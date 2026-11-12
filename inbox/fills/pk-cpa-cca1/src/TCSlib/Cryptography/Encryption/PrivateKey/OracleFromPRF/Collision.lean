@@ -34,6 +34,7 @@ queries.
   by queries that grow the size by at most one, has probability at most `q · (size + q) · δ`.
 * `PRFGame.lazyImpl_agree`, `lazyImpl_stick`, `lazyImpl_step`, `lazyImpl_grow`.
 * `PRFGame.abs_prob_lazyImpl_sub_le`: the two bits' lazy experiments differ by at most `q² / 2ⁿ`.
+* `PRFGame.abs_expect_fImpl_sub_le`: hence so do the experiments with a uniform random function.
 
 ## References
 
@@ -73,7 +74,7 @@ theorem prob_bad_le {impl : QueryImpl spec σ unifSpec} (bad : σ → Prop) [Dec
     rw [simulate_pure, prob_pure, if_neg hs]
     exact mul_nonneg (by positivity) hδ
   | query i x k ih =>
-    obtain ⟨hm, hk⟩ := hc
+    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
     have hm1 : 1 ≤ m := hm
     obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
     have hk' : ∀ y, (k y).CostBoundedBy (fun _ => 1) m' := fun y => by
@@ -149,14 +150,15 @@ theorem length_addPt_le (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit
 
 /-- Adding a point raises the flag by `hit`: `(addPt b st x y hit).2.2 = (st.2.2 || hit)`. -/
 theorem flag_addPt (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bool) :
-    (addPt b st x y hit).2.2 = (st.2.2 || hit) := rfl
+    (addPt b st x y hit).2.2 = (st.2.2 || hit) := by
+  rw [addPt_eq]
 
 /-- Away from the challenge's nonce the recorded values do not depend on `b`. -/
 theorem look_eq_of_hitStar (b b' : Bool) (st : LState n d) (x : Fin n → Bool)
     (h : hitStar st x = false) : look b st x = look b' st x := by
   obtain ⟨T, ch, bd⟩ := st
   cases ch with
-  | none => rfl
+  | none => rw [look_none, look_none]
   | some p =>
     obtain ⟨ml, c⟩ := p
     rw [hitStar_some, decide_eq_false_iff_not] at h
@@ -167,7 +169,7 @@ theorem isSome_look_eq (b b' : Bool) (st : LState n d) (x : Fin n → Bool) :
     (look b st x).isSome = (look b' st x).isSome := by
   obtain ⟨T, ch, bd⟩ := st
   cases ch with
-  | none => rfl
+  | none => rw [look_none, look_none]
   | some p =>
     obtain ⟨ml, c⟩ := p
     rw [look_some, look_some]
@@ -214,6 +216,12 @@ theorem ctOf_xorPerm (r : Fin n → Bool) {m₀ m₁ : List Bool} (h₀ : m₀.l
     simp only [List.getElem_zipWith]
     cases m₀[i] <;> cases m₁[i] <;> cases (List.ofFn y)[i] <;> rfl
 
+/-- The empty state records no value: `ovr b ([], none, false) R = R`. -/
+theorem ovr_init (b : Bool) (R : (Fin n → Bool) → (Fin n → Bool)) :
+    ovr b (([], none, false) : LState n d) R = R := by
+  funext x
+  rw [ovr_apply, look_none, List.lookup_nil, Option.getD_none]
+
 end Records
 
 /-! ### The lazy experiment until the bad event -/
@@ -253,13 +261,20 @@ theorem lazyImpl_agree (hatk : FixedLengthScheme.decOpen atk true = false) (hi2 
         rw [hatk, Bool.false_and]
       rw [lazyImpl_dec_closed ins outs d n atk b c _ hcl,
         lazyImpl_dec_closed ins outs d n atk b' c _ hcl]
-    | none => rfl
+    | none =>
+      by_cases hop : (FixedLengthScheme.decOpen atk ((T, none, bd) : LState n d).2.1.isSome &&
+          decWF n (List.ofFn c)) = true
+      · rw [lazyImpl_dec_open ins outs d n atk b c _ hop,
+          lazyImpl_dec_open ins outs d n atk b' c _ hop]
+        simp only [look_none, addPt_eq_of b b' ((T, none, bd) : LState n d)]
+      · rw [lazyImpl_dec_closed ins outs d n atk b c _ (Bool.eq_false_iff.2 hop),
+          lazyImpl_dec_closed ins outs d n atk b' c _ (Bool.eq_false_iff.2 hop)]
   | 2, mm, g =>
     obtain ⟨T, ch, bd⟩ := s
     cases ch with
     | some p =>
       obtain ⟨ml, c⟩ := p
-      rfl
+      rw [lazyImpl_challenge_some, lazyImpl_challenge_some]
     | none =>
       have hbd : bd = false := Bool.eq_false_iff.2 hs
       subst hbd
@@ -429,6 +444,54 @@ theorem abs_prob_lazyImpl_sub_le (hatk : FixedLengthScheme.decOpen atk true = fa
   refine h1.trans (h2.trans (le_of_eq ?_))
   simp only [List.length_nil, Nat.cast_zero, zero_add]
   ring
+
+/-- Expectations of functions `ε`-close at every point are `ε`-close. -/
+theorem abs_expect_sub_le {ρ : Type} (c : ProbComp ρ) {f g : ρ → ℝ} {ε : ℝ}
+    (h : ∀ x, |f x - g x| ≤ ε) : |expect c f - expect c g| ≤ ε := by
+  have h1 : expect c f ≤ expect c g + ε :=
+    calc expect c f ≤ expect c (fun x => g x + ε) :=
+          expect_mono c fun x => by linarith [(abs_le.1 (h x)).2]
+      _ = expect c g + ε := by rw [expect_add c g (fun _ => ε), expect_const]
+  have h2 : expect c g ≤ expect c f + ε :=
+    calc expect c g ≤ expect c (fun x => f x + ε) :=
+          expect_mono c fun x => by linarith [(abs_le.1 (h x)).1]
+      _ = expect c f + ε := by rw [expect_add c f (fun _ => ε), expect_const]
+  rw [abs_le]
+  constructor <;> linarith
+
+/-- **Step 2 of [PS10, Thm 168.2]: with a random function the bit is hidden up to `q² / 2ⁿ`.**
+For CPA and CCA1, `d = 3n + 2`, `2n`-bit challenge queries and computations `C r` (over coins
+`r`) making at most `q` queries, the experiments with a uniform random function for `b = 0` and
+`b = 1` accept with probabilities at most `q² / 2ⁿ` apart.
+
+**Proof sketch.** For each `b` and coins `r`, averaging over the function is the lazy experiment
+from the empty state (`expect_lazyImpl`; the override of the empty state is the function itself);
+pointwise in `r` the lazy experiments differ by at most `q² / 2ⁿ` (`abs_prob_lazyImpl_sub_le`);
+average over `r` (`abs_expect_sub_le`). -/
+theorem abs_expect_fImpl_sub_le (hatk : FixedLengthScheme.decOpen atk true = false)
+    (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {ρ α : Type} [Fintype ρ] [Nonempty ρ]
+    (C : ρ → OracleComp (bitSpec ins outs) α) (P : α → Prop) [DecidablePred P] (q : ℕ)
+    (hC : ∀ r, (C r).CostBoundedBy (fun _ => 1) q) :
+    |expect (sample ((Fin n → Bool) → (Fin n → Bool))) (fun R => expect (sample ρ) fun r =>
+        expect (simulate (fImpl ins outs d n atk false R) (C r) none)
+          (fun p => if P p.1 then (1 : ℝ) else 0)) -
+      expect (sample ((Fin n → Bool) → (Fin n → Bool))) (fun R => expect (sample ρ) fun r =>
+        expect (simulate (fImpl ins outs d n atk true R) (C r) none)
+          (fun p => if P p.1 then (1 : ℝ) else 0))| ≤ q ^ 2 / 2 ^ n := by
+  have key : ∀ (b : Bool) (r : ρ),
+      expect (sample ((Fin n → Bool) → (Fin n → Bool))) (fun R =>
+          expect (simulate (fImpl ins outs d n atk b R) (C r) none)
+            (fun p => if P p.1 then (1 : ℝ) else 0)) =
+        prob (simulate (lazyImpl ins outs d n atk b) (C r) (([], none, false) : LState n d))
+          (fun p => P p.1) := fun b r => by
+    have h := expect_lazyImpl ins outs d n atk b hd hi2 (fun a => if P a then (1 : ℝ) else 0) (C r)
+      (([], none, false) : LState n d)
+    simp only [ovr_init, Option.map_none] at h
+    rw [h, prob_eq_expect]
+  rw [expect_sample_comm, expect_sample_comm (α := (Fin n → Bool) → (Fin n → Bool))]
+  simp only [key]
+  exact abs_expect_sub_le _ fun r =>
+    abs_prob_lazyImpl_sub_le ins outs d n atk hatk hi2 (C r) P q (hC r)
 
 end Agree
 

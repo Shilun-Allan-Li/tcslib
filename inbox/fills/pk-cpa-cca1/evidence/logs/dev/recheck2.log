@@ -1,0 +1,43 @@
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games start 2026-11-12T00:58:06Z
+elapsed 2.7s; max RSS of children 2550 MiB
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games end 2026-11-12T00:58:08Z status 0
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler start 2026-11-12T00:58:08Z
+elapsed 10.4s; max RSS of children 2583 MiB
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler end 2026-11-12T00:58:19Z status 0
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction start 2026-11-12T00:58:19Z
+elapsed 2.6s; max RSS of children 2555 MiB
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction end 2026-11-12T00:58:21Z status 0
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer start 2026-11-12T00:58:21Z
+elapsed 2.6s; max RSS of children 2542 MiB
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer end 2026-11-12T00:58:24Z status 0
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy start 2026-11-12T00:58:24Z
+elapsed 3.3s; max RSS of children 2562 MiB
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy end 2026-11-12T00:58:27Z status 0
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision start 2026-11-12T00:58:28Z
+elapsed 3.1s; max RSS of children 2594 MiB
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision end 2026-11-12T00:58:31Z status 0
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF start 2026-11-12T00:58:31Z
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:413:8: error(lean.unknownIdentifier): Unknown identifier `atkOf_false`
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:412:88: error: unsolved goals
+F : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hFE : ∀ (n : ℕ) (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)
+hF : PRF F
+⊢ (prfFixedScheme F E hE hFE).INDSecure Attack.cpa
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:430:8: error(lean.unknownIdentifier): Unknown identifier `atkOf_true`
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:429:90: error: unsolved goals
+F : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hFE : ∀ (n : ℕ) (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)
+hF : PRF F
+⊢ (prfFixedScheme F E hE hFE).INDSecure Attack.cca1
+FAIL(TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF): no fresh .olean produced
+elapsed 3.5s; max RSS of children 2610 MiB
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF end 2026-11-12T00:58:34Z status 1
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF start 2026-11-12T00:58:39Z
+elapsed 3.6s; max RSS of children 2616 MiB
+== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF end 2026-11-12T00:58:42Z status 0

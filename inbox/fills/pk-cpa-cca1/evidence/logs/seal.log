@@ -1,0 +1,71 @@
+# Seals at proof-branch head 79f34dadd
+== evidence/seal/SealGames start 2026-11-12T01:20:43Z
+elapsed 2.9s; max RSS of children 2555 MiB
+== evidence/seal/SealGames end 2026-11-12T01:20:46Z status 0
+== evidence/seal/SealHandler start 2026-11-12T01:20:46Z
+elapsed 3.2s; max RSS of children 2584 MiB
+== evidence/seal/SealHandler end 2026-11-12T01:20:50Z status 0
+== evidence/seal/SealReduction start 2026-11-12T01:20:50Z
+elapsed 2.6s; max RSS of children 2561 MiB
+== evidence/seal/SealReduction end 2026-11-12T01:20:52Z status 0
+== evidence/seal/SealTransfer start 2026-11-12T01:20:52Z
+elapsed 2.4s; max RSS of children 2551 MiB
+== evidence/seal/SealTransfer end 2026-11-12T01:20:55Z status 0
+== evidence/seal/SealLazy start 2026-11-12T01:20:55Z
+elapsed 3.2s; max RSS of children 2567 MiB
+== evidence/seal/SealLazy end 2026-11-12T01:20:58Z status 0
+== evidence/seal/SealCollision start 2026-11-12T01:20:58Z
+elapsed 3.3s; max RSS of children 2592 MiB
+== evidence/seal/SealCollision end 2026-11-12T01:21:01Z status 0
+== evidence/seal/SealOracleSecurity start 2026-11-12T01:21:01Z
+elapsed 2.5s; max RSS of children 2476 MiB
+== evidence/seal/SealOracleSecurity end 2026-11-12T01:21:04Z status 0
+== evidence/seal/SealOracleFromPRF start 2026-11-12T01:21:04Z
+evidence/seal/SealOracleFromPRF.lean:619:10: error: Application type mismatch: The argument
+  x
+has type
+  Fin (PolyExpr.var.eval n) → Bool
+but is expected to have type
+  Fin n → Bool
+in the application
+  Exists.intro x
+evidence/seal/SealOracleFromPRF.lean:691:9: error: Application type mismatch: The argument
+  (NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n) rg
+has type
+  Fin (PolyExpr.var.eval n) → Bool
+but is expected to have type
+  Fin n → Bool
+in the application
+  Exists.intro ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n) rg)
+FAIL(evidence/seal/SealOracleFromPRF): lean exited with status 1
+FAIL(evidence/seal/SealOracleFromPRF): error diagnostics reported
+FAIL(evidence/seal/SealOracleFromPRF): no fresh .olean produced
+elapsed 3.8s; max RSS of children 2614 MiB
+== evidence/seal/SealOracleFromPRF end 2026-11-12T01:21:08Z status 1
+== evidence/seal/SealOracleFromPRFTail start 2026-11-12T01:21:08Z
+elapsed 3.6s; max RSS of children 2627 MiB
+== evidence/seal/SealOracleFromPRFTail end 2026-11-12T01:21:11Z status 0
+== evidence/seal/SealOracleFromPRFBase start 2026-11-12T01:21:11Z
+evidence/seal/SealOracleFromPRFBase.lean:119:8: warning: declaration uses 'sorry'
+evidence/seal/SealOracleFromPRFBase.lean:130:8: warning: declaration uses 'sorry'
+evidence/seal/SealOracleFromPRFBase.lean:313:10: error: Application type mismatch: The argument
+  x
+has type
+  Fin (PolyExpr.var.eval n) → Bool
+but is expected to have type
+  Fin n → Bool
+in the application
+  Exists.intro x
+evidence/seal/SealOracleFromPRFBase.lean:385:9: error: Application type mismatch: The argument
+  (NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n) rg
+has type
+  Fin (PolyExpr.var.eval n) → Bool
+but is expected to have type
+  Fin n → Bool
+in the application
+  Exists.intro ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n) rg)
+FAIL(evidence/seal/SealOracleFromPRFBase): lean exited with status 1
+FAIL(evidence/seal/SealOracleFromPRFBase): error diagnostics reported
+FAIL(evidence/seal/SealOracleFromPRFBase): no fresh .olean produced
+elapsed 2.7s; max RSS of children 2567 MiB
+== evidence/seal/SealOracleFromPRFBase end 2026-11-12T01:21:14Z status 1

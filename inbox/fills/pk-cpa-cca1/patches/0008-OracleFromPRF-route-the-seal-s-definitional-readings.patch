@@ -1,0 +1,369 @@
+From 79f34dadd74d359fa5114c34c62202ce2057e666 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 12 Nov 2026 01:01:33 +0000
+Subject: [PATCH 8/8] OracleFromPRF: route the seal's definitional readings
+ through published readers
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTkdwQWfa1fQdC2H7H5
+---
+ .../Encryption/PrivateKey/OracleFromPRF.lean  |  6 ++++-
+ .../PrivateKey/OracleFromPRF/Collision.lean   | 20 +++++++++-----
+ .../PrivateKey/OracleFromPRF/Games.lean       |  4 +--
+ .../PrivateKey/OracleFromPRF/Handler.lean     | 21 ++++++++++++++-
+ .../PrivateKey/OracleFromPRF/Lazy.lean        |  7 +++--
+ .../PrivateKey/OracleFromPRF/Reduction.lean   | 27 +++++++++----------
+ .../PrivateKey/OracleFromPRF/Transfer.lean    | 14 +++++-----
+ 7 files changed, 66 insertions(+), 33 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+index f6dffd5e4..32024da9b 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+@@ -361,7 +361,8 @@ private theorem prf_advantage_le (atkBit : Bool) (A : NUPPT) (q : PolyExpr) :
+     refine key _ _ _ _ _ (le_trans ?_ hQ1)
+     exact abs_expect_fImpl_sub_le (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+       (ctP.eval n) n (atkOf atkBit) (by rw [decOpen_atkOf, Bool.not_true, Bool.and_false])
+-      (ctP_eval n) (by show (pkDin 2).eval n = n + n; rw [pkDin_two]; rfl)
++      (ctP_eval n)
++      (by show (pkDin 2).eval n = n + n; rw [pkDin_two, PolyExpr.eval_add, PolyExpr.eval_var])
+       (fun r => A.toComp (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n
+         (q.eval n) r) (fun a => (List.ofFn a).headD false = true) (q.eval n)
+       (fun r => toComp_costBoundedBy A _ n _ r)
+@@ -375,6 +376,7 @@ are (`PRF.negligible_prfAdv`, budget `qRed q`), and so is a polynomial times `2
+ are negligible (`Negligible.add`). -/
+ private theorem prf_indSecure (atkBit : Bool) (hF : PRF F) :
+     (prfFixedScheme F E hE hFE).INDSecure (atkOf atkBit) := by
++  rw [FixedLengthScheme.INDSecure_iff]
+   intro A q
+   obtain ⟨D₀, D₁, h⟩ := prf_advantage_le F E hE hFE atkBit A q
+   exact ⟨_, ((hF.negligible_prfAdv D₀ (qRed q)).add (hF.negligible_prfAdv D₁ (qRed q))).add
+@@ -408,6 +410,7 @@ challenge bit in its seed. Here there is one reduction per bit (the bit hard-wir
+    above (`advantage ≤ 1` at `n = 0`); it is negligible (`PRF.negligible_prfAdv`,
+    `EnsembleLemmas.negligible_polyExpr_mul`, `negligible_two_pow_neg`). -/
+ theorem prfFixedScheme_cpa (hF : PRF F) : (prfFixedScheme F E hE hFE).INDSecure .cpa := by
++  rw [← PRFGame.atkOf_false]
+   exact prf_indSecure F E hE hFE false hF
+ 
+ /-- **Theorem 168.2 (CCA1)** [PS10]: if `F` is a pseudorandom function family, the §3.9 scheme
+@@ -424,6 +427,7 @@ experiment a pre-challenge decryption enters its nonce in the table, so the bad
+ that it is the challenge's `r*`, again bounded by `prob_mem_le` because `r*` is drawn after those
+ queries; after the challenge CCA1 refuses decryption, so it never reads `b`. -/
+ theorem prfFixedScheme_cca1 (hF : PRF F) : (prfFixedScheme F E hE hFE).INDSecure .cca1 := by
++  rw [← PRFGame.atkOf_true]
+   exact prf_indSecure F E hE hFE true hF
+ 
+ /-- Reverse the word, negate its first bit, and reverse back: on a nonempty word this
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean
+index c5a7baf45..c213c52fb 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean
+@@ -74,7 +74,7 @@ theorem prob_bad_le {impl : QueryImpl spec σ unifSpec} (bad : σ → Prop) [Dec
+     rw [simulate_pure, prob_pure, if_neg hs]
+     exact mul_nonneg (by positivity) hδ
+   | query i x k ih =>
+-    obtain ⟨hm, hk⟩ := hc
++    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+     have hm1 : 1 ≤ m := hm
+     obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
+     have hk' : ∀ y, (k y).CostBoundedBy (fun _ => 1) m' := fun y => by
+@@ -150,14 +150,15 @@ theorem length_addPt_le (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit
+ 
+ /-- Adding a point raises the flag by `hit`: `(addPt b st x y hit).2.2 = (st.2.2 || hit)`. -/
+ theorem flag_addPt (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bool) :
+-    (addPt b st x y hit).2.2 = (st.2.2 || hit) := rfl
++    (addPt b st x y hit).2.2 = (st.2.2 || hit) := by
++  rw [addPt_eq]
+ 
+ /-- Away from the challenge's nonce the recorded values do not depend on `b`. -/
+ theorem look_eq_of_hitStar (b b' : Bool) (st : LState n d) (x : Fin n → Bool)
+     (h : hitStar st x = false) : look b st x = look b' st x := by
+   obtain ⟨T, ch, bd⟩ := st
+   cases ch with
+-  | none => rfl
++  | none => rw [look_none, look_none]
+   | some p =>
+     obtain ⟨ml, c⟩ := p
+     rw [hitStar_some, decide_eq_false_iff_not] at h
+@@ -168,7 +169,7 @@ theorem isSome_look_eq (b b' : Bool) (st : LState n d) (x : Fin n → Bool) :
+     (look b st x).isSome = (look b' st x).isSome := by
+   obtain ⟨T, ch, bd⟩ := st
+   cases ch with
+-  | none => rfl
++  | none => rw [look_none, look_none]
+   | some p =>
+     obtain ⟨ml, c⟩ := p
+     rw [look_some, look_some]
+@@ -260,13 +261,20 @@ theorem lazyImpl_agree (hatk : FixedLengthScheme.decOpen atk true = false) (hi2
+         rw [hatk, Bool.false_and]
+       rw [lazyImpl_dec_closed ins outs d n atk b c _ hcl,
+         lazyImpl_dec_closed ins outs d n atk b' c _ hcl]
+-    | none => rfl
++    | none =>
++      by_cases hop : (FixedLengthScheme.decOpen atk ((T, none, bd) : LState n d).2.1.isSome &&
++          decWF n (List.ofFn c)) = true
++      · rw [lazyImpl_dec_open ins outs d n atk b c _ hop,
++          lazyImpl_dec_open ins outs d n atk b' c _ hop]
++        simp only [look_none, addPt_eq_of b b' ((T, none, bd) : LState n d)]
++      · rw [lazyImpl_dec_closed ins outs d n atk b c _ (Bool.eq_false_iff.2 hop),
++          lazyImpl_dec_closed ins outs d n atk b' c _ (Bool.eq_false_iff.2 hop)]
+   | 2, mm, g =>
+     obtain ⟨T, ch, bd⟩ := s
+     cases ch with
+     | some p =>
+       obtain ⟨ml, c⟩ := p
+-      rfl
++      rw [lazyImpl_challenge_some, lazyImpl_challenge_some]
+     | none =>
+       have hbd : bd = false := Bool.eq_false_iff.2 hs
+       subst hbd
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean
+index 26c7cd94b..83889d92e 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean
+@@ -115,7 +115,7 @@ theorem expect_simulate_congr {ι : Type} {spec : OracleSpec ι} {σ α : Type}
+     (c : OracleComp spec α) (s : σ) (G : α × σ → ℝ) :
+     expect (simulate impl₀ c s) G = expect (simulate impl₁ c s) G := by
+   induction c generalizing s with
+-  | pure a => rfl
++  | pure a => rw [simulate_pure, simulate_pure]
+   | query i x k ih =>
+     rw [simulate_query, simulate_query, expect_bind, expect_bind, h]
+     exact congrArg _ (funext fun p => ih p.1 p.2)
+@@ -266,7 +266,7 @@ theorem expect_eImpl (κ : ℕ) {α : Type} (G : α → ℝ) (c : OracleComp (bi
+     simp only [simulate_pure, expect_pure]
+     exact expect_const _ _
+   | query i x k ih =>
+-    obtain ⟨hm, hk⟩ := hc
++    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+     have hm1 : 1 ≤ m := hm
+     have hjk : j < κ := by omega
+     have hrest : j + 1 + (m - 1) ≤ κ := by omega
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean
+index d901a6c69..8e8ce6d3f 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean
+@@ -91,7 +91,7 @@ theorem pkDout_one : pkDout 1 = .add .var (.const 1) := rfl
+ theorem pkDout_two : pkDout 2 = ctP := rfl
+ 
+ /-- The outer oracle: `n`-bit queries and answers. -/
+-def pkOut : Fin 1 → PolyExpr := fun _ => .var
++abbrev pkOut : Fin 1 → PolyExpr := fun _ => .var
+ 
+ /-- `pkOut j = var`. -/
+ theorem pkOut_eq (j : Fin 1) : pkOut j = .var := rfl
+@@ -391,6 +391,22 @@ def pkSeedTapes (atkBit b : Bool) (n : ℕ) :
+     (Fin ((pkHandler q atkBit b).seedLen.eval n) → Bool) ≃ (Fin (q.eval n) → Fin n → Bool) :=
+   pkTapes q n
+ 
++/-- The encoded state at the handler's state type: `pkHState q atkBit b n j o = pkState q n j o`. -/
++def pkHState (atkBit b : Bool) (n j : ℕ) (o : Option (Fin (ctP.eval n) → Bool)) :
++    Fin ((pkHandler q atkBit b).stateLen.eval n) → Bool :=
++  pkState q n j o
++
++/-- `pkHState q atkBit b n j o = pkState q n j o`. -/
++theorem pkHState_eq (atkBit b : Bool) (n j : ℕ) (o : Option (Fin (ctP.eval n) → Bool)) :
++    pkHState q atkBit b n j o = pkState q n j o :=
++  rfl
++
++/-- The initial state is the encoded `(0, none)`: `(pkHandler q atkBit b).init n =
++pkHState q atkBit b n 0 none`. -/
++theorem pkHandler_init_hstate (atkBit b : Bool) (n : ℕ) :
++    (pkHandler q atkBit b).init n = pkHState q atkBit b n 0 none :=
++  rfl
++
+ /-- `pkSeedTapes q atkBit b n = pkTapes q n`. -/
+ theorem pkSeedTapes_eq (atkBit b : Bool) (n : ℕ) : pkSeedTapes q atkBit b n = pkTapes q n :=
+   rfl
+@@ -404,6 +420,9 @@ theorem pkHandler_finish (atkBit b : Bool) (n : ℕ) (z : List Bool)
+     (pkHandler q atkBit b).finish n z ω s a =
+       .pure (padFin ((pkHandler q atkBit b).outLen.eval n) (List.ofFn a)) := by
+   rw [InteractiveHandler.finish_eq]
++  have h0 : (pkHandler q atkBit b).finCall.eval n = 0 := by
++    rw [pkHandler_finCall, PolyExpr.eval_const]
++  rw [h0]
+   refine buildComp_zero_of_ret ?_
+   show decodeBitMove _ _ _ (pkFin _) = _
+   rw [pkFin, InteractiveHandler.finInput_eq, pairSndD_pairEncode, pairSndD_pairEncode,
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
+index 3e62c42e7..184122c7f 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
+@@ -418,7 +418,9 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
+       · rw [Bool.not_eq_true] at hop
+         have hop' : (FixedLengthScheme.decOpen atk (st.2.1.map Prod.snd).isSome &&
+             decWF n (List.ofFn c)) = false := by rw [Option.isSome_map]; exact hop
+-        have hz0 : padFin (outs 1) [] = zeroBits (outs 1) := funext fun _ => rfl
++        have hz0 : padFin (outs 1) [] = zeroBits (outs 1) := by
++          funext k
++          simp only [padFin_def, List.getD_nil, zeroBits_apply]
+         simp only [simulate_query, fImpl_dec, lazyImpl_dec_closed _ _ _ _ _ _ c st hop,
+           OracleComp.pure_bind, decAns_eq, hop', Bool.false_eq_true, if_false, hz0]
+         exact ih _ st
+@@ -427,7 +429,8 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
+       cases ch with
+       | some p =>
+         obtain ⟨ml, c⟩ := p
+-        simp only [simulate_query, lazyImpl_challenge_some, OracleComp.pure_bind]
++        simp only [simulate_query, lazyImpl_challenge_some, OracleComp.pure_bind, Option.map_some,
++          fImpl_challenge_some]
+         exact ih _ _
+       | none =>
+         have hm : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n := by
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean
+index 3c1db3c36..a26f75f38 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean
+@@ -72,7 +72,7 @@ theorem simulate_eq_of_abs_bounded {ι ι' : Type} {spec : OracleSpec ι} {spec'
+   induction c generalizing m s with
+   | pure a => simp only [simulate_pure, OracleComp.pure_bind]
+   | query i x k ih =>
+-    obtain ⟨hm, hk⟩ := hc
++    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+     have hm1 : 1 ≤ m := hm
+     obtain ⟨y, s', h₂, hcnt, h₁⟩ := h i x s (by omega)
+     rw [simulate_query, simulate_query, h₁, h₂, OracleComp.pure_bind, OracleComp.pure_bind]
+@@ -124,11 +124,11 @@ variable (q : PolyExpr) (atkBit b : Bool) (n : ℕ) (f : (Fin n → Bool) → (F
+ /-- The handler's state and the (trivial) outer state, as functions of `eImpl`'s state. -/
+ def pkAbs (s : ℕ × Option (Fin (ctP.eval n) → Bool)) :
+     (Fin ((pkHandler q atkBit b).stateLen.eval n) → Bool) × Unit :=
+-  (pkState q n s.1 s.2, ())
++  (pkHState q atkBit b n s.1 s.2, ())
+ 
+-/-- `pkAbs q atkBit b n s = (pkState q n s.1 s.2, ())`. -/
++/-- `pkAbs q atkBit b n s = (pkHState q atkBit b n s.1 s.2, ())`. -/
+ theorem pkAbs_eq (s : ℕ × Option (Fin (ctP.eval n) → Bool)) :
+-    pkAbs q atkBit b n s = (pkState q n s.1 s.2, ()) :=
++    pkAbs q atkBit b n s = (pkHState q atkBit b n s.1 s.2, ()) :=
+   rfl
+ 
+ /-- Reading a tape through the outer oracle's padding: `f` at the tape `r`. -/
+@@ -165,9 +165,9 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
+     refine ⟨_, _, eImpl_enc (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+         (ctP.eval n) n (atkOf atkBit) b f
+         (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j o, le_rfl, ?_⟩
+-    rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_enc q atkBit b n z ω x j o hj,
++    rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq, pkHandler_impl_enc q atkBit b n z ω x j o hj,
+       simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
+-      pkAbs_eq, hT, fOuter_tape]
++      pkAbs_eq, pkHState_eq, hT, fOuter_tape]
+   | 1, x =>
+     by_cases hop : (atkBit && !o.isSome && decWF n (List.ofFn x)) = true
+     · refine ⟨_, _, eImpl_dec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+@@ -182,7 +182,7 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
+       have hx0 : padFin n (List.ofFn (padFin ((pkOut 0).eval n) (pairFstD (List.ofFn x)))) =
+           padFin n (pairFstD (List.ofFn x)) := by
+         rw [GGMRed.ofFn_padFin_of_length (by rw [hwf'.1, hn])]
+-      rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_dec_open q atkBit b n z ω x j o hj.le hop,
++      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq, pkHandler_impl_dec_open q atkBit b n z ω x j o hj.le hop,
+         simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
+         hx0, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn]; exact hn.symm),
+         decOpen_atkOf, decAns_eq]
+@@ -192,7 +192,7 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
+         (ctP.eval n) n (atkOf atkBit) b f
+           (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j o, Nat.le_succ _, ?_⟩
+       rw [Bool.not_eq_true] at hop
+-      rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_dec_closed q atkBit b n z ω x j o hj.le
++      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq, pkHandler_impl_dec_closed q atkBit b n z ω x j o hj.le
+           hop,
+         simulate_pure, OracleComp.pure_bind, decOpen_atkOf, decAns_eq,
+         if_neg (by rw [hop]; exact Bool.false_ne_true)]
+@@ -206,16 +206,16 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
+       refine ⟨_, _, eImpl_challenge_some (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+           (ctP.eval n) n (atkOf atkBit) b f
+         (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j c, Nat.le_succ _, ?_⟩
+-      rw [QueryImpl.comp_apply, pkAbs_eq,
++      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq,
+         pkHandler_impl_challenge_some q atkBit b n z ω x j c hj.le, simulate_pure,
+         OracleComp.pure_bind]
+     | none =>
+       refine ⟨_, _, eImpl_challenge_none (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+           (ctP.eval n) n (atkOf atkBit) b f
+         (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j, le_rfl, ?_⟩
+-      rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_challenge_none q atkBit b n z ω x j hj,
++      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq, pkHandler_impl_challenge_none q atkBit b n z ω x j hj,
+         simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
+-        pkAbs_eq, hT, fOuter_tape]
++        pkAbs_eq, pkHState_eq, hT, fOuter_tape]
+ 
+ end Composed
+ 
+@@ -348,9 +348,8 @@ theorem exists_prfReduction (A : NUPPT) (q : PolyExpr) (atkBit b : Bool) :
+     refine h1.symm.trans ?_
+     rw [simulate_bind, simulate_comp, OracleComp.bind_assoc, expect_bind]
+     simp only [OracleComp.pure_bind, pkHandler_finish, simulate_pure, expect_pure]
+-    rw [pkHandler_init_eq, show ((pkState q n 0 none, ()) :
+-        (Fin ((pkHandler q atkBit b).stateLen.eval n) → Bool) × Unit) =
+-        pkAbs q atkBit b n (0, none) from rfl,
++    rw [pkHandler_init_hstate, show (pkHState q atkBit b n 0 none, ()) =
++        pkAbs q atkBit b n (0, none) from (pkAbs_eq q atkBit b n (0, none)).symm,
+       simulate_eq_of_abs_bounded _ _ (pkAbs q atkBit b n) (fun s => s.1) (q.eval n)
+         (fun i x s hs => comp_pkAbs q atkBit b n f [] ω i x s hs) _ (q.eval n)
+         (toComp_costBoundedBy A _ n (q.eval n) r) (0, none) (Nat.zero_add _).le,
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean
+index d40644229..ff0b4d30b 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean
+@@ -91,20 +91,20 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+     refine congrArg _ (funext fun re => ?_)
+     rw [expect_pure, expect_pure]
+     have hm : List.ofFn (cast (S.indSpec_encDom n) m) = List.ofFn m :=
+-      AdaptiveCPA.ofFn_cast (S.inLens_zero n).symm _ m
++      AdaptiveCPA.ofFn_cast (S.inLens_zero n) _ m
+     have hm' : cast (S.indSpec_encDom n) m = padFin n (List.ofFn m) :=
+       eq_of_ofFn_eq (by rw [hm, GGMRed.ofFn_padFin_of_length (by
+         rw [List.length_ofFn, S.inLens_zero])])
+     congr 2
+     refine eq_of_ofFn_eq ?_
+-    rw [AdaptiveCPA.ofFn_cast (S.outLens_zero n) _ _, hm', henc,
++    rw [AdaptiveCPA.ofFn_cast (S.outLens_zero n).symm _ _, hm', henc,
+       GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, S.inLens_zero]),
+       GGMRed.ofFn_padFin_of_length (by
+         rw [hlenCt _ (by rw [List.length_ofFn, S.inLens_zero]), S.outLens_zero])]
+   | 1, c =>
+     rw [S.indImpl_dec_onSpec, fImpl_dec, decOpen_atkOf]
+     have hc : List.ofFn (cast (S.indSpec_decDom n) c) = List.ofFn c :=
+-      AdaptiveCPA.ofFn_cast (S.inLens_one n).symm _ c
++      AdaptiveCPA.ofFn_cast (S.inLens_one n) _ c
+     by_cases hop : (atkBit && !s.isSome) = true
+     · have hs : s = none := by
+         cases s with
+@@ -116,7 +116,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+       rw [expect_pure, expect_pure]
+       congr 2
+       refine eq_of_ofFn_eq ?_
+-      rw [AdaptiveCPA.ofFn_cast (S.outLens_one n) _ _, hc, hdec, decAns_eq, hop, Bool.true_and]
++      rw [AdaptiveCPA.ofFn_cast (S.outLens_one n).symm _ _, hc, hdec, decAns_eq, hop, Bool.true_and]
+       by_cases hw : decWF n (List.ofFn c) = true
+       · rw [if_pos hw, if_pos hw]
+         rw [decWF_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq] at hw
+@@ -129,7 +129,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+         Bool.false_and, if_neg Bool.false_ne_true, expect_pure, expect_pure, padFin_nil]
+   | 2, mm =>
+     have hmm : List.ofFn (cast (S.indSpec_challengeDom n) mm) = List.ofFn mm :=
+-      AdaptiveCPA.ofFn_cast (S.inLens_two n).symm _ mm
++      AdaptiveCPA.ofFn_cast (S.inLens_two n) _ mm
+     have hmsg : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n := by
+       have : (List.ofFn mm).length = n + n := by rw [List.length_ofFn, S.inLens_two]
+       rw [AdaptiveCPA.msgOf_eq]
+@@ -148,7 +148,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+       rw [S.indImpl_challenge_repeat_onSpec, fImpl_challenge_some, expect_pure, expect_pure]
+       congr 2
+       refine eq_of_ofFn_eq ?_
+-      rw [AdaptiveCPA.ofFn_cast (S.outLens_two n) _ _,
++      rw [AdaptiveCPA.ofFn_cast (S.outLens_two n).symm _ _,
+         GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, S.outLens_two])]
+     | none =>
+       rw [S.indImpl_challenge_none_onSpec, fImpl_challenge_none, expect_bind, expect_bind,
+@@ -162,7 +162,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+         rw [hsel, henc, GGMRed.ofFn_padFin_of_length hmsg]
+       congr 2
+       · refine eq_of_ofFn_eq ?_
+-        rw [AdaptiveCPA.ofFn_cast (S.outLens_two n) _ _, henc',
++        rw [AdaptiveCPA.ofFn_cast (S.outLens_two n).symm _ _, henc',
+           GGMRed.ofFn_padFin_of_length (by rw [hlenCt _ hmsg, S.outLens_two])]
+       · congr 1
+         refine eq_of_ofFn_eq ?_
+-- 
+2.43.0
+

@@ -1,0 +1,81 @@
+== evidence/seal/SealControlsUnsealed start 2026-11-12T01:21:14Z
+elapsed 2.0s; max RSS of children 2531 MiB
+== evidence/seal/SealControlsUnsealed end 2026-11-12T01:21:16Z status 0
+== evidence/seal/SealControlsSealed start 2026-11-12T01:21:16Z
+evidence/seal/SealControlsSealed.lean:12:68: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (PolyExpr.var.add PolyExpr.var).eval n = n + n
+evidence/seal/SealControlsSealed.lean:14:76: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  S.outLens n 0 = S.ctLen.eval n
+evidence/seal/SealControlsSealed.lean:18:75: error: Invalid projection: Expected a value whose type is a structure
+  h
+has type
+  OracleComp.CostBoundedBy (fun x => 1) (OracleComp.query i x k) m
+evidence/seal/SealControlsSealed.lean:21:76: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  simulate impl (OracleComp.pure a) s = OracleComp.pure (a, s)
+evidence/seal/SealControlsSealed.lean:25:52: error: Function expected at
+  h
+but this term has type
+  S.INDSecure Attack.cpa
+
+Note: Expected a function because this term is being applied to the argument
+  A
+evidence/seal/SealControlsSealed.lean:27:32: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  atkOf false = Attack.cpa
+evidence/seal/SealControlsSealed.lean:31:89: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  fImpl ins outs d n atk b f 2 mm (some c) = OracleComp.pure (padFin (outs 2) (List.ofFn c), some c)
+evidence/seal/SealControlsSealed.lean:33:88: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (pkHandler q atkBit b).finCall = PolyExpr.const 0
+evidence/seal/SealControlsSealed.lean:36:32: error: Type mismatch
+  pkState q n j o
+has type
+  Fin ((pkStLen q).eval n) → Bool
+but is expected to have type
+  Fin ((pkHandler q atkBit b).stateLen.eval n) → Bool
+evidence/seal/SealControlsSealed.lean:39:79: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  look b (T, none, bd) x = List.lookup x T
+evidence/seal/SealControlsSealed.lean:42:50: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (addPt b st x y hit).2.2 = (st.2.2 || hit)
+evidence/seal/SealControlsSealed.lean:47:63: error: Type mismatch
+  rfl
+has type
+  ?m.35 = ?m.35
+but is expected to have type
+  lazyImpl ins outs d n atk b 2 mm (T, some (ml, c), bd) =
+    OracleComp.pure (padFin (outs 2) (List.ofFn c), T, some (ml, c), bd)
+FAIL(evidence/seal/SealControlsSealed): lean exited with status 1
+FAIL(evidence/seal/SealControlsSealed): error diagnostics reported
+FAIL(evidence/seal/SealControlsSealed): no fresh .olean produced
+elapsed 2.1s; max RSS of children 2526 MiB
+== evidence/seal/SealControlsSealed end 2026-11-12T01:21:18Z status 1

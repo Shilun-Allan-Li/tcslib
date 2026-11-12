@@ -115,7 +115,7 @@ theorem expect_simulate_congr {ι : Type} {spec : OracleSpec ι} {σ α : Type}
     (c : OracleComp spec α) (s : σ) (G : α × σ → ℝ) :
     expect (simulate impl₀ c s) G = expect (simulate impl₁ c s) G := by
   induction c generalizing s with
-  | pure a => rfl
+  | pure a => rw [simulate_pure, simulate_pure]
   | query i x k ih =>
     rw [simulate_query, simulate_query, expect_bind, expect_bind, h]
     exact congrArg _ (funext fun p => ih p.1 p.2)
@@ -266,7 +266,7 @@ theorem expect_eImpl (κ : ℕ) {α : Type} (G : α → ℝ) (c : OracleComp (bi
     simp only [simulate_pure, expect_pure]
     exact expect_const _ _
   | query i x k ih =>
-    obtain ⟨hm, hk⟩ := hc
+    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
     have hm1 : 1 ≤ m := hm
     have hjk : j < κ := by omega
     have hrest : j + 1 + (m - 1) ≤ κ := by omega

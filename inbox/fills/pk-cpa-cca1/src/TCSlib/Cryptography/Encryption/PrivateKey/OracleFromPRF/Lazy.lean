@@ -115,7 +115,8 @@ def hitStar (st : LState n d) (x : Fin n → Bool) : Bool :=
   | some (_, c) => decide (x = rStar c)
   | none => false
 
-/-- `hitStar (T, some (ml, c), bd) x = decide (x = rStar c)` and `hitStar (T, none, bd) x = false`. -/
+/-- `hitStar (T, some (ml, c), bd) x = decide (x = rStar c)`
+and `hitStar (T, none, bd) x = false`. -/
 theorem hitStar_some (T : List ((Fin n → Bool) × (Fin n → Bool))) (ml : List Bool)
     (c : Fin d → Bool) (bd : Bool) (x : Fin n → Bool) :
     hitStar ((T, some (ml, c), bd) : LState n d) x = decide (x = rStar c) := rfl
@@ -157,7 +158,8 @@ noncomputable def lazyImpl : QueryImpl (bitSpec ins outs) (LState n d) unifSpec
           .pure (padFin _ (List.ofFn (padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm))
               ((look b ((T, none, bd) : LState n d) r).getD y)))),
             (T, some (List.ofFn mm, padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm))
-              ((look b ((T, none, bd) : LState n d) r).getD y))), bd || (look b ((T, none, bd) : LState n d) r).isSome))
+              ((look b ((T, none, bd) : LState n d) r).getD y))),
+                bd || (look b ((T, none, bd) : LState n d) r).isSome))
 
 /-- An encryption samples a nonce `r` and a fresh value `y`, answers `⟨r, m ⊕ R(r)⟩` with the lazy
 value, and records the point. -/
@@ -203,7 +205,8 @@ theorem lazyImpl_challenge_none (mm : Fin (ins 2) → Bool)
           .pure (padFin _ (List.ofFn (padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm))
               ((look b ((T, none, bd) : LState n d) r).getD y)))),
             (T, some (List.ofFn mm, padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm))
-              ((look b ((T, none, bd) : LState n d) r).getD y))), bd || (look b ((T, none, bd) : LState n d) r).isSome)) :=
+              ((look b ((T, none, bd) : LState n d) r).getD y))),
+                bd || (look b ((T, none, bd) : LState n d) r).isSome)) :=
   rfl
 
 end Lazy
@@ -415,7 +418,9 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
       · rw [Bool.not_eq_true] at hop
         have hop' : (FixedLengthScheme.decOpen atk (st.2.1.map Prod.snd).isSome &&
             decWF n (List.ofFn c)) = false := by rw [Option.isSome_map]; exact hop
-        have hz0 : padFin (outs 1) [] = zeroBits (outs 1) := funext fun _ => rfl
+        have hz0 : padFin (outs 1) [] = zeroBits (outs 1) := by
+          funext k
+          simp only [padFin_def, List.getD_nil, zeroBits_apply]
         simp only [simulate_query, fImpl_dec, lazyImpl_dec_closed _ _ _ _ _ _ c st hop,
           OracleComp.pure_bind, decAns_eq, hop', Bool.false_eq_true, if_false, hz0]
         exact ih _ st
@@ -424,7 +429,8 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
       cases ch with
       | some p =>
         obtain ⟨ml, c⟩ := p
-        simp only [simulate_query, lazyImpl_challenge_some, OracleComp.pure_bind]
+        simp only [simulate_query, lazyImpl_challenge_some, OracleComp.pure_bind, Option.map_some,
+          fImpl_challenge_some]
         exact ih _ _
       | none =>
         have hm : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n := by
@@ -445,7 +451,8 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
           simp only [hval, Option.getD_some, Option.isSome_some]
           refine Eq.trans ?_ (expect_const _ _).symm
           exact (congrArg _ (funext fun R => by
-            rw [← ovr_record_of_some hd b T bd (bd || true) (List.ofFn mm) hm r y₀ hr R]; rfl)).trans
+            rw [← ovr_record_of_some hd b T bd (bd || true) (List.ofFn mm) hm r y₀
+                hr R]; rfl)).trans
             (ih _ _)
         | none =>
           rw [← BitwiseSim.expect_sample_update r]

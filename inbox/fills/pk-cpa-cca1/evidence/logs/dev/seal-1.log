@@ -1,0 +1,507 @@
+== evidence/seal/SealGames start 2026-11-12T00:54:25Z
+evidence/seal/SealGames.lean:124:14: error: Tactic `rfl` failed: The left-hand side
+  expect (simulate impl₀ (OracleComp.pure a) s) G
+is not definitionally equal to the right-hand side
+  expect (simulate impl₁ (OracleComp.pure a) s) G
+
+case pure
+ι : Type
+spec : OracleSpec ι
+σ α : Type
+impl₀ impl₁ : QueryImpl spec σ unifSpec
+h : ∀ (i : ι) (x : spec.dom i) (s : σ) (g : spec.rng i × σ → ℝ), expect (impl₀ i x s) g = expect (impl₁ i x s) g
+G : α × σ → ℝ
+a : α
+s : σ
+⊢ expect (simulate impl₀ (OracleComp.pure a) s) G = expect (simulate impl₁ (OracleComp.pure a) s) G
+evidence/seal/SealGames.lean:275:11: error: Tactic `rcases` failed: `hc : OracleComp.CostBoundedBy (fun x => 1) (OracleComp.query i x k)
+  m` is not an inductive datatype
+FAIL(evidence/seal/SealGames): lean exited with status 1
+FAIL(evidence/seal/SealGames): error diagnostics reported
+FAIL(evidence/seal/SealGames): no fresh .olean produced
+elapsed 2.5s; max RSS of children 2528 MiB
+== evidence/seal/SealGames end 2026-11-12T00:54:27Z status 1
+== evidence/seal/SealHandler start 2026-11-12T00:54:27Z
+evidence/seal/SealHandler.lean:413:2: error: Type mismatch
+  buildComp_zero_of_ret ?m.58
+has type
+  buildComp ?m.54 ?m.55 0 ?m.56 = OracleComp.pure ?m.57
+but is expected to have type
+  buildComp
+      (fun L =>
+        decodeBitMove (fun j => (pkOut j).eval n) (fun j => (pkOut j).eval n) ((pkHandler q atkBit b).outLen.eval n)
+          ((pkHandler q atkBit b).finRun
+            (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+              ((bitCodec (fun j => (pkOut j).eval n) (fun j => (pkOut j).eval n) 0).encodeLog L))))
+      (zeroBits ((pkHandler q atkBit b).outLen.eval n)) ((pkHandler q atkBit b).finCall.eval n) [] =
+    OracleComp.pure (padFin ((pkHandler q atkBit b).outLen.eval n) (List.ofFn a))
+FAIL(evidence/seal/SealHandler): lean exited with status 1
+FAIL(evidence/seal/SealHandler): error diagnostics reported
+FAIL(evidence/seal/SealHandler): no fresh .olean produced
+elapsed 3.0s; max RSS of children 2570 MiB
+== evidence/seal/SealHandler end 2026-11-12T00:54:30Z status 1
+== evidence/seal/SealReduction start 2026-11-12T00:54:30Z
+evidence/seal/SealReduction.lean:81:11: error: Tactic `rcases` failed: `hc : OracleComp.CostBoundedBy (fun x => 1) (OracleComp.query i x k)
+  m` is not an inductive datatype
+evidence/seal/SealReduction.lean:133:3: error: Application type mismatch: The argument
+  pkState q n s.1 s.2
+has type
+  Fin ((pkStLen q).eval n) → Bool
+but is expected to have type
+  Fin ((pkHandler q atkBit b).stateLen.eval n) → Bool
+in the application
+  Prod.mk (pkState q n s.1 s.2)
+evidence/seal/SealReduction.lean:137:27: error: Type mismatch
+  (pkState q n s.1 s.2, ())
+has type
+  (Fin ((pkStLen q).eval n) → Bool) × Unit
+but is expected to have type
+  (Fin ((pkHandler q atkBit b).stateLen.eval n) → Bool) × Unit
+evidence/seal/SealReduction.lean:157:8: warning: declaration uses 'sorry'
+evidence/seal/SealReduction.lean:193:46: warning: 'rw [List.length_ofFn]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+evidence/seal/SealReduction.lean:193:69: warning: 'exact hn.symm' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+evidence/seal/SealReduction.lean:195:6: warning: 'simp only [Bool.and_eq_true] at hop' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+evidence/seal/SealReduction.lean:196:6: warning: 'rw [if_pos (by simp only [Bool.and_eq_true]; exact ⟨hop.1, hwf⟩)]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+evidence/seal/SealReduction.lean:204:19: warning: 'rw [hop]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+evidence/seal/SealReduction.lean:204:29: warning: 'exact Bool.false_ne_true' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+evidence/seal/SealReduction.lean:205:6: warning: 'have hz : padFin ((pkDout 1).eval n) [] = zeroBits _ :=
+  by
+  funext k
+  simp only [padFin_def, List.getD_nil, zeroBits_apply]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+evidence/seal/SealReduction.lean:208:6: warning: 'rw [hz]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+evidence/seal/SealReduction.lean:193:46: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+evidence/seal/SealReduction.lean:193:69: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+evidence/seal/SealReduction.lean:195:6: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+evidence/seal/SealReduction.lean:196:6: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+evidence/seal/SealReduction.lean:204:19: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+evidence/seal/SealReduction.lean:204:29: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+evidence/seal/SealReduction.lean:205:6: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+evidence/seal/SealReduction.lean:208:6: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+evidence/seal/SealReduction.lean:342:29: error: Type mismatch
+  hφ₂ [] ω (φ₀ r)
+has type
+  ((simulate ((pkHandler q atkBit b).impl n [] ω)
+          (A'.toCompOn (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) ((pkHandler q atkBit b).advInput n [] ω) (φ₀ r))
+          ((pkHandler q atkBit b).init n)).bind
+      fun res => (pkHandler q atkBit b).finish n [] ω res.2 res.1) =
+    B.toCompOn (bitCodec (fun j => (pkOut j).eval n) (fun j => (pkOut j).eval n) ((pkHandler q atkBit b).outLen.eval n))
+      n (q.eval n * (pkHandler q atkBit b).perCall.eval n + (pkHandler q atkBit b).finCall.eval n) [] (φ₂ (ω, φ₀ r))
+but is expected to have type
+  ?m.347 =
+    B.toCompOn
+      (bitCodec (fun x => PolyExpr.var.eval n) (fun x => PolyExpr.var.eval n) ((pkHandler q atkBit b).outLen.eval n)) n
+      (q.eval n * (pkHandler q atkBit b).perCall.eval n + (pkHandler q atkBit b).finCall.eval n) [] (φ₂ (ω, φ₀ r))
+FAIL(evidence/seal/SealReduction): lean exited with status 1
+FAIL(evidence/seal/SealReduction): error diagnostics reported
+FAIL(evidence/seal/SealReduction): no fresh .olean produced
+elapsed 2.6s; max RSS of children 2542 MiB
+== evidence/seal/SealReduction end 2026-11-12T00:54:33Z status 1
+== evidence/seal/SealTransfer start 2026-11-12T00:54:33Z
+evidence/seal/SealTransfer.lean:100:53: error: Application type mismatch: The argument
+  m
+has type
+  (S.indSpec n).dom 0
+but is expected to have type
+  Fin n → Bool
+in the application
+  AdaptiveCPA.ofFn_cast (Eq.symm (FixedLengthScheme.inLens_zero S n)) ?m.396 m
+evidence/seal/SealTransfer.lean:106:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn (cast ?m.448 ?m.449)
+in the target expression
+  List.ofFn (cast ⋯ (S.encryptAt n key (cast ⋯ m) re)) =
+    List.ofFn (padFin (S.outLens n 0) (ctOf (ν re) (List.ofFn m) (fk (ν re))))
+
+case e_a.e_fst
+S : FixedLengthScheme
+atkBit b : Bool
+n : ℕ
+key : List Bool
+fk : (Fin n → Bool) → Fin n → Bool
+hct : S.ctLen.eval n = 3 * n + 2
+ν : S.enc.Coins n ≃ (Fin n → Bool)
+henc :
+  ∀ (m : Fin n → Bool) (re : S.enc.Coins n), List.ofFn (S.encryptAt n key m re) = ctOf (ν re) (List.ofFn m) (fk (ν re))
+hdec :
+  ∀ (w : List Bool) (rd : S.dec.Coins n),
+    List.ofFn (FixedLengthScheme.decAnswer (decodeFin n (S.dec.runAt n (pairEncode key w) rd))) =
+      if decWF n w = true then true :: List.zipWith xor (pairSndD w) (List.ofFn (fk (padFin n (pairFstD w))))
+      else List.replicate (n + 1) false
+i : Fin 3
+x : (S.indSpec n).dom i
+s : Option (Fin (S.ctLen.eval n) → Bool)
+hlenCt : ∀ (r : Fin n → Bool) {m : List Bool}, m.length = n → ∀ (y : Fin n → Bool), (ctOf r m y).length = S.ctLen.eval n
+m : (S.indSpec n).dom 0
+g : (S.indSpec n).rng 0 × Option (Fin (S.ctLen.eval n) → Bool) → ℝ
+re : S.enc.Coins n
+hm : List.ofFn (cast ⋯ m) = List.ofFn m
+hm' : cast ⋯ m = padFin n (List.ofFn m)
+⊢ List.ofFn (cast ⋯ (S.encryptAt n key (cast ⋯ m) re)) =
+    List.ofFn (padFin (S.outLens n 0) (ctOf (ν re) (List.ofFn m) (fk (ν re))))
+evidence/seal/SealTransfer.lean:113:52: error: Application type mismatch: The argument
+  c
+has type
+  (S.indSpec n).dom 1
+but is expected to have type
+  Fin (S.ctLen.eval n) → Bool
+in the application
+  AdaptiveCPA.ofFn_cast (Eq.symm (FixedLengthScheme.inLens_one S n)) ?m.482 c
+evidence/seal/SealTransfer.lean:125:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn (cast ?m.619 ?m.620)
+in the target expression
+  List.ofFn
+      (cast ⋯ (FixedLengthScheme.decAnswer (decodeFin n (S.dec.runAt n (pairEncode key (List.ofFn (cast ⋯ c))) rd)))) =
+    List.ofFn (padFin (S.outLens n 1) (decAns n fk (atkBit && !none.isSome) (List.ofFn c)))
+
+case pos.e_a.e_fst
+S : FixedLengthScheme
+atkBit b : Bool
+n : ℕ
+key : List Bool
+fk : (Fin n → Bool) → Fin n → Bool
+hct : S.ctLen.eval n = 3 * n + 2
+ν : S.enc.Coins n ≃ (Fin n → Bool)
+henc :
+  ∀ (m : Fin n → Bool) (re : S.enc.Coins n), List.ofFn (S.encryptAt n key m re) = ctOf (ν re) (List.ofFn m) (fk (ν re))
+hdec :
+  ∀ (w : List Bool) (rd : S.dec.Coins n),
+    List.ofFn (FixedLengthScheme.decAnswer (decodeFin n (S.dec.runAt n (pairEncode key w) rd))) =
+      if decWF n w = true then true :: List.zipWith xor (pairSndD w) (List.ofFn (fk (padFin n (pairFstD w))))
+      else List.replicate (n + 1) false
+i : Fin 3
+x : (S.indSpec n).dom i
+hlenCt : ∀ (r : Fin n → Bool) {m : List Bool}, m.length = n → ∀ (y : Fin n → Bool), (ctOf r m y).length = S.ctLen.eval n
+c : (S.indSpec n).dom 1
+g : (S.indSpec n).rng 1 × Option (Fin (S.ctLen.eval n) → Bool) → ℝ
+hc : List.ofFn (cast ⋯ c) = List.ofFn c
+hop : (atkBit && !none.isSome) = true
+rd : S.dec.Coins n
+⊢ List.ofFn
+      (cast ⋯ (FixedLengthScheme.decAnswer (decodeFin n (S.dec.runAt n (pairEncode key (List.ofFn (cast ⋯ c))) rd)))) =
+    List.ofFn (padFin (S.outLens n 1) (decAns n fk (atkBit && !none.isSome) (List.ofFn c)))
+evidence/seal/SealTransfer.lean:138:52: error: Application type mismatch: The argument
+  mm
+has type
+  (S.indSpec n).dom 2
+but is expected to have type
+  Fin (n + n) → Bool
+in the application
+  AdaptiveCPA.ofFn_cast (Eq.symm (FixedLengthScheme.inLens_two S n)) ?m.672 mm
+evidence/seal/SealTransfer.lean:157:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn (cast ?m.865 ?m.866)
+in the target expression
+  List.ofFn (cast ⋯ c) = List.ofFn (padFin (S.outLens n 2) (List.ofFn c))
+
+case some.e_a.e_fst
+S : FixedLengthScheme
+atkBit b : Bool
+n : ℕ
+key : List Bool
+fk : (Fin n → Bool) → Fin n → Bool
+hct : S.ctLen.eval n = 3 * n + 2
+ν : S.enc.Coins n ≃ (Fin n → Bool)
+henc :
+  ∀ (m : Fin n → Bool) (re : S.enc.Coins n), List.ofFn (S.encryptAt n key m re) = ctOf (ν re) (List.ofFn m) (fk (ν re))
+hdec :
+  ∀ (w : List Bool) (rd : S.dec.Coins n),
+    List.ofFn (FixedLengthScheme.decAnswer (decodeFin n (S.dec.runAt n (pairEncode key w) rd))) =
+      if decWF n w = true then true :: List.zipWith xor (pairSndD w) (List.ofFn (fk (padFin n (pairFstD w))))
+      else List.replicate (n + 1) false
+i : Fin 3
+x : (S.indSpec n).dom i
+hlenCt : ∀ (r : Fin n → Bool) {m : List Bool}, m.length = n → ∀ (y : Fin n → Bool), (ctOf r m y).length = S.ctLen.eval n
+mm : (S.indSpec n).dom 2
+g : (S.indSpec n).rng 2 × Option (Fin (S.ctLen.eval n) → Bool) → ℝ
+hmm : List.ofFn (cast ⋯ mm) = List.ofFn mm
+hmsg : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n
+hsel :
+  (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ mm)).2 else (FixedLengthScheme.splitHalf (cast ⋯ mm)).1) =
+    padFin n (AdaptiveCPA.msgOf n b (List.ofFn mm))
+c : Fin (S.ctLen.eval n) → Bool
+⊢ List.ofFn (cast ⋯ c) = List.ofFn (padFin (S.outLens n 2) (List.ofFn c))
+evidence/seal/SealTransfer.lean:171:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn (cast ?m.980 ?m.981)
+in the target expression
+  List.ofFn
+      (cast ⋯
+        (S.encryptAt n key
+          (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ mm)).2
+          else (FixedLengthScheme.splitHalf (cast ⋯ mm)).1)
+          re)) =
+    List.ofFn (padFin (S.outLens n 2) (ctOf (ν re) (AdaptiveCPA.msgOf n b (List.ofFn mm)) (fk (ν re))))
+
+case none.e_a.e_fst
+S : FixedLengthScheme
+atkBit b : Bool
+n : ℕ
+key : List Bool
+fk : (Fin n → Bool) → Fin n → Bool
+hct : S.ctLen.eval n = 3 * n + 2
+ν : S.enc.Coins n ≃ (Fin n → Bool)
+henc :
+  ∀ (m : Fin n → Bool) (re : S.enc.Coins n), List.ofFn (S.encryptAt n key m re) = ctOf (ν re) (List.ofFn m) (fk (ν re))
+hdec :
+  ∀ (w : List Bool) (rd : S.dec.Coins n),
+    List.ofFn (FixedLengthScheme.decAnswer (decodeFin n (S.dec.runAt n (pairEncode key w) rd))) =
+      if decWF n w = true then true :: List.zipWith xor (pairSndD w) (List.ofFn (fk (padFin n (pairFstD w))))
+      else List.replicate (n + 1) false
+i : Fin 3
+x : (S.indSpec n).dom i
+hlenCt : ∀ (r : Fin n → Bool) {m : List Bool}, m.length = n → ∀ (y : Fin n → Bool), (ctOf r m y).length = S.ctLen.eval n
+mm : (S.indSpec n).dom 2
+g : (S.indSpec n).rng 2 × Option (Fin (S.ctLen.eval n) → Bool) → ℝ
+hmm : List.ofFn (cast ⋯ mm) = List.ofFn mm
+hmsg : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n
+hsel :
+  (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ mm)).2 else (FixedLengthScheme.splitHalf (cast ⋯ mm)).1) =
+    padFin n (AdaptiveCPA.msgOf n b (List.ofFn mm))
+re : S.enc.Coins n
+henc' :
+  List.ofFn
+      (S.encryptAt n key
+        (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ mm)).2 else (FixedLengthScheme.splitHalf (cast ⋯ mm)).1)
+        re) =
+    ctOf (ν re) (AdaptiveCPA.msgOf n b (List.ofFn mm)) (fk (ν re))
+⊢ List.ofFn
+      (cast ⋯
+        (S.encryptAt n key
+          (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ mm)).2
+          else (FixedLengthScheme.splitHalf (cast ⋯ mm)).1)
+          re)) =
+    List.ofFn (padFin (S.outLens n 2) (ctOf (ν re) (AdaptiveCPA.msgOf n b (List.ofFn mm)) (fk (ν re))))
+FAIL(evidence/seal/SealTransfer): lean exited with status 1
+FAIL(evidence/seal/SealTransfer): error diagnostics reported
+FAIL(evidence/seal/SealTransfer): no fresh .olean produced
+elapsed 2.5s; max RSS of children 2532 MiB
+== evidence/seal/SealTransfer end 2026-11-12T00:54:36Z status 1
+== evidence/seal/SealLazy start 2026-11-12T00:54:36Z
+evidence/seal/SealLazy.lean:427:77: error: Type mismatch
+  rfl
+has type
+  ?m.891 = ?m.891
+but is expected to have type
+  padFin (outs 1) [] x✝ = zeroBits (outs 1) x✝
+evidence/seal/SealLazy.lean:437:8: error: Type mismatch
+  ih ?m.941 ?m.942
+has type
+  ((sample ((Fin n → Bool) → Fin n → Bool)).expect fun R =>
+      expect (simulate (fImpl ins outs d n atk b (ovr b ?m.942 R)) (k ?m.941) (Option.map Prod.snd ?m.942.2.1)) fun p =>
+        G p.1) =
+    expect (simulate (lazyImpl ins outs d n atk b) (k ?m.941) ?m.942) fun p => G p.1
+but is expected to have type
+  ((sample ((Fin n → Bool) → Fin n → Bool)).expect fun R =>
+      expect
+        ((fImpl ins outs d n atk b (ovr b (T, some (ml, c), bd) R) 2 mm (Option.map Prod.snd (some (ml, c)))).bind
+          fun ys => simulate (fImpl ins outs d n atk b (ovr b (T, some (ml, c), bd) R)) (k ys.1) ys.2)
+        fun p => G p.1) =
+    expect (simulate (lazyImpl ins outs d n atk b) (k (padFin (outs 2) (List.ofFn c))) (T, some (ml, c), bd)) fun p =>
+      G p.1
+FAIL(evidence/seal/SealLazy): lean exited with status 1
+FAIL(evidence/seal/SealLazy): error diagnostics reported
+FAIL(evidence/seal/SealLazy): no fresh .olean produced
+elapsed 3.2s; max RSS of children 2552 MiB
+== evidence/seal/SealLazy end 2026-11-12T00:54:39Z status 1
+== evidence/seal/SealCollision start 2026-11-12T00:54:39Z
+evidence/seal/SealCollision.lean:83:11: error: Tactic `rcases` failed: `hc : OracleComp.CostBoundedBy (fun x => 1) (OracleComp.query i x k)
+  m` is not an inductive datatype
+evidence/seal/SealCollision.lean:159:50: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (addPt b st x y hit).2.2 = (st.2.2 || hit)
+evidence/seal/SealCollision.lean:166:12: error: Tactic `rfl` failed: The left-hand side
+  look b (T, none, bd) x
+is not definitionally equal to the right-hand side
+  look b' (T, none, bd) x
+
+case none
+n d : ℕ
+b b' : Bool
+x : Fin n → Bool
+T : List ((Fin n → Bool) × (Fin n → Bool))
+bd : Bool
+h : hitStar (T, none, bd) x = false
+⊢ look b (T, none, bd) x = look b' (T, none, bd) x
+evidence/seal/SealCollision.lean:177:12: error: Tactic `rfl` failed: The left-hand side
+  (look b (T, none, bd) x).isSome
+is not definitionally equal to the right-hand side
+  (look b' (T, none, bd) x).isSome
+
+case none
+n d : ℕ
+b b' : Bool
+x : Fin n → Bool
+T : List ((Fin n → Bool) × (Fin n → Bool))
+bd : Bool
+⊢ (look b (T, none, bd) x).isSome = (look b' (T, none, bd) x).isSome
+evidence/seal/SealCollision.lean:269:14: error: Tactic `rfl` failed: The left-hand side
+  expect (lazyImpl ins outs d n atk b 1 c (T, none, bd)) fun ys => if ys.2.2.2 = true then 0 else g ys
+is not definitionally equal to the right-hand side
+  expect (lazyImpl ins outs d n atk b' 1 c (T, none, bd)) fun ys => if ys.2.2.2 = true then 0 else g ys
+
+case none
+ins outs : Fin 3 → ℕ
+d n : ℕ
+atk : Attack
+hatk : FixedLengthScheme.decOpen atk true = false
+hi2 : ins 2 = n + n
+b b' : Bool
+i : Fin 3
+x : (bitSpec ins outs).dom i
+g✝ : (bitSpec ins outs).rng i × LState n d → ℝ
+c : (bitSpec ins outs).dom 1
+g : (bitSpec ins outs).rng 1 × LState n d → ℝ
+T : List ((Fin n → Bool) × (Fin n → Bool))
+bd : Bool
+hs : ¬(T, none, bd).2.2 = true
+⊢ (expect (lazyImpl ins outs d n atk b 1 c (T, none, bd)) fun ys => if ys.2.2.2 = true then 0 else g ys) =
+    expect (lazyImpl ins outs d n atk b' 1 c (T, none, bd)) fun ys => if ys.2.2.2 = true then 0 else g ys
+evidence/seal/SealCollision.lean:275:6: error: Tactic `rfl` failed: The left-hand side
+  expect (lazyImpl ins outs d n atk b 2 mm (T, some (ml, c), bd)) fun ys => if ys.2.2.2 = true then 0 else g ys
+is not definitionally equal to the right-hand side
+  expect (lazyImpl ins outs d n atk b' 2 mm (T, some (ml, c), bd)) fun ys => if ys.2.2.2 = true then 0 else g ys
+
+case some
+ins outs : Fin 3 → ℕ
+d n : ℕ
+atk : Attack
+hatk : FixedLengthScheme.decOpen atk true = false
+hi2 : ins 2 = n + n
+b b' : Bool
+i : Fin 3
+x : (bitSpec ins outs).dom i
+g✝ : (bitSpec ins outs).rng i × LState n d → ℝ
+mm : (bitSpec ins outs).dom 2
+g : (bitSpec ins outs).rng 2 × LState n d → ℝ
+T : List ((Fin n → Bool) × (Fin n → Bool))
+bd : Bool
+ml : List Bool
+c : Fin d → Bool
+hs : ¬(T, some (ml, c), bd).2.2 = true
+⊢ (expect (lazyImpl ins outs d n atk b 2 mm (T, some (ml, c), bd)) fun ys => if ys.2.2.2 = true then 0 else g ys) =
+    expect (lazyImpl ins outs d n atk b' 2 mm (T, some (ml, c), bd)) fun ys => if ys.2.2.2 = true then 0 else g ys
+FAIL(evidence/seal/SealCollision): lean exited with status 1
+FAIL(evidence/seal/SealCollision): error diagnostics reported
+FAIL(evidence/seal/SealCollision): no fresh .olean produced
+elapsed 3.0s; max RSS of children 2570 MiB
+== evidence/seal/SealCollision end 2026-11-12T00:54:42Z status 1
+== evidence/seal/SealOracleFromPRF start 2026-11-12T00:54:42Z
+evidence/seal/SealOracleFromPRF.lean:370:70: error: Tactic `rfl` failed: The left-hand side
+  (PolyExpr.var.add PolyExpr.var).eval n
+is not definitionally equal to the right-hand side
+  n + n
+
+F : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hFE : ∀ (n : ℕ) (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)
+atkBit : Bool
+A : NUPPT
+q : PolyExpr
+D₀ : NUPPT
+hD₀ :
+  ∀ (n : ℕ) (f : (Fin n → Bool) → Fin n → Bool),
+    ((sample (D₀.Coins n)).expect fun c =>
+        if QueryTree.eval f (D₀.toOracleAdversary n n n ((qRed q).eval n) c) = true then 1 else 0) =
+      (sample (A.Coins n)).expect fun r =>
+        expect
+          (simulate
+            (fImpl (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) (ctP.eval n) n (atkOf atkBit) false f)
+            (A.toComp (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n (q.eval n) r) none)
+          fun p => if (List.ofFn p.1).headD false = true then 1 else 0
+D₁ : NUPPT
+hD₁ :
+  ∀ (n : ℕ) (f : (Fin n → Bool) → Fin n → Bool),
+    ((sample (D₁.Coins n)).expect fun c =>
+        if QueryTree.eval f (D₁.toOracleAdversary n n n ((qRed q).eval n) c) = true then 1 else 0) =
+      (sample (A.Coins n)).expect fun r =>
+        expect
+          (simulate
+            (fImpl (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) (ctP.eval n) n (atkOf atkBit) true f)
+            (A.toComp (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n (q.eval n) r) none)
+          fun p => if (List.ofFn p.1).headD false = true then 1 else 0
+n : ℕ
+hp : ∀ (D : NUPPT), 0 ≤ prfAdv (F n) (D.toOracleAdversary n n n ((qRed q).eval n))
+hQ : ↑(((q.mul q).add (PolyExpr.const 1)).eval n) * 2⁻¹ ^ n = (↑(q.eval n) ^ 2 + 1) / 2 ^ n
+hQ1 : ↑(q.eval n) ^ 2 / 2 ^ n ≤ (↑(q.eval n) ^ 2 + 1) / 2 ^ n
+hn : n > 0
+key : ∀ (a₀ a₁ X₀ X₁ K : ℝ), |X₀ - X₁| ≤ K → |a₀ - a₁| ≤ |a₀ - X₀| + |a₁ - X₁| + K
+⊢ (PolyExpr.var.add PolyExpr.var).eval n = n + n
+evidence/seal/SealOracleFromPRF.lean:384:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+F : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hFE : ∀ (n : ℕ) (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)
+atkBit : Bool
+hF : PRF F
+⊢ (prfFixedScheme F E hE hFE).INDSecure (atkOf atkBit)
+evidence/seal/SealOracleFromPRF.lean:417:2: error: Type mismatch
+  prf_indSecure F E hE hFE false hF
+has type
+  (prfFixedScheme F E hE hFE).INDSecure (PRFGame.atkOf false)
+but is expected to have type
+  (prfFixedScheme F E hE hFE).INDSecure Attack.cpa
+evidence/seal/SealOracleFromPRF.lean:433:2: error: Type mismatch
+  prf_indSecure F E hE hFE true hF
+has type
+  (prfFixedScheme F E hE hFE).INDSecure (PRFGame.atkOf true)
+but is expected to have type
+  (prfFixedScheme F E hE hFE).INDSecure Attack.cca1
+evidence/seal/SealOracleFromPRF.lean:615:10: error: Application type mismatch: The argument
+  x
+has type
+  Fin (PolyExpr.var.eval n) → Bool
+but is expected to have type
+  Fin n → Bool
+in the application
+  Exists.intro x
+evidence/seal/SealOracleFromPRF.lean:687:9: error: Application type mismatch: The argument
+  (NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n) rg
+has type
+  Fin (PolyExpr.var.eval n) → Bool
+but is expected to have type
+  Fin n → Bool
+in the application
+  Exists.intro ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n) rg)
+FAIL(evidence/seal/SealOracleFromPRF): lean exited with status 1
+FAIL(evidence/seal/SealOracleFromPRF): error diagnostics reported
+FAIL(evidence/seal/SealOracleFromPRF): no fresh .olean produced
+elapsed 3.8s; max RSS of children 2607 MiB
+== evidence/seal/SealOracleFromPRF end 2026-11-12T00:54:46Z status 1
+== evidence/seal/SealOracleSecurity start 2026-11-12T00:54:46Z
+elapsed 2.5s; max RSS of children 2475 MiB
+== evidence/seal/SealOracleSecurity end 2026-11-12T00:54:48Z status 0
