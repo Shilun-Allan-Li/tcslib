@@ -206,6 +206,13 @@ theorem hadamardMat_apply (y x : Reg 1) :
 private theorem reg1_cases : ∀ x : Reg 1, x = (fun _ => 0) ∨ x = (fun _ => 1) := by
   decide
 
+/-- Two one-qubit matrices are equal when they agree on the four pairs of basis states
+`(|a⟩, |b⟩)`. -/
+private theorem mat1_ext {A B : Matrix (Reg 1) (Reg 1) ℂ}
+    (h : ∀ a b : Qubit, A (fun _ => a) (fun _ => b) = B (fun _ => a) (fun _ => b)) : A = B := by
+  ext y x
+  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;> exact h _ _
+
 /-- A sum over the one-qubit basis has two terms. -/
 private theorem sum_reg1 (f : Reg 1 → ℂ) : ∑ z, f z = f (fun _ => 0) + f (fun _ => 1) := by
   rw [← (Equiv.funUnique (Fin 1) Qubit).symm.sum_comp, Fin.sum_univ_two]
@@ -229,12 +236,12 @@ theorem hadamardMat_conjTranspose : hadamardMatᴴ = hadamardMat := by
 
 /-- The Hadamard matrix squares to the identity. [dW26, §1.4]
 
-**Proof sketch.** Compare the four entries. Each is a two-term sum over the middle basis state
-(`sum_reg1`), `(1/2) ∑_z (-1)^{z(x + y)}`, which is `(1 + 1)/2 = 1` if `x = y` and
+**Proof sketch.** Compare the four entries (`mat1_ext`). Each is a two-term sum over the middle
+basis state (`sum_reg1`), `(1/2) ∑_z (-1)^{z(x + y)}`, which is `(1 + 1)/2 = 1` if `x = y` and
 `(1 - 1)/2 = 0` otherwise (`inv_sqrt_two_mul_self`). -/
 theorem hadamardMat_mul_self : hadamardMat * hadamardMat = 1 := by
-  ext y x
-  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+  refine mat1_ext fun a b => ?_
+  fin_cases a <;> fin_cases b <;>
     simp [Matrix.mul_apply, sum_reg1, hadamardMat_apply, Matrix.one_apply,
       inv_sqrt_two_mul_self] <;>
     first | decide | norm_num
@@ -323,10 +330,8 @@ theorem Toffoli_coe :
 `(|a⟩, |b⟩)`. -/
 private theorem gate1_ext {A B : Gate 1}
     (h : ∀ a b : Qubit, (A : Matrix (Reg 1) (Reg 1) ℂ) (fun _ => a) (fun _ => b) =
-      (B : Matrix (Reg 1) (Reg 1) ℂ) (fun _ => a) (fun _ => b)) : A = B := by
-  apply Subtype.ext
-  ext y x
-  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;> exact h _ _
+      (B : Matrix (Reg 1) (Reg 1) ℂ) (fun _ => a) (fun _ => b)) : A = B :=
+  Subtype.ext (mat1_ext h)
 
 /-- The Hadamard gate is its own inverse: `H H = 1`. [dW26, §1.4]
 
