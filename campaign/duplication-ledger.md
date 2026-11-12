@@ -1939,3 +1939,28 @@ in `campaign/gates/129-input-readers/r4-evidence/`.
   mapped anchor. Convention now owns the equation. It replaces the private
   Seam proof, the CodeSimulator inline proof, and the two checked Primitives
   instances.
+
+
+## Gate 129 round 5 action and suffix-copy re-points
+
+These exact proof instances retire on merge of #251 at `c2fbacf42718b16c03fc0e61b571a9cf2f8c6ecb`.
+The closing-form inventory and the 53-file comparison are in the gate 129
+round 5 evidence.
+
+- With an outer `none` write, the selected work tape retains its word. The
+  audited overflow, blank, polynomial and inactive preparation fields use
+  `apply_workTape_of_no_write`. The same premise covers the inspected
+  forwarding and countdown frames. A true erase still uses outer
+  `some none`.
+- The complete action record follows `Action.apply.eq_1`. The 21 Catalog
+  references now use the owner equation directly. The Boolean input/control
+  specialization in Simulation cites that equation with `controlAction_def`.
+  Historical pair 155 disappeared under round 4's scorer cutoff. The
+  Simulation proof changed in round 5.
+- A zero-tape suffix copier emits the unread suffix and halts at the right
+  blank. The token's empty suffix uses the same trace. The prepend and
+  empty-input constant-source cases share the complete prefix-plus-copy run.
+- The two split dispatch branches share their live-state witness.
+
+The reviewed instances and the historical cutoff correction have
+source and matched-span receipts in `campaign/gates/129-input-readers/r5-evidence/`.
