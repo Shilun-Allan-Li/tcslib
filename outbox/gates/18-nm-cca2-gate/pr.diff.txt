@@ -1,0 +1,1599 @@
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean
+index 896f6c46f..f1b2870c0 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean
+@@ -3,13 +3,17 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
++import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
++import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Indistinguishability.Forward
++import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Indistinguishability.Decrypt
++import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Indistinguishability.Encrypt
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Non-malleable encryption (statement phase)
++# Non-malleable encryption
+ 
+ [PS10, Definition 172.6] and Theorem 175.9, over the public-key experiment of Definition 171.5
+ (`Encryption/PublicKey/OracleSecurity.lean`).
+@@ -45,14 +49,23 @@ adversary's final output is `ℓ(n)` ciphertexts of `ctLen(n)` bits. Each decryp
+ - Definition 173.7 and Theorem 174.8 follow [PSV07] (same ruling), in
+   `Encryption/PublicKey/NonMalleability/Simulation.lean`.
+ 
++## Contents
++
++* `NonMalleability.Indistinguishability.Forward`: the forwarding handler and the log readers.
++* `NonMalleability.Indistinguishability.Decrypt`: the reduction (⇒), whose finalization decrypts
++  the adversary's ciphertexts and runs the distinguisher.
++* `NonMalleability.Indistinguishability.Encrypt`: the reduction (⇐), whose finalization encrypts
++  the guess and its negation, and the distinguisher that reads the guess back.
++
+ ## Main definitions
+ 
+ * `FixedLengthPKScheme.nmGame`, `FixedLengthPKScheme.NMSecure`: [PS10, Definition 172.6].
+ 
+ ## Main results
+ 
+-* `FixedLengthPKScheme.indSecure_cca2_iff_nmSecure_cca2` (Thm 175.9, stated; a `sorry` under the
+-  source's sketch).
++* `FixedLengthPKScheme.nmSecure_cca2_of_indSecure_cca2`, `indSecure_cca2_of_nmSecure_cca2`: the
++  two directions of Thm 175.9.
++* `FixedLengthPKScheme.indSecure_cca2_iff_nmSecure_cca2` (Thm 175.9, proved).
+ 
+ ## References
+ 
+@@ -185,27 +198,457 @@ theorem nmDecrypt_challenge {n : ℕ} (sk : List Bool) (c : Fin (S.ctLen.eval n)
+     S.nmDecrypt sk (some c) c = zeroBits _ := by
+   simp [nmDecrypt]
+ 
++/-! ### Proof of Theorem 175.9 -/
++
++section Proof
++
++open AdaptiveCPA NMCCA2 ProbComp ChallengeSim
++
++/-- The non-malleability codec is the bit codec of the oracles of Definition 171.5 with
++`ℓ · ctLen(n)` output bits: `S.nmCodec n ℓ = bitCodec (S.inLens n) (S.outLens n) (ℓ · ctLen(n))`. -/
++theorem nmCodec_eq_bitCodec (n ℓ : ℕ) :
++    S.nmCodec n ℓ = bitCodec (S.inLens n) (S.outLens n) (ℓ * S.ctLen.eval n) := rfl
++
++/-- Ciphertext `i` of an output string is its `i`-th block of `ctLen(n)` bits:
++`⟦S.nthCt w i⟧ = (⟦w⟧.drop (i · ctLen(n))).take ctLen(n)`. -/
++theorem ofFn_nthCt {n ℓ : ℕ} (w : Fin (ℓ * S.ctLen.eval n) → Bool) (i : Fin ℓ) :
++    List.ofFn (S.nthCt w i) =
++      ((List.ofFn w).drop (i * S.ctLen.eval n)).take (S.ctLen.eval n) := by
++  have hle : (i : ℕ) * S.ctLen.eval n + S.ctLen.eval n ≤ ℓ * S.ctLen.eval n := by
++    have := Nat.mul_le_mul_right (S.ctLen.eval n) (Nat.succ_le_of_lt i.isLt)
++    rw [Nat.succ_mul] at this
++    exact this
++  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
++  · simp only [List.length_ofFn, List.length_take, List.length_drop]
++    omega
++  · rw [List.getElem_ofFn, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
++    refine congrArg w (Fin.ext ?_)
++    rw [finProdFinEquiv_apply_val]
++    show j + S.ctLen.eval n * i = i * S.ctLen.eval n + j
++    rw [Nat.mul_comm]
++    omega
++
++/-! ### (⇒) The CCA2 adversary built from a non-malleability adversary -/
++
++/-- **The CCA2 decryption oracle on T2's codec answers as the experiment decrypts:** a query `x`
++in state `st` is answered `⟦S.nmDecrypt sk st c⟧`, `c` the query read as a ciphertext, and the
++state is kept.
++
++**Proof sketch.** `castImpl_eq` and the decryption reader with its answer cast
++(`indImpl_dec_onSpec_cast`); under CCA2 `Dec` is open (`decOpen_cca2`), so it refuses exactly
++the recorded challenge with `⊥ = 0`, as `nmDecrypt` does (`nmDecrypt_eq`); the casts keep the
++strings (`ofFn_cast`, `ofFn_zeroBits`, `outLens_zero`). -/
++private theorem castImpl_indImpl_dec (b : Bool) (n : ℕ) (pk sk : List Bool)
++    (x : Fin ((acDin S 0).eval n) → Bool) (st : Option (Fin (S.ctLen.eval n) → Bool)) :
++    castImpl (ins := fun i => (acDin S i).eval n) (outs := fun i => (acDout S i).eval n)
++      (S.indImpl .cca2 b n pk sk) 0 x st =
++      .pure (padFin ((acDout S 0).eval n) (List.ofFn (S.nmDecrypt sk st
++        (cast (S.indSpec_decDom n) (padFin (S.inLens n 0) (List.ofFn x))))), st) := by
++  rw [castImpl_eq, S.indImpl_dec_onSpec_cast, FixedLengthScheme.decOpen_cca2, Bool.true_and,
++    S.nmDecrypt_eq]
++  by_cases hs : st = some (cast (S.indSpec_decDom n) (padFin (S.inLens n 0) (List.ofFn x)))
++  · rw [if_neg (by rw [decide_eq_true hs, Bool.not_true]; exact Bool.false_ne_true), if_pos hs,
++      OracleComp.pure_bind]
++    dsimp only
++    rw [ofFn_zeroBits, ofFn_zeroBits, S.outLens_zero]
++  · rw [if_pos (by rw [decide_eq_false hs, Bool.not_false]), if_neg hs, OracleComp.pure_bind]
++    dsimp only
++    rw [ofFn_cast (S.outLens_zero n).symm]
++
++/-- **The reduction's queries are the experiment's ciphertexts:** block `i < ℓ(n)` of the
++adversary's output `a`, read as a decryption query, is ciphertext `i` of `a`.
++
++**Proof sketch.** Both are the bits `[i · ctLen(n), (i + 1) · ctLen(n))` of `⟦a⟧`
++(`ofFn_nthCt`, `ofFn_padFin_eq_take`, `ofFn_cast`); they are equal as strings
++(`List.ofFn_injective`). -/
++private theorem decBlock_eq_nthCt (ℓ : PolyExpr) (n : ℕ)
++    (a : Fin ((ℓ.mul S.ctLen).eval n) → Bool) (i : ℕ) (hi : i < ℓ.eval n) :
++    cast (S.indSpec_decDom n) (padFin (S.inLens n 0) (List.ofFn (decBlock S n a i))) =
++      S.nthCt (padFin (ℓ.eval n * S.ctLen.eval n) (List.ofFn a)) ⟨i, hi⟩ := by
++  have hct : (acDin S 0).eval n = S.ctLen.eval n := by rw [acDin_zero]
++  have hin : S.inLens n 0 = S.ctLen.eval n := S.inLens_zero n
++  have ha : (List.ofFn a).length = ℓ.eval n * S.ctLen.eval n := by
++    rw [List.length_ofFn, PolyExpr.eval_mul]
++  have hle : i * S.ctLen.eval n + S.ctLen.eval n ≤ ℓ.eval n * S.ctLen.eval n := by
++    have := Nat.mul_le_mul_right (S.ctLen.eval n) (Nat.succ_le_of_lt hi)
++    rw [Nat.succ_mul] at this
++    exact this
++  have hblk : List.ofFn (decBlock S n a i) =
++      ((List.ofFn a).drop (i * S.ctLen.eval n)).take (S.ctLen.eval n) := by
++    rw [decBlock_eq, ofFn_padFin_eq_take, hct,
++      List.take_append_of_le_length (by rw [List.length_drop, ha]; omega)]
++  apply List.ofFn_injective
++  rw [ofFn_cast hin, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hct, hin]), hblk,
++    ofFn_nthCt, GGMRed.ofFn_padFin_of_length ha]
++
++/-- **The reduction's collected answers are the experiment's output:** the concatenated answers
++of the CCA2 decryption oracle on the `ℓ(n)` blocks of `a`, in state `st`, are
++`S.nmOutput sk st a`.
++
++**Proof sketch.** Answer `i` is `⟦nmDecrypt sk st (block i)⟧` (`castImpl_indImpl_dec`, read at
++its width by `acDout_zero`), and block `i` is ciphertext `i` (`decBlock_eq_nthCt`); compare the
++two lists entrywise (`nmOutput_eq`). -/
++private theorem decAnswers_eq_nmOutput (ℓ : PolyExpr) (n : ℕ) (sk : List Bool)
++    (a : Fin ((ℓ.mul S.ctLen).eval n) → Bool) (st : Option (Fin (S.ctLen.eval n) → Bool)) :
++    ((List.range (ℓ.eval n)).map fun i => List.ofFn (padFin ((acDout S 0).eval n) (List.ofFn
++        (S.nmDecrypt sk st (cast (S.indSpec_decDom n) (padFin (S.inLens n 0)
++          (List.ofFn (decBlock S n a i)))))))).flatten =
++      S.nmOutput sk st (padFin (ℓ.eval n * S.ctLen.eval n) (List.ofFn a)) := by
++  have hout : (acDout S 0).eval n = S.msgLen.eval n + 1 := by
++    rw [acDout_zero, PolyExpr.eval_add, PolyExpr.eval_const]
++  rw [nmOutput_eq]
++  congr 1
++  refine List.ext_getElem (by rw [List.length_map, List.length_range, List.length_ofFn])
++    fun i h₁ h₂ => ?_
++  rw [List.getElem_map, List.getElem_range, List.getElem_ofFn,
++    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hout]),
++    decBlock_eq_nthCt S ℓ n a i (by rw [List.length_map, List.length_range] at h₁; exact h₁)]
++
++/-- **The reduction's game is the non-malleability experiment.** Let `B` be T2's machine for the
++handler `decHandler S ℓ D` (with its coin bijection `φ` at `n`) and `B'` the machine `B` with
++`D`'s advice hard-wired (`hB'`, coins identified by `hc`). Then `B'`'s CCA2 game `Ind_b` and the
++experiment `NM_b` for `A` and `D` accept with the same probability.
++
++**Proof sketch.** Fix the keys. `B'`'s coins are the handler's seed (`D`'s coins, `e`) and `A`'s
++coins (`φ`, `expect_sample_equiv`, `expect_sample_prod`, `expect_sample_comm`). For fixed coins,
++transport `B`'s run to T2's codec (`indCodec_eq_bitCodec`, `expect_simulate_castImpl_toCompOn`) and
++replace it by the reduction (T2's equation `hφ`). The handler forwards (`simulate_decHandler_impl`),
++so the run is `A`'s run against the CCA2 oracles followed by the finalization in the final
++state (`simulate_bind`), which decrypts the `ℓ` ciphertexts with the state kept
++(`simulate_decHandler_finish`, `castImpl_indImpl_dec`) and outputs `D`'s verdict on
++`S.nmOutput sk st a` (`decAnswers_eq_nmOutput`). That is `NM_b`'s output, after transporting
++`A`'s run back to the experiment's codec (`nmCodec_eq_bitCodec`). -/
++private theorem accept_indGame_decRed (A D B B' : NUPPT) (q ℓ : PolyExpr) (n : ℕ)
++    (φ : (Fin ((decHandler S ℓ D).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n)
++    (hφ : ∀ (z : List Bool) (ω : Fin ((decHandler S ℓ D).seedLen.eval n) → Bool)
++      (r : A.Coins n),
++      (simulate ((decHandler S ℓ D).impl n z ω)
++          (A.toCompOn (bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++            ((ℓ.mul S.ctLen).eval n)) n (q.eval n) ((decHandler S ℓ D).advInput n z ω) r)
++          ((decHandler S ℓ D).init n)).bind
++          (fun res => (decHandler S ℓ D).finish n z ω res.2 res.1) =
++        B.toCompOn (bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n)
++          ((decHandler S ℓ D).outLen.eval n)) n
++          (q.eval n * (decHandler S ℓ D).perCall.eval n + (decHandler S ℓ D).finCall.eval n)
++          z (φ (ω, r)))
++    (hc : B.coins = B'.coins)
++    (hB' : ∀ (Q : ℕ) (x : List Bool) (r : B.Coins n),
++      B'.toCompOn (S.indCodec n) n Q x (NUPPT.coinsCongr hc n r) =
++        B.toCompOn (S.indCodec n) n Q (pairEncode x (D.advice n)) r)
++    (b : Bool) :
++    accept (S.indGame .cca2 B'
++        (q.eval n * (decHandler S ℓ D).perCall.eval n + (decHandler S ℓ D).finCall.eval n) b n) =
++      accept (S.nmGame .cca2 A (q.eval n) (ℓ.eval n) D b n) := by
++  have hd1 : (decHandler S ℓ D).outLen.eval n = 1 := by
++    rw [decHandler_outLen, PolyExpr.eval_const]
++  have hdα : (ℓ.mul S.ctLen).eval n = ℓ.eval n * S.ctLen.eval n := PolyExpr.eval_mul _ _ _
++  let e : D.Coins n ≃ (Fin ((decHandler S ℓ D).seedLen.eval n) → Bool) :=
++    NUPPT.coinsEquivPoly (decHandler_seedLen S ℓ D).symm n
++  rw [accept_eq, accept_eq, S.indGame_eq, S.nmGame_eq, prob_bind, prob_bind]
++  refine congrArg _ (funext fun rg => ?_)
++  conv_lhs => rw [prob_bind, ← expect_sample_equiv (φ.trans (NUPPT.coinsCongr hc n)),
++    expect_sample_prod, expect_sample_comm]
++  conv_rhs => rw [prob_bind]
++  refine congrArg _ (funext fun r => ?_)
++  conv_lhs => rw [← expect_sample_equiv e]
++  conv_rhs => rw [prob_bind]
++  refine congrArg _ (funext fun ρ => ?_)
++  -- The reduction's side: transport to T2's codec and unfold the reduction.
++  have h1 : (fun res : (Fin 1 → Bool) × Option (Fin (S.ctLen.eval n) → Bool) =>
++      ProbComp.prob (.pure (res.1 0)) (· = true)) =
++      fun res => (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
++        if p.1.headD false = true then (1 : ℝ) else 0) (List.ofFn res.1, res.2) := by
++    funext res
++    rw [prob_pure]
++    dsimp only
++    rw [headD_ofFn_one]
++  rw [Equiv.trans_apply, hB', prob_bind, indCodec_eq_bitCodec, h1]
++  refine (expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hd1 _ B n _ _ _
++    none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
++      if p.1.headD false = true then (1 : ℝ) else 0)).symm.trans ?_
++  rw [← hφ, decHandler_advInput, pairFstD_pairEncode, simulate_decHandler_impl,
++    OracleComp.bind_assoc]
++  simp only [OracleComp.pure_bind]
++  rw [simulate_bind, expect_bind]
++  simp only [simulate_decHandler_finish S ℓ D n _ _ _ _ _ _ (castImpl_indImpl_dec S b n _ _),
++    expect_pure]
++  -- The experiment's side: transport `A`'s run to T2's codec.
++  have h2 : (fun res : (Fin (ℓ.eval n * S.ctLen.eval n) → Bool) ×
++      Option (Fin (S.ctLen.eval n) → Bool) =>
++      ProbComp.prob (.pure (D.distinguisherL n
++        (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) res.2 res.1) ρ)) (· = true)) =
++      fun res => (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
++        if D.distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) p.2
++          (padFin (ℓ.eval n * S.ctLen.eval n) p.1)) ρ = true then (1 : ℝ) else 0)
++        (List.ofFn res.1, res.2) := by
++    funext res
++    rw [prob_pure]
++    dsimp only
++    rw [padFin_ofFn]
++  rw [prob_bind, nmCodec_eq_bitCodec, h2]
++  refine Eq.trans ?_ (expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hdα _
++    A n _ _ _ none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
++      if D.distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) p.2
++        (padFin (ℓ.eval n * S.ctLen.eval n) p.1)) ρ = true then (1 : ℝ) else 0))
++  refine congrArg _ (funext fun p => ?_)
++  -- Pointwise: the verdict on the collected answers is `D`'s verdict on `NM_b`'s output.
++  rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_singleton, hd1]), List.headD_cons,
++    pairSndD_pairEncode, decAnswers_eq_nmOutput, NUPPT.coinsEquivPoly_ofFn,
++    ← NUPPT.runAtL_eq_output_layout, ← NUPPT.runAt_eq, ← NUPPT.distinguisherL_eq]
++
++/-- **(⇒) of Theorem 175.9: CCA2 security implies CCA2 non-malleability** [PS10, Theorem 175.9].
++
++**Proof sketch.** Given `A` (budget `q`, `ℓ` ciphertexts) and `D`, T2
++(`Games.exists_interactiveHandlerMachine`) makes the handler `decHandler S ℓ D` a machine `B`, and
++`exists_withAdviceOn` hard-wires `D`'s advice into it (`B'`). `B'`'s budget is
++`q · 1 + ℓ`, a polynomial; CCA2 security gives a negligible bound on `B'`'s advantage, which at
++every `n` equals the advantage of `D` between `NM_0` and `NM_1` (`accept_indGame_decRed`). -/
++theorem nmSecure_cca2_of_indSecure_cca2 (h : S.INDSecure .cca2) : S.NMSecure .cca2 := by
++  rw [NMSecure_iff]
++  intro A q ℓ D
++  obtain ⟨B, hB⟩ := exists_interactiveHandlerMachine A q (acDin S) (acDout S) (acDin S)
++    (acDout S) (ℓ.mul S.ctLen) (decHandler S ℓ D)
++  obtain ⟨B', hc, hB'⟩ := exists_withAdviceOn B D.advice D.adv D.advice_length
++  obtain ⟨ε, hε, hbound⟩ := (S.INDSecure_iff .cca2).1 h B'
++    ((q.mul (decHandler S ℓ D).perCall).add (decHandler S ℓ D).finCall)
++  refine ⟨ε, hε, fun n => ?_⟩
++  obtain ⟨φ, hφ⟩ := hB n
++  have key := fun b => accept_indGame_decRed S A D B B' q ℓ n φ hφ hc
++    (fun Q x r => hB' n (S.indCodec n) Q x r) b
++  have hn := hbound n
++  rw [PolyExpr.eval_add, PolyExpr.eval_mul] at hn
++  rw [advantage_eq, ← key false, ← key true, ← advantage_eq]
++  exact hn
++
++/-! ### (⇐) The non-malleability adversary built from a CCA2 adversary -/
++
++/-- A two-block concatenation at a width only propositionally equal to `2`: for `k = 2`,
++`(List.ofFn f).flatten = f 0 ++ f 1` (`OneWay.flatten_ofFn_two` after substituting `k`). -/
++private theorem flatten_ofFn_two {k : ℕ} (hk : k = 2) (f : Fin k → List Bool) :
++    (List.ofFn f).flatten = f ⟨0, by omega⟩ ++ f ⟨1, by omega⟩ := by
++  subst hk
++  exact OneWay.flatten_ofFn_two f
++
++/-- **The distinguisher recovers the guess.** Let the reduction output the ciphertexts
++`c₁ = encCt … g true` (an encryption of `g^m`) and `c₂ = encCt … g false` (of `(¬g)^m`) under a
++generated key, with `m = msgLen(n) > 0`. Then for every recorded challenge `st`, the distinguisher's
++verdict on the experiment's output `S.nmOutput sk st (c₁ ‖ c₂)` is `g`.
++
++**Proof sketch.** By correctness `c₁` decrypts to `g^m` and `c₂` to `(¬g)^m` (`S.correct`, with
++`S.enc_length` for the padding), so `c₁ ≠ c₂` (their messages differ at bit `0`), and `st` copies
++at most one of them. If `st ≠ some c₁` the first decryption is valid (`guessBit_valid`); otherwise
++the first is `⊥` and the second valid (`guessBit_refused`). -/
++private theorem guessDist_nmOutput (n : ℕ) (hm : 0 < S.msgLen.eval n) (rg : S.gen.Coins n)
++    (ω : Fin ((encHandler S).seedLen.eval n) → Bool) (g : Bool)
++    (st : Option (Fin (S.ctLen.eval n) → Bool)) (ρ : guessDist.Coins n) :
++    guessDist.distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) st
++      (padFin ((PolyExpr.const 2).eval n * S.ctLen.eval n)
++        (encCt S n (pairFstD (S.gen.runAt n [] rg)) ω g true ++
++          encCt S n (pairFstD (S.gen.runAt n [] rg)) ω g false))) ρ = g := by
++  set pk := pairFstD (S.gen.runAt n [] rg)
++  set sk := pairSndD (S.gen.runAt n [] rg)
++  set c₁ := encCt S n pk ω g true
++  set c₂ := encCt S n pk ω g false
++  have h2 : (PolyExpr.const 2).eval n = 2 := PolyExpr.eval_const _ _
++  -- The honest ciphertexts and their decryptions.
++  have hc : ∀ β, encCt S n pk ω g β = S.enc.runAt n (pairEncode pk (List.ofFn
++      fun _ : Fin (S.msgLen.eval n) => if β then g else !g)) (encTape S n ω β) := fun β => by
++    rw [encCt_eq, EnsembleLemmas.padL_eq, List.take_append_of_le_length (by rw [S.enc_length]),
++      List.take_of_length_le (by rw [S.enc_length])]
++  have hlen : ∀ β, (encCt S n pk ω g β).length = S.ctLen.eval n := fun β => by
++    rw [encCt_eq, EnsembleLemmas.length_padL]
++  have hdec : ∀ β, decodeFin (S.msgLen.eval n) (S.dec (pairEncode sk (encCt S n pk ω g β))) =
++      some fun _ => if β then g else !g := fun β => by
++    rw [hc]
++    exact S.correct n _ rg (encTape S n ω β)
++  -- The two blocks of the output.
++  set W := padFin ((PolyExpr.const 2).eval n * S.ctLen.eval n) (c₁ ++ c₂)
++  have hW : List.ofFn W = c₁ ++ c₂ := GGMRed.ofFn_padFin_of_length (by
++    rw [List.length_append, hlen, hlen, h2]; omega)
++  have hblk : ∀ (i : Fin ((PolyExpr.const 2).eval n)) (β : Bool), (i : ℕ) = (if β then 0 else 1) →
++      List.ofFn (S.nthCt W i) = encCt S n pk ω g β := by
++    intro i β hi
++    rw [ofFn_nthCt, hW, hi]
++    cases β
++    · rw [if_neg Bool.false_ne_true, Nat.one_mul, List.drop_left' (hlen true),
++        List.take_of_length_le (by rw [hlen])]
++    · rw [if_pos rfl, Nat.zero_mul, List.drop_zero, List.take_left' (hlen true)]
++  have hdecB : ∀ (i : Fin ((PolyExpr.const 2).eval n)) (β : Bool),
++      (i : ℕ) = (if β then 0 else 1) →
++      decodeFin (S.msgLen.eval n) (S.dec (pairEncode sk (List.ofFn (S.nthCt W i)))) =
++        some fun _ => if β then g else !g := fun i β hi => by
++    rw [hblk i β hi]
++    exact hdec β
++  -- The output is the two decryptions.
++  have i₀ : (0 : ℕ) < (PolyExpr.const 2).eval n := by rw [h2]; omega
++  have i₁ : (1 : ℕ) < (PolyExpr.const 2).eval n := by rw [h2]; omega
++  have hout : S.nmOutput sk st W = List.ofFn (S.nmDecrypt sk st (S.nthCt W ⟨0, i₀⟩)) ++
++      List.ofFn (S.nmDecrypt sk st (S.nthCt W ⟨1, i₁⟩)) := by
++    rw [nmOutput_eq]
++    exact flatten_ofFn_two h2 _
++  -- The two ciphertexts differ.
++  have hne : S.nthCt W ⟨0, i₀⟩ ≠ S.nthCt W ⟨1, i₁⟩ := by
++    intro h
++    have e := (hdecB ⟨0, i₀⟩ true rfl).symm.trans (h ▸ hdecB ⟨1, i₁⟩ false rfl)
++    have := congrFun (Option.some.inj e) ⟨0, hm⟩
++    simp at this
++  rw [guessDist_distinguisherL, hout]
++  by_cases hs : st = some (S.nthCt W ⟨0, i₀⟩)
++  · have hs' : st ≠ some (S.nthCt W ⟨1, i₁⟩) := fun h => hne (Option.some.inj (hs.symm.trans h))
++    rw [S.nmDecrypt_eq, S.nmDecrypt_eq, if_pos hs, if_neg hs', hdecB ⟨1, i₁⟩ false rfl]
++    simpa only [if_neg Bool.false_ne_true] using guessBit_refused hm g
++  · rw [S.nmDecrypt_eq, if_neg hs, hdecB ⟨0, i₀⟩ true rfl]
++    simpa only [if_pos rfl] using guessBit_valid hm g _
++
++/-- **The reduction's experiment is the CCA2 game.** Let `B` be T2's machine for the handler
++`encHandler S` (with its coin bijection `φ` at `n`), and `msgLen(n) > 0`. Then `B`'s experiment
++`NM_b` with two output ciphertexts and the distinguisher `guessDist` accepts with the probability
++of `A`'s CCA2 game `Ind_b`.
++
++**Proof sketch.** Fix the keys. `B`'s coins are the handler's seed `ω` and `A`'s coins `r` (`φ`,
++`expect_sample_equiv`, `expect_sample_prod`). For fixed `ω`, `r` and the distinguisher's coins,
++transport `B`'s run to T2's codec (`nmCodec_eq_bitCodec`, `expect_simulate_castImpl_toCompOn`) and
++replace it by the reduction (T2's equation `hφ`). The handler forwards
++(`simulate_encHandler_impl`), so the run is `A`'s run against the CCA2 oracles, after which the
++finalization outputs the two ciphertexts and keeps the recorded challenge (`simulate_bind`,
++`encHandler_finish`). Whatever that challenge is, `guessDist` outputs `A`'s guess
++(`guessDist_nmOutput`). Transport `A`'s run back to the game's codec (`indCodec_eq_bitCodec`). The
++result does not depend on `ω` or on the distinguisher's coins (`expect_const`). -/
++private theorem accept_nmGame_encRed (A B : NUPPT) (q : PolyExpr) (n : ℕ)
++    (hm : 0 < S.msgLen.eval n)
++    (φ : (Fin ((encHandler S).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n)
++    (hφ : ∀ (z : List Bool) (ω : Fin ((encHandler S).seedLen.eval n) → Bool) (r : A.Coins n),
++      (simulate ((encHandler S).impl n z ω)
++          (A.toCompOn (bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++            ((PolyExpr.const 1).eval n)) n (q.eval n) ((encHandler S).advInput n z ω) r)
++          ((encHandler S).init n)).bind
++          (fun res => (encHandler S).finish n z ω res.2 res.1) =
++        B.toCompOn (bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n)
++          ((encHandler S).outLen.eval n)) n
++          (q.eval n * (encHandler S).perCall.eval n + (encHandler S).finCall.eval n) z (φ (ω, r)))
++    (b : Bool) :
++    accept (S.nmGame .cca2 B
++        (q.eval n * (encHandler S).perCall.eval n + (encHandler S).finCall.eval n)
++        ((PolyExpr.const 2).eval n) guessDist b n) =
++      accept (S.indGame .cca2 A (q.eval n) b n) := by
++  have hd1 : (PolyExpr.const 1).eval n = 1 := PolyExpr.eval_const _ _
++  have hd2 : (encHandler S).outLen.eval n = (PolyExpr.const 2).eval n * S.ctLen.eval n := by
++    rw [encHandler_outLen, PolyExpr.eval_add, PolyExpr.eval_const]
++    omega
++  rw [accept_eq, accept_eq, S.nmGame_eq, S.indGame_eq, prob_bind, prob_bind]
++  refine congrArg _ (funext fun rg => ?_)
++  rw [prob_bind, prob_bind, ← expect_sample_equiv φ, expect_sample_prod]
++  refine (congrArg _ (funext fun ω => ?_)).trans (expect_const _ _)
++  refine congrArg _ (funext fun r => ?_)
++  rw [prob_bind]
++  refine (congrArg _ (funext fun ρ => ?_)).trans (expect_const _ _)
++  -- The reduction's side: transport to T2's codec and unfold the reduction.
++  have h2 : (fun res : (Fin ((PolyExpr.const 2).eval n * S.ctLen.eval n) → Bool) ×
++      Option (Fin (S.ctLen.eval n) → Bool) =>
++      ProbComp.prob (.pure (guessDist.distinguisherL n
++        (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) res.2 res.1) ρ)) (· = true)) =
++      fun res => (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
++        if guessDist.distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) p.2
++          (padFin ((PolyExpr.const 2).eval n * S.ctLen.eval n) p.1)) ρ = true then (1 : ℝ)
++        else 0) (List.ofFn res.1, res.2) := by
++    funext res
++    rw [prob_pure]
++    dsimp only
++    rw [padFin_ofFn]
++  rw [prob_bind, nmCodec_eq_bitCodec, h2]
++  refine (expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hd2 _ B n _ _ _
++    none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
++      if guessDist.distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) p.2
++        (padFin ((PolyExpr.const 2).eval n * S.ctLen.eval n) p.1)) ρ = true then (1 : ℝ)
++      else 0)).symm.trans ?_
++  rw [← hφ, encHandler_advInput, simulate_encHandler_impl, OracleComp.bind_assoc]
++  simp only [OracleComp.pure_bind, encHandler_finish]
++  rw [simulate_bind, expect_bind]
++  simp only [simulate_pure, expect_pure]
++  -- The game's side: transport `A`'s run to T2's codec.
++  have h1 : (fun res : (Fin 1 → Bool) × Option (Fin (S.ctLen.eval n) → Bool) =>
++      ProbComp.prob (.pure (res.1 0)) (· = true)) =
++      fun res => (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
++        if p.1.headD false = true then (1 : ℝ) else 0) (List.ofFn res.1, res.2) := by
++    funext res
++    rw [prob_pure]
++    dsimp only
++    rw [headD_ofFn_one]
++  rw [prob_bind, indCodec_eq_bitCodec, h1]
++  refine Eq.trans ?_ (expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hd1 _
++    A n _ _ _ none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
++      if p.1.headD false = true then (1 : ℝ) else 0))
++  refine congrArg _ (funext fun p => ?_)
++  -- Pointwise: the distinguisher outputs `A`'s guess.
++  have hw : List.ofFn (padFin ((encHandler S).outLen.eval n)
++      (encCt S n (pairFstD (S.gen.runAt n [] rg)) ω ((List.ofFn p.1).headD false) true ++
++        encCt S n (pairFstD (S.gen.runAt n [] rg)) ω ((List.ofFn p.1).headD false) false)) =
++      encCt S n (pairFstD (S.gen.runAt n [] rg)) ω ((List.ofFn p.1).headD false) true ++
++        encCt S n (pairFstD (S.gen.runAt n [] rg)) ω ((List.ofFn p.1).headD false) false :=
++    GGMRed.ofFn_padFin_of_length (by
++      rw [List.length_append, encCt_eq, encCt_eq, EnsembleLemmas.length_padL,
++        EnsembleLemmas.length_padL, encHandler_outLen, PolyExpr.eval_add])
++  dsimp only
++  rw [hw, guessDist_nmOutput S n hm]
++
++/-- **(⇐) of Theorem 175.9: CCA2 non-malleability implies CCA2 security**
++[PS10, Theorem 175.9].
++
++**Proof sketch.** Given `A` with budget `q`, T2 (`Games.exists_interactiveHandlerMachine`) makes
++the handler `encHandler S` a machine `B`, with budget `q · 1 + 0`. Non-malleability for `B`, two
++output ciphertexts and `guessDist` gives a negligible bound. At `n` with `msgLen(n) > 0`, `A`'s
++CCA2 advantage equals that experiment's advantage (`accept_nmGame_encRed`). At `msgLen(n) = 0` the
++two CCA2 games coincide (`indImpl_eq_of_msgLen_eq_zero`), so `A`'s advantage is `0`. -/
++theorem indSecure_cca2_of_nmSecure_cca2 (h : S.NMSecure .cca2) : S.INDSecure .cca2 := by
++  rw [INDSecure_iff]
++  intro A q
++  obtain ⟨B, hB⟩ := exists_interactiveHandlerMachine A q (acDin S) (acDout S) (acDin S)
++    (acDout S) (.const 1) (encHandler S)
++  obtain ⟨ε, hε, hbound⟩ := (S.NMSecure_iff .cca2).1 h B
++    ((q.mul (encHandler S).perCall).add (encHandler S).finCall) (.const 2) guessDist
++  refine ⟨ε, hε, fun n => ?_⟩
++  have hn := hbound n
++  by_cases hm : S.msgLen.eval n = 0
++  · have hg : S.indGame .cca2 A (q.eval n) false n = S.indGame .cca2 A (q.eval n) true n := by
++      rw [S.indGame_eq, S.indGame_eq]
++      simp only [indImpl_eq_of_msgLen_eq_zero S .cca2 n _ _ hm]
++    rw [hg, advantage_self]
++    exact (advantage_nonneg _ _).trans hn
++  · obtain ⟨φ, hφ⟩ := hB n
++    have key := fun b => accept_nmGame_encRed S A B q n (Nat.pos_of_ne_zero hm) φ hφ b
++    rw [PolyExpr.eval_add, PolyExpr.eval_mul] at hn
++    rw [advantage_eq, ← key false, ← key true, ← advantage_eq]
++    exact hn
++
++end Proof
++
+ /-- **Theorem 175.9: under CCA2, secrecy and non-malleability coincide** [PS10, Theorem 175.9].
+ 
+-**Proof sketch** (the source's, made explicit).
++**Proof sketch** (the source's, made explicit; the delivered proof).
+ 1. (⇒) Given an NM adversary `A` with `ℓ` ciphertexts and a distinguisher `D`, the IND
+-   adversary runs `A`, then asks CCA2's `Dec` for each of `A`'s ciphertexts. `Dec` refuses the
+-   challenge with the same `⊥` that `NM` assigns to its copies (`indImpl_dec_cca2_challenge`,
+-   `nmDecrypt_challenge`), so the answers are exactly `NM_b`'s output. It runs `D` on them and
+-   outputs `D`'s verdict. T2 (`Games.exists_interactiveHandlerMachine`) supplies
+-   `advIn = pk`, forwards decryption queries, and uses `finCall = ℓ` in finalization before
+-   running `D`, for total budget `q + ℓ`. Advice is carried through `z` and the public
+-   `exists_withAdvice`/`exists_comp` closure lemmas. The advantage is unchanged.
+-2. (⇐) Given an IND adversary `A` with guess `g`, the NM adversary runs `A` and outputs fresh
+-   encryptions of `g^{msgLen}` and `(¬g)^{msgLen}` (it holds `pk`). The two plaintexts differ, so
+-   by correctness at most one of the two ciphertexts is the challenge. The distinguisher reads
+-   `g` from the first if it decrypts, and from the second otherwise. Same advantage; at
+-   `msgLen(n) = 0` there is nothing to distinguish.
++   adversary runs `A` on `pk`, forwarding every query to its own oracles, then asks CCA2's `Dec`
++   for each of `A`'s ciphertexts. `Dec` refuses the recorded challenge with the same `⊥ = 0` that
++   `NM` assigns to its copies and decrypts every other ciphertext as `NM` does
++   (`indImpl_dec_cca2_challenge`, `nmDecrypt_challenge`), so the answers are exactly `NM_b`'s
++   output. It runs `D` on them and outputs `D`'s verdict. T2
++   (`Games.exists_interactiveHandlerMachine`) makes this a machine, for the forwarding handler
++   `NMCCA2.decHandler`: `advIn = pk`, one outer call per query, and `finCall = ℓ` in
++   finalization before running `D`, for total budget `q + ℓ`. `D`'s advice is carried through
++   `z = ⟨pk, α⟩` and hard-wired afterwards (`NMCCA2.exists_withAdviceOn`, from the public
++   `exists_withAdvice`/`exists_comp` closure lemmas). The two games accept with the same
++   probability at every `n` (`nmSecure_cca2_of_indSecure_cca2`).
++2. (⇐) Given an IND adversary `A` with guess `g`, the NM adversary runs `A`, forwarding its
++   queries, and outputs fresh encryptions of `g^{msgLen}` and `(¬g)^{msgLen}` under `pk` with its
++   own seed (`NMCCA2.encHandler`). The two plaintexts differ, so by correctness at most one of
++   the two ciphertexts is the challenge. The distinguisher (`NMCCA2.guessDist`) reads `g` from
++   the first if it decrypts, and from the second otherwise. Same advantage; at `msgLen(n) = 0`
++   the two CCA2 games coincide and the advantage is `0`
++   (`indSecure_cca2_of_nmSecure_cca2`).
+ 
+ The source's sketch argues the contrapositives: an NM break yields a related ciphertext that
+ `Dec` decrypts, and an IND break lets the adversary decrypt and re-encrypt a related message. -/
+ theorem indSecure_cca2_iff_nmSecure_cca2 : S.INDSecure .cca2 ↔ S.NMSecure .cca2 := by
+-  sorry
++  exact ⟨S.nmSecure_cca2_of_indSecure_cca2, S.indSecure_cca2_of_nmSecure_cca2⟩
+ 
+ end FixedLengthPKScheme
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean
+new file mode 100644
+index 000000000..7acb81676
+--- /dev/null
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean
+@@ -0,0 +1,350 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Indistinguishability.Forward
++import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Handler
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The reduction from non-malleability to CCA2 security
++
++Direction (⇒) of [PS10, Theorem 175.9]. Given a non-malleability adversary `A` whose output is
++`ℓ(n)` ciphertexts and a distinguisher `D`, the CCA2 adversary runs `A` on the public key and
++forwards all of `A`'s queries to its own oracles (`NMCCA2.fwdHandler`). In the finalization it
++asks its decryption oracle for each of `A`'s `ℓ(n)` ciphertexts in turn and outputs `D`'s
++verdict on the concatenated answers. Under CCA2 the decryption oracle refuses the recorded
++challenge with `⊥`, exactly as the non-malleability experiment decrypts a copy of the challenge.
++
++This file builds the handler (`decHandler S ℓ D`): its seed is `D`'s coins, and the reduction
++input is `⟨pk, α⟩`, where `α` is `D`'s advice. It proves the finalization's equation against
++any outer oracle whose decryption answers are deterministic and keep the state
++(`simulate_decHandler_finish`). The advice is hard-wired afterwards (`exists_withAdviceOn`,
++from `NUPPT.exists_comp` and `NUPPT.exists_withAdvice`).
++
++## Main definitions
++
++* `NMCCA2.cntRead`, `NMCCA2.ansRead`: the per-entry readings of a log (one token, the answer).
++* `NMCCA2.decHandler`: the handler of the reduction.
++
++## Main results
++
++* `NMCCA2.simulate_decHandler_impl`: the handler forwards.
++* `NMCCA2.simulate_decHandler_finish`: the finalization decrypts the `ℓ` blocks and runs `D`.
++* `NMCCA2.exists_withAdviceOn`: hard-wiring a second component of the input.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.9 (book p. 175).
++-/
++
++namespace TCSlib.Cryptography.Composability.NMCCA2
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++open AdaptiveCPA (acDin acDout acDin_zero acDout_zero)
++
++/-! ### Readings of a log entry -/
++
++/-- One token for a nonempty log and nothing for the empty one:
++`cntRead v = if v = [] then [] else [true]`. With `logEmit` it counts the entries of a log. -/
++def cntRead (v : List Bool) : List Bool := if decide (v = []) then [] else [true]
++
++/-- `cntRead v = if v = [] then [] else [true]`. -/
++theorem cntRead_eq (v : List Bool) : cntRead v = if decide (v = []) then [] else [true] := rfl
++
++/-- The token reading is polynomial-time: `PolyTimeComputable cntRead`. -/
++theorem polyTimeComputable_cntRead : PolyTimeComputable cntRead :=
++  polyTimeComputable_ite polyTimeComputable_isNil (polyTimeComputable_const [])
++    (polyTimeComputable_const [true])
++
++/-- The answer `y` of the first entry `⟨1^i, ⟨x, y⟩⟩` of a log:
++`ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
++def ansRead (v : List Bool) : List Bool := pairSndD (pairSndD (pairFstD v))
++
++/-- `ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
++theorem ansRead_eq (v : List Bool) : ansRead v = pairSndD (pairSndD (pairFstD v)) := rfl
++
++/-- The answer reading is polynomial-time: `PolyTimeComputable ansRead`. -/
++theorem polyTimeComputable_ansRead : PolyTimeComputable ansRead :=
++  polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
++
++section Readings
++
++variable {k : ℕ} {din dout : Fin k → ℕ} {dα : ℕ}
++
++/-- **Counting the entries:** `|logEmit cntRead ⟦h⟧| = |h|`. -/
++theorem length_logEmit_cntRead (h : QueryLog (bitSpec din dout)) :
++    (logEmit cntRead ((bitCodec din dout dα).encodeLog h)).length = h.length := by
++  rw [logEmit_encodeLog _ cntRead (fun _ => [true]) rfl
++    (fun e t => by rw [cntRead_eq, decide_eq_false (pairEncode_ne_nil _ _)]; rfl)]
++  simp only [List.length_flatMap, List.length_singleton, List.map_const', List.sum_replicate,
++    smul_eq_mul, mul_one]
++
++/-- **Collecting the answers:** `logEmit ansRead ⟦h⟧` is the concatenation of the entries'
++answers, `h.flatMap fun e => ⟦e.2.2⟧`. -/
++theorem logEmit_ansRead (h : QueryLog (bitSpec din dout)) :
++    logEmit ansRead ((bitCodec din dout dα).encodeLog h) = h.flatMap fun e => List.ofFn e.2.2 :=
++  logEmit_encodeLog _ ansRead _ (by
++    rw [ansRead_eq, pairFstD_nil, pairSndD_of_pairDecode_eq_none pairDecode_nil,
++      pairSndD_of_pairDecode_eq_none pairDecode_nil]) (fun e t => by
++    rw [ansRead_eq, pairFstD_pairEncode, bitCodec_encodeEntry, pairSndD_pairEncode,
++      pairSndD_pairEncode]) h
++
++end Readings
++
++/-! ### The finalization -/
++
++variable (S : FixedLengthPKScheme) (ℓ : PolyExpr) (D : NUPPT)
++
++/-- The number of decryptions asked so far, in unary. -/
++private def dCnt (w : List Bool) : List Bool := logEmit cntRead (finL w)
++
++/-- The next block of the adversary's output: `ctLen(n)` bits from position `j · ctLen(n)`, for
++`j` the decryptions asked so far, padded with `false`. -/
++private def dCt (w : List Bool) : List Bool :=
++  EnsembleLemmas.padL (S.ctLen.eval (finU w).length)
++    ((finA w).drop ((dCnt w).length * S.ctLen.eval (finU w).length))
++
++/-- `D`'s input layout: parameter `1^n`, the collected answers, the advice (the second component
++of the reduction input) and the seed as coins. -/
++private def dIn (w : List Bool) : List Bool :=
++  pairEncode (pairEncode (pairEncode (finU w) (logEmit ansRead (finL w))) (pairSndD (finZ w)))
++    (finW w)
++
++/-- **One round of the finalization.** After `ℓ(n)` decryptions, output `D`'s verdict
++`[D(answers) = [true]]`; before, ask the decryption oracle (index `0`) the next block. -/
++private def dFin (w : List Bool) : List Bool :=
++  if decide (ℓ.eval (finU w).length ≤ (dCnt w).length) then
++    pairEncode [true] [decide (D.output (dIn w) = [true])]
++  else pairEncode [false] (pairEncode [] (dCt S w))
++
++/-- The finalization round is polynomial-time. -/
++private theorem polyTimeComputable_dFin : PolyTimeComputable (dFin S ℓ D) := by
++  obtain ⟨hU, hZ, hW, hA, hL⟩ := polyTimeComputable_finFields
++  have hCnt : PolyTimeComputable dCnt :=
++    (polyTimeComputable_logEmit polyTimeComputable_cntRead).comp hL
++  have hAns : PolyTimeComputable fun w => logEmit ansRead (finL w) :=
++    (polyTimeComputable_logEmit polyTimeComputable_ansRead).comp hL
++  have hOff : PolyTimeComputable fun w =>
++      List.replicate ((dCnt w).length * S.ctLen.eval (finU w).length) true :=
++    (OneWay.polyTimeComputable_unaryMulPair.comp
++      (hCnt.pairEncode ((polyTimeComputable_unaryPoly S.ctLen).comp hU))).congr fun w => by
++        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
++          List.length_replicate]
++  have hDrop : PolyTimeComputable fun w =>
++      (finA w).drop ((dCnt w).length * S.ctLen.eval (finU w).length) :=
++    (polyTimeComputable_dropPrefixByLength.comp (hOff.pairEncode hA)).congr fun w => by
++      simp only [Function.comp_apply, PrefixByLength.drop_def, pairFstD_pairEncode,
++        pairSndD_pairEncode, List.length_replicate]
++  have hCt : PolyTimeComputable (dCt S) := EnsembleLemmas.polyTimeComputable_padL S.ctLen hU hDrop
++  have hIn : PolyTimeComputable dIn :=
++    ((hU.pairEncode hAns).pairEncode (polyTimeComputable_pairSndD.comp hZ)).pairEncode hW
++  have hV : PolyTimeComputable fun w => [decide (D.output (dIn w) = [true])] :=
++    (polyTimeComputable_pairEq.comp ((D.polyTimeComputable_output.comp hIn).pairEncode
++      (polyTimeComputable_const [true]))).congr fun w => by
++        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++  have hT : PolyTimeComputable fun w => [decide (ℓ.eval (finU w).length ≤ (dCnt w).length)] :=
++    (polyTimeComputable_lenLe.comp (hCnt.pairEncode
++      ((polyTimeComputable_unaryPoly ℓ).comp hU))).congr fun w => by
++        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
++          List.length_replicate]
++  exact polyTimeComputable_ite hT ((polyTimeComputable_const [true]).pairEncode hV)
++    ((polyTimeComputable_const [false]).pairEncode ((polyTimeComputable_const []).pairEncode hCt))
++
++/-- The adversary's input is the first component of the reduction input. -/
++private theorem polyTimeComputable_decAdvIn :
++    PolyTimeComputable fun ctx : List Bool => pairFstD (pairFstD (pairSndD ctx)) :=
++  polyTimeComputable_pairFstD.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
++
++/-! ### The handler -/
++
++/-- **The handler of the reduction (⇒)** for the scheme `S`, `ℓ` output ciphertexts and the
++distinguisher `D`: the forwarding handler (`fwdHandler`) on the oracles of Definition 171.5, with
++the seed of `D`'s coins, the adversary run on the first component `pk` of the reduction input
++`⟨pk, α⟩`, and a finalization with at most `ℓ(n)` outer queries and a one-bit output: it asks
++the decryption oracle for each of the `ℓ(n)` blocks of the adversary's output, then outputs
++`[D(1^n, answers; α, ω) = [true]]`. -/
++def decHandler : InteractiveHandler 2 (acDin S) (acDout S) 2 (acDin S) (acDout S) :=
++  fwdHandler (acDin S) (acDout S) D.coins (fun ctx => pairFstD (pairFstD (pairSndD ctx)))
++    polyTimeComputable_decAdvIn (.const 1) ℓ (dFin S ℓ D) (polyTimeComputable_dFin S ℓ D)
++
++/-- The handler's seed is `D`'s coins: `(decHandler S ℓ D).seedLen = D.coins`. -/
++theorem decHandler_seedLen : (decHandler S ℓ D).seedLen = D.coins := by
++  rw [decHandler, fwdHandler_seedLen]
++
++/-- One outer call per inner query: `(decHandler S ℓ D).perCall = .const 1`. -/
++theorem decHandler_perCall : (decHandler S ℓ D).perCall = .const 1 := by
++  rw [decHandler, fwdHandler_perCall]
++
++/-- At most `ℓ(n)` outer queries in the finalization: `(decHandler S ℓ D).finCall = ℓ`. -/
++theorem decHandler_finCall : (decHandler S ℓ D).finCall = ℓ := by
++  rw [decHandler, fwdHandler_finCall]
++
++/-- A one-bit output: `(decHandler S ℓ D).outLen = .const 1`. -/
++theorem decHandler_outLen : (decHandler S ℓ D).outLen = .const 1 := by
++  rw [decHandler, fwdHandler_outLen]
++
++/-- The adversary runs on the first component of the reduction input:
++`(decHandler S ℓ D).advInput n z ω = pairFstD z`. -/
++theorem decHandler_advInput (n : ℕ) (z : List Bool)
++    (ω : Fin ((decHandler S ℓ D).seedLen.eval n) → Bool) :
++    (decHandler S ℓ D).advInput n z ω = pairFstD z := by
++  rw [InteractiveHandler.advInput_eq]
++  simp only [decHandler, fwdHandler_advIn]
++  rw [seedIn_eq, pairSndD_pairEncode, pairFstD_pairEncode]
++
++/-- **The handler forwards** (`simulate_fwdHandler_impl`): `simulate (H.impl n z ω) c s =
++c.bind fun a => pure (a, s)`. -/
++theorem simulate_decHandler_impl (n : ℕ) (z : List Bool)
++    (ω : Fin ((decHandler S ℓ D).seedLen.eval n) → Bool) {α : Type}
++    (c : OracleComp (bitSpecAt (acDin S) (acDout S) n) α)
++    (s : Fin ((decHandler S ℓ D).stateLen.eval n) → Bool) :
++    simulate ((decHandler S ℓ D).impl n z ω) c s = c.bind fun a => .pure (a, s) :=
++  simulate_fwdHandler_impl (acDin S) (acDout S) D.coins _ polyTimeComputable_decAdvIn (.const 1) ℓ
++    (dFin S ℓ D) (polyTimeComputable_dFin S ℓ D) n z ω c s
++
++/-- The `i`-th block of `ctLen(n)` bits of a string `a`, padded with `false`, as a decryption
++query: `padFin _ (⟦a⟧.drop (i · ctLen(n)))`. -/
++def decBlock (n : ℕ) {d : ℕ} (a : Fin d → Bool) (i : ℕ) : Fin ((acDin S 0).eval n) → Bool :=
++  padFin _ ((List.ofFn a).drop (i * S.ctLen.eval n))
++
++/-- `decBlock S n a i = padFin _ (⟦a⟧.drop (i · ctLen(n)))`. -/
++theorem decBlock_eq (n : ℕ) {d : ℕ} (a : Fin d → Bool) (i : ℕ) :
++    decBlock S n a i = padFin _ ((List.ofFn a).drop (i * S.ctLen.eval n)) := rfl
++
++/-- **The finalization decrypts the blocks and runs `D`.** Against an outer oracle `O` whose
++decryption answers `ans x st` are deterministic and keep the state `st`, the finalization after
++the adversary's output `a` asks the `ℓ(n)` blocks of `a` and returns `D`'s verdict on the
++concatenated answers:
++`simulate O (H.finish n z ω s a) st = pure (padFin _ [D.output (layout 1^n ans* (snd z) ω) =
++[true]], st)` with `ans* = ⟦ans (block 0) st⟧ ++ ⋯ ++ ⟦ans (block (ℓ(n) − 1)) st⟧`.
++
++**Proof sketch.** Induction on the remaining budget along the finalization's log: after `j`
++decryptions the log holds the entries `(0, block i, ans (block i) st)` for `i < j`. Its count is
++`j` (`length_logEmit_cntRead`), so for `j < ℓ(n)` the round asks block `j` (its offset is
++`j · ctLen(n)`, `decodeBitMove_query`), which `O` answers without changing `st`, and the log
++grows by that entry. At `j = ℓ(n)` the budget is spent and the round returns the verdict on the
++collected answers (`logEmit_ansRead`, `decodeBitMove_ret`). -/
++theorem simulate_decHandler_finish (n : ℕ) (z : List Bool)
++    (ω : Fin ((decHandler S ℓ D).seedLen.eval n) → Bool)
++    (s : Fin ((decHandler S ℓ D).stateLen.eval n) → Bool) {d : ℕ} (a : Fin d → Bool) {σ : Type}
++    (O : QueryImpl (bitSpecAt (acDin S) (acDout S) n) σ unifSpec)
++    (ans : (Fin ((acDin S 0).eval n) → Bool) → σ → (Fin ((acDout S 0).eval n) → Bool))
++    (hO : ∀ x st, O 0 x st = .pure (ans x st, st)) (st : σ) :
++    simulate O ((decHandler S ℓ D).finish n z ω s a) st =
++      .pure (padFin _ [decide (D.output (NUPPT.layout (List.replicate n true)
++          ((List.range (ℓ.eval n)).map fun i => List.ofFn (ans (decBlock S n a i) st)).flatten
++          (pairSndD z) (List.ofFn ω)) = [true])], st) := by
++  -- The log after `j` decryptions.
++  obtain ⟨hist, hhist⟩ : ∃ hist : ℕ → QueryLog (bitSpecAt (acDin S) (acDout S) n),
++      hist = fun j => (List.range j).map fun i =>
++        (⟨0, decBlock S n a i, ans (decBlock S n a i) st⟩ : Σ i, _) := ⟨_, rfl⟩
++  have hfin : (decHandler S ℓ D).finRun = dFin S ℓ D := by
++    funext w
++    rw [decHandler, fwdHandler_finRun]
++  have hctl : (acDin S 0).eval n = S.ctLen.eval n := by rw [acDin_zero]
++  have hout : (decHandler S ℓ D).outLen.eval n = 1 := by
++    rw [decHandler_outLen, PolyExpr.eval_const]
++  -- The fields of the round input on the log `hist j`.
++  have hfields : ∀ (j : ℕ) (w : List Bool),
++      w = InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
++        ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog
++          (hist j)) →
++      (dCnt w).length = j ∧ finU w = List.replicate n true ∧
++      dIn w = NUPPT.layout (List.replicate n true)
++        ((List.range j).map fun i => List.ofFn (ans (decBlock S n a i) st)).flatten
++        (pairSndD z) (List.ofFn ω) ∧
++      dCt S w = List.ofFn (decBlock S n a j) := by
++    intro j w hw
++    obtain ⟨hU, hZ, hW, hA, hL⟩ := fields_finInput n z (List.ofFn ω) (List.ofFn s)
++      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++        0).encodeLog (hist j))
++    rw [← hw] at hU hZ hW hA hL
++    have hc : (dCnt w).length = j := by
++      rw [dCnt, hL, length_logEmit_cntRead, hhist, List.length_map, List.length_range]
++    refine ⟨hc, hU, ?_, ?_⟩
++    · rw [dIn, hU, hZ, hW, hL, logEmit_ansRead, NUPPT.layout_eq, hhist, List.flatMap_map,
++        List.flatMap_def]
++    · rw [dCt, hU, hA, hc, List.length_replicate, decBlock_eq, ofFn_padFin_eq_take,
++        EnsembleLemmas.padL_eq, hctl]
++  -- Induction on the remaining budget.
++  have key : ∀ m j, j + m = ℓ.eval n →
++      simulate O (buildComp (fun L => decodeBitMove (fun i => (acDin S i).eval n)
++          (fun i => (acDout S i).eval n) ((decHandler S ℓ D).outLen.eval n)
++          ((decHandler S ℓ D).finRun (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s)
++            (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++              0).encodeLog L)))) (zeroBits _) m (hist j)) st =
++        .pure (padFin _ [decide (D.output (NUPPT.layout (List.replicate n true)
++          ((List.range (ℓ.eval n)).map fun i => List.ofFn (ans (decBlock S n a i) st)).flatten
++          (pairSndD z) (List.ofFn ω)) = [true])], st) := by
++    intro m
++    induction m with
++    | zero =>
++      intro j hj
++      rw [Nat.add_zero] at hj
++      subst hj
++      obtain ⟨hc, hU, hIn, -⟩ := hfields (ℓ.eval n) _ rfl
++      rw [buildComp_zero_of_ret, simulate_pure]
++      rw [hfin, dFin, hc, hU, List.length_replicate, if_pos (decide_eq_true le_rfl), hIn]
++      have hw : List.ofFn (padFin ((decHandler S ℓ D).outLen.eval n)
++          [decide (D.output (NUPPT.layout (List.replicate n true)
++            ((List.range (ℓ.eval n)).map fun i => List.ofFn (ans (decBlock S n a i) st)).flatten
++            (pairSndD z) (List.ofFn ω)) = [true])]) =
++          [decide (D.output (NUPPT.layout (List.replicate n true)
++            ((List.range (ℓ.eval n)).map fun i => List.ofFn (ans (decBlock S n a i) st)).flatten
++            (pairSndD z) (List.ofFn ω)) = [true])] :=
++        GGMRed.ofFn_padFin_of_length (by rw [List.length_singleton, hout])
++      exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
++        (decodeBitMove_ret _ _ _ _)
++    | succ m ih =>
++      intro j hj
++      obtain ⟨hc, hU, -, hCt⟩ := hfields j _ rfl
++      rw [buildComp_succ_of_query (i := 0) (x := decBlock S n a j) (by
++        rw [hfin, dFin, hc, hU, List.length_replicate,
++          if_neg (fun h => by have := of_decide_eq_true h; omega), hCt]
++        exact decodeBitMove_query (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) _
++          0 (decBlock S n a j))]
++      rw [simulate_query, hO, OracleComp.pure_bind]
++      have hh : hist j ++ [⟨0, decBlock S n a j, ans (decBlock S n a j) st⟩] = hist (j + 1) := by
++        simp only [hhist, List.range_succ, List.map_append, List.map_cons, List.map_nil]
++      rw [hh]
++      exact ih (j + 1) (by omega)
++  have h0 : hist 0 = [] := by simp only [hhist, List.range_zero, List.map_nil]
++  rw [InteractiveHandler.finish_eq, decHandler_finCall, ← h0]
++  exact key (ℓ.eval n) 0 (Nat.zero_add _)
++
++/-! ### Hard-wiring the advice -/
++
++/-- **Hard-wiring a second input component** [PS10, §2.1, implicit]: for a machine `B` and a
++polynomially bounded family `β n` there is a machine `B'` with the same coins (`h`) whose
++computation on the input `x` is `B`'s on `⟨x, β n⟩`, for every codec and budget:
++`B'.toCompOn codec n q x (coinsCongr h n r) = B.toCompOn codec n q ⟨x, β n⟩ r`.
++
++**Proof sketch.** `B₁ := NUPPT.exists_comp B` with the re-pairing
++`⟨⟨x, L⟩, β⟩ ↦ ⟨⟨x, β⟩, L⟩`, then `B' := NUPPT.exists_withAdvice B₁ β`; on `⟨x, L⟩` (the input
++and the encoded log) `B'` runs `B` on `⟨⟨x, β n⟩, L⟩`. -/
++theorem exists_withAdviceOn (B : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
++    (hβ : ∀ n, (β n).length ≤ b.eval n) :
++    ∃ (B' : NUPPT) (h : B.coins = B'.coins), ∀ (n : ℕ) {ι α : Type} {spec : OracleSpec ι}
++      (codec : MachineCodec spec α) (q : ℕ) (x : List Bool) (r : B.Coins n),
++      B'.toCompOn codec n q x (NUPPT.coinsCongr h n r) =
++        B.toCompOn codec n q (pairEncode x (β n)) r := by
++  have hpre : PolyTimeComputable fun w : List Bool =>
++      pairEncode (pairEncode (pairFstD (pairFstD w)) (pairSndD w)) (pairSndD (pairFstD w)) :=
++    ((polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD).pairEncode
++      polyTimeComputable_pairSndD).pairEncode
++      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
++  obtain ⟨B₁, hc₁, -, -, hB₁⟩ := NUPPT.exists_comp B hpre polyTimeComputable_id
++  obtain ⟨B', hc', hB'⟩ := NUPPT.exists_withAdvice B₁ β b hβ
++  refine ⟨B', (hc'.trans hc₁).symm, fun n ι α spec codec q x r => ?_⟩
++  rw [NUPPT.toCompOn_eq, NUPPT.toCompOn_eq]
++  congr 1
++  funext hist
++  rw [NUPPT.runAt_coinsCongr, hB', hB₁, NUPPT.runAt_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, id_eq]
++
++end TCSlib.Cryptography.Composability.NMCCA2
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean
+new file mode 100644
+index 000000000..fc9acf3b7
+--- /dev/null
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean
+@@ -0,0 +1,332 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Indistinguishability.Forward
++import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Handler
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The reduction from CCA2 security to non-malleability
++
++Direction (⇐) of [PS10, Theorem 175.9]. Given a CCA2 adversary `A` with guess `g`, the
++non-malleability adversary runs `A` on the public key and forwards all of `A`'s queries to its own
++oracles (`NMCCA2.fwdHandler`). It then outputs two fresh encryptions under `pk`, with its own
++coins: of `g^{m}` and of `(¬g)^{m}`, where `m = msgLen(n)`. The distinguisher `guessDist` reads `g`
++back from the two decryptions: from the first message bit if the first decryption is valid,
++and otherwise from the negated last bit of the second.
++
++This file builds the handler (`encHandler S`), whose seed is two encryption tapes. It proves
++the finalization's equation (`encHandler_finish`) and defines the distinguisher with its two
++verdicts (`guessBit_valid`, `guessBit_refused`). It also shows that at `msgLen(n) = 0` the two
++CCA2 oracles coincide (`indImpl_eq_of_msgLen_eq_zero`).
++
++## Main definitions
++
++* `NMCCA2.encHandler`: the handler of the reduction.
++* `NMCCA2.encTape`, `NMCCA2.encCt`: the seed's two tapes and the two ciphertexts.
++* `NMCCA2.guessBit`, `NMCCA2.guessDist`: the distinguisher.
++
++## Main results
++
++* `NMCCA2.simulate_encHandler_impl`, `NMCCA2.encHandler_finish`.
++* `NMCCA2.guessDist_distinguisherL`, `NMCCA2.guessBit_valid`, `NMCCA2.guessBit_refused`.
++* `NMCCA2.indImpl_eq_of_msgLen_eq_zero`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.9 (book p. 175).
++-/
++
++namespace TCSlib.Cryptography.Composability.NMCCA2
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++open AdaptiveCPA (acDin acDout acDout_zero)
++
++variable (S : FixedLengthPKScheme)
++
++/-! ### The finalization -/
++
++/-- The plaintext bit of ciphertext `β`: the adversary's guess `g` (its output's first bit) for
++`β = true`, and `¬g` for `β = false`. -/
++private def eBit (β : Bool) (w : List Bool) : Bool :=
++  if β then (finA w).headD false else !(finA w).headD false
++
++/-- The plaintext of ciphertext `β`: its bit repeated `msgLen(n)` times. -/
++private def eMsg (β : Bool) (w : List Bool) : List Bool :=
++  if eBit β w then List.replicate (S.msgLen.eval (finU w).length) true
++  else List.replicate (S.msgLen.eval (finU w).length) false
++
++/-- The coins of ciphertext `β`: the first (`β = true`) or the second `ρ(n)` bits of the seed. -/
++private def eTape (β : Bool) (w : List Bool) : List Bool :=
++  if β then (finW w).take (S.enc.coins.eval (finU w).length)
++  else (finW w).drop (S.enc.coins.eval (finU w).length)
++
++/-- Ciphertext `β`: `Enc` on `⟨1^n, ⟨pk, plaintext⟩⟩` with empty advice and its coins, padded to
++`ctLen(n)` bits. -/
++private def eCt (β : Bool) (w : List Bool) : List Bool :=
++  EnsembleLemmas.padL (S.ctLen.eval (finU w).length)
++    (S.enc.output (pairEncode (pairEncode (pairEncode (finU w)
++      (pairEncode (finZ w) (eMsg S β w))) []) (eTape S β w)))
++
++/-- **The finalization's round:** output the two ciphertexts, `⟨[true], c₁ ‖ c₂⟩`. -/
++private def eFin (w : List Bool) : List Bool := pairEncode [true] (eCt S true w ++ eCt S false w)
++
++/-- The finalization round is polynomial-time. -/
++private theorem polyTimeComputable_eFin : PolyTimeComputable (eFin S) := by
++  obtain ⟨hU, hZ, hW, hA, -⟩ := polyTimeComputable_finFields
++  have hg : PolyTimeComputable fun w => [(finA w).headD false] := polyTimeComputable_headD.comp hA
++  have hBit : ∀ β, PolyTimeComputable fun w => [eBit β w] := by
++    intro β
++    cases β
++    · exact (polyTimeComputable_not hg).congr fun w => rfl
++    · exact hg.congr fun w => rfl
++  have hMsg : ∀ β, PolyTimeComputable (eMsg S β) := fun β =>
++    polyTimeComputable_ite (hBit β) ((polyTimeComputable_unaryPoly S.msgLen).comp hU)
++      (EnsembleLemmas.polyTimeComputable_zeros S.msgLen hU)
++  have hTape : ∀ β, PolyTimeComputable (eTape S β) := by
++    intro β
++    cases β
++    · exact ((polyTimeComputable_pairDropPoly S.enc.coins).comp (hU.pairEncode hW)).congr
++        fun w => by simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]; rfl
++    · exact ((polyTimeComputable_pairTakePoly S.enc.coins).comp (hU.pairEncode hW)).congr
++        fun w => by simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]; rfl
++  have hCt : ∀ β, PolyTimeComputable (eCt S β) := fun β =>
++    EnsembleLemmas.polyTimeComputable_padL S.ctLen hU (S.enc.polyTimeComputable_output.comp
++      (((hU.pairEncode (hZ.pairEncode (hMsg β))).pairEncode
++        (polyTimeComputable_const [])).pairEncode (hTape β)))
++  exact (polyTimeComputable_const [true]).pairEncode ((hCt true).append (hCt false))
++
++/-- The adversary's input is the reduction input. -/
++private theorem polyTimeComputable_encAdvIn :
++    PolyTimeComputable fun ctx : List Bool => pairFstD (pairSndD ctx) :=
++  polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
++
++/-! ### The handler -/
++
++/-- **The handler of the reduction (⇐)** for the scheme `S`: the forwarding handler
++(`fwdHandler`) on the oracles of Definition 171.5, with a seed of two encryption tapes
++(`2ρ(n)` bits), the adversary run on the reduction input `pk`, and a finalization without outer
++queries whose output is `2 · ctLen(n)` bits: `Enc_pk(g^{msgLen(n)})` with the first tape, then
++`Enc_pk((¬g)^{msgLen(n)})` with the second, where `g` is the adversary's first output bit. -/
++def encHandler : InteractiveHandler 2 (acDin S) (acDout S) 2 (acDin S) (acDout S) :=
++  fwdHandler (acDin S) (acDout S) (S.enc.coins.add S.enc.coins)
++    (fun ctx => pairFstD (pairSndD ctx)) polyTimeComputable_encAdvIn (S.ctLen.add S.ctLen)
++    (.const 0) (eFin S) (polyTimeComputable_eFin S)
++
++/-- Two encryption tapes: `(encHandler S).seedLen = ρ + ρ`. -/
++theorem encHandler_seedLen : (encHandler S).seedLen = S.enc.coins.add S.enc.coins := by
++  rw [encHandler, fwdHandler_seedLen]
++
++/-- One outer call per inner query: `(encHandler S).perCall = .const 1`. -/
++theorem encHandler_perCall : (encHandler S).perCall = .const 1 := by
++  rw [encHandler, fwdHandler_perCall]
++
++/-- No outer query in the finalization: `(encHandler S).finCall = .const 0`. -/
++theorem encHandler_finCall : (encHandler S).finCall = .const 0 := by
++  rw [encHandler, fwdHandler_finCall]
++
++/-- Two ciphertexts as output: `(encHandler S).outLen = ctLen + ctLen`. -/
++theorem encHandler_outLen : (encHandler S).outLen = S.ctLen.add S.ctLen := by
++  rw [encHandler, fwdHandler_outLen]
++
++/-- The adversary runs on the reduction input: `(encHandler S).advInput n z ω = z`. -/
++theorem encHandler_advInput (n : ℕ) (z : List Bool)
++    (ω : Fin ((encHandler S).seedLen.eval n) → Bool) :
++    (encHandler S).advInput n z ω = z := by
++  rw [InteractiveHandler.advInput_eq]
++  simp only [encHandler, fwdHandler_advIn]
++  rw [seedIn_eq, pairSndD_pairEncode, pairFstD_pairEncode]
++
++/-- **The handler forwards** (`simulate_fwdHandler_impl`): `simulate (H.impl n z ω) c s =
++c.bind fun a => pure (a, s)`. -/
++theorem simulate_encHandler_impl (n : ℕ) (z : List Bool)
++    (ω : Fin ((encHandler S).seedLen.eval n) → Bool) {α : Type}
++    (c : OracleComp (bitSpecAt (acDin S) (acDout S) n) α)
++    (s : Fin ((encHandler S).stateLen.eval n) → Bool) :
++    simulate ((encHandler S).impl n z ω) c s = c.bind fun a => .pure (a, s) :=
++  simulate_fwdHandler_impl (acDin S) (acDout S) (S.enc.coins.add S.enc.coins) _
++    polyTimeComputable_encAdvIn (S.ctLen.add S.ctLen) (.const 0) (eFin S)
++    (polyTimeComputable_eFin S) n z ω c s
++
++/-- **The seed's two encryption tapes:** tape `true` is the first `ρ(n)` bits of the seed, tape
++`false` the rest (`ρ(n)` bits), read as coins of `Enc`. -/
++def encTape (n : ℕ) (ω : Fin ((encHandler S).seedLen.eval n) → Bool) (β : Bool) :
++    S.enc.Coins n :=
++  (NUPPT.coinsEquivPoly rfl n).symm (padFin _ (if β then (List.ofFn ω).take (S.enc.coins.eval n)
++    else (List.ofFn ω).drop (S.enc.coins.eval n)))
++
++/-- `encTape S n ω β = (coinsEquivPoly rfl n).symm (padFin _ (if β then ⟦ω⟧.take ρ(n) else
++⟦ω⟧.drop ρ(n)))`. -/
++theorem encTape_eq (n : ℕ) (ω : Fin ((encHandler S).seedLen.eval n) → Bool) (β : Bool) :
++    encTape S n ω β = (NUPPT.coinsEquivPoly rfl n).symm (padFin _ (if β then
++      (List.ofFn ω).take (S.enc.coins.eval n) else (List.ofFn ω).drop (S.enc.coins.eval n))) :=
++  rfl
++
++/-- The tapes as strings: `⟦encTape S n ω β⟧ = if β then ⟦ω⟧.take ρ(n) else ⟦ω⟧.drop ρ(n)`. -/
++theorem ofFn_encTape (n : ℕ) (ω : Fin ((encHandler S).seedLen.eval n) → Bool) (β : Bool) :
++    List.ofFn (encTape S n ω β) = if β then (List.ofFn ω).take (S.enc.coins.eval n)
++      else (List.ofFn ω).drop (S.enc.coins.eval n) := by
++  have hω : (List.ofFn ω).length = S.enc.coins.eval n + S.enc.coins.eval n := by
++    rw [List.length_ofFn, encHandler_seedLen, PolyExpr.eval_add]
++  rw [encTape_eq, NUPPT.coinsEquivPoly_symm_ofFn]
++  cases β
++  · exact GGMRed.ofFn_padFin_of_length (by
++      rw [if_neg Bool.false_ne_true, List.length_drop, hω]; omega)
++  · exact GGMRed.ofFn_padFin_of_length (by rw [if_pos rfl, List.length_take, hω]; omega)
++
++/-- **Ciphertext `β` of the reduction's output**, for the public key `z`, the seed `ω` and the
++guess `g`: `padL ctLen(n) (Enc_z(b^{msgLen(n)}); encTape β)` with `b = g` for `β = true` and
++`b = ¬g` for `β = false`. -/
++def encCt (n : ℕ) (z : List Bool) (ω : Fin ((encHandler S).seedLen.eval n) → Bool) (g β : Bool) :
++    List Bool :=
++  EnsembleLemmas.padL (S.ctLen.eval n) (S.enc.runAt n
++    (pairEncode z (List.ofFn fun _ : Fin (S.msgLen.eval n) => if β then g else !g))
++    (encTape S n ω β))
++
++/-- `encCt S n z ω g β = padL ctLen(n) (Enc_z((if β then g else ¬g)^{msgLen(n)}); encTape β)`. -/
++theorem encCt_eq (n : ℕ) (z : List Bool) (ω : Fin ((encHandler S).seedLen.eval n) → Bool)
++    (g β : Bool) :
++    encCt S n z ω g β = EnsembleLemmas.padL (S.ctLen.eval n) (S.enc.runAt n
++      (pairEncode z (List.ofFn fun _ : Fin (S.msgLen.eval n) => if β then g else !g))
++      (encTape S n ω β)) :=
++  rfl
++
++/-- **The finalization outputs the two ciphertexts:** after the adversary's output `a` (guess
++`g = ⟦a⟧.headD false`), `H.finish n z ω s a = pure (padFin _ (encCt … g true ++ encCt … g false))`,
++asking nothing.
++
++**Proof sketch.** With budget `0` the first round returns (`buildComp_zero_of_ret`): its word is
++`⟨[true], c₁ ‖ c₂⟩` of the right length (`length_padL`, `decodeBitMove_ret`), and each `cᵢ` is
++`encCt` by the input readers, `NUPPT.Uniform.runAt_eq` and `ofFn_encTape`. -/
++theorem encHandler_finish (n : ℕ) (z : List Bool)
++    (ω : Fin ((encHandler S).seedLen.eval n) → Bool)
++    (s : Fin ((encHandler S).stateLen.eval n) → Bool) {d : ℕ} (a : Fin d → Bool) :
++    (encHandler S).finish n z ω s a =
++      .pure (padFin _ (encCt S n z ω ((List.ofFn a).headD false) true ++
++        encCt S n z ω ((List.ofFn a).headD false) false)) := by
++  have hfin : (encHandler S).finRun = eFin S := by
++    funext w
++    rw [encHandler, fwdHandler_finRun]
++  rw [InteractiveHandler.finish_eq, encHandler_finCall, PolyExpr.eval_const]
++  refine buildComp_zero_of_ret ?_
++  obtain ⟨hU, hZ, hW, hA, -⟩ := fields_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
++    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
++  have hCt : ∀ β, eCt S β (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s)
++      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++        0).encodeLog [])) = encCt S n z ω ((List.ofFn a).headD false) β := by
++    intro β
++    have hm : eMsg S β (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s)
++        (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++          0).encodeLog [])) =
++        List.ofFn fun _ : Fin (S.msgLen.eval n) =>
++          if β then (List.ofFn a).headD false else !(List.ofFn a).headD false := by
++      rw [List.ofFn_const, eMsg, eBit, hA, hU, List.length_replicate]
++      cases β <;> cases (List.ofFn a).headD false <;> rfl
++    rw [eCt, hm, hU, hZ, encCt_eq, NUPPT.Uniform.runAt_eq S.enc_uniform, NUPPT.advInput_eq,
++      ofFn_encTape, eTape, hW, hU, List.length_replicate]
++  have hw : List.ofFn (padFin ((encHandler S).outLen.eval n)
++      (encCt S n z ω ((List.ofFn a).headD false) true ++
++        encCt S n z ω ((List.ofFn a).headD false) false)) =
++      encCt S n z ω ((List.ofFn a).headD false) true ++
++        encCt S n z ω ((List.ofFn a).headD false) false :=
++    GGMRed.ofFn_padFin_of_length (by
++      rw [List.length_append, encCt_eq, encCt_eq, EnsembleLemmas.length_padL,
++        EnsembleLemmas.length_padL, encHandler_outLen, PolyExpr.eval_add])
++  show decodeBitMove _ _ _ ((encHandler S).finRun _) = _
++  rw [hfin, eFin, hCt, hCt]
++  exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
++    (decodeBitMove_ret _ _ _ _)
++
++/-! ### The distinguisher -/
++
++/-- **The distinguisher's verdict** on the concatenated decryptions `w = v₁ ‖ v₂`: the bit after
++the first validity flag if that flag is set, and the negated last bit of `w` otherwise. -/
++def guessBit (w : List Bool) : Bool :=
++  if w.headD false then (w.drop 1).headD false else !w.reverse.headD false
++
++/-- `guessBit w = if w.headD false then (w.drop 1).headD false else ¬ w.reverse.headD false`. -/
++theorem guessBit_eq (w : List Bool) :
++    guessBit w = if w.headD false then (w.drop 1).headD false else !w.reverse.headD false := rfl
++
++/-- The distinguisher's raw function on the machine input `⟨⟨⟨1^n, w⟩, α⟩, ρ⟩`. -/
++private def guessFun (x : List Bool) : List Bool :=
++  if (pairSndD (pairFstD (pairFstD x))).headD false then
++    [((pairSndD (pairFstD (pairFstD x))).drop 1).headD false]
++  else [!(pairSndD (pairFstD (pairFstD x))).reverse.headD false]
++
++/-- The distinguisher's raw function is polynomial-time. -/
++private theorem polyTimeComputable_guessFun : PolyTimeComputable guessFun := by
++  have hw : PolyTimeComputable fun x => pairSndD (pairFstD (pairFstD x)) :=
++    polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)
++  exact polyTimeComputable_ite (polyTimeComputable_headD.comp hw)
++    (polyTimeComputable_headD.comp (polyTimeComputable_tail.comp hw))
++    (polyTimeComputable_not
++      (polyTimeComputable_headD.comp (BinArith.polyTimeComputable_reverse.comp hw)))
++
++/-- **The distinguisher** of the reduction (⇐): the uniform machine without coins computing
++`[guessBit w]` on its argument `w`. -/
++noncomputable def guessDist : NUPPT :=
++  NUPPT.ofPolyTimeUniform polyTimeComputable_guessFun (.const 0)
++
++/-- The distinguisher accepts `w` exactly when `guessBit w`:
++`guessDist.distinguisherL n w ρ = guessBit w`. -/
++theorem guessDist_distinguisherL (n : ℕ) (w : List Bool) (ρ : guessDist.Coins n) :
++    guessDist.distinguisherL n w ρ = guessBit w := by
++  have hrun : ∀ y r, guessDist.runAtL n y r = guessFun (pairEncode (pairEncode
++      (NUPPT.advInput n y) []) r) := fun y r =>
++    NUPPT.runAtL_ofPolyTimeUniform polyTimeComputable_guessFun (.const 0) n y r
++  rw [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hrun, guessFun, NUPPT.advInput_eq,
++    pairFstD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode, guessBit_eq]
++  split <;> simp
++
++/-- **A valid first decryption gives the guess:** if `v₁` encodes the message `g^m` with `m > 0`,
++then `guessBit (v₁ ‖ v₂) = g`. -/
++theorem guessBit_valid {m : ℕ} (hm : 0 < m) (g : Bool) (v₂ : List Bool) :
++    guessBit (List.ofFn (FixedLengthScheme.decAnswer (some fun _ : Fin m => g)) ++ v₂) = g := by
++  obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
++  rw [FixedLengthScheme.decAnswer_some, guessBit_eq, List.ofFn_succ, List.ofFn_succ]
++  simp
++
++/-- **A refused first decryption is answered by the second:** if `v₁` is `⊥ = 0` and `v₂`
++encodes `(¬g)^m` with `m > 0`, then `guessBit (v₁ ‖ v₂) = g`. -/
++theorem guessBit_refused {m : ℕ} (hm : 0 < m) (g : Bool) :
++    guessBit (List.ofFn (zeroBits (m + 1)) ++
++      List.ofFn (FixedLengthScheme.decAnswer (some fun _ : Fin m => !g))) = g := by
++  obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
++  have h2 : List.ofFn (Fin.cons (α := fun _ => Bool) true (fun _ : Fin (m' + 1) => !g)) =
++      true :: (List.replicate m' (!g) ++ [!g]) := by
++    rw [List.ofFn_succ, Fin.cons_zero, ← List.replicate_succ', ← List.ofFn_const]
++    rfl
++  rw [FixedLengthScheme.decAnswer_some, h2, guessBit_eq, ofFn_zeroBits, List.replicate_succ]
++  simp
++
++/-! ### Empty messages -/
++
++/-- **With empty messages the two CCA2 oracles coincide:** if `msgLen(n) = 0`, then
++`S.indImpl atk false n pk sk = S.indImpl atk true n pk sk` (both halves of a challenge are the
++empty message).
++
++**Proof sketch.** Compare query by query through the published equations: decryption does not
++depend on the bit (`indImpl_dec_onSpec`), a repeated challenge repeats the record
++(`indImpl_challenge_repeat_onSpec`), and a first challenge encrypts a half of the query
++(`indImpl_challenge_none_onSpec`), whose string is `[]` either way. -/
++theorem indImpl_eq_of_msgLen_eq_zero (atk : Attack) (n : ℕ) (pk sk : List Bool)
++    (h : S.msgLen.eval n = 0) : S.indImpl atk false n pk sk = S.indImpl atk true n pk sk := by
++  have h0 : ∀ f : Fin (S.msgLen.eval n) → Bool, List.ofFn f = [] := fun f =>
++    List.eq_nil_of_length_eq_zero (by rw [List.length_ofFn, h])
++  funext i x s
++  match i with
++  | 0 => rw [S.indImpl_dec_onSpec, S.indImpl_dec_onSpec]
++  | 1 =>
++    cases s with
++    | some c => rw [S.indImpl_challenge_repeat_onSpec, S.indImpl_challenge_repeat_onSpec]
++    | none =>
++      rw [S.indImpl_challenge_none_onSpec, S.indImpl_challenge_none_onSpec]
++      simp only [h0]
++
++end TCSlib.Cryptography.Composability.NMCCA2
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean
+new file mode 100644
+index 000000000..f854ae60f
+--- /dev/null
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean
+@@ -0,0 +1,350 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Efficiency
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Forwarding handlers and log readers
++
++Both reductions of [PS10, Theorem 175.9] run the adversary once against the reduction's own
++oracles: every query is **forwarded** unchanged to the outer oracle of the same index, and only
++the finalization differs. This file builds that handler once, generically in the oracle lengths
++(`fwdHandler`), as a `Games.InteractiveHandler` with one outer call per inner query and an empty
++state, so that T2 (`Games.exists_interactiveHandlerMachine`) makes it a machine. Its answers are
++the outer oracle's (`fwdHandler_impl`), so simulating it is running the adversary against the
++outer oracles (`simulate_fwdHandler_impl`).
++
++It also provides the readers of a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩` (`finU`,
++`finZ`, `finW`, `finA`, `finL`) and of an encoded outer log: `logEmit G L` concatenates `G` of the
++successive suffixes of the nested log `L`, is polynomial-time for polynomial-time `G`
++(`polyTimeComputable_logEmit`), and on an encoded log is the concatenation of `G`'s values on the
++entries (`logEmit_encodeLog`).
++
++## Main definitions
++
++* `NMCCA2.fwdHandler`: the forwarding handler with a given finalization.
++* `NMCCA2.finU`, `finZ`, `finW`, `finA`, `finL`: the fields of a finalization input.
++* `NMCCA2.logEmit`: concatenated readings of the suffixes of an encoded log.
++
++## Main results
++
++* `NMCCA2.fwdHandler_impl`, `NMCCA2.simulate_fwdHandler_impl`: forwarding.
++* `NMCCA2.polyTimeComputable_logEmit`, `NMCCA2.logEmit_encodeLog`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.9 (book p. 175).
++-/
++
++namespace TCSlib.Cryptography.Composability.NMCCA2
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++
++variable {k : ℕ}
++
++/-! ### Readers of a round input -/
++
++/-- The state `s` of a round input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`. -/
++private def rState (w : List Bool) : List Bool := pairFstD (pairSndD w)
++/-- The oracle index `1^i` of a round input. -/
++private def rIdx (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
++/-- The query `x` of a round input. -/
++private def rQuery (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
++/-- The outer log `L` of the call so far. -/
++private def rLog (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
++/-- The outer answer `y` recorded in a one-entry log `⟨⟨1^j, ⟨x, y⟩⟩, []⟩`. -/
++private def rAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rLog w)))
++
++/-- The fields of a round input (DL-30–34 overlap: the round-input readers). -/
++private theorem fields_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
++    rState (InteractiveHandler.input n z ω s i x L) = s ∧
++      rIdx (InteractiveHandler.input n z ω s i x L) = List.replicate i true ∧
++      rQuery (InteractiveHandler.input n z ω s i x L) = x ∧
++      rLog (InteractiveHandler.input n z ω s i x L) = L := by
++  simp only [InteractiveHandler.input_eq, rState, rIdx, rQuery, rLog, pairFstD_pairEncode,
++    pairSndD_pairEncode, and_self]
++
++/-- **One forwarding round.** With an empty outer log, ask the outer oracle `i` the query `x`;
++with the outer answer `y` in the log, return `y` and keep the state. -/
++private def fwdRun (w : List Bool) : List Bool :=
++  if decide (rLog w = []) then pairEncode [false] (pairEncode (rIdx w) (rQuery w))
++  else pairEncode [true] (rAns w ++ rState w)
++
++/-- The forwarding round is polynomial-time. -/
++private theorem polyTimeComputable_fwdRun : PolyTimeComputable fwdRun := by
++  have hF := polyTimeComputable_pairFstD
++  have hD := polyTimeComputable_pairSndD
++  have hS : PolyTimeComputable rState := hF.comp hD
++  have hI : PolyTimeComputable rIdx := hF.comp (hF.comp (hD.comp hD))
++  have hX : PolyTimeComputable rQuery := hD.comp (hF.comp (hD.comp hD))
++  have hL : PolyTimeComputable rLog := hD.comp (hD.comp hD)
++  have hA : PolyTimeComputable rAns := hD.comp (hD.comp (hF.comp hL))
++  exact polyTimeComputable_ite (polyTimeComputable_isNil.comp hL)
++    ((polyTimeComputable_const [false]).pairEncode (hI.pairEncode hX))
++    ((polyTimeComputable_const [true]).pairEncode (hA.append hS))
++
++/-! ### The forwarding handler -/
++
++/-- **The forwarding handler** for `k` bit-string oracles with lengths `din`, `dout`, inner and
++outer alike: empty state, the seed of `seedLen(n)` bits, one outer call per inner query, which
++forwards the query to the outer oracle of the same index and returns its answer; the adversary's
++input `advIn`, and the finalization `finRun` with `outLen(n)`-bit output and at most `finCall(n)`
++outer queries. -/
++def fwdHandler (din dout : Fin k → PolyExpr) (seedLen : PolyExpr)
++    (advIn : List Bool → List Bool) (advIn_poly : PolyTimeComputable advIn)
++    (outLen finCall : PolyExpr) (finRun : List Bool → List Bool)
++    (finRun_poly : PolyTimeComputable finRun) : InteractiveHandler k din dout k din dout where
++  stateLen := .const 0
++  seedLen := seedLen
++  perCall := .const 1
++  init _ := zeroBits _
++  run := fwdRun
++  poly := polyTimeComputable_fwdRun
++  advIn := advIn
++  advIn_poly := advIn_poly
++  outLen := outLen
++  finCall := finCall
++  finRun := finRun
++  finRun_poly := finRun_poly
++
++attribute [simps (config := { isSimp := false }) stateLen seedLen perCall init advIn outLen finCall
++  finRun] fwdHandler
++
++section Forward
++
++variable (din dout : Fin k → PolyExpr) (seedLen : PolyExpr) (advIn : List Bool → List Bool)
++  (advIn_poly : PolyTimeComputable advIn) (outLen finCall : PolyExpr)
++  (finRun : List Bool → List Bool) (finRun_poly : PolyTimeComputable finRun)
++
++/-- **The forwarding handler forwards:** the inner query `x` to oracle `i` in state `s` is the
++outer query `x` to oracle `i`, answered with the outer answer `y` and the state kept:
++`H.impl n z ω i x s = query i x (fun y => pure (y, s))`.
++
++**Proof sketch.** The call's first round has an empty outer log, so it is the query
++`⟨[false], ⟨1^i, x⟩⟩` (`decodeBitMove_query`); its second round reads the answer `y` from the
++one-entry log and returns `y ‖ s` (`decodeBitMove_ret`), which `impl` splits back into `y` and
++`s` (`Fin.append_left`, `Fin.append_right`). -/
++theorem fwdHandler_impl (n : ℕ) (z : List Bool)
++    (ω : Fin ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
++      finRun_poly).seedLen.eval n) → Bool) (i : Fin k) (x : Fin ((din i).eval n) → Bool)
++    (s : Fin ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
++      finRun_poly).stateLen.eval n) → Bool) :
++    (fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun finRun_poly).impl n z ω
++        i x s = .query i x fun y => .pure (y, s) := by
++  rw [InteractiveHandler.impl_apply, InteractiveHandler.call_eq, fwdHandler_perCall,
++    PolyExpr.eval_const]
++  rw [buildComp_succ_of_query (i := i) (x := x) (by
++    show decodeBitMove _ _ _ (fwdRun _) = _
++    obtain ⟨-, hI, hX, hL⟩ := fields_input (k := k) n z (List.ofFn ω) (List.ofFn s) i
++      (List.ofFn x)
++      ((bitCodec (fun j => (din j).eval n) (fun j => (dout j).eval n) 0).encodeLog [])
++    rw [fwdRun, hI, hX, hL, MachineCodec.encodeLog_nil, if_pos (decide_eq_true rfl)]
++    exact decodeBitMove_query (fun j => (din j).eval n) (fun j => (dout j).eval n) _ i x),
++    OracleComp.query_bind]
++  congr 1
++  funext y
++  rw [buildComp_zero_of_ret (a := Fin.append y s) (by
++    show decodeBitMove _ _ _ (fwdRun _) = _
++    obtain ⟨hS, -, -, hL⟩ := fields_input (k := k) n z (List.ofFn ω) (List.ofFn s) i
++      (List.ofFn x)
++      ((bitCodec (fun j => (din j).eval n) (fun j => (dout j).eval n) 0).encodeLog
++        ([] ++ [⟨i, x, y⟩]))
++    have hlog : (bitCodec (fun j => (din j).eval n) (fun j => (dout j).eval n) 0).encodeLog
++        ([] ++ [⟨i, x, y⟩]) = pairEncode (pairEncode (List.replicate i true)
++          (pairEncode (List.ofFn x) (List.ofFn y))) [] := by
++      rw [List.nil_append, MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
++        bitCodec_encodeEntry]
++    have hA : rAns (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x)
++        ((bitCodec (fun j => (din j).eval n) (fun j => (dout j).eval n) 0).encodeLog
++          ([] ++ [⟨i, x, y⟩]))) = List.ofFn y := by
++      rw [rAns, hL, hlog, pairFstD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode]
++    rw [fwdRun, hA, hS, hL, hlog, if_neg (fun h => pairEncode_ne_nil _ _ (of_decide_eq_true h)),
++      ← List.ofFn_fin_append]
++    exact decodeBitMove_ret _ _ _ _)]
++  rw [OracleComp.pure_bind]
++  congr 2
++  · funext j
++    exact Fin.append_left y s j
++  · funext j
++    exact Fin.append_right y s j
++
++/-- **Simulating the forwarding handler is running the computation:** for every computation
++`c` against the oracles and every state `s`, `simulate (H.impl n z ω) c s = c.bind (fun a =>
++pure (a, s))`.
++
++**Proof sketch.** Induction on `c`, with `fwdHandler_impl` at each query. -/
++theorem simulate_fwdHandler_impl (n : ℕ) (z : List Bool)
++    (ω : Fin ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
++      finRun_poly).seedLen.eval n) → Bool) {α : Type}
++    (c : OracleComp (bitSpecAt din dout n) α)
++    (s : Fin ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
++      finRun_poly).stateLen.eval n) → Bool) :
++    simulate ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
++      finRun_poly).impl n z ω) c s = c.bind fun a => .pure (a, s) := by
++  induction c with
++  | pure a => rw [simulate_pure, OracleComp.pure_bind]
++  | query i x k ih =>
++    rw [simulate_query, fwdHandler_impl, OracleComp.query_bind, OracleComp.query_bind]
++    congr 1
++    funext y
++    rw [OracleComp.pure_bind]
++    exact ih y
++
++end Forward
++
++/-! ### Readers of a finalization input -/
++
++/-- The parameter `1^n` of a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`. -/
++def finU (w : List Bool) : List Bool := pairFstD (pairFstD w)
++
++/-- `finU w = pairFstD (pairFstD w)`. -/
++theorem finU_eq (w : List Bool) : finU w = pairFstD (pairFstD w) := rfl
++
++/-- The reduction input `z` of a finalization input. -/
++def finZ (w : List Bool) : List Bool := pairFstD (pairSndD (pairFstD w))
++
++/-- `finZ w = pairFstD (pairSndD (pairFstD w))`. -/
++theorem finZ_eq (w : List Bool) : finZ w = pairFstD (pairSndD (pairFstD w)) := rfl
++
++/-- The seed `ω` of a finalization input. -/
++def finW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
++
++/-- `finW w = pairSndD (pairSndD (pairFstD w))`. -/
++theorem finW_eq (w : List Bool) : finW w = pairSndD (pairSndD (pairFstD w)) := rfl
++
++/-- The adversary's output `a` of a finalization input. -/
++def finA (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD w))
++
++/-- `finA w = pairFstD (pairSndD (pairSndD w))`. -/
++theorem finA_eq (w : List Bool) : finA w = pairFstD (pairSndD (pairSndD w)) := rfl
++
++/-- The outer log `L` of the finalization so far. -/
++def finL (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
++
++/-- `finL w = pairSndD (pairSndD (pairSndD w))`. -/
++theorem finL_eq (w : List Bool) : finL w = pairSndD (pairSndD (pairSndD w)) := rfl
++
++/-- **The fields of a finalization input:** on `finInput n z ω s a L = ⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a,
++L⟩⟩⟩` the readers return `1^n`, `z`, `ω`, `a` and `L`. -/
++theorem fields_finInput (n : ℕ) (z ω s a L : List Bool) :
++    finU (InteractiveHandler.finInput n z ω s a L) = List.replicate n true ∧
++      finZ (InteractiveHandler.finInput n z ω s a L) = z ∧
++      finW (InteractiveHandler.finInput n z ω s a L) = ω ∧
++      finA (InteractiveHandler.finInput n z ω s a L) = a ∧
++      finL (InteractiveHandler.finInput n z ω s a L) = L := by
++  simp only [InteractiveHandler.finInput_eq, seedIn_eq, finU, finZ, finW, finA, finL,
++    pairFstD_pairEncode, pairSndD_pairEncode, and_self]
++
++/-- The finalization-input readers are polynomial-time: `PolyTimeComputable finU`, and the same
++for `finZ`, `finW`, `finA` and `finL`. -/
++theorem polyTimeComputable_finFields :
++    PolyTimeComputable finU ∧ PolyTimeComputable finZ ∧ PolyTimeComputable finW ∧
++      PolyTimeComputable finA ∧ PolyTimeComputable finL := by
++  have hF := polyTimeComputable_pairFstD
++  have hD := polyTimeComputable_pairSndD
++  exact ⟨hF.comp hF, hF.comp (hD.comp hF), hD.comp (hD.comp hF), hF.comp (hD.comp hD),
++    hD.comp (hD.comp hD)⟩
++
++/-! ### Readers of an encoded log -/
++
++/-- **Concatenated readings of an encoded log:** `G` applied to the successive suffixes
++`L, snd L, snd (snd L), …` of the nested log `L = ⟨e₁, ⟨e₂, ⟨…, []⟩⟩⟩`, for `|L| + 1` steps, and
++concatenated: `logEmit G L = (List.range (|L| + 1)).flatMap fun i => G (pairSndD^[i] L)`. -/
++def logEmit (G : List Bool → List Bool) (L : List Bool) : List Bool :=
++  (List.range (L.length + 1)).flatMap fun i => G (pairSndD^[i] L)
++
++/-- `logEmit G L = (List.range (|L| + 1)).flatMap fun i => G (pairSndD^[i] L)`. -/
++theorem logEmit_eq (G : List Bool → List Bool) (L : List Bool) :
++    logEmit G L = (List.range (L.length + 1)).flatMap fun i => G (pairSndD^[i] L) := rfl
++
++/-- The iterated second projection never lengthens a word. -/
++private theorem length_iterate_pairSndD_le (L : List Bool) (i : ℕ) :
++    (pairSndD^[i] L).length ≤ L.length := by
++  induction i with
++  | zero => exact le_rfl
++  | succ i ih =>
++    rw [Function.iterate_succ_apply']
++    exact (length_pairSndD_le _).trans ih
++
++/-- **The readings of an encoded log are polynomial-time** when `G` is
++(`Complexity.polyTimeComputable_iterateEmit` with the step `pairSndD`, which never lengthens a
++word, and `|L|` rounds). -/
++theorem polyTimeComputable_logEmit {G : List Bool → List Bool} (hG : PolyTimeComputable G) :
++    PolyTimeComputable (logEmit G) :=
++  (polyTimeComputable_iterateEmit polyTimeComputable_pairSndD hG .var .var
++    (fun x i _ => by rw [PolyExpr.eval_var]; exact length_iterate_pairSndD_le x i)).congr
++    fun L => by rw [PolyExpr.eval_var, logEmit_eq]
++
++section LogEmit
++
++variable {ι : Type} {spec : OracleSpec ι} {α : Type}
++
++/-- The second projection of an encoded log drops its first entry. -/
++private theorem iterate_pairSndD_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec)
++    (i : ℕ) : pairSndD^[i] (codec.encodeLog h) = codec.encodeLog (h.drop i) := by
++  induction i generalizing h with
++  | zero => rfl
++  | succ i ih =>
++    rw [Function.iterate_succ_apply]
++    cases h with
++    | nil =>
++      rw [MachineCodec.encodeLog_nil, pairSndD_of_pairDecode_eq_none pairDecode_nil,
++        ← MachineCodec.encodeLog_nil codec, ih, List.drop_nil, List.drop_nil]
++    | cons e t =>
++      rw [MachineCodec.encodeLog_cons, pairSndD_pairEncode, ih, List.drop_succ_cons]
++
++/-- Reading the suffixes of a log within at least its number of steps. -/
++private theorem flatMap_range_drop (codec : MachineCodec spec α) (G : List Bool → List Bool)
++    (g : (Σ i, spec.dom i × spec.rng i) → List Bool) (hnil : G [] = [])
++    (hcons : ∀ e t, G (pairEncode (codec.encodeEntry e) t) = g e) :
++    ∀ (h : QueryLog spec) (m : ℕ), h.length ≤ m →
++      ((List.range m).flatMap fun i => G (codec.encodeLog (h.drop i))) = h.flatMap g := by
++  intro h
++  induction h with
++  | nil =>
++    intro m _
++    rw [List.flatMap_nil]
++    refine List.flatMap_eq_nil_iff.2 fun i _ => ?_
++    rw [List.drop_nil, MachineCodec.encodeLog_nil, hnil]
++  | cons e t ih =>
++    intro m hm
++    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by rw [List.length_cons] at hm; omega⟩
++    rw [List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map, List.drop_zero,
++      MachineCodec.encodeLog_cons, hcons, List.flatMap_cons]
++    congr 1
++    simp only [List.drop_succ_cons]
++    exact ih m' (by rw [List.length_cons] at hm; omega)
++
++/-- An encoded log is at least as long as its number of entries. -/
++private theorem length_le_length_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec) :
++    h.length ≤ (codec.encodeLog h).length := by
++  induction h with
++  | nil => exact Nat.zero_le _
++  | cons e t ih =>
++    rw [MachineCodec.encodeLog_cons, length_pairEncode, List.length_cons]
++    omega
++
++/-- **The readings of an encoded log are the readings of its entries:** if `G [] = []` and `G`
++reads only the first entry of a nonempty log, `G ⟨⟦e⟧, t⟩ = g e`, then
++`logEmit G (codec.encodeLog h) = h.flatMap g`.
++
++**Proof sketch.** The `i`-th suffix of the encoded log encodes `h.drop i`; the first `|h|`
++readings are `g` of the entries and the rest are `G [] = []`, since `|h| ≤ |L|`. -/
++theorem logEmit_encodeLog (codec : MachineCodec spec α) (G : List Bool → List Bool)
++    (g : (Σ i, spec.dom i × spec.rng i) → List Bool) (hnil : G [] = [])
++    (hcons : ∀ e t, G (pairEncode (codec.encodeEntry e) t) = g e) (h : QueryLog spec) :
++    logEmit G (codec.encodeLog h) = h.flatMap g := by
++  rw [logEmit_eq]
++  simp only [iterate_pairSndD_encodeLog]
++  exact flatMap_range_drop codec G g hnil hcons h _
++    (Nat.le_succ_of_le (length_le_length_encodeLog codec h))
++
++end LogEmit
++
++end TCSlib.Cryptography.Composability.NMCCA2
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
+index 5cc1de3c8..a6bdf09b6 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
+@@ -581,6 +581,23 @@ theorem indImpl_dec_onSpec (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Boo
+       else .pure (zeroBits _, s) := by
+   simpa only [cast_eq] using S.indImpl_dec atk b n pk sk c s
+ 
++/-- The decryption oracle answers a validity bit followed by one message:
++`(S.indSpec n).rng 0 = (Fin (S.msgLen.eval n + 1) → Bool)`. -/
++theorem indSpec_decRng (n : ℕ) : (S.indSpec n).rng 0 = (Fin (S.msgLen.eval n + 1) → Bool) := by
++  rw [S.indSpec_rng, S.outLens_zero]
++
++/-- `indImpl_dec_onSpec` with the answer cast through `indSpec_decRng`: for `c' = cast _ c`,
++`S.indImpl atk b n pk sk 0 c s = if decOpen atk s.isSome && s ≠ some c' then
++pure (cast _ (decAnswer (decodeFin _ (Dec ⟨sk, c'⟩))), s) else pure (zeroBits _, s)`. -/
++theorem indImpl_dec_onSpec_cast (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
++    (c : (S.indSpec n).dom 0) (s : Option (Fin (S.ctLen.eval n) → Bool)) :
++    S.indImpl atk b n pk sk 0 c s =
++      if FixedLengthScheme.decOpen atk s.isSome && !decide (s = some (cast (S.indSpec_decDom n) c))
++      then .pure (cast (S.indSpec_decRng n).symm (FixedLengthScheme.decAnswer
++        (decodeFin _ (S.dec (pairEncode sk (List.ofFn (cast (S.indSpec_decDom n) c)))))), s)
++      else .pure (zeroBits _, s) := by
++  simpa only [cast_eq] using S.indImpl_dec_onSpec atk b n pk sk c s
++
+ /-- The challenge oracle returns a ciphertext at the scheme's encoded width. -/
+ theorem indSpec_challengeRng (n : ℕ) :
+     (S.indSpec n).rng 1 = (Fin (S.ctLen.eval n) → Bool) := by
