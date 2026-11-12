@@ -3,5 +3,5 @@ Round 2 repairs are on the branch: the campaign after #251 is merged in, with th
 approved InputLength and Fresh/Prepared seam proof-only patches. The 164-module
 merged-tree replay passed (55 inherited admissions, none in the owners). All 24
 whole-proof seals and 50 paired controls passed, with no new lint. The copy screen
-dispositions all 43 new pairs. The round 2 Codex pack is checked and awaits publication.
+dispositions all 43 new pairs. The round 2 Codex bundle is published and **Ready to dispatch** (prompt-r2.md).
 See pack-r2.md and resolutions-r2.md.
