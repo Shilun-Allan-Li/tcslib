@@ -88,7 +88,9 @@ theorem length_logEmit_cntRead (h : QueryLog (bitSpec din dout)) :
 answers, `h.flatMap fun e => ⟦e.2.2⟧`. -/
 theorem logEmit_ansRead (h : QueryLog (bitSpec din dout)) :
     logEmit ansRead ((bitCodec din dout dα).encodeLog h) = h.flatMap fun e => List.ofFn e.2.2 :=
-  logEmit_encodeLog _ ansRead _ rfl (fun e t => by
+  logEmit_encodeLog _ ansRead _ (by
+    rw [ansRead_eq, pairFstD_nil, pairSndD_of_pairDecode_eq_none pairDecode_nil,
+      pairSndD_of_pairDecode_eq_none pairDecode_nil]) (fun e t => by
     rw [ansRead_eq, pairFstD_pairEncode, bitCodec_encodeEntry, pairSndD_pairEncode,
       pairSndD_pairEncode]) h
 
@@ -123,7 +125,8 @@ private def dFin (w : List Bool) : List Bool :=
 /-- The finalization round is polynomial-time. -/
 private theorem polyTimeComputable_dFin : PolyTimeComputable (dFin S ℓ D) := by
   obtain ⟨hU, hZ, hW, hA, hL⟩ := polyTimeComputable_finFields
-  have hCnt : PolyTimeComputable dCnt := (polyTimeComputable_logEmit polyTimeComputable_cntRead).comp hL
+  have hCnt : PolyTimeComputable dCnt :=
+    (polyTimeComputable_logEmit polyTimeComputable_cntRead).comp hL
   have hAns : PolyTimeComputable fun w => logEmit ansRead (finL w) :=
     (polyTimeComputable_logEmit polyTimeComputable_ansRead).comp hL
   have hOff : PolyTimeComputable fun w =>
@@ -295,8 +298,8 @@ theorem simulate_decHandler_finish (n : ℕ) (z : List Bool)
             ((List.range (ℓ.eval n)).map fun i => List.ofFn (ans (decBlock S n a i) st)).flatten
             (pairSndD z) (List.ofFn ω)) = [true])] :=
         GGMRed.ofFn_padFin_of_length (by rw [List.length_singleton, hout])
-      rw [← hw]
-      exact decodeBitMove_ret _ _ _ _
+      exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
+        (decodeBitMove_ret _ _ _ _)
     | succ m ih =>
       intro j hj
       obtain ⟨hc, hU, -, hCt⟩ := hfields j _ rfl

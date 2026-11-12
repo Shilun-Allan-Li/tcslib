@@ -324,7 +324,7 @@ private theorem flatMap_range_drop (codec : MachineCodec spec α) (G : List Bool
 private theorem length_le_length_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec) :
     h.length ≤ (codec.encodeLog h).length := by
   induction h with
-  | nil => exact le_rfl
+  | nil => exact Nat.zero_le _
   | cons e t ih =>
     rw [MachineCodec.encodeLog_cons, length_pairEncode, List.length_cons]
     omega
