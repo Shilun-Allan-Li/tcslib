@@ -17,3 +17,15 @@ classifies 91 raw `MultiTapeTM.step` tokens in Hardness and EXP. At the head, 78
 all in declarations this PR does not change (machine-specific transitions, frame and
 simulation steps, and halted or live reads inside operational proofs). They keep their
 census dispositions. This round neither retires that family nor asks to retain it.
+
+## Round 2 result (2026-11-12)
+
+Codex returned **HOLD (0 blockers, 0 majors, 1 minor, 7 notes)**, recorded verbatim as
+`findings-r2.md` (SHA-256 `3eb556933eee0a8ae0ed7b974065e0ec20387fec17ea9d440d0f24335b7229ec`). Round 1's major 1 and minor 2 are resolved (notes 2 and 3).
+
+| Finding | Disposition |
+| --- | --- |
+| 1 · minor · copy-screen inputs incompletely packaged | **Fixed in records.** `r2-evidence/SCREEN-INPUTS-CARRIER-r2.json` holds all 33 population files at BASE `4fff1ea8` and HEAD `0f6f07eb` (66 captures; 39 unique blobs) and the scorer `scripts/copy-text-screen-v3.py` (SHA-256 `f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181`). `SCREEN-INPUTS-BINDING-r2.json` binds each capture to its Git blob, SHA-256 and byte count, and records the invocation; carrier SHA-256 `d97ce1d618ad72ad974aba12dba8e5e636ad99400c3a2f930a57ba53f2cc13af`. Each capture equals the export the screens ran on. The issued round 2 files are unchanged. No Lean change. |
+| 2–8 · notes | Accepted within their stated scopes. Note 2's limit stands: the 78 raw step tokens in 52 unchanged declarations are not cleared by this gate. |
+
+With 0 blockers and 0 majors and the minor fixed, **gate 121 is closed.**

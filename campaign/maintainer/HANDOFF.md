@@ -21,7 +21,7 @@ snapshot. See campaign/status/2026-11-09-merge-243-244/.
 | #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
 | #242 / 122 | **Not yet clear to merge.** The checked clock repair is pushed at `6fe6b56cc514ce3c3d6ee0fa9daa9783396ff249`. Shared gate121 reads and Call/Clean remain held. |
-| #241 / 121 | **Not yet clear to merge.** Round 2 at `0f6f07eba0c2d91dbb082287f6479cb0962dc377` (campaign after #251 merged in, InputLength and seam patches applied). 164-module replay, 24 seals and 50 controls passed. Codex round 2 **Ready to dispatch**: . |
+| #241 / 121 | **Clear to merge.** Gate 121 closed: round 2 0/0/1 (packaging minor fixed in records), 7 notes, at `0f6f07eba0c2d91dbb082287f6479cb0962dc377`. Replay on campaign Lean `4fff1ea8`; merges cleanly. Draft: mark ready, then merge. Then #242 refreshes against it. |
 | #252 / 130 | **Merged.** Gate closed and actual335 snapshot adopted before the Ladner merge. |
 | #249 / 128 | **Merged** as Ladner statement scaffold. Gate closed and current actual2 replay passed. |
 | #254 | **Merged** (2026-11-11, `2088f98e`), tooling only, no Lean diff. |

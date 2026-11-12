@@ -1,7 +1,6 @@
-**Not yet clear to merge: #241** at `0f6f07eba0c2d91dbb082287f6479cb0962dc377`.
-Round 2 repairs are on the branch: the campaign after #251 is merged in, with the
-approved InputLength and Fresh/Prepared seam proof-only patches. The 164-module
-merged-tree replay passed (55 inherited admissions, none in the owners). All 24
-whole-proof seals and 50 paired controls passed, with no new lint. The copy screen
-dispositions all 43 new pairs. The round 2 Codex bundle is published and **Ready to dispatch** (prompt-r2.md).
-See pack-r2.md and resolutions-r2.md.
+**Clear to merge: #241** at `0f6f07eba0c2d91dbb082287f6479cb0962dc377`.
+Gate 121 closed: round 2 returned 0 blockers, 0 majors, 1 minor (packaging), 7 notes
+(`findings-r2.md`). Round 1's major and minor are resolved. The minor is fixed in records
+(`r2-evidence/SCREEN-INPUTS-*-r2.json`). The 164-module merged-tree replay ran on current
+campaign Lean `4fff1ea8` and the head merges cleanly. The PR is a draft; mark it ready before merging.
+See findings-r2.md and resolutions-r2.md.
