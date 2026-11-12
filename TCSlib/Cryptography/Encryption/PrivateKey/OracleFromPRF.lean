@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleSecurity
 import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF
+import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Reduction
 import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
@@ -92,6 +93,371 @@ theorem prfFixedScheme_enc :
 theorem prfFixedScheme_dec :
     (prfFixedScheme F E hE hFE).dec = (prfScheme F E hE hFE).dec :=
   congrArg PrivateKeyScheme.dec (prfFixedScheme_toPrivateKeyScheme F E hE hFE)
+
+/-! ### Step 1: the game is the experiment with pad function `f_k` -/
+
+section PRFStep
+
+open PRFGame ChallengeSim ProbComp
+
+/-- **The key generator outputs its coins:** `Gen(1^n; rg) = ⟦rg⟧` (`runAt_coinKey`). -/
+private theorem prf_gen_runAt (n : ℕ) :
+    ∀ rg : (prfFixedScheme F E hE hFE).gen.Coins n,
+      (prfFixedScheme F E hE hFE).gen.runAt n [] rg = List.ofFn rg := by
+  rw [prfFixedScheme_gen, prfScheme_gen]
+  intro rg
+  exact runAt_coinKey .var n rg
+
+/-- Reading a vector at an equal width keeps its word. -/
+private theorem ofFn_arrowCongr_finCongr {a b : ℕ} (h : a = b) (v : Fin a → Bool) :
+    List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) v) = List.ofFn v := by
+  subst h
+  rfl
+
+/-- The key coins as an `n`-bit key, keeping the string. -/
+private noncomputable def prfKeyEq (n : ℕ) :
+    (prfFixedScheme F E hE hFE).gen.Coins n ≃ (Fin n → Bool) :=
+  (NUPPT.coinsCongr (by rw [prfFixedScheme_gen, prfScheme_gen]) n).trans
+    ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n).trans
+      (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool)))
+
+/-- `⟦prfKeyEq n rg⟧ = ⟦rg⟧`. -/
+private theorem ofFn_prfKeyEq (n : ℕ) (rg : (prfFixedScheme F E hE hFE).gen.Coins n) :
+    List.ofFn (prfKeyEq F E hE hFE n rg) = List.ofFn rg := by
+  rw [prfKeyEq, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
+    NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, NUPPT.coinsCongr_ofFn]
+
+/-- The encryption coins as an `n`-bit nonce, keeping the string. -/
+private noncomputable def prfNonceEq (n : ℕ) :
+    (prfFixedScheme F E hE hFE).enc.Coins n ≃ (Fin n → Bool) :=
+  (NUPPT.coinsCongr (by rw [prfFixedScheme_enc, prfScheme_enc]) n).trans
+    ((NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) .var n).trans
+      (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool)))
+
+/-- `⟦prfNonceEq n re⟧ = ⟦re⟧`. -/
+private theorem ofFn_prfNonceEq (n : ℕ) (re : (prfFixedScheme F E hE hFE).enc.Coins n) :
+    List.ofFn (prfNonceEq F E hE hFE n re) = List.ofFn re := by
+  rw [prfNonceEq, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
+    NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, NUPPT.coinsCongr_ofFn]
+
+/-- **Encryption with the key `k` and the coins `re`** is the ciphertext `⟨r, m ⊕ F_k(r)⟩` with the
+nonce `r = prfNonceEq re` (`runAt_prfEnc`, `hFE`). -/
+private theorem ofFn_prf_encryptAt (n : ℕ) (k m : Fin n → Bool)
+    (re : (prfFixedScheme F E hE hFE).enc.Coins n) :
+    List.ofFn ((prfFixedScheme F E hE hFE).encryptAt n (List.ofFn k) m re) =
+      ctOf (prfNonceEq F E hE hFE n re) (List.ofFn m)
+        (F n k (prfNonceEq F E hE hFE n re)) := by
+  have hx : List.ofFn re = List.ofFn (prfNonceEq F E hE hFE n re) :=
+    (ofFn_prfNonceEq F E hE hFE n re).symm
+  generalize prfNonceEq F E hE hFE n re = x at hx
+  revert re
+  simp only [FixedLengthScheme.encryptAt_eq, prfFixedScheme_ctLen]
+  rw [prfFixedScheme_enc, prfScheme_enc]
+  intro re hx
+  rw [runAt_prfEnc hE, hx, hFE, ctOf_eq]
+  apply GGMRed.ofFn_padFin_of_length
+  simp only [length_pairEncode, List.length_ofFn, List.length_zipWith, Nat.min_self,
+    PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+  omega
+
+/-- **Decryption with the key `k`**, for `n > 0`: on a well-formed `w = ⟨x, v⟩` the answer is
+`⟨1, v ⊕ F_k(x)⟩`, and otherwise `⊥` (`runAt_prfDec`, `decodeFin_runAt_prfDec_of_not_wf`). -/
+private theorem ofFn_prf_decAnswer (n : ℕ) (hn : 0 < n) (k : Fin n → Bool) (w : List Bool)
+    (rd : (prfFixedScheme F E hE hFE).dec.Coins n) :
+    List.ofFn (FixedLengthScheme.decAnswer (decodeFin n
+        ((prfFixedScheme F E hE hFE).dec.runAt n (pairEncode (List.ofFn k) w) rd))) =
+      if decWF n w then
+        true :: List.zipWith xor (pairSndD w) (List.ofFn (F n k (padFin n (pairFstD w))))
+      else List.replicate (n + 1) false := by
+  revert rd
+  rw [prfFixedScheme_dec, prfScheme_dec]
+  intro rd
+  by_cases hw : decWF n w = true
+  · rw [if_pos hw]
+    rw [decWF_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq] at hw
+    have hne : pairFstD w ≠ [] := by
+      intro h
+      have := hw.1
+      rw [h, List.length_nil] at this
+      omega
+    have hx : pairFstD w = List.ofFn (padFin n (pairFstD w)) :=
+      (GGMRed.ofFn_padFin_of_length hw.1).symm
+    have hv : List.zipWith xor (pairSndD w) (List.ofFn (F n k (padFin n (pairFstD w)))) =
+        List.ofFn (padFin n (List.zipWith xor (pairSndD w)
+          (List.ofFn (F n k (padFin n (pairFstD w)))))) :=
+      (GGMRed.ofFn_padFin_of_length (by
+        rw [List.length_zipWith, List.length_ofFn, hw.2, Nat.min_self])).symm
+    conv_lhs => rw [eq_pairEncode_of_pairFstD_ne hne]
+    rw [runAt_prfDec hE _ n _ _ _ hw.1 hw.2, hx, hFE, ← hx, hv, decodeFin_ofFn,
+      FixedLengthScheme.decAnswer_some, List.ofFn_succ, Fin.cons_zero]
+    simp only [Fin.cons_succ]
+  · rw [if_neg hw, decodeFin_runAt_prfDec_of_not_wf hE _ n _ w (by
+      rw [decWF_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq] at hw
+      exact hw), FixedLengthScheme.decAnswer_none, ofFn_zeroBits]
+
+/-- An all-`false` list reads as the all-`false` vector at every width. -/
+private theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) = zeroBits d := by
+  rw [← ofFn_zeroBits, AdaptiveCPA.padFin_ofFn_zeroBits]
+
+/-- The empty list reads as the all-`false` vector: `padFin d [] = zeroBits d`. -/
+private theorem padFin_nil (d : ℕ) : padFin d [] = zeroBits d := padFin_replicate_false d 0
+
+/-- Vectors with the same word are equal. -/
+private theorem eq_of_ofFn_eq {d : ℕ} {a c : Fin d → Bool} (h : List.ofFn a = List.ofFn c) :
+    a = c :=
+  List.ofFn_injective h
+
+/-- **One call of `IND_b` with the key `k` has the law of `fImpl` with `f = F_k`** (CPA or CCA1),
+for every function `g` of the answer and the new state, for a scheme `S` whose encryption with
+the key `k` is `ctOf` with the nonce `ν re` of a bijection `ν` (`henc`), whose decryption is
+`⟨1, v ⊕ F_k(x)⟩` on well-formed `⟨x, v⟩` and `⊥` otherwise (`hdec`), with `(3n + 2)`-bit
+ciphertexts.
+
+**Proof sketch.** By the oracle (the `_onSpec` readers). Encryption and the first challenge
+sample the coins of `Enc`, which are the nonce (`expect_sample_equiv ν`), and encrypt as `ctOf`;
+the selected half is `msgOf` (`ofFn_splitHalf_fst`, `_snd`). Decryption is open only before the
+challenge (CCA1) or never (CPA), so the refusal of the challenge is vacuous; its coins are unused
+(`expect_const`). A repeated challenge returns the record. -/
+private theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+    (k : Fin n → Bool) (hct : S.ctLen.eval n = 3 * n + 2) (ν : S.enc.Coins n ≃ (Fin n → Bool))
+    (henc : ∀ (m : Fin n → Bool) (re : S.enc.Coins n),
+      List.ofFn (S.encryptAt n (List.ofFn k) m re) = ctOf (ν re) (List.ofFn m) (F n k (ν re)))
+    (hdec : ∀ (w : List Bool) (rd : S.dec.Coins n),
+      List.ofFn (FixedLengthScheme.decAnswer (decodeFin n
+          (S.dec.runAt n (pairEncode (List.ofFn k) w) rd))) =
+        if decWF n w then
+          true :: List.zipWith xor (pairSndD w) (List.ofFn (F n k (padFin n (pairFstD w))))
+        else List.replicate (n + 1) false)
+    (i : Fin 3) (x : (S.indSpec n).dom i) (s : Option (Fin (S.ctLen.eval n) → Bool))
+    (g : (S.indSpec n).rng i × Option (Fin (S.ctLen.eval n) → Bool) → ℝ) :
+    expect (S.indImpl (atkOf atkBit) b n (List.ofFn k) i x s) g =
+      expect (fImpl (S.inLens n) (S.outLens n) (S.ctLen.eval n) n (atkOf atkBit) b (F n k) i x s)
+        g := by
+  have hlenCt : ∀ (r : Fin n → Bool) {m : List Bool}, m.length = n → ∀ y : Fin n → Bool,
+      (ctOf r m y).length = S.ctLen.eval n := fun r m hm y => by rw [length_ctOf r hm, hct]
+  match i, x with
+  | 0, m =>
+    rw [S.indImpl_enc_onSpec, fImpl_enc, expect_bind, expect_bind, ← expect_sample_equiv ν]
+    refine congrArg _ (funext fun re => ?_)
+    rw [expect_pure, expect_pure]
+    have hm : List.ofFn (cast (S.indSpec_encDom n) m) = List.ofFn m :=
+      AdaptiveCPA.ofFn_cast (S.inLens_zero n).symm _ m
+    have hm' : cast (S.indSpec_encDom n) m = padFin n (List.ofFn m) :=
+      eq_of_ofFn_eq (by rw [hm, GGMRed.ofFn_padFin_of_length (by
+        rw [List.length_ofFn, S.inLens_zero])])
+    congr 2
+    refine eq_of_ofFn_eq ?_
+    rw [AdaptiveCPA.ofFn_cast (S.outLens_zero n) _ _, hm', henc,
+      GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, S.inLens_zero]),
+      GGMRed.ofFn_padFin_of_length (by
+        rw [hlenCt _ (by rw [List.length_ofFn, S.inLens_zero]), S.outLens_zero])]
+  | 1, c =>
+    rw [S.indImpl_dec_onSpec, fImpl_dec, decOpen_atkOf]
+    have hc : List.ofFn (cast (S.indSpec_decDom n) c) = List.ofFn c :=
+      AdaptiveCPA.ofFn_cast (S.inLens_one n).symm _ c
+    by_cases hop : (atkBit && !s.isSome) = true
+    · have hs : s = none := by
+        cases s with
+        | none => rfl
+        | some _ => simp at hop
+      subst hs
+      rw [if_pos (by simpa using hop), expect_bind]
+      refine (congrArg _ (funext fun rd => ?_)).trans (expect_const _ _)
+      rw [expect_pure, expect_pure]
+      congr 2
+      refine eq_of_ofFn_eq ?_
+      rw [AdaptiveCPA.ofFn_cast (S.outLens_one n) _ _, hc, hdec, decAns_eq, hop, Bool.true_and]
+      by_cases hw : decWF n (List.ofFn c) = true
+      · rw [if_pos hw, if_pos hw]
+        rw [decWF_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq] at hw
+        rw [GGMRed.ofFn_padFin_of_length (by
+          rw [List.length_cons, List.length_zipWith, List.length_ofFn, hw.2, Nat.min_self,
+            S.outLens_one])]
+      · rw [if_neg hw, if_neg hw, padFin_nil, ofFn_zeroBits, S.outLens_one]
+    · rw [Bool.not_eq_true] at hop
+      rw [if_neg (by rw [hop, Bool.false_and]; exact Bool.false_ne_true), decAns_eq, hop,
+        Bool.false_and, if_neg Bool.false_ne_true, expect_pure, expect_pure, padFin_nil]
+  | 2, mm =>
+    have hmm : List.ofFn (cast (S.indSpec_challengeDom n) mm) = List.ofFn mm :=
+      AdaptiveCPA.ofFn_cast (S.inLens_two n).symm _ mm
+    have hmsg : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n := by
+      have : (List.ofFn mm).length = n + n := by rw [List.length_ofFn, S.inLens_two]
+      rw [AdaptiveCPA.msgOf_eq]
+      cases b <;> simp [this]
+    have hsel : (if b then (FixedLengthScheme.splitHalf
+        (cast (S.indSpec_challengeDom n) mm)).2 else (FixedLengthScheme.splitHalf
+        (cast (S.indSpec_challengeDom n) mm)).1) =
+        padFin n (AdaptiveCPA.msgOf n b (List.ofFn mm)) := by
+      refine eq_of_ofFn_eq ?_
+      rw [GGMRed.ofFn_padFin_of_length hmsg, AdaptiveCPA.msgOf_eq, ← hmm]
+      cases b
+      · exact AdaptiveCPA.ofFn_splitHalf_fst _
+      · exact AdaptiveCPA.ofFn_splitHalf_snd _
+    cases s with
+    | some c =>
+      rw [S.indImpl_challenge_repeat_onSpec, fImpl_challenge_some, expect_pure, expect_pure]
+      congr 2
+      refine eq_of_ofFn_eq ?_
+      rw [AdaptiveCPA.ofFn_cast (S.outLens_two n) _ _,
+        GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, S.outLens_two])]
+    | none =>
+      rw [S.indImpl_challenge_none_onSpec, fImpl_challenge_none, expect_bind, expect_bind,
+        ← expect_sample_equiv ν]
+      refine congrArg _ (funext fun re => ?_)
+      simp only [expect_pure]
+      have henc' : List.ofFn (S.encryptAt n (List.ofFn k) (if b then (FixedLengthScheme.splitHalf
+          (cast (S.indSpec_challengeDom n) mm)).2 else (FixedLengthScheme.splitHalf
+          (cast (S.indSpec_challengeDom n) mm)).1) re) =
+          ctOf (ν re) (AdaptiveCPA.msgOf n b (List.ofFn mm)) (F n k (ν re)) := by
+        rw [hsel, henc, GGMRed.ofFn_padFin_of_length hmsg]
+      congr 2
+      · refine eq_of_ofFn_eq ?_
+        rw [AdaptiveCPA.ofFn_cast (S.outLens_two n) _ _, henc',
+          GGMRed.ofFn_padFin_of_length (by rw [hlenCt _ hmsg, S.outLens_two])]
+      · congr 1
+        refine eq_of_ofFn_eq ?_
+        rw [henc', GGMRed.ofFn_padFin_of_length (hlenCt _ hmsg _)]
+
+/-- **The game's codec is the bit codec of its lengths:**
+`S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1` (the three codec readers and structure
+eta). -/
+private theorem prf_indCodec_eq (S : FixedLengthScheme) (n : ℕ) :
+    S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1 := by
+  have hd : (S.indCodec n).decodeMove = (bitCodec (S.inLens n) (S.outLens n) 1).decodeMove :=
+    funext fun w => (S.indCodec_decodeMove n w).trans (bitCodec_decodeMove _ _ _ w).symm
+  have he : (S.indCodec n).encodeEntry = (bitCodec (S.inLens n) (S.outLens n) 1).encodeEntry :=
+    funext fun e => (S.indCodec_encodeEntry n e).trans (bitCodec_encodeEntry _ _ _ e).symm
+  have ht : (S.indCodec n).timeout = (bitCodec (S.inLens n) (S.outLens n) 1).timeout :=
+    (S.indCodec_timeout n).trans (bitCodec_timeout _ _ _).symm
+  calc S.indCodec n = ⟨(S.indCodec n).decodeMove, (S.indCodec n).encodeEntry,
+        (S.indCodec n).timeout⟩ := rfl
+    _ = ⟨(bitCodec (S.inLens n) (S.outLens n) 1).decodeMove,
+        (bitCodec (S.inLens n) (S.outLens n) 1).encodeEntry,
+        (bitCodec (S.inLens n) (S.outLens n) 1).timeout⟩ := by rw [hd, he, ht]
+    _ = bitCodec (S.inLens n) (S.outLens n) 1 := rfl
+
+/-- The scheme's ciphertexts have `ctP(n) = 3n + 2` bits. -/
+private theorem prf_ctLen_eval (n : ℕ) :
+    (prfFixedScheme F E hE hFE).ctLen.eval n = ctP.eval n := by
+  rw [prfFixedScheme_ctLen, ctP_eval, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
+    PolyExpr.eval_const, PolyExpr.eval_var]
+
+/-- The scheme's query lengths are the reduction's: `inLens n = fun i => (pkDin i).eval n`. -/
+private theorem prf_inLens (n : ℕ) :
+    (prfFixedScheme F E hE hFE).inLens n = fun i => (pkDin i).eval n := by
+  funext i
+  match i with
+  | 0 => rw [FixedLengthScheme.inLens_zero, pkDin_zero, PolyExpr.eval_var]
+  | 1 => rw [FixedLengthScheme.inLens_one, pkDin_one, prf_ctLen_eval]
+  | 2 => rw [FixedLengthScheme.inLens_two, pkDin_two, PolyExpr.eval_add, PolyExpr.eval_var]
+
+/-- The scheme's answer lengths are the reduction's: `outLens n = fun i => (pkDout i).eval n`. -/
+private theorem prf_outLens (n : ℕ) :
+    (prfFixedScheme F E hE hFE).outLens n = fun i => (pkDout i).eval n := by
+  funext i
+  match i with
+  | 0 => rw [FixedLengthScheme.outLens_zero, pkDout_zero, prf_ctLen_eval]
+  | 1 =>
+    rw [FixedLengthScheme.outLens_one, pkDout_one, PolyExpr.eval_add, PolyExpr.eval_var,
+      PolyExpr.eval_const]
+  | 2 => rw [FixedLengthScheme.outLens_two, pkDout_two, prf_ctLen_eval]
+
+/-- **The game with pad function `f` along equal lengths:** for `ins = ins'`, `outs = outs'` and
+`d = d'`, the expected first output bit of `A`'s run against `fImpl` agrees.
+
+**Proof sketch.** Substitute the equalities. -/
+private theorem expect_fImpl_transport {ins ins' outs outs' : Fin 3 → ℕ} {d d' : ℕ}
+    (hi : ins = ins') (ho : outs = outs') (hd : d = d') (n : ℕ) (atk : Attack) (b : Bool)
+    (f : (Fin n → Bool) → (Fin n → Bool)) (A : NUPPT) (Q : ℕ) (r : A.Coins n) :
+    expect (simulate (fImpl ins outs d n atk b f) (A.toComp (bitCodec ins outs 1) n Q r) none)
+        (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) =
+      expect (simulate (fImpl ins' outs' d' n atk b f) (A.toComp (bitCodec ins' outs' 1) n Q r)
+        none) (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) := by
+  subst hi ho hd
+  rfl
+
+/-- **The IND experiment of the scheme is the experiment with pad function `F_k`** (step 1,
+`n > 0`, CPA or CCA1): `Pr[IND_b = 1] = 𝔼_k 𝔼_r Pr[A outputs 1 against fImpl … (F n k)]`, on the
+reduction's lengths.
+
+**Proof sketch.** The key generator outputs its uniform coins (`prf_gen_runAt`, `prfKeyEq`); for
+every key, the oracles of `IND_b` and `fImpl … (F n k)` have the same laws call by call
+(`expect_indImpl_fImpl`, from `ofFn_prf_encryptAt` and `ofFn_prf_decAnswer`), so the simulations
+agree (`PRFGame.expect_simulate_congr`); the game's codec and lengths are the reduction's
+(`prf_indCodec_eq`, `prf_inLens`, `prf_outLens`, `prf_ctLen_eval`). -/
+private theorem accept_prf_indGame (atkBit b : Bool) (A : NUPPT) (Q n : ℕ) (hn : 0 < n) :
+    accept ((prfFixedScheme F E hE hFE).indGame (atkOf atkBit) A Q b n) =
+      expect (ProbComp.sample (Fin n → Bool)) fun k =>
+        expect (ProbComp.sample (A.Coins n)) fun r =>
+          expect (simulate (fImpl (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+              (ctP.eval n) n (atkOf atkBit) b (F n k))
+              (A.toComp (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n Q r)
+              none)
+            (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) := by
+  have hct : (prfFixedScheme F E hE hFE).ctLen.eval n = 3 * n + 2 := by
+    rw [prf_ctLen_eval, ctP_eval]
+  rw [accept_eq, FixedLengthScheme.indGame_eq, prob_bind,
+    ← expect_sample_equiv (prfKeyEq F E hE hFE n)]
+  refine congrArg _ (funext fun rg => ?_)
+  have hk : (prfFixedScheme F E hE hFE).gen.runAt n [] rg =
+      List.ofFn (prfKeyEq F E hE hFE n rg) := by
+    rw [prf_gen_runAt, ofFn_prfKeyEq]
+  rw [hk, prob_bind]
+  refine congrArg _ (funext fun r => ?_)
+  rw [prob_bind]
+  have h1 : (fun res : (Fin 1 → Bool) × Option (Fin ((prfFixedScheme F E hE hFE).ctLen.eval n) →
+      Bool) => ProbComp.prob (.pure (res.1 0)) (· = true)) =
+      fun res => if (List.ofFn res.1).headD false = true then (1 : ℝ) else 0 := by
+    funext res
+    rw [prob_pure, AdaptiveCPA.headD_ofFn_one]
+  rw [h1, expect_simulate_congr _ _ (fun i x s g => expect_indImpl_fImpl F _ atkBit b n _ hct
+      (prfNonceEq F E hE hFE n) (fun m re => ofFn_prf_encryptAt F E hE hFE n _ m re)
+      (fun w rd => ofFn_prf_decAnswer F E hE hFE n hn _ w rd) i x s g),
+    prf_indCodec_eq]
+  exact expect_fImpl_transport (prf_inLens F E hE hFE n) (prf_outLens F E hE hFE n)
+    (prf_ctLen_eval F E hE hFE n) n _ b _ A Q r
+
+/-- **The reduction's PRF advantage is the gap between the experiments with `F_k` and with a
+random function** (step 1): for the machine `D` of `exists_prfReduction` and `n > 0`,
+`prfAdv (F n) D = |Pr[IND_b = 1] − 𝔼_R 𝔼_r Pr[A outputs 1 against fImpl … R]|`.
+
+**Proof sketch.** `prfAdv_def`, `distAdv_def`; each acceptance probability is an average over the
+key (resp. the function table) and `D`'s coins (`Bridge.acceptProb_eq`, `acceptGame_eq`,
+`oracleDist_apply`, `randomFunction_apply`), which `D`'s defining property turns into the
+experiment with that function; with the key it is the game (`accept_prf_indGame`). -/
+private theorem prfAdv_prfReduction (atkBit b : Bool) (A : NUPPT) (q : PolyExpr) (D : NUPPT)
+    (hD : ∀ (n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)),
+      expect (ProbComp.sample (D.Coins n))
+          (fun c => if (D.toOracleAdversary n n n ((qRed q).eval n) c).eval f = true
+            then (1 : ℝ) else 0) =
+        expect (ProbComp.sample (A.Coins n)) fun r =>
+          expect (simulate (fImpl (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+              (ctP.eval n) n (atkOf atkBit) b f)
+              (A.toComp (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n
+                (q.eval n) r) none)
+            (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0))
+    (n : ℕ) (hn : 0 < n) :
+    prfAdv (F n) (D.toOracleAdversary n n n ((qRed q).eval n)) =
+      |accept ((prfFixedScheme F E hE hFE).indGame (atkOf atkBit) A (q.eval n) b n) -
+        expect (ProbComp.sample ((Fin n → Bool) → (Fin n → Bool))) fun R =>
+          expect (ProbComp.sample (A.Coins n)) fun r =>
+            expect (simulate (fImpl (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+                (ctP.eval n) n (atkOf atkBit) b R)
+                (A.toComp (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n
+                  (q.eval n) r) none)
+              (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0)| := by
+  rw [prfAdv_def, distAdv_def, accept_prf_indGame F E hE hFE atkBit b A _ n hn,
+    Bridge.acceptProb_eq, Bridge.acceptProb_eq, accept_eq, accept_eq, Bridge.acceptGame_eq,
+    Bridge.acceptGame_eq, prob_bind, prob_bind]
+  congr 2
+  · refine congrArg _ (funext fun k => ?_)
+    simp only [prob_bind, prob_pure, oracleDist_apply]
+    exact hD n (F n k)
+  · refine congrArg _ (funext fun R => ?_)
+    simp only [prob_bind, prob_pure, oracleDist_apply, randomFunction_apply]
+    exact hD n R
+
+end PRFStep
 
 /-- **Theorem 168.2 (CPA)** [PS10]: if `F` is a pseudorandom function family, the §3.9 scheme is
 CPA-secure.
