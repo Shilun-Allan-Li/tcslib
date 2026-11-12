@@ -27,7 +27,8 @@ queries.
 * *The bad probability.* A query from a good state raises the flag with probability at most
   `(|T| + 1) / 2ⁿ` (`lazyImpl_step`; the first challenge's nonce hits one of the `|T|` points of
   the table, `prob_mem_le`, or an encryption's nonce hits `r*`), and adds at most one point to the
-  table (`lazyImpl_grow`). A potential argument sums these over `q` queries (`ProbComp.prob_bad_le`).
+  table (`lazyImpl_grow`). A potential argument sums these over `q` queries
+  (`ProbComp.prob_bad_le`).
 
 ## Main results
 

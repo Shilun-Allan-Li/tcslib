@@ -82,7 +82,7 @@ section XorPerm
 
 variable {n : ℕ}
 
-/-- Exclusive-or with a fixed vector `v`, as a permutation of `{0,1}ⁿ`. -/
+/-- Exclusive-or with a fixed vector `v`, as a permutation of `{0,1}ⁿ`: `xorPerm v y = y ⊕ v`. -/
 def xorPerm (v : Fin n → Bool) : Equiv.Perm (Fin n → Bool) :=
   Function.Involutive.toPerm (fun y i => xor (y i) (v i)) fun y => funext fun i => by
     simp

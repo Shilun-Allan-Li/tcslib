@@ -378,7 +378,7 @@ theorem expect_simulate_congr {ι : Type} {spec : OracleSpec ι} {σ α : Type}
 /-- **A bad event raised a little at each query:** if from a good state each query raises `bad`
 with probability at most `(sz s + 1) · δ` and grows the size `sz` by at most one, then from a good
 state `s` a computation making at most `m` queries ends in a bad state with probability at most
-`m · (sz s + m) · δ`.
+`m · (sz s + m) · δ`: `Pr[bad (simulate impl c s).2] ≤ m · (sz s + m) · δ`.
 
 **Proof sketch.** Induction on the computation. At a query, a bad successor contributes at most
 its probability; a good successor `s'` has `sz s' ≤ sz s + 1` and, by induction, contributes at
@@ -429,7 +429,8 @@ theorem prob_bad_le {ι : Type} {spec : OracleSpec ι} {σ : Type} {impl : Query
           linarith
 
 /-- **Hitting a list with a uniform sample:** a uniform element of `T` lies in a list `L` with
-probability at most `|L| / |T|` (`prob_mem_le` for a fixed list). -/
+probability at most `|L| / |T|`: `𝔼_{t ← T} [t ∈ L] ≤ |L| / |T|` (`prob_mem_le` for a fixed
+list). -/
 theorem expect_sample_mem_le {T : Type} [Fintype T] [Nonempty T] [DecidableEq T] (L : List T) :
     expect (sample T) (fun t => if t ∈ L then (1 : ℝ) else 0) ≤ L.length / Fintype.card T := by
   have h := prob_mem_le (OracleComp.pure L : ProbComp (List T)) (q := L.length)

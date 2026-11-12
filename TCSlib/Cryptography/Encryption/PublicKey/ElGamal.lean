@@ -1427,8 +1427,9 @@ the same coins (the exponents are the same samplers, `h^{(ab mod q)} = h^{ab}` s
 `NUPPT.distinguisherL_eq`, `he`, `dlc_challenge_eq`). The derived index `i` (`dlc_grp_runAt`) is
 valid and well formed, `⟨p, ⟨q, h⟩⟩` with `p`, `q` from `G`'s index (`wellFormedIndex_iff`,
 `safePrimeValid_iff`) and `h = egSquareGen p g = g² mod p` off the bad event, of order `q`
-(`egSquareGen_valid`). The padding of the tuple is lossless (`ofFn_padFin_of_length`, `length_ddhTuple`),
-so `D_b` reads `⟨i, X⟩`, `Y` and `Z` back. The exponent `ddhExpo n i u` has the value of the sampler
+(`egSquareGen_valid`). The padding of the tuple is lossless (`ofFn_padFin_of_length`,
+`length_ddhTuple`), so `D_b` reads `⟨i, X⟩`, `Y` and `Z` back. The exponent `ddhExpo n i u` has
+the value of the sampler
 `sampleBelowL q (Nat.size q) n n u` of `egGenParts`/`egEncParts` (`expOrd_of_valid`,
 `ZMod.val_natCast`, `sampleBelowL_lt`), `expF i z` is the numeral of `h^z mod p` (`expF_eq`,
 `WellFormedIndex.dlW_eq`), and `(h^x mod p)^y · c ≡ h^{xy mod q} · c (mod p)` since `h` has order

@@ -454,21 +454,23 @@ The fields of a round input `w = ⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x�
 field (`rU_input`, …), and each is polynomial-time (`polyTimeComputable_rU`, …). `rCnt` reads the
 first component of the state, the call count `1^j` of the handlers that keep one there. -/
 
-/-- The parameter `1^n` of a round input. -/
+/-- The parameter `1^n` of a round input: `rU w = pairFstD (pairFstD w)`. -/
 def rU (w : List Bool) : List Bool := pairFstD (pairFstD w)
-/-- The reduction input `z` of a round input. -/
+/-- The reduction input `z` of a round input: `rZ w = pairFstD (pairSndD (pairFstD w))`. -/
 def rZ (w : List Bool) : List Bool := pairFstD (pairSndD (pairFstD w))
-/-- The seed `ω` of a round input. -/
+/-- The seed `ω` of a round input: `rW w = pairSndD (pairSndD (pairFstD w))`. -/
 def rW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
-/-- The state `s` of a round input. -/
+/-- The state `s` of a round input: `rS w = pairFstD (pairSndD w)`. -/
 def rS (w : List Bool) : List Bool := pairFstD (pairSndD w)
-/-- The oracle index `1^i` of a round input. -/
+/-- The oracle index `1^i` of a round input:
+`rI w = pairFstD (pairFstD (pairSndD (pairSndD w)))`. -/
 def rI (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
-/-- The query `x` of a round input. -/
+/-- The query `x` of a round input: `rX w = pairSndD (pairFstD (pairSndD (pairSndD w)))`. -/
 def rX (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
-/-- The outer log `L` of a round input. -/
+/-- The outer log `L` of a round input: `rL w = pairSndD (pairSndD (pairSndD w))`. -/
 def rL (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
-/-- The first component `pairFstD s` of the state of a round input. -/
+/-- The first component `pairFstD s` of the state of a round input:
+`rCnt w = pairFstD (rS w)`. -/
 def rCnt (w : List Bool) : List Bool := pairFstD (rS w)
 
 /-- `rU (input n z ω s i x L) = 1^n`. -/
@@ -511,37 +513,37 @@ theorem rCnt_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) 
     rCnt (input n z ω s i x L) = pairFstD s := by
   rw [rCnt, rS_input]
 
-/-- `rU` is polynomial-time. -/
+/-- `rU` is polynomial-time: `PolyTimeComputable rU`. -/
 theorem polyTimeComputable_rU : PolyTimeComputable rU :=
   polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD
 
-/-- `rZ` is polynomial-time. -/
+/-- `rZ` is polynomial-time: `PolyTimeComputable rZ`. -/
 theorem polyTimeComputable_rZ : PolyTimeComputable rZ :=
   polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
 
-/-- `rW` is polynomial-time. -/
+/-- `rW` is polynomial-time: `PolyTimeComputable rW`. -/
 theorem polyTimeComputable_rW : PolyTimeComputable rW :=
   polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
 
-/-- `rS` is polynomial-time. -/
+/-- `rS` is polynomial-time: `PolyTimeComputable rS`. -/
 theorem polyTimeComputable_rS : PolyTimeComputable rS :=
   polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
 
-/-- `rI` is polynomial-time. -/
+/-- `rI` is polynomial-time: `PolyTimeComputable rI`. -/
 theorem polyTimeComputable_rI : PolyTimeComputable rI :=
   polyTimeComputable_pairFstD.comp (polyTimeComputable_pairFstD.comp
     (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
 
-/-- `rX` is polynomial-time. -/
+/-- `rX` is polynomial-time: `PolyTimeComputable rX`. -/
 theorem polyTimeComputable_rX : PolyTimeComputable rX :=
   polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp
     (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
 
-/-- `rL` is polynomial-time. -/
+/-- `rL` is polynomial-time: `PolyTimeComputable rL`. -/
 theorem polyTimeComputable_rL : PolyTimeComputable rL :=
   polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
-/-- `rCnt` is polynomial-time. -/
+/-- `rCnt` is polynomial-time: `PolyTimeComputable rCnt`. -/
 theorem polyTimeComputable_rCnt : PolyTimeComputable rCnt :=
   polyTimeComputable_pairFstD.comp polyTimeComputable_rS
 

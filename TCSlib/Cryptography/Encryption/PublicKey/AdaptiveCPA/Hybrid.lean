@@ -239,7 +239,8 @@ at the cap are answered alike. The `kst`-th fresh challenge samples coins on bot
 the order of the two samples (`expect_sample_comm`) and apply the induction hypothesis. Another
 fresh challenge, the `j`-th, reads `T j` on the left; the continuation runs from a history of
 length `j + 1`, so it ignores `T j` (`simulate_tapeImpl_congr`, `extTape_update`), and
-`ProbComp.expect_sample_coord` replaces `T j` by fresh coins; then apply the induction hypothesis. -/
+`ProbComp.expect_sample_coord` replaces `T j` by fresh coins; then apply the induction
+hypothesis. -/
 theorem expect_tapeImpl (κ : ℕ) (E : Bool → (Fin (ins 1) → Bool) → C → (Fin L → Bool))
     (sel : ℕ → Bool) (kst : ℕ) {α : Type} (G : α × List (Fin L → Bool) → ℝ)
     (c : OracleComp (bitSpec ins outs) α) (h : List (Fin L → Bool)) :
