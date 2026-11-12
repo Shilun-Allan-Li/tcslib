@@ -2,5 +2,5 @@
 The three round 4 majors and one minor have current repair dispositions.
 The 395-module merged-tree replay passed, with all 65 inherited admissions in
 byte-identical files. All 125 complete proof checks and
-78 paired controls passed. The round 5 Codex pack is checked and awaits publication.
+78 paired controls passed. The round 5 Codex bundle is published and **Ready to dispatch**.
 See pack-r5.md and resolutions-r5.md.
