@@ -1,13 +1,13 @@
-\chapter{Linear Codes and the Uniformity Lemma}
+\section{Linear Codes}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Overview}
+\subsection*{Linear Codes: Introduction}
 
 This chapter develops the theory of linear codes and a key probabilistic tool:
 for a uniformly random $n\times k$ generator matrix $G$ and any nonzero message
 $x\in\alpha^k$, the output $Gx$ is uniformly distributed over $\alpha^n$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Distance equals minimum weight in linear codes}
+\subsection{Distance equals minimum weight in linear codes}
 
 \begin{theorem}[Minimum distance equals minimum nonzero weight]
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code_dist_eq_min_weight}
@@ -27,7 +27,7 @@ all-zero codeword.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Uniform distributions and random matrices}
+\subsection{Uniform distributions and random matrices}
 
 \begin{definition}[Uniform distribution on vectors]
 \lean{ErrorCorrectingCodes.Codeword.uniform_vector_dist}
@@ -67,7 +67,7 @@ Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Uniformity lemma}
+\subsection{Uniformity lemma}
 
 \begin{theorem}[Random matrix images of a nonzero vector are uniform]
 \lean{ErrorCorrectingCodes.Codeword.uniformity_lemma}

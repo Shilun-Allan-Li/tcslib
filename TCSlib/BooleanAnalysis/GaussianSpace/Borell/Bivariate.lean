@@ -151,9 +151,9 @@ lemma measurePreserving_scalarGaussianRotation (θ : ℝ) :
       (standardGaussianMeasure.prod standardGaussianMeasure)
       (standardGaussianMeasure.prod standardGaussianMeasure) := by
   letI : IsGaussian standardGaussianMeasure := by
-    unfold standardGaussianMeasure
+    rw [standardGaussianMeasure_eq]
     infer_instance
-  exact ⟨by fun_prop, IsGaussian.map_rotation_eq_self (by simp [standardGaussianMeasure]) θ⟩
+  exact ⟨by fun_prop, IsGaussian.map_rotation_eq_self (by simp [standardGaussianMeasure_eq]) θ⟩
 
 /-- A valid scalar Gaussian endpoint has the standard Gaussian law.
 [OD14, Fact 11.7]
@@ -179,7 +179,7 @@ lemma gaussianBivariateStability_eq_threshold (ρ α β : ℝ)
       (standardGaussianMeasure.prod standardGaussianMeasure).real
         {z : ℝ × ℝ | z.1 ≤ standardGaussianQuantile α ∧
           ρ * z.1 + Real.sqrt (1 - ρ ^ 2) * z.2 ≤ standardGaussianQuantile β} := by
-  unfold gaussianBivariateStability
+  simp only [gaussianBivariateStability_eq]
   congr 1
   ext z
   simp only [Set.mem_setOf_eq]
@@ -203,8 +203,8 @@ at least one both cdf comparisons hold everywhere. -/
 lemma gaussianBivariateStability_diag (ρ α : ℝ) :
     gaussianBivariateStability ρ α α = gaussianHalfspaceStability ρ α := by
   by_cases h0 : α ≤ 0
-  · rw [gaussianHalfspaceStability, if_pos h0]
-    unfold gaussianBivariateStability
+  · rw [gaussianHalfspaceStability_eq, if_pos h0]
+    simp only [gaussianBivariateStability_eq]
     have hset : {z : ℝ × ℝ | standardGaussianCDF z.1 ≤ α ∧
         standardGaussianCDF (ρ * z.1 + Real.sqrt (1 - ρ ^ 2) * z.2) ≤ α} = ∅ := by
       apply Set.eq_empty_iff_forall_notMem.mpr
@@ -212,8 +212,8 @@ lemma gaussianBivariateStability_diag (ρ α : ℝ) :
       exact (not_le_of_gt (lt_of_le_of_lt h0 (standardGaussianCDF_pos z.1))) hz.1
     simp [hset]
   by_cases h1 : 1 ≤ α
-  · rw [gaussianHalfspaceStability, if_neg h0, if_pos h1]
-    unfold gaussianBivariateStability
+  · rw [gaussianHalfspaceStability_eq, if_neg h0, if_pos h1]
+    simp only [gaussianBivariateStability_eq]
     have hset : {z : ℝ × ℝ | standardGaussianCDF z.1 ≤ α ∧
         standardGaussianCDF (ρ * z.1 + Real.sqrt (1 - ρ ^ 2) * z.2) ≤ α} = Set.univ := by
       apply Set.eq_univ_of_forall
@@ -223,7 +223,7 @@ lemma gaussianBivariateStability_diag (ρ α : ℝ) :
     simp [hset]
   rw [gaussianBivariateStability_eq_threshold ρ α α
     ⟨lt_of_not_ge h0, lt_of_not_ge h1⟩ ⟨lt_of_not_ge h0, lt_of_not_ge h1⟩,
-    gaussianHalfspaceStability, if_neg h0, if_neg h1]
+    gaussianHalfspaceStability_eq, if_neg h0, if_neg h1]
   rfl
 
 /-- A two-threshold Gaussian probability is the Gaussian integral of its
@@ -284,7 +284,7 @@ lemma abs_gaussianBivariateStability_sub_right_le {ρ : ℝ}
     (hρ : ρ ∈ Set.Icc (-1 : ℝ) 1) (α β β' : ℝ)
     (hβ : β ∈ Set.Icc (0 : ℝ) 1) (hβ' : β' ∈ Set.Icc (0 : ℝ) 1) :
     |gaussianBivariateStability ρ α β - gaussianBivariateStability ρ α β'| ≤ |β - β'| := by
-  simpa only [gaussianBivariateStability, Set.setOf_and, Set.inter_comm] using
+  simpa only [gaussianBivariateStability_eq, Set.setOf_and, Set.inter_comm] using
     abs_measureReal_standardGaussianCDF_inter_sub_le (measurePreserving_scalarGaussianEndpoint hρ)
       {z : ℝ × ℝ | standardGaussianCDF z.1 ≤ α} β β' hβ hβ'
 
@@ -328,7 +328,7 @@ lemma gaussianBivariateStability_eq_conditional_integral (ρ α β : ℝ)
 [MN15, §1.2, boundary values of J] -/
 @[simp] lemma gaussianBivariateStability_zero_left (ρ β : ℝ) :
     gaussianBivariateStability ρ 0 β = 0 := by
-  unfold gaussianBivariateStability
+  simp only [gaussianBivariateStability_eq]
   have hs : {z : ℝ × ℝ | standardGaussianCDF z.1 ≤ 0 ∧
       standardGaussianCDF (ρ * z.1 + Real.sqrt (1 - ρ ^ 2) * z.2) ≤ β} = ∅ :=
     Set.eq_empty_iff_forall_notMem.mpr
@@ -339,7 +339,7 @@ lemma gaussianBivariateStability_eq_conditional_integral (ρ α β : ℝ)
 [MN15, §1.2, boundary values of J] -/
 @[simp] lemma gaussianBivariateStability_zero_right (ρ α : ℝ) :
     gaussianBivariateStability ρ α 0 = 0 := by
-  unfold gaussianBivariateStability
+  simp only [gaussianBivariateStability_eq]
   have hs : {z : ℝ × ℝ | standardGaussianCDF z.1 ≤ α ∧
       standardGaussianCDF (ρ * z.1 + Real.sqrt (1 - ρ ^ 2) * z.2) ≤ 0} = ∅ :=
     Set.eq_empty_iff_forall_notMem.mpr
@@ -351,7 +351,7 @@ correlation. [MN15, §1.2, boundary values of J] -/
 lemma gaussianBivariateStability_one_left {ρ : ℝ} (hρ : ρ ∈ Set.Icc (-1 : ℝ) 1)
     (β : ℝ) (hβ : β ∈ Set.Icc (0 : ℝ) 1) :
     gaussianBivariateStability ρ 1 β = β := by
-  unfold gaussianBivariateStability
+  simp only [gaussianBivariateStability_eq]
   have hs : {z : ℝ × ℝ | standardGaussianCDF z.1 ≤ 1 ∧
       standardGaussianCDF (ρ * z.1 + Real.sqrt (1 - ρ ^ 2) * z.2) ≤ β} =
       {z : ℝ × ℝ | standardGaussianCDF
@@ -367,7 +367,7 @@ lemma gaussianBivariateStability_one_left {ρ : ℝ} (hρ : ρ ∈ Set.Icc (-1 :
 [MN15, §1.2, boundary values of J] -/
 lemma gaussianBivariateStability_one_right (ρ α : ℝ) (hα : α ∈ Set.Icc (0 : ℝ) 1) :
     gaussianBivariateStability ρ α 1 = α := by
-  unfold gaussianBivariateStability
+  simp only [gaussianBivariateStability_eq]
   have hs : {z : ℝ × ℝ | standardGaussianCDF z.1 ≤ α ∧
       standardGaussianCDF (ρ * z.1 + Real.sqrt (1 - ρ ^ 2) * z.2) ≤ 1} =
       {z : ℝ × ℝ | standardGaussianCDF z.1 ≤ α} := by
@@ -456,7 +456,7 @@ lemma gaussianBivariateStability_symm {ρ : ℝ}
       measurable_const).inter
       (measurableSet_le (continuous_standardGaussianCDF.measurable.comp (by fun_prop))
         measurable_const)
-  unfold gaussianBivariateStability
+  simp only [gaussianBivariateStability_eq]
   calc
     _ = (standardGaussianMeasure.prod standardGaussianMeasure).real
         (R ⁻¹' {z : ℝ × ℝ | standardGaussianCDF z.1 ≤ β ∧

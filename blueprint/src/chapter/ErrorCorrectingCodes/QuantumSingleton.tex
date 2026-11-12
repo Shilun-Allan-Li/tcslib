@@ -1,7 +1,7 @@
-\chapter{Quantum Singleton Bound}
+\section{Quantum Singleton}
 \label{chap:quantum-singleton}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Overview}
+\subsection*{Quantum Singleton: Introduction}
 
 This chapter proves the \textbf{quantum Singleton bound}:
 for a stabilizer code with logical dimension $k$ and distance $d$
@@ -13,7 +13,7 @@ The proof uses the symplectic vector space $V = \mathbb{F}_p^n \times \mathbb{F}
 with the standard symplectic form, and the key idea of erasure correctability.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Symplectic vector space}
+\subsection{Symplectic vector space}
 
 \begin{definition}[Symplectic form]
 \lean{sym_form}
@@ -123,7 +123,7 @@ $\omega$ packaged as a \texttt{LinearMap.BilinForm}.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Support, weight, and isotropic subspaces}
+\subsection{Support, weight, and isotropic subspaces}
 
 \begin{definition}[Support and weight]
 \lean{supp}
@@ -227,7 +227,7 @@ for all $u,v \in S$.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Code parameters and erasure correctability}
+\subsection{Code parameters and erasure correctability}
 
 \begin{definition}[Quantum code distance]
 \lean{code_dist}
@@ -328,7 +328,7 @@ $k(S) = n - \dim(S)$.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Key lemma: two disjoint correctable sets}
+\subsection{Key lemma: two disjoint correctable sets}
 
 \begin{lemma}[Two disjoint correctable erasures bound the logical dimension]
 \lean{two_disjoint_correctable_sets_bound_logical_dimension}
@@ -367,7 +367,7 @@ route is a symplectic dimension count with no density matrices.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Quantum Singleton bound}
+\subsection{Quantum Singleton bound}
 
 \begin{theorem}[Quantum Singleton bound]
 \lean{quantum_singleton_bound}
@@ -412,7 +412,7 @@ the erasure/cleaning argument.
 \end{proof}
 
 %%% added by the blueprint pipeline
-\section{Additional declarations}
+\subsection*{Quantum Singleton: Further results}
 
 \begin{definition}[Prime field $\mathbb{F}_p$]
 \lean{F}

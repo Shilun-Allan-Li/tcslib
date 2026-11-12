@@ -1,13 +1,13 @@
-\chapter{Entropy and Asymptotic Bounds}
+\section{Entropy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Overview}
+\subsection*{Entropy: Introduction}
 
 This chapter develops the asymptotic relationship between Hamming ball sizes and the
 $q$-ary entropy function $H_q$, and provides the key binomial lower bound used in the
 Gilbert--Varshamov argument.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Asymptotic upper bound on ball size}
+\subsection{Asymptotic upper bound on ball size}
 
 \begin{theorem}[Entropy upper bound on Hamming balls]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_size_asymptotic_upper_bound}
@@ -31,7 +31,7 @@ ball of radius $\lfloor np\rfloor$ about $c$, namely $B_{\lfloor np\rfloor}(c) =
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Entropy algebra lemmas}
+\subsection{Entropy algebra lemmas}
 
 \begin{lemma}[Closed form for $q^{H_q(p)}$]
 \lean{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
@@ -60,7 +60,7 @@ q^{\,H_q(p)} \;=\; (q-1)^{p}\, p^{-p}\,(1-p)^{-(1-p)}.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Analytic helpers}
+\subsection{Analytic helpers}
 
 \begin{lemma}[Square root minus square root of floor is at most one]
 \lean{ErrorCorrectingCodes.Codeword.sqrt_sub_sqrt_floor_le_one}
@@ -75,7 +75,7 @@ where $\lfloor x \rfloor$ denotes the greatest integer not exceeding $x$.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Stirling-based binomial lower bound}
+\subsection{Stirling-based binomial lower bound}
 
 \begin{lemma}[Asymptotic lower bound on a weighted binomial coefficient]
 \lean{ErrorCorrectingCodes.Codeword.binomial_coef_asymptotic_lower_bound'}
@@ -93,7 +93,7 @@ the $q$-ary entropy function. Then there is a function $\varepsilon \colon \bbn 
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Positivity of $q$-ary entropy}
+\subsection{Positivity of $q$-ary entropy}
 
 \begin{theorem}[Positivity of the $q$-ary entropy]
 \lean{ErrorCorrectingCodes.Codeword.qary_entropy_pos}
@@ -110,7 +110,7 @@ H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p) \;>\; 0.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% added by the blueprint pipeline
-\section{Additional declarations}
+\subsection*{Entropy: Further results}
 
 \begin{lemma}[Rearrangement of the $q$-ary entropy expression]
 \lean{ErrorCorrectingCodes.Codeword.qary_entropy_logb_expand}

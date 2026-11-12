@@ -290,8 +290,20 @@ def build_work_unit(module: str, mdata: dict, kept_global: set[str],
         "target_tex": rel_tex,
         "target_exists": tex_path.exists(),
         "chapter_title": camel_split(module.split(".")[-1]),
+        **organization_metadata(rel_tex),
         "decls": decls,
     }
+
+
+def organization_metadata(target_tex: str) -> dict:
+    """Presentation metadata only; unmapped modules need an explicit editorial choice."""
+    from scripts.blueprint_structure import module_title
+    rel = Path(target_tex).relative_to("blueprint/src/chapter").as_posix()
+    path = BASE / "blueprint" / "organization.json"
+    data = json.loads(path.read_text())
+    owner = next((c['id'] for p in data['parts'] for c in p['chapters']
+                  if rel in c['modules']), None)
+    return {"section_title": module_title(rel), "organization_chapter": owner}
 
 
 def main():
@@ -344,6 +356,8 @@ def main():
                                args.include_covered, claimed)
         if unit is None:
             continue
+        if unit['organization_chapter'] is None and module.startswith('TCSlib.'):
+            print(f"  UNMAPPED: {unit['target_tex']} must be assigned in blueprint/organization.json before publication")
         safe = module.replace(".", "_")
         work_file = WORK_DIR / f"{safe}.json"
         work_file.write_text(json.dumps(unit, indent=2), encoding="utf-8")

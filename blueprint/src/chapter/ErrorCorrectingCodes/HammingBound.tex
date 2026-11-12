@@ -1,6 +1,6 @@
-\chapter{Hamming Bound}
+\section{Hamming Bound}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Overview}
+\subsection*{Hamming Bound: Introduction}
 
 This chapter establishes the \textbf{Hamming (sphere-packing) bound}: for a code $C$
 of block-length $n$ and minimum distance $d$ over a $q$-ary alphabet $\alpha$,
@@ -11,7 +11,7 @@ of block-length $n$ and minimum distance $d$ over a $q$-ary alphabet $\alpha$,
 where $\mathrm{Vol}(n,t) = \sum_{i=0}^{t}\binom{n}{i}(q-1)^i$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Volume formula}
+\subsection{Volume formula}
 
 \begin{theorem}[Cardinality of Hamming balls]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_size}
@@ -72,7 +72,7 @@ where $\abs{\alpha}$ is the number of symbols in the alphabet.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Disjointness of decoding balls}
+\subsection{Disjointness of decoding balls}
 
 \begin{lemma}[Disjointness of decoding balls around distinct codewords]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
@@ -153,7 +153,7 @@ $B_t(c_2)$ of radius $t$ centered at $c_1$ and $c_2$ are disjoint.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Hamming bound}
+\subsection{Hamming bound}
 
 \begin{theorem}[Hamming (sphere-packing) bound]
 \lean{ErrorCorrectingCodes.Codeword.hamming_bound}

@@ -440,4 +440,30 @@ lemma integral_abs_gaussianProjection {n : ℕ} (a : Fin n → ℝ) :
       _ = _ := by rw [← hi, integral_abs_standardGaussian]
 
 
+/-- The absolute conditional Gaussian crossing quotient converges to the endpoint
+Gaussian density times the absolute conditioning coordinate.
+[OD14, Prop. 11.49 (proof)] -/
+lemma gaussianCDF_rotation_quotient_tendsto (t y : ℝ) :
+    Tendsto (fun θ : ℝ =>
+      |standardGaussianCDF ((t - Real.sin θ * y) / Real.cos θ) - standardGaussianCDF t| / θ)
+      (𝓝[>] (0 : ℝ)) (𝓝 (standardGaussianPDF t * |y|)) :=
+  rotated_gaussianCDF_quotient_tendsto t y
+
+/-- For a positive angle below one, the conditional Gaussian crossing quotient
+is bounded by an integrable affine function of the absolute conditioning coordinate.
+[OD14, Prop. 11.49 (proof)] -/
+lemma gaussianCDF_rotation_quotient_le (t y θ : ℝ) (hθ : 0 < θ) (hθ1 : θ < 1) :
+    |standardGaussianCDF ((t - Real.sin θ * y) / Real.cos θ) - standardGaussianCDF t| / θ ≤
+      2 * standardGaussianPDF 0 * (|t| + |y|) := (by
+  exact rotated_gaussianCDF_quotient_le t y θ hθ hθ1
+)
+
+/-- The Gaussian measure of a symmetric difference of lower halflines is the
+absolute difference of their Gaussian distribution values.
+[OD14, Prop. 11.49 (proof)] -/
+lemma gaussianMeasure_symmDiff_Iic (a b : ℝ) :
+    standardGaussianMeasure.real (symmDiff (Set.Iic a) (Set.Iic b)) =
+      |standardGaussianCDF b - standardGaussianCDF a| :=
+  standardGaussianMeasure_symmDiff_Iic a b
+
 end BooleanAnalysis.GaussianSpace

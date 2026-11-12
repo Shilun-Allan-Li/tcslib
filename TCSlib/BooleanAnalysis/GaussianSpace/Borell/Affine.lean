@@ -61,8 +61,8 @@ theorem gaussianNoiseStability_affine {ρ : ℝ} (hρ : ρ ∈ Set.Icc (-1 : ℝ
       fun x => a * gaussianNoise ρ f x + b := by
     rw [gaussianNoise_add hρ (hi.const_mul a) (integrable_const b),
       gaussianNoise_const_mul]
-    simp [gaussianNoise]
-  unfold gaussianNoiseStability
+    simp [gaussianNoise_eq]
+  simp only [gaussianNoiseStability_eq]
   rw [hnoise]
   calc
     _ = ∫ x, a ^ 2 * (f x * gaussianNoise ρ f x) +

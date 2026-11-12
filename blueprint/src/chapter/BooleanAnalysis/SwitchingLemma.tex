@@ -1,6 +1,6 @@
-\chapter{Håstad's Switching Lemma}
+\section{Switching Lemma}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Overview}
+\subsection*{Switching Lemma: Introduction}
 
 This chapter formalises \textbf{Håstad's Switching Lemma} (1987) via Razborov's
 decision-tree path encoding. Informally:
@@ -17,7 +17,7 @@ after rearranging.  References: Håstad (1987); Razborov's simplified proof;
 O'Donnell, \emph{Analysis of Boolean Functions}, Ch.~4.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The formalised statement}
+\subsection{The formalised statement}
 
 \begin{theorem}[Håstad's switching lemma for bounded-width DNFs]
 \label{thm:switching_lemma}
@@ -927,7 +927,7 @@ Then the number $N$ of $s$-restrictions that are bad satisfies
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Faithfulness critique}\label{sec:faithfulness}
+\subsection{Faithfulness critique}\label{sec:faithfulness}
 
 The Lean statement is faithful to the classical lemma \emph{modulo} a handful
 of subtle modelling choices.  This section documents each one so a user of
@@ -935,7 +935,7 @@ of subtle modelling choices.  This section documents each one so a user of
 up for.
 
 %-----------------------------------------------------------------------------
-\subsection{How DNFs are modelled}
+\subsubsection{How DNFs are modelled}
 
 Recall (\texttt{Literal}, \texttt{Term}, \texttt{DNF} in
 \texttt{TCSlib/BooleanAnalysis/Circuit.lean}):
@@ -988,7 +988,7 @@ literal twice.  Two remarks:
 \end{enumerate}
 
 %-----------------------------------------------------------------------------
-\subsection{The restriction regime: $5s \le n$}
+\subsubsection{The restriction regime: $5s \le n$}
 \label{hyp:five_s_le_n}
 
 Classical Hastad is typically stated for any $s$, with the bound reading
@@ -1004,7 +1004,7 @@ $d>s$ branch (\texttt{bad\_filter\_empty\_of\_d\_ge\_s}).
 Required so that $\mathrm{Fin}\,n$ is inhabited.  Trivial.
 
 %-----------------------------------------------------------------------------
-\subsection{The $(10sw)^d$ constant vs.\ $(5sw)^d$}
+\subsubsection{The $(10sw)^d$ constant vs.\ $(5sw)^d$}
 
 Razborov's encoding yields $(5sw/n)^d$ in the sharpest accounting.  The
 formalised constant is $10sw$ rather than $5sw$.  The extra factor of two
@@ -1016,7 +1016,7 @@ was sidestepped for proof-engineering simplicity.  This is a loss of a
 constant factor, not an asymptotic one.
 
 %-----------------------------------------------------------------------------
-\subsection{Status}
+\subsubsection{Status}
 
 \begin{itemize}
   \item \texttt{SwitchingLemma.switching\_lemma} is stated and the outer
@@ -1031,7 +1031,7 @@ constant factor, not an asymptotic one.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Dependency graph}
+\subsection{Dependency graph}
 
 The proof is layered across seven Lean files.  Information flows downward:
 
@@ -1089,7 +1089,7 @@ each fibre by $(4w)^d$ (the aux-data count
 inequality \texttt{choose\_mul\_pow\_bound}, which is where $5s\le n$ is consumed.
 
 %-----------------------------------------------------------------------------
-\section{Corollary: no small CNF approximations}
+\subsection{Corollary: no small CNF approximations}
 
 \begin{theorem}[Switching corollary: restrictions with no narrow CNF]
 \label{thm:switching_corollary}

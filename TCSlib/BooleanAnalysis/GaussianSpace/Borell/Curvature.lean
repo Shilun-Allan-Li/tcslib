@@ -64,7 +64,7 @@ lemma gaussianBivariate_curvature_factor {ρ a b : ℝ}
   have hs : s ≠ 0 := (Real.sqrt_pos.mpr hv).ne'
   have hsym : c * U = d * V :=
     standardGaussianPDF_correlated_symmetry ρ s _ _ hs (Real.sq_sqrt hv.le)
-  simp only [gaussianBivariateSlope,
+  simp only [gaussianBivariateSlope_eq,
     (hasDerivAt_gaussianBivariateSlope_left ρ b ha).deriv,
     (hasDerivAt_gaussianBivariateSlope_right ρ a hb).deriv,
     (hasDerivAt_gaussianBivariateSlope_left ρ a hb).deriv]
@@ -78,7 +78,7 @@ lemma gaussianBivariate_curvature_factor {ρ a b : ℝ}
 /-- The totalized joint-density expression is nonnegative. -/
 lemma gaussianBivariateDensity_nonneg (ρ a b : ℝ) :
     0 ≤ gaussianBivariateDensity ρ a b := by
-  unfold gaussianBivariateDensity gaussianIsoperimetric
+  rw [gaussianBivariateDensity_eq, gaussianIsoperimetric_eq]
   exact div_nonneg
     (mul_nonneg (standardGaussianPDF_pos _).le (standardGaussianPDF_pos _).le)
     (Real.sqrt_nonneg _)
@@ -99,5 +99,32 @@ lemma gaussianBivariate_curvature_nonpos {ρ a b : ℝ}
   exact mul_nonpos_of_nonpos_of_nonneg
     (mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr hρ.1.le)
       (gaussianBivariateDensity_nonneg ρ a b)) (sq_nonneg _)
+
+/-- The mixed derivatives of the Gaussian profile agree when its two
+volumes are exchanged. [MN15, §2, equations (2.4)–(2.5)]
+
+**Proof sketch.** Substitute the conditional density formulas, use symmetry
+of the bivariate Gaussian density, and clear nonzero density denominators. -/
+
+lemma gaussianBivariateSlope_mixed_deriv_symm {ρ a b : ℝ}
+    (hρ : ρ ∈ Set.Ioo (-1 : ℝ) 1)
+    (ha : a ∈ Set.Ioo (0 : ℝ) 1) (hb : b ∈ Set.Ioo (0 : ℝ) 1) :
+    deriv (fun p => gaussianBivariateSlope ρ a p) b =
+      deriv (fun p => gaussianBivariateSlope ρ b p) a := by
+  have hsq : 0 < 1 - ρ ^ 2 := by nlinarith [hρ.1, hρ.2]
+  have hs : Real.sqrt (1 - ρ ^ 2) ≠ 0 := (Real.sqrt_pos.mpr hsq).ne'
+  have ha0 : gaussianIsoperimetric a ≠ 0 := (standardGaussianPDF_pos _).ne'
+  have hb0 : gaussianIsoperimetric b ≠ 0 := (standardGaussianPDF_pos _).ne'
+  have hid := standardGaussianPDF_correlated_symmetry ρ (Real.sqrt (1 - ρ ^ 2))
+    (standardGaussianQuantile a) (standardGaussianQuantile b) hs (Real.sq_sqrt hsq.le)
+  simp only [gaussianBivariateSlope_eq,
+    (hasDerivAt_gaussianBivariateSlope_right ρ a hb).deriv,
+    (hasDerivAt_gaussianBivariateSlope_right ρ b ha).deriv]
+  apply (div_eq_div_iff (mul_ne_zero hs hb0) (mul_ne_zero hs ha0)).mpr
+  change _ * (Real.sqrt (1 - ρ ^ 2) * gaussianIsoperimetric a) =
+    _ * (Real.sqrt (1 - ρ ^ 2) * gaussianIsoperimetric b)
+  simp only [gaussianIsoperimetric_eq]
+  nlinarith [congrArg (fun t : ℝ => Real.sqrt (1 - ρ ^ 2) * t) hid]
+
 
 end BooleanAnalysis.GaussianSpace
