@@ -1,0 +1,69 @@
+# preflight 2026-11-12T04:45:36Z (checkout /workspace/dlc, a git worktree of the local clone; own .lake)
+## nproc
+4
+## cgroup v1 memory.limit_in_bytes
+9223372036854771712
+## cgroup v1 memory.usage_in_bytes
+2277720064
+## cgroup v1 memory.stat
+cache 44945408
+rss 11313152
+rss_huge 0
+shmem 17125376
+mapped_file 31272960
+dirty 57344
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 17244
+pgpgout 3552
+pgfault 6522
+pgmajfault 35
+inactive_anon 13930496
+active_anon 4096
+inactive_file 22585344
+active_file 5238784
+unevictable 14512128
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 2259439616
+total_rss 18399232
+total_rss_huge 0
+total_shmem 17125376
+total_mapped_file 34856960
+total_dirty 1350643712
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 392826
+total_pgpgout 220907
+total_pgfault 269899
+total_pgmajfault 969
+total_inactive_anon 20213760
+total_active_anon 24576
+total_inactive_file 2087714816
+total_active_file 154603520
+total_unevictable 15175680
+## /proc/meminfo
+MemTotal:       16472084 kB
+MemFree:        14084512 kB
+MemAvailable:   16108636 kB
+Buffers:           30712 kB
+Cached:          2175596 kB
+## df -B1
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 25700474880 18171793408  59% /
+/dev/vda       270553174016 25700474880 18171793408  59% /
+## df -T
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 25098120  17745892  59% /
+/dev/vda       ext4 264212084 25098120  17745892  59% /
+## computation
+cgroup v1 limit 9223372036854771712 (no limit) -> headroom = MemAvailable = 16111620 kB = 15.37 GiB (floor 4 GiB)
+memory in use = usage - total_cache + total_shmem = 2286923776 - 2265395200 + 17125376 = 38653952 B
+disk free on /dev/vda = 18171793408 B = 16.92 GiB (floor 12 GiB)
+toolchain: Lean 4.25.0 already installed by elan on this host (~/.elan, earlier session work)

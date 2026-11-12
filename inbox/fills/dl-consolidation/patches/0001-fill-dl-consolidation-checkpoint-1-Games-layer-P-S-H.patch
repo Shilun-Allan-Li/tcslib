@@ -1,0 +1,1203 @@
+From 01b4f556b921c298749288e198cc9969816a9f83 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 12 Nov 2026 05:49:49 +0000
+Subject: [PATCH] fill dl-consolidation: checkpoint 1 (Games layer: P, S, H)
+
+Promote the generic probability, simulation and hopping lemmas of DL-30,
+DL-32, DL-33 and DL-34 to the Games layer and delete the copies:
+- Games/Probability (ProbComp): expect_sample_equiv, expect_sample_comm,
+  expect_sample_unique, expect_sub (from ChallengeSim); expect_sample_update
+  (BitwiseSim's general form) and expect_sample_coord (AdaptiveCPA's form,
+  derived from it); abs_expect_sub_le (from PRFGame).
+- Games/Simulate: simulate_eq_of_abs (AdaptiveCPA) and
+  simulate_eq_of_abs_bounded (PRFGame).
+- Games/Hopping (ProbComp): expect_simulate_congr, prob_bad_le,
+  expect_sample_mem_le (PRFGame).
+- Games/BitCodec: the castImpl family (castImpl, castImpl_eq, castImpl_self,
+  simulate_castImpl_toCompOn, expect_simulate_castImpl_toCompOn) from
+  AdaptiveCPA/Hybrid; BitCodec now imports Games.Probability (acyclic).
+- ChallengeSim: expect_simulate_eager moves here from BitwiseCPA/Eager, beside
+  chRun (no Games module can state it; escalation note in the report).
+ChallengeSim.expect_sample_prod stays (not a restatement of
+Bridge.expect_sample_pair). Uses re-pointed; sketches and module docstrings
+name the new homes.
+---
+ .../Encryption/PrivateKey/OracleFromPRF.lean  |   4 +-
+ .../PrivateKey/OracleFromPRF/Collision.lean   |  90 +-----------
+ .../PrivateKey/OracleFromPRF/Games.lean       |  28 +---
+ .../PrivateKey/OracleFromPRF/Lazy.lean        |  10 +-
+ .../PrivateKey/OracleFromPRF/Reduction.lean   |  32 +----
+ .../PublicKey/AdaptiveCPA/Hybrid.lean         | 134 +-----------------
+ .../Encryption/PublicKey/BitwiseCPA.lean      |   2 +-
+ .../PublicKey/BitwiseCPA/Eager.lean           |  85 +----------
+ .../OracleSecurity/ChallengeSim.lean          |  97 ++++++++-----
+ TCSlib/Cryptography/Games/BitCodec.lean       |  73 ++++++++++
+ TCSlib/Cryptography/Games/Hopping.lean        |  94 +++++++++++-
+ TCSlib/Cryptography/Games/Probability.lean    | 106 ++++++++++++++
+ TCSlib/Cryptography/Games/Simulate.lean       |  51 +++++++
+ 13 files changed, 403 insertions(+), 403 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+index 3f0c3fa58..9a7531327 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+@@ -240,7 +240,7 @@ reduction's lengths.
+ **Proof sketch.** The key generator outputs its uniform coins (`prf_gen_runAt`, `prfKeyEq`); for
+ every key, the oracles of `IND_b` and `fImpl … (F n k)` have the same laws call by call
+ (`expect_indImpl_fImpl`, from `ofFn_prf_encryptAt` and `ofFn_prf_decAnswer`), so the simulations
+-agree (`PRFGame.expect_simulate_congr`); the game's codec and lengths are the reduction's
++agree (`ProbComp.expect_simulate_congr`); the game's codec and lengths are the reduction's
+ (`indCodec_eq_bitCodec`, `prf_inLens`, `prf_outLens`, `prf_ctLen_eval`). -/
+ private theorem accept_prf_indGame (atkBit b : Bool) (A : NUPPT) (Q n : ℕ) (hn : 0 < n) :
+     accept ((prfFixedScheme F E hE hFE).indGame (atkOf atkBit) A Q b n) =
+@@ -404,7 +404,7 @@ challenge bit in its seed. Here there is one reduction per bit (the bit hard-wir
+ 2. *The random-function experiment* (`PRFGame.abs_expect_fImpl_sub_le`): sample `R` lazily
+    (`PRFGame.expect_lazyImpl`). The bad event is that the challenge's `r*` was already asked or
+    a later `Enc` uses it; a query raises it with probability at most `(q + 1) / 2ⁿ` (`prob_mem_le`),
+-   so it has probability at most `q(n)² / 2ⁿ` (`PRFGame.prob_bad_le`). Off the bad event,
++   so it has probability at most `q(n)² / 2ⁿ` (`ProbComp.prob_bad_le`). Off the bad event,
+    `m_b ⊕ R(r*)` is uniform for both `b` (identical until bad, `identical_until_bad`, with the pad
+    changed by `y ↦ y ⊕ m₀ ⊕ m₁`).
+ 3. *The bound* (`prf_advantage_le`, `prf_indSecure`): the triangle inequality gives the bound
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean
+index e942f42fd..ce2715628 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean
+@@ -26,12 +26,10 @@ queries.
+ * *The bad probability.* A query from a good state raises the flag with probability at most
+   `(|T| + 1) / 2ⁿ` (`lazyImpl_step`; the first challenge's nonce hits one of the `|T|` points of
+   the table, `prob_mem_le`, or an encryption's nonce hits `r*`), and adds at most one point to the
+-  table (`lazyImpl_grow`). A potential argument sums these over `q` queries (`prob_bad_le`).
++  table (`lazyImpl_grow`). A potential argument sums these over `q` queries (`ProbComp.prob_bad_le`).
+ 
+ ## Main results
+ 
+-* `PRFGame.prob_bad_le`: a bad event raised with probability at most `(size + 1) · δ` per query,
+-  by queries that grow the size by at most one, has probability at most `q · (size + q) · δ`.
+ * `PRFGame.lazyImpl_agree`, `lazyImpl_stick`, `lazyImpl_step`, `lazyImpl_grow`.
+ * `PRFGame.abs_prob_lazyImpl_sub_le`: the two bits' lazy experiments differ by at most `q² / 2ⁿ`.
+ * `PRFGame.abs_expect_fImpl_sub_le`: hence so do the experiments with a uniform random function.
+@@ -48,79 +46,8 @@ namespace TCSlib.Cryptography.Composability.PRFGame
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
+ 
+-/-! ### A potential bound on a bad event -/
+-
+-section Potential
+-
+-variable {ι : Type} {spec : OracleSpec ι} {σ : Type}
+-
+-/-- **A bad event raised a little at each query:** if from a good state each query raises `bad`
+-with probability at most `(sz s + 1) · δ` and grows the size `sz` by at most one, then from a good
+-state `s` a computation making at most `m` queries ends in a bad state with probability at most
+-`m · (sz s + m) · δ`.
+-
+-**Proof sketch.** Induction on the computation. At a query, a bad successor contributes at most
+-its probability; a good successor `s'` has `sz s' ≤ sz s + 1` and, by induction, contributes at
+-most `(m - 1) · (sz s + m) · δ`. Add `(sz s + 1) · δ ≤ (sz s + m) · δ`. -/
+-theorem prob_bad_le {impl : QueryImpl spec σ unifSpec} (bad : σ → Prop) [DecidablePred bad]
+-    (sz : σ → ℕ) {δ : ℝ} (hδ : 0 ≤ δ)
+-    (hstep : ∀ i x s, ¬ bad s → prob (impl i x s) (fun ys => bad ys.2) ≤ (sz s + 1) * δ)
+-    (hgrow : ∀ i x s, (impl i x s).AllOutputs fun ys => sz ys.2 ≤ sz s + 1)
+-    {α : Type} (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ)
+-    (hs : ¬ bad s) :
+-    prob (simulate impl c s) (fun r => bad r.2) ≤ m * (sz s + m) * δ := by
+-  induction c generalizing m s with
+-  | pure a =>
+-    rw [simulate_pure, prob_pure, if_neg hs]
+-    exact mul_nonneg (by positivity) hδ
+-  | query i x k ih =>
+-    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+-    have hm1 : 1 ≤ m := hm
+-    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
+-    have hk' : ∀ y, (k y).CostBoundedBy (fun _ => 1) m' := fun y => by
+-      simpa using hk y
+-    have hm0 : (0 : ℝ) ≤ m' := Nat.cast_nonneg m'
+-    set K : ℝ := m' * (sz s + (m' + 1)) * δ with hK
+-    have hK0 : 0 ≤ K := mul_nonneg (by positivity) hδ
+-    rw [simulate_query, prob_bind]
+-    calc expect (impl i x s) (fun ys => prob (simulate impl (k ys.1) ys.2) (fun r => bad r.2))
+-        ≤ expect (impl i x s) (fun ys => (if bad ys.2 then (1 : ℝ) else 0) + K) := by
+-          refine expect_mono_of_allOutputs (hgrow i x s) fun ys hys => ?_
+-          by_cases hb : bad ys.2
+-          · rw [if_pos hb]
+-            have h1 := prob_le_one (simulate impl (k ys.1) ys.2) (fun r => bad r.2)
+-            linarith
+-          · rw [if_neg hb, zero_add]
+-            refine (ih ys.1 m' (hk' ys.1) ys.2 hb).trans ?_
+-            have hys' : (sz ys.2 : ℝ) ≤ sz s + 1 := by exact_mod_cast hys
+-            exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (by linarith) hm0) hδ
+-      _ = prob (impl i x s) (fun ys => bad ys.2) + K := by
+-          rw [expect_add (impl i x s) (fun ys => if bad ys.2 then (1 : ℝ) else 0) (fun _ => K),
+-            expect_const, prob_eq_expect]
+-      _ ≤ ((m' + 1 : ℕ) : ℝ) * (sz s + ((m' + 1 : ℕ) : ℝ)) * δ := by
+-          have h3 := hstep i x s hs
+-          have h4 : ((sz s : ℝ) + 1) * δ ≤ (sz s + (m' + 1)) * δ :=
+-            mul_le_mul_of_nonneg_right (by linarith) hδ
+-          have e : ((m' : ℝ) + 1) * (sz s + (m' + 1)) * δ = K + (sz s + (m' + 1)) * δ := by
+-            rw [hK]; ring
+-          push_cast
+-          linarith
+-
+-end Potential
+-
+ /-! ### Hitting a list with a uniform sample -/
+ 
+-/-- A uniform element of `T` lies in a list `L` with probability at most `|L| / |T|`
+-(`prob_mem_le` for a fixed list). -/
+-theorem expect_sample_mem_le {T : Type} [Fintype T] [Nonempty T] [DecidableEq T] (L : List T) :
+-    expect (sample T) (fun t => if t ∈ L then (1 : ℝ) else 0) ≤ L.length / Fintype.card T := by
+-  have h := prob_mem_le (OracleComp.pure L : ProbComp (List T)) (q := L.length)
+-    (OracleComp.allOutputs_pure.2 le_rfl)
+-  rw [prob_bind, expect_pure, prob_bind] at h
+-  refine Eq.trans_le ?_ h
+-  refine congrArg _ (funext fun t => ?_)
+-  rw [prob_pure]
+-
+ /-- A key with a value in an association list is one of its keys:
+ `(T.lookup x).isSome → x ∈ T.map Prod.fst`. -/
+ theorem mem_keys_of_lookup_isSome {α β : Type} [DecidableEq α] (T : List (α × β)) (x : α)
+@@ -460,21 +387,6 @@ theorem abs_prob_lazyImpl_sub_le (hatk : FixedLengthScheme.decOpen atk true = fa
+   simp only [List.length_nil, Nat.cast_zero, zero_add]
+   ring
+ 
+-/-- Expectations of functions `ε`-close at every point are `ε`-close:
+-`(∀ x, |f x - g x| ≤ ε) → |𝔼_c f - 𝔼_c g| ≤ ε`. -/
+-theorem abs_expect_sub_le {ρ : Type} (c : ProbComp ρ) {f g : ρ → ℝ} {ε : ℝ}
+-    (h : ∀ x, |f x - g x| ≤ ε) : |expect c f - expect c g| ≤ ε := by
+-  have h1 : expect c f ≤ expect c g + ε :=
+-    calc expect c f ≤ expect c (fun x => g x + ε) :=
+-          expect_mono c fun x => by linarith [(abs_le.1 (h x)).2]
+-      _ = expect c g + ε := by rw [expect_add c g (fun _ => ε), expect_const]
+-  have h2 : expect c g ≤ expect c f + ε :=
+-    calc expect c g ≤ expect c (fun x => f x + ε) :=
+-          expect_mono c fun x => by linarith [(abs_le.1 (h x)).1]
+-      _ = expect c f + ε := by rw [expect_add c f (fun _ => ε), expect_const]
+-  rw [abs_le]
+-  constructor <;> linarith
+-
+ /-- **Step 2 of [PS10, Thm 168.2]: with a random function the bit is hidden up to `q² / 2ⁿ`.**
+ For CPA and CCA1, `d = 3n + 2`, `2n`-bit challenge queries and computations `C r` (over coins
+ `r`) making at most `q` queries, the experiments with a uniform random function for `b = 0` and
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean
+index e5dbe33ba..0f61c215e 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean
+@@ -26,7 +26,7 @@ functions; this file states the IND experiment's oracles with `f` an arbitrary f
+ 
+ Drawing `κ` tapes uniformly gives the distribution of `fImpl` for every computation with at most
+ `κ` queries (`expect_eImpl`); the proof resamples one tape at a time
+-(`AdaptiveCPA.expect_sample_update`), using that the run from the counter `j` ignores the tapes
++(`ProbComp.expect_sample_coord`), using that the run from the counter `j` ignores the tapes
+ below `j` (`simulate_eImpl_congr`).
+ 
+ ## Main definitions
+@@ -40,7 +40,6 @@ below `j` (`simulate_eImpl_congr`).
+ * `PRFGame.fImpl_enc`, `_dec`, `_challenge_none`, `_challenge_some` and the same for `eImpl`.
+ * `PRFGame.simulate_eImpl_congr`: the run from counter `j` ignores the tapes below `j`.
+ * `PRFGame.expect_eImpl`: tapes in advance have the distribution of fresh nonces.
+-* `PRFGame.expect_simulate_congr`: implementations with the same laws simulate alike.
+ 
+ ## References
+ 
+@@ -99,27 +98,6 @@ theorem decAns_eq (n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)) (op : Bo
+       else [] :=
+   rfl
+ 
+-/-! ### Simulation congruence -/
+-
+-/-- **Implementations with the same laws simulate alike:** if every call of `impl₀` and `impl₁`
+-has the same expectation of every function `g` of the answer and the new state, the simulations
+-of every computation have the same expectation of every function `G` of the output and the final
+-state: `𝔼[G] (simulate impl₀ c s) = 𝔼[G] (simulate impl₁ c s)`.
+-
+-**Proof sketch.** Induction on `c`; at a query, both sides are the expectation over the call of the
+-continuation's expectation (`simulate_query`, `expect_bind`), equal by induction and the
+-hypothesis. -/
+-theorem expect_simulate_congr {ι : Type} {spec : OracleSpec ι} {σ α : Type}
+-    (impl₀ impl₁ : QueryImpl spec σ unifSpec)
+-    (h : ∀ i x s (g : spec.rng i × σ → ℝ), expect (impl₀ i x s) g = expect (impl₁ i x s) g)
+-    (c : OracleComp spec α) (s : σ) (G : α × σ → ℝ) :
+-    expect (simulate impl₀ c s) G = expect (simulate impl₁ c s) G := by
+-  induction c generalizing s with
+-  | pure a => rw [simulate_pure, simulate_pure]
+-  | query i x k ih =>
+-    rw [simulate_query, simulate_query, expect_bind, expect_bind, h]
+-    exact congrArg _ (funext fun p => ih p.1 p.2)
+-
+ /-! ### The oracles with fresh nonces -/
+ 
+ section Oracles
+@@ -254,7 +232,7 @@ theorem simulate_eImpl_congr (T' : ℕ → Fin n → Bool) {α : Type}
+ **Proof sketch.** Induction on `c`, generalizing the counter, the state and the budget. A query
+ costs one unit, so a fresh nonce is read at a counter `j < κ`. There it reads `T j`, and the
+ continuation runs from `j + 1`, so it ignores `T j` (`simulate_eImpl_congr`, `extTape_update`);
+-`AdaptiveCPA.expect_sample_update` replaces `T j` by the fresh sample of `fImpl`. The other
++`ProbComp.expect_sample_coord` replaces `T j` by the fresh sample of `fImpl`. The other
+ queries are answered alike. -/
+ theorem expect_eImpl (κ : ℕ) {α : Type} (G : α → ℝ) (c : OracleComp (bitSpec ins outs) α)
+     (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (j : ℕ) (hj : j + m ≤ κ)
+@@ -291,7 +269,7 @@ theorem expect_eImpl (κ : ℕ) {α : Type} (G : α → ℝ) (c : OracleComp (bi
+       have hT : ∀ T : Fin κ → Fin n → Bool, AdaptiveCPA.extTape T j = T jj :=
+         fun T => AdaptiveCPA.extTape_of_lt T hjk
+       simp only [hT]
+-      refine (AdaptiveCPA.expect_sample_update jj (fun r T => expect (simulate
++      refine (ProbComp.expect_sample_coord jj (fun r T => expect (simulate
+         (eImpl ins outs d n atk b f (AdaptiveCPA.extTape T)) (k (ans r)) (j + 1, st r))
+           (fun p => G p.1)) ?_).trans ?_
+       · intro r r' T
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
+index 8e4278eed..e3182e061 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
+@@ -21,7 +21,7 @@ through that recomputation. A flag records the bad events of step 2: `r*` was al
+ table, or a later encryption uses `r*`.
+ 
+ Averaging the experiment with `R` over a uniform `R` gives the lazy experiment
+-(`expect_lazyImpl`): at a new point, resampling `R` there (`BitwiseSim.expect_sample_update`) is
++(`expect_lazyImpl`): at a new point, resampling `R` there (`ProbComp.expect_sample_update`) is
+ the lazy sample; the table and the record determine `R` elsewhere (`ovr`).
+ 
+ ## Main definitions
+@@ -352,7 +352,7 @@ queries, for every computation `c`, state `st` and function `G` of the output,
+ 
+ **Proof sketch.** Induction on `c`. At a point `x` with a recorded value both sides use it and the
+ recorded values do not change (`ovr_addPt_of_isSome`, `ovr_record_of_some`). At a new point,
+-resample `R` at `x` (`BitwiseSim.expect_sample_update`): `R(x)` becomes the lazy sample `y`, and
++resample `R` at `x` (`ProbComp.expect_sample_update`): `R(x)` becomes the lazy sample `y`, and
+ `R` resampled is the override of the new state (`ovr_addPt_of_none`, `ovr_record_of_none`);
+ exchange the samples (`expect_sample_comm`) and apply the induction hypothesis. Closed
+ decryptions and repeated challenges are answered alike. -/
+@@ -384,7 +384,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
+         exact (congrArg _ (funext fun R => by
+           rw [← ovr_addPt_of_isSome b st r y₀ (hitStar st r) hsome R]; rfl)).trans (ih _ _)
+       | none =>
+-        rw [← BitwiseSim.expect_sample_update r]
++        rw [← ProbComp.expect_sample_update r]
+         simp only [Option.getD_none]
+         have hU : ∀ R y, ovr b st (Function.update R r y) =
+             ovr b (addPt b st r y (hitStar st r)) R :=
+@@ -415,7 +415,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
+           exact (congrArg _ (funext fun R => by
+             rw [← ovr_addPt_of_isSome b st _ y₀ false hsome R]; rfl)).trans (ih _ _)
+         | none =>
+-          rw [← BitwiseSim.expect_sample_update (padFin n (pairFstD (List.ofFn c)))]
++          rw [← ProbComp.expect_sample_update (padFin n (pairFstD (List.ofFn c)))]
+           simp only [Option.getD_none]
+           have hU : ∀ R y, ovr b st (Function.update R (padFin n (pairFstD (List.ofFn c))) y) =
+               ovr b (addPt b st (padFin n (pairFstD (List.ofFn c))) y false) R :=
+@@ -466,7 +466,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
+                 hr R]; rfl)).trans
+             (ih _ _)
+         | none =>
+-          rw [← BitwiseSim.expect_sample_update r]
++          rw [← ProbComp.expect_sample_update r]
+           simp only [Option.getD_none, Option.isSome_none]
+           have hU : ∀ R y, ovr b ((T, none, bd) : LState n d) (Function.update R r y) =
+               ovr b ((T, some (List.ofFn mm, padFin d (ctOf r (AdaptiveCPA.msgOf n b
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean
+index 8a4c6987f..7f4403367 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean
+@@ -25,7 +25,7 @@ The proof answers the handler's outer queries by `f` (`fOuter`) and composes the
+ implementations (`QueryImpl.comp`). Each composed call, from the encoded state `pkState j o`, is
+ the call of `eImpl` from `(j, o)` with the handler's tapes in advance (`comp_pkAbs`), as long as
+ `j` is below the number `q(n)` of tapes; the adversary asks at most `q(n)` queries, so this holds
+-along every run (`simulate_eq_of_abs_bounded`). Drawing the seed uniformly then gives fresh
++along every run (`Games.simulate_eq_of_abs_bounded`). Drawing the seed uniformly then gives fresh
+ nonces (`PRFGame.expect_eImpl`).
+ 
+ ## Main definitions
+@@ -36,8 +36,6 @@ nonces (`PRFGame.expect_eImpl`).
+ 
+ ## Main results
+ 
+-* `PRFGame.simulate_eq_of_abs_bounded`: simulation through a state abstraction along runs with a
+-  query budget.
+ * `PRFGame.exists_prfReduction`: the reduction.
+ 
+ ## References
+@@ -50,34 +48,6 @@ namespace TCSlib.Cryptography.Composability.PRFGame
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
+ 
+-/-! ### Simulation through a state abstraction along bounded runs -/
+-
+-/-- **Simulation through a state abstraction, along runs with a query budget:** let every call of
+-`impl₂` from a state `s` with `cnt s < κ` be a deterministic answer `(y, s')` with
+-`cnt s' ≤ cnt s + 1`, and the call of `impl₁` from `f s` be `(y, f s')`. Then for a computation
+-`c` with at most `m` queries and `cnt s + m ≤ κ`,
+-`simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => pure (p.1, f p.2)`.
+-
+-**Proof sketch.** Induction on `c`. A query costs one unit, so it is asked from a state with
+-`cnt s < κ`; both calls return the same answer, and the continuation runs from `s'` with one unit
+-less, where `cnt s' + (m - 1) ≤ κ`. -/
+-theorem simulate_eq_of_abs_bounded {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+-    {σ₁ σ₂ α : Type} (impl₁ : QueryImpl spec σ₁ spec') (impl₂ : QueryImpl spec σ₂ spec')
+-    (f : σ₂ → σ₁) (cnt : σ₂ → ℕ) (κ : ℕ)
+-    (h : ∀ i x s, cnt s < κ → ∃ (y : spec.rng i) (s' : σ₂), impl₂ i x s = .pure (y, s') ∧
+-      cnt s' ≤ cnt s + 1 ∧ impl₁ i x (f s) = .pure (y, f s'))
+-    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ₂)
+-    (hs : cnt s + m ≤ κ) :
+-    simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => .pure (p.1, f p.2) := by
+-  induction c generalizing m s with
+-  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
+-  | query i x k ih =>
+-    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+-    have hm1 : 1 ≤ m := hm
+-    obtain ⟨y, s', h₂, hcnt, h₁⟩ := h i x s (by omega)
+-    rw [simulate_query, simulate_query, h₁, h₂, OracleComp.pure_bind, OracleComp.pure_bind]
+-    exact ih y (m - 1) (hk y) s' (by omega)
+-
+ /-! ### The outer oracle and the composed calls -/
+ 
+ /-- **The outer oracle answering with `f`:** a query `x` is answered `f x`, lengths adjusted. -/
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean
+index d6b068575..9757cd23e 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean
+@@ -24,25 +24,21 @@ answers all-`false`.
+ * `tapeImpl κ E sel T kst` answers the `j`-th fresh challenge with the coins `T j` given in
+   advance, except the `kst`-th, for which it samples coins. Drawing `T` uniformly gives the
+   distribution of `hybImpl` (`expect_tapeImpl`); the proof resamples one coordinate at a time
+-  (`expect_sample_update`), using that the run from a history of length `j + 1` ignores the
++  (`ProbComp.expect_sample_coord`), using that the run from a history of length `j + 1` ignores the
+   coins `T j` (`simulate_tapeImpl_congr`).
+ 
+-Two generic tools complete the file: `castImpl` transports an implementation along equal
+-length functions (`simulate_castImpl_toCompOn`), and `simulate_eq_of_abs` relates two
+-implementations through an abstraction of their states.
++The generic tools it uses live in the Games layer: `Games.castImpl` transports an implementation
++along equal length functions (`Games.simulate_castImpl_toCompOn`), and `Games.simulate_eq_of_abs`
++relates two implementations through an abstraction of their states.
+ 
+ ## Main definitions
+ 
+-* `AdaptiveCPA.castImpl`: an implementation read along equal length functions.
+ * `AdaptiveCPA.hybImpl`, `AdaptiveCPA.tapeImpl`: the hybrid challenge oracles.
+ * `AdaptiveCPA.extTape`: a finite family of coins, extended to every index.
+ 
+ ## Main results
+ 
+-* `AdaptiveCPA.simulate_castImpl_toCompOn`: transport of a machine's run between two codecs.
+-* `AdaptiveCPA.simulate_eq_of_abs`: simulation through a state abstraction.
+ * `AdaptiveCPA.hybImpl_congr`: only the selector's values below the cap matter.
+-* `AdaptiveCPA.expect_sample_update`: resampling one coordinate of a uniform tuple.
+ * `AdaptiveCPA.expect_tapeImpl`: coins given in advance have the lazy distribution.
+ 
+ ## References
+@@ -55,96 +51,6 @@ namespace TCSlib.Cryptography.Composability.AdaptiveCPA
+ 
+ open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
+ 
+-/-! ### Transport along equal lengths -/
+-
+-section Transport
+-
+-variable {k : ℕ} {σ : Type}
+-
+-/-- **An implementation read along length functions:** answer the query `x` to oracle `i` of
+-`bitSpec ins outs` by asking `O` the query `padFin (ins' i) ⟦x⟧` and reading its answer `y` as
+-`padFin (outs i) ⟦y⟧`. When `ins = ins'` and `outs = outs'` this is `O` itself
+-(`castImpl_self`). -/
+-def castImpl {ins ins' outs outs' : Fin k → ℕ} (O : QueryImpl (bitSpec ins' outs') σ unifSpec) :
+-    QueryImpl (bitSpec ins outs) σ unifSpec :=
+-  fun i x s => (O i (padFin (ins' i) (List.ofFn x)) s).bind fun p =>
+-    .pure (padFin (outs i) (List.ofFn p.1), p.2)
+-
+-/-- The defining equation of `castImpl`: `castImpl O i x s =
+-(O i (padFin (ins' i) ⟦x⟧) s).bind fun p => pure (padFin (outs i) ⟦p.1⟧, p.2)`. -/
+-theorem castImpl_eq {ins ins' outs outs' : Fin k → ℕ}
+-    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (i : Fin k) (x : Fin (ins i) → Bool)
+-    (s : σ) :
+-    castImpl (ins := ins) (outs := outs) O i x s =
+-      (O i (padFin (ins' i) (List.ofFn x)) s).bind fun p =>
+-        .pure (padFin (outs i) (List.ofFn p.1), p.2) :=
+-  rfl
+-
+-/-- Read along the same lengths, an implementation is unchanged: `castImpl O = O`. -/
+-theorem castImpl_self {ins outs : Fin k → ℕ} (O : QueryImpl (bitSpec ins outs) σ unifSpec) :
+-    castImpl (ins := ins) (outs := outs) O = O := by
+-  funext i x s
+-  rw [castImpl_eq, padFin_ofFn]
+-  simp only [padFin_ofFn]
+-  exact OracleComp.bind_pure _
+-
+-/-- **Transport of a machine's run:** if `ins = ins'`, `outs = outs'` and `d = d'`, simulating
+-`castImpl O` on the run of `M` through `bitCodec ins outs d` gives, with outputs read as lists,
+-the simulation of `O` on the run of `M` through `bitCodec ins' outs' d'`.
+-
+-**Proof sketch.** Substitute the equalities; then `castImpl O = O` (`castImpl_self`). -/
+-theorem simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
+-    (hi : ins = ins') (ho : outs = outs') (hd : d = d')
+-    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (M : NUPPT) (n q : ℕ) (x : List Bool)
+-    (r : M.Coins n) (s : σ) :
+-    (simulate (castImpl (ins := ins) (outs := outs) O)
+-        (M.toCompOn (bitCodec ins outs d) n q x r) s).bind
+-        (fun p => .pure (List.ofFn p.1, p.2)) =
+-      (simulate O (M.toCompOn (bitCodec ins' outs' d') n q x r) s).bind
+-        (fun p => .pure (List.ofFn p.1, p.2)) := by
+-  subst hi ho hd
+-  rw [castImpl_self]
+-
+-/-- **Transport of a machine's run, in expectation:** for every function `G` of the output (read
+-as a list) and the final state, `simulate_castImpl_toCompOn` in the form
+-`𝔼[G (⟦p.1⟧, p.2)]` over the two simulations. -/
+-theorem expect_simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
+-    (hi : ins = ins') (ho : outs = outs') (hd : d = d')
+-    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (M : NUPPT) (n q : ℕ) (x : List Bool)
+-    (r : M.Coins n) (s : σ) (G : List Bool × σ → ℝ) :
+-    expect (simulate (castImpl (ins := ins) (outs := outs) O)
+-        (M.toCompOn (bitCodec ins outs d) n q x r) s) (fun p => G (List.ofFn p.1, p.2)) =
+-      expect (simulate O (M.toCompOn (bitCodec ins' outs' d') n q x r) s)
+-        (fun p => G (List.ofFn p.1, p.2)) := by
+-  have h := congrArg (fun c => expect c G) (simulate_castImpl_toCompOn hi ho hd O M n q x r s)
+-  simp only [expect_bind, expect_pure] at h
+-  exact h
+-
+-end Transport
+-
+-/-! ### Simulation through a state abstraction -/
+-
+-/-- **Simulation through an abstraction of the state:** if every call of `impl₁` from the
+-abstract state `f s` is the call of `impl₂` from `s` with its new state abstracted, the same holds
+-for whole simulations: `simulate impl₁ c (f s) =
+-(simulate impl₂ c s).bind fun p => pure (p.1, f p.2)`.
+-
+-**Proof sketch.** Induction on `c`; at a query, rewrite the call by the hypothesis and use the
+-induction hypothesis on each continuation after associativity. -/
+-theorem simulate_eq_of_abs {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+-    {σ₁ σ₂ α : Type} (impl₁ : QueryImpl spec σ₁ spec') (impl₂ : QueryImpl spec σ₂ spec')
+-    (f : σ₂ → σ₁) (h : ∀ i x s, impl₁ i x (f s) = (impl₂ i x s).bind fun p => .pure (p.1, f p.2))
+-    (c : OracleComp spec α) (s : σ₂) :
+-    simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => .pure (p.1, f p.2) := by
+-  induction c generalizing s with
+-  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
+-  | query i x k ih =>
+-    rw [simulate_query, simulate_query, h, OracleComp.bind_assoc, OracleComp.bind_assoc]
+-    congr 1
+-    funext p
+-    rw [OracleComp.pure_bind]
+-    exact ih p.1 p.2
+-
+ /-! ### The hybrid oracles -/
+ 
+ section Hybrid
+@@ -321,34 +227,6 @@ theorem extTape_update {κ : ℕ} (T : Fin κ → C) (j : Fin κ) (r : C) {m : 
+ 
+ variable [Fintype C]
+ 
+-/-- **Resampling one coordinate of a uniform tuple:** if `F r T` ignores the coordinate `j` of
+-`T`, then `𝔼_T F (T j) T = 𝔼_r 𝔼_T F r T`.
+-
+-**Proof sketch.** The map `(T, r) ↦ (T[j ↦ r], T j)` is an involution of `(Fin κ → C) × C`, so
+-it preserves the uniform average (`expect_sample_equiv`). It carries `F (T j) T` to
+-`F r (T[j ↦ r]) = F r T`. Split the products (`expect_sample_prod`), drop the unused sample
+-(`expect_const`) and exchange the order (`expect_sample_comm`). -/
+-theorem expect_sample_update {κ : ℕ} (j : Fin κ) (F : C → (Fin κ → C) → ℝ)
+-    (hF : ∀ r r' T, F r (Function.update T j r') = F r T) :
+-    expect (sample (Fin κ → C)) (fun T => F (T j) T) =
+-      expect (sample C) fun r => expect (sample (Fin κ → C)) fun T => F r T := by
+-  let e : (Fin κ → C) × C ≃ (Fin κ → C) × C :=
+-    { toFun := fun p => (Function.update p.1 j p.2, p.1 j)
+-      invFun := fun p => (Function.update p.1 j p.2, p.1 j)
+-      left_inv := fun p => by
+-        simp only [Function.update_self, Function.update_idem, Function.update_eq_self]
+-      right_inv := fun p => by
+-        simp only [Function.update_self, Function.update_idem, Function.update_eq_self] }
+-  have he := expect_sample_equiv e (fun p => F (p.1 j) p.1)
+-  have hl : (fun p : (Fin κ → C) × C => F ((e p).1 j) (e p).1) = fun p => F p.2 p.1 := by
+-    funext p
+-    show F ((Function.update p.1 j p.2) j) (Function.update p.1 j p.2) = F p.2 p.1
+-    rw [Function.update_self, hF]
+-  rw [hl, expect_sample_prod, expect_sample_prod] at he
+-  rw [← expect_sample_comm, he]
+-  refine congrArg _ (funext fun T => ?_)
+-  exact (expect_const _ _).symm
+-
+ variable {ins outs : Fin 2 → ℕ} {L : ℕ}
+ 
+ /-- **Coins in advance have the lazy distribution:** for every `kst` and every function `G` of
+@@ -361,7 +239,7 @@ at the cap are answered alike. The `kst`-th fresh challenge samples coins on bot
+ the order of the two samples (`expect_sample_comm`) and apply the induction hypothesis. Another
+ fresh challenge, the `j`-th, reads `T j` on the left; the continuation runs from a history of
+ length `j + 1`, so it ignores `T j` (`simulate_tapeImpl_congr`, `extTape_update`), and
+-`expect_sample_update` replaces `T j` by fresh coins; then apply the induction hypothesis. -/
++`ProbComp.expect_sample_coord` replaces `T j` by fresh coins; then apply the induction hypothesis. -/
+ theorem expect_tapeImpl (κ : ℕ) (E : Bool → (Fin (ins 1) → Bool) → C → (Fin L → Bool))
+     (sel : ℕ → Bool) (kst : ℕ) {α : Type} (G : α × List (Fin L → Bool) → ℝ)
+     (c : OracleComp (bitSpec ins outs) α) (h : List (Fin L → Bool)) :
+@@ -390,7 +268,7 @@ theorem expect_tapeImpl (κ : ℕ) (E : Bool → (Fin (ins 1) → Bool) → C 
+           let j : Fin κ := ⟨h.length, hh⟩
+           have hj : ∀ T : Fin κ → C, extTape T h.length = T j := fun T => extTape_of_lt T hh
+           simp only [hj]
+-          refine (expect_sample_update j (fun r T => expect (simulate
++          refine (expect_sample_coord j (fun r T => expect (simulate
+             (tapeImpl κ E sel (extTape T) kst) (k (padFin (outs 1) (List.ofFn
+               (E (sel h.length) x r)))) (E (sel h.length) x r :: h)) G) ?_).trans ?_
+           · intro r r' T
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean
+index 72e46ec27..cc93dc1fe 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean
+@@ -482,7 +482,7 @@ messages and `L(n)`-bit ciphertexts.
+    Then `advantage(H_{j⋆}, H_{j⋆+1})` equals `D`'s single-bit advantage between `⟨pk, Enc_pk(0)⟩`
+    and `⟨pk, Enc_pk(1)⟩` exactly (`hyb_advantage_eq`): only the first challenge matters
+    (`ChallengeSim.chRun_congr`); resampling coin block `j⋆` turns the two hybrids into the
+-   planted tuples with `Enc(m₀_{j⋆})` and `Enc(m₁_{j⋆})` (`BitwiseSim.expect_sample_update`); and
++   planted tuples with `Enc(m₀_{j⋆})` and `Enc(m₁_{j⋆})` (`ProbComp.expect_sample_update`); and
+    the signed case split on `(m₀_{j⋆}, m₁_{j⋆})` is `ChallengeSim.expect_indicator_sub`.
+ 4. So `A`'s advantage is at most `n` times `D`'s advantage, negligible by `singleBitSecure_iff`;
+    the product is negligible by `Negligible.polyExpr_mul` with `PolyExpr.var`. -/
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean
+index 340f86303..b65d204d1 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean
+@@ -14,17 +14,14 @@ set_option autoImplicit false
+ Generic facts used by the hybrid argument for the bitwise scheme under chosen-plaintext attack
+ [PS10, p. 103, in the game of Definition 171.5]: under CPA the encryption coins of the challenge
+ may be sampled in advance (`expect_simulate_indImpl_cpa`, through the oracle equations
+-`indImpl_*_onSpec`); resampling one coordinate of a uniform tuple leaves it uniform
+-(`expect_sample_update`); and the padded encryptor of a padded public-key scheme pads the
++`indImpl_*_onSpec`, from `ChallengeSim.expect_simulate_eager`); and the padded encryptor of a padded public-key scheme pads the
+ original encryptor's output (`padded_enc_runAt`). All are read from the published lemmas of
+ `OracleSecurity` and `ChallengeSim`. The CPA game's codec is the bit codec of the scheme's
+ lengths by `AdaptiveCPA.indCodec_eq_bitCodec`, and casts are read by `AdaptiveCPA.ofFn_cast`.
+ 
+ ## Main results
+ 
+-* `BitwiseSim.expect_simulate_eager`, `expect_simulate_indImpl_cpa`: eager challenge coins under
+-  CPA, generically and for `indImpl`.
+-* `BitwiseSim.expect_sample_update`: resampling a coordinate.
++* `BitwiseSim.expect_simulate_indImpl_cpa`: eager challenge coins under CPA, for `indImpl`.
+ * `BitwiseSim.padded_enc_runAt`, `BitwiseSim.padded_enc_coins`: readers of the padded scheme.
+ 
+ ## References
+@@ -37,62 +34,6 @@ namespace TCSlib.Cryptography.Composability.BitwiseSim
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ChallengeSim ProbComp
+ 
+-/-- **Eager challenge coins, for any CPA-shaped oracle.** Let `impl` answer oracle `0`
+-all-`false`, a challenge from a recorded state `c` with `c`, and the first challenge `mm` by
+-sampling `re` and answering (and recording) `padFin d (g mm re)`; the state holds `d`-bit
+-strings, `d = outs 1`, read through the cast `e`. Then for every `G`,
+-`𝔼[G ∘ fst] (simulate impl c s) = 𝔼_{re} G (chRun (fun mm => g mm re) c (s.map (cast e))).1`.
+-
+-**Proof sketch.** Substitute `d = outs 1`, so that the casts are identities. Induction on the
+-computation: decryption queries and repeated challenges are deterministic in both; at the first
+-challenge the lazy side samples `re` and continues from the recorded answer, by the induction
+-hypothesis an average over coins `re'` on which the recorded run does not depend
+-(`chRun_some_congr`), so `re'` marginalizes out (`expect_const`). -/
+-theorem expect_simulate_eager {ins outs : Fin 2 → ℕ} {d : ℕ} (hd : outs 1 = d)
+-    (e : (Fin d → Bool) = (Fin (outs 1) → Bool)) {R : Type} [Fintype R] [Nonempty R]
+-    (impl : QueryImpl (bitSpec ins outs) (Option (Fin d → Bool)) unifSpec)
+-    (g : (Fin (ins 1) → Bool) → R → List Bool)
+-    (h0 : ∀ x s, impl 0 x s = .pure (zeroBits _, s))
+-    (hrep : ∀ mm c, impl 1 mm (some c) = .pure (cast e c, some c))
+-    (hnew : ∀ mm, impl 1 mm none = (ProbComp.sample R).bind fun re =>
+-      .pure (cast e (padFin d (g mm re)), some (padFin d (g mm re))))
+-    {α : Type} (G : α → ℝ) (c : OracleComp (bitSpec ins outs) α) (s : Option (Fin d → Bool)) :
+-    expect (simulate impl c s) (fun p => G p.1) =
+-      expect (ProbComp.sample R) fun re =>
+-        G (chRun (fun mm => g mm re) c (s.map (cast e))).1 := by
+-  subst hd
+-  have hc : ∀ x : Fin (outs 1) → Bool, cast e x = x := fun x => cast_eq e x
+-  have hmap : ∀ s : Option (Fin (outs 1) → Bool), s.map (cast e) = s := fun s => by
+-    cases s <;> simp
+-  simp only [hc] at hrep hnew
+-  simp only [hmap]
+-  induction c generalizing s with
+-  | pure a =>
+-    rw [simulate_pure, expect_pure]
+-    simp only [chRun_pure]
+-    exact (expect_const _ _).symm
+-  | query i x k ih =>
+-    match i, x, k, ih with
+-    | 0, x, k, ih =>
+-      rw [simulate_query, h0, OracleComp.pure_bind]
+-      simp only [chRun_query_zero]
+-      exact ih _ s
+-    | 1, x, k, ih =>
+-      cases s with
+-      | some C =>
+-        rw [simulate_query, hrep, OracleComp.pure_bind]
+-        simp only [chRun_query_one_some]
+-        exact ih _ _
+-      | none =>
+-        rw [simulate_query, hnew, OracleComp.bind_assoc, expect_bind]
+-        refine congrArg _ (funext fun re => ?_)
+-        rw [OracleComp.pure_bind, ih, chRun_query_one_none]
+-        dsimp only
+-        exact (congrArg _ (funext fun re' =>
+-          congrArg (fun p : α × Option (Fin (outs 1) → Bool) => G p.1)
+-            (chRun_some_congr (fun mm => g mm re') (fun mm => g mm re) _ _))).trans
+-          (expect_const _ _)
+-
+ /-- **Eager challenge coins under CPA.** Simulating the oracles of `Ind_b` from the unchallenged
+ state has, for every `G`, the expectation of first sampling the encryption coins `re` and then
+ running the deterministic oracles whose challenge `mm` is answered with `Enc(⟨pk, m_b⟩; re)`,
+@@ -117,28 +58,6 @@ theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool) (n : 
+     (fun mm C => S.indImpl_challenge_repeat_onSpec .cpa b n pk sk mm C)
+     (fun mm => S.indImpl_challenge_none_onSpec .cpa b n pk sk mm) G c none
+ 
+-/-- **Resampling one coordinate of a uniform tuple leaves it uniform**:
+-`𝔼_{v} 𝔼_{b} f (update v j b) = 𝔼_{v} f v`.
+-
+-**Proof sketch.** The map `(v, b) ↦ (update v j b, v j)` is an involution of
+-`(ι → β) × β` (`Function.update_idem`, `Function.update_eq_self`); reindexing the product sample
+-along it (`expect_sample_equiv`, `expect_sample_prod`) turns the left side into
+-`𝔼_{v} 𝔼_{b} f v = 𝔼_{v} f v` (`expect_const`). -/
+-theorem expect_sample_update {ι β : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+-    (j : ι) (f : (ι → β) → ℝ) :
+-    (expect (sample (ι → β)) fun v => expect (sample β) fun b => f (Function.update v j b)) =
+-      expect (sample (ι → β)) f := by
+-  let e : (ι → β) × β ≃ (ι → β) × β :=
+-    { toFun := fun p => (Function.update p.1 j p.2, p.1 j)
+-      invFun := fun p => (Function.update p.1 j p.2, p.1 j)
+-      left_inv := fun p => by simp
+-      right_inv := fun p => by simp }
+-  rw [← expect_sample_prod (fun p : (ι → β) × β => f (Function.update p.1 j p.2))]
+-  have h := expect_sample_equiv e (fun p : (ι → β) × β => f p.1)
+-  refine h.trans ?_
+-  rw [expect_sample_prod]
+-  exact congrArg _ (funext fun v => expect_const (sample β) (f v))
+-
+ /-- **The padded encryptor pads the original encryptor's output**: for a padded public-key
+ scheme, `Enc'(1^n, y; r) = padCt L(n) (Enc(1^n, y; r))`, with the coin string read as a list
+ (`PublicKeyScheme.padded_enc`, `runAt_padEnc`, `NUPPT.coinsCongr_ofFn`). -/
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean
+index 77b7bd503..166ec5dd9 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean
+@@ -43,8 +43,9 @@ reduction: reindexing by an equivalence, products, exchange of order, and single
+ * `ChallengeSim.chRun_congr`: the run depends on `g` only at the first challenge query.
+ * `ChallengeSim.length_of_firstQ_eq_some`: the first challenge query has `ins 1` bits.
+ * `ChallengeSim.chRun_toCompOn_transport`: transport along equal length functions.
+-* `ChallengeSim.expect_sample_equiv`, `expect_sample_prod`, `expect_sample_comm`,
+-  `expect_sample_unique`, `expect_sub`: sampling identities.
++* `ChallengeSim.expect_simulate_eager`: eager challenge coins, for any CPA-shaped oracle.
++* `ChallengeSim.expect_sample_prod`: sampling a product is sampling its factors (the other
++  sampling identities are `Games.ProbComp`'s).
+ * `ChallengeSim.expect_indicator_sub`: the case split on the first challenge `(m₀, m₁)`.
+ 
+ ## References
+@@ -130,6 +131,62 @@ theorem chRun_some_congr (g g' : (Fin (ins 1) → Bool) → List Bool)
+     | 0, x, k, ih => rw [chRun_query_zero, chRun_query_zero, ih]
+     | 1, x, k, ih => rw [chRun_query_one_some, chRun_query_one_some, ih]
+ 
++/-- **Eager challenge coins, for any CPA-shaped oracle.** Let `impl` answer oracle `0`
++all-`false`, a challenge from a recorded state `c` with `c`, and the first challenge `mm` by
++sampling `re` and answering (and recording) `padFin d (g mm re)`; the state holds `d`-bit
++strings, `d = outs 1`, read through the cast `e`. Then for every `G`,
++`𝔼[G ∘ fst] (simulate impl c s) = 𝔼_{re} G (chRun (fun mm => g mm re) c (s.map (cast e))).1`.
++
++**Proof sketch.** Substitute `d = outs 1`, so that the casts are identities. Induction on the
++computation: decryption queries and repeated challenges are deterministic in both; at the first
++challenge the lazy side samples `re` and continues from the recorded answer, by the induction
++hypothesis an average over coins `re'` on which the recorded run does not depend
++(`chRun_some_congr`), so `re'` marginalizes out (`expect_const`). -/
++theorem expect_simulate_eager {ins outs : Fin 2 → ℕ} {d : ℕ} (hd : outs 1 = d)
++    (e : (Fin d → Bool) = (Fin (outs 1) → Bool)) {R : Type} [Fintype R] [Nonempty R]
++    (impl : QueryImpl (bitSpec ins outs) (Option (Fin d → Bool)) unifSpec)
++    (g : (Fin (ins 1) → Bool) → R → List Bool)
++    (h0 : ∀ x s, impl 0 x s = .pure (zeroBits _, s))
++    (hrep : ∀ mm c, impl 1 mm (some c) = .pure (cast e c, some c))
++    (hnew : ∀ mm, impl 1 mm none = (ProbComp.sample R).bind fun re =>
++      .pure (cast e (padFin d (g mm re)), some (padFin d (g mm re))))
++    {α : Type} (G : α → ℝ) (c : OracleComp (bitSpec ins outs) α) (s : Option (Fin d → Bool)) :
++    expect (simulate impl c s) (fun p => G p.1) =
++      expect (ProbComp.sample R) fun re =>
++        G (chRun (fun mm => g mm re) c (s.map (cast e))).1 := by
++  subst hd
++  have hc : ∀ x : Fin (outs 1) → Bool, cast e x = x := fun x => cast_eq e x
++  have hmap : ∀ s : Option (Fin (outs 1) → Bool), s.map (cast e) = s := fun s => by
++    cases s <;> simp
++  simp only [hc] at hrep hnew
++  simp only [hmap]
++  induction c generalizing s with
++  | pure a =>
++    rw [simulate_pure, expect_pure]
++    simp only [chRun_pure]
++    exact (expect_const _ _).symm
++  | query i x k ih =>
++    match i, x, k, ih with
++    | 0, x, k, ih =>
++      rw [simulate_query, h0, OracleComp.pure_bind]
++      simp only [chRun_query_zero]
++      exact ih _ s
++    | 1, x, k, ih =>
++      cases s with
++      | some C =>
++        rw [simulate_query, hrep, OracleComp.pure_bind]
++        simp only [chRun_query_one_some]
++        exact ih _ _
++      | none =>
++        rw [simulate_query, hnew, OracleComp.bind_assoc, expect_bind]
++        refine congrArg _ (funext fun re => ?_)
++        rw [OracleComp.pure_bind, ih, chRun_query_one_none]
++        dsimp only
++        exact (congrArg _ (funext fun re' =>
++          congrArg (fun p : α × Option (Fin (outs 1) → Bool) => G p.1)
++            (chRun_some_congr (fun mm => g mm re') (fun mm => g mm re) _ _))).trans
++          (expect_const _ _)
++
+ /-- **First-challenge congruence:** if `g` and `g'` agree at the first challenge query of `c`
+ (vacuous when there is none), the runs from the unchallenged state agree:
+ `chRun g c none = chRun g' c none`.
+@@ -196,14 +253,6 @@ section Sampling
+ 
+ variable {β : Type}
+ 
+-/-- **Reindexing a sample by an equivalence:** `𝔼_{a ← α} g (e a) = 𝔼_{b ← β} g b`.
+-
+-**Proof sketch.** Both are uniform averages (`expect_sample`); the cardinalities agree
+-(`Fintype.card_congr`) and the sums agree by reindexing along `e` (`Equiv.sum_comp`). -/
+-theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (e : α ≃ β)
+-    (g : β → ℝ) : expect (sample α) (fun a => g (e a)) = expect (sample β) g := by
+-  rw [expect_sample, expect_sample, Fintype.card_congr e, Equiv.sum_comp e g]
+-
+ /-- **Sampling a product is sampling its factors:**
+ `𝔼_{(a, b) ← α × β} g (a, b) = 𝔼_{a ← α} 𝔼_{b ← β} g (a, b)`. -/
+ theorem expect_sample_prod [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
+@@ -212,34 +261,6 @@ theorem expect_sample_prod [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
+   rw [← Bridge.expect_sample_pair]
+   simp only [expect_bind, expect_pure]
+ 
+-/-- **Independent samples commute:**
+-`𝔼_{a ← α} 𝔼_{b ← β} g a b = 𝔼_{b ← β} 𝔼_{a ← α} g a b`.
+-
+-**Proof sketch.** Both are the average over the product (`expect_sample_prod`), reindexed by
+-the swap equivalence (`expect_sample_equiv`). -/
+-theorem expect_sample_comm [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
+-    (g : α → β → ℝ) :
+-    (expect (sample α) fun a => expect (sample β) fun b => g a b) =
+-      expect (sample β) fun b => expect (sample α) fun a => g a b := by
+-  rw [← expect_sample_prod (fun p : α × β => g p.1 p.2),
+-    ← expect_sample_prod (fun p : β × α => g p.2 p.1),
+-    ← expect_sample_equiv (Equiv.prodComm β α) (fun p : α × β => g p.1 p.2)]
+-  rfl
+-
+-/-- **Sampling a singleton type** returns its element: `𝔼_{a ← α} g a = g default`. -/
+-theorem expect_sample_unique [Fintype α] [Unique α] (g : α → ℝ) :
+-    expect (sample α) g = g default := by
+-  rw [expect_sample, Fintype.card_unique, Fintype.sum_unique]
+-  simp
+-
+-/-- Expectation is subtractive: `𝔼[f − g] = 𝔼 f − 𝔼 g`. -/
+-theorem expect_sub (c : ProbComp α) (f g : α → ℝ) :
+-    expect c (fun a => f a - g a) = expect c f - expect c g := by
+-  have h := expect_add c f (fun a => -1 * g a)
+-  rw [expect_const_mul] at h
+-  simp only [neg_one_mul, ← sub_eq_add_neg] at h
+-  exact h
+-
+ /-- **The pointwise case split of the CPA reduction:** for the first challenge `(m₀, m₁)`, the
+ difference of the acceptance rates of `A` against `Enc(m₀)` and `Enc(m₁)` equals the difference of
+ the acceptance rates of the post-processed bit `(m₀ ≠ m₁) ∧ (a ≠ m₀)` against `Enc(0)` and `Enc(1)`.
+diff --git a/TCSlib/Cryptography/Games/BitCodec.lean b/TCSlib/Cryptography/Games/BitCodec.lean
+index b00fa697a..40973a7b2 100644
+--- a/TCSlib/Cryptography/Games/BitCodec.lean
++++ b/TCSlib/Cryptography/Games/BitCodec.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Games.Machines
+ import TCSlib.Cryptography.Asymptotic.Adversary
++import TCSlib.Cryptography.Games.Probability
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -34,6 +35,7 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
+   a move.
+ * `Games.encodeBitMove`: the canonical word of a move.
+ * `Games.bitCodec din dout dα`: the codec.
++* `Games.castImpl`: an implementation of bit-string oracles read along equal length functions.
+ 
+ ## Main results
+ 
+@@ -42,6 +44,8 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
+ * `Games.decodeIdx_eq_some_iff`, `Games.decodeBitMove_eq_query_iff`: only the canonical words
+   decode as an index or a query.
+ * `Games.decodeBitMove_of_not_canonical`: every other word decodes to the all-`false` output.
++* `Games.simulate_castImpl_toCompOn`, `Games.expect_simulate_castImpl_toCompOn`: transport of a
++  machine's run between two codecs with equal lengths.
+ 
+ ## References
+ 
+@@ -294,4 +298,73 @@ theorem encodeBitMove_injective (din dout : Fin k → ℕ) (dα : ℕ) :
+     Function.Injective (encodeBitMove din dout dα) := fun m m' h => by
+   rw [← decodeBitMove_encodeBitMove din dout dα m, h, decodeBitMove_encodeBitMove]
+ 
++/-! ### Transport along equal lengths -/
++
++section Transport
++
++open ProbComp
++
++variable {σ : Type}
++
++/-- **An implementation read along length functions:** answer the query `x` to oracle `i` of
++`bitSpec ins outs` by asking `O` the query `padFin (ins' i) ⟦x⟧` and reading its answer `y` as
++`padFin (outs i) ⟦y⟧`. When `ins = ins'` and `outs = outs'` this is `O` itself
++(`castImpl_self`). -/
++def castImpl {ins ins' outs outs' : Fin k → ℕ} (O : QueryImpl (bitSpec ins' outs') σ unifSpec) :
++    QueryImpl (bitSpec ins outs) σ unifSpec :=
++  fun i x s => (O i (padFin (ins' i) (List.ofFn x)) s).bind fun p =>
++    .pure (padFin (outs i) (List.ofFn p.1), p.2)
++
++/-- The defining equation of `castImpl`: `castImpl O i x s =
++(O i (padFin (ins' i) ⟦x⟧) s).bind fun p => pure (padFin (outs i) ⟦p.1⟧, p.2)`. -/
++theorem castImpl_eq {ins ins' outs outs' : Fin k → ℕ}
++    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (i : Fin k) (x : Fin (ins i) → Bool)
++    (s : σ) :
++    castImpl (ins := ins) (outs := outs) O i x s =
++      (O i (padFin (ins' i) (List.ofFn x)) s).bind fun p =>
++        .pure (padFin (outs i) (List.ofFn p.1), p.2) :=
++  rfl
++
++/-- Read along the same lengths, an implementation is unchanged: `castImpl O = O`. -/
++theorem castImpl_self {ins outs : Fin k → ℕ} (O : QueryImpl (bitSpec ins outs) σ unifSpec) :
++    castImpl (ins := ins) (outs := outs) O = O := by
++  funext i x s
++  rw [castImpl_eq, padFin_ofFn]
++  simp only [padFin_ofFn]
++  exact OracleComp.bind_pure _
++
++/-- **Transport of a machine's run:** if `ins = ins'`, `outs = outs'` and `d = d'`, simulating
++`castImpl O` on the run of `M` through `bitCodec ins outs d` gives, with outputs read as lists,
++the simulation of `O` on the run of `M` through `bitCodec ins' outs' d'`.
++
++**Proof sketch.** Substitute the equalities; then `castImpl O = O` (`castImpl_self`). -/
++theorem simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
++    (hi : ins = ins') (ho : outs = outs') (hd : d = d')
++    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (M : NUPPT) (n q : ℕ) (x : List Bool)
++    (r : M.Coins n) (s : σ) :
++    (simulate (castImpl (ins := ins) (outs := outs) O)
++        (M.toCompOn (bitCodec ins outs d) n q x r) s).bind
++        (fun p => .pure (List.ofFn p.1, p.2)) =
++      (simulate O (M.toCompOn (bitCodec ins' outs' d') n q x r) s).bind
++        (fun p => .pure (List.ofFn p.1, p.2)) := by
++  subst hi ho hd
++  rw [castImpl_self]
++
++/-- **Transport of a machine's run, in expectation:** for every function `G` of the output (read
++as a list) and the final state, `simulate_castImpl_toCompOn` in the form
++`𝔼[G (⟦p.1⟧, p.2)]` over the two simulations. -/
++theorem expect_simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
++    (hi : ins = ins') (ho : outs = outs') (hd : d = d')
++    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (M : NUPPT) (n q : ℕ) (x : List Bool)
++    (r : M.Coins n) (s : σ) (G : List Bool × σ → ℝ) :
++    expect (simulate (castImpl (ins := ins) (outs := outs) O)
++        (M.toCompOn (bitCodec ins outs d) n q x r) s) (fun p => G (List.ofFn p.1, p.2)) =
++      expect (simulate O (M.toCompOn (bitCodec ins' outs' d') n q x r) s)
++        (fun p => G (List.ofFn p.1, p.2)) := by
++  have h := congrArg (fun c => expect c G) (simulate_castImpl_toCompOn hi ho hd O M n q x r s)
++  simp only [expect_bind, expect_pure] at h
++  exact h
++
++end Transport
++
+ end TCSlib.Cryptography.Games
+diff --git a/TCSlib/Cryptography/Games/Hopping.lean b/TCSlib/Cryptography/Games/Hopping.lean
+index 3a6a3130b..7fcc1e226 100644
+--- a/TCSlib/Cryptography/Games/Hopping.lean
++++ b/TCSlib/Cryptography/Games/Hopping.lean
+@@ -35,7 +35,10 @@ The hybrid argument itself is `advantage_hybrid` (`TCSlib.Cryptography.Games.Adv
+ * `ProbComp.prob_eq_one_of_allOutputs`, `ProbComp.expect_mono_of_allOutputs`: reasoning on the
+   possible outputs only.
+ * `ProbComp.abs_prob_sub_le_of_agree`: the difference lemma [Sho04, §1.1, Lemma 1].
+-* `ProbComp.prob_mem_le`: the collision bound.
++* `ProbComp.prob_mem_le`: the collision bound; `ProbComp.expect_sample_mem_le`, its form for a
++  uniform sample and a fixed list.
++* `ProbComp.expect_simulate_congr`: implementations with the same laws simulate alike.
++* `ProbComp.prob_bad_le`: the per-query potential bound `Pr[bad] ≤ q · (size + q) · δ`.
+ * `Games.prob_eq_until_bad`, `Games.identical_until_bad`, `Games.identical_until_bad_init`: the
+   code-based fundamental lemma [BR06], in semantic form, from a fixed or a sampled initial
+   state; `Games.hagree_of_eq` recovers the syntactic hypothesis.
+@@ -349,4 +352,93 @@ theorem identical_until_bad_init {spec : OracleSpec ι}
+   rw [abs_le]
+   constructor <;> linarith
+ 
++namespace ProbComp
++
++/-! ### Simulation congruence and a bad-event potential -/
++
++/-- **Implementations with the same laws simulate alike:** if every call of `impl₀` and `impl₁`
++has the same expectation of every function `g` of the answer and the new state, the simulations
++of every computation have the same expectation of every function `G` of the output and the final
++state: `𝔼[G] (simulate impl₀ c s) = 𝔼[G] (simulate impl₁ c s)`.
++
++**Proof sketch.** Induction on `c`; at a query, both sides are the expectation over the call of the
++continuation's expectation (`simulate_query`, `expect_bind`), equal by induction and the
++hypothesis. -/
++theorem expect_simulate_congr {ι : Type} {spec : OracleSpec ι} {σ α : Type}
++    (impl₀ impl₁ : QueryImpl spec σ unifSpec)
++    (h : ∀ i x s (g : spec.rng i × σ → ℝ), expect (impl₀ i x s) g = expect (impl₁ i x s) g)
++    (c : OracleComp spec α) (s : σ) (G : α × σ → ℝ) :
++    expect (simulate impl₀ c s) G = expect (simulate impl₁ c s) G := by
++  induction c generalizing s with
++  | pure a => rw [simulate_pure, simulate_pure]
++  | query i x k ih =>
++    rw [simulate_query, simulate_query, expect_bind, expect_bind, h]
++    exact congrArg _ (funext fun p => ih p.1 p.2)
++
++/-- **A bad event raised a little at each query:** if from a good state each query raises `bad`
++with probability at most `(sz s + 1) · δ` and grows the size `sz` by at most one, then from a good
++state `s` a computation making at most `m` queries ends in a bad state with probability at most
++`m · (sz s + m) · δ`.
++
++**Proof sketch.** Induction on the computation. At a query, a bad successor contributes at most
++its probability; a good successor `s'` has `sz s' ≤ sz s + 1` and, by induction, contributes at
++most `(m - 1) · (sz s + m) · δ`. Add `(sz s + 1) · δ ≤ (sz s + m) · δ`. -/
++theorem prob_bad_le {ι : Type} {spec : OracleSpec ι} {σ : Type} {impl : QueryImpl spec σ unifSpec}
++    (bad : σ → Prop) [DecidablePred bad]
++    (sz : σ → ℕ) {δ : ℝ} (hδ : 0 ≤ δ)
++    (hstep : ∀ i x s, ¬ bad s → prob (impl i x s) (fun ys => bad ys.2) ≤ (sz s + 1) * δ)
++    (hgrow : ∀ i x s, (impl i x s).AllOutputs fun ys => sz ys.2 ≤ sz s + 1)
++    {α : Type} (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ)
++    (hs : ¬ bad s) :
++    prob (simulate impl c s) (fun r => bad r.2) ≤ m * (sz s + m) * δ := by
++  induction c generalizing m s with
++  | pure a =>
++    rw [simulate_pure, prob_pure, if_neg hs]
++    exact mul_nonneg (by positivity) hδ
++  | query i x k ih =>
++    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
++    have hm1 : 1 ≤ m := hm
++    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
++    have hk' : ∀ y, (k y).CostBoundedBy (fun _ => 1) m' := fun y => by
++      simpa using hk y
++    have hm0 : (0 : ℝ) ≤ m' := Nat.cast_nonneg m'
++    set K : ℝ := m' * (sz s + (m' + 1)) * δ with hK
++    have hK0 : 0 ≤ K := mul_nonneg (by positivity) hδ
++    rw [simulate_query, prob_bind]
++    calc expect (impl i x s) (fun ys => prob (simulate impl (k ys.1) ys.2) (fun r => bad r.2))
++        ≤ expect (impl i x s) (fun ys => (if bad ys.2 then (1 : ℝ) else 0) + K) := by
++          refine expect_mono_of_allOutputs (hgrow i x s) fun ys hys => ?_
++          by_cases hb : bad ys.2
++          · rw [if_pos hb]
++            have h1 := prob_le_one (simulate impl (k ys.1) ys.2) (fun r => bad r.2)
++            linarith
++          · rw [if_neg hb, zero_add]
++            refine (ih ys.1 m' (hk' ys.1) ys.2 hb).trans ?_
++            have hys' : (sz ys.2 : ℝ) ≤ sz s + 1 := by exact_mod_cast hys
++            exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (by linarith) hm0) hδ
++      _ = prob (impl i x s) (fun ys => bad ys.2) + K := by
++          rw [expect_add (impl i x s) (fun ys => if bad ys.2 then (1 : ℝ) else 0) (fun _ => K),
++            expect_const, prob_eq_expect]
++      _ ≤ ((m' + 1 : ℕ) : ℝ) * (sz s + ((m' + 1 : ℕ) : ℝ)) * δ := by
++          have h3 := hstep i x s hs
++          have h4 : ((sz s : ℝ) + 1) * δ ≤ (sz s + (m' + 1)) * δ :=
++            mul_le_mul_of_nonneg_right (by linarith) hδ
++          have e : ((m' : ℝ) + 1) * (sz s + (m' + 1)) * δ = K + (sz s + (m' + 1)) * δ := by
++            rw [hK]; ring
++          push_cast
++          linarith
++
++/-- **Hitting a list with a uniform sample:** a uniform element of `T` lies in a list `L` with
++probability at most `|L| / |T|` (`prob_mem_le` for a fixed list). -/
++theorem expect_sample_mem_le {T : Type} [Fintype T] [Nonempty T] [DecidableEq T] (L : List T) :
++    expect (sample T) (fun t => if t ∈ L then (1 : ℝ) else 0) ≤ L.length / Fintype.card T := by
++  have h := prob_mem_le (OracleComp.pure L : ProbComp (List T)) (q := L.length)
++    (OracleComp.allOutputs_pure.2 le_rfl)
++  rw [prob_bind, expect_pure, prob_bind] at h
++  refine Eq.trans_le ?_ h
++  refine congrArg _ (funext fun t => ?_)
++  rw [prob_pure]
++
++end ProbComp
++
+ end TCSlib.Cryptography.Games
+diff --git a/TCSlib/Cryptography/Games/Probability.lean b/TCSlib/Cryptography/Games/Probability.lean
+index 81a91dc5c..3ffd71753 100644
+--- a/TCSlib/Cryptography/Games/Probability.lean
++++ b/TCSlib/Cryptography/Games/Probability.lean
+@@ -43,6 +43,9 @@ information-theory layer, so statistical distance and closeness (`EpsClose`) app
+   monotonicity.
+ * `ProbComp.prob_nonneg`, `prob_le_one`, `prob_mono`, `prob_or_le` (the union bound),
+   `prob_not`, `prob_bind`.
++* `ProbComp.expect_sample_equiv`, `expect_sample_comm`, `expect_sample_unique`,
++  `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform
++  samples; `expect_sub`, `abs_expect_sub_le`: subtraction and pointwise closeness.
+ 
+ ## References
+ 
+@@ -286,6 +289,109 @@ noncomputable def dist [Fintype α] [DecidableEq α] (c : ProbComp α) : FinDist
+ theorem dist_apply [Fintype α] [DecidableEq α] (c : ProbComp α) (a : α) :
+     dist c a = prob c (· = a) := rfl
+ 
++/-! ### Sampling identities -/
++
++section Sampling
++
++variable {β : Type}
++
++/-- **Reindexing a sample by an equivalence:** `𝔼_{a ← α} g (e a) = 𝔼_{b ← β} g b`.
++
++**Proof sketch.** Both are uniform averages (`expect_sample`); the cardinalities agree
++(`Fintype.card_congr`) and the sums agree by reindexing along `e` (`Equiv.sum_comp`). -/
++theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (e : α ≃ β)
++    (g : β → ℝ) : expect (sample α) (fun a => g (e a)) = expect (sample β) g := by
++  rw [expect_sample, expect_sample, Fintype.card_congr e, Equiv.sum_comp e g]
++
++/-- **Independent samples commute:**
++`𝔼_{a ← α} 𝔼_{b ← β} g a b = 𝔼_{b ← β} 𝔼_{a ← α} g a b`.
++
++**Proof sketch.** Both sides are the double uniform average (`expect_sample`); exchange the two
++finite sums (`Finset.sum_comm`). -/
++theorem expect_sample_comm [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
++    (g : α → β → ℝ) :
++    (expect (sample α) fun a => expect (sample β) fun b => g a b) =
++      expect (sample β) fun b => expect (sample α) fun a => g a b := by
++  simp only [expect_sample, mul_sum]
++  rw [sum_comm]
++  refine sum_congr rfl fun b _ => sum_congr rfl fun a _ => ?_
++  ring
++
++/-- **Sampling a singleton type** returns its element: `𝔼_{a ← α} g a = g default`. -/
++theorem expect_sample_unique [Fintype α] [Unique α] (g : α → ℝ) :
++    expect (sample α) g = g default := by
++  rw [expect_sample, Fintype.card_unique, Fintype.sum_unique]
++  simp
++
++/-- Expectation is subtractive: `𝔼[f − g] = 𝔼 f − 𝔼 g`. -/
++theorem expect_sub (c : ProbComp α) (f g : α → ℝ) :
++    expect c (fun a => f a - g a) = expect c f - expect c g := by
++  have h := expect_add c f (fun a => -1 * g a)
++  rw [expect_const_mul] at h
++  simp only [neg_one_mul, ← sub_eq_add_neg] at h
++  exact h
++
++/-- **Resampling one coordinate of a uniform tuple leaves it uniform**:
++`𝔼_{v} 𝔼_{b} f (update v j b) = 𝔼_{v} f v`.
++
++**Proof sketch.** The map `(v, b) ↦ (update v j b, v j)` is an involution of `(ι → β) × β`
++(`Function.update_idem`, `Function.update_eq_self`). Written as uniform averages
++(`expect_sample`), the double sum of `f (update v j b)` over pairs is the sum of `f v` over pairs
++reindexed along it (`Fintype.sum_prod_type'`, `Equiv.sum_comp`), which is `|β|` times the sum of
++`f`. -/
++theorem expect_sample_update {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
++    (j : ι) (f : (ι → β) → ℝ) :
++    (expect (sample (ι → β)) fun v => expect (sample β) fun b => f (Function.update v j b)) =
++      expect (sample (ι → β)) f := by
++  let e : (ι → β) × β ≃ (ι → β) × β :=
++    { toFun := fun p => (Function.update p.1 j p.2, p.1 j)
++      invFun := fun p => (Function.update p.1 j p.2, p.1 j)
++      left_inv := fun p => by
++        simp only [Function.update_self, Function.update_idem, Function.update_eq_self]
++      right_inv := fun p => by
++        simp only [Function.update_self, Function.update_idem, Function.update_eq_self] }
++  have hpair : (∑ v : ι → β, ∑ b : β, f (Function.update v j b)) =
++      ∑ v : ι → β, ∑ _b : β, f v := by
++    rw [← Fintype.sum_prod_type' (fun v b => f (Function.update v j b)),
++      ← Fintype.sum_prod_type' (fun v (_ : β) => f v)]
++    exact Equiv.sum_comp e (fun p => f p.1)
++  have hβ : (Fintype.card β : ℝ) ≠ 0 := by positivity
++  simp only [expect_sample, ← mul_sum]
++  rw [hpair]
++  simp only [sum_const, card_univ, nsmul_eq_mul, ← mul_sum]
++  rw [inv_mul_cancel_left₀ hβ]
++
++/-- **One coordinate of a uniform tuple, sampled apart:** if `F r T` does not depend on the
++coordinate `j` of `T`, then `𝔼_{T} F (T j) T = 𝔼_{r} 𝔼_{T} F r T`.
++
++**Proof sketch.** Exchange the samples on the right (`expect_sample_comm`) and resample the
++coordinate `j` on the left (`expect_sample_update`); pointwise,
++`F ((update T j r) j) (update T j r) = F r T` (`Function.update_self` and the hypothesis). -/
++theorem expect_sample_coord {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
++    (j : ι) (F : β → (ι → β) → ℝ) (hF : ∀ r r' T, F r (Function.update T j r') = F r T) :
++    expect (sample (ι → β)) (fun T => F (T j) T) =
++      expect (sample β) fun r => expect (sample (ι → β)) fun T => F r T := by
++  rw [expect_sample_comm, ← expect_sample_update j (fun T => F (T j) T)]
++  refine congrArg _ (funext fun T => congrArg _ (funext fun r => ?_))
++  rw [Function.update_self, hF]
++
++/-- Expectations of functions `ε`-close at every point are `ε`-close:
++`(∀ x, |f x - g x| ≤ ε) → |𝔼_c f - 𝔼_c g| ≤ ε`. -/
++theorem abs_expect_sub_le (c : ProbComp α) {f g : α → ℝ} {ε : ℝ}
++    (h : ∀ x, |f x - g x| ≤ ε) : |expect c f - expect c g| ≤ ε := by
++  have h1 : expect c f ≤ expect c g + ε :=
++    calc expect c f ≤ expect c (fun x => g x + ε) :=
++          expect_mono c fun x => by linarith [(abs_le.1 (h x)).2]
++      _ = expect c g + ε := by rw [expect_add c g (fun _ => ε), expect_const]
++  have h2 : expect c g ≤ expect c f + ε :=
++    calc expect c g ≤ expect c (fun x => f x + ε) :=
++          expect_mono c fun x => by linarith [(abs_le.1 (h x)).1]
++      _ = expect c f + ε := by rw [expect_add c f (fun _ => ε), expect_const]
++  rw [abs_le]
++  constructor <;> linarith
++
++end Sampling
++
+ end ProbComp
+ 
+ end TCSlib.Cryptography.Games
+diff --git a/TCSlib/Cryptography/Games/Simulate.lean b/TCSlib/Cryptography/Games/Simulate.lean
+index acf23f38e..cb906962a 100644
+--- a/TCSlib/Cryptography/Games/Simulate.lean
++++ b/TCSlib/Cryptography/Games/Simulate.lean
+@@ -44,6 +44,8 @@ queried" are predicates on that log. Logging never changes the computation
+ * `Games.simulate_costBoundedBy`: if each query of `c` to oracle `i` is answered by a computation
+   of cost at most `b i`, and `c` is cost-bounded by `q` when oracle `i` costs `b i`, then the
+   simulation is cost-bounded by `q`.
++* `Games.simulate_eq_of_abs`, `Games.simulate_eq_of_abs_bounded`: simulation through an
++  abstraction of the state, on every run or along runs with a query budget.
+ 
+ ## References
+ 
+@@ -273,4 +275,53 @@ theorem simulate_costBoundedBy {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+     rw [simulate_query]
+     exact h
+ 
++/-! ### Simulation through a state abstraction -/
++
++/-- **Simulation through an abstraction of the state:** if every call of `impl₁` from the
++abstract state `f s` is the call of `impl₂` from `s` with its new state abstracted, the same holds
++for whole simulations: `simulate impl₁ c (f s) =
++(simulate impl₂ c s).bind fun p => pure (p.1, f p.2)`.
++
++**Proof sketch.** Induction on `c`; at a query, rewrite the call by the hypothesis and use the
++induction hypothesis on each continuation after associativity. -/
++theorem simulate_eq_of_abs {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
++    {σ₁ σ₂ α : Type} (impl₁ : QueryImpl spec σ₁ spec') (impl₂ : QueryImpl spec σ₂ spec')
++    (f : σ₂ → σ₁) (h : ∀ i x s, impl₁ i x (f s) = (impl₂ i x s).bind fun p => .pure (p.1, f p.2))
++    (c : OracleComp spec α) (s : σ₂) :
++    simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => .pure (p.1, f p.2) := by
++  induction c generalizing s with
++  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
++  | query i x k ih =>
++    rw [simulate_query, simulate_query, h, OracleComp.bind_assoc, OracleComp.bind_assoc]
++    congr 1
++    funext p
++    rw [OracleComp.pure_bind]
++    exact ih p.1 p.2
++
++/-- **Simulation through a state abstraction, along runs with a query budget:** let every call of
++`impl₂` from a state `s` with `cnt s < κ` be a deterministic answer `(y, s')` with
++`cnt s' ≤ cnt s + 1`, and the call of `impl₁` from `f s` be `(y, f s')`. Then for a computation
++`c` with at most `m` queries and `cnt s + m ≤ κ`,
++`simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => pure (p.1, f p.2)`.
++
++**Proof sketch.** Induction on `c`. A query costs one unit, so it is asked from a state with
++`cnt s < κ`; both calls return the same answer, and the continuation runs from `s'` with one unit
++less, where `cnt s' + (m - 1) ≤ κ`. -/
++theorem simulate_eq_of_abs_bounded {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
++    {σ₁ σ₂ α : Type} (impl₁ : QueryImpl spec σ₁ spec') (impl₂ : QueryImpl spec σ₂ spec')
++    (f : σ₂ → σ₁) (cnt : σ₂ → ℕ) (κ : ℕ)
++    (h : ∀ i x s, cnt s < κ → ∃ (y : spec.rng i) (s' : σ₂), impl₂ i x s = .pure (y, s') ∧
++      cnt s' ≤ cnt s + 1 ∧ impl₁ i x (f s) = .pure (y, f s'))
++    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ₂)
++    (hs : cnt s + m ≤ κ) :
++    simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => .pure (p.1, f p.2) := by
++  induction c generalizing m s with
++  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
++  | query i x k ih =>
++    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
++    have hm1 : 1 ≤ m := hm
++    obtain ⟨y, s', h₂, hcnt, h₁⟩ := h i x s (by omega)
++    rw [simulate_query, simulate_query, h₁, h₂, OracleComp.pure_bind, OracleComp.pure_bind]
++    exact ih y (m - 1) (hk y) s' (by omega)
++
+ end TCSlib.Cryptography.Games
+-- 
+2.43.0
+
