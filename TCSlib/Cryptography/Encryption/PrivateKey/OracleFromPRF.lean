@@ -387,7 +387,8 @@ end PRFStep
 /-- **Theorem 168.2 (CPA)** [PS10]: if `F` is a pseudorandom function family, the §3.9 scheme is
 CPA-secure.
 
-**Deviation:** the source's bound is `2 · prfAdv + q(n)/2ⁿ` with one reduction carrying the
+**Deviation:** [PS10]'s proof is qualitative (a PRF reduction and a negligible collision event);
+the issued brief suggested the bound `2 · prfAdv + q(n)/2ⁿ` with one reduction carrying the
 challenge bit in its seed. Here there is one reduction per bit (the bit hard-wired) and the bound is
 `prfAdv(F_n, D₀) + prfAdv(F_n, D₁) + (q(n)² + 1) / 2ⁿ`: the bad event is bounded query by query
 (at most `q` steps, each against at most `q` points), and the `+ 1` covers `n = 0`.

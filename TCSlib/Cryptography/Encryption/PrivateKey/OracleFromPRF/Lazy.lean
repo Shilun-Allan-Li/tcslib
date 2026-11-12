@@ -53,6 +53,11 @@ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp Ch
 abbrev LState (n d : ℕ) :=
   List ((Fin n → Bool) × (Fin n → Bool)) × Option (List Bool × (Fin d → Bool)) × Bool
 
+/-- `LState n d = List ((Fin n → Bool) × (Fin n → Bool)) × Option (List Bool × (Fin d → Bool)) ×
+Bool`. -/
+theorem LState_eq (n d : ℕ) : LState n d =
+    (List ((Fin n → Bool) × (Fin n → Bool)) × Option (List Bool × (Fin d → Bool)) × Bool) := rfl
+
 section State
 
 variable {n d : ℕ}
