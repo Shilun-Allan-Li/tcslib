@@ -1,0 +1,1294 @@
+diff --git a/TCSlib/Quantum/Basic/ApplyOn.lean b/TCSlib/Quantum/Basic/ApplyOn.lean
+index e9962ab7..7956c322 100644
+--- a/TCSlib/Quantum/Basic/ApplyOn.lean
++++ b/TCSlib/Quantum/Basic/ApplyOn.lean
+@@ -40,6 +40,9 @@ the gate sits on the first `k` wires.
+ * `Quantum.applyOn_castAdd_eq_reindex_kronecker` — on the first `k` wires, `applyOn` is
+   `U ⊗ I`, reindexed.
+ * `Quantum.applyOn_mulVec_basis` — the image of a basis state.
++* `Quantum.applyOn_mulVec_apply`, `Quantum.applyOn_wire_mulVec_apply`,
++  `Quantum.applyOn_permMat_mulVec_apply` — the action on an arbitrary vector: in general, for a
++  one-wire gate, and for a permutation gate (added in fill epoch E1).
+ * `Quantum.applyOn_wire_X_mulVec_basis` — sanity check: `X` on wire `i` flips wire `i`.
+ 
+ ## References
+@@ -80,6 +83,49 @@ otherwise. -/
+ theorem applyOn_apply (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (y x : Reg n) :
+     applyOn w U y x = if AgreeOff w y x then U (y ∘ w) (x ∘ w) else 0 := rfl
+ 
++/-! ### Reconstructing a register from its gate wires -/
++
++/-- `AgreeOff w` is symmetric. -/
++private theorem agreeOff_symm {w : Fin k ↪ Fin n} {y x : Reg n} (h : AgreeOff w y x) :
++    AgreeOff w x y :=
++  fun i hi => (h i hi).symm
++
++/-- `AgreeOff w` is transitive. -/
++private theorem agreeOff_trans {w : Fin k ↪ Fin n} {y z x : Reg n} (h₁ : AgreeOff w y z)
++    (h₂ : AgreeOff w z x) : AgreeOff w y x :=
++  fun i hi => (h₁ i hi).trans (h₂ i hi)
++
++/-- Writing `u` on the wires `w` and copying `x` elsewhere, then reading the wires `w`, gives
++back `u`. -/
++private theorem extend_comp (w : Fin k ↪ Fin n) (u : Reg k) (x : Reg n) :
++    Function.extend w u x ∘ w = u := by
++  funext j
++  exact w.injective.extend_apply u x j
++
++/-- Writing `u` on the wires `w` and copying `x` elsewhere agrees with `x` off `w`. -/
++private theorem agreeOff_extend (w : Fin k ↪ Fin n) (u : Reg k) (x : Reg n) :
++    AgreeOff w (Function.extend w u x) x := by
++  intro i hi
++  exact Function.extend_apply' u x i (fun ⟨j, hj⟩ => hi j hj)
++
++/-- A register agreeing with `x` off `w` is recovered from its values on `w` and from `x`: the
++two maps of the bijection behind `applyOn_mul` are inverse. -/
++private theorem extend_self {w : Fin k ↪ Fin n} {z x : Reg n} (h : AgreeOff w z x) :
++    Function.extend w (z ∘ w) x = z := by
++  funext i
++  by_cases hi : ∃ j, w j = i
++  · obtain ⟨j, rfl⟩ := hi
++    exact w.injective.extend_apply (z ∘ w) x j
++  · rw [Function.extend_apply' _ _ _ hi]
++    exact (h i fun j hj => hi ⟨j, hj⟩).symm
++
++/-- Registers that agree off `w` and on `w` are equal. -/
++private theorem eq_of_agreeOff {w : Fin k ↪ Fin n} {y x : Reg n} (h : AgreeOff w y x)
++    (hw : y ∘ w = x ∘ w) : y = x :=
++  calc y = Function.extend w (y ∘ w) x := (extend_self h).symm
++    _ = Function.extend w (x ∘ w) x := by rw [hw]
++    _ = x := extend_self fun _ _ => rfl
++
+ /-! ### Algebraic properties -/
+ 
+ /-- Placing the identity on any wires gives the identity.
+@@ -87,19 +133,67 @@ theorem applyOn_apply (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (y
+ **Proof sketch.** Entry `(y, x)` is `[y ∘ w = x ∘ w]` when `y, x` agree off `w`, and `0`
+ otherwise; both cases together say `[y = x]`. -/
+ theorem applyOn_one (w : Fin k ↪ Fin n) : applyOn w (1 : Matrix (Reg k) (Reg k) ℂ) = 1 := by
+-  sorry
++  ext y x
++  rw [applyOn_apply, Matrix.one_apply, Matrix.one_apply]
++  by_cases h : AgreeOff w y x
++  · rw [if_pos h]
++    by_cases hw : y ∘ w = x ∘ w
++    · rw [if_pos hw, if_pos (eq_of_agreeOff h hw)]
++    · rw [if_neg hw, if_neg (fun hyx => hw (by rw [hyx]))]
++  · rw [if_neg h, if_neg (fun hyx => h (by subst hyx; exact fun _ _ => rfl))]
++
++/-- A placed gate acts on a vector `v` by summing over the gate's own basis: the amplitude at `y`
++is `∑ᵤ U (y ∘ w) u · v (y with u written on the wires w)`. This is a coordinate formula for an
++arbitrary matrix `U` and vector `v`; it extends the placement of unitary gates in
++[dW26, §2.1.2], which the formula does not need.
++
++**Proof sketch.** Only registers `z` agreeing with `y` off `w` contribute to
++`∑_z applyOn w U y z · v z`, and they correspond to `u : Reg k` through `z ↦ z ∘ w`, with inverse
++"write `u` on `w`, copy `y` elsewhere" (`Function.extend`; `extend_comp`, `extend_self`). This
++bijection is the key step; `applyOn_mul` is derived from this lemma. -/
++theorem applyOn_mulVec_apply (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (v : Reg n → ℂ)
++    (y : Reg n) :
++    (applyOn w U *ᵥ v) y = ∑ u : Reg k, U (y ∘ w) u * v (Function.extend w u y) := by
++  simp only [mulVec, dotProduct, applyOn_apply]
++  have key : (∑ z, (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z) =
++      ∑ z ∈ Finset.univ.filter (fun z => AgreeOff w z y),
++        (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z := by
++    refine (Finset.sum_filter_of_ne fun z _ hz => ?_).symm
++    by_contra h
++    exact hz (by rw [if_neg (fun h' => h (agreeOff_symm h')), zero_mul])
++  rw [key]
++  apply Finset.sum_nbij' (fun z => z ∘ w) (fun u => Function.extend w u y)
++  · intros; exact Finset.mem_univ _
++  · intro u _; exact Finset.mem_filter.2 ⟨Finset.mem_univ _, agreeOff_extend w u y⟩
++  · intro z hz; exact extend_self (Finset.mem_filter.1 hz).2
++  · intro u _; exact extend_comp w u y
++  · intro z hz
++    rw [if_pos (agreeOff_symm (Finset.mem_filter.1 hz).2), extend_self (Finset.mem_filter.1 hz).2]
+ 
+ /-- Placing a product on wires `w` is the product of the placed factors:
+ `applyOn w (U V) = applyOn w U · applyOn w V`.
+ 
+-**Proof sketch.** Entry `(y, x)` of the right side is `∑_z applyOn w U y z · applyOn w V z x`.
+-Only the `z` agreeing with `x` (equivalently `y`) off `w` contribute, and these are in bijection
+-with `Reg k` through `z ↦ z ∘ w`, with inverse "write `u` on wires `w`, copy `x` elsewhere".
+-The sum becomes `∑_u U (y ∘ w) u · V u (x ∘ w)`, entry `(y ∘ w, x ∘ w)` of `U V`. If `y, x`
+-do not agree off `w`, every term vanishes. The bijection is the key lemma. -/
++**Proof sketch.** Entry `(y, x)` of the right side is `applyOn w U` applied to column `x` of
++`applyOn w V`, at `y`. By `applyOn_mulVec_apply` it is `∑_u U (y ∘ w) u · applyOn w V y_u x`, where
++`y_u` is `y` with `u` written on the wires `w`. Now `y_u` reads `u` on `w` (`extend_comp`) and
++agrees with `x` off `w` exactly when `y` does (`agreeOff_extend`). So the sum is
++`∑_u U (y ∘ w) u · V u (x ∘ w)`, entry `(y ∘ w, x ∘ w)` of `U V`, when `y, x` agree off `w`, and
++`0` otherwise. -/
+ theorem applyOn_mul (w : Fin k ↪ Fin n) (U V : Matrix (Reg k) (Reg k) ℂ) :
+     applyOn w (U * V) = applyOn w U * applyOn w V := by
+-  sorry
++  ext y x
++  have h := applyOn_mulVec_apply w U (fun z => applyOn w V z x) y
++  simp only [mulVec, dotProduct] at h
++  rw [Matrix.mul_apply, h]
++  simp only [applyOn_apply, extend_comp]
++  by_cases hyx : AgreeOff w y x
++  · rw [if_pos hyx, Matrix.mul_apply]
++    refine Finset.sum_congr rfl fun u _ => ?_
++    rw [if_pos (agreeOff_trans (agreeOff_extend w u y) hyx)]
++  · rw [if_neg hyx]
++    symm
++    refine Finset.sum_eq_zero fun u _ => ?_
++    rw [if_neg (fun h => hyx (agreeOff_trans (agreeOff_symm (agreeOff_extend w u y)) h)), mul_zero]
+ 
+ /-- Placing commutes with adjoints: `(applyOn w U)ᴴ = applyOn w Uᴴ`.
+ 
+@@ -107,7 +201,11 @@ theorem applyOn_mul (w : Fin k ↪ Fin n) (U V : Matrix (Reg k) (Reg k) ℂ) :
+ `conj (U x y)`. -/
+ theorem applyOn_conjTranspose (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) :
+     (applyOn w U)ᴴ = applyOn w Uᴴ := by
+-  sorry
++  ext y x
++  simp only [conjTranspose_apply, applyOn_apply]
++  by_cases h : AgreeOff w x y
++  · rw [if_pos h, if_pos (agreeOff_symm h)]
++  · rw [if_neg h, if_neg (fun h' => h (agreeOff_symm h')), star_zero]
+ 
+ /-- Placing a unitary on any wires gives a unitary.
+ 
+@@ -115,7 +213,9 @@ theorem applyOn_conjTranspose (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k)
+ `applyOn_conjTranspose`, `applyOn_mul` and `applyOn_one`. -/
+ theorem applyOn_mem_unitaryGroup (w : Fin k ↪ Fin n) {U : Matrix (Reg k) (Reg k) ℂ}
+     (hU : U ∈ 𝐔[Reg k]) : applyOn w U ∈ 𝐔[Reg n] := by
+-  sorry
++  rw [mem_unitaryGroup_iff'] at hU ⊢
++  rw [star_eq_conjTranspose, applyOn_conjTranspose, ← applyOn_mul, ← star_eq_conjTranspose, hU,
++    applyOn_one]
+ 
+ /-- The gate `U` placed on wires `w`, as an element of `𝐔[Reg n]`. -/
+ def applyOnU (w : Fin k ↪ Fin n) (U : Gate k) : 𝐔[Reg n] :=
+@@ -131,7 +231,65 @@ theorem applyOnU_coe (w : Fin k ↪ Fin n) (U : Gate k) :
+ `y ∘ id = y`. -/
+ theorem applyOn_refl (U : Matrix (Reg n) (Reg n) ℂ) :
+     applyOn (Function.Embedding.refl (Fin n)) U = U := by
+-  sorry
++  ext y x
++  rw [applyOn_apply, if_pos (show AgreeOff _ y x from fun i hi => absurd rfl (hi i))]
++  rfl
++
++/-- The product of two operators on disjoint wires, entrywise: it is
++`U₁ (y ∘ w₁) (x ∘ w₁) · U₂ (y ∘ w₂) (x ∘ w₂)` when `y` and `x` agree off both ranges, and `0`
++otherwise. The only intermediate register that can contribute agrees with `x` on `w₁`'s range and
++with `y` elsewhere.
++
++**Proof sketch.** Let `z*` be `y` on `w₂`'s range and `x` elsewhere. Then `z* ∘ w₁ = x ∘ w₁`
++(the ranges are disjoint), `z* ∘ w₂ = y ∘ w₂`, `z*` agrees with `x` off `w₂`, and `z*` agrees with
++`y` off `w₁` exactly when `y` and `x` agree off both ranges. So the term at `z*` is the stated
++expression. Any other `z` with a nonzero term would agree with `y` off `w₁` and with `x` off `w₂`,
++which forces `z = z*` wire by wire (`Finset.sum_eq_single`). -/
++private theorem applyOn_mul_applyOn_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w₂ : Fin k₂ ↪ Fin n)
++    (hd : ∀ j₁ j₂, w₁ j₁ ≠ w₂ j₂)
++    (U₁ : Matrix (Reg k₁) (Reg k₁) ℂ) (U₂ : Matrix (Reg k₂) (Reg k₂) ℂ) (y x : Reg n) :
++    (applyOn w₁ U₁ * applyOn w₂ U₂) y x =
++      if (∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i) then
++        U₁ (y ∘ w₁) (x ∘ w₁) * U₂ (y ∘ w₂) (x ∘ w₂) else 0 := by
++  -- The candidate intermediate register `z*` of the sketch, and its four properties.
++  set zs : Reg n := fun i => if ∃ j, w₂ j = i then y i else x i with hzs
++  have hz1 : zs ∘ w₁ = x ∘ w₁ := by
++    funext j; simp only [Function.comp, hzs]
++    rw [if_neg (fun ⟨j', hj'⟩ => hd j j' hj'.symm)]
++  have hz2 : zs ∘ w₂ = y ∘ w₂ := by
++    funext j; simp only [Function.comp, hzs]; rw [if_pos ⟨j, rfl⟩]
++  have hA2 : AgreeOff w₂ zs x := by
++    intro i hi; simp only [hzs]; rw [if_neg (fun ⟨j, hj⟩ => hi j hj)]
++  have hA1 : AgreeOff w₁ y zs ↔ ∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i := by
++    constructor
++    · intro h i h1 h2
++      have := h i h1; simp only [hzs] at this; rwa [if_neg (fun ⟨j, hj⟩ => h2 j hj)] at this
++    · intro h i h1
++      simp only [hzs]
++      by_cases hi : ∃ j, w₂ j = i
++      · rw [if_pos hi]
++      · rw [if_neg hi]; exact h i h1 (fun j hj => hi ⟨j, hj⟩)
++  -- The sum over intermediate registers has only the term at `zs`.
++  rw [Matrix.mul_apply, Finset.sum_eq_single zs]
++  · -- The term at `zs` is the stated expression.
++    simp only [applyOn_apply]
++    rw [if_pos hA2, hz1, hz2]
++    by_cases hc : ∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i
++    · rw [if_pos (hA1.2 hc), if_pos hc]
++    · rw [if_neg (fun h => hc (hA1.1 h)), if_neg hc, zero_mul]
++  · -- Any other `z` with a nonzero term would equal `zs` wire by wire.
++    intro z _ hz
++    simp only [applyOn_apply]
++    by_cases h1 : AgreeOff w₁ y z
++    · by_cases h2 : AgreeOff w₂ z x
++      · exfalso; apply hz; funext i; simp only [hzs]
++        by_cases hi : ∃ j, w₂ j = i
++        · rw [if_pos hi]; obtain ⟨j, rfl⟩ := hi
++          exact (h1 (w₂ j) (fun j' hj' => hd j' j hj')).symm
++        · rw [if_neg hi]; exact h2 i (fun j hj => hi ⟨j, hj⟩)
++      · rw [if_neg h2, mul_zero]
++    · rw [if_neg h1, zero_mul]
++  · intro h; exact absurd (Finset.mem_univ _) h
+ 
+ /-- Operators on disjoint sets of wires commute. [NC10, §4.5]
+ 
+@@ -148,7 +306,30 @@ theorem applyOn_commute_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w₂ : Fin k₂
+     (h : Disjoint (Set.range w₁) (Set.range w₂))
+     (U₁ : Matrix (Reg k₁) (Reg k₁) ℂ) (U₂ : Matrix (Reg k₂) (Reg k₂) ℂ) :
+     Commute (applyOn w₁ U₁) (applyOn w₂ U₂) := by
+-  sorry
++  have hd : ∀ j₁ j₂, w₁ j₁ ≠ w₂ j₂ := fun j₁ j₂ e =>
++    Set.disjoint_left.1 h ⟨j₁, rfl⟩ ⟨j₂, e.symm⟩
++  show applyOn w₁ U₁ * applyOn w₂ U₂ = applyOn w₂ U₂ * applyOn w₁ U₁
++  ext y x
++  rw [applyOn_mul_applyOn_of_disjoint w₁ w₂ hd,
++    applyOn_mul_applyOn_of_disjoint w₂ w₁ (fun a b e => hd b a e.symm)]
++  by_cases hc : ∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i
++  · rw [if_pos hc, if_pos (fun i h2 h1 => hc i h1 h2), mul_comm]
++  · rw [if_neg hc, if_neg (fun hc' => hc (fun i h1 h2 => hc' i h2 h1))]
++
++/-- Two registers agree off the first `k` wires iff they agree on the last `m`. -/
++private theorem agreeOff_castAddEmb_iff (m : ℕ) (y x : Reg (k + m)) :
++    AgreeOff (Fin.castAddEmb m) y x ↔
++      (fun i => y (Fin.natAdd k i)) = (fun i => x (Fin.natAdd k i)) := by
++  constructor
++  · intro h; funext i
++    apply h (Fin.natAdd k i)
++    intro j hj
++    have := congrArg Fin.val hj; simp at this; omega
++  · intro H i hi
++    by_cases hik : (i : ℕ) < k
++    · exact absurd (Fin.ext rfl) (hi ⟨i, hik⟩)
++    · have : i = Fin.natAdd k ⟨i - k, by omega⟩ := Fin.ext (by simp; omega)
++      rw [this]; exact congrFun H _
+ 
+ /-- On the first `k` wires, `applyOn` is the Kronecker product `U ⊗ I`, reindexed along
+ `regAppendEquiv k m`. This ties `applyOn` to the tensor-product description of placing a gate.
+@@ -163,7 +344,12 @@ theorem applyOn_castAdd_eq_reindex_kronecker (m : ℕ) (U : Matrix (Reg k) (Reg
+     applyOn (Fin.castAddEmb m) U =
+       reindex (regAppendEquiv k m) (regAppendEquiv k m)
+         (kroneckerMap (· * ·) U (1 : Matrix (Reg m) (Reg m) ℂ)) := by
+-  sorry
++  ext y x
++  simp only [reindex_apply, submatrix_apply, regAppendEquiv_symm_apply, kroneckerMap_apply,
++    applyOn_apply, Matrix.one_apply]
++  by_cases hA : AgreeOff (Fin.castAddEmb m) y x
++  · rw [if_pos hA, if_pos ((agreeOff_castAddEmb_iff m y x).1 hA), mul_one]; rfl
++  · rw [if_neg hA, if_neg (fun h => hA ((agreeOff_castAddEmb_iff m y x).2 h)), mul_zero]
+ 
+ /-! ### Action on basis states -/
+ 
+@@ -176,7 +362,8 @@ agreeing with `x` off `w`, and `0` elsewhere.
+ theorem applyOn_mulVec_basis (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (x : Reg n) :
+     applyOn w U *ᵥ (Ket.basis x).vec =
+       fun y => if AgreeOff w y x then U (y ∘ w) (x ∘ w) else 0 := by
+-  sorry
++  ext y
++  simp [mulVec, dotProduct, applyOn_apply, Ket.basis_vec]
+ 
+ /-- With no wires (`k = 0`), `applyOn` scales the identity by the single entry of the `1 × 1`
+ matrix `U`: a zero-qubit operator acts as a global scalar (round-1 audit, sanity statement 2).
+@@ -186,7 +373,28 @@ matrix `U`: a zero-qubit operator acts as a global scalar (round-1 audit, sanity
+ `y ∘ w = x ∘ w` is the unique element of `Reg 0`. -/
+ theorem applyOn_of_fin_zero (w : Fin 0 ↪ Fin n) (U : Matrix (Reg 0) (Reg 0) ℂ) :
+     applyOn w U = U Fin.elim0 Fin.elim0 • (1 : Matrix (Reg n) (Reg n) ℂ) := by
+-  sorry
++  ext y x
++  rw [applyOn_apply, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
++  have h0 : ∀ z : Reg n, z ∘ w = Fin.elim0 := fun z => funext fun j => j.elim0
++  by_cases h : y = x
++  · rw [if_pos (by subst h; exact fun _ _ => rfl), if_pos h, h0, h0, mul_one]
++  · rw [if_neg (fun h' => h (funext fun i => h' i (fun j => j.elim0))), if_neg h, mul_zero]
++
++/-- A permutation gate placed on wires `w` maps `|x⟩` to the basis state that holds `σ (x ∘ w)`
++on the wires `w` and agrees with `x` elsewhere. -/
++private theorem applyOn_permMat_mulVec_basis (w : Fin k ↪ Fin n) (σ : Equiv.Perm (Reg k))
++    (x : Reg n) :
++    applyOn w (permMat σ) *ᵥ (Ket.basis x).vec =
++      (Ket.basis (Function.extend w (σ (x ∘ w)) x)).vec := by
++  rw [applyOn_mulVec_basis]
++  funext y
++  simp only [Ket.basis_vec, permMat_apply]
++  by_cases hA : AgreeOff w y x
++  · rw [if_pos hA]
++    by_cases hy : y ∘ w = σ (x ∘ w)
++    · rw [if_pos hy, if_pos (by rw [← hy, extend_self hA])]
++    · rw [if_neg hy, if_neg (fun he => hy (by rw [← he, extend_comp]))]
++  · rw [if_neg hA, if_neg (fun he => hA (by rw [← he]; exact agreeOff_extend w _ x))]
+ 
+ /-- The embedding `Fin 1 ↪ Fin n` naming the single wire `i`. -/
+ def wire (i : Fin n) : Fin 1 ↪ Fin n := ⟨fun _ => i, fun a b _ => Subsingleton.elim a b⟩
+@@ -194,16 +402,64 @@ def wire (i : Fin n) : Fin 1 ↪ Fin n := ⟨fun _ => i, fun a b _ => Subsinglet
+ /-- `wire i` sends the gate's only wire to `i`. -/
+ theorem wire_apply (i : Fin n) (j : Fin 1) : wire i j = i := rfl
+ 
++/-! ### Action on arbitrary vectors -/
++
++/-- Writing a one-qubit register `u` on the single wire `i` of `y` is updating `y` at `i` to
++`u 0`. -/
++private theorem extend_wire (i : Fin n) (u : Reg 1) (y : Reg n) :
++    Function.extend (wire i) u y = Function.update y i (u 0) := by
++  funext j
++  by_cases hj : j = i
++  · subst hj
++    exact (wire j).injective.extend_apply _ y 0 |>.trans (by simp)
++  · rw [Function.extend_apply' _ _ _ (fun ⟨b, hb⟩ => hj (by rw [← hb, wire_apply])),
++      Function.update_of_ne hj]
++
++/-- A one-wire operator placed on wire `i` acts on a vector by a two-term sum over the input bit
++`a` on wire `i`: the amplitude at `y` is `∑ₐ U (y i) a · v (y with wire i set to a)`, where `y i`
++is the output bit. A coordinate formula for an arbitrary matrix `U` and vector `v`, extending the
++one-qubit gates of [dW26, §1.4].
++
++**Proof sketch.** `applyOn_mulVec_apply`, with `Reg 1 ≃ Qubit` and the fact that writing `u` on
++the single wire `i` is `Function.update y i (u 0)` (`extend_wire`). -/
++theorem applyOn_wire_mulVec_apply (i : Fin n) (U : Matrix (Reg 1) (Reg 1) ℂ) (v : Reg n → ℂ)
++    (y : Reg n) :
++    (applyOn (wire i) U *ᵥ v) y =
++      ∑ a : Qubit, U (fun _ => y i) (fun _ => a) * v (Function.update y i a) := by
++  rw [applyOn_mulVec_apply, ← (Equiv.funUnique (Fin 1) Qubit).symm.sum_comp]
++  refine Finset.sum_congr rfl fun a _ => ?_
++  rw [extend_wire]
++  rfl
++
++/-- A permutation gate placed on wires `w` relabels the amplitudes: the amplitude at `y` is `v`'s
++amplitude at the register holding `σ⁻¹ (y ∘ w)` on the wires `w` and agreeing with `y` elsewhere.
++
++**Proof sketch.** In `applyOn_mulVec_apply`, `permMat σ (y ∘ w) u` is `1` exactly when
++`u = σ⁻¹ (y ∘ w)` and `0` otherwise, so only that term survives (`Finset.sum_eq_single`). -/
++theorem applyOn_permMat_mulVec_apply (w : Fin k ↪ Fin n) (σ : Equiv.Perm (Reg k)) (v : Reg n → ℂ)
++    (y : Reg n) :
++    (applyOn w (permMat σ) *ᵥ v) y = v (Function.extend w (σ.symm (y ∘ w)) y) := by
++  rw [applyOn_mulVec_apply]
++  simp only [permMat_apply, ite_mul, one_mul, zero_mul]
++  rw [Finset.sum_eq_single (σ.symm (y ∘ w))]
++  · rw [if_pos (by simp)]
++  · intro u _ hu
++    rw [if_neg (fun h => hu (by rw [h, Equiv.symm_apply_apply]))]
++  · intro h; exact absurd (Finset.mem_univ _) h
++
+ /-- Sanity check for the definition of `applyOn`: the NOT gate placed on wire `i` maps the
+ basis state `|x⟩` to `|x with wire i flipped⟩`. [dW26, §1.4]
+ 
+-**Proof sketch.** By `applyOn_mulVec_basis`, the amplitude at `y` is `X (y ∘ wire i) (x ∘ wire i)`
+-when `y` agrees with `x` off `i`; that is `1` exactly when `y i = x i + 1`, i.e.
+-`y = flipAt i x`. -/
++**Proof sketch.** A placed permutation gate maps `|x⟩` to the basis state holding `σ (x ∘ w)` on
++the wires `w` and agreeing with `x` elsewhere (`applyOn_permMat_mulVec_basis`). For `X` on
++`wire i`, that state is `x` with wire `i` changed to `x i + 1`, which is `flipAt i x`. -/
+ theorem applyOn_wire_X_mulVec_basis (i : Fin n) (x : Reg n) :
+     applyOn (wire i) (Gate.X : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ (Ket.basis x).vec =
+       (Ket.basis (flipAt i x)).vec := by
+-  sorry
++  rw [Gate.X_coe, applyOn_permMat_mulVec_basis]
++  congr 2
++  rw [extend_wire, flipAt_eq]
++  simp [flipAt_eq, wire_apply]
+ 
+ /-- The embedding `Fin 2 ↪ Fin 3` sending gate wire `0` to register wire `2` and gate wire `1`
+ to register wire `0`: a reversed, non-contiguous placement, used as a sanity check. -/
+@@ -217,12 +473,21 @@ register wire `2` and its target on register wire `0` maps `|x⟩` to the basis
+ replaced by `x 0 + x 2`, all other wires unchanged (round-1 audit, sanity statement 3; on the
+ input `011` the output is `111`).
+ 
+-**Proof sketch.** By `applyOn_mulVec_basis`, the amplitude at `y` is
+-`CNOT (y ∘ wires20) (x ∘ wires20)` when `y 1 = x 1`; it is `1` exactly when
+-`(y 2, y 0) = (x 2, x 0 + x 2)`. -/
++**Proof sketch.** By `applyOn_permMat_mulVec_basis`, the image is the basis state holding
++`cnotMap (x 2, x 0) = (x 2, x 0 + x 2)` on wires `(2, 0)` and `x 1` on wire `1`. Check it wire by
++wire against `Function.update x 0 (x 0 + x 2)`. -/
+ theorem applyOn_wires20_CNOT_mulVec_basis (x : Reg 3) :
+     applyOn wires20 (Gate.CNOT : Matrix (Reg 2) (Reg 2) ℂ) *ᵥ (Ket.basis x).vec =
+       (Ket.basis (Function.update x 0 (x 0 + x 2))).vec := by
+-  sorry
++  rw [Gate.CNOT_coe, applyOn_permMat_mulVec_basis]
++  congr 2
++  funext j
++  fin_cases j
++  · rw [show ((⟨0, by decide⟩ : Fin 3)) = wires20 1 from rfl, wires20.injective.extend_apply]
++    simp [cnotMap_eq, wires20_apply]
++  · rw [Function.extend_apply' _ _ _ (by decide)]
++    simp
++  · rw [show ((⟨2, by decide⟩ : Fin 3)) = wires20 0 from rfl, wires20.injective.extend_apply]
++    simp [cnotMap_eq, wires20_apply]
+ 
+ end Quantum
+diff --git a/TCSlib/Quantum/Basic/Gates.lean b/TCSlib/Quantum/Basic/Gates.lean
+index 8a8aae74..ff76b148 100644
+--- a/TCSlib/Quantum/Basic/Gates.lean
++++ b/TCSlib/Quantum/Basic/Gates.lean
+@@ -37,6 +37,9 @@ Hadamard gate `H` is neither.
+ * `Quantum.permMat_mem_unitaryGroup`, `Quantum.diagonal_mem_unitaryGroup` — classical and
+   phase gates are unitary.
+ * `Quantum.permMat_mulVec_basis` — a classical gate maps `|x⟩` to `|σ x⟩`.
++* `Quantum.inv_sqrt_two_mul_self` — `(1/√2)² = 1/2`, the square of the Hadamard entries.
++* `Quantum.hadamardMat_conjTranspose`, `Quantum.hadamardMat_mul_self` — the Hadamard matrix is
++  self-adjoint and squares to the identity.
+ * `Quantum.Gate.H_mul_H`, `Quantum.Gate.S_mul_S`, `Quantum.Gate.H_mul_Z_mul_H` — gate
+   identities.
+ * `Quantum.Gate.X_eq_H_mul_S_mul_S_mul_H` — the NOT gate from Hadamard and phase gates
+@@ -85,17 +88,21 @@ theorem permMat_apply (σ : Equiv.Perm d) (y x : d) :
+ 
+ /-- A permutation matrix is unitary.
+ 
+-**Proof sketch.** `(permMat σ)ᴴ = permMat σ⁻¹`, and `permMat σ * permMat τ = permMat (σ * τ)`,
+-so `(permMat σ)ᴴ * permMat σ = permMat 1 = 1`. -/
++**Proof sketch.** Entry `(y, x)` of `(permMat σ)ᴴ · permMat σ` is
++`∑_z [z = σ y] [z = σ x] = [σ y = σ x]`, which is `[y = x]` because `σ` is injective. -/
+ theorem permMat_mem_unitaryGroup (σ : Equiv.Perm d) : permMat σ ∈ 𝐔[d] := by
+-  sorry
++  rw [mem_unitaryGroup_iff']
++  ext y x
++  simp [Matrix.mul_apply, permMat, Matrix.one_apply, apply_ite, Finset.sum_ite_eq',
++    σ.injective.eq_iff, eq_comm]
+ 
+ /-- A classical gate maps the basis state `|x⟩` to `|σ x⟩`. [dW26, §1.4]
+ 
+ **Proof sketch.** Entry `y` of `permMat σ *ᵥ |x⟩` is `permMat σ y x = [y = σ x]`. -/
+ theorem permMat_mulVec_basis (σ : Equiv.Perm d) (x : d) :
+     permMat σ *ᵥ (Ket.basis x).vec = (Ket.basis (σ x)).vec := by
+-  sorry
++  ext y
++  simp [mulVec, dotProduct, permMat, Ket.basis_vec, eq_comm]
+ 
+ /-- A diagonal matrix whose entries all have norm `1` is unitary. [dW26, App. A.4]
+ 
+@@ -103,7 +110,11 @@ theorem permMat_mulVec_basis (σ : Equiv.Perm d) (x : d) :
+ `conj z * z = ‖z‖² = 1`. -/
+ theorem diagonal_mem_unitaryGroup (f : d → ℂ) (hf : ∀ x, ‖f x‖ = 1) :
+     diagonal f ∈ 𝐔[d] := by
+-  sorry
++  rw [mem_unitaryGroup_iff', star_eq_conjTranspose, diagonal_conjTranspose, diagonal_mul_diagonal,
++    ← diagonal_one]
++  congr 1
++  funext x
++  simp [Complex.conj_mul', hf]
+ 
+ end Constructions
+ 
+@@ -145,7 +156,15 @@ theorem flipAt_eq {n : ℕ} (i : Fin n) (x : Reg n) :
+ **Proof sketch.** Pointwise: at wire `i` the value is `x i + 1 + 1 = x i` in `Fin 2`; elsewhere
+ `Function.update` leaves `x` unchanged. -/
+ theorem flipAt_involutive {n : ℕ} (i : Fin n) : Function.Involutive (flipAt i) := by
+-  sorry
++  intro x
++  funext j
++  by_cases h : j = i
++  · subst h
++    simp only [flipAt, Function.update_self]
++    generalize x j = a
++    revert a
++    decide
++  · simp [flipAt, h]
+ 
+ /-- The bit map of `CNOT`: `(a, b) ↦ (a, b ⊕ a)`, control wire `0`, target wire `1`. -/
+ def cnotMap (x : Reg 2) : Reg 2 := Function.update x 1 (x 1 + x 0)
+@@ -183,12 +202,57 @@ def hadamardMat : Matrix (Reg 1) (Reg 1) ℂ :=
+ theorem hadamardMat_apply (y x : Reg 1) :
+     hadamardMat y x = ((Real.sqrt 2)⁻¹ : ℂ) * (-1) ^ ((x 0 * y 0 : Qubit) : ℕ) := rfl
+ 
++/-- Every one-qubit basis state is one of the two constant registers. -/
++private theorem reg1_cases : ∀ x : Reg 1, x = (fun _ => 0) ∨ x = (fun _ => 1) := by
++  decide
++
++/-- Two one-qubit matrices are equal when they agree on the four pairs of basis states
++`(|a⟩, |b⟩)`. -/
++private theorem mat1_ext {A B : Matrix (Reg 1) (Reg 1) ℂ}
++    (h : ∀ a b : Qubit, A (fun _ => a) (fun _ => b) = B (fun _ => a) (fun _ => b)) : A = B := by
++  ext y x
++  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;> exact h _ _
++
++/-- A sum over the one-qubit basis has two terms. -/
++private theorem sum_reg1 (f : Reg 1 → ℂ) : ∑ z, f z = f (fun _ => 0) + f (fun _ => 1) := by
++  rw [← (Equiv.funUnique (Fin 1) Qubit).symm.sum_comp, Fin.sum_univ_two]
++  rfl
++
++/-- `(1/√2)² = 1/2` in `ℂ`: the square of the Hadamard matrix's entries. Public so that later
++files computing with `H` share it (added in fill epoch E1). -/
++theorem inv_sqrt_two_mul_self :
++    ((Real.sqrt 2 : ℂ))⁻¹ * ((Real.sqrt 2 : ℂ))⁻¹ = 1 / 2 := by
++  rw [← mul_inv, ← Complex.ofReal_mul, Real.mul_self_sqrt (by norm_num)]
++  norm_num
++
++/-- The Hadamard matrix is self-adjoint: its entries are real, and entry `(y, x)` depends on
++`x·y = y·x` only.
++
++**Proof sketch.** Entrywise: the conjugate of the real number `(-1)^(x·y) / √2` is itself, and
++`x 0 * y 0 = y 0 * x 0`. -/
++theorem hadamardMat_conjTranspose : hadamardMatᴴ = hadamardMat := by
++  ext y x
++  simp [Matrix.conjTranspose_apply, hadamardMat_apply, mul_comm (y 0)]
++
++/-- The Hadamard matrix squares to the identity. [dW26, §1.4]
++
++**Proof sketch.** Compare the four entries (`mat1_ext`). Each is a two-term sum over the middle
++basis state (`sum_reg1`), `(1/2) ∑_z (-1)^{z(x + y)}`, which is `(1 + 1)/2 = 1` if `x = y` and
++`(1 - 1)/2 = 0` otherwise (`inv_sqrt_two_mul_self`). -/
++theorem hadamardMat_mul_self : hadamardMat * hadamardMat = 1 := by
++  refine mat1_ext fun a b => ?_
++  fin_cases a <;> fin_cases b <;>
++    simp [Matrix.mul_apply, sum_reg1, hadamardMat_apply, Matrix.one_apply,
++      inv_sqrt_two_mul_self] <;>
++    first | decide | norm_num
++
+ /-- The Hadamard matrix is unitary.
+ 
+-**Proof sketch.** It is real and symmetric, so its adjoint is itself; its square is the identity
+-by direct computation of the four entries (`(1 + 1)/2 = 1`, `(1 - 1)/2 = 0`). -/
++**Proof sketch.** Its adjoint is itself (`hadamardMat_conjTranspose`) and its square is the
++identity (`hadamardMat_mul_self`). -/
+ theorem hadamardMat_mem_unitaryGroup : hadamardMat ∈ 𝐔[Reg 1] := by
+-  sorry
++  rw [mem_unitaryGroup_iff', Matrix.star_eq_conjTranspose, hadamardMat_conjTranspose,
++    hadamardMat_mul_self]
+ 
+ /-- The phase of `Z`: `(-1)^a` on `|a⟩`. -/
+ def zPhase (x : Reg 1) : ℂ := (-1) ^ ((x 0 : Qubit) : ℕ)
+@@ -200,7 +264,7 @@ theorem zPhase_eq (x : Reg 1) : zPhase x = (-1) ^ ((x 0 : Qubit) : ℕ) := rfl
+ 
+ **Proof sketch.** `‖(-1)ⁿ‖ = ‖-1‖ⁿ = 1` (`norm_pow`, `norm_neg`, `norm_one`). -/
+ theorem norm_zPhase (x : Reg 1) : ‖zPhase x‖ = 1 := by
+-  sorry
++  simp [zPhase]
+ 
+ /-- The phase of `S` (Watrous's `P`): `iᵃ` on `|a⟩`. [Wat08, §III.2] -/
+ def sPhase (x : Reg 1) : ℂ := Complex.I ^ ((x 0 : Qubit) : ℕ)
+@@ -212,7 +276,7 @@ theorem sPhase_eq (x : Reg 1) : sPhase x = Complex.I ^ ((x 0 : Qubit) : ℕ) :=
+ 
+ **Proof sketch.** `‖iⁿ‖ = ‖i‖ⁿ = 1` (`norm_pow`, `Complex.norm_I`). -/
+ theorem norm_sPhase (x : Reg 1) : ‖sPhase x‖ = 1 := by
+-  sorry
++  simp [sPhase]
+ 
+ /-! ### The named gates -/
+ 
+@@ -262,25 +326,38 @@ theorem Toffoli_coe :
+ 
+ /-! ### Gate identities -/
+ 
++/-- Two one-qubit gates are equal when their matrices agree on the four pairs of basis states
++`(|a⟩, |b⟩)`. -/
++private theorem gate1_ext {A B : Gate 1}
++    (h : ∀ a b : Qubit, (A : Matrix (Reg 1) (Reg 1) ℂ) (fun _ => a) (fun _ => b) =
++      (B : Matrix (Reg 1) (Reg 1) ℂ) (fun _ => a) (fun _ => b)) : A = B :=
++  Subtype.ext (mat1_ext h)
++
+ /-- The Hadamard gate is its own inverse: `H H = 1`. [dW26, §1.4]
+ 
+-**Proof sketch.** Entry `(y, x)` of `H H` is `(1/2) ∑_z (-1)^{z(x + y)}`, which is `1` if
+-`x = y` and `0` otherwise. -/
+-theorem H_mul_H : H * H = 1 := by
+-  sorry
++**Proof sketch.** The matrix of `H` is `hadamardMat`, which squares to the identity
++(`hadamardMat_mul_self`). -/
++theorem H_mul_H : H * H = 1 :=
++  Subtype.ext hadamardMat_mul_self
+ 
+ /-- The NOT gate is its own inverse: `X X = 1` (round-1 audit, sanity statement 3).
+ 
+-**Proof sketch.** `X` is the permutation gate of the involution `flipAt 0`, and
+-`permMat σ * permMat σ = permMat (σ * σ) = permMat 1 = 1`. -/
++**Proof sketch.** Compare the four entries (`gate1_ext`). `X` is the permutation matrix of the
++involution `flipAt 0`, so each entry of `X X` reduces to a decidable comparison of basis states
++that agrees with the identity. -/
+ theorem X_mul_X : X * X = 1 := by
+-  sorry
++  refine gate1_ext fun a b => ?_
++  fin_cases a <;> fin_cases b <;>
++    simp (config := { decide := true }) [Matrix.mul_apply, X_coe, permMat, flipAt]
+ 
+ /-- The phase flip is its own inverse: `Z Z = 1` (round-1 audit, sanity statement 3).
+ 
+-**Proof sketch.** Diagonal matrices multiply entrywise, and `((-1)^a)² = 1`. -/
++**Proof sketch.** Compare the four entries (`gate1_ext`): diagonal matrices multiply entrywise,
++and `((-1)^a)² = 1`. -/
+ theorem Z_mul_Z : Z * Z = 1 := by
+-  sorry
++  refine gate1_ext fun a b => ?_
++  fin_cases a <;> fin_cases b <;>
++    simp (config := { decide := true }) [Z_coe, zPhase]
+ 
+ /-- The NOT gate is not the identity, so the gate definitions are not degenerate (round-1 audit,
+ sanity statement 3).
+@@ -288,41 +365,58 @@ sanity statement 3).
+ **Proof sketch.** Entry `(|1⟩, |0⟩)` of `X` is `1` (`permMat_apply`, since `flipAt 0` sends the
+ register `0` to `1`), while that entry of the identity is `0`. -/
+ theorem X_ne_one : X ≠ 1 := by
+-  sorry
++  intro h
++  have := congrArg (fun U : Gate 1 => (U : Matrix (Reg 1) (Reg 1) ℂ) (fun _ => 1) (fun _ => 0)) h
++  simp (config := { decide := true }) [X_coe, permMat] at this
+ 
+ /-- Two phase shifts make a phase flip: `S S = Z`.
+ 
+-**Proof sketch.** Both are diagonal; `diagonal f * diagonal g = diagonal (f * g)`, and
+-`iᵃ · iᵃ = (-1)ᵃ` for `a ∈ {0, 1}`. Compare as elements of the unitary group by `Subtype.ext`. -/
++**Proof sketch.** Compare the four entries (`gate1_ext`): both are diagonal, products of diagonal
++matrices are diagonal with the products of the entries, and `iᵃ · iᵃ = (-1)ᵃ` for `a ∈ {0, 1}`. -/
+ theorem S_mul_S : S * S = Z := by
+-  sorry
++  refine gate1_ext fun a b => ?_
++  fin_cases a <;> fin_cases b <;>
++    simp (config := { decide := true }) [S_coe, Z_coe, sPhase, zPhase]
+ 
+ /-- Conjugating a phase flip by Hadamards gives a bit flip: `H Z H = X`. [dW26, §1.4]
+ 
+-**Proof sketch.** Entry `(y, x)` of `H Z H` is `(1/2) ∑_z (-1)^{z(x + y + 1)}`, which is `1`
+-if `y = x + 1` and `0` otherwise: the entries of `X`. -/
++**Proof sketch.** Compare the four entries (`gate1_ext`). Entry `(y, x)` of `H Z H` is a two-term
++sum (`sum_reg1`), `(1/2) ∑_z (-1)^{z(x + y + 1)}`, which is `1` if `y = x + 1` and `0` otherwise
++(`inv_sqrt_two_mul_self`): the entries of `X`. -/
+ theorem H_mul_Z_mul_H : H * Z * H = X := by
+-  sorry
++  refine gate1_ext fun a b => ?_
++  fin_cases a <;> fin_cases b <;>
++    simp (config := { decide := true }) [Matrix.mul_apply, sum_reg1, H_coe, hadamardMat, Z_coe,
++      zPhase, X_coe, permMat] <;>
++    (rw [inv_sqrt_two_mul_self]; norm_num)
+ 
+ /-- The NOT gate is built from Hadamard and phase gates: `X = H P P H`. [Wat08, Fig. 4]
+ 
+ **Proof sketch.** `S S = Z` (`S_mul_S`) and `H Z H = X` (`H_mul_Z_mul_H`), with
+ associativity. -/
+ theorem X_eq_H_mul_S_mul_S_mul_H : X = H * S * S * H := by
+-  sorry
++  rw [mul_assoc H S S, S_mul_S, H_mul_Z_mul_H]
++
++/-- On the slice where wire `0` is `1` in both input and output, `toffoliMap` acts as `cnotMap`
++on wires `1, 2` (checked on all `64` pairs of basis states). -/
++private theorem toffoli_cnot_slice : ∀ y x : Reg 3, y 0 = 1 → x 0 = 1 →
++    (y = toffoliMap x ↔ (fun i => y i.succ) = cnotMap (fun i => x i.succ)) := by
++  decide
+ 
+ /-- A Toffoli gate whose first control is `|1⟩` acts as `CNOT` on wires `1, 2`: for basis
+ states `y, x` with `y 0 = x 0 = 1`, entry `(y, x)` of `Toffoli` is entry `(y ∘ succ, x ∘ succ)`
+ of `CNOT`. This is the controlled-NOT construction of [Wat08, Fig. 4], with the constant `|1⟩`
+ supplied on wire `0`.
+ 
+-**Proof sketch.** With `x 0 = 1`, `toffoliMap x` changes wire `2` to `x 2 + x 1`, which is
+-`cnotMap` on wires `1, 2`. Both entries are `1` exactly when `y` is the image of `x`, and `y 0`
+-matches since neither map touches wire `0`. -/
++**Proof sketch.** Both entries are indicators: `[y = toffoliMap x]` and
++`[y ∘ succ = cnotMap (x ∘ succ)]`. With `x 0 = y 0 = 1`, `toffoliMap x` changes wire `2` to
++`x 2 + x 1`, which is `cnotMap` on wires `1, 2`, so the two conditions are equivalent. The
++equivalence is checked on all `64` pairs of basis states (`toffoli_cnot_slice`). -/
+ theorem Toffoli_apply_of_control_one (y x : Reg 3) (hy : y 0 = 1) (hx : x 0 = 1) :
+     (Toffoli : Matrix (Reg 3) (Reg 3) ℂ) y x =
+       (CNOT : Matrix (Reg 2) (Reg 2) ℂ) (fun i => y i.succ) (fun i => x i.succ) := by
+-  sorry
++  simp only [Toffoli_coe, CNOT_coe, permMat_apply, Function.Involutive.coe_toPerm]
++  exact if_congr (toffoli_cnot_slice y x hy hx) rfl rfl
+ 
+ end Gate
+ 
+diff --git a/TCSlib/Quantum/Basic/Measure.lean b/TCSlib/Quantum/Basic/Measure.lean
+index 405b40f4..70de7361 100644
+--- a/TCSlib/Quantum/Basic/Measure.lean
++++ b/TCSlib/Quantum/Basic/Measure.lean
+@@ -41,6 +41,8 @@ noncomputable section
+ 
+ namespace Quantum
+ 
++open Matrix
++
+ namespace Ket
+ 
+ variable {d : Type*} [Fintype d] {k n : ℕ}
+@@ -56,7 +58,8 @@ theorem prob_eq (ψ : Ket d) (x : d) : ψ.prob x = ‖ψ.vec x‖ ^ 2 := rfl
+ 
+ **Proof sketch.** A square of a real number is nonnegative (`sq_nonneg`). -/
+ theorem prob_nonneg (ψ : Ket d) (x : d) : 0 ≤ ψ.prob x := by
+-  sorry
++  rw [prob_eq]
++  positivity
+ 
+ /-- Outcome probabilities sum to `1`: this is the normalization of `ψ`. [dW26, §1.2.2] -/
+ theorem sum_prob (ψ : Ket d) : ∑ x, ψ.prob x = 1 := ψ.normalized'
+@@ -66,7 +69,8 @@ theorem sum_prob (ψ : Ket d) : ∑ x, ψ.prob x = 1 := ψ.normalized'
+ **Proof sketch.** It is one nonnegative term of a sum equal to `1` (`sum_prob`,
+ `prob_nonneg`). -/
+ theorem prob_le_one (ψ : Ket d) (x : d) : ψ.prob x ≤ 1 := by
+-  sorry
++  rw [← ψ.sum_prob]
++  exact Finset.single_le_sum (fun y _ => prob_nonneg ψ y) (Finset.mem_univ x)
+ 
+ /-- The probability that measuring wire `i` of the register state `ψ` gives `b`: the total
+ probability of the basis states `x` with `x i = b`. [dW26, §1.2.2] -/
+@@ -81,7 +85,8 @@ theorem probQubit_eq (ψ : Ket (Reg n)) (i : Fin n) (b : Qubit) :
+ 
+ **Proof sketch.** A sum of nonnegative terms (`Finset.sum_nonneg`, `prob_nonneg`). -/
+ theorem probQubit_nonneg (ψ : Ket (Reg n)) (i : Fin n) (b : Qubit) : 0 ≤ ψ.probQubit i b := by
+-  sorry
++  rw [probQubit_eq]
++  exact Finset.sum_nonneg fun y _ => prob_nonneg ψ y
+ 
+ /-- The two outcomes of measuring wire `i` have total probability `1`.
+ 
+@@ -90,7 +95,14 @@ theorem probQubit_nonneg (ψ : Ket (Reg n)) (i : Fin n) (b : Qubit) : 0 ≤ ψ.p
+ sum is `1` (`sum_prob`). -/
+ theorem probQubit_zero_add_one (ψ : Ket (Reg n)) (i : Fin n) :
+     ψ.probQubit i 0 + ψ.probQubit i 1 = 1 := by
+-  sorry
++  rw [probQubit_eq, probQubit_eq, ← ψ.sum_prob]
++  rw [← Finset.sum_filter_add_sum_filter_not Finset.univ (fun x : Reg n => x i = 0)]
++  congr 1
++  apply Finset.sum_congr _ (fun _ _ => rfl)
++  ext x
++  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
++  generalize x i = a
++  revert a; decide
+ 
+ /-- Measuring wire `i` of the basis state `|x⟩` gives `x i` with certainty.
+ 
+@@ -98,22 +110,56 @@ theorem probQubit_zero_add_one (ψ : Ket (Reg n)) (i : Fin n) :
+ is `1` if `x i = b` and `0` otherwise. -/
+ theorem probQubit_basis (x : Reg n) (i : Fin n) (b : Qubit) :
+     (basis x).probQubit i b = if x i = b then 1 else 0 := by
+-  sorry
++  rw [probQubit_eq]
++  simp [prob_eq, basis_vec, apply_ite, Finset.sum_ite_eq]
++
++/-- The probability that wire `i` reads `b` is the squared norm of `ψ` projected onto the basis
++states with `x i = b`. -/
++private theorem probQubit_eq_sum_norm_sq (ψ : Ket (Reg n)) (i : Fin n) (b : Qubit) :
++    ψ.probQubit i b = ∑ x, ‖(if x i = b then ψ.vec x else 0)‖ ^ 2 := by
++  rw [probQubit_eq, Finset.sum_filter]
++  refine Finset.sum_congr rfl fun x _ => ?_
++  split_ifs <;> simp [prob_eq]
++
++/-- A gate on wires avoiding `i` commutes with the projection onto "wire `i` reads `b`": it never
++changes wire `i`. -/
++private theorem applyOn_mulVec_proj (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) {i : Fin n}
++    (hi : ∀ j, w j ≠ i) (b : Qubit) (v : Reg n → ℂ) :
++    (fun x => if x i = b then (applyOn w U *ᵥ v) x else 0) =
++      applyOn w U *ᵥ (fun x => if x i = b then v x else 0) := by
++  funext x
++  simp only [mulVec, dotProduct]
++  split_ifs with hx
++  · refine Finset.sum_congr rfl fun z _ => ?_
++    by_cases hA : AgreeOff w x z
++    · rw [if_pos (by rw [← hA i hi, hx])]
++    · rw [applyOn_apply, if_neg hA, zero_mul, zero_mul]
++  · symm
++    refine Finset.sum_eq_zero fun z _ => ?_
++    by_cases hA : AgreeOff w x z
++    · rw [if_neg (by rw [← hA i hi]; exact hx), mul_zero]
++    · rw [applyOn_apply, if_neg hA, zero_mul]
+ 
+ /-- A gate placed on wires that avoid `i` does not change the statistics of measuring wire `i`.
+ This is what makes measurements of separate registers independent of the gates applied to
+ the others.
+ 
+-**Proof sketch.** Partition `Reg n` into the classes of `AgreeOff w`: registers equal off the
+-range of `w`. Wire `i` is off that range, so `x i` is constant on each class, and the event
+-`x i = b` is a union of classes. `applyOn w U` maps vectors supported on a class into that
+-same class (`applyOn_mulVec_basis`), where it acts as `U` under the bijection `x ↦ x ∘ w` of
+-`applyOn_mul`'s sketch. Unitaries preserve squared norms
+-(`sum_norm_sq_mulVec_of_mem_unitaryGroup`), so each class keeps its total probability. -/
++**Proof sketch.** Let `P` project onto the basis states with `x i = b`. Then
++`probQubit i b` is the squared norm of `P ψ` (`probQubit_eq_sum_norm_sq`). The placed gate never
++changes wire `i`, since `i` is off the range of `w`, so it commutes with `P`
++(`applyOn_mulVec_proj`). Hence the probability after the gate is `‖P (A ψ)‖² = ‖A (P ψ)‖²`, and
++unitaries preserve squared norms (`sum_norm_sq_mulVec_of_mem_unitaryGroup`). -/
+ theorem probQubit_evolve_applyOnU_of_forall_ne (ψ : Ket (Reg n)) (w : Fin k ↪ Fin n)
+     (U : Gate k) {i : Fin n} (hi : ∀ j, w j ≠ i) (b : Qubit) :
+     (ψ.evolve (applyOnU w U)).probQubit i b = ψ.probQubit i b := by
+-  sorry
++  rw [probQubit_eq_sum_norm_sq, probQubit_eq_sum_norm_sq, evolve_vec, applyOnU_coe]
++  calc ∑ x, ‖(if x i = b then (applyOn w (U : Matrix (Reg k) (Reg k) ℂ) *ᵥ ψ.vec) x else 0)‖ ^ 2
++      = ∑ x, ‖(applyOn w (U : Matrix (Reg k) (Reg k) ℂ) *ᵥ
++          fun x => if x i = b then ψ.vec x else 0) x‖ ^ 2 := by
++        refine Finset.sum_congr rfl fun x _ => ?_
++        rw [← congrFun (applyOn_mulVec_proj w U hi b ψ.vec) x]
++    _ = ∑ x, ‖(if x i = b then ψ.vec x else 0)‖ ^ 2 :=
++        sum_norm_sq_mulVec_of_mem_unitaryGroup (applyOn_mem_unitaryGroup w U.2) _
+ 
+ end Ket
+ 
+diff --git a/TCSlib/Quantum/Basic/Protocols.lean b/TCSlib/Quantum/Basic/Protocols.lean
+index a9bccc36..63522331 100644
+--- a/TCSlib/Quantum/Basic/Protocols.lean
++++ b/TCSlib/Quantum/Basic/Protocols.lean
+@@ -85,7 +85,34 @@ theorem no_cloning_of_overlap {d : Type*} [Fintype d] [DecidableEq d] (e : d) (
+     ¬ ∃ (U : 𝐔[d × d]) (c₁ c₂ : ℂ), ‖c₁‖ = 1 ∧ ‖c₂‖ = 1 ∧
+       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = c₁ • (ψ ⊗ᵠ ψ).vec ∧
+       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (φ ⊗ᵠ Ket.basis e).vec = c₂ • (φ ⊗ᵠ φ).vec := by
+-  sorry
++  rintro ⟨U, c₁, c₂, hc₁, hc₂, hψ, hφ⟩
++  set t := ∑ x, star (ψ.vec x) * φ.vec x with ht
++  -- The inner product of the inputs is `t`, and that of the outputs is `conj c₁ · c₂ · t²`.
++  have hin : star (ψ ⊗ᵠ Ket.basis e).vec ⬝ᵥ (φ ⊗ᵠ Ket.basis e).vec = t := by
++    simp only [dotProduct, Pi.star_apply, Ket.prod_vec, Ket.basis_vec, Fintype.sum_prod_type,
++      mul_ite, mul_one, mul_zero]
++    simp [Finset.sum_ite_eq, ht, mul_comm]
++  have hout : star (c₁ • (ψ ⊗ᵠ ψ).vec) ⬝ᵥ (c₂ • (φ ⊗ᵠ φ).vec) = star c₁ * c₂ * t ^ 2 := by
++    simp only [dotProduct, Pi.star_apply, Pi.smul_apply, smul_eq_mul, Ket.prod_vec,
++      Fintype.sum_prod_type, star_mul']
++    rw [ht, sq, Finset.mul_sum, Finset.mul_sum]
++    refine Finset.sum_congr rfl fun a _ => ?_
++    rw [Finset.sum_mul, Finset.mul_sum]
++    refine Finset.sum_congr rfl fun b _ => ?_
++    ring
++  -- `U` preserves inner products, so the two agree.
++  have heq : t = star c₁ * c₂ * t ^ 2 :=
++    calc t = star (ψ ⊗ᵠ Ket.basis e).vec ⬝ᵥ (φ ⊗ᵠ Ket.basis e).vec := hin.symm
++      _ = star ((U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec) ⬝ᵥ
++          ((U : Matrix (d × d) (d × d) ℂ) *ᵥ (φ ⊗ᵠ Ket.basis e).vec) :=
++            (inner_mulVec_of_mem_unitaryGroup U.2 _ _).symm
++      _ = star (c₁ • (ψ ⊗ᵠ ψ).vec) ⬝ᵥ (c₂ • (φ ⊗ᵠ φ).vec) := by rw [hψ, hφ]
++      _ = star c₁ * c₂ * t ^ 2 := hout
++  -- Taking moduli, `‖t‖ = ‖t‖²`, impossible for `0 < ‖t‖ < 1`.
++  have hn : ‖t‖ = ‖t‖ ^ 2 := by
++    conv_lhs => rw [heq]
++    rw [norm_mul, norm_mul, norm_star, hc₁, hc₂, norm_pow]; ring
++  nlinarith
+ 
+ /-- **No-cloning theorem.** On a basis with at least two elements, no unitary `U` maps
+ `|ψ⟩|e⟩` to `c_ψ |ψ⟩|ψ⟩` for every state `ψ`, even allowing a phase `|c_ψ| = 1` that depends on
+@@ -98,7 +125,26 @@ forbids copying both. -/
+ theorem no_cloning {d : Type*} [Fintype d] [DecidableEq d] [Nontrivial d] (e : d) :
+     ¬ ∃ U : 𝐔[d × d], ∀ ψ : Ket d, ∃ c : ℂ, ‖c‖ = 1 ∧
+       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = c • (ψ ⊗ᵠ ψ).vec := by
+-  sorry
++  rintro ⟨U, hU⟩
++  obtain ⟨i, j, hij⟩ := exists_pair_ne d
++  let φ : Ket d := ⟨fun x =>
++      ((Real.sqrt 2 : ℂ))⁻¹ * ((if i = x then 1 else 0) + (if j = x then 1 else 0)), by
++    simp only [norm_mul, mul_pow, ← Finset.mul_sum]
++    rw [Finset.sum_eq_add (s := Finset.univ) i j hij]
++    · simp [hij, Ne.symm hij]
++      norm_num
++    · intro c _ hc; simp [Ne.symm hc.1, Ne.symm hc.2]
++    · simp
++    · simp⟩
++  have hov : ∑ x, star ((Ket.basis i).vec x) * φ.vec x = ((Real.sqrt 2 : ℂ))⁻¹ := by
++    simp [φ, Ket.basis_vec, Ne.symm hij]
++  obtain ⟨c₁, hc₁, h1⟩ := hU (Ket.basis i)
++  obtain ⟨c₂, hc₂, h2⟩ := hU φ
++  refine no_cloning_of_overlap e (Ket.basis i) φ ?_ ?_ ⟨U, c₁, c₂, hc₁, hc₂, h1, h2⟩
++  · rw [hov, norm_pos_iff]; simp
++  · rw [hov, norm_inv, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by positivity)]
++    rw [inv_lt_one_iff₀]; right
++    rw [Real.lt_sqrt (by norm_num)]; norm_num
+ 
+ /-- **No exact cloning of vectors.** No unitary `U` maps `|ψ⟩|e⟩` to exactly `|ψ⟩|ψ⟩` for every
+ ket `ψ`, on any basis. This is weaker than `no_cloning`: it forbids copying vector
+@@ -111,7 +157,19 @@ physical state is trivially copied. Kept as a vector-level fact (round-1 audit,
+ theorem no_exact_cloning {d : Type*} [Fintype d] [DecidableEq d] (e : d) :
+     ¬ ∃ U : 𝐔[d × d], ∀ ψ : Ket d,
+       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = (ψ ⊗ᵠ ψ).vec := by
+-  sorry
++  rintro ⟨U, hU⟩
++  let ψ := Ket.basis e
++  let ψn : Ket d := ⟨fun x => -ψ.vec x, by simpa using ψ.normalized'⟩
++  have h1 := hU ψ
++  have h2 := hU ψn
++  have hlin : (ψn ⊗ᵠ Ket.basis e).vec = -(ψ ⊗ᵠ Ket.basis e).vec := by
++    funext p; simp [ψn, Ket.prod_vec]
++  have hsq : (ψn ⊗ᵠ ψn).vec = (ψ ⊗ᵠ ψ).vec := by
++    funext p; simp [ψn, Ket.prod_vec]
++  rw [hlin, mulVec_neg, h1, hsq] at h2
++  have := congrFun h2 (e, e)
++  simp [ψ, Ket.prod_vec, Ket.basis_vec] at this
++  norm_num at this
+ 
+ /-! ### The EPR pair -/
+ 
+@@ -127,7 +185,9 @@ theorem bellVec_eq (x : Reg 2) :
+ **Proof sketch.** Exactly two of the four basis states have equal wires, and
+ `‖1/√2‖² = 1/2`. -/
+ theorem sum_norm_sq_bellVec : ∑ x, ‖bellVec x‖ ^ 2 = 1 := by
+-  sorry
++  rw [← (finTwoArrowEquiv Qubit).symm.sum_comp, Fintype.sum_prod_type]
++  simp [Fin.sum_univ_two, bellVec, finTwoArrowEquiv]
++  norm_num
+ 
+ /-- The EPR pair `(|00⟩ + |11⟩)/√2`. [dW26, §1.5] -/
+ def bell : Ket (Reg 2) := ⟨bellVec, sum_norm_sq_bellVec⟩
+@@ -149,11 +209,14 @@ def teleportInit (ψ : Ket (Reg 1)) : Ket (Reg 3) := (ψ ⊗ᵠ bell).relabel (r
+ 
+ /-- The amplitude of the initial state at `y` is `ψ (y 0) · bell (y 1, y 2)`.
+ 
+-**Proof sketch.** Unfold `relabel` and `prod`, and read `(regAppendEquiv 1 2).symm y` with
+-`regAppendEquiv_apply_castAdd` and `regAppendEquiv_apply_natAdd`. -/
++**Proof sketch.** Unfold `relabel` and `prod`, and split `y` into its first wire and its last two
++with `regAppendEquiv_symm_apply`. -/
+ theorem teleportInit_vec (ψ : Ket (Reg 1)) (y : Reg 3) :
+     (teleportInit ψ).vec y = ψ.vec (fun _ => y 0) * bellVec ![y 1, y 2] := by
+-  sorry
++  rw [teleportInit, Ket.relabel_vec, Ket.prod_vec, regAppendEquiv_symm_apply, bell_vec]
++  congr 2
++  · funext i; fin_cases i; rfl
++  · funext i; fin_cases i <;> rfl
+ 
+ /-- The state after Alice's gates: `CNOT` from wire `0` to wire `1`, then `H` on wire `0`.
+ Alice then measures wires `0, 1`. [dW26, §1.5] -/
+@@ -166,22 +229,79 @@ theorem teleportState_eq (ψ : Ket (Reg 1)) :
+       ((teleportInit ψ).evolve (applyOnU wires01 Gate.CNOT)).evolve (applyOnU (wire 0) Gate.H) :=
+   rfl
+ 
++/-- `(1/√2)² = 1/2` in `ℂ`, in the `^ 2` form `ring_nf` produces (from `inv_sqrt_two_mul_self`). -/
++private theorem inv_sqrt_two_sq : ((Real.sqrt 2 : ℂ))⁻¹ ^ 2 = 1 / 2 := by
++  rw [sq, inv_sqrt_two_mul_self]
++
++/-- `CNOT` on wires `0, 1` of a three-wire register adds wire `0` into wire `1`. -/
++private theorem cnot_extend_wires01 (z : Reg 3) :
++    Function.extend wires01 (cnotMap (z ∘ wires01)) z = Function.update z 1 (z 1 + z 0) := by
++  funext j
++  fin_cases j
++  · exact (wires01.injective.extend_apply _ z 0).trans (by simp [cnotMap_eq, wires01_apply])
++  · exact (wires01.injective.extend_apply _ z 1).trans (by simp [cnotMap_eq, wires01_apply])
++  · rw [Function.extend_apply' _ _ _ (by decide)]; simp
++
++/-- The teleportation state after Alice's gates, as a two-term sum over the value `a` of wire `0`
++before the Hadamard gate. -/
++private theorem teleportState_vec_sum (ψ : Ket (Reg 1)) (y : Reg 3) :
++    (teleportState ψ).vec y = ∑ a : Qubit, hadamardMat (fun _ => y 0) (fun _ => a) *
++      (ψ.vec (fun _ => a) * bellVec ![y 1 + a, y 2]) := by
++  rw [teleportState, Ket.evolve_vec, Ket.evolve_vec, applyOnU_coe, applyOnU_coe,
++    applyOn_wire_mulVec_apply]
++  refine Finset.sum_congr rfl fun a _ => ?_
++  rw [Gate.H_coe, Gate.CNOT_coe, applyOn_permMat_mulVec_apply, Function.Involutive.toPerm_symm,
++    Function.Involutive.coe_toPerm, cnot_extend_wires01, teleportInit_vec]
++  congr 2
++
++/-- A permutation matrix relabels a register vector's entries: `(permMat σ v) c = v (σ⁻¹ c)`. It is
++`applyOn_permMat_mulVec_apply` on all wires in order (`applyOn_refl`). -/
++private theorem permMat_mulVec_apply {n : ℕ} (σ : Equiv.Perm (Reg n)) (w : Reg n → ℂ)
++    (c : Reg n) : (permMat σ *ᵥ w) c = w (σ.symm c) := by
++  rw [← applyOn_refl (permMat σ), applyOn_permMat_mulVec_apply]
++  congr 1
++  funext j
++  exact (Function.Embedding.refl (Fin n)).injective.extend_apply _ c j
++
++/-- On one wire, `flipAt 0` adds `1` to the wire's value. -/
++private theorem flipAt_const (c : Qubit) : flipAt 0 (fun _ : Fin 1 => c) = fun _ => c + 1 := by
++  funext j; fin_cases j; simp [flipAt_eq]
++
++/-- `X` flips the argument of a one-qubit amplitude vector. -/
++private theorem X_mulVec_apply (w : Reg 1 → ℂ) (c : Qubit) :
++    ((Gate.X : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ w) (fun _ => c) = w (fun _ => c + 1) := by
++  rw [Gate.X_coe, permMat_mulVec_apply, Function.Involutive.toPerm_symm,
++    Function.Involutive.coe_toPerm, flipAt_const]
++
++/-- `Z` multiplies the amplitude at `|c⟩` by `(-1)^c`. -/
++private theorem Z_mulVec_apply (w : Reg 1 → ℂ) (c : Qubit) :
++    ((Gate.Z : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ w) (fun _ => c) = (-1) ^ (c : ℕ) * w (fun _ => c) := by
++  rw [Gate.Z_coe, mulVec_diagonal, zPhase_eq]
++
+ /-- **Teleportation, the key identity.** After Alice's gates the state is
+ `½ ∑_{m₀ m₁} |m₀ m₁⟩ ⊗ X^{m₁} Z^{m₀} |ψ⟩`: its amplitude at `y` is `½` times the amplitude of
+ `X^{y 1} Z^{y 0} ψ` at Bob's wire value `y 2`. [dW26, §1.5]
+ 
+-**Proof sketch.** Write `ψ = α|0⟩ + β|1⟩`. After `CNOT` on wires `0, 1`, the amplitude at
+-`(a, b, c)` is `ψ(a) · [b + a = c] / √2`. After `H` on wire `0` it is
+-`½ ∑_a (-1)^{a y₀} ψ(a) [y₁ + a = y₂]`. For each `(y₀, y₁)` the only surviving `a` is
+-`a = y₂ + y₁`, which gives `½ (-1)^{(y₂ + y₁) y₀} ψ(y₂ + y₁)`: the amplitude of
+-`X^{y₁} Z^{y₀} ψ` at `y₂`. Each step reads `applyOn` through `applyOn_mulVec_basis`, so the
+-proof exercises `applyOn` on two different wire sets of one register. -/
++**Proof sketch.** `H` on wire `0` acts by a two-term sum over that wire's value `a`
++(`applyOn_wire_mulVec_apply`). `CNOT` on wires `0, 1` relabels amplitudes, adding wire `0` into
++wire `1` (`applyOn_permMat_mulVec_apply`; its permutation is its own inverse). With
++`teleportInit_vec` this gives `∑_a (-1)^{a y₀}/√2 · ψ(a) · bell(y₁ + a, y₂)`
++(`teleportState_vec_sum`). Compare with `½ (X^{y₁} Z^{y₀} ψ)(y₂)` in each of the eight cases of
++`(y₀, y₁, y₂)`, using `(1/√2)² = 1/2`. The proof exercises `applyOn` on two different wire sets
++of one register. -/
+ theorem teleportState_vec (ψ : Ket (Reg 1)) (y : Reg 3) :
+     (teleportState ψ).vec y =
+       (1 / 2 : ℂ) *
+         (((Gate.X ^ (y 1).val * Gate.Z ^ (y 0).val : Gate 1) : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ
+           ψ.vec) (fun _ => y 2) := by
+-  sorry
++  rw [teleportState_vec_sum, Fin.sum_univ_two, Submonoid.coe_mul, SubmonoidClass.coe_pow,
++    SubmonoidClass.coe_pow, ← mulVec_mulVec]
++  generalize y 0 = c0
++  generalize y 1 = c1
++  generalize y 2 = c2
++  fin_cases c0 <;> fin_cases c1 <;> fin_cases c2 <;>
++    simp [hadamardMat_apply, bellVec, X_mulVec_apply, Z_mulVec_apply] <;>
++    ring_nf <;> rw [inv_sqrt_two_sq] <;> ring
+ 
+ /-- Each of Alice's four measurement outcomes `(m₀, m₁)` occurs with probability `1/4`,
+ whatever `ψ` is. [dW26, §1.5]
+@@ -192,7 +312,33 @@ whatever `ψ` is. [dW26, §1.5]
+ theorem teleport_outcome_prob (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
+     ∑ y ∈ Finset.univ.filter (fun y : Reg 3 => y 0 = m₀ ∧ y 1 = m₁), (teleportState ψ).prob y =
+       1 / 4 := by
+-  sorry
++  set M : Matrix (Reg 1) (Reg 1) ℂ := ((Gate.X ^ m₁.val * Gate.Z ^ m₀.val : Gate 1) :
++    Matrix (Reg 1) (Reg 1) ℂ) with hM
++  have hU : M ∈ 𝐔[Reg 1] := (Gate.X ^ m₁.val * Gate.Z ^ m₀.val).2
++  -- Reindex the outcome's strings `(m₀, m₁, c)` by Bob's bit `c`; by `teleportState_vec`, the
++  -- summand is `‖½ (M ψ)(c)‖²`.
++  rw [Finset.sum_nbij' (fun y => y 2) (fun c => ![m₀, m₁, c])
++    (t := Finset.univ) (g := fun c => ‖(1 / 2 : ℂ) * (M *ᵥ ψ.vec) (fun _ => c)‖ ^ 2)]
++  · -- `M` is unitary, so `∑_c ‖(M ψ)(c)‖² = ‖ψ‖² = 1`, and the outcome has probability `1/4`.
++    simp only [norm_mul, mul_pow, ← Finset.mul_sum]
++    rw [← (Equiv.funUnique (Fin 1) Qubit).sum_comp]
++    have h1 : ∑ x : Reg 1, ‖(M *ᵥ ψ.vec) (fun _ => (Equiv.funUnique (Fin 1) Qubit) x)‖ ^ 2 =
++        ∑ x : Reg 1, ‖(M *ᵥ ψ.vec) x‖ ^ 2 := by
++      refine Finset.sum_congr rfl fun x _ => ?_
++      congr 3; funext j; fin_cases j; rfl
++    rw [h1, sum_norm_sq_mulVec_of_mem_unitaryGroup hU, ψ.normalized']
++    norm_num
++  · -- The reindexing is a bijection between the filtered strings and `Qubit`.
++    intros; exact Finset.mem_univ _
++  · intro c _; simp
++  · intro y hy
++    obtain ⟨h0, h1⟩ := (Finset.mem_filter.1 hy).2
++    funext j; fin_cases j <;> simp [h0, h1]
++  · intros; rfl
++  · -- The summands agree (`teleportState_vec`).
++    intro y hy
++    obtain ⟨h0, h1⟩ := (Finset.mem_filter.1 hy).2
++    rw [Ket.prob_eq, teleportState_vec, h0, h1]
+ 
+ /-- Bob's qubit after Alice measures `(m₀, m₁)`, unnormalized: the amplitudes of
+ `teleportState ψ` with wires `0, 1` fixed to `m₀, m₁`. -/
+@@ -203,17 +349,32 @@ def bobVec (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) : Reg 1 → ℂ :=
+ theorem bobVec_apply (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) (b : Reg 1) :
+     bobVec ψ m₀ m₁ b = (teleportState ψ).vec ![m₀, m₁, b 0] := rfl
+ 
++/-- A gate that is its own inverse has `gᵐ gᵐ = 1` for every `m` (used for `X` and `Z`). -/
++private theorem pow_mul_self_of_mul_self {g : Gate 1} (h : g * g = 1) (m : ℕ) :
++    g ^ m * g ^ m = 1 := by
++  rw [← pow_add, ← two_mul, pow_mul, sq, h, one_pow]
++
+ /-- **Teleportation is correct.** After Alice's outcome `(m₀, m₁)`, Bob applies `X^{m₁}` and
+ then `Z^{m₀}`, and holds `ψ` (scaled by `½`, the amplitude of the outcome). [dW26, §1.5]
+ 
+ **Proof sketch.** By `teleportState_vec`, `bobVec ψ m₀ m₁ = ½ X^{m₁} Z^{m₀} ψ`. Then
+-`Z^{m₀} X^{m₁} X^{m₁} Z^{m₀} = 1`, since `X X = 1` and `Z Z = 1` (from `H_mul_H`,
+-`S_mul_S` and `H_mul_Z_mul_H`, or by computing the four entries). -/
++`Z^{m₀} X^{m₁} X^{m₁} Z^{m₀} = 1` in the unitary group, since `Xᵐ Xᵐ = 1` and `Zᵐ Zᵐ = 1`
++(`Gate.X_mul_X`, `Gate.Z_mul_Z`, through one private power lemma). -/
+ theorem teleport_correct (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
+     ((Gate.Z ^ m₀.val * Gate.X ^ m₁.val : Gate 1) : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ
+         bobVec ψ m₀ m₁ =
+       (1 / 2 : ℂ) • ψ.vec := by
+-  sorry
++  have hb : bobVec ψ m₀ m₁ = (1 / 2 : ℂ) •
++      (((Gate.X ^ m₁.val * Gate.Z ^ m₀.val : Gate 1) : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ ψ.vec) := by
++    funext b
++    rw [bobVec_apply, teleportState_vec, Pi.smul_apply, smul_eq_mul]
++    have hb' : (fun _ : Fin 1 => b 0) = b := by funext j; fin_cases j; rfl
++    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
++      Matrix.tail_cons, hb']
++  have key : (Gate.Z ^ m₀.val * Gate.X ^ m₁.val) * (Gate.X ^ m₁.val * Gate.Z ^ m₀.val) = 1 := by
++    rw [mul_assoc, ← mul_assoc (Gate.X ^ m₁.val),
++      pow_mul_self_of_mul_self Gate.X_mul_X, one_mul, pow_mul_self_of_mul_self Gate.Z_mul_Z]
++  rw [hb, mulVec_smul, mulVec_mulVec, ← Submonoid.coe_mul, key, Submonoid.coe_one, one_mulVec]
+ 
+ /-! ### Superdense coding -/
+ 
+@@ -239,24 +400,59 @@ theorem superdenseState_eq (b₀ b₁ : Qubit) :
+       ((bell.evolve (applyOnU (wire 0) (denseCode b₀ b₁))).evolve Gate.CNOT).evolve
+         (applyOnU (wire 0) Gate.H) := rfl
+ 
++/-- A two-term sum over a wire's value against a one-qubit matrix is that matrix applied to a
++vector, evaluated at a basis state. -/
++private theorem wire_sum_eq_mulVec (D : Matrix (Reg 1) (Reg 1) ℂ) (g : Qubit → ℂ) (c : Qubit) :
++    ∑ a : Qubit, D (fun _ => c) (fun _ => a) * g a = (D *ᵥ fun x => g (x 0)) (fun _ => c) := by
++  simp only [mulVec, dotProduct]
++  rw [← (Equiv.funUnique (Fin 1) Qubit).symm.sum_comp]
++  rfl
++
++/-- `CNOT` relabels a two-qubit vector's entries by `cnotMap`. -/
++private theorem cnot_mulVec_apply (w : Reg 2 → ℂ) (z : Reg 2) :
++    ((Gate.CNOT : Matrix (Reg 2) (Reg 2) ℂ) *ᵥ w) z = w (cnotMap z) := by
++  rw [Gate.CNOT_coe, permMat_mulVec_apply, Function.Involutive.toPerm_symm,
++    Function.Involutive.coe_toPerm]
++
++/-- The decoded superdense state, computed case by case; `superdenseState_vec` restates it. -/
++private theorem superdenseState_vec_aux (b₀ b₁ : Qubit) :
++    (superdenseState b₀ b₁).vec = ((-1 : ℂ) ^ (b₀.val * b₁.val)) • (Ket.basis ![b₀, b₁]).vec := by
++  funext y
++  rw [superdenseState, Ket.evolve_vec, Ket.evolve_vec, Ket.evolve_vec, applyOnU_coe,
++    applyOnU_coe, applyOn_wire_mulVec_apply, Fin.sum_univ_two, cnot_mulVec_apply,
++    cnot_mulVec_apply, applyOn_wire_mulVec_apply, applyOn_wire_mulVec_apply,
++    wire_sum_eq_mulVec, wire_sum_eq_mulVec, denseCode_eq, Submonoid.coe_mul,
++    SubmonoidClass.coe_pow, SubmonoidClass.coe_pow, ← mulVec_mulVec, ← mulVec_mulVec,
++    Pi.smul_apply, Ket.basis_vec, bell_vec]
++  have hy : y = ![y 0, y 1] := by funext j; fin_cases j <;> rfl
++  rw [hy]
++  generalize y 0 = c0
++  generalize y 1 = c1
++  fin_cases b₀ <;> fin_cases b₁ <;> fin_cases c0 <;> fin_cases c1 <;>
++    simp [Gate.H_coe, hadamardMat_apply, cnotMap_eq, bellVec, X_mulVec_apply, Z_mulVec_apply] <;>
++    ring_nf <;> first | rfl | (rw [inv_sqrt_two_sq]; ring)
++
+ /-- **Superdense coding.** Measuring Bob's two qubits gives Alice's bits `(b₀, b₁)` with
+ certainty: one qubit carries two classical bits, given shared entanglement. [NC10, §2.3]
+ 
+-**Proof sketch.** Compute the four cases. `Z` on wire `0` turns `|00⟩ + |11⟩` into
+-`|00⟩ - |11⟩`, and `X` swaps the value of wire `0`; then `CNOT` and `H` map the four Bell states
+-`X^{b₁} Z^{b₀} ⊗ I (|00⟩ + |11⟩)/√2` to `±|b₀ b₁⟩`. A global sign does not change the
+-probability. -/
++**Proof sketch.** The decoded state is `±|b₀ b₁⟩` (the computation behind `superdenseState_vec`,
++done once in a private lemma placed before this theorem). A global sign does not change the
++probability, which is `|±1|² = 1`. -/
+ theorem superdense_decode (b₀ b₁ : Qubit) : (superdenseState b₀ b₁).prob ![b₀, b₁] = 1 := by
+-  sorry
++  rw [Ket.prob_eq, superdenseState_vec_aux]
++  simp [Ket.basis_vec]
+ 
+ /-- **Superdense coding, exact state.** Bob's decoded state is the basis state `|b₀ b₁⟩` times the
+ sign `(-1)^(b₀ b₁)`: it is `-|11⟩` for the message `11` and `+|b₀ b₁⟩` otherwise. This pins down
+ the phase that `superdense_decode` deliberately ignores (round-1 audit, sanity statement 10).
+ 
+-**Proof sketch.** As for `superdense_decode`, computing the four cases: the sign comes from
+-applying `Z` before `X` in `denseCode`, since `X Z = -Z X`. -/
++**Proof sketch.** `Z` on wire `0` turns `|00⟩ + |11⟩` into `|00⟩ - |11⟩`, and `X` swaps the value
++of wire `0`; then `CNOT` and `H` map the four Bell states `X^{b₁} Z^{b₀} ⊗ I (|00⟩ + |11⟩)/√2` to
++`±|b₀ b₁⟩`. Each gate is read through `applyOn_wire_mulVec_apply` or
++`applyOn_permMat_mulVec_apply`, and the result is compared in the 16 cases of `(b₀, b₁, y₀, y₁)`.
++The sign comes from applying `Z` before `X` in `denseCode`, since `X Z = -Z X`. -/
+ theorem superdenseState_vec (b₀ b₁ : Qubit) :
+-    (superdenseState b₀ b₁).vec = ((-1 : ℂ) ^ (b₀.val * b₁.val)) • (Ket.basis ![b₀, b₁]).vec := by
+-  sorry
++    (superdenseState b₀ b₁).vec = ((-1 : ℂ) ^ (b₀.val * b₁.val)) • (Ket.basis ![b₀, b₁]).vec :=
++  superdenseState_vec_aux b₀ b₁
+ 
+ end Quantum
+diff --git a/TCSlib/Quantum/Basic/Register.lean b/TCSlib/Quantum/Basic/Register.lean
+index 1831c432..a85e6c14 100644
+--- a/TCSlib/Quantum/Basic/Register.lean
++++ b/TCSlib/Quantum/Basic/Register.lean
+@@ -31,7 +31,9 @@ is a unit vector `d → ℂ`.
+ 
+ ## Main results
+ 
+-* `Quantum.sum_norm_sq_mulVec_of_mem_unitaryGroup` — unitaries preserve the squared norm.
++* `Quantum.inner_mulVec_of_mem_unitaryGroup`, `Quantum.sum_norm_sq_mulVec_of_mem_unitaryGroup` —
++  unitaries preserve inner products and squared norms.
++* `Quantum.regAppendEquiv_symm_apply` — splitting a register into its first and last wires.
+ * The normalization lemmas behind `Ket.basis`, `Ket.relabel` and `Ket.prod`.
+ * `Quantum.Ket.evolve_mul`, `Quantum.Ket.evolve_one` — evolution is an action.
+ 
+@@ -94,7 +96,7 @@ zero-qubit state space is one-dimensional, not empty (round-1 audit, sanity stat
+ 
+ **Proof sketch.** `Fintype.card_fun`, `Fintype.card_fin`. -/
+ theorem card_reg (n : ℕ) : Fintype.card (Reg n) = 2 ^ n := by
+-  sorry
++  simp
+ 
+ /-- The register basis state spelling out a `Bool` string: wire `i` holds the qubit
+ corresponding to `x i`. -/
+@@ -119,7 +121,7 @@ def regAppendEquiv (k m : ℕ) : Reg k × Reg m ≃ Reg (k + m) :=
+ (`finSumFinEquiv_symm_apply_castAdd`), and `Sum.elim a b (inl i) = a i`. -/
+ theorem regAppendEquiv_apply_castAdd (k m : ℕ) (a : Reg k) (b : Reg m) (i : Fin k) :
+     regAppendEquiv k m (a, b) (Fin.castAdd m i) = a i := by
+-  sorry
++  simp [regAppendEquiv]
+ 
+ /-- On the last `m` wires, `regAppendEquiv k m (a, b)` reads `b`.
+ 
+@@ -127,7 +129,22 @@ theorem regAppendEquiv_apply_castAdd (k m : ℕ) (a : Reg k) (b : Reg m) (i : Fi
+ `finSumFinEquiv.symm (natAdd k i) = inr i`. -/
+ theorem regAppendEquiv_apply_natAdd (k m : ℕ) (a : Reg k) (b : Reg m) (i : Fin m) :
+     regAppendEquiv k m (a, b) (Fin.natAdd k i) = b i := by
+-  sorry
++  simp [regAppendEquiv]
++
++/-- Splitting a register of `k + m` wires gives its first `k` wires and its last `m` wires:
++`(regAppendEquiv k m).symm y = (y ∘ castAdd m, y ∘ natAdd k)`. Promoted from a private lemma of
++`ApplyOn.lean` during fill epoch E1, so that `Protocols.lean` can use it without a copy.
++
++**Proof sketch.** Apply `regAppendEquiv k m` to both sides and compare wire by wire
++(`Fin.addCases`), using `regAppendEquiv_apply_castAdd` and `regAppendEquiv_apply_natAdd`. -/
++theorem regAppendEquiv_symm_apply (k m : ℕ) (y : Reg (k + m)) :
++    (regAppendEquiv k m).symm y = (fun i => y (Fin.castAdd m i), fun i => y (Fin.natAdd k i)) := by
++  apply (regAppendEquiv k m).injective
++  rw [Equiv.apply_symm_apply]
++  funext i
++  refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++  · rw [regAppendEquiv_apply_castAdd]
++  · rw [regAppendEquiv_apply_natAdd]
+ 
+ /-! ### Norm identities behind the constructions -/
+ 
+@@ -141,14 +158,14 @@ variable {d d₁ d₂ : Type*} [Fintype d] [Fintype d₁] [Fintype d₂]
+ `‖1‖² = 1`. -/
+ theorem sum_norm_sq_basisVec [DecidableEq d] (i : d) :
+     ∑ j, ‖(if i = j then (1 : ℂ) else 0)‖ ^ 2 = 1 := by
+-  sorry
++  simp [apply_ite]
+ 
+ /-- Relabelling the basis along an equivalence does not change the squared norm.
+ 
+ **Proof sketch.** Reindex the sum along `e` (`Equiv.sum_comp`). -/
+ theorem sum_norm_sq_comp_equiv (v : d₁ → ℂ) (e : d₂ ≃ d₁) :
+-    ∑ i, ‖v (e i)‖ ^ 2 = ∑ j, ‖v j‖ ^ 2 := by
+-  sorry
++    ∑ i, ‖v (e i)‖ ^ 2 = ∑ j, ‖v j‖ ^ 2 :=
++  Equiv.sum_comp e (fun j => ‖v j‖ ^ 2)
+ 
+ /-- The squared norm is multiplicative on tensor products:
+ `∑_{(i,j)} ‖v i · w j‖² = (∑ᵢ ‖v i‖²)(∑ⱼ ‖w j‖²)`. [dW26, App. A.6]
+@@ -156,18 +173,36 @@ theorem sum_norm_sq_comp_equiv (v : d₁ → ℂ) (e : d₂ ≃ d₁) :
+ **Proof sketch.** Split the sum over the product type, use `‖ab‖² = ‖a‖²‖b‖²`, and factor. -/
+ theorem sum_norm_sq_mul_prod (v : d₁ → ℂ) (w : d₂ → ℂ) :
+     ∑ p : d₁ × d₂, ‖v p.1 * w p.2‖ ^ 2 = (∑ i, ‖v i‖ ^ 2) * (∑ j, ‖w j‖ ^ 2) := by
+-  sorry
++  simp only [Fintype.sum_prod_type, norm_mul, mul_pow, Finset.sum_mul_sum]
++
++/-- The squared norm of a vector, cast to `ℂ`, is its Hermitian dot product with itself:
++`∑ₓ ‖w x‖² = star w ⬝ᵥ w`. -/
++private theorem sum_norm_sq_eq_dotProduct (w : d → ℂ) :
++    ((∑ x, ‖w x‖ ^ 2 : ℝ) : ℂ) = star w ⬝ᵥ w := by
++  push_cast
++  simp [dotProduct, Complex.conj_mul']
++
++/-- A unitary matrix preserves the Hermitian inner product: `⟨U a, U b⟩ = ⟨a, b⟩`, where
++`⟨a, b⟩ = star a ⬝ᵥ b = ∑ₓ conj (a x) · b x`. [dW26, App. A.4] (Added in fill epoch E1; the
++squared-norm statement below and the no-cloning proofs both use it.)
++
++**Proof sketch.** `star (U a) ⬝ᵥ (U b) = star a ⬝ᵥ ((star U * U) b)` (`star_mulVec`,
++`dotProduct_mulVec`, `vecMul_vecMul`), and `star U * U = 1` (`Matrix.mem_unitaryGroup_iff'`). -/
++theorem inner_mulVec_of_mem_unitaryGroup [DecidableEq d] {U : Matrix d d ℂ} (hU : U ∈ 𝐔[d])
++    (a b : d → ℂ) : star (U *ᵥ a) ⬝ᵥ (U *ᵥ b) = star a ⬝ᵥ b := by
++  rw [Matrix.mem_unitaryGroup_iff'] at hU
++  rw [star_mulVec, dotProduct_mulVec, vecMul_vecMul, ← star_eq_conjTranspose, hU, vecMul_one]
+ 
+ /-- A unitary matrix preserves the squared norm of every vector: `∑ ‖(U v) x‖² = ∑ ‖v x‖²`.
+ [dW26, §1.2.3, App. A.4]
+ 
+-**Proof sketch.** Write the squared norm as `star v ⬝ᵥ v`. Then
+-`star (U v) ⬝ᵥ (U v) = star v ⬝ᵥ ((star U * U) v)`, and `star U * U = 1` for `U` in the
+-unitary group (`Matrix.mem_unitaryGroup_iff'`). -/
++**Proof sketch.** Write the squared norm, cast to `ℂ`, as `star v ⬝ᵥ v`. A unitary preserves this
++inner product (`inner_mulVec_of_mem_unitaryGroup`), and `ℂ`'s real embedding is injective. -/
+ theorem sum_norm_sq_mulVec_of_mem_unitaryGroup [DecidableEq d] {U : Matrix d d ℂ}
+     (hU : U ∈ 𝐔[d]) (v : d → ℂ) :
+     ∑ x, ‖(U *ᵥ v) x‖ ^ 2 = ∑ x, ‖v x‖ ^ 2 := by
+-  sorry
++  apply Complex.ofReal_injective
++  rw [sum_norm_sq_eq_dotProduct, sum_norm_sq_eq_dotProduct, inner_mulVec_of_mem_unitaryGroup hU]
+ 
+ end Norms
+ 
+@@ -230,13 +265,15 @@ theorem evolve_vec [DecidableEq d] (U : 𝐔[d]) (ψ : Ket d) :
+ **Proof sketch.** `(U * V) *ᵥ v = U *ᵥ (V *ᵥ v)` (`Matrix.mulVec_mulVec`), then `Ket.ext`. -/
+ theorem evolve_mul [DecidableEq d] (U V : 𝐔[d]) (ψ : Ket d) :
+     ψ.evolve (U * V) = (ψ.evolve V).evolve U := by
+-  sorry
++  ext x
++  simp [evolve_vec, Matrix.mulVec_mulVec]
+ 
+ /-- Applying the identity does nothing.
+ 
+ **Proof sketch.** `1 *ᵥ v = v` (`Matrix.one_mulVec`), then `Ket.ext`. -/
+ theorem evolve_one [DecidableEq d] (ψ : Ket d) : ψ.evolve 1 = ψ := by
+-  sorry
++  ext x
++  simp [evolve_vec]
+ 
+ /-- There is no state on an empty basis: the empty sum of squared norms is `0`, not `1`. This
+ distinguishes an empty basis from the one-element basis `Reg 0` (round-1 audit, sanity
+@@ -244,8 +281,8 @@ statement 1).
+ 
+ **Proof sketch.** For a ket on an empty basis, `normalized'` says `0 = 1`
+ (`Finset.univ_eq_empty`, `Finset.sum_empty`). -/
+-theorem isEmpty_of_isEmpty [IsEmpty d] : IsEmpty (Ket d) := by
+-  sorry
++theorem isEmpty_of_isEmpty [IsEmpty d] : IsEmpty (Ket d) :=
++  ⟨fun ψ => by have := ψ.normalized'; simp at this⟩
+ 
+ /-- The zero-qubit register carries a state: the basis state of its unique basis element. -/
+ theorem nonempty_reg_zero : Nonempty (Ket (Reg 0)) := ⟨basis Fin.elim0⟩

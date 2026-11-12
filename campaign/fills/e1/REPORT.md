@@ -17,15 +17,22 @@ covers E1. The audited baseline is the closing commit of gate `quantum-phase1`,
 ## Verification (MEASURED, `evidence/logs/`, scripts in `evidence/scripts/`)
 
 - **Sweep (`sweep.log`).** All 14 P1 modules pass `scripts/lean_check_tree.sh` in dependency
-  order (direct `lean`, never `lake build`). The 7 `Quantum` modules report no diagnostics at all.
+  order (direct `lean`, never `lake build`). The 7 `Quantum` modules report no warning or error.
+  (The sweep counts `sorry` warnings and, separately, every other line containing `warning` or
+  `error`; it does not count information messages.)
   The total is 33 `sorry` warnings, all in `Promise/Basic` (3), `Counting/PP` (2), `Counting/GapP`
   (15), `Counting/PolyTime` (8) and `Counting/Inclusions` (5).
-- **Axioms (`axioms.log`).** 268 constants. All 175 constants of the `Quantum` modules depend
-  only on `propext`, `Classical.choice` and `Quot.sound`. This includes the 19 definitions and 19
-  equation lemmas that inherited `sorryAx` through proof fields before E1 (gate note 9). The 33
-  `sorryAx` dependents are exactly the remaining counting-layer statements.
+- **Axioms (`axioms.log`).** A census of the 268 non-internal constants of the audited modules
+  (names `Name.isInternal` does not flag; private declarations are internal and are covered
+  through the public constants that use them, and by the sweep's `sorry` count). All 175
+  constants of the `Quantum` modules depend only on `propext`, `Classical.choice` and
+  `Quot.sound`. This includes the 19 definitions and the 19 theorems (18 equation lemmas and
+  `Ket.nonempty_reg_zero`) that inherited `sorryAx` before E1 (gate note 9). The 33 `sorryAx`
+  dependents are exactly the remaining counting-layer statements.
 - **Statement freeze (`drift.log`, `drift.py`, comparing signatures and full bodies).** From 212
-  declarations at the baseline to 246:
+  declarations at the baseline to 246 (as counted by `drift.py`: 211 named declarations plus
+  ApplyOn's anonymous `Decidable` instance, then 245 plus that instance; the anonymous `example`
+  in `Measure.lean` was absorbed into `probQubit_zero_add_one`, see the errata):
   - **0 removed;**
   - **0 signatures changed;**
   - **52 bodies changed**, exactly the 52 filled statements;
@@ -34,7 +41,8 @@ covers E1. The audited baseline is the closing commit of gate `quantum-phase1`,
 - **Style (`style_lint.log`, `campaign_style_lint.log`).** `style_lint.py` reports 0 findings
   over the 14 files. That includes its check that every proof over about 20 lines has a sketch,
   which caught one private helper during E1, now fixed. `campaign_style_lint.py` reports 0 FAIL
-  and 0 WARN over all 14. No line exceeds 100 characters.
+  and 0 WARN over all 14 (its per-file public count does not include ApplyOn's anonymous
+  `Decidable` instance). No line exceeds 100 characters.
 
 ## New public declarations (6) — for the epoch-boundary audit
 
@@ -59,7 +67,7 @@ and Phase 2's circuits (plan Q2) will need them.
 - **`Register.lean` (1).** `sum_norm_sq_eq_dotProduct`.
 - **`Gates.lean` (4).** `reg1_cases`, `sum_reg1`, `toffoli_cnot_slice`, and `gate1_ext` (two
   one-qubit gates are equal if their four entries agree; shared by the five gate identities).
-- **`ApplyOn.lean` (11).**
+- **`ApplyOn.lean` (9).**
   - the reconstruction of a register from its gate wires (`Function.extend`): `agreeOff_symm`,
     `agreeOff_trans`, `extend_comp`, `agreeOff_extend`, `extend_self`, `eq_of_agreeOff`;
   - `applyOn_mul_applyOn_of_disjoint`, `agreeOff_castAddEmb_iff`, `applyOn_permMat_mulVec_basis`.
@@ -127,3 +135,22 @@ proof of the same fact. Each shares a tactic idiom across *different* statements
   promotions are listed above, for the epoch audit to confirm.
 - The proofs use only Mathlib and the audited statements. No TCSlib machine construction or host
   is involved (policy §1, *Hosts come first*).
+
+## Errata (E1 epoch audit, round 1)
+
+The epoch audit (`campaign/gates/02-quantum-e1/findings.md`) found the following errors in this
+report; the text above is corrected in place, and the repairs to the Lean files are recorded in
+`campaign/gates/02-quantum-e1/resolutions.md`.
+
+- **Finding 8.** `ApplyOn.lean` has 9 private helpers, not 11 (the list was right; the total of 28
+  was right). The 19 theorems that inherited `sorryAx` were 18 equation lemmas and
+  `Ket.nonempty_reg_zero`, not 19 equation lemmas. The campaign lint's public count omits the
+  anonymous instance. The sweep's second counter counts warning and error lines, not all
+  diagnostics.
+- **Finding 9.** The axiom census covers non-internal constants only. By kind, its 22 additions
+  over the gate's census were 6 source theorems, 12 generated equation lemmas, 2 matchers and 2
+  `congr_simp` lemmas, with no removals.
+- **Finding 1 and finding 7.** The final commit carried an anonymous `example` in `Measure.lean`
+  restating `probQubit_basis` with the same proof. Neither `drift.py` nor the copy screen treats
+  `example` as a command boundary, so both read it as part of `probQubit_zero_add_one`. The
+  example is removed, and the round-1 evidence scripts recognize anonymous commands.

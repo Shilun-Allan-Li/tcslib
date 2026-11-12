@@ -1,0 +1,38 @@
+old a97fceca7c0f7b360f91cb08d4db5a5b33bdb548: 245 named declarations; new HEAD: 248 named declarations
+REMOVED:
+   TCSlib/Quantum/Basic/Protocols.lean::X_pow_mul_self
+   TCSlib/Quantum/Basic/Protocols.lean::Z_pow_mul_self
+ADDED:
+   TCSlib/Quantum/Basic/ApplyOn.lean::extend_wire
+   TCSlib/Quantum/Basic/Gates.lean::hadamardMat_conjTranspose
+   TCSlib/Quantum/Basic/Gates.lean::hadamardMat_mul_self
+   TCSlib/Quantum/Basic/Gates.lean::mat1_ext
+   TCSlib/Quantum/Basic/Protocols.lean::pow_mul_self_of_mul_self
+CHANGED SIGNATURE:
+CHANGED BODY ONLY (same signature):
+   TCSlib/Quantum/Basic/ApplyOn.lean::applyOn_wire_X_mulVec_basis
+   TCSlib/Quantum/Basic/ApplyOn.lean::applyOn_wire_mulVec_apply
+   TCSlib/Quantum/Basic/ApplyOn.lean::applyOn_wires20_CNOT_mulVec_basis
+   TCSlib/Quantum/Basic/Gates.lean::H_mul_H
+   TCSlib/Quantum/Basic/Gates.lean::gate1_ext
+   TCSlib/Quantum/Basic/Gates.lean::hadamardMat_mem_unitaryGroup
+   TCSlib/Quantum/Basic/Protocols.lean::cnot_extend_wires01
+   TCSlib/Quantum/Basic/Protocols.lean::flipAt_const
+   TCSlib/Quantum/Basic/Protocols.lean::superdenseState_vec_aux
+   TCSlib/Quantum/Basic/Protocols.lean::teleportState_vec
+   TCSlib/Quantum/Basic/Protocols.lean::teleport_correct
+UNCHANGED (signature and body): 232
+ORDER of carried-over declarations: same in every file
+ANONYMOUS COMMANDS (example, unnamed instance), old -> new:
+   TCSlib/Quantum/Basic/Register.lean: 0 -> 0
+   TCSlib/Quantum/Basic/Gates.lean: 0 -> 0
+   TCSlib/Quantum/Basic/ApplyOn.lean: 1 -> 1
+      new: instance (w : Fin k ↪ Fin n) (y x : Reg n) : Decidable (AgreeOff w y x) := inferInstanceAs (Decidable (∀ i : Fin n, (∀ j : Fin k, w j ≠ i) → y i = x i))
+   TCSlib/Quantum/Basic/Measure.lean: 1 -> 0
+      removed: example (x : Reg n) (i : Fin n) (b : Qubit) : (basis x).probQubit i b = if x i = b then 1 else 0 := by rw [probQubit_eq] simp [prob_eq, basis_vec, apply_ite, Fi
+   TCSlib/Quantum/Basic/Protocols.lean: 0 -> 0
+   TCSlib/Complexity/Promise/Basic.lean: 0 -> 0
+   TCSlib/Complexity/Counting/PP.lean: 0 -> 0
+   TCSlib/Complexity/Counting/GapP.lean: 0 -> 0
+   TCSlib/Complexity/Counting/PolyTime.lean: 0 -> 0
+   TCSlib/Complexity/Counting/Inclusions.lean: 0 -> 0
