@@ -3,7 +3,6 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA
-import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Eager
 import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Planted
 import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.QueryHandler
 
@@ -35,8 +34,6 @@ depend on the public key. The proof below therefore goes back to single-bit secu
 
 ## Contents
 
-* `BitwiseCPA/Eager`: eager challenge coins under CPA, resampling one coordinate of a uniform
-  tuple, and readers of the padded encryptor.
 * `BitwiseCPA/Planted`: the planted bitwise challenge answer and the reduction's final bit.
 * `BitwiseCPA/QueryHandler`: the query-recording handler with advice and its machine by T1.
 
@@ -133,9 +130,9 @@ private theorem ofFn_getD_split {n : ℕ} (l : List Bool) (hl : l.length = n + n
 `Pr[Ind_b = 1] = Pr[H_{j_b} = 1]` with `j_0 = 0`, `j_1 = n`.
 
 **Proof sketch.** Eager coins (`expect_simulate_indImpl_cpa`); the padded bitwise encryptor pads
-the tuple of single-bit encryptions (`padded_enc_runAt`, `bitwise_runAt_blocks`) on the coin
-blocks `v` (the bijection `bitwiseEncCoins`, then `coinsCongr`), and bit `i` of the selected
-half is `l_{n+i}` for `b = 1` and `l_i` for `b = 0` (`ofFn_half`). -/
+the tuple of single-bit encryptions (`PublicKeyScheme.padded_enc_runAt`, `bitwise_runAt_blocks`) on
+the coin blocks `v` (the bijection `bitwiseEncCoins`, then `coinsCongr`), and bit `i` of the
+selected half is `l_{n+i}` for `b = 1` and `l_i` for `b = 0` (`ofFn_half`). -/
 private theorem accept_indGame_eq (S : BitPublicKeyScheme) (L : PolyExpr)
     (hL : ∀ n (rg : S.bitwise.gen.Coins n) (m : Fin n → Bool) (re : S.bitwise.enc.Coins n),
       2 * (S.bitwise.enc.runAt n (pairEncode (pairFstD (S.bitwise.gen.runAt n [] rg))
@@ -157,12 +154,12 @@ private theorem accept_indGame_eq (S : BitPublicKeyScheme) (L : PolyExpr)
   refine (expect_simulate_indImpl_cpa _ b n _ _
     (fun a : Fin 1 → Bool => ProbComp.prob (.pure (a 0)) (· = true)) _ none).trans ?_
   rw [← expect_sample_equiv ((S.bitwiseEncCoins n).trans
-    (NUPPT.coinsCongr (padded_enc_coins S.bitwise L hL hmsg) n))]
+    (NUPPT.coinsCongr (PublicKeyScheme.padded_enc_coins S.bitwise L hL hmsg) n))]
   refine congrArg _ (funext fun v => ?_)
   refine congrArg (fun g => ProbComp.prob (.pure ((chRun g
     (A.toCompOn ((S.bitwise.padded L hL hmsg).indCodec n) n q (pairFstD (S.gen.runAt n [] rg)) r)
       none).1 0)) (· = true)) (funext fun mm => ?_)
-  rw [padded_enc_runAt, Equiv.trans_apply, NUPPT.coinsCongr_ofFn,
+  rw [PublicKeyScheme.padded_enc_runAt, Equiv.trans_apply, NUPPT.coinsCongr_ofFn,
     ofFn_half hk b (cast ((S.bitwise.padded L hL hmsg).indSpec_challengeDom n) mm),
     ofFn_cast ((S.bitwise.padded L hL hmsg).inLens_one n), ← NUPPT.runAt_eq,
     bitwise_runAt_blocks]

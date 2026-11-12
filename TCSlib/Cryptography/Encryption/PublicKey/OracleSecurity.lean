@@ -57,7 +57,8 @@ Security is stated for each admissible `L`; a larger `L` admits longer `Dec` que
   canonical strings.
 * `PublicKeyScheme.exists_padBound`, `BitPublicKeyScheme.exists_padBound`: padding bounds exist.
 * `FixedLengthPKScheme.indCodec_eq_bitCodec`: the adversary codec is a bit codec;
-  `expect_simulate_indImpl_cpa`: eager challenge coins under CPA.
+  `expect_simulate_indImpl_cpa`: eager challenge coins under CPA;
+  `PublicKeyScheme.padded_enc_runAt`, `padded_enc_coins`: the padded encryptor.
 * `BitPublicKeyScheme.SingleBitSecure.padded_cpa`: single-bit security gives CPA security.
   Its helpers are `OracleSecurity.ChallengeSim` (the deterministic CPA run and first-challenge
   congruence) and `OracleSecurity.RecordHandler` (the recording handler for T1).
@@ -359,6 +360,22 @@ theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_enc :
 /-- The padded public-key scheme decrypts with `padDecFun S.dec`. -/
 theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_dec :
     (S.padded L hL hmsg).dec = padDecFun S.dec := rfl
+
+/-- **The padded encryptor pads the original encryptor's output**, the coins read as a list:
+`Enc'(1^n, y; r) = padCt L(n) (Enc(1^n, y; ⟦r⟧))` (`runAt_padEnc`, `coinsCongr_ofFn`). -/
+theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_enc_runAt (n : ℕ) (y : List Bool)
+    (r : (S.padded L hL hmsg).enc.Coins n) :
+    (S.padded L hL hmsg).enc.runAt n y r = padCt (L.eval n) (S.enc.runAtL n y (List.ofFn r)) := by
+  have key : ∀ E : NUPPT, E = padEnc S.enc L → ∀ r : E.Coins n,
+      E.runAt n y r = padCt (L.eval n) (S.enc.runAtL n y (List.ofFn r)) := by
+    rintro E rfl r
+    rw [runAt_padEnc S.enc_uniform L n y r, NUPPT.runAt_eq, NUPPT.coinsCongr_ofFn]
+  exact key _ (PublicKeyScheme.padded_enc S L hL hmsg) r
+
+/-- The padded encryptor keeps the coins: `S.enc.coins = (S.padded L hL hmsg).enc.coins`. -/
+theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_enc_coins :
+    S.enc.coins = (S.padded L hL hmsg).enc.coins := by
+  rw [PublicKeyScheme.padded_enc, padEnc_coins]
 
 end PublicKeyPaddedReaders
 
@@ -741,16 +758,15 @@ private theorem ofFn_splitHalf_bit {k : ℕ} (hk : k = 1) (b : Bool) (mm : Fin (
 
 /-- **Eager challenge coins under CPA.** Simulating the oracles of `Ind_b` from the state `s` has,
 for every `G`, the expectation of first sampling the encryption coins `re` and then running the
-deterministic oracles whose challenge `mm` is answered with `Enc(⟨pk, m_b⟩; re)`, the halves read
-through `indSpec_challengeDom`:
+deterministic oracles whose challenge `mm` is answered with `Enc(⟨pk, m_b⟩; re)`, the halves and the
+recorded ciphertext read through `indSpec_challengeDom` and `indSpec_challengeRng`:
 `𝔼[G ∘ fst] (simulate (indImpl .cpa b n pk sk) c s) = 𝔼_{re} G (chRun g_re c s).1`.
 
-**Proof sketch.** Induction on the computation. Decryption queries are answered all-`false`
-in both (`indImpl_dec_cpa`); a repeated challenge repeats the recorded ciphertext in both. At the
-first challenge the lazy side samples `re` and continues from the recorded ciphertext; by the
-induction hypothesis the continuation is again an average over coins `re'`, and from a recorded
-state the deterministic run does not depend on `re'` (`chRun_some_congr`), so `re'`
-marginalizes out (`expect_const`). -/
+**Proof sketch.** `ChallengeSim.expect_simulate_eager` with `d = ctLen(n)` (`outLens_one`), the
+cast `indSpec_challengeRng`, and the oracle equations `indImpl_dec_onSpec` (with `decOpen_cpa`),
+`indImpl_challenge_repeat_onSpec` and `indImpl_challenge_none_onSpec`: decryption queries are
+answered all-`false`, a repeated challenge repeats the record, and the first challenge samples the
+coins and records the encryption. -/
 theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool) (n : ℕ)
     (pk sk : List Bool) {α : Type} (G : α → ℝ) (c : OracleComp (S.indSpec n) α)
     (s : Option (Fin (S.ctLen.eval n) → Bool)) :
@@ -759,31 +775,13 @@ theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool) (n : �
         G (chRun (fun mm => S.enc.runAt n (pairEncode pk (List.ofFn
           (if b then (FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n) mm)).2
             else (FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n) mm)).1))) re)
-          c s).1 := by
-  induction c generalizing s with
-  | pure a =>
-    rw [simulate_pure, expect_pure]
-    simp only [chRun_pure]
-    exact (expect_const _ _).symm
-  | query i x k ih =>
-    match i, x, k, ih with
-    | 0, x, k, ih =>
-      rw [simulate_query, S.indImpl_dec_cpa, OracleComp.pure_bind]
-      simp only [chRun_query_zero]
-      exact ih _ s
-    | 1, x, k, ih =>
-      cases s with
-      | some C =>
-        rw [simulate_query, S.indImpl_challenge_repeat, OracleComp.pure_bind]
-        simp only [chRun_query_one_some]
-        exact ih _ _
-      | none =>
-        rw [simulate_query, S.indImpl_challenge_none, OracleComp.bind_assoc, expect_bind]
-        refine congrArg _ (funext fun re => ?_)
-        rw [OracleComp.pure_bind, ih, chRun_query_one_none]
-        exact (congrArg _ (funext fun re' =>
-          congrArg (fun p : α × Option (Fin (S.ctLen.eval n) → Bool) => G p.1)
-            (chRun_some_congr _ _ _ _))).trans (expect_const _ _)
+          c (s.map (cast (S.indSpec_challengeRng n).symm))).1 :=
+  expect_simulate_eager (S.outLens_one n) (S.indSpec_challengeRng n).symm _ _
+    (fun x s => by
+      rw [S.indImpl_dec_onSpec]
+      simp only [FixedLengthScheme.decOpen_cpa, Bool.false_and, Bool.false_eq_true, if_false])
+    (fun mm C => S.indImpl_challenge_repeat_onSpec .cpa b n pk sk mm C)
+    (fun mm => S.indImpl_challenge_none_onSpec .cpa b n pk sk mm) G c s
 
 /-- **The exact identity of step 4.** Let `B` be the machine of T1 for the recording handler
 with challenge answer `cpaAns L` (with its coin bijection `φ`). At every `n`, `A`'s CPA advantage
