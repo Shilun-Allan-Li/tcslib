@@ -3440,12 +3440,17 @@ private lemma clFresh_run (x : List Bool) (p : Fin (x.length + 2))
 /-- The unrestricted loader's completed state is absorbing. -/
 private lemma clFresh_idle {x : List Bool} (c : Cfg 2 Bool clFreshTM.State x)
     (hc : c.state = some (.inr (.inr true))) : clFreshTM.tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
-  change (FinTM.controlAction 0 (some (Sum.inr (.inr true)))).apply c = c
-  rw [FinTM.controlAction_apply, moveInputPos_zero]
-  cases c
-  simp_all
+  let d : Cfg 2 Bool clReadTM.State x :=
+    ⟨some (.inr true), c.inputPos, c.workTapes, c.workTapePos, c.output⟩
+  have hm : d.mapState Sum.inr = c :=
+    Cfg.mapState_eq_of_fields d Sum.inr c (by simpa only [d, Option.map_some] using hc.symm)
+      rfl rfl rfl rfl
+  rw [MultiTapeTM.step_of_some hc]
+  change ((seamCompTM clWipeTM.tm (2 : Fin 3) clReadTM.tm (.inl none)).tr
+    (.inr (.inr true)) c.inputSymbol c.workTapeSymbols).apply c = c
+  rw [seamCompTM_tr_inr]
+  change ((FinTM.controlAction 0 (some (.inr true))).mapState Sum.inr).apply c = c
+  rw [← hm, Cfg.mapState_apply, FinTM.controlAction_apply, moveInputPos_zero]
 
 /-- First-return loader interface without the inherited overwrite-length
 precondition; cleanup is explicit in the bound and in the transition table. -/
@@ -4854,26 +4859,49 @@ private lemma clPrepared_run (A : FinTM Bool) (w : Fin A.k → List Bool) (tail 
   exact run
 
 /-- An absorbing return in the prepared machine remains absorbing after
-native loading, with the complete retained-input frame fixed. -/
+native loading, with the complete retained-input frame fixed.
+
+**Proof sketch.** Reconstruct the supplied configuration as the forwarding
+embedding of its selected source tapes and unchanged ambient frame. The
+source return is fixed by its control-action contract. The embedding's
+one-step lockstep and the seam's right transition preserve that fixed point. -/
 private lemma clPrepared_idle (A : FinTM Bool) (ret : A.State)
     (htr : ∀ inp work, A.tm.tr ret inp work = FinTM.controlAction 0 (some ret))
     {x : List Bool} (c : Cfg (clPreparedTM A).k Bool (clPreparedTM A).State x)
     (hc : c.state = some (.inr ret)) : (clPreparedTM A).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
-  change (clPlacedAction (clKeepLastPlacement A.k) Sum.inr ret
-    (A.tm.tr ret c.inputSymbol (fun i => c.workTapeSymbols ((clKeepLastPlacement A.k).index i)))).apply c = c
-  rw [htr]
-  have ha : clPlacedAction (clKeepLastPlacement A.k) (Sum.inr : A.State → (clPreparedTM A).State) ret (FinTM.controlAction 0 (some ret)) =
-      FinTM.controlAction 0 (some (.inr ret)) := by
-    rw [clPlacedAction_eq]
-    unfold FinTM.controlAction
-    congr 1
+  let d : Cfg A.k Bool A.State x :=
+    ⟨some ret, c.inputPos, fun i => c.workTapes ((clKeepLastPlacement A.k).index i),
+      fun i => c.workTapePos ((clKeepLastPlacement A.k).index i), c.output⟩
+  let e := embedEmitCfg (clKeepLastPlacement A.k).index c.workTapes c.workTapePos [] d
+  have hm : e.mapState (Sum.inr : A.State → (clPreparedTM A).State) = c :=
+    embedEmitCfg_mapState_eq (clKeepLastPlacement A.k).index Sum.inr
+      c.workTapes c.workTapePos [] d c
+      (by simpa only [d, Option.map_some] using hc.symm) rfl (List.nil_append _)
+      (fun _ => ⟨rfl, rfl⟩) (fun _ _ => ⟨rfl, rfl⟩)
+  have he : e.state = some ret := by rw [embedEmitCfg_state]
+  have hi : (e.mapState (Sum.inr : A.State → (clPreparedTM A).State)).inputSymbol =
+      e.inputSymbol :=
+    Cfg.inputSymbol_congr _ _ (by rw [Cfg.mapState_inputPos])
+  have hw : (e.mapState (Sum.inr : A.State → (clPreparedTM A).State)).workTapeSymbols =
+      e.workTapeSymbols := by
     funext i
-    cases (clKeepLastPlacement A.k).select i <;> rfl
-  rw [ha, FinTM.controlAction_apply, moveInputPos_zero]
-  cases c
-  simp_all
+    rw [Cfg.workTapeSymbols_eq, Cfg.workTapeSymbols_eq,
+      Cfg.mapState_workTapePos, Cfg.mapState_workTapes]
+  have hd : A.tm.step d = d := by
+    rw [MultiTapeTM.step_of_some (show d.state = some ret from rfl), htr,
+      FinTM.controlAction_apply, moveInputPos_zero]
+  have hr : (embedEmitTM (clKeepLastPlacement A.k).index A.tm).step e =
+      embedEmitCfg (clKeepLastPlacement A.k).index c.workTapes c.workTapePos []
+        (A.tm.step d) := by
+    simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using
+      embedEmitTM_runFrom (clKeepLastPlacement A.k).index A.tm
+        c.workTapes c.workTapePos [] d 1
+  rw [MultiTapeTM.step_of_some hc]
+  change ((seamCompTM (clPrepareTM A.k).tm (.inr (Fin.last A.k, .inl 0))
+    (embedEmitTM (clKeepLastPlacement A.k).index A.tm) A.tm.q₀).tr
+      (.inr ret) c.inputSymbol c.workTapeSymbols).apply c = c
+  rw [seamCompTM_tr_inr, ← hm, hi, hw, Cfg.mapState_apply,
+    ← MultiTapeTM.step_of_some he, hr, hd]
 
 /-- Native query argument words: blank candidate fields, retained record
 stream, two target counts, a unary strict-prefix clock, and blank flags. -/
