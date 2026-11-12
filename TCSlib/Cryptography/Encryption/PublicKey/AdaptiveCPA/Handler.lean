@@ -125,39 +125,17 @@ theorem acTapes_apply (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Boo
 /-- **Tape `j` is the `j`-th block of the seed:**
 `⟦acTapes S cap n ω j⟧ = (⟦ω⟧.drop (j·ρ(n))).take ρ(n)`.
 
-**Proof sketch.** The coin equivalence keeps the string (`coinsEquivPoly_symm_ofFn`); position `k`
-of block `j` is position `k + ρ·j` of `ω` (`FunFamily.blocks_apply`), which is position `k` of the
-dropped and truncated list. -/
+**Proof sketch.** The coin equivalence keeps the string (`coinsEquivPoly_symm_ofFn`), and block `j`
+of the seed is its `j`-th window (`FunFamily.ofFn_blocks`). -/
 theorem ofFn_acTapes (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool)
     (j : Fin (cap.eval n)) :
     List.ofFn (acTapes S cap n ω j) =
       ((List.ofFn ω).drop (j * S.enc.coins.eval n)).take (S.enc.coins.eval n) := by
   rw [acTapes, Equiv.trans_apply, Equiv.arrowCongr_apply, Function.comp_apply, Function.comp_apply,
     Equiv.refl_symm, Equiv.refl_apply, NUPPT.coinsEquivPoly_symm_ofFn]
-  have hj := j.isLt
-  have hle : (j : ℕ) * S.enc.coins.eval n + S.enc.coins.eval n ≤
-      cap.eval n * S.enc.coins.eval n := by
-    have := Nat.mul_le_mul_right (S.enc.coins.eval n) (Nat.succ_le_of_lt hj)
-    rw [Nat.succ_mul] at this
-    exact this
-  refine List.ext_getElem ?_ fun k h₁ h₂ => ?_
-  · simp only [List.length_ofFn, List.length_take, List.length_drop, PolyExpr.eval_mul]
-    omega
-  · rw [List.getElem_ofFn, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
-    refine (FunFamily.blocks_apply _ _ ω j ⟨k, _⟩).trans ?_
-    congr 1
-    refine Fin.ext ?_
-    rw [finProdFinEquiv_apply_val]
-    show k + S.enc.coins.eval n * j = j * S.enc.coins.eval n + k
-    rw [Nat.mul_comm]
-    omega
+  exact FunFamily.ofFn_blocks (cap.eval n) (S.enc.coins.eval n) ω j
 
 /-! ### Strings -/
-
-/-- `⟦padFin k a⟧ = padL k a`, the first `k` bits of `a ++ 0^k` (`ofFn_padFin_eq_take`). -/
-private theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) :
-    List.ofFn (padFin k a) = EnsembleLemmas.padL k a := by
-  rw [EnsembleLemmas.padL_eq, ofFn_padFin_eq_take]
 
 /-- The fields of an encoded state. -/
 private theorem fields_acState (n j : ℕ) (c : Fin (S.ctLen.eval n) → Bool) (hj : j ≤ cap.eval n)
@@ -401,7 +379,7 @@ theorem acHandler_finish (n : ℕ) (z : List Bool)
   rw [acFin, InteractiveHandler.finInput_eq, pairSndD_pairEncode, pairSndD_pairEncode,
     pairFstD_pairEncode]
   have hw : List.ofFn (padFin ((acHandler S cap ist).outLen.eval n) (List.ofFn a)) = List.ofFn a :=
-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])
+    ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])
   exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
     (decodeBitMove_ret _ _ _ _)
 
@@ -479,7 +457,7 @@ theorem acHandler_impl_full (x : Fin ((acDin S 1).eval n) → Bool)
   have hh : ([true].headD false = true) := rfl
   have hc : decide (cap.eval n ≤ cap.eval n) = true := decide_eq_true le_rfl
   rw [acRun, hI, replicate_one, hU, hCnt, hS, hLat, List.length_replicate, List.length_replicate,
-    if_pos hh, if_pos hc, GGMRed.ofFn_padFin_of_length (List.length_ofFn)]
+    if_pos hh, if_pos hc, ofFn_padFin_of_length (List.length_ofFn)]
 
 /-- **A fresh challenge other than the advised one is encrypted by the handler:** from the state
 `acState j c` with `j < cap(n)` and `j ≠ i⋆(n)`, the challenge `x` is answered with
@@ -504,20 +482,21 @@ theorem acHandler_impl_eager (x : Fin ((acDin S 1).eval n) → Bool) (j : ℕ)
     fields_input S cap ist n z ω (i := 1) (List.ofFn x) [] j c hj.le hi
   have hEnc : rEnc S (InteractiveHandler.input n z (List.ofFn ω)
       (List.ofFn (acState S cap ist n j c)) (1 : Fin 2) (List.ofFn x) []) = List.ofFn c' := by
-    rw [hc', ofFn_padFin_eq_padL, rEnc, hU, List.length_replicate, NUPPT.Uniform.runAt_eq
-      S.enc_uniform, NUPPT.advInput_eq, ofFn_acSeedTapes, rTape, rMsg, hZ, hW, hCnt, hIst, hU, hX,
-      List.length_replicate, List.length_replicate, List.length_replicate, msgOf_eq]
+    rw [hc', EnsembleLemmas.ofFn_padFin_eq_padL, rEnc, hU, List.length_replicate,
+      NUPPT.Uniform.runAt_eq S.enc_uniform, NUPPT.advInput_eq, ofFn_acSeedTapes, rTape, rMsg, hZ,
+      hW, hCnt, hIst, hU, hX, List.length_replicate, List.length_replicate, List.length_replicate,
+      msgOf_eq]
   have hNew : rNew S cap (InteractiveHandler.input n z (List.ofFn ω)
       (List.ofFn (acState S cap ist n j c)) (1 : Fin 2) (List.ofFn x) []) (List.ofFn c') =
       List.ofFn (acState S cap ist n (j + 1) c') := by
-    rw [rNew, hU, hCnt, hIst, List.length_replicate, acState_eq, ofFn_padFin_eq_padL,
-      List.replicate_succ]
+    rw [rNew, hU, hCnt, hIst, List.length_replicate, acState_eq,
+      EnsembleLemmas.ofFn_padFin_eq_padL, List.replicate_succ]
   have hh : ([true].headD false = true) := rfl
   have hc1 : ¬ (decide (cap.eval n ≤ j) = true) := by rw [decide_eq_true_eq]; omega
   have hc2 : ¬ (decide (j = ist n) = true) := by rw [decide_eq_true_eq]; exact hne
   rw [acRun, hI, replicate_one, hU, hCnt, hIst, hEnc, hNew, List.length_replicate,
     List.length_replicate, List.length_replicate, if_pos hh, if_neg hc1, if_neg hc2,
-    GGMRed.ofFn_padFin_of_length (List.length_ofFn)]
+    ofFn_padFin_of_length (List.length_ofFn)]
 
 /-- **The advised fresh challenge is forwarded:** from the state `acState j c` with
 `j = i⋆(n) < cap(n)`, the challenge `x` is asked to the outer challenge oracle, and its answer `y`
@@ -567,8 +546,9 @@ theorem acHandler_impl_forward (x : Fin ((acDin S 1).eval n) → Bool) (j : ℕ)
         (List.ofFn (acState S cap ist n j c)) (1 : Fin 2) (List.ofFn x)
         ((bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) 0).encodeLog
           ([] ++ [⟨1, x, y⟩]))) (List.ofFn y) = List.ofFn s' := by
-      rw [rNew, hU, hCnt, hIst, List.length_replicate, hs', acState_eq, ofFn_padFin_eq_padL,
-        List.replicate_succ, GGMRed.ofFn_padFin_of_length (List.length_ofFn)]
+      rw [rNew, hU, hCnt, hIst, List.length_replicate, hs', acState_eq,
+        EnsembleLemmas.ofFn_padFin_eq_padL, List.replicate_succ,
+        ofFn_padFin_of_length (List.length_ofFn)]
     have hFwd : rFwd (InteractiveHandler.input n z (List.ofFn ω)
         (List.ofFn (acState S cap ist n j c)) (1 : Fin 2) (List.ofFn x)
         ((bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) 0).encodeLog

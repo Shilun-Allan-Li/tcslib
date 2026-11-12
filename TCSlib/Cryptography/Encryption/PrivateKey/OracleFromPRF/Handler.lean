@@ -151,35 +151,15 @@ theorem pkTapes_apply (n : ℕ) (ω : Fin ((q.mul .var).eval n) → Bool) (j : F
 
 /-- **Tape `j` is the `j`-th block of the seed:** `⟦pkTapes q n ω j⟧ = (⟦ω⟧.drop (j·n)).take n`.
 
-**Proof sketch.** Position `k` of block `j` is position `j·n + k` of `ω` (`blocks_apply`,
-`finProdFinEquiv_apply_val`), which is position `k` of the dropped and truncated list. -/
+**Proof sketch.** The width cast keeps the string (`ofFn_arrowCongr_finCongr`), and block `j` of
+the seed is its `j`-th window (`EnsembleLemmas.blocks_eq`, `FunFamily.ofFn_blocks`). -/
 theorem ofFn_pkTapes (n : ℕ) (ω : Fin ((q.mul .var).eval n) → Bool) (j : Fin (q.eval n)) :
     List.ofFn (pkTapes q n ω j) = ((List.ofFn ω).drop (j * n)).take n := by
-  have hlen : (q.mul .var).eval n = q.eval n * n := by rw [PolyExpr.eval_mul, PolyExpr.eval_var]
-  have hj := j.isLt
-  have hle : (j : ℕ) * n + n ≤ q.eval n * n := by
-    have := Nat.mul_le_mul_right n (Nat.succ_le_of_lt hj)
-    rw [Nat.succ_mul] at this
-    exact this
-  refine List.ext_getElem ?_ fun k h₁ h₂ => ?_
-  · simp only [List.length_ofFn, List.length_take, List.length_drop]
-    omega
-  · have hpt : ∀ k' : Fin n, pkTapes q n ω j k' =
-        ω (Fin.cast hlen.symm (finProdFinEquiv (j, k'))) := fun k' => pkTapes_apply q n ω j k'
-    simp only [List.getElem_ofFn, List.getElem_take, List.getElem_drop, hpt]
-    congr 1
-    refine Fin.ext ?_
-    rw [Fin.coe_cast, finProdFinEquiv_apply_val]
-    show k + n * j = j * n + k
-    rw [Nat.mul_comm]
-    omega
+  unfold pkTapes
+  rw [Equiv.trans_apply, EnsembleLemmas.blocks_eq, FunFamily.ofFn_blocks,
+    ofFn_arrowCongr_finCongr]
 
 /-! ### Strings -/
-
-/-- `⟦padFin k a⟧ = padL k a`. -/
-private theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) :
-    List.ofFn (padFin k a) = EnsembleLemmas.padL k a := by
-  rw [EnsembleLemmas.padL_eq, ofFn_padFin_eq_take]
 
 /-- The fields of an encoded state with `j ≤ q(n)`: the count `1^j`, the flag and the record. -/
 private theorem fields_pkState (n j : ℕ) (o : Option (Fin (ctP.eval n) → Bool))
@@ -429,7 +409,7 @@ theorem pkHandler_finish (atkBit b : Bool) (n : ℕ) (z : List Bool)
     pairFstD_pairEncode]
   have hw : List.ofFn (padFin ((pkHandler q atkBit b).outLen.eval n) (List.ofFn a)) =
       List.ofFn a :=
-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, pkHandler_outLen])
+    ofFn_padFin_of_length (by rw [List.length_ofFn, pkHandler_outLen])
   exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
     (decodeBitMove_ret _ _ _ _)
 
@@ -527,7 +507,8 @@ private theorem rNew_fields {i : Fin 3} (x L : List Bool) (j : ℕ)
     rNew q (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (pkState q n j o)) i x L)
         (recBits n o') = List.ofFn (pkState q n (j + 1) o') := by
   obtain ⟨hU, -, -, -, -, -, hCnt, -, -⟩ := fields_input q atkBit b n z ω (i := i) x L j o hj
-  rw [rNew, hU, hCnt, List.length_replicate, pkState_eq, ofFn_padFin_eq_padL, List.replicate_succ]
+  rw [rNew, hU, hCnt, List.length_replicate, pkState_eq, EnsembleLemmas.ofFn_padFin_eq_padL,
+    List.replicate_succ]
 
 /-- The flag and the record rebuild the record bits: `rFlag :: rRec = recBits o`. -/
 private theorem recBits_fields (o : Option (Fin (ctP.eval n) → Bool)) :
@@ -571,7 +552,7 @@ theorem pkHandler_impl_enc (x : Fin ((pkDin 0).eval n) → Bool) (j : ℕ)
   have hT : List.ofFn (padFin ((pkOut 0).eval n)
       (List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩))) =
       List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩) :=
-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
+    ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
   refine impl_of_query q atkBit b n z ω x _ _ _ _ ?_ ?_
   · obtain ⟨-, -, -, hI, -, hL, -, -, -⟩ :=
       fields_input q atkBit b n z ω (i := 0) (List.ofFn x) [] j o hj.le
@@ -584,11 +565,11 @@ theorem pkHandler_impl_enc (x : Fin ((pkDin 0).eval n) → Bool) (j : ℕ)
           (List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩)))) (List.ofFn y))) []) j o hj.le
     have hY := rY_one _ _ _ hL
     have hy : List.ofFn (padFin n (List.ofFn y)) = List.ofFn y :=
-      GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
+      ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
     have hct : List.ofFn (padFin ((pkDout 0).eval n) (ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩)
         (List.ofFn x) (padFin n (List.ofFn y)))) =
         ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩) (List.ofFn x) (padFin n (List.ofFn y)) :=
-      GGMRed.ofFn_padFin_of_length (by
+      ofFn_padFin_of_length (by
         rw [length_ctOf _ (by rw [List.length_ofFn, pkDin_zero, PolyExpr.eval_var]), pkDout_zero,
           ctP_eval])
     rw [pkRun, hI, replicate_zero', List.headD_nil, if_neg Bool.false_ne_true, hL, log_ne_nil,
@@ -616,7 +597,7 @@ theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
     exact hop.2
   rw [decWF_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq] at hwf
   have hx0 : List.ofFn (padFin ((pkOut 0).eval n) (pairFstD (List.ofFn x))) =
-      pairFstD (List.ofFn x) := GGMRed.ofFn_padFin_of_length (by rw [hwf.1, hn])
+      pairFstD (List.ofFn x) := ofFn_padFin_of_length (by rw [hwf.1, hn])
   have hc : ((1 : Fin 3) : ℕ) = 1 := rfl
   refine impl_of_query q atkBit b n z ω x _ _ _ _ ?_ ?_
   · obtain ⟨hU, -, -, hI, hX, hL, -, hFlag, -⟩ :=
@@ -641,7 +622,7 @@ theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
     have hans : List.ofFn (padFin ((pkDout 1).eval n)
         (true :: List.zipWith xor (pairSndD (List.ofFn x)) (List.ofFn y))) =
         true :: List.zipWith xor (pairSndD (List.ofFn x)) (List.ofFn y) :=
-      GGMRed.ofFn_padFin_of_length (by
+      ofFn_padFin_of_length (by
         rw [List.length_cons, List.length_zipWith, List.length_ofFn, hwf.2, hn, Nat.min_self,
           pkDout_one, PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const])
     rw [pkRun, hI, replicate_one, hFlag, hWF, hop, hL, log_ne_nil, if_neg Bool.false_ne_true,
@@ -676,7 +657,7 @@ theorem pkHandler_impl_challenge_some (x : Fin ((pkDin 2).eval n) → Bool) (j :
   obtain ⟨-, -, hS, hI, -, -, -, hFlag, hRec⟩ :=
     fields_input q atkBit b n z ω (i := 2) (List.ofFn x) [] j (some c) hj
   have hc : List.ofFn (padFin ((pkDout 2).eval n) (List.ofFn c)) = List.ofFn c :=
-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, pkDout_two])
+    ofFn_padFin_of_length (by rw [List.length_ofFn, pkDout_two])
   rw [pkRun, hI, replicate_two, hFlag, hRec, hS, hc]
   rfl
 
@@ -698,7 +679,7 @@ theorem pkHandler_impl_challenge_none (x : Fin ((pkDin 2).eval n) → Bool) (j :
   have hT : List.ofFn (padFin ((pkOut 0).eval n)
       (List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩))) =
       List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩) :=
-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
+    ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
   have hmsg : (AdaptiveCPA.msgOf n b (List.ofFn x)).length = n := by
     have hx : (List.ofFn x).length = n + n := by
       rw [List.length_ofFn, pkDin_two, PolyExpr.eval_add, PolyExpr.eval_var]
@@ -717,7 +698,7 @@ theorem pkHandler_impl_challenge_none (x : Fin ((pkDin 2).eval n) → Bool) (j :
           (List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩)))) (List.ofFn y))) []) j none hj.le
     have hY := rY_one _ _ _ hL
     have hy : List.ofFn (padFin n (List.ofFn y)) = List.ofFn y :=
-      GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
+      ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
     have hlen : (ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩) (AdaptiveCPA.msgOf n b (List.ofFn x))
         (padFin n (List.ofFn y))).length = ctP.eval n := by
       rw [length_ctOf _ hmsg, ctP_eval]
@@ -725,12 +706,12 @@ theorem pkHandler_impl_challenge_none (x : Fin ((pkDin 2).eval n) → Bool) (j :
         (AdaptiveCPA.msgOf n b (List.ofFn x)) (padFin n (List.ofFn y)))) =
         ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩) (AdaptiveCPA.msgOf n b (List.ofFn x))
           (padFin n (List.ofFn y)) :=
-      GGMRed.ofFn_padFin_of_length (by rw [hlen, pkDout_two])
+      ofFn_padFin_of_length (by rw [hlen, pkDout_two])
     have hrec : true :: ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩)
         (AdaptiveCPA.msgOf n b (List.ofFn x)) (padFin n (List.ofFn y)) =
         recBits n (some (padFin (ctP.eval n) (ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩)
           (AdaptiveCPA.msgOf n b (List.ofFn x)) (padFin n (List.ofFn y))))) := by
-      rw [recBits_some, GGMRed.ofFn_padFin_of_length hlen]
+      rw [recBits_some, ofFn_padFin_of_length hlen]
     have hMsg : rMsg b (InteractiveHandler.input n z (List.ofFn ω)
         (List.ofFn (pkState q n j none)) (2 : Fin 3) (List.ofFn x)
         (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((pkOut 0).eval n)

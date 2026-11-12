@@ -264,7 +264,7 @@ theorem simulate_recHandler_recorded
       have hans1 : (recHandler Lc ans hans).answer n z ω s 1 x =
           (padFin _ (ans (seedIn n z (List.ofFn ω))), s) := by
         refine PolyHandler.answer_of_run_eq _ ?_
-        rw [recHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
+        rw [recHandler_run, PolyHandler.input_eq, ofFn_padFin_of_length (by
           rw [hw, recDout_one]), seedIn_eq]
         exact recRun_recorded ans _ _ _ hs
       rw [simulate_query, PolyHandler.impl_apply, hans1, OracleComp.pure_bind,
@@ -315,8 +315,8 @@ theorem simulate_recHandler_init
       have hans1 : (recHandler Lc ans hans).answer n z ω ((recHandler Lc ans hans).init n) 1 x =
           (padFin _ (ans (seedIn n z (List.ofFn ω))), padFin _ (true :: List.ofFn x)) := by
         refine PolyHandler.answer_of_run_eq _ ?_
-        rw [recHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
-          rw [hw, recDout_one]), GGMRed.ofFn_padFin_of_length hlen, seedIn_eq]
+        rw [recHandler_run, PolyHandler.input_eq, ofFn_padFin_of_length (by
+          rw [hw, recDout_one]), ofFn_padFin_of_length hlen, seedIn_eq]
         refine recRun_fresh ans _ _ _ ?_
         rw [hinit]
         rfl
@@ -324,8 +324,8 @@ theorem simulate_recHandler_init
       · rw [simulate_query, PolyHandler.impl_apply, hans1, OracleComp.pure_bind,
           chRun_query_one_none]
         exact simulate_recHandler_recorded Lc hans n z ω hw _ _
-          (by rw [GGMRed.ofFn_padFin_of_length hlen]; rfl)
-      · rw [GGMRed.ofFn_padFin_of_length hlen, firstQ_query_one]
+          (by rw [ofFn_padFin_of_length hlen]; rfl)
+      · rw [ofFn_padFin_of_length hlen, firstQ_query_one]
         rfl
 
 end Simulation

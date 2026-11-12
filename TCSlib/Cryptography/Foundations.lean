@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Foundations.Negligible
 import TCSlib.Cryptography.Foundations.Probability
 import TCSlib.Cryptography.Foundations.Experiments
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -24,6 +25,8 @@ one-way function, hard-concentrate bit and pseudorandomness developments are bui
   Fubini, averaging and the hybrid argument.
 * `Experiments`: `invProb`, `predProb`, `acceptProb`, `distAdv`, and the bound of
   distinguishing advantage by statistical distance.
+* `BitLists`: generic facts about bit lists and bit vectors (heads of suffixes, flattening
+  one-bit blocks, cancellation of exclusive-or, `xorPerm`, keys of an association list).
 
 ## References
 

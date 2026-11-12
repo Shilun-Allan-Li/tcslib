@@ -5,6 +5,7 @@ Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs
 import TCSlib.Cryptography.Pseudorandom.NextBit.Concrete
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -80,13 +81,6 @@ theorem Ensemble.nextBitUnpredictable_iff_lt {ℓ : PolyExpr} (X : Ensemble ℓ)
     obtain ⟨ε, hε, hlt⟩ := h A
     exact ⟨ε, hε, fun n i => (hlt n i).le⟩
 
-/-- Bit `i` of `u` is the head of the suffix `(ofFn u).drop i` — the readout
-`polyTimeComputable_headD` of the machines below (`List.head?_drop`, `List.getElem?_ofFn`). -/
-private theorem headD_drop_ofFn {ℓ : ℕ} (i : Fin ℓ) (u : Fin ℓ → Bool) :
-    ((List.ofFn u).drop i).headD false = u i := by
-  rw [List.headD_eq_head?, List.head?_drop, List.getElem?_ofFn]
-  simp [i.isLt]
-
 /-- A distinguisher whose coin string is reindexed by a bijection has the same acceptance
 probability (`uprob_comp_equiv` on the coin factor of the sample space). -/
 private theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
@@ -121,7 +115,7 @@ of the advice's second component (`polyTimeComputable_headD`), and combines them
 `A := ofPolyTime` of it with coins `add ℓ D.coins` and advice bound `2·D.adv + 3`
 (`length_pairEncode`); the coin split is `Fin.appendEquiv` composed with `finCongr`, and the
 identity is `runAtL_ofPolyTime`, the projection identities of the layout,
-`List.take_left'`/`List.drop_left'`, `ofFn_completePrefix` and `headD_drop_ofFn`. -/
+`List.take_left'`/`List.drop_left'`, `ofFn_completePrefix` and `headD_drop`. -/
 private theorem exists_nextBitPredMachine (ℓ : PolyExpr) (D : NUPPT) (flip : ℕ → Bool) :
     ∃ (A : NUPPT) (e : ∀ n, (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ A.Coins n),
       ∀ n (i : Fin (ℓ.eval n)) (t : Fin i → Bool) (u : Fin (ℓ.eval n) → Bool) (c : D.Coins n),
@@ -399,7 +393,7 @@ gives a positive `p` with `1/p(n) ≤ |ε n|` infinitely often. The distinguishe
 reads bit `k n` of `t` and outputs `[decide (verdict = [bit])]`. At every `n` with `ε n ≠ 0`
 (every `n` of the infinite set), `ε n` is attained at `i_n = k n`, and the functional identity
 `D.distinguisher n (ℓ n) t (e r) = nextBitDist i_n (A.predictor n i_n) t r` (`ofFn_prefixOf`,
-`headD_drop_ofFn`, coins reindexed by `e : A.Coins n ≃ D.Coins n` from `finCongr`) gives, by
+`headD_drop`, coins reindexed by `e : A.Coins n ≃ D.Coins n` from `finCongr`) gives, by
 `prgAdv_nextBitDist` and `acceptProb_coins_equiv`,
 `prgAdv (X_n) (D.distinguisher n (ℓ n)) = |nextBitProb (X_n) i_n (A.predictor n i_n) − 1/2| =
 |ε n| ≥ 1/p(n)` — the advantage being an absolute value, no choice between the predictor and
@@ -457,7 +451,7 @@ theorem Ensemble.Pseudorandom.nextBitUnpredictable {ℓ : PolyExpr} {X : Ensembl
     rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hDm, hkn]
     rw [nextBitDist_eq]
     rw [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
-      ofFn_prefixOf, headD_drop_ofFn]
+      ofFn_prefixOf, headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn]
     simp
   have hadv : prgAdv (X.X n) (Dm.distinguisher n (ℓ.eval n)) = |ε n| := by
     rw [← hspec, ← prgAdv_nextBitDist (X.X n) j₀ (A.predictor n j₀)]

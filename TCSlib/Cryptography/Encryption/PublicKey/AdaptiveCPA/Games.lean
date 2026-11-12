@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Hybrid
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Handler
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -86,48 +87,6 @@ theorem acDout_eval (n : ℕ) : (fun i => (acDout S i).eval n) = S.outLens n := 
   | 0 => rw [acDout_zero, PolyExpr.eval_add, PolyExpr.eval_const, S.outLens_zero]
   | 1 => rw [acDout_one, S.outLens_one]
 
-/-! ### Strings of the oracles -/
-
-/-- Reading a bit vector across an equality of widths keeps its string:
-`⟦cast h f⟧ = ⟦f⟧` when `a = b`. -/
-theorem ofFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
-    (f : Fin a → Bool) : List.ofFn (cast h f) = List.ofFn f := by
-  subst hab
-  rfl
-
-/-- The first half of a `2m`-bit query is its first `m` bits:
-`⟦(splitHalf y).1⟧ = ⟦y⟧.take m`. -/
-theorem ofFn_splitHalf_fst {m : ℕ} (y : Fin (m + m) → Bool) :
-    List.ofFn (FixedLengthScheme.splitHalf y).1 = (List.ofFn y).take m := by
-  rw [FixedLengthScheme.splitHalf_fst]
-  refine List.ext_getElem (by simp only [List.length_ofFn, List.length_take]; omega)
-    fun i h₁ h₂ => ?_
-  rw [List.getElem_ofFn, List.getElem_take, List.getElem_ofFn]
-  rfl
-
-/-- The second half of a `2m`-bit query is its last `m` bits:
-`⟦(splitHalf y).2⟧ = ⟦y⟧.drop m`. -/
-theorem ofFn_splitHalf_snd {m : ℕ} (y : Fin (m + m) → Bool) :
-    List.ofFn (FixedLengthScheme.splitHalf y).2 = (List.ofFn y).drop m := by
-  rw [FixedLengthScheme.splitHalf_snd]
-  refine List.ext_getElem (by simp only [List.length_ofFn, List.length_drop]; omega)
-    fun i h₁ h₂ => ?_
-  rw [List.getElem_ofFn, List.getElem_drop, List.getElem_ofFn]
-  rfl
-
-/-- The all-`false` answer, read at any width, is all-`false`:
-`padFin d ⟦zeroBits m⟧ = zeroBits d`. -/
-theorem padFin_ofFn_zeroBits (d m : ℕ) : padFin d (List.ofFn (zeroBits m)) = zeroBits d := by
-  funext i
-  rw [padFin_apply, ofFn_zeroBits, zeroBits_apply]
-  by_cases hi : (i : ℕ) < m
-  · rw [List.getD_eq_getElem _ _ (by rw [List.length_replicate]; exact hi), List.getElem_replicate]
-  · rw [List.getD_eq_default _ _ (by rw [List.length_replicate]; omega)]
-
-/-- The bit of a one-bit output is the head of its string: `⟦f⟧.headD false = f 0`. -/
-theorem headD_ofFn_one (f : Fin 1 → Bool) : (List.ofFn f).headD false = f 0 := by
-  rw [List.ofFn_succ, List.headD_cons]
-
 /-! ### The hybrid games -/
 
 /-- **The encryption of the selected message:** `E β mm r = padFin (Enc_pk(m_β); r)` for the
@@ -191,11 +150,12 @@ theorem ofFn_select (n : ℕ) (x : Fin ((acDin S 1).eval n) → Bool) (b : Bool)
       msgOf (S.msgLen.eval n) b (List.ofFn x) := by
   have hx : List.ofFn (cast (S.indSpec_challengeDom n) (padFin (S.inLens n 1) (List.ofFn x))) =
       List.ofFn x := by
-    rw [ofFn_cast (S.inLens_one n), GGMRed.ofFn_padFin_of_length (by
+    rw [ofFn_cast (S.inLens_one n), ofFn_padFin_of_length (by
       rw [List.length_ofFn, acDin_one, PolyExpr.eval_add, S.inLens_one])]
   cases b
-  · rw [if_neg Bool.false_ne_true, ofFn_splitHalf_fst, hx, msgOf_eq, if_neg Bool.false_ne_true]
-  · rw [if_pos rfl, ofFn_splitHalf_snd, hx, msgOf_eq, if_pos rfl]
+  · rw [if_neg Bool.false_ne_true, FixedLengthScheme.ofFn_splitHalf_fst, hx, msgOf_eq,
+      if_neg Bool.false_ne_true]
+  · rw [if_pos rfl, FixedLengthScheme.ofFn_splitHalf_snd, hx, msgOf_eq, if_pos rfl]
 
 /-- **The adaptive CPA oracles on T2's codec are a hybrid:** read along the lengths of T2's codec,
 `S.adaptiveIndImpl .cpa b n pk sk κ` is `hybImpl κ (acEnc S n pk) (fun _ => b)`.

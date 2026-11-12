@@ -6,6 +6,7 @@ Authors: TCSlib contributors
 import TCSlib.Cryptography.Asymptotic.HardCore
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
 import TCSlib.Cryptography.ZeroKnowledge.Interaction
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -266,10 +267,6 @@ theorem flatMap_range_eq_of_nil (F : ℕ → List Bool) {n m : ℕ} (hnm : n ≤
   have h : (List.range d).flatMap (fun a => F (n + a)) = [] :=
     List.flatMap_eq_nil_iff.2 fun x _ => hF _ (Nat.le_add_right n x)
   rw [h, List.append_nil]
-
-/-- The head of a dropped list is the element at the dropping index (`List.getD`). -/
-theorem headD_drop (l : List Bool) (i : ℕ) (d : Bool) : (l.drop i).headD d = l.getD i d := by
-  rw [List.headD_eq_head?, List.head?_drop, List.getD_eq_getElem?_getD]
 
 /-! ### The splice machines -/
 

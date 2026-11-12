@@ -11,6 +11,7 @@ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Transfer
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Lazy
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Collision
 import Mathlib.Tactic.Simps.Basic
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -167,7 +168,7 @@ private theorem ofFn_prf_encryptAt (n : ℕ) (k m : Fin n → Bool)
   rw [prfFixedScheme_enc, prfScheme_enc]
   intro re hx
   rw [runAt_prfEnc hE, hx, hFE, ctOf_eq]
-  apply GGMRed.ofFn_padFin_of_length
+  apply ofFn_padFin_of_length
   simp only [length_pairEncode, List.length_ofFn, List.length_zipWith, Nat.min_self,
     PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   omega
@@ -193,11 +194,11 @@ private theorem ofFn_prf_decAnswer (n : ℕ) (hn : 0 < n) (k : Fin n → Bool) (
       rw [h, List.length_nil] at this
       omega
     have hx : pairFstD w = List.ofFn (padFin n (pairFstD w)) :=
-      (GGMRed.ofFn_padFin_of_length hw.1).symm
+      (ofFn_padFin_of_length hw.1).symm
     have hv : List.zipWith xor (pairSndD w) (List.ofFn (F n k (padFin n (pairFstD w)))) =
         List.ofFn (padFin n (List.zipWith xor (pairSndD w)
           (List.ofFn (F n k (padFin n (pairFstD w)))))) :=
-      (GGMRed.ofFn_padFin_of_length (by
+      (ofFn_padFin_of_length (by
         rw [List.length_zipWith, List.length_ofFn, hw.2, Nat.min_self])).symm
     conv_lhs => rw [eq_pairEncode_of_pairFstD_ne hne]
     rw [runAt_prfDec hE _ n _ _ _ hw.1 hw.2, hx, hFE, ← hx, hv, decodeFin_ofFn,
@@ -266,7 +267,7 @@ private theorem accept_prf_indGame (atkBit b : Bool) (A : NUPPT) (Q n : ℕ) (hn
       Bool) => ProbComp.prob (.pure (res.1 0)) (· = true)) =
       fun res => if (List.ofFn res.1).headD false = true then (1 : ℝ) else 0 := by
     funext res
-    rw [prob_pure, AdaptiveCPA.headD_ofFn_one]
+    rw [prob_pure, headD_ofFn_one]
   rw [h1, expect_simulate_congr _ _ (fun i x s g => expect_indImpl_fImpl _ atkBit b n _ _ hct
       (prfNonceEq F E hE hFE n) (fun m re => ofFn_prf_encryptAt F E hE hFE n _ m re)
       (fun w rd => ofFn_prf_decAnswer F E hE hFE n hn _ w rd) i x s g),
@@ -613,7 +614,7 @@ private theorem cca2Encrypt (n : ℕ) (k m : Fin n → Bool)
     NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n r
   refine ⟨x, hx.symm, ?_⟩
   rw [runAt_prfEnc hE, ← hx, hFE, zipWith_xor_ofFn_add]
-  apply GGMRed.ofFn_padFin_of_length
+  apply ofFn_padFin_of_length
   simp only [length_pairEncode, List.length_ofFn, PolyExpr.eval_add,
     PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   omega
@@ -650,7 +651,7 @@ private def cca2Alter {d : ℕ} (c : Fin d → Bool) : Fin d → Bool :=
 /-- At positive width the modified ciphertext has exactly the flipped word. -/
 private theorem cca2Alter_ofFn {d : ℕ} (hd : 0 < d) (c : Fin d → Bool) :
     List.ofFn (cca2Alter c) = cca2FlipLast (List.ofFn c) := by
-  apply GGMRed.ofFn_padFin_of_length
+  apply ofFn_padFin_of_length
   rw [cca2FlipLast_length]
   · exact List.length_ofFn
   · intro he
@@ -722,13 +723,6 @@ private theorem cca2Decrypt (n : ℕ) (k x v : Fin n → Bool)
   rw [runAt_prfDec hE _ n _ _ _ List.length_ofFn List.length_ofFn, hFE, zipWith_xor_ofFn_add,
     decodeFin_ofFn]
 
-/-- Transporting a bit vector along a width equality does not change its word:
-`List.ofFn (cast h f) = List.ofFn f` when `h` comes from `a = b`. -/
-private theorem cca2OfFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
-    (f : Fin a → Bool) : List.ofFn (cast h f) = List.ofFn f := by
-  subst hab
-  rfl
-
 /-- At `n > 0`, the valid answer `⟨1, b^n ⊕ e_{n-1}⟩` ends in `!b`. -/
 private theorem cca2LastBit {n : ℕ} (hn : 0 < n) (b : Bool) :
     (List.ofFn (Fin.cons (α := fun _ => Bool) true (cca2FlipBits (n := n) fun _ => b))).getLastD
@@ -767,7 +761,7 @@ private theorem cca2Run (S : FixedLengthScheme) (n : ℕ) (hd : 0 < S.ctLen.eval
     rw [MachineCodec.encodeLog_nil, cca2Adversary_run, if_pos rfl,
       FixedLengthScheme.indCodec_decodeMove]
     have hw : List.ofFn x = List.replicate n false ++ List.replicate n true := by
-      rw [hx, cca2OfFn_cast (S.inLens_two n).symm, cca2Messages_ofFn]
+      rw [hx, ofFn_cast (S.inLens_two n).symm, cca2Messages_ofFn]
     rw [← hw]
     exact decodeBitMove_query (S.inLens n) (S.outLens n) 1 2 x
   rw [NUPPT.toComp_eq, buildComp_succ_of_query (next := fun hist => (S.indCodec n).decodeMove
@@ -787,8 +781,8 @@ private theorem cca2Run (S : FixedLengthScheme) (n : ℕ) (hd : 0 < S.ctLen.eval
     simp only [MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
       FixedLengthScheme.indCodec_encodeEntry, cca2Adversary_one,
       FixedLengthScheme.indCodec_decodeMove]
-    rw [cca2OfFn_cast (S.outLens_two n).symm, ← cca2Alter_ofFn hd,
-      ← cca2OfFn_cast (S.inLens_one n).symm (S.indSpec_decDom n).symm]
+    rw [ofFn_cast (S.outLens_two n).symm, ← cca2Alter_ofFn hd,
+      ← ofFn_cast (S.inLens_one n).symm (S.indSpec_decDom n).symm]
     exact decodeBitMove_query (S.inLens n) (S.outLens n) 1 1 _
   rw [buildComp_succ_of_query (next := fun hist => (S.indCodec n).decodeMove
     (cca2Adversary.runAt n ((S.indCodec n).encodeLog hist) r)) h2, simulate_query,
@@ -818,7 +812,7 @@ private theorem cca2Run (S : FixedLengthScheme) (n : ℕ) (hd : 0 < S.ctLen.eval
     simp only [List.singleton_append, MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
       FixedLengthScheme.indCodec_encodeEntry, cca2Adversary_two,
       FixedLengthScheme.indCodec_decodeMove]
-    rw [cca2OfFn_cast (S.outLens_one n).symm, hlast, Bool.not_not]
+    rw [ofFn_cast (S.outLens_one n).symm, hlast, Bool.not_not]
     have hb : [b] = List.ofFn (fun _ : Fin 1 => b) := by
       rw [List.ofFn_const, List.replicate_one]
     rw [hb]

@@ -1077,12 +1077,6 @@ private theorem dlc_splitEquiv_symm_ofFn {L a b : ℕ} (h : L = a + b) (u : Fin 
   subst h
   exact ofFn_splitCoins_symm a b u v
 
-/-- Padding a string of the right length is lossless: `List.ofFn (padFin ℓ w) = w` for `|w| = ℓ`
-(`Collection.ofFn_padFin_of_le`). -/
-private theorem dlc_ofFn_padFin {ℓ : ℕ} {w : List Bool} (h : w.length = ℓ) :
-    List.ofFn (padFin ℓ w) = w := by
-  rw [Collection.ofFn_padFin_of_le h.le, h, Nat.sub_self, List.replicate_zero, List.append_nil]
-
 /-- The public key `⟨i, X⟩` read from a DDH tuple `⟨i, ⟨X, ⟨Y, Z⟩⟩⟩`. -/
 private def dlc_tuplePk (t : List Bool) : List Bool := pairEncode (pairFstD t) (pairFstD (pairSndD t))
 
@@ -1433,7 +1427,7 @@ the same coins (the exponents are the same samplers, `h^{(ab mod q)} = h^{ab}` s
 `NUPPT.distinguisherL_eq`, `he`, `dlc_challenge_eq`). The derived index `i` (`dlc_grp_runAt`) is
 valid and well formed, `⟨p, ⟨q, h⟩⟩` with `p`, `q` from `G`'s index (`wellFormedIndex_iff`,
 `safePrimeValid_iff`) and `h = egSquareGen p g = g² mod p` off the bad event, of order `q`
-(`egSquareGen_valid`). The padding of the tuple is lossless (`dlc_ofFn_padFin`, `length_ddhTuple`),
+(`egSquareGen_valid`). The padding of the tuple is lossless (`ofFn_padFin_of_length`, `length_ddhTuple`),
 so `D_b` reads `⟨i, X⟩`, `Y` and `Z` back. The exponent `ddhExpo n i u` has the value of the sampler
 `sampleBelowL q (Nat.size q) n n u` of `egGenParts`/`egEncParts` (`expOrd_of_valid`,
 `ZMod.val_natCast`, `sampleBelowL_lt`), `expF i z` is the numeral of `h^z mod p` (`expF_eq`,
@@ -1484,7 +1478,7 @@ private theorem dlc_hyb1_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : N
   simp only [pairFstD_pairEncode, pairSndD_pairEncode, dlP_eq, dlM_eq, dlG_eq]
   generalize egUnit n (listToNat a) (List.ofFn u₁) ^ 2 % listToNat a = h at hord hi hhp ⊢
   -- the tuple
-  rw [dlc_ofFn_padFin (by rw [length_ddhTuple hwi, eval_ddhLen])]
+  rw [ofFn_padFin_of_length (by rw [length_ddhTuple hwi, eval_ddhLen])]
   unfold dlc_ddhInput dlc_tuplePk
   rw [ddhTuple_eq]
   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
@@ -1615,7 +1609,7 @@ private theorem dlc_rand_term {n : ℕ} {i : List Bool} (hvi : SafePrimeValid i)
 runs `D` on `⟨⟨i, g^a⟩, ⟨g^b, ⟦g^z · m'_b mod p⟧_n⟩⟩` with `z = ddhExpo n i u₃`.
 
 **Proof sketch.** Unfold `D_b` on the random tuple (`NUPPT.distinguisher_eq`,
-`NUPPT.distinguisherL_eq`, `he`, `ddhRandom`). The padding is lossless (`dlc_ofFn_padFin`,
+`NUPPT.distinguisherL_eq`, `he`, `ddhRandom`). The padding is lossless (`ofFn_padFin_of_length`,
 `length_ddhTuple`), so the projections of `dlc_ddhInput` and `dlc_tuplePk` read the components of
 the tuple back, and the numeral `Z = expF i z` reads as `g^z mod p` (`expF_eq`,
 `listToNat_natToList` below `dlP_lt_two_pow`). -/
@@ -1648,7 +1642,7 @@ private theorem dlc_rand_accept (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : 
   dsimp only
   generalize (egGroupGen H G).gen.runAt n [] r = i at hvi hwi ⊢
   have hp0 : 0 < dlP i := ((expValid_iff i).1 hvi.expValid).1.pos
-  rw [dlc_ofFn_padFin (by rw [length_ddhTuple hwi, eval_ddhLen])]
+  rw [ofFn_padFin_of_length (by rw [length_ddhTuple hwi, eval_ddhLen])]
   unfold dlc_ddhInput dlc_tuplePk
   rw [ddhTuple_eq]
   simp only [pairFstD_pairEncode, pairSndD_pairEncode]

@@ -130,12 +130,6 @@ theorem padToLen_pairEncode_ofFn (a : List Bool) {L : ℕ} (ρ : Fin L → Bool)
       Bool.xor_self]
     rfl
 
-/-- The encoding of `padFin L w` is `w` when `|w| = L`. -/
-theorem ofFn_padFin_of_length {L : ℕ} {w : List Bool} (hw : w.length = L) :
-    List.ofFn (padFin L w) = w := by
-  refine List.ext_getElem (by simp [hw]) fun j hj₁ hj₂ => ?_
-  simp [padFin_def, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj₂]
-
 /-- **The evaluator of the hard-core bit of the padded collection** `⟨padFin(encD_i x), r⟩` on
 `⟨i, ⟨encD_i x, r⟩⟩` [PS10, Theorem 87.3, collection form, efficiency clause]. -/
 theorem exists_glBitCollEvaluator (F : Collection) :

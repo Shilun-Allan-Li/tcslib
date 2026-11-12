@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Games
 import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Eager
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -224,26 +225,17 @@ section Records
 
 variable {n d : ℕ}
 
-/-- Exclusive-or with the same list twice cancels: `(a ⊕ c) ⊕ a = c` for `|a| = |c|`. -/
-theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
-    List.zipWith xor (List.zipWith xor a c) a = c := by
-  apply List.ext_getElem
-  · simp [h]
-  · intro i h₁ h₂
-    simp only [List.getElem_zipWith]
-    cases a[i] <;> cases c[i] <;> rfl
-
 /-- The record of a ciphertext `⟨r, m ⊕ y⟩` (with `|m| = n` and `d = 3n + 2`) has nonce `r`. -/
 theorem rStar_ctOf (hd : d = 3 * n + 2) (r : Fin n → Bool) {m : List Bool} (hm : m.length = n)
     (y : Fin n → Bool) : rStar (padFin d (ctOf r m y)) = r := by
-  rw [rStar_eq, GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
+  rw [rStar_eq, ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
     pairFstD_pairEncode, padFin_ofFn]
 
 /-- The record of a challenge ciphertext `⟨r, m_b ⊕ y⟩` has pad `y`. -/
 theorem padAt_ctOf (hd : d = 3 * n + 2) (b : Bool) (r : Fin n → Bool) (ml : List Bool)
     (hm : (AdaptiveCPA.msgOf n b ml).length = n) (y : Fin n → Bool) :
     padAt b ml (padFin d (ctOf r (AdaptiveCPA.msgOf n b ml) y)) = y := by
-  rw [padAt_eq, GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
+  rw [padAt_eq, ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
     pairSndD_pairEncode, zipWith_xor_cancel_left (by rw [hm, List.length_ofFn]), padFin_ofFn]
 
 /-- The flag does not change the recorded values: `look b (st.1, st.2.1, bd) = look b st`. -/
@@ -450,7 +442,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
           cases b <;> simp [this]
         have hpad : ∀ r y, List.ofFn (padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm)) y)) =
             ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm)) y := fun r y =>
-          GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd])
+          ofFn_padFin_of_length (by rw [length_ctOf r hm, hd])
         simp only [simulate_query, Option.map_none, fImpl_challenge_none, lazyImpl_challenge_none,
           OracleComp.bind_assoc, expect_bind, OracleComp.pure_bind, hpad]
         rw [expect_sample_comm]

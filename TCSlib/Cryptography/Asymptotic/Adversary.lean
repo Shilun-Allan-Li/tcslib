@@ -62,7 +62,11 @@ by `ifEq`).
   equation and its full-length condition.
 * `TCSlib.Cryptography.decodeFin_ofFn`, `TCSlib.Cryptography.padFin_ofFn` — decoding and
   padding invert `List.ofFn`; `TCSlib.Cryptography.decodeFin_eq_some_iff` — decoding succeeds
-  exactly on the encoding.
+  exactly on the encoding; `TCSlib.Cryptography.ofFn_padFin_of_length` — padding a string of the
+  right length keeps it.
+* `TCSlib.Cryptography.ofFn_cast`, `TCSlib.Cryptography.ofFn_arrowCongr_finCongr` — a bit vector
+  read across an equality of widths keeps its string.
+* `TCSlib.Cryptography.FunFamily.ofFn_blocks` — block `j` of a string is its `j`-th window.
 * `TCSlib.Cryptography.invProbOpt_le_invProb`, `TCSlib.Cryptography.invProbOpt_some` — the
   bridges to the concrete `invProb`.
 * `TCSlib.Cryptography.invProbOpt_nonneg`, `TCSlib.Cryptography.invProbOpt_le_one` — bounds.
@@ -153,6 +157,28 @@ theorem padFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : padFin ℓ (List.ofFn x
   funext i
   simp [padFin]
 
+/-- The encoding of `padFin L w` is `w` when `|w| = L`: `List.ofFn (padFin L w) = w`. -/
+theorem ofFn_padFin_of_length {L : ℕ} {w : List Bool} (hw : w.length = L) :
+    List.ofFn (padFin L w) = w := by
+  refine List.ext_getElem (by simp [hw]) fun j hj₁ hj₂ => ?_
+  simp [padFin_def, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj₂]
+
+/-! ### Bit vectors across equal widths -/
+
+/-- Reading a bit vector across an equality of widths keeps its string:
+`⟦cast h f⟧ = ⟦f⟧` when `a = b`. -/
+theorem ofFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
+    (f : Fin a → Bool) : List.ofFn (cast h f) = List.ofFn f := by
+  subst hab
+  rfl
+
+/-- Reading a vector at an equal width keeps its word:
+`⟦(arrowCongr (finCongr h) (refl Bool)) v⟧ = ⟦v⟧`. -/
+theorem ofFn_arrowCongr_finCongr {a b : ℕ} (h : a = b) (v : Fin a → Bool) :
+    List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) v) = List.ofFn v := by
+  subst h
+  rfl
+
 /-! ### Blocks of a flat tuple -/
 
 /-- A tuple of `q · ℓ` entries with values in an arbitrary type `X` as `q` consecutive blocks of
@@ -186,6 +212,30 @@ theorem FunFamily.blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : F
 theorem FunFamily.blocks_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) (k : Fin (q * ℓ)) :
     (FunFamily.blocks q ℓ).symm t k = t k.divNat k.modNat :=
   blocksEquivX_symm_apply q ℓ t k
+
+/-- **Block `j` is the `j`-th window of the string:**
+`⟦FunFamily.blocks q ℓ ω j⟧ = (⟦ω⟧.drop (j·ℓ)).take ℓ`.
+
+**Proof sketch.** Block `j` ends within the string, `j·ℓ + ℓ ≤ q·ℓ`, so both sides have `ℓ` bits.
+Position `k` of block `j` is position `finProdFinEquiv (j, k) = k + ℓ·j` of `ω`
+(`FunFamily.blocks_apply`), which is position `k` of the window. -/
+theorem FunFamily.ofFn_blocks (q ℓ : ℕ) (ω : Fin (q * ℓ) → Bool) (j : Fin q) :
+    List.ofFn (FunFamily.blocks q ℓ ω j) = ((List.ofFn ω).drop (j * ℓ)).take ℓ := by
+  have hle : (j : ℕ) * ℓ + ℓ ≤ q * ℓ := by
+    have := Nat.mul_le_mul_right ℓ (Nat.succ_le_of_lt j.isLt)
+    rw [Nat.succ_mul] at this
+    exact this
+  refine List.ext_getElem ?_ fun k h₁ h₂ => ?_
+  · simp only [List.length_ofFn, List.length_take, List.length_drop]
+    omega
+  · rw [List.getElem_ofFn, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+    refine (FunFamily.blocks_apply q ℓ ω j ⟨k, _⟩).trans ?_
+    congr 1
+    refine Fin.ext ?_
+    rw [finProdFinEquiv_apply_val]
+    show k + ℓ * j = j * ℓ + k
+    rw [Nat.mul_comm]
+    omega
 
 /-- `A(1^n, y)` as an inverter: output decoded as an `ℓ`-bit string, wrong length = failure
 [PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`].

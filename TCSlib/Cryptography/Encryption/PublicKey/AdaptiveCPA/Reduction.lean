@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -141,7 +142,7 @@ private theorem comp_acAbs (b : Bool) (n : ℕ) (hist : ist n ≤ cap.eval n) (p
         simp only [OracleComp.pure_bind, simulate_pure]
         have he : padFin (S.ctLen.eval n) (List.ofFn (padFin ((acDout S 1).eval n)
             (List.ofFn (acEnc S n pk b x r)))) = acEnc S n pk b x r := by
-          rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acDout_one]), padFin_ofFn]
+          rw [ofFn_padFin_of_length (by rw [List.length_ofFn, acDout_one]), padFin_ofFn]
         rw [he, acAbs, List.length_cons, Nat.min_eq_left (by omega), List.headD_cons,
           getElem?_reverse_cons, if_pos hk.symm]
       · -- another fresh challenge: the handler's own encryption with its tape
@@ -225,7 +226,7 @@ private theorem prob_red_tape (hist : ist n ≤ cap.eval n)
     simulate_eq_of_abs _ _ (acAbs S cap ist n) (comp_acAbs S cap ist b n hist pk sk ω),
     expect_bind]
   refine congrArg _ (funext fun a => ?_)
-  rw [expect_pure, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])]
+  rw [expect_pure, ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])]
 
 /-- **`B`'s game is the hybrid `H_{i⋆+b}`:** if `B` is the machine of T2 for the handler
 `acHandler S cap ist` (with the coin bijection `φ` at `n`) and `i⋆(n) ≤ cap(n)`, then `B`'s

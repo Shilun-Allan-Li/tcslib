@@ -17,7 +17,7 @@ may be sampled in advance (`expect_simulate_indImpl_cpa`, through the oracle equ
 `indImpl_*_onSpec`, from `ChallengeSim.expect_simulate_eager`); and the padded encryptor of a padded public-key scheme pads the
 original encryptor's output (`padded_enc_runAt`). All are read from the published lemmas of
 `OracleSecurity` and `ChallengeSim`. The CPA game's codec is the bit codec of the scheme's
-lengths by `AdaptiveCPA.indCodec_eq_bitCodec`, and casts are read by `AdaptiveCPA.ofFn_cast`.
+lengths by `AdaptiveCPA.indCodec_eq_bitCodec`, and casts are read by `ofFn_cast`.
 
 ## Main results
 

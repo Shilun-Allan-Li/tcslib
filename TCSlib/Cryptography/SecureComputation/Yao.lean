@@ -6,6 +6,7 @@ import TCSlib.Cryptography.SecureComputation.Hybrid
 import TCSlib.Cryptography.SecureComputation.GarblingSecurity
 import TCSlib.Complexity.CircuitComplexity.Uniform
 import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -700,16 +701,6 @@ theorem yaoBobOut_yaoMsg (n : ℕ) (x : Fin (Y.inA.eval n) → Bool)
   cases ((Y.circ n).values (Fin.append x y)).getD (Y.outs n j) false
   · exact decodeOut_fst _ _
   · exact decodeOut_snd _ _ fun h => hdist j (List.ofFn_injective h).symm
-
-/-- Concatenating singleton lists: `[g₀ 0] ++ ⋯ ++ [g_{k−1} 0] = [g₀ 0, …, g_{k−1} 0]`. -/
-private theorem flatten_ofFn_one {k l : ℕ} (hl : l = 1) (g : Fin k → Fin l → Bool) :
-    (List.ofFn fun j => List.ofFn (g j)).flatten = List.ofFn fun j => g j ⟨0, by omega⟩ := by
-  subst hl
-  induction k with
-  | zero => rfl
-  | succ k ih =>
-    rw [List.ofFn_succ, List.flatten_cons, ih (fun j => g j.succ), List.ofFn_succ (n := k)]
-    simp
 
 /-- **Bob's OT answers are the keys of his bits**: in the hybrid execution, bit `i · n + t` of
 Bob's answers is bit `t` of the key `k_{inA + i}^{y_i}` of his wire `inA + i` for his bit `y_i`

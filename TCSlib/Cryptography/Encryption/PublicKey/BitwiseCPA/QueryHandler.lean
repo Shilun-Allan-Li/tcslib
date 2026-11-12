@@ -184,17 +184,6 @@ attribute [simps (config := { isSimp := false }) stateLen seedLen init run advIn
 
 /-! ### The handler's simulation -/
 
-/-- An empty answer decodes to all-`false` at every length:
-`(decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ`. -/
-theorem decodeFin_nil_getD (ℓ : ℕ) : (decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ := by
-  rw [decodeFin_eq]
-  split
-  · next h =>
-    subst h
-    funext i
-    exact absurd i.isLt (Nat.not_lt_zero _)
-  · rfl
-
 section Simulation
 
 variable {α : Type} (Lc Lq Ld Laux Lseed : PolyExpr) (aux : ℕ → List Bool)
@@ -250,7 +239,7 @@ theorem simulate_qHandler_recorded
           (padFin _ (ans (pairEncode (seedIn n z (List.ofFn ω))
             (pairEncode (aux n) (List.ofFn mm)))), s) := by
         refine PolyHandler.answer_of_run_eq _ ?_
-        rw [qHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
+        rw [qHandler_run, PolyHandler.input_eq, ofFn_padFin_of_length (by
           rw [hw _ hlen, qDout_one]), hs, seedIn_eq]
         exact qRun_recorded ans _ _ _ _
       rw [simulate_query, PolyHandler.impl_apply, hans1, OracleComp.pure_bind,
@@ -282,7 +271,7 @@ theorem simulate_qHandler_init (haux : (aux n).length = Laux.eval n)
     rw [show (qHandler Lc Lq Ld Laux Lseed aux ans hans fin hfin).init n =
         padFin _ (pairEncode (aux n) (false :: List.replicate (Lq.eval n) false)) from
       funext (qHandler_init Lc Lq Ld Laux Lseed aux ans hans fin hfin n)]
-    refine GGMRed.ofFn_padFin_of_length ?_
+    refine ofFn_padFin_of_length ?_
     rw [qHandler_stateLen, length_pairEncode, List.length_cons, List.length_replicate, haux]
     simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
     omega
@@ -311,15 +300,15 @@ theorem simulate_qHandler_init (haux : (aux n).length = Laux.eval n)
             (pairEncode (aux n) (List.ofFn x)))),
             padFin _ (pairEncode (aux n) (true :: List.ofFn x))) := by
         refine PolyHandler.answer_of_run_eq _ ?_
-        rw [qHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
-          rw [hw _ hxlen, qDout_one]), GGMRed.ofFn_padFin_of_length hlen, hinit, seedIn_eq]
+        rw [qHandler_run, PolyHandler.input_eq, ofFn_padFin_of_length (by
+          rw [hw _ hxlen, qDout_one]), ofFn_padFin_of_length hlen, hinit, seedIn_eq]
         exact qRun_fresh ans _ _ _ _ rfl
       refine ⟨padFin _ (pairEncode (aux n) (true :: List.ofFn x)), ?_, ?_⟩
       · rw [simulate_query, PolyHandler.impl_apply, hans1, OracleComp.pure_bind,
           chRun_query_one_none]
         exact simulate_qHandler_recorded Lc Lq Ld Laux Lseed aux hans hfin n z ω hw _ x _
-          (GGMRed.ofFn_padFin_of_length hlen)
-      · rw [GGMRed.ofFn_padFin_of_length hlen, firstQ_query_one]
+          (ofFn_padFin_of_length hlen)
+      · rw [ofFn_padFin_of_length hlen, firstQ_query_one]
         rfl
 
 end Simulation

@@ -171,7 +171,7 @@ private theorem accept_indGame_eq (S : BitPublicKeyScheme) (L : PolyExpr)
       none).1 0)) (· = true)) (funext fun mm => ?_)
   rw [padded_enc_runAt, Equiv.trans_apply, NUPPT.coinsCongr_ofFn,
     ofFn_half hk b (cast ((S.bitwise.padded L hL hmsg).indSpec_challengeDom n) mm),
-    AdaptiveCPA.ofFn_cast ((S.bitwise.padded L hL hmsg).inLens_one n), ← NUPPT.runAt_eq,
+    ofFn_cast ((S.bitwise.padded L hL hmsg).inLens_one n), ← NUPPT.runAt_eq,
     bitwise_runAt_blocks]
   unfold hybCt
   refine congrArg (fun l => padCt (L.eval n) (PrivateKeyScheme.encodeList (List.ofFn l)))
