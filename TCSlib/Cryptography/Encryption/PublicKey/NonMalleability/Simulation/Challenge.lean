@@ -380,10 +380,12 @@ theorem chalHandler_costBoundedBy {α : Type}
     match i, x with
     | 0, x =>
       rw [chalHandler_impl_dec]
-      exact ⟨OracleComp.costBoundedBy_pure _ _ _, ⟨some (y, h, a), rfl⟩, ⟨y, h, a, rfl⟩⟩
+      exact ⟨OracleComp.costBoundedBy_pure _ _ _,
+        OracleComp.allOutputs_pure.2 ⟨⟨some (y, h, a), rfl⟩, ⟨y, h, a, rfl⟩⟩⟩
     | 1, x =>
       rw [chalHandler_impl_some]
-      exact ⟨OracleComp.costBoundedBy_pure _ _ _, ⟨some (y, h, a), rfl⟩, ⟨y, h, a, rfl⟩⟩
+      exact ⟨OracleComp.costBoundedBy_pure _ _ _,
+        OracleComp.allOutputs_pure.2 ⟨⟨some (y, h, a), rfl⟩, ⟨y, h, a, rfl⟩⟩⟩
   · obtain ⟨o, rfl⟩ := hg
     cases o with
     | some yha => exact absurd ⟨yha.1, yha.2.1, yha.2.2, rfl⟩ hu
@@ -391,11 +393,14 @@ theorem chalHandler_costBoundedBy {α : Type}
       match i, x with
       | 0, x =>
         rw [chalHandler_impl_dec]
-        exact Or.inl ⟨OracleComp.costBoundedBy_pure _ _ _, ⟨none, rfl⟩, hu⟩
+        exact Or.inl ⟨OracleComp.costBoundedBy_pure _ _ _,
+          OracleComp.allOutputs_pure.2 ⟨⟨none, rfl⟩, hu⟩⟩
       | 1, x =>
         rw [chalHandler_impl_none]
         exact Or.inr ⟨(OracleComp.costBoundedBy_query _ _ _ _ _).2 ⟨le_rfl, fun _ =>
-          OracleComp.costBoundedBy_pure _ _ _⟩, fun _ => ⟨⟨some (_, _, padFin _ (List.ofFn x)), rfl⟩, ⟨_, _, padFin _ (List.ofFn x), rfl⟩⟩⟩
+          OracleComp.costBoundedBy_pure _ _ _⟩, OracleComp.allOutputs_query.2 fun _ =>
+            OracleComp.allOutputs_pure.2 ⟨⟨some (_, _, padFin _ (List.ofFn x)), rfl⟩,
+              ⟨_, _, padFin _ (List.ofFn x), rfl⟩⟩⟩
 
 end Calls
 

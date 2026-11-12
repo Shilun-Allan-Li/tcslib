@@ -250,7 +250,7 @@ theorem nmFin_eq (r : PolyExpr) (w : List Bool) :
 /-- The finalization round is polynomial-time. -/
 theorem polyTimeComputable_nmFin (r : PolyExpr) : PolyTimeComputable (nmFin S samp hl r) := by
   obtain ⟨hU, hZ, hW, hA, -⟩ := polyTimeComputable_finFields
-  have hS : PolyTimeComputable finSt := polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+  have hS := polyTimeComputable_finSt
   have hctx : PolyTimeComputable fun w =>
       pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))) :=
     hU.pairEncode (hZ.pairEncode (hW.pairEncode hS))

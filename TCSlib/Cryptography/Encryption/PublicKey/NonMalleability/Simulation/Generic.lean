@@ -133,7 +133,9 @@ theorem bind_congr_of_allOutputs {ι : Type} {spec : OracleSpec ι} {c : OracleC
     {P : α → Prop} (hc : c.AllOutputs P) {f g : α → OracleComp spec β}
     (h : ∀ a, P a → f a = g a) : c.bind f = c.bind g := by
   induction c with
-  | pure a => exact h a hc
+  | pure a =>
+    rw [OracleComp.pure_bind, OracleComp.pure_bind]
+    exact h a (OracleComp.allOutputs_pure.1 hc)
   | query i x k ih =>
     rw [OracleComp.query_bind, OracleComp.query_bind]
     congr 1
