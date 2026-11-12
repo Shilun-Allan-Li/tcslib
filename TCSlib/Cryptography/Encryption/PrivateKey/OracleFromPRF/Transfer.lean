@@ -91,20 +91,20 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
     refine congrArg _ (funext fun re => ?_)
     rw [expect_pure, expect_pure]
     have hm : List.ofFn (cast (S.indSpec_encDom n) m) = List.ofFn m :=
-      AdaptiveCPA.ofFn_cast (S.inLens_zero n).symm _ m
+      AdaptiveCPA.ofFn_cast (S.inLens_zero n) _ m
     have hm' : cast (S.indSpec_encDom n) m = padFin n (List.ofFn m) :=
       eq_of_ofFn_eq (by rw [hm, GGMRed.ofFn_padFin_of_length (by
         rw [List.length_ofFn, S.inLens_zero])])
     congr 2
     refine eq_of_ofFn_eq ?_
-    rw [AdaptiveCPA.ofFn_cast (S.outLens_zero n) _ _, hm', henc,
+    rw [AdaptiveCPA.ofFn_cast (S.outLens_zero n).symm _ _, hm', henc,
       GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, S.inLens_zero]),
       GGMRed.ofFn_padFin_of_length (by
         rw [hlenCt _ (by rw [List.length_ofFn, S.inLens_zero]), S.outLens_zero])]
   | 1, c =>
     rw [S.indImpl_dec_onSpec, fImpl_dec, decOpen_atkOf]
     have hc : List.ofFn (cast (S.indSpec_decDom n) c) = List.ofFn c :=
-      AdaptiveCPA.ofFn_cast (S.inLens_one n).symm _ c
+      AdaptiveCPA.ofFn_cast (S.inLens_one n) _ c
     by_cases hop : (atkBit && !s.isSome) = true
     · have hs : s = none := by
         cases s with
@@ -116,7 +116,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
       rw [expect_pure, expect_pure]
       congr 2
       refine eq_of_ofFn_eq ?_
-      rw [AdaptiveCPA.ofFn_cast (S.outLens_one n) _ _, hc, hdec, decAns_eq, hop, Bool.true_and]
+      rw [AdaptiveCPA.ofFn_cast (S.outLens_one n).symm _ _, hc, hdec, decAns_eq, hop, Bool.true_and]
       by_cases hw : decWF n (List.ofFn c) = true
       · rw [if_pos hw, if_pos hw]
         rw [decWF_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq] at hw
@@ -129,7 +129,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
         Bool.false_and, if_neg Bool.false_ne_true, expect_pure, expect_pure, padFin_nil]
   | 2, mm =>
     have hmm : List.ofFn (cast (S.indSpec_challengeDom n) mm) = List.ofFn mm :=
-      AdaptiveCPA.ofFn_cast (S.inLens_two n).symm _ mm
+      AdaptiveCPA.ofFn_cast (S.inLens_two n) _ mm
     have hmsg : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n := by
       have : (List.ofFn mm).length = n + n := by rw [List.length_ofFn, S.inLens_two]
       rw [AdaptiveCPA.msgOf_eq]
@@ -148,7 +148,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
       rw [S.indImpl_challenge_repeat_onSpec, fImpl_challenge_some, expect_pure, expect_pure]
       congr 2
       refine eq_of_ofFn_eq ?_
-      rw [AdaptiveCPA.ofFn_cast (S.outLens_two n) _ _,
+      rw [AdaptiveCPA.ofFn_cast (S.outLens_two n).symm _ _,
         GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, S.outLens_two])]
     | none =>
       rw [S.indImpl_challenge_none_onSpec, fImpl_challenge_none, expect_bind, expect_bind,
@@ -162,7 +162,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
         rw [hsel, henc, GGMRed.ofFn_padFin_of_length hmsg]
       congr 2
       · refine eq_of_ofFn_eq ?_
-        rw [AdaptiveCPA.ofFn_cast (S.outLens_two n) _ _, henc',
+        rw [AdaptiveCPA.ofFn_cast (S.outLens_two n).symm _ _, henc',
           GGMRed.ofFn_padFin_of_length (by rw [hlenCt _ hmsg, S.outLens_two])]
       · congr 1
         refine eq_of_ofFn_eq ?_

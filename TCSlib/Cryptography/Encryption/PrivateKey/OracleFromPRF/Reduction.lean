@@ -72,7 +72,7 @@ theorem simulate_eq_of_abs_bounded {ι ι' : Type} {spec : OracleSpec ι} {spec'
   induction c generalizing m s with
   | pure a => simp only [simulate_pure, OracleComp.pure_bind]
   | query i x k ih =>
-    obtain ⟨hm, hk⟩ := hc
+    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
     have hm1 : 1 ≤ m := hm
     obtain ⟨y, s', h₂, hcnt, h₁⟩ := h i x s (by omega)
     rw [simulate_query, simulate_query, h₁, h₂, OracleComp.pure_bind, OracleComp.pure_bind]
@@ -124,11 +124,11 @@ variable (q : PolyExpr) (atkBit b : Bool) (n : ℕ) (f : (Fin n → Bool) → (F
 /-- The handler's state and the (trivial) outer state, as functions of `eImpl`'s state. -/
 def pkAbs (s : ℕ × Option (Fin (ctP.eval n) → Bool)) :
     (Fin ((pkHandler q atkBit b).stateLen.eval n) → Bool) × Unit :=
-  (pkState q n s.1 s.2, ())
+  (pkHState q atkBit b n s.1 s.2, ())
 
-/-- `pkAbs q atkBit b n s = (pkState q n s.1 s.2, ())`. -/
+/-- `pkAbs q atkBit b n s = (pkHState q atkBit b n s.1 s.2, ())`. -/
 theorem pkAbs_eq (s : ℕ × Option (Fin (ctP.eval n) → Bool)) :
-    pkAbs q atkBit b n s = (pkState q n s.1 s.2, ()) :=
+    pkAbs q atkBit b n s = (pkHState q atkBit b n s.1 s.2, ()) :=
   rfl
 
 /-- Reading a tape through the outer oracle's padding: `f` at the tape `r`. -/
@@ -165,9 +165,9 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
     refine ⟨_, _, eImpl_enc (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
         (ctP.eval n) n (atkOf atkBit) b f
         (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j o, le_rfl, ?_⟩
-    rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_enc q atkBit b n z ω x j o hj,
+    rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq, pkHandler_impl_enc q atkBit b n z ω x j o hj,
       simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
-      pkAbs_eq, hT, fOuter_tape]
+      pkAbs_eq, pkHState_eq, hT, fOuter_tape]
   | 1, x =>
     by_cases hop : (atkBit && !o.isSome && decWF n (List.ofFn x)) = true
     · refine ⟨_, _, eImpl_dec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
@@ -182,7 +182,7 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
       have hx0 : padFin n (List.ofFn (padFin ((pkOut 0).eval n) (pairFstD (List.ofFn x)))) =
           padFin n (pairFstD (List.ofFn x)) := by
         rw [GGMRed.ofFn_padFin_of_length (by rw [hwf'.1, hn])]
-      rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_dec_open q atkBit b n z ω x j o hj.le hop,
+      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq, pkHandler_impl_dec_open q atkBit b n z ω x j o hj.le hop,
         simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
         hx0, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn]; exact hn.symm),
         decOpen_atkOf, decAns_eq]
@@ -192,7 +192,7 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
         (ctP.eval n) n (atkOf atkBit) b f
           (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j o, Nat.le_succ _, ?_⟩
       rw [Bool.not_eq_true] at hop
-      rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_dec_closed q atkBit b n z ω x j o hj.le
+      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq, pkHandler_impl_dec_closed q atkBit b n z ω x j o hj.le
           hop,
         simulate_pure, OracleComp.pure_bind, decOpen_atkOf, decAns_eq,
         if_neg (by rw [hop]; exact Bool.false_ne_true)]
@@ -206,16 +206,16 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
       refine ⟨_, _, eImpl_challenge_some (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
           (ctP.eval n) n (atkOf atkBit) b f
         (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j c, Nat.le_succ _, ?_⟩
-      rw [QueryImpl.comp_apply, pkAbs_eq,
+      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq,
         pkHandler_impl_challenge_some q atkBit b n z ω x j c hj.le, simulate_pure,
         OracleComp.pure_bind]
     | none =>
       refine ⟨_, _, eImpl_challenge_none (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
           (ctP.eval n) n (atkOf atkBit) b f
         (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j, le_rfl, ?_⟩
-      rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_challenge_none q atkBit b n z ω x j hj,
+      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq, pkHandler_impl_challenge_none q atkBit b n z ω x j hj,
         simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
-        pkAbs_eq, hT, fOuter_tape]
+        pkAbs_eq, pkHState_eq, hT, fOuter_tape]
 
 end Composed
 
@@ -348,9 +348,8 @@ theorem exists_prfReduction (A : NUPPT) (q : PolyExpr) (atkBit b : Bool) :
     refine h1.symm.trans ?_
     rw [simulate_bind, simulate_comp, OracleComp.bind_assoc, expect_bind]
     simp only [OracleComp.pure_bind, pkHandler_finish, simulate_pure, expect_pure]
-    rw [pkHandler_init_eq, show ((pkState q n 0 none, ()) :
-        (Fin ((pkHandler q atkBit b).stateLen.eval n) → Bool) × Unit) =
-        pkAbs q atkBit b n (0, none) from rfl,
+    rw [pkHandler_init_hstate, show (pkHState q atkBit b n 0 none, ()) =
+        pkAbs q atkBit b n (0, none) from (pkAbs_eq q atkBit b n (0, none)).symm,
       simulate_eq_of_abs_bounded _ _ (pkAbs q atkBit b n) (fun s => s.1) (q.eval n)
         (fun i x s hs => comp_pkAbs q atkBit b n f [] ω i x s hs) _ (q.eval n)
         (toComp_costBoundedBy A _ n (q.eval n) r) (0, none) (Nat.zero_add _).le,

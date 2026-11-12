@@ -361,7 +361,8 @@ private theorem prf_advantage_le (atkBit : Bool) (A : NUPPT) (q : PolyExpr) :
     refine key _ _ _ _ _ (le_trans ?_ hQ1)
     exact abs_expect_fImpl_sub_le (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
       (ctP.eval n) n (atkOf atkBit) (by rw [decOpen_atkOf, Bool.not_true, Bool.and_false])
-      (ctP_eval n) (by show (pkDin 2).eval n = n + n; rw [pkDin_two]; rfl)
+      (ctP_eval n)
+      (by show (pkDin 2).eval n = n + n; rw [pkDin_two, PolyExpr.eval_add, PolyExpr.eval_var])
       (fun r => A.toComp (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n
         (q.eval n) r) (fun a => (List.ofFn a).headD false = true) (q.eval n)
       (fun r => toComp_costBoundedBy A _ n _ r)
@@ -375,6 +376,7 @@ are (`PRF.negligible_prfAdv`, budget `qRed q`), and so is a polynomial times `2�
 are negligible (`Negligible.add`). -/
 private theorem prf_indSecure (atkBit : Bool) (hF : PRF F) :
     (prfFixedScheme F E hE hFE).INDSecure (atkOf atkBit) := by
+  rw [FixedLengthScheme.INDSecure_iff]
   intro A q
   obtain ⟨D₀, D₁, h⟩ := prf_advantage_le F E hE hFE atkBit A q
   exact ⟨_, ((hF.negligible_prfAdv D₀ (qRed q)).add (hF.negligible_prfAdv D₁ (qRed q))).add
@@ -408,6 +410,7 @@ challenge bit in its seed. Here there is one reduction per bit (the bit hard-wir
    above (`advantage ≤ 1` at `n = 0`); it is negligible (`PRF.negligible_prfAdv`,
    `EnsembleLemmas.negligible_polyExpr_mul`, `negligible_two_pow_neg`). -/
 theorem prfFixedScheme_cpa (hF : PRF F) : (prfFixedScheme F E hE hFE).INDSecure .cpa := by
+  rw [← PRFGame.atkOf_false]
   exact prf_indSecure F E hE hFE false hF
 
 /-- **Theorem 168.2 (CCA1)** [PS10]: if `F` is a pseudorandom function family, the §3.9 scheme
@@ -424,6 +427,7 @@ experiment a pre-challenge decryption enters its nonce in the table, so the bad 
 that it is the challenge's `r*`, again bounded by `prob_mem_le` because `r*` is drawn after those
 queries; after the challenge CCA1 refuses decryption, so it never reads `b`. -/
 theorem prfFixedScheme_cca1 (hF : PRF F) : (prfFixedScheme F E hE hFE).INDSecure .cca1 := by
+  rw [← PRFGame.atkOf_true]
   exact prf_indSecure F E hE hFE true hF
 
 /-- Reverse the word, negate its first bit, and reverse back: on a nonempty word this

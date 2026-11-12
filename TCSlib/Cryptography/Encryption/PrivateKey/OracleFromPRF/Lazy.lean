@@ -418,7 +418,9 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
       · rw [Bool.not_eq_true] at hop
         have hop' : (FixedLengthScheme.decOpen atk (st.2.1.map Prod.snd).isSome &&
             decWF n (List.ofFn c)) = false := by rw [Option.isSome_map]; exact hop
-        have hz0 : padFin (outs 1) [] = zeroBits (outs 1) := funext fun _ => rfl
+        have hz0 : padFin (outs 1) [] = zeroBits (outs 1) := by
+          funext k
+          simp only [padFin_def, List.getD_nil, zeroBits_apply]
         simp only [simulate_query, fImpl_dec, lazyImpl_dec_closed _ _ _ _ _ _ c st hop,
           OracleComp.pure_bind, decAns_eq, hop', Bool.false_eq_true, if_false, hz0]
         exact ih _ st
@@ -427,7 +429,8 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
       cases ch with
       | some p =>
         obtain ⟨ml, c⟩ := p
-        simp only [simulate_query, lazyImpl_challenge_some, OracleComp.pure_bind]
+        simp only [simulate_query, lazyImpl_challenge_some, OracleComp.pure_bind, Option.map_some,
+          fImpl_challenge_some]
         exact ih _ _
       | none =>
         have hm : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n := by

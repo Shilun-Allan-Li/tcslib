@@ -91,7 +91,7 @@ theorem pkDout_one : pkDout 1 = .add .var (.const 1) := rfl
 theorem pkDout_two : pkDout 2 = ctP := rfl
 
 /-- The outer oracle: `n`-bit queries and answers. -/
-def pkOut : Fin 1 → PolyExpr := fun _ => .var
+abbrev pkOut : Fin 1 → PolyExpr := fun _ => .var
 
 /-- `pkOut j = var`. -/
 theorem pkOut_eq (j : Fin 1) : pkOut j = .var := rfl
@@ -391,6 +391,22 @@ def pkSeedTapes (atkBit b : Bool) (n : ℕ) :
     (Fin ((pkHandler q atkBit b).seedLen.eval n) → Bool) ≃ (Fin (q.eval n) → Fin n → Bool) :=
   pkTapes q n
 
+/-- The encoded state at the handler's state type: `pkHState q atkBit b n j o = pkState q n j o`. -/
+def pkHState (atkBit b : Bool) (n j : ℕ) (o : Option (Fin (ctP.eval n) → Bool)) :
+    Fin ((pkHandler q atkBit b).stateLen.eval n) → Bool :=
+  pkState q n j o
+
+/-- `pkHState q atkBit b n j o = pkState q n j o`. -/
+theorem pkHState_eq (atkBit b : Bool) (n j : ℕ) (o : Option (Fin (ctP.eval n) → Bool)) :
+    pkHState q atkBit b n j o = pkState q n j o :=
+  rfl
+
+/-- The initial state is the encoded `(0, none)`: `(pkHandler q atkBit b).init n =
+pkHState q atkBit b n 0 none`. -/
+theorem pkHandler_init_hstate (atkBit b : Bool) (n : ℕ) :
+    (pkHandler q atkBit b).init n = pkHState q atkBit b n 0 none :=
+  rfl
+
 /-- `pkSeedTapes q atkBit b n = pkTapes q n`. -/
 theorem pkSeedTapes_eq (atkBit b : Bool) (n : ℕ) : pkSeedTapes q atkBit b n = pkTapes q n :=
   rfl
@@ -404,6 +420,9 @@ theorem pkHandler_finish (atkBit b : Bool) (n : ℕ) (z : List Bool)
     (pkHandler q atkBit b).finish n z ω s a =
       .pure (padFin ((pkHandler q atkBit b).outLen.eval n) (List.ofFn a)) := by
   rw [InteractiveHandler.finish_eq]
+  have h0 : (pkHandler q atkBit b).finCall.eval n = 0 := by
+    rw [pkHandler_finCall, PolyExpr.eval_const]
+  rw [h0]
   refine buildComp_zero_of_ret ?_
   show decodeBitMove _ _ _ (pkFin _) = _
   rw [pkFin, InteractiveHandler.finInput_eq, pairSndD_pairEncode, pairSndD_pairEncode,
