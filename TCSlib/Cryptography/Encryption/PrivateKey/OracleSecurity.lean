@@ -57,6 +57,7 @@ never (CPA), before the challenge only (CCA1), or always, except on `c` itself (
   once).
 * `FixedLengthScheme.ofFn_splitHalf_fst`, `ofFn_splitHalf_snd`: the strings of the two halves of a
   challenge query.
+* `FixedLengthScheme.indCodec_eq_bitCodec`: the game's codec is a bit codec.
 
 The theorems on these notions (Thms 168.2 and 170.4, Claim 169.a) are stated in the statement
 phase of prong C, in their own modules.
@@ -358,6 +359,9 @@ theorem indCodec_encodeEntry (n : ℕ)
 /-- The IND codec returns the false verdict when its budget expires. -/
 theorem indCodec_timeout (n : ℕ) : (S.indCodec n).timeout = zeroBits 1 :=
   bitCodec_timeout (S.inLens n) (S.outLens n) 1
+
+/-- The game's codec is a bit codec: `S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1`. -/
+theorem indCodec_eq_bitCodec (n : ℕ) : S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1 := rfl
 
 /-- **The experiment `IND_b^{O₁,O₂}(Π, A, n)`** [PS10, Definition 168.1] for the attack `atk`, with
 query budget `q`: sample `k ← Gen(1^n)` and `A`'s coins, run `A` against the oracles of `IND_b`

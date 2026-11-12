@@ -56,6 +56,8 @@ Security is stated for each admissible `L`; a larger `L` admits longer `Dec` que
 * `pairFstD_padCt`, `isPadded_padCt`, `padCt_of_isPadded`: padding is a bijection onto the
   canonical strings.
 * `PublicKeyScheme.exists_padBound`, `BitPublicKeyScheme.exists_padBound`: padding bounds exist.
+* `FixedLengthPKScheme.indCodec_eq_bitCodec`: the adversary codec is a bit codec;
+  `expect_simulate_indImpl_cpa`: eager challenge coins under CPA.
 * `BitPublicKeyScheme.SingleBitSecure.padded_cpa`: single-bit security gives CPA security.
   Its helpers are `OracleSecurity.ChallengeSim` (the deterministic CPA run and first-challenge
   congruence) and `OracleSecurity.RecordHandler` (the recording handler for T1).
@@ -661,6 +663,9 @@ theorem indCodec_encodeEntry (n : ℕ)
 theorem indCodec_timeout (n : ℕ) : (S.indCodec n).timeout = zeroBits 1 :=
   bitCodec_timeout (S.inLens n) (S.outLens n) 1
 
+/-- The adversary codec is a bit codec: `S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1`. -/
+theorem indCodec_eq_bitCodec (n : ℕ) : S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1 := rfl
+
 /-- **The experiment `Ind_b(Π, A, n)`** [PS10, Definition 171.5] for the attack `atk`, with query
 budget `q`: sample `(pk, sk) ← Gen(1^n)` and `A`'s coins, run `A` on `pk` against the oracles
 from the unchallenged state, and output its bit. -/
@@ -734,10 +739,11 @@ private theorem ofFn_splitHalf_bit {k : ℕ} (hk : k = 1) (b : Bool) (mm : Fin (
   cases b <;> simp [FixedLengthScheme.splitHalf_fst, FixedLengthScheme.splitHalf_snd,
     List.ofFn_succ]
 
-/-- **Eager challenge coins** (checkpoint 1). Under CPA, simulating the oracles of `Ind_b` from
-the state `s` has, for every function `G` of the output, the expectation of first sampling the
-encryption coins `re` and then running the deterministic oracles whose challenge answer is the
-encryption of `m_b` with coins `re` (`chRun`).
+/-- **Eager challenge coins under CPA.** Simulating the oracles of `Ind_b` from the state `s` has,
+for every `G`, the expectation of first sampling the encryption coins `re` and then running the
+deterministic oracles whose challenge `mm` is answered with `Enc(⟨pk, m_b⟩; re)`, the halves read
+through `indSpec_challengeDom`:
+`𝔼[G ∘ fst] (simulate (indImpl .cpa b n pk sk) c s) = 𝔼_{re} G (chRun g_re c s).1`.
 
 **Proof sketch.** Induction on the computation. Decryption queries are answered all-`false`
 in both (`indImpl_dec_cpa`); a repeated challenge repeats the recorded ciphertext in both. At the
@@ -745,14 +751,15 @@ first challenge the lazy side samples `re` and continues from the recorded ciphe
 induction hypothesis the continuation is again an average over coins `re'`, and from a recorded
 state the deterministic run does not depend on `re'` (`chRun_some_congr`), so `re'`
 marginalizes out (`expect_const`). -/
-private theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool) (n : ℕ)
+theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool) (n : ℕ)
     (pk sk : List Bool) {α : Type} (G : α → ℝ) (c : OracleComp (S.indSpec n) α)
     (s : Option (Fin (S.ctLen.eval n) → Bool)) :
     expect (simulate (S.indImpl .cpa b n pk sk) c s) (fun p => G p.1) =
       expect (ProbComp.sample (S.enc.Coins n)) fun re =>
         G (chRun (fun mm => S.enc.runAt n (pairEncode pk (List.ofFn
-          (if b then (FixedLengthScheme.splitHalf mm).2
-            else (FixedLengthScheme.splitHalf mm).1))) re) c s).1 := by
+          (if b then (FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n) mm)).2
+            else (FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n) mm)).1))) re)
+          c s).1 := by
   induction c generalizing s with
   | pure a =>
     rw [simulate_pure, expect_pure]

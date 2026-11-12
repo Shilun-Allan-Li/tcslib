@@ -15,13 +15,13 @@ Generic transfer lemmas for step 1 of [PS10, Theorem 168.2]: a fixed-length priv
 whose encryption with a key is `⟨r, m ⊕ f(r)⟩` with a uniform nonce `r`, and whose decryption is
 `⟨1, v ⊕ f(x)⟩` on well-formed `⟨x, v⟩` and `⊥` otherwise, has, call by call, the oracles
 `PRFGame.fImpl` with the pad function `f` under CPA and CCA1 (`expect_indImpl_fImpl`). The game's
-codec is a bit codec (`indCodec_eq_bitCodec`), and the experiment with `f` is transported along
-equal lengths (`expect_fImpl_transport`).
+codec is a bit codec (`FixedLengthScheme.indCodec_eq_bitCodec`), and the experiment with `f` is
+transported along equal lengths (`expect_fImpl_transport`).
 
 ## Main results
 
 * `PRFGame.expect_indImpl_fImpl`: one call of `IND_b` has the law of `fImpl`.
-* `PRFGame.indCodec_eq_bitCodec`, `PRFGame.expect_fImpl_transport`.
+* `PRFGame.expect_fImpl_transport`: the experiment with `f` along equal lengths.
 
 ## References
 
@@ -145,26 +145,6 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
       · congr 1
         refine List.ofFn_injective ?_
         rw [henc', ofFn_padFin_of_length (hlenCt _ hmsg _)]
-
-
-/-- **The game's codec is the bit codec of its lengths:**
-`S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1` (the three codec readers and structure
-eta). -/
-theorem indCodec_eq_bitCodec (S : FixedLengthScheme) (n : ℕ) :
-    S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1 := by
-  have hd : (S.indCodec n).decodeMove = (bitCodec (S.inLens n) (S.outLens n) 1).decodeMove :=
-    funext fun w => (S.indCodec_decodeMove n w).trans (bitCodec_decodeMove _ _ _ w).symm
-  have he : (S.indCodec n).encodeEntry = (bitCodec (S.inLens n) (S.outLens n) 1).encodeEntry :=
-    funext fun e => (S.indCodec_encodeEntry n e).trans (bitCodec_encodeEntry _ _ _ e).symm
-  have ht : (S.indCodec n).timeout = (bitCodec (S.inLens n) (S.outLens n) 1).timeout :=
-    (S.indCodec_timeout n).trans (bitCodec_timeout _ _ _).symm
-  calc S.indCodec n = ⟨(S.indCodec n).decodeMove, (S.indCodec n).encodeEntry,
-        (S.indCodec n).timeout⟩ := rfl
-    _ = ⟨(bitCodec (S.inLens n) (S.outLens n) 1).decodeMove,
-        (bitCodec (S.inLens n) (S.outLens n) 1).encodeEntry,
-        (bitCodec (S.inLens n) (S.outLens n) 1).timeout⟩ := by rw [hd, he, ht]
-    _ = bitCodec (S.inLens n) (S.outLens n) 1 := rfl
-
 
 /-- **The game with pad function `f` along equal lengths:** for `ins = ins'`, `outs = outs'` and
 `d = d'`, the expected first output bit of `A`'s run against `fImpl` agrees.

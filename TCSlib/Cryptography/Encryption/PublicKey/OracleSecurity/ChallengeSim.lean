@@ -42,7 +42,8 @@ reduction: reindexing by an equivalence, products, exchange of order, and single
 * `ChallengeSim.chRun_some_congr`: once the challenge is recorded, `g` no longer matters.
 * `ChallengeSim.chRun_congr`: the run depends on `g` only at the first challenge query.
 * `ChallengeSim.length_of_firstQ_eq_some`: the first challenge query has `ins 1` bits.
-* `ChallengeSim.chRun_toCompOn_transport`: transport along equal length functions.
+* `ChallengeSim.chRun_toCompOn_transport_list`, `ChallengeSim.chRun_toCompOn_transport`: transport
+  along equal length functions, with a query-dependent and with a constant answer.
 * `ChallengeSim.expect_simulate_eager`: eager challenge coins, for any CPA-shaped oracle.
 * `ChallengeSim.expect_sample_prod`: sampling a product is sampling its factors (the other
   sampling identities are `Games.ProbComp`'s).
@@ -228,13 +229,33 @@ theorem length_of_firstQ_eq_some (c : OracleComp (bitSpec ins outs) α) {l : Lis
       rw [firstQ_query_one, Option.some.injEq] at h
       rw [← h, List.length_ofFn]
 
+/-- **Transport of a run with a query-dependent answer along equal lengths:** for a machine
+adversary run through `bitCodec`, if `ins = ins'`, `outs = outs'` and `d = d'`, then for every
+`G : List Bool → List Bool`,
+`List.ofFn (chRun (fun y => G ⟦y⟧) (A.toCompOn (bitCodec ins outs d) n q x r) none).1 =
+List.ofFn (chRun (fun y => G ⟦y⟧) (A.toCompOn (bitCodec ins' outs' d') n q x r) none).1`, and
+the two runs have the same `firstQ`.
+
+**Proof sketch.** Substitute the equalities; both sides become identical. -/
+theorem chRun_toCompOn_transport_list {ins' outs' : Fin 2 → ℕ} {d d' : ℕ}
+    (hi : ins = ins') (ho : outs = outs') (hd : d = d') (A : NUPPT) (n q : ℕ) (x : List Bool)
+    (r : A.Coins n) (G : List Bool → List Bool) :
+    List.ofFn (chRun (ins := ins) (outs := outs) (fun y => G (List.ofFn y))
+        (A.toCompOn (bitCodec ins outs d) n q x r) none).1 =
+      List.ofFn (chRun (ins := ins') (outs := outs') (fun y => G (List.ofFn y))
+        (A.toCompOn (bitCodec ins' outs' d') n q x r) none).1 ∧
+    firstQ (A.toCompOn (bitCodec ins outs d) n q x r) =
+      firstQ (A.toCompOn (bitCodec ins' outs' d') n q x r) := by
+  subst hi ho hd
+  exact ⟨rfl, rfl⟩
+
 /-- **Transport along equal lengths:** for a machine adversary run through `bitCodec`, if
 `ins = ins'`, `outs = outs'` and `d = d'`, then
 `List.ofFn (chRun (fun _ => w) (A.toCompOn (bitCodec ins outs d) n q x r) none).1 =
 List.ofFn (chRun (fun _ => w) (A.toCompOn (bitCodec ins' outs' d') n q x r) none).1` and the
 two runs have the same `firstQ`.
 
-**Proof sketch.** Substitute the equalities; both sides become identical. -/
+**Proof sketch.** `chRun_toCompOn_transport_list` with the constant answer `G = fun _ => w`. -/
 theorem chRun_toCompOn_transport {ins' outs' : Fin 2 → ℕ} {d d' : ℕ} (hi : ins = ins')
     (ho : outs = outs') (hd : d = d') (A : NUPPT) (n q : ℕ) (x : List Bool) (r : A.Coins n)
     (w : List Bool) :
@@ -243,9 +264,8 @@ theorem chRun_toCompOn_transport {ins' outs' : Fin 2 → ℕ} {d d' : ℕ} (hi :
       List.ofFn (chRun (ins := ins') (outs := outs') (fun _ => w)
         (A.toCompOn (bitCodec ins' outs' d') n q x r) none).1 ∧
     firstQ (A.toCompOn (bitCodec ins outs d) n q x r) =
-      firstQ (A.toCompOn (bitCodec ins' outs' d') n q x r) := by
-  subst hi ho hd
-  exact ⟨rfl, rfl⟩
+      firstQ (A.toCompOn (bitCodec ins' outs' d') n q x r) :=
+  chRun_toCompOn_transport_list hi ho hd A n q x r fun _ => w
 
 /-! ### Sampling identities -/
 

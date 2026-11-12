@@ -53,6 +53,7 @@ per inner query is the forwarded challenge; its finalization asks nothing and ou
 namespace TCSlib.Cryptography.Composability.AdaptiveCPA
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rCnt)
 
 /-! ### Messages, lengths and states -/
 
@@ -158,22 +159,6 @@ private theorem fields_acState (n j : ℕ) (c : Fin (S.ctLen.eval n) → Bool) (
 
 /-! ### The round function -/
 
-/-- The parameter `1^n` of a round input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`. -/
-private def rU (w : List Bool) : List Bool := pairFstD (pairFstD w)
-/-- The reduction input `z` (the public key). -/
-private def rZ (w : List Bool) : List Bool := pairFstD (pairSndD (pairFstD w))
-/-- The seed `ω`. -/
-private def rW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
-/-- The state `s`. -/
-private def rS (w : List Bool) : List Bool := pairFstD (pairSndD w)
-/-- The oracle index `1^i`. -/
-private def rI (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
-/-- The query `x`. -/
-private def rX (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
-/-- The outer log `L` of the call. -/
-private def rL (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
-/-- The count `1^j` of the state. -/
-private def rCnt (w : List Bool) : List Bool := pairFstD (rS w)
 /-- The advised index `1^{i⋆}` of the state. -/
 private def rIst (w : List Bool) : List Bool := pairFstD (pairSndD (rS w))
 /-- The latest ciphertext of the state. -/
@@ -217,14 +202,14 @@ private def acRun (w : List Bool) : List Bool :=
 private theorem polyTimeComputable_acRun : PolyTimeComputable (acRun S cap) := by
   have hF := polyTimeComputable_pairFstD
   have hD := polyTimeComputable_pairSndD
-  have hU : PolyTimeComputable rU := hF.comp hF
-  have hZ : PolyTimeComputable rZ := hF.comp (hD.comp hF)
-  have hW : PolyTimeComputable rW := hD.comp (hD.comp hF)
-  have hS : PolyTimeComputable rS := hF.comp hD
-  have hI : PolyTimeComputable rI := hF.comp (hF.comp (hD.comp hD))
-  have hX : PolyTimeComputable rX := hD.comp (hF.comp (hD.comp hD))
-  have hL : PolyTimeComputable rL := hD.comp (hD.comp hD)
-  have hCnt : PolyTimeComputable rCnt := hF.comp hS
+  have hU : PolyTimeComputable rU := InteractiveHandler.polyTimeComputable_rU
+  have hZ : PolyTimeComputable rZ := InteractiveHandler.polyTimeComputable_rZ
+  have hW : PolyTimeComputable rW := InteractiveHandler.polyTimeComputable_rW
+  have hS : PolyTimeComputable rS := InteractiveHandler.polyTimeComputable_rS
+  have hI : PolyTimeComputable rI := InteractiveHandler.polyTimeComputable_rI
+  have hX : PolyTimeComputable rX := InteractiveHandler.polyTimeComputable_rX
+  have hL : PolyTimeComputable rL := InteractiveHandler.polyTimeComputable_rL
+  have hCnt : PolyTimeComputable rCnt := InteractiveHandler.polyTimeComputable_rCnt
   have hIst : PolyTimeComputable rIst := hF.comp (hD.comp hS)
   have hLat : PolyTimeComputable (rLat S) :=
     ((polyTimeComputable_pairTakePoly S.ctLen).comp (hU.pairEncode (hD.comp (hD.comp hS)))).congr
@@ -389,28 +374,6 @@ section Answers
 
 variable (n : ℕ) (z : List Bool) (ω : Fin ((acHandler S cap ist).seedLen.eval n) → Bool)
 
-/-- A call whose first round returns `y ‖ s'` is answered `y` with new state `s'`. -/
-private theorem impl_of_ret {i : Fin 2} (x : Fin ((acDin S i).eval n) → Bool)
-    (s : Fin ((acStLen S cap).eval n) → Bool) (y : Fin ((acDout S i).eval n) → Bool)
-    (s' : Fin ((acStLen S cap).eval n) → Bool)
-    (h : acRun S cap (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x) []) =
-      pairEncode [true] (List.ofFn y ++ List.ofFn s')) :
-    (acHandler S cap ist).impl n z ω i x s = .pure (y, s') := by
-  rw [InteractiveHandler.impl_apply, InteractiveHandler.call_eq, acHandler_perCall,
-    PolyExpr.eval_const]
-  rw [buildComp_succ_of_ret (a := Fin.append y s') (by
-    show decodeBitMove _ _ _ (acRun S cap _) = _
-    rw [MachineCodec.encodeLog_nil, h, ← List.ofFn_fin_append]
-    exact decodeBitMove_ret _ _ _ _), OracleComp.pure_bind]
-  congr 2
-  · funext j
-    exact Fin.append_left y s' j
-  · funext j
-    exact Fin.append_right y s' j
-
-/-- The index word of a challenge query is `[true]`. -/
-private theorem replicate_one : List.replicate ((1 : Fin 2) : ℕ) true = [true] := rfl
-
 /-- The round input of a call, field by field. -/
 private theorem fields_input {i : Fin 2} (x : List Bool) (L : List Bool) (j : ℕ)
     (c : Fin (S.ctLen.eval n) → Bool) (hj : j ≤ cap.eval n) (hi : ist n ≤ cap.eval n) :
@@ -420,27 +383,29 @@ private theorem fields_input {i : Fin 2} (x : List Bool) (L : List Bool) (j : �
       rL w = L ∧ rCnt w = List.replicate j true ∧ rIst w = List.replicate (ist n) true ∧
       rLat S w = List.ofFn c := by
   obtain ⟨h₁, h₂, h₃⟩ := fields_acState S cap ist n j c hj hi
-  simp only [InteractiveHandler.input_eq, rU, rZ, rW, rS, rI, rX, rL, rCnt, rIst, rLat,
-    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, h₁, h₂, h₃, and_self]
+  simp only [InteractiveHandler.rU_input, InteractiveHandler.rZ_input,
+    InteractiveHandler.rW_input, InteractiveHandler.rS_input, InteractiveHandler.rI_input,
+    InteractiveHandler.rX_input, InteractiveHandler.rL_input, InteractiveHandler.rCnt_input, rIst,
+    rLat, List.length_replicate, h₁, h₂, h₃, and_self]
 
 /-- **Decryption is refused:** `(acHandler S cap ist).impl n z ω 0 x s = pure (0, s)`. -/
 theorem acHandler_impl_dec (x : Fin ((acDin S 0).eval n) → Bool)
     (s : Fin ((acHandler S cap ist).stateLen.eval n) → Bool) :
     (acHandler S cap ist).impl n z ω 0 x s = .pure (zeroBits _, s) := by
-  refine impl_of_ret S cap ist n z ω x s _ _ ?_
+  refine InteractiveHandler.impl_of_ret _ n z ω x s _ _ ?_
+  show acRun S cap _ = _
   have hI : rI (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x)
       []) =
-      [] := by
-    simp only [InteractiveHandler.input_eq, rI, pairFstD_pairEncode, pairSndD_pairEncode]
-    rfl
+      [] :=
+    InteractiveHandler.rI_input _ _ _ _ _ _ _
   have hU : rU (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x)
       []) =
-      List.replicate n true := by
-    simp only [InteractiveHandler.input_eq, rU, pairFstD_pairEncode]
+      List.replicate n true :=
+    InteractiveHandler.rU_input _ _ _ _ _ _ _
   have hS : rS (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x)
       []) =
-      List.ofFn s := by
-    simp only [InteractiveHandler.input_eq, rS, pairFstD_pairEncode, pairSndD_pairEncode]
+      List.ofFn s :=
+    InteractiveHandler.rS_input _ _ _ _ _ _ _
   rw [acRun, hI, List.headD_nil, if_neg Bool.false_ne_true, hU, hS, List.length_replicate,
     ofFn_zeroBits, acDout_zero]
 
@@ -451,13 +416,14 @@ theorem acHandler_impl_full (x : Fin ((acDin S 1).eval n) → Bool)
     (acHandler S cap ist).impl n z ω 1 x (acHState S cap ist n (cap.eval n) c) =
       .pure (padFin ((acDout S 1).eval n) (List.ofFn c), acHState S cap ist n (cap.eval n) c) := by
   rw [acHState_eq]
-  refine impl_of_ret S cap ist n z ω x _ _ _ ?_
+  refine InteractiveHandler.impl_of_ret _ n z ω x _ _ _ ?_
+  show acRun S cap _ = _
   obtain ⟨hU, -, -, hS, hI, -, -, hCnt, -, hLat⟩ :=
     fields_input S cap ist n z ω (i := 1) (List.ofFn x) [] (cap.eval n) c le_rfl hi
   have hh : ([true].headD false = true) := rfl
   have hc : decide (cap.eval n ≤ cap.eval n) = true := decide_eq_true le_rfl
-  rw [acRun, hI, replicate_one, hU, hCnt, hS, hLat, List.length_replicate, List.length_replicate,
-    if_pos hh, if_pos hc, ofFn_padFin_of_length (List.length_ofFn)]
+  rw [acRun, hI, Fin.val_one, List.replicate_one, hU, hCnt, hS, hLat, List.length_replicate,
+    List.length_replicate, if_pos hh, if_pos hc, ofFn_padFin_of_length (List.length_ofFn)]
 
 /-- **A fresh challenge other than the advised one is encrypted by the handler:** from the state
 `acState j c` with `j < cap(n)` and `j ≠ i⋆(n)`, the challenge `x` is answered with
@@ -477,7 +443,8 @@ theorem acHandler_impl_eager (x : Fin ((acDin S 1).eval n) → Bool) (j : ℕ)
       (S.enc.runAt n (pairEncode z (msgOf (S.msgLen.eval n) (decide (j < ist n)) (List.ofFn x)))
         (acSeedTapes S cap ist n ω ⟨j, hj⟩)) := ⟨_, rfl⟩
   rw [← hc']
-  refine impl_of_ret S cap ist n z ω x _ _ _ ?_
+  refine InteractiveHandler.impl_of_ret _ n z ω x _ _ _ ?_
+  show acRun S cap _ = _
   obtain ⟨hU, hZ, hW, hS, hI, hX, -, hCnt, hIst, -⟩ :=
     fields_input S cap ist n z ω (i := 1) (List.ofFn x) [] j c hj.le hi
   have hEnc : rEnc S (InteractiveHandler.input n z (List.ofFn ω)
@@ -494,7 +461,7 @@ theorem acHandler_impl_eager (x : Fin ((acDin S 1).eval n) → Bool) (j : ℕ)
   have hh : ([true].headD false = true) := rfl
   have hc1 : ¬ (decide (cap.eval n ≤ j) = true) := by rw [decide_eq_true_eq]; omega
   have hc2 : ¬ (decide (j = ist n) = true) := by rw [decide_eq_true_eq]; exact hne
-  rw [acRun, hI, replicate_one, hU, hCnt, hIst, hEnc, hNew, List.length_replicate,
+  rw [acRun, hI, Fin.val_one, List.replicate_one, hU, hCnt, hIst, hEnc, hNew, List.length_replicate,
     List.length_replicate, List.length_replicate, if_pos hh, if_neg hc1, if_neg hc2,
     ofFn_padFin_of_length (List.length_ofFn)]
 
@@ -521,8 +488,8 @@ theorem acHandler_impl_forward (x : Fin ((acDin S 1).eval n) → Bool) (j : ℕ)
     have hc1 : ¬ (decide (cap.eval n ≤ j) = true) := by rw [decide_eq_true_eq]; omega
     have hc2 : decide (j = ist n) = true := decide_eq_true heq
     have hc3 : decide (([] : List Bool) = []) = true := decide_eq_true rfl
-    rw [acRun, hI, replicate_one, hU, hCnt, hIst, hL, hX, MachineCodec.encodeLog_nil, hlen, hlen,
-      hlen, if_pos hh, if_neg hc1, if_pos hc2, if_pos hc3, ← replicate_one]
+    rw [acRun, hI, Fin.val_one, List.replicate_one, hU, hCnt, hIst, hL, hX,
+      MachineCodec.encodeLog_nil, hlen, hlen, hlen, if_pos hh, if_neg hc1, if_pos hc2, if_pos hc3]
     exact decodeBitMove_query (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) _ 1 x),
     OracleComp.query_bind]
   congr 1
@@ -561,8 +528,8 @@ theorem acHandler_impl_forward (x : Fin ((acDin S 1).eval n) → Bool) (j : ℕ)
         [] = []) = true) := by
       rw [decide_eq_true_eq]
       exact pairEncode_ne_nil _ _
-    rw [acRun, hI, replicate_one, hU, hCnt, hIst, hFwd, hNew, hL, hlog, hlen, hlen, hlen,
-      if_pos hh, if_neg hc1, if_pos hc2, if_neg hc3, ← List.ofFn_fin_append]
+    rw [acRun, hI, Fin.val_one, List.replicate_one, hU, hCnt, hIst, hFwd, hNew, hL, hlog, hlen,
+      hlen, hlen, if_pos hh, if_neg hc1, if_pos hc2, if_neg hc3, ← List.ofFn_fin_append]
     exact decodeBitMove_ret _ _ _ _)]
   rw [OracleComp.pure_bind]
   congr 2
