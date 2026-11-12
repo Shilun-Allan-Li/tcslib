@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
-import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Indistinguishability.Readers
 import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Indistinguishability.Forward
 import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Indistinguishability.Decrypt
 import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Indistinguishability.Encrypt
@@ -14,7 +13,7 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Non-malleable encryption (statement phase)
+# Non-malleable encryption
 
 [PS10, Definition 172.6] and Theorem 175.9, over the public-key experiment of Definition 171.5
 (`Encryption/PublicKey/OracleSecurity.lean`).
@@ -52,8 +51,6 @@ adversary's final output is `ℓ(n)` ciphertexts of `ctLen(n)` bits. Each decryp
 
 ## Contents
 
-* `NonMalleability.Indistinguishability.Readers`: the two decryption-oracle readers requested for
-  `PublicKey/OracleSecurity.lean` (the fill's escalation).
 * `NonMalleability.Indistinguishability.Forward`: the forwarding handler and the log readers.
 * `NonMalleability.Indistinguishability.Decrypt`: the reduction (⇒), whose finalization decrypts
   the adversary's ciphertexts and runs the distinguisher.
@@ -247,7 +244,7 @@ private theorem castImpl_indImpl_dec (b : Bool) (n : ℕ) (pk sk : List Bool)
       (S.indImpl .cca2 b n pk sk) 0 x st =
       .pure (padFin ((acDout S 0).eval n) (List.ofFn (S.nmDecrypt sk st
         (cast (S.indSpec_decDom n) (padFin (S.inLens n 0) (List.ofFn x))))), st) := by
-  rw [castImpl_eq, indImpl_dec_onSpec_cast, FixedLengthScheme.decOpen_cca2, Bool.true_and,
+  rw [castImpl_eq, S.indImpl_dec_onSpec_cast, FixedLengthScheme.decOpen_cca2, Bool.true_and,
     S.nmDecrypt_eq]
   by_cases hs : st = some (cast (S.indSpec_decDom n) (padFin (S.inLens n 0) (List.ofFn x)))
   · rw [if_neg (by rw [decide_eq_true hs, Bool.not_true]; exact Bool.false_ne_true), if_pos hs,
@@ -306,7 +303,6 @@ private theorem decAnswers_eq_nmOutput (ℓ : PolyExpr) (n : ℕ) (sk : List Boo
   rw [List.getElem_map, List.getElem_range, List.getElem_ofFn,
     GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hout]),
     decBlock_eq_nthCt S ℓ n a i (by rw [List.length_map, List.length_range] at h₁; exact h₁)]
-
 
 /-- **The reduction's game is the non-malleability experiment.** Let `B` be T2's machine for the
 handler `decHandler S ℓ D` (with its coin bijection `φ` at `n`) and `B'` the machine `B` with
@@ -503,7 +499,6 @@ private theorem guessDist_nmOutput (n : ℕ) (hm : 0 < S.msgLen.eval n) (rg : S.
     simpa only [if_neg Bool.false_ne_true] using guessBit_refused hm g
   · rw [S.nmDecrypt_eq, if_neg hs, hdecB ⟨0, i₀⟩ true rfl]
     simpa only [if_pos rfl] using guessBit_valid hm g _
-
 
 /-- **The reduction's experiment is the CCA2 game.** Let `B` be T2's machine for the handler
 `encHandler S` (with its coin bijection `φ` at `n`), and `msgLen(n) > 0`. Then `B`'s experiment

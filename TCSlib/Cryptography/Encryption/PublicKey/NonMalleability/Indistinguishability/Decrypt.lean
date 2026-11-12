@@ -56,7 +56,7 @@ def cntRead (v : List Bool) : List Bool := if decide (v = []) then [] else [true
 /-- `cntRead v = if v = [] then [] else [true]`. -/
 theorem cntRead_eq (v : List Bool) : cntRead v = if decide (v = []) then [] else [true] := rfl
 
-/-- The token reading is polynomial-time. -/
+/-- The token reading is polynomial-time: `PolyTimeComputable cntRead`. -/
 theorem polyTimeComputable_cntRead : PolyTimeComputable cntRead :=
   polyTimeComputable_ite polyTimeComputable_isNil (polyTimeComputable_const [])
     (polyTimeComputable_const [true])
@@ -68,7 +68,7 @@ def ansRead (v : List Bool) : List Bool := pairSndD (pairSndD (pairFstD v))
 /-- `ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
 theorem ansRead_eq (v : List Bool) : ansRead v = pairSndD (pairSndD (pairFstD v)) := rfl
 
-/-- The answer reading is polynomial-time. -/
+/-- The answer reading is polynomial-time: `PolyTimeComputable ansRead`. -/
 theorem polyTimeComputable_ansRead : PolyTimeComputable ansRead :=
   polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
 

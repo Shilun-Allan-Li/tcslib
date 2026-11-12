@@ -581,6 +581,23 @@ theorem indImpl_dec_onSpec (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Boo
       else .pure (zeroBits _, s) := by
   simpa only [cast_eq] using S.indImpl_dec atk b n pk sk c s
 
+/-- The decryption oracle answers a validity bit followed by one message:
+`(S.indSpec n).rng 0 = (Fin (S.msgLen.eval n + 1) → Bool)`. -/
+theorem indSpec_decRng (n : ℕ) : (S.indSpec n).rng 0 = (Fin (S.msgLen.eval n + 1) → Bool) := by
+  rw [S.indSpec_rng, S.outLens_zero]
+
+/-- `indImpl_dec_onSpec` with the answer cast through `indSpec_decRng`: for `c' = cast _ c`,
+`S.indImpl atk b n pk sk 0 c s = if decOpen atk s.isSome && s ≠ some c' then
+pure (cast _ (decAnswer (decodeFin _ (Dec ⟨sk, c'⟩))), s) else pure (zeroBits _, s)`. -/
+theorem indImpl_dec_onSpec_cast (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+    (c : (S.indSpec n).dom 0) (s : Option (Fin (S.ctLen.eval n) → Bool)) :
+    S.indImpl atk b n pk sk 0 c s =
+      if FixedLengthScheme.decOpen atk s.isSome && !decide (s = some (cast (S.indSpec_decDom n) c))
+      then .pure (cast (S.indSpec_decRng n).symm (FixedLengthScheme.decAnswer
+        (decodeFin _ (S.dec (pairEncode sk (List.ofFn (cast (S.indSpec_decDom n) c)))))), s)
+      else .pure (zeroBits _, s) := by
+  simpa only [cast_eq] using S.indImpl_dec_onSpec atk b n pk sk c s
+
 /-- The challenge oracle returns a ciphertext at the scheme's encoded width. -/
 theorem indSpec_challengeRng (n : ℕ) :
     (S.indSpec n).rng 1 = (Fin (S.ctLen.eval n) → Bool) := by

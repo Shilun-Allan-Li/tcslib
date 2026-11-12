@@ -241,7 +241,8 @@ theorem fields_finInput (n : ℕ) (z ω s a L : List Bool) :
   simp only [InteractiveHandler.finInput_eq, seedIn_eq, finU, finZ, finW, finA, finL,
     pairFstD_pairEncode, pairSndD_pairEncode, and_self]
 
-/-- The finalization-input readers are polynomial-time. -/
+/-- The finalization-input readers are polynomial-time: `PolyTimeComputable finU`, and the same
+for `finZ`, `finW`, `finA` and `finL`. -/
 theorem polyTimeComputable_finFields :
     PolyTimeComputable finU ∧ PolyTimeComputable finZ ∧ PolyTimeComputable finW ∧
       PolyTimeComputable finA ∧ PolyTimeComputable finL := by
