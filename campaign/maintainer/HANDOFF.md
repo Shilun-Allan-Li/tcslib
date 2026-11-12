@@ -24,7 +24,7 @@ snapshot. See campaign/status/2026-11-09-merge-243-244/.
 | #241 / 121 | **Not yet clear to merge.** Gate 131 provider merged. Eight-module integrated native preflight passed on the final gate 129 round 3 snapshot. Await the #251 merge, exact seals, copy review, replay and follow-up. |
 | #252 / 130 | **Merged.** Gate closed and actual335 snapshot adopted before the Ladner merge. |
 | #249 / 128 | **Merged** as Ladner statement scaffold. Gate closed and current actual2 replay passed. |
-| #254 | **Clear to merge** as tooling only, no Lean diff. |
+| #254 | **Merged** (2026-11-11, `2088f98e`), tooling only, no Lean diff. |
 
 Gates 123–127 are closed and #243–#247 have merged.
 
@@ -35,8 +35,15 @@ the main open theorem. No fill is dispatched. RD-2/H6 remains separately
 held (41 direct admissions in the recorded scopes, outside the merged TQBF
 proof). See campaign/status/2026-11-08-roadmap-readiness/.
 
-Pending design: sharp SAT verifier interface, SAT PolyTimeBlockLoop import
-and RO1 home. Leave the intentionally dirty RO1 worktree intact. The approved
+Pending design: sharp SAT verifier interface and SAT PolyTimeBlockLoop import.
+**RO1 home ruled (Seyoon, 2026-11-12): `Deterministic`** (the alternative in
+`campaign/items/dedup/overnight-2026-11-08/review/ro1-deterministic-option/`),
+superseding the 2026-11-06 `CfgFacts` ruling. The generic
+`Turing.MultiTapeTM.runFrom_one` goes beside `runFrom_zero` and
+`runFrom_succ_eq_step`, with no import changes, and is added to the file's
+list of local modifications. The re-point scope ruled on 2026-11-06 stands.
+It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
+with them), then gets its own replay and gate. The archived `CfgFacts` draft is superseded. The approved
 Hardness CfgFacts import stays separate. Next free gate 132. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.

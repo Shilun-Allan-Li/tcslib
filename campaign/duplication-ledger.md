@@ -1197,6 +1197,13 @@ The ledger's census undercounts accordingly. **Questions for the user:** whether
 lemma replaces `EmitIterEmbed`'s public `Turing.runFrom_one` (a public removal); and the scope of
 the re-points (all non-colleague sites in one PR or several; `CircuitComplexity` needs its own
 authorization).
+**Ruled (the user, 2026-11-06, second round):** the general lemma replaces `Turing.runFrom_one`, and
+every site is re-pointed, colleague-owned files included. **Home revised (the user, 2026-11-12):**
+`TuringMachine/Deterministic`, beside `runFrom_zero` and `runFrom_succ_eq_step`, recorded among the
+vendored file's local modifications. It needs no import changes and also covers `Simulation`'s
+`bufferedScanCfg_run`, which the `CfgFacts` home could not reach (cycle through `StateRenaming`).
+The proposal is `campaign/items/dedup/overnight-2026-11-08/review/ro1-deterministic-option/`. It
+is rebuilt after #251, #241 and #242 merge.
 
 **NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
 `qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and
