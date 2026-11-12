@@ -404,28 +404,31 @@ theorem wire_apply (i : Fin n) (j : Fin 1) : wire i j = i := rfl
 
 /-! ### Action on arbitrary vectors -/
 
+/-- Writing a one-qubit register `u` on the single wire `i` of `y` is updating `y` at `i` to
+`u 0`. -/
+private theorem extend_wire (i : Fin n) (u : Reg 1) (y : Reg n) :
+    Function.extend (wire i) u y = Function.update y i (u 0) := by
+  funext j
+  by_cases hj : j = i
+  · subst hj
+    exact (wire j).injective.extend_apply _ y 0 |>.trans (by simp)
+  · rw [Function.extend_apply' _ _ _ (fun ⟨b, hb⟩ => hj (by rw [← hb, wire_apply])),
+      Function.update_of_ne hj]
+
 /-- A one-wire operator placed on wire `i` acts on a vector by a two-term sum over the input bit
 `a` on wire `i`: the amplitude at `y` is `∑ₐ U (y i) a · v (y with wire i set to a)`, where `y i`
 is the output bit. A coordinate formula for an arbitrary matrix `U` and vector `v`, extending the
 one-qubit gates of [dW26, §1.4].
 
 **Proof sketch.** `applyOn_mulVec_apply`, with `Reg 1 ≃ Qubit` and the fact that writing `u` on
-the single wire `i` is `Function.update y i (u 0)`. -/
+the single wire `i` is `Function.update y i (u 0)` (`extend_wire`). -/
 theorem applyOn_wire_mulVec_apply (i : Fin n) (U : Matrix (Reg 1) (Reg 1) ℂ) (v : Reg n → ℂ)
     (y : Reg n) :
     (applyOn (wire i) U *ᵥ v) y =
       ∑ a : Qubit, U (fun _ => y i) (fun _ => a) * v (Function.update y i a) := by
   rw [applyOn_mulVec_apply, ← (Equiv.funUnique (Fin 1) Qubit).symm.sum_comp]
   refine Finset.sum_congr rfl fun a _ => ?_
-  have hext : Function.extend (wire i) ((Equiv.funUnique (Fin 1) Qubit).symm a) y =
-      Function.update y i a := by
-    funext j
-    by_cases hj : j = i
-    · subst hj
-      exact (wire j).injective.extend_apply _ y 0 |>.trans (by simp)
-    · rw [Function.extend_apply' _ _ _ (fun ⟨b, hb⟩ => hj (by rw [← hb, wire_apply])),
-        Function.update_of_ne hj]
-  rw [hext]
+  rw [extend_wire]
   rfl
 
 /-- A permutation gate placed on wires `w` relabels the amplitudes: the amplitude at `y` is `v`'s
@@ -455,13 +458,8 @@ theorem applyOn_wire_X_mulVec_basis (i : Fin n) (x : Reg n) :
       (Ket.basis (flipAt i x)).vec := by
   rw [Gate.X_coe, applyOn_permMat_mulVec_basis]
   congr 2
-  funext j
-  by_cases hj : j = i
-  · subst hj
-    refine ((wire j).injective.extend_apply _ x 0).trans ?_
-    simp [flipAt_eq, wire_apply]
-  · rw [Function.extend_apply' _ _ _ (fun ⟨a, ha⟩ => hj (by rw [← ha, wire_apply]))]
-    simp [flipAt_eq, hj]
+  rw [extend_wire, flipAt_eq]
+  simp [flipAt_eq, wire_apply]
 
 /-- The embedding `Fin 2 ↪ Fin 3` sending gate wire `0` to register wire `2` and gate wire `1`
 to register wire `0`: a reversed, non-contiguous placement, used as a sanity check. -/

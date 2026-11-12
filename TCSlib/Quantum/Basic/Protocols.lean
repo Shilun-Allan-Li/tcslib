@@ -349,20 +349,17 @@ def bobVec (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) : Reg 1 → ℂ :=
 theorem bobVec_apply (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) (b : Reg 1) :
     bobVec ψ m₀ m₁ b = (teleportState ψ).vec ![m₀, m₁, b 0] := rfl
 
-/-- `Xᵐ Xᵐ = 1`, from `X X = 1`. -/
-private theorem X_pow_mul_self (m : ℕ) : Gate.X ^ m * Gate.X ^ m = 1 := by
-  rw [← pow_add, ← two_mul, pow_mul, sq, Gate.X_mul_X, one_pow]
-
-/-- `Zᵐ Zᵐ = 1`, from `Z Z = 1`. -/
-private theorem Z_pow_mul_self (m : ℕ) : Gate.Z ^ m * Gate.Z ^ m = 1 := by
-  rw [← pow_add, ← two_mul, pow_mul, sq, Gate.Z_mul_Z, one_pow]
+/-- A gate that is its own inverse has `gᵐ gᵐ = 1` for every `m` (used for `X` and `Z`). -/
+private theorem pow_mul_self_of_mul_self {g : Gate 1} (h : g * g = 1) (m : ℕ) :
+    g ^ m * g ^ m = 1 := by
+  rw [← pow_add, ← two_mul, pow_mul, sq, h, one_pow]
 
 /-- **Teleportation is correct.** After Alice's outcome `(m₀, m₁)`, Bob applies `X^{m₁}` and
 then `Z^{m₀}`, and holds `ψ` (scaled by `½`, the amplitude of the outcome). [dW26, §1.5]
 
 **Proof sketch.** By `teleportState_vec`, `bobVec ψ m₀ m₁ = ½ X^{m₁} Z^{m₀} ψ`. Then
 `Z^{m₀} X^{m₁} X^{m₁} Z^{m₀} = 1` in the unitary group, since `Xᵐ Xᵐ = 1` and `Zᵐ Zᵐ = 1`
-(from `Gate.X_mul_X` and `Gate.Z_mul_Z`). -/
+(`Gate.X_mul_X`, `Gate.Z_mul_Z`, through one private power lemma). -/
 theorem teleport_correct (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
     ((Gate.Z ^ m₀.val * Gate.X ^ m₁.val : Gate 1) : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ
         bobVec ψ m₀ m₁ =
@@ -375,7 +372,8 @@ theorem teleport_correct (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
       Matrix.tail_cons, hb']
   have key : (Gate.Z ^ m₀.val * Gate.X ^ m₁.val) * (Gate.X ^ m₁.val * Gate.Z ^ m₀.val) = 1 := by
-    rw [mul_assoc, ← mul_assoc (Gate.X ^ m₁.val), X_pow_mul_self, one_mul, Z_pow_mul_self]
+    rw [mul_assoc, ← mul_assoc (Gate.X ^ m₁.val),
+      pow_mul_self_of_mul_self Gate.X_mul_X, one_mul, pow_mul_self_of_mul_self Gate.Z_mul_Z]
   rw [hb, mulVec_smul, mulVec_mulVec, ← Submonoid.coe_mul, key, Submonoid.coe_one, one_mulVec]
 
 /-! ### Superdense coding -/
