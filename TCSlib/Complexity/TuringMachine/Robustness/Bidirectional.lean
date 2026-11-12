@@ -298,7 +298,7 @@ private lemma foldCfg_run {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (foldTM M).tm.runFrom ((foldTM M).tm.initCfg (x.map foldEmbedding)) (t + 1) =
       foldCfg (M.tm.runFrom (M.tm.initCfg x) t) := by
   induction t with
-  | zero => simpa only [MultiTapeTM.runFrom_one] using foldCfg_init M x
+  | zero => simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using foldCfg_init M x
   | succ t ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step', ih, foldCfg_step,
       MultiTapeTM.runFrom_succ_eq_step']
