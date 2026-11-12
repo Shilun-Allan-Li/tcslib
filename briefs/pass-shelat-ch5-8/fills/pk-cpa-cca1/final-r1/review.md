@@ -38,3 +38,8 @@ Delivery: Claude worker, exchange `5285ea8a` (`inbox/fills/pk-cpa-cca1/`), 8 pat
 Branch `land/pass-shelat-pk-cpa-cca1` at `63ca0eb3dccb65542e90c181b7ceb0a4a4a46272` (8 delivered commits + landing
 edits). After the edits: 10 affected modules rebuilt (0 errors, hash-bound); 28 downstream modules through
 `TCSlib` rc 0 on the full tree (`landing/`). PR #293 (draft).
+
+## Errata (after Gate 17)
+- Item 9 was wrong: policy §1 requires an `_eq` lemma for a new public `abbrev`. `LState_eq` was added (G17-01).
+- "`q²` is needed" overstated the point: later encryption collisions make the query-by-query quadratic bound the
+  natural one, but its necessity was not shown (Gate 17 remark).
