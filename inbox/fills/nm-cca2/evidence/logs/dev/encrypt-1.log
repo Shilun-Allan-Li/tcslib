@@ -1,0 +1,131 @@
+START TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt 2026-11-12T05:28:25+00:00
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:230:58: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (List.replicate ?m.341 ?m.342).length
+in the target expression
+  EnsembleLemmas.padL (S.ctLen.eval n)
+      (S.enc.output
+        (pairEncode
+          (pairEncode
+            (pairEncode (List.replicate n true)
+              (pairEncode z
+                (List.ofFn fun x => if β = true then (List.ofFn a).headD false else !(List.ofFn a).headD false)))
+            [])
+          (if β = true then List.take (S.enc.coins.eval n) (List.ofFn ω)
+          else List.drop (S.enc.coins.eval n) (List.ofFn ω)))) =
+    EnsembleLemmas.padL (S.ctLen.eval n)
+      (S.enc.output
+        (pairEncode
+          (pairEncode
+            (pairEncode (List.replicate n true)
+              (pairEncode z
+                (List.ofFn fun x => if β = true then (List.ofFn a).headD false else !(List.ofFn a).headD false)))
+            [])
+          (if β = true then List.take (S.enc.coins.eval n) (List.ofFn ω)
+          else List.drop (S.enc.coins.eval n) (List.ofFn ω))))
+
+S : FixedLengthPKScheme
+n : ℕ
+z : List Bool
+ω : Fin ((encHandler S).seedLen.eval n) → Bool
+s : Fin ((encHandler S).stateLen.eval n) → Bool
+d : ℕ
+a : Fin d → Bool
+hfin : (encHandler S).finRun = eFin S
+hU :
+  finU
+      (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+        ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])) =
+    List.replicate n true
+hZ :
+  finZ
+      (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+        ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])) =
+    z
+hW :
+  finW
+      (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+        ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])) =
+    List.ofFn ω
+hA :
+  finA
+      (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+        ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])) =
+    List.ofFn a
+β : Bool
+hm :
+  eMsg S β
+      (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+        ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])) =
+    List.ofFn fun x => if β = true then (List.ofFn a).headD false else !(List.ofFn a).headD false
+⊢ EnsembleLemmas.padL (S.ctLen.eval n)
+      (S.enc.output
+        (pairEncode
+          (pairEncode
+            (pairEncode (List.replicate n true)
+              (pairEncode z
+                (List.ofFn fun x => if β = true then (List.ofFn a).headD false else !(List.ofFn a).headD false)))
+            [])
+          (if β = true then List.take (S.enc.coins.eval n) (List.ofFn ω)
+          else List.drop (S.enc.coins.eval n) (List.ofFn ω)))) =
+    EnsembleLemmas.padL (S.ctLen.eval n)
+      (S.enc.output
+        (pairEncode
+          (pairEncode
+            (pairEncode (List.replicate n true)
+              (pairEncode z
+                (List.ofFn fun x => if β = true then (List.ofFn a).headD false else !(List.ofFn a).headD false)))
+            [])
+          (if β = true then List.take (S.enc.coins.eval n) (List.ofFn ω)
+          else List.drop (S.enc.coins.eval n) (List.ofFn ω))))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:242:2: error: Type mismatch
+  decodeBitMove_ret ?m.432 ?m.433 ?m.434 ?m.435
+has type
+  decodeBitMove ?m.432 ?m.433 ?m.434 (pairEncode [true] (List.ofFn ?m.435)) = Move.ret ?m.435
+but is expected to have type
+  decodeBitMove (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) ((encHandler S).outLen.eval n)
+      (pairEncode [true]
+        (List.ofFn
+          (padFin ((encHandler S).outLen.eval n)
+            (encCt S n z ω ((List.ofFn a).headD false) true ++ encCt S n z ω ((List.ofFn a).headD false) false)))) =
+    Move.ret
+      (padFin ((encHandler S).outLen.eval n)
+        (List.ofFn
+          (padFin ((encHandler S).outLen.eval n)
+            (encCt S n z ω ((List.ofFn a).headD false) true ++ encCt S n z ω ((List.ofFn a).headD false) false))))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:267:60: error(lean.unknownIdentifier): Unknown identifier `polyTimeComputable_reverse.comp`
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:277:47: error: Failed to rewrite using equation theorems for `guessDist`
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:295:4: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn fun x => ?c
+in the target expression
+  (if
+        (List.replicate (m + 1) false ++
+                Fin.cons true (fun x => !g) 0 :: List.ofFn fun i => Fin.cons true (fun x => !g) i.succ).headD
+            false =
+          true then
+      (List.drop 1
+            (List.replicate (m + 1) false ++
+              Fin.cons true (fun x => !g) 0 :: List.ofFn fun i => Fin.cons true (fun x => !g) i.succ)).headD
+        false
+    else
+      !(List.replicate (m + 1) false ++
+                Fin.cons true (fun x => !g) 0 :: List.ofFn fun i => Fin.cons true (fun x => !g) i.succ).reverse.headD
+          false) =
+    g
+
+m : ℕ
+hm : 0 < m
+g : Bool
+⊢ (if
+        (List.replicate (m + 1) false ++
+                Fin.cons true (fun x => !g) 0 :: List.ofFn fun i => Fin.cons true (fun x => !g) i.succ).headD
+            false =
+          true then
+      (List.drop 1
+            (List.replicate (m + 1) false ++
+              Fin.cons true (fun x => !g) 0 :: List.ofFn fun i => Fin.cons true (fun x => !g) i.succ)).headD
+        false
+    else
+      !(List.replicate (m + 1) false ++
+                Fin.cons true (fun x => !g) 0 :: List.ofFn fun i => Fin.cons true (fun x => !g) i.succ).reverse.headD
+          false) =
+    g

@@ -1,21 +1,23 @@
-# Fill `nm-cca2` — checkpoint 1: (⇒) proved; escalation E-READER (missing reader)
+# Fill `nm-cca2` — checkpoint 2: target proved (both directions); escalation E-READER stands
 
 **Worker:** Claude (external). **Issue base:** `b96ab3ccc1915497ea3138df499eec00b6581db0` on
 `cryptography/pass-shelat-ch2-4` (the merge of #293). **Local proof branch:** `fill/nm-cca2`, head
-`aae1d6541`, never pushed; the whole series from the base is in `patches/`. **Pack:** read at
+`60b4ad5bf`, never pushed; the whole series from the base is in `patches/`. **Pack:** read at
 exchange `3f6d6783a1e4527e5287c63a9f1a0075fb6d0369`; `SHA256SUMS` 7/7 OK; all 249 entries of
 `SOURCE-SHA256SUMS` match the base.
 
 ## Status
 
-- **(⇒) IND-CCA2 ⇒ NM-CCA2 is proved:** `FixedLengthPKScheme.nmSecure_cca2_of_indSecure_cca2` in the
-  owned file, axioms `[propext, Classical.choice, Quot.sound]`.
-- **Escalation E-READER.** One reader of `PublicKey/OracleSecurity.lean` is missing (below). The
-  proof isolates it in one helper module (`Indistinguishability/Readers.lean`) in the requested
-  form. That module's second lemma is the only place in the fill that reads a foreign
-  definition (`outLens`) definitionally, so the final seal will fail there and nowhere else
-  until the reader lands in its home file.
-- The target `indSecure_cca2_iff_nmSecure_cca2` is still admitted; (⇐) is next (checkpoint 2).
+- **The target `FixedLengthPKScheme.indSecure_cca2_iff_nmSecure_cca2` is proved**, as
+  `⟨nmSecure_cca2_of_indSecure_cca2, indSecure_cca2_of_nmSecure_cca2⟩`. All three print the axioms
+  `[propext, Classical.choice, Quot.sound]` (development probe; the final axiom log follows with
+  the final delivery).
+- **Escalation E-READER stands** (checkpoint 1, repeated below). The one missing reader is isolated in
+  `Indistinguishability/Readers.lean`. Its second lemma is the fill's only definitional read of a
+  foreign definition (`outLens`).
+- **Checkpoint 1** (exchange `f3878eb2b`): (⇒) and the escalation.
+- **Remaining for the final delivery:** the full sweep, admissions, axioms of every constant, seals
+  with controls, the unfold scan and lint.
 
 ## Escalation E-READER: the decryption answer has no cast reader
 
@@ -133,16 +135,64 @@ form). **Please confirm this route, or rule otherwise.**
 - **Codec timeout:** `A`'s timeout output is part of `toCompOn` on both sides and is transported
   with it. The reduction's own budget is never short, by T2's equation.
 
+## (⇐) The proof (brief step 2)
+
+- **The reduction** (`Encrypt.lean`). `encHandler S` is `fwdHandler` on `acDin S`/`acDout S`, with:
+  - a seed of two encryption tapes, `ρ + ρ` bits (`encTape` reads them as `Enc` coins);
+  - the adversary run on the reduction input `pk`;
+  - `finCall = 0`, `outLen = ctLen + ctLen`.
+
+  Its finalization reads `A`'s guess `g` (the first output bit; the codec's timeout output gives
+  `g = false`). It outputs `padL ctLen (Enc(1^n, ⟨pk, b^{msgLen}⟩; tape))` for `b = g` with the
+  first tape and `b = ¬g` with the second (`polyTimeComputable_eFin`). By
+  `encHandler_finish`, the finalization is `pure (c₁ ‖ c₂)` and asks nothing.
+- **The distinguisher** `guessDist` is uniform, without coins:
+  `guessBit w = if w[0] then w[1] else ¬(last w)`.
+  - `guessBit_valid`: a valid first decryption of `g^m`, `m > 0`, gives `g`.
+  - `guessBit_refused`: `⊥` followed by a valid decryption of `(¬g)^m` gives `g`.
+- **The guess is recovered** (owned file, `guessDist_nmOutput`), for any recorded challenge `st`.
+  1. By `S.correct` (with `S.enc_length` for the padding), `c₁` decrypts to `g^m` and `c₂` to
+     `(¬g)^m`.
+  2. So `c₁ ≠ c₂` (bit 0 differs, `m > 0`), and at most one is the challenge.
+  3. If `st ≠ some c₁`, use `guessBit_valid`; otherwise `st ≠ some c₂` and use `guessBit_refused`.
+
+  The two blocks of the output are `c₁` and `c₂` (`ofFn_nthCt`). `flatten_ofFn_two` handles the
+  `Fin ((const 2).eval n)` indexing without reading `PolyExpr.eval`.
+- **The game identity** (`accept_nmGame_encRed`, for `msgLen(n) > 0`):
+  `accept (NM_b(B, 2, guessDist)) = accept (Ind_b(A))`. The structure is that of (⇒):
+  1. coins `(ω, r)` through `φ`;
+  2. transport to T2's codec and T2's equation;
+  3. the handler forwards; `simulate_bind`; the finalization;
+  4. pointwise `guessDist_nmOutput`;
+  5. transport back.
+
+  The result does not depend on `ω` or on the distinguisher's coins (`expect_const`).
+- **`msgLen(n) = 0`** (`indImpl_eq_of_msgLen_eq_zero`): both halves of a challenge are `[]`, so
+  `indImpl .cca2 false = indImpl .cca2 true` query by query (published `_onSpec` readers only), the
+  two games are equal, and the advantage is `0 ≤ ε(n)`.
+- **The bound.** `B` has budget `q·1 + 0` and `ℓ = 2`. Non-malleability gives `ε`, and the IND
+  advantage is at most the NM advantage at every `n`.
+
+**Edge cases (⇐):**
+- **Budget 0 and the codec's timeout:** `A`'s timeout output `zeroBits 1` is a guess `g = false`
+  like any other; the reduction encrypts and the distinguisher recovers it.
+- **`msgLen(n) = 0`:** handled separately, as above.
+- **No challenge asked:** `st = none` copies neither ciphertext, so both decrypt validly.
+- **Repeated challenges:** `st` is the first challenge; the argument is uniform in `st`.
+- **The reduction's own ciphertexts copying the challenge:** at most one can (they differ), which
+  is exactly the case split.
+
 ## Changed files
 
 | File | Change |
 |---|---|
-| `NonMalleability/Indistinguishability.lean` (owned) | 4 imports added (the 3 helpers, `AdaptiveCPA.Games`); `## Contents` list; status line; a `section Proof` with the (⇒) declarations. Statement, other declarations, statement prose and simp attributes unchanged; target still `sorry`. |
+| `NonMalleability/Indistinguishability.lean` (owned, 659 lines) | 5 imports added (the 4 helpers, `AdaptiveCPA.Games`); a `## Contents` list; the status line; a `section Proof` with both directions; the target's sketch rewritten to describe the delivered proof; the target's body (`exact ⟨…⟩`). The statement, every other declaration, the statement prose and the global simp attributes are unchanged. |
 | `…/Indistinguishability/Readers.lean` (new, 71 lines) | the two requested readers (escalation) |
 | `…/Indistinguishability/Forward.lean` (new, 349 lines) | forwarding handler; finalization-input readers; `logEmit` |
 | `…/Indistinguishability/Decrypt.lean` (new, 347 lines) | `decHandler`, its finalization equation, `exists_withAdviceOn` |
+| `…/Indistinguishability/Encrypt.lean` (new, 329 lines) | `encHandler`, `encTape`, `encCt`, its finalization equation, `guessDist`, `indImpl_eq_of_msgLen_eq_zero` |
 
-## New declarations (checkpoint 1)
+## New declarations
 
 - **Readers:** `NMCCA2.indSpec_decRng`, `NMCCA2.indImpl_dec_onSpec_cast`.
 - **Forward:**
@@ -162,10 +212,21 @@ form). **Please confirm this route, or rule otherwise.**
   - `simulate_decHandler_impl`, `decBlock` with `_eq`, `simulate_decHandler_finish`,
     `exists_withAdviceOn`;
   - private: `dCnt`, `dCt`, `dIn`, `dFin`, `polyTimeComputable_dFin`, `polyTimeComputable_decAdvIn`.
+- **Encrypt:**
+  - `encHandler` with `_seedLen`, `_perCall`, `_finCall`, `_outLen` and `_advInput`;
+  - `simulate_encHandler_impl`;
+  - `encTape` with `_eq`, `ofFn_encTape`; `encCt` with `_eq`; `encHandler_finish`;
+  - `guessBit` with `_eq`, `guessDist`, `guessDist_distinguisherL`, `guessBit_valid`,
+    `guessBit_refused`;
+  - `indImpl_eq_of_msgLen_eq_zero`;
+  - private: `eBit`, `eMsg`, `eTape`, `eCt`, `eFin`, `polyTimeComputable_eFin`,
+    `polyTimeComputable_encAdvIn`, `guessFun`, `polyTimeComputable_guessFun`.
 - **Owned file:**
-  - `nmCodec_eq_bitCodec`, `ofFn_nthCt`, `nmSecure_cca2_of_indSecure_cca2`;
+  - `nmCodec_eq_bitCodec`, `ofFn_nthCt`;
+  - `nmSecure_cca2_of_indSecure_cca2`, `indSecure_cca2_of_nmSecure_cca2`;
   - private: `castImpl_indImpl_dec`, `decBlock_eq_nthCt`, `decAnswers_eq_nmOutput`,
-    `accept_indGame_decRed`.
+    `accept_indGame_decRed`, `flatten_ofFn_two`, `guessDist_nmOutput`,
+    `accept_nmGame_encRed`.
 
 **DL-30–34 overlap: the round-input readers.** `Forward.lean` re-derives private round-input
 readers (`rState`, `rIdx`, `rQuery`, `rLog`, `rAns`, `fields_input`) from `InteractiveHandler.input_eq`. They
@@ -211,9 +272,10 @@ play the role of `AdaptiveCPA`'s private `rS`, `rI`, `rX`, `rL`, `rFwd`. Nothing
 
 ## Next
 
-(⇐), checkpoint 2:
-- an NM adversary that forwards `A`'s queries and outputs `Enc_pk(g^L)`, `Enc_pk((¬g)^L)` under its own seed;
-- a uniform distinguisher;
-- the `msgLen(n) = 0` case.
-
-Then the assembly, the full sweep, axioms, seals, unfold scan and lint.
+The final delivery:
+- bootstrap of the remaining modules of the order;
+- the sweep with the helpers inserted before the owned file, and admissions against
+  `base-sorries.txt`;
+- axioms of every stored constant of the five files, and `simNMSecure_cpa_iff_nmSecure_cpa`;
+- whole-file seals with base and paired controls (`PolyExpr.eval` exempt and sealed);
+- the explicit-unfold scan, lint and patch replay.
