@@ -1,13 +1,7 @@
-**Not yet clear to merge: #241.**
-
-The gate 131 provider is merged. The five edited owners and three
-intermediate importers for the private #241 combination all compile
-on the verified prospective gate 129 snapshot. See
-preflight-post244-final251. The approved InputLength and Fresh/Prepared
-repairs are present in that combination. The four manifest files
-identified in the audit are verified in the follow-up staging list.
-
-After the gate 129 provider merges, refresh the exact integrated seals,
-copy dispositions and downstream replay for the selected Codex
-follow-up. The issued 817-section packet remains the historical
-audit input.
+**Not yet clear to merge: #241** at `0f6f07eba0c2d91dbb082287f6479cb0962dc377`.
+Round 2 repairs are on the branch: the campaign after #251 is merged in, with the
+approved InputLength and Fresh/Prepared seam proof-only patches. The 164-module
+merged-tree replay passed (55 inherited admissions, none in the owners). All 24
+whole-proof seals and 50 paired controls passed, with no new lint. The copy screen
+dispositions all 43 new pairs. The round 2 Codex pack is checked and awaits publication.
+See pack-r2.md and resolutions-r2.md.
