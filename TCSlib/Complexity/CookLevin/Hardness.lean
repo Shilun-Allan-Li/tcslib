@@ -10,6 +10,7 @@ import TCSlib.Complexity.ClassNP.TMSAT
 import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
 import TCSlib.Complexity.CookLevin.Snapshot
 import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -1077,7 +1078,8 @@ private lemma clCount_run (x : List Bool) (p : Fin (x.length + 2)) (w : List Boo
 an arbitrary upper bound to be cut to the actual first return. -/
 private lemma clCount_idle {x : List Bool} (c : Cfg 1 Bool (Fin 4) x)
     (hc : c.state = some 0) : clCountTM.tm.step c = c := by
-  simp only [MultiTapeTM.step, hc, clCountTM,
+  rw [MultiTapeTM.step_of_some hc]
+  simp only [clCountTM,
     show (0 : Fin 4) ≠ 1 from by decide, show (0 : Fin 4) ≠ 2 from by decide, if_false]
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -1223,26 +1225,45 @@ private lemma clBank_finish {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
   funext i
   exact clBank_component x p (a i) (n i) W (hW i)
 
-/-- The all-returned bank is absorbing on the entire configuration. -/
+/-- The all-returned bank is absorbing on the entire configuration.
+
+**Proof sketch.** Each component return action fixes its one-tape configuration.
+Compare the bank's fields through the published action equations to retain its
+control, tapes, heads and output. -/
 private lemma clBank_idle {l : ℕ} {x : List Bool}
     (c : Cfg (clBankTM l).k Bool (clBankTM l).State x)
     (hc : c.state = some (fun _ => some (0 : Fin 4))) :
     (clBankTM l).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
-  refine Cfg.ext hc.symm (moveInputPos_zero _) ?_ ?_ ?_
+  rw [MultiTapeTM.step_of_some hc]
+  simp only [clBankTM, clBankPart, clCountTM,
+    show (0 : Fin 4) ≠ 1 from by decide, show (0 : Fin 4) ≠ 2 from by decide, if_false]
+  let d (i : Fin l) : Cfg 1 Bool (Fin 4) x :=
+    ⟨some 0, c.inputPos, (fun _ => c.workTapes i),
+      (fun _ => c.workTapePos i), c.output⟩
+  have hd (i : Fin l) : (FinTM.controlAction 0 (some (0 : Fin 4))).apply (d i) = d i := by
+    rw [FinTM.controlAction_apply, moveInputPos_zero]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Action.apply_state]
+    refine (congrArg some ?_).trans hc.symm
+    funext i
+    have hs := congrArg Cfg.state (hd i)
+    simpa only [Action.apply_state] using hs
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_zero _
   · funext i
-    simp [clBankTM, clBankPart, clCountTM, FinTM.controlAction, Action.apply]
+    have hw := congrArg (fun e : Cfg 1 Bool (Fin 4) x => e.workTapes 0) (hd i)
+    simpa only [Action.apply_workTapes, Cfg.workTapeSymbols_eq] using hw
   · funext i
-    simp [clBankTM, clBankPart, clCountTM, FinTM.controlAction, Action.apply]
-  · simp [clBankTM, Action.apply]
+    have hp := congrArg (fun e : Cfg 1 Bool (Fin 4) x => e.workTapePos 0) (hd i)
+    simpa only [Action.apply_workTapePos] using hp
+  · simp only [Action.apply_output, Option.toList_none, List.append_nil]
 
 /-- Cut the simultaneous bank at its observed first all-returned state.
 This duration may be zero when no displacement needs a counter update;
 the surrounding source-step/dispatch controller supplies positivity.
-**Proof sketch.** Minimize the all-returned occurrence before the common
-proved deadline. Absorption implies that its first occurrence already has
-the exact endpoint and restored heads. -/
+**Proof sketch.** Apply the public fixed-stop first-entry theorem to the
+all-returned state and the proved deadline. Whole-configuration stationarity
+preserves the exact endpoint and restored heads at that first entry. -/
 private lemma clBank_first {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
     (a : Fin l → Bool) (n : Fin l → ℕ) (W : ℕ)
     (hW : ∀ i, (n i).bits.length ≤ W) :
@@ -1254,23 +1275,17 @@ private lemma clBank_first {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
         (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) t =
         clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits []) := by
   let start := clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])
-  have finish := clBank_finish x p a n W hW
-  have hex : ∃ t, t ≤ 2 * W + 2 ∧
-      ((clBankTM l).tm.runFrom start t).state = some (fun _ => some (0 : Fin 4)) :=
-    ⟨2 * W + 2, le_rfl, by rw [finish]; rfl⟩
-  let t := Nat.find hex
-  have ht := Nat.find_spec hex
-  refine ⟨t, ht.1, ?_, ?_⟩
-  · intro j hj hs
-    have := Nat.find_min' hex (show j ≤ 2 * W + 2 ∧
-      ((clBankTM l).tm.runFrom start j).state = some (fun _ => some (0 : Fin 4)) from
-        ⟨by omega, hs⟩)
-    omega
-  · have hstay := Function.iterate_fixed (clBank_idle _ ht.2) (2 * W + 2 - t)
-    change (clBankTM l).tm.runFrom ((clBankTM l).tm.runFrom start t)
-      (2 * W + 2 - t) = (clBankTM l).tm.runFrom start t at hstay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
-    exact hstay.symm.trans finish
+  let finishCfg := clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits [])
+  have finish : (clBankTM l).tm.runFrom start (2 * W + 2) = finishCfg :=
+    clBank_finish x p a n W hW
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    (clBankTM l).tm (fun q => q = (fun _ : Fin l => some (0 : Fin 4)))
+    start finishCfg (2 * W + 2)
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact clBank_idle c hq)
+    ⟨(fun _ => some (0 : Fin 4)), rfl, rfl⟩ finish
+  exact ⟨t, ht, fun j hj hs => hcut j hj ⟨_, hs, rfl⟩, he⟩
 
 /-- Actual source-head displacements. The input component is the clamped
 virtual displacement, not the source's requested (possibly blocked) move.
@@ -1706,8 +1721,7 @@ private lemma clCopy_run (x : List Bool) (p : Fin (x.length + 2))
 /-- Returned record-copy configurations remain unchanged in their entirety. -/
 private lemma clCopy_idle {x : List Bool} (c : Cfg 2 Bool (Fin 5) x)
     (hc : c.state = some (4 : Fin 5)) : clCopyTM.tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   change (FinTM.controlAction 0 (some (4 : Fin 5))).apply c = c
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -1716,7 +1730,10 @@ private lemma clCopy_idle {x : List Bool} (c : Cfg 2 Bool (Fin 5) x)
 /-- The exact recorded field is available at the copier's observed first
 positive return, with both the untouched source and the new record head
 specified. This permits a host to dispatch without knowing field length.
-**Proof sketch.** Choose the first completed-control occurrence below the exact copying bound. Since completion is absorbing on the whole configuration, its first occurrence already has the final record and restored source head. Initial and completed controls are distinct. -/
+**Proof sketch.** Apply the public fixed-stop first-entry theorem to the
+completed control and the exact copying bound. Its first entry preserves the
+final record and restored source head. Distinct initial and completed controls
+make the selected time positive. -/
 private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))
     (w record : List Bool) :
     ∃ t ≤ 3 * w.length + 3, 0 < t ∧
@@ -1724,29 +1741,22 @@ private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))
       clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t =
         clCopyCfg x 4 p 0 w (record ++ pairEncode w []) := by
   have finish := clCopy_run x p w record
-  have hex : ∃ t, t ≤ 3 * w.length + 3 ∧
-      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t).state = some (4 : Fin 5) :=
-    ⟨3 * w.length + 3, le_rfl, by rw [finish]; rfl⟩
-  let t := Nat.find hex
-  have ht := Nat.find_spec hex
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    clCopyTM.tm (fun q => q = (4 : Fin 5))
+    (clCopyCfg x 0 p 0 w record) (clCopyCfg x 4 p 0 w (record ++ pairEncode w []))
+    (3 * w.length + 3)
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact clCopy_idle c hq)
+    ⟨(4 : Fin 5), rfl, rfl⟩ finish
   have hp : 0 < t := by
-    by_contra h
+    by_contra hn
     have hz : t = 0 := by omega
-    have hs := ht.2
-    change (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t).state = some (4 : Fin 5) at hs
+    have hs := congrArg Cfg.state he
     rw [hz, MultiTapeTM.runFrom_zero] at hs
     have hh := congrArg (fun z => z.map Fin.val) hs
     norm_num [clCopyCfg] at hh
-  refine ⟨t, ht.1, hp, ?_, ?_⟩
-  · intro j hj hs
-    have := Nat.find_min' hex (show j ≤ 3 * w.length + 3 ∧
-      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state = some (4 : Fin 5) from ⟨by omega, hs⟩)
-    omega
-  · have hstay := Function.iterate_fixed (clCopy_idle _ ht.2) (3 * w.length + 3 - t)
-    change clCopyTM.tm.runFrom (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t)
-      (3 * w.length + 3 - t) = clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t at hstay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
-    exact hstay.symm.trans finish
+  exact ⟨t, ht, hp, fun j hj hs => hcut j hj ⟨(4 : Fin 5), hs, rfl⟩, he⟩
 
 /-- A concrete physical layout, with an exact selector and no aliased slot. -/
 private structure clPlacement (k l : ℕ) where
@@ -2131,8 +2141,7 @@ private lemma clRow_stored {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
 private lemma clRow_idle {l : ℕ} {x : List Bool}
     (c : Cfg (clRowTM l).k Bool (clRowTM l).State x)
     (hc : c.state = some (Fin.last l, (0 : Fin 5))) : (clRowTM l).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   simp only [clRowTM, Fin.val_last, Nat.lt_irrefl, dite_false]
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -2140,9 +2149,10 @@ private lemma clRow_idle {l : ℕ} {x : List Bool}
 
 /-- A row is completely stored at the actual first end-of-row return.
 The fixed positive field count makes that return strictly positive.
-**Proof sketch.** Minimize the completed-control occurrence below the
-proved copying bound. The completed controller is absorbing, so its
-first occurrence has the exact word and all the restored counter heads. -/
+**Proof sketch.** Apply the public fixed-stop first-entry theorem to the
+completed control and the proved copying bound. Stationarity preserves the
+exact word and restored counter heads. The nonzero field count excludes an
+initial completed control and makes the selected time positive. -/
 private lemma clRow_first {l : ℕ} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))
     (w : Fin l → List Bool) (record : List Bool) (W : ℕ)
     (hW : ∀ i, (w i).length ≤ W) :
@@ -2151,32 +2161,24 @@ private lemma clRow_first {l : ℕ} (hl : 0 < l) (x : List Bool) (p : Fin (x.len
         some (Fin.last l, (0 : Fin 5))) ∧
       (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t =
         clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l) := by
-  obtain ⟨B, hB, he⟩ := clRow_stored x p w record W hW
-  have hex : ∃ t, t ≤ B ∧ ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t).state =
-      some (Fin.last l, (0 : Fin 5)) := ⟨B, le_rfl, by rw [he]; rfl⟩
-  let t := Nat.find hex
-  have ht := Nat.find_spec hex
+  obtain ⟨B, hB, finish⟩ := clRow_stored x p w record W hW
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    (clRowTM l).tm (fun q => q = (Fin.last l, (0 : Fin 5)))
+    (clRowCfg x p 0 0 w record)
+    (clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l)) B
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact clRow_idle c hq)
+    ⟨(Fin.last l, 0), rfl, rfl⟩ finish
   have hp : 0 < t := by
     by_contra hn
     have hz : t = 0 := by omega
-    have hs := ht.2
-    change ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t).state =
-      some (Fin.last l, (0 : Fin 5)) at hs
+    have hs := congrArg Cfg.state he
     rw [hz, MultiTapeTM.runFrom_zero] at hs
     have hh := congrArg (fun z => z.map (fun q => q.1.val)) hs
     simp [clRowCfg] at hh
     omega
-  refine ⟨t, ht.1.trans hB, hp, ?_, ?_⟩
-  · intro j hj hs
-    have := Nat.find_min' hex (show j ≤ B ∧
-      ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state =
-        some (Fin.last l, (0 : Fin 5)) from ⟨by omega, hs⟩)
-    omega
-  · have hstay := Function.iterate_fixed (clRow_idle _ ht.2) (B - t)
-    change (clRowTM l).tm.runFrom ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t)
-      (B - t) = (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t at hstay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
-    exact hstay.symm.trans he
+  exact ⟨t, ht.trans hB, hp, fun j hj hs => hcut j hj ⟨_, hs, rfl⟩, he⟩
 
 /-- A row's stored field lengths have their exact doubled-bit-plus-separator
 ledger, independently of the native copying runtime. -/
@@ -2977,8 +2979,7 @@ private lemma clCmp_run (x : List Bool) (p : Fin (x.length + 2))
 /-- Completed comparisons are absorbing on the entire configuration. -/
 private lemma clCmp_idle {x : List Bool} (c : Cfg 4 Bool clCmpTM.State x)
     (b : Bool) (hc : c.state = some (.inr (.inr b))) : clCmpTM.tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   change (FinTM.controlAction 0 (some (.inr (.inr b)))).apply c = c
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -2986,9 +2987,10 @@ private lemma clCmp_idle {x : List Bool} (c : Cfg 4 Bool clCmpTM.State x)
 
 /-- The native comparator returns at its first observed completion, within
 its scan bound, with the correct arithmetic verdict and all four heads restored.
-**Proof sketch.** Cut the exact completed run at its first completed-state
-occurrence. Whole-configuration absorption preserves both the verdict and
-all read-only words. The disjoint initial phase excludes zero duration. -/
+**Proof sketch.** Apply the public fixed-stop first-entry theorem with both
+completed verdicts in its stop predicate. It preserves the exact arithmetic
+verdict and all read-only words. The disjoint initial phase excludes zero
+duration. -/
 private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))
     (w : Fin 4 → List Bool) (W : ℕ) (hW : ∀ i, (w i).length ≤ W) :
     ∃ t ≤ 2 * W + 2, 0 < t ∧ ∃ b,
@@ -2999,44 +3001,23 @@ private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))
         clCmpCfg x p (.inr (.inr b)) w 0 := by
   let b := clCmpVerdict (clCmpOrbit w (clCmpSize w))
   have finish := clCmp_run x p w
-  have hex : ∃ t, t ≤ 2 * clCmpSize w + 2 ∧
-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t).state =
-        some (.inr (.inr b)) := ⟨2 * clCmpSize w + 2, le_rfl, by rw [finish]; rfl⟩
-  let t := Nat.find hex
-  have ht := Nat.find_spec hex
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    clCmpTM.tm (fun q => ∃ d : Bool, q = .inr (.inr d))
+    (clCmpCfg x p (.inl (false, false, true)) w 0)
+    (clCmpCfg x p (.inr (.inr b)) w 0) (2 * clCmpSize w + 2)
+    (by
+      rintro c ⟨q, hq, d, rfl⟩
+      exact clCmp_idle c d hq)
+    ⟨.inr (.inr b), rfl, b, rfl⟩ finish
   have hw : clCmpSize w ≤ W := Finset.sup_le (fun i _ => hW i)
   have hp : 0 < t := by
     by_contra hn
     have hz : t = 0 := by omega
-    have hh := ht.2
-    change (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t).state =
-      some (.inr (.inr b)) at hh
+    have hh := congrArg Cfg.state he
     rw [hz, MultiTapeTM.runFrom_zero] at hh
     cases hh
-  refine ⟨t, by omega, hp, b, clCmpVerdict_spec w, ?_, ?_⟩
-  · intro j hj d hd
-    have hstay := Function.iterate_fixed (clCmp_idle _ d hd) (2 * clCmpSize w + 2 - j)
-    change clCmpTM.tm.runFrom
-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j)
-      (2 * clCmpSize w + 2 - j) =
-        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j at hstay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega)] at hstay
-    have hh := congrArg Cfg.state (finish.symm.trans hstay)
-    rw [hd] at hh
-    have hbd : b = d := Sum.inr.inj (Sum.inr.inj (Option.some.inj hh))
-    have hs : (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state =
-        some (.inr (.inr b)) := by rw [hbd]; exact hd
-    have := Nat.find_min' hex (show j ≤ 2 * clCmpSize w + 2 ∧
-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state =
-        some (.inr (.inr b)) from ⟨by omega, hs⟩)
-    omega
-  · have hstay := Function.iterate_fixed (clCmp_idle _ b ht.2) (2 * clCmpSize w + 2 - t)
-    change clCmpTM.tm.runFrom
-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t)
-      (2 * clCmpSize w + 2 - t) =
-        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t at hstay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
-    exact hstay.symm.trans finish
+  exact ⟨t, by omega, hp, b, clCmpVerdict_spec w,
+    fun j hj d hd => hcut j hj ⟨.inr (.inr d), hd, d, rfl⟩, he⟩
 
 /-- Specializing stored positions to the public all-false schedule recovers
 the exact input and work coordinates, including the shifted input origin. -/
@@ -3278,8 +3259,9 @@ private lemma clRecords_length (M : FinTM Bool) (y : List Bool) (T : ℕ) :
     omega
 
 /-- Cut a proved bounded run to its first visit to a fresh absorbing return.
-**Proof sketch.** Minimize the return-control occurrence. Absorption makes
-its whole configuration identical to the known endpoint, not just its state. -/
+**Proof sketch.** Specialize the public fixed-stop first-entry theorem to the
+return control. It preserves the complete known endpoint; the initial-control
+exclusion makes the selected time positive. -/
 private lemma clFirst {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
     (tm : MultiTapeTM k Bool S) (start finish : Cfg k Bool S x) (ret : S) (B : ℕ)
     (hrun : tm.runFrom start B = finish) (hret : finish.state = some ret)
@@ -3287,26 +3269,19 @@ private lemma clFirst {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
     (hidle : ∀ c : Cfg k Bool S x, c.state = some ret → tm.step c = c) :
     ∃ t ≤ B, 0 < t ∧ (∀ j < t, (tm.runFrom start j).state ≠ some ret) ∧
       tm.runFrom start t = finish := by
-  have hex : ∃ t, t ≤ B ∧ (tm.runFrom start t).state = some ret :=
-    ⟨B, le_rfl, by rw [hrun]; exact hret⟩
-  let t := Nat.find hex
-  have ht := Nat.find_spec hex
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    tm (fun q => q = ret) start finish B
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact hidle c hq)
+    ⟨ret, hret, rfl⟩ hrun
   have hp : 0 < t := by
     by_contra hn
     have hz : t = 0 := by omega
-    have hh := ht.2
-    change (tm.runFrom start t).state = some ret at hh
-    rw [hz, MultiTapeTM.runFrom_zero] at hh
-    exact hstart hh
-  refine ⟨t, ht.1, hp, ?_, ?_⟩
-  · intro j hj hs
-    have := Nat.find_min' hex (show j ≤ B ∧ (tm.runFrom start j).state = some ret
-      from ⟨by omega, hs⟩)
-    omega
-  · have stay := Function.iterate_fixed (hidle _ ht.2) (B - t)
-    change tm.runFrom (tm.runFrom start t) (B - t) = tm.runFrom start t at stay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1, hrun] at stay
-    exact stay.symm
+    have hs := congrArg Cfg.state he
+    rw [hz, MultiTapeTM.runFrom_zero, hret] at hs
+    exact hstart hs
+  exact ⟨t, ht, hp, fun j hj hs => hcut j hj ⟨ret, hs, rfl⟩, he⟩
 
 /-- Clearing the last occupied cell leaves exactly the shorter buffer.
 Locally harvested from the audited bridge's `emCall_erase_last` proof. -/
@@ -3422,8 +3397,7 @@ private lemma clWipe_run (x : List Bool) (p : Fin (x.length + 2))
 /-- The reset return fixes the entire configuration. -/
 private lemma clWipe_idle {x : List Bool} (c : Cfg 2 Bool (Fin 3) x)
     (hc : c.state = some 2) : clWipeTM.tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   change (FinTM.controlAction 0 (some (2 : Fin 3))).apply c = c
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -3466,12 +3440,17 @@ private lemma clFresh_run (x : List Bool) (p : Fin (x.length + 2))
 /-- The unrestricted loader's completed state is absorbing. -/
 private lemma clFresh_idle {x : List Bool} (c : Cfg 2 Bool clFreshTM.State x)
     (hc : c.state = some (.inr (.inr true))) : clFreshTM.tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
-  change (FinTM.controlAction 0 (some (Sum.inr (.inr true)))).apply c = c
-  rw [FinTM.controlAction_apply, moveInputPos_zero]
-  cases c
-  simp_all
+  let d : Cfg 2 Bool clReadTM.State x :=
+    ⟨some (.inr true), c.inputPos, c.workTapes, c.workTapePos, c.output⟩
+  have hm : d.mapState Sum.inr = c :=
+    Cfg.mapState_eq_of_fields d Sum.inr c (by simpa only [d, Option.map_some] using hc.symm)
+      rfl rfl rfl rfl
+  rw [MultiTapeTM.step_of_some hc]
+  change ((seamCompTM clWipeTM.tm (2 : Fin 3) clReadTM.tm (.inl none)).tr
+    (.inr (.inr true)) c.inputSymbol c.workTapeSymbols).apply c = c
+  rw [seamCompTM_tr_inr]
+  change ((FinTM.controlAction 0 (some (.inr true))).mapState Sum.inr).apply c = c
+  rw [← hm, Cfg.mapState_apply, FinTM.controlAction_apply, moveInputPos_zero]
 
 /-- First-return loader interface without the inherited overwrite-length
 precondition; cleanup is explicit in the bound and in the transition table. -/
@@ -3681,8 +3660,7 @@ private lemma clLoad_complete {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
 private lemma clLoad_idle {l : ℕ} {x : List Bool}
     (c : Cfg (clLoadTM l).k Bool (clLoadTM l).State x)
     (hc : c.state = some (Fin.last l, .inl 0)) : (clLoadTM l).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   simp only [clLoadTM, Fin.val_last, Nat.lt_irrefl, dite_false]
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -3822,8 +3800,7 @@ private lemma clInput_run (x : List Bool) :
 /-- Native-copy return is absorbing, so it can be used at its first visit. -/
 private lemma clInput_idle {x : List Bool} (c : Cfg 1 Bool (Fin 3) x)
     (hc : c.state = some 2) : clInputTM.tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   change (FinTM.controlAction 0 (some (2 : Fin 3))).apply c = c
   rw [FinTM.controlAction_apply, moveInputPos_zero]
   cases c
@@ -3923,13 +3900,13 @@ private lemma clPrepare_complete {l : ℕ} (w : Fin l → List Bool)
 private lemma clPrepare_idle {l : ℕ} {x : List Bool}
     (c : Cfg (clPrepareTM l).k Bool (clPrepareTM l).State x)
     (hc : c.state = some (.inr (Fin.last l, .inl 0))) : (clPrepareTM l).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   simp only [clPrepareTM, clLoadTM, Fin.val_last, Nat.lt_irrefl, dite_false]
-  change (FinTM.controlAction 0 (some (Sum.inr (Fin.last l, .inl 0)))).apply c = c
-  rw [FinTM.controlAction_apply, moveInputPos_zero]
-  cases c
-  simp_all
+  let d : Cfg (clLoadTM l).k Bool (clLoadTM l).State x :=
+    {c with state := some (Fin.last l, .inl 0)}
+  have hd : d.mapState Sum.inr = c :=
+    Cfg.mapState_eq_of_fields d Sum.inr c hc.symm rfl rfl rfl rfl
+  rw [← hd, Cfg.mapState_apply, FinTM.controlAction_apply, moveInputPos_zero]
 
 /-- The genuine preparatory seam is reached at a positive first return,
 including zero fields. Native input copying and dispatch ensure positivity. -/
@@ -4882,26 +4859,49 @@ private lemma clPrepared_run (A : FinTM Bool) (w : Fin A.k → List Bool) (tail 
   exact run
 
 /-- An absorbing return in the prepared machine remains absorbing after
-native loading, with the complete retained-input frame fixed. -/
+native loading, with the complete retained-input frame fixed.
+
+**Proof sketch.** Reconstruct the supplied configuration as the forwarding
+embedding of its selected source tapes and unchanged ambient frame. The
+source return is fixed by its control-action contract. The embedding's
+one-step lockstep and the seam's right transition preserve that fixed point. -/
 private lemma clPrepared_idle (A : FinTM Bool) (ret : A.State)
     (htr : ∀ inp work, A.tm.tr ret inp work = FinTM.controlAction 0 (some ret))
     {x : List Bool} (c : Cfg (clPreparedTM A).k Bool (clPreparedTM A).State x)
     (hc : c.state = some (.inr ret)) : (clPreparedTM A).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
-  change (clPlacedAction (clKeepLastPlacement A.k) Sum.inr ret
-    (A.tm.tr ret c.inputSymbol (fun i => c.workTapeSymbols ((clKeepLastPlacement A.k).index i)))).apply c = c
-  rw [htr]
-  have ha : clPlacedAction (clKeepLastPlacement A.k) (Sum.inr : A.State → (clPreparedTM A).State) ret (FinTM.controlAction 0 (some ret)) =
-      FinTM.controlAction 0 (some (.inr ret)) := by
-    rw [clPlacedAction_eq]
-    unfold FinTM.controlAction
-    congr 1
+  let d : Cfg A.k Bool A.State x :=
+    ⟨some ret, c.inputPos, fun i => c.workTapes ((clKeepLastPlacement A.k).index i),
+      fun i => c.workTapePos ((clKeepLastPlacement A.k).index i), c.output⟩
+  let e := embedEmitCfg (clKeepLastPlacement A.k).index c.workTapes c.workTapePos [] d
+  have hm : e.mapState (Sum.inr : A.State → (clPreparedTM A).State) = c :=
+    embedEmitCfg_mapState_eq (clKeepLastPlacement A.k).index Sum.inr
+      c.workTapes c.workTapePos [] d c
+      (by simpa only [d, Option.map_some] using hc.symm) rfl (List.nil_append _)
+      (fun _ => ⟨rfl, rfl⟩) (fun _ _ => ⟨rfl, rfl⟩)
+  have he : e.state = some ret := by rw [embedEmitCfg_state]
+  have hi : (e.mapState (Sum.inr : A.State → (clPreparedTM A).State)).inputSymbol =
+      e.inputSymbol :=
+    Cfg.inputSymbol_congr _ _ (by rw [Cfg.mapState_inputPos])
+  have hw : (e.mapState (Sum.inr : A.State → (clPreparedTM A).State)).workTapeSymbols =
+      e.workTapeSymbols := by
     funext i
-    cases (clKeepLastPlacement A.k).select i <;> rfl
-  rw [ha, FinTM.controlAction_apply, moveInputPos_zero]
-  cases c
-  simp_all
+    rw [Cfg.workTapeSymbols_eq, Cfg.workTapeSymbols_eq,
+      Cfg.mapState_workTapePos, Cfg.mapState_workTapes]
+  have hd : A.tm.step d = d := by
+    rw [MultiTapeTM.step_of_some (show d.state = some ret from rfl), htr,
+      FinTM.controlAction_apply, moveInputPos_zero]
+  have hr : (embedEmitTM (clKeepLastPlacement A.k).index A.tm).step e =
+      embedEmitCfg (clKeepLastPlacement A.k).index c.workTapes c.workTapePos []
+        (A.tm.step d) := by
+    simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using
+      embedEmitTM_runFrom (clKeepLastPlacement A.k).index A.tm
+        c.workTapes c.workTapePos [] d 1
+  rw [MultiTapeTM.step_of_some hc]
+  change ((seamCompTM (clPrepareTM A.k).tm (.inr (Fin.last A.k, .inl 0))
+    (embedEmitTM (clKeepLastPlacement A.k).index A.tm) A.tm.q₀).tr
+      (.inr ret) c.inputSymbol c.workTapeSymbols).apply c = c
+  rw [seamCompTM_tr_inr, ← hm, hi, hw, Cfg.mapState_apply,
+    ← MultiTapeTM.step_of_some he, hr, hd]
 
 /-- Native query argument words: blank candidate fields, retained record
 stream, two target counts, a unary strict-prefix clock, and blank flags. -/
@@ -5026,27 +5026,34 @@ private lemma clFields_width (ws : List (List Bool)) (w : List Bool) (hw : w ∈
 
 /-- The recorder's observed completed state is absorbing with its full
 retained input/header frame unchanged.
-**Proof sketch.** Unfold only the completed recorder transition and its relocation. Its action preserves every cell and head and selects the same return control. -/
+**Proof sketch.** Read the completed placed action through the placement and
+control-action equations. Exact slot selection reconstructs the retained frame,
+so its cells, heads, output and return control are unchanged. -/
 private lemma clRecord_idle (M : FinTM Bool) {x : List Bool}
     (c : Cfg (clRecordTM M).k Bool (clRecordTM M).State x)
     (hc : c.state = some (.inr (.inr (.inr (.inr (.inr ())))))) :
     (clRecordTM M).tm.step c = c := by
-  unfold MultiTapeTM.step
-  rw [hc]
+  rw [MultiTapeTM.step_of_some hc]
   simp only [clRecordTM, clRecTM]
-  have ha : clPlacedAction (clRecordSelect M) (Sum.inr : (clRecTM M).State → (clRecordTM M).State) (.inr (.inr (.inr (.inr ())))) (FinTM.controlAction 0 (some (.inr (.inr (.inr (.inr ())))))) =
-      FinTM.controlAction 0 (some (.inr (.inr (.inr (.inr (.inr ())))))) := by
-    rw [clPlacedAction_eq]
-    unfold FinTM.controlAction
-    congr 1
-    funext i
-    refine Fin.addCases ?_ ?_ i
-    · intro i
-      refine Fin.addCases ?_ ?_ i <;> intro i <;> simp [clRecordSelect]
-    · intro i; simp [clRecordSelect]
-  rw [ha, FinTM.controlAction_apply, moveInputPos_zero]
-  cases c
-  simp_all
+  let slots := clRecordSelect M
+  let q : (clRecTM M).State := .inr (.inr (.inr (.inr ())))
+  let d : Cfg (clRecTM M).k Bool (clRecTM M).State x :=
+    ⟨some q, c.inputPos, (fun i => c.workTapes (slots.index i)),
+      (fun i => c.workTapePos (slots.index i)), c.output⟩
+  have hd : clPlacedCfg slots (Sum.inr : (clRecTM M).State → (clRecordTM M).State)
+      c.workTapes c.workTapePos d = c := by
+    rw [clPlacedCfg_eq]
+    refine Cfg.ext hc.symm rfl ?_ ?_ rfl
+    · funext j
+      cases hs : slots.select j with
+      | none => simp only [hs]
+      | some i => simpa only [hs] using congrArg c.workTapes ((slots.exact i j).mp hs)
+    · funext j
+      cases hs : slots.select j with
+      | none => simp only [hs]
+      | some i => simpa only [hs] using congrArg c.workTapePos ((slots.exact i j).mp hs)
+  rw [← hd, clPlaced_apply, FinTM.controlAction_apply, moveInputPos_zero]
+  rfl
 
 /-- The actual trajectory tape can be returned as the entire physical
 output. This preserves effects-first reference recording and its silence. -/
@@ -7227,29 +7234,43 @@ private lemma clA5Compare_compute (w : Fin 4 → List Bool) :
     clPreparedCfg clCmpTM arg (clFields (List.ofFn w)).length
       (clCmpTM.tm.runFrom (Cfg.ofWords (input := arg) clCmpTM.tm.q₀ w) (2 * clCmpSize w + 2)) at he
   have init : Cfg.ofWords (input := arg) clCmpTM.tm.q₀ w =
-      clCmpCfg arg 1 (.inl (false, false, true)) w 0 := rfl
+      clCmpCfg arg 1 (.inl (false, false, true)) w 0 := by
+    apply Cfg.ext
+    · exact Cfg.ofWords_state _ _
+    · exact Cfg.ofWords_inputPos _ _
+    · funext i
+      exact Cfg.ofWords_workTapes _ _ i
+    · funext i
+      exact Cfg.ofWords_workTapePos _ _ i
+    · exact Cfg.ofWords_output _ _
   rw [init, clCmp_run] at he
   let result := clPreparedCfg clCmpTM arg (clFields (List.ofFn w)).length (clCmpCfg arg 1 (.inr (.inr b)) w 0)
   have hend : A.tm.runFrom (A.tm.initCfg arg) (a + (2 * clCmpSize w + 2)) = result := he
   have idle (v : Bool) (cfg : Cfg A.k Bool A.State arg) (hc : cfg.state = some (ret v)) :
       A.tm.step cfg = cfg := clPrepared_idle clCmpTM (.inr (.inr v))
         (by intros; rfl) cfg hc
-  obtain ⟨t, ht, hp, hf, hr⟩ := clFirst A.tm _ result (ret b)
-    (a + (2 * clCmpSize w + 2)) hend rfl (by simp [A, clPreparedTM, seamCompTM, ret]) (idle b)
+  have resultState : result.state = some (ret b) := by
+    dsimp only [result, clPreparedCfg]
+    rw [clPlacedCfg_eq]
+    rfl
+  obtain ⟨t, ht, hcut, hr⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    A.tm (fun q => ∃ v : Bool, q = ret v) (A.tm.initCfg arg) result
+    (a + (2 * clCmpSize w + 2))
+    (by
+      rintro cfg ⟨q, hq, v, rfl⟩
+      exact idle v cfg hq)
+    ⟨ret b, resultState, b, rfl⟩ hend
   have guard : ∀ j < t, ∀ v, (A.tm.runFrom (A.tm.initCfg arg) j).state ≠ some (ret v) := by
     intro j hj v hv
-    have stay := Function.iterate_fixed (idle v _ hv) (t - j)
-    change A.tm.runFrom (A.tm.runFrom (A.tm.initCfg arg) j) (t - j) =
-      A.tm.runFrom (A.tm.initCfg arg) j at stay
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega), hr] at stay
-    have hstate := congrArg Cfg.state stay
-    change some (ret b) = _ at hstate
-    rw [hv] at hstate
-    have hb : b = v := Sum.inr.inj (Sum.inr.inj (Sum.inr.inj (Option.some.inj hstate)))
-    exact hf j hj (by rw [hb]; exact hv)
+    exact hcut j hj ⟨ret v, hv, v, rfl⟩
   have actionid (act : Action A.k Bool A.State) : Action.mapState id act = act := by
-    delta Action.mapState
-    simp only [Option.map_id]
+    change Action.mk (act.mapState id).inputTape (act.mapState id).workTapes
+      (act.mapState id).output (act.mapState id).state = act
+    have hw : (act.mapState id).workTapes = act.workTapes := by
+      funext i
+      exact Action.mapState_workTapes id act i
+    rw [Action.mapState_inputTape, hw, Action.mapState_output,
+      Action.mapState_state, Option.map_id]
     rfl
   have run := MultiTapeTM.runFrom_mapState_of_agreeOn A.tm clA5CompareTM.tm (Function.Embedding.refl _)
     (fun q => ∀ v, q ≠ ret v) (by
@@ -7266,16 +7287,33 @@ private lemma clA5Compare_compute (w : Fin 4 → List Bool) :
           | inr v => exact False.elim (hq v rfl))
     (A.tm.initCfg arg) t (by intro j hj q hq v heq; subst q; exact guard j hj v hq)
   have mapid (cfg : Cfg A.k Bool A.State arg) : cfg.mapState id = cfg := by
-    cases cfg
-    simp [Cfg.mapState]
+    exact Cfg.mapState_eq_of_fields cfg id cfg (congrFun Option.map_id cfg.state) rfl rfl rfl rfl
   change clA5CompareTM.tm.runFrom ((A.tm.initCfg arg).mapState id) t =
     (A.tm.runFrom (A.tm.initCfg arg) t).mapState id at run
   rw [mapid, hr, mapid] at run
-  have hi : A.tm.initCfg arg = clA5CompareTM.tm.initCfg arg := rfl
+  have hi : A.tm.initCfg arg = clA5CompareTM.tm.initCfg arg := by
+    rw [MultiTapeTM.initCfg_eq, MultiTapeTM.initCfg_eq]
+    rfl
   rw [hi] at run
   have finish : clA5CompareTM.tm.step result = {result with state := none, output := [b]} := by
+    have fields : result.state = some (ret b) ∧ result.output = [] := by
+      dsimp only [result, clPreparedCfg]
+      rw [clPlacedCfg_eq]
+      exact ⟨rfl, rfl⟩
+    rw [MultiTapeTM.step_of_some fields.1]
     change (Action.mk 0 (fun _ => (none, 0)) (some b) none).apply result = _
-    simp [Action.apply, show result.output = [] from rfl]
+    apply Cfg.ext
+    · rw [Action.apply_state]
+    · rw [Action.apply_inputPos, moveInputPos_zero]
+    · funext i
+      rw [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq,
+        Function.update_eq_self]
+    · funext i
+      rw [Action.apply_workTapePos]
+      change result.workTapePos i + (0 : ℤ) = result.workTapePos i
+      exact add_zero _
+    · rw [Action.apply_output, fields.2]
+      rfl
   have hb : b = decide (clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3)) := by
     apply Bool.eq_iff_iff.mpr
     simpa using clCmpVerdict_spec w
