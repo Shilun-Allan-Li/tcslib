@@ -1964,3 +1964,20 @@ round 5 evidence.
 
 The reviewed instances and the historical cutoff correction have
 source and matched-span receipts in `campaign/gates/129-input-readers/r5-evidence/`.
+
+
+## Gate 122 held Call and Clean fronts (ruled 2026-11-12)
+
+**Ruled (Seyoon, 2026-11-12): out of #242's scope, scheduled.** `Call.call_run`
+(`SpaceComplexity/Machines/Call.lean`) and `Clean.cleanTM_run` (`Machines/Clean.lean`) still
+read other files' definitions: `MultiTapeTM.step`, `compileTM`, and `SimRel`/`HaltRel` in Call;
+the visited sets, `markI`, `ccfg`, `Cfg.init` and `PB` in Clean. #242 does not change either file;
+its screen exposed them. They are **open rule-10 fronts, not acknowledged debt.** A later PR
+publishes the readers they need and repairs both proofs:
+- `SimRel`/`HaltRel` introduction and elimination beside their definitions in `Machines/Sim`;
+- `PB`, `markI` and the needed `ccfg` field equations beside their definitions in `Machines/CleanSweep`.
+
+That PR's public API goes to Seyoon first. The analysis is in
+`campaign/status/2026-11-08-overnight/audit-reviews/122/SITE-DISPOSITIONS.md` (rows 50 and 51).
+This ruling resolves gate 122's maintainer finding M1 for #242's scope; the five shared
+gate 121 step donors were repaired by #241.
