@@ -6,6 +6,7 @@ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Handler
 import TCSlib.Cryptography.Games.Bridges.QueryTree
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -106,8 +107,8 @@ private theorem fOuter_tape (r : Fin n → Bool) :
     padFin n (List.ofFn (padFin ((pkOut 0).eval n) (List.ofFn (f (padFin n (List.ofFn
       (padFin ((pkOut 0).eval n) (List.ofFn r)))))))) = f r := by
   have hn : (pkOut 0).eval n = n := by rw [pkOut_eq, PolyExpr.eval_var]
-  rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn,
-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn]
+  rw [ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn,
+    ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn]
 
 /-- **One composed call is a call of `eImpl` with the tapes in advance:** from the encoded state
 `pkState j o` with `j < q(n)`, the handler composed with `fOuter f` answers as `eImpl` with pad
@@ -151,11 +152,11 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
       have hn : (pkOut 0).eval n = n := by rw [pkOut_eq, PolyExpr.eval_var]
       have hx0 : padFin n (List.ofFn (padFin ((pkOut 0).eval n) (pairFstD (List.ofFn x)))) =
           padFin n (pairFstD (List.ofFn x)) := by
-        rw [GGMRed.ofFn_padFin_of_length (by rw [hwf'.1, hn])]
+        rw [ofFn_padFin_of_length (by rw [hwf'.1, hn])]
       rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq,
         pkHandler_impl_dec_open q atkBit b n z ω x j o hj.le hop,
         simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
-        hx0, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn]; exact hn.symm),
+        hx0, ofFn_padFin_of_length (by rw [List.length_ofFn]; exact hn.symm),
         decOpen_atkOf, decAns_eq]
       simp only [Bool.and_eq_true] at hop
       rw [if_pos (by simp only [Bool.and_eq_true]; exact ⟨hop.1, hwf⟩)]
@@ -294,7 +295,7 @@ theorem exists_prfReduction (A : NUPPT) (q : PolyExpr) (atkBit b : Bool) :
     intro ω
     have key : ∀ g : Fin 1 → Bool, (if g 0 = true then (1 : ℝ) else 0) =
         if (List.ofFn g).headD false = true then 1 else 0 := fun g => by
-      rw [AdaptiveCPA.headD_ofFn_one]
+      rw [headD_ofFn_one]
     have h2 : _ = B.toCompOn (bitCodec (fun _ : Fin 1 => PolyExpr.var.eval n)
         (fun _ => PolyExpr.var.eval n) ((pkHandler q atkBit b).outLen.eval n)) n
         (q.eval n * (pkHandler q atkBit b).perCall.eval n + (pkHandler q atkBit b).finCall.eval n)
@@ -321,7 +322,7 @@ theorem exists_prfReduction (A : NUPPT) (q : PolyExpr) (atkBit b : Bool) :
       expect_bind]
     simp only [expect_pure]
     refine congrArg _ (funext fun p => ?_)
-    rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, pkHandler_outLen])]
+    rw [ofFn_padFin_of_length (by rw [List.length_ofFn, pkHandler_outLen])]
   simp only [hrun]
   rw [expect_sample_equiv (pkSeedTapes q atkBit b n) (fun T => expect (simulate
       (eImpl (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) (ctP.eval n) n (atkOf atkBit)

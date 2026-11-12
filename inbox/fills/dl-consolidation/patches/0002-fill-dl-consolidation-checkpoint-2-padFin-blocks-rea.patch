@@ -1,0 +1,1544 @@
+From d4639a1d198a12be407062641d9170b5aa634842 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 12 Nov 2026 06:39:19 +0000
+Subject: [PATCH 2/2] fill dl-consolidation: checkpoint 2 (padFin/blocks
+ readers, BitLists: A, L)
+
+---
+ TCSlib/Cryptography/Asymptotic/Adversary.lean |  52 ++++++++-
+ .../Asymptotic/EnsemblesLemmas.lean           |   5 +
+ .../Asymptotic/HardCoreGLColl.lean            |   6 -
+ .../Encryption/PrivateKey/OracleFromPRF.lean  |  28 ++---
+ .../PrivateKey/OracleFromPRF/Collision.lean   |  29 +----
+ .../PrivateKey/OracleFromPRF/Handler.lean     |  55 +++------
+ .../PrivateKey/OracleFromPRF/Lazy.lean        |  16 +--
+ .../PrivateKey/OracleFromPRF/Reduction.lean   |  13 ++-
+ .../PrivateKey/OracleFromPRF/Transfer.lean    |  55 +++------
+ .../Encryption/PrivateKey/OracleSecurity.lean |  22 ++++
+ .../PublicKey/AdaptiveCPA/Games.lean          |  50 +--------
+ .../PublicKey/AdaptiveCPA/Handler.lean        |  50 +++------
+ .../PublicKey/AdaptiveCPA/Reduction.lean      |   5 +-
+ .../Encryption/PublicKey/BitwiseCPA.lean      |   2 +-
+ .../PublicKey/BitwiseCPA/Eager.lean           |   2 +-
+ .../PublicKey/BitwiseCPA/Planted.lean         |  21 +---
+ .../PublicKey/BitwiseCPA/QueryHandler.lean    |  23 +---
+ .../Encryption/PublicKey/ElGamal.lean         |  14 +--
+ .../OracleSecurity/RecordHandler.lean         |  10 +-
+ TCSlib/Cryptography/Foundations.lean          |   3 +
+ TCSlib/Cryptography/Foundations/BitLists.lean | 105 ++++++++++++++++++
+ TCSlib/Cryptography/Games/BitCodec.lean       |  29 +++++
+ .../Functions/Asymptotic/GGM/Run.lean         |   6 -
+ TCSlib/Cryptography/Pseudorandom/NextBit.lean |  14 +--
+ .../Cryptography/SecureComputation/Yao.lean   |  11 +-
+ .../ZeroKnowledge/CommitmentLemmas.lean       |   5 +-
+ .../GraphIsomorphism/EfficiencyRep.lean       |   7 +-
+ .../GraphIsomorphism/EfficiencyRepGI.lean     |   7 +-
+ 28 files changed, 328 insertions(+), 317 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Foundations/BitLists.lean
+
+diff --git a/TCSlib/Cryptography/Asymptotic/Adversary.lean b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+index da68fc408..4f1e84a21 100644
+--- a/TCSlib/Cryptography/Asymptotic/Adversary.lean
++++ b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+@@ -62,7 +62,11 @@ by `ifEq`).
+   equation and its full-length condition.
+ * `TCSlib.Cryptography.decodeFin_ofFn`, `TCSlib.Cryptography.padFin_ofFn` — decoding and
+   padding invert `List.ofFn`; `TCSlib.Cryptography.decodeFin_eq_some_iff` — decoding succeeds
+-  exactly on the encoding.
++  exactly on the encoding; `TCSlib.Cryptography.ofFn_padFin_of_length` — padding a string of the
++  right length keeps it.
++* `TCSlib.Cryptography.ofFn_cast`, `TCSlib.Cryptography.ofFn_arrowCongr_finCongr` — a bit vector
++  read across an equality of widths keeps its string.
++* `TCSlib.Cryptography.FunFamily.ofFn_blocks` — block `j` of a string is its `j`-th window.
+ * `TCSlib.Cryptography.invProbOpt_le_invProb`, `TCSlib.Cryptography.invProbOpt_some` — the
+   bridges to the concrete `invProb`.
+ * `TCSlib.Cryptography.invProbOpt_nonneg`, `TCSlib.Cryptography.invProbOpt_le_one` — bounds.
+@@ -153,6 +157,28 @@ theorem padFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : padFin ℓ (List.ofFn x
+   funext i
+   simp [padFin]
+ 
++/-- The encoding of `padFin L w` is `w` when `|w| = L`: `List.ofFn (padFin L w) = w`. -/
++theorem ofFn_padFin_of_length {L : ℕ} {w : List Bool} (hw : w.length = L) :
++    List.ofFn (padFin L w) = w := by
++  refine List.ext_getElem (by simp [hw]) fun j hj₁ hj₂ => ?_
++  simp [padFin_def, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj₂]
++
++/-! ### Bit vectors across equal widths -/
++
++/-- Reading a bit vector across an equality of widths keeps its string:
++`⟦cast h f⟧ = ⟦f⟧` when `a = b`. -/
++theorem ofFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
++    (f : Fin a → Bool) : List.ofFn (cast h f) = List.ofFn f := by
++  subst hab
++  rfl
++
++/-- Reading a vector at an equal width keeps its word:
++`⟦(arrowCongr (finCongr h) (refl Bool)) v⟧ = ⟦v⟧`. -/
++theorem ofFn_arrowCongr_finCongr {a b : ℕ} (h : a = b) (v : Fin a → Bool) :
++    List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) v) = List.ofFn v := by
++  subst h
++  rfl
++
+ /-! ### Blocks of a flat tuple -/
+ 
+ /-- A tuple of `q · ℓ` entries with values in an arbitrary type `X` as `q` consecutive blocks of
+@@ -187,6 +213,30 @@ theorem FunFamily.blocks_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Boo
+     (FunFamily.blocks q ℓ).symm t k = t k.divNat k.modNat :=
+   blocksEquivX_symm_apply q ℓ t k
+ 
++/-- **Block `j` is the `j`-th window of the string:**
++`⟦FunFamily.blocks q ℓ ω j⟧ = (⟦ω⟧.drop (j·ℓ)).take ℓ`.
++
++**Proof sketch.** Block `j` ends within the string, `j·ℓ + ℓ ≤ q·ℓ`, so both sides have `ℓ` bits.
++Position `k` of block `j` is position `finProdFinEquiv (j, k) = k + ℓ·j` of `ω`
++(`FunFamily.blocks_apply`), which is position `k` of the window. -/
++theorem FunFamily.ofFn_blocks (q ℓ : ℕ) (ω : Fin (q * ℓ) → Bool) (j : Fin q) :
++    List.ofFn (FunFamily.blocks q ℓ ω j) = ((List.ofFn ω).drop (j * ℓ)).take ℓ := by
++  have hle : (j : ℕ) * ℓ + ℓ ≤ q * ℓ := by
++    have := Nat.mul_le_mul_right ℓ (Nat.succ_le_of_lt j.isLt)
++    rw [Nat.succ_mul] at this
++    exact this
++  refine List.ext_getElem ?_ fun k h₁ h₂ => ?_
++  · simp only [List.length_ofFn, List.length_take, List.length_drop]
++    omega
++  · rw [List.getElem_ofFn, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
++    refine (FunFamily.blocks_apply q ℓ ω j ⟨k, _⟩).trans ?_
++    congr 1
++    refine Fin.ext ?_
++    rw [finProdFinEquiv_apply_val]
++    show k + ℓ * j = j * ℓ + k
++    rw [Nat.mul_comm]
++    omega
++
+ /-- `A(1^n, y)` as an inverter: output decoded as an `ℓ`-bit string, wrong length = failure
+ [PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`].
+ 
+diff --git a/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean b/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
+index 5a392edfb..710088b0d 100644
+--- a/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
+@@ -56,6 +56,8 @@ part of the public API of the campaign.
+   by exactly distributed polynomial-time samplers.
+ * `TCSlib.Cryptography.EnsembleLemmas.negligible_polyExpr_mul` — a syntactic polynomial
+   times a negligible function is negligible.
++* `TCSlib.Cryptography.EnsembleLemmas.ofFn_padFin_eq_padL` — the string of a padded vector is
++  `padL`.
+ 
+ ## References
+ 
+@@ -161,6 +163,9 @@ def padL (k : ℕ) (a : List Bool) : List Bool := List.ofFn (padFin k a)
+ /-- `padL` has exactly `k` bits. -/
+ theorem length_padL (k : ℕ) (a : List Bool) : (padL k a).length = k := List.length_ofFn
+ 
++/-- The string of a padded vector is `padL`: `⟦padFin k a⟧ = padL k a`. -/
++theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) : List.ofFn (padFin k a) = padL k a := rfl
++
+ /-- `padL k a` is the first `k` bits of `a ++ 0^k`. -/
+ theorem padL_eq (k : ℕ) (a : List Bool) : padL k a = (a ++ List.replicate k false).take k := by
+   refine List.ext_getElem ?_ fun i h₁ h₂ => ?_
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean b/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean
+index dd6cd5cd9..fa812959c 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean
+@@ -130,12 +130,6 @@ theorem padToLen_pairEncode_ofFn (a : List Bool) {L : ℕ} (ρ : Fin L → Bool)
+       Bool.xor_self]
+     rfl
+ 
+-/-- The encoding of `padFin L w` is `w` when `|w| = L`. -/
+-theorem ofFn_padFin_of_length {L : ℕ} {w : List Bool} (hw : w.length = L) :
+-    List.ofFn (padFin L w) = w := by
+-  refine List.ext_getElem (by simp [hw]) fun j hj₁ hj₂ => ?_
+-  simp [padFin_def, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj₂]
+-
+ /-- **The evaluator of the hard-core bit of the padded collection** `⟨padFin(encD_i x), r⟩` on
+ `⟨i, ⟨encD_i x, r⟩⟩` [PS10, Theorem 87.3, collection form, efficiency clause]. -/
+ theorem exists_glBitCollEvaluator (F : Collection) :
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+index 9a7531327..6dc397b00 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+@@ -11,6 +11,7 @@ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Transfer
+ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Lazy
+ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Collision
+ import Mathlib.Tactic.Simps.Basic
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -167,7 +168,7 @@ private theorem ofFn_prf_encryptAt (n : ℕ) (k m : Fin n → Bool)
+   rw [prfFixedScheme_enc, prfScheme_enc]
+   intro re hx
+   rw [runAt_prfEnc hE, hx, hFE, ctOf_eq]
+-  apply GGMRed.ofFn_padFin_of_length
++  apply ofFn_padFin_of_length
+   simp only [length_pairEncode, List.length_ofFn, List.length_zipWith, Nat.min_self,
+     PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+   omega
+@@ -193,11 +194,11 @@ private theorem ofFn_prf_decAnswer (n : ℕ) (hn : 0 < n) (k : Fin n → Bool) (
+       rw [h, List.length_nil] at this
+       omega
+     have hx : pairFstD w = List.ofFn (padFin n (pairFstD w)) :=
+-      (GGMRed.ofFn_padFin_of_length hw.1).symm
++      (ofFn_padFin_of_length hw.1).symm
+     have hv : List.zipWith xor (pairSndD w) (List.ofFn (F n k (padFin n (pairFstD w)))) =
+         List.ofFn (padFin n (List.zipWith xor (pairSndD w)
+           (List.ofFn (F n k (padFin n (pairFstD w)))))) :=
+-      (GGMRed.ofFn_padFin_of_length (by
++      (ofFn_padFin_of_length (by
+         rw [List.length_zipWith, List.length_ofFn, hw.2, Nat.min_self])).symm
+     conv_lhs => rw [eq_pairEncode_of_pairFstD_ne hne]
+     rw [runAt_prfDec hE _ n _ _ _ hw.1 hw.2, hx, hFE, ← hx, hv, decodeFin_ofFn,
+@@ -266,7 +267,7 @@ private theorem accept_prf_indGame (atkBit b : Bool) (A : NUPPT) (Q n : ℕ) (hn
+       Bool) => ProbComp.prob (.pure (res.1 0)) (· = true)) =
+       fun res => if (List.ofFn res.1).headD false = true then (1 : ℝ) else 0 := by
+     funext res
+-    rw [prob_pure, AdaptiveCPA.headD_ofFn_one]
++    rw [prob_pure, headD_ofFn_one]
+   rw [h1, expect_simulate_congr _ _ (fun i x s g => expect_indImpl_fImpl _ atkBit b n _ _ hct
+       (prfNonceEq F E hE hFE n) (fun m re => ofFn_prf_encryptAt F E hE hFE n _ m re)
+       (fun w rd => ofFn_prf_decAnswer F E hE hFE n hn _ w rd) i x s g),
+@@ -613,7 +614,7 @@ private theorem cca2Encrypt (n : ℕ) (k m : Fin n → Bool)
+     NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n r
+   refine ⟨x, hx.symm, ?_⟩
+   rw [runAt_prfEnc hE, ← hx, hFE, zipWith_xor_ofFn_add]
+-  apply GGMRed.ofFn_padFin_of_length
++  apply ofFn_padFin_of_length
+   simp only [length_pairEncode, List.length_ofFn, PolyExpr.eval_add,
+     PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+   omega
+@@ -650,7 +651,7 @@ private def cca2Alter {d : ℕ} (c : Fin d → Bool) : Fin d → Bool :=
+ /-- At positive width the modified ciphertext has exactly the flipped word. -/
+ private theorem cca2Alter_ofFn {d : ℕ} (hd : 0 < d) (c : Fin d → Bool) :
+     List.ofFn (cca2Alter c) = cca2FlipLast (List.ofFn c) := by
+-  apply GGMRed.ofFn_padFin_of_length
++  apply ofFn_padFin_of_length
+   rw [cca2FlipLast_length]
+   · exact List.length_ofFn
+   · intro he
+@@ -722,13 +723,6 @@ private theorem cca2Decrypt (n : ℕ) (k x v : Fin n → Bool)
+   rw [runAt_prfDec hE _ n _ _ _ List.length_ofFn List.length_ofFn, hFE, zipWith_xor_ofFn_add,
+     decodeFin_ofFn]
+ 
+-/-- Transporting a bit vector along a width equality does not change its word:
+-`List.ofFn (cast h f) = List.ofFn f` when `h` comes from `a = b`. -/
+-private theorem cca2OfFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
+-    (f : Fin a → Bool) : List.ofFn (cast h f) = List.ofFn f := by
+-  subst hab
+-  rfl
+-
+ /-- At `n > 0`, the valid answer `⟨1, b^n ⊕ e_{n-1}⟩` ends in `!b`. -/
+ private theorem cca2LastBit {n : ℕ} (hn : 0 < n) (b : Bool) :
+     (List.ofFn (Fin.cons (α := fun _ => Bool) true (cca2FlipBits (n := n) fun _ => b))).getLastD
+@@ -767,7 +761,7 @@ private theorem cca2Run (S : FixedLengthScheme) (n : ℕ) (hd : 0 < S.ctLen.eval
+     rw [MachineCodec.encodeLog_nil, cca2Adversary_run, if_pos rfl,
+       FixedLengthScheme.indCodec_decodeMove]
+     have hw : List.ofFn x = List.replicate n false ++ List.replicate n true := by
+-      rw [hx, cca2OfFn_cast (S.inLens_two n).symm, cca2Messages_ofFn]
++      rw [hx, ofFn_cast (S.inLens_two n).symm, cca2Messages_ofFn]
+     rw [← hw]
+     exact decodeBitMove_query (S.inLens n) (S.outLens n) 1 2 x
+   rw [NUPPT.toComp_eq, buildComp_succ_of_query (next := fun hist => (S.indCodec n).decodeMove
+@@ -787,8 +781,8 @@ private theorem cca2Run (S : FixedLengthScheme) (n : ℕ) (hd : 0 < S.ctLen.eval
+     simp only [MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
+       FixedLengthScheme.indCodec_encodeEntry, cca2Adversary_one,
+       FixedLengthScheme.indCodec_decodeMove]
+-    rw [cca2OfFn_cast (S.outLens_two n).symm, ← cca2Alter_ofFn hd,
+-      ← cca2OfFn_cast (S.inLens_one n).symm (S.indSpec_decDom n).symm]
++    rw [ofFn_cast (S.outLens_two n).symm, ← cca2Alter_ofFn hd,
++      ← ofFn_cast (S.inLens_one n).symm (S.indSpec_decDom n).symm]
+     exact decodeBitMove_query (S.inLens n) (S.outLens n) 1 1 _
+   rw [buildComp_succ_of_query (next := fun hist => (S.indCodec n).decodeMove
+     (cca2Adversary.runAt n ((S.indCodec n).encodeLog hist) r)) h2, simulate_query,
+@@ -818,7 +812,7 @@ private theorem cca2Run (S : FixedLengthScheme) (n : ℕ) (hd : 0 < S.ctLen.eval
+     simp only [List.singleton_append, MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
+       FixedLengthScheme.indCodec_encodeEntry, cca2Adversary_two,
+       FixedLengthScheme.indCodec_decodeMove]
+-    rw [cca2OfFn_cast (S.outLens_one n).symm, hlast, Bool.not_not]
++    rw [ofFn_cast (S.outLens_one n).symm, hlast, Bool.not_not]
+     have hb : [b] = List.ofFn (fun _ : Fin 1 => b) := by
+       rw [List.ofFn_const, List.replicate_one]
+     rw [hb]
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean
+index ce2715628..85f62194f 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Lazy
+ import TCSlib.Cryptography.Games.Hopping
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -46,24 +47,6 @@ namespace TCSlib.Cryptography.Composability.PRFGame
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
+ 
+-/-! ### Hitting a list with a uniform sample -/
+-
+-/-- A key with a value in an association list is one of its keys:
+-`(T.lookup x).isSome → x ∈ T.map Prod.fst`. -/
+-theorem mem_keys_of_lookup_isSome {α β : Type} [DecidableEq α] (T : List (α × β)) (x : α)
+-    (h : (T.lookup x).isSome = true) : x ∈ T.map Prod.fst := by
+-  induction T with
+-  | nil => simp at h
+-  | cons p T ih =>
+-    obtain ⟨k, v⟩ := p
+-    rw [List.map_cons]
+-    by_cases hx : x = k
+-    · rw [hx]
+-      exact List.mem_cons_self
+-    · have hb : (x == k) = false := beq_eq_false_iff_ne.mpr hx
+-      simp only [List.lookup_cons, hb] at h
+-      exact List.mem_cons_of_mem _ (ih h)
+-
+ /-! ### The state readings -/
+ 
+ section Records
+@@ -112,14 +95,6 @@ theorem addPt_eq_of (b b' : Bool) (st : LState n d) (x y : Fin n → Bool) (hit
+     addPt b st x y hit = addPt b' st x y hit := by
+   rw [addPt_eq, addPt_eq, isSome_look_eq b b']
+ 
+-/-- Exclusive-or with a fixed vector `v`, as a permutation of `{0,1}ⁿ`. -/
+-def xorPerm (v : Fin n → Bool) : Equiv.Perm (Fin n → Bool) :=
+-  Function.Involutive.toPerm (fun y i => xor (y i) (v i)) fun y => funext fun i => by
+-    simp
+-
+-/-- `xorPerm v y = y ⊕ v`. -/
+-theorem xorPerm_apply (v y : Fin n → Bool) : xorPerm v y = fun i => xor (y i) (v i) := rfl
+-
+ /-- **The change of variables at the challenge:** with `|m₀| = |m₁| = n`,
+ `⟨r, m₀ ⊕ y⟩ = ⟨r, m₁ ⊕ (y ⊕ m₀ ⊕ m₁)⟩`.
+ 
+@@ -131,7 +106,7 @@ theorem ctOf_xorPerm (r : Fin n → Bool) {m₀ m₁ : List Bool} (h₀ : m₀.l
+   rw [ctOf_eq, ctOf_eq]
+   congr 1
+   have hv : List.ofFn (padFin n (List.zipWith xor m₀ m₁)) = List.zipWith xor m₀ m₁ :=
+-    GGMRed.ofFn_padFin_of_length (by simp [h₀, h₁])
++    ofFn_padFin_of_length (by simp [h₀, h₁])
+   have hY : ∀ v : Fin n → Bool,
+       List.ofFn (xorPerm v y) = List.zipWith xor (List.ofFn y) (List.ofFn v) := fun v => by
+     apply List.ext_getElem
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean
+index 52f34aac3..a0cd1acfb 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean
+@@ -151,36 +151,16 @@ theorem pkTapes_apply (n : ℕ) (ω : Fin ((q.mul .var).eval n) → Bool) (j : F
+ 
+ /-- **Tape `j` is the `j`-th block of the seed:** `⟦pkTapes q n ω j⟧ = (⟦ω⟧.drop (j·n)).take n`.
+ 
+-**Proof sketch.** Position `k` of block `j` is position `j·n + k` of `ω` (`blocks_apply`,
+-`finProdFinEquiv_apply_val`), which is position `k` of the dropped and truncated list. -/
++**Proof sketch.** The width cast keeps the string (`ofFn_arrowCongr_finCongr`), and block `j` of
++the seed is its `j`-th window (`EnsembleLemmas.blocks_eq`, `FunFamily.ofFn_blocks`). -/
+ theorem ofFn_pkTapes (n : ℕ) (ω : Fin ((q.mul .var).eval n) → Bool) (j : Fin (q.eval n)) :
+     List.ofFn (pkTapes q n ω j) = ((List.ofFn ω).drop (j * n)).take n := by
+-  have hlen : (q.mul .var).eval n = q.eval n * n := by rw [PolyExpr.eval_mul, PolyExpr.eval_var]
+-  have hj := j.isLt
+-  have hle : (j : ℕ) * n + n ≤ q.eval n * n := by
+-    have := Nat.mul_le_mul_right n (Nat.succ_le_of_lt hj)
+-    rw [Nat.succ_mul] at this
+-    exact this
+-  refine List.ext_getElem ?_ fun k h₁ h₂ => ?_
+-  · simp only [List.length_ofFn, List.length_take, List.length_drop]
+-    omega
+-  · have hpt : ∀ k' : Fin n, pkTapes q n ω j k' =
+-        ω (Fin.cast hlen.symm (finProdFinEquiv (j, k'))) := fun k' => pkTapes_apply q n ω j k'
+-    simp only [List.getElem_ofFn, List.getElem_take, List.getElem_drop, hpt]
+-    congr 1
+-    refine Fin.ext ?_
+-    rw [Fin.coe_cast, finProdFinEquiv_apply_val]
+-    show k + n * j = j * n + k
+-    rw [Nat.mul_comm]
+-    omega
++  unfold pkTapes
++  rw [Equiv.trans_apply, EnsembleLemmas.blocks_eq, FunFamily.ofFn_blocks,
++    ofFn_arrowCongr_finCongr]
+ 
+ /-! ### Strings -/
+ 
+-/-- `⟦padFin k a⟧ = padL k a`. -/
+-private theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) :
+-    List.ofFn (padFin k a) = EnsembleLemmas.padL k a := by
+-  rw [EnsembleLemmas.padL_eq, ofFn_padFin_eq_take]
+-
+ /-- The fields of an encoded state with `j ≤ q(n)`: the count `1^j`, the flag and the record. -/
+ private theorem fields_pkState (n j : ℕ) (o : Option (Fin (ctP.eval n) → Bool))
+     (hj : j ≤ q.eval n) :
+@@ -429,7 +409,7 @@ theorem pkHandler_finish (atkBit b : Bool) (n : ℕ) (z : List Bool)
+     pairFstD_pairEncode]
+   have hw : List.ofFn (padFin ((pkHandler q atkBit b).outLen.eval n) (List.ofFn a)) =
+       List.ofFn a :=
+-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, pkHandler_outLen])
++    ofFn_padFin_of_length (by rw [List.length_ofFn, pkHandler_outLen])
+   exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
+     (decodeBitMove_ret _ _ _ _)
+ 
+@@ -527,7 +507,8 @@ private theorem rNew_fields {i : Fin 3} (x L : List Bool) (j : ℕ)
+     rNew q (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (pkState q n j o)) i x L)
+         (recBits n o') = List.ofFn (pkState q n (j + 1) o') := by
+   obtain ⟨hU, -, -, -, -, -, hCnt, -, -⟩ := fields_input q atkBit b n z ω (i := i) x L j o hj
+-  rw [rNew, hU, hCnt, List.length_replicate, pkState_eq, ofFn_padFin_eq_padL, List.replicate_succ]
++  rw [rNew, hU, hCnt, List.length_replicate, pkState_eq, EnsembleLemmas.ofFn_padFin_eq_padL,
++    List.replicate_succ]
+ 
+ /-- The flag and the record rebuild the record bits: `rFlag :: rRec = recBits o`. -/
+ private theorem recBits_fields (o : Option (Fin (ctP.eval n) → Bool)) :
+@@ -571,7 +552,7 @@ theorem pkHandler_impl_enc (x : Fin ((pkDin 0).eval n) → Bool) (j : ℕ)
+   have hT : List.ofFn (padFin ((pkOut 0).eval n)
+       (List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩))) =
+       List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩) :=
+-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
++    ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
+   refine impl_of_query q atkBit b n z ω x _ _ _ _ ?_ ?_
+   · obtain ⟨-, -, -, hI, -, hL, -, -, -⟩ :=
+       fields_input q atkBit b n z ω (i := 0) (List.ofFn x) [] j o hj.le
+@@ -584,11 +565,11 @@ theorem pkHandler_impl_enc (x : Fin ((pkDin 0).eval n) → Bool) (j : ℕ)
+           (List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩)))) (List.ofFn y))) []) j o hj.le
+     have hY := rY_one _ _ _ hL
+     have hy : List.ofFn (padFin n (List.ofFn y)) = List.ofFn y :=
+-      GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
++      ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
+     have hct : List.ofFn (padFin ((pkDout 0).eval n) (ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩)
+         (List.ofFn x) (padFin n (List.ofFn y)))) =
+         ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩) (List.ofFn x) (padFin n (List.ofFn y)) :=
+-      GGMRed.ofFn_padFin_of_length (by
++      ofFn_padFin_of_length (by
+         rw [length_ctOf _ (by rw [List.length_ofFn, pkDin_zero, PolyExpr.eval_var]), pkDout_zero,
+           ctP_eval])
+     rw [pkRun, hI, replicate_zero', List.headD_nil, if_neg Bool.false_ne_true, hL, log_ne_nil,
+@@ -616,7 +597,7 @@ theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
+     exact hop.2
+   rw [decWF_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq] at hwf
+   have hx0 : List.ofFn (padFin ((pkOut 0).eval n) (pairFstD (List.ofFn x))) =
+-      pairFstD (List.ofFn x) := GGMRed.ofFn_padFin_of_length (by rw [hwf.1, hn])
++      pairFstD (List.ofFn x) := ofFn_padFin_of_length (by rw [hwf.1, hn])
+   have hc : ((1 : Fin 3) : ℕ) = 1 := rfl
+   refine impl_of_query q atkBit b n z ω x _ _ _ _ ?_ ?_
+   · obtain ⟨hU, -, -, hI, hX, hL, -, hFlag, -⟩ :=
+@@ -641,7 +622,7 @@ theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
+     have hans : List.ofFn (padFin ((pkDout 1).eval n)
+         (true :: List.zipWith xor (pairSndD (List.ofFn x)) (List.ofFn y))) =
+         true :: List.zipWith xor (pairSndD (List.ofFn x)) (List.ofFn y) :=
+-      GGMRed.ofFn_padFin_of_length (by
++      ofFn_padFin_of_length (by
+         rw [List.length_cons, List.length_zipWith, List.length_ofFn, hwf.2, hn, Nat.min_self,
+           pkDout_one, PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const])
+     rw [pkRun, hI, replicate_one, hFlag, hWF, hop, hL, log_ne_nil, if_neg Bool.false_ne_true,
+@@ -676,7 +657,7 @@ theorem pkHandler_impl_challenge_some (x : Fin ((pkDin 2).eval n) → Bool) (j :
+   obtain ⟨-, -, hS, hI, -, -, -, hFlag, hRec⟩ :=
+     fields_input q atkBit b n z ω (i := 2) (List.ofFn x) [] j (some c) hj
+   have hc : List.ofFn (padFin ((pkDout 2).eval n) (List.ofFn c)) = List.ofFn c :=
+-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, pkDout_two])
++    ofFn_padFin_of_length (by rw [List.length_ofFn, pkDout_two])
+   rw [pkRun, hI, replicate_two, hFlag, hRec, hS, hc]
+   rfl
+ 
+@@ -698,7 +679,7 @@ theorem pkHandler_impl_challenge_none (x : Fin ((pkDin 2).eval n) → Bool) (j :
+   have hT : List.ofFn (padFin ((pkOut 0).eval n)
+       (List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩))) =
+       List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩) :=
+-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
++    ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
+   have hmsg : (AdaptiveCPA.msgOf n b (List.ofFn x)).length = n := by
+     have hx : (List.ofFn x).length = n + n := by
+       rw [List.length_ofFn, pkDin_two, PolyExpr.eval_add, PolyExpr.eval_var]
+@@ -717,7 +698,7 @@ theorem pkHandler_impl_challenge_none (x : Fin ((pkDin 2).eval n) → Bool) (j :
+           (List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩)))) (List.ofFn y))) []) j none hj.le
+     have hY := rY_one _ _ _ hL
+     have hy : List.ofFn (padFin n (List.ofFn y)) = List.ofFn y :=
+-      GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
++      ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
+     have hlen : (ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩) (AdaptiveCPA.msgOf n b (List.ofFn x))
+         (padFin n (List.ofFn y))).length = ctP.eval n := by
+       rw [length_ctOf _ hmsg, ctP_eval]
+@@ -725,12 +706,12 @@ theorem pkHandler_impl_challenge_none (x : Fin ((pkDin 2).eval n) → Bool) (j :
+         (AdaptiveCPA.msgOf n b (List.ofFn x)) (padFin n (List.ofFn y)))) =
+         ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩) (AdaptiveCPA.msgOf n b (List.ofFn x))
+           (padFin n (List.ofFn y)) :=
+-      GGMRed.ofFn_padFin_of_length (by rw [hlen, pkDout_two])
++      ofFn_padFin_of_length (by rw [hlen, pkDout_two])
+     have hrec : true :: ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩)
+         (AdaptiveCPA.msgOf n b (List.ofFn x)) (padFin n (List.ofFn y)) =
+         recBits n (some (padFin (ctP.eval n) (ctOf (pkSeedTapes q atkBit b n ω ⟨j, hj⟩)
+           (AdaptiveCPA.msgOf n b (List.ofFn x)) (padFin n (List.ofFn y))))) := by
+-      rw [recBits_some, GGMRed.ofFn_padFin_of_length hlen]
++      rw [recBits_some, ofFn_padFin_of_length hlen]
+     have hMsg : rMsg b (InteractiveHandler.input n z (List.ofFn ω)
+         (List.ofFn (pkState q n j none)) (2 : Fin 3) (List.ofFn x)
+         (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((pkOut 0).eval n)
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
+index e3182e061..9dcc1fbfe 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Games
+ import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Eager
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -224,26 +225,17 @@ section Records
+ 
+ variable {n d : ℕ}
+ 
+-/-- Exclusive-or with the same list twice cancels: `(a ⊕ c) ⊕ a = c` for `|a| = |c|`. -/
+-theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
+-    List.zipWith xor (List.zipWith xor a c) a = c := by
+-  apply List.ext_getElem
+-  · simp [h]
+-  · intro i h₁ h₂
+-    simp only [List.getElem_zipWith]
+-    cases a[i] <;> cases c[i] <;> rfl
+-
+ /-- The record of a ciphertext `⟨r, m ⊕ y⟩` (with `|m| = n` and `d = 3n + 2`) has nonce `r`. -/
+ theorem rStar_ctOf (hd : d = 3 * n + 2) (r : Fin n → Bool) {m : List Bool} (hm : m.length = n)
+     (y : Fin n → Bool) : rStar (padFin d (ctOf r m y)) = r := by
+-  rw [rStar_eq, GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
++  rw [rStar_eq, ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
+     pairFstD_pairEncode, padFin_ofFn]
+ 
+ /-- The record of a challenge ciphertext `⟨r, m_b ⊕ y⟩` has pad `y`. -/
+ theorem padAt_ctOf (hd : d = 3 * n + 2) (b : Bool) (r : Fin n → Bool) (ml : List Bool)
+     (hm : (AdaptiveCPA.msgOf n b ml).length = n) (y : Fin n → Bool) :
+     padAt b ml (padFin d (ctOf r (AdaptiveCPA.msgOf n b ml) y)) = y := by
+-  rw [padAt_eq, GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
++  rw [padAt_eq, ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
+     pairSndD_pairEncode, zipWith_xor_cancel_left (by rw [hm, List.length_ofFn]), padFin_ofFn]
+ 
+ /-- The flag does not change the recorded values: `look b (st.1, st.2.1, bd) = look b st`. -/
+@@ -450,7 +442,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
+           cases b <;> simp [this]
+         have hpad : ∀ r y, List.ofFn (padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm)) y)) =
+             ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm)) y := fun r y =>
+-          GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd])
++          ofFn_padFin_of_length (by rw [length_ctOf r hm, hd])
+         simp only [simulate_query, Option.map_none, fImpl_challenge_none, lazyImpl_challenge_none,
+           OracleComp.bind_assoc, expect_bind, OracleComp.pure_bind, hpad]
+         rw [expect_sample_comm]
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean
+index 7f4403367..a56ef4068 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean
+@@ -6,6 +6,7 @@ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Handler
+ import TCSlib.Cryptography.Games.Bridges.QueryTree
+ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -106,8 +107,8 @@ private theorem fOuter_tape (r : Fin n → Bool) :
+     padFin n (List.ofFn (padFin ((pkOut 0).eval n) (List.ofFn (f (padFin n (List.ofFn
+       (padFin ((pkOut 0).eval n) (List.ofFn r)))))))) = f r := by
+   have hn : (pkOut 0).eval n = n := by rw [pkOut_eq, PolyExpr.eval_var]
+-  rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn,
+-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn]
++  rw [ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn,
++    ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn]
+ 
+ /-- **One composed call is a call of `eImpl` with the tapes in advance:** from the encoded state
+ `pkState j o` with `j < q(n)`, the handler composed with `fOuter f` answers as `eImpl` with pad
+@@ -151,11 +152,11 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
+       have hn : (pkOut 0).eval n = n := by rw [pkOut_eq, PolyExpr.eval_var]
+       have hx0 : padFin n (List.ofFn (padFin ((pkOut 0).eval n) (pairFstD (List.ofFn x)))) =
+           padFin n (pairFstD (List.ofFn x)) := by
+-        rw [GGMRed.ofFn_padFin_of_length (by rw [hwf'.1, hn])]
++        rw [ofFn_padFin_of_length (by rw [hwf'.1, hn])]
+       rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq,
+         pkHandler_impl_dec_open q atkBit b n z ω x j o hj.le hop,
+         simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
+-        hx0, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn]; exact hn.symm),
++        hx0, ofFn_padFin_of_length (by rw [List.length_ofFn]; exact hn.symm),
+         decOpen_atkOf, decAns_eq]
+       simp only [Bool.and_eq_true] at hop
+       rw [if_pos (by simp only [Bool.and_eq_true]; exact ⟨hop.1, hwf⟩)]
+@@ -294,7 +295,7 @@ theorem exists_prfReduction (A : NUPPT) (q : PolyExpr) (atkBit b : Bool) :
+     intro ω
+     have key : ∀ g : Fin 1 → Bool, (if g 0 = true then (1 : ℝ) else 0) =
+         if (List.ofFn g).headD false = true then 1 else 0 := fun g => by
+-      rw [AdaptiveCPA.headD_ofFn_one]
++      rw [headD_ofFn_one]
+     have h2 : _ = B.toCompOn (bitCodec (fun _ : Fin 1 => PolyExpr.var.eval n)
+         (fun _ => PolyExpr.var.eval n) ((pkHandler q atkBit b).outLen.eval n)) n
+         (q.eval n * (pkHandler q atkBit b).perCall.eval n + (pkHandler q atkBit b).finCall.eval n)
+@@ -321,7 +322,7 @@ theorem exists_prfReduction (A : NUPPT) (q : PolyExpr) (atkBit b : Bool) :
+       expect_bind]
+     simp only [expect_pure]
+     refine congrArg _ (funext fun p => ?_)
+-    rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, pkHandler_outLen])]
++    rw [ofFn_padFin_of_length (by rw [List.length_ofFn, pkHandler_outLen])]
+   simp only [hrun]
+   rw [expect_sample_equiv (pkSeedTapes q atkBit b n) (fun T => expect (simulate
+       (eImpl (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) (ctP.eval n) n (atkOf atkBit)
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean
+index f98f82394..d29d71c84 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean
+@@ -22,8 +22,6 @@ equal lengths (`expect_fImpl_transport`).
+ 
+ * `PRFGame.expect_indImpl_fImpl`: one call of `IND_b` has the law of `fImpl`.
+ * `PRFGame.indCodec_eq_bitCodec`, `PRFGame.expect_fImpl_transport`.
+-* `PRFGame.padFin_nil`, `padFin_replicate_false`, `ofFn_arrowCongr_finCongr`:
+-  vector readings.
+ 
+ ## References
+ 
+@@ -35,23 +33,6 @@ namespace TCSlib.Cryptography.Composability.PRFGame
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
+ 
+-/-- Reading a vector at an equal width keeps its word:
+-`⟦(arrowCongr (finCongr h) (refl Bool)) v⟧ = ⟦v⟧`. -/
+-theorem ofFn_arrowCongr_finCongr {a b : ℕ} (h : a = b) (v : Fin a → Bool) :
+-    List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) v) = List.ofFn v := by
+-  subst h
+-  rfl
+-
+-
+-/-- An all-`false` list reads as the all-`false` vector at every width:
+-`padFin d (List.replicate m false) = zeroBits d`. -/
+-theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) = zeroBits d := by
+-  rw [← ofFn_zeroBits, AdaptiveCPA.padFin_ofFn_zeroBits]
+-
+-/-- The empty list reads as the all-`false` vector: `padFin d [] = zeroBits d`. -/
+-theorem padFin_nil (d : ℕ) : padFin d [] = zeroBits d := padFin_replicate_false d 0
+-
+-
+ /-- **One call of `IND_b` with the key `key` has the law of `fImpl` with the pad function `fk`**
+ (CPA or CCA1), for every function `g` of the answer and the new state, for a scheme `S` whose
+ encryption with `key` is `ctOf` with the nonce `ν re` of a bijection `ν` (`henc`), whose
+@@ -88,20 +69,20 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+     refine congrArg _ (funext fun re => ?_)
+     rw [expect_pure, expect_pure]
+     have hm : List.ofFn (cast (S.indSpec_encDom n) m) = List.ofFn m :=
+-      AdaptiveCPA.ofFn_cast (S.inLens_zero n) _ m
++      ofFn_cast (S.inLens_zero n) _ m
+     have hm' : cast (S.indSpec_encDom n) m = padFin n (List.ofFn m) :=
+-      List.ofFn_injective (by rw [hm, GGMRed.ofFn_padFin_of_length (by
++      List.ofFn_injective (by rw [hm, ofFn_padFin_of_length (by
+         rw [List.length_ofFn, S.inLens_zero])])
+     congr 2
+     refine List.ofFn_injective ?_
+-    rw [AdaptiveCPA.ofFn_cast (S.outLens_zero n).symm _ _, hm', henc,
+-      GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, S.inLens_zero]),
+-      GGMRed.ofFn_padFin_of_length (by
++    rw [ofFn_cast (S.outLens_zero n).symm _ _, hm', henc,
++      ofFn_padFin_of_length (by rw [List.length_ofFn, S.inLens_zero]),
++      ofFn_padFin_of_length (by
+         rw [hlenCt _ (by rw [List.length_ofFn, S.inLens_zero]), S.outLens_zero])]
+   | 1, c =>
+     rw [S.indImpl_dec_onSpec, fImpl_dec, decOpen_atkOf]
+     have hc : List.ofFn (cast (S.indSpec_decDom n) c) = List.ofFn c :=
+-      AdaptiveCPA.ofFn_cast (S.inLens_one n) _ c
++      ofFn_cast (S.inLens_one n) _ c
+     by_cases hop : (atkBit && !s.isSome) = true
+     · have hs : s = none := by
+         cases s with
+@@ -113,11 +94,11 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+       rw [expect_pure, expect_pure]
+       congr 2
+       refine List.ofFn_injective ?_
+-      rw [AdaptiveCPA.ofFn_cast (S.outLens_one n).symm _ _, hc, hdec, decAns_eq, hop, Bool.true_and]
++      rw [ofFn_cast (S.outLens_one n).symm _ _, hc, hdec, decAns_eq, hop, Bool.true_and]
+       by_cases hw : decWF n (List.ofFn c) = true
+       · rw [if_pos hw, if_pos hw]
+         rw [decWF_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq] at hw
+-        rw [GGMRed.ofFn_padFin_of_length (by
++        rw [ofFn_padFin_of_length (by
+           rw [List.length_cons, List.length_zipWith, List.length_ofFn, hw.2, Nat.min_self,
+             S.outLens_one])]
+       · rw [if_neg hw, if_neg hw, padFin_nil, ofFn_zeroBits, S.outLens_one]
+@@ -126,7 +107,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+         Bool.false_and, if_neg Bool.false_ne_true, expect_pure, expect_pure, padFin_nil]
+   | 2, mm =>
+     have hmm : List.ofFn (cast (S.indSpec_challengeDom n) mm) = List.ofFn mm :=
+-      AdaptiveCPA.ofFn_cast (S.inLens_two n) _ mm
++      ofFn_cast (S.inLens_two n) _ mm
+     have hmsg : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n := by
+       have : (List.ofFn mm).length = n + n := by rw [List.length_ofFn, S.inLens_two]
+       rw [AdaptiveCPA.msgOf_eq]
+@@ -136,17 +117,17 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+         (cast (S.indSpec_challengeDom n) mm)).1) =
+         padFin n (AdaptiveCPA.msgOf n b (List.ofFn mm)) := by
+       refine List.ofFn_injective ?_
+-      rw [GGMRed.ofFn_padFin_of_length hmsg, AdaptiveCPA.msgOf_eq, ← hmm]
++      rw [ofFn_padFin_of_length hmsg, AdaptiveCPA.msgOf_eq, ← hmm]
+       cases b
+-      · exact AdaptiveCPA.ofFn_splitHalf_fst _
+-      · exact AdaptiveCPA.ofFn_splitHalf_snd _
++      · exact FixedLengthScheme.ofFn_splitHalf_fst _
++      · exact FixedLengthScheme.ofFn_splitHalf_snd _
+     cases s with
+     | some c =>
+       rw [S.indImpl_challenge_repeat_onSpec, fImpl_challenge_some, expect_pure, expect_pure]
+       congr 2
+       refine List.ofFn_injective ?_
+-      rw [AdaptiveCPA.ofFn_cast (S.outLens_two n).symm _ _,
+-        GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, S.outLens_two])]
++      rw [ofFn_cast (S.outLens_two n).symm _ _,
++        ofFn_padFin_of_length (by rw [List.length_ofFn, S.outLens_two])]
+     | none =>
+       rw [S.indImpl_challenge_none_onSpec, fImpl_challenge_none, expect_bind, expect_bind,
+         ← expect_sample_equiv ν]
+@@ -156,14 +137,14 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
+           (cast (S.indSpec_challengeDom n) mm)).2 else (FixedLengthScheme.splitHalf
+           (cast (S.indSpec_challengeDom n) mm)).1) re) =
+           ctOf (ν re) (AdaptiveCPA.msgOf n b (List.ofFn mm)) (fk (ν re)) := by
+-        rw [hsel, henc, GGMRed.ofFn_padFin_of_length hmsg]
++        rw [hsel, henc, ofFn_padFin_of_length hmsg]
+       congr 2
+       · refine List.ofFn_injective ?_
+-        rw [AdaptiveCPA.ofFn_cast (S.outLens_two n).symm _ _, henc',
+-          GGMRed.ofFn_padFin_of_length (by rw [hlenCt _ hmsg, S.outLens_two])]
++        rw [ofFn_cast (S.outLens_two n).symm _ _, henc',
++          ofFn_padFin_of_length (by rw [hlenCt _ hmsg, S.outLens_two])]
+       · congr 1
+         refine List.ofFn_injective ?_
+-        rw [henc', GGMRed.ofFn_padFin_of_length (hlenCt _ hmsg _)]
++        rw [henc', ofFn_padFin_of_length (hlenCt _ hmsg _)]
+ 
+ 
+ /-- **The game's codec is the bit codec of its lengths:**
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean
+index db45c238d..b49280656 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean
+@@ -55,6 +55,8 @@ never (CPA), before the challenge only (CCA1), or always, except on `c` itself (
+ * `indImpl_dec_cpa`, `indImpl_dec_cca2_challenge`, `indImpl_challenge_repeat`: sanity checks of
+   the oracles (CPA's `Dec` is closed; CCA2's `Dec` refuses the challenge; a challenge is asked
+   once).
++* `FixedLengthScheme.ofFn_splitHalf_fst`, `ofFn_splitHalf_snd`: the strings of the two halves of a
++  challenge query.
+ 
+ The theorems on these notions (Thms 168.2 and 170.4, Claim 169.a) are stated in the statement
+ phase of prong C, in their own modules.
+@@ -178,6 +180,26 @@ theorem splitHalf_fst {n : ℕ} (x : Fin (n + n) → Bool) :
+ theorem splitHalf_snd {n : ℕ} (x : Fin (n + n) → Bool) :
+     (splitHalf x).2 = fun j => x (Fin.natAdd n j) := rfl
+ 
++/-- The first half of a `2m`-bit query is its first `m` bits:
++`⟦(splitHalf y).1⟧ = ⟦y⟧.take m`. -/
++theorem ofFn_splitHalf_fst {m : ℕ} (y : Fin (m + m) → Bool) :
++    List.ofFn (splitHalf y).1 = (List.ofFn y).take m := by
++  rw [splitHalf_fst]
++  refine List.ext_getElem (by simp only [List.length_ofFn, List.length_take]; omega)
++    fun i h₁ h₂ => ?_
++  rw [List.getElem_ofFn, List.getElem_take, List.getElem_ofFn]
++  rfl
++
++/-- The second half of a `2m`-bit query is its last `m` bits:
++`⟦(splitHalf y).2⟧ = ⟦y⟧.drop m`. -/
++theorem ofFn_splitHalf_snd {m : ℕ} (y : Fin (m + m) → Bool) :
++    List.ofFn (splitHalf y).2 = (List.ofFn y).drop m := by
++  rw [splitHalf_snd]
++  refine List.ext_getElem (by simp only [List.length_ofFn, List.length_drop]; omega)
++    fun i h₁ h₂ => ?_
++  rw [List.getElem_ofFn, List.getElem_drop, List.getElem_ofFn]
++  rfl
++
+ /-- **The oracles of `IND_b`** at parameter `n`, for the key `k`; the state is the challenge,
+ once asked.
+ - `Enc` answers `Enc_k(m)` with fresh coins.
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean
+index 233dc8491..edc13606e 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean
+@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Hybrid
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Handler
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -86,48 +87,6 @@ theorem acDout_eval (n : ℕ) : (fun i => (acDout S i).eval n) = S.outLens n :=
+   | 0 => rw [acDout_zero, PolyExpr.eval_add, PolyExpr.eval_const, S.outLens_zero]
+   | 1 => rw [acDout_one, S.outLens_one]
+ 
+-/-! ### Strings of the oracles -/
+-
+-/-- Reading a bit vector across an equality of widths keeps its string:
+-`⟦cast h f⟧ = ⟦f⟧` when `a = b`. -/
+-theorem ofFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
+-    (f : Fin a → Bool) : List.ofFn (cast h f) = List.ofFn f := by
+-  subst hab
+-  rfl
+-
+-/-- The first half of a `2m`-bit query is its first `m` bits:
+-`⟦(splitHalf y).1⟧ = ⟦y⟧.take m`. -/
+-theorem ofFn_splitHalf_fst {m : ℕ} (y : Fin (m + m) → Bool) :
+-    List.ofFn (FixedLengthScheme.splitHalf y).1 = (List.ofFn y).take m := by
+-  rw [FixedLengthScheme.splitHalf_fst]
+-  refine List.ext_getElem (by simp only [List.length_ofFn, List.length_take]; omega)
+-    fun i h₁ h₂ => ?_
+-  rw [List.getElem_ofFn, List.getElem_take, List.getElem_ofFn]
+-  rfl
+-
+-/-- The second half of a `2m`-bit query is its last `m` bits:
+-`⟦(splitHalf y).2⟧ = ⟦y⟧.drop m`. -/
+-theorem ofFn_splitHalf_snd {m : ℕ} (y : Fin (m + m) → Bool) :
+-    List.ofFn (FixedLengthScheme.splitHalf y).2 = (List.ofFn y).drop m := by
+-  rw [FixedLengthScheme.splitHalf_snd]
+-  refine List.ext_getElem (by simp only [List.length_ofFn, List.length_drop]; omega)
+-    fun i h₁ h₂ => ?_
+-  rw [List.getElem_ofFn, List.getElem_drop, List.getElem_ofFn]
+-  rfl
+-
+-/-- The all-`false` answer, read at any width, is all-`false`:
+-`padFin d ⟦zeroBits m⟧ = zeroBits d`. -/
+-theorem padFin_ofFn_zeroBits (d m : ℕ) : padFin d (List.ofFn (zeroBits m)) = zeroBits d := by
+-  funext i
+-  rw [padFin_apply, ofFn_zeroBits, zeroBits_apply]
+-  by_cases hi : (i : ℕ) < m
+-  · rw [List.getD_eq_getElem _ _ (by rw [List.length_replicate]; exact hi), List.getElem_replicate]
+-  · rw [List.getD_eq_default _ _ (by rw [List.length_replicate]; omega)]
+-
+-/-- The bit of a one-bit output is the head of its string: `⟦f⟧.headD false = f 0`. -/
+-theorem headD_ofFn_one (f : Fin 1 → Bool) : (List.ofFn f).headD false = f 0 := by
+-  rw [List.ofFn_succ, List.headD_cons]
+-
+ /-! ### The hybrid games -/
+ 
+ /-- **The encryption of the selected message:** `E β mm r = padFin (Enc_pk(m_β); r)` for the
+@@ -191,11 +150,12 @@ theorem ofFn_select (n : ℕ) (x : Fin ((acDin S 1).eval n) → Bool) (b : Bool)
+       msgOf (S.msgLen.eval n) b (List.ofFn x) := by
+   have hx : List.ofFn (cast (S.indSpec_challengeDom n) (padFin (S.inLens n 1) (List.ofFn x))) =
+       List.ofFn x := by
+-    rw [ofFn_cast (S.inLens_one n), GGMRed.ofFn_padFin_of_length (by
++    rw [ofFn_cast (S.inLens_one n), ofFn_padFin_of_length (by
+       rw [List.length_ofFn, acDin_one, PolyExpr.eval_add, S.inLens_one])]
+   cases b
+-  · rw [if_neg Bool.false_ne_true, ofFn_splitHalf_fst, hx, msgOf_eq, if_neg Bool.false_ne_true]
+-  · rw [if_pos rfl, ofFn_splitHalf_snd, hx, msgOf_eq, if_pos rfl]
++  · rw [if_neg Bool.false_ne_true, FixedLengthScheme.ofFn_splitHalf_fst, hx, msgOf_eq,
++      if_neg Bool.false_ne_true]
++  · rw [if_pos rfl, FixedLengthScheme.ofFn_splitHalf_snd, hx, msgOf_eq, if_pos rfl]
+ 
+ /-- **The adaptive CPA oracles on T2's codec are a hybrid:** read along the lengths of T2's codec,
+ `S.adaptiveIndImpl .cpa b n pk sk κ` is `hybImpl κ (acEnc S n pk) (fun _ => b)`.
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
+index 4983f860b..f50dd45e3 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
+@@ -125,40 +125,18 @@ theorem acTapes_apply (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Boo
+ /-- **Tape `j` is the `j`-th block of the seed:**
+ `⟦acTapes S cap n ω j⟧ = (⟦ω⟧.drop (j·ρ(n))).take ρ(n)`.
+ 
+-**Proof sketch.** The coin equivalence keeps the string (`coinsEquivPoly_symm_ofFn`); position `k`
+-of block `j` is position `k + ρ·j` of `ω` (`FunFamily.blocks_apply`), which is position `k` of the
+-dropped and truncated list. -/
++**Proof sketch.** The coin equivalence keeps the string (`coinsEquivPoly_symm_ofFn`), and block `j`
++of the seed is its `j`-th window (`FunFamily.ofFn_blocks`). -/
+ theorem ofFn_acTapes (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool)
+     (j : Fin (cap.eval n)) :
+     List.ofFn (acTapes S cap n ω j) =
+       ((List.ofFn ω).drop (j * S.enc.coins.eval n)).take (S.enc.coins.eval n) := by
+   rw [acTapes, Equiv.trans_apply, Equiv.arrowCongr_apply, Function.comp_apply, Function.comp_apply,
+     Equiv.refl_symm, Equiv.refl_apply, NUPPT.coinsEquivPoly_symm_ofFn]
+-  have hj := j.isLt
+-  have hle : (j : ℕ) * S.enc.coins.eval n + S.enc.coins.eval n ≤
+-      cap.eval n * S.enc.coins.eval n := by
+-    have := Nat.mul_le_mul_right (S.enc.coins.eval n) (Nat.succ_le_of_lt hj)
+-    rw [Nat.succ_mul] at this
+-    exact this
+-  refine List.ext_getElem ?_ fun k h₁ h₂ => ?_
+-  · simp only [List.length_ofFn, List.length_take, List.length_drop, PolyExpr.eval_mul]
+-    omega
+-  · rw [List.getElem_ofFn, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+-    refine (FunFamily.blocks_apply _ _ ω j ⟨k, _⟩).trans ?_
+-    congr 1
+-    refine Fin.ext ?_
+-    rw [finProdFinEquiv_apply_val]
+-    show k + S.enc.coins.eval n * j = j * S.enc.coins.eval n + k
+-    rw [Nat.mul_comm]
+-    omega
++  exact FunFamily.ofFn_blocks (cap.eval n) (S.enc.coins.eval n) ω j
+ 
+ /-! ### Strings -/
+ 
+-/-- `⟦padFin k a⟧ = padL k a`, the first `k` bits of `a ++ 0^k` (`ofFn_padFin_eq_take`). -/
+-private theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) :
+-    List.ofFn (padFin k a) = EnsembleLemmas.padL k a := by
+-  rw [EnsembleLemmas.padL_eq, ofFn_padFin_eq_take]
+-
+ /-- The fields of an encoded state. -/
+ private theorem fields_acState (n j : ℕ) (c : Fin (S.ctLen.eval n) → Bool) (hj : j ≤ cap.eval n)
+     (hi : ist n ≤ cap.eval n) :
+@@ -401,7 +379,7 @@ theorem acHandler_finish (n : ℕ) (z : List Bool)
+   rw [acFin, InteractiveHandler.finInput_eq, pairSndD_pairEncode, pairSndD_pairEncode,
+     pairFstD_pairEncode]
+   have hw : List.ofFn (padFin ((acHandler S cap ist).outLen.eval n) (List.ofFn a)) = List.ofFn a :=
+-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])
++    ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])
+   exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
+     (decodeBitMove_ret _ _ _ _)
+ 
+@@ -479,7 +457,7 @@ theorem acHandler_impl_full (x : Fin ((acDin S 1).eval n) → Bool)
+   have hh : ([true].headD false = true) := rfl
+   have hc : decide (cap.eval n ≤ cap.eval n) = true := decide_eq_true le_rfl
+   rw [acRun, hI, replicate_one, hU, hCnt, hS, hLat, List.length_replicate, List.length_replicate,
+-    if_pos hh, if_pos hc, GGMRed.ofFn_padFin_of_length (List.length_ofFn)]
++    if_pos hh, if_pos hc, ofFn_padFin_of_length (List.length_ofFn)]
+ 
+ /-- **A fresh challenge other than the advised one is encrypted by the handler:** from the state
+ `acState j c` with `j < cap(n)` and `j ≠ i⋆(n)`, the challenge `x` is answered with
+@@ -504,20 +482,21 @@ theorem acHandler_impl_eager (x : Fin ((acDin S 1).eval n) → Bool) (j : ℕ)
+     fields_input S cap ist n z ω (i := 1) (List.ofFn x) [] j c hj.le hi
+   have hEnc : rEnc S (InteractiveHandler.input n z (List.ofFn ω)
+       (List.ofFn (acState S cap ist n j c)) (1 : Fin 2) (List.ofFn x) []) = List.ofFn c' := by
+-    rw [hc', ofFn_padFin_eq_padL, rEnc, hU, List.length_replicate, NUPPT.Uniform.runAt_eq
+-      S.enc_uniform, NUPPT.advInput_eq, ofFn_acSeedTapes, rTape, rMsg, hZ, hW, hCnt, hIst, hU, hX,
+-      List.length_replicate, List.length_replicate, List.length_replicate, msgOf_eq]
++    rw [hc', EnsembleLemmas.ofFn_padFin_eq_padL, rEnc, hU, List.length_replicate,
++      NUPPT.Uniform.runAt_eq S.enc_uniform, NUPPT.advInput_eq, ofFn_acSeedTapes, rTape, rMsg, hZ,
++      hW, hCnt, hIst, hU, hX, List.length_replicate, List.length_replicate, List.length_replicate,
++      msgOf_eq]
+   have hNew : rNew S cap (InteractiveHandler.input n z (List.ofFn ω)
+       (List.ofFn (acState S cap ist n j c)) (1 : Fin 2) (List.ofFn x) []) (List.ofFn c') =
+       List.ofFn (acState S cap ist n (j + 1) c') := by
+-    rw [rNew, hU, hCnt, hIst, List.length_replicate, acState_eq, ofFn_padFin_eq_padL,
+-      List.replicate_succ]
++    rw [rNew, hU, hCnt, hIst, List.length_replicate, acState_eq,
++      EnsembleLemmas.ofFn_padFin_eq_padL, List.replicate_succ]
+   have hh : ([true].headD false = true) := rfl
+   have hc1 : ¬ (decide (cap.eval n ≤ j) = true) := by rw [decide_eq_true_eq]; omega
+   have hc2 : ¬ (decide (j = ist n) = true) := by rw [decide_eq_true_eq]; exact hne
+   rw [acRun, hI, replicate_one, hU, hCnt, hIst, hEnc, hNew, List.length_replicate,
+     List.length_replicate, List.length_replicate, if_pos hh, if_neg hc1, if_neg hc2,
+-    GGMRed.ofFn_padFin_of_length (List.length_ofFn)]
++    ofFn_padFin_of_length (List.length_ofFn)]
+ 
+ /-- **The advised fresh challenge is forwarded:** from the state `acState j c` with
+ `j = i⋆(n) < cap(n)`, the challenge `x` is asked to the outer challenge oracle, and its answer `y`
+@@ -567,8 +546,9 @@ theorem acHandler_impl_forward (x : Fin ((acDin S 1).eval n) → Bool) (j : ℕ)
+         (List.ofFn (acState S cap ist n j c)) (1 : Fin 2) (List.ofFn x)
+         ((bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) 0).encodeLog
+           ([] ++ [⟨1, x, y⟩]))) (List.ofFn y) = List.ofFn s' := by
+-      rw [rNew, hU, hCnt, hIst, List.length_replicate, hs', acState_eq, ofFn_padFin_eq_padL,
+-        List.replicate_succ, GGMRed.ofFn_padFin_of_length (List.length_ofFn)]
++      rw [rNew, hU, hCnt, hIst, List.length_replicate, hs', acState_eq,
++        EnsembleLemmas.ofFn_padFin_eq_padL, List.replicate_succ,
++        ofFn_padFin_of_length (List.length_ofFn)]
+     have hFwd : rFwd (InteractiveHandler.input n z (List.ofFn ω)
+         (List.ofFn (acState S cap ist n j c)) (1 : Fin 2) (List.ofFn x)
+         ((bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) 0).encodeLog
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean
+index 42f096262..a45dbe580 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -141,7 +142,7 @@ private theorem comp_acAbs (b : Bool) (n : ℕ) (hist : ist n ≤ cap.eval n) (p
+         simp only [OracleComp.pure_bind, simulate_pure]
+         have he : padFin (S.ctLen.eval n) (List.ofFn (padFin ((acDout S 1).eval n)
+             (List.ofFn (acEnc S n pk b x r)))) = acEnc S n pk b x r := by
+-          rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acDout_one]), padFin_ofFn]
++          rw [ofFn_padFin_of_length (by rw [List.length_ofFn, acDout_one]), padFin_ofFn]
+         rw [he, acAbs, List.length_cons, Nat.min_eq_left (by omega), List.headD_cons,
+           getElem?_reverse_cons, if_pos hk.symm]
+       · -- another fresh challenge: the handler's own encryption with its tape
+@@ -225,7 +226,7 @@ private theorem prob_red_tape (hist : ist n ≤ cap.eval n)
+     simulate_eq_of_abs _ _ (acAbs S cap ist n) (comp_acAbs S cap ist b n hist pk sk ω),
+     expect_bind]
+   refine congrArg _ (funext fun a => ?_)
+-  rw [expect_pure, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])]
++  rw [expect_pure, ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])]
+ 
+ /-- **`B`'s game is the hybrid `H_{i⋆+b}`:** if `B` is the machine of T2 for the handler
+ `acHandler S cap ist` (with the coin bijection `φ` at `n`) and `i⋆(n) ≤ cap(n)`, then `B`'s
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean
+index cc93dc1fe..087503591 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean
+@@ -171,7 +171,7 @@ private theorem accept_indGame_eq (S : BitPublicKeyScheme) (L : PolyExpr)
+       none).1 0)) (· = true)) (funext fun mm => ?_)
+   rw [padded_enc_runAt, Equiv.trans_apply, NUPPT.coinsCongr_ofFn,
+     ofFn_half hk b (cast ((S.bitwise.padded L hL hmsg).indSpec_challengeDom n) mm),
+-    AdaptiveCPA.ofFn_cast ((S.bitwise.padded L hL hmsg).inLens_one n), ← NUPPT.runAt_eq,
++    ofFn_cast ((S.bitwise.padded L hL hmsg).inLens_one n), ← NUPPT.runAt_eq,
+     bitwise_runAt_blocks]
+   unfold hybCt
+   refine congrArg (fun l => padCt (L.eval n) (PrivateKeyScheme.encodeList (List.ofFn l)))
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean
+index b65d204d1..90c505bc2 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean
+@@ -17,7 +17,7 @@ may be sampled in advance (`expect_simulate_indImpl_cpa`, through the oracle equ
+ `indImpl_*_onSpec`, from `ChallengeSim.expect_simulate_eager`); and the padded encryptor of a padded public-key scheme pads the
+ original encryptor's output (`padded_enc_runAt`). All are read from the published lemmas of
+ `OracleSecurity` and `ChallengeSim`. The CPA game's codec is the bit codec of the scheme's
+-lengths by `AdaptiveCPA.indCodec_eq_bitCodec`, and casts are read by `AdaptiveCPA.ofFn_cast`.
++lengths by `AdaptiveCPA.indCodec_eq_bitCodec`, and casts are read by `ofFn_cast`.
+ 
+ ## Main results
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Planted.lean b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Planted.lean
+index 93e93023a..a3b025afa 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Planted.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Planted.lean
+@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.Encryption.PublicKey.HybridMachine
+ import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity.RecordHandler
+ import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -52,20 +53,6 @@ theorem ofFn_const_of_eq_one {p : ℕ} (hp : p = 1) (b : Bool) :
+   subst hp
+   rfl
+ 
+-/-- Flattening singletons: `(List.ofFn fun i => List.ofFn fun _ : Fin p => f i).flatten =
+-List.ofFn f` when `p = 1`. -/
+-theorem flatten_ofFn_singleton {p : ℕ} (hp : p = 1) :
+-    ∀ {k : ℕ} (f : Fin k → Bool),
+-      (List.ofFn fun i => List.ofFn fun _ : Fin p => f i).flatten = List.ofFn f := by
+-  intro k
+-  induction k with
+-  | zero => intro f; rfl
+-  | succ k ih =>
+-    intro f
+-    rw [List.ofFn_succ, List.ofFn_succ, List.flatten_cons, ih (fun i => f i.succ),
+-      ofFn_const_of_eq_one hp]
+-    rfl
+-
+ /-- The first `j` bits of `List.ofFn m`, as a flattening of singletons (`p = 1`):
+ `(ofFn m).take j = (ofFn fun i : Fin j => ofFn fun _ : Fin p => m i).flatten`. -/
+ theorem take_ofFn_flatten {p n j : ℕ} (hp : p = 1) (m : Fin n → Bool) (hj : j ≤ n) :
+@@ -93,12 +80,6 @@ theorem drop_ofFn_flatten {p n j : ℕ} (hp : p = 1) (m : Fin n → Bool) (hj :
+   · intro t h₁ h₂
+     simp only [List.getElem_drop, List.getElem_ofFn]
+ 
+-/-- The head of a suffix is an entry: `(l.drop k).headD false = l.getD k false`. -/
+-theorem headD_drop (l : List Bool) (k : ℕ) : (l.drop k).headD false = l.getD k false := by
+-  induction l generalizing k with
+-  | nil => simp
+-  | cons b l ih => cases k <;> simp
+-
+ /-! ### The planted tuple -/
+ 
+ /-- **The planted tuple** on `⟨⟨u, ⟨⟨pk, c⟩, ω⟩⟩, ⟨⟨u_j, ⟨u_b, Z⟩⟩, x⟩⟩` (unary parameter
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean
+index 85ee5a1fd..09d101f74 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean
+@@ -184,17 +184,6 @@ attribute [simps (config := { isSimp := false }) stateLen seedLen init run advIn
+ 
+ /-! ### The handler's simulation -/
+ 
+-/-- An empty answer decodes to all-`false` at every length:
+-`(decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ`. -/
+-theorem decodeFin_nil_getD (ℓ : ℕ) : (decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ := by
+-  rw [decodeFin_eq]
+-  split
+-  · next h =>
+-    subst h
+-    funext i
+-    exact absurd i.isLt (Nat.not_lt_zero _)
+-  · rfl
+-
+ section Simulation
+ 
+ variable {α : Type} (Lc Lq Ld Laux Lseed : PolyExpr) (aux : ℕ → List Bool)
+@@ -250,7 +239,7 @@ theorem simulate_qHandler_recorded
+           (padFin _ (ans (pairEncode (seedIn n z (List.ofFn ω))
+             (pairEncode (aux n) (List.ofFn mm)))), s) := by
+         refine PolyHandler.answer_of_run_eq _ ?_
+-        rw [qHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
++        rw [qHandler_run, PolyHandler.input_eq, ofFn_padFin_of_length (by
+           rw [hw _ hlen, qDout_one]), hs, seedIn_eq]
+         exact qRun_recorded ans _ _ _ _
+       rw [simulate_query, PolyHandler.impl_apply, hans1, OracleComp.pure_bind,
+@@ -282,7 +271,7 @@ theorem simulate_qHandler_init (haux : (aux n).length = Laux.eval n)
+     rw [show (qHandler Lc Lq Ld Laux Lseed aux ans hans fin hfin).init n =
+         padFin _ (pairEncode (aux n) (false :: List.replicate (Lq.eval n) false)) from
+       funext (qHandler_init Lc Lq Ld Laux Lseed aux ans hans fin hfin n)]
+-    refine GGMRed.ofFn_padFin_of_length ?_
++    refine ofFn_padFin_of_length ?_
+     rw [qHandler_stateLen, length_pairEncode, List.length_cons, List.length_replicate, haux]
+     simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+     omega
+@@ -311,15 +300,15 @@ theorem simulate_qHandler_init (haux : (aux n).length = Laux.eval n)
+             (pairEncode (aux n) (List.ofFn x)))),
+             padFin _ (pairEncode (aux n) (true :: List.ofFn x))) := by
+         refine PolyHandler.answer_of_run_eq _ ?_
+-        rw [qHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
+-          rw [hw _ hxlen, qDout_one]), GGMRed.ofFn_padFin_of_length hlen, hinit, seedIn_eq]
++        rw [qHandler_run, PolyHandler.input_eq, ofFn_padFin_of_length (by
++          rw [hw _ hxlen, qDout_one]), ofFn_padFin_of_length hlen, hinit, seedIn_eq]
+         exact qRun_fresh ans _ _ _ _ rfl
+       refine ⟨padFin _ (pairEncode (aux n) (true :: List.ofFn x)), ?_, ?_⟩
+       · rw [simulate_query, PolyHandler.impl_apply, hans1, OracleComp.pure_bind,
+           chRun_query_one_none]
+         exact simulate_qHandler_recorded Lc Lq Ld Laux Lseed aux hans hfin n z ω hw _ x _
+-          (GGMRed.ofFn_padFin_of_length hlen)
+-      · rw [GGMRed.ofFn_padFin_of_length hlen, firstQ_query_one]
++          (ofFn_padFin_of_length hlen)
++      · rw [ofFn_padFin_of_length hlen, firstQ_query_one]
+         rfl
+ 
+ end Simulation
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean b/TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean
+index 2a4f397ee..476d2e985 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean
+@@ -1077,12 +1077,6 @@ private theorem dlc_splitEquiv_symm_ofFn {L a b : ℕ} (h : L = a + b) (u : Fin
+   subst h
+   exact ofFn_splitCoins_symm a b u v
+ 
+-/-- Padding a string of the right length is lossless: `List.ofFn (padFin ℓ w) = w` for `|w| = ℓ`
+-(`Collection.ofFn_padFin_of_le`). -/
+-private theorem dlc_ofFn_padFin {ℓ : ℕ} {w : List Bool} (h : w.length = ℓ) :
+-    List.ofFn (padFin ℓ w) = w := by
+-  rw [Collection.ofFn_padFin_of_le h.le, h, Nat.sub_self, List.replicate_zero, List.append_nil]
+-
+ /-- The public key `⟨i, X⟩` read from a DDH tuple `⟨i, ⟨X, ⟨Y, Z⟩⟩⟩`. -/
+ private def dlc_tuplePk (t : List Bool) : List Bool := pairEncode (pairFstD t) (pairFstD (pairSndD t))
+ 
+@@ -1433,7 +1427,7 @@ the same coins (the exponents are the same samplers, `h^{(ab mod q)} = h^{ab}` s
+ `NUPPT.distinguisherL_eq`, `he`, `dlc_challenge_eq`). The derived index `i` (`dlc_grp_runAt`) is
+ valid and well formed, `⟨p, ⟨q, h⟩⟩` with `p`, `q` from `G`'s index (`wellFormedIndex_iff`,
+ `safePrimeValid_iff`) and `h = egSquareGen p g = g² mod p` off the bad event, of order `q`
+-(`egSquareGen_valid`). The padding of the tuple is lossless (`dlc_ofFn_padFin`, `length_ddhTuple`),
++(`egSquareGen_valid`). The padding of the tuple is lossless (`ofFn_padFin_of_length`, `length_ddhTuple`),
+ so `D_b` reads `⟨i, X⟩`, `Y` and `Z` back. The exponent `ddhExpo n i u` has the value of the sampler
+ `sampleBelowL q (Nat.size q) n n u` of `egGenParts`/`egEncParts` (`expOrd_of_valid`,
+ `ZMod.val_natCast`, `sampleBelowL_lt`), `expF i z` is the numeral of `h^z mod p` (`expF_eq`,
+@@ -1484,7 +1478,7 @@ private theorem dlc_hyb1_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : N
+   simp only [pairFstD_pairEncode, pairSndD_pairEncode, dlP_eq, dlM_eq, dlG_eq]
+   generalize egUnit n (listToNat a) (List.ofFn u₁) ^ 2 % listToNat a = h at hord hi hhp ⊢
+   -- the tuple
+-  rw [dlc_ofFn_padFin (by rw [length_ddhTuple hwi, eval_ddhLen])]
++  rw [ofFn_padFin_of_length (by rw [length_ddhTuple hwi, eval_ddhLen])]
+   unfold dlc_ddhInput dlc_tuplePk
+   rw [ddhTuple_eq]
+   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
+@@ -1615,7 +1609,7 @@ private theorem dlc_rand_term {n : ℕ} {i : List Bool} (hvi : SafePrimeValid i)
+ runs `D` on `⟨⟨i, g^a⟩, ⟨g^b, ⟦g^z · m'_b mod p⟧_n⟩⟩` with `z = ddhExpo n i u₃`.
+ 
+ **Proof sketch.** Unfold `D_b` on the random tuple (`NUPPT.distinguisher_eq`,
+-`NUPPT.distinguisherL_eq`, `he`, `ddhRandom`). The padding is lossless (`dlc_ofFn_padFin`,
++`NUPPT.distinguisherL_eq`, `he`, `ddhRandom`). The padding is lossless (`ofFn_padFin_of_length`,
+ `length_ddhTuple`), so the projections of `dlc_ddhInput` and `dlc_tuplePk` read the components of
+ the tuple back, and the numeral `Z = expF i z` reads as `g^z mod p` (`expF_eq`,
+ `listToNat_natToList` below `dlP_lt_two_pow`). -/
+@@ -1648,7 +1642,7 @@ private theorem dlc_rand_accept (H : ArithmeticFP) (G : SafePrimeGen) (M D Db :
+   dsimp only
+   generalize (egGroupGen H G).gen.runAt n [] r = i at hvi hwi ⊢
+   have hp0 : 0 < dlP i := ((expValid_iff i).1 hvi.expValid).1.pos
+-  rw [dlc_ofFn_padFin (by rw [length_ddhTuple hwi, eval_ddhLen])]
++  rw [ofFn_padFin_of_length (by rw [length_ddhTuple hwi, eval_ddhLen])]
+   unfold dlc_ddhInput dlc_tuplePk
+   rw [ddhTuple_eq]
+   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean
+index 8e670d56a..346f45408 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean
+@@ -264,7 +264,7 @@ theorem simulate_recHandler_recorded
+       have hans1 : (recHandler Lc ans hans).answer n z ω s 1 x =
+           (padFin _ (ans (seedIn n z (List.ofFn ω))), s) := by
+         refine PolyHandler.answer_of_run_eq _ ?_
+-        rw [recHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
++        rw [recHandler_run, PolyHandler.input_eq, ofFn_padFin_of_length (by
+           rw [hw, recDout_one]), seedIn_eq]
+         exact recRun_recorded ans _ _ _ hs
+       rw [simulate_query, PolyHandler.impl_apply, hans1, OracleComp.pure_bind,
+@@ -315,8 +315,8 @@ theorem simulate_recHandler_init
+       have hans1 : (recHandler Lc ans hans).answer n z ω ((recHandler Lc ans hans).init n) 1 x =
+           (padFin _ (ans (seedIn n z (List.ofFn ω))), padFin _ (true :: List.ofFn x)) := by
+         refine PolyHandler.answer_of_run_eq _ ?_
+-        rw [recHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
+-          rw [hw, recDout_one]), GGMRed.ofFn_padFin_of_length hlen, seedIn_eq]
++        rw [recHandler_run, PolyHandler.input_eq, ofFn_padFin_of_length (by
++          rw [hw, recDout_one]), ofFn_padFin_of_length hlen, seedIn_eq]
+         refine recRun_fresh ans _ _ _ ?_
+         rw [hinit]
+         rfl
+@@ -324,8 +324,8 @@ theorem simulate_recHandler_init
+       · rw [simulate_query, PolyHandler.impl_apply, hans1, OracleComp.pure_bind,
+           chRun_query_one_none]
+         exact simulate_recHandler_recorded Lc hans n z ω hw _ _
+-          (by rw [GGMRed.ofFn_padFin_of_length hlen]; rfl)
+-      · rw [GGMRed.ofFn_padFin_of_length hlen, firstQ_query_one]
++          (by rw [ofFn_padFin_of_length hlen]; rfl)
++      · rw [ofFn_padFin_of_length hlen, firstQ_query_one]
+         rfl
+ 
+ end Simulation
+diff --git a/TCSlib/Cryptography/Foundations.lean b/TCSlib/Cryptography/Foundations.lean
+index 5b01fd51e..2cd2acc8e 100644
+--- a/TCSlib/Cryptography/Foundations.lean
++++ b/TCSlib/Cryptography/Foundations.lean
+@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.Foundations.Negligible
+ import TCSlib.Cryptography.Foundations.Probability
+ import TCSlib.Cryptography.Foundations.Experiments
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -24,6 +25,8 @@ one-way function, hard-concentrate bit and pseudorandomness developments are bui
+   Fubini, averaging and the hybrid argument.
+ * `Experiments`: `invProb`, `predProb`, `acceptProb`, `distAdv`, and the bound of
+   distinguishing advantage by statistical distance.
++* `BitLists`: generic facts about bit lists and bit vectors (heads of suffixes, flattening
++  one-bit blocks, cancellation of exclusive-or, `xorPerm`, keys of an association list).
+ 
+ ## References
+ 
+diff --git a/TCSlib/Cryptography/Foundations/BitLists.lean b/TCSlib/Cryptography/Foundations/BitLists.lean
+new file mode 100644
+index 000000000..b336b4dc6
+--- /dev/null
++++ b/TCSlib/Cryptography/Foundations/BitLists.lean
+@@ -0,0 +1,105 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import Mathlib.Data.List.OfFn
++import Mathlib.Data.List.GetD
++import Mathlib.Logic.Equiv.Prod
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Bit lists and bit vectors
++
++Generic facts about lists, lists of bits and bit vectors `Fin n → Bool`, shared by the
++cryptographic developments: heads of suffixes, flattening singleton blocks, the bit of a one-bit
++vector, cancellation of exclusive-or, exclusive-or with a fixed vector as a permutation, and keys of
++an association list. They depend on Mathlib only.
++
++## Main definitions
++
++* `TCSlib.Cryptography.xorPerm v`: exclusive-or with the vector `v`, as a permutation.
++
++## Main results
++
++* `TCSlib.Cryptography.headD_drop`: the head of a suffix is an entry.
++* `TCSlib.Cryptography.flatten_ofFn_one`, `flatten_ofFn_singleton`: flattening one-element blocks.
++* `TCSlib.Cryptography.headD_ofFn_one`: the bit of a one-bit vector is the head of its string.
++* `TCSlib.Cryptography.zipWith_xor_cancel_left`: `(a ⊕ c) ⊕ a = c`.
++* `TCSlib.Cryptography.xorPerm_apply`: `xorPerm v y = y ⊕ v`.
++* `TCSlib.Cryptography.mem_keys_of_lookup_isSome`: a key with a value in an association list is
++  one of its keys.
++
++## References
++
++Generic list facts; no textbook counterpart.
++-/
++
++namespace TCSlib.Cryptography
++
++/-- The head of a dropped list is the element at the dropping index:
++`(l.drop i).headD d = l.getD i d`. -/
++theorem headD_drop {α : Type*} (l : List α) (i : ℕ) (d : α) : (l.drop i).headD d = l.getD i d := by
++  rw [List.headD_eq_head?, List.head?_drop, List.getD_eq_getElem?_getD]
++
++/-- **Flattening one-element blocks:** concatenating the one-bit blocks `g j` gives their bits,
++`(List.ofFn fun j => List.ofFn (g j)).flatten = List.ofFn fun j => g j 0` when the blocks have
++length `l = 1`.
++
++**Proof sketch.** Induction on the number `k` of blocks (`List.ofFn_succ`, `List.flatten_cons`). -/
++theorem flatten_ofFn_one {k l : ℕ} (hl : l = 1) (g : Fin k → Fin l → Bool) :
++    (List.ofFn fun j => List.ofFn (g j)).flatten = List.ofFn fun j => g j ⟨0, by omega⟩ := by
++  subst hl
++  induction k with
++  | zero => rfl
++  | succ k ih =>
++    rw [List.ofFn_succ, List.flatten_cons, ih (fun j => g j.succ), List.ofFn_succ (n := k)]
++    simp
++
++/-- Flattening singletons: `(List.ofFn fun i => List.ofFn fun _ : Fin p => f i).flatten =
++List.ofFn f` when `p = 1` (`flatten_ofFn_one` with constant blocks). -/
++theorem flatten_ofFn_singleton {p : ℕ} (hp : p = 1) :
++    ∀ {k : ℕ} (f : Fin k → Bool),
++      (List.ofFn fun i => List.ofFn fun _ : Fin p => f i).flatten = List.ofFn f :=
++  fun f => flatten_ofFn_one hp fun i _ => f i
++
++/-- The bit of a one-bit output is the head of its string: `⟦f⟧.headD false = f 0`. -/
++theorem headD_ofFn_one (f : Fin 1 → Bool) : (List.ofFn f).headD false = f 0 := by
++  rw [List.ofFn_succ, List.headD_cons]
++
++/-- Exclusive-or with the same list twice cancels: `(a ⊕ c) ⊕ a = c` for `|a| = |c|`. -/
++theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
++    List.zipWith xor (List.zipWith xor a c) a = c := by
++  apply List.ext_getElem
++  · simp [h]
++  · intro i h₁ h₂
++    simp only [List.getElem_zipWith]
++    cases a[i] <;> cases c[i] <;> rfl
++
++section XorPerm
++
++variable {n : ℕ}
++
++/-- Exclusive-or with a fixed vector `v`, as a permutation of `{0,1}ⁿ`. -/
++def xorPerm (v : Fin n → Bool) : Equiv.Perm (Fin n → Bool) :=
++  Function.Involutive.toPerm (fun y i => xor (y i) (v i)) fun y => funext fun i => by
++    simp
++
++/-- `xorPerm v y = y ⊕ v`. -/
++theorem xorPerm_apply (v y : Fin n → Bool) : xorPerm v y = fun i => xor (y i) (v i) := rfl
++
++end XorPerm
++
++/-- A key with a value in an association list is one of its keys:
++`(T.lookup x).isSome → x ∈ T.map Prod.fst`.
++
++**Proof sketch.** Core's `List.lookup_isSome_iff` gives a pair `p ∈ T` with `x == p.1`, so `x`
++is the first component of an element of `T` (`List.mem_map`). -/
++theorem mem_keys_of_lookup_isSome {α β : Type} [DecidableEq α] (T : List (α × β)) (x : α)
++    (h : (T.lookup x).isSome = true) : x ∈ T.map Prod.fst := by
++  obtain ⟨p, hp, hx⟩ := List.lookup_isSome_iff.1 h
++  exact List.mem_map.2 ⟨p, hp, (beq_iff_eq.1 hx).symm⟩
++
++end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/Games/BitCodec.lean b/TCSlib/Cryptography/Games/BitCodec.lean
+index 40973a7b2..3fa41a97b 100644
+--- a/TCSlib/Cryptography/Games/BitCodec.lean
++++ b/TCSlib/Cryptography/Games/BitCodec.lean
+@@ -44,6 +44,8 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
+ * `Games.decodeIdx_eq_some_iff`, `Games.decodeBitMove_eq_query_iff`: only the canonical words
+   decode as an index or a query.
+ * `Games.decodeBitMove_of_not_canonical`: every other word decodes to the all-`false` output.
++* `Games.padFin_ofFn_zeroBits`, `Games.padFin_replicate_false`, `Games.padFin_nil`,
++  `Games.decodeFin_nil_getD`: all-`false` strings and the empty answer read as `zeroBits`.
+ * `Games.simulate_castImpl_toCompOn`, `Games.expect_simulate_castImpl_toCompOn`: transport of a
+   machine's run between two codecs with equal lengths.
+ 
+@@ -125,6 +127,33 @@ theorem zeroBits_apply (d : ℕ) (j : Fin d) : zeroBits d j = false :=
+ theorem ofFn_zeroBits (d : ℕ) : List.ofFn (zeroBits d) = List.replicate d false := by
+   rw [show zeroBits d = fun _ => false from rfl, List.ofFn_const]
+ 
++/-- The all-`false` answer, read at any width, is all-`false`:
++`padFin d ⟦zeroBits m⟧ = zeroBits d`. -/
++theorem padFin_ofFn_zeroBits (d m : ℕ) : padFin d (List.ofFn (zeroBits m)) = zeroBits d := by
++  funext i
++  rw [padFin_apply, ofFn_zeroBits, zeroBits_apply, List.getD_eq_getElem?_getD,
++    List.getElem?_replicate]
++  split <;> rfl
++
++/-- An all-`false` list reads as the all-`false` vector at every width:
++`padFin d (List.replicate m false) = zeroBits d`. -/
++theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) = zeroBits d := by
++  rw [← ofFn_zeroBits, padFin_ofFn_zeroBits]
++
++/-- The empty list reads as the all-`false` vector: `padFin d [] = zeroBits d`. -/
++theorem padFin_nil (d : ℕ) : padFin d [] = zeroBits d := padFin_replicate_false d 0
++
++/-- An empty answer decodes to all-`false` at every length:
++`(decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ`. -/
++theorem decodeFin_nil_getD (ℓ : ℕ) : (decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ := by
++  rw [decodeFin_eq]
++  split
++  · next h =>
++    subst h
++    funext i
++    exact absurd i.isLt (Nat.not_lt_zero _)
++  · rfl
++
+ /-- Decoding of a machine output as a move against `bitSpec din dout` with `dα`-bit outputs:
+ `⟨[false], ⟨1^i, x⟩⟩` with `i < k` and `|x| = din i` is the query `x` to oracle `i`;
+ `⟨[true], a⟩` with `|a| = dα` is the output `a`; anything else is the output `zeroBits dα`. -/
+diff --git a/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean b/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean
+index b60d08fe6..744448baa 100644
+--- a/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean
++++ b/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean
+@@ -173,12 +173,6 @@ theorem queryOf_eq_some_iff (ℓ : ℕ) (w : List Bool) (x : Fin ℓ → Bool) :
+     rw [h]
+     exact decodeFin_ofFn x
+ 
+-/-- The encoding of the padding of a string of the right length is the string. -/
+-theorem ofFn_padFin_of_length {ℓ : ℕ} {w : List Bool} (h : w.length = ℓ) :
+-    List.ofFn (padFin ℓ w) = w := by
+-  refine List.ext_getElem (by simp [h]) fun k hk₁ hk₂ => ?_
+-  simp [padFin_def, List.getElem?_eq_getElem hk₂]
+-
+ /-- A machine output is a query iff its first component is `[false]` and its second has
+ length `ℓ`. -/
+ theorem exists_queryOf_iff (ℓ : ℕ) (w : List Bool) :
+diff --git a/TCSlib/Cryptography/Pseudorandom/NextBit.lean b/TCSlib/Cryptography/Pseudorandom/NextBit.lean
+index 6a835134a..8bda935ae 100644
+--- a/TCSlib/Cryptography/Pseudorandom/NextBit.lean
++++ b/TCSlib/Cryptography/Pseudorandom/NextBit.lean
+@@ -5,6 +5,7 @@ Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs
+ import TCSlib.Cryptography.Pseudorandom.NextBit.Concrete
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -80,13 +81,6 @@ theorem Ensemble.nextBitUnpredictable_iff_lt {ℓ : PolyExpr} (X : Ensemble ℓ)
+     obtain ⟨ε, hε, hlt⟩ := h A
+     exact ⟨ε, hε, fun n i => (hlt n i).le⟩
+ 
+-/-- Bit `i` of `u` is the head of the suffix `(ofFn u).drop i` — the readout
+-`polyTimeComputable_headD` of the machines below (`List.head?_drop`, `List.getElem?_ofFn`). -/
+-private theorem headD_drop_ofFn {ℓ : ℕ} (i : Fin ℓ) (u : Fin ℓ → Bool) :
+-    ((List.ofFn u).drop i).headD false = u i := by
+-  rw [List.headD_eq_head?, List.head?_drop, List.getElem?_ofFn]
+-  simp [i.isLt]
+-
+ /-- A distinguisher whose coin string is reindexed by a bijection has the same acceptance
+ probability (`uprob_comp_equiv` on the coin factor of the sample space). -/
+ private theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
+@@ -121,7 +115,7 @@ of the advice's second component (`polyTimeComputable_headD`), and combines them
+ `A := ofPolyTime` of it with coins `add ℓ D.coins` and advice bound `2·D.adv + 3`
+ (`length_pairEncode`); the coin split is `Fin.appendEquiv` composed with `finCongr`, and the
+ identity is `runAtL_ofPolyTime`, the projection identities of the layout,
+-`List.take_left'`/`List.drop_left'`, `ofFn_completePrefix` and `headD_drop_ofFn`. -/
++`List.take_left'`/`List.drop_left'`, `ofFn_completePrefix` and `headD_drop`. -/
+ private theorem exists_nextBitPredMachine (ℓ : PolyExpr) (D : NUPPT) (flip : ℕ → Bool) :
+     ∃ (A : NUPPT) (e : ∀ n, (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ A.Coins n),
+       ∀ n (i : Fin (ℓ.eval n)) (t : Fin i → Bool) (u : Fin (ℓ.eval n) → Bool) (c : D.Coins n),
+@@ -399,7 +393,7 @@ gives a positive `p` with `1/p(n) ≤ |ε n|` infinitely often. The distinguishe
+ reads bit `k n` of `t` and outputs `[decide (verdict = [bit])]`. At every `n` with `ε n ≠ 0`
+ (every `n` of the infinite set), `ε n` is attained at `i_n = k n`, and the functional identity
+ `D.distinguisher n (ℓ n) t (e r) = nextBitDist i_n (A.predictor n i_n) t r` (`ofFn_prefixOf`,
+-`headD_drop_ofFn`, coins reindexed by `e : A.Coins n ≃ D.Coins n` from `finCongr`) gives, by
++`headD_drop`, coins reindexed by `e : A.Coins n ≃ D.Coins n` from `finCongr`) gives, by
+ `prgAdv_nextBitDist` and `acceptProb_coins_equiv`,
+ `prgAdv (X_n) (D.distinguisher n (ℓ n)) = |nextBitProb (X_n) i_n (A.predictor n i_n) − 1/2| =
+ |ε n| ≥ 1/p(n)` — the advantage being an absolute value, no choice between the predictor and
+@@ -457,7 +451,7 @@ theorem Ensemble.Pseudorandom.nextBitUnpredictable {ℓ : PolyExpr} {X : Ensembl
+     rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hDm, hkn]
+     rw [nextBitDist_eq]
+     rw [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+-      ofFn_prefixOf, headD_drop_ofFn]
++      ofFn_prefixOf, headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn]
+     simp
+   have hadv : prgAdv (X.X n) (Dm.distinguisher n (ℓ.eval n)) = |ε n| := by
+     rw [← hspec, ← prgAdv_nextBitDist (X.X n) j₀ (A.predictor n j₀)]
+diff --git a/TCSlib/Cryptography/SecureComputation/Yao.lean b/TCSlib/Cryptography/SecureComputation/Yao.lean
+index a0327ad2d..e4a546c2d 100644
+--- a/TCSlib/Cryptography/SecureComputation/Yao.lean
++++ b/TCSlib/Cryptography/SecureComputation/Yao.lean
+@@ -6,6 +6,7 @@ import TCSlib.Cryptography.SecureComputation.Hybrid
+ import TCSlib.Cryptography.SecureComputation.GarblingSecurity
+ import TCSlib.Complexity.CircuitComplexity.Uniform
+ import TCSlib.Complexity.ClassP.BinaryArith.Words
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -701,16 +702,6 @@ theorem yaoBobOut_yaoMsg (n : ℕ) (x : Fin (Y.inA.eval n) → Bool)
+   · exact decodeOut_fst _ _
+   · exact decodeOut_snd _ _ fun h => hdist j (List.ofFn_injective h).symm
+ 
+-/-- Concatenating singleton lists: `[g₀ 0] ++ ⋯ ++ [g_{k−1} 0] = [g₀ 0, …, g_{k−1} 0]`. -/
+-private theorem flatten_ofFn_one {k l : ℕ} (hl : l = 1) (g : Fin k → Fin l → Bool) :
+-    (List.ofFn fun j => List.ofFn (g j)).flatten = List.ofFn fun j => g j ⟨0, by omega⟩ := by
+-  subst hl
+-  induction k with
+-  | zero => rfl
+-  | succ k ih =>
+-    rw [List.ofFn_succ, List.flatten_cons, ih (fun j => g j.succ), List.ofFn_succ (n := k)]
+-    simp
+-
+ /-- **Bob's OT answers are the keys of his bits**: in the hybrid execution, bit `i · n + t` of
+ Bob's answers is bit `t` of the key `k_{inA + i}^{y_i}` of his wire `inA + i` for his bit `y_i`
+ (`otFunctionality_f_snd`). -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean b/TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean
+index d631c6f07..36d815937 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean
+@@ -6,6 +6,7 @@ Authors: TCSlib contributors
+ import TCSlib.Cryptography.Asymptotic.HardCore
+ import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
+ import TCSlib.Cryptography.ZeroKnowledge.Interaction
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -267,10 +268,6 @@ theorem flatMap_range_eq_of_nil (F : ℕ → List Bool) {n m : ℕ} (hnm : n ≤
+     List.flatMap_eq_nil_iff.2 fun x _ => hF _ (Nat.le_add_right n x)
+   rw [h, List.append_nil]
+ 
+-/-- The head of a dropped list is the element at the dropping index (`List.getD`). -/
+-theorem headD_drop (l : List Bool) (i : ℕ) (d : Bool) : (l.drop i).headD d = l.getD i d := by
+-  rw [List.headD_eq_head?, List.head?_drop, List.getD_eq_getElem?_getD]
+-
+ /-! ### The splice machines -/
+ 
+ /-- The splice pre-processing on the argument `⟨z, ⟨pre, suf⟩⟩`: `pre ++ z ++ suf`. -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
+index 4ce866b9d..1e3db04a3 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
+@@ -5,6 +5,7 @@ Authors: TCSlib contributors
+ -/
+ import TCSlib.Complexity.ClassP.BinaryArith.Loops
+ import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Efficiency
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -585,10 +586,6 @@ theorem headD_take {c : ℕ} (hc : 0 < c) (l : List Bool) : (l.take c).headD fal
+     | zero => omega
+     | succ c => simp
+ 
+-/-- An entry of a list with default is the first entry of the corresponding suffix. -/
+-theorem getD_eq_headD_drop {α : Type*} (l : List α) (j : ℕ) (d : α) : l.getD j d = (l.drop j).headD d := by
+-  rw [List.headD_eq_head?, List.head?_drop, List.getD_eq_getElem?_getD]
+-
+ /-- The verdict condition of the `|x|`-fold graph non-isomorphism verifier, read through the
+ scan: message `j` is `pairFstD (pairSndD^[j] msgs)` and the first bit of coin block `j` is the
+ first bit of `r.drop (j c)`. -/
+@@ -599,7 +596,7 @@ theorem gni_verdict_iff (hist : List (List Bool)) (r : List Bool) (N c : ℕ) (h
+   rw [Fin.forall_iff]
+   refine forall_congr' fun j => forall_congr' fun _ => ?_
+   rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinBlock_eq, headD_take hc, Fin.val_mk,
+-    getD_eq_headD_drop]
++    ← headD_drop]
+ 
+ /-- The verifier of the `|x|`-fold graph non-isomorphism protocol is efficient (D8) (Inf-4.2).
+ 
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean
+index b532d32af..3899a77df 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRep
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -300,8 +301,8 @@ theorem gi_verdict_iff (x : List Bool) (hist : List (List Bool)) (r : List Bool)
+   rw [Fin.forall_iff]
+   refine forall_congr' fun j => forall_congr' fun _ => ?_
+   rw [Fin.val_mk, iterate_sndD_two_encodeMsgs, pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs,
+-    Strategy.pairFstD_encodeMsgs, List.drop_drop, relabelAt_replicate, ← getD_eq_headD_drop,
+-    ← getD_eq_headD_drop, ← getD_eq_headD_drop]
++    Strategy.pairFstD_encodeMsgs, List.drop_drop, relabelAt_replicate, headD_drop,
++    headD_drop, headD_drop]
+   cases r.getD j false <;> exact Iff.rfl
+ 
+ /-- The verifier of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2).
+@@ -323,7 +324,7 @@ theorem giVerifierRep_efficient : giVerifierRep.Efficient := by
+     List.length_replicate, inCoins_ilayout, argX_ilayout, vcount_ilayout, PolyExpr.eval_mul,
+     PolyExpr.eval_const, PolyExpr.eval_var, decide_eq_true_eq]
+   by_cases hodd : hist.length % 2 = 1
+-  · rw [if_pos hodd, if_pos hodd, getD_eq_headD_drop]
++  · rw [if_pos hodd, if_pos hodd, ← headD_drop]
+   · rw [if_neg hodd, if_neg hodd]
+     by_cases hlt : hist.length < 2 * x.length
+     · rw [if_pos hlt, if_pos hlt]
+-- 
+2.43.0
+

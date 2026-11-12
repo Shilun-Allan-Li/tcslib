@@ -22,9 +22,11 @@ def find_block(src,name,kinds=('theorem','def','lemma','noncomputable def','abbr
 def get(src,name): d,e=find_block(src,name); return src[d:e]
 def remove(src,name):
     d,e=find_block(src,name)
-    out=src[:d]+src[e:]
-    out=re.sub(r'\n{3,}','\n\n',out)
-    return out
+    a,b=src[:d],src[e:]
+    # collapse blank lines only at the junction
+    a=a.rstrip('\n')+'\n\n' if a.strip() else a
+    b=b.lstrip('\n')
+    return a+b
 if __name__=='__main__':
     op,path=sys.argv[1],sys.argv[2]
     s=open(path).read()

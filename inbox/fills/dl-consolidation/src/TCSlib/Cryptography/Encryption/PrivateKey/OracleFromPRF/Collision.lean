@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Lazy
 import TCSlib.Cryptography.Games.Hopping
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -45,24 +46,6 @@ queries.
 namespace TCSlib.Cryptography.Composability.PRFGame
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
-
-/-! ### Hitting a list with a uniform sample -/
-
-/-- A key with a value in an association list is one of its keys:
-`(T.lookup x).isSome → x ∈ T.map Prod.fst`. -/
-theorem mem_keys_of_lookup_isSome {α β : Type} [DecidableEq α] (T : List (α × β)) (x : α)
-    (h : (T.lookup x).isSome = true) : x ∈ T.map Prod.fst := by
-  induction T with
-  | nil => simp at h
-  | cons p T ih =>
-    obtain ⟨k, v⟩ := p
-    rw [List.map_cons]
-    by_cases hx : x = k
-    · rw [hx]
-      exact List.mem_cons_self
-    · have hb : (x == k) = false := beq_eq_false_iff_ne.mpr hx
-      simp only [List.lookup_cons, hb] at h
-      exact List.mem_cons_of_mem _ (ih h)
 
 /-! ### The state readings -/
 
@@ -112,14 +95,6 @@ theorem addPt_eq_of (b b' : Bool) (st : LState n d) (x y : Fin n → Bool) (hit 
     addPt b st x y hit = addPt b' st x y hit := by
   rw [addPt_eq, addPt_eq, isSome_look_eq b b']
 
-/-- Exclusive-or with a fixed vector `v`, as a permutation of `{0,1}ⁿ`. -/
-def xorPerm (v : Fin n → Bool) : Equiv.Perm (Fin n → Bool) :=
-  Function.Involutive.toPerm (fun y i => xor (y i) (v i)) fun y => funext fun i => by
-    simp
-
-/-- `xorPerm v y = y ⊕ v`. -/
-theorem xorPerm_apply (v y : Fin n → Bool) : xorPerm v y = fun i => xor (y i) (v i) := rfl
-
 /-- **The change of variables at the challenge:** with `|m₀| = |m₁| = n`,
 `⟨r, m₀ ⊕ y⟩ = ⟨r, m₁ ⊕ (y ⊕ m₀ ⊕ m₁)⟩`.
 
@@ -131,7 +106,7 @@ theorem ctOf_xorPerm (r : Fin n → Bool) {m₀ m₁ : List Bool} (h₀ : m₀.l
   rw [ctOf_eq, ctOf_eq]
   congr 1
   have hv : List.ofFn (padFin n (List.zipWith xor m₀ m₁)) = List.zipWith xor m₀ m₁ :=
-    GGMRed.ofFn_padFin_of_length (by simp [h₀, h₁])
+    ofFn_padFin_of_length (by simp [h₀, h₁])
   have hY : ∀ v : Fin n → Bool,
       List.ofFn (xorPerm v y) = List.zipWith xor (List.ofFn y) (List.ofFn v) := fun v => by
     apply List.ext_getElem

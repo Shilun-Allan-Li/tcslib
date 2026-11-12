@@ -44,6 +44,8 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
 * `Games.decodeIdx_eq_some_iff`, `Games.decodeBitMove_eq_query_iff`: only the canonical words
   decode as an index or a query.
 * `Games.decodeBitMove_of_not_canonical`: every other word decodes to the all-`false` output.
+* `Games.padFin_ofFn_zeroBits`, `Games.padFin_replicate_false`, `Games.padFin_nil`,
+  `Games.decodeFin_nil_getD`: all-`false` strings and the empty answer read as `zeroBits`.
 * `Games.simulate_castImpl_toCompOn`, `Games.expect_simulate_castImpl_toCompOn`: transport of a
   machine's run between two codecs with equal lengths.
 
@@ -124,6 +126,33 @@ theorem zeroBits_apply (d : ℕ) (j : Fin d) : zeroBits d j = false :=
 `List.ofFn (zeroBits d) = List.replicate d false`. -/
 theorem ofFn_zeroBits (d : ℕ) : List.ofFn (zeroBits d) = List.replicate d false := by
   rw [show zeroBits d = fun _ => false from rfl, List.ofFn_const]
+
+/-- The all-`false` answer, read at any width, is all-`false`:
+`padFin d ⟦zeroBits m⟧ = zeroBits d`. -/
+theorem padFin_ofFn_zeroBits (d m : ℕ) : padFin d (List.ofFn (zeroBits m)) = zeroBits d := by
+  funext i
+  rw [padFin_apply, ofFn_zeroBits, zeroBits_apply, List.getD_eq_getElem?_getD,
+    List.getElem?_replicate]
+  split <;> rfl
+
+/-- An all-`false` list reads as the all-`false` vector at every width:
+`padFin d (List.replicate m false) = zeroBits d`. -/
+theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) = zeroBits d := by
+  rw [← ofFn_zeroBits, padFin_ofFn_zeroBits]
+
+/-- The empty list reads as the all-`false` vector: `padFin d [] = zeroBits d`. -/
+theorem padFin_nil (d : ℕ) : padFin d [] = zeroBits d := padFin_replicate_false d 0
+
+/-- An empty answer decodes to all-`false` at every length:
+`(decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ`. -/
+theorem decodeFin_nil_getD (ℓ : ℕ) : (decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ := by
+  rw [decodeFin_eq]
+  split
+  · next h =>
+    subst h
+    funext i
+    exact absurd i.isLt (Nat.not_lt_zero _)
+  · rfl
 
 /-- Decoding of a machine output as a move against `bitSpec din dout` with `dα`-bit outputs:
 `⟨[false], ⟨1^i, x⟩⟩` with `i < k` and `|x| = din i` is the query `x` to oracle `i`;
