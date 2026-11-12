@@ -97,8 +97,8 @@ private theorem polyTimeComputable_eFin : PolyTimeComputable (eFin S) := by
         fun w => by simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]; rfl
   have hCt : ∀ β, PolyTimeComputable (eCt S β) := fun β =>
     EnsembleLemmas.polyTimeComputable_padL S.ctLen hU (S.enc.polyTimeComputable_output.comp
-      (((hU.pairEncode (hZ.pairEncode (hMsg β))).pairEncode (polyTimeComputable_const [])).pairEncode
-        (hTape β)))
+      (((hU.pairEncode (hZ.pairEncode (hMsg β))).pairEncode
+        (polyTimeComputable_const [])).pairEncode (hTape β)))
   exact (polyTimeComputable_const [true]).pairEncode ((hCt true).append (hCt false))
 
 /-- The adversary's input is the reduction input. -/
@@ -175,7 +175,8 @@ theorem ofFn_encTape (n : ℕ) (ω : Fin ((encHandler S).seedLen.eval n) → Boo
     rw [List.length_ofFn, encHandler_seedLen, PolyExpr.eval_add]
   rw [encTape_eq, NUPPT.coinsEquivPoly_symm_ofFn]
   cases β
-  · exact GGMRed.ofFn_padFin_of_length (by rw [if_neg Bool.false_ne_true, List.length_drop, hω]; omega)
+  · exact GGMRed.ofFn_padFin_of_length (by
+      rw [if_neg Bool.false_ne_true, List.length_drop, hω]; omega)
   · exact GGMRed.ofFn_padFin_of_length (by rw [if_pos rfl, List.length_take, hω]; omega)
 
 /-- **Ciphertext `β` of the reduction's output**, for the public key `z`, the seed `ω` and the
@@ -264,11 +265,13 @@ private theorem polyTimeComputable_guessFun : PolyTimeComputable guessFun := by
     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)
   exact polyTimeComputable_ite (polyTimeComputable_headD.comp hw)
     (polyTimeComputable_headD.comp (polyTimeComputable_tail.comp hw))
-    (polyTimeComputable_not (polyTimeComputable_headD.comp (BinArith.polyTimeComputable_reverse.comp hw)))
+    (polyTimeComputable_not
+      (polyTimeComputable_headD.comp (BinArith.polyTimeComputable_reverse.comp hw)))
 
 /-- **The distinguisher** of the reduction (⇐): the uniform machine without coins computing
 `[guessBit w]` on its argument `w`. -/
-noncomputable def guessDist : NUPPT := NUPPT.ofPolyTimeUniform polyTimeComputable_guessFun (.const 0)
+noncomputable def guessDist : NUPPT :=
+  NUPPT.ofPolyTimeUniform polyTimeComputable_guessFun (.const 0)
 
 /-- The distinguisher accepts `w` exactly when `guessBit w`:
 `guessDist.distinguisherL n w ρ = guessBit w`. -/

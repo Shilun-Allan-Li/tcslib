@@ -1,0 +1,83 @@
+START scratch/seal/ControlsSealedB 2026-11-12T06:05:00+00:00
+scratch/seal/ControlsSealedB.lean:11:77: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  S.inLens n 0 = S.ctLen.eval n
+scratch/seal/ControlsSealedB.lean:13:83: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  S.outLens n 0 = S.msgLen.eval n + 1
+scratch/seal/ControlsSealedB.lean:15:51: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (PolyExpr.const 3).eval n = 3
+scratch/seal/ControlsSealedB.lean:18:74: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  seedIn n z ω = pairEncode (List.replicate n true) (pairEncode z ω)
+scratch/seal/ControlsSealedB.lean:20:38: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  padFin 1 [true] 0 = true
+scratch/seal/ControlsSealedB.lean:22:59: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  acDin S 0 = S.ctLen
+scratch/seal/ControlsSealedB.lean:24:60: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  finU w = pairFstD (pairFstD w)
+scratch/seal/ControlsSealedB.lean:28:95: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (fwdHandler din dout sl a ha o f r hr).perCall = PolyExpr.const 1
+scratch/seal/ControlsSealedB.lean:30:29: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  cntRead [] = []
+scratch/seal/ControlsSealedB.lean:32:97: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (decHandler S ℓ D).finCall = ℓ
+scratch/seal/ControlsSealedB.lean:34:73: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (encHandler S).finCall = PolyExpr.const 0
+scratch/seal/ControlsSealedB.lean:36:32: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  guessBit [] = true
+scratch/seal/ControlsSealedB.lean:39:80: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  S.nmCodec n ℓ = bitCodec (S.inLens n) (S.outLens n) (ℓ * S.ctLen.eval n)
+FAIL(scratch/seal/ControlsSealedB): lean exited with status 1
+FAIL(scratch/seal/ControlsSealedB): error diagnostics reported
+FAIL(scratch/seal/ControlsSealedB): no fresh .olean produced
+END scratch/seal/ControlsSealedB 2026-11-12T06:05:02+00:00 exit=1 wall=2.0s maxrss=2531MiB

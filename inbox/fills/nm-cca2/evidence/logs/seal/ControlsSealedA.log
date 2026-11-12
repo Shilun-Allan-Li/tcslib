@@ -1,0 +1,77 @@
+START scratch/seal/ControlsSealedA 2026-11-12T06:04:58+00:00
+scratch/seal/ControlsSealedA.lean:11:77: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  S.inLens n 0 = S.ctLen.eval n
+scratch/seal/ControlsSealedA.lean:13:83: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  S.outLens n 0 = S.msgLen.eval n + 1
+scratch/seal/ControlsSealedA.lean:18:74: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  seedIn n z ω = pairEncode (List.replicate n true) (pairEncode z ω)
+scratch/seal/ControlsSealedA.lean:20:38: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  padFin 1 [true] 0 = true
+scratch/seal/ControlsSealedA.lean:22:59: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  acDin S 0 = S.ctLen
+scratch/seal/ControlsSealedA.lean:24:60: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  finU w = pairFstD (pairFstD w)
+scratch/seal/ControlsSealedA.lean:28:95: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (fwdHandler din dout sl a ha o f r hr).perCall = PolyExpr.const 1
+scratch/seal/ControlsSealedA.lean:30:29: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  cntRead [] = []
+scratch/seal/ControlsSealedA.lean:32:97: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (decHandler S ℓ D).finCall = ℓ
+scratch/seal/ControlsSealedA.lean:34:73: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (encHandler S).finCall = PolyExpr.const 0
+scratch/seal/ControlsSealedA.lean:36:32: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  guessBit [] = true
+scratch/seal/ControlsSealedA.lean:39:80: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  S.nmCodec n ℓ = bitCodec (S.inLens n) (S.outLens n) (ℓ * S.ctLen.eval n)
+FAIL(scratch/seal/ControlsSealedA): lean exited with status 1
+FAIL(scratch/seal/ControlsSealedA): error diagnostics reported
+FAIL(scratch/seal/ControlsSealedA): no fresh .olean produced
+END scratch/seal/ControlsSealedA 2026-11-12T06:05:00+00:00 exit=1 wall=2.0s maxrss=2529MiB

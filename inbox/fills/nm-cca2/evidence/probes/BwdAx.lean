@@ -1,3 +1,0 @@
-import scratch.Bwd
-#print axioms TCSlib.Cryptography.Composability.FixedLengthPKScheme.iff_test
-#print axioms TCSlib.Cryptography.Composability.FixedLengthPKScheme.indSecure_cca2_of_nmSecure_cca2
