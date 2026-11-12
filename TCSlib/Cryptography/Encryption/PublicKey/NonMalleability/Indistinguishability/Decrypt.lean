@@ -297,7 +297,7 @@ theorem simulate_decHandler_finish (n : ℕ) (z : List Bool)
           [decide (D.output (NUPPT.layout (List.replicate n true)
             ((List.range (ℓ.eval n)).map fun i => List.ofFn (ans (decBlock S n a i) st)).flatten
             (pairSndD z) (List.ofFn ω)) = [true])] :=
-        GGMRed.ofFn_padFin_of_length (by rw [List.length_singleton, hout])
+        ofFn_padFin_of_length (by rw [List.length_singleton, hout])
       exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
         (decodeBitMove_ret _ _ _ _)
     | succ m ih =>
