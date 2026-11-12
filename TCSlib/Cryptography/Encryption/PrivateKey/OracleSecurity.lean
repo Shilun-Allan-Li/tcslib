@@ -242,6 +242,16 @@ theorem indImpl_challenge_repeat (atk : Attack) (b : Bool) (n : ℕ) (k : List B
     (mm : Fin (n + n) → Bool) (c : Fin (S.ctLen.eval n) → Bool) :
     S.indImpl atk b n k 2 mm (some c) = .pure (c, some c) := rfl
 
+/-- The encryption oracle accepts an `n`-bit message:
+`(S.indSpec n).dom 0 = (Fin n → Bool)`. -/
+theorem indSpec_encDom (n : ℕ) : (S.indSpec n).dom 0 = (Fin n → Bool) := by
+  rw [S.indSpec_eq, bitSpec_dom, S.inLens_zero]
+
+/-- The encryption oracle answers a ciphertext at the fixed ciphertext width:
+`(S.indSpec n).rng 0 = (Fin (S.ctLen.eval n) → Bool)`. -/
+theorem indSpec_encRng (n : ℕ) : (S.indSpec n).rng 0 = (Fin (S.ctLen.eval n) → Bool) := by
+  rw [S.indSpec_eq, bitSpec_rng, S.outLens_zero]
+
 /-- The decryption oracle accepts a ciphertext at the fixed ciphertext width:
 `(S.indSpec n).dom 1 = (Fin (S.ctLen.eval n) → Bool)`. -/
 theorem indSpec_decDom (n : ℕ) : (S.indSpec n).dom 1 = (Fin (S.ctLen.eval n) → Bool) := by
@@ -287,6 +297,25 @@ theorem indImpl_challenge_none_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : L
         let c := S.encryptAt n k (if b then halves.2 else halves.1) r
         .pure (cast (S.indSpec_challengeRng n).symm c, some c) := by
   simpa only [cast_eq] using S.indImpl_challenge_none atk b n k mm
+
+/-- The encryption equation on the query specification's type: with `m' = cast _ m` the message
+read at width `n`, `S.indImpl atk b n k 0 m st` draws `r ← Enc.Coins n` and answers
+`cast _ (S.encryptAt n k m' r)`, keeping the state `st`. -/
+theorem indImpl_enc_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
+    (m : (S.indSpec n).dom 0) (st : Option (Fin (S.ctLen.eval n) → Bool)) :
+    S.indImpl atk b n k 0 m st =
+      (ProbComp.sample (S.enc.Coins n)).bind fun r =>
+        .pure (cast (S.indSpec_encRng n).symm (S.encryptAt n k (cast (S.indSpec_encDom n) m) r),
+          st) := by
+  simpa only [cast_eq] using S.indImpl_enc atk b n k m st
+
+/-- The repeated challenge equation on the query specification's type:
+`S.indImpl atk b n k 2 mm (some c) = pure (cast _ c, some c)`, the recorded ciphertext `c` read at
+the challenge oracle's answer type. -/
+theorem indImpl_challenge_repeat_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
+    (mm : (S.indSpec n).dom 2) (c : Fin (S.ctLen.eval n) → Bool) :
+    S.indImpl atk b n k 2 mm (some c) = .pure (cast (S.indSpec_challengeRng n).symm c, some c) := by
+  simpa only [cast_eq] using S.indImpl_challenge_repeat atk b n k mm c
 
 /-- The codec of the adversary: the three oracles, and a one-bit final output. -/
 def indCodec (n : ℕ) : MachineCodec (S.indSpec n) (Fin 1 → Bool) :=

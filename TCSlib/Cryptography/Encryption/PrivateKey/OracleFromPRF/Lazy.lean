@@ -1,0 +1,484 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Games
+import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Eager
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The experiment with a lazily sampled random function
+
+Step 2 of [PS10, Theorem 168.2] runs the IND experiment with a random function `R` in place of
+`f_k`. This file samples `R` lazily (`lazyImpl`): a table records the points asked so far, a new
+point gets a fresh uniform value, and a repeated point its recorded value. The challenge's point
+`r*` is not entered in the table; its value is recomputed from the recorded challenge `⟨r*, c⟩`
+and messages `⟨m₀, m₁⟩` as `c ⊕ m_b` (`look`), so that the state does not depend on `b` except
+through that recomputation. A flag records the bad events of step 2: `r*` was already in the
+table, or a later encryption uses `r*`.
+
+Averaging the experiment with `R` over a uniform `R` gives the lazy experiment
+(`expect_lazyImpl`): at a new point, resampling `R` there (`BitwiseSim.expect_sample_update`) is
+the lazy sample; the table and the record determine `R` elsewhere (`ovr`).
+
+## Main definitions
+
+* `PRFGame.LState`: the state (table, challenge record, flag).
+* `PRFGame.rStar`, `padAt`, `look`, `ovr`: the challenge's point and pad, the lazy function's
+  recorded values, and `R` overridden by them.
+* `PRFGame.lazyImpl`: the lazy experiment.
+
+## Main results
+
+* `PRFGame.lazyImpl_enc`, `_dec_open`, `_dec_closed`, `_challenge_none`, `_challenge_some`.
+* `PRFGame.expect_lazyImpl`: the random function sampled in advance is the lazy one.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+  §3.8.1 (the two descriptions of a random function) and Theorem 168.2 (book pp. 95, 168).
+-/
+
+namespace TCSlib.Cryptography.Composability.PRFGame
+
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
+
+/-! ### The state and the recorded values -/
+
+/-- The state of the lazy experiment: the table of asked points and values, the challenge record
+`⟨m₀ ‖ m₁, c⟩` once asked, and the bad flag. -/
+abbrev LState (n d : ℕ) :=
+  List ((Fin n → Bool) × (Fin n → Bool)) × Option (List Bool × (Fin d → Bool)) × Bool
+
+/-- `LState n d = List ((Fin n → Bool) × (Fin n → Bool)) × Option (List Bool × (Fin d → Bool)) ×
+Bool`. -/
+theorem LState_eq (n d : ℕ) : LState n d =
+    (List ((Fin n → Bool) × (Fin n → Bool)) × Option (List Bool × (Fin d → Bool)) × Bool) := rfl
+
+section State
+
+variable {n d : ℕ}
+
+/-- The challenge's nonce: the first component of the ciphertext `c`, read at `n` bits. -/
+def rStar (c : Fin d → Bool) : Fin n → Bool := padFin n (pairFstD (List.ofFn c))
+
+/-- `rStar c = padFin n (pairFstD ⟦c⟧)`. -/
+theorem rStar_eq (c : Fin d → Bool) : rStar (n := n) c = padFin n (pairFstD (List.ofFn c)) := rfl
+
+/-- The challenge's pad `c₂ ⊕ m_b` recomputed from the ciphertext `c = ⟨r*, c₂⟩` and the
+challenge query `ml = m₀ ‖ m₁`. -/
+def padAt (b : Bool) (ml : List Bool) (c : Fin d → Bool) : Fin n → Bool :=
+  padFin n (List.zipWith xor (pairSndD (List.ofFn c)) (AdaptiveCPA.msgOf n b ml))
+
+/-- `padAt b ml c = padFin n (pairSndD ⟦c⟧ ⊕ msgOf n b ml)`. -/
+theorem padAt_eq (b : Bool) (ml : List Bool) (c : Fin d → Bool) :
+    padAt (n := n) b ml c =
+      padFin n (List.zipWith xor (pairSndD (List.ofFn c)) (AdaptiveCPA.msgOf n b ml)) := rfl
+
+/-- **The lazy function's recorded value** at `x`: the challenge's pad at `r*`, else the table's
+value. -/
+def look (b : Bool) (st : LState n d) (x : Fin n → Bool) : Option (Fin n → Bool) :=
+  match st.2.1 with
+  | some (ml, c) => if x = rStar c then some (padAt b ml c) else st.1.lookup x
+  | none => st.1.lookup x
+
+/-- Without a challenge record, the recorded values are the table's:
+`look b (T, none, bd) x = T.lookup x`. -/
+theorem look_none (b : Bool) (T : List ((Fin n → Bool) × (Fin n → Bool))) (bd : Bool)
+    (x : Fin n → Bool) : look b ((T, none, bd) : LState n d) x = T.lookup x := rfl
+
+/-- With the challenge record `⟨ml, c⟩`, the value at `r*` is the pad, elsewhere the table's:
+`look b (T, some (ml, c), bd) x = if x = rStar c then some (padAt b ml c) else T.lookup x`. -/
+theorem look_some (b : Bool) (T : List ((Fin n → Bool) × (Fin n → Bool))) (ml : List Bool)
+    (c : Fin d → Bool) (bd : Bool) (x : Fin n → Bool) :
+    look b ((T, some (ml, c), bd) : LState n d) x =
+      if x = rStar c then some (padAt b ml c) else T.lookup x := rfl
+
+/-- **`R` overridden by the recorded values:** `ovr b st R x = (look b st x).getD (R x)`. -/
+def ovr (b : Bool) (st : LState n d) (R : (Fin n → Bool) → (Fin n → Bool)) :
+    (Fin n → Bool) → (Fin n → Bool) :=
+  fun x => (look b st x).getD (R x)
+
+/-- `ovr b st R x = (look b st x).getD (R x)`. -/
+theorem ovr_apply (b : Bool) (st : LState n d) (R : (Fin n → Bool) → (Fin n → Bool))
+    (x : Fin n → Bool) : ovr b st R x = (look b st x).getD (R x) := rfl
+
+/-- The state after a lazily answered point `x` with fresh value `y`: `(x, y)` is added to the
+table unless `x` already has a value; the flag is raised by `hit`. -/
+def addPt (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bool) : LState n d :=
+  (if (look b st x).isSome then st.1 else (x, y) :: st.1, st.2.1, st.2.2 || hit)
+
+/-- `addPt b st x y hit = (if (look b st x).isSome then T else (x, y) :: T, ch, bd || hit)`. -/
+theorem addPt_eq (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bool) :
+    addPt b st x y hit =
+      (if (look b st x).isSome then st.1 else (x, y) :: st.1, st.2.1, st.2.2 || hit) := rfl
+
+/-- Whether `x` is the challenge's nonce. -/
+def hitStar (st : LState n d) (x : Fin n → Bool) : Bool :=
+  match st.2.1 with
+  | some (_, c) => decide (x = rStar c)
+  | none => false
+
+/-- `hitStar (T, some (ml, c), bd) x = decide (x = rStar c)`
+and `hitStar (T, none, bd) x = false`. -/
+theorem hitStar_some (T : List ((Fin n → Bool) × (Fin n → Bool))) (ml : List Bool)
+    (c : Fin d → Bool) (bd : Bool) (x : Fin n → Bool) :
+    hitStar ((T, some (ml, c), bd) : LState n d) x = decide (x = rStar c) := rfl
+
+/-- `hitStar (T, none, bd) x = false`. -/
+theorem hitStar_none (T : List ((Fin n → Bool) × (Fin n → Bool))) (bd : Bool) (x : Fin n → Bool) :
+    hitStar ((T, none, bd) : LState n d) x = false := rfl
+
+end State
+
+/-! ### The lazy experiment -/
+
+section Lazy
+
+variable (ins outs : Fin 3 → ℕ) (d n : ℕ) (atk : Attack) (b : Bool)
+
+/-- **The IND experiment with a lazily sampled random function:** as `fImpl`, with the function's
+value at a point `x` the recorded `look b st x` if any, else a fresh uniform `y`, recorded in the
+table (`addPt`). An encryption raises the flag on the challenge's nonce (`hitStar`); the first
+challenge raises it when its nonce already has a value, and records `⟨m₀ ‖ m₁, c⟩` without
+entering its nonce in the table. -/
+noncomputable def lazyImpl : QueryImpl (bitSpec ins outs) (LState n d) unifSpec
+  | 0, m, st => (ProbComp.sample (Fin n → Bool)).bind fun r =>
+      (ProbComp.sample (Fin n → Bool)).bind fun y =>
+        .pure (padFin _ (ctOf r (List.ofFn m) ((look b st r).getD y)),
+          addPt b st r y (hitStar st r))
+  | 1, c, st =>
+    if FixedLengthScheme.decOpen atk st.2.1.isSome && decWF n (List.ofFn c) then
+      (ProbComp.sample (Fin n → Bool)).bind fun y =>
+        .pure (padFin _ (true :: List.zipWith xor (pairSndD (List.ofFn c))
+            (List.ofFn ((look b st (padFin n (pairFstD (List.ofFn c)))).getD y))),
+          addPt b st (padFin n (pairFstD (List.ofFn c))) y false)
+    else .pure (zeroBits _, st)
+  | 2, mm, st =>
+    match st with
+    | (T, some (ml, c), bd) => .pure (padFin _ (List.ofFn c), (T, some (ml, c), bd))
+    | (T, none, bd) => (ProbComp.sample (Fin n → Bool)).bind fun r =>
+        (ProbComp.sample (Fin n → Bool)).bind fun y =>
+          .pure (padFin _ (List.ofFn (padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm))
+              ((look b ((T, none, bd) : LState n d) r).getD y)))),
+            (T, some (List.ofFn mm, padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm))
+              ((look b ((T, none, bd) : LState n d) r).getD y))),
+                bd || (look b ((T, none, bd) : LState n d) r).isSome))
+
+/-- An encryption samples a nonce `r` and a fresh value `y`, answers `⟨r, m ⊕ R(r)⟩` with the lazy
+value, and records the point. -/
+theorem lazyImpl_enc (m : Fin (ins 0) → Bool) (st : LState n d) :
+    lazyImpl ins outs d n atk b 0 m st = (ProbComp.sample (Fin n → Bool)).bind fun r =>
+      (ProbComp.sample (Fin n → Bool)).bind fun y =>
+        .pure (padFin _ (ctOf r (List.ofFn m) ((look b st r).getD y)),
+          addPt b st r y (hitStar st r)) :=
+  rfl
+
+/-- An open decryption of a well-formed `⟨x, v⟩` answers `⟨1, v ⊕ R(x)⟩` with the lazy value and
+records the point. -/
+theorem lazyImpl_dec_open (c : Fin (ins 1) → Bool) (st : LState n d)
+    (h : (FixedLengthScheme.decOpen atk st.2.1.isSome && decWF n (List.ofFn c)) = true) :
+    lazyImpl ins outs d n atk b 1 c st = (ProbComp.sample (Fin n → Bool)).bind fun y =>
+      .pure (padFin _ (true :: List.zipWith xor (pairSndD (List.ofFn c))
+          (List.ofFn ((look b st (padFin n (pairFstD (List.ofFn c)))).getD y))),
+        addPt b st (padFin n (pairFstD (List.ofFn c))) y false) := by
+  show (if _ then _ else _) = _
+  rw [if_pos h]
+
+/-- Otherwise a decryption answers `⊥` and keeps the state. -/
+theorem lazyImpl_dec_closed (c : Fin (ins 1) → Bool) (st : LState n d)
+    (h : (FixedLengthScheme.decOpen atk st.2.1.isSome && decWF n (List.ofFn c)) = false) :
+    lazyImpl ins outs d n atk b 1 c st = .pure (zeroBits _, st) := by
+  show (if _ then _ else _) = _
+  rw [if_neg (by rw [h]; exact Bool.false_ne_true)]
+
+/-- A repeated challenge returns the recorded ciphertext. -/
+theorem lazyImpl_challenge_some (mm : Fin (ins 2) → Bool)
+    (T : List ((Fin n → Bool) × (Fin n → Bool))) (ml : List Bool) (c : Fin d → Bool) (bd : Bool) :
+    lazyImpl ins outs d n atk b 2 mm (T, some (ml, c), bd) =
+      .pure (padFin _ (List.ofFn c), (T, some (ml, c), bd)) :=
+  rfl
+
+/-- The first challenge samples `r` and `y`, answers `c = ⟨r, m_b ⊕ R(r)⟩` with the lazy value,
+records `⟨m₀ ‖ m₁, c⟩` and raises the flag if `r` already has a value. -/
+theorem lazyImpl_challenge_none (mm : Fin (ins 2) → Bool)
+    (T : List ((Fin n → Bool) × (Fin n → Bool))) (bd : Bool) :
+    lazyImpl ins outs d n atk b 2 mm (T, none, bd) =
+      (ProbComp.sample (Fin n → Bool)).bind fun r =>
+        (ProbComp.sample (Fin n → Bool)).bind fun y =>
+          .pure (padFin _ (List.ofFn (padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm))
+              ((look b ((T, none, bd) : LState n d) r).getD y)))),
+            (T, some (List.ofFn mm, padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm))
+              ((look b ((T, none, bd) : LState n d) r).getD y))),
+                bd || (look b ((T, none, bd) : LState n d) r).isSome)) :=
+  rfl
+
+end Lazy
+
+/-! ### The recorded values along the lazy experiment -/
+
+section Records
+
+variable {n d : ℕ}
+
+/-- Exclusive-or with the same list twice cancels: `(a ⊕ c) ⊕ a = c` for `|a| = |c|`. -/
+theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
+    List.zipWith xor (List.zipWith xor a c) a = c := by
+  apply List.ext_getElem
+  · simp [h]
+  · intro i h₁ h₂
+    simp only [List.getElem_zipWith]
+    cases a[i] <;> cases c[i] <;> rfl
+
+/-- The record of a ciphertext `⟨r, m ⊕ y⟩` (with `|m| = n` and `d = 3n + 2`) has nonce `r`. -/
+theorem rStar_ctOf (hd : d = 3 * n + 2) (r : Fin n → Bool) {m : List Bool} (hm : m.length = n)
+    (y : Fin n → Bool) : rStar (padFin d (ctOf r m y)) = r := by
+  rw [rStar_eq, GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
+    pairFstD_pairEncode, padFin_ofFn]
+
+/-- The record of a challenge ciphertext `⟨r, m_b ⊕ y⟩` has pad `y`. -/
+theorem padAt_ctOf (hd : d = 3 * n + 2) (b : Bool) (r : Fin n → Bool) (ml : List Bool)
+    (hm : (AdaptiveCPA.msgOf n b ml).length = n) (y : Fin n → Bool) :
+    padAt b ml (padFin d (ctOf r (AdaptiveCPA.msgOf n b ml) y)) = y := by
+  rw [padAt_eq, GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
+    pairSndD_pairEncode, zipWith_xor_cancel_left (by rw [hm, List.length_ofFn]), padFin_ofFn]
+
+/-- The flag does not change the recorded values: `look b (st.1, st.2.1, bd) = look b st`. -/
+theorem look_flag (b : Bool) (st : LState n d) (bd : Bool) :
+    look b ((st.1, st.2.1, bd) : LState n d) = look b st := by
+  obtain ⟨T, ch, bd'⟩ := st
+  cases ch <;> rfl
+
+/-- **A point with a value is not recorded again:** if `look b st x` is some value, adding `x`
+changes no recorded value, so `ovr` is unchanged: `ovr b (addPt b st x y hit) R = ovr b st R`. -/
+theorem ovr_addPt_of_isSome (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bool)
+    (hx : (look b st x).isSome = true) (R : (Fin n → Bool) → (Fin n → Bool)) :
+    ovr b (addPt b st x y hit) R = ovr b st R := by
+  rw [addPt_eq, if_pos hx]
+  funext z
+  rw [ovr_apply, ovr_apply, look_flag]
+
+/-- **A new point is a resampled value:** if `x` has no value, adding `(x, y)` gives the recorded
+values of `st` with `R` resampled to `y` at `x`:
+`ovr b (addPt b st x y hit) R = ovr b st (Function.update R x y)`.
+
+**Proof sketch.** At `z = x` both sides read `y` (the new table entry, resp. the update); at
+`z ≠ x` the new entry is skipped by `lookup` and the update is not read (`look_none`, `look_some`,
+`List.lookup_cons`, `Function.update_of_ne`). -/
+theorem ovr_addPt_of_none (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bool)
+    (hx : look b st x = none) (R : (Fin n → Bool) → (Fin n → Bool)) :
+    ovr b (addPt b st x y hit) R = ovr b st (Function.update R x y) := by
+  rw [addPt_eq, if_neg (by rw [hx]; exact Bool.false_ne_true)]
+  funext z
+  obtain ⟨T, ch, bd⟩ := st
+  rw [ovr_apply, ovr_apply]
+  by_cases hz : z = x
+  · subst hz
+    rw [hx, Option.getD_none, Function.update_self]
+    cases ch with
+    | none => simp [look_none]
+    | some p =>
+      obtain ⟨ml, c⟩ := p
+      have hne : ¬ z = rStar c := by
+        intro h
+        rw [look_some, if_pos h] at hx
+        exact Option.noConfusion hx
+      simp [look_some, hne]
+  · rw [Function.update_of_ne hz]
+    have hzb : (z == x) = false := beq_eq_false_iff_ne.mpr hz
+    cases ch with
+    | none => simp [look_none, List.lookup_cons, hzb]
+    | some p =>
+      obtain ⟨ml, c⟩ := p
+      simp only [look_some]
+      split
+      · rfl
+      · simp [List.lookup_cons, hzb]
+
+/-- After a fresh point `x` with value `y`, the value at `x` is `y`. -/
+theorem ovr_addPt_self (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bool)
+    (hx : look b st x = none) (R : (Fin n → Bool) → (Fin n → Bool)) :
+    ovr b (addPt b st x y hit) R x = y := by
+  rw [ovr_addPt_of_none b st x y hit hx, ovr_apply, hx, Option.getD_none, Function.update_self]
+
+/-- **The challenge record holds the challenge's value:** from `(T, none, bd)`, recording the
+challenge ciphertext `c = ⟨r, m_b ⊕ y⟩` gives the recorded values with the value `y` at `r`, so
+`ovr` of the new state is `ovr` of the old one with `R` resampled at `r` (if `r` had no value). -/
+theorem ovr_record_of_none (hd : d = 3 * n + 2) (b : Bool)
+    (T : List ((Fin n → Bool) × (Fin n → Bool))) (bd bd' : Bool) (ml : List Bool)
+    (hm : (AdaptiveCPA.msgOf n b ml).length = n) (r y : Fin n → Bool)
+    (hr : look b ((T, none, bd) : LState n d) r = none) (R : (Fin n → Bool) → (Fin n → Bool)) :
+    ovr b ((T, some (ml, padFin d (ctOf r (AdaptiveCPA.msgOf n b ml) y)), bd') : LState n d) R =
+      ovr b ((T, none, bd) : LState n d) (Function.update R r y) := by
+  funext z
+  rw [ovr_apply, ovr_apply, look_some, rStar_ctOf hd r hm, padAt_ctOf hd b r ml hm, look_none]
+  rw [look_none] at hr
+  by_cases hz : z = r
+  · subst hz
+    rw [if_pos rfl, hr, Option.getD_some, Option.getD_none, Function.update_self]
+  · rw [if_neg hz, Function.update_of_ne hz]
+
+/-- If the challenge's nonce `r` already has the value `y₀`, recording `⟨r, m_b ⊕ y₀⟩` changes no
+recorded value. -/
+theorem ovr_record_of_some (hd : d = 3 * n + 2) (b : Bool)
+    (T : List ((Fin n → Bool) × (Fin n → Bool))) (bd bd' : Bool) (ml : List Bool)
+    (hm : (AdaptiveCPA.msgOf n b ml).length = n) (r y₀ : Fin n → Bool)
+    (hr : look b ((T, none, bd) : LState n d) r = some y₀) (R : (Fin n → Bool) → (Fin n → Bool)) :
+    ovr b ((T, some (ml, padFin d (ctOf r (AdaptiveCPA.msgOf n b ml) y₀)), bd') : LState n d) R =
+      ovr b ((T, none, bd) : LState n d) R := by
+  funext z
+  rw [ovr_apply, ovr_apply, look_some, rStar_ctOf hd r hm, padAt_ctOf hd b r ml hm, look_none]
+  rw [look_none] at hr
+  by_cases hz : z = r
+  · subst hz
+    rw [if_pos rfl, hr]
+  · rw [if_neg hz]
+
+end Records
+
+/-! ### Sampling the random function in advance or lazily -/
+
+section LazyEq
+
+variable (ins outs : Fin 3 → ℕ) (d n : ℕ) (atk : Attack) (b : Bool)
+
+/-- **The random function sampled in advance is the lazy one** (the two descriptions of a random
+function [PS10, §3.8.1], inside the IND experiment): with `d = 3n + 2` and `2n`-bit challenge
+queries, for every computation `c`, state `st` and function `G` of the output,
+`𝔼_R 𝔼[G] (simulate (fImpl … (ovr b st R)) c (record of st)) = 𝔼[G] (simulate (lazyImpl …) c st)`.
+
+**Proof sketch.** Induction on `c`. At a point `x` with a recorded value both sides use it and the
+recorded values do not change (`ovr_addPt_of_isSome`, `ovr_record_of_some`). At a new point,
+resample `R` at `x` (`BitwiseSim.expect_sample_update`): `R(x)` becomes the lazy sample `y`, and
+`R` resampled is the override of the new state (`ovr_addPt_of_none`, `ovr_record_of_none`);
+exchange the samples (`expect_sample_comm`) and apply the induction hypothesis. Closed
+decryptions and repeated challenges are answered alike. -/
+theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (G : α → ℝ)
+    (c : OracleComp (bitSpec ins outs) α) (st : LState n d) :
+    expect (ProbComp.sample ((Fin n → Bool) → (Fin n → Bool))) (fun R =>
+        expect (simulate (fImpl ins outs d n atk b (ovr b st R)) c (st.2.1.map Prod.snd))
+          (fun p => G p.1)) =
+      expect (simulate (lazyImpl ins outs d n atk b) c st) (fun p => G p.1) := by
+  induction c generalizing st with
+  | pure a =>
+    simp only [simulate_pure, expect_pure]
+    exact expect_const _ _
+  | query i x k ih =>
+    match i, x, k, ih with
+    | 0, m, k, ih =>
+      simp only [simulate_query, fImpl_enc, lazyImpl_enc, OracleComp.bind_assoc, expect_bind,
+        OracleComp.pure_bind]
+      rw [expect_sample_comm]
+      refine congrArg _ (funext fun r => ?_)
+      cases hr : look b st r with
+      | some y₀ =>
+        have hval : ∀ R, ovr b st R r = y₀ := fun R => by rw [ovr_apply, hr, Option.getD_some]
+        have hsome : (look b st r).isSome = true := by rw [hr]; rfl
+        have hst : ∀ y, addPt b st r y (hitStar st r) = addPt b st r y₀ (hitStar st r) :=
+          fun y => by rw [addPt_eq, addPt_eq, if_pos hsome, if_pos hsome]
+        simp only [hval, Option.getD_some, hst]
+        refine Eq.trans ?_ (expect_const _ _).symm
+        exact (congrArg _ (funext fun R => by
+          rw [← ovr_addPt_of_isSome b st r y₀ (hitStar st r) hsome R]; rfl)).trans (ih _ _)
+      | none =>
+        rw [← BitwiseSim.expect_sample_update r]
+        simp only [Option.getD_none]
+        have hU : ∀ R y, ovr b st (Function.update R r y) =
+            ovr b (addPt b st r y (hitStar st r)) R :=
+          fun R y => (ovr_addPt_of_none b st r y _ hr R).symm
+        have hV : ∀ R y, ovr b (addPt b st r y (hitStar st r)) R r = y :=
+          fun R y => ovr_addPt_self b st r y _ hr R
+        simp only [hU, hV]
+        rw [expect_sample_comm]
+        exact congrArg _ (funext fun y => ih _ _)
+    | 1, c, k, ih =>
+      by_cases hop : (FixedLengthScheme.decOpen atk st.2.1.isSome && decWF n (List.ofFn c)) = true
+      · have hop' : (FixedLengthScheme.decOpen atk (st.2.1.map Prod.snd).isSome &&
+            decWF n (List.ofFn c)) = true := by rw [Option.isSome_map]; exact hop
+        simp only [simulate_query, fImpl_dec, lazyImpl_dec_open _ _ _ _ _ _ c st hop,
+          OracleComp.bind_assoc, expect_bind, OracleComp.pure_bind, decAns_eq,
+          if_pos hop']
+        cases hr : look b st (padFin n (pairFstD (List.ofFn c))) with
+        | some y₀ =>
+          have hval : ∀ R, ovr b st R (padFin n (pairFstD (List.ofFn c))) = y₀ :=
+            fun R => by rw [ovr_apply, hr, Option.getD_some]
+          have hsome : (look b st (padFin n (pairFstD (List.ofFn c)))).isSome = true := by
+            rw [hr]; rfl
+          have hst : ∀ y, addPt b st (padFin n (pairFstD (List.ofFn c))) y false =
+              addPt b st (padFin n (pairFstD (List.ofFn c))) y₀ false :=
+            fun y => by rw [addPt_eq, addPt_eq, if_pos hsome, if_pos hsome]
+          simp only [hval, Option.getD_some, hst]
+          refine Eq.trans ?_ (expect_const _ _).symm
+          exact (congrArg _ (funext fun R => by
+            rw [← ovr_addPt_of_isSome b st _ y₀ false hsome R]; rfl)).trans (ih _ _)
+        | none =>
+          rw [← BitwiseSim.expect_sample_update (padFin n (pairFstD (List.ofFn c)))]
+          simp only [Option.getD_none]
+          have hU : ∀ R y, ovr b st (Function.update R (padFin n (pairFstD (List.ofFn c))) y) =
+              ovr b (addPt b st (padFin n (pairFstD (List.ofFn c))) y false) R :=
+            fun R y => (ovr_addPt_of_none b st _ y _ hr R).symm
+          have hV : ∀ R y, ovr b (addPt b st (padFin n (pairFstD (List.ofFn c))) y false) R
+              (padFin n (pairFstD (List.ofFn c))) = y :=
+            fun R y => ovr_addPt_self b st _ y _ hr R
+          simp only [hU, hV]
+          rw [expect_sample_comm]
+          exact congrArg _ (funext fun y => ih _ _)
+      · rw [Bool.not_eq_true] at hop
+        have hop' : (FixedLengthScheme.decOpen atk (st.2.1.map Prod.snd).isSome &&
+            decWF n (List.ofFn c)) = false := by rw [Option.isSome_map]; exact hop
+        have hz0 : padFin (outs 1) [] = zeroBits (outs 1) := by
+          funext k
+          simp only [padFin_def, List.getD_nil, zeroBits_apply]
+        simp only [simulate_query, fImpl_dec, lazyImpl_dec_closed _ _ _ _ _ _ c st hop,
+          OracleComp.pure_bind, decAns_eq, hop', Bool.false_eq_true, if_false, hz0]
+        exact ih _ st
+    | 2, mm, k, ih =>
+      obtain ⟨T, ch, bd⟩ := st
+      cases ch with
+      | some p =>
+        obtain ⟨ml, c⟩ := p
+        simp only [simulate_query, lazyImpl_challenge_some, OracleComp.pure_bind, Option.map_some,
+          fImpl_challenge_some]
+        exact ih _ _
+      | none =>
+        have hm : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n := by
+          have : (List.ofFn mm).length = n + n := by rw [List.length_ofFn, hi2]
+          rw [AdaptiveCPA.msgOf_eq]
+          cases b <;> simp [this]
+        have hpad : ∀ r y, List.ofFn (padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm)) y)) =
+            ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm)) y := fun r y =>
+          GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd])
+        simp only [simulate_query, Option.map_none, fImpl_challenge_none, lazyImpl_challenge_none,
+          OracleComp.bind_assoc, expect_bind, OracleComp.pure_bind, hpad]
+        rw [expect_sample_comm]
+        refine congrArg _ (funext fun r => ?_)
+        cases hr : look b ((T, none, bd) : LState n d) r with
+        | some y₀ =>
+          have hval : ∀ R, ovr b ((T, none, bd) : LState n d) R r = y₀ :=
+            fun R => by rw [ovr_apply, hr, Option.getD_some]
+          simp only [hval, Option.getD_some, Option.isSome_some]
+          refine Eq.trans ?_ (expect_const _ _).symm
+          exact (congrArg _ (funext fun R => by
+            rw [← ovr_record_of_some hd b T bd (bd || true) (List.ofFn mm) hm r y₀
+                hr R]; rfl)).trans
+            (ih _ _)
+        | none =>
+          rw [← BitwiseSim.expect_sample_update r]
+          simp only [Option.getD_none, Option.isSome_none]
+          have hU : ∀ R y, ovr b ((T, none, bd) : LState n d) (Function.update R r y) =
+              ovr b ((T, some (List.ofFn mm, padFin d (ctOf r (AdaptiveCPA.msgOf n b
+                (List.ofFn mm)) y)), bd || false) : LState n d) R :=
+            fun R y => (ovr_record_of_none hd b T bd _ _ hm r y hr R).symm
+          have hV : ∀ R y, ovr b ((T, some (List.ofFn mm, padFin d (ctOf r (AdaptiveCPA.msgOf n b
+              (List.ofFn mm)) y)), bd || false) : LState n d) R r = y := fun R y => by
+            rw [← hU, ovr_apply, hr, Option.getD_none, Function.update_self]
+          simp only [hU, hV]
+          rw [expect_sample_comm]
+          exact congrArg _ (funext fun y => ih _ _)
+
+end LazyEq
+
+end TCSlib.Cryptography.Composability.PRFGame
