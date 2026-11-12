@@ -1,0 +1,67 @@
+# preflight 2026-11-12T19:31:59Z (nm-sim)
+## nproc
+4
+## cgroup v1 (/sys/fs/cgroup/memory)
+memory.limit_in_bytes 9223372036854771712
+memory.usage_in_bytes 2281140224
+memory.stat:
+cache 44978176
+rss 11259904
+rss_huge 0
+shmem 17125376
+mapped_file 31338496
+dirty 20480
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 17211
+pgpgout 3524
+pgfault 6537
+pgmajfault 35
+inactive_anon 13885440
+active_anon 4096
+inactive_file 22593536
+active_file 5263360
+unevictable 14491648
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 2262913024
+total_rss 18329600
+total_rss_huge 0
+total_shmem 17125376
+total_mapped_file 34885632
+total_dirty 1454206976
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 365037
+total_pgpgout 203501
+total_pgfault 243786
+total_pgmajfault 923
+total_inactive_anon 20090880
+total_active_anon 20480
+total_inactive_file 2145869824
+total_active_file 99921920
+total_unevictable 15155200
+in use (usage - total_cache + total_shmem) = 35180544 B
+## no cgroup limit: headroom = MemAvailable
+MemTotal:       16472084 kB
+MemFree:        14092684 kB
+MemAvailable:   16120284 kB
+Buffers:           31148 kB
+Cached:          2178708 kB
+## df -B1 / df -T (clone /workspace/sim, payload /workspace/simpay, TMPDIR /tmp)
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 27112239104 16760029184  62% /
+/dev/vda       270553174016 27112239104 16760029184  62% /
+/dev/vda       270553174016 27112239104 16760029184  62% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 26476796  16367216  62% /
+/dev/vda       ext4 264212084 26476796  16367216  62% /
+/dev/vda       ext4 264212084 26476796  16367216  62% /
+headroom = MemAvailable = 16119980 kB = 15.37 GiB (floor 4 GiB)
+disk free = 16760029184 B = 15.60 GiB (floor 12 GiB)
