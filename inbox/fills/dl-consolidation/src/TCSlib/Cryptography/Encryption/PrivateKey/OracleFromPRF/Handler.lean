@@ -48,6 +48,7 @@ The finalization asks nothing and outputs the adversary's bit.
 namespace TCSlib.Cryptography.Composability.PRFGame
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+open TCSlib.Cryptography.Games.InteractiveHandler (rU rW rS rI rX rL rCnt)
 
 /-! ### Lengths and states -/
 
@@ -186,20 +187,6 @@ private theorem fields_pkState (n j : ℕ) (o : Option (Fin (ctP.eval n) → Boo
 
 /-! ### The round function -/
 
-/-- The parameter `1^n` of a round input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`. -/
-private def rU (w : List Bool) : List Bool := pairFstD (pairFstD w)
-/-- The seed `ω`. -/
-private def rW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
-/-- The state `s`. -/
-private def rS (w : List Bool) : List Bool := pairFstD (pairSndD w)
-/-- The oracle index `1^i`. -/
-private def rI (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
-/-- The query `x`. -/
-private def rX (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
-/-- The outer log `L` of the call. -/
-private def rL (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
-/-- The count `1^j` of the state. -/
-private def rCnt (w : List Bool) : List Bool := pairFstD (rS w)
 /-- The challenge flag of the state. -/
 private def rFlag (w : List Bool) : Bool := (pairSndD (rS w)).headD false
 /-- The recorded challenge of the state. -/
@@ -252,13 +239,13 @@ private theorem polyTimeComputable_pkRun (atkBit b : Bool) :
     PolyTimeComputable (pkRun q atkBit b) := by
   have hF := polyTimeComputable_pairFstD
   have hD := polyTimeComputable_pairSndD
-  have hU : PolyTimeComputable rU := hF.comp hF
-  have hW : PolyTimeComputable rW := hD.comp (hD.comp hF)
-  have hS : PolyTimeComputable rS := hF.comp hD
-  have hI : PolyTimeComputable rI := hF.comp (hF.comp (hD.comp hD))
-  have hX : PolyTimeComputable rX := hD.comp (hF.comp (hD.comp hD))
-  have hL : PolyTimeComputable rL := hD.comp (hD.comp hD)
-  have hCnt : PolyTimeComputable rCnt := hF.comp hS
+  have hU : PolyTimeComputable rU := InteractiveHandler.polyTimeComputable_rU
+  have hW : PolyTimeComputable rW := InteractiveHandler.polyTimeComputable_rW
+  have hS : PolyTimeComputable rS := InteractiveHandler.polyTimeComputable_rS
+  have hI : PolyTimeComputable rI := InteractiveHandler.polyTimeComputable_rI
+  have hX : PolyTimeComputable rX := InteractiveHandler.polyTimeComputable_rX
+  have hL : PolyTimeComputable rL := InteractiveHandler.polyTimeComputable_rL
+  have hCnt : PolyTimeComputable rCnt := InteractiveHandler.polyTimeComputable_rCnt
   have hT : PolyTimeComputable fun w => pairSndD (rS w) := hD.comp hS
   have hFlag : PolyTimeComputable fun w => [rFlag w] := polyTimeComputable_headD.comp hT
   have hRec : PolyTimeComputable rRec :=
@@ -420,25 +407,6 @@ section Answers
 variable (atkBit b : Bool) (n : ℕ) (z : List Bool)
   (ω : Fin ((pkHandler q atkBit b).seedLen.eval n) → Bool)
 
-/-- A call whose first round returns `y ‖ s'` is answered `y` with new state `s'`. -/
-private theorem impl_of_ret {i : Fin 3} (x : Fin ((pkDin i).eval n) → Bool)
-    (s : Fin ((pkStLen q).eval n) → Bool) (y : Fin ((pkDout i).eval n) → Bool)
-    (s' : Fin ((pkStLen q).eval n) → Bool)
-    (h : pkRun q atkBit b (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) i
-      (List.ofFn x) []) = pairEncode [true] (List.ofFn y ++ List.ofFn s')) :
-    (pkHandler q atkBit b).impl n z ω i x s = .pure (y, s') := by
-  rw [InteractiveHandler.impl_apply, InteractiveHandler.call_eq, pkHandler_perCall,
-    PolyExpr.eval_const]
-  rw [buildComp_succ_of_ret (a := Fin.append y s') (by
-    show decodeBitMove _ _ _ (pkRun q atkBit b _) = _
-    rw [MachineCodec.encodeLog_nil, h, ← List.ofFn_fin_append]
-    exact decodeBitMove_ret _ _ _ _), OracleComp.pure_bind]
-  congr 2
-  · funext j
-    exact Fin.append_left y s' j
-  · funext j
-    exact Fin.append_right y s' j
-
 /-- The outer log after one outer query `x'` answered `y`. -/
 private theorem encodeLog_one (x' y : Fin ((pkOut 0).eval n) → Bool) :
     (bitCodec (fun j => (pkOut j).eval n) (fun j => (pkOut j).eval n) 0).encodeLog
@@ -489,8 +457,9 @@ private theorem fields_input {i : Fin 3} (x L : List Bool) (j : ℕ)
       rL w = L ∧ rCnt w = List.replicate j true ∧ rFlag w = o.isSome ∧
       rRec w = (recBits n o).drop 1 := by
   obtain ⟨h₁, h₂, h₃⟩ := fields_pkState q n j o hj
-  simp only [InteractiveHandler.input_eq, rU, rW, rS, rI, rX, rL, rCnt, rFlag, rRec,
-    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, h₁, h₂, h₃, and_self]
+  simp only [InteractiveHandler.rU_input, InteractiveHandler.rW_input, InteractiveHandler.rS_input,
+    InteractiveHandler.rI_input, InteractiveHandler.rX_input, InteractiveHandler.rL_input,
+    InteractiveHandler.rCnt_input, rFlag, rRec, List.length_replicate, h₁, h₂, h₃, and_self]
 
 /-- The tape at the count `j < q(n)` is the `j`-th block of the seed. -/
 private theorem rNonce_fields {i : Fin 3} (x L : List Bool) (j : ℕ)
@@ -519,9 +488,6 @@ private theorem recBits_fields (o : Option (Fin (ctP.eval n) → Bool)) :
 private theorem rY_one (w : List Bool) (x' y : List Bool)
     (hL : rL w = pairEncode (pairEncode [] (pairEncode x' y)) []) : rY w = y := by
   rw [rY, hL, pairFstD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode]
-
-/-- The index word of oracle `1`. -/
-private theorem replicate_one : List.replicate ((1 : Fin 3) : ℕ) true = [true] := rfl
 
 /-- The index word of oracle `2`. -/
 private theorem replicate_two : List.replicate ((2 : Fin 3) : ℕ) true = [true, true] := rfl
@@ -606,7 +572,7 @@ theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
         (1 : Fin 3)
         (List.ofFn x) []) = decWF n (List.ofFn x) := by
       rw [rWF, hU, hX, List.length_replicate, decWF_eq]
-    rw [pkRun, hI, replicate_one, hFlag, hWF, hop, hL, hX, hx0]
+    rw [pkRun, hI, Fin.val_one, List.replicate_one, hFlag, hWF, hop, hL, hX, hx0]
     rfl
   · intro y
     obtain ⟨hU, -, hS, hI, hX, hL, -, hFlag, -⟩ :=
@@ -625,8 +591,8 @@ theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
       ofFn_padFin_of_length (by
         rw [List.length_cons, List.length_zipWith, List.length_ofFn, hwf.2, hn, Nat.min_self,
           pkDout_one, PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const])
-    rw [pkRun, hI, replicate_one, hFlag, hWF, hop, hL, log_ne_nil, if_neg Bool.false_ne_true,
-      hans, hS, hX, hY]
+    rw [pkRun, hI, Fin.val_one, List.replicate_one, hFlag, hWF, hop, hL, log_ne_nil,
+      if_neg Bool.false_ne_true, hans, hS, hX, hY]
     rfl
 
 /-- **Closed decryption:** if the oracle is closed (CPA, or a record exists) or the query is not
@@ -636,15 +602,16 @@ theorem pkHandler_impl_dec_closed (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ
     (hcl : (atkBit && !o.isSome && decWF n (List.ofFn x)) = false) :
     (pkHandler q atkBit b).impl n z ω 1 x (pkState q n j o)
         = .pure (zeroBits _, pkState q n j o) := by
-  refine impl_of_ret q atkBit b n z ω x _ _ _ ?_
+  refine InteractiveHandler.impl_of_ret _ n z ω x _ _ _ ?_
+  show pkRun q atkBit b _ = _
   obtain ⟨hU, -, hS, hI, hX, -, -, hFlag, -⟩ :=
     fields_input q atkBit b n z ω (i := 1) (List.ofFn x) [] j o hj
   have hWF : rWF (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (pkState q n j o))
       (1 : Fin 3)
       (List.ofFn x) []) = decWF n (List.ofFn x) := by
     rw [rWF, hU, hX, List.length_replicate, decWF_eq]
-  rw [pkRun, hI, replicate_one, hFlag, hWF, hcl, hU, hS, List.length_replicate, ofFn_zeroBits,
-    pkDout_one]
+  rw [pkRun, hI, Fin.val_one, List.replicate_one, hFlag, hWF, hcl, hU, hS, List.length_replicate,
+    ofFn_zeroBits, pkDout_one]
   rfl
 
 /-- **A recorded challenge is repeated:** from `pkState j (some c)`, a challenge is answered `c` and
@@ -653,7 +620,8 @@ theorem pkHandler_impl_challenge_some (x : Fin ((pkDin 2).eval n) → Bool) (j :
     (c : Fin (ctP.eval n) → Bool) (hj : j ≤ q.eval n) :
     (pkHandler q atkBit b).impl n z ω 2 x (pkState q n j (some c)) =
       .pure (padFin _ (List.ofFn c), pkState q n j (some c)) := by
-  refine impl_of_ret q atkBit b n z ω x _ _ _ ?_
+  refine InteractiveHandler.impl_of_ret _ n z ω x _ _ _ ?_
+  show pkRun q atkBit b _ = _
   obtain ⟨-, -, hS, hI, -, -, -, hFlag, hRec⟩ :=
     fields_input q atkBit b n z ω (i := 2) (List.ofFn x) [] j (some c) hj
   have hc : List.ofFn (padFin ((pkDout 2).eval n) (List.ofFn c)) = List.ofFn c :=

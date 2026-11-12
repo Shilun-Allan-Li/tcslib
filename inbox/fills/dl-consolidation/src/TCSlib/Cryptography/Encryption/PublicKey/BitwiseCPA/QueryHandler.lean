@@ -32,8 +32,6 @@ first challenge query (`exists_qHandlerMachine`).
 * `BitwiseSim.simulate_qHandler_recorded`, `simulate_qHandler_init`: the handler's simulation is
   the deterministic run with the answer function, and its final state records the first
   challenge query.
-* `BitwiseSim.chRun_toCompOn_transport_list`: transport of a run with a query-dependent answer
-  along equal lengths.
 * `BitwiseSim.exists_qHandlerMachine`: the machine of the handler, by T1.
 
 ## References
@@ -314,26 +312,6 @@ theorem simulate_qHandler_init (haux : (aux n).length = Laux.eval n)
 end Simulation
 
 /-! ### Transport and the machine -/
-
-/-- **Transport of a run with a query-dependent answer along equal lengths:** for a machine
-adversary run through `bitCodec`, if `ins = ins'`, `outs = outs'` and `d = d'`, then for every
-`G : List Bool → List Bool`,
-`List.ofFn (chRun (fun y => G ⟦y⟧) (A.toCompOn (bitCodec ins outs d) n q x r) none).1 =
-List.ofFn (chRun (fun y => G ⟦y⟧) (A.toCompOn (bitCodec ins' outs' d') n q x r) none).1`, and
-the two runs have the same `firstQ`.
-
-**Proof sketch.** Substitute the equalities; both sides become identical. -/
-theorem chRun_toCompOn_transport_list {ins outs ins' outs' : Fin 2 → ℕ} {d d' : ℕ}
-    (hi : ins = ins') (ho : outs = outs') (hd : d = d') (A : NUPPT) (n q : ℕ) (x : List Bool)
-    (r : A.Coins n) (G : List Bool → List Bool) :
-    List.ofFn (chRun (ins := ins) (outs := outs) (fun y => G (List.ofFn y))
-        (A.toCompOn (bitCodec ins outs d) n q x r) none).1 =
-      List.ofFn (chRun (ins := ins') (outs := outs') (fun y => G (List.ofFn y))
-        (A.toCompOn (bitCodec ins' outs' d') n q x r) none).1 ∧
-    firstQ (A.toCompOn (bitCodec ins outs d) n q x r) =
-      firstQ (A.toCompOn (bitCodec ins' outs' d') n q x r) := by
-  subst hi ho hd
-  exact ⟨rfl, rfl⟩
 
 /-- **The machine of the query-recording handler** (T1 for `qHandler`). For a machine adversary
 `A` with query budget `q` and one-bit output, there is a machine `D` and, at every parameter, a

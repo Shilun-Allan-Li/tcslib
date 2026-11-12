@@ -242,7 +242,7 @@ reduction's lengths.
 every key, the oracles of `IND_b` and `fImpl … (F n k)` have the same laws call by call
 (`expect_indImpl_fImpl`, from `ofFn_prf_encryptAt` and `ofFn_prf_decAnswer`), so the simulations
 agree (`ProbComp.expect_simulate_congr`); the game's codec and lengths are the reduction's
-(`indCodec_eq_bitCodec`, `prf_inLens`, `prf_outLens`, `prf_ctLen_eval`). -/
+(`FixedLengthScheme.indCodec_eq_bitCodec`, `prf_inLens`, `prf_outLens`, `prf_ctLen_eval`). -/
 private theorem accept_prf_indGame (atkBit b : Bool) (A : NUPPT) (Q n : ℕ) (hn : 0 < n) :
     accept ((prfFixedScheme F E hE hFE).indGame (atkOf atkBit) A Q b n) =
       expect (ProbComp.sample (Fin n → Bool)) fun k =>
@@ -271,7 +271,7 @@ private theorem accept_prf_indGame (atkBit b : Bool) (A : NUPPT) (Q n : ℕ) (hn
   rw [h1, expect_simulate_congr _ _ (fun i x s g => expect_indImpl_fImpl _ atkBit b n _ _ hct
       (prfNonceEq F E hE hFE n) (fun m re => ofFn_prf_encryptAt F E hE hFE n _ m re)
       (fun w rd => ofFn_prf_decAnswer F E hE hFE n hn _ w rd) i x s g),
-    indCodec_eq_bitCodec]
+    FixedLengthScheme.indCodec_eq_bitCodec]
   exact expect_fImpl_transport (prf_inLens F E hE hFE n) (prf_outLens F E hE hFE n)
     (prf_ctLen_eval F E hE hFE n) n _ b _ A Q r
 
@@ -599,25 +599,15 @@ private theorem cca2Adversary_two (n : ℕ) (i x c j y d : List Bool)
   simp only [hn, ite_false, pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- For every encryption tape there is an `n`-bit nonce `x`; the ciphertext is exactly
-the pair of that nonce and the message masked by `F n k x`. -/
+the pair of that nonce and the message masked by `F n k x` (`ofFn_prf_encryptAt` with the nonce
+`prfNonceEq r`). -/
 private theorem cca2Encrypt (n : ℕ) (k m : Fin n → Bool)
     (r : (prfFixedScheme F E hE hFE).enc.Coins n) :
     ∃ x : Fin n → Bool, List.ofFn r = List.ofFn x ∧
       List.ofFn ((prfFixedScheme F E hE hFE).encryptAt n (List.ofFn k) m r) =
         pairEncode (List.ofFn x) (List.ofFn (m + F n k x)) := by
-  revert r
-  simp only [FixedLengthScheme.encryptAt_eq, prfFixedScheme_ctLen]
-  rw [prfFixedScheme_enc, prfScheme_enc]
-  intro r
-  let x := NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) .var n r
-  have hx : List.ofFn x = List.ofFn r :=
-    NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n r
-  refine ⟨x, hx.symm, ?_⟩
-  rw [runAt_prfEnc hE, ← hx, hFE, zipWith_xor_ofFn_add]
-  apply ofFn_padFin_of_length
-  simp only [length_pairEncode, List.length_ofFn, PolyExpr.eval_add,
-    PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
-  omega
+  refine ⟨prfNonceEq F E hE hFE n r, (ofFn_prfNonceEq F E hE hFE n r).symm, ?_⟩
+  rw [ofFn_prf_encryptAt, PRFGame.ctOf_eq, zipWith_xor_ofFn_add]
 
 /-- The challenge query concatenates the all-false and all-true messages. -/
 private def cca2Messages (n : ℕ) : Fin (n + n) → Bool :=
@@ -671,21 +661,10 @@ private theorem cca2Alter_ne {d : ℕ} (hd : 0 < d) (c : Fin d → Bool) :
   simp only [List.length_ofFn, List.length_nil] at hl
   omega
 
-/-- The ciphertext width evaluates to `3 * n + 2`. -/
-private theorem cca2CtLen (n : ℕ) :
-    (prfFixedScheme F E hE hFE).ctLen.eval n = 3 * n + 2 := by
-  rw [prfFixedScheme_ctLen, PolyExpr.eval_add, PolyExpr.eval_mul,
-    PolyExpr.eval_const, PolyExpr.eval_const, PolyExpr.eval_var]
-
-/-- Every generated key is an `n`-bit word. -/
+/-- Every generated key is an `n`-bit word (`prf_gen_runAt`, `ofFn_prfKeyEq`). -/
 private theorem cca2Gen (n : ℕ) (rg : (prfFixedScheme F E hE hFE).gen.Coins n) :
-    ∃ k : Fin n → Bool, (prfFixedScheme F E hE hFE).gen.runAt n [] rg = List.ofFn k := by
-  revert rg
-  rw [prfFixedScheme_gen, prfScheme_gen]
-  intro rg
-  rw [runAt_coinKey]
-  exact ⟨NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n rg,
-    (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n rg).symm⟩
+    ∃ k : Fin n → Bool, (prfFixedScheme F E hE hFE).gen.runAt n [] rg = List.ofFn k :=
+  ⟨prfKeyEq F E hE hFE n rg, by rw [prf_gen_runAt, ofFn_prfKeyEq]⟩
 
 /-- The actual encrypted word is well formed, and its last-bit modification is a
 distinct, well-formed pair with the same nonce and the flipped masked payload. -/
@@ -700,7 +679,7 @@ private theorem cca2Cipher (n : ℕ) (hn : 0 < n) (k m : Fin n → Bool)
         (prfFixedScheme F E hE hFE).encryptAt n (List.ofFn k) m r := by
   obtain ⟨x, -, hc⟩ := cca2Encrypt F E hE hFE n k m r
   have hd : 0 < (prfFixedScheme F E hE hFE).ctLen.eval n := by
-    rw [cca2CtLen]
+    rw [prf_ctLen_eval, PRFGame.ctP_eval]
     omega
   have hp : List.ofFn (m + F n k x) ≠ [] := by
     intro he
@@ -844,7 +823,7 @@ theorem prfFixedScheme_not_cca2 :
         ((prfFixedScheme F E hE hFE).indGame .cca2 A (q.eval n) true n) = 1 := by
   refine ⟨cca2Adversary, .const 2, fun n hn => ?_⟩
   have hd : 0 < (prfFixedScheme F E hE hFE).ctLen.eval n := by
-    rw [cca2CtLen]
+    rw [prf_ctLen_eval, PRFGame.ctP_eval]
     omega
   have hacc : ∀ b : Bool, accept ((prfFixedScheme F E hE hFE).indGame .cca2 cca2Adversary
       ((PolyExpr.const 2).eval n) b n) = if b = true then 1 else 0 := by

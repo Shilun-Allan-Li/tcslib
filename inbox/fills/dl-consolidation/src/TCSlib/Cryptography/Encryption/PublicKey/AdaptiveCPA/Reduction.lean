@@ -179,7 +179,7 @@ adversary's coins `r` and the handler's seed `ω` fixed, the probability that `B
 the oracles of bit `b` outputs `1` is the expectation of `A`'s bit against `H_{i⋆+b}` with the
 handler's tapes in advance and the lazy slot `i⋆`.
 
-**Proof sketch.** Transport `B`'s run to T2's codec (`indCodec_eq_bitCodec`,
+**Proof sketch.** Transport `B`'s run to T2's codec (`FixedLengthPKScheme.indCodec_eq_bitCodec`,
 `expect_simulate_castImpl_toCompOn`), replace it by the reduction (T2's equation `hφ`, with
 `acHandler_advInput` and `acHandler_finish`), compose the two simulations (`simulate_bind`,
 `simulate_comp`) and pass to the hybrid through the state abstraction (`init_acAbs`,
@@ -214,7 +214,7 @@ private theorem prob_red_tape (hist : ist n ≤ cap.eval n)
       fun res => if (List.ofFn res.1).headD false = true then (1 : ℝ) else 0 := by
     funext res
     rw [prob_pure, headD_ofFn_one]
-  rw [prob_bind, indCodec_eq_bitCodec, h1]
+  rw [prob_bind, FixedLengthPKScheme.indCodec_eq_bitCodec, h1]
   refine (expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hd
     (S.indImpl .cpa b n pk sk) B n _ pk (φ (ω, r)) none
     (fun p => if p.1.headD false = true then (1 : ℝ) else 0)).symm.trans ?_

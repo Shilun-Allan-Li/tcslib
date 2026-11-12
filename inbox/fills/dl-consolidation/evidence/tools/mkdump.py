@@ -1,6 +1,10 @@
 import sys
 cands=[l.strip() for l in open('/workspace/dlc-work/candidates.txt') if l.strip()]
-extra=sys.argv[1:]  # extra module names to import (new modules)
+args=sys.argv[1:]
+outp='/workspace/dlc/lean_proof/dlc/DeclDump.lean'
+if args and args[0].startswith('--out='):
+    outp=args[0][6:]; args=args[1:]
+extra=args  # extra module names to import (new or further changed modules)
 imports=cands+['TCSlib.Cryptography.Implications.PublicKey']+extra
 mods=cands+extra
 src='\n'.join('import '+m for m in imports)+'''
@@ -51,4 +55,7 @@ def endpoints : List Name := [`TCSlib.Cryptography.Composability.prfFixedScheme_
       let axs ← liftCoreM <| Lean.collectAxioms e
       IO.println s!"ENDPOINT {e}: {((axs.map toString).qsort (· < ·)).toList}"
 ''' % ', '.join('`'+m for m in mods)
-open('/workspace/dlc/lean_proof/dlc/DeclDump.lean','w').write(src)
+import os
+os.makedirs(os.path.dirname(outp),exist_ok=True)
+open(outp,'w').write(src)
+print(outp)

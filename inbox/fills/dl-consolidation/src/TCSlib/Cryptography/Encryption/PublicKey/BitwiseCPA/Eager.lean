@@ -9,19 +9,16 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Eager challenge coins and readers for the CPA game
+# Readers of the padded encryptor for the CPA game
 
-Generic facts used by the hybrid argument for the bitwise scheme under chosen-plaintext attack
-[PS10, p. 103, in the game of Definition 171.5]: under CPA the encryption coins of the challenge
-may be sampled in advance (`expect_simulate_indImpl_cpa`, through the oracle equations
-`indImpl_*_onSpec`, from `ChallengeSim.expect_simulate_eager`); and the padded encryptor of a padded public-key scheme pads the
-original encryptor's output (`padded_enc_runAt`). All are read from the published lemmas of
-`OracleSecurity` and `ChallengeSim`. The CPA game's codec is the bit codec of the scheme's
-lengths by `AdaptiveCPA.indCodec_eq_bitCodec`, and casts are read by `ofFn_cast`.
+Facts used by the hybrid argument for the bitwise scheme under chosen-plaintext attack
+[PS10, p. 103, in the game of Definition 171.5]: the padded encryptor of a padded public-key
+scheme pads the original encryptor's output (`padded_enc_runAt`) and has its coins
+(`padded_enc_coins`). Both are read from the published lemmas of `OracleSecurity`. Eager challenge
+coins under CPA are `expect_simulate_indImpl_cpa` (`OracleSecurity`).
 
 ## Main results
 
-* `BitwiseSim.expect_simulate_indImpl_cpa`: eager challenge coins under CPA, for `indImpl`.
 * `BitwiseSim.padded_enc_runAt`, `BitwiseSim.padded_enc_coins`: readers of the padded scheme.
 
 ## References
@@ -33,30 +30,6 @@ lengths by `AdaptiveCPA.indCodec_eq_bitCodec`, and casts are read by `ofFn_cast`
 namespace TCSlib.Cryptography.Composability.BitwiseSim
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ChallengeSim ProbComp
-
-/-- **Eager challenge coins under CPA.** Simulating the oracles of `Ind_b` from the unchallenged
-state has, for every `G`, the expectation of first sampling the encryption coins `re` and then
-running the deterministic oracles whose challenge `mm` is answered with `Enc(⟨pk, m_b⟩; re)`,
-the halves read through `indSpec_challengeDom`:
-`𝔼[G ∘ fst] (simulate (indImpl .cpa b n pk sk) c none) = 𝔼_{re} G (chRun g_re c none).1`.
-
-**Proof sketch.** `expect_simulate_eager` with `d = ctLen(n)` (`outLens_one`), the cast
-`indSpec_challengeRng`, and the oracle equations `indImpl_dec_onSpec` (with `decOpen_cpa`),
-`indImpl_challenge_repeat_onSpec` and `indImpl_challenge_none_onSpec`. -/
-theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool) (n : ℕ)
-    (pk sk : List Bool) {α : Type} (G : α → ℝ) (c : OracleComp (S.indSpec n) α) :
-    expect (simulate (S.indImpl .cpa b n pk sk) c none) (fun p => G p.1) =
-      expect (ProbComp.sample (S.enc.Coins n)) fun re =>
-        G (chRun (fun mm => S.enc.runAt n (pairEncode pk (List.ofFn
-          (if b then (FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n) mm)).2
-            else (FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n) mm)).1))) re)
-          c none).1 :=
-  expect_simulate_eager (S.outLens_one n) (S.indSpec_challengeRng n).symm _ _
-    (fun x s => by
-      rw [S.indImpl_dec_onSpec]
-      simp only [FixedLengthScheme.decOpen_cpa, Bool.false_and, Bool.false_eq_true, if_false])
-    (fun mm C => S.indImpl_challenge_repeat_onSpec .cpa b n pk sk mm C)
-    (fun mm => S.indImpl_challenge_none_onSpec .cpa b n pk sk mm) G c none
 
 /-- **The padded encryptor pads the original encryptor's output**: for a padded public-key
 scheme, `Enc'(1^n, y; r) = padCt L(n) (Enc(1^n, y; r))`, with the coin string read as a list
