@@ -1197,6 +1197,13 @@ The ledger's census undercounts accordingly. **Questions for the user:** whether
 lemma replaces `EmitIterEmbed`'s public `Turing.runFrom_one` (a public removal); and the scope of
 the re-points (all non-colleague sites in one PR or several; `CircuitComplexity` needs its own
 authorization).
+**Ruled (the user, 2026-11-06, second round):** the general lemma replaces `Turing.runFrom_one`, and
+every site is re-pointed, colleague-owned files included. **Home revised (the user, 2026-11-12):**
+`TuringMachine/Deterministic`, beside `runFrom_zero` and `runFrom_succ_eq_step`, recorded among the
+vendored file's local modifications. It needs no import changes and also covers `Simulation`'s
+`bufferedScanCfg_run`, which the `CfgFacts` home could not reach (cycle through `StateRenaming`).
+The proposal is `campaign/items/dedup/overnight-2026-11-08/review/ro1-deterministic-option/`. It
+is rebuilt after #251, #241 and #242 merge.
 
 **NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
 `qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and
@@ -1884,3 +1891,76 @@ authorize retained or future foreign reads elsewhere.
 The short rewrite of runFrom at one in the rewind head base case and the
 final strip case is RO-1 accounting under the existing schedule. The general
 home decision stays parked; no new public reader is added for this law.
+
+## Actual gates 123 and 124 merges (2026-11-09)
+
+Seyoon merged #243 at `e4b1664011a40256a0ea52fb63079f28233b98dd` and
+#244 at `ef98f1685ddfb8da40d8e97890c0fff6d145523b`. Their exact combined replay passed
+82 modules and supplies the adopted campaign snapshot.
+
+The five inspected Bool-facing run-law implementations now cite the
+generic public contracts. The three inspected SafeRun zero, cons and
+trans implementations cite the public Segment operations through their
+private conversion. These scoped retirements preserve the existing
+declaration headers. The RO1 home ruling remains separate.
+
+## Gate 129 round 3 proof reuse on #251 (2026-11-09)
+
+The exact source ead826bc6b1900c4209717aafc14244745106d7d shares three live-copy
+and five aligned rewind implementations in Primitives, and centralizes
+thirty no-write field subproofs. The former forward eraser proof now
+uses the existing buffer replay. The six private Reductions fixed-prefix
+declarations are replaced by the public pairing computation and its
+linear-to-polynomial lift. The recorded implementation retirements
+take effect on merge.
+
+The expanded 52-file comparison also identifies the existing
+Nondeterminism conditional and threaded-map closure proofs against
+PolyTimePairing, alongside the PL-1 linear lift. These occur on both
+sides of the #251 comparison. A later Nondeterminism cleanup requires
+its own import ruling. The bounded evidence and remaining candidate
+kinds are in campaign/gates/129-input-readers/r3-evidence/COPY-REVIEW.md.
+
+
+## Gate 129 reader and scan re-points
+
+The following exact instances are retired on merge of #251 at
+`39dfa843b02ae7fdd0acaeacfadf5bba17a60feb`. See the 53-file copy review and source pins
+in `campaign/gates/129-input-readers/r4-evidence/`.
+
+- The complete native-input copy is a whole-word instance of the suffix copy.
+  The obsolete private prefix wrapper is removed. The indexed right-moving
+  zero-tape row is shared by the prefix, suffix, true-prefix, increment and
+  token proofs.
+- A work tape with an outer `none` write keeps its entire word. The exact
+  Primitives instances now cite the same private field lemma, including the
+  replay, rewind, polynomial and length-checker cases.
+- The optional-state map of a canonical word seam is the same seam with the
+  mapped anchor. Convention now owns the equation. It replaces the private
+  Seam proof, the CodeSimulator inline proof, and the two checked Primitives
+  instances.
+
+
+## Gate 129 round 5 action and suffix-copy re-points
+
+These exact proof instances retire on merge of #251 at `c2fbacf42718b16c03fc0e61b571a9cf2f8c6ecb`.
+The closing-form inventory and the 53-file comparison are in the gate 129
+round 5 evidence.
+
+- With an outer `none` write, the selected work tape retains its word. The
+  audited overflow, blank, polynomial and inactive preparation fields use
+  `apply_workTape_of_no_write`. The same premise covers the inspected
+  forwarding and countdown frames. A true erase still uses outer
+  `some none`.
+- The complete action record follows `Action.apply.eq_1`. The 21 Catalog
+  references now use the owner equation directly. The Boolean input/control
+  specialization in Simulation cites that equation with `controlAction_def`.
+  Historical pair 155 disappeared under round 4's scorer cutoff. The
+  Simulation proof changed in round 5.
+- A zero-tape suffix copier emits the unread suffix and halts at the right
+  blank. The token's empty suffix uses the same trace. The prepend and
+  empty-input constant-source cases share the complete prefix-plus-copy run.
+- The two split dispatch branches share their live-state witness.
+
+The reviewed instances and the historical cutoff correction have
+source and matched-span receipts in `campaign/gates/129-input-readers/r5-evidence/`.

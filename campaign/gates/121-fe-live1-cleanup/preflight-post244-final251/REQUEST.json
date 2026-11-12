@@ -1,0 +1,44 @@
+{
+  "head241": "9936345ae64a4380bbec3ac6f3dad192f927420a",
+  "campaign_Lean": "ef98f1685ddfb8da40d8e97890c0fff6d145523b",
+  "head251": "ead826bc6b1900c4209717aafc14244745106d7d",
+  "head253_is_merged": true,
+  "prospective_provider_tree": "55012e66e729fa06961e847f2c018058060a56f6",
+  "temporary_combined_tree": "e24aa1fd07122ba3159c1465dbea09bc9188c1e4",
+  "pr241_changed_paths": [
+    "TCSlib/Complexity/ClassNP/EXP.lean",
+    "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "TCSlib/Complexity/TuringMachine/Build/InputCall.lean"
+  ],
+  "applied_private_patches": [
+    {
+      "path": "campaign/items/dedup/fe-live1-repairs/inputlength-current-reader-validation/2026-11-08/InputLength-reader-proof-only.patch.txt",
+      "sha256": "699dcfb32461b7ca5f8caf99288fdd90bfa8a118f6e45fe6b82f06a7e6e5779c"
+    },
+    {
+      "path": "campaign/items/dedup/fe-live1-repairs/seam-reader-proposal/2026-11-08/source/consumer-only.patch",
+      "sha256": "6d1e2317b4742533f553f79cf4d81bf7533f465933e8e435e3bbd50b925f5dbd"
+    }
+  ],
+  "changed_owner_source_sha256": {
+    "TCSlib/Complexity/CookLevin/Hardness.lean": {
+      "before": "e5eafd4228a79194ad4d9aa2215b3081e31f7da284c0898907a57c89ad48767c",
+      "after": "c61dbf6be271b0000a5d3d89214c40cc812c4fc62c5567fcf437c9730086fe3e"
+    },
+    "TCSlib/Complexity/TuringMachine/Build/InputLength.lean": {
+      "before": "11bf21c0860d3d8bd89e820df34604a16a1c7e436d6af92f5f7112b7b59eb795",
+      "after": "abf197470b9de512d2060c893d26e10be530619e3c27c57b08dec09997f1b48e"
+    }
+  },
+  "required_rebuilt_dependencies_including_consumer": {
+    "TCSlib/Complexity/CookLevin/Hardness.lean": [
+      "TCSlib/Complexity/ClassNP/EXP.lean",
+      "TCSlib/Complexity/CookLevin/Hardness.lean"
+    ],
+    "TCSlib/Complexity/TuringMachine/Build/InputLength.lean": [
+      "TCSlib/Complexity/TuringMachine/Build/InputLength.lean"
+    ]
+  },
+  "scope": "Private text integration only. No Lean execution, source PR update, or gate decision."
+}

@@ -7,32 +7,26 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-09T01:29:22.900599-08:00; authoritative)
+## 0. Current state (2026-11-11T19:34:37.561713-08:00; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
-only go directly after fetch/rebase. #246, #247 and #245 merged after #253.
-Campaign Lean is `967bc00f00637312676f438c7f61b14219fa943b`. The complete post-#246 snapshot
-`oleans-pr246-post253` matches 1,004 source blobs and 896 object hashes.
-The 49-module post-#247/#245 replay passed. Use the verified whole snapshot
-`oleans-campaign-post245-247` (1,004 source blobs, 896 object hashes).
-See campaign/status/2026-11-09-merge-245-247/merge-chain.json.
+only go directly after fetch/rebase. #243 and #244 merged after #245–#247.
+Campaign Lean is `ef98f1685ddfb8da40d8e97890c0fff6d145523b`. The 82-module
+combined replay matches the actual #244 merge at all 1,004 Lean blobs and
+896 physical object hashes. Use the whole `oleans-pr243-244-current`
+snapshot. See campaign/status/2026-11-09-merge-243-244/.
 
 | PR / gate | Current state |
 |---|---|
-| #251 / 129 | **Not yet clear to merge.** Round 2 HOLD. Documented local repair bf8d502573a0ba945a04f7a9dfe827f55b2c840f passed the current-base 395-module replay and exact selected proof checks. The two reuse scopes and audit agent selection remain open. |
+| #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
-| #242 / 122 | **Not yet clear to merge.** Four #252 consumer repairs pushed at `f6d8f0f3d7212ab97cd6994fc1d55e02c15e0833`. Shared gate121 reads and Call/Clean remain held. The checked clock-capture transport proposal awaits a ruling. |
-| #241 / 121 | **Not yet clear to merge.** Gate 131 provider merged. Eight-module integrated native preflight passed on the prospective #251 snapshot. Await the #251 merge, exact seals, copy review, replay and follow-up. |
+| #242 / 122 | **Not yet clear to merge.** The checked clock repair is pushed at `6fe6b56cc514ce3c3d6ee0fa9daa9783396ff249`. Shared gate121 reads and Call/Clean remain held. |
+| #241 / 121 | **Merged** at `3a10a32e8975b79621873626198356fdea61e988` (2026-11-12). Gate closed. Its replay output is the campaign snapshot `oleans-c3a10` (campaign/status/2026-11-12-merge-241/). |
 | #252 / 130 | **Merged.** Gate closed and actual335 snapshot adopted before the Ladner merge. |
 | #249 / 128 | **Merged** as Ladner statement scaffold. Gate closed and current actual2 replay passed. |
-| #254 | **Clear to merge** as tooling only, no Lean diff. |
+| #254 | **Merged** (2026-11-11, `2088f98e`), tooling only, no Lean diff. |
 
-Gates 123–127 stay closed. #245–#247 have merged. **Clear to merge:** #243.
-Its actual 82-module replay remains current under START-HERE §4 because the
-changed owner and its complete import source are byte-exact. The combined
-#243 then #244 replay passed all 82 modules. After #243 merges, verify the
-actual current #244 prospective source against gate 124's saved Lean map
-and toolchain hashes before restoring #244 clearance.
+Gates 123–127 are closed and #243–#247 have merged.
 
 Roadmap: 26/26 previously tracked headlines and 19 additional checked
 closures without sorryAx. Book-form Theorem 3.1, SPACE(n+1) ≠ NP and F6
@@ -41,8 +35,15 @@ the main open theorem. No fill is dispatched. RD-2/H6 remains separately
 held (41 direct admissions in the recorded scopes, outside the merged TQBF
 proof). See campaign/status/2026-11-08-roadmap-readiness/.
 
-Pending design: sharp SAT verifier interface, SAT PolyTimeBlockLoop import
-and RO1 home. Leave the intentionally dirty RO1 worktree intact. The approved
+Pending design: sharp SAT verifier interface and SAT PolyTimeBlockLoop import.
+**RO1 home ruled (Seyoon, 2026-11-12): `Deterministic`** (the alternative in
+`campaign/items/dedup/overnight-2026-11-08/review/ro1-deterministic-option/`),
+superseding the 2026-11-06 `CfgFacts` ruling. The generic
+`Turing.MultiTapeTM.runFrom_one` goes beside `runFrom_zero` and
+`runFrom_succ_eq_step`, with no import changes, and is added to the file's
+list of local modifications. The re-point scope ruled on 2026-11-06 stands.
+It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
+with them), then gets its own replay and gate. The archived `CfgFacts` draft is superseded. The approved
 Hardness CfgFacts import stays separate. Next free gate 132. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.

@@ -1,13 +1,2 @@
-**Not yet clear to merge: #241.**
-
-The gate 131 provider is merged. The five edited owners and three
-intermediate importers for the private #241 combination all compile
-on the verified prospective gate 129 snapshot. See
-preflight-post245-247. The approved InputLength and Fresh/Prepared
-repairs are present in that combination. The four manifest files
-identified in the audit are verified in the follow-up staging list.
-
-After the gate 129 provider merges, refresh the exact integrated seals,
-copy dispositions and downstream replay for the selected Codex
-follow-up. The issued 817-section packet remains the historical
-audit input.
+**Merged** · #241 merged at `3a10a32e8975b79621873626198356fdea61e988` (2026-11-12). Gate 121 closed (round 2: 0/0/1, minor fixed in records).
+See findings-r2.md, resolutions-r2.md and campaign/status/2026-11-12-merge-241/.

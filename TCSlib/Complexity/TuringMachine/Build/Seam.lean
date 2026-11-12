@@ -341,11 +341,6 @@ private lemma seamComp_visited_general {Symbol : Type*} {x : List Symbol} [Decid
     exact Finset.mem_image.mpr
       ⟨t - (T₁ + 1), Finset.mem_range.mpr (by omega), rfl⟩
 
-/-- State mapping of a canonical seam changes only its anchor. -/
-private lemma seam_ofWords_mapState {S₃ : Type*} (f : S₁ → S₃)
-    (q : S₁) (w : Fin k → List Bool) :
-    (Cfg.ofWords (input := x) q w).mapState f = Cfg.ofWords (f q) w := rfl
-
 /-- **R2, seam-to-seam composition** (design §12;
 [Bon26], `executes_in_sum`). If `M₁` carries the seam
 `Cfg.ofWords start w₀` to the seam `Cfg.ofWords exit w₁` in exactly `T₁`
@@ -385,9 +380,9 @@ theorem seamCompTM_run [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
   have h₂' : M₂.runFrom
       ((Cfg.ofWords (input := x) exit w₁).mapState fun _ => entry) T₂ =
         Cfg.ofWords q₂ w₂ := by
-    simpa only [seam_ofWords_mapState] using h₂
-  simpa only [seam_ofWords_mapState] using
-    seamComp_run_general M₁ exit M₂ entry h₁ rfl hcut h₂'
+    simpa only [Cfg.ofWords_mapState] using h₂
+  simpa only [Cfg.ofWords_mapState] using
+    seamComp_run_general M₁ exit M₂ entry h₁ (Cfg.ofWords_state exit w₁) hcut h₂'
 
 /-- **R2, the inherited first-return cut** (design
 §12). Under the hypotheses of `seamCompTM_run`, if additionally `M₂` does
@@ -421,9 +416,9 @@ theorem seamCompTM_firstReturn [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S�
   have hcut₂' : ∀ t < T₂,
       (M₂.runFrom ((Cfg.ofWords (input := x) exit w₁).mapState fun _ => entry)
         t).state ≠ some q₂ := by
-    simpa only [seam_ofWords_mapState] using hcut₂
-  simpa only [seam_ofWords_mapState] using
-    seamComp_firstReturn_general M₁ exit M₂ entry q₂ h₁ rfl hcut hcut₂'
+    simpa only [Cfg.ofWords_mapState] using hcut₂
+  simpa only [Cfg.ofWords_mapState] using
+    seamComp_firstReturn_general M₁ exit M₂ entry q₂ h₁ (Cfg.ofWords_state exit w₁) hcut hcut₂'
 
 /-- **R2 space, the per-tape headline** (design §12,
 frozen decision 12.1: the sharp per-tape form). On every work tape `i`,
@@ -456,8 +451,8 @@ theorem seamCompTM_visitedByTapeHead [DecidableEq S₁]
         (Cfg.ofWords (input := x) (Sum.inl start) w₀) (T₁ + 1 + T₂) i ⊆
       M₁.visitedByTapeHead (Cfg.ofWords (input := x) start w₀) T₁ i ∪
         M₂.visitedByTapeHead (Cfg.ofWords (input := x) entry w₁) T₂ i := by
-  simpa only [seam_ofWords_mapState] using
-    seamComp_visited_general (T₂ := T₂) M₁ exit M₂ entry h₁ rfl hcut i
+  simpa only [Cfg.ofWords_mapState] using
+    seamComp_visited_general (T₂ := T₂) M₁ exit M₂ entry h₁ (Cfg.ofWords_state exit w₁) hcut i
 
 /-- **R2 space, the per-tape sum corollary** (design
 §12, decision 12.1). On every work tape, the composite's space usage is

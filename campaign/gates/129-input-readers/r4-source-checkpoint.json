@@ -1,0 +1,108 @@
+{
+  "source": {
+    "head": "4918ebe696fe55b0f2cbd2efeb6381ff2b02235f",
+    "base": "ef98f1685ddfb8da40d8e97890c0fff6d145523b",
+    "campaign_records_at_commit": "354d099984262aa3f49a19eecf37a99e984fe08b",
+    "audited_predecessor": "ead826bc6b1900c4209717aafc14244745106d7d",
+    "owners": [
+      "TCSlib/Complexity/ClassNP/Reductions.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Scan.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Seam.lean",
+      "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "TCSlib/Complexity/TuringMachine/Simulation.lean"
+    ],
+    "remote_pushed": true,
+    "audit_agent": "Codex",
+    "pr": {
+      "baseRefName": "complexity/arora-barak-ch3-4",
+      "headRefOid": "4918ebe696fe55b0f2cbd2efeb6381ff2b02235f",
+      "isDraft": true,
+      "number": 251,
+      "state": "OPEN",
+      "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/251"
+    }
+  },
+  "word_seam_ruling": "Approve in #251 for gate 129 round 4",
+  "word_seam_reader": "Turing.Cfg.ofWords_mapState",
+  "superseded_partial": {
+    "stopped_utc": "2026-11-09T18:52:23.941446+00:00",
+    "superseded_head": "4517ee227d6c3e7fc175823619a230252ca85213",
+    "completed_partial_modules": 138,
+    "expected_modules": 395,
+    "unusable_interrupted_snapshot": "oleans-pr251-r4",
+    "reason": "The copy review exposed additional exact proof reuse, so this head cannot serve as the audited source.",
+    "superseded_controller_ids": [
+      23403,
+      23402
+    ],
+    "descendant_count": 11
+  },
+  "replacement_replay_started": true,
+  "replacement_replay_pass_claimed": false,
+  "copy_screen": {
+    "files_each_side": 53,
+    "base": 2429,
+    "head": 2344,
+    "r3_head_historical_population": 2290,
+    "delta": {
+      "base_to_final": {
+        "new": 84,
+        "gone": 169,
+        "changed_score": 69
+      },
+      "checked_predecessor_to_final": {
+        "new": 71,
+        "gone": 17,
+        "changed_score": 18
+      }
+    },
+    "reviewed": 219,
+    "exact_reuse_followups": {
+      "26": [
+        "Primitives.lean::bufferReplay_run",
+        "Primitives.lean::apply_workTape_of_no_write"
+      ],
+      "44": [
+        "Primitives.lean::emitterP2_prepare_rewind_bank",
+        "Primitives.lean::apply_workTape_of_no_write"
+      ],
+      "84": [
+        "Primitives.lean::poly_step",
+        "Primitives.lean::apply_workTape_of_no_write"
+      ],
+      "95": [
+        "Primitives.lean::scanCopy_suffix",
+        "Primitives.lean::scanCopy_finish"
+      ],
+      "155": [
+        "Simulation.lean::controlAction_apply",
+        "Primitives.lean::apply_workTape_of_no_write"
+      ]
+    },
+    "categories": {
+      "retained exact reviewed spans": 114,
+      "fixed-prefix application": 2,
+      "existing population": 50,
+      "word-seam equation citation": 1,
+      "published run equations": 23,
+      "action fields for different rows": 6,
+      "zero-tape token and copy rows": 4,
+      "pair-grammar variants": 5,
+      "native versus buffered or verdict scans": 3,
+      "length checker frame citations": 2,
+      "first-halt assembly": 1,
+      "stationary and absorbing rows": 3,
+      "seam run and first-return assembly": 2,
+      "left and right tape projections": 2,
+      "rewind endpoint and all-prefix head bound": 1
+    },
+    "removed_nested_word_seam_pair": [
+      "CodeSimulator.lean::canonPreserveInstall",
+      "Convention.lean::Cfg.ofWords_mapState"
+    ]
+  },
+  "audit_dispatched": false
+}

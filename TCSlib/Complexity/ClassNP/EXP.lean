@@ -1988,10 +1988,10 @@ private lemma enumCont_absorb {k : ℕ} {S : Type} {x : List Bool}
     (ha : ∀ inp work, tm.tr qa inp work = controlAction 0 (some qa))
     (c : Cfg k Bool S x) (hc : c.state = some qa) (t : ℕ) : tm.runFrom c t = c := by
   induction t with
-  | zero => rfl
+  | zero => exact MultiTapeTM.runFrom_zero
   | succ t ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step', ih]
-    simp only [MultiTapeTM.step, hc, ha, controlAction_apply]
+    rw [MultiTapeTM.step_of_some hc, ha, controlAction_apply]
     apply Cfg.ext
     · exact hc.symm
     · exact moveInputPos_zero _
@@ -2020,7 +2020,10 @@ private lemma enumCont_agree_run {k : ℕ} {S : Type} {x : List Bool}
 
 /-- The first visit to a stopped anchor transfers to the active machine with
 the same full endpoint and no earlier anchor visit. Absorption identifies
-the first endpoint with the supplied bounded endpoint. -/
+the first endpoint with the supplied bounded endpoint.
+**Proof sketch.** Apply the public fixed-stop first-entry theorem to the stopped
+machine, then use the off-anchor prefix agreement to transfer the cut and full
+endpoint to the active machine. -/
 private lemma enumCont_first_anchor {k : ℕ} {S : Type} {x : List Bool}
     (tm stop : MultiTapeTM k Bool S) (qa : S)
     (ha : ∀ q, q ≠ qa → ∀ inp work, tm.tr q inp work = stop.tr q inp work)
@@ -2028,20 +2031,22 @@ private lemma enumCont_first_anchor {k : ℕ} {S : Type} {x : List Bool}
     (c : Cfg k Bool S x) (T : ℕ) (hT : (stop.runFrom c T).state = some qa) :
     ∃ t ≤ T, (∀ j < t, (tm.runFrom c j).state ≠ some qa) ∧
       tm.runFrom c t = stop.runFrom c T := by
-  classical
-  have hex : ∃ t, (stop.runFrom c t).state = some qa := ⟨T, hT⟩
-  let t := Nat.find hex
-  have ht : t ≤ T := Nat.find_min' hex hT
-  have hend : (stop.runFrom c t).state = some qa := Nat.find_spec hex
-  have hn : ∀ j < t, (stop.runFrom c j).state ≠ some qa := fun j hj => Nat.find_min hex hj
-  have he : stop.runFrom c T = stop.runFrom c t := by
-    obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le ht
-    rw [hr, MultiTapeTM.runFrom_add, enumCont_absorb stop qa hs _ hend]
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    stop (fun q => q = qa) c (stop.runFrom c T) T
+    (by
+      rintro d ⟨q, hq, hqa⟩
+      have hstate : d.state = some qa := hq.trans (congrArg some hqa)
+      simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using
+        enumCont_absorb stop qa hs d hstate 1)
+    ⟨qa, hT, rfl⟩ rfl
+  have hn : ∀ j < t, (stop.runFrom c j).state ≠ some qa :=
+    fun j hj hs => hcut j hj ⟨qa, hs, rfl⟩
   refine ⟨t, ht, ?_, ?_⟩
   · intro j hj
     rw [enumCont_agree_run tm stop qa ha c j (fun i hi => hn i (by omega))]
     exact hn j hj
-  · rw [enumCont_agree_run tm stop qa ha c t hn, he]
+  · rw [enumCont_agree_run tm stop qa ha c t hn]
+    exact he
 
 /-- A halted stopped run never visited the live absorbing anchor. Its entire
 bounded run therefore transfers unchanged to the active machine. -/

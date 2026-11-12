@@ -525,31 +525,30 @@ private lemma catalog_clear_trace {Symbol : Type*} {x : List Symbol} (i : Fin k)
   apply catalog_trace_run
   · intro r hr
     have hs : (catalogClearF i d r).workTapeSymbols i = some w[r] := by
-      simp [catalogClearF, Cfg.workTapeSymbols, hw r (by omega) (by omega),
+      simp [catalogClearF, Cfg.workTapeSymbols_eq, hw r (by omega) (by omega),
         List.getElem?_eq_getElem hr]
-    change ((clearTM k i).tr .sweep _ _).apply _ = _
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [clearTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogClearF]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogClearF]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
   · have hs : (catalogClearF i d w.length).workTapeSymbols i = none := by
-      simp [catalogClearF, Cfg.workTapeSymbols, hw w.length (by omega) (by omega)]
-    change ((clearTM k i).tr .sweep _ _).apply _ = _
+      simp [catalogClearF, Cfg.workTapeSymbols_eq, hw w.length (by omega) (by omega)]
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [clearTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogClearF, catalogClearR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogClearF, catalogClearR]
     · funext j q
       split_ifs <;> simp_all <;> omega
     · funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
   · intro r hr
     have hs : (catalogClearR i d w.length (r + 1)).workTapeSymbols i = some w[r] := by
-      have he : ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) := by omega
-      simp [catalogClearR, Cfg.workTapeSymbols, he,
+      simp [catalogClearR, Cfg.workTapeSymbols_eq,
         hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
-    change ((clearTM k i).tr .rewind _ _).apply _ = _
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [clearTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogClearR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogClearR]
     · funext j
       by_cases hj : j = i
       · subst j
@@ -561,14 +560,22 @@ private lemma catalog_clear_trace {Symbol : Type*} {x : List Symbol} (i : Fin k)
     · funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
   · have hs : (catalogClearR i d w.length 0).workTapeSymbols i = none := by
-      simpa [catalogClearR, Cfg.workTapeSymbols] using hw (-1) (by omega) (by omega)
-    change ((clearTM k i).tr .rewind _ _).apply _ = _
+      simpa [catalogClearR, Cfg.workTapeSymbols_eq] using hw (-1) (by omega) (by omega)
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [clearTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogClearR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogClearR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
-  · apply Cfg.ext <;> simp [MultiTapeTM.step, clearTM, Action.apply]
+  · rw [MultiTapeTM.step_of_some (by rfl)]
+    apply Cfg.ext
+    · simp [-Action.apply, Action.apply_state, clearTM]
+    · simp [-Action.apply, Action.apply_inputPos, clearTM]
+    · funext j
+      simp [-Action.apply, Action.apply_workTapes, Cfg.workTapeSymbols_eq, clearTM]
+    · funext j
+      simp [-Action.apply, Action.apply_workTapePos, clearTM]
+    · simp [-Action.apply, Action.apply_output, clearTM]
 
 /-- The framed forward phase of the mapped copy and transfer: after `r` forward steps the
 destination interval `[pos, pos + r)` holds the row's written values `v q`, every other cell is
@@ -657,7 +664,7 @@ the transfer's return pass writes back, at each source cell it leaves, the symbo
 there, which changes nothing; every other transition of the two tables is the same. So the two
 machines take the same step from every configuration.
 
-**Proof sketch.** Unfold one step and split on the phase and the scanned source cell. Only the
+**Proof sketch.** Read the step equations, then split on the phase and the scanned cell. Only the
 `rewind` phase over a nonblank source cell differs, where the transfer's write is
 `Function.update` of the tape at the head with the cell's own content. -/
 private lemma copyMapTM_step_eq {Symbol : Type*} {Δ : Type*} {x : List Symbol} (src dst : Fin k)
@@ -665,10 +672,10 @@ private lemma copyMapTM_step_eq {Symbol : Type*} {Δ : Type*} {x : List Symbol} 
     (c : Cfg k Symbol SweepPhase x) :
     (copyMapTM k src dst extract merge).step c =
       (transferMapTM k src dst extract merge some).step c := by
-  unfold MultiTapeTM.step
   cases hq : c.state with
-  | none => rfl
+  | none => simp only [MultiTapeTM.step_of_halt hq]
   | some q =>
+    simp only [MultiTapeTM.step_of_some hq]
     cases q with
     | sweep => rfl
     | done => rfl
@@ -676,9 +683,10 @@ private lemma copyMapTM_step_eq {Symbol : Type*} {Δ : Type*} {x : List Symbol} 
       cases hb : c.workTapeSymbols src with
       | none => simp only [copyMapTM, transferMapTM, hb]
       | some b =>
-        have hc : c.workTapes src (c.workTapePos src) = some b := hb
+        have hc : c.workTapes src (c.workTapePos src) = some b :=
+          (Cfg.workTapeSymbols_eq c src).symm.trans hb
         simp only [copyMapTM, transferMapTM, hb]
-        apply Cfg.ext <;> simp only [Action.apply]
+        apply Cfg.ext <;> simp only [Action.apply.eq_1]
         · funext j
           by_cases hs : j = src
           · subst hs
@@ -751,11 +759,11 @@ private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List 
     have hs : (catalogSweepF src dst
         (fun q => (FinTM.bufferTape w (q - d.workTapePos dst)).map
           fun γ => merge (d.workTapes dst q) (extract γ)) d r).workTapeSymbols src = some w[r] := by
-      simp [catalogSweepF, Cfg.workTapeSymbols, hne,
+      simp [catalogSweepF, Cfg.workTapeSymbols_eq, hne,
         hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
-    change ((transferMapTM k src dst extract merge rest).tr .sweep _ _).apply _ = _
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [transferMapTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogSweepF]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogSweepF]
     · funext j
       by_cases hj : j = dst
       · subst j
@@ -764,7 +772,7 @@ private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List 
         rw [Function.update_apply]
         by_cases hq : q = d.workTapePos dst + r
         · subst hq
-          simp [Cfg.workTapeSymbols, FinTM.bufferTape, List.getElem?_eq_getElem hr]
+          simp [Cfg.workTapeSymbols_eq, FinTM.bufferTape_eq, List.getElem?_eq_getElem hr]
         · rw [if_neg hq]
           split_ifs <;> simp_all <;> omega
       · by_cases hs' : j = src <;> simp [hj, hs', hne]
@@ -774,10 +782,11 @@ private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List 
   · have hs : ∀ v : ℤ → Option Symbol,
         (catalogSweepF src dst v d w.length).workTapeSymbols src = none := by
       intro v
-      simp [catalogSweepF, Cfg.workTapeSymbols, hne, hw w.length (by omega) (by omega)]
-    change ((transferMapTM k src dst extract merge rest).tr .sweep _ _).apply _ = _
+      simp [catalogSweepF, Cfg.workTapeSymbols_eq, hne, hw w.length (by omega) (by omega)]
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [transferMapTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogSweepF, catalogSweepR, catalogSweepResidueR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogSweepF, catalogSweepR,
+      catalogSweepResidueR]
     · funext j
       by_cases hj : j = src <;> by_cases hd : j = dst <;> simp [hj, hd, hne, Ne.symm hne]
       all_goals
@@ -790,11 +799,12 @@ private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List 
         (catalogSweepResidueR src dst v u d w.length (r + 1)).workTapeSymbols src =
           some w[r] := by
       intro v u
-      simp [catalogSweepResidueR, catalogSweepR, catalogSweepF, Cfg.workTapeSymbols, hne,
+      simp [catalogSweepResidueR, catalogSweepR, catalogSweepF, Cfg.workTapeSymbols_eq, hne,
         hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
-    change ((transferMapTM k src dst extract merge rest).tr .rewind _ _).apply _ = _
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [transferMapTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogSweepResidueR, catalogSweepR, catalogSweepF]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogSweepResidueR,
+      catalogSweepR, catalogSweepF]
     · funext j
       by_cases hj : j = src
       · subst j
@@ -802,22 +812,24 @@ private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List 
         funext q
         simp only [Function.update_apply]
         split_ifs <;>
-          simp_all [FinTM.bufferTape] <;> omega
+          simp_all [FinTM.bufferTape_eq] <;> omega
       · by_cases hd : j = dst <;> simp [hj, hd, hne, Ne.symm hne]
     · funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
   · have hs : ∀ v u : ℤ → Option Symbol,
         (catalogSweepResidueR src dst v u d w.length 0).workTapeSymbols src = none := by
       intro v u
-      simpa [catalogSweepResidueR, catalogSweepR, catalogSweepF, Cfg.workTapeSymbols, hne] using
+      simpa [catalogSweepResidueR, catalogSweepR, catalogSweepF, Cfg.workTapeSymbols_eq, hne] using
         hw (-1) (by omega) (by omega)
-    change ((transferMapTM k src dst extract merge rest).tr .rewind _ _).apply _ = _
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [transferMapTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogSweepResidueR, catalogSweepR, catalogSweepF]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogSweepResidueR,
+      catalogSweepR, catalogSweepF]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
-  · apply Cfg.ext <;> simp [MultiTapeTM.step, transferMapTM, Action.apply]
+  · rw [MultiTapeTM.step_of_some (by rfl)]
+    apply Cfg.ext <;> simp [transferMapTM, -Action.apply, Action.apply.eq_1]
 
 /-- The first unequal or terminating cells occur after a common nonblank
 prefix, and equality at those terminating cells is precisely word equality.
@@ -941,7 +953,7 @@ theorem compareStop_le {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol)
   exact (List.takeWhile_sublist _).length_le.trans (by simp)
 
 /-- Comparison's exact framed invariant at a first differing or blank position.
-Proof sketch: the delimited common prefix supplies both passes' reads. The stopping
+**Proof sketch.** The delimited common prefix supplies both passes' reads. The stopping
 condition determines the turn and verdict, and both heads return to their entry positions. -/
 private lemma catalog_compare_trace {Symbol : Type*} [DecidableEq Symbol] {x : List Symbol}
     (fst snd : Fin k) (u v : List Symbol) (d : Cfg k Symbol FlagPhase x)
@@ -965,19 +977,19 @@ private lemma catalog_compare_trace {Symbol : Type*} [DecidableEq Symbol] {x : L
   · intro r hr
     obtain ⟨b, hf, hg⟩ := hp r hr
     have hsf : (catalogCompareF fst snd d r).workTapeSymbols fst = some b := by
-      simpa [catalogCompareF, Cfg.workTapeSymbols, hf] using hu r (by omega) (by omega)
+      simpa [catalogCompareF, Cfg.workTapeSymbols_eq, hf] using hu r (by omega) (by omega)
     have hsg : (catalogCompareF fst snd d r).workTapeSymbols snd = some b := by
-      simpa [catalogCompareF, Cfg.workTapeSymbols, hg] using hv r (by omega) (by omega)
-    change ((compareTM k fst snd).tr .run _ _).apply _ = _
+      simpa [catalogCompareF, Cfg.workTapeSymbols_eq, hg] using hv r (by omega) (by omega)
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [compareTM, hsf, hsg, ↓reduceIte]
-    apply Cfg.ext <;> simp [Action.apply, catalogCompareF]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogCompareF]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
   · have hreadf : (catalogCompareF fst snd d δ).workTapeSymbols fst = u[δ]? := by
-      simpa [catalogCompareF, Cfg.workTapeSymbols] using hu δ (by omega) (by omega)
+      simpa [catalogCompareF, Cfg.workTapeSymbols_eq] using hu δ (by omega) (by omega)
     have hreadg : (catalogCompareF fst snd d δ).workTapeSymbols snd = v[δ]? := by
-      simpa [catalogCompareF, Cfg.workTapeSymbols] using hv δ (by omega) (by omega)
+      simpa [catalogCompareF, Cfg.workTapeSymbols_eq] using hv δ (by omega) (by omega)
     have ht : (compareTM k fst snd).tr .run
         (catalogCompareF fst snd d δ).inputSymbol
         (catalogCompareF fst snd d δ).workTapeSymbols =
@@ -1014,9 +1026,9 @@ private lemma catalog_compare_trace {Symbol : Type*} [DecidableEq Symbol] {x : L
             have h' := he.mpr h
             exact hab (by simpa only [hf, hg, Option.some.injEq] using h')
           simp [hab, hneq]
-    change ((compareTM k fst snd).tr .run _ _).apply _ = _
+    rw [MultiTapeTM.step_of_some (by rfl)]
     rw [ht]
-    apply Cfg.ext <;> simp [Action.apply, catalogCompareF, catalogCompareR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogCompareF, catalogCompareR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
@@ -1024,24 +1036,25 @@ private lemma catalog_compare_trace {Symbol : Type*} [DecidableEq Symbol] {x : L
     obtain ⟨b, hf, _⟩ := hp r hr
     have hread : (catalogCompareR fst snd d (decide (u = v)) (r + 1)).workTapeSymbols fst =
         some b := by
-      simpa [catalogCompareR, Cfg.workTapeSymbols, hf,
+      simpa [catalogCompareR, Cfg.workTapeSymbols_eq, hf,
         show ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) by omega] using hu r (by omega) (by omega)
-    change ((compareTM k fst snd).tr (.rewind _) _ _).apply _ = _
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [compareTM, hread]
-    apply Cfg.ext <;> simp [Action.apply, catalogCompareR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogCompareR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
   · have hread : (catalogCompareR fst snd d (decide (u = v)) 0).workTapeSymbols fst =
         none := by
-      simpa [catalogCompareR, Cfg.workTapeSymbols] using hu (-1) (by omega) (by omega)
-    change ((compareTM k fst snd).tr (.rewind _) _ _).apply _ = _
+      simpa [catalogCompareR, Cfg.workTapeSymbols_eq] using hu (-1) (by omega) (by omega)
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [compareTM, hread]
-    apply Cfg.ext <;> simp [Action.apply, catalogCompareR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogCompareR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast]
-  · apply Cfg.ext <;> simp [MultiTapeTM.step, compareTM, Action.apply]
+  · rw [MultiTapeTM.step_of_some (by rfl)]
+    apply Cfg.ext <;> simp [compareTM, -Action.apply, Action.apply.eq_1]
 
 /-- A word consists of its leading true bits followed by either a first false
 bit and its tail, or no remaining bits. -/
@@ -1146,12 +1159,12 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
   · intro r hr
     have hpr : p - r = (p - (r + 1)) + 1 := by omega
     have hs : (catalogIncF i d p tail r).workTapeSymbols i = some true := by
-      simp [catalogIncF, catalogTape, Cfg.workTapeSymbols, hpr,
+      simp [catalogIncF, catalogTape, Cfg.workTapeSymbols_eq, hpr,
         List.replicate_succ, List.append_assoc]
       omega
-    change ((incrementTM k i).tr .run _ _).apply _ = _
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogIncF]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF]
     · funext j
       by_cases hj : j = i
       · subst j
@@ -1169,19 +1182,19 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
     | none =>
       have hs : (catalogIncF i d p none p).workTapeSymbols i = none := by
         have hh := hw p (by omega) (by simp [hsplit])
-        simpa [catalogIncF, catalogTape, Cfg.workTapeSymbols, hsplit] using hh
-      change ((incrementTM k i).tr .run _ _).apply _ = _
+        simpa [catalogIncF, catalogTape, Cfg.workTapeSymbols_eq, hsplit] using hh
+      rw [MultiTapeTM.step_of_some (by rfl)]
       simp only [incrementTM, hs]
-      apply Cfg.ext <;> simp [Action.apply, catalogIncF, catalogIncR]
+      apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF, catalogIncR]
       all_goals
         funext j
         split_ifs <;> simp_all [SignType.cast] <;> omega
     | some v =>
       have hs : (catalogIncF i d p (some v) p).workTapeSymbols i = some false := by
-        simp [catalogIncF, catalogTape, Cfg.workTapeSymbols]
-      change ((incrementTM k i).tr .run _ _).apply _ = _
+        simp [catalogIncF, catalogTape, Cfg.workTapeSymbols_eq]
+      rw [MultiTapeTM.step_of_some (by rfl)]
       simp only [incrementTM, hs]
-      apply Cfg.ext <;> simp [Action.apply, catalogIncF, catalogIncR]
+      apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF, catalogIncR]
       · funext j
         by_cases hj : j = i
         · subst j
@@ -1193,23 +1206,24 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
   · intro r hr
     have hs : (catalogIncR i d p tail (r + 1)).workTapeSymbols i = some false := by
       have hb : (r : ℤ) < p + (tail.elim [] (true :: ·)).length := by omega
-      simp [catalogIncR, catalogTape, Cfg.workTapeSymbols, List.getElem?_append, hr, hb]
-    change ((incrementTM k i).tr (.rewind _) _ _).apply _ = _
+      simp [catalogIncR, catalogTape, Cfg.workTapeSymbols_eq, List.getElem?_append, hr, hb]
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogIncR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
   · have hs : (catalogIncR i d p tail 0).workTapeSymbols i = none := by
-      simpa [catalogIncR, catalogTape, Cfg.workTapeSymbols] using
+      simpa [catalogIncR, catalogTape, Cfg.workTapeSymbols_eq] using
         hw (-1) (by omega) (by omega)
-    change ((incrementTM k i).tr (.rewind _) _ _).apply _ = _
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogIncR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
-  · apply Cfg.ext <;> simp [MultiTapeTM.step, incrementTM, Action.apply]
+  · rw [MultiTapeTM.step_of_some (by rfl)]
+    apply Cfg.ext <;> simp [incrementTM, -Action.apply, Action.apply.eq_1]
 
 /-! ### Framed contracts (design §12.6)
 
@@ -2566,12 +2580,20 @@ def inputMoveAction {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State
     Action k Symbol State :=
   ⟨inp, fun _ => (none, 0), none, some q⟩
 
+/-- An input-only action has the requested input movement and live successor,
+with no work-tape writes or head movement and no output symbol. -/
+theorem inputMoveAction_eq {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State) :
+    inputMoveAction (k := k) (Symbol := Symbol) inp q =
+      (⟨inp, fun _ => (none, 0), none, some q⟩ : Action k Symbol State) := by
+  rfl
+
 /-- **One step of a non-writing one-tape action** (design §12.8a). If the machine's table
 gives `Turing.tapeAction i inp none m q'` at the current state and reads, one step moves
 the input head by `inp` and head `i` by `m`, enters `q'`, and changes nothing else.
 
-**Proof sketch.** Unfold `MultiTapeTM.step` and `Action.apply`; the work-tape fields are
-pointwise updates at `i`. -/
+**Proof sketch.** Use the live-step equation and the published action-field
+equations. Only head `i` moves among the work heads, and every tape cell is
+preserved. -/
 theorem step_of_tapeAction_move {Symbol State : Type*} {k : ℕ} {x : List Symbol}
     (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State} (i : Fin k)
     (inp m : SignType) (hq : c.state = some q)
@@ -2581,16 +2603,23 @@ theorem step_of_tapeAction_move {Symbol State : Type*} {k : ℕ} {x : List Symbo
         state := some q'
         inputPos := moveInputPos c.inputPos inp
         workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by
-  simp only [MultiTapeTM.step, hq, htr]
-  apply Cfg.ext <;> simp [Action.apply, tapeAction]
+  rw [MultiTapeTM.step_of_some hq, htr]
+  apply Cfg.ext
+  · simp only [Action.apply_state, tapeAction]
+  · simp only [Action.apply_inputPos, tapeAction]
+  · funext j
+    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    by_cases hj : j = i
+    · subst j
+      simp only [tapeAction, ↓reduceIte, Option.getD_none, Function.update_eq_self]
+    · simp only [tapeAction, hj, ↓reduceIte, Option.getD_none, Function.update_eq_self]
   · funext j
     by_cases hj : j = i
-    · subst hj; simp
-    · simp [hj]
-  · funext j
-    by_cases hj : j = i
-    · subst hj; simp
-    · simp [hj]
+    · subst j
+      simp only [Action.apply_workTapePos, tapeAction, ↓reduceIte, Function.update_self]
+    · simp only [Action.apply_workTapePos, tapeAction, hj, ↓reduceIte, SignType.coe_zero,
+        add_zero, Function.update_of_ne hj]
+  · simp only [Action.apply_output, tapeAction, Option.toList_none, List.append_nil]
 
 /-- **One step of a writing one-tape action** (design §12.8a). If the machine's table
 gives `Turing.tapeAction i inp (some s) m q'` at the current state and reads, one step
@@ -2609,30 +2638,51 @@ theorem step_of_tapeAction_write {Symbol State : Type*} {k : ℕ} {x : List Symb
         workTapes := Function.update c.workTapes i
           (Function.update (c.workTapes i) (c.workTapePos i) s)
         workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by
-  simp only [MultiTapeTM.step, hq, htr]
-  apply Cfg.ext <;> simp [Action.apply, tapeAction]
+  rw [MultiTapeTM.step_of_some hq, htr]
+  apply Cfg.ext
+  · simp only [Action.apply_state, tapeAction]
+  · simp only [Action.apply_inputPos, tapeAction]
+  · funext j
+    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    by_cases hj : j = i
+    · subst j
+      simp only [tapeAction, ↓reduceIte, Option.getD_some, Function.update_self]
+    · simp only [tapeAction, hj, ↓reduceIte, Option.getD_none, Function.update_eq_self,
+        Function.update_of_ne hj]
   · funext j
     by_cases hj : j = i
-    · subst hj; simp
-    · simp [hj]
-  · funext j
-    by_cases hj : j = i
-    · subst hj; simp
-    · simp [hj]
+    · subst j
+      simp only [Action.apply_workTapePos, tapeAction, ↓reduceIte, Function.update_self]
+    · simp only [Action.apply_workTapePos, tapeAction, hj, ↓reduceIte, SignType.coe_zero,
+        add_zero, Function.update_of_ne hj]
+  · simp only [Action.apply_output, tapeAction, Option.toList_none, List.append_nil]
 
 /-- **One step of an input-only action** (design §12.8a). If the machine's table gives
 `Turing.inputMoveAction inp q'` at the current state and reads, one step moves the input
 head by `inp`, enters `q'`, and changes nothing else. At `inp = 0` (with
 `moveInputPos_zero`) this is every live anchor's stationarity.
 
-**Proof sketch.** Unfold `MultiTapeTM.step` and `Action.apply`. -/
+**Proof sketch.** With no work tapes, compare the state, input and output fields.
+Otherwise use the non-writing one-tape step with zero work-head movement;
+its head update is the identity. -/
 theorem step_of_inputMoveAction {Symbol State : Type*} {k : ℕ} {x : List Symbol}
     (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State}
     (inp : SignType) (hq : c.state = some q)
     (htr : M.tr q c.inputSymbol c.workTapeSymbols = inputMoveAction inp q') :
     M.step c = { c with state := some q', inputPos := moveInputPos c.inputPos inp } := by
-  simp only [MultiTapeTM.step, hq, htr]
-  apply Cfg.ext <;> simp [Action.apply, inputMoveAction]
+  cases k with
+  | zero =>
+    rw [MultiTapeTM.step_of_some hq, htr]
+    apply Cfg.ext_zero_tapes
+    · simp only [Action.apply_state, inputMoveAction_eq]
+    · simp only [Action.apply_inputPos, inputMoveAction_eq]
+    · simp only [Action.apply_output, inputMoveAction_eq, Option.toList_none, List.append_nil]
+  | succ k =>
+    have ha : inputMoveAction (k := k + 1) (Symbol := Symbol) inp q' =
+        tapeAction (0 : Fin (k + 1)) inp none 0 q' := by
+      simp only [inputMoveAction_eq, tapeAction, ite_self]
+    rw [step_of_tapeAction_move M c (0 : Fin (k + 1)) inp 0 hq (htr.trans ha)]
+    simp only [SignType.coe_zero, add_zero, Function.update_eq_self]
 
 /-! ### The field layout -/
 
@@ -3055,32 +3105,35 @@ theorem walkTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src : Fin
         ⟨0, fun j => if moved j then (none, dir) else (none, 0), none, some q⟩) :
       M.step (F r) = { F (r + 1) with state := some q } := by
     have hst : (F r).state = some .run := hstate
-    simp only [MultiTapeTM.step, hst, htr]
+    rw [MultiTapeTM.step_of_some hst, htr]
     apply Cfg.ext
-    · rfl
-    · simp [Action.apply, F, moveInputPos_zero]
+    · simp only [Action.apply_state]
+    · simp only [Action.apply_inputPos, F, moveInputPos_zero]
     · funext j
-      by_cases hj : moved j <;> simp [Action.apply, F, hj]
+      rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+      by_cases hj : moved j
+      · simp only [F, hj, if_true, Option.getD_none, Function.update_eq_self]
+      · simp only [F, hj, if_false, Option.getD_none, Function.update_eq_self]
     · funext j
       by_cases hj : moved j
-      · simp only [Action.apply, F, hj, if_true]
+      · simp only [Action.apply_workTapePos, F, hj, if_true]
         push_cast
         ring
-      · simp [Action.apply, F, hj]
-    · simp [Action.apply, F]
+      · simp only [Action.apply_workTapePos, F, hj, if_false, SignType.coe_zero, add_zero]
+    · simp only [Action.apply_output, F, Option.toList_none, List.append_nil]
   have hsym (r : ℕ) : (F r).workTapeSymbols src = d.workTapes src
       (d.workTapePos src + (dir : ℤ) * (r : ℤ)) := by
-    simp [F, Cfg.workTapeSymbols, hsrc]
+    simp [F, Cfg.workTapeSymbols_eq, hsrc]
   have hF (r : ℕ) (hr : r < w.length) : M.step (F r) = F (r + 1) := by
     have hs : (F r).workTapeSymbols src = some w[r] := by
       rw [hsym, hw r (by omega)]
-      simp [FinTM.bufferTape, List.getElem?_eq_getElem hr]
+      simp [FinTM.bufferTape_nat, List.getElem?_eq_getElem hr]
     rw [hstep r .run (by simp only [M, walkTM, hs])]
     apply Cfg.ext <;> simp [F, hstate]
   have hexit : M.step (F w.length) = D := by
     have hs : (F w.length).workTapeSymbols src = none := by
       rw [hsym, hw w.length le_rfl]
-      simp [FinTM.bufferTape]
+      simp [FinTM.bufferTape_nat]
     exact (hstep w.length .done (by simp only [M, walkTM, hs])).trans rfl
   have hD : M.step D = D := by
     rw [step_of_inputMoveAction M D 0 rfl rfl, moveInputPos_zero]
