@@ -25,7 +25,7 @@ The proof answers the handler's outer queries by `f` (`fOuter`) and composes the
 implementations (`QueryImpl.comp`). Each composed call, from the encoded state `pkState j o`, is
 the call of `eImpl` from `(j, o)` with the handler's tapes in advance (`comp_pkAbs`), as long as
 `j` is below the number `q(n)` of tapes; the adversary asks at most `q(n)` queries, so this holds
-along every run (`simulate_eq_of_abs_bounded`). Drawing the seed uniformly then gives fresh
+along every run (`Games.simulate_eq_of_abs_bounded`). Drawing the seed uniformly then gives fresh
 nonces (`PRFGame.expect_eImpl`).
 
 ## Main definitions
@@ -36,8 +36,6 @@ nonces (`PRFGame.expect_eImpl`).
 
 ## Main results
 
-* `PRFGame.simulate_eq_of_abs_bounded`: simulation through a state abstraction along runs with a
-  query budget.
 * `PRFGame.exists_prfReduction`: the reduction.
 
 ## References
@@ -49,34 +47,6 @@ nonces (`PRFGame.expect_eImpl`).
 namespace TCSlib.Cryptography.Composability.PRFGame
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
-
-/-! ### Simulation through a state abstraction along bounded runs -/
-
-/-- **Simulation through a state abstraction, along runs with a query budget:** let every call of
-`impl₂` from a state `s` with `cnt s < κ` be a deterministic answer `(y, s')` with
-`cnt s' ≤ cnt s + 1`, and the call of `impl₁` from `f s` be `(y, f s')`. Then for a computation
-`c` with at most `m` queries and `cnt s + m ≤ κ`,
-`simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => pure (p.1, f p.2)`.
-
-**Proof sketch.** Induction on `c`. A query costs one unit, so it is asked from a state with
-`cnt s < κ`; both calls return the same answer, and the continuation runs from `s'` with one unit
-less, where `cnt s' + (m - 1) ≤ κ`. -/
-theorem simulate_eq_of_abs_bounded {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
-    {σ₁ σ₂ α : Type} (impl₁ : QueryImpl spec σ₁ spec') (impl₂ : QueryImpl spec σ₂ spec')
-    (f : σ₂ → σ₁) (cnt : σ₂ → ℕ) (κ : ℕ)
-    (h : ∀ i x s, cnt s < κ → ∃ (y : spec.rng i) (s' : σ₂), impl₂ i x s = .pure (y, s') ∧
-      cnt s' ≤ cnt s + 1 ∧ impl₁ i x (f s) = .pure (y, f s'))
-    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ₂)
-    (hs : cnt s + m ≤ κ) :
-    simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => .pure (p.1, f p.2) := by
-  induction c generalizing m s with
-  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
-  | query i x k ih =>
-    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
-    have hm1 : 1 ≤ m := hm
-    obtain ⟨y, s', h₂, hcnt, h₁⟩ := h i x s (by omega)
-    rw [simulate_query, simulate_query, h₁, h₂, OracleComp.pure_bind, OracleComp.pure_bind]
-    exact ih y (m - 1) (hk y) s' (by omega)
 
 /-! ### The outer oracle and the composed calls -/
 

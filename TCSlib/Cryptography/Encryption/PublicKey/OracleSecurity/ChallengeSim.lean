@@ -43,8 +43,9 @@ reduction: reindexing by an equivalence, products, exchange of order, and single
 * `ChallengeSim.chRun_congr`: the run depends on `g` only at the first challenge query.
 * `ChallengeSim.length_of_firstQ_eq_some`: the first challenge query has `ins 1` bits.
 * `ChallengeSim.chRun_toCompOn_transport`: transport along equal length functions.
-* `ChallengeSim.expect_sample_equiv`, `expect_sample_prod`, `expect_sample_comm`,
-  `expect_sample_unique`, `expect_sub`: sampling identities.
+* `ChallengeSim.expect_simulate_eager`: eager challenge coins, for any CPA-shaped oracle.
+* `ChallengeSim.expect_sample_prod`: sampling a product is sampling its factors (the other
+  sampling identities are `Games.ProbComp`'s).
 * `ChallengeSim.expect_indicator_sub`: the case split on the first challenge `(m₀, m₁)`.
 
 ## References
@@ -130,6 +131,62 @@ theorem chRun_some_congr (g g' : (Fin (ins 1) → Bool) → List Bool)
     | 0, x, k, ih => rw [chRun_query_zero, chRun_query_zero, ih]
     | 1, x, k, ih => rw [chRun_query_one_some, chRun_query_one_some, ih]
 
+/-- **Eager challenge coins, for any CPA-shaped oracle.** Let `impl` answer oracle `0`
+all-`false`, a challenge from a recorded state `c` with `c`, and the first challenge `mm` by
+sampling `re` and answering (and recording) `padFin d (g mm re)`; the state holds `d`-bit
+strings, `d = outs 1`, read through the cast `e`. Then for every `G`,
+`𝔼[G ∘ fst] (simulate impl c s) = 𝔼_{re} G (chRun (fun mm => g mm re) c (s.map (cast e))).1`.
+
+**Proof sketch.** Substitute `d = outs 1`, so that the casts are identities. Induction on the
+computation: decryption queries and repeated challenges are deterministic in both; at the first
+challenge the lazy side samples `re` and continues from the recorded answer, by the induction
+hypothesis an average over coins `re'` on which the recorded run does not depend
+(`chRun_some_congr`), so `re'` marginalizes out (`expect_const`). -/
+theorem expect_simulate_eager {ins outs : Fin 2 → ℕ} {d : ℕ} (hd : outs 1 = d)
+    (e : (Fin d → Bool) = (Fin (outs 1) → Bool)) {R : Type} [Fintype R] [Nonempty R]
+    (impl : QueryImpl (bitSpec ins outs) (Option (Fin d → Bool)) unifSpec)
+    (g : (Fin (ins 1) → Bool) → R → List Bool)
+    (h0 : ∀ x s, impl 0 x s = .pure (zeroBits _, s))
+    (hrep : ∀ mm c, impl 1 mm (some c) = .pure (cast e c, some c))
+    (hnew : ∀ mm, impl 1 mm none = (ProbComp.sample R).bind fun re =>
+      .pure (cast e (padFin d (g mm re)), some (padFin d (g mm re))))
+    {α : Type} (G : α → ℝ) (c : OracleComp (bitSpec ins outs) α) (s : Option (Fin d → Bool)) :
+    expect (simulate impl c s) (fun p => G p.1) =
+      expect (ProbComp.sample R) fun re =>
+        G (chRun (fun mm => g mm re) c (s.map (cast e))).1 := by
+  subst hd
+  have hc : ∀ x : Fin (outs 1) → Bool, cast e x = x := fun x => cast_eq e x
+  have hmap : ∀ s : Option (Fin (outs 1) → Bool), s.map (cast e) = s := fun s => by
+    cases s <;> simp
+  simp only [hc] at hrep hnew
+  simp only [hmap]
+  induction c generalizing s with
+  | pure a =>
+    rw [simulate_pure, expect_pure]
+    simp only [chRun_pure]
+    exact (expect_const _ _).symm
+  | query i x k ih =>
+    match i, x, k, ih with
+    | 0, x, k, ih =>
+      rw [simulate_query, h0, OracleComp.pure_bind]
+      simp only [chRun_query_zero]
+      exact ih _ s
+    | 1, x, k, ih =>
+      cases s with
+      | some C =>
+        rw [simulate_query, hrep, OracleComp.pure_bind]
+        simp only [chRun_query_one_some]
+        exact ih _ _
+      | none =>
+        rw [simulate_query, hnew, OracleComp.bind_assoc, expect_bind]
+        refine congrArg _ (funext fun re => ?_)
+        rw [OracleComp.pure_bind, ih, chRun_query_one_none]
+        dsimp only
+        exact (congrArg _ (funext fun re' =>
+          congrArg (fun p : α × Option (Fin (outs 1) → Bool) => G p.1)
+            (chRun_some_congr (fun mm => g mm re') (fun mm => g mm re) _ _))).trans
+          (expect_const _ _)
+
 /-- **First-challenge congruence:** if `g` and `g'` agree at the first challenge query of `c`
 (vacuous when there is none), the runs from the unchallenged state agree:
 `chRun g c none = chRun g' c none`.
@@ -196,14 +253,6 @@ section Sampling
 
 variable {β : Type}
 
-/-- **Reindexing a sample by an equivalence:** `𝔼_{a ← α} g (e a) = 𝔼_{b ← β} g b`.
-
-**Proof sketch.** Both are uniform averages (`expect_sample`); the cardinalities agree
-(`Fintype.card_congr`) and the sums agree by reindexing along `e` (`Equiv.sum_comp`). -/
-theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (e : α ≃ β)
-    (g : β → ℝ) : expect (sample α) (fun a => g (e a)) = expect (sample β) g := by
-  rw [expect_sample, expect_sample, Fintype.card_congr e, Equiv.sum_comp e g]
-
 /-- **Sampling a product is sampling its factors:**
 `𝔼_{(a, b) ← α × β} g (a, b) = 𝔼_{a ← α} 𝔼_{b ← β} g (a, b)`. -/
 theorem expect_sample_prod [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
@@ -211,34 +260,6 @@ theorem expect_sample_prod [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
     expect (sample (α × β)) g = expect (sample α) fun a => expect (sample β) fun b => g (a, b) := by
   rw [← Bridge.expect_sample_pair]
   simp only [expect_bind, expect_pure]
-
-/-- **Independent samples commute:**
-`𝔼_{a ← α} 𝔼_{b ← β} g a b = 𝔼_{b ← β} 𝔼_{a ← α} g a b`.
-
-**Proof sketch.** Both are the average over the product (`expect_sample_prod`), reindexed by
-the swap equivalence (`expect_sample_equiv`). -/
-theorem expect_sample_comm [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
-    (g : α → β → ℝ) :
-    (expect (sample α) fun a => expect (sample β) fun b => g a b) =
-      expect (sample β) fun b => expect (sample α) fun a => g a b := by
-  rw [← expect_sample_prod (fun p : α × β => g p.1 p.2),
-    ← expect_sample_prod (fun p : β × α => g p.2 p.1),
-    ← expect_sample_equiv (Equiv.prodComm β α) (fun p : α × β => g p.1 p.2)]
-  rfl
-
-/-- **Sampling a singleton type** returns its element: `𝔼_{a ← α} g a = g default`. -/
-theorem expect_sample_unique [Fintype α] [Unique α] (g : α → ℝ) :
-    expect (sample α) g = g default := by
-  rw [expect_sample, Fintype.card_unique, Fintype.sum_unique]
-  simp
-
-/-- Expectation is subtractive: `𝔼[f − g] = 𝔼 f − 𝔼 g`. -/
-theorem expect_sub (c : ProbComp α) (f g : α → ℝ) :
-    expect c (fun a => f a - g a) = expect c f - expect c g := by
-  have h := expect_add c f (fun a => -1 * g a)
-  rw [expect_const_mul] at h
-  simp only [neg_one_mul, ← sub_eq_add_neg] at h
-  exact h
 
 /-- **The pointwise case split of the CPA reduction:** for the first challenge `(m₀, m₁)`, the
 difference of the acceptance rates of `A` against `Enc(m₀)` and `Enc(m₁)` equals the difference of

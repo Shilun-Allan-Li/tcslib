@@ -21,7 +21,7 @@ through that recomputation. A flag records the bad events of step 2: `r*` was al
 table, or a later encryption uses `r*`.
 
 Averaging the experiment with `R` over a uniform `R` gives the lazy experiment
-(`expect_lazyImpl`): at a new point, resampling `R` there (`BitwiseSim.expect_sample_update`) is
+(`expect_lazyImpl`): at a new point, resampling `R` there (`ProbComp.expect_sample_update`) is
 the lazy sample; the table and the record determine `R` elsewhere (`ovr`).
 
 ## Main definitions
@@ -352,7 +352,7 @@ queries, for every computation `c`, state `st` and function `G` of the output,
 
 **Proof sketch.** Induction on `c`. At a point `x` with a recorded value both sides use it and the
 recorded values do not change (`ovr_addPt_of_isSome`, `ovr_record_of_some`). At a new point,
-resample `R` at `x` (`BitwiseSim.expect_sample_update`): `R(x)` becomes the lazy sample `y`, and
+resample `R` at `x` (`ProbComp.expect_sample_update`): `R(x)` becomes the lazy sample `y`, and
 `R` resampled is the override of the new state (`ovr_addPt_of_none`, `ovr_record_of_none`);
 exchange the samples (`expect_sample_comm`) and apply the induction hypothesis. Closed
 decryptions and repeated challenges are answered alike. -/
@@ -384,7 +384,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
         exact (congrArg _ (funext fun R => by
           rw [← ovr_addPt_of_isSome b st r y₀ (hitStar st r) hsome R]; rfl)).trans (ih _ _)
       | none =>
-        rw [← BitwiseSim.expect_sample_update r]
+        rw [← ProbComp.expect_sample_update r]
         simp only [Option.getD_none]
         have hU : ∀ R y, ovr b st (Function.update R r y) =
             ovr b (addPt b st r y (hitStar st r)) R :=
@@ -415,7 +415,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
           exact (congrArg _ (funext fun R => by
             rw [← ovr_addPt_of_isSome b st _ y₀ false hsome R]; rfl)).trans (ih _ _)
         | none =>
-          rw [← BitwiseSim.expect_sample_update (padFin n (pairFstD (List.ofFn c)))]
+          rw [← ProbComp.expect_sample_update (padFin n (pairFstD (List.ofFn c)))]
           simp only [Option.getD_none]
           have hU : ∀ R y, ovr b st (Function.update R (padFin n (pairFstD (List.ofFn c))) y) =
               ovr b (addPt b st (padFin n (pairFstD (List.ofFn c))) y false) R :=
@@ -466,7 +466,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
                 hr R]; rfl)).trans
             (ih _ _)
         | none =>
-          rw [← BitwiseSim.expect_sample_update r]
+          rw [← ProbComp.expect_sample_update r]
           simp only [Option.getD_none, Option.isSome_none]
           have hU : ∀ R y, ovr b ((T, none, bd) : LState n d) (Function.update R r y) =
               ovr b ((T, some (List.ofFn mm, padFin d (ctOf r (AdaptiveCPA.msgOf n b

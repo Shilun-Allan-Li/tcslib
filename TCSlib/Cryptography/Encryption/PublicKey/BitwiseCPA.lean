@@ -482,7 +482,7 @@ messages and `L(n)`-bit ciphertexts.
    Then `advantage(H_{j⋆}, H_{j⋆+1})` equals `D`'s single-bit advantage between `⟨pk, Enc_pk(0)⟩`
    and `⟨pk, Enc_pk(1)⟩` exactly (`hyb_advantage_eq`): only the first challenge matters
    (`ChallengeSim.chRun_congr`); resampling coin block `j⋆` turns the two hybrids into the
-   planted tuples with `Enc(m₀_{j⋆})` and `Enc(m₁_{j⋆})` (`BitwiseSim.expect_sample_update`); and
+   planted tuples with `Enc(m₀_{j⋆})` and `Enc(m₁_{j⋆})` (`ProbComp.expect_sample_update`); and
    the signed case split on `(m₀_{j⋆}, m₁_{j⋆})` is `ChallengeSim.expect_indicator_sub`.
 4. So `A`'s advantage is at most `n` times `D`'s advantage, negligible by `singleBitSecure_iff`;
    the product is negligible by `Negligible.polyExpr_mul` with `PolyExpr.var`. -/

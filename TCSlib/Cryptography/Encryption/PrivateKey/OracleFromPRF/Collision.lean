@@ -26,12 +26,10 @@ queries.
 * *The bad probability.* A query from a good state raises the flag with probability at most
   `(|T| + 1) / 2ⁿ` (`lazyImpl_step`; the first challenge's nonce hits one of the `|T|` points of
   the table, `prob_mem_le`, or an encryption's nonce hits `r*`), and adds at most one point to the
-  table (`lazyImpl_grow`). A potential argument sums these over `q` queries (`prob_bad_le`).
+  table (`lazyImpl_grow`). A potential argument sums these over `q` queries (`ProbComp.prob_bad_le`).
 
 ## Main results
 
-* `PRFGame.prob_bad_le`: a bad event raised with probability at most `(size + 1) · δ` per query,
-  by queries that grow the size by at most one, has probability at most `q · (size + q) · δ`.
 * `PRFGame.lazyImpl_agree`, `lazyImpl_stick`, `lazyImpl_step`, `lazyImpl_grow`.
 * `PRFGame.abs_prob_lazyImpl_sub_le`: the two bits' lazy experiments differ by at most `q² / 2ⁿ`.
 * `PRFGame.abs_expect_fImpl_sub_le`: hence so do the experiments with a uniform random function.
@@ -48,78 +46,7 @@ namespace TCSlib.Cryptography.Composability.PRFGame
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
 
-/-! ### A potential bound on a bad event -/
-
-section Potential
-
-variable {ι : Type} {spec : OracleSpec ι} {σ : Type}
-
-/-- **A bad event raised a little at each query:** if from a good state each query raises `bad`
-with probability at most `(sz s + 1) · δ` and grows the size `sz` by at most one, then from a good
-state `s` a computation making at most `m` queries ends in a bad state with probability at most
-`m · (sz s + m) · δ`.
-
-**Proof sketch.** Induction on the computation. At a query, a bad successor contributes at most
-its probability; a good successor `s'` has `sz s' ≤ sz s + 1` and, by induction, contributes at
-most `(m - 1) · (sz s + m) · δ`. Add `(sz s + 1) · δ ≤ (sz s + m) · δ`. -/
-theorem prob_bad_le {impl : QueryImpl spec σ unifSpec} (bad : σ → Prop) [DecidablePred bad]
-    (sz : σ → ℕ) {δ : ℝ} (hδ : 0 ≤ δ)
-    (hstep : ∀ i x s, ¬ bad s → prob (impl i x s) (fun ys => bad ys.2) ≤ (sz s + 1) * δ)
-    (hgrow : ∀ i x s, (impl i x s).AllOutputs fun ys => sz ys.2 ≤ sz s + 1)
-    {α : Type} (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ)
-    (hs : ¬ bad s) :
-    prob (simulate impl c s) (fun r => bad r.2) ≤ m * (sz s + m) * δ := by
-  induction c generalizing m s with
-  | pure a =>
-    rw [simulate_pure, prob_pure, if_neg hs]
-    exact mul_nonneg (by positivity) hδ
-  | query i x k ih =>
-    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
-    have hm1 : 1 ≤ m := hm
-    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
-    have hk' : ∀ y, (k y).CostBoundedBy (fun _ => 1) m' := fun y => by
-      simpa using hk y
-    have hm0 : (0 : ℝ) ≤ m' := Nat.cast_nonneg m'
-    set K : ℝ := m' * (sz s + (m' + 1)) * δ with hK
-    have hK0 : 0 ≤ K := mul_nonneg (by positivity) hδ
-    rw [simulate_query, prob_bind]
-    calc expect (impl i x s) (fun ys => prob (simulate impl (k ys.1) ys.2) (fun r => bad r.2))
-        ≤ expect (impl i x s) (fun ys => (if bad ys.2 then (1 : ℝ) else 0) + K) := by
-          refine expect_mono_of_allOutputs (hgrow i x s) fun ys hys => ?_
-          by_cases hb : bad ys.2
-          · rw [if_pos hb]
-            have h1 := prob_le_one (simulate impl (k ys.1) ys.2) (fun r => bad r.2)
-            linarith
-          · rw [if_neg hb, zero_add]
-            refine (ih ys.1 m' (hk' ys.1) ys.2 hb).trans ?_
-            have hys' : (sz ys.2 : ℝ) ≤ sz s + 1 := by exact_mod_cast hys
-            exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (by linarith) hm0) hδ
-      _ = prob (impl i x s) (fun ys => bad ys.2) + K := by
-          rw [expect_add (impl i x s) (fun ys => if bad ys.2 then (1 : ℝ) else 0) (fun _ => K),
-            expect_const, prob_eq_expect]
-      _ ≤ ((m' + 1 : ℕ) : ℝ) * (sz s + ((m' + 1 : ℕ) : ℝ)) * δ := by
-          have h3 := hstep i x s hs
-          have h4 : ((sz s : ℝ) + 1) * δ ≤ (sz s + (m' + 1)) * δ :=
-            mul_le_mul_of_nonneg_right (by linarith) hδ
-          have e : ((m' : ℝ) + 1) * (sz s + (m' + 1)) * δ = K + (sz s + (m' + 1)) * δ := by
-            rw [hK]; ring
-          push_cast
-          linarith
-
-end Potential
-
 /-! ### Hitting a list with a uniform sample -/
-
-/-- A uniform element of `T` lies in a list `L` with probability at most `|L| / |T|`
-(`prob_mem_le` for a fixed list). -/
-theorem expect_sample_mem_le {T : Type} [Fintype T] [Nonempty T] [DecidableEq T] (L : List T) :
-    expect (sample T) (fun t => if t ∈ L then (1 : ℝ) else 0) ≤ L.length / Fintype.card T := by
-  have h := prob_mem_le (OracleComp.pure L : ProbComp (List T)) (q := L.length)
-    (OracleComp.allOutputs_pure.2 le_rfl)
-  rw [prob_bind, expect_pure, prob_bind] at h
-  refine Eq.trans_le ?_ h
-  refine congrArg _ (funext fun t => ?_)
-  rw [prob_pure]
 
 /-- A key with a value in an association list is one of its keys:
 `(T.lookup x).isSome → x ∈ T.map Prod.fst`. -/
@@ -459,21 +386,6 @@ theorem abs_prob_lazyImpl_sub_le (hatk : FixedLengthScheme.decOpen atk true = fa
   refine h1.trans (h2.trans (le_of_eq ?_))
   simp only [List.length_nil, Nat.cast_zero, zero_add]
   ring
-
-/-- Expectations of functions `ε`-close at every point are `ε`-close:
-`(∀ x, |f x - g x| ≤ ε) → |𝔼_c f - 𝔼_c g| ≤ ε`. -/
-theorem abs_expect_sub_le {ρ : Type} (c : ProbComp ρ) {f g : ρ → ℝ} {ε : ℝ}
-    (h : ∀ x, |f x - g x| ≤ ε) : |expect c f - expect c g| ≤ ε := by
-  have h1 : expect c f ≤ expect c g + ε :=
-    calc expect c f ≤ expect c (fun x => g x + ε) :=
-          expect_mono c fun x => by linarith [(abs_le.1 (h x)).2]
-      _ = expect c g + ε := by rw [expect_add c g (fun _ => ε), expect_const]
-  have h2 : expect c g ≤ expect c f + ε :=
-    calc expect c g ≤ expect c (fun x => f x + ε) :=
-          expect_mono c fun x => by linarith [(abs_le.1 (h x)).1]
-      _ = expect c f + ε := by rw [expect_add c f (fun _ => ε), expect_const]
-  rw [abs_le]
-  constructor <;> linarith
 
 /-- **Step 2 of [PS10, Thm 168.2]: with a random function the bit is hidden up to `q² / 2ⁿ`.**
 For CPA and CCA1, `d = 3n + 2`, `2n`-bit challenge queries and computations `C r` (over coins

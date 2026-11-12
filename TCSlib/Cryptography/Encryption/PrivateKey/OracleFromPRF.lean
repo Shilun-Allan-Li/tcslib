@@ -240,7 +240,7 @@ reduction's lengths.
 **Proof sketch.** The key generator outputs its uniform coins (`prf_gen_runAt`, `prfKeyEq`); for
 every key, the oracles of `IND_b` and `fImpl … (F n k)` have the same laws call by call
 (`expect_indImpl_fImpl`, from `ofFn_prf_encryptAt` and `ofFn_prf_decAnswer`), so the simulations
-agree (`PRFGame.expect_simulate_congr`); the game's codec and lengths are the reduction's
+agree (`ProbComp.expect_simulate_congr`); the game's codec and lengths are the reduction's
 (`indCodec_eq_bitCodec`, `prf_inLens`, `prf_outLens`, `prf_ctLen_eval`). -/
 private theorem accept_prf_indGame (atkBit b : Bool) (A : NUPPT) (Q n : ℕ) (hn : 0 < n) :
     accept ((prfFixedScheme F E hE hFE).indGame (atkOf atkBit) A Q b n) =
@@ -404,7 +404,7 @@ challenge bit in its seed. Here there is one reduction per bit (the bit hard-wir
 2. *The random-function experiment* (`PRFGame.abs_expect_fImpl_sub_le`): sample `R` lazily
    (`PRFGame.expect_lazyImpl`). The bad event is that the challenge's `r*` was already asked or
    a later `Enc` uses it; a query raises it with probability at most `(q + 1) / 2ⁿ` (`prob_mem_le`),
-   so it has probability at most `q(n)² / 2ⁿ` (`PRFGame.prob_bad_le`). Off the bad event,
+   so it has probability at most `q(n)² / 2ⁿ` (`ProbComp.prob_bad_le`). Off the bad event,
    `m_b ⊕ R(r*)` is uniform for both `b` (identical until bad, `identical_until_bad`, with the pad
    changed by `y ↦ y ⊕ m₀ ⊕ m₁`).
 3. *The bound* (`prf_advantage_le`, `prf_indSecure`): the triangle inequality gives the bound

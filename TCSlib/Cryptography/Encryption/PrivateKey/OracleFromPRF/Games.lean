@@ -26,7 +26,7 @@ functions; this file states the IND experiment's oracles with `f` an arbitrary f
 
 Drawing `κ` tapes uniformly gives the distribution of `fImpl` for every computation with at most
 `κ` queries (`expect_eImpl`); the proof resamples one tape at a time
-(`AdaptiveCPA.expect_sample_update`), using that the run from the counter `j` ignores the tapes
+(`ProbComp.expect_sample_coord`), using that the run from the counter `j` ignores the tapes
 below `j` (`simulate_eImpl_congr`).
 
 ## Main definitions
@@ -40,7 +40,6 @@ below `j` (`simulate_eImpl_congr`).
 * `PRFGame.fImpl_enc`, `_dec`, `_challenge_none`, `_challenge_some` and the same for `eImpl`.
 * `PRFGame.simulate_eImpl_congr`: the run from counter `j` ignores the tapes below `j`.
 * `PRFGame.expect_eImpl`: tapes in advance have the distribution of fresh nonces.
-* `PRFGame.expect_simulate_congr`: implementations with the same laws simulate alike.
 
 ## References
 
@@ -98,27 +97,6 @@ theorem decAns_eq (n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)) (op : Bo
         true :: List.zipWith xor (pairSndD w) (List.ofFn (f (padFin n (pairFstD w))))
       else [] :=
   rfl
-
-/-! ### Simulation congruence -/
-
-/-- **Implementations with the same laws simulate alike:** if every call of `impl₀` and `impl₁`
-has the same expectation of every function `g` of the answer and the new state, the simulations
-of every computation have the same expectation of every function `G` of the output and the final
-state: `𝔼[G] (simulate impl₀ c s) = 𝔼[G] (simulate impl₁ c s)`.
-
-**Proof sketch.** Induction on `c`; at a query, both sides are the expectation over the call of the
-continuation's expectation (`simulate_query`, `expect_bind`), equal by induction and the
-hypothesis. -/
-theorem expect_simulate_congr {ι : Type} {spec : OracleSpec ι} {σ α : Type}
-    (impl₀ impl₁ : QueryImpl spec σ unifSpec)
-    (h : ∀ i x s (g : spec.rng i × σ → ℝ), expect (impl₀ i x s) g = expect (impl₁ i x s) g)
-    (c : OracleComp spec α) (s : σ) (G : α × σ → ℝ) :
-    expect (simulate impl₀ c s) G = expect (simulate impl₁ c s) G := by
-  induction c generalizing s with
-  | pure a => rw [simulate_pure, simulate_pure]
-  | query i x k ih =>
-    rw [simulate_query, simulate_query, expect_bind, expect_bind, h]
-    exact congrArg _ (funext fun p => ih p.1 p.2)
 
 /-! ### The oracles with fresh nonces -/
 
@@ -254,7 +232,7 @@ theorem simulate_eImpl_congr (T' : ℕ → Fin n → Bool) {α : Type}
 **Proof sketch.** Induction on `c`, generalizing the counter, the state and the budget. A query
 costs one unit, so a fresh nonce is read at a counter `j < κ`. There it reads `T j`, and the
 continuation runs from `j + 1`, so it ignores `T j` (`simulate_eImpl_congr`, `extTape_update`);
-`AdaptiveCPA.expect_sample_update` replaces `T j` by the fresh sample of `fImpl`. The other
+`ProbComp.expect_sample_coord` replaces `T j` by the fresh sample of `fImpl`. The other
 queries are answered alike. -/
 theorem expect_eImpl (κ : ℕ) {α : Type} (G : α → ℝ) (c : OracleComp (bitSpec ins outs) α)
     (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (j : ℕ) (hj : j + m ≤ κ)
@@ -291,7 +269,7 @@ theorem expect_eImpl (κ : ℕ) {α : Type} (G : α → ℝ) (c : OracleComp (bi
       have hT : ∀ T : Fin κ → Fin n → Bool, AdaptiveCPA.extTape T j = T jj :=
         fun T => AdaptiveCPA.extTape_of_lt T hjk
       simp only [hT]
-      refine (AdaptiveCPA.expect_sample_update jj (fun r T => expect (simulate
+      refine (ProbComp.expect_sample_coord jj (fun r T => expect (simulate
         (eImpl ins outs d n atk b f (AdaptiveCPA.extTape T)) (k (ans r)) (j + 1, st r))
           (fun p => G p.1)) ?_).trans ?_
       · intro r r' T
