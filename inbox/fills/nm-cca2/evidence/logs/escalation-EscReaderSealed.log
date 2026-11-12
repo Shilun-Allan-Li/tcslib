@@ -1,0 +1,19 @@
+START scratch/EscReaderSealed 2026-11-12T05:23:57+00:00
+scratch/EscReaderSealed.lean:23:2: error: Type mismatch: After simplification, term
+  FixedLengthPKScheme.indImpl_dec_onSpec S atk b n pk sk c s
+ has type
+  S.indImpl atk b n pk sk 0 c s =
+    if (FixedLengthScheme.decOpen atk s.isSome && !decide (s = some c)) = true then
+      OracleComp.pure
+        (FixedLengthScheme.decAnswer (decodeFin (S.msgLen.eval n) (S.dec (pairEncode sk (List.ofFn c)))), s)
+    else OracleComp.pure (zeroBits (S.outLens n 0), s)
+but is expected to have type
+  S.indImpl atk b n pk sk 0 c s =
+    if (FixedLengthScheme.decOpen atk s.isSome && !decide (s = some c)) = true then
+      OracleComp.pure
+        (cast ⋯ (FixedLengthScheme.decAnswer (decodeFin (S.msgLen.eval n) (S.dec (pairEncode sk (List.ofFn c))))), s)
+    else OracleComp.pure (zeroBits (S.outLens n 0), s)
+FAIL(scratch/EscReaderSealed): lean exited with status 1
+FAIL(scratch/EscReaderSealed): error diagnostics reported
+FAIL(scratch/EscReaderSealed): no fresh .olean produced
+END scratch/EscReaderSealed 2026-11-12T05:23:59+00:00 exit=1 wall=2.0s maxrss=2514MiB

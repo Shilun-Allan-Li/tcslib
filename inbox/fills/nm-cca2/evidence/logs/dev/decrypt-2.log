@@ -1,0 +1,141 @@
+START TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt 2026-11-12T05:14:16+00:00
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:310:19: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.range (Nat.succ ?m.745)
+in the target expression
+  (fun j => List.map (fun i => ⟨0, (decBlock S n a i, ans (decBlock S n a i) st)⟩) (List.range j)) j ++
+      [⟨0, (decBlock S n a j, ans (decBlock S n a j) st)⟩] =
+    (fun j => List.map (fun i => ⟨0, (decBlock S n a i, ans (decBlock S n a i) st)⟩) (List.range j)) (j + 1)
+
+S : FixedLengthPKScheme
+ℓ : PolyExpr
+D : NUPPT
+n : ℕ
+z : List Bool
+ω : Fin ((decHandler S ℓ D).seedLen.eval n) → Bool
+s : Fin ((decHandler S ℓ D).stateLen.eval n) → Bool
+d : ℕ
+a : Fin d → Bool
+σ : Type
+O : QueryImpl (bitSpecAt (acDin S) (acDout S) n) σ unifSpec
+ans : (Fin ((acDin S 0).eval n) → Bool) → σ → Fin ((acDout S 0).eval n) → Bool
+hO : ∀ (x : (bitSpecAt (acDin S) (acDout S) n).dom 0) (st : σ), O 0 x st = OracleComp.pure (ans x st, st)
+st : σ
+hist : ℕ → QueryLog (bitSpecAt (acDin S) (acDout S) n)
+hhist : hist = fun j => List.map (fun i => ⟨0, (decBlock S n a i, ans (decBlock S n a i) st)⟩) (List.range j)
+hfin : (decHandler S ℓ D).finRun = dFin S ℓ D
+hctl : (acDin S 0).eval n = S.ctLen.eval n
+hout : (decHandler S ℓ D).outLen.eval n = 1
+hfields :
+  ∀ (j : ℕ) (w : List Bool),
+    w =
+        InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+          ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog (hist j)) →
+      (dCnt w).length = j ∧
+        finU w = List.replicate n true ∧
+          dIn w =
+              NUPPT.layout (List.replicate n true)
+                (List.map (fun i => List.ofFn (ans (decBlock S n a i) st)) (List.range j)).flatten (pairSndD z)
+                (List.ofFn ω) ∧
+            dCt S w = List.ofFn (decBlock S n a j)
+m : ℕ
+ih :
+  ∀ (j : ℕ),
+    j + m = ℓ.eval n →
+      simulate O
+          (buildComp
+            (fun L =>
+              decodeBitMove (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+                ((decHandler S ℓ D).outLen.eval n)
+                ((decHandler S ℓ D).finRun
+                  (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+                    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog L))))
+            (zeroBits ((decHandler S ℓ D).outLen.eval n)) m (hist j))
+          st =
+        OracleComp.pure
+          (padFin ((decHandler S ℓ D).outLen.eval n)
+              [decide
+                  (D.output
+                      (NUPPT.layout (List.replicate n true)
+                        (List.map (fun i => List.ofFn (ans (decBlock S n a i) st)) (List.range (ℓ.eval n))).flatten
+                        (pairSndD z) (List.ofFn ω)) =
+                    [true])],
+            st)
+j : ℕ
+hj : j + (m + 1) = ℓ.eval n
+hc :
+  (dCnt
+        (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+          ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog (hist j)))).length =
+    j
+hU :
+  finU
+      (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+        ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog (hist j))) =
+    List.replicate n true
+hCt :
+  dCt S
+      (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+        ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog (hist j))) =
+    List.ofFn (decBlock S n a j)
+⊢ (fun j => List.map (fun i => ⟨0, (decBlock S n a i, ans (decBlock S n a i) st)⟩) (List.range j)) j ++
+      [⟨0, (decBlock S n a j, ans (decBlock S n a j) st)⟩] =
+    (fun j => List.map (fun i => ⟨0, (decBlock S n a i, ans (decBlock S n a i) st)⟩) (List.range j)) (j + 1)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:313:41: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.range 0
+in the target expression
+  (fun j => List.map (fun i => ⟨0, (decBlock S n a i, ans (decBlock S n a i) st)⟩) (List.range j)) 0 = []
+
+S : FixedLengthPKScheme
+ℓ : PolyExpr
+D : NUPPT
+n : ℕ
+z : List Bool
+ω : Fin ((decHandler S ℓ D).seedLen.eval n) → Bool
+s : Fin ((decHandler S ℓ D).stateLen.eval n) → Bool
+d : ℕ
+a : Fin d → Bool
+σ : Type
+O : QueryImpl (bitSpecAt (acDin S) (acDout S) n) σ unifSpec
+ans : (Fin ((acDin S 0).eval n) → Bool) → σ → Fin ((acDout S 0).eval n) → Bool
+hO : ∀ (x : (bitSpecAt (acDin S) (acDout S) n).dom 0) (st : σ), O 0 x st = OracleComp.pure (ans x st, st)
+st : σ
+hist : ℕ → QueryLog (bitSpecAt (acDin S) (acDout S) n)
+hhist : hist = fun j => List.map (fun i => ⟨0, (decBlock S n a i, ans (decBlock S n a i) st)⟩) (List.range j)
+hfin : (decHandler S ℓ D).finRun = dFin S ℓ D
+hctl : (acDin S 0).eval n = S.ctLen.eval n
+hout : (decHandler S ℓ D).outLen.eval n = 1
+hfields :
+  ∀ (j : ℕ) (w : List Bool),
+    w =
+        InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+          ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog (hist j)) →
+      (dCnt w).length = j ∧
+        finU w = List.replicate n true ∧
+          dIn w =
+              NUPPT.layout (List.replicate n true)
+                (List.map (fun i => List.ofFn (ans (decBlock S n a i) st)) (List.range j)).flatten (pairSndD z)
+                (List.ofFn ω) ∧
+            dCt S w = List.ofFn (decBlock S n a j)
+key :
+  ∀ (m j : ℕ),
+    j + m = ℓ.eval n →
+      simulate O
+          (buildComp
+            (fun L =>
+              decodeBitMove (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+                ((decHandler S ℓ D).outLen.eval n)
+                ((decHandler S ℓ D).finRun
+                  (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+                    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog L))))
+            (zeroBits ((decHandler S ℓ D).outLen.eval n)) m (hist j))
+          st =
+        OracleComp.pure
+          (padFin ((decHandler S ℓ D).outLen.eval n)
+              [decide
+                  (D.output
+                      (NUPPT.layout (List.replicate n true)
+                        (List.map (fun i => List.ofFn (ans (decBlock S n a i) st)) (List.range (ℓ.eval n))).flatten
+                        (pairSndD z) (List.ofFn ω)) =
+                    [true])],
+            st)
+⊢ (fun j => List.map (fun i => ⟨0, (decBlock S n a i, ans (decBlock S n a i) st)⟩) (List.range j)) 0 = []

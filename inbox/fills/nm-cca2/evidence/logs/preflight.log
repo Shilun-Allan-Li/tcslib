@@ -1,0 +1,66 @@
+# preflight 2026-11-12T04:52:09Z
+## nproc
+4
+## cgroup v1 (process cgroup /sys/fs/cgroup/memory/process_api/4704c4d8565c3e4c74e5f186ca11e5b8)
+memory.limit_in_bytes 9223372036854771712
+memory.usage_in_bytes 4534177792
+memory.stat:
+cache 4355756032
+rss 5709824
+rss_huge 0
+shmem 0
+mapped_file 3112960
+dirty 1425616896
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 1894073
+pgpgout 1396024
+pgfault 1446163
+pgmajfault 177
+inactive_anon 5591040
+active_anon 12288
+inactive_file 3537911808
+active_file 817844224
+unevictable 0
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 4355756032
+total_rss 5709824
+total_rss_huge 0
+total_shmem 0
+total_mapped_file 3112960
+total_dirty 1425616896
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 1894073
+total_pgpgout 1396024
+total_pgfault 1446163
+total_pgmajfault 177
+total_inactive_anon 5591040
+total_active_anon 12288
+total_inactive_file 3537911808
+total_active_file 817844224
+total_unevictable 0
+## no cgroup limit (limit = 2^63-page): headroom = MemAvailable
+MemTotal:       16472084 kB
+MemFree:        10956292 kB
+MemAvailable:   16021084 kB
+Buffers:           43616 kB
+Cached:          5098812 kB
+## df -B1 / df -T (clone /workspace/fill, scratch /workspace/payload, TMPDIR /tmp)
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 18269986816 25602281472  42% /
+/dev/vda       270553174016 18269986816 25602281472  42% /
+/dev/vda       270553174016 18269986816 25602281472  42% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 17841784  25002228  42% /
+/dev/vda       ext4 264212084 17841784  25002228  42% /
+/dev/vda       ext4 264212084 17841784  25002228  42% /
+headroom = MemAvailable = 16021256 kB = 15.27 GiB (floor 4 GiB)
+disk free = 25602281472 B = 23.84 GiB (floor 12 GiB)

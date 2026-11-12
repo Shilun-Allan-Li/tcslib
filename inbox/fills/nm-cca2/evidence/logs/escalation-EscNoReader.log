@@ -1,0 +1,32 @@
+START scratch/EscNoReader 2026-11-12T05:23:45+00:00
+scratch/EscNoReader.lean:35:4: error: Type mismatch
+  HEq.rfl
+has type
+  @HEq ?m.181 ?m.182 ?m.181 ?m.182
+but is expected to have type
+  @HEq (Fin (S.outLens n 0) → Bool)
+    (FixedLengthScheme.decAnswer
+          (decodeFin (S.msgLen.eval n)
+            (S.dec (pairEncode sk (List.ofFn (cast ⋯ (padFin (S.inLens n 0) (List.ofFn x))))))),
+        st).1
+    (Fin (S.msgLen.eval n + 1) → Bool)
+    (FixedLengthScheme.decAnswer
+      (decodeFin (S.msgLen.eval n) (S.dec (pairEncode sk (List.ofFn (cast ⋯ (padFin (S.inLens n 0) (List.ofFn x))))))))
+case neg.e_a.e_fst.e_w
+S : FixedLengthPKScheme
+b : Bool
+n : ℕ
+pk sk : List Bool
+x : Fin ((acDin S 0).eval n) → Bool
+st : Option (Fin (S.ctLen.eval n) → Bool)
+hs : ¬st = some (cast ⋯ (padFin (S.inLens n 0) (List.ofFn x)))
+⊢ (FixedLengthScheme.decAnswer
+          (decodeFin (S.msgLen.eval n)
+            (S.dec (pairEncode sk (List.ofFn (cast ⋯ (padFin (S.inLens n 0) (List.ofFn x))))))),
+        st).1 ≍
+    FixedLengthScheme.decAnswer
+      (decodeFin (S.msgLen.eval n) (S.dec (pairEncode sk (List.ofFn (cast ⋯ (padFin (S.inLens n 0) (List.ofFn x)))))))
+FAIL(scratch/EscNoReader): lean exited with status 1
+FAIL(scratch/EscNoReader): error diagnostics reported
+FAIL(scratch/EscNoReader): no fresh .olean produced
+END scratch/EscNoReader 2026-11-12T05:23:47+00:00 exit=1 wall=2.2s maxrss=2512MiB

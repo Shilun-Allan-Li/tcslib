@@ -1,0 +1,75 @@
+START TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt 2026-11-12T05:13:08+00:00
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:91:2: error: Type mismatch
+  logEmit_encodeLog ?m.25 ansRead ?m.26 rfl fun e t => ?m.31
+has type
+  ∀ (h : QueryLog ?m.23), logEmit ansRead (MachineCodec.encodeLog ?m.25 h) = List.flatMap ?m.26 h
+but is expected to have type
+  logEmit ansRead ((bitCodec din dout dα).encodeLog h) = List.flatMap (fun e => List.ofFn e.snd.2) h
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:91:47: error: unsolved goals
+k : ℕ
+din dout : Fin k → ℕ
+dα : ℕ
+h : QueryLog (bitSpec din dout)
+⊢ ℕ
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:204:6: error: Failed to rewrite using equation theorems for `decHandler`
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:242:75: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (fwdHandler ?din ?dout ?seedLen ?advIn ?advIn_poly ?outLen ?finCall ?finRun ?finRun_poly).finRun ?a✝
+in the target expression
+  (fwdHandler (acDin S) (acDout S) D.coins (fun ctx => pairFstD (pairFstD (pairSndD ctx))) polyTimeComputable_decAdvIn
+        (PolyExpr.const 1) ℓ (dFin S ℓ D) ⋯).finRun =
+    dFin S ℓ D
+
+S : FixedLengthPKScheme
+ℓ : PolyExpr
+D : NUPPT
+n : ℕ
+z : List Bool
+ω : Fin ((decHandler S ℓ D).seedLen.eval n) → Bool
+s : Fin ((decHandler S ℓ D).stateLen.eval n) → Bool
+d : ℕ
+a : Fin d → Bool
+σ : Type
+O : QueryImpl (bitSpecAt (acDin S) (acDout S) n) σ unifSpec
+ans : (Fin ((acDin S 0).eval n) → Bool) → σ → Fin ((acDout S 0).eval n) → Bool
+hO : ∀ (x : (bitSpecAt (acDin S) (acDout S) n).dom 0) (st : σ), O 0 x st = OracleComp.pure (ans x st, st)
+st : σ
+hist : ℕ → QueryLog (bitSpecAt (acDin S) (acDout S) n) :=
+  fun j => List.map (fun i => ⟨0, (decBlock S n a i, ans (decBlock S n a i) st)⟩) (List.range j)
+⊢ (fwdHandler (acDin S) (acDout S) D.coins (fun ctx => pairFstD (pairFstD (pairSndD ctx))) polyTimeComputable_decAdvIn
+        (PolyExpr.const 1) ℓ (dFin S ℓ D) ⋯).finRun =
+    dFin S ℓ D
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:248:6: error: Function expected at
+  List.ofFn a
+but this term has type
+  List Bool
+
+Note: Expected a function because this term is being applied to the argument
+  ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog (hist j))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:250:33: error: Application type mismatch: The argument
+  w
+has type
+  List Bool → List Bool → List Bool
+but is expected to have type
+  List Bool
+in the application
+  finU w
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:251:10: error: Application type mismatch: The argument
+  w
+has type
+  List Bool → List Bool → List Bool
+but is expected to have type
+  List Bool
+in the application
+  dIn w
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:254:12: error: Application type mismatch: The argument
+  w
+has type
+  List Bool → List Bool → List Bool
+but is expected to have type
+  List Bool
+in the application
+  dCt S w
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt): no fresh .olean produced
+END TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt 2026-11-12T05:13:15+00:00 exit=1 wall=7.7s maxrss=2527MiB
