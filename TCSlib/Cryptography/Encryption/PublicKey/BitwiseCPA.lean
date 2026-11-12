@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA
+import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity.PaddedCPA
 import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Planted
 import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.QueryHandler
 
