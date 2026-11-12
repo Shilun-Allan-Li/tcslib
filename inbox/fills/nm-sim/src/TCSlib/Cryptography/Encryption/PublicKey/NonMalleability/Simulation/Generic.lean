@@ -33,6 +33,7 @@ to encryption.
 ## Main results
 
 * `NMSim.buildComp_budget_eq`, `NMSim.toCompOn_budget_eq`.
+* `NMSim.expect_toCompOn_outLen`: a machine's output length may be changed along an equality.
 * `NMSim.expect_congr_of_allOutputs`, `NMSim.expect_expect_sample`, `NMSim.bind_congr_of_allOutputs`.
 * `NMSim.expect_simulate_eager`.
 * `NMSim.expect_eq_until_bad`: equal until bad, for functions of the final state.
@@ -140,6 +141,19 @@ theorem bind_congr_of_allOutputs {ι : Type} {spec : OracleSpec ι} {c : OracleC
     exact ih y (OracleComp.allOutputs_query.1 hc y)
 
 end Expect
+
+/-- **Changing a machine's output length along `d = d'`** keeps the law of its output read as a
+list: `𝔼[G (⟦p.1⟧, p.2)]` over the runs through `bitCodec ins outs d` and `bitCodec ins outs d'`
+agree. -/
+theorem expect_toCompOn_outLen {k : ℕ} {ins outs : Fin k → ℕ} {σ : Type}
+    (O : QueryImpl (bitSpec ins outs) σ unifSpec) (A : NUPPT) (n q : ℕ) (x : List Bool)
+    (r : A.Coins n) (s : σ) {d d' : ℕ} (hd : d = d') (G : List Bool × σ → ℝ) :
+    ProbComp.expect (simulate O (A.toCompOn (bitCodec ins outs d) n q x r) s)
+        (fun p => G (List.ofFn p.1, p.2)) =
+      ProbComp.expect (simulate O (A.toCompOn (bitCodec ins outs d') n q x r) s)
+        (fun p => G (List.ofFn p.1, p.2)) := by
+  subst hd
+  rfl
 
 /-! ### One-shot coins drawn in advance -/
 

@@ -21,12 +21,19 @@ oracle's run with the coin `β` (`accept_nmGame_eq_rImpl`).
 ## Main definitions
 
 * `NMSim.halfSamp`: the sampler `⟨m₀, m₁⟩ ↦ m_β`; `NMSim.halfCoins`: its coins are one bit.
+* `NMSim.copyHandler`: the SIM adversary's handler (forwarding, output `A`'s output).
+* `NMSim.halfDist` (`D''`), `NMSim.entryTails`, `NMSim.tailDist` (`D'`): the distinguishers.
+* `NMSim.runB`: `A`'s run against the hybrid oracle with coin `β`.
 
 ## Main results
 
 * `NMSim.halfSamp_runAt`, `NMSim.ofFn_drawWith_half`, `NMSim.expect_sample_halfCoins`.
 * `NMSim.castImpl_indImpl_abs`: the CCA oracles of `Ind_β` are the hybrid oracle with coin `β`.
 * `NMSim.accept_nmGame_eq_rImpl`: `NM_β` as a run against the hybrid oracle.
+* `NMSim.simulate_copyHandler_machine`: the SIM adversary's run is `A`'s.
+* `NMSim.tailDist_blocks`, `NMSim.halfDist_blocks`, `NMSim.nmOutput_eq_entryTails`: the
+  distinguishers on the views.
+* `NMSim.real_identity`, `NMSim.ideal_identity`: the identities behind the two gaps.
 
 ## References
 

@@ -1,111 +1,106 @@
-# Fill `nm-sim` — checkpoint 1: SIM ⇒ IND proved (every attack)
+# Fill `nm-sim` — checkpoint 2: both targets proved
 
 **Worker:** Claude (external). **Issue base:** `262d6e9ae526c82eb68fe5a6169156bd1504e6d8` on
 `cryptography/pass-shelat-ch2-4` (the merge of #294). **Local proof branch:** `fill/nm-sim`, head
-`21d43d0c7`, never pushed; the whole series from the base is in `patches/`. **Pack:** read at exchange
-`6f1e13ae6`; `SHA256SUMS` 7/7 OK; `order.txt` 252 modules, `roots.txt` 97, `base-sorries.txt` 26.
+`6882f3a13`, never pushed; the whole series from the base is in `patches/` (2 commits). **Pack:** read at
+exchange `6f1e13ae6`; `SHA256SUMS` 7/7 OK; `order.txt` 252 modules, `roots.txt` 97, `base-sorries.txt` 26.
 
 ## Status
 
 | Target | Status | Axioms |
 |---|---|---|
-| `FixedLengthPKScheme.nmSecure_of_simNMSecure` | **proved** | `propext`, `Classical.choice`, `Quot.sound` |
-| `FixedLengthPKScheme.simNMSecure_of_nmSecure_cpa` | admitted (checkpoint 2) | + `sorryAx` |
-| `FixedLengthPKScheme.simNMSecure_cpa_iff_nmSecure_cpa` | depends on the second | + `sorryAx` |
+| `FixedLengthPKScheme.nmSecure_of_simNMSecure` | **proved** (checkpoint 1) | `propext`, `Classical.choice`, `Quot.sound` |
+| `FixedLengthPKScheme.simNMSecure_of_nmSecure_cpa` | **proved** | `propext`, `Classical.choice`, `Quot.sound` |
+| `FixedLengthPKScheme.simNMSecure_cpa_iff_nmSecure_cpa` | admission-free | `propext`, `Classical.choice`, `Quot.sound` |
 
-`evidence/logs/dev/cp1-axioms.log`. No statement was changed, no escalation is open, and no reader of a
-frozen file was needed.
+`evidence/logs/dev/cp2-axioms.log`. No statement changed, no escalation, no reader of a frozen file needed.
+The owned file has no `sorry` left; the module title drops "(statement phase)" and gets `## Contents`.
 
-## The proof of `nmSecure_of_simNMSecure` (brief step 1)
+## The proof of `simNMSecure_of_nmSecure_cpa` (brief step 2)
 
-The maintainer's route, with the bound `|adv_NM| ≤ 2·adv(D') + adv(D'')`. The sketch in the owned file
-now describes the delivered proof (step numbers below are the sketch's).
+The maintainer's route; the owned sketch now describes it. The proof is organised around the hybrids
+`H_b = NMSim.hybAcc … b …`: `A` runs against `NMSim.rImpl … b …`, which on the first challenge `a` answers
+`⟨Enc_pk(M(a; ρ_b)), h(M(a; ρ))⟩` (`ρ₀ = ρ` the experiment's sampler coins, `ρ₁` independent), `Dec = ⊥`
+under CPA, and the view is `realView`.
 
-1. **Sampler** `NMSim.halfSamp S` (uniform, coins `const 1`): on `⟨m₀, m₁⟩` (`paramLen = msgLen + msgLen`) it
-   outputs `m_β` for its single coin `β` (`halfSamp_runAt`, `ofFn_drawWith_half`), with history `fun _ => []`
-   and `histLen = const 0`. Its coins are one bit (`halfCoins`, `expect_sample_halfCoins`).
-2. **SIM adversary** `A'`: T2 (`exists_interactiveHandlerMachine`) on `NMSim.simHandler S ℓ =
-   copyHandler …`, which is `NMCCA2.fwdHandler` (imported, not copied) with seed `const 0`, `finCall = const 0`
-   and a finalization that returns `A`'s output. `simulate_copyHandler_machine`: against any oracle and state,
-   `A'`'s run is `A`'s, its output padded to `ℓ·ctLen + 0` bits. `Sim` comes from `h M A' (q·perCall + finCall) ℓ 0`.
-3. **Distinguishers.** `D' = NMSim.tailDist S D` (built with `ofPolyTime` and `D`'s coins and advice): `0` if
-   `m₀ = m₁`, else `[D(entry tails) = 1] == [m = m₁]`, where `entryTails` (a `chunkMap`) drops each entry's
-   `COPY` flag, so a copy reads as `nmDecrypt`'s `⊥` (`nmOutput_eq_entryTails`). `D'' = NMSim.halfDist S`
-   tests `m₀ ≠ m₁`.
-4. **Both experiments on T2's lengths** (owned file, `accept_snmReal_eq`, `accept_snmIdeal_eq`):
-   `castImpl_snmImpl` shows that `snmImpl`, read along `snmDin`/`snmDout`, is the hybrid oracle
-   `NMSim.rImpl … false … ρ ρ' none`; `snmView_realView`/`snmView_idealView` turn the views into the
-   list forms `realView`/`idealView`; `simImpl_eq_histImpl`. So `accept (snmReal …) = NMSim.realAcc …` and
-   `accept (snmIdeal …) = NMSim.idealAcc …`.
-5. **Real** (`NMSim.real_gap`): `2·Pr_real[D' = 1] − Pr_real[D'' = 1] = Pr[D(NM_1) = 1] − Pr[D(NM_0) = 1]`.
-   - `accept_nmGame_eq_rImpl`: with the coin `β` fixed, `NM_β` is `A`'s run against `rImpl` with coin `β`
-     (`castImpl_indImpl_abs` relates `indImpl` to `rImpl` through the state abstraction `s ↦ s.map fst`).
-   - `expect_runB_good`: until a parameter with `m₀ ≠ m₁` is recorded the two coins give the same oracle,
-     and such a parameter stays recorded (`expect_eq_until_bad`, Generic).
-   - `real_identity` is the identity pointwise in keys and coins; `realAcc_copyHandler`/`realAcc_half`
-     reduce `A'`'s experiment to `A`'s runs; linear algebra of expectations finishes.
-6. **Ideal** (`NMSim.ideal_gap`): `2·Pr_ideal[D' = 1] = Pr_ideal[D'' = 1]` for every simulator.
-   With `histLen = 0` the history oracle ignores the sampler's coin (`histImpl_coins`), so `β` is drawn after
-   the run (`expect_sample_comm`); then `ideal_identity` (pointwise) and `D''` ignoring `β`.
-7. `abs_le_of_gap` combines them: `ε = 2·ε' + ε''` (`Negligible.const_mul`, `Negligible.add`).
+1. **Real = `H_false`** (`accept_snmReal_eq`, `NMSim.realAcc_eq_hybAcc`).
+2. **Ideal = `H_true`** (`NMSim.exists_simulator`, `Simulator.lean`).
+   - The simulator is T2's machine of `chalHandler (simParams …)`, with `M`'s advice hard-wired
+     (`NMCCA2.exists_withAdviceOn`, imported). Seed `ρ̃ ‖ re`; state `[flag] ‖ ỹ ‖ h ‖ a`.
+   - `Dec` gets `⊥` without a query. The first challenge `a` makes the only outer query `a`, gets `h`,
+     computes `ỹ = Enc_pk(M(a; ρ̃); re)` (`simCt`, with `M`'s advice from the input `⟨pk, α_M⟩`) and
+     answers `⟨ỹ, h⟩`. Repeated challenges replay the record. The output is `r` flagged entries
+     `[flag ∧ c_i = ỹ] ‖ c_i`, then `σ` (`simFin`; a separate branch for `ctLen(n) = 0`, where `chunkMap`
+     cannot cut).
+   - **Budget.** T2 gives budget `q·1 + 1` (`finCall = 1`, so the budget is at least 1 even when `q = 0`).
+     `chalHandler_costBoundedBy` shows the run asks at most one query (`simulate_costBoundedBy_once`).
+     The finalization asks none (`simFinish`), so `toCompOn_budget_eq` (the generic budget reduction
+     asked for in the brief, `Generic.lean`) gives the run at budget 1.
+   - `simComp_abs`: the history oracle composed with the handler is `rImpl … true … ρ ρ̃ (some re)`
+     through a state abstraction. `idealView_simOut`: the views agree. The encryption coins are drawn in
+     advance (`expect_simulate_rImpl_eager`).
+3. **`NM_b = H_b` when `msgLen(n) > 0`** (`NMSim.exists_nmAdversary`, `Reduction`, `Recover`, `IndSim`).
+   - `B` is T2's machine of `chalHandler (nmParams …)` with `M`'s advice hard-wired. Seed `ρ ‖ ρ̃ ‖ re`.
+   - The first challenge `a` asks `⟨M(a; ρ), M(a; ρ̃)⟩` and answers `⟨y, h(M(a; ρ))⟩`.
+   - The output is, for each `c_i`, `c_i ‖ Enc(f^L) ‖ Enc((¬f)^L)` with `f = [c_i = y]`. Then the same pair
+     for each bit of `a`, `m = M(a; ρ)` and `σ`, all with one tape `re`. That is `nmLen = 3r + 2(pl + L + sl)`
+     ciphertexts.
+   - `nmComp_abs`: `NM_b`'s oracles composed with the handler are `rImpl … b … ρ ρ̃ none`
+     (`ofFn_drawWith_half` picks `M(a; ρ_b)`).
+   - `recDist X` reads the view back. `entF` maps each group of three decryptions to `d_i`, and `bitG` maps
+     each pair to its bit (`NMCCA2.guessBit`, imported). `guessBit_encPair`: by correctness the two
+     ciphertexts of a pair differ, so at most one is the challenge (`guessBit_valid`/`_refused`).
+     `ctLen_pos`: `msgLen > 0` forces `ctLen > 0`.
+4. **Glue** (owned): at each `n`, the advantage is `B`'s NM advantage (`msgLen(n) > 0`) or 0
+   (`hybAcc_true_eq_false` from `rImpl_eq_of_msgLen_eq_zero`).
 
-Edge cases: `m₀ = m₁` (both `D'`, `D''` output 0 there, and the coupling makes those runs equal); `msgLen = 0`
-(then `m₀ = m₁` always, the advantage is `0 ≤ ε`); `ℓ = 0`; `A` never asking (the state stays `none`, read as
-the parameter `0`, which has equal halves); repeated challenges (`rImpl_some`); budget 0 and the codecs'
-timeouts (`castImpl_snmImpl` and the transports are equalities of whole runs, timeouts included); the
-challenge copied (`entryL`'s `COPY` read as `⊥`, exactly `nmDecrypt_challenge`).
+Edge cases:
+- **Budget 0:** `q = 0` is covered by `finCall = 1`.
+- **`r = 0`, `sl = 0`:** generic.
+- **`msgLen(n) = 0`:** advantage 0; the simulator is still exact there, including `ctLen = 0`.
+- **No challenge:** both experiments use `0^{pl}`; the abstraction maps `none` to the initial states.
+- **Repeated challenges:** `chalHandler_impl_some`.
+- **Copied or invalid ciphertexts:** `COPY` is read through the flag, and `⊥` as `nmDecrypt`'s answer.
+- **Codec timeouts:** every transport is an equality of whole runs.
 
-## Changed files (this checkpoint)
+## Changed files
 
 | File | Lines | Change |
 |---|---|---|
-| `NonMalleability/Simulation.lean` (owned) | 752 | target 1 proved; section *The experiments on T2's lengths*; target 1 sketch; `## Main results` |
-| `NonMalleability/Simulation/Generic.lean` | 436 | new helper (generic; promotion requests) |
-| `NonMalleability/Simulation/Hybrid.lean` | 532 | new helper (the hybrid oracle, views, acceptance rates) |
-| `NonMalleability/Simulation/SimIND.lean` | 881 | new helper (sampler, SIM adversary, `D'`, `D''`, identities) |
-| `NonMalleability/Simulation/SimINDGap.lean` | 343 | new helper (the two gaps) |
+| `NonMalleability/Simulation.lean` (owned) | 790 | both bodies; section *The experiments on T2's lengths* (9 lemmas); sketches; title, `## Main results`, `## Contents` |
+| `Simulation/Generic.lean` | 450 | budget reduction, eager coins, until-bad, chunk maps, output-length transport |
+| `Simulation/Hybrid.lean` | 681 | hybrid and history oracles, views, block lemmas, `realAcc`/`idealAcc`/`hybAcc` |
+| `Simulation/SimIND.lean`, `SimINDGap.lean` | 892, 332 | SIM ⇒ IND |
+| `Simulation/Rounds.lean` | 345 | round readers, one-call lemmas, one-shot cost bound, seeds |
+| `Simulation/Challenge.lean` | 402 | the challenge handler |
+| `Simulation/Simulator.lean` | 610 | the simulator, Ideal = `H_true` |
+| `Simulation/Reduction.lean`, `Recover.lean`, `IndSim.lean` | 634, 505, 281 | the NM adversary, distinguisher, `NM_b = H_b` |
 
-Every helper is in namespace `TCSlib.Cryptography.Composability.NMSim`. The owned file imports all four
-(the style lint's facade check requires it). The module title keeps "(statement phase)" until the final.
+All files are below 1000 lines. Helpers live in `TCSlib.Cryptography.Composability.NMSim`, and the owned
+file imports all ten. The campaign lint is clean on the changed files: 0 FAIL, no WARN on them.
 
-## Duplication and promotions (preliminary; final list at the final delivery)
+## Duplication (preliminary; final list with the final delivery)
 
-- **Imported, not copied:** `NMCCA2.fwdHandler`, `fwdHandler_finRun/_finCall/_advIn/_outLen`,
-  `simulate_fwdHandler_impl`, `fields_finInput`, `polyTimeComputable_finFields`, `finA`;
-  `AdaptiveCPA.castImpl`, `castImpl_eq`, `castImpl_self`, `expect_simulate_castImpl_toCompOn`,
-  `simulate_eq_of_abs`, `ofFn_cast`, `ofFn_splitHalf_fst/_snd`, `padFin_ofFn_zeroBits`;
-  `ChallengeSim.expect_sample_equiv/_prod/_comm`, `expect_sub`; `S.ofFn_nthCt`, `S.nmOutput_eq`,
-  `S.nmDecrypt_eq`, `S.nmCodec_eq_bitCodec`, `indImpl_dec_onSpec_cast`, `indImpl_challenge_*_onSpec`.
-- **DL-30–36 overlap: `flatMap_range_drop`** (`Generic.lean`, private) — the statement of the private lemma of
-  `Indistinguishability/Forward.lean` used by `logEmit_encodeLog`, re-derived in general form for `chunkMap_flatten`.
-- **Promotion requests:** `Generic.lean` entirely — `buildComp_budget_eq`, `toCompOn_budget_eq` →
-  `Games/Machines.lean` (the budget reduction the brief asks for; used in checkpoint 2);
-  `expect_congr_of_allOutputs`, `expect_expect_sample`, `bind_congr_of_allOutputs`, `expect_simulate_eager`,
-  `expect_eq_until_bad` → `Games/Hopping.lean` / `Games/Probability.lean`; `chunkMap` and its lemmas →
-  `Games/Efficiency.lean` (a polytime map over fixed-length blocks). From `Hybrid.lean`: `ofFn_block`,
-  `ofFn_natAdd_eq_drop`, `ofFn_eq_map_range`, `decide_map_ofFn`, `chunkAt` (list facts). From
-  `SimINDGap.lean` (private): `expect_toCompOn_outLen`, `lin_expect`, `lin_expect'`, `lin_sample`.
+**DL-30–36 overlap** (re-derived from published readers, general form):
+- `flatMap_range_drop` (`Generic`, private): `Forward`'s private lemma.
+- `fields_input` and the round readers `rdState`/`rdIdx`/`rdQuery`/`rdLog`/`rdAns` (`Rounds`): `Forward`'s
+  private readers.
+- `ofFn_padFin_eq_padL` (`Rounds`): `AdaptiveCPA/Handler`'s private lemma.
+- `polyTimeComputable_guessBit` (`Recover`): the content of `Encrypt`'s private
+  `polyTimeComputable_guessFun`.
+
+**Imported, not copied:** `NMCCA2.fwdHandler` and its readers, `exists_withAdviceOn`, `guessBit` and its
+lemmas, `finU/finZ/finW/finA`, `fields_finInput`, `AdaptiveCPA.castImpl`/`simulate_eq_of_abs`/…,
+`ChallengeSim.expect_sample_*`.
 
 ## Evidence (this checkpoint)
 
-- `evidence/inputs/`: the pack as read (brief, addendum, README, order, roots, base-sorries, source hashes).
-- `evidence/logs/preflight.log`, `packages-check.log` (11 match, 0 mismatch, 4 absent; `.lake/packages` is a
-  symlink to this session's earlier narrowed fetch for nm-cca2, same `lake-manifest.json` pins),
-  `cache-probe.log`, `bootstrap-upstream.tsv` (the 160 upstream modules of the order, all pass, incl.
-  `Simulation` at the base) with per-module logs in `bootstrap/`, `bootstrap-extra.tsv`.
-- `evidence/logs/dev/cp1-*.log`: the four helpers and the owned file, checked in order, one module per
-  `scripts/lean_check_tree.sh` call (only the second target's `sorry` warning remains);
-  `cp1-axioms.log`.
-- The sweep, sorry census, whole-file seals and controls, explicit-unfold scan and lint evidence come with the
-  final delivery. The campaign lint already passes on the changed files (0 FAIL; the remaining WARNs are on
-  files outside this fill).
+- `evidence/logs/dev/cp2-*.log`: every changed module checked in dependency order, one module per
+  `scripts/lean_check_tree.sh` call, no warning. `Recover` takes about 100 s; the others take under 15 s.
+- `evidence/logs/dev/cp2-axioms.log`.
+- From checkpoint 1: the pack, preflight, packages, bootstrap.
 
-**Note.** The repository's `AGENTS.md` says not to run `lean`/`lake`; the brief and the addendum require
-`scripts/lean_check_tree.sh`. I followed the brief.
-
-## Next (checkpoint 2)
-
-`simNMSecure_of_nmSecure_cpa` along the maintainer's route: the simulator as a T2 handler with one outer query,
-the generic budget reduction (`toCompOn_budget_eq`, already in `Generic.lean`), the NM adversary `B` with the
-bit encodings of `guessBit`, and `NM_0`/`NM_1` = real/ideal as the hybrids `rImpl … false/true`
-(`expect_simulate_rImpl_eager`, `rImpl_eq_of_msgLen_eq_zero` for `msgLen = 0`).
+Still to come with the final delivery: the sweep with the sorry census, the axioms of every stored constant,
+the whole-file seals with controls, the explicit-unfold scan, the lint log, and the patch replay. The
+repository's `AGENTS.md` forbids running `lean`; the brief and the addendum require it, and I followed the
+brief.

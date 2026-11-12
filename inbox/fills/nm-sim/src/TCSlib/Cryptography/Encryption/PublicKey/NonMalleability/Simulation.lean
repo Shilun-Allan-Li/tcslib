@@ -7,6 +7,12 @@ import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Gener
 import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Hybrid
 import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.SimIND
 import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.SimINDGap
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Rounds
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Challenge
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Simulator
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Reduction
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Recover
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.IndSim
 import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
@@ -14,7 +20,7 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Simulation-based non-malleability (statement phase)
+# Simulation-based non-malleability
 
 [PS10, Definition 173.7 and Theorem 174.8], in the form of [PSV07] (ruling of 2026-11-05: the
 non-malleability notions of §7.1.5–7.1.6 follow Pass, shelat and Vaikuntanathan).
@@ -69,11 +75,25 @@ defers both proofs to its full version; the sketches below are the maintainer's.
 
 ## Main results
 
-* `FixedLengthPKScheme.nmSecure_of_simNMSecure` (proved): SIM ⇒ IND for every attack
-  [PSV07, Corollary 1].
-* `FixedLengthPKScheme.simNMSecure_of_nmSecure_cpa` (stated; a `sorry` under its sketch):
-  IND ⇒ SIM under CPA [PSV07, Theorem 3].
+* `FixedLengthPKScheme.nmSecure_of_simNMSecure`: SIM ⇒ IND for every attack [PSV07, Corollary 1].
+* `FixedLengthPKScheme.simNMSecure_of_nmSecure_cpa`: IND ⇒ SIM under CPA [PSV07, Theorem 3].
 * `FixedLengthPKScheme.simNMSecure_cpa_iff_nmSecure_cpa`: Theorem 174.8 under CPA, from the two.
+* `FixedLengthPKScheme.accept_snmReal_eq`, `FixedLengthPKScheme.accept_snmIdeal_eq`: both
+  experiments on T2's lengths (`NMSim.realAcc`, `NMSim.idealAcc`).
+
+## Contents
+
+The proofs use the helper modules under `NonMalleability/Simulation/` (namespace
+`TCSlib.Cryptography.Composability.NMSim`):
+* `Generic`: budget reduction, coins drawn in advance, equal until bad, chunk maps;
+* `Hybrid`: the hybrid oracle `rImpl` (an encryption of `M(a; ρ)` or of an independent draw), the
+  history oracle, the views as strings and the acceptance rates `realAcc`, `idealAcc`, `hybAcc`;
+* `SimIND`, `SimINDGap`: SIM ⇒ IND (the sampler `⟨m₀, m₁⟩ ↦ m_β`, the SIM adversary, `D'`, `D''`,
+  and the real and ideal gaps);
+* `Rounds`, `Challenge`: rounds of T2's handlers and the challenge handler shared by the two
+  machines of IND ⇒ SIM;
+* `Simulator`: the simulator (the ideal experiment is the hybrid `H_true`);
+* `Reduction`, `Recover`, `IndSim`: the NM adversary, the NM distinguisher, and `NM_b = H_b`.
 
 ## References
 
@@ -720,26 +740,44 @@ theorem nmSecure_of_simNMSecure (atk : Attack) (h : S.SimNMSecure atk) : S.NMSec
 Theorem 3, at one message]: Definition 172.6 implies SIM-NME′ under a chosen-plaintext attack.
 (Under CCA1 and CCA2 it does not, [PSV07, Theorem 4].)
 
-**Proof sketch** (the maintainer's; [PSV07] defers its proof). Fix `M`, `A`, `q`, `r`, `sl`.
-1. **The simulator** runs `A` on `pk`, answering `Dec` with `⊥` (CPA, `snmImpl_dec_cpa`). On
-   `A`'s challenge `a` it asks its own query `a`, gets `h(m)`, draws a dummy `m̃ ← M(a)` with its
-   own coins (it can run `M`), and answers `A` with `⟨Enc_pk(m̃), h(m)⟩`. It outputs `A`'s
-   ciphertexts, flagging those equal to its dummy challenge, and `σ`. If `A` never asks, it
-   never queries and outputs `A`'s output unflagged. At `msgLen(n) = 0` the two experiments
-   coincide.
-2. **The two experiments differ only in the challenge**: `Enc_pk(m)` in the real one,
-   `Enc_pk(m̃)` in the ideal one, with `m, m̃` independent draws from `M(a)`, and the same `h(m)`.
-3. **The NM adversary** `B` runs `A`; at `a` it draws `m, m̃ ← M(a)`, asks its challenge on
-   `⟨m, m̃⟩`, receives `y = Enc_pk(m_b)`, and answers `A` with `⟨y, h(m)⟩`. It outputs `A`'s
-   ciphertexts, then for each bit `x` of `a`, `m`, `σ` and the copy flags `[c_i = y]`, the pair
-   `Enc_pk(x^{msgLen})`, `Enc_pk((¬x)^{msgLen})`. The two plaintexts differ, so by correctness at
-   most one of the pair is the challenge, and the NM view yields `x` (as in the sketch of
-   Theorem 175.9).
-4. From `NM_b`'s view, the distinguisher reconstructs `(a, m, (d_i)_i, σ)`: the real experiment's
-   output for `b = 0`, and the ideal one's (with the simulator of step 1) for `b = 1`. So `D`'s
-   advantage is `B`'s NM advantage, negligible. -/
+**Proof sketch** (the maintainer's route; [PSV07] defers its proof). Fix `M`, `A`, `q`, `r`, `sl`.
+1. **The hybrids.** `H_b` (`NMSim.hybAcc`) runs `A` against the oracle `NMSim.rImpl … b …` (under
+   CPA `Dec` answers `⊥`, `snmImpl_dec_cpa`): on the first challenge `a` it answers
+   `⟨Enc_pk(M(a; ρ_b)), h(M(a; ρ))⟩` for the sampler's coins `ρ₀ = ρ` and an independent `ρ₁`, and
+   the view is `(a, M(a; ρ), (d_i)_i, σ)` with `d_i = COPY` iff `c_i` is the challenge. `H_false` is
+   the real experiment (`castImpl_snmImpl`, `NMSim.realAcc_eq_hybAcc`).
+2. **The simulator** (`NMSim.exists_simulator`) runs `A` on `pk`, answering `Dec` with `⊥`. On `A`'s
+   first challenge `a` it makes its only query `a`, gets `h(m)`, draws `m̃ = M(a; ρ̃)` with its own
+   coins and `M`'s advice (hard-wired, `exists_withAdviceOn`), and answers `⟨Enc_pk(m̃), h(m)⟩`;
+   repeated challenges get the recorded answer. It outputs `A`'s ciphertexts, each flagged `COPY`
+   iff it equals its dummy challenge, and `σ`; if `A` never asks it never queries. Its run at
+   budget `1` is its run at T2's budget (`NMSim.toCompOn_budget_eq`; it asks at most one query,
+   `NMSim.chalHandler_costBoundedBy`), and against the history oracle it is `H_true`.
+3. **The NM adversary** `B` (`NMSim.exists_nmAdversary`) runs `A`; on `a` it draws `m, m̃ ← M(a)`,
+   asks its challenge on `⟨m, m̃⟩`, receives `y = Enc_pk(m_b)` and answers `A` with `⟨y, h(m)⟩`. It
+   outputs each of `A`'s ciphertexts followed by the pair `Enc_pk(f^{msgLen})`, `Enc_pk((¬f)^{msgLen})`
+   for its copy flag `f = [c_i = y]`, then the same pair for each bit `x` of `a`, `m` and `σ`. By
+   correctness the two plaintexts of a pair differ, so at most one of the pair is the challenge,
+   and the distinguisher `NMSim.recDist` reads `x` back (`NMCCA2.guessBit`) and runs `D` on the
+   view. When `msgLen(n) > 0`, `NM_b` accepts with the probability of `H_b`.
+4. Hence at every `n` the SIM advantage is `B`'s NM advantage, or `0` when `msgLen(n) = 0` (the two
+   hybrids coincide, `NMSim.hybAcc_true_eq_false`): it is negligible. -/
 theorem simNMSecure_of_nmSecure_cpa (h : S.NMSecure .cpa) : S.SimNMSecure .cpa := by
-  sorry
+  intro M A q r sl
+  obtain ⟨Sim, hSim⟩ := NMSim.exists_simulator S M.samp M.paramLen M.histLen M.hist A q r sl
+  obtain ⟨B, qB, hB⟩ := NMSim.exists_nmAdversary S M.samp M.paramLen M.histLen M.hist
+    M.hist_poly r sl A q
+  refine ⟨Sim, fun D => ?_⟩
+  obtain ⟨ε, hε, hεn⟩ := h B qB (NMSim.nmLen S M.paramLen r sl) (NMSim.recDist S M.paramLen r D)
+  refine ⟨ε, hε, fun n => ?_⟩
+  have h₀ := hεn n
+  rw [advantage_eq] at h₀
+  rw [advantage_eq, accept_snmReal_eq, accept_snmIdeal_eq, hSim, NMSim.realAcc_eq_hybAcc]
+  by_cases hL : S.msgLen.eval n = 0
+  · rw [NMSim.hybAcc_true_eq_false S .cpa M.samp M.paramLen M.histLen M.hist A (q.eval n) (r.eval n)
+      (sl.eval n) D n hL, sub_self, abs_zero]
+    exact (abs_nonneg _).trans h₀
+  · rwa [← hB D n false (Nat.pos_of_ne_zero hL), ← hB D n true (Nat.pos_of_ne_zero hL)]
 
 /-- **Theorem 174.8 under CPA** [PS10, Theorem 174.8; PSV07, Theorem 3, at one message]:
 non-malleability (Definition 172.6) and simulation-based non-malleability (Definition 173.7, as
