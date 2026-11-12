@@ -630,7 +630,7 @@ private theorem ss_bufferLeaf_run {n : ℕ} (i : Fin n) (emptyMove : SignType)
           (d.workTapePos i + if d.workTapeSymbols i = none then (emptyMove : ℤ) else 0) } ∧
       ∀ u < 1, ((ss_bufferLeaf n i emptyMove).runFrom d u).state ≠ some true := by
   constructor
-  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+  · rw [MultiTapeTM.runFrom_one]
     have h := step_of_tapeAction_move (ss_bufferLeaf n i emptyMove) d i 0
       (if d.workTapeSymbols i = none then emptyMove else 0) hstate rfl
     simpa only [moveInputPos_zero, apply_ite, SignType.coe_zero] using h
@@ -1261,8 +1261,7 @@ private theorem ss_inputRewind_run {n : ℕ} {z : List Bool}
   have hstop : M.runFrom d (d.inputPos.val + 1) =
       { d with state := some .stop, inputPos := 1 } := by
     rw [← ht, MultiTapeTM.runFrom_add,
-      MultiTapeTM.runFrom_succ_eq_step' (cfg := d) (t := 0),
-      MultiTapeTM.runFrom_zero, hstep, hscan]
+      MultiTapeTM.runFrom_one, hstep, hscan]
   have hlast : ∀ (a : Cfg n Bool ss_RewindState z), a.state = some .stop →
       M.step a = { a with state := some .done } := by
     intro a ha

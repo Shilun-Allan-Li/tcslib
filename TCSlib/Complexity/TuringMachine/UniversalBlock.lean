@@ -66,7 +66,7 @@ private lemma universal_skip_unary {x : List Bool}
   | zero =>
     have hr : bufferTape table (l.length : ℤ) = some false := by
       rw [ht]; simpa using universal_table_read l r false
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := universalEval_step base (.skipUnary dest rem)
       (if h : rem.val = 0 then universalSkipDone dest
         else .skipFixed dest ⟨rem.val - 1, by omega⟩ 0)
@@ -183,7 +183,7 @@ private lemma universal_skip_groups {x : List Bool} {n : ℕ}
   induction groups generalizing l j with
   | nil =>
     simp only [List.length_nil, List.flatMap_nil, Nat.add_zero, Nat.zero_add,
-      Nat.cast_zero, add_zero, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+      Nat.cast_zero, add_zero, MultiTapeTM.runFrom_one]
     have he := universalEval_step base (.group index) (.rewindState (some index))
       table l.length (universalStateWindow j 0) (j + 1) 0 0 none
       (by simp [universalInterpreter, universalFour, universalStateWindow_end])
@@ -209,7 +209,7 @@ private lemma universal_skip_groups {x : List Bool} {n : ℕ}
       (gs.length + (gs.flatMap (fun g => g.flatMap universalRecordBits)).length + 1),
       MultiTapeTM.runFrom_add _ 1 (g.flatMap universalRecordBits).length]
     simp only [List.length_cons]
-    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
+    rw [MultiTapeTM.runFrom_one, he]
     simp only [SignType.coe_zero, add_zero, SignType.pos_eq_one, SignType.coe_one,
       universalStateWindow_erase]
     rw [show (j : ℤ) + 1 + 1 = j + 2 by omega, hskip]
@@ -251,7 +251,7 @@ private lemma universal_read_fixed {x : List Bool}
         apply hknown
         have hn : i.val ≠ field.val := fun h => hi (Fin.ext h)
         omega
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := universalEval_step base (.readAction field old) (.nextState bits)
       table (l.length + field.val) state sp .pos 0 none
       (by
@@ -314,8 +314,7 @@ private lemma universal_prepare_next {x : List Bool} {n : ℕ}
     have he := universalEval_step base (.nextState bits) (.applyRecord bits true)
       table l.length (universalStateTape 0) 1 0 0 none
       (by simp [universalInterpreter, universalFour, hr])
-    simpa [universalNextCost, universalNextOnes, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero] using he
+    simpa [universalNextCost, universalNextOnes, MultiTapeTM.runFrom_one] using he
   | some q =>
     have hr : bufferTape table (l.length : ℤ) = some true := by
       rw [ht]; simpa [universalNextOnes, List.replicate_succ, List.append_assoc] using
@@ -342,7 +341,7 @@ private lemma universal_prepare_next {x : List Bool} {n : ℕ}
     rw [show 2 * q.val + 4 = 1 + (q.val + 1) + (q.val + 2) by omega,
       MultiTapeTM.runFrom_add _ (1 + (q.val + 1)) (q.val + 2),
       MultiTapeTM.runFrom_add _ 1 (q.val + 1)]
-    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
+    rw [MultiTapeTM.runFrom_one, he]
     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero]
     rw [hc]
     simpa only [universalNextOnes, Option.isNone_some, Option.map_some, Option.getD_some,
@@ -641,7 +640,7 @@ lemma universal_live_block (M : CodeTM) (α : List Bool) {x : List Bool}
     have hmain : universalInterpreter.runFrom base 1 =
         universalEvalCfg base (.rewindTable false index) M.serialize (p - 1)
           (universalStateTape q.val) 1 := by
-      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]
+      rw [MultiTapeTM.runFrom_one]
       conv_lhs => rw [hcfg]
       have he := universalEval_step base .main (.rewindTable false index)
         M.serialize p (universalStateTape q.val) 1 .neg 0 none (by
@@ -704,7 +703,7 @@ lemma universal_live_block (M : CodeTM) (α : List Bool) {x : List Bool}
         (universalEvalCfg base (.applyRecord bits a.state.isNone) M.serialize p'
           (universalStateTape ((a.state.map Fin.val).getD 0)) 1) 1 =
       universalSimulationCfg M α (a.apply src) p' := by
-      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]
+      rw [MultiTapeTM.runFrom_one]
       exact universal_apply_record M α src p p' a
     have hrun := universal_run_join universalInterpreter
       (universal_run_join universalInterpreter

@@ -780,7 +780,7 @@ private lemma enumCont_undo_run (M : FinTM Bool) {x : List Bool}
   induction t with
   | zero =>
     simpa only [Nat.mul_zero, Nat.zero_add, MultiTapeTM.runFrom_zero,
-      enumCont_history, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+      enumCont_history, MultiTapeTM.runFrom_one]
       using enumCont_undo_empty c₀ p
   | succ t ih =>
     have hs : (M.tm.runFrom c₀ t).state ≠ none := hlive t (by omega)
@@ -802,8 +802,7 @@ private lemma enumCont_undo_run (M : FinTM Bool) {x : List Bool}
           (enumCont_undoCfg (a.apply c)
             (enumCont_history M.tm c₀ t ++ [(c.workTapeSymbols, fun i => (a.workTapes i).2)]) p) 2 =
           enumCont_undoCfg c (enumCont_history M.tm c₀ t) p := by
-        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
-          MultiTapeTM.runFrom_zero, enumCont_undo_back, enumCont_undo_write]
+        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, enumCont_undo_back, enumCont_undo_write]
       rw [hsrun, hhist, he, MultiTapeTM.runFrom_add, htwo]
       exact ih (fun j hj => hlive j (by omega))
 
@@ -1002,7 +1001,7 @@ private lemma enumCont_clean_buffer_rewind (M : FinTM Bool) {x : List Bool}
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change ((enumCont_cleanTM M).tm.tr (.inr (.inl 4)) _ _).apply _ = _
     have hr : (enumCont_cleanCfg M c₀ y (some (.inr (.inl 4))) p ((0 : ℤ) - 1)).workTapeSymbols
@@ -1122,7 +1121,7 @@ private lemma enumCont_concat_native (x s pre rest : List Bool) (hx : x = pre ++
     have hp : x = pre := by simpa using hx
     subst pre
     simp only [List.length_nil]
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have hr : (enumCont_concatCfg x s (some false) ⟨x.length + 1, by omega⟩ 0 x).inputSymbol =
         none := by simp [enumCont_concatCfg, Cfg.inputSymbol]
     unfold MultiTapeTM.step
@@ -1166,7 +1165,7 @@ private lemma enumCont_concat_candidate (x s pre rest : List Bool) (p : Fin (x.l
     have hp : s = pre := by simpa using hs
     subst pre
     simp only [List.length_nil]
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change (enumCont_concatTM.tm.tr true _ _).apply _ = _
     simp only [enumCont_concatTM, ↓reduceIte, enumCont_concatCfg, Cfg.workTapeSymbols,
@@ -1592,7 +1591,7 @@ private lemma enumCont_copy_scan {L : ℕ} {S : Type} {x : List Bool} (hL : 0 < 
     rw [hv]
     simp only [List.length_nil, Nat.zero_add, List.map_nil, List.drop_zero, List.append_nil,
       Int.natCast_zero, add_zero]
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     change (tm.tr qc _ _).apply _ = _
     rw [htr]
     have hr : (enumCont_pairCfg (L := L) (x := x) (some qc) (bufferTape (pre ++ old))
@@ -1633,7 +1632,7 @@ private lemma enumCont_pair_rewind {L : ℕ} {S : Type} {x : List Bool} (hL : 0 
       (j + 1) = enumCont_pairCfg (some qa) (bufferTape w) (fun _ => none) 0 := by
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     change (tm.tr qr _ _).apply _ = _
     rw [htr]
     have hr : (enumCont_pairCfg (L := L) (x := x) (some qr) (bufferTape w)
@@ -2036,7 +2035,7 @@ private lemma enumCont_first_anchor {k : ℕ} {S : Type} {x : List Bool}
     (by
       rintro d ⟨q, hq, hqa⟩
       have hstate : d.state = some qa := hq.trans (congrArg some hqa)
-      simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using
+      simpa only [MultiTapeTM.runFrom_one] using
         enumCont_absorb stop qa hs d hstate 1)
     ⟨qa, hT, rfl⟩ rfl
   have hn : ∀ j < t, (stop.runFrom c j).state ≠ some qa :=
@@ -2748,7 +2747,7 @@ private lemma a3_load_rewind (C : FinTM Bool) (hk : 0 < C.k) (entry exit : C.Sta
       Cfg.ofWords (.inl (2 : Fin 3)) (stateWord C.k x) := by
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     simp only [a3RunTM, a3LoadCfg, Cfg.workTapeSymbols, Nat.cast_zero, zero_sub,
       show (1 : Fin 3) ≠ 0 by decide, ↓reduceIte, bufferTape_left]
@@ -2953,7 +2952,7 @@ private lemma a3_nonempty_run (M : FinTM Bool) {x : List Bool}
 private lemma a3_nonempty_nil (M : FinTM Bool) :
     (a3NonemptyTM M).ComputesInTime [] [false] 1 := by
   apply (computesInTime_iff _ _ _ _).mpr
-  simp [MultiTapeTM.runFrom, MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init,
+  simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init,
     Cfg.inputSymbol, a3NonemptyTM, Action.apply]
 
 /-- Successful split payloads enter the source machine, charging the guard. -/

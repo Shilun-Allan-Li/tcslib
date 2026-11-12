@@ -272,7 +272,7 @@ private lemma cw_left_run {Γ : Type} {k : ℕ} {x : List Γ} (i : Fin k)
                workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } ∧
       (∀ u < 1, ((cw_leftTM k i).runFrom d u).state ≠ some true) := by
   constructor
-  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+  · rw [MultiTapeTM.runFrom_one]
     have h := step_of_tapeAction_move (cw_leftTM k i) d i 0 .neg hd rfl
     simpa only [moveInputPos_zero, SignType.coe_neg_one, sub_eq_add_neg] using h
   · intro u hu

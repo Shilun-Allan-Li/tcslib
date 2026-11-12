@@ -239,15 +239,15 @@ private lemma counter_carry (x : List Bool) (p : Fin (x.length + 2))
   induction bs with
   | nil =>
     intro pre
-    simp only [counterCarry, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero, counter_carry_step]
+    simp only [counterCarry]
+    rw [MultiTapeTM.runFrom_one, counter_carry_step]
     simp [counterInc]
   | cons b bs ih =>
     intro pre
     cases b with
     | false =>
-      simp only [counterCarry, MultiTapeTM.runFrom_succ_eq_step,
-        MultiTapeTM.runFrom_zero, counter_carry_step]
+      simp only [counterCarry]
+      rw [MultiTapeTM.runFrom_one, counter_carry_step]
       simp [counterInc]
     | true =>
       simp only [counterCarry, MultiTapeTM.runFrom_succ_eq_step, counter_carry_step,
@@ -269,7 +269,7 @@ private lemma counter_rewind (x : List Bool) (p : Fin (x.length + 2))
   induction j with
   | zero =>
     intro hj
-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, FinTM.lengthBitsTM, counterCfg, Cfg.workTapeSymbols,
         counterTape, Action.apply]

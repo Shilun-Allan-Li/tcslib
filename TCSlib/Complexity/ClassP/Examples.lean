@@ -272,7 +272,7 @@ private lemma pal_test (x : List Bool) : ∀ r i (hi : i ≤ x.length)
     have hs : (palCfg x 2 ⟨x.length + 1, by omega⟩
         ((x.length : ℤ) - 1 - x.length) x.length).inputSymbol = none := by
       simp [Cfg.inputSymbol, palCfg]
-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    simp only [Nat.zero_add, MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change ((palTM.tm.tr (2 : Fin 3) _ _).apply _).state = none ∧ _
     rw [hs]

@@ -243,7 +243,7 @@ lemma goR_run (a b : ℤ) (Dt : Fin k → ℤ → Option Bool) (Mt : Fin k → �
     · obtain rfl : t = 0 := by omega
       exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
     · obtain rfl : t = 1 := by omega
-      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]
+      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep]
       exact PB_ccfg _ _ _ _ _ _ _ _ (abs_update_le _ _ _ _ hB hbB')
         (abs_update_le _ _ _ _ hB hbB')
   | succ n ih =>
@@ -318,7 +318,7 @@ lemma erase_run (a b : ℤ) (f : ℤ → Option Bool) (ha : a ≤ 0) (haB : -B �
     · obtain rfl : t = 0 := by omega
       exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
     · obtain rfl : t = 1 := by omega
-      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]
+      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep]
       exact PB_ccfg _ _ _ _ _ _ _ _ (abs_update_le _ _ _ _ hB haB')
         (abs_update_le _ _ _ _ hB haB')
   | succ n ih =>
@@ -407,7 +407,7 @@ lemma back_run (a : ℤ) :
     · obtain rfl : t = 0 := by omega
       exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
     · obtain rfl : t = 1 := by omega
-      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]
+      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep]
       have h0 : |(0 : ℤ)| ≤ B := by have := hB i; rw [hp] at this; exact this
       exact PB_ccfg _ _ _ _ _ _ _ _ (abs_update_le _ _ _ _ hB h0) (abs_update_le _ _ _ _ hB h0)
   | succ n ih =>
@@ -490,16 +490,16 @@ lemma clean_tape (a b : ℤ) (Dt Mt : Fin k → ℤ → Option Bool) (Dp : Fin k
       · obtain rfl : t = 0 := by omega
         exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
       · obtain rfl : t = 1 := by omega
-        rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]
+        rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep]
         exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
-    rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]
+    rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep]
     apply Complexity.LogProg.runFrom_forall_append (Q := PB B) hb1
     rw [hr1]
     apply Complexity.LogProg.runFrom_forall_append (Q := PB B) hb2
     rw [hr2]
     exact hb3
   · rw [MultiTapeTM.runFrom_add,
-      show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep,
+      show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep,
       MultiTapeTM.runFrom_add, hr1, MultiTapeTM.runFrom_add, hr2, hr3]
     simp [hDpa, hDpb, hMt1]
 

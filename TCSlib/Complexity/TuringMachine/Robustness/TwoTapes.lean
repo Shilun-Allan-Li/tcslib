@@ -790,7 +790,7 @@ private theorem tt_round (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 <
       output := c₀.output ++ (a.output.map Sum.inl).toList } at hstep
   have h₀ : (tt_Mf M F none).runFrom c₀ 0 = c₀ := MultiTapeTM.runFrom_zero
   have h1 : (tt_Mf M F none).runFrom c₀ 1 = (tt_leafTM M).step c₀ :=
-    MultiTapeTM.runFrom_succ_eq_step.trans MultiTapeTM.runFrom_zero
+    MultiTapeTM.runFrom_one _ _
   have hguard : ∀ u < 1, ∀ s, ((tt_Mf M F none).runFrom c₀ u).state = some s →
       tt_red M F hk none s = none := by
     intro u hu s hs

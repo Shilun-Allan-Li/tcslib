@@ -213,7 +213,7 @@ private theorem b2b_verdict_trace {k : ℕ} {x : List Bool} (i : Fin k)
       { d with
         state := some .read
         workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } := by
-    simpa [MultiTapeTM.runFrom, moveInputPos_zero, sub_eq_add_neg] using
+    simpa [MultiTapeTM.runFrom_one, moveInputPos_zero, sub_eq_add_neg] using
       step_of_tapeAction_move (b2b_verdictTM k i) d i 0 .neg hs rfl
   have h2 := step_of_tapeAction_write (q' := .done b) (b2b_verdictTM k i)
     ({ d with
@@ -2325,7 +2325,7 @@ private theorem b2b_finish_answer (MV MI MP : FinTM Bool) {x : List Bool} (b : B
     rw [hp]
     change (M.runFrom c r).workTapePos = c.workTapePos
     have h1 : M.runFrom c 1 = { c with state := some 1, output := c.output ++ [b] } := by
-      simp [M, b2b_answerTM, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step, hc,
+      simp [M, b2b_answerTM, MultiTapeTM.runFrom_one, MultiTapeTM.step, hc,
         FinTM.emitAction, Action.apply]
     interval_cases r
     · rfl

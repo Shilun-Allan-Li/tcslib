@@ -161,7 +161,7 @@ theorem print_walk {w : List Bool} (k : GateKind) (c : Fin 3) (pc : Fin 64) (t :
   induction j with
   | zero =>
     intro out _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+    rw [MultiTapeTM.runFrom_one, step_some]
     have hb : tp t (Function.update hd t ((0 : ℕ) - 1 : ℤ) t) = none := by
       simp [htp, ones_neg]
     simp only [tr, hb, Option.isSome_none, Bool.false_eq_true, if_false]
@@ -199,7 +199,7 @@ theorem back_walk {w : List Bool} (k : GateKind) (c : Fin 3) (pc : Fin 64) (t : 
   induction d with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+    rw [MultiTapeTM.runFrom_one, step_some]
     have hb : tp t (Function.update hd t (((m - 0 : ℕ) : ℤ)) t) = none := by
       simp [htp, ones_ge]
     simp only [tr, hb, Option.isSome_none, Bool.false_eq_true, if_false]
@@ -234,7 +234,7 @@ theorem clear_walk {w : List Bool} (t : Fin 3) (p : Fin (w.length + 2))
   intro j
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+    rw [MultiTapeTM.runFrom_one, step_some]
     have hb : Function.update tp t (ones 0) t (Function.update hd t ((0 : ℕ) - 1 : ℤ) t) =
         none := by
       simp [ones_neg]

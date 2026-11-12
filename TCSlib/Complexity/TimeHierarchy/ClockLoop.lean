@@ -134,7 +134,7 @@ lemma ret_run {x : List Bool} (c : Cfg W.k Bool W.State x) (q : W.State) (r : Ou
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       clockTM_step_some K W _ (.ret q r) rfl]
     simp only [clockTr, ctrCfg_ctr, Nat.cast_zero, zero_sub, hneg, if_true]
     rw [ctrAction_apply]

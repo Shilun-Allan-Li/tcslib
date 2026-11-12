@@ -154,7 +154,7 @@ private theorem f6_native_halt (c : EffectiveMachineCode) :
     MultiTapeTM.runFrom_with_q₀ _ _ _ _
   have hleaf {y : List Bool} (d : Cfg (K + 3) Bool Unit y) (hs : d.state = some ()) :
       leaf.runFrom d 1 = {d with state := none} := by
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       MultiTapeTM.step_of_some hs]
     change (FinTM.controlAction 0 none).apply d = _
     rw [FinTM.controlAction_apply, moveInputPos_zero]
@@ -1237,7 +1237,7 @@ private lemma sph_right_run {k : ℕ} {Γ : Type} {x : List Γ}
       ∀ u ≤ 1, ((sphRightTM k Γ).runFrom d u).workTapePos = d.workTapePos := by
   have hstep : (sphRightTM k Γ).runFrom d 1 =
       {d with state := some true, inputPos := moveInputPos d.inputPos .pos} := by
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       MultiTapeTM.step_of_some hd]
     apply Cfg.ext
     · rw [Action.apply_state]; rfl
@@ -1284,7 +1284,7 @@ private lemma sph_emit_run {k : ℕ} {Γ : Type} {x : List Γ} (b : Γ)
       ∀ u ≤ 1, ((sphEmitTM k b).runFrom d u).workTapePos = d.workTapePos := by
   have hstep : (sphEmitTM k b).runFrom d 1 =
       {d with state := none, output := d.output ++ [b]} := by
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       MultiTapeTM.step_of_some hd]
     apply Cfg.ext
     · rw [Action.apply_state]; rfl

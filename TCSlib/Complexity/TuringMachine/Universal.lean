@@ -271,7 +271,7 @@ private lemma timedCut_table_rewind {x : List Bool}
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := timedCut_Eval_step base (.rewindTable initial index) (.countFirst initial index)
       table (-1) state sp .pos 0 none (by simp [timedCutInterpreter, universalInterpreter, universalFour])
     simpa using he
@@ -320,8 +320,7 @@ private lemma timedCut_count_run {x : List Bool}
       table (l.length + 1) state sp .pos 0 none
       (by simp [timedCutInterpreter, universalInterpreter, universalFour, hr1])
     change timedCutInterpreter.runFrom _ (0 + 1 + 1) = _
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, he0]
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, he0]
     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero]
     rw [he1]
     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero,
@@ -394,7 +393,7 @@ private lemma timedCut_state_rewind {x : List Bool}
   intro j
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := timedCut_Eval_step base q q' table tp state 0 0 .pos none
       (hstop _ _ (by simpa [universalFour] using hzero))
     simpa using he
@@ -421,7 +420,7 @@ private lemma timedCut_initial_skip {x : List Bool}
   | zero =>
     have hr : bufferTape table (l.length : ℤ) = some false := by
       rw [ht]; simpa using timedCut_table_read l r false
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := timedCut_Eval_step base (.initialSkip index) (.group index)
       table l.length state sp .pos 0 none (by simp [timedCutInterpreter, universalInterpreter, universalFour, hr])
     simpa using he
@@ -464,7 +463,7 @@ private lemma timedCut_unary_copy {x : List Bool}
   | zero =>
     have hr : bufferTape table (l.length : ℤ) = some false := by
       rw [ht]; simpa using timedCut_table_read l r false
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := timedCut_Eval_step base q q' table l.length (universalStateTape j) (j + 1)
       doneMove 0 none (hfalse _ _ (by simp [universalFour, hr]))
     simpa using he
@@ -602,7 +601,7 @@ private lemma timedCut_skip_fixed {x : List Bool}
   induction n with
   | zero =>
     intro field tp hf
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := timedCut_Eval_step base (.skipFixed dest rem field) (.skipUnary dest rem)
       table tp state sp .pos 0 none (by simp [timedCutInterpreter, universalInterpreter, show field.val = 7 by omega])
     simpa using he
@@ -638,7 +637,7 @@ private lemma timedCut_skip_unary {x : List Bool}
   | zero =>
     have hr : bufferTape table (l.length : ℤ) = some false := by
       rw [ht]; simpa using timedCut_table_read l r false
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := timedCut_Eval_step base (.skipUnary dest rem)
       (if h : rem.val = 0 then universalSkipDone dest
         else .skipFixed dest ⟨rem.val - 1, by omega⟩ 0)
@@ -755,7 +754,7 @@ private lemma timedCut_skip_groups {x : List Bool} {n : ℕ}
   induction groups generalizing l j with
   | nil =>
     simp only [List.length_nil, List.flatMap_nil, Nat.add_zero, Nat.zero_add,
-      Nat.cast_zero, add_zero, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+      Nat.cast_zero, add_zero, MultiTapeTM.runFrom_one]
     have he := timedCut_Eval_step base (.group index) (.rewindState (some index))
       table l.length (universalStateWindow j 0) (j + 1) 0 0 none
       (by simp [timedCutInterpreter, universalInterpreter, universalFour, universalStateWindow_end])
@@ -781,7 +780,7 @@ private lemma timedCut_skip_groups {x : List Bool} {n : ℕ}
       (gs.length + (gs.flatMap (fun g => g.flatMap universalRecordBits)).length + 1),
       MultiTapeTM.runFrom_add _ 1 (g.flatMap universalRecordBits).length]
     simp only [List.length_cons]
-    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
+    rw [MultiTapeTM.runFrom_one, he]
     simp only [SignType.coe_zero, add_zero, SignType.pos_eq_one, SignType.coe_one,
       universalStateWindow_erase]
     rw [show (j : ℤ) + 1 + 1 = j + 2 by omega, hskip]
@@ -823,7 +822,7 @@ private lemma timedCut_read_fixed {x : List Bool}
         apply hknown
         have hn : i.val ≠ field.val := fun h => hi (Fin.ext h)
         omega
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := timedCut_Eval_step base (.readAction field old) (.nextState bits)
       table (l.length + field.val) state sp .pos 0 none
       (by
@@ -886,8 +885,7 @@ private lemma timedCut_prepare_next {x : List Bool} {n : ℕ}
     have he := timedCut_Eval_step base (.nextState bits) (.applyRecord bits true)
       table l.length (universalStateTape 0) 1 0 0 none
       (by simp [timedCutInterpreter, universalInterpreter, universalFour, hr])
-    simpa [timedCut_NextCost, universalNextOnes, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero] using he
+    simpa [timedCut_NextCost, universalNextOnes, MultiTapeTM.runFrom_one] using he
   | some q =>
     have hr : bufferTape table (l.length : ℤ) = some true := by
       rw [ht]; simpa [universalNextOnes, List.replicate_succ, List.append_assoc] using
@@ -914,7 +912,7 @@ private lemma timedCut_prepare_next {x : List Bool} {n : ℕ}
     rw [show 2 * q.val + 4 = 1 + (q.val + 1) + (q.val + 2) by omega,
       MultiTapeTM.runFrom_add _ (1 + (q.val + 1)) (q.val + 2),
       MultiTapeTM.runFrom_add _ 1 (q.val + 1)]
-    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
+    rw [MultiTapeTM.runFrom_one, he]
     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero]
     rw [hc]
     simpa only [universalNextOnes, Option.isNone_some, Option.map_some, Option.getD_some,
@@ -1222,7 +1220,7 @@ private lemma timedCut_live_block (M : CodeTM) (α : List Bool) {x : List Bool}
     have hmain : timedCutInterpreter.runFrom base 1 =
         universalEvalCfg base (.rewindTable false index) M.serialize (p - 1)
           (universalStateTape q.val) 1 := by
-      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]
+      rw [MultiTapeTM.runFrom_one]
       conv_lhs => rw [hcfg]
       have he := timedCut_Eval_step base .main (.rewindTable false index)
         M.serialize p (universalStateTape q.val) 1 .neg 0 none (by
@@ -1978,7 +1976,7 @@ private lemma timed_clock_back {x : List Bool} (base : Cfg 6 Bool TimedControl x
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have h := timedClock_step base (.clockBack bits halt) (.borrow bits halt true) bs (-1) .pos
       (by intro inp ws hw; simp [timedInterpreter, hw])
     simpa using h
@@ -2034,6 +2032,7 @@ private lemma timed_clock_pass {x : List Bool} (cfg : Cfg 4 Bool UniversalContro
       (timedBorrow true bs).2 bs.length := by
   have h0 : timedInterpreter.runFrom (timedLift cfg bs) 1 =
       timedClockCfg (timedLift cfg bs) (.clockBack bits halt) bs (bs.length - 1) := by
+    rw [MultiTapeTM.runFrom_one]
     exact timed_clock_start cfg bs bits halt hs
   have h1 := timed_clock_back (timedLift cfg bs) bits halt bs bs.length (le_refl _)
   have h2 := timed_clock_borrow (timedLift cfg bs) bits halt true bs
@@ -2140,7 +2139,7 @@ private lemma timed_output_back {x : List Bool} (cfg : Cfg 4 Bool UniversalContr
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have h := timed_output_step cfg bs .emitBack (some .flush) (-1) out .pos (some true)
       (by intro inp ws hw; simp [timedInterpreter, hw])
     simpa using h
@@ -2201,7 +2200,7 @@ private lemma timed_flush {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)
   have h2 := timed_output_forward cfg bs cfg.output [] [true] (by simp)
   have hstart : timedInterpreter.runFrom (timedLift cfg bs) 1 =
       timedOutputCfg cfg bs (some .emitBack) (cfg.output.length - 1) [] := by
-    rw [hcfg]
+    rw [MultiTapeTM.runFrom_one, hcfg]
     simpa using h0
   have h := timedCut_run_join timedInterpreter (timedCut_run_join timedInterpreter hstart h1) h2
   have ht : 1 + (cfg.output.length + 1) + (cfg.output.length + 1) = 2 * cfg.output.length + 3 := by omega

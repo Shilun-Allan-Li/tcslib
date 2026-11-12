@@ -194,7 +194,7 @@ theorem wret_sweep (c : Cfg M.k Bool M.State x) (oq : Option M.State) (r : OutRe
   intro j
   induction j generalizing L with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       wret_none M bits P c τC _ zC _ oq r b (by simp)]
     simp
   | succ j ih =>

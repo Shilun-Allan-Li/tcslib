@@ -598,7 +598,7 @@ private theorem sc_body_step {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool 
         (M.step c) ct cp := by
   have hE := embedEmitTM_runFrom Fin.castSuccEmb M (fun _ => ct) (fun _ => cp) [] c 1
   rw [sc_layout, sc_layout, hs] at hE
-  simp only [MultiTapeTM.runFrom, Function.iterate_one] at hE
+  simp only [MultiTapeTM.runFrom_one] at hE
   rw [show (embedEmitTM Fin.castSuccEmb M).step (clockCfg (some s) c ct cp) =
       ((embedEmitTM Fin.castSuccEmb M).tr s (clockCfg (some s) c ct cp).inputSymbol
         (clockCfg (some s) c ct cp).workTapeSymbols).apply (clockCfg (some s) c ct cp)

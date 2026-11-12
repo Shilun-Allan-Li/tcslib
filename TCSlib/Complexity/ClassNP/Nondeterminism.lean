@@ -516,7 +516,7 @@ private lemma cont_rewind_choices (N : FinNDTM Bool) {y : List Bool}
       Cfg.mapState Sum.inr (choiceCoreCfg N (N.tm.initCfg x) true u 0 p) := by
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     simp only [Nat.cast_zero]
     have hw : (contLoadCfg (y := y) N 5 x u p 0 ((0 : ℤ) - 1)).workTapeSymbols
         (Fin.natAdd N.k 1) = none := by
@@ -570,7 +570,7 @@ private lemma cont_rewind_input (N : FinNDTM Bool) {y : List Bool}
         contLoadCfg (y := y) N 5 x u p 0 ((u.length : ℤ) - 1) := by
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     simp only [Nat.cast_zero]
     have hw : (contLoadCfg (y := y) N 4 x u p ((0 : ℤ) - 1) u.length).workTapeSymbols
         (Fin.natAdd N.k 0) = none := by
@@ -704,7 +704,7 @@ private lemma cont_start_core (N : FinNDTM Bool) (y x u : List Bool) :
       (contLoadCfg (y := y) N 3 x u ⟨y.length + 1, by omega⟩ x.length u.length) 1 =
         contLoadCfg (y := y) N 4 x u ⟨y.length + 1, by omega⟩
           ((x.length : ℤ) - 1) u.length := by
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change ((contPairTM N).tm.tr (.inl 3) _ _).apply _ = _
     rw [cont_load_read N 3 x u y.length (le_refl _)]
@@ -771,7 +771,7 @@ private lemma cont_parse_double (N : FinNDTM Bool) (y pre rest x : List Bool)
       cases b <;> rfl)
   simp only [Option.toList_none, Option.toList_some, List.append_nil,
     List.length_nil, Nat.cast_zero] at h1 h2
-  simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]
   rw [h1]
   exact h2
 
@@ -798,7 +798,7 @@ private lemma cont_parse_separator (N : FinNDTM Bool) (y pre u x : List Bool)
       rw [hr]
       simp [contPairTM, hz])
   simp only [Option.toList_none, List.append_nil, List.length_nil, Nat.cast_zero] at h1 h2
-  simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]
   rw [h1]
   exact h2
 
@@ -3078,7 +3078,7 @@ private lemma a2Borrow_rewind (out : List Bool) (x : List Bool) (p : Fin (x.leng
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     simp only [Nat.cast_zero, zero_sub]
     unfold MultiTapeTM.step
     simp only [a2DebitTM, a2DebitCfg, Cfg.workTapeSymbols, bufferTape_left]
@@ -3142,7 +3142,7 @@ private lemma a2_countdown (x : List Bool) (p : Fin (x.length + 2)) (n : ℕ) :
       rw [hn]
       refine ⟨(2 * a2BorrowPos u + 2) + 1, by omega, ?_⟩
       rw [MultiTapeTM.runFrom_add, hr]
-      simp [MultiTapeTM.runFrom, MultiTapeTM.step, a2DebitCfg, a2DebitTM,
+      simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, a2DebitCfg, a2DebitTM,
         hs, controlAction, Action.apply]
     | true =>
       simp only [hs, ↓reduceIte] at hd
@@ -3152,7 +3152,7 @@ private lemma a2_countdown (x : List Bool) (p : Fin (x.length + 2)) (n : ℕ) :
           (a2DebitCfg out x p (.inr true) 0 (a2Debit u).1) 1 =
           a2DebitCfg (out ++ [true]) x p (.inl none) 0 (a2Debit u).1 := by
         refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
-        funext i; simp [MultiTapeTM.runFrom, MultiTapeTM.step, a2DebitCfg,
+        funext i; simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, a2DebitCfg,
           a2DebitTM, Action.apply]
       refine ⟨(2 * a2BorrowPos u + 2) + 1 + t, ?_, ?_⟩
       · rw [a2Debit_length] at ht
@@ -3212,7 +3212,7 @@ private lemma a2_load_rewind (x : List Bool) (p : Fin (x.length + 2))
       a2DebitCfg [] x p (.inl none) 0 u := by
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     simp only [Nat.cast_zero, zero_sub]
     unfold MultiTapeTM.step
     simp only [a2DebitTM, a2LoadCfg, Cfg.workTapeSymbols, bufferTape_left]
@@ -3735,7 +3735,7 @@ private lemma a3n_eq_double (y pre rest u : List Bool) (b : Bool)
       rw [moveInputPos_pos_of_ne_right _ (by simp [hy])]
     · funext i; simp [Action.apply, a3nEqCfg]
   rw [MultiTapeTM.runFrom_succ_eq_step, hs,
-    MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    MultiTapeTM.runFrom_one]
   unfold MultiTapeTM.step
   change (a3nEqTM.tm.tr (if b then 2 else 1, true) _ _).apply _ = _
   rw [h1]
@@ -3775,7 +3775,7 @@ private lemma a3n_eq_separator (y pre v u : List Bool)
       rw [moveInputPos_pos_of_ne_right _ (by simp [hy])]
     · funext i; simp [Action.apply, a3nEqCfg]
   rw [MultiTapeTM.runFrom_succ_eq_step, hs,
-    MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    MultiTapeTM.runFrom_one]
   unfold MultiTapeTM.step
   change (a3nEqTM.tm.tr (1, true) _ _).apply _ = _
   simp only [a3nEqTM, h1]
@@ -3821,7 +3821,7 @@ private lemma a3n_eq_rewind (y u : List Bool) (p : Fin (y.length + 2))
       a3nEqCfg y 4 true p u 0 := by
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     simp only [Nat.cast_zero, zero_sub]
     unfold MultiTapeTM.step
     simp only [a3nEqTM, a3nEqCfg, Cfg.workTapeSymbols, bufferTape_left]

@@ -609,7 +609,7 @@ private theorem up_scan_pair {k : ℕ} {z : List Bool} (i : Fin k)
       ↓reduceIte, and_self, and_false, false_and, true_and] using step
   have one (e : Cfg k Bool (Fin 4) z) :
       (headerScanTM i).runFrom e 1 = (headerScanTM i).step e := by
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
   constructor
   · calc
       _ = (headerScanTM i).runFrom

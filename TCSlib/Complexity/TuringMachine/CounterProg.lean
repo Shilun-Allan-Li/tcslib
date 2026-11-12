@@ -302,7 +302,7 @@ theorem print_walk (r : Fin R) (l : Λ) (p : Fin (x.length + 2)) (tp : Fin R →
   induction j with
   | zero =>
     intro out _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+    rw [MultiTapeTM.runFrom_one, step_some]
     have hb : tp r (Function.update hd r ((0 : ℕ) - 1 : ℤ) r) = none := by
       simp [htp, ones_neg]
     simp only [tr, hb, Option.isSome_none, Bool.false_eq_true, if_false]
@@ -338,7 +338,7 @@ theorem back_walk (r : Fin R) (l : Λ) (p : Fin (x.length + 2)) (tp : Fin R → 
   induction d with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+    rw [MultiTapeTM.runFrom_one, step_some]
     have hb : tp r (Function.update hd r (((m - 0 : ℕ) : ℤ)) r) = none := by
       simp [htp, ones_ge]
     simp only [tr, hb, Option.isSome_none, Bool.false_eq_true, if_false]
@@ -413,7 +413,7 @@ theorem sim_step (s : St R Λ) (l : Λ) (hl : s.lbl = some l) (hp : s.pos ≤ x.
       (⟨some (.main l), ip, fun r => ones (ρ r), fun r => (ρ r : ℤ), out⟩ :
         Cfg R Bool (TSt R Λ) x) := rfl
   have hone : ∀ c : Cfg R Bool (TSt R Λ) x, (toTM P l₀).tm.runFrom c 1 = (toTM P l₀).tm.step c :=
-    fun c => rfl
+    MultiTapeTM.runFrom_one _
   rw [henc] at hsym ⊢
   cases hP : P l with
   | halt =>

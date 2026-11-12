@@ -472,8 +472,7 @@ private lemma taut_syntax_double (x : List Bool) (s : TautSyntax) (i : ℕ)
     change (tautTM.tm.tr (.syntaxFirst s) _ _).apply _ = _
     rw [taut_read, h₀]
     exact taut_move_right x _ _ i (by omega) [] 0 [] 0
-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
-    MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
   change (tautTM.tm.tr (.syntaxSecond s b) _ _).apply _ = _
   rw [taut_read, h₁]
   simp only [tautTM]
@@ -491,8 +490,7 @@ private lemma taut_syntax_separator (x : List Bool) (s : TautSyntax) (i : ℕ)
     change (tautTM.tm.tr (.syntaxFirst s) _ _).apply _ = _
     rw [taut_read, h₀]
     exact taut_move_right x _ _ i (by omega) [] 0 [] 0
-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
-    MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
   change (tautTM.tm.tr (.syntaxSecond s false) _ _).apply _ = _
   rw [taut_read, h₁]
   exact taut_move_right x _ _ (i+1) hi [] 0 [] 0
@@ -615,7 +613,7 @@ private lemma taut_work_rewind (q dest : TautControl)
   induction n with
   | zero =>
     intro _hn
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     change (tautTM.tm.tr q _ _).apply _ = _
     rw [htr]
     have hw : (tautCfg x (some q) i hi u ((0 : ℕ)-1 : ℤ)).workTapeSymbols 0 = none := by
@@ -716,8 +714,7 @@ private lemma taut_eval_double (x : List Bool) (q : TautEval) (q' : TautControl)
     rw [taut_read, hr]
     simpa only [SignType.coe_zero, add_zero] using
       taut_move_right x _ _ i (by omega) u h [] 0
-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
-    MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
   change (tautEvalAction q b (FinTM.bufferTape u h)).apply _ = _
   rw [ha]
   exact taut_move_right x _ _ (i+1) hi u h [] e

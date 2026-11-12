@@ -139,7 +139,7 @@ lemma ret2_run (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)
     · obtain rfl : t = 0 := by omega
       rfl
     · obtain rfl : t = 1 := by omega
-      simp only [MultiTapeTM.runFrom, Function.iterate_one] at hstep ⊢
+      simp only [MultiTapeTM.runFrom_one] at hstep ⊢
       rw [hstep]; rfl
   | succ j ih =>
     intro ip hip hj
@@ -216,7 +216,7 @@ lemma retR_scan (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)
       · obtain rfl : t = 0 := by omega
         exact ⟨Or.inl (by simp [mkCfg]), by funext i; simp [mkCfg]⟩
       · obtain rfl : t = 1 := by omega
-        simp only [MultiTapeTM.runFrom, Function.iterate_one, hstep]
+        simp only [MultiTapeTM.runFrom_one, hstep]
         refine ⟨?_, by funext i; simp [mkCfg]⟩
         by_cases hr : r = rr
         · subst hr; right; simp [mkCfg, hpos]
@@ -324,7 +324,7 @@ lemma retR_run (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)
     · obtain rfl : t = 0 := by omega
       exact ⟨Or.inl (by simp [mkCfg]), by funext i; simp [mkCfg]⟩
     · obtain rfl : t = 1 := by omega
-      simp only [MultiTapeTM.runFrom, Function.iterate_one, hstep]
+      simp only [MultiTapeTM.runFrom_one, hstep]
       refine ⟨?_, by funext i; simp [mkCfg]⟩
       by_cases hr : r = rr
       · subst hr; right; simp [mkCfg, hm1]

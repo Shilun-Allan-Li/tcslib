@@ -202,7 +202,7 @@ private lemma poly_emit {c C : ℕ} (x : List Bool) (q : ℕ)
   induction j with
   | zero =>
     intro hj o
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;> simp [MultiTapeTM.step, polyUnaryTM, polyCfg, Action.apply]
   | succ j ih =>
     intro hj o
@@ -225,7 +225,7 @@ private lemma poly_rewind {c C : ℕ} (x : List Bool) (q : ℕ)
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     change ((if _ then _ else _) : Action (c + 1) Bool (PolyControl c C)).apply _ = _
     simp only [Cfg.workTapeSymbols, polyCfg, Function.update_self,
       Nat.cast_zero, zero_sub, polyTape, show ¬(0 ≤ (-1 : ℤ) ∧ (-1 : ℤ) < q) by omega,
@@ -307,7 +307,7 @@ private lemma poly_loop {c C : ℕ} (x : List Bool) (q : ℕ) (_hq : 0 < q) :
           show (polyUnaryTM c C).tm.runFrom (polyCfg x q (.loop 0) h' o) 1 =
             polyCfg x q (.emit ⟨C, by omega⟩) h' o by simpa using hs,
           poly_emit x q h' C (le_refl C),
-          MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+          MultiTapeTM.runFrom_one]
         simpa [h'] using poly_advance (C := C) x q h'
           (o ++ List.replicate C true) (⟨0, hi⟩ : Fin (c + 1))
       · have hlow : ∀ k : Fin (c + 1), k.val ≤ i - 1 → h' k = 0 := by
@@ -342,7 +342,7 @@ private lemma poly_loop {c C : ℕ} (x : List Bool) (q : ℕ) (_hq : 0 < q) :
           MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
           show (polyUnaryTM c C).tm.runFrom (polyCfg x q (.loop ⟨i, hi⟩) h' o) 1 =
             polyCfg x q (.loop ⟨i - 1, by omega⟩) h' o by simpa using hs,
-          hinner', MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+          hinner', MultiTapeTM.runFrom_one]
         simpa [h'] using poly_advance (C := C) x q h'
           (o ++ List.replicate (C * q ^ i) true) (⟨i, hi⟩ : Fin (c + 1))
     induction r generalizing o with
@@ -455,7 +455,7 @@ private lemma poly_setup (c C : ℕ) (x : List Bool) (q : ℕ) : ∀ j (_hj : j 
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, polyUnaryTM, polyCfg, Cfg.workTapeSymbols, polyTape, Action.apply]
   | succ j ih =>
@@ -932,8 +932,7 @@ private lemma tmsat_take_double (x : List Bool) (i m : ℕ) (b : Bool)
     · rfl
     · funext j; simp [Action.apply, tmsatTakeCfg]
     · rfl
-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
-    MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
   change (tmsatTakeTM.tm.tr (if b then (2 : Fin 4) else (1 : Fin 4)) _ _).apply _ = _
   rw [tmsat_take_read, h₁]
   cases b <;>
@@ -963,8 +962,7 @@ private lemma tmsat_take_separator (x : List Bool) (i m : ℕ)
     · rfl
     · funext j; simp [Action.apply, tmsatTakeCfg]
     · rfl
-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
-    MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
   change (tmsatTakeTM.tm.tr (1 : Fin 4) _ _).apply _ = _
   rw [tmsat_take_read, h₁]
   change (⟨1, fun _ => (none, -1), none, some 3⟩ : Action 1 Bool (Fin 4)).apply _ = _

@@ -128,13 +128,13 @@ theorem marm_run (A : MARM m d Λ) (l₀ : Λ) (oracle : Fin d → List Bool →
       obtain ⟨l', M', p', hm, hstep⟩ := mmem_step A l₀ oracle D q0 (x := x) (l := l)
         (by simp [hA, MIns.isMem]) v M p out
       rw [hm] at h1 h2
-      refine compose 1 _ (by rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+      refine compose 1 _ (by rw [MultiTapeTM.runFrom_one,
         hstep]) (fun t ht => ?_) (ih l' v M' p' out b h1 h2 (hg' _ hm))
       rcases Nat.lt_or_ge t 1 with h | h
       · obtain rfl : t = 0 := by omega
         exact mbox_mseam W B P l v M p out hP
       · obtain rfl : t = 1 := by omega
-        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hstep]
+        rw [MultiTapeTM.runFrom_one, hstep]
         cases N with
         | zero => simp [mrun] at h1
         | succ N =>

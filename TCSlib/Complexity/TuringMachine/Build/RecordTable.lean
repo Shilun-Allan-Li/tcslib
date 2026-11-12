@@ -1355,7 +1355,7 @@ private theorem rt_find_read {Γ A : Type} {m : ℕ} (hm : 0 < m)
   let b := (d.workTapes 0 (d.workTapePos 0)).isSome
   let z : Cfg 2 Γ (Option Bool) x := { d with state := some (some b) }
   have hz : (rt_findParts (m := m) δ a₀ .read).runFrom d 1 = z := by
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     rw [step_of_inputMoveAction _ d 0 hd (by rfl)]
     simp only [z, moveInputPos_zero]
     rfl
@@ -2317,7 +2317,7 @@ private theorem rt_boundary_run {Γ : Type*} {k : ℕ} {x : List Γ}
     workTapes := Function.update d.workTapes i
       (Function.update (d.workTapes i) (d.workTapePos i - 1) (some b))}
   have one : (rt_boundaryTM k i b).runFrom d 1 = a := by
-    change (rt_boundaryTM k i b).step d = a
+    rw [MultiTapeTM.runFrom_one]
     rw [step_of_tapeAction_move (rt_boundaryTM k i b) d (q' := 1) i 0 .neg hs
       (by simp [rt_boundaryTM])]
     simp [a, SignType.cast, sub_eq_add_neg]

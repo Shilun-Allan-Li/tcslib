@@ -1874,7 +1874,7 @@ private theorem oracleHost_initial (M : FinOracleTM Bool) (C : FinTM Bool)
     · intro i
       rfl
   have boot : oracleDispatchTM.runFrom localInit 1 = localDone := by
-    change oracleDispatchTM.step localInit = _
+    rw [MultiTapeTM.runFrom_one]
     simp [localInit, localDone, MultiTapeTM.step, oracleDispatchTM, oracleDispatchAction,
       Cfg.ofWords, Cfg.mapState, oracleOrigin, Cfg.ext_iff, funext_iff, Fin.forall_fin_succ,
       Function.update_apply]

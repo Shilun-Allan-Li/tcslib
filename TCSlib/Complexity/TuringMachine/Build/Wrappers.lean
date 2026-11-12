@@ -918,7 +918,7 @@ private lemma timed_read_heads (D M₁ M₂ : FinTM Bool) {x : List Bool}
     have hstate : (timedControlCfg D M₁ M₂ c).state = some (.inr (.inl false)) := by
       simp only [timedControlCfg, captureCfg_state, leftCfg_state, hs,
         Option.map_none, Option.getD_none]
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       MultiTapeTM.step_of_some hstate]
     funext i
     rw [Action.apply_workTapePos, timed_control_heads]

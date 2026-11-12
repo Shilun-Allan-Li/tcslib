@@ -252,13 +252,13 @@ private theorem body_round (hek : 0 < Em.k) (hgk : 0 < Gm.k) (s es gs : List Boo
     intro j hj
     exact state_isSome_of_runFrom Em.tm (by rw [hErun]; rfl) hj
   have hone : Em.tm.runFrom subc₀ 1 = Em.tm.step subc₀ := by
-    simp [MultiTapeTM.runFrom]
+    exact MultiTapeTM.runFrom_one _ _
   have hEchain : ∀ u ≤ tE - 1,
       H.runFrom c₀ (1 + u) =
         embedCfg (Nat.le_max_left Em.k Gm.k) (BodyState.callE (SG := Gm.State))
           (Em.tm.runFrom subc₀ (1 + u)) := by
     intro u hu
-    rw [runFrom_add, runFrom_one, hstep₁]
+    rw [runFrom_add, MultiTapeTM.runFrom_one, hstep₁]
     rw [embed_run (Nat.le_max_left Em.k Gm.k) Em.tm H
       (BodyState.callE (SG := Gm.State)) ex htrE (Em.tm.step subc₀) u ?hstates]
     · rw [runFrom_add, hone]
@@ -285,7 +285,7 @@ private theorem body_round (hek : 0 < Em.k) (hgk : 0 < Gm.k) (s es gs : List Boo
   have hB : H.runFrom c₀ (tE + 1) =
       { Cfg.ofWords BodyState.gStart (stateWord (max Em.k Gm.k) s)
           with output := es } := by
-    rw [runFrom_add, hA, runFrom_one, control_step (q := BodyState.callE ex) ?_ rfl]
+    rw [runFrom_add, hA, MultiTapeTM.runFrom_one, control_step (q := BodyState.callE ex) ?_ rfl]
     · rfl
     · intro inp work
       simp [hH, emitIterBody]
@@ -310,13 +310,13 @@ private theorem body_round (hek : 0 < Em.k) (hgk : 0 < Gm.k) (s es gs : List Boo
     intro j hj
     exact state_isSome_of_runFrom Gm.tm (by rw [hGrun]; rfl) hj
   have honeG : Gm.tm.runFrom subg₀ 1 = Gm.tm.step subg₀ := by
-    simp [MultiTapeTM.runFrom]
+    exact MultiTapeTM.runFrom_one _ _
   have hGchain : ∀ u ≤ tG - 1,
       H.runFrom (Cfg.ofWords (BodyState.gStart (SE := Em.State) (SG := Gm.State)) (stateWord (max Em.k Gm.k) s)) (1 + u) =
         embedCfg (Nat.le_max_right Em.k Gm.k) (BodyState.callG (SE := Em.State))
           (Gm.tm.runFrom subg₀ (1 + u)) := by
     intro u hu
-    rw [runFrom_add, runFrom_one, hstep₂]
+    rw [runFrom_add, MultiTapeTM.runFrom_one, hstep₂]
     rw [embed_run (Nat.le_max_right Em.k Gm.k) Gm.tm H
       (BodyState.callG (SE := Em.State)) gx htrG (Gm.tm.step subg₀) u ?hstatesG]
     · rw [runFrom_add, honeG]
@@ -362,7 +362,7 @@ private theorem body_round (hek : 0 < Em.k) (hgk : 0 < Gm.k) (s es gs : List Boo
     rw [hGout tG le_rfl (by omega), hGrun, embed_ofWords_right Em Gm gx hgk]
   constructor
   · rw [show tE + 1 + tG + 1 = (tE + 1 + tG) + 1 from rfl, runFrom_add, hC,
-      runFrom_one, control_step (q := BodyState.callG gx) ?_ rfl]
+      MultiTapeTM.runFrom_one, control_step (q := BodyState.callG gx) ?_ rfl]
     · rfl
     · intro inp work
       simp [hH, emitIterBody]

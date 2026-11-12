@@ -169,7 +169,7 @@ theorem compile_correct_from (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD 
             exact ⟨fun r => by simpa [seam] using hbN r, fun i => by simp [seam]⟩
           · obtain rfl : t = 1 := by omega
             rw [show (compileTM P l₀ D q0).runFrom (seam c) 1 =
-              (compileTM P l₀ D q0).step (seam c) from rfl, hst, ← hr]
+              (compileTM P l₀ D q0).step (seam c) from MultiTapeTM.runFrom_one _ _, hst, ← hr]
             exact ⟨fun r => by simpa [seam] using hbN1 r, fun i => by simp [seam]⟩
         | some cs =>
           obtain ⟨hnd, hin, hargs, hclean⟩ := hcalls N (by omega) l cs hs hcl

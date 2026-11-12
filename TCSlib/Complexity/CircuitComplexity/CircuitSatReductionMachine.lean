@@ -129,8 +129,7 @@ theorem em_loop {w : List Bool} (k : GateKind) (c : Fin 3) (p : Fin (w.length + 
       obtain ⟨T, hT, pe, hpe, hrun⟩ := ih (pc + 1) (by omega) (out ++ [b]) hr'
       refine ⟨1 + T, ?_, pe, hpe, ?_⟩
       · simp only [List.length_cons]; nlinarith
-      · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step,
-          MultiTapeTM.runFrom_zero, step_some]
+      · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_one, step_some]
         simp only [tr, hget]
         rw [apply_ctl, moveInputPos_zero, hsucc]
         simp only [Option.toList_some]
@@ -145,7 +144,7 @@ theorem em_loop {w : List Bool} (k : GateKind) (c : Fin 3) (p : Fin (w.length + 
       · have h1 : emTM.tm.runFrom (⟨some (.em k c ⟨pc, hpc⟩), p, tapesOf v, headsOf v, out⟩ :
             Cfg 3 Bool St w) 1 = ⟨some (.prW k c ⟨pc, hpc⟩ t), p, tapesOf v,
               Function.update (headsOf v) t (((v t : ℕ) : ℤ) - 1), out⟩ := by
-          rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+          rw [MultiTapeTM.runFrom_one, step_some]
           simp only [tr, hget]
           rw [apply_act, moveInputPos_zero]
           simp only [wrT, Function.update_eq_self, Option.toList_none, List.append_nil]
@@ -174,7 +173,7 @@ theorem rd_step (w : List Bool) (s : ES) (i : ℕ) (hi : i ≤ w.length) (out : 
     emTM.tm.runFrom (cfgS w s i hi out) 1 =
       (tr (.rd s.φ) w[i]? (fun j => tapesOf s.vec j (headsOf s.vec j))).apply
         (cfgS w s i hi out) := by
-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_one]
   unfold cfgS
   rw [step_some, FinTM.inputSymbol_at _ i hi rfl]
 
@@ -201,7 +200,7 @@ theorem gate_run (w : List Bool) (s : ES) (k : GateKind) (c : Fin 3) (i : ℕ)
       ⟨some (.clW 1), ip w i hi, Function.update (tapesOf v) (1 : Fin 3) (ones (v 1)),
         Function.update (headsOf v) (1 : Fin 3) (((v 1 : ℕ) : ℤ) - 1),
         out ++ emitBits k c v⟩ := by
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+    rw [MultiTapeTM.runFrom_one, step_some]
     simp only [tr, hpe]
     rw [apply_act, moveInputPos_zero]
     simp only [wrT, Option.toList_none, List.append_nil, emitBits]
@@ -220,7 +219,7 @@ theorem gate_run (w : List Bool) (s : ES) (k : GateKind) (c : Fin 3) (i : ℕ)
       ⟨some (.clW 2), ip w i hi, Function.update (tapesOf v₁) (2 : Fin 3) (ones (v 2)),
         Function.update (headsOf v₁) (2 : Fin 3) (((v 2 : ℕ) : ℤ) - 1),
         out ++ emitBits k c v⟩ := by
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+    rw [MultiTapeTM.runFrom_one, step_some]
     simp only [tr]
     rw [apply_act, moveInputPos_zero]
     simp only [wrT, Option.toList_none, List.append_nil]
@@ -238,7 +237,7 @@ theorem gate_run (w : List Bool) (s : ES) (k : GateKind) (c : Fin 3) (i : ℕ)
   have h₆ : emTM.tm.runFrom (⟨some .inc, ip w i hi, tapesOf v₂, headsOf v₂,
       out ++ emitBits k c v⟩ : Cfg 3 Bool St w) 1 =
       cfgS w ⟨.g, s.z + 1, 0, 0⟩ i hi (out ++ emitBits k c v) := by
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+    rw [MultiTapeTM.runFrom_one, step_some]
     simp only [tr]
     rw [apply_act, moveInputPos_zero]
     unfold cfgS

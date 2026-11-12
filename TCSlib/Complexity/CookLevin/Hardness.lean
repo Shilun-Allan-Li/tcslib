@@ -687,7 +687,7 @@ private lemma clFill_run (b : Bool) (x : List Bool) (i : ℕ) (hi : i ≤ x.leng
   | zero =>
     have he : i = x.length := by omega
     subst i
-    simp [MultiTapeTM.runFrom, MultiTapeTM.step, clFillTM, Cfg.inputSymbol]
+    simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, clFillTM, Cfg.inputSymbol]
     constructor <;> funext j <;> exact Fin.elim0 j
   | succ r ih =>
     have hil : i < x.length := by omega
@@ -1002,15 +1002,13 @@ private lemma clCount_carry (x : List Bool) (p : Fin (x.length + 2))
   induction bs with
   | nil =>
     intro pre
-    simp only [clCountCarry, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero, clCount_carry_step]
+    simp only [clCountCarry, Nat.zero_add, MultiTapeTM.runFrom_one, clCount_carry_step]
     simp [clCountInc]
   | cons b bs ih =>
     intro pre
     cases b with
     | false =>
-      simp only [clCountCarry, MultiTapeTM.runFrom_succ_eq_step,
-        MultiTapeTM.runFrom_zero, clCount_carry_step]
+      simp only [clCountCarry, Nat.zero_add, MultiTapeTM.runFrom_one, clCount_carry_step]
       simp [clCountInc]
     | true =>
       simp only [clCountCarry, MultiTapeTM.runFrom_succ_eq_step, clCount_carry_step,
@@ -1032,7 +1030,7 @@ private lemma clCount_rewind (x : List Bool) (p : Fin (x.length + 2))
   induction j with
   | zero =>
     intro hj
-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clCountTM, clCountCfg, Cfg.workTapeSymbols,
         clCountTape, Action.apply]
@@ -1621,7 +1619,7 @@ private lemma clCopy_pair (x : List Bool) (p : Fin (x.length + 2))
       clTwo, Fin.cases_zero, hr]
     simpa [clCopyCfg] using clCopy_write x 0 1 p pre.length (pre ++ b :: rest) record b 0
   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, h0]
+    MultiTapeTM.runFrom_one, h0]
   change (clCopyTM.tm.tr (1 : Fin 5) _ _).apply _ = _
   simp only [clCopyTM, show (1 : Fin 5) ≠ 0 by decide, ↓reduceIte,
     clCopyCfg, Cfg.workTapeSymbols, clTwo, Fin.cases_zero, hr, Option.getD_some]
@@ -1661,7 +1659,7 @@ private lemma clCopy_separator (x : List Bool) (p : Fin (x.length + 2))
       clTwo, Fin.cases_zero, hr]
     simpa [clCopyCfg, sub_eq_add_neg] using clCopy_write x 0 2 p w.length w record false .neg
   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, h0]
+    MultiTapeTM.runFrom_one, h0]
   change (clCopyTM.tm.tr (2 : Fin 5) _ _).apply _ = _
   simp only [clCopyTM, show (2 : Fin 5) ≠ 0 by decide,
     show (2 : Fin 5) ≠ 1 by decide, ↓reduceIte]
@@ -1680,7 +1678,7 @@ private lemma clCopy_rewind (x : List Bool) (p : Fin (x.length + 2))
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clCopyTM, clCopyCfg,
         Cfg.workTapeSymbols, clTwo, Action.apply]
@@ -2941,7 +2939,7 @@ private lemma clCmp_rewind (x : List Bool) (p : Fin (x.length + 2))
     have hb : ∀ i, (clCmpCfg x p (.inr (.inl b)) w (-1)).workTapeSymbols i = none := by
       intro i
       simp [clCmpCfg, Cfg.workTapeSymbols]
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     change (clCmpTM.tm.tr (.inr (.inl b)) _ _).apply _ = _
     simp only [clCmpTM]
     have hb' : ∀ i, (clCmpCfg x p (.inr (.inl b)) w (((0 : ℕ) : ℤ) - 1)).workTapeSymbols i = none := hb
@@ -3117,7 +3115,7 @@ private lemma clRead_pair (x : List Bool) (p : Fin (x.length + 2))
     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]
+    MultiTapeTM.runFrom_one, first]
   change (clReadTM.tm.tr (.inl (some b)) _ _).apply _ = _
   simp only [clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, ↓reduceIte, r1]
   refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
@@ -3175,7 +3173,7 @@ private lemma clRead_separator (x : List Bool) (p : Fin (x.length + 2))
     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]
+    MultiTapeTM.runFrom_one, first]
   change (clReadTM.tm.tr (.inl (some false)) _ _).apply _ = _
   simp only [clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, ↓reduceIte, r1]
   simp only [Bool.true_eq_false, Option.some.injEq, if_false]
@@ -3194,7 +3192,7 @@ private lemma clRead_rewind (x : List Bool) (p : Fin (x.length + 2))
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo,
         Action.apply, funext_iff]
@@ -3328,7 +3326,7 @@ private lemma clWipe_forward (x : List Bool) (p : Fin (x.length + 2))
   | zero =>
     have he : j = word.length := by omega
     subst j
-    rw [zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [zero_add, MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo,
         Action.apply, funext_iff, sub_eq_add_neg]
@@ -3359,7 +3357,7 @@ private lemma clWipe_backward (x : List Bool) (p : Fin (x.length + 2))
   induction word using List.reverseRecOn with
   | nil =>
     rw [show ([] : List Bool).length + 1 = 1 by rfl,
-      MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+      MultiTapeTM.runFrom_one]
     refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl
     · simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo]
     · funext i; fin_cases i <;>
@@ -3753,7 +3751,7 @@ private lemma clInput_backward (x w : List Bool) : ∀ j (hj : j ≤ x.length),
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clInputTM, clInputCfg, Cfg.inputSymbol, Action.apply,
         moveInputPos, funext_iff]
@@ -4655,7 +4653,7 @@ private lemma clReplay_back (x : List Bool) (p : Fin (x.length + 2)) (w out : Li
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]
   | succ j ih =>
@@ -4686,7 +4684,7 @@ private lemma clReplay_forward (x : List Bool) (p : Fin (x.length + 2)) (w : Lis
     intro out
     have hj' : j = w.length := by omega
     subst j
-    rw [zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [zero_add, MultiTapeTM.runFrom_one]
     apply Cfg.ext <;>
       simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]
   | succ r ih =>
@@ -4893,7 +4891,7 @@ private lemma clPrepared_idle (A : FinTM Bool) (ret : A.State)
   have hr : (embedEmitTM (clKeepLastPlacement A.k).index A.tm).step e =
       embedEmitCfg (clKeepLastPlacement A.k).index c.workTapes c.workTapePos []
         (A.tm.step d) := by
-    simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using
+    simpa only [MultiTapeTM.runFrom_one] using
       embedEmitTM_runFrom (clKeepLastPlacement A.k).index A.tm
         c.workTapes c.workTapePos [] d 1
   rw [MultiTapeTM.step_of_some hc]

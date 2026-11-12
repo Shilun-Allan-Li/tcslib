@@ -291,7 +291,7 @@ lemma universal_table_rewind {x : List Bool}
   induction j with
   | zero =>
     intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := universalEval_step base (.rewindTable initial index) (.countFirst initial index)
       table (-1) state sp .pos 0 none (by simp [universalInterpreter, universalFour])
     simpa using he
@@ -340,8 +340,7 @@ lemma universal_count_run {x : List Bool}
       table (l.length + 1) state sp .pos 0 none
       (by simp [universalInterpreter, universalFour, hr1])
     change universalInterpreter.runFrom _ (0 + 1 + 1) = _
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, he0]
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, he0]
     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero]
     rw [he1]
     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero,
@@ -477,7 +476,7 @@ lemma universal_state_rewind {x : List Bool}
   intro j
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := universalEval_step base q q' table tp state 0 0 .pos none
       (hstop _ _ (by simpa [universalFour] using hzero))
     simpa using he
@@ -501,7 +500,7 @@ lemma universal_initial_skip {x : List Bool}
   | zero =>
     have hr : bufferTape table (l.length : ℤ) = some false := by
       rw [ht]; simpa using universal_table_read l r false
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := universalEval_step base (.initialSkip index) (.group index)
       table l.length state sp .pos 0 none (by simp [universalInterpreter, universalFour, hr])
     simpa using he
@@ -544,7 +543,7 @@ lemma universal_unary_copy {x : List Bool}
   | zero =>
     have hr : bufferTape table (l.length : ℤ) = some false := by
       rw [ht]; simpa using universal_table_read l r false
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := universalEval_step base q q' table l.length (universalStateTape j) (j + 1)
       doneMove 0 none (hfalse _ _ (by simp [universalFour, hr]))
     simpa using he
@@ -1005,7 +1004,7 @@ lemma universal_skip_fixed {x : List Bool}
   induction n with
   | zero =>
     intro field tp hf
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have he := universalEval_step base (.skipFixed dest rem field) (.skipUnary dest rem)
       table tp state sp .pos 0 none (by simp [universalInterpreter, show field.val = 7 by omega])
     simpa using he

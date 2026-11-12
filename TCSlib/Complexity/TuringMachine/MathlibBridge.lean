@@ -629,8 +629,7 @@ private lemma bridge_statement (c : ToPartrec.Code) {x : List BridgeAlphabet}
       p (Function.update st k (f v :: st k)) out) ?_ (ih v _ ht)
     refine ⟨2, ?_⟩
     rw [bridgeExec_mem c _ v hq, show 2 = 1 + 1 from rfl,
-      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, bridge_step]
+      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, bridge_step]
     simp only [bridgeTM]
     change (bridgeTM c).tm.step
       ((bridgeOne (bridgeIndex k) none .neg (some (.push ⟨some (.push k f tail), hq⟩ v))).apply
@@ -644,8 +643,7 @@ private lemma bridge_statement (c : ToPartrec.Code) {x : List BridgeAlphabet}
     apply bridgeReach_trans _ (b := bridgeCfg c (bridgeExec c (some tail) (f v (st k).head?))
       p st out) ?_ (ih _ _ ht)
     refine ⟨1, ?_⟩
-    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, bridge_step]
+    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
     simp only [bridgeTM]
     rw [bridgeCfg_read]
     have hh : ((st k).head?.map (Sum.inr (α := Bool))).bind Sum.getRight? = (st k).head? := by
@@ -658,8 +656,7 @@ private lemma bridge_statement (c : ToPartrec.Code) {x : List BridgeAlphabet}
     apply bridgeReach_trans _ (b := bridgeCfg c (bridgeExec c (some tail) (f v (st k).head?))
       p (Function.update st k (st k).tail) out) ?_ (ih _ _ ht)
     refine ⟨1, ?_⟩
-    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, bridge_step]
+    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
     simp only [bridgeTM]
     rw [bridgeCfg_read]
     have hh : ((st k).head?.map (Sum.inr (α := Bool))).bind Sum.getRight? = (st k).head? := by
@@ -673,8 +670,7 @@ private lemma bridge_statement (c : ToPartrec.Code) {x : List BridgeAlphabet}
     apply bridgeReach_trans _ (b := bridgeCfg c (bridgeExec c (some tail) (f v)) p st out)
       ?_ (ih _ _ ht)
     refine ⟨1, ?_⟩
-    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, bridge_step]
+    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
     simp only [bridgeTM]
     exact bridgeCfg_idle c _ _ p st out
   | branch f yes no ihy ihn =>
@@ -685,8 +681,7 @@ private lemma bridge_statement (c : ToPartrec.Code) {x : List BridgeAlphabet}
       apply bridgeReach_trans _ (b := bridgeCfg c (bridgeExec c (some no) v) p st out)
         ?_ (by simpa [TM2.stepAux, hv] using ihn v st ht)
       refine ⟨1, ?_⟩
-      rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
-        MultiTapeTM.runFrom_zero, bridge_step]
+      rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
       simp only [bridgeTM, hv, Bool.false_eq_true, ↓reduceIte]
       exact bridgeCfg_idle c _ _ p st out
     | true =>
@@ -694,22 +689,19 @@ private lemma bridge_statement (c : ToPartrec.Code) {x : List BridgeAlphabet}
       apply bridgeReach_trans _ (b := bridgeCfg c (bridgeExec c (some yes) v) p st out)
         ?_ (by simpa [TM2.stepAux, hv] using ihy v st ht)
       refine ⟨1, ?_⟩
-      rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
-        MultiTapeTM.runFrom_zero, bridge_step]
+      rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
       simp only [bridgeTM, hv, ↓reduceIte]
       exact bridgeCfg_idle c _ _ p st out
   | goto f =>
     intro v st hq
     refine ⟨1, ?_⟩
-    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, bridge_step]
+    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
     simp only [bridgeTM, TM2.stepAux, Option.map_some]
     exact bridgeCfg_idle c _ _ p st out
   | halt =>
     intro v st hq
     refine ⟨1, ?_⟩
-    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, bridge_step]
+    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
     simp only [bridgeTM, TM2.stepAux, Option.map_none]
     exact bridgeCfg_idle c _ _ p st out
 
@@ -820,7 +812,7 @@ private lemma bridge_back (c : ToPartrec.Code) (x : List Bool) :
   | zero =>
     intro _
     refine ⟨1, ?_⟩
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
+    rw [MultiTapeTM.runFrom_one, bridge_step]
     have hi : (bridgeCfg (x := x.map Sum.inl) c (some .back) ⟨0, by simp⟩
       (bridgeStore (bridgeWord (x.drop 0))) []).inputSymbol = none := by
       simp [bridgeCfg, Cfg.inputSymbol]
@@ -834,7 +826,7 @@ private lemma bridge_back (c : ToPartrec.Code) (x : List Bool) :
       ⟨j, by simp; omega⟩ (bridgeStore (bridgeWord (x.drop j))) []) ?_ (ih (by omega))
     refine ⟨2, ?_⟩
     rw [MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
+      MultiTapeTM.runFrom_one, bridge_step]
     have hi : (bridgeCfg (x := x.map Sum.inl) c (some .back) ⟨j + 1, by simp; omega⟩
       (bridgeStore (bridgeWord (x.drop (j + 1)))) []).inputSymbol = some (Sum.inl x[j]) := by
       exact (inputSymbolInner (cfg := bridgeCfg (x := x.map Sum.inl) c (some .back)
@@ -913,7 +905,7 @@ private lemma bridge_seed (c : ToPartrec.Code) (x : List Bool) :
       (bridgeCfg (x := x.map Sum.inl) c (some .scan) ⟨x.length + 1, by simp⟩ (bridgeStore []) []) 3 =
       bridgeCfg c (some .back) ⟨x.length, by simp⟩ (bridgeStore [.bit1, .cons]) [] := by
   rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
+    MultiTapeTM.runFrom_one, bridge_step]
   have hi : (bridgeCfg (x := x.map Sum.inl) c (some .scan) ⟨x.length + 1, by simp⟩
     (bridgeStore []) []).inputSymbol = none := by
     simp [bridgeCfg, Cfg.inputSymbol, Fin.ext_iff]
@@ -997,8 +989,7 @@ private lemma bridge_emit (c : ToPartrec.Code) {x : List BridgeAlphabet}
   | nil =>
     intro st out carry hs
     refine ⟨2, ?_⟩
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, bridge_emit_step c p st out carry true [.cons] hs, bridge_step]
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, bridge_emit_step c p st out carry true [.cons] hs, bridge_step]
     have hr := bridgeCfg_read c (some (.emit (some true))) p (Function.update st .main [.cons])
       (out ++ carry.toList.map Sum.inl) .main
     simp only [Function.update_self, List.head?_cons, Option.map_some] at hr
@@ -1011,7 +1002,7 @@ private lemma bridge_emit (c : ToPartrec.Code) {x : List BridgeAlphabet}
     have hs' : st .main = bridgeBit b :: bridgeWord xs := hs
     apply bridgeReach_trans _ (b := bridgeCfg c (some (.emit (some b))) p
       (Function.update st .main (bridgeWord xs)) (out ++ carry.toList.map Sum.inl))
-    · exact ⟨1, by simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using
+    · exact ⟨1, by simpa only [MultiTapeTM.runFrom_one] using
         bridge_emit_step c p st out carry b (bridgeWord xs) hs'⟩
     · have h := ih (Function.update st .main (bridgeWord xs))
         (out ++ carry.toList.map Sum.inl) (some b) (Function.update_self _ _ _)
@@ -1044,7 +1035,7 @@ private lemma bridge_compiles (c : ToPartrec.Code) (f : List Bool → List Bool)
         (bridgeStore (bridgeWord (f x))) [])
       (bridgeCfg c (some (.emit none)) 0 (bridgeStore (bridgeWord (f x))) []) := by
     refine ⟨1, ?_⟩
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
+    rw [MultiTapeTM.runFrom_one, bridge_step]
     exact bridgeCfg_idle c _ _ _ _ _
   have hf := bridge_emit c (x := x.map Sum.inl) 0 (f x)
     (bridgeStore (bridgeWord (f x))) [] none rfl

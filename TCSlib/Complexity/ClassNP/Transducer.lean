@@ -125,8 +125,7 @@ theorem transducer_run [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ)
       omega
     have hsym : cfg.inputSymbol = none := by
       rw [FinTM.inputSymbol_at cfg i hi hp]; simp [hix]
-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero]
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     rw [hq]
     simp only

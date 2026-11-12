@@ -34,6 +34,9 @@ Local modifications (see policy.md §2, vendored code):
   consumers read `spaceUsed` through an equation;
 * added `spaceUsedByTape_eq_card`, a tape's space as the number of cells its head visited, so
   that consumers read `spaceUsedByTape` through an equation.
+* added `MultiTapeTM.runFrom_one`, a one-step run as one machine step, beside the upstream
+  `runFrom_zero` and `runFrom_succ_eq_step`, so that every one-step site cites one public lemma
+  (dedup family RO-1; user, 2026-11-12).
 The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.Group.Abs
@@ -218,6 +221,11 @@ lemma runFrom_succ_eq_step {cfg : Cfg k Symbol State input} {t : ℕ} :
 lemma runFrom_succ_eq_step' {cfg : Cfg k Symbol State input} {t : ℕ} :
     tm.runFrom cfg (t + 1) = tm.step (tm.runFrom cfg t) := by
   simp [runFrom, Function.iterate_succ_apply']
+
+/-- A one-step run from any configuration is exactly one machine step. -/
+theorem _root_.Turing.MultiTapeTM.runFrom_one {k : ℕ} {Γ S : Type*} {x : List Γ}
+    (tm : MultiTapeTM k Γ S) (c : Cfg k Γ S x) : tm.runFrom c 1 = tm.step c := by
+  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
 
 /-- Running `a + b` steps equals running `b` steps from the configuration reached after `a`. -/
 lemma runFrom_add (cfg : Cfg k Symbol State input) (a b : ℕ) :

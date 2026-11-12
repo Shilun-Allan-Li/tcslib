@@ -218,11 +218,6 @@ theorem embedCfg_output (hmk : m ≤ k) (inject : SS → B)
     embedCfg hmk inject { c with output := o } =
       { embedCfg hmk inject c with output := o } := rfl
 
-/-- A one-step run is a step. -/
-theorem runFrom_one (H : MultiTapeTM k Bool B) (c : Cfg k Bool B x) :
-    H.runFrom c 1 = H.step c := by
-  simp [MultiTapeTM.runFrom]
-
 /-- One host step at a state behaving like the module's state `q` tracks one
 module step.
 **Proof sketch.** Both steps dispatch their transition tables on live states;

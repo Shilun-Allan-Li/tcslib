@@ -452,7 +452,7 @@ private lemma satEval_rewind (M : FinTM Bool) {w : List Bool}
       satEvalCfg M saved u dest i hi 0 := by
   induction n with
   | zero =>
-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change ((satEvalTM M).tm.tr (.inr q) _ _).apply _ = _
     rw [htr, satEvalCfg_work]
@@ -644,7 +644,7 @@ private lemma satEval_formula (M : FinTM Bool) {w : List Bool}
         pre.length (by simp [hw]) 0).inputSymbol = some false := by
       rw [satEvalCfg_input]
       simp [hw, CNF.serialize, satBits]
-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+    simp only [MultiTapeTM.runFrom_one,
       MultiTapeTM.step, satEvalCfg, satEvalQ] at hin ⊢
     rw [hin]
     simp [satEvalTM, satEvalAction, satEvalQ, CNF.eval_nil]
@@ -1572,11 +1572,6 @@ private lemma satRed_move (x : List Bool) (q q' : Fin 35)
   exact satRedAction_apply x (some q) (some q') i i' hi hi' n n buf buf a b a' b' out out
     m none none d₀ d₁ none hm rfl rfl ha hb (by simp)
 
-/-- A single machine transition is the one-step run. -/
-private lemma satRed_one {x : List Bool} (cfg : Cfg 2 Bool (Fin 35) x) :
-    satRedTM.tm.runFrom cfg 1 = satRedTM.tm.step cfg := by
-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-
 /-- Counter rewinds take exactly `r+1` silent transitions, including the
 left blank, and apply to each of the three return phases.
 
@@ -1593,7 +1588,7 @@ private lemma satRed_counterBack (x : List Bool) (q dest : Fin 35)
       satRedCfg x (some dest) i hi n buf 0 b out := by
   induction r with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     apply satRed_move x q dest i i hi hi n buf (-1) b 0 b out 0 .pos 0
       (moveInputPos_zero _) (by simp) (by simp)
     rw [htr]
@@ -1713,9 +1708,9 @@ private lemma satRed_maxLiteral (x : List Bool) (v : ℕ) (pol : Bool)
         simpa only [hp, Nat.add_assoc] using hm)
       (by simp) (by simp)
     rfl
-  rw [← satRed_one] at h₁
-  rw [← satRed_one] at h₃
-  rw [← satRed_one] at h₅
+  rw [← MultiTapeTM.runFrom_one] at h₁
+  rw [← MultiTapeTM.runFrom_one] at h₃
+  rw [← MultiTapeTM.runFrom_one] at h₅
   conv_lhs => rw [show 2 * v + 5 = 1 + (v + (1 + ((v + 2) + 1))) by omega,
     MultiTapeTM.runFrom_add, h₁, MultiTapeTM.runFrom_add, hh₂,
     MultiTapeTM.runFrom_add, h₃, MultiTapeTM.runFrom_add, hh₄, h₅]
@@ -1753,7 +1748,7 @@ private lemma satRed_maxClause (x : List Bool) (C : CNF.Clause ℕ) :
   | nil =>
     intro pre rest hx n buf b out
     refine ⟨1, by simp [CNF.serializeClause], ?_⟩
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     simp only [CNF.serializeClause, List.flatMap_nil, List.nil_append, List.length_singleton,
       satClauseVars, List.map_nil, List.foldr_nil, Nat.max_zero]
     apply satRed_move x 3 2 _ _ _ _ _ buf _ b _ b out .pos 0 0
@@ -1796,7 +1791,7 @@ private lemma satRed_maxFormula (x : List Bool) (φ : CNF ℕ) :
   | nil =>
     intro pre rest hx n buf b out
     refine ⟨1, by simp [CNF.serialize], ?_⟩
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     simp only [CNF.serialize, List.flatMap_nil, List.nil_append, List.length_singleton,
       Nat.add_sub_cancel, CNF.numVars, List.foldr_nil, Nat.max_zero]
     apply satRed_move x 2 7 _ _ _ _ _ buf _ b _ b out 0 0 0
@@ -1826,7 +1821,7 @@ private lemma satRed_maxFormula (x : List Bool) (φ : CNF ℕ) :
         1 + (CNF.serializeClause C).length + (CNF.serialize φ).length := by
       simp [CNF.serialize, CNF.serializeClause] <;> omega
     refine ⟨1 + (s + t), by omega, ?_⟩
-    rw [← satRed_one] at hs
+    rw [← MultiTapeTM.runFrom_one] at hs
     rw [MultiTapeTM.runFrom_add, hs, MultiTapeTM.runFrom_add, hsrun]
     have hn : max (max n (satClauseVars C)) (CNF.numVars φ) =
         max n (CNF.numVars (C :: φ)) := by rw [sat_numVars_cons, max_assoc]
@@ -1872,7 +1867,7 @@ private lemma satRed_init (x : List Bool) :
     exact satRedAction_apply x (some 1) (some 2) 0 0 _ _ 0 0 (fun _ => none)
       (satRedBuffer [] 0) 0 (-1) 0 0 [] [] 0 none (some (some false)) 0 .pos none
       (moveInputPos_zero _) rfl satRedBuffer_empty.symm (by simp) (by simp) (by simp)
-  rw [hinit, MultiTapeTM.runFrom_succ_eq_step, h₁, satRed_one, h₂]
+  rw [hinit, MultiTapeTM.runFrom_succ_eq_step, h₁, MultiTapeTM.runFrom_one, h₂]
 
 /-- The maximum pass and native rewind establish the streaming seam with
 exactly `numVars` in unary, empty output, and both work heads at zero.
@@ -2515,7 +2510,7 @@ private lemma satPair_rewind (M : FinTM Bool) {x : List Bool}
         satPairCfg M saved u (some 4) 0 (Nat.zero_le _) 0 [] := by
   induction n with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change ((satPairTM M).tm.tr (.inr 3) _ _).apply _ = _
     simp only [satPairTM]
@@ -2655,8 +2650,7 @@ private lemma satPair_copy (M : FinTM Bool) {x : List Bool}
   | nil =>
     intro pre out hx
     have hl : x.length = pre.length := by simp [hx]
-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero]
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change ((satPairTM M).tm.tr (.inr 7) _ _).apply _ = _
     simp only [satPairTM]
@@ -3203,7 +3197,7 @@ private lemma satDrop_rewind (x : List Bool) (p n : ℕ) :
   induction r with
   | zero =>
     intro _
-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change (satDropTM.tm.tr (3 : Fin 6) _ _).apply _ = _
     have hw : (satDropCfg x (some 3) p n ((0 : ℤ) - 1) []).workTapeSymbols 0 = none := by
@@ -3264,8 +3258,7 @@ private lemma satDrop_copy (x rest : List Bool) (n : ℕ) :
     have he : x = pre := by simpa using hx
     clear hx
     subst x
-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero]
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change (satDropTM.tm.tr (5 : Fin 6) _ _).apply _ = _
     have hin : (satDropCfg pre (some 5) pre.length n n out).inputSymbol = none := by
@@ -3641,8 +3634,7 @@ private lemma satAppend_seek (x w rest : List Bool) :
     intro pre hw
     have he : w = pre := by simpa using hw
     subst w
-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero]
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change (satAppendTM.tm.tr (0 : Fin 5) _ _).apply _ = _
     simp [satAppendTM, satAppendCfg, Cfg.workTapeSymbols, Action.apply]
@@ -3675,8 +3667,7 @@ private lemma satAppend_copy (x w rest : List Bool) :
     have he : x = pre := by simpa using hx
     clear hx
     subst x
-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero]
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     have hr := satStreamPos_read pre (satAppendCfg pre (some 1)
       (satStreamPos pre pre.length) (w ++ pre) (w ++ pre).length) pre.length rfl
     unfold MultiTapeTM.step
@@ -3719,7 +3710,7 @@ private lemma satAppend_rewind (x w : List Bool) (i : Fin (x.length + 2)) :
   induction r with
   | zero =>
     intro _
-    simp only [Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    simp only [Nat.zero_add, MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change (satAppendTM.tm.tr (2 : Fin 5) _ _).apply _ = _
     have hr : (satAppendCfg x (some 2) i w ((0 : ℤ) - 1)).workTapeSymbols 0 = none := by

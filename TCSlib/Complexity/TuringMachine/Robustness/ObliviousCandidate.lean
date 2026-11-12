@@ -1059,6 +1059,7 @@ private lemma macroCfg_cycle (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
       macroCfg W a base (some .macroCheck) (u + 1) 0 := by
   have hcheck : (obliviousSchedule W a).tm.runFrom
       (macroCfg W a base (some .macroCheck) u 0) 1 = macroCfg W a base (some .seekLeft) u 0 := by
+    rw [MultiTapeTM.runFrom_one]
     simpa only [hu, ↓reduceIte] using macroCfg_check W a base u 0
   have hseek : (obliviousSchedule W a).tm.runFrom
       (macroCfg W a base (some .seekLeft) u 0) (R + 2) =
