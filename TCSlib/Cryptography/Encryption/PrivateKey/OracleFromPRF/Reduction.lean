@@ -94,6 +94,12 @@ theorem fOuter_apply (n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)) (i : 
 /-- The attack of the attack bit: CCA1 for `true`, CPA for `false`. -/
 def atkOf (atkBit : Bool) : Attack := if atkBit then .cca1 else .cpa
 
+/-- `atkOf false = CPA`. -/
+theorem atkOf_false : atkOf false = .cpa := rfl
+
+/-- `atkOf true = CCA1`. -/
+theorem atkOf_true : atkOf true = .cca1 := rfl
+
 /-- The decryption oracle of `atkOf atkBit` is open exactly when `atkBit` holds and no challenge
 was recorded: `decOpen (atkOf atkBit) c = (atkBit && !c)`. -/
 theorem decOpen_atkOf (atkBit c : Bool) :
@@ -156,14 +162,16 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
       pkSeedTapes q atkBit b n ω ⟨j, hj⟩ := AdaptiveCPA.extTape_of_lt _ hj
   match i, x with
   | 0, x =>
-    refine ⟨_, _, eImpl_enc (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) (ctP.eval n) n (atkOf atkBit) b f
+    refine ⟨_, _, eImpl_enc (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+        (ctP.eval n) n (atkOf atkBit) b f
         (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j o, le_rfl, ?_⟩
     rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_enc q atkBit b n z ω x j o hj,
       simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
       pkAbs_eq, hT, fOuter_tape]
   | 1, x =>
     by_cases hop : (atkBit && !o.isSome && decWF n (List.ofFn x)) = true
-    · refine ⟨_, _, eImpl_dec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) (ctP.eval n) n (atkOf atkBit) b f
+    · refine ⟨_, _, eImpl_dec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+        (ctP.eval n) n (atkOf atkBit) b f
           (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j o, Nat.le_succ _, ?_⟩
       have hwf : decWF n (List.ofFn x) = true := by
         simp only [Bool.and_eq_true] at hop
@@ -180,10 +188,12 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
         decOpen_atkOf, decAns_eq]
       simp only [Bool.and_eq_true] at hop
       rw [if_pos (by simp only [Bool.and_eq_true]; exact ⟨hop.1, hwf⟩)]
-    · refine ⟨_, _, eImpl_dec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) (ctP.eval n) n (atkOf atkBit) b f
+    · refine ⟨_, _, eImpl_dec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+        (ctP.eval n) n (atkOf atkBit) b f
           (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j o, Nat.le_succ _, ?_⟩
       rw [Bool.not_eq_true] at hop
-      rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_dec_closed q atkBit b n z ω x j o hj.le hop,
+      rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_dec_closed q atkBit b n z ω x j o hj.le
+          hop,
         simulate_pure, OracleComp.pure_bind, decOpen_atkOf, decAns_eq,
         if_neg (by rw [hop]; exact Bool.false_ne_true)]
       have hz : padFin ((pkDout 1).eval n) [] = zeroBits _ := by
@@ -193,13 +203,15 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
   | 2, x =>
     cases o with
     | some c =>
-      refine ⟨_, _, eImpl_challenge_some (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) (ctP.eval n) n (atkOf atkBit) b f
+      refine ⟨_, _, eImpl_challenge_some (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+          (ctP.eval n) n (atkOf atkBit) b f
         (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j c, Nat.le_succ _, ?_⟩
       rw [QueryImpl.comp_apply, pkAbs_eq,
         pkHandler_impl_challenge_some q atkBit b n z ω x j c hj.le, simulate_pure,
         OracleComp.pure_bind]
     | none =>
-      refine ⟨_, _, eImpl_challenge_none (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) (ctP.eval n) n (atkOf atkBit) b f
+      refine ⟨_, _, eImpl_challenge_none (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
+          (ctP.eval n) n (atkOf atkBit) b f
         (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j, le_rfl, ?_⟩
       rw [QueryImpl.comp_apply, pkAbs_eq, pkHandler_impl_challenge_none q atkBit b n z ω x j hj,
         simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,

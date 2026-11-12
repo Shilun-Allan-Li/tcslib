@@ -68,7 +68,8 @@ the selected half is `msgOf` (`ofFn_splitHalf_fst`, `_snd`). Decryption is open 
 challenge (CCA1) or never (CPA), so the refusal of the challenge is vacuous; its coins are unused
 (`expect_const`). A repeated challenge returns the record. -/
 theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
-    (key : List Bool) (fk : (Fin n → Bool) → (Fin n → Bool)) (hct : S.ctLen.eval n = 3 * n + 2) (ν : S.enc.Coins n ≃ (Fin n → Bool))
+    (key : List Bool) (fk : (Fin n → Bool) → (Fin n → Bool)) (hct : S.ctLen.eval n = 3 * n + 2)
+    (ν : S.enc.Coins n ≃ (Fin n → Bool))
     (henc : ∀ (m : Fin n → Bool) (re : S.enc.Coins n),
       List.ofFn (S.encryptAt n key m re) = ctOf (ν re) (List.ofFn m) (fk (ν re)))
     (hdec : ∀ (w : List Bool) (rd : S.dec.Coins n),

@@ -139,6 +139,16 @@ def pkTapes (n : ℕ) : (Fin ((q.mul .var).eval n) → Bool) ≃ (Fin (q.eval n)
   (Equiv.arrowCongr (finCongr (by rw [PolyExpr.eval_mul, PolyExpr.eval_var]))
     (Equiv.refl Bool)).trans (EnsembleLemmas.blocks (q.eval n) n)
 
+/-- **Bit `k` of tape `j` is bit `j·n + k` of the seed:**
+`pkTapes q n ω j k = ω (finProdFinEquiv (j, k))`, read at the seed's length. -/
+theorem pkTapes_apply (n : ℕ) (ω : Fin ((q.mul .var).eval n) → Bool) (j : Fin (q.eval n))
+    (k : Fin n) :
+    pkTapes q n ω j k = ω (Fin.cast (by rw [PolyExpr.eval_mul, PolyExpr.eval_var])
+      (finProdFinEquiv (j, k))) := by
+  unfold pkTapes
+  rw [Equiv.trans_apply, EnsembleLemmas.blocks_apply]
+  rfl
+
 /-- **Tape `j` is the `j`-th block of the seed:** `⟦pkTapes q n ω j⟧ = (⟦ω⟧.drop (j·n)).take n`.
 
 **Proof sketch.** Position `k` of block `j` is position `j·n + k` of `ω` (`blocks_apply`,
@@ -155,11 +165,7 @@ theorem ofFn_pkTapes (n : ℕ) (ω : Fin ((q.mul .var).eval n) → Bool) (j : Fi
   · simp only [List.length_ofFn, List.length_take, List.length_drop]
     omega
   · have hpt : ∀ k' : Fin n, pkTapes q n ω j k' =
-        ω (Fin.cast hlen.symm (finProdFinEquiv (j, k'))) := by
-      intro k'
-      unfold pkTapes
-      rw [Equiv.trans_apply, EnsembleLemmas.blocks_apply]
-      rfl
+        ω (Fin.cast hlen.symm (finProdFinEquiv (j, k'))) := fun k' => pkTapes_apply q n ω j k'
     simp only [List.getElem_ofFn, List.getElem_take, List.getElem_drop, hpt]
     congr 1
     refine Fin.ext ?_
@@ -356,7 +362,8 @@ private theorem polyTimeComputable_pkFin : PolyTimeComputable pkFin :=
 CCA1, `false` for CPA) and the challenge bit `b`: state `pkState j o` (initially `j = 0` and no
 record), seed `q · n` bits (the tapes `pkTapes`), one outer call per inner query, the adversary
 run on the reduction input (ignored), and the finalization outputting the adversary's bit. -/
-noncomputable def pkHandler (atkBit b : Bool) : InteractiveHandler 3 pkDin pkDout 1 pkOut pkOut where
+noncomputable def pkHandler (atkBit b : Bool) :
+    InteractiveHandler 3 pkDin pkDout 1 pkOut pkOut where
   stateLen := pkStLen q
   seedLen := q.mul .var
   perCall := .const 1
@@ -586,7 +593,8 @@ theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
   refine impl_of_query q atkBit b n z ω x _ _ _ _ ?_ ?_
   · obtain ⟨hU, -, -, hI, hX, hL, -, hFlag, -⟩ :=
       fields_input q atkBit b n z ω (i := 1) (List.ofFn x) [] j o hj
-    have hWF : rWF (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (pkState q n j o)) (1 : Fin 3)
+    have hWF : rWF (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (pkState q n j o))
+        (1 : Fin 3)
         (List.ofFn x) []) = decWF n (List.ofFn x) := by
       rw [rWF, hU, hX, List.length_replicate, decWF_eq]
     rw [pkRun, hI, replicate_one, hFlag, hWF, hop, hL, hX, hx0]
@@ -596,7 +604,8 @@ theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
       fields_input q atkBit b n z ω (i := 1) (List.ofFn x)
         (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((pkOut 0).eval n)
           (pairFstD (List.ofFn x)))) (List.ofFn y))) []) j o hj
-    have hWF : rWF (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (pkState q n j o)) (1 : Fin 3)
+    have hWF : rWF (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (pkState q n j o))
+        (1 : Fin 3)
         (List.ofFn x) (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((pkOut 0).eval n)
           (pairFstD (List.ofFn x)))) (List.ofFn y))) [])) = decWF n (List.ofFn x) := by
       rw [rWF, hU, hX, List.length_replicate, decWF_eq]
@@ -616,11 +625,13 @@ well formed, the answer is `⊥` (all-`false`) and the state is kept. -/
 theorem pkHandler_impl_dec_closed (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
     (o : Option (Fin (ctP.eval n) → Bool)) (hj : j ≤ q.eval n)
     (hcl : (atkBit && !o.isSome && decWF n (List.ofFn x)) = false) :
-    (pkHandler q atkBit b).impl n z ω 1 x (pkState q n j o) = .pure (zeroBits _, pkState q n j o) := by
+    (pkHandler q atkBit b).impl n z ω 1 x (pkState q n j o)
+        = .pure (zeroBits _, pkState q n j o) := by
   refine impl_of_ret q atkBit b n z ω x _ _ _ ?_
   obtain ⟨hU, -, hS, hI, hX, -, -, hFlag, -⟩ :=
     fields_input q atkBit b n z ω (i := 1) (List.ofFn x) [] j o hj
-  have hWF : rWF (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (pkState q n j o)) (1 : Fin 3)
+  have hWF : rWF (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (pkState q n j o))
+      (1 : Fin 3)
       (List.ofFn x) []) = decWF n (List.ofFn x) := by
     rw [rWF, hU, hX, List.length_replicate, decWF_eq]
   rw [pkRun, hI, replicate_one, hFlag, hWF, hcl, hU, hS, List.length_replicate, ofFn_zeroBits,
