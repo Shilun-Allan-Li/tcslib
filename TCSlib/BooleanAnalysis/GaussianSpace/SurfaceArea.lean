@@ -337,4 +337,56 @@ theorem gaussian_isoperimetric (hA : MeasurableSet A) {α : ℝ}
   intro x
   exact (hasFDerivAt_averagedGaussianIndicator hA u hsin x).differentiableAt.hasFDerivAt
 
+/-- Rotation disagreement for an intersection is bounded by the sum of the
+component disagreements. [OD14, Def. 11.42]
+
+**Proof sketch.** If intersection membership changes, membership in at least
+one component changes. Apply the union bound under the Gaussian product law. -/
+lemma rotationSensitivity_inter_le {n : ℕ} (A B : Set (Fin n → ℝ)) (θ : ℝ) :
+    rotationSensitivity (A ∩ B) θ ≤ rotationSensitivity A θ + rotationSensitivity B θ := by
+  letI : IsProbabilityMeasure standardGaussianMeasure := by
+    rw [standardGaussianMeasure_eq]
+    infer_instance
+  let μ := (Measure.pi fun _ : Fin n => standardGaussianMeasure).prod
+    (Measure.pi fun _ : Fin n => standardGaussianMeasure)
+  let E (S : Set (Fin n → ℝ)) : Set ((Fin n → ℝ) × (Fin n → ℝ)) :=
+    {z | ¬ (z.1 ∈ S ↔ (fun i => Real.cos θ * z.1 i + Real.sin θ * z.2 i) ∈ S)}
+  rw [rotationSensitivity_eq, rotationSensitivity_eq, rotationSensitivity_eq]
+  change μ.real (E (A ∩ B)) ≤ μ.real (E A) + μ.real (E B)
+  refine (measureReal_mono (show E (A ∩ B) ⊆ E A ∪ E B from ?_)).trans
+    (measureReal_union_le _ _)
+  intro z hz
+  simp only [E, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_union] at hz ⊢
+  tauto
+/-- The Gaussian surface area of an intersection is at most the sum of the
+component surface areas. [OD14, §11.4, Def. 11.48]
+
+**Proof sketch.** The union bound controls each rotation disagreement by the
+sum of the component disagreements. Scale by the positive angle, bound each
+component quotient by its surface area, and pass to the intersection's rotation
+limit. The extended-real formulation also covers infinite surface area. -/
+lemma surfaceArea_inter_le {n : ℕ} {A B : Set (Fin n → ℝ)}
+    (hA : MeasurableSet A) (hB : MeasurableSet B) :
+    gaussianSurfaceArea (A ∩ B) ≤ gaussianSurfaceArea A + gaussianSurfaceArea B := (by
+  apply le_of_tendsto (surfaceArea_rotation_limit (hA.inter hB))
+  filter_upwards [self_mem_nhdsWithin] with θ hθ
+  change 0 < θ at hθ
+  calc
+    ENNReal.ofReal (Real.sqrt (Real.pi / 2) * rotationSensitivity (A ∩ B) θ / θ) ≤
+        ENNReal.ofReal (Real.sqrt (Real.pi / 2) * rotationSensitivity A θ / θ +
+          Real.sqrt (Real.pi / 2) * rotationSensitivity B θ / θ) := by
+      apply ENNReal.ofReal_le_ofReal
+      simpa only [mul_add, add_div] using
+        div_le_div_of_nonneg_right
+          (mul_le_mul_of_nonneg_left (rotationSensitivity_inter_le A B θ)
+            (Real.sqrt_nonneg _)) hθ.le
+    _ ≤ ENNReal.ofReal (Real.sqrt (Real.pi / 2) * rotationSensitivity A θ / θ) +
+        ENNReal.ofReal (Real.sqrt (Real.pi / 2) * rotationSensitivity B θ / θ) :=
+      ENNReal.ofReal_add_le
+    _ ≤ gaussianSurfaceArea A + gaussianSurfaceArea B :=
+      add_le_add (rotationSensitivity_le_surfaceArea hA θ hθ)
+        (rotationSensitivity_le_surfaceArea hB θ hθ)
+)
+
+
 end BooleanAnalysis.GaussianSpace

@@ -303,7 +303,7 @@ nonempty finite list in $\alpha$. For each position $i$ in $l$, let $a_i$ be the
 of entries of $l$ strictly less than $l_i$, and let $b_i$ be the number of entries less
 than or equal to $l_i$. The expected number of comparisons made by the randomized
 selection procedure satisfies
-\[\mathbb{E}(k,l)=\sum_i \frac{1}{|l|}\left(|l|+\begin{cases}\mathbb{E}(k,\{x\in l:x<l_i\}),&k\le a_i,\\\mathbb{E}(k-b_i,\{x\in l:l_i<x\}),&b_i<k,\0,&\text{otherwise.}\end{cases}\right),\]
+\[\mathbb{E}(k,l)=\sum_i \frac{1}{|l|}\left(|l|+\begin{cases}\mathbb{E}(k,\{x\in l:x<l_i\}),&k\le a_i,\\\mathbb{E}(k-b_i,\{x\in l:l_i<x\}),&b_i<k,\\0,&\text{otherwise.}\end{cases}\right),\]
 where each filtered list retains the order and multiplicities of its entries.
 \end{theorem}
 

@@ -105,7 +105,7 @@ lemma integral_coordinate_derivative_gaussianPi {n : ℕ} (i : Fin n)
     (∫ x, v x ∂(Measure.pi fun _ => standardGaussianMeasure)) =
       ∫ x, x i * u x ∂(Measure.pi fun _ => standardGaussianMeasure) := by
   letI : IsProbabilityMeasure standardGaussianMeasure := by
-    unfold standardGaussianMeasure
+    rw [standardGaussianMeasure_eq]
     infer_instance
   cases n with
   | zero => exact Fin.elim0 i

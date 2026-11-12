@@ -249,4 +249,19 @@ lemma correlatedGaussianMeasure_zero {n : ℕ} :
         (Measure.pi (fun _ : Fin n => standardGaussianMeasure)) := by
   simp [correlatedGaussianMeasure]
 
+/-- A real linear functional on finite coordinate space is the sum of its
+coordinate values weighted by the corresponding input coordinates. -/
+lemma realLinearFunctional_pi {n : ℕ} (L : (Fin n → ℝ) →L[ℝ] ℝ) (x : Fin n → ℝ) :
+    L x = ∑ i, x i * L (Pi.single i 1) := by
+  classical
+  change L.toLinearMap x = ∑ i, x i * L.toLinearMap (Pi.single i 1)
+  rw [LinearMap.pi_apply_eq_sum_univ L.toLinearMap x]
+  apply Finset.sum_congr rfl
+  intro i _
+  congr 1
+  apply congrArg L
+  ext j
+  simp [Pi.single_apply, eq_comm]
+
+
 end BooleanAnalysis.GaussianSpace
