@@ -1,0 +1,246 @@
+{
+  "head": "ce427bde6ee5464a4146dce2b3add69b7a05677d",
+  "snapshot": "oleans-ro1r2b-c7b6b (the replay of the head on the campaign snapshot after #242)",
+  "scope": "every .lean file under TCSlib/ that mentions runFrom",
+  "mutation": {
+    "files": 96,
+    "jobs": 202,
+    "site_mutations": 728,
+    "outcomes": {
+      "fail": 707,
+      "pass": 21
+    },
+    "passing_mutants_confirmed_with_runFrom_irreducible": [
+      {
+        "file": "ClassNP/EXP.lean",
+        "line": 2859,
+        "decl": "a3_run_call",
+        "text": "simpa only [MultiTapeTM.runFrom_succ_eq_step] using h",
+        "confirm_verdict": "shift / defeq (mutant needs native unfolding)",
+        "disposition": "the mutant needs runFrom unfolded natively: the original closes a step shift or a definitional equation, not a one-step run"
+      },
+      {
+        "file": "ClassNP/Nondeterminism.lean",
+        "line": 1593,
+        "decl": "b2_guess_run",
+        "text": "rw [← MultiTapeTM.runFrom_succ_eq_step]",
+        "confirm_verdict": "decl unfolds natively anyway: mutant fails",
+        "disposition": "step shift at a general duration: the original folds or unfolds runFrom (step c) u against runFrom c (u + 1) for a variable u; not a one-step run; the declaration already fails with runFrom irreducible for other reasons, and the irreducibility pass classifies its errors"
+      },
+      {
+        "file": "ClassNP/Nondeterminism.lean",
+        "line": 1935,
+        "decl": "b2_verify_run",
+        "text": "rw [← MultiTapeTM.runFrom_succ_eq_step]",
+        "confirm_verdict": "decl unfolds natively anyway: mutant fails",
+        "disposition": "step shift at a general duration: the original folds or unfolds runFrom (step c) u against runFrom c (u + 1) for a variable u; not a one-step run; the declaration already fails with runFrom irreducible for other reasons, and the irreducibility pass classifies its errors"
+      },
+      {
+        "file": "ClassNP/Nondeterminism.lean",
+        "line": 1939,
+        "decl": "b2_verify_run",
+        "text": "· simpa only [List.length_cons, MultiTapeTM.runFrom_succ_eq_step] using htag''",
+        "confirm_verdict": "decl unfolds natively anyway: mutant fails",
+        "disposition": "step shift at a general duration: the original folds or unfolds runFrom (step c) u against runFrom c (u + 1) for a variable u; not a one-step run; the declaration already fails with runFrom irreducible for other reasons, and the irreducibility pass classifies its errors"
+      },
+      {
+        "file": "ClassP/TimeConstructible.lean",
+        "line": 337,
+        "decl": "counter_increment",
+        "text": "← MultiTapeTM.runFrom_succ_eq_step]",
+        "confirm_verdict": "shift / defeq (mutant needs native unfolding)",
+        "disposition": "the mutant needs runFrom unfolded natively: the original closes a step shift or a definitional equation, not a one-step run"
+      },
+      {
+        "file": "CookLevin/Hardness.lean",
+        "line": 5741,
+        "decl": "clRepeat_call",
+        "text": "simpa only [MultiTapeTM.runFrom_succ_eq_step] using hq)",
+        "confirm_verdict": "shift / defeq (mutant needs native unfolding)",
+        "disposition": "the mutant needs runFrom unfolded natively: the original closes a step shift or a definitional equation, not a one-step run"
+      },
+      {
+        "file": "TuringMachine/Build/NDClockHost.lean",
+        "line": 365,
+        "decl": "boot_run",
+        "text": "rw [← MultiTapeTM.runFrom_succ_eq_step]",
+        "confirm_verdict": "decl unfolds natively anyway: mutant fails",
+        "disposition": "step shift at a general duration: the original folds or unfolds runFrom (step c) u against runFrom c (u + 1) for a variable u; not a one-step run; the declaration already fails with runFrom irreducible for other reasons, and the irreducibility pass classifies its errors"
+      },
+      {
+        "file": "TuringMachine/Build/StepBlock.lean",
+        "line": 1473,
+        "decl": "seekTM_stateStep",
+        "text": "step (`MultiTapeTM.runFrom_succ_eq_step`) gives the claim; time `0` is the router control",
+        "confirm_verdict": "one-step (confirmed sealed)",
+        "disposition": "docstring mention of runFrom_succ_eq_step in seekTM_rank, not code"
+      },
+      {
+        "file": "TuringMachine/Build/StepBlock.lean",
+        "line": 3428,
+        "decl": "roundTM_iterate",
+        "text": "rw [← MultiTapeTM.runFrom_succ_eq_step]",
+        "confirm_verdict": "decl unfolds natively anyway: mutant fails",
+        "disposition": "step shift at a general duration: the original folds or unfolds runFrom (step c) u against runFrom c (u + 1) for a variable u; not a one-step run; the declaration already fails with runFrom irreducible for other reasons, and the irreducibility pass classifies its errors"
+      },
+      {
+        "file": "TuringMachine/Build/StepClock.lean",
+        "line": 652,
+        "decl": "sc_observedSegment",
+        "text": "rw [← MultiTapeTM.runFrom_succ_eq_step]",
+        "confirm_verdict": "decl unfolds natively anyway: mutant fails",
+        "disposition": "step shift at a general duration: the original folds or unfolds runFrom (step c) u against runFrom c (u + 1) for a variable u; not a one-step run; the declaration already fails with runFrom irreducible for other reasons, and the irreducibility pass classifies its errors"
+      },
+      {
+        "file": "TuringMachine/Build/StepClock.lean",
+        "line": 655,
+        "decl": "sc_observedSegment",
+        "text": "rw [← MultiTapeTM.runFrom_succ_eq_step]",
+        "confirm_verdict": "decl unfolds natively anyway: mutant fails",
+        "disposition": "step shift at a general duration: the original folds or unfolds runFrom (step c) u against runFrom c (u + 1) for a variable u; not a one-step run; the declaration already fails with runFrom irreducible for other reasons, and the irreducibility pass classifies its errors"
+      },
+      {
+        "file": "TuringMachine/Build/StepClock.lean",
+        "line": 659,
+        "decl": "sc_observedSegment",
+        "text": "MultiTapeTM.runFrom_succ_eq_step] using joined",
+        "confirm_verdict": "decl unfolds natively anyway: mutant fails",
+        "disposition": "step shift at a general duration: the original folds or unfolds runFrom (step c) u against runFrom c (u + 1) for a variable u; not a one-step run; the declaration already fails with runFrom irreducible for other reasons, and the irreducibility pass classifies its errors"
+      },
+      {
+        "file": "TuringMachine/Build/WindowRun.lean",
+        "line": 316,
+        "decl": "windowRun_exhausted_of_live",
+        "text": "· rw [← MultiTapeTM.runFrom_succ_eq_step]",
+        "confirm_verdict": "shift / defeq (mutant needs native unfolding)",
+        "disposition": "the mutant needs runFrom unfolded natively: the original closes a step shift or a definitional equation, not a one-step run"
+      },
+      {
+        "file": "TuringMachine/Build/WindowRun.lean",
+        "line": 318,
+        "decl": "windowRun_exhausted_of_live",
+        "text": "· rw [← MultiTapeTM.runFrom_succ_eq_step]",
+        "confirm_verdict": "shift / defeq (mutant needs native unfolding)",
+        "disposition": "the mutant needs runFrom unfolded natively: the original closes a step shift or a definitional equation, not a one-step run"
+      },
+      {
+        "file": "TuringMachine/Oracle.lean",
+        "line": 229,
+        "decl": "runFrom_succ_eq_step'",
+        "text": "theorem runFrom_succ_eq_step' (M : OracleTM k Symbol State) (O : Language Symbol)",
+        "confirm_verdict": "one-step (confirmed sealed)",
+        "disposition": "OracleTM: the token is the name of OracleTM's own theorem runFrom_succ_eq_step'; mutating it renames that theorem"
+      },
+      {
+        "file": "TuringMachine/Oracle.lean",
+        "line": 300,
+        "decl": "runFrom_eq_of_forall_ne_qQuery",
+        "text": "rw [runFrom_succ_eq_step', runFrom_succ_eq_step', ← ih (fun s hs => h s (by omega))]",
+        "confirm_verdict": "one-step (confirmed sealed)",
+        "disposition": "OracleTM: not a pass; the renamed theorem leaves this reference unknown (error(lean.unknownIdentifier), tagged-error note)"
+      },
+      {
+        "file": "TuringMachine/Oracle.lean",
+        "line": 368,
+        "decl": "step_radius",
+        "text": "**Proof sketch.** Induction on `s`, with `runFrom_succ_eq_step'` and `step_radius`. -/",
+        "confirm_verdict": "one-step (confirmed sealed)",
+        "disposition": "OracleTM: docstring mention, not code"
+      },
+      {
+        "file": "TuringMachine/Oracle.lean",
+        "line": 378,
+        "decl": "runFrom_radius",
+        "text": "rw [runFrom_succ_eq_step']",
+        "confirm_verdict": "one-step (confirmed sealed)",
+        "disposition": "OracleTM: the mutant resolves to the renamed OracleTM theorem (from row 229), so it is not MultiTapeTM.runFrom_one; OracleTM's runFrom is outside RO-1"
+      },
+      {
+        "file": "TuringMachine/Robustness/Bidirectional.lean",
+        "line": 301,
+        "decl": "foldCfg_run",
+        "text": "| zero => simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using foldCfg_init M x",
+        "confirm_verdict": "shift / defeq (mutant needs native unfolding)",
+        "disposition": "the mutant needs runFrom unfolded natively: the original closes a step shift or a definitional equation, not a one-step run; Bidirectional foldCfg_run is the disclosed definitional zero-step base"
+      },
+      {
+        "file": "TuringMachine/Robustness/SingleTape.lean",
+        "line": 2088,
+        "decl": "dg_simulate",
+        "text": "exact MultiTapeTM.runFrom_succ_eq_step'.symm",
+        "confirm_verdict": "one-step (confirmed sealed)",
+        "disposition": "not a pass: the mutant fails with error(lean.unknownIdentifier), which the sweep parser did not read (tagged-error note); the original is a step shift at the general duration t + 1"
+      },
+      {
+        "file": "TuringMachine/Universal.lean",
+        "line": 2352,
+        "decl": "timed_interpret_finishes",
+        "text": "simpa only [timedAnswer, MultiTapeTM.runFrom_succ_eq_step] using hfinish",
+        "confirm_verdict": "shift / defeq (mutant needs native unfolding)",
+        "disposition": "the mutant needs runFrom unfolded natively: the original closes a step shift or a definitional equation, not a one-step run"
+      }
+    ],
+    "summary": "no genuine one-step runFrom_succ_eq_step(') closing remains: of 21 passing mutants, 7 need native unfolding (shift or definitional), 8 are general-duration shifts in declarations that already fail sealed, and the 6 marked one-step are docstrings, OracleTM artifacts or parse misses"
+  },
+  "irreducibility": {
+    "files": 138,
+    "errors": 230,
+    "one_step_rows": [
+      {
+        "file": "TuringMachine/Build/RecordTable.lean",
+        "line": 2325,
+        "first_line": "'change' tactic failed, pattern",
+        "disposition": "RecordTable rt_boundaryTM: change … step (runFrom d 1) inside a two-step run (and its three-step sibling at 2336, reached only after this error); disclosed, outside RO-1"
+      }
+    ],
+    "context_only_rows": [
+      {
+        "file": "SpaceComplexity/Inclusions.lean",
+        "line": 225,
+        "source": "· rfl",
+        "disposition": "runFrom … 1 occurs only in a context hypothesis (h1); the failing goal is a zero-step rfl"
+      },
+      {
+        "file": "SpaceComplexity/Inclusions.lean",
+        "line": 2331,
+        "source": "· rfl",
+        "disposition": "runFrom … 1 occurs only in a context hypothesis (h1); the failing goal is a zero-step rfl"
+      }
+    ],
+    "summary": "one one-step row, the disclosed RecordTable two-step site; no uncited one-step run"
+  },
+  "tagged_errors": {
+    "note": "Lean 4.25 writes some error headers as error(<tag>): …; the sweep, confirm and classifier regexes read only error: …. The only tagged errors in all sweep and confirmation logs are the four listed (two mutation jobs and their confirmations), all lean.unknownIdentifier. No irreducibility-pass log has one, so the one-step classification is unaffected; the two affected mutation rows are the SingleTape 2088 and Oracle 300 false passes above.",
+    "errors": [
+      {
+        "log": "sweep/TCSlib_Complexity_TuringMachine_Oracle.lean.mut1.log",
+        "file": "TCSlib/Complexity/TuringMachine/Oracle.lean",
+        "line": 301,
+        "tag": "lean.unknownIdentifier",
+        "message": "Unknown identifier `runFrom_succ_eq_step'`"
+      },
+      {
+        "log": "sweep/TCSlib_Complexity_TuringMachine_Robustness_SingleTape.lean.mut2.log",
+        "file": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+        "line": 2089,
+        "tag": "lean.unknownIdentifier",
+        "message": "Unknown constant `Turing.MultiTapeTM.runFrom_one.symm`"
+      },
+      {
+        "log": "confirm/TCSlib_Complexity_TuringMachine_Oracle.lean.c1.log",
+        "file": "TCSlib/Complexity/TuringMachine/Oracle.lean",
+        "line": 301,
+        "tag": "lean.unknownIdentifier",
+        "message": "Unknown identifier `runFrom_succ_eq_step'`"
+      },
+      {
+        "log": "confirm/TCSlib_Complexity_TuringMachine_Robustness_SingleTape.lean.c1.log",
+        "file": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+        "line": 2089,
+        "tag": "lean.unknownIdentifier",
+        "message": "Unknown constant `Turing.MultiTapeTM.runFrom_one.symm`"
+      }
+    ]
+  },
+  "argument_sweep_inherited": "candidates 781 distinct 386 not-inherited 0 root-absent-at-base 0"
+}

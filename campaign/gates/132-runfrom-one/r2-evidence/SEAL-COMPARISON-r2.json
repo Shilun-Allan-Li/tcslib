@@ -1,0 +1,249 @@
+{
+  "head": "ce427bde6ee5464a4146dce2b3add69b7a05677d",
+  "base": "7b6bd1685a1436313dfbc13ce191f40c7dd065d3",
+  "heads_identical_per_shared_check": true,
+  "owners_passing": {
+    "head": 29,
+    "base": 25,
+    "owners": 69
+  },
+  "failing_roots": {
+    "head": 117,
+    "base": 138
+  },
+  "new_failing_roots_at_head": [],
+  "roots_passing_at_head_only": [
+    {
+      "file": "AlphabetReduction.lean",
+      "root": "Turing.FinTM.arCfg_cycle"
+    },
+    {
+      "file": "AlphabetReduction.lean",
+      "root": "Turing.FinTM.arMoveCfg_run"
+    },
+    {
+      "file": "AlphabetReduction.lean",
+      "root": "Turing.FinTM.arWriteCfg_run"
+    },
+    {
+      "file": "CallReturn.lean",
+      "root": "Complexity.LogProg.retR_run"
+    },
+    {
+      "file": "CallReturn.lean",
+      "root": "Complexity.LogProg.retR_scan"
+    },
+    {
+      "file": "CodeSimulator.lean",
+      "root": "Turing.MachineFormat.canonSuffix_run"
+    },
+    {
+      "file": "CodeSimulator.lean",
+      "root": "Turing.MachineFormat.canonTag_step"
+    },
+    {
+      "file": "CounterProg.lean",
+      "root": "Complexity.CounterProg.sim_step"
+    },
+    {
+      "file": "EXP.lean",
+      "root": "Complexity.enumCont_rewind"
+    },
+    {
+      "file": "InputLength.lean",
+      "root": "Turing.inputLength_round"
+    },
+    {
+      "file": "Loop.lean",
+      "root": "Turing.FinTM.loop_scan_left"
+    },
+    {
+      "file": "MathlibBridge.lean",
+      "root": "Turing.bridgeReach_step"
+    },
+    {
+      "file": "Primitives.lean",
+      "root": "Turing.FinTM.emitterP2_body_round"
+    },
+    {
+      "file": "StepBlockForward.lean",
+      "root": "Turing.StepBlock.fl_leaf_run"
+    },
+    {
+      "file": "StepClock.lean",
+      "root": "Turing.sc_finish"
+    },
+    {
+      "file": "TMSAT.lean",
+      "root": "Complexity.poly_loop"
+    },
+    {
+      "file": "Universal.lean",
+      "root": "Turing.timedCut_Interpreter_initialize"
+    },
+    {
+      "file": "Universal.lean",
+      "root": "Turing.timed_clock_pass"
+    },
+    {
+      "file": "Universal.lean",
+      "root": "Turing.timed_flush"
+    },
+    {
+      "file": "Universal.lean",
+      "root": "Turing.timed_output_forward"
+    },
+    {
+      "file": "UniversalInterpreter.lean",
+      "root": "Turing.universalInterpreter_initialize"
+    }
+  ],
+  "shared_roots_with_head_sites_outside_base": [
+    {
+      "file": "Basic.lean",
+      "root": "Turing.Segment.one",
+      "classification": "cascade: at base the `rfl` (455) that RO-1 replaces fails and ends the block; at head the citation passes and the proof reaches `exact ha` and `exact h₀` (457, 459), which read zero-step runs of the sealed runFrom",
+      "head": [
+        "Basic.lean:457:4: error: Type mismatch",
+        "Basic.lean:459:6: error: Type mismatch"
+      ],
+      "base": [
+        "Basic.lean:455:10: error: Application type mismatch: The argument"
+      ]
+    },
+    {
+      "file": "CodePrefix.lean",
+      "root": "Complexity.TimeHierarchy.pre_copy",
+      "classification": "cascade: at base the `change` (246) that RO-1 replaces fails and ends the block; at head the citation passes and the proof reaches the unchanged `simp [preTr]` (242), which leaves the sealed transition unsolved (reported at 241)",
+      "head": [
+        "CodePrefix.lean:241:32: error: unsolved goals",
+        "CodePrefix.lean:246:36: error: unsolved goals",
+        "CodePrefix.lean:258:53: error: Tactic `rfl` failed: The left-hand side"
+      ],
+      "base": [
+        "CodePrefix.lean:246:4: error: 'change' tactic failed, pattern",
+        "CodePrefix.lean:249:36: error: unsolved goals",
+        "CodePrefix.lean:261:53: error: Tactic `rfl` failed: The left-hand side"
+      ]
+    },
+    {
+      "file": "CodePrefix.lean",
+      "root": "Complexity.TimeHierarchy.pre_scan",
+      "classification": "cascade: at base the two `change`s (150, 152) that RO-1 replaces fails and ends the block; at head the citation passes and the proof reaches the unchanged `; rfl` and `simp [preTr, controlAction, scanPre]` tails of the same lines (150, 151)",
+      "head": [
+        "CodePrefix.lean:150:60: error: Tactic `rfl` failed: The left-hand side",
+        "CodePrefix.lean:151:4: error: unsolved goals",
+        "CodePrefix.lean:167:58: error: Tactic `rfl` failed: The left-hand side",
+        "CodePrefix.lean:169:6: error: 'change' tactic failed, pattern",
+        "CodePrefix.lean:171:6: error: 'change' tactic failed, pattern",
+        "CodePrefix.lean:188:58: error: Tactic `rfl` failed: The left-hand side",
+        "CodePrefix.lean:195:52: error: unsolved goals",
+        "CodePrefix.lean:197:46: error: Type mismatch"
+      ],
+      "base": [
+        "CodePrefix.lean:150:6: error: 'change' tactic failed, pattern",
+        "CodePrefix.lean:152:6: error: 'change' tactic failed, pattern",
+        "CodePrefix.lean:169:58: error: Tactic `rfl` failed: The left-hand side",
+        "CodePrefix.lean:171:6: error: 'change' tactic failed, pattern",
+        "CodePrefix.lean:173:6: error: 'change' tactic failed, pattern",
+        "CodePrefix.lean:190:58: error: Tactic `rfl` failed: The left-hand side",
+        "CodePrefix.lean:197:52: error: unsolved goals",
+        "CodePrefix.lean:199:46: error: Type mismatch"
+      ]
+    },
+    {
+      "file": "CounterLoop.lean",
+      "root": "Turing.counter_body",
+      "classification": "cascade: at base the `change` (1072) that RO-1 replaces fails and ends the block; at head the citation passes and the proof reaches `hc` for the `embedEmitCfg` let (1073) and the closing `rfl` (1075), both reading sealed definitions",
+      "head": [
+        "CounterLoop.lean:1073:36: error: Type mismatch",
+        "CounterLoop.lean:1075:4: error: Tactic `rfl` failed: The left-hand side",
+        "CounterLoop.lean:1091:8: error: 'change' tactic failed, pattern",
+        "CounterLoop.lean:1100:4: error: Tactic `rfl` failed: The left-hand side"
+      ],
+      "base": [
+        "CounterLoop.lean:1072:4: error: 'change' tactic failed, pattern",
+        "CounterLoop.lean:1092:8: error: 'change' tactic failed, pattern",
+        "CounterLoop.lean:1101:4: error: Tactic `rfl` failed: The left-hand side"
+      ]
+    },
+    {
+      "file": "Loop.lean",
+      "root": "Turing.FinTM.emCall_track_initial",
+      "classification": "cascade: at base the `change` (3595) that RO-1 replaces fails and ends the block; at head the citation passes and the proof reaches the unchanged `refine Cfg.ext rfl (moveInputPos_zero _) …` after a `simp only [MultiTapeTM.step, …]` that cannot unfold the sealed definitions (3599)",
+      "head": [
+        "Loop.lean:3599:21: error: Application type mismatch: The argument"
+      ],
+      "base": [
+        "Loop.lean:3595:2: error: 'change' tactic failed, pattern"
+      ]
+    },
+    {
+      "file": "OracleSim.lean",
+      "root": "Turing.oracleHost_initial",
+      "classification": "cascade: at base the `change` (1916) that RO-1 replaces fails and ends the block; at head the citation passes and the proof reaches the unchanged `simp [localInit, localDone, MultiTapeTM.step, …]`, which leaves `boot` unsolved over the sealed definitions (reported at its `by`, 1911)",
+      "head": [
+        "OracleSim.lean:1906:66: error: Application type mismatch: The argument",
+        "OracleSim.lean:1911:66: error: unsolved goals",
+        "OracleSim.lean:1917:38: error: Application type mismatch: The argument",
+        "OracleSim.lean:1921:46: error: Application type mismatch: The argument"
+      ],
+      "base": [
+        "OracleSim.lean:1910:66: error: Application type mismatch: The argument",
+        "OracleSim.lean:1916:4: error: 'change' tactic failed, pattern",
+        "OracleSim.lean:1921:38: error: Application type mismatch: The argument",
+        "OracleSim.lean:1925:46: error: Application type mismatch: The argument"
+      ]
+    },
+    {
+      "file": "OracleSim.lean",
+      "root": "Turing.oraclePrepare",
+      "classification": "cascade: at base the `change`s (982, 994, 1005, 1012) that RO-1 replaces fails and ends the block; at head the citation passes and the proof reaches the unchanged `simp [MultiTapeTM.step, …]` bullets and the closing `rfl` (981, 1006)",
+      "head": [
+        "OracleSim.lean:1006:8: error: unsolved goals",
+        "OracleSim.lean:980:19: error: Application type mismatch: The argument",
+        "OracleSim.lean:981:4: error: unsolved goals",
+        "OracleSim.lean:999:21: error: Application type mismatch: The argument"
+      ],
+      "base": [
+        "OracleSim.lean:1001:21: error: Application type mismatch: The argument",
+        "OracleSim.lean:1005:10: error: 'change' tactic failed, pattern",
+        "OracleSim.lean:1012:10: error: 'change' tactic failed, pattern",
+        "OracleSim.lean:980:19: error: Application type mismatch: The argument",
+        "OracleSim.lean:982:6: error: 'change' tactic failed, pattern",
+        "OracleSim.lean:994:6: error: 'change' tactic failed, pattern"
+      ]
+    },
+    {
+      "file": "StepBlock.lean",
+      "root": "Turing.StepBlock.seekTM_observe",
+      "classification": "cascade: at base the `change`s (1782, 1788) and `from` term (1795) that RO-1 replaces fails and ends the block; at head the citation passes and the proof reaches the unchanged `exact ⟨rfl, rfl, rfl, …⟩` (1796), whose `rfl`s read sealed definitions",
+      "head": [
+        "StepBlock.lean:1764:8: error: Tactic `rfl` failed: The left-hand side",
+        "StepBlock.lean:1772:8: error: Tactic `rfl` failed: The left-hand side",
+        "StepBlock.lean:1793:39: error: Type mismatch",
+        "StepBlock.lean:1796:23: error: Application type mismatch: The argument",
+        "StepBlock.lean:1798:24: error: Application type mismatch: The argument"
+      ],
+      "base": [
+        "StepBlock.lean:1762:8: error: Tactic `rfl` failed: The left-hand side",
+        "StepBlock.lean:1770:8: error: Tactic `rfl` failed: The left-hand side",
+        "StepBlock.lean:1782:4: error: 'change' tactic failed, pattern",
+        "StepBlock.lean:1788:6: error: 'change' tactic failed, pattern",
+        "StepBlock.lean:1793:39: error: Type mismatch",
+        "StepBlock.lean:1795:11: error: Type mismatch",
+        "StepBlock.lean:1798:24: error: Application type mismatch: The argument"
+      ]
+    }
+  ],
+  "unrooted": [
+    {
+      "file": "ObliviousSetup.lean",
+      "diagnostics": [
+        "error: (kernel) unknown constant '_private.ObliviousSetup.0.Complexity.setupCfg_start_center'"
+      ],
+      "classification": "setupCfg_allocation cites setupCfg_start_center, which fails its seal at both commits and so is absent from the kernel environment (as in round 1)"
+    }
+  ],
+  "line_numbers": "sealed runtime sources (seals/runtime and seals-cmp-base/runtime in the carrier)"
+}
