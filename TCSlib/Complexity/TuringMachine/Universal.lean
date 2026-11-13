@@ -560,13 +560,7 @@ private lemma timedCut_Interpreter_initialize {x : List Bool}
     MultiTapeTM.runFrom_add _ (1 + (table.length + 1) + (2 * bits.length + 2) + (n + 1)) (n + 2),
     MultiTapeTM.runFrom_add _ (1 + (table.length + 1) + (2 * bits.length + 2)) (n + 1),
     MultiTapeTM.runFrom_add _ (1 + (table.length + 1)) (2 * bits.length + 2),
-    MultiTapeTM.runFrom_add _ 1 (table.length + 1)]
-  change timedCutInterpreter.runFrom
-    (timedCutInterpreter.runFrom
-      (timedCutInterpreter.runFrom
-        (timedCutInterpreter.runFrom
-          (timedCutInterpreter.step (timedCut_InterpreterInitial p table))
-          (table.length + 1)) (2 * bits.length + 2)) (n + 1)) (n + 2) = _
+    MultiTapeTM.runFrom_add _ 1 (table.length + 1), MultiTapeTM.runFrom_one]
   rw [timedCut_Interpreter_first, hrew]
   have hc : timedCutInterpreter.runFrom
       (universalEvalCfg base (.countFirst true 0) table 0 (universalStateTape 0) 1)
@@ -2170,7 +2164,7 @@ private lemma timed_output_forward {x : List Bool} (cfg : Cfg 4 Bool UniversalCo
       rw [he, bufferTape_nat, List.getElem?_eq_none (le_refl _)]
     have h := timed_output_step cfg bs .flush none l.length out 0 none
       (by intro inp ws hw; simp [timedInterpreter, hw, hread])
-    simpa [he] using h
+    simpa [he, MultiTapeTM.runFrom_one] using h
   | cons b r ih =>
     intro l out hr
     have hread : bufferTape cfg.output (l.length : ℤ) = some b := by

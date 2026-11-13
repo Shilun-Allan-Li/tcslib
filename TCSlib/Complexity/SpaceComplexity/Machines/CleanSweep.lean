@@ -238,7 +238,7 @@ lemma goR_run (a b : ℤ) (Dt : Fin k → ℤ → Option Bool) (Mt : Fin k → �
       rw [apply_clAct]
       simp [wr, hp]
     have hbB' : |b| ≤ B := by have := hB i; rw [hp] at this; rw [abs_le] at this ⊢; omega
-    refine ⟨fun t ht => ?_, by simpa using hstep⟩
+    refine ⟨fun t ht => ?_, by simpa [MultiTapeTM.runFrom_one] using hstep⟩
     rcases Nat.lt_or_ge t 1 with h | h
     · obtain rfl : t = 0 := by omega
       exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
@@ -313,7 +313,7 @@ lemma erase_run (a b : ℤ) (f : ℤ → Option Bool) (ha : a ≤ 0) (haB : -B �
       congr 2 <;> simp
     have haB' : |a| ≤ B := by
       have := hB i; rw [hp, abs_le] at this; rw [abs_le]; omega
-    refine ⟨fun t ht => ?_, by simpa using hstep⟩
+    refine ⟨fun t ht => ?_, by simpa [MultiTapeTM.runFrom_one] using hstep⟩
     rcases Nat.lt_or_ge t 1 with h | h
     · obtain rfl : t = 0 := by omega
       exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
@@ -402,7 +402,7 @@ lemma back_run (a : ℤ) :
         split_ifs <;> rfl
       rw [e1, hp]
       congr 2; simp
-    refine ⟨fun t ht => ?_, by simpa using hstep⟩
+    refine ⟨fun t ht => ?_, by simpa [MultiTapeTM.runFrom_one] using hstep⟩
     rcases Nat.lt_or_ge t 1 with h | h
     · obtain rfl : t = 0 := by omega
       exact PB_ccfg _ _ _ _ _ _ _ _ hB hB

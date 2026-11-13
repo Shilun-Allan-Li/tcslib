@@ -985,9 +985,8 @@ private lemma enumCont_rewind {k : ℕ} {S : Type} {x : List Bool}
     omega
   refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_⟩
   · rw [moveInputPos_neg_val]; omega
-  · rw [MultiTapeTM.runFrom_add]
-    change tm.runFrom (tm.step c) _ = _
-    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_one, hstep,
+      rewind_scan tm scan dest hscan _ rfl hp]
 
 /-- The retained output word rewinds without being erased. Starting just
 left of cell `j`, the scan returns its head to zero in exactly `j+1` steps. -/

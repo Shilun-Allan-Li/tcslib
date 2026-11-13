@@ -492,9 +492,7 @@ private lemma arCfg_cycle {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
   | some q =>
     rw [show 3 * (N + 1) + 2 = (N + 1) + (1 + ((N + 1) + ((N + 1) + 1))) by omega,
       MultiTapeTM.runFrom_add, arReadCfg_run E e M c q hs (N + 1) (le_refl _)]
-    rw [MultiTapeTM.runFrom_add]
-    change (arTM E e M).tm.runFrom
-      ((arTM E e M).tm.step (arReadCfg E e c q ⟨N + 1, by omega⟩)) _ = _
+    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_one]
     rw [arReadCfg_dispatch, MultiTapeTM.runFrom_add,
       arWriteCfg_run E e M c _ N (le_refl _), arMoveCfg_run E e M c _ (N + 1) (le_refl _)]
     simp only [MultiTapeTM.step, hs]

@@ -220,7 +220,8 @@ private lemma acceptCfg_step (M : FinTM Bool) {x : List Bool}
     rw [MultiTapeTM.step_of_halt hs]
     cases hb : cfg.output.getLast?.getD false with
     | false =>
-      exact acceptTM_loop M (acceptCfg M cfg) (by simp [acceptCfg, acceptState, hs, hb]) 1
+      exact (MultiTapeTM.runFrom_one _ _).symm.trans
+        (acceptTM_loop M (acceptCfg M cfg) (by simp [acceptCfg, acceptState, hs, hb]) 1)
     | true =>
       exact MultiTapeTM.step_of_halt (by simp [acceptCfg, acceptState, hs, hb])
   | some q =>

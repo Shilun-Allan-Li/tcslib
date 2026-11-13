@@ -1969,6 +1969,7 @@ private lemma clPlaced_apply {k l : ℕ} {S H : Type} {x : List Bool}
       clPlacedCfg slots emb tapes heads (a.apply c) := by
   let constant : MultiTapeTM k Bool S := ⟨q, fun _ _ _ => a⟩
   have one := embedEmitTM_runFrom slots.index constant tapes heads [] {c with state := some q} 1
+  rw [MultiTapeTM.runFrom_one, MultiTapeTM.runFrom_one] at one
   change ((embedEmitTM slots.index constant).tr q c.inputSymbol _).apply
     (embedEmitCfg slots.index tapes heads [] {c with state := some q}) = _ at one
   have result := congrArg (Cfg.mapState emb) one
@@ -6684,7 +6685,7 @@ private lemma clA5Map_run {S : Type} [Fintype S] [DecidableEq S]
     intro pre hx q out
     simp only [List.append_nil] at hx
     subst x
-    simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, clA5MapTM,
+    simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, clA5MapTM,
       clA5MapCfg, Cfg.inputSymbol, Action.apply, clA5MapWord]
   | cons b rest ih =>
     intro pre hx q out

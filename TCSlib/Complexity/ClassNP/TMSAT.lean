@@ -305,7 +305,8 @@ private lemma poly_loop {c C : ℕ} (x : List Bool) (q : ℕ) (_hq : 0 < q) :
         rw [show polyCost q C 0 + 2 = 1 + (C + 1) + 1 by simp [polyCost]; omega,
           MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
           show (polyUnaryTM c C).tm.runFrom (polyCfg x q (.loop 0) h' o) 1 =
-            polyCfg x q (.emit ⟨C, by omega⟩) h' o by simpa using hs,
+            polyCfg x q (.emit ⟨C, by omega⟩) h' o by
+              rw [MultiTapeTM.runFrom_one]; simpa using hs,
           poly_emit x q h' C (le_refl C),
           MultiTapeTM.runFrom_one]
         simpa [h'] using poly_advance (C := C) x q h'
@@ -341,7 +342,8 @@ private lemma poly_loop {c C : ℕ} (x : List Bool) (q : ℕ) (_hq : 0 < q) :
         rw [show polyCost q C i + 2 = 1 + polyCost q C i + 1 by omega,
           MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
           show (polyUnaryTM c C).tm.runFrom (polyCfg x q (.loop ⟨i, hi⟩) h' o) 1 =
-            polyCfg x q (.loop ⟨i - 1, by omega⟩) h' o by simpa using hs,
+            polyCfg x q (.loop ⟨i - 1, by omega⟩) h' o by
+              rw [MultiTapeTM.runFrom_one]; simpa using hs,
           hinner', MultiTapeTM.runFrom_one]
         simpa [h'] using poly_advance (C := C) x q h'
           (o ++ List.replicate (C * q ^ i) true) (⟨i, hi⟩ : Fin (c + 1))

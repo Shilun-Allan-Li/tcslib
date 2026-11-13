@@ -134,7 +134,7 @@ lemma ret2_run (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)
       rw [apply_inputOnly]
       congr 1
       rw [hz]; exact Fin.ext (by simp [moveInputPos])
-    refine ⟨fun t ht => ?_, by simpa using hstep⟩
+    refine ⟨fun t ht => ?_, by simpa [MultiTapeTM.runFrom_one] using hstep⟩
     rcases Nat.lt_or_ge t 1 with h | h
     · obtain rfl : t = 0 := by omega
       rfl
@@ -221,7 +221,7 @@ lemma retR_scan (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)
         by_cases hr : r = rr
         · subst hr; right; simp [mkCfg, hpos]
         · left; simp [mkCfg, hr]
-    · simpa using hstep
+    · simpa [MultiTapeTM.runFrom_one] using hstep
   | succ n ih =>
     intro rp hp hn
     have hpos : rp (rr) = n := by omega
@@ -319,7 +319,7 @@ lemma retR_run (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)
       rw [apply_regMove]
       congr 1
       rw [hm1]; simp
-    refine ⟨1, fun t ht r => ?_, by simpa using hstep⟩
+    refine ⟨1, fun t ht r => ?_, by simpa [MultiTapeTM.runFrom_one] using hstep⟩
     rcases Nat.lt_or_ge t 1 with h | h
     · obtain rfl : t = 0 := by omega
       exact ⟨Or.inl (by simp [mkCfg]), by funext i; simp [mkCfg]⟩

@@ -396,8 +396,9 @@ private lemma redirect_step (M : FinTM Bool) (haltOn : Bool) {x : List Bool}
     rw [MultiTapeTM.step_of_halt hs]
     by_cases hr : c.output.getLast? = some haltOn
     · exact MultiTapeTM.step_of_halt (by simp [redirectCfg, redirectState, hs, hr])
-    · exact redirect_loop M haltOn (redirectCfg M haltOn c)
-        (by simp [redirectCfg, redirectState, hs, hr]) 1
+    · exact (MultiTapeTM.runFrom_one _ _).symm.trans
+        (redirect_loop M haltOn (redirectCfg M haltOn c)
+          (by simp [redirectCfg, redirectState, hs, hr]) 1)
   | some q =>
     have hi : (redirectCfg M haltOn c).inputSymbol = c.inputSymbol := rfl
     have hw : (redirectCfg M haltOn c).workTapeSymbols = c.workTapeSymbols := rfl

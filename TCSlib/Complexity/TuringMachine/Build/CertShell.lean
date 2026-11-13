@@ -423,7 +423,7 @@ private theorem certGuard_run {k : ℕ} {y : List Bool} (slot : Fin k)
       else Cfg.ofWords true w := by
   have he : FinTM.bufferTape (w slot) 0 = none ↔ w slot = [] := by
     cases w slot <;> simp [FinTM.bufferTape]
-  simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, certGuardTM,
+  simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, certGuardTM,
     Cfg.ofWords, Cfg.workTapeSymbols, Action.apply, he]
   split <;> simp
 

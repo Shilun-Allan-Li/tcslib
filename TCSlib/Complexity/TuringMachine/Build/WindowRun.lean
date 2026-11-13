@@ -134,7 +134,7 @@ theorem windowRun_halted_of_run {k : ℕ} {Q T : Type} {x : List Bool}
         have hrun : M.runFrom c (t + 1) = M.runFrom (M.step c) t :=
           MultiTapeTM.runFrom_succ_eq_step
         have hstep : (M.step c).InWindow s := by
-          simpa [MultiTapeTM.runFrom_succ_eq_step] using hwin 1 (by omega)
+          simpa [MultiTapeTM.runFrom_one] using hwin 1 (by omega)
         have key := ih t (M.step c) (by omega) (by rw [← hrun]; exact hhalt)
           (fun u hu => by
             have h := hwin (u + 1) (by omega)
@@ -231,7 +231,7 @@ theorem windowRun_spec {k : ℕ} {Q T : Type} {x : List Bool}
         · simp [windowRun, hst, hw]
         · intro _
           refine ⟨by omega, by simpa using hst, ?_⟩
-          simpa [MultiTapeTM.runFrom_succ_eq_step] using hw
+          simpa [MultiTapeTM.runFrom_one] using hw
         · simp [windowRun, hst, hw]
 
 /-- **The tag tracks the output.** If the tag `σ` of output words is compatible with `upd`
@@ -307,7 +307,7 @@ theorem windowRun_exhausted_of_live {k : ℕ} {Q T : Type} {x : List Bool}
     intro c τ hlive hwin
     have hst : c.state ≠ none := by simpa using hlive 0 (by omega)
     have hw : (M.step c).InWindow s := by
-      simpa [MultiTapeTM.runFrom_succ_eq_step] using hwin 1 (by omega)
+      simpa [MultiTapeTM.runFrom_one] using hwin 1 (by omega)
     have heq : windowRun M s upd (N + 1) c τ =
         windowRun M s upd N (M.step c) (upd τ (M.outputSymbol c)) := by
       simp only [windowRun, if_neg hst, if_pos hw]

@@ -349,7 +349,7 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
     simp only [Function.comp_apply] at this
     rw [this]; simp
   · rw [MultiTapeTM.runFrom_add]
-    change (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) _ = _
+    rw [MultiTapeTM.runFrom_one]
     rw [MultiTapeTM.runFrom_add, ← hgH, MultiTapeTM.runFrom_add]
     rw [show (compileTM P l₀ D q0).runFrom gH 1 = (compileTM P l₀ D q0).step gH from MultiTapeTM.runFrom_one _ _, hret1,
       MultiTapeTM.runFrom_add, hr2, hr3, hfinal]

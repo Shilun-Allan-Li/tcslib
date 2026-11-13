@@ -779,7 +779,7 @@ private lemma loopReplay_run (x : List Bool) (p : Fin (x.length + 2))
   induction rest with
   | nil =>
     intro pre out
-    simpa [MultiTapeTM.runFrom_succ_eq_step] using loopReplay_step x p pre [] out
+    simpa [MultiTapeTM.runFrom_one] using loopReplay_step x p pre [] out
   | cons b rest ih =>
     intro pre out
     rw [List.length_cons, MultiTapeTM.runFrom_succ_eq_step, loopReplay_step]
@@ -1691,13 +1691,13 @@ private lemma loopHost_borrow_run (body F : FinTM Bool) (anchor : body.State) (f
   induction word with
   | nil =>
     intro pre
-    simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_succ_eq_step] using
+    simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_one] using
       loopHost_borrow_step body F anchor forward findMode base p pre []
   | cons b word ih =>
     intro pre
     cases b with
     | true =>
-      simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_succ_eq_step] using
+      simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_one] using
         loopHost_borrow_step body F anchor forward findMode base p pre (true :: word)
     | false =>
       simp only [loopBorrowPos]
@@ -1939,6 +1939,7 @@ private lemma loopHost_accept (body F : FinTM Bool) (anchor : body.State)
   cases findMode with
   | false =>
     refine ⟨1, by omega, ?_⟩
+    rw [MultiTapeTM.runFrom_one]
     change ((loopHostTM body F anchor false).tm.step base).state = none ∧
       ((loopHostTM body F anchor false).tm.step base).output = [true]
     rw [hstep]
@@ -4856,7 +4857,7 @@ private lemma emCall_exit_fixed (M : FinTM Bool) (emit : Bool) (x : List Bool)
     emCallEmbeddedCfg (emCallPairEmbedding M) (fun q => .inr (.inr q))
       z.workTapes z.workTapePos c at he
   rw [hframe] at he
-  exact he
+  exact (MultiTapeTM.runFrom_one _ _).symm.trans he
 
 /-- The complete clean call returns at its actual first positive exit.
 **Proof sketch.** Cut the bounded complete run at the least exit visit.

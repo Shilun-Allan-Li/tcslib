@@ -163,7 +163,7 @@ theorem compile_correct_from (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD 
         | none =>
           have hst := step_seam_prog P l₀ D q0 c l hs hcl
           have hr : rstep P oracle c = P.tm.step c := by simp [rstep, hs, hcl]
-          refine ⟨1, by rw [hr]; exact hst, fun t ht => ?_⟩
+          refine ⟨1, by rw [MultiTapeTM.runFrom_one, hr]; exact hst, fun t ht => ?_⟩
           rcases Nat.lt_or_ge t 1 with h | h
           · obtain rfl : t = 0 := by omega
             exact ⟨fun r => by simpa [seam] using hbN r, fun i => by simp [seam]⟩

@@ -160,7 +160,8 @@ private lemma setupCfg_reset (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     simpa only [MultiTapeTM.runFrom_one] using hs
   rw [show p.val - 1 + 2 = 1 + (p.val - 1) + 1 by omega,
     MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hs1,
-    setupCfg_reset_scan W a base b u g bt ut gt _ (by have := p.isLt; omega)]
+    setupCfg_reset_scan W a base b u g bt ut gt _ (by have := p.isLt; omega),
+    MultiTapeTM.runFrom_one]
   change ((obliviousSchedule W a).tm.tr .resetScan _ _).apply _ = _
   simp only [obliviousSchedule, setupCfg_input, Fin.val_zero, if_true]
   rw [setupCfg_apply]

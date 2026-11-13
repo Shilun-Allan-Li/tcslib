@@ -3096,7 +3096,7 @@ private lemma exists_canonStripTM :
   let stopped := halt.runFrom (emitted.mapState (fun _ => ())) 1
   have stopped_eq : stopped =
       { emitted.mapState (fun _ => ()) with state := none } := by
-    simp [stopped, halt, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step,
+    simp [stopped, halt, MultiTapeTM.runFrom_one, MultiTapeTM.step,
       emitted, Cfg.mapState, Cfg.ofWords, Action.apply]
   have finished := seamCompTM_run_ofCfg release (Sum.inr exit) halt ()
     released rfl releaseCut (rfl : halt.runFrom (emitted.mapState (fun _ => ())) 1 = stopped)
@@ -3555,7 +3555,7 @@ private lemma canonUnaryCore_run {x : List Bool} (w : List Bool)
   have cellEq : afterCell = _ := canonCell_step false cellStart none cellState
   have stateT : afterCell.state = some (some bit) := by rw [cellEq]
   have second := phaseHostTM_run canonUnaryFamily ⟨none, .dec .run⟩ canonUnaryNext
-    (some none) cellStart afterCell 1 rfl (some bit) stateT
+    (some none) cellStart afterCell 1 (MultiTapeTM.runFrom_one _ _) (some bit) stateT
     ⟨some (some bit), .sweep⟩ rfl (by
       intro u hu s state
       have zero : u = 0 := by omega
@@ -3962,8 +3962,8 @@ private lemma canonPairs_run {m : ℕ} {x : List Bool} (vs : List (Bool → Bool
             state := some (Sum.inr (j, some a))
             inputPos := moveInputPos d.inputPos 1 }
         have run1 : M.runFrom d 1 = d1 :=
-          step_of_inputMoveAction M d _ state
-            (by simp [M, canonPairsTM, more, read])
+          (MultiTapeTM.runFrom_one _ _).trans (step_of_inputMoveAction M d _ state
+            (by simp [M, canonPairsTM, more, read]))
         have pos1 : d1.inputPos.val = (p + 1) + 1 := by
           exact advance.1
         have range1 : p + 1 ≤ x.length := by have := d1.inputPos.isLt; omega
@@ -4018,7 +4018,8 @@ private lemma canonPairs_run {m : ℕ} {x : List Bool} (vs : List (Bool → Bool
                 state := some (Sum.inr (j', none))
                 inputPos := moveInputPos d1.inputPos 1 }
             have run2 : M.runFrom d 2 = d2 := by
-              rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_add (tm := M) d 1 1, run1]
+              rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_add (tm := M) d 1 1, run1,
+                MultiTapeTM.runFrom_one]
               exact step_of_inputMoveAction M d1 _ d1state
                 (by simp [M, canonPairsTM, more, read1, valid, j'])
             have advance1 := native1.2 b ys advance.2
@@ -4485,7 +4486,8 @@ private lemma canonSuffix_run {m : ℕ} {x : List Bool} (d : Cfg m Bool (Option 
           ∀ u < t, ∀ b, ((canonSuffixTM m).runFrom d u).state ≠ some (some b) := by
       have step : (canonSuffixTM m).runFrom d 1 =
           { d with state := some (some bit), inputPos := moveInputPos d.inputPos 0 } :=
-        step_of_inputMoveAction (canonSuffixTM m) d 0 state (by rw [hv]; exact htr)
+        (MultiTapeTM.runFrom_one _ _).trans
+          (step_of_inputMoveAction (canonSuffixTM m) d 0 state (by rw [hv]; exact htr))
       refine ⟨1, by omega, ?_, ?_, ?_, ?_, ?_⟩
       · rw [step, value]
       · rw [step]

@@ -880,7 +880,7 @@ when the source NDTM would accept an empty input and empty choice word. -/
 private lemma cont_pair_empty (N : FinNDTM Bool) :
     (contPairTM N).ComputesInTime [] [false] 1 := by
   apply (computesInTime_iff _ _ _ _).mpr
-  simp [MultiTapeTM.runFrom_succ_eq_step,
+  simp [MultiTapeTM.runFrom_one,
     MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init, Cfg.inputSymbol, contPairTM]
 
 /-- The library split emitter, retaining the exact encoded pair on success
@@ -3054,13 +3054,13 @@ private lemma a2Borrow_run (out : List Bool) (x : List Bool) (p : Fin (x.length 
   induction u with
   | nil =>
     intro pre
-    simpa [a2BorrowPos, a2Debit, MultiTapeTM.runFrom_succ_eq_step] using
+    simpa [a2BorrowPos, a2Debit, MultiTapeTM.runFrom_one] using
       a2Borrow_step out x p pre []
   | cons b u ih =>
     intro pre
     cases b with
     | true =>
-      simpa [a2BorrowPos, a2Debit, MultiTapeTM.runFrom_succ_eq_step] using
+      simpa [a2BorrowPos, a2Debit, MultiTapeTM.runFrom_one] using
         a2Borrow_step out x p pre (true :: u)
     | false =>
       simp only [a2BorrowPos]
@@ -3151,8 +3151,9 @@ private lemma a2_countdown (x : List Bool) (p : Fin (x.length + 2)) (n : ℕ) :
       have hstep : a2DebitTM.tm.runFrom
           (a2DebitCfg out x p (.inr true) 0 (a2Debit u).1) 1 =
           a2DebitCfg (out ++ [true]) x p (.inl none) 0 (a2Debit u).1 := by
+        rw [MultiTapeTM.runFrom_one]
         refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
-        funext i; simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, a2DebitCfg,
+        funext i; simp [MultiTapeTM.step, a2DebitCfg,
           a2DebitTM, Action.apply]
       refine ⟨(2 * a2BorrowPos u + 2) + 1 + t, ?_, ?_⟩
       · rw [a2Debit_length] at ht

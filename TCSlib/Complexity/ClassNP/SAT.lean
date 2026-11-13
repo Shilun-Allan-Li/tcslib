@@ -275,7 +275,7 @@ private lemma satScan_run {S : Type} [Fintype S] [DecidableEq S]
   | nil =>
     intro pre hx q
     subst x
-    simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, satScanTM,
+    simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, satScanTM,
       satScanCfg, Cfg.inputSymbol, Action.apply]
   | cons b rest ih =>
     intro pre hx q
@@ -2773,7 +2773,7 @@ private lemma satMap_run {S : Type} [Fintype S] [DecidableEq S]
     intro pre hx q out
     simp only [List.append_nil] at hx
     subst x
-    simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, satMapTM,
+    simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, satMapTM,
       satMapCfg, Cfg.inputSymbol, Action.apply, satMapWord]
   | cons b rest ih =>
     intro pre hx q out

@@ -472,7 +472,8 @@ private lemma bridgeReach_refl {k : ℕ} {A Q : Type} {x : List A}
     (M : MultiTapeTM k A Q) (a : Cfg k A Q x) : bridgeReach M a a := ⟨0, rfl⟩
 
 private lemma bridgeReach_step {k : ℕ} {A Q : Type} {x : List A}
-    (M : MultiTapeTM k A Q) (a : Cfg k A Q x) : bridgeReach M a (M.step a) := ⟨1, rfl⟩
+    (M : MultiTapeTM k A Q) (a : Cfg k A Q x) : bridgeReach M a (M.step a) :=
+  ⟨1, MultiTapeTM.runFrom_one _ _⟩
 
 private lemma bridgeReach_trans {k : ℕ} {A Q : Type} {x : List A}
     (M : MultiTapeTM k A Q) {a b d : Cfg k A Q x}

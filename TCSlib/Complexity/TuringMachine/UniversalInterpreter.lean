@@ -705,13 +705,7 @@ private lemma universalInterpreter_initialize {x : List Bool}
     MultiTapeTM.runFrom_add _ (1 + (table.length + 1) + (2 * bits.length + 2) + (n + 1)) (n + 2),
     MultiTapeTM.runFrom_add _ (1 + (table.length + 1) + (2 * bits.length + 2)) (n + 1),
     MultiTapeTM.runFrom_add _ (1 + (table.length + 1)) (2 * bits.length + 2),
-    MultiTapeTM.runFrom_add _ 1 (table.length + 1)]
-  change universalInterpreter.runFrom
-    (universalInterpreter.runFrom
-      (universalInterpreter.runFrom
-        (universalInterpreter.runFrom
-          (universalInterpreter.step (universalInterpreterInitial p table))
-          (table.length + 1)) (2 * bits.length + 2)) (n + 1)) (n + 2) = _
+    MultiTapeTM.runFrom_add _ 1 (table.length + 1), MultiTapeTM.runFrom_one]
   rw [universalInterpreter_first, hrew]
   have hc : universalInterpreter.runFrom
       (universalEvalCfg base (.countFirst true 0) table 0 (universalStateTape 0) 1)
