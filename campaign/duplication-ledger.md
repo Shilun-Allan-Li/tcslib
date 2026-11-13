@@ -1204,6 +1204,9 @@ vendored file's local modifications. It needs no import changes and also covers 
 `bufferedScanCfg_run`, which the `CfgFacts` home could not reach (cycle through `StateRenaming`).
 The proposal is `campaign/items/dedup/overnight-2026-11-08/review/ro1-deterministic-option/`. It
 is rebuilt after #251, #241 and #242 merge.
+**Rebuilt (2026-11-12/13):** draft PR #296 at `677970b0`, gate 132. It cites the lemma in 59 owners and deletes the
+five copies (the Bool-only public one and four privates). It keeps the campaign text at the six `0 + 1`
+induction bases in `Primitives` and at `Bidirectional`'s `foldCfg_run`, which close only by unfolding `runFrom`.
 
 **NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
 `qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and

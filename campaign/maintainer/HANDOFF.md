@@ -18,6 +18,7 @@ snapshot. See campaign/status/2026-11-09-merge-243-244/.
 
 | PR / gate | Current state |
 |---|---|
+| #296 / 132 | **Not yet clear to merge** (draft) at `677970b0e7bba401a707e409b5c275a664924f0b`: RO-1, `MultiTapeTM.runFrom_one` in `Deterministic`, cited at the one-step sites of 59 owners; five copies deleted. Replay (403 modules), seals with base comparison, controls, lint and copy screen checked; Codex audit (Seyoon, 2026-11-12). See campaign/gates/132-runfrom-one/. |
 | #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
 | #242 / 122 | **Merged** at `7b6bd1685a1436313dfbc13ce191f40c7dd065d3` (2026-11-12). Gate closed. Its replay output is the campaign snapshot `oleans-c7b6b` (campaign/status/2026-11-12-merge-242/). |
@@ -44,7 +45,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 `runFrom_succ_eq_step`, with no import changes, and is added to the file's
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
-with them), then gets its own replay and gate. The archived `CfgFacts` draft is superseded. The approved
+with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132).** The archived `CfgFacts` draft is superseded. The approved
 Hardness CfgFacts import stays separate. Next free gate 132. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.

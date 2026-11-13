@@ -1,0 +1,72 @@
+{
+  "head": "677970b0e7bba401a707e409b5c275a664924f0b",
+  "base": "7b6bd1685a1436313dfbc13ce191f40c7dd065d3",
+  "heads_identical_per_shared_check": true,
+  "owners_passing": {
+    "head": 26,
+    "base": 24,
+    "owners": 60
+  },
+  "failing_roots": {
+    "head": 100,
+    "base": 106
+  },
+  "new_failing_roots_at_head": [],
+  "roots_passing_at_head_only": [
+    {
+      "file": "CodeSimulator.lean",
+      "root": "Turing.MachineFormat.canonTag_step"
+    },
+    {
+      "file": "CounterProg.lean",
+      "root": "Complexity.CounterProg.sim_step"
+    },
+    {
+      "file": "Primitives.lean",
+      "root": "Turing.FinTM.emitterP2_body_round"
+    },
+    {
+      "file": "StepBlockForward.lean",
+      "root": "Turing.StepBlock.fl_leaf_run"
+    },
+    {
+      "file": "Universal.lean",
+      "root": "Turing.timed_clock_pass"
+    },
+    {
+      "file": "Universal.lean",
+      "root": "Turing.timed_flush"
+    }
+  ],
+  "shared_roots_with_head_sites_outside_base": [
+    {
+      "file": "Loop.lean",
+      "root": "Turing.FinTM.emCall_track_initial",
+      "classification": "cascade: the base fails at the change/from step RO1 replaces, aborting the block; at head the replacement passes and an unchanged later line, already reading a foreign definition, fails"
+    },
+    {
+      "file": "OracleSim.lean",
+      "root": "Turing.oracleHost_initial",
+      "classification": "cascade: the base fails at the change/from step RO1 replaces, aborting the block; at head the replacement passes and an unchanged later line, already reading a foreign definition, fails"
+    },
+    {
+      "file": "StepBlock.lean",
+      "root": "Turing.StepBlock.seekTM_observe",
+      "classification": "cascade: the base fails at the change/from step RO1 replaces, aborting the block; at head the replacement passes and an unchanged later line, already reading a foreign definition, fails"
+    }
+  ],
+  "unrooted": [
+    {
+      "file": "ObliviousSetup.lean",
+      "diagnostics": [
+        "error: (kernel) unknown constant '_private.ObliviousSetup.0.Complexity.setupCfg_start_center'"
+      ],
+      "classification": "setupCfg_allocation cites setupCfg_start_center, which fails its seal at both commits and so is absent from the kernel environment"
+    }
+  ],
+  "private_heads_left_unsealed": [
+    "_private.TCSlib.Complexity.TuringMachine.UniversalStartup.0.Turing.universalInputCfg"
+  ],
+  "bidirectional": "at 069c76bd, foldCfg_run newly failed (its 0 + 1 base closed only by unfolding MultiTapeTM.runFrom natively); 2a9f32da restores the campaign text and the file leaves the PR",
+  "glue_cleanup": "677970b0 removes five show (1 : ℕ) = 0 + 1 from rfl rewrites left before runFrom_one (NDNormalForm, SeamLayout x3, NDCodeSimulator); found while dispositioning the 2a9f32da copy screen; every check reran at 677970b0"
+}
