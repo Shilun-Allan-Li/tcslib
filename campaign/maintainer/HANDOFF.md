@@ -18,7 +18,7 @@ snapshot. See campaign/status/2026-11-09-merge-243-244/.
 
 | PR / gate | Current state |
 |---|---|
-| #296 / 132 | **Not yet clear to merge** (draft) at `677970b0e7bba401a707e409b5c275a664924f0b`: RO-1, `MultiTapeTM.runFrom_one` in `Deterministic`, cited at the one-step sites of 59 owners; five copies deleted. Replay (403 modules), seals with base comparison, controls, lint and copy screen checked; Codex bundle published, **ready to dispatch** (prompt.md; Codex, Seyoon 2026-11-12). See campaign/gates/132-runfrom-one/. |
+| #296 / 132 | **Not yet clear to merge.** Round 1 (Codex) **HOLD**: three minors (G132-01/02: 18 further one-step sites, three owners outside the PR; G132-03: pack counts). No soundness defect or new failing seal root. Repairs in progress. See campaign/gates/132-runfrom-one/. |
 | #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
 | #242 / 122 | **Merged** at `7b6bd1685a1436313dfbc13ce191f40c7dd065d3` (2026-11-12). Gate closed. Its replay output is the campaign snapshot `oleans-c7b6b` (campaign/status/2026-11-12-merge-242/). |
