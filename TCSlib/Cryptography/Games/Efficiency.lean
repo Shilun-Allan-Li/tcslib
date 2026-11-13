@@ -93,7 +93,8 @@ handler, the reduction's output. This bounds every history, which the guarded st
   finalization, with up to `finCall(n)` outer queries.
 * `Games.InteractiveHandler.rU`, `rZ`, `rW`, `rS`, `rI`, `rX`, `rL`, `rCnt`, `rAns`: the fields of
   a round input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩` (and the first component of the state, and
-  the answer of the first entry of the outer log).
+  the answer of the first entry of the outer log); `Games.InteractiveHandler.finA`: the adversary's
+  output in a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`.
 
 ## Main results
 
@@ -105,10 +106,11 @@ handler, the reduction's output. This bounds every history, which the guarded st
   finalization. The reductions that forward or answer queries with their own oracle need it (the
   PRF MAC's distinguisher, hash-and-sign's forger, the CPA and CCA reductions).
 * `Games.InteractiveHandler.rU_input`, …, `rCnt_input`, `rAns_input`: the readers of a round
-  input on `InteractiveHandler.input`; `Games.InteractiveHandler.impl_of_ret`,
-  `Games.InteractiveHandler.impl_of_query`: a call whose first round returns, or asks one outer
-  query and returns in its second round; `Games.InteractiveHandler.finish_of_ret`: a finalization
-  whose first round returns.
+  input on `InteractiveHandler.input`; `rU_finInput`, `rZ_finInput`, `rW_finInput`, `rS_finInput`,
+  `rL_finInput`, `finA_finInput`: the readers of a finalization input on `finInput`;
+  `Games.InteractiveHandler.impl_of_ret`, `Games.InteractiveHandler.impl_of_query`: a call whose
+  first round returns, or asks one outer query and returns in its second round;
+  `Games.InteractiveHandler.finish_of_ret`: a finalization whose first round returns.
 * `Games.exists_toCompOn_of_toComp` (the fill's target): a machine without input is a machine
   with an input that it ignores, with the same coins.
 * `Games.expect_toCompOn_outLen`: a machine's output length may be changed along an equality.
@@ -481,6 +483,9 @@ def rCnt (w : List Bool) : List Bool := pairFstD (rS w)
 `rAns w = pairSndD (pairSndD (pairFstD (rL w)))`. -/
 def rAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
 
+/-- `rAns w = pairSndD (pairSndD (pairFstD (rL w)))`. -/
+theorem rAns_eq (w : List Bool) : rAns w = pairSndD (pairSndD (pairFstD (rL w))) := rfl
+
 /-- `rU (input n z ω s i x L) = 1^n`. -/
 theorem rU_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
     rU (input n z ω s i x L) = List.replicate n true := by
@@ -716,6 +721,45 @@ def finInput (n : ℕ) (z ω s a L : List Bool) : List Bool :=
 theorem finInput_eq (n : ℕ) (z ω s a L : List Bool) :
     finInput n z ω s a L = pairEncode (seedIn n z ω) (pairEncode s (pairEncode a L)) :=
   rfl
+
+/-! #### Readers of a finalization input
+
+A finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩` has the shape of a round input, so the
+round-input readers `rU`, `rZ`, `rW`, `rS` and `rL` read its parameter, reduction input, seed,
+state and outer log (`rU_finInput`, …); `finA` reads the adversary's output. -/
+
+/-- `rU (finInput n z ω s a L) = 1^n`. -/
+theorem rU_finInput (n : ℕ) (z ω s a L : List Bool) :
+    rU (finInput n z ω s a L) = List.replicate n true := by
+  simp only [rU, finInput_eq, seedIn_eq, pairFstD_pairEncode]
+
+/-- `rZ (finInput n z ω s a L) = z`. -/
+theorem rZ_finInput (n : ℕ) (z ω s a L : List Bool) : rZ (finInput n z ω s a L) = z := by
+  simp only [rZ, finInput_eq, seedIn_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- `rW (finInput n z ω s a L) = ω`. -/
+theorem rW_finInput (n : ℕ) (z ω s a L : List Bool) : rW (finInput n z ω s a L) = ω := by
+  simp only [rW, finInput_eq, seedIn_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- `rS (finInput n z ω s a L) = s`. -/
+theorem rS_finInput (n : ℕ) (z ω s a L : List Bool) : rS (finInput n z ω s a L) = s := by
+  simp only [rS, finInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- `rL (finInput n z ω s a L) = L`. -/
+theorem rL_finInput (n : ℕ) (z ω s a L : List Bool) : rL (finInput n z ω s a L) = L := by
+  simp only [rL, finInput_eq, pairSndD_pairEncode]
+
+/-- The adversary's output `a` of a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`:
+`finA w = pairFstD (pairSndD (pairSndD w))`. -/
+def finA (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD w))
+
+/-- `finA (finInput n z ω s a L) = a`. -/
+theorem finA_finInput (n : ℕ) (z ω s a L : List Bool) : finA (finInput n z ω s a L) = a := by
+  simp only [finA, finInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- `finA` is polynomial-time: `PolyTimeComputable finA`. -/
+theorem polyTimeComputable_finA : PolyTimeComputable finA :=
+  polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
 /-- **The finalization** in the final state `s`, after the adversary's output `a`: the
 reduction's `outLen(n)`-bit output, computed with at most `finCall(n)` outer queries, in at most

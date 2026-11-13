@@ -536,8 +536,8 @@ theorem ofFn_snmEntry {n : ℕ} (sk : List Bool) (copy : Bool) (c : Fin (S.ctLen
 /-- **The real experiment's view is `realView`:** for an output `w` and a final state `s`,
 `snmView a (M.draw … a ρ) (d_i)_i (snmSigma w) = realView … ⟦w⟧ s`, with `a` the recorded parameter.
 
-**Proof sketch.** Block by block: `ofFn_block` for the ciphertexts, `decide_map_ofFn` for the
-copy test, `ofFn_snmEntry` for the entries and `ofFn_natAdd_eq_drop` for `σ`. -/
+**Proof sketch.** Block by block: `ofFn_block_eq_coinBlock` for the ciphertexts, `decide_map_ofFn`
+for the copy test, `ofFn_snmEntry` for the entries and `ofFn_natAdd_eq_drop` for `σ`. -/
 theorem snmView_realView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ : M.samp.Coins n)
     (w : Fin (r * S.ctLen.eval n + sl) → Bool) (s : S.SnmState M n) :
     S.snmView ((s.map Prod.snd).getD (zeroBits (M.paramLen.eval n)))
@@ -548,15 +548,16 @@ theorem snmView_realView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ : 
   rw [snmView_eq, realView_eq, M.draw_eq, drawWith_eq, snmSigma_eq, ofFn_natAdd_eq_drop]
   congr 3
   refine ofFn_eq_map_range _ _ fun i => ?_
-  have hc : chunkAt (S.ctLen.eval n) i (List.ofFn w) = List.ofFn (S.snmCt w i) := by
-    rw [snmCt_eq, ofFn_block]
+  have hc : coinBlock (S.ctLen.eval n) i (List.ofFn w) = List.ofFn (S.snmCt w i) := by
+    rw [snmCt_eq, ofFn_block_eq_coinBlock]
   rw [hc, decide_map_ofFn, ofFn_snmEntry]
 
 /-- **The ideal experiment's view is `idealView`:** for an output `w` and the oracle's final state
 `sa`, `snmView a (M.draw … a ρ) (d_i)_i (snmSigma w) = idealView … ⟦w⟧ sa`.
 
-**Proof sketch.** Entry `i` of `w` is the block `chunkAt (ctLen(n) + 1) i ⟦w⟧` (`ofFn_block`),
-whose head is the `COPY` flag and whose tail is the ciphertext (`simEntry_fst`, `simEntry_snd`). -/
+**Proof sketch.** Entry `i` of `w` is the block `coinBlock (ctLen(n) + 1) i ⟦w⟧`
+(`ofFn_block_eq_coinBlock`), whose head is the `COPY` flag and whose tail is the ciphertext
+(`simEntry_fst`, `simEntry_snd`). -/
 theorem snmView_idealView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ : M.samp.Coins n)
     (w : Fin (r * (S.ctLen.eval n + 1) + sl) → Bool)
     (sa : Option (Fin (M.paramLen.eval n) → Bool)) :
@@ -567,9 +568,9 @@ theorem snmView_idealView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ :
   rw [snmView_eq, idealView_eq, M.draw_eq, drawWith_eq, snmSigma_eq, ofFn_natAdd_eq_drop]
   congr 3
   refine ofFn_eq_map_range _ _ fun i => ?_
-  have hc : chunkAt (S.ctLen.eval n + 1) i (List.ofFn w) =
+  have hc : coinBlock (S.ctLen.eval n + 1) i (List.ofFn w) =
       (S.simEntry w i).1 :: List.ofFn (S.simEntry w i).2 := by
-    rw [← ofFn_block, List.ofFn_succ, simEntry_fst]
+    rw [← ofFn_block_eq_coinBlock, List.ofFn_succ, simEntry_fst]
     exact congrArg _ (congrArg List.ofFn (funext fun j => (simEntry_snd S w i j).symm))
   rw [hc, List.headD_cons, List.tail_cons, ofFn_snmEntry]
 

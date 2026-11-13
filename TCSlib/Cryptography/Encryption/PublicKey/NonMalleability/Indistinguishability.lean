@@ -210,23 +210,14 @@ theorem nmCodec_eq_bitCodec (n ℓ : ℕ) :
     S.nmCodec n ℓ = bitCodec (S.inLens n) (S.outLens n) (ℓ * S.ctLen.eval n) := rfl
 
 /-- Ciphertext `i` of an output string is its `i`-th block of `ctLen(n)` bits:
-`⟦S.nthCt w i⟧ = (⟦w⟧.drop (i · ctLen(n))).take ctLen(n)`. -/
+`⟦S.nthCt w i⟧ = (⟦w⟧.drop (i · ctLen(n))).take ctLen(n)` (`FunFamily.ofFn_blocks`, the block
+window). -/
 theorem ofFn_nthCt {n ℓ : ℕ} (w : Fin (ℓ * S.ctLen.eval n) → Bool) (i : Fin ℓ) :
     List.ofFn (S.nthCt w i) =
       ((List.ofFn w).drop (i * S.ctLen.eval n)).take (S.ctLen.eval n) := by
-  have hle : (i : ℕ) * S.ctLen.eval n + S.ctLen.eval n ≤ ℓ * S.ctLen.eval n := by
-    have := Nat.mul_le_mul_right (S.ctLen.eval n) (Nat.succ_le_of_lt i.isLt)
-    rw [Nat.succ_mul] at this
-    exact this
-  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
-  · simp only [List.length_ofFn, List.length_take, List.length_drop]
-    omega
-  · rw [List.getElem_ofFn, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
-    refine congrArg w (Fin.ext ?_)
-    rw [finProdFinEquiv_apply_val]
-    show j + S.ctLen.eval n * i = i * S.ctLen.eval n + j
-    rw [Nat.mul_comm]
-    omega
+  have hblk : S.nthCt w i = FunFamily.blocks ℓ (S.ctLen.eval n) w i :=
+    funext fun j => (FunFamily.blocks_apply ℓ (S.ctLen.eval n) w i j).symm
+  rw [hblk, FunFamily.ofFn_blocks]
 
 /-! ### (⇒) The CCA2 adversary built from a non-malleability adversary -/
 

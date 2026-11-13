@@ -53,7 +53,7 @@ per inner query is the forwarded challenge; its finalization asks nothing and ou
 namespace TCSlib.Cryptography.Composability.AdaptiveCPA
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
-open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rCnt)
+open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rCnt rAns)
 
 /-! ### Messages, lengths and states -/
 
@@ -164,8 +164,6 @@ private def rIst (w : List Bool) : List Bool := pairFstD (pairSndD (rS w))
 /-- The latest ciphertext of the state. -/
 private def rLat (w : List Bool) : List Bool :=
   (pairSndD (pairSndD (rS w))).take (S.ctLen.eval (rU w).length)
-/-- The outer answer recorded in the log `⟨⟨1, ⟨x, y⟩⟩, []⟩`. -/
-private def rFwd (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
 /-- The new state `⟨1^{j+1}, ⟨1^{i⋆}, y⟩⟩`, padded. -/
 private def rNew (w y : List Bool) : List Bool :=
   EnsembleLemmas.padL ((acStLen S cap).eval (rU w).length)
@@ -193,7 +191,7 @@ private def acRun (w : List Bool) : List Bool :=
     if decide (cap.eval (rU w).length ≤ (rCnt w).length) then pairEncode [true] (rLat S w ++ rS w)
     else if decide ((rCnt w).length = (rIst w).length) then
       if decide (rL w = []) then pairEncode [false] (pairEncode [true] (rX w))
-      else pairEncode [true] (rFwd w ++ rNew S cap w (rFwd w))
+      else pairEncode [true] (rAns w ++ rNew S cap w (rAns w))
     else pairEncode [true] (rEnc S w ++ rNew S cap w (rEnc S w))
   else pairEncode [true] (List.replicate ((S.msgLen.add (.const 1)).eval (rU w).length) false ++
     rS w)
@@ -214,7 +212,7 @@ private theorem polyTimeComputable_acRun : PolyTimeComputable (acRun S cap) := b
   have hLat : PolyTimeComputable (rLat S) :=
     ((polyTimeComputable_pairTakePoly S.ctLen).comp (hU.pairEncode (hD.comp (hD.comp hS)))).congr
       fun w => by simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]; rfl
-  have hFwd : PolyTimeComputable rFwd := hD.comp (hD.comp (hF.comp hL))
+  have hFwd : PolyTimeComputable rAns := InteractiveHandler.polyTimeComputable_rAns
   have hNew : ∀ {y : List Bool → List Bool}, PolyTimeComputable y →
       PolyTimeComputable fun w => rNew S cap w (y w) := fun hy =>
     EnsembleLemmas.polyTimeComputable_padL (acStLen S cap) hU
@@ -516,11 +514,12 @@ theorem acHandler_impl_forward (x : Fin ((acDin S 1).eval n) → Bool) (j : ℕ)
       rw [rNew, hU, hCnt, hIst, List.length_replicate, hs', acState_eq,
         EnsembleLemmas.ofFn_padFin_eq_padL, List.replicate_succ,
         ofFn_padFin_of_length (List.length_ofFn)]
-    have hFwd : rFwd (InteractiveHandler.input n z (List.ofFn ω)
+    have hFwd : rAns (InteractiveHandler.input n z (List.ofFn ω)
         (List.ofFn (acState S cap ist n j c)) (1 : Fin 2) (List.ofFn x)
         ((bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) 0).encodeLog
           ([] ++ [⟨1, x, y⟩]))) = List.ofFn y := by
-      rw [rFwd, hL, hlog, pairFstD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode]
+      rw [InteractiveHandler.rAns_eq, hL, hlog, pairFstD_pairEncode, pairSndD_pairEncode,
+        pairSndD_pairEncode]
     have hh : ([true].headD false = true) := rfl
     have hc1 : ¬ (decide (cap.eval n ≤ j) = true) := by rw [decide_eq_true_eq]; omega
     have hc2 : decide (j = ist n) = true := decide_eq_true heq

@@ -34,7 +34,7 @@ function `hist` and its length `hl`), on the lengths that T2 machines use (`snmD
 * `NMSim.snmDin`, `NMSim.snmDout`: the oracle lengths as polynomials.
 * `NMSim.drawWith`, `NMSim.histWith`, `NMSim.encWith`: `M(a; ρ)`, `h(m)` and `Enc_pk(m; re)`.
 * `NMSim.rImpl`: the hybrid oracle; `NMSim.histImpl`: the history oracle.
-* `NMSim.chunkAt`, `NMSim.entryL`, `NMSim.realView`, `NMSim.idealView`.
+* `NMSim.entryL`, `NMSim.realView`, `NMSim.idealView`.
 * `NMSim.realAcc`, `NMSim.idealAcc`, `NMSim.hybAcc`.
 
 ## Main results
@@ -45,8 +45,11 @@ function `hist` and its length `hl`), on the lengths that T2 machines use (`snmD
 * `NMSim.rImpl_eq_of_msgLen_eq_zero`: with empty messages the two hybrids coincide.
 * `NMSim.expect_simulate_rImpl_eager`: the encryption coins may be drawn in advance.
 * `NMSim.rImpl_false_coins`, `NMSim.histImpl_coins`: coins that are not read.
-* Blocks of strings: `NMSim.ofFn_block`, `ofFn_natAdd_eq_drop`, `take_eq_flatten_chunkAt`,
-  `chunkAt_flatten_append`, `map_chunkAt_flatten`, and their lengths.
+* Blocks of strings: `NMSim.take_eq_flatten_chunkAt` (the first `r` segments `coinBlock`) and
+  `NMSim.drop_flatten_append`. The other block lemmas first proved here are now beside `coinBlock`
+  (`ofFn_block_eq_coinBlock`, `coinBlock_flatten_append`, `map_coinBlock_flatten`) and in
+  `Foundations/BitLists.lean` (`ofFn_natAdd_eq_drop`, `ofFn_eq_map_range`, `decide_map_ofFn`,
+  `length_flatten_map_const`, `length_flatten_map_range`).
 * `NMSim.realAcc_eq_hybAcc`, `NMSim.hybAcc_true_eq_false`: `H_false` is the real experiment, and
   the hybrids coincide when `msgLen(n) = 0`.
 
@@ -360,130 +363,19 @@ theorem histImpl_coins (samp : NUPPT) (pl hl : PolyExpr) (hist : List Bool → L
 
 /-! ### Blocks of fixed-length strings -/
 
-/-- Block `i` of `k` bits of a string: `chunkAt k i w = (w.drop (i·k)).take k`. -/
-def chunkAt (k i : ℕ) (w : List Bool) : List Bool := (w.drop (i * k)).take k
-
-/-- `chunkAt k i w = (w.drop (i·k)).take k`. -/
-theorem chunkAt_eq (k i : ℕ) (w : List Bool) : chunkAt k i w = (w.drop (i * k)).take k := rfl
-
-/-- A block inside the string has `k` bits: `|chunkAt k i w| = k` when `(i + 1)·k ≤ |w|`. -/
-theorem length_chunkAt (k i : ℕ) (w : List Bool) (h : (i + 1) * k ≤ w.length) :
-    (chunkAt k i w).length = k := by
-  rw [chunkAt_eq, List.length_take, List.length_drop, Nat.succ_mul] at *
-  omega
-
-/-- **The first `r` blocks:** `w.take (r·k) = (chunkAt k 0 w ++ ⋯ ++ chunkAt k (r-1) w)`. -/
+/-- **The first `r` blocks:** `w.take (r·k) = (coinBlock k 0 w ++ ⋯ ++ coinBlock k (r-1) w)`. -/
 theorem take_eq_flatten_chunkAt (k r : ℕ) (w : List Bool) :
-    w.take (r * k) = ((List.range r).map fun i => chunkAt k i w).flatten := by
+    w.take (r * k) = ((List.range r).map fun i => coinBlock k i w).flatten := by
   induction r with
   | zero => rw [Nat.zero_mul, List.take_zero, List.range_zero, List.map_nil, List.flatten_nil]
   | succ r ih =>
     rw [Nat.succ_mul, List.take_add, ih, List.range_succ, List.map_append, List.flatten_append,
-      List.map_singleton, List.flatten_singleton, chunkAt_eq]
-
-/-- `r` blocks of `k` bits have `r·k` bits. -/
-theorem length_flatten_map_range (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i < r, (g i).length = k) :
-    ((List.range r).map g).flatten.length = r * k := by
-  induction r with
-  | zero => rw [List.range_zero, List.map_nil, List.flatten_nil, List.length_nil, Nat.zero_mul]
-  | succ r ih =>
-    rw [List.range_succ, List.map_append, List.flatten_append, List.length_append,
-      ih fun i hi => hg i (by omega), List.map_singleton, List.flatten_singleton,
-      hg r (by omega), Nat.succ_mul]
-
-/-- Blocks of `k` bits, one per element: `|(l.map g).flatten| = |l|·k` when every `g x` has
-`k` bits. -/
-theorem length_flatten_map_const {α β : Type} (l : List α) (g : α → List β) (k : ℕ)
-    (hg : ∀ x, (g x).length = k) : (l.map g).flatten.length = l.length * k := by
-  induction l with
-  | nil => rw [List.map_nil, List.flatten_nil, List.length_nil, List.length_nil, Nat.zero_mul]
-  | cons x t ih => rw [List.map_cons, List.flatten_cons, List.length_append, ih, hg,
-      List.length_cons, Nat.succ_mul, Nat.add_comm]
-
-/-- **Reading back the blocks:** if `g 0, …, g (r-1)` have `k` bits each, block `i < r` of
-`g 0 ++ ⋯ ++ g (r-1) ++ t` is `g i`. -/
-theorem chunkAt_flatten_append (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i < r, (g i).length = k)
-    (t : List Bool) (i : ℕ) (hi : i < r) :
-    chunkAt k i (((List.range r).map g).flatten ++ t) = g i := by
-  induction r generalizing t with
-  | zero => exact absurd hi (Nat.not_lt_zero _)
-  | succ r ih =>
-    rw [List.range_succ, List.map_append, List.flatten_append, List.map_singleton,
-      List.flatten_singleton, List.append_assoc]
-    by_cases h : i < r
-    · exact ih (fun j hj => hg j (by omega)) _ h
-    · have hir : i = r := by omega
-      subst hir
-      rw [chunkAt_eq, List.drop_append_of_le_length (by
-          rw [length_flatten_map_range k i g fun j hj => hg j (by omega)]),
-        List.drop_of_length_le (by rw [length_flatten_map_range k i g fun j hj => hg j (by omega)]),
-        List.nil_append, List.take_left' (hg i (by omega))]
+      List.map_singleton, List.flatten_singleton, coinBlock_eq]
 
 /-- The tail after `r` blocks of `k` bits: `(g 0 ++ ⋯ ++ g (r-1) ++ t).drop (r·k) = t`. -/
 theorem drop_flatten_append (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i < r, (g i).length = k)
     (t : List Bool) : (((List.range r).map g).flatten ++ t).drop (r * k) = t :=
   List.drop_left' (length_flatten_map_range k r g hg)
-
-/-- **The blocks of a concatenation of `k`-bit blocks:** if every block of `cs` has `k` bits,
-mapping `F` over `chunkAt k i cs.flatten` for `i < |cs|` is mapping `F` over `cs`. -/
-theorem map_chunkAt_flatten {α : Type} (k : ℕ) (F : List Bool → α) :
-    ∀ cs : List (List Bool), (∀ c ∈ cs, c.length = k) →
-      (List.range cs.length).map (fun i => F (chunkAt k i cs.flatten)) = cs.map F := by
-  intro cs
-  induction cs with
-  | nil => intro _; rfl
-  | cons c t ih =>
-    intro hc
-    have hck : c.length = k := hc c List.mem_cons_self
-    rw [List.length_cons, List.range_succ_eq_map, List.map_cons, List.map_map, List.map_cons,
-      List.flatten_cons, ← ih fun c' hc' => hc c' (List.mem_cons_of_mem _ hc')]
-    congr 1
-    · rw [chunkAt_eq, Nat.zero_mul, List.drop_zero, List.take_left' hck]
-    · refine List.map_congr_left fun i _ => ?_
-      rw [Function.comp_apply, chunkAt_eq, chunkAt_eq, Nat.succ_mul, Nat.add_comm,
-        ← List.drop_drop, List.drop_left' hck]
-
-/-- **Block `i` of a string of `r` blocks of `k` bits and a tail:**
-`⟦j ↦ w (castAdd sl (finProdFinEquiv (i, j)))⟧ = chunkAt k i ⟦w⟧`. -/
-theorem ofFn_block {r k sl : ℕ} (w : Fin (r * k + sl) → Bool) (i : Fin r) :
-    List.ofFn (fun j : Fin k => w (Fin.castAdd sl (finProdFinEquiv (i, j)))) =
-      chunkAt k i (List.ofFn w) := by
-  have hle : (i : ℕ) * k + k ≤ r * k := by
-    have := Nat.mul_le_mul_right k (Nat.succ_le_of_lt i.isLt)
-    rw [Nat.succ_mul] at this
-    exact this
-  rw [chunkAt_eq]
-  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
-  · simp only [List.length_ofFn, List.length_take, List.length_drop]
-    omega
-  · rw [List.getElem_ofFn, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
-    refine congrArg w (Fin.ext ?_)
-    rw [Fin.coe_castAdd, finProdFinEquiv_apply_val]
-    show j + k * i = i * k + j
-    rw [Nat.mul_comm]
-    omega
-
-/-- **The tail of a string:** `⟦j ↦ w (natAdd k j)⟧ = ⟦w⟧.drop k`. -/
-theorem ofFn_natAdd_eq_drop {k sl : ℕ} (w : Fin (k + sl) → Bool) :
-    List.ofFn (fun j : Fin sl => w (Fin.natAdd k j)) = (List.ofFn w).drop k := by
-  rw [List.ofFn_add, List.drop_left' List.length_ofFn]
-
-/-- A list of `r` values is a map over `List.range r`: if `f i = g i` for `i < r`, then
-`List.ofFn f = (List.range r).map g`. -/
-theorem ofFn_eq_map_range {α : Type} {r : ℕ} (f : Fin r → α) (g : ℕ → α)
-    (h : ∀ i : Fin r, f i = g i) : List.ofFn f = (List.range r).map g := by
-  refine List.ext_getElem (by rw [List.length_ofFn, List.length_map, List.length_range])
-    fun i h₁ h₂ => ?_
-  rw [List.getElem_ofFn, List.getElem_map, List.getElem_range]
-  exact h _
-
-/-- Comparing strings is comparing their lists:
-`decide (o.map ofFn = some ⟦c⟧) = decide (o = some c)`. -/
-theorem decide_map_ofFn {k : ℕ} (o : Option (Fin k → Bool)) (c : Fin k → Bool) :
-    decide (o.map List.ofFn = some (List.ofFn c)) = decide (o = some c) := by
-  cases o with
-  | none => simp
-  | some c' => simp [List.ofFn_inj]
 
 /-! ### The experiments' outputs as strings -/
 
@@ -519,8 +411,8 @@ def realView (samp : NUPPT) (pl : PolyExpr) (n r : ℕ) (sk : List Bool) (ρ : s
   List.ofFn ((s.map Prod.snd).getD (zeroBits _)) ++
     List.ofFn (drawWith samp (S.msgLen.eval n) n ((s.map Prod.snd).getD (zeroBits _)) ρ) ++
     ((List.range r).map fun i => entryL S n sk
-      (decide ((s.map Prod.fst).map List.ofFn = some (chunkAt (S.ctLen.eval n) i w)))
-      (chunkAt (S.ctLen.eval n) i w)).flatten ++
+      (decide ((s.map Prod.fst).map List.ofFn = some (coinBlock (S.ctLen.eval n) i w)))
+      (coinBlock (S.ctLen.eval n) i w)).flatten ++
     w.drop (r * S.ctLen.eval n)
 
 /-- `realView … w s = ⟦a⟧ ++ ⟦M(a; ρ)⟧ ++ (d_0 ++ ⋯ ++ d_{r-1}) ++ σ` as defined. -/
@@ -530,8 +422,8 @@ theorem realView_eq (samp : NUPPT) (pl : PolyExpr) (n r : ℕ) (sk : List Bool) 
       List.ofFn ((s.map Prod.snd).getD (zeroBits _)) ++
         List.ofFn (drawWith samp (S.msgLen.eval n) n ((s.map Prod.snd).getD (zeroBits _)) ρ) ++
         ((List.range r).map fun i => entryL S n sk
-          (decide ((s.map Prod.fst).map List.ofFn = some (chunkAt (S.ctLen.eval n) i w)))
-          (chunkAt (S.ctLen.eval n) i w)).flatten ++
+          (decide ((s.map Prod.fst).map List.ofFn = some (coinBlock (S.ctLen.eval n) i w)))
+          (coinBlock (S.ctLen.eval n) i w)).flatten ++
         w.drop (r * S.ctLen.eval n) := rfl
 
 /-- **The ideal experiment's output** `(a, m, (d_i)_i, σ)` as a string, from the simulator's output
@@ -543,8 +435,8 @@ def idealView (samp : NUPPT) (pl : PolyExpr) (n r : ℕ) (sk : List Bool) (ρ : 
   List.ofFn (sa.getD (zeroBits _)) ++
     List.ofFn (drawWith samp (S.msgLen.eval n) n (sa.getD (zeroBits _)) ρ) ++
     ((List.range r).map fun i => entryL S n sk
-      ((chunkAt (S.ctLen.eval n + 1) i w).headD false)
-      (chunkAt (S.ctLen.eval n + 1) i w).tail).flatten ++
+      ((coinBlock (S.ctLen.eval n + 1) i w).headD false)
+      (coinBlock (S.ctLen.eval n + 1) i w).tail).flatten ++
     w.drop (r * (S.ctLen.eval n + 1))
 
 /-- `idealView … w sa = ⟦a⟧ ++ ⟦M(a; ρ)⟧ ++ (d_0 ++ ⋯ ++ d_{r-1}) ++ σ` as defined. -/
@@ -554,8 +446,8 @@ theorem idealView_eq (samp : NUPPT) (pl : PolyExpr) (n r : ℕ) (sk : List Bool)
       List.ofFn (sa.getD (zeroBits _)) ++
         List.ofFn (drawWith samp (S.msgLen.eval n) n (sa.getD (zeroBits _)) ρ) ++
         ((List.range r).map fun i => entryL S n sk
-          ((chunkAt (S.ctLen.eval n + 1) i w).headD false)
-          (chunkAt (S.ctLen.eval n + 1) i w).tail).flatten ++
+          ((coinBlock (S.ctLen.eval n + 1) i w).headD false)
+          (coinBlock (S.ctLen.eval n + 1) i w).tail).flatten ++
         w.drop (r * (S.ctLen.eval n + 1)) := rfl
 
 /-! ### The acceptance rates of the experiments -/

@@ -63,16 +63,6 @@ theorem getD_ofFn_lt' {α : Type*} {c : ℕ} (t : Fin c → α) {i : ℕ} (hi : 
   rw [List.getD_eq_getElem?_getD, List.getElem?_ofFn]
   simp [hi]
 
-/-- The list of a tuple given by a function on `ℕ` is the map over `List.range`. -/
-theorem ofFn_eq_map_range {α : Type*} : ∀ {k : ℕ} (f : Fin k → α) (g : ℕ → α),
-    (∀ t : Fin k, f t = g t) → List.ofFn f = List.map g (List.range k)
-  | 0, _, _, _ => by simp
-  | k + 1, f, g, h => by
-    rw [List.ofFn_succ_last, List.range_succ, List.map_append, List.map_singleton,
-      ofFn_eq_map_range (fun t => f t.castSucc) g (fun t => by
-        show f t.castSucc = g t
-        rw [h, Fin.coe_castSucc]), h, Fin.val_last]
-
 /-- In a verifier-first execution of `2k` moves each party has received exactly `k` messages. -/
 theorem exec_vfirst_length (P' V : Strategy) (x zP zV rP rV : List Bool) :
     ∀ k, (exec P' V true x zP zV rP rV (2 * k)).1.length = k ∧

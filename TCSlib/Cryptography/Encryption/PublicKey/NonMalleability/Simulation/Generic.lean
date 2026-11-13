@@ -140,30 +140,6 @@ theorem polyTimeComputable_chunkMap (c : PolyExpr) {f : List Bool → List Bool 
       exact length_iterate_chunkStep_le c x i)).congr
     fun x => by rw [PolyExpr.eval_var, chunkMap_eq]
 
-/-- Reading the suffixes of a list within at least its length many steps (DL-30–36 overlap: the
-general form of `Forward`'s private `flatMap_range_drop`, with the reading of a nonempty suffix
-assumed only for the list's members). -/
-private theorem flatMap_range_drop {β : Type} (F : List β → List Bool) (g : β → List Bool)
-    (hnil : F [] = []) :
-    ∀ (l : List β), (∀ e ∈ l, ∀ t, F (e :: t) = g e) → ∀ m : ℕ, l.length ≤ m →
-      ((List.range m).flatMap fun i => F (l.drop i)) = l.flatMap g := by
-  intro l
-  induction l with
-  | nil =>
-    intro _ m _
-    rw [List.flatMap_nil]
-    refine List.flatMap_eq_nil_iff.2 fun i _ => ?_
-    rw [List.drop_nil, hnil]
-  | cons e t ih =>
-    intro hcons m hm
-    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by rw [List.length_cons] at hm; omega⟩
-    rw [List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map, List.drop_zero,
-      hcons e List.mem_cons_self, List.flatMap_cons]
-    congr 1
-    simp only [List.drop_succ_cons]
-    exact ih (fun e' he' => hcons e' (List.mem_cons_of_mem _ he')) m'
-      (by rw [List.length_cons] at hm; omega)
-
 /-- **The chunk map of a concatenation of chunks:** if every chunk has `c(n) > 0` bits, the chunk
 map of `⟨⟨1^n, e⟩, chunks.flatten⟩` is the concatenation of `f ⟨1^n, e⟩` over the chunks.
 

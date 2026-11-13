@@ -915,15 +915,6 @@ theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
   | nil => rw [Strategy.encodeMsgs_nil]; rfl
   | cons m h ih => rw [Strategy.encodeMsgs_cons, List.flatMap_cons, ih, pairEncode_eq_append_nil]
 
-/-- `List.ofFn f` is the image of `range n` under any `ℕ`-indexed extension of `f`. -/
-theorem ofFn_eq_map_range {α : Type*} {n : ℕ} (f : Fin n → α) (F : ℕ → α)
-    (h : ∀ (k : ℕ) (hk : k < n), f ⟨k, hk⟩ = F k) : List.ofFn f = (List.range n).map F := by
-  apply List.ext_getElem
-  · simp
-  · intro i h1 h2
-    rw [List.getElem_ofFn, List.getElem_map, List.getElem_range]
-    exact h i (by simpa using h1)
-
 /-- The `i`-th second projection of an encoded history drops its first `i` messages. -/
 theorem iterate_pairSndD_encodeMsgs (hist : List (List Bool)) :
     ∀ i, pairSndD^[i] (Strategy.encodeMsgs hist) = Strategy.encodeMsgs (hist.drop i) := by
@@ -996,7 +987,7 @@ theorem histLen_poly : PolyTimeComputable fun M => List.replicate (histLen M) tr
 theorem encodeMsgs_ofFn_eq_flatMap {n : ℕ} (f : Fin n → List Bool) (F : ℕ → List Bool)
     (h : ∀ (k : ℕ) (hk : k < n), f ⟨k, hk⟩ = F k) :
     Strategy.encodeMsgs (List.ofFn f) = (List.range n).flatMap (fun i => pairEncode (F i) []) := by
-  rw [ofFn_eq_map_range f F h, encodeMsgs_eq_flatMap, List.flatMap_map]
+  rw [ofFn_eq_map_range f F fun t => h t t.isLt, encodeMsgs_eq_flatMap, List.flatMap_map]
 
 /-- With at least one edge, `edgeAt G e` is the edge of index `e mod |E|`. -/
 theorem edgeAt_eq_some_of_pos {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G) (e : ℕ) :

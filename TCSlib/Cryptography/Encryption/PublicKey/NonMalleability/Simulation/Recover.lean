@@ -258,7 +258,7 @@ theorem recDist_distinguisherL (n : ℕ) (u : List Bool) (rD : D.Coins n) :
 
 /-- **The decryptions of concatenated ciphertexts:** for `ℓ` ciphertexts `cs` of `ctLen(n)` bits,
 `nmOutput sk s' (padFin _ cs.flatten)` is the concatenation of the entries' tails
-`(entryL … [c is the challenge] c).drop 1` (`nmOutput_eq_entryTails`, `map_chunkAt_flatten`). -/
+`(entryL … [c is the challenge] c).drop 1` (`nmOutput_eq_entryTails`, `map_coinBlock_flatten`). -/
 theorem nmOutput_flatten (n ℓ : ℕ) (sk : List Bool) (s' : Option (Fin (S.ctLen.eval n) → Bool))
     (cs : List (List Bool)) (hℓ : cs.length = ℓ) (hc : ∀ c ∈ cs, c.length = S.ctLen.eval n) :
     S.nmOutput sk s' (padFin (ℓ * S.ctLen.eval n) cs.flatten) =
@@ -268,7 +268,7 @@ theorem nmOutput_flatten (n ℓ : ℕ) (sk : List Bool) (s' : Option (Fin (S.ctL
     have : cs.map List.length = cs.map fun _ => S.ctLen.eval n := List.map_congr_left hc
     rw [this, List.map_const', List.sum_replicate, smul_eq_mul]
   rw [nmOutput_eq_entryTails S n ℓ sk s' _ hlen, ← hℓ,
-    map_chunkAt_flatten (S.ctLen.eval n) (fun c => (entryL S n sk
+    map_coinBlock_flatten (S.ctLen.eval n) (fun c => (entryL S n sk
       (decide (s'.map List.ofFn = some c)) c).drop 1) cs hc]
 
 variable (samp : NUPPT)
@@ -368,18 +368,18 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
         (padFin ((nmLen S pl r sl).eval n * S.ctLen.eval n) (nmOutL S samp r n
           (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st))) a aP mP))) =
       aP ++ mP ++ ((List.range (r.eval n)).map fun i => entryL S n (pairSndD (S.gen.runAt n [] rg))
-        (decide (s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i a)))
-        (chunkAt (S.ctLen.eval n) i a)).flatten ++ a.drop (r.eval n * S.ctLen.eval n) := by
+        (decide (s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i a)))
+        (coinBlock (S.ctLen.eval n) i a)).flatten ++ a.drop (r.eval n * S.ctLen.eval n) := by
   set sk := pairSndD (S.gen.runAt n [] rg) with hsk
   set ctx := pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st)) with hctx
   set v : List Bool → List Bool := fun c =>
     (entryL S n sk (decide (s'.map List.ofFn = some c)) c).drop 1 with hvdef
   set f : ℕ → Bool := fun i => st.headD false &&
-    decide (chunkAt (S.ctLen.eval n) i a = (st.drop 1).take (S.ctLen.eval n)) with hfdef
+    decide (coinBlock (S.ctLen.eval n) i a = (st.drop 1).take (S.ctLen.eval n)) with hfdef
   set bits := aP ++ mP ++ a.drop (r.eval n * S.ctLen.eval n) with hbits
   have hct := ctLen_pos S n rg re hL
-  have hci : ∀ i < r.eval n, (chunkAt (S.ctLen.eval n) i a).length = S.ctLen.eval n := fun i hi =>
-    length_chunkAt _ _ _ (by
+  have hci : ∀ i < r.eval n, (coinBlock (S.ctLen.eval n) i a).length = S.ctLen.eval n := fun i hi =>
+    length_coinBlock (by
       rw [ha]
       have := Nat.mul_le_mul_right (S.ctLen.eval n) (show i + 1 ≤ r.eval n from hi)
       omega)
@@ -389,7 +389,8 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
   have he : ∀ x, (encBit S samp ctx x).length = S.ctLen.eval n := fun x =>
     length_encBit S samp n _ x
   set cs : List (List Bool) := ((List.range (r.eval n)).map fun i =>
-      [chunkAt (S.ctLen.eval n) i a, encBit S samp ctx (f i), encBit S samp ctx (!f i)]).flatten ++
+      [coinBlock (S.ctLen.eval n) i a, encBit S samp ctx (f i),
+        encBit S samp ctx (!f i)]).flatten ++
     (bits.map fun x => [encBit S samp ctx x, encBit S samp ctx (!x)]).flatten with hcs
   have hW : nmOutL S samp r n ctx a aP mP = cs.flatten := by
     rw [nmOutL_eq, hcs, List.flatten_append, List.flatten_flatten, List.flatten_flatten,
@@ -406,7 +407,7 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
     rw [hcs, List.length_append, List.length_flatten, List.length_flatten, List.map_map,
       List.map_map]
     have h3 : (List.map (List.length ∘ fun i =>
-        [chunkAt (S.ctLen.eval n) i a, encBit S samp ctx (f i), encBit S samp ctx (!f i)])
+        [coinBlock (S.ctLen.eval n) i a, encBit S samp ctx (f i), encBit S samp ctx (!f i)])
         (List.range (r.eval n))) = List.replicate (r.eval n) 3 := by
       rw [List.eq_replicate_iff, List.length_map, List.length_range]
       refine ⟨rfl, fun b hb => ?_⟩
@@ -440,7 +441,7 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
       · exact he _
   rw [hW, nmOutput_flatten S n _ sk s' cs hcs_len hcs_ct]
   have hP : (cs.map v).flatten =
-      ((List.range (r.eval n)).map fun i => v (chunkAt (S.ctLen.eval n) i a) ++
+      ((List.range (r.eval n)).map fun i => v (coinBlock (S.ctLen.eval n) i a) ++
         (v (encBit S samp ctx (f i)) ++ v (encBit S samp ctx (!f i)))).flatten ++
       (bits.map fun x => v (encBit S samp ctx x) ++ v (encBit S samp ctx (!x))).flatten := by
     rw [hcs, List.map_append, List.flatten_append, List.map_flatten, List.map_flatten,
@@ -461,12 +462,12 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
     rw [PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const, PolyExpr.eval_const]
   have h1 : (S.msgLen.add (.const 1)).eval n = S.msgLen.eval n + 1 := by
     rw [PolyExpr.eval_add, PolyExpr.eval_const]
-  have hg3 : ∀ i < r.eval n, (v (chunkAt (S.ctLen.eval n) i a) ++
+  have hg3 : ∀ i < r.eval n, (v (coinBlock (S.ctLen.eval n) i a) ++
       (v (encBit S samp ctx (f i)) ++ v (encBit S samp ctx (!f i)))).length =
       ((PolyExpr.const 3).mul (S.msgLen.add (.const 1))).eval n := fun i _ => by
     rw [List.length_append, List.length_append, hv, hv, hv, h3]
     ring
-  have hP1 : (((List.range (r.eval n)).map fun i => v (chunkAt (S.ctLen.eval n) i a) ++
+  have hP1 : (((List.range (r.eval n)).map fun i => v (coinBlock (S.ctLen.eval n) i a) ++
       (v (encBit S samp ctx (f i)) ++ v (encBit S samp ctx (!f i)))).flatten).length =
       (r.mul ((PolyExpr.const 3).mul (S.msgLen.add (.const 1)))).eval n := by
     rw [length_flatten_map_range _ _ _ hg3]
@@ -493,19 +494,19 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
       | cons x t ih => rw [List.map_cons, List.flatten_cons, ih]; rfl
     rw [List.map_congr_left (fun x _ => hx x), hfl]
   have hE : (List.range (r.eval n)).map (entF S (pairEncode (List.replicate n true) []) ∘ fun i =>
-      v (chunkAt (S.ctLen.eval n) i a) ++
+      v (coinBlock (S.ctLen.eval n) i a) ++
         (v (encBit S samp ctx (f i)) ++ v (encBit S samp ctx (!f i)))) =
       (List.range (r.eval n)).map fun i => entryL S n sk
-        (decide (s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i a)))
-        (chunkAt (S.ctLen.eval n) i a) := by
+        (decide (s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i a)))
+        (coinBlock (S.ctLen.eval n) i a) := by
     refine List.map_congr_left fun i _ => ?_
     have hg : guessBit (v (encBit S samp ctx (f i)) ++ v (encBit S samp ctx (!f i))) = f i := by
       rw [hvdef]
       exact guessBit_encPair S samp n rg s' hL z ω st hz re hω (f i)
-    have hf : f i = decide (s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i a)) := hflag _
+    have hf : f i = decide (s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i a)) := hflag _
     rw [Function.comp_apply, entF_eq, pairFstD_pairEncode, List.length_replicate, h1,
       List.drop_left' (hv _), List.take_left' (hv _), hg, hf, entryL_eq]
-    by_cases hc : s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i a)
+    by_cases hc : s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i a)
     · rw [if_pos (decide_eq_true hc), if_pos (decide_eq_true hc)]
     · rw [if_neg (by simpa using hc), if_neg (by simpa using hc), hvdef]
       simp only [hc, decide_false, entryL_eq, Bool.false_eq_true, ↓reduceIte, List.drop_one,

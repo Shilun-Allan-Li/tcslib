@@ -92,20 +92,6 @@ theorem length_flatten_ofFn {B : ℕ} : ∀ {q : ℕ} (g : Fin q → List Bool),
       length_flatten_ofFn (fun i => g i.succ) (fun i => hg i.succ), Nat.succ_mul]
     omega
 
-/-- Segment `i` of a concatenation of `B`-bit blocks is block `i`. -/
-theorem coinBlock_flatten {B : ℕ} : ∀ (l : List (List Bool)), (∀ c ∈ l, c.length = B) →
-    ∀ (i : ℕ) (hi : i < l.length), coinBlock B i l.flatten = l[i]
-  | [], _, _, hi => by simp at hi
-  | c :: cs, hl, 0, _ => by
-    have hc : c.length = B := hl c (by simp)
-    simp [coinBlock_eq, ← hc]
-  | c :: cs, hl, i + 1, hi => by
-    have hc : c.length = B := hl c (by simp)
-    have hrest := coinBlock_flatten cs (fun d hd => hl d (by simp [hd])) i (by simpa using hi)
-    simp only [List.getElem_cons_succ, ← hrest, coinBlock_eq, List.flatten_cons]
-    rw [show (i + 1) * B = c.length + i * B by rw [hc, Nat.succ_mul]; ring, List.drop_append,
-      List.drop_eq_nil_of_le (by omega), List.nil_append, Nat.add_sub_cancel_left]
-
 /-- Segment `i` of the concatenation of `B`-bit blocks `g 0, …, g (q − 1)` is `g i`. -/
 theorem coinBlock_flatten_ofFn {q B : ℕ} (g : Fin q → List Bool) (hg : ∀ i, (g i).length = B)
     (i : Fin q) : coinBlock B i (List.ofFn g).flatten = g i := by

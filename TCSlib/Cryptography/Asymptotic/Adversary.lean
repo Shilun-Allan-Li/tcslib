@@ -6,6 +6,7 @@ Authors: TCSlib contributors
 import TCSlib.Complexity.Randomized.PPT
 import TCSlib.Cryptography.Foundations.Experiments
 import TCSlib.Cryptography.HardcoreBit.Basic
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -59,7 +60,9 @@ by `ifEq`).
 ## Main results
 
 * `TCSlib.Cryptography.coinBlock_eq`, `TCSlib.Cryptography.length_coinBlock` — the segment
-  equation and its full-length condition.
+  equation and its full-length condition; `coinBlock_flatten`, `map_coinBlock_flatten`,
+  `coinBlock_flatten_append` — the segments of a concatenation of equal-length blocks;
+  `ofFn_block_eq_coinBlock` — block `i` of a string of blocks and a tail is segment `i`.
 * `TCSlib.Cryptography.decodeFin_ofFn`, `TCSlib.Cryptography.padFin_ofFn` — decoding and
   padding invert `List.ofFn`; `TCSlib.Cryptography.decodeFin_eq_some_iff` — decoding succeeds
   exactly on the encoding; `TCSlib.Cryptography.ofFn_padFin_of_length` — padding a string of the
@@ -97,6 +100,58 @@ theorem length_coinBlock {B i : ℕ} {r : List Bool} (h : (i + 1) * B ≤ r.leng
   simp only [coinBlock_eq, List.length_take, List.length_drop]
   rw [Nat.add_mul, Nat.one_mul] at h
   omega
+
+/-- **The blocks of a concatenation of `B`-bit blocks:** if every block of `l` has `B` bits,
+segment `i < |l|` of `l.flatten` is `l[i]`.
+
+**Proof sketch.** Induction on `l`: segment `0` is the first block (`List.take_left'`), and
+segment `i + 1` drops the first block (`List.drop_append`) and is segment `i` of the rest. -/
+theorem coinBlock_flatten {B : ℕ} : ∀ (l : List (List Bool)), (∀ c ∈ l, c.length = B) →
+    ∀ (i : ℕ) (hi : i < l.length), coinBlock B i l.flatten = l[i]
+  | [], _, _, hi => by simp at hi
+  | c :: cs, hl, 0, _ => by
+    have hc : c.length = B := hl c (by simp)
+    simp [coinBlock_eq, ← hc]
+  | c :: cs, hl, i + 1, hi => by
+    have hc : c.length = B := hl c (by simp)
+    have hrest := coinBlock_flatten cs (fun d hd => hl d (by simp [hd])) i (by simpa using hi)
+    simp only [List.getElem_cons_succ, ← hrest, coinBlock_eq, List.flatten_cons]
+    rw [show (i + 1) * B = c.length + i * B by rw [hc, Nat.succ_mul]; ring, List.drop_append,
+      List.drop_eq_nil_of_le (by omega), List.nil_append, Nat.add_sub_cancel_left]
+
+/-- **The blocks of a concatenation, mapped:** if every block of `cs` has `k` bits, mapping `F`
+over the segments `coinBlock k i cs.flatten` for `i < |cs|` is mapping `F` over `cs`
+(`coinBlock_flatten`, entry by entry). -/
+theorem map_coinBlock_flatten {α : Type} (k : ℕ) (F : List Bool → α) :
+    ∀ cs : List (List Bool), (∀ c ∈ cs, c.length = k) →
+      (List.range cs.length).map (fun i => F (coinBlock k i cs.flatten)) = cs.map F := by
+  intro cs hc
+  refine List.ext_getElem (by rw [List.length_map, List.length_range, List.length_map])
+    fun i h₁ h₂ => ?_
+  rw [List.getElem_map, List.getElem_range, List.getElem_map,
+    coinBlock_flatten cs hc i (by rw [List.length_map, List.length_range] at h₁; exact h₁)]
+
+/-- **Reading back the blocks before a tail:** if `g 0, …, g (r-1)` have `k` bits each, segment
+`i < r` of `g 0 ++ ⋯ ++ g (r-1) ++ t` is `g i`.
+
+**Proof sketch.** Induction on `r`: for `i < r` the last block and the tail form the new tail;
+for `i = r` the segment starts right after the first `r·k` bits (`length_flatten_map_range`). -/
+theorem coinBlock_flatten_append (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i < r, (g i).length = k)
+    (t : List Bool) (i : ℕ) (hi : i < r) :
+    coinBlock k i (((List.range r).map g).flatten ++ t) = g i := by
+  induction r generalizing t with
+  | zero => exact absurd hi (Nat.not_lt_zero _)
+  | succ r ih =>
+    rw [List.range_succ, List.map_append, List.flatten_append, List.map_singleton,
+      List.flatten_singleton, List.append_assoc]
+    by_cases h : i < r
+    · exact ih (fun j hj => hg j (by omega)) _ h
+    · have hir : i = r := by omega
+      subst hir
+      rw [coinBlock_eq, List.drop_append_of_le_length (by
+          rw [length_flatten_map_range k i g fun j hj => hg j (by omega)]),
+        List.drop_of_length_le (by rw [length_flatten_map_range k i g fun j hj => hg j (by omega)]),
+        List.nil_append, List.take_left' (hg i (by omega))]
 
 /-- Decode a string as an `ℓ`-bit string: `some` of its bits if the length is exactly `ℓ`,
 `none` otherwise (a wrong-length answer of an inverter is a failure, D5). -/
@@ -236,6 +291,30 @@ theorem FunFamily.ofFn_blocks (q ℓ : ℕ) (ω : Fin (q * ℓ) → Bool) (j : F
     show k + ℓ * j = j * ℓ + k
     rw [Nat.mul_comm]
     omega
+
+/-- **Block `i` of a string of `r` blocks of `k` bits and a tail** is segment `i`:
+`⟦j ↦ w (castAdd sl (finProdFinEquiv (i, j)))⟧ = coinBlock k i ⟦w⟧`.
+
+**Proof sketch.** The block is block `i` of the first `r·k` bits (`FunFamily.blocks_apply`),
+whose word is the window `(⟦w⟧.take (r·k)).drop (i·k)).take k` (`FunFamily.ofFn_blocks`,
+`List.ofFn_add`); the tail does not reach the window since `i·k + k ≤ r·k`. -/
+theorem ofFn_block_eq_coinBlock {r k sl : ℕ} (w : Fin (r * k + sl) → Bool) (i : Fin r) :
+    List.ofFn (fun j : Fin k => w (Fin.castAdd sl (finProdFinEquiv (i, j)))) =
+      coinBlock k i (List.ofFn w) := by
+  have hle : (i : ℕ) * k + k ≤ r * k := by
+    have := Nat.mul_le_mul_right k (Nat.succ_le_of_lt i.isLt)
+    rw [Nat.succ_mul] at this
+    exact this
+  have hblk : (fun j : Fin k => w (Fin.castAdd sl (finProdFinEquiv (i, j)))) =
+      FunFamily.blocks r k (fun p => w (Fin.castAdd sl p)) i :=
+    funext fun j => (FunFamily.blocks_apply r k (fun p => w (Fin.castAdd sl p)) i j).symm
+  have hx : (List.ofFn fun p : Fin (r * k) => w (Fin.castAdd sl p)).length = r * k :=
+    List.length_ofFn
+  have hw : List.ofFn w = List.ofFn (fun p : Fin (r * k) => w (Fin.castAdd sl p)) ++
+      List.ofFn (fun j : Fin sl => w (Fin.natAdd (r * k) j)) := List.ofFn_add
+  rw [hblk, FunFamily.ofFn_blocks, coinBlock_eq, hw,
+    List.drop_append_of_le_length (by omega), List.take_append_of_le_length (by
+      rw [List.length_drop]; omega)]
 
 /-- `A(1^n, y)` as an inverter: output decoded as an `ℓ`-bit string, wrong length = failure
 [PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`].

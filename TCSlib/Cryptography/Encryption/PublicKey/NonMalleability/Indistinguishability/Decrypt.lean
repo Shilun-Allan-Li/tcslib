@@ -46,6 +46,10 @@ The per-entry readings of a log are `Games.cntRead` and `Games.ansRead`.
 namespace TCSlib.Cryptography.Composability.NMCCA2
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
+open TCSlib.Cryptography.Games.InteractiveHandler (rU_finInput rZ_finInput rW_finInput
+  rL_finInput finA_finInput polyTimeComputable_rU polyTimeComputable_rZ polyTimeComputable_rW
+  polyTimeComputable_rL polyTimeComputable_finA)
 open AdaptiveCPA (acDin acDout acDin_zero acDout_zero)
 
 /-! ### Readings of a log -/
@@ -79,42 +83,46 @@ end Readings
 variable (S : FixedLengthPKScheme) (ℓ : PolyExpr) (D : NUPPT)
 
 /-- The number of decryptions asked so far, in unary. -/
-private def dCnt (w : List Bool) : List Bool := logEmit cntRead (finL w)
+private def dCnt (w : List Bool) : List Bool := logEmit cntRead (rL w)
 
 /-- The next block of the adversary's output: `ctLen(n)` bits from position `j · ctLen(n)`, for
 `j` the decryptions asked so far, padded with `false`. -/
 private def dCt (w : List Bool) : List Bool :=
-  EnsembleLemmas.padL (S.ctLen.eval (finU w).length)
-    ((finA w).drop ((dCnt w).length * S.ctLen.eval (finU w).length))
+  EnsembleLemmas.padL (S.ctLen.eval (rU w).length)
+    ((finA w).drop ((dCnt w).length * S.ctLen.eval (rU w).length))
 
 /-- `D`'s input layout: parameter `1^n`, the collected answers, the advice (the second component
 of the reduction input) and the seed as coins. -/
 private def dIn (w : List Bool) : List Bool :=
-  pairEncode (pairEncode (pairEncode (finU w) (logEmit ansRead (finL w))) (pairSndD (finZ w)))
-    (finW w)
+  pairEncode (pairEncode (pairEncode (rU w) (logEmit ansRead (rL w))) (pairSndD (rZ w)))
+    (rW w)
 
 /-- **One round of the finalization.** After `ℓ(n)` decryptions, output `D`'s verdict
 `[D(answers) = [true]]`; before, ask the decryption oracle (index `0`) the next block. -/
 private def dFin (w : List Bool) : List Bool :=
-  if decide (ℓ.eval (finU w).length ≤ (dCnt w).length) then
+  if decide (ℓ.eval (rU w).length ≤ (dCnt w).length) then
     pairEncode [true] [decide (D.output (dIn w) = [true])]
   else pairEncode [false] (pairEncode [] (dCt S w))
 
 /-- The finalization round is polynomial-time. -/
 private theorem polyTimeComputable_dFin : PolyTimeComputable (dFin S ℓ D) := by
-  obtain ⟨hU, hZ, hW, hA, hL⟩ := polyTimeComputable_finFields
+  have hU := polyTimeComputable_rU
+  have hZ := polyTimeComputable_rZ
+  have hW := polyTimeComputable_rW
+  have hA := polyTimeComputable_finA
+  have hL := polyTimeComputable_rL
   have hCnt : PolyTimeComputable dCnt :=
     (polyTimeComputable_logEmit polyTimeComputable_cntRead).comp hL
-  have hAns : PolyTimeComputable fun w => logEmit ansRead (finL w) :=
+  have hAns : PolyTimeComputable fun w => logEmit ansRead (rL w) :=
     (polyTimeComputable_logEmit polyTimeComputable_ansRead).comp hL
   have hOff : PolyTimeComputable fun w =>
-      List.replicate ((dCnt w).length * S.ctLen.eval (finU w).length) true :=
+      List.replicate ((dCnt w).length * S.ctLen.eval (rU w).length) true :=
     (OneWay.polyTimeComputable_unaryMulPair.comp
       (hCnt.pairEncode ((polyTimeComputable_unaryPoly S.ctLen).comp hU))).congr fun w => by
         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
           List.length_replicate]
   have hDrop : PolyTimeComputable fun w =>
-      (finA w).drop ((dCnt w).length * S.ctLen.eval (finU w).length) :=
+      (finA w).drop ((dCnt w).length * S.ctLen.eval (rU w).length) :=
     (polyTimeComputable_dropPrefixByLength.comp (hOff.pairEncode hA)).congr fun w => by
       simp only [Function.comp_apply, PrefixByLength.drop_def, pairFstD_pairEncode,
         pairSndD_pairEncode, List.length_replicate]
@@ -125,7 +133,7 @@ private theorem polyTimeComputable_dFin : PolyTimeComputable (dFin S ℓ D) := b
     (polyTimeComputable_pairEq.comp ((D.polyTimeComputable_output.comp hIn).pairEncode
       (polyTimeComputable_const [true]))).congr fun w => by
         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
-  have hT : PolyTimeComputable fun w => [decide (ℓ.eval (finU w).length ≤ (dCnt w).length)] :=
+  have hT : PolyTimeComputable fun w => [decide (ℓ.eval (rU w).length ≤ (dCnt w).length)] :=
     (polyTimeComputable_lenLe.comp (hCnt.pairEncode
       ((polyTimeComputable_unaryPoly ℓ).comp hU))).congr fun w => by
         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
@@ -232,13 +240,25 @@ theorem simulate_decHandler_finish (n : ℕ) (z : List Bool)
       w = InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
         ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog
           (hist j)) →
-      (dCnt w).length = j ∧ finU w = List.replicate n true ∧
+      (dCnt w).length = j ∧ rU w = List.replicate n true ∧
       dIn w = NUPPT.layout (List.replicate n true)
         ((List.range j).map fun i => List.ofFn (ans (decBlock S n a i) st)).flatten
         (pairSndD z) (List.ofFn ω) ∧
       dCt S w = List.ofFn (decBlock S n a j) := by
     intro j w hw
-    obtain ⟨hU, hZ, hW, hA, hL⟩ := fields_finInput n z (List.ofFn ω) (List.ofFn s)
+    have hU := rU_finInput n z (List.ofFn ω) (List.ofFn s)
+      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+        0).encodeLog (hist j))
+    have hZ := rZ_finInput n z (List.ofFn ω) (List.ofFn s)
+      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+        0).encodeLog (hist j))
+    have hW := rW_finInput n z (List.ofFn ω) (List.ofFn s)
+      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+        0).encodeLog (hist j))
+    have hA := finA_finInput n z (List.ofFn ω) (List.ofFn s)
+      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+        0).encodeLog (hist j))
+    have hL := rL_finInput n z (List.ofFn ω) (List.ofFn s)
       (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
         0).encodeLog (hist j))
     rw [← hw] at hU hZ hW hA hL

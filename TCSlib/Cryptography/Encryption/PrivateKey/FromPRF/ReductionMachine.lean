@@ -217,11 +217,10 @@ theorem zipWith_xor_flatten_ofFn : ∀ {k : ℕ} (F G : Fin k → List Bool),
       zipWith_xor_flatten_ofFn (fun j => F j.succ) (fun j => G j.succ) fun j => h j.succ]
 
 /-- A string of `q·s` bits read as `q` chunks of `s` bits: chunk `i` is block `i` of
-`FunFamily.blocks` (the canonical `EnsembleLemmas.take_drop_ofFn_blocks`, read through
-`EnsembleLemmas.blocks_eq`). -/
+`FunFamily.blocks` (the block window `FunFamily.ofFn_blocks`, read backwards). -/
 theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
-    ((List.ofFn w).drop (i * s)).take s = List.ofFn (FunFamily.blocks q s w ⟨i, hi⟩) := by
-  rw [EnsembleLemmas.take_drop_ofFn_blocks w i hi, EnsembleLemmas.blocks_eq]
+    ((List.ofFn w).drop (i * s)).take s = List.ofFn (FunFamily.blocks q s w ⟨i, hi⟩) :=
+  (FunFamily.ofFn_blocks q s w ⟨i, hi⟩).symm
 
 /-! ### The next-query machine of Thm-99.2.1 -/
 
