@@ -176,18 +176,13 @@ theorem quadraticCode_of_linear {F : List Bool → List Bool} {ℓ : PolyExpr} {
 
 /-! ## One-wayness of the padded family -/
 
-/-- `List.ofFn` through a `finCongr` relabelling of the index type. -/
-private theorem ofFn_arrowCongr {a b : ℕ} (h : a = b) (f : Fin a → Bool) :
-    List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) f) = List.ofFn f :=
-  (List.ofFn_congr h f).symm
-
 /-- The encoding of a pair of strings assembled by `Fin.appendEquiv` (and a length cast) is
 the concatenation of the encodings. -/
 private theorem ofFn_appendEquiv {a b n : ℕ} (h : a + b = n) (q : (Fin a → Bool) × (Fin b → Bool)) :
     List.ofFn (((Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h) (Equiv.refl Bool))) q) =
       List.ofFn q.1 ++ List.ofFn q.2 := by
   show List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) (Fin.append q.1 q.2)) = _
-  rw [ofFn_arrowCongr, List.ofFn_fin_append]
+  rw [ofFn_arrowCongr_finCongr, List.ofFn_fin_append]
 
 /-- The encoding of a coin string reassembled by `splitCoins` (and a length cast) is the
 concatenation of the encodings of the halves. -/
@@ -196,7 +191,7 @@ private theorem ofFn_splitCoins_symm_cast {a b n : ℕ} (h : a + b = n)
     List.ofFn (((splitCoins a b).symm.trans (Equiv.arrowCongr (finCongr h) (Equiv.refl Bool))) q) =
       List.ofFn q.1 ++ List.ofFn q.2 := by
   show List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) ((splitCoins a b).symm q)) = _
-  rw [ofFn_arrowCongr]
+  rw [ofFn_arrowCongr_finCongr]
   obtain ⟨q₁, q₂⟩ := q
   exact ofFn_splitCoins_symm a b q₁ q₂
 
