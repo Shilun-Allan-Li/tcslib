@@ -48,7 +48,7 @@ The finalization asks nothing and outputs the adversary's bit.
 namespace TCSlib.Cryptography.Composability.PRFGame
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
-open TCSlib.Cryptography.Games.InteractiveHandler (rU rW rS rI rX rL rCnt)
+open TCSlib.Cryptography.Games.InteractiveHandler (rU rW rS rI rX rL rCnt rAns)
 
 /-! ### Lengths and states -/
 
@@ -192,14 +192,12 @@ private def rFlag (w : List Bool) : Bool := (pairSndD (rS w)).headD false
 /-- The recorded challenge of the state. -/
 private def rRec (w : List Bool) : List Bool :=
   ((pairSndD (rS w)).drop 1).take (ctP.eval (rU w).length)
-/-- The outer answer recorded in the log `⟨⟨[], ⟨x, y⟩⟩, []⟩`. -/
-private def rY (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
 /-- Tape `j` of the seed. -/
 private def rNonce (w : List Bool) : List Bool :=
   ((rW w).drop ((rCnt w).length * (rU w).length)).take (rU w).length
 /-- The ciphertext `⟨r, m ⊕ y⟩` with the tape `r` and the outer answer `y`. -/
 private def rCt (w m : List Bool) : List Bool :=
-  pairEncode (rNonce w) (List.zipWith xor m (rY w))
+  pairEncode (rNonce w) (List.zipWith xor m (rAns w))
 /-- The selected challenge message `m_b`. -/
 private def rMsg (b : Bool) (w : List Bool) : List Bool :=
   if b then (rX w).drop (rU w).length else (rX w).take (rU w).length
@@ -223,7 +221,7 @@ private def pkRun (atkBit b : Bool) (w : List Bool) : List Bool :=
     else
       if atkBit && !rFlag w && rWF w then
         if decide (rL w = []) then pairEncode [false] (pairEncode [] (pairFstD (rX w)))
-        else pairEncode [true] ((true :: List.zipWith xor (pairSndD (rX w)) (rY w)) ++ rS w)
+        else pairEncode [true] ((true :: List.zipWith xor (pairSndD (rX w)) (rAns w)) ++ rS w)
       else pairEncode [true]
         (List.replicate ((PolyExpr.add .var (.const 1)).eval (rU w).length) false ++ rS w)
   else
@@ -252,7 +250,7 @@ private theorem polyTimeComputable_pkRun (atkBit b : Bool) :
     ((polyTimeComputable_pairTakePoly ctP).comp
       (hU.pairEncode (polyTimeComputable_tail.comp hT))).congr fun w => by
         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]; rfl
-  have hY : PolyTimeComputable rY := hD.comp (hD.comp (hF.comp hL))
+  have hY : PolyTimeComputable rAns := InteractiveHandler.polyTimeComputable_rAns
   have hOff : PolyTimeComputable fun w =>
       List.replicate ((rCnt w).length * (rU w).length) true :=
     (OneWay.polyTimeComputable_unaryMulPair.comp (hCnt.pairEncode hU)).congr fun w => by
@@ -266,7 +264,7 @@ private theorem polyTimeComputable_pkRun (atkBit b : Bool) :
       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
         PolyExpr.eval_var]; rfl
   have hXor : ∀ {m : List Bool → List Bool}, PolyTimeComputable m →
-      PolyTimeComputable fun w => List.zipWith xor (m w) (rY w) := fun hm =>
+      PolyTimeComputable fun w => List.zipWith xor (m w) (rAns w) := fun hm =>
     (polyTimeComputable_pairXor.comp (hm.pairEncode hY)).congr fun w => by
       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
   have hCt : ∀ {m : List Bool → List Bool}, PolyTimeComputable m →
@@ -445,8 +443,9 @@ private theorem recBits_fields (o : Option (Fin (ctP.eval n) → Bool)) :
 
 /-- The outer answer recorded in a one-entry log. -/
 private theorem rY_one (w : List Bool) (x' y : List Bool)
-    (hL : rL w = pairEncode (pairEncode [] (pairEncode x' y)) []) : rY w = y := by
-  rw [rY, hL, pairFstD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode]
+    (hL : rL w = pairEncode (pairEncode [] (pairEncode x' y)) []) : rAns w = y := by
+  rw [InteractiveHandler.rAns_eq, hL, pairFstD_pairEncode, pairSndD_pairEncode,
+    pairSndD_pairEncode]
 
 /-- The index word of oracle `2`. -/
 private theorem replicate_two : List.replicate ((2 : Fin 3) : ℕ) true = [true, true] := rfl

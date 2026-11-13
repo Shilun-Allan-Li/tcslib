@@ -6,6 +6,7 @@ import TCSlib.Cryptography.Games.Machines
 import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.Games.Probability
 import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import Mathlib.Data.List.GetD
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -49,6 +50,7 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
 * `Games.decodeBitMove_of_not_canonical`: every other word decodes to the all-`false` output.
 * `Games.padFin_ofFn_zeroBits`, `Games.padFin_replicate_false`, `Games.padFin_nil`,
   `Games.decodeFin_nil_getD`: all-`false` strings and the empty answer read as `zeroBits`.
+* `Games.padFin_append_split`: the two parts of a padded concatenation.
 * `Games.simulate_castImpl_toCompOn`, `Games.expect_simulate_castImpl_toCompOn`: transport of a
   machine's run between two codecs with equal lengths.
 * `Games.polyTimeComputable_cntRead`, `Games.polyTimeComputable_ansRead`: the per-entry readings
@@ -147,6 +149,18 @@ theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) =
 
 /-- The empty list reads as the all-`false` vector: `padFin d [] = zeroBits d`. -/
 theorem padFin_nil (d : ℕ) : padFin d [] = zeroBits d := padFin_replicate_false d 0
+
+/-- **The two parts of a padded concatenation:** if `|u| = d₁`, the first `d₁` bits of
+`padFin (d₁ + d₂) (u ++ v)` are `padFin d₁ u` and the rest `padFin d₂ v` (`padFin_apply`,
+`List.getD_append`, `List.getD_append_right`). -/
+theorem padFin_append_split {d₁ d₂ : ℕ} (u v : List Bool) (hu : u.length = d₁) :
+    (fun j : Fin d₁ => padFin (d₁ + d₂) (u ++ v) (Fin.castAdd d₂ j)) = padFin d₁ u ∧
+      (fun j : Fin d₂ => padFin (d₁ + d₂) (u ++ v) (Fin.natAdd d₁ j)) = padFin d₂ v := by
+  refine ⟨funext fun j => ?_, funext fun j => ?_⟩
+  · rw [padFin_apply, padFin_apply, Fin.coe_castAdd, List.getD_append _ _ _ _ (by omega)]
+  · rw [padFin_apply, padFin_apply, Fin.coe_natAdd, List.getD_append_right _ _ _ _ (by omega)]
+    congr 1
+    omega
 
 /-- An empty answer decodes to all-`false` at every length:
 `(decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ`. -/

@@ -18,15 +18,14 @@ and an empty state, so that T2 (`Games.exists_interactiveHandlerMachine`) makes 
 answers are the outer oracle's (`Games.fwdHandler_impl`), so simulating it is running the
 adversary against the outer oracles (`simulate_fwdHandler_impl`).
 
-It also provides the readers of a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩` (`finU`,
-`finZ`, `finW`, `finA`, `finL`) and of an encoded outer log: `logEmit G L` concatenates `G` of the
+It also provides the readers of an encoded outer log: `logEmit G L` concatenates `G` of the
 successive suffixes of the nested log `L`, is polynomial-time for polynomial-time `G`
 (`polyTimeComputable_logEmit`), and on an encoded log is the concatenation of `G`'s values on the
-entries (`logEmit_encodeLog`).
+entries (`logEmit_encodeLog`). The readers of a finalization input are the published
+`Games.InteractiveHandler.rU`, `rZ`, `rW`, `rL` (with their `_finInput` lemmas) and `finA`.
 
 ## Main definitions
 
-* `NMCCA2.finU`, `finZ`, `finW`, `finA`, `finL`: the fields of a finalization input.
 * `NMCCA2.logEmit`: concatenated readings of the suffixes of an encoded log.
 
 ## Main results
@@ -78,59 +77,6 @@ theorem simulate_fwdHandler_impl (n : ℕ) (z : List Bool)
 
 end Forward
 
-/-! ### Readers of a finalization input -/
-
-/-- The parameter `1^n` of a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`. -/
-def finU (w : List Bool) : List Bool := pairFstD (pairFstD w)
-
-/-- `finU w = pairFstD (pairFstD w)`. -/
-theorem finU_eq (w : List Bool) : finU w = pairFstD (pairFstD w) := rfl
-
-/-- The reduction input `z` of a finalization input. -/
-def finZ (w : List Bool) : List Bool := pairFstD (pairSndD (pairFstD w))
-
-/-- `finZ w = pairFstD (pairSndD (pairFstD w))`. -/
-theorem finZ_eq (w : List Bool) : finZ w = pairFstD (pairSndD (pairFstD w)) := rfl
-
-/-- The seed `ω` of a finalization input. -/
-def finW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
-
-/-- `finW w = pairSndD (pairSndD (pairFstD w))`. -/
-theorem finW_eq (w : List Bool) : finW w = pairSndD (pairSndD (pairFstD w)) := rfl
-
-/-- The adversary's output `a` of a finalization input. -/
-def finA (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD w))
-
-/-- `finA w = pairFstD (pairSndD (pairSndD w))`. -/
-theorem finA_eq (w : List Bool) : finA w = pairFstD (pairSndD (pairSndD w)) := rfl
-
-/-- The outer log `L` of the finalization so far. -/
-def finL (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
-
-/-- `finL w = pairSndD (pairSndD (pairSndD w))`. -/
-theorem finL_eq (w : List Bool) : finL w = pairSndD (pairSndD (pairSndD w)) := rfl
-
-/-- **The fields of a finalization input:** on `finInput n z ω s a L = ⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a,
-L⟩⟩⟩` the readers return `1^n`, `z`, `ω`, `a` and `L`. -/
-theorem fields_finInput (n : ℕ) (z ω s a L : List Bool) :
-    finU (InteractiveHandler.finInput n z ω s a L) = List.replicate n true ∧
-      finZ (InteractiveHandler.finInput n z ω s a L) = z ∧
-      finW (InteractiveHandler.finInput n z ω s a L) = ω ∧
-      finA (InteractiveHandler.finInput n z ω s a L) = a ∧
-      finL (InteractiveHandler.finInput n z ω s a L) = L := by
-  simp only [InteractiveHandler.finInput_eq, seedIn_eq, finU, finZ, finW, finA, finL,
-    pairFstD_pairEncode, pairSndD_pairEncode, and_self]
-
-/-- The finalization-input readers are polynomial-time: `PolyTimeComputable finU`, and the same
-for `finZ`, `finW`, `finA` and `finL`. -/
-theorem polyTimeComputable_finFields :
-    PolyTimeComputable finU ∧ PolyTimeComputable finZ ∧ PolyTimeComputable finW ∧
-      PolyTimeComputable finA ∧ PolyTimeComputable finL := by
-  have hF := polyTimeComputable_pairFstD
-  have hD := polyTimeComputable_pairSndD
-  exact ⟨hF.comp hF, hF.comp (hD.comp hF), hD.comp (hD.comp hF), hF.comp (hD.comp hD),
-    hD.comp (hD.comp hD)⟩
-
 /-! ### Readers of an encoded log -/
 
 /-- **Concatenated readings of an encoded log:** `G` applied to the successive suffixes
@@ -179,28 +125,6 @@ private theorem iterate_pairSndD_encodeLog (codec : MachineCodec spec α) (h : Q
     | cons e t =>
       rw [MachineCodec.encodeLog_cons, pairSndD_pairEncode, ih, List.drop_succ_cons]
 
-/-- Reading the suffixes of a log within at least its number of steps. -/
-private theorem flatMap_range_drop (codec : MachineCodec spec α) (G : List Bool → List Bool)
-    (g : (Σ i, spec.dom i × spec.rng i) → List Bool) (hnil : G [] = [])
-    (hcons : ∀ e t, G (pairEncode (codec.encodeEntry e) t) = g e) :
-    ∀ (h : QueryLog spec) (m : ℕ), h.length ≤ m →
-      ((List.range m).flatMap fun i => G (codec.encodeLog (h.drop i))) = h.flatMap g := by
-  intro h
-  induction h with
-  | nil =>
-    intro m _
-    rw [List.flatMap_nil]
-    refine List.flatMap_eq_nil_iff.2 fun i _ => ?_
-    rw [List.drop_nil, MachineCodec.encodeLog_nil, hnil]
-  | cons e t ih =>
-    intro m hm
-    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by rw [List.length_cons] at hm; omega⟩
-    rw [List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map, List.drop_zero,
-      MachineCodec.encodeLog_cons, hcons, List.flatMap_cons]
-    congr 1
-    simp only [List.drop_succ_cons]
-    exact ih m' (by rw [List.length_cons] at hm; omega)
-
 /-- An encoded log is at least as long as its number of entries. -/
 private theorem length_le_length_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec) :
     h.length ≤ (codec.encodeLog h).length := by
@@ -222,7 +146,9 @@ theorem logEmit_encodeLog (codec : MachineCodec spec α) (G : List Bool → List
     logEmit G (codec.encodeLog h) = h.flatMap g := by
   rw [logEmit_eq]
   simp only [iterate_pairSndD_encodeLog]
-  exact flatMap_range_drop codec G g hnil hcons h _
+  exact flatMap_range_drop (fun l => G (codec.encodeLog l)) g
+    (by beta_reduce; rw [MachineCodec.encodeLog_nil]; exact hnil)
+    h (fun e _ t => by beta_reduce; rw [MachineCodec.encodeLog_cons]; exact hcons e _) _
     (Nat.le_succ_of_le (length_le_length_encodeLog codec h))
 
 end LogEmit

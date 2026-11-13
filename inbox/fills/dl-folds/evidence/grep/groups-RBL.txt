@@ -1,0 +1,641 @@
+### R1-fin-readers
+$ git grep -nE 'def fin[A-Z][A-Za-z]* |fields_finInput|polyTimeComputable_finFields|pairFstD \(pairSndD \(pairSndD w\)\)' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:309:    (pairEncode (g (pairFstD (pairSndD (pairSndD w))))
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:310:      (pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w)))))
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:317:        (pairEncode (g (pairFstD (pairSndD (pairSndD w))))
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:318:          (pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w))))) :=
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:323:  pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:327:    out emit w = pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w))) :=
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:332:theorem point_poly : PolyTimeComputable fun w => pairFstD (pairSndD (pairSndD w)) :=
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:90:    ((pairFstD (pairSndD (pairSndD w))).drop (L.eval (pairFstD w).length))
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:98:  if decide ((pairSndD (pairEncode [] (pairFstD (pairSndD (pairSndD w))))).length ≤
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:99:      (pairFstD (pairEncode [] (pairFstD (pairSndD (pairSndD w))))).length) then []
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:102:      ((pairFstD (pairSndD (pairSndD w))).take (L.eval (pairFstD w).length)))
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:524:def p₃ (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:128:def pcs (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:195:      (pairEncode ((pairFstD (pairSndD (pairSndD w))).drop (pairFstD (pairFstD (pairFstD w))).length)
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:198:            ((pairFstD (pairSndD (pairSndD w))).take (pairFstD (pairFstD (pairFstD w))).length)
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:226:  have hs : PolyTimeComputable fun w => pairFstD (pairSndD (pairSndD w)) :=
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:236:        (pairEncode ((pairFstD (pairSndD (pairSndD w))).drop (pairFstD (pairFstD (pairFstD w))).length)
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:239:              ((pairFstD (pairSndD (pairSndD w))).take (pairFstD (pairFstD (pairFstD w))).length)
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:79:def finCastEquiv {a b : ℕ} (h : a = b) : (Fin a → Bool) ≃ (Fin b → Bool) where
+TCSlib/Cryptography/Authentication/MAC/FromPRF.lean:58:    pairEncode (E (pairEncode (pairFstD (pairSndD w)) (pairFstD (pairSndD (pairSndD w)))))
+TCSlib/Cryptography/Authentication/MAC/FromPRF.lean:65:      [decide (E (pairEncode (pairFstD (pairSndD w)) (pairFstD (pairSndD (pairSndD w)))) =
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:142:        (pairFstD (pairSndD (pairSndD w))))
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:151:            (pairFstD (pairSndD (pairSndD w))))
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:234:  [(decide ((pairFstD (pairSndD (pairSndD w))).length = (pairFstD w).length) &&
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:238:        (blockState (pairFstD w) [] (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:241:        (blockState (pairFstD w) [] (pairFstD (pairSndD (pairSndD w))) (pairFstD (pairSndD w))))]
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:247:      [(decide ((pairFstD (pairSndD (pairSndD w))).length = (pairFstD w).length) &&
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:251:            (blockState (pairFstD w) [] (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:254:            (blockState (pairFstD w) [] (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:343:      [decide ((pairFstD (pairSndD (pairSndD w))).length = (pairFstD w).length)] := by
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:361:          (blockState (pairFstD w) [] (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:364:          (blockState (pairFstD w) [] (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:318:  pairEncode [true] (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:282:  pairEncode [true] (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean:80:  if (pairFstD (pairSndD (pairSndD w))).headD false then
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean:96:      if (pairFstD (pairSndD (pairSndD w))).headD false then
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean:144:  have hi : PolyTimeComputable fun w => [(pairFstD (pairSndD (pairSndD w))).headD false] :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:127:  obtain ⟨hU, hZ, hW, hA, hL⟩ := polyTimeComputable_finFields
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:263:    obtain ⟨hU, hZ, hW, hA, hL⟩ := fields_finInput n z (List.ofFn ω) (List.ofFn s)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:81:  obtain ⟨hU, hZ, hW, hA, -⟩ := polyTimeComputable_finFields
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:217:  obtain ⟨hU, hZ, hW, hA, -⟩ := fields_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:56:private def rIdx (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:58:private def rQuery (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:204:def finU (w : List Bool) : List Bool := pairFstD (pairFstD w)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:210:def finZ (w : List Bool) : List Bool := pairFstD (pairSndD (pairFstD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:216:def finW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:222:def finA (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:224:/-- `finA w = pairFstD (pairSndD (pairSndD w))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:225:theorem finA_eq (w : List Bool) : finA w = pairFstD (pairSndD (pairSndD w)) := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:228:def finL (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:235:theorem fields_finInput (n : ℕ) (z ω s a L : List Bool) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:246:theorem polyTimeComputable_finFields :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:49:open NMCCA2 (finU finZ finW finA fields_finInput polyTimeComputable_finFields)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:213:def finMsg (n : ℕ) (α ω aP : List Bool) : List Bool :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:259:**Proof sketch.** From the polynomial-time field readers (`polyTimeComputable_finFields`,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:265:  obtain ⟨hU, hZ, hW, hA, -⟩ := polyTimeComputable_finFields
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:295:**Proof sketch.** Read the fields of the input in `nmFin_eq` (`fields_finInput`,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:306:  obtain ⟨hU, hZ, hW, hA, -⟩ := fields_finInput n z ω s a L
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:75:def rdIdx (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:77:/-- `rdIdx w = pairFstD (pairFstD (pairSndD (pairSndD w)))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:78:theorem rdIdx_eq (w : List Bool) : rdIdx w = pairFstD (pairFstD (pairSndD (pairSndD w))) := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:81:def rdQuery (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:83:/-- `rdQuery w = pairSndD (pairFstD (pairSndD (pairSndD w)))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:84:theorem rdQuery_eq (w : List Bool) : rdQuery w = pairSndD (pairFstD (pairSndD (pairSndD w))) :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:297:  simulate_fwdHandler_impl fields_finInput polyTimeComputable_finFields finA)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:304:  (polyTimeComputable_const [true]).pairEncode polyTimeComputable_finFields.2.2.2.1
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:359:  rw [hfin, copyFin, (fields_finInput _ _ _ _ _ _).2.2.2.1]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:47:open NMCCA2 (finU finA fields_finInput polyTimeComputable_finFields)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:105:def finSt (w : List Bool) : List Bool := pairFstD (pairSndD w)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:187:  obtain ⟨hU, -, -, hA, -⟩ := polyTimeComputable_finFields
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:219:  obtain ⟨hU, -, -, hA, -⟩ := fields_finInput n z ω s a L
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean:84:  if (pairFstD (pairSndD (pairSndD w))).headD false then
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean:93:      if (pairFstD (pairSndD (pairSndD w))).headD false then
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean:127:  have hq : PolyTimeComputable fun w => [(pairFstD (pairSndD (pairSndD w))).headD false] :=
+TCSlib/Cryptography/Games/Efficiency.lean:466:`rI w = pairFstD (pairFstD (pairSndD (pairSndD w)))`. -/
+TCSlib/Cryptography/Games/Efficiency.lean:467:def rI (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Games/Efficiency.lean:468:/-- The query `x` of a round input: `rX w = pairSndD (pairFstD (pairSndD (pairSndD w)))`. -/
+TCSlib/Cryptography/Games/Efficiency.lean:469:def rX (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Games/Efficiency.lean:647:def finInput (n : ℕ) (z ω s a L : List Bool) : List Bool :=
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:106:    (pairEncode (pairFstD (pairSndD (pairSndD w))) (pairSndD (hMove A dα din advIn w))))
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:112:        (pairEncode (pairFstD (pairSndD (pairSndD w))) (pairSndD (hMove A dα din advIn w)))) :=
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:147:      (pairEncode (pairFstD (pairSndD (pairSndD w))) (pairSndD (hMove A dα din advIn w)))))
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:151:      (pairEncode (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:160:          (pairEncode (pairFstD (pairSndD (pairSndD w))) (pairSndD (hMove A dα din advIn w)))))
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:164:          (pairEncode (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:412:def finOneEquiv (m : ℕ) : Fin m ≃ (Fin 1 → Fin m) × Unit where
+
+### R2-round-readers
+$ git grep -nE 'def (rd[A-Z][A-Za-z]*|rState|rIdx|rQuery|rLog|rS|rI|rX|rL|rU|rZ|rW) |fields_input' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean:100:def rS : Fin 7 := 1
+TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean:106:def rZ : Fin 7 := 4
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean:82:def rX : Fin 17 := 4
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean:90:def rU : Fin 17 := 8
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean:98:def rZ : Fin 17 := 12
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean:64:def rX : Fin 18 := 2
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean:70:def rZ : Fin 18 := 5
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean:80:def rU : Fin 18 := 10
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean:86:def rI : Fin 18 := 13
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:452:private theorem fields_input {i : Fin 3} (x L : List Bool) (j : ℕ)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:469:  obtain ⟨hU, hW, -, -, -, -, hCnt, -, -⟩ := fields_input q atkBit b n z ω (i := i) x L j o hj.le
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:478:  obtain ⟨hU, -, -, -, -, -, hCnt, -, -⟩ := fields_input q atkBit b n z ω (i := i) x L j o hj
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:507:**Proof sketch.** Read the round input field by field (`fields_input`); the first round, with an
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:524:      fields_input q atkBit b n z ω (i := 0) (List.ofFn x) [] j o hj.le
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:529:      fields_input q atkBit b n z ω (i := 0) (List.ofFn x)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:551:well-formedness of `⟦x⟧` (`fields_input`); the first round asks the outer oracle at `x₀`, the second
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:570:      fields_input q atkBit b n z ω (i := 1) (List.ofFn x) [] j o hj
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:579:      fields_input q atkBit b n z ω (i := 1) (List.ofFn x)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:608:    fields_input q atkBit b n z ω (i := 1) (List.ofFn x) [] j o hj
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:626:    fields_input q atkBit b n z ω (i := 2) (List.ofFn x) [] j (some c) hj
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:658:      fields_input q atkBit b n z ω (i := 2) (List.ofFn x) [] j none hj.le
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:664:      fields_input q atkBit b n z ω (i := 2) (List.ofFn x)
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:378:private theorem fields_input {i : Fin 2} (x : List Bool) (L : List Bool) (j : ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:422:    fields_input S cap ist n z ω (i := 1) (List.ofFn x) [] (cap.eval n) c le_rfl hi
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:449:    fields_input S cap ist n z ω (i := 1) (List.ofFn x) [] j c hj.le hi
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:484:      fields_input S cap ist n z ω (i := 1) (List.ofFn x)
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:503:      fields_input S cap ist n z ω (i := 1) (List.ofFn x)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:54:private def rState (w : List Bool) : List Bool := pairFstD (pairSndD w)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:56:private def rIdx (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:58:private def rQuery (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:60:private def rLog (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:65:private theorem fields_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:144:    obtain ⟨-, hI, hX, hL⟩ := fields_input (k := k) n z (List.ofFn ω) (List.ofFn s) i
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:154:    obtain ⟨hS, -, -, hL⟩ := fields_input (k := k) n z (List.ofFn ω) (List.ofFn s) i
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:248:  obtain ⟨hU, -, -, hS, hI, -, -⟩ := fields_input (k := 2) n z (List.ofFn ω)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:262:  obtain ⟨hU, -, -, hS, hI, -, -⟩ := fields_input (k := 2) n z (List.ofFn ω)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:318:  obtain ⟨hU₀, -, -, hS₀, hI₀, -, hL₀⟩ := fields_input (k := 2) n z (List.ofFn ω)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:338:    rw [P.ansY_len, hW₁, (fields_input (k := 2) n z _ _ 1 _ _).1, List.length_replicate]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:340:    rw [P.ansH_len, hW₁, (fields_input (k := 2) n z _ _ 1 _ _).1, List.length_replicate]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:354:    obtain ⟨hU₁, -, -, hS₁, hI₁, hQ₁, hL₁⟩ := fields_input (k := 2) n z (List.ofFn ω)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:491:  obtain ⟨hU, hZ, hW, -, -, hQ, -⟩ := fields_input n (pairEncode pk (samp.advice n))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:591:      rw [nmParams_qry, (fields_input (k := 2) n _ _ s' 1 _ L).1, List.length_replicate, hm, hm',
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:602:      rw [nmParams_ansH, (fields_input (k := 2) n _ _ s' 1 _ _).1, List.length_replicate,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:613:      rw [nmParams_ansY, (fields_input (k := 2) n _ _ s' 1 _ _).1, List.length_replicate,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:19:  `rdIdx`, `rdQuery`, `rdLog`, `rdAns`), with their values (`fields_input`) and their
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:33:* `NMSim.fields_input`, `NMSim.rdAns_input`, `NMSim.polyTimeComputable_rd`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:51:def rdU (w : List Bool) : List Bool := pairFstD (pairFstD w)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:57:def rdZ (w : List Bool) : List Bool := pairFstD (pairSndD (pairFstD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:63:def rdW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:69:def rdState (w : List Bool) : List Bool := pairFstD (pairSndD w)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:75:def rdIdx (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:81:def rdQuery (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:88:def rdLog (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:94:def rdAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rdLog w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:107:theorem fields_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:124:  rw [rdAns, (fields_input n z ω s i x _).2.2.2.2.2.2, pairFstD_pairEncode, pairSndD_pairEncode,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:379:  obtain ⟨hU, hZ, hW, -, -, hQ, -⟩ := fields_input (k := 2) n (pairEncode pk (samp.advice n))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:434:      rw [simParams_qry, (fields_input (k := 2) n _ _ s' 1 _ L).1,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:435:        (fields_input (k := 2) n _ _ s' 1 _ L).2.2.2.2.2.1, List.length_replicate,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:444:      rw [simParams_ansH, (fields_input (k := 2) n _ _ s' 1 _ _).1, List.length_replicate,
+TCSlib/Cryptography/Games/Efficiency.lean:458:def rU (w : List Bool) : List Bool := pairFstD (pairFstD w)
+TCSlib/Cryptography/Games/Efficiency.lean:460:def rZ (w : List Bool) : List Bool := pairFstD (pairSndD (pairFstD w))
+TCSlib/Cryptography/Games/Efficiency.lean:462:def rW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
+TCSlib/Cryptography/Games/Efficiency.lean:464:def rS (w : List Bool) : List Bool := pairFstD (pairSndD w)
+TCSlib/Cryptography/Games/Efficiency.lean:467:def rI (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Games/Efficiency.lean:469:def rX (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Games/Efficiency.lean:471:def rL (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+
+### R2-bodies
+$ git grep -nE 'pairFstD \(pairFstD \(pairSndD \(pairSndD w\)\)\)|pairSndD \(pairFstD \(pairSndD \(pairSndD w\)\)\)|pairSndD \(pairSndD \(pairSndD w\)\)' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:343:      (pairEncode (pairSndD (pairFstD (pairSndD w))) (pairSndD (pairSndD (pairSndD w))))
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:346:    have h2 := length_iterate_pairSndD_le (pairSndD (pairSndD (pairSndD w))) i
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:310:      (pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w)))))
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:318:          (pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w))))) :=
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:323:  pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:327:    out emit w = pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w))) :=
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:337:theorem accum_poly : PolyTimeComputable fun w => pairSndD (pairSndD (pairSndD w)) :=
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:91:    ((pairSndD (pairSndD (pairSndD w))).drop (B.eval (pairFstD w).length))
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:103:    [] ((pairSndD (pairSndD (pairSndD w))).take (B.eval (pairFstD w).length)))) []
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:527:def p₄ (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:530:def p₅ (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD (pairSndD (pairSndD w))))
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:533:def p₆ (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD (pairSndD (pairSndD w))))
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:634:  have h₄ := two_mul_length_pairFstD_add_le (pairSndD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:635:  have h₅ := two_mul_length_pairFstD_add_le (pairSndD (pairSndD (pairSndD (pairSndD w))))
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:131:def pvotes (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:197:          List.zipWith xor (pairSndD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:199:        else pairSndD (pairSndD (pairSndD w))))
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:202:def out (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:228:  have hacc : PolyTimeComputable fun w => pairSndD (pairSndD (pairSndD w)) :=
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:238:            List.zipWith xor (pairSndD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:240:          else pairSndD (pairSndD (pairSndD w)))) :=
+TCSlib/Cryptography/Authentication/MAC/FromPRF.lean:59:      (pairSndD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Authentication/MAC/FromPRF.lean:66:        pairSndD (pairSndD (pairSndD w)))] := by
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:143:      (pairSndD (pairSndD (pairSndD w))))))
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:152:          (pairSndD (pairSndD (pairSndD w)))))) := rfl
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:235:      decide ((pairSndD (pairSndD (pairSndD w))).length =
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:239:          (pairSndD (pairSndD (pairSndD w)))) =
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:248:          decide ((pairSndD (pairSndD (pairSndD w))).length =
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:252:              (pairSndD (pairSndD (pairSndD w)))) =
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:348:      [decide ((pairSndD (pairSndD (pairSndD w))).length =
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:362:            (pairSndD (pairSndD (pairSndD w)))) =
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean:87:          (pairSndD (pairSndD (pairSndD w))))))
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean:88:        (pairEncode (pairFstD (pairFstD (pairSndD w))) (true :: pairSndD (pairSndD (pairSndD w))))
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean:103:              (pairSndD (pairSndD (pairSndD w))))))
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean:105:              (true :: pairSndD (pairSndD (pairSndD w))))
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean:143:  have hx : PolyTimeComputable fun w => pairSndD (pairSndD (pairSndD w)) := hS.comp (hS.comp hS)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:56:private def rIdx (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:58:private def rQuery (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:60:private def rLog (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:228:def finL (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:230:/-- `finL w = pairSndD (pairSndD (pairSndD w))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:231:theorem finL_eq (w : List Bool) : finL w = pairSndD (pairSndD (pairSndD w)) := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:75:def rdIdx (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:77:/-- `rdIdx w = pairFstD (pairFstD (pairSndD (pairSndD w)))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:78:theorem rdIdx_eq (w : List Bool) : rdIdx w = pairFstD (pairFstD (pairSndD (pairSndD w))) := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:81:def rdQuery (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:83:/-- `rdQuery w = pairSndD (pairFstD (pairSndD (pairSndD w)))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:84:theorem rdQuery_eq (w : List Bool) : rdQuery w = pairSndD (pairFstD (pairSndD (pairSndD w))) :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:88:def rdLog (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:90:/-- `rdLog w = pairSndD (pairSndD (pairSndD w))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:91:theorem rdLog_eq (w : List Bool) : rdLog w = pairSndD (pairSndD (pairSndD w)) := rfl
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean:87:        else true :: pairSndD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean:96:            else true :: pairSndD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean:133:  have hx : PolyTimeComputable fun w => true :: pairSndD (pairSndD (pairSndD w)) :=
+TCSlib/Cryptography/Games/Efficiency.lean:466:`rI w = pairFstD (pairFstD (pairSndD (pairSndD w)))`. -/
+TCSlib/Cryptography/Games/Efficiency.lean:467:def rI (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Games/Efficiency.lean:468:/-- The query `x` of a round input: `rX w = pairSndD (pairFstD (pairSndD (pairSndD w)))`. -/
+TCSlib/Cryptography/Games/Efficiency.lean:469:def rX (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
+TCSlib/Cryptography/Games/Efficiency.lean:470:/-- The outer log `L` of a round input: `rL w = pairSndD (pairSndD (pairSndD w))`. -/
+TCSlib/Cryptography/Games/Efficiency.lean:471:def rL (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:125:      (pairSndD (hRes A dα din run advIn w))) (true :: pairSndD (pairSndD (pairSndD w))))
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:138:          (pairSndD (hRes A dα din run advIn w))) (true :: pairSndD (pairSndD (pairSndD w)))) :=
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:148:  else if q.eval (NUPPT.inParam (pairFstD w)).length ≤ (pairSndD (pairSndD (pairSndD w))).length
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:162:          (pairSndD (pairSndD (pairSndD w))).length then
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:193:  have hupd : PolyTimeComputable fun w => pairSndD (pairSndD (pairSndD w)) :=
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:195:  have hclosed : ∀ z j, loopState (fun w => pairSndD (pairSndD (pairSndD w))) s z j =
+
+### R3-answer
+$ git grep -nE 'pairSndD \(pairSndD \(pairFstD \((rL|rdLog|rLog) w\)\)\)|def (rdAns|rAns|rFwd|rY) ' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean:247:def rY (ph : Bool) : Fin 17 := if ph then rs else rlg
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:196:private def rY (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:168:private def rFwd (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:62:private def rAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rLog w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:94:def rdAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rdLog w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:96:/-- `rdAns w = pairSndD (pairSndD (pairFstD (rdLog w)))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:97:theorem rdAns_eq (w : List Bool) : rdAns w = pairSndD (pairSndD (pairFstD (rdLog w))) := rfl
+
+### B1-chunks
+$ git grep -nE 'def (chunkAt|coinBlock|chunk|block)[A-Za-z]* |\(w\.drop \(i \* k\)\)\.take k|\(r\.drop \(i \* B\)\)\.take B' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:286:def blockDone : List Bool := pairEncode [] []
+TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean:57:def blockAt (a k : ℕ) (z : List Bool) (i : ℕ) : List Bool :=
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:466:private def chunkStep (d : List Bool) : List Bool :=
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:474:def chunkW (z : List Bool) : List Bool :=
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:479:def chunkList (c : ℕ) (w : List Bool) (N : ℕ) : List (List Bool) :=
+TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean:58:def blockInit (x : List Bool) (s L : ℕ) (β : List Bool) : Prop :=
+TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean:62:def blockAcc (x : List Bool) (s L : ℕ) (β : List Bool) : Prop :=
+TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean:67:def blockStep (x : List Bool) (s L : ℕ) (β β' : List Bool) : Prop :=
+TCSlib/Complexity/FormulaKit/Gate.lean:75:def blockVar (base width t i : ℕ) : ℕ := base + t * width + i
+TCSlib/Complexity/Randomized/Classes.lean:502:def blockCount (q K : ℕ) (B : List Bool → Bool) (l : List Bool) : ℕ :=
+TCSlib/Complexity/Randomized/RandomBits.lean:201:def blockVal (b : ℕ) (r : List Bool) (i : ℕ) : ℕ :=
+TCSlib/Complexity/Randomized/RandomBits.lean:262:def blocksEquiv (n b : ℕ) : (Fin (n * b) → Bool) ≃ (Fin n → Fin (2 ^ b)) :=
+TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:383:noncomputable def blocksD (u : List Bool) (m : ℕ) : List (SX N) :=
+TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean:321:def block (u : List Bool) (j : ℕ) : List Bool := (u.drop (W N * j)).take (W N)
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:116:noncomputable def chunkBit (cv : CellV N) (t : ℕ) : Bool :=
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:238:noncomputable def chunksWord (f : ℕ → CellV N) (m : ℕ) : List Bool :=
+TCSlib/Cryptography/Asymptotic/Adversary.lean:89:def coinBlock (B i : ℕ) (r : List Bool) : List Bool := (r.drop (i * B)).take B
+TCSlib/Cryptography/Asymptotic/Adversary.lean:92:theorem coinBlock_eq (B i : ℕ) (r : List Bool) : coinBlock B i r = (r.drop (i * B)).take B := rfl
+TCSlib/Cryptography/Asymptotic/Adversary.lean:187:def blocksEquivX (q ℓ : ℕ) (X : Type*) : (Fin (q * ℓ) → X) ≃ (Fin q → Fin ℓ → X) :=
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:81:def blockState (u pk m r : List Bool) : List Bool := pairEncode u (pairEncode pk (pairEncode m r))
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:88:def blockStep (L B : PolyExpr) (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:97:def blockEmit (E : List Bool → List Bool) (L B : PolyExpr) (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:108:def blockEncFun (E : List Bool → List Bool) (L B : PolyExpr) (x : List Bool) : List Bool :=
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:117:def blockList (E : List Bool → List Bool) (L B : ℕ) (u pk : List Bool) :
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:214:private def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:369:def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:70:def blocksEquiv (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:83:def blocksStr {k m : ℕ} (s : Fin k → Fin m → Bool) : List Bool :=
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:63:def blocksE (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:230:def blockMapFun (b : PolyExpr) (g : List Bool → List Bool) (z : List Bool) : List Bool :=
+TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:51:def coinBlocks (k B : ℕ) : (Fin k → Fin B → Bool) ≃ (Fin (k * B) → Bool) :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:287:def chunkStep (c : PolyExpr) (x : List Bool) : List Bool :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:298:def chunkEmit (c : PolyExpr) (f : List Bool → List Bool → List Bool) (x : List Bool) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:313:def chunkMap (c : PolyExpr) (f : List Bool → List Bool → List Bool) (x : List Bool) : List Bool :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:364:def chunkAt (k i : ℕ) (w : List Bool) : List Bool := (w.drop (i * k)).take k
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:367:theorem chunkAt_eq (k i : ℕ) (w : List Bool) : chunkAt k i w = (w.drop (i * k)).take k := rfl
+TCSlib/Cryptography/NumberTheory/Primality.lean:695:def chunk (T n : ℕ) (r : Fin (T * n) → Bool) : Fin T → Fin n → Bool := fun t i =>
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:200:def blockVal (r : List Bool) (base k : ℕ) : ℕ :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:217:def blocksEquiv (m c : ℕ) : (Fin m → Fin c → Bool) ≃ (Fin (m * c) → Bool) :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:257:def blockFields (P Q : ℕ) (g : Fin (1 + P + Q) → Bool) : ((Fin P → Bool) × Bool) × (Fin Q → Bool) :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:69:def blockLen (V' : Strategy) (N : ℕ) : ℕ := 1 + (N + 1) ^ 2 + V'.coinLen N
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:77:def blockTapeEquiv (V' : Strategy) (N M : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:87:def blockPoly (V' : Strategy) : PolyExpr := .add (.add (.const 1) (.normal 1 2)) V'.coins
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:162:def blockRead (b K C : ℕ) (h : K * b ≤ C) (r : Fin C → Bool) (t : Fin K) (j : Fin b) : Bool :=
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:78:def blockPoly (ℓ : PolyExpr) (V' : Strategy) : PolyExpr :=
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:580:noncomputable def chunk (Com : List Bool → List Bool) (ℓ : PolyExpr) (x blk : List Bool)
+
+### B2-windows
+$ git grep -nE 'ofFn_block|take_drop_ofFn_blocks|ofFn_nthCt|coinBlock_flatten|chunkAt_flatten|ofFn_chunk|ofFn_halves|drop \(i \* [a-zA-Z.()]*\)\)\.take' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect.lean:97:    (((l.flatMap g) ++ rest).drop (i * c)).take c = g l[i] := by
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:480:  (List.range N).map fun i => (w.drop (i * c)).take c
+TCSlib/Complexity/Randomized/Classes.lean:503:  (List.range K).countP fun i => B ((l.drop (i * q)).take q)
+TCSlib/Complexity/Randomized/Classes.lean:518:  have hfun : ((fun i => B ((l.drop (i * q)).take q)) ∘ Nat.succ)
+TCSlib/Complexity/Randomized/Classes.lean:519:      = fun i => B (((l.drop q).drop (i * q)).take q) := by
+TCSlib/Complexity/Randomized/Classes.lean:1291:    rw [haux (fun i => M x ((l.drop (i * q)).take q)) (List.range K)]
+TCSlib/Complexity/Randomized/Inclusions.lean:426:    have hb : (((List.ofFn r).drop (i * q)).take q).length = q := by
+TCSlib/Complexity/Randomized/Matching.lean:202:  have hrow : ((w.drop (i * n)).take n).length = n * [true].length := by
+TCSlib/Complexity/Randomized/Matching.lean:206:  have hcoin : ((r.drop (i * NK.length)).take NK.length).length = n * k := by
+TCSlib/Complexity/Randomized/Matching.lean:220:  have hbit : (((w.drop (i * n)).take n).drop j).take 1 = [w.getD (i * n + j) false] := by
+TCSlib/Complexity/Randomized/Matching.lean:228:  have hblk : (((r.drop (i * NK.length)).take NK.length).drop (j * k)).take k =
+TCSlib/Complexity/Randomized/NPPoly.lean:110:        decide (f (Turing.pairEncode (List.ofFn v) (((List.ofFn ρ).drop (i * q)).take q)) ∈ C) :=
+TCSlib/Complexity/Randomized/NPPoly.lean:115:        decide (f (Turing.pairEncode (List.ofFn v) (((List.ofFn ρ).drop (i * q)).take q)) ∈ C) :=
+TCSlib/Complexity/Randomized/NPPoly.lean:219:      (((List.range K).flatMap g).drop (i * c)).take c = g i
+TCSlib/Complexity/Randomized/NPPoly.lean:237:    ((l.drop (i * c)).take c).length = c := by
+TCSlib/Complexity/Randomized/RPExpected.lean:122:    have hb : (((List.ofFn r).drop (i * q)).take q).length = q := by
+TCSlib/Complexity/Randomized/RandomBits.lean:202:  bitsVal ((r.drop (i * b)).take b)
+TCSlib/Complexity/Randomized/RandomBits.lean:206:    blockVal b r i = Complexity.LogProg.bitsVal ((r.drop (i * b)).take b) := rfl
+TCSlib/Complexity/Randomized/RandomBits.lean:269:  have hlist : ((List.ofFn r).drop (i * b)).take b =
+TCSlib/Complexity/Randomized/SipserGacs.lean:320:    rw [haux (fun i => M₀ x ((l.drop (i * q)).take q)) (List.range K)]
+TCSlib/Complexity/Randomized/SipserGacs.lean:574:    have hblock_len : ∀ i, i < ks → ((u.drop (i * m)).take m).length = m := by
+TCSlib/Complexity/Randomized/SipserGacs.lean:582:          M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+TCSlib/Complexity/Randomized/SipserGacs.lean:591:          M x (List.zipWith xor l ((u.drop (i * m)).take m)) = true)
+TCSlib/Complexity/Randomized/SipserGacs.lean:593:        rw [show (u.drop (i * m)).take m = List.ofFn ci from hci, hxor]
+TCSlib/Complexity/Randomized/SipserGacs.lean:600:          M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+TCSlib/Complexity/Randomized/SipserGacs.lean:604:            M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+TCSlib/Complexity/Randomized/SipserGacs.lean:613:          M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+TCSlib/Complexity/Randomized/SipserGacs.lean:618:          M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+TCSlib/Complexity/Randomized/SipserGacs.lean:622:            ((u.drop (i * m)).take m)) = true).card : ℚ) ≤
+TCSlib/Complexity/Randomized/SipserGacs.lean:625:              ((u.drop (i * m)).take m)) = true).card : ℚ) := by
+TCSlib/Complexity/Randomized/SipserGacs.lean:635:            ((u.drop (i * m)).take m)) = true).card : ℚ)
+TCSlib/Complexity/Randomized/SipserGacs.lean:638:                ((u.drop (i * m)).take m)) = true).card : ℚ) := h3
+TCSlib/Complexity/Randomized/SipserGacs.lean:646:          M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+TCSlib/Complexity/Randomized/SipserGacs.lean:655:          ((u.drop (i * m)).take m)) = false := by
+TCSlib/Complexity/Randomized/SipserGacs.lean:659:          ((u.drop (i * m)).take m))
+TCSlib/Complexity/Randomized/SipserGacs.lean:671:        ((u.drop (i * m)).take m)) = true)
+TCSlib/Cryptography/Asymptotic/Adversary.lean:69:* `TCSlib.Cryptography.FunFamily.ofFn_blocks` — block `j` of a string is its `j`-th window.
+TCSlib/Cryptography/Asymptotic/Adversary.lean:89:def coinBlock (B i : ℕ) (r : List Bool) : List Bool := (r.drop (i * B)).take B
+TCSlib/Cryptography/Asymptotic/Adversary.lean:92:theorem coinBlock_eq (B i : ℕ) (r : List Bool) : coinBlock B i r = (r.drop (i * B)).take B := rfl
+TCSlib/Cryptography/Asymptotic/Adversary.lean:222:theorem FunFamily.ofFn_blocks (q ℓ : ℕ) (ω : Fin (q * ℓ) → Bool) (j : Fin q) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:395:theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:396:    ((List.ofFn w).drop (i * s)).take s = List.ofFn (blocks q s w ⟨i, hi⟩) := by
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:411:theorem ofFn_blocks_symm {q ℓ : ℕ} (V : Fin q → Fin ℓ → Bool) (F : ℕ → List Bool)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:789:`i`-th block of the coins (`take_drop_ofFn_blocks`) and the concatenation of the blocks is the
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:790:string of `(blocks t ℓ).symm` (`ofFn_blocks_symm`). The reduction is
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:858:  refine (ofFn_blocks_symm _ F fun i hi => ?_).symm
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:861:  · simp only [padL, take_drop_ofFn_blocks _ i hi, Equiv.apply_symm_apply]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:863:  · simp only [padL, take_drop_ofFn_blocks _ i hi, Equiv.apply_symm_apply]
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:99:    ((blocksStr s).drop (i * m)).take m = List.ofFn (s i) := by
+TCSlib/Cryptography/Asymptotic/OneWay.lean:380:theorem ofFn_blocks_symm (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) :
+TCSlib/Cryptography/Asymptotic/OneWay.lean:449:(`ofFn_blocks_symm`, the hypothesis on `F`). -/
+TCSlib/Cryptography/Asymptotic/OneWay.lean:454:  rw [NUPPT.advInput_eq, hspec, prod_f, ofFn_blocks_symm]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:723:private theorem ofFn_blocks_two_symm (ℓ : ℕ) (t : Fin 2 → Fin ℓ → Bool) :
+TCSlib/Cryptography/Asymptotic/OneWay.lean:725:  rw [FunFamily.ofFn_blocks_symm, OneWay.flatten_ofFn_two]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:746:`Fin.appendEquiv`, `uprob_comp_equiv`, `ofFn_blocks_symm`). Probability: `invProbAt_prod_eq`
+TCSlib/Cryptography/Asymptotic/OneWay.lean:750:`ofFn_block_eq_take_drop`) gives `(𝓕.prod 2).invProbAt A' n ≤ 𝓕.invProbAt A n`; conclude by
+TCSlib/Cryptography/Asymptotic/OneWay.lean:785:    rw [← ofFn_blocks_two_symm, ← List.ofFn_fin_append]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:824:  rw [NUPPT.inverter_eq_some_iff, ofFn_blocks_two_symm, Function.update_self,
+TCSlib/Cryptography/Asymptotic/OneWay.lean:827:  have hblk := OneWay.ofFn_block_eq_take_drop x'' 0
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:30:  `OneWay.lean` unfolds to this), and `ofFn_block_eq_take_drop` reads it off `List.ofFn x` by
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:77:that window (`FunFamily.ofFn_blocks`). -/
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:78:theorem ofFn_block_eq_take_drop {q ℓ : ℕ} (x : Fin (q * ℓ) → Bool) (i : Fin q) :
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:83:  rw [hblk, FunFamily.ofFn_blocks]
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:88:  rw [← ofFn_block_eq_take_drop, List.length_ofFn]
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:124:  rw [ofFn_padTrue, ofFn_block_eq_take_drop]
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:460:`ofFn_block_eq_take_drop`. -/
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:499:  rw [ofFn_block_eq_take_drop]
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:851:    rw [← ofFn_block_eq_take_drop pb' t, hUspec]
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:43:* `TCSlib.Cryptography.OneWay.ofFn_blocksE_symm_update` — planting a block is splicing.
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:81:theorem ofFn_blocksE_symm (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) :
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:106:theorem ofFn_blocksE_symm_update {q ℓ : ℕ} (t : Fin q → Fin ℓ → Bool) (p : Fin q)
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:640:blockwise evaluator returns the tuple `(f(x₁), …, f(x_m))` (`hF'`, `hFe`, `ofFn_blocksE_symm`),
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:641:planting is splicing (`ofFn_blocksE_symm_update`), `A'.output` on the layout is `A'.runAt`, and
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:685:    rw [hF' b, ofFn_blocksE_symm]
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:698:    rw [ofFn_blocksE_symm_update]
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:789:(`ofFn_block_eq_take_drop`), so the round test is `f(z_i) = y` (`test_layout`) and the payload is
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:817:    exact (ofFn_block_eq_take_drop r ⟨i, h⟩).symm.trans
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:96:theorem coinBlock_flatten {B : ℕ} : ∀ (l : List (List Bool)), (∀ c ∈ l, c.length = B) →
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:104:    have hrest := coinBlock_flatten cs (fun d hd => hl d (by simp [hd])) i (by simpa using hi)
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:110:theorem coinBlock_flatten_ofFn {q B : ℕ} (g : Fin q → List Bool) (hg : ∀ i, (g i).length = B)
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:112:  rw [coinBlock_flatten (List.ofFn g) (fun c hc => by
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:462:`x_i^{m_i}` (`coinBlock_flatten_ofFn`); block `i` of the public key is the pair
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:518:  rw [coinBlock_flatten_ofFn _ hsel i, coinBlock_flatten_ofFn _ hpk i]
+TCSlib/Cryptography/Candidates/Concrete.lean:737:  have hblock : ∀ i, rbl_block (rbl_step^[i] x0) = (c.drop (i * bw.length)).take kw.length := by
+TCSlib/Cryptography/Candidates/Concrete.lean:742:      decide (E (listToNat par) (listToNat ((c.drop (i * bw.length)).take kw.length)))) := by
+TCSlib/Cryptography/Candidates/Concrete.lean:756:        decide (E (listToNat par) (listToNat ((c.drop (i * bw.length)).take kw.length)))) := by
+TCSlib/Cryptography/Candidates/Concrete.lean:761:      (fun i => decide (E (listToNat par) (listToNat ((c.drop (i * bw.length)).take kw.length))))
+TCSlib/Cryptography/Candidates/Factoring.lean:198:private theorem fac_ofFn_halves (n : ℕ) (x : Fin (2 * n) → Bool) :
+TCSlib/Cryptography/Candidates/Factoring.lean:202:      List.ofFn (FunFamily.blocks 2 n x i) = ((List.ofFn x).drop (i * n)).take n :=
+TCSlib/Cryptography/Candidates/Factoring.lean:204:      (OneWay.ofFn_block_eq_take_drop x i)
+TCSlib/Cryptography/Candidates/Factoring.lean:231:`(List.ofFn w).take n`/`.drop n` (`FunFamily.ofFn_blocks_symm`, `List.ofFn_mul`) and
+TCSlib/Cryptography/Candidates/Factoring.lean:247:  obtain ⟨h0, h1⟩ := fac_ofFn_halves n x
+TCSlib/Cryptography/Candidates/Factoring.lean:487:what `A''` returns (`oneCallFactorer_runAtL`, `fac_ofFn_halves`, the coins through
+TCSlib/Cryptography/Candidates/Factoring.lean:548:    exact (fac_ofFn_halves n x').1
+TCSlib/Cryptography/Candidates/Factoring.lean:594:(`FunFamily.ofFn_blocks_symm`, `List.ofFn_succ`, `List.take_left`), so `A''` factors
+TCSlib/Cryptography/Candidates/Factoring.lean:799:    exact (fac_ofFn_halves n _).1
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:97:          (fun i => g (((L.flatMap f).drop (i * b)).take b)) =
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:220:`FunFamily.blocks` (the canonical `EnsembleLemmas.take_drop_ofFn_blocks`, read through
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:222:theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:223:    ((List.ofFn w).drop (i * s)).take s = List.ofFn (FunFamily.blocks q s w ⟨i, hi⟩) := by
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:224:  rw [EnsembleLemmas.take_drop_ofFn_blocks w i hi, EnsembleLemmas.blocks_eq]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:459:`b` the verdict of `D` on `H ⊕ maskOf (v n)` (`postFun_layout`, `take_drop_ofFn_blocks`,
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:542:      take_drop_ofFn_blocks _ k hk, Equiv.apply_symm_apply, decodeOracleMove_query]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:156:the seed is its `j`-th window (`EnsembleLemmas.blocks_eq`, `FunFamily.ofFn_blocks`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:160:  rw [Equiv.trans_apply, EnsembleLemmas.blocks_eq, FunFamily.ofFn_blocks,
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:130:of the seed is its `j`-th window (`FunFamily.ofFn_blocks`). -/
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:137:  exact FunFamily.ofFn_blocks (cap.eval n) (S.enc.coins.eval n) ω j
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:214:theorem ofFn_nthCt {n ℓ : ℕ} (w : Fin (ℓ * S.ctLen.eval n) → Bool) (i : Fin ℓ) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:262:(`ofFn_nthCt`, `ofFn_padFin_eq_take`, `ofFn_cast`); they are equal as strings
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:282:    ofFn_nthCt, ofFn_padFin_of_length ha]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:471:    rw [ofFn_nthCt, hW, hi]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:539:**Proof sketch.** Block by block: `ofFn_block` for the ciphertexts, `decide_map_ofFn` for the
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:552:    rw [snmCt_eq, ofFn_block]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:558:**Proof sketch.** Entry `i` of `w` is the block `chunkAt (ctLen(n) + 1) i ⟦w⟧` (`ofFn_block`),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:572:    rw [← ofFn_block, List.ofFn_succ, simEntry_fst]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:48:* Blocks of strings: `NMSim.ofFn_block`, `ofFn_natAdd_eq_drop`, `take_eq_flatten_chunkAt`,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:49:  `chunkAt_flatten_append`, `map_chunkAt_flatten`, and their lengths.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:364:def chunkAt (k i : ℕ) (w : List Bool) : List Bool := (w.drop (i * k)).take k
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:367:theorem chunkAt_eq (k i : ℕ) (w : List Bool) : chunkAt k i w = (w.drop (i * k)).take k := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:405:theorem chunkAt_flatten_append (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i < r, (g i).length = k)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:429:theorem map_chunkAt_flatten {α : Type} (k : ℕ) (F : List Bool → α) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:448:theorem ofFn_block {r k sl : ℕ} (w : Fin (r * k + sl) → Bool) (i : Fin r) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:261:`(entryL … [c is the challenge] c).drop 1` (`nmOutput_eq_entryTails`, `map_chunkAt_flatten`). -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:271:    map_chunkAt_flatten (S.ctLen.eval n) (fun c => (entryL S n sk
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:627:    rw [S.ofFn_nthCt, ofFn_padFin_of_length hw, chunkAt_eq]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:462:**Proof sketch.** Entry `i` of the output is `flagF ⟨1^n, st⟩ c_i` (`chunkAt_flatten_append`), whose
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:492:  rw [chunkAt_flatten_append _ _ _ hg _ _ hi, flagF_eq, List.headD_cons, List.tail_cons,
+TCSlib/Cryptography/NumberTheory/Primality.lean:780:private theorem ofFn_chunk {T n : ℕ} (r : Fin (T * n) → Bool) (t : Fin T) :
+TCSlib/Cryptography/NumberTheory/Primality.lean:807:      decide (listToNat ((rs.drop (i * n)).take n)).Prime := by
+TCSlib/Cryptography/NumberTheory/Primality.lean:813:    spOut (spStep^[i] (pairEncode (List.replicate n true) rs)) = (rs.drop (i * n)).take n := by
+TCSlib/Cryptography/NumberTheory/Primality.lean:825:`ofFn_chunk`); if it fails, no block is prime and `samplePrime` returns `none`
+TCSlib/Cryptography/NumberTheory/Primality.lean:839:    rw [bitsToNat_eq_listToNat, ofFn_chunk]
+TCSlib/Cryptography/NumberTheory/Primality.lean:841:      decide (listToNat (((List.ofFn r).drop (i * n)).take n)).Prime = false := by
+TCSlib/Cryptography/NumberTheory/Primality.lean:877:    simp only [Option.map_some, Option.getD_some, ofFn_chunk]
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator.lean:54:theorem drop_take_ofFn_blocks (q ℓ : ℕ) (w : Fin (q * ℓ) → Bool) {k : ℕ} (hk : k < q) :
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean:399:pairs (`drop_take_ofFn_blocks`), which is `W₁ |L|` re-encoded; for `|L| = j` it returns the
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean:417:      drop_take_ofFn_blocks (q.eval n) (2 * n) _ hk, Equiv.apply_symm_apply]
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean:422:        List.length_replicate, drop_take_ofFn_blocks (q.eval n) n _ hk, Equiv.apply_symm_apply,
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:687:(`CommitmentLemmas.ofFn_blocks_symm_update`, lengths by `length_flatten_ofFn`). If
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:750:    rw [hTz, ofFn_blocks_symm_update]
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:788:for two block strings of total length `≤ 3n(n+1)` (`CommitmentLemmas.ofFn_blocks_symm_update`)
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:831:`List.ofFn ((blocks n (n+1)).symm (owpCom …))` (`EnsembleLemmas.ofFn_blocks_symm`), i.e.
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:853:  rw [hb, EnsembleLemmas.ofFn_blocks_symm T E hEi]
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:33:* **splitting a tuple at a position** (`ofFn_update_eq`, `ofFn_blocks_symm_update`,
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:55:* `TCSlib.Cryptography.CommitmentLemmas.ofFn_blocks_symm_update`,
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:216:`z`, then the blocks after `k` (`FunFamily.ofFn_blocks_symm`, `ofFn_update_eq`). -/
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:217:theorem ofFn_blocks_symm_update {q ℓ : ℕ} (W : Fin q → Fin ℓ → Bool) (k : Fin q)
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:222:  rw [FunFamily.ofFn_blocks_symm]
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:485:`r_i = blocks n n (padFin (n²) r) i`, `n = |v|` (`EnsembleLemmas.take_drop_ofFn_blocks`). -/
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:495:  have hblock : ((EnsembleLemmas.padL (v.length * v.length) r).drop (i * v.length)).take v.length =
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:497:    EnsembleLemmas.take_drop_ofFn_blocks (padFin (v.length * v.length) r) i hi
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:280:theorem headD_ofFn_block {P Q : ℕ} (g : Fin (1 + P + Q) → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:286:theorem drop_one_take_ofFn_block {P Q : ℕ} (g : Fin (1 + P + Q) → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:295:theorem drop_ofFn_block {P Q : ℕ} (g : Fin (1 + P + Q) → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:325:**Proof sketch.** Unfold `attemptStr`; the block's fields are read by `headD_ofFn_block`,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:326:`drop_one_take_ofFn_block`, `drop_ofFn_block`; the vertex count `instanceVertexCount x = n`
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:338:      headD_ofFn_block,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:339:    drop_one_take_ofFn_block, drop_ofFn_block]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:30:  (`drop_take_ofFn_blockRead`).
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:46:  `TCSlib.Cryptography.ColRep.drop_take_ofFn_blockRead` — tape blocks.
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:195:theorem drop_take_ofFn_blockRead (b K C : ℕ) (h : K * b ≤ C) (r : Fin C → Bool) (t : Fin K) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1132:(`ColRep.drop_take_ofFn_blockRead`) this is a test `T` of the `n|E|` sampled edges `Φ rV`. The
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1174:    rw [colCoinSlice_eq, ← ColRep.drop_take_ofFn_blockRead _ _ _ hKb rV ⟨k, hk⟩]
+
+### B3-aliases
+$ git grep -nE 'EnsembleLemmas\.blocks|def blocks|blocks_eq|private def blocks' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/Randomized/RandomBits.lean:262:def blocksEquiv (n b : ℕ) : (Fin (n * b) → Bool) ≃ (Fin n → Fin (2 ^ b)) :=
+TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:383:noncomputable def blocksD (u : List Bool) (m : ℕ) : List (SX N) :=
+TCSlib/Cryptography/Asymptotic/Adversary.lean:187:def blocksEquivX (q ℓ : ℕ) (X : Type*) : (Fin (q * ℓ) → X) ≃ (Fin q → Fin ℓ → X) :=
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:214:private def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:218:private theorem blocks_eq (q ℓ : ℕ) : blocks q ℓ = FunFamily.blocks q ℓ := rfl
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:235:  simp only [copies, blocks_eq, FunFamily.blocks_symm_apply, TCSlib.Cryptography.copies_def,
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:514:        ((EnsembleLemmas.blocks (t.eval n) (ℓ.eval n)).symm v) r := ⟨_, fun _ _ _ => rfl⟩
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:550:          (EnsembleLemmas.coinsEquiv rfl ((EnsembleLemmas.blocks _ _).symm c.1.1,
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:551:            (EnsembleLemmas.blocks _ _).symm c.1.2), c.2) :=
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:552:      ⟨((((EnsembleLemmas.blocks _ _).symm.prodCongr (EnsembleLemmas.blocks _ _).symm).trans
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:37:* `TCSlib.Cryptography.EnsembleLemmas.blocks` — the blockwise bijection
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:369:def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:373:theorem blocks_eq (q ℓ : ℕ) : blocks q ℓ = FunFamily.blocks q ℓ := rfl
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:384:  rw [blocks_eq, FunFamily.blocks_symm_apply, finProdFinEquiv_symm_apply]
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:70:def blocksEquiv (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:83:def blocksStr {k m : ℕ} (s : Fin k → Fin m → Bool) : List Bool :=
+TCSlib/Cryptography/Asymptotic/OneWay.lean:619:private theorem blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ :=
+TCSlib/Cryptography/Asymptotic/OneWay.lean:702:    rw [NUPPT.inverter_eq_some_iff, blocks_eq_blocksE] at hx''
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:63:def blocksE (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Candidates/Factoring.lean:685:private theorem fac_blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ :=
+TCSlib/Cryptography/Candidates/Factoring.lean:695:  rw [fac_blocks_eq_blocksE]
+TCSlib/Cryptography/Candidates/Factoring.lean:714:    rw [Option.getD_some, fac_blocks_apply, ← fac_blocks_eq_blocksE, h2]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:221:`EnsembleLemmas.blocks_eq`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:224:  rw [EnsembleLemmas.take_drop_ofFn_blocks w i hi, EnsembleLemmas.blocks_eq]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:141:    (Equiv.refl Bool)).trans (EnsembleLemmas.blocks (q.eval n) n)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:150:  rw [Equiv.trans_apply, EnsembleLemmas.blocks_apply]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:156:the seed is its `j`-th window (`EnsembleLemmas.blocks_eq`, `FunFamily.ofFn_blocks`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:160:  rw [Equiv.trans_apply, EnsembleLemmas.blocks_eq, FunFamily.ofFn_blocks,
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:852:  have hb : FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1) := rfl
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:488:      F (NUPPT.advInput v.length (List.ofFn (EnsembleLemmas.blocks v.length v.length
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:490:      [xor (v.getD i false) ((H (NUPPT.advInput v.length (List.ofFn (EnsembleLemmas.blocks
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:496:      List.ofFn (EnsembleLemmas.blocks v.length v.length (padFin (v.length * v.length) r) ⟨i, hi⟩) :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:217:def blocksEquiv (m c : ℕ) : (Fin m → Fin c → Bool) ≃ (Fin (m * c) → Bool) :=
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:179:`EnsembleLemmas.blocks K b : (Fin (K b) → Bool) ≃ (Fin K → Fin b → Bool)`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:180:(`EnsembleLemmas.blocks_apply`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:184:    (HardcoreBit.pushesUniform_equiv (EnsembleLemmas.blocks K b))
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:187:  rw [EnsembleLemmas.blocks_apply, blockRead_eq]
+
+### L1-lists
+$ git grep -nE 'flatMap_range_drop|ofFn_natAdd_eq_drop|decide_map_ofFn|length_flatten_map_const|length_flatten_map_range|ofFn_eq_map_range' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/Randomized/NPPoly.lean:217:private theorem flatMap_range_drop_take {α : Type*} (g : ℕ → List α) {c : ℕ} :
+TCSlib/Complexity/Randomized/NPPoly.lean:231:      exact flatMap_range_drop_take g K i (fun j hj => h j (by omega)) hi
+TCSlib/Complexity/Randomized/NPPoly.lean:344:        exact flatMap_range_drop_take (fun i => ρb n i ++ Yb n Y i) (polyLen 36 1 n) i
+TCSlib/Complexity/Randomized/NPPoly.lean:407:        flatMap_range_drop_take Yc _ i hYc hi'
+TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean:258:lemma ofFn_eq_map_range {β : Type} (g : ℕ → β) (m : ℕ) :
+TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean:305:  simp only [vChunk, hfst, hb, ofFn_eq_map_range (fun j => (u.drop (W N * j)).take (W N)),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:303:private theorem flatMap_range_drop (codec : MachineCodec spec α) (G : List Bool → List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:345:  exact flatMap_range_drop codec G g hnil hcons h _
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:539:**Proof sketch.** Block by block: `ofFn_block` for the ciphertexts, `decide_map_ofFn` for the
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:540:copy test, `ofFn_snmEntry` for the entries and `ofFn_natAdd_eq_drop` for `σ`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:548:  rw [snmView_eq, realView_eq, M.draw_eq, drawWith_eq, snmSigma_eq, ofFn_natAdd_eq_drop]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:550:  refine ofFn_eq_map_range _ _ fun i => ?_
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:553:  rw [hc, decide_map_ofFn, ofFn_snmEntry]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:567:  rw [snmView_eq, idealView_eq, M.draw_eq, drawWith_eq, snmSigma_eq, ofFn_natAdd_eq_drop]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:569:  refine ofFn_eq_map_range _ _ fun i => ?_
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:380:general form of `Forward`'s private `flatMap_range_drop`, with the reading of a nonempty suffix
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:382:private theorem flatMap_range_drop {β : Type} (F : List β → List Bool) (g : β → List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:444:  rw [flatMap_range_drop (fun l => chunkEmit c f (pairEncode ctx l.flatten)) (f ctx)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:48:* Blocks of strings: `NMSim.ofFn_block`, `ofFn_natAdd_eq_drop`, `take_eq_flatten_chunkAt`,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:385:theorem length_flatten_map_range (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i < r, (g i).length = k) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:396:theorem length_flatten_map_const {α β : Type} (l : List α) (g : α → List β) (k : ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:418:          rw [length_flatten_map_range k i g fun j hj => hg j (by omega)]),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:419:        List.drop_of_length_le (by rw [length_flatten_map_range k i g fun j hj => hg j (by omega)]),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:425:  List.drop_left' (length_flatten_map_range k r g hg)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:467:theorem ofFn_natAdd_eq_drop {k sl : ℕ} (w : Fin (k + sl) → Bool) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:473:theorem ofFn_eq_map_range {α : Type} {r : ℕ} (f : Fin r → α) (g : ℕ → α)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:482:theorem decide_map_ofFn {k : ℕ} (o : Option (Fin k → Bool)) (c : Fin k → Bool) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:472:    rw [length_flatten_map_range _ _ _ hg3]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:416:    length_flatten_map_range (S.ctLen.eval n + 2 * S.ctLen.eval n) _ _ fun i hi => ?_,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:417:    length_flatten_map_const _ _ (2 * S.ctLen.eval n) fun x => ?_, List.length_append,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:320:      length_flatten_map_range (S.ctLen.eval n + 1) _ _ fun i hi => ?_]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:485:      length_flatten_map_range (S.ctLen.eval n + 1) _ _ hg, Nat.mul_add, Nat.mul_one]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:67:theorem ofFn_eq_map_range {α : Type*} : ∀ {k : ℕ} (f : Fin k → α) (g : ℕ → α),
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:72:      ofFn_eq_map_range (fun t => f t.castSucc) g (fun t => by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:372:      ofFn_eq_map_range (fun k : Fin (i + 1) => encGraph (prefixLE (fun j => permGraph (cond (b j) G₁ G₀)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:919:theorem ofFn_eq_map_range {α : Type*} {n : ℕ} (f : Fin n → α) (F : ℕ → α)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:999:  rw [ofFn_eq_map_range f F h, encodeMsgs_eq_flatMap, List.flatMap_map]
+
+### L2-padFin
+$ git grep -nE 'padFin_append_split|getD_append_right' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/CircuitComplexity/Adder.lean:546:        List.getD_append_right _ _ _ _ (by omega)]
+TCSlib/Complexity/CircuitComplexity/Adder.lean:550:      rw [inBits_get, List.getD_append_right _ _ _ _ (by simp; omega)]
+TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:198:  rw [List.getD_append_right _ _ _ _ (by omega)]
+TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:381:      rw [hσ_gate, List.getD_append_right _ _ _ _ (by omega),
+TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:382:        List.getD_append_right _ _ _ _ (by omega), hlen, hlen0]
+TCSlib/Complexity/CircuitComplexity/DAGTransform.lean:171:    rw [List.getD_append_right _ _ _ _ (by omega)]; simp [hml]
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:264:      · rw [if_pos hvm, List.getD_append_right _ _ _ _ (by simp),
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:268:          List.getD_append_right _ _ _ _ (by simp; omega)]
+TCSlib/Complexity/CircuitComplexity/KarpLiptonSearch.lean:292:    rw [List.getD_append_right _ _ _ _ (by simp)]
+TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily.lean:167:    rw [hinit, List.append_assoc, List.getD_append_right _ _ _ _ (by omega), hy,
+TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily.lean:170:    rw [hinit, List.getD_append_right _ _ _ _ (by simp; omega)]; simp [hy, hp]
+TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily.lean:172:    rw [hinit, List.getD_append_right _ _ _ _ (by simp; omega)]
+TCSlib/Complexity/CircuitComplexity/LogspaceUniformWalk.lean:200:      rw [List.getD_append_right _ _ _ _ (by omega)]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit.lean:253:      List.getD_append_right _ _ _ _ (by omega), hlitlen,
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit.lean:278:      List.getD_append_right _ _ _ _ (by simp)]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit.lean:556:    List.getD_append_right _ _ _ _ (by simp)]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyGadget.lean:196:  rw [List.getD_append_right _ _ _ _ (by omega), hl, Nat.sub_self, List.getD_cons_zero]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyProgram.lean:161:    List.getD_append_right _ _ _ _ (by omega), hpl, Nat.sub_self, List.getD_cons_zero]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect.lean:127:  · rw [List.getD_append_right _ _ _ _ (by omega)]; simp [hpre]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect.lean:128:  · rw [List.getD_append_right _ _ _ _ (by omega)]; simp [hpre]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect.lean:129:  · rw [List.getD_append_right _ _ _ _ (by omega)]; simp [hpre]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect.lean:132:  · rw [List.getD_append_right _ _ _ _ (by omega)]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect.lean:351:        · rw [hnew _ (le_refl _), List.getD_append_right _ _ _ _ (by simp)]
+TCSlib/Complexity/CircuitComplexity/StraightLine.lean:363:      rw [hidx, vertexValue_last, List.getD_append_right _ _ _ _ (by simp)]
+TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:372:  rw [List.getD_append_right _ _ _ _ (by simp)]
+TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.lean:428:    · rw [List.getD_append_right _ _ _ _ (by omega)]
+TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.lean:475:    rw [← hVc, List.getD_append_right _ _ _ _ (by omega), hlen, Nat.add_sub_cancel_left,
+TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.lean:549:    · rw [hall, hB, List.getD_append_right _ _ _ _ (by omega), hVdl,
+TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.lean:577:    · rw [hP0v, List.getD_append_right _ _ _ _ (by simp)]; simp
+TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.lean:578:    · rw [hP0v, List.getD_append_right _ _ _ _ (by simp)]; simp
+TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.lean:579:    · rw [hP0v, List.getD_append_right _ _ _ _ (by simp; omega)]
+TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.lean:581:      rw [List.append_assoc, List.getD_append_right _ _ _ _ (by simp),
+TCSlib/Complexity/CircuitComplexity/UniformTableauSpec.lean:113:  rw [hb, hs, ← hlen, tabLayout_eval, snapExp, List.getD_append_right _ _ _ _ (by simp)]
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:546:        · rw [List.getD_append_right _ _ _ _ hi, show i - rs.length = 0 by omega]
+TCSlib/Complexity/ClassP/BinaryArith/DetModMath.lean:159:        rw [List.getD_append_right _ _ _ _ (by omega), hlast, Fin.last_add_one]
+TCSlib/Complexity/Randomized/AlgCircuit.lean:133:    rw [List.getD_append_right _ _ _ _ (by omega), Nat.add_sub_cancel]
+TCSlib/Complexity/Randomized/AlgCircuit.lean:361:  rw [hidx, List.getD_append_right _ _ _ _ le_rfl, Nat.sub_self, List.getD_cons_zero]
+TCSlib/Complexity/Randomized/AlgCircuit.lean:363:  rw [List.getD_append _ _ _ _ (by omega), List.getD_append_right _ _ _ _ (by omega), hl1]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:155:theorem padFin_append_split {d₁ d₂ : ℕ} (u v : List Bool) (hu : u.length = d₁) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:160:  · rw [padFin_apply, padFin_apply, Fin.coe_natAdd, List.getD_append_right _ _ _ _ (by omega)]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:186:  obtain ⟨h₁, h₂⟩ := padFin_append_split (d₂ := H.stateLen.eval n) u v hu
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:197:`padFin_append_split` splits it into the answer and the state. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:228:  obtain ⟨h₁, h₂⟩ := padFin_append_split (d₂ := H.stateLen.eval n) (u y) (v y) (hu y)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:100:(`List.getD_append`, `List.getD_append_right`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:151:      · rw [List.getD_append_right _ _ _ _ (by omega), List.getD_append_right _ _ _ _ (by omega),
+TCSlib/Programs/Util/List.lean:76:  rw [List.getD_append_right l l' d _ (Nat.le_add_right _ _), Nat.add_sub_cancel_left]
+TCSlib/Programs/Util/List.lean:116:  · rw [Function.update_self, List.getD_append_right _ _ _ _ le_rfl, Nat.sub_self,
+TCSlib/Programs/Util/List.lean:377:    · rw [List.getD_append_right _ _ _ _ (List.length_filter_range q i).le,
+
+### L3-seeds
+$ git grep -nE 'seedEquiv|coinsEquivPoly rfl n\)\.prodCongr' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:252:`seedEquivPoly`, `seedEquiv`, `expect_sample_prod`) and the distinguisher's as `X`'s; pointwise
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:278:      (seedEquivPoly (nmParams_seedLen_handler S samp pl hl hist hist_poly r sl) n),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:281:  rw [← ProbComp.expect_sample_equiv (seedEquiv (A := samp) (B := S.enc) rfl n),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:466:  seedEquivPoly (nmParams_seedLen_handler S samp pl hl hist hist_poly r sl) n
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:467:    (ρ, seedEquiv (A := samp) (B := S.enc) rfl n (ρ', re))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:469:/-- `nmSeed … ρ ρ̃ re = seedEquivPoly _ n (ρ, seedEquiv rfl n (ρ̃, re))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:472:      seedEquivPoly (nmParams_seedLen_handler S samp pl hl hist hist_poly r sl) n
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:473:        (ρ, seedEquiv (A := samp) (B := S.enc) rfl n (ρ', re)) := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:479:  rw [nmSeed, seedEquivPoly_ofFn, seedEquiv_ofFn]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:29:* `NMSim.seedEquiv`, `NMSim.seedEquivPoly`: seeds made of coins.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:35:* `NMSim.seedEquiv_ofFn`, `NMSim.seedEquivPoly_ofFn`, `NMSim.ofFn_padFin_eq_padL`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:249:`A.Coins n × B.Coins n ≃ {0,1}^{L(n)}`, concatenating the two coin strings (`seedEquiv_ofFn`). -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:250:def seedEquiv {A B : NUPPT} {L : PolyExpr} (h : L = A.coins.add B.coins) (n : ℕ) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:252:  ((NUPPT.coinsEquivPoly rfl n).prodCongr (NUPPT.coinsEquivPoly rfl n)).trans
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:255:/-- The seed is the concatenation of the coins: `⟦seedEquiv h n (r₁, r₂)⟧ = ⟦r₁⟧ ++ ⟦r₂⟧`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:256:theorem seedEquiv_ofFn {A B : NUPPT} {L : PolyExpr} (h : L = A.coins.add B.coins) (n : ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:258:    List.ofFn (seedEquiv h n c) = List.ofFn c.1 ++ List.ofFn c.2 := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:259:  rw [seedEquiv, Equiv.trans_apply, EnsembleLemmas.ofFn_coinsEquiv, Equiv.prodCongr_apply,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:263:`A.Coins n × {0,1}^{L₂(n)} ≃ {0,1}^{L(n)}`, concatenating (`seedEquivPoly_ofFn`). -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:264:def seedEquivPoly {A : NUPPT} {L L₂ : PolyExpr} (h : L = A.coins.add L₂) (n : ℕ) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:266:  ((NUPPT.coinsEquivPoly rfl n).prodCongr (Equiv.refl _)).trans
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:269:/-- The seed is the concatenation: `⟦seedEquivPoly h n (r, w)⟧ = ⟦r⟧ ++ ⟦w⟧`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:270:theorem seedEquivPoly_ofFn {A : NUPPT} {L L₂ : PolyExpr} (h : L = A.coins.add L₂) (n : ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:272:    List.ofFn (seedEquivPoly h n c) = List.ofFn c.1 ++ List.ofFn c.2 := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:273:  rw [seedEquivPoly, Equiv.trans_apply, EnsembleLemmas.ofFn_coinsEquiv, Equiv.prodCongr_apply,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:375:        (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:380:    (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s 1
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:387:    pairSndD_pairEncode, seedEquiv_ofFn,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:408:        (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:431:          (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s'
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:440:          (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s'
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:546:          (φ (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re), rA))) none)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:552:  set ω := seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re) with hω
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:597:`(ρ̃ ‖ re, rA)` (`coinsCongr`, `φ`, `seedEquiv`, `expect_sample_prod`), draw the hybrid's encryption
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:615:    ← ProbComp.expect_sample_equiv (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n),
+
+### L4-padL
+$ git grep -nE 'ofFn_padFin_eq_padL' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:59:* `TCSlib.Cryptography.EnsembleLemmas.ofFn_padFin_eq_padL` — the string of a padded vector is
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:167:theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) : List.ofFn (padFin k a) = padL k a := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:479:  rw [rNew, hU, hCnt, List.length_replicate, pkState_eq, EnsembleLemmas.ofFn_padFin_eq_padL,
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:452:    rw [hc', EnsembleLemmas.ofFn_padFin_eq_padL, rEnc, hU, List.length_replicate,
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:460:      EnsembleLemmas.ofFn_padFin_eq_padL, List.replicate_succ]
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:517:        EnsembleLemmas.ofFn_padFin_eq_padL, List.replicate_succ,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:139:    List.take_left' (length_ofFn_coins samp n ρ), drawWith_eq, ofFn_padFin_eq_padL,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:497:    drawWith_eq, ofFn_padFin_of_length hxs, ofFn_padFin_eq_padL, ofFn_padFin_eq_padL,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:592:        nmPair_eq, ofFn_padFin_eq_padL]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:604:        histWith_eq, ofFn_padFin_eq_padL]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:651:    rw [hans, List.append_nil, ← ofFn_padFin_eq_padL,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:35:* `NMSim.seedEquiv_ofFn`, `NMSim.seedEquivPoly_ofFn`, `NMSim.ofFn_padFin_eq_padL`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:281:/-- `⟦padFin k a⟧ = padL k a` (DL-30–36 overlap: the private `ofFn_padFin_eq_padL` of
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:283:theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:389:    encWith_eq, drawWith_eq, ofFn_padFin_eq_padL, ofFn_padFin_eq_padL,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:436:        ofFn_padFin_eq_padL]
+

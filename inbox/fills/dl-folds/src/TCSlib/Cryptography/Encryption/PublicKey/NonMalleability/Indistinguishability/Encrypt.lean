@@ -45,6 +45,10 @@ CCA2 oracles coincide (`indImpl_eq_of_msgLen_eq_zero`).
 namespace TCSlib.Cryptography.Composability.NMCCA2
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
+open TCSlib.Cryptography.Games.InteractiveHandler (rU_finInput rZ_finInput rW_finInput
+  finA_finInput polyTimeComputable_rU polyTimeComputable_rZ polyTimeComputable_rW
+  polyTimeComputable_finA)
 open AdaptiveCPA (acDin acDout acDout_zero)
 
 variable (S : FixedLengthPKScheme)
@@ -58,27 +62,30 @@ private def eBit (β : Bool) (w : List Bool) : Bool :=
 
 /-- The plaintext of ciphertext `β`: its bit repeated `msgLen(n)` times. -/
 private def eMsg (β : Bool) (w : List Bool) : List Bool :=
-  if eBit β w then List.replicate (S.msgLen.eval (finU w).length) true
-  else List.replicate (S.msgLen.eval (finU w).length) false
+  if eBit β w then List.replicate (S.msgLen.eval (rU w).length) true
+  else List.replicate (S.msgLen.eval (rU w).length) false
 
 /-- The coins of ciphertext `β`: the first (`β = true`) or the second `ρ(n)` bits of the seed. -/
 private def eTape (β : Bool) (w : List Bool) : List Bool :=
-  if β then (finW w).take (S.enc.coins.eval (finU w).length)
-  else (finW w).drop (S.enc.coins.eval (finU w).length)
+  if β then (rW w).take (S.enc.coins.eval (rU w).length)
+  else (rW w).drop (S.enc.coins.eval (rU w).length)
 
 /-- Ciphertext `β`: `Enc` on `⟨1^n, ⟨pk, plaintext⟩⟩` with empty advice and its coins, padded to
 `ctLen(n)` bits. -/
 private def eCt (β : Bool) (w : List Bool) : List Bool :=
-  EnsembleLemmas.padL (S.ctLen.eval (finU w).length)
-    (S.enc.output (pairEncode (pairEncode (pairEncode (finU w)
-      (pairEncode (finZ w) (eMsg S β w))) []) (eTape S β w)))
+  EnsembleLemmas.padL (S.ctLen.eval (rU w).length)
+    (S.enc.output (pairEncode (pairEncode (pairEncode (rU w)
+      (pairEncode (rZ w) (eMsg S β w))) []) (eTape S β w)))
 
 /-- **The finalization's round:** output the two ciphertexts, `⟨[true], c₁ ‖ c₂⟩`. -/
 private def eFin (w : List Bool) : List Bool := pairEncode [true] (eCt S true w ++ eCt S false w)
 
 /-- The finalization round is polynomial-time. -/
 private theorem polyTimeComputable_eFin : PolyTimeComputable (eFin S) := by
-  obtain ⟨hU, hZ, hW, hA, -⟩ := polyTimeComputable_finFields
+  have hU := polyTimeComputable_rU
+  have hZ := polyTimeComputable_rZ
+  have hW := polyTimeComputable_rW
+  have hA := polyTimeComputable_finA
   have hg : PolyTimeComputable fun w => [(finA w).headD false] := polyTimeComputable_headD.comp hA
   have hBit : ∀ β, PolyTimeComputable fun w => [eBit β w] := by
     intro β
@@ -214,7 +221,13 @@ theorem encHandler_finish (n : ℕ) (z : List Bool)
     rw [encHandler, fwdHandler_finRun]
   rw [InteractiveHandler.finish_eq, encHandler_finCall, PolyExpr.eval_const]
   refine buildComp_zero_of_ret ?_
-  obtain ⟨hU, hZ, hW, hA, -⟩ := fields_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+  have hU := rU_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
+  have hZ := rZ_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
+  have hW := rW_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
+  have hA := finA_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
     ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
   have hCt : ∀ β, eCt S β (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s)
       (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)

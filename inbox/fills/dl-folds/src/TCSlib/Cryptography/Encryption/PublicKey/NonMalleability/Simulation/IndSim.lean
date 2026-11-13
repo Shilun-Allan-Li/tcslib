@@ -39,6 +39,7 @@ None: this module only proves results. `B`'s handler parameters `nmParams` and t
 namespace TCSlib.Cryptography.Composability.NMSim
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+open TCSlib.Cryptography.EnsembleLemmas (seedEquiv seedEquivPoly ofFn_padFin_eq_padL)
 
 variable (S : FixedLengthPKScheme) (samp : NUPPT) (pl hl : PolyExpr)
   (hist : List Bool → List Bool) (hist_poly : PolyTimeComputable hist) (r sl : PolyExpr)

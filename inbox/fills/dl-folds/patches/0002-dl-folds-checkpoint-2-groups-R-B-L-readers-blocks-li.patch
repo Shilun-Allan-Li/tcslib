@@ -1,0 +1,2537 @@
+From a2b3b3a4fbca30eb095339fc064cc9f68b63540a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 13 Nov 2026 20:41:46 +0000
+Subject: [PATCH 2/2] dl-folds checkpoint 2: groups R, B, L (readers, blocks,
+ lists)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- R1: finalization readers rU_finInput … rL_finInput and the new reader finA beside finInput;
+  NMCCA2.finU/finZ/finW/finA/finL and NMSim.finSt deleted and re-pointed
+- R2: NMSim.rdU … rdLog, fields_input, polyTimeComputable_rd deleted; uses re-pointed to
+  InteractiveHandler.rU … rL and their lemmas
+- R3: InteractiveHandler.rAns with rAns_eq; NMSim.rdAns and the private rFwd, rY deleted
+- B1/B2: chunkAt folded onto coinBlock; coinBlock_flatten (from Lamport), map_coinBlock_flatten,
+  coinBlock_flatten_append and ofFn_block_eq_coinBlock beside coinBlock; ofFn_nthCt,
+  EnsembleLemmas.take_drop_ofFn_blocks, the ReductionMachine and GGM restatements derived from
+  FunFamily.ofFn_blocks
+- B3: the blocks aliases kept (escalated)
+- L1: flatMap_range_drop, ofFn_natAdd_eq_drop, decide_map_ofFn, length_flatten_map_const,
+  length_flatten_map_range, ofFn_eq_map_range in Foundations/BitLists (ZK copies deleted)
+- L2: Games.padFin_append_split; L3: EnsembleLemmas.seedEquiv(Poly); L4: NMSim copy deleted
+---
+ TCSlib/Cryptography/Asymptotic/Adversary.lean |  81 +++++++-
+ .../Asymptotic/EnsemblesLemmas.lean           |  46 +++--
+ .../Authentication/Signatures/Lamport.lean    |  14 --
+ .../PrivateKey/FromPRF/ReductionMachine.lean  |   7 +-
+ .../PrivateKey/OracleFromPRF/Handler.lean     |  17 +-
+ .../PublicKey/AdaptiveCPA/Handler.lean        |  13 +-
+ .../NonMalleability/Indistinguishability.lean |  19 +-
+ .../Indistinguishability/Decrypt.lean         |  46 +++--
+ .../Indistinguishability/Encrypt.lean         |  31 +++-
+ .../Indistinguishability/Forward.lean         |  86 +--------
+ .../PublicKey/NonMalleability/Simulation.lean |  17 +-
+ .../NonMalleability/Simulation/Challenge.lean |  86 ++++++---
+ .../NonMalleability/Simulation/Generic.lean   |  24 ---
+ .../NonMalleability/Simulation/Hybrid.lean    | 142 ++------------
+ .../NonMalleability/Simulation/IndSim.lean    |   1 +
+ .../NonMalleability/Simulation/Recover.lean   |  35 ++--
+ .../NonMalleability/Simulation/Reduction.lean | 139 ++++++++------
+ .../NonMalleability/Simulation/Rounds.lean    | 173 ++----------------
+ .../NonMalleability/Simulation/SimIND.lean    |  32 ++--
+ .../NonMalleability/Simulation/Simulator.lean | 170 +++++++++--------
+ TCSlib/Cryptography/Foundations/BitLists.lean |  74 ++++++++
+ TCSlib/Cryptography/Games/BitCodec.lean       |  14 ++
+ TCSlib/Cryptography/Games/Efficiency.lean     |  54 +++++-
+ .../Functions/Asymptotic/GGM/Evaluator.lean   |  17 +-
+ .../GraphIsomorphism/SoundnessRep.lean        |  10 -
+ .../ZeroKnowledge/ThreeColoring/Machines.lean |  11 +-
+ 26 files changed, 641 insertions(+), 718 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Asymptotic/Adversary.lean b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+index 4f1e84a21..e2018d8af 100644
+--- a/TCSlib/Cryptography/Asymptotic/Adversary.lean
++++ b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+@@ -6,6 +6,7 @@ Authors: TCSlib contributors
+ import TCSlib.Complexity.Randomized.PPT
+ import TCSlib.Cryptography.Foundations.Experiments
+ import TCSlib.Cryptography.HardcoreBit.Basic
++import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -59,7 +60,9 @@ by `ifEq`).
+ ## Main results
+ 
+ * `TCSlib.Cryptography.coinBlock_eq`, `TCSlib.Cryptography.length_coinBlock` — the segment
+-  equation and its full-length condition.
++  equation and its full-length condition; `coinBlock_flatten`, `map_coinBlock_flatten`,
++  `coinBlock_flatten_append` — the segments of a concatenation of equal-length blocks;
++  `ofFn_block_eq_coinBlock` — block `i` of a string of blocks and a tail is segment `i`.
+ * `TCSlib.Cryptography.decodeFin_ofFn`, `TCSlib.Cryptography.padFin_ofFn` — decoding and
+   padding invert `List.ofFn`; `TCSlib.Cryptography.decodeFin_eq_some_iff` — decoding succeeds
+   exactly on the encoding; `TCSlib.Cryptography.ofFn_padFin_of_length` — padding a string of the
+@@ -98,6 +101,58 @@ theorem length_coinBlock {B i : ℕ} {r : List Bool} (h : (i + 1) * B ≤ r.leng
+   rw [Nat.add_mul, Nat.one_mul] at h
+   omega
+ 
++/-- **The blocks of a concatenation of `B`-bit blocks:** if every block of `l` has `B` bits,
++segment `i < |l|` of `l.flatten` is `l[i]`.
++
++**Proof sketch.** Induction on `l`: segment `0` is the first block (`List.take_left'`), and
++segment `i + 1` drops the first block (`List.drop_append`) and is segment `i` of the rest. -/
++theorem coinBlock_flatten {B : ℕ} : ∀ (l : List (List Bool)), (∀ c ∈ l, c.length = B) →
++    ∀ (i : ℕ) (hi : i < l.length), coinBlock B i l.flatten = l[i]
++  | [], _, _, hi => by simp at hi
++  | c :: cs, hl, 0, _ => by
++    have hc : c.length = B := hl c (by simp)
++    simp [coinBlock_eq, ← hc]
++  | c :: cs, hl, i + 1, hi => by
++    have hc : c.length = B := hl c (by simp)
++    have hrest := coinBlock_flatten cs (fun d hd => hl d (by simp [hd])) i (by simpa using hi)
++    simp only [List.getElem_cons_succ, ← hrest, coinBlock_eq, List.flatten_cons]
++    rw [show (i + 1) * B = c.length + i * B by rw [hc, Nat.succ_mul]; ring, List.drop_append,
++      List.drop_eq_nil_of_le (by omega), List.nil_append, Nat.add_sub_cancel_left]
++
++/-- **The blocks of a concatenation, mapped:** if every block of `cs` has `k` bits, mapping `F`
++over the segments `coinBlock k i cs.flatten` for `i < |cs|` is mapping `F` over `cs`
++(`coinBlock_flatten`, entry by entry). -/
++theorem map_coinBlock_flatten {α : Type} (k : ℕ) (F : List Bool → α) :
++    ∀ cs : List (List Bool), (∀ c ∈ cs, c.length = k) →
++      (List.range cs.length).map (fun i => F (coinBlock k i cs.flatten)) = cs.map F := by
++  intro cs hc
++  refine List.ext_getElem (by rw [List.length_map, List.length_range, List.length_map])
++    fun i h₁ h₂ => ?_
++  rw [List.getElem_map, List.getElem_range, List.getElem_map,
++    coinBlock_flatten cs hc i (by rw [List.length_map, List.length_range] at h₁; exact h₁)]
++
++/-- **Reading back the blocks before a tail:** if `g 0, …, g (r-1)` have `k` bits each, segment
++`i < r` of `g 0 ++ ⋯ ++ g (r-1) ++ t` is `g i`.
++
++**Proof sketch.** Induction on `r`: for `i < r` the last block and the tail form the new tail;
++for `i = r` the segment starts right after the first `r·k` bits (`length_flatten_map_range`). -/
++theorem coinBlock_flatten_append (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i < r, (g i).length = k)
++    (t : List Bool) (i : ℕ) (hi : i < r) :
++    coinBlock k i (((List.range r).map g).flatten ++ t) = g i := by
++  induction r generalizing t with
++  | zero => exact absurd hi (Nat.not_lt_zero _)
++  | succ r ih =>
++    rw [List.range_succ, List.map_append, List.flatten_append, List.map_singleton,
++      List.flatten_singleton, List.append_assoc]
++    by_cases h : i < r
++    · exact ih (fun j hj => hg j (by omega)) _ h
++    · have hir : i = r := by omega
++      subst hir
++      rw [coinBlock_eq, List.drop_append_of_le_length (by
++          rw [length_flatten_map_range k i g fun j hj => hg j (by omega)]),
++        List.drop_of_length_le (by rw [length_flatten_map_range k i g fun j hj => hg j (by omega)]),
++        List.nil_append, List.take_left' (hg i (by omega))]
++
+ /-- Decode a string as an `ℓ`-bit string: `some` of its bits if the length is exactly `ℓ`,
+ `none` otherwise (a wrong-length answer of an inverter is a failure, D5). -/
+ def decodeFin (ℓ : ℕ) (w : List Bool) : Option (Fin ℓ → Bool) :=
+@@ -237,6 +292,30 @@ theorem FunFamily.ofFn_blocks (q ℓ : ℕ) (ω : Fin (q * ℓ) → Bool) (j : F
+     rw [Nat.mul_comm]
+     omega
+ 
++/-- **Block `i` of a string of `r` blocks of `k` bits and a tail** is segment `i`:
++`⟦j ↦ w (castAdd sl (finProdFinEquiv (i, j)))⟧ = coinBlock k i ⟦w⟧`.
++
++**Proof sketch.** The block is block `i` of the first `r·k` bits (`FunFamily.blocks_apply`),
++whose word is the window `(⟦w⟧.take (r·k)).drop (i·k)).take k` (`FunFamily.ofFn_blocks`,
++`List.ofFn_add`); the tail does not reach the window since `i·k + k ≤ r·k`. -/
++theorem ofFn_block_eq_coinBlock {r k sl : ℕ} (w : Fin (r * k + sl) → Bool) (i : Fin r) :
++    List.ofFn (fun j : Fin k => w (Fin.castAdd sl (finProdFinEquiv (i, j)))) =
++      coinBlock k i (List.ofFn w) := by
++  have hle : (i : ℕ) * k + k ≤ r * k := by
++    have := Nat.mul_le_mul_right k (Nat.succ_le_of_lt i.isLt)
++    rw [Nat.succ_mul] at this
++    exact this
++  have hblk : (fun j : Fin k => w (Fin.castAdd sl (finProdFinEquiv (i, j)))) =
++      FunFamily.blocks r k (fun p => w (Fin.castAdd sl p)) i :=
++    funext fun j => (FunFamily.blocks_apply r k (fun p => w (Fin.castAdd sl p)) i j).symm
++  have hx : (List.ofFn fun p : Fin (r * k) => w (Fin.castAdd sl p)).length = r * k :=
++    List.length_ofFn
++  have hw : List.ofFn w = List.ofFn (fun p : Fin (r * k) => w (Fin.castAdd sl p)) ++
++      List.ofFn (fun j : Fin sl => w (Fin.natAdd (r * k) j)) := List.ofFn_add
++  rw [hblk, FunFamily.ofFn_blocks, coinBlock_eq, hw,
++    List.drop_append_of_le_length (by omega), List.take_append_of_le_length (by
++      rw [List.length_drop]; omega)]
++
+ /-- `A(1^n, y)` as an inverter: output decoded as an `ℓ`-bit string, wrong length = failure
+ [PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`].
+ 
+diff --git a/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean b/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
+index 710088b0d..a0de8e3a2 100644
+--- a/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
+@@ -33,6 +33,9 @@ part of the public API of the campaign.
+ * `TCSlib.Cryptography.EnsembleLemmas.coinsEquiv` — the coin-splitting bijection
+   `{0,1}^a × {0,1}^b ≃ {0,1}^m` for `m = a + b` (`Fin.appendEquiv` transported along the
+   length equation).
++* `TCSlib.Cryptography.EnsembleLemmas.seedEquiv`, `seedEquivPoly` — seeds made of two machines'
++  coins, or of a machine's coins and a string (`seedEquiv_ofFn`, `seedEquivPoly_ofFn`: the seed
++  is the concatenation).
+ * `TCSlib.Cryptography.EnsembleLemmas.padL` — the padded/truncated string `padFin` as a list.
+ * `TCSlib.Cryptography.EnsembleLemmas.blocks` — the blockwise bijection
+   `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q` (an alias of `FunFamily.blocks`, `Asymptotic/Adversary.lean`).
+@@ -154,6 +157,34 @@ theorem drop_ofFn_coinsEquiv {m a b : ℕ} (h : m = a + b) (c : (Fin a → Bool)
+     (List.ofFn (coinsEquiv h c)).drop a = List.ofFn c.2 := by
+   rw [ofFn_coinsEquiv, List.drop_left' List.length_ofFn]
+ 
++/-- **A seed of two machines' coins:** for `L = A.coins + B.coins`,
++`A.Coins n × B.Coins n ≃ {0,1}^{L(n)}`, concatenating the two coin strings (`seedEquiv_ofFn`). -/
++def seedEquiv {A B : NUPPT} {L : PolyExpr} (h : L = A.coins.add B.coins) (n : ℕ) :
++    A.Coins n × B.Coins n ≃ (Fin (L.eval n) → Bool) :=
++  ((NUPPT.coinsEquivPoly rfl n).prodCongr (NUPPT.coinsEquivPoly rfl n)).trans
++    (coinsEquiv (by rw [h, PolyExpr.eval_add]))
++
++/-- The seed is the concatenation of the coins: `⟦seedEquiv h n (r₁, r₂)⟧ = ⟦r₁⟧ ++ ⟦r₂⟧`. -/
++theorem seedEquiv_ofFn {A B : NUPPT} {L : PolyExpr} (h : L = A.coins.add B.coins) (n : ℕ)
++    (c : A.Coins n × B.Coins n) :
++    List.ofFn (seedEquiv h n c) = List.ofFn c.1 ++ List.ofFn c.2 := by
++  rw [seedEquiv, Equiv.trans_apply, ofFn_coinsEquiv, Equiv.prodCongr_apply,
++    Prod.map_fst, Prod.map_snd, NUPPT.coinsEquivPoly_ofFn, NUPPT.coinsEquivPoly_ofFn]
++
++/-- **A seed of a machine's coins and a string:** for `L = A.coins + L₂`,
++`A.Coins n × {0,1}^{L₂(n)} ≃ {0,1}^{L(n)}`, concatenating (`seedEquivPoly_ofFn`). -/
++def seedEquivPoly {A : NUPPT} {L L₂ : PolyExpr} (h : L = A.coins.add L₂) (n : ℕ) :
++    A.Coins n × (Fin (L₂.eval n) → Bool) ≃ (Fin (L.eval n) → Bool) :=
++  ((NUPPT.coinsEquivPoly rfl n).prodCongr (Equiv.refl _)).trans
++    (coinsEquiv (by rw [h, PolyExpr.eval_add]))
++
++/-- The seed is the concatenation: `⟦seedEquivPoly h n (r, w)⟧ = ⟦r⟧ ++ ⟦w⟧`. -/
++theorem seedEquivPoly_ofFn {A : NUPPT} {L L₂ : PolyExpr} (h : L = A.coins.add L₂) (n : ℕ)
++    (c : A.Coins n × (Fin (L₂.eval n) → Bool)) :
++    List.ofFn (seedEquivPoly h n c) = List.ofFn c.1 ++ List.ofFn c.2 := by
++  rw [seedEquivPoly, Equiv.trans_apply, ofFn_coinsEquiv, Equiv.prodCongr_apply,
++    Prod.map_fst, Prod.map_snd, NUPPT.coinsEquivPoly_ofFn, Equiv.refl_apply]
++
+ /-! ### Padding as an FP function -/
+ 
+ /-- The padded/truncated string of `padFin` as a list: exactly `k` bits, the bits of `a`
+@@ -391,20 +422,11 @@ theorem finProdFinEquiv_symm_mk {q ℓ : ℕ} (i : Fin q) (j : Fin ℓ) (h : i *
+   simp [finProdFinEquiv_apply_val]
+   ring
+ 
+-/-- The `i`-th chunk of `s` bits of the string of a `q·s`-bit word is its block `i`. -/
++/-- The `i`-th chunk of `s` bits of the string of a `q·s`-bit word is its block `i`
++(`FunFamily.ofFn_blocks`, the block window, through `blocks_eq`). -/
+ theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+     ((List.ofFn w).drop (i * s)).take s = List.ofFn (blocks q s w ⟨i, hi⟩) := by
+-  have hle : i * s + s ≤ q * s := by
+-    rw [← Nat.succ_mul]
+-    exact Nat.mul_le_mul_right s hi
+-  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
+-  · simp only [List.length_take, List.length_drop, List.length_ofFn]
+-    omega
+-  · simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn, blocks_apply]
+-    congr 1
+-    ext
+-    simp [finProdFinEquiv_apply_val]
+-    ring
++  rw [blocks_eq, FunFamily.ofFn_blocks]
+ 
+ /-- The string of `(blocks q ℓ).symm V` is the concatenation of the `q` block strings
+ (`List.ofFn_mul`). -/
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean
+index ade832e58..2f4b0795f 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean
+@@ -92,20 +92,6 @@ theorem length_flatten_ofFn {B : ℕ} : ∀ {q : ℕ} (g : Fin q → List Bool),
+       length_flatten_ofFn (fun i => g i.succ) (fun i => hg i.succ), Nat.succ_mul]
+     omega
+ 
+-/-- Segment `i` of a concatenation of `B`-bit blocks is block `i`. -/
+-theorem coinBlock_flatten {B : ℕ} : ∀ (l : List (List Bool)), (∀ c ∈ l, c.length = B) →
+-    ∀ (i : ℕ) (hi : i < l.length), coinBlock B i l.flatten = l[i]
+-  | [], _, _, hi => by simp at hi
+-  | c :: cs, hl, 0, _ => by
+-    have hc : c.length = B := hl c (by simp)
+-    simp [coinBlock_eq, ← hc]
+-  | c :: cs, hl, i + 1, hi => by
+-    have hc : c.length = B := hl c (by simp)
+-    have hrest := coinBlock_flatten cs (fun d hd => hl d (by simp [hd])) i (by simpa using hi)
+-    simp only [List.getElem_cons_succ, ← hrest, coinBlock_eq, List.flatten_cons]
+-    rw [show (i + 1) * B = c.length + i * B by rw [hc, Nat.succ_mul]; ring, List.drop_append,
+-      List.drop_eq_nil_of_le (by omega), List.nil_append, Nat.add_sub_cancel_left]
+-
+ /-- Segment `i` of the concatenation of `B`-bit blocks `g 0, …, g (q − 1)` is `g i`. -/
+ theorem coinBlock_flatten_ofFn {q B : ℕ} (g : Fin q → List Bool) (hg : ∀ i, (g i).length = B)
+     (i : Fin q) : coinBlock B i (List.ofFn g).flatten = g i := by
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean
+index 654d5c5d6..11f31f81a 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean
+@@ -217,11 +217,10 @@ theorem zipWith_xor_flatten_ofFn : ∀ {k : ℕ} (F G : Fin k → List Bool),
+       zipWith_xor_flatten_ofFn (fun j => F j.succ) (fun j => G j.succ) fun j => h j.succ]
+ 
+ /-- A string of `q·s` bits read as `q` chunks of `s` bits: chunk `i` is block `i` of
+-`FunFamily.blocks` (the canonical `EnsembleLemmas.take_drop_ofFn_blocks`, read through
+-`EnsembleLemmas.blocks_eq`). -/
++`FunFamily.blocks` (the block window `FunFamily.ofFn_blocks`, read backwards). -/
+ theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+-    ((List.ofFn w).drop (i * s)).take s = List.ofFn (FunFamily.blocks q s w ⟨i, hi⟩) := by
+-  rw [EnsembleLemmas.take_drop_ofFn_blocks w i hi, EnsembleLemmas.blocks_eq]
++    ((List.ofFn w).drop (i * s)).take s = List.ofFn (FunFamily.blocks q s w ⟨i, hi⟩) :=
++  (FunFamily.ofFn_blocks q s w ⟨i, hi⟩).symm
+ 
+ /-! ### The next-query machine of Thm-99.2.1 -/
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean
+index de77a46a3..c61bad1a2 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean
+@@ -48,7 +48,7 @@ The finalization asks nothing and outputs the adversary's bit.
+ namespace TCSlib.Cryptography.Composability.PRFGame
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+-open TCSlib.Cryptography.Games.InteractiveHandler (rU rW rS rI rX rL rCnt)
++open TCSlib.Cryptography.Games.InteractiveHandler (rU rW rS rI rX rL rCnt rAns)
+ 
+ /-! ### Lengths and states -/
+ 
+@@ -192,14 +192,12 @@ private def rFlag (w : List Bool) : Bool := (pairSndD (rS w)).headD false
+ /-- The recorded challenge of the state. -/
+ private def rRec (w : List Bool) : List Bool :=
+   ((pairSndD (rS w)).drop 1).take (ctP.eval (rU w).length)
+-/-- The outer answer recorded in the log `⟨⟨[], ⟨x, y⟩⟩, []⟩`. -/
+-private def rY (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
+ /-- Tape `j` of the seed. -/
+ private def rNonce (w : List Bool) : List Bool :=
+   ((rW w).drop ((rCnt w).length * (rU w).length)).take (rU w).length
+ /-- The ciphertext `⟨r, m ⊕ y⟩` with the tape `r` and the outer answer `y`. -/
+ private def rCt (w m : List Bool) : List Bool :=
+-  pairEncode (rNonce w) (List.zipWith xor m (rY w))
++  pairEncode (rNonce w) (List.zipWith xor m (rAns w))
+ /-- The selected challenge message `m_b`. -/
+ private def rMsg (b : Bool) (w : List Bool) : List Bool :=
+   if b then (rX w).drop (rU w).length else (rX w).take (rU w).length
+@@ -223,7 +221,7 @@ private def pkRun (atkBit b : Bool) (w : List Bool) : List Bool :=
+     else
+       if atkBit && !rFlag w && rWF w then
+         if decide (rL w = []) then pairEncode [false] (pairEncode [] (pairFstD (rX w)))
+-        else pairEncode [true] ((true :: List.zipWith xor (pairSndD (rX w)) (rY w)) ++ rS w)
++        else pairEncode [true] ((true :: List.zipWith xor (pairSndD (rX w)) (rAns w)) ++ rS w)
+       else pairEncode [true]
+         (List.replicate ((PolyExpr.add .var (.const 1)).eval (rU w).length) false ++ rS w)
+   else
+@@ -252,7 +250,7 @@ private theorem polyTimeComputable_pkRun (atkBit b : Bool) :
+     ((polyTimeComputable_pairTakePoly ctP).comp
+       (hU.pairEncode (polyTimeComputable_tail.comp hT))).congr fun w => by
+         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]; rfl
+-  have hY : PolyTimeComputable rY := hD.comp (hD.comp (hF.comp hL))
++  have hY : PolyTimeComputable rAns := InteractiveHandler.polyTimeComputable_rAns
+   have hOff : PolyTimeComputable fun w =>
+       List.replicate ((rCnt w).length * (rU w).length) true :=
+     (OneWay.polyTimeComputable_unaryMulPair.comp (hCnt.pairEncode hU)).congr fun w => by
+@@ -266,7 +264,7 @@ private theorem polyTimeComputable_pkRun (atkBit b : Bool) :
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
+         PolyExpr.eval_var]; rfl
+   have hXor : ∀ {m : List Bool → List Bool}, PolyTimeComputable m →
+-      PolyTimeComputable fun w => List.zipWith xor (m w) (rY w) := fun hm =>
++      PolyTimeComputable fun w => List.zipWith xor (m w) (rAns w) := fun hm =>
+     (polyTimeComputable_pairXor.comp (hm.pairEncode hY)).congr fun w => by
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+   have hCt : ∀ {m : List Bool → List Bool}, PolyTimeComputable m →
+@@ -445,8 +443,9 @@ private theorem recBits_fields (o : Option (Fin (ctP.eval n) → Bool)) :
+ 
+ /-- The outer answer recorded in a one-entry log. -/
+ private theorem rY_one (w : List Bool) (x' y : List Bool)
+-    (hL : rL w = pairEncode (pairEncode [] (pairEncode x' y)) []) : rY w = y := by
+-  rw [rY, hL, pairFstD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode]
++    (hL : rL w = pairEncode (pairEncode [] (pairEncode x' y)) []) : rAns w = y := by
++  rw [InteractiveHandler.rAns_eq, hL, pairFstD_pairEncode, pairSndD_pairEncode,
++    pairSndD_pairEncode]
+ 
+ /-- The index word of oracle `2`. -/
+ private theorem replicate_two : List.replicate ((2 : Fin 3) : ℕ) true = [true, true] := rfl
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
+index 470a9e07f..3382bf3d7 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
+@@ -53,7 +53,7 @@ per inner query is the forwarded challenge; its finalization asks nothing and ou
+ namespace TCSlib.Cryptography.Composability.AdaptiveCPA
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+-open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rCnt)
++open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rCnt rAns)
+ 
+ /-! ### Messages, lengths and states -/
+ 
+@@ -164,8 +164,6 @@ private def rIst (w : List Bool) : List Bool := pairFstD (pairSndD (rS w))
+ /-- The latest ciphertext of the state. -/
+ private def rLat (w : List Bool) : List Bool :=
+   (pairSndD (pairSndD (rS w))).take (S.ctLen.eval (rU w).length)
+-/-- The outer answer recorded in the log `⟨⟨1, ⟨x, y⟩⟩, []⟩`. -/
+-private def rFwd (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
+ /-- The new state `⟨1^{j+1}, ⟨1^{i⋆}, y⟩⟩`, padded. -/
+ private def rNew (w y : List Bool) : List Bool :=
+   EnsembleLemmas.padL ((acStLen S cap).eval (rU w).length)
+@@ -193,7 +191,7 @@ private def acRun (w : List Bool) : List Bool :=
+     if decide (cap.eval (rU w).length ≤ (rCnt w).length) then pairEncode [true] (rLat S w ++ rS w)
+     else if decide ((rCnt w).length = (rIst w).length) then
+       if decide (rL w = []) then pairEncode [false] (pairEncode [true] (rX w))
+-      else pairEncode [true] (rFwd w ++ rNew S cap w (rFwd w))
++      else pairEncode [true] (rAns w ++ rNew S cap w (rAns w))
+     else pairEncode [true] (rEnc S w ++ rNew S cap w (rEnc S w))
+   else pairEncode [true] (List.replicate ((S.msgLen.add (.const 1)).eval (rU w).length) false ++
+     rS w)
+@@ -214,7 +212,7 @@ private theorem polyTimeComputable_acRun : PolyTimeComputable (acRun S cap) := b
+   have hLat : PolyTimeComputable (rLat S) :=
+     ((polyTimeComputable_pairTakePoly S.ctLen).comp (hU.pairEncode (hD.comp (hD.comp hS)))).congr
+       fun w => by simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]; rfl
+-  have hFwd : PolyTimeComputable rFwd := hD.comp (hD.comp (hF.comp hL))
++  have hFwd : PolyTimeComputable rAns := InteractiveHandler.polyTimeComputable_rAns
+   have hNew : ∀ {y : List Bool → List Bool}, PolyTimeComputable y →
+       PolyTimeComputable fun w => rNew S cap w (y w) := fun hy =>
+     EnsembleLemmas.polyTimeComputable_padL (acStLen S cap) hU
+@@ -516,11 +514,12 @@ theorem acHandler_impl_forward (x : Fin ((acDin S 1).eval n) → Bool) (j : ℕ)
+       rw [rNew, hU, hCnt, hIst, List.length_replicate, hs', acState_eq,
+         EnsembleLemmas.ofFn_padFin_eq_padL, List.replicate_succ,
+         ofFn_padFin_of_length (List.length_ofFn)]
+-    have hFwd : rFwd (InteractiveHandler.input n z (List.ofFn ω)
++    have hFwd : rAns (InteractiveHandler.input n z (List.ofFn ω)
+         (List.ofFn (acState S cap ist n j c)) (1 : Fin 2) (List.ofFn x)
+         ((bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) 0).encodeLog
+           ([] ++ [⟨1, x, y⟩]))) = List.ofFn y := by
+-      rw [rFwd, hL, hlog, pairFstD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode]
++      rw [InteractiveHandler.rAns_eq, hL, hlog, pairFstD_pairEncode, pairSndD_pairEncode,
++        pairSndD_pairEncode]
+     have hh : ([true].headD false = true) := rfl
+     have hc1 : ¬ (decide (cap.eval n ≤ j) = true) := by rw [decide_eq_true_eq]; omega
+     have hc2 : decide (j = ist n) = true := decide_eq_true heq
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean
+index ac1f304af..920dd452d 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean
+@@ -210,23 +210,14 @@ theorem nmCodec_eq_bitCodec (n ℓ : ℕ) :
+     S.nmCodec n ℓ = bitCodec (S.inLens n) (S.outLens n) (ℓ * S.ctLen.eval n) := rfl
+ 
+ /-- Ciphertext `i` of an output string is its `i`-th block of `ctLen(n)` bits:
+-`⟦S.nthCt w i⟧ = (⟦w⟧.drop (i · ctLen(n))).take ctLen(n)`. -/
++`⟦S.nthCt w i⟧ = (⟦w⟧.drop (i · ctLen(n))).take ctLen(n)` (`FunFamily.ofFn_blocks`, the block
++window). -/
+ theorem ofFn_nthCt {n ℓ : ℕ} (w : Fin (ℓ * S.ctLen.eval n) → Bool) (i : Fin ℓ) :
+     List.ofFn (S.nthCt w i) =
+       ((List.ofFn w).drop (i * S.ctLen.eval n)).take (S.ctLen.eval n) := by
+-  have hle : (i : ℕ) * S.ctLen.eval n + S.ctLen.eval n ≤ ℓ * S.ctLen.eval n := by
+-    have := Nat.mul_le_mul_right (S.ctLen.eval n) (Nat.succ_le_of_lt i.isLt)
+-    rw [Nat.succ_mul] at this
+-    exact this
+-  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
+-  · simp only [List.length_ofFn, List.length_take, List.length_drop]
+-    omega
+-  · rw [List.getElem_ofFn, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+-    refine congrArg w (Fin.ext ?_)
+-    rw [finProdFinEquiv_apply_val]
+-    show j + S.ctLen.eval n * i = i * S.ctLen.eval n + j
+-    rw [Nat.mul_comm]
+-    omega
++  have hblk : S.nthCt w i = FunFamily.blocks ℓ (S.ctLen.eval n) w i :=
++    funext fun j => (FunFamily.blocks_apply ℓ (S.ctLen.eval n) w i j).symm
++  rw [hblk, FunFamily.ofFn_blocks]
+ 
+ /-! ### (⇒) The CCA2 adversary built from a non-malleability adversary -/
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean
+index c09c5dfd2..9e7f1bced 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean
+@@ -46,6 +46,10 @@ The per-entry readings of a log are `Games.cntRead` and `Games.ansRead`.
+ namespace TCSlib.Cryptography.Composability.NMCCA2
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
++open TCSlib.Cryptography.Games.InteractiveHandler (rU_finInput rZ_finInput rW_finInput
++  rL_finInput finA_finInput polyTimeComputable_rU polyTimeComputable_rZ polyTimeComputable_rW
++  polyTimeComputable_rL polyTimeComputable_finA)
+ open AdaptiveCPA (acDin acDout acDin_zero acDout_zero)
+ 
+ /-! ### Readings of a log -/
+@@ -79,42 +83,46 @@ end Readings
+ variable (S : FixedLengthPKScheme) (ℓ : PolyExpr) (D : NUPPT)
+ 
+ /-- The number of decryptions asked so far, in unary. -/
+-private def dCnt (w : List Bool) : List Bool := logEmit cntRead (finL w)
++private def dCnt (w : List Bool) : List Bool := logEmit cntRead (rL w)
+ 
+ /-- The next block of the adversary's output: `ctLen(n)` bits from position `j · ctLen(n)`, for
+ `j` the decryptions asked so far, padded with `false`. -/
+ private def dCt (w : List Bool) : List Bool :=
+-  EnsembleLemmas.padL (S.ctLen.eval (finU w).length)
+-    ((finA w).drop ((dCnt w).length * S.ctLen.eval (finU w).length))
++  EnsembleLemmas.padL (S.ctLen.eval (rU w).length)
++    ((finA w).drop ((dCnt w).length * S.ctLen.eval (rU w).length))
+ 
+ /-- `D`'s input layout: parameter `1^n`, the collected answers, the advice (the second component
+ of the reduction input) and the seed as coins. -/
+ private def dIn (w : List Bool) : List Bool :=
+-  pairEncode (pairEncode (pairEncode (finU w) (logEmit ansRead (finL w))) (pairSndD (finZ w)))
+-    (finW w)
++  pairEncode (pairEncode (pairEncode (rU w) (logEmit ansRead (rL w))) (pairSndD (rZ w)))
++    (rW w)
+ 
+ /-- **One round of the finalization.** After `ℓ(n)` decryptions, output `D`'s verdict
+ `[D(answers) = [true]]`; before, ask the decryption oracle (index `0`) the next block. -/
+ private def dFin (w : List Bool) : List Bool :=
+-  if decide (ℓ.eval (finU w).length ≤ (dCnt w).length) then
++  if decide (ℓ.eval (rU w).length ≤ (dCnt w).length) then
+     pairEncode [true] [decide (D.output (dIn w) = [true])]
+   else pairEncode [false] (pairEncode [] (dCt S w))
+ 
+ /-- The finalization round is polynomial-time. -/
+ private theorem polyTimeComputable_dFin : PolyTimeComputable (dFin S ℓ D) := by
+-  obtain ⟨hU, hZ, hW, hA, hL⟩ := polyTimeComputable_finFields
++  have hU := polyTimeComputable_rU
++  have hZ := polyTimeComputable_rZ
++  have hW := polyTimeComputable_rW
++  have hA := polyTimeComputable_finA
++  have hL := polyTimeComputable_rL
+   have hCnt : PolyTimeComputable dCnt :=
+     (polyTimeComputable_logEmit polyTimeComputable_cntRead).comp hL
+-  have hAns : PolyTimeComputable fun w => logEmit ansRead (finL w) :=
++  have hAns : PolyTimeComputable fun w => logEmit ansRead (rL w) :=
+     (polyTimeComputable_logEmit polyTimeComputable_ansRead).comp hL
+   have hOff : PolyTimeComputable fun w =>
+-      List.replicate ((dCnt w).length * S.ctLen.eval (finU w).length) true :=
++      List.replicate ((dCnt w).length * S.ctLen.eval (rU w).length) true :=
+     (OneWay.polyTimeComputable_unaryMulPair.comp
+       (hCnt.pairEncode ((polyTimeComputable_unaryPoly S.ctLen).comp hU))).congr fun w => by
+         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
+           List.length_replicate]
+   have hDrop : PolyTimeComputable fun w =>
+-      (finA w).drop ((dCnt w).length * S.ctLen.eval (finU w).length) :=
++      (finA w).drop ((dCnt w).length * S.ctLen.eval (rU w).length) :=
+     (polyTimeComputable_dropPrefixByLength.comp (hOff.pairEncode hA)).congr fun w => by
+       simp only [Function.comp_apply, PrefixByLength.drop_def, pairFstD_pairEncode,
+         pairSndD_pairEncode, List.length_replicate]
+@@ -125,7 +133,7 @@ private theorem polyTimeComputable_dFin : PolyTimeComputable (dFin S ℓ D) := b
+     (polyTimeComputable_pairEq.comp ((D.polyTimeComputable_output.comp hIn).pairEncode
+       (polyTimeComputable_const [true]))).congr fun w => by
+         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+-  have hT : PolyTimeComputable fun w => [decide (ℓ.eval (finU w).length ≤ (dCnt w).length)] :=
++  have hT : PolyTimeComputable fun w => [decide (ℓ.eval (rU w).length ≤ (dCnt w).length)] :=
+     (polyTimeComputable_lenLe.comp (hCnt.pairEncode
+       ((polyTimeComputable_unaryPoly ℓ).comp hU))).congr fun w => by
+         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
+@@ -232,13 +240,25 @@ theorem simulate_decHandler_finish (n : ℕ) (z : List Bool)
+       w = InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+         ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog
+           (hist j)) →
+-      (dCnt w).length = j ∧ finU w = List.replicate n true ∧
++      (dCnt w).length = j ∧ rU w = List.replicate n true ∧
+       dIn w = NUPPT.layout (List.replicate n true)
+         ((List.range j).map fun i => List.ofFn (ans (decBlock S n a i) st)).flatten
+         (pairSndD z) (List.ofFn ω) ∧
+       dCt S w = List.ofFn (decBlock S n a j) := by
+     intro j w hw
+-    obtain ⟨hU, hZ, hW, hA, hL⟩ := fields_finInput n z (List.ofFn ω) (List.ofFn s)
++    have hU := rU_finInput n z (List.ofFn ω) (List.ofFn s)
++      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++        0).encodeLog (hist j))
++    have hZ := rZ_finInput n z (List.ofFn ω) (List.ofFn s)
++      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++        0).encodeLog (hist j))
++    have hW := rW_finInput n z (List.ofFn ω) (List.ofFn s)
++      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++        0).encodeLog (hist j))
++    have hA := finA_finInput n z (List.ofFn ω) (List.ofFn s)
++      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++        0).encodeLog (hist j))
++    have hL := rL_finInput n z (List.ofFn ω) (List.ofFn s)
+       (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+         0).encodeLog (hist j))
+     rw [← hw] at hU hZ hW hA hL
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean
+index 1304a49c1..b2410e91e 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean
+@@ -45,6 +45,10 @@ CCA2 oracles coincide (`indImpl_eq_of_msgLen_eq_zero`).
+ namespace TCSlib.Cryptography.Composability.NMCCA2
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
++open TCSlib.Cryptography.Games.InteractiveHandler (rU_finInput rZ_finInput rW_finInput
++  finA_finInput polyTimeComputable_rU polyTimeComputable_rZ polyTimeComputable_rW
++  polyTimeComputable_finA)
+ open AdaptiveCPA (acDin acDout acDout_zero)
+ 
+ variable (S : FixedLengthPKScheme)
+@@ -58,27 +62,30 @@ private def eBit (β : Bool) (w : List Bool) : Bool :=
+ 
+ /-- The plaintext of ciphertext `β`: its bit repeated `msgLen(n)` times. -/
+ private def eMsg (β : Bool) (w : List Bool) : List Bool :=
+-  if eBit β w then List.replicate (S.msgLen.eval (finU w).length) true
+-  else List.replicate (S.msgLen.eval (finU w).length) false
++  if eBit β w then List.replicate (S.msgLen.eval (rU w).length) true
++  else List.replicate (S.msgLen.eval (rU w).length) false
+ 
+ /-- The coins of ciphertext `β`: the first (`β = true`) or the second `ρ(n)` bits of the seed. -/
+ private def eTape (β : Bool) (w : List Bool) : List Bool :=
+-  if β then (finW w).take (S.enc.coins.eval (finU w).length)
+-  else (finW w).drop (S.enc.coins.eval (finU w).length)
++  if β then (rW w).take (S.enc.coins.eval (rU w).length)
++  else (rW w).drop (S.enc.coins.eval (rU w).length)
+ 
+ /-- Ciphertext `β`: `Enc` on `⟨1^n, ⟨pk, plaintext⟩⟩` with empty advice and its coins, padded to
+ `ctLen(n)` bits. -/
+ private def eCt (β : Bool) (w : List Bool) : List Bool :=
+-  EnsembleLemmas.padL (S.ctLen.eval (finU w).length)
+-    (S.enc.output (pairEncode (pairEncode (pairEncode (finU w)
+-      (pairEncode (finZ w) (eMsg S β w))) []) (eTape S β w)))
++  EnsembleLemmas.padL (S.ctLen.eval (rU w).length)
++    (S.enc.output (pairEncode (pairEncode (pairEncode (rU w)
++      (pairEncode (rZ w) (eMsg S β w))) []) (eTape S β w)))
+ 
+ /-- **The finalization's round:** output the two ciphertexts, `⟨[true], c₁ ‖ c₂⟩`. -/
+ private def eFin (w : List Bool) : List Bool := pairEncode [true] (eCt S true w ++ eCt S false w)
+ 
+ /-- The finalization round is polynomial-time. -/
+ private theorem polyTimeComputable_eFin : PolyTimeComputable (eFin S) := by
+-  obtain ⟨hU, hZ, hW, hA, -⟩ := polyTimeComputable_finFields
++  have hU := polyTimeComputable_rU
++  have hZ := polyTimeComputable_rZ
++  have hW := polyTimeComputable_rW
++  have hA := polyTimeComputable_finA
+   have hg : PolyTimeComputable fun w => [(finA w).headD false] := polyTimeComputable_headD.comp hA
+   have hBit : ∀ β, PolyTimeComputable fun w => [eBit β w] := by
+     intro β
+@@ -214,7 +221,13 @@ theorem encHandler_finish (n : ℕ) (z : List Bool)
+     rw [encHandler, fwdHandler_finRun]
+   rw [InteractiveHandler.finish_eq, encHandler_finCall, PolyExpr.eval_const]
+   refine buildComp_zero_of_ret ?_
+-  obtain ⟨hU, hZ, hW, hA, -⟩ := fields_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
++  have hU := rU_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
++    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
++  have hZ := rZ_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
++    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
++  have hW := rW_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
++    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
++  have hA := finA_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+     ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
+   have hCt : ∀ β, eCt S β (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s)
+       (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean
+index 417f778ea..f9a068d0e 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean
+@@ -18,15 +18,14 @@ and an empty state, so that T2 (`Games.exists_interactiveHandlerMachine`) makes
+ answers are the outer oracle's (`Games.fwdHandler_impl`), so simulating it is running the
+ adversary against the outer oracles (`simulate_fwdHandler_impl`).
+ 
+-It also provides the readers of a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩` (`finU`,
+-`finZ`, `finW`, `finA`, `finL`) and of an encoded outer log: `logEmit G L` concatenates `G` of the
++It also provides the readers of an encoded outer log: `logEmit G L` concatenates `G` of the
+ successive suffixes of the nested log `L`, is polynomial-time for polynomial-time `G`
+ (`polyTimeComputable_logEmit`), and on an encoded log is the concatenation of `G`'s values on the
+-entries (`logEmit_encodeLog`).
++entries (`logEmit_encodeLog`). The readers of a finalization input are the published
++`Games.InteractiveHandler.rU`, `rZ`, `rW`, `rL` (with their `_finInput` lemmas) and `finA`.
+ 
+ ## Main definitions
+ 
+-* `NMCCA2.finU`, `finZ`, `finW`, `finA`, `finL`: the fields of a finalization input.
+ * `NMCCA2.logEmit`: concatenated readings of the suffixes of an encoded log.
+ 
+ ## Main results
+@@ -78,59 +77,6 @@ theorem simulate_fwdHandler_impl (n : ℕ) (z : List Bool)
+ 
+ end Forward
+ 
+-/-! ### Readers of a finalization input -/
+-
+-/-- The parameter `1^n` of a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`. -/
+-def finU (w : List Bool) : List Bool := pairFstD (pairFstD w)
+-
+-/-- `finU w = pairFstD (pairFstD w)`. -/
+-theorem finU_eq (w : List Bool) : finU w = pairFstD (pairFstD w) := rfl
+-
+-/-- The reduction input `z` of a finalization input. -/
+-def finZ (w : List Bool) : List Bool := pairFstD (pairSndD (pairFstD w))
+-
+-/-- `finZ w = pairFstD (pairSndD (pairFstD w))`. -/
+-theorem finZ_eq (w : List Bool) : finZ w = pairFstD (pairSndD (pairFstD w)) := rfl
+-
+-/-- The seed `ω` of a finalization input. -/
+-def finW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
+-
+-/-- `finW w = pairSndD (pairSndD (pairFstD w))`. -/
+-theorem finW_eq (w : List Bool) : finW w = pairSndD (pairSndD (pairFstD w)) := rfl
+-
+-/-- The adversary's output `a` of a finalization input. -/
+-def finA (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD w))
+-
+-/-- `finA w = pairFstD (pairSndD (pairSndD w))`. -/
+-theorem finA_eq (w : List Bool) : finA w = pairFstD (pairSndD (pairSndD w)) := rfl
+-
+-/-- The outer log `L` of the finalization so far. -/
+-def finL (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+-
+-/-- `finL w = pairSndD (pairSndD (pairSndD w))`. -/
+-theorem finL_eq (w : List Bool) : finL w = pairSndD (pairSndD (pairSndD w)) := rfl
+-
+-/-- **The fields of a finalization input:** on `finInput n z ω s a L = ⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a,
+-L⟩⟩⟩` the readers return `1^n`, `z`, `ω`, `a` and `L`. -/
+-theorem fields_finInput (n : ℕ) (z ω s a L : List Bool) :
+-    finU (InteractiveHandler.finInput n z ω s a L) = List.replicate n true ∧
+-      finZ (InteractiveHandler.finInput n z ω s a L) = z ∧
+-      finW (InteractiveHandler.finInput n z ω s a L) = ω ∧
+-      finA (InteractiveHandler.finInput n z ω s a L) = a ∧
+-      finL (InteractiveHandler.finInput n z ω s a L) = L := by
+-  simp only [InteractiveHandler.finInput_eq, seedIn_eq, finU, finZ, finW, finA, finL,
+-    pairFstD_pairEncode, pairSndD_pairEncode, and_self]
+-
+-/-- The finalization-input readers are polynomial-time: `PolyTimeComputable finU`, and the same
+-for `finZ`, `finW`, `finA` and `finL`. -/
+-theorem polyTimeComputable_finFields :
+-    PolyTimeComputable finU ∧ PolyTimeComputable finZ ∧ PolyTimeComputable finW ∧
+-      PolyTimeComputable finA ∧ PolyTimeComputable finL := by
+-  have hF := polyTimeComputable_pairFstD
+-  have hD := polyTimeComputable_pairSndD
+-  exact ⟨hF.comp hF, hF.comp (hD.comp hF), hD.comp (hD.comp hF), hF.comp (hD.comp hD),
+-    hD.comp (hD.comp hD)⟩
+-
+ /-! ### Readers of an encoded log -/
+ 
+ /-- **Concatenated readings of an encoded log:** `G` applied to the successive suffixes
+@@ -179,28 +125,6 @@ private theorem iterate_pairSndD_encodeLog (codec : MachineCodec spec α) (h : Q
+     | cons e t =>
+       rw [MachineCodec.encodeLog_cons, pairSndD_pairEncode, ih, List.drop_succ_cons]
+ 
+-/-- Reading the suffixes of a log within at least its number of steps. -/
+-private theorem flatMap_range_drop (codec : MachineCodec spec α) (G : List Bool → List Bool)
+-    (g : (Σ i, spec.dom i × spec.rng i) → List Bool) (hnil : G [] = [])
+-    (hcons : ∀ e t, G (pairEncode (codec.encodeEntry e) t) = g e) :
+-    ∀ (h : QueryLog spec) (m : ℕ), h.length ≤ m →
+-      ((List.range m).flatMap fun i => G (codec.encodeLog (h.drop i))) = h.flatMap g := by
+-  intro h
+-  induction h with
+-  | nil =>
+-    intro m _
+-    rw [List.flatMap_nil]
+-    refine List.flatMap_eq_nil_iff.2 fun i _ => ?_
+-    rw [List.drop_nil, MachineCodec.encodeLog_nil, hnil]
+-  | cons e t ih =>
+-    intro m hm
+-    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by rw [List.length_cons] at hm; omega⟩
+-    rw [List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map, List.drop_zero,
+-      MachineCodec.encodeLog_cons, hcons, List.flatMap_cons]
+-    congr 1
+-    simp only [List.drop_succ_cons]
+-    exact ih m' (by rw [List.length_cons] at hm; omega)
+-
+ /-- An encoded log is at least as long as its number of entries. -/
+ private theorem length_le_length_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec) :
+     h.length ≤ (codec.encodeLog h).length := by
+@@ -222,7 +146,9 @@ theorem logEmit_encodeLog (codec : MachineCodec spec α) (G : List Bool → List
+     logEmit G (codec.encodeLog h) = h.flatMap g := by
+   rw [logEmit_eq]
+   simp only [iterate_pairSndD_encodeLog]
+-  exact flatMap_range_drop codec G g hnil hcons h _
++  exact flatMap_range_drop (fun l => G (codec.encodeLog l)) g
++    (by beta_reduce; rw [MachineCodec.encodeLog_nil]; exact hnil)
++    h (fun e _ t => by beta_reduce; rw [MachineCodec.encodeLog_cons]; exact hcons e _) _
+     (Nat.le_succ_of_le (length_le_length_encodeLog codec h))
+ 
+ end LogEmit
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
+index 76cedb06b..cc2bfbc9c 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
+@@ -536,8 +536,8 @@ theorem ofFn_snmEntry {n : ℕ} (sk : List Bool) (copy : Bool) (c : Fin (S.ctLen
+ /-- **The real experiment's view is `realView`:** for an output `w` and a final state `s`,
+ `snmView a (M.draw … a ρ) (d_i)_i (snmSigma w) = realView … ⟦w⟧ s`, with `a` the recorded parameter.
+ 
+-**Proof sketch.** Block by block: `ofFn_block` for the ciphertexts, `decide_map_ofFn` for the
+-copy test, `ofFn_snmEntry` for the entries and `ofFn_natAdd_eq_drop` for `σ`. -/
++**Proof sketch.** Block by block: `ofFn_block_eq_coinBlock` for the ciphertexts, `decide_map_ofFn`
++for the copy test, `ofFn_snmEntry` for the entries and `ofFn_natAdd_eq_drop` for `σ`. -/
+ theorem snmView_realView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ : M.samp.Coins n)
+     (w : Fin (r * S.ctLen.eval n + sl) → Bool) (s : S.SnmState M n) :
+     S.snmView ((s.map Prod.snd).getD (zeroBits (M.paramLen.eval n)))
+@@ -548,15 +548,16 @@ theorem snmView_realView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ :
+   rw [snmView_eq, realView_eq, M.draw_eq, drawWith_eq, snmSigma_eq, ofFn_natAdd_eq_drop]
+   congr 3
+   refine ofFn_eq_map_range _ _ fun i => ?_
+-  have hc : chunkAt (S.ctLen.eval n) i (List.ofFn w) = List.ofFn (S.snmCt w i) := by
+-    rw [snmCt_eq, ofFn_block]
++  have hc : coinBlock (S.ctLen.eval n) i (List.ofFn w) = List.ofFn (S.snmCt w i) := by
++    rw [snmCt_eq, ofFn_block_eq_coinBlock]
+   rw [hc, decide_map_ofFn, ofFn_snmEntry]
+ 
+ /-- **The ideal experiment's view is `idealView`:** for an output `w` and the oracle's final state
+ `sa`, `snmView a (M.draw … a ρ) (d_i)_i (snmSigma w) = idealView … ⟦w⟧ sa`.
+ 
+-**Proof sketch.** Entry `i` of `w` is the block `chunkAt (ctLen(n) + 1) i ⟦w⟧` (`ofFn_block`),
+-whose head is the `COPY` flag and whose tail is the ciphertext (`simEntry_fst`, `simEntry_snd`). -/
++**Proof sketch.** Entry `i` of `w` is the block `coinBlock (ctLen(n) + 1) i ⟦w⟧`
++(`ofFn_block_eq_coinBlock`), whose head is the `COPY` flag and whose tail is the ciphertext
++(`simEntry_fst`, `simEntry_snd`). -/
+ theorem snmView_idealView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ : M.samp.Coins n)
+     (w : Fin (r * (S.ctLen.eval n + 1) + sl) → Bool)
+     (sa : Option (Fin (M.paramLen.eval n) → Bool)) :
+@@ -567,9 +568,9 @@ theorem snmView_idealView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ :
+   rw [snmView_eq, idealView_eq, M.draw_eq, drawWith_eq, snmSigma_eq, ofFn_natAdd_eq_drop]
+   congr 3
+   refine ofFn_eq_map_range _ _ fun i => ?_
+-  have hc : chunkAt (S.ctLen.eval n + 1) i (List.ofFn w) =
++  have hc : coinBlock (S.ctLen.eval n + 1) i (List.ofFn w) =
+       (S.simEntry w i).1 :: List.ofFn (S.simEntry w i).2 := by
+-    rw [← ofFn_block, List.ofFn_succ, simEntry_fst]
++    rw [← ofFn_block_eq_coinBlock, List.ofFn_succ, simEntry_fst]
+     exact congrArg _ (congrArg List.ofFn (funext fun j => (simEntry_snd S w i j).symm))
+   rw [hc, List.headD_cons, List.tail_cons, ofFn_snmEntry]
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
+index 29aebbc5c..d247dab72 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
+@@ -45,6 +45,10 @@ states (`chalState`) and that a whole run asks at most one outer query
+ namespace TCSlib.Cryptography.Composability.NMSim
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
++open TCSlib.Cryptography.Games.InteractiveHandler (rU_input rS_input rI_input rX_input rL_input
++  polyTimeComputable_rU polyTimeComputable_rS polyTimeComputable_rI polyTimeComputable_rX
++  polyTimeComputable_rL)
+ 
+ variable (S : FixedLengthPKScheme)
+ 
+@@ -67,19 +71,19 @@ structure ChalParams (pl hl : PolyExpr) (k' : ℕ) (din' dout' : Fin k' → Poly
+   /-- It is polynomial-time. -/
+   qry_poly : PolyTimeComputable qry
+   /-- It has the outer query length. -/
+-  qry_len : ∀ w, (qry w).length = (din' j).eval (rdU w).length
++  qry_len : ∀ w, (qry w).length = (din' j).eval (rU w).length
+   /-- The ciphertext part of the answer, from the round input with the outer answer. -/
+   ansY : List Bool → List Bool
+   /-- It is polynomial-time. -/
+   ansY_poly : PolyTimeComputable ansY
+   /-- It has `ctLen(n)` bits. -/
+-  ansY_len : ∀ w, (ansY w).length = S.ctLen.eval (rdU w).length
++  ansY_len : ∀ w, (ansY w).length = S.ctLen.eval (rU w).length
+   /-- The history part of the answer, from the round input with the outer answer. -/
+   ansH : List Bool → List Bool
+   /-- It is polynomial-time. -/
+   ansH_poly : PolyTimeComputable ansH
+   /-- It has `hl(n)` bits. -/
+-  ansH_len : ∀ w, (ansH w).length = hl.eval (rdU w).length
++  ansH_len : ∀ w, (ansH w).length = hl.eval (rU w).length
+   /-- The length of the output. -/
+   outLen : PolyExpr
+   /-- The bound on the outer queries of the finalization. -/
+@@ -97,17 +101,17 @@ challenge with the flag set returns the recorded `⟨Y, H⟩`; otherwise, with a
+ asks `qry w` to the outer oracle `j`, and with the answer in the log it returns `⟨Y, H⟩` and the
+ state `[true] ‖ Y ‖ H ‖ x`. -/
+ def chalRun (P : ChalParams S pl hl k' din' dout') (w : List Bool) : List Bool :=
+-  if decide (rdIdx w = []) then
+-    pairEncode [true] (List.replicate ((S.msgLen.add (.const 1)).eval (rdU w).length) false ++
+-      rdState w)
+-  else if (rdState w).headD false then
+-    pairEncode [true] (((rdState w).drop 1).take ((S.ctLen.add hl).eval (rdU w).length) ++
+-      rdState w)
+-  else if decide (rdLog w = []) then
++  if decide (rI w = []) then
++    pairEncode [true] (List.replicate ((S.msgLen.add (.const 1)).eval (rU w).length) false ++
++      rS w)
++  else if (rS w).headD false then
++    pairEncode [true] (((rS w).drop 1).take ((S.ctLen.add hl).eval (rU w).length) ++
++      rS w)
++  else if decide (rL w = []) then
+     pairEncode [false] (pairEncode (List.replicate P.j true) (P.qry w))
+   else
+     pairEncode [true] (P.ansY w ++ P.ansH w ++
+-      (true :: (P.ansY w ++ P.ansH w ++ EnsembleLemmas.padL (pl.eval (rdU w).length) (rdQuery w))))
++      (true :: (P.ansY w ++ P.ansH w ++ EnsembleLemmas.padL (pl.eval (rU w).length) (rX w))))
+ 
+ /-- `chalRun P w` is `⟨[true], 0^{msgLen+1} ‖ s⟩` if `i = 0`; else
+ `⟨[true], (s.drop 1).take (ctLen + hl) ‖ s⟩` if the flag is set; else
+@@ -115,22 +119,26 @@ def chalRun (P : ChalParams S pl hl k' din' dout') (w : List Bool) : List Bool :
+ `⟨[true], Y ‖ H ‖ (true :: Y ‖ H ‖ padL pl x)⟩`, with `Y = ansY w` and `H = ansH w`. -/
+ theorem chalRun_eq (P : ChalParams S pl hl k' din' dout') (w : List Bool) :
+     chalRun P w =
+-      if decide (rdIdx w = []) then
+-        pairEncode [true] (List.replicate ((S.msgLen.add (.const 1)).eval (rdU w).length) false ++
+-          rdState w)
+-      else if (rdState w).headD false then
+-        pairEncode [true] (((rdState w).drop 1).take ((S.ctLen.add hl).eval (rdU w).length) ++
+-          rdState w)
+-      else if decide (rdLog w = []) then
++      if decide (rI w = []) then
++        pairEncode [true] (List.replicate ((S.msgLen.add (.const 1)).eval (rU w).length) false ++
++          rS w)
++      else if (rS w).headD false then
++        pairEncode [true] (((rS w).drop 1).take ((S.ctLen.add hl).eval (rU w).length) ++
++          rS w)
++      else if decide (rL w = []) then
+         pairEncode [false] (pairEncode (List.replicate P.j true) (P.qry w))
+       else
+         pairEncode [true] (P.ansY w ++ P.ansH w ++ (true :: (P.ansY w ++ P.ansH w ++
+-          EnsembleLemmas.padL (pl.eval (rdU w).length) (rdQuery w)))) := rfl
++          EnsembleLemmas.padL (pl.eval (rU w).length) (rX w)))) := rfl
+ 
+ /-- The round is polynomial-time. -/
+ theorem polyTimeComputable_chalRun (P : ChalParams S pl hl k' din' dout') :
+     PolyTimeComputable (chalRun P) := by
+-  obtain ⟨hU, -, -, hS, hI, hQ, hL, -⟩ := polyTimeComputable_rd
++  have hU := polyTimeComputable_rU
++  have hS := polyTimeComputable_rS
++  have hI := polyTimeComputable_rI
++  have hQ := polyTimeComputable_rX
++  have hL := polyTimeComputable_rL
+   have hT := polyTimeComputable_const [true]
+   have hY := P.ansY_poly
+   have hH := P.ansH_poly
+@@ -245,7 +253,11 @@ theorem chalHandler_impl_dec (x : Fin ((snmDin S pl 0).eval n) → Bool)
+     (o : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (hl.eval n) → Bool) ×
+       (Fin (pl.eval n) → Bool))) :
+     (chalHandler P).impl n z ω 0 x (chalState P n o) = .pure (zeroBits _, chalState P n o) := by
+-  obtain ⟨hU, -, -, hS, hI, -, -⟩ := fields_input (k := 2) n z (List.ofFn ω)
++  have hU := rU_input (k := 2) n z (List.ofFn ω)
++    (List.ofFn (chalState P n o)) 0 (List.ofFn x) []
++  have hS := rS_input (k := 2) n z (List.ofFn ω)
++    (List.ofFn (chalState P n o)) 0 (List.ofFn x) []
++  have hI := rI_input (k := 2) n z (List.ofFn ω)
+     (List.ofFn (chalState P n o)) 0 (List.ofFn x) []
+   rw [InteractiveHandler.impl_of_ret_padFin (chalHandler P) n z ω 0 x (chalState P n o)
+     (List.replicate ((S.msgLen.add (.const 1)).eval n) false) (List.ofFn (chalState P n o))
+@@ -259,7 +271,11 @@ theorem chalHandler_impl_some (x : Fin ((snmDin S pl 1).eval n) → Bool)
+     (y : Fin (S.ctLen.eval n) → Bool) (h : Fin (hl.eval n) → Bool) (a : Fin (pl.eval n) → Bool) :
+     (chalHandler P).impl n z ω 1 x (chalState P n (some (y, h, a))) =
+       .pure (padFin _ (List.ofFn y ++ List.ofFn h), chalState P n (some (y, h, a))) := by
+-  obtain ⟨hU, -, -, hS, hI, -, -⟩ := fields_input (k := 2) n z (List.ofFn ω)
++  have hU := rU_input (k := 2) n z (List.ofFn ω)
++    (List.ofFn (chalState P n (some (y, h, a)))) 1 (List.ofFn x) []
++  have hS := rS_input (k := 2) n z (List.ofFn ω)
++    (List.ofFn (chalState P n (some (y, h, a)))) 1 (List.ofFn x) []
++  have hI := rI_input (k := 2) n z (List.ofFn ω)
+     (List.ofFn (chalState P n (some (y, h, a)))) 1 (List.ofFn x) []
+   have hans : ((List.ofFn (chalState P n (some (y, h, a)))).drop 1).take
+       ((S.ctLen.add hl).eval n) = List.ofFn y ++ List.ofFn h := by
+@@ -315,7 +331,13 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
+             padFin (pl.eval n) (List.ofFn x)))) := by
+   set w₀ := InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (chalState P n none)) (1 : Fin 2)
+     (List.ofFn x) [] with hw₀
+-  obtain ⟨hU₀, -, -, hS₀, hI₀, -, hL₀⟩ := fields_input (k := 2) n z (List.ofFn ω)
++  have hU₀ := rU_input (k := 2) n z (List.ofFn ω)
++    (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []
++  have hS₀ := rS_input (k := 2) n z (List.ofFn ω)
++    (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []
++  have hI₀ := rI_input (k := 2) n z (List.ofFn ω)
++    (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []
++  have hL₀ := rL_input (k := 2) n z (List.ofFn ω)
+     (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []
+   have hq : List.ofFn (padFin ((din' P.j).eval n) (P.qry w₀)) = P.qry w₀ :=
+     ofFn_padFin_of_length (by rw [P.qry_len, hU₀, List.length_replicate])
+@@ -335,9 +357,9 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
+       (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
+     with hW₁
+   have hY : ∀ y, (P.ansY (W₁ y)).length = S.ctLen.eval n := fun y => by
+-    rw [P.ansY_len, hW₁, (fields_input (k := 2) n z _ _ 1 _ _).1, List.length_replicate]
++    rw [P.ansY_len, hW₁, rU_input (k := 2) n z _ _ 1 _ _, List.length_replicate]
+   have hH : ∀ y, (P.ansH (W₁ y)).length = hl.eval n := fun y => by
+-    rw [P.ansH_len, hW₁, (fields_input (k := 2) n z _ _ 1 _ _).1, List.length_replicate]
++    rw [P.ansH_len, hW₁, rU_input (k := 2) n z _ _ 1 _ _, List.length_replicate]
+   rw [InteractiveHandler.impl_of_query_padFin (chalHandler P) n z ω 1 x (chalState P n none) P.j
+     (padFin _ (P.qry w₀))
+     (fun y => P.ansY (W₁ y) ++ P.ansH (W₁ y))
+@@ -352,7 +374,19 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
+     rw [chalRun_eq, hI₀, hU₀, hS₀, hL₀, List.length_replicate, headD_ofFn_chalState, hq]
+     rfl
+   · rw [hq]
+-    obtain ⟨hU₁, -, -, hS₁, hI₁, hQ₁, hL₁⟩ := fields_input (k := 2) n z (List.ofFn ω)
++    have hU₁ := rU_input (k := 2) n z (List.ofFn ω)
++      (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
++      (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
++    have hS₁ := rS_input (k := 2) n z (List.ofFn ω)
++      (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
++      (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
++    have hI₁ := rI_input (k := 2) n z (List.ofFn ω)
++      (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
++      (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
++    have hQ₁ := rX_input (k := 2) n z (List.ofFn ω)
++      (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
++      (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
++    have hL₁ := rL_input (k := 2) n z (List.ofFn ω)
+       (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
+       (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
+     show chalRun P (W₁ y) = _
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
+index 0503900b2..aa80b3b1d 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
+@@ -140,30 +140,6 @@ theorem polyTimeComputable_chunkMap (c : PolyExpr) {f : List Bool → List Bool
+       exact length_iterate_chunkStep_le c x i)).congr
+     fun x => by rw [PolyExpr.eval_var, chunkMap_eq]
+ 
+-/-- Reading the suffixes of a list within at least its length many steps (DL-30–36 overlap: the
+-general form of `Forward`'s private `flatMap_range_drop`, with the reading of a nonempty suffix
+-assumed only for the list's members). -/
+-private theorem flatMap_range_drop {β : Type} (F : List β → List Bool) (g : β → List Bool)
+-    (hnil : F [] = []) :
+-    ∀ (l : List β), (∀ e ∈ l, ∀ t, F (e :: t) = g e) → ∀ m : ℕ, l.length ≤ m →
+-      ((List.range m).flatMap fun i => F (l.drop i)) = l.flatMap g := by
+-  intro l
+-  induction l with
+-  | nil =>
+-    intro _ m _
+-    rw [List.flatMap_nil]
+-    refine List.flatMap_eq_nil_iff.2 fun i _ => ?_
+-    rw [List.drop_nil, hnil]
+-  | cons e t ih =>
+-    intro hcons m hm
+-    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by rw [List.length_cons] at hm; omega⟩
+-    rw [List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map, List.drop_zero,
+-      hcons e List.mem_cons_self, List.flatMap_cons]
+-    congr 1
+-    simp only [List.drop_succ_cons]
+-    exact ih (fun e' he' => hcons e' (List.mem_cons_of_mem _ he')) m'
+-      (by rw [List.length_cons] at hm; omega)
+-
+ /-- **The chunk map of a concatenation of chunks:** if every chunk has `c(n) > 0` bits, the chunk
+ map of `⟨⟨1^n, e⟩, chunks.flatten⟩` is the concatenation of `f ⟨1^n, e⟩` over the chunks.
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean
+index 52eced24a..82e2d1ac1 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean
+@@ -34,7 +34,7 @@ function `hist` and its length `hl`), on the lengths that T2 machines use (`snmD
+ * `NMSim.snmDin`, `NMSim.snmDout`: the oracle lengths as polynomials.
+ * `NMSim.drawWith`, `NMSim.histWith`, `NMSim.encWith`: `M(a; ρ)`, `h(m)` and `Enc_pk(m; re)`.
+ * `NMSim.rImpl`: the hybrid oracle; `NMSim.histImpl`: the history oracle.
+-* `NMSim.chunkAt`, `NMSim.entryL`, `NMSim.realView`, `NMSim.idealView`.
++* `NMSim.entryL`, `NMSim.realView`, `NMSim.idealView`.
+ * `NMSim.realAcc`, `NMSim.idealAcc`, `NMSim.hybAcc`.
+ 
+ ## Main results
+@@ -45,8 +45,11 @@ function `hist` and its length `hl`), on the lengths that T2 machines use (`snmD
+ * `NMSim.rImpl_eq_of_msgLen_eq_zero`: with empty messages the two hybrids coincide.
+ * `NMSim.expect_simulate_rImpl_eager`: the encryption coins may be drawn in advance.
+ * `NMSim.rImpl_false_coins`, `NMSim.histImpl_coins`: coins that are not read.
+-* Blocks of strings: `NMSim.ofFn_block`, `ofFn_natAdd_eq_drop`, `take_eq_flatten_chunkAt`,
+-  `chunkAt_flatten_append`, `map_chunkAt_flatten`, and their lengths.
++* Blocks of strings: `NMSim.take_eq_flatten_chunkAt` (the first `r` segments `coinBlock`) and
++  `NMSim.drop_flatten_append`. The other block lemmas first proved here are now beside `coinBlock`
++  (`ofFn_block_eq_coinBlock`, `coinBlock_flatten_append`, `map_coinBlock_flatten`) and in
++  `Foundations/BitLists.lean` (`ofFn_natAdd_eq_drop`, `ofFn_eq_map_range`, `decide_map_ofFn`,
++  `length_flatten_map_const`, `length_flatten_map_range`).
+ * `NMSim.realAcc_eq_hybAcc`, `NMSim.hybAcc_true_eq_false`: `H_false` is the real experiment, and
+   the hybrids coincide when `msgLen(n) = 0`.
+ 
+@@ -360,131 +363,20 @@ theorem histImpl_coins (samp : NUPPT) (pl hl : PolyExpr) (hist : List Bool → L
+ 
+ /-! ### Blocks of fixed-length strings -/
+ 
+-/-- Block `i` of `k` bits of a string: `chunkAt k i w = (w.drop (i·k)).take k`. -/
+-def chunkAt (k i : ℕ) (w : List Bool) : List Bool := (w.drop (i * k)).take k
+-
+-/-- `chunkAt k i w = (w.drop (i·k)).take k`. -/
+-theorem chunkAt_eq (k i : ℕ) (w : List Bool) : chunkAt k i w = (w.drop (i * k)).take k := rfl
+-
+-/-- A block inside the string has `k` bits: `|chunkAt k i w| = k` when `(i + 1)·k ≤ |w|`. -/
+-theorem length_chunkAt (k i : ℕ) (w : List Bool) (h : (i + 1) * k ≤ w.length) :
+-    (chunkAt k i w).length = k := by
+-  rw [chunkAt_eq, List.length_take, List.length_drop, Nat.succ_mul] at *
+-  omega
+-
+-/-- **The first `r` blocks:** `w.take (r·k) = (chunkAt k 0 w ++ ⋯ ++ chunkAt k (r-1) w)`. -/
++/-- **The first `r` blocks:** `w.take (r·k) = (coinBlock k 0 w ++ ⋯ ++ coinBlock k (r-1) w)`. -/
+ theorem take_eq_flatten_chunkAt (k r : ℕ) (w : List Bool) :
+-    w.take (r * k) = ((List.range r).map fun i => chunkAt k i w).flatten := by
++    w.take (r * k) = ((List.range r).map fun i => coinBlock k i w).flatten := by
+   induction r with
+   | zero => rw [Nat.zero_mul, List.take_zero, List.range_zero, List.map_nil, List.flatten_nil]
+   | succ r ih =>
+     rw [Nat.succ_mul, List.take_add, ih, List.range_succ, List.map_append, List.flatten_append,
+-      List.map_singleton, List.flatten_singleton, chunkAt_eq]
+-
+-/-- `r` blocks of `k` bits have `r·k` bits. -/
+-theorem length_flatten_map_range (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i < r, (g i).length = k) :
+-    ((List.range r).map g).flatten.length = r * k := by
+-  induction r with
+-  | zero => rw [List.range_zero, List.map_nil, List.flatten_nil, List.length_nil, Nat.zero_mul]
+-  | succ r ih =>
+-    rw [List.range_succ, List.map_append, List.flatten_append, List.length_append,
+-      ih fun i hi => hg i (by omega), List.map_singleton, List.flatten_singleton,
+-      hg r (by omega), Nat.succ_mul]
+-
+-/-- Blocks of `k` bits, one per element: `|(l.map g).flatten| = |l|·k` when every `g x` has
+-`k` bits. -/
+-theorem length_flatten_map_const {α β : Type} (l : List α) (g : α → List β) (k : ℕ)
+-    (hg : ∀ x, (g x).length = k) : (l.map g).flatten.length = l.length * k := by
+-  induction l with
+-  | nil => rw [List.map_nil, List.flatten_nil, List.length_nil, List.length_nil, Nat.zero_mul]
+-  | cons x t ih => rw [List.map_cons, List.flatten_cons, List.length_append, ih, hg,
+-      List.length_cons, Nat.succ_mul, Nat.add_comm]
+-
+-/-- **Reading back the blocks:** if `g 0, …, g (r-1)` have `k` bits each, block `i < r` of
+-`g 0 ++ ⋯ ++ g (r-1) ++ t` is `g i`. -/
+-theorem chunkAt_flatten_append (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i < r, (g i).length = k)
+-    (t : List Bool) (i : ℕ) (hi : i < r) :
+-    chunkAt k i (((List.range r).map g).flatten ++ t) = g i := by
+-  induction r generalizing t with
+-  | zero => exact absurd hi (Nat.not_lt_zero _)
+-  | succ r ih =>
+-    rw [List.range_succ, List.map_append, List.flatten_append, List.map_singleton,
+-      List.flatten_singleton, List.append_assoc]
+-    by_cases h : i < r
+-    · exact ih (fun j hj => hg j (by omega)) _ h
+-    · have hir : i = r := by omega
+-      subst hir
+-      rw [chunkAt_eq, List.drop_append_of_le_length (by
+-          rw [length_flatten_map_range k i g fun j hj => hg j (by omega)]),
+-        List.drop_of_length_le (by rw [length_flatten_map_range k i g fun j hj => hg j (by omega)]),
+-        List.nil_append, List.take_left' (hg i (by omega))]
++      List.map_singleton, List.flatten_singleton, coinBlock_eq]
+ 
+ /-- The tail after `r` blocks of `k` bits: `(g 0 ++ ⋯ ++ g (r-1) ++ t).drop (r·k) = t`. -/
+ theorem drop_flatten_append (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i < r, (g i).length = k)
+     (t : List Bool) : (((List.range r).map g).flatten ++ t).drop (r * k) = t :=
+   List.drop_left' (length_flatten_map_range k r g hg)
+ 
+-/-- **The blocks of a concatenation of `k`-bit blocks:** if every block of `cs` has `k` bits,
+-mapping `F` over `chunkAt k i cs.flatten` for `i < |cs|` is mapping `F` over `cs`. -/
+-theorem map_chunkAt_flatten {α : Type} (k : ℕ) (F : List Bool → α) :
+-    ∀ cs : List (List Bool), (∀ c ∈ cs, c.length = k) →
+-      (List.range cs.length).map (fun i => F (chunkAt k i cs.flatten)) = cs.map F := by
+-  intro cs
+-  induction cs with
+-  | nil => intro _; rfl
+-  | cons c t ih =>
+-    intro hc
+-    have hck : c.length = k := hc c List.mem_cons_self
+-    rw [List.length_cons, List.range_succ_eq_map, List.map_cons, List.map_map, List.map_cons,
+-      List.flatten_cons, ← ih fun c' hc' => hc c' (List.mem_cons_of_mem _ hc')]
+-    congr 1
+-    · rw [chunkAt_eq, Nat.zero_mul, List.drop_zero, List.take_left' hck]
+-    · refine List.map_congr_left fun i _ => ?_
+-      rw [Function.comp_apply, chunkAt_eq, chunkAt_eq, Nat.succ_mul, Nat.add_comm,
+-        ← List.drop_drop, List.drop_left' hck]
+-
+-/-- **Block `i` of a string of `r` blocks of `k` bits and a tail:**
+-`⟦j ↦ w (castAdd sl (finProdFinEquiv (i, j)))⟧ = chunkAt k i ⟦w⟧`. -/
+-theorem ofFn_block {r k sl : ℕ} (w : Fin (r * k + sl) → Bool) (i : Fin r) :
+-    List.ofFn (fun j : Fin k => w (Fin.castAdd sl (finProdFinEquiv (i, j)))) =
+-      chunkAt k i (List.ofFn w) := by
+-  have hle : (i : ℕ) * k + k ≤ r * k := by
+-    have := Nat.mul_le_mul_right k (Nat.succ_le_of_lt i.isLt)
+-    rw [Nat.succ_mul] at this
+-    exact this
+-  rw [chunkAt_eq]
+-  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
+-  · simp only [List.length_ofFn, List.length_take, List.length_drop]
+-    omega
+-  · rw [List.getElem_ofFn, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+-    refine congrArg w (Fin.ext ?_)
+-    rw [Fin.coe_castAdd, finProdFinEquiv_apply_val]
+-    show j + k * i = i * k + j
+-    rw [Nat.mul_comm]
+-    omega
+-
+-/-- **The tail of a string:** `⟦j ↦ w (natAdd k j)⟧ = ⟦w⟧.drop k`. -/
+-theorem ofFn_natAdd_eq_drop {k sl : ℕ} (w : Fin (k + sl) → Bool) :
+-    List.ofFn (fun j : Fin sl => w (Fin.natAdd k j)) = (List.ofFn w).drop k := by
+-  rw [List.ofFn_add, List.drop_left' List.length_ofFn]
+-
+-/-- A list of `r` values is a map over `List.range r`: if `f i = g i` for `i < r`, then
+-`List.ofFn f = (List.range r).map g`. -/
+-theorem ofFn_eq_map_range {α : Type} {r : ℕ} (f : Fin r → α) (g : ℕ → α)
+-    (h : ∀ i : Fin r, f i = g i) : List.ofFn f = (List.range r).map g := by
+-  refine List.ext_getElem (by rw [List.length_ofFn, List.length_map, List.length_range])
+-    fun i h₁ h₂ => ?_
+-  rw [List.getElem_ofFn, List.getElem_map, List.getElem_range]
+-  exact h _
+-
+-/-- Comparing strings is comparing their lists:
+-`decide (o.map ofFn = some ⟦c⟧) = decide (o = some c)`. -/
+-theorem decide_map_ofFn {k : ℕ} (o : Option (Fin k → Bool)) (c : Fin k → Bool) :
+-    decide (o.map List.ofFn = some (List.ofFn c)) = decide (o = some c) := by
+-  cases o with
+-  | none => simp
+-  | some c' => simp [List.ofFn_inj]
+-
+ /-! ### The experiments' outputs as strings -/
+ 
+ /-- **An entry `d_i` as a string:** `COPY` (`true` followed by `msgLen(n) + 1` falses) if `copy`,
+@@ -519,8 +411,8 @@ def realView (samp : NUPPT) (pl : PolyExpr) (n r : ℕ) (sk : List Bool) (ρ : s
+   List.ofFn ((s.map Prod.snd).getD (zeroBits _)) ++
+     List.ofFn (drawWith samp (S.msgLen.eval n) n ((s.map Prod.snd).getD (zeroBits _)) ρ) ++
+     ((List.range r).map fun i => entryL S n sk
+-      (decide ((s.map Prod.fst).map List.ofFn = some (chunkAt (S.ctLen.eval n) i w)))
+-      (chunkAt (S.ctLen.eval n) i w)).flatten ++
++      (decide ((s.map Prod.fst).map List.ofFn = some (coinBlock (S.ctLen.eval n) i w)))
++      (coinBlock (S.ctLen.eval n) i w)).flatten ++
+     w.drop (r * S.ctLen.eval n)
+ 
+ /-- `realView … w s = ⟦a⟧ ++ ⟦M(a; ρ)⟧ ++ (d_0 ++ ⋯ ++ d_{r-1}) ++ σ` as defined. -/
+@@ -530,8 +422,8 @@ theorem realView_eq (samp : NUPPT) (pl : PolyExpr) (n r : ℕ) (sk : List Bool)
+       List.ofFn ((s.map Prod.snd).getD (zeroBits _)) ++
+         List.ofFn (drawWith samp (S.msgLen.eval n) n ((s.map Prod.snd).getD (zeroBits _)) ρ) ++
+         ((List.range r).map fun i => entryL S n sk
+-          (decide ((s.map Prod.fst).map List.ofFn = some (chunkAt (S.ctLen.eval n) i w)))
+-          (chunkAt (S.ctLen.eval n) i w)).flatten ++
++          (decide ((s.map Prod.fst).map List.ofFn = some (coinBlock (S.ctLen.eval n) i w)))
++          (coinBlock (S.ctLen.eval n) i w)).flatten ++
+         w.drop (r * S.ctLen.eval n) := rfl
+ 
+ /-- **The ideal experiment's output** `(a, m, (d_i)_i, σ)` as a string, from the simulator's output
+@@ -543,8 +435,8 @@ def idealView (samp : NUPPT) (pl : PolyExpr) (n r : ℕ) (sk : List Bool) (ρ :
+   List.ofFn (sa.getD (zeroBits _)) ++
+     List.ofFn (drawWith samp (S.msgLen.eval n) n (sa.getD (zeroBits _)) ρ) ++
+     ((List.range r).map fun i => entryL S n sk
+-      ((chunkAt (S.ctLen.eval n + 1) i w).headD false)
+-      (chunkAt (S.ctLen.eval n + 1) i w).tail).flatten ++
++      ((coinBlock (S.ctLen.eval n + 1) i w).headD false)
++      (coinBlock (S.ctLen.eval n + 1) i w).tail).flatten ++
+     w.drop (r * (S.ctLen.eval n + 1))
+ 
+ /-- `idealView … w sa = ⟦a⟧ ++ ⟦M(a; ρ)⟧ ++ (d_0 ++ ⋯ ++ d_{r-1}) ++ σ` as defined. -/
+@@ -554,8 +446,8 @@ theorem idealView_eq (samp : NUPPT) (pl : PolyExpr) (n r : ℕ) (sk : List Bool)
+       List.ofFn (sa.getD (zeroBits _)) ++
+         List.ofFn (drawWith samp (S.msgLen.eval n) n (sa.getD (zeroBits _)) ρ) ++
+         ((List.range r).map fun i => entryL S n sk
+-          ((chunkAt (S.ctLen.eval n + 1) i w).headD false)
+-          (chunkAt (S.ctLen.eval n + 1) i w).tail).flatten ++
++          ((coinBlock (S.ctLen.eval n + 1) i w).headD false)
++          (coinBlock (S.ctLen.eval n + 1) i w).tail).flatten ++
+         w.drop (r * (S.ctLen.eval n + 1)) := rfl
+ 
+ /-! ### The acceptance rates of the experiments -/
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
+index 779671f0f..49b16d2cc 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
+@@ -39,6 +39,7 @@ None: this module only proves results. `B`'s handler parameters `nmParams` and t
+ namespace TCSlib.Cryptography.Composability.NMSim
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++open TCSlib.Cryptography.EnsembleLemmas (seedEquiv seedEquivPoly ofFn_padFin_eq_padL)
+ 
+ variable (S : FixedLengthPKScheme) (samp : NUPPT) (pl hl : PolyExpr)
+   (hist : List Bool → List Bool) (hist_poly : PolyTimeComputable hist) (r sl : PolyExpr)
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
+index cec3ef93d..b1142e597 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
+@@ -258,7 +258,7 @@ theorem recDist_distinguisherL (n : ℕ) (u : List Bool) (rD : D.Coins n) :
+ 
+ /-- **The decryptions of concatenated ciphertexts:** for `ℓ` ciphertexts `cs` of `ctLen(n)` bits,
+ `nmOutput sk s' (padFin _ cs.flatten)` is the concatenation of the entries' tails
+-`(entryL … [c is the challenge] c).drop 1` (`nmOutput_eq_entryTails`, `map_chunkAt_flatten`). -/
++`(entryL … [c is the challenge] c).drop 1` (`nmOutput_eq_entryTails`, `map_coinBlock_flatten`). -/
+ theorem nmOutput_flatten (n ℓ : ℕ) (sk : List Bool) (s' : Option (Fin (S.ctLen.eval n) → Bool))
+     (cs : List (List Bool)) (hℓ : cs.length = ℓ) (hc : ∀ c ∈ cs, c.length = S.ctLen.eval n) :
+     S.nmOutput sk s' (padFin (ℓ * S.ctLen.eval n) cs.flatten) =
+@@ -268,7 +268,7 @@ theorem nmOutput_flatten (n ℓ : ℕ) (sk : List Bool) (s' : Option (Fin (S.ctL
+     have : cs.map List.length = cs.map fun _ => S.ctLen.eval n := List.map_congr_left hc
+     rw [this, List.map_const', List.sum_replicate, smul_eq_mul]
+   rw [nmOutput_eq_entryTails S n ℓ sk s' _ hlen, ← hℓ,
+-    map_chunkAt_flatten (S.ctLen.eval n) (fun c => (entryL S n sk
++    map_coinBlock_flatten (S.ctLen.eval n) (fun c => (entryL S n sk
+       (decide (s'.map List.ofFn = some c)) c).drop 1) cs hc]
+ 
+ variable (samp : NUPPT)
+@@ -368,18 +368,18 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
+         (padFin ((nmLen S pl r sl).eval n * S.ctLen.eval n) (nmOutL S samp r n
+           (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st))) a aP mP))) =
+       aP ++ mP ++ ((List.range (r.eval n)).map fun i => entryL S n (pairSndD (S.gen.runAt n [] rg))
+-        (decide (s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i a)))
+-        (chunkAt (S.ctLen.eval n) i a)).flatten ++ a.drop (r.eval n * S.ctLen.eval n) := by
++        (decide (s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i a)))
++        (coinBlock (S.ctLen.eval n) i a)).flatten ++ a.drop (r.eval n * S.ctLen.eval n) := by
+   set sk := pairSndD (S.gen.runAt n [] rg) with hsk
+   set ctx := pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st)) with hctx
+   set v : List Bool → List Bool := fun c =>
+     (entryL S n sk (decide (s'.map List.ofFn = some c)) c).drop 1 with hvdef
+   set f : ℕ → Bool := fun i => st.headD false &&
+-    decide (chunkAt (S.ctLen.eval n) i a = (st.drop 1).take (S.ctLen.eval n)) with hfdef
++    decide (coinBlock (S.ctLen.eval n) i a = (st.drop 1).take (S.ctLen.eval n)) with hfdef
+   set bits := aP ++ mP ++ a.drop (r.eval n * S.ctLen.eval n) with hbits
+   have hct := ctLen_pos S n rg re hL
+-  have hci : ∀ i < r.eval n, (chunkAt (S.ctLen.eval n) i a).length = S.ctLen.eval n := fun i hi =>
+-    length_chunkAt _ _ _ (by
++  have hci : ∀ i < r.eval n, (coinBlock (S.ctLen.eval n) i a).length = S.ctLen.eval n := fun i hi =>
++    length_coinBlock (by
+       rw [ha]
+       have := Nat.mul_le_mul_right (S.ctLen.eval n) (show i + 1 ≤ r.eval n from hi)
+       omega)
+@@ -389,7 +389,8 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
+   have he : ∀ x, (encBit S samp ctx x).length = S.ctLen.eval n := fun x =>
+     length_encBit S samp n _ x
+   set cs : List (List Bool) := ((List.range (r.eval n)).map fun i =>
+-      [chunkAt (S.ctLen.eval n) i a, encBit S samp ctx (f i), encBit S samp ctx (!f i)]).flatten ++
++      [coinBlock (S.ctLen.eval n) i a, encBit S samp ctx (f i),
++        encBit S samp ctx (!f i)]).flatten ++
+     (bits.map fun x => [encBit S samp ctx x, encBit S samp ctx (!x)]).flatten with hcs
+   have hW : nmOutL S samp r n ctx a aP mP = cs.flatten := by
+     rw [nmOutL_eq, hcs, List.flatten_append, List.flatten_flatten, List.flatten_flatten,
+@@ -406,7 +407,7 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
+     rw [hcs, List.length_append, List.length_flatten, List.length_flatten, List.map_map,
+       List.map_map]
+     have h3 : (List.map (List.length ∘ fun i =>
+-        [chunkAt (S.ctLen.eval n) i a, encBit S samp ctx (f i), encBit S samp ctx (!f i)])
++        [coinBlock (S.ctLen.eval n) i a, encBit S samp ctx (f i), encBit S samp ctx (!f i)])
+         (List.range (r.eval n))) = List.replicate (r.eval n) 3 := by
+       rw [List.eq_replicate_iff, List.length_map, List.length_range]
+       refine ⟨rfl, fun b hb => ?_⟩
+@@ -440,7 +441,7 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
+       · exact he _
+   rw [hW, nmOutput_flatten S n _ sk s' cs hcs_len hcs_ct]
+   have hP : (cs.map v).flatten =
+-      ((List.range (r.eval n)).map fun i => v (chunkAt (S.ctLen.eval n) i a) ++
++      ((List.range (r.eval n)).map fun i => v (coinBlock (S.ctLen.eval n) i a) ++
+         (v (encBit S samp ctx (f i)) ++ v (encBit S samp ctx (!f i)))).flatten ++
+       (bits.map fun x => v (encBit S samp ctx x) ++ v (encBit S samp ctx (!x))).flatten := by
+     rw [hcs, List.map_append, List.flatten_append, List.map_flatten, List.map_flatten,
+@@ -461,12 +462,12 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
+     rw [PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const, PolyExpr.eval_const]
+   have h1 : (S.msgLen.add (.const 1)).eval n = S.msgLen.eval n + 1 := by
+     rw [PolyExpr.eval_add, PolyExpr.eval_const]
+-  have hg3 : ∀ i < r.eval n, (v (chunkAt (S.ctLen.eval n) i a) ++
++  have hg3 : ∀ i < r.eval n, (v (coinBlock (S.ctLen.eval n) i a) ++
+       (v (encBit S samp ctx (f i)) ++ v (encBit S samp ctx (!f i)))).length =
+       ((PolyExpr.const 3).mul (S.msgLen.add (.const 1))).eval n := fun i _ => by
+     rw [List.length_append, List.length_append, hv, hv, hv, h3]
+     ring
+-  have hP1 : (((List.range (r.eval n)).map fun i => v (chunkAt (S.ctLen.eval n) i a) ++
++  have hP1 : (((List.range (r.eval n)).map fun i => v (coinBlock (S.ctLen.eval n) i a) ++
+       (v (encBit S samp ctx (f i)) ++ v (encBit S samp ctx (!f i)))).flatten).length =
+       (r.mul ((PolyExpr.const 3).mul (S.msgLen.add (.const 1)))).eval n := by
+     rw [length_flatten_map_range _ _ _ hg3]
+@@ -493,19 +494,19 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
+       | cons x t ih => rw [List.map_cons, List.flatten_cons, ih]; rfl
+     rw [List.map_congr_left (fun x _ => hx x), hfl]
+   have hE : (List.range (r.eval n)).map (entF S (pairEncode (List.replicate n true) []) ∘ fun i =>
+-      v (chunkAt (S.ctLen.eval n) i a) ++
++      v (coinBlock (S.ctLen.eval n) i a) ++
+         (v (encBit S samp ctx (f i)) ++ v (encBit S samp ctx (!f i)))) =
+       (List.range (r.eval n)).map fun i => entryL S n sk
+-        (decide (s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i a)))
+-        (chunkAt (S.ctLen.eval n) i a) := by
++        (decide (s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i a)))
++        (coinBlock (S.ctLen.eval n) i a) := by
+     refine List.map_congr_left fun i _ => ?_
+     have hg : guessBit (v (encBit S samp ctx (f i)) ++ v (encBit S samp ctx (!f i))) = f i := by
+       rw [hvdef]
+       exact guessBit_encPair S samp n rg s' hL z ω st hz re hω (f i)
+-    have hf : f i = decide (s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i a)) := hflag _
++    have hf : f i = decide (s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i a)) := hflag _
+     rw [Function.comp_apply, entF_eq, pairFstD_pairEncode, List.length_replicate, h1,
+       List.drop_left' (hv _), List.take_left' (hv _), hg, hf, entryL_eq]
+-    by_cases hc : s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i a)
++    by_cases hc : s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i a)
+     · rw [if_pos (decide_eq_true hc), if_pos (decide_eq_true hc)]
+     · rw [if_neg (by simpa using hc), if_neg (by simpa using hc), hvdef]
+       simp only [hc, decide_false, entryL_eq, Bool.false_eq_true, ↓reduceIte, List.drop_one,
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
+index 05fd16e8c..a034e821a 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
+@@ -46,7 +46,13 @@ oracles, its run is `A`'s run against the hybrid oracle `rImpl … b …` (`nmCo
+ namespace TCSlib.Cryptography.Composability.NMSim
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+-open NMCCA2 (finU finZ finW finA fields_finInput polyTimeComputable_finFields)
++open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
++open TCSlib.Cryptography.EnsembleLemmas (seedEquiv seedEquivPoly seedEquiv_ofFn seedEquivPoly_ofFn
++  ofFn_padFin_eq_padL)
++open TCSlib.Cryptography.Games.InteractiveHandler (rU_input rZ_input rW_input rX_input rAns_input
++  rU_finInput rZ_finInput rW_finInput rS_finInput finA_finInput polyTimeComputable_rU
++  polyTimeComputable_rZ polyTimeComputable_rW polyTimeComputable_rS polyTimeComputable_rX
++  polyTimeComputable_rAns polyTimeComputable_finA)
+ 
+ variable (S : FixedLengthPKScheme) (samp : NUPPT)
+ 
+@@ -55,25 +61,28 @@ variable (S : FixedLengthPKScheme) (samp : NUPPT)
+ /-- The second message `m̃ = M(a; ρ̃)` read in a round `w`: as `simMsg`, with the coins `ρ̃` after
+ the first `coins(n)` bits of the seed. -/
+ def altMsg (w : List Bool) : List Bool :=
+-  EnsembleLemmas.padL (S.msgLen.eval (rdU w).length)
+-    (samp.output (NUPPT.layout (rdU w) (rdQuery w) (pairSndD (rdZ w))
+-      (((rdW w).drop (samp.coins.eval (rdU w).length)).take (samp.coins.eval (rdU w).length))))
++  EnsembleLemmas.padL (S.msgLen.eval (rU w).length)
++    (samp.output (NUPPT.layout (rU w) (rX w) (pairSndD (rZ w))
++      (((rW w).drop (samp.coins.eval (rU w).length)).take (samp.coins.eval (rU w).length))))
+ 
+ /-- `altMsg S samp w = padL msgLen(n) (M.output (layout 1^n a α ρ̃))`. -/
+ theorem altMsg_eq (w : List Bool) :
+-    altMsg S samp w = EnsembleLemmas.padL (S.msgLen.eval (rdU w).length)
+-      (samp.output (NUPPT.layout (rdU w) (rdQuery w) (pairSndD (rdZ w))
+-        (((rdW w).drop (samp.coins.eval (rdU w).length)).take
+-          (samp.coins.eval (rdU w).length)))) := rfl
++    altMsg S samp w = EnsembleLemmas.padL (S.msgLen.eval (rU w).length)
++      (samp.output (NUPPT.layout (rU w) (rX w) (pairSndD (rZ w))
++        (((rW w).drop (samp.coins.eval (rU w).length)).take
++          (samp.coins.eval (rU w).length)))) := rfl
+ 
+ /-- The second message is polynomial-time. -/
+ theorem polyTimeComputable_altMsg : PolyTimeComputable (altMsg S samp) := by
+-  obtain ⟨hU, hZ, hW, -, -, hQ, -, -⟩ := polyTimeComputable_rd
+-  have hd : PolyTimeComputable fun w => (rdW w).drop (samp.coins.eval (rdU w).length) :=
++  have hU := polyTimeComputable_rU
++  have hZ := polyTimeComputable_rZ
++  have hW := polyTimeComputable_rW
++  have hQ := polyTimeComputable_rX
++  have hd : PolyTimeComputable fun w => (rW w).drop (samp.coins.eval (rU w).length) :=
+     ((polyTimeComputable_pairDropPoly samp.coins).comp (hU.pairEncode hW)).congr fun w => by
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+   have hρ : PolyTimeComputable fun w =>
+-      ((rdW w).drop (samp.coins.eval (rdU w).length)).take (samp.coins.eval (rdU w).length) :=
++      ((rW w).drop (samp.coins.eval (rU w).length)).take (samp.coins.eval (rU w).length) :=
+     ((polyTimeComputable_pairTakePoly samp.coins).comp (hU.pairEncode hd)).congr fun w => by
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+   exact EnsembleLemmas.polyTimeComputable_padL S.msgLen hU (samp.polyTimeComputable_output.comp
+@@ -189,14 +198,14 @@ variable (pl hl : PolyExpr)
+ `A`'s output `a` (`r(n)` ciphertexts, then `σ`), the recorded parameter `aP` and the message `mP`:
+ `encF ctx c_i` for each ciphertext, then `encPair ctx x` for each bit `x` of `aP ‖ mP ‖ σ`. -/
+ def nmOutL (r : PolyExpr) (n : ℕ) (ctx a aP mP : List Bool) : List Bool :=
+-  ((List.range (r.eval n)).map fun i => encF S samp ctx (chunkAt (S.ctLen.eval n) i a)).flatten ++
++  ((List.range (r.eval n)).map fun i => encF S samp ctx (coinBlock (S.ctLen.eval n) i a)).flatten ++
+     ((aP ++ mP ++ a.drop (r.eval n * S.ctLen.eval n)).map fun x => encPair S samp ctx x).flatten
+ 
+ /-- `nmOutL S samp r n ctx a aP mP = (encF ctx c_i)_i ++ (encPair ctx x)_{x ∈ aP ‖ mP ‖ σ}`. -/
+ theorem nmOutL_eq (r : PolyExpr) (n : ℕ) (ctx a aP mP : List Bool) :
+     nmOutL S samp r n ctx a aP mP =
+       ((List.range (r.eval n)).map fun i =>
+-        encF S samp ctx (chunkAt (S.ctLen.eval n) i a)).flatten ++
++        encF S samp ctx (coinBlock (S.ctLen.eval n) i a)).flatten ++
+         ((aP ++ mP ++ a.drop (r.eval n * S.ctLen.eval n)).map fun x =>
+           encPair S samp ctx x).flatten := rfl
+ 
+@@ -225,16 +234,16 @@ no outer query. -/
+ def nmFin (r : PolyExpr) (w : List Bool) : List Bool :=
+   pairEncode [true]
+     (chunkMap S.ctLen (encF S samp)
+-        (pairEncode (pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))))
+-          ((finA w).take ((r.mul S.ctLen).eval (finU w).length))) ++
++        (pairEncode (pairEncode (rU w) (pairEncode (rZ w) (pairEncode (rW w) (rS w))))
++          ((finA w).take ((r.mul S.ctLen).eval (rU w).length))) ++
+       chunkMap (.const 1) (bitF S samp)
+-        (pairEncode (pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))))
+-          ((finSt w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (finU w).length) ++
+-            EnsembleLemmas.padL (S.msgLen.eval (finU w).length)
+-              (samp.output (NUPPT.layout (finU w)
+-                ((finSt w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (finU w).length))
+-                (pairSndD (finZ w)) ((finW w).take (samp.coins.eval (finU w).length)))) ++
+-            (finA w).drop ((r.mul S.ctLen).eval (finU w).length))))
++        (pairEncode (pairEncode (rU w) (pairEncode (rZ w) (pairEncode (rW w) (rS w))))
++          ((rS w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (rU w).length) ++
++            EnsembleLemmas.padL (S.msgLen.eval (rU w).length)
++              (samp.output (NUPPT.layout (rU w)
++                ((rS w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (rU w).length))
++                (pairSndD (rZ w)) ((rW w).take (samp.coins.eval (rU w).length)))) ++
++            (finA w).drop ((r.mul S.ctLen).eval (rU w).length))))
+ 
+ /-- `nmFin S samp hl r w = ⟨[true], E ‖ B⟩`, with `E = chunkMap ctLen encF ⟨ctx, a.take (r·ctLen)⟩`
+ and `B = chunkMap 1 bitF ⟨ctx, aP ‖ M(aP; ρ) ‖ a.drop (r·ctLen)⟩`, where
+@@ -243,42 +252,45 @@ and `B = chunkMap 1 bitF ⟨ctx, aP ‖ M(aP; ρ) ‖ a.drop (r·ctLen)⟩`, whe
+ theorem nmFin_eq (r : PolyExpr) (w : List Bool) :
+     nmFin S samp hl r w = pairEncode [true]
+       (chunkMap S.ctLen (encF S samp)
+-          (pairEncode (pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))))
+-            ((finA w).take ((r.mul S.ctLen).eval (finU w).length))) ++
++          (pairEncode (pairEncode (rU w) (pairEncode (rZ w) (pairEncode (rW w) (rS w))))
++            ((finA w).take ((r.mul S.ctLen).eval (rU w).length))) ++
+         chunkMap (.const 1) (bitF S samp)
+-          (pairEncode (pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))))
+-            ((finSt w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (finU w).length) ++
+-              EnsembleLemmas.padL (S.msgLen.eval (finU w).length)
+-                (samp.output (NUPPT.layout (finU w)
+-                  ((finSt w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (finU w).length))
+-                  (pairSndD (finZ w)) ((finW w).take (samp.coins.eval (finU w).length)))) ++
+-              (finA w).drop ((r.mul S.ctLen).eval (finU w).length)))) := rfl
++          (pairEncode (pairEncode (rU w) (pairEncode (rZ w) (pairEncode (rW w) (rS w))))
++            ((rS w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (rU w).length) ++
++              EnsembleLemmas.padL (S.msgLen.eval (rU w).length)
++                (samp.output (NUPPT.layout (rU w)
++                  ((rS w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (rU w).length))
++                  (pairSndD (rZ w)) ((rW w).take (samp.coins.eval (rU w).length)))) ++
++              (finA w).drop ((r.mul S.ctLen).eval (rU w).length)))) := rfl
+ 
+ /-- The finalization round is polynomial-time.
+ 
+-**Proof sketch.** From the polynomial-time field readers (`polyTimeComputable_finFields`,
+-`polyTimeComputable_finSt`): the context by `pairEncode`; the cuts of `a` at `r·ctLen`, the
++**Proof sketch.** From the polynomial-time field readers (`polyTimeComputable_rU`,
++…, `polyTimeComputable_finA`): the context by `pairEncode`; the cuts of `a` at `r·ctLen`, the
+ parameter `aP` and the coins `ρ` by `pairTakePoly`/`pairDropPoly`; the message by
+ `polyTimeComputable_padL` of `M`'s output on `layout`. The two chunk maps are
+ `polyTimeComputable_chunkMap` of `encF` and `bitF`, joined by `append` and `pairEncode`. -/
+ theorem polyTimeComputable_nmFin (r : PolyExpr) : PolyTimeComputable (nmFin S samp hl r) := by
+-  obtain ⟨hU, hZ, hW, hA, -⟩ := polyTimeComputable_finFields
+-  have hS := polyTimeComputable_finSt
++  have hU := polyTimeComputable_rU
++  have hZ := polyTimeComputable_rZ
++  have hW := polyTimeComputable_rW
++  have hA := polyTimeComputable_finA
++  have hS := polyTimeComputable_rS
+   have hctx : PolyTimeComputable fun w =>
+-      pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))) :=
++      pairEncode (rU w) (pairEncode (rZ w) (pairEncode (rW w) (rS w))) :=
+     hU.pairEncode (hZ.pairEncode (hW.pairEncode hS))
+-  have htake : PolyTimeComputable fun w => (finA w).take ((r.mul S.ctLen).eval (finU w).length) :=
++  have htake : PolyTimeComputable fun w => (finA w).take ((r.mul S.ctLen).eval (rU w).length) :=
+     ((polyTimeComputable_pairTakePoly (r.mul S.ctLen)).comp (hU.pairEncode hA)).congr fun w => by
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+-  have hdrop : PolyTimeComputable fun w => (finA w).drop ((r.mul S.ctLen).eval (finU w).length) :=
++  have hdrop : PolyTimeComputable fun w => (finA w).drop ((r.mul S.ctLen).eval (rU w).length) :=
+     ((polyTimeComputable_pairDropPoly (r.mul S.ctLen)).comp (hU.pairEncode hA)).congr fun w => by
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+   have haP : PolyTimeComputable fun w =>
+-      (finSt w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (finU w).length) :=
++      (rS w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (rU w).length) :=
+     ((polyTimeComputable_pairDropPoly ((PolyExpr.const 1).add (S.ctLen.add hl))).comp
+       (hU.pairEncode hS)).congr fun w => by
+         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+-  have hρ : PolyTimeComputable fun w => (finW w).take (samp.coins.eval (finU w).length) :=
++  have hρ : PolyTimeComputable fun w => (rW w).take (samp.coins.eval (rU w).length) :=
+     ((polyTimeComputable_pairTakePoly samp.coins).comp (hU.pairEncode hW)).congr fun w => by
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+   have hm := EnsembleLemmas.polyTimeComputable_padL S.msgLen hU (samp.polyTimeComputable_output.comp
+@@ -292,9 +304,9 @@ theorem polyTimeComputable_nmFin (r : PolyExpr) : PolyTimeComputable (nmFin S sa
+ /-- **The finalization round on a finalization input** (for `A`'s output of `r·ctLen + sl` bits, and
+ `ctLen(n) > 0`) returns `⟨[true], nmOutL …⟩`.
+ 
+-**Proof sketch.** Read the fields of the input in `nmFin_eq` (`fields_finInput`,
+-`finSt_finInput`). Cut `a.take (r·ctLen)` into its `r` chunks of `ctLen(n) > 0` bits
+-(`take_eq_flatten_chunkAt`, `length_chunkAt`), so the first chunk map is `encF` over them
++**Proof sketch.** Read the fields of the input in `nmFin_eq` (`rU_finInput`,
++…, `finA_finInput`). Cut `a.take (r·ctLen)` into its `r` chunks of `ctLen(n) > 0` bits
++(`take_eq_flatten_chunkAt`, `length_coinBlock`), so the first chunk map is `encF` over them
+ (`chunkMap_flatten`). Write `aP ‖ M(aP; ρ) ‖ σ` as the flatten of its singletons, so the second,
+ with chunk length `1`, is `bitF` over its bits; both match `nmOutL_eq`. -/
+ theorem nmFin_finInput (r sl : PolyExpr) (n : ℕ) (z ω s a L : List Bool)
+@@ -303,13 +315,16 @@ theorem nmFin_finInput (r sl : PolyExpr) (n : ℕ) (z ω s a L : List Bool)
+       pairEncode [true] (nmOutL S samp r n
+         (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω s))) a (stParam S hl n s)
+         (finMsg S samp n (pairSndD z) ω (stParam S hl n s))) := by
+-  obtain ⟨hU, hZ, hW, hA, -⟩ := fields_finInput n z ω s a L
++  have hU := rU_finInput n z ω s a L
++  have hZ := rZ_finInput n z ω s a L
++  have hW := rW_finInput n z ω s a L
++  have hA := finA_finInput n z ω s a L
+   have hbits : ∀ l : List Bool, l = (l.map fun x => [x]).flatten := by
+     intro l
+     induction l with
+     | nil => rfl
+     | cons x t ih => rw [List.map_cons, List.flatten_cons, ← ih]; rfl
+-  rw [nmFin_eq, hU, hZ, hW, hA, finSt_finInput, List.length_replicate, PolyExpr.eval_mul,
++  rw [nmFin_eq, hU, hZ, hW, hA, rS_finInput, List.length_replicate, PolyExpr.eval_mul,
+     take_eq_flatten_chunkAt,
+     chunkMap_flatten _ _ n _ _ (fun ch hch => ?_) hct, List.map_map, nmOutL_eq, stParam_eq,
+     finMsg_eq]
+@@ -321,7 +336,7 @@ theorem nmFin_finInput (r sl : PolyExpr) (n : ℕ) (z ω s a L : List Bool)
+       rw [PolyExpr.eval_const, List.length_singleton]
+   · obtain ⟨i, hi, rfl⟩ := List.mem_map.1 hch
+     rw [List.mem_range] at hi
+-    refine length_chunkAt _ _ _ ?_
++    refine length_coinBlock ?_
+     rw [ha]
+     have := Nat.mul_le_mul_right (S.ctLen.eval n) (show i + 1 ≤ r.eval n from hi)
+     omega
+@@ -355,17 +370,17 @@ def nmParams (r sl : PolyExpr) :
+   advIn ctx := pairFstD (pairFstD (pairSndD ctx))
+   advIn_poly := polyTimeComputable_pairFstD.comp
+     (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+-  qry w := EnsembleLemmas.padL ((S.msgLen.add S.msgLen).eval (rdU w).length)
++  qry w := EnsembleLemmas.padL ((S.msgLen.add S.msgLen).eval (rU w).length)
+     (simMsg S samp w ++ altMsg S samp w)
+-  qry_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rd.1
++  qry_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rU
+     ((polyTimeComputable_simMsg S samp).append (polyTimeComputable_altMsg S samp))
+   qry_len w := by rw [EnsembleLemmas.length_padL, snmDin_one]
+-  ansY w := EnsembleLemmas.padL (S.ctLen.eval (rdU w).length) (rdAns w)
+-  ansY_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rd.1
+-    polyTimeComputable_rd.2.2.2.2.2.2.2
++  ansY w := EnsembleLemmas.padL (S.ctLen.eval (rU w).length) (rAns w)
++  ansY_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rU
++    polyTimeComputable_rAns
+   ansY_len _ := EnsembleLemmas.length_padL _ _
+-  ansH w := EnsembleLemmas.padL (hl.eval (rdU w).length) (hist (simMsg S samp w))
+-  ansH_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rd.1
++  ansH w := EnsembleLemmas.padL (hl.eval (rU w).length) (hist (simMsg S samp w))
++  ansH_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rU
+     (hist_poly.comp (polyTimeComputable_simMsg S samp))
+   ansH_len _ := EnsembleLemmas.length_padL _ _
+   outLen := (nmLen S pl r sl).mul S.ctLen
+@@ -421,7 +436,7 @@ theorem length_nmOutL (e a aP mP : List Bool)
+   · rw [encPair_eq, List.length_append, length_encBit, length_encBit]
+     ring
+   · rw [encF_eq, encPair_eq, List.length_append, List.length_append, length_encBit,
+-      length_encBit, length_chunkAt _ _ _ (by
++      length_encBit, length_coinBlock (by
+         rw [ha]
+         have := Nat.mul_le_mul_right (S.ctLen.eval n) (show i + 1 ≤ r.eval n from hi)
+         omega)]
+@@ -488,7 +503,13 @@ theorem nmMsgs_input (pk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
+     altMsg S samp (InteractiveHandler.input n (pairEncode pk (samp.advice n))
+         (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s i xs L) =
+       List.ofFn (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) xs) ρ') := by
+-  obtain ⟨hU, hZ, hW, -, -, hQ, -⟩ := fields_input n (pairEncode pk (samp.advice n))
++  have hU := rU_input n (pairEncode pk (samp.advice n))
++    (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s i xs L
++  have hZ := rZ_input n (pairEncode pk (samp.advice n))
++    (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s i xs L
++  have hW := rW_input n (pairEncode pk (samp.advice n))
++    (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s i xs L
++  have hQ := rX_input n (pairEncode pk (samp.advice n))
+     (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s i xs L
+   have hρ := length_ofFn_coins samp n ρ
+   have hρ' := length_ofFn_coins samp n ρ'
+@@ -588,7 +609,7 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
+       intro s' L
+       obtain ⟨hm, hm'⟩ := nmMsgs_input S samp pl hl hist hist_poly r sl n pk ρ ρ' re s' 1
+         (List.ofFn x) L hxl
+-      rw [nmParams_qry, (fields_input (k := 2) n _ _ s' 1 _ L).1, List.length_replicate, hm, hm',
++      rw [nmParams_qry, rU_input (k := 2) n _ _ s' 1 _ L, List.length_replicate, hm, hm',
+         nmPair_eq, ofFn_padFin_eq_padL]
+     have hH : ∀ (s' q t : List Bool), (nmParams S samp pl hl hist hist_poly r sl).ansH
+         (InteractiveHandler.input n (pairEncode pk (samp.advice n))
+@@ -599,7 +620,7 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
+         List.ofFn (histWith hist (hl.eval n)
+           (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x)) ρ)) := by
+       intro s' q t
+-      rw [nmParams_ansH, (fields_input (k := 2) n _ _ s' 1 _ _).1, List.length_replicate,
++      rw [nmParams_ansH, rU_input (k := 2) n _ _ s' 1 _ _, List.length_replicate,
+         (nmMsgs_input S samp pl hl hist hist_poly r sl n pk ρ ρ' re s' 1 (List.ofFn x) _ hxl).1,
+         histWith_eq, ofFn_padFin_eq_padL]
+     have hY : ∀ (s' q t : List Bool), (nmParams S samp pl hl hist hist_poly r sl).ansY
+@@ -610,8 +631,8 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
+             [])) =
+         EnsembleLemmas.padL (S.ctLen.eval n) t := by
+       intro s' q t
+-      rw [nmParams_ansY, (fields_input (k := 2) n _ _ s' 1 _ _).1, List.length_replicate,
+-        rdAns_input]
++      rw [nmParams_ansY, rU_input (k := 2) n _ _ s' 1 _ _, List.length_replicate,
++        rAns_input]
+     have hdraw : ∀ re' : S.enc.Coins n, encWith S n pk (drawWith (halfSamp S) (S.msgLen.eval n) n
+         (nmPair S samp pl n ρ ρ' (padFin (pl.eval n) (List.ofFn x))) ((halfCoins S n).symm b)) re' =
+         encWith S n pk (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x))
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
+index 997cdf1b3..44fb61832 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
+@@ -9,31 +9,23 @@ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Rounds of interactive handlers
++# Coin strings of the IND ⇒ SIM machines
+ 
+-Generic facts about T2's interactive handlers (`Games.InteractiveHandler`), used by the two
+-machines of direction IND ⇒ SIM of [PS10, Theorem 174.8] (the simulator and the NM adversary).
++A local fact used by the two machines of direction IND ⇒ SIM of [PS10, Theorem 174.8] (the
++simulator and the NM adversary): a machine's coin string has `coins(n)` bits
++(`length_ofFn_coins`).
+ 
+-* **Readers of a round input** `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩` (`rdU`, `rdZ`, `rdW`,
+-  `rdState`,
+-  `rdIdx`, `rdQuery`, `rdLog`, `rdAns`), with their values (`fields_input`) and their
+-  polynomial-time bounds.
+-* **Seeds made of coins** (`seedEquiv`, `seedEquivPoly`) and padded concatenations.
+-
+-The calls and finalizations whose rounds return at once or after one outer query are
+-`Games.InteractiveHandler.impl_of_ret_padFin`, `impl_of_query_padFin` and `finish_of_ret_padFin`;
+-the cost of a one-shot oracle is `Games.simulate_costBoundedBy_once`.
+-
+-## Main definitions
+-
+-* `NMSim.rdU`, `rdZ`, `rdW`, `rdState`, `rdIdx`, `rdQuery`, `rdLog`, `rdAns`.
+-* `NMSim.seedEquiv`, `NMSim.seedEquivPoly`: seeds made of coins.
++The generic facts first proved here now live in shared modules: the readers of a round input are
++`Games.InteractiveHandler.rU`, …, `rAns`; the calls and finalizations whose rounds return at once
++or after one outer query are `Games.InteractiveHandler.impl_of_ret_padFin`,
++`impl_of_query_padFin` and `finish_of_ret_padFin`; the cost of a one-shot oracle is
++`Games.simulate_costBoundedBy_once`; the split of a padded concatenation is
++`Games.padFin_append_split`; the seeds made of coins are `EnsembleLemmas.seedEquiv` and
++`EnsembleLemmas.seedEquivPoly`.
+ 
+ ## Main results
+ 
+-* `NMSim.fields_input`, `NMSim.rdAns_input`, `NMSim.polyTimeComputable_rd`.
+-* `NMSim.padFin_append_split`.
+-* `NMSim.seedEquiv_ofFn`, `NMSim.seedEquivPoly_ofFn`, `NMSim.ofFn_padFin_eq_padL`.
++* `NMSim.length_ofFn_coins`.
+ 
+ ## References
+ 
+@@ -45,150 +37,9 @@ namespace TCSlib.Cryptography.Composability.NMSim
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+ 
+-/-! ### Readers of a round input -/
+-
+-/-- The parameter `1^n` of a round input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`. -/
+-def rdU (w : List Bool) : List Bool := pairFstD (pairFstD w)
+-
+-/-- `rdU w = pairFstD (pairFstD w)`. -/
+-theorem rdU_eq (w : List Bool) : rdU w = pairFstD (pairFstD w) := rfl
+-
+-/-- The reduction input `z` of a round input. -/
+-def rdZ (w : List Bool) : List Bool := pairFstD (pairSndD (pairFstD w))
+-
+-/-- `rdZ w = pairFstD (pairSndD (pairFstD w))`. -/
+-theorem rdZ_eq (w : List Bool) : rdZ w = pairFstD (pairSndD (pairFstD w)) := rfl
+-
+-/-- The seed `ω` of a round input. -/
+-def rdW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
+-
+-/-- `rdW w = pairSndD (pairSndD (pairFstD w))`. -/
+-theorem rdW_eq (w : List Bool) : rdW w = pairSndD (pairSndD (pairFstD w)) := rfl
+-
+-/-- The state `s` of a round input. -/
+-def rdState (w : List Bool) : List Bool := pairFstD (pairSndD w)
+-
+-/-- `rdState w = pairFstD (pairSndD w)`. -/
+-theorem rdState_eq (w : List Bool) : rdState w = pairFstD (pairSndD w) := rfl
+-
+-/-- The oracle index `1^i` of a round input. -/
+-def rdIdx (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
+-
+-/-- `rdIdx w = pairFstD (pairFstD (pairSndD (pairSndD w)))`. -/
+-theorem rdIdx_eq (w : List Bool) : rdIdx w = pairFstD (pairFstD (pairSndD (pairSndD w))) := rfl
+-
+-/-- The query `x` of a round input. -/
+-def rdQuery (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
+-
+-/-- `rdQuery w = pairSndD (pairFstD (pairSndD (pairSndD w)))`. -/
+-theorem rdQuery_eq (w : List Bool) : rdQuery w = pairSndD (pairFstD (pairSndD (pairSndD w))) :=
+-  rfl
+-
+-/-- The outer log `L` of the call so far. -/
+-def rdLog (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+-
+-/-- `rdLog w = pairSndD (pairSndD (pairSndD w))`. -/
+-theorem rdLog_eq (w : List Bool) : rdLog w = pairSndD (pairSndD (pairSndD w)) := rfl
+-
+-/-- The outer answer `y` of the first entry `⟨1^j, ⟨x, y⟩⟩` of the outer log. -/
+-def rdAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rdLog w)))
+-
+-/-- `rdAns w = pairSndD (pairSndD (pairFstD (rdLog w)))`. -/
+-theorem rdAns_eq (w : List Bool) : rdAns w = pairSndD (pairSndD (pairFstD (rdLog w))) := rfl
+-
+-section Fields
+-
+-variable {k : ℕ}
+-
+-/-- **The fields of a round input** (DL-30–36 overlap: the round-input readers of
+-`Indistinguishability/Forward.lean`, here with the context): on
+-`input n z ω s i x L = ⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩` the readers return `1^n`, `z`, `ω`,
+-`s`, `1^i`, `x` and `L`. -/
+-theorem fields_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+-    rdU (InteractiveHandler.input n z ω s i x L) = List.replicate n true ∧
+-      rdZ (InteractiveHandler.input n z ω s i x L) = z ∧
+-      rdW (InteractiveHandler.input n z ω s i x L) = ω ∧
+-      rdState (InteractiveHandler.input n z ω s i x L) = s ∧
+-      rdIdx (InteractiveHandler.input n z ω s i x L) = List.replicate i true ∧
+-      rdQuery (InteractiveHandler.input n z ω s i x L) = x ∧
+-      rdLog (InteractiveHandler.input n z ω s i x L) = L := by
+-  simp only [InteractiveHandler.input_eq, rdU, rdZ, rdW, rdState, rdIdx, rdQuery, rdLog,
+-    pairFstD_pairEncode, pairSndD_pairEncode, and_self]
+-
+-/-- The answer of a one-entry outer log: `rdAns` of a round input with the log
+-`⟨⟨1^j, ⟨x', y⟩⟩, t⟩` is `y`. -/
+-theorem rdAns_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x : List Bool) (j : ℕ)
+-    (x' y t : List Bool) :
+-    rdAns (InteractiveHandler.input n z ω s i x
+-      (pairEncode (pairEncode (List.replicate j true) (pairEncode x' y)) t)) = y := by
+-  rw [rdAns, (fields_input n z ω s i x _).2.2.2.2.2.2, pairFstD_pairEncode, pairSndD_pairEncode,
+-    pairSndD_pairEncode]
+-
+-end Fields
+-
+-/-- The round-input readers are polynomial-time: `rdU`, `rdZ`, `rdW`, `rdState`, `rdIdx`,
+-`rdQuery`, `rdLog` and `rdAns`. -/
+-theorem polyTimeComputable_rd :
+-    PolyTimeComputable rdU ∧ PolyTimeComputable rdZ ∧ PolyTimeComputable rdW ∧
+-      PolyTimeComputable rdState ∧ PolyTimeComputable rdIdx ∧ PolyTimeComputable rdQuery ∧
+-      PolyTimeComputable rdLog ∧ PolyTimeComputable rdAns := by
+-  have hF := polyTimeComputable_pairFstD
+-  have hD := polyTimeComputable_pairSndD
+-  have hL : PolyTimeComputable rdLog := hD.comp (hD.comp hD)
+-  exact ⟨hF.comp hF, hF.comp (hD.comp hF), hD.comp (hD.comp hF), hF.comp hD,
+-    hF.comp (hF.comp (hD.comp hD)), hD.comp (hF.comp (hD.comp hD)), hL,
+-    hD.comp (hD.comp (hF.comp hL))⟩
+-
+-/-- The two parts of a padded concatenation: if `|u| = d₁`, the first `d₁` bits of
+-`padFin (d₁ + d₂) (u ++ v)` are `padFin d₁ u` and the rest `padFin d₂ v`. -/
+-theorem padFin_append_split {d₁ d₂ : ℕ} (u v : List Bool) (hu : u.length = d₁) :
+-    (fun j : Fin d₁ => padFin (d₁ + d₂) (u ++ v) (Fin.castAdd d₂ j)) = padFin d₁ u ∧
+-      (fun j : Fin d₂ => padFin (d₁ + d₂) (u ++ v) (Fin.natAdd d₁ j)) = padFin d₂ v := by
+-  refine ⟨funext fun j => ?_, funext fun j => ?_⟩
+-  · rw [padFin_apply, padFin_apply, Fin.coe_castAdd, List.getD_append _ _ _ _ (by omega)]
+-  · rw [padFin_apply, padFin_apply, Fin.coe_natAdd, List.getD_append_right _ _ _ _ (by omega)]
+-    congr 1
+-    omega
+-
+-/-! ### Seeds and padding -/
+-
+-/-- **A seed of two machines' coins:** for `L = A.coins + B.coins`,
+-`A.Coins n × B.Coins n ≃ {0,1}^{L(n)}`, concatenating the two coin strings (`seedEquiv_ofFn`). -/
+-def seedEquiv {A B : NUPPT} {L : PolyExpr} (h : L = A.coins.add B.coins) (n : ℕ) :
+-    A.Coins n × B.Coins n ≃ (Fin (L.eval n) → Bool) :=
+-  ((NUPPT.coinsEquivPoly rfl n).prodCongr (NUPPT.coinsEquivPoly rfl n)).trans
+-    (EnsembleLemmas.coinsEquiv (by rw [h, PolyExpr.eval_add]))
+-
+-/-- The seed is the concatenation of the coins: `⟦seedEquiv h n (r₁, r₂)⟧ = ⟦r₁⟧ ++ ⟦r₂⟧`. -/
+-theorem seedEquiv_ofFn {A B : NUPPT} {L : PolyExpr} (h : L = A.coins.add B.coins) (n : ℕ)
+-    (c : A.Coins n × B.Coins n) :
+-    List.ofFn (seedEquiv h n c) = List.ofFn c.1 ++ List.ofFn c.2 := by
+-  rw [seedEquiv, Equiv.trans_apply, EnsembleLemmas.ofFn_coinsEquiv, Equiv.prodCongr_apply,
+-    Prod.map_fst, Prod.map_snd, NUPPT.coinsEquivPoly_ofFn, NUPPT.coinsEquivPoly_ofFn]
+-
+-/-- **A seed of a machine's coins and a string:** for `L = A.coins + L₂`,
+-`A.Coins n × {0,1}^{L₂(n)} ≃ {0,1}^{L(n)}`, concatenating (`seedEquivPoly_ofFn`). -/
+-def seedEquivPoly {A : NUPPT} {L L₂ : PolyExpr} (h : L = A.coins.add L₂) (n : ℕ) :
+-    A.Coins n × (Fin (L₂.eval n) → Bool) ≃ (Fin (L.eval n) → Bool) :=
+-  ((NUPPT.coinsEquivPoly rfl n).prodCongr (Equiv.refl _)).trans
+-    (EnsembleLemmas.coinsEquiv (by rw [h, PolyExpr.eval_add]))
+-
+-/-- The seed is the concatenation: `⟦seedEquivPoly h n (r, w)⟧ = ⟦r⟧ ++ ⟦w⟧`. -/
+-theorem seedEquivPoly_ofFn {A : NUPPT} {L L₂ : PolyExpr} (h : L = A.coins.add L₂) (n : ℕ)
+-    (c : A.Coins n × (Fin (L₂.eval n) → Bool)) :
+-    List.ofFn (seedEquivPoly h n c) = List.ofFn c.1 ++ List.ofFn c.2 := by
+-  rw [seedEquivPoly, Equiv.trans_apply, EnsembleLemmas.ofFn_coinsEquiv, Equiv.prodCongr_apply,
+-    Prod.map_fst, Prod.map_snd, NUPPT.coinsEquivPoly_ofFn, Equiv.refl_apply]
+-
+ /-- A machine's coins have `coins(n)` bits: `|⟦r⟧| = A.coins.eval n`. -/
+ theorem length_ofFn_coins (A : NUPPT) (n : ℕ) (r : A.Coins n) :
+     (List.ofFn r).length = A.coins.eval n := by
+   rw [List.length_ofFn, NUPPT.coinLen_eq]
+ 
+-/-- `⟦padFin k a⟧ = padL k a` (DL-30–36 overlap: the private `ofFn_padFin_eq_padL` of
+-`AdaptiveCPA/Handler.lean`, from the public `ofFn_padFin_eq_take`). -/
+-theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) :
+-    List.ofFn (padFin k a) = EnsembleLemmas.padL k a := by
+-  rw [EnsembleLemmas.padL_eq, ofFn_padFin_eq_take]
+-
+ end TCSlib.Cryptography.Composability.NMSim
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
+index f9b9957ea..eec9b449c 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
+@@ -293,14 +293,16 @@ theorem accept_nmGame_eq_rImpl (atk : Attack) (A : NUPPT) (q ℓ : ℕ) (D : NUP
+ 
+ /-! ### The SIM adversary -/
+ 
+-open NMCCA2 (simulate_fwdHandler_impl fields_finInput polyTimeComputable_finFields finA)
++open NMCCA2 (simulate_fwdHandler_impl)
++open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
++open TCSlib.Cryptography.Games.InteractiveHandler (finA_finInput polyTimeComputable_finA)
+ 
+ /-- The SIM adversary's finalization round: output the adversary's output, `⟨[true], a⟩`. -/
+ private def copyFin (w : List Bool) : List Bool := pairEncode [true] (finA w)
+ 
+ /-- The finalization round is polynomial-time. -/
+ private theorem polyTimeComputable_copyFin : PolyTimeComputable copyFin :=
+-  (polyTimeComputable_const [true]).pairEncode polyTimeComputable_finFields.2.2.2.1
++  (polyTimeComputable_const [true]).pairEncode polyTimeComputable_finA
+ 
+ /-- The adversary's input is the reduction input. -/
+ private theorem polyTimeComputable_copyAdvIn :
+@@ -355,7 +357,7 @@ theorem copyHandler_finish (pl hl outLen : PolyExpr) (n : ℕ) (z : List Bool)
+   rw [InteractiveHandler.finish_eq, hfc, PolyExpr.eval_const]
+   refine buildComp_zero_of_ret ?_
+   show decodeBitMove _ _ _ ((copyHandler S pl hl outLen).finRun _) = _
+-  rw [hfin, copyFin, (fields_finInput _ _ _ _ _ _).2.2.2.1]
++  rw [hfin, copyFin, finA_finInput _ _ _ _ _ _]
+   have hw : List.ofFn (padFin ((copyHandler S pl hl outLen).outLen.eval n) (List.ofFn a)) =
+       List.ofFn a := ofFn_padFin_of_length (by rw [List.length_ofFn, hol, hd])
+   exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
+@@ -614,24 +616,24 @@ theorem nmOutput_eq_entryTails (n ℓ : ℕ) (sk : List Bool)
+     (w : List Bool) (hw : w.length = ℓ * S.ctLen.eval n) :
+     S.nmOutput sk s' (padFin (ℓ * S.ctLen.eval n) w) =
+       ((List.range ℓ).map fun i => (entryL S n sk
+-        (decide (s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i w)))
+-        (chunkAt (S.ctLen.eval n) i w)).drop 1).flatten := by
++        (decide (s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i w)))
++        (coinBlock (S.ctLen.eval n) i w)).drop 1).flatten := by
+   rw [S.nmOutput_eq]
+   congr 1
+   refine List.ext_getElem (by rw [List.length_ofFn, List.length_map, List.length_range])
+     fun i h₁ h₂ => ?_
+   rw [List.getElem_ofFn, List.getElem_map, List.getElem_range, entryL_drop_one, S.nmDecrypt_eq]
+   have hc : List.ofFn (S.nthCt (padFin (ℓ * S.ctLen.eval n) w) ⟨i, by
+-      rw [List.length_ofFn] at h₁; exact h₁⟩) = chunkAt (S.ctLen.eval n) i w := by
+-    rw [S.ofFn_nthCt, ofFn_padFin_of_length hw, chunkAt_eq]
++      rw [List.length_ofFn] at h₁; exact h₁⟩) = coinBlock (S.ctLen.eval n) i w := by
++    rw [S.ofFn_nthCt, ofFn_padFin_of_length hw, coinBlock_eq]
+   have hcopy : (s' = some (S.nthCt (padFin (ℓ * S.ctLen.eval n) w) ⟨i, by
+       rw [List.length_ofFn] at h₁; exact h₁⟩)) ↔
+-      s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i w) := by
++      s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i w) := by
+     rw [← hc]
+     cases s' with
+     | none => simp
+     | some c => simp [List.ofFn_inj]
+-  by_cases h : s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i w)
++  by_cases h : s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i w)
+   · rw [if_pos (hcopy.2 h), decide_eq_true h, if_pos rfl, ofFn_zeroBits]
+   · rw [if_neg (fun h' => h (hcopy.1 h')), decide_eq_false h, if_neg Bool.false_ne_true, hc]
+ 
+@@ -815,11 +817,11 @@ theorem real_identity (D : NUPPT) (rD : D.Coins n) (ρ'' : (halfDist S).Coins n)
+         S.msgLen.eval n := List.length_ofFn
+     have hes : ((List.range ℓ).map fun i => entryL S n sk
+         (decide ((p.2.map Prod.fst).map List.ofFn =
+-          some (chunkAt (S.ctLen.eval n) i (List.ofFn p.1))))
+-        (chunkAt (S.ctLen.eval n) i (List.ofFn p.1))) =
++          some (coinBlock (S.ctLen.eval n) i (List.ofFn p.1))))
++        (coinBlock (S.ctLen.eval n) i (List.ofFn p.1))) =
+         (((List.range ℓ).map fun i => Prod.mk (decide ((p.2.map Prod.fst).map List.ofFn =
+-          some (chunkAt (S.ctLen.eval n) i (List.ofFn p.1))))
+-          (chunkAt (S.ctLen.eval n) i (List.ofFn p.1))).map
++          some (coinBlock (S.ctLen.eval n) i (List.ofFn p.1))))
++          (coinBlock (S.ctLen.eval n) i (List.ofFn p.1))).map
+           fun e : Bool × List Bool => entryL S n sk e.1 e.2) := by
+       rw [List.map_map]
+       rfl
+@@ -828,8 +830,8 @@ theorem real_identity (D : NUPPT) (rD : D.Coins n) (ρ'' : (halfDist S).Coins n)
+       List.map_map]
+     have hnm : ((List.range ℓ).map ((fun e : Bool × List Bool => (entryL S n sk e.1 e.2).drop 1) ∘
+         fun i => Prod.mk (decide ((p.2.map Prod.fst).map List.ofFn =
+-          some (chunkAt (S.ctLen.eval n) i (List.ofFn p.1))))
+-          (chunkAt (S.ctLen.eval n) i (List.ofFn p.1)))).flatten =
++          some (coinBlock (S.ctLen.eval n) i (List.ofFn p.1))))
++          (coinBlock (S.ctLen.eval n) i (List.ofFn p.1)))).flatten =
+         S.nmOutput sk (p.2.map Prod.fst) (padFin (ℓ * S.ctLen.eval n) (List.ofFn p.1)) := by
+       rw [nmOutput_eq_entryTails S n ℓ sk _ _ List.length_ofFn, Option.map_map]
+       rfl
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
+index 6f56697a1..ef14ff53d 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
+@@ -44,45 +44,53 @@ hybrid's view of `A`'s (`idealView_simOut`).
+ namespace TCSlib.Cryptography.Composability.NMSim
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+-open NMCCA2 (finU finA fields_finInput polyTimeComputable_finFields)
++open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
++open TCSlib.Cryptography.EnsembleLemmas (seedEquiv seedEquiv_ofFn ofFn_padFin_eq_padL)
++open TCSlib.Cryptography.Games.InteractiveHandler (rU_input rZ_input rW_input rX_input rAns_input
++  rU_finInput rS_finInput finA_finInput polyTimeComputable_rU polyTimeComputable_rZ
++  polyTimeComputable_rW polyTimeComputable_rS polyTimeComputable_rX polyTimeComputable_rAns
++  polyTimeComputable_finA)
+ 
+ variable (S : FixedLengthPKScheme) (samp : NUPPT)
+ 
+ /-! ### The dummy challenge -/
+ 
+-/-- The dummy message `m̃ = M(a; ρ̃)` read in a round `w`: with `n = |rdU w|`, `a = rdQuery w`, the
+-advice `α = snd (rdZ w)` and `ρ̃` the first `coins(n)` bits of the seed, `padL msgLen(n)` of `M`'s
++/-- The dummy message `m̃ = M(a; ρ̃)` read in a round `w`: with `n = |rU w|`, `a = rX w`, the
++advice `α = snd (rZ w)` and `ρ̃` the first `coins(n)` bits of the seed, `padL msgLen(n)` of `M`'s
+ output on `layout 1^n a α ρ̃`. -/
+ def simMsg (w : List Bool) : List Bool :=
+-  EnsembleLemmas.padL (S.msgLen.eval (rdU w).length)
+-    (samp.output (NUPPT.layout (rdU w) (rdQuery w) (pairSndD (rdZ w))
+-      ((rdW w).take (samp.coins.eval (rdU w).length))))
++  EnsembleLemmas.padL (S.msgLen.eval (rU w).length)
++    (samp.output (NUPPT.layout (rU w) (rX w) (pairSndD (rZ w))
++      ((rW w).take (samp.coins.eval (rU w).length))))
+ 
+ /-- `simMsg S samp w = padL msgLen(n) (M.output (layout 1^n a α ρ̃))`. -/
+ theorem simMsg_eq (w : List Bool) :
+-    simMsg S samp w = EnsembleLemmas.padL (S.msgLen.eval (rdU w).length)
+-      (samp.output (NUPPT.layout (rdU w) (rdQuery w) (pairSndD (rdZ w))
+-        ((rdW w).take (samp.coins.eval (rdU w).length)))) := rfl
++    simMsg S samp w = EnsembleLemmas.padL (S.msgLen.eval (rU w).length)
++      (samp.output (NUPPT.layout (rU w) (rX w) (pairSndD (rZ w))
++        ((rW w).take (samp.coins.eval (rU w).length)))) := rfl
+ 
+-/-- The dummy challenge `ỹ = Enc_pk(m̃; re)` read in a round `w`: `pk = fst (rdZ w)`, `re` the seed
++/-- The dummy challenge `ỹ = Enc_pk(m̃; re)` read in a round `w`: `pk = fst (rZ w)`, `re` the seed
+ after `ρ̃`, `padL ctLen(n)` of `Enc`'s output on `⟨⟨⟨1^n, ⟨pk, m̃⟩⟩, []⟩, re⟩`. -/
+ def simCt (w : List Bool) : List Bool :=
+-  EnsembleLemmas.padL (S.ctLen.eval (rdU w).length)
+-    (S.enc.output (pairEncode (pairEncode (pairEncode (rdU w)
+-      (pairEncode (pairFstD (rdZ w)) (simMsg S samp w))) [])
+-      ((rdW w).drop (samp.coins.eval (rdU w).length))))
++  EnsembleLemmas.padL (S.ctLen.eval (rU w).length)
++    (S.enc.output (pairEncode (pairEncode (pairEncode (rU w)
++      (pairEncode (pairFstD (rZ w)) (simMsg S samp w))) [])
++      ((rW w).drop (samp.coins.eval (rU w).length))))
+ 
+ /-- `simCt S samp w = padL ctLen(n) (Enc.output ⟨⟨⟨1^n, ⟨pk, m̃⟩⟩, []⟩, re⟩)`. -/
+ theorem simCt_eq (w : List Bool) :
+-    simCt S samp w = EnsembleLemmas.padL (S.ctLen.eval (rdU w).length)
+-      (S.enc.output (pairEncode (pairEncode (pairEncode (rdU w)
+-        (pairEncode (pairFstD (rdZ w)) (simMsg S samp w))) [])
+-        ((rdW w).drop (samp.coins.eval (rdU w).length)))) := rfl
++    simCt S samp w = EnsembleLemmas.padL (S.ctLen.eval (rU w).length)
++      (S.enc.output (pairEncode (pairEncode (pairEncode (rU w)
++        (pairEncode (pairFstD (rZ w)) (simMsg S samp w))) [])
++        ((rW w).drop (samp.coins.eval (rU w).length)))) := rfl
+ 
+ /-- The dummy message is polynomial-time. -/
+ theorem polyTimeComputable_simMsg : PolyTimeComputable (simMsg S samp) := by
+-  obtain ⟨hU, hZ, hW, -, -, hQ, -, -⟩ := polyTimeComputable_rd
+-  have hρ : PolyTimeComputable fun w => (rdW w).take (samp.coins.eval (rdU w).length) :=
++  have hU := polyTimeComputable_rU
++  have hZ := polyTimeComputable_rZ
++  have hW := polyTimeComputable_rW
++  have hQ := polyTimeComputable_rX
++  have hρ : PolyTimeComputable fun w => (rW w).take (samp.coins.eval (rU w).length) :=
+     ((polyTimeComputable_pairTakePoly samp.coins).comp (hU.pairEncode hW)).congr fun w => by
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+   exact EnsembleLemmas.polyTimeComputable_padL S.msgLen hU (samp.polyTimeComputable_output.comp
+@@ -90,8 +98,10 @@ theorem polyTimeComputable_simMsg : PolyTimeComputable (simMsg S samp) := by
+ 
+ /-- The dummy challenge is polynomial-time. -/
+ theorem polyTimeComputable_simCt : PolyTimeComputable (simCt S samp) := by
+-  obtain ⟨hU, hZ, hW, -, -, -, -, -⟩ := polyTimeComputable_rd
+-  have hre : PolyTimeComputable fun w => (rdW w).drop (samp.coins.eval (rdU w).length) :=
++  have hU := polyTimeComputable_rU
++  have hZ := polyTimeComputable_rZ
++  have hW := polyTimeComputable_rW
++  have hre : PolyTimeComputable fun w => (rW w).drop (samp.coins.eval (rU w).length) :=
+     ((polyTimeComputable_pairDropPoly samp.coins).comp (hU.pairEncode hW)).congr fun w => by
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+   exact EnsembleLemmas.polyTimeComputable_padL S.ctLen hU (S.enc.polyTimeComputable_output.comp
+@@ -101,21 +111,6 @@ theorem polyTimeComputable_simCt : PolyTimeComputable (simCt S samp) := by
+ 
+ /-! ### The finalization -/
+ 
+-/-- The state `s` of a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`. -/
+-def finSt (w : List Bool) : List Bool := pairFstD (pairSndD w)
+-
+-/-- `finSt w = pairFstD (pairSndD w)`. -/
+-theorem finSt_eq (w : List Bool) : finSt w = pairFstD (pairSndD w) := rfl
+-
+-/-- The state of a finalization input: `finSt (finInput n z ω s a L) = s`. -/
+-theorem finSt_finInput (n : ℕ) (z ω s a L : List Bool) :
+-    finSt (InteractiveHandler.finInput n z ω s a L) = s := by
+-  rw [finSt, InteractiveHandler.finInput_eq, pairSndD_pairEncode, pairFstD_pairEncode]
+-
+-/-- The state reader is polynomial-time. -/
+-theorem polyTimeComputable_finSt : PolyTimeComputable finSt :=
+-  polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+-
+ /-- **The flagged entry** of a ciphertext `c`, on the context `⟨1^n, s⟩` with the state
+ `s = [flag] ‖ ỹ ‖ …`: `[flag ∧ c = ỹ]` followed by `c`. -/
+ def flagF (ctx c : List Bool) : List Bool :=
+@@ -148,14 +143,14 @@ theorem polyTimeComputable_flagF :
+ (`r(n)` ciphertexts, then `σ`): the flagged entries `flagF ⟨1^n, st⟩ c_i`, then `σ`. -/
+ def simOutL (r : PolyExpr) (n : ℕ) (st a : List Bool) : List Bool :=
+   ((List.range (r.eval n)).map fun i =>
+-    flagF S (pairEncode (List.replicate n true) st) (chunkAt (S.ctLen.eval n) i a)).flatten ++
++    flagF S (pairEncode (List.replicate n true) st) (coinBlock (S.ctLen.eval n) i a)).flatten ++
+   a.drop (r.eval n * S.ctLen.eval n)
+ 
+ /-- `simOutL S r n st a = (flagF ⟨1^n, st⟩ c_0 ++ ⋯ ++ flagF ⟨1^n, st⟩ c_{r-1}) ++ σ`. -/
+ theorem simOutL_eq (r : PolyExpr) (n : ℕ) (st a : List Bool) :
+     simOutL S r n st a =
+       ((List.range (r.eval n)).map fun i =>
+-        flagF S (pairEncode (List.replicate n true) st) (chunkAt (S.ctLen.eval n) i a)).flatten ++
++        flagF S (pairEncode (List.replicate n true) st) (coinBlock (S.ctLen.eval n) i a)).flatten ++
+       a.drop (r.eval n * S.ctLen.eval n) := rfl
+ 
+ /-- **The simulator's finalization round**: `⟨[true], F ‖ a.drop (r·ctLen)⟩`, with no outer query,
+@@ -164,32 +159,33 @@ where `F` is `chunkMap ctLen flagF ⟨⟨1^n, s⟩, a.take (r·ctLen)⟩` (the f
+ equal to `ỹ`). -/
+ def simFin (r : PolyExpr) (w : List Bool) : List Bool :=
+   pairEncode [true]
+-    ((if decide (List.replicate (S.ctLen.eval (finU w).length) true = []) then
+-        (if (finSt w).headD false then List.replicate (r.eval (finU w).length) true
+-          else List.replicate (r.eval (finU w).length) false)
+-      else chunkMap S.ctLen (flagF S) (pairEncode (pairEncode (finU w) (finSt w))
+-        ((finA w).take ((r.mul S.ctLen).eval (finU w).length)))) ++
+-    (finA w).drop ((r.mul S.ctLen).eval (finU w).length))
++    ((if decide (List.replicate (S.ctLen.eval (rU w).length) true = []) then
++        (if (rS w).headD false then List.replicate (r.eval (rU w).length) true
++          else List.replicate (r.eval (rU w).length) false)
++      else chunkMap S.ctLen (flagF S) (pairEncode (pairEncode (rU w) (rS w))
++        ((finA w).take ((r.mul S.ctLen).eval (rU w).length)))) ++
++    (finA w).drop ((r.mul S.ctLen).eval (rU w).length))
+ 
+ /-- `simFin S r w = ⟨[true], F ‖ a.drop (r·ctLen)⟩`, with `F = flag^r` if `ctLen(n) = 0` and
+ `F = chunkMap ctLen flagF ⟨⟨1^n, s⟩, a.take (r·ctLen)⟩` otherwise. -/
+ theorem simFin_eq (r : PolyExpr) (w : List Bool) :
+     simFin S r w = pairEncode [true]
+-      ((if decide (List.replicate (S.ctLen.eval (finU w).length) true = []) then
+-          (if (finSt w).headD false then List.replicate (r.eval (finU w).length) true
+-            else List.replicate (r.eval (finU w).length) false)
+-        else chunkMap S.ctLen (flagF S) (pairEncode (pairEncode (finU w) (finSt w))
+-          ((finA w).take ((r.mul S.ctLen).eval (finU w).length)))) ++
+-      (finA w).drop ((r.mul S.ctLen).eval (finU w).length)) := rfl
++      ((if decide (List.replicate (S.ctLen.eval (rU w).length) true = []) then
++          (if (rS w).headD false then List.replicate (r.eval (rU w).length) true
++            else List.replicate (r.eval (rU w).length) false)
++        else chunkMap S.ctLen (flagF S) (pairEncode (pairEncode (rU w) (rS w))
++          ((finA w).take ((r.mul S.ctLen).eval (rU w).length)))) ++
++      (finA w).drop ((r.mul S.ctLen).eval (rU w).length)) := rfl
+ 
+ /-- The finalization round is polynomial-time. -/
+ theorem polyTimeComputable_simFin (r : PolyExpr) : PolyTimeComputable (simFin S r) := by
+-  obtain ⟨hU, -, -, hA, -⟩ := polyTimeComputable_finFields
+-  have hS := polyTimeComputable_finSt
+-  have htake : PolyTimeComputable fun w => (finA w).take ((r.mul S.ctLen).eval (finU w).length) :=
++  have hU := polyTimeComputable_rU
++  have hA := polyTimeComputable_finA
++  have hS := polyTimeComputable_rS
++  have htake : PolyTimeComputable fun w => (finA w).take ((r.mul S.ctLen).eval (rU w).length) :=
+     ((polyTimeComputable_pairTakePoly (r.mul S.ctLen)).comp (hU.pairEncode hA)).congr fun w => by
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+-  have hdrop : PolyTimeComputable fun w => (finA w).drop ((r.mul S.ctLen).eval (finU w).length) :=
++  have hdrop : PolyTimeComputable fun w => (finA w).drop ((r.mul S.ctLen).eval (rU w).length) :=
+     ((polyTimeComputable_pairDropPoly (r.mul S.ctLen)).comp (hU.pairEncode hA)).congr fun w => by
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+   exact (polyTimeComputable_const [true]).pairEncode
+@@ -210,22 +206,24 @@ returns `⟨[true], simOutL …⟩`.
+ **Proof sketch.** Read the fields of the input in `simFin_eq` and split on `ctLen(n)`. If
+ `ctLen(n) = 0`, every chunk is empty and equals `ỹ`, so every flagged entry is `[flag]` and the
+ `r` entries flatten to `flag^r`. Otherwise cut `a.take (r·ctLen)` into its `r` chunks of
+-`ctLen(n)` bits (`take_eq_flatten_chunkAt`, `length_chunkAt`); `chunkMap_flatten` maps
++`ctLen(n)` bits (`take_eq_flatten_chunkAt`, `length_coinBlock`); `chunkMap_flatten` maps
+ `flagF` over them, which is `simOutL_eq`. -/
+ theorem simFin_finInput (r sl : PolyExpr) (n : ℕ) (z ω s a L : List Bool)
+     (ha : a.length = r.eval n * S.ctLen.eval n + sl.eval n) :
+     simFin S r (InteractiveHandler.finInput n z ω s a L) =
+       pairEncode [true] (simOutL S r n s a) := by
+-  obtain ⟨hU, -, -, hA, -⟩ := fields_finInput n z ω s a L
+-  rw [simFin_eq, hU, hA, finSt_finInput, List.length_replicate, PolyExpr.eval_mul, simOutL_eq]
++  have hU := rU_finInput n z ω s a L
++  have hA := finA_finInput n z ω s a L
++  rw [simFin_eq, hU, hA, rS_finInput, List.length_replicate, PolyExpr.eval_mul, simOutL_eq]
+   congr 2
+   by_cases hct : S.ctLen.eval n = 0
+   · rw [if_pos (by rw [hct, List.replicate_zero]; rfl)]
+-    have hent : ∀ i, flagF S (pairEncode (List.replicate n true) s) (chunkAt (S.ctLen.eval n) i a) =
+-        [s.headD false] := by
++    have hent : ∀ i,
++        flagF S (pairEncode (List.replicate n true) s) (coinBlock (S.ctLen.eval n) i a) =
++          [s.headD false] := by
+       intro i
+       rw [flagF_eq, pairSndD_pairEncode, pairFstD_pairEncode, List.length_replicate, hct,
+-        chunkAt_eq, List.take_zero, List.take_zero, decide_eq_true rfl, Bool.and_true]
++        coinBlock_eq, List.take_zero, List.take_zero, decide_eq_true rfl, Bool.and_true]
+     have hrep : ∀ (b : Bool) (m : ℕ), ((List.range m).map fun _ => [b]).flatten =
+         List.replicate m b := by
+       intro b m
+@@ -242,7 +240,7 @@ theorem simFin_finInput (r sl : PolyExpr) (n : ℕ) (z ω s a L : List Bool)
+     · rfl
+     · obtain ⟨i, hi, rfl⟩ := List.mem_map.1 hch
+       rw [List.mem_range] at hi
+-      refine length_chunkAt _ _ _ ?_
++      refine length_coinBlock ?_
+       rw [ha]
+       have := Nat.mul_le_mul_right (S.ctLen.eval n) (show i + 1 ≤ r.eval n from hi)
+       omega
+@@ -263,16 +261,16 @@ def simParams (r sl : PolyExpr) : ChalParams S pl hl 1 (fun _ => pl) (fun _ => h
+   advIn ctx := pairFstD (pairFstD (pairSndD ctx))
+   advIn_poly := polyTimeComputable_pairFstD.comp
+     (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+-  qry w := EnsembleLemmas.padL (pl.eval (rdU w).length) (rdQuery w)
+-  qry_poly := EnsembleLemmas.polyTimeComputable_padL pl polyTimeComputable_rd.1
+-    polyTimeComputable_rd.2.2.2.2.2.1
++  qry w := EnsembleLemmas.padL (pl.eval (rU w).length) (rX w)
++  qry_poly := EnsembleLemmas.polyTimeComputable_padL pl polyTimeComputable_rU
++    polyTimeComputable_rX
+   qry_len _ := EnsembleLemmas.length_padL _ _
+   ansY := simCt S samp
+   ansY_poly := polyTimeComputable_simCt S samp
+   ansY_len _ := EnsembleLemmas.length_padL _ _
+-  ansH w := EnsembleLemmas.padL (hl.eval (rdU w).length) (rdAns w)
+-  ansH_poly := EnsembleLemmas.polyTimeComputable_padL hl polyTimeComputable_rd.1
+-    polyTimeComputable_rd.2.2.2.2.2.2.2
++  ansH w := EnsembleLemmas.padL (hl.eval (rU w).length) (rAns w)
++  ansH_poly := EnsembleLemmas.polyTimeComputable_padL hl polyTimeComputable_rU
++    polyTimeComputable_rAns
+   ansH_len _ := EnsembleLemmas.length_padL _ _
+   outLen := (r.mul (S.ctLen.add (.const 1))).add sl
+   finCall := .const 1
+@@ -320,7 +318,7 @@ theorem simFinish (z : List Bool)
+       length_flatten_map_range (S.ctLen.eval n + 1) _ _ fun i hi => ?_]
+     · rw [Nat.mul_add, Nat.mul_one]
+       omega
+-    · rw [length_flagF, length_chunkAt _ _ _ (by
++    · rw [length_flagF, length_coinBlock (by
+         rw [ha]
+         have := Nat.mul_le_mul_right (S.ctLen.eval n) (show i + 1 ≤ r.eval n from hi)
+         omega)]
+@@ -376,7 +374,16 @@ theorem simCt_input (pk : List Bool) (ρ' : samp.Coins n) (re : S.enc.Coins n) (
+         (1 : Fin 2) (List.ofFn x) L) =
+       List.ofFn (encWith S n pk (drawWith samp (S.msgLen.eval n) n
+         (padFin (pl.eval n) (List.ofFn x)) ρ') re) := by
+-  obtain ⟨hU, hZ, hW, -, -, hQ, -⟩ := fields_input (k := 2) n (pairEncode pk (samp.advice n))
++  have hU := rU_input (k := 2) n (pairEncode pk (samp.advice n))
++    (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s 1
++    (List.ofFn x) L
++  have hZ := rZ_input (k := 2) n (pairEncode pk (samp.advice n))
++    (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s 1
++    (List.ofFn x) L
++  have hW := rW_input (k := 2) n (pairEncode pk (samp.advice n))
++    (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s 1
++    (List.ofFn x) L
++  have hQ := rX_input (k := 2) n (pairEncode pk (samp.advice n))
+     (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s 1
+     (List.ofFn x) L
+   have hxl : (List.ofFn x).length = pl.eval n := by
+@@ -431,8 +438,8 @@ theorem simComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coin
+           (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s'
+           (1 : Fin 2) (List.ofFn x) L) = List.ofFn (padFin (pl.eval n) (List.ofFn x)) := by
+       intro s' L
+-      rw [simParams_qry, (fields_input (k := 2) n _ _ s' 1 _ L).1,
+-        (fields_input (k := 2) n _ _ s' 1 _ L).2.2.2.2.2.1, List.length_replicate,
++      rw [simParams_qry, rU_input (k := 2) n _ _ s' 1 _ L,
++        rX_input (k := 2) n _ _ s' 1 _ L, List.length_replicate,
+         ofFn_padFin_eq_padL]
+     have hH : ∀ (s' q : List Bool) (y : Fin (hl.eval n) → Bool),
+         (simParams S samp pl hl r sl).ansH
+@@ -441,8 +448,8 @@ theorem simComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coin
+           (1 : Fin 2) (List.ofFn x) (pairEncode (pairEncode (List.replicate 0 true)
+             (pairEncode q (List.ofFn y))) [])) = List.ofFn y := by
+       intro s' q y
+-      rw [simParams_ansH, (fields_input (k := 2) n _ _ s' 1 _ _).1, List.length_replicate,
+-        rdAns_input, EnsembleLemmas.padL_eq]
++      rw [simParams_ansH, rU_input (k := 2) n _ _ s' 1 _ _, List.length_replicate,
++        rAns_input, EnsembleLemmas.padL_eq]
+       exact List.take_left' List.length_ofFn
+     rw [simAbs_none, chalHandler_impl_none, simulate_query, histImpl_eq, OracleComp.pure_bind,
+       simulate_pure, OracleComp.pure_bind, rImpl_none_eager, OracleComp.pure_bind, simAbs_some,
+@@ -459,9 +466,10 @@ output `a` (`r·ctLen + sl` bits) and the hybrid's final state `s`, `idealView`
+ output (flags from the abstracted state) with the history oracle's state is `realView` of `a` and
+ `s`.
+ 
+-**Proof sketch.** Entry `i` of the output is `flagF ⟨1^n, st⟩ c_i` (`chunkAt_flatten_append`), whose
+-flag is `[c_i = y]` for the recorded `y` and `false` without a challenge (`headD_ofFn_chalState`,
+-`ofFn_chalState_some`), as `realView`'s copy test; `σ` is the tail (`drop_flatten_append`). -/
++**Proof sketch.** Entry `i` of the output is `flagF ⟨1^n, st⟩ c_i` (`coinBlock_flatten_append`),
++whose flag is `[c_i = y]` for the recorded `y` and `false` without a challenge
++(`headD_ofFn_chalState`, `ofFn_chalState_some`), as `realView`'s copy test; `σ` is the tail
++(`drop_flatten_append`). -/
+ theorem idealView_simOut (sk : List Bool) (ρ : samp.Coins n)
+     (s : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (pl.eval n) → Bool))) (a : List Bool)
+     (ha : a.length = r.eval n * S.ctLen.eval n + sl.eval n) :
+@@ -471,13 +479,13 @@ theorem idealView_simOut (sk : List Bool) (ρ : samp.Coins n)
+         (simAbs S samp pl hl hist r sl n ρ s).2 =
+       realView S samp pl n (r.eval n) sk ρ a s := by
+   set st := List.ofFn (simAbs S samp pl hl hist r sl n ρ s).1 with hst
+-  have hc : ∀ i < r.eval n, (chunkAt (S.ctLen.eval n) i a).length = S.ctLen.eval n := fun i hi =>
+-    length_chunkAt _ _ _ (by
++  have hc : ∀ i < r.eval n, (coinBlock (S.ctLen.eval n) i a).length = S.ctLen.eval n := fun i hi =>
++    length_coinBlock (by
+       rw [ha]
+       have := Nat.mul_le_mul_right (S.ctLen.eval n) (show i + 1 ≤ r.eval n from hi)
+       omega)
+   have hg : ∀ i < r.eval n, (flagF S (pairEncode (List.replicate n true) st)
+-      (chunkAt (S.ctLen.eval n) i a)).length = S.ctLen.eval n + 1 := fun i hi => by
++      (coinBlock (S.ctLen.eval n) i a)).length = S.ctLen.eval n + 1 := fun i hi => by
+     rw [length_flagF, hc i hi]
+   have hlen : (simOutL S r n st a).length =
+       (chalHandler (simParams S samp pl hl r sl)).outLen.eval n := by
+@@ -489,7 +497,7 @@ theorem idealView_simOut (sk : List Bool) (ρ : samp.Coins n)
+   congr 3
+   refine List.map_congr_left fun i hi => ?_
+   rw [List.mem_range] at hi
+-  rw [chunkAt_flatten_append _ _ _ hg _ _ hi, flagF_eq, List.headD_cons, List.tail_cons,
++  rw [coinBlock_flatten_append _ _ _ hg _ _ hi, flagF_eq, List.headD_cons, List.tail_cons,
+     pairSndD_pairEncode, pairFstD_pairEncode, List.length_replicate]
+   congr 1
+   cases s with
+diff --git a/TCSlib/Cryptography/Foundations/BitLists.lean b/TCSlib/Cryptography/Foundations/BitLists.lean
+index 54e270a2e..a8d70ef50 100644
+--- a/TCSlib/Cryptography/Foundations/BitLists.lean
++++ b/TCSlib/Cryptography/Foundations/BitLists.lean
+@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import Mathlib.Data.List.OfFn
+ import Mathlib.Data.List.GetD
+ import Mathlib.Logic.Equiv.Prod
++import Mathlib.Data.Fintype.Basic
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -31,6 +32,11 @@ an association list. They depend on Mathlib only.
+ * `TCSlib.Cryptography.xorPerm_apply`: `xorPerm v y = y ⊕ v`.
+ * `TCSlib.Cryptography.mem_keys_of_lookup_isSome`: a key with a value in an association list is
+   one of its keys.
++* `TCSlib.Cryptography.ofFn_eq_map_range`, `ofFn_natAdd_eq_drop`, `decide_map_ofFn`: lists of
++  tuples as maps over ranges, tails of tuples, comparing optional tuples through their lists.
++* `TCSlib.Cryptography.length_flatten_map_const`, `length_flatten_map_range`: the length of a
++  concatenation of equal-length blocks.
++* `TCSlib.Cryptography.flatMap_range_drop`: reading the successive suffixes of a list.
+ 
+ ## References
+ 
+@@ -102,4 +108,72 @@ theorem mem_keys_of_lookup_isSome {α β : Type} [DecidableEq α] (T : List (α
+   obtain ⟨p, hp, hx⟩ := List.lookup_isSome_iff.1 h
+   exact List.mem_map.2 ⟨p, hp, (beq_iff_eq.1 hx).symm⟩
+ 
++/-! ### Lists indexed by ranges, tails and blocks of lists -/
++
++/-- A list of `r` values is a map over `List.range r`: if `f i = g i` for every `i : Fin r`, then
++`List.ofFn f = (List.range r).map g` (both have `r` entries, entry `i` is `f i = g i`). -/
++theorem ofFn_eq_map_range {α : Type*} {r : ℕ} (f : Fin r → α) (g : ℕ → α)
++    (h : ∀ i : Fin r, f i = g i) : List.ofFn f = (List.range r).map g := by
++  refine List.ext_getElem (by rw [List.length_ofFn, List.length_map, List.length_range])
++    fun i h₁ h₂ => ?_
++  rw [List.getElem_ofFn, List.getElem_map, List.getElem_range]
++  exact h _
++
++/-- **The tail of a string:** `⟦j ↦ w (natAdd k j)⟧ = ⟦w⟧.drop k` (`List.ofFn_add`). -/
++theorem ofFn_natAdd_eq_drop {k sl : ℕ} (w : Fin (k + sl) → Bool) :
++    List.ofFn (fun j : Fin sl => w (Fin.natAdd k j)) = (List.ofFn w).drop k := by
++  rw [List.ofFn_add, List.drop_left' List.length_ofFn]
++
++/-- Comparing strings is comparing their lists:
++`decide (o.map ofFn = some ⟦c⟧) = decide (o = some c)` (`List.ofFn_inj`). -/
++theorem decide_map_ofFn {k : ℕ} (o : Option (Fin k → Bool)) (c : Fin k → Bool) :
++    decide (o.map List.ofFn = some (List.ofFn c)) = decide (o = some c) := by
++  cases o with
++  | none => simp
++  | some c' => simp [List.ofFn_inj]
++
++/-- Blocks of `k` entries, one per element: `|(l.map g).flatten| = |l|·k` when every `g x` has
++`k` entries (`List.length_flatten`, a sum of the constant `k`). -/
++theorem length_flatten_map_const {α β : Type*} (l : List α) (g : α → List β) (k : ℕ)
++    (hg : ∀ x, (g x).length = k) : (l.map g).flatten.length = l.length * k := by
++  rw [List.length_flatten, List.map_map, show (List.length ∘ g) = fun _ => k from funext hg,
++    List.map_const', List.sum_replicate_nat]
++
++/-- `r` blocks of `k` entries have `r·k` entries: `|((range r).map g).flatten| = r·k` when
++`g 0, …, g (r-1)` have `k` entries each (`List.length_flatten`, a sum of the constant `k`). -/
++theorem length_flatten_map_range {β : Type*} (k r : ℕ) (g : ℕ → List β)
++    (hg : ∀ i < r, (g i).length = k) : ((List.range r).map g).flatten.length = r * k := by
++  rw [List.length_flatten, List.map_map,
++    List.map_congr_left (f := List.length ∘ g) (g := fun _ => k)
++      fun i hi => hg i (List.mem_range.1 hi),
++    List.map_const', List.sum_replicate_nat, List.length_range]
++
++/-- **Reading the suffixes of a list within at least its length many steps:** if `F [] = []`
++and `F` reads only the first element of a nonempty suffix, `F (e :: t) = g e` for the members `e`
++of `l`, then `(List.range m).flatMap (fun i => F (l.drop i)) = l.flatMap g` for every
++`m ≥ |l|`.
++
++**Proof sketch.** Induction on `l`: the first suffix is `l` itself, read as `g e`; the others are
++the suffixes of the tail, within `m - 1` steps; the empty suffixes read `[]`. -/
++theorem flatMap_range_drop {β γ : Type*} (F : List β → List γ) (g : β → List γ)
++    (hnil : F [] = []) :
++    ∀ (l : List β), (∀ e ∈ l, ∀ t, F (e :: t) = g e) → ∀ m : ℕ, l.length ≤ m →
++      ((List.range m).flatMap fun i => F (l.drop i)) = l.flatMap g := by
++  intro l
++  induction l with
++  | nil =>
++    intro _ m _
++    rw [List.flatMap_nil]
++    refine List.flatMap_eq_nil_iff.2 fun i _ => ?_
++    rw [List.drop_nil, hnil]
++  | cons e t ih =>
++    intro hcons m hm
++    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by rw [List.length_cons] at hm; omega⟩
++    rw [List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map, List.drop_zero,
++      hcons e List.mem_cons_self, List.flatMap_cons]
++    congr 1
++    simp only [List.drop_succ_cons]
++    exact ih (fun e' he' => hcons e' (List.mem_cons_of_mem _ he')) m'
++      (by rw [List.length_cons] at hm; omega)
++
+ end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/Games/BitCodec.lean b/TCSlib/Cryptography/Games/BitCodec.lean
+index 4a037fb52..ab6e953a4 100644
+--- a/TCSlib/Cryptography/Games/BitCodec.lean
++++ b/TCSlib/Cryptography/Games/BitCodec.lean
+@@ -6,6 +6,7 @@ import TCSlib.Cryptography.Games.Machines
+ import TCSlib.Cryptography.Asymptotic.Adversary
+ import TCSlib.Cryptography.Games.Probability
+ import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
++import Mathlib.Data.List.GetD
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -49,6 +50,7 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
+ * `Games.decodeBitMove_of_not_canonical`: every other word decodes to the all-`false` output.
+ * `Games.padFin_ofFn_zeroBits`, `Games.padFin_replicate_false`, `Games.padFin_nil`,
+   `Games.decodeFin_nil_getD`: all-`false` strings and the empty answer read as `zeroBits`.
++* `Games.padFin_append_split`: the two parts of a padded concatenation.
+ * `Games.simulate_castImpl_toCompOn`, `Games.expect_simulate_castImpl_toCompOn`: transport of a
+   machine's run between two codecs with equal lengths.
+ * `Games.polyTimeComputable_cntRead`, `Games.polyTimeComputable_ansRead`: the per-entry readings
+@@ -148,6 +150,18 @@ theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) =
+ /-- The empty list reads as the all-`false` vector: `padFin d [] = zeroBits d`. -/
+ theorem padFin_nil (d : ℕ) : padFin d [] = zeroBits d := padFin_replicate_false d 0
+ 
++/-- **The two parts of a padded concatenation:** if `|u| = d₁`, the first `d₁` bits of
++`padFin (d₁ + d₂) (u ++ v)` are `padFin d₁ u` and the rest `padFin d₂ v` (`padFin_apply`,
++`List.getD_append`, `List.getD_append_right`). -/
++theorem padFin_append_split {d₁ d₂ : ℕ} (u v : List Bool) (hu : u.length = d₁) :
++    (fun j : Fin d₁ => padFin (d₁ + d₂) (u ++ v) (Fin.castAdd d₂ j)) = padFin d₁ u ∧
++      (fun j : Fin d₂ => padFin (d₁ + d₂) (u ++ v) (Fin.natAdd d₁ j)) = padFin d₂ v := by
++  refine ⟨funext fun j => ?_, funext fun j => ?_⟩
++  · rw [padFin_apply, padFin_apply, Fin.coe_castAdd, List.getD_append _ _ _ _ (by omega)]
++  · rw [padFin_apply, padFin_apply, Fin.coe_natAdd, List.getD_append_right _ _ _ _ (by omega)]
++    congr 1
++    omega
++
+ /-- An empty answer decodes to all-`false` at every length:
+ `(decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ`. -/
+ theorem decodeFin_nil_getD (ℓ : ℕ) : (decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ := by
+diff --git a/TCSlib/Cryptography/Games/Efficiency.lean b/TCSlib/Cryptography/Games/Efficiency.lean
+index a989e8808..ab33eae60 100644
+--- a/TCSlib/Cryptography/Games/Efficiency.lean
++++ b/TCSlib/Cryptography/Games/Efficiency.lean
+@@ -93,7 +93,8 @@ handler, the reduction's output. This bounds every history, which the guarded st
+   finalization, with up to `finCall(n)` outer queries.
+ * `Games.InteractiveHandler.rU`, `rZ`, `rW`, `rS`, `rI`, `rX`, `rL`, `rCnt`, `rAns`: the fields of
+   a round input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩` (and the first component of the state, and
+-  the answer of the first entry of the outer log).
++  the answer of the first entry of the outer log); `Games.InteractiveHandler.finA`: the adversary's
++  output in a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`.
+ 
+ ## Main results
+ 
+@@ -105,10 +106,11 @@ handler, the reduction's output. This bounds every history, which the guarded st
+   finalization. The reductions that forward or answer queries with their own oracle need it (the
+   PRF MAC's distinguisher, hash-and-sign's forger, the CPA and CCA reductions).
+ * `Games.InteractiveHandler.rU_input`, …, `rCnt_input`, `rAns_input`: the readers of a round
+-  input on `InteractiveHandler.input`; `Games.InteractiveHandler.impl_of_ret`,
+-  `Games.InteractiveHandler.impl_of_query`: a call whose first round returns, or asks one outer
+-  query and returns in its second round; `Games.InteractiveHandler.finish_of_ret`: a finalization
+-  whose first round returns.
++  input on `InteractiveHandler.input`; `rU_finInput`, `rZ_finInput`, `rW_finInput`, `rS_finInput`,
++  `rL_finInput`, `finA_finInput`: the readers of a finalization input on `finInput`;
++  `Games.InteractiveHandler.impl_of_ret`, `Games.InteractiveHandler.impl_of_query`: a call whose
++  first round returns, or asks one outer query and returns in its second round;
++  `Games.InteractiveHandler.finish_of_ret`: a finalization whose first round returns.
+ * `Games.exists_toCompOn_of_toComp` (the fill's target): a machine without input is a machine
+   with an input that it ignores, with the same coins.
+ * `Games.expect_toCompOn_outLen`: a machine's output length may be changed along an equality.
+@@ -481,6 +483,9 @@ def rCnt (w : List Bool) : List Bool := pairFstD (rS w)
+ `rAns w = pairSndD (pairSndD (pairFstD (rL w)))`. -/
+ def rAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
+ 
++/-- `rAns w = pairSndD (pairSndD (pairFstD (rL w)))`. -/
++theorem rAns_eq (w : List Bool) : rAns w = pairSndD (pairSndD (pairFstD (rL w))) := rfl
++
+ /-- `rU (input n z ω s i x L) = 1^n`. -/
+ theorem rU_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+     rU (input n z ω s i x L) = List.replicate n true := by
+@@ -717,6 +722,45 @@ theorem finInput_eq (n : ℕ) (z ω s a L : List Bool) :
+     finInput n z ω s a L = pairEncode (seedIn n z ω) (pairEncode s (pairEncode a L)) :=
+   rfl
+ 
++/-! #### Readers of a finalization input
++
++A finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩` has the shape of a round input, so the
++round-input readers `rU`, `rZ`, `rW`, `rS` and `rL` read its parameter, reduction input, seed,
++state and outer log (`rU_finInput`, …); `finA` reads the adversary's output. -/
++
++/-- `rU (finInput n z ω s a L) = 1^n`. -/
++theorem rU_finInput (n : ℕ) (z ω s a L : List Bool) :
++    rU (finInput n z ω s a L) = List.replicate n true := by
++  simp only [rU, finInput_eq, seedIn_eq, pairFstD_pairEncode]
++
++/-- `rZ (finInput n z ω s a L) = z`. -/
++theorem rZ_finInput (n : ℕ) (z ω s a L : List Bool) : rZ (finInput n z ω s a L) = z := by
++  simp only [rZ, finInput_eq, seedIn_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- `rW (finInput n z ω s a L) = ω`. -/
++theorem rW_finInput (n : ℕ) (z ω s a L : List Bool) : rW (finInput n z ω s a L) = ω := by
++  simp only [rW, finInput_eq, seedIn_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- `rS (finInput n z ω s a L) = s`. -/
++theorem rS_finInput (n : ℕ) (z ω s a L : List Bool) : rS (finInput n z ω s a L) = s := by
++  simp only [rS, finInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- `rL (finInput n z ω s a L) = L`. -/
++theorem rL_finInput (n : ℕ) (z ω s a L : List Bool) : rL (finInput n z ω s a L) = L := by
++  simp only [rL, finInput_eq, pairSndD_pairEncode]
++
++/-- The adversary's output `a` of a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`:
++`finA w = pairFstD (pairSndD (pairSndD w))`. -/
++def finA (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD w))
++
++/-- `finA (finInput n z ω s a L) = a`. -/
++theorem finA_finInput (n : ℕ) (z ω s a L : List Bool) : finA (finInput n z ω s a L) = a := by
++  simp only [finA, finInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- `finA` is polynomial-time: `PolyTimeComputable finA`. -/
++theorem polyTimeComputable_finA : PolyTimeComputable finA :=
++  polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
++
+ /-- **The finalization** in the final state `s`, after the adversary's output `a`: the
+ reduction's `outLen(n)`-bit output, computed with at most `finCall(n)` outer queries, in at most
+ `finCall(n) + 1` rounds of `finRun`. A malformed round output is the all-`false` output
+diff --git a/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator.lean b/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator.lean
+index 44dfcefd8..d62076975 100644
+--- a/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator.lean
++++ b/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator.lean
+@@ -50,22 +50,11 @@ theorem eq_blocks_divNat_modNat {q ℓ : ℕ} (w : Fin (q * ℓ) → Bool) (k :
+     _ = FunFamily.blocks q ℓ w k.divNat k.modNat := FunFamily.blocks_symm_apply q ℓ _ k
+ 
+ /-- Block `k` of the encoding of a `q`-tuple of `ℓ`-bit strings (positions `ℓk, …, ℓk + ℓ − 1`)
+-is the encoding of the `k`-th component, read through `FunFamily.blocks`. -/
++is the encoding of the `k`-th component, read through `FunFamily.blocks` (the block window
++`FunFamily.ofFn_blocks`, read backwards). -/
+ theorem drop_take_ofFn_blocks (q ℓ : ℕ) (w : Fin (q * ℓ) → Bool) {k : ℕ} (hk : k < q) :
+     ((List.ofFn w).drop (ℓ * k)).take ℓ = List.ofFn (FunFamily.blocks q ℓ w ⟨k, hk⟩) := by
+-  have hlen : ℓ * k + ℓ ≤ q * ℓ := by
+-    have : (k + 1) * ℓ ≤ q * ℓ := Nat.mul_le_mul_right ℓ hk
+-    nlinarith
+-  refine List.ext_getElem ?_ fun j hj₁ hj₂ => ?_
+-  · simp only [List.length_take, List.length_drop, List.length_ofFn]
+-    omega
+-  · simp only [List.length_take, List.length_drop, List.length_ofFn] at hj₁
+-    simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+-    have hℓ : 0 < ℓ := by omega
+-    rw [eq_blocks_divNat_modNat w]
+-    refine congrArg₂ _ (Fin.ext ?_) (Fin.ext ?_)
+-    · rw [Fin.coe_divNat, Nat.mul_add_div hℓ, Nat.div_eq_of_lt (by omega), Nat.add_zero]
+-    · rw [Fin.coe_modNat, Nat.mul_add_mod, Nat.mod_eq_of_lt (by omega)]
++  rw [Nat.mul_comm ℓ k, FunFamily.ofFn_blocks]
+ 
+ /-- The encoding of the `i`-bit prefix `prefixAt x i` (`i ≤ n`) is the first `i` bits of the
+ encoding of `x`. -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean
+index 8b77f6bb7..fdbfde4c4 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean
+@@ -63,16 +63,6 @@ theorem getD_ofFn_lt' {α : Type*} {c : ℕ} (t : Fin c → α) {i : ℕ} (hi :
+   rw [List.getD_eq_getElem?_getD, List.getElem?_ofFn]
+   simp [hi]
+ 
+-/-- The list of a tuple given by a function on `ℕ` is the map over `List.range`. -/
+-theorem ofFn_eq_map_range {α : Type*} : ∀ {k : ℕ} (f : Fin k → α) (g : ℕ → α),
+-    (∀ t : Fin k, f t = g t) → List.ofFn f = List.map g (List.range k)
+-  | 0, _, _, _ => by simp
+-  | k + 1, f, g, h => by
+-    rw [List.ofFn_succ_last, List.range_succ, List.map_append, List.map_singleton,
+-      ofFn_eq_map_range (fun t => f t.castSucc) g (fun t => by
+-        show f t.castSucc = g t
+-        rw [h, Fin.coe_castSucc]), h, Fin.val_last]
+-
+ /-- In a verifier-first execution of `2k` moves each party has received exactly `k` messages. -/
+ theorem exec_vfirst_length (P' V : Strategy) (x zP zV rP rV : List Bool) :
+     ∀ k, (exec P' V true x zP zV rP rV (2 * k)).1.length = k ∧
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean
+index 7b0a16dab..6304cd020 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean
+@@ -915,15 +915,6 @@ theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+   | nil => rw [Strategy.encodeMsgs_nil]; rfl
+   | cons m h ih => rw [Strategy.encodeMsgs_cons, List.flatMap_cons, ih, pairEncode_eq_append_nil]
+ 
+-/-- `List.ofFn f` is the image of `range n` under any `ℕ`-indexed extension of `f`. -/
+-theorem ofFn_eq_map_range {α : Type*} {n : ℕ} (f : Fin n → α) (F : ℕ → α)
+-    (h : ∀ (k : ℕ) (hk : k < n), f ⟨k, hk⟩ = F k) : List.ofFn f = (List.range n).map F := by
+-  apply List.ext_getElem
+-  · simp
+-  · intro i h1 h2
+-    rw [List.getElem_ofFn, List.getElem_map, List.getElem_range]
+-    exact h i (by simpa using h1)
+-
+ /-- The `i`-th second projection of an encoded history drops its first `i` messages. -/
+ theorem iterate_pairSndD_encodeMsgs (hist : List (List Bool)) :
+     ∀ i, pairSndD^[i] (Strategy.encodeMsgs hist) = Strategy.encodeMsgs (hist.drop i) := by
+@@ -996,7 +987,7 @@ theorem histLen_poly : PolyTimeComputable fun M => List.replicate (histLen M) tr
+ theorem encodeMsgs_ofFn_eq_flatMap {n : ℕ} (f : Fin n → List Bool) (F : ℕ → List Bool)
+     (h : ∀ (k : ℕ) (hk : k < n), f ⟨k, hk⟩ = F k) :
+     Strategy.encodeMsgs (List.ofFn f) = (List.range n).flatMap (fun i => pairEncode (F i) []) := by
+-  rw [ofFn_eq_map_range f F h, encodeMsgs_eq_flatMap, List.flatMap_map]
++  rw [ofFn_eq_map_range f F fun t => h t t.isLt, encodeMsgs_eq_flatMap, List.flatMap_map]
+ 
+ /-- With at least one edge, `edgeAt G e` is the edge of index `e mod |E|`. -/
+ theorem edgeAt_eq_some_of_pos {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G) (e : ℕ) :
+-- 
+2.43.0
+
