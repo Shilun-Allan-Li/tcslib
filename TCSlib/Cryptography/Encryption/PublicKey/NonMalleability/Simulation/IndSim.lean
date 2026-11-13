@@ -17,6 +17,11 @@ adversary `B` (T2's machine of `nmParams`, with `M`'s advice hard-wired) and the
 (`hybAcc … b …`) whenever `msgLen(n) > 0` (`exists_nmAdversary`). With `H_false` the real
 experiment and `H_true` the ideal one (`Simulator.lean`), the SIM advantage is `B`'s NM advantage.
 
+## Main definitions
+
+None: this module only proves results. `B`'s handler parameters `nmParams` and the distinguisher
+`recDist` are defined in `Reduction.lean` and `Recover.lean`.
+
 ## Main results
 
 * `NMSim.recView_nmOut`: the view read back from `B`'s NM output is the hybrid's view.
