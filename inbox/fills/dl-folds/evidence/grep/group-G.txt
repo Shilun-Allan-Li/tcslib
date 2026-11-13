@@ -1,0 +1,375 @@
+### G1-budget
+$ git grep -nE 'buildComp_budget_eq|toCompOn_budget_eq|CostBoundedBy \(fun _ => 1\) j' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:757:   budget `1` is its run at T2's budget (`NMSim.toCompOn_budget_eq`; it asks at most one query,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:18:* **Budget reduction** (`buildComp_budget_eq`, `toCompOn_budget_eq`). A machine's computation at
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:35:* `NMSim.buildComp_budget_eq`, `NMSim.toCompOn_budget_eq`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:67:theorem buildComp_budget_eq (next : QueryLog spec → Move spec α) (t : α) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:69:      (buildComp next t K hist).CostBoundedBy (fun _ => 1) j →
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:101:theorem toCompOn_budget_eq (D : NUPPT) {β : Type} (codec : MachineCodec spec β) (n j K : ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:103:    (hc : (D.toCompOn codec n K x r).CostBoundedBy (fun _ => 1) j) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:107:  exact buildComp_budget_eq _ _ j K [] hjK hc
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:521:the run at T2's budget (`toCompOn_budget_eq`: the handler asks at most one query,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:569:  rw [toCompOn_budget_eq Sim₀ _ n 1 _ z (φ (ω, rA)) hK (by
+
+### G1-ret
+$ git grep -nE 'buildComp_of_ret|buildComp_zero_of_ret h$|=> exact buildComp_zero_of_ret' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:34:* `NMSim.buildComp_of_ret`, `NMSim.impl_of_ret`, `NMSim.impl_of_query`, `NMSim.finish_of_ret`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:146:theorem buildComp_of_ret {ι α : Type} {spec : OracleSpec ι} {next : QueryLog spec → Move spec α}
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:150:  | zero => exact buildComp_zero_of_ret h
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:182:    buildComp_of_ret (a := padFin ((dout i).eval n + H.stateLen.eval n) (u ++ v)) (by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:196:decodes to the return of `padFin _ (u y ‖ v y)` (`buildComp_of_ret`, `decodeBitMove_ret`), and
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:224:  rw [buildComp_of_ret (a := padFin ((dout i).eval n + H.stateLen.eval n) (u y ++ v y)) (by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:239:  refine buildComp_of_ret ?_
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:82:    | zero => exact buildComp_zero_of_ret h'
+
+### G2-impl
+$ git grep -nE 'impl_of_ret|impl_of_query|finish_of_ret|theorem .*impl_.*(ret|query)' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:421:private theorem impl_of_query {i : Fin 3} (x : Fin ((pkDin i).eval n) → Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:510:(`rNew_fields`); `impl_of_query` assembles the two rounds. -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:522:  refine impl_of_query q atkBit b n z ω x _ _ _ _ ?_ ?_
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:552:returns `⟨1, v ⊕ y⟩` with the state unchanged (`impl_of_query`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:568:  refine impl_of_query q atkBit b n z ω x _ _ _ _ ?_ ?_
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:605:  refine InteractiveHandler.impl_of_ret _ n z ω x _ _ _ ?_
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:623:  refine InteractiveHandler.impl_of_ret _ n z ω x _ _ _ ?_
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:656:  refine impl_of_query q atkBit b n z ω x _ _ _ _ ?_ ?_
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:395:  refine InteractiveHandler.impl_of_ret _ n z ω x s _ _ ?_
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:419:  refine InteractiveHandler.impl_of_ret _ n z ω x _ _ _ ?_
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:446:  refine InteractiveHandler.impl_of_ret _ n z ω x _ _ _ ?_
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:250:  rw [impl_of_ret (chalHandler P) n z ω 0 x (chalState P n o)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:268:  rw [impl_of_ret (chalHandler P) n z ω 1 x _ (List.ofFn y ++ List.ofFn h)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:281:**Proof sketch.** `impl_of_query` with the answer `ansY w₁ ‖ ansH w₁` and the encoded state
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:341:  rw [impl_of_query (chalHandler P) n z ω 1 x (chalState P n none) P.j (padFin _ (P.qry w₀))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:444:  refine finish_of_ret _ n z ω s a _ ?_ ?_
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:21:* **One call** whose first round returns (`impl_of_ret`), or asks one outer query and returns in its
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:22:  second round (`impl_of_query`); a finalization whose first round returns (`finish_of_ret`).
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:34:* `NMSim.buildComp_of_ret`, `NMSim.impl_of_ret`, `NMSim.impl_of_query`, `NMSim.finish_of_ret`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:173:theorem impl_of_ret (i : Fin k) (x : Fin ((din i).eval n) → Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:198:theorem impl_of_query (i : Fin k) (x : Fin ((din i).eval n) → Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:233:theorem finish_of_ret (s : Fin (H.stateLen.eval n) → Bool) {d : ℕ} (a : Fin d → Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:318:  refine finish_of_ret _ n z ω s a _ ?_ ?_
+TCSlib/Cryptography/Games/Efficiency.lean:107:  `InteractiveHandler.input`; `Games.InteractiveHandler.impl_of_ret`: a call whose first round
+TCSlib/Cryptography/Games/Efficiency.lean:620:theorem impl_of_ret (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
+
+### G2-buildComp-use
+$ git grep -nE 'buildComp_succ_of_query|buildComp_zero_of_ret|buildComp_succ_of_ret' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:746:  rw [NUPPT.toComp_eq, buildComp_succ_of_query (next := fun hist => (S.indCodec n).decodeMove
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:766:  rw [buildComp_succ_of_query (next := fun hist => (S.indCodec n).decodeMove
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:799:  rw [buildComp_zero_of_ret (next := fun hist => (S.indCodec n).decodeMove
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:393:  refine buildComp_zero_of_ret ?_
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:434:  rw [buildComp_succ_of_query (i := 0) (x := x') (by
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:441:  rw [buildComp_zero_of_ret (a := Fin.append (ans y) (s' y)) (by
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:362:  refine buildComp_zero_of_ret ?_
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:481:  rw [buildComp_succ_of_query (i := 1) (x := x) (by
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:500:  rw [buildComp_zero_of_ret (a := Fin.append y s') (by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:291:      rw [buildComp_zero_of_ret, simulate_pure]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:306:      rw [buildComp_succ_of_query (i := 0) (x := decBlock S n a j) (by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:203:**Proof sketch.** With budget `0` the first round returns (`buildComp_zero_of_ret`): its word is
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:216:  refine buildComp_zero_of_ret ?_
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:142:  rw [buildComp_succ_of_query (i := i) (x := x) (by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:152:  rw [buildComp_zero_of_ret (a := Fin.append y s) (by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:79:      | succ K => rw [buildComp_zero_of_ret h, buildComp_succ_of_ret h]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:84:        rw [buildComp_succ_of_query h, OracleComp.costBoundedBy_query] at hc
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:90:    | ret a => rw [buildComp_succ_of_ret h, buildComp_succ_of_ret h]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:92:      rw [buildComp_succ_of_query h] at hc ⊢
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:93:      rw [buildComp_succ_of_query h]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:150:  | zero => exact buildComp_zero_of_ret h
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:151:  | succ q => exact buildComp_succ_of_ret h
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:194:first round decodes to the query (`decodeBitMove_query`), which `buildComp_succ_of_query` asks.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:211:    buildComp_succ_of_query (i := j) (x := x') (by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:357:  refine buildComp_zero_of_ret ?_
+TCSlib/Cryptography/Games/Bridges/Machines.lean:116:hist)`, by their case equations (`buildComp_zero_of_ret`, …, `buildTree_succ_of_query`): a verdict
+TCSlib/Cryptography/Games/Bridges/Machines.lean:128:    | ret b => rw [buildComp_zero_of_ret (a := b) (by simp only [hn]), buildTree_zero_of_ret hn]
+TCSlib/Cryptography/Games/Bridges/Machines.lean:134:    | ret b => rw [buildComp_succ_of_ret (a := b) (by simp only [hn]), buildTree_succ_of_ret hn]
+TCSlib/Cryptography/Games/Bridges/Machines.lean:136:      rw [buildComp_succ_of_query (i := ()) (x := x) (by simp only [hn]),
+TCSlib/Cryptography/Games/Efficiency.lean:618:every budget (`buildComp_zero_of_ret`, `buildComp_succ_of_ret`); the output splits back into `y`
+TCSlib/Cryptography/Games/Efficiency.lean:635:    rw [buildComp_zero_of_ret (a := Fin.append y s') (by
+TCSlib/Cryptography/Games/Efficiency.lean:640:    rw [buildComp_succ_of_ret (a := Fin.append y s') (by
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:381:(`buildComp_zero_of_ret`, `buildComp_succ_of_ret`, `simulate_pure`). On a query with `b = 0` it
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:385:`simulate` after `buildComp_succ_of_query`, `simulate_query` and `pure_bind`. The states stay
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:466:        refine ⟨a, s, by rw [buildComp_zero_of_ret hm, simulate_pure], ?_⟩
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:480:        refine ⟨a, s, by rw [buildComp_succ_of_ret hm, simulate_pure], ?_⟩
+TCSlib/Cryptography/Games/Efficiency/Handler.lean:500:        rw [buildComp_succ_of_query hm, simulate_query, OracleComp.pure_bind]
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:481:      rw [buildComp_zero_of_ret hm, replaysFrom_pure_iff, List.append_nil,
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:501:      rw [buildComp_succ_of_ret hm, replaysFrom_pure_iff, List.append_nil,
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:504:      rw [buildComp_succ_of_query hm, replaysFrom_query_iff]
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:602:      rw [buildComp_zero_of_ret hm, OracleComp.pure_bind]
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:626:      rw [buildComp_succ_of_ret hm, OracleComp.pure_bind]
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:630:      rw [buildComp_succ_of_query hm, OracleComp.query_bind, replaysFrom_query_iff]
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:714:      rw [iTree_eq, buildComp_zero_of_ret hm, simulate_pure, OracleComp.pure_bind]
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:729:      rw [iTree_eq, buildComp_succ_of_ret hm, simulate_pure, OracleComp.pure_bind]
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:735:      rw [iTree_eq, buildComp_succ_of_query hm, simulate_query, iImpl_apply]
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:306:        buildComp_zero_of_ret hb, QueryTree.eval_ret, OracleComp.evalFn_pure]
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:313:        buildComp_succ_of_query hb, QueryTree.eval_query, OracleComp.evalFn_query]
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:319:        buildComp_succ_of_ret hb, QueryTree.eval_ret, OracleComp.evalFn_pure]
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:66:`next hist = ret a`, and `buildComp` returns `a` at every budget (`buildComp_zero_of_ret`,
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:67:`buildComp_succ_of_ret`). A query costs `1 ≤ b`, so `b = b' + 1`, and `buildComp` asks the same
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:68:query (`buildComp_succ_of_query`); each continuation is replayed from `hist ++ [⟨i, x, y⟩]`
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:82:    | zero => exact buildComp_zero_of_ret h'
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:83:    | succ b => exact buildComp_succ_of_ret h'
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:90:    rw [buildComp_succ_of_query h1]
+TCSlib/Cryptography/Games/Machines.lean:124:theorem buildComp_zero_of_ret {a : α} (h : next hist = .ret a) :
+TCSlib/Cryptography/Games/Machines.lean:136:theorem buildComp_succ_of_ret {q : ℕ} {a : α} (h : next hist = .ret a) :
+TCSlib/Cryptography/Games/Machines.lean:144:theorem buildComp_succ_of_query {q : ℕ} {i : ι} {x : spec.dom i} (h : next hist = .query i x) :
+TCSlib/Cryptography/Games/Machines.lean:157:    | ret a => rw [buildComp_zero_of_ret h]; exact OracleComp.costBoundedBy_pure _ _ _
+TCSlib/Cryptography/Games/Machines.lean:161:    | ret a => rw [buildComp_succ_of_ret h]; exact OracleComp.costBoundedBy_pure _ _ _
+TCSlib/Cryptography/Games/Machines.lean:163:      rw [buildComp_succ_of_query h]
+
+### G3
+$ git grep -nE 'expect_toCompOn_outLen|bitCodec ins outs d.\)' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:218:      expect (simulate (fImpl ins outs c n atk b f) (A.toComp (bitCodec ins outs d') n q r) none)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:36:* `NMSim.expect_toCompOn_outLen`: a machine's output length may be changed along an equality.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:151:theorem expect_toCompOn_outLen {k : ℕ} {ins outs : Fin k → ℕ} {σ : Type}
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:156:      ProbComp.expect (simulate O (A.toCompOn (bitCodec ins outs d') n q x r) s)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:156:**Proof sketch.** Transport the output length (`expect_toCompOn_outLen`); T2's equation; the
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:213:  refine (expect_toCompOn_outLen _ B₀ n _ _ _ none
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:226:  refine (expect_toCompOn_outLen _ A n (q.eval n) _ rA none hdα fun p =>
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean:136:  refine (expect_toCompOn_outLen _ A' n _ _ _ none hout fun p =>
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean:167:(`expect_toCompOn_outLen`). -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean:231:    exact expect_toCompOn_outLen _ A n _ _ rA none hlen fun p =>
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:520:**Proof sketch.** Transport the output length (`expect_toCompOn_outLen`); the run at budget `1` is
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:562:  refine (expect_toCompOn_outLen _ Sim₀ n 1 z _ none
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:582:  refine (expect_toCompOn_outLen _ A n (q.eval n) pk rA none hdα fun p =>
+
+### G4-congr
+$ git grep -nE 'expect_congr_of_allOutputs|le_antisymm \(.*expect_mono_of_allOutputs' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:37:* `NMSim.expect_congr_of_allOutputs`, `NMSim.expect_expect_sample`,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:118:theorem expect_congr_of_allOutputs {c : ProbComp α} {P : α → Prop} (hc : c.AllOutputs P)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:120:  le_antisymm (ProbComp.expect_mono_of_allOutputs hc fun a ha => (h a ha).le)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:214:      rw [expect_congr_of_allOutputs hun fun p hp => ih p.1 hp, expect_expect_sample]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:217:      refine expect_congr_of_allOutputs (hu t) fun p hp => ?_
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:257:      rw [expect_congr_of_allOutputs (simulate_allOutputs_bad bad hst _ hb)
+
+### G4-sample
+$ git grep -nE 'expect_expect_sample|expect_const_mul, (ProbComp\.)?expect_sum' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:37:* `NMSim.expect_congr_of_allOutputs`, `NMSim.expect_expect_sample`,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:124:theorem expect_expect_sample (c : ProbComp α) (T : Type) [Fintype T] [Nonempty T]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:129:  rw [ProbComp.expect_const_mul, ProbComp.expect_sum]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:191:(`expect_expect_sample`); in the second, expand `O`'s sample and conclude from the coincidence at
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:214:      rw [expect_congr_of_allOutputs hun fun p hp => ih p.1 hp, expect_expect_sample]
+
+### G4-bind
+$ git grep -nE 'bind_congr_of_allOutputs|bind_congr|c\.bind f = c\.bind g' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:38:  `NMSim.bind_congr_of_allOutputs`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:132:`c.bind f = c.bind g` when `f a = g a` whenever `P a`, and `c.AllOutputs P`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:133:theorem bind_congr_of_allOutputs {ι : Type} {spec : OracleSpec ι} {c : OracleComp spec α}
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:135:    (h : ∀ a, P a → f a = g a) : c.bind f = c.bind g := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:176:    exact bind_congr_of_allOutputs (hstick i x s hs) fun p hp => ih p.1 hp
+
+### G4-cost
+$ git grep -nE 'costBoundedBy_bind_of_allOutputs|Nat\.sub_add_comm hi' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:36:* `NMSim.costBoundedBy_bind_of_allOutputs`, `NMSim.simulate_costBoundedBy_once`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:296:theorem costBoundedBy_bind_of_allOutputs {cost : ι → ℕ} {c : OracleComp spec α}
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:309:    rw [Nat.sub_add_comm hi]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:318:**Proof sketch.** Induction on the computation; at a query, `costBoundedBy_bind_of_allOutputs`
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:340:      have := costBoundedBy_bind_of_allOutputs h₀ hP fun p hp => by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:346:      · have := costBoundedBy_bind_of_allOutputs h₀ hP fun p hp => by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:350:      · exact costBoundedBy_bind_of_allOutputs h₁ hP fun p hp => by
+TCSlib/Cryptography/Games/OracleComp.lean:265:    rw [Nat.sub_add_comm hi]
+
+### G4-once
+$ git grep -nE 'simulate_costBoundedBy_once|if used s then 0 else 1' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:369:**Proof sketch.** `simulate_costBoundedBy_once` with the encoded states as the invariant and the
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:383:  have key := simulate_costBoundedBy_once ((chalHandler P).impl n z ω) (fun _ => 1)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:23:* **Costs with a one-shot oracle** (`simulate_costBoundedBy_once`): if the calls are free except one
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:36:* `NMSim.costBoundedBy_bind_of_allOutputs`, `NMSim.simulate_costBoundedBy_once`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:320:theorem simulate_costBoundedBy_once (impl : QueryImpl spec σ spec') (cost : ι' → ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:329:    ∀ s, good s → (simulate impl c s).CostBoundedBy cost (if used s then 0 else 1) := by
+
+### G5
+$ git grep -nE 'expect_simulate_eager|simulate_eq_of_used|Classical\.arbitrary T' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:22:* **One-shot coins drawn in advance** (`expect_simulate_eager`). An implementation that samples
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:39:* `NMSim.expect_simulate_eager`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:168:private theorem simulate_eq_of_used (O O' : QueryImpl spec σ unifSpec) (used : σ → Prop)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:189:(`simulate_eq_of_used`). At a query from an unused state: in the first case, rewrite the call,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:193:theorem expect_simulate_eager (O : QueryImpl spec σ unifSpec) (OE : T → QueryImpl spec σ unifSpec)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:212:        (h (Classical.arbitrary T)).2
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:218:      rw [simulate_eq_of_used O (OE t) used (hused t) hstick _ hp]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:262:drawn in advance, averaged over `re` (`expect_simulate_eager`; the coins are spent at the first
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean:272:  refine expect_simulate_eager _ _ (fun s => s.isSome = true) (fun re i x s hs => ?_)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:47:* `ChallengeSim.expect_simulate_eager`: eager challenge coins, for any CPA-shaped oracle.
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:146:theorem expect_simulate_eager {ins outs : Fin 2 → ℕ} {d : ℕ} (hd : outs 1 = d)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:86:**Proof sketch.** `ChallengeSim.expect_simulate_eager` with `d = ctLen(n)` (`outLens_one`), the
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/PaddedCPA.lean:100:  expect_simulate_eager (S.outLens_one n) (S.indSpec_challengeRng n).symm _ _
+
+### G6
+$ git grep -nE 'expect_eq_until_bad|prob_eq_until_bad|if bad r\.2 then 0 else G' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:40:* `NMSim.expect_eq_until_bad`: equal until bad, for functions of the final state.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:231:`𝔼[G · 1_{good}]` is the same under both simulations. This generalizes `prob_eq_until_bad`
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:237:theorem expect_eq_until_bad {impl₀ impl₁ : QueryImpl spec σ unifSpec} (bad : σ → Prop)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:245:    ProbComp.expect (simulate impl₀ c s) (fun r => if bad r.2 then 0 else G r) =
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:246:      ProbComp.expect (simulate impl₁ c s) (fun r => if bad r.2 then 0 else G r) := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:254:          ProbComp.expect (simulate impl (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:260:        ProbComp.expect (simulate impl₀ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:263:              (fun r => if bad r.2 then 0 else G r) := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:269:        ProbComp.expect (simulate impl₁ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:272:              (fun r => if bad r.2 then 0 else G r) := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:692:`0` and `1` (`expect_eq_until_bad`): the oracles agree while the recorded parameter has equal
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:695:**Proof sketch.** `expect_eq_until_bad` with the bad event `badHalves`. The empty state is good
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:739:  refine expect_eq_until_bad (badHalves S n) (fun i x s hs g => ?_) (hstick false) (hstick true) _
+TCSlib/Cryptography/Games/Hopping.lean:42:* `Games.prob_eq_until_bad`, `Games.identical_until_bad`, `Games.identical_until_bad_init`: the
+TCSlib/Cryptography/Games/Hopping.lean:208:theorem prob_eq_until_bad {spec : OracleSpec ι} {impl₀ impl₁ : QueryImpl spec σ unifSpec}
+TCSlib/Cryptography/Games/Hopping.lean:286:2. *Equal until bad:* `prob_eq_until_bad`.
+TCSlib/Cryptography/Games/Hopping.lean:300:  obtain ⟨h1, h2⟩ := prob_eq_until_bad bad hagree hstick₀ hstick₁ c p hs
+
+### G7-fwd
+$ git grep -nE 'fwdHandler|fwdRun|perCall := \.const 1' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:336:  perCall := .const 1
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:299:  perCall := .const 1
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:17:forwards all of `A`'s queries to its own oracles (`NMCCA2.fwdHandler`). In the finalization it
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:166:distinguisher `D`: the forwarding handler (`fwdHandler`) on the oracles of Definition 171.5, with
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:172:  fwdHandler (acDin S) (acDout S) D.coins (fun ctx => pairFstD (pairFstD (pairSndD ctx)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:177:  rw [decHandler, fwdHandler_seedLen]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:181:  rw [decHandler, fwdHandler_perCall]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:185:  rw [decHandler, fwdHandler_finCall]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:189:  rw [decHandler, fwdHandler_outLen]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:197:  simp only [decHandler, fwdHandler_advIn]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:200:/-- **The handler forwards** (`simulate_fwdHandler_impl`): `simulate (H.impl n z ω) c s =
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:207:  simulate_fwdHandler_impl (acDin S) (acDout S) D.coins _ polyTimeComputable_decAdvIn (.const 1) ℓ
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:248:    rw [decHandler, fwdHandler_finRun]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:17:oracles (`NMCCA2.fwdHandler`). It then outputs two fresh encryptions under `pk`, with its own
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:112:(`fwdHandler`) on the oracles of Definition 171.5, with a seed of two encryption tapes
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:117:  fwdHandler (acDin S) (acDout S) (S.enc.coins.add S.enc.coins)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:123:  rw [encHandler, fwdHandler_seedLen]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:127:  rw [encHandler, fwdHandler_perCall]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:131:  rw [encHandler, fwdHandler_finCall]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:135:  rw [encHandler, fwdHandler_outLen]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:142:  simp only [encHandler, fwdHandler_advIn]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:145:/-- **The handler forwards** (`simulate_fwdHandler_impl`): `simulate (H.impl n z ω) c s =
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:152:  simulate_fwdHandler_impl (acDin S) (acDout S) (S.enc.coins.add S.enc.coins) _
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:214:    rw [encHandler, fwdHandler_finRun]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:17:(`fwdHandler`), as a `Games.InteractiveHandler` with one outer call per inner query and an empty
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:19:the outer oracle's (`fwdHandler_impl`), so simulating it is running the adversary against the
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:20:outer oracles (`simulate_fwdHandler_impl`).
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:30:* `NMCCA2.fwdHandler`: the forwarding handler with a given finalization.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:36:* `NMCCA2.fwdHandler_impl`, `NMCCA2.simulate_fwdHandler_impl`: forwarding.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:75:private def fwdRun (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:80:private theorem polyTimeComputable_fwdRun : PolyTimeComputable fwdRun := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:99:def fwdHandler (din dout : Fin k → PolyExpr) (seedLen : PolyExpr)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:105:  perCall := .const 1
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:107:  run := fwdRun
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:108:  poly := polyTimeComputable_fwdRun
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:117:  finRun] fwdHandler
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:133:theorem fwdHandler_impl (n : ℕ) (z : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:134:    (ω : Fin ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:136:    (s : Fin ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:138:    (fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun finRun_poly).impl n z ω
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:140:  rw [InteractiveHandler.impl_apply, InteractiveHandler.call_eq, fwdHandler_perCall,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:143:    show decodeBitMove _ _ _ (fwdRun _) = _
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:147:    rw [fwdRun, hI, hX, hL, MachineCodec.encodeLog_nil, if_pos (decide_eq_true rfl)]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:153:    show decodeBitMove _ _ _ (fwdRun _) = _
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:167:    rw [fwdRun, hA, hS, hL, hlog, if_neg (fun h => pairEncode_ne_nil _ _ (of_decide_eq_true h)),
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:181:**Proof sketch.** Induction on `c`, with `fwdHandler_impl` at each query. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:182:theorem simulate_fwdHandler_impl (n : ℕ) (z : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:183:    (ω : Fin ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:186:    (s : Fin ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:188:    simulate ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:193:    rw [simulate_query, fwdHandler_impl, OracleComp.query_bind, OracleComp.query_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:158:  perCall := .const 1
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:296:open NMCCA2 (fwdHandler fwdHandler_finRun fwdHandler_finCall fwdHandler_advIn
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:297:  simulate_fwdHandler_impl fields_finInput polyTimeComputable_finFields finA)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:312:and history length `hl`): it forwards every query (`NMCCA2.fwdHandler`), runs the adversary on the
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:317:  fwdHandler (snmDin S pl) (snmDout S hl) (.const 0) (fun ctx => pairFstD (pairSndD ctx))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:325:  simp only [copyHandler, fwdHandler_advIn]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:331:  rw [copyHandler, NMCCA2.fwdHandler_outLen]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:333:/-- **The handler forwards** (`simulate_fwdHandler_impl`). -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:339:  simulate_fwdHandler_impl (snmDin S pl) (snmDout S hl) (.const 0) _ polyTimeComputable_copyAdvIn
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:352:    rw [copyHandler, fwdHandler_finRun]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:354:    rw [copyHandler, fwdHandler_finCall]
+
+### G7-advice
+$ git grep -nE 'exists_withAdviceOn|pairEncode \(pairEncode \(pairFstD \(pairFstD w\)\) \(pairSndD w\)\)' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:403:`exists_withAdviceOn` hard-wires `D`'s advice into it (`B'`). `B'`'s budget is
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:411:  obtain ⟨B', hc, hB'⟩ := exists_withAdviceOn B D.advice D.adv D.advice_length
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:637:   `z = ⟨pk, α⟩` and hard-wired afterwards (`NMCCA2.exists_withAdviceOn`, from the public
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:25:(`simulate_decHandler_finish`). The advice is hard-wired afterwards (`exists_withAdviceOn`,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:37:* `NMCCA2.exists_withAdviceOn`: hard-wiring a second component of the input.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:330:theorem exists_withAdviceOn (B : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:337:      pairEncode (pairEncode (pairFstD (pairFstD w)) (pairSndD w)) (pairSndD (pairFstD w)) :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:754:   coins and `M`'s advice (hard-wired, `exists_withAdviceOn`), and answers `⟨Enc_pk(m̃), h(m)⟩`;
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:251:`M.advice n` (`exists_withAdviceOn`). Reindex `B`'s coins as `(ρ ‖ ρ̃ ‖ re, rA)` (`coinsCongr`, `φ`,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:262:  obtain ⟨B, hc, hB⟩ := NMCCA2.exists_withAdviceOn B₀ samp.advice samp.adv samp.advice_length
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:596:`M.advice n` as the second input component (`exists_withAdviceOn`). Reindex `Sim`'s coins as
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:606:  obtain ⟨Sim, hc, hSim⟩ := NMCCA2.exists_withAdviceOn Sim₀ samp.advice samp.adv
+
+### G7-readers
+$ git grep -nE 'cntRead|ansRead|if decide \(v = \[\]\) then \[\] else \[true\]|pairSndD \(pairSndD \(pairFstD' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:129:    (pairEncode (pairSndD (pairSndD w)) (pairSndD (pairSndD (pairFstD w)))))
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:264:  have hpt : PolyTimeComputable (fun w => pairSndD (pairSndD (pairFstD w))) :=
+TCSlib/Complexity/Randomized/BPLInP.lean:67:    (pairEncode (pairFstD (pairFstD z)) (pairEncode (pairSndD (pairSndD (pairFstD z)))
+TCSlib/Complexity/Randomized/BPLInP.lean:82:    (pairEncode (pairSndD (pairSndD (pairFstD (pairFstD y)))) (pairSndD (pairFstD y)))))
+TCSlib/Complexity/Randomized/BPLInP.lean:86:  pairEncode (pairFstD S) (mapW (rowW N) (pairEncode S (pairSndD (pairSndD (pairFstD S)))))
+TCSlib/Complexity/Randomized/BPLInP.lean:110:    (pairEncode (pairSndD (pairSndD (pairFstD (dpRun N c B e x)))) (pairSndD (dpRun N c B e x)))))
+TCSlib/Complexity/Randomized/Yap.lean:321:  have hw' : PolyTimeComputable fun q => pairFstD (pairSndD (pairSndD (pairFstD q))) :=
+TCSlib/Complexity/Randomized/Yap.lean:323:  have hr : PolyTimeComputable fun q => pairSndD (pairSndD (pairSndD (pairFstD q))) :=
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:274:  modExpStr (pairEncode (pairSndD (pairSndD (pairFstD z)))
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1130:private def dlb_fα (f : List Bool) : List Bool := pairSndD (pairSndD (pairFstD f))
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1133:private def dlb_feR (f : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (pairSndD f)))
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:269:def postBudget (z : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (NUPPT.inArg z)))
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:522:      (cca2FlipLast (pairSndD (pairSndD (pairFstD h)))))
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:524:    [!(pairSndD (pairSndD (pairFstD (pairSndD h)))).getLastD false]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:536:  have hans : PolyTimeComputable (fun z => pairSndD (pairSndD (pairFstD z))) :=
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:564:          (cca2FlipLast (pairSndD (pairSndD (pairFstD h)))))
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:566:        [!(pairSndD (pairSndD (pairFstD (pairSndD h)))).getLastD false] := by
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:196:private def rY (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:168:private def rFwd (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Planted.lean:96:        (pairSndD (pairSndD (pairFstD w)))) ++
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Planted.lean:102:          ((pairSndD (pairSndD (pairFstD w))).drop
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Planted.lean:115:            (pairSndD (pairSndD (pairFstD w)))) ++
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Planted.lean:121:              ((pairSndD (pairSndD (pairFstD w))).drop
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:30:* `NMCCA2.cntRead`, `NMCCA2.ansRead`: the per-entry readings of a log (one token, the answer).
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:53:`cntRead v = if v = [] then [] else [true]`. With `logEmit` it counts the entries of a log. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:54:def cntRead (v : List Bool) : List Bool := if decide (v = []) then [] else [true]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:56:/-- `cntRead v = if v = [] then [] else [true]`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:57:theorem cntRead_eq (v : List Bool) : cntRead v = if decide (v = []) then [] else [true] := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:59:/-- The token reading is polynomial-time: `PolyTimeComputable cntRead`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:60:theorem polyTimeComputable_cntRead : PolyTimeComputable cntRead :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:65:`ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:66:def ansRead (v : List Bool) : List Bool := pairSndD (pairSndD (pairFstD v))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:68:/-- `ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:69:theorem ansRead_eq (v : List Bool) : ansRead v = pairSndD (pairSndD (pairFstD v)) := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:71:/-- The answer reading is polynomial-time: `PolyTimeComputable ansRead`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:72:theorem polyTimeComputable_ansRead : PolyTimeComputable ansRead :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:79:/-- **Counting the entries:** `|logEmit cntRead ⟦h⟧| = |h|`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:80:theorem length_logEmit_cntRead (h : QueryLog (bitSpec din dout)) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:81:    (logEmit cntRead ((bitCodec din dout dα).encodeLog h)).length = h.length := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:82:  rw [logEmit_encodeLog _ cntRead (fun _ => [true]) rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:83:    (fun e t => by rw [cntRead_eq, decide_eq_false (pairEncode_ne_nil _ _)]; rfl)]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:87:/-- **Collecting the answers:** `logEmit ansRead ⟦h⟧` is the concatenation of the entries'
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:89:theorem logEmit_ansRead (h : QueryLog (bitSpec din dout)) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:90:    logEmit ansRead ((bitCodec din dout dα).encodeLog h) = h.flatMap fun e => List.ofFn e.2.2 :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:91:  logEmit_encodeLog _ ansRead _ (by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:92:    rw [ansRead_eq, pairFstD_nil, pairSndD_of_pairDecode_eq_none pairDecode_nil,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:94:    rw [ansRead_eq, pairFstD_pairEncode, bitCodec_encodeEntry, pairSndD_pairEncode,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:104:private def dCnt (w : List Bool) : List Bool := logEmit cntRead (finL w)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:115:  pairEncode (pairEncode (pairEncode (finU w) (logEmit ansRead (finL w))) (pairSndD (finZ w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:129:    (polyTimeComputable_logEmit polyTimeComputable_cntRead).comp hL
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:130:  have hAns : PolyTimeComputable fun w => logEmit ansRead (finL w) :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:131:    (polyTimeComputable_logEmit polyTimeComputable_ansRead).comp hL
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:228:`j` (`length_logEmit_cntRead`), so for `j < ℓ(n)` the round asks block `j` (its offset is
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:231:collected answers (`logEmit_ansRead`, `decodeBitMove_ret`). -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:268:      rw [dCnt, hL, length_logEmit_cntRead, hhist, List.length_map, List.length_range]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:270:    · rw [dIn, hU, hZ, hW, hL, logEmit_ansRead, NUPPT.layout_eq, hhist, List.flatMap_map,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:62:private def rAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rLog w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:216:def finW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:218:/-- `finW w = pairSndD (pairSndD (pairFstD w))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:219:theorem finW_eq (w : List Bool) : finW w = pairSndD (pairSndD (pairFstD w)) := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:63:def rdW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:65:/-- `rdW w = pairSndD (pairSndD (pairFstD w))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:66:theorem rdW_eq (w : List Bool) : rdW w = pairSndD (pairSndD (pairFstD w)) := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:94:def rdAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rdLog w)))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:96:/-- `rdAns w = pairSndD (pairSndD (pairFstD (rdLog w)))`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:97:theorem rdAns_eq (w : List Bool) : rdAns w = pairSndD (pairSndD (pairFstD (rdLog w))) := rfl
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:134:        (pairEncode (pairSndD (pairSndD (pairFstD z))) (pairFstD (pairSndD z))) []
+TCSlib/Cryptography/Games/Efficiency.lean:461:/-- The seed `ω` of a round input: `rW w = pairSndD (pairSndD (pairFstD w))`. -/
+TCSlib/Cryptography/Games/Efficiency.lean:462:def rW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:151:    (pairEncode (pairSndD (pairSndD (pairFstD (pairSndD (pairSndD st)))))
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:156:              pairSndD (pairSndD (pairFstD (pairSndD st))) else pairFstD (pairSndD (pairFstD (pairSndD st))))
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:179:        pairSndD (pairSndD (pairFstD (pairSndD st))) else pairFstD (pairSndD (pairFstD (pairSndD st))) :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:185:        pairSndD (pairSndD (pairFstD (pairSndD st))) else pairFstD (pairSndD (pairFstD (pairSndD st))))
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:231:            pairSndD (pairSndD (pairFstD (pairSndD x₀))) else pairFstD (pairSndD (pairFstD (pairSndD x₀))))
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:237:          pairSndD (pairSndD (pairFstD (pairSndD x₀))) else pairFstD (pairSndD (pairFstD (pairSndD x₀))))
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:440:  have hm : PolyTimeComputable fun w => pairFstD (pairSndD (pairSndD (pairFstD (pairFstD w)))) :=
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:443:      (pairFstD (pairSndD (pairSndD (pairFstD (pairFstD w))))).take
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:450:        ((pairFstD (pairSndD (pairSndD (pairFstD (pairFstD w))))).take
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:302:  have hzz : PolyTimeComputable fun L => pairSndD (pairSndD (pairFstD (NUPPT.inArg L))) :=
+

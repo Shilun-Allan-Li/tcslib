@@ -1,0 +1,318 @@
+# Fill `dl-folds` — DL-36 and DL-37 folds and accepted promotions
+
+**Status: checkpoint 1 (group G) delivered.** Groups R, B, L (checkpoint 2) and E (checkpoint 3)
+and the final checks follow; this report is extended at each delivery.
+
+| | |
+|---|---|
+| Unit | `dl-folds` (brief `outbox/fills/dl-folds/brief.md`, exchange `a0a46d7c5`; `evidence/inputs/`, SHA256SUMS 7/7 OK) |
+| Worker | Claude |
+| Issue base | `d3f2290a2c66f614e8807903b89ac595086578b3` (merge of #298) on `cryptography/pass-shelat-ch2-4` |
+| Branch | local `fill/dl-folds`; checkpoint 1 = commit `b3f7dae2c` (one commit on the base) |
+| Toolchain | Lean 4.25.0, Mathlib of the base's `lake-manifest.json` |
+| Order | base `order.txt` 421 modules; after checkpoint 1, `evidence/cp1/order-cp1.txt`, 422 modules |
+
+## 1. Checkpoint 1 at a glance
+
+- All seven G items are **done**: the listed copies are deleted (14 `NMSim` lemmas; `NMCCA2`'s
+  `fwdHandler`, `fwdHandler_impl`, `exists_withAdviceOn`, `cntRead` and `ansRead` with their
+  lemmas; the private PRF `impl_of_query`), their uses re-pointed, and the promoted lemmas
+  published in the Games layer under new names (§3). No item is escalated.
+- **Statements:** `decls2` over the 24 changed and new files: 28 ADDED, 23 REMOVED, **0 CHANGED**
+  (`evidence/cp1/statements/decls2-cp1.tsv`). The audited endpoints are untouched (none of their
+  files' headers changed; the endpoint files `Indistinguishability.lean` and `Simulation.lean`
+  changed only in one proof line and in docstrings, §5).
+- **Census** (public constants, base against checkpoint 1, name map applied): REMOVED 32 = the
+  listed copies and their generated `simps` field lemmas and `congr_simp`; ADDED 41 = the promoted
+  lemmas, the published readers, the generated lemmas of the moved definitions, and three
+  generated matchers of the re-derived `ChallengeSim.expect_simulate_eager`; **CHANGED 1**, that
+  re-derived proof's generated matcher `ChallengeSim.expect_simulate_eager.match_1_1` (a proof
+  artifact, not a statement); REPOINTED 6 (types equal after the name map); map check 0 bad
+  (`evidence/cp1/census/census-diff-cp1.txt`).
+- **Build:** every module from the first edited one (`Games/OracleComp`, position 199) to the end of
+  the recomputed order checked, 224/224 pass (`evidence/cp1/sweep.tsv`); after a last
+  docstring-only edit, positions 286–422 rechecked, 137/137 pass (`evidence/cp1/sweep2.tsv`).
+- **Sorry census:** 45 declarations in 24 modules, identical to `base-sorries.txt`
+  (`evidence/cp1/sorry-census.txt`, `evidence/logs/sorry-census-base.txt`).
+- **Lint:** `python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography --check8b`: 216 FAIL,
+  103 WARN, the same FAIL and WARN lines as at the base (`evidence/cp1/lint-cp1.log`,
+  `evidence/logs/lint-base.log`).
+- **Rule 10 (early check):** whole-file seals A and B of 11 changed and new files pass with no
+  failing declaration (`evidence/logs/seal/cp1/results.jsonl`, sources `evidence/seal-src/cp1/`).
+  The full seal comparison (every changed file, base and final, controls, explicit-unfold scan)
+  belongs to the final delivery.
+- **Patch replay:** the series applied to the base gives the branch's tree
+  (`evidence/cp1/patch-replay.log`).
+
+## 2. Files (checkpoint 1)
+
+| File | Lines base → cp1 |
+|---|---|
+| `Games/OracleComp.lean` | 331 → 371 |
+| `Games/Simulate.lean` | 327 → 374 |
+| `Games/Probability.lean` | 397 → 409 |
+| `Games/Machines.lean` | 216 → 278 |
+| `Games/BitCodec.lean` | 399 → 430 |
+| `Games/Hopping.lean` | 445 → 524 |
+| `Games/Efficiency.lean` | 844 → 935 |
+| `Games/Forwarding.lean` (**new**) | — → 212 |
+| `Games.lean` (facade) | 61 → 64 |
+| `Encryption/PublicKey/OracleSecurity/ChallengeSim.lean` | 315 → 369 |
+| `Encryption/PrivateKey/OracleFromPRF/Handler.lean` | 702 → 673 |
+| `NMI/Forward.lean` | 350 → 230 |
+| `NMI/Decrypt.lean` | 350 → 298 |
+| `NMI/Encrypt.lean` | 332 → 332 |
+| `NMI.lean` (`Indistinguishability.lean`) | 655 → 655 |
+| `NMS/Generic.lean` | 460 → 224 |
+| `NMS/Rounds.lean` | 356 → 194 |
+| `NMS/Challenge.lean` | 415 → 416 |
+| `NMS/Hybrid.lean` | 683 → 683 |
+| `NMS/SimIND.lean` | 912 → 911 |
+| `NMS/Simulator.lean` | 628 → 628 |
+| `NMS/Reduction.lean` | 661 → 661 |
+| `NMS/IndSim.lean` | 293 → 293 |
+| `Simulation.lean` | 795 → 796 |
+
+Paths are relative to `TCSlib/Cryptography/`; `NMI/`, `NMS/` as in the brief. Every file stays below
+1000 lines. `Games/Efficiency.lean` keeps 64 lines of room for the R1 readers of checkpoint 2.
+
+## 3. Items of group G
+
+The grep receipts (searches at the base, with hits) are in `evidence/grep/group-G.txt`
+(script `evidence/tools/greps_g.sh`).
+
+### G1 — budget reduction and `buildComp_of_ret` — done
+
+- `NMSim.buildComp_of_ret` → `Games.buildComp_of_ret` (`Games/Machines.lean`, in section
+  `BuildComp` beside `buildComp_zero_of_ret`, `buildComp_succ_of_ret`).
+- `NMSim.buildComp_budget_eq` → `Games.buildComp_budget_eq`, beside `buildComp_costBoundedBy`.
+- `NMSim.toCompOn_budget_eq` → `Complexity.NUPPT.toCompOn_budget_eq`, beside
+  `NUPPT.toCompOn_costBoundedBy` (the namespace of the `NUPPT.toCompOn_*` lemmas of the file).
+- Statements are the copies' up to the namespace; proofs unchanged. Uses re-pointed:
+  `NMS/Simulator.lean` (`NUPPT.toCompOn_budget_eq`), `Rounds`' own uses moved with the lemmas.
+- Further copies: none (receipts G1-budget, G1-ret).
+
+### G2 — calls and finalizations — done
+
+- **Published (Fin form)** beside `InteractiveHandler.impl_of_ret` in `Games/Efficiency.lean`:
+  - `InteractiveHandler.impl_of_query`: answer `y' y` and state `s' y` as vectors, the general form
+    of both `NMSim.impl_of_query` and the private PRF copy (any outer index `j`, any `perCall ≥ 1`);
+  - `InteractiveHandler.finish_of_ret`: `finRun … = ⟨[true], ⟦b⟧⟩ → finish = pure b`.
+- **The list forms are different statements** (lists `u`, `v`, `b` with length hypotheses and
+  `padFin` in the conclusion), so they are kept as corollaries, derived from the Fin forms with
+  `ofFn_padFin_of_length`:
+  - `NMSim.impl_of_ret` → `InteractiveHandler.impl_of_ret_padFin`;
+  - `NMSim.impl_of_query` → `InteractiveHandler.impl_of_query_padFin`;
+  - `NMSim.finish_of_ret` → `InteractiveHandler.finish_of_ret_padFin`.
+
+  They live in the new `Games/Forwarding.lean`, not beside `impl_of_ret`: with them
+  `Games/Efficiency.lean` would pass 1000 lines once the R1 readers are added (935 lines now, plus
+  about 45). Their statements are the NMSim copies' (same argument order), so the uses only change
+  name: `NMS/Challenge.lean` (3), `NMS/Simulator.lean`, `NMS/Reduction.lean`.
+- **Private PRF `impl_of_query`** (`OracleFromPRF/Handler.lean:421`) folded onto the published
+  `InteractiveHandler.impl_of_query` (with `j = 0`, `perCall = 1` from `pkHandler_perCall`); its
+  private helper `encodeLog_one`, used only there, is deleted. The three uses
+  (`pkHandler_impl_enc`, `pkHandler_impl_dec_open`, `pkHandler_impl_challenge_none`) now open each
+  round goal with `show pkRun q atkBit b _ = _` (the copy stated its hypotheses on `pkRun`
+  directly) and, in the second round, `simp only [Fin.val_zero, List.replicate_zero]` (the
+  published lemma writes the outer index of the log as `1^j`, the copy as `[]`). Nothing else in
+  those proofs changed.
+- Further copies (receipts G2-impl, G2-buildComp-use), not folded, recorded in §7:
+  `AdaptiveCPA/Handler.lean` `acHandler_impl_forward` re-proves `impl_of_query` inline, and
+  `pkHandler_finish`, `acHandler_finish` re-prove a return-at-budget-0 finalization inline. They
+  are proofs of published theorems, not declarations, so the brief's rule that other proofs stay
+  unchanged keeps them.
+
+### G3 — `expect_toCompOn_outLen` — done
+
+`NMSim.expect_toCompOn_outLen` → `Games.expect_toCompOn_outLen` (`Games/Efficiency.lean`, after
+`exists_toCompOn_of_toComp`). Uses (`NMS/Simulator`, `IndSim`, `SimINDGap`) resolve to it through
+`open TCSlib.Cryptography.Games` without a source change. No further copy.
+
+### G4 — reasoning on the possible outputs, costs — done
+
+| Copy | Promoted | Home |
+|---|---|---|
+| `NMSim.expect_congr_of_allOutputs` | `Games.ProbComp.expect_congr_of_allOutputs` | `Games/Hopping.lean`, after `expect_mono_of_allOutputs` |
+| `NMSim.bind_congr_of_allOutputs` | `Games.OracleComp.bind_congr_of_allOutputs` | `Games/OracleComp.lean`, after `AllOutputs.bind` |
+| `NMSim.costBoundedBy_bind_of_allOutputs` | `Games.OracleComp.CostBoundedBy.bind_of_allOutputs` | `Games/OracleComp.lean`, after `bind_congr_of_allOutputs` |
+| `NMSim.expect_expect_sample` | `Games.ProbComp.expect_expect_sample` | `Games/Probability.lean`, section `Sampling` |
+| `NMSim.simulate_costBoundedBy_once` | `Games.simulate_costBoundedBy_once` | `Games/Simulate.lean`, after `simulate_costBoundedBy` |
+
+`CostBoundedBy.bind_of_allOutputs` cannot sit directly beside `CostBoundedBy.bind`: it needs
+`AllOutputs`, which the file defines after the cost section; it is the last lemma of the
+"Possible outputs" section, named in the `CostBoundedBy.bind` style. No further copies.
+
+### G5 — one-shot coins drawn in advance — done
+
+- `NMSim.expect_simulate_eager` (with its private helper `simulate_eq_of_used`) →
+  `Games.expect_simulate_eager` (`Games/Hopping.lean`, new section "One-shot coins drawn in
+  advance"; the helper stays private there).
+- `ChallengeSim.expect_simulate_eager` keeps its name and statement (decls2: unchanged) and is now
+  derived from it: with the coins `re` fixed, the CPA oracle becomes a deterministic oracle `OE re`
+  (a local `let` defined by `match` in the proof) whose simulation is `chRun (g · re)` (induction);
+  from the unchallenged state `Games.expect_simulate_eager` (used = "challenge recorded") gives the
+  average; from a recorded state the oracle is already deterministic and `chRun_some_congr` removes
+  the dependence on `re`. `ChallengeSim.lean` gains `import TCSlib.Cryptography.Games.Hopping`.
+- Uses: `NMS/Hybrid.lean` resolves to the Games lemma unchanged; `PaddedCPA.lean` keeps using the
+  ChallengeSim lemma.
+
+### G6 — equal until bad in expectation — done
+
+`NMSim.expect_eq_until_bad` → `Games.expect_eq_until_bad`, directly before `prob_eq_until_bad`.
+`prob_eq_until_bad` keeps its statement (decls2: unchanged) and both conjuncts are now derived from
+it: "`Q` and good" is `𝔼[if bad then 0 else 1_Q]`, and "bad" is `1 − 𝔼[if bad then 0 else 1]`
+(`prob_not`). The private `expect_ite_one_split`, used only by the old second conjunct, is deleted.
+Use re-pointed: `NMS/SimIND.lean` (resolves through `open Games`; docstrings qualified).
+
+### G7 — the forwarding handler, hard-wired advice, log readings — done
+
+- **New module `Games/Forwarding.lean`** (imports `Games.Efficiency`; module docstring; imported by
+  the facade `Games.lean`, `## Contents` updated):
+  - `NMCCA2.fwdHandler` (with its `simps` field lemmas `_stateLen`, `_seedLen`, `_perCall`,
+    `_init`, `_advIn`, `_outLen`, `_finCall`, `_finRun`) → `Games.fwdHandler` (same lemmas);
+  - `NMCCA2.fwdHandler_impl` → `Games.fwdHandler_impl`, now proved from
+    `InteractiveHandler.impl_of_query` and the published `_input` lemmas of the readers;
+  - `NMCCA2.exists_withAdviceOn` → `Complexity.NUPPT.exists_withAdviceOn` (it is a fact about
+    `NUPPT`, like `NUPPT.exists_withAdvice`); proof unchanged;
+  - the three list-form call lemmas of G2.
+- **Why a new `Games/` module and not `Games/Efficiency.lean` or a sibling under
+  `Games/Efficiency/`:** `Games/Efficiency.lean` would pass 1000 lines (§2). A sibling under
+  `Games/Efficiency/` must import `Games.Efficiency` (it needs `InteractiveHandler`), so the
+  facade `Games/Efficiency.lean` could not import it, and the lint would add a new FAIL
+  ("facade does not import child module") for both `Games/Efficiency.lean` and `Games.lean`.
+  Under `Games/` the facade `Games.lean` imports it, and the lint has no new FAIL.
+- **Rule 10 and the definition's body:** `fwdHandler`'s round function, the private `fwdRun`,
+  moved with it. It read the round input through `Forward`'s private readers `rState`, `rIdx`,
+  `rQuery`, `rLog`, `rAns`; it now reads it through the published `InteractiveHandler.rS`, `rI`,
+  `rX`, `rL` and the new `InteractiveHandler.rAns` (R3, published in this checkpoint because
+  `fwdRun` needs it), with the same bodies. This is the only definition body that changed
+  (recorded body change). `Forward`'s private readers and their private `fields_input`, used only
+  by `fwdRun` and `fwdHandler_impl`, are deleted (they are R2's private copies).
+- `NMCCA2.simulate_fwdHandler_impl` is not in the item list and stays in `NMI/Forward.lean` with
+  its name; its statement now mentions `Games.fwdHandler` (re-pointed). The definitions that
+  instantiate the handler, `NMCCA2.decHandler`, `NMCCA2.encHandler` and `NMSim.copyHandler`, are
+  textually unchanged and now elaborate to `Games.fwdHandler` (census REPOINTED rows of their
+  `eq_1` lemmas).
+- `cntRead`, `ansRead`, `cntRead_eq`, `ansRead_eq`, `polyTimeComputable_cntRead`,
+  `polyTimeComputable_ansRead` → `Games.*` in `Games/BitCodec.lean` (new section "Readings of a log
+  entry"). `polyTimeComputable_cntRead` needs `Complexity.polyTimeComputable_isNil`, so
+  `Games/BitCodec.lean` imports `TCSlib.Complexity.ClassNP.PolyTimeBlockLoop` (§4).
+  `length_logEmit_cntRead` and `logEmit_ansRead` stay in `NMI/Decrypt.lean` (they need `logEmit`,
+  item E1). In `length_logEmit_cntRead` the hypothesis `cntRead [] = []` was `rfl`; `cntRead` is
+  now another file's definition, so it reads `by rw [cntRead_eq]; rfl` (Rule 10).
+- Uses re-pointed: `NMS/SimIND.lean` (`open NMCCA2 (…)` drops the moved names;
+  `NMCCA2.fwdHandler_outLen` → `fwdHandler_outLen`), `NMI.lean`, `NMS/Simulator.lean`,
+  `NMS/IndSim.lean` (`NUPPT.exists_withAdviceOn`), and docstrings.
+- Further copies (receipts G7-*): the private `rY` (PRF handler) and `rFwd` (AdaptiveCPA handler)
+  are R3 copies of the answer reader (checkpoint 2). `OracleFromPRF.lean:536` re-proves
+  `polyTimeComputable_ansRead` as a local `have` inside a proof (§7).
+  `DiscreteLogHardcore.lean:1130` `dlb_fα` has `ansRead`'s body but reads a field of a different
+  layout, so it is not a copy.
+
+## 4. Imports and order
+
+| Module | Import change | Reason |
+|---|---|---|
+| `Games/BitCodec.lean` | + `TCSlib.Complexity.ClassNP.PolyTimeBlockLoop` | `polyTimeComputable_isNil` for `polyTimeComputable_cntRead`; a Complexity module (order 67 < 225), no TCSlib.Cryptography import, so acyclic |
+| `Games.lean` (facade) | + `TCSlib.Cryptography.Games.Forwarding` | the facade imports its new child; only `TCSlib.lean` imports `Games.lean`, so acyclic |
+| `Games/Forwarding.lean` (new) | `TCSlib.Cryptography.Games.Efficiency` | `InteractiveHandler` |
+| `OracleSecurity/ChallengeSim.lean` (consumer) | + `TCSlib.Cryptography.Games.Hopping` | `Games.expect_simulate_eager` |
+| `NMI/Forward.lean` (consumer) | `Games.Efficiency` → `Games.Forwarding` | `Games.fwdHandler` |
+
+No downstream module is imported to reach a lemma. The order is recomputed with a stable
+topological sort of the base order (`evidence/tools/reorder.py`): `Games/Hopping` moves before
+`ChallengeSim` (265 and 266), and `Games/Forwarding` is inserted at 280, before its first consumer
+`NMI/Forward` (`evidence/cp1/order-cp1.txt`).
+
+## 5. Statements, bodies and proofs
+
+- `decls2` (`evidence/tools/decls2.py`, the maintainer's tool): 0 CHANGED over the 24 files.
+- `bodies.py` (`evidence/tools/bodies.py`, complement to decls2: every definition's whole text and
+  every private theorem's header, private declarations included):
+  `evidence/cp1/statements/bodies-cp1.tsv` has no CHANGED-BODY and no CHANGED-PRIVATE-HEADER row;
+  its REMOVED/ADDED rows are the moves of §3 (`fwdRun`'s body change from private to published
+  readers is a move between files and is recorded in G7).
+- Proofs that changed beyond re-pointed names, each required by its item:
+  `Games.prob_eq_until_bad` (G6), `ChallengeSim.expect_simulate_eager` (G5), the three PRF handler
+  proofs (G2), `NMCCA2.length_logEmit_cntRead` (G7, Rule 10), and the moved `fwdHandler_impl` (G7).
+- The audited endpoint files `NMI.lean` and `Simulation.lean`: one proof line of
+  `nmSecure_cca2_of_indSecure_cca2` re-pointed (`exists_withAdviceOn` →
+  `NUPPT.exists_withAdviceOn`) and docstrings re-pointed; no header changed.
+
+## 6. Name map (checkpoint 1)
+
+`evidence/census/namemap.tsv` is the cumulative map (old full name → new full name), checked
+against the census (`MAP-CHECK`: every old name absent at head, every new name present). Short
+form (NMSim = `Composability.NMSim`, NMCCA2 = `Composability.NMCCA2`, `IH` =
+`Games.InteractiveHandler`):
+
+| Old | New |
+|---|---|
+| `NMSim.buildComp_budget_eq` | `Games.buildComp_budget_eq` |
+| `NMSim.toCompOn_budget_eq` | `Complexity.NUPPT.toCompOn_budget_eq` |
+| `NMSim.buildComp_of_ret` | `Games.buildComp_of_ret` |
+| `NMSim.impl_of_ret` | `IH.impl_of_ret_padFin` |
+| `NMSim.impl_of_query` | `IH.impl_of_query_padFin` |
+| `NMSim.finish_of_ret` | `IH.finish_of_ret_padFin` |
+| (private) `PRFGame.impl_of_query` | `IH.impl_of_query` |
+| (private) `PRFGame.encodeLog_one` | — (helper of the deleted copy) |
+| `NMSim.expect_toCompOn_outLen` | `Games.expect_toCompOn_outLen` |
+| `NMSim.expect_congr_of_allOutputs` | `Games.ProbComp.expect_congr_of_allOutputs` |
+| `NMSim.bind_congr_of_allOutputs` | `Games.OracleComp.bind_congr_of_allOutputs` |
+| `NMSim.expect_expect_sample` | `Games.ProbComp.expect_expect_sample` |
+| `NMSim.costBoundedBy_bind_of_allOutputs` | `Games.OracleComp.CostBoundedBy.bind_of_allOutputs` |
+| `NMSim.simulate_costBoundedBy_once` | `Games.simulate_costBoundedBy_once` |
+| `NMSim.expect_simulate_eager` | `Games.expect_simulate_eager` |
+| (private) `NMSim.simulate_eq_of_used` | (private) `Games.simulate_eq_of_used` |
+| `NMSim.expect_eq_until_bad` | `Games.expect_eq_until_bad` |
+| (private) `Games.expect_ite_one_split` | — (unused after G6) |
+| `NMCCA2.fwdHandler` and its 8 `simps` lemmas, `fwdHandler.congr_simp` | `Games.fwdHandler` and the same lemmas |
+| (private) `NMCCA2.fwdRun`, `polyTimeComputable_fwdRun` | (private) `Games.fwdRun`, `polyTimeComputable_fwdRun` |
+| `NMCCA2.fwdHandler_impl` | `Games.fwdHandler_impl` |
+| (private) `NMCCA2.rState`, `rIdx`, `rQuery`, `rLog`, `rAns` | `IH.rS`, `rI`, `rX`, `rL`, `rAns` |
+| (private) `NMCCA2.fields_input` (Forward) | `IH.rS_input`, `rI_input`, `rX_input`, `rL_input`, `rAns_input` |
+| `NMCCA2.exists_withAdviceOn` | `Complexity.NUPPT.exists_withAdviceOn` |
+| `NMCCA2.cntRead`, `cntRead_eq`, `polyTimeComputable_cntRead` | `Games.cntRead`, `cntRead_eq`, `polyTimeComputable_cntRead` |
+| `NMCCA2.ansRead`, `ansRead_eq`, `polyTimeComputable_ansRead` | `Games.ansRead`, `ansRead_eq`, `polyTimeComputable_ansRead` |
+
+New declarations without a predecessor: `IH.impl_of_query` (also the PRF copy's successor),
+`IH.finish_of_ret`, `IH.rAns`, `IH.rAns_input`, `IH.polyTimeComputable_rAns`.
+
+## 7. New duplication found (not folded)
+
+1. `AdaptiveCPA/Handler.lean` `acHandler_impl_forward` re-proves `InteractiveHandler.impl_of_query`
+   inline (`buildComp_succ_of_query`, then `buildComp_zero_of_ret` with `Fin.append`).
+2. `pkHandler_finish` (`OracleFromPRF/Handler.lean`) and `acHandler_finish`
+   (`AdaptiveCPA/Handler.lean`) re-prove a returning finalization inline (`buildComp_zero_of_ret`),
+   the content of `InteractiveHandler.finish_of_ret`.
+3. `OracleFromPRF.lean:536` proves `PolyTimeComputable fun z => pairSndD (pairSndD (pairFstD z))`
+   as a local `have`, which is `Games.polyTimeComputable_ansRead`.
+
+Each is inside the proof of a published theorem; the brief keeps other proofs unchanged, so they
+are listed for a later cleanup.
+
+## 8. Evidence (checkpoint 1)
+
+`evidence/SHA256SUMS` lists every evidence file, and the delivered evidence paths are exactly the
+manifest's paths (checked by `evidence/tools/pack.py`).
+
+| Path | Content |
+|---|---|
+| `inputs/` | the brief's inputs (brief, addendum, README, `order.txt`, `roots.txt`, `base-sorries.txt`, their SHA256SUMS) |
+| `logs/preflight.log`, `cache-*.log`, `packages-check.log`, `mathlib-roots.txt` | environment and narrowed cache fetch (addendum) |
+| `logs/bootstrap.tsv`, `logs/bootstrap/` | the base bootstrap, 421/421 |
+| `logs/census/census-base.log`, `logs/census/axioms-base.log` | base census (13,639 constants) and base axioms of the 46-file superset |
+| `logs/seal/base/` | base whole-file seals A/B, scans, `results.jsonl` (46 files) |
+| `logs/lint-base.log`, `logs/sorry-census-base.txt` | base lint and sorry census |
+| `cp1/order-cp1.txt`, `cp1/changed-modules.txt` | recomputed order; changed and new modules |
+| `cp1/sweep-list.txt`, `cp1/sweep.tsv`, `cp1/sweep-logs/` | checkpoint sweep 199–422 |
+| `cp1/sweep2-list.txt`, `cp1/sweep2.tsv`, `cp1/sweep2-logs/` | recheck 286–422 after docstring edits |
+| `cp1/sorry-census.txt` | 45 in 24, as at the base |
+| `cp1/census/census-cp1.log`, `cp1/census/census-diff-cp1.txt` | census and its comparison |
+| `cp1/statements/decls2-cp1.tsv`, `bodies-cp1.tsv` | statement and body comparison |
+| `cp1/lint-cp1.log`, `cp1/patch-replay.log` | lint; patch replay |
+| `logs/seal/cp1/`, `seal-src/` | early seals of 11 files; all seal sources |
+| `census/namemap.tsv` | cumulative name map |
+| `grep/group-G.txt` | grep receipts |
+| `tools/` | every script used (`chk.py`, `sweep.py`, `reorder.py`, `sorrycensus.py`, `census_diff.py`, `decls2.py`, `bodies.py`, `seal.py`, `files.py`, `greps_g.sh`, `gen_census.py`, `pack.py`) and the census sources (`tools/census/`) |

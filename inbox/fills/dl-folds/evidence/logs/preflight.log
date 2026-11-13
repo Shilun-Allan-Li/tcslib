@@ -1,0 +1,69 @@
+# preflight 2026-11-13T07:57:40Z (dl-folds)
+## nproc
+4
+## cgroup
+v1 (/sys/fs/cgroup/memory)
+memory.limit_in_bytes 9223372036854771712
+memory.usage_in_bytes 2538426368
+memory.stat:
+cache 44998656
+rss 11403264
+rss_huge 0
+shmem 17166336
+mapped_file 31055872
+dirty 40960
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 17383
+pgpgout 3650
+pgfault 6735
+pgmajfault 35
+inactive_anon 14032896
+active_anon 4096
+inactive_file 22532096
+active_file 5304320
+unevictable 14532608
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 2520055808
+total_rss 18481152
+total_rss_huge 0
+total_shmem 17166336
+total_mapped_file 34615296
+total_dirty 1491197952
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 438029
+total_pgpgout 248572
+total_pgfault 302060
+total_pgmajfault 964
+total_inactive_anon 20246528
+total_active_anon 24576
+total_inactive_file 2331389952
+total_active_file 171495424
+total_unevictable 15192064
+## /proc/meminfo
+MemTotal:       16472076 kB
+MemFree:        13815596 kB
+MemAvailable:   16096520 kB
+Buffers:           34624 kB
+Cached:          2426212 kB
+## df -B1 / df -T (clone, payload, /tmp)
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 29105197056 14767071232  67% /
+/dev/vda       270553174016 29105197056 14767071232  67% /
+/dev/vda       270553174016 29105197056 14767071232  67% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 28423044  14420968  67% /
+/dev/vda       ext4 264212084 28423044  14420968  67% /
+/dev/vda       ext4 264212084 28423044  14420968  67% /
+## computation
+cgroup v1, no limit (9223372036854771712): headroom = MemAvailable = 16096520 kB = 15.35 GiB >= 4 GiB
+in use = usage - total_cache + total_shmem = 2538426368 - 2520055808 + 17166336 = 35536896 B
+disk free on clone fs: 14767071232 B = 13.75 GiB >= 12 GiB

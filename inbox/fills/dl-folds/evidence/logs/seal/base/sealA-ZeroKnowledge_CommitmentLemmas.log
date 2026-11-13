@@ -1,0 +1,76 @@
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_CommitmentLemmas.lean:104:2: error: Tactic `rfl` failed: The left-hand side
+  uexp fun a =>
+    uprob fun b =>
+      D (X (Prod.fst.{u_1, max u_3 u_4} ((EnsembleLemmas.swapAux κ σ ρ) (a, b))))
+          ((EnsembleLemmas.swapAux κ σ ρ) (a, b)).2 =
+        true
+is not definitionally equal to the right-hand side
+  uexp fun c₀ => uprob fun z => D (X (Prod.fst.{u_1, u_4} z)) (c₀, z.2) = true
+
+σ : Type u_1
+γ : Type u_2
+κ : Type u_3
+ρ : Type u_4
+inst✝² : Fintype σ
+inst✝¹ : Fintype κ
+inst✝ : Fintype ρ
+X : σ → γ
+D : γ → κ × ρ → Bool
+⊢ (uexp fun a =>
+      uprob fun b => D (X ((EnsembleLemmas.swapAux κ σ ρ) (a, b)).1) ((EnsembleLemmas.swapAux κ σ ρ) (a, b)).2 = true) =
+    uexp fun c₀ => uprob fun z => D (X z.1) (c₀, z.2) = true
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_CommitmentLemmas.lean:129:2: error: Type mismatch
+  abs_sub_comm ?m.19 ?m.20
+has type
+  |?m.19 - ?m.20| = |?m.20 - ?m.19|
+but is expected to have type
+  distAdv X Y D = distAdv Y X D
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_CommitmentLemmas.lean:140:72: error: unsolved goals
+case e_D.h.h
+σ : Type u_1
+inst✝ : Fintype σ
+B D : NUPPT
+hc : B.coins = D.coins
+n m : ℕ
+X : σ → Fin m → Bool
+g : List Bool → List Bool
+hrun : ∀ (y r : List Bool), B.runAtL n y r = D.runAtL n (g y) r
+hlen : D.coinLen n = B.coinLen n
+e : D.Coins n ≃ B.Coins n := (finCongr hlen).arrowCongr (Equiv.refl Bool)
+z : Fin m → Bool
+c : D.Coins n
+hofn : List.ofFn (e c) = List.ofFn c
+⊢ decide (D.runAtL n (g (List.ofFn z)) (List.ofFn c) = [true]) =
+    decide (D.runAtL n (g (List.ofFn z)) (List.ofFn c) = [true])
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_CommitmentLemmas.lean:153:94: error: unsolved goals
+case e_D.h.h
+σ : Type u_1
+inst✝ : Fintype σ
+B D : NUPPT
+hc : B.coins = D.coins
+n : ℕ
+X : σ → List Bool
+g : List Bool → List Bool
+hrun : ∀ (y r : List Bool), B.runAtL n y r = D.runAtL n (g y) r
+hlen : D.coinLen n = B.coinLen n
+e : D.Coins n ≃ B.Coins n := (finCongr hlen).arrowCongr (Equiv.refl Bool)
+z : List Bool
+c : D.Coins n
+hofn : List.ofFn (e c) = List.ofFn c
+⊢ decide (D.runAtL n (g z) (List.ofFn c) = [true]) = decide (D.runAtL n (g z) (List.ofFn c) = [true])
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_CommitmentLemmas.lean:241:11: error: Tactic `rfl` failed: The left-hand side
+  Strategy.encodeMsgs ([] ++ M)
+is not definitionally equal to the right-hand side
+  Strategy.encodeMsgs [] ++ Strategy.encodeMsgs M
+
+case nil
+M : List (List Bool)
+⊢ Strategy.encodeMsgs ([] ++ M) = Strategy.encodeMsgs [] ++ Strategy.encodeMsgs M
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_CommitmentLemmas.lean:502:4: error: Type mismatch
+  EnsembleLemmas.take_drop_ofFn_blocks (padFin (v.length * v.length) r) i hi
+has type
+  List.take v.length (List.drop (i * v.length) (List.ofFn (padFin (v.length * v.length) r))) =
+    List.ofFn ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩)
+but is expected to have type
+  List.take v.length (List.drop (i * v.length) (EnsembleLemmas.padL (v.length * v.length) r)) =
+    List.ofFn ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩)

@@ -1,0 +1,167 @@
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:221:20: warning: This simp argument is unused:
+  Equiv.prodComm_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [e, pairHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, E̵q̵u̵i̵v̵.̵p̵r̵o̵d̵C̵o̵m̵m̵_̵a̵p̵p̵l̵y̵,̵ ̵Prod.map_apply, Prod.fst_swap, Prod.snd_swap, id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:221:42: warning: This simp argument is unused:
+  Prod.map_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [e, pairHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.m̵a̵p̵_̵a̵p̵p̵l̵y̵,̵ ̵P̵r̵o̵d̵.̵fst_swap, Prod.snd_swap, id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:221:58: warning: This simp argument is unused:
+  Prod.fst_swap
+
+Hint: Omit it from the simp argument list.
+  simp only [e, pairHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.map_apply, Prod.f̵st̵_̵s̵w̵a̵p̵,̵ ̵P̵r̵o̵d̵.̵s̵nd_swap, id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:221:73: warning: This simp argument is unused:
+  Prod.snd_swap
+
+Hint: Omit it from the simp argument list.
+  simp only [e, pairHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.map_apply, Prod.fst_swap, P̵r̵o̵d̵.̵s̵n̵d̵_̵s̵w̵a̵p̵,̵ ̵id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:221:88: warning: This simp argument is unused:
+  id_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [e, pairHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.map_apply, Prod.fst_swap, Prod.snd_swap,̵ ̵i̵d̵_̵e̵q̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:321:71: error: Type mismatch
+  rfl
+has type
+  ?m.221 = ?m.221
+but is expected to have type
+  distAdv (fun r => multiCom Com v r) (fun r => multiCom Com v' r) (D.distinguisherL n) =
+    distAdv (pairTuple (cm v)) (pairTuple (cm v')) D'
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:609:15: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.155 ↔ ?m.155
+but is expected to have type
+  owpPredictorSnoc D flip (f x✝.1) x✝.2 = h x✝.1 ↔
+    owpPredictor (fun z r => D (e z) r) flip
+        (owpPair f
+          ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)
+        ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =
+      h ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1.1
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:613:4: error: Tactic `rfl` failed: The left-hand side
+  acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r
+is not definitionally equal to the right-hand side
+  acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+
+ρ : Type u_1
+inst✝¹ : Fintype ρ
+inst✝ : Nonempty ρ
+n : ℕ
+f : (Fin n → Bool) ≃ (Fin n → Bool)
+h : (Fin n → Bool) → Bool
+D : (Fin (n + 1) → Bool) → ρ → Bool
+e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+  { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+    right_inv := ⋯ }
+h1 :
+  ∀ (flip : Bool),
+    predProb (⇑f) h (owpPredictorSnoc D flip) =
+      predProb (owpPair f) (fun w => h w.1) (owpPredictor (fun z r => D (e z) r) flip)
+⊢ (acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:617:4: error: Tactic `rfl` failed: The left-hand side
+  acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r
+is not definitionally equal to the right-hand side
+  acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+
+ρ : Type u_1
+inst✝¹ : Fintype ρ
+inst✝ : Nonempty ρ
+n : ℕ
+f : (Fin n → Bool) ≃ (Fin n → Bool)
+h : (Fin n → Bool) → Bool
+D : (Fin (n + 1) → Bool) → ρ → Bool
+e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+  { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+    right_inv := ⋯ }
+h1 :
+  ∀ (flip : Bool),
+    predProb (⇑f) h (owpPredictorSnoc D flip) =
+      predProb (owpPair f) (fun w => h w.1) (owpPredictor (fun z r => D (e z) r) flip)
+h0 : (acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r) = acceptProb (bitCom f h false) D
+⊢ (acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:725:4: error: Tactic `rfl` failed: The left-hand side
+  |acceptProb (fun r => List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v₀ ((FunFamily.blocks n n) r))))
+        (D.distinguisherL n) -
+      acceptProb (fun r => List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v₁ ((FunFamily.blocks n n) r))))
+        (D.distinguisherL n)|
+is not definitionally equal to the right-hand side
+  |acceptProb (fun s => pairTuple (bc v₀) ((FunFamily.blocks n n) s)) D' -
+      acceptProb (fun s => pairTuple (bc v₁) ((FunFamily.blocks n n) s)) D'|
+
+P : PermFamily
+h : (n : ℕ) → (Fin n → Bool) → Bool
+D : NUPPT
+n : ℕ
+hn : n > 0
+D' : (Fin n → Fin (n + 1) → Bool) → D.Coins n → Bool :=
+  fun w c => D.distinguisherL n (List.ofFn ((FunFamily.blocks n (n + 1)).symm w)) c
+hD' : D' = fun w c => D.distinguisherL n (List.ofFn ((FunFamily.blocks n (n + 1)).symm w)) c
+bc : (Fin n → Bool) → Fin n → (Fin n → Bool) → Fin (n + 1) → Bool := fun v i => bitCom (P.f n) (h n) (v i)
+hbc : bc = fun v i => bitCom (P.f n) (h n) (v i)
+v₀ v₁ : Fin n → Bool
+⊢ |acceptProb (fun r => List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v₀ ((FunFamily.blocks n n) r))))
+          (D.distinguisherL n) -
+        acceptProb (fun r => List.ofFn ((FunFamily.blocks n (n + 1)).symm (owpCom P h n v₁ ((FunFamily.blocks n n) r))))
+          (D.distinguisherL n)| =
+    |acceptProb (fun s => pairTuple (bc v₀) ((FunFamily.blocks n n) s)) D' -
+        acceptProb (fun s => pairTuple (bc v₁) ((FunFamily.blocks n n) s)) D'|
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:856:4: error: Tactic `rfl` failed: The left-hand side
+  List.ofFn
+    (Fin.snoc ((P.f v.length) ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩))
+      (v.getD i false ^^
+        h v.length ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩)))
+is not definitionally equal to the right-hand side
+  List.ofFn (T ⟨i, hi⟩)
+
+P : PermFamily
+h : (n : ℕ) → (Fin n → Bool) → Bool
+F H : List Bool → List Bool
+hFx : ∀ (n : ℕ) (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn ((P.f n) x)
+hHx : ∀ (n : ℕ) (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]
+w v r : List Bool
+n : ℕ := v.length
+hn : n = v.length
+T : Fin n → Fin (n + 1) → Bool := owpCom P h n (padFin n v) ((FunFamily.blocks n n) (padFin (n * n) r))
+hT : T = owpCom P h n (padFin n v) ((FunFamily.blocks n n) (padFin (n * n) r))
+E : ℕ → List Bool := fun i => ComLoop.emit F H (ComLoop.step^[i] (ComLoop.init (pairEncode v r)))
+hE : E = fun i => ComLoop.emit F H (ComLoop.step^[i] (ComLoop.init (pairEncode v r)))
+i : ℕ
+hi : i < n
+⊢ List.ofFn
+      (Fin.snoc ((P.f v.length) ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩))
+        (v.getD i false ^^
+          h v.length ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩))) =
+    List.ofFn (T ⟨i, hi⟩)
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:857:76: error: Type mismatch
+  rfl
+has type
+  ?m.136 = ?m.136
+but is expected to have type
+  FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1)
+/workspace/folds/scratch/seal/base/SealA_ZeroKnowledge_Commitment.lean:888:33: error: Application type mismatch: The argument
+  hFx
+has type
+  ∀ (n : ℕ) (x : Fin (P.toFunFamily.inLen.eval n) → Bool),
+    F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.toFunFamily.f n x)
+but is expected to have type
+  ∀ (n : ℕ) (x : Fin n → Bool), ?m.107 (NUPPT.advInput n (List.ofFn x)) = List.ofFn ((P.f n) x)
+in the application
+  owpComStr_eq_loopOut P h hFx

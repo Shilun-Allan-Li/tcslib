@@ -1,0 +1,36 @@
+/workspace/folds/scratch/seal/base/SealB_Encryption_PublicKey_AdaptiveCPA_Handler.lean:121:2: error: Type mismatch
+  (FunFamily.blocks (cap.eval n) (S.enc.coins.eval n)).trans
+    ((Equiv.refl (Fin (cap.eval n))).arrowCongr (NUPPT.coinsEquivPoly ⋯ n).symm)
+has type
+  (Fin (cap.eval n * S.enc.coins.eval n) → Bool) ≃ (Fin (cap.eval n) → S.enc.Coins n)
+but is expected to have type
+  (Fin ((cap.mul S.enc.coins).eval n) → Bool) ≃ (Fin (cap.eval n) → S.enc.Coins n)
+/workspace/folds/scratch/seal/base/SealB_Encryption_PublicKey_AdaptiveCPA_Handler.lean:128:92: error: Application type mismatch: The argument
+  ω
+has type
+  Fin ((cap.mul S.enc.coins).eval n) → Bool
+but is expected to have type
+  Fin (cap.eval n * S.enc.coins.eval n) → Bool
+in the application
+  (FunFamily.blocks (cap.eval n) (S.enc.coins.eval n)) ω
+/workspace/folds/scratch/seal/base/SealB_Encryption_PublicKey_AdaptiveCPA_Handler.lean:140:6: warning: declaration uses 'sorry'
+/workspace/folds/scratch/seal/base/SealB_Encryption_PublicKey_AdaptiveCPA_Handler.lean:136:8: warning: declaration uses 'sorry'
+/workspace/folds/scratch/seal/base/SealB_Encryption_PublicKey_AdaptiveCPA_Handler.lean:142:2: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/workspace/folds/scratch/seal/base/SealB_Encryption_PublicKey_AdaptiveCPA_Handler.lean:142:2: warning: 'exact FunFamily.ofFn_blocks (cap.eval n) (S.enc.coins.eval n) ω j' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/workspace/folds/scratch/seal/base/SealB_Encryption_PublicKey_AdaptiveCPA_Handler.lean:367:2: error: Type mismatch
+  buildComp_zero_of_ret ?m.58
+has type
+  buildComp ?m.54 ?m.55 0 ?m.56 = OracleComp.pure ?m.57
+but is expected to have type
+  buildComp
+      (fun L =>
+        decodeBitMove (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) ((acHandler S cap ist).outLen.eval n)
+          ((acHandler S cap ist).finRun
+            (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+              ((bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) 0).encodeLog L))))
+      (zeroBits ((acHandler S cap ist).outLen.eval n)) ((acHandler S cap ist).finCall.eval n) [] =
+    OracleComp.pure (padFin ((acHandler S cap ist).outLen.eval n) (List.ofFn a))
