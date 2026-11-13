@@ -3,6 +3,16 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Indistinguishability
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Generic
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Hybrid
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.SimIND
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.SimINDGap
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Rounds
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Challenge
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Simulator
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Reduction
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Recover
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.IndSim
 import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
@@ -10,7 +20,7 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Simulation-based non-malleability (statement phase)
+# Simulation-based non-malleability
 
 [PS10, Definition 173.7 and Theorem 174.8], in the form of [PSV07] (ruling of 2026-11-05: the
 non-malleability notions of §7.1.5–7.1.6 follow Pass, shelat and Vaikuntanathan).
@@ -65,11 +75,25 @@ defers both proofs to its full version; the sketches below are the maintainer's.
 
 ## Main results
 
-* `FixedLengthPKScheme.nmSecure_of_simNMSecure` (stated; a `sorry` under its sketch):
-  SIM ⇒ IND for every attack [PSV07, Corollary 1].
-* `FixedLengthPKScheme.simNMSecure_of_nmSecure_cpa` (stated; a `sorry` under its sketch):
-  IND ⇒ SIM under CPA [PSV07, Theorem 3].
+* `FixedLengthPKScheme.nmSecure_of_simNMSecure`: SIM ⇒ IND for every attack [PSV07, Corollary 1].
+* `FixedLengthPKScheme.simNMSecure_of_nmSecure_cpa`: IND ⇒ SIM under CPA [PSV07, Theorem 3].
 * `FixedLengthPKScheme.simNMSecure_cpa_iff_nmSecure_cpa`: Theorem 174.8 under CPA, from the two.
+* `FixedLengthPKScheme.accept_snmReal_eq`, `FixedLengthPKScheme.accept_snmIdeal_eq`: both
+  experiments on T2's lengths (`NMSim.realAcc`, `NMSim.idealAcc`).
+
+## Contents
+
+The proofs use the helper modules under `NonMalleability/Simulation/` (namespace
+`TCSlib.Cryptography.Composability.NMSim`):
+* `Generic`: budget reduction, coins drawn in advance, equal until bad, chunk maps;
+* `Hybrid`: the hybrid oracle `rImpl` (an encryption of `M(a; ρ)` or of an independent draw), the
+  history oracle, the views as strings and the acceptance rates `realAcc`, `idealAcc`, `hybAcc`;
+* `SimIND`, `SimINDGap`: SIM ⇒ IND (the sampler `⟨m₀, m₁⟩ ↦ m_β`, the SIM adversary, `D'`, `D''`,
+  and the real and ideal gaps);
+* `Rounds`, `Challenge`: rounds of T2's handlers and the challenge handler shared by the two
+  machines of IND ⇒ SIM;
+* `Simulator`: the simulator (the ideal experiment is the hybrid `H_true`);
+* `Reduction`, `Recover`, `IndSim`: the NM adversary, the NM distinguisher, and `NM_b = H_b`.
 
 ## References
 
@@ -449,6 +473,194 @@ theorem snmIdeal_eq (M : MsgSampler) (Sim : NUPPT) (r sl : ℕ) (D : NUPPT) (n :
                 (S.simEntry res.1 i).2)
               (snmSigma res.1)) rD)) := rfl
 
+/-! ### The experiments on T2's lengths -/
+
+section Transport
+
+open NMSim
+open AdaptiveCPA (castImpl castImpl_eq expect_simulate_castImpl_toCompOn padFin_ofFn_zeroBits)
+
+/-- **The real experiment's oracles on T2's lengths are the hybrid oracle with `b = false`:**
+read along `snmDin`, `snmDout`, `snmImpl` is `NMSim.rImpl … false … ρ ρ' none` (for every `ρ'`).
+
+**Proof sketch.** Query by query (`snmImpl_dec`, `snmImpl_challenge`, `rImpl_dec`, `rImpl_some`,
+`rImpl_none_lazy`, `rImpl_none_eager`): the casts keep the strings (`ofFn_padFin_of_length`), and
+`M.draw`, `M.histAt` are `drawWith`, `histWith`. -/
+theorem castImpl_snmImpl (atk : Attack) (M : MsgSampler) (n : ℕ) (pk sk : List Bool)
+    (ρ ρ' : M.samp.Coins n) :
+    castImpl (ins := fun i => (snmDin S M.paramLen i).eval n)
+        (outs := fun i => (snmDout S M.histLen i).eval n) (S.snmImpl atk M n pk sk ρ) =
+      rImpl S atk false M.samp M.paramLen M.histLen M.hist n pk sk ρ ρ' none := by
+  funext i x s
+  rw [castImpl_eq]
+  match i, s with
+  | 0, s =>
+    have hx : List.ofFn (padFin (S.ctLen.eval n) (List.ofFn x)) = List.ofFn x :=
+      GGMRed.ofFn_padFin_of_length (by
+        rw [List.length_ofFn]; show (snmDin S M.paramLen 0).eval n = _; rw [snmDin_zero])
+    erw [S.snmImpl_dec atk M n pk sk ρ (padFin (S.ctLen.eval n) (List.ofFn x)) s]
+    rw [rImpl_dec, hx]
+    by_cases hc : (FixedLengthScheme.decOpen atk s.isSome &&
+        !decide (s.map Prod.fst = some (padFin (S.ctLen.eval n) (List.ofFn x)))) = true
+    · rw [if_pos hc, if_pos hc, OracleComp.pure_bind]
+    · rw [if_neg hc, if_neg hc, OracleComp.pure_bind]
+      dsimp only
+      erw [padFin_ofFn_zeroBits]
+  | 1, some (y, a) =>
+    erw [S.snmImpl_challenge atk M n pk sk ρ (padFin (M.paramLen.eval n) (List.ofFn x))
+      (some (y, a))]
+    dsimp only
+    rw [OracleComp.pure_bind, rImpl_some]
+    dsimp only
+    erw [List.ofFn_fin_append]
+    simp only [M.histAt_eq, M.draw_eq, histWith_eq, drawWith_eq]
+  | 1, none =>
+    erw [S.snmImpl_challenge atk M n pk sk ρ (padFin (M.paramLen.eval n) (List.ofFn x)) none]
+    dsimp only
+    rw [rImpl_none_lazy, OracleComp.bind_assoc]
+    refine congrArg _ (funext fun re => ?_)
+    rw [OracleComp.pure_bind, rImpl_none_eager, if_neg Bool.false_ne_true, encWith_eq]
+    dsimp only
+    erw [List.ofFn_fin_append]
+    simp only [M.histAt_eq, M.draw_eq, histWith_eq, drawWith_eq]
+
+/-- An entry as a string: `⟦snmEntry sk copy c⟧ = entryL S n sk copy ⟦c⟧`. -/
+theorem ofFn_snmEntry {n : ℕ} (sk : List Bool) (copy : Bool) (c : Fin (S.ctLen.eval n) → Bool) :
+    List.ofFn (S.snmEntry sk copy c) = entryL S n sk copy (List.ofFn c) := by
+  rw [snmEntry_eq, entryL_eq]
+  cases copy
+  · rw [if_neg Bool.false_ne_true, if_neg Bool.false_ne_true, List.ofFn_succ]
+    simp only [Fin.cons_zero, Fin.cons_succ]
+  · rw [if_pos rfl, if_pos rfl, List.ofFn_succ]
+    simp only [Fin.cons_zero, Fin.cons_succ, ofFn_zeroBits]
+
+/-- **The real experiment's view is `realView`:** for an output `w` and a final state `s`,
+`snmView a (M.draw … a ρ) (d_i)_i (snmSigma w) = realView … ⟦w⟧ s`, with `a` the recorded parameter.
+
+**Proof sketch.** Block by block: `ofFn_block` for the ciphertexts, `decide_map_ofFn` for the
+copy test, `ofFn_snmEntry` for the entries and `ofFn_natAdd_eq_drop` for `σ`. -/
+theorem snmView_realView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ : M.samp.Coins n)
+    (w : Fin (r * S.ctLen.eval n + sl) → Bool) (s : S.SnmState M n) :
+    S.snmView ((s.map Prod.snd).getD (zeroBits (M.paramLen.eval n)))
+        (M.draw (S.msgLen.eval n) n ((s.map Prod.snd).getD (zeroBits (M.paramLen.eval n))) ρ)
+        (fun i => S.snmEntry sk (decide (s.map Prod.fst = some (S.snmCt w i))) (S.snmCt w i))
+        (snmSigma w) =
+      realView S M.samp M.paramLen n r sk ρ (List.ofFn w) s := by
+  rw [snmView_eq, realView_eq, M.draw_eq, drawWith_eq, snmSigma_eq, ofFn_natAdd_eq_drop]
+  congr 3
+  refine ofFn_eq_map_range _ _ fun i => ?_
+  have hc : chunkAt (S.ctLen.eval n) i (List.ofFn w) = List.ofFn (S.snmCt w i) := by
+    rw [snmCt_eq, ofFn_block]
+  rw [hc, decide_map_ofFn, ofFn_snmEntry]
+
+/-- **The ideal experiment's view is `idealView`:** for an output `w` and the oracle's final state
+`sa`, `snmView a (M.draw … a ρ) (d_i)_i (snmSigma w) = idealView … ⟦w⟧ sa`.
+
+**Proof sketch.** Entry `i` of `w` is the block `chunkAt (ctLen(n) + 1) i ⟦w⟧` (`ofFn_block`),
+whose head is the `COPY` flag and whose tail is the ciphertext (`simEntry_fst`, `simEntry_snd`). -/
+theorem snmView_idealView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ : M.samp.Coins n)
+    (w : Fin (r * (S.ctLen.eval n + 1) + sl) → Bool)
+    (sa : Option (Fin (M.paramLen.eval n) → Bool)) :
+    S.snmView (sa.getD (zeroBits (M.paramLen.eval n)))
+        (M.draw (S.msgLen.eval n) n (sa.getD (zeroBits (M.paramLen.eval n))) ρ)
+        (fun i => S.snmEntry sk (S.simEntry w i).1 (S.simEntry w i).2) (snmSigma w) =
+      idealView S M.samp M.paramLen n r sk ρ (List.ofFn w) sa := by
+  rw [snmView_eq, idealView_eq, M.draw_eq, drawWith_eq, snmSigma_eq, ofFn_natAdd_eq_drop]
+  congr 3
+  refine ofFn_eq_map_range _ _ fun i => ?_
+  have hc : chunkAt (S.ctLen.eval n + 1) i (List.ofFn w) =
+      (S.simEntry w i).1 :: List.ofFn (S.simEntry w i).2 := by
+    rw [← ofFn_block, List.ofFn_succ, simEntry_fst]
+    exact congrArg _ (congrArg List.ofFn (funext fun j => (simEntry_snd S w i j).symm))
+  rw [hc, List.headD_cons, List.tail_cons, ofFn_snmEntry]
+
+/-- The ideal experiment's oracle is `NMSim.histImpl` of the sampler. -/
+theorem simImpl_eq_histImpl (M : MsgSampler) (n : ℕ) (ρ : M.samp.Coins n) :
+    S.simImpl M n ρ = histImpl S M.samp M.paramLen M.histLen M.hist n ρ := by
+  funext i a s
+  rw [simImpl_eq, histImpl_eq]
+  dsimp only
+  rw [M.histAt_eq, M.draw_eq, histWith_eq, drawWith_eq]
+
+/-- `T2`'s query lengths at `pl = M.paramLen` are the real experiment's. -/
+private theorem snmDin_eval (M : MsgSampler) (n : ℕ) :
+    (fun i => (snmDin S M.paramLen i).eval n) = S.snmInLens M n := by
+  funext i
+  match i with
+  | 0 => rw [snmDin_zero, snmInLens_zero]
+  | 1 => rw [snmDin_one, snmInLens_one]
+
+/-- `T2`'s answer lengths at `hl = M.histLen` are the real experiment's. -/
+private theorem snmDout_eval (M : MsgSampler) (n : ℕ) :
+    (fun i => (snmDout S M.histLen i).eval n) = S.snmOutLens M n := by
+  funext i
+  match i with
+  | 0 => rw [snmDout_zero, snmOutLens_zero, PolyExpr.eval_add, PolyExpr.eval_const]
+  | 1 => rw [snmDout_one, snmOutLens_one, PolyExpr.eval_add]
+
+/-- **The real experiment's acceptance rate on T2's lengths:**
+`accept (snmReal atk M A q r sl X n) =
+NMSim.realAcc S atk M.samp M.paramLen M.histLen M.hist A q r sl X n`.
+
+**Proof sketch.** Transport `A`'s run (`expect_simulate_castImpl_toCompOn`, `castImpl_snmImpl`)
+and read the view (`snmView_realView`). -/
+theorem accept_snmReal_eq (atk : Attack) (M : MsgSampler) (A : NUPPT) (q r sl : ℕ) (X : NUPPT)
+    (n : ℕ) :
+    accept (S.snmReal atk M A q r sl X n) =
+      realAcc S atk M.samp M.paramLen M.histLen M.hist A q r sl X n := by
+  rw [accept_eq, snmReal_eq, realAcc_eq, ProbComp.prob_bind]
+  refine congrArg _ (funext fun rg => ?_)
+  rw [ProbComp.prob_bind]
+  refine congrArg _ (funext fun ρ => ?_)
+  rw [ProbComp.prob_bind]
+  refine congrArg _ (funext fun rA => ?_)
+  rw [ProbComp.prob_bind]
+  refine congrArg _ (funext fun rX => ?_)
+  rw [ProbComp.prob_bind, ← castImpl_snmImpl S atk M n _ _ ρ ρ]
+  have hG : (fun res : (Fin (r * S.ctLen.eval n + sl) → Bool) × S.SnmState M n =>
+      ProbComp.prob (.pure (X.distinguisherL n
+        (S.snmView ((res.2.map Prod.snd).getD (zeroBits (M.paramLen.eval n)))
+          (M.draw (S.msgLen.eval n) n ((res.2.map Prod.snd).getD (zeroBits (M.paramLen.eval n))) ρ)
+          (fun i => S.snmEntry (pairSndD (S.gen.runAt n [] rg))
+            (decide (res.2.map Prod.fst = some (S.snmCt res.1 i))) (S.snmCt res.1 i))
+          (snmSigma res.1)) rX)) (· = true)) =
+      fun res => (fun p : List Bool × S.SnmState M n =>
+        if X.distinguisherL n (realView S M.samp M.paramLen n r (pairSndD (S.gen.runAt n [] rg)) ρ
+          p.1 p.2) rX = true then (1 : ℝ) else 0) (List.ofFn res.1, res.2) := by
+    funext res
+    rw [ProbComp.prob_pure, snmView_realView]
+  exact (congrArg (ProbComp.expect _) hG).trans
+    (expect_simulate_castImpl_toCompOn (snmDin_eval S M n) (snmDout_eval S M n)
+      (rfl : r * S.ctLen.eval n + sl = r * S.ctLen.eval n + sl)
+      (S.snmImpl atk M n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg)) ρ) A n q
+      (pairFstD (S.gen.runAt n [] rg)) rA none fun p : List Bool × S.SnmState M n =>
+        if X.distinguisherL n (realView S M.samp M.paramLen n r (pairSndD (S.gen.runAt n [] rg)) ρ
+          p.1 p.2) rX = true then (1 : ℝ) else 0).symm
+
+/-- **The ideal experiment's acceptance rate on T2's lengths:**
+`accept (snmIdeal M Sim r sl X n) =
+NMSim.idealAcc S M.samp M.paramLen M.histLen M.hist Sim r sl X n`.
+
+**Proof sketch.** `simImpl_eq_histImpl`, and read the view (`snmView_idealView`). -/
+theorem accept_snmIdeal_eq (M : MsgSampler) (Sim : NUPPT) (r sl : ℕ) (X : NUPPT) (n : ℕ) :
+    accept (S.snmIdeal M Sim r sl X n) =
+      idealAcc S M.samp M.paramLen M.histLen M.hist Sim r sl X n := by
+  rw [accept_eq, snmIdeal_eq, idealAcc_eq, ProbComp.prob_bind]
+  refine congrArg _ (funext fun rg => ?_)
+  rw [ProbComp.prob_bind]
+  refine congrArg _ (funext fun ρ => ?_)
+  rw [ProbComp.prob_bind]
+  refine congrArg _ (funext fun rS => ?_)
+  rw [ProbComp.prob_bind]
+  refine congrArg _ (funext fun rX => ?_)
+  rw [ProbComp.prob_bind, simImpl_eq_histImpl]
+  refine congrArg (ProbComp.expect _) (funext fun res => ?_)
+  rw [ProbComp.prob_pure]
+  dsimp only
+  rw [snmView_idealView]
+
+end Transport
+
 /-! ### Definition 173.7 and Theorem 174.8 -/
 
 /-- **Simulation-based non-malleability** [PS10, Definition 173.7], in the form SIM-NME′ of
@@ -473,52 +685,105 @@ theorem SimNMSecure_iff (atk : Attack) :
           advantage (S.snmReal atk M A (q.eval n) (r.eval n) (sl.eval n) D n)
             (S.snmIdeal M Sim (r.eval n) (sl.eval n) D n) ≤ ε n := Iff.rfl
 
+/-- The bound of SIM ⇒ IND: if `2·R₁ − R₂ = a − b`, `2·I₁ = I₂`, `|R₁ − I₁| ≤ e₁` and
+`|R₂ − I₂| ≤ e₂`, then `|b − a| ≤ 2·e₁ + e₂`. -/
+private theorem abs_le_of_gap {a b R₁ I₁ R₂ I₂ e₁ e₂ : ℝ} (hr : 2 * R₁ - R₂ = a - b)
+    (hi : 2 * I₁ = I₂) (h₁ : |R₁ - I₁| ≤ e₁) (h₂ : |R₂ - I₂| ≤ e₂) : |b - a| ≤ 2 * e₁ + e₂ := by
+  have hab : b - a = -(2 * (R₁ - I₁) - (R₂ - I₂)) := by linarith
+  rw [hab, abs_neg]
+  refine (abs_sub _ _).trans ?_
+  rw [abs_mul, abs_two]
+  linarith
+
 /-- **Theorem 174.8, (relation-based ⇒ indistinguishability-based), for every attack**
 [PSV07, Corollary 1, at one message]: SIM-NME′ implies Definition 172.6.
 
-**Proof sketch** (the maintainer's; [PSV07] defers its proof).
+**Proof sketch** (the maintainer's route; [PSV07] defers its proof).
 1. Fix an NM adversary `A` (budget `q`, `ℓ` ciphertexts) and a distinguisher `D`. Take the
-   sampler `M` with parameter `⟨m₀, m₁⟩` that outputs `m_β` for a uniform coin `β`, and the
-   constant history. The adversary `A'` runs `A`, forwarding `Dec`; on `A`'s challenge
-   `⟨m₀, m₁⟩` it asks its own challenge with that parameter and passes `y` on. It outputs `A`'s
-   ciphertexts, with `sl = 0`.
-2. In the real experiment `m = m_β`, `y ← Enc_pk(m_β)`, and the entries `d_i` are `NM_β`'s
-   output once `COPY` is read as `⊥`. Let `D'` read `m₀, m₁, m` from the view, output `0` when
-   `m₀ = m₁`, and otherwise output whether `D`'s verdict on the converted entries equals `β`.
-   Then `Pr[D' = 1] = ½ + ½ (Pr[D(NM_1) = 1] − Pr[D(NM_0) = 1])` on the event `m₀ ≠ m₁`
-   (when `m₀ = m₁`, `NM_0` and `NM_1` coincide).
-3. In the ideal experiment the simulator's entries depend on `pk`, its coins and the constant
-   history, so they are independent of `β` given the parameter; `D'` accepts with probability
-   `½` on the event `m₀ ≠ m₁`. The distinguisher `D''` that tests `m₀ ≠ m₁` bounds the
-   difference of that event's probabilities. So `NM`'s advantage is at most twice the sum of
-   `D'`'s and `D''`'s, both negligible. -/
+   sampler `M = NMSim.halfSamp S`: its parameter is `⟨m₀, m₁⟩` (`paramLen = msgLen + msgLen`), it
+   outputs `m_β` for its single coin `β`, and its history is empty (`histLen = 0`). The SIM
+   adversary `A'` is T2's machine of `NMSim.simHandler S ℓ`: it forwards `A`'s `Dec` and challenge
+   queries and outputs `A`'s ciphertexts (`r = ℓ`, `sl = 0`). Take `Sim` from `h M A' Q ℓ 0`, with
+   `Q = q·perCall + finCall` T2's budget.
+2. `D' = NMSim.tailDist S D` outputs `0` when `m₀ = m₁`, and otherwise whether `D`'s verdict on the
+   entries without their `COPY` flags (so a copy reads as `nmDecrypt`'s `⊥`) equals `[m = m₁]`;
+   `D'' = NMSim.halfDist S` tests `m₀ ≠ m₁`.
+3. **Real** (`NMSim.real_gap`). With the coin `β` fixed, the real experiment's oracles are those of
+   `NM_β` (`castImpl_snmImpl`, `NMSim.castImpl_indImpl_abs`), and the unflagged entries are
+   `NM_β`'s output. While `m₀ = m₁` the two coins give the same run (`NMSim.expect_runB_good`). So
+   `2·Pr_real[D' = 1] − Pr_real[D'' = 1] = Pr[D(NM_1) = 1] − Pr[D(NM_0) = 1]`.
+4. **Ideal** (`NMSim.ideal_gap`). With the empty history the simulator's oracle ignores `β`
+   (`NMSim.histImpl_coins`), and `m = m_β` makes exactly one coin satisfy `D'` when `m₀ ≠ m₁`:
+   `2·Pr_ideal[D' = 1] = Pr_ideal[D'' = 1]`.
+5. Hence `NM`'s advantage is at most `2·adv(D') + adv(D'')`, negligible (`accept_snmReal_eq`,
+   `accept_snmIdeal_eq` read both experiments on T2's lengths). -/
 theorem nmSecure_of_simNMSecure (atk : Attack) (h : S.SimNMSecure atk) : S.NMSecure atk := by
-  sorry
+  rw [S.NMSecure_iff]
+  intro A q ℓ D
+  obtain ⟨A', hA'⟩ := exists_interactiveHandlerMachine A q (NMSim.snmDin S (S.msgLen.add S.msgLen))
+    (NMSim.snmDout S (.const 0)) (NMSim.snmDin S (S.msgLen.add S.msgLen))
+    (NMSim.snmDout S (.const 0)) (ℓ.mul S.ctLen) (NMSim.simHandler S ℓ)
+  obtain ⟨Sim, hSim⟩ := h ⟨NMSim.halfSamp S, S.msgLen.add S.msgLen, fun _ => [], .const 0,
+      polyTimeComputable_const []⟩ A'
+    ((q.mul (NMSim.simHandler S ℓ).perCall).add (NMSim.simHandler S ℓ).finCall) ℓ (.const 0)
+  obtain ⟨ε₁, hε₁, h₁⟩ := hSim (NMSim.tailDist S D)
+  obtain ⟨ε₂, hε₂, h₂⟩ := hSim (NMSim.halfDist S)
+  refine ⟨fun n => 2 * ε₁ n + ε₂ n, (hε₁.const_mul 2).add hε₂, fun n => ?_⟩
+  obtain ⟨φ, hφ⟩ := hA' n
+  have hK : ((q.mul (NMSim.simHandler S ℓ).perCall).add (NMSim.simHandler S ℓ).finCall).eval n =
+      q.eval n * (NMSim.simHandler S ℓ).perCall.eval n + (NMSim.simHandler S ℓ).finCall.eval n := by
+    rw [PolyExpr.eval_add, PolyExpr.eval_mul]
+  have e₁ := h₁ n
+  have e₂ := h₂ n
+  rw [advantage_eq, accept_snmReal_eq, accept_snmIdeal_eq] at e₁ e₂
+  rw [advantage_eq]
+  exact abs_le_of_gap (NMSim.real_gap S atk A A' q ℓ _ D n hK φ hφ)
+    (NMSim.ideal_gap S Sim D (ℓ.eval n) n) e₁ e₂
 
 /-- **Theorem 174.8, (indistinguishability-based ⇒ relation-based), under CPA** [PSV07,
 Theorem 3, at one message]: Definition 172.6 implies SIM-NME′ under a chosen-plaintext attack.
 (Under CCA1 and CCA2 it does not, [PSV07, Theorem 4].)
 
-**Proof sketch** (the maintainer's; [PSV07] defers its proof). Fix `M`, `A`, `q`, `r`, `sl`.
-1. **The simulator** runs `A` on `pk`, answering `Dec` with `⊥` (CPA, `snmImpl_dec_cpa`). On
-   `A`'s challenge `a` it asks its own query `a`, gets `h(m)`, draws a dummy `m̃ ← M(a)` with its
-   own coins (it can run `M`), and answers `A` with `⟨Enc_pk(m̃), h(m)⟩`. It outputs `A`'s
-   ciphertexts, flagging those equal to its dummy challenge, and `σ`. If `A` never asks, it
-   never queries and outputs `A`'s output unflagged. At `msgLen(n) = 0` the two experiments
-   coincide.
-2. **The two experiments differ only in the challenge**: `Enc_pk(m)` in the real one,
-   `Enc_pk(m̃)` in the ideal one, with `m, m̃` independent draws from `M(a)`, and the same `h(m)`.
-3. **The NM adversary** `B` runs `A`; at `a` it draws `m, m̃ ← M(a)`, asks its challenge on
-   `⟨m, m̃⟩`, receives `y = Enc_pk(m_b)`, and answers `A` with `⟨y, h(m)⟩`. It outputs `A`'s
-   ciphertexts, then for each bit `x` of `a`, `m`, `σ` and the copy flags `[c_i = y]`, the pair
-   `Enc_pk(x^{msgLen})`, `Enc_pk((¬x)^{msgLen})`. The two plaintexts differ, so by correctness at
-   most one of the pair is the challenge, and the NM view yields `x` (as in the sketch of
-   Theorem 175.9).
-4. From `NM_b`'s view, the distinguisher reconstructs `(a, m, (d_i)_i, σ)`: the real experiment's
-   output for `b = 0`, and the ideal one's (with the simulator of step 1) for `b = 1`. So `D`'s
-   advantage is `B`'s NM advantage, negligible. -/
+**Proof sketch** (the maintainer's route; [PSV07] defers its proof). Fix `M`, `A`, `q`, `r`, `sl`.
+1. **The hybrids.** `H_b` (`NMSim.hybAcc`) runs `A` against the oracle `NMSim.rImpl … b …` (under
+   CPA `Dec` answers `⊥`, `snmImpl_dec_cpa`): on the first challenge `a` it answers
+   `⟨Enc_pk(M(a; ρ_b)), h(M(a; ρ))⟩` for the sampler's coins `ρ₀ = ρ` and an independent `ρ₁`, and
+   the view is `(a, M(a; ρ), (d_i)_i, σ)` with `d_i = COPY` iff `c_i` is the challenge. `H_false` is
+   the real experiment (`castImpl_snmImpl`, `NMSim.realAcc_eq_hybAcc`).
+2. **The simulator** (`NMSim.exists_simulator`) runs `A` on `pk`, answering `Dec` with `⊥`. On `A`'s
+   first challenge `a` it makes its only query `a`, gets `h(m)`, draws `m̃ = M(a; ρ̃)` with its own
+   coins and `M`'s advice (hard-wired, `exists_withAdviceOn`), and answers `⟨Enc_pk(m̃), h(m)⟩`;
+   repeated challenges get the recorded answer. It outputs `A`'s ciphertexts, each flagged `COPY`
+   iff it equals its dummy challenge, and `σ`; if `A` never asks it never queries. Its run at
+   budget `1` is its run at T2's budget (`NMSim.toCompOn_budget_eq`; it asks at most one query,
+   `NMSim.chalHandler_costBoundedBy`), and against the history oracle it is `H_true`.
+3. **The NM adversary** `B` (`NMSim.exists_nmAdversary`) runs `A`; on `a` it draws `m, m̃ ← M(a)`,
+   asks its challenge on `⟨m, m̃⟩`, receives `y = Enc_pk(m_b)` and answers `A` with `⟨y, h(m)⟩`. It
+   outputs each of `A`'s ciphertexts followed by the pair
+   `Enc_pk(f^{msgLen})`, `Enc_pk((¬f)^{msgLen})`
+   for its copy flag `f = [c_i = y]`, then the same pair for each bit `x` of `a`, `m` and `σ`. By
+   correctness the two plaintexts of a pair differ, so at most one of the pair is the challenge,
+   and the distinguisher `NMSim.recDist` reads `x` back (`NMCCA2.guessBit`) and runs `D` on the
+   view. When `msgLen(n) > 0`, `NM_b` accepts with the probability of `H_b`.
+4. Hence at every `n` the SIM advantage is `B`'s NM advantage, or `0` when `msgLen(n) = 0` (the two
+   hybrids coincide, `NMSim.hybAcc_true_eq_false`): it is negligible. -/
 theorem simNMSecure_of_nmSecure_cpa (h : S.NMSecure .cpa) : S.SimNMSecure .cpa := by
-  sorry
+  intro M A q r sl
+  obtain ⟨Sim, hSim⟩ := NMSim.exists_simulator S M.samp M.paramLen M.histLen M.hist A q r sl
+  obtain ⟨B, qB, hB⟩ := NMSim.exists_nmAdversary S M.samp M.paramLen M.histLen M.hist
+    M.hist_poly r sl A q
+  refine ⟨Sim, fun D => ?_⟩
+  obtain ⟨ε, hε, hεn⟩ := (S.NMSecure_iff .cpa).1 h B qB (NMSim.nmLen S M.paramLen r sl)
+    (NMSim.recDist S M.paramLen r D)
+  refine ⟨ε, hε, fun n => ?_⟩
+  have h₀ := hεn n
+  rw [advantage_eq] at h₀
+  rw [advantage_eq, accept_snmReal_eq, accept_snmIdeal_eq, hSim, NMSim.realAcc_eq_hybAcc]
+  by_cases hL : S.msgLen.eval n = 0
+  · rw [NMSim.hybAcc_true_eq_false S .cpa M.samp M.paramLen M.histLen M.hist A (q.eval n) (r.eval n)
+      (sl.eval n) D n hL, sub_self, abs_zero]
+    exact (abs_nonneg _).trans h₀
+  · rwa [← hB D n false (Nat.pos_of_ne_zero hL), ← hB D n true (Nat.pos_of_ne_zero hL)]
 
 /-- **Theorem 174.8 under CPA** [PS10, Theorem 174.8; PSV07, Theorem 3, at one message]:
 non-malleability (Definition 172.6) and simulation-based non-malleability (Definition 173.7, as
