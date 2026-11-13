@@ -559,7 +559,8 @@ theorem snmView_realView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ : 
 **Proof sketch.** Entry `i` of `w` is the block `chunkAt (ctLen(n) + 1) i ⟦w⟧` (`ofFn_block`),
 whose head is the `COPY` flag and whose tail is the ciphertext (`simEntry_fst`, `simEntry_snd`). -/
 theorem snmView_idealView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ : M.samp.Coins n)
-    (w : Fin (r * (S.ctLen.eval n + 1) + sl) → Bool) (sa : Option (Fin (M.paramLen.eval n) → Bool)) :
+    (w : Fin (r * (S.ctLen.eval n + 1) + sl) → Bool)
+    (sa : Option (Fin (M.paramLen.eval n) → Bool)) :
     S.snmView (sa.getD (zeroBits (M.paramLen.eval n)))
         (M.draw (S.msgLen.eval n) n (sa.getD (zeroBits (M.paramLen.eval n))) ρ)
         (fun i => S.snmEntry sk (S.simEntry w i).1 (S.simEntry w i).2) (snmSigma w) =
@@ -598,7 +599,8 @@ private theorem snmDout_eval (M : MsgSampler) (n : ℕ) :
   | 1 => rw [snmDout_one, snmOutLens_one, PolyExpr.eval_add]
 
 /-- **The real experiment's acceptance rate on T2's lengths:**
-`accept (snmReal atk M A q r sl X n) = NMSim.realAcc S atk M.samp M.paramLen M.histLen M.hist A q r sl X n`.
+`accept (snmReal atk M A q r sl X n) =
+NMSim.realAcc S atk M.samp M.paramLen M.histLen M.hist A q r sl X n`.
 
 **Proof sketch.** Transport `A`'s run (`expect_simulate_castImpl_toCompOn`, `castImpl_snmImpl`)
 and read the view (`snmView_realView`). -/
@@ -636,7 +638,8 @@ theorem accept_snmReal_eq (atk : Attack) (M : MsgSampler) (A : NUPPT) (q r sl : 
           p.1 p.2) rX = true then (1 : ℝ) else 0).symm
 
 /-- **The ideal experiment's acceptance rate on T2's lengths:**
-`accept (snmIdeal M Sim r sl X n) = NMSim.idealAcc S M.samp M.paramLen M.histLen M.hist Sim r sl X n`.
+`accept (snmIdeal M Sim r sl X n) =
+NMSim.idealAcc S M.samp M.paramLen M.histLen M.hist Sim r sl X n`.
 
 **Proof sketch.** `simImpl_eq_histImpl`, and read the view (`snmView_idealView`). -/
 theorem accept_snmIdeal_eq (M : MsgSampler) (Sim : NUPPT) (r sl : ℕ) (X : NUPPT) (n : ℕ) :
@@ -756,7 +759,8 @@ Theorem 3, at one message]: Definition 172.6 implies SIM-NME′ under a chosen-p
    `NMSim.chalHandler_costBoundedBy`), and against the history oracle it is `H_true`.
 3. **The NM adversary** `B` (`NMSim.exists_nmAdversary`) runs `A`; on `a` it draws `m, m̃ ← M(a)`,
    asks its challenge on `⟨m, m̃⟩`, receives `y = Enc_pk(m_b)` and answers `A` with `⟨y, h(m)⟩`. It
-   outputs each of `A`'s ciphertexts followed by the pair `Enc_pk(f^{msgLen})`, `Enc_pk((¬f)^{msgLen})`
+   outputs each of `A`'s ciphertexts followed by the pair
+   `Enc_pk(f^{msgLen})`, `Enc_pk((¬f)^{msgLen})`
    for its copy flag `f = [c_i = y]`, then the same pair for each bit `x` of `a`, `m` and `σ`. By
    correctness the two plaintexts of a pair differ, so at most one of the pair is the challenge,
    and the distinguisher `NMSim.recDist` reads `x` back (`NMCCA2.guessBit`) and runs `D` on the

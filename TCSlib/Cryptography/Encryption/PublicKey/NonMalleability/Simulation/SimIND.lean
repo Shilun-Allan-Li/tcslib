@@ -143,9 +143,11 @@ theorem expect_sample_halfCoins (n : ℕ) (g : (halfSamp S).Coins n → ℝ) :
 
 /-! ### `Ind_β` is the hybrid oracle with coin `β` -/
 
-/-- **The CCA oracles of `Ind_β` are the hybrid oracle with the sampler's coin `β`** (on T2's lengths
+/-- **The CCA oracles of `Ind_β` are the hybrid oracle with the sampler's coin `β`** (on T2's
+lengths
 with `pl = 2 · msgLen`, `hl = 0`), once the hybrid's state forgets the recorded parameter:
-`castImpl (Ind_β) i x (s.map fst) = (rImpl … (coin β) … i x s).bind fun p => pure (p.1, p.2.map fst)`.
+`castImpl (Ind_β) i x (s.map fst) =
+(rImpl … (coin β) … i x s).bind fun p => pure (p.1, p.2.map fst)`.
 
 **Proof sketch.** `Dec`: the same availability, refusal and decryption (`indImpl_dec_onSpec_cast`,
 `rImpl_dec`), the casts keeping the strings (`ofFn_cast`). A repeated challenge repeats the record
@@ -227,7 +229,8 @@ theorem castImpl_indImpl_abs (atk : Attack) (β : Bool) (n : ℕ) (pk sk : List 
           padFin (S.ctLen.eval n) (S.enc.runAt n (pairEncode pk (List.ofFn
             (if β then (FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n)
               (padFin (S.inLens n 1) (List.ofFn x)))).2 else (FixedLengthScheme.splitHalf
-                (cast (S.indSpec_challengeDom n) (padFin (S.inLens n 1) (List.ofFn x)))).1))) re) := by
+                (cast (S.indSpec_challengeDom n)
+                  (padFin (S.inLens n 1) (List.ofFn x)))).1))) re) := by
         rw [if_neg Bool.false_ne_true, encWith_eq, hdraw]
       rw [he, ofFn_cast (S.outLens_one n).symm, hh, List.append_nil, Option.map_some]
 
@@ -475,7 +478,13 @@ private def tailFun (z : List Bool) : List Bool :=
       ((NUPPT.inArg z).drop (S.msgLen.eval (NUPPT.inParam z).length)).take
         (S.msgLen.eval (NUPPT.inParam z).length))]
 
-/-- `D'`'s raw function is polynomial-time. -/
+/-- `D'`'s raw function is polynomial-time.
+
+**Proof sketch.** `a₀`, `a₁`, `m` and the entries are `take`/`drop`s of `msgLen(n)` bits of the
+view (`polyTimeComputable_takeMsg`, `polyTimeComputable_dropMsg`), the tails are
+`polyTimeComputable_entryTails`, `D`'s verdict is `D.output` on `layout`, and the equality tests
+use `polyTimeComputable_pairEq`. The outer test is `polyTimeComputable_ite`, and `[v == w]` is
+the `ite` on `v` of `[w]` and `[!w]`. -/
 private theorem polyTimeComputable_tailFun : PolyTimeComputable (tailFun S D) := by
   have hy := NUPPT.polyTimeComputable_inArg
   have hu := NUPPT.polyTimeComputable_inParam
@@ -601,7 +610,8 @@ theorem entryTails_entries (n : ℕ) (sk : List Bool) (es : List (Bool × List B
 /-- **The experiment's output is the entries' tails:** for an output string `w` of `ℓ` ciphertexts,
 `nmOutput sk s' w` is the concatenation of the tails of the entries `entryL … [ciphertext i is
 the challenge] (ciphertext i)`. -/
-theorem nmOutput_eq_entryTails (n ℓ : ℕ) (sk : List Bool) (s' : Option (Fin (S.ctLen.eval n) → Bool))
+theorem nmOutput_eq_entryTails (n ℓ : ℕ) (sk : List Bool)
+    (s' : Option (Fin (S.ctLen.eval n) → Bool))
     (w : List Bool) (hw : w.length = ℓ * S.ctLen.eval n) :
     S.nmOutput sk s' (padFin (ℓ * S.ctLen.eval n) w) =
       ((List.range ℓ).map fun i => (entryL S n sk
@@ -680,7 +690,14 @@ private instance : DecidablePred (badHalves S n) := fun _ => instDecidableNot
 
 /-- **The coupling of the two coins:** `𝔼[G · 1_{m₀ = m₁}]` is the same with the sampler's coin
 `0` and `1` (`expect_eq_until_bad`): the oracles agree while the recorded parameter has equal
-halves, and a bad parameter stays recorded. -/
+halves, and a bad parameter stays recorded.
+
+**Proof sketch.** `expect_eq_until_bad` with the bad event `badHalves`. The empty state is good
+(its parameter reads `0`, `ofFn_zeroBits`), and a recorded state stays recorded (`rImpl_dec`,
+`rImpl_some`), so bad is sticky. From a good state the two oracles agree: `Dec` and repeated
+challenges do not read the coin (the history is empty), and on a first challenge, after the same
+encryption coins, the new state is bad on both sides or `m₀ = m₁` and the two draws coincide
+(`ofFn_drawWith_half`). -/
 private theorem expect_runB_good (G : (Fin (ℓ * S.ctLen.eval n) → Bool) ×
       Option ((Fin (S.ctLen.eval n) → Bool) × (Fin ((S.msgLen.add S.msgLen).eval n) → Bool)) → ℝ) :
     expect (runB S atk A q ℓ n hist pk sk r ρ' false)

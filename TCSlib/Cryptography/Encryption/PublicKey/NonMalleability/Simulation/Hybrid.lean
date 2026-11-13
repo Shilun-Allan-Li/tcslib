@@ -391,7 +391,8 @@ theorem length_flatten_map_range (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i
       ih fun i hi => hg i (by omega), List.map_singleton, List.flatten_singleton,
       hg r (by omega), Nat.succ_mul]
 
-/-- Blocks of `k` bits, one per element: `|(l.map g).flatten| = |l|·k` when every `g x` has `k` bits. -/
+/-- Blocks of `k` bits, one per element: `|(l.map g).flatten| = |l|·k` when every `g x` has
+`k` bits. -/
 theorem length_flatten_map_const {α β : Type} (l : List α) (g : α → List β) (k : ℕ)
     (hg : ∀ x, (g x).length = k) : (l.map g).flatten.length = l.length * k := by
   induction l with
@@ -493,8 +494,8 @@ def entryL (n : ℕ) (sk : List Bool) (copy : Bool) (c : List Bool) : List Bool 
   else false :: List.ofFn (FixedLengthScheme.decAnswer
     (decodeFin (S.msgLen.eval n) (S.dec (pairEncode sk c))))
 
-/-- `entryL S n sk copy c = if copy then true :: 0^{msgLen + 1} else false :: ⟦decAnswer (Dec_sk c)⟧`.
--/
+/-- `entryL S n sk copy c =
+if copy then true :: 0^{msgLen + 1} else false :: ⟦decAnswer (Dec_sk c)⟧`. -/
 theorem entryL_eq (n : ℕ) (sk : List Bool) (copy : Bool) (c : List Bool) :
     entryL S n sk copy c = if copy then true :: List.replicate (S.msgLen.eval n + 1) false
       else false :: List.ofFn (FixedLengthScheme.decAnswer
@@ -662,7 +663,8 @@ theorem hybAcc_eq (atk : Attack) (b : Bool) (samp : NUPPT) (pl hl : PolyExpr)
 `b = false` the oracle does not read `ρ'`, `rImpl_false_coins`). -/
 theorem realAcc_eq_hybAcc (atk : Attack) (samp : NUPPT) (pl hl : PolyExpr)
     (hist : List Bool → List Bool) (A : NUPPT) (q r sl : ℕ) (X : NUPPT) (n : ℕ) :
-    realAcc S atk samp pl hl hist A q r sl X n = hybAcc S atk false samp pl hl hist A q r sl X n := by
+    realAcc S atk samp pl hl hist A q r sl X n =
+      hybAcc S atk false samp pl hl hist A q r sl X n := by
   rw [realAcc_eq, hybAcc_eq]
   refine congrArg _ (funext fun rg => congrArg _ (funext fun ρ => ?_))
   refine (ProbComp.expect_const (ProbComp.sample (samp.Coins n)) _).symm.trans

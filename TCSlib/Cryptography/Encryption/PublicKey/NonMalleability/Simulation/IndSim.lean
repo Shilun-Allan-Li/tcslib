@@ -51,7 +51,8 @@ theorem stParam_nmAbs (ρ ρ' : samp.Coins n)
     (s : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (pl.eval n) → Bool))) :
     stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1) =
       List.ofFn ((s.map Prod.snd).getD (zeroBits _)) := by
-  have hs : ((PolyExpr.const 1).add (S.ctLen.add hl)).eval n = 1 + (S.ctLen.eval n + hl.eval n) := by
+  have hs : ((PolyExpr.const 1).add (S.ctLen.add hl)).eval n =
+      1 + (S.ctLen.eval n + hl.eval n) := by
     rw [PolyExpr.eval_add, PolyExpr.eval_add, PolyExpr.eval_const]
   cases s with
   | none =>
@@ -102,15 +103,19 @@ theorem recView_nmOut (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n) (ρ ρ' : 
               (pairEncode (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re))
                 (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1)))) a
             (stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1))
-            (finMsg S samp n (pairSndD (pairEncode (pairFstD (S.gen.runAt n [] rg)) (samp.advice n)))
+            (finMsg S samp n
+              (pairSndD (pairEncode (pairFstD (S.gen.runAt n [] rg)) (samp.advice n)))
               (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re))
-              (stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1)))))))) =
+              (stParam S hl n
+                (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1)))))))) =
       realView S samp pl n (r.eval n) (pairSndD (S.gen.runAt n [] rg)) ρ a s := by
   have hω := nmSeed_ofFn S samp pl hl hist hist_poly r sl n ρ ρ' re
-  have haP : (stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1)).length =
+  have haP :
+      (stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1)).length =
       pl.eval n := by
     rw [stParam_nmAbs, List.length_ofFn]
-  have hmP : (finMsg S samp n (pairSndD (pairEncode (pairFstD (S.gen.runAt n [] rg)) (samp.advice n)))
+  have hmP : (finMsg S samp n
+      (pairSndD (pairEncode (pairFstD (S.gen.runAt n [] rg)) (samp.advice n)))
       (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re))
       (stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1))).length =
       S.msgLen.eval n := by
@@ -177,7 +182,8 @@ theorem nmRun_eq (B₀ : NUPPT) (n : ℕ)
             (chalHandler (nmParams S samp pl hl hist hist_poly r sl)).finCall.eval n)
           (pairEncode (pairFstD (S.gen.runAt n [] rg)) (samp.advice n))
           (φ (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re, rA))) none)
-        (fun p => if (recDist S pl r X).distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg))
+        (fun p => if (recDist S pl r X).distinguisherL n
+          (S.nmOutput (pairSndD (S.gen.runAt n [] rg))
           (p.2.map Prod.fst) (padFin ((nmLen S pl r sl).eval n * S.ctLen.eval n) (List.ofFn p.1)))
           (NUPPT.coinsCongr (recDist_coins S pl r X).symm n rX) = true then 1 else 0) =
       ProbComp.expect (simulate (rImpl S .cpa b samp pl hl hist n (pairFstD (S.gen.runAt n [] rg))
@@ -238,7 +244,8 @@ the hybrid `H_b`.
 
 **Proof sketch.** `B₀` is T2's machine of the NM adversary's handler and `B` hard-wires
 `M.advice n` (`exists_withAdviceOn`). Reindex `B`'s coins as `(ρ ‖ ρ̃ ‖ re, rA)` (`coinsCongr`, `φ`,
-`seedEquivPoly`, `seedEquiv`, `expect_sample_prod`) and the distinguisher's as `X`'s; pointwise this is
+`seedEquivPoly`, `seedEquiv`, `expect_sample_prod`) and the distinguisher's as `X`'s; pointwise
+this is
 `nmRun_eq`, which does not read `re` (`expect_const`). -/
 theorem exists_nmAdversary : ∃ (B : NUPPT) (qB : PolyExpr), ∀ (X : NUPPT) (n : ℕ) (b : Bool),
     0 < S.msgLen.eval n →

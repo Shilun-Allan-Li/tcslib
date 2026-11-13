@@ -34,7 +34,8 @@ to encryption.
 
 * `NMSim.buildComp_budget_eq`, `NMSim.toCompOn_budget_eq`.
 * `NMSim.expect_toCompOn_outLen`: a machine's output length may be changed along an equality.
-* `NMSim.expect_congr_of_allOutputs`, `NMSim.expect_expect_sample`, `NMSim.bind_congr_of_allOutputs`.
+* `NMSim.expect_congr_of_allOutputs`, `NMSim.expect_expect_sample`,
+  `NMSim.bind_congr_of_allOutputs`.
 * `NMSim.expect_simulate_eager`.
 * `NMSim.expect_eq_until_bad`: equal until bad, for functions of the final state.
 * `NMSim.polyTimeComputable_chunkMap`, `NMSim.chunkMap_flatten`.
@@ -258,7 +259,8 @@ theorem expect_eq_until_bad {impl₀ impl₁ : QueryImpl spec σ unifSpec} (bad 
     have h0 : ∀ ys : spec.rng i × σ,
         ProbComp.expect (simulate impl₀ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
           if bad ys.2 then 0 else
-            ProbComp.expect (simulate impl₁ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) := by
+            ProbComp.expect (simulate impl₁ (k ys.1) ys.2)
+              (fun r => if bad r.2 then 0 else G r) := by
       intro ys
       by_cases hb : bad ys.2
       · rw [if_pos hb, hz impl₀ hstick₀ ys hb]
@@ -266,7 +268,8 @@ theorem expect_eq_until_bad {impl₀ impl₁ : QueryImpl spec σ unifSpec} (bad 
     have h1 : ∀ ys : spec.rng i × σ,
         ProbComp.expect (simulate impl₁ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
           if bad ys.2 then 0 else
-            ProbComp.expect (simulate impl₁ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) := by
+            ProbComp.expect (simulate impl₁ (k ys.1) ys.2)
+              (fun r => if bad r.2 then 0 else G r) := by
       intro ys
       by_cases hb : bad ys.2
       · rw [if_pos hb, hz impl₁ hstick₁ ys hb]
@@ -341,7 +344,12 @@ private theorem length_iterate_chunkStep_le (c : PolyExpr) (x : List Bool) (i : 
 
 /-- **Chunk maps are polynomial-time** when `f` is, read as a function of `⟨ctx, chunk⟩`
 (`Complexity.polyTimeComputable_iterateEmit` with the step `chunkStep`, which never lengthens a
-word, and `|x|` rounds). -/
+word, and `|x|` rounds).
+
+**Proof sketch.** The step (keep `ctx`, drop `c(n)` bits) and the emission (`[]` on an empty
+rest, else `f ctx` of the next `c(n)` bits) are polynomial-time by the pair readers,
+`pairTakePoly`/`pairDropPoly` and `polyTimeComputable_ite`. The iterates stay within `|x| + 2`
+bits (`length_iterate_chunkStep_le`), so `polyTimeComputable_iterateEmit` gives `chunkMap_eq`. -/
 theorem polyTimeComputable_chunkMap (c : PolyExpr) {f : List Bool → List Bool → List Bool}
     (hf : PolyTimeComputable fun z => f (pairFstD z) (pairSndD z)) :
     PolyTimeComputable (chunkMap c f) := by

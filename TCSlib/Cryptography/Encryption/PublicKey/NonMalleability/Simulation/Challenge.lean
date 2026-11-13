@@ -109,7 +109,10 @@ def chalRun (P : ChalParams S pl hl k' din' dout') (w : List Bool) : List Bool :
     pairEncode [true] (P.ansY w ++ P.ansH w ++
       (true :: (P.ansY w ++ P.ansH w ++ EnsembleLemmas.padL (pl.eval (rdU w).length) (rdQuery w))))
 
-/-- `chalRun P w` is the round described above. -/
+/-- `chalRun P w` is `⟨[true], 0^{msgLen+1} ‖ s⟩` if `i = 0`; else
+`⟨[true], (s.drop 1).take (ctLen + hl) ‖ s⟩` if the flag is set; else
+`⟨[false], ⟨1^j, qry w⟩⟩` if the outer log is empty; else
+`⟨[true], Y ‖ H ‖ (true :: Y ‖ H ‖ padL pl x)⟩`, with `Y = ansY w` and `H = ansH w`. -/
 theorem chalRun_eq (P : ChalParams S pl hl k' din' dout') (w : List Bool) :
     chalRun P w =
       if decide (rdIdx w = []) then
@@ -179,7 +182,8 @@ theorem chalHandler_stateLen_eval :
 /-- **The encoded states:** `none` (no challenge yet) is all `false`, and `some (Y, H, a)` is
 `[true] ‖ Y ‖ H ‖ a`. -/
 def chalState
-    (o : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (hl.eval n) → Bool) × (Fin (pl.eval n) → Bool))) :
+    (o : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (hl.eval n) → Bool) ×
+      (Fin (pl.eval n) → Bool))) :
     Fin ((chalHandler P).stateLen.eval n) → Bool :=
   match o with
   | none => zeroBits _
@@ -216,7 +220,8 @@ theorem ofFn_chalState_none :
 
 /-- The first bit of an encoded state tells whether a challenge was recorded. -/
 theorem headD_ofFn_chalState
-    (o : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (hl.eval n) → Bool) × (Fin (pl.eval n) → Bool))) :
+    (o : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (hl.eval n) → Bool) ×
+      (Fin (pl.eval n) → Bool))) :
     (List.ofFn (chalState P n o)).headD false = o.isSome := by
   cases o with
   | none =>
@@ -231,7 +236,8 @@ theorem headD_ofFn_chalState
 end State
 
 /-- A padded run of `false`s is all `false`: `padFin d (0^m) = 0`. -/
-private theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) = zeroBits d := by
+private theorem padFin_replicate_false (d m : ℕ) :
+    padFin d (List.replicate m false) = zeroBits d := by
   funext i
   rw [padFin_apply, zeroBits_apply]
   by_cases h : (i : ℕ) < m
@@ -279,7 +285,13 @@ theorem chalHandler_impl_some (x : Fin ((snmDin S pl 1).eval n) → Bool)
 /-- **A first challenge asks one outer query:** on the parameter `x` in the empty state it asks
 `qry w₀` to the outer oracle `j` (`w₀` the round input with the empty log) and, on the answer `y`,
 answers `⟨Y, H⟩ = ⟨ansY w₁, ansH w₁⟩` (`w₁` the round input with `y` in the log), recording
-`⟨Y, H, x⟩`. -/
+`⟨Y, H, x⟩`.
+
+**Proof sketch.** `impl_of_query` with the answer `ansY w₁ ‖ ansH w₁` and the encoded state
+`chalState (some ⟨Y, H, x⟩)` (lengths by `ansY_len`, `ansH_len`; `perCall = 1`). The first
+round, on `w₀` (a challenge, flag unset, empty log), is the query branch of `chalRun_eq`; the
+second, on `w₁`, is its answer branch, with `x` read back through `padL`
+(`ofFn_chalState_some`, `ofFn_padFin_of_length`). -/
 theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
     (chalHandler P).impl n z ω 1 x (chalState P n none) =
       .query P.j (padFin _ (P.qry (InteractiveHandler.input n z (List.ofFn ω)
@@ -289,22 +301,26 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
               (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
               (pairEncode (pairEncode (List.replicate P.j true)
                 (pairEncode (P.qry (InteractiveHandler.input n z (List.ofFn ω)
-                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) [])) (List.ofFn y))) [])) ++
+                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []))
+                  (List.ofFn y))) [])) ++
             P.ansH (InteractiveHandler.input n z (List.ofFn ω)
               (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
               (pairEncode (pairEncode (List.replicate P.j true)
                 (pairEncode (P.qry (InteractiveHandler.input n z (List.ofFn ω)
-                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) [])) (List.ofFn y))) []))),
+                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []))
+                  (List.ofFn y))) []))),
           chalState P n (some (padFin _ (P.ansY (InteractiveHandler.input n z (List.ofFn ω)
               (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
               (pairEncode (pairEncode (List.replicate P.j true)
                 (pairEncode (P.qry (InteractiveHandler.input n z (List.ofFn ω)
-                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) [])) (List.ofFn y))) []))),
+                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []))
+                  (List.ofFn y))) []))),
             padFin _ (P.ansH (InteractiveHandler.input n z (List.ofFn ω)
               (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
               (pairEncode (pairEncode (List.replicate P.j true)
                 (pairEncode (P.qry (InteractiveHandler.input n z (List.ofFn ω)
-                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) [])) (List.ofFn y))) []))),
+                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []))
+                  (List.ofFn y))) []))),
             padFin (pl.eval n) (List.ofFn x)))) := by
   set w₀ := InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (chalState P n none)) (1 : Fin 2)
     (List.ofFn x) [] with hw₀
@@ -323,7 +339,8 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
   have hpc : 1 ≤ (chalHandler P).perCall.eval n := by
     rw [chalHandler_perCall, PolyExpr.eval_const]
   set W₁ : (Fin ((dout' P.j).eval n) → Bool) → List Bool := fun y =>
-    InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
+    InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (chalState P n none)) (1 : Fin 2)
+      (List.ofFn x)
       (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
     with hW₁
   have hY : ∀ y, (P.ansY (W₁ y)).length = S.ctLen.eval n := fun y => by

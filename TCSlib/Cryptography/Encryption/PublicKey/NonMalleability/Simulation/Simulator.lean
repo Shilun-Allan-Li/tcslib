@@ -172,7 +172,8 @@ def simFin (r : PolyExpr) (w : List Bool) : List Bool :=
         ((finA w).take ((r.mul S.ctLen).eval (finU w).length)))) ++
     (finA w).drop ((r.mul S.ctLen).eval (finU w).length))
 
-/-- `simFin S r w` is the round described above. -/
+/-- `simFin S r w = ⟨[true], F ‖ a.drop (r·ctLen)⟩`, with `F = flag^r` if `ctLen(n) = 0` and
+`F = chunkMap ctLen flagF ⟨⟨1^n, s⟩, a.take (r·ctLen)⟩` otherwise. -/
 theorem simFin_eq (r : PolyExpr) (w : List Bool) :
     simFin S r w = pairEncode [true]
       ((if decide (List.replicate (S.ctLen.eval (finU w).length) true = []) then
@@ -205,10 +206,17 @@ theorem length_flagF (ctx c : List Bool) : (flagF S ctx c).length = c.length + 1
   rw [flagF_eq, List.length_cons]
 
 /-- **The finalization round on a finalization input** (for `A`'s output of `r·ctLen + sl` bits)
-returns `⟨[true], simOutL …⟩`. -/
+returns `⟨[true], simOutL …⟩`.
+
+**Proof sketch.** Read the fields of the input in `simFin_eq` and split on `ctLen(n)`. If
+`ctLen(n) = 0`, every chunk is empty and equals `ỹ`, so every flagged entry is `[flag]` and the
+`r` entries flatten to `flag^r`. Otherwise cut `a.take (r·ctLen)` into its `r` chunks of
+`ctLen(n)` bits (`take_eq_flatten_chunkAt`, `length_chunkAt`); `chunkMap_flatten` maps
+`flagF` over them, which is `simOutL_eq`. -/
 theorem simFin_finInput (r sl : PolyExpr) (n : ℕ) (z ω s a L : List Bool)
     (ha : a.length = r.eval n * S.ctLen.eval n + sl.eval n) :
-    simFin S r (InteractiveHandler.finInput n z ω s a L) = pairEncode [true] (simOutL S r n s a) := by
+    simFin S r (InteractiveHandler.finInput n z ω s a L) =
+      pairEncode [true] (simOutL S r n s a) := by
   obtain ⟨hU, -, -, hA, -⟩ := fields_finInput n z ω s a L
   rw [simFin_eq, hU, hA, finSt_finInput, List.length_replicate, PolyExpr.eval_mul, simOutL_eq]
   congr 2
@@ -359,7 +367,8 @@ theorem simAbs_snd (ρ : samp.Coins n)
   | none => rfl
   | some ya => rfl
 
-/-- **The dummy challenge in a round of the simulator** (input `⟨pk, M.advice n⟩`, seed `ρ̃ ‖ re`, on
+/-- **The dummy challenge in a round of the simulator** (input `⟨pk, M.advice n⟩`, seed
+`ρ̃ ‖ re`, on
 the parameter `x`): `simCt … = ⟦Enc_pk(M(x; ρ̃); re)⟧`. -/
 theorem simCt_input (pk : List Bool) (ρ' : samp.Coins n) (re : S.enc.Coins n) (s : List Bool)
     (x : Fin ((snmDin S pl 1).eval n) → Bool) (L : List Bool) :
@@ -390,7 +399,8 @@ CPA) with its state abstracted (`simAbs`).
 **Proof sketch.** Query by query: `Dec` is `⊥` on both sides (`chalHandler_impl_dec`,
 `rImpl_dec_cpa`); a repeated challenge repeats `⟨y, h(M(a; ρ))⟩` (`chalHandler_impl_some`,
 `rImpl_some`); a first challenge asks `a`, receives `h(M(a; ρ))` (`histImpl_eq`) and answers
-`⟨Enc_pk(M(a; ρ̃); re), h(M(a; ρ))⟩` (`chalHandler_impl_none`, `simCt_input`, `rImpl_none_eager`). -/
+`⟨Enc_pk(M(a; ρ̃); re), h(M(a; ρ))⟩` (`chalHandler_impl_none`, `simCt_input`,
+`rImpl_none_eager`). -/
 theorem simComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins n) (i : Fin 2)
     (x : (bitSpecAt (snmDin S pl) (snmDout S hl) n).dom i)
     (s : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (pl.eval n) → Bool))) :
@@ -417,7 +427,8 @@ theorem simComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coin
       show (snmDin S pl 1).eval n = _
       rw [snmDin_one]
     have hq : ∀ (s' : List Bool) (L : List Bool),
-        (simParams S samp pl hl r sl).qry (InteractiveHandler.input n (pairEncode pk (samp.advice n))
+        (simParams S samp pl hl r sl).qry
+          (InteractiveHandler.input n (pairEncode pk (samp.advice n))
           (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s'
           (1 : Fin 2) (List.ofFn x) L) = List.ofFn (padFin (pl.eval n) (List.ofFn x)) := by
       intro s' L
@@ -425,7 +436,8 @@ theorem simComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coin
         (fields_input (k := 2) n _ _ s' 1 _ L).2.2.2.2.2.1, List.length_replicate,
         ofFn_padFin_eq_padL]
     have hH : ∀ (s' q : List Bool) (y : Fin (hl.eval n) → Bool),
-        (simParams S samp pl hl r sl).ansH (InteractiveHandler.input n (pairEncode pk (samp.advice n))
+        (simParams S samp pl hl r sl).ansH
+          (InteractiveHandler.input n (pairEncode pk (samp.advice n))
           (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s'
           (1 : Fin 2) (List.ofFn x) (pairEncode (pairEncode (List.replicate 0 true)
             (pairEncode q (List.ofFn y))) [])) = List.ofFn y := by
@@ -515,7 +527,8 @@ theorem simRun_eq (Sim₀ : NUPPT) (n : ℕ)
     (φ : (Fin ((chalHandler (simParams S samp pl hl r sl)).seedLen.eval n) → Bool) × A.Coins n ≃
       Sim₀.Coins n)
     (hφ : ∀ (z : List Bool)
-      (ω : Fin ((chalHandler (simParams S samp pl hl r sl)).seedLen.eval n) → Bool) (rA : A.Coins n),
+      (ω : Fin ((chalHandler (simParams S samp pl hl r sl)).seedLen.eval n) → Bool)
+      (rA : A.Coins n),
       (simulate ((chalHandler (simParams S samp pl hl r sl)).impl n z ω)
           (A.toCompOn (bitCodec (fun i => (snmDin S pl i).eval n) (fun i => (snmDout S hl i).eval n)
             (((r.mul S.ctLen).add sl).eval n)) n (q.eval n)
@@ -543,7 +556,8 @@ theorem simRun_eq (Sim₀ : NUPPT) (n : ℕ)
     rw [PolyExpr.eval_add, PolyExpr.eval_mul]
   have hfin : ∀ (st : Fin ((chalHandler (simParams S samp pl hl r sl)).stateLen.eval n) → Bool)
       (a : Fin (((r.mul S.ctLen).add sl).eval n) → Bool),
-      (chalHandler (simParams S samp pl hl r sl)).finish n z ω st a = .pure (padFin _ (simOutL S r n (List.ofFn st) (List.ofFn a))) :=
+      (chalHandler (simParams S samp pl hl r sl)).finish n z ω st a =
+        .pure (padFin _ (simOutL S r n (List.ofFn st) (List.ofFn a))) :=
     fun st a => simFinish S samp pl hl r sl n z ω st a hdα
   -- The output length, the budget and T2.
   refine (expect_toCompOn_outLen _ Sim₀ n 1 z _ none
@@ -558,7 +572,8 @@ theorem simRun_eq (Sim₀ : NUPPT) (n : ℕ)
     refine OracleComp.CostBoundedBy.bind (q₁ := 1) (q₂ := 0) (chalHandler_costBoundedBy _ n z ω _)
       fun res => ?_
     rw [hfin]
-    exact OracleComp.costBoundedBy_pure _ _ _), ← hφ z ω rA, simParams_advInput, chalHandler_init, simulate_bind,
+    exact OracleComp.costBoundedBy_pure _ _ _), ← hφ z ω rA, simParams_advInput, chalHandler_init,
+    simulate_bind,
     simulate_comp, ← simAbs_none S samp pl hl hist r sl n ρ,
     simulate_eq_of_abs _ _ _ (simComp_abs S samp pl hl hist r sl n pk sk ρ ρ' re),
     OracleComp.bind_assoc, OracleComp.bind_assoc]

@@ -59,14 +59,16 @@ theorem polyTimeComputable_guessBit : PolyTimeComputable fun w => [guessBit w] :
     split <;> rfl
 
 /-- **An entry read back** from the decryptions `v ‖ v₁ ‖ v₂` (`msgLen(n) + 1` bits each) of a
-ciphertext and the encoding of its copy flag, on the context `⟨1^n, _⟩`: `COPY` if `guessBit (v₁ ‖ v₂)`,
+ciphertext and the encoding of its copy flag, on the context `⟨1^n, _⟩`: `COPY` if
+`guessBit (v₁ ‖ v₂)`,
 and `false` followed by `v` otherwise. -/
 def entF (ctx ch : List Bool) : List Bool :=
   if guessBit (ch.drop ((S.msgLen.add (.const 1)).eval (pairFstD ctx).length)) then
     true :: List.replicate ((S.msgLen.add (.const 1)).eval (pairFstD ctx).length) false
   else false :: ch.take ((S.msgLen.add (.const 1)).eval (pairFstD ctx).length)
 
-/-- `entF S ctx ch = if guessBit (ch.drop (msgLen + 1)) then COPY else false :: ch.take (msgLen + 1)`. -/
+/-- `entF S ctx ch =
+if guessBit (ch.drop (msgLen + 1)) then COPY else false :: ch.take (msgLen + 1)`. -/
 theorem entF_eq (ctx ch : List Bool) :
     entF S ctx ch =
       if guessBit (ch.drop ((S.msgLen.add (.const 1)).eval (pairFstD ctx).length)) then
@@ -105,7 +107,8 @@ theorem polyTimeComputable_bitG : PolyTimeComputable fun z => bitG (pairFstD z) 
 variable (pl : PolyExpr) (r sl : PolyExpr)
 
 /-- **The view read back** on the parameter string `U = 1^n` from the decryptions `u`: the entries
-`E` (`chunkMap` of `entF` over the first `r` groups of three decryptions) and the bits `B` (`chunkMap`
+`E` (`chunkMap` of `entF` over the first `r` groups of three decryptions) and the bits `B`
+(`chunkMap`
 of `bitG` over the remaining pairs); the view is `B.take pl ‖ (B.drop pl).take msgLen ‖ E ‖
 B.drop (pl + msgLen)`. -/
 def recView (U u : List Bool) : List Bool :=
@@ -144,12 +147,19 @@ theorem recView_eq (U u : List Bool) :
             (u.drop ((r.mul ((PolyExpr.const 3).mul (S.msgLen.add (.const 1)))).eval
               U.length)))).drop ((pl.add S.msgLen).eval U.length) := rfl
 
-/-- The reading of the view is polynomial-time, as a function of `⟨U, u⟩`. -/
+/-- The reading of the view is polynomial-time, as a function of `⟨U, u⟩`.
+
+**Proof sketch.** The chunk maps `B` (of `bitG`, on the `drop` of `u` after the `r` groups) and
+`E` (of `entF`, on the matching `take`) are `polyTimeComputable_chunkMap` composed with
+`pairTakePoly`/`pairDropPoly`. The three pieces of `B` cut `⟨U, B⟩` the same way (`take pl`,
+`take msgLen` of `drop pl`, `drop (pl + msgLen)`), and `recView_eq` joins the four parts by
+`append`. -/
 theorem polyTimeComputable_recView :
     PolyTimeComputable fun z => recView S pl r (pairFstD z) (pairSndD z) := by
   have hF := polyTimeComputable_pairFstD
   have hD := polyTimeComputable_pairSndD
-  have hcut : ∀ p : PolyExpr, PolyTimeComputable (fun z => (pairSndD z).take (p.eval (pairFstD z).length)) ∧
+  have hcut : ∀ p : PolyExpr,
+      PolyTimeComputable (fun z => (pairSndD z).take (p.eval (pairFstD z).length)) ∧
       PolyTimeComputable (fun z => (pairSndD z).drop (p.eval (pairFstD z).length)) := fun p =>
     ⟨polyTimeComputable_pairTakePoly p, polyTimeComputable_pairDropPoly p⟩
   have hctx : PolyTimeComputable fun z => pairEncode (pairFstD z) ([] : List Bool) :=
@@ -173,13 +183,15 @@ theorem polyTimeComputable_recView :
         (pairEncode (pairEncode (pairFstD z) [])
           ((pairSndD z).drop ((r.mul ((PolyExpr.const 3).mul (S.msgLen.add (.const 1)))).eval
             (pairFstD z).length))))) := fun _ => hF.pairEncode hB
-  have h1 : PolyTimeComputable fun z => (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
+  have h1 : PolyTimeComputable fun z =>
+      (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
         (pairEncode (pairEncode (pairFstD z) [])
           ((pairSndD z).drop ((r.mul ((PolyExpr.const 3).mul (S.msgLen.add (.const 1)))).eval
             (pairFstD z).length)))).take (pl.eval (pairFstD z).length) :=
     ((hcut pl).1.comp (hBU pl)).congr fun z => by
     simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
-  have h2a : PolyTimeComputable fun z => (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
+  have h2a : PolyTimeComputable fun z =>
+      (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
         (pairEncode (pairEncode (pairFstD z) [])
           ((pairSndD z).drop ((r.mul ((PolyExpr.const 3).mul (S.msgLen.add (.const 1)))).eval
             (pairFstD z).length)))).drop (pl.eval (pairFstD z).length) :=
@@ -193,7 +205,8 @@ theorem polyTimeComputable_recView :
         (S.msgLen.eval (pairFstD z).length) :=
     ((hcut S.msgLen).1.comp (hF.pairEncode h2a)).congr fun z => by
         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
-  have h3 : PolyTimeComputable fun z => (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
+  have h3 : PolyTimeComputable fun z =>
+      (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
         (pairEncode (pairEncode (pairFstD z) [])
           ((pairSndD z).drop ((r.mul ((PolyExpr.const 3).mul (S.msgLen.add (.const 1)))).eval
             (pairFstD z).length)))).drop ((pl.add S.msgLen).eval (pairFstD z).length) :=
@@ -283,19 +296,22 @@ theorem ctLen_pos (n : ℕ) (rg : S.gen.Coins n) (re : S.enc.Coins n) (hL : 0 < 
 **Proof sketch.** The two ciphertexts decrypt to `x^{msgLen}` and `(¬x)^{msgLen}` (correctness), so
 they differ and at most one is the challenge: `guessBit_valid` or `guessBit_refused`. -/
 theorem guessBit_encPair (n : ℕ) (rg : S.gen.Coins n) (s' : Option (Fin (S.ctLen.eval n) → Bool))
-    (hL : 0 < S.msgLen.eval n) (z ω st : List Bool) (hz : pairFstD z = pairFstD (S.gen.runAt n [] rg))
+    (hL : 0 < S.msgLen.eval n) (z ω st : List Bool)
+    (hz : pairFstD z = pairFstD (S.gen.runAt n [] rg))
     (re : S.enc.Coins n) (hω : ω.drop ((samp.coins.add samp.coins).eval n) = List.ofFn re)
     (x : Bool) :
     guessBit ((entryL S n (pairSndD (S.gen.runAt n [] rg))
         (decide (s'.map List.ofFn = some (encBit S samp
           (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st))) x)))
-        (encBit S samp (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st))) x)).drop 1 ++
+        (encBit S samp (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st)))
+          x)).drop 1 ++
       (entryL S n (pairSndD (S.gen.runAt n [] rg))
         (decide (s'.map List.ofFn = some (encBit S samp
           (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st))) (!x))))
         (encBit S samp (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st)))
           (!x))).drop 1) = x := by
-  have henc : ∀ y, encBit S samp (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st)))
+  have henc : ∀ y,
+      encBit S samp (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st)))
       y = S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg))
         (List.ofFn fun _ : Fin (S.msgLen.eval n) => y)) re := by
     intro y
@@ -370,7 +386,8 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
   have hv : ∀ c, (v c).length = S.msgLen.eval n + 1 := fun c => by
     rw [hvdef, List.length_drop, length_entryL]
     omega
-  have he : ∀ x, (encBit S samp ctx x).length = S.ctLen.eval n := fun x => length_encBit S samp n _ x
+  have he : ∀ x, (encBit S samp ctx x).length = S.ctLen.eval n := fun x =>
+    length_encBit S samp n _ x
   set cs : List (List Bool) := ((List.range (r.eval n)).map fun i =>
       [chunkAt (S.ctLen.eval n) i a, encBit S samp ctx (f i), encBit S samp ctx (!f i)]).flatten ++
     (bits.map fun x => [encBit S samp ctx x, encBit S samp ctx (!x)]).flatten with hcs

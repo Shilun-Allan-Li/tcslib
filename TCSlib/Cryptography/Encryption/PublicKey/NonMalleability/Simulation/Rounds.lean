@@ -14,7 +14,8 @@ set_option autoImplicit false
 Generic facts about T2's interactive handlers (`Games.InteractiveHandler`), used by the two
 machines of direction IND ⇒ SIM of [PS10, Theorem 174.8] (the simulator and the NM adversary).
 
-* **Readers of a round input** `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩` (`rdU`, `rdZ`, `rdW`, `rdState`,
+* **Readers of a round input** `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩` (`rdU`, `rdZ`, `rdW`,
+  `rdState`,
   `rdIdx`, `rdQuery`, `rdLog`, `rdAns`), with their values (`fields_input`) and their
   polynomial-time bounds.
 * **One call** whose first round returns (`impl_of_ret`), or asks one outer query and returns in its
@@ -187,7 +188,13 @@ theorem impl_of_ret (i : Fin k) (x : Fin ((din i).eval n) → Bool)
 
 /-- **A call with one outer query:** if the first round asks the outer query `x'` to oracle `j`,
 and the second round, with the answer `y` in the outer log, returns `⟨[true], u y ‖ v y⟩`, then
-(with `perCall ≥ 1`) the call is `query j x' (fun y => pure (padFin _ (u y), padFin _ (v y)))`. -/
+(with `perCall ≥ 1`) the call is `query j x' (fun y => pure (padFin _ (u y), padFin _ (v y)))`.
+
+**Proof sketch.** Unfold the call (`impl_apply`, `call_eq`) at the budget `perCall = p + 1`. The
+first round decodes to the query (`decodeBitMove_query`), which `buildComp_succ_of_query` asks.
+After the answer `y` the log encodes as in `hrun₁` (`bitCodec_encodeEntry`), the second round
+decodes to the return of `padFin _ (u y ‖ v y)` (`buildComp_of_ret`, `decodeBitMove_ret`), and
+`padFin_append_split` splits it into the answer and the state. -/
 theorem impl_of_query (i : Fin k) (x : Fin ((din i).eval n) → Bool)
     (s : Fin (H.stateLen.eval n) → Bool) (j : Fin k') (x' : Fin ((din' j).eval n) → Bool)
     (u v : (Fin ((dout' j).eval n) → Bool) → List Bool)

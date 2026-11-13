@@ -21,6 +21,11 @@ satisfy, at every `n`,
 
 So `NM`'s advantage is at most `2·adv(D') + adv(D'')`.
 
+## Main definitions
+
+* `NMSim.simHandler`: the SIM adversary's handler, `copyHandler` on the real experiment's
+  oracles with the parameter `⟨m₀, m₁⟩` and the empty history.
+
 ## Main results
 
 * `NMSim.realAcc_copyHandler`: the SIM adversary's real experiment is `A`'s.
@@ -61,7 +66,8 @@ private theorem lin_expect' {α : Type} (c : ProbComp α) (f g h₀ h₁ : α �
   exact congrArg _ (funext h)
 
 /-- **The coupling in expectation:** if `T₀(e c) + T₁(e c) − (H₀ b + H₁ b)/2 = V₁ c − V₀ c` for all
-`c`, `b`, then `2·((𝔼T₀ + 𝔼T₁)/2) − (𝔼H₀ + 𝔼H₁)/2 = 𝔼V₁ − 𝔼V₀` (uniform samples; `e` a bijection). -/
+`c`, `b`, then `2·((𝔼T₀ + 𝔼T₁)/2) − (𝔼H₀ + 𝔼H₁)/2 = 𝔼V₁ − 𝔼V₀` (uniform samples; `e` a
+bijection). -/
 private theorem lin_sample {α β γ : Type} [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
     [Fintype γ] [Nonempty γ] (T₀ T₁ : α → ℝ) (H₀ H₁ : β → ℝ) (V₀ V₁ : γ → ℝ) (e : γ ≃ α)
     (h : ∀ c b, T₀ (e c) + T₁ (e c) - (H₀ b + H₁ b) / 2 = V₁ c - V₀ c) :
@@ -136,7 +142,8 @@ theorem realAcc_copyHandler (atk : Attack) (samp : NUPPT) (pl hl : PolyExpr)
   dsimp only
   rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, copyHandler_outLen, hd])]
 
-/-- **The SIM adversary's handler** for an NM adversary with `ℓ` output ciphertexts: `copyHandler` on
+/-- **The SIM adversary's handler** for an NM adversary with `ℓ` output ciphertexts:
+`copyHandler` on
 the real experiment's oracles with the parameter `⟨m₀, m₁⟩` (`pl = msgLen + msgLen`), the empty
 history and `ℓ·ctLen + 0` output bits (`r = ℓ`, `sl = 0`). -/
 def simHandler (ℓ : PolyExpr) :
@@ -146,11 +153,18 @@ def simHandler (ℓ : PolyExpr) :
 
 /-- `simHandler S ℓ = copyHandler S (msgLen + msgLen) 0 (ℓ·ctLen + 0)`. -/
 theorem simHandler_eq (ℓ : PolyExpr) :
-    simHandler S ℓ = copyHandler S (S.msgLen.add S.msgLen) (.const 0) ((ℓ.mul S.ctLen).add (.const 0)) :=
+    simHandler S ℓ =
+      copyHandler S (S.msgLen.add S.msgLen) (.const 0) ((ℓ.mul S.ctLen).add (.const 0)) :=
   rfl
 
 /-- **The real experiment with the sampler `⟨m₀, m₁⟩ ↦ m_β`** is the average over `β` of `A`'s runs
-`runB … β` (with any `ρ'`), the views read with the coin `β`. -/
+`runB … β` (with any `ρ'`), the views read with the coin `β`.
+
+**Proof sketch.** `realAcc_copyHandler` makes the experiment `A`'s run against the hybrid oracle
+whose sampler coins `ρ` also stand in its `ρ'` slot, and `expect_sample_halfCoins` splits the
+average over `ρ` into the two coins `β`. For each `β`, the oracle with `b = false` does not read
+`ρ'` (`rImpl_false_coins`), so the run is `runB … β`, after transporting the output length
+(`expect_toCompOn_outLen`). -/
 private theorem realAcc_half (atk : Attack) (A A' : NUPPT) (q ℓ : PolyExpr) (K : ℕ) (X : NUPPT)
     (n : ℕ) (ρ' : (halfSamp S).Coins n)
     (hK : K = q.eval n * (simHandler S ℓ).perCall.eval n + (simHandler S ℓ).finCall.eval n)
@@ -171,13 +185,16 @@ private theorem realAcc_half (atk : Attack) (A A' : NUPPT) (q ℓ : PolyExpr) (K
         ((PolyExpr.const 0).eval n) X n =
       expect (sample (S.gen.Coins n)) fun rg =>
         ((expect (sample (A.Coins n)) fun r => expect (sample (X.Coins n)) fun rX =>
-          expect (runB S atk A (q.eval n) (ℓ.eval n) n (fun _ => []) (pairFstD (S.gen.runAt n [] rg))
+          expect (runB S atk A (q.eval n) (ℓ.eval n) n (fun _ => [])
+            (pairFstD (S.gen.runAt n [] rg))
             (pairSndD (S.gen.runAt n [] rg)) r ρ' false) fun p =>
             if X.distinguisherL n (realView S (halfSamp S) (S.msgLen.add S.msgLen) n (ℓ.eval n)
-              (pairSndD (S.gen.runAt n [] rg)) ((halfCoins S n).symm false) (List.ofFn p.1) p.2) rX =
+              (pairSndD (S.gen.runAt n [] rg)) ((halfCoins S n).symm false) (List.ofFn p.1)
+              p.2) rX =
               true then 1 else 0) +
         (expect (sample (A.Coins n)) fun r => expect (sample (X.Coins n)) fun rX =>
-          expect (runB S atk A (q.eval n) (ℓ.eval n) n (fun _ => []) (pairFstD (S.gen.runAt n [] rg))
+          expect (runB S atk A (q.eval n) (ℓ.eval n) n (fun _ => [])
+            (pairFstD (S.gen.runAt n [] rg))
             (pairSndD (S.gen.runAt n [] rg)) r ρ' true) fun p =>
             if X.distinguisherL n (realView S (halfSamp S) (S.msgLen.add S.msgLen) n (ℓ.eval n)
               (pairSndD (S.gen.runAt n [] rg)) ((halfCoins S n).symm true) (List.ofFn p.1) p.2) rX =
@@ -295,7 +312,8 @@ theorem ideal_gap (Sim D : NUPPT) (r n : ℕ) :
       expect (simulate (histImpl S (halfSamp S) (S.msgLen.add S.msgLen) (.const 0) (fun _ => []) n
           ((halfCoins S n).symm false))
         (Sim.toCompOn (bitCodec (fun _ => (S.msgLen.add S.msgLen).eval n)
-          (fun _ => (PolyExpr.const 0).eval n) (r * (S.ctLen.eval n + 1) + (PolyExpr.const 0).eval n))
+          (fun _ => (PolyExpr.const 0).eval n)
+          (r * (S.ctLen.eval n + 1) + (PolyExpr.const 0).eval n))
           n 1 (pairFstD (S.gen.runAt n [] rg)) rS) none) fun p =>
         2⁻¹ * ((if X.distinguisherL n (idealView S (halfSamp S) (S.msgLen.add S.msgLen) n r
             (pairSndD (S.gen.runAt n [] rg)) ((halfCoins S n).symm false) (List.ofFn p.1) p.2) rX =

@@ -101,7 +101,8 @@ theorem encBit_eq (ctx : List Bool) (x : Bool) :
           ((samp.coins.add samp.coins).eval (pairFstD ctx).length)))) := rfl
 
 /-- **The encoding of a bit** `x`: `Enc_pk(x^{msgLen}) ‖ Enc_pk((¬x)^{msgLen})`. -/
-def encPair (ctx : List Bool) (x : Bool) : List Bool := encBit S samp ctx x ++ encBit S samp ctx (!x)
+def encPair (ctx : List Bool) (x : Bool) : List Bool :=
+  encBit S samp ctx x ++ encBit S samp ctx (!x)
 
 /-- `encPair S samp ctx x = encBit ctx x ++ encBit ctx (¬x)`. -/
 theorem encPair_eq (ctx : List Bool) (x : Bool) :
@@ -159,7 +160,8 @@ theorem polyTimeComputable_encPair {u : List Bool → List Bool} {x : List Bool 
     (polyTimeComputable_encBit S samp hu (polyTimeComputable_not hx))
 
 /-- `encF` is polynomial-time, as a function of `⟨ctx, c⟩`. -/
-theorem polyTimeComputable_encF : PolyTimeComputable fun z => encF S samp (pairFstD z) (pairSndD z) := by
+theorem polyTimeComputable_encF :
+    PolyTimeComputable fun z => encF S samp (pairFstD z) (pairSndD z) := by
   have hF := polyTimeComputable_pairFstD
   have hD := polyTimeComputable_pairSndD
   have hst : PolyTimeComputable fun z => ctxSt (pairFstD z) := hD.comp (hD.comp (hD.comp hF))
@@ -176,7 +178,8 @@ theorem polyTimeComputable_encF : PolyTimeComputable fun z => encF S samp (pairF
     (polyTimeComputable_and (polyTimeComputable_headD.comp hst) heq))
 
 /-- `bitF` is polynomial-time, as a function of `⟨ctx, b⟩`. -/
-theorem polyTimeComputable_bitF : PolyTimeComputable fun z => bitF S samp (pairFstD z) (pairSndD z) :=
+theorem polyTimeComputable_bitF :
+    PolyTimeComputable fun z => bitF S samp (pairFstD z) (pairSndD z) :=
   polyTimeComputable_encPair S samp polyTimeComputable_pairFstD
     (polyTimeComputable_headD.comp polyTimeComputable_pairSndD)
 
@@ -192,7 +195,8 @@ def nmOutL (r : PolyExpr) (n : ℕ) (ctx a aP mP : List Bool) : List Bool :=
 /-- `nmOutL S samp r n ctx a aP mP = (encF ctx c_i)_i ++ (encPair ctx x)_{x ∈ aP ‖ mP ‖ σ}`. -/
 theorem nmOutL_eq (r : PolyExpr) (n : ℕ) (ctx a aP mP : List Bool) :
     nmOutL S samp r n ctx a aP mP =
-      ((List.range (r.eval n)).map fun i => encF S samp ctx (chunkAt (S.ctLen.eval n) i a)).flatten ++
+      ((List.range (r.eval n)).map fun i =>
+        encF S samp ctx (chunkAt (S.ctLen.eval n) i a)).flatten ++
         ((aP ++ mP ++ a.drop (r.eval n * S.ctLen.eval n)).map fun x =>
           encPair S samp ctx x).flatten := rfl
 
@@ -232,7 +236,10 @@ def nmFin (r : PolyExpr) (w : List Bool) : List Bool :=
                 (pairSndD (finZ w)) ((finW w).take (samp.coins.eval (finU w).length)))) ++
             (finA w).drop ((r.mul S.ctLen).eval (finU w).length))))
 
-/-- `nmFin S samp hl r w` is the round described above. -/
+/-- `nmFin S samp hl r w = ⟨[true], E ‖ B⟩`, with `E = chunkMap ctLen encF ⟨ctx, a.take (r·ctLen)⟩`
+and `B = chunkMap 1 bitF ⟨ctx, aP ‖ M(aP; ρ) ‖ a.drop (r·ctLen)⟩`, where
+`ctx = ⟨1^n, ⟨z, ⟨ω, s⟩⟩⟩`, `aP = s.drop (1 + ctLen + hl)`, `ρ = ω.take coins` and
+`M(aP; ρ) = padL msgLen (M.output (layout 1^n aP (snd z) ρ))`. -/
 theorem nmFin_eq (r : PolyExpr) (w : List Bool) :
     nmFin S samp hl r w = pairEncode [true]
       (chunkMap S.ctLen (encF S samp)
@@ -247,7 +254,13 @@ theorem nmFin_eq (r : PolyExpr) (w : List Bool) :
                   (pairSndD (finZ w)) ((finW w).take (samp.coins.eval (finU w).length)))) ++
               (finA w).drop ((r.mul S.ctLen).eval (finU w).length)))) := rfl
 
-/-- The finalization round is polynomial-time. -/
+/-- The finalization round is polynomial-time.
+
+**Proof sketch.** From the polynomial-time field readers (`polyTimeComputable_finFields`,
+`polyTimeComputable_finSt`): the context by `pairEncode`; the cuts of `a` at `r·ctLen`, the
+parameter `aP` and the coins `ρ` by `pairTakePoly`/`pairDropPoly`; the message by
+`polyTimeComputable_padL` of `M`'s output on `layout`. The two chunk maps are
+`polyTimeComputable_chunkMap` of `encF` and `bitF`, joined by `append` and `pairEncode`. -/
 theorem polyTimeComputable_nmFin (r : PolyExpr) : PolyTimeComputable (nmFin S samp hl r) := by
   obtain ⟨hU, hZ, hW, hA, -⟩ := polyTimeComputable_finFields
   have hS := polyTimeComputable_finSt
@@ -277,7 +290,13 @@ theorem polyTimeComputable_nmFin (r : PolyExpr) : PolyTimeComputable (nmFin S sa
         (hctx.pairEncode ((haP.append hm).append hdrop))))
 
 /-- **The finalization round on a finalization input** (for `A`'s output of `r·ctLen + sl` bits, and
-`ctLen(n) > 0`) returns `⟨[true], nmOutL …⟩`. -/
+`ctLen(n) > 0`) returns `⟨[true], nmOutL …⟩`.
+
+**Proof sketch.** Read the fields of the input in `nmFin_eq` (`fields_finInput`,
+`finSt_finInput`). Cut `a.take (r·ctLen)` into its `r` chunks of `ctLen(n) > 0` bits
+(`take_eq_flatten_chunkAt`, `length_chunkAt`), so the first chunk map is `encF` over them
+(`chunkMap_flatten`). Write `aP ‖ M(aP; ρ) ‖ σ` as the flatten of its singletons, so the second,
+with chunk length `1`, is `bitF` over its bits; both match `nmOutL_eq`. -/
 theorem nmFin_finInput (r sl : PolyExpr) (n : ℕ) (z ω s a L : List Bool)
     (ha : a.length = r.eval n * S.ctLen.eval n + sl.eval n) (hct : 0 < S.ctLen.eval n) :
     nmFin S samp hl r (InteractiveHandler.finInput n z ω s a L) =
@@ -324,7 +343,8 @@ variable (hist : List Bool → List Bool) (hist_poly : PolyTimeComputable hist)
 
 /-- **The parameters of the NM adversary's handler** (on the real experiment's oracles with
 parameter length `pl` and history `hist` of length `hl`; the outer oracles are those of
-Definition 171.5 on T2's lengths): the first challenge `a` asks the challenge `⟨m, m̃⟩` (oracle `1`),
+Definition 171.5 on T2's lengths): the first challenge `a` asks the challenge `⟨m, m̃⟩`
+(oracle `1`),
 with `m = M(a; ρ)` (`simMsg`) and `m̃ = M(a; ρ̃)` (`altMsg`); it answers `⟨y, h(m)⟩` with `y` the
 outer answer. The seed is `ρ ‖ ρ̃ ‖ re`, the adversary runs on `pk = fst z`, the output is `nmLen`
 ciphertexts (`nmFin`), and the finalization asks nothing. -/
@@ -375,7 +395,8 @@ theorem nmParams_outLen_eval :
 /-- The NM adversary runs `A` on `pk`: `advInput n ⟨pk, α⟩ ω = pk`. -/
 theorem nmParams_advInput (pk α : List Bool)
     (ω : Fin ((chalHandler (nmParams S samp pl hl hist hist_poly r sl)).seedLen.eval n) → Bool) :
-    (chalHandler (nmParams S samp pl hl hist hist_poly r sl)).advInput n (pairEncode pk α) ω = pk := by
+    (chalHandler (nmParams S samp pl hl hist hist_poly r sl)).advInput n (pairEncode pk α) ω =
+      pk := by
   rw [InteractiveHandler.advInput_eq, chalHandler_advIn, nmParams_advIn, seedIn_eq,
     pairSndD_pairEncode, pairFstD_pairEncode, pairFstD_pairEncode]
 
@@ -386,7 +407,8 @@ theorem length_encBit (n : ℕ) (e : List Bool) (x : Bool) :
 
 /-- **The NM adversary outputs `nmLen` ciphertexts:** for `A`'s output of `r·ctLen + sl` bits, a
 parameter of `pl` bits and a message of `msgLen` bits, `|nmOutL …| = nmLen · ctLen`. -/
-theorem length_nmOutL (e a aP mP : List Bool) (ha : a.length = r.eval n * S.ctLen.eval n + sl.eval n)
+theorem length_nmOutL (e a aP mP : List Bool)
+    (ha : a.length = r.eval n * S.ctLen.eval n + sl.eval n)
     (haP : aP.length = pl.eval n) (hmP : mP.length = S.msgLen.eval n) :
     (nmOutL S samp r n (pairEncode (List.replicate n true) e) a aP mP).length =
       (nmLen S pl r sl).eval n * S.ctLen.eval n := by
@@ -488,7 +510,8 @@ theorem nmPair_eq (ρ ρ' : samp.Coins n) (a : Fin (pl.eval n) → Bool) :
       List.ofFn (drawWith samp (S.msgLen.eval n) n a ρ')) := rfl
 
 /-- **The abstraction of the hybrid's state** to the NM adversary's and `NM_b`'s: no challenge is
-`(empty, none)`; the challenge `y` on `a` is `(⟨y, h(M(a; ρ)), a⟩, some (y, ⟨M(a; ρ), M(a; ρ̃)⟩))`. -/
+`(empty, none)`; the challenge `y` on `a` is
+`(⟨y, h(M(a; ρ)), a⟩, some (y, ⟨M(a; ρ), M(a; ρ̃)⟩))`. -/
 def nmAbs (ρ ρ' : samp.Coins n) :
     Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (pl.eval n) → Bool)) →
       (Fin ((chalHandler (nmParams S samp pl hl hist hist_poly r sl)).stateLen.eval n) → Bool) ×
@@ -520,7 +543,8 @@ theorem nmAbs_snd_fst (ρ ρ' : samp.Coins n)
   | some ya => rfl
 
 /-- **The NM adversary against `NM_b`'s oracles is the hybrid `H_b`:** for the input
-`⟨pk, M.advice n⟩` and the seed `ρ ‖ ρ̃ ‖ re`, the composition of `NM_b`'s oracles (the hybrid oracle
+`⟨pk, M.advice n⟩` and the seed `ρ ‖ ρ̃ ‖ re`, the composition of `NM_b`'s oracles (the hybrid
+oracle
 with the sampler `halfSamp` and its coin `b`, under CPA) with the NM adversary's handler, from the
 abstracted state, is `rImpl … b … ρ ρ̃ none` with its state abstracted (`nmAbs`).
 
@@ -569,7 +593,8 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
     have hH : ∀ (s' q t : List Bool), (nmParams S samp pl hl hist hist_poly r sl).ansH
         (InteractiveHandler.input n (pairEncode pk (samp.advice n))
           (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s' (1 : Fin 2)
-          (List.ofFn x) (pairEncode (pairEncode (List.replicate ((1 : Fin 2) : ℕ) true) (pairEncode q t))
+          (List.ofFn x)
+          (pairEncode (pairEncode (List.replicate ((1 : Fin 2) : ℕ) true) (pairEncode q t))
             [])) =
         List.ofFn (histWith hist (hl.eval n)
           (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x)) ρ)) := by
@@ -580,7 +605,8 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
     have hY : ∀ (s' q t : List Bool), (nmParams S samp pl hl hist hist_poly r sl).ansY
         (InteractiveHandler.input n (pairEncode pk (samp.advice n))
           (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s' (1 : Fin 2)
-          (List.ofFn x) (pairEncode (pairEncode (List.replicate ((1 : Fin 2) : ℕ) true) (pairEncode q t))
+          (List.ofFn x)
+          (pairEncode (pairEncode (List.replicate ((1 : Fin 2) : ℕ) true) (pairEncode q t))
             [])) =
         EnsembleLemmas.padL (S.ctLen.eval n) t := by
       intro s' q t
@@ -591,7 +617,8 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
         encWith S n pk (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x))
           (if b then ρ' else ρ)) re' := by
       intro re'
-      have hlen : (List.ofFn (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x)) ρ)
+      have hlen : (List.ofFn (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x))
+            ρ)
           ++ List.ofFn (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x))
             ρ')).length = (S.msgLen.add S.msgLen).eval n := by
         rw [List.length_append, List.length_ofFn, List.length_ofFn, hpl]
