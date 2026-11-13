@@ -1,0 +1,81 @@
+commit c2839c41ca6b3a9c34db1595a1ad287768316630
+Author: Claude <noreply@anthropic.com>
+Date:   Fri Nov 13 06:01:05 2026 +0000
+
+    dl-consolidation landing edit LE-gate20: fold ofFn_arrowCongr and ofFn_block_eq_take_drop (G20-02)
+    
+    Gate 20 minor finding G20-02, two folds the delivery missed:
+    - Asymptotic/UniversalPadding.lean: the private ofFn_arrowCongr had the statement of the
+      promoted ofFn_arrowCongr_finCongr (Asymptotic/Adversary.lean, A3). Deleted; its two uses
+      (ofFn_appendEquiv, ofFn_splitCoins_symm_cast) rewrite with ofFn_arrowCongr_finCongr.
+    - Asymptotic/OneWayLemmas.lean: OneWay.ofFn_block_eq_take_drop keeps its statement byte for
+      byte; its proof is now FunFamily.ofFn_blocks read through the published FunFamily.blocks_apply
+      (no unfolding of blocks or blocksEquivX). Docstring gains the proof sketch.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+
+diff --git a/TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean b/TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean
+index 96ad2a9cc..0bb677c17 100644
+--- a/TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean
+@@ -71,19 +71,16 @@ open Complexity Turing Finset
+ /-! ### Blocks of a string -/
+ 
+ /-- Block `i` of `x : Fin (q * ℓ) → Bool` (positions `ℓ·i, …, ℓ·i + ℓ - 1`) is the `ℓ`-bit window
+-of `List.ofFn x` after `i·ℓ` bits. -/
++of `List.ofFn x` after `i·ℓ` bits.
++
++**Proof sketch.** The block is `FunFamily.blocks q ℓ x i` (`FunFamily.blocks_apply`), whose word is
++that window (`FunFamily.ofFn_blocks`). -/
+ theorem ofFn_block_eq_take_drop {q ℓ : ℕ} (x : Fin (q * ℓ) → Bool) (i : Fin q) :
+     List.ofFn (fun j : Fin ℓ => x (finProdFinEquiv (i, j))) =
+       ((List.ofFn x).drop (i * ℓ)).take ℓ := by
+-  have hle : i * ℓ + ℓ ≤ q * ℓ := by
+-    have : (i + 1) * ℓ ≤ q * ℓ := Nat.mul_le_mul_right ℓ i.2
+-    rwa [Nat.add_mul, Nat.one_mul] at this
+-  refine List.ext_getElem (by simp; omega) fun j h₁ h₂ => ?_
+-  simp only [List.getElem_ofFn, List.getElem_take, List.getElem_drop]
+-  congr 1
+-  ext
+-  simp only [finProdFinEquiv_apply_val]
+-  ring
++  have hblk : (fun j : Fin ℓ => x (finProdFinEquiv (i, j))) = FunFamily.blocks q ℓ x i :=
++    funext fun j => (FunFamily.blocks_apply q ℓ x i j).symm
++  rw [hblk, FunFamily.ofFn_blocks]
+ 
+ /-- The window of `ℓ` bits after `i·ℓ` bits of `List.ofFn x` has exactly `ℓ` bits. -/
+ theorem length_take_drop_block {q ℓ : ℕ} (x : Fin (q * ℓ) → Bool) (i : Fin q) :
+diff --git a/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean b/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean
+index fcc6cc720..cd7319b55 100644
+--- a/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean
++++ b/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean
+@@ -176,18 +176,13 @@ theorem quadraticCode_of_linear {F : List Bool → List Bool} {ℓ : PolyExpr} {
+ 
+ /-! ## One-wayness of the padded family -/
+ 
+-/-- `List.ofFn` through a `finCongr` relabelling of the index type. -/
+-private theorem ofFn_arrowCongr {a b : ℕ} (h : a = b) (f : Fin a → Bool) :
+-    List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) f) = List.ofFn f :=
+-  (List.ofFn_congr h f).symm
+-
+ /-- The encoding of a pair of strings assembled by `Fin.appendEquiv` (and a length cast) is
+ the concatenation of the encodings. -/
+ private theorem ofFn_appendEquiv {a b n : ℕ} (h : a + b = n) (q : (Fin a → Bool) × (Fin b → Bool)) :
+     List.ofFn (((Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h) (Equiv.refl Bool))) q) =
+       List.ofFn q.1 ++ List.ofFn q.2 := by
+   show List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) (Fin.append q.1 q.2)) = _
+-  rw [ofFn_arrowCongr, List.ofFn_fin_append]
++  rw [ofFn_arrowCongr_finCongr, List.ofFn_fin_append]
+ 
+ /-- The encoding of a coin string reassembled by `splitCoins` (and a length cast) is the
+ concatenation of the encodings of the halves. -/
+@@ -196,7 +191,7 @@ private theorem ofFn_splitCoins_symm_cast {a b n : ℕ} (h : a + b = n)
+     List.ofFn (((splitCoins a b).symm.trans (Equiv.arrowCongr (finCongr h) (Equiv.refl Bool))) q) =
+       List.ofFn q.1 ++ List.ofFn q.2 := by
+   show List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) ((splitCoins a b).symm q)) = _
+-  rw [ofFn_arrowCongr]
++  rw [ofFn_arrowCongr_finCongr]
+   obtain ⟨q₁, q₂⟩ := q
+   exact ofFn_splitCoins_symm a b q₁ q₂
+ 
