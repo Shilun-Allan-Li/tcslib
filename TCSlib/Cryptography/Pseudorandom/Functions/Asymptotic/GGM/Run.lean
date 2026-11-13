@@ -173,12 +173,6 @@ theorem queryOf_eq_some_iff (ℓ : ℕ) (w : List Bool) (x : Fin ℓ → Bool) :
     rw [h]
     exact decodeFin_ofFn x
 
-/-- The encoding of the padding of a string of the right length is the string. -/
-theorem ofFn_padFin_of_length {ℓ : ℕ} {w : List Bool} (h : w.length = ℓ) :
-    List.ofFn (padFin ℓ w) = w := by
-  refine List.ext_getElem (by simp [h]) fun k hk₁ hk₂ => ?_
-  simp [padFin_def, List.getElem?_eq_getElem hk₂]
-
 /-- A machine output is a query iff its first component is `[false]` and its second has
 length `ℓ`. -/
 theorem exists_queryOf_iff (ℓ : ℕ) (w : List Bool) :

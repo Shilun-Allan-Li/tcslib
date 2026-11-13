@@ -175,9 +175,9 @@ theorem ofFn_encTape (n : ℕ) (ω : Fin ((encHandler S).seedLen.eval n) → Boo
     rw [List.length_ofFn, encHandler_seedLen, PolyExpr.eval_add]
   rw [encTape_eq, NUPPT.coinsEquivPoly_symm_ofFn]
   cases β
-  · exact GGMRed.ofFn_padFin_of_length (by
+  · exact ofFn_padFin_of_length (by
       rw [if_neg Bool.false_ne_true, List.length_drop, hω]; omega)
-  · exact GGMRed.ofFn_padFin_of_length (by rw [if_pos rfl, List.length_take, hω]; omega)
+  · exact ofFn_padFin_of_length (by rw [if_pos rfl, List.length_take, hω]; omega)
 
 /-- **Ciphertext `β` of the reduction's output**, for the public key `z`, the seed `ω` and the
 guess `g`: `padL ctLen(n) (Enc_z(b^{msgLen(n)}); encTape β)` with `b = g` for `β = true` and
@@ -234,7 +234,7 @@ theorem encHandler_finish (n : ℕ) (z : List Bool)
         encCt S n z ω ((List.ofFn a).headD false) false)) =
       encCt S n z ω ((List.ofFn a).headD false) true ++
         encCt S n z ω ((List.ofFn a).headD false) false :=
-    GGMRed.ofFn_padFin_of_length (by
+    ofFn_padFin_of_length (by
       rw [List.length_append, encCt_eq, encCt_eq, EnsembleLemmas.length_padL,
         EnsembleLemmas.length_padL, encHandler_outLen, PolyExpr.eval_add])
   show decodeBitMove _ _ _ ((encHandler S).finRun _) = _

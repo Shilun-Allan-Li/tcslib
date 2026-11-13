@@ -55,14 +55,14 @@ private theorem lin_expect {α : Type} (c : ProbComp α) (A₀ A₁ B₀ B₁ C�
   have hC : expect c (fun x => C₁ x - C₀ x) =
       expect c (fun x => (A₀ x + A₁ x) - 2⁻¹ * (B₀ x + B₁ x)) :=
     congrArg _ (funext fun x => by linarith [h x])
-  rw [← expect_sub, hC, expect_sub, expect_const_mul, expect_add, expect_add]
+  rw [← ProbComp.expect_sub, hC, ProbComp.expect_sub, expect_const_mul, expect_add, expect_add]
   ring
 
 /-- `2·f − g = h₁ − h₀` pointwise passes to expectations. -/
 private theorem lin_expect' {α : Type} (c : ProbComp α) (f g h₀ h₁ : α → ℝ)
     (h : ∀ x, 2 * f x - g x = h₁ x - h₀ x) :
     2 * expect c f - expect c g = expect c h₁ - expect c h₀ := by
-  rw [← expect_const_mul, ← expect_sub, ← expect_sub]
+  rw [← expect_const_mul, ← ProbComp.expect_sub, ← ProbComp.expect_sub]
   exact congrArg _ (funext h)
 
 /-- **The coupling in expectation:** if `T₀(e c) + T₁(e c) − (H₀ b + H₁ b)/2 = V₁ c − V₀ c` for all
@@ -82,8 +82,8 @@ private theorem lin_sample {α β γ : Type} [Fintype α] [Nonempty α] [Fintype
   have hT : expect (sample γ) (fun c => T₀ (e c) + T₁ (e c) - (V₁ c - V₀ c)) =
       expect (sample γ) (fun _ => (H₀ b₀ + H₁ b₀) / 2) :=
     congrArg _ (funext fun c => by linarith [h c b₀])
-  rw [expect_sub, expect_add, expect_sub, expect_const,
-    expect_sample_equiv e T₀, expect_sample_equiv e T₁] at hT
+  rw [ProbComp.expect_sub, expect_add, ProbComp.expect_sub, expect_const,
+    ProbComp.expect_sample_equiv e T₀, ProbComp.expect_sample_equiv e T₁] at hT
   rw [expect_add, expect_const] at hH
   linarith [h c₀ b₀]
 
@@ -127,7 +127,7 @@ theorem realAcc_copyHandler (atk : Attack) (samp : NUPPT) (pl hl : PolyExpr)
   subst hK
   rw [realAcc_eq]
   refine congrArg _ (funext fun rg => congrArg _ (funext fun ρ => ?_))
-  rw [← expect_sample_equiv φ, expect_sample_prod]
+  rw [← ProbComp.expect_sample_equiv φ, expect_sample_prod]
   refine Eq.trans ?_
     (expect_const (sample (Fin ((copyHandler S pl hl outL).seedLen.eval n) → Bool)) _)
   refine congrArg _ (funext fun ω => congrArg _ (funext fun rA => congrArg _ (funext fun rX => ?_)))
@@ -140,7 +140,7 @@ theorem realAcc_copyHandler (atk : Attack) (samp : NUPPT) (pl hl : PolyExpr)
   refine congrArg _ (funext fun p => ?_)
   rw [expect_pure]
   dsimp only
-  rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, copyHandler_outLen, hd])]
+  rw [ofFn_padFin_of_length (by rw [List.length_ofFn, copyHandler_outLen, hd])]
 
 /-- **The SIM adversary's handler** for an NM adversary with `ℓ` output ciphertexts:
 `copyHandler` on
@@ -324,9 +324,9 @@ theorem ideal_gap (Sim D : NUPPT) (r n : ℕ) :
     intro X
     rw [idealAcc_eq]
     refine congrArg _ (funext fun rg => ?_)
-    rw [expect_sample_comm]
+    rw [ProbComp.expect_sample_comm]
     refine congrArg _ (funext fun rS => ?_)
-    rw [expect_sample_comm]
+    rw [ProbComp.expect_sample_comm]
     refine congrArg _ (funext fun rX => ?_)
     rw [expect_sample_halfCoins, histImpl_coins S _ _ _ _ n ((halfCoins S n).symm true)
       ((halfCoins S n).symm false) hhl, ← expect_add, div_eq_inv_mul, ← expect_const_mul]
@@ -336,7 +336,8 @@ theorem ideal_gap (Sim D : NUPPT) (r n : ℕ) :
   refine congrArg _ (funext fun rS => ?_)
   symm
   refine Eq.trans (congrArg _ (funext fun ρ'' => ?_)) (expect_const (sample _) _)
-  rw [← expect_sample_equiv (NUPPT.coinsCongr (tailDist_coins S D).symm n), ← expect_const_mul]
+  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr (tailDist_coins S D).symm n),
+    ← expect_const_mul]
   symm
   refine Eq.trans (congrArg _ (funext fun rD => ?_)) (expect_const (sample _) _)
   rw [← expect_const_mul]

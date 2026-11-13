@@ -35,7 +35,10 @@ The hybrid argument itself is `advantage_hybrid` (`TCSlib.Cryptography.Games.Adv
 * `ProbComp.prob_eq_one_of_allOutputs`, `ProbComp.expect_mono_of_allOutputs`: reasoning on the
   possible outputs only.
 * `ProbComp.abs_prob_sub_le_of_agree`: the difference lemma [Sho04, §1.1, Lemma 1].
-* `ProbComp.prob_mem_le`: the collision bound.
+* `ProbComp.prob_mem_le`: the collision bound; `ProbComp.expect_sample_mem_le`, its form for a
+  uniform sample and a fixed list.
+* `ProbComp.expect_simulate_congr`: implementations with the same laws simulate alike.
+* `ProbComp.prob_bad_le`: the per-query potential bound `Pr[bad] ≤ q · (size + q) · δ`.
 * `Games.prob_eq_until_bad`, `Games.identical_until_bad`, `Games.identical_until_bad_init`: the
   code-based fundamental lemma [BR06], in semantic form, from a fixed or a sampled initial
   state; `Games.hagree_of_eq` recovers the syntactic hypothesis.
@@ -348,5 +351,95 @@ theorem identical_until_bad_init {spec : OracleSpec ι}
   rw [ProbComp.expect_add] at u v
   rw [abs_le]
   constructor <;> linarith
+
+namespace ProbComp
+
+/-! ### Simulation congruence and a bad-event potential -/
+
+/-- **Implementations with the same laws simulate alike:** if every call of `impl₀` and `impl₁`
+has the same expectation of every function `g` of the answer and the new state, the simulations
+of every computation have the same expectation of every function `G` of the output and the final
+state: `𝔼[G] (simulate impl₀ c s) = 𝔼[G] (simulate impl₁ c s)`.
+
+**Proof sketch.** Induction on `c`; at a query, both sides are the expectation over the call of the
+continuation's expectation (`simulate_query`, `expect_bind`), equal by induction and the
+hypothesis. -/
+theorem expect_simulate_congr {ι : Type} {spec : OracleSpec ι} {σ α : Type}
+    (impl₀ impl₁ : QueryImpl spec σ unifSpec)
+    (h : ∀ i x s (g : spec.rng i × σ → ℝ), expect (impl₀ i x s) g = expect (impl₁ i x s) g)
+    (c : OracleComp spec α) (s : σ) (G : α × σ → ℝ) :
+    expect (simulate impl₀ c s) G = expect (simulate impl₁ c s) G := by
+  induction c generalizing s with
+  | pure a => rw [simulate_pure, simulate_pure]
+  | query i x k ih =>
+    rw [simulate_query, simulate_query, expect_bind, expect_bind, h]
+    exact congrArg _ (funext fun p => ih p.1 p.2)
+
+/-- **A bad event raised a little at each query:** if from a good state each query raises `bad`
+with probability at most `(sz s + 1) · δ` and grows the size `sz` by at most one, then from a good
+state `s` a computation making at most `m` queries ends in a bad state with probability at most
+`m · (sz s + m) · δ`: `Pr[bad (simulate impl c s).2] ≤ m · (sz s + m) · δ`.
+
+**Proof sketch.** Induction on the computation. At a query, a bad successor contributes at most
+its probability; a good successor `s'` has `sz s' ≤ sz s + 1` and, by induction, contributes at
+most `(m - 1) · (sz s + m) · δ`. Add `(sz s + 1) · δ ≤ (sz s + m) · δ`. -/
+theorem prob_bad_le {ι : Type} {spec : OracleSpec ι} {σ : Type} {impl : QueryImpl spec σ unifSpec}
+    (bad : σ → Prop) [DecidablePred bad]
+    (sz : σ → ℕ) {δ : ℝ} (hδ : 0 ≤ δ)
+    (hstep : ∀ i x s, ¬ bad s → prob (impl i x s) (fun ys => bad ys.2) ≤ (sz s + 1) * δ)
+    (hgrow : ∀ i x s, (impl i x s).AllOutputs fun ys => sz ys.2 ≤ sz s + 1)
+    {α : Type} (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ)
+    (hs : ¬ bad s) :
+    prob (simulate impl c s) (fun r => bad r.2) ≤ m * (sz s + m) * δ := by
+  induction c generalizing m s with
+  | pure a =>
+    rw [simulate_pure, prob_pure, if_neg hs]
+    exact mul_nonneg (by positivity) hδ
+  | query i x k ih =>
+    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+    have hm1 : 1 ≤ m := hm
+    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
+    have hk' : ∀ y, (k y).CostBoundedBy (fun _ => 1) m' := fun y => by
+      simpa using hk y
+    have hm0 : (0 : ℝ) ≤ m' := Nat.cast_nonneg m'
+    set K : ℝ := m' * (sz s + (m' + 1)) * δ with hK
+    have hK0 : 0 ≤ K := mul_nonneg (by positivity) hδ
+    rw [simulate_query, prob_bind]
+    calc expect (impl i x s) (fun ys => prob (simulate impl (k ys.1) ys.2) (fun r => bad r.2))
+        ≤ expect (impl i x s) (fun ys => (if bad ys.2 then (1 : ℝ) else 0) + K) := by
+          refine expect_mono_of_allOutputs (hgrow i x s) fun ys hys => ?_
+          by_cases hb : bad ys.2
+          · rw [if_pos hb]
+            have h1 := prob_le_one (simulate impl (k ys.1) ys.2) (fun r => bad r.2)
+            linarith
+          · rw [if_neg hb, zero_add]
+            refine (ih ys.1 m' (hk' ys.1) ys.2 hb).trans ?_
+            have hys' : (sz ys.2 : ℝ) ≤ sz s + 1 := by exact_mod_cast hys
+            exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (by linarith) hm0) hδ
+      _ = prob (impl i x s) (fun ys => bad ys.2) + K := by
+          rw [expect_add (impl i x s) (fun ys => if bad ys.2 then (1 : ℝ) else 0) (fun _ => K),
+            expect_const, prob_eq_expect]
+      _ ≤ ((m' + 1 : ℕ) : ℝ) * (sz s + ((m' + 1 : ℕ) : ℝ)) * δ := by
+          have h3 := hstep i x s hs
+          have h4 : ((sz s : ℝ) + 1) * δ ≤ (sz s + (m' + 1)) * δ :=
+            mul_le_mul_of_nonneg_right (by linarith) hδ
+          have e : ((m' : ℝ) + 1) * (sz s + (m' + 1)) * δ = K + (sz s + (m' + 1)) * δ := by
+            rw [hK]; ring
+          push_cast
+          linarith
+
+/-- **Hitting a list with a uniform sample:** a uniform element of `T` lies in a list `L` with
+probability at most `|L| / |T|`: `𝔼_{t ← T} [t ∈ L] ≤ |L| / |T|` (`prob_mem_le` for a fixed
+list). -/
+theorem expect_sample_mem_le {T : Type} [Fintype T] [Nonempty T] [DecidableEq T] (L : List T) :
+    expect (sample T) (fun t => if t ∈ L then (1 : ℝ) else 0) ≤ L.length / Fintype.card T := by
+  have h := prob_mem_le (OracleComp.pure L : ProbComp (List T)) (q := L.length)
+    (OracleComp.allOutputs_pure.2 le_rfl)
+  rw [prob_bind, expect_pure, prob_bind] at h
+  refine Eq.trans_le ?_ h
+  refine congrArg _ (funext fun t => ?_)
+  rw [prob_pure]
+
+end ProbComp
 
 end TCSlib.Cryptography.Games

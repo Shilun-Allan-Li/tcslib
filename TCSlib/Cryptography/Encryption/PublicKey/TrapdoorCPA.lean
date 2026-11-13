@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PublicKey.Trapdoor
-import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
+import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity.PaddedCPA
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -23,7 +23,8 @@ This module provides the original public-key game import through
 
 `TCSlib.Cryptography.TrapdoorCollection.tdpBitScheme_padded_cpa` applies the
 ensemble-to-CPA bridge to the trapdoor construction of Algorithm 104.3.
-It uses the stated `BitPublicKeyScheme.SingleBitSecure.padded_cpa` bridge.
+It uses the `BitPublicKeyScheme.SingleBitSecure.padded_cpa` bridge of
+`TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity.PaddedCPA`.
 
 ## References
 

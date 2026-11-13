@@ -478,7 +478,6 @@ theorem snmIdeal_eq (M : MsgSampler) (Sim : NUPPT) (r sl : ℕ) (D : NUPPT) (n :
 section Transport
 
 open NMSim
-open AdaptiveCPA (castImpl castImpl_eq expect_simulate_castImpl_toCompOn padFin_ofFn_zeroBits)
 
 /-- **The real experiment's oracles on T2's lengths are the hybrid oracle with `b = false`:**
 read along `snmDin`, `snmDout`, `snmImpl` is `NMSim.rImpl … false … ρ ρ' none` (for every `ρ'`).
@@ -492,11 +491,11 @@ theorem castImpl_snmImpl (atk : Attack) (M : MsgSampler) (n : ℕ) (pk sk : List
         (outs := fun i => (snmDout S M.histLen i).eval n) (S.snmImpl atk M n pk sk ρ) =
       rImpl S atk false M.samp M.paramLen M.histLen M.hist n pk sk ρ ρ' none := by
   funext i x s
-  rw [castImpl_eq]
+  rw [Games.castImpl_eq]
   match i, s with
   | 0, s =>
     have hx : List.ofFn (padFin (S.ctLen.eval n) (List.ofFn x)) = List.ofFn x :=
-      GGMRed.ofFn_padFin_of_length (by
+      ofFn_padFin_of_length (by
         rw [List.length_ofFn]; show (snmDin S M.paramLen 0).eval n = _; rw [snmDin_zero])
     erw [S.snmImpl_dec atk M n pk sk ρ (padFin (S.ctLen.eval n) (List.ofFn x)) s]
     rw [rImpl_dec, hx]
@@ -505,7 +504,7 @@ theorem castImpl_snmImpl (atk : Attack) (M : MsgSampler) (n : ℕ) (pk sk : List
     · rw [if_pos hc, if_pos hc, OracleComp.pure_bind]
     · rw [if_neg hc, if_neg hc, OracleComp.pure_bind]
       dsimp only
-      erw [padFin_ofFn_zeroBits]
+      erw [Games.padFin_ofFn_zeroBits]
   | 1, some (y, a) =>
     erw [S.snmImpl_challenge atk M n pk sk ρ (padFin (M.paramLen.eval n) (List.ofFn x))
       (some (y, a))]
@@ -630,7 +629,7 @@ theorem accept_snmReal_eq (atk : Attack) (M : MsgSampler) (A : NUPPT) (q r sl : 
     funext res
     rw [ProbComp.prob_pure, snmView_realView]
   exact (congrArg (ProbComp.expect _) hG).trans
-    (expect_simulate_castImpl_toCompOn (snmDin_eval S M n) (snmDout_eval S M n)
+    (Games.expect_simulate_castImpl_toCompOn (snmDin_eval S M n) (snmDout_eval S M n)
       (rfl : r * S.ctLen.eval n + sl = r * S.ctLen.eval n + sl)
       (S.snmImpl atk M n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg)) ρ) A n q
       (pairFstD (S.gen.runAt n [] rg)) rA none fun p : List Bool × S.SnmState M n =>

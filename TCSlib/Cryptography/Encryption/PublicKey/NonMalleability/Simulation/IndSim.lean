@@ -39,7 +39,6 @@ None: this module only proves results. `B`'s handler parameters `nmParams` and t
 namespace TCSlib.Cryptography.Composability.NMSim
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
-open AdaptiveCPA (simulate_eq_of_abs)
 
 variable (S : FixedLengthPKScheme) (samp : NUPPT) (pl hl : PolyExpr)
   (hist : List Bool → List Bool) (hist_poly : PolyTimeComputable hist) (r sl : PolyExpr)
@@ -130,7 +129,7 @@ theorem recView_nmOut (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n) (ρ ρ' : 
       (pairEncode (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re))
         (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1))) a _ _ ha haP hmP
   rw [← nmParams_outLen_eval S samp pl hl hist hist_poly r sl n] at hlen
-  rw [GGMRed.ofFn_padFin_of_length hlen, nmAbs_snd_fst,
+  rw [ofFn_padFin_of_length hlen, nmAbs_snd_fst,
     recView_nmOutL S pl r sl samp n rg hL (s.map Prod.fst) _ _ _ a _ _
       (pairFstD_pairEncode _ _) re
       (by rw [hω, PolyExpr.eval_add, ← List.append_assoc, List.drop_left' (by
@@ -218,7 +217,8 @@ theorem nmRun_eq (B₀ : NUPPT) (n : ℕ)
       (NUPPT.coinsCongr (recDist_coins S pl r X).symm n rX) = true then 1 else 0)).trans ?_
   rw [← hφ, nmParams_advInput, chalHandler_init, simulate_bind, simulate_comp,
     ← nmAbs_none S samp pl hl hist hist_poly r sl n ρ ρ',
-    simulate_eq_of_abs _ _ _ (nmComp_abs S samp pl hl hist hist_poly r sl n _ _ ρ ρ' re b ρ''),
+    Games.simulate_eq_of_abs _ _ _
+      (nmComp_abs S samp pl hl hist hist_poly r sl n _ _ ρ ρ' re b ρ''),
     OracleComp.bind_assoc, OracleComp.bind_assoc]
   simp only [OracleComp.pure_bind, hfin, simulate_pure]
   rw [ProbComp.expect_bind]
@@ -271,19 +271,19 @@ theorem exists_nmAdversary : ∃ (B : NUPPT) (qB : PolyExpr), ∀ (X : NUPPT) (n
   rw [accept_nmGame_eq_rImpl S .cpa B _ _ (recDist S pl r X) b n (fun _ => [])
     ((halfCoins S n).symm false), hybAcc_eq, hK]
   refine congrArg _ (funext fun rg => ?_)
-  rw [← ChallengeSim.expect_sample_equiv (NUPPT.coinsCongr hc n)]
+  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr hc n)]
   simp only [hB]
-  rw [← ChallengeSim.expect_sample_equiv φ, ChallengeSim.expect_sample_prod,
-    ← ChallengeSim.expect_sample_equiv
+  rw [← ProbComp.expect_sample_equiv φ, ChallengeSim.expect_sample_prod,
+    ← ProbComp.expect_sample_equiv
       (seedEquivPoly (nmParams_seedLen_handler S samp pl hl hist hist_poly r sl) n),
     ChallengeSim.expect_sample_prod]
   refine congrArg _ (funext fun ρ => ?_)
-  rw [← ChallengeSim.expect_sample_equiv (seedEquiv (A := samp) (B := S.enc) rfl n),
+  rw [← ProbComp.expect_sample_equiv (seedEquiv (A := samp) (B := S.enc) rfl n),
     ChallengeSim.expect_sample_prod]
   refine congrArg _ (funext fun ρ' => ?_)
   refine Eq.trans ?_ (ProbComp.expect_const (ProbComp.sample (S.enc.Coins n)) _)
   refine congrArg _ (funext fun re => congrArg _ (funext fun rA => ?_))
-  rw [← ChallengeSim.expect_sample_equiv (NUPPT.coinsCongr (recDist_coins S pl r X).symm n)]
+  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr (recDist_coins S pl r X).symm n)]
   refine congrArg _ (funext fun rX => ?_)
   rw [← nmSeed_eq]
   exact nmRun_eq S samp pl hl hist hist_poly r sl A q B₀ n φ hφ rg hL ρ ρ' re rA b _ X rX

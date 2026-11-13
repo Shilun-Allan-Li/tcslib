@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Games.Machines
 import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Games.Probability
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -34,6 +35,7 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
   a move.
 * `Games.encodeBitMove`: the canonical word of a move.
 * `Games.bitCodec din dout dα`: the codec.
+* `Games.castImpl`: an implementation of bit-string oracles read along equal length functions.
 
 ## Main results
 
@@ -42,6 +44,10 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
 * `Games.decodeIdx_eq_some_iff`, `Games.decodeBitMove_eq_query_iff`: only the canonical words
   decode as an index or a query.
 * `Games.decodeBitMove_of_not_canonical`: every other word decodes to the all-`false` output.
+* `Games.padFin_ofFn_zeroBits`, `Games.padFin_replicate_false`, `Games.padFin_nil`,
+  `Games.decodeFin_nil_getD`: all-`false` strings and the empty answer read as `zeroBits`.
+* `Games.simulate_castImpl_toCompOn`, `Games.expect_simulate_castImpl_toCompOn`: transport of a
+  machine's run between two codecs with equal lengths.
 
 ## References
 
@@ -120,6 +126,33 @@ theorem zeroBits_apply (d : ℕ) (j : Fin d) : zeroBits d j = false :=
 `List.ofFn (zeroBits d) = List.replicate d false`. -/
 theorem ofFn_zeroBits (d : ℕ) : List.ofFn (zeroBits d) = List.replicate d false := by
   rw [show zeroBits d = fun _ => false from rfl, List.ofFn_const]
+
+/-- The all-`false` answer, read at any width, is all-`false`:
+`padFin d ⟦zeroBits m⟧ = zeroBits d`. -/
+theorem padFin_ofFn_zeroBits (d m : ℕ) : padFin d (List.ofFn (zeroBits m)) = zeroBits d := by
+  funext i
+  rw [padFin_apply, ofFn_zeroBits, zeroBits_apply, List.getD_eq_getElem?_getD,
+    List.getElem?_replicate]
+  split <;> rfl
+
+/-- An all-`false` list reads as the all-`false` vector at every width:
+`padFin d (List.replicate m false) = zeroBits d`. -/
+theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) = zeroBits d := by
+  rw [← ofFn_zeroBits, padFin_ofFn_zeroBits]
+
+/-- The empty list reads as the all-`false` vector: `padFin d [] = zeroBits d`. -/
+theorem padFin_nil (d : ℕ) : padFin d [] = zeroBits d := padFin_replicate_false d 0
+
+/-- An empty answer decodes to all-`false` at every length:
+`(decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ`. -/
+theorem decodeFin_nil_getD (ℓ : ℕ) : (decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ := by
+  rw [decodeFin_eq]
+  split
+  · next h =>
+    subst h
+    funext i
+    exact absurd i.isLt (Nat.not_lt_zero _)
+  · rfl
 
 /-- Decoding of a machine output as a move against `bitSpec din dout` with `dα`-bit outputs:
 `⟨[false], ⟨1^i, x⟩⟩` with `i < k` and `|x| = din i` is the query `x` to oracle `i`;
@@ -293,5 +326,74 @@ theorem decodeBitMove_encodeBitMove (din dout : Fin k → ℕ) (dα : ℕ)
 theorem encodeBitMove_injective (din dout : Fin k → ℕ) (dα : ℕ) :
     Function.Injective (encodeBitMove din dout dα) := fun m m' h => by
   rw [← decodeBitMove_encodeBitMove din dout dα m, h, decodeBitMove_encodeBitMove]
+
+/-! ### Transport along equal lengths -/
+
+section Transport
+
+open ProbComp
+
+variable {σ : Type}
+
+/-- **An implementation read along length functions:** answer the query `x` to oracle `i` of
+`bitSpec ins outs` by asking `O` the query `padFin (ins' i) ⟦x⟧` and reading its answer `y` as
+`padFin (outs i) ⟦y⟧`. When `ins = ins'` and `outs = outs'` this is `O` itself
+(`castImpl_self`). -/
+def castImpl {ins ins' outs outs' : Fin k → ℕ} (O : QueryImpl (bitSpec ins' outs') σ unifSpec) :
+    QueryImpl (bitSpec ins outs) σ unifSpec :=
+  fun i x s => (O i (padFin (ins' i) (List.ofFn x)) s).bind fun p =>
+    .pure (padFin (outs i) (List.ofFn p.1), p.2)
+
+/-- The defining equation of `castImpl`: `castImpl O i x s =
+(O i (padFin (ins' i) ⟦x⟧) s).bind fun p => pure (padFin (outs i) ⟦p.1⟧, p.2)`. -/
+theorem castImpl_eq {ins ins' outs outs' : Fin k → ℕ}
+    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (i : Fin k) (x : Fin (ins i) → Bool)
+    (s : σ) :
+    castImpl (ins := ins) (outs := outs) O i x s =
+      (O i (padFin (ins' i) (List.ofFn x)) s).bind fun p =>
+        .pure (padFin (outs i) (List.ofFn p.1), p.2) :=
+  rfl
+
+/-- Read along the same lengths, an implementation is unchanged: `castImpl O = O`. -/
+theorem castImpl_self {ins outs : Fin k → ℕ} (O : QueryImpl (bitSpec ins outs) σ unifSpec) :
+    castImpl (ins := ins) (outs := outs) O = O := by
+  funext i x s
+  rw [castImpl_eq, padFin_ofFn]
+  simp only [padFin_ofFn]
+  exact OracleComp.bind_pure _
+
+/-- **Transport of a machine's run:** if `ins = ins'`, `outs = outs'` and `d = d'`, simulating
+`castImpl O` on the run of `M` through `bitCodec ins outs d` gives, with outputs read as lists,
+the simulation of `O` on the run of `M` through `bitCodec ins' outs' d'`.
+
+**Proof sketch.** Substitute the equalities; then `castImpl O = O` (`castImpl_self`). -/
+theorem simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
+    (hi : ins = ins') (ho : outs = outs') (hd : d = d')
+    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (M : NUPPT) (n q : ℕ) (x : List Bool)
+    (r : M.Coins n) (s : σ) :
+    (simulate (castImpl (ins := ins) (outs := outs) O)
+        (M.toCompOn (bitCodec ins outs d) n q x r) s).bind
+        (fun p => .pure (List.ofFn p.1, p.2)) =
+      (simulate O (M.toCompOn (bitCodec ins' outs' d') n q x r) s).bind
+        (fun p => .pure (List.ofFn p.1, p.2)) := by
+  subst hi ho hd
+  rw [castImpl_self]
+
+/-- **Transport of a machine's run, in expectation:** for every function `G` of the output (read
+as a list) and the final state, `simulate_castImpl_toCompOn` in the form
+`𝔼[G (⟦p.1⟧, p.2)]` over the two simulations. -/
+theorem expect_simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
+    (hi : ins = ins') (ho : outs = outs') (hd : d = d')
+    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (M : NUPPT) (n q : ℕ) (x : List Bool)
+    (r : M.Coins n) (s : σ) (G : List Bool × σ → ℝ) :
+    expect (simulate (castImpl (ins := ins) (outs := outs) O)
+        (M.toCompOn (bitCodec ins outs d) n q x r) s) (fun p => G (List.ofFn p.1, p.2)) =
+      expect (simulate O (M.toCompOn (bitCodec ins' outs' d') n q x r) s)
+        (fun p => G (List.ofFn p.1, p.2)) := by
+  have h := congrArg (fun c => expect c G) (simulate_castImpl_toCompOn hi ho hd O M n q x r s)
+  simp only [expect_bind, expect_pure] at h
+  exact h
+
+end Transport
 
 end TCSlib.Cryptography.Games

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRep
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -300,8 +301,8 @@ theorem gi_verdict_iff (x : List Bool) (hist : List (List Bool)) (r : List Bool)
   rw [Fin.forall_iff]
   refine forall_congr' fun j => forall_congr' fun _ => ?_
   rw [Fin.val_mk, iterate_sndD_two_encodeMsgs, pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs,
-    Strategy.pairFstD_encodeMsgs, List.drop_drop, relabelAt_replicate, ← getD_eq_headD_drop,
-    ← getD_eq_headD_drop, ← getD_eq_headD_drop]
+    Strategy.pairFstD_encodeMsgs, List.drop_drop, relabelAt_replicate, headD_drop,
+    headD_drop, headD_drop]
   cases r.getD j false <;> exact Iff.rfl
 
 /-- The verifier of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2).
@@ -323,7 +324,7 @@ theorem giVerifierRep_efficient : giVerifierRep.Efficient := by
     List.length_replicate, inCoins_ilayout, argX_ilayout, vcount_ilayout, PolyExpr.eval_mul,
     PolyExpr.eval_const, PolyExpr.eval_var, decide_eq_true_eq]
   by_cases hodd : hist.length % 2 = 1
-  · rw [if_pos hodd, if_pos hodd, getD_eq_headD_drop]
+  · rw [if_pos hodd, if_pos hodd, ← headD_drop]
   · rw [if_neg hodd, if_neg hodd]
     by_cases hlt : hist.length < 2 * x.length
     · rw [if_pos hlt, if_pos hlt]

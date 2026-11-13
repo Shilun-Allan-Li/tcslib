@@ -177,7 +177,7 @@ theorem impl_of_ret (i : Fin k) (x : Fin ((din i).eval n) → Bool)
       pairEncode [true] (u ++ v)) :
     H.impl n z ω i x s = .pure (padFin _ u, padFin _ v) := by
   have hw : u ++ v = List.ofFn (padFin ((dout i).eval n + H.stateLen.eval n) (u ++ v)) :=
-    (GGMRed.ofFn_padFin_of_length (by rw [List.length_append, hu, hv])).symm
+    (ofFn_padFin_of_length (by rw [List.length_append, hu, hv])).symm
   rw [InteractiveHandler.impl_apply, InteractiveHandler.call_eq,
     buildComp_of_ret (a := padFin ((dout i).eval n + H.stateLen.eval n) (u ++ v)) (by
       rw [MachineCodec.encodeLog_nil, hrun]
@@ -220,7 +220,7 @@ theorem impl_of_query (i : Fin k) (x : Fin ((din i).eval n) → Bool)
     rw [List.nil_append, MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
       bitCodec_encodeEntry]
   have hw : u y ++ v y = List.ofFn (padFin ((dout i).eval n + H.stateLen.eval n) (u y ++ v y)) :=
-    (GGMRed.ofFn_padFin_of_length (by rw [List.length_append, hu, hv])).symm
+    (ofFn_padFin_of_length (by rw [List.length_append, hu, hv])).symm
   rw [buildComp_of_ret (a := padFin ((dout i).eval n + H.stateLen.eval n) (u y ++ v y)) (by
       rw [hlog, hrun₁]
       exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).trans
@@ -239,7 +239,7 @@ theorem finish_of_ret (s : Fin (H.stateLen.eval n) → Bool) {d : ℕ} (a : Fin 
   refine buildComp_of_ret ?_
   rw [MachineCodec.encodeLog_nil, hrun]
   exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w))
-    (GGMRed.ofFn_padFin_of_length hb).symm).trans (decodeBitMove_ret _ _ _ _)
+    (ofFn_padFin_of_length hb).symm).trans (decodeBitMove_ret _ _ _ _)
 
 end Calls
 

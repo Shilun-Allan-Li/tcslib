@@ -71,19 +71,16 @@ open Complexity Turing Finset
 /-! ### Blocks of a string -/
 
 /-- Block `i` of `x : Fin (q * ℓ) → Bool` (positions `ℓ·i, …, ℓ·i + ℓ - 1`) is the `ℓ`-bit window
-of `List.ofFn x` after `i·ℓ` bits. -/
+of `List.ofFn x` after `i·ℓ` bits.
+
+**Proof sketch.** The block is `FunFamily.blocks q ℓ x i` (`FunFamily.blocks_apply`), whose word is
+that window (`FunFamily.ofFn_blocks`). -/
 theorem ofFn_block_eq_take_drop {q ℓ : ℕ} (x : Fin (q * ℓ) → Bool) (i : Fin q) :
     List.ofFn (fun j : Fin ℓ => x (finProdFinEquiv (i, j))) =
       ((List.ofFn x).drop (i * ℓ)).take ℓ := by
-  have hle : i * ℓ + ℓ ≤ q * ℓ := by
-    have : (i + 1) * ℓ ≤ q * ℓ := Nat.mul_le_mul_right ℓ i.2
-    rwa [Nat.add_mul, Nat.one_mul] at this
-  refine List.ext_getElem (by simp; omega) fun j h₁ h₂ => ?_
-  simp only [List.getElem_ofFn, List.getElem_take, List.getElem_drop]
-  congr 1
-  ext
-  simp only [finProdFinEquiv_apply_val]
-  ring
+  have hblk : (fun j : Fin ℓ => x (finProdFinEquiv (i, j))) = FunFamily.blocks q ℓ x i :=
+    funext fun j => (FunFamily.blocks_apply q ℓ x i j).symm
+  rw [hblk, FunFamily.ofFn_blocks]
 
 /-- The window of `ℓ` bits after `i·ℓ` bits of `List.ofFn x` has exactly `ℓ` bits. -/
 theorem length_take_drop_block {q ℓ : ℕ} (x : Fin (q * ℓ) → Bool) (i : Fin q) :

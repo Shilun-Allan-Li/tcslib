@@ -91,6 +91,8 @@ handler, the reduction's output. This bounds every history, which the guarded st
   times per inner query, and its semantics as a `QueryImpl` of the inner oracles by the outer ones;
   `InteractiveHandler.advInput` and `InteractiveHandler.finish`: the adversary's input and the
   finalization, with up to `finCall(n)` outer queries.
+* `Games.InteractiveHandler.rU`, `rZ`, `rW`, `rS`, `rI`, `rX`, `rL`, `rCnt`: the fields of a
+  round input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩` (and the first component of the state).
 
 ## Main results
 
@@ -101,6 +103,9 @@ handler, the reduction's output. This bounds every history, which the guarded st
   `q(n) · perCall(n) + finCall(n)`, whose computation is exactly the simulation followed by the
   finalization. The reductions that forward or answer queries with their own oracle need it (the
   PRF MAC's distinguisher, hash-and-sign's forger, the CPA and CCA reductions).
+* `Games.InteractiveHandler.rU_input`, …, `rCnt_input`: the readers of a round input on
+  `InteractiveHandler.input`; `Games.InteractiveHandler.impl_of_ret`: a call whose first round
+  returns.
 * `Games.exists_toCompOn_of_toComp` (the fill's target): a machine without input is a machine
   with an input that it ignores, with the same coins.
 * `Games.exists_toOracleAdversary_of_bitCodec` (T4, the fill's target): an oracle machine
@@ -442,6 +447,106 @@ theorem input_eq (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
         (pairEncode s (pairEncode (pairEncode (List.replicate i true) x) L)) :=
   rfl
 
+/-! #### Readers of a round input
+
+The fields of a round input `w = ⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`, read with `pairFstD` and
+`pairSndD`, as a handler's round function reads them; on `input n z ω s i x L` they return the
+field (`rU_input`, …), and each is polynomial-time (`polyTimeComputable_rU`, …). `rCnt` reads the
+first component of the state, the call count `1^j` of the handlers that keep one there. -/
+
+/-- The parameter `1^n` of a round input: `rU w = pairFstD (pairFstD w)`. -/
+def rU (w : List Bool) : List Bool := pairFstD (pairFstD w)
+/-- The reduction input `z` of a round input: `rZ w = pairFstD (pairSndD (pairFstD w))`. -/
+def rZ (w : List Bool) : List Bool := pairFstD (pairSndD (pairFstD w))
+/-- The seed `ω` of a round input: `rW w = pairSndD (pairSndD (pairFstD w))`. -/
+def rW (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD w))
+/-- The state `s` of a round input: `rS w = pairFstD (pairSndD w)`. -/
+def rS (w : List Bool) : List Bool := pairFstD (pairSndD w)
+/-- The oracle index `1^i` of a round input:
+`rI w = pairFstD (pairFstD (pairSndD (pairSndD w)))`. -/
+def rI (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
+/-- The query `x` of a round input: `rX w = pairSndD (pairFstD (pairSndD (pairSndD w)))`. -/
+def rX (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
+/-- The outer log `L` of a round input: `rL w = pairSndD (pairSndD (pairSndD w))`. -/
+def rL (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
+/-- The first component `pairFstD s` of the state of a round input:
+`rCnt w = pairFstD (rS w)`. -/
+def rCnt (w : List Bool) : List Bool := pairFstD (rS w)
+
+/-- `rU (input n z ω s i x L) = 1^n`. -/
+theorem rU_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+    rU (input n z ω s i x L) = List.replicate n true := by
+  simp only [rU, input_eq, pairFstD_pairEncode]
+
+/-- `rZ (input n z ω s i x L) = z`. -/
+theorem rZ_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+    rZ (input n z ω s i x L) = z := by
+  simp only [rZ, input_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- `rW (input n z ω s i x L) = ω`. -/
+theorem rW_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+    rW (input n z ω s i x L) = ω := by
+  simp only [rW, input_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- `rS (input n z ω s i x L) = s`. -/
+theorem rS_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+    rS (input n z ω s i x L) = s := by
+  simp only [rS, input_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- `rI (input n z ω s i x L) = 1^i`. -/
+theorem rI_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+    rI (input n z ω s i x L) = List.replicate i true := by
+  simp only [rI, input_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- `rX (input n z ω s i x L) = x`. -/
+theorem rX_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+    rX (input n z ω s i x L) = x := by
+  simp only [rX, input_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- `rL (input n z ω s i x L) = L`. -/
+theorem rL_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+    rL (input n z ω s i x L) = L := by
+  simp only [rL, input_eq, pairSndD_pairEncode]
+
+/-- `rCnt (input n z ω s i x L) = pairFstD s`. -/
+theorem rCnt_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+    rCnt (input n z ω s i x L) = pairFstD s := by
+  rw [rCnt, rS_input]
+
+/-- `rU` is polynomial-time: `PolyTimeComputable rU`. -/
+theorem polyTimeComputable_rU : PolyTimeComputable rU :=
+  polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD
+
+/-- `rZ` is polynomial-time: `PolyTimeComputable rZ`. -/
+theorem polyTimeComputable_rZ : PolyTimeComputable rZ :=
+  polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
+
+/-- `rW` is polynomial-time: `PolyTimeComputable rW`. -/
+theorem polyTimeComputable_rW : PolyTimeComputable rW :=
+  polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
+
+/-- `rS` is polynomial-time: `PolyTimeComputable rS`. -/
+theorem polyTimeComputable_rS : PolyTimeComputable rS :=
+  polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+
+/-- `rI` is polynomial-time: `PolyTimeComputable rI`. -/
+theorem polyTimeComputable_rI : PolyTimeComputable rI :=
+  polyTimeComputable_pairFstD.comp (polyTimeComputable_pairFstD.comp
+    (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
+
+/-- `rX` is polynomial-time: `PolyTimeComputable rX`. -/
+theorem polyTimeComputable_rX : PolyTimeComputable rX :=
+  polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp
+    (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
+
+/-- `rL` is polynomial-time: `PolyTimeComputable rL`. -/
+theorem polyTimeComputable_rL : PolyTimeComputable rL :=
+  polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
+
+/-- `rCnt` is polynomial-time: `PolyTimeComputable rCnt`. -/
+theorem polyTimeComputable_rCnt : PolyTimeComputable rCnt :=
+  polyTimeComputable_pairFstD.comp polyTimeComputable_rS
+
 /-- The adversary's input at parameter `n`, for the reduction input `z` and the seed `ω`: `advIn`
 of the context `⟨1^n, ⟨z, ω⟩⟩`. -/
 def advInput (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
@@ -503,6 +608,39 @@ theorem impl_apply (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (
       (H.call n z ω s i x).bind fun w =>
         .pure (fun j => w (Fin.castAdd _ j), fun j => w (Fin.natAdd _ j)) :=
   rfl
+
+/-- **A call whose first round returns `y ‖ s'`** is answered `y` with the new state `s'`: if
+`H.run (input n z ⟦ω⟧ ⟦s⟧ i ⟦x⟧ []) = ⟨[true], ⟦y⟧ ++ ⟦s'⟧⟩`, then
+`H.impl n z ω i x s = pure (y, s')`.
+
+**Proof sketch.** One call is `buildComp` of the rounds from the empty log (`call_eq`). The first
+round decodes as the final output `y ‖ s'` (`decodeBitMove_ret`), which stops the computation at
+every budget (`buildComp_zero_of_ret`, `buildComp_succ_of_ret`); the output splits back into `y`
+and `s'` (`Fin.append_left`, `Fin.append_right`). -/
+theorem impl_of_ret (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
+    (ω : Fin (H.seedLen.eval n) → Bool) {i : Fin k} (x : Fin ((din i).eval n) → Bool)
+    (s : Fin (H.stateLen.eval n) → Bool) (y : Fin ((dout i).eval n) → Bool)
+    (s' : Fin (H.stateLen.eval n) → Bool)
+    (h : H.run (input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x) []) =
+      pairEncode [true] (List.ofFn y ++ List.ofFn s')) :
+    H.impl n z ω i x s = .pure (y, s') := by
+  rw [impl_apply, call_eq]
+  have hy : (fun j => Fin.append y s' (Fin.castAdd (H.stateLen.eval n) j)) = y :=
+    funext fun j => Fin.append_left y s' j
+  have hs : (fun j => Fin.append y s' (Fin.natAdd ((dout i).eval n) j)) = s' :=
+    funext fun j => Fin.append_right y s' j
+  generalize H.perCall.eval n = q
+  cases q with
+  | zero =>
+    rw [buildComp_zero_of_ret (a := Fin.append y s') (by
+      show decodeBitMove _ _ _ (H.run _) = _
+      rw [MachineCodec.encodeLog_nil, h, ← List.ofFn_fin_append]
+      exact decodeBitMove_ret _ _ _ _), OracleComp.pure_bind, hy, hs]
+  | succ q =>
+    rw [buildComp_succ_of_ret (a := Fin.append y s') (by
+      show decodeBitMove _ _ _ (H.run _) = _
+      rw [MachineCodec.encodeLog_nil, h, ← List.ofFn_fin_append]
+      exact decodeBitMove_ret _ _ _ _), OracleComp.pure_bind, hy, hs]
 
 /-- The input string of one round of the finalization: `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`, with the
 final state `s`, the adversary's output `a` and the outer log `L` of the finalization so far. -/

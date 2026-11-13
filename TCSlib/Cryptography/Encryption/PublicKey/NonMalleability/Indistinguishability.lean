@@ -240,11 +240,11 @@ the recorded challenge with `⊥ = 0`, as `nmDecrypt` does (`nmDecrypt_eq`); the
 strings (`ofFn_cast`, `ofFn_zeroBits`, `outLens_zero`). -/
 private theorem castImpl_indImpl_dec (b : Bool) (n : ℕ) (pk sk : List Bool)
     (x : Fin ((acDin S 0).eval n) → Bool) (st : Option (Fin (S.ctLen.eval n) → Bool)) :
-    castImpl (ins := fun i => (acDin S i).eval n) (outs := fun i => (acDout S i).eval n)
+    Games.castImpl (ins := fun i => (acDin S i).eval n) (outs := fun i => (acDout S i).eval n)
       (S.indImpl .cca2 b n pk sk) 0 x st =
       .pure (padFin ((acDout S 0).eval n) (List.ofFn (S.nmDecrypt sk st
         (cast (S.indSpec_decDom n) (padFin (S.inLens n 0) (List.ofFn x))))), st) := by
-  rw [castImpl_eq, S.indImpl_dec_onSpec_cast, FixedLengthScheme.decOpen_cca2, Bool.true_and,
+  rw [Games.castImpl_eq, S.indImpl_dec_onSpec_cast, FixedLengthScheme.decOpen_cca2, Bool.true_and,
     S.nmDecrypt_eq]
   by_cases hs : st = some (cast (S.indSpec_decDom n) (padFin (S.inLens n 0) (List.ofFn x)))
   · rw [if_neg (by rw [decide_eq_true hs, Bool.not_true]; exact Bool.false_ne_true), if_pos hs,
@@ -278,8 +278,8 @@ private theorem decBlock_eq_nthCt (ℓ : PolyExpr) (n : ℕ)
     rw [decBlock_eq, ofFn_padFin_eq_take, hct,
       List.take_append_of_le_length (by rw [List.length_drop, ha]; omega)]
   apply List.ofFn_injective
-  rw [ofFn_cast hin, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hct, hin]), hblk,
-    ofFn_nthCt, GGMRed.ofFn_padFin_of_length ha]
+  rw [ofFn_cast hin, ofFn_padFin_of_length (by rw [List.length_ofFn, hct, hin]), hblk,
+    ofFn_nthCt, ofFn_padFin_of_length ha]
 
 /-- **The reduction's collected answers are the experiment's output:** the concatenated answers
 of the CCA2 decryption oracle on the `ℓ(n)` blocks of `a`, in state `st`, are
@@ -301,7 +301,7 @@ private theorem decAnswers_eq_nmOutput (ℓ : PolyExpr) (n : ℕ) (sk : List Boo
   refine List.ext_getElem (by rw [List.length_map, List.length_range, List.length_ofFn])
     fun i h₁ h₂ => ?_
   rw [List.getElem_map, List.getElem_range, List.getElem_ofFn,
-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hout]),
+    ofFn_padFin_of_length (by rw [List.length_ofFn, hout]),
     decBlock_eq_nthCt S ℓ n a i (by rw [List.length_map, List.length_range] at h₁; exact h₁)]
 
 /-- **The reduction's game is the non-malleability experiment.** Let `B` be T2's machine for the
@@ -346,11 +346,11 @@ private theorem accept_indGame_decRed (A D B B' : NUPPT) (q ℓ : PolyExpr) (n :
     NUPPT.coinsEquivPoly (decHandler_seedLen S ℓ D).symm n
   rw [accept_eq, accept_eq, S.indGame_eq, S.nmGame_eq, prob_bind, prob_bind]
   refine congrArg _ (funext fun rg => ?_)
-  conv_lhs => rw [prob_bind, ← expect_sample_equiv (φ.trans (NUPPT.coinsCongr hc n)),
-    expect_sample_prod, expect_sample_comm]
+  conv_lhs => rw [prob_bind, ← ProbComp.expect_sample_equiv (φ.trans (NUPPT.coinsCongr hc n)),
+    expect_sample_prod, ProbComp.expect_sample_comm]
   conv_rhs => rw [prob_bind]
   refine congrArg _ (funext fun r => ?_)
-  conv_lhs => rw [← expect_sample_equiv e]
+  conv_lhs => rw [← ProbComp.expect_sample_equiv e]
   conv_rhs => rw [prob_bind]
   refine congrArg _ (funext fun ρ => ?_)
   -- The reduction's side: transport to T2's codec and unfold the reduction.
@@ -362,8 +362,8 @@ private theorem accept_indGame_decRed (A D B B' : NUPPT) (q ℓ : PolyExpr) (n :
     rw [prob_pure]
     dsimp only
     rw [headD_ofFn_one]
-  rw [Equiv.trans_apply, hB', prob_bind, indCodec_eq_bitCodec, h1]
-  refine (expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hd1 _ B n _ _ _
+  rw [Equiv.trans_apply, hB', prob_bind, FixedLengthPKScheme.indCodec_eq_bitCodec, h1]
+  refine (Games.expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hd1 _ B n _ _ _
     none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
       if p.1.headD false = true then (1 : ℝ) else 0)).symm.trans ?_
   rw [← hφ, decHandler_advInput, pairFstD_pairEncode, simulate_decHandler_impl,
@@ -386,13 +386,13 @@ private theorem accept_indGame_decRed (A D B B' : NUPPT) (q ℓ : PolyExpr) (n :
     dsimp only
     rw [padFin_ofFn]
   rw [prob_bind, nmCodec_eq_bitCodec, h2]
-  refine Eq.trans ?_ (expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hdα _
-    A n _ _ _ none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
+  refine Eq.trans ?_ (Games.expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n)
+    hdα _ A n _ _ _ none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
       if D.distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) p.2
         (padFin (ℓ.eval n * S.ctLen.eval n) p.1)) ρ = true then (1 : ℝ) else 0))
   refine congrArg _ (funext fun p => ?_)
   -- Pointwise: the verdict on the collected answers is `D`'s verdict on `NM_b`'s output.
-  rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_singleton, hd1]), List.headD_cons,
+  rw [ofFn_padFin_of_length (by rw [List.length_singleton, hd1]), List.headD_cons,
     pairSndD_pairEncode, decAnswers_eq_nmOutput, NUPPT.coinsEquivPoly_ofFn,
     ← NUPPT.runAtL_eq_output_layout, ← NUPPT.runAt_eq, ← NUPPT.distinguisherL_eq]
 
@@ -463,7 +463,7 @@ private theorem guessDist_nmOutput (n : ℕ) (hm : 0 < S.msgLen.eval n) (rg : S.
     exact S.correct n _ rg (encTape S n ω β)
   -- The two blocks of the output.
   set W := padFin ((PolyExpr.const 2).eval n * S.ctLen.eval n) (c₁ ++ c₂)
-  have hW : List.ofFn W = c₁ ++ c₂ := GGMRed.ofFn_padFin_of_length (by
+  have hW : List.ofFn W = c₁ ++ c₂ := ofFn_padFin_of_length (by
     rw [List.length_append, hlen, hlen, h2]; omega)
   have hblk : ∀ (i : Fin ((PolyExpr.const 2).eval n)) (β : Bool), (i : ℕ) = (if β then 0 else 1) →
       List.ofFn (S.nthCt W i) = encCt S n pk ω g β := by
@@ -537,7 +537,7 @@ private theorem accept_nmGame_encRed (A B : NUPPT) (q : PolyExpr) (n : ℕ)
     omega
   rw [accept_eq, accept_eq, S.nmGame_eq, S.indGame_eq, prob_bind, prob_bind]
   refine congrArg _ (funext fun rg => ?_)
-  rw [prob_bind, prob_bind, ← expect_sample_equiv φ, expect_sample_prod]
+  rw [prob_bind, prob_bind, ← ProbComp.expect_sample_equiv φ, expect_sample_prod]
   refine (congrArg _ (funext fun ω => ?_)).trans (expect_const _ _)
   refine congrArg _ (funext fun r => ?_)
   rw [prob_bind]
@@ -556,7 +556,7 @@ private theorem accept_nmGame_encRed (A B : NUPPT) (q : PolyExpr) (n : ℕ)
     dsimp only
     rw [padFin_ofFn]
   rw [prob_bind, nmCodec_eq_bitCodec, h2]
-  refine (expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hd2 _ B n _ _ _
+  refine (Games.expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hd2 _ B n _ _ _
     none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
       if guessDist.distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) p.2
         (padFin ((PolyExpr.const 2).eval n * S.ctLen.eval n) p.1)) ρ = true then (1 : ℝ)
@@ -574,9 +574,9 @@ private theorem accept_nmGame_encRed (A B : NUPPT) (q : PolyExpr) (n : ℕ)
     rw [prob_pure]
     dsimp only
     rw [headD_ofFn_one]
-  rw [prob_bind, indCodec_eq_bitCodec, h1]
-  refine Eq.trans ?_ (expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hd1 _
-    A n _ _ _ none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
+  rw [prob_bind, FixedLengthPKScheme.indCodec_eq_bitCodec, h1]
+  refine Eq.trans ?_ (Games.expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n)
+    hd1 _ A n _ _ _ none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
       if p.1.headD false = true then (1 : ℝ) else 0))
   refine congrArg _ (funext fun p => ?_)
   -- Pointwise: the distinguisher outputs `A`'s guess.
@@ -585,7 +585,7 @@ private theorem accept_nmGame_encRed (A B : NUPPT) (q : PolyExpr) (n : ℕ)
         encCt S n (pairFstD (S.gen.runAt n [] rg)) ω ((List.ofFn p.1).headD false) false)) =
       encCt S n (pairFstD (S.gen.runAt n [] rg)) ω ((List.ofFn p.1).headD false) true ++
         encCt S n (pairFstD (S.gen.runAt n [] rg)) ω ((List.ofFn p.1).headD false) false :=
-    GGMRed.ofFn_padFin_of_length (by
+    ofFn_padFin_of_length (by
       rw [List.length_append, encCt_eq, encCt_eq, EnsembleLemmas.length_padL,
         EnsembleLemmas.length_padL, encHandler_outLen, PolyExpr.eval_add])
   dsimp only

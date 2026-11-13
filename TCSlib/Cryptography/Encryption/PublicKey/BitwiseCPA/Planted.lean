@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Encryption.PublicKey.HybridMachine
 import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity.RecordHandler
 import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -52,20 +53,6 @@ theorem ofFn_const_of_eq_one {p : ℕ} (hp : p = 1) (b : Bool) :
   subst hp
   rfl
 
-/-- Flattening singletons: `(List.ofFn fun i => List.ofFn fun _ : Fin p => f i).flatten =
-List.ofFn f` when `p = 1`. -/
-theorem flatten_ofFn_singleton {p : ℕ} (hp : p = 1) :
-    ∀ {k : ℕ} (f : Fin k → Bool),
-      (List.ofFn fun i => List.ofFn fun _ : Fin p => f i).flatten = List.ofFn f := by
-  intro k
-  induction k with
-  | zero => intro f; rfl
-  | succ k ih =>
-    intro f
-    rw [List.ofFn_succ, List.ofFn_succ, List.flatten_cons, ih (fun i => f i.succ),
-      ofFn_const_of_eq_one hp]
-    rfl
-
 /-- The first `j` bits of `List.ofFn m`, as a flattening of singletons (`p = 1`):
 `(ofFn m).take j = (ofFn fun i : Fin j => ofFn fun _ : Fin p => m i).flatten`. -/
 theorem take_ofFn_flatten {p n j : ℕ} (hp : p = 1) (m : Fin n → Bool) (hj : j ≤ n) :
@@ -92,12 +79,6 @@ theorem drop_ofFn_flatten {p n j : ℕ} (hp : p = 1) (m : Fin n → Bool) (hj : 
     omega
   · intro t h₁ h₂
     simp only [List.getElem_drop, List.getElem_ofFn]
-
-/-- The head of a suffix is an entry: `(l.drop k).headD false = l.getD k false`. -/
-theorem headD_drop (l : List Bool) (k : ℕ) : (l.drop k).headD false = l.getD k false := by
-  induction l generalizing k with
-  | nil => simp
-  | cons b l ih => cases k <;> simp
 
 /-! ### The planted tuple -/
 

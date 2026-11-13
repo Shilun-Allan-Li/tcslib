@@ -44,6 +44,8 @@ queried" are predicates on that log. Logging never changes the computation
 * `Games.simulate_costBoundedBy`: if each query of `c` to oracle `i` is answered by a computation
   of cost at most `b i`, and `c` is cost-bounded by `q` when oracle `i` costs `b i`, then the
   simulation is cost-bounded by `q`.
+* `Games.simulate_eq_of_abs`, `Games.simulate_eq_of_abs_bounded`: simulation through an
+  abstraction of the state, on every run or along runs with a query budget.
 
 ## References
 
@@ -272,5 +274,54 @@ theorem simulate_costBoundedBy {spec : OracleSpec ι} {spec' : OracleSpec ι'}
     rw [Nat.add_sub_cancel' hi] at h
     rw [simulate_query]
     exact h
+
+/-! ### Simulation through a state abstraction -/
+
+/-- **Simulation through an abstraction of the state:** if every call of `impl₁` from the
+abstract state `f s` is the call of `impl₂` from `s` with its new state abstracted, the same holds
+for whole simulations: `simulate impl₁ c (f s) =
+(simulate impl₂ c s).bind fun p => pure (p.1, f p.2)`.
+
+**Proof sketch.** Induction on `c`; at a query, rewrite the call by the hypothesis and use the
+induction hypothesis on each continuation after associativity. -/
+theorem simulate_eq_of_abs {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+    {σ₁ σ₂ α : Type} (impl₁ : QueryImpl spec σ₁ spec') (impl₂ : QueryImpl spec σ₂ spec')
+    (f : σ₂ → σ₁) (h : ∀ i x s, impl₁ i x (f s) = (impl₂ i x s).bind fun p => .pure (p.1, f p.2))
+    (c : OracleComp spec α) (s : σ₂) :
+    simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => .pure (p.1, f p.2) := by
+  induction c generalizing s with
+  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
+  | query i x k ih =>
+    rw [simulate_query, simulate_query, h, OracleComp.bind_assoc, OracleComp.bind_assoc]
+    congr 1
+    funext p
+    rw [OracleComp.pure_bind]
+    exact ih p.1 p.2
+
+/-- **Simulation through a state abstraction, along runs with a query budget:** let every call of
+`impl₂` from a state `s` with `cnt s < κ` be a deterministic answer `(y, s')` with
+`cnt s' ≤ cnt s + 1`, and the call of `impl₁` from `f s` be `(y, f s')`. Then for a computation
+`c` with at most `m` queries and `cnt s + m ≤ κ`,
+`simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => pure (p.1, f p.2)`.
+
+**Proof sketch.** Induction on `c`. A query costs one unit, so it is asked from a state with
+`cnt s < κ`; both calls return the same answer, and the continuation runs from `s'` with one unit
+less, where `cnt s' + (m - 1) ≤ κ`. -/
+theorem simulate_eq_of_abs_bounded {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+    {σ₁ σ₂ α : Type} (impl₁ : QueryImpl spec σ₁ spec') (impl₂ : QueryImpl spec σ₂ spec')
+    (f : σ₂ → σ₁) (cnt : σ₂ → ℕ) (κ : ℕ)
+    (h : ∀ i x s, cnt s < κ → ∃ (y : spec.rng i) (s' : σ₂), impl₂ i x s = .pure (y, s') ∧
+      cnt s' ≤ cnt s + 1 ∧ impl₁ i x (f s) = .pure (y, f s'))
+    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ₂)
+    (hs : cnt s + m ≤ κ) :
+    simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => .pure (p.1, f p.2) := by
+  induction c generalizing m s with
+  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
+  | query i x k ih =>
+    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+    have hm1 : 1 ≤ m := hm
+    obtain ⟨y, s', h₂, hcnt, h₁⟩ := h i x s (by omega)
+    rw [simulate_query, simulate_query, h₁, h₂, OracleComp.pure_bind, OracleComp.pure_bind]
+    exact ih y (m - 1) (hk y) s' (by omega)
 
 end TCSlib.Cryptography.Games

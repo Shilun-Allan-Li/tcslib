@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Hybrid
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Handler
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -32,7 +33,6 @@ and `H_κ` the game with `b = true` (`acHyb_lt_zero`, `acHyb_lt_cap`).
 
 ## Main results
 
-* `AdaptiveCPA.indCodec_eq_bitCodec`: the adversary codec is a `bitCodec`.
 * `AdaptiveCPA.acDin_eval`, `acDout_eval`: the lengths of T2's codec are the game's.
 * `AdaptiveCPA.castImpl_adaptiveIndImpl`: the adaptive CPA oracles, read on T2's codec, are the
   hybrid with the constant selector.
@@ -52,26 +52,6 @@ variable (S : FixedLengthPKScheme)
 
 /-! ### Codecs and lengths -/
 
-/-- **The adversary codec is a bit codec:** `S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1`.
-
-**Proof sketch.** Both are codecs with the same three fields (`indCodec_decodeMove`,
-`indCodec_encodeEntry`, `indCodec_timeout` against the `bitCodec` readers). -/
-theorem indCodec_eq_bitCodec (n : ℕ) :
-    S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1 := by
-  have h1 := S.indCodec_decodeMove n
-  have h2 := S.indCodec_encodeEntry n
-  have h3 := S.indCodec_timeout n
-  generalize S.indCodec n = c at h1 h2 h3
-  cases c with
-  | mk d e t =>
-    have hd : d = (bitCodec (S.inLens n) (S.outLens n) 1).decodeMove :=
-      funext fun w => (h1 w).trans (bitCodec_decodeMove _ _ _ w).symm
-    have he : e = (bitCodec (S.inLens n) (S.outLens n) 1).encodeEntry :=
-      funext fun en => (h2 en).trans (bitCodec_encodeEntry _ _ _ en).symm
-    have ht : t = (bitCodec (S.inLens n) (S.outLens n) 1).timeout :=
-      h3.trans (bitCodec_timeout _ _ _).symm
-    rw [hd, he, ht]
-
 /-- The query lengths of T2's codec are the game's: `(acDin S · ).eval n = S.inLens n`. -/
 theorem acDin_eval (n : ℕ) : (fun i => (acDin S i).eval n) = S.inLens n := by
   funext i
@@ -85,48 +65,6 @@ theorem acDout_eval (n : ℕ) : (fun i => (acDout S i).eval n) = S.outLens n := 
   match i with
   | 0 => rw [acDout_zero, PolyExpr.eval_add, PolyExpr.eval_const, S.outLens_zero]
   | 1 => rw [acDout_one, S.outLens_one]
-
-/-! ### Strings of the oracles -/
-
-/-- Reading a bit vector across an equality of widths keeps its string:
-`⟦cast h f⟧ = ⟦f⟧` when `a = b`. -/
-theorem ofFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
-    (f : Fin a → Bool) : List.ofFn (cast h f) = List.ofFn f := by
-  subst hab
-  rfl
-
-/-- The first half of a `2m`-bit query is its first `m` bits:
-`⟦(splitHalf y).1⟧ = ⟦y⟧.take m`. -/
-theorem ofFn_splitHalf_fst {m : ℕ} (y : Fin (m + m) → Bool) :
-    List.ofFn (FixedLengthScheme.splitHalf y).1 = (List.ofFn y).take m := by
-  rw [FixedLengthScheme.splitHalf_fst]
-  refine List.ext_getElem (by simp only [List.length_ofFn, List.length_take]; omega)
-    fun i h₁ h₂ => ?_
-  rw [List.getElem_ofFn, List.getElem_take, List.getElem_ofFn]
-  rfl
-
-/-- The second half of a `2m`-bit query is its last `m` bits:
-`⟦(splitHalf y).2⟧ = ⟦y⟧.drop m`. -/
-theorem ofFn_splitHalf_snd {m : ℕ} (y : Fin (m + m) → Bool) :
-    List.ofFn (FixedLengthScheme.splitHalf y).2 = (List.ofFn y).drop m := by
-  rw [FixedLengthScheme.splitHalf_snd]
-  refine List.ext_getElem (by simp only [List.length_ofFn, List.length_drop]; omega)
-    fun i h₁ h₂ => ?_
-  rw [List.getElem_ofFn, List.getElem_drop, List.getElem_ofFn]
-  rfl
-
-/-- The all-`false` answer, read at any width, is all-`false`:
-`padFin d ⟦zeroBits m⟧ = zeroBits d`. -/
-theorem padFin_ofFn_zeroBits (d m : ℕ) : padFin d (List.ofFn (zeroBits m)) = zeroBits d := by
-  funext i
-  rw [padFin_apply, ofFn_zeroBits, zeroBits_apply]
-  by_cases hi : (i : ℕ) < m
-  · rw [List.getD_eq_getElem _ _ (by rw [List.length_replicate]; exact hi), List.getElem_replicate]
-  · rw [List.getD_eq_default _ _ (by rw [List.length_replicate]; omega)]
-
-/-- The bit of a one-bit output is the head of its string: `⟦f⟧.headD false = f 0`. -/
-theorem headD_ofFn_one (f : Fin 1 → Bool) : (List.ofFn f).headD false = f 0 := by
-  rw [List.ofFn_succ, List.headD_cons]
 
 /-! ### The hybrid games -/
 
@@ -191,11 +129,12 @@ theorem ofFn_select (n : ℕ) (x : Fin ((acDin S 1).eval n) → Bool) (b : Bool)
       msgOf (S.msgLen.eval n) b (List.ofFn x) := by
   have hx : List.ofFn (cast (S.indSpec_challengeDom n) (padFin (S.inLens n 1) (List.ofFn x))) =
       List.ofFn x := by
-    rw [ofFn_cast (S.inLens_one n), GGMRed.ofFn_padFin_of_length (by
+    rw [ofFn_cast (S.inLens_one n), ofFn_padFin_of_length (by
       rw [List.length_ofFn, acDin_one, PolyExpr.eval_add, S.inLens_one])]
   cases b
-  · rw [if_neg Bool.false_ne_true, ofFn_splitHalf_fst, hx, msgOf_eq, if_neg Bool.false_ne_true]
-  · rw [if_pos rfl, ofFn_splitHalf_snd, hx, msgOf_eq, if_pos rfl]
+  · rw [if_neg Bool.false_ne_true, FixedLengthScheme.ofFn_splitHalf_fst, hx, msgOf_eq,
+      if_neg Bool.false_ne_true]
+  · rw [if_pos rfl, FixedLengthScheme.ofFn_splitHalf_snd, hx, msgOf_eq, if_pos rfl]
 
 /-- **The adaptive CPA oracles on T2's codec are a hybrid:** read along the lengths of T2's codec,
 `S.adaptiveIndImpl .cpa b n pk sk κ` is `hybImpl κ (acEnc S n pk) (fun _ => b)`.
@@ -254,9 +193,9 @@ theorem castImpl_adaptiveIndImpl (b : Bool) (n : ℕ) (pk sk : List Bool) (κ : 
 `S.adaptiveIndGame .cpa A q κ b n = acHyb S A q κ n (fun _ => b)`.
 
 **Proof sketch.** Fix the key-generation and adversary coins. The adversary codec is a bit codec
-(`indCodec_eq_bitCodec`), its one-bit output is the head of its string (`headD_ofFn_one`), and
-the run transports to T2's codec, whose lengths are equal (`simulate_castImpl_toCompOn`), where the
-oracles are the hybrid (`castImpl_adaptiveIndImpl`). -/
+(`FixedLengthPKScheme.indCodec_eq_bitCodec`), its one-bit output is the head of its string
+(`headD_ofFn_one`), and the run transports to T2's codec, whose lengths are equal
+(`simulate_castImpl_toCompOn`), where the oracles are the hybrid (`castImpl_adaptiveIndImpl`). -/
 theorem adaptiveIndGame_eq_acHyb (A : NUPPT) (q κ : ℕ) (b : Bool) (n : ℕ) :
     S.adaptiveIndGame .cpa A q κ b n = acHyb S A q κ n (fun _ => b) := by
   rw [S.adaptiveIndGame_eq, acHyb_eq]
@@ -265,7 +204,7 @@ theorem adaptiveIndGame_eq_acHyb (A : NUPPT) (q κ : ℕ) (b : Bool) (n : ℕ) :
   congr 1
   funext r
   rw [← castImpl_adaptiveIndImpl S b n (pairFstD (S.gen.runAt n [] rg))
-    (pairSndD (S.gen.runAt n [] rg)) κ, indCodec_eq_bitCodec]
+    (pairSndD (S.gen.runAt n [] rg)) κ, FixedLengthPKScheme.indCodec_eq_bitCodec]
   have key := simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n)
     (PolyExpr.eval_const 1 n)
     (S.adaptiveIndImpl .cpa b n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg))

@@ -45,7 +45,6 @@ namespace TCSlib.Cryptography.Composability.NMSim
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 open NMCCA2 (finU finA fields_finInput polyTimeComputable_finFields)
-open AdaptiveCPA (simulate_eq_of_abs)
 
 variable (S : FixedLengthPKScheme) (samp : NUPPT)
 
@@ -388,7 +387,7 @@ theorem simCt_input (pk : List Bool) (ρ' : samp.Coins n) (re : S.enc.Coins n) (
     pairSndD_pairEncode, seedEquiv_ofFn,
     List.take_left' (length_ofFn_coins samp n ρ'), List.drop_left' (length_ofFn_coins samp n ρ'),
     encWith_eq, drawWith_eq, ofFn_padFin_eq_padL, ofFn_padFin_eq_padL,
-    GGMRed.ofFn_padFin_of_length hxl, NUPPT.Uniform.runAt_eq S.enc_uniform, NUPPT.advInput_eq,
+    ofFn_padFin_of_length hxl, NUPPT.Uniform.runAt_eq S.enc_uniform, NUPPT.advInput_eq,
     NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout]
 
 /-- **The simulator against the history oracle is the hybrid with an independent draw:** for the
@@ -485,7 +484,7 @@ theorem idealView_simOut (sk : List Bool) (ρ : samp.Coins n)
     rw [simParams_outLen_eval, simOutL_eq, List.length_append, List.length_drop, ha,
       length_flatten_map_range (S.ctLen.eval n + 1) _ _ hg, Nat.mul_add, Nat.mul_one]
     omega
-  rw [GGMRed.ofFn_padFin_of_length hlen, simAbs_snd, idealView_eq, realView_eq, simOutL_eq,
+  rw [ofFn_padFin_of_length hlen, simAbs_snd, idealView_eq, realView_eq, simOutL_eq,
     drop_flatten_append _ _ _ hg]
   congr 3
   refine List.map_congr_left fun i hi => ?_
@@ -575,7 +574,7 @@ theorem simRun_eq (Sim₀ : NUPPT) (n : ℕ)
     exact OracleComp.costBoundedBy_pure _ _ _), ← hφ z ω rA, simParams_advInput, chalHandler_init,
     simulate_bind,
     simulate_comp, ← simAbs_none S samp pl hl hist r sl n ρ,
-    simulate_eq_of_abs _ _ _ (simComp_abs S samp pl hl hist r sl n pk sk ρ ρ' re),
+    Games.simulate_eq_of_abs _ _ _ (simComp_abs S samp pl hl hist r sl n pk sk ρ ρ' re),
     OracleComp.bind_assoc, OracleComp.bind_assoc]
   simp only [OracleComp.pure_bind, hfin, simulate_pure]
   rw [ProbComp.expect_bind]
@@ -610,19 +609,19 @@ theorem exists_simulator : ∃ Sim : NUPPT, ∀ (X : NUPPT) (n : ℕ),
   obtain ⟨φ, hφ⟩ := hT2 n
   rw [idealAcc_eq, hybAcc_eq]
   refine congrArg _ (funext fun rg => congrArg _ (funext fun ρ => ?_))
-  rw [← ChallengeSim.expect_sample_equiv (NUPPT.coinsCongr hc n)]
+  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr hc n)]
   simp only [hSim]
-  rw [← ChallengeSim.expect_sample_equiv φ, ChallengeSim.expect_sample_prod,
-    ← ChallengeSim.expect_sample_equiv (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n),
+  rw [← ProbComp.expect_sample_equiv φ, ChallengeSim.expect_sample_prod,
+    ← ProbComp.expect_sample_equiv (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n),
     ChallengeSim.expect_sample_prod]
   refine congrArg _ (funext fun ρ' => ?_)
   simp only [expect_simulate_rImpl_eager]
   refine (congrArg _ (funext fun re => congrArg _ (funext fun rA => congrArg _ (funext fun rX =>
     simRun_eq S samp pl hl hist A q r sl Sim₀ n φ hφ _ _ ρ ρ' re rA fun v =>
       if X.distinguisherL n v rX = true then 1 else 0)))).trans ?_
-  rw [ChallengeSim.expect_sample_comm]
+  rw [ProbComp.expect_sample_comm]
   refine congrArg _ (funext fun rA => ?_)
-  rw [ChallengeSim.expect_sample_comm]
+  rw [ProbComp.expect_sample_comm]
 
 end Ideal
 

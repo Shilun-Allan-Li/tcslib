@@ -207,7 +207,7 @@ theorem ofFn_chalState_some (y : Fin (S.ctLen.eval n) → Bool) (h : Fin (hl.eva
     List.ofFn (chalState P n (some (y, h, a))) =
       true :: (List.ofFn y ++ List.ofFn h ++ List.ofFn a) := by
   rw [chalState_some]
-  refine GGMRed.ofFn_padFin_of_length ?_
+  refine ofFn_padFin_of_length ?_
   rw [List.length_cons, List.length_append, List.length_append, List.length_ofFn, List.length_ofFn,
     List.length_ofFn, chalHandler_stateLen_eval]
   omega
@@ -235,15 +235,6 @@ theorem headD_ofFn_chalState
 
 end State
 
-/-- A padded run of `false`s is all `false`: `padFin d (0^m) = 0`. -/
-private theorem padFin_replicate_false (d m : ℕ) :
-    padFin d (List.replicate m false) = zeroBits d := by
-  funext i
-  rw [padFin_apply, zeroBits_apply]
-  by_cases h : (i : ℕ) < m
-  · rw [List.getD_eq_getElem _ _ (by rw [List.length_replicate]; exact h), List.getElem_replicate]
-  · rw [List.getD_eq_default _ _ (by rw [List.length_replicate]; omega)]
-
 section Calls
 
 variable (P : ChalParams S pl hl k' din' dout') (n : ℕ) (z : List Bool)
@@ -261,7 +252,7 @@ theorem chalHandler_impl_dec (x : Fin ((snmDin S pl 0).eval n) → Bool)
     (by rw [List.length_replicate, snmDout_zero]) List.length_ofFn (by
       show chalRun P _ = _
       rw [chalRun_eq, hI, hU, hS, List.length_replicate]
-      rfl), padFin_replicate_false, padFin_ofFn]
+      rfl), Games.padFin_replicate_false, padFin_ofFn]
 
 /-- **A repeated challenge answers the recorded `⟨Y, H⟩`** and keeps the state, asking nothing. -/
 theorem chalHandler_impl_some (x : Fin ((snmDin S pl 1).eval n) → Bool)
@@ -327,14 +318,14 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
   obtain ⟨hU₀, -, -, hS₀, hI₀, -, hL₀⟩ := fields_input (k := 2) n z (List.ofFn ω)
     (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []
   have hq : List.ofFn (padFin ((din' P.j).eval n) (P.qry w₀)) = P.qry w₀ :=
-    GGMRed.ofFn_padFin_of_length (by rw [P.qry_len, hU₀, List.length_replicate])
+    ofFn_padFin_of_length (by rw [P.qry_len, hU₀, List.length_replicate])
   have hxl : (List.ofFn x).length = pl.eval n := by
     rw [List.length_ofFn]
     show (snmDin S pl 1).eval n = _
     rw [snmDin_one]
   have hx : EnsembleLemmas.padL (pl.eval n) (List.ofFn x) =
       List.ofFn (padFin (pl.eval n) (List.ofFn x)) := by
-    rw [EnsembleLemmas.padL_eq, GGMRed.ofFn_padFin_of_length hxl]
+    rw [EnsembleLemmas.padL_eq, ofFn_padFin_of_length hxl]
     exact List.take_left' hxl
   have hpc : 1 ≤ (chalHandler P).perCall.eval n := by
     rw [chalHandler_perCall, PolyExpr.eval_const]
@@ -368,7 +359,7 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
     rw [chalRun_eq, hW₁]
     beta_reduce
     rw [hI₁, hU₁, hS₁, hL₁, hQ₁, List.length_replicate, headD_ofFn_chalState, hx,
-      ofFn_chalState_some, GGMRed.ofFn_padFin_of_length (hY y), GGMRed.ofFn_padFin_of_length (hH y)]
+      ofFn_chalState_some, ofFn_padFin_of_length (hY y), ofFn_padFin_of_length (hH y)]
     rw [if_neg (by simp), if_neg (by simp),
       if_neg (fun h => pairEncode_ne_nil _ _ (of_decide_eq_true h))]
 

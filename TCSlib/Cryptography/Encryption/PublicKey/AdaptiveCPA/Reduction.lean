@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -141,7 +142,7 @@ private theorem comp_acAbs (b : Bool) (n : ℕ) (hist : ist n ≤ cap.eval n) (p
         simp only [OracleComp.pure_bind, simulate_pure]
         have he : padFin (S.ctLen.eval n) (List.ofFn (padFin ((acDout S 1).eval n)
             (List.ofFn (acEnc S n pk b x r)))) = acEnc S n pk b x r := by
-          rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acDout_one]), padFin_ofFn]
+          rw [ofFn_padFin_of_length (by rw [List.length_ofFn, acDout_one]), padFin_ofFn]
         rw [he, acAbs, List.length_cons, Nat.min_eq_left (by omega), List.headD_cons,
           getElem?_reverse_cons, if_pos hk.symm]
       · -- another fresh challenge: the handler's own encryption with its tape
@@ -178,7 +179,7 @@ adversary's coins `r` and the handler's seed `ω` fixed, the probability that `B
 the oracles of bit `b` outputs `1` is the expectation of `A`'s bit against `H_{i⋆+b}` with the
 handler's tapes in advance and the lazy slot `i⋆`.
 
-**Proof sketch.** Transport `B`'s run to T2's codec (`indCodec_eq_bitCodec`,
+**Proof sketch.** Transport `B`'s run to T2's codec (`FixedLengthPKScheme.indCodec_eq_bitCodec`,
 `expect_simulate_castImpl_toCompOn`), replace it by the reduction (T2's equation `hφ`, with
 `acHandler_advInput` and `acHandler_finish`), compose the two simulations (`simulate_bind`,
 `simulate_comp`) and pass to the hybrid through the state abstraction (`init_acAbs`,
@@ -213,7 +214,7 @@ private theorem prob_red_tape (hist : ist n ≤ cap.eval n)
       fun res => if (List.ofFn res.1).headD false = true then (1 : ℝ) else 0 := by
     funext res
     rw [prob_pure, headD_ofFn_one]
-  rw [prob_bind, indCodec_eq_bitCodec, h1]
+  rw [prob_bind, FixedLengthPKScheme.indCodec_eq_bitCodec, h1]
   refine (expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hd
     (S.indImpl .cpa b n pk sk) B n _ pk (φ (ω, r)) none
     (fun p => if p.1.headD false = true then (1 : ℝ) else 0)).symm.trans ?_
@@ -225,7 +226,7 @@ private theorem prob_red_tape (hist : ist n ≤ cap.eval n)
     simulate_eq_of_abs _ _ (acAbs S cap ist n) (comp_acAbs S cap ist b n hist pk sk ω),
     expect_bind]
   refine congrArg _ (funext fun a => ?_)
-  rw [expect_pure, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])]
+  rw [expect_pure, ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])]
 
 /-- **`B`'s game is the hybrid `H_{i⋆+b}`:** if `B` is the machine of T2 for the handler
 `acHandler S cap ist` (with the coin bijection `φ` at `n`) and `i⋆(n) ≤ cap(n)`, then `B`'s

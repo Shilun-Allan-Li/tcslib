@@ -56,6 +56,8 @@ part of the public API of the campaign.
   by exactly distributed polynomial-time samplers.
 * `TCSlib.Cryptography.EnsembleLemmas.negligible_polyExpr_mul` — a syntactic polynomial
   times a negligible function is negligible.
+* `TCSlib.Cryptography.EnsembleLemmas.ofFn_padFin_eq_padL` — the string of a padded vector is
+  `padL`.
 
 ## References
 
@@ -160,6 +162,9 @@ def padL (k : ℕ) (a : List Bool) : List Bool := List.ofFn (padFin k a)
 
 /-- `padL` has exactly `k` bits. -/
 theorem length_padL (k : ℕ) (a : List Bool) : (padL k a).length = k := List.length_ofFn
+
+/-- The string of a padded vector is `padL`: `⟦padFin k a⟧ = padL k a`. -/
+theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) : List.ofFn (padFin k a) = padL k a := rfl
 
 /-- `padL k a` is the first `k` bits of `a ++ 0^k`. -/
 theorem padL_eq (k : ℕ) (a : List Bool) : padL k a = (a ++ List.replicate k false).take k := by

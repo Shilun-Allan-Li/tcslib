@@ -6,6 +6,7 @@ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Handler
 import TCSlib.Cryptography.Games.Bridges.QueryTree
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -25,7 +26,7 @@ The proof answers the handler's outer queries by `f` (`fOuter`) and composes the
 implementations (`QueryImpl.comp`). Each composed call, from the encoded state `pkState j o`, is
 the call of `eImpl` from `(j, o)` with the handler's tapes in advance (`comp_pkAbs`), as long as
 `j` is below the number `q(n)` of tapes; the adversary asks at most `q(n)` queries, so this holds
-along every run (`simulate_eq_of_abs_bounded`). Drawing the seed uniformly then gives fresh
+along every run (`Games.simulate_eq_of_abs_bounded`). Drawing the seed uniformly then gives fresh
 nonces (`PRFGame.expect_eImpl`).
 
 ## Main definitions
@@ -36,8 +37,6 @@ nonces (`PRFGame.expect_eImpl`).
 
 ## Main results
 
-* `PRFGame.simulate_eq_of_abs_bounded`: simulation through a state abstraction along runs with a
-  query budget.
 * `PRFGame.exists_prfReduction`: the reduction.
 
 ## References
@@ -49,34 +48,6 @@ nonces (`PRFGame.expect_eImpl`).
 namespace TCSlib.Cryptography.Composability.PRFGame
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
-
-/-! ### Simulation through a state abstraction along bounded runs -/
-
-/-- **Simulation through a state abstraction, along runs with a query budget:** let every call of
-`impl₂` from a state `s` with `cnt s < κ` be a deterministic answer `(y, s')` with
-`cnt s' ≤ cnt s + 1`, and the call of `impl₁` from `f s` be `(y, f s')`. Then for a computation
-`c` with at most `m` queries and `cnt s + m ≤ κ`,
-`simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => pure (p.1, f p.2)`.
-
-**Proof sketch.** Induction on `c`. A query costs one unit, so it is asked from a state with
-`cnt s < κ`; both calls return the same answer, and the continuation runs from `s'` with one unit
-less, where `cnt s' + (m - 1) ≤ κ`. -/
-theorem simulate_eq_of_abs_bounded {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
-    {σ₁ σ₂ α : Type} (impl₁ : QueryImpl spec σ₁ spec') (impl₂ : QueryImpl spec σ₂ spec')
-    (f : σ₂ → σ₁) (cnt : σ₂ → ℕ) (κ : ℕ)
-    (h : ∀ i x s, cnt s < κ → ∃ (y : spec.rng i) (s' : σ₂), impl₂ i x s = .pure (y, s') ∧
-      cnt s' ≤ cnt s + 1 ∧ impl₁ i x (f s) = .pure (y, f s'))
-    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ₂)
-    (hs : cnt s + m ≤ κ) :
-    simulate impl₁ c (f s) = (simulate impl₂ c s).bind fun p => .pure (p.1, f p.2) := by
-  induction c generalizing m s with
-  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
-  | query i x k ih =>
-    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
-    have hm1 : 1 ≤ m := hm
-    obtain ⟨y, s', h₂, hcnt, h₁⟩ := h i x s (by omega)
-    rw [simulate_query, simulate_query, h₁, h₂, OracleComp.pure_bind, OracleComp.pure_bind]
-    exact ih y (m - 1) (hk y) s' (by omega)
 
 /-! ### The outer oracle and the composed calls -/
 
@@ -136,8 +107,8 @@ private theorem fOuter_tape (r : Fin n → Bool) :
     padFin n (List.ofFn (padFin ((pkOut 0).eval n) (List.ofFn (f (padFin n (List.ofFn
       (padFin ((pkOut 0).eval n) (List.ofFn r)))))))) = f r := by
   have hn : (pkOut 0).eval n = n := by rw [pkOut_eq, PolyExpr.eval_var]
-  rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn,
-    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn]
+  rw [ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn,
+    ofFn_padFin_of_length (by rw [List.length_ofFn, hn]), padFin_ofFn]
 
 /-- **One composed call is a call of `eImpl` with the tapes in advance:** from the encoded state
 `pkState j o` with `j < q(n)`, the handler composed with `fOuter f` answers as `eImpl` with pad
@@ -181,11 +152,11 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
       have hn : (pkOut 0).eval n = n := by rw [pkOut_eq, PolyExpr.eval_var]
       have hx0 : padFin n (List.ofFn (padFin ((pkOut 0).eval n) (pairFstD (List.ofFn x)))) =
           padFin n (pairFstD (List.ofFn x)) := by
-        rw [GGMRed.ofFn_padFin_of_length (by rw [hwf'.1, hn])]
+        rw [ofFn_padFin_of_length (by rw [hwf'.1, hn])]
       rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq,
         pkHandler_impl_dec_open q atkBit b n z ω x j o hj.le hop,
         simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
-        hx0, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn]; exact hn.symm),
+        hx0, ofFn_padFin_of_length (by rw [List.length_ofFn]; exact hn.symm),
         decOpen_atkOf, decAns_eq]
       simp only [Bool.and_eq_true] at hop
       rw [if_pos (by simp only [Bool.and_eq_true]; exact ⟨hop.1, hwf⟩)]
@@ -324,7 +295,7 @@ theorem exists_prfReduction (A : NUPPT) (q : PolyExpr) (atkBit b : Bool) :
     intro ω
     have key : ∀ g : Fin 1 → Bool, (if g 0 = true then (1 : ℝ) else 0) =
         if (List.ofFn g).headD false = true then 1 else 0 := fun g => by
-      rw [AdaptiveCPA.headD_ofFn_one]
+      rw [headD_ofFn_one]
     have h2 : _ = B.toCompOn (bitCodec (fun _ : Fin 1 => PolyExpr.var.eval n)
         (fun _ => PolyExpr.var.eval n) ((pkHandler q atkBit b).outLen.eval n)) n
         (q.eval n * (pkHandler q atkBit b).perCall.eval n + (pkHandler q atkBit b).finCall.eval n)
@@ -351,7 +322,7 @@ theorem exists_prfReduction (A : NUPPT) (q : PolyExpr) (atkBit b : Bool) :
       expect_bind]
     simp only [expect_pure]
     refine congrArg _ (funext fun p => ?_)
-    rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, pkHandler_outLen])]
+    rw [ofFn_padFin_of_length (by rw [List.length_ofFn, pkHandler_outLen])]
   simp only [hrun]
   rw [expect_sample_equiv (pkSeedTapes q atkBit b n) (fun T => expect (simulate
       (eImpl (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) (ctP.eval n) n (atkOf atkBit)

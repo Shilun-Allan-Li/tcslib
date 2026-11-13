@@ -25,6 +25,7 @@ hybrid index, the messages and the coin offsets.
 
 ## Main results
 
+* `TCSlib.Cryptography.hybridPre_eq` is the defining equation of the pre-processing.
 * `TCSlib.Cryptography.blockEncFun_flatten` describes block encryption on a concatenation
   of messages. `TCSlib.Cryptography.encodeList_ofFn_split` splits an encoded tuple.
 * `TCSlib.Cryptography.exists_hybridMachine` constructs the reduction with its coin count
@@ -232,6 +233,23 @@ def hybridPre (E : List Bool → List Bool) (L B : PolyExpr) (y : List Bool) : L
         (blockEncFun E L B (blockState (pairFstD (pairSndD y)) (pairFstD (pairFstD (pairFstD y)))
           (pairSndD (pairSndD (pairSndD (pairSndD y))))
           ((pairSndD (pairFstD y)).drop (pairSndD (pairFstD (pairSndD (pairSndD y)))).length))))
+
+/-- The defining equation of `hybridPre`: on `y = ⟨⟨⟨pk, c⟩, w⟩, ⟨u, ⟨⟨u₁, u₂⟩, ⟨M₁, M₂⟩⟩⟩⟩` it is
+`⟨pk, blockEncFun E L B (blockState u pk M₁ (w.take |u₁|)) ++
+⟨c, blockEncFun E L B (blockState u pk M₂ (w.drop |u₂|))⟩⟩`. -/
+theorem hybridPre_eq (E : List Bool → List Bool) (L B : PolyExpr) (y : List Bool) :
+    hybridPre E L B y =
+      pairEncode (pairFstD (pairFstD (pairFstD y)))
+        (blockEncFun E L B (blockState (pairFstD (pairSndD y)) (pairFstD (pairFstD (pairFstD y)))
+            (pairFstD (pairSndD (pairSndD (pairSndD y))))
+            ((pairSndD (pairFstD y)).take (pairFstD (pairFstD (pairSndD (pairSndD y)))).length)) ++
+          pairEncode (pairSndD (pairFstD (pairFstD y)))
+            (blockEncFun E L B
+              (blockState (pairFstD (pairSndD y)) (pairFstD (pairFstD (pairFstD y)))
+                (pairSndD (pairSndD (pairSndD (pairSndD y))))
+                ((pairSndD (pairFstD y)).drop
+                  (pairSndD (pairFstD (pairSndD (pairSndD y)))).length)))) :=
+  rfl
 
 /-- The pre-processing of the hybrid machine is polynomial-time.
 

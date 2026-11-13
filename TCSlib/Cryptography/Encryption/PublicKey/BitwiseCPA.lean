@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA
-import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Eager
+import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity.PaddedCPA
 import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Planted
 import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.QueryHandler
 
@@ -35,8 +35,6 @@ depend on the public key. The proof below therefore goes back to single-bit secu
 
 ## Contents
 
-* `BitwiseCPA/Eager`: eager challenge coins under CPA, resampling one coordinate of a uniform
-  tuple, and readers of the padded encryptor.
 * `BitwiseCPA/Planted`: the planted bitwise challenge answer and the reduction's final bit.
 * `BitwiseCPA/QueryHandler`: the query-recording handler with advice and its machine by T1.
 
@@ -82,43 +80,36 @@ private noncomputable def hybGame (S : BitPublicKeyScheme) (L : PolyExpr)
     (A.toCompOn ((S.bitwise.padded L hL hmsg).indCodec n) n q
       (pairFstD (S.gen.runAt n [] rg)) r) none).1 0)
 
-/-- The bitwise encryptor on a coin list: the tuple of the single-bit encryptions with the
-consecutive coin segments (`bitwise_enc`, `bitwise_enc_runAtL`). -/
-private theorem bitwise_runAtL (S : BitPublicKeyScheme) (n : ℕ) (pk : List Bool)
-    (m : Fin n → Bool) (r : List Bool) :
-    S.bitwise.enc.runAtL n (pairEncode pk (List.ofFn m)) r =
-      PrivateKeyScheme.encodeList (List.ofFn fun i : Fin n =>
-        S.enc.runAtL n (pairEncode pk [m i]) (coinBlock (S.enc.coinLen n) i r)) := by
-  rw [BitPublicKeyScheme.bitwise_enc]
-  exact BitPublicKeyScheme.bitwise_enc_runAtL S n pk m r
-
 /-- The bitwise encryptor on the coin blocks `v`: the tuple of the single-bit encryptions with
-coins `v_i` (`bitwiseEncCoins_ofFn`, `coinBlock_ofFn_coinBlocks`). -/
+coins `v_i` (`bitwiseEncCoins_ofFn`, `bitwise_enc`, `bitwise_enc_runAtL`,
+`coinBlock_ofFn_coinBlocks`). -/
 private theorem bitwise_runAt_blocks (S : BitPublicKeyScheme) (n : ℕ) (pk : List Bool)
     (m : Fin n → Bool) (v : Fin n → S.enc.Coins n) :
     S.bitwise.enc.runAt n (pairEncode pk (List.ofFn m)) (S.bitwiseEncCoins n v) =
       PrivateKeyScheme.encodeList (List.ofFn fun i : Fin n =>
         S.enc.runAt n (pairEncode pk [m i]) (v i)) := by
-  rw [NUPPT.runAt_eq, bitwise_runAtL, BitPublicKeyScheme.bitwiseEncCoins_ofFn]
+  rw [NUPPT.runAt_eq, BitPublicKeyScheme.bitwiseEncCoins_ofFn, BitPublicKeyScheme.bitwise_enc,
+    BitPublicKeyScheme.bitwise_enc_runAtL]
   refine congrArg (fun l => PrivateKeyScheme.encodeList (List.ofFn l)) (funext fun i => ?_)
   rw [coinBlock_ofFn_coinBlocks, ← NUPPT.runAt_eq]
 
-/-- The selected half of a challenge query, as the list of its `n` bits read from the query. -/
+/-- The selected half of a challenge query, as the list of its `n` bits read from the query
+(the published `FixedLengthScheme.ofFn_splitHalf_fst`, `_snd`). -/
 private theorem ofFn_half {k n : ℕ} (hk : k = n) (b : Bool) (mm : Fin (k + k) → Bool) :
     List.ofFn (if b then (FixedLengthScheme.splitHalf mm).2
       else (FixedLengthScheme.splitHalf mm).1) =
       List.ofFn (fun i : Fin n => (List.ofFn mm).getD ((if b then n else 0) + i) false) := by
   subst hk
-  apply List.ext_getElem
-  · cases b <;> simp
-  · intro t h₁ h₂
-    have ht : t < k := by cases b <;> simpa using h₂
-    cases b
-    · simp [FixedLengthScheme.splitHalf_fst, List.getD_eq_getElem?_getD]
-      rw [dif_pos (by omega)]
-      rfl
-    · simp [FixedLengthScheme.splitHalf_snd, List.getD_eq_getElem?_getD]
-      exact congrArg mm (Fin.ext (Nat.add_comm _ _))
+  cases b
+  · rw [if_neg Bool.false_ne_true, FixedLengthScheme.ofFn_splitHalf_fst]
+    refine List.ext_getElem (by simp) fun t h₁ h₂ => ?_
+    have ht : t < k := by simpa using h₂
+    simp [List.getD_eq_getElem?_getD]
+    rw [dif_pos (by omega)]
+    rfl
+  · rw [if_pos rfl, FixedLengthScheme.ofFn_splitHalf_snd]
+    refine List.ext_getElem (by simp) fun t h₁ h₂ => ?_
+    simp [List.getD_eq_getElem?_getD]
 
 /-- A list of `n + n` bits is its first and its last `n` bits. -/
 private theorem ofFn_getD_split {n : ℕ} (l : List Bool) (hl : l.length = n + n) :
@@ -140,9 +131,9 @@ private theorem ofFn_getD_split {n : ℕ} (l : List Bool) (hl : l.length = n + n
 `Pr[Ind_b = 1] = Pr[H_{j_b} = 1]` with `j_0 = 0`, `j_1 = n`.
 
 **Proof sketch.** Eager coins (`expect_simulate_indImpl_cpa`); the padded bitwise encryptor pads
-the tuple of single-bit encryptions (`padded_enc_runAt`, `bitwise_runAt_blocks`) on the coin
-blocks `v` (the bijection `bitwiseEncCoins`, then `coinsCongr`), and bit `i` of the selected
-half is `l_{n+i}` for `b = 1` and `l_i` for `b = 0` (`ofFn_half`). -/
+the tuple of single-bit encryptions (`PublicKeyScheme.padded_enc_runAt`, `bitwise_runAt_blocks`) on
+the coin blocks `v` (the bijection `bitwiseEncCoins`, then `coinsCongr`), and bit `i` of the
+selected half is `l_{n+i}` for `b = 1` and `l_i` for `b = 0` (`ofFn_half`). -/
 private theorem accept_indGame_eq (S : BitPublicKeyScheme) (L : PolyExpr)
     (hL : ∀ n (rg : S.bitwise.gen.Coins n) (m : Fin n → Bool) (re : S.bitwise.enc.Coins n),
       2 * (S.bitwise.enc.runAt n (pairEncode (pairFstD (S.bitwise.gen.runAt n [] rg))
@@ -162,16 +153,16 @@ private theorem accept_indGame_eq (S : BitPublicKeyScheme) (L : PolyExpr)
   refine congrArg _ (funext fun r => ?_)
   rw [prob_bind, prob_bind]
   refine (expect_simulate_indImpl_cpa _ b n _ _
-    (fun a : Fin 1 → Bool => ProbComp.prob (.pure (a 0)) (· = true)) _).trans ?_
+    (fun a : Fin 1 → Bool => ProbComp.prob (.pure (a 0)) (· = true)) _ none).trans ?_
   rw [← expect_sample_equiv ((S.bitwiseEncCoins n).trans
-    (NUPPT.coinsCongr (padded_enc_coins S.bitwise L hL hmsg) n))]
+    (NUPPT.coinsCongr (PublicKeyScheme.padded_enc_coins S.bitwise L hL hmsg) n))]
   refine congrArg _ (funext fun v => ?_)
   refine congrArg (fun g => ProbComp.prob (.pure ((chRun g
     (A.toCompOn ((S.bitwise.padded L hL hmsg).indCodec n) n q (pairFstD (S.gen.runAt n [] rg)) r)
       none).1 0)) (· = true)) (funext fun mm => ?_)
-  rw [padded_enc_runAt, Equiv.trans_apply, NUPPT.coinsCongr_ofFn,
+  rw [PublicKeyScheme.padded_enc_runAt, Equiv.trans_apply, NUPPT.coinsCongr_ofFn,
     ofFn_half hk b (cast ((S.bitwise.padded L hL hmsg).indSpec_challengeDom n) mm),
-    AdaptiveCPA.ofFn_cast ((S.bitwise.padded L hL hmsg).inLens_one n), ← NUPPT.runAt_eq,
+    ofFn_cast ((S.bitwise.padded L hL hmsg).inLens_one n), ← NUPPT.runAt_eq,
     bitwise_runAt_blocks]
   unfold hybCt
   refine congrArg (fun l => padCt (L.eval n) (PrivateKeyScheme.encodeList (List.ofFn l)))
@@ -374,7 +365,8 @@ private theorem hyb_advantage_eq {S : BitPublicKeyScheme} (L : PolyExpr)
         [(firstQ (comp rg r)).elim false fun l =>
           (l.getD (js n) false != l.getD (n + js n) false) &&
             (F rg r (W β rg v re l) != l.getD (js n) false)] := by
-      rw [hφ _ _ hins houts _ _ _ (hw β rg re v), hz, ← AdaptiveCPA.indCodec_eq_bitCodec, ha]
+      rw [hφ _ _ hins houts _ _ _ (hw β rg re v), hz, ← FixedLengthPKScheme.indCodec_eq_bitCodec,
+        ha]
       cases hq : firstQ (comp rg r) with
       | none => simp only [Option.elim_none, plantOut_init]
       | some l =>
@@ -467,7 +459,7 @@ messages and `L(n)`-bit ciphertexts.
    bit with independent coins `v_i`, the first `j` bits of the right message and the remaining
    bits of the left message (`hybGame`, with the encryption coins sampled in advance). `H_0` and
    `H_n` have the acceptance probabilities of the experiments with `b = false` and `b = true`
-   (`accept_indGame_eq`: eager coins `BitwiseSim.expect_simulate_indImpl_cpa`, the bitwise
+   (`accept_indGame_eq`: eager coins `expect_simulate_indImpl_cpa`, the bitwise
    layout `bitwise_enc_runAtL` and the coin blocks `bitwiseEncCoins_ofFn`).
 2. By `Games.exists_advantage_hybrid_gap`, at each `n > 0` some `j⋆(n) < n` has
    `advantage(H_{j⋆}, H_{j⋆+1}) ≥ advantage(H_0, H_n) / n`; at `n = 0` the two ends coincide and
@@ -482,7 +474,7 @@ messages and `L(n)`-bit ciphertexts.
    Then `advantage(H_{j⋆}, H_{j⋆+1})` equals `D`'s single-bit advantage between `⟨pk, Enc_pk(0)⟩`
    and `⟨pk, Enc_pk(1)⟩` exactly (`hyb_advantage_eq`): only the first challenge matters
    (`ChallengeSim.chRun_congr`); resampling coin block `j⋆` turns the two hybrids into the
-   planted tuples with `Enc(m₀_{j⋆})` and `Enc(m₁_{j⋆})` (`BitwiseSim.expect_sample_update`); and
+   planted tuples with `Enc(m₀_{j⋆})` and `Enc(m₁_{j⋆})` (`ProbComp.expect_sample_update`); and
    the signed case split on `(m₀_{j⋆}, m₁_{j⋆})` is `ChallengeSim.expect_indicator_sub`.
 4. So `A`'s advantage is at most `n` times `D`'s advantage, negligible by `singleBitSecure_iff`;
    the product is negligible by `Negligible.polyExpr_mul` with `PolyExpr.var`. -/

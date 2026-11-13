@@ -3,7 +3,8 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Games
-import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Eager
+import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -21,7 +22,7 @@ through that recomputation. A flag records the bad events of step 2: `r*` was al
 table, or a later encryption uses `r*`.
 
 Averaging the experiment with `R` over a uniform `R` gives the lazy experiment
-(`expect_lazyImpl`): at a new point, resampling `R` there (`BitwiseSim.expect_sample_update`) is
+(`expect_lazyImpl`): at a new point, resampling `R` there (`ProbComp.expect_sample_update`) is
 the lazy sample; the table and the record determine `R` elsewhere (`ovr`).
 
 ## Main definitions
@@ -224,26 +225,17 @@ section Records
 
 variable {n d : ℕ}
 
-/-- Exclusive-or with the same list twice cancels: `(a ⊕ c) ⊕ a = c` for `|a| = |c|`. -/
-theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
-    List.zipWith xor (List.zipWith xor a c) a = c := by
-  apply List.ext_getElem
-  · simp [h]
-  · intro i h₁ h₂
-    simp only [List.getElem_zipWith]
-    cases a[i] <;> cases c[i] <;> rfl
-
 /-- The record of a ciphertext `⟨r, m ⊕ y⟩` (with `|m| = n` and `d = 3n + 2`) has nonce `r`. -/
 theorem rStar_ctOf (hd : d = 3 * n + 2) (r : Fin n → Bool) {m : List Bool} (hm : m.length = n)
     (y : Fin n → Bool) : rStar (padFin d (ctOf r m y)) = r := by
-  rw [rStar_eq, GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
+  rw [rStar_eq, ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
     pairFstD_pairEncode, padFin_ofFn]
 
 /-- The record of a challenge ciphertext `⟨r, m_b ⊕ y⟩` has pad `y`. -/
 theorem padAt_ctOf (hd : d = 3 * n + 2) (b : Bool) (r : Fin n → Bool) (ml : List Bool)
     (hm : (AdaptiveCPA.msgOf n b ml).length = n) (y : Fin n → Bool) :
     padAt b ml (padFin d (ctOf r (AdaptiveCPA.msgOf n b ml) y)) = y := by
-  rw [padAt_eq, GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
+  rw [padAt_eq, ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
     pairSndD_pairEncode, zipWith_xor_cancel_left (by rw [hm, List.length_ofFn]), padFin_ofFn]
 
 /-- The flag does not change the recorded values: `look b (st.1, st.2.1, bd) = look b st`. -/
@@ -352,7 +344,7 @@ queries, for every computation `c`, state `st` and function `G` of the output,
 
 **Proof sketch.** Induction on `c`. At a point `x` with a recorded value both sides use it and the
 recorded values do not change (`ovr_addPt_of_isSome`, `ovr_record_of_some`). At a new point,
-resample `R` at `x` (`BitwiseSim.expect_sample_update`): `R(x)` becomes the lazy sample `y`, and
+resample `R` at `x` (`ProbComp.expect_sample_update`): `R(x)` becomes the lazy sample `y`, and
 `R` resampled is the override of the new state (`ovr_addPt_of_none`, `ovr_record_of_none`);
 exchange the samples (`expect_sample_comm`) and apply the induction hypothesis. Closed
 decryptions and repeated challenges are answered alike. -/
@@ -384,7 +376,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
         exact (congrArg _ (funext fun R => by
           rw [← ovr_addPt_of_isSome b st r y₀ (hitStar st r) hsome R]; rfl)).trans (ih _ _)
       | none =>
-        rw [← BitwiseSim.expect_sample_update r]
+        rw [← ProbComp.expect_sample_update r]
         simp only [Option.getD_none]
         have hU : ∀ R y, ovr b st (Function.update R r y) =
             ovr b (addPt b st r y (hitStar st r)) R :=
@@ -415,7 +407,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
           exact (congrArg _ (funext fun R => by
             rw [← ovr_addPt_of_isSome b st _ y₀ false hsome R]; rfl)).trans (ih _ _)
         | none =>
-          rw [← BitwiseSim.expect_sample_update (padFin n (pairFstD (List.ofFn c)))]
+          rw [← ProbComp.expect_sample_update (padFin n (pairFstD (List.ofFn c)))]
           simp only [Option.getD_none]
           have hU : ∀ R y, ovr b st (Function.update R (padFin n (pairFstD (List.ofFn c))) y) =
               ovr b (addPt b st (padFin n (pairFstD (List.ofFn c))) y false) R :=
@@ -450,7 +442,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
           cases b <;> simp [this]
         have hpad : ∀ r y, List.ofFn (padFin d (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm)) y)) =
             ctOf r (AdaptiveCPA.msgOf n b (List.ofFn mm)) y := fun r y =>
-          GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd])
+          ofFn_padFin_of_length (by rw [length_ctOf r hm, hd])
         simp only [simulate_query, Option.map_none, fImpl_challenge_none, lazyImpl_challenge_none,
           OracleComp.bind_assoc, expect_bind, OracleComp.pure_bind, hpad]
         rw [expect_sample_comm]
@@ -466,7 +458,7 @@ theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (
                 hr R]; rfl)).trans
             (ih _ _)
         | none =>
-          rw [← BitwiseSim.expect_sample_update r]
+          rw [← ProbComp.expect_sample_update r]
           simp only [Option.getD_none, Option.isSome_none]
           have hU : ∀ R y, ovr b ((T, none, bd) : LState n d) (Function.update R r y) =
               ovr b ((T, some (List.ofFn mm, padFin d (ctOf r (AdaptiveCPA.msgOf n b

@@ -10,6 +10,7 @@ import TCSlib.Cryptography.Encryption.PublicKey.EnsembleSecurity
 import TCSlib.Cryptography.Encryption.PublicKey.TrapdoorPredictor
 import TCSlib.Cryptography.Encryption.PublicKey.Trapdoor
 import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
+import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity.PaddedCPA
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA
 import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA
@@ -55,7 +56,9 @@ multi-message security.
 * `Trapdoor` proves correctness and single-bit security of Algorithm 104.3 and gives
   the Goldreich–Levin bridge [PS10, §3.10].
 * `OracleSecurity` gives the fixed-length scheme, codecs and oracle games [PS10, §7.1.4].
-  The proof of `TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.padded_cpa` is pending.
+* `OracleSecurity.PaddedCPA` proves
+  `TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.padded_cpa` (single-bit security gives
+  CPA security of the padded scheme).
 * `AdaptiveSecurity` gives the multi-challenge game and its cap-one correspondence.
 * `AdaptiveCPA` lifts single-challenge CPA security to the adaptive game (stated).
 * `BitwiseCPA` gives CPA and adaptive CPA security of the padded bitwise scheme (the first

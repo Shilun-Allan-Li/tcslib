@@ -494,7 +494,7 @@ theorem nmMsgs_input (pk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins 
   have hρ' := length_ofFn_coins samp n ρ'
   rw [simMsg_eq, altMsg_eq, hU, hZ, hW, hQ, List.length_replicate, pairSndD_pairEncode,
     nmSeed_ofFn, List.take_left' hρ, List.drop_left' hρ, List.take_left' hρ', drawWith_eq,
-    drawWith_eq, GGMRed.ofFn_padFin_of_length hxs, ofFn_padFin_eq_padL, ofFn_padFin_eq_padL,
+    drawWith_eq, ofFn_padFin_of_length hxs, ofFn_padFin_eq_padL, ofFn_padFin_eq_padL,
     NUPPT.runAt_eq, NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, NUPPT.runAtL_eq_output_layout]
   exact ⟨rfl, rfl⟩
 
@@ -623,7 +623,7 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
             ρ')).length = (S.msgLen.add S.msgLen).eval n := by
         rw [List.length_append, List.length_ofFn, List.length_ofFn, hpl]
       rw [encWith_eq, encWith_eq, ofFn_drawWith_half S n _ hpl, nmPair_eq,
-        GGMRed.ofFn_padFin_of_length hlen]
+        ofFn_padFin_of_length hlen]
       cases b
       · rw [if_neg Bool.false_ne_true, if_neg Bool.false_ne_true,
           List.take_left' List.length_ofFn]
@@ -637,13 +637,13 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
     have hx' : List.ofFn (padFin ((snmDin S (S.msgLen.add S.msgLen) 1).eval n)
         (List.ofFn (nmPair S samp pl n ρ ρ' (padFin (pl.eval n) (List.ofFn x))))) =
         List.ofFn (nmPair S samp pl n ρ ρ' (padFin (pl.eval n) (List.ofFn x))) :=
-      GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, snmDin_one])
+      ofFn_padFin_of_length (by rw [List.length_ofFn, snmDin_one])
     have hlen : (List.ofFn (encWith S n pk (drawWith samp (S.msgLen.eval n) n
         (padFin (pl.eval n) (List.ofFn x)) (if b then ρ' else ρ)) re') ++ []).length =
         (snmDout S (.const 0) 1).eval n := by
       rw [List.append_nil, List.length_ofFn, snmDout_one, PolyExpr.eval_add, PolyExpr.eval_const,
         Nat.add_zero]
-    have hans := GGMRed.ofFn_padFin_of_length hlen
+    have hans := ofFn_padFin_of_length hlen
     rw [rImpl_none_eager, rImpl_none_eager]
     simp only [OracleComp.pure_bind, simulate_pure, nmAbs_some, Bool.false_eq_true, ↓reduceIte, hq]
     rw [hx', padFin_ofFn (nmPair S samp pl n ρ ρ' (padFin (pl.eval n) (List.ofFn x))), hdraw, h0]

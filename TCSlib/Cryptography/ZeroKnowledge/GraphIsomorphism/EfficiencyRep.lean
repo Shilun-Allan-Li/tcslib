@@ -5,6 +5,7 @@ Authors: TCSlib contributors
 -/
 import TCSlib.Complexity.ClassP.BinaryArith.Loops
 import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Efficiency
+import TCSlib.Cryptography.Foundations.BitLists
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -585,10 +586,6 @@ theorem headD_take {c : ℕ} (hc : 0 < c) (l : List Bool) : (l.take c).headD fal
     | zero => omega
     | succ c => simp
 
-/-- An entry of a list with default is the first entry of the corresponding suffix. -/
-theorem getD_eq_headD_drop {α : Type*} (l : List α) (j : ℕ) (d : α) : l.getD j d = (l.drop j).headD d := by
-  rw [List.headD_eq_head?, List.head?_drop, List.getD_eq_getElem?_getD]
-
 /-- The verdict condition of the `|x|`-fold graph non-isomorphism verifier, read through the
 scan: message `j` is `pairFstD (pairSndD^[j] msgs)` and the first bit of coin block `j` is the
 first bit of `r.drop (j c)`. -/
@@ -599,7 +596,7 @@ theorem gni_verdict_iff (hist : List (List Bool)) (r : List Bool) (N c : ℕ) (h
   rw [Fin.forall_iff]
   refine forall_congr' fun j => forall_congr' fun _ => ?_
   rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinBlock_eq, headD_take hc, Fin.val_mk,
-    getD_eq_headD_drop]
+    ← headD_drop]
 
 /-- The verifier of the `|x|`-fold graph non-isomorphism protocol is efficient (D8) (Inf-4.2).
 

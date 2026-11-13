@@ -55,6 +55,9 @@ never (CPA), before the challenge only (CCA1), or always, except on `c` itself (
 * `indImpl_dec_cpa`, `indImpl_dec_cca2_challenge`, `indImpl_challenge_repeat`: sanity checks of
   the oracles (CPA's `Dec` is closed; CCA2's `Dec` refuses the challenge; a challenge is asked
   once).
+* `FixedLengthScheme.ofFn_splitHalf_fst`, `ofFn_splitHalf_snd`: the strings of the two halves of a
+  challenge query.
+* `FixedLengthScheme.indCodec_eq_bitCodec`: the game's codec is a bit codec.
 
 The theorems on these notions (Thms 168.2 and 170.4, Claim 169.a) are stated in the statement
 phase of prong C, in their own modules.
@@ -177,6 +180,26 @@ theorem splitHalf_fst {n : ℕ} (x : Fin (n + n) → Bool) :
 /-- The second half of a challenge query consists of its final `n` bits. -/
 theorem splitHalf_snd {n : ℕ} (x : Fin (n + n) → Bool) :
     (splitHalf x).2 = fun j => x (Fin.natAdd n j) := rfl
+
+/-- The first half of a `2m`-bit query is its first `m` bits:
+`⟦(splitHalf y).1⟧ = ⟦y⟧.take m`. -/
+theorem ofFn_splitHalf_fst {m : ℕ} (y : Fin (m + m) → Bool) :
+    List.ofFn (splitHalf y).1 = (List.ofFn y).take m := by
+  rw [splitHalf_fst]
+  refine List.ext_getElem (by simp only [List.length_ofFn, List.length_take]; omega)
+    fun i h₁ h₂ => ?_
+  rw [List.getElem_ofFn, List.getElem_take, List.getElem_ofFn]
+  rfl
+
+/-- The second half of a `2m`-bit query is its last `m` bits:
+`⟦(splitHalf y).2⟧ = ⟦y⟧.drop m`. -/
+theorem ofFn_splitHalf_snd {m : ℕ} (y : Fin (m + m) → Bool) :
+    List.ofFn (splitHalf y).2 = (List.ofFn y).drop m := by
+  rw [splitHalf_snd]
+  refine List.ext_getElem (by simp only [List.length_ofFn, List.length_drop]; omega)
+    fun i h₁ h₂ => ?_
+  rw [List.getElem_ofFn, List.getElem_drop, List.getElem_ofFn]
+  rfl
 
 /-- **The oracles of `IND_b`** at parameter `n`, for the key `k`; the state is the challenge,
 once asked.
@@ -336,6 +359,9 @@ theorem indCodec_encodeEntry (n : ℕ)
 /-- The IND codec returns the false verdict when its budget expires. -/
 theorem indCodec_timeout (n : ℕ) : (S.indCodec n).timeout = zeroBits 1 :=
   bitCodec_timeout (S.inLens n) (S.outLens n) 1
+
+/-- The game's codec is a bit codec: `S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1`. -/
+theorem indCodec_eq_bitCodec (n : ℕ) : S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1 := rfl
 
 /-- **The experiment `IND_b^{O₁,O₂}(Π, A, n)`** [PS10, Definition 168.1] for the attack `atk`, with
 query budget `q`: sample `k ← Gen(1^n)` and `A`'s coins, run `A` against the oracles of `IND_b`

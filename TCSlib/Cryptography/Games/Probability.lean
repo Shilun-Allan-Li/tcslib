@@ -43,6 +43,9 @@ information-theory layer, so statistical distance and closeness (`EpsClose`) app
   monotonicity.
 * `ProbComp.prob_nonneg`, `prob_le_one`, `prob_mono`, `prob_or_le` (the union bound),
   `prob_not`, `prob_bind`.
+* `ProbComp.expect_sample_equiv`, `expect_sample_comm`, `expect_sample_unique`,
+  `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform
+  samples; `expect_sub`, `abs_expect_sub_le`: subtraction and pointwise closeness.
 
 ## References
 
@@ -285,6 +288,109 @@ noncomputable def dist [Fintype α] [DecidableEq α] (c : ProbComp α) : FinDist
 /-- The output distribution gives each outcome its probability. -/
 theorem dist_apply [Fintype α] [DecidableEq α] (c : ProbComp α) (a : α) :
     dist c a = prob c (· = a) := rfl
+
+/-! ### Sampling identities -/
+
+section Sampling
+
+variable {β : Type}
+
+/-- **Reindexing a sample by an equivalence:** `𝔼_{a ← α} g (e a) = 𝔼_{b ← β} g b`.
+
+**Proof sketch.** Both are uniform averages (`expect_sample`); the cardinalities agree
+(`Fintype.card_congr`) and the sums agree by reindexing along `e` (`Equiv.sum_comp`). -/
+theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (e : α ≃ β)
+    (g : β → ℝ) : expect (sample α) (fun a => g (e a)) = expect (sample β) g := by
+  rw [expect_sample, expect_sample, Fintype.card_congr e, Equiv.sum_comp e g]
+
+/-- **Independent samples commute:**
+`𝔼_{a ← α} 𝔼_{b ← β} g a b = 𝔼_{b ← β} 𝔼_{a ← α} g a b`.
+
+**Proof sketch.** Both sides are the double uniform average (`expect_sample`); exchange the two
+finite sums (`Finset.sum_comm`). -/
+theorem expect_sample_comm [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
+    (g : α → β → ℝ) :
+    (expect (sample α) fun a => expect (sample β) fun b => g a b) =
+      expect (sample β) fun b => expect (sample α) fun a => g a b := by
+  simp only [expect_sample, mul_sum]
+  rw [sum_comm]
+  refine sum_congr rfl fun b _ => sum_congr rfl fun a _ => ?_
+  ring
+
+/-- **Sampling a singleton type** returns its element: `𝔼_{a ← α} g a = g default`. -/
+theorem expect_sample_unique [Fintype α] [Unique α] (g : α → ℝ) :
+    expect (sample α) g = g default := by
+  rw [expect_sample, Fintype.card_unique, Fintype.sum_unique]
+  simp
+
+/-- Expectation is subtractive: `𝔼[f − g] = 𝔼 f − 𝔼 g`. -/
+theorem expect_sub (c : ProbComp α) (f g : α → ℝ) :
+    expect c (fun a => f a - g a) = expect c f - expect c g := by
+  have h := expect_add c f (fun a => -1 * g a)
+  rw [expect_const_mul] at h
+  simp only [neg_one_mul, ← sub_eq_add_neg] at h
+  exact h
+
+/-- **Resampling one coordinate of a uniform tuple leaves it uniform**:
+`𝔼_{v} 𝔼_{b} f (update v j b) = 𝔼_{v} f v`.
+
+**Proof sketch.** The map `(v, b) ↦ (update v j b, v j)` is an involution of `(ι → β) × β`
+(`Function.update_idem`, `Function.update_eq_self`). Written as uniform averages
+(`expect_sample`), the double sum of `f (update v j b)` over pairs is the sum of `f v` over pairs
+reindexed along it (`Fintype.sum_prod_type'`, `Equiv.sum_comp`), which is `|β|` times the sum of
+`f`. -/
+theorem expect_sample_update {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+    (j : ι) (f : (ι → β) → ℝ) :
+    (expect (sample (ι → β)) fun v => expect (sample β) fun b => f (Function.update v j b)) =
+      expect (sample (ι → β)) f := by
+  let e : (ι → β) × β ≃ (ι → β) × β :=
+    { toFun := fun p => (Function.update p.1 j p.2, p.1 j)
+      invFun := fun p => (Function.update p.1 j p.2, p.1 j)
+      left_inv := fun p => by
+        simp only [Function.update_self, Function.update_idem, Function.update_eq_self]
+      right_inv := fun p => by
+        simp only [Function.update_self, Function.update_idem, Function.update_eq_self] }
+  have hpair : (∑ v : ι → β, ∑ b : β, f (Function.update v j b)) =
+      ∑ v : ι → β, ∑ _b : β, f v := by
+    rw [← Fintype.sum_prod_type' (fun v b => f (Function.update v j b)),
+      ← Fintype.sum_prod_type' (fun v (_ : β) => f v)]
+    exact Equiv.sum_comp e (fun p => f p.1)
+  have hβ : (Fintype.card β : ℝ) ≠ 0 := by positivity
+  simp only [expect_sample, ← mul_sum]
+  rw [hpair]
+  simp only [sum_const, card_univ, nsmul_eq_mul, ← mul_sum]
+  rw [inv_mul_cancel_left₀ hβ]
+
+/-- **One coordinate of a uniform tuple, sampled apart:** if `F r T` does not depend on the
+coordinate `j` of `T`, then `𝔼_{T} F (T j) T = 𝔼_{r} 𝔼_{T} F r T`.
+
+**Proof sketch.** Exchange the samples on the right (`expect_sample_comm`) and resample the
+coordinate `j` on the left (`expect_sample_update`); pointwise,
+`F ((update T j r) j) (update T j r) = F r T` (`Function.update_self` and the hypothesis). -/
+theorem expect_sample_coord {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+    (j : ι) (F : β → (ι → β) → ℝ) (hF : ∀ r r' T, F r (Function.update T j r') = F r T) :
+    expect (sample (ι → β)) (fun T => F (T j) T) =
+      expect (sample β) fun r => expect (sample (ι → β)) fun T => F r T := by
+  rw [expect_sample_comm, ← expect_sample_update j (fun T => F (T j) T)]
+  refine congrArg _ (funext fun T => congrArg _ (funext fun r => ?_))
+  rw [Function.update_self, hF]
+
+/-- Expectations of functions `ε`-close at every point are `ε`-close:
+`(∀ x, |f x - g x| ≤ ε) → |𝔼_c f - 𝔼_c g| ≤ ε`. -/
+theorem abs_expect_sub_le (c : ProbComp α) {f g : α → ℝ} {ε : ℝ}
+    (h : ∀ x, |f x - g x| ≤ ε) : |expect c f - expect c g| ≤ ε := by
+  have h1 : expect c f ≤ expect c g + ε :=
+    calc expect c f ≤ expect c (fun x => g x + ε) :=
+          expect_mono c fun x => by linarith [(abs_le.1 (h x)).2]
+      _ = expect c g + ε := by rw [expect_add c g (fun _ => ε), expect_const]
+  have h2 : expect c g ≤ expect c f + ε :=
+    calc expect c g ≤ expect c (fun x => f x + ε) :=
+          expect_mono c fun x => by linarith [(abs_le.1 (h x)).1]
+      _ = expect c f + ε := by rw [expect_add c f (fun _ => ε), expect_const]
+  rw [abs_le]
+  constructor <;> linarith
+
+end Sampling
 
 end ProbComp
 
