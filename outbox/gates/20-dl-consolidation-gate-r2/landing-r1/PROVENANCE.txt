@@ -1,0 +1,34 @@
+dl-consolidation gate20-r1: landing edit LE-gate20 for Gate 20 finding G20-02 (2026-11-13 UTC)
+worktree $SP/wt-land-dlcons, branch land/pass-shelat-dl-consolidation (local commit only; not pushed).
+  parent 6f853adc61d5d175ee83c69f6c07ab2da112cabc (draft PR #298 head)
+  head   c2839c41ca6b3a9c34db1595a1ad287768316630, tree 5eb486b8c2f1901e3c4db08b610840a12d13fe0f
+  commit "dl-consolidation landing edit LE-gate20: fold ofFn_arrowCongr and ofFn_block_eq_take_drop (G20-02)"
+  (landing/landing-log.txt, landing/0001-*.patch, landing/LE-gate20.diff). No rebase, no amend.
+change: Asymptotic/UniversalPadding.lean: private PadQuad.ofFn_arrowCongr deleted, its 2 uses (ofFn_appendEquiv,
+  ofFn_splitCoins_symm_cast) rewrite with ofFn_arrowCongr_finCongr (TCSlib.Cryptography, Adversary.lean).
+  Asymptotic/OneWayLemmas.lean: OneWay.ofFn_block_eq_take_drop statement byte-identical; proof = funext through
+  FunFamily.blocks_apply, then FunFamily.ofFn_blocks; docstring gains a proof sketch.
+lean 4.25.0; olean tree $SP/dl-oleans only (one Lean process at a time; scripts/lean_check_tree.sh via tools/runner.py).
+build: order/full/order.txt (tools/downorder.py at the head: 1198 modules + 31 PFR); order/delta (changed 2,
+  downstream 114 incl. root TCSlib and audits/{pass-shelat,garg-ch1-3}/Checks); order/rebuild-queue.txt = stale or
+  downstream (114). build/: 114/114 rc 0, 0 errors. logs/final-tree-check.txt over logs/all-results.jsonl (the
+  bootstrap, edit-runs and rebase-r1 build records of the review, copied, plus build/): all 1198 TCSlib/audits
+  modules rc 0 at the final-head source hash; 0 errors; 219 sorry warnings (unchanged).
+  (The two files were also checked directly once before the commit; those runs are not recorded; the recorded
+  runs are build/.)
+decls2: statements/decls2-two-files.tsv (6f853adc -> head, 2 files): 0 rows. statements/decls2-whole-pr.tsv
+  (2ea4df08d -> head, all changed .lean): 68 ADDED, 42 REMOVED, 2 MOVED, 0 CHANGED. touched-two-files.tsv: private
+  ofFn_arrowCongr REMOVED; ofFn_block_eq_take_drop, ofFn_appendEquiv, ofFn_splitCoins_symm_cast proof-changed.
+axioms: probe-sources/DlProbe/AxProbeGate20.lean (tools/mkcensus.py head side, owners OneWayLemmas and UniversalPadding,
+  33 #print axioms: the 2 OneWay lemmas, 15 public UniversalPadding theorems, 16 endpoints), probe-runs/,
+  logs/axioms-summary.txt. Probe files deleted from the worktree and the olean tree afterwards.
+seals: probe-sources/DlProbe/CollectGate20.lean -> probe-runs/ collector log; tools/mkseals_ab.py with the archived
+  gate10 harness (tools/archived-gate10-tools): seals/{A,B} at HEAD, base-seals/{A,B} at 6f853adc (old source over
+  the same closure; records, manifests and .lean.txt sources), seal-runs/ (8 probes; results.jsonl, mods/*.log);
+  tools/sealsum.py -> logs/seal-{head,base}-{A,B}.tsv, logs/seal-compare.txt.
+controls: tools/mkctl_dl.py per file (controls/records-*, controls/out-*/ plans and sources), control-runs/,
+  tools/ctlcheck2.py -> controls/controls-result-*.json, logs/ctlcheck-*.log (ALL_OK True in both).
+lint/widths/sizes: logs/lint-{parent,head}.log (parent = git archive of 6f853adc), lint-diff.txt (empty),
+  logs/widths-sizes.txt. Tool hashes: logs/tools-sha256.txt (tools/ holds copies of every tool used).
+evidence zip: $SP/dl-review/gate20-r1-evidence.zip holds exactly the paths of SHA256SUMS (relative to gate20-r1/);
+  SHA256SUMS itself sits beside it in gate20-r1/.
