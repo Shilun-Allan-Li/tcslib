@@ -1,0 +1,16 @@
+Landing of the 4 delivery patches on land/pass-shelat-dl-consolidation (parent f237892103a08e371c2c9c128fbc3b74202e629c,
+origin/cryptography/pass-shelat-ch2-4 at fetch, containing #294 merge 262d6e9ae526c82eb68fe5a6169156bd1504e6d8).
+
+git am -3: rc 0, all four patches applied without a textual conflict (git-am.log).
+1. TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean (both sides edited):
+   - #294 inserted indSpec_decRng and indImpl_dec_onSpec_cast after indImpl_dec_onSpec (17 lines).
+   - The consolidation added R1 FixedLengthPKScheme.indCodec_eq_bitCodec, published R3
+     expect_simulate_indImpl_cpa (section PaddedCPA) and R4 PublicKeyScheme.padded_enc_runAt/_coins
+     (section PublicKeyPaddedReaders), and re-proved R3 through ChallengeSim.expect_simulate_eager.
+   - The hunks are disjoint; git applied them with offsets. Result = worker's final file + #294's 17 lines
+     (verified: am-merge-check.txt, landing head vs 6917e5716 differs only in #294's 5 files, and in
+     OracleSecurity.lean only by #294's insertion). Both sides kept. Merged file: 1004 lines (> 1000): LE-split.
+2. Semantic conflicts (no textual conflict): #294's NonMalleability/Indistinguishability{,/Decrypt,/Encrypt}.lean
+   used names the consolidation moved or deleted (GGMRed.ofFn_padFin_of_length; AdaptiveCPA.castImpl,
+   castImpl_eq, expect_simulate_castImpl_toCompOn, indCodec_eq_bitCodec; ChallengeSim.expect_sample_equiv,
+   expect_sample_comm). Resolved by landing edit LE-repoint (explicit published names). Forward.lean needed no change.
