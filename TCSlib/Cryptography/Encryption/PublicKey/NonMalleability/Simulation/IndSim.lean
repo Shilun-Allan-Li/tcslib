@@ -248,9 +248,9 @@ budget `qB` such that for every distinguisher `X`, every `n` with `msgLen(n) > 0
 the hybrid `H_b`.
 
 **Proof sketch.** `B₀` is T2's machine of the NM adversary's handler and `B` hard-wires
-`M.advice n` (`exists_withAdviceOn`). Reindex `B`'s coins as `(ρ ‖ ρ̃ ‖ re, rA)` (`coinsCongr`, `φ`,
-`seedEquivPoly`, `seedEquiv`, `expect_sample_prod`) and the distinguisher's as `X`'s; pointwise
-this is
+`M.advice n` (`NUPPT.exists_withAdviceOn`). Reindex `B`'s coins as `(ρ ‖ ρ̃ ‖ re, rA)`
+(`coinsCongr`, `φ`, `seedEquivPoly`, `seedEquiv`, `expect_sample_prod`) and the distinguisher's
+as `X`'s; pointwise this is
 `nmRun_eq`, which does not read `re` (`expect_const`). -/
 theorem exists_nmAdversary : ∃ (B : NUPPT) (qB : PolyExpr), ∀ (X : NUPPT) (n : ℕ) (b : Bool),
     0 < S.msgLen.eval n →
@@ -259,7 +259,7 @@ theorem exists_nmAdversary : ∃ (B : NUPPT) (qB : PolyExpr), ∀ (X : NUPPT) (n
   obtain ⟨B₀, hT2⟩ := exists_interactiveHandlerMachine A q (snmDin S pl) (snmDout S hl)
     (snmDin S (S.msgLen.add S.msgLen)) (snmDout S (.const 0)) ((r.mul S.ctLen).add sl)
     (chalHandler (nmParams S samp pl hl hist hist_poly r sl))
-  obtain ⟨B, hc, hB⟩ := NMCCA2.exists_withAdviceOn B₀ samp.advice samp.adv samp.advice_length
+  obtain ⟨B, hc, hB⟩ := NUPPT.exists_withAdviceOn B₀ samp.advice samp.adv samp.advice_length
   refine ⟨B, (q.mul (chalHandler (nmParams S samp pl hl hist hist_poly r sl)).perCall).add
     (chalHandler (nmParams S samp pl hl hist hist_poly r sl)).finCall, fun X n b hL => ?_⟩
   obtain ⟨φ, hφ⟩ := hT2 n

@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Games.Machines
 import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.Games.Probability
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -36,6 +37,8 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
 * `Games.encodeBitMove`: the canonical word of a move.
 * `Games.bitCodec din dout dα`: the codec.
 * `Games.castImpl`: an implementation of bit-string oracles read along equal length functions.
+* `Games.cntRead`, `Games.ansRead`: the per-entry readings of an encoded log (one token for a
+  nonempty log; the answer of the first entry).
 
 ## Main results
 
@@ -48,6 +51,8 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
   `Games.decodeFin_nil_getD`: all-`false` strings and the empty answer read as `zeroBits`.
 * `Games.simulate_castImpl_toCompOn`, `Games.expect_simulate_castImpl_toCompOn`: transport of a
   machine's run between two codecs with equal lengths.
+* `Games.polyTimeComputable_cntRead`, `Games.polyTimeComputable_ansRead`: the per-entry readings
+  are polynomial-time.
 
 ## References
 
@@ -326,6 +331,32 @@ theorem decodeBitMove_encodeBitMove (din dout : Fin k → ℕ) (dα : ℕ)
 theorem encodeBitMove_injective (din dout : Fin k → ℕ) (dα : ℕ) :
     Function.Injective (encodeBitMove din dout dα) := fun m m' h => by
   rw [← decodeBitMove_encodeBitMove din dout dα m, h, decodeBitMove_encodeBitMove]
+
+/-! ### Readings of a log entry -/
+
+/-- One token for a nonempty log and nothing for the empty one:
+`cntRead v = if v = [] then [] else [true]`. Applied to the successive suffixes of an encoded log,
+it counts the entries. -/
+def cntRead (v : List Bool) : List Bool := if decide (v = []) then [] else [true]
+
+/-- `cntRead v = if v = [] then [] else [true]`. -/
+theorem cntRead_eq (v : List Bool) : cntRead v = if decide (v = []) then [] else [true] := rfl
+
+/-- The token reading is polynomial-time: `PolyTimeComputable cntRead`. -/
+theorem polyTimeComputable_cntRead : PolyTimeComputable cntRead :=
+  polyTimeComputable_ite polyTimeComputable_isNil (polyTimeComputable_const [])
+    (polyTimeComputable_const [true])
+
+/-- The answer `y` of the first entry `⟨1^i, ⟨x, y⟩⟩` of an encoded log:
+`ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
+def ansRead (v : List Bool) : List Bool := pairSndD (pairSndD (pairFstD v))
+
+/-- `ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
+theorem ansRead_eq (v : List Bool) : ansRead v = pairSndD (pairSndD (pairFstD v)) := rfl
+
+/-- The answer reading is polynomial-time: `PolyTimeComputable ansRead`. -/
+theorem polyTimeComputable_ansRead : PolyTimeComputable ansRead :=
+  polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
 
 /-! ### Transport along equal lengths -/
 

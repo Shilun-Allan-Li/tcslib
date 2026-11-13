@@ -48,6 +48,8 @@ layer ([Gar26]); the bridge between the two is in the S2b layer.
 * `Games.OracleComp.CostBoundedBy.bind`: costs add under sequencing.
 * `Games.OracleComp.costBoundedBy_liftLeft`, `costBoundedBy_liftRight`: lifting into a union of
   specifications keeps the cost.
+* `Games.OracleComp.bind_congr_of_allOutputs`, `Games.OracleComp.CostBoundedBy.bind_of_allOutputs`:
+  sequencing needs the continuation only on the possible outputs.
 
 ## References
 
@@ -325,6 +327,44 @@ theorem AllOutputs.bind {spec : OracleSpec ι} {P : α → Prop} {Q : β → Pro
   induction c with
   | pure a => exact hf a hc
   | query i x k ih => exact fun y => ih y (hc y)
+
+/-- Two continuations that agree on every possible output give the same computation:
+`c.bind f = c.bind g` when `f a = g a` whenever `P a`, and `c.AllOutputs P`. -/
+theorem bind_congr_of_allOutputs {spec : OracleSpec ι} {c : OracleComp spec α}
+    {P : α → Prop} (hc : c.AllOutputs P) {f g : α → OracleComp spec β}
+    (h : ∀ a, P a → f a = g a) : c.bind f = c.bind g := by
+  induction c with
+  | pure a =>
+    rw [OracleComp.pure_bind, OracleComp.pure_bind]
+    exact h a (OracleComp.allOutputs_pure.1 hc)
+  | query i x k ih =>
+    rw [OracleComp.query_bind, OracleComp.query_bind]
+    congr 1
+    funext y
+    exact ih y (OracleComp.allOutputs_query.1 hc y)
+
+/-- **Costs add under sequencing, on the possible outputs:** if `c` fits in `q₁`, every possible
+output of `c` satisfies `P`, and `f a` fits in `q₂` for every `a` with `P a`, then `c` followed by
+`f` fits in `q₁ + q₂` (`CostBoundedBy.bind` with the continuations restricted to the possible
+outputs).
+
+**Proof sketch.** As for `CostBoundedBy.bind`, by induction on `c`; at a return `a` the
+hypothesis on `f a` applies since `P a`. -/
+theorem CostBoundedBy.bind_of_allOutputs {cost : ι₁ → ℕ} {c : OracleComp spec α}
+    {f : α → OracleComp spec β} {P : α → Prop} {q₁ q₂ : ℕ} (hc : c.CostBoundedBy cost q₁)
+    (hP : c.AllOutputs P) (hf : ∀ a, P a → (f a).CostBoundedBy cost q₂) :
+    (c.bind f).CostBoundedBy cost (q₁ + q₂) := by
+  induction c generalizing q₁ with
+  | pure a =>
+    rw [OracleComp.pure_bind]
+    exact (hf a (OracleComp.allOutputs_pure.1 hP)).mono (Nat.le_add_left _ _)
+  | query i x k ih =>
+    obtain ⟨hi, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+    rw [OracleComp.query_bind]
+    refine (OracleComp.costBoundedBy_query _ _ _ _ _).2
+      ⟨Nat.le_trans hi (Nat.le_add_right _ _), fun y => ?_⟩
+    rw [Nat.sub_add_comm hi]
+    exact ih y (hk y) (OracleComp.allOutputs_query.1 hP y)
 
 end OracleComp
 

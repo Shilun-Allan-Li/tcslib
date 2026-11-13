@@ -407,47 +407,6 @@ section Answers
 variable (atkBit b : Bool) (n : ℕ) (z : List Bool)
   (ω : Fin ((pkHandler q atkBit b).seedLen.eval n) → Bool)
 
-/-- The outer log after one outer query `x'` answered `y`. -/
-private theorem encodeLog_one (x' y : Fin ((pkOut 0).eval n) → Bool) :
-    (bitCodec (fun j => (pkOut j).eval n) (fun j => (pkOut j).eval n) 0).encodeLog
-        ([] ++ [⟨0, x', y⟩]) =
-      pairEncode (pairEncode [] (pairEncode (List.ofFn x') (List.ofFn y))) [] := by
-  rw [List.nil_append, MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
-    bitCodec_encodeEntry]
-  rfl
-
-/-- A call whose first round asks `x'` of the outer oracle, and whose second round, with the
-answer `y` in the log, returns `ans y ‖ s' y`, is the query `x'` followed by `(ans y, s' y)`. -/
-private theorem impl_of_query {i : Fin 3} (x : Fin ((pkDin i).eval n) → Bool)
-    (s : Fin ((pkStLen q).eval n) → Bool) (x' : Fin ((pkOut 0).eval n) → Bool)
-    (ans : (Fin ((pkOut 0).eval n) → Bool) → Fin ((pkDout i).eval n) → Bool)
-    (s' : (Fin ((pkOut 0).eval n) → Bool) → Fin ((pkStLen q).eval n) → Bool)
-    (h1 : pkRun q atkBit b (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) i
-      (List.ofFn x) []) = pairEncode [false] (pairEncode [] (List.ofFn x')))
-    (h2 : ∀ y, pkRun q atkBit b (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) i
-      (List.ofFn x) (pairEncode (pairEncode [] (pairEncode (List.ofFn x') (List.ofFn y))) [])) =
-        pairEncode [true] (List.ofFn (ans y) ++ List.ofFn (s' y))) :
-    (pkHandler q atkBit b).impl n z ω i x s =
-      .query 0 x' fun y => .pure (ans y, s' y) := by
-  rw [InteractiveHandler.impl_apply, InteractiveHandler.call_eq, pkHandler_perCall,
-    PolyExpr.eval_const]
-  rw [buildComp_succ_of_query (i := 0) (x := x') (by
-    show decodeBitMove _ _ _ (pkRun q atkBit b _) = _
-    rw [MachineCodec.encodeLog_nil, h1]
-    exact decodeBitMove_query (fun j => (pkOut j).eval n) (fun j => (pkOut j).eval n) _ 0 x'),
-    OracleComp.query_bind]
-  congr 1
-  funext y
-  rw [buildComp_zero_of_ret (a := Fin.append (ans y) (s' y)) (by
-    show decodeBitMove _ _ _ (pkRun q atkBit b _) = _
-    rw [encodeLog_one, h2, ← List.ofFn_fin_append]
-    exact decodeBitMove_ret _ _ _ _), OracleComp.pure_bind]
-  congr 2
-  · funext k
-    exact Fin.append_left (ans y) (s' y) k
-  · funext k
-    exact Fin.append_right (ans y) (s' y) k
-
 /-- The round input of a call, field by field, on an encoded state with `j ≤ q(n)`. -/
 private theorem fields_input {i : Fin 3} (x L : List Bool) (j : ℕ)
     (o : Option (Fin (ctP.eval n) → Bool)) (hj : j ≤ q.eval n) :
@@ -507,7 +466,7 @@ state `pkState (j + 1) o`.
 **Proof sketch.** Read the round input field by field (`fields_input`); the first round, with an
 empty log, asks the outer oracle at the tape `T_j` (`rNonce_fields`); the second, with the answer
 `y` in the log (`rY_one`), returns `⟨T_j, m ⊕ y⟩` and the state with count `j + 1`
-(`rNew_fields`); `impl_of_query` assembles the two rounds. -/
+(`rNew_fields`); `InteractiveHandler.impl_of_query` assembles the two rounds. -/
 theorem pkHandler_impl_enc (x : Fin ((pkDin 0).eval n) → Bool) (j : ℕ)
     (o : Option (Fin (ctP.eval n) → Bool)) (hj : j < q.eval n) :
     (pkHandler q atkBit b).impl n z ω 0 x (pkState q n j o) =
@@ -519,12 +478,16 @@ theorem pkHandler_impl_enc (x : Fin ((pkDin 0).eval n) → Bool) (j : ℕ)
       (List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩))) =
       List.ofFn (pkSeedTapes q atkBit b n ω ⟨j, hj⟩) :=
     ofFn_padFin_of_length (by rw [List.length_ofFn, hn])
-  refine impl_of_query q atkBit b n z ω x _ _ _ _ ?_ ?_
-  · obtain ⟨-, -, -, hI, -, hL, -, -, -⟩ :=
+  refine InteractiveHandler.impl_of_query _ n z ω x _ 0 _ _ _
+    (by rw [pkHandler_perCall, PolyExpr.eval_const]) ?_ ?_
+  · show pkRun q atkBit b _ = _
+    obtain ⟨-, -, -, hI, -, hL, -, -, -⟩ :=
       fields_input q atkBit b n z ω (i := 0) (List.ofFn x) [] j o hj.le
     rw [pkRun, hI, hL, hT, rNonce_fields q atkBit b n z ω (i := 0) _ _ j o hj]
     rfl
   · intro y
+    show pkRun q atkBit b _ = _
+    simp only [Fin.val_zero, List.replicate_zero]
     obtain ⟨-, -, -, hI, hX, hL, -, hFlag, hRec⟩ :=
       fields_input q atkBit b n z ω (i := 0) (List.ofFn x)
         (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((pkOut 0).eval n)
@@ -549,7 +512,7 @@ state is kept.
 
 **Proof sketch.** As for `pkHandler_impl_enc`: the open test reads `atkBit`, the flag and the
 well-formedness of `⟦x⟧` (`fields_input`); the first round asks the outer oracle at `x₀`, the second
-returns `⟨1, v ⊕ y⟩` with the state unchanged (`impl_of_query`). -/
+returns `⟨1, v ⊕ y⟩` with the state unchanged (`InteractiveHandler.impl_of_query`). -/
 theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
     (o : Option (Fin (ctP.eval n) → Bool)) (hj : j ≤ q.eval n)
     (hop : (atkBit && !o.isSome && decWF n (List.ofFn x)) = true) :
@@ -565,8 +528,10 @@ theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
   have hx0 : List.ofFn (padFin ((pkOut 0).eval n) (pairFstD (List.ofFn x))) =
       pairFstD (List.ofFn x) := ofFn_padFin_of_length (by rw [hwf.1, hn])
   have hc : ((1 : Fin 3) : ℕ) = 1 := rfl
-  refine impl_of_query q atkBit b n z ω x _ _ _ _ ?_ ?_
-  · obtain ⟨hU, -, -, hI, hX, hL, -, hFlag, -⟩ :=
+  refine InteractiveHandler.impl_of_query _ n z ω x _ 0 _ _ _
+    (by rw [pkHandler_perCall, PolyExpr.eval_const]) ?_ ?_
+  · show pkRun q atkBit b _ = _
+    obtain ⟨hU, -, -, hI, hX, hL, -, hFlag, -⟩ :=
       fields_input q atkBit b n z ω (i := 1) (List.ofFn x) [] j o hj
     have hWF : rWF (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (pkState q n j o))
         (1 : Fin 3)
@@ -575,6 +540,8 @@ theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
     rw [pkRun, hI, Fin.val_one, List.replicate_one, hFlag, hWF, hop, hL, hX, hx0]
     rfl
   · intro y
+    show pkRun q atkBit b _ = _
+    simp only [Fin.val_zero, List.replicate_zero]
     obtain ⟨hU, -, hS, hI, hX, hL, -, hFlag, -⟩ :=
       fields_input q atkBit b n z ω (i := 1) (List.ofFn x)
         (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((pkOut 0).eval n)
@@ -653,13 +620,17 @@ theorem pkHandler_impl_challenge_none (x : Fin ((pkDin 2).eval n) → Bool) (j :
       rw [List.length_ofFn, pkDin_two, PolyExpr.eval_add, PolyExpr.eval_var]
     rw [AdaptiveCPA.msgOf_eq]
     cases b <;> simp [hx]
-  refine impl_of_query q atkBit b n z ω x _ _ _ _ ?_ ?_
-  · obtain ⟨-, -, -, hI, -, hL, -, hFlag, -⟩ :=
+  refine InteractiveHandler.impl_of_query _ n z ω x _ 0 _ _ _
+    (by rw [pkHandler_perCall, PolyExpr.eval_const]) ?_ ?_
+  · show pkRun q atkBit b _ = _
+    obtain ⟨-, -, -, hI, -, hL, -, hFlag, -⟩ :=
       fields_input q atkBit b n z ω (i := 2) (List.ofFn x) [] j none hj.le
     rw [pkRun, hI, replicate_two, hFlag, hL, hT,
       rNonce_fields q atkBit b n z ω (i := 2) _ _ j none hj]
     rfl
   · intro y
+    show pkRun q atkBit b _ = _
+    simp only [Fin.val_zero, List.replicate_zero]
     obtain ⟨hU, -, -, hI, hX, hL, -, hFlag, -⟩ :=
       fields_input q atkBit b n z ω (i := 2) (List.ofFn x)
         (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((pkOut 0).eval n)

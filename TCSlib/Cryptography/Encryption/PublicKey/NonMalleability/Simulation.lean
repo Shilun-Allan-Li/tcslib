@@ -751,11 +751,12 @@ Theorem 3, at one message]: Definition 172.6 implies SIM-NME′ under a chosen-p
    the real experiment (`castImpl_snmImpl`, `NMSim.realAcc_eq_hybAcc`).
 2. **The simulator** (`NMSim.exists_simulator`) runs `A` on `pk`, answering `Dec` with `⊥`. On `A`'s
    first challenge `a` it makes its only query `a`, gets `h(m)`, draws `m̃ = M(a; ρ̃)` with its own
-   coins and `M`'s advice (hard-wired, `exists_withAdviceOn`), and answers `⟨Enc_pk(m̃), h(m)⟩`;
-   repeated challenges get the recorded answer. It outputs `A`'s ciphertexts, each flagged `COPY`
-   iff it equals its dummy challenge, and `σ`; if `A` never asks it never queries. Its run at
-   budget `1` is its run at T2's budget (`NMSim.toCompOn_budget_eq`; it asks at most one query,
-   `NMSim.chalHandler_costBoundedBy`), and against the history oracle it is `H_true`.
+   coins and `M`'s advice (hard-wired, `NUPPT.exists_withAdviceOn`), and answers
+   `⟨Enc_pk(m̃), h(m)⟩`; repeated challenges get the recorded answer. It outputs `A`'s
+   ciphertexts, each flagged `COPY` iff it equals its dummy challenge, and `σ`; if `A` never asks
+   it never queries. Its run at budget `1` is its run at T2's budget (`NUPPT.toCompOn_budget_eq`;
+   it asks at most one query, `NMSim.chalHandler_costBoundedBy`), and against the history oracle
+   it is `H_true`.
 3. **The NM adversary** `B` (`NMSim.exists_nmAdversary`) runs `A`; on `a` it draws `m, m̃ ← M(a)`,
    asks its challenge on `⟨m, m̃⟩`, receives `y = Enc_pk(m_b)` and answers `A` with `⟨y, h(m)⟩`. It
    outputs each of `A`'s ciphertexts followed by the pair

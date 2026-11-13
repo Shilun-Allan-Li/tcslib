@@ -247,7 +247,7 @@ theorem chalHandler_impl_dec (x : Fin ((snmDin S pl 0).eval n) → Bool)
     (chalHandler P).impl n z ω 0 x (chalState P n o) = .pure (zeroBits _, chalState P n o) := by
   obtain ⟨hU, -, -, hS, hI, -, -⟩ := fields_input (k := 2) n z (List.ofFn ω)
     (List.ofFn (chalState P n o)) 0 (List.ofFn x) []
-  rw [impl_of_ret (chalHandler P) n z ω 0 x (chalState P n o)
+  rw [InteractiveHandler.impl_of_ret_padFin (chalHandler P) n z ω 0 x (chalState P n o)
     (List.replicate ((S.msgLen.add (.const 1)).eval n) false) (List.ofFn (chalState P n o))
     (by rw [List.length_replicate, snmDout_zero]) List.length_ofFn (by
       show chalRun P _ = _
@@ -265,8 +265,8 @@ theorem chalHandler_impl_some (x : Fin ((snmDin S pl 1).eval n) → Bool)
       ((S.ctLen.add hl).eval n) = List.ofFn y ++ List.ofFn h := by
     rw [ofFn_chalState_some, List.drop_one, List.tail_cons, PolyExpr.eval_add]
     exact List.take_left' (by rw [List.length_append, List.length_ofFn, List.length_ofFn])
-  rw [impl_of_ret (chalHandler P) n z ω 1 x _ (List.ofFn y ++ List.ofFn h)
-    (List.ofFn (chalState P n (some (y, h, a))))
+  rw [InteractiveHandler.impl_of_ret_padFin (chalHandler P) n z ω 1 x _
+    (List.ofFn y ++ List.ofFn h) (List.ofFn (chalState P n (some (y, h, a))))
     (by rw [List.length_append, List.length_ofFn, List.length_ofFn, snmDout_one, PolyExpr.eval_add])
     List.length_ofFn (by
       show chalRun P _ = _
@@ -278,11 +278,11 @@ theorem chalHandler_impl_some (x : Fin ((snmDin S pl 1).eval n) → Bool)
 answers `⟨Y, H⟩ = ⟨ansY w₁, ansH w₁⟩` (`w₁` the round input with `y` in the log), recording
 `⟨Y, H, x⟩`.
 
-**Proof sketch.** `impl_of_query` with the answer `ansY w₁ ‖ ansH w₁` and the encoded state
-`chalState (some ⟨Y, H, x⟩)` (lengths by `ansY_len`, `ansH_len`; `perCall = 1`). The first
-round, on `w₀` (a challenge, flag unset, empty log), is the query branch of `chalRun_eq`; the
-second, on `w₁`, is its answer branch, with `x` read back through `padL`
-(`ofFn_chalState_some`, `ofFn_padFin_of_length`). -/
+**Proof sketch.** `InteractiveHandler.impl_of_query_padFin` with the answer `ansY w₁ ‖ ansH w₁`
+and the encoded state `chalState (some ⟨Y, H, x⟩)` (lengths by `ansY_len`, `ansH_len`;
+`perCall = 1`). The first round, on `w₀` (a challenge, flag unset, empty log), is the query
+branch of `chalRun_eq`; the second, on `w₁`, is its answer branch, with `x` read back through
+`padL` (`ofFn_chalState_some`, `ofFn_padFin_of_length`). -/
 theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
     (chalHandler P).impl n z ω 1 x (chalState P n none) =
       .query P.j (padFin _ (P.qry (InteractiveHandler.input n z (List.ofFn ω)
@@ -338,7 +338,8 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
     rw [P.ansY_len, hW₁, (fields_input (k := 2) n z _ _ 1 _ _).1, List.length_replicate]
   have hH : ∀ y, (P.ansH (W₁ y)).length = hl.eval n := fun y => by
     rw [P.ansH_len, hW₁, (fields_input (k := 2) n z _ _ 1 _ _).1, List.length_replicate]
-  rw [impl_of_query (chalHandler P) n z ω 1 x (chalState P n none) P.j (padFin _ (P.qry w₀))
+  rw [InteractiveHandler.impl_of_query_padFin (chalHandler P) n z ω 1 x (chalState P n none) P.j
+    (padFin _ (P.qry w₀))
     (fun y => P.ansY (W₁ y) ++ P.ansH (W₁ y))
     (fun y => List.ofFn (chalState P n (some (padFin _ (P.ansY (W₁ y)), padFin _ (P.ansH (W₁ y)),
       padFin (pl.eval n) (List.ofFn x)))))

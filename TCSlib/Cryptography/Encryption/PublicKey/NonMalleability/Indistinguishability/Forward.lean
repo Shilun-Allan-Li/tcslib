@@ -2,7 +2,7 @@
 Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import TCSlib.Cryptography.Games.Efficiency
+import TCSlib.Cryptography.Games.Forwarding
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -13,11 +13,10 @@ set_option autoImplicit false
 
 Both reductions of [PS10, Theorem 175.9] run the adversary once against the reduction's own
 oracles: every query is **forwarded** unchanged to the outer oracle of the same index, and only
-the finalization differs. This file builds that handler once, generically in the oracle lengths
-(`fwdHandler`), as a `Games.InteractiveHandler` with one outer call per inner query and an empty
-state, so that T2 (`Games.exists_interactiveHandlerMachine`) makes it a machine. Its answers are
-the outer oracle's (`fwdHandler_impl`), so simulating it is running the adversary against the
-outer oracles (`simulate_fwdHandler_impl`).
+the finalization differs. That handler is `Games.fwdHandler`, with one outer call per inner query
+and an empty state, so that T2 (`Games.exists_interactiveHandlerMachine`) makes it a machine. Its
+answers are the outer oracle's (`Games.fwdHandler_impl`), so simulating it is running the
+adversary against the outer oracles (`simulate_fwdHandler_impl`).
 
 It also provides the readers of a finalization input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩` (`finU`,
 `finZ`, `finW`, `finA`, `finL`) and of an encoded outer log: `logEmit G L` concatenates `G` of the
@@ -27,13 +26,12 @@ entries (`logEmit_encodeLog`).
 
 ## Main definitions
 
-* `NMCCA2.fwdHandler`: the forwarding handler with a given finalization.
 * `NMCCA2.finU`, `finZ`, `finW`, `finA`, `finL`: the fields of a finalization input.
 * `NMCCA2.logEmit`: concatenated readings of the suffixes of an encoded log.
 
 ## Main results
 
-* `NMCCA2.fwdHandler_impl`, `NMCCA2.simulate_fwdHandler_impl`: forwarding.
+* `NMCCA2.simulate_fwdHandler_impl`: simulating the forwarding handler.
 * `NMCCA2.polyTimeComputable_logEmit`, `NMCCA2.logEmit_encodeLog`.
 
 ## References
@@ -48,73 +46,7 @@ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 
 variable {k : ℕ}
 
-/-! ### Readers of a round input -/
-
-/-- The state `s` of a round input `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`. -/
-private def rState (w : List Bool) : List Bool := pairFstD (pairSndD w)
-/-- The oracle index `1^i` of a round input. -/
-private def rIdx (w : List Bool) : List Bool := pairFstD (pairFstD (pairSndD (pairSndD w)))
-/-- The query `x` of a round input. -/
-private def rQuery (w : List Bool) : List Bool := pairSndD (pairFstD (pairSndD (pairSndD w)))
-/-- The outer log `L` of the call so far. -/
-private def rLog (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
-/-- The outer answer `y` recorded in a one-entry log `⟨⟨1^j, ⟨x, y⟩⟩, []⟩`. -/
-private def rAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rLog w)))
-
-/-- The fields of a round input (DL-30–34 overlap: the round-input readers). -/
-private theorem fields_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
-    rState (InteractiveHandler.input n z ω s i x L) = s ∧
-      rIdx (InteractiveHandler.input n z ω s i x L) = List.replicate i true ∧
-      rQuery (InteractiveHandler.input n z ω s i x L) = x ∧
-      rLog (InteractiveHandler.input n z ω s i x L) = L := by
-  simp only [InteractiveHandler.input_eq, rState, rIdx, rQuery, rLog, pairFstD_pairEncode,
-    pairSndD_pairEncode, and_self]
-
-/-- **One forwarding round.** With an empty outer log, ask the outer oracle `i` the query `x`;
-with the outer answer `y` in the log, return `y` and keep the state. -/
-private def fwdRun (w : List Bool) : List Bool :=
-  if decide (rLog w = []) then pairEncode [false] (pairEncode (rIdx w) (rQuery w))
-  else pairEncode [true] (rAns w ++ rState w)
-
-/-- The forwarding round is polynomial-time. -/
-private theorem polyTimeComputable_fwdRun : PolyTimeComputable fwdRun := by
-  have hF := polyTimeComputable_pairFstD
-  have hD := polyTimeComputable_pairSndD
-  have hS : PolyTimeComputable rState := hF.comp hD
-  have hI : PolyTimeComputable rIdx := hF.comp (hF.comp (hD.comp hD))
-  have hX : PolyTimeComputable rQuery := hD.comp (hF.comp (hD.comp hD))
-  have hL : PolyTimeComputable rLog := hD.comp (hD.comp hD)
-  have hA : PolyTimeComputable rAns := hD.comp (hD.comp (hF.comp hL))
-  exact polyTimeComputable_ite (polyTimeComputable_isNil.comp hL)
-    ((polyTimeComputable_const [false]).pairEncode (hI.pairEncode hX))
-    ((polyTimeComputable_const [true]).pairEncode (hA.append hS))
-
-/-! ### The forwarding handler -/
-
-/-- **The forwarding handler** for `k` bit-string oracles with lengths `din`, `dout`, inner and
-outer alike: empty state, the seed of `seedLen(n)` bits, one outer call per inner query, which
-forwards the query to the outer oracle of the same index and returns its answer; the adversary's
-input `advIn`, and the finalization `finRun` with `outLen(n)`-bit output and at most `finCall(n)`
-outer queries. -/
-def fwdHandler (din dout : Fin k → PolyExpr) (seedLen : PolyExpr)
-    (advIn : List Bool → List Bool) (advIn_poly : PolyTimeComputable advIn)
-    (outLen finCall : PolyExpr) (finRun : List Bool → List Bool)
-    (finRun_poly : PolyTimeComputable finRun) : InteractiveHandler k din dout k din dout where
-  stateLen := .const 0
-  seedLen := seedLen
-  perCall := .const 1
-  init _ := zeroBits _
-  run := fwdRun
-  poly := polyTimeComputable_fwdRun
-  advIn := advIn
-  advIn_poly := advIn_poly
-  outLen := outLen
-  finCall := finCall
-  finRun := finRun
-  finRun_poly := finRun_poly
-
-attribute [simps (config := { isSimp := false }) stateLen seedLen perCall init advIn outLen finCall
-  finRun] fwdHandler
+/-! ### Simulating the forwarding handler -/
 
 section Forward
 
@@ -122,63 +54,11 @@ variable (din dout : Fin k → PolyExpr) (seedLen : PolyExpr) (advIn : List Bool
   (advIn_poly : PolyTimeComputable advIn) (outLen finCall : PolyExpr)
   (finRun : List Bool → List Bool) (finRun_poly : PolyTimeComputable finRun)
 
-/-- **The forwarding handler forwards:** the inner query `x` to oracle `i` in state `s` is the
-outer query `x` to oracle `i`, answered with the outer answer `y` and the state kept:
-`H.impl n z ω i x s = query i x (fun y => pure (y, s))`.
-
-**Proof sketch.** The call's first round has an empty outer log, so it is the query
-`⟨[false], ⟨1^i, x⟩⟩` (`decodeBitMove_query`); its second round reads the answer `y` from the
-one-entry log and returns `y ‖ s` (`decodeBitMove_ret`), which `impl` splits back into `y` and
-`s` (`Fin.append_left`, `Fin.append_right`). -/
-theorem fwdHandler_impl (n : ℕ) (z : List Bool)
-    (ω : Fin ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
-      finRun_poly).seedLen.eval n) → Bool) (i : Fin k) (x : Fin ((din i).eval n) → Bool)
-    (s : Fin ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
-      finRun_poly).stateLen.eval n) → Bool) :
-    (fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun finRun_poly).impl n z ω
-        i x s = .query i x fun y => .pure (y, s) := by
-  rw [InteractiveHandler.impl_apply, InteractiveHandler.call_eq, fwdHandler_perCall,
-    PolyExpr.eval_const]
-  rw [buildComp_succ_of_query (i := i) (x := x) (by
-    show decodeBitMove _ _ _ (fwdRun _) = _
-    obtain ⟨-, hI, hX, hL⟩ := fields_input (k := k) n z (List.ofFn ω) (List.ofFn s) i
-      (List.ofFn x)
-      ((bitCodec (fun j => (din j).eval n) (fun j => (dout j).eval n) 0).encodeLog [])
-    rw [fwdRun, hI, hX, hL, MachineCodec.encodeLog_nil, if_pos (decide_eq_true rfl)]
-    exact decodeBitMove_query (fun j => (din j).eval n) (fun j => (dout j).eval n) _ i x),
-    OracleComp.query_bind]
-  congr 1
-  funext y
-  rw [buildComp_zero_of_ret (a := Fin.append y s) (by
-    show decodeBitMove _ _ _ (fwdRun _) = _
-    obtain ⟨hS, -, -, hL⟩ := fields_input (k := k) n z (List.ofFn ω) (List.ofFn s) i
-      (List.ofFn x)
-      ((bitCodec (fun j => (din j).eval n) (fun j => (dout j).eval n) 0).encodeLog
-        ([] ++ [⟨i, x, y⟩]))
-    have hlog : (bitCodec (fun j => (din j).eval n) (fun j => (dout j).eval n) 0).encodeLog
-        ([] ++ [⟨i, x, y⟩]) = pairEncode (pairEncode (List.replicate i true)
-          (pairEncode (List.ofFn x) (List.ofFn y))) [] := by
-      rw [List.nil_append, MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
-        bitCodec_encodeEntry]
-    have hA : rAns (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x)
-        ((bitCodec (fun j => (din j).eval n) (fun j => (dout j).eval n) 0).encodeLog
-          ([] ++ [⟨i, x, y⟩]))) = List.ofFn y := by
-      rw [rAns, hL, hlog, pairFstD_pairEncode, pairSndD_pairEncode, pairSndD_pairEncode]
-    rw [fwdRun, hA, hS, hL, hlog, if_neg (fun h => pairEncode_ne_nil _ _ (of_decide_eq_true h)),
-      ← List.ofFn_fin_append]
-    exact decodeBitMove_ret _ _ _ _)]
-  rw [OracleComp.pure_bind]
-  congr 2
-  · funext j
-    exact Fin.append_left y s j
-  · funext j
-    exact Fin.append_right y s j
-
 /-- **Simulating the forwarding handler is running the computation:** for every computation
 `c` against the oracles and every state `s`, `simulate (H.impl n z ω) c s = c.bind (fun a =>
 pure (a, s))`.
 
-**Proof sketch.** Induction on `c`, with `fwdHandler_impl` at each query. -/
+**Proof sketch.** Induction on `c`, with `Games.fwdHandler_impl` at each query. -/
 theorem simulate_fwdHandler_impl (n : ℕ) (z : List Bool)
     (ω : Fin ((fwdHandler din dout seedLen advIn advIn_poly outLen finCall finRun
       finRun_poly).seedLen.eval n) → Bool) {α : Type}

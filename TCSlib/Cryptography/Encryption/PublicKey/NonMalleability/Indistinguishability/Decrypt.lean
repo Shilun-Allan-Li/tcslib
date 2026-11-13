@@ -14,7 +14,7 @@ set_option autoImplicit false
 
 Direction (⇒) of [PS10, Theorem 175.9]. Given a non-malleability adversary `A` whose output is
 `ℓ(n)` ciphertexts and a distinguisher `D`, the CCA2 adversary runs `A` on the public key and
-forwards all of `A`'s queries to its own oracles (`NMCCA2.fwdHandler`). In the finalization it
+forwards all of `A`'s queries to its own oracles (`Games.fwdHandler`). In the finalization it
 asks its decryption oracle for each of `A`'s `ℓ(n)` ciphertexts in turn and outputs `D`'s
 verdict on the concatenated answers. Under CCA2 the decryption oracle refuses the recorded
 challenge with `⊥`, exactly as the non-malleability experiment decrypts a copy of the challenge.
@@ -22,19 +22,20 @@ challenge with `⊥`, exactly as the non-malleability experiment decrypts a copy
 This file builds the handler (`decHandler S ℓ D`): its seed is `D`'s coins, and the reduction
 input is `⟨pk, α⟩`, where `α` is `D`'s advice. It proves the finalization's equation against
 any outer oracle whose decryption answers are deterministic and keep the state
-(`simulate_decHandler_finish`). The advice is hard-wired afterwards (`exists_withAdviceOn`,
-from `NUPPT.exists_comp` and `NUPPT.exists_withAdvice`).
+(`simulate_decHandler_finish`). The advice is hard-wired afterwards
+(`Complexity.NUPPT.exists_withAdviceOn`, from `NUPPT.exists_comp` and `NUPPT.exists_withAdvice`).
+The per-entry readings of a log are `Games.cntRead` and `Games.ansRead`.
 
 ## Main definitions
 
-* `NMCCA2.cntRead`, `NMCCA2.ansRead`: the per-entry readings of a log (one token, the answer).
 * `NMCCA2.decHandler`: the handler of the reduction.
 
 ## Main results
 
+* `NMCCA2.length_logEmit_cntRead`, `NMCCA2.logEmit_ansRead`: counting the entries of a log and
+  collecting their answers.
 * `NMCCA2.simulate_decHandler_impl`: the handler forwards.
 * `NMCCA2.simulate_decHandler_finish`: the finalization decrypts the `ℓ` blocks and runs `D`.
-* `NMCCA2.exists_withAdviceOn`: hard-wiring a second component of the input.
 
 ## References
 
@@ -47,30 +48,7 @@ namespace TCSlib.Cryptography.Composability.NMCCA2
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 open AdaptiveCPA (acDin acDout acDin_zero acDout_zero)
 
-/-! ### Readings of a log entry -/
-
-/-- One token for a nonempty log and nothing for the empty one:
-`cntRead v = if v = [] then [] else [true]`. With `logEmit` it counts the entries of a log. -/
-def cntRead (v : List Bool) : List Bool := if decide (v = []) then [] else [true]
-
-/-- `cntRead v = if v = [] then [] else [true]`. -/
-theorem cntRead_eq (v : List Bool) : cntRead v = if decide (v = []) then [] else [true] := rfl
-
-/-- The token reading is polynomial-time: `PolyTimeComputable cntRead`. -/
-theorem polyTimeComputable_cntRead : PolyTimeComputable cntRead :=
-  polyTimeComputable_ite polyTimeComputable_isNil (polyTimeComputable_const [])
-    (polyTimeComputable_const [true])
-
-/-- The answer `y` of the first entry `⟨1^i, ⟨x, y⟩⟩` of a log:
-`ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
-def ansRead (v : List Bool) : List Bool := pairSndD (pairSndD (pairFstD v))
-
-/-- `ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
-theorem ansRead_eq (v : List Bool) : ansRead v = pairSndD (pairSndD (pairFstD v)) := rfl
-
-/-- The answer reading is polynomial-time: `PolyTimeComputable ansRead`. -/
-theorem polyTimeComputable_ansRead : PolyTimeComputable ansRead :=
-  polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
+/-! ### Readings of a log -/
 
 section Readings
 
@@ -79,7 +57,7 @@ variable {k : ℕ} {din dout : Fin k → ℕ} {dα : ℕ}
 /-- **Counting the entries:** `|logEmit cntRead ⟦h⟧| = |h|`. -/
 theorem length_logEmit_cntRead (h : QueryLog (bitSpec din dout)) :
     (logEmit cntRead ((bitCodec din dout dα).encodeLog h)).length = h.length := by
-  rw [logEmit_encodeLog _ cntRead (fun _ => [true]) rfl
+  rw [logEmit_encodeLog _ cntRead (fun _ => [true]) (by rw [cntRead_eq]; rfl)
     (fun e t => by rw [cntRead_eq, decide_eq_false (pairEncode_ne_nil _ _)]; rfl)]
   simp only [List.length_flatMap, List.length_singleton, List.map_const', List.sum_replicate,
     smul_eq_mul, mul_one]
@@ -316,35 +294,5 @@ theorem simulate_decHandler_finish (n : ℕ) (z : List Bool)
   have h0 : hist 0 = [] := by simp only [hhist, List.range_zero, List.map_nil]
   rw [InteractiveHandler.finish_eq, decHandler_finCall, ← h0]
   exact key (ℓ.eval n) 0 (Nat.zero_add _)
-
-/-! ### Hard-wiring the advice -/
-
-/-- **Hard-wiring a second input component** [PS10, §2.1, implicit]: for a machine `B` and a
-polynomially bounded family `β n` there is a machine `B'` with the same coins (`h`) whose
-computation on the input `x` is `B`'s on `⟨x, β n⟩`, for every codec and budget:
-`B'.toCompOn codec n q x (coinsCongr h n r) = B.toCompOn codec n q ⟨x, β n⟩ r`.
-
-**Proof sketch.** `B₁ := NUPPT.exists_comp B` with the re-pairing
-`⟨⟨x, L⟩, β⟩ ↦ ⟨⟨x, β⟩, L⟩`, then `B' := NUPPT.exists_withAdvice B₁ β`; on `⟨x, L⟩` (the input
-and the encoded log) `B'` runs `B` on `⟨⟨x, β n⟩, L⟩`. -/
-theorem exists_withAdviceOn (B : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
-    (hβ : ∀ n, (β n).length ≤ b.eval n) :
-    ∃ (B' : NUPPT) (h : B.coins = B'.coins), ∀ (n : ℕ) {ι α : Type} {spec : OracleSpec ι}
-      (codec : MachineCodec spec α) (q : ℕ) (x : List Bool) (r : B.Coins n),
-      B'.toCompOn codec n q x (NUPPT.coinsCongr h n r) =
-        B.toCompOn codec n q (pairEncode x (β n)) r := by
-  have hpre : PolyTimeComputable fun w : List Bool =>
-      pairEncode (pairEncode (pairFstD (pairFstD w)) (pairSndD w)) (pairSndD (pairFstD w)) :=
-    ((polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD).pairEncode
-      polyTimeComputable_pairSndD).pairEncode
-      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
-  obtain ⟨B₁, hc₁, -, -, hB₁⟩ := NUPPT.exists_comp B hpre polyTimeComputable_id
-  obtain ⟨B', hc', hB'⟩ := NUPPT.exists_withAdvice B₁ β b hβ
-  refine ⟨B', (hc'.trans hc₁).symm, fun n ι α spec codec q x r => ?_⟩
-  rw [NUPPT.toCompOn_eq, NUPPT.toCompOn_eq]
-  congr 1
-  funext hist
-  rw [NUPPT.runAt_coinsCongr, hB', hB₁, NUPPT.runAt_eq]
-  simp only [pairFstD_pairEncode, pairSndD_pairEncode, id_eq]
 
 end TCSlib.Cryptography.Composability.NMCCA2

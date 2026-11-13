@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Games.BitCodec
 import TCSlib.Cryptography.Games.Machines
 import TCSlib.Cryptography.Games.Probability
+import TCSlib.Cryptography.Games.Hopping
 import TCSlib.Cryptography.Games.Bridges.Experiments
 
 set_option maxHeartbeats 0
@@ -138,11 +139,12 @@ sampling `re` and answering (and recording) `padFin d (g mm re)`; the state hold
 strings, `d = outs 1`, read through the cast `e`. Then for every `G`,
 `𝔼[G ∘ fst] (simulate impl c s) = 𝔼_{re} G (chRun (fun mm => g mm re) c (s.map (cast e))).1`.
 
-**Proof sketch.** Substitute `d = outs 1`, so that the casts are identities. Induction on the
-computation: decryption queries and repeated challenges are deterministic in both; at the first
-challenge the lazy side samples `re` and continues from the recorded answer, by the induction
-hypothesis an average over coins `re'` on which the recorded run does not depend
-(`chRun_some_congr`), so `re'` marginalizes out (`expect_const`). -/
+**Proof sketch.** Substitute `d = outs 1`, so that the casts are identities. With the coins `re`
+fixed, `impl` becomes the deterministic oracle `OE re`, whose simulation is the run
+`chRun (fun mm => g mm re)` (induction on the computation). From the unchallenged state,
+`Games.expect_simulate_eager` (the coins are spent at the first challenge, after which the state
+is recorded) averages `OE re` over `re`. From a recorded state `impl` is already deterministic,
+so its simulation is the run for any `re`, which does not depend on `re` (`chRun_some_congr`). -/
 theorem expect_simulate_eager {ins outs : Fin 2 → ℕ} {d : ℕ} (hd : outs 1 = d)
     (e : (Fin d → Bool) = (Fin (outs 1) → Bool)) {R : Type} [Fintype R] [Nonempty R]
     (impl : QueryImpl (bitSpec ins outs) (Option (Fin d → Bool)) unifSpec)
@@ -161,32 +163,84 @@ theorem expect_simulate_eager {ins outs : Fin 2 → ℕ} {d : ℕ} (hd : outs 1 
     cases s <;> simp
   simp only [hc] at hrep hnew
   simp only [hmap]
-  induction c generalizing s with
-  | pure a =>
-    rw [simulate_pure, expect_pure]
-    simp only [chRun_pure]
-    exact (expect_const _ _).symm
-  | query i x k ih =>
-    match i, x, k, ih with
-    | 0, x, k, ih =>
-      rw [simulate_query, h0, OracleComp.pure_bind]
-      simp only [chRun_query_zero]
-      exact ih _ s
-    | 1, x, k, ih =>
-      cases s with
-      | some C =>
-        rw [simulate_query, hrep, OracleComp.pure_bind]
-        simp only [chRun_query_one_some]
+  -- The oracle with the coins `re` fixed in advance.
+  let OE : R → QueryImpl (bitSpec ins outs) (Option (Fin (outs 1) → Bool)) unifSpec :=
+    fun re i x s => match i, x, s with
+      | 0, _, s => .pure (zeroBits _, s)
+      | 1, mm, none => .pure (padFin _ (g mm re), some (padFin _ (g mm re)))
+      | 1, _, some c => .pure (c, some c)
+  -- Its simulation is the run with the answer `g · re`.
+  have hdet : ∀ (re : R) (c : OracleComp (bitSpec ins outs) α) (s : Option (Fin (outs 1) → Bool)),
+      simulate (OE re) c s = .pure (chRun (fun mm => g mm re) c s) := by
+    intro re c
+    induction c with
+    | pure a => exact fun s => by rw [simulate_pure, chRun_pure]
+    | query i x k ih =>
+      intro s
+      match i, x, k, ih, s with
+      | 0, x, k, ih, s =>
+        rw [simulate_query, chRun_query_zero]
+        show (OracleComp.pure (zeroBits _, s)).bind (fun p => simulate (OE re) (k p.1) p.2) = _
+        rw [OracleComp.pure_bind]
+        exact ih _ s
+      | 1, x, k, ih, none =>
+        rw [simulate_query, chRun_query_one_none]
+        show (OracleComp.pure (padFin _ (g x re), some (padFin _ (g x re)))).bind
+          (fun p => simulate (OE re) (k p.1) p.2) = _
+        rw [OracleComp.pure_bind]
         exact ih _ _
-      | none =>
-        rw [simulate_query, hnew, OracleComp.bind_assoc, expect_bind]
-        refine congrArg _ (funext fun re => ?_)
-        rw [OracleComp.pure_bind, ih, chRun_query_one_none]
-        dsimp only
-        exact (congrArg _ (funext fun re' =>
-          congrArg (fun p : α × Option (Fin (outs 1) → Bool) => G p.1)
-            (chRun_some_congr (fun mm => g mm re') (fun mm => g mm re) _ _))).trans
-          (expect_const _ _)
+      | 1, x, k, ih, some C =>
+        rw [simulate_query, chRun_query_one_some]
+        show (OracleComp.pure (C, some C)).bind (fun p => simulate (OE re) (k p.1) p.2) = _
+        rw [OracleComp.pure_bind]
+        exact ih _ _
+  -- From a recorded state, `impl` is the oracle with any coins fixed.
+  have hsome : ∀ (re : R) (c : OracleComp (bitSpec ins outs) α) (C : Fin (outs 1) → Bool),
+      simulate impl c (some C) = simulate (OE re) c (some C) := by
+    intro re c
+    induction c with
+    | pure a => exact fun C => by rw [simulate_pure, simulate_pure]
+    | query i x k ih =>
+      intro C
+      match i, x, k, ih with
+      | 0, x, k, ih =>
+        rw [simulate_query, simulate_query, h0, OracleComp.pure_bind]
+        show _ = (OracleComp.pure (zeroBits _, some C)).bind
+          (fun p => simulate (OE re) (k p.1) p.2)
+        rw [OracleComp.pure_bind]
+        exact ih _ C
+      | 1, x, k, ih =>
+        rw [simulate_query, simulate_query, hrep, OracleComp.pure_bind]
+        show _ = (OracleComp.pure (C, some C)).bind (fun p => simulate (OE re) (k p.1) p.2)
+        rw [OracleComp.pure_bind]
+        exact ih _ C
+  cases s with
+  | none =>
+    rw [Games.expect_simulate_eager impl OE (fun s => s.isSome = true)
+      (fun re i x s hs => ?_) (fun i x s hs => ?_) (fun i x s hs => ?_) c (fun p => G p.1)
+      (by simp)]
+    · refine congrArg _ (funext fun re => ?_)
+      rw [hdet, expect_pure]
+    · obtain ⟨C, rfl⟩ := Option.isSome_iff_exists.1 hs
+      match i, x with
+      | 0, x => exact (h0 x _).symm
+      | 1, x => exact (hrep x C).symm
+    · obtain ⟨C, rfl⟩ := Option.isSome_iff_exists.1 hs
+      match i, x with
+      | 0, x => rw [h0]; exact OracleComp.allOutputs_pure.2 rfl
+      | 1, x => rw [hrep]; exact OracleComp.allOutputs_pure.2 rfl
+    · obtain rfl : s = none := by simpa using hs
+      match i, x with
+      | 0, x =>
+        exact .inl fun re => ⟨(h0 x none).symm, by
+          rw [h0]
+          exact OracleComp.allOutputs_pure.2 (by simp)⟩
+      | 1, x => exact .inr ⟨hnew x, fun re => OracleComp.allOutputs_pure.2 rfl⟩
+  | some C =>
+    rw [hsome (Classical.arbitrary R), hdet, expect_pure]
+    refine (Eq.trans ?_ (expect_const (ProbComp.sample R) _)).symm
+    refine congrArg _ (funext fun re => ?_)
+    rw [chRun_some_congr (fun mm => g mm re) (fun mm => g mm (Classical.arbitrary R))]
 
 /-- **First-challenge congruence:** if `g` and `g'` agree at the first challenge query of `c`
 (vacuous when there is none), the runs from the unchallenged state agree:

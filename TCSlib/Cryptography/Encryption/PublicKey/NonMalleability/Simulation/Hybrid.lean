@@ -259,8 +259,8 @@ theorem rImpl_allOutputs_isSome (atk : Attack) (b : Bool) (samp : NUPPT) (pl hl 
 
 /-- **The encryption coins may be drawn in advance:** for every computation `c` and function `G`,
 the run against the hybrid oracle with sampled coins has the law of the runs with coins `re`
-drawn in advance, averaged over `re` (`expect_simulate_eager`; the coins are spent at the first
-challenge). -/
+drawn in advance, averaged over `re` (`Games.expect_simulate_eager`; the coins are spent at the
+first challenge). -/
 theorem expect_simulate_rImpl_eager (atk : Attack) (b : Bool) (samp : NUPPT) (pl hl : PolyExpr)
     (hist : List Bool → List Bool) (n : ℕ) (pk sk : List Bool) (ρ ρ' : samp.Coins n) {α : Type}
     (c : OracleComp (bitSpecAt (snmDin S pl) (snmDout S hl) n) α)

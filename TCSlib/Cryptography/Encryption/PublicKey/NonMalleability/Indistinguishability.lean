@@ -400,7 +400,7 @@ private theorem accept_indGame_decRed (A D B B' : NUPPT) (q ℓ : PolyExpr) (n :
 
 **Proof sketch.** Given `A` (budget `q`, `ℓ` ciphertexts) and `D`, T2
 (`Games.exists_interactiveHandlerMachine`) makes the handler `decHandler S ℓ D` a machine `B`, and
-`exists_withAdviceOn` hard-wires `D`'s advice into it (`B'`). `B'`'s budget is
+`NUPPT.exists_withAdviceOn` hard-wires `D`'s advice into it (`B'`). `B'`'s budget is
 `q · 1 + ℓ`, a polynomial; CCA2 security gives a negligible bound on `B'`'s advantage, which at
 every `n` equals the advantage of `D` between `NM_0` and `NM_1` (`accept_indGame_decRed`). -/
 theorem nmSecure_cca2_of_indSecure_cca2 (h : S.INDSecure .cca2) : S.NMSecure .cca2 := by
@@ -408,7 +408,7 @@ theorem nmSecure_cca2_of_indSecure_cca2 (h : S.INDSecure .cca2) : S.NMSecure .cc
   intro A q ℓ D
   obtain ⟨B, hB⟩ := exists_interactiveHandlerMachine A q (acDin S) (acDout S) (acDin S)
     (acDout S) (ℓ.mul S.ctLen) (decHandler S ℓ D)
-  obtain ⟨B', hc, hB'⟩ := exists_withAdviceOn B D.advice D.adv D.advice_length
+  obtain ⟨B', hc, hB'⟩ := NUPPT.exists_withAdviceOn B D.advice D.adv D.advice_length
   obtain ⟨ε, hε, hbound⟩ := (S.INDSecure_iff .cca2).1 h B'
     ((q.mul (decHandler S ℓ D).perCall).add (decHandler S ℓ D).finCall)
   refine ⟨ε, hε, fun n => ?_⟩
@@ -634,7 +634,7 @@ end Proof
    (`Games.exists_interactiveHandlerMachine`) makes this a machine, for the forwarding handler
    `NMCCA2.decHandler`: `advIn = pk`, one outer call per query, and `finCall = ℓ` in
    finalization before running `D`, for total budget `q + ℓ`. `D`'s advice is carried through
-   `z = ⟨pk, α⟩` and hard-wired afterwards (`NMCCA2.exists_withAdviceOn`, from the public
+   `z = ⟨pk, α⟩` and hard-wired afterwards (`NUPPT.exists_withAdviceOn`, from the public
    `exists_withAdvice`/`exists_comp` closure lemmas). The two games accept with the same
    probability at every `n` (`nmSecure_cca2_of_indSecure_cca2`).
 2. (⇐) Given an IND adversary `A` with guess `g`, the NM adversary runs `A`, forwarding its

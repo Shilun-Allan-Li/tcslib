@@ -14,7 +14,7 @@ set_option autoImplicit false
 
 Direction (⇐) of [PS10, Theorem 175.9]. Given a CCA2 adversary `A` with guess `g`, the
 non-malleability adversary runs `A` on the public key and forwards all of `A`'s queries to its own
-oracles (`NMCCA2.fwdHandler`). It then outputs two fresh encryptions under `pk`, with its own
+oracles (`Games.fwdHandler`). It then outputs two fresh encryptions under `pk`, with its own
 coins: of `g^{m}` and of `(¬g)^{m}`, where `m = msgLen(n)`. The distinguisher `guessDist` reads `g`
 back from the two decryptions: from the first message bit if the first decryption is valid,
 and otherwise from the negated last bit of the second.

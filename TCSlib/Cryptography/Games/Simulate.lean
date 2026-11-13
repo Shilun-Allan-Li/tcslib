@@ -44,6 +44,8 @@ queried" are predicates on that log. Logging never changes the computation
 * `Games.simulate_costBoundedBy`: if each query of `c` to oracle `i` is answered by a computation
   of cost at most `b i`, and `c` is cost-bounded by `q` when oracle `i` costs `b i`, then the
   simulation is cost-bounded by `q`.
+* `Games.simulate_costBoundedBy_once`: an implementation whose only costly call (of cost at most
+  one) marks the state as used costs at most one query in total.
 * `Games.simulate_eq_of_abs`, `Games.simulate_eq_of_abs_bounded`: simulation through an
   abstraction of the state, on every run or along runs with a query budget.
 
@@ -274,6 +276,51 @@ theorem simulate_costBoundedBy {spec : OracleSpec ι} {spec' : OracleSpec ι'}
     rw [Nat.add_sub_cancel' hi] at h
     rw [simulate_query]
     exact h
+
+/-- **A one-shot oracle costs at most one query in total.** Let `good` be an invariant of the
+states and `used` mark the states after the costly call. If from a good used state every call is
+free and keeps the state good and used, and from a good unused state every call is either free and
+keeps the state good and unused, or costs at most `1` and leaves it good and used, then the
+simulation of any computation from a good state `s` costs at most `0` (used) or `1` (unused):
+`(simulate impl c s).CostBoundedBy cost (if used s then 0 else 1)`.
+
+**Proof sketch.** Induction on the computation; at a query,
+`OracleComp.CostBoundedBy.bind_of_allOutputs` with the call's cost and the continuation's
+(`0 + 0`, `0 + 1` or `1 + 0`). -/
+theorem simulate_costBoundedBy_once {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+    (impl : QueryImpl spec σ spec') (cost : ι' → ℕ)
+    (good used : σ → Prop) [DecidablePred used]
+    (hused : ∀ i x s, good s → used s →
+      (impl i x s).CostBoundedBy cost 0 ∧ (impl i x s).AllOutputs fun p => good p.2 ∧ used p.2)
+    (hfresh : ∀ i x s, good s → ¬ used s →
+      ((impl i x s).CostBoundedBy cost 0 ∧
+          (impl i x s).AllOutputs fun p => good p.2 ∧ ¬ used p.2) ∨
+        ((impl i x s).CostBoundedBy cost 1 ∧ (impl i x s).AllOutputs fun p => good p.2 ∧ used p.2))
+    (c : OracleComp spec α) :
+    ∀ s, good s → (simulate impl c s).CostBoundedBy cost (if used s then 0 else 1) := by
+  induction c with
+  | pure a =>
+    intro s _
+    rw [simulate_pure]
+    exact OracleComp.costBoundedBy_pure _ _ _
+  | query i x k ih =>
+    intro s hs
+    rw [simulate_query]
+    by_cases hu : used s
+    · obtain ⟨h₀, hP⟩ := hused i x s hs hu
+      have := OracleComp.CostBoundedBy.bind_of_allOutputs h₀ hP fun p hp => by
+        have h := ih p.1 p.2 hp.1
+        rwa [if_pos hp.2] at h
+      rwa [if_pos hu]
+    · rw [if_neg hu]
+      rcases hfresh i x s hs hu with ⟨h₀, hP⟩ | ⟨h₁, hP⟩
+      · have := OracleComp.CostBoundedBy.bind_of_allOutputs h₀ hP fun p hp => by
+          have h := ih p.1 p.2 hp.1
+          rwa [if_neg hp.2] at h
+        rwa [Nat.zero_add] at this
+      · exact OracleComp.CostBoundedBy.bind_of_allOutputs h₁ hP fun p hp => by
+          have h := ih p.1 p.2 hp.1
+          rwa [if_pos hp.2] at h
 
 /-! ### Simulation through a state abstraction -/
 

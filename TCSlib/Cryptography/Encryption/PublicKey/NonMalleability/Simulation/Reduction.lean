@@ -441,7 +441,7 @@ theorem nmFinish (z : List Bool)
         (finMsg S samp n (pairSndD z) (List.ofFn ω) (stParam S hl n (List.ofFn s))))) := by
   have ha : (List.ofFn a).length = r.eval n * S.ctLen.eval n + sl.eval n := by
     rw [List.length_ofFn, hd]
-  refine finish_of_ret _ n z ω s a _ ?_ ?_
+  refine InteractiveHandler.finish_of_ret_padFin _ n z ω s a _ ?_ ?_
   · have hs : (List.ofFn s).length = 1 + (S.ctLen.eval n + hl.eval n) + pl.eval n := by
       rw [List.length_ofFn, chalHandler_stateLen_eval]
     rw [nmParams_outLen_eval, length_nmOutL S samp pl r sl n _ _ _ _ ha ?_ ?_]

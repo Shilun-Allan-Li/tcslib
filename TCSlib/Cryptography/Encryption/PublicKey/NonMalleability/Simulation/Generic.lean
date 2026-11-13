@@ -10,21 +10,19 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Generic tools for Theorem 174.8
+# Chunk maps for Theorem 174.8
 
-Three generic facts used by both directions of [PS10, Theorem 174.8]. None of them is specific
-to encryption.
+A generic tool used by both directions of [PS10, Theorem 174.8], not specific to encryption:
+**chunk maps** (`chunkMap`), a polynomial-time map applied to the consecutive fixed-length chunks
+of a string, concatenated (`polyTimeComputable_chunkMap`, `chunkMap_flatten`). The machines of
+both reductions read and write their tuples of ciphertexts and entries this way.
 
-* **Budget reduction** (`buildComp_budget_eq`, `toCompOn_budget_eq`). A machine's computation at
-  budget `K ≥ j` that makes at most `j` queries on every path is its computation at budget `j`.
-  The simulator of the ideal experiment runs at budget `1`, while T2 builds it at a polynomial
-  budget.
-* **One-shot coins drawn in advance** (`expect_simulate_eager`). An implementation that samples
-  coins `t` at most once, on the call that leaves the "unused" states, has the law of the
-  implementations with `t` fixed in advance, averaged over `t`.
-* **Chunk maps** (`chunkMap`). A polynomial-time map applied to the consecutive fixed-length
-  chunks of a string, concatenated (`polyTimeComputable_chunkMap`, `chunkMap_flatten`). The
-  machines of both reductions read and write their tuples of ciphertexts and entries this way.
+The other generic facts first proved here now live in the Games layer: budget reduction
+(`Games.buildComp_budget_eq`, `Complexity.NUPPT.toCompOn_budget_eq`), output-length transport
+(`Games.expect_toCompOn_outLen`), reasoning on the possible outputs
+(`Games.ProbComp.expect_congr_of_allOutputs`, `Games.ProbComp.expect_expect_sample`,
+`Games.OracleComp.bind_congr_of_allOutputs`), one-shot coins drawn in advance
+(`Games.expect_simulate_eager`) and equal until bad in expectation (`Games.expect_eq_until_bad`).
 
 ## Main definitions
 
@@ -32,12 +30,6 @@ to encryption.
 
 ## Main results
 
-* `NMSim.buildComp_budget_eq`, `NMSim.toCompOn_budget_eq`.
-* `NMSim.expect_toCompOn_outLen`: a machine's output length may be changed along an equality.
-* `NMSim.expect_congr_of_allOutputs`, `NMSim.expect_expect_sample`,
-  `NMSim.bind_congr_of_allOutputs`.
-* `NMSim.expect_simulate_eager`.
-* `NMSim.expect_eq_until_bad`: equal until bad, for functions of the final state.
 * `NMSim.polyTimeComputable_chunkMap`, `NMSim.chunkMap_flatten`.
 
 ## References
@@ -49,234 +41,6 @@ to encryption.
 namespace TCSlib.Cryptography.Composability.NMSim
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
-
-/-! ### Budget reduction -/
-
-section Budget
-
-variable {ι α : Type} {spec : OracleSpec ι}
-
-/-- **Budget reduction for `buildComp`.** If the computation of `next` at budget `K` from the log
-`hist` makes at most `j ≤ K` queries on every path, it is the computation at budget `j`:
-`buildComp next t j hist = buildComp next t K hist`.
-
-**Proof sketch.** Induction on `j`. A final output is the same at every budget. A query at budget
-`K` costs `1 ≤ j`, so `j = j' + 1` and `K = K' + 1`; both computations ask the same query and
-continue with the same log, at budgets `j'` and `K' ≥ j'`, and the continuation makes at most `j'`
-queries. At `j = 0` a query is impossible unless `K = 0`, where both give `timeout`. -/
-theorem buildComp_budget_eq (next : QueryLog spec → Move spec α) (t : α) :
-    ∀ (j K : ℕ) (hist : QueryLog spec), j ≤ K →
-      (buildComp next t K hist).CostBoundedBy (fun _ => 1) j →
-      buildComp next t j hist = buildComp next t K hist := by
-  intro j
-  induction j with
-  | zero =>
-    intro K hist _ hc
-    cases h : next hist with
-    | ret a =>
-      cases K with
-      | zero => rfl
-      | succ K => rw [buildComp_zero_of_ret h, buildComp_succ_of_ret h]
-    | query i x =>
-      cases K with
-      | zero => rfl
-      | succ K =>
-        rw [buildComp_succ_of_query h, OracleComp.costBoundedBy_query] at hc
-        exact absurd hc.1 (by omega)
-  | succ j ih =>
-    intro K hist hK hc
-    obtain ⟨K, rfl⟩ : ∃ K', K = K' + 1 := ⟨K - 1, by omega⟩
-    cases h : next hist with
-    | ret a => rw [buildComp_succ_of_ret h, buildComp_succ_of_ret h]
-    | query i x =>
-      rw [buildComp_succ_of_query h] at hc ⊢
-      rw [buildComp_succ_of_query h]
-      rw [OracleComp.costBoundedBy_query] at hc
-      congr 1
-      funext y
-      exact ih K _ (by omega) (by simpa using hc.2 y)
-
-/-- **Budget reduction for a machine:** if `D`'s computation on `x` at budget `K ≥ j` makes at
-most `j` queries on every path, it is `D`'s computation at budget `j`. -/
-theorem toCompOn_budget_eq (D : NUPPT) {β : Type} (codec : MachineCodec spec β) (n j K : ℕ)
-    (x : List Bool) (r : D.Coins n) (hjK : j ≤ K)
-    (hc : (D.toCompOn codec n K x r).CostBoundedBy (fun _ => 1) j) :
-    D.toCompOn codec n j x r = D.toCompOn codec n K x r := by
-  rw [NUPPT.toCompOn_eq] at hc ⊢
-  rw [NUPPT.toCompOn_eq]
-  exact buildComp_budget_eq _ _ j K [] hjK hc
-
-end Budget
-
-/-! ### Expectations on the possible outputs -/
-
-section Expect
-
-variable {α β : Type}
-
-/-- Two functions that agree on every possible output have the same expectation. -/
-theorem expect_congr_of_allOutputs {c : ProbComp α} {P : α → Prop} (hc : c.AllOutputs P)
-    {f g : α → ℝ} (h : ∀ a, P a → f a = g a) : ProbComp.expect c f = ProbComp.expect c g :=
-  le_antisymm (ProbComp.expect_mono_of_allOutputs hc fun a ha => (h a ha).le)
-    (ProbComp.expect_mono_of_allOutputs hc fun a ha => (h a ha).ge)
-
-/-- **Fubini for a uniform sample:** `𝔼_c[𝔼_{t ← T}[h a t]] = 𝔼_{t ← T}[𝔼_c[h a t]]`. -/
-theorem expect_expect_sample (c : ProbComp α) (T : Type) [Fintype T] [Nonempty T]
-    (h : α → T → ℝ) :
-    ProbComp.expect c (fun a => ProbComp.expect (ProbComp.sample T) (h a)) =
-      ProbComp.expect (ProbComp.sample T) fun t => ProbComp.expect c fun a => h a t := by
-  simp only [ProbComp.expect_sample]
-  rw [ProbComp.expect_const_mul, ProbComp.expect_sum]
-
-/-- Two continuations that agree on every possible output give the same computation:
-`c.bind f = c.bind g` when `f a = g a` whenever `P a`, and `c.AllOutputs P`. -/
-theorem bind_congr_of_allOutputs {ι : Type} {spec : OracleSpec ι} {c : OracleComp spec α}
-    {P : α → Prop} (hc : c.AllOutputs P) {f g : α → OracleComp spec β}
-    (h : ∀ a, P a → f a = g a) : c.bind f = c.bind g := by
-  induction c with
-  | pure a =>
-    rw [OracleComp.pure_bind, OracleComp.pure_bind]
-    exact h a (OracleComp.allOutputs_pure.1 hc)
-  | query i x k ih =>
-    rw [OracleComp.query_bind, OracleComp.query_bind]
-    congr 1
-    funext y
-    exact ih y (OracleComp.allOutputs_query.1 hc y)
-
-end Expect
-
-/-- **Changing a machine's output length along `d = d'`** keeps the law of its output read as a
-list: `𝔼[G (⟦p.1⟧, p.2)]` over the runs through `bitCodec ins outs d` and `bitCodec ins outs d'`
-agree. -/
-theorem expect_toCompOn_outLen {k : ℕ} {ins outs : Fin k → ℕ} {σ : Type}
-    (O : QueryImpl (bitSpec ins outs) σ unifSpec) (A : NUPPT) (n q : ℕ) (x : List Bool)
-    (r : A.Coins n) (s : σ) {d d' : ℕ} (hd : d = d') (G : List Bool × σ → ℝ) :
-    ProbComp.expect (simulate O (A.toCompOn (bitCodec ins outs d) n q x r) s)
-        (fun p => G (List.ofFn p.1, p.2)) =
-      ProbComp.expect (simulate O (A.toCompOn (bitCodec ins outs d') n q x r) s)
-        (fun p => G (List.ofFn p.1, p.2)) := by
-  subst hd
-  rfl
-
-/-! ### One-shot coins drawn in advance -/
-
-section Eager
-
-variable {ι σ α T : Type} {spec : OracleSpec ι} [Fintype T] [Nonempty T]
-
-/-- From a used state, an implementation that agrees with `O` there simulates like `O`. -/
-private theorem simulate_eq_of_used (O O' : QueryImpl spec σ unifSpec) (used : σ → Prop)
-    (hused : ∀ i x s, used s → O' i x s = O i x s)
-    (hstick : ∀ i x s, used s → (O i x s).AllOutputs fun p => used p.2)
-    (c : OracleComp spec α) {s : σ} (hs : used s) : simulate O' c s = simulate O c s := by
-  induction c generalizing s with
-  | pure a => rw [simulate_pure, simulate_pure]
-  | query i x k ih =>
-    rw [simulate_query, simulate_query, hused i x s hs]
-    exact bind_congr_of_allOutputs (hstick i x s hs) fun p hp => ih p.1 hp
-
-/-- **One-shot coins drawn in advance.** Let `O` be an implementation and `OE t` its variants with
-coins `t ∈ T` fixed in advance, and let `used` mark the states after the coins are spent:
-- from a used state, `OE t` is `O`, and `O` keeps the state used;
-- from an unused state, a call either does not use the coins (`OE t` is `O` for every `t`, and the
-  state stays unused), or it is the one that spends them (`O` samples `t` and runs `OE t`, and
-  every successor is used).
-
-Then from an unused state, `O`'s simulation has the law of `OE t`'s, averaged over `t`:
-`𝔼[G(simulate O c s)] = 𝔼_{t ← T} 𝔼[G(simulate (OE t) c s)]`.
-
-**Proof sketch.** Induction on `c`. From used states the two simulations coincide
-(`simulate_eq_of_used`). At a query from an unused state: in the first case, rewrite the call,
-apply the induction hypothesis at the (unused) successors and exchange the expectations
-(`expect_expect_sample`); in the second, expand `O`'s sample and conclude from the coincidence at
-the (used) successors. -/
-theorem expect_simulate_eager (O : QueryImpl spec σ unifSpec) (OE : T → QueryImpl spec σ unifSpec)
-    (used : σ → Prop) (hused : ∀ t i x s, used s → OE t i x s = O i x s)
-    (hstick : ∀ i x s, used s → (O i x s).AllOutputs fun p => used p.2)
-    (hfresh : ∀ i x s, ¬ used s →
-      (∀ t, OE t i x s = O i x s ∧ (O i x s).AllOutputs fun p => ¬ used p.2) ∨
-      (O i x s = (ProbComp.sample T).bind (fun t => OE t i x s) ∧
-        ∀ t, (OE t i x s).AllOutputs fun p => used p.2))
-    (c : OracleComp spec α) (G : α × σ → ℝ) {s : σ} (hs : ¬ used s) :
-    ProbComp.expect (simulate O c s) G =
-      ProbComp.expect (ProbComp.sample T) fun t => ProbComp.expect (simulate (OE t) c s) G := by
-  induction c generalizing s with
-  | pure a =>
-    simp only [simulate_pure, ProbComp.expect_pure]
-    exact (ProbComp.expect_const _ _).symm
-  | query i x k ih =>
-    simp only [simulate_query, ProbComp.expect_bind]
-    rcases hfresh i x s hs with h | ⟨h, hu⟩
-    · have hO : ∀ t, OE t i x s = O i x s := fun t => (h t).1
-      have hun : (O i x s).AllOutputs fun p => ¬ used p.2 :=
-        (h (Classical.arbitrary T)).2
-      simp only [hO]
-      rw [expect_congr_of_allOutputs hun fun p hp => ih p.1 hp, expect_expect_sample]
-    · rw [h, ProbComp.expect_bind]
-      refine congrArg _ (funext fun t => ?_)
-      refine expect_congr_of_allOutputs (hu t) fun p hp => ?_
-      rw [simulate_eq_of_used O (OE t) used (hused t) hstick _ hp]
-
-end Eager
-
-/-! ### Equal until bad, for functions of the final state -/
-
-section UntilBad
-
-variable {ι σ α : Type} {spec : OracleSpec ι}
-
-/-- **Equal until bad, in expectation, for functions of the output and the final state.** Let two
-implementations give, from every good state, the same law to good successors, and let each keep
-bad states bad. Then from a good state, for every function `G` of the output and the final state,
-`𝔼[G · 1_{good}]` is the same under both simulations. This generalizes `prob_eq_until_bad`
-(`Games/Hopping.lean`), whose events read only the output.
-
-**Proof sketch.** Induction on the computation. From a bad successor the continuation's value is
-`0` on both sides (`simulate_allOutputs_bad`); from a good one the two values agree by induction;
-so both expectations only see the values at good successors, which `hagree` equates. -/
-theorem expect_eq_until_bad {impl₀ impl₁ : QueryImpl spec σ unifSpec} (bad : σ → Prop)
-    [DecidablePred bad]
-    (hagree : ∀ i x s, ¬ bad s → ∀ g : spec.rng i × σ → ℝ,
-      ProbComp.expect (impl₀ i x s) (fun ys => if bad ys.2 then 0 else g ys) =
-        ProbComp.expect (impl₁ i x s) (fun ys => if bad ys.2 then 0 else g ys))
-    (hstick₀ : ∀ i x s, bad s → (impl₀ i x s).AllOutputs fun ys => bad ys.2)
-    (hstick₁ : ∀ i x s, bad s → (impl₁ i x s).AllOutputs fun ys => bad ys.2)
-    (c : OracleComp spec α) (G : α × σ → ℝ) {s : σ} (hs : ¬ bad s) :
-    ProbComp.expect (simulate impl₀ c s) (fun r => if bad r.2 then 0 else G r) =
-      ProbComp.expect (simulate impl₁ c s) (fun r => if bad r.2 then 0 else G r) := by
-  induction c generalizing s with
-  | pure a => rw [simulate_pure, simulate_pure]
-  | query i x k ih =>
-    simp only [simulate_query, ProbComp.expect_bind]
-    have hz : ∀ (impl : QueryImpl spec σ unifSpec),
-        (∀ i x s, bad s → (impl i x s).AllOutputs fun ys => bad ys.2) →
-        ∀ ys : spec.rng i × σ, bad ys.2 →
-          ProbComp.expect (simulate impl (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
-            0 := by
-      intro impl hst ys hb
-      rw [expect_congr_of_allOutputs (simulate_allOutputs_bad bad hst _ hb)
-        (g := fun _ => 0) fun r hr => if_pos hr, ProbComp.expect_const]
-    have h0 : ∀ ys : spec.rng i × σ,
-        ProbComp.expect (simulate impl₀ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
-          if bad ys.2 then 0 else
-            ProbComp.expect (simulate impl₁ (k ys.1) ys.2)
-              (fun r => if bad r.2 then 0 else G r) := by
-      intro ys
-      by_cases hb : bad ys.2
-      · rw [if_pos hb, hz impl₀ hstick₀ ys hb]
-      · rw [if_neg hb, ih ys.1 hb]
-    have h1 : ∀ ys : spec.rng i × σ,
-        ProbComp.expect (simulate impl₁ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
-          if bad ys.2 then 0 else
-            ProbComp.expect (simulate impl₁ (k ys.1) ys.2)
-              (fun r => if bad r.2 then 0 else G r) := by
-      intro ys
-      by_cases hb : bad ys.2
-      · rw [if_pos hb, hz impl₁ hstick₁ ys hb]
-      · rw [if_neg hb]
-    rw [funext h0, hagree i x s hs, ← funext h1]
-
-end UntilBad
 
 /-! ### Chunk maps -/
 

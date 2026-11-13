@@ -8,6 +8,7 @@ import TCSlib.Cryptography.Games.Simulate
 import TCSlib.Cryptography.Games.Advantage
 import TCSlib.Cryptography.Games.Hopping
 import TCSlib.Cryptography.Games.Protocols
+import TCSlib.Cryptography.Games.Forwarding
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -42,6 +43,8 @@ the interaction model `Strategy`.
 * `TCSlib.Cryptography.Games.Protocols`: parties, the message exchange, executions in a
   coroutine model that contains D8's (bridge B4), and traced executions recording received
   messages and coin draws.
+* `TCSlib.Cryptography.Games.Forwarding`: the forwarding handler, the call lemmas of interactive
+  handlers read on lists, and hard-wiring a second input component (S2b layer).
 
 ## References
 

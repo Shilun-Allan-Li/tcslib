@@ -315,7 +315,7 @@ theorem simFinish (z : List Bool)
       .pure (padFin _ (simOutL S r n (List.ofFn s) (List.ofFn a))) := by
   have ha : (List.ofFn a).length = r.eval n * S.ctLen.eval n + sl.eval n := by
     rw [List.length_ofFn, hd]
-  refine finish_of_ret _ n z ω s a _ ?_ ?_
+  refine InteractiveHandler.finish_of_ret_padFin _ n z ω s a _ ?_ ?_
   · rw [simParams_outLen_eval, simOutL_eq, List.length_append, List.length_drop, ha,
       length_flatten_map_range (S.ctLen.eval n + 1) _ _ fun i hi => ?_]
     · rw [Nat.mul_add, Nat.mul_one]
@@ -518,7 +518,7 @@ oracle (coins `ρ`) is the law of `F(realView)` over `A`'s run (coins `rA`) agai
 `rImpl … true … ρ ρ̃ (some re)`.
 
 **Proof sketch.** Transport the output length (`expect_toCompOn_outLen`); the run at budget `1` is
-the run at T2's budget (`toCompOn_budget_eq`: the handler asks at most one query,
+the run at T2's budget (`NUPPT.toCompOn_budget_eq`: the handler asks at most one query,
 `chalHandler_costBoundedBy`, and its finalization none, `simFinish`); T2's equation; the
 composition of the two simulations (`simulate_bind`, `simulate_comp`) is the hybrid's run through
 the abstraction (`simulate_eq_of_abs`, `simComp_abs`); the views agree (`idealView_simOut`). -/
@@ -566,7 +566,7 @@ theorem simRun_eq (Sim₀ : NUPPT) (n : ℕ)
       (chalHandler (simParams S samp pl hl r sl)).finCall.eval n := by
     rw [chalHandler_finCall, simParams_finCall, PolyExpr.eval_const]
     omega
-  rw [toCompOn_budget_eq Sim₀ _ n 1 _ z (φ (ω, rA)) hK (by
+  rw [NUPPT.toCompOn_budget_eq Sim₀ _ n 1 _ z (φ (ω, rA)) hK (by
     rw [← hφ z ω rA, chalHandler_init]
     refine OracleComp.CostBoundedBy.bind (q₁ := 1) (q₂ := 0) (chalHandler_costBoundedBy _ n z ω _)
       fun res => ?_
@@ -593,7 +593,7 @@ ideal acceptance rate (budget `1`) is, for every distinguisher and every `n`, th
 (under CPA).
 
 **Proof sketch.** `Sim₀` is T2's machine of the simulator's handler and `Sim` hard-wires
-`M.advice n` as the second input component (`exists_withAdviceOn`). Reindex `Sim`'s coins as
+`M.advice n` as the second input component (`NUPPT.exists_withAdviceOn`). Reindex `Sim`'s coins as
 `(ρ̃ ‖ re, rA)` (`coinsCongr`, `φ`, `seedEquiv`, `expect_sample_prod`), draw the hybrid's encryption
 coins in advance (`expect_simulate_rImpl_eager`) and reorder the samples (`expect_sample_comm`);
 pointwise this is `simRun_eq`. -/
@@ -603,7 +603,7 @@ theorem exists_simulator : ∃ Sim : NUPPT, ∀ (X : NUPPT) (n : ℕ),
   obtain ⟨Sim₀, hT2⟩ := exists_interactiveHandlerMachine A q (snmDin S pl) (snmDout S hl)
     (fun _ : Fin 1 => pl) (fun _ => hl) ((r.mul S.ctLen).add sl)
     (chalHandler (simParams S samp pl hl r sl))
-  obtain ⟨Sim, hc, hSim⟩ := NMCCA2.exists_withAdviceOn Sim₀ samp.advice samp.adv
+  obtain ⟨Sim, hc, hSim⟩ := NUPPT.exists_withAdviceOn Sim₀ samp.advice samp.adv
     samp.advice_length
   refine ⟨Sim, fun X n => ?_⟩
   obtain ⟨φ, hφ⟩ := hT2 n

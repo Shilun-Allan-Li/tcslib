@@ -46,6 +46,7 @@ information-theory layer, so statistical distance and closeness (`EpsClose`) app
 * `ProbComp.expect_sample_equiv`, `expect_sample_comm`, `expect_sample_unique`,
   `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform
   samples; `expect_sub`, `abs_expect_sub_le`: subtraction and pointwise closeness.
+* `ProbComp.expect_expect_sample`: exchanging an expectation with a uniform sample (Fubini).
 
 ## References
 
@@ -316,6 +317,17 @@ theorem expect_sample_comm [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
   rw [sum_comm]
   refine sum_congr rfl fun b _ => sum_congr rfl fun a _ => ?_
   ring
+
+/-- **Fubini for a uniform sample:** `𝔼_c[𝔼_{t ← T}[h a t]] = 𝔼_{t ← T}[𝔼_c[h a t]]`.
+
+**Proof sketch.** The inner sample is a uniform average (`expect_sample`); pull the constant
+factor and the finite sum out of the outer expectation (`expect_const_mul`, `expect_sum`). -/
+theorem expect_expect_sample (c : ProbComp α) (T : Type) [Fintype T] [Nonempty T]
+    (h : α → T → ℝ) :
+    expect c (fun a => expect (sample T) (h a)) =
+      expect (sample T) fun t => expect c fun a => h a t := by
+  simp only [expect_sample]
+  rw [expect_const_mul, expect_sum]
 
 /-- **Sampling a singleton type** returns its element: `𝔼_{a ← α} g a = g default`. -/
 theorem expect_sample_unique [Fintype α] [Unique α] (g : α → ℝ) :
