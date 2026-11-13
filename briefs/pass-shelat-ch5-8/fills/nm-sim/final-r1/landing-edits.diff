@@ -1,0 +1,677 @@
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
+index d888b25e2..a20f63411 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
+@@ -559,7 +559,8 @@ theorem snmView_realView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ :
+ **Proof sketch.** Entry `i` of `w` is the block `chunkAt (ctLen(n) + 1) i ⟦w⟧` (`ofFn_block`),
+ whose head is the `COPY` flag and whose tail is the ciphertext (`simEntry_fst`, `simEntry_snd`). -/
+ theorem snmView_idealView (M : MsgSampler) (n r sl : ℕ) (sk : List Bool) (ρ : M.samp.Coins n)
+-    (w : Fin (r * (S.ctLen.eval n + 1) + sl) → Bool) (sa : Option (Fin (M.paramLen.eval n) → Bool)) :
++    (w : Fin (r * (S.ctLen.eval n + 1) + sl) → Bool)
++    (sa : Option (Fin (M.paramLen.eval n) → Bool)) :
+     S.snmView (sa.getD (zeroBits (M.paramLen.eval n)))
+         (M.draw (S.msgLen.eval n) n (sa.getD (zeroBits (M.paramLen.eval n))) ρ)
+         (fun i => S.snmEntry sk (S.simEntry w i).1 (S.simEntry w i).2) (snmSigma w) =
+@@ -598,7 +599,8 @@ private theorem snmDout_eval (M : MsgSampler) (n : ℕ) :
+   | 1 => rw [snmDout_one, snmOutLens_one, PolyExpr.eval_add]
+ 
+ /-- **The real experiment's acceptance rate on T2's lengths:**
+-`accept (snmReal atk M A q r sl X n) = NMSim.realAcc S atk M.samp M.paramLen M.histLen M.hist A q r sl X n`.
++`accept (snmReal atk M A q r sl X n) =
++NMSim.realAcc S atk M.samp M.paramLen M.histLen M.hist A q r sl X n`.
+ 
+ **Proof sketch.** Transport `A`'s run (`expect_simulate_castImpl_toCompOn`, `castImpl_snmImpl`)
+ and read the view (`snmView_realView`). -/
+@@ -636,7 +638,8 @@ theorem accept_snmReal_eq (atk : Attack) (M : MsgSampler) (A : NUPPT) (q r sl :
+           p.1 p.2) rX = true then (1 : ℝ) else 0).symm
+ 
+ /-- **The ideal experiment's acceptance rate on T2's lengths:**
+-`accept (snmIdeal M Sim r sl X n) = NMSim.idealAcc S M.samp M.paramLen M.histLen M.hist Sim r sl X n`.
++`accept (snmIdeal M Sim r sl X n) =
++NMSim.idealAcc S M.samp M.paramLen M.histLen M.hist Sim r sl X n`.
+ 
+ **Proof sketch.** `simImpl_eq_histImpl`, and read the view (`snmView_idealView`). -/
+ theorem accept_snmIdeal_eq (M : MsgSampler) (Sim : NUPPT) (r sl : ℕ) (X : NUPPT) (n : ℕ) :
+@@ -756,7 +759,8 @@ Theorem 3, at one message]: Definition 172.6 implies SIM-NME′ under a chosen-p
+    `NMSim.chalHandler_costBoundedBy`), and against the history oracle it is `H_true`.
+ 3. **The NM adversary** `B` (`NMSim.exists_nmAdversary`) runs `A`; on `a` it draws `m, m̃ ← M(a)`,
+    asks its challenge on `⟨m, m̃⟩`, receives `y = Enc_pk(m_b)` and answers `A` with `⟨y, h(m)⟩`. It
+-   outputs each of `A`'s ciphertexts followed by the pair `Enc_pk(f^{msgLen})`, `Enc_pk((¬f)^{msgLen})`
++   outputs each of `A`'s ciphertexts followed by the pair
++   `Enc_pk(f^{msgLen})`, `Enc_pk((¬f)^{msgLen})`
+    for its copy flag `f = [c_i = y]`, then the same pair for each bit `x` of `a`, `m` and `σ`. By
+    correctness the two plaintexts of a pair differ, so at most one of the pair is the challenge,
+    and the distinguisher `NMSim.recDist` reads `x` back (`NMCCA2.guessBit`) and runs `D` on the
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
+index 0f6ea8e98..0087be300 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
+@@ -179,7 +179,8 @@ theorem chalHandler_stateLen_eval :
+ /-- **The encoded states:** `none` (no challenge yet) is all `false`, and `some (Y, H, a)` is
+ `[true] ‖ Y ‖ H ‖ a`. -/
+ def chalState
+-    (o : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (hl.eval n) → Bool) × (Fin (pl.eval n) → Bool))) :
++    (o : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (hl.eval n) → Bool) ×
++      (Fin (pl.eval n) → Bool))) :
+     Fin ((chalHandler P).stateLen.eval n) → Bool :=
+   match o with
+   | none => zeroBits _
+@@ -216,7 +217,8 @@ theorem ofFn_chalState_none :
+ 
+ /-- The first bit of an encoded state tells whether a challenge was recorded. -/
+ theorem headD_ofFn_chalState
+-    (o : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (hl.eval n) → Bool) × (Fin (pl.eval n) → Bool))) :
++    (o : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (hl.eval n) → Bool) ×
++      (Fin (pl.eval n) → Bool))) :
+     (List.ofFn (chalState P n o)).headD false = o.isSome := by
+   cases o with
+   | none =>
+@@ -231,7 +233,8 @@ theorem headD_ofFn_chalState
+ end State
+ 
+ /-- A padded run of `false`s is all `false`: `padFin d (0^m) = 0`. -/
+-private theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) = zeroBits d := by
++private theorem padFin_replicate_false (d m : ℕ) :
++    padFin d (List.replicate m false) = zeroBits d := by
+   funext i
+   rw [padFin_apply, zeroBits_apply]
+   by_cases h : (i : ℕ) < m
+@@ -289,22 +292,26 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
+               (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
+               (pairEncode (pairEncode (List.replicate P.j true)
+                 (pairEncode (P.qry (InteractiveHandler.input n z (List.ofFn ω)
+-                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) [])) (List.ofFn y))) [])) ++
++                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []))
++                  (List.ofFn y))) [])) ++
+             P.ansH (InteractiveHandler.input n z (List.ofFn ω)
+               (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
+               (pairEncode (pairEncode (List.replicate P.j true)
+                 (pairEncode (P.qry (InteractiveHandler.input n z (List.ofFn ω)
+-                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) [])) (List.ofFn y))) []))),
++                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []))
++                  (List.ofFn y))) []))),
+           chalState P n (some (padFin _ (P.ansY (InteractiveHandler.input n z (List.ofFn ω)
+               (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
+               (pairEncode (pairEncode (List.replicate P.j true)
+                 (pairEncode (P.qry (InteractiveHandler.input n z (List.ofFn ω)
+-                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) [])) (List.ofFn y))) []))),
++                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []))
++                  (List.ofFn y))) []))),
+             padFin _ (P.ansH (InteractiveHandler.input n z (List.ofFn ω)
+               (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
+               (pairEncode (pairEncode (List.replicate P.j true)
+                 (pairEncode (P.qry (InteractiveHandler.input n z (List.ofFn ω)
+-                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) [])) (List.ofFn y))) []))),
++                  (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []))
++                  (List.ofFn y))) []))),
+             padFin (pl.eval n) (List.ofFn x)))) := by
+   set w₀ := InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (chalState P n none)) (1 : Fin 2)
+     (List.ofFn x) [] with hw₀
+@@ -323,7 +330,8 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
+   have hpc : 1 ≤ (chalHandler P).perCall.eval n := by
+     rw [chalHandler_perCall, PolyExpr.eval_const]
+   set W₁ : (Fin ((dout' P.j).eval n) → Bool) → List Bool := fun y =>
+-    InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
++    InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (chalState P n none)) (1 : Fin 2)
++      (List.ofFn x)
+       (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
+     with hW₁
+   have hY : ∀ y, (P.ansY (W₁ y)).length = S.ctLen.eval n := fun y => by
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
+index 0be537a8a..d61b23c20 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
+@@ -34,7 +34,8 @@ to encryption.
+ 
+ * `NMSim.buildComp_budget_eq`, `NMSim.toCompOn_budget_eq`.
+ * `NMSim.expect_toCompOn_outLen`: a machine's output length may be changed along an equality.
+-* `NMSim.expect_congr_of_allOutputs`, `NMSim.expect_expect_sample`, `NMSim.bind_congr_of_allOutputs`.
++* `NMSim.expect_congr_of_allOutputs`, `NMSim.expect_expect_sample`,
++  `NMSim.bind_congr_of_allOutputs`.
+ * `NMSim.expect_simulate_eager`.
+ * `NMSim.expect_eq_until_bad`: equal until bad, for functions of the final state.
+ * `NMSim.polyTimeComputable_chunkMap`, `NMSim.chunkMap_flatten`.
+@@ -258,7 +259,8 @@ theorem expect_eq_until_bad {impl₀ impl₁ : QueryImpl spec σ unifSpec} (bad
+     have h0 : ∀ ys : spec.rng i × σ,
+         ProbComp.expect (simulate impl₀ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
+           if bad ys.2 then 0 else
+-            ProbComp.expect (simulate impl₁ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) := by
++            ProbComp.expect (simulate impl₁ (k ys.1) ys.2)
++              (fun r => if bad r.2 then 0 else G r) := by
+       intro ys
+       by_cases hb : bad ys.2
+       · rw [if_pos hb, hz impl₀ hstick₀ ys hb]
+@@ -266,7 +268,8 @@ theorem expect_eq_until_bad {impl₀ impl₁ : QueryImpl spec σ unifSpec} (bad
+     have h1 : ∀ ys : spec.rng i × σ,
+         ProbComp.expect (simulate impl₁ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
+           if bad ys.2 then 0 else
+-            ProbComp.expect (simulate impl₁ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) := by
++            ProbComp.expect (simulate impl₁ (k ys.1) ys.2)
++              (fun r => if bad r.2 then 0 else G r) := by
+       intro ys
+       by_cases hb : bad ys.2
+       · rw [if_pos hb, hz impl₁ hstick₁ ys hb]
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean
+index 4d1bd7bf8..cd298ca10 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Hybrid.lean
+@@ -391,7 +391,8 @@ theorem length_flatten_map_range (k r : ℕ) (g : ℕ → List Bool) (hg : ∀ i
+       ih fun i hi => hg i (by omega), List.map_singleton, List.flatten_singleton,
+       hg r (by omega), Nat.succ_mul]
+ 
+-/-- Blocks of `k` bits, one per element: `|(l.map g).flatten| = |l|·k` when every `g x` has `k` bits. -/
++/-- Blocks of `k` bits, one per element: `|(l.map g).flatten| = |l|·k` when every `g x` has
++`k` bits. -/
+ theorem length_flatten_map_const {α β : Type} (l : List α) (g : α → List β) (k : ℕ)
+     (hg : ∀ x, (g x).length = k) : (l.map g).flatten.length = l.length * k := by
+   induction l with
+@@ -493,8 +494,8 @@ def entryL (n : ℕ) (sk : List Bool) (copy : Bool) (c : List Bool) : List Bool
+   else false :: List.ofFn (FixedLengthScheme.decAnswer
+     (decodeFin (S.msgLen.eval n) (S.dec (pairEncode sk c))))
+ 
+-/-- `entryL S n sk copy c = if copy then true :: 0^{msgLen + 1} else false :: ⟦decAnswer (Dec_sk c)⟧`.
+--/
++/-- `entryL S n sk copy c =
++if copy then true :: 0^{msgLen + 1} else false :: ⟦decAnswer (Dec_sk c)⟧`. -/
+ theorem entryL_eq (n : ℕ) (sk : List Bool) (copy : Bool) (c : List Bool) :
+     entryL S n sk copy c = if copy then true :: List.replicate (S.msgLen.eval n + 1) false
+       else false :: List.ofFn (FixedLengthScheme.decAnswer
+@@ -662,7 +663,8 @@ theorem hybAcc_eq (atk : Attack) (b : Bool) (samp : NUPPT) (pl hl : PolyExpr)
+ `b = false` the oracle does not read `ρ'`, `rImpl_false_coins`). -/
+ theorem realAcc_eq_hybAcc (atk : Attack) (samp : NUPPT) (pl hl : PolyExpr)
+     (hist : List Bool → List Bool) (A : NUPPT) (q r sl : ℕ) (X : NUPPT) (n : ℕ) :
+-    realAcc S atk samp pl hl hist A q r sl X n = hybAcc S atk false samp pl hl hist A q r sl X n := by
++    realAcc S atk samp pl hl hist A q r sl X n =
++      hybAcc S atk false samp pl hl hist A q r sl X n := by
+   rw [realAcc_eq, hybAcc_eq]
+   refine congrArg _ (funext fun rg => congrArg _ (funext fun ρ => ?_))
+   refine (ProbComp.expect_const (ProbComp.sample (samp.Coins n)) _).symm.trans
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
+index 8af22d398..09c5d9c7b 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
+@@ -51,7 +51,8 @@ theorem stParam_nmAbs (ρ ρ' : samp.Coins n)
+     (s : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (pl.eval n) → Bool))) :
+     stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1) =
+       List.ofFn ((s.map Prod.snd).getD (zeroBits _)) := by
+-  have hs : ((PolyExpr.const 1).add (S.ctLen.add hl)).eval n = 1 + (S.ctLen.eval n + hl.eval n) := by
++  have hs : ((PolyExpr.const 1).add (S.ctLen.add hl)).eval n =
++      1 + (S.ctLen.eval n + hl.eval n) := by
+     rw [PolyExpr.eval_add, PolyExpr.eval_add, PolyExpr.eval_const]
+   cases s with
+   | none =>
+@@ -102,15 +103,19 @@ theorem recView_nmOut (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n) (ρ ρ' :
+               (pairEncode (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re))
+                 (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1)))) a
+             (stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1))
+-            (finMsg S samp n (pairSndD (pairEncode (pairFstD (S.gen.runAt n [] rg)) (samp.advice n)))
++            (finMsg S samp n
++              (pairSndD (pairEncode (pairFstD (S.gen.runAt n [] rg)) (samp.advice n)))
+               (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re))
+-              (stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1)))))))) =
++              (stParam S hl n
++                (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1)))))))) =
+       realView S samp pl n (r.eval n) (pairSndD (S.gen.runAt n [] rg)) ρ a s := by
+   have hω := nmSeed_ofFn S samp pl hl hist hist_poly r sl n ρ ρ' re
+-  have haP : (stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1)).length =
++  have haP :
++      (stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1)).length =
+       pl.eval n := by
+     rw [stParam_nmAbs, List.length_ofFn]
+-  have hmP : (finMsg S samp n (pairSndD (pairEncode (pairFstD (S.gen.runAt n [] rg)) (samp.advice n)))
++  have hmP : (finMsg S samp n
++      (pairSndD (pairEncode (pairFstD (S.gen.runAt n [] rg)) (samp.advice n)))
+       (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re))
+       (stParam S hl n (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1))).length =
+       S.msgLen.eval n := by
+@@ -177,7 +182,8 @@ theorem nmRun_eq (B₀ : NUPPT) (n : ℕ)
+             (chalHandler (nmParams S samp pl hl hist hist_poly r sl)).finCall.eval n)
+           (pairEncode (pairFstD (S.gen.runAt n [] rg)) (samp.advice n))
+           (φ (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re, rA))) none)
+-        (fun p => if (recDist S pl r X).distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg))
++        (fun p => if (recDist S pl r X).distinguisherL n
++          (S.nmOutput (pairSndD (S.gen.runAt n [] rg))
+           (p.2.map Prod.fst) (padFin ((nmLen S pl r sl).eval n * S.ctLen.eval n) (List.ofFn p.1)))
+           (NUPPT.coinsCongr (recDist_coins S pl r X).symm n rX) = true then 1 else 0) =
+       ProbComp.expect (simulate (rImpl S .cpa b samp pl hl hist n (pairFstD (S.gen.runAt n [] rg))
+@@ -238,7 +244,8 @@ the hybrid `H_b`.
+ 
+ **Proof sketch.** `B₀` is T2's machine of the NM adversary's handler and `B` hard-wires
+ `M.advice n` (`exists_withAdviceOn`). Reindex `B`'s coins as `(ρ ‖ ρ̃ ‖ re, rA)` (`coinsCongr`, `φ`,
+-`seedEquivPoly`, `seedEquiv`, `expect_sample_prod`) and the distinguisher's as `X`'s; pointwise this is
++`seedEquivPoly`, `seedEquiv`, `expect_sample_prod`) and the distinguisher's as `X`'s; pointwise
++this is
+ `nmRun_eq`, which does not read `re` (`expect_const`). -/
+ theorem exists_nmAdversary : ∃ (B : NUPPT) (qB : PolyExpr), ∀ (X : NUPPT) (n : ℕ) (b : Bool),
+     0 < S.msgLen.eval n →
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
+index 42b0f44b6..4ba7180d1 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
+@@ -59,14 +59,16 @@ theorem polyTimeComputable_guessBit : PolyTimeComputable fun w => [guessBit w] :
+     split <;> rfl
+ 
+ /-- **An entry read back** from the decryptions `v ‖ v₁ ‖ v₂` (`msgLen(n) + 1` bits each) of a
+-ciphertext and the encoding of its copy flag, on the context `⟨1^n, _⟩`: `COPY` if `guessBit (v₁ ‖ v₂)`,
++ciphertext and the encoding of its copy flag, on the context `⟨1^n, _⟩`: `COPY` if
++`guessBit (v₁ ‖ v₂)`,
+ and `false` followed by `v` otherwise. -/
+ def entF (ctx ch : List Bool) : List Bool :=
+   if guessBit (ch.drop ((S.msgLen.add (.const 1)).eval (pairFstD ctx).length)) then
+     true :: List.replicate ((S.msgLen.add (.const 1)).eval (pairFstD ctx).length) false
+   else false :: ch.take ((S.msgLen.add (.const 1)).eval (pairFstD ctx).length)
+ 
+-/-- `entF S ctx ch = if guessBit (ch.drop (msgLen + 1)) then COPY else false :: ch.take (msgLen + 1)`. -/
++/-- `entF S ctx ch =
++if guessBit (ch.drop (msgLen + 1)) then COPY else false :: ch.take (msgLen + 1)`. -/
+ theorem entF_eq (ctx ch : List Bool) :
+     entF S ctx ch =
+       if guessBit (ch.drop ((S.msgLen.add (.const 1)).eval (pairFstD ctx).length)) then
+@@ -105,7 +107,8 @@ theorem polyTimeComputable_bitG : PolyTimeComputable fun z => bitG (pairFstD z)
+ variable (pl : PolyExpr) (r sl : PolyExpr)
+ 
+ /-- **The view read back** on the parameter string `U = 1^n` from the decryptions `u`: the entries
+-`E` (`chunkMap` of `entF` over the first `r` groups of three decryptions) and the bits `B` (`chunkMap`
++`E` (`chunkMap` of `entF` over the first `r` groups of three decryptions) and the bits `B`
++(`chunkMap`
+ of `bitG` over the remaining pairs); the view is `B.take pl ‖ (B.drop pl).take msgLen ‖ E ‖
+ B.drop (pl + msgLen)`. -/
+ def recView (U u : List Bool) : List Bool :=
+@@ -149,7 +152,8 @@ theorem polyTimeComputable_recView :
+     PolyTimeComputable fun z => recView S pl r (pairFstD z) (pairSndD z) := by
+   have hF := polyTimeComputable_pairFstD
+   have hD := polyTimeComputable_pairSndD
+-  have hcut : ∀ p : PolyExpr, PolyTimeComputable (fun z => (pairSndD z).take (p.eval (pairFstD z).length)) ∧
++  have hcut : ∀ p : PolyExpr,
++      PolyTimeComputable (fun z => (pairSndD z).take (p.eval (pairFstD z).length)) ∧
+       PolyTimeComputable (fun z => (pairSndD z).drop (p.eval (pairFstD z).length)) := fun p =>
+     ⟨polyTimeComputable_pairTakePoly p, polyTimeComputable_pairDropPoly p⟩
+   have hctx : PolyTimeComputable fun z => pairEncode (pairFstD z) ([] : List Bool) :=
+@@ -173,13 +177,15 @@ theorem polyTimeComputable_recView :
+         (pairEncode (pairEncode (pairFstD z) [])
+           ((pairSndD z).drop ((r.mul ((PolyExpr.const 3).mul (S.msgLen.add (.const 1)))).eval
+             (pairFstD z).length))))) := fun _ => hF.pairEncode hB
+-  have h1 : PolyTimeComputable fun z => (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
++  have h1 : PolyTimeComputable fun z =>
++      (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
+         (pairEncode (pairEncode (pairFstD z) [])
+           ((pairSndD z).drop ((r.mul ((PolyExpr.const 3).mul (S.msgLen.add (.const 1)))).eval
+             (pairFstD z).length)))).take (pl.eval (pairFstD z).length) :=
+     ((hcut pl).1.comp (hBU pl)).congr fun z => by
+     simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+-  have h2a : PolyTimeComputable fun z => (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
++  have h2a : PolyTimeComputable fun z =>
++      (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
+         (pairEncode (pairEncode (pairFstD z) [])
+           ((pairSndD z).drop ((r.mul ((PolyExpr.const 3).mul (S.msgLen.add (.const 1)))).eval
+             (pairFstD z).length)))).drop (pl.eval (pairFstD z).length) :=
+@@ -193,7 +199,8 @@ theorem polyTimeComputable_recView :
+         (S.msgLen.eval (pairFstD z).length) :=
+     ((hcut S.msgLen).1.comp (hF.pairEncode h2a)).congr fun z => by
+         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+-  have h3 : PolyTimeComputable fun z => (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
++  have h3 : PolyTimeComputable fun z =>
++      (chunkMap ((PolyExpr.const 2).mul (S.msgLen.add (.const 1))) bitG
+         (pairEncode (pairEncode (pairFstD z) [])
+           ((pairSndD z).drop ((r.mul ((PolyExpr.const 3).mul (S.msgLen.add (.const 1)))).eval
+             (pairFstD z).length)))).drop ((pl.add S.msgLen).eval (pairFstD z).length) :=
+@@ -283,19 +290,22 @@ theorem ctLen_pos (n : ℕ) (rg : S.gen.Coins n) (re : S.enc.Coins n) (hL : 0 <
+ **Proof sketch.** The two ciphertexts decrypt to `x^{msgLen}` and `(¬x)^{msgLen}` (correctness), so
+ they differ and at most one is the challenge: `guessBit_valid` or `guessBit_refused`. -/
+ theorem guessBit_encPair (n : ℕ) (rg : S.gen.Coins n) (s' : Option (Fin (S.ctLen.eval n) → Bool))
+-    (hL : 0 < S.msgLen.eval n) (z ω st : List Bool) (hz : pairFstD z = pairFstD (S.gen.runAt n [] rg))
++    (hL : 0 < S.msgLen.eval n) (z ω st : List Bool)
++    (hz : pairFstD z = pairFstD (S.gen.runAt n [] rg))
+     (re : S.enc.Coins n) (hω : ω.drop ((samp.coins.add samp.coins).eval n) = List.ofFn re)
+     (x : Bool) :
+     guessBit ((entryL S n (pairSndD (S.gen.runAt n [] rg))
+         (decide (s'.map List.ofFn = some (encBit S samp
+           (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st))) x)))
+-        (encBit S samp (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st))) x)).drop 1 ++
++        (encBit S samp (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st)))
++          x)).drop 1 ++
+       (entryL S n (pairSndD (S.gen.runAt n [] rg))
+         (decide (s'.map List.ofFn = some (encBit S samp
+           (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st))) (!x))))
+         (encBit S samp (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st)))
+           (!x))).drop 1) = x := by
+-  have henc : ∀ y, encBit S samp (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st)))
++  have henc : ∀ y,
++      encBit S samp (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω st)))
+       y = S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg))
+         (List.ofFn fun _ : Fin (S.msgLen.eval n) => y)) re := by
+     intro y
+@@ -370,7 +380,8 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
+   have hv : ∀ c, (v c).length = S.msgLen.eval n + 1 := fun c => by
+     rw [hvdef, List.length_drop, length_entryL]
+     omega
+-  have he : ∀ x, (encBit S samp ctx x).length = S.ctLen.eval n := fun x => length_encBit S samp n _ x
++  have he : ∀ x, (encBit S samp ctx x).length = S.ctLen.eval n := fun x =>
++    length_encBit S samp n _ x
+   set cs : List (List Bool) := ((List.range (r.eval n)).map fun i =>
+       [chunkAt (S.ctLen.eval n) i a, encBit S samp ctx (f i), encBit S samp ctx (!f i)]).flatten ++
+     (bits.map fun x => [encBit S samp ctx x, encBit S samp ctx (!x)]).flatten with hcs
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
+index cc392b84e..eacd45b46 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
+@@ -101,7 +101,8 @@ theorem encBit_eq (ctx : List Bool) (x : Bool) :
+           ((samp.coins.add samp.coins).eval (pairFstD ctx).length)))) := rfl
+ 
+ /-- **The encoding of a bit** `x`: `Enc_pk(x^{msgLen}) ‖ Enc_pk((¬x)^{msgLen})`. -/
+-def encPair (ctx : List Bool) (x : Bool) : List Bool := encBit S samp ctx x ++ encBit S samp ctx (!x)
++def encPair (ctx : List Bool) (x : Bool) : List Bool :=
++  encBit S samp ctx x ++ encBit S samp ctx (!x)
+ 
+ /-- `encPair S samp ctx x = encBit ctx x ++ encBit ctx (¬x)`. -/
+ theorem encPair_eq (ctx : List Bool) (x : Bool) :
+@@ -159,7 +160,8 @@ theorem polyTimeComputable_encPair {u : List Bool → List Bool} {x : List Bool
+     (polyTimeComputable_encBit S samp hu (polyTimeComputable_not hx))
+ 
+ /-- `encF` is polynomial-time, as a function of `⟨ctx, c⟩`. -/
+-theorem polyTimeComputable_encF : PolyTimeComputable fun z => encF S samp (pairFstD z) (pairSndD z) := by
++theorem polyTimeComputable_encF :
++    PolyTimeComputable fun z => encF S samp (pairFstD z) (pairSndD z) := by
+   have hF := polyTimeComputable_pairFstD
+   have hD := polyTimeComputable_pairSndD
+   have hst : PolyTimeComputable fun z => ctxSt (pairFstD z) := hD.comp (hD.comp (hD.comp hF))
+@@ -176,7 +178,8 @@ theorem polyTimeComputable_encF : PolyTimeComputable fun z => encF S samp (pairF
+     (polyTimeComputable_and (polyTimeComputable_headD.comp hst) heq))
+ 
+ /-- `bitF` is polynomial-time, as a function of `⟨ctx, b⟩`. -/
+-theorem polyTimeComputable_bitF : PolyTimeComputable fun z => bitF S samp (pairFstD z) (pairSndD z) :=
++theorem polyTimeComputable_bitF :
++    PolyTimeComputable fun z => bitF S samp (pairFstD z) (pairSndD z) :=
+   polyTimeComputable_encPair S samp polyTimeComputable_pairFstD
+     (polyTimeComputable_headD.comp polyTimeComputable_pairSndD)
+ 
+@@ -192,7 +195,8 @@ def nmOutL (r : PolyExpr) (n : ℕ) (ctx a aP mP : List Bool) : List Bool :=
+ /-- `nmOutL S samp r n ctx a aP mP = (encF ctx c_i)_i ++ (encPair ctx x)_{x ∈ aP ‖ mP ‖ σ}`. -/
+ theorem nmOutL_eq (r : PolyExpr) (n : ℕ) (ctx a aP mP : List Bool) :
+     nmOutL S samp r n ctx a aP mP =
+-      ((List.range (r.eval n)).map fun i => encF S samp ctx (chunkAt (S.ctLen.eval n) i a)).flatten ++
++      ((List.range (r.eval n)).map fun i =>
++        encF S samp ctx (chunkAt (S.ctLen.eval n) i a)).flatten ++
+         ((aP ++ mP ++ a.drop (r.eval n * S.ctLen.eval n)).map fun x =>
+           encPair S samp ctx x).flatten := rfl
+ 
+@@ -324,7 +328,8 @@ variable (hist : List Bool → List Bool) (hist_poly : PolyTimeComputable hist)
+ 
+ /-- **The parameters of the NM adversary's handler** (on the real experiment's oracles with
+ parameter length `pl` and history `hist` of length `hl`; the outer oracles are those of
+-Definition 171.5 on T2's lengths): the first challenge `a` asks the challenge `⟨m, m̃⟩` (oracle `1`),
++Definition 171.5 on T2's lengths): the first challenge `a` asks the challenge `⟨m, m̃⟩`
++(oracle `1`),
+ with `m = M(a; ρ)` (`simMsg`) and `m̃ = M(a; ρ̃)` (`altMsg`); it answers `⟨y, h(m)⟩` with `y` the
+ outer answer. The seed is `ρ ‖ ρ̃ ‖ re`, the adversary runs on `pk = fst z`, the output is `nmLen`
+ ciphertexts (`nmFin`), and the finalization asks nothing. -/
+@@ -375,7 +380,8 @@ theorem nmParams_outLen_eval :
+ /-- The NM adversary runs `A` on `pk`: `advInput n ⟨pk, α⟩ ω = pk`. -/
+ theorem nmParams_advInput (pk α : List Bool)
+     (ω : Fin ((chalHandler (nmParams S samp pl hl hist hist_poly r sl)).seedLen.eval n) → Bool) :
+-    (chalHandler (nmParams S samp pl hl hist hist_poly r sl)).advInput n (pairEncode pk α) ω = pk := by
++    (chalHandler (nmParams S samp pl hl hist hist_poly r sl)).advInput n (pairEncode pk α) ω =
++      pk := by
+   rw [InteractiveHandler.advInput_eq, chalHandler_advIn, nmParams_advIn, seedIn_eq,
+     pairSndD_pairEncode, pairFstD_pairEncode, pairFstD_pairEncode]
+ 
+@@ -386,7 +392,8 @@ theorem length_encBit (n : ℕ) (e : List Bool) (x : Bool) :
+ 
+ /-- **The NM adversary outputs `nmLen` ciphertexts:** for `A`'s output of `r·ctLen + sl` bits, a
+ parameter of `pl` bits and a message of `msgLen` bits, `|nmOutL …| = nmLen · ctLen`. -/
+-theorem length_nmOutL (e a aP mP : List Bool) (ha : a.length = r.eval n * S.ctLen.eval n + sl.eval n)
++theorem length_nmOutL (e a aP mP : List Bool)
++    (ha : a.length = r.eval n * S.ctLen.eval n + sl.eval n)
+     (haP : aP.length = pl.eval n) (hmP : mP.length = S.msgLen.eval n) :
+     (nmOutL S samp r n (pairEncode (List.replicate n true) e) a aP mP).length =
+       (nmLen S pl r sl).eval n * S.ctLen.eval n := by
+@@ -488,7 +495,8 @@ theorem nmPair_eq (ρ ρ' : samp.Coins n) (a : Fin (pl.eval n) → Bool) :
+       List.ofFn (drawWith samp (S.msgLen.eval n) n a ρ')) := rfl
+ 
+ /-- **The abstraction of the hybrid's state** to the NM adversary's and `NM_b`'s: no challenge is
+-`(empty, none)`; the challenge `y` on `a` is `(⟨y, h(M(a; ρ)), a⟩, some (y, ⟨M(a; ρ), M(a; ρ̃)⟩))`. -/
++`(empty, none)`; the challenge `y` on `a` is
++`(⟨y, h(M(a; ρ)), a⟩, some (y, ⟨M(a; ρ), M(a; ρ̃)⟩))`. -/
+ def nmAbs (ρ ρ' : samp.Coins n) :
+     Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (pl.eval n) → Bool)) →
+       (Fin ((chalHandler (nmParams S samp pl hl hist hist_poly r sl)).stateLen.eval n) → Bool) ×
+@@ -520,7 +528,8 @@ theorem nmAbs_snd_fst (ρ ρ' : samp.Coins n)
+   | some ya => rfl
+ 
+ /-- **The NM adversary against `NM_b`'s oracles is the hybrid `H_b`:** for the input
+-`⟨pk, M.advice n⟩` and the seed `ρ ‖ ρ̃ ‖ re`, the composition of `NM_b`'s oracles (the hybrid oracle
++`⟨pk, M.advice n⟩` and the seed `ρ ‖ ρ̃ ‖ re`, the composition of `NM_b`'s oracles (the hybrid
++oracle
+ with the sampler `halfSamp` and its coin `b`, under CPA) with the NM adversary's handler, from the
+ abstracted state, is `rImpl … b … ρ ρ̃ none` with its state abstracted (`nmAbs`).
+ 
+@@ -569,7 +578,8 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
+     have hH : ∀ (s' q t : List Bool), (nmParams S samp pl hl hist hist_poly r sl).ansH
+         (InteractiveHandler.input n (pairEncode pk (samp.advice n))
+           (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s' (1 : Fin 2)
+-          (List.ofFn x) (pairEncode (pairEncode (List.replicate ((1 : Fin 2) : ℕ) true) (pairEncode q t))
++          (List.ofFn x)
++          (pairEncode (pairEncode (List.replicate ((1 : Fin 2) : ℕ) true) (pairEncode q t))
+             [])) =
+         List.ofFn (histWith hist (hl.eval n)
+           (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x)) ρ)) := by
+@@ -580,7 +590,8 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
+     have hY : ∀ (s' q t : List Bool), (nmParams S samp pl hl hist hist_poly r sl).ansY
+         (InteractiveHandler.input n (pairEncode pk (samp.advice n))
+           (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s' (1 : Fin 2)
+-          (List.ofFn x) (pairEncode (pairEncode (List.replicate ((1 : Fin 2) : ℕ) true) (pairEncode q t))
++          (List.ofFn x)
++          (pairEncode (pairEncode (List.replicate ((1 : Fin 2) : ℕ) true) (pairEncode q t))
+             [])) =
+         EnsembleLemmas.padL (S.ctLen.eval n) t := by
+       intro s' q t
+@@ -591,7 +602,8 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
+         encWith S n pk (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x))
+           (if b then ρ' else ρ)) re' := by
+       intro re'
+-      have hlen : (List.ofFn (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x)) ρ)
++      have hlen : (List.ofFn (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x))
++            ρ)
+           ++ List.ofFn (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x))
+             ρ')).length = (S.msgLen.add S.msgLen).eval n := by
+         rw [List.length_append, List.length_ofFn, List.length_ofFn, hpl]
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
+index ab0056971..c992b32cf 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
+@@ -14,7 +14,8 @@ set_option autoImplicit false
+ Generic facts about T2's interactive handlers (`Games.InteractiveHandler`), used by the two
+ machines of direction IND ⇒ SIM of [PS10, Theorem 174.8] (the simulator and the NM adversary).
+ 
+-* **Readers of a round input** `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩` (`rdU`, `rdZ`, `rdW`, `rdState`,
++* **Readers of a round input** `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩` (`rdU`, `rdZ`, `rdW`,
++  `rdState`,
+   `rdIdx`, `rdQuery`, `rdLog`, `rdAns`), with their values (`fields_input`) and their
+   polynomial-time bounds.
+ * **One call** whose first round returns (`impl_of_ret`), or asks one outer query and returns in its
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
+index 308535ce8..9c770fdf0 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
+@@ -143,9 +143,11 @@ theorem expect_sample_halfCoins (n : ℕ) (g : (halfSamp S).Coins n → ℝ) :
+ 
+ /-! ### `Ind_β` is the hybrid oracle with coin `β` -/
+ 
+-/-- **The CCA oracles of `Ind_β` are the hybrid oracle with the sampler's coin `β`** (on T2's lengths
++/-- **The CCA oracles of `Ind_β` are the hybrid oracle with the sampler's coin `β`** (on T2's
++lengths
+ with `pl = 2 · msgLen`, `hl = 0`), once the hybrid's state forgets the recorded parameter:
+-`castImpl (Ind_β) i x (s.map fst) = (rImpl … (coin β) … i x s).bind fun p => pure (p.1, p.2.map fst)`.
++`castImpl (Ind_β) i x (s.map fst) =
++(rImpl … (coin β) … i x s).bind fun p => pure (p.1, p.2.map fst)`.
+ 
+ **Proof sketch.** `Dec`: the same availability, refusal and decryption (`indImpl_dec_onSpec_cast`,
+ `rImpl_dec`), the casts keeping the strings (`ofFn_cast`). A repeated challenge repeats the record
+@@ -227,7 +229,8 @@ theorem castImpl_indImpl_abs (atk : Attack) (β : Bool) (n : ℕ) (pk sk : List
+           padFin (S.ctLen.eval n) (S.enc.runAt n (pairEncode pk (List.ofFn
+             (if β then (FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n)
+               (padFin (S.inLens n 1) (List.ofFn x)))).2 else (FixedLengthScheme.splitHalf
+-                (cast (S.indSpec_challengeDom n) (padFin (S.inLens n 1) (List.ofFn x)))).1))) re) := by
++                (cast (S.indSpec_challengeDom n)
++                  (padFin (S.inLens n 1) (List.ofFn x)))).1))) re) := by
+         rw [if_neg Bool.false_ne_true, encWith_eq, hdraw]
+       rw [he, ofFn_cast (S.outLens_one n).symm, hh, List.append_nil, Option.map_some]
+ 
+@@ -601,7 +604,8 @@ theorem entryTails_entries (n : ℕ) (sk : List Bool) (es : List (Bool × List B
+ /-- **The experiment's output is the entries' tails:** for an output string `w` of `ℓ` ciphertexts,
+ `nmOutput sk s' w` is the concatenation of the tails of the entries `entryL … [ciphertext i is
+ the challenge] (ciphertext i)`. -/
+-theorem nmOutput_eq_entryTails (n ℓ : ℕ) (sk : List Bool) (s' : Option (Fin (S.ctLen.eval n) → Bool))
++theorem nmOutput_eq_entryTails (n ℓ : ℕ) (sk : List Bool)
++    (s' : Option (Fin (S.ctLen.eval n) → Bool))
+     (w : List Bool) (hw : w.length = ℓ * S.ctLen.eval n) :
+     S.nmOutput sk s' (padFin (ℓ * S.ctLen.eval n) w) =
+       ((List.range ℓ).map fun i => (entryL S n sk
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean
+index a2ff7840c..aa5811f76 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean
+@@ -61,7 +61,8 @@ private theorem lin_expect' {α : Type} (c : ProbComp α) (f g h₀ h₁ : α 
+   exact congrArg _ (funext h)
+ 
+ /-- **The coupling in expectation:** if `T₀(e c) + T₁(e c) − (H₀ b + H₁ b)/2 = V₁ c − V₀ c` for all
+-`c`, `b`, then `2·((𝔼T₀ + 𝔼T₁)/2) − (𝔼H₀ + 𝔼H₁)/2 = 𝔼V₁ − 𝔼V₀` (uniform samples; `e` a bijection). -/
++`c`, `b`, then `2·((𝔼T₀ + 𝔼T₁)/2) − (𝔼H₀ + 𝔼H₁)/2 = 𝔼V₁ − 𝔼V₀` (uniform samples; `e` a
++bijection). -/
+ private theorem lin_sample {α β γ : Type} [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
+     [Fintype γ] [Nonempty γ] (T₀ T₁ : α → ℝ) (H₀ H₁ : β → ℝ) (V₀ V₁ : γ → ℝ) (e : γ ≃ α)
+     (h : ∀ c b, T₀ (e c) + T₁ (e c) - (H₀ b + H₁ b) / 2 = V₁ c - V₀ c) :
+@@ -136,7 +137,8 @@ theorem realAcc_copyHandler (atk : Attack) (samp : NUPPT) (pl hl : PolyExpr)
+   dsimp only
+   rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, copyHandler_outLen, hd])]
+ 
+-/-- **The SIM adversary's handler** for an NM adversary with `ℓ` output ciphertexts: `copyHandler` on
++/-- **The SIM adversary's handler** for an NM adversary with `ℓ` output ciphertexts:
++`copyHandler` on
+ the real experiment's oracles with the parameter `⟨m₀, m₁⟩` (`pl = msgLen + msgLen`), the empty
+ history and `ℓ·ctLen + 0` output bits (`r = ℓ`, `sl = 0`). -/
+ def simHandler (ℓ : PolyExpr) :
+@@ -146,7 +148,8 @@ def simHandler (ℓ : PolyExpr) :
+ 
+ /-- `simHandler S ℓ = copyHandler S (msgLen + msgLen) 0 (ℓ·ctLen + 0)`. -/
+ theorem simHandler_eq (ℓ : PolyExpr) :
+-    simHandler S ℓ = copyHandler S (S.msgLen.add S.msgLen) (.const 0) ((ℓ.mul S.ctLen).add (.const 0)) :=
++    simHandler S ℓ =
++      copyHandler S (S.msgLen.add S.msgLen) (.const 0) ((ℓ.mul S.ctLen).add (.const 0)) :=
+   rfl
+ 
+ /-- **The real experiment with the sampler `⟨m₀, m₁⟩ ↦ m_β`** is the average over `β` of `A`'s runs
+@@ -171,13 +174,16 @@ private theorem realAcc_half (atk : Attack) (A A' : NUPPT) (q ℓ : PolyExpr) (K
+         ((PolyExpr.const 0).eval n) X n =
+       expect (sample (S.gen.Coins n)) fun rg =>
+         ((expect (sample (A.Coins n)) fun r => expect (sample (X.Coins n)) fun rX =>
+-          expect (runB S atk A (q.eval n) (ℓ.eval n) n (fun _ => []) (pairFstD (S.gen.runAt n [] rg))
++          expect (runB S atk A (q.eval n) (ℓ.eval n) n (fun _ => [])
++            (pairFstD (S.gen.runAt n [] rg))
+             (pairSndD (S.gen.runAt n [] rg)) r ρ' false) fun p =>
+             if X.distinguisherL n (realView S (halfSamp S) (S.msgLen.add S.msgLen) n (ℓ.eval n)
+-              (pairSndD (S.gen.runAt n [] rg)) ((halfCoins S n).symm false) (List.ofFn p.1) p.2) rX =
++              (pairSndD (S.gen.runAt n [] rg)) ((halfCoins S n).symm false) (List.ofFn p.1)
++              p.2) rX =
+               true then 1 else 0) +
+         (expect (sample (A.Coins n)) fun r => expect (sample (X.Coins n)) fun rX =>
+-          expect (runB S atk A (q.eval n) (ℓ.eval n) n (fun _ => []) (pairFstD (S.gen.runAt n [] rg))
++          expect (runB S atk A (q.eval n) (ℓ.eval n) n (fun _ => [])
++            (pairFstD (S.gen.runAt n [] rg))
+             (pairSndD (S.gen.runAt n [] rg)) r ρ' true) fun p =>
+             if X.distinguisherL n (realView S (halfSamp S) (S.msgLen.add S.msgLen) n (ℓ.eval n)
+               (pairSndD (S.gen.runAt n [] rg)) ((halfCoins S n).symm true) (List.ofFn p.1) p.2) rX =
+@@ -295,7 +301,8 @@ theorem ideal_gap (Sim D : NUPPT) (r n : ℕ) :
+       expect (simulate (histImpl S (halfSamp S) (S.msgLen.add S.msgLen) (.const 0) (fun _ => []) n
+           ((halfCoins S n).symm false))
+         (Sim.toCompOn (bitCodec (fun _ => (S.msgLen.add S.msgLen).eval n)
+-          (fun _ => (PolyExpr.const 0).eval n) (r * (S.ctLen.eval n + 1) + (PolyExpr.const 0).eval n))
++          (fun _ => (PolyExpr.const 0).eval n)
++          (r * (S.ctLen.eval n + 1) + (PolyExpr.const 0).eval n))
+           n 1 (pairFstD (S.gen.runAt n [] rg)) rS) none) fun p =>
+         2⁻¹ * ((if X.distinguisherL n (idealView S (halfSamp S) (S.msgLen.add S.msgLen) n r
+             (pairSndD (S.gen.runAt n [] rg)) ((halfCoins S n).symm false) (List.ofFn p.1) p.2) rX =
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
+index 8a52f9218..17972fdf4 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
+@@ -208,7 +208,8 @@ theorem length_flagF (ctx c : List Bool) : (flagF S ctx c).length = c.length + 1
+ returns `⟨[true], simOutL …⟩`. -/
+ theorem simFin_finInput (r sl : PolyExpr) (n : ℕ) (z ω s a L : List Bool)
+     (ha : a.length = r.eval n * S.ctLen.eval n + sl.eval n) :
+-    simFin S r (InteractiveHandler.finInput n z ω s a L) = pairEncode [true] (simOutL S r n s a) := by
++    simFin S r (InteractiveHandler.finInput n z ω s a L) =
++      pairEncode [true] (simOutL S r n s a) := by
+   obtain ⟨hU, -, -, hA, -⟩ := fields_finInput n z ω s a L
+   rw [simFin_eq, hU, hA, finSt_finInput, List.length_replicate, PolyExpr.eval_mul, simOutL_eq]
+   congr 2
+@@ -359,7 +360,8 @@ theorem simAbs_snd (ρ : samp.Coins n)
+   | none => rfl
+   | some ya => rfl
+ 
+-/-- **The dummy challenge in a round of the simulator** (input `⟨pk, M.advice n⟩`, seed `ρ̃ ‖ re`, on
++/-- **The dummy challenge in a round of the simulator** (input `⟨pk, M.advice n⟩`, seed
++`ρ̃ ‖ re`, on
+ the parameter `x`): `simCt … = ⟦Enc_pk(M(x; ρ̃); re)⟧`. -/
+ theorem simCt_input (pk : List Bool) (ρ' : samp.Coins n) (re : S.enc.Coins n) (s : List Bool)
+     (x : Fin ((snmDin S pl 1).eval n) → Bool) (L : List Bool) :
+@@ -390,7 +392,8 @@ CPA) with its state abstracted (`simAbs`).
+ **Proof sketch.** Query by query: `Dec` is `⊥` on both sides (`chalHandler_impl_dec`,
+ `rImpl_dec_cpa`); a repeated challenge repeats `⟨y, h(M(a; ρ))⟩` (`chalHandler_impl_some`,
+ `rImpl_some`); a first challenge asks `a`, receives `h(M(a; ρ))` (`histImpl_eq`) and answers
+-`⟨Enc_pk(M(a; ρ̃); re), h(M(a; ρ))⟩` (`chalHandler_impl_none`, `simCt_input`, `rImpl_none_eager`). -/
++`⟨Enc_pk(M(a; ρ̃); re), h(M(a; ρ))⟩` (`chalHandler_impl_none`, `simCt_input`,
++`rImpl_none_eager`). -/
+ theorem simComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins n) (i : Fin 2)
+     (x : (bitSpecAt (snmDin S pl) (snmDout S hl) n).dom i)
+     (s : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (pl.eval n) → Bool))) :
+@@ -417,7 +420,8 @@ theorem simComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coin
+       show (snmDin S pl 1).eval n = _
+       rw [snmDin_one]
+     have hq : ∀ (s' : List Bool) (L : List Bool),
+-        (simParams S samp pl hl r sl).qry (InteractiveHandler.input n (pairEncode pk (samp.advice n))
++        (simParams S samp pl hl r sl).qry
++          (InteractiveHandler.input n (pairEncode pk (samp.advice n))
+           (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s'
+           (1 : Fin 2) (List.ofFn x) L) = List.ofFn (padFin (pl.eval n) (List.ofFn x)) := by
+       intro s' L
+@@ -425,7 +429,8 @@ theorem simComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coin
+         (fields_input (k := 2) n _ _ s' 1 _ L).2.2.2.2.2.1, List.length_replicate,
+         ofFn_padFin_eq_padL]
+     have hH : ∀ (s' q : List Bool) (y : Fin (hl.eval n) → Bool),
+-        (simParams S samp pl hl r sl).ansH (InteractiveHandler.input n (pairEncode pk (samp.advice n))
++        (simParams S samp pl hl r sl).ansH
++          (InteractiveHandler.input n (pairEncode pk (samp.advice n))
+           (List.ofFn (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n (ρ', re))) s'
+           (1 : Fin 2) (List.ofFn x) (pairEncode (pairEncode (List.replicate 0 true)
+             (pairEncode q (List.ofFn y))) [])) = List.ofFn y := by
+@@ -515,7 +520,8 @@ theorem simRun_eq (Sim₀ : NUPPT) (n : ℕ)
+     (φ : (Fin ((chalHandler (simParams S samp pl hl r sl)).seedLen.eval n) → Bool) × A.Coins n ≃
+       Sim₀.Coins n)
+     (hφ : ∀ (z : List Bool)
+-      (ω : Fin ((chalHandler (simParams S samp pl hl r sl)).seedLen.eval n) → Bool) (rA : A.Coins n),
++      (ω : Fin ((chalHandler (simParams S samp pl hl r sl)).seedLen.eval n) → Bool)
++      (rA : A.Coins n),
+       (simulate ((chalHandler (simParams S samp pl hl r sl)).impl n z ω)
+           (A.toCompOn (bitCodec (fun i => (snmDin S pl i).eval n) (fun i => (snmDout S hl i).eval n)
+             (((r.mul S.ctLen).add sl).eval n)) n (q.eval n)
+@@ -543,7 +549,8 @@ theorem simRun_eq (Sim₀ : NUPPT) (n : ℕ)
+     rw [PolyExpr.eval_add, PolyExpr.eval_mul]
+   have hfin : ∀ (st : Fin ((chalHandler (simParams S samp pl hl r sl)).stateLen.eval n) → Bool)
+       (a : Fin (((r.mul S.ctLen).add sl).eval n) → Bool),
+-      (chalHandler (simParams S samp pl hl r sl)).finish n z ω st a = .pure (padFin _ (simOutL S r n (List.ofFn st) (List.ofFn a))) :=
++      (chalHandler (simParams S samp pl hl r sl)).finish n z ω st a =
++        .pure (padFin _ (simOutL S r n (List.ofFn st) (List.ofFn a))) :=
+     fun st a => simFinish S samp pl hl r sl n z ω st a hdα
+   -- The output length, the budget and T2.
+   refine (expect_toCompOn_outLen _ Sim₀ n 1 z _ none
+@@ -558,7 +565,8 @@ theorem simRun_eq (Sim₀ : NUPPT) (n : ℕ)
+     refine OracleComp.CostBoundedBy.bind (q₁ := 1) (q₂ := 0) (chalHandler_costBoundedBy _ n z ω _)
+       fun res => ?_
+     rw [hfin]
+-    exact OracleComp.costBoundedBy_pure _ _ _), ← hφ z ω rA, simParams_advInput, chalHandler_init, simulate_bind,
++    exact OracleComp.costBoundedBy_pure _ _ _), ← hφ z ω rA, simParams_advInput, chalHandler_init,
++    simulate_bind,
+     simulate_comp, ← simAbs_none S samp pl hl hist r sl n ρ,
+     simulate_eq_of_abs _ _ _ (simComp_abs S samp pl hl hist r sl n pk sk ρ ρ' re),
+     OracleComp.bind_assoc, OracleComp.bind_assoc]
