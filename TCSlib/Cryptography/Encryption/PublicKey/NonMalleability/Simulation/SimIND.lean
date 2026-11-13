@@ -46,8 +46,6 @@ oracle's run with the coin `β` (`accept_nmGame_eq_rImpl`).
 namespace TCSlib.Cryptography.Composability.NMSim
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
-open AdaptiveCPA (castImpl castImpl_eq ofFn_cast ofFn_splitHalf_fst ofFn_splitHalf_snd
-  padFin_ofFn_zeroBits expect_simulate_castImpl_toCompOn simulate_eq_of_abs)
 
 variable (S : FixedLengthPKScheme)
 
@@ -128,7 +126,7 @@ theorem ofFn_drawWith_half (n : ℕ) {k : ℕ} (a : Fin k → Bool)
     List.ofFn (drawWith (halfSamp S) (S.msgLen.eval n) n a ((halfCoins S n).symm β)) =
       if β then (List.ofFn a).drop (S.msgLen.eval n) else (List.ofFn a).take (S.msgLen.eval n) := by
   rw [drawWith_eq, halfSamp_runAt, headD_ofFn_halfCoins_symm]
-  refine GGMRed.ofFn_padFin_of_length ?_
+  refine ofFn_padFin_of_length ?_
   cases β <;> simp only [Bool.false_eq_true, ↓reduceIte, List.length_take, List.length_drop,
     List.length_ofFn] <;> omega
 
@@ -137,7 +135,7 @@ theorem ofFn_drawWith_half (n : ℕ) {k : ℕ} (a : Fin k → Bool)
 theorem expect_sample_halfCoins (n : ℕ) (g : (halfSamp S).Coins n → ℝ) :
     expect (sample ((halfSamp S).Coins n)) g =
       (g ((halfCoins S n).symm false) + g ((halfCoins S n).symm true)) / 2 := by
-  rw [← expect_sample_equiv (halfCoins S n).symm, expect_sample, Fintype.sum_bool,
+  rw [← ProbComp.expect_sample_equiv (halfCoins S n).symm, expect_sample, Fintype.sum_bool,
     Fintype.card_bool]
   ring
 
@@ -178,11 +176,11 @@ theorem castImpl_indImpl_abs (atk : Attack) (β : Bool) (n : ℕ) (pk sk : List 
         padFin (S.ctLen.eval n) (List.ofFn x) := by
       apply List.ofFn_injective
       rw [ofFn_cast (S.inLens_zero n),
-        GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hd0, S.inLens_zero]),
-        GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hd0])]
+        ofFn_padFin_of_length (by rw [List.length_ofFn, hd0, S.inLens_zero]),
+        ofFn_padFin_of_length (by rw [List.length_ofFn, hd0])]
     have hx : List.ofFn (padFin (S.ctLen.eval n) (List.ofFn x)) = List.ofFn x :=
-      GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hd0])
-    rw [castImpl_eq, S.indImpl_dec_onSpec_cast, rImpl_dec, hc, Option.isSome_map, hx]
+      ofFn_padFin_of_length (by rw [List.length_ofFn, hd0])
+    rw [Games.castImpl_eq, S.indImpl_dec_onSpec_cast, rImpl_dec, hc, Option.isSome_map, hx]
     by_cases hcond : (FixedLengthScheme.decOpen atk s.isSome &&
         !decide (s.map Prod.fst = some (padFin (S.ctLen.eval n) (List.ofFn x)))) = true
     · rw [if_pos hcond, if_pos hcond, OracleComp.pure_bind, OracleComp.pure_bind]
@@ -190,7 +188,7 @@ theorem castImpl_indImpl_abs (atk : Attack) (β : Bool) (n : ℕ) (pk sk : List 
       rw [ofFn_cast (S.outLens_zero n).symm]
     · rw [if_neg hcond, if_neg hcond, OracleComp.pure_bind, OracleComp.pure_bind]
       dsimp only
-      rw [padFin_ofFn_zeroBits]
+      rw [Games.padFin_ofFn_zeroBits]
   | 1, x =>
     have hh : ∀ {ℓ : ℕ} (m : Fin ℓ → Bool),
         List.ofFn (histWith hist ((PolyExpr.const 0).eval n) m) = [] := fun m =>
@@ -198,12 +196,12 @@ theorem castImpl_indImpl_abs (atk : Attack) (β : Bool) (n : ℕ) (pk sk : List 
     cases s with
     | some ya =>
       obtain ⟨y, a⟩ := ya
-      rw [Option.map_some, castImpl_eq, S.indImpl_challenge_repeat_onSpec, OracleComp.pure_bind,
-        rImpl_some, OracleComp.pure_bind]
+      rw [Option.map_some, Games.castImpl_eq, S.indImpl_challenge_repeat_onSpec,
+        OracleComp.pure_bind, rImpl_some, OracleComp.pure_bind]
       dsimp only
       rw [ofFn_cast (S.outLens_one n).symm, hh, List.append_nil, Option.map_some]
     | none =>
-      rw [Option.map_none, castImpl_eq, S.indImpl_challenge_none_onSpec, rImpl_none_lazy,
+      rw [Option.map_none, Games.castImpl_eq, S.indImpl_challenge_none_onSpec, rImpl_none_lazy,
         OracleComp.bind_assoc, OracleComp.bind_assoc]
       refine congrArg _ (funext fun re => ?_)
       rw [OracleComp.pure_bind, rImpl_none_eager, OracleComp.pure_bind]
@@ -217,12 +215,13 @@ theorem castImpl_indImpl_abs (atk : Attack) (β : Bool) (n : ℕ) (pk sk : List 
             (padFin (S.inLens n 1) (List.ofFn x))) =
             List.ofFn (padFin ((S.msgLen.add S.msgLen).eval n) (List.ofFn x)) := by
           rw [ofFn_cast (S.inLens_one n),
-            GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hd1, hpl, S.inLens_one]),
-            GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hd1])]
+            ofFn_padFin_of_length (by rw [List.length_ofFn, hd1, hpl, S.inLens_one]),
+            ofFn_padFin_of_length (by rw [List.length_ofFn, hd1])]
         rw [ofFn_drawWith_half S n _ hpl]
         cases β
-        · rw [if_neg Bool.false_ne_true, if_neg Bool.false_ne_true, ofFn_splitHalf_fst, hx]
-        · rw [if_pos rfl, if_pos rfl, ofFn_splitHalf_snd, hx]
+        · rw [if_neg Bool.false_ne_true, if_neg Bool.false_ne_true,
+            FixedLengthScheme.ofFn_splitHalf_fst, hx]
+        · rw [if_pos rfl, if_pos rfl, FixedLengthScheme.ofFn_splitHalf_snd, hx]
       have he : encWith S n pk (drawWith (halfSamp S) (S.msgLen.eval n) n
           (padFin ((S.msgLen.add S.msgLen).eval n) (List.ofFn x))
           (if false = true then ρ' else (halfCoins S n).symm β)) re =
@@ -276,12 +275,13 @@ theorem accept_nmGame_eq_rImpl (atk : Attack) (A : NUPPT) (q ℓ : ℕ) (D : NUP
     dsimp only
     rw [padFin_ofFn]
   rw [prob_bind, S.nmCodec_eq_bitCodec, h2]
-  refine (expect_simulate_castImpl_toCompOn (snmDin_eval_inLens S n) (snmDout_eval_outLens S n)
-    rfl (S.indImpl atk β n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg))) A n q
+  refine (Games.expect_simulate_castImpl_toCompOn (snmDin_eval_inLens S n)
+    (snmDout_eval_outLens S n) rfl
+    (S.indImpl atk β n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg))) A n q
     _ r none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
       if D.distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) p.2
         (padFin (ℓ * S.ctLen.eval n) p.1)) rD = true then (1 : ℝ) else 0)).symm.trans ?_
-  have habs := simulate_eq_of_abs _ _ (Option.map Prod.fst)
+  have habs := Games.simulate_eq_of_abs _ _ (Option.map Prod.fst)
     (fun i x s => castImpl_indImpl_abs S atk β n (pairFstD (S.gen.runAt n [] rg))
       (pairSndD (S.gen.runAt n [] rg)) hist ρ' i x s)
     (A.toCompOn (bitCodec (fun i => (snmDin S (S.msgLen.add S.msgLen) i).eval n)
@@ -358,7 +358,7 @@ theorem copyHandler_finish (pl hl outLen : PolyExpr) (n : ℕ) (z : List Bool)
   show decodeBitMove _ _ _ ((copyHandler S pl hl outLen).finRun _) = _
   rw [hfin, copyFin, (fields_finInput _ _ _ _ _ _).2.2.2.1]
   have hw : List.ofFn (padFin ((copyHandler S pl hl outLen).outLen.eval n) (List.ofFn a)) =
-      List.ofFn a := GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hol, hd])
+      List.ofFn a := ofFn_padFin_of_length (by rw [List.length_ofFn, hol, hd])
   exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
     (decodeBitMove_ret _ _ _ _)
 
@@ -624,7 +624,7 @@ theorem nmOutput_eq_entryTails (n ℓ : ℕ) (sk : List Bool)
   rw [List.getElem_ofFn, List.getElem_map, List.getElem_range, entryL_drop_one, S.nmDecrypt_eq]
   have hc : List.ofFn (S.nthCt (padFin (ℓ * S.ctLen.eval n) w) ⟨i, by
       rw [List.length_ofFn] at h₁; exact h₁⟩) = chunkAt (S.ctLen.eval n) i w := by
-    rw [S.ofFn_nthCt, GGMRed.ofFn_padFin_of_length hw, chunkAt_eq]
+    rw [S.ofFn_nthCt, ofFn_padFin_of_length hw, chunkAt_eq]
   have hcopy : (s' = some (S.nthCt (padFin (ℓ * S.ctLen.eval n) w) ⟨i, by
       rw [List.length_ofFn] at h₁; exact h₁⟩)) ↔
       s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i w) := by
@@ -846,21 +846,21 @@ theorem real_identity (D : NUPPT) (rD : D.Coins n) (ρ'' : (halfDist S).Coins n)
           expect (runB S atk A q ℓ n hist pk sk r ρ' β) (fun p => if badHalves S n p.2 then 0
             else f p) := by
     intro β f
-    rw [← expect_sub]
+    rw [← ProbComp.expect_sub]
     refine congrArg _ (funext fun p => ?_)
     split <;> ring
   simp only [fun β p => (hview β p).1, fun β p => (hview β p).2]
   simp only [Bool.false_eq_true, ↓reduceIte]
   have hsub0 : expect (runB S atk A q ℓ n hist pk sk r ρ' false) (fun p => 1 - v p) =
       1 - expect (runB S atk A q ℓ n hist pk sk r ρ' false) v := by
-    rw [expect_sub, expect_const]
+    rw [ProbComp.expect_sub, expect_const]
   have hsub0' : expect (runB S atk A q ℓ n hist pk sk r ρ' false)
       (fun p => if badHalves S n p.2 then 0 else 1 - v p) =
       expect (runB S atk A q ℓ n hist pk sk r ρ' false)
         (fun p => if badHalves S n p.2 then 0 else 1) -
       expect (runB S atk A q ℓ n hist pk sk r ρ' false)
         (fun p => if badHalves S n p.2 then 0 else v p) := by
-    rw [← expect_sub]
+    rw [← ProbComp.expect_sub]
     refine congrArg _ (funext fun p => ?_)
     split <;> ring
   rw [hsplit false (fun p => 1 - v p), hsplit true v, hsplit false (fun _ => 1),
