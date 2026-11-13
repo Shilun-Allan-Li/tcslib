@@ -755,7 +755,7 @@ private lemma succFieldTM_trace {m n : ℕ} {x : List Bool} (src dst : Fin m)
       subst t
       have hs : d.workTapeSymbols src = some false := by
         simpa [Cfg.workTapeSymbols, optStateBits] using hw 0 (by simp [optStateBits])
-      change (succFieldTM src dst copy).step d = _
+      rw [Nat.zero_add, MultiTapeTM.runFrom_one]
       rw [step_of_tapeAction_move (succFieldTM src dst copy) d
         (q' := SuccPhase.done false) src 0 .pos hq (by simp [succFieldTM, hs])]
       apply Cfg.ext <;> simp [succFieldCfg, afterTag, optStateBits]

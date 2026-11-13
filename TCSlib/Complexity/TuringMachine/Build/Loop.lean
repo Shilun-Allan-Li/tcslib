@@ -910,7 +910,7 @@ private lemma loop_scan_left {k : ℕ} {S : Type*} {x : List Bool}
     (hstep : ∀ j < n, tm.step (frame (j + 1)) = frame j)
     (hexit : tm.step (frame 0) = done) :
     ∀ j ≤ n, tm.runFrom (frame j) (j + 1) = done := by
-  refine Nat.rec (fun _ => hexit) ?_
+  refine Nat.rec (fun _ => (MultiTapeTM.runFrom_one _ _).trans hexit) ?_
   intro j ih hj
   calc
     tm.runFrom (frame (j + 1)) (j + 1 + 1) =
@@ -3211,6 +3211,7 @@ private lemma emCall_clear_origin (w : List Bool) (p : Fin (w.length + 2)) :
   intro n
   induction n with
   | zero =>
+    rw [Nat.zero_add, MultiTapeTM.runFrom_one]
     change (⟨0, (fun i : Fin 3 => (if i = 2 then some none else none, 0)),
       none, some (3 : Fin 4)⟩ : Action 3 Bool (Fin 4)).apply
       (emCallClearCfg w p 2 (fun _ => none) (fun _ => none) (bufferTape [true]) 0) = _

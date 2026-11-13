@@ -389,7 +389,7 @@ private lemma arMoveCfg_run {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
       (r + 1) = arCfg E e (a.apply c) := by
   intro r
   induction r with
-  | zero => intro hr; exact arMoveCfg_finish E e M c a
+  | zero => intro hr; exact (MultiTapeTM.runFrom_one _ _).trans (arMoveCfg_finish E e M c a)
   | succ r ih =>
     intro hr
     rw [MultiTapeTM.runFrom_succ_eq_step, arMoveCfg_step E e M c a ⟨r + 1, by omega⟩ (by simp)]
@@ -445,7 +445,7 @@ private lemma arWriteCfg_run {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
       (j + 1) = arMoveCfg E e c a ⟨N + 1, by omega⟩ := by
   intro j
   induction j with
-  | zero => intro hj; exact arWriteCfg_finish E e M c a
+  | zero => intro hj; exact (MultiTapeTM.runFrom_one _ _).trans (arWriteCfg_finish E e M c a)
   | succ j ih =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step, arWriteCfg_step E e M c a ⟨j + 1, by omega⟩ (by simp)]
