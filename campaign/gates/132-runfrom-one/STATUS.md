@@ -2,4 +2,4 @@
 The 403-module merged-tree replay passed (65 inherited admissions, none in the owners). 26 of 60
 whole-proof seals pass. The base-against-head comparison finds no new failing root, six roots that
 newly pass and three cascades. All 422 paired controls passed. Lint has no new findings, and every
-new and removed copy pair has a disposition. The Codex bundle is being staged. See pack.md.
+new and removed copy pair has a disposition. The Codex bundle is published (exchange `8718e8b2`) and **Ready to dispatch** (prompt.md). See pack.md.
