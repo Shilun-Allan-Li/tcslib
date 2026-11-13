@@ -21,8 +21,9 @@ and otherwise from the negated last bit of the second.
 
 This file builds the handler (`encHandler S`), whose seed is two encryption tapes. It proves
 the finalization's equation (`encHandler_finish`) and defines the distinguisher with its two
-verdicts (`guessBit_valid`, `guessBit_refused`). It also shows that at `msgLen(n) = 0` the two
-CCA2 oracles coincide (`indImpl_eq_of_msgLen_eq_zero`).
+verdicts (`guessBit_valid`, `guessBit_refused`), and shows that the verdict is polynomial-time
+(`polyTimeComputable_guessBit`). That the two CCA2 oracles coincide at `msgLen(n) = 0` is
+`FixedLengthPKScheme.indImpl_eq_of_msgLen_eq_zero` (`Encryption/PublicKey/OracleSecurity.lean`).
 
 ## Main definitions
 
@@ -34,7 +35,7 @@ CCA2 oracles coincide (`indImpl_eq_of_msgLen_eq_zero`).
 
 * `NMCCA2.simulate_encHandler_impl`, `NMCCA2.encHandler_finish`.
 * `NMCCA2.guessDist_distinguisherL`, `NMCCA2.guessBit_valid`, `NMCCA2.guessBit_refused`.
-* `NMCCA2.indImpl_eq_of_msgLen_eq_zero`.
+* `NMCCA2.polyTimeComputable_guessBit`: the verdict is polynomial-time.
 
 ## References
 
@@ -266,6 +267,16 @@ def guessBit (w : List Bool) : Bool :=
 theorem guessBit_eq (w : List Bool) :
     guessBit w = if w.headD false then (w.drop 1).headD false else !w.reverse.headD false := rfl
 
+/-- **The verdict is polynomial-time:** `PolyTimeComputable fun w => [guessBit w]` (`headD`, `tail`,
+`reverse` and `not`, through `polyTimeComputable_ite`). -/
+theorem polyTimeComputable_guessBit : PolyTimeComputable fun w => [guessBit w] :=
+  (polyTimeComputable_ite polyTimeComputable_headD
+    (polyTimeComputable_headD.comp polyTimeComputable_tail)
+    (polyTimeComputable_not
+      (polyTimeComputable_headD.comp BinArith.polyTimeComputable_reverse))).congr fun w => by
+    rw [guessBit_eq]
+    split <;> rfl
+
 /-- The distinguisher's raw function on the machine input `⟨⟨⟨1^n, w⟩, α⟩, ρ⟩`. -/
 private def guessFun (x : List Bool) : List Bool :=
   if (pairSndD (pairFstD (pairFstD x))).headD false then
@@ -276,10 +287,9 @@ private def guessFun (x : List Bool) : List Bool :=
 private theorem polyTimeComputable_guessFun : PolyTimeComputable guessFun := by
   have hw : PolyTimeComputable fun x => pairSndD (pairFstD (pairFstD x)) :=
     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)
-  exact polyTimeComputable_ite (polyTimeComputable_headD.comp hw)
-    (polyTimeComputable_headD.comp (polyTimeComputable_tail.comp hw))
-    (polyTimeComputable_not
-      (polyTimeComputable_headD.comp (BinArith.polyTimeComputable_reverse.comp hw)))
+  refine (polyTimeComputable_guessBit.comp hw).congr fun x => ?_
+  rw [Function.comp_apply, guessFun, guessBit_eq]
+  split <;> rfl
 
 /-- **The distinguisher** of the reduction (⇐): the uniform machine without coins computing
 `[guessBit w]` on its argument `w`. -/
@@ -317,29 +327,5 @@ theorem guessBit_refused {m : ℕ} (hm : 0 < m) (g : Bool) :
     rfl
   rw [FixedLengthScheme.decAnswer_some, h2, guessBit_eq, ofFn_zeroBits, List.replicate_succ]
   simp
-
-/-! ### Empty messages -/
-
-/-- **With empty messages the two CCA2 oracles coincide:** if `msgLen(n) = 0`, then
-`S.indImpl atk false n pk sk = S.indImpl atk true n pk sk` (both halves of a challenge are the
-empty message).
-
-**Proof sketch.** Compare query by query through the published equations: decryption does not
-depend on the bit (`indImpl_dec_onSpec`), a repeated challenge repeats the record
-(`indImpl_challenge_repeat_onSpec`), and a first challenge encrypts a half of the query
-(`indImpl_challenge_none_onSpec`), whose string is `[]` either way. -/
-theorem indImpl_eq_of_msgLen_eq_zero (atk : Attack) (n : ℕ) (pk sk : List Bool)
-    (h : S.msgLen.eval n = 0) : S.indImpl atk false n pk sk = S.indImpl atk true n pk sk := by
-  have h0 : ∀ f : Fin (S.msgLen.eval n) → Bool, List.ofFn f = [] := fun f =>
-    List.eq_nil_of_length_eq_zero (by rw [List.length_ofFn, h])
-  funext i x s
-  match i with
-  | 0 => rw [S.indImpl_dec_onSpec, S.indImpl_dec_onSpec]
-  | 1 =>
-    cases s with
-    | some c => rw [S.indImpl_challenge_repeat_onSpec, S.indImpl_challenge_repeat_onSpec]
-    | none =>
-      rw [S.indImpl_challenge_none_onSpec, S.indImpl_challenge_none_onSpec]
-      simp only [h0]
 
 end TCSlib.Cryptography.Composability.NMCCA2

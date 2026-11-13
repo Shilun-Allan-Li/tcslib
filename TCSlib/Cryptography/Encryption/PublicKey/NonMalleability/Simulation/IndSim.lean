@@ -198,7 +198,7 @@ theorem nmRun_eq (B₀ : NUPPT) (n : ℕ)
           none)
         (fun p => if X.distinguisherL n (realView S samp pl n (r.eval n)
           (pairSndD (S.gen.runAt n [] rg)) ρ (List.ofFn p.1) p.2) rX = true then 1 else 0) := by
-  have hct := ctLen_pos S n rg re hL
+  have hct := S.ctLen_pos n rg re hL
   have hdα : ((r.mul S.ctLen).add sl).eval n = r.eval n * S.ctLen.eval n + sl.eval n := by
     rw [PolyExpr.eval_add, PolyExpr.eval_mul]
   have hfin : ∀ (z : List Bool)

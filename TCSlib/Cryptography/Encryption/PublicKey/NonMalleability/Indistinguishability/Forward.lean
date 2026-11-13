@@ -19,10 +19,11 @@ answers are the outer oracle's (`Games.fwdHandler_impl`), so simulating it is ru
 adversary against the outer oracles (`simulate_fwdHandler_impl`).
 
 It also provides the readers of an encoded outer log: `logEmit G L` concatenates `G` of the
-successive suffixes of the nested log `L`, is polynomial-time for polynomial-time `G`
-(`polyTimeComputable_logEmit`), and on an encoded log is the concatenation of `G`'s values on the
-entries (`logEmit_encodeLog`). The readers of a finalization input are the published
-`Games.InteractiveHandler.rU`, `rZ`, `rW`, `rL` (with their `_finInput` lemmas) and `finA`.
+successive suffixes of the nested log `L` (iterate and emit, `Games.iterEmit`), is polynomial-time
+for polynomial-time `G` (`polyTimeComputable_logEmit`), and on an encoded log is the concatenation
+of `G`'s values on the entries (`logEmit_encodeLog`). The readers of a finalization input are the
+published `Games.InteractiveHandler.rU`, `rZ`, `rW`, `rL` (with their `_finInput` lemmas) and
+`finA`.
 
 ## Main definitions
 
@@ -81,49 +82,27 @@ end Forward
 
 /-- **Concatenated readings of an encoded log:** `G` applied to the successive suffixes
 `L, snd L, snd (snd L), …` of the nested log `L = ⟨e₁, ⟨e₂, ⟨…, []⟩⟩⟩`, for `|L| + 1` steps, and
-concatenated: `logEmit G L = (List.range (|L| + 1)).flatMap fun i => G (pairSndD^[i] L)`. -/
+concatenated: iterate and emit (`Games.iterEmit`) with the step `pairSndD`,
+`logEmit G L = (List.range (|L| + 1)).flatMap fun i => G (pairSndD^[i] L)`. -/
 def logEmit (G : List Bool → List Bool) (L : List Bool) : List Bool :=
-  (List.range (L.length + 1)).flatMap fun i => G (pairSndD^[i] L)
+  iterEmit pairSndD G (L.length + 1) L
 
-/-- `logEmit G L = (List.range (|L| + 1)).flatMap fun i => G (pairSndD^[i] L)`. -/
+/-- `logEmit G L = (List.range (|L| + 1)).flatMap fun i => G (pairSndD^[i] L)`
+(`Games.iterEmit_eq`). -/
 theorem logEmit_eq (G : List Bool → List Bool) (L : List Bool) :
-    logEmit G L = (List.range (L.length + 1)).flatMap fun i => G (pairSndD^[i] L) := rfl
-
-/-- The iterated second projection never lengthens a word. -/
-private theorem length_iterate_pairSndD_le (L : List Bool) (i : ℕ) :
-    (pairSndD^[i] L).length ≤ L.length := by
-  induction i with
-  | zero => exact le_rfl
-  | succ i ih =>
-    rw [Function.iterate_succ_apply']
-    exact (length_pairSndD_le _).trans ih
+    logEmit G L = (List.range (L.length + 1)).flatMap fun i => G (pairSndD^[i] L) := by
+  rw [logEmit, iterEmit_eq]
 
 /-- **The readings of an encoded log are polynomial-time** when `G` is
-(`Complexity.polyTimeComputable_iterateEmit` with the step `pairSndD`, which never lengthens a
-word, and `|L|` rounds). -/
+(`Games.polyTimeComputable_iterEmit` with the step `pairSndD`, which never lengthens a word). -/
 theorem polyTimeComputable_logEmit {G : List Bool → List Bool} (hG : PolyTimeComputable G) :
     PolyTimeComputable (logEmit G) :=
-  (polyTimeComputable_iterateEmit polyTimeComputable_pairSndD hG .var .var
-    (fun x i _ => by rw [PolyExpr.eval_var]; exact length_iterate_pairSndD_le x i)).congr
-    fun L => by rw [PolyExpr.eval_var, logEmit_eq]
+  (polyTimeComputable_iterEmit polyTimeComputable_pairSndD hG 0
+    fun y => (length_pairSndD_le y).trans (le_max_left _ _)).congr fun L => by rw [logEmit]
 
 section LogEmit
 
 variable {ι : Type} {spec : OracleSpec ι} {α : Type}
-
-/-- The second projection of an encoded log drops its first entry. -/
-private theorem iterate_pairSndD_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec)
-    (i : ℕ) : pairSndD^[i] (codec.encodeLog h) = codec.encodeLog (h.drop i) := by
-  induction i generalizing h with
-  | zero => rfl
-  | succ i ih =>
-    rw [Function.iterate_succ_apply]
-    cases h with
-    | nil =>
-      rw [MachineCodec.encodeLog_nil, pairSndD_of_pairDecode_eq_none pairDecode_nil,
-        ← MachineCodec.encodeLog_nil codec, ih, List.drop_nil, List.drop_nil]
-    | cons e t =>
-      rw [MachineCodec.encodeLog_cons, pairSndD_pairEncode, ih, List.drop_succ_cons]
 
 /-- An encoded log is at least as long as its number of entries. -/
 private theorem length_le_length_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec) :
@@ -138,18 +117,23 @@ private theorem length_le_length_encodeLog (codec : MachineCodec spec α) (h : Q
 reads only the first entry of a nonempty log, `G ⟨⟦e⟧, t⟩ = g e`, then
 `logEmit G (codec.encodeLog h) = h.flatMap g`.
 
-**Proof sketch.** The `i`-th suffix of the encoded log encodes `h.drop i`; the first `|h|`
-readings are `g` of the entries and the rest are `G [] = []`, since `|h| ≤ |L|`. -/
+**Proof sketch.** `Games.iterEmit_encode` with the encoding `codec.encodeLog`: `pairSndD` drops
+the first entry of an encoded log (`MachineCodec.encodeLog_cons`) and fixes the empty one, and
+`|h| ≤ |L|` (`length_le_length_encodeLog`). -/
 theorem logEmit_encodeLog (codec : MachineCodec spec α) (G : List Bool → List Bool)
     (g : (Σ i, spec.dom i × spec.rng i) → List Bool) (hnil : G [] = [])
     (hcons : ∀ e t, G (pairEncode (codec.encodeEntry e) t) = g e) (h : QueryLog spec) :
     logEmit G (codec.encodeLog h) = h.flatMap g := by
-  rw [logEmit_eq]
-  simp only [iterate_pairSndD_encodeLog]
-  exact flatMap_range_drop (fun l => G (codec.encodeLog l)) g
-    (by beta_reduce; rw [MachineCodec.encodeLog_nil]; exact hnil)
-    h (fun e _ t => by beta_reduce; rw [MachineCodec.encodeLog_cons]; exact hcons e _) _
-    (Nat.le_succ_of_le (length_le_length_encodeLog codec h))
+  rw [logEmit]
+  refine iterEmit_encode pairSndD G codec.encodeLog g h ?_ (fun e _ t => ?_) ?_
+    (fun e _ t => ?_) _ (Nat.le_succ_of_le (length_le_length_encodeLog codec h))
+  · rw [MachineCodec.encodeLog_nil]
+    exact pairSndD_of_pairDecode_eq_none pairDecode_nil
+  · rw [MachineCodec.encodeLog_cons, pairSndD_pairEncode]
+  · rw [MachineCodec.encodeLog_nil]
+    exact hnil
+  · rw [MachineCodec.encodeLog_cons]
+    exact hcons e _
 
 end LogEmit
 

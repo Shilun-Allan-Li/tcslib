@@ -589,7 +589,8 @@ private theorem accept_nmGame_encRed (A B : NUPPT) (q : PolyExpr) (n : ℕ)
 the handler `encHandler S` a machine `B`, with budget `q · 1 + 0`. Non-malleability for `B`, two
 output ciphertexts and `guessDist` gives a negligible bound. At `n` with `msgLen(n) > 0`, `A`'s
 CCA2 advantage equals that experiment's advantage (`accept_nmGame_encRed`). At `msgLen(n) = 0` the
-two CCA2 games coincide (`indImpl_eq_of_msgLen_eq_zero`), so `A`'s advantage is `0`. -/
+two CCA2 games coincide (`FixedLengthPKScheme.indImpl_eq_of_msgLen_eq_zero`), so `A`'s advantage
+is `0`. -/
 theorem indSecure_cca2_of_nmSecure_cca2 (h : S.NMSecure .cca2) : S.INDSecure .cca2 := by
   rw [INDSecure_iff]
   intro A q
@@ -602,7 +603,7 @@ theorem indSecure_cca2_of_nmSecure_cca2 (h : S.NMSecure .cca2) : S.INDSecure .cc
   by_cases hm : S.msgLen.eval n = 0
   · have hg : S.indGame .cca2 A (q.eval n) false n = S.indGame .cca2 A (q.eval n) true n := by
       rw [S.indGame_eq, S.indGame_eq]
-      simp only [indImpl_eq_of_msgLen_eq_zero S .cca2 n _ _ hm]
+      simp only [S.indImpl_eq_of_msgLen_eq_zero .cca2 n _ _ hm]
     rw [hg, advantage_self]
     exact (advantage_nonneg _ _).trans hn
   · obtain ⟨φ, hφ⟩ := hB n
