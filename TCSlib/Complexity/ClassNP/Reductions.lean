@@ -211,7 +211,14 @@ private lemma acceptCfg_apply (M : FinTM Bool) {x : List Bool}
   · rfl
 
 /-- The control transform commutes with every step, including a halt that
-emits the decision bit. Rejection maps to the stationary live loop. -/
+emits the decision bit. Rejection maps to the stationary live loop.
+
+**Proof sketch.** Case on the source state. A halted source does not move. If its last
+output bit is `false`, the image sits in the rejecting live state, and one step of the
+stationary loop (`acceptTM_loop` at duration one, read through `runFrom_one`) leaves it
+fixed; if the bit is `true`, the image is halted as well. For a live source, unfold one step
+of the transformed machine: it applies `acceptAction` of the source transition, which reads
+the same input and work symbols, and `acceptCfg_apply` commutes it with the transform. -/
 private lemma acceptCfg_step (M : FinTM Bool) {x : List Bool}
     (cfg : Cfg M.k Bool M.State x) :
     (acceptTM M).tm.step (acceptCfg M cfg) = acceptCfg M (M.tm.step cfg) := by
