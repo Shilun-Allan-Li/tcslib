@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Resumable sweep: check the modules of an order list in order, one per lean_check_tree call,
-until about 240 s have passed; append to <tsv>; stop at the first failure.
+until about 285 s would be passed (a long module runs alone at the start of a chunk); append to <tsv>; stop at the first failure.
 usage: sweep.py ORDER TSV LOGDIR"""
 import subprocess, time, os, sys
 order_f, tsv, LG = sys.argv[1], sys.argv[2], sys.argv[3]
@@ -21,9 +21,10 @@ if os.path.exists(bt):
         mm = re.search(r'wall=([0-9.]+)s', l)
         if mm: est[p[0]] = float(mm.group(1))
 t0 = time.time()
+ran = 0
 for m in order:
     if m in done: continue
-    if time.time() - t0 + est.get(m, 60) * 1.2 + 5 > 285:
+    if ran and time.time() - t0 + est.get(m, 60) * 1.2 + 5 > 285:
         print('PAUSE', len(done), '/', len(set(order))); sys.exit(0)
     lg = LG + '/' + m.replace('/', '.') + '.log'
     with open(lg, 'w') as f:
@@ -33,4 +34,5 @@ for m in order:
     open(tsv, 'a').write(f'{m}\t{st}\t{last}\n')
     if st != 0: print('FAIL', m); sys.exit(1)
     done.add(m)
+    ran += 1
 print('DONE', len(done), '/', len(set(order)))

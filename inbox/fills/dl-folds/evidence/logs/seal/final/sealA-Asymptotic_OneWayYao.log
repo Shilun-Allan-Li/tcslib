@@ -1,0 +1,160 @@
+/workspace/folds/scratch/seal/final/SealA_Asymptotic_OneWayYao.lean:454:35: error: Type mismatch
+  Nat.sub_le ?m.60 ?m.61
+has type
+  ?m.60 - ?m.61 ≤ ?m.60
+but is expected to have type
+  (NUPPT.inCoins ((g D)^[i] w)).length - (ρP D).eval (NUPPT.inParam ((g D)^[i] w)).length ≤
+    (pairSndD ((g D)^[i] w)).length
+/workspace/folds/scratch/seal/final/SealA_Asymptotic_OneWayYao.lean:461:2: error: Type mismatch
+  polyTimeComputable_iterateFind g_poly (acc_poly hFe hF' hPm) (ans_poly hF' hPm) T
+    (PolyExpr.var.add (PolyExpr.const 2)) fun w i x => ?m.12
+has type
+  PolyTimeComputable fun x =>
+    match List.find? (fun i => acc D ((g ?m.2)^[i] x)) (List.range (T.eval x.length + 1)) with
+    | some i => ans D ((g ?m.2)^[i] x)
+    | none => []
+but is expected to have type
+  PolyTimeComputable (yaoRaw D T)
+/workspace/folds/scratch/seal/final/SealA_Asymptotic_OneWayYao.lean:462:40: error: unsolved goals
+D : Data
+hFe : PolyTimeComputable D.Fe
+hF' : PolyTimeComputable D.F'
+hPm : PolyTimeComputable D.Pm
+T : PolyExpr
+w : List Bool
+i : ℕ
+x✝ : i ≤ T.eval w.length
+⊢ ((g ?m.21)^[i] w).length ≤ w.length + 2
+/workspace/folds/scratch/seal/final/SealA_Asymptotic_OneWayYao.lean:709:4: error: Tactic `rfl` failed: The left-hand side
+  D.A'.output
+    (NUPPT.layout (List.replicate n true)
+      (List.ofFn
+        ((blocksE (D.m.eval n) (D.outLen.eval n)).symm
+          (Function.update (prodFun f (D.m.eval n) ((blocksE (D.m.eval n) (D.inLen.eval n)) b)) (posOf hM ⋯ a) y)))
+      (D.A'.advice n) (List.ofFn c'))
+is not definitionally equal to the right-hand side
+  D.A'.runAt n
+    (List.ofFn
+      ((blocksE (D.m.eval n) (D.outLen.eval n)).symm
+        (Function.update (prodFun f (D.m.eval n) ((blocksE (D.m.eval n) (D.inLen.eval n)) b)) (posOf hM ⋯ a) y)))
+    c'
+
+D : Data
+n : ℕ
+hM : 0 < D.m.eval n
+f : (Fin (D.inLen.eval n) → Bool) → Fin (D.outLen.eval n) → Bool
+hFe : ∀ (a : Fin (D.inLen.eval n) → Bool), D.Fe (pairEncode (List.replicate n true) (List.ofFn a)) = List.ofFn (f a)
+hF' :
+  ∀ (x : Fin (D.m.eval n * D.inLen.eval n) → Bool),
+    D.F' (pairEncode (List.replicate n true) (List.ofFn x)) =
+      (List.ofFn fun i =>
+          D.Fe (pairEncode (List.replicate n true) (List.ofFn fun j => x (finProdFinEquiv (i, j))))).flatten
+hPm :
+  ∀ (pb' : Fin (n * kkOf (D.m.eval n)) → Bool),
+    D.Pm
+        (pairEncode (pairEncode (List.replicate (kkOf (D.m.eval n)) true) (List.replicate (D.m.eval n) true))
+          (List.ofFn pb')) =
+      List.replicate
+        (↑((rejectionSample (D.m.eval n) (kkOf (D.m.eval n)) n fun t j => pb' (finProdFinEquiv (t, j))).getD ⟨0, hM⟩))
+        true
+y : Fin (D.outLen.eval n) → Bool
+rest' : List Bool
+a : Fin (n * D.m.eval n) → Bool
+b : Fin (D.m.eval n * D.inLen.eval n) → Bool
+c' : Fin (D.A'.coinLen n) → Bool
+w : List Bool :=
+  NUPPT.layout (List.replicate n true) (List.ofFn y) (adv D n)
+    (List.ofFn ((roundEquiv n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n)) (a, b, c')) ++ rest')
+hw :
+  w =
+    NUPPT.layout (List.replicate n true) (List.ofFn y) (adv D n)
+      (List.ofFn ((roundEquiv n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n)) (a, b, c')) ++ rest')
+hu : NUPPT.inParam w = List.replicate n true
+hy : NUPPT.inArg w = List.ofFn y
+hα : NUPPT.inAdvice w = adv D n
+hcoins : NUPPT.inCoins w = List.ofFn ((roundEquiv n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n)) (a, b, c')) ++ rest'
+halpha : alpha1 w = D.A'.advice n
+hukk : ukk w = List.replicate (kkOf (D.m.eval n)) true
+huM : uM D w = List.replicate (D.m.eval n) true
+hrc : rc D w = List.ofFn a ++ (List.ofFn b ++ List.ofFn c')
+hnkk : nkk w = List.replicate (n * kkOf (D.m.eval n)) true
+hposBits : posBits D w = List.ofFn fun j => a (Fin.castLE ⋯ j)
+hipos : ipos D w = List.replicate (↑(posOf hM ⋯ a)) true
+hxs : xs D w = List.ofFn b
+hrcoins : rcoins D w = List.ofFn c'
+hys :
+  ys D w =
+    List.ofFn
+      ((blocksE (D.m.eval n) (D.outLen.eval n)).symm
+        (prodFun f (D.m.eval n) ((blocksE (D.m.eval n) (D.inLen.eval n)) b)))
+huOut : uOut D w = List.replicate (D.outLen.eval n) true
+hoff : off D w = List.replicate (↑(posOf hM ⋯ a) * D.outLen.eval n) true
+hplanted :
+  planted D w =
+    List.ofFn
+      ((blocksE (D.m.eval n) (D.outLen.eval n)).symm
+        (Function.update (prodFun f (D.m.eval n) ((blocksE (D.m.eval n) (D.inLen.eval n)) b)) (posOf hM ⋯ a) y))
+⊢ D.A'.output
+      (NUPPT.layout (List.replicate n true)
+        (List.ofFn
+          ((blocksE (D.m.eval n) (D.outLen.eval n)).symm
+            (Function.update (prodFun f (D.m.eval n) ((blocksE (D.m.eval n) (D.inLen.eval n)) b)) (posOf hM ⋯ a) y)))
+        (D.A'.advice n) (List.ofFn c')) =
+    D.A'.runAt n
+      (List.ofFn
+        ((blocksE (D.m.eval n) (D.outLen.eval n)).symm
+          (Function.update (prodFun f (D.m.eval n) ((blocksE (D.m.eval n) (D.inLen.eval n)) b)) (posOf hM ⋯ a) y)))
+      c'
+/workspace/folds/scratch/seal/final/SealA_Asymptotic_OneWayYao.lean:769:2: error: Type mismatch
+  StatClose.comp_equiv_left
+    (statClose_pi
+      (statClose_roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n) (kkOf (D.m.eval n)) hM
+        (LT.lt.le (lt_two_pow_kkOf (D.m.eval n))) (nkk_le n (D.m.eval n) hM))
+      (T.eval n + 1))
+    ?m.84
+has type
+  StatClose
+    (fun s t => roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n) (kkOf (D.m.eval n)) hM ⋯ (?m.84 s t))
+    (fun c t => id (c t)) (↑(T.eval n + 1) * ((1 - ↑(D.m.eval n) / 2 ^ kkOf (D.m.eval n)) ^ n + 0))
+but is expected to have type
+  StatClose (sampleAll T n hM) id (↑(T.eval n + 1) * ((1 - ↑(D.m.eval n) / 2 ^ kkOf (D.m.eval n)) ^ n + 0))
+/workspace/folds/scratch/seal/final/SealA_Asymptotic_OneWayYao.lean:928:56: error: Application type mismatch: The argument
+  r
+has type
+  A.Coins n
+but is expected to have type
+  Fin ((T.eval n + 1) * (YaoMachine.ρP D).eval n) → Bool
+in the application
+  YaoMachine.sampleAll T n hM r
+/workspace/folds/scratch/seal/final/SealA_Asymptotic_OneWayYao.lean:933:84: error: Application type mismatch: The argument
+  r
+has type
+  A.Coins n
+but is expected to have type
+  Fin ((T.eval n + 1) * (YaoMachine.ρP D).eval n) → Bool
+in the application
+  YaoMachine.yaoRaw'_layout T n hM hn (f n) (hFe_spec n) (hF'spec n) hPm' y r
+/workspace/folds/scratch/seal/final/SealA_Asymptotic_OneWayYao.lean:937:56: error: Application type mismatch: The argument
+  r
+has type
+  A.Coins n
+but is expected to have type
+  Fin ((T.eval n + 1) * (YaoMachine.ρP D).eval n) → Bool
+in the application
+  YaoMachine.sampleAll T n hM r
+/workspace/folds/scratch/seal/final/SealA_Asymptotic_OneWayYao.lean:948:73: error: Application type mismatch: The argument
+  r
+has type
+  A.Coins n
+but is expected to have type
+  Fin ((T.eval n + 1) * (YaoMachine.ρP D).eval n) → Bool
+in the application
+  YaoMachine.sampleAll T n hM r
+/workspace/folds/scratch/seal/final/SealA_Asymptotic_OneWayYao.lean:956:64: error: Application type mismatch: The argument
+  z.1
+has type
+  A.Coins n
+but is expected to have type
+  Fin ((T.eval n + 1) * (YaoMachine.ρP D).eval n) → Bool
+in the application
+  YaoMachine.sampleAll T n hM z.1

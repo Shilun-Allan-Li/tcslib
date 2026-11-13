@@ -1,0 +1,146 @@
+/workspace/folds/scratch/seal/final/SealB_Asymptotic_EnsemblesLemmas.lean:92:2: error: Type mismatch
+  uprob_eq_of_equiv ((Equiv.refl σ).prodCongr e) fun x => Iff.rfl
+has type
+  (uprob fun x => (fun w => D (X w.1) w.2 = true) (((Equiv.refl σ).prodCongr e) x)) =
+    uprob fun w => D (X w.1) w.2 = true
+but is expected to have type
+  (acceptProb X fun z c => D z (e c)) = acceptProb X D
+/workspace/folds/scratch/seal/final/SealB_Asymptotic_EnsemblesLemmas.lean:99:2: error: Type mismatch
+  Eq.trans (uprob_eq_of_equiv (Equiv.prodAssoc σ ρ κ).symm fun x => Iff.rfl) (uprob_fst fun w => D (X w.1) w.2 = true)
+has type
+  (uprob fun x => (fun w => D (X w.1.1) w.1.2 = true) ((Equiv.prodAssoc σ ρ κ).symm x)) =
+    uprob fun w => D (X w.1) w.2 = true
+but is expected to have type
+  (acceptProb X fun z c => D z c.1) = acceptProb X D
+/workspace/folds/scratch/seal/final/SealB_Asymptotic_EnsemblesLemmas.lean:128:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+σ : Type u_1
+τ : Type u_2
+γ : Type u_3
+inst✝⁴ : Fintype σ
+inst✝³ : Fintype τ
+inst✝² : Subsingleton γ
+inst✝¹ : Nonempty σ
+inst✝ : Nonempty τ
+X : σ → γ
+Y : τ → γ
+⊢ StatClose X Y 0
+/workspace/folds/scratch/seal/final/SealB_Asymptotic_EnsemblesLemmas.lean:138:78: error: Application type mismatch: The argument
+  abs_nonneg ?m.36
+has type
+  0 ≤ |?m.36|
+but is expected to have type
+  0 ≤ distAdv X Y D
+in the application
+  le_antisymm (distAdv_le_of_statClose X Y (statClose_of_subsingleton X Y) D) (abs_nonneg ?m.36)
+/workspace/folds/scratch/seal/final/SealB_Asymptotic_EnsemblesLemmas.lean:283:88: error: unsolved goals
+case e_D.h.h
+σ : Type u_1
+inst✝ : Fintype σ
+B D : NUPPT
+p : PolyExpr
+hBc : B.coins = D.coins.subst p
+hB : ∀ (n : ℕ) (y r : List Bool), B.runAtL n y r = D.runAtL (p.eval n) y r
+n m : ℕ
+X : σ → Fin m → Bool
+hlen : D.coinLen (p.eval n) = B.coinLen n
+e : D.Coins (p.eval n) ≃ B.Coins n := (finCongr hlen).arrowCongr (Equiv.refl Bool)
+z : Fin m → Bool
+c : D.Coins (p.eval n)
+hofn : List.ofFn (e c) = List.ofFn c
+⊢ decide (D.runAtL (p.eval n) (List.ofFn z) (List.ofFn c) = [true]) =
+    decide (D.runAtL (p.eval n) (List.ofFn z) (List.ofFn c) = [true])
+/workspace/folds/scratch/seal/final/SealB_Asymptotic_EnsemblesLemmas.lean:300:83: error: unsolved goals
+case e_D.h.h
+σ : Type u_1
+inst✝ : Fintype σ
+A D : NUPPT
+φ : ℕ → ℕ
+p : PolyExpr
+hAc : A.coins = D.coins.subst p
+hA : ∀ (n : ℕ) (y r : List Bool), A.runAtL n y r = D.runAtL (φ n) y (List.take (D.coinLen (φ n)) r)
+m : ℕ
+hle : D.coinLen (φ m) ≤ D.coinLen (p.eval m)
+k : ℕ
+X : σ → Fin k → Bool
+hlen : A.coinLen m = D.coinLen (φ m) + (D.coinLen (p.eval m) - D.coinLen (φ m))
+z : Fin k → Bool
+c : (Fin (D.coinLen (φ m)) → Bool) × (Fin (D.coinLen (p.eval m) - D.coinLen (φ m)) → Bool)
+⊢ decide (D.runAtL (φ m) (List.ofFn z) (List.ofFn c.1) = [true]) =
+    decide (D.runAtL (φ m) (List.ofFn z) (List.ofFn c.1) = [true])
+/workspace/folds/scratch/seal/final/SealB_Asymptotic_EnsemblesLemmas.lean:350:67: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.91 = ?m.91
+but is expected to have type
+  (NUPPT.ofPolyTime hF (M.coins.add D.coins) ((((PolyExpr.const 2).mul M.adv).add (PolyExpr.const 2)).add D.adv)
+        (fun n => NUPPT.combineAdvice (M.advice n) (D.advice n)) hadv).coins =
+    M.coins.add D.coins
+in the application
+  And.intro rfl
+/workspace/folds/scratch/seal/final/SealB_Asymptotic_EnsemblesLemmas.lean:366:43: error: unsolved goals
+case e_D.h.h
+σ : Type u_1
+inst✝ : Fintype σ
+M D B : NUPPT
+ℓ' : PolyExpr
+hBc : B.coins = M.coins.add D.coins
+hB :
+  ∀ (n : ℕ) (y r : List Bool),
+    B.runAtL n y r =
+      D.runAtL n (padL (ℓ'.eval n) (M.runAtL n y (List.take (M.coinLen n) r))) (List.drop (M.coinLen n) r)
+n m : ℕ
+X : σ → Fin m → Bool
+hlen : B.coinLen n = M.coinLen n + D.coinLen n
+z : Fin m → Bool
+c : (Fin (M.coinLen n) → Bool) × (Fin (D.coinLen n) → Bool)
+⊢ decide
+      (D.runAtL n (List.ofFn (padFin (ℓ'.eval n) (M.runAtL n (List.ofFn z) (List.ofFn c.1)))) (List.ofFn c.2) =
+        [true]) =
+    decide
+      (D.runAtL n (List.ofFn (padFin (ℓ'.eval n) (M.runAtL n (List.ofFn z) (List.ofFn c.1)))) (List.ofFn c.2) = [true])
+/workspace/folds/scratch/seal/final/SealB_Asymptotic_EnsemblesLemmas.lean:533:8: error: Type mismatch
+  uprob_eq_of_equiv (swapAux ζ ((Fin t → κX) × (Fin t → κY)) ρ) fun x => Iff.rfl
+has type
+  (uprob fun x => ?m.173 ((swapAux ζ ((Fin t → κX) × (Fin t → κY)) ρ) x)) = uprob ?m.173
+but is expected to have type
+  acceptProb Z (multicopyRed X' Y' t k D) =
+    uprob fun v =>
+      D (fun i => if ↑i < k then copies t Y' v.1.2 i else if ↑i = k then Z v.2.1 else copies t X' v.1.1 i) v.2.2 = true
+/workspace/folds/scratch/seal/final/SealB_Asymptotic_EnsemblesLemmas.lean:538:8: error: Type mismatch
+  Eq.symm (uprob_eq_of_equiv (swapAux ζ ((Fin t → σ) × (Fin t → τ)) ρ) fun x => Iff.rfl)
+has type
+  uprob ?m.230 = uprob fun x => ?m.230 ((swapAux ζ ((Fin t → σ) × (Fin t → τ)) ρ) x)
+but is expected to have type
+  (uprob fun v =>
+      D (fun i => if ↑i < k then copies t Y v.1.2 i else if ↑i = k then Z v.2.1 else copies t X v.1.1 i) v.2.2 = true) =
+    acceptProb Z (multicopyRed X Y t k D)
+/workspace/folds/scratch/seal/final/SealB_Asymptotic_EnsemblesLemmas.lean:838:37: error: Tactic `rfl` failed: The left-hand side
+  (NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).coins.add D.coins
+is not definitionally equal to the right-hand side
+  ((t.mul sX).add (t.mul sY)).add D.coins
+
+D : NUPPT
+SX SY : List Bool → List Bool
+hSX : PolyTimeComputable SX
+hSY : PolyTimeComputable SY
+sX sY ℓ t : PolyExpr
+k : ℕ → ℕ
+hk : ∀ (n : ℕ), k n ≤ t.eval n
+D₂ : NUPPT
+hD₂c : D₂.coins = D.coins
+hD₂ : ∀ (n : ℕ) (y r : List Bool), D₂.runAtL n y r = id (D.runAtL n (pairSndD y) r)
+C : NUPPT
+hCc : C.coins = (NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).coins.add D₂.coins
+hC :
+  ∀ (n : ℕ) (y r : List Bool),
+    C.runAtL n y r =
+      D₂.runAtL n
+        (pairEncode y
+          ((NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).runAtL n y
+            (List.take ((NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).coinLen n) r)))
+        (List.drop ((NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).coinLen n) r)
+B : NUPPT
+hBc : B.coins = C.coins
+hB : ∀ (n : ℕ) (y r : List Bool), B.runAtL n y r = C.runAtL n (pairEncode y (List.replicate (k n) true)) r
+⊢ (NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).coins.add D.coins = ((t.mul sX).add (t.mul sY)).add D.coins

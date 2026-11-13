@@ -1,0 +1,79 @@
+/workspace/folds/scratch/seal/final/SealA_ZeroKnowledge_GraphIsomorphism_SoundnessRep.lean:125:2: error: 'show' tactic failed, pattern
+  [decide
+        ¬Isomorphic (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
+            (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (hist.getLastD []))] =
+    ?m.20
+is not definitionally equal to target
+  gniProver.next (encInstance G₀ G₁) y r hist = [decide ¬Isomorphic G₀ (decGraphAt n (hist.getLastD []))]
+/workspace/folds/scratch/seal/final/SealA_ZeroKnowledge_GraphIsomorphism_SoundnessRep.lean:162:96: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  gniProtocolRep.outV P' x y z r =
+    gniVerifierRep.next x z (List.ofFn r.2)
+      (exec P' gniVerifierRep true x y z (List.ofFn r.1) (List.ofFn r.2) (2 * x.length)).2
+/workspace/folds/scratch/seal/final/SealA_ZeroKnowledge_GraphIsomorphism_SoundnessRep.lean:288:10: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+σ : Type u_1
+γ : Type u_2
+inst✝¹ : Fintype σ
+inst✝ : Fintype γ
+X : σ → γ
+δ : ℝ
+h : StatClose X id δ
+⊢ StatClose (fun ts k => X (ts k)) id (↑0 * δ)
+/workspace/folds/scratch/seal/final/SealA_ZeroKnowledge_GraphIsomorphism_SoundnessRep.lean:309:10: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+σ : Type u_1
+γ : Type u_2
+inst✝¹ : Fintype σ
+inst✝ : Fintype γ
+X : σ → γ
+δ : ℝ
+h : StatClose X id δ
+m : ℕ
+ih : StatClose (fun ts k => X (ts k)) id (↑m * δ)
+hp :
+  StatClose (fun s => Fin.cons (X s.1, fun k => X (s.2 k)).1 (X s.1, fun k => X (s.2 k)).2)
+    (fun t => Fin.cons (id t.1, id t.2).1 (id t.1, id t.2).2) (δ + ↑m * δ)
+h1 :
+  StatClose
+    (fun s =>
+      Fin.cons (X ((Fin.consEquiv fun x => σ).symm s).1, fun k => X (((Fin.consEquiv fun x => σ).symm s).2 k)).1
+        (X ((Fin.consEquiv fun x => σ).symm s).1, fun k => X (((Fin.consEquiv fun x => σ).symm s).2 k)).2)
+    (fun t =>
+      Fin.cons (id ((Fin.consEquiv fun x => γ).symm t).1, id ((Fin.consEquiv fun x => γ).symm t).2).1
+        (id ((Fin.consEquiv fun x => γ).symm t).1, id ((Fin.consEquiv fun x => γ).symm t).2).2)
+    (δ + ↑m * δ)
+⊢ StatClose (fun ts k => X (ts k)) id (↑(m + 1) * δ)
+/workspace/folds/scratch/seal/final/SealA_ZeroKnowledge_GraphIsomorphism_SoundnessRep.lean:372:10: error: Tactic `rfl` failed: The left-hand side
+  (fun k => encGraph (prefixLE (fun j => permGraph (bif b j then G₁ else G₀) (samplePerm n (List.ofFn (ts j)))) i k)) t
+is not definitionally equal to the right-hand side
+  encGraph (permGraph (bif b ⟨↑t, ⋯⟩ then G₁ else G₀) (samplePerm n (List.ofFn (ts ⟨↑t, ⋯⟩))))
+
+n : ℕ
+G₀ G₁ : Graph n
+σ₀ : Equiv.Perm (Fin n)
+hσ : permGraph G₀ σ₀ = G₁
+P' : Strategy
+y z : List Bool
+r₁ : P'.Coins (encInstance G₀ G₁).length
+hr₁ :
+  (uprob fun r => gniProtocolRep.outV P' (encInstance G₀ G₁) y z r = [true]) ≤
+    uprob fun r₂ => gniProtocolRep.outV P' (encInstance G₀ G₁) y z (r₁, r₂) = [true]
+b : Fin (encInstance G₀ G₁).length → Bool
+ts : Fin (encInstance G₀ G₁).length → Fin (1 * ((encInstance G₀ G₁).length + 1) ^ 2) → Bool
+i : Fin (encInstance G₀ G₁).length
+t : Fin (↑i + 1)
+⊢ (fun k => encGraph (prefixLE (fun j => permGraph (bif b j then G₁ else G₀) (samplePerm n (List.ofFn (ts j)))) i k))
+      t =
+    encGraph (permGraph (bif b ⟨↑t, ⋯⟩ then G₁ else G₀) (samplePerm n (List.ofFn (ts ⟨↑t, ⋯⟩))))
+/workspace/folds/scratch/seal/final/SealA_ZeroKnowledge_GraphIsomorphism_SoundnessRep.lean:406:16: error: Type mismatch
+  hV
+has type
+  gniVerifierRep.Efficient
+but is expected to have type
+  gniProtocolRep.V.Efficient
+/workspace/folds/scratch/seal/final/SealA_ZeroKnowledge_GraphIsomorphism_SoundnessRep.lean:409:13: error: Tactic `rcases` failed: `a✝ : Lniso x` is not an inductive datatype
+/workspace/folds/scratch/seal/final/SealA_ZeroKnowledge_GraphIsomorphism_SoundnessRep.lean:415:13: error: Tactic `rcases` failed: `x✝ : Isomorphic G₀ G₁` is not an inductive datatype

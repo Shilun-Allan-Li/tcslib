@@ -1,17 +1,188 @@
 # Fill `dl-folds` — DL-36 and DL-37 folds and accepted promotions
 
-**Status: checkpoint 3 (group E) delivered; checkpoints 1 (group G) and 2 (groups R, B, L)
-delivered before.** The final checks follow; this report is extended at each delivery.
-§1–§8 are the checkpoint-1 report (unchanged), §9 is checkpoint 2, §10 is checkpoint 3.
+**Status: final delivery.** §0 is the final summary and the final checks. §1–§8 are the
+checkpoint-1 report, §9 checkpoint 2 and §10 checkpoint 3, kept as delivered (their numbers are
+checkpoint numbers; the final ones are in §0).
 
 | | |
 |---|---|
 | Unit | `dl-folds` (brief `outbox/fills/dl-folds/brief.md`, exchange `a0a46d7c5`; `evidence/inputs/`, SHA256SUMS 7/7 OK) |
 | Worker | Claude |
 | Issue base | `d3f2290a2c66f614e8807903b89ac595086578b3` (merge of #298) on `cryptography/pass-shelat-ch2-4` |
-| Branch | local `fill/dl-folds`; checkpoint 1 = `b3f7dae2c`, checkpoint 2 = `a2b3b3a4f`, checkpoint 3 = `5ad4c0775` (three commits on the base) |
+| Branch | local `fill/dl-folds`, head `5ad4c07759ee60e6c66fcc1c3b560176267b7c10` = checkpoint 3 (three commits on the base: `b3f7dae2c` checkpoint 1, `a2b3b3a4f` checkpoint 2, `5ad4c0775` checkpoint 3); the final delivery adds evidence only |
 | Toolchain | Lean 4.25.0, Mathlib of the base's `lake-manifest.json` |
-| Order | base `order.txt` 421 modules; after checkpoint 1, `evidence/cp1/order-cp1.txt`, 422 modules; after checkpoint 2, `evidence/cp2/order-cp2.txt`, 422 modules |
+| Order | base `order.txt` 421 modules; final `evidence/final/order-final.txt`, 422 modules (`Games/Forwarding` new) |
+
+## 0. Final summary
+
+### 0.1 Items
+
+| Item | Disposition | Where |
+|---|---|---|
+| G1 budget reduction, `buildComp_of_ret` | done | §3 |
+| G2 calls and finalizations (and the private PRF copy) | done | §3 |
+| G3 `expect_toCompOn_outLen` | done | §3 |
+| G4 possible outputs, costs | done | §3 |
+| G5 one-shot coins drawn in advance | done; `ChallengeSim.expect_simulate_eager` derived | §3 |
+| G6 equal until bad in expectation | done; `prob_eq_until_bad` derived | §3 |
+| G7 forwarding handler, hard-wired advice, log readings | done (new module `Games/Forwarding.lean`) | §3 |
+| R1 finalization readers | done | §9.3 |
+| R2 round-input readers | done | §9.3 |
+| R3 answer reader (four copies) | done | §3, §9.3 |
+| B1 `chunkAt` → `coinBlock` | done | §9.3 |
+| B2 block lemmas, one block window | done (plus GGM's restatement, found by the grep) | §9.3 |
+| B3 the two `blocks` aliases | **escalated**: kept, with the list of statements a fold would change | §9.4 |
+| L1 lists | done (both ZK copies deleted) | §9.3 |
+| L2 `padFin_append_split` | done | §9.3 |
+| L3 `seedEquiv`, `seedEquivPoly` | done | §9.3 |
+| L4 `ofFn_padFin_eq_padL` | done (same statement; copy deleted) | §9.3 |
+| E1 iterate and emit | done (`logEmit`, `chunkMap` instances; `relabel` bridged) | §10.2 |
+| E2 `polyTimeComputable_guessBit` | done | §10.2 |
+| E3 `ctLen_pos`, `indImpl_eq_of_msgLen_eq_zero` | done | §10.2 |
+
+One question for the reviewer is open: the 13 NM helper headers re-pointed by R1/R2/B1 (§9.5).
+
+### 0.2 Final checks (`evidence/final/`)
+
+| Check | Result | Evidence |
+|---|---|---|
+| **Full fresh sweep** | all 422 modules of `order-final.txt` rechecked in order, one `lean_check_tree.sh` call each: **422/422 pass, 0 errors** (`CookLevin/Hardness`, 314 s, ran as its own job) | `sweep.tsv`, `sweep-logs/`, `sweep-run.log` |
+| **Sorry census** | **45 declarations in 24 modules**, identical to `base-sorries.txt` and to the base bootstrap | `sorry-census-final.txt`, `logs/sorry-census-base.txt` |
+| **Census** (36 changed and new modules, base against final) | REMOVED 110 (the listed copies and their generated auxiliaries), ADDED 83 (all public, semireducible, not `simp`, not instances), **CHANGED 1** (the generated matcher `ChallengeSim.expect_simulate_eager.match_1_1` of the G5 re-derivation: a proof artifact), REPOINTED 40 (types equal after the name map), name map complete (every removed name mapped; every old name gone and every new name present) | `census/census-final.log`, `census/census-diff-final.txt`, `../census/namemap.tsv` |
+| **Statements** (decls2 over the 36 files) | 62 ADDED, 81 REMOVED, 13 CHANGED; **13/13 identical after the textual name map** (R1/R2/B1 re-pointings in NM helper files, §9.5); **0 CHANGED in the owned files `NMI.lean`, `Simulation.lean`** | `statements/decls2-final.tsv`, `decls2-final-modmap.txt` |
+| **Audited endpoints and owned files, byte comparison** | the 16 endpoint headers and every theorem/definition header of `NMI.lean` and `Simulation.lean`: **96/96 byte-identical** | `statements/endpoint-headers.txt` (tool `tools/endpoints_headers.py`) |
+| **Definition bodies** | 26 changed: 24 re-pointings (identical after the name map) and the 2 intended E1 instances `logEmit`, `chunkMap` (types unchanged) | `statements/bodies-final.tsv`, `bodies-final-modmap.txt` |
+| **Axioms** | 1974 stored constants of the 36 modules and the 16 endpoints. Every constant uses a subset of `propext`, `Classical.choice`, `Quot.sound`, except the base's admitted `Authentication.lamport_oneTimeSecure` (`sorryAx`, as at the base). **Every endpoint: `[Classical.choice, Quot.sound, propext]`**, as at the base. Changed sets (6, all within the three): the generated `ChallengeSim.expect_simulate_eager.match_1_1` and `simParams._proof_3/_5` lose `Classical.choice`/`Quot.sound`, `simParams._proof_4` gains them (the auxiliary proofs of `simParams`' fields are renumbered by the re-pointed fields), `length_flatten_map_const` gains `Quot.sound` (now `List.length_flatten`/`List.sum_replicate_nat`), `map_coinBlock_flatten` gains `Classical.choice` (now derived from `coinBlock_flatten`). | `axioms/axioms-final.log`, `axioms/axioms-compare.txt` (base: `logs/census/axioms-base.log`; endpoints outside the base superset: the consolidation's `ENDPOINT` lines, all three axioms) |
+| **Seals A and B** (whole file, full TCSlib import closure; A = `PolyExpr.eval` exempt, B = sealed) | 47 files: the 46 base-superset files, which contain every changed file except the facade `Games.lean` (imports only, no declaration), and the new `Games/Forwarding.lean`: **0 new failing declarations**; the 17 failing variants fail exactly as at the base (pre-existing, e.g. `EnsemblesLemmas` 10/10, `Lamport` B 11, `AdaptiveCPA/Handler` B 3, `OracleSecurity` B 2) | `final/seal-compare.txt`, `logs/seal/final/`, `logs/seal/base/`, sources `seal-src/final/`, `seal-src/base/` |
+| **Paired controls** | 10 examples reading one definition each by `rfl` (`PolyExpr.eval`, `iterEmit`, `rAns`, `finA`, `ansRead`, `cntRead`, `coinBlock`, `logEmit`, `chunkMap`, `fwdHandler`): unsealed **pass**; sealed **10/10 fail, one error each**; sealed with `PolyExpr.eval` open **9/10 fail**, only the `PolyExpr.eval` example passes. (A first run had an ill-posed `iterEmit` example that failed unsealed; it was corrected and the three runs repeated; the first run is kept in `final-checks.log`.) | `controls/`, `controls/src/` |
+| **Explicit-unfold scan** (every identifier passed to `rw`/`simp`/`unfold`/`delta`/… in each of the 36 files, resolved in the file's namespaces and `open`s) | 1863 theorems, 108 own definitions, 4 core (`reduceIte`), 531 local/unresolved, **0 foreign TCSlib definitions** | `rwids/rwids-final.tsv`, `rwids/scan-*.log`, `rwids/src/` (tool `tools/rwids.py`, the consolidation's, with two fixes noted in its header) |
+| **Lint** | 216 FAIL (exactly the base's lines), 102 WARN (the base's minus `ZeroKnowledge/ThreeColoring/Machines.lean`, now 998 lines) | `lint-final.log`, `lint-diff.txt` |
+| **`audits/`** | none of the 87 deleted or moved names occurs in `audits/` | `audits-check.txt` |
+| **Patch replay** | the three patches applied to the base give the branch's tree `f5f85616…` | `patch-replay.log` |
+
+### 0.3 Files (base → final, lines)
+
+| File | Base | Final |
+|---|---|---|
+| `Games.lean` (facade) | 61 | 64 |
+| `Games/Forwarding.lean` (**new**) | — | 212 |
+| `Games/OracleComp.lean` | 331 | 371 |
+| `Games/Simulate.lean` | 327 | 374 |
+| `Games/Probability.lean` | 397 | 409 |
+| `Games/Machines.lean` | 216 | 278 |
+| `Games/BitCodec.lean` | 399 | 444 |
+| `Games/Hopping.lean` | 445 | 524 |
+| `Games/Efficiency.lean` | 844 | 979 |
+| `Games/Efficiency/OracleBridge.lean` | 321 | 410 |
+| `Foundations/BitLists.lean` | 105 | 179 |
+| `Asymptotic/Adversary.lean` | 373 | 452 |
+| `Asymptotic/EnsemblesLemmas.lean` | 865 | 887 |
+| `Authentication/Signatures/Lamport.lean` | 581 | 567 |
+| `Pseudorandom/Functions/Asymptotic/GGM/Evaluator.lean` | 265 | 254 |
+| `Encryption/PrivateKey/FromPRF/ReductionMachine.lean` | 573 | 572 |
+| `Encryption/PrivateKey/OracleFromPRF/Handler.lean` | 702 | 672 |
+| `Encryption/PublicKey/AdaptiveCPA/Handler.lean` | 543 | 542 |
+| `Encryption/PublicKey/OracleSecurity.lean` | 723 | 765 |
+| `Encryption/PublicKey/OracleSecurity/ChallengeSim.lean` | 315 | 369 |
+| `NMI.lean` | 655 | 647 |
+| `NMI/Forward.lean` | 350 | 140 |
+| `NMI/Decrypt.lean` | 350 | 318 |
+| `NMI/Encrypt.lean` | 332 | 331 |
+| `Simulation.lean` | 795 | 797 |
+| `NMS/Generic.lean` | 460 | 181 |
+| `NMS/Rounds.lean` | 356 | 45 |
+| `NMS/Hybrid.lean` | 683 | 575 |
+| `NMS/Challenge.lean` | 415 | 450 |
+| `NMS/Simulator.lean` | 628 | 636 |
+| `NMS/Reduction.lean` | 661 | 682 |
+| `NMS/Recover.lean` | 519 | 495 |
+| `NMS/SimIND.lean` | 912 | 913 |
+| `NMS/IndSim.lean` | 293 | 294 |
+| `ZeroKnowledge/ThreeColoring/Machines.lean` | 1007 | 998 |
+| `ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean` | 450 | 440 |
+
+36 paths: 35 changed, 1 new; nothing deleted. Every file is below 1000 lines.
+
+### 0.4 Imports (all checkpoints)
+
+| Module | Change | Reason |
+|---|---|---|
+| `Games.lean` (facade) | + `Games.Forwarding` | its new child; only `TCSlib.lean` imports the facade |
+| `Games/Forwarding.lean` (new) | `Games.Efficiency` | `InteractiveHandler` |
+| `Games/BitCodec.lean` | + `TCSlib.Complexity.ClassNP.PolyTimeBlockLoop`, + `Mathlib.Data.List.GetD` | `polyTimeComputable_isNil` (`cntRead`), `List.getD_append*` (`padFin_append_split`) |
+| `Foundations/BitLists.lean` | + `Mathlib.Data.Fintype.Basic` | the decidable equality in `decide_map_ofFn`'s statement |
+| `Asymptotic/Adversary.lean` | + `TCSlib.Cryptography.Foundations.BitLists` | `length_flatten_map_range` (`coinBlock_flatten_append`) |
+| `OracleSecurity/ChallengeSim.lean` (consumer) | + `Games.Hopping` | `Games.expect_simulate_eager` |
+| `NMI/Forward.lean` (consumer) | `Games.Efficiency` → `Games.Forwarding` | `Games.fwdHandler` |
+
+Every added import is acyclic: the Complexity and Mathlib modules import no Cryptography module,
+`BitLists` imports only Mathlib, `Hopping` imports only `Simulate` and `Advantage`, and nothing below
+`Games.lean` imports it. The final order is the base order with `Games/Hopping` before `ChallengeSim`,
+`Foundations/BitLists` before `Asymptotic/Adversary`, and `Games/Forwarding` before `NMI/Forward`
+(stable topological re-sort, `tools/reorder.py`).
+
+### 0.5 Name map
+
+`evidence/census/namemap.tsv` (old → new full names; `-` for a deleted declaration without a
+successor) is complete for the public constants: the census lists no removed name outside it, and
+every row is checked (old gone, new present). The private renames and deletions are in §6, §9.8 and
+§10.4. Summary of the public map:
+
+| Old | New |
+|---|---|
+| `NMSim.buildComp_budget_eq`, `buildComp_of_ret` | `Games.buildComp_budget_eq`, `buildComp_of_ret` |
+| `NMSim.toCompOn_budget_eq` | `Complexity.NUPPT.toCompOn_budget_eq` |
+| `NMSim.impl_of_ret`, `impl_of_query`, `finish_of_ret` | `Games.InteractiveHandler.impl_of_ret_padFin`, `impl_of_query_padFin`, `finish_of_ret_padFin` |
+| `NMSim.expect_toCompOn_outLen`, `expect_simulate_eager`, `expect_eq_until_bad`, `simulate_costBoundedBy_once` | `Games.*` (same last names) |
+| `NMSim.expect_congr_of_allOutputs`, `expect_expect_sample` | `Games.ProbComp.*` |
+| `NMSim.bind_congr_of_allOutputs` | `Games.OracleComp.bind_congr_of_allOutputs` |
+| `NMSim.costBoundedBy_bind_of_allOutputs` | `Games.OracleComp.CostBoundedBy.bind_of_allOutputs` |
+| `NMCCA2.fwdHandler` (+ 8 `simps` lemmas, `congr_simp`), `fwdHandler_impl` | `Games.fwdHandler` (+ the same), `Games.fwdHandler_impl` |
+| `NMCCA2.exists_withAdviceOn` | `Complexity.NUPPT.exists_withAdviceOn` |
+| `NMCCA2.cntRead`, `ansRead` (+ `_eq`, `polyTimeComputable_`) | `Games.*` |
+| `NMCCA2.finU`, `finZ`, `finW`, `finL`; `NMSim.finSt` | `Games.InteractiveHandler.rU`, `rZ`, `rW`, `rL`; `rS` |
+| `NMCCA2.finA` | `Games.InteractiveHandler.finA` |
+| `NMSim.finSt_finInput`, `polyTimeComputable_finSt` | `InteractiveHandler.rS_finInput`, `polyTimeComputable_rS` |
+| `NMSim.rdU`, `rdZ`, `rdW`, `rdState`, `rdIdx`, `rdQuery`, `rdLog`, `rdAns` | `InteractiveHandler.rU`, `rZ`, `rW`, `rS`, `rI`, `rX`, `rL`, `rAns` |
+| `NMSim.rdAns_eq`, `rdAns_input` | `InteractiveHandler.rAns_eq`, `rAns_input` |
+| `NMCCA2.fin*_eq`, `fields_finInput`, `polyTimeComputable_finFields`; `NMSim.rd*_eq` (except `rdAns_eq`), `finSt_eq`, `fields_input`, `polyTimeComputable_rd` | — (uses read the per-reader `_input`/`_finInput`/`polyTimeComputable_` lemmas) |
+| `NMSim.chunkAt`, `chunkAt_eq`, `length_chunkAt` | `coinBlock`, `coinBlock_eq`, `length_coinBlock` |
+| `NMSim.chunkAt_flatten_append`, `map_chunkAt_flatten`, `ofFn_block` | `coinBlock_flatten_append`, `map_coinBlock_flatten`, `ofFn_block_eq_coinBlock` |
+| `Authentication.coinBlock_flatten` | `TCSlib.Cryptography.coinBlock_flatten` |
+| `NMSim.ofFn_natAdd_eq_drop`, `decide_map_ofFn`, `length_flatten_map_const`, `length_flatten_map_range`, `ofFn_eq_map_range`; `ColMachines.ofFn_eq_map_range`, `GI.ofFn_eq_map_range` | `TCSlib.Cryptography.*` (BitLists) |
+| `NMSim.padFin_append_split` | `Games.padFin_append_split` |
+| `NMSim.seedEquiv`, `seedEquiv_ofFn`, `seedEquivPoly`, `seedEquivPoly_ofFn` | `EnsembleLemmas.*` |
+| `NMSim.ofFn_padFin_eq_padL` | `EnsembleLemmas.ofFn_padFin_eq_padL` |
+| `NMSim.polyTimeComputable_guessBit` | `NMCCA2.polyTimeComputable_guessBit` |
+| `NMSim.ctLen_pos`, `NMCCA2.indImpl_eq_of_msgLen_eq_zero` | `FixedLengthPKScheme.ctLen_pos`, `indImpl_eq_of_msgLen_eq_zero` |
+
+New declarations without a predecessor: `Games.InteractiveHandler.impl_of_query`, `finish_of_ret`,
+`rAns` (and `rAns_eq`, `rAns_input`, `polyTimeComputable_rAns`), `rU_finInput`, `rZ_finInput`,
+`rW_finInput`, `rS_finInput`, `rL_finInput`, `finA_finInput`, `polyTimeComputable_finA`;
+`Games.iterEmit`, `iterEmit_eq`, `length_iterate_le_add`, `polyTimeComputable_iterEmit`,
+`iterEmit_encode`; `EffFill.relabelN_eq_iterEmit`, `relabel_eq_iterEmit`.
+
+### 0.6 New duplication found (not folded)
+
+- §7: inline re-proofs of `impl_of_query` (`acHandler_impl_forward`) and of a returning finalization
+  (`pkHandler_finish`, `acHandler_finish`); a local `have` that is `polyTimeComputable_ansRead`
+  (`OracleFromPRF.lean`).
+- §9.3: further block-window restatements (`Primality.ofFn_chunk`, `ColRep.drop_take_ofFn_blockRead`,
+  `Factoring.fac_ofFn_halves`, already corollaries; `HardCoreLoops.take_drop_blocksStr`, a different
+  definition); Complexity copies of `ofFn_eq_map_range` and `flatMap_range_drop` (out of scope).
+- §10.2: other iterate-and-emit loops (`BlockEncryptor`, `EnsembleLemmas.CopiesLoop`,
+  `StretchMachine`, `CommitmentLemmas.ComLoop`, ZK `EncodingMachines`), and the ZK pair
+  `GI.iterate_pairSndD_encodeMsgs` / `ColMachines.iterate_pairSndD_encodeMsgs`.
+
+### 0.7 Evidence
+
+`evidence/SHA256SUMS` lists every evidence file, and the delivered evidence paths are
+exactly the manifest's (checked by `tools/pack.py` at packing). Directories: `inputs/` (the brief's
+inputs), `logs/` (environment, base bootstrap, base census and axioms, base seals, base lint and
+sorry census), `cp1/`, `cp2/`, `cp3/` (checkpoint sweeps, censuses, statements, lint, patch
+replays), `final/` (§0.2), `census/namemap.tsv`, `grep/` (receipts of groups G, R/B/L, E), `b3/` (the
+B3 probe and its output), `seal-src/` (every seal and scan source, base, checkpoints and final),
+`tools/` (every script and the census, axiom and probe sources).
 
 ## 1. Checkpoint 1 at a glance
 

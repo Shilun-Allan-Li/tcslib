@@ -1,0 +1,68 @@
+/workspace/folds/scratch/seal/final/SealB_Encryption_PublicKey_OracleSecurity.lean:342:34: error: Application type mismatch: The argument
+  m
+has type
+  Fin (PolyExpr.var.eval n) → Bool
+but is expected to have type
+  Fin n → Bool
+in the application
+  S.correct n m
+/workspace/folds/scratch/seal/final/SealB_Encryption_PublicKey_OracleSecurity.lean:399:4: error: Application type mismatch: The argument
+  fun n m rg re => ?m.32
+has type
+  ∀ (n : ℕ) (m : Fin 1 → Bool) (rg : S.gen.Coins n) (re : S.enc.Coins n),
+    decodeFin ((PolyExpr.const 1).eval n)
+        (S.dec
+          (pairEncode (pairSndD (S.gen.runAt n [] rg))
+            (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re))) =
+      some m
+but is expected to have type
+  ∀ (n : ℕ) (m : Fin ((PolyExpr.const 1).eval n) → Bool) (rg : S.gen.Coins n) (re : S.enc.Coins n),
+    decodeFin ((PolyExpr.const 1).eval n)
+        (S.dec
+          (pairEncode (pairSndD (S.gen.runAt n [] rg))
+            (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re))) =
+      some m
+in the application
+  FixedLengthPKScheme.ofPadded (PolyExpr.const 1) S.gen S.enc S.dec ⋯ ⋯ ⋯ ⋯
+/workspace/folds/scratch/seal/final/SealB_Encryption_PublicKey_OracleSecurity.lean:401:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn m
+in the target expression
+  decodeFin ((PolyExpr.const 1).eval n)
+      (S.dec
+        (pairEncode (pairSndD (S.gen.runAt n [] rg))
+          (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re))) =
+    some m
+
+S : BitPublicKeyScheme
+L : PolyExpr
+hL :
+  ∀ (n : ℕ) (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
+    2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [b]) re).length + 2 ≤ L.eval n
+hmsg : ∀ (n : ℕ), 1 ≤ L.eval n
+n : ℕ
+m : Fin 1 → Bool
+rg : S.gen.Coins n
+re : S.enc.Coins n
+hm : List.ofFn m = [m 0]
+⊢ decodeFin ((PolyExpr.const 1).eval n)
+      (S.dec
+        (pairEncode (pairSndD (S.gen.runAt n [] rg))
+          (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re))) =
+    some m
+/workspace/folds/scratch/seal/final/SealB_Encryption_PublicKey_OracleSecurity.lean:405:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn m
+in the target expression
+  2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re).length + 2 ≤ L.eval n
+
+S : BitPublicKeyScheme
+L : PolyExpr
+hL :
+  ∀ (n : ℕ) (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
+    2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [b]) re).length + 2 ≤ L.eval n
+hmsg : ∀ (n : ℕ), 1 ≤ L.eval n
+n : ℕ
+rg : S.gen.Coins n
+m : Fin 1 → Bool
+re : S.enc.Coins n
+hm : List.ofFn m = [m 0]
+⊢ 2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re).length + 2 ≤ L.eval n
