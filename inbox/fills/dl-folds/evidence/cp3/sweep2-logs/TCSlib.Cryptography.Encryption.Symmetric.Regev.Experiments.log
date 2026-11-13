@@ -1,0 +1,18 @@
+START TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments 2026-11-13T21:03:02+00:00
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean:54:11: warning: The definition TCSlib.Cryptography.Encryption.Symmetric.Regev.encryptDist_def is not a constructor application. Please use `@[simps!]` instead.
+
+Explanation: `@[simps]` uses the definition to find what the simp lemmas should be. If the definition is a constructor, then this is easy, since the values of the projections are just the arguments to the constructor. If the definition is not a constructor, then `@[simps]` will unfold the right-hand side until it has found a constructor application, and uses those values.
+
+This might not always result in the simp-lemmas you want, so you are advised to use `@[simps?]` to double-check whether `@[simps]` generated satisfactory lemmas.
+Note 1: `@[simps!]` also calls the `simp` tactic, and this can be expensive in certain cases.
+Note 2: `@[simps!]` is equivalent to `@[simps (config := {rhsMd := .default, simpRhs := true})]`. You can also try `@[simps (config := {rhsMd := .default})]` to still unfold the definitions, but avoid calling `simp` on the resulting statement.
+Note 3: You need `simps!` if not all fields are given explicitly in this definition, even if the definition is a constructor application. For example, if you give a `MulEquiv` by giving the corresponding `Equiv` and the proof that it respects multiplication, then you need to mark it as `@[simps!]`, since the attribute needs to unfold the corresponding `Equiv` to get to the `toFun` field.
+
+Note: This linter can be disabled with `set_option linter.simpsNoConstructor false`
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean:77:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Encryption.Symmetric.Regev.acceptProb_uniform_shift`:
+  [Nonempty ρ]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Nonempty ρ] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+END TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments 2026-11-13T21:03:04+00:00 exit=0 wall=2.0s maxrss=2429MiB

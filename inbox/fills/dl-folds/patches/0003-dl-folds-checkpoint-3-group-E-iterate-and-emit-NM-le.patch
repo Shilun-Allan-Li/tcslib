@@ -1,0 +1,699 @@
+From 5ad4c07759ee60e6c66fcc1c3b560176267b7c10 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 13 Nov 2026 21:09:09 +0000
+Subject: [PATCH 3/3] dl-folds checkpoint 3: group E (iterate and emit, NM
+ leftovers)
+
+- E1: Games.iterEmit with iterEmit_eq, length_iterate_le_add, polyTimeComputable_iterEmit and
+  iterEmit_encode beside relabelN (Games/Efficiency/OracleBridge.lean); NMCCA2.logEmit and
+  NMSim.chunkMap redefined as instances, their lemmas derived from the generic facts; relabelN and
+  relabel kept with the bridging equations relabelN_eq_iterEmit, relabel_eq_iterEmit, and
+  bridgePre_poly derived from polyTimeComputable_iterEmit
+- E2: NMCCA2.polyTimeComputable_guessBit (Encrypt.lean); the private polyTimeComputable_guessFun
+  uses it; NMSim's copy deleted
+- E3: FixedLengthPKScheme.ctLen_pos and indImpl_eq_of_msgLen_eq_zero (OracleSecurity.lean)
+---
+ .../NonMalleability/Indistinguishability.lean |   5 +-
+ .../Indistinguishability/Encrypt.lean         |  48 +++-----
+ .../Indistinguishability/Forward.lean         |  72 +++++------
+ .../NonMalleability/Simulation/Generic.lean   |  99 ++++++---------
+ .../NonMalleability/Simulation/IndSim.lean    |   2 +-
+ .../NonMalleability/Simulation/Recover.lean   |  29 +----
+ .../Encryption/PublicKey/OracleSecurity.lean  |  42 +++++++
+ .../Games/Efficiency/OracleBridge.lean        | 115 ++++++++++++++++--
+ 8 files changed, 235 insertions(+), 177 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean
+index 920dd452d..3cf6deba3 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean
+@@ -589,7 +589,8 @@ private theorem accept_nmGame_encRed (A B : NUPPT) (q : PolyExpr) (n : ℕ)
+ the handler `encHandler S` a machine `B`, with budget `q · 1 + 0`. Non-malleability for `B`, two
+ output ciphertexts and `guessDist` gives a negligible bound. At `n` with `msgLen(n) > 0`, `A`'s
+ CCA2 advantage equals that experiment's advantage (`accept_nmGame_encRed`). At `msgLen(n) = 0` the
+-two CCA2 games coincide (`indImpl_eq_of_msgLen_eq_zero`), so `A`'s advantage is `0`. -/
++two CCA2 games coincide (`FixedLengthPKScheme.indImpl_eq_of_msgLen_eq_zero`), so `A`'s advantage
++is `0`. -/
+ theorem indSecure_cca2_of_nmSecure_cca2 (h : S.NMSecure .cca2) : S.INDSecure .cca2 := by
+   rw [INDSecure_iff]
+   intro A q
+@@ -602,7 +603,7 @@ theorem indSecure_cca2_of_nmSecure_cca2 (h : S.NMSecure .cca2) : S.INDSecure .cc
+   by_cases hm : S.msgLen.eval n = 0
+   · have hg : S.indGame .cca2 A (q.eval n) false n = S.indGame .cca2 A (q.eval n) true n := by
+       rw [S.indGame_eq, S.indGame_eq]
+-      simp only [indImpl_eq_of_msgLen_eq_zero S .cca2 n _ _ hm]
++      simp only [S.indImpl_eq_of_msgLen_eq_zero .cca2 n _ _ hm]
+     rw [hg, advantage_self]
+     exact (advantage_nonneg _ _).trans hn
+   · obtain ⟨φ, hφ⟩ := hB n
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean
+index b2410e91e..86a12aae1 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean
+@@ -21,8 +21,9 @@ and otherwise from the negated last bit of the second.
+ 
+ This file builds the handler (`encHandler S`), whose seed is two encryption tapes. It proves
+ the finalization's equation (`encHandler_finish`) and defines the distinguisher with its two
+-verdicts (`guessBit_valid`, `guessBit_refused`). It also shows that at `msgLen(n) = 0` the two
+-CCA2 oracles coincide (`indImpl_eq_of_msgLen_eq_zero`).
++verdicts (`guessBit_valid`, `guessBit_refused`), and shows that the verdict is polynomial-time
++(`polyTimeComputable_guessBit`). That the two CCA2 oracles coincide at `msgLen(n) = 0` is
++`FixedLengthPKScheme.indImpl_eq_of_msgLen_eq_zero` (`Encryption/PublicKey/OracleSecurity.lean`).
+ 
+ ## Main definitions
+ 
+@@ -34,7 +35,7 @@ CCA2 oracles coincide (`indImpl_eq_of_msgLen_eq_zero`).
+ 
+ * `NMCCA2.simulate_encHandler_impl`, `NMCCA2.encHandler_finish`.
+ * `NMCCA2.guessDist_distinguisherL`, `NMCCA2.guessBit_valid`, `NMCCA2.guessBit_refused`.
+-* `NMCCA2.indImpl_eq_of_msgLen_eq_zero`.
++* `NMCCA2.polyTimeComputable_guessBit`: the verdict is polynomial-time.
+ 
+ ## References
+ 
+@@ -266,6 +267,16 @@ def guessBit (w : List Bool) : Bool :=
+ theorem guessBit_eq (w : List Bool) :
+     guessBit w = if w.headD false then (w.drop 1).headD false else !w.reverse.headD false := rfl
+ 
++/-- **The verdict is polynomial-time:** `PolyTimeComputable fun w => [guessBit w]` (`headD`, `tail`,
++`reverse` and `not`, through `polyTimeComputable_ite`). -/
++theorem polyTimeComputable_guessBit : PolyTimeComputable fun w => [guessBit w] :=
++  (polyTimeComputable_ite polyTimeComputable_headD
++    (polyTimeComputable_headD.comp polyTimeComputable_tail)
++    (polyTimeComputable_not
++      (polyTimeComputable_headD.comp BinArith.polyTimeComputable_reverse))).congr fun w => by
++    rw [guessBit_eq]
++    split <;> rfl
++
+ /-- The distinguisher's raw function on the machine input `⟨⟨⟨1^n, w⟩, α⟩, ρ⟩`. -/
+ private def guessFun (x : List Bool) : List Bool :=
+   if (pairSndD (pairFstD (pairFstD x))).headD false then
+@@ -276,10 +287,9 @@ private def guessFun (x : List Bool) : List Bool :=
+ private theorem polyTimeComputable_guessFun : PolyTimeComputable guessFun := by
+   have hw : PolyTimeComputable fun x => pairSndD (pairFstD (pairFstD x)) :=
+     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)
+-  exact polyTimeComputable_ite (polyTimeComputable_headD.comp hw)
+-    (polyTimeComputable_headD.comp (polyTimeComputable_tail.comp hw))
+-    (polyTimeComputable_not
+-      (polyTimeComputable_headD.comp (BinArith.polyTimeComputable_reverse.comp hw)))
++  refine (polyTimeComputable_guessBit.comp hw).congr fun x => ?_
++  rw [Function.comp_apply, guessFun, guessBit_eq]
++  split <;> rfl
+ 
+ /-- **The distinguisher** of the reduction (⇐): the uniform machine without coins computing
+ `[guessBit w]` on its argument `w`. -/
+@@ -318,28 +328,4 @@ theorem guessBit_refused {m : ℕ} (hm : 0 < m) (g : Bool) :
+   rw [FixedLengthScheme.decAnswer_some, h2, guessBit_eq, ofFn_zeroBits, List.replicate_succ]
+   simp
+ 
+-/-! ### Empty messages -/
+-
+-/-- **With empty messages the two CCA2 oracles coincide:** if `msgLen(n) = 0`, then
+-`S.indImpl atk false n pk sk = S.indImpl atk true n pk sk` (both halves of a challenge are the
+-empty message).
+-
+-**Proof sketch.** Compare query by query through the published equations: decryption does not
+-depend on the bit (`indImpl_dec_onSpec`), a repeated challenge repeats the record
+-(`indImpl_challenge_repeat_onSpec`), and a first challenge encrypts a half of the query
+-(`indImpl_challenge_none_onSpec`), whose string is `[]` either way. -/
+-theorem indImpl_eq_of_msgLen_eq_zero (atk : Attack) (n : ℕ) (pk sk : List Bool)
+-    (h : S.msgLen.eval n = 0) : S.indImpl atk false n pk sk = S.indImpl atk true n pk sk := by
+-  have h0 : ∀ f : Fin (S.msgLen.eval n) → Bool, List.ofFn f = [] := fun f =>
+-    List.eq_nil_of_length_eq_zero (by rw [List.length_ofFn, h])
+-  funext i x s
+-  match i with
+-  | 0 => rw [S.indImpl_dec_onSpec, S.indImpl_dec_onSpec]
+-  | 1 =>
+-    cases s with
+-    | some c => rw [S.indImpl_challenge_repeat_onSpec, S.indImpl_challenge_repeat_onSpec]
+-    | none =>
+-      rw [S.indImpl_challenge_none_onSpec, S.indImpl_challenge_none_onSpec]
+-      simp only [h0]
+-
+ end TCSlib.Cryptography.Composability.NMCCA2
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean
+index f9a068d0e..cb97e77e3 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean
+@@ -19,10 +19,11 @@ answers are the outer oracle's (`Games.fwdHandler_impl`), so simulating it is ru
+ adversary against the outer oracles (`simulate_fwdHandler_impl`).
+ 
+ It also provides the readers of an encoded outer log: `logEmit G L` concatenates `G` of the
+-successive suffixes of the nested log `L`, is polynomial-time for polynomial-time `G`
+-(`polyTimeComputable_logEmit`), and on an encoded log is the concatenation of `G`'s values on the
+-entries (`logEmit_encodeLog`). The readers of a finalization input are the published
+-`Games.InteractiveHandler.rU`, `rZ`, `rW`, `rL` (with their `_finInput` lemmas) and `finA`.
++successive suffixes of the nested log `L` (iterate and emit, `Games.iterEmit`), is polynomial-time
++for polynomial-time `G` (`polyTimeComputable_logEmit`), and on an encoded log is the concatenation
++of `G`'s values on the entries (`logEmit_encodeLog`). The readers of a finalization input are the
++published `Games.InteractiveHandler.rU`, `rZ`, `rW`, `rL` (with their `_finInput` lemmas) and
++`finA`.
+ 
+ ## Main definitions
+ 
+@@ -81,50 +82,28 @@ end Forward
+ 
+ /-- **Concatenated readings of an encoded log:** `G` applied to the successive suffixes
+ `L, snd L, snd (snd L), …` of the nested log `L = ⟨e₁, ⟨e₂, ⟨…, []⟩⟩⟩`, for `|L| + 1` steps, and
+-concatenated: `logEmit G L = (List.range (|L| + 1)).flatMap fun i => G (pairSndD^[i] L)`. -/
++concatenated: iterate and emit (`Games.iterEmit`) with the step `pairSndD`,
++`logEmit G L = (List.range (|L| + 1)).flatMap fun i => G (pairSndD^[i] L)`. -/
+ def logEmit (G : List Bool → List Bool) (L : List Bool) : List Bool :=
+-  (List.range (L.length + 1)).flatMap fun i => G (pairSndD^[i] L)
++  iterEmit pairSndD G (L.length + 1) L
+ 
+-/-- `logEmit G L = (List.range (|L| + 1)).flatMap fun i => G (pairSndD^[i] L)`. -/
++/-- `logEmit G L = (List.range (|L| + 1)).flatMap fun i => G (pairSndD^[i] L)`
++(`Games.iterEmit_eq`). -/
+ theorem logEmit_eq (G : List Bool → List Bool) (L : List Bool) :
+-    logEmit G L = (List.range (L.length + 1)).flatMap fun i => G (pairSndD^[i] L) := rfl
+-
+-/-- The iterated second projection never lengthens a word. -/
+-private theorem length_iterate_pairSndD_le (L : List Bool) (i : ℕ) :
+-    (pairSndD^[i] L).length ≤ L.length := by
+-  induction i with
+-  | zero => exact le_rfl
+-  | succ i ih =>
+-    rw [Function.iterate_succ_apply']
+-    exact (length_pairSndD_le _).trans ih
++    logEmit G L = (List.range (L.length + 1)).flatMap fun i => G (pairSndD^[i] L) := by
++  rw [logEmit, iterEmit_eq]
+ 
+ /-- **The readings of an encoded log are polynomial-time** when `G` is
+-(`Complexity.polyTimeComputable_iterateEmit` with the step `pairSndD`, which never lengthens a
+-word, and `|L|` rounds). -/
++(`Games.polyTimeComputable_iterEmit` with the step `pairSndD`, which never lengthens a word). -/
+ theorem polyTimeComputable_logEmit {G : List Bool → List Bool} (hG : PolyTimeComputable G) :
+     PolyTimeComputable (logEmit G) :=
+-  (polyTimeComputable_iterateEmit polyTimeComputable_pairSndD hG .var .var
+-    (fun x i _ => by rw [PolyExpr.eval_var]; exact length_iterate_pairSndD_le x i)).congr
+-    fun L => by rw [PolyExpr.eval_var, logEmit_eq]
++  (polyTimeComputable_iterEmit polyTimeComputable_pairSndD hG 0
++    fun y => (length_pairSndD_le y).trans (le_max_left _ _)).congr fun L => by rw [logEmit]
+ 
+ section LogEmit
+ 
+ variable {ι : Type} {spec : OracleSpec ι} {α : Type}
+ 
+-/-- The second projection of an encoded log drops its first entry. -/
+-private theorem iterate_pairSndD_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec)
+-    (i : ℕ) : pairSndD^[i] (codec.encodeLog h) = codec.encodeLog (h.drop i) := by
+-  induction i generalizing h with
+-  | zero => rfl
+-  | succ i ih =>
+-    rw [Function.iterate_succ_apply]
+-    cases h with
+-    | nil =>
+-      rw [MachineCodec.encodeLog_nil, pairSndD_of_pairDecode_eq_none pairDecode_nil,
+-        ← MachineCodec.encodeLog_nil codec, ih, List.drop_nil, List.drop_nil]
+-    | cons e t =>
+-      rw [MachineCodec.encodeLog_cons, pairSndD_pairEncode, ih, List.drop_succ_cons]
+-
+ /-- An encoded log is at least as long as its number of entries. -/
+ private theorem length_le_length_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec) :
+     h.length ≤ (codec.encodeLog h).length := by
+@@ -138,18 +117,23 @@ private theorem length_le_length_encodeLog (codec : MachineCodec spec α) (h : Q
+ reads only the first entry of a nonempty log, `G ⟨⟦e⟧, t⟩ = g e`, then
+ `logEmit G (codec.encodeLog h) = h.flatMap g`.
+ 
+-**Proof sketch.** The `i`-th suffix of the encoded log encodes `h.drop i`; the first `|h|`
+-readings are `g` of the entries and the rest are `G [] = []`, since `|h| ≤ |L|`. -/
++**Proof sketch.** `Games.iterEmit_encode` with the encoding `codec.encodeLog`: `pairSndD` drops
++the first entry of an encoded log (`MachineCodec.encodeLog_cons`) and fixes the empty one, and
++`|h| ≤ |L|` (`length_le_length_encodeLog`). -/
+ theorem logEmit_encodeLog (codec : MachineCodec spec α) (G : List Bool → List Bool)
+     (g : (Σ i, spec.dom i × spec.rng i) → List Bool) (hnil : G [] = [])
+     (hcons : ∀ e t, G (pairEncode (codec.encodeEntry e) t) = g e) (h : QueryLog spec) :
+     logEmit G (codec.encodeLog h) = h.flatMap g := by
+-  rw [logEmit_eq]
+-  simp only [iterate_pairSndD_encodeLog]
+-  exact flatMap_range_drop (fun l => G (codec.encodeLog l)) g
+-    (by beta_reduce; rw [MachineCodec.encodeLog_nil]; exact hnil)
+-    h (fun e _ t => by beta_reduce; rw [MachineCodec.encodeLog_cons]; exact hcons e _) _
+-    (Nat.le_succ_of_le (length_le_length_encodeLog codec h))
++  rw [logEmit]
++  refine iterEmit_encode pairSndD G codec.encodeLog g h ?_ (fun e _ t => ?_) ?_
++    (fun e _ t => ?_) _ (Nat.le_succ_of_le (length_le_length_encodeLog codec h))
++  · rw [MachineCodec.encodeLog_nil]
++    exact pairSndD_of_pairDecode_eq_none pairDecode_nil
++  · rw [MachineCodec.encodeLog_cons, pairSndD_pairEncode]
++  · rw [MachineCodec.encodeLog_nil]
++    exact hnil
++  · rw [MachineCodec.encodeLog_cons]
++    exact hcons e _
+ 
+ end LogEmit
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
+index aa80b3b1d..1cbb4d1d4 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
+@@ -14,7 +14,8 @@ set_option autoImplicit false
+ 
+ A generic tool used by both directions of [PS10, Theorem 174.8], not specific to encryption:
+ **chunk maps** (`chunkMap`), a polynomial-time map applied to the consecutive fixed-length chunks
+-of a string, concatenated (`polyTimeComputable_chunkMap`, `chunkMap_flatten`). The machines of
++of a string, concatenated (`polyTimeComputable_chunkMap`, `chunkMap_flatten`): an instance of
++iterate and emit (`Games.iterEmit`). The machines of
+ both reductions read and write their tuples of ciphertexts and entries this way.
+ 
+ The other generic facts first proved here now live in the Games layer: budget reduction
+@@ -72,16 +73,17 @@ theorem chunkEmit_eq (c : PolyExpr) (f : List Bool → List Bool → List Bool)
+ 
+ /-- **The chunk map** of `f` with chunk length `c`, on `x = ⟨ctx, w⟩` with `ctx = ⟨1^n, _⟩`: the
+ concatenation of `f ctx` over the consecutive `c(n)`-bit chunks of `w`, computed by `|x| + 1`
+-rounds of `chunkStep`: `chunkMap c f x = (List.range (|x| + 1)).flatMap fun i =>
+-chunkEmit c f (chunkStep c)^[i] x`. -/
++rounds of `chunkStep` (iterate and emit, `Games.iterEmit`): `chunkMap c f x =
++(List.range (|x| + 1)).flatMap fun i => chunkEmit c f (chunkStep c)^[i] x`. -/
+ def chunkMap (c : PolyExpr) (f : List Bool → List Bool → List Bool) (x : List Bool) : List Bool :=
+-  (List.range (x.length + 1)).flatMap fun i => chunkEmit c f ((chunkStep c)^[i] x)
++  iterEmit (chunkStep c) (chunkEmit c f) (x.length + 1) x
+ 
+-/-- `chunkMap c f x = (List.range (|x| + 1)).flatMap fun i => chunkEmit c f (chunkStep c)^[i] x`. -/
++/-- `chunkMap c f x = (List.range (|x| + 1)).flatMap fun i => chunkEmit c f (chunkStep c)^[i] x`
++(`Games.iterEmit_eq`). -/
+ theorem chunkMap_eq (c : PolyExpr) (f : List Bool → List Bool → List Bool) (x : List Bool) :
+     chunkMap c f x =
+-      (List.range (x.length + 1)).flatMap fun i => chunkEmit c f ((chunkStep c)^[i] x) :=
+-  rfl
++      (List.range (x.length + 1)).flatMap fun i => chunkEmit c f ((chunkStep c)^[i] x) := by
++  rw [chunkMap, iterEmit_eq]
+ 
+ /-- One step never makes a word longer than `max |x| 2` (a malformed word becomes `⟨[], []⟩`). -/
+ private theorem length_chunkStep_le (c : PolyExpr) (x : List Bool) :
+@@ -96,24 +98,14 @@ private theorem length_chunkStep_le (c : PolyExpr) (x : List Bool) :
+       length_pairEncode]
+     omega
+ 
+-/-- The iterated step keeps words within `|x| + 2` bits. -/
+-private theorem length_iterate_chunkStep_le (c : PolyExpr) (x : List Bool) (i : ℕ) :
+-    ((chunkStep c)^[i] x).length ≤ x.length + 2 := by
+-  suffices h : ((chunkStep c)^[i] x).length ≤ max x.length 2 by omega
+-  induction i with
+-  | zero => exact le_max_left _ _
+-  | succ i ih =>
+-    rw [Function.iterate_succ_apply']
+-    exact (length_chunkStep_le c _).trans (max_le ih (le_max_right _ _))
+-
+ /-- **Chunk maps are polynomial-time** when `f` is, read as a function of `⟨ctx, chunk⟩`
+-(`Complexity.polyTimeComputable_iterateEmit` with the step `chunkStep`, which never lengthens a
+-word, and `|x|` rounds).
++(`Games.polyTimeComputable_iterEmit` with the step `chunkStep`, which never makes a word longer
++than `max |x| 2`).
+ 
+ **Proof sketch.** The step (keep `ctx`, drop `c(n)` bits) and the emission (`[]` on an empty
+ rest, else `f ctx` of the next `c(n)` bits) are polynomial-time by the pair readers,
+-`pairTakePoly`/`pairDropPoly` and `polyTimeComputable_ite`. The iterates stay within `|x| + 2`
+-bits (`length_iterate_chunkStep_le`), so `polyTimeComputable_iterateEmit` gives `chunkMap_eq`. -/
++`pairTakePoly`/`pairDropPoly` and `polyTimeComputable_ite`; one step never lengthens a word beyond
++`max |x| 2` (`length_chunkStep_le`), so `polyTimeComputable_iterEmit` applies. -/
+ theorem polyTimeComputable_chunkMap (c : PolyExpr) {f : List Bool → List Bool → List Bool}
+     (hf : PolyTimeComputable fun z => f (pairFstD z) (pairSndD z)) :
+     PolyTimeComputable (chunkMap c f) := by
+@@ -134,42 +126,24 @@ theorem polyTimeComputable_chunkMap (c : PolyExpr) {f : List Bool → List Bool
+     polyTimeComputable_ite (polyTimeComputable_isNil.comp hD) (polyTimeComputable_const [])
+       ((hf.comp (hF.pairEncode htake)).congr fun x => by
+         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode])
+-  exact (polyTimeComputable_iterateEmit hstep hemit .var (.add .var (.const 2))
+-    (fun x i _ => by
+-      rw [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+-      exact length_iterate_chunkStep_le c x i)).congr
+-    fun x => by rw [PolyExpr.eval_var, chunkMap_eq]
++  exact (polyTimeComputable_iterEmit hstep hemit 2 (length_chunkStep_le c)).congr
++    fun x => by rw [chunkMap]
+ 
+ /-- **The chunk map of a concatenation of chunks:** if every chunk has `c(n) > 0` bits, the chunk
+ map of `⟨⟨1^n, e⟩, chunks.flatten⟩` is the concatenation of `f ⟨1^n, e⟩` over the chunks.
+ 
+-**Proof sketch.** The `i`-th step leaves `(chunks.drop i).flatten` (dropping a first chunk of
+-`c(n)` bits), whose emission is `f` of the `i`-th chunk while chunks remain and `[]` afterwards;
+-there are at most `|x| + 1` chunks since each has a bit. -/
++**Proof sketch.** `Games.iterEmit_encode` with the encoding `l ↦ ⟨ctx, l.flatten⟩`: a step drops a
++first chunk of `c(n)` bits and fixes `⟨ctx, []⟩`; the emission is `f ctx` of the first chunk while
++chunks remain and `[]` afterwards; there are at most `|x| + 1` chunks since each has a bit. -/
+ theorem chunkMap_flatten (c : PolyExpr) (f : List Bool → List Bool → List Bool) (n : ℕ)
+     (e : List Bool) (chunks : List (List Bool)) (hlen : ∀ ch ∈ chunks, ch.length = c.eval n)
+     (hpos : 0 < c.eval n) :
+     chunkMap c f (pairEncode (pairEncode (List.replicate n true) e) chunks.flatten) =
+       (chunks.map (f (pairEncode (List.replicate n true) e))).flatten := by
+   set ctx := pairEncode (List.replicate n true) e
+-  have hit : ∀ i, (chunkStep c)^[i] (pairEncode ctx chunks.flatten) =
+-      pairEncode ctx (chunks.drop i).flatten := by
+-    intro i
+-    induction i with
+-    | zero => rfl
+-    | succ i ih =>
+-      rw [Function.iterate_succ_apply', ih, chunkStep_eq, pairFstD_pairEncode,
+-        pairSndD_pairEncode, pairFstD_pairEncode, List.length_replicate, ← List.tail_drop]
+-      cases h : chunks.drop i with
+-      | nil => rw [List.flatten_nil, List.drop_nil, List.tail_nil, List.flatten_nil]
+-      | cons ch rest =>
+-        have hch : ch.length = c.eval n :=
+-          hlen ch (List.mem_of_mem_drop (h ▸ List.mem_cons_self))
+-        rw [List.flatten_cons, List.tail_cons, ← hch, List.drop_left]
+   have hlen' : chunks.length ≤ (pairEncode ctx chunks.flatten).length + 1 := by
+     have : chunks.length ≤ chunks.flatten.length := by
+       rw [List.length_flatten]
+-      clear hit
+       induction chunks with
+       | nil => exact le_rfl
+       | cons ch rest ih =>
+@@ -179,21 +153,28 @@ theorem chunkMap_flatten (c : PolyExpr) (f : List Bool → List Bool → List Bo
+         omega
+     rw [length_pairEncode]
+     omega
+-  rw [chunkMap_eq]
+-  simp only [hit]
+-  rw [flatMap_range_drop (fun l => chunkEmit c f (pairEncode ctx l.flatten)) (f ctx)
+-    (by
+-      show chunkEmit c f (pairEncode ctx ([] : List (List Bool)).flatten) = []
+-      rw [List.flatten_nil, chunkEmit_eq, pairSndD_pairEncode, if_pos (decide_eq_true rfl)])
+-    chunks (fun ch hch t => ?_) _ hlen', List.flatMap_def]
+-  have hl := hlen ch hch
+-  have hne : ch ++ t.flatten ≠ [] := fun h => by
+-    rw [List.append_eq_nil_iff] at h
+-    rw [h.1, List.length_nil] at hl
+-    omega
+-  show chunkEmit c f (pairEncode ctx (ch :: t).flatten) = f ctx ch
+-  rw [chunkEmit_eq, pairSndD_pairEncode, pairFstD_pairEncode, pairFstD_pairEncode,
+-    List.length_replicate, List.flatten_cons, if_neg (by simpa using hne), ← hl, List.take_left]
++  have hstep_nil : chunkStep c (pairEncode ctx ([] : List (List Bool)).flatten) =
++      pairEncode ctx ([] : List (List Bool)).flatten := by
++    rw [List.flatten_nil, chunkStep_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.drop_nil]
++  have hstep : ∀ ch ∈ chunks, ∀ t : List (List Bool),
++      chunkStep c (pairEncode ctx (ch :: t).flatten) = pairEncode ctx t.flatten := by
++    intro ch hch t
++    rw [chunkStep_eq, pairFstD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode,
++      List.length_replicate, List.flatten_cons, ← hlen ch hch, List.drop_left]
++  have hnil : chunkEmit c f (pairEncode ctx ([] : List (List Bool)).flatten) = [] := by
++    rw [List.flatten_nil, chunkEmit_eq, pairSndD_pairEncode, if_pos (decide_eq_true rfl)]
++  have hcons : ∀ ch ∈ chunks, ∀ t : List (List Bool),
++      chunkEmit c f (pairEncode ctx (ch :: t).flatten) = f ctx ch := by
++    intro ch hch t
++    have hl := hlen ch hch
++    have hne : ch ++ t.flatten ≠ [] := fun h => by
++      rw [List.append_eq_nil_iff] at h
++      rw [h.1, List.length_nil] at hl
++      omega
++    rw [chunkEmit_eq, pairSndD_pairEncode, pairFstD_pairEncode, pairFstD_pairEncode,
++      List.length_replicate, List.flatten_cons, if_neg (by simpa using hne), ← hl, List.take_left]
++  rw [chunkMap, iterEmit_encode (chunkStep c) (chunkEmit c f) (fun l => pairEncode ctx l.flatten)
++    (f ctx) chunks hstep_nil hstep hnil hcons _ hlen', List.flatMap_def]
+ 
+ end Chunks
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
+index 49b16d2cc..2af86c6db 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
+@@ -198,7 +198,7 @@ theorem nmRun_eq (B₀ : NUPPT) (n : ℕ)
+           none)
+         (fun p => if X.distinguisherL n (realView S samp pl n (r.eval n)
+           (pairSndD (S.gen.runAt n [] rg)) ρ (List.ofFn p.1) p.2) rX = true then 1 else 0) := by
+-  have hct := ctLen_pos S n rg re hL
++  have hct := S.ctLen_pos n rg re hL
+   have hdα : ((r.mul S.ctLen).add sl).eval n = r.eval n * S.ctLen.eval n + sl.eval n := by
+     rw [PolyExpr.eval_add, PolyExpr.eval_mul]
+   have hfin : ∀ (z : List Bool)
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
+index b1142e597..f3e646fe3 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
+@@ -42,22 +42,12 @@ of the challenge). The distinguisher `recDist S D` reads back the SIM experiment
+ namespace TCSlib.Cryptography.Composability.NMSim
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+-open NMCCA2 (guessBit guessBit_eq guessBit_valid guessBit_refused)
++open NMCCA2 (guessBit guessBit_eq guessBit_valid guessBit_refused polyTimeComputable_guessBit)
+ 
+ variable (S : FixedLengthPKScheme)
+ 
+ /-! ### Reading the view -/
+ 
+-/-- `guessBit` is polynomial-time (DL-30–36 overlap: the content of the private
+-`polyTimeComputable_guessFun` of `Indistinguishability/Encrypt.lean`, on the bare string). -/
+-theorem polyTimeComputable_guessBit : PolyTimeComputable fun w => [guessBit w] :=
+-  (polyTimeComputable_ite polyTimeComputable_headD
+-    (polyTimeComputable_headD.comp polyTimeComputable_tail)
+-    (polyTimeComputable_not
+-      (polyTimeComputable_headD.comp BinArith.polyTimeComputable_reverse))).congr fun w => by
+-    rw [guessBit_eq]
+-    split <;> rfl
+-
+ /-- **An entry read back** from the decryptions `v ‖ v₁ ‖ v₂` (`msgLen(n) + 1` bits each) of a
+ ciphertext and the encoding of its copy flag, on the context `⟨1^n, _⟩`: `COPY` if
+ `guessBit (v₁ ‖ v₂)`,
+@@ -273,21 +263,6 @@ theorem nmOutput_flatten (n ℓ : ℕ) (sk : List Bool) (s' : Option (Fin (S.ctL
+ 
+ variable (samp : NUPPT)
+ 
+-/-- **The ciphertexts are not empty** when the messages are not: with `msgLen(n) > 0`, correctness
+-gives `ctLen(n) > 0` (two different messages cannot both decrypt from the empty ciphertext). -/
+-theorem ctLen_pos (n : ℕ) (rg : S.gen.Coins n) (re : S.enc.Coins n) (hL : 0 < S.msgLen.eval n) :
+-    0 < S.ctLen.eval n := by
+-  by_contra h
+-  have h0 : S.ctLen.eval n = 0 := by omega
+-  have hnil : ∀ m : Fin (S.msgLen.eval n) → Bool,
+-      S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re = [] := fun m =>
+-    List.eq_nil_of_length_eq_zero ((S.enc_length n rg m re).trans h0)
+-  have h₁ := S.correct n (fun _ => true) rg re
+-  have h₂ := S.correct n (fun _ => false) rg re
+-  rw [hnil] at h₁ h₂
+-  have := congrFun (Option.some.inj (h₁.symm.trans h₂)) ⟨0, hL⟩
+-  exact absurd this (by decide)
+-
+ /-- **The encoding of a bit is read back** from its decryptions: under generated keys, with
+ `msgLen(n) > 0`, for the context `⟨1^n, ⟨z, ⟨ω, st⟩⟩⟩` with `pk = fst z` and the tape `re` after
+ `2·coins(n)` bits of `ω`, `guessBit (v(Enc_pk(x^{msgLen})) ‖ v(Enc_pk((¬x)^{msgLen}))) = x`, where
+@@ -377,7 +352,7 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
+   set f : ℕ → Bool := fun i => st.headD false &&
+     decide (coinBlock (S.ctLen.eval n) i a = (st.drop 1).take (S.ctLen.eval n)) with hfdef
+   set bits := aP ++ mP ++ a.drop (r.eval n * S.ctLen.eval n) with hbits
+-  have hct := ctLen_pos S n rg re hL
++  have hct := S.ctLen_pos n rg re hL
+   have hci : ∀ i < r.eval n, (coinBlock (S.ctLen.eval n) i a).length = S.ctLen.eval n := fun i hi =>
+     length_coinBlock (by
+       rw [ha]
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
+index ad93fad9b..ca469fb1a 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
+@@ -56,6 +56,9 @@ Security is stated for each admissible `L`; a larger `L` admits longer `Dec` que
+ * `PublicKeyScheme.exists_padBound`, `BitPublicKeyScheme.exists_padBound`: padding bounds exist.
+ * `FixedLengthPKScheme.indCodec_eq_bitCodec`: the adversary codec is a bit codec;
+   `PublicKeyScheme.padded_enc_runAt`, `padded_enc_coins`: the padded encryptor.
++* `FixedLengthPKScheme.ctLen_pos`: nonempty messages force nonempty ciphertexts;
++  `FixedLengthPKScheme.indImpl_eq_of_msgLen_eq_zero`: with empty messages the two oracles of the
++  IND game coincide.
+ 
+ The claim after Definition 171.5, `BitPublicKeyScheme.SingleBitSecure.padded_cpa` (single-bit
+ security gives CPA security), and its eager-coins lemma `expect_simulate_indImpl_cpa` are in
+@@ -718,6 +721,45 @@ theorem INDSecure_iff (atk : Attack) :
+       ∀ n, advantage (S.indGame atk A (q.eval n) false n)
+         (S.indGame atk A (q.eval n) true n) ≤ ε n := Iff.rfl
+ 
++/-! ### Nonempty ciphertexts, empty messages -/
++
++/-- **The ciphertexts are not empty** when the messages are not: with `msgLen(n) > 0`, correctness
++gives `ctLen(n) > 0` (two different messages cannot both decrypt from the empty ciphertext). -/
++theorem ctLen_pos (n : ℕ) (rg : S.gen.Coins n) (re : S.enc.Coins n) (hL : 0 < S.msgLen.eval n) :
++    0 < S.ctLen.eval n := by
++  by_contra h
++  have h0 : S.ctLen.eval n = 0 := by omega
++  have hnil : ∀ m : Fin (S.msgLen.eval n) → Bool,
++      S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re = [] := fun m =>
++    List.eq_nil_of_length_eq_zero ((S.enc_length n rg m re).trans h0)
++  have h₁ := S.correct n (fun _ => true) rg re
++  have h₂ := S.correct n (fun _ => false) rg re
++  rw [hnil] at h₁ h₂
++  have := congrFun (Option.some.inj (h₁.symm.trans h₂)) ⟨0, hL⟩
++  exact absurd this (by decide)
++
++/-- **With empty messages the two CCA2 oracles coincide:** if `msgLen(n) = 0`, then
++`S.indImpl atk false n pk sk = S.indImpl atk true n pk sk` (both halves of a challenge are the
++empty message).
++
++**Proof sketch.** Compare query by query through the published equations: decryption does not
++depend on the bit (`indImpl_dec_onSpec`), a repeated challenge repeats the record
++(`indImpl_challenge_repeat_onSpec`), and a first challenge encrypts a half of the query
++(`indImpl_challenge_none_onSpec`), whose string is `[]` either way. -/
++theorem indImpl_eq_of_msgLen_eq_zero (atk : Attack) (n : ℕ) (pk sk : List Bool)
++    (h : S.msgLen.eval n = 0) : S.indImpl atk false n pk sk = S.indImpl atk true n pk sk := by
++  have h0 : ∀ f : Fin (S.msgLen.eval n) → Bool, List.ofFn f = [] := fun f =>
++    List.eq_nil_of_length_eq_zero (by rw [List.length_ofFn, h])
++  funext i x s
++  match i with
++  | 0 => rw [S.indImpl_dec_onSpec, S.indImpl_dec_onSpec]
++  | 1 =>
++    cases s with
++    | some c => rw [S.indImpl_challenge_repeat_onSpec, S.indImpl_challenge_repeat_onSpec]
++    | none =>
++      rw [S.indImpl_challenge_none_onSpec, S.indImpl_challenge_none_onSpec]
++      simp only [h0]
++
+ end FixedLengthPKScheme
+ 
+ end TCSlib.Cryptography.Composability
+diff --git a/TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean b/TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean
+index ddd335704..5b3d541fc 100644
+--- a/TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean
++++ b/TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean
+@@ -28,10 +28,16 @@ needs the parameter.
+ 
+ ## Main definitions
+ 
++* `Games.iterEmit`: iterate and emit, the generic construction of `relabel`, `NMCCA2.logEmit`
++  and `NMSim.chunkMap`.
+ * `EffFill.relabelEmit`, `EffFill.relabel`, `EffFill.bridgePre`, `EffFill.bridgePost`.
+ 
+ ## Main results
+ 
++* `Games.polyTimeComputable_iterEmit`, `Games.iterEmit_encode`, `Games.length_iterate_le_add`:
++  iterate and emit is polynomial-time and reads a list encoding element by element.
++* `EffFill.relabelN_eq_iterEmit`, `EffFill.relabel_eq_iterEmit`: the history translator is an
++  instance.
+ * `EffFill.bridgePre_encodeHist`: the history of a log translates to the log.
+ * `EffFill.bridgePost_spec`: the translated move is the decoded move.
+ * `EffFill.eval_buildTree_bridge`: the two computations evaluate alike against every oracle.
+@@ -42,6 +48,85 @@ needs the parameter.
+   Definition 96.1 (oracle indistinguishability against oracle machines).
+ -/
+ 
++namespace TCSlib.Cryptography.Games
++
++open Complexity Turing
++
++/-! ### Iterate and emit
++
++`iterEmit step emit m x` runs `m` rounds of `step` from `x` and concatenates the emissions of the
++visited words. On the words `enc l` of a list encoding whose step drops the first element, it reads
++the elements one by one (`iterEmit_encode`); with polynomial-time `step` and `emit` and `|x| + 1`
++rounds, it is polynomial-time when `step` never lengthens a word beyond a constant
++(`polyTimeComputable_iterEmit`). The history translator below (`EffFill.relabel`), the log readings
++`NMCCA2.logEmit` and the chunk maps `NMSim.chunkMap` are instances. -/
++
++/-- **Iterate and emit:** the emissions of the first `m` iterates of `step` from `x`,
++concatenated: `iterEmit step emit m x = (List.range m).flatMap fun i => emit (step^[i] x)`. -/
++def iterEmit (step emit : List Bool → List Bool) (m : ℕ) (x : List Bool) : List Bool :=
++  (List.range m).flatMap fun i => emit (step^[i] x)
++
++/-- `iterEmit step emit m x = (List.range m).flatMap fun i => emit (step^[i] x)`. -/
++theorem iterEmit_eq (step emit : List Bool → List Bool) (m : ℕ) (x : List Bool) :
++    iterEmit step emit m x = (List.range m).flatMap fun i => emit (step^[i] x) :=
++  rfl
++
++/-- **The orbit stays short:** if one step never makes a word longer than `max |y| c`, the
++iterates of `x` have at most `|x| + c` bits: `|step^[i] x| ≤ |x| + c`. -/
++theorem length_iterate_le_add {step : List Bool → List Bool} (c : ℕ)
++    (h : ∀ y, (step y).length ≤ max y.length c) (x : List Bool) (i : ℕ) :
++    (step^[i] x).length ≤ x.length + c := by
++  suffices hmax : (step^[i] x).length ≤ max x.length c by omega
++  induction i with
++  | zero => exact le_max_left _ _
++  | succ i ih =>
++    rw [Function.iterate_succ_apply']
++    exact (h _).trans (max_le ih (le_max_right _ _))
++
++/-- **Iterate and emit is polynomial-time** for `|x| + 1` rounds, when `step` and `emit` are and
++one step never makes a word longer than `max |y| c`:
++`PolyTimeComputable fun x => iterEmit step emit (|x| + 1) x`.
++
++**Proof sketch.** `Complexity.polyTimeComputable_iterateEmit` with `|x|` rounds and the orbit
++bound `|x| + c` (`length_iterate_le_add`). -/
++theorem polyTimeComputable_iterEmit {step emit : List Bool → List Bool}
++    (hstep : PolyTimeComputable step) (hemit : PolyTimeComputable emit) (c : ℕ)
++    (h : ∀ y, (step y).length ≤ max y.length c) :
++    PolyTimeComputable fun x => iterEmit step emit (x.length + 1) x :=
++  (polyTimeComputable_iterateEmit hstep hemit .var (.add .var (.const c))
++    (fun x i _ => by
++      rw [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
++      exact length_iterate_le_add c h x i)).congr
++    fun x => by rw [PolyExpr.eval_var, iterEmit_eq]
++
++/-- **Iterate and emit reads a list encoding element by element.** Let `enc` encode lists of `β`
++so that `step` drops the first element of the encoded list of `l` (`step (enc (e :: t)) = enc t`
++for the elements `e` of `l`) and fixes `enc []`, and let `emit` read nothing from `enc []` and `g e`
++from `enc (e :: t)`. Then `m ≥ |l|` rounds from `enc l` emit `l.flatMap g`:
++`iterEmit step emit m (enc l) = l.flatMap g`.
++
++**Proof sketch.** The `i`-th iterate is `enc (l.drop i)` (induction on `i`); the readings of the
++successive suffixes are `TCSlib.Cryptography.flatMap_range_drop`. -/
++theorem iterEmit_encode {β : Type} (step emit : List Bool → List Bool) (enc : List β → List Bool)
++    (g : β → List Bool) (l : List β) (hstep_nil : step (enc []) = enc [])
++    (hstep : ∀ e ∈ l, ∀ t, step (enc (e :: t)) = enc t) (hnil : emit (enc []) = [])
++    (hcons : ∀ e ∈ l, ∀ t, emit (enc (e :: t)) = g e) (m : ℕ) (hm : l.length ≤ m) :
++    iterEmit step emit m (enc l) = l.flatMap g := by
++  have hit : ∀ i, step^[i] (enc l) = enc (l.drop i) := by
++    intro i
++    induction i with
++    | zero => rfl
++    | succ i ih =>
++      rw [Function.iterate_succ_apply', ih, ← List.tail_drop]
++      cases hd : l.drop i with
++      | nil => rw [List.tail_nil, hstep_nil]
++      | cons e t => rw [List.tail_cons, hstep e (List.mem_of_mem_drop (hd ▸ List.mem_cons_self))]
++  rw [iterEmit_eq]
++  simp only [hit]
++  exact flatMap_range_drop (fun l' => emit (enc l')) g hnil l hcons m hm
++
++end TCSlib.Cryptography.Games
++
+ namespace TCSlib.Cryptography.Games.EffFill
+ 
+ open Complexity Turing
+@@ -67,12 +152,24 @@ theorem relabelN_eq (m : ℕ) (w : List Bool) :
+     relabelN m w = (List.range m).flatMap fun i => relabelEmit (pairSndD^[i] w) :=
+   rfl
+ 
++/-- `relabelN` is iterate-and-emit with the step `pairSndD`:
++`relabelN m w = iterEmit pairSndD relabelEmit m w`. -/
++theorem relabelN_eq_iterEmit (m : ℕ) (w : List Bool) :
++    relabelN m w = iterEmit pairSndD relabelEmit m w := by
++  rw [relabelN_eq, iterEmit_eq]
++
+ /-- **The history translator's body:** the pieces of the first `|x| + 1` suffixes of `x`. -/
+ def relabel (x : List Bool) : List Bool := relabelN (x.length + 1) x
+ 
+ /-- `relabel x = relabelN (|x| + 1) x`. -/
+ theorem relabel_eq (x : List Bool) : relabel x = relabelN (x.length + 1) x := rfl
+ 
++/-- `relabel` is iterate-and-emit for `|x| + 1` rounds:
++`relabel x = iterEmit pairSndD relabelEmit (|x| + 1) x`. -/
++theorem relabel_eq_iterEmit (x : List Bool) :
++    relabel x = iterEmit pairSndD relabelEmit (x.length + 1) x := by
++  rw [relabel_eq, relabelN_eq_iterEmit]
++
+ /-- **The history translator:** `bridgePre x = ⟨[], relabel x⟩`. -/
+ def bridgePre (x : List Bool) : List Bool := pairEncode [] (relabel x)
+ 
+@@ -163,21 +260,13 @@ theorem relabelEmit_poly : PolyTimeComputable relabelEmit :=
+     · rw [if_neg h, decide_eq_false h]
+       rfl
+ 
+-/-- **The history translator is polynomial-time** (`Complexity.polyTimeComputable_iterateEmit`
+-with the step `pairSndD`, `|x| + 1` rounds and the orbit bound `|x|`). -/
++/-- **The history translator is polynomial-time** (`polyTimeComputable_iterEmit` with the step
++`pairSndD`, which never lengthens a word, through `relabel_eq_iterEmit`). -/
+ theorem bridgePre_poly : PolyTimeComputable bridgePre := by
+-  have horbit : ∀ (x : List Bool) (i : ℕ), i ≤ PolyExpr.var.eval x.length →
+-      (pairSndD^[i] x).length ≤ PolyExpr.var.eval x.length := by
+-    intro x i _
+-    clear * -
+-    rw [PolyExpr.eval_var]
+-    induction i with
+-    | zero => exact le_rfl
+-    | succ i ih => rw [Function.iterate_succ_apply']; exact (length_pairSndD_le _).trans ih
+-  have h := polyTimeComputable_iterateEmit polyTimeComputable_pairSndD relabelEmit_poly .var .var
+-    horbit
++  have h := polyTimeComputable_iterEmit polyTimeComputable_pairSndD relabelEmit_poly 0
++    fun y => (length_pairSndD_le y).trans (le_max_left _ _)
+   refine ((polyTimeComputable_const []).pairEncode h).congr fun x => ?_
+-  rw [bridgePre_eq, relabel_eq, relabelN_eq, PolyExpr.eval_var]
++  rw [bridgePre_eq, relabel_eq_iterEmit]
+ 
+ /-! ### The move translator -/
+ 
+-- 
+2.43.0
+

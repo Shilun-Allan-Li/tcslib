@@ -1,15 +1,15 @@
 # Fill `dl-folds` — DL-36 and DL-37 folds and accepted promotions
 
-**Status: checkpoint 2 (groups R, B, L) delivered; checkpoint 1 (group G) delivered before.**
-Group E (checkpoint 3) and the final checks follow; this report is extended at each delivery.
-§1–§8 are the checkpoint-1 report (unchanged); §9 is checkpoint 2.
+**Status: checkpoint 3 (group E) delivered; checkpoints 1 (group G) and 2 (groups R, B, L)
+delivered before.** The final checks follow; this report is extended at each delivery.
+§1–§8 are the checkpoint-1 report (unchanged), §9 is checkpoint 2, §10 is checkpoint 3.
 
 | | |
 |---|---|
 | Unit | `dl-folds` (brief `outbox/fills/dl-folds/brief.md`, exchange `a0a46d7c5`; `evidence/inputs/`, SHA256SUMS 7/7 OK) |
 | Worker | Claude |
 | Issue base | `d3f2290a2c66f614e8807903b89ac595086578b3` (merge of #298) on `cryptography/pass-shelat-ch2-4` |
-| Branch | local `fill/dl-folds`; checkpoint 1 = `b3f7dae2c`, checkpoint 2 = `a2b3b3a4f` (two commits on the base) |
+| Branch | local `fill/dl-folds`; checkpoint 1 = `b3f7dae2c`, checkpoint 2 = `a2b3b3a4f`, checkpoint 3 = `5ad4c0775` (three commits on the base) |
 | Toolchain | Lean 4.25.0, Mathlib of the base's `lake-manifest.json` |
 | Order | base `order.txt` 421 modules; after checkpoint 1, `evidence/cp1/order-cp1.txt`, 422 modules; after checkpoint 2, `evidence/cp2/order-cp2.txt`, 422 modules |
 
@@ -536,3 +536,107 @@ auxiliaries). `-` marks a deleted declaration without a successor of its own: th
 the deleted readers (their published successors have `_input`/`_finInput` lemmas instead; no use
 needed them) and the bundle lemmas `fields_input`, `fields_finInput`, `polyTimeComputable_rd`,
 `polyTimeComputable_finFields` (each use reads the published per-reader lemmas).
+
+## 10. Checkpoint 3 — group E
+
+### 10.1 At a glance
+
+- E1, E2, E3: **done**; nothing escalated.
+- **Build:** order unchanged from checkpoint 2 (`cp3/order-cp3.txt`). Sweep of positions 253–422
+  from the first edited module (`Encryption/PublicKey/OracleSecurity`), 170/170
+  (`cp3/sweep.tsv`); recheck of 281–422 after a docstring rewrap in `NMI/Forward.lean`, 142/142
+  (`cp3/sweep2.tsv`).
+- **Sorry census:** 45 in 24, as at the base (`cp3/sorry-census.txt`). **Lint:** 216 FAIL (the
+  base's lines), 102 WARN (§9.1) (`cp3/lint-cp3.log`).
+- **Census** (36 changed and new modules): REMOVED 110, ADDED 83, CHANGED 1 (the same generated
+  matcher as before), REPOINTED 40, map check 0 bad, every removed name mapped
+  (`cp3/census/census-diff-cp3.txt`).
+- **Statements:** `decls2` 13 CHANGED, all the checkpoint-2 re-pointings (13/13 SAME-MODULO-MAP).
+  Definition bodies: 24 re-pointings and the 2 intended E1 redefinitions (§10.2): `NMCCA2.logEmit`
+  and `NMSim.chunkMap` (`cp3/statements/bodies-cp3-modmap.txt`).
+- **Patch replay:** three patches, the branch's tree (`cp3/patch-replay.log`).
+
+### 10.2 Items
+
+**E1 — iterate and emit: done.**
+- New, beside `relabelN` (`Games/Efficiency/OracleBridge.lean`, 321 → 410 lines, in namespace
+  `TCSlib.Cryptography.Games` before the `EffFill` history translator):
+  - `iterEmit step emit m x = (List.range m).flatMap fun i => emit (step^[i] x)`, with `iterEmit_eq`;
+  - `length_iterate_le_add`: if one step never makes a word longer than `max |y| c`, the orbit stays
+    within `|x| + c`;
+  - `polyTimeComputable_iterEmit`: `fun x => iterEmit step emit (|x| + 1) x` is polynomial-time,
+    from `Complexity.polyTimeComputable_iterateEmit` (read-only, used as is) with the orbit bound
+    of `length_iterate_le_add`;
+  - `iterEmit_encode`: on `enc l`, for an encoding whose step drops the first element and whose
+    emission reads it, `m ≥ |l|` rounds emit `l.flatMap g` (from `flatMap_range_drop`, L1).
+- **Instances** (definition bodies changed to the instance; types unchanged; definitional
+  equality by unfolding `iterEmit`):
+  - `NMCCA2.logEmit G L := iterEmit pairSndD G (|L| + 1) L`. `logEmit_eq` keeps its statement and
+    now reads `iterEmit_eq` (not `rfl`: Rule 10); `polyTimeComputable_logEmit` and
+    `logEmit_encodeLog` keep their statements and are corollaries of `polyTimeComputable_iterEmit`
+    (`c = 0`) and `iterEmit_encode` (encoding `codec.encodeLog`). The private
+    `length_iterate_pairSndD_le` and `iterate_pairSndD_encodeLog` are deleted (their content is
+    `length_iterate_le_add` and the iterate step of `iterEmit_encode`); `length_le_length_encodeLog`
+    stays.
+  - `NMSim.chunkMap c f x := iterEmit (chunkStep c) (chunkEmit c f) (|x| + 1) x`. `chunkMap_eq`,
+    `polyTimeComputable_chunkMap` and `chunkMap_flatten` keep their statements and are corollaries
+    of `iterEmit_eq`, `polyTimeComputable_iterEmit` (`c = 2`, the private `length_chunkStep_le`)
+    and `iterEmit_encode` (encoding `l ↦ ⟨ctx, l.flatten⟩`). The private
+    `length_iterate_chunkStep_le` is deleted.
+- **`relabelN` and `relabel` are kept** (they are the efficiency fill's T4 definitions, audited at
+  Gate 10; `relabelN` also has a round-count argument of its own). Bridging equations, proved through
+  `iterEmit_eq`: `EffFill.relabelN_eq_iterEmit : relabelN m w = iterEmit pairSndD relabelEmit m w`
+  and `EffFill.relabel_eq_iterEmit : relabel x = iterEmit pairSndD relabelEmit (|x| + 1) x`.
+  `bridgePre_poly` keeps its statement and is now a corollary of `polyTimeComputable_iterEmit`
+  (its private orbit bound is gone). `relabelN_encodeHist` and `length_le_length_encodeHist` are
+  unchanged (their statements are about `relabelN` with any `m ≥ |L|`). No foreign body was needed.
+- **Further iterate-and-emit constructions found** (receipt E1-*), not folded: their round count
+  is a polynomial other than `|x| + 1` or their definitions are in audited ch. 2–4 files:
+  `BlockEncryptor.blockEncFun`, `decListFun`, `EnsembleLemmas.CopiesLoop`, `StretchMachine`'s
+  `prgIter`, `CommitmentLemmas.ComLoop`, the ZK `EncodingMachines` counter loops. Also two public
+  copies of one fact in ZK: `GI.iterate_pairSndD_encodeMsgs` (`GraphIsomorphism/EfficiencyRep.lean`)
+  and `ColMachines.iterate_pairSndD_encodeMsgs` (`ThreeColoring/Machines.lean`) — new duplication,
+  outside this unit's items.
+
+**E2 — `polyTimeComputable_guessBit`: done.** `NMSim.polyTimeComputable_guessBit`
+(`NMS/Recover.lean`) → `NMCCA2.polyTimeComputable_guessBit` (`NMI/Encrypt.lean`, after
+`guessBit_eq`); the private `polyTimeComputable_guessFun` is now `polyTimeComputable_guessBit`
+composed with the reader of `w`. Recover reaches it through its `open NMCCA2 (…)` list.
+
+**E3 — done.** `NMSim.ctLen_pos` (`NMS/Recover.lean`) and `NMCCA2.indImpl_eq_of_msgLen_eq_zero`
+(`NMI/Encrypt.lean`) → `FixedLengthPKScheme.ctLen_pos` and
+`FixedLengthPKScheme.indImpl_eq_of_msgLen_eq_zero` (`Encryption/PublicKey/OracleSecurity.lean`,
+723 → 765 lines, new subsection at the end of `FixedLengthPKScheme`; statements unchanged up to the
+namespace, proofs unchanged, read through the published `_onSpec` equations). Uses:
+`NMS/Recover`, `NMS/IndSim` (`S.ctLen_pos …`) and one proof line of the endpoint
+`indSecure_cca2_of_nmSecure_cca2` in `NMI.lean` (`S.indImpl_eq_of_msgLen_eq_zero …`; header
+unchanged).
+
+### 10.3 Files changed at checkpoint 3 (base → checkpoint 3, lines)
+
+| File | Lines |
+|---|---|
+| `Games/Efficiency/OracleBridge.lean` | 321 → 410 |
+| `Encryption/PublicKey/OracleSecurity.lean` | 723 → 765 |
+| `NMI.lean` | 655 → 647 |
+| `NMI/Encrypt.lean` | 332 → 331 |
+| `NMI/Forward.lean` | 350 → 140 |
+| `NMS/Generic.lean` | 460 → 181 |
+| `NMS/Recover.lean` | 519 → 495 |
+| `NMS/IndSim.lean` | 293 → 294 |
+
+No import changes at checkpoint 3 (`OracleBridge` reaches `Foundations/BitLists` through its
+existing imports).
+
+### 10.4 Name map (checkpoint 3)
+
+| Old | New |
+|---|---|
+| `NMSim.polyTimeComputable_guessBit` | `NMCCA2.polyTimeComputable_guessBit` |
+| `NMSim.ctLen_pos` | `FixedLengthPKScheme.ctLen_pos` |
+| `NMCCA2.indImpl_eq_of_msgLen_eq_zero` | `FixedLengthPKScheme.indImpl_eq_of_msgLen_eq_zero` |
+| (private) `NMCCA2.length_iterate_pairSndD_le`, `iterate_pairSndD_encodeLog` | — (`Games.length_iterate_le_add`, `Games.iterEmit_encode`) |
+| (private) `NMSim.length_iterate_chunkStep_le` | — (`Games.length_iterate_le_add`) |
+
+New: `Games.iterEmit`, `iterEmit_eq`, `length_iterate_le_add`, `polyTimeComputable_iterEmit`,
+`iterEmit_encode`, `EffFill.relabelN_eq_iterEmit`, `EffFill.relabel_eq_iterEmit`.

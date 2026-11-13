@@ -1,0 +1,203 @@
+### E1-iterateEmit-uses
+$ git grep -nE 'polyTimeComputable_iterateEmit' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:17:`Complexity.polyTimeComputable_iterateEmit`, and the string functions
+TCSlib/Complexity/Randomized/Build/StateLoop.lean:50:  `Complexity.polyTimeComputable_iterate` and `polyTimeComputable_iterateEmit`.
+TCSlib/Complexity/Randomized/Repetition.lean:28:`polyTimeComputable_iterateEmit`, the block map and the string tests `majority`, `pairXor`,
+TCSlib/Complexity/Randomized/Repetition.lean:92:* `Complexity.polyTimeComputable_iterate`, `Complexity.polyTimeComputable_iterateEmit` —
+TCSlib/Complexity/Randomized/Repetition.lean:351:theorem polyTimeComputable_iterateEmit {g emit : List Bool → List Bool}
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:26:instances of `Complexity.polyTimeComputable_iterateEmit` (D11), with the unfolding lemmas
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:280:`Complexity.polyTimeComputable_iterateEmit` with `R := var` rounds and the orbit bound
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:284:  have h := polyTimeComputable_iterateEmit (blockStep_poly L B) (blockEmit_poly hE L B)
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:367:(`polyTimeComputable_iterateEmit`, `R := var`, orbit bound `7 · |x|`). -/
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:380:  have h := polyTimeComputable_iterateEmit hstep hemit .var (.mul (.const 7) .var)
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:494:(`polyTimeComputable_iterateEmit`, coins cut by `pairTakePoly`/`pairDropPoly`, the challenge
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:709:/-- The loop output is polynomial-time (`Complexity.polyTimeComputable_iterateEmit` with the
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:714:  refine polyTimeComputable_iterateEmit (step_poly sX sY) (emit_poly sX sY SX SY ℓ hSX hSY) t
+TCSlib/Cryptography/Asymptotic/OneWay.lean:444:`Complexity.polyTimeComputable_iterateEmit` with `R := q` on the state word `⟨⟨1^n, cnt⟩, rest⟩`:
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:453:**Proof sketch.** `Complexity.polyTimeComputable_iterateEmit` with `R := q` on the state word
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:476:  have hloop := polyTimeComputable_iterateEmit (ProdEval.step_poly inLen)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:276:(`Complexity.polyTimeComputable_iterateEmit` with the step `pairSndD`, which never lengthens a
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:280:  (polyTimeComputable_iterateEmit polyTimeComputable_pairSndD hG .var .var
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:346:(`Complexity.polyTimeComputable_iterateEmit` with the step `chunkStep`, which never lengthens a
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:352:bits (`length_iterate_chunkStep_le`), so `polyTimeComputable_iterateEmit` gives `chunkMap_eq`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:373:  exact (polyTimeComputable_iterateEmit hstep hemit .var (.add .var (.const 2))
+TCSlib/Cryptography/Games/Efficiency.lean:808:     `1^0 = []`), by emitting one piece per suffix (`Complexity.polyTimeComputable_iterateEmit` with
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:166:/-- **The history translator is polynomial-time** (`Complexity.polyTimeComputable_iterateEmit`
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:177:  have h := polyTimeComputable_iterateEmit polyTimeComputable_pairSndD relabelEmit_poly .var .var
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:190:`polyTimeComputable_iterateEmit` with step `x ↦ (F x).dropLast` (the next seed,
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:201:emitting the last bits (`polyTimeComputable_iterateEmit` with the unary advice as fuel),
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/StretchMachine.lean:57:seed `s`, concatenated (`Complexity.polyTimeComputable_iterateEmit`). -/
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/StretchMachine.lean:85:`Complexity.polyTimeComputable_iterateEmit` with `R := ℓ` and orbit bound `P := var`). -/
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/StretchMachine.lean:88:  polyTimeComputable_iterateEmit (prgIterStep_poly hF) (prgIterEmit_poly hF) ℓ .var
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:867:(`polyTimeComputable_iterateEmit`, state `⟨1^n, ⟨v.drop i, rest⟩⟩`: each round drops one value
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:42:  (`Complexity.polyTimeComputable_iterateEmit`), with the closed form of its emissions.
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:449:/-- The loop output is polynomial-time (`Complexity.polyTimeComputable_iterateEmit` with the
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:454:  refine polyTimeComputable_iterateEmit step_poly (emit_poly F H hF hH) .var (.mul (.const 5) .var)
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:661:(`polyTimeComputable_iterateEmit` over `i`), the `2n²` trials of `permBits n` bits are the
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:24:`Complexity.polyTimeComputable_iterateEmit`, the typed cuts `pairTakePoly`/`pairDropPoly`, the
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:59:  principle (an instance of `Complexity.polyTimeComputable_iterateEmit`).
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:392:**Proof sketch.** Instance of `Complexity.polyTimeComputable_iterateEmit` on the counter step
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:413:  have hE := polyTimeComputable_iterateEmit cstep_poly hemit (PolyExpr.normal C c)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:156:`Complexity.polyTimeComputable_iterateEmit` on the counter step `EncodingMachines.cstep` (as
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:170:  have hL := polyTimeComputable_iterateEmit cstep_poly hemit (PolyExpr.normal C c)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:564:`polyTimeComputable_iterateEmit` for the `encodeMsgs` fold; the opening by the two projections
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:578:`polyTimeComputable_iterateEmit`), the challenge `1^e` by `polyTimeComputable_unaryPoly`-style
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:703:`polyTimeComputable_blockMap ℓ` composed with `hCom` and `polyTimeComputable_iterateEmit`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:175:**Proof sketch.** `Complexity.polyTimeComputable_iterateEmit` on the counter step
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:190:  have hE := polyTimeComputable_iterateEmit cstep_poly hemit .var (cbound .var) (cstep_horbit _)
+audits/pass-shelat/Checks.lean:66:#print axioms Complexity.polyTimeComputable_iterateEmit
+audits/pass-shelat/run2-axioms.log:26:'Complexity.polyTimeComputable_iterateEmit' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+audits/pass-shelat/run2-census.md:131:`sorryAx` (142): `Complexity.polyTimeComputable_unaryPoly`, `Complexity.NUPPT.decides_of_decidesWithAdviceInTime`, `Turing.FinTM.computesFunInTime_pairSplitAt`, `Turing.FinTM.computesFunInTime_unaryMul`, `Complexity.polyTimeComputable_pairTakePoly`, `Complexity.polyTimeComputable_pairDropPoly`, `Complexity.NUPPT.exists_reparam`, `Complexity.NUPPT.exists_reparam_advice`, `Complexity.NUPPT.exists_split`, `Complexity.NUPPT.exists_seq`, `Complexity.polyTimeComputable_iterateFind`, `Complexity.polyTimeComputable_iterate`, `Complexity.polyTimeComputable_iterateEmit`, `Complexity.polyTimeComputable_majority`, `Complexity.polyTimeComputable_pairXor`, `Complexity.polyTimeComputable_pairEq`, `Complexity.polyTimeComputable_blockMap`, `permFromCoins_uniform_of_some`, `FunFamily.Easy.prod`, `weak_to_strong`, `strong_prod_two`, `Collection.OneWay.owfFamily_strongOneWay`, `Collection.OneWay.exists_strongOneWay`, `fUniversal_easy`, `lemma_64_3`, `fUniversal_hard`, `fUniversal_weakOneWay`, `theorem_63_1`, `NumberTheory.two_mul_card_mrLiars_le`, `NumberTheory.uprob_millerRabin_le`, `NumberTheory.exists_samplePrime_nuppt`, `Candidates.fmult_easy`, `Candidates.fmult_weakOneWay`, `Candidates.fmult_prod_strongOneWay`, `Candidates.factoringCollection_sampleClose`, `Candidates.factoringCollection_invProbAt_le`, `Candidates.factoringCollection_oneWay`, `Candidates.rsaInv_spec`, `Candidates.rsaCollection_sampleClose`, `Candidates.rsaCollection_invProbAt_le`, `Candidates.rsaCollection_oneWay`, `Candidates.rsaTrapdoor_oneWay`, `Candidates.factorProb_le_rsaProb`, `Candidates.rsa_imp_factoring`, `Candidates.rabinCollection_sampleClose`, `Candidates.rabinCollection_invProbAt_le`, `Candidates.blumInv_spec`, `Candidates.rabinBlumTrapdoor_sampleClose`, `Candidates.rabinBlumTrapdoor_invProbAt_le`, `Candidates.rabinBlumTrapdoor_oneWay`, `Candidates.blumFactorProb_le_invProbAt`, `Candidates.blumFactoring_of_rabinBlum_oneWay`, `Candidates.expCollection_sampleClose`, `Candidates.expCollection_invProbAt_le`, `Candidates.expCollection_oneWay`, `Candidates.dlCollection_oneWay`, `Candidates.uprob_majOracle_ne_le`, `Candidates.invProb_dlInverter_ge`, `Candidates.fullDLCollection_oneWay`, `Candidates.fullDLCollection_hardCore`, `Candidates.statClose_sq_generator`, `Candidates.elGamal_correct`, `Candidates.elGamal_secure`, `Ensemble.Indist.toLit`, `Ensemble.IndistLit.toIndist`, `Ensemble.Indist.push`, `Ensemble.Indist.copies`, `prediction_lemma`, `acceptProb_nextBitHybrid_mix`, `nextBitProb_nextBitPred_false`, `exists_nextBitPred`, `Ensemble.NextBitUnpredictable.pseudorandom`, `Ensemble.Pseudorandom.nextBitUnpredictable`, `owp_hardcore_prg`, `prg_expand`, `cor_81_7`, `FunFamily.StrongOneWay.glPad`, `FunFamily.StrongOneWay.glPad_hardCore`, `goldreich_levin`, `Collection.OneWay.glPad`, `Collection.OneWay.glPad_hardCore`, `goldreich_levin_coll`, `PermCollection.OneWay.glPad`, `TrapdoorCollection.OneWay.glPad`, `TrapdoorCollection.OneWay.glPad_hardCore`, `prgScheme_singleMessageSecure`, `PrivateKeyScheme.not_multiMessageSecure_of_deterministic`, `PrivateKeyScheme.SingleMessageSecure.zeroKnowledge`, `PrivateKeyScheme.singleMessageSecure_iff_zeroKnowledge`, `PRG.Secure.doubling`, `exists_ggmBitsDist_nuppt`, `ggmPRF_prf`, `exists_prf_of_exists_prg`, `uprob_not_injective_le`, `distAdv_prfEncReal_random_otp_le`, `distAdv_prfEncReal_le`, `prfScheme_multiMessageSecure`, `distAdv_multi_le_sum`, `BitPublicKeyScheme.bitwiseEncFun_poly`, `BitPublicKeyScheme.SingleBitSecure.bitwise`, `PublicKeyScheme.Secure.multiMessageSecure`, `TrapdoorCollection.tdpBitScheme_singleBitSecure`, `TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure`, `WitnessRelation.mem_NP`, `exists_witnessRelation_of_mem_NP`, `negligible_inv_pow_sqrt_div`, `pushesUniform_coinTable`, `polyTimeComputable_encPermGraph`, `polyTimeComputable_encPermMulInv`, `polyTimeComputable_encPermFromCoins`, `Riso_witnessRelation`, `uprob_gi_rep_cheat_le`, `uprob_gni_rep_cheat`, `gni_interactiveProofErr`, `gni_interactiveProof`, `gi_efficientProverProofErr`, `gi_rep_efficientProverProof`, `gi_rep_interactiveProof`, `statClose_giSimTrunc`, `exists_giSimulator`, `gi_statZK`, `gi_zk`, `gi_hvzk`, `HardCore.bitHiding`, `BitHiding.owpComStr_hides`, `owpComStr_polyTimeComputable`, `owp_commitment`, `exists_commitment_of_owp_hardCore`, `uprob_col_cheat_le`, `R3COL_witnessRelation`, `col_efficientProverProofErr`, `colRep_efficientProverProof`, `colRep_interactiveProof`, `statClose_colSimTruncH`, `exists_colSimRed_ge`, `col_zk`, `col_hvzk`, `col_zeroKnowledgeProof`, `zk_proof_of_levinReduction`, `zk_proof_of_owp_levinReduction`, `zk_proof_of_mem_NP`, `zk_proof_of_mem_NP_of_owp`.
+audits/pass-shelat/run3-axioms.log:26:'Complexity.polyTimeComputable_iterateEmit' depends on axioms: [propext, Classical.choice, Quot.sound]
+audits/pass-shelat/run3b-machine-axioms.log:37:'Complexity.polyTimeComputable_iterateEmit' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+### E1-shapes
+$ git grep -nE 'flatMap fun i => [A-Za-z]+ \(\(?[A-Za-z]+( [A-Za-z]+)?\)\^\[i\]|\^\[i\] [A-Za-z]+\)\)?$' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:195:  (List.range (1 * (S.length + 1) ^ 1 + 1)).flatMap (fun i => mapChunk g (listStep^[i] S))
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:259:  (List.range (1 * (S.length + 1) ^ 1 + 1)).flatMap (fun i => zipChunk g (zipStep^[i] S))
+TCSlib/Complexity/Randomized/Repetition.lean:198:      | some i => out (g^[i] x)
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:109:  (List.range (x.length + 1)).flatMap fun i => blockEmit E L B ((blockStep L B)^[i] x)
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:239:    have := hg (g^[i] x)
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:305:  (List.range (x.length + 1)).flatMap fun i => decListEmit Dc (decListStep^[i] x)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:648:    have := length_step_le sX sY ((step sX sY)^[i] w)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:707:  (List.range (t.eval x.length + 1)).flatMap fun i => emit sX sY SX SY ℓ ((step sX sY)^[i] x)
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:293:  | some i => ans D ((g D)^[i] x)
+TCSlib/Cryptography/Candidates/Concrete.lean:618:    (fun i => rbl_out (rbl_step^[i] x))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:260:  (List.range (L.length + 1)).flatMap fun i => G (pairSndD^[i] L)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:314:  (List.range (x.length + 1)).flatMap fun i => chunkEmit c f ((chunkStep c)^[i] x)
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:63:  (List.range m).flatMap fun i => relabelEmit (pairSndD^[i] w)
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean:228:  G n s := fun i => h n ((⇑(P.f n))^[i] s)
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/StretchMachine.lean:59:  (List.range (ℓ.eval s.length + 1)).flatMap fun i => prgIterEmit F ((prgIterStep F)^[i] s)
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:410:    have := length_step_le (step^[i] w)
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:447:  (List.range (x.length + 1)).flatMap fun i => emit F H (step^[i] x)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:173:        if (i : ℕ) = p₁ then A₁ else if (i : ℕ) = p₂ then A₂ else pairFstD (pairSndD^[i] cv))
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:106:def msgAt (w : List Bool) (i : ℕ) : List Bool := pairFstD (pairSndD^[i] w)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:64:def msgAt (w : List Bool) (i : ℕ) : List Bool := pairFstD (pairSndD^[i] w)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1235:    (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1327:    (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1487:    (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
+
+### E1-orbit
+$ git grep -nE 'length_iterate_[A-Za-z]*_le|iterate_pairSndD_[A-Za-z]*' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean:148:theorem length_iterate_guardLoop_le (g : List Bool → List Bool) (w : List Bool) (i : ℕ) :
+TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean:186:every orbit from every word by `7(|w|+1)` (`length_iterate_guardLoop_le`), as
+TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean:204:    (length_iterate_guardLoop_le g) (fun z => ?_)
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:362:theorem iterate_pairSndD_encWords (L : List (List Bool)) (j : ℕ) :
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:371:      exact iterate_pairSndD_nil j
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:377:  rw [getW, forLoop_pairEncode, pairSndD_pairEncode, iterate_pairSndD_encWords,
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:394:    have := length_iterate_pairSndD_le d j
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:151:theorem length_iterate_pairSndD_le (w : List Bool) (i : ℕ) :
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:158:theorem iterate_pairSndD_nil (i : ℕ) : pairSndD^[i] ([] : List Bool) = [] :=
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:238:    have h1 := length_iterate_pairSndD_le (pairSndD (pairSndD w)) i
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:345:    have h1 := length_iterate_pairSndD_le (pairSndD (pairFstD (pairSndD w))) i
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:346:    have h2 := length_iterate_pairSndD_le (pairSndD (pairSndD (pairSndD w))) i
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:375:    have := length_iterate_pairSndD_le w i; simp; omega)
+TCSlib/Complexity/Randomized/BPLInPWords.lean:125:        ((length_pairFstD_le _).trans (length_iterate_pairSndD_le w j)))).le
+TCSlib/Complexity/Randomized/BPLInPWords.lean:136:  have hr := length_iterate_pairSndD_le w i
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:642:theorem length_iterate_step_le (w : List Bool) (i : ℕ) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:716:  have h := length_iterate_step_le sX sY x i
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:420:theorem length_iterate_step_le (inLen : PolyExpr) (w : List Bool) (i : ℕ) :
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:457:`4|w| + 2q(|w|) + 6` (`ProdEval.length_iterate_step_le`). `q` is evaluated at the length of the
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:473:    have := ProdEval.length_iterate_step_le inLen w i
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:267:private theorem length_iterate_pairSndD_le (L : List Bool) (i : ℕ) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:281:    (fun x i _ => by rw [PolyExpr.eval_var]; exact length_iterate_pairSndD_le x i)).congr
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:289:private theorem iterate_pairSndD_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:344:  simp only [iterate_pairSndD_encodeLog]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:336:private theorem length_iterate_chunkStep_le (c : PolyExpr) (x : List Bool) (i : ℕ) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:352:bits (`length_iterate_chunkStep_le`), so `polyTimeComputable_iterateEmit` gives `chunkMap_eq`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:376:      exact length_iterate_chunkStep_le c x i)).congr
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:404:theorem length_iterate_step_le (w : List Bool) (i : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:456:  have := length_iterate_step_le x i
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:88:theorem iterate_pairSndD_nil : ∀ k : ℕ, pairSndD^[k] [] = []
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:90:  | k + 1 => by rw [Function.iterate_succ_apply]; exact iterate_pairSndD_nil k
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:101:theorem iterate_pairSndD_encodeMsgs : ∀ (k : ℕ) (hist : List (List Bool)),
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:105:    rw [Function.iterate_succ_apply, pairSndD_encodeMsgs, iterate_pairSndD_encodeMsgs k, List.drop_drop]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:241:    rw [iterate_pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:243:  · rw [iterate_pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:274:    rw [iterate_pairSndD_encodeMsgs, ih, List.drop_drop]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:326:    rw [iterate_pairSndD_encodeMsgs, pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:329:  · rw [iterate_pairSndD_encodeMsgs, pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:337:  rw [lastSteps_encodeMsgs, iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:598:  rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinBlock_eq, headD_take hc, Fin.val_mk,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:928:theorem iterate_pairSndD_encodeMsgs (hist : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:962:  rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, List.headD_eq_head?_getD,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:980:  · rw [iterate_pairSndD_encodeMsgs, List.drop_length]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:983:    rw [iterate_pairSndD_encodeMsgs, decide_eq_false_iff_not, encodeMsgs_eq_nil_iff,
+
+### E2-guess
+$ git grep -nE 'guessBit|guessFun' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:439:at most one of them. If `st ≠ some c₁` the first decryption is valid (`guessBit_valid`); otherwise
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:440:the first is `⊥` and the second valid (`guessBit_refused`). -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:499:    simpa only [if_neg Bool.false_ne_true] using guessBit_refused hm g
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:501:    simpa only [if_pos rfl] using guessBit_valid hm g _
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:24:verdicts (`guessBit_valid`, `guessBit_refused`). It also shows that at `msgLen(n) = 0` the two
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:31:* `NMCCA2.guessBit`, `NMCCA2.guessDist`: the distinguisher.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:36:* `NMCCA2.guessDist_distinguisherL`, `NMCCA2.guessBit_valid`, `NMCCA2.guessBit_refused`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:249:def guessBit (w : List Bool) : Bool :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:252:/-- `guessBit w = if w.headD false then (w.drop 1).headD false else ¬ w.reverse.headD false`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:253:theorem guessBit_eq (w : List Bool) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:254:    guessBit w = if w.headD false then (w.drop 1).headD false else !w.reverse.headD false := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:257:private def guessFun (x : List Bool) : List Bool :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:263:private theorem polyTimeComputable_guessFun : PolyTimeComputable guessFun := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:272:`[guessBit w]` on its argument `w`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:274:  NUPPT.ofPolyTimeUniform polyTimeComputable_guessFun (.const 0)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:276:/-- The distinguisher accepts `w` exactly when `guessBit w`:
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:277:`guessDist.distinguisherL n w ρ = guessBit w`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:279:    guessDist.distinguisherL n w ρ = guessBit w := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:280:  have hrun : ∀ y r, guessDist.runAtL n y r = guessFun (pairEncode (pairEncode
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:282:    NUPPT.runAtL_ofPolyTimeUniform polyTimeComputable_guessFun (.const 0) n y r
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:283:  rw [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hrun, guessFun, NUPPT.advInput_eq,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:284:    pairFstD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode, guessBit_eq]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:288:then `guessBit (v₁ ‖ v₂) = g`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:289:theorem guessBit_valid {m : ℕ} (hm : 0 < m) (g : Bool) (v₂ : List Bool) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:290:    guessBit (List.ofFn (FixedLengthScheme.decAnswer (some fun _ : Fin m => g)) ++ v₂) = g := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:292:  rw [FixedLengthScheme.decAnswer_some, guessBit_eq, List.ofFn_succ, List.ofFn_succ]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:296:encodes `(¬g)^m` with `m > 0`, then `guessBit (v₁ ‖ v₂) = g`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:297:theorem guessBit_refused {m : ℕ} (hm : 0 < m) (g : Bool) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:298:    guessBit (List.ofFn (zeroBits (m + 1)) ++
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:305:  rw [FixedLengthScheme.decAnswer_some, h2, guessBit_eq, ofFn_zeroBits, List.replicate_succ]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:765:   and the distinguisher `NMSim.recDist` reads `x` back (`NMCCA2.guessBit`) and runs `D` on the
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:21:  correctness at most one of them is the challenge, and `guessBit` reads `x` from the two
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:22:  decryptions (`guessBit_encPair`).
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:31:* `NMSim.recDist_distinguisherL`, `NMSim.nmOutput_flatten`, `NMSim.guessBit_encPair`,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:45:open NMCCA2 (guessBit guessBit_eq guessBit_valid guessBit_refused)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:51:/-- `guessBit` is polynomial-time (DL-30–36 overlap: the content of the private
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:52:`polyTimeComputable_guessFun` of `Indistinguishability/Encrypt.lean`, on the bare string). -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:53:theorem polyTimeComputable_guessBit : PolyTimeComputable fun w => [guessBit w] :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:58:    rw [guessBit_eq]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:63:`guessBit (v₁ ‖ v₂)`,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:66:  if guessBit (ch.drop ((S.msgLen.add (.const 1)).eval (pairFstD ctx).length)) then
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:71:if guessBit (ch.drop (msgLen + 1)) then COPY else false :: ch.take (msgLen + 1)`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:74:      if guessBit (ch.drop ((S.msgLen.add (.const 1)).eval (pairFstD ctx).length)) then
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:78:/-- **A bit read back** from the decryptions of its encoding: `[guessBit ch]`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:79:def bitG (_ctx ch : List Bool) : List Bool := [guessBit ch]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:81:/-- `bitG ctx ch = [guessBit ch]`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:82:theorem bitG_eq (ctx ch : List Bool) : bitG ctx ch = [guessBit ch] := rfl
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:98:  exact polyTimeComputable_ite (polyTimeComputable_guessBit.comp hdrop)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:105:  polyTimeComputable_guessBit.comp polyTimeComputable_pairSndD
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:293:`2·coins(n)` bits of `ω`, `guessBit (v(Enc_pk(x^{msgLen})) ‖ v(Enc_pk((¬x)^{msgLen}))) = x`, where
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:297:they differ and at most one is the challenge: `guessBit_valid` or `guessBit_refused`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:298:theorem guessBit_encPair (n : ℕ) (rg : S.gen.Coins n) (s' : Option (Fin (S.ctLen.eval n) → Bool))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:303:    guessBit ((entryL S n (pairSndD (S.gen.runAt n [] rg))
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:346:    exact guessBit_refused hL x
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:348:    exact guessBit_valid hL x _
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:358:(`guessBit_encPair`, `hflag`) and `bitG` each pair into its bit (`chunkMap_flatten`). -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:488:      exact congrArg (· :: []) (guessBit_encPair S samp n rg s' hL z ω st hz re hω x)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:502:    have hg : guessBit (v (encBit S samp ctx (f i)) ++ v (encBit S samp ctx (!f i))) = f i := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:504:      exact guessBit_encPair S samp n rg s' hL z ω st hz re hω (f i)
+
+### E3-ctLen
+$ git grep -nE 'ctLen_pos|indImpl_eq_of_msgLen_eq_zero|0 < S\.ctLen\.eval' d3f2290a2c66f614e8807903b89ac595086578b3 -- TCSlib audits
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:727:private theorem cca2Run (S : FixedLengthScheme) (n : ℕ) (hd : 0 < S.ctLen.eval n)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:601:two CCA2 games coincide (`indImpl_eq_of_msgLen_eq_zero`), so `A`'s advantage is `0`. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:614:      simp only [indImpl_eq_of_msgLen_eq_zero S .cca2 n _ _ hm]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:25:CCA2 oracles coincide (`indImpl_eq_of_msgLen_eq_zero`).
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:37:* `NMCCA2.indImpl_eq_of_msgLen_eq_zero`.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:318:theorem indImpl_eq_of_msgLen_eq_zero (atk : Attack) (n : ℕ) (pk sk : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:200:  have hct := ctLen_pos S n rg re hL
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:278:theorem ctLen_pos (n : ℕ) (rg : S.gen.Coins n) (re : S.enc.Coins n) (hL : 0 < S.msgLen.eval n) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:279:    0 < S.ctLen.eval n := by
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean:380:  have hct := ctLen_pos S n rg re hL
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:301:    (ha : a.length = r.eval n * S.ctLen.eval n + sl.eval n) (hct : 0 < S.ctLen.eval n) :
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:436:    (hct : 0 < S.ctLen.eval n) :
+

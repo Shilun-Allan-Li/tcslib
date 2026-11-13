@@ -42,21 +42,11 @@ of the challenge). The distinguisher `recDist S D` reads back the SIM experiment
 namespace TCSlib.Cryptography.Composability.NMSim
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
-open NMCCA2 (guessBit guessBit_eq guessBit_valid guessBit_refused)
+open NMCCA2 (guessBit guessBit_eq guessBit_valid guessBit_refused polyTimeComputable_guessBit)
 
 variable (S : FixedLengthPKScheme)
 
 /-! ### Reading the view -/
-
-/-- `guessBit` is polynomial-time (DL-30–36 overlap: the content of the private
-`polyTimeComputable_guessFun` of `Indistinguishability/Encrypt.lean`, on the bare string). -/
-theorem polyTimeComputable_guessBit : PolyTimeComputable fun w => [guessBit w] :=
-  (polyTimeComputable_ite polyTimeComputable_headD
-    (polyTimeComputable_headD.comp polyTimeComputable_tail)
-    (polyTimeComputable_not
-      (polyTimeComputable_headD.comp BinArith.polyTimeComputable_reverse))).congr fun w => by
-    rw [guessBit_eq]
-    split <;> rfl
 
 /-- **An entry read back** from the decryptions `v ‖ v₁ ‖ v₂` (`msgLen(n) + 1` bits each) of a
 ciphertext and the encoding of its copy flag, on the context `⟨1^n, _⟩`: `COPY` if
@@ -273,21 +263,6 @@ theorem nmOutput_flatten (n ℓ : ℕ) (sk : List Bool) (s' : Option (Fin (S.ctL
 
 variable (samp : NUPPT)
 
-/-- **The ciphertexts are not empty** when the messages are not: with `msgLen(n) > 0`, correctness
-gives `ctLen(n) > 0` (two different messages cannot both decrypt from the empty ciphertext). -/
-theorem ctLen_pos (n : ℕ) (rg : S.gen.Coins n) (re : S.enc.Coins n) (hL : 0 < S.msgLen.eval n) :
-    0 < S.ctLen.eval n := by
-  by_contra h
-  have h0 : S.ctLen.eval n = 0 := by omega
-  have hnil : ∀ m : Fin (S.msgLen.eval n) → Bool,
-      S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re = [] := fun m =>
-    List.eq_nil_of_length_eq_zero ((S.enc_length n rg m re).trans h0)
-  have h₁ := S.correct n (fun _ => true) rg re
-  have h₂ := S.correct n (fun _ => false) rg re
-  rw [hnil] at h₁ h₂
-  have := congrFun (Option.some.inj (h₁.symm.trans h₂)) ⟨0, hL⟩
-  exact absurd this (by decide)
-
 /-- **The encoding of a bit is read back** from its decryptions: under generated keys, with
 `msgLen(n) > 0`, for the context `⟨1^n, ⟨z, ⟨ω, st⟩⟩⟩` with `pk = fst z` and the tape `re` after
 `2·coins(n)` bits of `ω`, `guessBit (v(Enc_pk(x^{msgLen})) ‖ v(Enc_pk((¬x)^{msgLen}))) = x`, where
@@ -377,7 +352,7 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
   set f : ℕ → Bool := fun i => st.headD false &&
     decide (coinBlock (S.ctLen.eval n) i a = (st.drop 1).take (S.ctLen.eval n)) with hfdef
   set bits := aP ++ mP ++ a.drop (r.eval n * S.ctLen.eval n) with hbits
-  have hct := ctLen_pos S n rg re hL
+  have hct := S.ctLen_pos n rg re hL
   have hci : ∀ i < r.eval n, (coinBlock (S.ctLen.eval n) i a).length = S.ctLen.eval n := fun i hi =>
     length_coinBlock (by
       rw [ha]
