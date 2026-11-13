@@ -1,0 +1,555 @@
+From 6f853adc61d5d175ee83c69f6c07ab2da112cabc Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 13 Nov 2026 04:30:22 +0000
+Subject: [PATCH] dl-consolidation landing edit LE-repoint-nmsim: re-point the
+ nm-sim files to the consolidated names
+
+#297 (nm-sim) landed before the consolidation and uses names the consolidation moved.
+Re-pointed in the nm-sim modules (proofs to explicit published names; docstrings only where
+they spelled a stale qualified name; the two statements that mention castImpl keep their
+text byte for byte, the unqualified name resolving to Games.castImpl through the open Games):
+- GGMRed.ofFn_padFin_of_length -> ofFn_padFin_of_length;
+- AdaptiveCPA.{castImpl, castImpl_eq, expect_simulate_castImpl_toCompOn, padFin_ofFn_zeroBits,
+  simulate_eq_of_abs} -> Games.*; AdaptiveCPA.ofFn_cast -> root ofFn_cast;
+  AdaptiveCPA.ofFn_splitHalf_fst/_snd -> FixedLengthScheme.*;
+- ChallengeSim.{expect_sample_equiv, expect_sample_comm, expect_sub} -> ProbComp.* (Games.ProbComp);
+- the selective `open AdaptiveCPA (...)` lines of Simulation, SimIND, IndSim and Simulator
+  removed (every name they opened moved).
+DL-37: nm-sim's private padFin_replicate_false (Simulation/Challenge.lean) deleted; its use
+reads Games.padFin_replicate_false. Lines over 100 characters re-wrapped.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../PublicKey/NonMalleability/Simulation.lean |  9 ++--
+ .../NonMalleability/Simulation/Challenge.lean | 19 ++------
+ .../NonMalleability/Simulation/IndSim.lean    | 16 +++----
+ .../NonMalleability/Simulation/Reduction.lean |  8 ++--
+ .../NonMalleability/Simulation/Rounds.lean    |  6 +--
+ .../NonMalleability/Simulation/SimIND.lean    | 48 +++++++++----------
+ .../NonMalleability/Simulation/SimINDGap.lean | 19 ++++----
+ .../NonMalleability/Simulation/Simulator.lean | 17 ++++---
+ 8 files changed, 66 insertions(+), 76 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
+index a20f63411..ef63d352c 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
+@@ -478,7 +478,6 @@ theorem snmIdeal_eq (M : MsgSampler) (Sim : NUPPT) (r sl : ℕ) (D : NUPPT) (n :
+ section Transport
+ 
+ open NMSim
+-open AdaptiveCPA (castImpl castImpl_eq expect_simulate_castImpl_toCompOn padFin_ofFn_zeroBits)
+ 
+ /-- **The real experiment's oracles on T2's lengths are the hybrid oracle with `b = false`:**
+ read along `snmDin`, `snmDout`, `snmImpl` is `NMSim.rImpl … false … ρ ρ' none` (for every `ρ'`).
+@@ -492,11 +491,11 @@ theorem castImpl_snmImpl (atk : Attack) (M : MsgSampler) (n : ℕ) (pk sk : List
+         (outs := fun i => (snmDout S M.histLen i).eval n) (S.snmImpl atk M n pk sk ρ) =
+       rImpl S atk false M.samp M.paramLen M.histLen M.hist n pk sk ρ ρ' none := by
+   funext i x s
+-  rw [castImpl_eq]
++  rw [Games.castImpl_eq]
+   match i, s with
+   | 0, s =>
+     have hx : List.ofFn (padFin (S.ctLen.eval n) (List.ofFn x)) = List.ofFn x :=
+-      GGMRed.ofFn_padFin_of_length (by
++      ofFn_padFin_of_length (by
+         rw [List.length_ofFn]; show (snmDin S M.paramLen 0).eval n = _; rw [snmDin_zero])
+     erw [S.snmImpl_dec atk M n pk sk ρ (padFin (S.ctLen.eval n) (List.ofFn x)) s]
+     rw [rImpl_dec, hx]
+@@ -505,7 +504,7 @@ theorem castImpl_snmImpl (atk : Attack) (M : MsgSampler) (n : ℕ) (pk sk : List
+     · rw [if_pos hc, if_pos hc, OracleComp.pure_bind]
+     · rw [if_neg hc, if_neg hc, OracleComp.pure_bind]
+       dsimp only
+-      erw [padFin_ofFn_zeroBits]
++      erw [Games.padFin_ofFn_zeroBits]
+   | 1, some (y, a) =>
+     erw [S.snmImpl_challenge atk M n pk sk ρ (padFin (M.paramLen.eval n) (List.ofFn x))
+       (some (y, a))]
+@@ -630,7 +629,7 @@ theorem accept_snmReal_eq (atk : Attack) (M : MsgSampler) (A : NUPPT) (q r sl :
+     funext res
+     rw [ProbComp.prob_pure, snmView_realView]
+   exact (congrArg (ProbComp.expect _) hG).trans
+-    (expect_simulate_castImpl_toCompOn (snmDin_eval S M n) (snmDout_eval S M n)
++    (Games.expect_simulate_castImpl_toCompOn (snmDin_eval S M n) (snmDout_eval S M n)
+       (rfl : r * S.ctLen.eval n + sl = r * S.ctLen.eval n + sl)
+       (S.snmImpl atk M n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg)) ρ) A n q
+       (pairFstD (S.gen.runAt n [] rg)) rA none fun p : List Bool × S.SnmState M n =>
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
+index 94eefbf83..8915ae42d 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
+@@ -207,7 +207,7 @@ theorem ofFn_chalState_some (y : Fin (S.ctLen.eval n) → Bool) (h : Fin (hl.eva
+     List.ofFn (chalState P n (some (y, h, a))) =
+       true :: (List.ofFn y ++ List.ofFn h ++ List.ofFn a) := by
+   rw [chalState_some]
+-  refine GGMRed.ofFn_padFin_of_length ?_
++  refine ofFn_padFin_of_length ?_
+   rw [List.length_cons, List.length_append, List.length_append, List.length_ofFn, List.length_ofFn,
+     List.length_ofFn, chalHandler_stateLen_eval]
+   omega
+@@ -235,15 +235,6 @@ theorem headD_ofFn_chalState
+ 
+ end State
+ 
+-/-- A padded run of `false`s is all `false`: `padFin d (0^m) = 0`. -/
+-private theorem padFin_replicate_false (d m : ℕ) :
+-    padFin d (List.replicate m false) = zeroBits d := by
+-  funext i
+-  rw [padFin_apply, zeroBits_apply]
+-  by_cases h : (i : ℕ) < m
+-  · rw [List.getD_eq_getElem _ _ (by rw [List.length_replicate]; exact h), List.getElem_replicate]
+-  · rw [List.getD_eq_default _ _ (by rw [List.length_replicate]; omega)]
+-
+ section Calls
+ 
+ variable (P : ChalParams S pl hl k' din' dout') (n : ℕ) (z : List Bool)
+@@ -261,7 +252,7 @@ theorem chalHandler_impl_dec (x : Fin ((snmDin S pl 0).eval n) → Bool)
+     (by rw [List.length_replicate, snmDout_zero]) List.length_ofFn (by
+       show chalRun P _ = _
+       rw [chalRun_eq, hI, hU, hS, List.length_replicate]
+-      rfl), padFin_replicate_false, padFin_ofFn]
++      rfl), Games.padFin_replicate_false, padFin_ofFn]
+ 
+ /-- **A repeated challenge answers the recorded `⟨Y, H⟩`** and keeps the state, asking nothing. -/
+ theorem chalHandler_impl_some (x : Fin ((snmDin S pl 1).eval n) → Bool)
+@@ -327,14 +318,14 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
+   obtain ⟨hU₀, -, -, hS₀, hI₀, -, hL₀⟩ := fields_input (k := 2) n z (List.ofFn ω)
+     (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []
+   have hq : List.ofFn (padFin ((din' P.j).eval n) (P.qry w₀)) = P.qry w₀ :=
+-    GGMRed.ofFn_padFin_of_length (by rw [P.qry_len, hU₀, List.length_replicate])
++    ofFn_padFin_of_length (by rw [P.qry_len, hU₀, List.length_replicate])
+   have hxl : (List.ofFn x).length = pl.eval n := by
+     rw [List.length_ofFn]
+     show (snmDin S pl 1).eval n = _
+     rw [snmDin_one]
+   have hx : EnsembleLemmas.padL (pl.eval n) (List.ofFn x) =
+       List.ofFn (padFin (pl.eval n) (List.ofFn x)) := by
+-    rw [EnsembleLemmas.padL_eq, GGMRed.ofFn_padFin_of_length hxl]
++    rw [EnsembleLemmas.padL_eq, ofFn_padFin_of_length hxl]
+     exact List.take_left' hxl
+   have hpc : 1 ≤ (chalHandler P).perCall.eval n := by
+     rw [chalHandler_perCall, PolyExpr.eval_const]
+@@ -368,7 +359,7 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
+     rw [chalRun_eq, hW₁]
+     beta_reduce
+     rw [hI₁, hU₁, hS₁, hL₁, hQ₁, List.length_replicate, headD_ofFn_chalState, hx,
+-      ofFn_chalState_some, GGMRed.ofFn_padFin_of_length (hY y), GGMRed.ofFn_padFin_of_length (hH y)]
++      ofFn_chalState_some, ofFn_padFin_of_length (hY y), ofFn_padFin_of_length (hH y)]
+     rw [if_neg (by simp), if_neg (by simp),
+       if_neg (fun h => pairEncode_ne_nil _ _ (of_decide_eq_true h))]
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
+index 035c0da6a..dedbe2166 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean
+@@ -39,7 +39,6 @@ None: this module only proves results. `B`'s handler parameters `nmParams` and t
+ namespace TCSlib.Cryptography.Composability.NMSim
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+-open AdaptiveCPA (simulate_eq_of_abs)
+ 
+ variable (S : FixedLengthPKScheme) (samp : NUPPT) (pl hl : PolyExpr)
+   (hist : List Bool → List Bool) (hist_poly : PolyTimeComputable hist) (r sl : PolyExpr)
+@@ -130,7 +129,7 @@ theorem recView_nmOut (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n) (ρ ρ' :
+       (pairEncode (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re))
+         (List.ofFn (nmAbs S samp pl hl hist hist_poly r sl n ρ ρ' s).1))) a _ _ ha haP hmP
+   rw [← nmParams_outLen_eval S samp pl hl hist hist_poly r sl n] at hlen
+-  rw [GGMRed.ofFn_padFin_of_length hlen, nmAbs_snd_fst,
++  rw [ofFn_padFin_of_length hlen, nmAbs_snd_fst,
+     recView_nmOutL S pl r sl samp n rg hL (s.map Prod.fst) _ _ _ a _ _
+       (pairFstD_pairEncode _ _) re
+       (by rw [hω, PolyExpr.eval_add, ← List.append_assoc, List.drop_left' (by
+@@ -218,7 +217,8 @@ theorem nmRun_eq (B₀ : NUPPT) (n : ℕ)
+       (NUPPT.coinsCongr (recDist_coins S pl r X).symm n rX) = true then 1 else 0)).trans ?_
+   rw [← hφ, nmParams_advInput, chalHandler_init, simulate_bind, simulate_comp,
+     ← nmAbs_none S samp pl hl hist hist_poly r sl n ρ ρ',
+-    simulate_eq_of_abs _ _ _ (nmComp_abs S samp pl hl hist hist_poly r sl n _ _ ρ ρ' re b ρ''),
++    Games.simulate_eq_of_abs _ _ _
++      (nmComp_abs S samp pl hl hist hist_poly r sl n _ _ ρ ρ' re b ρ''),
+     OracleComp.bind_assoc, OracleComp.bind_assoc]
+   simp only [OracleComp.pure_bind, hfin, simulate_pure]
+   rw [ProbComp.expect_bind]
+@@ -271,19 +271,19 @@ theorem exists_nmAdversary : ∃ (B : NUPPT) (qB : PolyExpr), ∀ (X : NUPPT) (n
+   rw [accept_nmGame_eq_rImpl S .cpa B _ _ (recDist S pl r X) b n (fun _ => [])
+     ((halfCoins S n).symm false), hybAcc_eq, hK]
+   refine congrArg _ (funext fun rg => ?_)
+-  rw [← ChallengeSim.expect_sample_equiv (NUPPT.coinsCongr hc n)]
++  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr hc n)]
+   simp only [hB]
+-  rw [← ChallengeSim.expect_sample_equiv φ, ChallengeSim.expect_sample_prod,
+-    ← ChallengeSim.expect_sample_equiv
++  rw [← ProbComp.expect_sample_equiv φ, ChallengeSim.expect_sample_prod,
++    ← ProbComp.expect_sample_equiv
+       (seedEquivPoly (nmParams_seedLen_handler S samp pl hl hist hist_poly r sl) n),
+     ChallengeSim.expect_sample_prod]
+   refine congrArg _ (funext fun ρ => ?_)
+-  rw [← ChallengeSim.expect_sample_equiv (seedEquiv (A := samp) (B := S.enc) rfl n),
++  rw [← ProbComp.expect_sample_equiv (seedEquiv (A := samp) (B := S.enc) rfl n),
+     ChallengeSim.expect_sample_prod]
+   refine congrArg _ (funext fun ρ' => ?_)
+   refine Eq.trans ?_ (ProbComp.expect_const (ProbComp.sample (S.enc.Coins n)) _)
+   refine congrArg _ (funext fun re => congrArg _ (funext fun rA => ?_))
+-  rw [← ChallengeSim.expect_sample_equiv (NUPPT.coinsCongr (recDist_coins S pl r X).symm n)]
++  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr (recDist_coins S pl r X).symm n)]
+   refine congrArg _ (funext fun rX => ?_)
+   rw [← nmSeed_eq]
+   exact nmRun_eq S samp pl hl hist hist_poly r sl A q B₀ n φ hφ rg hL ρ ρ' re rA b _ X rX
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
+index 595c20d44..61d805562 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
+@@ -494,7 +494,7 @@ theorem nmMsgs_input (pk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
+   have hρ' := length_ofFn_coins samp n ρ'
+   rw [simMsg_eq, altMsg_eq, hU, hZ, hW, hQ, List.length_replicate, pairSndD_pairEncode,
+     nmSeed_ofFn, List.take_left' hρ, List.drop_left' hρ, List.take_left' hρ', drawWith_eq,
+-    drawWith_eq, GGMRed.ofFn_padFin_of_length hxs, ofFn_padFin_eq_padL, ofFn_padFin_eq_padL,
++    drawWith_eq, ofFn_padFin_of_length hxs, ofFn_padFin_eq_padL, ofFn_padFin_eq_padL,
+     NUPPT.runAt_eq, NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, NUPPT.runAtL_eq_output_layout]
+   exact ⟨rfl, rfl⟩
+ 
+@@ -623,7 +623,7 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
+             ρ')).length = (S.msgLen.add S.msgLen).eval n := by
+         rw [List.length_append, List.length_ofFn, List.length_ofFn, hpl]
+       rw [encWith_eq, encWith_eq, ofFn_drawWith_half S n _ hpl, nmPair_eq,
+-        GGMRed.ofFn_padFin_of_length hlen]
++        ofFn_padFin_of_length hlen]
+       cases b
+       · rw [if_neg Bool.false_ne_true, if_neg Bool.false_ne_true,
+           List.take_left' List.length_ofFn]
+@@ -637,13 +637,13 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
+     have hx' : List.ofFn (padFin ((snmDin S (S.msgLen.add S.msgLen) 1).eval n)
+         (List.ofFn (nmPair S samp pl n ρ ρ' (padFin (pl.eval n) (List.ofFn x))))) =
+         List.ofFn (nmPair S samp pl n ρ ρ' (padFin (pl.eval n) (List.ofFn x))) :=
+-      GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, snmDin_one])
++      ofFn_padFin_of_length (by rw [List.length_ofFn, snmDin_one])
+     have hlen : (List.ofFn (encWith S n pk (drawWith samp (S.msgLen.eval n) n
+         (padFin (pl.eval n) (List.ofFn x)) (if b then ρ' else ρ)) re') ++ []).length =
+         (snmDout S (.const 0) 1).eval n := by
+       rw [List.append_nil, List.length_ofFn, snmDout_one, PolyExpr.eval_add, PolyExpr.eval_const,
+         Nat.add_zero]
+-    have hans := GGMRed.ofFn_padFin_of_length hlen
++    have hans := ofFn_padFin_of_length hlen
+     rw [rImpl_none_eager, rImpl_none_eager]
+     simp only [OracleComp.pure_bind, simulate_pure, nmAbs_some, Bool.false_eq_true, ↓reduceIte, hq]
+     rw [hx', padFin_ofFn (nmPair S samp pl n ρ ρ' (padFin (pl.eval n) (List.ofFn x))), hdraw, h0]
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
+index ce201832d..0bd479f47 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
+@@ -177,7 +177,7 @@ theorem impl_of_ret (i : Fin k) (x : Fin ((din i).eval n) → Bool)
+       pairEncode [true] (u ++ v)) :
+     H.impl n z ω i x s = .pure (padFin _ u, padFin _ v) := by
+   have hw : u ++ v = List.ofFn (padFin ((dout i).eval n + H.stateLen.eval n) (u ++ v)) :=
+-    (GGMRed.ofFn_padFin_of_length (by rw [List.length_append, hu, hv])).symm
++    (ofFn_padFin_of_length (by rw [List.length_append, hu, hv])).symm
+   rw [InteractiveHandler.impl_apply, InteractiveHandler.call_eq,
+     buildComp_of_ret (a := padFin ((dout i).eval n + H.stateLen.eval n) (u ++ v)) (by
+       rw [MachineCodec.encodeLog_nil, hrun]
+@@ -220,7 +220,7 @@ theorem impl_of_query (i : Fin k) (x : Fin ((din i).eval n) → Bool)
+     rw [List.nil_append, MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
+       bitCodec_encodeEntry]
+   have hw : u y ++ v y = List.ofFn (padFin ((dout i).eval n + H.stateLen.eval n) (u y ++ v y)) :=
+-    (GGMRed.ofFn_padFin_of_length (by rw [List.length_append, hu, hv])).symm
++    (ofFn_padFin_of_length (by rw [List.length_append, hu, hv])).symm
+   rw [buildComp_of_ret (a := padFin ((dout i).eval n + H.stateLen.eval n) (u y ++ v y)) (by
+       rw [hlog, hrun₁]
+       exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).trans
+@@ -239,7 +239,7 @@ theorem finish_of_ret (s : Fin (H.stateLen.eval n) → Bool) {d : ℕ} (a : Fin
+   refine buildComp_of_ret ?_
+   rw [MachineCodec.encodeLog_nil, hrun]
+   exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w))
+-    (GGMRed.ofFn_padFin_of_length hb).symm).trans (decodeBitMove_ret _ _ _ _)
++    (ofFn_padFin_of_length hb).symm).trans (decodeBitMove_ret _ _ _ _)
+ 
+ end Calls
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
+index f027536d5..3e06a04d2 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
+@@ -46,8 +46,6 @@ oracle's run with the coin `β` (`accept_nmGame_eq_rImpl`).
+ namespace TCSlib.Cryptography.Composability.NMSim
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
+-open AdaptiveCPA (castImpl castImpl_eq ofFn_cast ofFn_splitHalf_fst ofFn_splitHalf_snd
+-  padFin_ofFn_zeroBits expect_simulate_castImpl_toCompOn simulate_eq_of_abs)
+ 
+ variable (S : FixedLengthPKScheme)
+ 
+@@ -128,7 +126,7 @@ theorem ofFn_drawWith_half (n : ℕ) {k : ℕ} (a : Fin k → Bool)
+     List.ofFn (drawWith (halfSamp S) (S.msgLen.eval n) n a ((halfCoins S n).symm β)) =
+       if β then (List.ofFn a).drop (S.msgLen.eval n) else (List.ofFn a).take (S.msgLen.eval n) := by
+   rw [drawWith_eq, halfSamp_runAt, headD_ofFn_halfCoins_symm]
+-  refine GGMRed.ofFn_padFin_of_length ?_
++  refine ofFn_padFin_of_length ?_
+   cases β <;> simp only [Bool.false_eq_true, ↓reduceIte, List.length_take, List.length_drop,
+     List.length_ofFn] <;> omega
+ 
+@@ -137,7 +135,7 @@ theorem ofFn_drawWith_half (n : ℕ) {k : ℕ} (a : Fin k → Bool)
+ theorem expect_sample_halfCoins (n : ℕ) (g : (halfSamp S).Coins n → ℝ) :
+     expect (sample ((halfSamp S).Coins n)) g =
+       (g ((halfCoins S n).symm false) + g ((halfCoins S n).symm true)) / 2 := by
+-  rw [← expect_sample_equiv (halfCoins S n).symm, expect_sample, Fintype.sum_bool,
++  rw [← ProbComp.expect_sample_equiv (halfCoins S n).symm, expect_sample, Fintype.sum_bool,
+     Fintype.card_bool]
+   ring
+ 
+@@ -178,11 +176,11 @@ theorem castImpl_indImpl_abs (atk : Attack) (β : Bool) (n : ℕ) (pk sk : List
+         padFin (S.ctLen.eval n) (List.ofFn x) := by
+       apply List.ofFn_injective
+       rw [ofFn_cast (S.inLens_zero n),
+-        GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hd0, S.inLens_zero]),
+-        GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hd0])]
++        ofFn_padFin_of_length (by rw [List.length_ofFn, hd0, S.inLens_zero]),
++        ofFn_padFin_of_length (by rw [List.length_ofFn, hd0])]
+     have hx : List.ofFn (padFin (S.ctLen.eval n) (List.ofFn x)) = List.ofFn x :=
+-      GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hd0])
+-    rw [castImpl_eq, S.indImpl_dec_onSpec_cast, rImpl_dec, hc, Option.isSome_map, hx]
++      ofFn_padFin_of_length (by rw [List.length_ofFn, hd0])
++    rw [Games.castImpl_eq, S.indImpl_dec_onSpec_cast, rImpl_dec, hc, Option.isSome_map, hx]
+     by_cases hcond : (FixedLengthScheme.decOpen atk s.isSome &&
+         !decide (s.map Prod.fst = some (padFin (S.ctLen.eval n) (List.ofFn x)))) = true
+     · rw [if_pos hcond, if_pos hcond, OracleComp.pure_bind, OracleComp.pure_bind]
+@@ -190,7 +188,7 @@ theorem castImpl_indImpl_abs (atk : Attack) (β : Bool) (n : ℕ) (pk sk : List
+       rw [ofFn_cast (S.outLens_zero n).symm]
+     · rw [if_neg hcond, if_neg hcond, OracleComp.pure_bind, OracleComp.pure_bind]
+       dsimp only
+-      rw [padFin_ofFn_zeroBits]
++      rw [Games.padFin_ofFn_zeroBits]
+   | 1, x =>
+     have hh : ∀ {ℓ : ℕ} (m : Fin ℓ → Bool),
+         List.ofFn (histWith hist ((PolyExpr.const 0).eval n) m) = [] := fun m =>
+@@ -198,12 +196,12 @@ theorem castImpl_indImpl_abs (atk : Attack) (β : Bool) (n : ℕ) (pk sk : List
+     cases s with
+     | some ya =>
+       obtain ⟨y, a⟩ := ya
+-      rw [Option.map_some, castImpl_eq, S.indImpl_challenge_repeat_onSpec, OracleComp.pure_bind,
+-        rImpl_some, OracleComp.pure_bind]
++      rw [Option.map_some, Games.castImpl_eq, S.indImpl_challenge_repeat_onSpec,
++        OracleComp.pure_bind, rImpl_some, OracleComp.pure_bind]
+       dsimp only
+       rw [ofFn_cast (S.outLens_one n).symm, hh, List.append_nil, Option.map_some]
+     | none =>
+-      rw [Option.map_none, castImpl_eq, S.indImpl_challenge_none_onSpec, rImpl_none_lazy,
++      rw [Option.map_none, Games.castImpl_eq, S.indImpl_challenge_none_onSpec, rImpl_none_lazy,
+         OracleComp.bind_assoc, OracleComp.bind_assoc]
+       refine congrArg _ (funext fun re => ?_)
+       rw [OracleComp.pure_bind, rImpl_none_eager, OracleComp.pure_bind]
+@@ -217,12 +215,13 @@ theorem castImpl_indImpl_abs (atk : Attack) (β : Bool) (n : ℕ) (pk sk : List
+             (padFin (S.inLens n 1) (List.ofFn x))) =
+             List.ofFn (padFin ((S.msgLen.add S.msgLen).eval n) (List.ofFn x)) := by
+           rw [ofFn_cast (S.inLens_one n),
+-            GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hd1, hpl, S.inLens_one]),
+-            GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hd1])]
++            ofFn_padFin_of_length (by rw [List.length_ofFn, hd1, hpl, S.inLens_one]),
++            ofFn_padFin_of_length (by rw [List.length_ofFn, hd1])]
+         rw [ofFn_drawWith_half S n _ hpl]
+         cases β
+-        · rw [if_neg Bool.false_ne_true, if_neg Bool.false_ne_true, ofFn_splitHalf_fst, hx]
+-        · rw [if_pos rfl, if_pos rfl, ofFn_splitHalf_snd, hx]
++        · rw [if_neg Bool.false_ne_true, if_neg Bool.false_ne_true,
++            FixedLengthScheme.ofFn_splitHalf_fst, hx]
++        · rw [if_pos rfl, if_pos rfl, FixedLengthScheme.ofFn_splitHalf_snd, hx]
+       have he : encWith S n pk (drawWith (halfSamp S) (S.msgLen.eval n) n
+           (padFin ((S.msgLen.add S.msgLen).eval n) (List.ofFn x))
+           (if false = true then ρ' else (halfCoins S n).symm β)) re =
+@@ -276,12 +275,13 @@ theorem accept_nmGame_eq_rImpl (atk : Attack) (A : NUPPT) (q ℓ : ℕ) (D : NUP
+     dsimp only
+     rw [padFin_ofFn]
+   rw [prob_bind, S.nmCodec_eq_bitCodec, h2]
+-  refine (expect_simulate_castImpl_toCompOn (snmDin_eval_inLens S n) (snmDout_eval_outLens S n)
+-    rfl (S.indImpl atk β n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg))) A n q
++  refine (Games.expect_simulate_castImpl_toCompOn (snmDin_eval_inLens S n)
++    (snmDout_eval_outLens S n) rfl
++    (S.indImpl atk β n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg))) A n q
+     _ r none (fun p : List Bool × Option (Fin (S.ctLen.eval n) → Bool) =>
+       if D.distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) p.2
+         (padFin (ℓ * S.ctLen.eval n) p.1)) rD = true then (1 : ℝ) else 0)).symm.trans ?_
+-  have habs := simulate_eq_of_abs _ _ (Option.map Prod.fst)
++  have habs := Games.simulate_eq_of_abs _ _ (Option.map Prod.fst)
+     (fun i x s => castImpl_indImpl_abs S atk β n (pairFstD (S.gen.runAt n [] rg))
+       (pairSndD (S.gen.runAt n [] rg)) hist ρ' i x s)
+     (A.toCompOn (bitCodec (fun i => (snmDin S (S.msgLen.add S.msgLen) i).eval n)
+@@ -358,7 +358,7 @@ theorem copyHandler_finish (pl hl outLen : PolyExpr) (n : ℕ) (z : List Bool)
+   show decodeBitMove _ _ _ ((copyHandler S pl hl outLen).finRun _) = _
+   rw [hfin, copyFin, (fields_finInput _ _ _ _ _ _).2.2.2.1]
+   have hw : List.ofFn (padFin ((copyHandler S pl hl outLen).outLen.eval n) (List.ofFn a)) =
+-      List.ofFn a := GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, hol, hd])
++      List.ofFn a := ofFn_padFin_of_length (by rw [List.length_ofFn, hol, hd])
+   exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
+     (decodeBitMove_ret _ _ _ _)
+ 
+@@ -624,7 +624,7 @@ theorem nmOutput_eq_entryTails (n ℓ : ℕ) (sk : List Bool)
+   rw [List.getElem_ofFn, List.getElem_map, List.getElem_range, entryL_drop_one, S.nmDecrypt_eq]
+   have hc : List.ofFn (S.nthCt (padFin (ℓ * S.ctLen.eval n) w) ⟨i, by
+       rw [List.length_ofFn] at h₁; exact h₁⟩) = chunkAt (S.ctLen.eval n) i w := by
+-    rw [S.ofFn_nthCt, GGMRed.ofFn_padFin_of_length hw, chunkAt_eq]
++    rw [S.ofFn_nthCt, ofFn_padFin_of_length hw, chunkAt_eq]
+   have hcopy : (s' = some (S.nthCt (padFin (ℓ * S.ctLen.eval n) w) ⟨i, by
+       rw [List.length_ofFn] at h₁; exact h₁⟩)) ↔
+       s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i w) := by
+@@ -846,21 +846,21 @@ theorem real_identity (D : NUPPT) (rD : D.Coins n) (ρ'' : (halfDist S).Coins n)
+           expect (runB S atk A q ℓ n hist pk sk r ρ' β) (fun p => if badHalves S n p.2 then 0
+             else f p) := by
+     intro β f
+-    rw [← expect_sub]
++    rw [← ProbComp.expect_sub]
+     refine congrArg _ (funext fun p => ?_)
+     split <;> ring
+   simp only [fun β p => (hview β p).1, fun β p => (hview β p).2]
+   simp only [Bool.false_eq_true, ↓reduceIte]
+   have hsub0 : expect (runB S atk A q ℓ n hist pk sk r ρ' false) (fun p => 1 - v p) =
+       1 - expect (runB S atk A q ℓ n hist pk sk r ρ' false) v := by
+-    rw [expect_sub, expect_const]
++    rw [ProbComp.expect_sub, expect_const]
+   have hsub0' : expect (runB S atk A q ℓ n hist pk sk r ρ' false)
+       (fun p => if badHalves S n p.2 then 0 else 1 - v p) =
+       expect (runB S atk A q ℓ n hist pk sk r ρ' false)
+         (fun p => if badHalves S n p.2 then 0 else 1) -
+       expect (runB S atk A q ℓ n hist pk sk r ρ' false)
+         (fun p => if badHalves S n p.2 then 0 else v p) := by
+-    rw [← expect_sub]
++    rw [← ProbComp.expect_sub]
+     refine congrArg _ (funext fun p => ?_)
+     split <;> ring
+   rw [hsplit false (fun p => 1 - v p), hsplit true v, hsplit false (fun _ => 1),
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean
+index d4419e234..0dd5adcfe 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean
+@@ -55,14 +55,14 @@ private theorem lin_expect {α : Type} (c : ProbComp α) (A₀ A₁ B₀ B₁ C
+   have hC : expect c (fun x => C₁ x - C₀ x) =
+       expect c (fun x => (A₀ x + A₁ x) - 2⁻¹ * (B₀ x + B₁ x)) :=
+     congrArg _ (funext fun x => by linarith [h x])
+-  rw [← expect_sub, hC, expect_sub, expect_const_mul, expect_add, expect_add]
++  rw [← ProbComp.expect_sub, hC, ProbComp.expect_sub, expect_const_mul, expect_add, expect_add]
+   ring
+ 
+ /-- `2·f − g = h₁ − h₀` pointwise passes to expectations. -/
+ private theorem lin_expect' {α : Type} (c : ProbComp α) (f g h₀ h₁ : α → ℝ)
+     (h : ∀ x, 2 * f x - g x = h₁ x - h₀ x) :
+     2 * expect c f - expect c g = expect c h₁ - expect c h₀ := by
+-  rw [← expect_const_mul, ← expect_sub, ← expect_sub]
++  rw [← expect_const_mul, ← ProbComp.expect_sub, ← ProbComp.expect_sub]
+   exact congrArg _ (funext h)
+ 
+ /-- **The coupling in expectation:** if `T₀(e c) + T₁(e c) − (H₀ b + H₁ b)/2 = V₁ c − V₀ c` for all
+@@ -82,8 +82,8 @@ private theorem lin_sample {α β γ : Type} [Fintype α] [Nonempty α] [Fintype
+   have hT : expect (sample γ) (fun c => T₀ (e c) + T₁ (e c) - (V₁ c - V₀ c)) =
+       expect (sample γ) (fun _ => (H₀ b₀ + H₁ b₀) / 2) :=
+     congrArg _ (funext fun c => by linarith [h c b₀])
+-  rw [expect_sub, expect_add, expect_sub, expect_const,
+-    expect_sample_equiv e T₀, expect_sample_equiv e T₁] at hT
++  rw [ProbComp.expect_sub, expect_add, ProbComp.expect_sub, expect_const,
++    ProbComp.expect_sample_equiv e T₀, ProbComp.expect_sample_equiv e T₁] at hT
+   rw [expect_add, expect_const] at hH
+   linarith [h c₀ b₀]
+ 
+@@ -127,7 +127,7 @@ theorem realAcc_copyHandler (atk : Attack) (samp : NUPPT) (pl hl : PolyExpr)
+   subst hK
+   rw [realAcc_eq]
+   refine congrArg _ (funext fun rg => congrArg _ (funext fun ρ => ?_))
+-  rw [← expect_sample_equiv φ, expect_sample_prod]
++  rw [← ProbComp.expect_sample_equiv φ, expect_sample_prod]
+   refine Eq.trans ?_
+     (expect_const (sample (Fin ((copyHandler S pl hl outL).seedLen.eval n) → Bool)) _)
+   refine congrArg _ (funext fun ω => congrArg _ (funext fun rA => congrArg _ (funext fun rX => ?_)))
+@@ -140,7 +140,7 @@ theorem realAcc_copyHandler (atk : Attack) (samp : NUPPT) (pl hl : PolyExpr)
+   refine congrArg _ (funext fun p => ?_)
+   rw [expect_pure]
+   dsimp only
+-  rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, copyHandler_outLen, hd])]
++  rw [ofFn_padFin_of_length (by rw [List.length_ofFn, copyHandler_outLen, hd])]
+ 
+ /-- **The SIM adversary's handler** for an NM adversary with `ℓ` output ciphertexts:
+ `copyHandler` on
+@@ -324,9 +324,9 @@ theorem ideal_gap (Sim D : NUPPT) (r n : ℕ) :
+     intro X
+     rw [idealAcc_eq]
+     refine congrArg _ (funext fun rg => ?_)
+-    rw [expect_sample_comm]
++    rw [ProbComp.expect_sample_comm]
+     refine congrArg _ (funext fun rS => ?_)
+-    rw [expect_sample_comm]
++    rw [ProbComp.expect_sample_comm]
+     refine congrArg _ (funext fun rX => ?_)
+     rw [expect_sample_halfCoins, histImpl_coins S _ _ _ _ n ((halfCoins S n).symm true)
+       ((halfCoins S n).symm false) hhl, ← expect_add, div_eq_inv_mul, ← expect_const_mul]
+@@ -336,7 +336,8 @@ theorem ideal_gap (Sim D : NUPPT) (r n : ℕ) :
+   refine congrArg _ (funext fun rS => ?_)
+   symm
+   refine Eq.trans (congrArg _ (funext fun ρ'' => ?_)) (expect_const (sample _) _)
+-  rw [← expect_sample_equiv (NUPPT.coinsCongr (tailDist_coins S D).symm n), ← expect_const_mul]
++  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr (tailDist_coins S D).symm n),
++    ← expect_const_mul]
+   symm
+   refine Eq.trans (congrArg _ (funext fun rD => ?_)) (expect_const (sample _) _)
+   rw [← expect_const_mul]
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
+index 5a3e0f550..2e67f7489 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
+@@ -45,7 +45,6 @@ namespace TCSlib.Cryptography.Composability.NMSim
+ 
+ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+ open NMCCA2 (finU finA fields_finInput polyTimeComputable_finFields)
+-open AdaptiveCPA (simulate_eq_of_abs)
+ 
+ variable (S : FixedLengthPKScheme) (samp : NUPPT)
+ 
+@@ -388,7 +387,7 @@ theorem simCt_input (pk : List Bool) (ρ' : samp.Coins n) (re : S.enc.Coins n) (
+     pairSndD_pairEncode, seedEquiv_ofFn,
+     List.take_left' (length_ofFn_coins samp n ρ'), List.drop_left' (length_ofFn_coins samp n ρ'),
+     encWith_eq, drawWith_eq, ofFn_padFin_eq_padL, ofFn_padFin_eq_padL,
+-    GGMRed.ofFn_padFin_of_length hxl, NUPPT.Uniform.runAt_eq S.enc_uniform, NUPPT.advInput_eq,
++    ofFn_padFin_of_length hxl, NUPPT.Uniform.runAt_eq S.enc_uniform, NUPPT.advInput_eq,
+     NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout]
+ 
+ /-- **The simulator against the history oracle is the hybrid with an independent draw:** for the
+@@ -485,7 +484,7 @@ theorem idealView_simOut (sk : List Bool) (ρ : samp.Coins n)
+     rw [simParams_outLen_eval, simOutL_eq, List.length_append, List.length_drop, ha,
+       length_flatten_map_range (S.ctLen.eval n + 1) _ _ hg, Nat.mul_add, Nat.mul_one]
+     omega
+-  rw [GGMRed.ofFn_padFin_of_length hlen, simAbs_snd, idealView_eq, realView_eq, simOutL_eq,
++  rw [ofFn_padFin_of_length hlen, simAbs_snd, idealView_eq, realView_eq, simOutL_eq,
+     drop_flatten_append _ _ _ hg]
+   congr 3
+   refine List.map_congr_left fun i hi => ?_
+@@ -575,7 +574,7 @@ theorem simRun_eq (Sim₀ : NUPPT) (n : ℕ)
+     exact OracleComp.costBoundedBy_pure _ _ _), ← hφ z ω rA, simParams_advInput, chalHandler_init,
+     simulate_bind,
+     simulate_comp, ← simAbs_none S samp pl hl hist r sl n ρ,
+-    simulate_eq_of_abs _ _ _ (simComp_abs S samp pl hl hist r sl n pk sk ρ ρ' re),
++    Games.simulate_eq_of_abs _ _ _ (simComp_abs S samp pl hl hist r sl n pk sk ρ ρ' re),
+     OracleComp.bind_assoc, OracleComp.bind_assoc]
+   simp only [OracleComp.pure_bind, hfin, simulate_pure]
+   rw [ProbComp.expect_bind]
+@@ -610,19 +609,19 @@ theorem exists_simulator : ∃ Sim : NUPPT, ∀ (X : NUPPT) (n : ℕ),
+   obtain ⟨φ, hφ⟩ := hT2 n
+   rw [idealAcc_eq, hybAcc_eq]
+   refine congrArg _ (funext fun rg => congrArg _ (funext fun ρ => ?_))
+-  rw [← ChallengeSim.expect_sample_equiv (NUPPT.coinsCongr hc n)]
++  rw [← ProbComp.expect_sample_equiv (NUPPT.coinsCongr hc n)]
+   simp only [hSim]
+-  rw [← ChallengeSim.expect_sample_equiv φ, ChallengeSim.expect_sample_prod,
+-    ← ChallengeSim.expect_sample_equiv (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n),
++  rw [← ProbComp.expect_sample_equiv φ, ChallengeSim.expect_sample_prod,
++    ← ProbComp.expect_sample_equiv (seedEquiv (simParams_seedLen_handler S samp pl hl r sl) n),
+     ChallengeSim.expect_sample_prod]
+   refine congrArg _ (funext fun ρ' => ?_)
+   simp only [expect_simulate_rImpl_eager]
+   refine (congrArg _ (funext fun re => congrArg _ (funext fun rA => congrArg _ (funext fun rX =>
+     simRun_eq S samp pl hl hist A q r sl Sim₀ n φ hφ _ _ ρ ρ' re rA fun v =>
+       if X.distinguisherL n v rX = true then 1 else 0)))).trans ?_
+-  rw [ChallengeSim.expect_sample_comm]
++  rw [ProbComp.expect_sample_comm]
+   refine congrArg _ (funext fun rA => ?_)
+-  rw [ChallengeSim.expect_sample_comm]
++  rw [ProbComp.expect_sample_comm]
+ 
+ end Ideal
+ 
+-- 
+2.43.0
+
