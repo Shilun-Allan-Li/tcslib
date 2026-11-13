@@ -18,7 +18,7 @@ snapshot. See campaign/status/2026-11-09-merge-243-244/.
 
 | PR / gate | Current state |
 |---|---|
-| #296 / 132 | **Not yet clear to merge.** Round 1 (Codex) **HOLD**: three minors (G132-01/02: 18 further one-step sites, three owners outside the PR; G132-03: pack counts). Round 2 at `ce427bde`: repaired after a library-wide sweep; 68 citing owners; replay, seals (no new root), controls, lint and copy screen fresh. Codex round 2 staged; ready to dispatch (prompt-r2.md). See campaign/gates/132-runfrom-one/. |
+| #296 / 132 | **Not yet clear to merge.** Round 1 (Codex) HOLD (G132-01/02/03), resolved at `ce427bde`. Round 2 (Codex) **HOLD**: one minor, G132-04 (Bidirectional `foldCfg_run`'s `zero` case is an uncited one-step run, wrongly disposed as outside RO-1). No soundness defect or new failing seal root. Repair and round 3 in progress. See campaign/gates/132-runfrom-one/. |
 | #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
 | #242 / 122 | **Merged** at `7b6bd1685a1436313dfbc13ce191f40c7dd065d3` (2026-11-12). Gate closed. Its replay output is the campaign snapshot `oleans-c7b6b` (campaign/status/2026-11-12-merge-242/). |

@@ -1,5 +1,5 @@
-**Not yet clear to merge: #296.** Gate 132 round 1 (Codex): **HOLD**, three minors (findings.md).
-Round 2 at `ce427bde`: the minors are repaired or corrected (resolutions-r2.md), after a library-wide
-one-step sweep. The PR now cites `runFrom_one` in 68 owners. Fresh evidence: a 403-module replay that
-passes; no new failing seal root; 454 paired controls pass; lint is clean; every copy pair is
-dispositioned. Ready to dispatch: the round 2 Codex bundle is staged (exchange `46de8d53`; prompt-r2.md).
+**Not yet clear to merge: #296.** Gate 132 round 2 (Codex): **HOLD**, one minor (findings-r2.md).
+- G132-01, G132-02 and G132-03 are resolved.
+- G132-04: `Bidirectional.foldCfg_run`'s `zero` case is a one-step run (duration `0 + 1`) that still
+  closes with `runFrom_succ_eq_step, runFrom_zero`; its disposition as outside RO-1 was wrong.
+No new soundness defect or failing seal root was found. The repair and a round 3 pack are in progress.
