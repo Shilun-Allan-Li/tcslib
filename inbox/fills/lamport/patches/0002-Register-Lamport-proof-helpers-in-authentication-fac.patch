@@ -1,0 +1,26 @@
+From 09ac6b6c8c7f5997928ee5dfb4f18984ba2709b5 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 13 Nov 2026 22:18:24 -0800
+Subject: [PATCH 2/2] Register Lamport proof helpers in authentication facade
+
+---
+ TCSlib/Cryptography/Authentication.lean | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Authentication.lean b/TCSlib/Cryptography/Authentication.lean
+index e33d4b40f..657a8205e 100644
+--- a/TCSlib/Cryptography/Authentication.lean
++++ b/TCSlib/Cryptography/Authentication.lean
+@@ -12,6 +12,9 @@ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
+ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
+ import TCSlib.Cryptography.Authentication.MAC.FromPRF
+ import TCSlib.Cryptography.Authentication.Signatures.Lamport
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Encoding
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Planted
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.TableCoins
+ import TCSlib.Cryptography.Hashing.FromDiscreteLog
+ import TCSlib.Cryptography.Authentication.Signatures.HashAndSign
+ 
+-- 
+2.50.1 (Apple Git-155)
+

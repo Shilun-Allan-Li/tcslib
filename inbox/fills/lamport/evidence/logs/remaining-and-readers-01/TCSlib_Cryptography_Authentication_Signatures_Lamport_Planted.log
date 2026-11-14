@@ -1,0 +1,138 @@
+START 2026-11-14T06:02:39.609745+00:00
+COMMAND ['/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted']
+Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:70:87: error: unsolved goals
+n : ℕ
+T : Table n
+⊢ (List.ofFn (List.length ∘ fun i => List.ofFn (T (i, false)) ++ List.ofFn (T (i, true)))).sum = n ^ 2 * 2
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:71:61: warning: This simp argument is unused:
+  List.length_append
+
+Hint: Omit it from the simp argument list.
+  simp only [secretWord, List.length_flatten, List.map_ofFn, L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵a̵p̵p̵e̵n̵d̵,̵List.length_ofFn, List.ofFn_const,
+  ̲  ̲ ̲ ̲List.sum_replicate, nsmul_eq_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:72:4: warning: This simp argument is unused:
+  List.length_ofFn
+
+Hint: Omit it from the simp argument list.
+  simp only [secretWord, List.length_flatten, List.map_ofFn, List.length_append,
+  ̵  ̵ ̵ ̵List.l̵e̵n̵g̵t̵h̵_̵ofFn,̵ ̵L̵i̵s̵t̵.̵o̵f̵F̵n̵_const,
+  ̲  ̲ ̲ ̲List.sum_replicate, nsmul_eq_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:72:22: warning: This simp argument is unused:
+  List.ofFn_const
+
+Hint: Omit it from the simp argument list.
+  simp only [secretWord, List.length_flatten, List.map_ofFn, List.length_append,
+  ̵  ̵ ̵ ̵List.length_ofFn,
+  ̲ L̵i̵s̵t̵.̵o̵f̵F̵n̵_̵c̵o̵n̵s̵t̵,̵  ̲ ̲List.sum_replicate, nsmul_eq_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:72:39: warning: This simp argument is unused:
+  List.sum_replicate
+
+Hint: Omit it from the simp argument list.
+  simp only [secretWord, List.length_flatten, List.map_ofFn, List.length_append, List.length_ofFn,
+  ̲  ̲ ̲ ̲List.ofFn_const, L̵i̵s̵t̵.̵s̵u̵m̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵,̵ ̵nsmul_eq_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:72:59: warning: This simp argument is unused:
+  nsmul_eq_mul
+
+Hint: Omit it from the simp argument list.
+  simp only [secretWord, List.length_flatten, List.map_ofFn, List.length_append,
+  ̵  ̵ ̵ ̵List.length_ofFn,
+  ̲  ̲ ̲ ̲List.ofFn_const, List.sum_replicate,̵ ̵n̵s̵m̵u̵l̵_̵e̵q̵_̵m̵u̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:87:37: error: unsolved goals
+n : ℕ
+T : Table n
+i : Fin n
+c : Bool
+x : Fin n → Bool
+⊢ (if True then x else T (i, c)) = x
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:88:25: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [plantTable,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:161:2: error: unsolved goals
+case pos
+n : ℕ
+Y : Type
+g : (Fin n → Bool) → Y
+T : Table n
+i : Fin n
+c : Bool
+x : Fin n → Bool
+p : Fin n × Bool
+hp : p = (i, c)
+⊢ (if True then g x else g (T (i, c))) = g (if True then x else T (i, c))
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:161:59: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [plantedPublic, tablePublic, plantTable, hp,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:363:12: error: unexpected token '('; expected ')', ',' or ':'
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:362:54: error: Type mismatch: After simplification, term
+  hk.right
+ has type
+  ∀ (y : Fin (n * n) → Bool), OracleComp.CostBoundedBy (fun x => 1) (k y) 0
+but is expected to have type
+  OracleComp.CostBoundedBy (fun x => 1) (k (tableSignature (plantTable T i c x) m)) 0
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:358:16: error: unsolved goals
+case query
+n : ℕ
+α : Type
+T : Table n
+i : Fin n
+c : Bool
+x : Fin n → Bool
+j : Fin 1
+m : (bitSpec (fun x => n) fun x => n * n).dom j
+k : (bitSpec (fun x => n) fun x => n * n).rng j → OracleComp (bitSpec (fun x => n) fun x => n * n) α
+hcost : OracleComp.CostBoundedBy (fun x => 1) (OracleComp.query j m k) 1
+hsafe : Safe (OracleComp.query j m k) i c
+hm : m i ≠ c
+hk : 1 ≤ 1 ∧ ∀ (y : (bitSpec (fun x => n) fun x => n * n).rng j), OracleComp.CostBoundedBy (fun x => 1) (k y) (1 - 1)
+a : α
+ha : k (tableSignature (plantTable T i c x) m) = OracleComp.pure a
+⊢ simulate (abortingImpl T i c) (OracleComp.query j m k) false =
+    OracleComp.pure
+      (OracleComp.evalFn (fun x_1 m => tableSignature (plantTable T i c x) m) (OracleComp.query j m k), false)
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted): no fresh .olean produced
+        2.74 real         2.33 user         1.07 sys
+          2177990656  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              176934  page reclaims
+                 279  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  33  voluntary context switches
+               17659  involuntary context switches
+            32760636  instructions retired
+            19717158  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-14T06:02:42.363529+00:00
+EXIT 1

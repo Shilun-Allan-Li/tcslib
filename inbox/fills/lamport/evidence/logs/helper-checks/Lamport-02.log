@@ -1,0 +1,45 @@
+start=2026-11-14T06:07:01.632936+00:00
+command=["/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport"]
+source-sha256=4a8cfe2cb664d5d100a2ef5bb1803650e86ed55c88166071356cbd2c6e2637d3
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:613:85: error: unsolved goals
+L : PolyExpr
+f : (n : ℕ) → (Fin n → Bool) → Fin (L.eval n) → Bool
+E : List Bool → List Bool
+hfE : ∀ (n : ℕ) (x : Fin n → Bool), E (NUPPT.advInput n (List.ofFn x)) = List.ofFn (f n x)
+n : ℕ
+Y : Fin n × Bool → Fin (L.eval n) → Bool
+m : Fin n → Bool
+σ : Fin (n * n) → Bool
+g : Fin n → List Bool
+⊢ (List.ofFn ((fun c => pairEncode c []) ∘ g)).flatten = (List.ofFn fun i => pairEncode (g i) []).flatten
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:615:48: warning: This simp argument is unused:
+  Function.comp_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [List.flatMap_def, List.map_ofFn,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:691:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport): no fresh .olean produced
+       59.97 real        92.72 user         4.01 sys
+          2192113664  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              146520  page reclaims
+               64470  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                6555  voluntary context switches
+              363804  involuntary context switches
+            33193364  instructions retired
+            22881521  cycles elapsed
+             1622352  peak memory footprint
+end=2026-11-14T06:08:01.631362+00:00
+exit=1

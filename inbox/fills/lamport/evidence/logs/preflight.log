@@ -1,0 +1,125 @@
+$ uname -a
+Darwin Mac.lan 25.5.0 Darwin Kernel Version 25.5.0: Tue Jun  9 22:28:29 PDT 2026; root:xnu-12377.121.10~1/RELEASE_ARM64_T6030 arm64
+exit=0
+$ nproc
+[Errno 2] No such file or directory: 'nproc'
+$ sysctl -n hw.logicalcpu
+sysctl: sysctl fmt -1 1024 1: Operation not permitted
+exit=1
+$ sysctl hw.memsize
+sysctl: sysctl fmt -1 1024 1: Operation not permitted
+exit=1
+$ vm_stat
+Mach Virtual Memory Statistics: (page size of 16384 bytes)
+Pages free:                                     3996.
+Pages active:                                 251636.
+Pages inactive:                               234383.
+Pages speculative:                             16303.
+Pages throttled:                                   0.
+Pages wired down:                             288021.
+Pages purgeable:                                7290.
+"Translation faults":                    20429808635.
+Pages copy-on-write:                       528974818.
+Pages zero filled:                       14417288968.
+Pages reactivated:                         942952769.
+Pages purged:                              117656640.
+File-backed pages:                            271183.
+Anonymous pages:                              231139.
+Pages stored in compressor:                  1244303.
+Pages occupied by compressor:                 330153.
+Decompressions:                            499719567.
+Compressions:                              706420039.
+Pageins:                                   612243191.
+Pageouts:                                    2673546.
+Swapins:                                      514718.
+Swapouts:                                    1217944.
+exit=0
+$ memory_pressure
+The system has 19327352832 (1179648 pages with a page size of 16384).
+
+Stats: 
+Pages free: 3995 
+Pages purgeable: 7290 
+Pages purged: 117656640 
+
+Swap I/O:
+Swapins: 514718 
+Swapouts: 1217944 
+
+Page Q counts:
+Pages active: 251665 
+Pages inactive: 234384 
+Pages speculative: 16355 
+Pages throttled: 0 
+Pages wired down: 288021 
+
+Compressor Stats:
+Pages used by compressor: 330153 
+Pages decompressed: 499719567 
+Pages compressed: 706420039 
+
+File I/O:
+Pageins: 612243257 
+Pageouts: 2673546 
+
+System-wide memory free percentage: 44%
+exit=0
+$ df -B1 /private/tmp/tcslib-lamport-01a1d88f/proof /private/tmp
+df: invalid option -- B
+usage: df [--libxo] [-b | -g | -H | -h | -k | -m | -P] [-acIilnY] [-,] [-T type] [-t type]
+          [file | filesystem ...]
+exit=64
+$ df -T /private/tmp/tcslib-lamport-01a1d88f/proof /private/tmp
+exit=1
+$ df -k /private/tmp/tcslib-lamport-01a1d88f/proof /private/tmp
+Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on
+/dev/disk3s5   971350180 672386736 270239628    72% 7006365 2702396280    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 672386736 270239628    72% 7006365 2702396280    0%   /System/Volumes/Data
+exit=0
+$ mount
+/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+devfs on /dev (devfs, local, nobrowse)
+/dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
+/dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
+/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)
+/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)
+/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)
+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
+exit=0
+
+Platform: Darwin; /proc/meminfo and Linux cgroups are unavailable. macOS equivalents logged above.
+Python disk free bytes=276725379072
+
+macOS native supplement: os.cpu_count()=12; physical memory=19327352832 bytes;
+The system has 19327352832 (1179648 pages with a page size of 16384).
+
+Stats: 
+Pages free: 3558 
+Pages purgeable: 6803 
+Pages purged: 117667122 
+
+Swap I/O:
+Swapins: 514742 
+Swapouts: 1217944 
+
+Page Q counts:
+Pages active: 257188 
+Pages inactive: 233270 
+Pages speculative: 23030 
+Pages throttled: 0 
+Pages wired down: 276661 
+
+Compressor Stats:
+Pages used by compressor: 330447 
+Pages decompressed: 500312694 
+Pages compressed: 707098552 
+
+File I/O:
+Pageins: 612864525 
+Pageouts: 2676520 
+
+System-wide memory free percentage: 45%
+memory_pressure available estimate=19327352832*45/100=8697308774 bytes; required=4294967296 bytes. This is a macOS native estimate, not Linux MemAvailable.
+APFS disk free=273175490560 bytes; required=12884901888 bytes.

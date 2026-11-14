@@ -1,0 +1,32 @@
+start=2026-11-14T05:54:42.792418+00:00
+command=["/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging"]
+source-sha256=cd099c0a36a74e74c919ed898f4a9790d44a9fc05395f3ed7e57c2f11ac55918
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:75:2: error: Type mismatch: After simplification, term
+  hle
+ has type
+  (if m i ≠ m' i then 1 else 0) ≤ ∑ x, if m x ≠ m' x then 1 else 0
+but is expected to have type
+  1 ≤ ∑ i, if m i ≠ m' i then 1 else 0
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging): no fresh .olean produced
+        7.37 real         1.57 user         1.53 sys
+          1999437824  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              119138  page reclaims
+               49209  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                5066  voluntary context switches
+               46320  involuntary context switches
+            31806877  instructions retired
+            17505075  cycles elapsed
+             1589584  peak memory footprint
+end=2026-11-14T05:54:50.177661+00:00
+exit=1

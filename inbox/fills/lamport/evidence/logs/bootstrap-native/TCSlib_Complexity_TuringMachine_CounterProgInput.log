@@ -1,0 +1,32 @@
+START 2026-11-14T05:47:10.075995+00:00
+COMMAND ['/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Complexity/TuringMachine/CounterProgInput']
+TCSlib/Complexity/TuringMachine/CounterProgInput.lean:65:34: warning: This simp argument is unused:
+  shiftInput
+
+Hint: Omit it from the simp argument list.
+  simp [s̵h̵i̵f̵t̵I̵n̵p̵u̵t̵,̵ ̵Nat.add_assoc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/CounterProgInput.lean:61:4: warning: 'all_goals try rfl' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+        1.96 real         1.12 user         0.80 sys
+          1464123392  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              123709  page reclaims
+                  35  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   4  signals received
+                  23  voluntary context switches
+                9101  involuntary context switches
+            31821444  instructions retired
+            20377903  cycles elapsed
+             1589584  peak memory footprint
+END 2026-11-14T05:47:12.047579+00:00
+EXIT 0

@@ -1,0 +1,30 @@
+START 2026-11-14T05:58:59.705846+00:00
+COMMAND ['/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Cryptography/Asymptotic/Collections']
+TCSlib/Cryptography/Asymptotic/Collections.lean:1033:6: warning: This simp argument is unused:
+  Equiv.refl_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [Pev, Option.some.injEq, exists_eq_left', Equiv.prodCongr_apply,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵E̵q̵u̵i̵v̵.̵r̵e̵f̵l̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+        3.20 real         3.33 user         1.27 sys
+          2208186368  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              181743  page reclaims
+                 979  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  53  voluntary context switches
+               23391  involuntary context switches
+            33501936  instructions retired
+            18259313  cycles elapsed
+             1589584  peak memory footprint
+END 2026-11-14T05:59:02.916047+00:00
+EXIT 0

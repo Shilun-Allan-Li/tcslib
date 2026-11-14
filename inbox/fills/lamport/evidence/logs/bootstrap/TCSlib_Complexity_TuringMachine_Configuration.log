@@ -1,0 +1,15 @@
+START 2026-11-14T05:43:52.153672+00:00
+COMMAND ['/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Complexity/TuringMachine/Configuration']
+TCSlib/Complexity/TuringMachine/Configuration.lean:157:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Configuration.lean:160:61: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/Configuration.lean:175:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+       10.28 real         1.77 user         1.81 sys
+time: sysctl kern.clockrate: Operation not permitted
+END 2026-11-14T05:44:02.444703+00:00
+EXIT 1

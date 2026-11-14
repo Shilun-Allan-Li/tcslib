@@ -1,0 +1,34 @@
+start=2026-11-14T05:53:26.714262+00:00
+command=["/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding"]
+source-sha256=d7267f910d0d453494b7f378571d2157e9d83b9fd93aa631e56f25bedbbefa0d
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding.lean:72:3: error: Application type mismatch: The argument
+  encodeList_injective
+has type
+  Function.Injective encodeList
+but is expected to have type
+  encodeList xs = encodeList ys → xs = ys
+in the application
+  Iff.intro encodeList_injective
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding): no fresh .olean produced
+        8.41 real         1.42 user         1.69 sys
+          2108932096  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              120193  page reclaims
+               56616  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                5806  voluntary context switches
+               48535  involuntary context switches
+            30988322  instructions retired
+            15278818  cycles elapsed
+             1589584  peak memory footprint
+end=2026-11-14T05:53:35.130059+00:00
+exit=1

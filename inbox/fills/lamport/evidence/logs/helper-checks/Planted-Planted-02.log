@@ -1,0 +1,89 @@
+start=2026-11-14T06:03:38.742033+00:00
+command=["/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted"]
+source-sha256=3f9057c80c18fcba62fef958346e3b1d596f5c01c224e6ebf9e444b97aa804b4
+Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:70:87: error: unsolved goals
+n : ℕ
+T : Table n
+⊢ (List.ofFn (List.length ∘ fun i => List.ofFn (T (i, false)) ++ List.ofFn (T (i, true)))).sum = n ^ 2 * 2
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:71:61: warning: This simp argument is unused:
+  Function.comp_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [secretWord, List.length_flatten, List.map_ofFn, F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵,̵ ̵List.length_append,
+  ̵  ̵ ̵ ̵List.length_ofFn,
+  ̲  ̲ ̲ ̲List.ofFn_const, List.sum_replicate, nsmul_eq_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:71:82: warning: This simp argument is unused:
+  List.length_append
+
+Hint: Omit it from the simp argument list.
+  simp only [secretWord, List.length_flatten, List.map_ofFn, Function.comp_apply, List.length_a̵p̵p̵e̵n̵d̵,̵
+  ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵ofFn,
+  ̲  ̲ ̲ ̲List.ofFn_const, List.sum_replicate, nsmul_eq_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:72:4: warning: This simp argument is unused:
+  List.length_ofFn
+
+Hint: Omit it from the simp argument list.
+  simp only [secretWord, List.length_flatten, List.map_ofFn, Function.comp_apply,
+  ̲  ̲ ̲ ̲List.length_append,
+  ̵  ̵ ̵ ̵List.l̵e̵n̵g̵t̵h̵_̵ofFn,̵ ̵L̵i̵s̵t̵.̵o̵f̵F̵n̵_const, List.sum_replicate, nsmul_eq_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:72:22: warning: This simp argument is unused:
+  List.ofFn_const
+
+Hint: Omit it from the simp argument list.
+  simp only [secretWord, List.length_flatten, List.map_ofFn, Function.comp_apply,
+  ̲  ̲ ̲ ̲List.length_append,
+  ̵  ̵ ̵ ̵List.length_ofFn, List.o̵f̵F̵n̵_̵c̵o̵n̵st̵,̵ ̵L̵i̵s̵t̵.̵s̵um_replicate, nsmul_eq_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:72:39: warning: This simp argument is unused:
+  List.sum_replicate
+
+Hint: Omit it from the simp argument list.
+  simp only [secretWord, List.length_flatten, List.map_ofFn, Function.comp_apply,
+  ̲  ̲ ̲ ̲List.length_append,
+  ̵  ̵ ̵ ̵List.length_ofFn, List.ofFn_const, L̵i̵s̵t̵.̵s̵u̵m̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵,̵ ̵nsmul_eq_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:72:59: warning: This simp argument is unused:
+  nsmul_eq_mul
+
+Hint: Omit it from the simp argument list.
+  simp only [secretWord, List.length_flatten, List.map_ofFn, Function.comp_apply,
+  ̲  ̲ ̲ ̲List.length_append, List.length_ofFn, List.ofFn_const, L̵i̵s̵t̵.̵s̵u̵m̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵,̵ ̵n̵s̵m̵u̵l̵_̵e̵q̵_̵m̵u̵l̵]̵L̲i̲s̲t̲.̲s̲u̲m̲_̲r̲e̲p̲l̲i̲c̲a̲t̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted): no fresh .olean produced
+       12.04 real         2.30 user         2.22 sys
+          2171289600  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              109085  page reclaims
+               73583  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+               13706  voluntary context switches
+               79094  involuntary context switches
+            33835553  instructions retired
+            20317159  cycles elapsed
+             1589584  peak memory footprint
+end=2026-11-14T06:03:50.796002+00:00
+exit=1

@@ -1,0 +1,29 @@
+START 2026-11-14T05:49:45.551534+00:00
+COMMAND ['/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Cryptography/Encryption/PrivateKey/FromPRG']
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:59:16: warning: This simp argument is unused:
+  Fin.coe_castLE
+
+Hint: Omit it from the simp argument list.
+  simp [padXor,̵ ̵F̵i̵n̵.̵c̵o̵e̵_̵c̵a̵s̵t̵L̵E̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+        4.11 real         2.59 user         1.31 sys
+          2165981184  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175124  page reclaims
+                3842  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 167  voluntary context switches
+               23379  involuntary context switches
+            33488164  instructions retired
+            23288331  cycles elapsed
+             1589584  peak memory footprint
+END 2026-11-14T05:49:49.668035+00:00
+EXIT 0

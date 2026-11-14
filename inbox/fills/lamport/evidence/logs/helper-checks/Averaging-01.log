@@ -1,0 +1,57 @@
+start=2026-11-14T05:54:16.032181+00:00
+command=["/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging"]
+source-sha256=529b1199764c23d19ff4f22c03966abb19364d058543c58d82f7e6e6e9ed59da
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:47:32: warning: This simp argument is unused:
+  Fintype.sum_bool
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵F̵i̵n̵t̵y̵p̵e̵.̵s̵u̵m̵_̵b̵o̵o̵l̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:74:19: error: Tactic `split_ifs` failed: no if-then-else conditions to split
+
+ι : Type
+inst✝ : Fintype ι
+m m' : ι → Bool
+h : m ≠ m'
+i : ι
+hi : m i ≠ m' i
+j : ι
+x✝ : j ∈ univ
+⊢ 0 ≤ (fun j => if m j ≠ m' j then 1 else 0) j
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:75:2: error: Type mismatch: After simplification, term
+  hle
+ has type
+  (if m i ≠ m' i then 1 else 0) ≤ ∑ x, if m x ≠ m' x then 1 else 0
+but is expected to have type
+  1 ≤ ∑ i, if m i ≠ m' i then 1 else 0
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:97:22: warning: This simp argument is unused:
+  Fintype.sum_bool
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵F̵i̵n̵t̵y̵p̵e̵.̵s̵u̵m̵_̵b̵o̵o̵l̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging): no fresh .olean produced
+        7.39 real         1.80 user         1.70 sys
+          1970192384  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              121709  page reclaims
+               49288  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                5278  voluntary context switches
+               52319  involuntary context switches
+            31978422  instructions retired
+            17207500  cycles elapsed
+             1589584  peak memory footprint
+end=2026-11-14T05:54:23.428778+00:00
+exit=1

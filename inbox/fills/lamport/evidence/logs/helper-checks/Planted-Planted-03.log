@@ -1,0 +1,37 @@
+start=2026-11-14T06:04:26.056367+00:00
+command=["/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted"]
+source-sha256=a32d79123fb3e11adefbf1a512193c0de4b47f238a78692340dc3e63d80c2722
+Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:70:87: error: unsolved goals
+n : ℕ
+T : Table n
+hrow : (List.length ∘ fun i => List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))) = fun x => n + n
+⊢ ↑n * n * 2 = n ^ 2 * 2
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted): no fresh .olean produced
+        8.75 real         2.22 user         1.78 sys
+          2196553728  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              119541  page reclaims
+               58357  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                6205  voluntary context switches
+               56095  involuntary context switches
+            31420220  instructions retired
+            18840331  cycles elapsed
+             1605968  peak memory footprint
+end=2026-11-14T06:04:34.819372+00:00
+exit=1
