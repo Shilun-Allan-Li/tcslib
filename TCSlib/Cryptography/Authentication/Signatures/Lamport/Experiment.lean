@@ -52,23 +52,29 @@ variable {n ℓ : ℕ} {ρ : Type}
   (adv : ((Fin n × Bool) → Fin ℓ → Bool) → ρ →
     OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) (Fin (n + n * n) → Bool))
 
-/-- Evaluate the forger on the honest public table with deterministic table signing. -/
+/-- Evaluate the forger on the honest public table with deterministic table signing: `honestOutput g
+adv T r = (adv (tablePublic g T) r).evalFn (fun _ m => tableSignature T m)`. -/
 def honestOutput (T : Table n) (r : ρ) : Fin (n + n * n) → Bool :=
   (adv (tablePublic g T) r).evalFn (fun _ m => tableSignature T m)
 
-/-- The honest output is functional evaluation against the selected-preimage signing function. -/
+/-- The honest output is functional evaluation against the selected-preimage signing function:
+`honestOutput g adv T r = (adv (tablePublic g T) r).evalFn (fun _ m => tableSignature T m)`. -/
 theorem honestOutput_eq (T : Table n) (r : ρ) :
     honestOutput g adv T r =
       (adv (tablePublic g T) r).evalFn (fun _ m => tableSignature T m) := rfl
 
 /-- An honest output succeeds when all its signature blocks verify and its message was
-not the optional signing query [PS10, Definition 136.2]. -/
+not the optional signing query [PS10, Definition 136.2]: `HonestSuccess g adv T r ↔ (∀ j, g
+(signatureBlock σ j) = g (T (j, m j))) ∧ firstQuery (adv (tablePublic g T) r) ≠ some m`, where `(m,
+σ) = splitBits (honestOutput g adv T r)`. -/
 def HonestSuccess (T : Table n) (r : ρ) : Prop :=
   (∀ j, g (signatureBlock (splitBits (honestOutput g adv T r)).2 j) =
     g (T (j, (splitBits (honestOutput g adv T r)).1 j))) ∧
     firstQuery (adv (tablePublic g T) r) ≠ some (splitBits (honestOutput g adv T r)).1
 
-/-- Honest success is coordinate verification together with inequality to the optional query. -/
+/-- Honest success is coordinate verification together with inequality to the optional query:
+`HonestSuccess g adv T r ↔ (∀ j, g (signatureBlock σ j) = g (T (j, m j))) ∧ firstQuery (adv
+(tablePublic g T) r) ≠ some m`, where `(m, σ) = splitBits (honestOutput g adv T r)`. -/
 theorem honestSuccess_iff (T : Table n) (r : ρ) :
     HonestSuccess g adv T r ↔
       (∀ j, g (signatureBlock (splitBits (honestOutput g adv T r)).2 j) =
@@ -77,32 +83,40 @@ theorem honestSuccess_iff (T : Table n) (r : ρ) :
   Iff.rfl
 
 /-- A position-bit pair is favorable when its signing query is safe and its forged message
-uses the planted bit [PS10, proof of Theorem 137.2]. -/
+uses the planted bit [PS10, proof of Theorem 137.2]: `Favourable g adv T r p ↔ Safe (adv
+(tablePublic g T) r) p.1 p.2 ∧ (splitBits (honestOutput g adv T r)).1 p.1 = p.2`. -/
 def Favourable (T : Table n) (r : ρ) (p : Fin n × Bool) : Prop :=
   Safe (adv (tablePublic g T) r) p.1 p.2 ∧
     (splitBits (honestOutput g adv T r)).1 p.1 = p.2
 
-/-- Favorability is signing-query safety conjoined with the forged message's planted bit. -/
+/-- Favorability is signing-query safety conjoined with the forged message's planted bit:
+`Favourable g adv T r p ↔ Safe (adv (tablePublic g T) r) p.1 p.2 ∧ (splitBits (honestOutput g adv T
+r)).1 p.1 = p.2`. -/
 theorem favourable_iff (T : Table n) (r : ρ) (p : Fin n × Bool) :
     Favourable g adv T r p ↔ Safe (adv (tablePublic g T) r) p.1 p.2 ∧
       (splitBits (honestOutput g adv T r)).1 p.1 = p.2 := Iff.rfl
 
 /-- The planted reduction succeeds if it ends without abort and its extracted signature
-block is a preimage of the challenge [PS10, proof of Theorem 137.2]. -/
+block is a preimage of the challenge [PS10, proof of Theorem 137.2]: `RedSuccess g adv y T r p ↔ ∃
+a, simulate (abortingImpl T p.1 p.2) (adv (plantedPublic g T p.1 p.2 y) r) false = .pure (a, false)
+∧ g (signatureBlock (splitBits a).2 p.1) = y`. -/
 def RedSuccess (y : Fin ℓ → Bool) (T : Table n) (r : ρ) (p : Fin n × Bool) : Prop :=
   ∃ a, simulate (abortingImpl T p.1 p.2)
       (adv (plantedPublic g T p.1 p.2 y) r) false = .pure (a, false) ∧
     g (signatureBlock (splitBits a).2 p.1) = y
 
 /-- Reduction success means a pure nonaborting simulation output whose selected block
-maps to the challenge. -/
+maps to the challenge: `RedSuccess g adv y T r p ↔ ∃ a, simulate (abortingImpl T p.1 p.2) (adv
+(plantedPublic g T p.1 p.2 y) r) false = .pure (a, false) ∧ g (signatureBlock (splitBits a).2 p.1) =
+y`. -/
 theorem redSuccess_iff (y : Fin ℓ → Bool) (T : Table n) (r : ρ) (p : Fin n × Bool) :
     RedSuccess g adv y T r p ↔
       ∃ a, simulate (abortingImpl T p.1 p.2)
           (adv (plantedPublic g T p.1 p.2 y) r) false = .pure (a, false) ∧
         g (signatureBlock (splitBits a).2 p.1) = y := Iff.rfl
 
-/-- Replacing a table coordinate by its present value leaves the table unchanged. -/
+/-- Replacing a table coordinate by its present value leaves the table unchanged: `plantTable T i c
+(T (i, c)) = T`. -/
 theorem plantTable_self (T : Table n) (i : Fin n) (c : Bool) :
     plantTable T i c (T (i, c)) = T := by
   funext p
@@ -111,14 +125,22 @@ theorem plantTable_self (T : Table n) (i : Fin n) (c : Bool) :
   · rw [if_pos hp, hp]
   · rw [if_neg hp]
 
-/-- Reduction success ignores the original table preimage at the planted position. -/
+/-- Reduction success ignores the original table preimage at the planted position: `RedSuccess g adv
+y (plantTable T p.1 p.2 x) r p ↔ RedSuccess g adv y T r p`. -/
 theorem redSuccess_plant_iff (y : Fin ℓ → Bool) (T : Table n) (r : ρ)
     (p : Fin n × Bool) (x : Fin n → Bool) :
     RedSuccess g adv y (plantTable T p.1 p.2 x) r p ↔ RedSuccess g adv y T r p := by
   rw [redSuccess_iff, redSuccess_iff, plantedPublic_plant, abortingImpl_plant]
 
 /-- A favorable successful honest run is a successful planted reduction when challenged
-with the image of its own selected table entry [PS10, proof of Theorem 137.2]. -/
+with the image of its own selected table entry [PS10, proof of Theorem 137.2]: if every `adv Y r`
+has `(adv Y r).CostBoundedBy (fun _ => 1) 1`, `HonestSuccess g adv T r` and `Favourable g adv T r
+p`, then `RedSuccess g adv (g (T p)) T r p`.
+
+**Proof sketch.** Planting the present entry `T p` leaves the planted public table equal to the
+honest one and the key unchanged (`plantedPublic_image`, `plantTable_self`). Safety then gives, by
+`planted_coupling`, the nonaborting output `honestOutput g adv T r`. Acceptance at position `p.1`,
+whose forged bit is `p.2`, says that its block maps to `g (T p)`. -/
 theorem diagonal_red_of_success_favourable
     (hcost : ∀ Y r, (adv Y r).CostBoundedBy (fun _ => 1) 1)
     (T : Table n) (r : ρ) (p : Fin n × Bool)
@@ -138,7 +160,14 @@ theorem diagonal_red_of_success_favourable
     exact h
 
 /-- On every successful honest run, favorable position-bit mass is at least `1/(2n)`;
-the no-query case has mass exactly `1/2` [PS10, proof of Theorem 137.2]. -/
+the no-query case has mass exactly `1/2` [PS10, proof of Theorem 137.2]: if `HonestSuccess g adv T
+r`, then `1 / (2 * (n : ℝ)) ≤ ProbComp.expect (ProbComp.sample (Fin n × Bool)) (fun p => if
+Favourable g adv T r p then (1 : ℝ) else 0)`.
+
+**Proof sketch.** Freshness says that the optional first query differs from the forged message, so
+`optionQuery_favourable_expect_ge` bounds the mass of the pairs that avoid the query and select the
+forged bit. Each such pair is favourable (`favourable_iff`, `safe_iff`), and expectation is
+monotone. -/
 theorem favourable_mass_of_success [Nonempty (Fin n)] (T : Table n) (r : ρ)
     (hs : HonestSuccess g adv T r) :
     1 / (2 * (n : ℝ)) ≤ ProbComp.expect (ProbComp.sample (Fin n × Bool))
@@ -164,25 +193,34 @@ theorem favourable_mass_of_success [Nonempty (Fin n)] (T : Table n) (r : ρ)
 
 variable [Fintype ρ] [Nonempty ρ]
 
-/-- Honest success probability averages over the complete key table and forger coins. -/
+/-- Honest success probability averages over the complete key table and forger coins:
+`honestProbability g adv = ProbComp.expect (ProbComp.sample (Table n)) (fun T => ProbComp.expect
+(ProbComp.sample ρ) fun r => if HonestSuccess g adv T r then 1 else 0)`. -/
 noncomputable def honestProbability : ℝ :=
   ProbComp.expect (ProbComp.sample (Table n)) fun T =>
     ProbComp.expect (ProbComp.sample ρ) fun r => if HonestSuccess g adv T r then 1 else 0
 
-/-- Honest probability is the nested uniform expectation of the honest-success indicator. -/
+/-- Honest probability is the nested uniform expectation of the honest-success indicator:
+`honestProbability g adv = ProbComp.expect (ProbComp.sample (Table n)) (fun T => ProbComp.expect
+(ProbComp.sample ρ) fun r => if HonestSuccess g adv T r then 1 else 0)`. -/
 theorem honestProbability_eq : honestProbability g adv =
     ProbComp.expect (ProbComp.sample (Table n)) (fun T =>
       ProbComp.expect (ProbComp.sample ρ) fun r => if HonestSuccess g adv T r then 1 else 0) := rfl
 
 /-- The fixed-position reduction's success probability uses an independent challenge
-preimage, a complete random table, and forger coins. -/
+preimage, a complete random table, and forger coins: `redProbability g adv p = ProbComp.expect
+(ProbComp.sample (Fin n → Bool)) (fun x => ProbComp.expect (ProbComp.sample (Table n)) fun T =>
+ProbComp.expect (ProbComp.sample ρ) fun r => if RedSuccess g adv (g x) T r p then 1 else 0)`. -/
 noncomputable def redProbability (p : Fin n × Bool) : ℝ :=
   ProbComp.expect (ProbComp.sample (Fin n → Bool)) fun x =>
     ProbComp.expect (ProbComp.sample (Table n)) fun T =>
       ProbComp.expect (ProbComp.sample ρ) fun r => if RedSuccess g adv (g x) T r p then 1 else 0
 
 /-- Fixed-position reduction probability is the nested average of its nonaborting inversion
-indicator over independent challenge, key-table and forger samples. -/
+indicator over independent challenge, key-table and forger samples: `redProbability g adv p =
+ProbComp.expect (ProbComp.sample (Fin n → Bool)) (fun x => ProbComp.expect (ProbComp.sample (Table
+n)) fun T => ProbComp.expect (ProbComp.sample ρ) fun r => if RedSuccess g adv (g x) T r p then 1
+else 0)`. -/
 theorem redProbability_eq (p : Fin n × Bool) : redProbability g adv p =
     ProbComp.expect (ProbComp.sample (Fin n → Bool)) (fun x =>
       ProbComp.expect (ProbComp.sample (Table n)) fun T =>
@@ -191,7 +229,9 @@ theorem redProbability_eq (p : Fin n × Bool) : redProbability g adv p =
   rfl
 
 /-- A uniform position-bit planted reduction succeeds with probability at least the honest
-forgery probability divided by `2n` [PS10, proof of Theorem 137.2].
+forgery probability divided by `2n` [PS10, proof of Theorem 137.2]: if every `adv Y r` has `(adv Y
+r).CostBoundedBy (fun _ => 1) 1`, then `honestProbability g adv / (2 * (n : ℝ)) ≤ ProbComp.expect
+(ProbComp.sample (Fin n × Bool)) (redProbability g adv)`.
 
 **Proof sketch.** Favorable pairs occupy at least `1/(2n)` of every successful honest run.
 On those pairs the planted simulation is safe and its extracted signature block inverts
@@ -213,7 +253,10 @@ theorem averaged_redProbability_ge [Nonempty (Fin n)]
   simpa only [honestProbability_eq, redProbability_eq, one_div_mul_eq_div] using h
 
 /-- Some fixed position, while its planted bit remains fair, has reduction probability at
-least `H/(2n)` [PS10, proof of Theorem 137.2]. This is the position supplied as advice. -/
+least `H/(2n)` [PS10, proof of Theorem 137.2]: if every `adv Y r` has `(adv Y r).CostBoundedBy (fun
+_ => 1) 1`, then `∃ i : Fin n, honestProbability g adv / (2 * (n : ℝ)) ≤ ProbComp.expect
+(ProbComp.sample Bool) (fun c => redProbability g adv (i, c))`. This is the position supplied as
+advice. -/
 theorem exists_best_position [Nonempty (Fin n)]
     (hcost : ∀ Y r, (adv Y r).CostBoundedBy (fun _ => 1) 1) :
     ∃ i : Fin n, honestProbability g adv / (2 * (n : ℝ)) ≤

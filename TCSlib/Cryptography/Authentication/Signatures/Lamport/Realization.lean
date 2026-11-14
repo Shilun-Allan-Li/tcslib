@@ -38,7 +38,8 @@ open Complexity Turing TCSlib.Cryptography.Games
 open TCSlib.Cryptography
 
 /-- Run a machine forger on the serialized typed public table, using the canonical
-message/signature codec and a budget of one signing query. -/
+message/signature codec and a budget of one signing query: `machineForger L A n Y r = A.toCompOn
+(bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n)) n 1 (publicWord Y) r`. -/
 def machineForger (L : PolyExpr) (A : NUPPT) (n : ℕ)
     (Y : (Fin n × Bool) → Fin (L.eval n) → Bool) (r : A.Coins n) :
     OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n))
@@ -46,7 +47,9 @@ def machineForger (L : PolyExpr) (A : NUPPT) (n : ℕ)
   A.toCompOn (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
     n 1 (publicWord Y) r
 
-/-- The typed machine forger is `A.toCompOn` on the serialized public table. -/
+/-- The typed machine forger is `A.toCompOn` on the serialized public table: `machineForger L A n Y
+r = A.toCompOn (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n)) n 1 (publicWord Y) r`.
+-/
 theorem machineForger_eq (L : PolyExpr) (A : NUPPT) (n : ℕ)
     (Y : (Fin n × Bool) → Fin (L.eval n) → Bool) (r : A.Coins n) :
     machineForger L A n Y r =
@@ -54,22 +57,29 @@ theorem machineForger_eq (L : PolyExpr) (A : NUPPT) (n : ℕ)
         n 1 (publicWord Y) r := rfl
 
 /-- As a function of the public table and coins, the machine forger is the canonical
-one-query `toCompOn` construction. This form also reads it beneath an opaque expectation. -/
+one-query `toCompOn` construction: `machineForger L A n = fun Y r => A.toCompOn (bitCodec (fun _ :
+Fin 1 => n) (fun _ => n * n) (n + n * n)) n 1 (publicWord Y) r`. This form also reads it beneath an
+opaque expectation. -/
 theorem machineForger_eq_fun (L : PolyExpr) (A : NUPPT) (n : ℕ) :
     machineForger L A n = fun Y r =>
       A.toCompOn (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
         n 1 (publicWord Y) r := rfl
 
-/-- Every typed machine-forger tree has unit-query cost at most one. -/
+/-- Every typed machine-forger tree has unit-query cost at most one: `(machineForger L A n Y
+r).CostBoundedBy (fun _ => 1) 1`. -/
 theorem machineForger_cost (L : PolyExpr) (A : NUPPT) (n : ℕ)
     (Y : (Fin n × Bool) → Fin (L.eval n) → Bool) (r : A.Coins n) :
     (machineForger L A n Y r).CostBoundedBy (fun _ => 1) 1 := by
   rw [machineForger_eq]
   exact A.toCompOn_costBoundedBy _ _ _ _ _
 
-/-- The planted experiment's successful nonaborting outputs are actual inverter outputs.
-The machine uses one fair seed bit, one random table, and the forger's own random tape.
-[PS10, machine-realization step in the proof of Theorem 137.2].
+/-- The planted experiment's successful nonaborting outputs are actual inverter outputs: `∃ B :
+NUPPT, ∀ n, ∃ φ : ((Bool × Table n) × A.Coins n) ≃ B.Coins n, ∀ i y T c r, RedSuccess (f n)
+(machineForger L A n) y T r (i, c) → ∃ x', B.runAt n (pairEncode (List.ofFn y) (List.replicate i.val
+true)) (φ ((c, T), r)) = List.ofFn x' ∧ f n x' = y`, given the evaluator, generator, signer and
+block-reader contracts `hEval`, `hGen`, `hSign` and `hcoin`. The machine uses one fair seed bit, one
+random table, and the forger's own random tape. [PS10, machine-realization step in the proof of
+Theorem 137.2].
 
 **Proof sketch.** T1 gives a machine for the polynomial-time planting handler. Reindex its
 seed by the public seed/table equivalence. On a successful planted transcript the final

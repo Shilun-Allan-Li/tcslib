@@ -35,9 +35,11 @@ open Complexity TCSlib.Cryptography.Games
 /-- Suppose a machine's coins are a fair planting bit, a complete key table and forger coins,
 and every successful typed planted run yields the machine's correctly encoded preimage.
 Then the typed reduction's success averaged over the fair bit is at most the machine's
-inversion probability against the function family. The preimage width is the family's
-actual input width, so no dependent width casts are needed.
-[PS10, proof of Theorem 137.2].
+inversion probability against the function family: `ProbComp.expect (ProbComp.sample Bool) (fun c =>
+redProbability (F.f n) adv (i, c)) ≤ F.invProbAt B n`, provided `RedSuccess (F.f n) adv y T r (i, c)
+→ ∃ x', B.runAt n (List.ofFn y) (e ((c, T), r)) = List.ofFn x' ∧ F.f n x' = y` for all `y`, `T`,
+`c`, `r`. The preimage width is the family's actual input width, so no dependent width casts are
+needed. [PS10, proof of Theorem 137.2].
 
 **Proof sketch.** Read the machine inversion probability as the uniform probability that its
 output encodes a preimage. Product sampling separates the challenge preimage and machine

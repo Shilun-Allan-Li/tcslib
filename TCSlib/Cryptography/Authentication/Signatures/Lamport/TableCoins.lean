@@ -33,7 +33,7 @@ set_option autoImplicit false
 
 namespace TCSlib.Cryptography.Authentication.LamportFill
 
-/-- The row-major tape width `n(2n)` equals the generator width `2n²`. -/
+/-- The row-major tape width `n(2n)` equals the generator width `2n²`: `2 * n * n = n * (2 * n)`. -/
 theorem tableCoins_width (n : ℕ) : 2 * n * n = n * (2 * n) := by ring
 
 /-- A `2n²`-bit coin tape is equivalent to a table with an `n`-bit cell for each
@@ -48,7 +48,9 @@ def tableCoins (n : ℕ) : (Fin (2 * n * n) → Bool) ≃ Table n :=
       (Equiv.curry (Fin n) Bool (Fin n → Bool)).symm)
 
 /-- The cell `(i,c)` of `tableCoins n x` is block `c` of the `i`th two-preimage row
-of `x`, with `false` selecting block zero and `true` block one. -/
+of `x`, with `false` selecting block zero and `true` block one: `tableCoins n x (i, c) =
+FunFamily.blocks 2 n (FunFamily.blocks n (2 * n) ((Equiv.arrowCongr (finCongr (tableCoins_width n))
+(Equiv.refl Bool)) x) i) (finTwoEquiv.symm c)`. -/
 theorem tableCoins_apply (n : ℕ) (x : Fin (2 * n * n) → Bool) (i : Fin n) (c : Bool) :
     tableCoins n x (i, c) =
       FunFamily.blocks 2 n
@@ -57,7 +59,9 @@ theorem tableCoins_apply (n : ℕ) (x : Fin (2 * n * n) → Bool) (i : Fin n) (c
         (finTwoEquiv.symm c) := rfl
 
 /-- The inverse of `tableCoins` concatenates the two preimage cells of each row and then
-concatenates the rows, casting only between the equal widths `n(2n)` and `2n²`. -/
+concatenates the rows, casting only between the equal widths `n(2n)` and `2n²`: `(tableCoins n).symm
+T = (Equiv.arrowCongr (finCongr (tableCoins_width n).symm) (Equiv.refl Bool)) ((FunFamily.blocks n
+(2 * n)).symm fun i => (FunFamily.blocks 2 n).symm fun j => T (i, finTwoEquiv j))`. -/
 theorem tableCoins_symm (n : ℕ) (T : Table n) :
     (tableCoins n).symm T =
       (Equiv.arrowCongr (finCongr (tableCoins_width n).symm) (Equiv.refl Bool))

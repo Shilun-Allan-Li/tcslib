@@ -40,7 +40,9 @@ open Complexity Turing TCSlib.Cryptography.Games
 open TCSlib.Cryptography
 
 /-- The serialized public table is the concatenation of its self-delimiting image-pair
-blocks. This reads the public tuple encoding through `encodeList_eq_flatMap`. -/
+blocks: `publicWord Y = (List.ofFn fun i : Fin n => pairEncode (pairEncode (List.ofFn (Y (i,
+false))) (List.ofFn (Y (i, true)))) []).flatten`. This reads the public tuple encoding through
+`encodeList_eq_flatMap`. -/
 theorem publicWord_flatten {n ℓ : ℕ} (Y : (Fin n × Bool) → Fin ℓ → Bool) :
     publicWord Y = (List.ofFn fun i : Fin n =>
       pairEncode (pairEncode (List.ofFn (Y (i, false))) (List.ofFn (Y (i, true)))) []).flatten := by
@@ -53,7 +55,13 @@ variable (hcoin : ∀ {q B : ℕ} (g : Fin q → List Bool) (hg : ∀ j, (g j).l
   (i : Fin q), coinBlock B i (List.ofFn g).flatten = g i)
 
 include hcoin in
-/-- Reading the first `n`-bit half of the selected sampled row returns `T(i,false)`. -/
+/-- Reading the first `n`-bit half of the selected sampled row returns `T(i,false)`:
+`LamportMachine.first (seedIn n (pairEncode challenge (List.replicate i.val true)) (c :: secretWord
+T)) = List.ofFn (T (i, false))`.
+
+**Proof sketch.** On this context `first` takes `n` bits of `secretWord T` after the offset `2n·i`
+(`first_eq`, `tape_seedIn`, `offset_eq`, `pos_seedIn`, `u_seedIn`). By `hcoin`, the `2n` bits there
+are row `i`, that is `T (i, false) ‖ T (i, true)`, and the first `n` of them are `T (i, false)`. -/
 theorem first_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge : List Bool) :
     LamportMachine.first (seedIn n (pairEncode challenge (List.replicate i.val true))
       (c :: secretWord T)) = List.ofFn (T (i, false)) := by
@@ -70,7 +78,14 @@ theorem first_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge 
   exact h
 
 include hcoin in
-/-- Reading the second `n`-bit half of the selected sampled row returns `T(i,true)`. -/
+/-- Reading the second `n`-bit half of the selected sampled row returns `T(i,true)`:
+`LamportMachine.second (seedIn n (pairEncode challenge (List.replicate i.val true)) (c :: secretWord
+T)) = List.ofFn (T (i, true))`.
+
+**Proof sketch.** On this context `second` takes `n` bits of `secretWord T` after the offset `2n·i +
+n` (`second_eq`, `tape_seedIn`, `offset_eq`, `pos_seedIn`, `u_seedIn`). By `hcoin`, the `2n` bits
+after offset `2n·i` are row `i`, that is `T (i, false) ‖ T (i, true)`, and dropping its first `n`
+bits leaves `T (i, true)`. -/
 theorem second_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge : List Bool) :
     LamportMachine.second (seedIn n (pairEncode challenge (List.replicate i.val true))
       (c :: secretWord T)) = List.ofFn (T (i, true)) := by
@@ -89,7 +104,10 @@ theorem second_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge
 
 include hcoin in
 /-- The machine's replacement block serializes the planted row, using the evaluator's
-published agreement on `n`-bit inputs. -/
+published agreement on `n`-bit inputs: `LamportMachine.replacement E (seedIn n (pairEncode
+(List.ofFn challenge) (List.replicate i.val true)) (c :: secretWord T)) = pairEncode (pairEncode
+(List.ofFn (plantedPublic g T i c challenge (i, false))) (List.ofFn (plantedPublic g T i c challenge
+(i, true)))) []`. -/
 theorem replacement_context {n ℓ : ℕ} (g : (Fin n → Bool) → Fin ℓ → Bool)
     (E : List Bool → List Bool)
     (hE : ∀ x : Fin n → Bool,
@@ -107,8 +125,10 @@ theorem replacement_context {n ℓ : ℕ} (g : (Fin n → Bool) → Fin ℓ → 
 
 include hcoin in
 /-- On a canonical seed context, the machine's public-key input is exactly the serialized
-typed planted table. The only generator/evaluator facts required are their stated functional
-contracts; the owned Lamport module supplies them.
+typed planted table: if `W.eval n = 6 * ℓ + 6`, then `LamportMachine.advIn W E G (seedIn n
+(pairEncode (List.ofFn challenge) (List.replicate i.val true)) (c :: secretWord T)) = publicWord
+(plantedPublic g T i c challenge)`. The only generator/evaluator facts required are their stated
+functional contracts; the owned Lamport module supplies them.
 
 **Proof sketch.** The ordinary generated key is a concatenation of width `6ℓ+6` blocks.
 The machine takes the blocks before `i`, inserts the planted block, and drops through block
@@ -170,7 +190,8 @@ theorem advIn_context {n ℓ : ℕ} (W : PolyExpr)
 
 end KeyWindows
 
-/-- The selected bit of a serialized message is its typed bit at that position. -/
+/-- The selected bit of a serialized message is its typed bit at that position: `((List.ofFn m).drop
+i.val).headD false = m i`. -/
 theorem headD_drop_ofFn {n : ℕ} (m : Fin n → Bool) (i : Fin n) :
     ((List.ofFn m).drop i.val).headD false = m i := by
   simp only [headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn,
@@ -198,7 +219,10 @@ theorem run_input {n : ℕ} (S : List Bool → List Bool)
     LamportMachine.message_input, LamportMachine.u_seedIn, LamportMachine.tape_seedIn, hS,
     List.headD_cons, hb]
 
-/-- A safe query from non-abort state returns the typed signature and a false abort bit. -/
+/-- A safe query from non-abort state returns the typed signature and a false abort bit: if `m i ≠
+c`, then `LamportMachine.run S (PolyHandler.input n (pairEncode challenge (List.replicate i.val
+true)) (c :: secretWord T) [false] j (List.ofFn m)) = pairEncode (List.ofFn (tableSignature T m))
+[false]`. -/
 theorem run_safe {n : ℕ} (S : List Bool → List Bool)
     (hS : ∀ (T : Table n) (m : Fin n → Bool),
       S (NUPPT.layout (List.replicate n true) (pairEncode (secretWord T) (List.ofFn m)) [] []) =
@@ -213,7 +237,14 @@ theorem run_safe {n : ℕ} (S : List Bool → List Bool)
   simp only [hm, decide_false, Bool.false_or]
 
 /-- Finalization in non-abort state returns exactly the selected block of the typed forged
-signature, after its first `n` message bits. -/
+signature, after its first `n` message bits: if `LamportMachine.pos (seedIn n z ρ) = List.replicate
+i.val true`, then `LamportMachine.out (pairEncode (seedIn n z ρ) (pairEncode [false] (List.ofFn
+a))) = List.ofFn (signatureBlock (splitBits a).2 i)`.
+
+**Proof sketch.** With state `[false]`, `out` drops the `n` message bits, then `n·i` more bits, and
+takes `n` (`out_eq`, `u_seedIn`, `offset_eq`, `hz`). After the message the word is `List.ofFn
+(splitBits a).2` (`splitBits_snd`, `ofFn_natAdd_eq_drop`), and its block `i` is the signature block
+(`FunFamily.ofFn_blocks`, `signatureBlock_eq`). -/
 theorem out_nonabort {n : ℕ} (i : Fin n) (z ρ : List Bool)
     (a : Fin (n + n * n) → Bool)
     (hz : LamportMachine.pos (seedIn n z ρ) = List.replicate i.val true) :

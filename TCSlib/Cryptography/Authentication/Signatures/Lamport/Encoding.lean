@@ -66,7 +66,8 @@ theorem encodeList_injective : Function.Injective encodeList := by
   intro xs ys h
   exact haux xs ys h
 
-/-- Two nested-pair list encodings agree exactly when their lists of blocks agree. -/
+/-- Two nested-pair list encodings agree exactly when their lists of blocks agree: `encodeList xs =
+encodeList ys ↔ xs = ys`. -/
 theorem encodeList_eq_iff (xs ys : List (List Bool)) :
     encodeList xs = encodeList ys ↔ xs = ys :=
   ⟨fun h => encodeList_injective h, congrArg encodeList⟩

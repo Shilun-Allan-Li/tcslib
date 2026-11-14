@@ -41,21 +41,25 @@ at width `Nat.size n`. Its width is logarithmic, including an empty encoding at 
 noncomputable def indexBits (n i : ℕ) (hi : i ≤ n) : List Bool :=
   List.ofFn ((bitsEquiv (Nat.size n)).symm ⟨i, hi.trans_lt (Nat.lt_size_self n)⟩)
 
-/-- The index word is the serialized inverse image of `i` under `bitsEquiv`. -/
+/-- The index word is the serialized inverse image of `i` under `bitsEquiv`: `indexBits n i hi =
+List.ofFn ((bitsEquiv (Nat.size n)).symm ⟨i, hi.trans_lt (Nat.lt_size_self n)⟩)`. -/
 theorem indexBits_eq (n i : ℕ) (hi : i ≤ n) : indexBits n i hi =
     List.ofFn ((bitsEquiv (Nat.size n)).symm ⟨i, hi.trans_lt (Nat.lt_size_self n)⟩) := rfl
 
-/-- The binary index word has exactly `Nat.size n` bits. -/
+/-- The binary index word has exactly `Nat.size n` bits: `(indexBits n i hi).length = Nat.size n`.
+-/
 theorem length_indexBits (n i : ℕ) (hi : i ≤ n) :
     (indexBits n i hi).length = Nat.size n := by
   rw [indexBits_eq, List.length_ofFn]
 
-/-- Its logarithmic width is bounded by the polynomial width `n`. -/
+/-- Its logarithmic width is bounded by the polynomial width `n`: `(indexBits n i hi).length ≤ n`.
+-/
 theorem length_indexBits_le (n i : ℕ) (hi : i ≤ n) : (indexBits n i hi).length ≤ n := by
   rw [length_indexBits]
   exact Nat.size_le.2 n.lt_two_pow_self
 
-/-- Reading the binary index word gives the original natural number `i`.
+/-- Reading the binary index word gives the original natural number `i`: `OneWay.bitListToNat
+(indexBits n i hi) = i`.
 
 **Proof sketch.** Apply `bitsEquiv` to its inverse image, read the natural-number value
 using `bitsEquiv_val`, then use the published equivalence between typed and list numerals. -/
@@ -68,17 +72,21 @@ theorem indexBits_value (n i : ℕ) (hi : i ≤ n) :
   exact h
 
 /-- On a parameter-aware input `⟨1^n,⟨y,b⟩⟩`, decode the bounded binary index `b` to unary
-and return `⟨y,U(⟨1^n,b⟩)⟩`. -/
+and return `⟨y,U(⟨1^n,b⟩)⟩`: `expandIndex U w = pairEncode (pairFstD (pairSndD w)) (U (pairEncode
+(pairFstD w) (pairSndD (pairSndD w))))`. -/
 def expandIndex (U : List Bool → List Bool) (w : List Bool) : List Bool :=
   pairEncode (pairFstD (pairSndD w))
     (U (pairEncode (pairFstD w) (pairSndD (pairSndD w))))
 
-/-- The expansion pairs the challenge with `U` applied to the parameter and binary index. -/
+/-- The expansion pairs the challenge with `U` applied to the parameter and binary index:
+`expandIndex U w = pairEncode (pairFstD (pairSndD w)) (U (pairEncode (pairFstD w) (pairSndD
+(pairSndD w))))`. -/
 theorem expandIndex_eq (U : List Bool → List Bool) (w : List Bool) : expandIndex U w =
     pairEncode (pairFstD (pairSndD w))
       (U (pairEncode (pairFstD w) (pairSndD (pairSndD w)))) := rfl
 
-/-- Expanding binary index advice is polynomial-time whenever the bounded decoder is. -/
+/-- Expanding binary index advice is polynomial-time whenever the bounded decoder is:
+`PolyTimeComputable U → PolyTimeComputable (expandIndex U)`. -/
 theorem expandIndex_poly {U : List Bool → List Bool} (hU : PolyTimeComputable U) :
     PolyTimeComputable (expandIndex U) :=
   (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD).pairEncode
@@ -86,7 +94,10 @@ theorem expandIndex_poly {U : List Bool → List Bool} (hU : PolyTimeComputable 
       (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)))
 
 /-- On canonical parameter-aware input, the bounded decoder expands `b` to its unary
-numeric value. This reads `advInput` and pairing only through their public equations. -/
+numeric value: if `OneWay.bitListToNat b ≤ n` and `U (pairEncode p b) = List.replicate
+(OneWay.bitListToNat b) true` whenever `OneWay.bitListToNat b ≤ p.length`, then `expandIndex U
+(NUPPT.advInput n (pairEncode y b)) = pairEncode y (List.replicate (OneWay.bitListToNat b) true)`.
+This reads `advInput` and pairing only through their public equations. -/
 theorem expandIndex_advInput (U : List Bool → List Bool)
     (hU : ∀ p b : List Bool, OneWay.bitListToNat b ≤ p.length →
       U (pairEncode p b) = List.replicate (OneWay.bitListToNat b) true)
@@ -122,7 +133,10 @@ theorem exists_withIndexAdvice (A : NUPPT) (i : ℕ → ℕ) (hi : ∀ n, i n �
   rw [hB, hD, pairSndD_pairEncode, expandIndex_advInput U hUread n y (β n) hcap, hvalue]
 
 /-- A same-coins machine with the indexed untyped activation equation has the corresponding
-typed activation equation through the published `coinsCongr` equivalence. -/
+typed activation equation through the published `coinsCongr` equivalence: if `hcoins : B.coins =
+A.coins` and `B.runAtL n y r = A.runAtL n (pairEncode y (List.replicate (i n) true)) r` for all `n`,
+`y`, `r`, then `B.runAt n y (NUPPT.coinsCongr hcoins.symm n r) = A.runAt n (pairEncode y
+(List.replicate (i n) true)) r`. -/
 theorem runAt_indexAdvice {A B : NUPPT} (hcoins : B.coins = A.coins)
     (i : ℕ → ℕ)
     (hB : ∀ n y r, B.runAtL n y r = A.runAtL n (pairEncode y (List.replicate (i n) true)) r)

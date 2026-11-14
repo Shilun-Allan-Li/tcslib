@@ -402,45 +402,53 @@ noncomputable def lamportGen : NUPPT :=
 noncomputable def lamportSign : NUPPT :=
   NUPPT.ofPolyTimeUniform polyTimeComputable_lamportSignFun (.const 0)
 
-/-- Lamport's generator uses the coin polynomial `2n²`. -/
+/-- Lamport's generator uses the coin polynomial `2n²`: `(lamportGen hE).coins = .mul (.mul
+(.const 2) .var) .var`. -/
 theorem lamportGen_coins : (lamportGen hE).coins = .mul (.mul (.const 2) .var) .var := by
   unfold lamportGen
   exact NUPPT.coins_ofPolyTimeUniform _ _
 
-/-- The generator's coin tape has `2n²` bits at parameter `n`. -/
+/-- The generator's coin tape has `2n²` bits at parameter `n`: `(lamportGen hE).coinLen n = 2 * n *
+n`. -/
 theorem lamportGen_coinLen (n : ℕ) : (lamportGen hE).coinLen n = 2 * n * n := by
   rw [NUPPT.coinLen_eq, lamportGen_coins]
   simp only [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
-/-- Lamport's generator coin tapes are equivalent to its row-major preimage tables. -/
+/-- Lamport's generator coin tapes are equivalent to its row-major preimage tables:
+`lamportCoinTables hE n : (lamportGen hE).Coins n ≃ Table n`. -/
 noncomputable def lamportCoinTables (n : ℕ) : (lamportGen hE).Coins n ≃ LamportFill.Table n :=
   (Equiv.arrowCongr (finCongr (lamportGen_coinLen hE n)) (Equiv.refl Bool)).trans
     (LamportFill.tableCoins n)
 
-/-- The coin-table equivalence first casts the tape width to `2n²`, then groups its blocks. -/
+/-- The coin-table equivalence first casts the tape width to `2n²`, then groups its blocks:
+`lamportCoinTables hE n = (Equiv.arrowCongr (finCongr (lamportGen_coinLen hE n)) (Equiv.refl
+Bool)).trans (tableCoins n)`. -/
 theorem lamportCoinTables_eq (n : ℕ) :
     lamportCoinTables hE n =
       (Equiv.arrowCongr (finCongr (lamportGen_coinLen hE n)) (Equiv.refl Bool)).trans
         (LamportFill.tableCoins n) := rfl
 
 /-- The inverse coin-table equivalence serializes the table and casts back to the generator's
-declared coin length. -/
+declared coin length: `(lamportCoinTables hE n).symm T = (Equiv.arrowCongr (finCongr
+(lamportGen_coinLen hE n).symm) (Equiv.refl Bool)) ((tableCoins n).symm T)`. -/
 theorem lamportCoinTables_symm (n : ℕ) (T : LamportFill.Table n) :
     (lamportCoinTables hE n).symm T =
       (Equiv.arrowCongr (finCongr (lamportGen_coinLen hE n).symm) (Equiv.refl Bool))
         ((LamportFill.tableCoins n).symm T) := rfl
 
-/-- The coin tape for table `T` is exactly its row-major secret word. -/
+/-- The coin tape for table `T` is exactly its row-major secret word: `List.ofFn ((lamportCoinTables
+hE n).symm T) = secretWord T`. -/
 theorem ofFn_lamportCoinTables_symm (n : ℕ) (T : LamportFill.Table n) :
     List.ofFn ((lamportCoinTables hE n).symm T) = LamportFill.secretWord T := by
   rw [lamportCoinTables_symm, ofFn_arrowCongr_finCongr, LamportFill.ofFn_tableCoins_symm]
 
-/-- Serializing the table of a generator coin tape recovers that tape's word. -/
+/-- Serializing the table of a generator coin tape recovers that tape's word: `secretWord
+(lamportCoinTables hE n ρ) = List.ofFn ρ`. -/
 theorem secretWord_lamportCoinTables (n : ℕ) (ρ : (lamportGen hE).Coins n) :
     LamportFill.secretWord (lamportCoinTables hE n ρ) = List.ofFn ρ := by
   rw [← ofFn_lamportCoinTables_symm, Equiv.symm_apply_apply]
 
-/-- Lamport's deterministic signer uses the zero coin polynomial. -/
+/-- Lamport's deterministic signer uses the zero coin polynomial: `lamportSign.coins = .const 0`. -/
 theorem lamportSign_coins : lamportSign.coins = .const 0 := by
   unfold lamportSign
   exact NUPPT.coins_ofPolyTimeUniform _ _
@@ -613,8 +621,12 @@ theorem lamport_sign : (lamport L f E hE hfE).sign = lamportSign := rfl
 theorem lamport_ver : (lamport L f E hE hfE).ver = lamportVerFun L E := rfl
 
 include hfE in
-/-- On a serialized preimage table, key generation returns its public images and the table
-itself [PS10, Protocol 137.1]. -/
+/-- On a serialized preimage table, key generation returns its public images and the table itself
+[PS10, Protocol 137.1]: if `List.ofFn ρ = secretWord T`, then `(lamportGen hE).runAt n [] ρ =
+pairEncode (publicWord (tablePublic (f n) T)) (secretWord T)`.
+
+**Proof sketch.** Block `i` of `secretWord T` is `T (i, false) ‖ T (i, true)`
+(`coinBlock_flatten_ofFn`); `lamportHalf` reads its halves, and `hfE` maps them to their images. -/
 theorem runAt_lamportGen_table (n : ℕ) (T : LamportFill.Table n)
     (ρ : (lamportGen hE).Coins n) (hρ : List.ofFn ρ = LamportFill.secretWord T) :
     (lamportGen hE).runAt n [] ρ =
@@ -640,8 +652,9 @@ theorem runAt_lamportGen_table (n : ℕ) (T : LamportFill.Table n)
   rw [hhalf i false, hhalf i true, hE', hE',
     LamportFill.tablePublic_eq, LamportFill.tablePublic_eq]
 
-/-- On a serialized preimage table, signing returns the typed signature selected from
-that table, independently of its signing coins [PS10, Protocol 137.1]. -/
+/-- On a serialized preimage table, signing returns the typed signature selected from that table,
+independently of its signing coins [PS10, Protocol 137.1]: `lamportSign.runAt n (pairEncode
+(secretWord T) (List.ofFn m)) r = List.ofFn (tableSignature T m)`. -/
 theorem runAt_lamportSign_table (n : ℕ) (T : LamportFill.Table n) (m : Fin n → Bool)
     (r : lamportSign.Coins n) :
     lamportSign.runAt n (pairEncode (LamportFill.secretWord T) (List.ofFn m)) r =
@@ -658,8 +671,10 @@ theorem runAt_lamportSign_table (n : ℕ) (T : LamportFill.Table n) (m : Fin n �
   cases m i <;> simp [lamportHalf_eq]
 
 include hE hfE in
-/-- On the canonical layout of a table, the generator string function returns its public
-images paired with its secret serialization [PS10, Protocol 137.1]. -/
+/-- On the canonical layout of a table, the generator string function returns its public images
+paired with its secret serialization [PS10, Protocol 137.1]: `lamportGenFun E (NUPPT.layout
+(List.replicate n true) [] [] (secretWord T)) = pairEncode (publicWord (tablePublic (f n) T))
+(secretWord T)`. -/
 theorem lamportGenFun_table (n : ℕ) (T : LamportFill.Table n) :
     lamportGenFun E (NUPPT.layout (List.replicate n true) [] [] (LamportFill.secretWord T)) =
       pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T))
@@ -672,8 +687,9 @@ theorem lamportGenFun_table (n : ℕ) (T : LamportFill.Table n) :
   rw [NUPPT.runAtL_ofPolyTimeUniform] at h
   simpa only [NUPPT.layout_eq, NUPPT.advInput_eq] using h
 
-/-- On the canonical signing layout, the signing string function returns the selected
-preimage vector [PS10, Protocol 137.1]. -/
+/-- On the canonical signing layout, the signing string function returns the selected preimage
+vector [PS10, Protocol 137.1]: `lamportSignFun (NUPPT.layout (List.replicate n true) (pairEncode
+(secretWord T) (List.ofFn m)) [] []) = List.ofFn (tableSignature T m)`. -/
 theorem lamportSignFun_table (n : ℕ) (T : LamportFill.Table n) (m : Fin n → Bool) :
     lamportSignFun (NUPPT.layout (List.replicate n true)
       (pairEncode (LamportFill.secretWord T) (List.ofFn m)) [] []) =
@@ -689,8 +705,10 @@ theorem lamportSignFun_table (n : ℕ) (T : LamportFill.Table n) (m : Fin n → 
   simpa only [NUPPT.layout_eq, NUPPT.advInput_eq] using h
 
 include hfE in
-/-- Verification of a typed public table accepts exactly when each signature block maps
-to the image selected by the corresponding message bit [PS10, Protocol 137.1].
+/-- Verification of a typed public table accepts exactly when each signature block maps to the image
+selected by the corresponding message bit [PS10, Protocol 137.1]: `lamportVerFun L E (atParam n
+(pairEncode (publicWord Y) (pairEncode (List.ofFn m) (List.ofFn σ)))) = [true] ↔ ∀ i, f n
+(signatureBlock σ i) = Y (i, m i)`.
 
 **Proof sketch.** Both length guards pass. The two block loops are tuple encodings of
 the signature-block images and selected public images. Injectivity of the tuple encoding
@@ -760,8 +778,9 @@ private theorem lamport_codec_ext {ι α : Type} {spec : OracleSpec ι}
   cases ht
   rfl
 
-/-- Lamport's forger codec is the canonical bit codec with query width `n`, answer width
-`n²` and final width `n+n²`. -/
+/-- Lamport's forger codec is the canonical bit codec with query width `n`, answer width `n²` and
+final width `n+n²`: `(lamport L f E hE hfE).forgerCodec n = bitCodec (fun _ : Fin 1 => n) (fun _ =>
+n * n) (n + n * n)`. -/
 theorem lamport_forgerCodec (n : ℕ) :
     (lamport L f E hE hfE).forgerCodec n =
       bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n) := by
@@ -783,7 +802,9 @@ run_cmd do
       Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
 
 /-- Against a serialized key table, every Lamport signing call has exactly the deterministic
-selected-preimage law. The equality holds for every function of the answer and state. -/
+selected-preimage law. The equality holds for every function of the answer and state:
+`ProbComp.expect ((lamport L f E hE hfE).signImpl n (secretWord T) i m s) G = ProbComp.expect
+(tableSigner T i m s) G`. -/
 theorem lamport_signImpl_expect (n : ℕ) (T : LamportFill.Table n)
     (i : Fin 1) (m : Fin n → Bool) (s : Unit)
     (G : (Fin (n * n) → Bool) × Unit → ℝ) :
@@ -796,8 +817,9 @@ theorem lamport_signImpl_expect (n : ℕ) (T : LamportFill.Table n)
     runAt_lamportSign_table, padFin_ofFn]
   exact ProbComp.expect_const _ _
 
-/-- Logging preserves the equality between actual Lamport signing and typed table signing,
-including the full appended query and answer log. -/
+/-- Logging preserves the equality between actual Lamport signing and typed table signing, including
+the full appended query and answer log: `ProbComp.expect (((lamport L f E hE hfE).signImpl n
+(secretWord T)).withLog i m s) G = ProbComp.expect ((tableSigner T).withLog i m s) G`. -/
 theorem lamport_loggedSignImpl_expect (n : ℕ) (T : LamportFill.Table n)
     (i : Fin 1) (m : Fin n → Bool)
     (s : Unit × QueryLog (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)))
@@ -812,8 +834,10 @@ theorem lamport_loggedSignImpl_expect (n : ℕ) (T : LamportFill.Table n)
       ProbComp.expect (.pure (ys.1, (ys.2, s.2 ++ [⟨i, m, ys.1⟩]))) G)
 
 include hfE in
-/-- The actual one-query Lamport forgery game has exactly the typed honest-table success
-probability [PS10, Definition 136.2 and proof of Theorem 137.2].
+/-- The actual one-query Lamport forgery game has exactly the typed honest-table success probability
+[PS10, Definition 136.2 and proof of Theorem 137.2]: `accept ((lamport L f E hE hfE).forgeGame A 1
+n) = honestProbability (f n) adv`, where `adv Y r = A.toCompOn (bitCodec (fun _ : Fin 1 => n) (fun _
+=> n * n) (n + n * n)) n 1 (publicWord Y) r`.
 
 **Proof sketch.** Reindex key-generation coins by the table equivalence and use the generator
 reader to identify public and secret keys. The signing machine ignores its signing coins, so
@@ -866,9 +890,11 @@ theorem lamport_forgeGame_accept_eq_honestProbability (A : NUPPT) (n : ℕ) :
   exact LamportFill.fresh_firstLog_iff T tree _
 
 
-/-- For every positive parameter, some fixed position with a fair planted bit gives
-reduction success at least the actual one-query forgery probability divided by `2n`
-[PS10, averaging step in the proof of Theorem 137.2].
+/-- For every positive parameter, some fixed position with a fair planted bit gives reduction
+success at least the actual one-query forgery probability divided by `2n` [PS10, averaging step in
+the proof of Theorem 137.2]: if `0 < n`, then `∃ i : Fin n, accept ((lamport L f E hE hfE).forgeGame
+A 1 n) / (2 * (n : ℝ)) ≤ ProbComp.expect (ProbComp.sample Bool) (fun c => redProbability (f n) adv
+(i, c))`, with `adv` as in `lamport_forgeGame_accept_eq_honestProbability`.
 
 **Proof sketch.** Read the actual forgery game as the typed honest probability, then apply
 the counted favorable-pair bound and select a position at least as good as its average. -/

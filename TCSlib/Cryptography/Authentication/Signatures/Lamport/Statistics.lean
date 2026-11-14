@@ -44,7 +44,11 @@ run_cmd do
 /-- Suppose every successful honest run has favorable position mass at least `b`, and
 every successful favorable run makes a reduction succeed when challenged at its own
 table coordinate. If the reduction ignores that original coordinate, the average
-reduction success for an independent challenge is at least `b` times honest success.
+reduction success for an independent challenge is at least `b` times honest success: if `∀ T r, P T
+r → b ≤ 𝔼 p, [Q T r p]`, `∀ T r p, P T r → Q T r p → R (T p) T r p` and `∀ x x' T r p, R x
+(Function.update T p x') r p ↔ R x T r p`, then `b * 𝔼 T, 𝔼 r, [P T r] ≤ 𝔼 p, 𝔼 x, 𝔼 T, 𝔼 r, [R x T
+r p]`, writing `𝔼 v, h v` for `ProbComp.expect (ProbComp.sample V) (fun v => h v)` with `T : Table
+n`, `r : ρ`, `p : Fin n × Bool`, `x : Fin n → Bool`, and `[A]` for `if A then (1 : ℝ) else 0`.
 
 **Proof sketch.** Bound the reduction's position average pointwise by favorable mass
 on successful honest runs, and by zero on unsuccessful ones. Average over tables and

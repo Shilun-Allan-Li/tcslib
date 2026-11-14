@@ -30,7 +30,8 @@ namespace TCSlib.Cryptography.Authentication.LamportFill
 open TCSlib.Cryptography.Games
 
 /-- A planted run with at most one query ending with a false abort bit queried no message
-that reveals the planted cell [PS10, proof of Theorem 137.2].
+that reveals the planted cell [PS10, proof of Theorem 137.2]: if `tree.CostBoundedBy (fun _ => 1) 1`
+and `simulate (abortingImpl T i c) tree false = .pure (a', false)`, then `Safe tree i c`.
 
 **Proof sketch.** An immediate return has no query. A query leaves cost zero, so its
 continuation is a return; the final abort flag is exactly equality of its selected bit with

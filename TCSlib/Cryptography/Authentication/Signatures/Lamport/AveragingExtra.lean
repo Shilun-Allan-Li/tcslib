@@ -35,8 +35,9 @@ open TCSlib.Cryptography.Games
 
 /-- If an optional queried message differs from the forged message, a uniform position and
 bit avoids revealing the planted preimage and selects the forged preimage with probability
-at least `1 / (2 |I|)`. An absent query imposes no avoidance constraint.
-[PS10, proof of Theorem 137.2].
+at least `1 / (2 |I|)`: if `q ≠ some m'`, then `1 / (2 * (Fintype.card ι : ℝ)) ≤ ProbComp.expect
+(ProbComp.sample (ι × Bool)) (fun p => if (∀ m, q = some m → m p.1 ≠ p.2) ∧ m' p.1 = p.2 then (1 :
+ℝ) else 0)`. An absent query imposes no avoidance constraint. [PS10, proof of Theorem 137.2].
 
 **Proof sketch.** With a query, freshness gives distinct messages and the differing-coordinate
 bound applies. Without a query, half of the position-bit pairs select the forged preimage;
@@ -63,7 +64,8 @@ theorem optionQuery_favourable_expect_ge {ι : Type} [Fintype ι] [Nonempty ι]
 
 /-- For every payoff `v(i,c)` on a nonempty finite position type and a bit, there is a
 position whose average over a fair bit is at least the average over a uniform position and
-fair bit. [PS10, proof of Theorem 137.2].
+fair bit: `∃ i, ProbComp.expect (ProbComp.sample (ι × Bool)) (fun p => v p.1 p.2) ≤ ProbComp.expect
+(ProbComp.sample Bool) (v i)`. [PS10, proof of Theorem 137.2].
 
 **Proof sketch.** Apply finite maximum averaging to the payoff already averaged over the bit.
 The published product-sampling equation identifies its average over positions with the

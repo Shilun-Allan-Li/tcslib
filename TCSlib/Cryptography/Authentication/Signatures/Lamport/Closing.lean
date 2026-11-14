@@ -54,7 +54,8 @@ theorem negligible_of_linear_bound {e p : ℕ → ℝ} (hp : Negligible p)
 
 /-- A nonnegative advantage bounded by `2n` times the inversion probability of a fixed
 machine against a strong one-way family is negligible for all parameters, with no condition
-needed at zero. [PS10, final step of the proof of Theorem 137.2]. -/
+needed at zero: if `F.StrongOneWay`, `∀ n, 0 ≤ e n` and `∀ n ≥ 1, e n ≤ 2 * (n : ℝ) * F.invProbAt B
+n`, then `Negligible e`. [PS10, final step of the proof of Theorem 137.2]. -/
 theorem negligible_of_inversion_bound (F : FunFamily) (hf : F.StrongOneWay) (B : NUPPT)
     (e : ℕ → ℝ) (he0 : ∀ n, 0 ≤ e n)
     (hbound : ∀ n ≥ 1, e n ≤ 2 * (n : ℝ) * F.invProbAt B n) : Negligible e :=

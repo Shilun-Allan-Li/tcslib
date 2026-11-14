@@ -40,33 +40,41 @@ namespace TCSlib.Cryptography.Authentication.LamportFill
 open TCSlib.Cryptography TCSlib.Cryptography.Games
 open Complexity Turing
 
-/-- A table has an `n`-bit preimage at each coordinate `(i,c)`. -/
+/-- A table has an `n`-bit preimage at each coordinate `(i,c)`: `Table n = ((Fin n × Bool) → Fin n →
+Bool)`. -/
 abbrev Table (n : ℕ) := (Fin n × Bool) → Fin n → Bool
 
 /-- The type of tables is the function type `(Fin n × Bool) → Fin n → Bool`. -/
 theorem Table_eq (n : ℕ) : Table n = ((Fin n × Bool) → Fin n → Bool) := rfl
 
-/-- Serialize a public table as the tuple of its pairs of images. -/
+/-- Serialize a public table as the tuple of its pairs of images: `publicWord Y =
+PrivateKeyScheme.encodeList (List.ofFn fun i : Fin n => pairEncode (List.ofFn (Y (i, false)))
+(List.ofFn (Y (i, true))))`. -/
 def publicWord {n ℓ : ℕ} (Y : (Fin n × Bool) → Fin ℓ → Bool) : List Bool :=
   PrivateKeyScheme.encodeList (List.ofFn fun i : Fin n =>
     pairEncode (List.ofFn (Y (i, false))) (List.ofFn (Y (i, true))))
 
-/-- The public word is the tuple of the encoded pairs `⟨Y(i,0),Y(i,1)⟩`. -/
+/-- The public word is the tuple of the encoded pairs `⟨Y(i,0),Y(i,1)⟩`: `publicWord Y =
+PrivateKeyScheme.encodeList (List.ofFn fun i : Fin n => pairEncode (List.ofFn (Y (i, false)))
+(List.ofFn (Y (i, true))))`. -/
 theorem publicWord_eq {n ℓ : ℕ} (Y : (Fin n × Bool) → Fin ℓ → Bool) :
     publicWord Y = PrivateKeyScheme.encodeList (List.ofFn fun i : Fin n =>
       pairEncode (List.ofFn (Y (i, false))) (List.ofFn (Y (i, true)))) := rfl
 
-/-- Serialize a preimage table in row order, with its false and true cells adjacent. -/
+/-- Serialize a preimage table in row order, with its false and true cells adjacent: `secretWord T =
+(List.ofFn fun i : Fin n => List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))).flatten`. -/
 def secretWord {n : ℕ} (T : Table n) : List Bool :=
   (List.ofFn fun i : Fin n => List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))).flatten
 
-/-- The secret word concatenates `T(i,0) ‖ T(i,1)` for consecutive rows `i`. -/
+/-- The secret word concatenates `T(i,0) ‖ T(i,1)` for consecutive rows `i`: `secretWord T =
+(List.ofFn fun i : Fin n => List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))).flatten`. -/
 theorem secretWord_eq {n : ℕ} (T : Table n) :
     secretWord T =
       (List.ofFn fun i : Fin n => List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))).flatten :=
   rfl
 
-/-- A serialized table contains `n` rows of `2n` bits, hence `2n²` bits. -/
+/-- A serialized table contains `n` rows of `2n` bits, hence `2n²` bits: `(secretWord T).length =
+2 * n * n`. -/
 theorem length_secretWord {n : ℕ} (T : Table n) : (secretWord T).length = 2 * n * n := by
   have hrow : (List.length ∘ fun i : Fin n =>
       List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))) = fun _ => n + n := by
@@ -77,43 +85,50 @@ theorem length_secretWord {n : ℕ} (T : Table n) : (secretWord T).length = 2 * 
   simp only [nsmul_eq_mul, Nat.cast_id]
   ring
 
-/-- Replace preimage `(i,c)` by `x`, leaving every other cell unchanged. -/
+/-- Replace preimage `(i,c)` by `x`, leaving every other cell unchanged: `plantTable T i c x p = if
+p = (i, c) then x else T p`. -/
 def plantTable {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool)
     (p : Fin n × Bool) : Fin n → Bool :=
   if p = (i, c) then x else T p
 
-/-- Planting returns `x` at the selected cell and `T p` elsewhere. -/
+/-- Planting returns `x` at the selected cell and `T p` elsewhere: `plantTable T i c x p = if p =
+(i, c) then x else T p`. -/
 theorem plantTable_eq {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool)
     (p : Fin n × Bool) :
     plantTable T i c x p = if p = (i, c) then x else T p := rfl
 
-/-- The planted cell contains `x`. -/
+/-- The planted cell contains `x`: `plantTable T i c x (i, c) = x`. -/
 theorem plantTable_at {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool) :
     plantTable T i c x (i, c) = x := by
   simp only [plantTable, if_true]
 
-/-- A cell different from `(i,c)` retains its original preimage. -/
+/-- A cell different from `(i,c)` retains its original preimage: if `p ≠ (i, c)`, then `plantTable T
+i c x p = T p`. -/
 theorem plantTable_ne {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool)
     {p : Fin n × Bool} (hp : p ≠ (i, c)) : plantTable T i c x p = T p := by
   rw [plantTable_eq, if_neg hp]
 
-/-- Planting a table is the ordinary update of its selected coordinate. -/
+/-- Planting a table is the ordinary update of its selected coordinate: `plantTable T i c x =
+Function.update T (i, c) x`. -/
 theorem plantTable_update {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
     (x : Fin n → Bool) : plantTable T i c x = Function.update T (i, c) x := by
   funext p
   rw [plantTable_eq, Function.update_apply]
 
-/-- The signature is the flattened table of preimages selected by the message bits. -/
+/-- The signature is the flattened table of preimages selected by the message bits: `tableSignature
+T m j = T (k.1, m k.1) k.2` with `k = finProdFinEquiv.symm j`. -/
 def tableSignature {n : ℕ} (T : Table n) (m : Fin n → Bool) : Fin (n * n) → Bool :=
   fun j => T ((finProdFinEquiv.symm j).1, m (finProdFinEquiv.symm j).1)
     (finProdFinEquiv.symm j).2
 
-/-- At the flattened index for `(i,k)`, the signature reads bit `k` of `T(i,m i)`. -/
+/-- At the flattened index for `(i,k)`, the signature reads bit `k` of `T(i,m i)`: `tableSignature T
+m (finProdFinEquiv (i, k)) = T (i, m i) k`. -/
 theorem tableSignature_apply {n : ℕ} (T : Table n) (m : Fin n → Bool)
     (i k : Fin n) : tableSignature T m (finProdFinEquiv (i, k)) = T (i, m i) k := by
   simp only [tableSignature, Equiv.symm_apply_apply]
 
-/-- The word of a selected signature concatenates the selected preimage words. -/
+/-- The word of a selected signature concatenates the selected preimage words: `List.ofFn
+(tableSignature T m) = (List.ofFn fun i : Fin n => List.ofFn (T (i, m i))).flatten`. -/
 theorem ofFn_tableSignature {n : ℕ} (T : Table n) (m : Fin n → Bool) :
     List.ofFn (tableSignature T m) =
       (List.ofFn fun i : Fin n => List.ofFn (T (i, m i))).flatten := by
@@ -124,7 +139,12 @@ theorem ofFn_tableSignature {n : ℕ} (T : Table n) (m : Fin n → Bool) :
   rw [Equiv.symm_apply_apply, hblocks] at h
   exact h
 
-/-- A message avoiding the planted cell has exactly its original signature. -/
+/-- A message avoiding the planted cell has exactly its original signature: if `m i ≠ c`, then
+`tableSignature (plantTable T i c x) m = tableSignature T m`.
+
+**Proof sketch.** Entry `j` of either signature reads the cell `(k.1, m k.1)` with `k =
+finProdFinEquiv.symm j`. That cell is not `(i, c)`, since `k.1 = i` would give `m i = c`, so
+`plantTable_ne` returns its original preimage. -/
 theorem tableSignature_plant_of_safe {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
     (x : Fin n → Bool) (m : Fin n → Bool) (hm : m i ≠ c) :
     tableSignature (plantTable T i c x) m = tableSignature T m := by
@@ -139,20 +159,22 @@ theorem tableSignature_plant_of_safe {n : ℕ} (T : Table n) (i : Fin n) (c : Bo
     exact hm hc
   rw [plantTable_ne T i c x hp]
 
-/-- The public table applies the one-way map to every preimage. -/
+/-- The public table applies the one-way map to every preimage: `tablePublic g T p = g (T p)`. -/
 def tablePublic {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
     (p : Fin n × Bool) : Y := g (T p)
 
-/-- The public image at cell `p` is `g (T p)`. -/
+/-- The public image at cell `p` is `g (T p)`: `tablePublic g T p = g (T p)`. -/
 theorem tablePublic_eq {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
     (p : Fin n × Bool) : tablePublic g T p = g (T p) := rfl
 
-/-- Replace the public image at `(i,c)` by `y`, without knowing a preimage of `y`. -/
+/-- Replace the public image at `(i,c)` by `y`, without knowing a preimage of `y`: `plantedPublic g
+T i c y p = if p = (i, c) then y else g (T p)`. -/
 def plantedPublic {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
     (i : Fin n) (c : Bool) (y : Y) (p : Fin n × Bool) : Y :=
   if p = (i, c) then y else g (T p)
 
-/-- The planted public table reads `y` at `(i,c)` and the original images elsewhere. -/
+/-- The planted public table reads `y` at `(i,c)` and the original images elsewhere: `plantedPublic
+g T i c y p = if p = (i, c) then y else g (T p)`. -/
 theorem plantedPublic_eq {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
     (i : Fin n) (c : Bool) (y : Y) (p : Fin n × Bool) :
     plantedPublic g T i c y p = if p = (i, c) then y else g (T p) := rfl
@@ -166,7 +188,8 @@ theorem plantedPublic_image {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T
   · simp only [plantedPublic, tablePublic, plantTable, hp, if_true]
   · simp only [plantedPublic, tablePublic, plantTable, hp, if_false]
 
-/-- The planted public table ignores the original preimage at its planted coordinate. -/
+/-- The planted public table ignores the original preimage at its planted coordinate: `plantedPublic
+g (plantTable T i c x) i c y = plantedPublic g T i c y`. -/
 theorem plantedPublic_plant {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
     (i : Fin n) (c : Bool) (x : Fin n → Bool) (y : Y) :
     plantedPublic g (plantTable T i c x) i c y = plantedPublic g T i c y := by
@@ -176,16 +199,19 @@ theorem plantedPublic_plant {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T
   · rw [plantedPublic_eq, plantedPublic_eq, if_neg hp, if_neg hp,
       plantTable_ne T i c x hp]
 
-/-- Extract the `i`-th preimage block from a flattened signature. -/
+/-- Extract the `i`-th preimage block from a flattened signature: `signatureBlock σ i = fun k => σ
+(finProdFinEquiv (i, k))`. -/
 def signatureBlock {n : ℕ} (σ : Fin (n * n) → Bool) (i : Fin n) : Fin n → Bool :=
   fun k => σ (finProdFinEquiv (i, k))
 
-/-- Extracted block `i` reads the flattened signature at indices `(i,k)`. -/
+/-- Extracted block `i` reads the flattened signature at indices `(i,k)`: `signatureBlock σ i = fun
+k => σ (finProdFinEquiv (i, k))`. -/
 theorem signatureBlock_eq {n : ℕ} (σ : Fin (n * n) → Bool) (i : Fin n) :
     signatureBlock σ i = fun k => σ (finProdFinEquiv (i, k)) := rfl
 
 /-- An accepting signature on a message with bit `c` at `i` supplies a preimage of `g(x)`
-under the planted public table [PS10, Theorem 137.2]. -/
+under the planted public table [PS10, Theorem 137.2]: if `∀ j, g (signatureBlock σ j) =
+plantedPublic g T i c (g x) (j, m j)` and `m i = c`, then `g (signatureBlock σ i) = g x`. -/
 theorem extract_planted {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
     (i : Fin n) (c : Bool) (x : Fin n → Bool) (m : Fin n → Bool)
     (σ : Fin (n * n) → Bool)
@@ -195,7 +221,8 @@ theorem extract_planted {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : T
   rw [plantedPublic_eq, hm, if_pos rfl] at h
   exact h
 
-/-- A computation of cost zero under unit query costs is a return. -/
+/-- A computation of cost zero under unit query costs is a return: if `tree.CostBoundedBy (fun _
+=> 1) 0`, then `∃ a, tree = .pure a`. -/
 theorem exists_pure_of_cost_zero {ι α : Type} {spec : OracleSpec ι}
     (tree : OracleComp spec α) (h : tree.CostBoundedBy (fun _ => 1) 0) :
     ∃ a, tree = .pure a := by
@@ -205,53 +232,62 @@ theorem exists_pure_of_cost_zero {ι α : Type} {spec : OracleSpec ι}
     have hcost := (OracleComp.costBoundedBy_query (fun _ => 1) j m k 0).1 h
     omega
 
-/-- The first query of a typed signature-forging computation, or `none` if it returns. -/
+/-- The first query of a typed signature-forging computation, or `none` if it returns: `firstQuery
+(.pure a) = none` and `firstQuery (.query j m k) = some m`. -/
 def firstQuery {n : ℕ} {α : Type} :
     OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α → Option (Fin n → Bool)
   | .pure _ => none
   | .query _ m _ => some m
 
-/-- A return has no first query. -/
+/-- A return has no first query: `firstQuery (.pure a : OracleComp (bitSpec (fun _ : Fin 1 => n)
+(fun _ => n * n)) α) = none`. -/
 theorem firstQuery_pure {n : ℕ} {α : Type} (a : α) :
     firstQuery (.pure a : OracleComp
       (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α) = none := rfl
 
-/-- A query node's first query is its own message. -/
+/-- A query node's first query is its own message: `firstQuery (.query j m k) = some m`. -/
 theorem firstQuery_query {n : ℕ} {α : Type} (j : Fin 1) (m : Fin n → Bool)
     (k : (Fin (n * n) → Bool) → OracleComp
       (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α) :
     firstQuery (.query j m k) = some m := rfl
 
-/-- The deterministic typed signing oracle returns the table's selected preimages. -/
+/-- The deterministic typed signing oracle returns the table's selected preimages: `tableSigner T =
+QueryImpl.ofComp fun _ m => .pure (tableSignature T m)`. -/
 def tableSigner {n : ℕ} (T : Table n) :
     QueryImpl (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) Unit unifSpec :=
   QueryImpl.ofComp fun _ m => .pure (tableSignature T m)
 
-/-- The table signer is the stateless implementation of `m ↦ pure (tableSignature T m)`. -/
+/-- The table signer is the stateless implementation of `m ↦ pure (tableSignature T m)`:
+`tableSigner T = QueryImpl.ofComp (fun _ m => .pure (tableSignature T m))`. -/
 theorem tableSigner_eq {n : ℕ} (T : Table n) :
     tableSigner T = QueryImpl.ofComp (fun _ m => .pure (tableSignature T m)) := rfl
 
 /-- The log of a computation with at most one query consists of its first query and answer,
-or is empty if it returns immediately. -/
+or is empty if it returns immediately: `firstLog T (.pure a) = []` and `firstLog T (.query j m k) =
+[⟨j, m, tableSignature T m⟩]`. -/
 def firstLog {n : ℕ} {α : Type} (T : Table n) :
     OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α →
       QueryLog (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n))
   | .pure _ => []
   | .query j m _ => [⟨j, m, tableSignature T m⟩]
 
-/-- A return has an empty first-query log. -/
+/-- A return has an empty first-query log: `firstLog T (.pure a : OracleComp (bitSpec (fun _ : Fin 1
+=> n) (fun _ => n * n)) α) = []`. -/
 theorem firstLog_pure {n : ℕ} {α : Type} (T : Table n) (a : α) :
     firstLog T (.pure a : OracleComp
       (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α) = [] := rfl
 
-/-- A query node's first-query log contains exactly its message and deterministic answer. -/
+/-- A query node's first-query log contains exactly its message and deterministic answer: `firstLog
+T (.query j m k) = [⟨j, m, tableSignature T m⟩]`. -/
 theorem firstLog_query {n : ℕ} {α : Type} (T : Table n) (j : Fin 1) (m : Fin n → Bool)
     (k : (Fin (n * n) → Bool) → OracleComp
       (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α) :
     firstLog T (.query j m k) = [⟨j, m, tableSignature T m⟩] := rfl
 
 /-- A computation with at most one query against the logged deterministic signer returns its
-functional evaluation and exactly its first-query log.
+functional evaluation and exactly its first-query log: if `tree.CostBoundedBy (fun _ => 1) 1`, then
+`simulate (tableSigner T).withLog tree ((), []) = .pure (tree.evalFn (fun _ m => tableSignature T
+m), ((), firstLog T tree))`.
 
 **Proof sketch.** An immediate return has no log. At a query, the signer returns its selected
 preimages and appends one entry. Unit query cost leaves cost zero for the continuation, so
@@ -280,7 +316,10 @@ theorem fresh_firstLog_iff {n : ℕ} {α : Type} (T : Table n)
   cases tree <;> simp [firstLog, firstQuery]
 
 /-- The logged one-query signing run has an output and log whose freshness condition is
-equivalent to avoiding the optional first query, for any projection of a forgery's message. -/
+equivalent to avoiding the optional first query, for any projection of a forgery's message: if
+`tree.CostBoundedBy (fun _ => 1) 1`, then `∃ a log, simulate (tableSigner T).withLog tree ((), []) =
+.pure (a, ((), log)) ∧ a = tree.evalFn (fun _ m => tableSignature T m) ∧ ((∀ e ∈ log, e.2.1 ≠
+message a) ↔ firstQuery tree ≠ some (message a))`. -/
 theorem exists_honest_transcript {n : ℕ} {α : Type} (T : Table n)
     (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
     (hcost : tree.CostBoundedBy (fun _ => 1) 1) (message : α → Fin n → Bool) :
@@ -289,19 +328,22 @@ theorem exists_honest_transcript {n : ℕ} {α : Type} (T : Table n)
       ((∀ e ∈ log, e.2.1 ≠ message a) ↔ firstQuery tree ≠ some (message a)) := by
   exact ⟨_, _, honest_transcript T tree hcost, rfl, fresh_firstLog_iff T tree _⟩
 
-/-- The sole signing query, if present, avoids the planted cell. -/
+/-- The sole signing query, if present, avoids the planted cell: `Safe tree i c ↔ ∀ m, firstQuery
+tree = some m → m i ≠ c`. -/
 def Safe {n : ℕ} {α : Type}
     (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
     (i : Fin n) (c : Bool) : Prop :=
   ∀ m, firstQuery tree = some m → m i ≠ c
 
-/-- Safety means that every message recorded as the first query has bit different from `c`. -/
+/-- Safety means that every message recorded as the first query has bit different from `c`: `Safe
+tree i c ↔ ∀ m, firstQuery tree = some m → m i ≠ c`. -/
 theorem safe_iff {n : ℕ} {α : Type}
     (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
     (i : Fin n) (c : Bool) :
     Safe tree i c ↔ ∀ m, firstQuery tree = some m → m i ≠ c := Iff.rfl
 
-/-- The aborting oracle answers an unsafe query with zero and answers a safe one honestly. -/
+/-- The aborting oracle answers an unsafe query with zero and answers a safe one honestly:
+`abortingAnswer T i c m = if m i = c then zeroBits _ else tableSignature T m`. -/
 def abortingAnswer {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (m : Fin n → Bool) :
     Fin (n * n) → Bool :=
   if m i = c then zeroBits _ else tableSignature T m
@@ -310,7 +352,8 @@ def abortingAnswer {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (m : Fin n →
 theorem abortingAnswer_eq {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (m : Fin n → Bool) :
     abortingAnswer T i c m = if m i = c then zeroBits _ else tableSignature T m := rfl
 
-/-- The aborting answer ignores the original preimage at the planted coordinate. -/
+/-- The aborting answer ignores the original preimage at the planted coordinate: `abortingAnswer
+(plantTable T i c x) i c m = abortingAnswer T i c m`. -/
 theorem abortingAnswer_plant {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
     (x : Fin n → Bool) (m : Fin n → Bool) :
     abortingAnswer (plantTable T i c x) i c m = abortingAnswer T i c m := by
@@ -319,7 +362,8 @@ theorem abortingAnswer_plant {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
   · rw [if_pos hm, if_pos hm]
   · rw [if_neg hm, if_neg hm, tableSignature_plant_of_safe T i c x m hm]
 
-/-- The planted implementation remembers whether an unsafe query has occurred. -/
+/-- The planted implementation remembers whether an unsafe query has occurred: `abortingImpl T i c j
+m bad = .pure (abortingAnswer T i c m, bad || decide (m i = c))`. -/
 def abortingImpl {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) :
     QueryImpl (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) Bool unifSpec :=
   fun _ m bad => .pure (abortingAnswer T i c m, bad || decide (m i = c))
@@ -330,14 +374,16 @@ theorem abortingImpl_apply {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
     abortingImpl T i c j m bad =
       .pure (abortingAnswer T i c m, bad || decide (m i = c)) := rfl
 
-/-- The aborting implementation ignores the original preimage at its planted coordinate. -/
+/-- The aborting implementation ignores the original preimage at its planted coordinate:
+`abortingImpl (plantTable T i c x) i c = abortingImpl T i c`. -/
 theorem abortingImpl_plant {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
     (x : Fin n → Bool) :
     abortingImpl (plantTable T i c x) i c = abortingImpl T i c := by
   funext j m bad
   rw [abortingImpl_apply, abortingImpl_apply, abortingAnswer_plant]
 
-/-- A safe call agrees with the updated key and leaves the abort bit false. -/
+/-- A safe call agrees with the updated key and leaves the abort bit false: if `m i ≠ c`, then
+`abortingImpl T i c j m false = .pure (tableSignature (plantTable T i c x) m, false)`. -/
 theorem abortingImpl_safe {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
     (x : Fin n → Bool) (j : Fin 1) (m : Fin n → Bool) (hm : m i ≠ c) :
     abortingImpl T i c j m false = .pure (tableSignature (plantTable T i c x) m, false) := by
@@ -346,7 +392,9 @@ theorem abortingImpl_safe {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
   simp only [hm, decide_false, Bool.false_or]
 
 /-- A safe run with at most one signing query has exactly the honest output for the updated
-key and never aborts [PS10, Theorem 137.2].
+key and never aborts [PS10, Theorem 137.2]: if `tree.CostBoundedBy (fun _ => 1) 1` and `Safe tree i
+c`, then `simulate (abortingImpl T i c) tree false = .pure (tree.evalFn (fun _ m => tableSignature
+(plantTable T i c x) m), false)`.
 
 **Proof sketch.** A return needs no coupling. At a query, safety says that the queried message
 does not reveal the planted cell, so its answer is exactly the updated key's honest answer.
@@ -369,7 +417,9 @@ theorem planted_coupling {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bo
     rw [simulate_query, abortingImpl_safe T i c x j m hm, OracleComp.pure_bind, ha,
       simulate_pure, OracleComp.evalFn_query, ha, OracleComp.evalFn_pure]
 
-/-- Run a fixed-position planted forger and extract block `i`, returning zero after an abort. -/
+/-- Run a fixed-position planted forger and extract block `i`, returning zero after an abort:
+`extractionExperiment T i c tree signature = (simulate (abortingImpl T i c) tree false).bind (fun
+res => .pure (if res.2 then zeroBits n else signatureBlock (signature res.1) i))`. -/
 def extractionExperiment {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bool)
     (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
     (signature : α → Fin (n * n) → Bool) : ProbComp (Fin n → Bool) :=
@@ -377,7 +427,9 @@ def extractionExperiment {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bo
     .pure (if res.2 then zeroBits n else signatureBlock (signature res.1) i)
 
 /-- The extraction experiment simulates the aborting implementation and selects the `i`-th
-signature block when the final abort bit is false. -/
+signature block when the final abort bit is false: `extractionExperiment T i c tree signature =
+(simulate (abortingImpl T i c) tree false).bind (fun res => .pure (if res.2 then zeroBits n else
+signatureBlock (signature res.1) i))`. -/
 theorem extractionExperiment_eq {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bool)
     (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
     (signature : α → Fin (n * n) → Bool) :
@@ -385,7 +437,9 @@ theorem extractionExperiment_eq {n : ℕ} {α : Type} (T : Table n) (i : Fin n) 
       (simulate (abortingImpl T i c) tree false).bind (fun res =>
         .pure (if res.2 then zeroBits n else signatureBlock (signature res.1) i)) := rfl
 
-/-- The extraction experiment ignores the original preimage at the planted coordinate. -/
+/-- The extraction experiment ignores the original preimage at the planted coordinate:
+`extractionExperiment (plantTable T i c x) i c tree signature = extractionExperiment T i c tree
+signature`. -/
 theorem extractionExperiment_plant {n : ℕ} {α : Type} (T : Table n) (i : Fin n)
     (c : Bool) (x : Fin n → Bool)
     (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
@@ -395,7 +449,8 @@ theorem extractionExperiment_plant {n : ℕ} {α : Type} (T : Table n) (i : Fin 
   rw [extractionExperiment_eq, extractionExperiment_eq, abortingImpl_plant]
 
 /-- The fixed-position reduction builds the planted public table, runs the forger against
-the aborting signer, and extracts the `i`-th signature block. -/
+the aborting signer, and extracts the `i`-th signature block: `plantedExperiment g T i c y adv
+signature = extractionExperiment T i c (adv (plantedPublic g T i c y)) signature`. -/
 def plantedExperiment {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
     (i : Fin n) (c : Bool) (y : Y)
     (adv : ((Fin n × Bool) → Y) →
@@ -404,7 +459,8 @@ def plantedExperiment {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y) (T : 
   extractionExperiment T i c (adv (plantedPublic g T i c y)) signature
 
 /-- The planted experiment is extraction after running the adversary on the planted public
-table. -/
+table: `plantedExperiment g T i c y adv signature = extractionExperiment T i c (adv (plantedPublic g
+T i c y)) signature`. -/
 theorem plantedExperiment_eq {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
     (i : Fin n) (c : Bool) (y : Y)
     (adv : ((Fin n × Bool) → Y) →
@@ -413,7 +469,8 @@ theorem plantedExperiment_eq {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y
     plantedExperiment g T i c y adv signature =
       extractionExperiment T i c (adv (plantedPublic g T i c y)) signature := rfl
 
-/-- The entire planted experiment ignores the original preimage at `(i,c)`; this is the
+/-- The entire planted experiment ignores the original preimage at `(i,c)`, `plantedExperiment g
+(plantTable T i c x) i c y adv signature = plantedExperiment g T i c y adv signature`; this is the
 coordinate-invariance hypothesis for sampling that preimage independently. -/
 theorem plantedExperiment_plant {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y)
     (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool) (y : Y)
@@ -426,7 +483,11 @@ theorem plantedExperiment_plant {n : ℕ} {α Y : Type} (g : (Fin n → Bool) �
     extractionExperiment_plant]
 
 /-- A safe, accepting honest run whose forged message uses the planted bit produces an
-inverse of the planted image in the reduction experiment [PS10, Theorem 137.2].
+inverse of the planted image in the reduction experiment [PS10, Theorem 137.2]: if
+`tree.CostBoundedBy (fun _ => 1) 1`, `Safe tree i c`, and the updated-key honest output `a`
+satisfies `∀ j, g (signatureBlock (signature a) j) = plantedPublic g T i c (g x) (j, message a j)`
+and `message a i = c`, then `∃ z, extractionExperiment T i c tree signature = .pure z ∧ g z = g x`,
+where `a = tree.evalFn (fun _ m => tableSignature (plantTable T i c x) m)`.
 
 **Proof sketch.** The safe coupling identifies the reduction's output with the honest forged
 signature block and keeps its abort bit false. Acceptance at the planted position then says
