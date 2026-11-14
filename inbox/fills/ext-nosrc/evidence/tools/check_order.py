@@ -37,6 +37,13 @@ Path('evidence/logs/'+mode+'-order.txt').write_text('\n'.join(modules)+'\n')
 with Path('evidence/logs/'+mode+'-results.jsonl').open('a') as results:
  for idx,module in enumerate(modules):
   path=logdir/(module.replace('/','_')+'.log')
+  # User override: from 2026-11-14 06:02:01 UTC, at most three host Lean jobs.
+  while time.time() >= 1794636121:
+   processes=subprocess.check_output(['ps','-axo','pid=,command='],text=True)
+   active=[line for line in processes.splitlines() if '/bin/lean ' in line and not 'ps -axo' in line]
+   if len(active)<3:break
+   print(f'WAIT concurrency: {len(active)} existing Lean processes',flush=True)
+   time.sleep(5)
   started=datetime.datetime.now(datetime.timezone.utc).isoformat()
   print(f'{idx+1}/{len(modules)} START {module}',flush=True)
   with path.open('w') as log:

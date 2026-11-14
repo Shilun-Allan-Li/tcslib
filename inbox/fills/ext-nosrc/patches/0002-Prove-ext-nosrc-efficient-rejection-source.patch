@@ -1,0 +1,332 @@
+From 406330fe72e7c6fe92ed2e9dca7e8ab3de1574a3 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 13 Nov 2026 21:58:15 -0800
+Subject: [PATCH 2/2] Prove ext-nosrc efficient rejection source
+
+---
+ .../Cryptography/Randomness/Extraction.lean   |  71 ++++++
+ .../Randomness/Extraction/Sampler.lean        | 216 ++++++++++++++++++
+ 2 files changed, 287 insertions(+)
+ create mode 100644 TCSlib/Cryptography/Randomness/Extraction/Sampler.lean
+
+diff --git a/TCSlib/Cryptography/Randomness/Extraction.lean b/TCSlib/Cryptography/Randomness/Extraction.lean
+index 539d972d3..82241326d 100644
+--- a/TCSlib/Cryptography/Randomness/Extraction.lean
++++ b/TCSlib/Cryptography/Randomness/Extraction.lean
+@@ -6,6 +6,7 @@ import TCSlib.InformationTheory.Entropy
+ import TCSlib.InformationTheory.Extractors
+ import TCSlib.Cryptography.Asymptotic.Adversary
+ import TCSlib.Cryptography.Randomness.Extraction.Rejection
++import TCSlib.Cryptography.Randomness.Extraction.Sampler
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -39,6 +40,11 @@ because `Ext` is. And `Pr[Ext(X) = 1] ≥ 1 − (3/4)^{10} > 0.9`, so `Ext(X)` i
+   trivial, since every distribution is a `(n − 2)`-source there (a point mass is a witness); the
+   content is at `n ≥ 3`.
+ 
++## Contents
++
++* `Randomness.Extraction.Rejection`: finite rejection laws and source-preserving mixtures.
++* `Randomness.Extraction.Sampler`: the uniform machine and its consecutive coin blocks.
++
+ ## Main definitions
+ 
+ * `Randomness.samplerLaw`: the law of a machine's `n`-bit output.
+@@ -203,6 +209,71 @@ theorem uniform_acceptance_lower (Ext : List Bool → List Bool) (n : ℕ)
+   have hl := (abs_le.1 hb).1
+   linarith
+ 
++/-- The bounded rejection machine's law at width `n` is the finite first-success law
++on `t` trials and an independent uniform fallback.
++
++**Proof sketch.** Its coin equivalence followed by the canonical block equivalence is a
++bijection onto independent uniform blocks. The machine reader identifies its output with
++the typed selector, whose pushforward is the rejection law. -/
++theorem samplerLaw_rejection {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t : ℕ) :
++    samplerLaw (RejectionSampler.machine hExt n t) n =
++      Rejection.law (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) t := by
++  let D := fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false
++  let e := (RejectionSampler.coinEquiv hExt n t n).trans (FunFamily.blocks (t + 1) n)
++  have hread : (fun r : (RejectionSampler.machine hExt n t).Coins n =>
++      padFin n ((RejectionSampler.machine hExt n t).runAt n [] r)) =
++      (fun r => Rejection.select D t (e r)) := by
++    funext r
++    rw [RejectionSampler.machine_runAt, ← RejectionSampler.coinEquiv_ofFn hExt n t n r,
++      RejectionSampler.chooseWord_blocks, padFin_ofFn]
++    rfl
++  rw [samplerLaw, hread,
++    ← Rejection.map_map (FinDist.uniform ((RejectionSampler.machine hExt n t).Coins n))
++      e (Rejection.select D t), Rejection.map_uniform_equiv e]
++  exact Rejection.select_uniform_law D t
++
++/-- Dividing a uniform `n`-bit point mass by `1/4` gives the exact `(n−2)`-source bound,
++including `n=0,1,2`: `4 / 2^n = 2^(-(n-2))`. -/
++theorem uniform_card_div_quarter (n : ℕ) :
++    (Fintype.card (Fin n → Bool) : ℝ)⁻¹ / (1 / 4) =
++      (2 : ℝ) ^ (-((n : ℝ) - 2)) := by
++  simp only [Fintype.card_fun, Fintype.card_fin, Fintype.card_bool, Nat.cast_pow,
++    Nat.cast_ofNat]
++  rw [show -((n : ℝ) - 2) = 2 - (n : ℝ) by ring,
++    Real.rpow_sub (by norm_num : (0 : ℝ) < 2), Real.rpow_natCast]
++  norm_num
++  ring
++
++/-- When uniform acceptance is at least `1/4`, ten rejection trials and a fresh fallback
++produce an efficiently samplable `(n−2)`-source.
++
++**Proof sketch.** The accepted flat source has point mass at most `1/(2^n q) ≤ 4/2^n`,
++so it and the uniform law are `(n−2)`-sources. The exact convex mixture identity preserves
++that bound, and the uniform machine realizes the mixture with `11n` coins. -/
++theorem rejection_mem_effSources {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n : ℕ)
++    (hq : 1 / 4 ≤ (FinDist.uniform (Fin n → Bool)).probTrue
++      (fun a => (Ext (List.ofFn a)).headD false)) :
++    Rejection.law (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) 10 ∈
++      effSources (fun n => (n : ℝ) - 2) n := by
++  let D := fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false
++  have hqpos : 0 < (FinDist.uniform (Fin n → Bool)).probTrue D := by
++    dsimp only [D]
++    linarith
++  have hbound : (Fintype.card (Fin n → Bool) : ℝ)⁻¹ /
++      (FinDist.uniform (Fin n → Bool)).probTrue D ≤ (2 : ℝ) ^ (-((n : ℝ) - 2)) := by
++    calc _ ≤ (Fintype.card (Fin n → Bool) : ℝ)⁻¹ / (1 / 4) :=
++        div_le_div_of_nonneg_left (by positivity) (by norm_num) hq
++      _ = _ := uniform_card_div_quarter n
++  obtain ⟨_, _, _, hU⟩ := (effSources_iff _ _ _).1 (uniform_mem_effSources n)
++  have hflat := Rejection.accepted_flat_isSource D (Rejection.accepted_nonempty D hqpos)
++    ((n : ℝ) - 2) hbound
++  exact (effSources_iff _ _ _).2
++    ⟨RejectionSampler.machine hExt n 10, RejectionSampler.machine_uniform hExt n 10,
++      (samplerLaw_rejection hExt n 10).symm,
++      Rejection.law_isSource D hqpos 10 ((n : ℝ) - 2) hU hflat⟩
++
+ /-- **Theorem 183.6: no efficient `1`-bit `1/4`-extractor for efficient `(n − 2)`-sources**
+ [PS10, Theorem 183.6]: for every polynomial-time `Ext` and every `n`, `Ext` is not a
+ `1/4`-extractor for the efficiently samplable `(n − 2)`-sources on `{0,1}^n`.
+diff --git a/TCSlib/Cryptography/Randomness/Extraction/Sampler.lean b/TCSlib/Cryptography/Randomness/Extraction/Sampler.lean
+new file mode 100644
+index 000000000..92bbe93f4
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Extraction/Sampler.lean
+@@ -0,0 +1,216 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Asymptotic.OneWay
++import TCSlib.Complexity.ClassP.BinaryArith.Basic
++import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
++import TCSlib.Cryptography.Randomness.Extraction.Rejection
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# A bounded rejection sampler on consecutive coin blocks
++
++The sampler used in [PS10, Theorem 183.6] reads a fixed number of blocks and returns the
++first whose extractor output starts with `true`, using the last block as a fallback.
++The security parameter at which the counterexample is needed is fixed before the sampler
++is chosen, so fixed block widths and a constant coin polynomial suffice. The resulting
++machine has no advice and is therefore uniform.
++
++## Main definitions
++
++* `RejectionSampler.chooseWord`: bounded first-success selection from a bit tape.
++* `RejectionSampler.machine`: the uniform PPT implementing the selection.
++* `RejectionSampler.coinEquiv`: its coins as a tape of exactly `(t + 1) * n` bits.
++
++## Main results
++
++* `RejectionSampler.chooseWord_poly`: fixed-width bounded selection is polynomial-time.
++* `RejectionSampler.chooseWord_blocks`: its typed interpretation is `Rejection.select`.
++* `RejectionSampler.machine_runAt_coinEquiv`: the machine implements that tape selection.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, §8.3.2, Theorem 183.6.
++-/
++
++namespace TCSlib.Cryptography.Randomness.RejectionSampler
++
++open Complexity Turing
++
++/-- Trying `t` blocks of width `n` and falling back to block `t` means returning the first
++block whose extractor output starts with `true`, or the final block if every test fails.
++[PS10, Theorem 183.6]. Short input tapes are truncated by `List.take`. -/
++def chooseWord (Ext : List Bool → List Bool) (n : ℕ) : ℕ → List Bool → List Bool
++  | 0, r => r.take n
++  | t + 1, r =>
++      if (Ext (r.take n)).headD false then r.take n else chooseWord Ext n t (r.drop n)
++
++/-- With no trials, `chooseWord` returns the first `n` bits: `chooseWord Ext n 0 r = r.take n`.
++-/
++theorem chooseWord_zero (Ext : List Bool → List Bool) (n : ℕ) (r : List Bool) :
++    chooseWord Ext n 0 r = r.take n := rfl
++
++/-- One additional trial tests the first block, returning it on acceptance and otherwise
++running the remaining trials on the tape with that block dropped. -/
++theorem chooseWord_succ (Ext : List Bool → List Bool) (n t : ℕ) (r : List Bool) :
++    chooseWord Ext n (t + 1) r =
++      if (Ext (r.take n)).headD false then r.take n else chooseWord Ext n t (r.drop n) := rfl
++
++/-- Taking any fixed number `n` of input bits is polynomial-time computable.
++
++**Proof sketch.** Pair a constant unary word of length `n` with the input and apply the
++published length-gated prefix machine. -/
++theorem take_poly (n : ℕ) : PolyTimeComputable (fun r : List Bool => r.take n) := by
++  have henc : PolyTimeComputable fun r => pairEncode (List.replicate n true) r :=
++    (polyTimeComputable_const (List.replicate n true)).pairEncode polyTimeComputable_id
++  have h := polyTimeComputable_takePrefixByLength.comp henc
++  convert h using 1
++  funext r
++  change r.take n = PrefixByLength.take (pairEncode (List.replicate n true) r)
++  rw [PrefixByLength.take_def, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
++
++/-- If `Ext` is polynomial-time, the fixed-width sampler with any fixed number of trials is
++polynomial-time. [PS10, Theorem 183.6, the efficiency claim].
++
++**Proof sketch.** Induct on the fixed number of trials. The head-bit test composes the
++extractor with a fixed prefix, and the conditional combinator joins that prefix with the
++inductively constructed sampler on the fixed-width suffix. -/
++theorem chooseWord_poly {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t : ℕ) : PolyTimeComputable (chooseWord Ext n t) := by
++  induction t with
++  | zero =>
++    convert take_poly n using 1
++  | succ t ih =>
++    have htest : PolyTimeComputable fun r => [(Ext (r.take n)).headD false] :=
++      polyTimeComputable_headD.comp (hExt.comp (take_poly n))
++    have h := polyTimeComputable_ite htest (take_poly n)
++      (ih.comp (BinArith.polyTimeComputable_drop n))
++    convert h using 1
++
++/-- On a concatenated tuple of `n`-bit blocks, string selection encodes typed selection:
++`chooseWord Ext n t (flatten (ofFn (ofFn ∘ x))) = ofFn (select D t x)`, where
++`D a = (Ext (ofFn a)).headD false`.
++
++**Proof sketch.** At each successor trial, `take n` reads the first encoded block and
++`drop n` leaves the concatenation of the remaining blocks. Both selectors therefore make
++the same branch choice; induction identifies the remaining trials. -/
++theorem chooseWord_flatten (Ext : List Bool → List Bool) (n t : ℕ)
++    (x : Fin (t + 1) → Fin n → Bool) :
++    chooseWord Ext n t (List.ofFn fun i => List.ofFn (x i)).flatten =
++      List.ofFn (Rejection.select (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) t x) := by
++  induction t with
++  | zero =>
++    rw [Rejection.select_zero, List.ofFn_succ, List.ofFn_zero, List.flatten_cons,
++      List.flatten_nil, List.append_nil, chooseWord_zero]
++    exact List.take_of_length_le (by simp only [List.length_ofFn, le_refl])
++  | succ t ih =>
++    have hflat : (List.ofFn fun i : Fin (t + 1 + 1) => List.ofFn (x i)).flatten =
++        List.ofFn (x 0) ++ (List.ofFn fun i : Fin (t + 1) => List.ofFn (x i.succ)).flatten := by
++      rw [List.ofFn_succ, List.flatten_cons]
++    have ht : (List.ofFn (x 0) ++
++        (List.ofFn fun i : Fin (t + 1) => List.ofFn (x i.succ)).flatten).take n =
++        List.ofFn (x 0) := List.take_left' List.length_ofFn
++    have hd : (List.ofFn (x 0) ++
++        (List.ofFn fun i : Fin (t + 1) => List.ofFn (x i.succ)).flatten).drop n =
++        (List.ofFn fun i : Fin (t + 1) => List.ofFn (x i.succ)).flatten :=
++      List.drop_left' List.length_ofFn
++    rw [hflat, chooseWord_succ, ht, hd, Rejection.select_succ]
++    split_ifs
++    · rfl
++    · exact ih (fun i => x i.succ)
++
++/-- On `(t + 1) * n` uniform coin bits, `chooseWord` encodes typed first-success selection
++from the canonical `(t + 1)` blocks. This includes `n = 0`. -/
++theorem chooseWord_blocks (Ext : List Bool → List Bool) (n t : ℕ)
++    (r : Fin ((t + 1) * n) → Bool) :
++    chooseWord Ext n t (List.ofFn r) =
++      List.ofFn (Rejection.select (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) t
++        (FunFamily.blocks (t + 1) n r)) := by
++  have h := FunFamily.ofFn_blocks_symm (t + 1) n (FunFamily.blocks (t + 1) n r)
++  rw [Equiv.symm_apply_apply] at h
++  rw [h]
++  exact chooseWord_flatten Ext n t _
++
++/-- The bounded rejection machine on `(t + 1) * n` coins has empty advice and runs
++`chooseWord Ext n t` on its coin tape. [PS10, Theorem 183.6]. -/
++noncomputable def machine {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t : ℕ) : NUPPT :=
++  NUPPT.ofPolyTimeUniform ((chooseWord_poly hExt n t).comp polyTimeComputable_pairSndD)
++    (.const ((t + 1) * n))
++
++/-- The defining equation of `machine` packages the polynomial-time coin function with
++constant coin polynomial `(t + 1) * n` and empty advice. -/
++theorem machine_eq {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext) (n t : ℕ) :
++    machine hExt n t =
++      NUPPT.ofPolyTimeUniform ((chooseWord_poly hExt n t).comp polyTimeComputable_pairSndD)
++        (.const ((t + 1) * n)) := rfl
++
++/-- The bounded rejection machine is uniform: it has empty advice at every parameter. -/
++theorem machine_uniform {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t : ℕ) : (machine hExt n t).Uniform := by
++  rw [machine_eq]
++  exact NUPPT.ofPolyTimeUniform_uniform _ _
++
++/-- The rejection machine's coin polynomial is the constant `(t + 1) * n`. -/
++theorem machine_coins {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t : ℕ) : (machine hExt n t).coins = .const ((t + 1) * n) := by
++  rw [machine_eq, NUPPT.coins_ofPolyTimeUniform]
++
++/-- On an untyped coin tape `r`, at every activation parameter and argument, the rejection
++machine returns `chooseWord Ext n t r`. -/
++theorem machine_runAtL {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) (y r : List Bool) :
++    (machine hExt n t).runAtL m y r = chooseWord Ext n t r := by
++  rw [machine_eq, NUPPT.runAtL_ofPolyTimeUniform]
++  change chooseWord Ext n t (pairSndD (pairEncode (pairEncode (NUPPT.advInput m y) []) r)) = _
++  rw [pairSndD_pairEncode]
++
++/-- On typed coins, the rejection machine runs `chooseWord` on the coin string. -/
++theorem machine_runAt {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) (y : List Bool) (r : (machine hExt n t).Coins m) :
++    (machine hExt n t).runAt m y r = chooseWord Ext n t (List.ofFn r) := by
++  rw [NUPPT.runAt_eq, machine_runAtL]
++
++/-- At every activation parameter, the rejection machine uses exactly `(t + 1) * n` bits. -/
++theorem machine_coinLen {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) : (machine hExt n t).coinLen m = (t + 1) * n := by
++  rw [NUPPT.coinLen_eq, machine_coins, PolyExpr.eval_const]
++
++/-- The rejection machine's coins are canonically the bit tape of length `(t + 1) * n`,
++independently of its activation parameter. -/
++noncomputable def coinEquiv {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) : (machine hExt n t).Coins m ≃ (Fin ((t + 1) * n) → Bool) :=
++  Equiv.arrowCongr (finCongr (machine_coinLen hExt n t m)) (Equiv.refl Bool)
++
++/-- The canonical rejection-coin equivalence is the arrow equivalence induced by the
++published equality `coinLen m = (t + 1) * n`. -/
++theorem coinEquiv_eq {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) : coinEquiv hExt n t m =
++      Equiv.arrowCongr (finCongr (machine_coinLen hExt n t m)) (Equiv.refl Bool) := rfl
++
++/-- The canonical rejection-coin equivalence preserves the encoded coin string. -/
++theorem coinEquiv_ofFn {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) (r : (machine hExt n t).Coins m) :
++    List.ofFn (coinEquiv hExt n t m r) = List.ofFn r :=
++  (List.ofFn_congr (machine_coinLen hExt n t m) r).symm
++
++/-- The inverse canonical rejection-coin equivalence preserves the encoded coin string. -/
++theorem coinEquiv_symm_ofFn {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) (r : Fin ((t + 1) * n) → Bool) :
++    List.ofFn ((coinEquiv hExt n t m).symm r) = List.ofFn r := by
++  rw [← coinEquiv_ofFn hExt n t m, Equiv.apply_symm_apply]
++
++/-- Running the rejection machine on a tape transported through `coinEquiv` is precisely
++`chooseWord Ext n t` on that tape. -/
++theorem machine_runAt_coinEquiv {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) (y : List Bool) (r : Fin ((t + 1) * n) → Bool) :
++    (machine hExt n t).runAt m y ((coinEquiv hExt n t m).symm r) =
++      chooseWord Ext n t (List.ofFn r) := by
++  rw [machine_runAt, coinEquiv_symm_ofFn]
++
++end TCSlib.Cryptography.Randomness.RejectionSampler
+-- 
+2.50.1 (Apple Git-155)
+

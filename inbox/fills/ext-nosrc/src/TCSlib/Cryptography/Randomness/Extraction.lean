@@ -6,6 +6,7 @@ import TCSlib.InformationTheory.Entropy
 import TCSlib.InformationTheory.Extractors
 import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.Randomness.Extraction.Rejection
+import TCSlib.Cryptography.Randomness.Extraction.Sampler
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -38,6 +39,11 @@ because `Ext` is. And `Pr[Ext(X) = 1] ≥ 1 − (3/4)^{10} > 0.9`, so `Ext(X)` i
   stronger than the source's "there is no extractor", which needs only one `n`. For `n ≤ 2` it is
   trivial, since every distribution is a `(n − 2)`-source there (a point mass is a witness); the
   content is at `n ≥ 3`.
+
+## Contents
+
+* `Randomness.Extraction.Rejection`: finite rejection laws and source-preserving mixtures.
+* `Randomness.Extraction.Sampler`: the uniform machine and its consecutive coin blocks.
 
 ## Main definitions
 
@@ -202,6 +208,71 @@ theorem uniform_acceptance_lower (Ext : List Bool → List Bool) (n : ℕ)
   rw [Rejection.probTrue_map, uniform_one_probTrue] at hb
   have hl := (abs_le.1 hb).1
   linarith
+
+/-- The bounded rejection machine's law at width `n` is the finite first-success law
+on `t` trials and an independent uniform fallback.
+
+**Proof sketch.** Its coin equivalence followed by the canonical block equivalence is a
+bijection onto independent uniform blocks. The machine reader identifies its output with
+the typed selector, whose pushforward is the rejection law. -/
+theorem samplerLaw_rejection {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
+    (n t : ℕ) :
+    samplerLaw (RejectionSampler.machine hExt n t) n =
+      Rejection.law (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) t := by
+  let D := fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false
+  let e := (RejectionSampler.coinEquiv hExt n t n).trans (FunFamily.blocks (t + 1) n)
+  have hread : (fun r : (RejectionSampler.machine hExt n t).Coins n =>
+      padFin n ((RejectionSampler.machine hExt n t).runAt n [] r)) =
+      (fun r => Rejection.select D t (e r)) := by
+    funext r
+    rw [RejectionSampler.machine_runAt, ← RejectionSampler.coinEquiv_ofFn hExt n t n r,
+      RejectionSampler.chooseWord_blocks, padFin_ofFn]
+    rfl
+  rw [samplerLaw, hread,
+    ← Rejection.map_map (FinDist.uniform ((RejectionSampler.machine hExt n t).Coins n))
+      e (Rejection.select D t), Rejection.map_uniform_equiv e]
+  exact Rejection.select_uniform_law D t
+
+/-- Dividing a uniform `n`-bit point mass by `1/4` gives the exact `(n−2)`-source bound,
+including `n=0,1,2`: `4 / 2^n = 2^(-(n-2))`. -/
+theorem uniform_card_div_quarter (n : ℕ) :
+    (Fintype.card (Fin n → Bool) : ℝ)⁻¹ / (1 / 4) =
+      (2 : ℝ) ^ (-((n : ℝ) - 2)) := by
+  simp only [Fintype.card_fun, Fintype.card_fin, Fintype.card_bool, Nat.cast_pow,
+    Nat.cast_ofNat]
+  rw [show -((n : ℝ) - 2) = 2 - (n : ℝ) by ring,
+    Real.rpow_sub (by norm_num : (0 : ℝ) < 2), Real.rpow_natCast]
+  norm_num
+  ring
+
+/-- When uniform acceptance is at least `1/4`, ten rejection trials and a fresh fallback
+produce an efficiently samplable `(n−2)`-source.
+
+**Proof sketch.** The accepted flat source has point mass at most `1/(2^n q) ≤ 4/2^n`,
+so it and the uniform law are `(n−2)`-sources. The exact convex mixture identity preserves
+that bound, and the uniform machine realizes the mixture with `11n` coins. -/
+theorem rejection_mem_effSources {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
+    (n : ℕ)
+    (hq : 1 / 4 ≤ (FinDist.uniform (Fin n → Bool)).probTrue
+      (fun a => (Ext (List.ofFn a)).headD false)) :
+    Rejection.law (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) 10 ∈
+      effSources (fun n => (n : ℝ) - 2) n := by
+  let D := fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false
+  have hqpos : 0 < (FinDist.uniform (Fin n → Bool)).probTrue D := by
+    dsimp only [D]
+    linarith
+  have hbound : (Fintype.card (Fin n → Bool) : ℝ)⁻¹ /
+      (FinDist.uniform (Fin n → Bool)).probTrue D ≤ (2 : ℝ) ^ (-((n : ℝ) - 2)) := by
+    calc _ ≤ (Fintype.card (Fin n → Bool) : ℝ)⁻¹ / (1 / 4) :=
+        div_le_div_of_nonneg_left (by positivity) (by norm_num) hq
+      _ = _ := uniform_card_div_quarter n
+  obtain ⟨_, _, _, hU⟩ := (effSources_iff _ _ _).1 (uniform_mem_effSources n)
+  have hflat := Rejection.accepted_flat_isSource D (Rejection.accepted_nonempty D hqpos)
+    ((n : ℝ) - 2) hbound
+  exact (effSources_iff _ _ _).2
+    ⟨RejectionSampler.machine hExt n 10, RejectionSampler.machine_uniform hExt n 10,
+      (samplerLaw_rejection hExt n 10).symm,
+      Rejection.law_isSource D hqpos 10 ((n : ℝ) - 2) hU hflat⟩
 
 /-- **Theorem 183.6: no efficient `1`-bit `1/4`-extractor for efficient `(n − 2)`-sources**
 [PS10, Theorem 183.6]: for every polynomial-time `Ext` and every `n`, `Ext` is not a

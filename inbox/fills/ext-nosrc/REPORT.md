@@ -1,28 +1,28 @@
-# ext-nosrc · checkpoint 1
+# ext-nosrc · checkpoint 2
 
 Issue base: `eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9`. Local branch: `fill/ext-nosrc` (never pushed).
-Local proof head: `e0b0d2265434219da031e81deb30f8ae18a4c1ad`. Issued exchange pack: `b436d19a0310265b214447ea6710deba32df6dd8`.
+Local proof head: `406330fe72e7c6fe92ed2e9dca7e8ab3de1574a3`. Issued exchange pack: `b436d19a0310265b214447ea6710deba32df6dd8`.
 
 ## Status
 
-Checkpoint 1 is proved and module-checked. The target remains admitted, with the extractor
-assumption introduced and the proved `uniform_acceptance_lower` bound available.
-This is an intermediate delivery, not a completed proof.
+Checkpoints 1 and 2 are proved and module-checked. The target remains admitted pending the
+final numerical contradiction. The frozen statement is unchanged.
 
-The uniform PPT returns its `n` coins, its law is `U_n`, and `U_n` is an `(n−2)`-source.
-Its extractor closeness implies `q ≥ 1/4`. A separate checked probability helper proves the
-finite rejection law, its acceptance probability, explicit uniform/flat mixture, and preservation
-of source bounds. The machine implementation and final assembly remain to be checked.
+The uniform PPT witness gives `q≥1/4`. The uniform rejection machine uses exactly `11n` coins,
+tries ten consecutive `n`-bit blocks, and falls back to the eleventh. Its law is exactly
+`(1−q)^10 U_n + (1−(1−q)^10) flat(S)`. Uniform and accepted-flat components are `(n−2)`-sources,
+and the checked mixture theorem gives the required efficient source. This includes small n,
+q=1 and empty extractor outputs through the general formulas.
 
 ## Files and declarations
 
 Changed: `TCSlib/Cryptography/Randomness/Extraction.lean`.
-New: `TCSlib/Cryptography/Randomness/Extraction/Rejection.lean`.
+New: `TCSlib/Cryptography/Randomness/Extraction/Rejection.lean` and `Extraction/Sampler.lean`.
 The patch and `src/` carry their exact committed bytes. The target statement is unchanged.
 New declarations are visible in those sources; probability helper promotions and searches are
 listed in `evidence/rejection-review.md`. No private foreign proof was copied or re-derived.
 `uniform_one_probTrue` is a promotion request to the finite-probability layer.
-No foreign reader request is currently needed. The original target sketch is unchanged so far.
+No foreign reader request is currently needed. The original target sketch is unchanged so far; the owned module now lists both helper modules in Contents.
 
 ## Environment and checks
 
@@ -42,7 +42,7 @@ downloading; 2,125 files decompressed. The shared cache store already held 32,66
 Zero-length olean scan was empty; a probe importing the first issued Mathlib root passed.
 
 The initial bootstrap checked 32 prerequisites successfully, then caught draft helper errors.
-The corrected helper check and the owned-module checkpoint check both exited 0. Raw failed
+The corrected helper check and owned-module checkpoint-one check exited 0. A further 43 prerequisites and the rejection machine were checked; its draft errors were corrected. The machine and complete checkpoint-two assembly then exited 0. The first base census attempt exposed a collector keyword error, preserved verbatim for repair; no dependent seal was run from that failed census. Raw failed
 attempts and successful rechecks are included. Every module invocation uses
 `scripts/lean_check_tree.sh`, one module at a time, with timestamps and maximum resident memory.
 No lake build or unfiltered cache fetch was run.
@@ -55,4 +55,4 @@ pending. No success is claimed for those final requirements at this checkpoint.
 
 `evidence/SHA256SUMS` covers exactly all evidence files except itself. The root SHA256SUMS
 covers the complete checkpoint payload except itself. Logs were copied as a completed
-checkpoint snapshot before further bootstrap work. All named paths are delivered.
+checkpoint snapshot between completed check stages. All named paths are delivered.

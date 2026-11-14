@@ -1,0 +1,29 @@
+START 2026-11-14T05:54:24.646377+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/OneWayFunctions/Amplification
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:113:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.OneWay.yaoInverter_def`:
+  [Fintype α]
+  [Fintype ρ]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] [Fintype ρ] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+        4.25 real         3.11 user         1.10 sys
+          2162245632  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175801  page reclaims
+                6134  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 193  voluntary context switches
+               19550  involuntary context switches
+            32137365  instructions retired
+            17078356  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-14T05:54:28.903700+00:00
+EXIT 0

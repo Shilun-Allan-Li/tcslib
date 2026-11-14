@@ -82,6 +82,14 @@ def code_mask(text: str) -> str:
             end = len(text) if end < 0 else end
             blank(i, end)
             i = end
+        elif text[i] == "r" and (raw := re.match(r'r(#+)?"', text[i:])):
+            fence = '"' + (raw.group(1) or "")
+            end = text.find(fence, i + len(raw.group(0)))
+            if end < 0:
+                raise RuntimeError("unterminated raw source string")
+            end += len(fence)
+            blank(i, end)
+            i = end
         elif text[i] == '"':
             end = i + 1
             while end < len(text) and text[end] != '"':
@@ -174,10 +182,10 @@ run_cmd do
         | .abbrev => true
         | _ => false
       | _ => false
-    let status ← if ci.isDefinition then do
+    let mut status : String := "not_definition"
+    if ci.isDefinition then
       let s ← liftCoreM <| getReducibilityStatus n
-      pure (reprStr s)
-      else pure "not_definition"
+      status := reprStr s
     let matcher := (Match.Extension.getMatcherInfo? env n).isSome
     let row := Json.mkObj [
       ("record", toJson ("constant" : String)),
@@ -195,11 +203,11 @@ run_cmd do
         ("axioms", toJson names)]
       logInfo m!"FILL_CENSUS {row.compress}"
       owned := owned + 1
-  let done := Json.mkObj [
+  let summary := Json.mkObj [
     ("record", toJson ("complete" : String)),
     ("constants", toJson seen), ("owned", toJson owned),
     ("owners", toJson owners)]
-  logInfo m!"FILL_CENSUS {done.compress}"
+  logInfo m!"FILL_CENSUS {summary.compress}"
 '''
 
 
@@ -364,6 +372,10 @@ def prepare_seals(side: str, census_log: Path) -> None:
     area = Path("evidence/rule10") / side
     config = json.loads((area / "init.json").read_bytes())
     assert config["base"] == BASE and config["side"] == side
+    result = json.loads(census_log.with_suffix(".json").read_bytes())
+    assert result["rc"] == 0 and result["fresh_nonempty_object"] and not result["errors"]
+    assert result["source_unchanged"] and result["source_sha256"] == config["census_source_sha256"]
+    assert result["log_sha256"] == digest(census_log.read_bytes())
     constants, axioms = read_census(census_log, [e["loaded_home"] for e in config["entries"]])
     probes, exclusions = [], []
     for entry in config["entries"]:

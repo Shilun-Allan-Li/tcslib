@@ -1,0 +1,38 @@
+START 2026-11-14T05:55:35.667493+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Randomness/Extraction/Sampler
+TCSlib/Cryptography/Randomness/Extraction/Sampler.lean:74:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  PrefixByLength.take ?z
+in the target expression
+  List.take n r = (PrefixByLength.take ∘ fun r => pairEncode (List.replicate n true) r) r
+
+case h.e'_1.h
+n : ℕ
+henc : PolyTimeComputable fun r => pairEncode (List.replicate n true) r
+h : PolyTimeComputable (PrefixByLength.take ∘ fun r => pairEncode (List.replicate n true) r)
+r : List Bool
+⊢ List.take n r = (PrefixByLength.take ∘ fun r => pairEncode (List.replicate n true) r) r
+TCSlib/Cryptography/Randomness/Extraction/Sampler.lean:87:4: error: No goals to be solved
+TCSlib/Cryptography/Randomness/Extraction/Sampler.lean:95:4: error: No goals to be solved
+FAIL(TCSlib/Cryptography/Randomness/Extraction/Sampler): lean exited with status 1
+FAIL(TCSlib/Cryptography/Randomness/Extraction/Sampler): error diagnostics reported
+FAIL(TCSlib/Cryptography/Randomness/Extraction/Sampler): no fresh .olean produced
+        2.48 real         1.60 user         1.03 sys
+          2143043584  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              176562  page reclaims
+                1098  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 173  voluntary context switches
+               11392  involuntary context switches
+            32763609  instructions retired
+            16004089  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-14T05:55:38.158956+00:00
+EXIT 1
