@@ -1,0 +1,282 @@
+/- Scratch statement-elaboration probe, not a library fill.
+Source/import pin: 5ab222167eb12664d97d255766c5def15b6d5d50.
+Every theorem body below is intentionally admitted. No target body is replaced.
+Additional imports and proposed public interfaces need the decisions in the route report.
+-/
+import TCSlib.Complexity.Diagonalization.Ladner
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.Complexity.ClassP.ModelInvariance
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing Complexity
+open scoped Classical
+noncomputable section
+
+namespace LadnerRoutePoly
+def values (T : List Bool) : List ℕ := (BinArith.decWords T).map LogProg.bitsVal
+
+def shortWords (a : ℕ) : List (List Bool) :=
+  (List.range (2 ^ (a + 1) - 1)).map (fun r => (Nat.bits (r + 1)).dropLast)
+
+def stage (vs : List ℕ) : ℕ :=
+  let n := vs.length
+  if hex : ∃ i, i < Nat.log 2 (Nat.log 2 n) ∧
+      ∀ x : List Bool, x.length ≤ Nat.log 2 n →
+        ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+          x ∈ padSAT (fun m => vs.getD m 0)) then Nat.find hex
+  else Nat.log 2 (Nat.log 2 n)
+
+def candidate (S : List Bool) : Bool :=
+  let n := (pairFstD S).length
+  let i := LogProg.bitsVal (pairFstD (pairSndD S))
+  let vs := values (pairSndD (pairSndD S))
+  decide (n = vs.length ∧ i < Nat.log 2 (Nat.log 2 n) ∧
+    ∀ x : List Bool, x.length ≤ Nat.log 2 n →
+      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT (fun m => vs.getD m 0)))
+
+def memoInit (z : List Bool) : List Bool :=
+  pairEncode (List.replicate z.length true) []
+
+def memoStep (S : List Bool) : List Bool :=
+  pairEncode (pairFstD S)
+    (pairSndD S ++ pairEncode (Nat.bits (stage (values (pairSndD S)))) [])
+
+theorem shortWords_complete (a : ℕ) (x : List Bool) :
+    x ∈ shortWords a ↔ x.length ≤ a := by sorry
+
+theorem shortWords_count (n : ℕ) :
+    (shortWords (Nat.log 2 n)).length ≤ 2 * (n + 1) := by sorry
+
+theorem short_deadline (n i m : ℕ)
+    (hi : i < Nat.log 2 (Nat.log 2 n)) (hm : m ≤ Nat.log 2 n) :
+    i * m ^ i ≤ n ^ 3 := by sorry
+
+theorem numeric_envelope (D n i : ℕ) (x : List Bool)
+    (hi : i < Nat.log 2 (Nat.log 2 n)) (hx : x.length ≤ Nat.log 2 n) :
+    D * ((Nat.bits i).length + x.length + i * x.length ^ i + 1) ^ D ≤
+      (D * 4 ^ D) * (n + 1) ^ (3 * D) := by sorry
+
+theorem short_SAT_machine
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    ∃ (a d b : ℕ) (E : FinTM Bool), E.DecidesInTime SAT
+      (fun m => b * 2 ^ (m + 1) *
+        (a * (2 * m + 2) ^ d + (2 * m + 2) ^ 2)) := by sorry
+
+theorem short_SAT_envelope (a b d n m : ℕ) (hm : m ≤ Nat.log 2 n) :
+    b * 2 ^ (m + 1) * (a * (2 * m + 2) ^ d + (2 * m + 2) ^ 2) ≤
+      (2 * b * (a * 2 ^ d + 4)) * (n + 1) ^ (d + 3) := by sorry
+
+-- Explicit preparation and envelope transfer: no preparation premise is implicit.
+theorem simulation_on_image (code input : List Bool → List Bool)
+    (deadline : List Bool → ℕ)
+    (hprep : PolyTimeComputable (fun z =>
+      pairEncode (pairEncode (Nat.bits (deadline z)) (code z)) (input z)))
+    (hbudget : ∃ A e, ∀ z, expCode.simDegree *
+      ((code z).length + (input z).length + deadline z + 1) ^ expCode.simDegree ≤
+        A * (z.length + 1) ^ e) :
+    PolyTimeComputable (fun z => [decide
+      ((expCode.decode (code z)).toFinTM.ComputesInTime
+        (input z) [true] (deadline z))]) := by sorry
+
+def validQuery (S : List Bool) : Prop :=
+  LogProg.bitsVal (pairFstD (pairSndD S)) <
+      Nat.log 2 (Nat.log 2 (pairFstD S).length) ∧
+    (pairSndD (pairSndD S)).length ≤ Nat.log 2 (pairFstD S).length
+
+def queryCode (S : List Bool) : List Bool :=
+  if validQuery S then Nat.bits (LogProg.bitsVal (pairFstD (pairSndD S))) else []
+def queryInput (S : List Bool) : List Bool :=
+  if validQuery S then pairSndD (pairSndD S) else []
+def queryDeadline (S : List Bool) : ℕ :=
+  if validQuery S then
+    LogProg.bitsVal (pairFstD (pairSndD S)) *
+      (pairSndD (pairSndD S)).length ^ LogProg.bitsVal (pairFstD (pairSndD S))
+  else 0
+
+def queryPrep (S : List Bool) : List Bool :=
+  pairEncode (pairEncode (Nat.bits (queryDeadline S)) (queryCode S)) (queryInput S)
+
+theorem query_preparation :
+    ∃ (M : FinTM Bool) (C q : ℕ),
+      M.ComputesFunInTime queryPrep (fun n => C * (n + 1) ^ q) := by sorry
+
+theorem query_budget (S : List Bool) :
+    expCode.simDegree *
+      ((queryCode S).length + (queryInput S).length + queryDeadline S + 1) ^
+        expCode.simDegree ≤
+      (expCode.simDegree * 4 ^ expCode.simDegree) *
+        (S.length + 1) ^ (3 * expCode.simDegree) := by sorry
+
+theorem composition_clock (C q A e n : ℕ) :
+    2 * (C * (n + 1) ^ q) + A * (n + 1) ^ e + 2 ≤
+      (2 * C + A + 2) * (n + 1) ^ max q e := by sorry
+
+theorem short_SAT_on_image (f : List Bool → List Bool)
+    (hf : PolyTimeComputable f)
+    (hshort : ∀ z, (f z).length ≤ Nat.log 2 z.length)
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    PolyTimeComputable (fun z => [decide (f z ∈ SAT)]) := by sorry
+
+theorem short_pad_FP
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    PolyTimeComputable (fun S : List Bool => [decide
+      ((pairFstD S).length ≤ Nat.log 2 (values (pairSndD S)).length ∧
+        pairFstD S ∈ padSAT (fun m => (values (pairSndD S)).getD m 0))]) := by sorry
+
+-- Concrete finite-scan states: no classical quantifier is executed by a host.
+def ctxGuard (C : List Bool) : Prop :=
+  (pairFstD C).length = (values (pairSndD (pairSndD C))).length ∧
+    LogProg.bitsVal (pairFstD (pairSndD C)) <
+      Nat.log 2 (Nat.log 2 (pairFstD C).length)
+
+def wordVerdict (C : List Bool) (r : ℕ) : Bool :=
+  let x := (Nat.bits (r + 1)).dropLast
+  let i := LogProg.bitsVal (pairFstD (pairSndD C))
+  decide (ctxGuard C ∧ x.length ≤ Nat.log 2 (pairFstD C).length ∧
+    ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+      x ∈ padSAT (fun m => (values (pairSndD (pairSndD C))).getD m 0)))
+
+def queryCount (C : List Bool) : ℕ := 2 ^ (Nat.log 2 (pairFstD C).length + 1) - 1
+
+def testInit (C : List Bool) : List Bool :=
+  pairEncode C (pairEncode (List.replicate (queryCount C) true) (pairEncode [] [true]))
+
+def testStep (S : List Bool) : List Bool :=
+  let C := pairFstD S
+  let rem := pairFstD (pairSndD S)
+  let rank := pairFstD (pairSndD (pairSndD S))
+  let flag := pairSndD (pairSndD (pairSndD S))
+  if rem = [] then S else
+    pairEncode C (pairEncode (rem.drop 1)
+      (pairEncode (rank ++ [true]) [flag.headD false && wordVerdict C rank.length]))
+
+def testOut (S : List Bool) : List Bool := pairSndD (pairSndD (pairSndD S))
+
+theorem log_eq_bits_length (n : ℕ) :
+    Nat.log 2 n = (Nat.bits n).length - 1 := by sorry
+
+theorem binary_log_FP : PolyTimeComputable
+    (fun w : List Bool => Nat.bits (Nat.log 2 (LogProg.bitsVal w))) := by sorry
+
+theorem wordVerdict_FP
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    PolyTimeComputable (fun S : List Bool =>
+      [wordVerdict (pairFstD S) (pairSndD S).length]) := by sorry
+
+theorem testInit_FP : PolyTimeComputable testInit := by sorry
+
+theorem testStep_FP
+    (hw : PolyTimeComputable (fun S : List Bool =>
+      [wordVerdict (pairFstD S) (pairSndD S).length])) :
+    PolyTimeComputable testStep := by sorry
+
+theorem test_orbit (C : List Bool) (j : ℕ) :
+    testStep^[j] (testInit C) =
+      pairEncode C (pairEncode (List.replicate (queryCount C - j) true)
+        (pairEncode (List.replicate (min j (queryCount C)) true)
+          [decide (∀ r < min j (queryCount C), wordVerdict C r = true)])) := by sorry
+
+theorem test_size (C : List Bool) (j : ℕ) :
+    (testStep^[j] (testInit C)).length ≤ 12 * (C.length + 1) ^ 1 := by sorry
+
+theorem candidate_readout (C : List Bool) :
+    [candidate C] = if ctxGuard C then
+      testOut (testStep^[2 * (C.length + 1) ^ 1] (testInit C)) else [false] := by sorry
+
+def selectCtx (T : List Bool) (i : ℕ) : List Bool :=
+  pairEncode (List.replicate (values T).length true) (pairEncode (Nat.bits i) T)
+
+def selectInit (T : List Bool) : List Bool := pairEncode T (pairEncode [] (pairEncode [] []))
+
+def selectStep (S : List Bool) : List Bool :=
+  let T := pairFstD S
+  let rank := pairFstD (pairSndD S)
+  let flag := pairFstD (pairSndD (pairSndD S))
+  let cap := Nat.log 2 (Nat.log 2 (values T).length)
+  if flag ≠ [] then S else
+    if rank.length < cap then
+      if candidate (selectCtx T rank.length) then
+        pairEncode T (pairEncode rank (pairEncode [true] (Nat.bits rank.length)))
+      else pairEncode T (pairEncode (rank ++ [true]) (pairEncode [] []))
+    else pairEncode T (pairEncode rank (pairEncode [true] (Nat.bits cap)))
+
+def selectOut (S : List Bool) : List Bool := pairSndD (pairSndD (pairSndD S))
+
+def SelectInv (T S : List Bool) : Prop :=
+  (∃ i, i ≤ Nat.log 2 (Nat.log 2 (values T).length) ∧
+    S = pairEncode T (pairEncode (List.replicate i true) (pairEncode [] [])) ∧
+    ∀ j < i, candidate (selectCtx T j) = false) ∨
+  (∃ i, i ≤ Nat.log 2 (Nat.log 2 (values T).length) ∧
+    S = pairEncode T (pairEncode (List.replicate i true)
+      (pairEncode [true] (Nat.bits (stage (values T))))))
+
+def selectMeasure (S : List Bool) : ℕ :=
+  if pairFstD (pairSndD (pairSndD S)) = [] then
+    Nat.log 2 (Nat.log 2 (values (pairFstD S)).length) - (pairFstD (pairSndD S)).length + 1
+  else 0
+
+theorem selectInit_FP : PolyTimeComputable selectInit := by sorry
+
+theorem selectStep_FP (hc : PolyTimeComputable (fun C => [candidate C])) :
+    PolyTimeComputable selectStep := by sorry
+
+theorem select_progress (T S : List Bool) (hI : SelectInv T S) :
+    SelectInv T (selectStep S) ∧
+      (0 < selectMeasure S → selectMeasure (selectStep S) < selectMeasure S) ∧
+      (selectMeasure S = 0 → selectStep S = S) := by sorry
+
+theorem select_size (T : List Bool) (j : ℕ) :
+    (selectStep^[j] (selectInit T)).length ≤ 12 * (T.length + 1) ^ 1 := by sorry
+
+theorem select_readout (T : List Bool) :
+    selectOut (selectStep^[1 * (T.length + 1) ^ 1] (selectInit T)) =
+      Nat.bits (stage (values T)) := by sorry
+
+theorem candidate_FP
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    PolyTimeComputable (fun S => [candidate S]) := by sorry
+
+theorem stage_FP
+    (hcheck : PolyTimeComputable (fun S => [candidate S])) :
+    PolyTimeComputable (fun T => Nat.bits (stage (values T))) := by sorry
+
+theorem stage_correct (vs : List ℕ)
+    (hvs : ∀ m < vs.length, vs.getD m 0 = ladnerH m) :
+    stage vs = ladnerH vs.length := by sorry
+
+theorem memoStep_FP
+    (hstage : PolyTimeComputable (fun T => Nat.bits (stage (values T)))) :
+    PolyTimeComputable memoStep := by sorry
+
+theorem memoInit_FP : PolyTimeComputable memoInit := by sorry
+
+theorem memo_orbit (z : List Bool) (j : ℕ) :
+    memoStep^[j] (memoInit z) =
+      pairEncode (List.replicate z.length true)
+        (BinArith.encWords ((List.range j).map (fun m => Nat.bits (ladnerH m)))) := by sorry
+
+theorem memo_size (z : List Bool) (j : ℕ) (hj : j ≤ z.length + 1) :
+    (memoStep^[j] (memoInit z)).length ≤ 4 * (z.length + 1) ^ 2 := by sorry
+
+theorem memo_readout (z : List Bool) :
+    BinArith.getW (memoStep^[1 * (z.length + 1) ^ 1] (memoInit z)) =
+      Nat.bits (ladnerH z.length) := by sorry
+
+-- This is an assembly schema, not an admission of the library target.
+theorem memo_transfer
+    (hstep : PolyTimeComputable memoStep) (hinit : PolyTimeComputable memoInit)
+    (hsize : ∀ z j, j ≤ 1 * (z.length + 1) ^ 1 →
+      (memoStep^[j] (memoInit z)).length ≤ 4 * (z.length + 1) ^ 2)
+    (hread : ∀ z, BinArith.getW (memoStep^[1 * (z.length + 1) ^ 1] (memoInit z)) =
+      Nat.bits (ladnerH z.length)) :
+    PolyTimeComputable (fun z => Nat.bits (ladnerH z.length)) := by sorry
+end LadnerRoutePoly

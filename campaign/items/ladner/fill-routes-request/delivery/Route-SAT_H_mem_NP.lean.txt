@@ -1,0 +1,59 @@
+/- Scratch statement-elaboration probe, not a library fill.
+Source/import pin: 5ab222167eb12664d97d255766c5def15b6d5d50.
+Every theorem body below is intentionally admitted. No target body is replaced.
+Additional imports and proposed public interfaces need the decisions in the route report.
+-/
+import TCSlib.Complexity.Diagonalization.Ladner
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.Complexity.ClassP.ModelInvariance
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing Complexity
+open scoped Classical
+noncomputable section
+
+namespace LadnerRouteNP
+
+-- Mathematical parser specification; implement through reverse/uRest/hasFalse,
+-- not by compiling a new private parser host.
+def parse : List Bool → Option (List Bool × ℕ)
+  | [] => none
+  | b :: bs => match parse bs with
+    | some (p, t) => some (b :: p, t)
+    | none => if b then none else some ([], bs.length)
+
+def padSyntax (h : ℕ → ℕ) (y : List Bool) : Bool :=
+  match parse y with
+  | none => false
+  | some (p, t) => decide (t = p.length ^ h p.length)
+
+def parseWord (y : List Bool) : List Bool :=
+  match parse y with
+  | none => []
+  | some (p, t) => pairEncode [true] (pairEncode p (Nat.bits t))
+
+def verifier (h : ℕ → ℕ) (V : Language Bool) : Language Bool :=
+  {S | match parse (pairFstD S) with
+    | none => False
+    | some (p, t) => t = p.length ^ h p.length ∧
+      (pairSndD S).length = p.length + 1 ∧ p ++ pairSndD S ∈ V}
+
+theorem verifier_P {h : ℕ → ℕ} {V : Language Bool}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)))
+    (hV : V ∈ P) : verifier h V ∈ P := by sorry
+
+theorem verifier_equiv {h : ℕ → ℕ} {V : Language Bool}
+    (hcert : ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) (y : List Bool) :
+    y ∈ padSAT h ↔ ∃ u : List Bool,
+      u.length ≤ y.length + 1 ∧ pairEncode y u ∈ verifier h V := by sorry
+
+theorem padded_NP {h : ℕ → ℕ}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)))
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    padSAT h ∈ NP := by sorry
+end LadnerRouteNP

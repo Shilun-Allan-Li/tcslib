@@ -1,0 +1,309 @@
+/- Scratch statement-elaboration probe, not a library fill.
+Source/import pin: 5ab222167eb12664d97d255766c5def15b6d5d50.
+Every theorem body below is intentionally admitted. No target body is replaced.
+Additional imports and proposed public interfaces need the decisions in the route report.
+-/
+import TCSlib.Complexity.Diagonalization.Ladner
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.Complexity.ClassP.ModelInvariance
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing Complexity
+open scoped Classical
+noncomputable section
+
+
+#check Complexity.mem_padSAT_iff
+#check Complexity.padSAT_congr
+#check Complexity.ladnerMachine_eq
+#check Complexity.ladnerH_eq
+#check Complexity.ladnerH_le
+#check Complexity.SAT_H_eq
+#check Complexity.padSAT
+#check Complexity.ladnerMachine
+#check Complexity.ladnerH
+#check Complexity.SAT_H
+#check Complexity.ladnerH_polyTime
+#check Complexity.SAT_H_mem_NP
+#check Complexity.ladnerH_bounded_of_mem_P
+#check Complexity.ladnerH_unbounded_of_not_mem_P
+#check Complexity.SAT_mem_P_of_padSAT_NPHard
+#check Complexity.SAT_H_intermediate
+#check Complexity.mem_P_iff
+#check Complexity.mem_P_iff_one_work_tape
+#check Complexity.mem_NP_iff_exists_length_le
+#check Complexity.SAT_mem_NP
+#check Complexity.SAT_NPHard
+#check Complexity.mem_P_of_polyTimeReducible
+#check Complexity.P_eq_NP_of_NPHard_mem_P
+#check Complexity.PolyTimeComputable.output_length_le
+#check Complexity.PolyTimeComputable.comp
+#check Complexity.PolyTimeComputable.pairEncode
+#check Complexity.PolyTimeComputable.append
+#check Complexity.mem_P_of_test
+#check Complexity.test_of_mem_P
+#check Complexity.mem_P_iff_polyTimeComputable
+#check Complexity.preimage_mem_P
+#check Complexity.inter_mem_P
+#check Complexity.polyTimeComputable_of_linear
+#check Complexity.polyTimeComputable_const
+#check Complexity.polyTimeComputable_id
+#check Complexity.polyTimeComputable_unary
+#check Complexity.polyTimeComputable_polyUnary
+#check Complexity.polyTimeComputable_pairFstD
+#check Complexity.polyTimeComputable_pairSndD
+#check Complexity.polyTimeComputable_ite
+#check Complexity.polyTimeComputable_and
+#check Complexity.polyTimeComputable_or
+#check Complexity.polyTimeComputable_not
+#check Complexity.polyTimeComputable_tail
+#check Complexity.polyTimeComputable_takePrefixByLength
+#check Complexity.polyTimeComputable_dropPrefixByLength
+#check Complexity.pairFstD_pairEncode
+#check Complexity.pairSndD_pairEncode
+#check Complexity.length_pairFstD_le
+#check Complexity.length_pairSndD_le
+#check Complexity.transduce_nil
+#check Complexity.transduce_cons
+#check Complexity.polyTimeComputable_transduce
+#check Complexity.exists_proj_decider
+#check Complexity.expCode
+#check Turing.UniformMachineCode.simulator_accepts
+#check Turing.UniformMachineCode.simulator_rejects
+#check Turing.MachineCode.decode_encode_pad
+#check Turing.FinTM.toCodeTM_computesInTime_iff
+#check Turing.FinTM.not_computesInTime_zero
+#check Turing.FinTM.ComputesInTime.mono
+#check Turing.FinTM.ComputesInTime.output_unique
+#check Turing.FinTM.computesFunInTime_iff
+#check Turing.FinTM.computesInTime_iff
+#check Turing.FinTM.exists_comp_on_image
+#check Turing.FinTM.computesFunInTime_lengthBits
+#check Turing.FinTM.computesFunInTime_polyBits
+#check Turing.FinTM.computesFunInTime_decideEq
+#check Turing.length_bits_le_self
+#check Turing.length_pairEncode
+#check Turing.pairEncode_injective
+#check Complexity.BinArith.polyTimeComputable_iterate
+#check Complexity.BinArith.iterate_invariant
+#check Complexity.BinArith.iterate_measure_eq_zero
+#check Complexity.BinArith.polyTimeComputable_forLoop
+#check Complexity.BinArith.forLoop_pairEncode
+#check Complexity.BinArith.polyTimeComputable_normBits
+#check Complexity.BinArith.polyTimeComputable_reverse
+#check Complexity.BinArith.polyTimeComputable_add
+#check Complexity.BinArith.polyTimeComputable_sub
+#check Complexity.BinArith.polyTimeComputable_mul
+#check Complexity.BinArith.polyTimeComputable_lt
+#check Complexity.BinArith.polyTimeComputable_le
+#check Complexity.BinArith.polyTimeComputable_beq
+#check Complexity.BinArith.add_pairEncode
+#check Complexity.BinArith.sub_pairEncode
+#check Complexity.BinArith.mul_pairEncode
+#check Complexity.BinArith.lt_pairEncode
+#check Complexity.BinArith.le_pairEncode
+#check Complexity.BinArith.beq_pairEncode
+#check Complexity.BinArith.bitsVal_eq_headD
+#check Complexity.BinArith.bitsVal_drop_one
+#check Complexity.BinArith.polyTimeComputable_uRest
+#check Complexity.BinArith.polyTimeComputable_hasFalse
+#check Complexity.BinArith.uRest_nil
+#check Complexity.BinArith.uRest_true_cons
+#check Complexity.BinArith.uRest_false_cons
+#check Complexity.BinArith.hasFalse_nil
+#check Complexity.BinArith.hasFalse_cons
+#check Complexity.BinArith.encWords_nil
+#check Complexity.BinArith.encWords_cons
+#check Complexity.BinArith.encWords_append_singleton
+#check Complexity.BinArith.length_encWords_le
+#check Complexity.BinArith.length_decWords_le
+#check Complexity.BinArith.polyTimeComputable_countW
+#check Complexity.BinArith.countW_eq
+#check Complexity.BinArith.polyTimeComputable_getW
+#check Complexity.BinArith.getW_pairEncode_bits
+#check Complexity.BinArith.polyTimeComputable_mapW
+#check Complexity.BinArith.mapW_pairEncode
+#check Complexity.BinArith.polyTimeComputable_eqW
+#check Complexity.BinArith.eqW_pairEncode
+#check Complexity.BinArith.polyTimeComputable_mulU
+#check Complexity.BinArith.length_mulU
+#check Complexity.LogProg.bitsVal_bits
+#check Complexity.LogProg.bits_injective
+#check Complexity.LogProg.bitsVal_lt_two_pow
+#check Nat.find_spec
+#check Nat.find_min'
+#check Nat.log_lt_self
+#check Nat.log_le_self
+#check Nat.le_log_of_pow_le
+#check Nat.pow_log_le_self
+#check Nat.pow_le_of_le_log
+#check Nat.lt_pow_succ_log_self
+#check Nat.bits_append_bit
+#check Nat.bit_val
+#check Nat.one_bits
+#check Nat.pow_le_pow_left
+#check Nat.pow_le_pow_right
+#check Function.iterate_succ_apply
+#check Function.iterate_succ_apply'
+#check Finset.le_sup
+#check Finset.mem_range
+
+#check Complexity.ladner
+#check Complexity.PolyTimeReducible
+#check Complexity.NPHard
+#check Complexity.NPComplete
+#check Complexity.PolyTimeComputable
+#check Complexity.LogProg.bitsVal
+#check Turing.MultiTapeTM.indicator
+
+-- Dependency axiom inventories; imported admissions are reported separately.
+#print axioms Complexity.mem_padSAT_iff
+#print axioms Complexity.padSAT_congr
+#print axioms Complexity.ladnerMachine_eq
+#print axioms Complexity.ladnerH_eq
+#print axioms Complexity.ladnerH_le
+#print axioms Complexity.SAT_H_eq
+#print axioms Complexity.padSAT
+#print axioms Complexity.ladnerMachine
+#print axioms Complexity.ladnerH
+#print axioms Complexity.SAT_H
+#print axioms Complexity.ladnerH_polyTime
+#print axioms Complexity.SAT_H_mem_NP
+#print axioms Complexity.ladnerH_bounded_of_mem_P
+#print axioms Complexity.ladnerH_unbounded_of_not_mem_P
+#print axioms Complexity.SAT_mem_P_of_padSAT_NPHard
+#print axioms Complexity.SAT_H_intermediate
+#print axioms Complexity.mem_P_iff
+#print axioms Complexity.mem_P_iff_one_work_tape
+#print axioms Complexity.mem_NP_iff_exists_length_le
+#print axioms Complexity.SAT_mem_NP
+#print axioms Complexity.SAT_NPHard
+#print axioms Complexity.mem_P_of_polyTimeReducible
+#print axioms Complexity.P_eq_NP_of_NPHard_mem_P
+#print axioms Complexity.PolyTimeComputable.output_length_le
+#print axioms Complexity.PolyTimeComputable.comp
+#print axioms Complexity.PolyTimeComputable.pairEncode
+#print axioms Complexity.PolyTimeComputable.append
+#print axioms Complexity.mem_P_of_test
+#print axioms Complexity.test_of_mem_P
+#print axioms Complexity.mem_P_iff_polyTimeComputable
+#print axioms Complexity.preimage_mem_P
+#print axioms Complexity.inter_mem_P
+#print axioms Complexity.polyTimeComputable_of_linear
+#print axioms Complexity.polyTimeComputable_const
+#print axioms Complexity.polyTimeComputable_id
+#print axioms Complexity.polyTimeComputable_unary
+#print axioms Complexity.polyTimeComputable_polyUnary
+#print axioms Complexity.polyTimeComputable_pairFstD
+#print axioms Complexity.polyTimeComputable_pairSndD
+#print axioms Complexity.polyTimeComputable_ite
+#print axioms Complexity.polyTimeComputable_and
+#print axioms Complexity.polyTimeComputable_or
+#print axioms Complexity.polyTimeComputable_not
+#print axioms Complexity.polyTimeComputable_tail
+#print axioms Complexity.polyTimeComputable_takePrefixByLength
+#print axioms Complexity.polyTimeComputable_dropPrefixByLength
+#print axioms Complexity.pairFstD_pairEncode
+#print axioms Complexity.pairSndD_pairEncode
+#print axioms Complexity.length_pairFstD_le
+#print axioms Complexity.length_pairSndD_le
+#print axioms Complexity.transduce_nil
+#print axioms Complexity.transduce_cons
+#print axioms Complexity.polyTimeComputable_transduce
+#print axioms Complexity.exists_proj_decider
+#print axioms Complexity.expCode
+#print axioms Turing.UniformMachineCode.simulator_accepts
+#print axioms Turing.UniformMachineCode.simulator_rejects
+#print axioms Turing.MachineCode.decode_encode_pad
+#print axioms Turing.FinTM.toCodeTM_computesInTime_iff
+#print axioms Turing.FinTM.not_computesInTime_zero
+#print axioms Turing.FinTM.ComputesInTime.mono
+#print axioms Turing.FinTM.ComputesInTime.output_unique
+#print axioms Turing.FinTM.computesFunInTime_iff
+#print axioms Turing.FinTM.computesInTime_iff
+#print axioms Turing.FinTM.exists_comp_on_image
+#print axioms Turing.FinTM.computesFunInTime_lengthBits
+#print axioms Turing.FinTM.computesFunInTime_polyBits
+#print axioms Turing.FinTM.computesFunInTime_decideEq
+#print axioms Turing.length_bits_le_self
+#print axioms Turing.length_pairEncode
+#print axioms Turing.pairEncode_injective
+#print axioms Complexity.BinArith.polyTimeComputable_iterate
+#print axioms Complexity.BinArith.iterate_invariant
+#print axioms Complexity.BinArith.iterate_measure_eq_zero
+#print axioms Complexity.BinArith.polyTimeComputable_forLoop
+#print axioms Complexity.BinArith.forLoop_pairEncode
+#print axioms Complexity.BinArith.polyTimeComputable_normBits
+#print axioms Complexity.BinArith.polyTimeComputable_reverse
+#print axioms Complexity.BinArith.polyTimeComputable_add
+#print axioms Complexity.BinArith.polyTimeComputable_sub
+#print axioms Complexity.BinArith.polyTimeComputable_mul
+#print axioms Complexity.BinArith.polyTimeComputable_lt
+#print axioms Complexity.BinArith.polyTimeComputable_le
+#print axioms Complexity.BinArith.polyTimeComputable_beq
+#print axioms Complexity.BinArith.add_pairEncode
+#print axioms Complexity.BinArith.sub_pairEncode
+#print axioms Complexity.BinArith.mul_pairEncode
+#print axioms Complexity.BinArith.lt_pairEncode
+#print axioms Complexity.BinArith.le_pairEncode
+#print axioms Complexity.BinArith.beq_pairEncode
+#print axioms Complexity.BinArith.bitsVal_eq_headD
+#print axioms Complexity.BinArith.bitsVal_drop_one
+#print axioms Complexity.BinArith.polyTimeComputable_uRest
+#print axioms Complexity.BinArith.polyTimeComputable_hasFalse
+#print axioms Complexity.BinArith.uRest_nil
+#print axioms Complexity.BinArith.uRest_true_cons
+#print axioms Complexity.BinArith.uRest_false_cons
+#print axioms Complexity.BinArith.hasFalse_nil
+#print axioms Complexity.BinArith.hasFalse_cons
+#print axioms Complexity.BinArith.encWords_nil
+#print axioms Complexity.BinArith.encWords_cons
+#print axioms Complexity.BinArith.encWords_append_singleton
+#print axioms Complexity.BinArith.length_encWords_le
+#print axioms Complexity.BinArith.length_decWords_le
+#print axioms Complexity.BinArith.polyTimeComputable_countW
+#print axioms Complexity.BinArith.countW_eq
+#print axioms Complexity.BinArith.polyTimeComputable_getW
+#print axioms Complexity.BinArith.getW_pairEncode_bits
+#print axioms Complexity.BinArith.polyTimeComputable_mapW
+#print axioms Complexity.BinArith.mapW_pairEncode
+#print axioms Complexity.BinArith.polyTimeComputable_eqW
+#print axioms Complexity.BinArith.eqW_pairEncode
+#print axioms Complexity.BinArith.polyTimeComputable_mulU
+#print axioms Complexity.BinArith.length_mulU
+#print axioms Complexity.LogProg.bitsVal_bits
+#print axioms Complexity.LogProg.bits_injective
+#print axioms Complexity.LogProg.bitsVal_lt_two_pow
+#print axioms Nat.find_spec
+#print axioms Nat.find_min'
+#print axioms Nat.log_lt_self
+#print axioms Nat.log_le_self
+#print axioms Nat.le_log_of_pow_le
+#print axioms Nat.pow_log_le_self
+#print axioms Nat.pow_le_of_le_log
+#print axioms Nat.lt_pow_succ_log_self
+#print axioms Nat.bits_append_bit
+#print axioms Nat.bit_val
+#print axioms Nat.one_bits
+#print axioms Nat.pow_le_pow_left
+#print axioms Nat.pow_le_pow_right
+#print axioms Function.iterate_succ_apply
+#print axioms Function.iterate_succ_apply'
+#print axioms Finset.le_sup
+#print axioms Finset.mem_range
+#print axioms Complexity.ladner
+#print axioms Complexity.PolyTimeReducible
+#print axioms Complexity.NPHard
+#print axioms Complexity.NPComplete
+#print axioms Complexity.PolyTimeComputable
+#print axioms Complexity.LogProg.bitsVal
+#print axioms Turing.MultiTapeTM.indicator
+#check Complexity.BinArith.decWords_encWords
+#print axioms Complexity.BinArith.decWords_encWords
+#check Complexity.polyTimeComputable_headD
+#print axioms Complexity.polyTimeComputable_headD
+#check Complexity.BinArith.polyTimeComputable_cons
+#print axioms Complexity.BinArith.polyTimeComputable_cons

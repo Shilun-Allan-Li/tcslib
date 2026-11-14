@@ -1,0 +1,38 @@
+/- Scratch statement-elaboration probe, not a library fill.
+Source/import pin: 5ab222167eb12664d97d255766c5def15b6d5d50.
+Every theorem body below is intentionally admitted. No target body is replaced.
+Additional imports and proposed public interfaces need the decisions in the route report.
+-/
+import TCSlib.Complexity.Diagonalization.Ladner
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.Complexity.ClassP.ModelInvariance
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing Complexity
+open scoped Classical
+noncomputable section
+
+namespace LadnerRouteBounded
+theorem pad_nil (h : ℕ → ℕ) : ([] : List Bool) ∉ padSAT h := by sorry
+
+theorem padded_index (M : CodeTM) (B : ℕ) :
+    ∃ i, B < i ∧ ladnerMachine i = M.toFinTM := by sorry
+
+theorem indexed_deadline (a d i m : ℕ)
+    (hd : d ≤ i) (ha : a * 2 ^ d ≤ i) (hm : 1 ≤ m) :
+    a * (m + 1) ^ d ≤ i * m ^ i := by sorry
+
+theorem correct_index (hP : SAT_H ∈ P) :
+    ∃ i, ∀ x : List Bool,
+      (ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH := by sorry
+
+theorem selector_bound (i : ℕ)
+    (good : ∀ x : List Bool,
+      (ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH) :
+    ∀ n, ladnerH n ≤ i := by sorry
+end LadnerRouteBounded

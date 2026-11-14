@@ -1,0 +1,47 @@
+/- Scratch statement-elaboration probe, not a library fill.
+Source/import pin: 5ab222167eb12664d97d255766c5def15b6d5d50.
+Every theorem body below is intentionally admitted. No target body is replaced.
+Additional imports and proposed public interfaces need the decisions in the route report.
+-/
+import TCSlib.Complexity.Diagonalization.Ladner
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.Complexity.ClassP.ModelInvariance
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing Complexity
+open scoped Classical
+noncomputable section
+
+namespace LadnerRouteUnbounded
+theorem fixed_clock_preparation (code : List Bool) (a d : ℕ) :
+    PolyTimeComputable (fun x : List Bool =>
+      pairEncode (pairEncode (Nat.bits (a * x.length ^ d)) code) x) := by sorry
+
+theorem fixed_clock_budget (D u a d n : ℕ) :
+    D * (u + n + a * n ^ d + 1) ^ D ≤
+      (D * (u + a + 2) ^ D) * (n + 1) ^ (max 1 d * D) := by sorry
+
+theorem fixed_clock_FP (code : List Bool) (a d : ℕ) :
+    PolyTimeComputable (fun x : List Bool =>
+      [decide ((expCode.decode code).toFinTM.ComputesInTime
+        x [true] (a * x.length ^ d))]) := by sorry
+
+theorem all_tests_imply_P (i : ℕ)
+    (good : ∀ x : List Bool,
+      (ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH) : SAT_H ∈ P := by sorry
+
+theorem failing_words (hP : SAT_H ∉ P) :
+    ∀ i : ℕ, ∃ x : List Bool,
+      ¬ ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH) := by sorry
+
+theorem selector_threshold
+    (bad : ∀ i : ℕ, ∃ x : List Bool,
+      ¬ ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH)) :
+    ∀ C, ∃ N, ∀ n ≥ N, C ≤ ladnerH n := by sorry
+end LadnerRouteUnbounded
