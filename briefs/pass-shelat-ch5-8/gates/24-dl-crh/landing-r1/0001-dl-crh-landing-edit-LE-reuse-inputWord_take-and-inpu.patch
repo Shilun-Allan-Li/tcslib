@@ -1,0 +1,67 @@
+From d356381aadc350860f9a0e97123e84d9aefa585b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 14 Nov 2026 21:37:24 +0000
+Subject: [PATCH] dl-crh landing edit LE-reuse: inputWord_take (and
+ inputWord_split) from the published ReductionSupport lemmas
+
+Codex finding G24-01: Hashing/FromDiscreteLog/Encoding.lean re-proved
+inputWord_take, a specialization of the public
+TCSlib.Cryptography.take_ofFn_castLE (Asymptotic/ReductionSupport.lean).
+It is now a thin reader of that lemma at m = n, l = n + 1 with
+Nat.le_succ n; Fin.ext identifies Fin.castLE (Nat.le_succ n) j with
+j.castSucc.
+
+Review item DL-41: inputWord_split restated the public
+ofFn_eq_init_append (same file) up to Fin.init; it is now that lemma,
+read through the definitional unfolding of Fin.init.
+
+Proof-only: both statements and docstrings are byte-identical (neither
+docstring has a proof sketch to adjust). Encoding.lean now imports
+TCSlib.Cryptography.Asymptotic.ReductionSupport directly. That module was
+not in Encoding's transitive import closure before (it adds
+ReductionSupport, Foundations.Negligible, Pseudorandom.Generators and
+Pseudorandom.Indistinguishability to it); it does not import Encoding or
+any module of this unit, so there is no cycle. Authentication and root
+TCSlib already imported it.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Cryptography/Hashing/FromDiscreteLog/Encoding.lean | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean
+index cca76894e..fd751608a 100644
+--- a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean
++++ b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean
+@@ -6,6 +6,7 @@ import TCSlib.Cryptography.Candidates.Arithmetic
+ import TCSlib.Cryptography.Asymptotic.Adversary
+ import TCSlib.Cryptography.Authentication.Encoding
+ import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
++import TCSlib.Cryptography.Asymptotic.ReductionSupport
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -65,14 +66,15 @@ theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
+ /-- The word of an `(n + 1)`-bit vector is its first `n` bits followed by its final bit:
+ `List.ofFn x = List.ofFn (fun j : Fin n => x j.castSucc) ++ [x (Fin.last n)]`. -/
+ theorem inputWord_split {n : ℕ} (x : Fin (n + 1) → Bool) :
+-    List.ofFn x = List.ofFn (fun j : Fin n => x j.castSucc) ++ [x (Fin.last n)] := by
+-  rw [List.ofFn_succ', List.concat_eq_append]
++    List.ofFn x = List.ofFn (fun j : Fin n => x j.castSucc) ++ [x (Fin.last n)] :=
++  ofFn_eq_init_append x
+ 
+ /-- Taking the first `n` bits of an `(n + 1)`-bit word gives its restricted vector:
+ `(List.ofFn x).take n = List.ofFn (fun j : Fin n => x j.castSucc)`. -/
+ theorem inputWord_take {n : ℕ} (x : Fin (n + 1) → Bool) :
+-    (List.ofFn x).take n = List.ofFn (fun j : Fin n => x j.castSucc) := by
+-  rw [inputWord_split, List.take_left' (by simp)]
++    (List.ofFn x).take n = List.ofFn (fun j : Fin n => x j.castSucc) :=
++  (take_ofFn_castLE (Nat.le_succ n) x).trans
++    (congrArg List.ofFn (funext fun _ => congrArg x (Fin.ext rfl)))
+ 
+ /-- Dropping the first `n` bits of an `(n + 1)`-bit word leaves its final bit:
+ `(List.ofFn x).drop n = [x (Fin.last n)]`. -/
+-- 
+2.43.0
+
