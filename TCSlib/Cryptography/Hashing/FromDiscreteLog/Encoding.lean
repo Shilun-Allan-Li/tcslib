@@ -39,7 +39,8 @@ namespace TCSlib.Cryptography.Authentication.FromDiscreteLog
 
 open TCSlib.Cryptography TCSlib.Cryptography.Candidates TCSlib.Cryptography.NumberTheory
 
-/-- The word of the first component of `splitBits w` is the first `a` bits of `w`. -/
+/-- The word of the first component of `splitBits w` is the first `a` bits of `w`:
+`List.ofFn (splitBits w).1 = (List.ofFn w).take a`. -/
 theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
     List.ofFn (splitBits w).1 = (List.ofFn w).take a := by
   have hfst : (splitBits w).1 = fun j : Fin a => w (Fin.castAdd b j) :=
@@ -49,7 +50,7 @@ theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
   simpa only [List.drop_zero, Nat.zero_add] using hwindow.symm
 
 /-- The word of the second component of `splitBits w` is the word of `w` after its first
-`a` bits. -/
+`a` bits: `List.ofFn (splitBits w).2 = (List.ofFn w).drop a`. -/
 theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
     List.ofFn (splitBits w).2 = (List.ofFn w).drop a := by
   have hsnd : (splitBits w).2 = fun j : Fin b => w (Fin.natAdd a j) :=
@@ -61,22 +62,26 @@ theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
   rw [List.take_of_length_le hlen.le] at hwindow
   exact hwindow.symm
 
-/-- The word of an `(n + 1)`-bit vector is its first `n` bits followed by its final bit. -/
+/-- The word of an `(n + 1)`-bit vector is its first `n` bits followed by its final bit:
+`List.ofFn x = List.ofFn (fun j : Fin n => x j.castSucc) ++ [x (Fin.last n)]`. -/
 theorem inputWord_split {n : ℕ} (x : Fin (n + 1) → Bool) :
     List.ofFn x = List.ofFn (fun j : Fin n => x j.castSucc) ++ [x (Fin.last n)] := by
   rw [List.ofFn_succ', List.concat_eq_append]
 
-/-- Taking the first `n` bits of an `(n + 1)`-bit word gives its restricted vector. -/
+/-- Taking the first `n` bits of an `(n + 1)`-bit word gives its restricted vector:
+`(List.ofFn x).take n = List.ofFn (fun j : Fin n => x j.castSucc)`. -/
 theorem inputWord_take {n : ℕ} (x : Fin (n + 1) → Bool) :
     (List.ofFn x).take n = List.ofFn (fun j : Fin n => x j.castSucc) := by
   rw [inputWord_split, List.take_left' (by simp)]
 
-/-- Dropping the first `n` bits of an `(n + 1)`-bit word leaves its final bit. -/
+/-- Dropping the first `n` bits of an `(n + 1)`-bit word leaves its final bit:
+`(List.ofFn x).drop n = [x (Fin.last n)]`. -/
 theorem inputWord_drop {n : ℕ} (x : Fin (n + 1) → Bool) :
     (List.ofFn x).drop n = [x (Fin.last n)] := by
   rw [inputWord_split, List.drop_left' (by simp)]
 
-/-- An `(n + 1)`-bit input is determined by its first `n` bits and its final bit. -/
+/-- An `(n + 1)`-bit input is determined by its first `n` bits and its final bit:
+`(List.ofFn x).take n = (List.ofFn y).take n → x (Fin.last n) = y (Fin.last n) → x = y`. -/
 theorem inputWord_ext {n : ℕ} {x y : Fin (n + 1) → Bool}
     (hprefix : (List.ofFn x).take n = (List.ofFn y).take n)
     (hlast : x (Fin.last n) = y (Fin.last n)) : x = y := by
@@ -85,7 +90,8 @@ theorem inputWord_ext {n : ℕ} {x y : Fin (n + 1) → Bool}
     hprefix, hlast]
 
 /-- An `(n + 1)`-bit input is determined by the number read from its first `n` bits
-and its final selector bit. -/
+and its final selector bit: `x = y` whenever `x (Fin.last n) = y (Fin.last n)` and
+`listToNat ((List.ofFn x).take n) = listToNat ((List.ofFn y).take n)`. -/
 theorem inputWord_num_ext {n : ℕ} {x y : Fin (n + 1) → Bool}
     (hnum : listToNat ((List.ofFn x).take n) = listToNat ((List.ofFn y).take n))
     (hlast : x (Fin.last n) = y (Fin.last n)) : x = y := by
@@ -136,13 +142,15 @@ noncomputable def boundedInputEquiv (n m : ℕ) (hm : m ≤ 2 ^ n) :
       rw [ofFn_padFin_of_length (by simp), List.drop_left' (by simp)] at hword
       exact List.singleton_inj.mp hword.symm
 
-/-- The bounded-input equivalence reads the exponent and the final selector bit. -/
+/-- The bounded-input equivalence reads the exponent and the final selector bit:
+`boundedInputEquiv n m hm x = (⟨listToNat ((List.ofFn x.1).take n), x.2⟩, x.1 (Fin.last n))`. -/
 theorem boundedInputEquiv_apply (n m : ℕ) (hm : m ≤ 2 ^ n)
     (x : {x : Fin (n + 1) → Bool // listToNat ((List.ofFn x).take n) < m}) :
     boundedInputEquiv n m hm x =
       (⟨listToNat ((List.ofFn x.1).take n), x.2⟩, x.1 (Fin.last n)) := rfl
 
-/-- The inverse equivalence writes an `n`-bit exponent and appends its selector bit. -/
+/-- The inverse equivalence writes an `n`-bit exponent and appends its selector bit:
+`((boundedInputEquiv n m hm).symm z).1 = padFin (n + 1) (natToList n z.1.val ++ [z.2])`. -/
 theorem boundedInputEquiv_symm_apply (n m : ℕ) (hm : m ≤ 2 ^ n) (z : Fin m × Bool) :
     ((boundedInputEquiv n m hm).symm z).1 =
       padFin (n + 1) (natToList n z.1.val ++ [z.2]) := rfl

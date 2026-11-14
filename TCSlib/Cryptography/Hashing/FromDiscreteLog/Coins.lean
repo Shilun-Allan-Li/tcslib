@@ -35,7 +35,8 @@ namespace TCSlib.Cryptography.Authentication.FromDiscreteLog
 open Complexity TCSlib.Cryptography
 
 /-- A machine with coin polynomial `c + d` has coins equivalent to a `c(n)`-bit vector and
-a `d(n)`-bit vector. -/
+a `d(n)`-bit vector: for `h : A.coins = .add c d`,
+`A.Coins n ≃ (Fin (c.eval n) → Bool) × (Fin (d.eval n) → Bool)`. -/
 def sumCoinsEquiv (A : NUPPT) {c d : PolyExpr} (h : A.coins = .add c d) (n : ℕ) :
     A.Coins n ≃ (Fin (c.eval n) → Bool) × (Fin (d.eval n) → Bool) :=
   (NUPPT.coinsEquivPoly h n).trans
@@ -43,7 +44,10 @@ def sumCoinsEquiv (A : NUPPT) {c d : PolyExpr} (h : A.coins = .add c d) (n : ℕ
       (splitCoins (c.eval n) (d.eval n)))
 
 /-- The sum-coin equivalence first identifies the machine's polynomial-length coin vector,
-then transports its length through evaluation of addition and applies `splitCoins`. -/
+then transports its length through evaluation of addition and applies `splitCoins`:
+`sumCoinsEquiv A h n = (NUPPT.coinsEquivPoly h n).trans (e.trans s)`, where
+`e = Equiv.arrowCongr (finCongr (PolyExpr.eval_add c d n)) (Equiv.refl Bool)` and
+`s = splitCoins (c.eval n) (d.eval n)`. -/
 theorem sumCoinsEquiv_eq (A : NUPPT) {c d : PolyExpr} (h : A.coins = .add c d) (n : ℕ) :
     sumCoinsEquiv A h n =
       (NUPPT.coinsEquivPoly h n).trans

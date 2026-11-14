@@ -48,7 +48,8 @@ def residueFinEquiv {m k : ℕ} [NeZero m] (h : m = k) : ZMod m ≃ Fin k :=
   (ZMod.finEquiv m).symm.toEquiv.trans (finCongr h)
 
 /-- The residue-to-finite equivalence is Mathlib's inverse `finEquiv`, followed by
-transport along the equality of the moduli. -/
+transport along the equality of the moduli:
+`residueFinEquiv h = (ZMod.finEquiv m).symm.toEquiv.trans (finCongr h)`. -/
 theorem residueFinEquiv_eq {m k : ℕ} [NeZero m] (h : m = k) :
     residueFinEquiv h = (ZMod.finEquiv m).symm.toEquiv.trans (finCongr h) := rfl
 
@@ -62,7 +63,8 @@ theorem residueFinEquiv_val {m k : ℕ} [NeZero m] (h : m = k) (z : ZMod m) :
   | succ m => rfl
 
 /-- At an index well formed at parameter `n`, evaluating the `n`-bit numeral of
-a residue's natural representative returns `expF i z`. -/
+a residue's natural representative returns `expF i z`:
+`expEval (pairEncode i (natToList n z.val)) = expF i z`. -/
 theorem expEval_natToList_val {n : ℕ} {i : List Bool} (hw : WellFormedIndex n i)
     (z : ZMod (expOrd i)) :
     expEval (Turing.pairEncode i (natToList n z.val)) = expF i z := by
@@ -71,7 +73,10 @@ theorem expEval_natToList_val {n : ℕ} {i : List Bool} (hw : WellFormedIndex n 
 
 /-- For a valid group index of order below `2^n`, any test of the rejection-sampled
 exponent and independent finite auxiliary coins has probability at most its
-probability for a uniform exponent in `ZMod (expOrd i)` plus `(1/2)^n`
+probability for a uniform exponent in `ZMod (expOrd i)` plus `(1/2)^n`: for `m = dlM i < 2^n`,
+`uprob (fun (s, a) => P ((sampleBelowL m (Nat.size m) n n (List.ofFn s)).getD 0) a) ≤`
+`uprob (fun (z, a) => P z.val a) + (1/2)^n` over `s : Fin (n * n) → Bool`,
+`z : ZMod (expOrd i)` and `a : ρ`
 [PS10, proof of Theorem 142.3, using the candidate-layer sampler convention].
 
 **Proof sketch.** Apply the published statistical-closeness theorem for bounded

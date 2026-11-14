@@ -51,14 +51,18 @@ def modularDifference (a b m : List Bool) : List Bool :=
     (addStr (pairEncode a (subStr (pairEncode m b)))) m))
 
 /-- The modular-difference routine adds `a` to the truncated subtraction of `b`
-from `m`, divides by `m`, and keeps the remainder. -/
+from `m`, divides by `m`, and keeps the remainder:
+`modularDifference a b m = pairSndD (divModStr (pairEncode (addStr (pairEncode a s)) m))`,
+where `s = subStr (pairEncode m b)`. -/
 theorem modularDifference_eq (a b m : List Bool) :
     modularDifference a b m =
       pairSndD (divModStr (pairEncode
         (addStr (pairEncode a (subStr (pairEncode m b)))) m)) := rfl
 
 /-- The modular-difference routine writes the `|m|`-bit numeral of
-`(⟦a⟧ + (⟦m⟧ - ⟦b⟧)) mod ⟦m⟧`. -/
+`(⟦a⟧ + (⟦m⟧ - ⟦b⟧)) mod ⟦m⟧`:
+`modularDifference a b m = natToList m.length ((⟦a⟧ + (⟦m⟧ - ⟦b⟧)) % ⟦m⟧)`, where
+`⟦w⟧ = listToNat w`. -/
 theorem modularDifference_value (a b m : List Bool) :
     modularDifference a b m = natToList m.length
       ((NumberTheory.listToNat a +
@@ -67,7 +71,9 @@ theorem modularDifference_value (a b m : List Bool) :
     listToNat_addStr, listToNat_subStr]
 
 /-- Applying the modular-difference routine to three polynomial-time word functions
-is polynomial-time under the arithmetic bundle. -/
+is polynomial-time under the arithmetic bundle: given `H : ArithmeticFP`,
+`PolyTimeComputable a → PolyTimeComputable b → PolyTimeComputable m →`
+`PolyTimeComputable fun w => modularDifference (a w) (b w) (m w)`. -/
 theorem polyTimeComputable_modularDifference (H : ArithmeticFP)
     {a b m : List Bool → List Bool} (ha : PolyTimeComputable a)
     (hb : PolyTimeComputable b) (hm : PolyTimeComputable m) :
@@ -78,9 +84,10 @@ theorem polyTimeComputable_modularDifference (H : ArithmeticFP)
   refine h.congr fun w => ?_
   simp only [Function.comp_apply, modularDifference_eq]
 
-/-- On `⟨u, ⟨⟨i,y⟩, raw⟩⟩`, pad or truncate `raw` to two blocks of `|u|+1` bits.
-Read exponents from each block's first `|u|` bits and the first selector from its
-last bit. Output `x' - x mod m` if that selector is true and `x - x' mod m`
+/-- On `w = ⟨u, ⟨⟨i,y⟩, raw⟩⟩`, pad or truncate `raw` to two blocks of `|u|+1` bits and output
+`collisionPost w = if s then modularDifference x' x m else modularDifference x x' m`.
+Here `x`, `x'` are read from each block's first `|u|` bits and the first selector `s` from its
+last bit, so the output is `x' - x mod m` if that selector is true and `x - x' mod m`
 otherwise, where `m` is the order word in the index `i` [PS10, Theorem 142.3]. -/
 def collisionPost (w : List Bool) : List Bool :=
   let u := pairFstD w
@@ -94,7 +101,12 @@ def collisionPost (w : List Bool) : List Bool :=
   else modularDifference x x' m
 
 /-- The postprocessor pads the raw output, reads two exponent prefixes and the first
-selector, and applies the corresponding modular difference. -/
+selector, and applies the corresponding modular difference:
+`collisionPost w = if s then modularDifference x' x m else modularDifference x x' m`, where
+`u = pairFstD w`, `m = pairFstD (pairSndD (pairFstD (pairFstD (pairSndD w))))`,
+`p = padStr (.add (.add .var (.const 1)) (.add .var (.const 1))) u (pairSndD (pairSndD w))`,
+`x = p.take u.length`, `x' = (p.drop (u.length + 1)).take u.length` and
+`s = (p.drop u.length).headD false`. -/
 theorem collisionPost_eq (w : List Bool) :
     collisionPost w =
       let u := pairFstD w
@@ -107,7 +119,8 @@ theorem collisionPost_eq (w : List Bool) :
       if (padded.drop u.length).headD false then modularDifference x' x m
       else modularDifference x x' m := rfl
 
-/-- The collision postprocessor is polynomial-time under the arithmetic bundle.
+/-- The collision postprocessor is polynomial-time under the arithmetic bundle:
+`ArithmeticFP → PolyTimeComputable collisionPost`.
 
 **Proof sketch.** Pair projections read the parameter, raw output, and order word.
 The existing padding and polynomial-prefix cuts read the two exponents and selector.
@@ -163,7 +176,10 @@ theorem polyTimeComputable_collisionPost (H : ArithmeticFP) :
 
 /-- At a well-formed index, postprocessing the concatenation of two `(n + 1)`-bit
 inputs writes the `n`-bit numeral of their selected exponent difference modulo
-`dlM i`. The first input's final bit chooses `x' - x` when true and `x - x'`
+`dlM i`: `collisionPost (pairEncode (List.replicate n true) (pairEncode (pairEncode i y) v)) =`
+`natToList n (if x (Fin.last n) then (x₀' + (m - x₀)) % m else (x₀ + (m - x₀')) % m)`, where
+`v = List.ofFn x ++ List.ofFn x'`, `x₀ = listToNat ((List.ofFn x).take n)`, `x₀'` likewise and
+`m = dlM i`. The first input's final bit chooses `x' - x` when true and `x - x'`
 otherwise [PS10, proof of Theorem 142.3].
 
 **Proof sketch.** The concatenation already has the padding width. Cutting after
@@ -211,7 +227,11 @@ theorem collisionPost_ofFn_append (n : ℕ) (i y : List Bool)
   split_ifs <;> rfl
 
 /-- For any raw finder output, the postprocessor writes the selected difference
-of the two inputs obtained by the collision game's padding and splitting. It writes
+of the two inputs obtained by the collision game's padding and splitting:
+`collisionPost (pairEncode (List.replicate n true) (pairEncode (pairEncode i y) raw)) =`
+`natToList n (if xx.1 (Fin.last n) then (x₀' + (m - x₀)) % m else (x₀ + (m - x₀')) % m)`,
+where `xx = splitBits (padFin ((n + 1) + (n + 1)) raw)`, `x₀ = listToNat ((List.ofFn xx.1).take n)`,
+`x₀'` likewise for `xx.2` and `m = dlM i`. It writes
 `x' - x mod m` when the first selector is true and `x - x' mod m` otherwise
 [PS10, proof of Theorem 142.3].
 
@@ -264,19 +284,24 @@ theorem collisionPost_split (n : ℕ) (i y raw : List Bool) (hw : WellFormedInde
   exact hpost.trans (collisionPost_ofFn_append n i y xx.1 xx.2 hw)
 
 /-- On a raw NUPPT layout, run `A` and apply `collisionPost` to the parameter,
-the original key, and `A`'s raw output [PS10, proof of Theorem 142.3]. -/
+the original key, and `A`'s raw output:
+`reductionRaw A z = collisionPost (pairEncode (inParam z) (pairEncode (inArg z) (A.output z)))`
+[PS10, proof of Theorem 142.3]. -/
 def reductionRaw (A : NUPPT) (z : List Bool) : List Bool :=
   collisionPost (pairEncode (NUPPT.inParam z) (pairEncode (NUPPT.inArg z) (A.output z)))
 
 /-- The raw reduction passes its parameter and original argument together with
-the finder's raw output to the postprocessor. -/
+the finder's raw output to the postprocessor:
+`reductionRaw A z = collisionPost (pairEncode (inParam z) (pairEncode (inArg z) (A.output z)))`,
+with `inParam = NUPPT.inParam` and `inArg = NUPPT.inArg`. -/
 theorem reductionRaw_eq (A : NUPPT) (z : List Bool) :
     reductionRaw A z =
       collisionPost (pairEncode (NUPPT.inParam z)
         (pairEncode (NUPPT.inArg z) (A.output z))) := rfl
 
 /-- Running a polynomial-time finder and then postprocessing its output is
-polynomial-time under the arithmetic bundle. -/
+polynomial-time under the arithmetic bundle:
+`ArithmeticFP → PolyTimeComputable (reductionRaw A)`. -/
 theorem polyTimeComputable_reductionRaw (H : ArithmeticFP) (A : NUPPT) :
     PolyTimeComputable (reductionRaw A) := by
   have h := (polyTimeComputable_collisionPost H).comp
@@ -286,34 +311,43 @@ theorem polyTimeComputable_reductionRaw (H : ArithmeticFP) (A : NUPPT) :
   simp only [Function.comp_apply, reductionRaw_eq]
 
 /-- The discrete-log reduction runs the collision finder and extracts the exponent
-difference, using the same coins and advice [PS10, proof of Theorem 142.3]. -/
+difference, using the same coins and advice: it realizes `reductionRaw A` in polynomial time
+with `(collisionReduction H A).coins = A.coins` and `(collisionReduction H A).advice = A.advice`
+[PS10, proof of Theorem 142.3]. -/
 noncomputable def collisionReduction (H : ArithmeticFP) (A : NUPPT) : NUPPT :=
   NUPPT.ofPolyTime (polyTimeComputable_reductionRaw H A)
     A.coins A.adv A.advice A.advice_length
 
 /-- The reduction is the polynomial-time realization of `reductionRaw A`, with
-the finder's coin polynomial, advice bound, and advice function. -/
+the finder's coin polynomial, advice bound, and advice function:
+`collisionReduction H A = NUPPT.ofPolyTime hraw A.coins A.adv A.advice A.advice_length`,
+where `hraw = polyTimeComputable_reductionRaw H A`. -/
 theorem collisionReduction_eq (H : ArithmeticFP) (A : NUPPT) :
     collisionReduction H A = NUPPT.ofPolyTime (polyTimeComputable_reductionRaw H A)
       A.coins A.adv A.advice A.advice_length := rfl
 
-/-- The reduction uses the collision finder's coin polynomial. -/
+/-- The reduction uses the collision finder's coin polynomial:
+`(collisionReduction H A).coins = A.coins`. -/
 theorem collisionReduction_coins (H : ArithmeticFP) (A : NUPPT) :
     (collisionReduction H A).coins = A.coins := by
   rw [collisionReduction_eq, NUPPT.coins_ofPolyTime]
 
-/-- The reduction has the collision finder's advice bound. -/
+/-- The reduction has the collision finder's advice bound:
+`(collisionReduction H A).adv = A.adv`. -/
 theorem collisionReduction_adv (H : ArithmeticFP) (A : NUPPT) :
     (collisionReduction H A).adv = A.adv := by
   rw [collisionReduction_eq, NUPPT.adv_ofPolyTime]
 
-/-- The reduction uses the collision finder's advice at every parameter. -/
+/-- The reduction uses the collision finder's advice at every parameter:
+`(collisionReduction H A).advice = A.advice`. -/
 theorem collisionReduction_advice (H : ArithmeticFP) (A : NUPPT) :
     (collisionReduction H A).advice = A.advice := by
   rw [collisionReduction_eq, NUPPT.advice_ofPolyTime]
 
 /-- At parameter `n` on key `key` and coin list `r`, the reduction postprocesses
-`A.runAtL n key r` while retaining `1^n` and the original key. -/
+`A.runAtL n key r` while retaining `1^n` and the original key:
+`(collisionReduction H A).runAtL n key r = collisionPost (pairEncode u (pairEncode key o))`,
+where `u = List.replicate n true` and `o = A.runAtL n key r`. -/
 theorem collisionReduction_runAtL (H : ArithmeticFP) (A : NUPPT)
     (n : ℕ) (key r : List Bool) :
     (collisionReduction H A).runAtL n key r =
@@ -324,7 +358,10 @@ theorem collisionReduction_runAtL (H : ArithmeticFP) (A : NUPPT)
     pairFstD_pairEncode, pairSndD_pairEncode, NUPPT.runAtL_eq]
 
 /-- On typed coins, the reduction postprocesses the finder's output on the same
-coin string, transported along the equality of their coin polynomials. -/
+coin string, transported along the equality of their coin polynomials:
+`(collisionReduction H A).runAt n key r = collisionPost (pairEncode u (pairEncode key o))`,
+where `u = List.replicate n true`, `o = A.runAt n key r'` and
+`r' = NUPPT.coinsCongr (collisionReduction_coins H A) n r`. -/
 theorem collisionReduction_runAt (H : ArithmeticFP) (A : NUPPT)
     (n : ℕ) (key : List Bool) (r : (collisionReduction H A).Coins n) :
     (collisionReduction H A).runAt n key r =

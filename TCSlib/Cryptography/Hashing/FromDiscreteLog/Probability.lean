@@ -35,14 +35,19 @@ namespace TCSlib.Cryptography.Authentication.FromDiscreteLog
 open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games
 
 /-- The expectation of `f` after sampling a nonempty finite type is the uniform
-average `uexp f`. Both expressions are the sum of `f` divided by the type's size. -/
+average `uexp f`: `ProbComp.expect (ProbComp.sample α) f = uexp f`. Both expressions
+are the sum of `f` divided by the type's size. -/
 theorem expect_sample_eq_uexp {α : Type} [Fintype α] [Nonempty α] (f : α → ℝ) :
     ProbComp.expect (ProbComp.sample α) f = uexp f := by
   rw [ProbComp.expect_sample, uexp_def, inv_mul_eq_div]
 
 /-- Collision-game acceptance is the average over generator coins of the probability,
 over finder coins, that the two padded output halves are distinct domain elements
-with equal hashes [PS10, Definition 140.1].
+with equal hashes: `accept (C.collisionGame A n) = uexp (fun rg => uprob (fun r => W rg r))`,
+where `W rg r` is `C.inDom n i xx.1 = true ∧ C.inDom n i xx.2 = true ∧ xx.1 ≠ xx.2 ∧`
+`C.hash n i xx.1 = C.hash n i xx.2` for `i = C.gen.runAt n [] rg` and
+`xx = splitBits (padFin (C.domLen.eval n + C.domLen.eval n) (A.runAt n i r))`
+[PS10, Definition 140.1].
 
 **Proof sketch.** Read the collision game and apply total probability to its two
 samples. A pure Boolean verdict accepts exactly when its collision predicate holds;

@@ -68,7 +68,9 @@ private theorem residue_of_unit_pow_mul {i : List Bool} (hi : ExpValid i)
   exact residue_difference ha hb.le hm
 
 /-- A collision between two distinct bounded exponent/selector pairs has different
-selector bits [PS10, proof of Theorem 142.3].
+selector bits: if `(x, b) ≠ (x', b')`, `x < dlM i`, `x' < dlM i` and
+`(if b then u ^ z.val else 1) * u ^ x = (if b' then u ^ z.val else 1) * u ^ x'` for
+`u = expUnit hi`, then `b ≠ b'` [PS10, proof of Theorem 142.3].
 
 **Proof sketch.** With equal selectors, cancel their common unit factor. Read the
 remaining powers through their numerals and apply the published injectivity of
@@ -101,7 +103,9 @@ theorem unitCollision_selector_ne {i : List Bool} (hi : ExpValid i)
 
 /-- A collision between distinct bounded exponent/selector pairs reveals the
 challenge exponent: it is `(x' + (m - x)) mod m` when the first selector is true,
-and `(x + (m - x')) mod m` otherwise [PS10, proof of Theorem 142.3].
+and `(x + (m - x')) mod m` otherwise, that is,
+`b ≠ b' ∧ z.val = if b then (x' + (m - x)) % m else (x + (m - x')) % m` for `m = dlM i`,
+under the hypotheses of `unitCollision_selector_ne` [PS10, proof of Theorem 142.3].
 
 **Proof sketch.** Equal selectors are impossible by cancellation. In the two remaining
 cases the collision reads either `g^z g^x = g^x'` or `g^z g^x' = g^x`. The order of
