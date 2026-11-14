@@ -1,0 +1,27 @@
+commit d20fbed3beb3710b4db1c0cdf5fb788ff1b2cf9f
+Author: Claude <noreply@anthropic.com>
+Date:   Sat Nov 14 02:59:57 2026 +0000
+
+    dl-folds landing edit LE-gate21: publish InteractiveHandler.finA_eq (Gate 21, G21-01)
+    
+    The promoted finalization reader finA gains its documented equation reader
+    finA_eq, as NMCCA2.finA_eq provided before the fold (policy section 1). No
+    other change; Games/Efficiency.lean 979 -> 982 lines.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+
+diff --git a/TCSlib/Cryptography/Games/Efficiency.lean b/TCSlib/Cryptography/Games/Efficiency.lean
+index ab33eae60..84fb9358e 100644
+--- a/TCSlib/Cryptography/Games/Efficiency.lean
++++ b/TCSlib/Cryptography/Games/Efficiency.lean
+@@ -753,6 +753,9 @@ theorem rL_finInput (n : ℕ) (z ω s a L : List Bool) : rL (finInput n z ω s a
+ `finA w = pairFstD (pairSndD (pairSndD w))`. -/
+ def finA (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD w))
+ 
++/-- `finA w = pairFstD (pairSndD (pairSndD w))`. -/
++theorem finA_eq (w : List Bool) : finA w = pairFstD (pairSndD (pairSndD w)) := rfl
++
+ /-- `finA (finInput n z ω s a L) = a`. -/
+ theorem finA_finInput (n : ℕ) (z ω s a L : List Bool) : finA (finInput n z ω s a L) = a := by
+   simp only [finA, finInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]

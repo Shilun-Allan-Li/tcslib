@@ -32,4 +32,17 @@ before any change that would take it past about 990 lines. This is recorded in t
 
 ## Checks at `d20fbed3`
 
-Pending: the rebuild of `Games/Efficiency` and its 42 downstream modules through root `TCSlib` is running; the axiom print of `finA_eq` follows. This section is completed when they finish.
+The evidence is in `landing-r1/`.
+
+- **Build:** `Games/Efficiency` and its 42 downstream modules were rebuilt on the consolidation's full tree, through
+  root `TCSlib`. All 43 have rc 0 and 0 errors, and each record's `source_sha256` matches the head
+  (`le-build-results.jsonl`, order `le-build-order.txt`).
+  - No other module imports `Games/Efficiency`, directly or indirectly. Every other module's olean is unchanged
+    from the review's 1199/1199 tree.
+- **Axioms:** `finA_eq` depends on no axioms (`axioms-finA_eq.log`). The probe file was deleted.
+- **Lint:** 216 FAIL and 102 WARN, the same lines as at `fcdb6579` (`lint-head.log`).
+- **Widths:** no new line over 100 characters; the file's single over-width line is inherited.
+- **Diff:** `LE-gate21.patch`, one file, +3 lines.
+- **Base:** every commit on the base after `934eac64` changes records only.
+
+**PR [#299](https://github.com/Shilun-Allan-Li/tcslib/pull/299)** is now at `d20fbed3` and has been marked ready.
