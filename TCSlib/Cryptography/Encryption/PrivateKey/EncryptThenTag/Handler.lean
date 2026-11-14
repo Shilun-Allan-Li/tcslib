@@ -37,7 +37,7 @@ Every query advances the counter. The finalization asks nothing and outputs the 
 
 * `ETTGame.ettCt`, `ettDin`, `ettDout`, `tagLen`, `tagOut`, `dStLen`, `dSeedLen`: the lengths.
 * `ETTGame.recBits`, `dState`, `dSeed`: the encoded state and seed.
-* `ETTGame.dHandler E hE q b`: the handler.
+* `ETTGame.dHandler q E hE b`: the handler.
 
 ## Main results
 

@@ -79,7 +79,7 @@ def dAbs (s : St n (ettCt.eval n) × ℕ) :
     (Fin ((dHandler q E hE b).stateLen.eval n) → Bool) × Unit :=
   (dHState q E hE b n s.2 s.1.1, ())
 
-/-- `dAbs q E hE b n s = (dHState q E hE b n s.2 s.1.1, ())`. -/
+/-- `dAbs E hE q b n s = (dHState q E hE b n s.2 s.1.1, ())`. -/
 theorem dAbs_eq (s : St n (ettCt.eval n) × ℕ) :
     dAbs E hE q b n s = (dHState q E hE b n s.2 s.1.1, ()) :=
   rfl

@@ -115,7 +115,7 @@ private theorem bKeyOf_ctOf {k : ℕ} (hk : k = ctP.eval n) (r : Fin n → Bool)
   rw [bKeyOf_eq, ofFn_ctOf n f hk r hm, pairFstD_pairEncode, pairSndD_pairEncode, pairV_eq]
 
 /-- **One composed call has the law of a call of the lazy experiment with tapes in advance:** from
-`bAbs ((o, L), j)` with the invariant and `j < q(n)`, the handler composed with the CPA oracles
+`bAbs q n ((o, L), j)` with the invariant and `j < q(n)`, the handler composed with the CPA oracles
 with pad function `f` gives every function `g` of the answer and the state the expectation that
 the call of `ettLazyTape` with the tapes `bTapes W` from `((o, L), j)` gives it, with the new state
 abstracted.

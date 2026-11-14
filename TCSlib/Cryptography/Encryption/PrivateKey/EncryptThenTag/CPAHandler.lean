@@ -36,7 +36,7 @@ call is well formed for every outer answer. Lookups use GGM's table lookup (`GGM
 ## Main definitions
 
 * `ETTGame.encE`, `tblW`, `bStLen`, `bSeedLen`, `bState`, `bSeed`, `bTapeOf`.
-* `ETTGame.bHandler q hq b`: the handler.
+* `ETTGame.bHandler q`: the handler.
 
 ## Main results
 
