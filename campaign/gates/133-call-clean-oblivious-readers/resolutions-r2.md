@@ -17,3 +17,10 @@ Each is accepted within its stated scope. This round's evidence replaces their r
 control, screen and metadata inputs. The qualification of G133-06 stands: `setupCfg_initializes`
 and the header of `dataTM_ready` still reach the unchanged cross-type statements (ObliviousSetup's
 private steps; `prepInvariant_run` and `dataTM`'s tape count and state type), as at base.
+
+## Round 2 result (2026-11-14)
+
+Codex returned **CLEAR (0 blockers, 0 majors, 0 minors, 9 notes)**, recorded verbatim as
+`findings-r2.md` (SHA-256 `c307470aa51e5db4908745c7dc7c8ba206487ff2a7efb3fd8a411d4a3388a102`). It finds G133-01 and G133-02 resolved; G133-06 keeps the two
+disclosed legacy seal roots (`dataTM_ready`'s header, `setupCfg_initializes`'s private steps)
+within scope. The other notes need no action. **Gate 133 is closed.**

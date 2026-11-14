@@ -17,7 +17,7 @@ Campaign Lean is `b313afe522991f2114390952f26ffe7de825bace`. Its replay output i
 | PR / gate | Current state |
 |---|---|
 | #301 / 134 | **Merged** at `b313afe522991f2114390952f26ffe7de825bace` (2026-11-14). Gate closed (CLEAR). Its replay output is the campaign snapshot `oleans-cb313` (876 objects; campaign/status/2026-11-14-merge-301/). |
-| #300 / 133 | **Not yet clear to merge.** Round 1 (Codex) HOLD (G133-01 major, G133-02 minor), repaired at `4ddce70c`. Round 2 pack ready (fresh replay on `b313afe5`, seals, focused seal, controls, screen); Codex round 2 ready to dispatch (prompt-r2.md, exchange `536bc555`). See campaign/gates/133-call-clean-oblivious-readers/. |
+| #300 / 133 | **Clear to merge.** Gate 133 closed: round 2 CLEAR (0/0/0, 9 notes) at `4ddce70c45e0a397fbc4d9a25ac925da80e05cda` (round 1 HOLD, repaired). Replay on campaign Lean `b313afe5` (still current); merges cleanly. Draft: mark ready, then merge; then adopt `oleans-rd133-cb313`. |
 | #296 / 132 | **Merged** at `5ab222167eb12664d97d255766c5def15b6d5d50` (2026-11-14). Gate closed (round 3 CLEAR). Its replay output is the campaign snapshot `oleans-c5ab2` (876 objects; campaign/status/2026-11-14-merge-296/). |
 | #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |

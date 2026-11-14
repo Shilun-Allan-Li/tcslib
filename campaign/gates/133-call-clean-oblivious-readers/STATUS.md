@@ -1,4 +1,5 @@
-**Not yet clear to merge: #300.** Gate 133 round 2 (Codex) is ready to dispatch: pack-r2.md, prompt-r2.md, bundle at exchange `536bc555`.
-- Round 1 (Codex) HOLD: G133-01 major, G133-02 minor (findings.md); both resolved (resolutions-r2.md).
-- Round 2 evidence on campaign `b313afe5` (after #301): 202-module replay passes; 10/12 owners seal (7 at base),
-  six proof improvements, no new failing root; focused `dataTM_ready` seal passes; 124 controls pass.
+**Clear to merge: #300** at `4ddce70c45e0a397fbc4d9a25ac925da80e05cda`.
+Gate 133 closed: round 2 CLEAR (0 blockers, 0 majors, 0 minors, 9 notes; `findings-r2.md`).
+The 202-module merged-tree replay ran on campaign Lean `b313afe5`, which is still current, and the
+head merges cleanly. The PR is a draft; mark it ready before merging. After the merge the replay
+output `oleans-rd133-cb313` becomes the campaign snapshot. See findings-r2.md and resolutions-r2.md.
