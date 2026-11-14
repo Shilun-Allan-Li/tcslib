@@ -91,7 +91,7 @@ lines and removes none.)*
 
 **Content.** The proof follows the source.
 1. **Compression:** from the counts `|D| = 2m` and `|R| = p − 1 = m`.
-2. **Equal selector bits:** a collision with *equal* selector bits is impossible, by cancellation and `expF_injective`; with different selector bits the reduction of step 3 applies. *(Erratum 2026-11-14, Gate 24 G24-02: this step previously said "different"; e.g. `p=3, m=2, g=2`: `(0,false)` and `(0,true)` both hash to `1`.)*
+2. **Equal selector bits:** a collision with *equal* selector bits is impossible, by cancellation and `expF_injective`; with different selector bits the reduction of step 3 applies. *(Erratum 2026-11-14, Gate 24 G24-02: this step previously said "different"; e.g. `p=3, m=2, g=2` with challenge `z=0`: `(0,false)` and `(0,true)` both hash to `1`. Second erratum, 2026-11-14: the example needs `z=0`; with `z=1` they hash to `1` and `2`. Disclosed in the Gate 24 round-2 pack.)*
 3. **The reduction:** it outputs `x' − x` or `x − x'` mod `m`, and it succeeds whenever the finder collides.
 4. **Sampler switch:** switching to the close sampler costs `(1/2)^n`.
 5. **Negligibility:** it follows from `hDL` from `G.n₀` on.
