@@ -2024,3 +2024,8 @@ through `obliviousSchedule_k`/`_State`. Same ruling, two extensions within the P
   adapted, so that both Oblivious consumers seal with `obliviousSchedule` irreducible;
 - `Call.regPos_box` is re-proved through the new readers, and `off_zero` moves beside `off` in
   `Machines/Layout` (same name and namespace).
+
+**Transport (Seyoon, 2026-11-14): designed in this PR.** Restating the three producers through
+`_k`/`_State` needs a transport between `Cfg (W.k + 3) OblSymbol (OblPhase W.State a)` and the
+configurations of `obliviousSchedule W a`. The design (its new API and the exact restated
+statements) goes to Seyoon before it is implemented; the PR waits for it.
