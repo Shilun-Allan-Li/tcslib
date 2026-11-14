@@ -60,7 +60,8 @@ theorem first_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge 
   rw [LamportMachine.first_eq, LamportMachine.tape_seedIn, LamportMachine.offset_eq,
     LamportMachine.pos_seedIn, LamportMachine.u_seedIn]
   simp only [List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
-  have hrow := hcoin (B := 2 * n) (fun j : Fin n => List.ofFn (T (j, false)) ++ List.ofFn (T (j, true)))
+  have hrow := hcoin (B := 2 * n)
+    (fun j : Fin n => List.ofFn (T (j, false)) ++ List.ofFn (T (j, true)))
     (fun j => by simp only [List.length_append, List.length_ofFn]; omega) i
   rw [coinBlock_eq, ← secretWord_eq] at hrow
   have h := congrArg (fun w : List Bool => w.take n) hrow
@@ -76,7 +77,8 @@ theorem second_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge
   rw [LamportMachine.second_eq, LamportMachine.tape_seedIn, LamportMachine.offset_eq,
     LamportMachine.pos_seedIn, LamportMachine.u_seedIn]
   simp only [List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
-  have hrow := hcoin (B := 2 * n) (fun j : Fin n => List.ofFn (T (j, false)) ++ List.ofFn (T (j, true)))
+  have hrow := hcoin (B := 2 * n)
+    (fun j : Fin n => List.ofFn (T (j, false)) ++ List.ofFn (T (j, true)))
     (fun j => by simp only [List.length_append, List.length_ofFn]; omega) i
   rw [coinBlock_eq, ← secretWord_eq] at hrow
   have h := congrArg (fun w : List Bool => w.drop n) hrow
@@ -218,7 +220,8 @@ theorem out_nonabort {n : ℕ} (i : Fin n) (z ρ : List Bool)
     LamportMachine.out (pairEncode (seedIn n z ρ) (pairEncode [false] (List.ofFn a))) =
       List.ofFn (signatureBlock (splitBits a).2 i) := by
   rw [LamportMachine.out_eq, LamportMachine.state_eq, LamportMachine.context_eq]
-  simp only [LamportMachine.context_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.headD_cons, Bool.false_eq_true,
+  simp only [LamportMachine.context_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.headD_cons,
+    Bool.false_eq_true,
     if_false, LamportMachine.u_seedIn, LamportMachine.offset_eq, hz,
     List.length_replicate, PolyExpr.eval_var]
   have hs : List.ofFn (splitBits a).2 = (List.ofFn a).drop n := by

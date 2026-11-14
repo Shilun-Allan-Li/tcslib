@@ -146,18 +146,21 @@ theorem first_eq (v : List Bool) : first v =
     ((tape v).drop (offset (.mul (.const 2) .var) v).length).take (u v).length := rfl
 /-- Selecting the first preimage is polynomial-time. -/
 theorem first_poly : PolyTimeComputable first :=
-  TCSlib.Cryptography.takeLen_poly u_poly (TCSlib.Cryptography.dropLen_poly (offset_poly _) tape_poly)
+  TCSlib.Cryptography.takeLen_poly u_poly
+    (TCSlib.Cryptography.dropLen_poly (offset_poly _) tape_poly)
 
 /-- The second preimage is the next `n` bits after offset `2ni+n`. -/
 def second (v : List Bool) : List Bool :=
   ((tape v).drop ((offset (.mul (.const 2) .var) v).length + (u v).length)).take (u v).length
 /-- `second` is the second `n`-bit half of the selected preimage pair. -/
 theorem second_eq (v : List Bool) : second v =
-    ((tape v).drop ((offset (.mul (.const 2) .var) v).length + (u v).length)).take (u v).length := rfl
+    ((tape v).drop ((offset (.mul (.const 2) .var) v).length +
+      (u v).length)).take (u v).length := rfl
 /-- Selecting the second preimage is polynomial-time. -/
 theorem second_poly : PolyTimeComputable second := by
   refine (TCSlib.Cryptography.takeLen_poly u_poly
-    (TCSlib.Cryptography.dropLen_poly ((offset_poly (.mul (.const 2) .var)).append u_poly) tape_poly)).congr ?_
+    (TCSlib.Cryptography.dropLen_poly ((offset_poly (.mul (.const 2) .var)).append u_poly)
+      tape_poly)).congr ?_
   intro v
   simp only [second_eq, List.length_append]
 
@@ -207,8 +210,10 @@ take the prefix and drop the suffix, then concatenate the replacement block betw
 theorem advIn_poly (W : PolyExpr) {E G : List Bool → List Bool}
     (hE : PolyTimeComputable E) (hG : PolyTimeComputable G) :
     PolyTimeComputable (advIn W E G) := by
-  refine (((TCSlib.Cryptography.takeLen_poly (offset_poly W) (honestPk_poly hG)).append (replacement_poly hE)).append
-    (TCSlib.Cryptography.dropLen_poly ((offset_poly W).append (width_poly W)) (honestPk_poly hG))).congr ?_
+  refine (((TCSlib.Cryptography.takeLen_poly (offset_poly W) (honestPk_poly hG)).append
+      (replacement_poly hE)).append
+    (TCSlib.Cryptography.dropLen_poly ((offset_poly W).append (width_poly W))
+      (honestPk_poly hG))).congr ?_
   intro v
   simp only [advIn_eq, List.length_append]
 
@@ -258,7 +263,8 @@ theorem blocked_eq (w : List Bool) : blocked w =
     decide (((message w).drop (pos (context w)).length).headD false = bit (context w)) := rfl
 /-- Testing whether a query requests the planted half is polynomial-time. -/
 theorem blocked_poly : PolyTimeComputable (fun w => [blocked w]) := by
-  have hq := polyTimeComputable_headD.comp (TCSlib.Cryptography.dropLen_poly (pos_poly.comp context_poly) message_poly)
+  have hq := polyTimeComputable_headD.comp
+    (TCSlib.Cryptography.dropLen_poly (pos_poly.comp context_poly) message_poly)
   have hb := bit_poly.comp context_poly
   refine (polyTimeComputable_pairEq.comp (hq.pairEncode hb)).congr ?_
   intro w

@@ -166,7 +166,8 @@ theorem exists_realization_machine
         (by simpa only [Nat.sub_self] using hk.2 (tableSignature T m))
       have hp : (a, false) = (a₀, false) := OracleComp.pure.inj (by
         simpa only [simulate_query, abortingImpl_apply, abortingAnswer_eq, if_neg hm,
-          hm, if_false, decide_false, Bool.false_or, OracleComp.pure_bind, ha, simulate_pure] using habort)
+          hm, if_false, decide_false, Bool.false_or, OracleComp.pure_bind, ha, simulate_pure]
+          using habort)
       have haa : a = a₀ := congrArg Prod.fst hp
       rw [simulate_query, hcall j m hm, OracleComp.pure_bind, ha, simulate_pure,
         haa]

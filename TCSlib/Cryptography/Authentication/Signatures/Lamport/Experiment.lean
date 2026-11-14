@@ -186,7 +186,8 @@ indicator over independent challenge, key-table and forger samples. -/
 theorem redProbability_eq (p : Fin n × Bool) : redProbability g adv p =
     ProbComp.expect (ProbComp.sample (Fin n → Bool)) (fun x =>
       ProbComp.expect (ProbComp.sample (Table n)) fun T =>
-        ProbComp.expect (ProbComp.sample ρ) fun r => if RedSuccess g adv (g x) T r p then 1 else 0) :=
+        ProbComp.expect (ProbComp.sample ρ) fun r =>
+          if RedSuccess g adv (g x) T r p then 1 else 0) :=
   rfl
 
 /-- A uniform position-bit planted reduction succeeds with probability at least the honest
