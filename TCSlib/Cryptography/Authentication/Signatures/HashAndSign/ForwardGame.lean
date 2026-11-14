@@ -282,18 +282,16 @@ theorem forgeGame_eq_fixed (S : SignatureScheme) (C : NUPPT) (n : ℕ) :
   simpa only [S.signImpl_eq, originalSuccess_iff, origFixedSign_eq,
     ProbComp.prob_eq_expect] using hraw
 
-/-- Normalizing the declared handler output width identifies its transported output
-with the forwarded output. -/
-theorem handlerOutput_forwardOutput (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+/-- The transported handler output and the forwarded output have the same bit list. -/
+theorem ofFn_handlerOutput (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
     (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
-    handlerOutput H S n i a = forwardOutput H S n i a := by
-  funext j
+    List.ofFn (handlerOutput H S n i a) = List.ofFn (forwardOutput H S n i a) := by
   rw [handlerOutput_eq]
-  exact congrArg (forwardOutput H S n i a)
-    (Fin.ext (Fin.coe_cast (HashSignForward.handler_output_width H S n) j))
+  exact (List.ofFn_congr (HashSignForward.handler_output_width H S n).symm
+    (forwardOutput H S n i a)).symm
 
-/-- With all tapes fixed, the original forgery event of the forwarding reduction has
-the common transcript's forwarding-success probability.
+/-- With all tapes fixed, reading the forwarding reduction's output list at the original
+game's width gives the common transcript's forwarding-success probability.
 
 **Proof sketch.** The deterministic coupling gives the same adversary output and a log
 whose queries are precisely the inner query hashes. The output-component and event
@@ -306,18 +304,20 @@ theorem forward_prob_transcript (H : CRH) (S : SignatureScheme) (n : ℕ) (pk sk
       (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool))
     (hc : c.CostBoundedBy (fun _ => 1) 1) :
     ProbComp.prob
-      (simulate (origFixedSign S n sk rs).withLog
+      ((simulate (origFixedSign S n sk rs).withLog
         ((simulate ((HashSignForward.handler H S).impl n pk ω) c
           ((HashSignForward.handler H S).init n)).bind
             (fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1))
-        ((), [])) (OriginalSuccess S n pk) =
+        ((), [])).bind (fun res =>
+          .pure (padFin (S.msgLen.eval n + S.sigLen.eval n) (List.ofFn res.1), res.2)))
+      (OriginalSuccess S n pk) =
       ProbComp.prob
         (simulate (fixedSign H S n sk (H.gen.runAtL n [] (List.ofFn ω)) rs).withLog c ((), []))
         (ForwardSuccess H S n pk (H.gen.runAtL n [] (List.ofFn ω))) := by
   classical
   obtain ⟨a, L, hinner, houter⟩ := forward_transcript H S n pk sk ω rs c hc
-  rw [houter, hinner, handlerOutput_forwardOutput,
-    ProbComp.prob_pure, ProbComp.prob_pure]
+  rw [houter, hinner, OracleComp.pure_bind, ProbComp.prob_pure, ofFn_handlerOutput,
+    padFin_ofFn, ProbComp.prob_pure]
   exact if_congr (originalSuccess_forwardOutput H S n pk _ a L) rfl rfl
 
 /-- A one-query machine against the original scheme realizes exactly the common
@@ -340,6 +340,7 @@ theorem exists_forwardGame (H : CRH) (S : SignatureScheme) (A : NUPPT) :
                     (pairSndD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri) rs rA)
                   (ForwardSuccess H S n (pairFstD (S.gen.runAt n [] rg))
                     (H.gen.runAt n [] ri)))))) := by
+  classical
   obtain ⟨C, hC⟩ := HashSignForward.exists_forwardMachine H S A
   refine ⟨C, fun n => ?_⟩
   obtain ⟨φ, hφ⟩ := hC n
@@ -358,9 +359,26 @@ theorem exists_forwardGame (H : CRH) (S : SignatureScheme) (A : NUPPT) :
   funext rA
   apply congrArg (ProbComp.expect (ProbComp.sample (S.sign.Coins n)))
   funext rs
+  have hout := expect_toCompOn_outLen
+    (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog C n 1
+    (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)) ((), [])
+    (HashSignForward.handler_output_width H S n).symm
+    (fun res => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg))
+      (padFin (S.msgLen.eval n + S.sigLen.eval n) res.1, res.2) then 1 else 0)
+  simp only [padFin_ofFn] at hout
+  rw [ProbComp.prob_eq_expect, hout]
   rw [← hφ _ (e ri) rA]
-  rw [forward_prob_transcript H S n _ _ (e ri) rs _
-    (A.toCompOn_costBoundedBy _ n 1 _ rA)]
+  let c := A.toCompOn
+    (bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
+      (H.domLen.eval n + S.sigLen.eval n)) n 1
+    ((HashSignForward.handler H S).advInput n (pairFstD (S.gen.runAt n [] rg)) (e ri)) rA
+  have hforward := forward_prob_transcript H S n (pairFstD (S.gen.runAt n [] rg))
+    (pairSndD (S.gen.runAt n [] rg)) (e ri) rs c
+    (A.toCompOn_costBoundedBy _ n 1 _ rA)
+  rw [ProbComp.prob_bind] at hforward
+  simp only [ProbComp.prob_pure, padFin_ofFn] at hforward
+  rw [hforward]
+  dsimp only [c]
   rw [HashSignForward.handler_advInput, he, ← NUPPT.runAt_eq, transcript_eq]
 
 end TCSlib.Cryptography.Authentication.HashSignFill

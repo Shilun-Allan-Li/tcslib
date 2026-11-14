@@ -136,9 +136,8 @@ theorem polyTimeComputable_collisionHash (H : CRH) (S : SignatureScheme) :
     (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairFstD)
   let hX := polyTimeComputable_pairSndD.comp'
     (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD)
-  let hE := H.eval_poly.comp' (hU.pairEncode (hI.pairEncode hX))
-  ((polyTimeComputable_padStr S.msgLen).comp' (hU.pairEncode hE)).congr (fun _ =>
-    congrArg₂ (padStr S.msgLen) (pairFstD_pairEncode _ _) (pairSndD_pairEncode _ _))
+  (HashSignForward.polyTimeComputable_hashWord H S hU hI hX).congr (fun w =>
+    (HashSignForward.hashWord_eq H S _ _ _).trans (collisionHash_eq H S w).symm)
 
 /-- A collision-finder round signs the query hash using the remaining seed and records
 the query as its new state [PS10, Theorem 144.1]. -/
