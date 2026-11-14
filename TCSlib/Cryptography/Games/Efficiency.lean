@@ -753,6 +753,9 @@ theorem rL_finInput (n : ℕ) (z ω s a L : List Bool) : rL (finInput n z ω s a
 `finA w = pairFstD (pairSndD (pairSndD w))`. -/
 def finA (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD w))
 
+/-- `finA w = pairFstD (pairSndD (pairSndD w))`. -/
+theorem finA_eq (w : List Bool) : finA w = pairFstD (pairSndD (pairSndD w)) := rfl
+
 /-- `finA (finInput n z ω s a L) = a`. -/
 theorem finA_finInput (n : ℕ) (z ω s a L : List Bool) : finA (finInput n z ω s a L) = a := by
   simp only [finA, finInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
