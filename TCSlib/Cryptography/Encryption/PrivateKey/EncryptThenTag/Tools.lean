@@ -33,7 +33,8 @@ candidates for promotion to the `Games` layer.
 
 ## Main results
 
-* `ETTGame.expect_simulate_abs`, `ETTGame.expect_simulate_tapeImpl`, `ETTGame.expect_sample_ovr`.
+* `ETTGame.expect_simulate_abs`, `ETTGame.expect_simulate_abs_inv`,
+  `ETTGame.expect_simulate_tapeImpl`, `ETTGame.expect_sample_ovr`.
 
 ## References
 
@@ -77,6 +78,29 @@ theorem expect_simulate_abs (impl₁ : QueryImpl spec σ₁ unifSpec)
     rw [simulate_query, simulate_query, expect_bind, expect_bind, h i x s (by omega)]
     refine expect_congr_of_allOutputs (hcnt i x s (by omega)) fun p hp => ?_
     exact ih p.1 (m - 1) (hk p.1) p.2 (by omega)
+
+/-- **Simulation through a state abstraction, in law, along runs with a query budget and an
+invariant:** as `expect_simulate_abs`, with the hypotheses only on the states satisfying an
+invariant `P` that every call of `impl₂` keeps.
+
+**Proof sketch.** As `expect_simulate_abs`, carrying `P` through the possible outcomes. -/
+theorem expect_simulate_abs_inv (impl₁ : QueryImpl spec σ₁ unifSpec)
+    (impl₂ : QueryImpl spec σ₂ unifSpec) (f : σ₂ → σ₁) (P : σ₂ → Prop) (cnt : σ₂ → ℕ) (κ : ℕ)
+    (h : ∀ i x s, P s → cnt s < κ → ∀ g : spec.rng i × σ₁ → ℝ,
+      expect (impl₁ i x (f s)) g = expect (impl₂ i x s) fun p => g (p.1, f p.2))
+    (hcnt : ∀ i x s, P s → cnt s < κ →
+      (impl₂ i x s).AllOutputs fun p => P p.2 ∧ cnt p.2 ≤ cnt s + 1)
+    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ₂) (hP : P s)
+    (hs : cnt s + m ≤ κ) (G : α × σ₁ → ℝ) :
+    expect (simulate impl₁ c (f s)) G = expect (simulate impl₂ c s) fun p => G (p.1, f p.2) := by
+  induction c generalizing m s with
+  | pure a => simp only [simulate_pure, expect_pure]
+  | query i x k ih =>
+    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+    have hm1 : 1 ≤ m := hm
+    rw [simulate_query, simulate_query, expect_bind, expect_bind, h i x s hP (by omega)]
+    refine expect_congr_of_allOutputs (hcnt i x s hP (by omega)) fun p hp => ?_
+    exact ih p.1 (m - 1) (hk p.1) p.2 hp.1 (by omega)
 
 end Abs
 
