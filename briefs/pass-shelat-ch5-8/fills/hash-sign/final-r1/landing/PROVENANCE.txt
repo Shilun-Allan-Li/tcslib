@@ -1,0 +1,81 @@
+hash-sign (Theorem 144.1, Authentication.hashAndSign_oneTimeSecure) maintainer delivery review r1, 2026-11-14 UTC
+Method: the ext-nosrc / cca2-ett reviews; tools copied from cca2-ett-r1/tools to tools/ (changes listed under tools).
+brief: briefs/pass-shelat-ch5-8/fills/hash-sign/issued-r1/brief.md, SHA-256 d4ddbdb335cf9df5382c1141769c730277301ce2618e017ad17f9ff94eaed211
+  (logs/brief.md); issue package SHA256SUMS 7/7 OK (logs/issue-package-check.txt); SOURCE-SHA256SUMS 150/150 OK at the issue base
+  (logs/source-sums-check.txt); base-sorries logs/base-sorries.txt (22 in 12 modules); order 150, roots 82 (logs/order.txt, roots.txt).
+  Owned file confirmed: TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean; helpers permitted under HashAndSign/.
+  Issue base eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9.
+delivery: exchange/pass-shelat-ch5-8 90e4b3c833e5e7fed134941e016724531ad64f1f ("fill hash-sign: final"; checkpoints 07d53012f, 053edd270
+  touch only inbox/fills/hash-sign; no later commit touches that path), git archive of inbox/fills/hash-sign into a scratch directory
+  (removed). Payload: PAYLOAD-SHA256SUMS, REPORT.md (logs/worker-REPORT.md), evidence/ (1210 files + SHA256SUMS), patches/ (4), src/ (10);
+  inventory logs/payload-inventory.sha256 (1227 files).
+integrity: PAYLOAD-SHA256SUMS 1226/1226 OK and evidence/SHA256SUMS 1210/1210 OK, delivered paths exactly the manifests' (each excludes
+  only itself) (logs/payload-check.txt, evidence-check.txt; tools/mancheck.py). git am of the 4 patches at the base: rc 0, tree
+  20aa8ef6247e3f0f7e58a6c4e096873219c9017c (= REPORT); the 10 changed paths byte-identical to src/, src/ holds nothing else
+  (logs/git-am-integrity.log). Worker commit hashes not reproduced (committer metadata absent; findings I1).
+scope: changed paths = owned HashAndSign.lean + 8 new helpers under HashAndSign/ + the frozen facade Authentication.lean. Facade diff vs
+  base = exactly 8 added import lines, equal to the worker's approved patch (evidence/escalations/proposed-authentication-imports.patch,
+  logs/worker-proposed-authentication-imports.patch; approval logs/worker-session-overrides.md; Seyoon's confirmation: decision log
+  2026-11-14 "Rulings confirmed"); no other facade line changed (logs/facade-diff.txt, landing/lefacade-check.txt). Lamport.lean and
+  Games/Efficiency.lean untouched.
+landing: branch land/pass-shelat-hash-sign (local only, no upstream), worktree $SP/wt-land-hash-sign (sparse, briefs/ excluded).
+  r1: git am at eff2dcd0 (authors kept: Codex <codex@openai.com>), rebased onto origin tip bc0cdd7c (records + #303), rc 0, no conflict,
+  content = am tree (landing/landing.log); LE-width 6a8ff9e2, LE-facade 5dad94be. r2 (coordinator note: #305 merged at 8d0db401):
+  rebased onto origin tip dee0de32ee33d7188afe97bdc3089fac68412057; since bc0cdd7c only scripts/campaign_style_lint.py and records
+  changed; Lean paths changed eff2dcd0..dee0de32 are #303's 4 files only; rc 0, no conflict, TCSlib/ identical to 5dad94be
+  (landing/rebase-r2.log). Head 6056f3ed7774d308846f7293e2c6ed992ce9d4f8, tree 683ac79ce6e8f7c8a00321293a81c344a1fa05b1; commits
+  landing/commits.txt, series landing/series/0001-0006, changed paths landing/changed-paths-vs-origin.txt (10). Committer Claude.
+LE-width (189f1c21): tools/lewidth_hs.py, one exact replacement (the 101-character statement line of the new expect_hashAndSign_sign);
+  tools/wscheck.py TOKENS-IDENTICAL, max width 100 (landing/lewidth-wscheck.txt).
+LE-facade (6056f3ed): tools/lefacade_hs.py swaps OneQuerySampling/OneQuery so the 8 helper imports follow their parent in alphabetical
+  order like Randomness.lean and Encryption/PrivateKey.lean; line multiset unchanged, facade vs base still exactly the 8 approved
+  imports (landing/lefacade-check.txt, lefacade.diff).
+LE-doc: not applied: 109 formula docstrings + 1 proof sketch = 110 > 40 (statements/ledoc-count.txt; findings M1).
+olean tree $SP/dl-oleans: verified a full base tree first (tree/tree-check-pre.txt: 1199 modules at the base source and the records'
+  object hashes, tree/base-records.jsonl = cca2-ett-r1 tree/all-results-restored.jsonl; tree/snapshot-pre.txt (1230 files) byte-equal to
+  cca2-ett-r1 tree/snapshot-post.txt, copied as tree/snapshot-ref-cca2-post.txt). dl-oleans-2 not touched.
+build: build/ (pre-LE head 7eef0cd8: 8 helpers, HashAndSign, Authentication, base-delta Rejection, Sampler, Extraction, Randomness,
+  root TCSlib; 15/15 rc 0, 0 errors, 0 sorry; warnings only the inherited Rejection 10 and Extraction 2 linter warnings);
+  edit-build/ (after LE: HashAndSign, Authentication, TCSlib, 3/3 rc 0, 0 errors). order/head-vs-base/ (tools/downorder.py:
+  changed 14 incl. #303's 4, downstream 15; audits/*/Checks import none of them), order/head-build-queue.txt.
+  Final head check tree/tree-check-head.txt at 6056f3ed: 1209 modules (order/headfull-order.txt, roots TCSlib + both audits Checks)
+  + 31 PFR, every module's last record rc 0 at the head source and olean hash, no extra olean (head probe oleans deleted first,
+  logs/head-probe-oleans-deleted.txt): RESULT OK.
+statements (vs eff2dcd0): statements/decls2.tsv and head-final/decls2-vs-base.tsv: 110 ADDED, 0 CHANGED, 0 REMOVED.
+  head-final/header-bytes.txt: the 32 pre-existing declarations of HashAndSign.lean (target included) byte-identical headers
+  (6 MISSING = new). touched (head-final/touched.tsv): target CHANGED (body and sketch), 6 new in the owned file, 104 in new files,
+  31 UNCHANGED; no private declarations. docaudit statements/docaudit.tsv (1 OK, 110 NO-FORMULA), sketchaudit statements/sketchaudit.txt
+  (11 theorems >= 15 lines, 1 without sketch). unused new declarations statements/unused-new-decls.txt (7; findings M2).
+axioms: probe-sources/head/DlProbe/Census_head.lean (tools/mkcensus_hs.py) -> probe-runs/: hashAndSign_oneTimeSecure [propext,
+  Classical.choice, Quot.sound]; lamport_oneTimeSecure and exists_oneTimeSecure_of_crh_owf with sorryAx (as at base). 176 stored
+  constants (50 HashAndSign, 126 helpers, 0 facade) use subsets of the three axioms except exists_oneTimeSecure_of_crh_owf; no simp, no
+  instance; abbrevs only the pre-existing hsGen, hsSign (logs/census-summary.txt, statements/census-head.tsv). Base Census_base
+  (base-probe-runs/, 40 constants, target with sorryAx); logs/census-base-vs-head.txt: all 40 present at head with identical kind, type
+  hash and flags; only the target's axioms changed (sorryAx removed).
+admissions: logs/sorry-census.txt (tools/sorrycensus.py on logs/records-base-plus-head.jsonl): issued modules 22 -> 21, only HashAndSign
+  differs (target removed); modules outside the issued order unchanged in source.
+Rule 10: collector probe-sources/head/DlProbe/CollectHead.lean (tools/mkcollect.py) -> probe-runs/; seals tools/mkseals_ab.py (strict)
+  -> seals/{A,B} and tools/mkseals_coe.py (FinDist CoeFun as notation, canonical) -> seals-coe/{A,B} (logs/mkseals-*.log; request counts
+  equal the worker's), 40 probes in seal-runs/ (generated at 5dad94be; the r2 rebase left every Lean source byte-identical). Base
+  (owned file and facade): base worktree at eff2dcd0 (removed), CollectBase -> base-probe-runs/, base-seals{,-coe}/{A,B} ->
+  base-seal-runs/ (8 probes, run on the restored base tree; requests 1546/1547 and 2035/2036 as the worker's). Summaries
+  logs/seal-{head,base}{,-coe}-{A,B}.tsv (tools/sealsum.py; base labels' "Base" prefix stripped with sed), logs/seal-table.txt: all 10
+  files pass A and B, strict and coe, at head; owned file and facade pass at base; 0 failing declarations; strict = coe.
+  controls: tools/mkctl_hs.py (rows padFin, PolyExpr.eval, padStr, splitBits, atParam, CRH.hash, HashSignForward.hashWord,
+  HashSignFill.hashedReply, OracleComp.CostBoundedBy) on the coe records -> controls/ (20 probes, 57 sealed negatives), control-runs/,
+  logs/ctlcheck.log + ctlcheck.json: ALL_OK (each sealed negative fails exactly once, readers pass, unsealed rc 0).
+  scan: tools/scan1.py/scan2.py -> scan/items-head.json, explicit-head.json (406 items, 0 foreign; logs/scan2-head.log,
+  logs/scan-unresolved.txt); base scan/explicit-base.json (57 items, 0 foreign; logs/scan2-base.log).
+lint (brief's command, TCSlib/Cryptography --check8b): old lint (pre-#305): logs/lint-crypto-{base,land}.log 216 FAIL / 102 WARN at base
+  and at the r1 landing head, FAIL/WARN line sets identical (logs/lint-crypto-diff.txt: only the file count 301 -> 311). New lint
+  (#305, Update 2): logs/lint-crypto-tip-r2.log at records tip dee0de32 and logs/lint-crypto-head-r2.log at head 6056f3ed: 92 FAIL /
+  102 WARN both, FAIL/WARN line sets identical (logs/lint-crypto-diff-r2.txt empty). The 8 helpers raise no facade FAIL (imported).
+other: logs/sizes-widths.txt (pre-LE), logs/module-docs.txt, logs/duplication-grep.txt, logs/findings.txt (findings table),
+  logs/probe-copies-check.txt (the 74 probe files equal their record copies).
+restore: deleted the 8 helper oleans and Rejection/Sampler oleans (logs/restore-deleted.txt), rebuilt base HashAndSign, Authentication,
+  Extraction, Randomness, TCSlib from the base worktree (restore-build/, object hashes = base records), ran the base probes, deleted all
+  DlProbe oleans (logs/base-probe-oleans-deleted.txt); tree/tree-check-post.txt RESULT OK and tree/snapshot-post.txt byte-identical to
+  tree/snapshot-pre.txt and to cca2-ett-r1's snapshot-post (every file, PFR included).
+tools: copied from cca2-ett-r1/tools. New: mancheck.py (manifest check), sizewidth.py, mkcensus_hs.py (endpoints: target, Lamport,
+  existential form; Implications.PublicKey import dropped), mkctl_hs.py (rows above; A/B letter parsing for this review's labels),
+  lewidth_hs.py, lefacade_hs.py. Others unmodified.

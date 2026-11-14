@@ -1,0 +1,20 @@
+stored constants 176
+by home {'ForwardHandler': 36, 'ForwardGame': 29, 'HashAndSign': 50, 'CollisionHandler': 36, 'OneQuery': 3, 'FixedGame': 14, 'CodecReaders': 4, 'CollisionGame': 3, 'OneQuerySampling': 1}
+by kind {'theorem': 141, 'def': 35}
+internal/aux 12 private 0
+axiom sets {'[Classical.choice, Quot.sound, propext]': 170, '[]': 1, '[Quot.sound, propext]': 3, '[Classical.choice, Quot.sound, propext, sorryAx]': 1, '[propext]': 1}
+sorryAx ['TCSlib.Cryptography.Authentication.exists_oneTimeSecure_of_crh_owf']
+simp [] instance []
+reducible [('TCSlib.Cryptography.Authentication.hsSign', 'abbrev'), ('TCSlib.Cryptography.Authentication.hsGen', 'abbrev')]
+abbrev ['TCSlib.Cryptography.Authentication.hsSign', 'TCSlib.Cryptography.Authentication.hsGen']
+'TCSlib.Cryptography.Authentication.hashAndSign_oneTimeSecure' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Authentication.lamport_oneTimeSecure' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Authentication.exists_oneTimeSecure_of_crh_owf' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]

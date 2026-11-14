@@ -1,0 +1,47 @@
+hash-sign r1 review findings (maintainer delivery review, 2026-11-14 UTC)
+Verdict: ACCEPT WITH LANDING EDITS (LE-width and LE-facade applied; LE-doc scope 110 docstrings > 40, not applied, reported).
+
+M1 (minor, policy §3 docstrings): 109 new public declarations have docstrings without a stated formula (statements/docaudit.tsv;
+   the 110th NO-FORMULA row is the target's frozen base first line), and one proof of >= 15 lines has no Proof sketch
+   (HashSignFill.polyTimeComputable_collisionRun, CollisionHandler.lean:163, 16 lines; statements/sketchaudit.txt). No module-docstring
+   section is missing (logs/module-docs.txt). Disposition: maintainer LE-doc pass in a follow-up landing edit (ext-nosrc/nm-sim
+   precedent, docstrings only) or a worker docstring revision; not blocking the proof.
+M2 (minor, dead code): 7 new declarations are referenced nowhere in TCSlib/audits code (statements/unused-new-decls.txt):
+   HashSignFill.sampledHashSign, sampledHashSign_eq, sampledHashSign_apply, expect_sampledHashSign_eq_transcript (FixedGame; the main
+   proof uses expect_hashAndSign_sign instead), HashSignFill.collisionAdv_seedIn (CollisionHandler), HashSignFill.forward_fresh
+   (ForwardGame), HashSignForward.hashWord_eq_hash (ForwardHandler). Disposition: drop in a worker revision or accept as published
+   readers (FixedGame's module docstring lists the sampledHashSign cluster as a main result). Not a landing edit (code change).
+M3 (minor, duplication; ledger candidates, logs/duplication-grep.txt):
+   a. HashSignForward.roundWord / handler (ForwardHandler) restates the private Games/Forwarding fwdRun / fwdHandler pattern with a
+      query map (hash before forwarding) and distinct inner/outer widths, which fwdHandler (same din/dout both sides, identity query)
+      cannot express; disclosed by the worker as "overlap". It reuses the published InteractiveHandler.impl_of_query and
+      finish_of_ret_padFin. Ledger: generalize fwdHandler to a query-transforming forwarder (fwdRun with q : List Bool -> List Bool).
+   b. HashSignFill.splitBits_pad_concat is the splitBits form of Games.padFin_append_split (BitCodec.lean:156) with
+      splitBits_fst/snd and padFin_ofFn; splitBits_append is new. Worker requests promotion to Authentication/Encoding.
+   c. HashSignFill.expect_simulate_sample_once (one-query eager sampling) is a near relative of Games.expect_simulate_eager
+      (Hopping.lean:494; used-state hypotheses instead of the unit query budget); not a restatement. Worker requests promotion to
+      Games/Hopping, beside it.
+   d. Cross-fill with the not-yet-landed lamport final (exchange 5a50cdc0): lamport's private lamport_codec_ext = hash-sign's public
+      Games.MachineCodec.ext_of_fields; lamport_forgerCodec is an instance of SignatureScheme.forgerCodec_eq_bitCodec; lamport's
+      public exists_pure_of_cost_zero (Lamport/Planted.lean) has the same statement as HashSignFill.eq_pure_of_cost_zero.
+      Disposition: hash-sign lands first; the lamport review should reuse these (or both promote to Games/Machines, Games/OracleComp
+      and Signatures/Defs as the worker requests).
+   e. HashSignForward.hashWord / HashSignFill.queryHash vs the main file's hsHashList (pads to rangeLen instead of msgLen;
+      hsHashList_eq_hashWord relates them under hlen); disclosed; a helper importing the main file would be a cycle.
+O1 (observation, Rule 10 boundary): Games.MachineCodec.ext_of_fields (CodecReaders) destructures the foreign structure MachineCodec
+   with `cases` (constructor/recursor; no definition, projection or matcher of Games/Machines is read, so the def-seals cannot see it).
+   one_query_cases / eq_pure_of_cost_zero case-split the foreign inductive OracleComp, as Games/Simulate, OracleFromPRF/Games and
+   Hopping already do. Disposition: accept; promote ext_of_fields to Games/Machines as requested (as a plain theorem; no @[ext]/@[simp]
+   without a gate).
+I1 (info): worker commit hashes (6bb52343, 15f43fd7, 8e423493, 2e9d455a) are not reproduced by git am with committer = author and
+   committer dates = author dates (7f2235f3 ... d86836df); the committer metadata is not in the delivery. The tree 20aa8ef6 named in
+   REPORT.md is reproduced exactly (logs/git-am-integrity.log). Same situation as ext-nosrc.
+I2 (info): explicit-unfold scan 406 items (= worker), 0 foreign; classification THEOREM 341 / OWNED_DEFINITION 6 /
+   LOCAL_OR_UNRESOLVED 59 vs the worker's 361 / 6 / 39: the 20 dot-notation and `open InteractiveHandler` aliases
+   (S.forgeGame_eq, H.gen_uniform.runAtL_eq, rL_input, finA_finInput, e.apply_symm_apply, ...) are left unresolved by the archived
+   scanner; every one is a theorem; the rest are local hypotheses/lets (c, payoff, win, h...) (logs/scan-unresolved.txt).
+I3 (info): the frozen facade's pre-existing 101-character line (head line 52 = base line 44) is left unchanged (exception allows only
+   the imports). All other lines of the 10 files are <= 100 characters after LE-width.
+I4 (info): lamport_oneTimeSecure stays admitted (sorryAx); hashAndSign_oneTimeSecure prints [propext, Classical.choice, Quot.sound];
+   the only stored constant of the 10 files with sorryAx is the pre-existing exists_oneTimeSecure_of_crh_owf (through Lamport, as at
+   base) (logs/census-summary.txt).

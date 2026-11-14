@@ -1,0 +1,135 @@
+# duplication greps at the landing head (6056f3ed7774d308846f7293e2c6ed992ce9d4f8); TCSlib/ excluding the hash-sign helper directory unless stated
+
+## fwdRun / fwdHandler (Games/Forwarding) vs HashSignForward.roundWord/handler
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:296:open NMCCA2 (simulate_fwdHandler_impl)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:334:/-- **The handler forwards** (`simulate_fwdHandler_impl`). -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:340:  simulate_fwdHandler_impl (snmDin S pl) (snmDout S hl) (.const 0) _ polyTimeComputable_copyAdvIn
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:186:/-- **The handler forwards** (`simulate_fwdHandler_impl`): `simulate (H.impl n z ω) c s =
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:193:  simulate_fwdHandler_impl (acDin S) (acDout S) D.coins _ polyTimeComputable_decAdvIn (.const 1) ℓ
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:18:answers are the outer oracle's (`Games.fwdHandler_impl`), so simulating it is running the
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:19:adversary against the outer oracles (`simulate_fwdHandler_impl`).
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:34:* `NMCCA2.simulate_fwdHandler_impl`: simulating the forwarding handler.
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:61:**Proof sketch.** Induction on `c`, with `Games.fwdHandler_impl` at each query. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:62:theorem simulate_fwdHandler_impl (n : ℕ) (z : List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:73:    rw [simulate_query, fwdHandler_impl, OracleComp.query_bind, OracleComp.query_bind]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:153:/-- **The handler forwards** (`simulate_fwdHandler_impl`): `simulate (H.impl n z ω) c s =
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Encrypt.lean:160:  simulate_fwdHandler_impl (acDin S) (acDout S) (S.enc.coins.add S.enc.coins) _
+TCSlib/Cryptography/Games/Forwarding.lean:24:  the outer oracle's (`fwdHandler_impl`). Its round reads the round input through the published
+TCSlib/Cryptography/Games/Forwarding.lean:37:* `Games.fwdHandler_impl`: the forwarding handler forwards.
+TCSlib/Cryptography/Games/Forwarding.lean:112:private def fwdRun (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Games/Forwarding.lean:118:private theorem polyTimeComputable_fwdRun : PolyTimeComputable fwdRun :=
+TCSlib/Cryptography/Games/Forwarding.lean:130:def fwdHandler (din dout : Fin k → PolyExpr) (seedLen : PolyExpr)
+TCSlib/Cryptography/Games/Forwarding.lean:138:  run := fwdRun
+TCSlib/Cryptography/Games/Forwarding.lean:139:  poly := polyTimeComputable_fwdRun
+TCSlib/Cryptography/Games/Forwarding.lean:164:theorem fwdHandler_impl (n : ℕ) (z : List Bool)
+TCSlib/Cryptography/Games/Forwarding.lean:173:  · show fwdRun _ = _
+TCSlib/Cryptography/Games/Forwarding.lean:174:    rw [fwdRun, InteractiveHandler.rL_input, InteractiveHandler.rI_input,
+TCSlib/Cryptography/Games/Forwarding.lean:176:  · show fwdRun _ = _
+TCSlib/Cryptography/Games/Forwarding.lean:177:    rw [fwdRun, InteractiveHandler.rL_input, InteractiveHandler.rAns_input,
+
+## InteractiveHandler call/finish readers reused by ForwardHandler
+TCSlib/Cryptography/Games/Efficiency.lean:680:theorem impl_of_query (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
+TCSlib/Cryptography/Games/Forwarding.lean:79:theorem impl_of_query_padFin (i : Fin k) (x : Fin ((din i).eval n) → Bool)
+TCSlib/Cryptography/Games/Forwarding.lean:96:theorem finish_of_ret_padFin (s : Fin (H.stateLen.eval n) → Bool) {d : ℕ} (a : Fin d → Bool)
+
+## other query-transforming forwarders (hash/map then forward)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean:166:  perCall := .const 1
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:297:  perCall := .const 1
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:334:  perCall := .const 1
+TCSlib/Cryptography/Games/Forwarding.lean:112:private def fwdRun (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Games/Forwarding.lean:136:  perCall := .const 1
+
+## MachineCodec extensionality
+TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean:1200:      cases hd
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:155:    cases hd
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:291:        rw [hr, pairDecode_pairEncode] at hd; cases hd
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:369:        rw [hr, pairDecode_pairEncode] at hd; cases hd
+
+## forgerCodec = bitCodec
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:525:    SignatureScheme.forgerCodec_eq_bitCodec, hashAndSign_msgLen, hashAndSign_sigLen]
+
+## splitBits of Fin.append / padded concatenation
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean:23:`Games.padFin_append_split`; the seeds made of coins are `EnsembleLemmas.seedEquiv` and
+TCSlib/Cryptography/Games/BitCodec.lean:53:* `Games.padFin_append_split`: the two parts of a padded concatenation.
+TCSlib/Cryptography/Games/BitCodec.lean:156:theorem padFin_append_split {d₁ d₂ : ℕ} (u v : List Bool) (hu : u.length = d₁) :
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:54:theorem ofFn_take_drop_add {a b : ℕ} (w : Fin (a + b) → Bool) :
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:545:the adversary's log (`ofFn_take_drop_add`, `encodeLog_append_single`) and `K` applies, after the
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:588:        (ofFn_take_drop_add w).1, (ofFn_take_drop_add w).2, encodeLog_append_single,
+TCSlib/Cryptography/Hashing/CollisionResistant.lean:116:    let xx := splitBits (padFin (H.domLen.eval n + H.domLen.eval n) (A.runAt n i r))
+TCSlib/Cryptography/Hashing/CollisionResistant.lean:127:        let xx := splitBits (padFin (H.domLen.eval n + H.domLen.eval n) (A.runAt n i r))
+
+## zero-/one-budget computation normal forms
+
+## sample-once / pre-sampled answer tape lemmas
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:422:  have hraw := HashSignFill.expect_simulate_sample_once
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:252:reduction; evaluation is simulation with `fOuter f` (`simulate_ofComp_pure`), which composes with
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:310:      simulate_ofComp_pure _ _ _
+TCSlib/Cryptography/Games/Bridges/QueryTree.lean:42:* `Games.simulate_ofComp_pure`: simulating with a deterministic stateless implementation is
+TCSlib/Cryptography/Games/Bridges/QueryTree.lean:83:theorem simulate_ofComp_pure {ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+
+## CRH collision game readers
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:598:  obtain ⟨εB, hεB, hboundB⟩ := (CRH.collisionResistant_iff H).mp hH B
+TCSlib/Cryptography/Hashing/CollisionResistant.lean:30:`CRH.hash_eq` and `CRH.collisionGame_eq` expose the computations. The predicate
+TCSlib/Cryptography/Hashing/CollisionResistant.lean:122:theorem collisionGame_eq (A : NUPPT) (n : ℕ) :
+TCSlib/Cryptography/Hashing/CollisionResistant.lean:138:theorem collisionResistant_iff :
+
+## one-time-secure readers
+TCSlib/Cryptography/Authentication/MAC/Defs.lean:31:`MAC.forgeGame_eq` exposes the experiment. `MAC.secure_iff` states its security bound.
+TCSlib/Cryptography/Authentication/MAC/Defs.lean:154:theorem forgeGame_eq (A : NUPPT) (b n : ℕ) :
+TCSlib/Cryptography/Authentication/Signatures/Defs.lean:173:theorem forgeGame_eq (A : NUPPT) (b n : ℕ) :
+TCSlib/Cryptography/Authentication/Signatures/Defs.lean:203:theorem oneTimeSecure_iff :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:514:  rw [SignatureScheme.forgeGame_eq, accept_eq, ProbComp.prob_eq_expect]
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:594:  apply (SignatureScheme.oneTimeSecure_iff _).mpr
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:599:  obtain ⟨εC, hεC, hboundC⟩ := (SignatureScheme.oneTimeSecure_iff S).mp hS C
+
+## hash/pad helpers (hashWord, queryHash vs hsHashList / CRH.hash)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:96:def hsHashList (H : CRH) (u i m : List Bool) : List Bool :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:100:theorem hsHashList_eq (H : CRH) (u i m : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:362:          ((ofFn_padFin_eq_padStr H.rangeLen (List.replicate n true) w).trans
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:395:theorem hsHashList_eq_hashWord (H : CRH) (S : SignatureScheme)
+TCSlib/Cryptography/Candidates/Factoring.lean:1104:samplePrimeCoins` maps `⟨u, r⟩` to `List.ofFn (padFin (2n² · n) r)` (`ofFn_padFin_eq_padStr`,
+TCSlib/Cryptography/Candidates/Factoring.lean:1140:    rw [← ofFn_padFin_eq_padStr, eval_samplePrimeCoins]
+TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean:20:(`ofFn_padFin_eq_padStr`).
+TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean:37:* `TCSlib.Cryptography.ofFn_padFin_eq_take`, `TCSlib.Cryptography.ofFn_padFin_eq_padStr`,
+TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean:73:(`ofFn_padFin_eq_padStr`). -/
+TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean:109:theorem ofFn_padFin_eq_padStr (p : PolyExpr) (u w : List Bool) :
+TCSlib/Cryptography/Asymptotic/Collections.lean:811:`ofFn_splitCoins_fst/snd` and `ofFn_padFin_eq_padStr`. -/
+TCSlib/Cryptography/Asymptotic/Collections.lean:826:  rw [hx, owfRawStr_eq, ← ofFn_padFin_eq_padStr, List.length_replicate]
+TCSlib/Cryptography/Asymptotic/Collections.lean:925:(`collInverter_runAt`, `ofFn_padFin_eq_padStr`, `ofFn_splitCoins_snd`), which decodes to an
+TCSlib/Cryptography/Asymptotic/Collections.lean:970:      rw [← ofFn_padFin_eq_padStr, List.length_replicate]
+TCSlib/Cryptography/Asymptotic/Collections.lean:1075:and `ofFn_padFin_eq_padStr`.
+TCSlib/Cryptography/Hashing/CollisionResistant.lean:79:def hash (n : ℕ) (i : List Bool) (x : Fin (H.domLen.eval n) → Bool) :
+
+## coins splitting / seed equivalences
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:518:  rw [← Bridge.expect_sample_pair]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:141:def coinsEquiv {m a b : ℕ} (h : m = a + b) : (Fin a → Bool) × (Fin b → Bool) ≃ (Fin m → Bool) :=
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:145:theorem ofFn_coinsEquiv {m a b : ℕ} (h : m = a + b) (c : (Fin a → Bool) × (Fin b → Bool)) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:162:def seedEquiv {A B : NUPPT} {L : PolyExpr} (h : L = A.coins.add B.coins) (n : ℕ) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:168:theorem seedEquiv_ofFn {A B : NUPPT} {L : PolyExpr} (h : L = A.coins.add B.coins) (n : ℕ)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:176:def seedEquivPoly {A : NUPPT} {L L₂ : PolyExpr} (h : L = A.coins.add L₂) (n : ℕ) :
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:335:  rw [← Bridge.expect_sample_pair]
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:72:theorem expect_sample_pair [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (g : α × β → ℝ) :
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:85:  rw [prob_eq_expect, prob_eq_expect, expect_sample_pair]
+TCSlib/Complexity/Randomized/PPT.lean:266:def coinsEquivPoly {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ) :
+TCSlib/Complexity/Randomized/PPT.lean:367:noncomputable def coinsEquiv_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+TCSlib/Complexity/Randomized/PPT.lean:417:noncomputable def coinsEquiv_ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+
+## BitCodec consolidation outputs referenced in the brief
+TCSlib/Cryptography/Asymptotic/Adversary.lean:169:def padFin (ℓ : ℕ) (w : List Bool) : Fin ℓ → Bool := fun i => w.getD i false
+TCSlib/Cryptography/Asymptotic/Adversary.lean:242:def blocksEquivX (q ℓ : ℕ) (X : Type*) : (Fin (q * ℓ) → X) ≃ (Fin q → Fin ℓ → X) :=
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:70:def blocksEquiv (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:83:def blocksStr {k m : ℕ} (s : Fin k → Fin m → Bool) : List Bool :=
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:214:private def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:400:def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:63:def blocksE (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Games/Efficiency.lean:484:def rAns (w : List Bool) : List Bool := pairSndD (pairSndD (pairFstD (rL w)))
+TCSlib/Cryptography/Games/Efficiency.lean:531:theorem rAns_input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x : List Bool) (j : ℕ)
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:66:def iterEmit (step emit : List Bool → List Bool) (m : ℕ) (x : List Bool) : List Bool :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:207:def blocksEquiv (m c : ℕ) : (Fin m → Fin c → Bool) ≃ (Fin (m * c) → Bool) :=
+TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:383:noncomputable def blocksD (u : List Bool) (m : ℕ) : List (SX N) :=
+TCSlib/Complexity/Randomized/RandomBits.lean:262:def blocksEquiv (n b : ℕ) : (Fin (n * b) → Bool) ≃ (Fin n → Fin (2 ^ b)) :=
+
+## cross-fill (lamport final 5a50cdc0, not landed): codec ext / forgerCodec / cost-zero
+5a50cdc0b738d955c346d2a0f81944ff1f11c94c:inbox/fills/lamport/src/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:753:private theorem lamport_codec_ext {ι α : Type} {spec : OracleSpec ι}
+5a50cdc0b738d955c346d2a0f81944ff1f11c94c:inbox/fills/lamport/src/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:765:theorem lamport_forgerCodec (n : ℕ) :
+5a50cdc0b738d955c346d2a0f81944ff1f11c94c:inbox/fills/lamport/src/TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:199:theorem exists_pure_of_cost_zero {ι α : Type} {spec : OracleSpec ι}
