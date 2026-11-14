@@ -1,0 +1,123 @@
+start: 2026-11-14T05:59:06.963250+00:00 module: TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:119:2: error: Type mismatch: After simplification, term
+  h
+ has type
+  PolyTimeComputable
+    ((fun z => padStr S.msgLen (pairFstD z) (pairSndD z)) ∘ fun x =>
+      pairEncode (u x) (H.eval (pairEncode (u x) (pairEncode (i x) (m x)))))
+but is expected to have type
+  PolyTimeComputable fun w => padStr S.msgLen (u w) (H.eval (pairEncode (u w) (pairEncode (i w) (m w))))
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:157:4: error: Application type mismatch: The argument
+  PolyTimeComputable.append
+    (polyTimeComputable_hashWord H S polyTimeComputable_rU
+      (polyTimeComputable_indexWord H polyTimeComputable_rU polyTimeComputable_rW) hm)
+    hs
+has type
+  PolyTimeComputable fun x =>
+    hashWord H S (rU x) (indexWord H (rU x) (rW x))
+        (((fun z => List.take (H.domLen.eval (pairFstD z).length) (pairSndD z)) ∘ fun x => pairEncode (rU x) (finA x))
+          x) ++
+      ((fun z => List.drop (H.domLen.eval (pairFstD z).length) (pairSndD z)) ∘ fun x => pairEncode (rU x) (finA x)) x
+but is expected to have type
+  PolyTimeComputable fun x =>
+    hashWord H S (rU x) (indexWord H (rU x) (rW x)) (List.take (H.domLen.eval (rU x).length) (finA x)) ++
+      List.drop (H.domLen.eval (rU x).length) (finA x)
+in the application
+  PolyTimeComputable.pairEncode (polyTimeComputable_const [true])
+    (PolyTimeComputable.append
+      (polyTimeComputable_hashWord H S polyTimeComputable_rU
+        (polyTimeComputable_indexWord H polyTimeComputable_rU polyTimeComputable_rW) hm)
+      hs)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:155:13: warning: This simp argument is unused:
+  Function.comp_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵,̵ ̵p̵a̵i̵r̵F̵s̵t̵D̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵,̵[̲p̲a̲i̲r̲F̲s̲t̲D̲_̲p̲a̲i̲r̲E̲n̲c̲o̲d̲e̲,̲ pairSndD_pairEncode] at hm hs
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:155:34: warning: This simp argument is unused:
+  pairFstD_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.comp_apply, pairF̵s̵t̵D̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵,̵ ̵p̵a̵i̵r̵SndD_pairEncode] at hm hs
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:155:55: warning: This simp argument is unused:
+  pairSndD_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.comp_apply, pairFstD_pairEncode,̵ ̵p̵a̵i̵r̵S̵n̵d̵D̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵] at hm hs
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:259:52: error: unsolved goals
+H : CRH
+S : SignatureScheme
+hlen : ∀ (n : ℕ), H.rangeLen.eval n = S.msgLen.eval n
+n : ℕ
+i : List Bool
+x : Fin (H.domLen.eval n) → Bool
+⊢ List.ofFn (padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn x))))) =
+    List.ofFn fun j => (H.eval (atParam n (pairEncode i (List.ofFn x)))).getD (↑j) false
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:317:72: error: unsolved goals
+case e_a.h
+H : CRH
+S : SignatureScheme
+n : ℕ
+pk : List Bool
+ω : Fin ((handler H S).seedLen.eval n) → Bool
+s : Fin ((handler H S).stateLen.eval n) → Bool
+a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool
+j : Fin ((handler H S).outLen.eval n)
+⊢ Fin.append
+      (padFin (S.msgLen.eval n)
+        (H.eval
+          (atParam n
+            (pairEncode (H.gen.runAtL n [] (List.ofFn ω)) (List.ofFn fun j => a (Fin.castAdd (S.sigLen.eval n) j))))))
+      (fun j => a (Fin.natAdd (H.domLen.eval n) j)) j =
+    Fin.append
+      (padFin (S.msgLen.eval n)
+        (H.eval (atParam n (pairEncode (H.gen.runAtL n [] (List.ofFn ω)) (List.ofFn (splitBits a).1)))))
+      (splitBits a).2 (Fin.cast ⋯ j)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:322:27: warning: This simp argument is unused:
+  splitBits_fst
+
+Hint: Omit it from the simp argument list.
+  simp only [padFin_apply, s̵p̵l̵i̵t̵B̵i̵t̵s̵_̵f̵s̵t̵,̵ ̵splitBits_snd, Fin.coe_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:322:42: warning: This simp argument is unused:
+  splitBits_snd
+
+Hint: Omit it from the simp argument list.
+  simp only [padFin_apply, splitBits_fst, s̵p̵l̵i̵t̵B̵i̵t̵s̵_̵s̵n̵d̵,̵ ̵Fin.coe_cast]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:322:57: warning: This simp argument is unused:
+  Fin.coe_cast
+
+Hint: Omit it from the simp argument list.
+  simp only [padFin_apply, splitBits_fst, splitBits_snd,̵ ̵F̵i̵n̵.̵c̵o̵e̵_̵c̵a̵s̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler): no fresh .olean produced
+        6.75 real         2.56 user         1.65 sys
+          2131066880  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              161665  page reclaims
+               22509  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1830  voluntary context switches
+               46042  involuntary context switches
+            32143820  instructions retired
+            20600090  cycles elapsed
+             1589584  peak memory footprint
+end: 2026-11-14T05:59:13.733540+00:00 exit: 1

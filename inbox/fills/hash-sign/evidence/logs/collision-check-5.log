@@ -1,0 +1,161 @@
+start: 2026-11-14T06:04:46.427991+00:00 module: TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:342:18: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  c
+in the target expression
+  simulate ((collisionHandler H S).impl n i ω)
+      (A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+        1 (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA)
+      ((collisionHandler H S).init n) =
+    OracleComp.pure (a, (collisionHandler H S).init n)
+
+case inl.refine_1
+H : CRH
+S : SignatureScheme
+A : NUPPT
+n : ℕ
+i : List Bool
+rg : S.gen.Coins n
+rs : S.sign.Coins n
+rA : A.Coins n
+ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool
+hω : List.ofFn ω = List.ofFn rg ++ List.ofFn rs
+hinput : (collisionHandler H S).advInput n i ω = pairEncode (pairFstD (S.gen.runAt n [] rg)) i
+c : OracleComp (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n)
+  (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :=
+  A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+    (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA
+hc : OracleComp.CostBoundedBy (fun x => 1) c 1
+a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool
+hcase : c = OracleComp.pure a
+⊢ simulate ((collisionHandler H S).impl n i ω)
+      (A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+        1 (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA)
+      ((collisionHandler H S).init n) =
+    OracleComp.pure (a, (collisionHandler H S).init n)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:343:25: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  c
+in the target expression
+  simulate (fixedSign H S n (pairSndD (S.gen.runAt n [] rg)) i rs).withLog
+      (A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+        1 (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA)
+      ((), []) =
+    OracleComp.pure (a, (), [])
+
+case inl.refine_2
+H : CRH
+S : SignatureScheme
+A : NUPPT
+n : ℕ
+i : List Bool
+rg : S.gen.Coins n
+rs : S.sign.Coins n
+rA : A.Coins n
+ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool
+hω : List.ofFn ω = List.ofFn rg ++ List.ofFn rs
+hinput : (collisionHandler H S).advInput n i ω = pairEncode (pairFstD (S.gen.runAt n [] rg)) i
+c : OracleComp (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n)
+  (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :=
+  A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+    (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA
+hc : OracleComp.CostBoundedBy (fun x => 1) c 1
+a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool
+hcase : c = OracleComp.pure a
+⊢ simulate (fixedSign H S n (pairSndD (S.gen.runAt n [] rg)) i rs).withLog
+      (A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+        1 (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA)
+      ((), []) =
+    OracleComp.pure (a, (), [])
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:346:18: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  c
+in the target expression
+  simulate ((collisionHandler H S).impl n i ω)
+      (A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+        1 (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA)
+      ((collisionHandler H S).init n) =
+    OracleComp.pure (f y, m)
+
+case inr.refine_1
+H : CRH
+S : SignatureScheme
+A : NUPPT
+n : ℕ
+i : List Bool
+rg : S.gen.Coins n
+rs : S.sign.Coins n
+rA : A.Coins n
+ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool
+hω : List.ofFn ω = List.ofFn rg ++ List.ofFn rs
+hinput : (collisionHandler H S).advInput n i ω = pairEncode (pairFstD (S.gen.runAt n [] rg)) i
+c : OracleComp (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n)
+  (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :=
+  A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+    (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA
+hc : OracleComp.CostBoundedBy (fun x => 1) c 1
+j : Fin 1
+m : (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n).dom j
+f : (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n).rng j → Fin (H.domLen.eval n + S.sigLen.eval n) → Bool
+hcase : c = OracleComp.query j m fun y => OracleComp.pure (f y)
+y : Fin (S.sigLen.eval n) → Bool := hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m
+⊢ simulate ((collisionHandler H S).impl n i ω)
+      (A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+        1 (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA)
+      ((collisionHandler H S).init n) =
+    OracleComp.pure (f y, m)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:348:25: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  c
+in the target expression
+  simulate (fixedSign H S n (pairSndD (S.gen.runAt n [] rg)) i rs).withLog
+      (A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+        1 (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA)
+      ((), []) =
+    OracleComp.pure (f y, (), [⟨j, (m, y)⟩])
+
+case inr.refine_2
+H : CRH
+S : SignatureScheme
+A : NUPPT
+n : ℕ
+i : List Bool
+rg : S.gen.Coins n
+rs : S.sign.Coins n
+rA : A.Coins n
+ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool
+hω : List.ofFn ω = List.ofFn rg ++ List.ofFn rs
+hinput : (collisionHandler H S).advInput n i ω = pairEncode (pairFstD (S.gen.runAt n [] rg)) i
+c : OracleComp (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n)
+  (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :=
+  A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+    (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA
+hc : OracleComp.CostBoundedBy (fun x => 1) c 1
+j : Fin 1
+m : (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n).dom j
+f : (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n).rng j → Fin (H.domLen.eval n + S.sigLen.eval n) → Bool
+hcase : c = OracleComp.query j m fun y => OracleComp.pure (f y)
+y : Fin (S.sigLen.eval n) → Bool := hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m
+⊢ simulate (fixedSign H S n (pairSndD (S.gen.runAt n [] rg)) i rs).withLog
+      (A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+        1 (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA)
+      ((), []) =
+    OracleComp.pure (f y, (), [⟨j, (m, y)⟩])
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler): no fresh .olean produced
+        7.60 real         1.88 user         1.73 sys
+          2171895808  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              148443  page reclaims
+               31968  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                3214  voluntary context switches
+               45518  involuntary context switches
+            31922463  instructions retired
+            18278886  cycles elapsed
+             1589584  peak memory footprint
+end: 2026-11-14T06:04:54.039630+00:00 exit: 1

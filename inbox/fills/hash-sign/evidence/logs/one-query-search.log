@@ -1,0 +1,38 @@
+TCSlib/Cryptography/Games/Hopping.lean:408:    {α : Type} (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ)
+TCSlib/Cryptography/Games/Hopping.lean:416:    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+TCSlib/Cryptography/Games/Hopping.lean:419:    have hk' : ∀ y, (k y).CostBoundedBy (fun _ => 1) m' := fun y => by
+TCSlib/Cryptography/Games/Machines.lean:76:into a move, how one query-log entry is encoded for the machine, and the output forced when the
+TCSlib/Cryptography/Games/Machines.lean:165:      (buildComp next timeout q hist).CostBoundedBy (fun _ => 1) q
+TCSlib/Cryptography/Games/Machines.lean:175:      exact (OracleComp.costBoundedBy_query _ _ _ _ _).2
+TCSlib/Cryptography/Games/Machines.lean:188:      (buildComp next t K hist).CostBoundedBy (fun _ => 1) j →
+TCSlib/Cryptography/Games/Machines.lean:203:        rw [buildComp_succ_of_query h, OracleComp.costBoundedBy_query] at hc
+TCSlib/Cryptography/Games/Machines.lean:213:      rw [OracleComp.costBoundedBy_query] at hc
+TCSlib/Cryptography/Games/Machines.lean:239:    (D.toComp codec n q r).CostBoundedBy (fun _ => 1) q :=
+TCSlib/Cryptography/Games/Machines.lean:264:    (D.toCompOn codec n q x r).CostBoundedBy (fun _ => 1) q :=
+TCSlib/Cryptography/Games/Machines.lean:272:    (hc : (D.toCompOn codec n K x r).CostBoundedBy (fun _ => 1) j) :
+TCSlib/Cryptography/Games/Probability.lean:86:/-- Sampling `Fin (m + 1)` is one query to the `m`-th sampling oracle:
+TCSlib/Cryptography/Games/OracleComp.lean:238:@[simp] theorem costBoundedBy_query (cost : ι₁ → ℕ) (i : ι₁) (x : spec.dom i)
+TCSlib/Cryptography/Games/OracleComp.lean:362:    obtain ⟨hi, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+TCSlib/Cryptography/Games/OracleComp.lean:364:    refine (OracleComp.costBoundedBy_query _ _ _ _ _).2
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:72:      ReplaysFrom t (fun O => next (hist ++ O)) → t.CostBoundedBy (fun _ => 1) b →
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:88:    obtain ⟨hb, hk⟩ := (OracleComp.costBoundedBy_query _ i x k b).1 hc
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:107:    (h : c.CostBoundedBy (fun _ => 1) q) (p : ℕ) : c.CostBoundedBy (fun _ => p) (q * p) := by
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:111:    obtain ⟨hq, hk⟩ := (OracleComp.costBoundedBy_query _ i x k q).1 h
+TCSlib/Cryptography/Games/Efficiency/Replay.lean:112:    refine (OracleComp.costBoundedBy_query _ i x k _).2 ⟨?_, fun y => ?_⟩
+TCSlib/Cryptography/Games/Efficiency.lean:159:- `run` answers one query: on `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨1^i, x⟩⟩⟩` (the context, the state `s`, and
+TCSlib/Cryptography/Games/Bridges/QueryTree.lean:137:    OracleComp.CostBoundedBy (fun _ => 1) t q ↔ t.BoundedBy q := by
+TCSlib/Cryptography/Games/Bridges/QueryTree.lean:142:    | zero => simp [OracleComp.costBoundedBy_query]
+TCSlib/Cryptography/Games/Bridges/QueryTree.lean:144:      simp only [OracleComp.costBoundedBy_query,
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:791:      [] init (q.eval n)).CostBoundedBy (fun _ => 1) (q.eval n * perCall.eval n + finCall.eval n) :=
+TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:794:    have himpl : ∀ i x s, OracleComp.CostBoundedBy (fun _ => 1)
+TCSlib/Cryptography/Games/Simulate.lean:48:  one) marks the state as used costs at most one query in total.
+TCSlib/Cryptography/Games/Simulate.lean:274:    obtain ⟨hi, hk⟩ := (OracleComp.costBoundedBy_query b i x k q).1 hc
+TCSlib/Cryptography/Games/Simulate.lean:275:    have h := OracleComp.CostBoundedBy.bind (himpl i x s) (fun ys => ih ys.1 (hk ys.1) ys.2)
+TCSlib/Cryptography/Games/Simulate.lean:280:/-- **A one-shot oracle costs at most one query in total.** Let `good` be an invariant of the
+TCSlib/Cryptography/Games/Simulate.lean:285:`(simulate impl c s).CostBoundedBy cost (if used s then 0 else 1)`.
+TCSlib/Cryptography/Games/Simulate.lean:294:      (impl i x s).CostBoundedBy cost 0 ∧ (impl i x s).AllOutputs fun p => good p.2 ∧ used p.2)
+TCSlib/Cryptography/Games/Simulate.lean:296:      ((impl i x s).CostBoundedBy cost 0 ∧
+TCSlib/Cryptography/Games/Simulate.lean:298:        ((impl i x s).CostBoundedBy cost 1 ∧ (impl i x s).AllOutputs fun p => good p.2 ∧ used p.2))
+TCSlib/Cryptography/Games/Simulate.lean:300:    ∀ s, good s → (simulate impl c s).CostBoundedBy cost (if used s then 0 else 1) := by
+TCSlib/Cryptography/Games/Simulate.lean:362:    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ₂)
+TCSlib/Cryptography/Games/Simulate.lean:368:    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc

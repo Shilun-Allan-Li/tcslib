@@ -1,0 +1,36 @@
+start: 2026-11-14T06:13:12.251820+00:00 module: .lake/hash-sign-rule10/base/ControlSingletonAS_inArg
+G06-COMPONENT label=ControlSingletonAS_inArg_part1 phase=install spelling=Complexity.NUPPT.inArg key=[["str","Complexity"],["str","NUPPT"],["str","inArg"]] home_key=[["str","TCSlib"],["str","Complexity"],["str","Randomized"],["str","Closure"]] instance=false
+G06-NAME label=ControlSingletonAS_inArg_part1 spelling=Complexity.NUPPT.inArg actual=Complexity.NUPPT.inArg home=TCSlib.Complexity.Randomized.Closure before=Lean.ReducibilityStatus.semireducible installed=Lean.ReducibilityStatus.irreducible
+G06-MASK label=ControlSingletonAS_inArg_part1 phase=install requested=1 verified=1 removed=0 scope_depth=1 scoped_names=217 tc_state=preserved
+G06-SEAL label=ControlSingletonAS_inArg_part1 requested=1 active=1 already_irreducible=0 verified=1
+.lake/hash-sign-rule10/base/ControlSingletonAS_inArg.lean:124:131: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  Complexity.NUPPT.inArg z = Complexity.pairSndD (Complexity.pairFstD (Complexity.pairFstD z))
+G06-COMPONENT label=ControlSingletonAS_inArg_part1 phase=eof spelling=Complexity.NUPPT.inArg key=[["str","Complexity"],["str","NUPPT"],["str","inArg"]] home_key=[["str","TCSlib"],["str","Complexity"],["str","Randomized"],["str","Closure"]] instance=false
+G06-MASK label=ControlSingletonAS_inArg_part1 phase=eof requested=1 verified=1
+G06-SEAL-END label=ControlSingletonAS_inArg_part1 requested=1 verified=1
+FAIL(.lake/hash-sign-rule10/base/ControlSingletonAS_inArg): lean exited with status 1
+FAIL(.lake/hash-sign-rule10/base/ControlSingletonAS_inArg): error diagnostics reported
+FAIL(.lake/hash-sign-rule10/base/ControlSingletonAS_inArg): no fresh .olean produced
+       79.49 real        56.26 user         5.42 sys
+          2191065088  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              215792  page reclaims
+               87093  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 164  voluntary context switches
+              338800  involuntary context switches
+            34307969  instructions retired
+            23061817  cycles elapsed
+             1556816  peak memory footprint
+end: 2026-11-14T06:14:31.748684+00:00 exit: 1

@@ -1,0 +1,244 @@
+{
+  "collector": {
+    "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-collect-1.log",
+    "stored_constant_count": 40,
+    "constants_with_sorryAx": [
+      "AXIOMS TCSlib.Cryptography.Authentication.Signatures.HashAndSign | TCSlib.Cryptography.Authentication.hashAndSign_oneTimeSecure | [Classical.choice, Quot.sound, propext, sorryAx]",
+      "AXIOMS TCSlib.Cryptography.Authentication.Signatures.HashAndSign | TCSlib.Cryptography.Authentication.exists_oneTimeSecure_of_crh_owf | [Classical.choice, Quot.sound, propext, sorryAx]"
+    ]
+  },
+  "seals": [
+    {
+      "module": ".lake/hash-sign-rule10/base/SealA_Cryptography_Authentication_Signatures_HashAndSign",
+      "label": "rule10-base-sealA-1",
+      "rc": 0,
+      "error_count": 0,
+      "failing_declarations": [],
+      "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-sealA-1.log"
+    },
+    {
+      "module": ".lake/hash-sign-rule10/base/SealB_Cryptography_Authentication_Signatures_HashAndSign",
+      "label": "rule10-base-sealB-1",
+      "rc": 0,
+      "error_count": 0,
+      "failing_declarations": [],
+      "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-sealB-1.log"
+    }
+  ],
+  "paired_controls": {
+    "A:costBoundedBy": {
+      "unsealed": {
+        "label": "rule10-base-control-r1-01",
+        "expectation_passed": true,
+        "error_count": 0,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r1-01.log",
+        "failing_declaration": null
+      },
+      "sealed": {
+        "label": "rule10-base-control-r1-02",
+        "expectation_passed": true,
+        "error_count": 1,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r1-02.log",
+        "failing_declaration": "HashSignSensitivity.negative"
+      },
+      "passed": true
+    },
+    "A:padFin": {
+      "unsealed": {
+        "label": "rule10-base-control-r2-03",
+        "expectation_passed": true,
+        "error_count": 0,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-03.log",
+        "failing_declaration": null
+      },
+      "sealed": {
+        "label": "rule10-base-control-r2-04",
+        "expectation_passed": true,
+        "error_count": 1,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-04.log",
+        "failing_declaration": "HashSignSensitivity.negative"
+      },
+      "passed": true
+    },
+    "A:inArg": {
+      "unsealed": {
+        "label": "rule10-base-control-r2-05",
+        "expectation_passed": true,
+        "error_count": 0,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-05.log",
+        "failing_declaration": null
+      },
+      "sealed": {
+        "label": "rule10-base-control-r2-06",
+        "expectation_passed": true,
+        "error_count": 1,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-06.log",
+        "failing_declaration": "HashSignSensitivity.negative"
+      },
+      "passed": true
+    },
+    "B:costBoundedBy": {
+      "unsealed": {
+        "label": "rule10-base-control-r2-07",
+        "expectation_passed": true,
+        "error_count": 0,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-07.log",
+        "failing_declaration": null
+      },
+      "sealed": {
+        "label": "rule10-base-control-r2-08",
+        "expectation_passed": true,
+        "error_count": 1,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-08.log",
+        "failing_declaration": "HashSignSensitivity.negative"
+      },
+      "passed": true
+    },
+    "B:eval": {
+      "unsealed": {
+        "label": "rule10-base-control-r2-09",
+        "expectation_passed": true,
+        "error_count": 0,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-09.log",
+        "failing_declaration": null
+      },
+      "sealed": {
+        "label": "rule10-base-control-r2-10",
+        "expectation_passed": true,
+        "error_count": 1,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-10.log",
+        "failing_declaration": "HashSignSensitivity.negative"
+      },
+      "passed": true
+    },
+    "B:padFin": {
+      "unsealed": {
+        "label": "rule10-base-control-r2-11",
+        "expectation_passed": true,
+        "error_count": 0,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-11.log",
+        "failing_declaration": null
+      },
+      "sealed": {
+        "label": "rule10-base-control-r2-12",
+        "expectation_passed": true,
+        "error_count": 1,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-12.log",
+        "failing_declaration": "HashSignSensitivity.negative"
+      },
+      "passed": true
+    },
+    "B:inArg": {
+      "unsealed": {
+        "label": "rule10-base-control-r2-13",
+        "expectation_passed": true,
+        "error_count": 0,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-13.log",
+        "failing_declaration": null
+      },
+      "sealed": {
+        "label": "rule10-base-control-r2-14",
+        "expectation_passed": true,
+        "error_count": 1,
+        "raw_log": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-14.log",
+        "failing_declaration": "HashSignSensitivity.negative"
+      },
+      "passed": true
+    }
+  },
+  "control_probe_count": 14,
+  "all_control_expectations_passed": true,
+  "all_pairs_complete_and_passed": true,
+  "closed_raw_logs": [
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-collect-1.log",
+      "bytes": 1076258,
+      "sha256": "0e166e0c463d433a0f57a72109c21182cd8f6c68eea5bce22f9bda651e416ce1"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r1-01.log",
+      "bytes": 930,
+      "sha256": "35dd64cdd3b73549553ac4c5decb5abd24203b21669c2a5e5d4a9e046e62525c"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r1-02.log",
+      "bytes": 1620974,
+      "sha256": "e5389151095543d5d58f53be48b12f13480c415586d1433cd31a073345686ec4"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-03.log",
+      "bytes": 925,
+      "sha256": "1f548e0a07ab49893834e48b956efff4d23fa2de16828f8775be07baec15617b"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-04.log",
+      "bytes": 2583,
+      "sha256": "1b9188124e9f5c083a3fd54675120683f5b4830a51c42d500aa02af45a754499"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-05.log",
+      "bytes": 924,
+      "sha256": "42a7e021ea6a16b702455306178340a21b510920e4fe9fdf20e14e3af97c0dd1"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-06.log",
+      "bytes": 2573,
+      "sha256": "ea382841857afa1b3bb0a00275a825ecdab1223c4ff52f191b79ff007a5011ec"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-07.log",
+      "bytes": 932,
+      "sha256": "b44af52cac4b3d59d7bec32b0e0affc9076aebd342d0db66c1f5f616a2b9935f"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-08.log",
+      "bytes": 2896,
+      "sha256": "cc94ddf48ae3cdd6d0ab13117724ea22c84f470637bba5b9b805752fdbdaaafa"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-09.log",
+      "bytes": 923,
+      "sha256": "85c5a1228ef539fedded1b3888ad8fd819a3249415b1f484a0ea4b05cd5c2e47"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-10.log",
+      "bytes": 2523,
+      "sha256": "5a44e03ca021d2bfd1e93e5a7569c6692de79f4bb88a2455b571c88d58fab462"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-11.log",
+      "bytes": 925,
+      "sha256": "8c67b3ee036b5e960de5db6288dbbbb6dc288db2bd607aa4237d1e8ff5b63666"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-12.log",
+      "bytes": 2583,
+      "sha256": "070a368e6a239b79ab54080df1eeba34d4a958214e4dbd1dda2149a7f4f5e3dd"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-13.log",
+      "bytes": 924,
+      "sha256": "3cbfa559ea232eb3550529b9c79f71b928d997878588c77e403462c69bb5f09f"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-control-r2-14.log",
+      "bytes": 2573,
+      "sha256": "c064d3f727670c1ad365791e205dd5968a824465bf3067f8376021e86384417d"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-sealA-1.log",
+      "bytes": 1741593,
+      "sha256": "2c179d62eecf240381c6c0c366abd79f4b9b12dd8600efcbee7a23ae9bbd9ee2"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-sealA-resources.log",
+      "bytes": 3958,
+      "sha256": "a25eff0d1b6b595fbfa7c02cb1140f5472716015b23f46b139a3bcafddb991a4"
+    },
+    {
+      "path": "/private/tmp/hash-sign-fill/delivery/hash-sign/evidence/logs/rule10-base-sealB-1.log",
+      "bytes": 1742459,
+      "sha256": "9f5cef6003ead0b2b7ca162c6fbdca9c89f6cea9c4d2ef4a2ba6bd2fe4950a74"
+    }
+  ]
+}

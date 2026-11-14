@@ -1,0 +1,75 @@
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling.lean:theorem expect_simulate_sample_once {ι α R : Type} {spec : OracleSpec ι}
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean:theorem ext_of_fields {ι α : Type} {spec : OracleSpec ι}
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean:theorem forgerCodec_eq_bitCodec (S : SignatureScheme) (n : ℕ) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean:theorem splitBits_append {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean:theorem splitBits_pad_concat {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuery.lean:theorem eq_pure_of_cost_zero {ι α : Type} {spec : OracleSpec ι}
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuery.lean:theorem one_query_cases {ι α : Type} {spec : OracleSpec ι}
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:def hashedReply (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:theorem hashedReply_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:def fixedSign (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:theorem fixedSign_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:theorem fixedSign_apply (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:def transcript (H : CRH) (S : SignatureScheme) (A : NUPPT) (n : ℕ)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:theorem transcript_eq (H : CRH) (S : SignatureScheme) (A : NUPPT) (n : ℕ)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:noncomputable def sampledHashSign (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:theorem sampledHashSign_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:theorem sampledHashSign_apply (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:theorem expect_sampledHashSign_eq_transcript (H : CRH) (S : SignatureScheme) (A : NUPPT)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:def Success (H : CRH) (S : SignatureScheme) (n : ℕ) (pk i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean:theorem success_iff (H : CRH) (S : SignatureScheme) (n : ℕ) (pk i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:def indexWord (H : CRH) (u ω : List Bool) : List Bool :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem indexWord_eq (H : CRH) (u ω : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:def hashWord (H : CRH) (S : SignatureScheme) (u i m : List Bool) : List Bool :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem hashWord_eq (H : CRH) (S : SignatureScheme) (u i m : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:def advWord (H : CRH) (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem advWord_eq (H : CRH) (w : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:def roundWord (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem roundWord_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:def finalWord (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem finalWord_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem polyTimeComputable_indexWord (H : CRH) {u ω : List Bool → List Bool}
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem polyTimeComputable_hashWord (H : CRH) (S : SignatureScheme)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem polyTimeComputable_advWord (H : CRH) : PolyTimeComputable (advWord H) := by
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem polyTimeComputable_roundWord (H : CRH) (S : SignatureScheme) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem polyTimeComputable_finalWord (H : CRH) (S : SignatureScheme) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:def handler (H : CRH) (S : SignatureScheme) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem indexWord_unary (H : CRH) (n : ℕ) (ω : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem hashWord_unary (H : CRH) (S : SignatureScheme) (n : ℕ) (i m : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem handler_advInput (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem handler_impl (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem handler_finish (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem hashWord_eq_hash (H : CRH) (S : SignatureScheme)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem exists_forwardMachine (H : CRH) (S : SignatureScheme) (A : NUPPT) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem handler_output_width (H : CRH) (S : SignatureScheme) (n : ℕ) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:theorem handler_finish_split (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:def collisionKey (S : SignatureScheme) (c : List Bool) : List Bool :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionKey_eq (S : SignatureScheme) (c : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem polyTimeComputable_collisionKey (S : SignatureScheme) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionKey_seed (S : SignatureScheme) (n : ℕ) (i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:def collisionAdv (S : SignatureScheme) (c : List Bool) : List Bool :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionAdv_eq (S : SignatureScheme) (c : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem polyTimeComputable_collisionAdv (S : SignatureScheme) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionAdv_seedIn (S : SignatureScheme) (n : ℕ) (i ω : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionAdv_seed (S : SignatureScheme) (n : ℕ) (i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:def collisionHash (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionHash_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem polyTimeComputable_collisionHash (H : CRH) (S : SignatureScheme) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:def collisionRun (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionRun_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem polyTimeComputable_collisionRun (H : CRH) (S : SignatureScheme) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:def collisionOut (H : CRH) (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionOut_eq (H : CRH) (w : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem polyTimeComputable_collisionOut (H : CRH) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:def collisionHandler (H : CRH) (S : SignatureScheme) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionHandler_run_input (H : CRH) (S : SignatureScheme) (n : ℕ)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:def collisionReply (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionReply_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionReply_seed (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem ofFn_collisionReply (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : List Bool) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionHandler_impl (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionHandler_result (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionHandler_transcript (H : CRH) (S : SignatureScheme) (A : NUPPT) (n : ℕ)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem collisionHandler_collision (H : CRH) (S : SignatureScheme)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem exists_collisionMachine (H : CRH) (S : SignatureScheme) (A : NUPPT) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:theorem exists_collisionMachine_transcript (H : CRH) (S : SignatureScheme) (A : NUPPT) :

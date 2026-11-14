@@ -1,0 +1,31 @@
+{
+  "changes": [
+    {
+      "path": "scan1.py",
+      "original_sha256": "62dab2d7b6bf6d76ec21b1e21d82b02dafe22faefa039993df8db374d001b79e",
+      "adapted_sha256": "5aa48a63f82a556b3a552814a0275fdb2ee00918be63db64b55670d36ea90132",
+      "description": "Generated native kinds probe imports exactly the scanned owner modules, replacing the full TCSlib facade."
+    }
+  ],
+  "new_adapter": "prepare.py",
+  "new_adapter_sha256": "9102e9de03aef49a91d9e388557d12f6c76fac40d2c0f9d2d05cb8ca8c09151c",
+  "additional_new_sources": [
+    {
+      "path": "run_probe.py",
+      "sha256": "fd96aa80c3cab25de33e9d071346b4aa1acf173c8aa4456343209cd2529445fc"
+    },
+    {
+      "path": "run_controls.py",
+      "sha256": "dd7c24617dcfc598a37920427a2f9872538b8fc3ffdc0dccdaeadac7525bbed2"
+    },
+    {
+      "path": "record_codec_searches.py",
+      "sha256": "2678972966225b8b230750e0b224c039dafd6533bcc3077a11ca617bbed39467"
+    },
+    {
+      "path": "summarize.py",
+      "sha256": "47e5c3968fb7dd35d6f009a1542cea640ae7ae29492ec72d53c94e8957aeb31e"
+    }
+  ],
+  "owner_discovery": "All committed .lean files under HashAndSign helper directory plus owned facade; final rejects uncommitted helpers"
+}

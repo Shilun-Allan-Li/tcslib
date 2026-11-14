@@ -1,0 +1,53 @@
+start: 2026-11-14T06:05:06.790872+00:00 module: TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:349:4: error: unsolved goals
+case inr.refine_2
+H : CRH
+S : SignatureScheme
+A : NUPPT
+n : ℕ
+i : List Bool
+rg : S.gen.Coins n
+rs : S.sign.Coins n
+rA : A.Coins n
+ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool
+hω : List.ofFn ω = List.ofFn rg ++ List.ofFn rs
+hinput : (collisionHandler H S).advInput n i ω = pairEncode (pairFstD (S.gen.runAt n [] rg)) i
+c : OracleComp (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n)
+  (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :=
+  A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+    (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA
+hc : OracleComp.CostBoundedBy (fun x => 1) c 1
+j : Fin 1
+m : (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n).dom j
+f : (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n).rng j → Fin (H.domLen.eval n + S.sigLen.eval n) → Bool
+hcase :
+  A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+      (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA =
+    OracleComp.query j m fun y => OracleComp.pure (f y)
+y : Fin (S.sigLen.eval n) → Bool := hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m
+⊢ OracleComp.pure
+      (f (hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m), (),
+        [⟨j, (m, hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m)⟩]) =
+    OracleComp.pure (f y, (), [⟨j, (m, y)⟩])
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler): no fresh .olean produced
+        6.28 real         1.95 user         1.66 sys
+          2164654080  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              161545  page reclaims
+               20353  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                3120  voluntary context switches
+               38212  involuntary context switches
+            32786480  instructions retired
+            22064364  cycles elapsed
+             1589584  peak memory footprint
+end: 2026-11-14T06:05:13.077183+00:00 exit: 1

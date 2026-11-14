@@ -1,0 +1,59 @@
+sum of rationals. The probability of an event is the expectation of its indicator. For a
+* `ProbComp.expect_bind`: **total expectation**; sequencing averages the continuations.
+* `ProbComp.expect_sample`: sampling a finite type is the uniform average.
+* `ProbComp.expect_add`, `expect_const_mul`, `expect_sum`, `expect_mono`: linearity and
+* `ProbComp.prob_nonneg`, `prob_le_one`, `prob_mono`, `prob_or_le` (the union bound),
+* `ProbComp.expect_sample_equiv`, `expect_sample_comm`, `expect_sample_unique`,
+  `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform
+  samples; `expect_sub`, `abs_expect_sub_le`: subtraction and pointwise closeness.
+* `ProbComp.expect_expect_sample`: exchanging an expectation with a uniform sample (Fubini).
+/-- The **expectation** of `g` over the output of `c`: `g a` for a return, and the average over
+/-- The **probability** that the output of `c` satisfies `p`: the expectation of the indicator
+theorem expect_bind (c : ProbComp α) (f : α → ProbComp β) (g : β → ℝ) :
+  rw [OracleComp.map_eq_bind, expect_bind]; rfl
+theorem expect_sampleFin (m : ℕ) (g : Fin (m + 1) → ℝ) :
+    expect (sampleFin m) g = ((m : ℝ) + 1)⁻¹ * ∑ j, g j := rfl
+theorem expect_sample (T : Type) [Fintype T] [Nonempty T] (g : T → ℝ) :
+    expect (sample T) g = (Fintype.card T : ℝ)⁻¹ * ∑ t, g t := by
+  rw [sample, expect_map, expect_sampleFin]
+theorem expect_mono (c : ProbComp α) {f g : α → ℝ} (h : ∀ a, f a ≤ g a) :
+  simpa [expect_const] using expect_mono c (f := fun _ => 0) h
+/-- The probability of `p` is the expectation of its indicator (any decidability instance). -/
+theorem prob_eq_expect (c : ProbComp α) (p : α → Prop) [DecidablePred p] :
+  simp only [prob_eq_expect, expect_bind]
+  exact expect_nonneg c fun a => by split_ifs <;> norm_num
+        expect_mono c fun a => by split_ifs <;> norm_num
+  exact expect_mono c fun a => by
+theorem prob_or_le (c : ProbComp α) (p q : α → Prop) :
+  exact expect_mono c fun a => by
+**Proof sketch.** Both are uniform averages (`expect_sample`); the cardinalities agree
+theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (e : α ≃ β)
+    (g : β → ℝ) : expect (sample α) (fun a => g (e a)) = expect (sample β) g := by
+  rw [expect_sample, expect_sample, Fintype.card_congr e, Equiv.sum_comp e g]
+**Proof sketch.** Both sides are the double uniform average (`expect_sample`); exchange the two
+theorem expect_sample_comm [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
+    (expect (sample α) fun a => expect (sample β) fun b => g a b) =
+      expect (sample β) fun b => expect (sample α) fun a => g a b := by
+  simp only [expect_sample, mul_sum]
+**Proof sketch.** The inner sample is a uniform average (`expect_sample`); pull the constant
+theorem expect_expect_sample (c : ProbComp α) (T : Type) [Fintype T] [Nonempty T]
+    expect c (fun a => expect (sample T) (h a)) =
+      expect (sample T) fun t => expect c fun a => h a t := by
+  simp only [expect_sample]
+theorem expect_sample_unique [Fintype α] [Unique α] (g : α → ℝ) :
+    expect (sample α) g = g default := by
+  rw [expect_sample, Fintype.card_unique, Fintype.sum_unique]
+(`expect_sample`), the double sum of `f (update v j b)` over pairs is the sum of `f v` over pairs
+theorem expect_sample_update {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+    (expect (sample (ι → β)) fun v => expect (sample β) fun b => f (Function.update v j b)) =
+      expect (sample (ι → β)) f := by
+  simp only [expect_sample, ← mul_sum]
+**Proof sketch.** Exchange the samples on the right (`expect_sample_comm`) and resample the
+coordinate `j` on the left (`expect_sample_update`); pointwise,
+theorem expect_sample_coord {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+    expect (sample (ι → β)) (fun T => F (T j) T) =
+      expect (sample β) fun r => expect (sample (ι → β)) fun T => F r T := by
+  rw [expect_sample_comm, ← expect_sample_update j (fun T => F (T j) T)]
+theorem abs_expect_sub_le (c : ProbComp α) {f g : α → ℝ} {ε : ℝ}
+          expect_mono c fun x => by linarith [(abs_le.1 (h x)).2]
+          expect_mono c fun x => by linarith [(abs_le.1 (h x)).1]

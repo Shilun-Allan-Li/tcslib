@@ -1,0 +1,60 @@
+{
+  "base": "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+  "recorded_utc": "2026-11-14T06:04:38.698448+00:00",
+  "searches": [
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "-C",
+        "/private/tmp/hash-sign-fill/repo",
+        "grep",
+        "-n",
+        "-E",
+        "MachineCodec\\.ext|theorem.*[Cc]odec.*ext|theorem.*ext.*[Cc]odec|forgerCodec_eq",
+        "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+        "--",
+        "TCSlib"
+      ],
+      "exit": 0,
+      "output": "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9:TCSlib/Complexity/ClassPSPACE/TQBF.lean:518:private theorem codec_symbol_ext (u v : Option Bool)\neff2dcd0a63f0c371118a17c67b9a5dfc046f4e9:TCSlib/Cryptography/Games/Efficiency/Handler.lean:60:theorem advNext_eq {\u03b9 \u03b1 : Type} {spec : OracleSpec \u03b9} (A : NUPPT) (codec : MachineCodec spec \u03b1)\n"
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "-C",
+        "/private/tmp/hash-sign-fill/repo",
+        "grep",
+        "-n",
+        "-E",
+        "splitBits.*append|splitBits.*concat|Fin\\.append.*splitBits",
+        "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+        "--",
+        "TCSlib"
+      ],
+      "exit": 1,
+      "output": ""
+    }
+  ],
+  "conclusion": "No relevant existing codec extensionality, complete forger-codec reader, or split/concatenation lemma found.",
+  "promotions": [
+    {
+      "declaration": "Games.MachineCodec.ext_of_fields",
+      "destination": "Games/Machines.lean"
+    },
+    {
+      "declaration": "Authentication.SignatureScheme.forgerCodec_eq_bitCodec",
+      "destination": "Authentication/Signatures/Defs.lean"
+    },
+    {
+      "declaration": "Authentication.HashSignFill.splitBits_append",
+      "destination": "Authentication/Encoding.lean"
+    },
+    {
+      "declaration": "Authentication.HashSignFill.splitBits_pad_concat",
+      "destination": "Authentication/Encoding.lean"
+    }
+  ],
+  "overlap": "None: the only text matches are unrelated TQBF codec_symbol_ext and Efficiency.Handler advNext_eq."
+}

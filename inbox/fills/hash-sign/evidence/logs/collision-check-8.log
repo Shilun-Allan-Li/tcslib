@@ -1,0 +1,40 @@
+start: 2026-11-14T06:07:22.966469+00:00 module: TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:380:22: error: Function expected at
+  List.not_mem_nil ?m.145
+but this term has type
+  False
+
+Note: Expected a function because this term is being applied to the argument
+  he
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:380:39: error: Application type mismatch: The argument
+  e
+has type
+  (i : Fin 1) ×
+    (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n).dom i ×
+      (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n).rng i
+of sort `Type` but is expected to have type
+  ?m.144 ∈ []
+of sort `Prop` in the application
+  List.not_mem_nil e
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler): no fresh .olean produced
+        3.96 real         1.96 user         1.29 sys
+          2181382144  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170237  page reclaims
+                9570  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 227  voluntary context switches
+               28830  involuntary context switches
+            33371747  instructions retired
+            18187867  cycles elapsed
+             1589584  peak memory footprint
+end: 2026-11-14T06:07:26.940622+00:00 exit: 1

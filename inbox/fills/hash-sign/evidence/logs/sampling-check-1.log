@@ -1,0 +1,41 @@
+start: 2026-11-14T05:55:02.547770+00:00 module: TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling.lean:54:12: error: Invalid field `withLog`: The environment does not contain `Function.withLog`
+  fun i x x_1 => OracleComp.pure (ans i x r, ())
+has type
+  (i : ι) → spec.dom i → Unit → OracleComp unifSpec (spec.rng i × Unit)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling.lean:60:2: error: unsolved goals
+case inr
+ι α R : Type
+spec : OracleSpec ι
+inst✝¹ : Fintype R
+inst✝ : Nonempty R
+ans : (i : ι) → spec.dom i → R → spec.rng i
+g : α × Unit × QueryLog spec → ℝ
+i : ι
+x : spec.dom i
+f : spec.rng i → α
+hc : OracleComp.CostBoundedBy (fun x => 1) (OracleComp.query i x fun y => OracleComp.pure (f y)) 1
+⊢ ((ProbComp.sample R).expect fun a => g (f (ans i x a), (), [] ++ [⟨i, (x, ans i x a)⟩])) =
+    (ProbComp.sample R).expect fun r => ProbComp.expect (sorry i x ((), [])) fun a => g (f a.1, a.2)
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling): no fresh .olean produced
+        2.36 real         1.29 user         0.99 sys
+          2002878464  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              163300  page reclaims
+                 124  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                  28  voluntary context switches
+                9941  involuntary context switches
+            32719139  instructions retired
+            21677232  cycles elapsed
+             1605968  peak memory footprint
+end: 2026-11-14T05:55:04.919725+00:00 exit: 1
