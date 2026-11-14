@@ -1,0 +1,85 @@
+From b422ab5f01c131c7519ae1ff3bcff885a1debcab Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 14 Nov 2026 21:37:06 +0000
+Subject: [PATCH] cca2-ett resolution edit LE-gate23: correct argument order in
+ three docstrings (G23-02)
+
+Codex finding G23-02: three documentation references gave argument lists
+that disagree with the declarations. Docstrings and module docs only.
+
+- Reduction.lean, dAbs_eq: `dAbs q E hE b n s` -> `dAbs E hE q b n s`
+  (the section variables E hE precede q b n; as in the statement).
+- Handler.lean, module Main definitions: `dHandler E hE q b` ->
+  `dHandler q E hE b` (q is the file-level variable; as at every use).
+- CPAHandler.lean, module Main definitions: `bHandler q hq b` ->
+  `bHandler q` (q is its only parameter; as at every use).
+
+Sweep of the other EncryptThenTag doc comments for dAbs, dHandler,
+bHandler and bAbs: one more of the same kind, fixed:
+- CPAReduction.lean, comp_bAbs: `bAbs ((o, L), j)` -> `bAbs q n ((o, L), j)`
+  (as in the bAbs and bAbs_eq docstrings and the statement).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean        | 2 +-
+ .../Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean      | 2 +-
+ .../Encryption/PrivateKey/EncryptThenTag/Handler.lean           | 2 +-
+ .../Encryption/PrivateKey/EncryptThenTag/Reduction.lean         | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean
+index fd76cdff9..5dd5444b4 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean
+@@ -36,7 +36,7 @@ call is well formed for every outer answer. Lookups use GGM's table lookup (`GGM
+ ## Main definitions
+ 
+ * `ETTGame.encE`, `tblW`, `bStLen`, `bSeedLen`, `bState`, `bSeed`, `bTapeOf`.
+-* `ETTGame.bHandler q hq b`: the handler.
++* `ETTGame.bHandler q`: the handler.
+ 
+ ## Main results
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
+index ed69f35b4..1acceb558 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
+@@ -115,7 +115,7 @@ private theorem bKeyOf_ctOf {k : ℕ} (hk : k = ctP.eval n) (r : Fin n → Bool)
+   rw [bKeyOf_eq, ofFn_ctOf n f hk r hm, pairFstD_pairEncode, pairSndD_pairEncode, pairV_eq]
+ 
+ /-- **One composed call has the law of a call of the lazy experiment with tapes in advance:** from
+-`bAbs ((o, L), j)` with the invariant and `j < q(n)`, the handler composed with the CPA oracles
++`bAbs q n ((o, L), j)` with the invariant and `j < q(n)`, the handler composed with the CPA oracles
+ with pad function `f` gives every function `g` of the answer and the state the expectation that
+ the call of `ettLazyTape` with the tapes `bTapes W` from `((o, L), j)` gives it, with the new state
+ abstracted.
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean
+index 9f54d4dd7..1d427e5c3 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean
+@@ -37,7 +37,7 @@ Every query advances the counter. The finalization asks nothing and outputs the
+ 
+ * `ETTGame.ettCt`, `ettDin`, `ettDout`, `tagLen`, `tagOut`, `dStLen`, `dSeedLen`: the lengths.
+ * `ETTGame.recBits`, `dState`, `dSeed`: the encoded state and seed.
+-* `ETTGame.dHandler E hE q b`: the handler.
++* `ETTGame.dHandler q E hE b`: the handler.
+ 
+ ## Main results
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean
+index 600c0f4a6..729c93ee8 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean
+@@ -79,7 +79,7 @@ def dAbs (s : St n (ettCt.eval n) × ℕ) :
+     (Fin ((dHandler q E hE b).stateLen.eval n) → Bool) × Unit :=
+   (dHState q E hE b n s.2 s.1.1, ())
+ 
+-/-- `dAbs q E hE b n s = (dHState q E hE b n s.2 s.1.1, ())`. -/
++/-- `dAbs E hE q b n s = (dHState q E hE b n s.2 s.1.1, ())`. -/
+ theorem dAbs_eq (s : St n (ettCt.eval n) × ℕ) :
+     dAbs E hE q b n s = (dHState q E hE b n s.2 s.1.1, ()) :=
+   rfl
+-- 
+2.43.0
+

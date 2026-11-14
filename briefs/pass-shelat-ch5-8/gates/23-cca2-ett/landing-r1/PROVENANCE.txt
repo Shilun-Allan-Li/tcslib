@@ -1,0 +1,70 @@
+cca2-ett resolution edit LE-gate23 (Codex finding G23-02), maintainer, 2026-11-14 UTC. PR #306.
+Method: the cca2-ett LE-doc job (../cca2-ett-r1-ledoc-evidence.zip, PROVENANCE.txt). Lean 4.25.0, PATH=$HOME/.elan/bin:$PATH.
+  One Lean process at a time, scripts/lean_check_tree.sh (byte-identical to /home/user/tcslib/scripts/lean_check_tree.sh,
+  SHA-256 366dab40...) with TCSLIB_OLEANS=$SP/dl-oleans-2 only ($SP/dl-oleans not touched). No lake command. Python python3 -I.
+  Not pushed; /home/user/tcslib not edited (git status clean before and after).
+landing: worktree $SP/wt-land-cca2-ett, branch land/pass-shelat-cca2-ett (tracks origin/land/pass-shelat-cca2-ett =
+  c1a3ba56; now ahead 1, not pushed).
+  parent c1a3ba5623febf318a56a0f84be885f262e0f86e (tree a64aea92b6384058304ee8cb8f48f61d97d4ad71)
+  head   b422ab5f01c131c7519ae1ff3bcff885a1debcab (tree 10e02c545b599461066718ab5935a5c7142eb215)
+  author = committer = Claude <noreply@anthropic.com>; trailers Co-Authored-By / Claude-Session as instructed.
+  landing/: commits.txt, commit-message.txt, LE-gate23.diff (c1a3ba56..b422ab5f), 0001-*.patch (git format-patch -1).
+  Edit script tools-used/g23_edit.py (exact old -> new lines, each asserted to occur once).
+finding confirmation (declarations and every use read before editing):
+  dAbs (Reduction.lean:78) has no own binders; it takes the section variables it uses in declaration order
+    (`variable (F) (E) (hE) (hFE) (q) (b) (n) ...`, line 66): E hE q b n. Statement of dAbs_eq and the uses at
+    Reduction.lean:127 read `dAbs E hE q b n s`. Doc said `dAbs q E hE b n s`.
+  dHandler (Handler.lean:401) binds (E) (hE) (b) after the file-level `variable (q : PolyExpr)` (line 114): q E hE b,
+    as at every use (`dHandler q E hE b`, `dHandler (q.subst tagLen) E hE b`). Module doc said `dHandler E hE q b`.
+  bHandler (CPAHandler.lean:426) has no binders; only `variable (q : PolyExpr)` (line 130) is in scope and used:
+    `bHandler q`, as at every use. There is no `hq` anywhere in the file. Module doc said `bHandler q hq b`.
+  bAbs (CPAReduction.lean:66) binds (q) (n) (s): its docstring, bAbs_eq and the uses read `bAbs q n ...`.
+changes (4 lines, 4 files, all in doc comments):
+  Reduction.lean:82   dAbs_eq docstring  `dAbs q E hE b n s = ...`   -> `dAbs E hE q b n s = ...`
+  Handler.lean:40     module doc         `ETTGame.dHandler E hE q b` -> `ETTGame.dHandler q E hE b`
+  CPAHandler.lean:39  module doc         `ETTGame.bHandler q hq b`   -> `ETTGame.bHandler q`
+  CPAReduction.lean:118 comp_bAbs docstring `bAbs ((o, L), j)`    -> `bAbs q n ((o, L), j)`   (found by the sweep)
+sweep (tools-used/docspans.py: every backtick span in a /-- -/ or /-! -/ comment of the 11 unit files naming dAbs,
+  dHandler, bHandler or bAbs): statements/docspans-c1a3ba56.txt (26 spans), docspans-head.txt, docspans.diff (the 4
+  lines above). The other 22 spans either carry no arguments or agree with the declarations; the three
+  `(dHandler …).impl ... (dHSeed … ...) (dHState … ...)` and `dAbs … (σ, j)` forms elide with `…` and were kept.
+  Not changed (outside the four names): the same comp_bAbs sentence also writes `bTapes W` for `bTapes q n W`.
+  No other TCSlib/audits file names these four (one more mention, EncryptThenTag.lean:653 `ETTGame.bHandler`, no args).
+checks (statements/):
+  hunk-in-docstring.txt (tools-used/hunkdoc2.py = LE-doc's): 4 files, 4 hunks, all IN-DOCSTRING; with doc comments
+    blanked each old/new file is byte-identical (4 CODE-IDENTICAL); 0 failures. Widths: max 100 (Reduction 99), 0 lines
+    over 100; the new CPAReduction line is 99 characters. Line counts unchanged.
+  lecheck-doc.txt (tools-used/lecheck.py doc, copied from $SP/g23tools): 4 lean files, no non-lean path, failing [].
+  changed-paths.txt: 4 M paths, nothing else.
+  header-bytes-perfile-vs-c1a3ba56.txt (tools-used/headerbytes_perfile.py = LE-doc's, on touched-c1a3ba56.json and
+    touched-head.json from tools-used/r1/touched.py): 372 compared, all IDENTICAL, 0 different or missing.
+  touched-c1a3ba56-vs-head.tsv: 2 CHANGED (comp_bAbs, dAbs_eq: docstrings), 370 UNCHANGED.
+build (build/): dl-oleans-2 verified at base first: build/tree-check-pre.txt RESULT OK (1199 modules rc 0 at eff2dcd0
+  source and object hashes of build/base-records.jsonl = LE-doc's), build/snapshot-pre.txt (1230 files, SHA-256
+  457ba704...) byte-equal to restore/snapshot-post.txt of briefs/pass-shelat-ch5-8/fills/lamport/final-r1/le-evidence.zip
+  (only that member extracted, to scratch; copied as build/snapshot-ref-lamport-le-restore-post.txt).
+  order/: tools-used/review/downorder.py (= LE-doc's). head-vs-c1a3ba56: changed 4, downstream 9 (Handler, Reduction,
+  CPAHandler, CPAReduction, EncryptThenTag, PrivateKey, Encryption, Composability, TCSlib). head-vs-base (eff2dcd0):
+  changed 15, downstream 19, = LE-doc's. order/head-build.txt = the 19 imports-first (= LE-doc's head-build.txt): the 10
+  helpers (the 6 unchanged ones are head-only and absent from the base tree), EncryptThenTag, PrivateKey, Encryption,
+  Composability, base-delta Rejection, Sampler, Extraction, Randomness, root TCSlib.
+  runner.py from the worktree at b422ab5f (logs/build-runner.out): 19/19 rc 0, 0 errors, 0 sorry; warnings 0 except
+  Rejection 10, Extraction 2 (inherited, as in LE-doc). build/results.jsonl, build/mods/, build/source-hashes.txt.
+  build/objects-vs-ledoc-build.txt: against the LE-doc build at c1a3ba56, only the 4 edited modules have new source and
+  olean hashes; the other 15 oleans are byte-identical.
+  build/tree-check-head.txt: 1211 modules (order/headfull-order.txt) last record rc 0 at b422ab5f source and olean hash,
+  no stray olean, no empty dir: RESULT OK (build/snapshot-head.txt, 1242 files).
+lint (logs/): python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography (the #305 lint), worktree at b422ab5f and a
+  git-archive export of c1a3ba56 (scripts, TCSlib): 92 FAIL, 102 WARN over 313 files at both; FAIL/WARN lines identical
+  (lint-crypto-parent-vs-head.diff empty; also identical to LE-doc's lint-crypto-head-c1a3ba56.log,
+  lint-crypto-ledoc-c1a3ba56-vs-head.diff empty); no FAIL/WARN line names an EncryptThenTag file. --check8b on
+  TCSlib/Cryptography/Encryption/PrivateKey: 0 FAIL, 5 WARN over 26 files at both, lines identical (lint-pk-*.diff empty).
+restore (restore/, logs/restore-runner.out): deleted the 12 head-only oleans (10 helpers, Rejection, Sampler) and the 2
+  emptied directories (restore/restore-deleted.txt), rebuilt order/restore-base.txt (EncryptThenTag, PrivateKey, Encryption,
+  Composability, Extraction, Randomness, TCSlib) from a git-archive export of eff2dcd0 (TCSlib, TCSlib.lean, audits, scripts,
+  lean-toolchain; .lake/packages symlinked; removed afterwards): 7/7 rc 0, 0 errors (base EncryptThenTag and Extraction carry
+  their base sorry); source and object hashes = base records (restore/restore-vs-base-records.txt RESULT OK).
+  restore/tree-check-post.txt RESULT OK; restore/snapshot-post.txt byte-identical to build/snapshot-pre.txt and to the
+  lamport reference (SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f).
+SHA256SUMS: every file here except itself (paths without "./"); ../cca2-ett-gate23-evidence.zip holds exactly the manifest
+  paths plus SHA256SUMS.
