@@ -1,0 +1,89 @@
+# lamport review duplication searches (git grep at records tip dee0de32; landing files read at the landing head)
+## take_poly
+dee0de32:TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:382:theorem take_poly (inLen : PolyExpr) :
+dee0de32:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1082:private theorem dlb_take_poly {fa fb : List Bool → List Bool} (ha : PolyTimeComputable fa)
+dee0de32:TCSlib/Cryptography/Randomness/Extraction/Sampler.lean:74:theorem take_poly (n : ℕ) : PolyTimeComputable (fun r : List Bool => r.take n) := by
+## drop_poly
+dee0de32:TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:374:theorem drop_poly (inLen : PolyExpr) :
+dee0de32:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:1088:private theorem dlb_drop_poly {fa fb : List Bool → List Bool} (ha : PolyTimeComputable fa)
+## takeLen_poly
+dee0de32:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:248:theorem takeLen_poly {a b : List Bool → List Bool} (ha : PolyTimeComputable a)
+## dropLen_poly
+dee0de32:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:256:theorem dropLen_poly {a b : List Bool → List Bool} (ha : PolyTimeComputable a)
+## Machine.lean imports and uses of takeLen_poly/dropLen_poly
+5:import TCSlib.Cryptography.Games.Efficiency
+6:import TCSlib.Cryptography.Asymptotic.OneWayLemmas
+7:import TCSlib.Cryptography.Asymptotic.ReductionSupport
+23:The generator and signer are parameters, so this module does not import its consumer.
+149:  TCSlib.Cryptography.takeLen_poly u_poly
+150:    (TCSlib.Cryptography.dropLen_poly (offset_poly _) tape_poly)
+161:  refine (TCSlib.Cryptography.takeLen_poly u_poly
+162:    (TCSlib.Cryptography.dropLen_poly ((offset_poly (.mul (.const 2) .var)).append u_poly)
+213:  refine (((TCSlib.Cryptography.takeLen_poly (offset_poly W) (honestPk_poly hG)).append
+215:    (TCSlib.Cryptography.dropLen_poly ((offset_poly W).append (width_poly W))
+267:    (TCSlib.Cryptography.dropLen_poly (pos_poly.comp context_poly) message_poly)
+308:    (TCSlib.Cryptography.takeLen_poly (u_poly.comp context_poly)
+309:      (TCSlib.Cryptography.dropLen_poly ((offset_poly .var).comp context_poly)
+310:        (TCSlib.Cryptography.dropLen_poly (u_poly.comp context_poly)
+## FunFamily.blocks relatives (signatureBlock)
+dee0de32:TCSlib/Cryptography/Asymptotic/Adversary.lean:258:def FunFamily.blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+dee0de32:TCSlib/Cryptography/Asymptotic/Adversary.lean:262:theorem FunFamily.blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
+180:def signatureBlock {n : ℕ} (σ : Fin (n * n) → Bool) (i : Fin n) : Fin n → Bool :=
+181-  fun k => σ (finProdFinEquiv (i, k))
+182-
+## block update / ofFn_update relatives (Blocks.flatten_ofFn_update)
+dee0de32:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:211:theorem encodeList_ofFn_split {N : ℕ} (F : Fin N → List Bool) (j : Fin N) :
+dee0de32:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:188:theorem ofFn_update_eq {α : Type*} {N : ℕ} (W : Fin N → α) (k : Fin N) (z : α) :
+## encodeList injectivity (Encoding.encodeList_injective)
+dee0de32:TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang.lean:120:theorem decodeList_encodeList {α : Type} (f : List Bool → Option (α × List Bool))
+dee0de32:TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang.lean:145:  rw [decodeList_encodeList decodeNat encodeNat g.args
+dee0de32:TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang.lean:166:  rw [decodeList_encodeList DAGGate.decode DAGGate.encode C.gates
+## averaging: exists i, E[g] <= g i (Averaging.exists_expect_sample_le)
+dee0de32:TCSlib/Cryptography/Asymptotic/Collections.lean:617:theorem StrongOneWay.exists_collection_oneWay {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
+dee0de32:TCSlib/Cryptography/Asymptotic/Ensembles.lean:269:theorem Ensemble.indist_iff_exists_negligible {ℓ : PolyExpr} (X Y : Ensemble ℓ) :
+dee0de32:TCSlib/Cryptography/Foundations/Negligible.lean:212:theorem exists_not_negligible_not_noticeable :
+dee0de32:TCSlib/Cryptography/Foundations/Probability.lean:137:theorem uprob_exists_le {ι : Type*} (s : Finset ι) (p : ι → α → Prop) :
+dee0de32:TCSlib/Cryptography/Games/Efficiency.lean:332:theorem exists_handlerMachine (A : NUPPT) (q : PolyExpr) (din dout : Fin k → PolyExpr)
+## Markov-type b*Pr[P] <= E[q] (Averaging.expect_favourable_of_success)
+dee0de32:TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:88:(`uprob_prod`, `uprob_mul_le_uexp`) gives `(ε/2)(2^{-k}/2) = ε/(4·2^k)`. -/
+dee0de32:TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:138:  have hcomb := uprob_mul_le_uexp (G := fun x => 1 / 2 + ε / 2 ≤ q x)
+dee0de32:TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:350:(`glColl_uprob_le`); averaging over the good indices (`HardcoreBit.uprob_mul_le_uexp`) gives
+dee0de32:TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:30:  (`HardcoreBit.half_le_uprob_threshold`), the averaging `HardcoreBit.uprob_mul_le_uexp`, and
+dee0de32:TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:293:good indices (`HardcoreBit.uprob_mul_le_uexp`) gives inversion probability
+dee0de32:TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:370:  have hbound := HardcoreBit.uprob_mul_le_uexp (G := fun r => 1 / 2 + ε ≤ q r) (q := inner)
+dee0de32:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2780:`3/(128n^c) − n·ℓ·δ_S(n)`. `HardcoreBit.uprob_mul_le_uexp` averages over the good set, and
+dee0de32:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2917:  have havg := HardcoreBit.uprob_mul_le_uexp hW0 hinst
+dee0de32:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2989:good instance. Averaging over the good set (`HardcoreBit.uprob_mul_le_uexp`,
+dee0de32:TCSlib/Cryptography/HardcoreBit/Basic.lean:142:theorem uprob_mul_le_uexp {G : Ω → Prop} {q : Ω → ℝ} {b : ℝ} (hq : ∀ ω, 0 ≤ q ω)
+dee0de32:TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:198:    (uprob_mul_le_uexp (fun x => uprob_nonneg _) hR)
+dee0de32:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:187:  refine uprob_mul_le_uexp (fun ω => sq_nonneg _) fun ω h => ?_
+## coordinate resampling (Statistics.coordinate_reduction_bound)
+dee0de32:TCSlib/Cryptography/Games/Probability.lean:354:theorem expect_sample_update {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+dee0de32:TCSlib/Cryptography/Games/Probability.lean:382:theorem expect_sample_coord {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+## negligibility polynomial factor (Closing)
+dee0de32:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:267:theorem Negligible.polyExpr_mul {μ : ℕ → ℝ} (hμ : Negligible μ) (p : PolyExpr) :
+dee0de32:TCSlib/Cryptography/Foundations/Negligible.lean:126:theorem Negligible.mul_pow (hμ : Negligible μ) (d : ℕ) :
+dee0de32:TCSlib/Cryptography/Foundations/Negligible.lean:143:theorem Negligible.const_mul (hμ : Negligible μ) (a : ℝ) :
+## MachineCodec extensionality (lamport_codec_ext)
+## padFin / iterEmit / Forwarding handler / BitCodec uses in the delivered files
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:514:  have h := hfE n (padFin n x)
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:515:  have hx' := Collection.ofFn_padFin_of_le (le_of_eq hx)
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:532:      (pairEncode (List.ofFn m) (List.ofFn (padFin (n * n) (lamportSign.runAt n
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:552:  have hpad := Collection.ofFn_padFin_of_le (le_of_eq hσ)
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:767:      bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n) := by
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:770:    rw [SignatureScheme.forgerCodec_decodeMove, bitCodec_decodeMove]
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:773:    rw [SignatureScheme.forgerCodec_encodeEntry, bitCodec_encodeEntry]
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:774:  · rw [SignatureScheme.forgerCodec_timeout, bitCodec_timeout]
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:796:    runAt_lamportSign_table, padFin_ofFn]
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:829:          (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:845:  let codec := bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n)
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:880:            (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:307:  if m i = c then zeroBits _ else tableSignature T m
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:311:    abortingAnswer T i c m = if m i = c then zeroBits _ else tableSignature T m := rfl
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:377:    .pure (if res.2 then zeroBits n else signatureBlock (signature res.1) i)
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:386:        .pure (if res.2 then zeroBits n else signatureBlock (signature res.1) i)) := rfl
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean:46:  A.toCompOn (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean:53:      A.toCompOn (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean:60:      A.toCompOn (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
+## index advice (Advice) vs Forwarding.exists_withAdviceOn
+dee0de32:TCSlib/Cryptography/Games/Forwarding.lean:192:theorem _root_.Complexity.NUPPT.exists_withAdviceOn (B : NUPPT) (β : ℕ → List Bool)

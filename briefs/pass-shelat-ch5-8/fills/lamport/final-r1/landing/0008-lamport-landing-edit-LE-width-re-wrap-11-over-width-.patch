@@ -1,0 +1,137 @@
+From 1023834eb030197ef2fc94c7270cc0d5ac85ab12 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 14 Nov 2026 18:05:58 +0000
+Subject: [PATCH 8/8] lamport landing edit LE-width: re-wrap 11 over-width
+ lines in four helpers
+
+Four of the new Lamport helper files had eleven lines over the 100-character limit:
+Experiment (1), Machine (6), MachineSpec (3) and Realization (1). This edit re-wraps each of
+them. It changes whitespace only: the whitespace-separated token sequence of every file is
+unchanged. No line in the four files exceeds 100 characters now.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Signatures/Lamport/Experiment.lean         |  3 ++-
+ .../Signatures/Lamport/Machine.lean            | 18 ++++++++++++------
+ .../Signatures/Lamport/MachineSpec.lean        |  9 ++++++---
+ .../Signatures/Lamport/Realization.lean        |  3 ++-
+ 4 files changed, 22 insertions(+), 11 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean
+index 2a296d739..c84e55af7 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean
+@@ -186,7 +186,8 @@ indicator over independent challenge, key-table and forger samples. -/
+ theorem redProbability_eq (p : Fin n × Bool) : redProbability g adv p =
+     ProbComp.expect (ProbComp.sample (Fin n → Bool)) (fun x =>
+       ProbComp.expect (ProbComp.sample (Table n)) fun T =>
+-        ProbComp.expect (ProbComp.sample ρ) fun r => if RedSuccess g adv (g x) T r p then 1 else 0) :=
++        ProbComp.expect (ProbComp.sample ρ) fun r =>
++          if RedSuccess g adv (g x) T r p then 1 else 0) :=
+   rfl
+ 
+ /-- A uniform position-bit planted reduction succeeds with probability at least the honest
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean
+index 39e1d0375..40b8a7e75 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean
+@@ -146,18 +146,21 @@ theorem first_eq (v : List Bool) : first v =
+     ((tape v).drop (offset (.mul (.const 2) .var) v).length).take (u v).length := rfl
+ /-- Selecting the first preimage is polynomial-time. -/
+ theorem first_poly : PolyTimeComputable first :=
+-  TCSlib.Cryptography.takeLen_poly u_poly (TCSlib.Cryptography.dropLen_poly (offset_poly _) tape_poly)
++  TCSlib.Cryptography.takeLen_poly u_poly
++    (TCSlib.Cryptography.dropLen_poly (offset_poly _) tape_poly)
+ 
+ /-- The second preimage is the next `n` bits after offset `2ni+n`. -/
+ def second (v : List Bool) : List Bool :=
+   ((tape v).drop ((offset (.mul (.const 2) .var) v).length + (u v).length)).take (u v).length
+ /-- `second` is the second `n`-bit half of the selected preimage pair. -/
+ theorem second_eq (v : List Bool) : second v =
+-    ((tape v).drop ((offset (.mul (.const 2) .var) v).length + (u v).length)).take (u v).length := rfl
++    ((tape v).drop ((offset (.mul (.const 2) .var) v).length +
++      (u v).length)).take (u v).length := rfl
+ /-- Selecting the second preimage is polynomial-time. -/
+ theorem second_poly : PolyTimeComputable second := by
+   refine (TCSlib.Cryptography.takeLen_poly u_poly
+-    (TCSlib.Cryptography.dropLen_poly ((offset_poly (.mul (.const 2) .var)).append u_poly) tape_poly)).congr ?_
++    (TCSlib.Cryptography.dropLen_poly ((offset_poly (.mul (.const 2) .var)).append u_poly)
++      tape_poly)).congr ?_
+   intro v
+   simp only [second_eq, List.length_append]
+ 
+@@ -207,8 +210,10 @@ take the prefix and drop the suffix, then concatenate the replacement block betw
+ theorem advIn_poly (W : PolyExpr) {E G : List Bool → List Bool}
+     (hE : PolyTimeComputable E) (hG : PolyTimeComputable G) :
+     PolyTimeComputable (advIn W E G) := by
+-  refine (((TCSlib.Cryptography.takeLen_poly (offset_poly W) (honestPk_poly hG)).append (replacement_poly hE)).append
+-    (TCSlib.Cryptography.dropLen_poly ((offset_poly W).append (width_poly W)) (honestPk_poly hG))).congr ?_
++  refine (((TCSlib.Cryptography.takeLen_poly (offset_poly W) (honestPk_poly hG)).append
++      (replacement_poly hE)).append
++    (TCSlib.Cryptography.dropLen_poly ((offset_poly W).append (width_poly W))
++      (honestPk_poly hG))).congr ?_
+   intro v
+   simp only [advIn_eq, List.length_append]
+ 
+@@ -258,7 +263,8 @@ theorem blocked_eq (w : List Bool) : blocked w =
+     decide (((message w).drop (pos (context w)).length).headD false = bit (context w)) := rfl
+ /-- Testing whether a query requests the planted half is polynomial-time. -/
+ theorem blocked_poly : PolyTimeComputable (fun w => [blocked w]) := by
+-  have hq := polyTimeComputable_headD.comp (TCSlib.Cryptography.dropLen_poly (pos_poly.comp context_poly) message_poly)
++  have hq := polyTimeComputable_headD.comp
++    (TCSlib.Cryptography.dropLen_poly (pos_poly.comp context_poly) message_poly)
+   have hb := bit_poly.comp context_poly
+   refine (polyTimeComputable_pairEq.comp (hq.pairEncode hb)).congr ?_
+   intro w
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean
+index 3ee00416c..2bed98ebe 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean
+@@ -60,7 +60,8 @@ theorem first_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge
+   rw [LamportMachine.first_eq, LamportMachine.tape_seedIn, LamportMachine.offset_eq,
+     LamportMachine.pos_seedIn, LamportMachine.u_seedIn]
+   simp only [List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+-  have hrow := hcoin (B := 2 * n) (fun j : Fin n => List.ofFn (T (j, false)) ++ List.ofFn (T (j, true)))
++  have hrow := hcoin (B := 2 * n)
++    (fun j : Fin n => List.ofFn (T (j, false)) ++ List.ofFn (T (j, true)))
+     (fun j => by simp only [List.length_append, List.length_ofFn]; omega) i
+   rw [coinBlock_eq, ← secretWord_eq] at hrow
+   have h := congrArg (fun w : List Bool => w.take n) hrow
+@@ -76,7 +77,8 @@ theorem second_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge
+   rw [LamportMachine.second_eq, LamportMachine.tape_seedIn, LamportMachine.offset_eq,
+     LamportMachine.pos_seedIn, LamportMachine.u_seedIn]
+   simp only [List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+-  have hrow := hcoin (B := 2 * n) (fun j : Fin n => List.ofFn (T (j, false)) ++ List.ofFn (T (j, true)))
++  have hrow := hcoin (B := 2 * n)
++    (fun j : Fin n => List.ofFn (T (j, false)) ++ List.ofFn (T (j, true)))
+     (fun j => by simp only [List.length_append, List.length_ofFn]; omega) i
+   rw [coinBlock_eq, ← secretWord_eq] at hrow
+   have h := congrArg (fun w : List Bool => w.drop n) hrow
+@@ -218,7 +220,8 @@ theorem out_nonabort {n : ℕ} (i : Fin n) (z ρ : List Bool)
+     LamportMachine.out (pairEncode (seedIn n z ρ) (pairEncode [false] (List.ofFn a))) =
+       List.ofFn (signatureBlock (splitBits a).2 i) := by
+   rw [LamportMachine.out_eq, LamportMachine.state_eq, LamportMachine.context_eq]
+-  simp only [LamportMachine.context_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.headD_cons, Bool.false_eq_true,
++  simp only [LamportMachine.context_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.headD_cons,
++    Bool.false_eq_true,
+     if_false, LamportMachine.u_seedIn, LamportMachine.offset_eq, hz,
+     List.length_replicate, PolyExpr.eval_var]
+   have hs : List.ofFn (splitBits a).2 = (List.ofFn a).drop n := by
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean
+index b2e0af9fd..8bc6ca4c7 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean
+@@ -166,7 +166,8 @@ theorem exists_realization_machine
+         (by simpa only [Nat.sub_self] using hk.2 (tableSignature T m))
+       have hp : (a, false) = (a₀, false) := OracleComp.pure.inj (by
+         simpa only [simulate_query, abortingImpl_apply, abortingAnswer_eq, if_neg hm,
+-          hm, if_false, decide_false, Bool.false_or, OracleComp.pure_bind, ha, simulate_pure] using habort)
++          hm, if_false, decide_false, Bool.false_or, OracleComp.pure_bind, ha, simulate_pure]
++          using habort)
+       have haa : a = a₀ := congrArg Prod.fst hp
+       rw [simulate_query, hcall j m hm, OracleComp.pure_bind, ha, simulate_pure,
+         haa]
+-- 
+2.43.0
+

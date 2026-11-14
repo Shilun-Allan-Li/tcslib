@@ -1,0 +1,43 @@
+== strict (archived Gate 10 harness)
+file                                                                           A head       A base       B head       B base  new / gone
+Cryptography_Authentication                                                      pass         pass         pass         pass  
+Cryptography_Authentication_Signatures_Lamport                                   pass         pass FAIL 26e/16d FAIL 15e/11d  B NEW ['TCSlib.Cryptography.Authentication.lamport_exists_best_position', 'TCSlib.Cryptography.Authentication.lamport_forgeGame_accept_eq_honestProbability', 'TCSlib.Cryptography.Authentication.lamport_forgerCodec', 'TCSlib.Cryptography.Authentication.lamport_loggedSignImpl_expect', 'TCSlib.Cryptography.Authentication.lamport_signImpl_expect']
+Cryptography_Authentication_Signatures_Lamport_Advice                            pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Averaging                         pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_AveragingExtra                    pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Blocks                            pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Closing                           pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Encoding                          pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Experiment                        pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_InversionProbability              pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Machine                           pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_MachineSpec                       pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Nonabort                          pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Planted                           pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Realization                       pass            -   FAIL 6e/1d            -  B (new file) failing ['TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine']
+Cryptography_Authentication_Signatures_Lamport_Seed                              pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Statistics                        pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_TableCoins                        pass            -         pass            -  
+head pass A 18/18, B 16/18; new failing declarations: [('Cryptography_Authentication_Signatures_Lamport', 'B', 'TCSlib.Cryptography.Authentication.lamport_exists_best_position'), ('Cryptography_Authentication_Signatures_Lamport', 'B', 'TCSlib.Cryptography.Authentication.lamport_forgeGame_accept_eq_honestProbability'), ('Cryptography_Authentication_Signatures_Lamport', 'B', 'TCSlib.Cryptography.Authentication.lamport_forgerCodec'), ('Cryptography_Authentication_Signatures_Lamport', 'B', 'TCSlib.Cryptography.Authentication.lamport_loggedSignImpl_expect'), ('Cryptography_Authentication_Signatures_Lamport', 'B', 'TCSlib.Cryptography.Authentication.lamport_signImpl_expect'), ('Cryptography_Authentication_Signatures_Lamport_Realization', 'B', 'TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine')]
+
+== coe variant (FinDist CoeFun instance as notation; canonical)
+file                                                                           A head       A base       B head       B base  new / gone
+Cryptography_Authentication                                                      pass         pass         pass         pass  
+Cryptography_Authentication_Signatures_Lamport                                   pass         pass FAIL 26e/16d FAIL 15e/11d  B NEW ['TCSlib.Cryptography.Authentication.lamport_exists_best_position', 'TCSlib.Cryptography.Authentication.lamport_forgeGame_accept_eq_honestProbability', 'TCSlib.Cryptography.Authentication.lamport_forgerCodec', 'TCSlib.Cryptography.Authentication.lamport_loggedSignImpl_expect', 'TCSlib.Cryptography.Authentication.lamport_signImpl_expect']
+Cryptography_Authentication_Signatures_Lamport_Advice                            pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Averaging                         pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_AveragingExtra                    pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Blocks                            pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Closing                           pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Encoding                          pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Experiment                        pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_InversionProbability              pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Machine                           pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_MachineSpec                       pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Nonabort                          pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Planted                           pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Realization                       pass            -   FAIL 6e/1d            -  B (new file) failing ['TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine']
+Cryptography_Authentication_Signatures_Lamport_Seed                              pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_Statistics                        pass            -         pass            -  
+Cryptography_Authentication_Signatures_Lamport_TableCoins                        pass            -         pass            -  
+head pass A 18/18, B 16/18; new failing declarations: [('Cryptography_Authentication_Signatures_Lamport', 'B', 'TCSlib.Cryptography.Authentication.lamport_exists_best_position'), ('Cryptography_Authentication_Signatures_Lamport', 'B', 'TCSlib.Cryptography.Authentication.lamport_forgeGame_accept_eq_honestProbability'), ('Cryptography_Authentication_Signatures_Lamport', 'B', 'TCSlib.Cryptography.Authentication.lamport_forgerCodec'), ('Cryptography_Authentication_Signatures_Lamport', 'B', 'TCSlib.Cryptography.Authentication.lamport_loggedSignImpl_expect'), ('Cryptography_Authentication_Signatures_Lamport', 'B', 'TCSlib.Cryptography.Authentication.lamport_signImpl_expect'), ('Cryptography_Authentication_Signatures_Lamport_Realization', 'B', 'TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine')]

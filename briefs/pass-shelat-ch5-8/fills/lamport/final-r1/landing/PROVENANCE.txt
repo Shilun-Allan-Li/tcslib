@@ -1,0 +1,143 @@
+lamport (Theorem 137.2, Authentication.lamport_oneTimeSecure) maintainer delivery review r1, 2026-11-14 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+
+brief: briefs/pass-shelat-ch5-8/fills/lamport/issued-r1/brief.md, SHA-256 fe4c7706a298ff53cac842dede0e349104a689e56be59ed376e24d417329f8d4
+  (logs/brief.md). Issued package SHA256SUMS 7/7 OK; SOURCE-SHA256SUMS 150/150 OK at eff2dcd0 (logs/issue-package-check.txt).
+  Base sorries: logs/base-sorries-issued.txt (22 in 12 modules). Issue base: eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9.
+  Owned file per the brief: TCSlib/Cryptography/Authentication/Signatures/Lamport.lean. Helpers: Lamport/ only.
+delivery: exchange/pass-shelat-ch5-8 5a50cdc0b738d955c346d2a0f81944ff1f11c94c ("fill lamport: final").
+  The 3 commits that touch inbox/fills/lamport touch nothing else (logs/exchange-commits.txt). The payload tree at
+  5a50cdc0 equals the tip c8e269af. It was extracted with git archive into a fresh directory, which was removed after use.
+  Cited files are kept in logs/delivery-extracts/; extract hashes equal the payload hashes
+  (logs/delivery-extract-hashes*.txt).
+integrity: logs/payload-check.txt (tools/mancheck.py, exact path-set equality).
+  - Top SHA256SUMS: 3064/3064 OK. evidence/SHA256SUMS: 3038/3038 OK.
+  - evidence/inputs/SHA256SUMS and SOURCE-SHA256SUMS are byte copies of the issued ones. The 7 entries verify; the other
+    inputs are covered by the top manifest.
+  - git am of the 6 patches at eff2dcd0 in a scratch worktree (removed): rc 0, tree a84df5e9de189001826beeb573c15ae1d8526912
+    (logs/git-am-integrity.log, logs/integrity.log).
+  - 18 changed paths (M Authentication.lean, M Signatures/Lamport.lean, A 16 helpers) are byte-identical to src/, and src/
+    holds exactly these 18 files. Their SHA-256 equal the worker's evidence/logs/source-payload-final-r2.json (18/18).
+  - The worker's commit ids (47ced271 final, 252ec646 = patch 5) cannot be reproduced, because no committer metadata is
+    delivered. Only the patch/src content is verified (logs/worker-claims.txt).
+  - Between patch 5 and patch 6 only Machine.lean changes (take_poly/drop_poly removed; ReductionSupport imported).
+olean tree: $SP/dl-oleans-2 only (dl-oleans untouched).
+  - tree/tree-check-pre.txt: 1199 modules at the eff2dcd0 source and recorded olean hashes (records =
+    dl-crh-r1/logs/all-results-restored.jsonl, copied to logs/prior-results-base.jsonl).
+  - Full snapshot tree/snapshot-pre.txt (1230 files) equals dl-crh-r1/tree/snapshot-post.txt.
+landing: branch land/pass-shelat-lamport (local, no upstream), worktree $SP/wt-land-lamport (sparse, briefs/ excluded).
+  - git am at eff2dcd0 (authors kept: Seyoon Ragavan; committer rev@local). Worker head e3b19f39 (landing/git-am.log; the
+    first attempt was refused on an unpopulated index, and nothing was applied).
+  - Rebased onto 8b27fd69 (landing/rebase.log, superseded). After #305 it was rebased onto origin tip
+    dee0de32ee33d7188afe97bdc3089fac68412057 (landing/rebase2.log, rc 0, no conflict).
+  - Origin delta since eff2dcd0: PassShelatChapter5-8Plan.md, briefs/, #303's four Randomness files and
+    scripts/campaign_style_lint.py (#305) (landing/origin-delta-nonbriefs.txt, origin-commits.txt).
+  - The Lamport paths after the rebase are identical to the worker head e3b19f39.
+  Commits (landing/landing-log.txt):
+    f95f2c9703cc2fc91c08ecc173abcd8e1368e5f0  Prove Lamport planted coupling and algorithm readers
+    228f9d852828f386e5198ef0c9266c557522ad06  Register Lamport proof helpers in authentication facade
+    98aef759419ffd9ae66c35ffa308d361949140dc  Prove Lamport averaging bound for the actual forgery game
+    188e4f315de417e937422a787c844de72f4c889e  Make Lamport local opacity installation idempotent
+    ea3d76b0ea4cbcbcc76afe0146504a4d0aee64c2  Prove Lamport one-time security via the planted-machine reduction
+    846103fae130d86eb7bb3cb9deff33804b0bd999  Reuse public polynomial-time prefix lemmas in Lamport handler
+    99d7d775935c62f09b699923dfa3e2030e6b869a  lamport landing edit LE-facade (Claude <noreply@anthropic.com>)
+    1023834eb030197ef2fc94c7270cc0d5ac85ab12  lamport landing edit LE-width (Claude <noreply@anthropic.com>)
+  head 1023834eb030197ef2fc94c7270cc0d5ac85ab12, tree 94aff1a580494d50002c6dde390c0112ea3212b6. Patches of the two edits are in landing/0007-*, 0008-*.
+LE-facade (Seyoon ruling 2026-11-14: exactly sixteen helper imports in Authentication.lean): landing/le-facade-check.txt.
+  - The worker's facade diff vs base is exactly 16 added Signatures.Lamport.* imports, 0 removed, base import order kept,
+    and every non-import line identical (logs/facade-diff-delivered.txt).
+  - LE-facade reorders only those 16 lines, alphabetically, directly after Signatures.Lamport. This is the same form as the
+    dl-crh and hash-sign LE-facades. The import multiset and the non-import lines are unchanged.
+  - Combining with land/pass-shelat-hash-sign (4f0280c8) by git merge-tree: no conflict (landing/facade-combine-check.txt).
+LE-width: 11 new over-width lines re-wrapped in Experiment (1), Machine (6), MachineSpec (3) and Realization (1).
+  - Whitespace only: the whitespace-split token sequence is identical per file (landing/le-width-wscheck.txt; tools/lewidth.py).
+  - The two remaining over-width lines (Lamport.lean:90, Authentication.lean:60) are pre-existing (logs/sizes-widths.txt).
+LE-doc: not made. 189 of 221 new public declarations' docstrings lack a backticked formula (statements/docaudit.tsv), and
+  8 proofs of 10+ lines have no sketch (statements/sketch-audit.tsv). That is above the ~40 limit, so only the counts are
+  reported.
+build (at 1023834e): build/ = order/head-build-queue.txt, all rc 0 and 0 errors. The 24 modules are the 18 changed, plus
+  HashAndSign and Authentication downstream, the base-delta modules Randomness/Extraction/{Rejection,Sampler}, Extraction
+  and Randomness, and root TCSlib.
+  - HashAndSign has its 1 issued sorry. Linter warnings: Blocks 2, InversionProbability 2, MachineSpec 2, Realization 1
+    (unused variable / unused simp arg / unreachable tactic); Rejection 10 and Extraction 2 as in the ext-nosrc review.
+  - audits/pass-shelat/Checks does not import Authentication (not downstream). Its olean is the base one, at an unchanged
+    source.
+  - logs/final-tree-check-head.txt: 1217 modules (+31 PFR) all rc 0 at the 1023834e source and olean hash, no stray olean.
+    logs/head-sources-not-in-tree.txt lists 34 base modules outside the root TCSlib closure (unchanged).
+statements (base eff2dcd0 vs worker head e3b19f39):
+  - statements/decls2.tsv: 220 ADDED, 0 CHANGED, 0 REMOVED.
+  - touched.tsv: 1 CHANGED (target, sketch step 5 and body), 46 UNCHANGED, 19 ADDED in Lamport.lean, 202 in new files.
+  - header-bytes.txt: all 47 pre-existing declarations of Lamport.lean, including the target, have IDENTICAL headers.
+    The 19 MISSING are the new names.
+  - The module docstring changes only the title, the target's Main-results line and the added ## Contents.
+  - touched-landing.* are the same at the landing head (used for line mapping).
+axioms: lamport_oneTimeSecure [propext, Classical.choice, Quot.sound] (census-run/ head; base-probe-runs/ base: + sorryAx).
+  - Census (logs/census-head-summary.txt, logs/census-summary.txt, statements/census.tsv): 321 stored constants in the 18
+    files, all with axiom subsets of the standard three.
+  - Base 67 -> head 321: 254 added, 0 removed / type-changed / attr-changed / moved; 1 axioms-changed (the target).
+  - No simp lemma, no instance. One new public abbrev, LamportFill.Table, with Table_eq.
+Rule 10:
+  - Head collector: probe-runs/ (owners: the 18 files). Seals seals/{A,B} (strict) and seals-coe/{A,B} (coe, canonical),
+    all run in seal-runs/ (72 probes). Base: base-probe-runs/ collector over Authentication and Lamport, base-seals*/,
+    base-seal-runs/ (8 probes).
+  - logs/seal-table.txt; strict = coe in every row.
+    A: 18/18 pass at head; base 2/2.
+    B (PolyExpr.eval sealed): 16/18 at head. Lamport.lean fails 16 declarations (base: 11, the same 11 inside them).
+    Realization fails 1 (new file).
+  - The 5 newly failing Lamport.lean declarations fail at their statements (lamport_signImpl_expect,
+    lamport_loggedSignImpl_expect, lamport_forgerCodec, lamport_forgeGame_accept_eq_honestProbability,
+    lamport_exists_best_position). The error is the frozen section variable `f : ∀ n, (Fin n → Bool) → …` being passed
+    where `Fin (PolyExpr.var.eval n)` is expected. This is the same first error as the base's lamportOWF and lamport.
+  - LamportFill.exists_realization_machine fails in its proof (Realization source 146–179). It treats T1's
+    `(bitSpecAt var (var·var) n).dom j` as `Fin n → Bool`.
+  - Paired controls: controls/ + control-runs/ (tools/mkctl_lamport.py on the coe records; rows padFin, PolyExpr.eval,
+    ProbComp.expect, ProbComp.sample, OracleComp.bind, LamportFill.secretWord, LamportFill.signatureBlock, LamportMachine.u).
+    16 probes and 37 sealed negatives, each failing exactly once. Positives and unsealed controls pass.
+    logs/ctlcheck.log: ALL_OK True.
+  - Explicit scan: scan/items-head.json, scan/explicit-head.json, logs/scan2-head.log, logs/scan-owned-items.txt.
+    797 items, 0 foreign definitions. 32 owned-definition items, all reading a definition of the same file.
+patch 4 (run_cmd opacity block in Lamport.lean:777, Lamport/Experiment.lean:40, Lamport/Statistics.lean:36):
+  - What it does: for ProbComp.expect, ProbComp.sample and OracleComp.bind, it runs `attribute [local irreducible]` only
+    when the name is not already irreducible. It is the seal harness's own install pattern.
+  - Why idempotent: a plain second `attribute [local irreducible]` errors when the name is already irreducible
+    (LpProbe/OpacityTwice: "failed to set [local irreducible] … currently [irreducible]"). Under a whole-file seal the
+    file's own attribute therefore fails.
+  - opacity-runs/ (tools/mkopacity.py, probe-sources/opacity/):
+    * Inside the namespace, after the block, the three names are irreducible (OpacityKeep_*).
+    * With the block deleted they are semireducible. Lamport and Experiment still compile rc 0.
+    * Statistics without the block did not finish in ~8.5 min (RSS 5.2 GB; reviewer killed its own PID,
+      logs/opacity-drop-statistics-killed.txt); with the block it takes 2 s.
+    * A module importing the facade sees all three semireducible (OpacityDownstream). The local attributes do not leak,
+      and they end at the file's namespace `end`.
+  - logs/opacity-seal-records.txt: in all three sealed files the seal installs the three names (before=semireducible,
+    installed=irreducible), the block is then a no-op, and EOF verification passes.
+  - In-file controls: controls-infile/, scan-infile-runs/, logs/infile-check.log ALL_OK. The sealed Lamport.lean, with the
+    block present, fails each of the expect/secretWord/padFin rfl readings exactly once; readers pass. Unsealed, all pass.
+admissions: logs/sorry-census.txt (head 1023834e): issued 22 -> 21. Only Signatures/Lamport differs (1 -> 0). The modules
+  outside the issued order are unchanged since eff2dcd0.
+lint:
+  - Old script (pre-#305): base eff2dcd0 216 FAIL / 102 WARN, worker head 216 / 101 (logs/lint-old-*, lint-old-diff-workerhead.txt).
+  - New script (#305), compared with the records tip dee0de32 (92 FAIL / 102 WARN): worker head 846103fa 92 / 101, and the
+    landing head 92 / 101 (logs/lint-new-*).
+  - Only diff: the Lamport.lean check-8 WARN (lamportGen, lamportSign without lemmas) is resolved.
+  - No facade FAIL for the helpers: the facade imports all 16.
+duplication: logs/duplication-grep.txt and logs/hash-sign-overlaps.txt (the maintainer note from the hash-sign review).
+  - No take_poly/drop_poly remains; Machine uses ReductionSupport.takeLen_poly and dropLen_poly.
+  - LamportFill.signatureBlock σ i = FunFamily.blocks n n σ i (blocks_apply). This is an undisclosed DL-9-class re-definition.
+  - Blocks.flatten_ofFn_update is a relative of CommitmentLemmas.ofFn_update_eq.
+  - Averaging.expect_favourable_of_success is the ProbComp analogue of HardcoreBit.uprob_mul_le_uexp.
+  - Three hash-sign overlaps: lamport_codec_ext = MachineCodec.ext_of_fields; lamport_forgerCodec is an instance of
+    forgerCodec_eq_bitCodec; exists_pure_of_cost_zero = eq_pure_of_cost_zero.
+restore: tree restored to the original base snapshot.
+  - restore-build/ (base worktree at eff2dcd0, order/restore-base.txt): Lamport, HashAndSign, Authentication, Extraction,
+    Randomness, TCSlib, all rc 0.
+  - Deleted (logs/restore-deletions.txt): the 16 helper oleans, the Rejection and Sampler oleans (directories removed), and
+    all LpProbe/ probe oleans. Base-side probes were run on the restored tree, and their oleans were deleted after.
+  - tree/tree-check-restored-1.txt and tree/tree-check-post.txt: RESULT OK. tree/snapshot-post.txt is byte-identical to
+    snapshot-pre.txt and to dl-crh-r1/tree/snapshot-post.txt.
+tools/: copied from dl-crh-r1/tools. Changes:
+  - mkcensus.py: endpoint lamport_oneTimeSecure.
+  - New: mkctl_lamport.py (from mkctl_dlcrh.py with lamport rows), mkopacity.py, mkinfile.py, lewidth.py.
+  - seals-coe/flat/ is a flat copy of seals-coe/{A,B}/*.json for mkctl.
+cleanup: the scratch base worktree was removed; the payload extraction and scratch files were removed; LpProbe/ was removed
+  from the landing worktree, which is clean at 1023834e.

@@ -1,0 +1,21 @@
+lamport review: overlaps with the parallel hash-sign delivery (maintainer note, 2026-11-14).
+Checked against exchange 90e4b3c8, inbox/fills/hash-sign/src/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/.
+Both are parallel deliveries from the same base (eff2dcd0), and neither copied the other. These are ledger candidates only, with no code change in this review.
+
+1. Lamport.lean:753, private `lamport_codec_ext` (a b : MachineCodec spec α) (decodeMove, encodeEntry, timeout equal) : a = b
+   = hash-sign CodecReaders.lean:44, public `Games.MachineCodec.ext_of_fields`. The statement is the same up to hypothesis
+   names, and the proof is the same (cases on both records and the three equalities, then rfl). Both workers ask for it to be
+   promoted to Games/Machines.
+2. Lamport.lean:765, `lamport_forgerCodec n : (lamport ..).forgerCodec n = bitCodec (fun _ => n) (fun _ => n*n) (n + n*n)`
+   is an instance of hash-sign CodecReaders.lean:68, `SignatureScheme.forgerCodec_eq_bitCodec S n` at S = lamport. The
+   instance is followed by rewriting msgLen.eval n = n and sigLen.eval n = n*n with `lamport_msgLen`, `lamport_sigLen`,
+   `PolyExpr.eval_var` and `PolyExpr.eval_mul`. It is used once, in lamport_forgeGame_accept_eq_honestProbability (Lamport.lean:834).
+3. Planted.lean:199, public `LamportFill.exists_pure_of_cost_zero (tree : OracleComp spec α)
+   (h : tree.CostBoundedBy (fun _ => 1) 0) : ∃ a, tree = .pure a`
+   = hash-sign OneQuery.lean:36, `HashSignFill.eq_pure_of_cost_zero`. The statement is the same up to the bound variable's
+   name, and the proof is the same (cases, then `OracleComp.costBoundedBy_query` and omega). Lamport uses it at Planted.lean:268
+   and 366, Nonabort.lean:51 and Realization.lean:165. Lamport's REPORT lists "the cost-zero OracleComp return
+   characterization" as a promotion request.
+Proposed disposition: one ledger row. Promote one copy of each to Games/Machines, Games/OracleComp and Signatures/Defs,
+then re-point both units at the post-landing consolidation. Lamport lands first or second, whichever order the
+maintainer chooses.
