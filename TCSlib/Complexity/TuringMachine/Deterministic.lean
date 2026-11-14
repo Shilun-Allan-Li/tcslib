@@ -37,6 +37,8 @@ Local modifications (see policy.md §2, vendored code):
 * added `MultiTapeTM.runFrom_one`, a one-step run as one machine step, beside the upstream
   `runFrom_zero` and `runFrom_succ_eq_step`, so that every one-step site cites one public lemma
   (dedup family RO-1; user, 2026-11-12).
+* added `MultiTapeTM.indicator_of_mem` and `MultiTapeTM.indicator_of_not_mem`, the two values of
+  `indicator`, so that consumers read it through equations.
 The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.Group.Abs
@@ -476,6 +478,17 @@ open Classical in
 /-- The Boolean indicator function of a set. -/
 noncomputable def indicator {α : Type*} (L : Set α) : α → Bool :=
   fun x => if x ∈ L then true else false
+
+/-- The indicator of a set is `true` at its members. -/
+theorem indicator_of_mem {α : Type*} {L : Set α} {x : α} (hx : x ∈ L) : indicator L x = true := by
+  classical
+  exact if_pos hx
+
+/-- The indicator of a set is `false` away from it. -/
+theorem indicator_of_not_mem {α : Type*} {L : Set α} {x : α} (hx : x ∉ L) :
+    indicator L x = false := by
+  classical
+  exact if_neg hx
 
 /-- A set is decidable within the given input-indexed bounds when its Boolean indicator is. -/
 def DecidableInTimeAndSpace {α : Type*} (L : Set α) (enc : α ↪ List Bool)
