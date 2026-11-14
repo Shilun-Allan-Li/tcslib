@@ -1,0 +1,50 @@
+START 2026-11-14T06:37:23.186583+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/EXP
+TCSlib/Complexity/ClassNP/EXP.lean:2734:66: warning: This simp argument is unused:
+  bufferTape
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.initCfg, Cfg.init, a3LoadCfg,̵ ̵b̵u̵f̵f̵e̵r̵T̵a̵p̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/ClassNP/EXP.lean:2760:88: warning: This simp argument is unused:
+  bufferTape
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, Cfg.ofWords, stateWord, b̵u̵f̵f̵e̵r̵T̵a̵p̵e̵,̵ ̵hz]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/ClassNP/EXP.lean:2778:66: warning: This simp argument is unused:
+  a3LoadCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, a̵3̵L̵o̵a̵d̵C̵f̵g̵,̵ ̵hz]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/ClassNP/EXP.lean:2779:66: warning: This simp argument is unused:
+  a3LoadCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, a̵3̵L̵o̵a̵d̵C̵f̵g̵,̵ ̵hz, sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+       10.70 real        24.54 user         2.64 sys
+          1800257536  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              161792  page reclaims
+                 391  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  23  voluntary context switches
+              193724  involuntary context switches
+            32923991  instructions retired
+            16105578  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-14T06:37:33.899949+00:00
+EXIT 0

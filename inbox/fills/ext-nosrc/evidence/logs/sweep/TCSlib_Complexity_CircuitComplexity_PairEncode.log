@@ -1,0 +1,52 @@
+START 2026-11-14T06:41:05.417783+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/PairEncode
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:117:4: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:129:41: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:180:10: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:178:27: warning: This simp argument is unused:
+  hs
+
+Hint: Omit it from the simp argument list.
+  simp [inputGate, h̵s̵,̵ ̵DAGGate.FaninTwo, DAGGate.WellFormed]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:189:63: warning: This simp argument is unused:
+  Nat.add_assoc
+
+Hint: Omit it from the simp argument list.
+  simp [DAGCircuit.size, DAGCircuit.bufferInputs, inputBuffer,̵ ̵N̵a̵t̵.̵a̵d̵d̵_̵a̵s̵s̵o̵c̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:241:64: warning: This simp argument is unused:
+  Fin.coe_cast
+
+Hint: Omit it from the simp argument list.
+  simp [List.getElem_ofFn, vectorOfList, List.get_eq_getElem,̵ ̵F̵i̵n̵.̵c̵o̵e̵_̵c̵a̵s̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+        4.62 real         1.71 user         1.10 sys
+          1474248704  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              103444  page reclaims
+               20896  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                2967  voluntary context switches
+               27511  involuntary context switches
+            32771570  instructions retired
+            17817562  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-14T06:41:10.045864+00:00
+EXIT 0

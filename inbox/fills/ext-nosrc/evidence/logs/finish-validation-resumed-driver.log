@@ -1,0 +1,15 @@
+Waiting for successful complete sweep
+Complete sweep passed; starting dependent facade checks
+RUN python3 -I evidence/tools/prepare_facade_rule10.py seals base
+END exit=0 log=evidence/logs/finish-validation-2-attempt-1794640187055003000.log
+RUN python3 -I evidence/tools/run_facade_rule10.py seals base
+END exit=0 log=evidence/logs/finish-validation-3.log
+RUN python3 -I evidence/tools/run_facade_rule10.py census final
+END exit=0 log=evidence/logs/finish-validation-4.log
+RUN python3 -I evidence/tools/prepare_facade_rule10.py seals final
+END exit=0 log=evidence/logs/finish-validation-5.log
+RUN python3 -I evidence/tools/run_facade_rule10.py seals final
+END exit=0 log=evidence/logs/finish-validation-6.log
+RUN python3 -I evidence/tools/check_admissions.py
+END exit=0 log=evidence/logs/finish-validation-7.log
+FINAL VALIDATION PASS

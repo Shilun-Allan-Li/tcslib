@@ -113,7 +113,9 @@ def header(raw: bytes) -> dict:
     for line in masked.splitlines(keepends=True):
         active = line.strip()
         if active:
-            match = re.fullmatch(r"import\s+([A-Za-z_][A-Za-z0-9_'.]*(?:\s+[A-Za-z_][A-Za-z0-9_'.]*)*)", active)
+            component = r"(?:[A-Za-z_][A-Za-z0-9_']*|«[^»\r\n]+»)"
+            module = component + r"(?:\." + component + r")*"
+            match = re.fullmatch(r"import\s+(" + module + r"(?:\s+" + module + r")*)", active)
             if match:
                 if closed:
                     raise RuntimeError("import after non-import command")

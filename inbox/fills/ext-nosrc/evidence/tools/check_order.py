@@ -1,8 +1,11 @@
 from pathlib import Path
-import datetime, json, subprocess, sys, time
+import datetime, json, subprocess, sys, time, runpy
 root=Path.cwd()
 order=[s.strip() for s in Path('evidence/inputs/order.txt').read_text().splitlines() if s.strip()]
-mode=sys.argv[1]
+arguments=[x for x in sys.argv[1:] if x!='--resume']
+resume='--resume' in sys.argv[1:]
+mode=arguments[0]
+wait_for_slot=runpy.run_path('evidence/tools/resource_gate.py')['wait_for_slot']
 target='TCSlib/Cryptography/Randomness/Extraction'
 seen=set()
 def closure(module):
@@ -25,7 +28,7 @@ elif mode=='prerequisites':
  closure('TCSlib/Cryptography/Randomness/Extraction/Sampler')
  modules=[m for m in order if m in seen and m!=target and not Path('.lake/tcslib-check-oleans',m+'.olean').exists()]
  modules += [m for m in sorted(seen-set(order)) if not Path('.lake/tcslib-check-oleans',m+'.olean').exists()]
-elif mode=='sweep':
+elif mode in ('sweep','final-sweep'):
  allowed=set(order)|seen
  modules=[]
  scheduled=set()
@@ -41,21 +44,26 @@ elif mode=='sweep':
   scheduled.add(module);modules.append(module)
  for module in order:visit(module)
 else:
- modules=sys.argv[1:]
+ modules=arguments
  mode='check-'+str(time.time_ns())
 logdir=Path('evidence/logs')/mode
 logdir.mkdir(parents=True,exist_ok=True)
 Path('evidence/logs/'+mode+'-order.txt').write_text('\n'.join(modules)+'\n')
-with Path('evidence/logs/'+mode+'-results.jsonl').open('a') as results:
+result_path=Path('evidence/logs/'+mode+'-results.jsonl')
+completed=[]
+if resume:
+ completed=[json.loads(line) for line in result_path.read_text().splitlines()]
+ assert [r['module'] for r in completed]==modules[:len(completed)]
+ assert all(r['exit']==0 for r in completed)
+ for result in completed:
+  assert Path(result['log']).is_file()
+ print(f'RESUME verified completed prefix: {len(completed)} modules',flush=True)
+with result_path.open('a') as results:
  for idx,module in enumerate(modules):
+  if idx<len(completed):continue
   path=logdir/(module.replace('/','_')+'.log')
-  # User override: from 2026-11-14 06:02:01 UTC, at most three host Lean jobs.
-  while time.time() >= 1794636121:
-   processes=subprocess.check_output(['ps','-axo','pid=,command='],text=True)
-   active=[line for line in processes.splitlines() if '/bin/lean ' in line and not 'ps -axo' in line]
-   if len(active)<3:break
-   print(f'WAIT concurrency: {len(active)} existing Lean processes',flush=True)
-   time.sleep(5)
+  if path.exists():path=logdir/(module.replace('/','_')+'-attempt-'+str(time.time_ns())+'.log')
+  wait_for_slot()
   started=datetime.datetime.now(datetime.timezone.utc).isoformat()
   print(f'{idx+1}/{len(modules)} START {module}',flush=True)
   with path.open('w') as log:

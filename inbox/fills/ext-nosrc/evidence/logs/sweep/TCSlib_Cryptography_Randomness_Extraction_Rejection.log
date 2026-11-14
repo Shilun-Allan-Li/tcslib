@@ -1,0 +1,80 @@
+START 2026-11-14T07:06:58.604147+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Randomness/Extraction/Rejection
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:159:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.tupleEquiv_apply`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:164:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.tupleEquiv_symm_apply`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:186:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.select_zero`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:190:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.select_succ`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:256:12: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵h̵d̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:258:14: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp [hd̵,̵ ̵h̵xa, ← mul_sum, q.sum_prob]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:259:14: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp [hd̵,̵ ̵h̵xa]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:268:31: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp [hd̵,̵ ̵h̵xa]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:334:6: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:385:21: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+        2.72 real         3.01 user         1.02 sys
+          2204680192  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179355  page reclaims
+                 181  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  30  voluntary context switches
+               18646  involuntary context switches
+            32260081  instructions retired
+            16469135  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-14T07:07:01.337429+00:00
+EXIT 0

@@ -1,0 +1,1 @@
+The pre-final-sweep report and ZIP were assembled before identifying the addendum requirement for a distinct final sweep after the full bootstrap. They were not pushed as the final delivery. This report is superseded; the final root REPORT and final-validation-summary record both complete passes. Proof sources are unchanged.

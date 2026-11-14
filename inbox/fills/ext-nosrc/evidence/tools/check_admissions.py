@@ -9,8 +9,8 @@ for line in Path('evidence/inputs/base-sorries.txt').read_text().splitlines():
  module,count,names=line.split(': ',2)
  if not module.startswith('TCSlib/'):module='TCSlib/Complexity/'+module
  for name in names.split(', '):base[(module,name)]=True
-results=[json.loads(line) for line in Path('evidence/logs/sweep-results.jsonl').read_text().splitlines()]
-order=Path('evidence/logs/sweep-order.txt').read_text().splitlines()
+results=[json.loads(line) for line in Path('evidence/logs/final-sweep-results.jsonl').read_text().splitlines()]
+order=Path('evidence/logs/final-sweep-order.txt').read_text().splitlines()
 assert len(results)==len(order) and all(r['exit']==0 for r in results),'complete successful sweep required'
 actual={}
 pattern=re.compile(r'^(TCSlib/[^:]+)\.lean:(\d+):\d+: warning: declaration uses \'sorry\'',re.M)

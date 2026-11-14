@@ -1,0 +1,22 @@
+Waiting for successful complete sweep
+Complete sweep passed; starting dependent facade checks
+RUN python3 -I evidence/tools/run_facade_rule10.py census base
+END exit=0 log=evidence/logs/finish-validation-1.log
+RUN python3 -I evidence/tools/prepare_facade_rule10.py seals base
+END exit=1 log=evidence/logs/finish-validation-2.log
+Traceback (most recent call last):
+  File "/Users/seyoonr/.codex/worktrees/ext-nosrc-fill/tcslib-exchange/evidence/tools/prepare_facade_rule10.py", line 213, in <module>
+    main()
+    ~~~~^^
+  File "/Users/seyoonr/.codex/worktrees/ext-nosrc-fill/tcslib-exchange/evidence/tools/prepare_facade_rule10.py", line 209, in main
+    seals(args.side)
+    ~~~~~^^^^^^^^^^^
+  File "/Users/seyoonr/.codex/worktrees/ext-nosrc-fill/tcslib-exchange/evidence/tools/prepare_facade_rule10.py", line 176, in seals
+    probe, edits, line_map = common["instrument"](raw, label, requests)
+                             ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "evidence/tools/prepare_rule10.py", line 336, in instrument
+    info = header(raw)
+  File "evidence/tools/prepare_rule10.py", line 119, in header
+    raise RuntimeError("import after non-import command")
+RuntimeError: import after non-import command
+

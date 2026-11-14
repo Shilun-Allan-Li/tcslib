@@ -1,0 +1,29 @@
+START 2026-11-14T07:05:21.950186+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:95:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.challengeStream_def`:
+  [Fintype S]
+  [Fintype V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype S] [Fintype V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+       12.11 real         2.23 user         2.21 sys
+          2108211200  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              104748  page reclaims
+               71410  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+               13810  voluntary context switches
+               73040  involuntary context switches
+            35265752  instructions retired
+            21565541  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-14T07:05:34.067655+00:00
+EXIT 0

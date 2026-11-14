@@ -1,0 +1,28 @@
+START 2026-11-14T06:20:56.389514+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Robustness/SingleTape
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1994:103: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2005:99: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+        4.76 real        12.64 user         0.99 sys
+          1723334656  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              137687  page reclaims
+                 236  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                  38  voluntary context switches
+               30131  involuntary context switches
+            31680686  instructions retired
+            15130867  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-14T06:21:01.158548+00:00
+EXIT 0

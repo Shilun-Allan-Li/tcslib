@@ -1,0 +1,37 @@
+START 2026-11-14T07:35:00.047534+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCore/Functions
+TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:321:49: warning: This simp argument is unused:
+  splitPair_symm_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, glInverter, splitPair_apply, s̵p̵l̵i̵t̵P̵a̵i̵r̵_̵s̵y̵m̵m̵_̵a̵p̵p̵l̵y̵,̵ ̵Equiv.coe_fn_mk, Equiv.symm_apply_apply]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:321:71: warning: This simp argument is unused:
+  Equiv.coe_fn_mk
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, glInverter, splitPair_apply, splitPair_symm_apply, Equiv.c̵o̵e̵_̵f̵n̵_̵m̵k̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵E̵q̵u̵i̵v̵.̵symm_apply_apply]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+       39.16 real        23.63 user         8.80 sys
+          2246180864  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              182321  page reclaims
+                  65  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                 210  voluntary context switches
+               74092  involuntary context switches
+            34618652  instructions retired
+            29309005  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-14T07:35:39.247971+00:00
+EXIT 0

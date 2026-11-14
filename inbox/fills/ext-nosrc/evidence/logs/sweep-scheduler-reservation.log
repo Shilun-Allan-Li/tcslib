@@ -1,0 +1,9 @@
+Intentionally stopped only this fill's Python scheduler PID 37612 to honor the dl-crh bootstrap slot reservation.
+Command: /Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python -I evidence/tools/check_order.py sweep
+CWD evidence:
+p37612
+fcwd
+n/Users/seyoonr/.codex/worktrees/ext-nosrc-fill/tcslib-exchange
+
+No Lean process is signaled.
+An overbroad command-text check matched its own shell wrapper, so the first attempt to end the stopped scheduler did not run. The replacement scheduler was already gated. Verified old scheduler stopped (T) and intentionally ended only PID37612 with SIGINT/SIGCONT; no Lean process was signaled.

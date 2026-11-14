@@ -1,0 +1,30 @@
+START 2026-11-14T06:57:12.895179+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:94:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.owpPredictor_apply`:
+  [Fintype α]
+  [Fintype β]
+  [Fintype ρ]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] [Fintype β] [Fintype ρ] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+        6.28 real         1.92 user         1.55 sys
+          2129854464  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              135913  page reclaims
+               45416  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1941  voluntary context switches
+               42350  involuntary context switches
+            31676284  instructions retired
+            15067961  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-14T06:57:19.179788+00:00
+EXIT 0

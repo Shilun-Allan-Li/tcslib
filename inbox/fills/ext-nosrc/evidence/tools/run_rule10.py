@@ -22,6 +22,7 @@ import datetime
 import hashlib
 import json
 import os
+import runpy
 from pathlib import Path
 import re
 import subprocess
@@ -93,13 +94,7 @@ def run_one(area: Path, row: dict, tree: Path) -> dict:
     env["TCSLIB_OLEANS"] = str(tree)
     native_time = ["/usr/bin/time", "-l" if sys.platform == "darwin" else "-v"]
     command = [*native_time, "bash", "scripts/lean_check_tree.sh", module]
-    while time.time() >= 1794636121:
-        processes=subprocess.check_output(['ps','-axo','pid=,command='],text=True)
-        active=[line for line in processes.splitlines() if '/bin/lean ' in line and 'ps -axo' not in line]
-        if len(active)<3:
-            break
-        print(f'WAIT concurrency: {len(active)} existing Lean processes',flush=True)
-        time.sleep(5)
+    runpy.run_path('evidence/tools/resource_gate.py')['wait_for_slot']()
     start = datetime.datetime.now(datetime.timezone.utc).isoformat()
     tick = time.monotonic()
     with log.open("xb") as stream:
