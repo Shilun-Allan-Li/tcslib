@@ -114,6 +114,12 @@ theorem exists_realization_machine
       PolyExpr.eval_mul, PolyExpr.eval_var]
   have hstate : H.stateLen.eval n = 1 := by
     simp only [H, LamportMachine.handler_stateLen, PolyExpr.eval_const]
+  -- T1's query, answer and output widths, read through the `PolyExpr.eval` equations.
+  have hd : PolyExpr.var.eval n = n := PolyExpr.eval_var n
+  have he : (PolyExpr.mul .var .var).eval n = n * n := by
+    rw [PolyExpr.eval_mul, PolyExpr.eval_var]
+  have ho : (PolyExpr.add .var (.mul .var .var)).eval n = n + n * n := by
+    rw [PolyExpr.eval_add, he, PolyExpr.eval_var]
   let toSeed : (Bool × Table n) ≃ (Fin (H.seedLen.eval n) → Bool) :=
     (seedCoins n).symm.trans
       (Equiv.arrowCongr (finCongr hseed.symm) (Equiv.refl Bool))
@@ -142,15 +148,35 @@ theorem exists_realization_machine
   have hsafe : Safe tree i c := safe_of_nonabort T i c tree hcost a₀ habort
   have hrunread : H.run = LamportMachine.run S :=
     LamportMachine.handler_run W E G S hE hG hS
-  have hcall : ∀ (j : Fin 1) (m : Fin n → Bool), m i ≠ c →
-      H.impl n z ω j m (H.init n) = .pure (tableSignature T m, H.init n) := by
+  -- A safe query at T1's widths is answered by its table signature, cast to the answer width.
+  have hcall : ∀ (j : Fin 1) (m : Fin (PolyExpr.var.eval n) → Bool), m (Fin.cast hd.symm i) ≠ c →
+      H.impl n z ω j m (H.init n) = .pure (fun k => tableSignature T
+        (fun l => m (Fin.cast hd.symm l)) (Fin.cast he k), H.init n) := by
     intro j m hm
     rw [PolyHandler.impl_apply]
     apply congrArg OracleComp.pure
     apply PolyHandler.answer_of_run_eq H
     simp only [hrunread, hω, hinitWord]
-    simpa only [z] using run_safe S (hSign n) T i c (List.ofFn y) j m hm
-  have hsim : simulate (H.impl n z ω) tree (H.init n) = .pure (a₀, H.init n) := by
+    rw [List.ofFn_congr hd m, List.ofFn_congr he]
+    simp only [Fin.cast_cast]
+    simp only [Fin.cast_refl, id_eq]
+    simpa only [z] using run_safe S (hSign n) T i c (List.ofFn y) j _ hm
+  -- The planted simulation at any widths equal to T1's: substitute the widths, then read the
+  -- typed tree. A return needs no query; a safe query keeps the false state.
+  have htransport : ∀ (d e o q : ℕ) (Y : List Bool) (hd : d = n) (he : e = n * n)
+      (ho : o = n + n * n), q = 1 → Y = publicWord (plantedPublic (f n) T i c y) →
+      ∀ impl : QueryImpl (bitSpec (fun _ : Fin 1 => d) (fun _ => e))
+        (Fin (H.stateLen.eval n) → Bool) unifSpec,
+      (∀ (j : Fin 1) (m : Fin d → Bool), m (Fin.cast hd.symm i) ≠ c →
+        impl j m (H.init n) = .pure (fun k => tableSignature T
+          (fun l => m (Fin.cast hd.symm l)) (Fin.cast he k), H.init n)) →
+      simulate impl (A.toCompOn (bitCodec (fun _ : Fin 1 => d) (fun _ => e) o) n q Y r)
+        (H.init n) = .pure (fun k => a₀ (Fin.cast ho k), H.init n) := by
+    intro d e o q Y hd he ho hq hY impl himpl
+    subst d e o q Y
+    simp only [Fin.cast_refl, id_eq] at himpl ⊢
+    rw [← machineForger_eq L A n]
+    change simulate impl tree (H.init n) = .pure (a₀, H.init n)
     cases ht : tree with
     | pure a =>
       rw [ht] at habort
@@ -169,21 +195,21 @@ theorem exists_realization_machine
           hm, if_false, decide_false, Bool.false_or, OracleComp.pure_bind, ha, simulate_pure]
           using habort)
       have haa : a = a₀ := congrArg Prod.fst hp
-      rw [simulate_query, hcall j m hm, OracleComp.pure_bind, ha, simulate_pure,
+      rw [simulate_query, himpl j m hm, OracleComp.pure_bind, ha, simulate_pure,
         haa]
   obtain ⟨a, s, hsimulation, houtput⟩ := hψ z ω r
-  have hsimulation' : simulate (H.impl n z ω) tree (H.init n) = .pure (a, s) := by
-    simpa only [PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_mul, PolyExpr.eval_add,
-      hadv, tree, machineForger_eq] using hsimulation
-  have hp : (a, s) = (a₀, H.init n) :=
-    OracleComp.pure.inj (hsimulation'.symm.trans hsim)
-  have ha : a = a₀ := congrArg Prod.fst hp
+  have hsim := htransport _ _ _ _ _ hd he ho (PolyExpr.eval_const 1 n) hadv (H.impl n z ω) hcall
+  have hp : (a, s) = (fun k => a₀ (Fin.cast ho k), H.init n) :=
+    OracleComp.pure.inj (hsimulation.symm.trans hsim)
+  have ha : a = fun k => a₀ (Fin.cast ho k) := congrArg Prod.fst hp
   have hs : s = H.init n := congrArg Prod.snd hp
   rw [ha, hs] at houtput
-  have hresult : H.result n z ω (H.init n) a₀ =
+  have hresult : H.result n z ω (H.init n) (fun k => a₀ (Fin.cast ho k)) =
       List.ofFn (signatureBlock (splitBits a₀).2 i) := by
     rw [PolyHandler.result_eq, show H.out = LamportMachine.out from
-      LamportMachine.handler_out W E G S hE hG hS, hω, hinitWord]
+      LamportMachine.handler_out W E G S hE hG hS, hω, hinitWord, List.ofFn_congr ho]
+    simp only [Fin.cast_cast]
+    simp only [Fin.cast_refl, id_eq]
     apply out_nonabort i z (c :: secretWord T) a₀
     simpa only [z] using LamportMachine.pos_seedIn n (List.ofFn y)
       (List.replicate i.val true) (c :: secretWord T)
