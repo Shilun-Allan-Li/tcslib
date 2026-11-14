@@ -358,12 +358,11 @@ theorem exists_cpaStep (A : NUPPT) (q : PolyExpr) :
       (q.eval n) (A₂.toCompOn_costBoundedBy _ n _ _ _) (none, []) 0 (by omega),
     ← expect_ettImpl_lazy _ _ _ n f b (ettCt_eval n) hi0 hi2
       (fun a => if (List.ofFn a).headD false = true then (1 : ℝ) else 0) _ (none, [])
-      (fun e he => absurd he List.not_mem_nil)]
+      (lInv_nil n f none)]
   refine congrArg _ (funext fun R => ?_)
   have htbl : ovr (tagTbl ((none, []) : LSt n (ettCt.eval n))) R = R := by
-    rw [tagTbl_eq, List.map_nil, List.nil_append]
-    rfl
-  rw [htbl, hφ₀]
+    rw [tagTbl_none_nil, ovr_nil]
+  rw [htbl, hφ₀, keysL_nil]
   exact expect_ettImpl_outLen (PolyExpr.eval_const 1 n).symm _ _ _ _ A _ r
 
 end TCSlib.Cryptography.Composability.ETTGame

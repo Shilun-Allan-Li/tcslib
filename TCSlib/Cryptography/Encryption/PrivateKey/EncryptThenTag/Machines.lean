@@ -116,7 +116,9 @@ theorem length_logCount_encodeLog {ι α : Type} {spec : OracleSpec ι} (codec :
       cases h with
       | nil =>
         rw [List.drop_nil, Function.iterate_succ_apply, MachineCodec.encodeLog_nil]
-        have : pairSndD ([] : List Bool) = [] := rfl
+        have : pairSndD ([] : List Bool) = [] := by
+          have h1 := Complexity.BinArith.iterate_pairSndD_nil 1
+          rwa [Function.iterate_one] at h1
         rw [this]
         have hn := ih []
         rwa [List.drop_nil, MachineCodec.encodeLog_nil] at hn

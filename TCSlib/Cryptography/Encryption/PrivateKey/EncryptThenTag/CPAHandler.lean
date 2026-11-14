@@ -159,6 +159,10 @@ theorem bState_eq (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval
 def bSeed (n : ℕ) : (Fin (q.eval n * (2 * n)) → Bool) ≃ (Fin ((bSeedLen q).eval n) → Bool) :=
   Equiv.arrowCongr (finCongr (bSeedLen_eval q n).symm) (Equiv.refl Bool)
 
+/-- `bSeed q n = arrowCongr (finCongr _) (refl Bool)`. -/
+theorem bSeed_eq (n : ℕ) :
+    bSeed q n = Equiv.arrowCongr (finCongr (bSeedLen_eval q n).symm) (Equiv.refl Bool) := rfl
+
 /-- `⟦bSeed q n W⟧ = ⟦W⟧`. -/
 theorem ofFn_bSeed (n : ℕ) (W : Fin (q.eval n * (2 * n)) → Bool) :
     List.ofFn (bSeed q n W) = List.ofFn W := by
@@ -192,7 +196,9 @@ private theorem fields_bState (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin
     pairFstD_pairEncode, pairSndD_pairEncode, ← GGMRed.pairEncode_append_right,
     pairFstD_pairEncode, pairSndD_pairEncode]
   refine ⟨rfl, rfl, ?_, ?_⟩
-  · cases o <;> rfl
+  · cases o with
+    | none => rw [recBits_none, List.cons_append, List.headD_cons, Option.isSome_none]
+    | some c => rw [recBits_some, List.cons_append, List.headD_cons, Option.isSome_some]
   · cases o with
     | none =>
       rw [recBits_none, List.cons_append, List.drop_succ_cons, List.drop_zero, List.drop_succ_cons,
@@ -440,7 +446,9 @@ theorem bHandler_init_hstate (n : ℕ) : (bHandler q).init n = bHState q n 0 [] 
 
 /-- The adversary's input is empty. -/
 theorem bHandler_advInput (n : ℕ) (z : List Bool)
-    (ω : Fin ((bHandler q).seedLen.eval n) → Bool) : (bHandler q).advInput n z ω = [] := rfl
+    (ω : Fin ((bHandler q).seedLen.eval n) → Bool) : (bHandler q).advInput n z ω = [] := by
+  rw [InteractiveHandler.advInput_eq]
+  rfl
 
 /-- The finalization outputs the adversary's bit and asks nothing:
 `(bHandler q).finish n z ω s a = pure (padFin _ ⟦a⟧)`. -/
@@ -563,7 +571,7 @@ private theorem bDecL_fields (w x : List Bool) (L : List (LEntry n))
   have hRef : bRef w = refW o x := by
     rw [bRef, hF, hR, hX]
     cases o with
-    | none => rfl
+    | none => rw [Option.isSome_none, Bool.false_and, refW_none]
     | some c =>
       rw [recBits_some, List.drop_succ_cons, List.drop_zero, Option.isSome_some, Bool.true_and,
         refW_some]
@@ -591,7 +599,9 @@ private theorem bDecL_fields (w x : List Bool) (L : List (LEntry n))
 /-- The flag and the record rebuild the record bits: `o.isSome :: (recBits o).drop 1 = recBits o`. -/
 private theorem recBits_fields (o : Option (Fin (ettCt.eval n) → Bool)) :
     o.isSome :: (recBits n o).drop 1 = recBits n o := by
-  cases o <;> rfl
+  cases o with
+  | none => rw [recBits_none, List.drop_succ_cons, List.drop_zero, Option.isSome_none]
+  | some c => rw [recBits_some, List.drop_succ_cons, List.drop_zero, Option.isSome_some]
 
 /-- The inner query word read at the outer length: `⟦padFin _ ⟦x⟧⟧ = ⟦x⟧` for an `n`-bit `x`. -/
 private theorem ofFn_padFin_msg {m : ℕ} (x : Fin m → Bool) (hm : m = n) :
@@ -641,7 +651,7 @@ theorem bHandler_impl_enc (x : Fin ((ettDin 0).eval n) → Bool) (j : ℕ) (L : 
       hL', log_ne_nil, if_neg Bool.false_ne_true, bCt, hY, hTag, hU, List.length_replicate, hK,
       hX, hT, hF, hR, recBits_fields, ← tblW_cons (bKeyOf n y, (tagOf ((o, L) : LSt n (ettCt.eval n))
         (bKeyOf n y)).getD (bTapeOf q n W j hj), List.ofFn x) L, bNew_fields q n _ j _ o hU hJ, ← ctW_eq]
-    rfl
+    rw [EnsembleLemmas.ofFn_padFin_eq_padL, ettDout_zero]
 
 /-- **Decryption:** from `bState j L o` with `j < q(n)`, the query `⟦x⟧` is answered by
 `lazyDec (o, L) ⟦x⟧` without an outer query, and the state is `bState (j + 1) L o`
@@ -660,7 +670,8 @@ theorem bHandler_impl_dec (x : Fin ((ettDin 1).eval n) → Bool) (j : ℕ) (L : 
     List.drop_zero, List.headD_nil, if_neg Bool.false_ne_true, bDecAns,
     bDecL_fields n _ _ L o hU hX hT hF hR, hU, List.length_replicate, hT, hF, hR, recBits_fields,
     bNew_fields q n _ j L o hU hJ]
-  rfl
+  beta_reduce
+  rw [EnsembleLemmas.ofFn_padFin_eq_padL, ettDout_one]
 
 /-- **A recorded challenge is repeated:** from `bState j L (some c)`, a challenge is answered `c`
 and the state is `bState (j + 1) L (some c)`. -/
@@ -675,12 +686,12 @@ theorem bHandler_impl_challenge_some (x : Fin ((ettDin 2).eval n) → Bool) (j :
     fields_input q n z W (i := 2) (List.ofFn x) [] j L (some c) hj hL hm
   have hRc : (recBits n (some c)).drop 1 = List.ofFn c := by
     rw [recBits_some, List.drop_succ_cons, List.drop_zero]
-  have hrec : true :: List.ofFn c = recBits n (some c) := rfl
+  have hrec : true :: List.ofFn c = recBits n (some c) := (recBits_some n c).symm
   rw [bRun, hI, hF, hR, hRc]
   simp only [show List.replicate ((2 : Fin 3) : ℕ) true = [true, true] from rfl, List.headD_cons,
     List.drop_succ_cons, List.drop_zero, if_true, Option.isSome_some]
   rw [hT, hrec, bNew_fields q n _ j L (some c) hU hJ, hU, List.length_replicate]
-  rfl
+  rw [EnsembleLemmas.ofFn_padFin_eq_padL, ettDout_two]
 
 /-- **The first challenge:** from `bState j L none` with `j < q(n)`, the challenge `⟦x⟧` asks the
 CPA challenge oracle at `⟦x⟧`; its answer `y` gives the ciphertext `c = ⟨pairFstD y, ⟨pairSndD y, t⟩⟩`
@@ -731,15 +742,15 @@ theorem bHandler_impl_challenge_none (x : Fin ((ettDin 2).eval n) → Bool) (j :
         recBits n (some (padFin (ettCt.eval n) (ctW (pairFstD (List.ofFn y))
             (pairSndD (List.ofFn y)) (List.ofFn ((tagOf ((none, L) : LSt n (ettCt.eval n))
               (bKeyOf n y)).getD (bTapeOf q n W j hj)))))) := by
-      rw [recBits_some, bCt, hY, hTag, hU, List.length_replicate, ← ctW_eq]
-      rfl
+      rw [recBits_some, bCt, hY, hTag, hU, List.length_replicate, ← ctW_eq,
+        EnsembleLemmas.ofFn_padFin_eq_padL]
     rw [bRun, hI, hF, hL']
     simp only [show List.replicate ((2 : Fin 3) : ℕ) true = [true, true] from rfl, List.headD_cons,
       List.drop_succ_cons, List.drop_zero, if_true, Option.isSome_none, Bool.false_eq_true,
       if_false]
     rw [log_ne_nil, if_neg Bool.false_ne_true, hrec, hT, bNew_fields q n _ j L _ hU hJ, bCt, hY,
       hTag, hU, List.length_replicate, ← ctW_eq]
-    rfl
+    rw [EnsembleLemmas.ofFn_padFin_eq_padL, ettDout_two]
 
 end Answers
 

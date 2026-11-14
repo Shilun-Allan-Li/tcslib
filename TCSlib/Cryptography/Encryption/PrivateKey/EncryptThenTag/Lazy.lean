@@ -43,6 +43,7 @@ answer `⟨1, c₁ ⊕ f(r)⟩` is the table's message, because the entry's pair
 * `ETTGame.expect_ettImpl_lazy`: the rejecting experiment with a random tag function is the lazy
   experiment.
 * `ETTGame.expect_ettLazyTape`: the lazy experiment with tapes in advance.
+* `ETTGame.tagTbl_none_nil`, `ETTGame.lInv_nil`: the empty lazy state.
 
 ## References
 
@@ -136,6 +137,14 @@ theorem tagTbl_eq (s : LSt n d) :
       match s.1 with
       | some c => [(pairW n (List.ofFn c), padFin (2 * n) (wT (List.ofFn c)))]
       | none => [] := rfl
+
+/-- The empty table has no pairs: `keysL [] = []`. -/
+theorem keysL_nil : keysL ([] : List (LEntry n)) = [] := by
+  rw [keysL_eq, List.map_nil]
+
+/-- The empty lazy state has the empty tag table: `tagTbl (none, []) = []`. -/
+theorem tagTbl_none_nil : tagTbl ((none, []) : LSt n d) = [] := by
+  rw [tagTbl_eq, List.map_nil, List.nil_append]
 
 end Tables
 
@@ -285,6 +294,10 @@ theorem lInv_iff {d : ℕ} (s : LSt n d) :
       ∃ r : Fin n → Bool, e.1 = pairV n (List.ofFn r) (maskL f r e.2.2) ∧ e.2.2.length = n :=
   Iff.rfl
 
+/-- The empty table has the invariant: `LInv f (o, [])`. -/
+theorem lInv_nil {d : ℕ} (o : Option (Fin d → Bool)) : LInv n f ((o, []) : LSt n d) :=
+  fun _ he => absurd he List.not_mem_nil
+
 /-- **The rejecting decryption answer with the table's tags is the lazy answer:** under the
 invariant, `decAnsW f (ovr (tagTbl s) R) true (s.1, keysL s.2) w = lazyDec s w`.
 
@@ -317,9 +330,8 @@ theorem decAnsW_tagTbl {d : ℕ} (s : LSt n d) (hs : LInv n f s)
           exact List.getElem_mem hlt)
         by_cases ht : wT w = List.ofFn (s.2.getD ((keysL s.2).idxOf (pairW n w)) default).2.1
         · rw [if_pos ht, if_pos ht.symm, decL_eq]
-          rw [hfst, pairW_eq] at hp
           obtain ⟨h₁, h₂⟩ := eq_of_pairV_eq hw'.1 hw'.2 List.length_ofFn
-            (length_maskL f r hl) hp
+            (length_maskL f r hl) ((pairW_eq n w).symm.trans (hfst.symm.trans hp))
           rw [h₁, h₂, padFin_ofFn, maskL_eq, zipWith_xor_cancel _ _ (by
             rw [List.length_ofFn, hl])]
         · rw [if_neg ht, if_neg (Ne.symm ht)]

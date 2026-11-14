@@ -429,7 +429,9 @@ theorem dHandler_init_hstate (n : ℕ) : (dHandler q E hE b).init n = dHState q 
 /-- The adversary's input is empty: `(dHandler q E hE b).advInput n z ω = []`. -/
 theorem dHandler_advInput (n : ℕ) (z : List Bool)
     (ω : Fin ((dHandler q E hE b).seedLen.eval n) → Bool) :
-    (dHandler q E hE b).advInput n z ω = [] := rfl
+    (dHandler q E hE b).advInput n z ω = [] := by
+  rw [InteractiveHandler.advInput_eq]
+  rfl
 
 /-- The finalization outputs the adversary's bit and asks nothing:
 `(dHandler q E hE b).finish n z ω s a = pure (padFin _ ⟦a⟧)`. -/

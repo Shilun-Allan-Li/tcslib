@@ -44,6 +44,7 @@ from tapes give `ettTape`, the experiment run by the PRF reduction.
 ## Main results
 
 * `ETTGame.ettStep_enc`, `_dec`, `_challenge_some`, `_challenge_none`: the answers.
+* `ETTGame.encW_eq_ctW`: an encryption reads the tag function at its pair only.
 * `ETTGame.length_encW`, `ETTGame.eq_ctW_of_wfW`: ciphertext lengths and canonical parsing.
 * `ETTGame.expect_ettTape`: nonces in advance have the law of fresh nonces.
 
