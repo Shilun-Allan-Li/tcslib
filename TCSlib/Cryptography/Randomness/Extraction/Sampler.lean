@@ -102,7 +102,8 @@ the same branch choice; induction identifies the remaining trials. -/
 theorem chooseWord_flatten (Ext : List Bool → List Bool) (n t : ℕ)
     (x : Fin (t + 1) → Fin n → Bool) :
     chooseWord Ext n t (List.ofFn fun i => List.ofFn (x i)).flatten =
-      List.ofFn (Rejection.select (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) t x) := by
+      List.ofFn
+        (Rejection.select (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) t x) := by
   induction t with
   | zero =>
     rw [Rejection.select_zero, List.ofFn_succ, List.ofFn_zero, List.flatten_cons,
