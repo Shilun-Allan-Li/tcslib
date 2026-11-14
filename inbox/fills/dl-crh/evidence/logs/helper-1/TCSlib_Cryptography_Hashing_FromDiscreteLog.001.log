@@ -1,0 +1,102 @@
+START 2026-11-14T06:45:00Z
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:85:2: error: `simp` made no progress
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:120:13: warning: This simp argument is unused:
+  NUPPT.inParam_layout
+
+Hint: Omit it from the simp argument list.
+  simp only [̵N̵U̵P̵P̵T̵.̵i̵n̵P̵a̵r̵a̵m̵_̵l̵a̵y̵o̵u̵t̵,̵ ̵N̵U̵P̵P̵T̵.̵i̵n̵A̵r̵g̵_̵l̵a̵y̵o̵u̵t̵,̵[̲N̲U̲P̲P̲T̲.̲i̲n̲A̲r̲g̲_̲l̲a̲y̲o̲u̲t̲,̲ NUPPT.inCoins_layout, List.length_replicate]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:120:55: warning: This simp argument is unused:
+  NUPPT.inCoins_layout
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.inParam_layout, NUPPT.inArg_layout, N̵U̵P̵P̵T̵.̵i̵n̵C̵o̵i̵n̵s̵_̵l̵a̵y̵o̵u̵t̵,̵
+  ̵ ̵ ̵ ̵ ̵List.length_replicate]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:121:4: warning: This simp argument is unused:
+  List.length_replicate
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.inParam_layout, NUPPT.inArg_layout, NUPPT.inCoins_layout,̵
+  ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:148:72: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  d ≥ 0
+  c ≥ 0
+  c - d ≥ 1
+  b ≥ 0
+  a ≥ 0
+  a - b ≥ 1
+where
+ a := ↑(dlM i)
+ b := ↑(listToNat (List.take n (List.ofFn x)))
+ c := ↑?m.57
+ d := ↑?m.58
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:148:4: error: Type mismatch: After simplification, term
+  hcanon
+ has type
+  natToList (min n (n + 1)) (listToNat (List.take n (List.ofFn x))) = List.take n (List.ofFn x)
+but is expected to have type
+  natToList n (listToNat (List.take n (List.ofFn x))) = List.take n (List.ofFn x)
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:239:15: warning: This simp argument is unused:
+  hb
+
+Hint: Omit it from the simp argument list.
+  simp only [h̵b̵,̵ ̵Bool.false_eq_true, ↓reduceIte, one_mul,
+  ̵  ̵ ̵ ̵ ̵ ̵FromDiscreteLog.expUnit_pow_val]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:241:15: warning: This simp argument is unused:
+  hb
+
+Hint: Omit it from the simp argument list.
+  simp only [h̵b̵,̵ ̵↓reduceIte, Units.val_mul, ZMod.val_mul,
+  ̵  ̵ ̵ ̵ ̵ ̵FromDiscreteLog.expUnit_pow_val]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:385:8: warning: declaration uses 'sorry'
+        3.36 real         2.18 user         1.35 sys
+          2354970624  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              181734  page reclaims
+                1494  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 113  voluntary context switches
+               20539  involuntary context switches
+         24506256076  instructions retired
+          9742613409  cycles elapsed
+           363857120  peak memory footprint
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog): lean exited with status 1
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog): error diagnostics reported
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog): no fresh .olean produced
+        3.40 real         2.19 user         1.37 sys
+          2354970624  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              185352  page reclaims
+                1512  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                 134  voluntary context switches
+               20718  involuntary context switches
+            34866106  instructions retired
+            22181500  cycles elapsed
+             1671504  peak memory footprint
+END 2026-11-14T06:45:04Z
+EXIT 1

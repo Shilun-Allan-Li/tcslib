@@ -1,0 +1,298 @@
+START 2026-11-14T07:00:31Z
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean:209:16: error: Tactic `rfl` failed: The left-hand side
+  natToList n
+    ((NumberTheory.listToNat
+          (List.take n
+            (List.drop (n + 1)
+              (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                (List.replicate n true) (List.ofFn x ++ List.ofFn x')))) +
+        (dlM i -
+          NumberTheory.listToNat
+            (List.take n
+              (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                (List.replicate n true) (List.ofFn x ++ List.ofFn x'))))) %
+      dlM i)
+is not definitionally equal to the right-hand side
+  natToList n
+    ((NumberTheory.listToNat (List.take n (List.ofFn x')) +
+        (dlM i - NumberTheory.listToNat (List.take n (List.ofFn x)))) %
+      dlM i)
+
+case pos
+n : ℕ
+i y : List Bool
+x x' : Fin (n + 1) → Bool
+hw : WellFormedIndex n i
+width : PolyExpr := (PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))
+hlen : (List.ofFn x ++ List.ofFn x').length = width.eval (List.replicate n true).length
+hpad : padStr width (List.replicate n true) (List.ofFn x ++ List.ofFn x') = List.ofFn x ++ List.ofFn x'
+hprefix : n ≤ (List.ofFn x).length
+hfirst : List.take n (List.ofFn x ++ List.ofFn x') = List.take n (List.ofFn x)
+hsecond : List.take n (List.drop (n + 1) (List.ofFn x ++ List.ofFn x')) = List.take n (List.ofFn x')
+hselector : (List.drop n (List.ofFn x ++ List.ofFn x')).headD false = x (Fin.last n)
+hmw : (pairFstD (pairSndD i)).length = n
+h✝¹ :
+  (List.drop n
+          (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+            (List.replicate n true) (List.ofFn x ++ List.ofFn x'))).headD
+      false =
+    true
+h✝ : x (Fin.last n) = true
+⊢ natToList n
+      ((NumberTheory.listToNat
+            (List.take n
+              (List.drop (n + 1)
+                (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                  (List.replicate n true) (List.ofFn x ++ List.ofFn x')))) +
+          (dlM i -
+            NumberTheory.listToNat
+              (List.take n
+                (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                  (List.replicate n true) (List.ofFn x ++ List.ofFn x'))))) %
+        dlM i) =
+    natToList n
+      ((NumberTheory.listToNat (List.take n (List.ofFn x')) +
+          (dlM i - NumberTheory.listToNat (List.take n (List.ofFn x)))) %
+        dlM i)
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean:209:16: error: Tactic `rfl` failed: The left-hand side
+  natToList n
+    ((NumberTheory.listToNat
+          (List.take n
+            (List.drop (n + 1)
+              (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                (List.replicate n true) (List.ofFn x ++ List.ofFn x')))) +
+        (dlM i -
+          NumberTheory.listToNat
+            (List.take n
+              (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                (List.replicate n true) (List.ofFn x ++ List.ofFn x'))))) %
+      dlM i)
+is not definitionally equal to the right-hand side
+  natToList n
+    ((NumberTheory.listToNat (List.take n (List.ofFn x)) +
+        (dlM i - NumberTheory.listToNat (List.take n (List.ofFn x')))) %
+      dlM i)
+
+case neg
+n : ℕ
+i y : List Bool
+x x' : Fin (n + 1) → Bool
+hw : WellFormedIndex n i
+width : PolyExpr := (PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))
+hlen : (List.ofFn x ++ List.ofFn x').length = width.eval (List.replicate n true).length
+hpad : padStr width (List.replicate n true) (List.ofFn x ++ List.ofFn x') = List.ofFn x ++ List.ofFn x'
+hprefix : n ≤ (List.ofFn x).length
+hfirst : List.take n (List.ofFn x ++ List.ofFn x') = List.take n (List.ofFn x)
+hsecond : List.take n (List.drop (n + 1) (List.ofFn x ++ List.ofFn x')) = List.take n (List.ofFn x')
+hselector : (List.drop n (List.ofFn x ++ List.ofFn x')).headD false = x (Fin.last n)
+hmw : (pairFstD (pairSndD i)).length = n
+h✝¹ :
+  (List.drop n
+          (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+            (List.replicate n true) (List.ofFn x ++ List.ofFn x'))).headD
+      false =
+    true
+h✝ : ¬x (Fin.last n) = true
+⊢ natToList n
+      ((NumberTheory.listToNat
+            (List.take n
+              (List.drop (n + 1)
+                (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                  (List.replicate n true) (List.ofFn x ++ List.ofFn x')))) +
+          (dlM i -
+            NumberTheory.listToNat
+              (List.take n
+                (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                  (List.replicate n true) (List.ofFn x ++ List.ofFn x'))))) %
+        dlM i) =
+    natToList n
+      ((NumberTheory.listToNat (List.take n (List.ofFn x)) +
+          (dlM i - NumberTheory.listToNat (List.take n (List.ofFn x')))) %
+        dlM i)
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean:209:16: error: Tactic `rfl` failed: The left-hand side
+  natToList n
+    ((NumberTheory.listToNat
+          (List.take n
+            (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+              (List.replicate n true) (List.ofFn x ++ List.ofFn x'))) +
+        (dlM i -
+          NumberTheory.listToNat
+            (List.take n
+              (List.drop (n + 1)
+                (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                  (List.replicate n true) (List.ofFn x ++ List.ofFn x')))))) %
+      dlM i)
+is not definitionally equal to the right-hand side
+  natToList n
+    ((NumberTheory.listToNat (List.take n (List.ofFn x')) +
+        (dlM i - NumberTheory.listToNat (List.take n (List.ofFn x)))) %
+      dlM i)
+
+case pos
+n : ℕ
+i y : List Bool
+x x' : Fin (n + 1) → Bool
+hw : WellFormedIndex n i
+width : PolyExpr := (PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))
+hlen : (List.ofFn x ++ List.ofFn x').length = width.eval (List.replicate n true).length
+hpad : padStr width (List.replicate n true) (List.ofFn x ++ List.ofFn x') = List.ofFn x ++ List.ofFn x'
+hprefix : n ≤ (List.ofFn x).length
+hfirst : List.take n (List.ofFn x ++ List.ofFn x') = List.take n (List.ofFn x)
+hsecond : List.take n (List.drop (n + 1) (List.ofFn x ++ List.ofFn x')) = List.take n (List.ofFn x')
+hselector : (List.drop n (List.ofFn x ++ List.ofFn x')).headD false = x (Fin.last n)
+hmw : (pairFstD (pairSndD i)).length = n
+h✝¹ :
+  ¬(List.drop n
+            (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+              (List.replicate n true) (List.ofFn x ++ List.ofFn x'))).headD
+        false =
+      true
+h✝ : x (Fin.last n) = true
+⊢ natToList n
+      ((NumberTheory.listToNat
+            (List.take n
+              (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                (List.replicate n true) (List.ofFn x ++ List.ofFn x'))) +
+          (dlM i -
+            NumberTheory.listToNat
+              (List.take n
+                (List.drop (n + 1)
+                  (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                    (List.replicate n true) (List.ofFn x ++ List.ofFn x')))))) %
+        dlM i) =
+    natToList n
+      ((NumberTheory.listToNat (List.take n (List.ofFn x')) +
+          (dlM i - NumberTheory.listToNat (List.take n (List.ofFn x)))) %
+        dlM i)
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean:209:16: error: Tactic `rfl` failed: The left-hand side
+  natToList n
+    ((NumberTheory.listToNat
+          (List.take n
+            (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+              (List.replicate n true) (List.ofFn x ++ List.ofFn x'))) +
+        (dlM i -
+          NumberTheory.listToNat
+            (List.take n
+              (List.drop (n + 1)
+                (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                  (List.replicate n true) (List.ofFn x ++ List.ofFn x')))))) %
+      dlM i)
+is not definitionally equal to the right-hand side
+  natToList n
+    ((NumberTheory.listToNat (List.take n (List.ofFn x)) +
+        (dlM i - NumberTheory.listToNat (List.take n (List.ofFn x')))) %
+      dlM i)
+
+case neg
+n : ℕ
+i y : List Bool
+x x' : Fin (n + 1) → Bool
+hw : WellFormedIndex n i
+width : PolyExpr := (PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))
+hlen : (List.ofFn x ++ List.ofFn x').length = width.eval (List.replicate n true).length
+hpad : padStr width (List.replicate n true) (List.ofFn x ++ List.ofFn x') = List.ofFn x ++ List.ofFn x'
+hprefix : n ≤ (List.ofFn x).length
+hfirst : List.take n (List.ofFn x ++ List.ofFn x') = List.take n (List.ofFn x)
+hsecond : List.take n (List.drop (n + 1) (List.ofFn x ++ List.ofFn x')) = List.take n (List.ofFn x')
+hselector : (List.drop n (List.ofFn x ++ List.ofFn x')).headD false = x (Fin.last n)
+hmw : (pairFstD (pairSndD i)).length = n
+h✝¹ :
+  ¬(List.drop n
+            (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+              (List.replicate n true) (List.ofFn x ++ List.ofFn x'))).headD
+        false =
+      true
+h✝ : ¬x (Fin.last n) = true
+⊢ natToList n
+      ((NumberTheory.listToNat
+            (List.take n
+              (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                (List.replicate n true) (List.ofFn x ++ List.ofFn x'))) +
+          (dlM i -
+            NumberTheory.listToNat
+              (List.take n
+                (List.drop (n + 1)
+                  (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1)))
+                    (List.replicate n true) (List.ofFn x ++ List.ofFn x')))))) %
+        dlM i) =
+    natToList n
+      ((NumberTheory.listToNat (List.take n (List.ofFn x)) +
+          (dlM i - NumberTheory.listToNat (List.take n (List.ofFn x')))) %
+        dlM i)
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean:207:27: warning: This simp argument is unused:
+  hpad
+
+Hint: Omit it from the simp argument list.
+  simp only [collisionPost_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+  ̵  ̵ ̵ ̵List.length_replicate,
+  ̲ h̵p̵a̵d̵,̵  ̲ ̲hfirst, hsecond, hselector]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean:207:33: warning: This simp argument is unused:
+  hfirst
+
+Hint: Omit it from the simp argument list.
+  simp only [collisionPost_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+  ̵  ̵ ̵ ̵List.length_replicate,
+  ̲  ̲ ̲ ̲hpad, hf̵i̵r̵st̵,̵ ̵h̵s̵econd, hselector]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean:207:41: warning: This simp argument is unused:
+  hsecond
+
+Hint: Omit it from the simp argument list.
+  simp only [collisionPost_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+  ̵  ̵ ̵ ̵List.length_replicate,
+  ̲  ̲ ̲ ̲hpad, hfirst, hsec̵o̵n̵d̵,̵ ̵h̵s̵e̵lector]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean:207:50: warning: This simp argument is unused:
+  hselector
+
+Hint: Omit it from the simp argument list.
+  simp only [collisionPost_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+  ̵  ̵ ̵ ̵List.length_replicate,
+  ̲  ̲ ̲ ̲hpad, hfirst, hsecond,̵ ̵h̵s̵e̵l̵e̵c̵t̵o̵r̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+        3.11 real         2.07 user         1.21 sys
+          2310995968  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              183691  page reclaims
+                 339  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 755  voluntary context switches
+               13688  involuntary context switches
+         24937255711  instructions retired
+          9067485142  cycles elapsed
+           357581856  peak memory footprint
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction): lean exited with status 1
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction): error diagnostics reported
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction): no fresh .olean produced
+        3.24 real         2.08 user         1.23 sys
+          2310995968  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              187420  page reclaims
+                 364  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                 778  voluntary context switches
+               13853  involuntary context switches
+            33546858  instructions retired
+            22986775  cycles elapsed
+             1704272  peak memory footprint
+END 2026-11-14T07:00:35Z
+EXIT 1

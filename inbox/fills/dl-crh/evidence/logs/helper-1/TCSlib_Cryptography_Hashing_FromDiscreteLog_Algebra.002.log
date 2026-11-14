@@ -1,0 +1,65 @@
+START 2026-11-14T06:55:50Z
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean:91:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (↑(expUnit hi ^ x)).val
+in the target expression
+  (fun u => (↑u).val) (expUnit hi ^ x) = (fun u => (↑u).val) (expUnit hi ^ x')
+
+i : List Bool
+hi : ExpValid i
+x x' : ℕ
+hx : x < dlM i
+hx' : x' < dlM i
+z : ZMod (expOrd i)
+b : Bool
+hdistinct : (x, b) ≠ (x', b)
+hcollision :
+  (if b = true then expUnit hi ^ z.val else 1) * expUnit hi ^ x =
+    (if b = true then expUnit hi ^ z.val else 1) * expUnit hi ^ x'
+hp : expUnit hi ^ x = expUnit hi ^ x'
+hxord : x < expOrd i
+hxord' : x' < expOrd i
+hxval : (↑x).val = x
+hxval' : (↑x').val = x'
+hnum : (fun u => (↑u).val) (expUnit hi ^ x) = (fun u => (↑u).val) (expUnit hi ^ x')
+⊢ False
+       10.06 real         1.86 user         1.82 sys
+          2289876992  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              119232  page reclaims
+               65483  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                6163  voluntary context switches
+               57900  involuntary context switches
+         22997959734  instructions retired
+         10115054512  cycles elapsed
+           350929784  peak memory footprint
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra): lean exited with status 1
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra): error diagnostics reported
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra): no fresh .olean produced
+       10.14 real         1.87 user         1.85 sys
+          2289876992  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              122898  page reclaims
+               65512  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                6192  voluntary context switches
+               58098  involuntary context switches
+            33147302  instructions retired
+            19637165  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-14T06:56:00Z
+EXIT 1

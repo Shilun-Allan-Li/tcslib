@@ -1,0 +1,5 @@
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Algebra
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Reduction
+#print axioms TCSlib.Cryptography.Authentication.FromDiscreteLog.unitCollision_extract
+#print axioms TCSlib.Cryptography.Authentication.FromDiscreteLog.polyTimeComputable_collisionPost
+#print axioms TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionReduction

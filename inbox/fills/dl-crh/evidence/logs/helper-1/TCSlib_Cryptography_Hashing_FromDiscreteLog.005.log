@@ -1,0 +1,98 @@
+START 2026-11-14T07:01:19Z
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:120:13: warning: This simp argument is unused:
+  NUPPT.inParam_layout
+
+Hint: Omit it from the simp argument list.
+  simp only [̵N̵U̵P̵P̵T̵.̵i̵n̵P̵a̵r̵a̵m̵_̵l̵a̵y̵o̵u̵t̵,̵ ̵N̵U̵P̵P̵T̵.̵i̵n̵A̵r̵g̵_̵l̵a̵y̵o̵u̵t̵,̵[̲N̲U̲P̲P̲T̲.̲i̲n̲A̲r̲g̲_̲l̲a̲y̲o̲u̲t̲,̲ NUPPT.inCoins_layout, List.length_replicate]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:120:55: warning: This simp argument is unused:
+  NUPPT.inCoins_layout
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.inParam_layout, NUPPT.inArg_layout, N̵U̵P̵P̵T̵.̵i̵n̵C̵o̵i̵n̵s̵_̵l̵a̵y̵o̵u̵t̵,̵
+  ̵ ̵ ̵ ̵ ̵List.length_replicate]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:121:4: warning: This simp argument is unused:
+  List.length_replicate
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.inParam_layout, NUPPT.inArg_layout, NUPPT.inCoins_layout,̵
+  ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:267:15: warning: This simp argument is unused:
+  hb
+
+Hint: Omit it from the simp argument list.
+  simp only [h̵b̵,̵ ̵Bool.false_eq_true, ↓reduceIte, one_mul,
+  ̵  ̵ ̵ ̵ ̵ ̵FromDiscreteLog.expUnit_pow_val]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:269:15: warning: This simp argument is unused:
+  hb
+
+Hint: Omit it from the simp argument list.
+  simp only [h̵b̵,̵ ̵↓reduceIte, Units.val_mul, ZMod.val_mul,
+  ̵  ̵ ̵ ̵ ̵ ̵FromDiscreteLog.expUnit_pow_val]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:456:4: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn ((NUPPT.coinsEquivPoly ?h ?n) ?r)
+in the target expression
+  List.ofFn (Prod.map ⇑(NUPPT.coinsEquivPoly ⋯ n) ⇑((finCongr ⋯).arrowCongr (Equiv.refl Bool)).symm (r, s)).1 ++
+      List.ofFn (Prod.map ⇑(NUPPT.coinsEquivPoly ⋯ n) ⇑((finCongr ⋯).arrowCongr (Equiv.refl Bool)).symm (r, s)).2 =
+    List.ofFn r ++ List.ofFn s
+
+V : List Bool → Prop
+H : ArithmeticFP
+G : ExpGroupGen V
+n : ℕ
+r : G.gen.Coins n
+s : Fin (n * n) → Bool
+⊢ List.ofFn (Prod.map ⇑(NUPPT.coinsEquivPoly ⋯ n) ⇑((finCongr ⋯).arrowCongr (Equiv.refl Bool)).symm (r, s)).1 ++
+      List.ofFn (Prod.map ⇑(NUPPT.coinsEquivPoly ⋯ n) ⇑((finCongr ⋯).arrowCongr (Equiv.refl Bool)).symm (r, s)).2 =
+    List.ofFn r ++ List.ofFn s
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:476:8: warning: declaration uses 'sorry'
+       11.21 real         2.88 user         2.61 sys
+          2289614848  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              129645  page reclaims
+               66918  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                6519  voluntary context switches
+               97145  involuntary context switches
+         29877178605  instructions retired
+         15103829022  cycles elapsed
+           367002776  peak memory footprint
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog): lean exited with status 1
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog): error diagnostics reported
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog): no fresh .olean produced
+       11.33 real         2.89 user         2.64 sys
+          2289614848  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              133398  page reclaims
+               66946  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                6557  voluntary context switches
+               97557  involuntary context switches
+            34179369  instructions retired
+            29116849  cycles elapsed
+             1687888  peak memory footprint
+END 2026-11-14T07:01:30Z
+EXIT 1

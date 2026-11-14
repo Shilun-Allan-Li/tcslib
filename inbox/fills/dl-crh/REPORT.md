@@ -1,108 +1,93 @@
-# dl-crh — final escalation payload (checkpoint 1)
+# dl-crh — compression checkpoint (route checkpoint 1)
 
-**Status: stopped at the missing-reader escalation required by the issued brief.**
-`Authentication.dlHash_crh` is still admitted. No compression lemma, reduction,
-or collision-resistance proof is submitted. The target statement is unchanged;
-no mathematical counterexample is claimed.
+**Status: compression and collision shape proved; `dlHash_crh` is still admitted
+on its collision-resistance component. This is not a final completed fill.**
 
-## Provenance and checkout
+The issue base is `eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9`; the issued exchange
+pack is `b436d19a0310265b214447ea6710deba32df6dd8`. The proof branch is local
+`fill/dl-crh` and is never pushed. This is delivery checkpoint 2, following the
+initial missing-reader escalation (delivery checkpoint 1).
 
-- Issued exchange pack: `b436d19a0310265b214447ea6710deba32df6dd8`.
-- Proof base and local `fill/dl-crh` HEAD:
-  `eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9`.
-- Campaign branch fetched from `https://github.com/Shilun-Allan-Li/tcslib.git`.
-- Separate worktree:
-  `/Users/seyoonr/.codex/worktrees/ps-dl-crh/tcslib-exchange`.
-- Lean pin: `leanprover/lean4:v4.25.0`; Mathlib:
-  `029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e`.
-- All seven issued pack checksums and all 170 issue-source checksums pass.
-  Raw logs: `evidence/logs/pack-verification.log` and
-  `evidence/logs/source-inspection.log`.
-- The local proof branch has zero commits beyond the issue base and has never
-  been pushed. Deliveries are restricted to `inbox/fills/dl-crh/` on the exchange.
-- Checkpoint 1 was committed and pushed as
-  `396c734fac3ba4a0e8d06320517f56017962f734` after the required pull with rebase.
-  This final payload retains that stop and adds the independent payload review.
+## User exceptions and scope
 
-## Exact stop and reader requests
+The user explicitly authorized adding only `expGenFun_eq` and `expSampleRaw_eq`
+in `Candidates/DiscreteLog.lean`, with Rule 10 intact. Both equations are added
+with formula docstrings and no simp attributes. All other provider declarations
+and bodies are unchanged. This provider already exceeded 1000 lines at the base;
+the scoped addition preserves that inherited size issue. All new helpers and the
+owned hashing file are below 1000 lines.
 
-The brief requires a checkpoint when a reader of a foreign definition is
-missing. `dlHashIdx_eq` exposes a call of `Candidates.expGenFun`, for which the
-base exports only an efficiency theorem. There is no published raw behavior
-reader. The first missing obligation is:
+The user also overrode host serialization to at most three Lean processes.
+This worker checks one module at a time in its own olean tree, counting other
+host Lean processes before each launch. The authorized coordination note was
+sent to the other fill chats. Exact user wording is in `evidence/authorization.md`.
 
-```lean
--- hn : G.n₀ ≤ n; r : G.gen.Coins n
-pairFstD (expGenFun G
-  (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r))) =
-  G.gen.runAt n [] r
-```
+## Mathematics delivered
 
-The next related gap is `Candidates.expSampleRaw`, directly called by
-`dlHashGenFun_eq`: it also has only an efficiency theorem. The existing bundled
-machine readers `expGen_runAt` and `expSampler_runAt` cannot bridge to these raw
-calls without unfolding a foreign wrapper or using an unpublished equation.
+- `dlHash_compresses` proves compression from `G.n₀` onward, using valid,
+  well-formed generated indices, positive unit residues, domain cardinality
+  `2m`, and range cardinality `p - 1 = m`.
+- `dlHashEval_collision` proves that distinct domain inputs with equal
+  evaluations have different selectors and identifies the discrete logarithm
+  with the appropriate modular difference. The selector argument consumes
+  published `expF_injective`.
+- Generator raw-layout, canonical-key, coin-equivalence, and activation readers
+  are proved. Sampler fallback zero and challenge exponent zero are included.
+- The reduction machine, polynomial-time postprocessor, typed activation reader,
+  and arbitrary-output numeric contract are implemented and checked. The generic
+  sampler-to-uniform-residue bound is also checked. Their use in the final
+  collision-resistance proof remains in progress.
 
-Request provider-side `expGenFun_eq` and `expSampleRaw_eq`, or equivalent
-raw-layout readers. Exact proposed statements, the derivation obstacle, and the
-resumption request are in `evidence/reader-request.md`. Both direct body
-equations are provider-side `rfl` lemmas; none was introduced into an owned
-helper, since that would violate Rule 10. Two independent read-only agents
-confirmed the source search. No external proof code was consulted.
+The target header is byte-identical to the issue base. Its compression component
+now applies `dlHash_compresses`; its remaining `sorry` is the original target
+admission. No helper contains an admission. The module title drops the statement
+phase label, and its results/contents report the actual intermediate status.
 
-## Changes, overlap, and scope
+## Files and declarations
 
-- Changed/new Lean files: **none**. No sketch, module-title, statement, or simp
-  attribute edits were made before the stop.
-- New declarations: **none**. Promotion requests: the two reader requests above
-  in `Candidates/DiscreteLog.lean`; no generic probability/list/machine helpers.
-- Overlap items: **none**. No public or private proof was copied or re-derived.
-- `src/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean` is an unchanged issue-base
-  snapshot. The complete `git format-patch` series is empty; its raw stdout is
-  included and `patches/README.md` explains this.
-- Checkpoint 1's mathematical goals remain open. Checkpoint 2 and the final key
-  distribution step were not attempted after the mandated stop. Their edge
-  cases have not been certified.
+The complete changed-file list and source commit are in
+`evidence/proof-snapshot.json`. `src/` contains all eight changed/new files;
+`patches/` contains the entire format-patch series from the issue base.
 
-## Host and checks
+New declarations comprise the two authorized candidate readers; the hashing
+layout/evaluation/range/collision/coin/compression lemmas; and the helper modules
+`Encoding`, `Algebra`, `Coins`, `Reduction`, `Probability`, and `Sampling`.
+Their exact source, public formula readers, sketches and provenance are delivered.
+The generic promotion requests and every conservative private-overlap disclosure
+are in `evidence/PROMOTION.md`. No public or private proof was copied. Private
+overlaps were rederived through published readers and are explicitly disclosed.
 
-Native diagnostic `evidence/logs/preflight.log` records macOS, 12 logical CPUs,
-19,327,352,832 bytes of physical memory, and 266,047,056 available 1024-byte disk
-blocks on APFS at both the worktree and `/private/tmp`: **272,432,185,344 bytes
-free**, above the 12 GiB floor. `nproc`, Linux cgroup counters, `/proc/meminfo`,
-GNU `df -B1`, and `df -T` are unavailable on this host; native `sysctl`,
-`vm_stat`, `memory_pressure -Q`, `df -k`, and `mount` are recorded instead.
-`memory_pressure -Q` reported 50% system-wide memory free. This is not asserted
-to be Linux `MemAvailable`, and the prescribed headroom formula is not
-certified. Other sessions had active Lake commands; none was interrupted.
+## Checks and raw evidence
 
-No Lean, Lake, toolchain installation, cache fetch, package reuse/symlink, or
-bootstrap was started by this worker. No dependency tree was copied or reused.
-The stop is a **reader escalation**, not an E-RES assertion. A continuation
-must resolve the readers and satisfy the environment addendum before checking.
+- The original pack's seven checksums and 170 source hashes passed. The original
+  escalation payload is retained verbatim as `evidence/initial-escalation.zip`.
+- Native preflight recorded 12 CPUs, 19,327,352,832 bytes RAM, and
+  264,007,364,608 bytes free on APFS. Linux counters are unavailable on macOS;
+  the recorded native non-cache headroom proxy is 7,088,668,672 bytes. It is
+  explicitly not claimed to be Linux MemAvailable.
+- Only the supplied 87 Mathlib roots were fetched. The narrowed cache command
+  exited 0, reused 2,339 existing archives, and downloaded none. The cache store
+  initially held 32,667 files (1,595,387,830 bytes), origin predating this worker.
+  All 11 present packages match manifest URLs/revisions; the four documentation
+  packages are absent. No empty olean was found; the Mathlib import probe passed.
+- All upstream prerequisites and all eight current changed/new source files have
+  successful module checks. The source-hash comparison verifies that the tested
+  files are the exact committed bytes. Every check used `lean_check_tree.sh`,
+  with timestamps, native Lean maximum resident memory and raw output retained.
+  Development failures and their successful repairs are retained, not omitted.
+- The checkpoint axiom probe prints only `propext`, `Classical.choice`, and
+  `Quot.sound` for compression, collision extraction, canonical generated keys,
+  the arbitrary-output postprocessor, sampler switch, and collision probability
+  reader. Earlier reduction-machine axiom logs are retained too.
+- The full 176-module final order (170 issued modules plus six helpers), final
+  sorry-warning comparison, all-stored-constant axiom census, base/final A/B
+  seals and paired controls, explicit-unfold scan, and final style-lint comparison
+  are **pending final proof completion**. Prepared tools/probes are included;
+  no unrun check is represented as a pass.
 
-- The 170-module order and 87 narrowed Mathlib roots are retained verbatim.
-- Bootstrap, module checks, final sweep, compiled sorry comparison, target/all
-  stored-constant axiom output, full-closure base/final seals A/B (with
-  `PolyExpr.eval` excluded and sealed), and paired controls were **not run**.
-  There is no changed/new Lean proof to certify, and no prerequisites were
-  built. No failure or pass is invented for these checks.
-- Explicit-unfold scan of changed/new Lean files: empty scope; no probe or seal
-  sources were generated or run. The source search that establishes the reader
-  request is delivered with its reproduction tool and raw output.
-- `python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography --check8b`
-  ran on the unchanged issue tree: exit 1, **216 existing FAIL, 102 WARN, 301
-  files**. No new FAIL is possible with the verified zero source diff. Its raw
-  log and the exact tool bytes are delivered. No lint fix outside scope was made.
-- `evidence/results.jsonl` records performed checks and skipped checks explicitly.
+`evidence/SHA256SUMS` covers every delivered evidence file except itself. Root
+`SHA256SUMS` covers the complete payload except itself. The packaging tool checks
+exact path-set equality and hashes and verifies that ZIP bytes match the payload.
+Only `inbox/fills/dl-crh/` is used for exchange delivery.
 
-## Evidence completeness and continuation
-
-`evidence/SHA256SUMS` covers every evidence file except itself. Root
-`SHA256SUMS` covers every payload file except itself, including the evidence
-manifest. The packaging tool verifies exact path-set equality and all hashes;
-the ZIP has `dl-crh/` at its root. All generated evidence and tools are included;
-there are no omitted raw probe/seal/control logs because none were generated.
-
-This delivery is reviewable escalation evidence, **not a completed fill**.
-Continuation requires provider readers and an updated base or issued overlay.
+Proof commit: `3e12e5e1f5ef6303da3b6c9d55a3c6ac52cd0d8e`. Issue base: `eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9`.

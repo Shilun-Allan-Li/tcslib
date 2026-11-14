@@ -1,0 +1,107 @@
+START 2026-11-14T07:06:48Z
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean:256:77: error: unsolved goals
+n : ℕ
+i y raw : List Bool
+hw : WellFormedIndex n i
+width : PolyExpr := (PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))
+u : List Bool := List.replicate n true
+xx : (Fin (n + 1) → Bool) × (Fin (n + 1) → Bool) := splitBits (padFin (n + 1 + (n + 1)) raw)
+hsplit : List.ofFn xx.1 ++ List.ofFn xx.2 = List.ofFn (padFin (n + 1 + (n + 1)) raw)
+hword : List.ofFn (padFin (n + 1 + (n + 1)) raw) = padStr width u raw
+hidem :
+  padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u
+      (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u raw) =
+    padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u raw
+⊢ (if
+        (List.drop u.length
+                (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u raw)).headD
+            false =
+          true then
+      modularDifference
+        (List.take u.length
+          (List.drop (u.length + 1)
+            (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u raw)))
+        (List.take u.length
+          (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u raw))
+        (pairFstD (pairSndD i))
+    else
+      modularDifference
+        (List.take u.length
+          (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u raw))
+        (List.take u.length
+          (List.drop (u.length + 1)
+            (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u raw)))
+        (pairFstD (pairSndD i))) =
+    if
+        (List.drop u.length
+                (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u
+                  (padStr width u raw))).headD
+            false =
+          true then
+      modularDifference
+        (List.take u.length
+          (List.drop (u.length + 1)
+            (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u
+              (padStr width u raw))))
+        (List.take u.length
+          (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u
+            (padStr width u raw)))
+        (pairFstD (pairSndD i))
+    else
+      modularDifference
+        (List.take u.length
+          (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u
+            (padStr width u raw)))
+        (List.take u.length
+          (List.drop (u.length + 1)
+            (padStr ((PolyExpr.var.add (PolyExpr.const 1)).add (PolyExpr.var.add (PolyExpr.const 1))) u
+              (padStr width u raw))))
+        (pairFstD (pairSndD i))
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean:259:75: warning: This simp argument is unused:
+  hidem
+
+Hint: Omit it from the simp argument list.
+  simp only [collisionPost_eq, pairFstD_pairEncode, pairSndD_pairEncode,̵ ̵h̵i̵d̵e̵m̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+        9.21 real         1.99 user         1.76 sys
+          2318794752  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              122778  page reclaims
+               65744  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                7552  voluntary context switches
+               55987  involuntary context switches
+         26337854598  instructions retired
+         10404545609  cycles elapsed
+           361350152  peak memory footprint
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction): lean exited with status 1
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction): error diagnostics reported
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction): no fresh .olean produced
+        9.24 real         2.00 user         1.77 sys
+          2318794752  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              126443  page reclaims
+               65760  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                7584  voluntary context switches
+               56065  involuntary context switches
+            33750543  instructions retired
+            15735207  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-14T07:06:58Z
+EXIT 1

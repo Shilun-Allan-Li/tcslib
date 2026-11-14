@@ -1,0 +1,65 @@
+UTC 2026-11-14T06:07:10Z
+Darwin Mac.lan 25.5.0 Darwin Kernel Version 25.5.0: Tue Jun  9 22:28:29 PDT 2026; root:xnu-12377.121.10~1/RELEASE_ARM64_T6030 arm64
+
+Requested Linux counters (unavailable on this macOS host):
+UNAVAILABLE /sys/fs/cgroup/memory.max
+UNAVAILABLE /sys/fs/cgroup/memory.current
+UNAVAILABLE /sys/fs/cgroup/memory.events
+UNAVAILABLE /sys/fs/cgroup/memory.stat
+UNAVAILABLE /proc/meminfo
+
+macOS native counters:
+hw.memsize: 19327352832
+hw.ncpu: 12
+Mach Virtual Memory Statistics: (page size of 16384 bytes)
+Pages free:                                     3742.
+Pages active:                                 253657.
+Pages inactive:                               229430.
+Pages speculative:                             22676.
+Pages throttled:                                   0.
+Pages wired down:                             267175.
+Pages purgeable:                                  29.
+"Translation faults":                    20574517904.
+Pages copy-on-write:                       530999130.
+Pages zero filled:                       14452041810.
+Pages reactivated:                         989160156.
+Pages purged:                              117821818.
+File-backed pages:                            373877.
+Anonymous pages:                              131886.
+Pages stored in compressor:                  1296722.
+Pages occupied by compressor:                 347929.
+Decompressions:                            519147834.
+Compressions:                              728594145.
+Pageins:                                   637843027.
+Pageouts:                                    2723424.
+Swapins:                                      515127.
+Swapouts:                                    1217944.
+The system has 19327352832 (1179648 pages with a page size of 16384).
+System-wide memory free percentage: 45%
+
+Disk, 1024-byte blocks (multiply Available by 1024 for bytes):
+Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on
+/dev/disk3s5   971350180 684806672 257819692    73% 7137055 2578196920    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 684806672 257819692    73% 7137055 2578196920    0%   /System/Volumes/Data
+
+Filesystem types:
+/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+devfs on /dev (devfs, local, nobrowse)
+/dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
+/dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
+/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)
+/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)
+/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)
+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
+
+Existing Lean/Lake processes; none will be interrupted:
+37196 /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.33.1/bin/lake build Solutions.CatalyticTreeEvaluation.WorkLaneTrace
+37260 /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.33.1/bin/lean /Users/seyoonr/phd_experiments/lean-prove2me-fills/Solutions/CatalyticTreeEvaluation/WorkLaneTrace.lean -o /Users/seyoonr/phd_experiments/lean-prove2me-fills/.lake/build/lib/lean/Solutions/CatalyticTreeEvaluation/WorkLaneTrace.olean -i /Users/seyoonr/phd_experiments/lean-prove2me-fills/.lake/build/lib/lean/Solutions/CatalyticTreeEvaluation/WorkLaneTrace.ilean -c /Users/seyoonr/phd_experiments/lean-prove2me-fills/.lake/build/ir/Solutions/CatalyticTreeEvaluation/WorkLaneTrace.c --setup /Users/seyoonr/phd_experiments/lean-prove2me-fills/.lake/build/ir/Solutions/CatalyticTreeEvaluation/WorkLaneTrace.setup.json --json
+37537 /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/bin/lean .lake/hash-sign-rule10/base/ControlForeignAU_costBoundedBy.lean -o /private/tmp/hash-sign-fill/repo/.lake/tcslib-check-oleans/.lake/hash-sign-rule10/base/ControlForeignAU_costBoundedBy.olean
+37574 /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/bin/lean TCSlib/Cryptography/Authentication/Signatures/Lamport.lean -o /private/tmp/tcslib-lamport-01a1d88f/proof/.lake/tcslib-check-oleans/TCSlib/Cryptography/Authentication/Signatures/Lamport.olean
+37596 /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/bin/lean TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean -o /private/tmp/hash-sign-fill/repo/.lake/tcslib-check-oleans/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.olean
+
+No Lean/Lake or cache work was started by this fill.
+This is a native diagnostic, not a certification of Linux MemAvailable.

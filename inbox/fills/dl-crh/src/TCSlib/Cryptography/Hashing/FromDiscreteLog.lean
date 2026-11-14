@@ -4,6 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Hashing.CollisionResistant
 import TCSlib.Cryptography.Candidates.DiscreteLog
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Encoding
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Algebra
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Coins
 import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
@@ -11,7 +14,7 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# A collision-resistant hash from discrete logarithms (statement phase)
+# A collision-resistant hash from discrete logarithms
 
 [PS10, Protocol 142.2]: `Gen(1^n)` outputs `(p, g, y)` with `p` an `n`-bit prime, `g` a
 generator of `Z_p^*` and `y` a random element of `Z_p^*`; `h_{p,g,y}(x, b) = y^b g^x mod p`.
@@ -40,7 +43,14 @@ of uniform on `⟨g⟩`, and, when `m = p − 1` (hypothesis `hV` of the theorem
 
 ## Main results
 
-* `Authentication.dlHash_crh` (Thm 142.3, stated; a `sorry` under the source's sketch).
+* `Authentication.dlHash_compresses`: the compression part of Theorem 142.3 (proved).
+* `Authentication.dlHash_crh`: Theorem 142.3 (collision-resistance proof in progress).
+
+## Contents
+
+* `FromDiscreteLog.Encoding`: bounded domain/range cardinalities and bit-vector readers.
+* `FromDiscreteLog.Algebra`: collision shape and exponent extraction in the unit group.
+* `FromDiscreteLog.Coins`: coin splitting through published machine readers.
 
 ## References
 
@@ -70,6 +80,21 @@ theorem dlHashIdx_eq (G : ExpGroupGen V) (z : List Bool) :
       pairFstD (expGenFun G (NUPPT.layout (NUPPT.inParam z) [] []
         ((NUPPT.inCoins z).take (G.gen.coins.eval (NUPPT.inParam z).length)))) := rfl
 
+/-- On generator coins followed by sampler coins, the raw hash index is the instance
+generator's output above its threshold and the fixed default index below it. -/
+theorem dlHashIdx_layout (G : ExpGroupGen V) (n : ℕ) (r : G.gen.Coins n)
+    (s : List Bool) :
+    dlHashIdx G (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r ++ s)) =
+      if G.n₀ ≤ n then G.gen.runAt n [] r else dlDefaultIndex := by
+  have hr : (List.ofFn r).length = G.gen.coins.eval n := by
+    rw [List.length_ofFn, NUPPT.coinLen_eq]
+  simp only [dlHashIdx_eq, NUPPT.inParam_layout, NUPPT.inCoins_layout,
+    List.length_replicate, List.take_left' hr, expGenFun_eq]
+  split_ifs with hn
+  · rw [pairFstD_pairEncode, NUPPT.Uniform.runAt_eq G.gen_uniform,
+      NUPPT.layout_eq, NUPPT.advInput_eq]
+  · exact pairFstD_pairEncode _ _
+
 /-- `Gen` on the raw layout: the key `⟨i, y⟩`, with `i` the group index and `y = g^w mod p` for
 `w` drawn by the domain sampler from the remaining coins. -/
 def dlHashGenFun (G : ExpGroupGen V) (z : List Bool) : List Bool :=
@@ -85,6 +110,50 @@ theorem dlHashGenFun_eq (G : ExpGroupGen V) (z : List Bool) :
         (expSampleRaw (NUPPT.layout (NUPPT.inParam z) (dlHashIdx G z) []
           ((NUPPT.inCoins z).drop (G.gen.coins.eval (NUPPT.inParam z).length)))))) := rfl
 
+/-- Above the threshold, generator coins followed by sampler coins produce the group
+index and the exponentiation of the rejection-sampled exponent [PS10, Protocol 142.2]. -/
+theorem dlHashGenFun_layout (G : ExpGroupGen V) (n : ℕ) (r : G.gen.Coins n)
+    (s : List Bool) (hn : G.n₀ ≤ n) :
+    dlHashGenFun G (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r ++ s)) =
+      pairEncode (G.gen.runAt n [] r)
+        (expEval (pairEncode (G.gen.runAt n [] r)
+          (natToList (dlW (G.gen.runAt n [] r))
+            ((sampleBelowL (dlM (G.gen.runAt n [] r))
+              (Nat.size (dlM (G.gen.runAt n [] r))) n n s).getD 0)))) := by
+  have hr : (List.ofFn r).length = G.gen.coins.eval n := by
+    rw [List.length_ofFn, NUPPT.coinLen_eq]
+  simp only [dlHashGenFun_eq, dlHashIdx_layout, if_pos hn, NUPPT.inParam_layout,
+    NUPPT.inCoins_layout, List.length_replicate, List.drop_left' hr, expSampleRaw_eq]
+  simp only [NUPPT.inParam_layout, NUPPT.inArg_layout, NUPPT.inCoins_layout,
+    List.length_replicate]
+
+/-- Above the generator threshold, every raw generated key has the form `⟨i, g^z⟩`
+for an exponent in the domain of its valid group index [PS10, Protocol 142.2].
+
+**Proof sketch.** Every accepted rejection-sampler output is below `m`; its fallback zero
+is also below the positive group order. Its residue therefore has exactly that value,
+so the sampler's numeral is the canonical exponent encoding. -/
+theorem dlHashGenFun_key (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i)
+    (n : ℕ) (r : G.gen.Coins n) (s : List Bool) (hn : G.n₀ ≤ n) :
+    ∃ z : ZMod (expOrd (G.gen.runAt n [] r)),
+      dlHashGenFun G (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r ++ s)) =
+        pairEncode (G.gen.runAt n [] r) (expF (G.gen.runAt n [] r) z) := by
+  let i := G.gen.runAt n [] r
+  let w := (sampleBelowL (dlM i) (Nat.size (dlM i)) n n s).getD 0
+  have hi : ExpValid i := hV _ (G.valid n r hn)
+  have hw : w < dlM i := by
+    cases hs : sampleBelowL (dlM i) (Nat.size (dlM i)) n n s with
+    | none =>
+      simpa only [w, hs, Option.getD_none] using ((expValid_iff i).1 hi).2.1
+    | some v =>
+      simpa only [w, hs, Option.getD_some] using sampleBelowL_lt hs
+  let z : ZMod (expOrd i) := (w : ℕ)
+  have hz : z.val = w := by
+    change ((w : ℕ) : ZMod (expOrd i)).val = w
+    rw [ZMod.val_natCast, expOrd_of_valid hi, Nat.mod_eq_of_lt hw]
+  refine ⟨z, ?_⟩
+  rw [dlHashGenFun_layout G n r s hn, ← expEval_spec i z, expEnc_eq, hz]
+
 /-- `g^x mod p` on `⟨1^n, ⟨⟨i, y⟩, xb⟩⟩`, with `x` the first `n` bits of `xb`. -/
 def dlHashPow (z : List Bool) : List Bool :=
   expEval (pairEncode (pairFstD (pairFstD (pairSndD z)))
@@ -96,6 +165,28 @@ theorem dlHashPow_eq (z : List Bool) :
     dlHashPow z =
       expEval (pairEncode (pairFstD (pairFstD (pairSndD z)))
         ((pairSndD (pairSndD z)).take (pairFstD z).length)) := rfl
+
+/-- At a well-formed valid index, the exponentiation part reads the first `n` input bits
+and returns the `n`-bit numeral of their power of `g` modulo `p`. -/
+theorem dlHashPow_atParam (n : ℕ) (i y : List Bool) (x : Fin (n + 1) → Bool)
+    (hi : ExpValid i) (hw : WellFormedIndex n i)
+    (hx : listToNat ((List.ofFn x).take n) < dlM i) :
+    dlHashPow (atParam n (pairEncode (pairEncode i y) (List.ofFn x))) =
+      natToList n (dlG i ^ listToNat ((List.ofFn x).take n) % dlP i) := by
+  have he : expEnc i
+      ((listToNat ((List.ofFn x).take n) : ℕ) : ZMod (expOrd i)) =
+      (List.ofFn x).take n := by
+    rw [expEnc_eq, hw.dlW_eq, ZMod.val_natCast, expOrd_of_valid hi,
+      Nat.mod_eq_of_lt hx]
+    have hcanon := natToList_length_listToNat ((List.ofFn x).take n)
+    simpa only [List.length_take, List.length_ofFn,
+      Nat.min_eq_left (Nat.le_succ n)] using hcanon
+  have hs := expEval_spec i
+    ((listToNat ((List.ofFn x).take n) : ℕ) : ZMod (expOrd i))
+  rw [he, expF_eq, hw.dlW_eq, ZMod.val_natCast, expOrd_of_valid hi,
+    Nat.mod_eq_of_lt hx] at hs
+  simpa only [dlHashPow_eq, atParam_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode, List.length_replicate] using hs
 
 /-- `y · g^x mod p` on `⟨1^n, ⟨⟨i, y⟩, xb⟩⟩`: one multiplication and one reduction modulo `p`. -/
 def dlHashMul (z : List Bool) : List Bool :=
@@ -111,6 +202,27 @@ theorem dlHashMul_eq (z : List Bool) :
         (mulStr (pairEncode (dlHashPow z) (pairSndD (pairFstD (pairSndD z)))))
         (pairFstD (pairFstD (pairFstD (pairSndD z)))))) := rfl
 
+/-- The multiplication part returns the `n`-bit numeral of the power of `g` times the
+key element, reduced modulo `p`, at a valid well-formed index. -/
+theorem dlHashMul_atParam (n : ℕ) (i y : List Bool) (x : Fin (n + 1) → Bool)
+    (hi : ExpValid i) (hw : WellFormedIndex n i)
+    (hx : listToNat ((List.ofFn x).take n) < dlM i) :
+    dlHashMul (atParam n (pairEncode (pairEncode i y) (List.ofFn x))) =
+      natToList n
+        ((dlG i ^ listToNat ((List.ofFn x).take n) % dlP i * listToNat y) % dlP i) := by
+  have hw' : (pairFstD i).length = n := by
+    obtain ⟨a, b, c, he, ha, _, _⟩ := (wellFormedIndex_iff n i).1 hw
+    rw [he, pairFstD_pairEncode]
+    exact ha
+  have hp : dlP i < 2 ^ n := by
+    simpa only [hw.dlW_eq] using dlP_lt_two_pow i
+  have hpow : dlG i ^ listToNat ((List.ofFn x).take n) % dlP i < 2 ^ n :=
+    (Nat.mod_lt _ ((expValid_iff i).1 hi).1.pos).trans hp
+  rw [dlHashMul_eq, dlHashPow_atParam n i y x hi hw hx]
+  simp only [atParam_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    divModStr_pairEncode, listToNat_mulStr, hw']
+  rw [← dlP_eq i, listToNat_natToList hpow]
+
 /-- **The hash** `h_{p,g,y}(x, b) = y^b g^x mod p` on `⟨1^n, ⟨⟨i, y⟩, xb⟩⟩`, with `x` the first
 `n` bits of `xb` and `b` its bit at position `n`: one modular exponentiation, and for `b = 1` one
 multiplication and one reduction modulo `p` (`dlHashMul`), each a numeral of the width of `p`. -/
@@ -124,6 +236,110 @@ theorem dlHashEval_eq (z : List Bool) :
     dlHashEval z =
       if ((pairSndD (pairSndD z)).drop (pairFstD z).length).headD false then dlHashMul z
       else dlHashPow z := rfl
+
+/-- Hash evaluation at a valid well-formed index is the `n`-bit numeral of `g^x mod p`
+for selector false, and of `(g^x mod p) y mod p` for selector true
+[PS10, Protocol 142.2]. -/
+theorem dlHashEval_atParam (n : ℕ) (i y : List Bool) (x : Fin (n + 1) → Bool)
+    (hi : ExpValid i) (hw : WellFormedIndex n i)
+    (hx : listToNat ((List.ofFn x).take n) < dlM i) :
+    dlHashEval (atParam n (pairEncode (pairEncode i y) (List.ofFn x))) =
+      natToList n (if x (Fin.last n) then
+        (dlG i ^ listToNat ((List.ofFn x).take n) % dlP i * listToNat y) % dlP i
+        else dlG i ^ listToNat ((List.ofFn x).take n) % dlP i) := by
+  rw [dlHashEval_eq, dlHashMul_atParam n i y x hi hw hx,
+    dlHashPow_atParam n i y x hi hw hx]
+  simp only [atParam_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    List.length_replicate, FromDiscreteLog.inputWord_drop, List.headD_cons]
+  split_ifs <;> rfl
+
+/-- For the key element `g^z`, evaluation writes the residue of the unit
+`(if b then g^z else 1) * g^x`, where `x` is the exponent prefix and `b` is the last bit
+[PS10, Protocol 142.2]. -/
+theorem dlHashEval_expF (n : ℕ) (i : List Bool) (z : ZMod (expOrd i))
+    (x : Fin (n + 1) → Bool) (hi : ExpValid i) (hw : WellFormedIndex n i)
+    (hx : listToNat ((List.ofFn x).take n) < dlM i) :
+    dlHashEval (atParam n (pairEncode (pairEncode i (expF i z)) (List.ofFn x))) =
+      natToList n
+        (((if x (Fin.last n) then expUnit hi ^ z.val else 1) *
+          expUnit hi ^ listToNat ((List.ofFn x).take n) : (ZMod (dlP i))ˣ) :
+            ZMod (dlP i)).val := by
+  have hp : dlP i < 2 ^ n := by
+    simpa only [hw.dlW_eq] using dlP_lt_two_pow i
+  have hz : dlG i ^ z.val % dlP i < 2 ^ n :=
+    (Nat.mod_lt _ ((expValid_iff i).1 hi).1.pos).trans hp
+  rw [dlHashEval_atParam n i (expF i z) x hi hw hx, expF_eq, hw.dlW_eq,
+    listToNat_natToList hz]
+  cases hb : x (Fin.last n)
+  · simp only [hb, Bool.false_eq_true, ↓reduceIte, one_mul,
+      FromDiscreteLog.expUnit_pow_val]
+  · simp only [hb, ↓reduceIte, Units.val_mul, ZMod.val_mul,
+      FromDiscreteLog.expUnit_pow_val]
+    rw [Nat.mul_comm]
+
+/-- Equal evaluations on two distinct domain inputs force different selectors and reveal
+the challenge exponent as the corresponding difference modulo `m`
+[PS10, proof of Theorem 142.3].
+
+**Proof sketch.** Evaluation writes the residue of the associated unit. Equal fixed-width
+numerals therefore give equal units. The unit-group collision lemma rules out equal
+selectors and extracts the unique exponent residue. -/
+theorem dlHashEval_collision (n : ℕ) (i : List Bool) (z : ZMod (expOrd i))
+    (x x' : Fin (n + 1) → Bool) (hi : ExpValid i) (hw : WellFormedIndex n i)
+    (hx : listToNat ((List.ofFn x).take n) < dlM i)
+    (hx' : listToNat ((List.ofFn x').take n) < dlM i) (hne : x ≠ x')
+    (hc : dlHashEval (atParam n (pairEncode (pairEncode i (expF i z)) (List.ofFn x))) =
+      dlHashEval (atParam n (pairEncode (pairEncode i (expF i z)) (List.ofFn x')))) :
+    x (Fin.last n) ≠ x' (Fin.last n) ∧ z.val =
+      if x (Fin.last n) then
+        (listToNat ((List.ofFn x').take n) +
+          (dlM i - listToNat ((List.ofFn x).take n))) % dlM i
+      else (listToNat ((List.ofFn x).take n) +
+          (dlM i - listToNat ((List.ofFn x').take n))) % dlM i := by
+  haveI : NeZero (dlP i) := ⟨((expValid_iff i).1 hi).1.ne_zero⟩
+  have hp : dlP i < 2 ^ n := by
+    simpa only [hw.dlW_eq] using dlP_lt_two_pow i
+  have hbound (u : (ZMod (dlP i))ˣ) : (u : ZMod (dlP i)).val < 2 ^ n :=
+    (ZMod.val_lt _).trans hp
+  rw [dlHashEval_expF n i z x hi hw hx, dlHashEval_expF n i z x' hi hw hx'] at hc
+  have hv := natToList_injOn (hbound _) (hbound _) hc
+  have hu := Units.ext (ZMod.val_injective (dlP i) hv)
+  have hd : (listToNat ((List.ofFn x).take n), x (Fin.last n)) ≠
+      (listToNat ((List.ofFn x').take n), x' (Fin.last n)) := by
+    intro he
+    exact hne (FromDiscreteLog.inputWord_num_ext
+      (congrArg Prod.fst he) (congrArg Prod.snd he))
+  exact FromDiscreteLog.unitCollision_extract hi hx hx' z hd hu
+
+/-- Evaluation on a domain input at a valid well-formed key has exactly `n` bits and
+reads as a positive residue below `p` [PS10, compression in Theorem 142.3].
+
+**Proof sketch.** The evaluation is the numeral of a unit's residue. A unit has positive
+residue below `p`, and the well-formed width is large enough to encode it exactly. -/
+theorem dlHashEval_range (n : ℕ) (i : List Bool) (z : ZMod (expOrd i))
+    (x : Fin (n + 1) → Bool) (hi : ExpValid i) (hw : WellFormedIndex n i)
+    (hx : listToNat ((List.ofFn x).take n) < dlM i) :
+    (dlHashEval (atParam n (pairEncode (pairEncode i (expF i z)) (List.ofFn x)))).length = n ∧
+      0 < listToNat (dlHashEval (atParam n
+        (pairEncode (pairEncode i (expF i z)) (List.ofFn x)))) ∧
+      listToNat (dlHashEval (atParam n
+        (pairEncode (pairEncode i (expF i z)) (List.ofFn x)))) < dlP i := by
+  have hp2 : 2 ≤ dlP i := ((expValid_iff i).1 hi).1.two_le
+  haveI : Fact (1 < dlP i) := ⟨by omega⟩
+  haveI : NeZero (dlP i) := ⟨by omega⟩
+  let u : (ZMod (dlP i))ˣ :=
+    (if x (Fin.last n) then expUnit hi ^ z.val else 1) *
+      expUnit hi ^ listToNat ((List.ofFn x).take n)
+  have hpw : dlP i < 2 ^ n := by
+    simpa only [hw.dlW_eq] using dlP_lt_two_pow i
+  have hval : (u : ZMod (dlP i)).val < 2 ^ n := (ZMod.val_lt _).trans hpw
+  have hu := units_val_mem u
+  rw [dlHashEval_expF n i z x hi hw hx]
+  change (natToList n (u : ZMod (dlP i)).val).length = n ∧
+    0 < listToNat (natToList n (u : ZMod (dlP i)).val) ∧
+      listToNat (natToList n (u : ZMod (dlP i)).val) < dlP i
+  rw [length_natToList, listToNat_natToList hval]
+  exact ⟨rfl, lt_of_lt_of_le Nat.zero_lt_one hu.1, ZMod.val_lt _⟩
 
 /-! ### Efficiency -/
 
@@ -214,6 +430,88 @@ noncomputable def dlHash (H : ArithmeticFP) (G : ExpGroupGen V) : CRH where
 
 attribute [simps (config := { isSimp := false }) domLen rangeLen gen eval inDom inRange] dlHash
 
+/-- The hash generator uses the instance generator's coin polynomial plus `n²` sampler
+coins [PS10, Protocol 142.2]. -/
+theorem dlHash_gen_coins (H : ArithmeticFP) (G : ExpGroupGen V) :
+    (dlHash H G).gen.coins = .add G.gen.coins (.mul .var .var) := by
+  rw [dlHash_gen, NUPPT.coins_ofPolyTimeUniform]
+
+/-- The hash generator's coins are the instance generator's coins and an independent
+`n²`-bit sampler tape [PS10, Protocol 142.2]. -/
+noncomputable def dlHash_coinsEquiv (H : ArithmeticFP) (G : ExpGroupGen V) (n : ℕ) :
+    (dlHash H G).gen.Coins n ≃ G.gen.Coins n × (Fin (n * n) → Bool) :=
+  (FromDiscreteLog.sumCoinsEquiv (dlHash H G).gen (dlHash_gen_coins H G) n).trans
+    (Equiv.prodCongr (NUPPT.coinsEquivPoly (A := G.gen) rfl n).symm
+      (Equiv.arrowCongr (finCongr (by rw [PolyExpr.eval_mul, PolyExpr.eval_var]))
+        (Equiv.refl Bool)))
+
+/-- The hash coin equivalence splits the sum polynomial, identifies its first component
+with the generator's coins, and reads the second component as `n²` bits. -/
+theorem dlHash_coinsEquiv_eq (H : ArithmeticFP) (G : ExpGroupGen V) (n : ℕ) :
+    dlHash_coinsEquiv H G n =
+      (FromDiscreteLog.sumCoinsEquiv (dlHash H G).gen (dlHash_gen_coins H G) n).trans
+        (Equiv.prodCongr (NUPPT.coinsEquivPoly (A := G.gen) rfl n).symm
+          (Equiv.arrowCongr (finCongr (by rw [PolyExpr.eval_mul, PolyExpr.eval_var]))
+            (Equiv.refl Bool))) := rfl
+
+/-- Combining a generator tape and a sampler tape concatenates their encoded words. -/
+theorem dlHash_coinsEquiv_symm_ofFn (H : ArithmeticFP) (G : ExpGroupGen V) (n : ℕ)
+    (r : G.gen.Coins n) (s : Fin (n * n) → Bool) :
+    List.ofFn ((dlHash_coinsEquiv H G n).symm (r, s)) = List.ofFn r ++ List.ofFn s := by
+  rw [dlHash_coinsEquiv_eq, Equiv.symm_trans_apply, Equiv.prodCongr_symm,
+    Equiv.prodCongr_apply, Equiv.symm_symm, FromDiscreteLog.sumCoinsEquiv_symm_ofFn,
+    Prod.map_fst, Prod.map_snd, NUPPT.coinsEquivPoly_ofFn,
+    Equiv.arrowCongr_symm, finCongr_symm, Equiv.refl_symm,
+    ofFn_arrowCongr_finCongr]
+
+/-- On recombined generator and sampler coins, the hash generator runs its raw function
+on their concatenation [PS10, Protocol 142.2]. -/
+theorem dlHash_gen_runAt (H : ArithmeticFP) (G : ExpGroupGen V) (n : ℕ)
+    (r : G.gen.Coins n) (s : Fin (n * n) → Bool) :
+    (dlHash H G).gen.runAt n [] ((dlHash_coinsEquiv H G n).symm (r, s)) =
+      dlHashGenFun G (NUPPT.layout (List.replicate n true) [] []
+        (List.ofFn r ++ List.ofFn s)) := by
+  rw [NUPPT.runAt_eq, dlHash_coinsEquiv_symm_ofFn, dlHash_gen,
+    NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq, NUPPT.layout_eq]
+
+/-- The discrete-log hash compresses at every parameter above the instance generator's
+threshold when its groups are the full unit groups [PS10, Theorem 142.3].
+
+**Proof sketch.** Split a generated key's coins into the instance and sampler tapes. Its
+index is valid and well formed, and its key element is a power of the generator. Evaluation
+therefore lands in the positive residues. There are `2m` domain inputs and `p - 1 = m`
+range values, with `m > 0`. -/
+theorem dlHash_compresses (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i ∧ dlM i = dlP i - 1) : (dlHash H G).Compresses := by
+  rw [CRH.compresses_iff]
+  refine ⟨G.n₀, ?_⟩
+  intro n hn rg
+  obtain ⟨⟨r, s⟩, rfl⟩ := (dlHash_coinsEquiv H G n).symm.surjective rg
+  rw [dlHash_gen_runAt]
+  obtain ⟨z, hkey⟩ := dlHashGenFun_key G (fun i hi => (hV i hi).1)
+    n r (List.ofFn s) hn
+  rw [hkey]
+  have hi := (hV _ (G.valid n r hn)).1
+  have hmfull := (hV _ (G.valid n r hn)).2
+  have hw := G.wellFormed n r hn
+  have hp : dlP (G.gen.runAt n [] r) < 2 ^ n := by
+    simpa only [hw.dlW_eq] using dlP_lt_two_pow (G.gen.runAt n [] r)
+  have hm : dlM (G.gen.runAt n [] r) < 2 ^ n :=
+    ((expValid_iff _).1 hi).2.2.1.trans hp
+  simp only [dlHash_inDom, dlHash_inRange, CRH.hash_eq, dlHash_eval,
+    dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
+    PolyExpr.eval_const, pairFstD_pairEncode, decide_eq_true_eq]
+  constructor
+  · intro x hx
+    have hr := dlHashEval_range n _ z x hi hw hx
+    rw [ofFn_padFin_of_length hr.1]
+    exact hr.2
+  · rw [FromDiscreteLog.card_boundedInput n _ hm.le,
+      FromDiscreteLog.card_boundedRange n _ ((expValid_iff _).1 hi).1.pos hp.le,
+      ← hmfull]
+    have hpos := ((expValid_iff _).1 hi).2.1
+    omega
+
 /-- **Theorem 142.3: Protocol 142.2 is a collision-resistant hash compressing by one bit**
 [PS10, Theorem 142.3], under the discrete-log assumption for an instance generator of the full
 groups `Z_p^*` (`m = p − 1`).
@@ -234,6 +532,7 @@ groups `Z_p^*` (`m = p − 1`).
 theorem dlHash_crh (H : ArithmeticFP) (G : ExpGroupGen V)
     (hV : ∀ i, V i → ExpValid i ∧ dlM i = dlP i - 1) (hDL : G.DLHard) :
     (dlHash H G).Compresses ∧ (dlHash H G).CollisionResistant := by
+  refine ⟨dlHash_compresses H G hV, ?_⟩
   sorry
 
 end TCSlib.Cryptography.Authentication

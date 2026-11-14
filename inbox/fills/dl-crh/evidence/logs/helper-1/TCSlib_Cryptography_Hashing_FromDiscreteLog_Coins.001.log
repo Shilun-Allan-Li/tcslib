@@ -1,0 +1,56 @@
+START 2026-11-14T06:50:41Z
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins.lean:61:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn (((finCongr ?h).arrowCongr (Equiv.refl Bool)) ?v)
+in the target expression
+  List.ofFn (((finCongr ⋯).symm.arrowCongr (Equiv.refl Bool).symm) ((splitCoins (c.eval n) (d.eval n)).symm (r, s))) =
+    List.ofFn r ++ List.ofFn s
+
+A : NUPPT
+c d : PolyExpr
+h : A.coins = c.add d
+n : ℕ
+r : Fin (c.eval n) → Bool
+s : Fin (d.eval n) → Bool
+⊢ List.ofFn (((finCongr ⋯).symm.arrowCongr (Equiv.refl Bool).symm) ((splitCoins (c.eval n) (d.eval n)).symm (r, s))) =
+    List.ofFn r ++ List.ofFn s
+        9.05 real         1.40 user         1.86 sys
+          2106425344  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              114238  page reclaims
+               57169  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                7283  voluntary context switches
+               56807  involuntary context switches
+         20844340060  instructions retired
+          8970343423  cycles elapsed
+           326083288  peak memory footprint
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins): lean exited with status 1
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins): error diagnostics reported
+FAIL(TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins): no fresh .olean produced
+        9.13 real         1.41 user         1.90 sys
+          2106425344  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              117925  page reclaims
+               57196  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                7317  voluntary context switches
+               57559  involuntary context switches
+            35998595  instructions retired
+            33555136  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-14T06:50:50Z
+EXIT 1

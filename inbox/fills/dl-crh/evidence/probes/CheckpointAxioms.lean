@@ -1,0 +1,10 @@
+import TCSlib.Cryptography.Hashing.FromDiscreteLog
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Reduction
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Sampling
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Probability
+#print axioms TCSlib.Cryptography.Authentication.dlHash_compresses
+#print axioms TCSlib.Cryptography.Authentication.dlHashEval_collision
+#print axioms TCSlib.Cryptography.Authentication.dlHashGenFun_key
+#print axioms TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionPost_split
+#print axioms TCSlib.Cryptography.Authentication.FromDiscreteLog.sampleBelowL_uprob_le
+#print axioms TCSlib.Cryptography.Authentication.FromDiscreteLog.collision_accept_eq
