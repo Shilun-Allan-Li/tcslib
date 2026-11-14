@@ -14,7 +14,7 @@ set_option autoImplicit false
 
 Direction (⇒) of [PS10, Theorem 175.9]. Given a non-malleability adversary `A` whose output is
 `ℓ(n)` ciphertexts and a distinguisher `D`, the CCA2 adversary runs `A` on the public key and
-forwards all of `A`'s queries to its own oracles (`NMCCA2.fwdHandler`). In the finalization it
+forwards all of `A`'s queries to its own oracles (`Games.fwdHandler`). In the finalization it
 asks its decryption oracle for each of `A`'s `ℓ(n)` ciphertexts in turn and outputs `D`'s
 verdict on the concatenated answers. Under CCA2 the decryption oracle refuses the recorded
 challenge with `⊥`, exactly as the non-malleability experiment decrypts a copy of the challenge.
@@ -22,19 +22,20 @@ challenge with `⊥`, exactly as the non-malleability experiment decrypts a copy
 This file builds the handler (`decHandler S ℓ D`): its seed is `D`'s coins, and the reduction
 input is `⟨pk, α⟩`, where `α` is `D`'s advice. It proves the finalization's equation against
 any outer oracle whose decryption answers are deterministic and keep the state
-(`simulate_decHandler_finish`). The advice is hard-wired afterwards (`exists_withAdviceOn`,
-from `NUPPT.exists_comp` and `NUPPT.exists_withAdvice`).
+(`simulate_decHandler_finish`). The advice is hard-wired afterwards
+(`Complexity.NUPPT.exists_withAdviceOn`, from `NUPPT.exists_comp` and `NUPPT.exists_withAdvice`).
+The per-entry readings of a log are `Games.cntRead` and `Games.ansRead`.
 
 ## Main definitions
 
-* `NMCCA2.cntRead`, `NMCCA2.ansRead`: the per-entry readings of a log (one token, the answer).
 * `NMCCA2.decHandler`: the handler of the reduction.
 
 ## Main results
 
+* `NMCCA2.length_logEmit_cntRead`, `NMCCA2.logEmit_ansRead`: counting the entries of a log and
+  collecting their answers.
 * `NMCCA2.simulate_decHandler_impl`: the handler forwards.
 * `NMCCA2.simulate_decHandler_finish`: the finalization decrypts the `ℓ` blocks and runs `D`.
-* `NMCCA2.exists_withAdviceOn`: hard-wiring a second component of the input.
 
 ## References
 
@@ -45,32 +46,13 @@ from `NUPPT.exists_comp` and `NUPPT.exists_withAdvice`).
 namespace TCSlib.Cryptography.Composability.NMCCA2
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
+open TCSlib.Cryptography.Games.InteractiveHandler (rU_finInput rZ_finInput rW_finInput
+  rL_finInput finA_finInput polyTimeComputable_rU polyTimeComputable_rZ polyTimeComputable_rW
+  polyTimeComputable_rL polyTimeComputable_finA)
 open AdaptiveCPA (acDin acDout acDin_zero acDout_zero)
 
-/-! ### Readings of a log entry -/
-
-/-- One token for a nonempty log and nothing for the empty one:
-`cntRead v = if v = [] then [] else [true]`. With `logEmit` it counts the entries of a log. -/
-def cntRead (v : List Bool) : List Bool := if decide (v = []) then [] else [true]
-
-/-- `cntRead v = if v = [] then [] else [true]`. -/
-theorem cntRead_eq (v : List Bool) : cntRead v = if decide (v = []) then [] else [true] := rfl
-
-/-- The token reading is polynomial-time: `PolyTimeComputable cntRead`. -/
-theorem polyTimeComputable_cntRead : PolyTimeComputable cntRead :=
-  polyTimeComputable_ite polyTimeComputable_isNil (polyTimeComputable_const [])
-    (polyTimeComputable_const [true])
-
-/-- The answer `y` of the first entry `⟨1^i, ⟨x, y⟩⟩` of a log:
-`ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
-def ansRead (v : List Bool) : List Bool := pairSndD (pairSndD (pairFstD v))
-
-/-- `ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
-theorem ansRead_eq (v : List Bool) : ansRead v = pairSndD (pairSndD (pairFstD v)) := rfl
-
-/-- The answer reading is polynomial-time: `PolyTimeComputable ansRead`. -/
-theorem polyTimeComputable_ansRead : PolyTimeComputable ansRead :=
-  polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
+/-! ### Readings of a log -/
 
 section Readings
 
@@ -79,7 +61,7 @@ variable {k : ℕ} {din dout : Fin k → ℕ} {dα : ℕ}
 /-- **Counting the entries:** `|logEmit cntRead ⟦h⟧| = |h|`. -/
 theorem length_logEmit_cntRead (h : QueryLog (bitSpec din dout)) :
     (logEmit cntRead ((bitCodec din dout dα).encodeLog h)).length = h.length := by
-  rw [logEmit_encodeLog _ cntRead (fun _ => [true]) rfl
+  rw [logEmit_encodeLog _ cntRead (fun _ => [true]) (by rw [cntRead_eq]; rfl)
     (fun e t => by rw [cntRead_eq, decide_eq_false (pairEncode_ne_nil _ _)]; rfl)]
   simp only [List.length_flatMap, List.length_singleton, List.map_const', List.sum_replicate,
     smul_eq_mul, mul_one]
@@ -101,42 +83,46 @@ end Readings
 variable (S : FixedLengthPKScheme) (ℓ : PolyExpr) (D : NUPPT)
 
 /-- The number of decryptions asked so far, in unary. -/
-private def dCnt (w : List Bool) : List Bool := logEmit cntRead (finL w)
+private def dCnt (w : List Bool) : List Bool := logEmit cntRead (rL w)
 
 /-- The next block of the adversary's output: `ctLen(n)` bits from position `j · ctLen(n)`, for
 `j` the decryptions asked so far, padded with `false`. -/
 private def dCt (w : List Bool) : List Bool :=
-  EnsembleLemmas.padL (S.ctLen.eval (finU w).length)
-    ((finA w).drop ((dCnt w).length * S.ctLen.eval (finU w).length))
+  EnsembleLemmas.padL (S.ctLen.eval (rU w).length)
+    ((finA w).drop ((dCnt w).length * S.ctLen.eval (rU w).length))
 
 /-- `D`'s input layout: parameter `1^n`, the collected answers, the advice (the second component
 of the reduction input) and the seed as coins. -/
 private def dIn (w : List Bool) : List Bool :=
-  pairEncode (pairEncode (pairEncode (finU w) (logEmit ansRead (finL w))) (pairSndD (finZ w)))
-    (finW w)
+  pairEncode (pairEncode (pairEncode (rU w) (logEmit ansRead (rL w))) (pairSndD (rZ w)))
+    (rW w)
 
 /-- **One round of the finalization.** After `ℓ(n)` decryptions, output `D`'s verdict
 `[D(answers) = [true]]`; before, ask the decryption oracle (index `0`) the next block. -/
 private def dFin (w : List Bool) : List Bool :=
-  if decide (ℓ.eval (finU w).length ≤ (dCnt w).length) then
+  if decide (ℓ.eval (rU w).length ≤ (dCnt w).length) then
     pairEncode [true] [decide (D.output (dIn w) = [true])]
   else pairEncode [false] (pairEncode [] (dCt S w))
 
 /-- The finalization round is polynomial-time. -/
 private theorem polyTimeComputable_dFin : PolyTimeComputable (dFin S ℓ D) := by
-  obtain ⟨hU, hZ, hW, hA, hL⟩ := polyTimeComputable_finFields
+  have hU := polyTimeComputable_rU
+  have hZ := polyTimeComputable_rZ
+  have hW := polyTimeComputable_rW
+  have hA := polyTimeComputable_finA
+  have hL := polyTimeComputable_rL
   have hCnt : PolyTimeComputable dCnt :=
     (polyTimeComputable_logEmit polyTimeComputable_cntRead).comp hL
-  have hAns : PolyTimeComputable fun w => logEmit ansRead (finL w) :=
+  have hAns : PolyTimeComputable fun w => logEmit ansRead (rL w) :=
     (polyTimeComputable_logEmit polyTimeComputable_ansRead).comp hL
   have hOff : PolyTimeComputable fun w =>
-      List.replicate ((dCnt w).length * S.ctLen.eval (finU w).length) true :=
+      List.replicate ((dCnt w).length * S.ctLen.eval (rU w).length) true :=
     (OneWay.polyTimeComputable_unaryMulPair.comp
       (hCnt.pairEncode ((polyTimeComputable_unaryPoly S.ctLen).comp hU))).congr fun w => by
         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
           List.length_replicate]
   have hDrop : PolyTimeComputable fun w =>
-      (finA w).drop ((dCnt w).length * S.ctLen.eval (finU w).length) :=
+      (finA w).drop ((dCnt w).length * S.ctLen.eval (rU w).length) :=
     (polyTimeComputable_dropPrefixByLength.comp (hOff.pairEncode hA)).congr fun w => by
       simp only [Function.comp_apply, PrefixByLength.drop_def, pairFstD_pairEncode,
         pairSndD_pairEncode, List.length_replicate]
@@ -147,7 +133,7 @@ private theorem polyTimeComputable_dFin : PolyTimeComputable (dFin S ℓ D) := b
     (polyTimeComputable_pairEq.comp ((D.polyTimeComputable_output.comp hIn).pairEncode
       (polyTimeComputable_const [true]))).congr fun w => by
         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
-  have hT : PolyTimeComputable fun w => [decide (ℓ.eval (finU w).length ≤ (dCnt w).length)] :=
+  have hT : PolyTimeComputable fun w => [decide (ℓ.eval (rU w).length ≤ (dCnt w).length)] :=
     (polyTimeComputable_lenLe.comp (hCnt.pairEncode
       ((polyTimeComputable_unaryPoly ℓ).comp hU))).congr fun w => by
         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
@@ -254,13 +240,25 @@ theorem simulate_decHandler_finish (n : ℕ) (z : List Bool)
       w = InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
         ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog
           (hist j)) →
-      (dCnt w).length = j ∧ finU w = List.replicate n true ∧
+      (dCnt w).length = j ∧ rU w = List.replicate n true ∧
       dIn w = NUPPT.layout (List.replicate n true)
         ((List.range j).map fun i => List.ofFn (ans (decBlock S n a i) st)).flatten
         (pairSndD z) (List.ofFn ω) ∧
       dCt S w = List.ofFn (decBlock S n a j) := by
     intro j w hw
-    obtain ⟨hU, hZ, hW, hA, hL⟩ := fields_finInput n z (List.ofFn ω) (List.ofFn s)
+    have hU := rU_finInput n z (List.ofFn ω) (List.ofFn s)
+      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+        0).encodeLog (hist j))
+    have hZ := rZ_finInput n z (List.ofFn ω) (List.ofFn s)
+      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+        0).encodeLog (hist j))
+    have hW := rW_finInput n z (List.ofFn ω) (List.ofFn s)
+      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+        0).encodeLog (hist j))
+    have hA := finA_finInput n z (List.ofFn ω) (List.ofFn s)
+      (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
+        0).encodeLog (hist j))
+    have hL := rL_finInput n z (List.ofFn ω) (List.ofFn s)
       (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
         0).encodeLog (hist j))
     rw [← hw] at hU hZ hW hA hL
@@ -316,35 +314,5 @@ theorem simulate_decHandler_finish (n : ℕ) (z : List Bool)
   have h0 : hist 0 = [] := by simp only [hhist, List.range_zero, List.map_nil]
   rw [InteractiveHandler.finish_eq, decHandler_finCall, ← h0]
   exact key (ℓ.eval n) 0 (Nat.zero_add _)
-
-/-! ### Hard-wiring the advice -/
-
-/-- **Hard-wiring a second input component** [PS10, §2.1, implicit]: for a machine `B` and a
-polynomially bounded family `β n` there is a machine `B'` with the same coins (`h`) whose
-computation on the input `x` is `B`'s on `⟨x, β n⟩`, for every codec and budget:
-`B'.toCompOn codec n q x (coinsCongr h n r) = B.toCompOn codec n q ⟨x, β n⟩ r`.
-
-**Proof sketch.** `B₁ := NUPPT.exists_comp B` with the re-pairing
-`⟨⟨x, L⟩, β⟩ ↦ ⟨⟨x, β⟩, L⟩`, then `B' := NUPPT.exists_withAdvice B₁ β`; on `⟨x, L⟩` (the input
-and the encoded log) `B'` runs `B` on `⟨⟨x, β n⟩, L⟩`. -/
-theorem exists_withAdviceOn (B : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
-    (hβ : ∀ n, (β n).length ≤ b.eval n) :
-    ∃ (B' : NUPPT) (h : B.coins = B'.coins), ∀ (n : ℕ) {ι α : Type} {spec : OracleSpec ι}
-      (codec : MachineCodec spec α) (q : ℕ) (x : List Bool) (r : B.Coins n),
-      B'.toCompOn codec n q x (NUPPT.coinsCongr h n r) =
-        B.toCompOn codec n q (pairEncode x (β n)) r := by
-  have hpre : PolyTimeComputable fun w : List Bool =>
-      pairEncode (pairEncode (pairFstD (pairFstD w)) (pairSndD w)) (pairSndD (pairFstD w)) :=
-    ((polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD).pairEncode
-      polyTimeComputable_pairSndD).pairEncode
-      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
-  obtain ⟨B₁, hc₁, -, -, hB₁⟩ := NUPPT.exists_comp B hpre polyTimeComputable_id
-  obtain ⟨B', hc', hB'⟩ := NUPPT.exists_withAdvice B₁ β b hβ
-  refine ⟨B', (hc'.trans hc₁).symm, fun n ι α spec codec q x r => ?_⟩
-  rw [NUPPT.toCompOn_eq, NUPPT.toCompOn_eq]
-  congr 1
-  funext hist
-  rw [NUPPT.runAt_coinsCongr, hB', hB₁, NUPPT.runAt_eq]
-  simp only [pairFstD_pairEncode, pairSndD_pairEncode, id_eq]
 
 end TCSlib.Cryptography.Composability.NMCCA2

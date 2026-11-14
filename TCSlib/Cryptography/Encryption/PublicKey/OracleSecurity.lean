@@ -56,6 +56,9 @@ Security is stated for each admissible `L`; a larger `L` admits longer `Dec` que
 * `PublicKeyScheme.exists_padBound`, `BitPublicKeyScheme.exists_padBound`: padding bounds exist.
 * `FixedLengthPKScheme.indCodec_eq_bitCodec`: the adversary codec is a bit codec;
   `PublicKeyScheme.padded_enc_runAt`, `padded_enc_coins`: the padded encryptor.
+* `FixedLengthPKScheme.ctLen_pos`: nonempty messages force nonempty ciphertexts;
+  `FixedLengthPKScheme.indImpl_eq_of_msgLen_eq_zero`: with empty messages the two oracles of the
+  IND game coincide.
 
 The claim after Definition 171.5, `BitPublicKeyScheme.SingleBitSecure.padded_cpa` (single-bit
 security gives CPA security), and its eager-coins lemma `expect_simulate_indImpl_cpa` are in
@@ -717,6 +720,45 @@ theorem INDSecure_iff (atk : Attack) :
     S.INDSecure atk ↔ ∀ (A : NUPPT) (q : PolyExpr), ∃ ε : ℕ → ℝ, Negligible ε ∧
       ∀ n, advantage (S.indGame atk A (q.eval n) false n)
         (S.indGame atk A (q.eval n) true n) ≤ ε n := Iff.rfl
+
+/-! ### Nonempty ciphertexts, empty messages -/
+
+/-- **The ciphertexts are not empty** when the messages are not: with `msgLen(n) > 0`, correctness
+gives `ctLen(n) > 0` (two different messages cannot both decrypt from the empty ciphertext). -/
+theorem ctLen_pos (n : ℕ) (rg : S.gen.Coins n) (re : S.enc.Coins n) (hL : 0 < S.msgLen.eval n) :
+    0 < S.ctLen.eval n := by
+  by_contra h
+  have h0 : S.ctLen.eval n = 0 := by omega
+  have hnil : ∀ m : Fin (S.msgLen.eval n) → Bool,
+      S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re = [] := fun m =>
+    List.eq_nil_of_length_eq_zero ((S.enc_length n rg m re).trans h0)
+  have h₁ := S.correct n (fun _ => true) rg re
+  have h₂ := S.correct n (fun _ => false) rg re
+  rw [hnil] at h₁ h₂
+  have := congrFun (Option.some.inj (h₁.symm.trans h₂)) ⟨0, hL⟩
+  exact absurd this (by decide)
+
+/-- **With empty messages the two CCA2 oracles coincide:** if `msgLen(n) = 0`, then
+`S.indImpl atk false n pk sk = S.indImpl atk true n pk sk` (both halves of a challenge are the
+empty message).
+
+**Proof sketch.** Compare query by query through the published equations: decryption does not
+depend on the bit (`indImpl_dec_onSpec`), a repeated challenge repeats the record
+(`indImpl_challenge_repeat_onSpec`), and a first challenge encrypts a half of the query
+(`indImpl_challenge_none_onSpec`), whose string is `[]` either way. -/
+theorem indImpl_eq_of_msgLen_eq_zero (atk : Attack) (n : ℕ) (pk sk : List Bool)
+    (h : S.msgLen.eval n = 0) : S.indImpl atk false n pk sk = S.indImpl atk true n pk sk := by
+  have h0 : ∀ f : Fin (S.msgLen.eval n) → Bool, List.ofFn f = [] := fun f =>
+    List.eq_nil_of_length_eq_zero (by rw [List.length_ofFn, h])
+  funext i x s
+  match i with
+  | 0 => rw [S.indImpl_dec_onSpec, S.indImpl_dec_onSpec]
+  | 1 =>
+    cases s with
+    | some c => rw [S.indImpl_challenge_repeat_onSpec, S.indImpl_challenge_repeat_onSpec]
+    | none =>
+      rw [S.indImpl_challenge_none_onSpec, S.indImpl_challenge_none_onSpec]
+      simp only [h0]
 
 end FixedLengthPKScheme
 

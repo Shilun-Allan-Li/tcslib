@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import Mathlib.Data.List.OfFn
 import Mathlib.Data.List.GetD
 import Mathlib.Logic.Equiv.Prod
+import Mathlib.Data.Fintype.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -31,6 +32,11 @@ an association list. They depend on Mathlib only.
 * `TCSlib.Cryptography.xorPerm_apply`: `xorPerm v y = y ⊕ v`.
 * `TCSlib.Cryptography.mem_keys_of_lookup_isSome`: a key with a value in an association list is
   one of its keys.
+* `TCSlib.Cryptography.ofFn_eq_map_range`, `ofFn_natAdd_eq_drop`, `decide_map_ofFn`: lists of
+  tuples as maps over ranges, tails of tuples, comparing optional tuples through their lists.
+* `TCSlib.Cryptography.length_flatten_map_const`, `length_flatten_map_range`: the length of a
+  concatenation of equal-length blocks.
+* `TCSlib.Cryptography.flatMap_range_drop`: reading the successive suffixes of a list.
 
 ## References
 
@@ -101,5 +107,73 @@ theorem mem_keys_of_lookup_isSome {α β : Type} [DecidableEq α] (T : List (α 
     (h : (T.lookup x).isSome = true) : x ∈ T.map Prod.fst := by
   obtain ⟨p, hp, hx⟩ := List.lookup_isSome_iff.1 h
   exact List.mem_map.2 ⟨p, hp, (beq_iff_eq.1 hx).symm⟩
+
+/-! ### Lists indexed by ranges, tails and blocks of lists -/
+
+/-- A list of `r` values is a map over `List.range r`: if `f i = g i` for every `i : Fin r`, then
+`List.ofFn f = (List.range r).map g` (both have `r` entries, entry `i` is `f i = g i`). -/
+theorem ofFn_eq_map_range {α : Type*} {r : ℕ} (f : Fin r → α) (g : ℕ → α)
+    (h : ∀ i : Fin r, f i = g i) : List.ofFn f = (List.range r).map g := by
+  refine List.ext_getElem (by rw [List.length_ofFn, List.length_map, List.length_range])
+    fun i h₁ h₂ => ?_
+  rw [List.getElem_ofFn, List.getElem_map, List.getElem_range]
+  exact h _
+
+/-- **The tail of a string:** `⟦j ↦ w (natAdd k j)⟧ = ⟦w⟧.drop k` (`List.ofFn_add`). -/
+theorem ofFn_natAdd_eq_drop {k sl : ℕ} (w : Fin (k + sl) → Bool) :
+    List.ofFn (fun j : Fin sl => w (Fin.natAdd k j)) = (List.ofFn w).drop k := by
+  rw [List.ofFn_add, List.drop_left' List.length_ofFn]
+
+/-- Comparing strings is comparing their lists:
+`decide (o.map ofFn = some ⟦c⟧) = decide (o = some c)` (`List.ofFn_inj`). -/
+theorem decide_map_ofFn {k : ℕ} (o : Option (Fin k → Bool)) (c : Fin k → Bool) :
+    decide (o.map List.ofFn = some (List.ofFn c)) = decide (o = some c) := by
+  cases o with
+  | none => simp
+  | some c' => simp [List.ofFn_inj]
+
+/-- Blocks of `k` entries, one per element: `|(l.map g).flatten| = |l|·k` when every `g x` has
+`k` entries (`List.length_flatten`, a sum of the constant `k`). -/
+theorem length_flatten_map_const {α β : Type*} (l : List α) (g : α → List β) (k : ℕ)
+    (hg : ∀ x, (g x).length = k) : (l.map g).flatten.length = l.length * k := by
+  rw [List.length_flatten, List.map_map, show (List.length ∘ g) = fun _ => k from funext hg,
+    List.map_const', List.sum_replicate_nat]
+
+/-- `r` blocks of `k` entries have `r·k` entries: `|((range r).map g).flatten| = r·k` when
+`g 0, …, g (r-1)` have `k` entries each (`List.length_flatten`, a sum of the constant `k`). -/
+theorem length_flatten_map_range {β : Type*} (k r : ℕ) (g : ℕ → List β)
+    (hg : ∀ i < r, (g i).length = k) : ((List.range r).map g).flatten.length = r * k := by
+  rw [List.length_flatten, List.map_map,
+    List.map_congr_left (f := List.length ∘ g) (g := fun _ => k)
+      fun i hi => hg i (List.mem_range.1 hi),
+    List.map_const', List.sum_replicate_nat, List.length_range]
+
+/-- **Reading the suffixes of a list within at least its length many steps:** if `F [] = []`
+and `F` reads only the first element of a nonempty suffix, `F (e :: t) = g e` for the members `e`
+of `l`, then `(List.range m).flatMap (fun i => F (l.drop i)) = l.flatMap g` for every
+`m ≥ |l|`.
+
+**Proof sketch.** Induction on `l`: the first suffix is `l` itself, read as `g e`; the others are
+the suffixes of the tail, within `m - 1` steps; the empty suffixes read `[]`. -/
+theorem flatMap_range_drop {β γ : Type*} (F : List β → List γ) (g : β → List γ)
+    (hnil : F [] = []) :
+    ∀ (l : List β), (∀ e ∈ l, ∀ t, F (e :: t) = g e) → ∀ m : ℕ, l.length ≤ m →
+      ((List.range m).flatMap fun i => F (l.drop i)) = l.flatMap g := by
+  intro l
+  induction l with
+  | nil =>
+    intro _ m _
+    rw [List.flatMap_nil]
+    refine List.flatMap_eq_nil_iff.2 fun i _ => ?_
+    rw [List.drop_nil, hnil]
+  | cons e t ih =>
+    intro hcons m hm
+    obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by rw [List.length_cons] at hm; omega⟩
+    rw [List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map, List.drop_zero,
+      hcons e List.mem_cons_self, List.flatMap_cons]
+    congr 1
+    simp only [List.drop_succ_cons]
+    exact ih (fun e' he' => hcons e' (List.mem_cons_of_mem _ he')) m'
+      (by rw [List.length_cons] at hm; omega)
 
 end TCSlib.Cryptography

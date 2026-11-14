@@ -46,7 +46,13 @@ oracles, its run is `A`'s run against the hybrid oracle `rImpl … b …` (`nmCo
 namespace TCSlib.Cryptography.Composability.NMSim
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
-open NMCCA2 (finU finZ finW finA fields_finInput polyTimeComputable_finFields)
+open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
+open TCSlib.Cryptography.EnsembleLemmas (seedEquiv seedEquivPoly seedEquiv_ofFn seedEquivPoly_ofFn
+  ofFn_padFin_eq_padL)
+open TCSlib.Cryptography.Games.InteractiveHandler (rU_input rZ_input rW_input rX_input rAns_input
+  rU_finInput rZ_finInput rW_finInput rS_finInput finA_finInput polyTimeComputable_rU
+  polyTimeComputable_rZ polyTimeComputable_rW polyTimeComputable_rS polyTimeComputable_rX
+  polyTimeComputable_rAns polyTimeComputable_finA)
 
 variable (S : FixedLengthPKScheme) (samp : NUPPT)
 
@@ -55,25 +61,28 @@ variable (S : FixedLengthPKScheme) (samp : NUPPT)
 /-- The second message `m̃ = M(a; ρ̃)` read in a round `w`: as `simMsg`, with the coins `ρ̃` after
 the first `coins(n)` bits of the seed. -/
 def altMsg (w : List Bool) : List Bool :=
-  EnsembleLemmas.padL (S.msgLen.eval (rdU w).length)
-    (samp.output (NUPPT.layout (rdU w) (rdQuery w) (pairSndD (rdZ w))
-      (((rdW w).drop (samp.coins.eval (rdU w).length)).take (samp.coins.eval (rdU w).length))))
+  EnsembleLemmas.padL (S.msgLen.eval (rU w).length)
+    (samp.output (NUPPT.layout (rU w) (rX w) (pairSndD (rZ w))
+      (((rW w).drop (samp.coins.eval (rU w).length)).take (samp.coins.eval (rU w).length))))
 
 /-- `altMsg S samp w = padL msgLen(n) (M.output (layout 1^n a α ρ̃))`. -/
 theorem altMsg_eq (w : List Bool) :
-    altMsg S samp w = EnsembleLemmas.padL (S.msgLen.eval (rdU w).length)
-      (samp.output (NUPPT.layout (rdU w) (rdQuery w) (pairSndD (rdZ w))
-        (((rdW w).drop (samp.coins.eval (rdU w).length)).take
-          (samp.coins.eval (rdU w).length)))) := rfl
+    altMsg S samp w = EnsembleLemmas.padL (S.msgLen.eval (rU w).length)
+      (samp.output (NUPPT.layout (rU w) (rX w) (pairSndD (rZ w))
+        (((rW w).drop (samp.coins.eval (rU w).length)).take
+          (samp.coins.eval (rU w).length)))) := rfl
 
 /-- The second message is polynomial-time. -/
 theorem polyTimeComputable_altMsg : PolyTimeComputable (altMsg S samp) := by
-  obtain ⟨hU, hZ, hW, -, -, hQ, -, -⟩ := polyTimeComputable_rd
-  have hd : PolyTimeComputable fun w => (rdW w).drop (samp.coins.eval (rdU w).length) :=
+  have hU := polyTimeComputable_rU
+  have hZ := polyTimeComputable_rZ
+  have hW := polyTimeComputable_rW
+  have hQ := polyTimeComputable_rX
+  have hd : PolyTimeComputable fun w => (rW w).drop (samp.coins.eval (rU w).length) :=
     ((polyTimeComputable_pairDropPoly samp.coins).comp (hU.pairEncode hW)).congr fun w => by
       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
   have hρ : PolyTimeComputable fun w =>
-      ((rdW w).drop (samp.coins.eval (rdU w).length)).take (samp.coins.eval (rdU w).length) :=
+      ((rW w).drop (samp.coins.eval (rU w).length)).take (samp.coins.eval (rU w).length) :=
     ((polyTimeComputable_pairTakePoly samp.coins).comp (hU.pairEncode hd)).congr fun w => by
       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
   exact EnsembleLemmas.polyTimeComputable_padL S.msgLen hU (samp.polyTimeComputable_output.comp
@@ -189,14 +198,14 @@ variable (pl hl : PolyExpr)
 `A`'s output `a` (`r(n)` ciphertexts, then `σ`), the recorded parameter `aP` and the message `mP`:
 `encF ctx c_i` for each ciphertext, then `encPair ctx x` for each bit `x` of `aP ‖ mP ‖ σ`. -/
 def nmOutL (r : PolyExpr) (n : ℕ) (ctx a aP mP : List Bool) : List Bool :=
-  ((List.range (r.eval n)).map fun i => encF S samp ctx (chunkAt (S.ctLen.eval n) i a)).flatten ++
+  ((List.range (r.eval n)).map fun i => encF S samp ctx (coinBlock (S.ctLen.eval n) i a)).flatten ++
     ((aP ++ mP ++ a.drop (r.eval n * S.ctLen.eval n)).map fun x => encPair S samp ctx x).flatten
 
 /-- `nmOutL S samp r n ctx a aP mP = (encF ctx c_i)_i ++ (encPair ctx x)_{x ∈ aP ‖ mP ‖ σ}`. -/
 theorem nmOutL_eq (r : PolyExpr) (n : ℕ) (ctx a aP mP : List Bool) :
     nmOutL S samp r n ctx a aP mP =
       ((List.range (r.eval n)).map fun i =>
-        encF S samp ctx (chunkAt (S.ctLen.eval n) i a)).flatten ++
+        encF S samp ctx (coinBlock (S.ctLen.eval n) i a)).flatten ++
         ((aP ++ mP ++ a.drop (r.eval n * S.ctLen.eval n)).map fun x =>
           encPair S samp ctx x).flatten := rfl
 
@@ -225,16 +234,16 @@ no outer query. -/
 def nmFin (r : PolyExpr) (w : List Bool) : List Bool :=
   pairEncode [true]
     (chunkMap S.ctLen (encF S samp)
-        (pairEncode (pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))))
-          ((finA w).take ((r.mul S.ctLen).eval (finU w).length))) ++
+        (pairEncode (pairEncode (rU w) (pairEncode (rZ w) (pairEncode (rW w) (rS w))))
+          ((finA w).take ((r.mul S.ctLen).eval (rU w).length))) ++
       chunkMap (.const 1) (bitF S samp)
-        (pairEncode (pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))))
-          ((finSt w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (finU w).length) ++
-            EnsembleLemmas.padL (S.msgLen.eval (finU w).length)
-              (samp.output (NUPPT.layout (finU w)
-                ((finSt w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (finU w).length))
-                (pairSndD (finZ w)) ((finW w).take (samp.coins.eval (finU w).length)))) ++
-            (finA w).drop ((r.mul S.ctLen).eval (finU w).length))))
+        (pairEncode (pairEncode (rU w) (pairEncode (rZ w) (pairEncode (rW w) (rS w))))
+          ((rS w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (rU w).length) ++
+            EnsembleLemmas.padL (S.msgLen.eval (rU w).length)
+              (samp.output (NUPPT.layout (rU w)
+                ((rS w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (rU w).length))
+                (pairSndD (rZ w)) ((rW w).take (samp.coins.eval (rU w).length)))) ++
+            (finA w).drop ((r.mul S.ctLen).eval (rU w).length))))
 
 /-- `nmFin S samp hl r w = ⟨[true], E ‖ B⟩`, with `E = chunkMap ctLen encF ⟨ctx, a.take (r·ctLen)⟩`
 and `B = chunkMap 1 bitF ⟨ctx, aP ‖ M(aP; ρ) ‖ a.drop (r·ctLen)⟩`, where
@@ -243,42 +252,45 @@ and `B = chunkMap 1 bitF ⟨ctx, aP ‖ M(aP; ρ) ‖ a.drop (r·ctLen)⟩`, whe
 theorem nmFin_eq (r : PolyExpr) (w : List Bool) :
     nmFin S samp hl r w = pairEncode [true]
       (chunkMap S.ctLen (encF S samp)
-          (pairEncode (pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))))
-            ((finA w).take ((r.mul S.ctLen).eval (finU w).length))) ++
+          (pairEncode (pairEncode (rU w) (pairEncode (rZ w) (pairEncode (rW w) (rS w))))
+            ((finA w).take ((r.mul S.ctLen).eval (rU w).length))) ++
         chunkMap (.const 1) (bitF S samp)
-          (pairEncode (pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))))
-            ((finSt w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (finU w).length) ++
-              EnsembleLemmas.padL (S.msgLen.eval (finU w).length)
-                (samp.output (NUPPT.layout (finU w)
-                  ((finSt w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (finU w).length))
-                  (pairSndD (finZ w)) ((finW w).take (samp.coins.eval (finU w).length)))) ++
-              (finA w).drop ((r.mul S.ctLen).eval (finU w).length)))) := rfl
+          (pairEncode (pairEncode (rU w) (pairEncode (rZ w) (pairEncode (rW w) (rS w))))
+            ((rS w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (rU w).length) ++
+              EnsembleLemmas.padL (S.msgLen.eval (rU w).length)
+                (samp.output (NUPPT.layout (rU w)
+                  ((rS w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (rU w).length))
+                  (pairSndD (rZ w)) ((rW w).take (samp.coins.eval (rU w).length)))) ++
+              (finA w).drop ((r.mul S.ctLen).eval (rU w).length)))) := rfl
 
 /-- The finalization round is polynomial-time.
 
-**Proof sketch.** From the polynomial-time field readers (`polyTimeComputable_finFields`,
-`polyTimeComputable_finSt`): the context by `pairEncode`; the cuts of `a` at `r·ctLen`, the
+**Proof sketch.** From the polynomial-time field readers (`polyTimeComputable_rU`,
+…, `polyTimeComputable_finA`): the context by `pairEncode`; the cuts of `a` at `r·ctLen`, the
 parameter `aP` and the coins `ρ` by `pairTakePoly`/`pairDropPoly`; the message by
 `polyTimeComputable_padL` of `M`'s output on `layout`. The two chunk maps are
 `polyTimeComputable_chunkMap` of `encF` and `bitF`, joined by `append` and `pairEncode`. -/
 theorem polyTimeComputable_nmFin (r : PolyExpr) : PolyTimeComputable (nmFin S samp hl r) := by
-  obtain ⟨hU, hZ, hW, hA, -⟩ := polyTimeComputable_finFields
-  have hS := polyTimeComputable_finSt
+  have hU := polyTimeComputable_rU
+  have hZ := polyTimeComputable_rZ
+  have hW := polyTimeComputable_rW
+  have hA := polyTimeComputable_finA
+  have hS := polyTimeComputable_rS
   have hctx : PolyTimeComputable fun w =>
-      pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))) :=
+      pairEncode (rU w) (pairEncode (rZ w) (pairEncode (rW w) (rS w))) :=
     hU.pairEncode (hZ.pairEncode (hW.pairEncode hS))
-  have htake : PolyTimeComputable fun w => (finA w).take ((r.mul S.ctLen).eval (finU w).length) :=
+  have htake : PolyTimeComputable fun w => (finA w).take ((r.mul S.ctLen).eval (rU w).length) :=
     ((polyTimeComputable_pairTakePoly (r.mul S.ctLen)).comp (hU.pairEncode hA)).congr fun w => by
       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
-  have hdrop : PolyTimeComputable fun w => (finA w).drop ((r.mul S.ctLen).eval (finU w).length) :=
+  have hdrop : PolyTimeComputable fun w => (finA w).drop ((r.mul S.ctLen).eval (rU w).length) :=
     ((polyTimeComputable_pairDropPoly (r.mul S.ctLen)).comp (hU.pairEncode hA)).congr fun w => by
       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
   have haP : PolyTimeComputable fun w =>
-      (finSt w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (finU w).length) :=
+      (rS w).drop (((PolyExpr.const 1).add (S.ctLen.add hl)).eval (rU w).length) :=
     ((polyTimeComputable_pairDropPoly ((PolyExpr.const 1).add (S.ctLen.add hl))).comp
       (hU.pairEncode hS)).congr fun w => by
         simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
-  have hρ : PolyTimeComputable fun w => (finW w).take (samp.coins.eval (finU w).length) :=
+  have hρ : PolyTimeComputable fun w => (rW w).take (samp.coins.eval (rU w).length) :=
     ((polyTimeComputable_pairTakePoly samp.coins).comp (hU.pairEncode hW)).congr fun w => by
       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
   have hm := EnsembleLemmas.polyTimeComputable_padL S.msgLen hU (samp.polyTimeComputable_output.comp
@@ -292,9 +304,9 @@ theorem polyTimeComputable_nmFin (r : PolyExpr) : PolyTimeComputable (nmFin S sa
 /-- **The finalization round on a finalization input** (for `A`'s output of `r·ctLen + sl` bits, and
 `ctLen(n) > 0`) returns `⟨[true], nmOutL …⟩`.
 
-**Proof sketch.** Read the fields of the input in `nmFin_eq` (`fields_finInput`,
-`finSt_finInput`). Cut `a.take (r·ctLen)` into its `r` chunks of `ctLen(n) > 0` bits
-(`take_eq_flatten_chunkAt`, `length_chunkAt`), so the first chunk map is `encF` over them
+**Proof sketch.** Read the fields of the input in `nmFin_eq` (`rU_finInput`,
+…, `finA_finInput`). Cut `a.take (r·ctLen)` into its `r` chunks of `ctLen(n) > 0` bits
+(`take_eq_flatten_chunkAt`, `length_coinBlock`), so the first chunk map is `encF` over them
 (`chunkMap_flatten`). Write `aP ‖ M(aP; ρ) ‖ σ` as the flatten of its singletons, so the second,
 with chunk length `1`, is `bitF` over its bits; both match `nmOutL_eq`. -/
 theorem nmFin_finInput (r sl : PolyExpr) (n : ℕ) (z ω s a L : List Bool)
@@ -303,13 +315,16 @@ theorem nmFin_finInput (r sl : PolyExpr) (n : ℕ) (z ω s a L : List Bool)
       pairEncode [true] (nmOutL S samp r n
         (pairEncode (List.replicate n true) (pairEncode z (pairEncode ω s))) a (stParam S hl n s)
         (finMsg S samp n (pairSndD z) ω (stParam S hl n s))) := by
-  obtain ⟨hU, hZ, hW, hA, -⟩ := fields_finInput n z ω s a L
+  have hU := rU_finInput n z ω s a L
+  have hZ := rZ_finInput n z ω s a L
+  have hW := rW_finInput n z ω s a L
+  have hA := finA_finInput n z ω s a L
   have hbits : ∀ l : List Bool, l = (l.map fun x => [x]).flatten := by
     intro l
     induction l with
     | nil => rfl
     | cons x t ih => rw [List.map_cons, List.flatten_cons, ← ih]; rfl
-  rw [nmFin_eq, hU, hZ, hW, hA, finSt_finInput, List.length_replicate, PolyExpr.eval_mul,
+  rw [nmFin_eq, hU, hZ, hW, hA, rS_finInput, List.length_replicate, PolyExpr.eval_mul,
     take_eq_flatten_chunkAt,
     chunkMap_flatten _ _ n _ _ (fun ch hch => ?_) hct, List.map_map, nmOutL_eq, stParam_eq,
     finMsg_eq]
@@ -321,7 +336,7 @@ theorem nmFin_finInput (r sl : PolyExpr) (n : ℕ) (z ω s a L : List Bool)
       rw [PolyExpr.eval_const, List.length_singleton]
   · obtain ⟨i, hi, rfl⟩ := List.mem_map.1 hch
     rw [List.mem_range] at hi
-    refine length_chunkAt _ _ _ ?_
+    refine length_coinBlock ?_
     rw [ha]
     have := Nat.mul_le_mul_right (S.ctLen.eval n) (show i + 1 ≤ r.eval n from hi)
     omega
@@ -355,17 +370,17 @@ def nmParams (r sl : PolyExpr) :
   advIn ctx := pairFstD (pairFstD (pairSndD ctx))
   advIn_poly := polyTimeComputable_pairFstD.comp
     (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
-  qry w := EnsembleLemmas.padL ((S.msgLen.add S.msgLen).eval (rdU w).length)
+  qry w := EnsembleLemmas.padL ((S.msgLen.add S.msgLen).eval (rU w).length)
     (simMsg S samp w ++ altMsg S samp w)
-  qry_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rd.1
+  qry_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rU
     ((polyTimeComputable_simMsg S samp).append (polyTimeComputable_altMsg S samp))
   qry_len w := by rw [EnsembleLemmas.length_padL, snmDin_one]
-  ansY w := EnsembleLemmas.padL (S.ctLen.eval (rdU w).length) (rdAns w)
-  ansY_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rd.1
-    polyTimeComputable_rd.2.2.2.2.2.2.2
+  ansY w := EnsembleLemmas.padL (S.ctLen.eval (rU w).length) (rAns w)
+  ansY_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rU
+    polyTimeComputable_rAns
   ansY_len _ := EnsembleLemmas.length_padL _ _
-  ansH w := EnsembleLemmas.padL (hl.eval (rdU w).length) (hist (simMsg S samp w))
-  ansH_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rd.1
+  ansH w := EnsembleLemmas.padL (hl.eval (rU w).length) (hist (simMsg S samp w))
+  ansH_poly := EnsembleLemmas.polyTimeComputable_padL _ polyTimeComputable_rU
     (hist_poly.comp (polyTimeComputable_simMsg S samp))
   ansH_len _ := EnsembleLemmas.length_padL _ _
   outLen := (nmLen S pl r sl).mul S.ctLen
@@ -421,7 +436,7 @@ theorem length_nmOutL (e a aP mP : List Bool)
   · rw [encPair_eq, List.length_append, length_encBit, length_encBit]
     ring
   · rw [encF_eq, encPair_eq, List.length_append, List.length_append, length_encBit,
-      length_encBit, length_chunkAt _ _ _ (by
+      length_encBit, length_coinBlock (by
         rw [ha]
         have := Nat.mul_le_mul_right (S.ctLen.eval n) (show i + 1 ≤ r.eval n from hi)
         omega)]
@@ -441,7 +456,7 @@ theorem nmFinish (z : List Bool)
         (finMsg S samp n (pairSndD z) (List.ofFn ω) (stParam S hl n (List.ofFn s))))) := by
   have ha : (List.ofFn a).length = r.eval n * S.ctLen.eval n + sl.eval n := by
     rw [List.length_ofFn, hd]
-  refine finish_of_ret _ n z ω s a _ ?_ ?_
+  refine InteractiveHandler.finish_of_ret_padFin _ n z ω s a _ ?_ ?_
   · have hs : (List.ofFn s).length = 1 + (S.ctLen.eval n + hl.eval n) + pl.eval n := by
       rw [List.length_ofFn, chalHandler_stateLen_eval]
     rw [nmParams_outLen_eval, length_nmOutL S samp pl r sl n _ _ _ _ ha ?_ ?_]
@@ -488,7 +503,13 @@ theorem nmMsgs_input (pk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins 
     altMsg S samp (InteractiveHandler.input n (pairEncode pk (samp.advice n))
         (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s i xs L) =
       List.ofFn (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) xs) ρ') := by
-  obtain ⟨hU, hZ, hW, -, -, hQ, -⟩ := fields_input n (pairEncode pk (samp.advice n))
+  have hU := rU_input n (pairEncode pk (samp.advice n))
+    (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s i xs L
+  have hZ := rZ_input n (pairEncode pk (samp.advice n))
+    (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s i xs L
+  have hW := rW_input n (pairEncode pk (samp.advice n))
+    (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s i xs L
+  have hQ := rX_input n (pairEncode pk (samp.advice n))
     (List.ofFn (nmSeed S samp pl hl hist hist_poly r sl n ρ ρ' re)) s i xs L
   have hρ := length_ofFn_coins samp n ρ
   have hρ' := length_ofFn_coins samp n ρ'
@@ -588,7 +609,7 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
       intro s' L
       obtain ⟨hm, hm'⟩ := nmMsgs_input S samp pl hl hist hist_poly r sl n pk ρ ρ' re s' 1
         (List.ofFn x) L hxl
-      rw [nmParams_qry, (fields_input (k := 2) n _ _ s' 1 _ L).1, List.length_replicate, hm, hm',
+      rw [nmParams_qry, rU_input (k := 2) n _ _ s' 1 _ L, List.length_replicate, hm, hm',
         nmPair_eq, ofFn_padFin_eq_padL]
     have hH : ∀ (s' q t : List Bool), (nmParams S samp pl hl hist hist_poly r sl).ansH
         (InteractiveHandler.input n (pairEncode pk (samp.advice n))
@@ -599,7 +620,7 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
         List.ofFn (histWith hist (hl.eval n)
           (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x)) ρ)) := by
       intro s' q t
-      rw [nmParams_ansH, (fields_input (k := 2) n _ _ s' 1 _ _).1, List.length_replicate,
+      rw [nmParams_ansH, rU_input (k := 2) n _ _ s' 1 _ _, List.length_replicate,
         (nmMsgs_input S samp pl hl hist hist_poly r sl n pk ρ ρ' re s' 1 (List.ofFn x) _ hxl).1,
         histWith_eq, ofFn_padFin_eq_padL]
     have hY : ∀ (s' q t : List Bool), (nmParams S samp pl hl hist hist_poly r sl).ansY
@@ -610,8 +631,8 @@ theorem nmComp_abs (pk sk : List Bool) (ρ ρ' : samp.Coins n) (re : S.enc.Coins
             [])) =
         EnsembleLemmas.padL (S.ctLen.eval n) t := by
       intro s' q t
-      rw [nmParams_ansY, (fields_input (k := 2) n _ _ s' 1 _ _).1, List.length_replicate,
-        rdAns_input]
+      rw [nmParams_ansY, rU_input (k := 2) n _ _ s' 1 _ _, List.length_replicate,
+        rAns_input]
     have hdraw : ∀ re' : S.enc.Coins n, encWith S n pk (drawWith (halfSamp S) (S.msgLen.eval n) n
         (nmPair S samp pl n ρ ρ' (padFin (pl.eval n) (List.ofFn x))) ((halfCoins S n).symm b)) re' =
         encWith S n pk (drawWith samp (S.msgLen.eval n) n (padFin (pl.eval n) (List.ofFn x))

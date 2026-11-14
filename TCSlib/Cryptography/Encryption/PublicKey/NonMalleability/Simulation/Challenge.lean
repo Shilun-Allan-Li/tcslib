@@ -45,6 +45,10 @@ states (`chalState`) and that a whole run asks at most one outer query
 namespace TCSlib.Cryptography.Composability.NMSim
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
+open TCSlib.Cryptography.Games.InteractiveHandler (rU_input rS_input rI_input rX_input rL_input
+  polyTimeComputable_rU polyTimeComputable_rS polyTimeComputable_rI polyTimeComputable_rX
+  polyTimeComputable_rL)
 
 variable (S : FixedLengthPKScheme)
 
@@ -67,19 +71,19 @@ structure ChalParams (pl hl : PolyExpr) (k' : ℕ) (din' dout' : Fin k' → Poly
   /-- It is polynomial-time. -/
   qry_poly : PolyTimeComputable qry
   /-- It has the outer query length. -/
-  qry_len : ∀ w, (qry w).length = (din' j).eval (rdU w).length
+  qry_len : ∀ w, (qry w).length = (din' j).eval (rU w).length
   /-- The ciphertext part of the answer, from the round input with the outer answer. -/
   ansY : List Bool → List Bool
   /-- It is polynomial-time. -/
   ansY_poly : PolyTimeComputable ansY
   /-- It has `ctLen(n)` bits. -/
-  ansY_len : ∀ w, (ansY w).length = S.ctLen.eval (rdU w).length
+  ansY_len : ∀ w, (ansY w).length = S.ctLen.eval (rU w).length
   /-- The history part of the answer, from the round input with the outer answer. -/
   ansH : List Bool → List Bool
   /-- It is polynomial-time. -/
   ansH_poly : PolyTimeComputable ansH
   /-- It has `hl(n)` bits. -/
-  ansH_len : ∀ w, (ansH w).length = hl.eval (rdU w).length
+  ansH_len : ∀ w, (ansH w).length = hl.eval (rU w).length
   /-- The length of the output. -/
   outLen : PolyExpr
   /-- The bound on the outer queries of the finalization. -/
@@ -97,17 +101,17 @@ challenge with the flag set returns the recorded `⟨Y, H⟩`; otherwise, with a
 asks `qry w` to the outer oracle `j`, and with the answer in the log it returns `⟨Y, H⟩` and the
 state `[true] ‖ Y ‖ H ‖ x`. -/
 def chalRun (P : ChalParams S pl hl k' din' dout') (w : List Bool) : List Bool :=
-  if decide (rdIdx w = []) then
-    pairEncode [true] (List.replicate ((S.msgLen.add (.const 1)).eval (rdU w).length) false ++
-      rdState w)
-  else if (rdState w).headD false then
-    pairEncode [true] (((rdState w).drop 1).take ((S.ctLen.add hl).eval (rdU w).length) ++
-      rdState w)
-  else if decide (rdLog w = []) then
+  if decide (rI w = []) then
+    pairEncode [true] (List.replicate ((S.msgLen.add (.const 1)).eval (rU w).length) false ++
+      rS w)
+  else if (rS w).headD false then
+    pairEncode [true] (((rS w).drop 1).take ((S.ctLen.add hl).eval (rU w).length) ++
+      rS w)
+  else if decide (rL w = []) then
     pairEncode [false] (pairEncode (List.replicate P.j true) (P.qry w))
   else
     pairEncode [true] (P.ansY w ++ P.ansH w ++
-      (true :: (P.ansY w ++ P.ansH w ++ EnsembleLemmas.padL (pl.eval (rdU w).length) (rdQuery w))))
+      (true :: (P.ansY w ++ P.ansH w ++ EnsembleLemmas.padL (pl.eval (rU w).length) (rX w))))
 
 /-- `chalRun P w` is `⟨[true], 0^{msgLen+1} ‖ s⟩` if `i = 0`; else
 `⟨[true], (s.drop 1).take (ctLen + hl) ‖ s⟩` if the flag is set; else
@@ -115,22 +119,26 @@ def chalRun (P : ChalParams S pl hl k' din' dout') (w : List Bool) : List Bool :
 `⟨[true], Y ‖ H ‖ (true :: Y ‖ H ‖ padL pl x)⟩`, with `Y = ansY w` and `H = ansH w`. -/
 theorem chalRun_eq (P : ChalParams S pl hl k' din' dout') (w : List Bool) :
     chalRun P w =
-      if decide (rdIdx w = []) then
-        pairEncode [true] (List.replicate ((S.msgLen.add (.const 1)).eval (rdU w).length) false ++
-          rdState w)
-      else if (rdState w).headD false then
-        pairEncode [true] (((rdState w).drop 1).take ((S.ctLen.add hl).eval (rdU w).length) ++
-          rdState w)
-      else if decide (rdLog w = []) then
+      if decide (rI w = []) then
+        pairEncode [true] (List.replicate ((S.msgLen.add (.const 1)).eval (rU w).length) false ++
+          rS w)
+      else if (rS w).headD false then
+        pairEncode [true] (((rS w).drop 1).take ((S.ctLen.add hl).eval (rU w).length) ++
+          rS w)
+      else if decide (rL w = []) then
         pairEncode [false] (pairEncode (List.replicate P.j true) (P.qry w))
       else
         pairEncode [true] (P.ansY w ++ P.ansH w ++ (true :: (P.ansY w ++ P.ansH w ++
-          EnsembleLemmas.padL (pl.eval (rdU w).length) (rdQuery w)))) := rfl
+          EnsembleLemmas.padL (pl.eval (rU w).length) (rX w)))) := rfl
 
 /-- The round is polynomial-time. -/
 theorem polyTimeComputable_chalRun (P : ChalParams S pl hl k' din' dout') :
     PolyTimeComputable (chalRun P) := by
-  obtain ⟨hU, -, -, hS, hI, hQ, hL, -⟩ := polyTimeComputable_rd
+  have hU := polyTimeComputable_rU
+  have hS := polyTimeComputable_rS
+  have hI := polyTimeComputable_rI
+  have hQ := polyTimeComputable_rX
+  have hL := polyTimeComputable_rL
   have hT := polyTimeComputable_const [true]
   have hY := P.ansY_poly
   have hH := P.ansH_poly
@@ -245,9 +253,13 @@ theorem chalHandler_impl_dec (x : Fin ((snmDin S pl 0).eval n) → Bool)
     (o : Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (hl.eval n) → Bool) ×
       (Fin (pl.eval n) → Bool))) :
     (chalHandler P).impl n z ω 0 x (chalState P n o) = .pure (zeroBits _, chalState P n o) := by
-  obtain ⟨hU, -, -, hS, hI, -, -⟩ := fields_input (k := 2) n z (List.ofFn ω)
+  have hU := rU_input (k := 2) n z (List.ofFn ω)
     (List.ofFn (chalState P n o)) 0 (List.ofFn x) []
-  rw [impl_of_ret (chalHandler P) n z ω 0 x (chalState P n o)
+  have hS := rS_input (k := 2) n z (List.ofFn ω)
+    (List.ofFn (chalState P n o)) 0 (List.ofFn x) []
+  have hI := rI_input (k := 2) n z (List.ofFn ω)
+    (List.ofFn (chalState P n o)) 0 (List.ofFn x) []
+  rw [InteractiveHandler.impl_of_ret_padFin (chalHandler P) n z ω 0 x (chalState P n o)
     (List.replicate ((S.msgLen.add (.const 1)).eval n) false) (List.ofFn (chalState P n o))
     (by rw [List.length_replicate, snmDout_zero]) List.length_ofFn (by
       show chalRun P _ = _
@@ -259,14 +271,18 @@ theorem chalHandler_impl_some (x : Fin ((snmDin S pl 1).eval n) → Bool)
     (y : Fin (S.ctLen.eval n) → Bool) (h : Fin (hl.eval n) → Bool) (a : Fin (pl.eval n) → Bool) :
     (chalHandler P).impl n z ω 1 x (chalState P n (some (y, h, a))) =
       .pure (padFin _ (List.ofFn y ++ List.ofFn h), chalState P n (some (y, h, a))) := by
-  obtain ⟨hU, -, -, hS, hI, -, -⟩ := fields_input (k := 2) n z (List.ofFn ω)
+  have hU := rU_input (k := 2) n z (List.ofFn ω)
+    (List.ofFn (chalState P n (some (y, h, a)))) 1 (List.ofFn x) []
+  have hS := rS_input (k := 2) n z (List.ofFn ω)
+    (List.ofFn (chalState P n (some (y, h, a)))) 1 (List.ofFn x) []
+  have hI := rI_input (k := 2) n z (List.ofFn ω)
     (List.ofFn (chalState P n (some (y, h, a)))) 1 (List.ofFn x) []
   have hans : ((List.ofFn (chalState P n (some (y, h, a)))).drop 1).take
       ((S.ctLen.add hl).eval n) = List.ofFn y ++ List.ofFn h := by
     rw [ofFn_chalState_some, List.drop_one, List.tail_cons, PolyExpr.eval_add]
     exact List.take_left' (by rw [List.length_append, List.length_ofFn, List.length_ofFn])
-  rw [impl_of_ret (chalHandler P) n z ω 1 x _ (List.ofFn y ++ List.ofFn h)
-    (List.ofFn (chalState P n (some (y, h, a))))
+  rw [InteractiveHandler.impl_of_ret_padFin (chalHandler P) n z ω 1 x _
+    (List.ofFn y ++ List.ofFn h) (List.ofFn (chalState P n (some (y, h, a))))
     (by rw [List.length_append, List.length_ofFn, List.length_ofFn, snmDout_one, PolyExpr.eval_add])
     List.length_ofFn (by
       show chalRun P _ = _
@@ -278,11 +294,11 @@ theorem chalHandler_impl_some (x : Fin ((snmDin S pl 1).eval n) → Bool)
 answers `⟨Y, H⟩ = ⟨ansY w₁, ansH w₁⟩` (`w₁` the round input with `y` in the log), recording
 `⟨Y, H, x⟩`.
 
-**Proof sketch.** `impl_of_query` with the answer `ansY w₁ ‖ ansH w₁` and the encoded state
-`chalState (some ⟨Y, H, x⟩)` (lengths by `ansY_len`, `ansH_len`; `perCall = 1`). The first
-round, on `w₀` (a challenge, flag unset, empty log), is the query branch of `chalRun_eq`; the
-second, on `w₁`, is its answer branch, with `x` read back through `padL`
-(`ofFn_chalState_some`, `ofFn_padFin_of_length`). -/
+**Proof sketch.** `InteractiveHandler.impl_of_query_padFin` with the answer `ansY w₁ ‖ ansH w₁`
+and the encoded state `chalState (some ⟨Y, H, x⟩)` (lengths by `ansY_len`, `ansH_len`;
+`perCall = 1`). The first round, on `w₀` (a challenge, flag unset, empty log), is the query
+branch of `chalRun_eq`; the second, on `w₁`, is its answer branch, with `x` read back through
+`padL` (`ofFn_chalState_some`, `ofFn_padFin_of_length`). -/
 theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
     (chalHandler P).impl n z ω 1 x (chalState P n none) =
       .query P.j (padFin _ (P.qry (InteractiveHandler.input n z (List.ofFn ω)
@@ -315,7 +331,13 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
             padFin (pl.eval n) (List.ofFn x)))) := by
   set w₀ := InteractiveHandler.input n z (List.ofFn ω) (List.ofFn (chalState P n none)) (1 : Fin 2)
     (List.ofFn x) [] with hw₀
-  obtain ⟨hU₀, -, -, hS₀, hI₀, -, hL₀⟩ := fields_input (k := 2) n z (List.ofFn ω)
+  have hU₀ := rU_input (k := 2) n z (List.ofFn ω)
+    (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []
+  have hS₀ := rS_input (k := 2) n z (List.ofFn ω)
+    (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []
+  have hI₀ := rI_input (k := 2) n z (List.ofFn ω)
+    (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []
+  have hL₀ := rL_input (k := 2) n z (List.ofFn ω)
     (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x) []
   have hq : List.ofFn (padFin ((din' P.j).eval n) (P.qry w₀)) = P.qry w₀ :=
     ofFn_padFin_of_length (by rw [P.qry_len, hU₀, List.length_replicate])
@@ -335,10 +357,11 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
       (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
     with hW₁
   have hY : ∀ y, (P.ansY (W₁ y)).length = S.ctLen.eval n := fun y => by
-    rw [P.ansY_len, hW₁, (fields_input (k := 2) n z _ _ 1 _ _).1, List.length_replicate]
+    rw [P.ansY_len, hW₁, rU_input (k := 2) n z _ _ 1 _ _, List.length_replicate]
   have hH : ∀ y, (P.ansH (W₁ y)).length = hl.eval n := fun y => by
-    rw [P.ansH_len, hW₁, (fields_input (k := 2) n z _ _ 1 _ _).1, List.length_replicate]
-  rw [impl_of_query (chalHandler P) n z ω 1 x (chalState P n none) P.j (padFin _ (P.qry w₀))
+    rw [P.ansH_len, hW₁, rU_input (k := 2) n z _ _ 1 _ _, List.length_replicate]
+  rw [InteractiveHandler.impl_of_query_padFin (chalHandler P) n z ω 1 x (chalState P n none) P.j
+    (padFin _ (P.qry w₀))
     (fun y => P.ansY (W₁ y) ++ P.ansH (W₁ y))
     (fun y => List.ofFn (chalState P n (some (padFin _ (P.ansY (W₁ y)), padFin _ (P.ansH (W₁ y)),
       padFin (pl.eval n) (List.ofFn x)))))
@@ -351,7 +374,19 @@ theorem chalHandler_impl_none (x : Fin ((snmDin S pl 1).eval n) → Bool) :
     rw [chalRun_eq, hI₀, hU₀, hS₀, hL₀, List.length_replicate, headD_ofFn_chalState, hq]
     rfl
   · rw [hq]
-    obtain ⟨hU₁, -, -, hS₁, hI₁, hQ₁, hL₁⟩ := fields_input (k := 2) n z (List.ofFn ω)
+    have hU₁ := rU_input (k := 2) n z (List.ofFn ω)
+      (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
+      (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
+    have hS₁ := rS_input (k := 2) n z (List.ofFn ω)
+      (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
+      (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
+    have hI₁ := rI_input (k := 2) n z (List.ofFn ω)
+      (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
+      (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
+    have hQ₁ := rX_input (k := 2) n z (List.ofFn ω)
+      (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
+      (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
+    have hL₁ := rL_input (k := 2) n z (List.ofFn ω)
       (List.ofFn (chalState P n none)) (1 : Fin 2) (List.ofFn x)
       (pairEncode (pairEncode (List.replicate P.j true) (pairEncode (P.qry w₀) (List.ofFn y))) [])
     show chalRun P (W₁ y) = _

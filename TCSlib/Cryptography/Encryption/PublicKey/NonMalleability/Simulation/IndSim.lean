@@ -39,6 +39,7 @@ None: this module only proves results. `B`'s handler parameters `nmParams` and t
 namespace TCSlib.Cryptography.Composability.NMSim
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+open TCSlib.Cryptography.EnsembleLemmas (seedEquiv seedEquivPoly ofFn_padFin_eq_padL)
 
 variable (S : FixedLengthPKScheme) (samp : NUPPT) (pl hl : PolyExpr)
   (hist : List Bool → List Bool) (hist_poly : PolyTimeComputable hist) (r sl : PolyExpr)
@@ -197,7 +198,7 @@ theorem nmRun_eq (B₀ : NUPPT) (n : ℕ)
           none)
         (fun p => if X.distinguisherL n (realView S samp pl n (r.eval n)
           (pairSndD (S.gen.runAt n [] rg)) ρ (List.ofFn p.1) p.2) rX = true then 1 else 0) := by
-  have hct := ctLen_pos S n rg re hL
+  have hct := S.ctLen_pos n rg re hL
   have hdα : ((r.mul S.ctLen).add sl).eval n = r.eval n * S.ctLen.eval n + sl.eval n := by
     rw [PolyExpr.eval_add, PolyExpr.eval_mul]
   have hfin : ∀ (z : List Bool)
@@ -248,9 +249,9 @@ budget `qB` such that for every distinguisher `X`, every `n` with `msgLen(n) > 0
 the hybrid `H_b`.
 
 **Proof sketch.** `B₀` is T2's machine of the NM adversary's handler and `B` hard-wires
-`M.advice n` (`exists_withAdviceOn`). Reindex `B`'s coins as `(ρ ‖ ρ̃ ‖ re, rA)` (`coinsCongr`, `φ`,
-`seedEquivPoly`, `seedEquiv`, `expect_sample_prod`) and the distinguisher's as `X`'s; pointwise
-this is
+`M.advice n` (`NUPPT.exists_withAdviceOn`). Reindex `B`'s coins as `(ρ ‖ ρ̃ ‖ re, rA)`
+(`coinsCongr`, `φ`, `seedEquivPoly`, `seedEquiv`, `expect_sample_prod`) and the distinguisher's
+as `X`'s; pointwise this is
 `nmRun_eq`, which does not read `re` (`expect_const`). -/
 theorem exists_nmAdversary : ∃ (B : NUPPT) (qB : PolyExpr), ∀ (X : NUPPT) (n : ℕ) (b : Bool),
     0 < S.msgLen.eval n →
@@ -259,7 +260,7 @@ theorem exists_nmAdversary : ∃ (B : NUPPT) (qB : PolyExpr), ∀ (X : NUPPT) (n
   obtain ⟨B₀, hT2⟩ := exists_interactiveHandlerMachine A q (snmDin S pl) (snmDout S hl)
     (snmDin S (S.msgLen.add S.msgLen)) (snmDout S (.const 0)) ((r.mul S.ctLen).add sl)
     (chalHandler (nmParams S samp pl hl hist hist_poly r sl))
-  obtain ⟨B, hc, hB⟩ := NMCCA2.exists_withAdviceOn B₀ samp.advice samp.adv samp.advice_length
+  obtain ⟨B, hc, hB⟩ := NUPPT.exists_withAdviceOn B₀ samp.advice samp.adv samp.advice_length
   refine ⟨B, (q.mul (chalHandler (nmParams S samp pl hl hist hist_poly r sl)).perCall).add
     (chalHandler (nmParams S samp pl hl hist hist_poly r sl)).finCall, fun X n b hL => ?_⟩
   obtain ⟨φ, hφ⟩ := hT2 n

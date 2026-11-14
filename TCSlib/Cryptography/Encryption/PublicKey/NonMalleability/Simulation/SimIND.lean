@@ -293,15 +293,16 @@ theorem accept_nmGame_eq_rImpl (atk : Attack) (A : NUPPT) (q ℓ : ℕ) (D : NUP
 
 /-! ### The SIM adversary -/
 
-open NMCCA2 (fwdHandler fwdHandler_finRun fwdHandler_finCall fwdHandler_advIn
-  simulate_fwdHandler_impl fields_finInput polyTimeComputable_finFields finA)
+open NMCCA2 (simulate_fwdHandler_impl)
+open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
+open TCSlib.Cryptography.Games.InteractiveHandler (finA_finInput polyTimeComputable_finA)
 
 /-- The SIM adversary's finalization round: output the adversary's output, `⟨[true], a⟩`. -/
 private def copyFin (w : List Bool) : List Bool := pairEncode [true] (finA w)
 
 /-- The finalization round is polynomial-time. -/
 private theorem polyTimeComputable_copyFin : PolyTimeComputable copyFin :=
-  (polyTimeComputable_const [true]).pairEncode polyTimeComputable_finFields.2.2.2.1
+  (polyTimeComputable_const [true]).pairEncode polyTimeComputable_finA
 
 /-- The adversary's input is the reduction input. -/
 private theorem polyTimeComputable_copyAdvIn :
@@ -309,7 +310,7 @@ private theorem polyTimeComputable_copyAdvIn :
   polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
 
 /-- **The SIM adversary's handler** (on the real experiment's oracles with parameter length `pl`
-and history length `hl`): it forwards every query (`NMCCA2.fwdHandler`), runs the adversary on the
+and history length `hl`): it forwards every query (`Games.fwdHandler`), runs the adversary on the
 reduction input, asks nothing in finalization, and outputs the adversary's `outLen(n)`-bit
 output. -/
 def copyHandler (pl hl outLen : PolyExpr) :
@@ -328,7 +329,7 @@ theorem copyHandler_advInput (pl hl outLen : PolyExpr) (n : ℕ) (z : List Bool)
 /-- The SIM adversary outputs `outLen(n)` bits: `(copyHandler S pl hl outLen).outLen = outLen`. -/
 theorem copyHandler_outLen (pl hl outLen : PolyExpr) :
     (copyHandler S pl hl outLen).outLen = outLen := by
-  rw [copyHandler, NMCCA2.fwdHandler_outLen]
+  rw [copyHandler, fwdHandler_outLen]
 
 /-- **The handler forwards** (`simulate_fwdHandler_impl`). -/
 theorem simulate_copyHandler_impl (pl hl outLen : PolyExpr) (n : ℕ) (z : List Bool)
@@ -356,7 +357,7 @@ theorem copyHandler_finish (pl hl outLen : PolyExpr) (n : ℕ) (z : List Bool)
   rw [InteractiveHandler.finish_eq, hfc, PolyExpr.eval_const]
   refine buildComp_zero_of_ret ?_
   show decodeBitMove _ _ _ ((copyHandler S pl hl outLen).finRun _) = _
-  rw [hfin, copyFin, (fields_finInput _ _ _ _ _ _).2.2.2.1]
+  rw [hfin, copyFin, finA_finInput _ _ _ _ _ _]
   have hw : List.ofFn (padFin ((copyHandler S pl hl outLen).outLen.eval n) (List.ofFn a)) =
       List.ofFn a := ofFn_padFin_of_length (by rw [List.length_ofFn, hol, hd])
   exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
@@ -615,24 +616,24 @@ theorem nmOutput_eq_entryTails (n ℓ : ℕ) (sk : List Bool)
     (w : List Bool) (hw : w.length = ℓ * S.ctLen.eval n) :
     S.nmOutput sk s' (padFin (ℓ * S.ctLen.eval n) w) =
       ((List.range ℓ).map fun i => (entryL S n sk
-        (decide (s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i w)))
-        (chunkAt (S.ctLen.eval n) i w)).drop 1).flatten := by
+        (decide (s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i w)))
+        (coinBlock (S.ctLen.eval n) i w)).drop 1).flatten := by
   rw [S.nmOutput_eq]
   congr 1
   refine List.ext_getElem (by rw [List.length_ofFn, List.length_map, List.length_range])
     fun i h₁ h₂ => ?_
   rw [List.getElem_ofFn, List.getElem_map, List.getElem_range, entryL_drop_one, S.nmDecrypt_eq]
   have hc : List.ofFn (S.nthCt (padFin (ℓ * S.ctLen.eval n) w) ⟨i, by
-      rw [List.length_ofFn] at h₁; exact h₁⟩) = chunkAt (S.ctLen.eval n) i w := by
-    rw [S.ofFn_nthCt, ofFn_padFin_of_length hw, chunkAt_eq]
+      rw [List.length_ofFn] at h₁; exact h₁⟩) = coinBlock (S.ctLen.eval n) i w := by
+    rw [S.ofFn_nthCt, ofFn_padFin_of_length hw, coinBlock_eq]
   have hcopy : (s' = some (S.nthCt (padFin (ℓ * S.ctLen.eval n) w) ⟨i, by
       rw [List.length_ofFn] at h₁; exact h₁⟩)) ↔
-      s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i w) := by
+      s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i w) := by
     rw [← hc]
     cases s' with
     | none => simp
     | some c => simp [List.ofFn_inj]
-  by_cases h : s'.map List.ofFn = some (chunkAt (S.ctLen.eval n) i w)
+  by_cases h : s'.map List.ofFn = some (coinBlock (S.ctLen.eval n) i w)
   · rw [if_pos (hcopy.2 h), decide_eq_true h, if_pos rfl, ofFn_zeroBits]
   · rw [if_neg (fun h' => h (hcopy.1 h')), decide_eq_false h, if_neg Bool.false_ne_true, hc]
 
@@ -689,11 +690,11 @@ private def badHalves (s : Option ((Fin (S.ctLen.eval n) → Bool) ×
 private instance : DecidablePred (badHalves S n) := fun _ => instDecidableNot
 
 /-- **The coupling of the two coins:** `𝔼[G · 1_{m₀ = m₁}]` is the same with the sampler's coin
-`0` and `1` (`expect_eq_until_bad`): the oracles agree while the recorded parameter has equal
-halves, and a bad parameter stays recorded.
+`0` and `1` (`Games.expect_eq_until_bad`): the oracles agree while the recorded parameter has
+equal halves, and a bad parameter stays recorded.
 
-**Proof sketch.** `expect_eq_until_bad` with the bad event `badHalves`. The empty state is good
-(its parameter reads `0`, `ofFn_zeroBits`), and a recorded state stays recorded (`rImpl_dec`,
+**Proof sketch.** `Games.expect_eq_until_bad` with the bad event `badHalves`. The empty state is
+good (its parameter reads `0`, `ofFn_zeroBits`), and a recorded state stays recorded (`rImpl_dec`,
 `rImpl_some`), so bad is sticky. From a good state the two oracles agree: `Dec` and repeated
 challenges do not read the coin (the history is empty), and on a first challenge, after the same
 encryption coins, the new state is bad on both sides or `m₀ = m₁` and the two draws coincide
@@ -816,11 +817,11 @@ theorem real_identity (D : NUPPT) (rD : D.Coins n) (ρ'' : (halfDist S).Coins n)
         S.msgLen.eval n := List.length_ofFn
     have hes : ((List.range ℓ).map fun i => entryL S n sk
         (decide ((p.2.map Prod.fst).map List.ofFn =
-          some (chunkAt (S.ctLen.eval n) i (List.ofFn p.1))))
-        (chunkAt (S.ctLen.eval n) i (List.ofFn p.1))) =
+          some (coinBlock (S.ctLen.eval n) i (List.ofFn p.1))))
+        (coinBlock (S.ctLen.eval n) i (List.ofFn p.1))) =
         (((List.range ℓ).map fun i => Prod.mk (decide ((p.2.map Prod.fst).map List.ofFn =
-          some (chunkAt (S.ctLen.eval n) i (List.ofFn p.1))))
-          (chunkAt (S.ctLen.eval n) i (List.ofFn p.1))).map
+          some (coinBlock (S.ctLen.eval n) i (List.ofFn p.1))))
+          (coinBlock (S.ctLen.eval n) i (List.ofFn p.1))).map
           fun e : Bool × List Bool => entryL S n sk e.1 e.2) := by
       rw [List.map_map]
       rfl
@@ -829,8 +830,8 @@ theorem real_identity (D : NUPPT) (rD : D.Coins n) (ρ'' : (halfDist S).Coins n)
       List.map_map]
     have hnm : ((List.range ℓ).map ((fun e : Bool × List Bool => (entryL S n sk e.1 e.2).drop 1) ∘
         fun i => Prod.mk (decide ((p.2.map Prod.fst).map List.ofFn =
-          some (chunkAt (S.ctLen.eval n) i (List.ofFn p.1))))
-          (chunkAt (S.ctLen.eval n) i (List.ofFn p.1)))).flatten =
+          some (coinBlock (S.ctLen.eval n) i (List.ofFn p.1))))
+          (coinBlock (S.ctLen.eval n) i (List.ofFn p.1)))).flatten =
         S.nmOutput sk (p.2.map Prod.fst) (padFin (ℓ * S.ctLen.eval n) (List.ofFn p.1)) := by
       rw [nmOutput_eq_entryTails S n ℓ sk _ _ List.length_ofFn, Option.map_map]
       rfl

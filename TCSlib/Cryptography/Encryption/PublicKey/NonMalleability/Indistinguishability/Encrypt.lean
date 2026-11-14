@@ -14,15 +14,16 @@ set_option autoImplicit false
 
 Direction (⇐) of [PS10, Theorem 175.9]. Given a CCA2 adversary `A` with guess `g`, the
 non-malleability adversary runs `A` on the public key and forwards all of `A`'s queries to its own
-oracles (`NMCCA2.fwdHandler`). It then outputs two fresh encryptions under `pk`, with its own
+oracles (`Games.fwdHandler`). It then outputs two fresh encryptions under `pk`, with its own
 coins: of `g^{m}` and of `(¬g)^{m}`, where `m = msgLen(n)`. The distinguisher `guessDist` reads `g`
 back from the two decryptions: from the first message bit if the first decryption is valid,
 and otherwise from the negated last bit of the second.
 
 This file builds the handler (`encHandler S`), whose seed is two encryption tapes. It proves
 the finalization's equation (`encHandler_finish`) and defines the distinguisher with its two
-verdicts (`guessBit_valid`, `guessBit_refused`). It also shows that at `msgLen(n) = 0` the two
-CCA2 oracles coincide (`indImpl_eq_of_msgLen_eq_zero`).
+verdicts (`guessBit_valid`, `guessBit_refused`), and shows that the verdict is polynomial-time
+(`polyTimeComputable_guessBit`). That the two CCA2 oracles coincide at `msgLen(n) = 0` is
+`FixedLengthPKScheme.indImpl_eq_of_msgLen_eq_zero` (`Encryption/PublicKey/OracleSecurity.lean`).
 
 ## Main definitions
 
@@ -34,7 +35,7 @@ CCA2 oracles coincide (`indImpl_eq_of_msgLen_eq_zero`).
 
 * `NMCCA2.simulate_encHandler_impl`, `NMCCA2.encHandler_finish`.
 * `NMCCA2.guessDist_distinguisherL`, `NMCCA2.guessBit_valid`, `NMCCA2.guessBit_refused`.
-* `NMCCA2.indImpl_eq_of_msgLen_eq_zero`.
+* `NMCCA2.polyTimeComputable_guessBit`: the verdict is polynomial-time.
 
 ## References
 
@@ -45,6 +46,10 @@ CCA2 oracles coincide (`indImpl_eq_of_msgLen_eq_zero`).
 namespace TCSlib.Cryptography.Composability.NMCCA2
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+open TCSlib.Cryptography.Games.InteractiveHandler (rU rZ rW rS rI rX rL rAns finA)
+open TCSlib.Cryptography.Games.InteractiveHandler (rU_finInput rZ_finInput rW_finInput
+  finA_finInput polyTimeComputable_rU polyTimeComputable_rZ polyTimeComputable_rW
+  polyTimeComputable_finA)
 open AdaptiveCPA (acDin acDout acDout_zero)
 
 variable (S : FixedLengthPKScheme)
@@ -58,27 +63,30 @@ private def eBit (β : Bool) (w : List Bool) : Bool :=
 
 /-- The plaintext of ciphertext `β`: its bit repeated `msgLen(n)` times. -/
 private def eMsg (β : Bool) (w : List Bool) : List Bool :=
-  if eBit β w then List.replicate (S.msgLen.eval (finU w).length) true
-  else List.replicate (S.msgLen.eval (finU w).length) false
+  if eBit β w then List.replicate (S.msgLen.eval (rU w).length) true
+  else List.replicate (S.msgLen.eval (rU w).length) false
 
 /-- The coins of ciphertext `β`: the first (`β = true`) or the second `ρ(n)` bits of the seed. -/
 private def eTape (β : Bool) (w : List Bool) : List Bool :=
-  if β then (finW w).take (S.enc.coins.eval (finU w).length)
-  else (finW w).drop (S.enc.coins.eval (finU w).length)
+  if β then (rW w).take (S.enc.coins.eval (rU w).length)
+  else (rW w).drop (S.enc.coins.eval (rU w).length)
 
 /-- Ciphertext `β`: `Enc` on `⟨1^n, ⟨pk, plaintext⟩⟩` with empty advice and its coins, padded to
 `ctLen(n)` bits. -/
 private def eCt (β : Bool) (w : List Bool) : List Bool :=
-  EnsembleLemmas.padL (S.ctLen.eval (finU w).length)
-    (S.enc.output (pairEncode (pairEncode (pairEncode (finU w)
-      (pairEncode (finZ w) (eMsg S β w))) []) (eTape S β w)))
+  EnsembleLemmas.padL (S.ctLen.eval (rU w).length)
+    (S.enc.output (pairEncode (pairEncode (pairEncode (rU w)
+      (pairEncode (rZ w) (eMsg S β w))) []) (eTape S β w)))
 
 /-- **The finalization's round:** output the two ciphertexts, `⟨[true], c₁ ‖ c₂⟩`. -/
 private def eFin (w : List Bool) : List Bool := pairEncode [true] (eCt S true w ++ eCt S false w)
 
 /-- The finalization round is polynomial-time. -/
 private theorem polyTimeComputable_eFin : PolyTimeComputable (eFin S) := by
-  obtain ⟨hU, hZ, hW, hA, -⟩ := polyTimeComputable_finFields
+  have hU := polyTimeComputable_rU
+  have hZ := polyTimeComputable_rZ
+  have hW := polyTimeComputable_rW
+  have hA := polyTimeComputable_finA
   have hg : PolyTimeComputable fun w => [(finA w).headD false] := polyTimeComputable_headD.comp hA
   have hBit : ∀ β, PolyTimeComputable fun w => [eBit β w] := by
     intro β
@@ -214,7 +222,13 @@ theorem encHandler_finish (n : ℕ) (z : List Bool)
     rw [encHandler, fwdHandler_finRun]
   rw [InteractiveHandler.finish_eq, encHandler_finCall, PolyExpr.eval_const]
   refine buildComp_zero_of_ret ?_
-  obtain ⟨hU, hZ, hW, hA, -⟩ := fields_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+  have hU := rU_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
+  have hZ := rZ_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
+  have hW := rW_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+    ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
+  have hA := finA_finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
     ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n) 0).encodeLog [])
   have hCt : ∀ β, eCt S β (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s)
       (List.ofFn a) ((bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
@@ -253,6 +267,16 @@ def guessBit (w : List Bool) : Bool :=
 theorem guessBit_eq (w : List Bool) :
     guessBit w = if w.headD false then (w.drop 1).headD false else !w.reverse.headD false := rfl
 
+/-- **The verdict is polynomial-time:** `PolyTimeComputable fun w => [guessBit w]` (`headD`, `tail`,
+`reverse` and `not`, through `polyTimeComputable_ite`). -/
+theorem polyTimeComputable_guessBit : PolyTimeComputable fun w => [guessBit w] :=
+  (polyTimeComputable_ite polyTimeComputable_headD
+    (polyTimeComputable_headD.comp polyTimeComputable_tail)
+    (polyTimeComputable_not
+      (polyTimeComputable_headD.comp BinArith.polyTimeComputable_reverse))).congr fun w => by
+    rw [guessBit_eq]
+    split <;> rfl
+
 /-- The distinguisher's raw function on the machine input `⟨⟨⟨1^n, w⟩, α⟩, ρ⟩`. -/
 private def guessFun (x : List Bool) : List Bool :=
   if (pairSndD (pairFstD (pairFstD x))).headD false then
@@ -263,10 +287,9 @@ private def guessFun (x : List Bool) : List Bool :=
 private theorem polyTimeComputable_guessFun : PolyTimeComputable guessFun := by
   have hw : PolyTimeComputable fun x => pairSndD (pairFstD (pairFstD x)) :=
     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)
-  exact polyTimeComputable_ite (polyTimeComputable_headD.comp hw)
-    (polyTimeComputable_headD.comp (polyTimeComputable_tail.comp hw))
-    (polyTimeComputable_not
-      (polyTimeComputable_headD.comp (BinArith.polyTimeComputable_reverse.comp hw)))
+  refine (polyTimeComputable_guessBit.comp hw).congr fun x => ?_
+  rw [Function.comp_apply, guessFun, guessBit_eq]
+  split <;> rfl
 
 /-- **The distinguisher** of the reduction (⇐): the uniform machine without coins computing
 `[guessBit w]` on its argument `w`. -/
@@ -304,29 +327,5 @@ theorem guessBit_refused {m : ℕ} (hm : 0 < m) (g : Bool) :
     rfl
   rw [FixedLengthScheme.decAnswer_some, h2, guessBit_eq, ofFn_zeroBits, List.replicate_succ]
   simp
-
-/-! ### Empty messages -/
-
-/-- **With empty messages the two CCA2 oracles coincide:** if `msgLen(n) = 0`, then
-`S.indImpl atk false n pk sk = S.indImpl atk true n pk sk` (both halves of a challenge are the
-empty message).
-
-**Proof sketch.** Compare query by query through the published equations: decryption does not
-depend on the bit (`indImpl_dec_onSpec`), a repeated challenge repeats the record
-(`indImpl_challenge_repeat_onSpec`), and a first challenge encrypts a half of the query
-(`indImpl_challenge_none_onSpec`), whose string is `[]` either way. -/
-theorem indImpl_eq_of_msgLen_eq_zero (atk : Attack) (n : ℕ) (pk sk : List Bool)
-    (h : S.msgLen.eval n = 0) : S.indImpl atk false n pk sk = S.indImpl atk true n pk sk := by
-  have h0 : ∀ f : Fin (S.msgLen.eval n) → Bool, List.ofFn f = [] := fun f =>
-    List.eq_nil_of_length_eq_zero (by rw [List.length_ofFn, h])
-  funext i x s
-  match i with
-  | 0 => rw [S.indImpl_dec_onSpec, S.indImpl_dec_onSpec]
-  | 1 =>
-    cases s with
-    | some c => rw [S.indImpl_challenge_repeat_onSpec, S.indImpl_challenge_repeat_onSpec]
-    | none =>
-      rw [S.indImpl_challenge_none_onSpec, S.indImpl_challenge_none_onSpec]
-      simp only [h0]
 
 end TCSlib.Cryptography.Composability.NMCCA2

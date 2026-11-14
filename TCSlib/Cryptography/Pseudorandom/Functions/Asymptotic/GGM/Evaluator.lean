@@ -50,22 +50,11 @@ theorem eq_blocks_divNat_modNat {q ℓ : ℕ} (w : Fin (q * ℓ) → Bool) (k : 
     _ = FunFamily.blocks q ℓ w k.divNat k.modNat := FunFamily.blocks_symm_apply q ℓ _ k
 
 /-- Block `k` of the encoding of a `q`-tuple of `ℓ`-bit strings (positions `ℓk, …, ℓk + ℓ − 1`)
-is the encoding of the `k`-th component, read through `FunFamily.blocks`. -/
+is the encoding of the `k`-th component, read through `FunFamily.blocks` (the block window
+`FunFamily.ofFn_blocks`, read backwards). -/
 theorem drop_take_ofFn_blocks (q ℓ : ℕ) (w : Fin (q * ℓ) → Bool) {k : ℕ} (hk : k < q) :
     ((List.ofFn w).drop (ℓ * k)).take ℓ = List.ofFn (FunFamily.blocks q ℓ w ⟨k, hk⟩) := by
-  have hlen : ℓ * k + ℓ ≤ q * ℓ := by
-    have : (k + 1) * ℓ ≤ q * ℓ := Nat.mul_le_mul_right ℓ hk
-    nlinarith
-  refine List.ext_getElem ?_ fun j hj₁ hj₂ => ?_
-  · simp only [List.length_take, List.length_drop, List.length_ofFn]
-    omega
-  · simp only [List.length_take, List.length_drop, List.length_ofFn] at hj₁
-    simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
-    have hℓ : 0 < ℓ := by omega
-    rw [eq_blocks_divNat_modNat w]
-    refine congrArg₂ _ (Fin.ext ?_) (Fin.ext ?_)
-    · rw [Fin.coe_divNat, Nat.mul_add_div hℓ, Nat.div_eq_of_lt (by omega), Nat.add_zero]
-    · rw [Fin.coe_modNat, Nat.mul_add_mod, Nat.mod_eq_of_lt (by omega)]
+  rw [Nat.mul_comm ℓ k, FunFamily.ofFn_blocks]
 
 /-- The encoding of the `i`-bit prefix `prefixAt x i` (`i ≤ n`) is the first `i` bits of the
 encoding of `x`. -/

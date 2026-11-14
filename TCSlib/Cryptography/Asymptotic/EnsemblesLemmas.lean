@@ -33,6 +33,9 @@ part of the public API of the campaign.
 * `TCSlib.Cryptography.EnsembleLemmas.coinsEquiv` — the coin-splitting bijection
   `{0,1}^a × {0,1}^b ≃ {0,1}^m` for `m = a + b` (`Fin.appendEquiv` transported along the
   length equation).
+* `TCSlib.Cryptography.EnsembleLemmas.seedEquiv`, `seedEquivPoly` — seeds made of two machines'
+  coins, or of a machine's coins and a string (`seedEquiv_ofFn`, `seedEquivPoly_ofFn`: the seed
+  is the concatenation).
 * `TCSlib.Cryptography.EnsembleLemmas.padL` — the padded/truncated string `padFin` as a list.
 * `TCSlib.Cryptography.EnsembleLemmas.blocks` — the blockwise bijection
   `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q` (an alias of `FunFamily.blocks`, `Asymptotic/Adversary.lean`).
@@ -153,6 +156,34 @@ theorem take_ofFn_coinsEquiv {m a b : ℕ} (h : m = a + b) (c : (Fin a → Bool)
 theorem drop_ofFn_coinsEquiv {m a b : ℕ} (h : m = a + b) (c : (Fin a → Bool) × (Fin b → Bool)) :
     (List.ofFn (coinsEquiv h c)).drop a = List.ofFn c.2 := by
   rw [ofFn_coinsEquiv, List.drop_left' List.length_ofFn]
+
+/-- **A seed of two machines' coins:** for `L = A.coins + B.coins`,
+`A.Coins n × B.Coins n ≃ {0,1}^{L(n)}`, concatenating the two coin strings (`seedEquiv_ofFn`). -/
+def seedEquiv {A B : NUPPT} {L : PolyExpr} (h : L = A.coins.add B.coins) (n : ℕ) :
+    A.Coins n × B.Coins n ≃ (Fin (L.eval n) → Bool) :=
+  ((NUPPT.coinsEquivPoly rfl n).prodCongr (NUPPT.coinsEquivPoly rfl n)).trans
+    (coinsEquiv (by rw [h, PolyExpr.eval_add]))
+
+/-- The seed is the concatenation of the coins: `⟦seedEquiv h n (r₁, r₂)⟧ = ⟦r₁⟧ ++ ⟦r₂⟧`. -/
+theorem seedEquiv_ofFn {A B : NUPPT} {L : PolyExpr} (h : L = A.coins.add B.coins) (n : ℕ)
+    (c : A.Coins n × B.Coins n) :
+    List.ofFn (seedEquiv h n c) = List.ofFn c.1 ++ List.ofFn c.2 := by
+  rw [seedEquiv, Equiv.trans_apply, ofFn_coinsEquiv, Equiv.prodCongr_apply,
+    Prod.map_fst, Prod.map_snd, NUPPT.coinsEquivPoly_ofFn, NUPPT.coinsEquivPoly_ofFn]
+
+/-- **A seed of a machine's coins and a string:** for `L = A.coins + L₂`,
+`A.Coins n × {0,1}^{L₂(n)} ≃ {0,1}^{L(n)}`, concatenating (`seedEquivPoly_ofFn`). -/
+def seedEquivPoly {A : NUPPT} {L L₂ : PolyExpr} (h : L = A.coins.add L₂) (n : ℕ) :
+    A.Coins n × (Fin (L₂.eval n) → Bool) ≃ (Fin (L.eval n) → Bool) :=
+  ((NUPPT.coinsEquivPoly rfl n).prodCongr (Equiv.refl _)).trans
+    (coinsEquiv (by rw [h, PolyExpr.eval_add]))
+
+/-- The seed is the concatenation: `⟦seedEquivPoly h n (r, w)⟧ = ⟦r⟧ ++ ⟦w⟧`. -/
+theorem seedEquivPoly_ofFn {A : NUPPT} {L L₂ : PolyExpr} (h : L = A.coins.add L₂) (n : ℕ)
+    (c : A.Coins n × (Fin (L₂.eval n) → Bool)) :
+    List.ofFn (seedEquivPoly h n c) = List.ofFn c.1 ++ List.ofFn c.2 := by
+  rw [seedEquivPoly, Equiv.trans_apply, ofFn_coinsEquiv, Equiv.prodCongr_apply,
+    Prod.map_fst, Prod.map_snd, NUPPT.coinsEquivPoly_ofFn, Equiv.refl_apply]
 
 /-! ### Padding as an FP function -/
 
@@ -391,20 +422,11 @@ theorem finProdFinEquiv_symm_mk {q ℓ : ℕ} (i : Fin q) (j : Fin ℓ) (h : i *
   simp [finProdFinEquiv_apply_val]
   ring
 
-/-- The `i`-th chunk of `s` bits of the string of a `q·s`-bit word is its block `i`. -/
+/-- The `i`-th chunk of `s` bits of the string of a `q·s`-bit word is its block `i`
+(`FunFamily.ofFn_blocks`, the block window, through `blocks_eq`). -/
 theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
     ((List.ofFn w).drop (i * s)).take s = List.ofFn (blocks q s w ⟨i, hi⟩) := by
-  have hle : i * s + s ≤ q * s := by
-    rw [← Nat.succ_mul]
-    exact Nat.mul_le_mul_right s hi
-  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
-  · simp only [List.length_take, List.length_drop, List.length_ofFn]
-    omega
-  · simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn, blocks_apply]
-    congr 1
-    ext
-    simp [finProdFinEquiv_apply_val]
-    ring
+  rw [blocks_eq, FunFamily.ofFn_blocks]
 
 /-- The string of `(blocks q ℓ).symm V` is the concatenation of the `q` block strings
 (`List.ofFn_mul`). -/

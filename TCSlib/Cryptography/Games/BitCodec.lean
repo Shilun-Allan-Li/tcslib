@@ -5,6 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Games.Machines
 import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.Games.Probability
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import Mathlib.Data.List.GetD
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -36,6 +38,8 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
 * `Games.encodeBitMove`: the canonical word of a move.
 * `Games.bitCodec din dout dα`: the codec.
 * `Games.castImpl`: an implementation of bit-string oracles read along equal length functions.
+* `Games.cntRead`, `Games.ansRead`: the per-entry readings of an encoded log (one token for a
+  nonempty log; the answer of the first entry).
 
 ## Main results
 
@@ -46,8 +50,11 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
 * `Games.decodeBitMove_of_not_canonical`: every other word decodes to the all-`false` output.
 * `Games.padFin_ofFn_zeroBits`, `Games.padFin_replicate_false`, `Games.padFin_nil`,
   `Games.decodeFin_nil_getD`: all-`false` strings and the empty answer read as `zeroBits`.
+* `Games.padFin_append_split`: the two parts of a padded concatenation.
 * `Games.simulate_castImpl_toCompOn`, `Games.expect_simulate_castImpl_toCompOn`: transport of a
   machine's run between two codecs with equal lengths.
+* `Games.polyTimeComputable_cntRead`, `Games.polyTimeComputable_ansRead`: the per-entry readings
+  are polynomial-time.
 
 ## References
 
@@ -142,6 +149,18 @@ theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) =
 
 /-- The empty list reads as the all-`false` vector: `padFin d [] = zeroBits d`. -/
 theorem padFin_nil (d : ℕ) : padFin d [] = zeroBits d := padFin_replicate_false d 0
+
+/-- **The two parts of a padded concatenation:** if `|u| = d₁`, the first `d₁` bits of
+`padFin (d₁ + d₂) (u ++ v)` are `padFin d₁ u` and the rest `padFin d₂ v` (`padFin_apply`,
+`List.getD_append`, `List.getD_append_right`). -/
+theorem padFin_append_split {d₁ d₂ : ℕ} (u v : List Bool) (hu : u.length = d₁) :
+    (fun j : Fin d₁ => padFin (d₁ + d₂) (u ++ v) (Fin.castAdd d₂ j)) = padFin d₁ u ∧
+      (fun j : Fin d₂ => padFin (d₁ + d₂) (u ++ v) (Fin.natAdd d₁ j)) = padFin d₂ v := by
+  refine ⟨funext fun j => ?_, funext fun j => ?_⟩
+  · rw [padFin_apply, padFin_apply, Fin.coe_castAdd, List.getD_append _ _ _ _ (by omega)]
+  · rw [padFin_apply, padFin_apply, Fin.coe_natAdd, List.getD_append_right _ _ _ _ (by omega)]
+    congr 1
+    omega
 
 /-- An empty answer decodes to all-`false` at every length:
 `(decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ`. -/
@@ -326,6 +345,32 @@ theorem decodeBitMove_encodeBitMove (din dout : Fin k → ℕ) (dα : ℕ)
 theorem encodeBitMove_injective (din dout : Fin k → ℕ) (dα : ℕ) :
     Function.Injective (encodeBitMove din dout dα) := fun m m' h => by
   rw [← decodeBitMove_encodeBitMove din dout dα m, h, decodeBitMove_encodeBitMove]
+
+/-! ### Readings of a log entry -/
+
+/-- One token for a nonempty log and nothing for the empty one:
+`cntRead v = if v = [] then [] else [true]`. Applied to the successive suffixes of an encoded log,
+it counts the entries. -/
+def cntRead (v : List Bool) : List Bool := if decide (v = []) then [] else [true]
+
+/-- `cntRead v = if v = [] then [] else [true]`. -/
+theorem cntRead_eq (v : List Bool) : cntRead v = if decide (v = []) then [] else [true] := rfl
+
+/-- The token reading is polynomial-time: `PolyTimeComputable cntRead`. -/
+theorem polyTimeComputable_cntRead : PolyTimeComputable cntRead :=
+  polyTimeComputable_ite polyTimeComputable_isNil (polyTimeComputable_const [])
+    (polyTimeComputable_const [true])
+
+/-- The answer `y` of the first entry `⟨1^i, ⟨x, y⟩⟩` of an encoded log:
+`ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
+def ansRead (v : List Bool) : List Bool := pairSndD (pairSndD (pairFstD v))
+
+/-- `ansRead v = pairSndD (pairSndD (pairFstD v))`. -/
+theorem ansRead_eq (v : List Bool) : ansRead v = pairSndD (pairSndD (pairFstD v)) := rfl
+
+/-- The answer reading is polynomial-time: `PolyTimeComputable ansRead`. -/
+theorem polyTimeComputable_ansRead : PolyTimeComputable ansRead :=
+  polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
 
 /-! ### Transport along equal lengths -/
 

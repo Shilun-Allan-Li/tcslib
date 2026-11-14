@@ -210,23 +210,14 @@ theorem nmCodec_eq_bitCodec (n ℓ : ℕ) :
     S.nmCodec n ℓ = bitCodec (S.inLens n) (S.outLens n) (ℓ * S.ctLen.eval n) := rfl
 
 /-- Ciphertext `i` of an output string is its `i`-th block of `ctLen(n)` bits:
-`⟦S.nthCt w i⟧ = (⟦w⟧.drop (i · ctLen(n))).take ctLen(n)`. -/
+`⟦S.nthCt w i⟧ = (⟦w⟧.drop (i · ctLen(n))).take ctLen(n)` (`FunFamily.ofFn_blocks`, the block
+window). -/
 theorem ofFn_nthCt {n ℓ : ℕ} (w : Fin (ℓ * S.ctLen.eval n) → Bool) (i : Fin ℓ) :
     List.ofFn (S.nthCt w i) =
       ((List.ofFn w).drop (i * S.ctLen.eval n)).take (S.ctLen.eval n) := by
-  have hle : (i : ℕ) * S.ctLen.eval n + S.ctLen.eval n ≤ ℓ * S.ctLen.eval n := by
-    have := Nat.mul_le_mul_right (S.ctLen.eval n) (Nat.succ_le_of_lt i.isLt)
-    rw [Nat.succ_mul] at this
-    exact this
-  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
-  · simp only [List.length_ofFn, List.length_take, List.length_drop]
-    omega
-  · rw [List.getElem_ofFn, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
-    refine congrArg w (Fin.ext ?_)
-    rw [finProdFinEquiv_apply_val]
-    show j + S.ctLen.eval n * i = i * S.ctLen.eval n + j
-    rw [Nat.mul_comm]
-    omega
+  have hblk : S.nthCt w i = FunFamily.blocks ℓ (S.ctLen.eval n) w i :=
+    funext fun j => (FunFamily.blocks_apply ℓ (S.ctLen.eval n) w i j).symm
+  rw [hblk, FunFamily.ofFn_blocks]
 
 /-! ### (⇒) The CCA2 adversary built from a non-malleability adversary -/
 
@@ -400,7 +391,7 @@ private theorem accept_indGame_decRed (A D B B' : NUPPT) (q ℓ : PolyExpr) (n :
 
 **Proof sketch.** Given `A` (budget `q`, `ℓ` ciphertexts) and `D`, T2
 (`Games.exists_interactiveHandlerMachine`) makes the handler `decHandler S ℓ D` a machine `B`, and
-`exists_withAdviceOn` hard-wires `D`'s advice into it (`B'`). `B'`'s budget is
+`NUPPT.exists_withAdviceOn` hard-wires `D`'s advice into it (`B'`). `B'`'s budget is
 `q · 1 + ℓ`, a polynomial; CCA2 security gives a negligible bound on `B'`'s advantage, which at
 every `n` equals the advantage of `D` between `NM_0` and `NM_1` (`accept_indGame_decRed`). -/
 theorem nmSecure_cca2_of_indSecure_cca2 (h : S.INDSecure .cca2) : S.NMSecure .cca2 := by
@@ -408,7 +399,7 @@ theorem nmSecure_cca2_of_indSecure_cca2 (h : S.INDSecure .cca2) : S.NMSecure .cc
   intro A q ℓ D
   obtain ⟨B, hB⟩ := exists_interactiveHandlerMachine A q (acDin S) (acDout S) (acDin S)
     (acDout S) (ℓ.mul S.ctLen) (decHandler S ℓ D)
-  obtain ⟨B', hc, hB'⟩ := exists_withAdviceOn B D.advice D.adv D.advice_length
+  obtain ⟨B', hc, hB'⟩ := NUPPT.exists_withAdviceOn B D.advice D.adv D.advice_length
   obtain ⟨ε, hε, hbound⟩ := (S.INDSecure_iff .cca2).1 h B'
     ((q.mul (decHandler S ℓ D).perCall).add (decHandler S ℓ D).finCall)
   refine ⟨ε, hε, fun n => ?_⟩
@@ -598,7 +589,8 @@ private theorem accept_nmGame_encRed (A B : NUPPT) (q : PolyExpr) (n : ℕ)
 the handler `encHandler S` a machine `B`, with budget `q · 1 + 0`. Non-malleability for `B`, two
 output ciphertexts and `guessDist` gives a negligible bound. At `n` with `msgLen(n) > 0`, `A`'s
 CCA2 advantage equals that experiment's advantage (`accept_nmGame_encRed`). At `msgLen(n) = 0` the
-two CCA2 games coincide (`indImpl_eq_of_msgLen_eq_zero`), so `A`'s advantage is `0`. -/
+two CCA2 games coincide (`FixedLengthPKScheme.indImpl_eq_of_msgLen_eq_zero`), so `A`'s advantage
+is `0`. -/
 theorem indSecure_cca2_of_nmSecure_cca2 (h : S.NMSecure .cca2) : S.INDSecure .cca2 := by
   rw [INDSecure_iff]
   intro A q
@@ -611,7 +603,7 @@ theorem indSecure_cca2_of_nmSecure_cca2 (h : S.NMSecure .cca2) : S.INDSecure .cc
   by_cases hm : S.msgLen.eval n = 0
   · have hg : S.indGame .cca2 A (q.eval n) false n = S.indGame .cca2 A (q.eval n) true n := by
       rw [S.indGame_eq, S.indGame_eq]
-      simp only [indImpl_eq_of_msgLen_eq_zero S .cca2 n _ _ hm]
+      simp only [S.indImpl_eq_of_msgLen_eq_zero .cca2 n _ _ hm]
     rw [hg, advantage_self]
     exact (advantage_nonneg _ _).trans hn
   · obtain ⟨φ, hφ⟩ := hB n
@@ -634,7 +626,7 @@ end Proof
    (`Games.exists_interactiveHandlerMachine`) makes this a machine, for the forwarding handler
    `NMCCA2.decHandler`: `advIn = pk`, one outer call per query, and `finCall = ℓ` in
    finalization before running `D`, for total budget `q + ℓ`. `D`'s advice is carried through
-   `z = ⟨pk, α⟩` and hard-wired afterwards (`NMCCA2.exists_withAdviceOn`, from the public
+   `z = ⟨pk, α⟩` and hard-wired afterwards (`NUPPT.exists_withAdviceOn`, from the public
    `exists_withAdvice`/`exists_comp` closure lemmas). The two games accept with the same
    probability at every `n` (`nmSecure_cca2_of_indSecure_cca2`).
 2. (⇐) Given an IND adversary `A` with guess `g`, the NM adversary runs `A`, forwarding its

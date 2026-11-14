@@ -28,10 +28,16 @@ needs the parameter.
 
 ## Main definitions
 
+* `Games.iterEmit`: iterate and emit, the generic construction of `relabel`, `NMCCA2.logEmit`
+  and `NMSim.chunkMap`.
 * `EffFill.relabelEmit`, `EffFill.relabel`, `EffFill.bridgePre`, `EffFill.bridgePost`.
 
 ## Main results
 
+* `Games.polyTimeComputable_iterEmit`, `Games.iterEmit_encode`, `Games.length_iterate_le_add`:
+  iterate and emit is polynomial-time and reads a list encoding element by element.
+* `EffFill.relabelN_eq_iterEmit`, `EffFill.relabel_eq_iterEmit`: the history translator is an
+  instance.
 * `EffFill.bridgePre_encodeHist`: the history of a log translates to the log.
 * `EffFill.bridgePost_spec`: the translated move is the decoded move.
 * `EffFill.eval_buildTree_bridge`: the two computations evaluate alike against every oracle.
@@ -41,6 +47,85 @@ needs the parameter.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
   Definition 96.1 (oracle indistinguishability against oracle machines).
 -/
+
+namespace TCSlib.Cryptography.Games
+
+open Complexity Turing
+
+/-! ### Iterate and emit
+
+`iterEmit step emit m x` runs `m` rounds of `step` from `x` and concatenates the emissions of the
+visited words. On the words `enc l` of a list encoding whose step drops the first element, it reads
+the elements one by one (`iterEmit_encode`); with polynomial-time `step` and `emit` and `|x| + 1`
+rounds, it is polynomial-time when `step` never lengthens a word beyond a constant
+(`polyTimeComputable_iterEmit`). The history translator below (`EffFill.relabel`), the log readings
+`NMCCA2.logEmit` and the chunk maps `NMSim.chunkMap` are instances. -/
+
+/-- **Iterate and emit:** the emissions of the first `m` iterates of `step` from `x`,
+concatenated: `iterEmit step emit m x = (List.range m).flatMap fun i => emit (step^[i] x)`. -/
+def iterEmit (step emit : List Bool → List Bool) (m : ℕ) (x : List Bool) : List Bool :=
+  (List.range m).flatMap fun i => emit (step^[i] x)
+
+/-- `iterEmit step emit m x = (List.range m).flatMap fun i => emit (step^[i] x)`. -/
+theorem iterEmit_eq (step emit : List Bool → List Bool) (m : ℕ) (x : List Bool) :
+    iterEmit step emit m x = (List.range m).flatMap fun i => emit (step^[i] x) :=
+  rfl
+
+/-- **The orbit stays short:** if one step never makes a word longer than `max |y| c`, the
+iterates of `x` have at most `|x| + c` bits: `|step^[i] x| ≤ |x| + c`. -/
+theorem length_iterate_le_add {step : List Bool → List Bool} (c : ℕ)
+    (h : ∀ y, (step y).length ≤ max y.length c) (x : List Bool) (i : ℕ) :
+    (step^[i] x).length ≤ x.length + c := by
+  suffices hmax : (step^[i] x).length ≤ max x.length c by omega
+  induction i with
+  | zero => exact le_max_left _ _
+  | succ i ih =>
+    rw [Function.iterate_succ_apply']
+    exact (h _).trans (max_le ih (le_max_right _ _))
+
+/-- **Iterate and emit is polynomial-time** for `|x| + 1` rounds, when `step` and `emit` are and
+one step never makes a word longer than `max |y| c`:
+`PolyTimeComputable fun x => iterEmit step emit (|x| + 1) x`.
+
+**Proof sketch.** `Complexity.polyTimeComputable_iterateEmit` with `|x|` rounds and the orbit
+bound `|x| + c` (`length_iterate_le_add`). -/
+theorem polyTimeComputable_iterEmit {step emit : List Bool → List Bool}
+    (hstep : PolyTimeComputable step) (hemit : PolyTimeComputable emit) (c : ℕ)
+    (h : ∀ y, (step y).length ≤ max y.length c) :
+    PolyTimeComputable fun x => iterEmit step emit (x.length + 1) x :=
+  (polyTimeComputable_iterateEmit hstep hemit .var (.add .var (.const c))
+    (fun x i _ => by
+      rw [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+      exact length_iterate_le_add c h x i)).congr
+    fun x => by rw [PolyExpr.eval_var, iterEmit_eq]
+
+/-- **Iterate and emit reads a list encoding element by element.** Let `enc` encode lists of `β`
+so that `step` drops the first element of the encoded list of `l` (`step (enc (e :: t)) = enc t`
+for the elements `e` of `l`) and fixes `enc []`, and let `emit` read nothing from `enc []` and `g e`
+from `enc (e :: t)`. Then `m ≥ |l|` rounds from `enc l` emit `l.flatMap g`:
+`iterEmit step emit m (enc l) = l.flatMap g`.
+
+**Proof sketch.** The `i`-th iterate is `enc (l.drop i)` (induction on `i`); the readings of the
+successive suffixes are `TCSlib.Cryptography.flatMap_range_drop`. -/
+theorem iterEmit_encode {β : Type} (step emit : List Bool → List Bool) (enc : List β → List Bool)
+    (g : β → List Bool) (l : List β) (hstep_nil : step (enc []) = enc [])
+    (hstep : ∀ e ∈ l, ∀ t, step (enc (e :: t)) = enc t) (hnil : emit (enc []) = [])
+    (hcons : ∀ e ∈ l, ∀ t, emit (enc (e :: t)) = g e) (m : ℕ) (hm : l.length ≤ m) :
+    iterEmit step emit m (enc l) = l.flatMap g := by
+  have hit : ∀ i, step^[i] (enc l) = enc (l.drop i) := by
+    intro i
+    induction i with
+    | zero => rfl
+    | succ i ih =>
+      rw [Function.iterate_succ_apply', ih, ← List.tail_drop]
+      cases hd : l.drop i with
+      | nil => rw [List.tail_nil, hstep_nil]
+      | cons e t => rw [List.tail_cons, hstep e (List.mem_of_mem_drop (hd ▸ List.mem_cons_self))]
+  rw [iterEmit_eq]
+  simp only [hit]
+  exact flatMap_range_drop (fun l' => emit (enc l')) g hnil l hcons m hm
+
+end TCSlib.Cryptography.Games
 
 namespace TCSlib.Cryptography.Games.EffFill
 
@@ -67,11 +152,23 @@ theorem relabelN_eq (m : ℕ) (w : List Bool) :
     relabelN m w = (List.range m).flatMap fun i => relabelEmit (pairSndD^[i] w) :=
   rfl
 
+/-- `relabelN` is iterate-and-emit with the step `pairSndD`:
+`relabelN m w = iterEmit pairSndD relabelEmit m w`. -/
+theorem relabelN_eq_iterEmit (m : ℕ) (w : List Bool) :
+    relabelN m w = iterEmit pairSndD relabelEmit m w := by
+  rw [relabelN_eq, iterEmit_eq]
+
 /-- **The history translator's body:** the pieces of the first `|x| + 1` suffixes of `x`. -/
 def relabel (x : List Bool) : List Bool := relabelN (x.length + 1) x
 
 /-- `relabel x = relabelN (|x| + 1) x`. -/
 theorem relabel_eq (x : List Bool) : relabel x = relabelN (x.length + 1) x := rfl
+
+/-- `relabel` is iterate-and-emit for `|x| + 1` rounds:
+`relabel x = iterEmit pairSndD relabelEmit (|x| + 1) x`. -/
+theorem relabel_eq_iterEmit (x : List Bool) :
+    relabel x = iterEmit pairSndD relabelEmit (x.length + 1) x := by
+  rw [relabel_eq, relabelN_eq_iterEmit]
 
 /-- **The history translator:** `bridgePre x = ⟨[], relabel x⟩`. -/
 def bridgePre (x : List Bool) : List Bool := pairEncode [] (relabel x)
@@ -163,21 +260,13 @@ theorem relabelEmit_poly : PolyTimeComputable relabelEmit :=
     · rw [if_neg h, decide_eq_false h]
       rfl
 
-/-- **The history translator is polynomial-time** (`Complexity.polyTimeComputable_iterateEmit`
-with the step `pairSndD`, `|x| + 1` rounds and the orbit bound `|x|`). -/
+/-- **The history translator is polynomial-time** (`polyTimeComputable_iterEmit` with the step
+`pairSndD`, which never lengthens a word, through `relabel_eq_iterEmit`). -/
 theorem bridgePre_poly : PolyTimeComputable bridgePre := by
-  have horbit : ∀ (x : List Bool) (i : ℕ), i ≤ PolyExpr.var.eval x.length →
-      (pairSndD^[i] x).length ≤ PolyExpr.var.eval x.length := by
-    intro x i _
-    clear * -
-    rw [PolyExpr.eval_var]
-    induction i with
-    | zero => exact le_rfl
-    | succ i ih => rw [Function.iterate_succ_apply']; exact (length_pairSndD_le _).trans ih
-  have h := polyTimeComputable_iterateEmit polyTimeComputable_pairSndD relabelEmit_poly .var .var
-    horbit
+  have h := polyTimeComputable_iterEmit polyTimeComputable_pairSndD relabelEmit_poly 0
+    fun y => (length_pairSndD_le y).trans (le_max_left _ _)
   refine ((polyTimeComputable_const []).pairEncode h).congr fun x => ?_
-  rw [bridgePre_eq, relabel_eq, relabelN_eq, PolyExpr.eval_var]
+  rw [bridgePre_eq, relabel_eq_iterEmit]
 
 /-! ### The move translator -/
 

@@ -42,6 +42,9 @@ result, stated in a later module.
 
 * `Games.buildComp_costBoundedBy`, `NUPPT.toComp_costBoundedBy`: the computation makes at most `q`
   queries.
+* `Games.buildComp_of_ret`: a final output is the computation at every budget.
+* `Games.buildComp_budget_eq`, `NUPPT.toCompOn_budget_eq`: a computation at budget `K ≥ j` that
+  makes at most `j` queries is the computation at budget `j`.
 
 ## References
 
@@ -146,6 +149,14 @@ theorem buildComp_succ_of_query {q : ℕ} {i : ι} {x : spec.dom i} (h : next hi
       .query i x (fun y => buildComp next timeout q (hist ++ [⟨i, x, y⟩])) := by
   rw [buildComp, h]
 
+/-- A final output is the computation at every budget: if `next hist = ret a`, then
+`buildComp next timeout q hist = pure a`. -/
+theorem buildComp_of_ret {q : ℕ} {a : α} (h : next hist = .ret a) :
+    buildComp next timeout q hist = .pure a := by
+  cases q with
+  | zero => exact buildComp_zero_of_ret h
+  | succ q => exact buildComp_succ_of_ret h
+
 end BuildComp
 
 /-- The computation built with budget `q` makes at most `q` queries, from every log. -/
@@ -163,6 +174,46 @@ theorem buildComp_costBoundedBy {spec : OracleSpec ι} (next : QueryLog spec →
       rw [buildComp_succ_of_query h]
       exact (OracleComp.costBoundedBy_query _ _ _ _ _).2
         ⟨Nat.le_add_left 1 q, fun y => buildComp_costBoundedBy next timeout q _⟩
+
+/-- **Budget reduction for `buildComp`.** If the computation of `next` at budget `K` from the log
+`hist` makes at most `j ≤ K` queries on every path, it is the computation at budget `j`:
+`buildComp next t j hist = buildComp next t K hist`.
+
+**Proof sketch.** Induction on `j`. A final output is the same at every budget. A query at budget
+`K` costs `1 ≤ j`, so `j = j' + 1` and `K = K' + 1`; both computations ask the same query and
+continue with the same log, at budgets `j'` and `K' ≥ j'`, and the continuation makes at most `j'`
+queries. At `j = 0` a query is impossible unless `K = 0`, where both give `timeout`. -/
+theorem buildComp_budget_eq {spec : OracleSpec ι} (next : QueryLog spec → Move spec α) (t : α) :
+    ∀ (j K : ℕ) (hist : QueryLog spec), j ≤ K →
+      (buildComp next t K hist).CostBoundedBy (fun _ => 1) j →
+      buildComp next t j hist = buildComp next t K hist := by
+  intro j
+  induction j with
+  | zero =>
+    intro K hist _ hc
+    cases h : next hist with
+    | ret a =>
+      cases K with
+      | zero => rfl
+      | succ K => rw [buildComp_zero_of_ret h, buildComp_succ_of_ret h]
+    | query i x =>
+      cases K with
+      | zero => rfl
+      | succ K =>
+        rw [buildComp_succ_of_query h, OracleComp.costBoundedBy_query] at hc
+        exact absurd hc.1 (by omega)
+  | succ j ih =>
+    intro K hist hK hc
+    obtain ⟨K, rfl⟩ : ∃ K', K = K' + 1 := ⟨K - 1, by omega⟩
+    cases h : next hist with
+    | ret a => rw [buildComp_succ_of_ret h, buildComp_succ_of_ret h]
+    | query i x =>
+      rw [buildComp_succ_of_query h] at hc ⊢
+      rw [buildComp_succ_of_query h]
+      rw [OracleComp.costBoundedBy_query] at hc
+      congr 1
+      funext y
+      exact ih K _ (by omega) (by simpa using hc.2 y)
 
 /-- The oracle computation of the machine `D` at parameter `n`, with coins `r` and query budget
 `q`: the machine's next-move function is one activation of `D` on the encoded log.
@@ -212,5 +263,16 @@ theorem _root_.Complexity.NUPPT.toCompOn_costBoundedBy {spec : OracleSpec ι} (D
     (codec : MachineCodec spec α) (n q : ℕ) (x : List Bool) (r : D.Coins n) :
     (D.toCompOn codec n q x r).CostBoundedBy (fun _ => 1) q :=
   buildComp_costBoundedBy _ _ q []
+
+/-- **Budget reduction for a machine:** if `D`'s computation on `x` at budget `K ≥ j` makes at
+most `j` queries on every path, it is `D`'s computation at budget `j`:
+`D.toCompOn codec n j x r = D.toCompOn codec n K x r` (`buildComp_budget_eq`). -/
+theorem _root_.Complexity.NUPPT.toCompOn_budget_eq {spec : OracleSpec ι} (D : NUPPT) {β : Type}
+    (codec : MachineCodec spec β) (n j K : ℕ) (x : List Bool) (r : D.Coins n) (hjK : j ≤ K)
+    (hc : (D.toCompOn codec n K x r).CostBoundedBy (fun _ => 1) j) :
+    D.toCompOn codec n j x r = D.toCompOn codec n K x r := by
+  rw [NUPPT.toCompOn_eq] at hc ⊢
+  rw [NUPPT.toCompOn_eq]
+  exact buildComp_budget_eq _ _ j K [] hjK hc
 
 end TCSlib.Cryptography.Games

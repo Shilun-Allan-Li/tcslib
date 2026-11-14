@@ -32,8 +32,8 @@ The hybrid argument itself is `advantage_hybrid` (`TCSlib.Cryptography.Games.Adv
 
 ## Main results
 
-* `ProbComp.prob_eq_one_of_allOutputs`, `ProbComp.expect_mono_of_allOutputs`: reasoning on the
-  possible outputs only.
+* `ProbComp.prob_eq_one_of_allOutputs`, `ProbComp.expect_mono_of_allOutputs`,
+  `ProbComp.expect_congr_of_allOutputs`: reasoning on the possible outputs only.
 * `ProbComp.abs_prob_sub_le_of_agree`: the difference lemma [Sho04, §1.1, Lemma 1].
 * `ProbComp.prob_mem_le`: the collision bound; `ProbComp.expect_sample_mem_le`, its form for a
   uniform sample and a fixed list.
@@ -41,7 +41,9 @@ The hybrid argument itself is `advantage_hybrid` (`TCSlib.Cryptography.Games.Adv
 * `ProbComp.prob_bad_le`: the per-query potential bound `Pr[bad] ≤ q · (size + q) · δ`.
 * `Games.prob_eq_until_bad`, `Games.identical_until_bad`, `Games.identical_until_bad_init`: the
   code-based fundamental lemma [BR06], in semantic form, from a fixed or a sampled initial
-  state; `Games.hagree_of_eq` recovers the syntactic hypothesis.
+  state; `Games.hagree_of_eq` recovers the syntactic hypothesis; `Games.expect_eq_until_bad`, the
+  expectation form for functions of the output and the final state.
+* `Games.expect_simulate_eager`: one-shot coins may be drawn in advance.
 
 ## References
 
@@ -92,6 +94,14 @@ theorem expect_mono_of_allOutputs {c : ProbComp α} {P : α → Prop} (hc : c.Al
     simp only [expect_query]
     exact mul_le_mul_of_nonneg_left
       (sum_le_sum fun j _ => ih j (OracleComp.allOutputs_query.1 hc j)) (by positivity)
+
+/-- Two functions that agree on every possible output have the same expectation: if
+`c.AllOutputs P` and `f a = g a` whenever `P a`, then `𝔼_c f = 𝔼_c g` (`expect_mono_of_allOutputs`
+both ways). -/
+theorem expect_congr_of_allOutputs {c : ProbComp α} {P : α → Prop} (hc : c.AllOutputs P)
+    {f g : α → ℝ} (h : ∀ a, P a → f a = g a) : expect c f = expect c g :=
+  le_antisymm (expect_mono_of_allOutputs hc fun a ha => (h a ha).le)
+    (expect_mono_of_allOutputs hc fun a ha => (h a ha).ge)
 
 /-- An event holding at every possible output has probability one. -/
 theorem prob_eq_one_of_allOutputs {c : ProbComp α} {p : α → Prop} (hc : c.AllOutputs p) :
@@ -178,21 +188,57 @@ theorem simulate_allOutputs_bad {spec : OracleSpec ι} {impl : QueryImpl spec σ
     rw [simulate_query]
     exact OracleComp.AllOutputs.bind (hstick i x s hs) fun ys hys => ih ys.1 hys
 
-/-- Splitting an expectation on a predicate: on `b` the function is `1`, elsewhere `f`. -/
-private theorem expect_ite_one_split {γ : Type} (c : ProbComp γ) (b : γ → Prop) [DecidablePred b]
-    (f : γ → ℝ) :
-    ProbComp.expect c (fun y => if b y then 1 else f y) =
-      (1 - ProbComp.expect c (fun y => if b y then 0 else 1)) +
-        ProbComp.expect c (fun y => if b y then 0 else f y) := by
-  have h : (fun y => if b y then (1 : ℝ) else f y) =
-      fun y => (1 + (-1) * (if b y then (0 : ℝ) else 1)) + (if b y then 0 else f y) := by
-    funext y
-    by_cases hy : b y <;> simp [hy]
-  rw [h, ProbComp.expect_add c (fun y => 1 + (-1) * (if b y then (0 : ℝ) else 1))
-      (fun y => if b y then 0 else f y),
-    ProbComp.expect_add c (fun _ => (1 : ℝ)) (fun y => (-1) * (if b y then (0 : ℝ) else 1)),
-    ProbComp.expect_const, ProbComp.expect_const_mul]
-  ring
+/-- **Equal until bad, in expectation, for functions of the output and the final state.** Let two
+implementations give, from every good state, the same law to good successors, and let each keep
+bad states bad. Then from a good state, for every function `G` of the output and the final state,
+`𝔼[G · 1_{good}]` is the same under both simulations:
+`𝔼[fun r => if bad r.2 then 0 else G r] (simulate impl₀ c s) =
+𝔼[fun r => if bad r.2 then 0 else G r] (simulate impl₁ c s)`.
+
+**Proof sketch.** Induction on the computation. From a bad successor the continuation's value is
+`0` on both sides (`simulate_allOutputs_bad`); from a good one the two values agree by induction;
+so both expectations only see the values at good successors, which `hagree` equates. -/
+theorem expect_eq_until_bad {spec : OracleSpec ι} {impl₀ impl₁ : QueryImpl spec σ unifSpec}
+    (bad : σ → Prop) [DecidablePred bad]
+    (hagree : ∀ i x s, ¬ bad s → ∀ g : spec.rng i × σ → ℝ,
+      ProbComp.expect (impl₀ i x s) (fun ys => if bad ys.2 then 0 else g ys) =
+        ProbComp.expect (impl₁ i x s) (fun ys => if bad ys.2 then 0 else g ys))
+    (hstick₀ : ∀ i x s, bad s → (impl₀ i x s).AllOutputs fun ys => bad ys.2)
+    (hstick₁ : ∀ i x s, bad s → (impl₁ i x s).AllOutputs fun ys => bad ys.2)
+    (c : OracleComp spec α) (G : α × σ → ℝ) {s : σ} (hs : ¬ bad s) :
+    ProbComp.expect (simulate impl₀ c s) (fun r => if bad r.2 then 0 else G r) =
+      ProbComp.expect (simulate impl₁ c s) (fun r => if bad r.2 then 0 else G r) := by
+  induction c generalizing s with
+  | pure a => rw [simulate_pure, simulate_pure]
+  | query i x k ih =>
+    simp only [simulate_query, ProbComp.expect_bind]
+    have hz : ∀ (impl : QueryImpl spec σ unifSpec),
+        (∀ i x s, bad s → (impl i x s).AllOutputs fun ys => bad ys.2) →
+        ∀ ys : spec.rng i × σ, bad ys.2 →
+          ProbComp.expect (simulate impl (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
+            0 := by
+      intro impl hst ys hb
+      rw [ProbComp.expect_congr_of_allOutputs (simulate_allOutputs_bad bad hst _ hb)
+        (g := fun _ => 0) fun r hr => if_pos hr, ProbComp.expect_const]
+    have h0 : ∀ ys : spec.rng i × σ,
+        ProbComp.expect (simulate impl₀ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
+          if bad ys.2 then 0 else
+            ProbComp.expect (simulate impl₁ (k ys.1) ys.2)
+              (fun r => if bad r.2 then 0 else G r) := by
+      intro ys
+      by_cases hb : bad ys.2
+      · rw [if_pos hb, hz impl₀ hstick₀ ys hb]
+      · rw [if_neg hb, ih ys.1 hb]
+    have h1 : ∀ ys : spec.rng i × σ,
+        ProbComp.expect (simulate impl₁ (k ys.1) ys.2) (fun r => if bad r.2 then 0 else G r) =
+          if bad ys.2 then 0 else
+            ProbComp.expect (simulate impl₁ (k ys.1) ys.2)
+              (fun r => if bad r.2 then 0 else G r) := by
+      intro ys
+      by_cases hb : bad ys.2
+      · rw [if_pos hb, hz impl₁ hstick₁ ys hb]
+      · rw [if_neg hb]
+    rw [funext h0, hagree i x s hs, ← funext h1]
 
 /-- **Equal until bad:** let two implementations give, from every good state, the same law to good
 successors (they may differ arbitrarily on bad successors, including in the call that makes the
@@ -200,11 +246,9 @@ state bad), and let each keep bad states bad. Then, from a good state, the two s
 the same probability to "`Q` holds and the final state is good", and the same probability to "the
 final state is bad".
 
-**Proof sketch.** Induction on the computation. At a query from a good state, write `F_b` for the
-continuation's probability of the event. On a bad successor `F_b` is `0` (for "good at the end")
-or `1` (for "bad at the end") on both sides (`simulate_allOutputs_bad`). So each expectation only
-depends on `F_b` at good successors, where `F₀ = F₁` by induction; and the two implementations give
-good successors the same law (`hagree`, once with `g := F₁` and once with `g := 1`). -/
+**Proof sketch.** Both are expectations of functions that vanish on bad final states:
+"`Q` and good" is `𝔼[if bad then 0 else 1_Q]`, and "bad" is `1 − 𝔼[if bad then 0 else 1]`
+(`prob_not`). Both are equal under the two simulations by `expect_eq_until_bad`. -/
 theorem prob_eq_until_bad {spec : OracleSpec ι} {impl₀ impl₁ : QueryImpl spec σ unifSpec}
     (bad : σ → Prop) [DecidablePred bad]
     (hagree : ∀ i x s, ¬ bad s → ∀ g : spec.rng i × σ → ℝ,
@@ -217,56 +261,29 @@ theorem prob_eq_until_bad {spec : OracleSpec ι} {impl₀ impl₁ : QueryImpl sp
         ProbComp.prob (simulate impl₁ c s) (fun r => Q r.1 ∧ ¬ bad r.2) ∧
       ProbComp.prob (simulate impl₀ c s) (fun r => bad r.2) =
         ProbComp.prob (simulate impl₁ c s) (fun r => bad r.2) := by
-  induction c generalizing s with
-  | pure a => simp only [simulate_pure, and_self]
-  | query i x k ih =>
-    simp only [simulate_query, ProbComp.prob_bind]
-    constructor
-    · -- "`Q` and good at the end"
-      have h0 : ∀ ys : spec.rng i × σ,
-          ProbComp.prob (simulate impl₀ (k ys.1) ys.2) (fun r => Q r.1 ∧ ¬ bad r.2) =
-            if bad ys.2 then 0 else
-              ProbComp.prob (simulate impl₁ (k ys.1) ys.2) (fun r => Q r.1 ∧ ¬ bad r.2) := by
-        intro ys
-        by_cases hb : bad ys.2
-        · rw [if_pos hb]
-          exact ProbComp.prob_eq_zero_of_allOutputs
-            ((simulate_allOutputs_bad bad hstick₀ _ hb).mono fun r hr h => h.2 hr)
-        · rw [if_neg hb]
-          exact (ih ys.1 hb).1
-      have h1 : ∀ ys : spec.rng i × σ,
-          ProbComp.prob (simulate impl₁ (k ys.1) ys.2) (fun r => Q r.1 ∧ ¬ bad r.2) =
-            if bad ys.2 then 0 else
-              ProbComp.prob (simulate impl₁ (k ys.1) ys.2) (fun r => Q r.1 ∧ ¬ bad r.2) := by
-        intro ys
-        by_cases hb : bad ys.2
-        · rw [if_pos hb]
-          exact ProbComp.prob_eq_zero_of_allOutputs
-            ((simulate_allOutputs_bad bad hstick₁ _ hb).mono fun r hr h => h.2 hr)
-        · rw [if_neg hb]
-      rw [funext h0, hagree i x s hs, ← funext h1]
-    · -- "bad at the end"
-      have h0 : ∀ ys : spec.rng i × σ,
-          ProbComp.prob (simulate impl₀ (k ys.1) ys.2) (fun r => bad r.2) =
-            if bad ys.2 then 1 else
-              ProbComp.prob (simulate impl₁ (k ys.1) ys.2) (fun r => bad r.2) := by
-        intro ys
-        by_cases hb : bad ys.2
-        · rw [if_pos hb]
-          exact ProbComp.prob_eq_one_of_allOutputs (simulate_allOutputs_bad bad hstick₀ _ hb)
-        · rw [if_neg hb]
-          exact (ih ys.1 hb).2
-      have h1 : ∀ ys : spec.rng i × σ,
-          ProbComp.prob (simulate impl₁ (k ys.1) ys.2) (fun r => bad r.2) =
-            if bad ys.2 then 1 else
-              ProbComp.prob (simulate impl₁ (k ys.1) ys.2) (fun r => bad r.2) := by
-        intro ys
-        by_cases hb : bad ys.2
-        · rw [if_pos hb]
-          exact ProbComp.prob_eq_one_of_allOutputs (simulate_allOutputs_bad bad hstick₁ _ hb)
-        · rw [if_neg hb]
-      rw [funext h0, expect_ite_one_split, hagree i x s hs (fun _ => 1), hagree i x s hs,
-        ← expect_ite_one_split, ← funext h1]
+  classical
+  have hgood : ∀ c' : ProbComp (α × σ), ProbComp.prob c' (fun r => Q r.1 ∧ ¬ bad r.2) =
+      ProbComp.expect c' (fun r => if bad r.2 then 0 else if Q r.1 then 1 else 0) := by
+    intro c'
+    rw [ProbComp.prob_eq_expect]
+    congr 1
+    funext r
+    by_cases hb : bad r.2 <;> by_cases hq : Q r.1 <;> simp [hb, hq]
+  have hbad : ∀ c' : ProbComp (α × σ), ProbComp.prob c' (fun r => bad r.2) =
+      1 - ProbComp.expect c' (fun r => if bad r.2 then 0 else 1) := by
+    intro c'
+    have h := ProbComp.prob_not c' (fun r => bad r.2)
+    have e : ProbComp.prob c' (fun r => ¬ bad r.2) =
+        ProbComp.expect c' (fun r => if bad r.2 then 0 else 1) := by
+      rw [ProbComp.prob_eq_expect]
+      congr 1
+      funext r
+      by_cases hb : bad r.2 <;> simp [hb]
+    linarith
+  refine ⟨?_, ?_⟩
+  · rw [hgood, hgood]
+    exact expect_eq_until_bad bad hagree hstick₀ hstick₁ c _ hs
+  · rw [hbad, hbad, expect_eq_until_bad bad hagree hstick₀ hstick₁ c (fun _ => 1) hs]
 
 /-- **Identical until bad** (the code-based fundamental lemma): let two implementations of the
 same oracles give, from every good state, the same law to good successors, and let each keep `bad`
@@ -441,5 +458,67 @@ theorem expect_sample_mem_le {T : Type} [Fintype T] [Nonempty T] [DecidableEq T]
   rw [prob_pure]
 
 end ProbComp
+
+/-! ### One-shot coins drawn in advance -/
+
+section Eager
+
+variable {spec : OracleSpec ι} {T : Type} [Fintype T] [Nonempty T]
+
+/-- From a used state, an implementation that agrees with `O` there simulates like `O`. -/
+private theorem simulate_eq_of_used (O O' : QueryImpl spec σ unifSpec) (used : σ → Prop)
+    (hused : ∀ i x s, used s → O' i x s = O i x s)
+    (hstick : ∀ i x s, used s → (O i x s).AllOutputs fun p => used p.2)
+    (c : OracleComp spec α) {s : σ} (hs : used s) : simulate O' c s = simulate O c s := by
+  induction c generalizing s with
+  | pure a => rw [simulate_pure, simulate_pure]
+  | query i x k ih =>
+    rw [simulate_query, simulate_query, hused i x s hs]
+    exact OracleComp.bind_congr_of_allOutputs (hstick i x s hs) fun p hp => ih p.1 hp
+
+/-- **One-shot coins drawn in advance.** Let `O` be an implementation and `OE t` its variants with
+coins `t ∈ T` fixed in advance, and let `used` mark the states after the coins are spent:
+- from a used state, `OE t` is `O`, and `O` keeps the state used;
+- from an unused state, a call either does not use the coins (`OE t` is `O` for every `t`, and the
+  state stays unused), or it is the one that spends them (`O` samples `t` and runs `OE t`, and
+  every successor is used).
+
+Then from an unused state, `O`'s simulation has the law of `OE t`'s, averaged over `t`:
+`𝔼[G(simulate O c s)] = 𝔼_{t ← T} 𝔼[G(simulate (OE t) c s)]`.
+
+**Proof sketch.** Induction on `c`. From used states the two simulations coincide
+(`simulate_eq_of_used`). At a query from an unused state: in the first case, rewrite the call,
+apply the induction hypothesis at the (unused) successors and exchange the expectations
+(`ProbComp.expect_expect_sample`); in the second, expand `O`'s sample and conclude from the
+coincidence at the (used) successors. -/
+theorem expect_simulate_eager (O : QueryImpl spec σ unifSpec) (OE : T → QueryImpl spec σ unifSpec)
+    (used : σ → Prop) (hused : ∀ t i x s, used s → OE t i x s = O i x s)
+    (hstick : ∀ i x s, used s → (O i x s).AllOutputs fun p => used p.2)
+    (hfresh : ∀ i x s, ¬ used s →
+      (∀ t, OE t i x s = O i x s ∧ (O i x s).AllOutputs fun p => ¬ used p.2) ∨
+      (O i x s = (ProbComp.sample T).bind (fun t => OE t i x s) ∧
+        ∀ t, (OE t i x s).AllOutputs fun p => used p.2))
+    (c : OracleComp spec α) (G : α × σ → ℝ) {s : σ} (hs : ¬ used s) :
+    ProbComp.expect (simulate O c s) G =
+      ProbComp.expect (ProbComp.sample T) fun t => ProbComp.expect (simulate (OE t) c s) G := by
+  induction c generalizing s with
+  | pure a =>
+    simp only [simulate_pure, ProbComp.expect_pure]
+    exact (ProbComp.expect_const _ _).symm
+  | query i x k ih =>
+    simp only [simulate_query, ProbComp.expect_bind]
+    rcases hfresh i x s hs with h | ⟨h, hu⟩
+    · have hO : ∀ t, OE t i x s = O i x s := fun t => (h t).1
+      have hun : (O i x s).AllOutputs fun p => ¬ used p.2 :=
+        (h (Classical.arbitrary T)).2
+      simp only [hO]
+      rw [ProbComp.expect_congr_of_allOutputs hun fun p hp => ih p.1 hp,
+        ProbComp.expect_expect_sample]
+    · rw [h, ProbComp.expect_bind]
+      refine congrArg _ (funext fun t => ?_)
+      refine ProbComp.expect_congr_of_allOutputs (hu t) fun p hp => ?_
+      rw [simulate_eq_of_used O (OE t) used (hused t) hstick _ hp]
+
+end Eager
 
 end TCSlib.Cryptography.Games
