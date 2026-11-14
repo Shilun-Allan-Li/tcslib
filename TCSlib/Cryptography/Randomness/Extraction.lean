@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.InformationTheory.Entropy
 import TCSlib.InformationTheory.Extractors
 import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Randomness.Extraction.Rejection
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -102,6 +103,106 @@ def extBit (Ext : List Bool → List Bool) (n : ℕ) : (Fin n → Bool) → (Fin
 theorem extBit_eq (Ext : List Bool → List Bool) (n : ℕ) (x : Fin n → Bool) :
     extBit Ext n x = padFin 1 (Ext (List.ofFn x)) := rfl
 
+/-- The uniform sampler at the fixed width `n` outputs its `n` coin bits and has no advice. -/
+noncomputable def uniformSampler (n : ℕ) : NUPPT :=
+  NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD (.const n)
+
+/-- The uniform sampler uses the constant coin polynomial `n`. -/
+theorem uniformSampler_coins (n : ℕ) : (uniformSampler n).coins = .const n :=
+  NUPPT.coins_ofPolyTimeUniform polyTimeComputable_pairSndD (.const n)
+
+/-- The uniform sampler has empty advice at every activation parameter. -/
+theorem uniformSampler_uniform (n : ℕ) : (uniformSampler n).Uniform :=
+  NUPPT.ofPolyTimeUniform_uniform polyTimeComputable_pairSndD (.const n)
+
+/-- The uniform sampler returns the encoding of its coin vector. -/
+theorem uniformSampler_runAt (n : ℕ) (r : (uniformSampler n).Coins n) :
+    (uniformSampler n).runAt n [] r = List.ofFn r := by
+  rw [NUPPT.runAt_eq]
+  change (NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD (.const n)).runAtL
+    n [] (List.ofFn r) = _
+  rw [NUPPT.runAtL_ofPolyTimeUniform, pairSndD_pairEncode]
+
+/-- The coins of the uniform sampler are canonically the `n`-bit vectors. -/
+noncomputable def uniformSamplerCoins (n : ℕ) :
+    (uniformSampler n).Coins n ≃ (Fin n → Bool) :=
+  (NUPPT.coinsEquivPoly (uniformSampler_coins n) n).trans
+    (Equiv.arrowCongr (finCongr (PolyExpr.eval_const n n)) (Equiv.refl Bool))
+
+/-- The canonical uniform-sampler coin equivalence is the composition of the published
+coin-polynomial identification with the constant-polynomial width equality. -/
+theorem uniformSamplerCoins_eq (n : ℕ) : uniformSamplerCoins n =
+    (NUPPT.coinsEquivPoly (uniformSampler_coins n) n).trans
+      (Equiv.arrowCongr (finCongr (PolyExpr.eval_const n n)) (Equiv.refl Bool)) := rfl
+
+/-- The uniform sampler's coin equivalence preserves the encoded word. -/
+theorem uniformSamplerCoins_ofFn (n : ℕ) (r : (uniformSampler n).Coins n) :
+    List.ofFn (uniformSamplerCoins n r) = List.ofFn r := by
+  rw [uniformSamplerCoins, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
+    NUPPT.coinsEquivPoly_ofFn]
+
+/-- The law of the sampler that returns its coins is the uniform law on `n`-bit strings.
+The coin equivalence preserves encodings, and a bijection preserves uniformity. -/
+theorem samplerLaw_uniformSampler (n : ℕ) :
+    samplerLaw (uniformSampler n) n = FinDist.uniform (Fin n → Bool) := by
+  have hread : (fun r : (uniformSampler n).Coins n =>
+      padFin n ((uniformSampler n).runAt n [] r)) = uniformSamplerCoins n := by
+    funext r
+    rw [uniformSampler_runAt, ← uniformSamplerCoins_ofFn n r, padFin_ofFn]
+  rw [samplerLaw, hread]
+  exact Rejection.map_uniform_equiv (uniformSamplerCoins n)
+
+/-- Uniform `n`-bit strings form an efficiently samplable `(n−2)`-source. -/
+theorem uniform_mem_effSources (n : ℕ) :
+    FinDist.uniform (Fin n → Bool) ∈ effSources (fun n => (n : ℝ) - 2) n := by
+  have hu : FinDist.IsSource (n : ℝ) (FinDist.uniform (Fin n → Bool)) := by
+    simpa [Fintype.card_bool, Fintype.card_fin, Real.logb_pow] using
+      (FinDist.isSource_uniform (α := Fin n → Bool))
+  exact (effSources_iff _ _ _).2
+    ⟨uniformSampler n, uniformSampler_uniform n, (samplerLaw_uniformSampler n).symm,
+      hu.mono (by linarith)⟩
+
+/-- The first output bit read by `extBit` is the head of the extractor's output,
+with `false` for an empty output. -/
+theorem extBit_zero (Ext : List Bool → List Bool) (n : ℕ) (x : Fin n → Bool) :
+    extBit Ext n x 0 = (Ext (List.ofFn x)).headD false := by
+  rw [extBit_eq, padFin_apply]
+  cases Ext (List.ofFn x) <;> rfl
+
+/-- A uniform one-bit word has its first bit true with probability `1/2`. -/
+theorem uniform_one_probTrue :
+    (FinDist.uniform (Fin 1 → Bool)).probTrue (fun x => x 0) = 1 / 2 := by
+  classical
+  rw [FinDist.probTrue_eq]
+  have hs : (Finset.univ : Finset (Fin 1 → Bool)).filter (fun x => x 0 = true) =
+      {fun _ => true} := by
+    ext x
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    constructor
+    · intro h
+      funext i
+      have hi : i = 0 := Subsingleton.elim _ _
+      simpa only [hi] using h
+    · rintro rfl
+      rfl
+  rw [hs, Finset.sum_singleton, FinDist.uniform_apply]
+  norm_num
+
+/-- If the candidate extractor succeeds on every efficient `(n−2)`-source, then its first
+bit on the uniform source is true with probability at least `1/4`.
+The uniform source is efficient, so its output is within `1/4` of a fair bit. -/
+theorem uniform_acceptance_lower (Ext : List Bool → List Bool) (n : ℕ)
+    (h : IsExtractor (effSources (fun n => (n : ℝ) - 2) n) (1 / 4) (extBit Ext n)) :
+    1 / 4 ≤ (FinDist.uniform (Fin n → Bool)).probTrue (fun x => extBit Ext n x 0) := by
+  have hclose := (isExtractor_iff.1 h) _ (uniform_mem_effSources n)
+  have hb := (abs_probTrue_sub_le_statDist
+    ((FinDist.uniform (Fin n → Bool)).map (extBit Ext n))
+    (FinDist.uniform (Fin 1 → Bool)) (fun x => x 0)).trans
+      (epsClose_iff_statDist_le.1 hclose)
+  rw [Rejection.probTrue_map, uniform_one_probTrue] at hb
+  have hl := (abs_le.1 hb).1
+  linarith
+
 /-- **Theorem 183.6: no efficient `1`-bit `1/4`-extractor for efficient `(n − 2)`-sources**
 [PS10, Theorem 183.6]: for every polynomial-time `Ext` and every `n`, `Ext` is not a
 `1/4`-extractor for the efficiently samplable `(n − 2)`-sources on `{0,1}^n`.
@@ -122,6 +223,8 @@ theorem extBit_eq (Ext : List Bool → List Bool) (n : ℕ) (x : Fin n → Bool)
 theorem not_isExtractor_effSources (Ext : List Bool → List Bool) (hExt : PolyTimeComputable Ext)
     (n : ℕ) :
     ¬ IsExtractor (effSources (fun n => (n : ℝ) - 2) n) (1 / 4) (extBit Ext n) := by
+  intro h
+  have hq := uniform_acceptance_lower Ext n h
   sorry
 
 end TCSlib.Cryptography.Randomness
