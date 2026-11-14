@@ -1,4 +1,4 @@
-**Dispatched (2026-11-14) to Codex** on the user's Mac, in a checkout of the exchange branch (at most 3 Lean processes machine-wide).
-Ladner fill 2: `BinArith.powCap` (Mul) and the private padding parser (Ladner). Base `a052f889`. Pre-shipped (preship/).
-Bundle `outbox/fills/fill-ladner-common-leaves/` (SHA-256 `41db5579`, exchange `5c1da420`). Delivery expected under
-`arora-barak-ch3-4/inbox/fill-ladner-common-leaves/` and attached in chat.
+**Delivered (2026-11-14); in gate 137** (draft PR #310). Codex's final zip `fill-ladner-common-leaves.zip`
+(SHA-256 `959144ae`, with checkpoints 1–2) is in `arora-barak-ch3-4/inbox/fill-ladner-common-leaves/`. Both parts complete:
+`BinArith.powCap` (Mul) and 16 private padding-parser leaves (Ladner), no escalation. Landed as branch commit `5a080e56`; the
+maintainer then added the ruled `sqStep` dedup (`570cf193`) and its rule-10 repair (`07272ed4`). See campaign/gates/137-ladner-common-leaves/.
