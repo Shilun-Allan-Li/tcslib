@@ -128,7 +128,8 @@ private theorem applyOn_mulVec_proj (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (R
     (fun x => if x i = b then (applyOn w U *ᵥ v) x else 0) =
       applyOn w U *ᵥ (fun x => if x i = b then v x else 0) := by
   funext x
-  simp only [mulVec, dotProduct]
+  show (if x i = b then ∑ z, applyOn w U x z * v z else 0) =
+    ∑ z, applyOn w U x z * (if z i = b then v z else 0)
   split_ifs with hx
   · refine Finset.sum_congr rfl fun z _ => ?_
     by_cases hA : AgreeOff w x z

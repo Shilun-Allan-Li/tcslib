@@ -154,7 +154,8 @@ bijection is the key step; `applyOn_mul` is derived from this lemma. -/
 theorem applyOn_mulVec_apply (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (v : Reg n → ℂ)
     (y : Reg n) :
     (applyOn w U *ᵥ v) y = ∑ u : Reg k, U (y ∘ w) u * v (Function.extend w u y) := by
-  simp only [mulVec, dotProduct, applyOn_apply]
+  rw [show (applyOn w U *ᵥ v) y = ∑ z, applyOn w U y z * v z from rfl]
+  simp only [applyOn_apply]
   have key : (∑ z, (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z) =
       ∑ z ∈ Finset.univ.filter (fun z => AgreeOff w z y),
         (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z := by
@@ -183,7 +184,7 @@ theorem applyOn_mul (w : Fin k ↪ Fin n) (U V : Matrix (Reg k) (Reg k) ℂ) :
     applyOn w (U * V) = applyOn w U * applyOn w V := by
   ext y x
   have h := applyOn_mulVec_apply w U (fun z => applyOn w V z x) y
-  simp only [mulVec, dotProduct] at h
+  change ∑ z, applyOn w U y z * applyOn w V z x = _ at h
   rw [Matrix.mul_apply, h]
   simp only [applyOn_apply, extend_comp]
   by_cases hyx : AgreeOff w y x
@@ -254,10 +255,10 @@ private theorem applyOn_mul_applyOn_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w�
   -- The candidate intermediate register `z*` of the sketch, and its four properties.
   set zs : Reg n := fun i => if ∃ j, w₂ j = i then y i else x i with hzs
   have hz1 : zs ∘ w₁ = x ∘ w₁ := by
-    funext j; simp only [Function.comp, hzs]
+    funext j; simp only [Function.comp_apply, hzs]
     rw [if_neg (fun ⟨j', hj'⟩ => hd j j' hj'.symm)]
   have hz2 : zs ∘ w₂ = y ∘ w₂ := by
-    funext j; simp only [Function.comp, hzs]; rw [if_pos ⟨j, rfl⟩]
+    funext j; simp only [Function.comp_apply, hzs]; rw [if_pos ⟨j, rfl⟩]
   have hA2 : AgreeOff w₂ zs x := by
     intro i hi; simp only [hzs]; rw [if_neg (fun ⟨j, hj⟩ => hi j hj)]
   have hA1 : AgreeOff w₁ y zs ↔ ∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i := by
@@ -363,7 +364,9 @@ theorem applyOn_mulVec_basis (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) �
     applyOn w U *ᵥ (Ket.basis x).vec =
       fun y => if AgreeOff w y x then U (y ∘ w) (x ∘ w) else 0 := by
   ext y
-  simp [mulVec, dotProduct, applyOn_apply, Ket.basis_vec]
+  rw [show (applyOn w U *ᵥ (Ket.basis x).vec) y =
+    ∑ z, applyOn w U y z * (Ket.basis x).vec z from rfl]
+  simp [applyOn_apply, Ket.basis_vec]
 
 /-- With no wires (`k = 0`), `applyOn` scales the identity by the single entry of the `1 × 1`
 matrix `U`: a zero-qubit operator acts as a global scalar (round-1 audit, sanity statement 2).

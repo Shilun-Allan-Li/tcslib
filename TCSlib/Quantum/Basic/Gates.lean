@@ -102,7 +102,8 @@ theorem permMat_mem_unitaryGroup (σ : Equiv.Perm d) : permMat σ ∈ 𝐔[d] :=
 theorem permMat_mulVec_basis (σ : Equiv.Perm d) (x : d) :
     permMat σ *ᵥ (Ket.basis x).vec = (Ket.basis (σ x)).vec := by
   ext y
-  simp [mulVec, dotProduct, permMat, Ket.basis_vec, eq_comm]
+  rw [show (permMat σ *ᵥ (Ket.basis x).vec) y = ∑ z, permMat σ y z * (Ket.basis x).vec z from rfl]
+  simp [permMat, Ket.basis_vec, eq_comm]
 
 /-- A diagonal matrix whose entries all have norm `1` is unitary. [dW26, App. A.4]
 

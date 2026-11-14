@@ -180,7 +180,8 @@ theorem sum_norm_sq_mul_prod (v : d₁ → ℂ) (w : d₂ → ℂ) :
 private theorem sum_norm_sq_eq_dotProduct (w : d → ℂ) :
     ((∑ x, ‖w x‖ ^ 2 : ℝ) : ℂ) = star w ⬝ᵥ w := by
   push_cast
-  simp [dotProduct, Complex.conj_mul']
+  rw [show star w ⬝ᵥ w = ∑ x, star (w x) * w x from rfl]
+  simp [Complex.conj_mul']
 
 /-- A unitary matrix preserves the Hermitian inner product: `⟨U a, U b⟩ = ⟨a, b⟩`, where
 `⟨a, b⟩ = star a ⬝ᵥ b = ∑ₓ conj (a x) · b x`. [dW26, App. A.4] (Added in fill epoch E1; the

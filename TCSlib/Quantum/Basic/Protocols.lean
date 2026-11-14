@@ -87,14 +87,15 @@ theorem no_cloning_of_overlap {d : Type*} [Fintype d] [DecidableEq d] (e : d) (�
       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (φ ⊗ᵠ Ket.basis e).vec = c₂ • (φ ⊗ᵠ φ).vec := by
   rintro ⟨U, c₁, c₂, hc₁, hc₂, hψ, hφ⟩
   set t := ∑ x, star (ψ.vec x) * φ.vec x with ht
+  have hdot : ∀ a b : d × d → ℂ, star a ⬝ᵥ b = ∑ p, star (a p) * b p := fun _ _ => rfl
   -- The inner product of the inputs is `t`, and that of the outputs is `conj c₁ · c₂ · t²`.
   have hin : star (ψ ⊗ᵠ Ket.basis e).vec ⬝ᵥ (φ ⊗ᵠ Ket.basis e).vec = t := by
-    simp only [dotProduct, Pi.star_apply, Ket.prod_vec, Ket.basis_vec, Fintype.sum_prod_type,
-      mul_ite, mul_one, mul_zero]
+    simp only [hdot, Ket.prod_vec, Ket.basis_vec, Fintype.sum_prod_type, mul_ite, mul_one,
+      mul_zero]
     simp [Finset.sum_ite_eq, ht, mul_comm]
   have hout : star (c₁ • (ψ ⊗ᵠ ψ).vec) ⬝ᵥ (c₂ • (φ ⊗ᵠ φ).vec) = star c₁ * c₂ * t ^ 2 := by
-    simp only [dotProduct, Pi.star_apply, Pi.smul_apply, smul_eq_mul, Ket.prod_vec,
-      Fintype.sum_prod_type, star_mul']
+    simp only [hdot, Pi.smul_apply, smul_eq_mul, Ket.prod_vec, Fintype.sum_prod_type,
+      star_mul']
     rw [ht, sq, Finset.mul_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [Finset.sum_mul, Finset.mul_sum]
@@ -186,7 +187,7 @@ theorem bellVec_eq (x : Reg 2) :
 `‖1/√2‖² = 1/2`. -/
 theorem sum_norm_sq_bellVec : ∑ x, ‖bellVec x‖ ^ 2 = 1 := by
   rw [← (finTwoArrowEquiv Qubit).symm.sum_comp, Fintype.sum_prod_type]
-  simp [Fin.sum_univ_two, bellVec, finTwoArrowEquiv]
+  simp [Fin.sum_univ_two, bellVec, finTwoArrowEquiv_symm_apply]
   norm_num
 
 /-- The EPR pair `(|00⟩ + |11⟩)/√2`. [dW26, §1.5] -/
@@ -349,17 +350,12 @@ def bobVec (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) : Reg 1 → ℂ :=
 theorem bobVec_apply (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) (b : Reg 1) :
     bobVec ψ m₀ m₁ b = (teleportState ψ).vec ![m₀, m₁, b 0] := rfl
 
-/-- A gate that is its own inverse has `gᵐ gᵐ = 1` for every `m` (used for `X` and `Z`). -/
-private theorem pow_mul_self_of_mul_self {g : Gate 1} (h : g * g = 1) (m : ℕ) :
-    g ^ m * g ^ m = 1 := by
-  rw [← pow_add, ← two_mul, pow_mul, sq, h, one_pow]
-
 /-- **Teleportation is correct.** After Alice's outcome `(m₀, m₁)`, Bob applies `X^{m₁}` and
 then `Z^{m₀}`, and holds `ψ` (scaled by `½`, the amplitude of the outcome). [dW26, §1.5]
 
 **Proof sketch.** By `teleportState_vec`, `bobVec ψ m₀ m₁ = ½ X^{m₁} Z^{m₀} ψ`. Then
 `Z^{m₀} X^{m₁} X^{m₁} Z^{m₀} = 1` in the unitary group, since `Xᵐ Xᵐ = 1` and `Zᵐ Zᵐ = 1`
-(`Gate.X_mul_X`, `Gate.Z_mul_Z`, through one private power lemma). -/
+(`Gate.X_mul_X`, `Gate.Z_mul_Z`, and Mathlib's `pow_mul_pow_eq_one`). -/
 theorem teleport_correct (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
     ((Gate.Z ^ m₀.val * Gate.X ^ m₁.val : Gate 1) : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ
         bobVec ψ m₀ m₁ =
@@ -373,7 +369,7 @@ theorem teleport_correct (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
       Matrix.tail_cons, hb']
   have key : (Gate.Z ^ m₀.val * Gate.X ^ m₁.val) * (Gate.X ^ m₁.val * Gate.Z ^ m₀.val) = 1 := by
     rw [mul_assoc, ← mul_assoc (Gate.X ^ m₁.val),
-      pow_mul_self_of_mul_self Gate.X_mul_X, one_mul, pow_mul_self_of_mul_self Gate.Z_mul_Z]
+      pow_mul_pow_eq_one _ Gate.X_mul_X, one_mul, pow_mul_pow_eq_one _ Gate.Z_mul_Z]
   rw [hb, mulVec_smul, mulVec_mulVec, ← Submonoid.coe_mul, key, Submonoid.coe_one, one_mulVec]
 
 /-! ### Superdense coding -/
@@ -404,7 +400,7 @@ theorem superdenseState_eq (b₀ b₁ : Qubit) :
 vector, evaluated at a basis state. -/
 private theorem wire_sum_eq_mulVec (D : Matrix (Reg 1) (Reg 1) ℂ) (g : Qubit → ℂ) (c : Qubit) :
     ∑ a : Qubit, D (fun _ => c) (fun _ => a) * g a = (D *ᵥ fun x => g (x 0)) (fun _ => c) := by
-  simp only [mulVec, dotProduct]
+  rw [show (D *ᵥ fun x => g (x 0)) (fun _ => c) = ∑ z, D (fun _ => c) z * g (z 0) from rfl]
   rw [← (Equiv.funUnique (Fin 1) Qubit).symm.sum_comp]
   rfl
 
