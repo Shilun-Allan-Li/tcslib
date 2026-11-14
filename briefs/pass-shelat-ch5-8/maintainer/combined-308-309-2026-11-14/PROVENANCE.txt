@@ -1,0 +1,55 @@
+Post-merge combined-tree check of #308 (hash-sign) + #309 (lamport), and trial merge with #306 (cca2-ett), maintainer, 2026-11-14 UTC.
+Method: as cca2-ett-gate23 (../cca2-ett-gate23/PROVENANCE.txt). Lean 4.25.0, PATH=$HOME/.elan/bin:$PATH. One Lean process at a time
+  (ours), scripts/lean_check_tree.sh (SHA-256 366dab40e8e8f0f13e14118e14c3d6be1bc1b36604e6c9ccdebb03bc96cdf335, identical in every
+  export) via tools-used/runner.py with TCSLIB_OLEANS=$SP/dl-oleans-2 only ($SP/dl-oleans not touched; another job was running on it).
+  No lake command. Python python3 -I. Nothing pushed; /home/user/tcslib not edited (git status clean before and after; only `git fetch`
+  and `git merge-tree --write-tree`, which writes objects to .git, were run against it). Full hashes from git rev-parse (order/commits.txt).
+tip: origin/cryptography/pass-shelat-ch2-4 = 53fb144d6658fe416ee60aa7c6ead417b8ca098c (tree f6ca704fb2a04519becbe4711e70b6cea96f773c).
+  Merge 97ee2524e632a0cacae324f91f6e1eb3c2f8e208 (parents 34dc8fb29c02... = #308 merge of 4f0280c85fae..., and 987efb5156b3... = #309 head);
+  after it two records-only commits c16870b5adc8..., 53fb144d... (0 .lean files changed 97ee2524..tip).
+step 1 (build/): dl-oleans-2 verified at base before any build: build/tree-check-pre.txt RESULT OK (1199 modules of order/basefull-1199.txt
+  rc 0 at eff2dcd0 source and object hash of build/base-records.jsonl = gate23's; 1230 files; no stray olean, no empty dir);
+  build/snapshot-pre.txt byte-equal to build/snapshot-ref-gate23-restore-post.txt (= ../cca2-ett-gate23/restore/snapshot-post.txt),
+  SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f.
+step 2: git archive of the tip (TCSlib, TCSlib.lean, audits, scripts, lean-toolchain; .lake/packages symlinked) into scratch.
+  order/git-diff-name-only.txt (git diff --name-only eff2dcd0 tip -- '*.lean'): 31 files, no deletions, = order/tip-vs-base/changed.txt
+  (tools-used/downorder.py). Attribution: #303 (merge d82e9a50) Randomness, Randomness/Extraction, Extraction/Rejection, Extraction/Sampler;
+  #308 HashAndSign + 8 helpers; #309 Lamport + 16 helpers; the facade Authentication (both merges; imports all 24 helpers).
+  Downstream: 32 (the 31 + root TCSlib); no audits/* module imports any of them (downorder over TCSlib/** and audits/**; grep confirms).
+  order/tip-build.txt: the 32 in imports-first order; their other 1191 upstream modules are all base oleans (none missing).
+  Result build/results.jsonl, build/mods/, logs/build-runner.out: 32/32 rc 0, 0 errors, 0 `declaration uses 'sorry'`.
+  Warnings: Lamport/Blocks 2, InversionProbability 2, MachineSpec 2, Realization 1, Rejection 10, Extraction 2 (linter only: unused
+  variables/simp args/section variables, unreachable tactic, `exact le_rfl` no-op), all others 0.
+  build/objects-vs-pr-builds.txt: against lamport-r1-le (987efb51) and hash-sign-r1-ledoc build records, every module except the merged
+  facade Authentication has identical source and olean hash to at least one per-PR build; Authentication is the only new source.
+  build/tree-check-tip.txt: 1225 modules (order/tipfull-order.txt) rc 0 at 53fb144d source and olean hash, 1256 files: RESULT OK.
+step 3 (axioms/, census/): axioms/AxiomsTip.lean run with tools-used/probe.sh (plain `lean`, same LEAN_PATH as the check script,
+  no -o; file count of dl-oleans-2 unchanged), axioms/AxiomsTip.log, lean rc 0:
+    lamport_oneTimeSecure, hashAndSign_oneTimeSecure, exists_oneTimeSecure_of_crh_owf (TCSlib.Cryptography.Authentication.*):
+    each depends on axioms [propext, Classical.choice, Quot.sound]; no sorryAx.
+  Sorry census TCSlib/Cryptography/Authentication/: census/build-sorry-tip.txt (tools-used/buildcensus.py; latest record per module,
+    base records for the 5 unchanged modules): 1 warning in 1 of 32 modules (facade included): MAC/FromPRF (prfMAC_secure, base sorry,
+    unchanged). census/src-sorry-53fb144d.txt (tools-used/srcsorry.py, code tokens only): 1 in 1 of 31 files (MAC/FromPRF.lean:145);
+    at eff2dcd0 (src-sorry-eff2dcd0.txt): 3 in 3 of 7 (FromPRF, HashAndSign, Lamport).
+step 4 (trial/): git merge-tree --write-tree --messages 53fb144d b422ab5f01c131c7519ae1ff3bcff885a1debcab: rc 0, clean, tree
+  19fc0b6d564e805774d737904d437d68a17ec926 (trial/merge-tree.out), merge base a757b6a18785377c158312ed051b1789cf45badf.
+  trial/tip-vs-merge-name-status.txt: tree differs from tip only in the 11 EncryptThenTag files (1 M, 10 A); each blob = b422ab5f's
+  (trial/merge-blobs-vs-306.txt, 11 SAME). order/trial-vs-tip: changed 11, downstream 15 (11 + PrivateKey, Encryption, Composability,
+  TCSlib); order/trial-build.txt. Built on top of step 2's tree from a git-archive export of the trial tree:
+  trial/build/results.jsonl, logs/trial-runner.out: 15/15 rc 0, 0 errors, 0 sorry, 0 warnings. trial/objects-vs-gate23.txt: all 15
+  source and olean hashes identical to ../cca2-ett-gate23/build/results.jsonl (b422ab5f). trial/tree-check-trial.txt: 1235 modules
+  rc 0 at 19fc0b6d source and olean hash, 1266 files: RESULT OK.
+step 5 (lint/): python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography (script blob 88a2256b in both trees) on the two exports:
+  tip 92 FAIL, 101 WARN over 327 files; trial 92 FAIL, 101 WARN over 337 files; FAIL/WARN lines identical (lint-tip-vs-trial.diff
+  empty); none names an Authentication, Randomness or EncryptThenTag file. Against gate23's lint at b422ab5f (92 FAIL, 102 WARN, 313
+  files): lint-306head-vs-trial.diff = one WARN fewer (Lamport.lean check 8: lamportGen, lamportSign; resolved by #309).
+step 6 (restore/): deleted the 36 oleans not in the base tree (26 tip-only, 10 trial-only) and the 4 emptied directories
+  (restore/restore-deleted.txt); rebuilt order/restore-base.txt (the 10 base modules overwritten: EncryptThenTag, PrivateKey, Encryption,
+  Lamport, HashAndSign, Authentication, Composability, Extraction, Randomness, TCSlib) from a git-archive export of eff2dcd0:
+  restore/results.jsonl, logs/restore-runner.out 10/10 rc 0, 0 errors (base EncryptThenTag, Lamport, HashAndSign, Extraction carry their
+  base sorry). restore/restore-vs-base-records.txt: all 10 source and object hashes = base records. restore/tree-check-post.txt RESULT OK
+  (1199 modules, 1230 files); restore/snapshot-post.txt byte-identical to build/snapshot-pre.txt and the gate23 reference, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f.
+scratch: the three exports (tip, trial, base) and the reference-zip extraction were deleted after use.
+SHA256SUMS: every file here except itself (paths without "./"); ../combined-308-309-evidence.zip holds exactly the manifest paths plus
+  SHA256SUMS.
