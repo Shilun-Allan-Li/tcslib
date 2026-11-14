@@ -137,3 +137,13 @@ and success only on non-aborting runs. No `take_poly` or `drop_poly` remains.
 - **Evidence:** `le-evidence.zip`, SHA-256 `329b830f6398997d621ea5ad36a7515b79cae6edc564a8db449dee1e44a68fe3`, 217 entries.
   Its manifest is `le-evidence-SHA256SUMS`, and the patches are in `landing-le/`.
 - **PR:** draft [PR #309](https://github.com/Shilun-Allan-Li/tcslib/pull/309).
+
+## Errata (2026-11-14, from Gate 26 staging)
+- **Finding 3** says "189 of the 221 new public declarations". The 221 rows include the target, which is not new. The
+  built LE-doc added 188 formulas and 7 sketches. (The plan's decision-log row said 189 and 8.)
+- **Figures measured before LE-doc.** The `Lamport.lean` size of 973 lines and the opacity-block line numbers
+  777/40/36 were taken before LE-doc. At the head they are 999 lines and lines 797/41/37.
+- **`landing/opacity-runner.out`** is empty, as it is in the zip. The opacity results are in `opacity-runs/` inside
+  `review-evidence.zip`.
+- **Attribution of the follow-up.** Seyoon chose "Accept as inherited", and the wording of that option included
+  adding the follow-up that restates the frozen hypothesis. So DL-43 rightly ties that follow-up to the ruling.
