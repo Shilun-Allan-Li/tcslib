@@ -952,6 +952,16 @@ theorem SAT_mem_NP : SAT ∈ NP := by
   intro x
   simpa only [Nat.pow_one, Nat.one_mul] using sat_verifier_equiv x
 
+/-- SAT has a polynomial-time verifier whose certificate has exactly one more bit
+than the instance. This records the explicit certificate size of `SAT_mem_NP`.
+[AB09, §2.1] -/
+theorem SAT_exists_linear_verifier :
+    ∃ V : Language Bool, V ∈ P ∧
+      ∀ x : List Bool, x ∈ SAT ↔
+        ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V := by
+  exact ⟨satVerifier false, satVerifier_of_poly false satVerdict_false_poly,
+    sat_verifier_equiv⟩
+
 /-- Width scanning stores a saturated counter in finite control. -/
 private def satWidthCap (n : ℕ) : Fin 4 := ⟨min n 3, by omega⟩
 
