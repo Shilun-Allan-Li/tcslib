@@ -1,0 +1,33 @@
+START 2026-11-14T05:49:39.377782+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Randomness/Extraction
+TCSlib/Cryptography/Randomness/Extraction.lean:72:8: warning: unused variable `r`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Cryptography/Randomness/Extraction.lean:81:8: warning: unused variable `r`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Cryptography/Randomness/Extraction.lean:121:6: error: Failed to rewrite using equation theorems for `uniformSampler`
+TCSlib/Cryptography/Randomness/Extraction.lean:221:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Randomness/Extraction): lean exited with status 1
+FAIL(TCSlib/Cryptography/Randomness/Extraction): error diagnostics reported
+FAIL(TCSlib/Cryptography/Randomness/Extraction): no fresh .olean produced
+       10.48 real         2.37 user         2.25 sys
+          2144485376  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              128131  page reclaims
+               61627  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                5498  voluntary context switches
+               74794  involuntary context switches
+            33294414  instructions retired
+            21140331  cycles elapsed
+             1671504  peak memory footprint
+END 2026-11-14T05:49:49.868165+00:00
+EXIT 1

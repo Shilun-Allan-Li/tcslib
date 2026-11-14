@@ -1,0 +1,141 @@
+START 2026-11-14T05:48:12.847571+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Randomness/Extraction/Rejection
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:67:2: error: unsolved goals
+case h₀
+α : Type u_1
+β : Type u_2
+inst✝² : Fintype α
+inst✝¹ : Fintype β
+inst✝ : DecidableEq β
+p : FinDist α
+f : α → β
+g : β → ℝ
+a : α
+a✝¹ : a ∈ univ
+b : β
+a✝ : b ∈ univ
+hba : b ≠ f a
+⊢ 0 * g b = 0
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:152:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.tupleEquiv_apply`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:157:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.tupleEquiv_symm_apply`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:179:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.select_zero`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:183:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.select_succ`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:232:4: error: No goals to be solved
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:254:12: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵h̵d̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:256:14: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp [hd̵,̵ ̵h̵xa, ← mul_sum, q.sum_prob]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:257:14: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp [hd̵,̵ ̵h̵xa]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:266:31: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp [hd̵,̵ ̵h̵xa]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:298:29: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  if True then ?t else ?e
+in the target expression
+  (if true = true then (↑(Fintype.card α))⁻¹ else 0) = (FinDist.uniform α).prob a
+
+α : Type u_1
+inst✝² : Fintype α
+inst✝¹ : DecidableEq α
+inst✝ : Nonempty α
+D : α → Bool
+t : ℕ
+a : α
+ha : a ∈ {a | D a = true}
+⊢ (if true = true then (↑(Fintype.card α))⁻¹ else 0) = (FinDist.uniform α).prob a
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:332:6: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:364:6: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    (if _a then (↑(#{a | D a = true}))⁻¹ else 0) =
+      if D a = true then (↑(Fintype.card α))⁻¹ / (FinDist.uniform α).probTrue D else 0
+Error: Application type mismatch: The argument
+  decidableMem a {a | D a = true}
+has type
+  Decidable (a ∈ {a | D a = true})
+but is expected to have type
+  Decidable _a
+in the application
+  @ite ℝ _a (decidableMem a {a | D a = true})
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+α : Type u_1
+inst✝² : Fintype α
+inst✝¹ : DecidableEq α
+inst✝ : Nonempty α
+D : α → Bool
+hs : {a | D a = true}.Nonempty
+a : α
+hm : a ∈ {a | D a = true} ↔ D a = true
+⊢ (if a ∈ {a | D a = true} then (↑(#{a | D a = true}))⁻¹ else 0) =
+    if D a = true then (↑(Fintype.card α))⁻¹ / (FinDist.uniform α).probTrue D else 0
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:383:21: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+FAIL(TCSlib/Cryptography/Randomness/Extraction/Rejection): lean exited with status 1
+FAIL(TCSlib/Cryptography/Randomness/Extraction/Rejection): error diagnostics reported
+FAIL(TCSlib/Cryptography/Randomness/Extraction/Rejection): no fresh .olean produced
+        4.75 real         3.71 user         1.43 sys
+          2160689152  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173071  page reclaims
+                9837  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                 494  voluntary context switches
+               37071  involuntary context switches
+            33593755  instructions retired
+            20703949  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-14T05:48:17.607173+00:00
+EXIT 1

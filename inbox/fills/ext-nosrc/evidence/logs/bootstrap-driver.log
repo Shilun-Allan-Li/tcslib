@@ -1,0 +1,208 @@
+1/34 START TCSlib/Complexity/TuringMachine/Configuration
+1/34 END TCSlib/Complexity/TuringMachine/Configuration exit=0
+2/34 START TCSlib/Complexity/TuringMachine/Deterministic
+2/34 END TCSlib/Complexity/TuringMachine/Deterministic exit=0
+3/34 START TCSlib/Complexity/TuringMachine/Finite
+3/34 END TCSlib/Complexity/TuringMachine/Finite exit=0
+4/34 START TCSlib/Complexity/TuringMachine/Simulation
+4/34 END TCSlib/Complexity/TuringMachine/Simulation exit=0
+5/34 START TCSlib/Complexity/TuringMachine/StateRenaming
+5/34 END TCSlib/Complexity/TuringMachine/StateRenaming exit=0
+6/34 START TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction
+6/34 END TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction exit=0
+7/34 START TCSlib/Complexity/TuringMachine/Sweep
+7/34 END TCSlib/Complexity/TuringMachine/Sweep exit=0
+8/34 START TCSlib/Complexity/TuringMachine/Robustness/SingleTape
+8/34 END TCSlib/Complexity/TuringMachine/Robustness/SingleTape exit=0
+9/34 START TCSlib/Complexity/TuringMachine/Encoding
+9/34 END TCSlib/Complexity/TuringMachine/Encoding exit=0
+10/34 START TCSlib/Complexity/ClassP/TimeConstructible
+10/34 END TCSlib/Complexity/ClassP/TimeConstructible exit=0
+11/34 START TCSlib/Complexity/TuringMachine/Build/Convention
+11/34 END TCSlib/Complexity/TuringMachine/Build/Convention exit=0
+12/34 START TCSlib/Complexity/TuringMachine/Composition
+12/34 END TCSlib/Complexity/TuringMachine/Composition exit=0
+13/34 START TCSlib/Complexity/TuringMachine/Build/Wrappers
+13/34 END TCSlib/Complexity/TuringMachine/Build/Wrappers exit=0
+14/34 START TCSlib/Complexity/TuringMachine/Build/Embed
+14/34 END TCSlib/Complexity/TuringMachine/Build/Embed exit=0
+15/34 START TCSlib/Complexity/TuringMachine/Build/Loop
+15/34 END TCSlib/Complexity/TuringMachine/Build/Loop exit=0
+16/34 START TCSlib/Complexity/TuringMachine/Build/Primitives
+16/34 END TCSlib/Complexity/TuringMachine/Build/Primitives exit=0
+17/34 START TCSlib/Complexity/ClassNP/PolyTime
+17/34 END TCSlib/Complexity/ClassNP/PolyTime exit=0
+18/34 START TCSlib/Complexity/ClassNP/PolyTimePairing
+18/34 END TCSlib/Complexity/ClassNP/PolyTimePairing exit=0
+19/34 START TCSlib/Complexity/Randomized/PolyExpr
+19/34 END TCSlib/Complexity/Randomized/PolyExpr exit=0
+20/34 START TCSlib/Complexity/Randomized/PPT
+20/34 END TCSlib/Complexity/Randomized/PPT exit=0
+21/34 START TCSlib/Cryptography/Foundations/Probability
+21/34 END TCSlib/Cryptography/Foundations/Probability exit=0
+22/34 START TCSlib/InformationTheory/FinDist
+22/34 END TCSlib/InformationTheory/FinDist exit=0
+23/34 START TCSlib/InformationTheory/StatisticalDistance
+23/34 END TCSlib/InformationTheory/StatisticalDistance exit=0
+24/34 START TCSlib/Cryptography/Foundations/Experiments
+24/34 END TCSlib/Cryptography/Foundations/Experiments exit=0
+25/34 START TCSlib/Cryptography/HardcoreBit/Basic
+25/34 END TCSlib/Cryptography/HardcoreBit/Basic exit=0
+26/34 START TCSlib/Cryptography/Foundations/BitLists
+26/34 END TCSlib/Cryptography/Foundations/BitLists exit=0
+27/34 START TCSlib/Cryptography/Asymptotic/Adversary
+27/34 END TCSlib/Cryptography/Asymptotic/Adversary exit=0
+28/34 START TCSlib/InformationTheory/Entropy
+28/34 END TCSlib/InformationTheory/Entropy exit=0
+29/34 START TCSlib/InformationTheory/UniversalHashing
+29/34 END TCSlib/InformationTheory/UniversalHashing exit=0
+30/34 START TCSlib/InformationTheory/LeftoverHash
+30/34 END TCSlib/InformationTheory/LeftoverHash exit=0
+31/34 START TCSlib/InformationTheory/Extractors
+31/34 END TCSlib/InformationTheory/Extractors exit=0
+32/34 START TCSlib/InformationTheory/Samples
+32/34 END TCSlib/InformationTheory/Samples exit=0
+33/34 START TCSlib/Cryptography/Randomness/Extraction/Rejection
+33/34 END TCSlib/Cryptography/Randomness/Extraction/Rejection exit=1
+START 2026-11-14T05:48:12.847571+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Randomness/Extraction/Rejection
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:67:2: error: unsolved goals
+case h₀
+α : Type u_1
+β : Type u_2
+inst✝² : Fintype α
+inst✝¹ : Fintype β
+inst✝ : DecidableEq β
+p : FinDist α
+f : α → β
+g : β → ℝ
+a : α
+a✝¹ : a ∈ univ
+b : β
+a✝ : b ∈ univ
+hba : b ≠ f a
+⊢ 0 * g b = 0
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:152:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.tupleEquiv_apply`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:157:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.tupleEquiv_symm_apply`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:179:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.select_zero`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:183:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Randomness.Rejection.select_succ`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:232:4: error: No goals to be solved
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:254:12: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵h̵d̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:256:14: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp [hd̵,̵ ̵h̵xa, ← mul_sum, q.sum_prob]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:257:14: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp [hd̵,̵ ̵h̵xa]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:266:31: warning: This simp argument is unused:
+  hd
+
+Hint: Omit it from the simp argument list.
+  simp [hd̵,̵ ̵h̵xa]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:298:29: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  if True then ?t else ?e
+in the target expression
+  (if true = true then (↑(Fintype.card α))⁻¹ else 0) = (FinDist.uniform α).prob a
+
+α : Type u_1
+inst✝² : Fintype α
+inst✝¹ : DecidableEq α
+inst✝ : Nonempty α
+D : α → Bool
+t : ℕ
+a : α
+ha : a ∈ {a | D a = true}
+⊢ (if true = true then (↑(Fintype.card α))⁻¹ else 0) = (FinDist.uniform α).prob a
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:332:6: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:364:6: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    (if _a then (↑(#{a | D a = true}))⁻¹ else 0) =
+      if D a = true then (↑(Fintype.card α))⁻¹ / (FinDist.uniform α).probTrue D else 0
+Error: Application type mismatch: The argument
+  decidableMem a {a | D a = true}
+has type
+  Decidable (a ∈ {a | D a = true})
+but is expected to have type
+  Decidable _a
+in the application
+  @ite ℝ _a (decidableMem a {a | D a = true})
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+α : Type u_1
+inst✝² : Fintype α
+inst✝¹ : DecidableEq α
+inst✝ : Nonempty α
+D : α → Bool
+hs : {a | D a = true}.Nonempty
+a : α
+hm : a ∈ {a | D a = true} ↔ D a = true
+⊢ (if a ∈ {a | D a = true} then (↑(#{a | D a = true}))⁻¹ else 0) =
+    if D a = true then (↑(Fintype.card α))⁻¹ / (FinDist.uniform α).probTrue D else 0
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:383:21: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+FAIL(TCSlib/Cryptography/Randomness/Extraction/Rejection): lean exited with status 1
+FAIL(TCSlib/Cryptography/Randomness/Extraction/Rejection): error diagnostics reported
+FAIL(TCSlib/Cryptography/Randomness/Extraction/Rejection): no fresh .olean produced
+        4.75 real         3.71 user         1.43 sys
+          2160689152  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173071  page reclaims
+                9837  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                 494  voluntary context switches
+               37071  involuntary context switches
+            33593755  instructions retired
+            20703949  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-14T05:48:17.607173+00:00
+EXIT 1
+

@@ -1,0 +1,36 @@
+START 2026-11-14T05:45:52.084490+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Finite
+TCSlib/Complexity/TuringMachine/Finite.lean:178:37: warning: This simp argument is unused:
+  hi
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, hs, hi̵,̵ ̵h̵w]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Finite.lean:178:41: warning: This simp argument is unused:
+  hw
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, hs, hi,̵ ̵h̵w̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+        2.48 real         1.77 user         0.95 sys
+          1429078016  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              120349  page reclaims
+                  46  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   4  signals received
+                  19  voluntary context switches
+               15519  involuntary context switches
+            33924683  instructions retired
+            26116905  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-14T05:45:54.579584+00:00
+EXIT 0

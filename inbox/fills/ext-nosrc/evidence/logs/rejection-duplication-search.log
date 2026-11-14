@@ -1,0 +1,127 @@
+TCSlib/Cryptography/Foundations/BitLists.lean:139:  rw [List.length_flatten, List.map_map, show (List.length ∘ g) = fun _ => k from funext hg,
+TCSlib/Cryptography/Foundations/BitLists.lean:146:  rw [List.length_flatten, List.map_map,
+TCSlib/Complexity/Randomized/Inclusions.lean:384:    -- rejection is a zero vote count, of probability `(1 - s)^K`
+TCSlib/Complexity/Randomized/BPLInP.lean:236:  rw [dpInit, codesW_eq, mapW_pairEncode, decWords_encWords, List.map_map, vecW]
+TCSlib/Complexity/Randomized/BPLInP.lean:249:  rw [mapW_pairEncode, decWords_encWords, List.map_map, vecW]
+TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean:29:* `uprob_comp_eq_probTrue_map`: the probability that a test accepts a sample is its acceptance
+TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean:50:theorem uprob_comp_eq_probTrue_map (X : σ → γ) (D : γ → Bool) :
+TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean:60:the distinguisher `decide ∘ T`; in both directions `uprob_comp_eq_probTrue_map` turns the
+TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean:66:    rw [← uprob_comp_eq_probTrue_map, ← uprob_comp_eq_probTrue_map]
+TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean:72:    rw [hX, hY, uprob_comp_eq_probTrue_map X (fun g => decide (T g)),
+TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean:73:      uprob_comp_eq_probTrue_map Y (fun g => decide (T g))]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:554:rejection-sampled positions that `weak_to_strong` subtracts). The concrete inequality is
+TCSlib/Cryptography/Asymptotic/OneWay.lean:628:`m = 2nq(n)` and a rejection-sampled position (statistical term absorbed). The direct product
+TCSlib/Cryptography/Asymptotic/OneWay.lean:646:position `i ← [m(n)]` by rejection (`n` trials of `kk` bits, D10), evaluates `f` on the `m(n)`
+TCSlib/Cryptography/Asymptotic/OneWay.lean:657:(`statClose_rejectionSample`); `YaoMachine.statClose_sampleAll` and
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:36:  `foldr`/`findSome?` of `OneWay.yaoInverter` and `rejectionSample`.
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:38:  rejection-sampled positions of Algorithm 38.5 are within `(T + 1)·δ` of uniform.
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:42:  `exists_unaryOf`, and the rejection sampler of the position `exists_posMachine`.
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:250:    rw [List.ofFn_eq_map, List.flatMap_def, ← List.map_coe_finRange, List.map_map]
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:268:copies are `N·δ`-close (the `T + 1` rounds of rejection-sampled positions of
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:681:rejection sampler of Algorithm 38.5 reads each `k`-bit trial as a number below `2^k ≤ 2m`).
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:705:/-! ### The rejection sampler of the position -/
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:817:/-- **The position sampler** [PS10, Algorithm 38.5, "`i ← [m]`", by rejection (D10)]: a
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:819:`rejectionSample m k n` on the `n` trials of `k` bits encoded in `trials` (`0` on failure),
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:829:which is the `findSome?` of `rejectionSample` (`findSome?_eq_bind_find?`,
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:835:          ((rejectionSample M kk n fun t j => pb' (finProdFinEquiv (t, j))).getD ⟨0, hM⟩).val true := by
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:888:  have hrs : rejectionSample M kk n (fun t j => pb' (finProdFinEquiv (t, j))) =
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:891:    simp only [rejectionSample_def]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:436:  rw [List.ofFn_mul, List.flatMap_def, ← List.map_coe_finRange, List.map_map, List.ofFn_eq_map]
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:127:experiments, approximated by the rejection samplers of `Asymptotic/Sampling.lean` (D6, D10).
+TCSlib/Complexity/Randomized/UniformSample.lean:19:[AB09, Exercise 7.1]: rejection sampling. Read `k` blocks of `L = ⌈log₂ N⌉` fair coins; output
+TCSlib/Complexity/Randomized/Repetition.lean:23:bounded number of attempts as strict PPT", Claims 123.d and 128.a), rejection samplers
+TCSlib/Complexity/Randomized/Repetition.lean:179:[PS10, Theorem 87.3], rejection sampling (D10), the truncated simulators
+TCSlib/Complexity/Randomized/Matching.lean:198:  simp only [BinArith.encMat, lovaszRows, List.map_map]
+TCSlib/Complexity/Randomized/Matching.lean:214:  simp only [BinArith.encRow, List.map_map]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:18:# Sampling devices: statistical closeness, rejection sampling, random permutations
+TCSlib/Cryptography/Asymptotic/Sampling.lean:23:rejection sampling, and every theorem carries the explicit statistical term. The file is
+TCSlib/Cryptography/Asymptotic/Sampling.lean:40:* `rejectionSample m k T` — `T` trials of `k` bits read as a number, the first one below `m`:
+TCSlib/Cryptography/Asymptotic/Sampling.lean:49:* The permutation sampler `permFromCoins n k T` (Fisher–Yates with rejection-sampled
+TCSlib/Cryptography/Asymptotic/Sampling.lean:67:* `TCSlib.Cryptography.uniformFromBits`, `TCSlib.Cryptography.rejectionSample` — one rejection
+TCSlib/Cryptography/Asymptotic/Sampling.lean:81:* `TCSlib.Cryptography.rejectionSample_uniform_of_some`,
+TCSlib/Cryptography/Asymptotic/Sampling.lean:82:  `TCSlib.Cryptography.uprob_rejectionSample_none`,
+TCSlib/Cryptography/Asymptotic/Sampling.lean:83:  `TCSlib.Cryptography.statClose_rejectionSample` — the rejection sampler.
+TCSlib/Cryptography/Asymptotic/Sampling.lean:248:"replace the ideal sampler by the rejection sampler" step of the campaign (C10). -/
+TCSlib/Cryptography/Asymptotic/Sampling.lean:457:/-- One rejection trial: `k` bits read as a number, accepted iff below `m`. -/
+TCSlib/Cryptography/Asymptotic/Sampling.lean:528:the rejection sampler (lemma C4 of the Chapter 2 inventory; `SamplePrime`
+TCSlib/Cryptography/Asymptotic/Sampling.lean:700:/-- `T` rejection trials of `k` bits each; the first accepted value. Uniform on `Fin m`
+TCSlib/Cryptography/Asymptotic/Sampling.lean:703:def rejectionSample (m k T : ℕ) (b : Fin T → Fin k → Bool) : Option (Fin m) :=
+TCSlib/Cryptography/Asymptotic/Sampling.lean:706:/-- The defining equation of `rejectionSample`: `rejectionSample m k T b =
+TCSlib/Cryptography/Asymptotic/Sampling.lean:708:theorem rejectionSample_def (m k T : ℕ) (b : Fin T → Fin k → Bool) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:709:    rejectionSample m k T b =
+TCSlib/Cryptography/Asymptotic/Sampling.lean:712:/-- The rejection sampler fails exactly when every trial fails. -/
+TCSlib/Cryptography/Asymptotic/Sampling.lean:713:theorem rejectionSample_eq_none_iff (m k T : ℕ) (b : Fin T → Fin k → Bool) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:714:    rejectionSample m k T b = none ↔ ∀ t, uniformFromBits m k (b t) = none := by
+TCSlib/Cryptography/Asymptotic/Sampling.lean:715:  unfold rejectionSample
+TCSlib/Cryptography/Asymptotic/Sampling.lean:719:/-- The rejection sampler is the first hit of the event `{x < m}` among the `T` numbers read
+TCSlib/Cryptography/Asymptotic/Sampling.lean:721:theorem map_rejectionSample_eq_firstHit {m k T : ℕ} (hk : m ≤ 2 ^ k) (b : Fin T → Fin k → Bool) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:722:    (rejectionSample m k T b).map (fun i : Fin m => (⟨i.val, lt_of_lt_of_le i.2 hk⟩ : Fin (2 ^ k))) =
+TCSlib/Cryptography/Asymptotic/Sampling.lean:724:  unfold rejectionSample firstHit
+TCSlib/Cryptography/Asymptotic/Sampling.lean:731:/-- Lemma C4 for the rejection sampler: conditioned on success the output is uniform — any two
+TCSlib/Cryptography/Asymptotic/Sampling.lean:735:**Proof sketch.** By `map_rejectionSample_eq_firstHit` the event `{output = i}` is the event
+TCSlib/Cryptography/Asymptotic/Sampling.lean:740:theorem rejectionSample_uniform_of_some (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k) (i j : Fin m) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:741:    uprob (fun b : Fin T → Fin k → Bool => rejectionSample m k T b = some i) =
+TCSlib/Cryptography/Asymptotic/Sampling.lean:742:      uprob (fun b : Fin T → Fin k → Bool => rejectionSample m k T b = some j) := by
+TCSlib/Cryptography/Asymptotic/Sampling.lean:747:  have key : ∀ (b : Fin T → Fin k → Bool) (i : Fin m), rejectionSample m k T b = some i ↔
+TCSlib/Cryptography/Asymptotic/Sampling.lean:750:    rw [← map_rejectionSample_eq_firstHit hk, Option.map_eq_some_iff]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:766:/-- The rejection sampler fails with probability exactly `(1 - m/2^k)^T` (C4, the no-hit
+TCSlib/Cryptography/Asymptotic/Sampling.lean:768:theorem uprob_rejectionSample_none (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:769:    uprob (fun b : Fin T → Fin k → Bool => rejectionSample m k T b = none) =
+TCSlib/Cryptography/Asymptotic/Sampling.lean:772:  rw [OneWay.uprob_congr fun b => rejectionSample_eq_none_iff m k T b,
+TCSlib/Cryptography/Asymptotic/Sampling.lean:779:theorem uprob_rejectionSample_none_le_half_pow (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:781:    uprob (fun b : Fin T → Fin k → Bool => rejectionSample m k T b = none) ≤ (1 / 2 : ℝ) ^ T := by
+TCSlib/Cryptography/Asymptotic/Sampling.lean:782:  rw [uprob_rejectionSample_none m k T hm hk]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:825:**Proof sketch.** Let `f = (1 - m/2^k)^T` (`uprob_rejectionSample_none`) and `q` the common
+TCSlib/Cryptography/Asymptotic/Sampling.lean:826:probability of `{output = i}` (`rejectionSample_uniform_of_some`); the `m + 1` events
+TCSlib/Cryptography/Asymptotic/Sampling.lean:829:in `[|S| q, |S| q + f]`. Alternatively: `map_rejectionSample_eq_firstHit`, the coordinatewise
+TCSlib/Cryptography/Asymptotic/Sampling.lean:833:theorem statClose_rejectionSample (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k) (d : Fin m) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:834:    StatClose (fun b : Fin T → Fin k → Bool => (rejectionSample m k T b).getD d) (id : Fin m → Fin m)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:855:      fun b => (rejectionSample m k T b).getD d := by
+TCSlib/Cryptography/Asymptotic/Sampling.lean:857:    rw [← map_rejectionSample_eq_firstHit hk]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:858:    cases rejectionSample m k T b with
+TCSlib/Cryptography/Asymptotic/Sampling.lean:872:`statClose_firstHit`, `statClose_rejectionSample` and `statClose_permFromCoins` (lemma C4 in
+TCSlib/Cryptography/Asymptotic/Permutations.lean:21:with offsets drawn by the rejection sampler `rejectionSample` of `Asymptotic/Sampling.lean`,
+TCSlib/Cryptography/Asymptotic/Permutations.lean:45:`n * (1 - 1/2^k)^T`; per-trial failure `≤ 1/2` holds for a single `rejectionSample` with
+TCSlib/Cryptography/Asymptotic/Permutations.lean:46:`2^k ≤ 2 m` (`uprob_rejectionSample_none_le_half_pow`).
+TCSlib/Cryptography/Asymptotic/Permutations.lean:59:  `Fin n` from offsets, and from rejection-sampled offsets.
+TCSlib/Cryptography/Asymptotic/Permutations.lean:106:/-- A permutation from `n` rejection samplers (`T` trials of `k` bits for position `i`,
+TCSlib/Cryptography/Asymptotic/Permutations.lean:110:  if h : ∀ i : Fin n, (rejectionSample (n - i) k T (b i)).isSome then
+TCSlib/Cryptography/Asymptotic/Permutations.lean:111:    some (fisherYates n fun i => ((rejectionSample (n - i) k T (b i)).get (h i)).val)
+TCSlib/Cryptography/Asymptotic/Permutations.lean:114:/-- The permutation sampler fails exactly when some position's rejection sampler fails. -/
+TCSlib/Cryptography/Asymptotic/Permutations.lean:116:    permFromCoins n k T b = none ↔ ∃ i : Fin n, rejectionSample (n - i) k T (b i) = none := by
+TCSlib/Cryptography/Asymptotic/Permutations.lean:296:`c` is the conjunction over the positions of `{rejectionSample (n - i) k T (b i) = some (c i)}`.
+TCSlib/Cryptography/Asymptotic/Permutations.lean:306:      ∀ i : Fin n, rejectionSample (n - i) k T (b i) = some ⟨c i, hc i⟩ := by
+TCSlib/Cryptography/Asymptotic/Permutations.lean:312:      have hd : (fun i : Fin n => ((rejectionSample (n - i) k T (b i)).get (h i)).val) = c :=
+TCSlib/Cryptography/Asymptotic/Permutations.lean:336:`{rejectionSample (n - i) k T (b i) = some (c i)}` are independent across `i` (product form
+TCSlib/Cryptography/Asymptotic/Permutations.lean:339:`q_i = (1 - f_i) / (n - i)` by `rejectionSample_uniform_of_some` and
+TCSlib/Cryptography/Asymptotic/Permutations.lean:340:`uprob_rejectionSample_none` (`0 < n - i ≤ 2^k` from `hk`). The offset map
+TCSlib/Cryptography/Asymptotic/Permutations.lean:349:`{permFromCoins = some π}` is the event `{∀ i, rejectionSample (n - i) k T (b i) = some (c_π i)}`
+TCSlib/Cryptography/Asymptotic/Permutations.lean:359:    (fun i x => rejectionSample (n - i) k T x = some ⟨c i, (mem_fyOffsets.1 hc) i⟩)
+TCSlib/Cryptography/Asymptotic/Permutations.lean:361:    (fun i x => rejectionSample (n - i) k T x = some ⟨c' i, (mem_fyOffsets.1 hc') i⟩)
+TCSlib/Cryptography/Asymptotic/Permutations.lean:366:  exact rejectionSample_uniform_of_some (n - i) k T (by omega) (by omega) _ _
+TCSlib/Cryptography/Asymptotic/Permutations.lean:378:`uprob_rejectionSample_none` at range `n - i ≥ 1`, and monotonicity of `x ↦ x^T`. -/
+TCSlib/Cryptography/Asymptotic/Permutations.lean:384:      (∃ i : Fin n, rejectionSample (n - i) k T (b i) = none) ↔
+TCSlib/Cryptography/Asymptotic/Permutations.lean:385:        ∃ i ∈ (univ : Finset (Fin n)), rejectionSample (n - i) k T (b i) = none := by
+TCSlib/Cryptography/Asymptotic/Permutations.lean:389:    rejectionSample (n - i) k T (b i) = none).trans ?_
+TCSlib/Cryptography/Asymptotic/Permutations.lean:391:      uprob (fun b : Fin n → Fin T → Fin k → Bool => rejectionSample (n - i) k T (b i) = none) ≤
+TCSlib/Cryptography/Asymptotic/Permutations.lean:396:      (fun c : Fin T → Fin k → Bool => rejectionSample (n - i) k T c = none),
+TCSlib/Cryptography/Asymptotic/Permutations.lean:397:      uprob_rejectionSample_none _ _ _ (by omega) (by omega)]
+TCSlib/Cryptography/Asymptotic/Permutations.lean:405:        uprob (fun b : Fin n → Fin T → Fin k → Bool => rejectionSample (n - i) k T (b i) = none)
+TCSlib/Cryptography/Asymptotic/Permutations.lean:427:and every rejection trial of every position accepts with probability at least `1/(2n)` (D10).
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:18:sample a position `i ← [m]` by rejection (D10), sample `m` fresh inputs, evaluate `f` on them,
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:25:[Gar26, Figure 2.2] up to the statistical term `(T + 1)·2^{-n}` of the rejection-sampled
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:26:positions (`statClose_pi`, `statClose_rejectionSample`).
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:161:/-- The trial length `⌊log₂ m⌋ + 1` of the rejection sampler of `i ← [m]`: the least `k` with
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:505:/-- The rejection-sampled position (`0` on failure). -/
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:507:  (rejectionSample M kk n (pbOf h a)).getD ⟨0, hM⟩
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:531:/-- The typed coins of a round read off the raw round coins: the position by rejection, the
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:539:(`statClose_rejectionSample` for the position, bijections for the rest). -/
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:545:    (statClose_rejectionSample M kk n hM hMk ⟨0, hM⟩).comp_pushesUniform (pushesUniform_pbOf h)
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:627:      List.replicate ((rejectionSample (D.m.eval n) (kkOf (D.m.eval n)) n
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:779:      List.replicate ((rejectionSample (D.m.eval n) (kkOf (D.m.eval n)) n
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:884:term `(T(n) + 1)·2^{-n}` of the rejection-sampled positions (D10).
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:894:(`uprob_rejectionSample_none_le_half_pow`). -/
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:916:        List.replicate ((rejectionSample (D.m.eval n) (kkOf (D.m.eval n)) n
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:938:    have h1 := uprob_rejectionSample_none (D.m.eval n) (kkOf (D.m.eval n)) n hM
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:940:    have h2 := uprob_rejectionSample_none_le_half_pow (D.m.eval n) (kkOf (D.m.eval n)) n hM
+TCSlib/Complexity/Randomized/UPathParse.lean:43:/-- A rejection has probability `q` exactly when `q = 0`. -/
