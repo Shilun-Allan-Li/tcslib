@@ -346,9 +346,18 @@ def check_facade(path: Path):
         mod = ".".join(child.relative_to(ROOT).with_suffix("").parts)
         if not is_facade(child) and f"import {mod}" not in src:
             # A grandchild may legitimately be imported via its own facade.
-            inter = child.parent / (child.parent.name + ".lean")
-            covered = inter != path and inter.exists() and \
-                f"import {'.'.join(inter.relative_to(ROOT).with_suffix('').parts)}" in src
+            # Walk the intermediate facades `D.lean` beside each directory `D` between the
+            # child and this facade; the child is covered when one of them is imported here
+            # (that facade's own check then requires the child).
+            covered = False
+            d = child.parent
+            while d != child_dir and child_dir in d.parents:
+                inter = d.with_suffix(".lean")
+                inter_mod = ".".join(inter.relative_to(ROOT).with_suffix("").parts)
+                if inter.exists() and f"import {inter_mod}" in src:
+                    covered = True
+                    break
+                d = d.parent
             if not covered:
                 note("FAIL", rel, f"facade does not import child module `{mod}`")
 
