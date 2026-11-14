@@ -253,14 +253,6 @@ private theorem validW_pairW (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bo
     validW g w = (wfW n w && decide (wT w = List.ofFn (g (pairW n w)))) := by
   rw [validW_eq, tagL_eq, pairW_eq]
 
-/-- An encryption reads the tag function at its pair only:
-`encW f g r m = ctW ⟦r⟧ c₁ ⟦g (pairV n ⟦r⟧ c₁)⟧`, `c₁ = maskL f r m`. -/
-private theorem encW_pairV (f : (Fin n → Bool) → (Fin n → Bool))
-    (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r : Fin n → Bool) (m : List Bool) :
-    encW f g r m = ctW (List.ofFn r) (maskL f r m)
-      (List.ofFn (g (pairV n (List.ofFn r) (maskL f r m)))) := by
-  rw [encW_eq, tagL_eq]
-
 /-- **A fresh guess hits the random tag with probability at most `2^{-2n}`:** under the
 invariant, `𝔼_R [hitW (ovr M R) s w] ≤ 2^{-2n}` for `n > 0`.
 
@@ -415,7 +407,7 @@ theorem expect_prob_bad_le (hn : 0 < n) (hd : d = 6 * n + 4) (hi2 : ins 2 = n + 
         exact expect_const _ _
     match i, x, k, ih, IH, fresh with
     | 0, x, k, ih, IH, fresh =>
-      simp only [ettStep_enc, hitQ_zero, encW_pairV]
+      simp only [ettStep_enc, hitQ_zero, encW_eq_ctW]
       exact fresh (fun r => pairV n (List.ofFn r) (maskL f r (List.ofFn x)))
         (fun r t => padFin _ (ctW (List.ofFn r) (maskL f r (List.ofFn x)) (List.ofFn t)))
         (fun r _ => (s.1, pairV n (List.ofFn r) (maskL f r (List.ofFn x)) :: s.2))
@@ -477,7 +469,7 @@ theorem expect_prob_bad_le (hn : 0 < n) (hd : d = 6 * n + 4) (hi2 : ins 2 = n + 
           rw [ctW_eq, length_pairEncode, length_pairEncode, List.length_ofFn, hl r,
             List.length_ofFn, hd]
           omega
-        simp only [ettStep_challenge_none, hitQ_two, encW_pairV]
+        simp only [ettStep_challenge_none, hitQ_two, encW_eq_ctW]
         exact fresh (fun r => pairV n (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b
             (List.ofFn mm))))
           (fun r t => padFin _ (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b

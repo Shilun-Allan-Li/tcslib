@@ -429,7 +429,9 @@ theorem dHandler_init_hstate (n : ℕ) : (dHandler q E hE b).init n = dHState q 
 /-- The adversary's input is empty: `(dHandler q E hE b).advInput n z ω = []`. -/
 theorem dHandler_advInput (n : ℕ) (z : List Bool)
     (ω : Fin ((dHandler q E hE b).seedLen.eval n) → Bool) :
-    (dHandler q E hE b).advInput n z ω = [] := rfl
+    (dHandler q E hE b).advInput n z ω = [] := by
+  rw [InteractiveHandler.advInput_eq]
+  rfl
 
 /-- The finalization outputs the adversary's bit and asks nothing:
 `(dHandler q E hE b).finish n z ω s a = pure (padFin _ ⟦a⟧)`. -/
@@ -491,7 +493,7 @@ private theorem fields_input {i : Fin 3} (x L : List Bool) (j : ℕ)
     (InteractiveHandler.rS_input ..).trans (ofFn_dHState q E hE b n j o)
   have hcnt : rCnt (InteractiveHandler.input n z (List.ofFn (dHSeed q E hE b n (k, W)))
       (List.ofFn (dHState q E hE b n j o)) i x L) = List.replicate j true := by
-    rw [rCnt, hS, h₁]
+    rw [InteractiveHandler.rCnt_input, ofFn_dHState, h₁]
   have hU := InteractiveHandler.rU_input (k := 3) n z (List.ofFn (dHSeed q E hE b n (k, W)))
     (List.ofFn (dHState q E hE b n j o)) i x L
   refine ⟨hU, InteractiveHandler.rS_input .., InteractiveHandler.rI_input ..,
@@ -519,15 +521,15 @@ private theorem recBits_fields (o : Option (Fin (ettCt.eval n) → Bool)) :
     o.isSome :: (recBits n o).drop 1 = recBits n o := by
   cases o <;> rfl
 
-/-- The outer answer recorded in a one-entry log. -/
-private theorem rY_one (w : List Bool) (x' y : List Bool)
-    (hL : rL w = pairEncode (pairEncode [] (pairEncode x' y)) []) : rAns w = y := by
+/-- The outer answer recorded in a one-entry log (any oracle index word `u`). -/
+private theorem rY_one (w : List Bool) (u x' y : List Bool)
+    (hL : rL w = pairEncode (pairEncode u (pairEncode x' y)) []) : rAns w = y := by
   rw [InteractiveHandler.rAns_eq, hL, pairFstD_pairEncode, pairSndD_pairEncode,
     pairSndD_pairEncode]
 
 /-- A one-entry log is not empty. -/
-private theorem log_ne_nil (x' y : List Bool) :
-    decide (pairEncode (pairEncode [] (pairEncode x' y)) [] = []) = false :=
+private theorem log_ne_nil (u x' y : List Bool) :
+    decide (pairEncode (pairEncode u (pairEncode x' y)) [] = []) = false :=
   decide_eq_false (pairEncode_ne_nil _ _)
 
 include hFE in
@@ -588,7 +590,7 @@ theorem dHandler_impl_enc (x : Fin ((ettDin 0).eval n) → Bool) (j : ℕ)
         (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((tagOut 0).eval n)
           (List.ofFn (dTape q n W j hj) ++ maskL (F n k) (dTape q n W j hj) (List.ofFn x))))
           (List.ofFn y))) []) j o hj
-    have hY := rY_one _ _ _ hL
+    have hY := rY_one _ _ _ _ hL
     have hct : List.ofFn (padFin ((ettDout 0).eval n) (ctW (List.ofFn (dTape q n W j hj))
         (maskL (F n k) (dTape q n W j hj) (List.ofFn x)) (List.ofFn y))) =
         ctW (List.ofFn (dTape q n W j hj)) (maskL (F n k) (dTape q n W j hj) (List.ofFn x))
@@ -676,7 +678,7 @@ theorem dHandler_impl_dec_wf (x : Fin ((ettDin 1).eval n) → Bool) (j : ℕ)
       fields_input q E hE b n z k W (i := 1) (List.ofFn x)
         (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((tagOut 0).eval n)
           (wR (List.ofFn x) ++ wC (List.ofFn x)))) (List.ofFn y))) []) j o hj
-    have hY := rY_one _ _ _ hL
+    have hY := rY_one _ _ _ _ hL
     have hans : (if rOK (InteractiveHandler.input n z (List.ofFn (dHSeed q E hE b n (k, W)))
         (List.ofFn (dHState q E hE b n j o)) (1 : Fin 3) (List.ofFn x)
         (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((tagOut 0).eval n)
@@ -802,7 +804,7 @@ theorem dHandler_impl_challenge_none (x : Fin ((ettDin 2).eval n) → Bool) (j :
           (List.ofFn (dTape q n W j hj) ++
             maskL (F n k) (dTape q n W j hj) (AdaptiveCPA.msgOf n b (List.ofFn x)))))
           (List.ofFn y))) []) j none hj
-    have hY := rY_one _ _ _ hL
+    have hY := rY_one _ _ _ _ hL
     have hlen := length_ctW_tag n (List.length_ofFn (f := dTape q n W j hj)) hm
       (by rw [List.length_ofFn, tagOut_eq, tagLen_eval] : (List.ofFn y).length = 2 * n)
     have hct : List.ofFn (padFin ((ettDout 2).eval n) (ctW (List.ofFn (dTape q n W j hj))

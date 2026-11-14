@@ -44,6 +44,7 @@ from tapes give `ettTape`, the experiment run by the PRF reduction.
 ## Main results
 
 * `ETTGame.ettStep_enc`, `_dec`, `_challenge_some`, `_challenge_none`: the answers.
+* `ETTGame.encW_eq_ctW`: an encryption reads the tag function at its pair only.
 * `ETTGame.length_encW`, `ETTGame.eq_ctW_of_wfW`: ciphertext lengths and canonical parsing.
 * `ETTGame.expect_ettTape`: nonces in advance have the law of fresh nonces.
 
@@ -101,6 +102,14 @@ def encW (f : (Fin n → Bool) → (Fin n → Bool)) (g : (Fin (2 * n) → Bool)
 theorem encW_eq (f : (Fin n → Bool) → (Fin n → Bool))
     (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r : Fin n → Bool) (m : List Bool) :
     encW f g r m = ctW (List.ofFn r) (maskL f r m) (tagL g (List.ofFn r) (maskL f r m)) := rfl
+
+/-- **An encryption reads the tag function at its pair only:**
+`encW f g r m = ctW ⟦r⟧ c₁ ⟦g (pairV n ⟦r⟧ c₁)⟧` with `c₁ = maskL f r m`. -/
+theorem encW_eq_ctW (f : (Fin n → Bool) → (Fin n → Bool))
+    (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r : Fin n → Bool) (m : List Bool) :
+    encW f g r m = ctW (List.ofFn r) (maskL f r m)
+      (List.ofFn (g (pairV n (List.ofFn r) (maskL f r m)))) := by
+  rw [encW_eq, tagL_eq]
 
 /-- The nonce field of a word: `wR w = pairFstD w`. -/
 def wR (w : List Bool) : List Bool := pairFstD w

@@ -1,0 +1,60 @@
+# Searches for the generic facts of step 3 (ripgrep over the tree of this fill, excluding EncryptThenTag/), 2026-11-14T05:45:50Z
+
+## rg -n 'AllOutputs fun p => P p\.2' TCSlib --glob '!**/EncryptThenTag/**'
+
+## rg -n 'expect_simulate_abs' TCSlib --glob '!**/EncryptThenTag/**'
+
+## rg -n 'theorem simulate_eq_of_abs' TCSlib --glob '!**/EncryptThenTag/**'
+TCSlib/Cryptography/Games/Simulate.lean:334:theorem simulate_eq_of_abs {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+TCSlib/Cryptography/Games/Simulate.lean:357:theorem simulate_eq_of_abs_bounded {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+
+## rg -n 'zipWith xor \(List\.zipWith xor' TCSlib --glob '!**/EncryptThenTag/**'
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:102:    List.zipWith xor (List.zipWith xor m p) p = m
+TCSlib/Cryptography/Foundations/BitLists.lean:80:    List.zipWith xor (List.zipWith xor a c) a = c := by
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:148:    List.zipWith xor (List.zipWith xor m p) p = m
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:171:    List.zipWith xor (List.zipWith xor m p) p = m
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:339:    List.zipWith xor (List.zipWith xor m p) p = m
+
+## rg -n 'zipWith_xor_cancel' TCSlib --glob '!**/EncryptThenTag/**'
+TCSlib/Cryptography/Foundations/BitLists.lean:31:* `TCSlib.Cryptography.zipWith_xor_cancel_left`: `(a ⊕ c) ⊕ a = c`.
+TCSlib/Cryptography/Foundations/BitLists.lean:79:theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:239:    pairSndD_pairEncode, zipWith_xor_cancel_left (by rw [hm, List.length_ofFn]), padFin_ofFn]
+
+## rg -n 'rY_one|rAns_one' TCSlib --glob '!**/EncryptThenTag/**'
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:445:private theorem rY_one (w : List Bool) (x' y : List Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:467:`y` in the log (`rY_one`), returns `⟨T_j, m ⊕ y⟩` and the state with count `j + 1`
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:494:    have hY := rY_one _ _ _ hL
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:553:    have hY := rY_one _ _ _ hL
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:637:    have hY := rY_one _ _ _ hL
+
+## rg -n 'theorem log_ne_nil' TCSlib --glob '!**/EncryptThenTag/**'
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:457:private theorem log_ne_nil (x' y : List Bool) :
+
+## rg -n 'theorem expect_toCompOn_outLen' TCSlib --glob '!**/EncryptThenTag/**'
+TCSlib/Cryptography/Games/Efficiency.lean:924:theorem expect_toCompOn_outLen {ins outs : Fin k → ℕ} {σ : Type}
+
+## rg -n 'theorem expect_fImpl_width' TCSlib --glob '!**/EncryptThenTag/**'
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:213:theorem expect_fImpl_width {ins outs : Fin 3 → ℕ} {d d' : ℕ} (hd : d = d') (c n : ℕ)
+
+## rg -n 'def lookup\b|theorem lookup_tblOf' TCSlib --glob '!**/EncryptThenTag/**'
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:349:def lookup (v : List Bool) : List Bool :=
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:472:theorem lookup_tblOf {i : ℕ} (val : ℕ → List Bool) (L : List (Fin i → Bool)) (p : Fin i → Bool) :
+
+## rg -n 'def keysL|def tagOf|def lookL' TCSlib --glob '!**/EncryptThenTag/**'
+
+## rg -n 'theorem recBits_fields' TCSlib --glob '!**/EncryptThenTag/**'
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:440:private theorem recBits_fields (o : Option (Fin (ctP.eval n) → Bool)) :
+
+## rg -n 'theorem fields_input' TCSlib --glob '!**/EncryptThenTag/**'
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:409:private theorem fields_input {i : Fin 3} (x L : List Bool) (j : ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:376:private theorem fields_input {i : Fin 2} (x : List Bool) (L : List Bool) (j : ℕ)
+
+## rg -n 'expect_lazyImpl|def lazyImpl' TCSlib --glob '!**/EncryptThenTag/**'
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:53:* `OracleFromPRF.Lazy`: the lazily sampled random function (`PRFGame.expect_lazyImpl`).
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:406:   (`PRFGame.expect_lazyImpl`). The bad event is that the challenge's `r*` was already asked or
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:372:from the empty state (`expect_lazyImpl`; the override of the empty state is the function itself);
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:391:    have h := expect_lazyImpl ins outs d n atk b hd hi2 (fun a => if P a then (1 : ℝ) else 0) (C r)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:25:(`expect_lazyImpl`): at a new point, resampling `R` there (`ProbComp.expect_sample_update`) is
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:38:* `PRFGame.expect_lazyImpl`: the random function sampled in advance is the lazy one.
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:149:noncomputable def lazyImpl : QueryImpl (bitSpec ins outs) (LState n d) unifSpec
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:351:theorem expect_lazyImpl (hd : d = 3 * n + 2) (hi2 : ins 2 = n + n) {α : Type} (G : α → ℝ)

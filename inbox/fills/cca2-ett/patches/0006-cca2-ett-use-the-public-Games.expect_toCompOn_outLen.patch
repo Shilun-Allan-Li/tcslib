@@ -1,0 +1,58 @@
+From c68fc02eb571ef0e4db84b0b0ff77b14f6c02697 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 14 Nov 2026 05:45:31 +0000
+Subject: [PATCH 6/8] cca2-ett: use the public Games.expect_toCompOn_outLen for
+ the width transport
+
+---
+ .../EncryptThenTag/CPAReduction.lean          | 20 +++----------------
+ 1 file changed, 3 insertions(+), 17 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
+index 2c5e20e87..978aa3fd5 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
+@@ -235,21 +235,6 @@ end Composed
+ 
+ /-! ### The reduction -/
+ 
+-/-- **The CPA experiment does not see the output width of an adversary on an input:** for
+-`d = d'`, the expected first output bit of the run through `bitCodec ins outs d` and through
+-`bitCodec ins outs d'` agree.
+-
+-**Proof sketch.** Substitute `d = d'`. -/
+-private theorem expect_fImpl_toCompOn_width {ins outs : Fin 3 → ℕ} {d d' : ℕ} (hd : d = d')
+-    (c n : ℕ) (atk : Attack) (b : Bool) (f : (Fin n → Bool) → (Fin n → Bool)) (B : NUPPT) (Q : ℕ)
+-    (x : List Bool) (r : B.Coins n) :
+-    expect (simulate (fImpl ins outs c n atk b f) (B.toCompOn (bitCodec ins outs d) n Q x r) none)
+-        (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) =
+-      expect (simulate (fImpl ins outs c n atk b f) (B.toCompOn (bitCodec ins outs d') n Q x r)
+-        none) (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) := by
+-  subst hd
+-  rfl
+-
+ /-- **Step 3 of [PS10, Thm 170.4]: the rejecting experiment with a random tag function is a CPA
+ experiment of the §3.9 scheme.** For a machine adversary `A` with budget `q` there is a machine
+ `B` such that, for every challenge bit `b`, every `n` and every pad function `f` on `n` bits, the
+@@ -267,7 +252,7 @@ against the CPA oracles into the handler's simulation of `A` composed with them
+ `ettLazyTape` with the tapes of `W` (`expect_simulate_abs_inv`, `comp_bAbs`, `ettLazyTape_bInv`).
+ Drawing `W` gives fresh tapes (`expect_ettLazyTape`), and the lazy experiment from the empty state
+ is the rejecting experiment averaged over `R` (`expect_ettImpl_lazy`; the empty tag table writes
+-nothing). Widths are transported by `expect_fImpl_toCompOn_width` and `expect_ettImpl_outLen`. -/
++nothing). Widths are transported by `Games.expect_toCompOn_outLen` and `expect_ettImpl_outLen`. -/
+ theorem exists_cpaStep (A : NUPPT) (q : PolyExpr) :
+     ∃ B : NUPPT, ∀ (b : Bool) (n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)),
+       expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool))) (fun R =>
+@@ -326,7 +311,8 @@ theorem exists_cpaStep (A : NUPPT) (q : PolyExpr) :
+               ((PolyExpr.const 1).eval n)) n (q.eval n) [] (φ₀ r)) ((none, []), 0))
+           (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) := by
+     intro W
+-    rw [expect_fImpl_toCompOn_width hout.symm, ← hQ,
++    rw [expect_toCompOn_outLen _ B n _ [] _ none hout.symm
++        (fun p => if p.1.headD false = true then (1 : ℝ) else 0), ← hQ,
+       ← hφ₂ [] (bHSeed q n W) (φ₀ r), bHandler_advInput, simulate_bind, simulate_comp,
+       OracleComp.bind_assoc, expect_bind]
+     simp only [OracleComp.pure_bind, bHandler_finish, simulate_pure, expect_pure]
+-- 
+2.43.0
+

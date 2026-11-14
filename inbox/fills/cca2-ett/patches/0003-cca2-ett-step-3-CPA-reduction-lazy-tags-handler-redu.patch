@@ -1,0 +1,1830 @@
+From 3fc373bb62edfd6d7af2ae755d498b5b6ebc7394 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 14 Nov 2026 05:11:32 +0000
+Subject: [PATCH 3/8] =?UTF-8?q?cca2-ett:=20step=203=20=E2=80=94=20CPA=20re?=
+ =?UTF-8?q?duction=20(lazy=20tags,=20handler,=20reduction)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .../PrivateKey/EncryptThenTag/CPAHandler.lean | 746 ++++++++++++++++++
+ .../EncryptThenTag/CPAReduction.lean          | 369 +++++++++
+ .../PrivateKey/EncryptThenTag/Forgery.lean    |  12 +-
+ .../PrivateKey/EncryptThenTag/Games.lean      |   8 +
+ .../PrivateKey/EncryptThenTag/Lazy.lean       | 573 ++++++++++++++
+ .../PrivateKey/EncryptThenTag/Tools.lean      |  26 +-
+ 6 files changed, 1723 insertions(+), 11 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean
+ create mode 100644 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
+ create mode 100644 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean
+new file mode 100644
+index 000000000..f279e6884
+--- /dev/null
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean
+@@ -0,0 +1,746 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Handler
++import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Lazy
++import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Handler
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The handler of the CPA reduction
++
++Step 3 of [PS10, Theorem 170.4]: the experiment that rejects fresh decryption queries is
++simulated by a CPA adversary against the §3.9 scheme. This file builds that adversary's handler
++(`bHandler`): a `Games.InteractiveHandler` from the CCA2 oracles of the encrypt-then-tag scheme
++(lengths `ettDin`, `ettDout`) to the CPA oracles of the §3.9 scheme (lengths `PRFGame.pkDin`,
++`PRFGame.pkDout`).
++
++The handler's seed is `q(n)` tag tapes of `2n` bits; its state is the table of its `Enc′` answers
++(`GGMRed.tblEnc` of the entries `(r ‖ c₁, t ‖ m)`, newest first), the query count and the
++challenge record (`bState`).
++- `Enc′` on `m`: ask the CPA encryption oracle, read its answer `⟨r, c₁⟩`, take the tag of
++  `r ‖ c₁` from the table, else from the record, else from the query's tape, answer
++  `⟨r, ⟨c₁, t⟩⟩` and add the entry.
++- `Dec′` on `w`: refuse the record; if `w` is well formed and the table holds its pair with its tag,
++  answer `⟨1, m⟩` with the table's message, else `⊥` (`lazyDec`). No outer query.
++- `Challenge`: the first time, ask the CPA challenge oracle on `⟨m₀, m₁⟩`, tag its answer as `Enc′`
++  does (without an entry) and record it; later repeat the record.
++Words read from the outer answer are padded to their lengths (`EnsembleLemmas.padL`), so every
++call is well formed for every outer answer. Lookups use GGM's table lookup (`GGMRed.lookup`,
++`GGMRed.lookup_tblOf`).
++
++## Main definitions
++
++* `ETTGame.encE`, `tblW`, `bStLen`, `bSeedLen`, `bState`, `bSeed`, `bTapeOf`.
++* `ETTGame.bHandler q hq b`: the handler.
++
++## Main results
++
++* `ETTGame.lookup_tblW`: the lookup on the table word is `lookL`.
++* `ETTGame.bHandler_impl_enc`, `_impl_dec`, `_impl_challenge_some`, `_impl_challenge_none`: its
++  answers on encoded states.
++* `ETTGame.bHandler_finish`, `bHandler_init_hstate`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 170.4 (book pp. 170–171).
++-/
++
++namespace TCSlib.Cryptography.Composability.ETTGame
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++open TCSlib.Cryptography.Games.InteractiveHandler (rU rW rS rI rX rL rAns)
++open TCSlib.Cryptography.Composability.PRFGame (pkDin pkDout ctP)
++
++/-! ### The table word -/
++
++section Table
++
++variable {n : ℕ}
++
++/-- The string entry of a lazy-table entry `(p, t, m)`: `(⟦p⟧, ⟦t⟧ ++ m)`. -/
++def encE (e : LEntry n) : List Bool × List Bool := (List.ofFn e.1, List.ofFn e.2.1 ++ e.2.2)
++
++/-- `encE e = (⟦e.1⟧, ⟦e.2.1⟧ ++ e.2.2)`. -/
++theorem encE_eq (e : LEntry n) : encE e = (List.ofFn e.1, List.ofFn e.2.1 ++ e.2.2) := rfl
++
++/-- **The table word** of a lazy table: the nested pairs of its string entries (`GGMRed.tblEnc`). -/
++def tblW (L : List (LEntry n)) : List Bool := GGMRed.tblEnc (L.map encE)
++
++/-- `tblW L = GGMRed.tblEnc (L.map encE)`. -/
++theorem tblW_eq (L : List (LEntry n)) : tblW L = GGMRed.tblEnc (L.map encE) := rfl
++
++/-- The table word of the empty table is empty. -/
++theorem tblW_nil : tblW ([] : List (LEntry n)) = [] := by
++  rw [tblW_eq, List.map_nil, GGMRed.tblEnc_nil]
++
++/-- A new entry is the first pair of the table word:
++`tblW (e :: L) = ⟨⟨⟦p⟧, ⟦t⟧ ++ m⟩, tblW L⟩`. -/
++theorem tblW_cons (e : LEntry n) (L : List (LEntry n)) :
++    tblW (e :: L) = pairEncode (pairEncode (List.ofFn e.1) (List.ofFn e.2.1 ++ e.2.2)) (tblW L) := by
++  rw [tblW_eq, tblW_eq, List.map_cons, GGMRed.tblEnc_cons, encE_eq]
++
++/-- With `n`-bit messages, each entry adds `14n + 6` bits:
++`|tblW L| = |L| · (14n + 6)`. -/
++theorem length_tblW (L : List (LEntry n)) (hL : ∀ e ∈ L, e.2.2.length = n) :
++    (tblW L).length = L.length * (14 * n + 6) := by
++  induction L with
++  | nil => rw [tblW_nil, List.length_nil, List.length_nil, Nat.zero_mul]
++  | cons e L ih =>
++    rw [tblW_cons, length_pairEncode, length_pairEncode, List.length_append, List.length_ofFn,
++      List.length_ofFn, hL e (List.mem_cons_self ..), ih fun e' he' => hL e' (List.mem_cons_of_mem _ he'),
++      List.length_cons]
++    ring
++
++/-- The table of string entries is `GGMRed.tblOf` of the pairs, with the entries' values. -/
++private theorem map_encE_eq_tblOf (L : List (LEntry n)) :
++    L.map encE = GGMRed.tblOf (fun k => (encE (L.getD k default)).2) (keysL L) 0 := by
++  refine List.ext_getElem (by rw [List.length_map, GGMRed.length_tblOf, keysL_eq, List.length_map])
++    fun k h₁ h₂ => ?_
++  have hk : k < L.length := by rwa [List.length_map] at h₁
++  refine Prod.ext ?_ ?_
++  · rw [GGMRed.tblOf_getElem_fst, List.getElem_map, encE_eq]
++    simp only [keysL_eq, List.getElem_map]
++  · rw [GGMRed.tblOf_getElem_snd, List.getElem_map, Nat.zero_add, List.getD_eq_getElem _ _ hk]
++
++/-- **The lookup on the table word is `lookL`:**
++`lookup ⟨⟦p⟧, tblW L⟩ = ⟨[], ⟦t⟧ ++ m⟩` for the newest entry `(p, t, m)` at `p`, and `[]` if there is
++none (`GGMRed.lookup_tblOf`). -/
++theorem lookup_tblW (L : List (LEntry n)) (p : Fin (2 * n) → Bool) :
++    GGMRed.lookup (pairEncode (List.ofFn p) (tblW L)) =
++      match lookL L p with
++      | some e => pairEncode [] (List.ofFn e.2.1 ++ e.2.2)
++      | none => [] := by
++  rw [tblW_eq, map_encE_eq_tblOf, GGMRed.lookup_tblOf, lookL_eq]
++  by_cases hp : p ∈ keysL L
++  · rw [if_pos hp, if_pos hp, encE_eq]
++  · rw [if_neg hp, if_neg hp]
++
++end Table
++
++/-! ### Lengths, state and seed -/
++
++variable (q : PolyExpr)
++
++/-- The state length `2q(14n + 6) + 2q + 6n + 9`. -/
++def bStLen : PolyExpr :=
++  .add (.add (.mul (.const 2) (.mul q (.add (.mul (.const 14) .var) (.const 6)))) (.mul (.const 2) q))
++    (.add (.mul (.const 6) .var) (.const 9))
++
++/-- `(bStLen q).eval n = 2 q(n) (14n + 6) + 2 q(n) + 6n + 9`. -/
++theorem bStLen_eval (n : ℕ) :
++    (bStLen q).eval n = 2 * (q.eval n * (14 * n + 6)) + 2 * q.eval n + (6 * n + 9) := by
++  simp only [bStLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
++
++/-- The seed length `q(n) · 2n`: one tag tape per query. -/
++def bSeedLen : PolyExpr := .mul q tagLen
++
++/-- `(bSeedLen q).eval n = q(n) · 2n`. -/
++theorem bSeedLen_eval (n : ℕ) : (bSeedLen q).eval n = q.eval n * (2 * n) := by
++  rw [bSeedLen, PolyExpr.eval_mul, tagLen_eval]
++
++/-- **The encoded state** with the table `L`, the query count `j` and the record `o`:
++`⟨tblW L, ⟨1^j, recBits o⟩⟩`, padded with `false` to the state length. -/
++def bState (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval n) → Bool)) :
++    Fin ((bStLen q).eval n) → Bool :=
++  padFin _ (pairEncode (tblW L) (pairEncode (List.replicate j true) (recBits n o)))
++
++/-- `bState q n j L o = padFin _ ⟨tblW L, ⟨1^j, recBits n o⟩⟩`. -/
++theorem bState_eq (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval n) → Bool)) :
++    bState q n j L o = padFin _ (pairEncode (tblW L) (pairEncode (List.replicate j true) (recBits n o))) :=
++  rfl
++
++/-- **The seed** from the tape word: `⟦bSeed q n W⟧ = ⟦W⟧`. -/
++def bSeed (n : ℕ) : (Fin (q.eval n * (2 * n)) → Bool) ≃ (Fin ((bSeedLen q).eval n) → Bool) :=
++  Equiv.arrowCongr (finCongr (bSeedLen_eval q n).symm) (Equiv.refl Bool)
++
++/-- `⟦bSeed q n W⟧ = ⟦W⟧`. -/
++theorem ofFn_bSeed (n : ℕ) (W : Fin (q.eval n * (2 * n)) → Bool) :
++    List.ofFn (bSeed q n W) = List.ofFn W := by
++  rw [bSeed, ofFn_arrowCongr_finCongr]
++
++/-- The tag tape `j` of the tape word: block `j` of `W`. -/
++def bTapeOf (n : ℕ) (W : Fin (q.eval n * (2 * n)) → Bool) (j : ℕ) (hj : j < q.eval n) :
++    Fin (2 * n) → Bool :=
++  EnsembleLemmas.blocks (q.eval n) (2 * n) W ⟨j, hj⟩
++
++/-- `bTapeOf q n W j hj = blocks (q n) (2n) W ⟨j, hj⟩`. -/
++theorem bTapeOf_eq (n : ℕ) (W : Fin (q.eval n * (2 * n)) → Bool) (j : ℕ) (hj : j < q.eval n) :
++    bTapeOf q n W j hj = EnsembleLemmas.blocks (q.eval n) (2 * n) W ⟨j, hj⟩ := rfl
++
++/-- The fields of an encoded state that fits: the table word, the count `1^j`, the flag and the
++record. -/
++private theorem fields_bState (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval n) → Bool))
++    (hj : j ≤ q.eval n) (hL : L.length ≤ q.eval n) (hm : ∀ e ∈ L, e.2.2.length = n) :
++    pairFstD (List.ofFn (bState q n j L o)) = tblW L ∧
++      pairFstD (pairSndD (List.ofFn (bState q n j L o))) = List.replicate j true ∧
++      (pairSndD (pairSndD (List.ofFn (bState q n j L o)))).headD false = o.isSome ∧
++      ((pairSndD (pairSndD (List.ofFn (bState q n j L o)))).drop 1).take (ettCt.eval n) =
++        (recBits n o).drop 1 := by
++  have hlen : (pairEncode (tblW L) (pairEncode (List.replicate j true) (recBits n o))).length ≤
++      (bStLen q).eval n := by
++    rw [length_pairEncode, length_pairEncode, List.length_replicate, length_recBits,
++      length_tblW L hm, bStLen_eval, ettCt_eval]
++    have : L.length * (14 * n + 6) ≤ q.eval n * (14 * n + 6) := Nat.mul_le_mul_right _ hL
++    omega
++  rw [bState_eq, Collection.ofFn_padFin_of_le hlen, ← GGMRed.pairEncode_append_right,
++    pairFstD_pairEncode, pairSndD_pairEncode, ← GGMRed.pairEncode_append_right,
++    pairFstD_pairEncode, pairSndD_pairEncode]
++  refine ⟨rfl, rfl, ?_, ?_⟩
++  · cases o <;> rfl
++  · cases o with
++    | none =>
++      rw [recBits_none, List.cons_append, List.drop_succ_cons, List.drop_zero, List.drop_succ_cons,
++        List.drop_zero, List.take_left' List.length_replicate]
++    | some c =>
++      rw [recBits_some, List.cons_append, List.drop_succ_cons, List.drop_zero, List.drop_succ_cons,
++        List.drop_zero, List.take_left' List.length_ofFn]
++
++/-! ### The round function -/
++
++/-- The table word of the state. -/
++private def bTbl (w : List Bool) : List Bool := pairFstD (rS w)
++/-- The query count of the state. -/
++private def bJ (w : List Bool) : List Bool := pairFstD (pairSndD (rS w))
++/-- The challenge flag of the state. -/
++private def bFlag (w : List Bool) : Bool := (pairSndD (pairSndD (rS w))).headD false
++/-- The recorded challenge of the state. -/
++private def bRec (w : List Bool) : List Bool :=
++  ((pairSndD (pairSndD (rS w))).drop 1).take (ettCt.eval (rU w).length)
++/-- A word read at `2n` bits. -/
++private def bPad2 (w v : List Bool) : List Bool := EnsembleLemmas.padL (tagLen.eval (rU w).length) v
++/-- The tape of the query count. -/
++private def bTape (w : List Bool) : List Bool :=
++  ((rW w).drop ((bJ w).length * tagLen.eval (rU w).length)).take (tagLen.eval (rU w).length)
++/-- The pair `r ‖ c₁` of the outer answer `⟨r, c₁⟩`, at `2n` bits. -/
++private def bKey (w : List Bool) : List Bool := bPad2 w (pairFstD (rAns w) ++ pairSndD (rAns w))
++/-- The table lookup at a pair. -/
++private def bLook (w key : List Bool) : List Bool := GGMRed.lookup (pairEncode key (bTbl w))
++/-- The pair of the record, at `2n` bits. -/
++private def bChalKey (w : List Bool) : List Bool :=
++  bPad2 w (pairFstD (bRec w) ++ pairFstD (pairSndD (bRec w)))
++/-- The tag of the record, at `2n` bits. -/
++private def bChalTag (w : List Bool) : List Bool := bPad2 w (pairSndD (pairSndD (bRec w)))
++/-- The tag of the outer answer's pair: the table's, else the record's, else the tape. -/
++private def bTag (w : List Bool) : List Bool :=
++  if decide (bLook w (bKey w) = []) then
++    (if bFlag w && decide (bChalKey w = bKey w) then bChalTag w else bTape w)
++  else (pairSndD (bLook w (bKey w))).take (tagLen.eval (rU w).length)
++/-- The ciphertext `⟨r, ⟨c₁, t⟩⟩` of the outer answer and its tag, at `6n + 4` bits. -/
++private def bCt (w : List Bool) : List Bool :=
++  EnsembleLemmas.padL (ettCt.eval (rU w).length)
++    (pairEncode (pairFstD (rAns w)) (pairEncode (pairSndD (rAns w)) (bTag w)))
++/-- The new state: the table word `tbl`, count `j + 1`, record `t`. -/
++private def bNew (w tbl t : List Bool) : List Bool :=
++  EnsembleLemmas.padL ((bStLen q).eval (rU w).length) (pairEncode tbl (pairEncode (true :: bJ w) t))
++/-- The pair of the decryption query, at `2n` bits. -/
++private def bDKey (w : List Bool) : List Bool :=
++  bPad2 w (pairFstD (rX w) ++ pairFstD (pairSndD (rX w)))
++/-- Whether the decryption query is well formed. -/
++private def bWF (w : List Bool) : Bool :=
++  decide ((pairFstD (rX w)).length = (rU w).length) &&
++    decide ((pairFstD (pairSndD (rX w))).length = (rU w).length)
++/-- Whether the decryption query is the recorded challenge. -/
++private def bRef (w : List Bool) : Bool := bFlag w && decide (rX w = bRec w)
++/-- The lazy decryption answer (`lazyDec`) of the query, from the table. -/
++private def bDecL (w : List Bool) : List Bool :=
++  if (!bRef w && bWF w) = true then
++    if decide (bLook w (bDKey w) = []) then []
++    else if decide ((pairSndD (bLook w (bDKey w))).take (tagLen.eval (rU w).length) =
++        pairSndD (pairSndD (rX w))) then
++      true :: (pairSndD (bLook w (bDKey w))).drop (tagLen.eval (rU w).length)
++    else []
++  else []
++/-- The decryption answer at `n + 1` bits. -/
++private def bDecAns (w : List Bool) : List Bool :=
++  EnsembleLemmas.padL ((PolyExpr.add .var (.const 1)).eval (rU w).length) (bDecL w)
++
++/-- **One round of the handler** (see the module docstring). A first round of `Enc′` or of a first
++challenge asks the CPA oracle; the second round, with the answer in the log, returns the answer and
++the new state. Decryption and a repeated challenge answer at once. -/
++private def bRun (w : List Bool) : List Bool :=
++  if (rI w).headD false then
++    if ((rI w).drop 1).headD false then
++      if bFlag w then
++        pairEncode [true] (EnsembleLemmas.padL (ettCt.eval (rU w).length) (bRec w) ++
++          bNew q w (bTbl w) (true :: bRec w))
++      else if decide (rL w = []) then pairEncode [false] (pairEncode [true, true] (rX w))
++      else pairEncode [true] (bCt w ++ bNew q w (bTbl w) (true :: bCt w))
++    else pairEncode [true] (bDecAns w ++ bNew q w (bTbl w) (bFlag w :: bRec w))
++  else
++    if decide (rL w = []) then pairEncode [false] (pairEncode [] (rX w))
++    else pairEncode [true] (bCt w ++
++      bNew q w (pairEncode (pairEncode (bKey w) (bTag w ++ rX w)) (bTbl w)) (bFlag w :: bRec w))
++
++/-- The round function is polynomial-time: pair projections, the table lookup
++(`GGMRed.lookup_poly`), padding (`EnsembleLemmas.polyTimeComputable_padL`), the tape by
++`unaryMulPair`, `dropPrefixByLength` and `pairTakePoly`, word tests (`pairEq`, `lenEq_poly`) and
++`polyTimeComputable_ite`. -/
++private theorem polyTimeComputable_bRun : PolyTimeComputable (bRun q) := by
++  have hF := polyTimeComputable_pairFstD
++  have hD := polyTimeComputable_pairSndD
++  have hU : PolyTimeComputable rU := InteractiveHandler.polyTimeComputable_rU
++  have hW : PolyTimeComputable rW := InteractiveHandler.polyTimeComputable_rW
++  have hS : PolyTimeComputable rS := InteractiveHandler.polyTimeComputable_rS
++  have hI : PolyTimeComputable rI := InteractiveHandler.polyTimeComputable_rI
++  have hX : PolyTimeComputable rX := InteractiveHandler.polyTimeComputable_rX
++  have hL : PolyTimeComputable rL := InteractiveHandler.polyTimeComputable_rL
++  have hY : PolyTimeComputable rAns := InteractiveHandler.polyTimeComputable_rAns
++  have hTbl : PolyTimeComputable bTbl := hF.comp hS
++  have hJ : PolyTimeComputable bJ := (hF.comp hD).comp hS
++  have hT : PolyTimeComputable fun w => pairSndD (pairSndD (rS w)) := (hD.comp hD).comp hS
++  have hFlag : PolyTimeComputable fun w => [bFlag w] := polyTimeComputable_headD.comp hT
++  have hRec : PolyTimeComputable bRec :=
++    ((polyTimeComputable_pairTakePoly ettCt).comp
++      (hU.pairEncode (polyTimeComputable_tail.comp hT))).congr fun w => by
++        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]; rfl
++  have hPad2 : ∀ {v : List Bool → List Bool}, PolyTimeComputable v →
++      PolyTimeComputable fun w => bPad2 w (v w) := fun hv =>
++    EnsembleLemmas.polyTimeComputable_padL tagLen hU hv
++  have hOff : PolyTimeComputable fun w =>
++      List.replicate ((bJ w).length * tagLen.eval (rU w).length) true :=
++    (OneWay.polyTimeComputable_unaryMulPair.comp (hJ.pairEncode
++      ((polyTimeComputable_unaryPoly tagLen).comp hU))).congr fun w => by
++        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
++          List.length_replicate]
++  have hDrop : PolyTimeComputable fun w =>
++      (rW w).drop ((bJ w).length * tagLen.eval (rU w).length) :=
++    (polyTimeComputable_dropPrefixByLength.comp (hOff.pairEncode hW)).congr fun w => by
++      simp only [Function.comp_apply, PrefixByLength.drop_def, pairFstD_pairEncode,
++        pairSndD_pairEncode, List.length_replicate]
++  have hTape : PolyTimeComputable bTape :=
++    ((polyTimeComputable_pairTakePoly tagLen).comp (hU.pairEncode hDrop)).congr fun w => by
++      simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]; rfl
++  have hKey : PolyTimeComputable bKey := hPad2 ((hF.comp hY).append (hD.comp hY))
++  have hLook : ∀ {k : List Bool → List Bool}, PolyTimeComputable k →
++      PolyTimeComputable fun w => bLook w (k w) := fun hk =>
++    GGMRed.lookup_poly.comp (hk.pairEncode hTbl)
++  have hEq : ∀ {u v : List Bool → List Bool}, PolyTimeComputable u → PolyTimeComputable v →
++      PolyTimeComputable fun w => [decide (u w = v w)] := fun hu hv =>
++    (polyTimeComputable_pairEq.comp (hu.pairEncode hv)).congr fun w => by
++      simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++  have hNil : ∀ {u : List Bool → List Bool}, PolyTimeComputable u →
++      PolyTimeComputable fun w => [decide (u w = [])] := fun hu => polyTimeComputable_isNil.comp hu
++  have hTake2 : ∀ {u : List Bool → List Bool}, PolyTimeComputable u →
++      PolyTimeComputable fun w => (u w).take (tagLen.eval (rU w).length) := fun hu =>
++    ((polyTimeComputable_pairTakePoly tagLen).comp (hU.pairEncode hu)).congr fun w => by
++      simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++  have hDrop2 : ∀ {u : List Bool → List Bool}, PolyTimeComputable u →
++      PolyTimeComputable fun w => (u w).drop (tagLen.eval (rU w).length) := fun hu =>
++    ((polyTimeComputable_pairDropPoly tagLen).comp (hU.pairEncode hu)).congr fun w => by
++      simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++  have hChalKey : PolyTimeComputable bChalKey := hPad2 ((hF.comp hRec).append ((hF.comp hD).comp hRec))
++  have hChalTag : PolyTimeComputable bChalTag := hPad2 ((hD.comp hD).comp hRec)
++  have hTag : PolyTimeComputable bTag :=
++    polyTimeComputable_ite (hNil (hLook hKey))
++      (polyTimeComputable_ite (polyTimeComputable_and hFlag (hEq hChalKey hKey)) hChalTag hTape)
++      (hTake2 (hD.comp (hLook hKey)))
++  have hCt : PolyTimeComputable bCt :=
++    EnsembleLemmas.polyTimeComputable_padL ettCt hU
++      ((hF.comp hY).pairEncode ((hD.comp hY).pairEncode hTag))
++  have hNew : ∀ {tb t : List Bool → List Bool}, PolyTimeComputable tb → PolyTimeComputable t →
++      PolyTimeComputable fun w => bNew q w (tb w) (t w) := fun htb ht =>
++    EnsembleLemmas.polyTimeComputable_padL (bStLen q) hU
++      (htb.pairEncode (((polyTimeComputable_const [true]).append hJ).pairEncode ht))
++  have hDKey : PolyTimeComputable bDKey := hPad2 ((hF.comp hX).append ((hF.comp hD).comp hX))
++  have hWF : PolyTimeComputable fun w => [bWF w] :=
++    polyTimeComputable_and (EffFill.lenEq_poly (hF.comp hX) hU)
++      (EffFill.lenEq_poly ((hF.comp hD).comp hX) hU)
++  have hRef : PolyTimeComputable fun w => [bRef w] := polyTimeComputable_and hFlag (hEq hX hRec)
++  have hDecL : PolyTimeComputable bDecL :=
++    polyTimeComputable_ite (polyTimeComputable_and (polyTimeComputable_not hRef) hWF)
++      (polyTimeComputable_ite (hNil (hLook hDKey)) (polyTimeComputable_const [])
++        (polyTimeComputable_ite (hEq (hTake2 (hD.comp (hLook hDKey))) ((hD.comp hD).comp hX))
++          ((polyTimeComputable_const [true]).append (hDrop2 (hD.comp (hLook hDKey))))
++          (polyTimeComputable_const [])))
++      (polyTimeComputable_const [])
++  have hDecAns : PolyTimeComputable bDecAns :=
++    EnsembleLemmas.polyTimeComputable_padL (.add .var (.const 1)) hU hDecL
++  have hRet : ∀ {f : List Bool → List Bool}, PolyTimeComputable f →
++      PolyTimeComputable fun w => pairEncode [true] (f w) := fun hf =>
++    (polyTimeComputable_const [true]).pairEncode hf
++  have hKeep : PolyTimeComputable fun w => bFlag w :: bRec w := (hFlag.append hRec).congr fun _ => rfl
++  have cNil : PolyTimeComputable fun w => [decide (rL w = [])] := polyTimeComputable_isNil.comp hL
++  have hChal := polyTimeComputable_ite hFlag
++    (hRet ((EnsembleLemmas.polyTimeComputable_padL ettCt hU hRec).append
++      (hNew hTbl ((polyTimeComputable_const [true]).append hRec))))
++    (polyTimeComputable_ite cNil
++      ((polyTimeComputable_const [false]).pairEncode ((polyTimeComputable_const [true, true]).pairEncode hX))
++      (hRet (hCt.append (hNew hTbl ((polyTimeComputable_const [true]).append hCt)))))
++  have hDec := hRet (hDecAns.append (hNew hTbl hKeep))
++  have hEnc := polyTimeComputable_ite cNil
++    ((polyTimeComputable_const [false]).pairEncode ((polyTimeComputable_const []).pairEncode hX))
++    (hRet (hCt.append (hNew ((hKey.pairEncode (hTag.append hX)).pairEncode hTbl) hKeep)))
++  exact polyTimeComputable_ite (polyTimeComputable_headD.comp hI)
++    (polyTimeComputable_ite (polyTimeComputable_headD.comp (polyTimeComputable_tail.comp hI))
++      hChal hDec) hEnc
++
++/-- The finalization's round: output `A`'s bit. -/
++private def bFin (w : List Bool) : List Bool := pairEncode [true] (pairFstD (pairSndD (pairSndD w)))
++
++/-- The finalization's round is polynomial-time. -/
++private theorem polyTimeComputable_bFin : PolyTimeComputable bFin :=
++  (polyTimeComputable_const [true]).pairEncode
++    (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
++
++/-! ### The handler -/
++
++/-- **The handler of the CPA reduction** for the budget `q`: state `bState` (initially the empty
++table, count `0`, no record), seed `q(n)` tag tapes, one outer call per inner query, the adversary
++run on the empty input, and the finalization outputting the adversary's bit. -/
++noncomputable def bHandler : InteractiveHandler 3 ettDin ettDout 3 pkDin pkDout where
++  stateLen := bStLen q
++  seedLen := bSeedLen q
++  perCall := .const 1
++  init n := bState q n 0 [] none
++  run := bRun q
++  poly := polyTimeComputable_bRun q
++  advIn _ := []
++  advIn_poly := polyTimeComputable_const []
++  outLen := .const 1
++  finCall := .const 0
++  finRun := bFin
++  finRun_poly := polyTimeComputable_bFin
++
++attribute [simps (config := { isSimp := false }) stateLen seedLen perCall outLen finCall] bHandler
++
++/-- The encoded state at the handler's state type: `bHState q n j L o = bState q n j L o`. -/
++def bHState (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval n) → Bool)) :
++    Fin ((bHandler q).stateLen.eval n) → Bool :=
++  bState q n j L o
++
++/-- `bHState q n j L o = bState q n j L o`. -/
++theorem bHState_eq (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval n) → Bool)) :
++    bHState q n j L o = bState q n j L o := rfl
++
++/-- `⟦bHState q n j L o⟧ = ⟦bState q n j L o⟧`. -/
++theorem ofFn_bHState (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval n) → Bool)) :
++    List.ofFn (bHState q n j L o) = List.ofFn (bState q n j L o) := rfl
++
++/-- The seed at the handler's seed type: `bHSeed q n = bSeed q n`. -/
++def bHSeed (n : ℕ) :
++    (Fin (q.eval n * (2 * n)) → Bool) ≃ (Fin ((bHandler q).seedLen.eval n) → Bool) :=
++  bSeed q n
++
++/-- `bHSeed q n = bSeed q n`. -/
++theorem bHSeed_eq (n : ℕ) : bHSeed q n = bSeed q n := rfl
++
++/-- `⟦bHSeed q n W⟧ = ⟦W⟧`. -/
++theorem ofFn_bHSeed (n : ℕ) (W : Fin (q.eval n * (2 * n)) → Bool) :
++    List.ofFn (bHSeed q n W) = List.ofFn W :=
++  ofFn_bSeed q n W
++
++/-- The initial state is the empty table, count `0` and no record. -/
++theorem bHandler_init_hstate (n : ℕ) : (bHandler q).init n = bHState q n 0 [] none := rfl
++
++/-- The adversary's input is empty. -/
++theorem bHandler_advInput (n : ℕ) (z : List Bool)
++    (ω : Fin ((bHandler q).seedLen.eval n) → Bool) : (bHandler q).advInput n z ω = [] := rfl
++
++/-- The finalization outputs the adversary's bit and asks nothing:
++`(bHandler q).finish n z ω s a = pure (padFin _ ⟦a⟧)`. -/
++theorem bHandler_finish (n : ℕ) (z : List Bool) (ω : Fin ((bHandler q).seedLen.eval n) → Bool)
++    (s : Fin ((bHandler q).stateLen.eval n) → Bool) (a : Fin ((PolyExpr.const 1).eval n) → Bool) :
++    (bHandler q).finish n z ω s a =
++      .pure (padFin ((bHandler q).outLen.eval n) (List.ofFn a)) := by
++  rw [InteractiveHandler.finish_eq]
++  have h0 : (bHandler q).finCall.eval n = 0 := by rw [bHandler_finCall, PolyExpr.eval_const]
++  rw [h0]
++  refine buildComp_zero_of_ret ?_
++  show decodeBitMove _ _ _ (bFin _) = _
++  rw [bFin, InteractiveHandler.finInput_eq, pairSndD_pairEncode, pairSndD_pairEncode,
++    pairFstD_pairEncode]
++  have hw : List.ofFn (padFin ((bHandler q).outLen.eval n) (List.ofFn a)) = List.ofFn a :=
++    ofFn_padFin_of_length (by rw [List.length_ofFn, bHandler_outLen])
++  exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
++    (decodeBitMove_ret _ _ _ _)
++
++/-! ### Answers of the handler -/
++
++/-- The pair of an outer answer `y = ⟨r, c₁⟩`, read at `2n` bits:
++`bKeyOf n y = padFin (2n) (pairFstD ⟦y⟧ ++ pairSndD ⟦y⟧)`. -/
++def bKeyOf (n : ℕ) {m : ℕ} (y : Fin m → Bool) : Fin (2 * n) → Bool :=
++  padFin (2 * n) (pairFstD (List.ofFn y) ++ pairSndD (List.ofFn y))
++
++/-- `bKeyOf n y = padFin (2n) (pairFstD ⟦y⟧ ++ pairSndD ⟦y⟧)`. -/
++theorem bKeyOf_eq (n : ℕ) {m : ℕ} (y : Fin m → Bool) :
++    bKeyOf n y = padFin (2 * n) (pairFstD (List.ofFn y) ++ pairSndD (List.ofFn y)) := rfl
++
++section Answers
++
++variable (n : ℕ) (z : List Bool) (W : Fin (q.eval n * (2 * n)) → Bool)
++
++/-- The round input of a call, field by field, on an encoded state that fits, with `j < q(n)`
++and the seed `bHSeed W`. -/
++private theorem fields_input {i : Fin 3} (x Lg : List Bool) (j : ℕ) (L : List (LEntry n))
++    (o : Option (Fin (ettCt.eval n) → Bool)) (hj : j < q.eval n) (hL : L.length ≤ q.eval n)
++    (hm : ∀ e ∈ L, e.2.2.length = n) :
++    let w := InteractiveHandler.input n z (List.ofFn (bHSeed q n W))
++      (List.ofFn (bHState q n j L o)) i x Lg
++    rU w = List.replicate n true ∧ rI w = List.replicate i true ∧ rX w = x ∧ rL w = Lg ∧
++      bTbl w = tblW L ∧ bJ w = List.replicate j true ∧ bFlag w = o.isSome ∧
++      bRec w = (recBits n o).drop 1 ∧ bTape w = List.ofFn (bTapeOf q n W j hj) := by
++  obtain ⟨h₁, h₂, h₃, h₄⟩ := fields_bState q n j L o hj.le hL hm
++  have hS : rS (InteractiveHandler.input n z (List.ofFn (bHSeed q n W))
++      (List.ofFn (bHState q n j L o)) i x Lg) = List.ofFn (bState q n j L o) :=
++    (InteractiveHandler.rS_input ..).trans (ofFn_bHState q n j L o)
++  have hU := InteractiveHandler.rU_input (k := 3) n z (List.ofFn (bHSeed q n W))
++    (List.ofFn (bHState q n j L o)) i x Lg
++  have hJ : bJ (InteractiveHandler.input n z (List.ofFn (bHSeed q n W))
++      (List.ofFn (bHState q n j L o)) i x Lg) = List.replicate j true := by rw [bJ, hS, h₂]
++  refine ⟨hU, InteractiveHandler.rI_input .., InteractiveHandler.rX_input ..,
++    InteractiveHandler.rL_input .., by rw [bTbl, hS, h₁], hJ, by rw [bFlag, hS, h₃],
++    by rw [bRec, hS, hU, List.length_replicate, h₄], ?_⟩
++  rw [bTape, hJ, hU, InteractiveHandler.rW_input, ofFn_bHSeed, List.length_replicate,
++    List.length_replicate, tagLen_eval, bTapeOf_eq]
++  exact EnsembleLemmas.take_drop_ofFn_blocks W j hj
++
++/-- The outer answer recorded in a one-entry log. -/
++private theorem rAns_one (w : List Bool) (u x' y : List Bool)
++    (hL : rL w = pairEncode (pairEncode u (pairEncode x' y)) []) : rAns w = y := by
++  rw [InteractiveHandler.rAns_eq, hL, pairFstD_pairEncode, pairSndD_pairEncode,
++    pairSndD_pairEncode]
++
++/-- A one-entry log is not empty. -/
++private theorem log_ne_nil (u x' y : List Bool) :
++    decide (pairEncode (pairEncode u (pairEncode x' y)) [] = []) = false :=
++  decide_eq_false (pairEncode_ne_nil _ _)
++
++/-- A word read at `2n` bits is a `2n`-bit word. -/
++private theorem bPad2_fields (w v : List Bool) (hU : rU w = List.replicate n true) :
++    bPad2 w v = List.ofFn (padFin (2 * n) v) := by
++  rw [bPad2, hU, List.length_replicate, tagLen_eval, EnsembleLemmas.ofFn_padFin_eq_padL]
++
++/-- The new state with table word `tblW L'`, count `j + 1` and record `recBits o'`. -/
++private theorem bNew_fields (w : List Bool) (j : ℕ) (L' : List (LEntry n))
++    (o' : Option (Fin (ettCt.eval n) → Bool)) (hU : rU w = List.replicate n true)
++    (hJ : bJ w = List.replicate j true) :
++    bNew q w (tblW L') (recBits n o') = List.ofFn (bHState q n (j + 1) L' o') := by
++  rw [bNew, hU, hJ, List.length_replicate, ofFn_bHState, bState_eq,
++    EnsembleLemmas.ofFn_padFin_eq_padL, List.replicate_succ]
++
++/-- **The tag of a pair `p`:** the table's, else the record's, else the tape `t`. -/
++private theorem bTag_fields (w : List Bool) (L : List (LEntry n))
++    (o : Option (Fin (ettCt.eval n) → Bool)) (p t : Fin (2 * n) → Bool)
++    (hU : rU w = List.replicate n true) (hT : bTbl w = tblW L) (hF : bFlag w = o.isSome)
++    (hR : bRec w = (recBits n o).drop 1) (hTp : bTape w = List.ofFn t)
++    (hK : bKey w = List.ofFn p) :
++    bTag w = List.ofFn ((tagOf ((o, L) : LSt n (ettCt.eval n)) p).getD t) := by
++  rw [bTag, bLook, hK, hT, lookup_tblW, tagOf_eq]
++  cases h : lookL L p with
++  | some e =>
++    simp only [decide_eq_false (pairEncode_ne_nil _ _), Bool.false_eq_true, if_false,
++      pairSndD_pairEncode, Option.getD_some]
++    rw [hU, List.length_replicate, tagLen_eval, List.take_left' (by rw [List.length_ofFn])]
++  | none =>
++    simp only [decide_true, if_true]
++    cases o with
++    | none => simp only [hF, Option.isSome_none, Bool.false_and, Bool.false_eq_true, if_false,
++        hTp, Option.getD_none]
++    | some c =>
++      have hRc : bRec w = List.ofFn c := by
++        rw [hR, recBits_some, List.drop_succ_cons, List.drop_zero]
++      have hCK : bChalKey w = List.ofFn (pairW n (List.ofFn c)) := by
++        rw [bChalKey, hRc, bPad2_fields n w _ hU, pairW_eq, pairV_eq, wR_eq, wC_eq]
++      have hCT : bChalTag w = List.ofFn (padFin (2 * n) (wT (List.ofFn c))) := by
++        rw [bChalTag, hRc, bPad2_fields n w _ hU, wT_eq]
++      simp only [hF, Option.isSome_some, Bool.true_and, hCK, List.ofFn_inj]
++      by_cases hc : pairW n (List.ofFn c) = p
++      · simp only [hc, decide_true, if_true, hCT, Option.getD_some]
++      · simp only [hc, decide_false, Bool.false_eq_true, if_false, hTp, Option.getD_none]
++
++/-- **The lazy decryption answer of the query `⟦x⟧`:** `bDecL w = lazyDec (o, L) ⟦x⟧`. -/
++private theorem bDecL_fields (w x : List Bool) (L : List (LEntry n))
++    (o : Option (Fin (ettCt.eval n) → Bool))
++    (hU : rU w = List.replicate n true) (hX : rX w = x) (hT : bTbl w = tblW L)
++    (hF : bFlag w = o.isSome) (hR : bRec w = (recBits n o).drop 1) :
++    bDecL w = lazyDec ((o, L) : LSt n (ettCt.eval n)) x := by
++  have hRef : bRef w = refW o x := by
++    rw [bRef, hF, hR, hX]
++    cases o with
++    | none => rfl
++    | some c =>
++      rw [recBits_some, List.drop_succ_cons, List.drop_zero, Option.isSome_some, Bool.true_and,
++        refW_some]
++      exact decide_eq_decide.2 eq_comm
++  have hWF : bWF w = wfW n x := by
++    rw [bWF, hU, hX, List.length_replicate, wfW_eq, wR_eq, wC_eq]
++  have hDK : bDKey w = List.ofFn (pairW n x) := by
++    rw [bDKey, hX, bPad2_fields n w _ hU, pairW_eq, pairV_eq, wR_eq, wC_eq]
++  rw [bDecL, lazyDec_eq, hRef, hWF]
++  simp only
++  by_cases hc : (!refW o x && wfW n x) = true
++  · rw [if_pos hc, if_pos hc, bLook, hDK, hT, lookup_tblW]
++    cases h : lookL L (pairW n x) with
++    | none => simp only [decide_true, if_true]
++    | some e =>
++      simp only [decide_eq_false (pairEncode_ne_nil _ _), Bool.false_eq_true, if_false,
++        pairSndD_pairEncode]
++      rw [hU, List.length_replicate, tagLen_eval, List.take_left' (by rw [List.length_ofFn]),
++        List.drop_left' (by rw [List.length_ofFn]), hX, wT_eq]
++      by_cases ht : List.ofFn e.2.1 = pairSndD (pairSndD x)
++      · rw [if_pos (decide_eq_true ht), if_pos ht]
++      · rw [if_neg (by rw [decide_eq_true_eq]; exact ht), if_neg ht]
++  · rw [if_neg hc, if_neg hc]
++
++/-- The flag and the record rebuild the record bits: `o.isSome :: (recBits o).drop 1 = recBits o`. -/
++private theorem recBits_fields (o : Option (Fin (ettCt.eval n) → Bool)) :
++    o.isSome :: (recBits n o).drop 1 = recBits n o := by
++  cases o <;> rfl
++
++/-- The inner query word read at the outer length: `⟦padFin _ ⟦x⟧⟧ = ⟦x⟧` for an `n`-bit `x`. -/
++private theorem ofFn_padFin_msg {m : ℕ} (x : Fin m → Bool) (hm : m = n) :
++    List.ofFn (padFin ((pkDin 0).eval n) (List.ofFn x)) = List.ofFn x :=
++  ofFn_padFin_of_length (by rw [List.length_ofFn, PRFGame.pkDin_zero, PolyExpr.eval_var, hm])
++
++/-- **Encryption:** from `bState j L o` with `j < q(n)`, the query `m = ⟦x⟧` asks the CPA
++encryption oracle at `m`; its answer `y` gives the ciphertext `⟨pairFstD y, ⟨pairSndD y, t⟩⟩`
++with the tag `t` of the pair `bKeyOf n y` (`tagOf`, else the tape `j`), and the state
++`bState (j + 1) ((bKeyOf n y, t, m) :: L) o`.
++
++**Proof sketch.** Read the round input field by field (`fields_input`); the first round, with an
++empty log, asks `m`; the second, with the answer in the log (`rAns_one`), computes the tag
++(`bTag_fields`, from `lookup_tblW`), the ciphertext and the new state (`bNew_fields`, `tblW_cons`);
++`InteractiveHandler.impl_of_query` assembles the two rounds. -/
++theorem bHandler_impl_enc (x : Fin ((ettDin 0).eval n) → Bool) (j : ℕ) (L : List (LEntry n))
++    (o : Option (Fin (ettCt.eval n) → Bool)) (hj : j < q.eval n) (hL : L.length ≤ q.eval n)
++    (hm : ∀ e ∈ L, e.2.2.length = n) :
++    (bHandler q).impl n z (bHSeed q n W) 0 x (bHState q n j L o) =
++      .query 0 (padFin _ (List.ofFn x)) fun y =>
++        .pure (padFin _ (ctW (pairFstD (List.ofFn y)) (pairSndD (List.ofFn y))
++            (List.ofFn ((tagOf ((o, L) : LSt n (ettCt.eval n)) (bKeyOf n y)).getD
++              (bTapeOf q n W j hj)))),
++          bHState q n (j + 1) ((bKeyOf n y, (tagOf ((o, L) : LSt n (ettCt.eval n))
++            (bKeyOf n y)).getD (bTapeOf q n W j hj), List.ofFn x) :: L) o) := by
++  have hx := ofFn_padFin_msg n x (by rw [ettDin_zero, PolyExpr.eval_var])
++  refine InteractiveHandler.impl_of_query _ n z _ x _ 0 _ _ _
++    (by rw [bHandler_perCall, PolyExpr.eval_const]) ?_ ?_
++  · show bRun q _ = _
++    obtain ⟨-, hI, hX, hL', -⟩ := fields_input q n z W (i := 0) (List.ofFn x) [] j L o hj hL hm
++    rw [bRun, hI, Fin.val_zero, List.replicate_zero, List.headD_nil, if_neg Bool.false_ne_true,
++      hL', if_pos (decide_eq_true rfl), hX, hx]
++  · intro y
++    show bRun q _ = _
++    simp only [Fin.val_zero, List.replicate_zero]
++    obtain ⟨hU, hI, hX, hL', hT, hJ, hF, hR, hTp⟩ := fields_input q n z W (i := 0) (List.ofFn x)
++      (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((pkDin 0).eval n)
++        (List.ofFn x))) (List.ofFn y))) []) j L o hj hL hm
++    have hY := rAns_one _ _ _ _ hL'
++    have hK : bKey (InteractiveHandler.input n z (List.ofFn (bHSeed q n W))
++        (List.ofFn (bHState q n j L o)) (0 : Fin 3) (List.ofFn x)
++        (pairEncode (pairEncode [] (pairEncode (List.ofFn (padFin ((pkDin 0).eval n)
++          (List.ofFn x))) (List.ofFn y))) [])) = List.ofFn (bKeyOf n y) := by
++      rw [bKey, hY, bPad2_fields n _ _ hU, bKeyOf_eq]
++    have hTag := bTag_fields n _ L o (bKeyOf n y) (bTapeOf q n W j hj) hU hT hF hR hTp hK
++    rw [bRun, hI, Fin.val_zero, List.replicate_zero, List.headD_nil, if_neg Bool.false_ne_true,
++      hL', log_ne_nil, if_neg Bool.false_ne_true, bCt, hY, hTag, hU, List.length_replicate, hK,
++      hX, hT, hF, hR, recBits_fields, ← tblW_cons (bKeyOf n y, (tagOf ((o, L) : LSt n (ettCt.eval n))
++        (bKeyOf n y)).getD (bTapeOf q n W j hj), List.ofFn x) L, bNew_fields q n _ j _ o hU hJ, ← ctW_eq]
++    rfl
++
++/-- **Decryption:** from `bState j L o` with `j < q(n)`, the query `⟦x⟧` is answered by
++`lazyDec (o, L) ⟦x⟧` without an outer query, and the state is `bState (j + 1) L o`
++(`bDecL_fields`). -/
++theorem bHandler_impl_dec (x : Fin ((ettDin 1).eval n) → Bool) (j : ℕ) (L : List (LEntry n))
++    (o : Option (Fin (ettCt.eval n) → Bool)) (hj : j < q.eval n) (hL : L.length ≤ q.eval n)
++    (hm : ∀ e ∈ L, e.2.2.length = n) :
++    (bHandler q).impl n z (bHSeed q n W) 1 x (bHState q n j L o) =
++      .pure (padFin _ (lazyDec ((o, L) : LSt n (ettCt.eval n)) (List.ofFn x)),
++        bHState q n (j + 1) L o) := by
++  refine InteractiveHandler.impl_of_ret _ n z _ x _ _ _ ?_
++  show bRun q _ = _
++  obtain ⟨hU, hI, hX, -, hT, hJ, hF, hR, -⟩ :=
++    fields_input q n z W (i := 1) (List.ofFn x) [] j L o hj hL hm
++  rw [bRun, hI, Fin.val_one, List.replicate_one, List.headD_cons, if_pos rfl, List.drop_succ_cons,
++    List.drop_zero, List.headD_nil, if_neg Bool.false_ne_true, bDecAns,
++    bDecL_fields n _ _ L o hU hX hT hF hR, hU, List.length_replicate, hT, hF, hR, recBits_fields,
++    bNew_fields q n _ j L o hU hJ]
++  rfl
++
++/-- **A recorded challenge is repeated:** from `bState j L (some c)`, a challenge is answered `c`
++and the state is `bState (j + 1) L (some c)`. -/
++theorem bHandler_impl_challenge_some (x : Fin ((ettDin 2).eval n) → Bool) (j : ℕ)
++    (L : List (LEntry n)) (c : Fin (ettCt.eval n) → Bool) (hj : j < q.eval n)
++    (hL : L.length ≤ q.eval n) (hm : ∀ e ∈ L, e.2.2.length = n) :
++    (bHandler q).impl n z (bHSeed q n W) 2 x (bHState q n j L (some c)) =
++      .pure (padFin _ (List.ofFn c), bHState q n (j + 1) L (some c)) := by
++  refine InteractiveHandler.impl_of_ret _ n z _ x _ _ _ ?_
++  show bRun q _ = _
++  obtain ⟨hU, hI, -, -, hT, hJ, hF, hR, -⟩ :=
++    fields_input q n z W (i := 2) (List.ofFn x) [] j L (some c) hj hL hm
++  have hRc : (recBits n (some c)).drop 1 = List.ofFn c := by
++    rw [recBits_some, List.drop_succ_cons, List.drop_zero]
++  have hrec : true :: List.ofFn c = recBits n (some c) := rfl
++  rw [bRun, hI, hF, hR, hRc]
++  simp only [show List.replicate ((2 : Fin 3) : ℕ) true = [true, true] from rfl, List.headD_cons,
++    List.drop_succ_cons, List.drop_zero, if_true, Option.isSome_some]
++  rw [hT, hrec, bNew_fields q n _ j L (some c) hU hJ, hU, List.length_replicate]
++  rfl
++
++/-- **The first challenge:** from `bState j L none` with `j < q(n)`, the challenge `⟦x⟧` asks the
++CPA challenge oracle at `⟦x⟧`; its answer `y` gives the ciphertext `c = ⟨pairFstD y, ⟨pairSndD y, t⟩⟩`
++with the tag `t` of `bKeyOf n y` (`tagOf (none, L)`, else the tape `j`), recorded in the state
++`bState (j + 1) L (some c)`. -/
++theorem bHandler_impl_challenge_none (x : Fin ((ettDin 2).eval n) → Bool) (j : ℕ)
++    (L : List (LEntry n)) (hj : j < q.eval n) (hL : L.length ≤ q.eval n)
++    (hm : ∀ e ∈ L, e.2.2.length = n) :
++    (bHandler q).impl n z (bHSeed q n W) 2 x (bHState q n j L none) =
++      .query 2 (padFin _ (List.ofFn x)) fun y =>
++        .pure (padFin _ (ctW (pairFstD (List.ofFn y)) (pairSndD (List.ofFn y))
++            (List.ofFn ((tagOf ((none, L) : LSt n (ettCt.eval n)) (bKeyOf n y)).getD
++              (bTapeOf q n W j hj)))),
++          bHState q n (j + 1) L (some (padFin (ettCt.eval n) (ctW (pairFstD (List.ofFn y))
++            (pairSndD (List.ofFn y)) (List.ofFn ((tagOf ((none, L) : LSt n (ettCt.eval n))
++              (bKeyOf n y)).getD (bTapeOf q n W j hj))))))) := by
++  have hx : List.ofFn (padFin ((pkDin 2).eval n) (List.ofFn x)) = List.ofFn x :=
++    ofFn_padFin_of_length (by rw [List.length_ofFn, PRFGame.pkDin_two, ettDin_two])
++  refine InteractiveHandler.impl_of_query _ n z _ x _ 2 _ _ _
++    (by rw [bHandler_perCall, PolyExpr.eval_const]) ?_ ?_
++  · show bRun q _ = _
++    obtain ⟨-, hI, hX, hL', -, -, hF, -⟩ :=
++      fields_input q n z W (i := 2) (List.ofFn x) [] j L none hj hL hm
++    rw [bRun, hI, hF, hL']
++    simp only [show List.replicate ((2 : Fin 3) : ℕ) true = [true, true] from rfl, List.headD_cons,
++      List.drop_succ_cons, List.drop_zero, if_true, Option.isSome_none, Bool.false_eq_true,
++      if_false, decide_true]
++    rw [hX, hx]
++  · intro y
++    show bRun q _ = _
++    simp only [show List.replicate ((2 : Fin 3) : ℕ) true = [true, true] from rfl]
++    obtain ⟨hU, hI, hX, hL', hT, hJ, hF, hR, hTp⟩ := fields_input q n z W (i := 2) (List.ofFn x)
++      (pairEncode (pairEncode [true, true]
++        (pairEncode (List.ofFn (padFin ((pkDin 2).eval n) (List.ofFn x))) (List.ofFn y))) [])
++      j L none hj hL hm
++    have hY := rAns_one _ _ _ _ hL'
++    have hK : bKey (InteractiveHandler.input n z (List.ofFn (bHSeed q n W))
++        (List.ofFn (bHState q n j L none)) (2 : Fin 3) (List.ofFn x)
++        (pairEncode (pairEncode [true, true]
++          (pairEncode (List.ofFn (padFin ((pkDin 2).eval n) (List.ofFn x))) (List.ofFn y))) [])) =
++        List.ofFn (bKeyOf n y) := by
++      rw [bKey, hY, bPad2_fields n _ _ hU, bKeyOf_eq]
++    have hTag := bTag_fields n _ L none (bKeyOf n y) (bTapeOf q n W j hj) hU hT hF hR hTp hK
++    have hrec : true :: bCt (InteractiveHandler.input n z (List.ofFn (bHSeed q n W))
++        (List.ofFn (bHState q n j L none)) (2 : Fin 3) (List.ofFn x)
++        (pairEncode (pairEncode [true, true]
++          (pairEncode (List.ofFn (padFin ((pkDin 2).eval n) (List.ofFn x))) (List.ofFn y))) [])) =
++        recBits n (some (padFin (ettCt.eval n) (ctW (pairFstD (List.ofFn y))
++            (pairSndD (List.ofFn y)) (List.ofFn ((tagOf ((none, L) : LSt n (ettCt.eval n))
++              (bKeyOf n y)).getD (bTapeOf q n W j hj)))))) := by
++      rw [recBits_some, bCt, hY, hTag, hU, List.length_replicate, ← ctW_eq]
++      rfl
++    rw [bRun, hI, hF, hL']
++    simp only [show List.replicate ((2 : Fin 3) : ℕ) true = [true, true] from rfl, List.headD_cons,
++      List.drop_succ_cons, List.drop_zero, if_true, Option.isSome_none, Bool.false_eq_true,
++      if_false]
++    rw [log_ne_nil, if_neg Bool.false_ne_true, hrec, hT, bNew_fields q n _ j L _ hU hJ, bCt, hY,
++      hTag, hU, List.length_replicate, ← ctW_eq]
++    rfl
++
++end Answers
++
++end TCSlib.Cryptography.Composability.ETTGame
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
+new file mode 100644
+index 000000000..f6b2bf0b5
+--- /dev/null
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
+@@ -0,0 +1,369 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.CPAHandler
++import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Reduction
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The CPA reduction for the encrypt-then-tag scheme
++
++Step 3 of [PS10, Theorem 170.4]: the experiment that rejects fresh decryption queries, with a
++uniform random tag function, is the CPA experiment of the §3.9 scheme against a machine adversary
++`B` (`exists_cpaStep`). `B` is T2 (`Games.exists_interactiveHandlerMachine`) applied to the handler
++`bHandler` (through the input-free companion `Games.exists_toCompOn_of_toComp`), run on the empty
++input (`NUPPT.exists_comp`).
++
++The proof composes the handler with the CPA oracles `PRFGame.fImpl` (`QueryImpl.comp`). Each
++composed call, from the encoded state `bState j L o` and the CPA record of `o`, has the law of the
++call of the lazy experiment with the tapes in advance (`ettLazyTape`) from `((o, L), j)`
++(`comp_bAbs`), as long as `j` is below the number `q(n)` of tapes and the table has at most `j`
++entries of `n`-bit messages (`bInv`, kept by every call, `ettLazyTape_bInv`); the adversary asks
++at most `q(n)` queries, so this holds along every run (`expect_simulate_abs_inv`). Drawing the
++seed uniformly gives fresh tapes (`expect_ettLazyTape`), and the lazy experiment is the rejecting
++experiment with a uniform random tag function (`expect_ettImpl_lazy`).
++
++## Main definitions
++
++* `ETTGame.cpaRec`: the CPA record `⟨r, c₁⟩` of a CCA2 record `⟨r, ⟨c₁, t⟩⟩`.
++* `ETTGame.bAbs`, `bInv`, `bTapes`: the abstraction, the invariant and the tapes.
++
++## Main results
++
++* `ETTGame.comp_bAbs`: one composed call has the law of a call of `ettLazyTape`.
++* `ETTGame.ettLazyTape_bInv`: the calls of `ettLazyTape` keep the invariant.
++* `ETTGame.exists_cpaStep`: step 3, the rejecting experiment with a random tag function is a CPA
++  experiment of the §3.9 scheme.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 170.4 (book pp. 170–171).
++-/
++
++namespace TCSlib.Cryptography.Composability.ETTGame
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp
++open TCSlib.Cryptography.Composability.PRFGame (pkDin pkDout ctP fImpl atkOf qRed ctOf)
++
++/-! ### The abstraction -/
++
++/-- **The CPA record** of a CCA2 record `c = ⟨r, ⟨c₁, t⟩⟩`: the pair `⟨r, c₁⟩` at `3n + 2` bits. -/
++def cpaRec (n : ℕ) (c : Fin (ettCt.eval n) → Bool) : Fin (ctP.eval n) → Bool :=
++  padFin _ (pairEncode (wR (List.ofFn c)) (wC (List.ofFn c)))
++
++/-- `cpaRec n c = padFin _ ⟨wR ⟦c⟧, wC ⟦c⟧⟩`. -/
++theorem cpaRec_eq (n : ℕ) (c : Fin (ettCt.eval n) → Bool) :
++    cpaRec n c = padFin _ (pairEncode (wR (List.ofFn c)) (wC (List.ofFn c))) := rfl
++
++/-- **The abstraction:** the handler's state `bState j L o` and the CPA record of `o`, as functions
++of the lazy experiment's state `(o, L)` with the counter `j`. -/
++def bAbs (q : PolyExpr) (n : ℕ) (s : LSt n (ettCt.eval n) × ℕ) :
++    (Fin ((bHandler q).stateLen.eval n) → Bool) × Option (Fin (ctP.eval n) → Bool) :=
++  (bHState q n s.2 s.1.2 s.1.1, s.1.1.map (cpaRec n))
++
++/-- `bAbs q n ((o, L), j) = (bHState q n j L o, o.map (cpaRec n))`. -/
++theorem bAbs_eq (q : PolyExpr) (n : ℕ) (s : LSt n (ettCt.eval n) × ℕ) :
++    bAbs q n s = (bHState q n s.2 s.1.2 s.1.1, s.1.1.map (cpaRec n)) := rfl
++
++/-- **The invariant:** the table has at most one entry per query, each with an `n`-bit message. -/
++def bInv (n : ℕ) (s : LSt n (ettCt.eval n) × ℕ) : Prop :=
++  s.1.2.length ≤ s.2 ∧ ∀ e ∈ s.1.2, e.2.2.length = n
++
++/-- `bInv n ((o, L), j) ↔ |L| ≤ j ∧ every message of `L` has `n` bits`. -/
++theorem bInv_iff (n : ℕ) (s : LSt n (ettCt.eval n) × ℕ) :
++    bInv n s ↔ s.1.2.length ≤ s.2 ∧ ∀ e ∈ s.1.2, e.2.2.length = n := Iff.rfl
++
++section Composed
++
++variable (q : PolyExpr) (b : Bool) (n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)) (z : List Bool)
++  (W : Fin (q.eval n * (2 * n)) → Bool)
++
++/-- The tag tapes of the tape word, extended to every index (`AdaptiveCPA.extTape`). -/
++noncomputable def bTapes : ℕ → Fin (2 * n) → Bool :=
++  AdaptiveCPA.extTape (EnsembleLemmas.blocks (q.eval n) (2 * n) W)
++
++/-- `bTapes q n W = extTape (blocks (q n) (2n) W)`. -/
++theorem bTapes_eq : bTapes q n W = AdaptiveCPA.extTape (EnsembleLemmas.blocks (q.eval n) (2 * n) W) :=
++  rfl
++
++/-- Below `q(n)`, the extended tapes are the tapes: `bTapes q n W j = bTapeOf q n W j hj`. -/
++theorem bTapes_of_lt (j : ℕ) (hj : j < q.eval n) : bTapes q n W j = bTapeOf q n W j hj := by
++  rw [bTapes_eq, AdaptiveCPA.extTape_of_lt _ hj, bTapeOf_eq]
++
++/-- The CPA ciphertext of an `n`-bit message as a list: `⟦padFin _ (ctOf r m (f r))⟧ = ⟨r, m ⊕ f(r)⟩`. -/
++private theorem ofFn_ctOf {k : ℕ} (hk : k = ctP.eval n) (r : Fin n → Bool) {m : List Bool}
++    (hm : m.length = n) :
++    List.ofFn (padFin k (ctOf r m (f r))) = pairEncode (List.ofFn r) (maskL f r m) := by
++  rw [ofFn_padFin_of_length (by rw [PRFGame.length_ctOf r hm, hk, PRFGame.ctP_eval]),
++    PRFGame.ctOf_eq, maskL_eq]
++
++/-- The pair read from a CPA ciphertext is the pair of the encryption:
++`bKeyOf n (padFin _ (ctOf r m (f r))) = pairV n ⟦r⟧ (maskL f r m)`. -/
++private theorem bKeyOf_ctOf {k : ℕ} (hk : k = ctP.eval n) (r : Fin n → Bool) {m : List Bool}
++    (hm : m.length = n) :
++    bKeyOf n (padFin k (ctOf r m (f r))) = pairV n (List.ofFn r) (maskL f r m) := by
++  rw [bKeyOf_eq, ofFn_ctOf n f hk r hm, pairFstD_pairEncode, pairSndD_pairEncode, pairV_eq]
++
++/-- **One composed call has the law of a call of the lazy experiment with tapes in advance:** from
++`bAbs ((o, L), j)` with the invariant and `j < q(n)`, the handler composed with the CPA oracles
++with pad function `f` gives every function `g` of the answer and the state the expectation that
++the call of `ettLazyTape` with the tapes `bTapes W` from `((o, L), j)` gives it, with the new state
++abstracted.
++
++**Proof sketch.** By the oracle and the record: encryption and a first challenge ask the CPA
++oracle, which draws `r` and answers `⟨r, m ⊕ f(r)⟩` (`PRFGame.fImpl_enc`,
++`PRFGame.fImpl_challenge_none`); the handler reads the pair `r ‖ (m ⊕ f(r))` (`bKeyOf_ctOf`) and
++tags it as `lazyStep` does (`bHandler_impl_enc`, `bHandler_impl_challenge_none`), and the recorded
++CPA challenge is the CPA record of the CCA2 record. Decryption and a repeated challenge answer
++directly in both (`bHandler_impl_dec`, `bHandler_impl_challenge_some`), and the lazy experiment's
++nonce is not read (`expect_const`). -/
++theorem comp_bAbs (i : Fin 3) (x : (bitSpecAt ettDin ettDout n).dom i)
++    (s : LSt n (ettCt.eval n) × ℕ) (hP : bInv n s) (hs : s.2 < q.eval n)
++    (g : (bitSpecAt ettDin ettDout n).rng i ×
++      ((Fin ((bHandler q).stateLen.eval n) → Bool) × Option (Fin (ctP.eval n) → Bool)) → ℝ) :
++    expect ((fImpl (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) (ctP.eval n) n
++        (atkOf false) b f).comp ((bHandler q).impl n z (bHSeed q n W)) i x (bAbs q n s)) g =
++      expect (ettLazyTape (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n)
++        (ettCt.eval n) n f b (bTapes q n W) i x s) fun p => g (p.1, bAbs q n p.2) := by
++  obtain ⟨⟨o, L⟩, j⟩ := s
++  obtain ⟨hL, hm⟩ := hP
++  have hj : j < q.eval n := hs
++  have hLq : L.length ≤ q.eval n := le_trans hL hj.le
++  rw [QueryImpl.comp_apply, bAbs_eq, ettLazyTape_eq, tapeImpl_apply, ettLazyK_eq,
++    bTapes_of_lt q n W j hj]
++  simp only [OracleComp.bind_assoc, OracleComp.pure_bind, expect_bind, expect_pure]
++  match i, x with
++  | 0, x =>
++    have hx : (List.ofFn x).length = n := by
++      rw [List.length_ofFn]
++      show (ettDin 0).eval n = n
++      rw [ettDin_zero, PolyExpr.eval_var]
++    have hx' : List.ofFn (padFin ((pkDin 0).eval n) (List.ofFn x)) = List.ofFn x :=
++      ofFn_padFin_of_length (by rw [hx, PRFGame.pkDin_zero, PolyExpr.eval_var])
++    rw [bHandler_impl_enc q n z W x j L o hj hLq hm, simulate_query, PRFGame.fImpl_enc]
++    simp only [OracleComp.bind_assoc, OracleComp.pure_bind, simulate_pure, expect_bind, expect_pure]
++    refine congrArg _ (funext fun r => ?_)
++    have hk : (fun i => (pkDout i).eval n) 0 = ctP.eval n := by
++      show (pkDout 0).eval n = ctP.eval n
++      rw [PRFGame.pkDout_zero]
++    rw [lazyStep_enc, bAbs_eq, hx', ofFn_ctOf n f hk r hx, bKeyOf_ctOf n f hk r hx,
++      pairFstD_pairEncode, pairSndD_pairEncode]
++  | 1, x =>
++    rw [bHandler_impl_dec q n z W x j L o hj hLq hm, simulate_pure]
++    simp only [expect_pure, lazyStep_dec, bAbs_eq, expect_const]
++  | 2, x =>
++    cases o with
++    | some c =>
++      rw [bHandler_impl_challenge_some q n z W x j L c hj hLq hm, simulate_pure]
++      simp only [expect_pure, lazyStep_challenge_some, bAbs_eq, expect_const]
++    | none =>
++      have hxx : (List.ofFn x).length = n + n := by
++        rw [List.length_ofFn]
++        show (ettDin 2).eval n = n + n
++        rw [ettDin_two, PolyExpr.eval_add, PolyExpr.eval_var]
++      have hx' : List.ofFn (padFin ((pkDin 2).eval n) (List.ofFn x)) = List.ofFn x :=
++        ofFn_padFin_of_length (by rw [hxx, PRFGame.pkDin_two, PolyExpr.eval_add, PolyExpr.eval_var])
++      have hmsg : (AdaptiveCPA.msgOf n b (List.ofFn x)).length = n := by
++        rw [AdaptiveCPA.msgOf_eq]
++        cases b <;> simp [hxx]
++      rw [bHandler_impl_challenge_none q n z W x j L hj hLq hm, simulate_query, Option.map_none,
++        PRFGame.fImpl_challenge_none]
++      simp only [OracleComp.bind_assoc, OracleComp.pure_bind, simulate_pure, expect_bind,
++        expect_pure]
++      refine congrArg _ (funext fun r => ?_)
++      have hk : (fun i => (pkDout i).eval n) 2 = ctP.eval n := by
++        show (pkDout 2).eval n = ctP.eval n
++        rw [PRFGame.pkDout_two]
++      have hlen : (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn x)))
++          (List.ofFn ((tagOf ((none, L) : LSt n (ettCt.eval n)) (pairV n (List.ofFn r)
++            (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn x))))).getD (bTapeOf q n W j hj)))).length =
++          ettCt.eval n := by
++        rw [ctW_eq, length_pairEncode, length_pairEncode, List.length_ofFn,
++          length_maskL f r hmsg, List.length_ofFn, ettCt_eval]
++        omega
++      have hrec : cpaRec n (padFin (ettCt.eval n) (ctW (List.ofFn r)
++          (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn x)))
++          (List.ofFn ((tagOf ((none, L) : LSt n (ettCt.eval n)) (pairV n (List.ofFn r)
++            (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn x))))).getD (bTapeOf q n W j hj))))) =
++          padFin (ctP.eval n) (ctOf r (AdaptiveCPA.msgOf n b (List.ofFn x)) (f r)) := by
++        rw [cpaRec_eq, ofFn_padFin_of_length hlen, wR_ctW, wC_ctW, PRFGame.ctOf_eq, maskL_eq]
++      rw [lazyStep_challenge_none, bAbs_eq, hx', ofFn_ctOf n f hk r hmsg, bKeyOf_ctOf n f hk r hmsg,
++        pairFstD_pairEncode, pairSndD_pairEncode]
++      simp only [Option.map_some, hrec]
++
++/-- **The calls of the lazy experiment keep the invariant** and raise the counter by one: an
++encryption adds one entry with the `n`-bit message; the other calls keep the table. -/
++theorem ettLazyTape_bInv (T : ℕ → Fin (2 * n) → Bool) (i : Fin 3)
++    (x : (bitSpecAt ettDin ettDout n).dom i) (s : LSt n (ettCt.eval n) × ℕ) (hP : bInv n s) :
++    (ettLazyTape (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n) (ettCt.eval n) n f b T
++      i x s).AllOutputs fun p => bInv n p.2 ∧ p.2.2 ≤ s.2 + 1 := by
++  obtain ⟨⟨o, L⟩, j⟩ := s
++  obtain ⟨hL, hm⟩ := hP
++  rw [ettLazyTape_eq, tapeImpl_apply, ettLazyK_eq, OracleComp.bind_assoc]
++  refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun r _ => ?_
++  rw [OracleComp.pure_bind]
++  refine OracleComp.allOutputs_pure.2 ⟨?_, le_rfl⟩
++  match i, x with
++  | 0, x =>
++    have hx : (List.ofFn x).length = n := by
++      rw [List.length_ofFn]
++      show (ettDin 0).eval n = n
++      rw [ettDin_zero, PolyExpr.eval_var]
++    rw [lazyStep_enc, bInv_iff]
++    refine ⟨by simp only [List.length_cons]; exact Nat.succ_le_succ hL, fun e he => ?_⟩
++    rcases List.mem_cons.1 he with rfl | he
++    · exact hx
++    · exact hm e he
++  | 1, x =>
++    rw [lazyStep_dec]
++    exact ⟨Nat.le_succ_of_le hL, hm⟩
++  | 2, x =>
++    cases o with
++    | some c =>
++      rw [lazyStep_challenge_some]
++      exact ⟨Nat.le_succ_of_le hL, hm⟩
++    | none =>
++      rw [lazyStep_challenge_none]
++      exact ⟨Nat.le_succ_of_le hL, hm⟩
++
++end Composed
++
++/-! ### The reduction -/
++
++/-- **The CPA experiment does not see the output width of an adversary on an input:** for
++`d = d'`, the expected first output bit of the run through `bitCodec ins outs d` and through
++`bitCodec ins outs d'` agree.
++
++**Proof sketch.** Substitute `d = d'`. -/
++private theorem expect_fImpl_toCompOn_width {ins outs : Fin 3 → ℕ} {d d' : ℕ} (hd : d = d')
++    (c n : ℕ) (atk : Attack) (b : Bool) (f : (Fin n → Bool) → (Fin n → Bool)) (B : NUPPT) (Q : ℕ)
++    (x : List Bool) (r : B.Coins n) :
++    expect (simulate (fImpl ins outs c n atk b f) (B.toCompOn (bitCodec ins outs d) n Q x r) none)
++        (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) =
++      expect (simulate (fImpl ins outs c n atk b f) (B.toCompOn (bitCodec ins outs d') n Q x r)
++        none) (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) := by
++  subst hd
++  rfl
++
++/-- **Step 3 of [PS10, Thm 170.4]: the rejecting experiment with a random tag function is a CPA
++experiment of the §3.9 scheme.** For a machine adversary `A` with budget `q` there is a machine
++`B` such that, for every challenge bit `b`, every `n` and every pad function `f` on `n` bits, the
++average over a uniform random tag function `R` of `A`'s acceptance probability in the experiment
++that rejects fresh decryption queries is `B`'s acceptance probability in the CPA experiment with
++pad function `f` (the oracles `PRFGame.fImpl`, on the lengths `pkDin`, `pkDout`) with budget
++`qRed q`.
++
++**Proof sketch.** `B` runs T2's machine for `bHandler` and the input-free companion of `A` on the
++empty input (`NUPPT.exists_comp` with `pre = ⟨[], ·⟩`). Its coins are, through the bijections of
++the companion, T2 and the seed, the tapes `W` and `A`'s coins `r` (`expect_sample_equiv`,
++`ChallengeSim.expect_sample_prod`, `expect_sample_comm`). For fixed `W` and `r`, T2 turns `B`'s run
++against the CPA oracles into the handler's simulation of `A` composed with them (`simulate_bind`,
++`simulate_comp`, `bHandler_finish`); along `A`'s run (at most `q(n)` queries) it has the law of
++`ettLazyTape` with the tapes of `W` (`expect_simulate_abs_inv`, `comp_bAbs`, `ettLazyTape_bInv`).
++Drawing `W` gives fresh tapes (`expect_ettLazyTape`), and the lazy experiment from the empty state
++is the rejecting experiment averaged over `R` (`expect_ettImpl_lazy`; the empty tag table writes
++nothing). Widths are transported by `expect_fImpl_toCompOn_width` and `expect_ettImpl_outLen`. -/
++theorem exists_cpaStep (A : NUPPT) (q : PolyExpr) :
++    ∃ B : NUPPT, ∀ (b : Bool) (n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)),
++      expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool))) (fun R =>
++          ettAcc (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n) (ettCt.eval n) n f R
++            true b A (q.eval n)) =
++        expect (sample (B.Coins n)) fun r =>
++          expect (simulate (fImpl (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
++              (ctP.eval n) n (atkOf false) b f)
++              (B.toComp (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n
++                ((qRed q).eval n) r) none)
++            (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) := by
++  obtain ⟨A₂, -, hA₂⟩ := exists_toCompOn_of_toComp A
++  obtain ⟨B, hB⟩ := exists_interactiveHandlerMachine A₂ q ettDin ettDout pkDin pkDout (.const 1)
++    (bHandler q)
++  obtain ⟨B', hc, -, -, hB'⟩ := NUPPT.exists_comp B
++    (pre := fun y => pairEncode [] y) (post := id)
++    ((polyTimeComputable_const []).pairEncode polyTimeComputable_id) polyTimeComputable_id
++  refine ⟨B', fun b n f => ?_⟩
++  obtain ⟨φ₀, hφ₀⟩ := hA₂ n
++  obtain ⟨φ₂, hφ₂⟩ := hB n
++  have hQ : q.eval n * (bHandler q).perCall.eval n + (bHandler q).finCall.eval n =
++      (qRed q).eval n := by
++    rw [bHandler_perCall, bHandler_finCall, PRFGame.qRed_eval]
++  have hout : (bHandler q).outLen.eval n = 1 := by rw [bHandler_outLen, PolyExpr.eval_const]
++  -- `B'` on the empty input history is `B` on the input `[]`.
++  have hB'B : ∀ r : B.Coins n,
++      B'.toComp (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n
++          ((qRed q).eval n) (NUPPT.coinsCongr hc.symm n r) =
++        B.toCompOn (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n
++          ((qRed q).eval n) [] r := by
++    intro r
++    rw [NUPPT.toComp_eq, NUPPT.toCompOn_eq]
++    congr 1
++    funext hist
++    rw [NUPPT.runAt_coinsCongr, hB', id_eq, ← NUPPT.runAt_eq]
++  -- `B'`'s coins are a tape word and `A`'s coins.
++  rw [← expect_sample_equiv (NUPPT.coinsCongr hc.symm n)]
++  simp only [hB'B]
++  rw [← expect_sample_equiv φ₂, ChallengeSim.expect_sample_prod,
++    ← expect_sample_equiv (bHSeed q n)]
++  conv_rhs => rw [expect_sample_comm]
++  rw [← expect_sample_equiv φ₀]
++  simp only [ettAcc_eq]
++  rw [expect_sample_comm]
++  refine congrArg _ (funext fun r => ?_)
++  -- One run of `B'` is the handler's simulation of `A`, composed with the CPA oracles.
++  have hrun : ∀ W : Fin (q.eval n * (2 * n)) → Bool,
++      expect (simulate (fImpl (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
++          (ctP.eval n) n (atkOf false) b f)
++          (B.toCompOn (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n
++            ((qRed q).eval n) [] (φ₂ (bHSeed q n W, φ₀ r))) none)
++          (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) =
++        expect (simulate (ettLazyTape (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n)
++            (ettCt.eval n) n f b (bTapes q n W))
++            (A₂.toCompOn (bitCodec (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n)
++              ((PolyExpr.const 1).eval n)) n (q.eval n) [] (φ₀ r)) ((none, []), 0))
++          (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) := by
++    intro W
++    rw [expect_fImpl_toCompOn_width hout.symm, ← hQ,
++      ← hφ₂ [] (bHSeed q n W) (φ₀ r), bHandler_advInput, simulate_bind, simulate_comp,
++      OracleComp.bind_assoc, expect_bind]
++    simp only [OracleComp.pure_bind, bHandler_finish, simulate_pure, expect_pure]
++    rw [bHandler_init_hstate, show ((bHState q n 0 [] none, none) :
++        (Fin ((bHandler q).stateLen.eval n) → Bool) × Option (Fin (ctP.eval n) → Bool)) =
++        bAbs q n ((none, []), 0) from rfl,
++      expect_simulate_abs_inv _ _ (bAbs q n) (bInv n) (fun s => s.2) (q.eval n)
++        (fun i x s hP hs g => comp_bAbs q b n f [] W i x s hP hs g)
++        (fun i x s hP _ => ettLazyTape_bInv b n f _ i x s hP) _ (q.eval n)
++        (A₂.toCompOn_costBoundedBy _ n _ _ _) ((none, []), 0)
++        ⟨le_rfl, fun e he => absurd he List.not_mem_nil⟩ (Nat.zero_add _).le]
++    refine congrArg _ (funext fun p => ?_)
++    rw [ofFn_padFin_of_length (by rw [List.length_ofFn, bHandler_outLen])]
++  simp only [hrun, bTapes_eq]
++  have hi0 : (fun i => (ettDin i).eval n) 0 = n := by
++    show (ettDin 0).eval n = n
++    rw [ettDin_zero, PolyExpr.eval_var]
++  have hi2 : (fun i => (ettDin i).eval n) 2 = n + n := by
++    show (ettDin 2).eval n = n + n
++    rw [ettDin_two, PolyExpr.eval_add, PolyExpr.eval_var]
++  rw [expect_sample_equiv (EnsembleLemmas.blocks (q.eval n) (2 * n)) (fun T =>
++      expect (simulate (ettLazyTape (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n)
++          (ettCt.eval n) n f b (AdaptiveCPA.extTape T))
++          (A₂.toCompOn (bitCodec (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n)
++            ((PolyExpr.const 1).eval n)) n (q.eval n) [] (φ₀ r)) ((none, []), 0))
++        (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0)),
++    expect_ettLazyTape _ _ _ _ _ _ (q.eval n)
++      (fun a => if (List.ofFn a).headD false = true then (1 : ℝ) else 0) _
++      (q.eval n) (A₂.toCompOn_costBoundedBy _ n _ _ _) (none, []) 0 (by omega),
++    ← expect_ettImpl_lazy _ _ _ n f b (ettCt_eval n) hi0 hi2
++      (fun a => if (List.ofFn a).headD false = true then (1 : ℝ) else 0) _ (none, [])
++      (fun e he => absurd he List.not_mem_nil)]
++  refine congrArg _ (funext fun R => ?_)
++  have htbl : ovr (tagTbl ((none, []) : LSt n (ettCt.eval n))) R = R := by
++    rw [tagTbl_eq, List.map_nil, List.nil_append]
++    rfl
++  rw [htbl, hφ₀]
++  exact expect_ettImpl_outLen (PolyExpr.eval_const 1 n).symm _ _ _ _ A _ r
++
++end TCSlib.Cryptography.Composability.ETTGame
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean
+index 13bdb2154..a8747386c 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean
+@@ -253,14 +253,6 @@ private theorem validW_pairW (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bo
+     validW g w = (wfW n w && decide (wT w = List.ofFn (g (pairW n w)))) := by
+   rw [validW_eq, tagL_eq, pairW_eq]
+ 
+-/-- An encryption reads the tag function at its pair only:
+-`encW f g r m = ctW ⟦r⟧ c₁ ⟦g (pairV n ⟦r⟧ c₁)⟧`, `c₁ = maskL f r m`. -/
+-private theorem encW_pairV (f : (Fin n → Bool) → (Fin n → Bool))
+-    (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r : Fin n → Bool) (m : List Bool) :
+-    encW f g r m = ctW (List.ofFn r) (maskL f r m)
+-      (List.ofFn (g (pairV n (List.ofFn r) (maskL f r m)))) := by
+-  rw [encW_eq, tagL_eq]
+-
+ /-- **A fresh guess hits the random tag with probability at most `2^{-2n}`:** under the
+ invariant, `𝔼_R [hitW (ovr M R) s w] ≤ 2^{-2n}` for `n > 0`.
+ 
+@@ -415,7 +407,7 @@ theorem expect_prob_bad_le (hn : 0 < n) (hd : d = 6 * n + 4) (hi2 : ins 2 = n +
+         exact expect_const _ _
+     match i, x, k, ih, IH, fresh with
+     | 0, x, k, ih, IH, fresh =>
+-      simp only [ettStep_enc, hitQ_zero, encW_pairV]
++      simp only [ettStep_enc, hitQ_zero, encW_eq_ctW]
+       exact fresh (fun r => pairV n (List.ofFn r) (maskL f r (List.ofFn x)))
+         (fun r t => padFin _ (ctW (List.ofFn r) (maskL f r (List.ofFn x)) (List.ofFn t)))
+         (fun r _ => (s.1, pairV n (List.ofFn r) (maskL f r (List.ofFn x)) :: s.2))
+@@ -477,7 +469,7 @@ theorem expect_prob_bad_le (hn : 0 < n) (hd : d = 6 * n + 4) (hi2 : ins 2 = n +
+           rw [ctW_eq, length_pairEncode, length_pairEncode, List.length_ofFn, hl r,
+             List.length_ofFn, hd]
+           omega
+-        simp only [ettStep_challenge_none, hitQ_two, encW_pairV]
++        simp only [ettStep_challenge_none, hitQ_two, encW_eq_ctW]
+         exact fresh (fun r => pairV n (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b
+             (List.ofFn mm))))
+           (fun r t => padFin _ (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Games.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Games.lean
+index 87e680f2e..ada8611ad 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Games.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Games.lean
+@@ -102,6 +102,14 @@ theorem encW_eq (f : (Fin n → Bool) → (Fin n → Bool))
+     (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r : Fin n → Bool) (m : List Bool) :
+     encW f g r m = ctW (List.ofFn r) (maskL f r m) (tagL g (List.ofFn r) (maskL f r m)) := rfl
+ 
++/-- **An encryption reads the tag function at its pair only:**
++`encW f g r m = ctW ⟦r⟧ c₁ ⟦g (pairV n ⟦r⟧ c₁)⟧` with `c₁ = maskL f r m`. -/
++theorem encW_eq_ctW (f : (Fin n → Bool) → (Fin n → Bool))
++    (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r : Fin n → Bool) (m : List Bool) :
++    encW f g r m = ctW (List.ofFn r) (maskL f r m)
++      (List.ofFn (g (pairV n (List.ofFn r) (maskL f r m)))) := by
++  rw [encW_eq, tagL_eq]
++
+ /-- The nonce field of a word: `wR w = pairFstD w`. -/
+ def wR (w : List Bool) : List Bool := pairFstD w
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean
+new file mode 100644
+index 000000000..bb1d169bb
+--- /dev/null
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean
+@@ -0,0 +1,573 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Games
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The rejecting experiment with lazily sampled tags
++
++Step 3 of [PS10, Theorem 170.4] simulates the experiment that rejects fresh decryption queries by
++a CPA adversary against the §3.9 scheme. That adversary cannot hold a random function on `2n`
++bits; it samples the tags lazily, one tape per query, and answers decryption queries from the table
++of its earlier answers. This file states that lazy experiment (`ettLazy`, with tapes in advance
++`ettLazyTape`) and proves that it has the law of the rejecting experiment with a uniform random
++tag function (`expect_ettImpl_lazy`).
++
++**The lazy state** (`LSt n d`) is the recorded challenge and the table of the `Enc′` answers, newest
++first: each entry is the pair `r ‖ c₁`, its tag and the encrypted message.
++- `Enc′` on `m` with the nonce `r`: the tag of the pair `p = r ‖ c₁` is the table's tag at `p` if `p`
++  is in the table, else the challenge's tag if `p` is the challenge's pair, else the query's tape
++  (`tagOf`); the entry `(p, tag, m)` is added.
++- `Dec′` on `w` refuses the record; a well-formed `w` whose pair is in the table and whose tag is the
++  table's tag gets `⟨1, m⟩` with the table's message, every other word `⊥` (`lazyDec`).
++- `Challenge` on `⟨m₀, m₁⟩`: the first time, as `Enc′` on `m_b` (without an entry), recorded.
++
++**The law** (`expect_ettImpl_lazy`). Average the rejecting experiment over `R` with the table's tags
++written over it (`tagTbl`, `ovr`). A new pair moves `R`'s value into the table (`expect_sample_ovr`);
++a pair in the table has its tag; a decryption with a listed pair reads the table's tag, and its
++answer `⟨1, c₁ ⊕ f(r)⟩` is the table's message, because the entry's pair is `r ‖ (m ⊕ f(r))` with an
++`n`-bit `m` (`LInv`).
++
++## Main definitions
++
++* `ETTGame.LEntry`, `LSt`, `keysL`, `lookL`, `tagOf`, `lazyDec`, `tagTbl`, `LInv`.
++* `ETTGame.lazyStep`, `ettLazyK`, `ettLazy`, `ettLazyTape`.
++
++## Main results
++
++* `ETTGame.expect_ettImpl_lazy`: the rejecting experiment with a random tag function is the lazy
++  experiment.
++* `ETTGame.expect_ettLazyTape`: the lazy experiment with tapes in advance.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 170.4 (book pp. 170–171).
++-/
++
++namespace TCSlib.Cryptography.Composability.ETTGame
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp
++
++/-! ### Tables -/
++
++section Tables
++
++variable {n d : ℕ}
++
++/-- An entry of the lazy table: a pair, its tag and the message of the encryption. -/
++abbrev LEntry (n : ℕ) : Type := (Fin (2 * n) → Bool) × (Fin (2 * n) → Bool) × List Bool
++
++/-- `LEntry n = pair × tag × message`. -/
++theorem LEntry_eq (n : ℕ) :
++    LEntry n = ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool) × List Bool) := rfl
++
++/-- The lazy state: the recorded challenge and the table, newest entry first. -/
++abbrev LSt (n d : ℕ) : Type := Option (Fin d → Bool) × List (LEntry n)
++
++/-- `LSt n d = Option (Fin d → Bool) × List (LEntry n)`. -/
++theorem LSt_eq (n d : ℕ) : LSt n d = (Option (Fin d → Bool) × List (LEntry n)) := rfl
++
++/-- The pairs of the table. -/
++def keysL (L : List (LEntry n)) : List (Fin (2 * n) → Bool) := L.map Prod.fst
++
++/-- `keysL L = L.map Prod.fst`. -/
++theorem keysL_eq (L : List (LEntry n)) : keysL L = L.map Prod.fst := rfl
++
++/-- **The table's entry at a pair:** the first (newest) entry with the pair `p`, if any. -/
++def lookL (L : List (LEntry n)) (p : Fin (2 * n) → Bool) : Option (LEntry n) :=
++  if p ∈ keysL L then some (L.getD ((keysL L).idxOf p) default) else none
++
++/-- `lookL L p = if p ∈ keysL L then some (L.getD ((keysL L).idxOf p) default) else none`. -/
++theorem lookL_eq (L : List (LEntry n)) (p : Fin (2 * n) → Bool) :
++    lookL L p = if p ∈ keysL L then some (L.getD ((keysL L).idxOf p) default) else none := rfl
++
++/-- **The tag of a pair:** the table's, else the challenge's at its pair, else none. -/
++def tagOf (s : LSt n d) (p : Fin (2 * n) → Bool) : Option (Fin (2 * n) → Bool) :=
++  match lookL s.2 p with
++  | some e => some e.2.1
++  | none =>
++    match s.1 with
++    | some c => if pairW n (List.ofFn c) = p then some (padFin (2 * n) (wT (List.ofFn c))) else none
++    | none => none
++
++/-- `tagOf s p`: the table's tag, else the challenge's at its pair. -/
++theorem tagOf_eq (s : LSt n d) (p : Fin (2 * n) → Bool) :
++    tagOf s p = match lookL s.2 p with
++      | some e => some e.2.1
++      | none =>
++        match s.1 with
++        | some c =>
++          if pairW n (List.ofFn c) = p then some (padFin (2 * n) (wT (List.ofFn c))) else none
++        | none => none := rfl
++
++/-- **The lazy decryption answer:** `⊥` on the record; on a well-formed word whose pair is in the
++table with the word's tag, `⟨1, m⟩` with the table's message; `⊥` otherwise. -/
++def lazyDec (s : LSt n d) (w : List Bool) : List Bool :=
++  if (!refW s.1 w && wfW n w) = true then
++    match lookL s.2 (pairW n w) with
++    | some e => if List.ofFn e.2.1 = wT w then true :: e.2.2 else []
++    | none => []
++  else []
++
++/-- `lazyDec s w` unfolded. -/
++theorem lazyDec_eq (s : LSt n d) (w : List Bool) :
++    lazyDec s w = if (!refW s.1 w && wfW n w) = true then
++      match lookL s.2 (pairW n w) with
++      | some e => if List.ofFn e.2.1 = wT w then true :: e.2.2 else []
++      | none => []
++    else [] := rfl
++
++/-- **The tag table of a lazy state:** the entries' tags, newest first, then the challenge's. -/
++def tagTbl (s : LSt n d) : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool)) :=
++  s.2.map (fun e => (e.1, e.2.1)) ++
++    match s.1 with
++    | some c => [(pairW n (List.ofFn c), padFin (2 * n) (wT (List.ofFn c)))]
++    | none => []
++
++/-- `tagTbl s` unfolded. -/
++theorem tagTbl_eq (s : LSt n d) :
++    tagTbl s = s.2.map (fun e => (e.1, e.2.1)) ++
++      match s.1 with
++      | some c => [(pairW n (List.ofFn c), padFin (2 * n) (wT (List.ofFn c)))]
++      | none => [] := rfl
++
++end Tables
++
++/-! ### Tags as a table written over a function -/
++
++section Ovr
++
++variable {n d : ℕ}
++
++/-- Writing a concatenation is writing its parts: `ovr (A ++ B) R = ovr A (ovr B R)`. -/
++theorem ovr_append (A B : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool)))
++    (R : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) : ovr (A ++ B) R = ovr A (ovr B R) := by
++  induction A with
++  | nil => rw [List.nil_append, ovr_nil]
++  | cons e A ih =>
++    obtain ⟨p, y⟩ := e
++    rw [List.cons_append, ovr_cons, ovr_cons, ih]
++
++/-- The entry at a listed pair has that pair: `p ∈ keysL L → (L.getD ((keysL L).idxOf p) _).1 = p`. -/
++theorem getD_idxOf_fst {L : List (LEntry n)} {p : Fin (2 * n) → Bool} (hp : p ∈ keysL L) :
++    (L.getD ((keysL L).idxOf p) default).1 = p := by
++  induction L with
++  | nil => simp [keysL_eq] at hp
++  | cons e L ih =>
++    rw [keysL_eq, List.map_cons, List.idxOf_cons]
++    by_cases h : e.1 = p
++    · simp [h]
++    · have hp' : p ∈ keysL L := by
++        rw [keysL_eq, List.map_cons, List.mem_cons] at hp
++        exact hp.resolve_left (Ne.symm h)
++      simp only [show (e.1 == p) = false from beq_false_of_ne h, cond_false, List.getD_cons_succ]
++      exact ih hp'
++
++/-- **On a listed pair the tag table gives the newest entry's tag:**
++`p ∈ keysL L → ovr (L-tags ++ X) R p = (L.getD ((keysL L).idxOf p) _).2.1`. -/
++theorem ovr_tags_of_mem (L : List (LEntry n))
++    (X : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool)))
++    (R : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) {p : Fin (2 * n) → Bool}
++    (hp : p ∈ keysL L) :
++    ovr (L.map (fun e => (e.1, e.2.1)) ++ X) R p = (L.getD ((keysL L).idxOf p) default).2.1 := by
++  induction L with
++  | nil => simp [keysL_eq] at hp
++  | cons e L ih =>
++    rw [List.map_cons, List.cons_append, ovr_cons, keysL_eq, List.map_cons, List.idxOf_cons]
++    by_cases h : e.1 = p
++    · subst h
++      simp
++    · have hp' : p ∈ keysL L := by
++        rw [keysL_eq, List.map_cons, List.mem_cons] at hp
++        exact hp.resolve_left (Ne.symm h)
++      rw [Function.update_of_ne (Ne.symm h)]
++      simp only [show (e.1 == p) = false from beq_false_of_ne h, cond_false, List.getD_cons_succ]
++      exact ih hp'
++
++/-- The keys of the tag table: the listed pairs, then the challenge's pair. -/
++theorem keys_tagTbl (s : LSt n d) :
++    (tagTbl s).map Prod.fst = keysL s.2 ++
++      match s.1 with
++      | some c => [pairW n (List.ofFn c)]
++      | none => [] := by
++  rw [tagTbl_eq, List.map_append, List.map_map, keysL_eq]
++  congr 1
++  cases s.1 <;> rfl
++
++/-- **`tagOf` reads the tag table:** for every `R`, `tagOf s p` is `ovr (tagTbl s) R p` on the keys
++of the tag table, and none elsewhere. -/
++theorem tagOf_eq_ovr (s : LSt n d) (p : Fin (2 * n) → Bool)
++    (R : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) :
++    tagOf s p = if p ∈ (tagTbl s).map Prod.fst then some (ovr (tagTbl s) R p) else none := by
++  rw [tagOf_eq, keys_tagTbl, tagTbl_eq]
++  by_cases hp : p ∈ keysL s.2
++  · rw [lookL_eq, if_pos hp, if_pos (List.mem_append_left _ hp), ovr_tags_of_mem _ _ _ hp]
++  · rw [lookL_eq, if_neg hp, ovr_append, ovr_of_not_mem (by rwa [List.map_map]) _]
++    obtain ⟨o, L⟩ := s
++    cases o with
++    | none => simp [hp]
++    | some c =>
++      simp only
++      by_cases hc : pairW n (List.ofFn c) = p
++      · subst hc
++        simp [ovr_cons, ovr_nil]
++      · simp only [if_neg hc, List.mem_append, hp, List.mem_singleton, false_or]
++        rw [if_neg (Ne.symm hc)]
++
++/-- The tag table after an entry: `tagTbl (o, (p, t, m) :: L) = (p, t) :: tagTbl (o, L)`. -/
++private theorem tagTbl_cons (o : Option (Fin d → Bool)) (p t : Fin (2 * n) → Bool) (m : List Bool)
++    (L : List (LEntry n)) : tagTbl (o, (p, t, m) :: L) = (p, t) :: tagTbl (o, L) := by
++  rw [tagTbl_eq, tagTbl_eq, List.map_cons, List.cons_append]
++
++/-- The pairs after an entry: `keysL ((p, t, m) :: L) = p :: keysL L`. -/
++private theorem keysL_cons (p t : Fin (2 * n) → Bool) (m : List Bool) (L : List (LEntry n)) :
++    keysL ((p, t, m) :: L) = p :: keysL L := by
++  rw [keysL_eq, keysL_eq, List.map_cons]
++
++/-- Writing a value the table already gives changes nothing:
++`ovr M R p = y → ovr ((p, y) :: M) R = ovr M R`. -/
++private theorem ovr_cons_self {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
++    {R : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)} {p y : Fin (2 * n) → Bool}
++    (h : ovr M R p = y) : ovr ((p, y) :: M) R = ovr M R := by
++  rw [ovr_cons, ← h, Function.update_eq_self]
++
++/-- Appending a value at a key changes nothing: `p ∈ keys M → ovr (M ++ [(p, y)]) R = ovr M R`. -/
++private theorem ovr_append_of_mem {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
++    {p : Fin (2 * n) → Bool} (hp : p ∈ M.map Prod.fst) (y : Fin (2 * n) → Bool)
++    (R : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) : ovr (M ++ [(p, y)]) R = ovr M R := by
++  rw [ovr_append, ovr_cons, ovr_nil]
++  funext x
++  by_cases hx : x ∈ M.map Prod.fst
++  · exact ovr_of_mem hx _ _
++  · rw [ovr_of_not_mem hx, ovr_of_not_mem hx,
++      Function.update_of_ne (fun h => hx (by rw [h]; exact hp))]
++
++/-- Appending a value at a new key is writing it first:
++`p ∉ keys M → ovr (M ++ [(p, y)]) R = ovr ((p, y) :: M) R`. -/
++private theorem ovr_append_of_not_mem {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
++    {p : Fin (2 * n) → Bool} (hp : p ∉ M.map Prod.fst) (y : Fin (2 * n) → Bool)
++    (R : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) :
++    ovr (M ++ [(p, y)]) R = ovr ((p, y) :: M) R := by
++  rw [ovr_append, ovr_cons, ovr_nil, ovr_cons, ovr_update hp]
++
++end Ovr
++
++/-! ### The lazy experiment -/
++
++/-- **XOR twice with the same pad is the identity** (generic; several modules keep a private
++copy): `(m ⊕ p) ⊕ p = m` when `|m| ≤ |p|`. -/
++theorem zipWith_xor_cancel : ∀ (m p : List Bool), m.length ≤ p.length →
++    List.zipWith xor (List.zipWith xor m p) p = m
++  | [], _, _ => by simp
++  | _ :: _, [], h => by simp at h
++  | a :: m, c :: p, h => by
++    simp only [List.zipWith_cons_cons, List.cons.injEq]
++    exact ⟨by cases a <;> cases c <;> rfl, zipWith_xor_cancel m p (by simpa using h)⟩
++
++section Lazy
++
++variable (ins outs : Fin 3 → ℕ) (d n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)) (b : Bool)
++
++/-- **The invariant of the lazy table:** every entry `(p, t, m)` has an `n`-bit message `m` and the
++pair `p = r ‖ (m ⊕ f(r))` of some nonce `r`. -/
++def LInv {d : ℕ} (s : LSt n d) : Prop :=
++  ∀ e ∈ s.2, ∃ r : Fin n → Bool, e.1 = pairV n (List.ofFn r) (maskL f r e.2.2) ∧ e.2.2.length = n
++
++/-- `LInv f s` unfolded. -/
++theorem lInv_iff {d : ℕ} (s : LSt n d) :
++    LInv n f s ↔ ∀ e ∈ s.2,
++      ∃ r : Fin n → Bool, e.1 = pairV n (List.ofFn r) (maskL f r e.2.2) ∧ e.2.2.length = n :=
++  Iff.rfl
++
++/-- **The rejecting decryption answer with the table's tags is the lazy answer:** under the
++invariant, `decAnsW f (ovr (tagTbl s) R) true (s.1, keysL s.2) w = lazyDec s w`.
++
++**Proof sketch.** A refused or malformed word gets `⊥` in both. A well-formed word with a listed
++pair reads the newest entry `(p, t, m)` at it (`ovr_tags_of_mem`, `getD_idxOf_fst`); its fields are
++`r` and `m ⊕ f(r)` (`eq_of_pairV_eq`), so `decL f w = ⟨1, m⟩` (`zipWith_xor_cancel`). A fresh pair is
++rejected by both. -/
++theorem decAnsW_tagTbl {d : ℕ} (s : LSt n d) (hs : LInv n f s)
++    (R : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (w : List Bool) :
++    decAnsW f (ovr (tagTbl s) R) true (s.1, keysL s.2) w = lazyDec s w := by
++  rw [decAnsW_eq, lazyDec_eq, validW_eq]
++  simp only [Bool.not_true, Bool.false_or]
++  by_cases hr : refW s.1 w = true
++  · simp [hr]
++  · rw [Bool.not_eq_true] at hr
++    simp only [hr, Bool.not_false, Bool.true_and]
++    by_cases hw : wfW n w = true
++    · simp only [hw, Bool.true_and]
++      have hw' := hw
++      rw [wfW_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq] at hw'
++      by_cases hk : pairW n w ∈ keysL s.2
++      · rw [lookL_eq, if_pos hk, tagL_eq, ← pairW_eq, tagTbl_eq, ovr_tags_of_mem _ _ _ hk]
++        simp only [decide_eq_true hk, Bool.and_true, decide_eq_true_eq, ↓reduceIte]
++        have hfst := getD_idxOf_fst hk
++        have hlt : (keysL s.2).idxOf (pairW n w) < s.2.length := by
++          have := List.idxOf_lt_length_of_mem hk
++          rwa [keysL_eq, List.length_map] at this
++        obtain ⟨r, hp, hl⟩ := hs (s.2.getD ((keysL s.2).idxOf (pairW n w)) default) (by
++          rw [List.getD_eq_getElem _ _ hlt]
++          exact List.getElem_mem hlt)
++        by_cases ht : wT w = List.ofFn (s.2.getD ((keysL s.2).idxOf (pairW n w)) default).2.1
++        · rw [if_pos ht, if_pos ht.symm, decL_eq]
++          rw [hfst, pairW_eq] at hp
++          obtain ⟨h₁, h₂⟩ := eq_of_pairV_eq hw'.1 hw'.2 List.length_ofFn
++            (length_maskL f r hl) hp
++          rw [h₁, h₂, padFin_ofFn, maskL_eq, zipWith_xor_cancel _ _ (by
++            rw [List.length_ofFn, hl])]
++        · rw [if_neg ht, if_neg (Ne.symm ht)]
++      · rw [lookL_eq, if_neg hk]
++        simp [hk]
++    · rw [Bool.not_eq_true] at hw
++      simp [hw]
++
++/-- **One step of the lazy experiment** with the nonce `r` and the tape `t` (see the module
++docstring). -/
++def lazyStep (r : Fin n → Bool) (t : Fin (2 * n) → Bool) :
++    ∀ i : Fin 3, (Fin (ins i) → Bool) → LSt n d → (Fin (outs i) → Bool) × LSt n d
++  | 0, m, s => (padFin _ (ctW (List.ofFn r) (maskL f r (List.ofFn m))
++        (List.ofFn ((tagOf s (pairV n (List.ofFn r) (maskL f r (List.ofFn m)))).getD t))),
++      (s.1, (pairV n (List.ofFn r) (maskL f r (List.ofFn m)),
++        (tagOf s (pairV n (List.ofFn r) (maskL f r (List.ofFn m)))).getD t, List.ofFn m) :: s.2))
++  | 1, w, s => (padFin _ (lazyDec s (List.ofFn w)), s)
++  | 2, _, (some c, L) => (padFin _ (List.ofFn c), (some c, L))
++  | 2, mm, (none, L) =>
++    (padFin _ (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))
++        (List.ofFn ((tagOf ((none, L) : LSt n d) (pairV n (List.ofFn r)
++          (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))))).getD t))),
++      (some (padFin d (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))
++        (List.ofFn ((tagOf ((none, L) : LSt n d) (pairV n (List.ofFn r)
++          (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))))).getD t)))), L))
++
++/-- `Enc′` in the lazy experiment: the tag `tagOf s p` or the tape, and a new entry. -/
++theorem lazyStep_enc (r : Fin n → Bool) (t : Fin (2 * n) → Bool) (m : Fin (ins 0) → Bool)
++    (s : LSt n d) :
++    lazyStep ins outs d n f b r t 0 m s =
++      (padFin _ (ctW (List.ofFn r) (maskL f r (List.ofFn m))
++          (List.ofFn ((tagOf s (pairV n (List.ofFn r) (maskL f r (List.ofFn m)))).getD t))),
++        (s.1, (pairV n (List.ofFn r) (maskL f r (List.ofFn m)),
++          (tagOf s (pairV n (List.ofFn r) (maskL f r (List.ofFn m)))).getD t,
++          List.ofFn m) :: s.2)) := rfl
++
++/-- `Dec′` in the lazy experiment answers `lazyDec`. -/
++theorem lazyStep_dec (r : Fin n → Bool) (t : Fin (2 * n) → Bool) (w : Fin (ins 1) → Bool)
++    (s : LSt n d) :
++    lazyStep ins outs d n f b r t 1 w s = (padFin _ (lazyDec s (List.ofFn w)), s) := rfl
++
++/-- A repeated challenge in the lazy experiment. -/
++theorem lazyStep_challenge_some (r : Fin n → Bool) (t : Fin (2 * n) → Bool)
++    (mm : Fin (ins 2) → Bool) (c : Fin d → Bool) (L : List (LEntry n)) :
++    lazyStep ins outs d n f b r t 2 mm (some c, L) = (padFin _ (List.ofFn c), (some c, L)) := rfl
++
++/-- The first challenge in the lazy experiment. -/
++theorem lazyStep_challenge_none (r : Fin n → Bool) (t : Fin (2 * n) → Bool)
++    (mm : Fin (ins 2) → Bool) (L : List (LEntry n)) :
++    lazyStep ins outs d n f b r t 2 mm (none, L) =
++      (padFin _ (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))
++          (List.ofFn ((tagOf ((none, L) : LSt n d) (pairV n (List.ofFn r)
++            (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))))).getD t))),
++        (some (padFin d (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))
++          (List.ofFn ((tagOf ((none, L) : LSt n d) (pairV n (List.ofFn r)
++            (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))))).getD t)))), L)) := rfl
++
++/-- One call of the lazy experiment with the tape `t`: draw the nonce and take `lazyStep`. -/
++noncomputable def ettLazyK (i : Fin 3) (x : Fin (ins i) → Bool) (s : LSt n d)
++    (t : Fin (2 * n) → Bool) : ProbComp ((Fin (outs i) → Bool) × LSt n d) :=
++  (sample (Fin n → Bool)).bind fun r => .pure (lazyStep ins outs d n f b r t i x s)
++
++/-- `ettLazyK … i x s t = (sample (Fin n → Bool)).bind fun r => pure (lazyStep … r t i x s)`. -/
++theorem ettLazyK_eq (i : Fin 3) (x : Fin (ins i) → Bool) (s : LSt n d) (t : Fin (2 * n) → Bool) :
++    ettLazyK ins outs d n f b i x s t =
++      (sample (Fin n → Bool)).bind fun r => .pure (lazyStep ins outs d n f b r t i x s) := rfl
++
++/-- **The lazy experiment:** one fresh tape per query (`freshImpl`). -/
++noncomputable def ettLazy : QueryImpl (bitSpec ins outs) (LSt n d) unifSpec :=
++  freshImpl (ettLazyK ins outs d n f b)
++
++/-- `ettLazy … = freshImpl (ettLazyK …)`. -/
++theorem ettLazy_eq : ettLazy ins outs d n f b = freshImpl (ettLazyK ins outs d n f b) := rfl
++
++/-- **The lazy experiment with tapes in advance** (`tapeImpl`). -/
++noncomputable def ettLazyTape (T : ℕ → Fin (2 * n) → Bool) : QueryImpl (bitSpec ins outs) (LSt n d × ℕ) unifSpec :=
++  tapeImpl (ettLazyK ins outs d n f b) T
++
++/-- `ettLazyTape … T = tapeImpl (ettLazyK …) T`. -/
++theorem ettLazyTape_eq (T : ℕ → Fin (2 * n) → Bool) :
++    ettLazyTape ins outs d n f b T = tapeImpl (ettLazyK ins outs d n f b) T := rfl
++
++/-- **Tapes in advance have the law of fresh tapes** (`expect_simulate_tapeImpl`). -/
++theorem expect_ettLazyTape (κ : ℕ) {α : Type} (G : α → ℝ) (c : OracleComp (bitSpec ins outs) α)
++    (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : LSt n d) (j : ℕ) (hj : j + m ≤ κ) :
++    expect (sample (Fin κ → Fin (2 * n) → Bool))
++        (fun T => expect (simulate (ettLazyTape ins outs d n f b (AdaptiveCPA.extTape T)) c (s, j))
++          fun p => G p.1) =
++      expect (simulate (ettLazy ins outs d n f b) c s) fun p => G p.1 :=
++  expect_simulate_tapeImpl _ κ G c m hc s j hj
++
++end Lazy
++
++/-! ### The law of the lazy experiment -/
++
++section LazyLaw
++
++variable (ins outs : Fin 3 → ℕ) (d n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)) (b : Bool)
++
++/-- One call of the lazy experiment: draw the tape, then the nonce, and take `lazyStep`. -/
++theorem ettLazy_apply (i : Fin 3) (x : Fin (ins i) → Bool) (s : LSt n d) :
++    ettLazy ins outs d n f b i x s =
++      (sample (Fin (2 * n) → Bool)).bind fun t =>
++        (sample (Fin n → Bool)).bind fun r => .pure (lazyStep ins outs d n f b r t i x s) := by
++  rw [ettLazy_eq, freshImpl_apply]
++  rfl
++
++/-- **The rejecting experiment with a uniform random tag function is the lazy experiment**
++[PS10, Thm 170.4, proof]: for `(6n + 4)`-bit records, `n`-bit messages and `2n`-bit challenge
++queries, from a lazy state with the invariant `LInv`, averaging over `R` with the table's tags
++written over it, `𝔼_R 𝔼[G (simulate (ettImpl … (ovr (tagTbl s) R) true b) c (s.1, keysL s.2))] =
++𝔼[G (simulate (ettLazy …) c s)]`.
++
++**Proof sketch.** Induction on `c`; both sides draw a nonce per query (exchanged with the
++average, `expect_sample_comm`). An encryption or a first challenge at a pair of the tag table reads
++the table (`tagOf_eq_ovr`, `ovr_of_mem`), and the new entry repeats it (`ovr_cons_self`,
++`ovr_append_of_mem`); at a new pair it reads `R` there, moved into the table by
++`expect_sample_ovr` and matched by the lazy tape (`ovr_append_of_not_mem`). Decryption answers agree
++(`decAnsW_tagTbl`). A repeated challenge reads nothing. -/
++theorem expect_ettImpl_lazy (hd : d = 6 * n + 4) (hi0 : ins 0 = n) (hi2 : ins 2 = n + n)
++    {α : Type} (G : α → ℝ) (c : OracleComp (bitSpec ins outs) α) (s : LSt n d)
++    (hs : LInv n f s) :
++    expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)))
++        (fun R => expect (simulate (ettImpl ins outs d n f (ovr (tagTbl s) R) true b) c
++          (s.1, keysL s.2)) fun p => G p.1) =
++      expect (simulate (ettLazy ins outs d n f b) c s) fun p => G p.1 := by
++  induction c generalizing s with
++  | pure a =>
++    simp only [simulate_pure, expect_pure]
++    exact expect_const _ _
++  | query i x k ih =>
++    rw [simulate_query, ettLazy_apply]
++    simp only [simulate_query, ettImpl_apply, OracleComp.bind_assoc, OracleComp.pure_bind,
++      expect_bind]
++    rw [expect_sample_comm (α := (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)),
++      expect_sample_comm (α := Fin (2 * n) → Bool)]
++    refine congrArg _ (funext fun r => ?_)
++    match i, x, k, ih with
++    | 0, m, k, ih =>
++      have hm : (List.ofFn m).length = n := by rw [List.length_ofFn, hi0]
++      simp only [ettStep_enc, lazyStep_enc, encW_eq_ctW]
++      by_cases hp : pairV n (List.ofFn r) (maskL f r (List.ofFn m)) ∈ (tagTbl s).map Prod.fst
++      · -- the pair has a tag already
++        have hy : ∀ R, ovr (tagTbl s) R (pairV n (List.ofFn r) (maskL f r (List.ofFn m))) =
++            ovr (tagTbl s) (fun _ => pairV n (List.ofFn r) (maskL f r (List.ofFn m)))
++              (pairV n (List.ofFn r) (maskL f r (List.ofFn m))) := fun R => ovr_of_mem hp R _
++        rw [tagOf_eq_ovr s _ (fun _ => pairV n (List.ofFn r) (maskL f r (List.ofFn m))),
++          if_pos hp]
++        simp only [Option.getD_some, hy, expect_const]
++        have hs' : LInv n f (s.1, (pairV n (List.ofFn r) (maskL f r (List.ofFn m)),
++            ovr (tagTbl s) (fun _ => pairV n (List.ofFn r) (maskL f r (List.ofFn m)))
++              (pairV n (List.ofFn r) (maskL f r (List.ofFn m))), List.ofFn m) :: s.2) := by
++          intro e he
++          rcases List.mem_cons.1 he with rfl | he
++          · exact ⟨r, rfl, hm⟩
++          · exact hs e he
++        rw [← ih _ _ hs', tagTbl_cons, keysL_cons, Prod.mk.eta]
++        refine congrArg _ (funext fun R => ?_)
++        rw [ovr_cons_self (hy R)]
++      · -- a new pair: its tag is the tape
++        rw [tagOf_eq_ovr s _ (fun _ => pairV n (List.ofFn r) (maskL f r (List.ofFn m))),
++          if_neg hp]
++        simp only [Option.getD_none]
++        have e : ∀ R, ovr (tagTbl s) R (pairV n (List.ofFn r) (maskL f r (List.ofFn m))) =
++            R (pairV n (List.ofFn r) (maskL f r (List.ofFn m))) := fun R => ovr_of_not_mem hp R
++        simp only [e]
++        rw [expect_sample_ovr (tagTbl s) hp (fun t g => expect (simulate
++          (ettImpl ins outs d n f g true b) (k (padFin _ (ctW (List.ofFn r)
++            (maskL f r (List.ofFn m)) (List.ofFn t))))
++          (s.1, pairV n (List.ofFn r) (maskL f r (List.ofFn m)) :: keysL s.2)) fun p => G p.1)]
++        refine congrArg _ (funext fun t => ?_)
++        have hs' : LInv n f (s.1, (pairV n (List.ofFn r) (maskL f r (List.ofFn m)), t,
++            List.ofFn m) :: s.2) := by
++          intro e he
++          rcases List.mem_cons.1 he with rfl | he
++          · exact ⟨r, rfl, hm⟩
++          · exact hs e he
++        rw [← ih _ _ hs', tagTbl_cons, keysL_cons, Prod.mk.eta]
++    | 1, w, k, ih =>
++      simp only [ettStep_dec, lazyStep_dec, decAnsW_tagTbl n f s hs, expect_const]
++      exact ih _ s hs
++    | 2, mm, k, ih =>
++      obtain ⟨o, L⟩ := s
++      cases o with
++      | some c =>
++        simp only [ettStep_challenge_some, lazyStep_challenge_some, expect_const]
++        exact ih _ (some c, L) hs
++      | none =>
++        have hmsg : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n := by
++          have : (List.ofFn mm).length = n + n := by rw [List.length_ofFn, hi2]
++          rw [AdaptiveCPA.msgOf_eq]
++          cases b <;> simp [this]
++        have hl := length_maskL f r hmsg
++        have hrec : ∀ t : Fin (2 * n) → Bool,
++            List.ofFn (padFin d (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b
++              (List.ofFn mm))) (List.ofFn t))) =
++            ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))) (List.ofFn t) := by
++          intro t
++          refine ofFn_padFin_of_length ?_
++          rw [ctW_eq, length_pairEncode, length_pairEncode, List.length_ofFn, hl, List.length_ofFn,
++            hd]
++          omega
++        have htbl : ∀ t : Fin (2 * n) → Bool,
++            tagTbl ((some (padFin d (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b
++              (List.ofFn mm))) (List.ofFn t))), L) : LSt n d) =
++            tagTbl ((none, L) : LSt n d) ++ [(pairV n (List.ofFn r)
++              (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))), t)] := by
++          intro t
++          rw [tagTbl_eq, tagTbl_eq, List.append_nil]
++          simp only
++          rw [hrec, pairW_eq, wR_ctW, wC_ctW, wT_ctW, padFin_ofFn]
++        simp only [ettStep_challenge_none, lazyStep_challenge_none, encW_eq_ctW]
++        by_cases hp : pairV n (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))) ∈
++            (tagTbl ((none, L) : LSt n d)).map Prod.fst
++        · have hy : ∀ R, ovr (tagTbl ((none, L) : LSt n d)) R (pairV n (List.ofFn r)
++              (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))) =
++              ovr (tagTbl ((none, L) : LSt n d)) (fun _ => pairV n (List.ofFn r)
++                (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))) (pairV n (List.ofFn r)
++                (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))) := fun R => ovr_of_mem hp R _
++          rw [tagOf_eq_ovr _ _ (fun _ => pairV n (List.ofFn r)
++            (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))), if_pos hp]
++          simp only [Option.getD_some, hy, expect_const]
++          rw [← ih _ (some (padFin d (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b
++            (List.ofFn mm))) (List.ofFn (ovr (tagTbl ((none, L) : LSt n d)) (fun _ => pairV n
++              (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))))
++              (pairV n (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))))))), L) hs,
++            htbl]
++          refine congrArg _ (funext fun R => ?_)
++          rw [ovr_append_of_mem hp]
++        · rw [tagOf_eq_ovr _ _ (fun _ => pairV n (List.ofFn r)
++            (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))), if_neg hp]
++          simp only [Option.getD_none]
++          have e : ∀ R, ovr (tagTbl ((none, L) : LSt n d)) R (pairV n (List.ofFn r)
++              (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))) =
++              R (pairV n (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))) :=
++            fun R => ovr_of_not_mem hp R
++          simp only [e]
++          rw [expect_sample_ovr (tagTbl ((none, L) : LSt n d)) hp (fun t g => expect (simulate
++            (ettImpl ins outs d n f g true b) (k (padFin _ (ctW (List.ofFn r)
++              (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))) (List.ofFn t))))
++            (some (padFin d (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm)))
++              (List.ofFn t))), keysL L)) fun p => G p.1)]
++          refine congrArg _ (funext fun t => ?_)
++          rw [← ih _ (some (padFin d (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b
++            (List.ofFn mm))) (List.ofFn t))), L) hs, htbl]
++          refine congrArg _ (funext fun R => ?_)
++          rw [ovr_append_of_not_mem hp]
++
++end LazyLaw
++
++end TCSlib.Cryptography.Composability.ETTGame
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean
+index d75d6c695..f0ecd18f2 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean
+@@ -33,7 +33,8 @@ candidates for promotion to the `Games` layer.
+ 
+ ## Main results
+ 
+-* `ETTGame.expect_simulate_abs`, `ETTGame.expect_simulate_tapeImpl`, `ETTGame.expect_sample_ovr`.
++* `ETTGame.expect_simulate_abs`, `ETTGame.expect_simulate_abs_inv`,
++  `ETTGame.expect_simulate_tapeImpl`, `ETTGame.expect_sample_ovr`.
+ 
+ ## References
+ 
+@@ -78,6 +79,29 @@ theorem expect_simulate_abs (impl₁ : QueryImpl spec σ₁ unifSpec)
+     refine expect_congr_of_allOutputs (hcnt i x s (by omega)) fun p hp => ?_
+     exact ih p.1 (m - 1) (hk p.1) p.2 (by omega)
+ 
++/-- **Simulation through a state abstraction, in law, along runs with a query budget and an
++invariant:** as `expect_simulate_abs`, with the hypotheses only on the states satisfying an
++invariant `P` that every call of `impl₂` keeps.
++
++**Proof sketch.** As `expect_simulate_abs`, carrying `P` through the possible outcomes. -/
++theorem expect_simulate_abs_inv (impl₁ : QueryImpl spec σ₁ unifSpec)
++    (impl₂ : QueryImpl spec σ₂ unifSpec) (f : σ₂ → σ₁) (P : σ₂ → Prop) (cnt : σ₂ → ℕ) (κ : ℕ)
++    (h : ∀ i x s, P s → cnt s < κ → ∀ g : spec.rng i × σ₁ → ℝ,
++      expect (impl₁ i x (f s)) g = expect (impl₂ i x s) fun p => g (p.1, f p.2))
++    (hcnt : ∀ i x s, P s → cnt s < κ →
++      (impl₂ i x s).AllOutputs fun p => P p.2 ∧ cnt p.2 ≤ cnt s + 1)
++    (c : OracleComp spec α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ₂) (hP : P s)
++    (hs : cnt s + m ≤ κ) (G : α × σ₁ → ℝ) :
++    expect (simulate impl₁ c (f s)) G = expect (simulate impl₂ c s) fun p => G (p.1, f p.2) := by
++  induction c generalizing m s with
++  | pure a => simp only [simulate_pure, expect_pure]
++  | query i x k ih =>
++    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
++    have hm1 : 1 ≤ m := hm
++    rw [simulate_query, simulate_query, expect_bind, expect_bind, h i x s hP (by omega)]
++    refine expect_congr_of_allOutputs (hcnt i x s hP (by omega)) fun p hp => ?_
++    exact ih p.1 (m - 1) (hk p.1) p.2 hp.1 (by omega)
++
+ end Abs
+ 
+ /-! ### Coins drawn fresh and coins in advance -/
+-- 
+2.43.0
+

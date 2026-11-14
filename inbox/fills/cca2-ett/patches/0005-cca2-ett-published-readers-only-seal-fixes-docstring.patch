@@ -1,0 +1,362 @@
+From 731efd9eda1fbd78bc2b7cff26926d7eb488610a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 14 Nov 2026 05:36:38 +0000
+Subject: [PATCH 5/8] cca2-ett: published readers only (seal fixes),
+ docstrings, lint
+
+---
+ .../Encryption/PrivateKey/EncryptThenTag.lean | 82 ++++++++++++-------
+ .../PrivateKey/EncryptThenTag/CPAHandler.lean | 33 +++++---
+ .../EncryptThenTag/CPAReduction.lean          |  7 +-
+ .../PrivateKey/EncryptThenTag/Games.lean      |  1 +
+ .../PrivateKey/EncryptThenTag/Handler.lean    |  4 +-
+ .../PrivateKey/EncryptThenTag/Lazy.lean       | 16 +++-
+ .../PrivateKey/EncryptThenTag/Machines.lean   |  4 +-
+ .../PrivateKey/EncryptThenTag/Transfer.lean   |  2 +-
+ 8 files changed, 98 insertions(+), 51 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean
+index aa4a6149e..5e0f0ada9 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean
+@@ -24,7 +24,7 @@ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# A CCA2-secure private-key scheme (statement phase)
++# A CCA2-secure private-key scheme
+ 
+ [PS10, Algorithm 169.3] and Theorem 170.4. For a PRF family `{f_k}`:
+ - `Gen′(1^n)` samples keys `k₁ ← U_n` and `k₂ ← U_{2n}`;
+@@ -70,7 +70,24 @@ followed by `k₂`. A ciphertext is `⟨r, ⟨c₁, t⟩⟩`, of `6n + 4` bits.
+ 
+ ## Main results
+ 
+-* `Composability.ccaScheme_cca2` (Thm 170.4, stated; a `sorry` under the source's sketch).
++* `Composability.ccaScheme_cca2`: Theorem 170.4, `π′` is CCA2-secure when `F` is a PRF.
++
++## Contents
++
++This file states the scheme and assembles the proof; the proof's games, handlers and reductions
++are in the helper modules under `EncryptThenTag/` (namespace `Composability.ETTGame`):
++- `Tools`: simulation through a state abstraction, coins in advance, functions overridden by a
++  table;
++- `Machines`: the budget cap and the parameter halving of machines;
++- `Games`: the CCA2 experiment with a pad function `f` and a tag function `g` (`ettImpl`);
++- `Handler`, `Reduction`: step 1, the tag-key PRF reduction at parameter `2n`
++  (`exists_tagStep`);
++- `Transfer`: the CCA2 experiment of `π′` as the experiment with `f_{k₁}` and `f_{k₂}`
++  (`accept_indGame_eq`);
++- `Forgery`: step 2, rejecting fresh decryption queries costs at most `q(n)/2^{2n}`
++  (`abs_ettAcc_rej_sub_le`);
++- `Lazy`, `CPAHandler`, `CPAReduction`: step 3, the rejecting experiment with lazily sampled tags
++  is a CPA experiment of the §3.9 scheme (`expect_ettImpl_lazy`, `exists_cpaStep`).
+ 
+ ## References
+ 
+@@ -608,36 +625,39 @@ end Proof
+ /-- **Theorem 170.4: `π′` is CCA2-secure** [PS10, Theorem 170.4] when `F` is a pseudorandom
+ function family.
+ 
+-**Proof sketch** (the source's, made explicit).
+-1. Replace `f_{k₂}` by a random function `RF` on `2n` bits: by PRF security at parameter `2n`,
+-   the advantage changes by a negligible amount. The reduction samples `k₁` itself and answers
+-   `Enc′` and `Dec′` with its oracle in place of `f_{k₂}`. T2
+-   (`Games.exists_interactiveHandlerMachine`) implements the forwarding handler with `k₁`
+-   in its seed, the input-free companion supplies its machine input, and T4
+-   (`Games.exists_toOracleAdversary_of_bitCodec`) provides the oracle adversary at length
+-   `2n`.
+-2. For positive `n`, call a `Dec′` query `(r, c₁, t)` *fresh* if `(r, c₁)` is not the
+-   ciphertext part of an earlier `Enc′` or challenge answer. Compare with a game that always
+-   rejects fresh-pair queries. Couple both games with the same tapes and `RF`: they agree until
+-   the first fresh-pair query with a valid tag. In the always-reject game, prior rejected guesses
+-   reveal no value of `RF` at such a pair. Each guess therefore hits that unrevealed uniform
+-   `2n`-bit value with probability at most `2^{-2n}`, even if the pair was queried before. The union bound
+-   gives a first-discrepancy probability at most `q(n)/2^{2n}` in each bit-game. This does not
+-   assert the same conditional probability after failed guesses in the original game.
+-   A nonfresh valid-tag query is an earlier answer itself: canonical parsing and the tag's
+-   dependence on `(r, c₁)` make it the refused challenge or an encryption of a chosen message.
+-3. The always-reject game is simulated by a CPA adversary against the §3.9 scheme under `k₁`:
+-   `Enc′` answers come from the CPA encryption oracle, tagged by a lazily sampled `RF`; `Dec′`
+-   answers come from the table of earlier answers, or are `⊥`. Up to fixed constant factors
+-   when combining the two bit-games, the advantage is bounded by the CPA advantage
+-   (`prfFixedScheme_cpa`), the first-discrepancy term `q(n)/2^{2n}`, and the PRF advantage.
+-   Each is negligible; the zero-parameter behavior described above changes no asymptotic claim.
+-
+-The source's simulator tags with fresh uniform strings rather than a lazily sampled `RF`. The two
+-differ only when two answers share `(r, c₁)`, a collision of the `n`-bit `r`, of probability at
+-most `q(n)²/2^n`. -/
++**Proof sketch** (the source's, made explicit). Fix a machine adversary `A` with budget `q` and a
++bit `b`; write `P_b` for `Pr[IND_b = 1]`.
++1. **The tag key becomes a random function** (`cca_tag_step`, from `ETTGame.exists_tagStep`):
++   replacing `f_{k₂}` by a uniform random function `R` on `2n` bits moves `P_b` by the PRF
++   advantage, at parameter `2n`, of a next-query machine `D_b`: T2
++   (`Games.exists_interactiveHandlerMachine`) with `k₁` and the nonces in its seed, T4
++   (`Games.exists_toOracleAdversary_of_bitCodec`) at length `2n`, and the parameter halving.
++2. **Fresh decryption queries are rejected** (`cca_rej_step`, from
++   `ETTGame.abs_ettAcc_rej_sub_le`): for `n > 0`, the experiment that rejects every `Dec′` query
++   whose pair `(r, c₁)` is not that of an earlier `Enc′` answer differs by at most
++   `q(n)/2^{2n}`: the two agree until the first fresh pair with a valid tag, and each such guess
++   hits the unrevealed value of `R` with probability at most `2^{-2n}`.
++3. **The rejecting experiment is a CPA experiment of the §3.9 scheme** (`ETTGame.exists_cpaStep`):
++   averaged over `R` it is the experiment with lazily sampled tags (`ETTGame.expect_ettImpl_lazy`),
++   which a CPA adversary `B` against the §3.9 scheme with pad `f_{k₁}` simulates: `Enc′` and the
++   challenge come from the CPA oracles and are tagged from the table of earlier answers, the
++   challenge record, or a fresh tape; `Dec′` is answered from the table (`ETTGame.bHandler`, T2).
++4. **The CPA experiment hides the bit** (as in [PS10, Theorem 168.2]): replacing `f_{k₁}` by a
++   random function costs the PRF advantages of `PRFGame.exists_prfReduction`'s machines `C_b`
++   (`ETTGame.prfAdv_eq_expect`), and with a random function the two bits are `Q²/2^n` apart,
++   `Q = qRed q` (`PRFGame.abs_expect_fImpl_sub_le`).
++So for `n > 0`, `|P₀ − P₁| ≤ adv(D₀) + adv(D₁) + 2q(n)/2^{2n} + adv(C₀) + adv(C₁) + Q(n)²/2^n`,
++every term negligible (`PRF.negligible_prfAdv`, `Negligible.comp_of_le` at `2n`,
++`EnsembleLemmas.negligible_polyExpr_mul`, `negligible_two_pow_neg`); at `n = 0` the advantage is
++at most `1` (`advantage_le_one`), an eventually-zero correction.
++
++Step 4 re-derives the CPA bound for the §3.9 scheme from `PRFGame`'s public reduction and
++collision bound rather than citing `prfFixedScheme_cpa`, since the simulator's CPA adversary runs
++against the oracles `PRFGame.fImpl` directly. The simulator samples tags lazily, so two answers that
++share `(r, c₁)` share their tag, as with `RF`; the source's fresh uniform tags would differ from
++`RF` only on such a collision. -/
+ theorem ccaScheme_cca2 (hF : PRF F) : (ccaScheme F E hE hFE).INDSecure .cca2 := by
+-  intro A q
++  refine (FixedLengthScheme.INDSecure_iff _ _).2 fun A q => ?_
+   obtain ⟨D₀, hD₀⟩ := cca_tag_step F E hE hFE A q false
+   obtain ⟨D₁, hD₁⟩ := cca_tag_step F E hE hFE A q true
+   obtain ⟨B, hB⟩ := ETTGame.exists_cpaStep A q
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean
+index f279e6884..5d550cf22 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean
+@@ -159,6 +159,10 @@ theorem bState_eq (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval
+ def bSeed (n : ℕ) : (Fin (q.eval n * (2 * n)) → Bool) ≃ (Fin ((bSeedLen q).eval n) → Bool) :=
+   Equiv.arrowCongr (finCongr (bSeedLen_eval q n).symm) (Equiv.refl Bool)
+ 
++/-- `bSeed q n = arrowCongr (finCongr _) (refl Bool)`. -/
++theorem bSeed_eq (n : ℕ) :
++    bSeed q n = Equiv.arrowCongr (finCongr (bSeedLen_eval q n).symm) (Equiv.refl Bool) := rfl
++
+ /-- `⟦bSeed q n W⟧ = ⟦W⟧`. -/
+ theorem ofFn_bSeed (n : ℕ) (W : Fin (q.eval n * (2 * n)) → Bool) :
+     List.ofFn (bSeed q n W) = List.ofFn W := by
+@@ -192,7 +196,9 @@ private theorem fields_bState (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin
+     pairFstD_pairEncode, pairSndD_pairEncode, ← GGMRed.pairEncode_append_right,
+     pairFstD_pairEncode, pairSndD_pairEncode]
+   refine ⟨rfl, rfl, ?_, ?_⟩
+-  · cases o <;> rfl
++  · cases o with
++    | none => rw [recBits_none, List.cons_append, List.headD_cons, Option.isSome_none]
++    | some c => rw [recBits_some, List.cons_append, List.headD_cons, Option.isSome_some]
+   · cases o with
+     | none =>
+       rw [recBits_none, List.cons_append, List.drop_succ_cons, List.drop_zero, List.drop_succ_cons,
+@@ -440,7 +446,9 @@ theorem bHandler_init_hstate (n : ℕ) : (bHandler q).init n = bHState q n 0 []
+ 
+ /-- The adversary's input is empty. -/
+ theorem bHandler_advInput (n : ℕ) (z : List Bool)
+-    (ω : Fin ((bHandler q).seedLen.eval n) → Bool) : (bHandler q).advInput n z ω = [] := rfl
++    (ω : Fin ((bHandler q).seedLen.eval n) → Bool) : (bHandler q).advInput n z ω = [] := by
++  rw [InteractiveHandler.advInput_eq]
++  rfl
+ 
+ /-- The finalization outputs the adversary's bit and asks nothing:
+ `(bHandler q).finish n z ω s a = pure (padFin _ ⟦a⟧)`. -/
+@@ -563,7 +571,7 @@ private theorem bDecL_fields (w x : List Bool) (L : List (LEntry n))
+   have hRef : bRef w = refW o x := by
+     rw [bRef, hF, hR, hX]
+     cases o with
+-    | none => rfl
++    | none => rw [Option.isSome_none, Bool.false_and, refW_none]
+     | some c =>
+       rw [recBits_some, List.drop_succ_cons, List.drop_zero, Option.isSome_some, Bool.true_and,
+         refW_some]
+@@ -591,7 +599,9 @@ private theorem bDecL_fields (w x : List Bool) (L : List (LEntry n))
+ /-- The flag and the record rebuild the record bits: `o.isSome :: (recBits o).drop 1 = recBits o`. -/
+ private theorem recBits_fields (o : Option (Fin (ettCt.eval n) → Bool)) :
+     o.isSome :: (recBits n o).drop 1 = recBits n o := by
+-  cases o <;> rfl
++  cases o with
++  | none => rw [recBits_none, List.drop_succ_cons, List.drop_zero, Option.isSome_none]
++  | some c => rw [recBits_some, List.drop_succ_cons, List.drop_zero, Option.isSome_some]
+ 
+ /-- The inner query word read at the outer length: `⟦padFin _ ⟦x⟧⟧ = ⟦x⟧` for an `n`-bit `x`. -/
+ private theorem ofFn_padFin_msg {m : ℕ} (x : Fin m → Bool) (hm : m = n) :
+@@ -641,7 +651,7 @@ theorem bHandler_impl_enc (x : Fin ((ettDin 0).eval n) → Bool) (j : ℕ) (L :
+       hL', log_ne_nil, if_neg Bool.false_ne_true, bCt, hY, hTag, hU, List.length_replicate, hK,
+       hX, hT, hF, hR, recBits_fields, ← tblW_cons (bKeyOf n y, (tagOf ((o, L) : LSt n (ettCt.eval n))
+         (bKeyOf n y)).getD (bTapeOf q n W j hj), List.ofFn x) L, bNew_fields q n _ j _ o hU hJ, ← ctW_eq]
+-    rfl
++    rw [EnsembleLemmas.ofFn_padFin_eq_padL, ettDout_zero]
+ 
+ /-- **Decryption:** from `bState j L o` with `j < q(n)`, the query `⟦x⟧` is answered by
+ `lazyDec (o, L) ⟦x⟧` without an outer query, and the state is `bState (j + 1) L o`
+@@ -660,7 +670,8 @@ theorem bHandler_impl_dec (x : Fin ((ettDin 1).eval n) → Bool) (j : ℕ) (L :
+     List.drop_zero, List.headD_nil, if_neg Bool.false_ne_true, bDecAns,
+     bDecL_fields n _ _ L o hU hX hT hF hR, hU, List.length_replicate, hT, hF, hR, recBits_fields,
+     bNew_fields q n _ j L o hU hJ]
+-  rfl
++  beta_reduce
++  rw [EnsembleLemmas.ofFn_padFin_eq_padL, ettDout_one]
+ 
+ /-- **A recorded challenge is repeated:** from `bState j L (some c)`, a challenge is answered `c`
+ and the state is `bState (j + 1) L (some c)`. -/
+@@ -675,12 +686,12 @@ theorem bHandler_impl_challenge_some (x : Fin ((ettDin 2).eval n) → Bool) (j :
+     fields_input q n z W (i := 2) (List.ofFn x) [] j L (some c) hj hL hm
+   have hRc : (recBits n (some c)).drop 1 = List.ofFn c := by
+     rw [recBits_some, List.drop_succ_cons, List.drop_zero]
+-  have hrec : true :: List.ofFn c = recBits n (some c) := rfl
++  have hrec : true :: List.ofFn c = recBits n (some c) := (recBits_some n c).symm
+   rw [bRun, hI, hF, hR, hRc]
+   simp only [show List.replicate ((2 : Fin 3) : ℕ) true = [true, true] from rfl, List.headD_cons,
+     List.drop_succ_cons, List.drop_zero, if_true, Option.isSome_some]
+   rw [hT, hrec, bNew_fields q n _ j L (some c) hU hJ, hU, List.length_replicate]
+-  rfl
++  rw [EnsembleLemmas.ofFn_padFin_eq_padL, ettDout_two]
+ 
+ /-- **The first challenge:** from `bState j L none` with `j < q(n)`, the challenge `⟦x⟧` asks the
+ CPA challenge oracle at `⟦x⟧`; its answer `y` gives the ciphertext `c = ⟨pairFstD y, ⟨pairSndD y, t⟩⟩`
+@@ -731,15 +742,15 @@ theorem bHandler_impl_challenge_none (x : Fin ((ettDin 2).eval n) → Bool) (j :
+         recBits n (some (padFin (ettCt.eval n) (ctW (pairFstD (List.ofFn y))
+             (pairSndD (List.ofFn y)) (List.ofFn ((tagOf ((none, L) : LSt n (ettCt.eval n))
+               (bKeyOf n y)).getD (bTapeOf q n W j hj)))))) := by
+-      rw [recBits_some, bCt, hY, hTag, hU, List.length_replicate, ← ctW_eq]
+-      rfl
++      rw [recBits_some, bCt, hY, hTag, hU, List.length_replicate, ← ctW_eq,
++        EnsembleLemmas.ofFn_padFin_eq_padL]
+     rw [bRun, hI, hF, hL']
+     simp only [show List.replicate ((2 : Fin 3) : ℕ) true = [true, true] from rfl, List.headD_cons,
+       List.drop_succ_cons, List.drop_zero, if_true, Option.isSome_none, Bool.false_eq_true,
+       if_false]
+     rw [log_ne_nil, if_neg Bool.false_ne_true, hrec, hT, bNew_fields q n _ j L _ hU hJ, bCt, hY,
+       hTag, hU, List.length_replicate, ← ctW_eq]
+-    rfl
++    rw [EnsembleLemmas.ofFn_padFin_eq_padL, ettDout_two]
+ 
+ end Answers
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
+index f6b2bf0b5..2c5e20e87 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean
+@@ -358,12 +358,11 @@ theorem exists_cpaStep (A : NUPPT) (q : PolyExpr) :
+       (q.eval n) (A₂.toCompOn_costBoundedBy _ n _ _ _) (none, []) 0 (by omega),
+     ← expect_ettImpl_lazy _ _ _ n f b (ettCt_eval n) hi0 hi2
+       (fun a => if (List.ofFn a).headD false = true then (1 : ℝ) else 0) _ (none, [])
+-      (fun e he => absurd he List.not_mem_nil)]
++      (lInv_nil n f none)]
+   refine congrArg _ (funext fun R => ?_)
+   have htbl : ovr (tagTbl ((none, []) : LSt n (ettCt.eval n))) R = R := by
+-    rw [tagTbl_eq, List.map_nil, List.nil_append]
+-    rfl
+-  rw [htbl, hφ₀]
++    rw [tagTbl_none_nil, ovr_nil]
++  rw [htbl, hφ₀, keysL_nil]
+   exact expect_ettImpl_outLen (PolyExpr.eval_const 1 n).symm _ _ _ _ A _ r
+ 
+ end TCSlib.Cryptography.Composability.ETTGame
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Games.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Games.lean
+index ada8611ad..66f753f01 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Games.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Games.lean
+@@ -44,6 +44,7 @@ from tapes give `ettTape`, the experiment run by the PRF reduction.
+ ## Main results
+ 
+ * `ETTGame.ettStep_enc`, `_dec`, `_challenge_some`, `_challenge_none`: the answers.
++* `ETTGame.encW_eq_ctW`: an encryption reads the tag function at its pair only.
+ * `ETTGame.length_encW`, `ETTGame.eq_ctW_of_wfW`: ciphertext lengths and canonical parsing.
+ * `ETTGame.expect_ettTape`: nonces in advance have the law of fresh nonces.
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean
+index 4e0c94cf3..3c3426dd4 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean
+@@ -429,7 +429,9 @@ theorem dHandler_init_hstate (n : ℕ) : (dHandler q E hE b).init n = dHState q
+ /-- The adversary's input is empty: `(dHandler q E hE b).advInput n z ω = []`. -/
+ theorem dHandler_advInput (n : ℕ) (z : List Bool)
+     (ω : Fin ((dHandler q E hE b).seedLen.eval n) → Bool) :
+-    (dHandler q E hE b).advInput n z ω = [] := rfl
++    (dHandler q E hE b).advInput n z ω = [] := by
++  rw [InteractiveHandler.advInput_eq]
++  rfl
+ 
+ /-- The finalization outputs the adversary's bit and asks nothing:
+ `(dHandler q E hE b).finish n z ω s a = pure (padFin _ ⟦a⟧)`. -/
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean
+index bb1d169bb..a5587b6ca 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean
+@@ -43,6 +43,7 @@ answer `⟨1, c₁ ⊕ f(r)⟩` is the table's message, because the entry's pair
+ * `ETTGame.expect_ettImpl_lazy`: the rejecting experiment with a random tag function is the lazy
+   experiment.
+ * `ETTGame.expect_ettLazyTape`: the lazy experiment with tapes in advance.
++* `ETTGame.tagTbl_none_nil`, `ETTGame.lInv_nil`: the empty lazy state.
+ 
+ ## References
+ 
+@@ -137,6 +138,14 @@ theorem tagTbl_eq (s : LSt n d) :
+       | some c => [(pairW n (List.ofFn c), padFin (2 * n) (wT (List.ofFn c)))]
+       | none => [] := rfl
+ 
++/-- The empty table has no pairs: `keysL [] = []`. -/
++theorem keysL_nil : keysL ([] : List (LEntry n)) = [] := by
++  rw [keysL_eq, List.map_nil]
++
++/-- The empty lazy state has the empty tag table: `tagTbl (none, []) = []`. -/
++theorem tagTbl_none_nil : tagTbl ((none, []) : LSt n d) = [] := by
++  rw [tagTbl_eq, List.map_nil, List.nil_append]
++
+ end Tables
+ 
+ /-! ### Tags as a table written over a function -/
+@@ -285,6 +294,10 @@ theorem lInv_iff {d : ℕ} (s : LSt n d) :
+       ∃ r : Fin n → Bool, e.1 = pairV n (List.ofFn r) (maskL f r e.2.2) ∧ e.2.2.length = n :=
+   Iff.rfl
+ 
++/-- The empty table has the invariant: `LInv f (o, [])`. -/
++theorem lInv_nil {d : ℕ} (o : Option (Fin d → Bool)) : LInv n f ((o, []) : LSt n d) :=
++  fun _ he => absurd he List.not_mem_nil
++
+ /-- **The rejecting decryption answer with the table's tags is the lazy answer:** under the
+ invariant, `decAnsW f (ovr (tagTbl s) R) true (s.1, keysL s.2) w = lazyDec s w`.
+ 
+@@ -317,9 +330,8 @@ theorem decAnsW_tagTbl {d : ℕ} (s : LSt n d) (hs : LInv n f s)
+           exact List.getElem_mem hlt)
+         by_cases ht : wT w = List.ofFn (s.2.getD ((keysL s.2).idxOf (pairW n w)) default).2.1
+         · rw [if_pos ht, if_pos ht.symm, decL_eq]
+-          rw [hfst, pairW_eq] at hp
+           obtain ⟨h₁, h₂⟩ := eq_of_pairV_eq hw'.1 hw'.2 List.length_ofFn
+-            (length_maskL f r hl) hp
++            (length_maskL f r hl) ((pairW_eq n w).symm.trans (hfst.symm.trans hp))
+           rw [h₁, h₂, padFin_ofFn, maskL_eq, zipWith_xor_cancel _ _ (by
+             rw [List.length_ofFn, hl])]
+         · rw [if_neg ht, if_neg (Ne.symm ht)]
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean
+index 8726d407d..14f24e0af 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean
+@@ -116,7 +116,9 @@ theorem length_logCount_encodeLog {ι α : Type} {spec : OracleSpec ι} (codec :
+       cases h with
+       | nil =>
+         rw [List.drop_nil, Function.iterate_succ_apply, MachineCodec.encodeLog_nil]
+-        have : pairSndD ([] : List Bool) = [] := rfl
++        have : pairSndD ([] : List Bool) = [] := by
++          have h1 := Complexity.BinArith.iterate_pairSndD_nil 1
++          rwa [Function.iterate_one] at h1
+         rw [this]
+         have hn := ih []
+         rwa [List.drop_nil, MachineCodec.encodeLog_nil] at hn
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean
+index 7b61e603f..da142f04d 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Transfer.lean
+@@ -97,7 +97,7 @@ theorem expect_indImpl_ettImpl (hct : S.ctLen.eval n = 6 * n + 4)
+         !refW s.1 (List.ofFn c) := by
+       obtain ⟨o, T⟩ := s
+       cases o with
+-      | none => rfl
++      | none => simp [refW_none]
+       | some c' =>
+         rw [refW_some]
+         simp only [Option.some.injEq]
+-- 
+2.43.0
+

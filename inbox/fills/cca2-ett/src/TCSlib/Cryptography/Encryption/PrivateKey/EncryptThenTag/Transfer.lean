@@ -97,7 +97,7 @@ theorem expect_indImpl_ettImpl (hct : S.ctLen.eval n = 6 * n + 4)
         !refW s.1 (List.ofFn c) := by
       obtain ⟨o, T⟩ := s
       cases o with
-      | none => rfl
+      | none => simp [refW_none]
       | some c' =>
         rw [refW_some]
         simp only [Option.some.injEq]

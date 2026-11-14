@@ -1,0 +1,26 @@
+From b66a81a1af45bc158fa2405cf8150058a4a805b4 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 14 Nov 2026 06:31:04 +0000
+Subject: [PATCH 8/8] cca2-ett: read rCnt through InteractiveHandler.rCnt_input
+ (explicit-unfold scan)
+
+---
+ .../Encryption/PrivateKey/EncryptThenTag/Handler.lean           | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean
+index c0929eb0a..0cda91a40 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean
+@@ -493,7 +493,7 @@ private theorem fields_input {i : Fin 3} (x L : List Bool) (j : ℕ)
+     (InteractiveHandler.rS_input ..).trans (ofFn_dHState q E hE b n j o)
+   have hcnt : rCnt (InteractiveHandler.input n z (List.ofFn (dHSeed q E hE b n (k, W)))
+       (List.ofFn (dHState q E hE b n j o)) i x L) = List.replicate j true := by
+-    rw [rCnt, hS, h₁]
++    rw [InteractiveHandler.rCnt_input, ofFn_dHState, h₁]
+   have hU := InteractiveHandler.rU_input (k := 3) n z (List.ofFn (dHSeed q E hE b n (k, W)))
+     (List.ofFn (dHState q E hE b n j o)) i x L
+   refine ⟨hU, InteractiveHandler.rS_input .., InteractiveHandler.rI_input ..,
+-- 
+2.43.0
+

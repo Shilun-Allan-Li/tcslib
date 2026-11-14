@@ -1,0 +1,116 @@
+From af9fdc724347fa297357f4f74d53ee3ac2f3d2cb Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 14 Nov 2026 05:15:08 +0000
+Subject: [PATCH 4/8] =?UTF-8?q?cca2-ett:=20Theorem=20170.4=20proved=20(com?=
+ =?UTF-8?q?bination=20of=20steps=201=E2=80=933)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .../Encryption/PrivateKey/EncryptThenTag.lean | 83 ++++++++++++++++++-
+ 1 file changed, 82 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean
+index 7610dcb26..aa4a6149e 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean
+@@ -13,6 +13,10 @@ import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Handler
+ import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Reduction
+ import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Transfer
+ import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Forgery
++import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Lazy
++import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.CPAHandler
++import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.CPAReduction
++import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Collision
+ import Mathlib.Tactic.Simps.Basic
+ 
+ set_option maxHeartbeats 0
+@@ -633,6 +637,83 @@ The source's simulator tags with fresh uniform strings rather than a lazily samp
+ differ only when two answers share `(r, c₁)`, a collision of the `n`-bit `r`, of probability at
+ most `q(n)²/2^n`. -/
+ theorem ccaScheme_cca2 (hF : PRF F) : (ccaScheme F E hE hFE).INDSecure .cca2 := by
+-  sorry
++  intro A q
++  obtain ⟨D₀, hD₀⟩ := cca_tag_step F E hE hFE A q false
++  obtain ⟨D₁, hD₁⟩ := cca_tag_step F E hE hFE A q true
++  obtain ⟨B, hB⟩ := ETTGame.exists_cpaStep A q
++  obtain ⟨C₀, hC₀⟩ := PRFGame.exists_prfReduction B (PRFGame.qRed q) false false
++  obtain ⟨C₁, hC₁⟩ := PRFGame.exists_prfReduction B (PRFGame.qRed q) false true
++  refine ⟨fun n => prfAdv (F (2 * n)) (D₀.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n))) +
++      prfAdv (F (2 * n)) (D₁.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n))) +
++      2 * ((q.eval n : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹) +
++      prfAdv (F n) (C₀.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n)) +
++      prfAdv (F n) (C₁.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n)) +
++      ((PRFGame.qRed q).eval n : ℝ) ^ 2 / 2 ^ n + (if n = 0 then 1 else 0), ?_, fun n => ?_⟩
++  · -- Each term is negligible.
++    have hT₀ := (hF.negligible_prfAdv D₀ q).comp_of_le (fun n => 2 * n) fun N => by show N ≤ 2 * N; omega
++    have hT₁ := (hF.negligible_prfAdv D₁ q).comp_of_le (fun n => 2 * n) fun N => by show N ≤ 2 * N; omega
++    have hR : Negligible fun n => 2 * ((q.eval n : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹) := by
++      refine ((EnsembleLemmas.negligible_polyExpr_mul q negligible_two_pow_neg).const_mul 2).mono
++        ⟨0, fun n _ => ?_⟩
++      have h₁ : ((2 : ℝ) ^ (2 * n))⁻¹ ≤ (2 : ℝ)⁻¹ ^ n := by
++        rw [inv_pow]
++        exact inv_anti₀ (by positivity) (pow_le_pow_right₀ (by norm_num) (by omega))
++      have h₂ : (0 : ℝ) ≤ q.eval n := Nat.cast_nonneg _
++      rw [abs_of_nonneg (by positivity), abs_of_nonneg (by positivity)]
++      gcongr
++    have hP₀ := hF.negligible_prfAdv C₀ (PRFGame.qRed (PRFGame.qRed q))
++    have hP₁ := hF.negligible_prfAdv C₁ (PRFGame.qRed (PRFGame.qRed q))
++    have hS : Negligible fun n => ((PRFGame.qRed q).eval n : ℝ) ^ 2 / 2 ^ n := by
++      refine (EnsembleLemmas.negligible_polyExpr_mul (.mul (PRFGame.qRed q) (PRFGame.qRed q))
++        negligible_two_pow_neg).mono ⟨0, fun n _ => le_of_eq ?_⟩
++      rw [PolyExpr.eval_mul, Nat.cast_mul, inv_pow, ← div_eq_mul_inv, sq]
++    have hZ : Negligible fun n : ℕ => if n = 0 then (1 : ℝ) else 0 :=
++      negligible_zero.mono ⟨1, fun n hn => by rw [if_neg (by omega)]⟩
++    exact (((((hT₀.add hT₁).add hR).add hP₀).add hP₁).add hS).add hZ
++  · have n₀ := prfAdv_nonneg (F (2 * n))
++      (D₀.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n)))
++    have n₁ := prfAdv_nonneg (F (2 * n))
++      (D₁.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n)))
++    have m₀ := prfAdv_nonneg (F n) (C₀.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
++    have m₁ := prfAdv_nonneg (F n) (C₁.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
++    have hc : (0 : ℝ) ≤ 2 * ((q.eval n : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹) := by positivity
++    have hs : (0 : ℝ) ≤ ((PRFGame.qRed q).eval n : ℝ) ^ 2 / 2 ^ n := by positivity
++    beta_reduce
++    rcases Nat.eq_zero_or_pos n with rfl | hn
++    · -- At `n = 0` the advantage is at most `1`.
++      have h1 := advantage_le_one ((ccaScheme F E hE hFE).indGame .cca2 A (q.eval 0) false 0)
++        ((ccaScheme F E hE hFE).indGame .cca2 A (q.eval 0) true 0)
++      rw [if_pos rfl]
++      linarith
++    · rw [if_neg (by omega : n ≠ 0), add_zero, advantage_eq]
++      -- Steps 1 and 2 for both bits.
++      have t₀ := hD₀ n
++      have t₁ := hD₁ n
++      have r₀ := cca_rej_step F A (q.eval n) false n hn
++      have r₁ := cca_rej_step F A (q.eval n) true n hn
++      -- Step 3: the rejecting experiments are CPA experiments of the §3.9 scheme.
++      simp only [hB false n, hB true n] at r₀ r₁
++      have p₀ := ETTGame.prfAdv_eq_expect (F n)
++        (C₀.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
++      have p₁ := ETTGame.prfAdv_eq_expect (F n)
++        (C₁.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
++      simp only [hC₀ n, hC₁ n] at p₀ p₁
++      have hcpa := PRFGame.abs_expect_fImpl_sub_le (fun i => (PRFGame.pkDin i).eval n)
++        (fun i => (PRFGame.pkDout i).eval n) (PRFGame.ctP.eval n) n (PRFGame.atkOf false)
++        (by rw [PRFGame.decOpen_atkOf]; rfl) (PRFGame.ctP_eval n)
++        (by show (PRFGame.pkDin 2).eval n = n + n
++            rw [PRFGame.pkDin_two, PolyExpr.eval_add, PolyExpr.eval_var])
++        (fun r : B.Coins n => B.toComp (bitCodec (fun i => (PRFGame.pkDin i).eval n)
++          (fun i => (PRFGame.pkDout i).eval n) 1) n ((PRFGame.qRed q).eval n) r)
++        (fun a => (List.ofFn a).headD false = true) ((PRFGame.qRed q).eval n)
++        (fun r => NUPPT.toComp_costBoundedBy _ _ _ _ _)
++      obtain ⟨a₀, b₀⟩ := abs_le.1 t₀.le
++      obtain ⟨a₁, b₁⟩ := abs_le.1 t₁.le
++      obtain ⟨c₀, d₀⟩ := abs_le.1 r₀
++      obtain ⟨c₁, d₁⟩ := abs_le.1 r₁
++      obtain ⟨e₀, f₀⟩ := abs_le.1 p₀.ge
++      obtain ⟨e₁, f₁⟩ := abs_le.1 p₁.ge
++      obtain ⟨g, h⟩ := abs_le.1 hcpa
++      refine abs_le.2 ⟨by linarith, by linarith⟩
+ 
+ end TCSlib.Cryptography.Composability
+-- 
+2.43.0
+

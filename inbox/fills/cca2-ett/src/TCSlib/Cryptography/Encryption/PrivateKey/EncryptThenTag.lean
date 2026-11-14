@@ -13,6 +13,10 @@ import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Handler
 import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Reduction
 import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Transfer
 import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Forgery
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Lazy
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.CPAHandler
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.CPAReduction
+import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Collision
 import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
@@ -20,7 +24,7 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# A CCA2-secure private-key scheme (statement phase)
+# A CCA2-secure private-key scheme
 
 [PS10, Algorithm 169.3] and Theorem 170.4. For a PRF family `{f_k}`:
 - `Gen′(1^n)` samples keys `k₁ ← U_n` and `k₂ ← U_{2n}`;
@@ -66,7 +70,24 @@ followed by `k₂`. A ciphertext is `⟨r, ⟨c₁, t⟩⟩`, of `6n + 4` bits.
 
 ## Main results
 
-* `Composability.ccaScheme_cca2` (Thm 170.4, stated; a `sorry` under the source's sketch).
+* `Composability.ccaScheme_cca2`: Theorem 170.4, `π′` is CCA2-secure when `F` is a PRF.
+
+## Contents
+
+This file states the scheme and assembles the proof; the proof's games, handlers and reductions
+are in the helper modules under `EncryptThenTag/` (namespace `Composability.ETTGame`):
+- `Tools`: simulation through a state abstraction, coins in advance, functions overridden by a
+  table;
+- `Machines`: the budget cap and the parameter halving of machines;
+- `Games`: the CCA2 experiment with a pad function `f` and a tag function `g` (`ettImpl`);
+- `Handler`, `Reduction`: step 1, the tag-key PRF reduction at parameter `2n`
+  (`exists_tagStep`);
+- `Transfer`: the CCA2 experiment of `π′` as the experiment with `f_{k₁}` and `f_{k₂}`
+  (`accept_indGame_eq`);
+- `Forgery`: step 2, rejecting fresh decryption queries costs at most `q(n)/2^{2n}`
+  (`abs_ettAcc_rej_sub_le`);
+- `Lazy`, `CPAHandler`, `CPAReduction`: step 3, the rejecting experiment with lazily sampled tags
+  is a CPA experiment of the §3.9 scheme (`expect_ettImpl_lazy`, `exists_cpaStep`).
 
 ## References
 
@@ -604,35 +625,115 @@ end Proof
 /-- **Theorem 170.4: `π′` is CCA2-secure** [PS10, Theorem 170.4] when `F` is a pseudorandom
 function family.
 
-**Proof sketch** (the source's, made explicit).
-1. Replace `f_{k₂}` by a random function `RF` on `2n` bits: by PRF security at parameter `2n`,
-   the advantage changes by a negligible amount. The reduction samples `k₁` itself and answers
-   `Enc′` and `Dec′` with its oracle in place of `f_{k₂}`. T2
-   (`Games.exists_interactiveHandlerMachine`) implements the forwarding handler with `k₁`
-   in its seed, the input-free companion supplies its machine input, and T4
-   (`Games.exists_toOracleAdversary_of_bitCodec`) provides the oracle adversary at length
-   `2n`.
-2. For positive `n`, call a `Dec′` query `(r, c₁, t)` *fresh* if `(r, c₁)` is not the
-   ciphertext part of an earlier `Enc′` or challenge answer. Compare with a game that always
-   rejects fresh-pair queries. Couple both games with the same tapes and `RF`: they agree until
-   the first fresh-pair query with a valid tag. In the always-reject game, prior rejected guesses
-   reveal no value of `RF` at such a pair. Each guess therefore hits that unrevealed uniform
-   `2n`-bit value with probability at most `2^{-2n}`, even if the pair was queried before. The union bound
-   gives a first-discrepancy probability at most `q(n)/2^{2n}` in each bit-game. This does not
-   assert the same conditional probability after failed guesses in the original game.
-   A nonfresh valid-tag query is an earlier answer itself: canonical parsing and the tag's
-   dependence on `(r, c₁)` make it the refused challenge or an encryption of a chosen message.
-3. The always-reject game is simulated by a CPA adversary against the §3.9 scheme under `k₁`:
-   `Enc′` answers come from the CPA encryption oracle, tagged by a lazily sampled `RF`; `Dec′`
-   answers come from the table of earlier answers, or are `⊥`. Up to fixed constant factors
-   when combining the two bit-games, the advantage is bounded by the CPA advantage
-   (`prfFixedScheme_cpa`), the first-discrepancy term `q(n)/2^{2n}`, and the PRF advantage.
-   Each is negligible; the zero-parameter behavior described above changes no asymptotic claim.
+**Proof sketch** (the source's, made explicit). Fix a machine adversary `A` with budget `q` and a
+bit `b`; write `P_b` for `Pr[IND_b = 1]`.
+1. **The tag key becomes a random function** (`cca_tag_step`, from `ETTGame.exists_tagStep`):
+   replacing `f_{k₂}` by a uniform random function `R` on `2n` bits moves `P_b` by the PRF
+   advantage, at parameter `2n`, of a next-query machine `D_b`: T2
+   (`Games.exists_interactiveHandlerMachine`) with `k₁` and the nonces in its seed, T4
+   (`Games.exists_toOracleAdversary_of_bitCodec`) at length `2n`, and the parameter halving.
+2. **Fresh decryption queries are rejected** (`cca_rej_step`, from
+   `ETTGame.abs_ettAcc_rej_sub_le`): for `n > 0`, the experiment that rejects every `Dec′` query
+   whose pair `(r, c₁)` is not that of an earlier `Enc′` answer differs by at most
+   `q(n)/2^{2n}`: the two agree until the first fresh pair with a valid tag, and each such guess
+   hits the unrevealed value of `R` with probability at most `2^{-2n}`.
+3. **The rejecting experiment is a CPA experiment of the §3.9 scheme** (`ETTGame.exists_cpaStep`):
+   averaged over `R` it is the experiment with lazily sampled tags (`ETTGame.expect_ettImpl_lazy`),
+   which a CPA adversary `B` against the §3.9 scheme with pad `f_{k₁}` simulates: `Enc′` and the
+   challenge come from the CPA oracles and are tagged from the table of earlier answers, the
+   challenge record, or a fresh tape; `Dec′` is answered from the table (`ETTGame.bHandler`, T2).
+4. **The CPA experiment hides the bit** (as in [PS10, Theorem 168.2]): replacing `f_{k₁}` by a
+   random function costs the PRF advantages of `PRFGame.exists_prfReduction`'s machines `C_b`
+   (`ETTGame.prfAdv_eq_expect`), and with a random function the two bits are `Q²/2^n` apart,
+   `Q = qRed q` (`PRFGame.abs_expect_fImpl_sub_le`).
+So for `n > 0`, `|P₀ − P₁| ≤ adv(D₀) + adv(D₁) + 2q(n)/2^{2n} + adv(C₀) + adv(C₁) + Q(n)²/2^n`,
+every term negligible (`PRF.negligible_prfAdv`, `Negligible.comp_of_le` at `2n`,
+`EnsembleLemmas.negligible_polyExpr_mul`, `negligible_two_pow_neg`); at `n = 0` the advantage is
+at most `1` (`advantage_le_one`), an eventually-zero correction.
 
-The source's simulator tags with fresh uniform strings rather than a lazily sampled `RF`. The two
-differ only when two answers share `(r, c₁)`, a collision of the `n`-bit `r`, of probability at
-most `q(n)²/2^n`. -/
+Step 4 re-derives the CPA bound for the §3.9 scheme from `PRFGame`'s public reduction and
+collision bound rather than citing `prfFixedScheme_cpa`, since the simulator's CPA adversary runs
+against the oracles `PRFGame.fImpl` directly. The simulator samples tags lazily, so two answers that
+share `(r, c₁)` share their tag, as with `RF`; the source's fresh uniform tags would differ from
+`RF` only on such a collision. -/
 theorem ccaScheme_cca2 (hF : PRF F) : (ccaScheme F E hE hFE).INDSecure .cca2 := by
-  sorry
+  refine (FixedLengthScheme.INDSecure_iff _ _).2 fun A q => ?_
+  obtain ⟨D₀, hD₀⟩ := cca_tag_step F E hE hFE A q false
+  obtain ⟨D₁, hD₁⟩ := cca_tag_step F E hE hFE A q true
+  obtain ⟨B, hB⟩ := ETTGame.exists_cpaStep A q
+  obtain ⟨C₀, hC₀⟩ := PRFGame.exists_prfReduction B (PRFGame.qRed q) false false
+  obtain ⟨C₁, hC₁⟩ := PRFGame.exists_prfReduction B (PRFGame.qRed q) false true
+  refine ⟨fun n => prfAdv (F (2 * n)) (D₀.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n))) +
+      prfAdv (F (2 * n)) (D₁.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n))) +
+      2 * ((q.eval n : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹) +
+      prfAdv (F n) (C₀.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n)) +
+      prfAdv (F n) (C₁.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n)) +
+      ((PRFGame.qRed q).eval n : ℝ) ^ 2 / 2 ^ n + (if n = 0 then 1 else 0), ?_, fun n => ?_⟩
+  · -- Each term is negligible.
+    have hT₀ := (hF.negligible_prfAdv D₀ q).comp_of_le (fun n => 2 * n) fun N => by show N ≤ 2 * N; omega
+    have hT₁ := (hF.negligible_prfAdv D₁ q).comp_of_le (fun n => 2 * n) fun N => by show N ≤ 2 * N; omega
+    have hR : Negligible fun n => 2 * ((q.eval n : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹) := by
+      refine ((EnsembleLemmas.negligible_polyExpr_mul q negligible_two_pow_neg).const_mul 2).mono
+        ⟨0, fun n _ => ?_⟩
+      have h₁ : ((2 : ℝ) ^ (2 * n))⁻¹ ≤ (2 : ℝ)⁻¹ ^ n := by
+        rw [inv_pow]
+        exact inv_anti₀ (by positivity) (pow_le_pow_right₀ (by norm_num) (by omega))
+      have h₂ : (0 : ℝ) ≤ q.eval n := Nat.cast_nonneg _
+      rw [abs_of_nonneg (by positivity), abs_of_nonneg (by positivity)]
+      gcongr
+    have hP₀ := hF.negligible_prfAdv C₀ (PRFGame.qRed (PRFGame.qRed q))
+    have hP₁ := hF.negligible_prfAdv C₁ (PRFGame.qRed (PRFGame.qRed q))
+    have hS : Negligible fun n => ((PRFGame.qRed q).eval n : ℝ) ^ 2 / 2 ^ n := by
+      refine (EnsembleLemmas.negligible_polyExpr_mul (.mul (PRFGame.qRed q) (PRFGame.qRed q))
+        negligible_two_pow_neg).mono ⟨0, fun n _ => le_of_eq ?_⟩
+      rw [PolyExpr.eval_mul, Nat.cast_mul, inv_pow, ← div_eq_mul_inv, sq]
+    have hZ : Negligible fun n : ℕ => if n = 0 then (1 : ℝ) else 0 :=
+      negligible_zero.mono ⟨1, fun n hn => by rw [if_neg (by omega)]⟩
+    exact (((((hT₀.add hT₁).add hR).add hP₀).add hP₁).add hS).add hZ
+  · have n₀ := prfAdv_nonneg (F (2 * n))
+      (D₀.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n)))
+    have n₁ := prfAdv_nonneg (F (2 * n))
+      (D₁.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n)))
+    have m₀ := prfAdv_nonneg (F n) (C₀.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
+    have m₁ := prfAdv_nonneg (F n) (C₁.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
+    have hc : (0 : ℝ) ≤ 2 * ((q.eval n : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹) := by positivity
+    have hs : (0 : ℝ) ≤ ((PRFGame.qRed q).eval n : ℝ) ^ 2 / 2 ^ n := by positivity
+    beta_reduce
+    rcases Nat.eq_zero_or_pos n with rfl | hn
+    · -- At `n = 0` the advantage is at most `1`.
+      have h1 := advantage_le_one ((ccaScheme F E hE hFE).indGame .cca2 A (q.eval 0) false 0)
+        ((ccaScheme F E hE hFE).indGame .cca2 A (q.eval 0) true 0)
+      rw [if_pos rfl]
+      linarith
+    · rw [if_neg (by omega : n ≠ 0), add_zero, advantage_eq]
+      -- Steps 1 and 2 for both bits.
+      have t₀ := hD₀ n
+      have t₁ := hD₁ n
+      have r₀ := cca_rej_step F A (q.eval n) false n hn
+      have r₁ := cca_rej_step F A (q.eval n) true n hn
+      -- Step 3: the rejecting experiments are CPA experiments of the §3.9 scheme.
+      simp only [hB false n, hB true n] at r₀ r₁
+      have p₀ := ETTGame.prfAdv_eq_expect (F n)
+        (C₀.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
+      have p₁ := ETTGame.prfAdv_eq_expect (F n)
+        (C₁.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
+      simp only [hC₀ n, hC₁ n] at p₀ p₁
+      have hcpa := PRFGame.abs_expect_fImpl_sub_le (fun i => (PRFGame.pkDin i).eval n)
+        (fun i => (PRFGame.pkDout i).eval n) (PRFGame.ctP.eval n) n (PRFGame.atkOf false)
+        (by rw [PRFGame.decOpen_atkOf]; rfl) (PRFGame.ctP_eval n)
+        (by show (PRFGame.pkDin 2).eval n = n + n
+            rw [PRFGame.pkDin_two, PolyExpr.eval_add, PolyExpr.eval_var])
+        (fun r : B.Coins n => B.toComp (bitCodec (fun i => (PRFGame.pkDin i).eval n)
+          (fun i => (PRFGame.pkDout i).eval n) 1) n ((PRFGame.qRed q).eval n) r)
+        (fun a => (List.ofFn a).headD false = true) ((PRFGame.qRed q).eval n)
+        (fun r => NUPPT.toComp_costBoundedBy _ _ _ _ _)
+      obtain ⟨a₀, b₀⟩ := abs_le.1 t₀.le
+      obtain ⟨a₁, b₁⟩ := abs_le.1 t₁.le
+      obtain ⟨c₀, d₀⟩ := abs_le.1 r₀
+      obtain ⟨c₁, d₁⟩ := abs_le.1 r₁
+      obtain ⟨e₀, f₀⟩ := abs_le.1 p₀.ge
+      obtain ⟨e₁, f₁⟩ := abs_le.1 p₁.ge
+      obtain ⟨g, h⟩ := abs_le.1 hcpa
+      refine abs_le.2 ⟨by linarith, by linarith⟩
 
 end TCSlib.Cryptography.Composability
