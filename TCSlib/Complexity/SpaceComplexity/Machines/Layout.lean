@@ -97,6 +97,9 @@ def off : List Seg → ℕ → ℕ
   | [], _ + 1 => 0
   | s :: rest, i + 1 => rlen s + 2 + off rest i
 
+/-- The first segment of a virtual input starts at offset `0`. -/
+@[simp] lemma off_zero (segs : List Seg) : off segs 0 = 0 := by cases segs <;> rfl
+
 /-- Segment `i`, with a default beyond the list. -/
 def seg (segs : List Seg) (i : ℕ) : Seg := segs.getD i ([], false)
 
@@ -126,7 +129,7 @@ lemma length_vword (segs : List Seg) (h : segs ≠ []) :
   | nil => exact absurd rfl h
   | cons s rest ih =>
     cases rest with
-    | nil => simp [vword, off, seg]
+    | nil => simp [vword, seg]
     | cons t rest' =>
       have := ih (by simp)
       simp only [vword, List.length_append, length_render, List.length_cons] at this ⊢
@@ -389,7 +392,7 @@ lemma vpos_tmove (segs : List Seg) (s : ℕ) (hs : s < segs.length) (tp : TPos)
     | left =>
       simp only [tmove]
       split_ifs with h
-      · subst h; simp [vpos, off]
+      · subst h; simp [vpos]
       · have e := F4 (by omega)
         simp only [vpos] at hlt ⊢
         rw [e]

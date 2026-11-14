@@ -68,9 +68,6 @@ lemma runFrom_forall_append {K : ℕ} {S : Type} {tm : MultiTapeTM K Bool S}
     rw [MultiTapeTM.runFrom_add]
     exact h₂ t' (by omega)
 
-/-- The first segment of a virtual input starts at offset `0`. -/
-@[simp] lemma off_zero (segs : List Seg) : off segs 0 = 0 := by cases segs <;> rfl
-
 section Whole
 
 variable {l : Λ} {cs : CallSpec m d Λ} {W : Fin m → List Bool} {c0 : Cfg m Bool Λ x}
@@ -79,21 +76,19 @@ variable {l : Λ} {cs : CallSpec m d Λ} {W : Fin m → List Bool} {c0 : Cfg m B
 lemma regPos_box (_hnd : cs.args.Nodup) (s : ℕ) (tp : TPos)
     (hval : tp.Valid (callSegs cs x W) s) (_hs : s < cs.args.length + 1) :
     RegBox cs c0.workTapePos W (regPos c0 cs W s tp) := by
-  intro r
-  refine ⟨fun hr => by simp [regPos, hr], fun hr => ?_⟩
+  refine regBox_iff.mpr fun r => ⟨fun hr => regPos_of_not_mem _ hr, fun hr => ?_⟩
   have hidx := List.idxOf_lt_length_of_mem hr
   have hget : cs.args[cs.args.idxOf r] = r := List.getElem_idxOf hidx
   have hw : wlen (callSegs cs x W) (cs.args.idxOf r + 1) = (W r).length := by
-    simp only [wlen]; rw [seg_callSegs_succ cs x W _ hidx, hget]
-  simp only [regPos, hr, ↓reduceIte]
-  split_ifs with h1 h2
-  · rw [hw]; omega
-  · omega
-  · have hs' : s = cs.args.idxOf r + 1 := by omega
+    rw [wlen_eq, seg_callSegs_succ cs x W _ hidx, hget]
+  rcases lt_trichotomy (cs.args.idxOf r + 1) s with h1 | h1 | h1
+  · rw [regPos_of_lt _ hr h1, hw]; omega
+  · rw [regPos_of_eq _ hr h1.symm]
     have := trackPos_bounds _ s tp hval
-    rw [hs'] at this ⊢
+    rw [← h1] at this ⊢
     rw [hw] at this
     exact this
+  · rw [regPos_of_gt _ hr h1]; omega
 
 /-- The side tests of the return phase agree with the register positions at the halt.
 
