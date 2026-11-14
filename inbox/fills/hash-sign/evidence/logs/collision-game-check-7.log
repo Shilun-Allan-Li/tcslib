@@ -1,0 +1,89 @@
+start: 2026-11-14T06:33:13.847913+00:00 module: TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean:101:4: error: unsolved goals
+case pos
+H : CRH
+S : SignatureScheme
+A : NUPPT
+hdom : ∀ (n : ℕ) (i : List Bool) (x : Fin (H.domLen.eval n) → Bool), H.inDom n i x = true
+B : NUPPT
+hB :
+  ∀ (n : ℕ),
+    ∃ φ,
+      ∀ (i : List Bool) (rg : S.gen.Coins n) (rs : S.sign.Coins n)
+        (ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool) (rA : A.Coins n),
+        List.ofFn ω = List.ofFn rg ++ List.ofFn rs →
+          ∃ a s L,
+            transcript H S A n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg)) i rs rA =
+                OracleComp.pure (a, (), L) ∧
+              (L = [] ∨ ∃ j m, L = [⟨j, (m, hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m)⟩] ∧ s = m) ∧
+                B.runAt n i (φ (ω, rA)) = (collisionHandler H S).result n i ω s a
+n : ℕ
+φ : (Fin ((collisionHandler H S).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n
+hφ :
+  ∀ (i : List Bool) (rg : S.gen.Coins n) (rs : S.sign.Coins n) (ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool)
+    (rA : A.Coins n),
+    List.ofFn ω = List.ofFn rg ++ List.ofFn rs →
+      ∃ a s L,
+        transcript H S A n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg)) i rs rA =
+            OracleComp.pure (a, (), L) ∧
+          (L = [] ∨ ∃ j m, L = [⟨j, (m, hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m)⟩] ∧ s = m) ∧
+            B.runAt n i (φ (ω, rA)) = (collisionHandler H S).result n i ω s a
+seed : S.gen.Coins n × S.sign.Coins n ≃ (Fin ((collisionHandler H S).seedLen.eval n) → Bool) :=
+  EnsembleLemmas.seedEquiv ⋯ n
+win : List Bool → B.Coins n → Prop :=
+  fun i r =>
+    let xx := splitBits (padFin (H.domLen.eval n + H.domLen.eval n) (B.runAt n i r));
+    H.inDom n i xx.1 = true ∧ H.inDom n i xx.2 = true ∧ xx.1 ≠ xx.2 ∧ H.hash n i xx.1 = H.hash n i xx.2
+payoff : List Bool → B.Coins n → ℝ := fun i r => if win i r then 1 else 0
+rg : S.gen.Coins n
+rs : S.sign.Coins n
+rA : A.Coins n
+i : List Bool
+a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool
+s : Fin (H.domLen.eval n) → Bool
+L : QueryLog (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n)
+ht :
+  transcript H S A n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg)) i rs rA =
+    OracleComp.pure (a, (), L)
+hinv : L = [] ∨ ∃ j m, L = [⟨j, (m, hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m)⟩] ∧ s = m
+hrun : B.runAt n i (φ (seed (rg, rs), rA)) = (collisionHandler H S).result n i (seed (rg, rs)) s a
+hcase : CollisionCase H S n i (a, (), L)
+hclauses :
+  (∀ e ∈ (a, (), L).2.2, e.snd.1 ≠ (splitBits (a, (), L).1).1) ∧
+    ∃ e ∈ (a, (), L).2.2, H.hash n i e.snd.1 = H.hash n i (splitBits (a, (), L).1).1
+hw : win i (φ (seed (rg, rs), rA))
+⊢ 1 ≤ 1
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean:132:8: error: Type mismatch
+  ProbComp.expect_sample_equiv seed ?m.375
+has type
+  (@ProbComp.expect (S.gen.Coins n × S.sign.Coins n) (ProbComp.sample (S.gen.Coins n × S.sign.Coins n)) fun a =>
+      ?m.375 (seed a)) =
+    (ProbComp.sample (Fin ((collisionHandler H S).seedLen.eval n) → Bool)).expect ?m.375
+but is expected to have type
+  (@ProbComp.expect (S.gen.Coins n × S.sign.Coins n) (ProbComp.sample (S.gen.Coins n × S.sign.Coins n)) fun p =>
+      (ProbComp.sample (A.Coins n)).expect fun rA => payoff i (φ (seed p, rA))) =
+    (ProbComp.sample (Fin ((collisionHandler H S).seedLen.eval n) → Bool)).expect fun ω =>
+      (ProbComp.sample (A.Coins n)).expect fun rA => payoff i (φ (ω, rA))
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean:181:6: error: No goals to be solved
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame): no fresh .olean produced
+       23.44 real        18.56 user         1.80 sys
+          2177105920  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              166590  page reclaims
+               14637  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                3183  voluntary context switches
+               81073  involuntary context switches
+            32469294  instructions retired
+            21174283  cycles elapsed
+             1622352  peak memory footprint
+end: 2026-11-14T06:33:37.301689+00:00 exit: 1

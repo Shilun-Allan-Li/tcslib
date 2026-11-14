@@ -1,0 +1,17 @@
+--- a/TCSlib/Cryptography/Authentication.lean
++++ b/TCSlib/Cryptography/Authentication.lean
+@@ -14,6 +14,14 @@
+ import TCSlib.Cryptography.Authentication.Signatures.Lamport
+ import TCSlib.Cryptography.Hashing.FromDiscreteLog
+ import TCSlib.Cryptography.Authentication.Signatures.HashAndSign
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CodecReaders
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionGame
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionHandler
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.FixedGame
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardGame
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardHandler
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuerySampling
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuery
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false

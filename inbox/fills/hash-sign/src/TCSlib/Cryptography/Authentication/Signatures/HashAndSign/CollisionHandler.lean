@@ -136,9 +136,8 @@ theorem polyTimeComputable_collisionHash (H : CRH) (S : SignatureScheme) :
     (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairFstD)
   let hX := polyTimeComputable_pairSndD.comp'
     (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD)
-  let hE := H.eval_poly.comp' (hU.pairEncode (hI.pairEncode hX))
-  ((polyTimeComputable_padStr S.msgLen).comp' (hU.pairEncode hE)).congr (fun _ =>
-    congrArg₂ (padStr S.msgLen) (pairFstD_pairEncode _ _) (pairSndD_pairEncode _ _))
+  (HashSignForward.polyTimeComputable_hashWord H S hU hI hX).congr (fun w =>
+    (HashSignForward.hashWord_eq H S _ _ _).trans (collisionHash_eq H S w).symm)
 
 /-- A collision-finder round signs the query hash using the remaining seed and records
 the query as its new state [PS10, Theorem 144.1]. -/
@@ -279,9 +278,7 @@ theorem ofFn_collisionReply (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : 
             (padStr S.msgLen (List.replicate n true)
               (H.eval (pairEncode (List.replicate n true) (pairEncode i m))))) []
           (ω.drop (S.gen.coins.eval n)))) := by
-  rw [collisionReply_eq]
-  simpa only [List.length_replicate] using
-    ofFn_padFin_eq_padStr S.sigLen (List.replicate n true) _
+  simp only [collisionReply_eq, ofFn_padFin_eq_take, padStr_eq, List.length_replicate]
 
 /-- The collision handler answers each typed query with its padded original signature and
 sets the state to that query, asking no further oracle. -/
@@ -384,8 +381,9 @@ theorem collisionHandler_collision (H : CRH) (S : SignatureScheme)
     have heq := List.mem_singleton.mp he
     subst e
     have hne : m ≠ (splitBits a).1 := hfresh _ (List.mem_singleton_self _)
-    have hp : (List.ofFn a).take (H.domLen.eval n) = List.ofFn (splitBits a).1 := by
-      simpa only [splitBits_fst] using (EffFill.ofFn_take_drop_add a).1
+    have hp : (List.ofFn a).take (H.domLen.eval n) = List.ofFn (splitBits a).1 :=
+      (EffFill.ofFn_take_drop_add a).1.trans
+        (congrArg List.ofFn (funext fun j => splitBits_fst a j)).symm
     have hdecode : splitBits (padFin (H.domLen.eval n + H.domLen.eval n)
         ((collisionHandler H S).result n i ω m a)) = (m, (splitBits a).1) := by
       rw [collisionHandler_result, hp, splitBits_pad_concat]

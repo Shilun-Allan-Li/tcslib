@@ -8,24 +8,74 @@
     }
   ],
   "new_adapter": "prepare.py",
-  "new_adapter_sha256": "9102e9de03aef49a91d9e388557d12f6c76fac40d2c0f9d2d05cb8ca8c09151c",
+  "new_adapter_sha256": "80ed58c6fbd8b88d2096695091ad340fcae0aeaa47fd530a9f63f19651750c94",
   "additional_new_sources": [
     {
-      "path": "run_probe.py",
-      "sha256": "fd96aa80c3cab25de33e9d071346b4aa1acf173c8aa4456343209cd2529445fc"
+      "path": "audit_controls.py",
+      "sha256": "26fb0f9e6984ecc504102447bd0a4df2135ed466464b4684f7597bc5de841d97"
     },
     {
-      "path": "run_controls.py",
-      "sha256": "dd7c24617dcfc598a37920427a2f9872538b8fc3ffdc0dccdaeadac7525bbed2"
+      "path": "failure_ledger.py",
+      "sha256": "7ee5a8572aaf6957b481ad4bb217beffbb5fce4b5fad033b64040437033f3137"
+    },
+    {
+      "path": "finalize_index.py",
+      "sha256": "c6895e6fc9d6c32a2d4c4b58bfa90852542b1c8ce70cbdba1554f15808e36e71"
+    },
+    {
+      "path": "precheck_forward.py",
+      "sha256": "613ada27ad84fa6731c5f429b9f41b1fc4a4ad1b46c6d4b4e46bc10d960d48e6"
+    },
+    {
+      "path": "prepare_facade_base.py",
+      "sha256": "af56bac34b8267cac54c4c52ee739928fe0d0824e45fcdf75ac0108d4527d1b6"
+    },
+    {
+      "path": "prepare_pilot.py",
+      "sha256": "cb11231fc9cea01e853eba6ede98075208bbdf25179724cbbcddf237c5ccf7a4"
     },
     {
       "path": "record_codec_searches.py",
       "sha256": "2678972966225b8b230750e0b224c039dafd6533bcc3077a11ca617bbed39467"
     },
     {
+      "path": "review_explicit.py",
+      "sha256": "0ffd33156b2c062348627989dd8e5846d00233a903bb4d6ae84f812f76526ad7"
+    },
+    {
+      "path": "run_controls.py",
+      "sha256": "dd7c24617dcfc598a37920427a2f9872538b8fc3ffdc0dccdaeadac7525bbed2"
+    },
+    {
+      "path": "run_pilot.py",
+      "sha256": "7a632a1e79981c820d56fa2908e0ab138c1eb5ace960c8693af8c15c52ee909e"
+    },
+    {
+      "path": "run_probe.py",
+      "sha256": "fd96aa80c3cab25de33e9d071346b4aa1acf173c8aa4456343209cd2529445fc"
+    },
+    {
+      "path": "run_seals.py",
+      "sha256": "6447ab62cc55ab479bcb7a06907f3f6f5452144a7aa1a01518e23c0bfe416bfc"
+    },
+    {
+      "path": "seal_matrix.py",
+      "sha256": "3400dca580fad4107428688f37e574d9634e00d62cde42189ab8eb394bfa42c1"
+    },
+    {
       "path": "summarize.py",
-      "sha256": "47e5c3968fb7dd35d6f009a1542cea640ae7ae29492ec72d53c94e8957aeb31e"
+      "sha256": "bef3c1bb6a74986089217ddf4d1437a6c2575f76fcd7c78fbcacd085a44ff89d"
+    },
+    {
+      "path": "summarize_axioms.py",
+      "sha256": "7bb35c0becf2b98c2f55bde8b410a5858b3f05903ce38b96fa229bc00b4460e7"
+    },
+    {
+      "path": "verify_guards.py",
+      "sha256": "95c234191ab7ac6d64dbb5ec627e5e75f5f0afeb802be5c7847a4bdc30a49d2f"
     }
   ],
-  "owner_discovery": "All committed .lean files under HashAndSign helper directory plus owned facade; final rejects uncommitted helpers"
+  "owner_discovery": "All committed HashAndSign helper .lean sources plus owned facade and user-authorized zero-constant Authentication facade",
+  "batching_pilot": "Root approved chunk1000; default500 retained. Full largest B request set positive/negative pilot required before using1000.",
+  "batching_pilots": "1000 and2250 both passed full2221-request guard/sensitivity pilots; actual20-cell latest-source matrix retains every actual batch/revision/log."
 }

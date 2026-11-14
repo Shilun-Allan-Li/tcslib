@@ -288,14 +288,14 @@ theorem exists_forwardMachine (H : CRH) (S : SignatureScheme) (A : NUPPT) :
               (fun res => (handler H S).finish n pk ω res.2 res.1) =
             C.toCompOn
               (bitCodec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
-                (S.msgLen.eval n + S.sigLen.eval n))
+                ((handler H S).outLen.eval n))
               n 1 pk (φ (ω, r)) := by
   obtain ⟨C, hC⟩ := exists_interactiveHandlerMachine A (.const 1)
     (fun _ : Fin 1 => H.domLen) (fun _ => S.sigLen)
     (fun _ : Fin 1 => S.msgLen) (fun _ => S.sigLen)
     (.add H.domLen S.sigLen) (handler H S)
   simp only [PolyExpr.eval_const, PolyExpr.eval_add, handler_perCall,
-    handler_finCall, handler_outLen, Nat.one_mul, Nat.add_zero] at hC
+    handler_finCall, Nat.one_mul, Nat.add_zero] at hC
   exact ⟨C, hC⟩
 
 /-- The handler output width is the sum of the original message and signature widths. -/

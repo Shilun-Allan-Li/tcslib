@@ -1,0 +1,37 @@
+start: 2026-11-14T06:40:55.903453+00:00 module: TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:312:18: error: failed to synthesize
+  Decidable (OriginalSuccess S n pk (padFin (S.msgLen.eval n + S.sigLen.eval n) (List.ofFn res.1), res.2))
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:331:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:371:2: warning: 'rw [forward_expect_transcript H S n _ _ (e ri) rs _ (A.toCompOn_costBoundedBy _ n 1 _ rA)]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:373:2: warning: 'rw [HashSignForward.handler_advInput, he, ← NUPPT.runAt_eq, transcript_eq]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:373:2: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame): no fresh .olean produced
+        9.52 real         2.21 user         1.85 sys
+          2185248768  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              119712  page reclaims
+               58983  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                5723  voluntary context switches
+               55290  involuntary context switches
+            33690130  instructions retired
+            22307397  cycles elapsed
+             1589584  peak memory footprint
+end: 2026-11-14T06:41:05.428809+00:00 exit: 1

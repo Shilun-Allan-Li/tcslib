@@ -1,0 +1,56 @@
+From 2e9d455a003c83d33b89149c83a6ab0610a63a4f Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 13 Nov 2026 23:33:04 -0800
+Subject: [PATCH 4/4] Read collision padding and split words through published
+ equations
+
+---
+ .../Authentication/Signatures/HashAndSign.lean           | 4 ++--
+ .../Signatures/HashAndSign/CollisionHandler.lean         | 9 ++++-----
+ 2 files changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean
+index 3cf0fa62d..d1052c3e1 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean
+@@ -574,8 +574,8 @@ logged transcript, including no-query and codec-timeout outputs.
+    `(m′, σ′)` with `m′ ≠ m` and `Ver_pk(h_i(m′), σ′)` accepting.
+ 2. *Case `h_i(m′) = h_i(m)`.* The collision finder `B(1^n, i)` samples `(pk, sk) ← Gen(1^n)`,
+    runs `A` on `⟨pk, i⟩` answering its query with `Sign_sk(h_i(m))`, and outputs `(m, m′)`
+-   (aborting if `A` made no query). Since `m′ ≠ m` and both lie in `D_i` (`hdom`), this is a
+-   collision. `B` answers `A`'s queries itself, so it is a machine by T1
++   (using the initial zero word if no query was made). For the queried case, freshness and
++   `hdom` give a collision. `B` answers `A`'s queries itself, so it is a machine by T1
+    (`Games.exists_handlerMachine`), with `advIn` supplying `⟨pk, i⟩`, `out` returning `(m, m′)`,
+    and the seed holding the coins of `Gen` and `Sign`.
+ 3. *Case `A` made no query or `h_i(m′) ≠ h_i(m)`.* The forger `C^{Sign_sk}(1^n, pk)` samples
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean
+index b9a7ac2af..381561e77 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean
+@@ -278,9 +278,7 @@ theorem ofFn_collisionReply (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m :
+             (padStr S.msgLen (List.replicate n true)
+               (H.eval (pairEncode (List.replicate n true) (pairEncode i m))))) []
+           (ω.drop (S.gen.coins.eval n)))) := by
+-  rw [collisionReply_eq]
+-  simpa only [List.length_replicate] using
+-    ofFn_padFin_eq_padStr S.sigLen (List.replicate n true) _
++  simp only [collisionReply_eq, ofFn_padFin_eq_take, padStr_eq, List.length_replicate]
+ 
+ /-- The collision handler answers each typed query with its padded original signature and
+ sets the state to that query, asking no further oracle. -/
+@@ -383,8 +381,9 @@ theorem collisionHandler_collision (H : CRH) (S : SignatureScheme)
+     have heq := List.mem_singleton.mp he
+     subst e
+     have hne : m ≠ (splitBits a).1 := hfresh _ (List.mem_singleton_self _)
+-    have hp : (List.ofFn a).take (H.domLen.eval n) = List.ofFn (splitBits a).1 := by
+-      simpa only [splitBits_fst] using (EffFill.ofFn_take_drop_add a).1
++    have hp : (List.ofFn a).take (H.domLen.eval n) = List.ofFn (splitBits a).1 :=
++      (EffFill.ofFn_take_drop_add a).1.trans
++        (congrArg List.ofFn (funext fun j => splitBits_fst a j)).symm
+     have hdecode : splitBits (padFin (H.domLen.eval n + H.domLen.eval n)
+         ((collisionHandler H S).result n i ω m a)) = (m, (splitBits a).1) := by
+       rw [collisionHandler_result, hp, splitBits_pad_concat]
+-- 
+2.50.1 (Apple Git-155)
+

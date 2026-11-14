@@ -1,0 +1,7 @@
+The third CollisionGame check was interrupted with SIGINT to insert immediate
+progress diagnostics locating the still-expensive elaboration step. The source
+already used game-side conv_rhs simplification and explicit scalar indicator
+cases; therefore the earlier whole-goal comparison was not the only issue.
+This is targeted proof debugging, not a module timeout or E-RES stop.
+The exact source is retained as probes/collision-game-check-3.lean and the raw
+checker log remains logs/collision-game-check-3.log. No unrelated process stopped.

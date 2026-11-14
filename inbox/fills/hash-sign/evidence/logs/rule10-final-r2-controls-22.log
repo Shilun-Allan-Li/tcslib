@@ -1,0 +1,37 @@
+start: 2026-11-14T08:16:02.234941+00:00 module: .lake/hash-sign-rule10/final-r2/ControlMinimalBS_indexWord
+source_sha256: 1ec78c502210eeba6b913c0f08d630e24982c126c4e239957bfc1b447ce03fe9
+G06-COMPONENT label=ControlMinimalBS_indexWord_part1 phase=install spelling=TCSlib.Cryptography.Authentication.HashSignForward.indexWord key=[["str","TCSlib"],["str","Cryptography"],["str","Authentication"],["str","HashSignForward"],["str","indexWord"]] home_key=[["str","TCSlib"],["str","Cryptography"],["str","Authentication"],["str","Signatures"],["str","HashAndSign"],["str","ForwardHandler"]] instance=false
+G06-NAME label=ControlMinimalBS_indexWord_part1 spelling=TCSlib.Cryptography.Authentication.HashSignForward.indexWord actual=TCSlib.Cryptography.Authentication.HashSignForward.indexWord home=TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardHandler before=Lean.ReducibilityStatus.semireducible installed=Lean.ReducibilityStatus.irreducible
+G06-MASK label=ControlMinimalBS_indexWord_part1 phase=install requested=1 verified=1 removed=0 scope_depth=1 scoped_names=222 tc_state=preserved
+G06-SEAL label=ControlMinimalBS_indexWord_part1 requested=1 active=1 already_irreducible=0 verified=1
+.lake/hash-sign-rule10/final-r2/ControlMinimalBS_indexWord.lean:120:203: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  TCSlib.Cryptography.Authentication.HashSignForward.indexWord H u ω = H.gen.output (Complexity.NUPPT.layout u [] [] ω)
+G06-COMPONENT label=ControlMinimalBS_indexWord_part1 phase=eof spelling=TCSlib.Cryptography.Authentication.HashSignForward.indexWord key=[["str","TCSlib"],["str","Cryptography"],["str","Authentication"],["str","HashSignForward"],["str","indexWord"]] home_key=[["str","TCSlib"],["str","Cryptography"],["str","Authentication"],["str","Signatures"],["str","HashAndSign"],["str","ForwardHandler"]] instance=false
+G06-MASK label=ControlMinimalBS_indexWord_part1 phase=eof requested=1 verified=1
+G06-SEAL-END label=ControlMinimalBS_indexWord_part1 requested=1 verified=1
+FAIL(.lake/hash-sign-rule10/final-r2/ControlMinimalBS_indexWord): lean exited with status 1
+FAIL(.lake/hash-sign-rule10/final-r2/ControlMinimalBS_indexWord): error diagnostics reported
+FAIL(.lake/hash-sign-rule10/final-r2/ControlMinimalBS_indexWord): no fresh .olean produced
+       49.58 real        47.83 user         1.42 sys
+          2259107840  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              195317  page reclaims
+                1248  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                 116  voluntary context switches
+               33579  involuntary context switches
+            33371723  instructions retired
+            18421773  cycles elapsed
+             1573200  peak memory footprint
+end: 2026-11-14T08:16:51.819719+00:00 exit: 1

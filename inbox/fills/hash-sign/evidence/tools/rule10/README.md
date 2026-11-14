@@ -6,10 +6,18 @@ All generated Lean probes must be checked separately, one module per
 tree. Base and final collection must each use oleans of that phase's sources.
 
 Owners are auto-discovered from the selected immutable Git revision: the owned
-`HashAndSign` facade plus every `.lean` file under its helper directory. At the
+`HashAndSign` facade plus every `.lean` file under its helper directory, and the
+user-authorized import-only `Authentication.lean` facade (zero stored constants). At the
 base, working helper sources that do not yet exist in that revision are recorded
 as absent, rather than assigned fabricated base checks. Final preparation fails
 if a working helper source was omitted from the selected committed revision.
+
+The genuine original base collection covered `HashAndSign` before the facade
+scope extension. The additional baseline facade is handled separately by
+`prepare_facade_base.py`, with its current-loaded-artifact limitation and exact
+catalog reconstruction disclosed in the generated provenance. Its source is
+the immutable base facade, and no current-owned proof is presented as a genuine
+baseline proof artifact.
 
 The retained collector and seal instrumenter came from the base repository's
 `briefs/pass-shelat-ch5-8/fills/dl-folds/final-r1/review-evidence.zip`.
@@ -55,7 +63,29 @@ ordinary semireducible definitions and generated matchers in each owner's full
 TCSlib import closure are covered, including definition-instances. Reducible
 abbreviations remain explicitly recorded exclusions. Requests use actual name
 components, verified home modules and metadata; installation and EOF verification
-are retained. Large request sets are split into commands of 500 requests.
+are retained. Large request sets default to commands of 500 requests.
+`--seal-chunk N` changes only this batching boundary; every requested definition,
+native identity check, instance-mask check, and EOF check remains present. The
+exact boundary is retained in `seals-batching.json` or `controls-batching.json`.
+The coordinator first selected a 1000-row pilot, then approved a 2250-row pilot
+for the largest 2221-request set. Both passed unsealed/sealed expectations and
+independent complete guard audits. Actual final checks use preserved 1000- and
+2250-batch records; `final-r2/seal-matrix.json` maps every latest-source A/B cell
+to its actual revision, source hash, raw log and guard audit. Historical failed
+source checks remain in `source-seal-failure-ledger.json`. Default 500 remains
+available; no proof or guard budgets changed.
+
+`prepare_pilot.py --out OUTPUT --chunk 1000` prepares one unsealed and one
+sealed sensitivity probe using the largest final B request set.
+The same `padFin` body-reading negative must pass unsealed and fail exactly
+once sealed; its published-reader positive must pass in both.
+
+`verify_guards.py --record REQUEST_JSON --log RAW_LOG --out RESULT_JSON`
+independently verifies that every request appears exactly once at installation
+and exactly once at EOF with its exact native components/home/instance metadata,
+that every name was installed irreducibly, that mask and typeclass-state checks
+closed for every batch, and that batch totals equal the full request count.
+It reports proof-body diagnostics separately from complete harness coverage.
 
 The per-variant `manifest.json` files list the probe modules to check. Preserve
 every generated `.lean.txt`, per-probe JSON, and the complete raw check logs.
@@ -75,9 +105,12 @@ installs the complete owner set. The full A/B source seals separately verify
 installation and EOF persistence for every closure request. The baseline
 `CostBoundedBy` pair used the complete A set; remaining baseline pairs use
 singleton sets, as recorded in `controls-workflow-switch.json`.
-The probes import that owner's direct imports from the selected immutable Git
-revision, rather than the owner module itself. This loads exactly its foreign
-closure and allows later proof edits without changing baseline control imports.
+The default probes import that owner's direct imports from the selected Git
+revision. `--control-import-mode definition-home` instead imports the authentic
+target's defining module (plus Lean), for singleton controls only. The final 22
+probes use this minimal-import mode; each target and its positive reader were
+checked in their defining module. Complete source seals and the largest full-set
+pilots independently cover the whole import closures and mask behavior.
 Controls cover `padFin`, `NUPPT.inArg`, `OracleComp.CostBoundedBy`,
 `PolyExpr.eval` in B, and the new helpers' `collisionKey` and `indexWord` when
 those are foreign to a consumer. `OneQuery` contains no new definitions;

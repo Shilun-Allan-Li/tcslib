@@ -10,13 +10,20 @@ import TCSlib.Cryptography.Asymptotic.CollectionsLemmas
 import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
 import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.FixedGame
 import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CodecReaders
+import TCSlib.Cryptography.Games.Bridges.Experiments
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionGame
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardGame
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionHandler
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardHandler
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuery
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuerySampling
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Hash-and-sign (statement phase)
+# Hash-and-sign
 
 [PS10, Protocol 144.2]: from a family of collision-resistant hash functions `{h_i}` and a
 signature scheme `(Gen, Sign, Ver)` for the hash values,
@@ -56,10 +63,21 @@ collisions the CRH game counts.
 * The `hsHashList_eq`, key/index and algorithm equations expose the string computations.
 * `Authentication.hashAndSign_msgLen`, `hashAndSign_sigLen`, `hashAndSign_gen`,
   `hashAndSign_sign`, `hashAndSign_ver`: the signature-scheme data fields.
-* `Authentication.hashAndSign_oneTimeSecure` (Thm 144.1, stated; a `sorry` under the source's
-  sketch).
+* `Authentication.hashAndSign_oneTimeSecure` (Thm 144.1): one-time security from collision
+  resistance and one-time security of the original scheme, proved by the two reductions.
 * `Authentication.exists_oneTimeSecure_of_crh_owf`: the source's existential form, with
   Lamport's scheme (proved from Theorems 137.2 and 144.1).
+
+## Contents
+
+* `HashAndSign.CodecReaders`: canonical forger codecs and split-word readers.
+* `HashAndSign.OneQuery`: zero/one-query computation normal forms.
+* `HashAndSign.OneQuerySampling`: drawing one signing tape in advance.
+* `HashAndSign.ForwardHandler`: the efficient hashing/forwarding handler.
+* `HashAndSign.FixedGame`: the common fixed-tape transcript.
+* `HashAndSign.CollisionHandler`: the efficient collision finder and its soundness.
+* `HashAndSign.CollisionGame`: the collision-finding probability bound.
+* `HashAndSign.ForwardGame`: the original-scheme forgery probability equality.
 
 ## References
 
@@ -472,16 +490,92 @@ theorem runAt_hsGen_split (S : SignatureScheme) (H : CRH) (n : ℕ)
       (H.gen.runAt n [] (fun j => σ (Fin.natAdd (S.gen.coinLen n) j)))) = _
   simp only [hσ, Fin.append_left, Fin.append_right]
 
+/-- The hash-and-sign forgery probability equals the common transcript's success
+probability averaged over independent original key, hash-index, adversary and signing tapes.
+
+**Proof sketch.** Read the forgery experiment through its published equation. Reindex the
+combined generator tape by the product of the original generator tapes and use its run
+equation. Finally move the single signing tape outside the logged simulation and identify
+verification with original-scheme verification on the hash. -/
+theorem hashAndSign_forge_eq_common (H : CRH) (S : SignatureScheme)
+    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (A : NUPPT) (n : ℕ) :
+    accept ((hashAndSign H S hlen).forgeGame A 1 n) =
+      ProbComp.expect (ProbComp.sample (S.gen.Coins n)) (fun rg =>
+        ProbComp.expect (ProbComp.sample (H.gen.Coins n)) (fun ri =>
+          ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA =>
+            ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
+              ProbComp.prob
+                (HashSignFill.transcript H S A n (pairFstD (S.gen.runAt n [] rg))
+                  (pairSndD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri) rs rA)
+                (HashSignFill.Success H S n (pairFstD (S.gen.runAt n [] rg))
+                  (H.gen.runAt n [] ri)))))) := by
+  classical
+  rw [SignatureScheme.forgeGame_eq, accept_eq, ProbComp.prob_eq_expect]
+  simp only [ProbComp.expect_bind, ProbComp.expect_pure, decide_eq_true_eq,
+    hashAndSign_gen]
+  rw [← ProbComp.expect_sample_equiv (EnsembleLemmas.coinsEquiv (hsGen_coinLen S H n))]
+  rw [← Bridge.expect_sample_pair]
+  simp only [ProbComp.expect_bind, ProbComp.expect_pure]
+  apply congrArg (ProbComp.expect (ProbComp.sample (S.gen.Coins n)))
+  funext rg
+  apply congrArg (ProbComp.expect (ProbComp.sample (H.gen.Coins n)))
+  funext ri
+  simp only [runAt_hsGen_split, pairFstD_pairEncode, pairSndD_pairEncode,
+    SignatureScheme.forgerCodec_eq_bitCodec, hashAndSign_msgLen, hashAndSign_sigLen]
+  apply congrArg (ProbComp.expect (ProbComp.sample (A.Coins n)))
+  funext rA
+  rw [expect_hashAndSign_sign H S hlen n _ _ _ (A.toCompOn_costBoundedBy _ n 1 _ rA)]
+  apply congrArg (ProbComp.expect (ProbComp.sample (S.sign.Coins n)))
+  funext rs
+  simp only [HashSignFill.transcript_eq, ProbComp.prob_eq_expect,
+    HashSignFill.success_iff, hashAndSign_accepts_iff]
+  apply congrArg (ProbComp.expect _)
+  funext res
+  split <;> rfl
+
+/-- Every successful common transcript either gives a fresh-message hash collision or
+is a successful forgery after forwarding hashes to the original signing oracle.
+
+**Proof sketch.** If a queried message has the final message's hash, use source freshness
+for the collision case. Otherwise the final hash is fresh among forwarded queries.
+The range-width equation transports equality of the forwarded hash vectors back to
+equality of CRH hash vectors, including at width zero. -/
+theorem hashAndSign_success_cases (H : CRH) (S : SignatureScheme)
+    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (pk i : List Bool)
+    (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
+      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
+        (fun _ => S.sigLen.eval n))))
+    (h : HashSignFill.Success H S n pk i res) :
+    HashSignFill.CollisionCase H S n i res ∨
+      HashSignFill.ForwardSuccess H S n pk i res := by
+  classical
+  obtain ⟨haccept, hfresh⟩ := (HashSignFill.success_iff H S n pk i res).mp h
+  by_cases heq : ∃ e ∈ res.2.2,
+      H.hash n i e.2.1 = H.hash n i (splitBits res.1).1
+  · exact Or.inl ((HashSignFill.collisionCase_iff H S n i res).mpr ⟨hfresh, heq⟩)
+  · apply Or.inr
+    apply (HashSignFill.forwardSuccess_iff H S n pk i res).mpr
+    constructor
+    · simpa only [HashSignFill.queryHash_eq] using haccept
+    · intro e hem hsame
+      apply heq
+      refine ⟨e, hem, ?_⟩
+      funext j
+      have hv := congrFun hsame (Fin.cast (hlen n) j)
+      simpa only [HashSignFill.queryHash_eq, CRH.hash_eq, padFin_apply, Fin.coe_cast] using hv
+
 /-- **Theorem 144.1: hash-and-sign is one-time secure** [PS10, Theorem 144.1] when the hash
 family is collision resistant on its full domain and the signature scheme is one-time secure.
 
-**Proof sketch** (the source's).
+**Proof sketch.** The source's two reductions are implemented with independent key,
+hash-index, adversary and signing tapes; a one-query sampling law couples their common
+logged transcript, including no-query and codec-timeout outputs.
 1. Let `A` be a one-time forger against `hashAndSign`, querying `m` (or nothing) and outputting
    `(m′, σ′)` with `m′ ≠ m` and `Ver_pk(h_i(m′), σ′)` accepting.
 2. *Case `h_i(m′) = h_i(m)`.* The collision finder `B(1^n, i)` samples `(pk, sk) ← Gen(1^n)`,
    runs `A` on `⟨pk, i⟩` answering its query with `Sign_sk(h_i(m))`, and outputs `(m, m′)`
-   (aborting if `A` made no query). Since `m′ ≠ m` and both lie in `D_i` (`hdom`), this is a
-   collision. `B` answers `A`'s queries itself, so it is a machine by T1
+   (using the initial zero word if no query was made). For the queried case, freshness and
+   `hdom` give a collision. `B` answers `A`'s queries itself, so it is a machine by T1
    (`Games.exists_handlerMachine`), with `advIn` supplying `⟨pk, i⟩`, `out` returning `(m, m′)`,
    and the seed holding the coins of `Gen` and `Sign`.
 3. *Case `A` made no query or `h_i(m′) ≠ h_i(m)`.* The forger `C^{Sign_sk}(1^n, pk)` samples
@@ -495,7 +589,32 @@ theorem hashAndSign_oneTimeSecure (H : CRH) (S : SignatureScheme)
     (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (hdom : ∀ n i x, H.inDom n i x = true)
     (hH : H.CollisionResistant) (hS : S.OneTimeSecure) :
     (hashAndSign H S hlen).OneTimeSecure := by
-  sorry
+  classical
+  apply (SignatureScheme.oneTimeSecure_iff _).mpr
+  intro A
+  obtain ⟨B, hB⟩ := HashSignFill.exists_collisionGame_bound H S A hdom
+  obtain ⟨C, hC⟩ := HashSignFill.exists_forwardGame H S A
+  obtain ⟨εB, hεB, hboundB⟩ := (CRH.collisionResistant_iff H).mp hH B
+  obtain ⟨εC, hεC, hboundC⟩ := (SignatureScheme.oneTimeSecure_iff S).mp hS C
+  refine ⟨fun n => εB n + εC n, hεB.add hεC, fun n => ?_⟩
+  rw [hashAndSign_forge_eq_common H S hlen A n]
+  refine le_trans ?_ (add_le_add (hboundB n) (hboundC n))
+  refine le_trans ?_ (add_le_add (hB n) (le_of_eq (hC n).symm))
+  -- Bound the success event by the union before averaging the independent tapes.
+  rw [← ProbComp.expect_add]
+  apply ProbComp.expect_mono
+  intro rg
+  rw [← ProbComp.expect_add]
+  apply ProbComp.expect_mono
+  intro ri
+  rw [← ProbComp.expect_add]
+  apply ProbComp.expect_mono
+  intro rA
+  rw [← ProbComp.expect_add]
+  apply ProbComp.expect_mono
+  intro rs
+  exact (ProbComp.prob_mono _ (fun res hs =>
+    hashAndSign_success_cases H S hlen n _ _ res hs)).trans (ProbComp.prob_or_le _ _ _)
 
 /-- **The existential form of Theorem 144.1** [PS10]: a collision-resistant hash family
 `{0,1}^{d(n)} → {0,1}^n` on its full domain, and a one-way function, give a one-time secure

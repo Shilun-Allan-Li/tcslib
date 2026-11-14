@@ -16,9 +16,9 @@ for row in rows:
     if '/Seal' in row['module']:
         seals.append({k: row[k] for k in ['module', 'label', 'rc', 'error_count', 'failing_declarations', 'raw_log']})
     if row.get('expected_error_count') is not None:
-        controls.append(row)
-        match = re.search(r'/Control(?:Foreign|Singleton)([AB])([SU])_(.+)$', row['module'])
+        match = re.search(r'/Control(?:Foreign|Singleton|Minimal)([AB])([SU])_(.+)$', row['module'])
         if match:
+            controls.append(row)
             pair = pairs.setdefault(match[1] + ':' + match[3], {})
             pair['sealed' if match[2] == 'S' else 'unsealed'] = {'label': row['label'], 'expectation_passed': row['expectation_passed'],
                 'error_count': row['error_count'], 'raw_log': row['raw_log'],

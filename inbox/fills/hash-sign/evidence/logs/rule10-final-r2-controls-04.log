@@ -1,0 +1,37 @@
+start: 2026-11-14T08:09:14.713302+00:00 module: .lake/hash-sign-rule10/final-r2/ControlMinimalAS_padFin
+source_sha256: 6b2f90868cb7e9aa0a6aa4ee283e63180eb59376204a5d81dcb4da360c66568b
+G06-COMPONENT label=ControlMinimalAS_padFin_part1 phase=install spelling=TCSlib.Cryptography.padFin key=[["str","TCSlib"],["str","Cryptography"],["str","padFin"]] home_key=[["str","TCSlib"],["str","Cryptography"],["str","Asymptotic"],["str","Adversary"]] instance=false
+G06-NAME label=ControlMinimalAS_padFin_part1 spelling=TCSlib.Cryptography.padFin actual=TCSlib.Cryptography.padFin home=TCSlib.Cryptography.Asymptotic.Adversary before=Lean.ReducibilityStatus.semireducible installed=Lean.ReducibilityStatus.irreducible
+G06-MASK label=ControlMinimalAS_padFin_part1 phase=install requested=1 verified=1 removed=0 scope_depth=1 scoped_names=217 tc_state=preserved
+G06-SEAL label=ControlMinimalAS_padFin_part1 requested=1 active=1 already_irreducible=0 verified=1
+.lake/hash-sign-rule10/final-r2/ControlMinimalAS_padFin.lean:120:108: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  TCSlib.Cryptography.padFin l w i = w.getD (↑i) false
+G06-COMPONENT label=ControlMinimalAS_padFin_part1 phase=eof spelling=TCSlib.Cryptography.padFin key=[["str","TCSlib"],["str","Cryptography"],["str","padFin"]] home_key=[["str","TCSlib"],["str","Cryptography"],["str","Asymptotic"],["str","Adversary"]] instance=false
+G06-MASK label=ControlMinimalAS_padFin_part1 phase=eof requested=1 verified=1
+G06-SEAL-END label=ControlMinimalAS_padFin_part1 requested=1 verified=1
+FAIL(.lake/hash-sign-rule10/final-r2/ControlMinimalAS_padFin): lean exited with status 1
+FAIL(.lake/hash-sign-rule10/final-r2/ControlMinimalAS_padFin): error diagnostics reported
+FAIL(.lake/hash-sign-rule10/final-r2/ControlMinimalAS_padFin): no fresh .olean produced
+       49.09 real        45.00 user         1.74 sys
+          2171863040  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              189698  page reclaims
+               12981  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 153  voluntary context switches
+               58040  involuntary context switches
+            32427132  instructions retired
+            15863363  cycles elapsed
+             1556816  peak memory footprint
+end: 2026-11-14T08:10:03.813323+00:00 exit: 1

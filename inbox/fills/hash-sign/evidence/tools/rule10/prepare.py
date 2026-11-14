@@ -19,6 +19,7 @@ sys.dont_write_bytecode = True
 HERE = Path(__file__).resolve().parent
 BASE = 'eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9'
 OWNED = 'TCSlib.Cryptography.Authentication.Signatures.HashAndSign'
+AUTH_FACADE = 'TCSlib.Cryptography.Authentication'
 
 
 def sha(raw):
@@ -51,7 +52,8 @@ def git(repo, *args):
 def owners_at(repo, rev):
     facade = OWNED.replace('.', '/') + '.lean'
     helper_dir = OWNED.replace('.', '/')
-    paths = git(repo, 'ls-tree', '-r', '--name-only', rev, '--', facade, helper_dir).splitlines()
+    paths = git(repo, 'ls-tree', '-r', '--name-only', rev, '--', facade, helper_dir,
+                AUTH_FACADE.replace('.', '/') + '.lean').splitlines()
     paths = sorted(p for p in paths if p.endswith('.lean'))
     owners = [p[:-5].replace('/', '.') for p in paths]
     current = [p.relative_to(repo).as_posix() for p in (repo / helper_dir).rglob('*.lean')]
@@ -112,7 +114,7 @@ def seals(args, repo, rev, out, sub, owners, absent):
         dest = out / ('seal-' + letter)
         if (dest / 'manifest.json').exists():
             raise RuntimeError('seal preparation already exists: ' + str(dest))
-        env = dict(os.environ, SEAL_CHUNK='500')
+        env = dict(os.environ, SEAL_CHUNK=str(args.seal_chunk))
         if letter == 'B':
             env['SEAL_EVAL'] = '1'
         else:
@@ -123,7 +125,7 @@ def seals(args, repo, rev, out, sub, owners, absent):
     print('Seal sources/requests prepared; run each manifest probe through lean_check_tree.sh.')
 
 
-def load_builder():
+def load_builder(chunk=500):
     def load(path, name):
         spec = importlib.util.spec_from_file_location(name, path)
         module = importlib.util.module_from_spec(spec)
@@ -136,8 +138,8 @@ def load_builder():
     adapter.configure_builders(bs, ctl)
     original = bs.seal_command
     def chunked(label, rows, *, end):
-        return b''.join(original(label + '_part' + str(i // 500 + 1), rows[i:i + 500], end=end)
-                        for i in range(0, len(rows), 500)) if rows else original(label, rows, end=end)
+        return b''.join(original(label + '_part' + str(i // chunk + 1), rows[i:i + chunk], end=end)
+                        for i in range(0, len(rows), chunk)) if rows else original(label, rows, end=end)
     bs.seal_command = chunked
     return bs
 
@@ -165,7 +167,7 @@ CONTROL_BODIES = {
 
 
 def controls(args, repo, rev, out, sub, owners, absent):
-    bs = load_builder()
+    bs = load_builder(args.seal_chunk)
     plan = []
     for letter in ['A', 'B']:
         records = [json.loads(p.read_text()) for p in sorted((out / ('seal-' + letter)).glob('Seal' + letter + '_*.json'))]
@@ -181,9 +183,16 @@ def controls(args, repo, rev, out, sub, owners, absent):
             original = subprocess.check_output(['git', '--no-optional-locks', '-C', str(repo), 'show',
                        record['rev'] + ':' + record['source']])
             direct_imports = bs.header(original)['imports']
-            imports = list(dict.fromkeys(['Lean', *direct_imports]))
+            target_metadata = next(r for r in record['rows'] if r['spelling'] == target)
+            if args.control_import_mode == 'definition-home':
+                if args.control_mode != 'singleton':
+                    raise RuntimeError('minimal defining-module imports require singleton requests')
+                imports = ['Lean', target_metadata['home']]
+            else:
+                imports = list(dict.fromkeys(['Lean', *direct_imports]))
             for sealed in [False, True]:
-                label = ('ControlForeign' if args.control_mode == 'whole' else 'ControlSingleton') + letter + ('S_' if sealed else 'U_') + tag
+                prefix = 'ControlMinimal' if args.control_import_mode == 'definition-home' else ('ControlForeign' if args.control_mode == 'whole' else 'ControlSingleton')
+                label = prefix + letter + ('S_' if sealed else 'U_') + tag
                 src = (''.join('import ' + module + '\n' for module in imports) + '\nset_option maxHeartbeats 0\n'
                        'set_option autoImplicit false\nset_option relaxedAutoImplicit false\n\n').encode()
                 if sealed:
@@ -199,6 +208,7 @@ def controls(args, repo, rev, out, sub, owners, absent):
                 plan.append(dict(probe, target=target, variant=letter, sealed=sealed,
                      owner=record['module'], request_record=record['label'], requested=len(requests) if sealed else 0,
                      request_mode=args.control_mode, request_names=[r['spelling'] for r in requests],
+                     control_import_mode=args.control_import_mode,
                      direct_imports=imports, imports_owner=False,
                      negative_start_line=negative_start, positive_start_line=positive_start,
                      expected_error_count=1 if sealed else 0,
@@ -238,7 +248,12 @@ def main():
     p.add_argument('--out', required=True, type=Path)
     p.add_argument('--collector-log')
     p.add_argument('--control-mode', choices=['whole', 'singleton'], default='singleton')
+    p.add_argument('--control-import-mode', choices=['owner-imports', 'definition-home'], default='owner-imports')
+    p.add_argument('--seal-chunk', type=int, default=500)
+    p.add_argument('--probe-subdir', help='Fresh repository-relative .lake probe directory')
     args = p.parse_args()
+    if args.seal_chunk <= 0:
+        p.error('--seal-chunk must be positive')
     repo, out = args.repo.resolve(), args.out.resolve()
     rev = git(repo, 'rev-parse', args.rev + '^{commit}')
     owners, absent = owners_at(repo, rev)
@@ -250,10 +265,15 @@ def main():
             committed = subprocess.check_output(['git', '--no-optional-locks', '-C', str(repo), 'show', rev + ':' + path])
             if (repo / path).read_bytes() != committed:
                 raise RuntimeError('final working source differs from selected revision: ' + path)
-    sub = '.lake/hash-sign-rule10/' + args.phase
+    sub = args.probe_subdir or '.lake/hash-sign-rule10/' + args.phase
     out.mkdir(parents=True, exist_ok=True)
+    write(out / 'owners.txt', '\n'.join(owners) + '\n')
     adapter_raw = Path(__file__).read_bytes()
     write(out / 'tool-versions' / ('prepare-' + sha(adapter_raw) + '.py'), adapter_raw)
+    if args.action in ['seals', 'controls']:
+        dump(out / (args.action + '-batching.json'), {'maximum_requests_per_command': args.seal_chunk,
+             'coverage_changed': False, 'native_name_guards_changed': False, 'instance_mask_guards_changed': False,
+             'eof_verification_changed': False})
     globals()[args.action](args, repo, rev, out, sub, owners, absent)
 
 

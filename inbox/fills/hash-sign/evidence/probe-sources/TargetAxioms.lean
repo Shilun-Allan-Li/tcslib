@@ -1,0 +1,2 @@
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign
+#print axioms TCSlib.Cryptography.Authentication.hashAndSign_oneTimeSecure

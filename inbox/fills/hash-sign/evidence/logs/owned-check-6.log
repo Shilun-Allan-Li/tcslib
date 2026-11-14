@@ -1,0 +1,83 @@
+start: 2026-11-14T06:14:26.473236+00:00 module: TCSlib/Cryptography/Authentication/Signatures/HashAndSign
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:518:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  if
+      S.Accepts n (pairFstD (S.gen.runAt n [] rg))
+          (padFin (S.msgLen.eval n)
+            (H.eval (atParam n (pairEncode (H.gen.runAt n [] ri) (List.ofFn (splitBits res.1).1)))))
+          (splitBits res.1).2 ∧
+        ∀ e ∈ res.2.2, e.snd.1 ≠ (splitBits res.1).1 then
+    ?m.172
+  else ?m.173
+in the target expression
+  1 = 1
+
+case h.h.h.h.h.isTrue
+H : CRH
+S : SignatureScheme
+hlen : ∀ (n : ℕ), H.rangeLen.eval n = S.msgLen.eval n
+A : NUPPT
+n : ℕ
+rg : Fin (S.gen.coinLen n) → Bool
+ri : Fin (H.gen.coinLen n) → Bool
+rA : A.Coins n
+rs : S.sign.Coins n
+res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) × Unit × QueryLog ((hashAndSign H S hlen).oracleSpec n)
+h :
+  S.Accepts n (pairFstD (S.gen.runAt n [] rg))
+      (padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode (H.gen.runAt n [] ri) (List.ofFn (splitBits res.1).1)))))
+      (splitBits res.1).2 ∧
+    ∀ e ∈ res.2.2, e.snd.1 ≠ (splitBits res.1).1
+⊢ 1 = 1
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:519:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  if
+      S.Accepts n (pairFstD (S.gen.runAt n [] rg))
+          (padFin (S.msgLen.eval n)
+            (H.eval (atParam n (pairEncode (H.gen.runAt n [] ri) (List.ofFn (splitBits res.1).1)))))
+          (splitBits res.1).2 ∧
+        ∀ e ∈ res.2.2, e.snd.1 ≠ (splitBits res.1).1 then
+    ?m.177
+  else ?m.178
+in the target expression
+  0 = 0
+
+case h.h.h.h.h.isFalse
+H : CRH
+S : SignatureScheme
+hlen : ∀ (n : ℕ), H.rangeLen.eval n = S.msgLen.eval n
+A : NUPPT
+n : ℕ
+rg : Fin (S.gen.coinLen n) → Bool
+ri : Fin (H.gen.coinLen n) → Bool
+rA : A.Coins n
+rs : S.sign.Coins n
+res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) × Unit × QueryLog ((hashAndSign H S hlen).oracleSpec n)
+h :
+  ¬(S.Accepts n (pairFstD (S.gen.runAt n [] rg))
+        (padFin (S.msgLen.eval n)
+          (H.eval (atParam n (pairEncode (H.gen.runAt n [] ri) (List.ofFn (splitBits res.1).1)))))
+        (splitBits res.1).2 ∧
+      ∀ e ∈ res.2.2, e.snd.1 ≠ (splitBits res.1).1)
+⊢ 0 = 0
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:540:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign): no fresh .olean produced
+        6.44 real         2.52 user         1.74 sys
+          2172715008  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              154948  page reclaims
+               25096  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                3394  voluntary context switches
+               46618  involuntary context switches
+            33776845  instructions retired
+            23109060  cycles elapsed
+             1556816  peak memory footprint
+end: 2026-11-14T06:14:32.935225+00:00 exit: 1

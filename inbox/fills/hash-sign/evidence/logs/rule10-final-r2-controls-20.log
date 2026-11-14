@@ -1,0 +1,40 @@
+start: 2026-11-14T08:15:02.911196+00:00 module: .lake/hash-sign-rule10/final-r2/ControlMinimalBS_collisionKey
+source_sha256: fd82f18e87ae6e9c9a033cd6d56607349b8b1eb4c6b5c1332e4211118c8d38c9
+G06-COMPONENT label=ControlMinimalBS_collisionKey_part1 phase=install spelling=TCSlib.Cryptography.Authentication.HashSignFill.collisionKey key=[["str","TCSlib"],["str","Cryptography"],["str","Authentication"],["str","HashSignFill"],["str","collisionKey"]] home_key=[["str","TCSlib"],["str","Cryptography"],["str","Authentication"],["str","Signatures"],["str","HashAndSign"],["str","CollisionHandler"]] instance=false
+G06-NAME label=ControlMinimalBS_collisionKey_part1 spelling=TCSlib.Cryptography.Authentication.HashSignFill.collisionKey actual=TCSlib.Cryptography.Authentication.HashSignFill.collisionKey home=TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionHandler before=Lean.ReducibilityStatus.semireducible installed=Lean.ReducibilityStatus.irreducible
+G06-MASK label=ControlMinimalBS_collisionKey_part1 phase=install requested=1 verified=1 removed=0 scope_depth=1 scoped_names=222 tc_state=preserved
+G06-SEAL label=ControlMinimalBS_collisionKey_part1 requested=1 active=1 already_irreducible=0 verified=1
+.lake/hash-sign-rule10/final-r2/ControlMinimalBS_collisionKey.lean:120:334: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  TCSlib.Cryptography.Authentication.HashSignFill.collisionKey S c =
+    S.gen.output
+      (Complexity.NUPPT.layout (Complexity.pairFstD c) [] []
+        (List.take (S.gen.coins.eval (Complexity.pairFstD c).length) (Complexity.pairSndD (Complexity.pairSndD c))))
+G06-COMPONENT label=ControlMinimalBS_collisionKey_part1 phase=eof spelling=TCSlib.Cryptography.Authentication.HashSignFill.collisionKey key=[["str","TCSlib"],["str","Cryptography"],["str","Authentication"],["str","HashSignFill"],["str","collisionKey"]] home_key=[["str","TCSlib"],["str","Cryptography"],["str","Authentication"],["str","Signatures"],["str","HashAndSign"],["str","CollisionHandler"]] instance=false
+G06-MASK label=ControlMinimalBS_collisionKey_part1 phase=eof requested=1 verified=1
+G06-SEAL-END label=ControlMinimalBS_collisionKey_part1 requested=1 verified=1
+FAIL(.lake/hash-sign-rule10/final-r2/ControlMinimalBS_collisionKey): lean exited with status 1
+FAIL(.lake/hash-sign-rule10/final-r2/ControlMinimalBS_collisionKey): error diagnostics reported
+FAIL(.lake/hash-sign-rule10/final-r2/ControlMinimalBS_collisionKey): no fresh .olean produced
+       54.51 real        49.51 user         1.87 sys
+          2233991168  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              195281  page reclaims
+               16945  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  50  voluntary context switches
+               71084  involuntary context switches
+            32327058  instructions retired
+            17323126  cycles elapsed
+             1556816  peak memory footprint
+end: 2026-11-14T08:15:57.430683+00:00 exit: 1

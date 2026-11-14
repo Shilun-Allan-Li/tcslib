@@ -21,9 +21,12 @@ This module introduces no definitions.
   and timeout fields are equal.
 * `Authentication.SignatureScheme.forgerCodec_eq_bitCodec`: the signature
   forger codec equals the canonical bit codec at its declared lengths.
+* `HashSignFill.splitBits_append`, `splitBits_pad_concat`: splitting fixed-width
+  concatenated words recovers their components, including zero widths.
 
 The generic extensionality lemma is a promotion request for `Games/Machines`;
 the signature-specific reader belongs beside its definition in `Signatures/Defs`.
+The two split-word readers are promotion requests for `Authentication/Encoding`.
 
 ## References
 

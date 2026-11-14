@@ -1,0 +1,63 @@
+start: 2026-11-14T06:12:34.993915+00:00 module: TCSlib/Cryptography/Authentication/Signatures/HashAndSign
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:494:48: error: unsolved goals
+case h.h.h.h
+H : CRH
+S : SignatureScheme
+hlen : ∀ (n : ℕ), H.rangeLen.eval n = S.msgLen.eval n
+A : NUPPT
+n : ℕ
+rg : Fin (S.gen.coinLen n) → Bool
+ri : Fin (H.gen.coinLen n) → Bool
+rA : A.Coins n
+rs : S.sign.Coins n
+⊢ (ProbComp.expect
+      (simulate (HashSignFill.fixedSign H S n (pairSndD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri) rs).withLog
+        (A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n))
+          n 1 (pairEncode (pairFstD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri)) rA)
+        ((), []))
+      fun a =>
+      if
+          S.Accepts n (pairFstD (S.gen.runAt n [] rg))
+              (padFin (S.msgLen.eval n)
+                (H.eval (atParam n (pairEncode (H.gen.runAt n [] ri) (List.ofFn (splitBits a.1).1)))))
+              (splitBits a.1).2 ∧
+            ∀ e ∈ a.2.2, e.snd.1 ≠ (splitBits a.1).1 then
+        1
+      else 0) =
+    ProbComp.expect
+      (simulate (HashSignFill.fixedSign H S n (pairSndD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri) rs).withLog
+        (A.toCompOn (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n))
+          n 1 (pairEncode (pairFstD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri)) rA)
+        ((), []))
+      fun a =>
+      if
+          S.Accepts n (pairFstD (S.gen.runAt n [] rg))
+              (padFin (S.msgLen.eval n)
+                (H.eval (atParam n (pairEncode (H.gen.runAt n [] ri) (List.ofFn (splitBits a.1).1)))))
+              (splitBits a.1).2 ∧
+            ∀ e ∈ a.2.2, e.snd.1 ≠ (splitBits a.1).1 then
+        1
+      else 0
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:535:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign): no fresh .olean produced
+       13.41 real         3.17 user         2.95 sys
+          2140651520  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171906  page reclaims
+               46074  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                9642  voluntary context switches
+               94180  involuntary context switches
+            34306047  instructions retired
+            23413925  cycles elapsed
+             1556816  peak memory footprint
+end: 2026-11-14T06:12:48.418180+00:00 exit: 1

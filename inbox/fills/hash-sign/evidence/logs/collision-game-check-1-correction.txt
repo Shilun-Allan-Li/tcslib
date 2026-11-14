@@ -1,0 +1,14 @@
+The first CollisionGame check was interrupted with SIGINT (exit 130) to correct an
+identified expensive proof tactic, not because a module timeout elapsed.
+
+Its final bare rfl compared the classical decidability instance of a local win
+predicate against the collision game's finite-conjunction/function-equality
+decidability instance. A native stack sample confirmed expensive isDefEq delta
+reduction. The correction explicitly exposes the local predicate, takes equality
+through the two expectations, and splits the indicator before reflexivity.
+
+The obsolete source is retained verbatim as probes/collision-game-check-1.lean.
+The raw checker log remains logs/collision-game-check-1.log. The complete native
+sample is losslessly compressed in logs/collision-game-check-1-sample.txt.gz;
+its large repeated stack indentation made the uncompressed sample 177 MiB.
+No unrelated process was interrupted.

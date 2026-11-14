@@ -1,0 +1,38 @@
+{
+  "stored_constants": 176,
+  "by_owner": {
+    "TCSlib.Cryptography.Authentication": 0,
+    "TCSlib.Cryptography.Authentication.Signatures.HashAndSign": 50,
+    "TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CodecReaders": 4,
+    "TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionGame": 3,
+    "TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionHandler": 36,
+    "TCSlib.Cryptography.Authentication.Signatures.HashAndSign.FixedGame": 14,
+    "TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardGame": 29,
+    "TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardHandler": 36,
+    "TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuery": 3,
+    "TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuerySampling": 1
+  },
+  "outside_standard_axioms": [
+    {
+      "home": "TCSlib.Cryptography.Authentication.Signatures.HashAndSign",
+      "name": "TCSlib.Cryptography.Authentication.exists_oneTimeSecure_of_crh_owf",
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext",
+        "sorryAx"
+      ]
+    }
+  ],
+  "target": [
+    {
+      "home": "TCSlib.Cryptography.Authentication.Signatures.HashAndSign",
+      "name": "TCSlib.Cryptography.Authentication.hashAndSign_oneTimeSecure",
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    }
+  ]
+}

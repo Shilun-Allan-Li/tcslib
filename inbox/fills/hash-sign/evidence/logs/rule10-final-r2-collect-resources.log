@@ -1,0 +1,74 @@
+$ date -u
+Sat Nov 14 07:41:47 UTC 2026
+exit: 0
+$ uname -a
+Darwin Mac.lan 25.5.0 Darwin Kernel Version 25.5.0: Tue Jun  9 22:28:29 PDT 2026; root:xnu-12377.121.10~1/RELEASE_ARM64_T6030 arm64
+exit: 0
+$ nproc
+[Errno 2] No such file or directory: 'nproc'
+$ sysctl -n hw.ncpu
+12
+exit: 0
+$ sysctl -n hw.memsize
+19327352832
+exit: 0
+$ vm_stat
+Mach Virtual Memory Statistics: (page size of 16384 bytes)
+Pages free:                                     3679.
+Pages active:                                 319906.
+Pages inactive:                               311683.
+Pages speculative:                              7099.
+Pages throttled:                                   0.
+Pages wired down:                             262530.
+Pages purgeable:                                4853.
+"Translation faults":                    20934039002.
+Pages copy-on-write:                       535254975.
+Pages zero filled:                       14548640592.
+Pages reactivated:                        1102168439.
+Pages purged:                              120535087.
+File-backed pages:                            333760.
+Anonymous pages:                              304928.
+Pages stored in compressor:                  1020156.
+Pages occupied by compressor:                 219583.
+Decompressions:                            583797634.
+Compressions:                              802011714.
+Pageins:                                   699346460.
+Pageouts:                                    2842965.
+Swapins:                                      524153.
+Swapouts:                                    1266256.
+exit: 0
+macOS native equivalent; Linux cgroups and /proc/meminfo unavailable.
+physical_bytes=19327352832; non_file_used_bytes=12894879744; headroom_bytes=6432473088
+$ memory_pressure -Q
+The system has 19327352832 (1179648 pages with a page size of 16384).
+System-wide memory free percentage: 56%
+exit: 0
+$ df -B1 /private/tmp/hash-sign-fill/repo /private/tmp/hash-sign-fill/delivery /var/folders/gc/93nsn68n4g9fgyjj6sjjmy180000gn/T/
+df: invalid option -- B
+usage: df [--libxo] [-b | -g | -H | -h | -k | -m | -P] [-acIilnY] [-,] [-T type] [-t type]
+          [file | filesystem ...]
+exit: 64
+$ df -T /private/tmp/hash-sign-fill/repo /private/tmp/hash-sign-fill/delivery /var/folders/gc/93nsn68n4g9fgyjj6sjjmy180000gn/T/
+exit: 1
+$ df -k /private/tmp/hash-sign-fill/repo /private/tmp/hash-sign-fill/delivery /var/folders/gc/93nsn68n4g9fgyjj6sjjmy180000gn/T/
+Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on
+/dev/disk3s5   971350180 694665360 247962004    74% 7195260 2479620040    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 694665360 247962004    74% 7195260 2479620040    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 694665360 247962004    74% 7195260 2479620040    0%   /System/Volumes/Data
+exit: 0
+$ mount
+/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+devfs on /dev (devfs, local, nobrowse)
+/dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
+/dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
+/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)
+/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)
+/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)
+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
+exit: 0
+/private/tmp/hash-sign-fill/repo: free_bytes=253913079808; initial_disk_floor_bytes=12884901888
+/private/tmp/hash-sign-fill/delivery: free_bytes=253913079808; initial_disk_floor_bytes=12884901888
+/var/folders/gc/93nsn68n4g9fgyjj6sjjmy180000gn/T/: free_bytes=253913079808; initial_disk_floor_bytes=12884901888
+PREFLIGHT PASS (macOS native resource readings)

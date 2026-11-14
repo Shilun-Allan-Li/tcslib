@@ -1,0 +1,12 @@
+The second CollisionGame check was interrupted with SIGINT for another correction
+to the same identified expensive whole-goal decidability comparison. This is a
+proof-code correction, not a module timeout or a resource-shortage escalation.
+
+The game-reader simplification now runs under conv_rhs, so its simplifier does not
+attempt whole-goal reflexivity against the left local indicator. Equality passes
+through the two expectations first; only then are the two scalar indicators
+rewritten using positive/negative proofs of their common collision predicate.
+
+The obsolete source is retained verbatim as probes/collision-game-check-2.lean.
+The raw checker log remains logs/collision-game-check-2.log.
+No unrelated process was interrupted.

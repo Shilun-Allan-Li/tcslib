@@ -1,0 +1,357 @@
+start: 2026-11-14T06:41:54.221677+00:00 module: TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame
+source_sha256: d437937350c8216e14f86233dede9e64bb637b04d7ae342dca9d760ee96a9b17
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:372:36: error: don't know how to synthesize placeholder for argument `x`
+context:
+H : CRH
+S : SignatureScheme
+A C : NUPPT
+hC :
+  ∀ (n : ℕ),
+    ∃ φ,
+      ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+        ((simulate ((HashSignForward.handler H S).impl n pk ω)
+                (A.toCompOn
+                  (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+                  1 ((HashSignForward.handler H S).advInput n pk ω) r)
+                ((HashSignForward.handler H S).init n)).bind
+            fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+          C.toCompOn
+            (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n)
+              ((HashSignForward.handler H S).outLen.eval n))
+            n 1 pk (φ (ω, r))
+n : ℕ
+φ : (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) × A.Coins n ≃ C.Coins n
+hφ :
+  ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+    ((simulate ((HashSignForward.handler H S).impl n pk ω)
+            (A.toCompOn
+              (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+              ((HashSignForward.handler H S).advInput n pk ω) r)
+            ((HashSignForward.handler H S).init n)).bind
+        fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+      C.toCompOn
+        (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n)) n
+        1 pk (φ (ω, r))
+e : H.gen.Coins n ≃ (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) := ⋯
+he : ∀ (ri : H.gen.Coins n), List.ofFn (e ri) = List.ofFn ri
+rg : S.gen.Coins n
+ri : H.gen.Coins n
+rA : A.Coins n
+rs : S.sign.Coins n
+hout :
+  (ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) (S.msgLen.eval n + S.sigLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0) =
+    ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn
+          (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0
+⊢ List Bool
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:372:30: error: don't know how to synthesize placeholder for argument `codec`
+context:
+H : CRH
+S : SignatureScheme
+A C : NUPPT
+hC :
+  ∀ (n : ℕ),
+    ∃ φ,
+      ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+        ((simulate ((HashSignForward.handler H S).impl n pk ω)
+                (A.toCompOn
+                  (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+                  1 ((HashSignForward.handler H S).advInput n pk ω) r)
+                ((HashSignForward.handler H S).init n)).bind
+            fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+          C.toCompOn
+            (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n)
+              ((HashSignForward.handler H S).outLen.eval n))
+            n 1 pk (φ (ω, r))
+n : ℕ
+φ : (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) × A.Coins n ≃ C.Coins n
+hφ :
+  ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+    ((simulate ((HashSignForward.handler H S).impl n pk ω)
+            (A.toCompOn
+              (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+              ((HashSignForward.handler H S).advInput n pk ω) r)
+            ((HashSignForward.handler H S).init n)).bind
+        fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+      C.toCompOn
+        (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n)) n
+        1 pk (φ (ω, r))
+e : H.gen.Coins n ≃ (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) := ⋯
+he : ∀ (ri : H.gen.Coins n), List.ofFn (e ri) = List.ofFn ri
+rg : S.gen.Coins n
+ri : H.gen.Coins n
+rA : A.Coins n
+rs : S.sign.Coins n
+hout :
+  (ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) (S.msgLen.eval n + S.sigLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0) =
+    ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn
+          (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0
+⊢ MachineCodec (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n)
+    (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:371:63: error: don't know how to synthesize placeholder for argument `c`
+context:
+H : CRH
+S : SignatureScheme
+A C : NUPPT
+hC :
+  ∀ (n : ℕ),
+    ∃ φ,
+      ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+        ((simulate ((HashSignForward.handler H S).impl n pk ω)
+                (A.toCompOn
+                  (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+                  1 ((HashSignForward.handler H S).advInput n pk ω) r)
+                ((HashSignForward.handler H S).init n)).bind
+            fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+          C.toCompOn
+            (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n)
+              ((HashSignForward.handler H S).outLen.eval n))
+            n 1 pk (φ (ω, r))
+n : ℕ
+φ : (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) × A.Coins n ≃ C.Coins n
+hφ :
+  ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+    ((simulate ((HashSignForward.handler H S).impl n pk ω)
+            (A.toCompOn
+              (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+              ((HashSignForward.handler H S).advInput n pk ω) r)
+            ((HashSignForward.handler H S).init n)).bind
+        fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+      C.toCompOn
+        (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n)) n
+        1 pk (φ (ω, r))
+e : H.gen.Coins n ≃ (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) := ⋯
+he : ∀ (ri : H.gen.Coins n), List.ofFn (e ri) = List.ofFn ri
+rg : S.gen.Coins n
+ri : H.gen.Coins n
+rA : A.Coins n
+rs : S.sign.Coins n
+hout :
+  (ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) (S.msgLen.eval n + S.sigLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0) =
+    ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn
+          (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0
+⊢ OracleComp (bitSpec (fun x => H.domLen.eval n) fun x => S.sigLen.eval n)
+    (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool)
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:371:51: error: don't know how to synthesize placeholder for argument `sk`
+context:
+H : CRH
+S : SignatureScheme
+A C : NUPPT
+hC :
+  ∀ (n : ℕ),
+    ∃ φ,
+      ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+        ((simulate ((HashSignForward.handler H S).impl n pk ω)
+                (A.toCompOn
+                  (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+                  1 ((HashSignForward.handler H S).advInput n pk ω) r)
+                ((HashSignForward.handler H S).init n)).bind
+            fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+          C.toCompOn
+            (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n)
+              ((HashSignForward.handler H S).outLen.eval n))
+            n 1 pk (φ (ω, r))
+n : ℕ
+φ : (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) × A.Coins n ≃ C.Coins n
+hφ :
+  ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+    ((simulate ((HashSignForward.handler H S).impl n pk ω)
+            (A.toCompOn
+              (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+              ((HashSignForward.handler H S).advInput n pk ω) r)
+            ((HashSignForward.handler H S).init n)).bind
+        fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+      C.toCompOn
+        (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n)) n
+        1 pk (φ (ω, r))
+e : H.gen.Coins n ≃ (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) := ⋯
+he : ∀ (ri : H.gen.Coins n), List.ofFn (e ri) = List.ofFn ri
+rg : S.gen.Coins n
+ri : H.gen.Coins n
+rA : A.Coins n
+rs : S.sign.Coins n
+hout :
+  (ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) (S.msgLen.eval n + S.sigLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0) =
+    ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn
+          (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0
+⊢ List Bool
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:371:49: error: don't know how to synthesize placeholder for argument `pk`
+context:
+H : CRH
+S : SignatureScheme
+A C : NUPPT
+hC :
+  ∀ (n : ℕ),
+    ∃ φ,
+      ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+        ((simulate ((HashSignForward.handler H S).impl n pk ω)
+                (A.toCompOn
+                  (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+                  1 ((HashSignForward.handler H S).advInput n pk ω) r)
+                ((HashSignForward.handler H S).init n)).bind
+            fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+          C.toCompOn
+            (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n)
+              ((HashSignForward.handler H S).outLen.eval n))
+            n 1 pk (φ (ω, r))
+n : ℕ
+φ : (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) × A.Coins n ≃ C.Coins n
+hφ :
+  ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+    ((simulate ((HashSignForward.handler H S).impl n pk ω)
+            (A.toCompOn
+              (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+              ((HashSignForward.handler H S).advInput n pk ω) r)
+            ((HashSignForward.handler H S).init n)).bind
+        fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+      C.toCompOn
+        (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n)) n
+        1 pk (φ (ω, r))
+e : H.gen.Coins n ≃ (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) := ⋯
+he : ∀ (ri : H.gen.Coins n), List.ofFn (e ri) = List.ofFn ri
+rg : S.gen.Coins n
+ri : H.gen.Coins n
+rA : A.Coins n
+rs : S.sign.Coins n
+hout :
+  (ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) (S.msgLen.eval n + S.sigLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0) =
+    ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn
+          (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0
+⊢ List Bool
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:371:7: error: failed to infer `have` declaration type
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:342:50: error: unsolved goals
+case h.h.h.h
+H : CRH
+S : SignatureScheme
+A C : NUPPT
+hC :
+  ∀ (n : ℕ),
+    ∃ φ,
+      ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+        ((simulate ((HashSignForward.handler H S).impl n pk ω)
+                (A.toCompOn
+                  (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n
+                  1 ((HashSignForward.handler H S).advInput n pk ω) r)
+                ((HashSignForward.handler H S).init n)).bind
+            fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+          C.toCompOn
+            (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n)
+              ((HashSignForward.handler H S).outLen.eval n))
+            n 1 pk (φ (ω, r))
+n : ℕ
+φ : (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) × A.Coins n ≃ C.Coins n
+hφ :
+  ∀ (pk : List Bool) (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) (r : A.Coins n),
+    ((simulate ((HashSignForward.handler H S).impl n pk ω)
+            (A.toCompOn
+              (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+              ((HashSignForward.handler H S).advInput n pk ω) r)
+            ((HashSignForward.handler H S).init n)).bind
+        fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1) =
+      C.toCompOn
+        (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n)) n
+        1 pk (φ (ω, r))
+e : H.gen.Coins n ≃ (Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool) := NUPPT.coinsEquivPoly ⋯ n
+he : ∀ (ri : H.gen.Coins n), List.ofFn (e ri) = List.ofFn ri
+rg : S.gen.Coins n
+ri : H.gen.Coins n
+rA : A.Coins n
+rs : S.sign.Coins n
+hout :
+  (ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) (S.msgLen.eval n + S.sigLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0) =
+    ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        (C.toCompOn
+          (bitCodec (fun x => S.msgLen.eval n) (fun x => S.sigLen.eval n) ((HashSignForward.handler H S).outLen.eval n))
+          n 1 (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)))
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0
+⊢ (ProbComp.expect
+      (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+        ((simulate ((HashSignForward.handler H S).impl n (pairFstD (S.gen.runAt n [] rg)) (e ri))
+              (A.toCompOn
+                (bitCodec (fun x => H.domLen.eval n) (fun x => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
+                ((HashSignForward.handler H S).advInput n (pairFstD (S.gen.runAt n [] rg)) (e ri)) rA)
+              ((HashSignForward.handler H S).init n)).bind
+          fun res => (HashSignForward.handler H S).finish n (pairFstD (S.gen.runAt n [] rg)) (e ri) res.2 res.1)
+        ((), []))
+      fun p => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) (p.1, p.2) then 1 else 0) =
+    (transcript H S A n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri) rs
+          rA).prob
+      (ForwardSuccess H S n (pairFstD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri))
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame): no fresh .olean produced
+        9.25 real         2.37 user         1.76 sys
+          2208595968  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              118725  page reclaims
+               58957  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                6958  voluntary context switches
+               52974  involuntary context switches
+            31716469  instructions retired
+            18181550  cycles elapsed
+             1589584  peak memory footprint
+end: 2026-11-14T06:42:03.479976+00:00 exit: 1

@@ -1,0 +1,1505 @@
+{
+ "base": "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+ "head": "8e4234934690fe4e3e00e46965112998e1d09a31",
+ "files": {
+  "TCSlib/Cryptography/Authentication.lean": {
+   "new_file": false,
+   "declarations": [],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 0
+  },
+  "TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsHashList",
+     "kind": "def",
+     "private": false,
+     "start": 94,
+     "decl_line": 96,
+     "end": 98,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsHashList_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 99,
+     "decl_line": 100,
+     "end": 102,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsSigKey",
+     "kind": "def",
+     "private": false,
+     "start": 103,
+     "decl_line": 105,
+     "end": 108,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsSigKey_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 109,
+     "decl_line": 111,
+     "end": 115,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsIdx",
+     "kind": "def",
+     "private": false,
+     "start": 116,
+     "decl_line": 117,
+     "end": 120,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsIdx_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 121,
+     "decl_line": 123,
+     "end": 127,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsGenFun",
+     "kind": "def",
+     "private": false,
+     "start": 128,
+     "decl_line": 129,
+     "end": 132,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsGenFun_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 133,
+     "decl_line": 135,
+     "end": 139,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsSignFun",
+     "kind": "def",
+     "private": false,
+     "start": 140,
+     "decl_line": 142,
+     "end": 148,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsSignFun_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 149,
+     "decl_line": 151,
+     "end": 158,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsVerFun",
+     "kind": "def",
+     "private": false,
+     "start": 159,
+     "decl_line": 160,
+     "end": 165,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsVerFun_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 166,
+     "decl_line": 168,
+     "end": 174,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.polyTimeComputable_hsHashList",
+     "kind": "theorem",
+     "private": false,
+     "start": 177,
+     "decl_line": 178,
+     "end": 186,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.polyTimeComputable_hsSigKey",
+     "kind": "theorem",
+     "private": false,
+     "start": 187,
+     "decl_line": 188,
+     "end": 197,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.polyTimeComputable_hsIdx",
+     "kind": "theorem",
+     "private": false,
+     "start": 198,
+     "decl_line": 199,
+     "end": 209,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.polyTimeComputable_hsGenFun",
+     "kind": "theorem",
+     "private": false,
+     "start": 210,
+     "decl_line": 211,
+     "end": 217,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.polyTimeComputable_hsSignFun",
+     "kind": "theorem",
+     "private": false,
+     "start": 218,
+     "decl_line": 219,
+     "end": 232,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.polyTimeComputable_hsVerFun",
+     "kind": "theorem",
+     "private": false,
+     "start": 233,
+     "decl_line": 234,
+     "end": 246,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsGen",
+     "kind": "abbrev",
+     "private": false,
+     "start": 249,
+     "decl_line": 250,
+     "end": 252,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsGen_coinLen",
+     "kind": "theorem",
+     "private": false,
+     "start": 253,
+     "decl_line": 255,
+     "end": 264,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsSign",
+     "kind": "abbrev",
+     "private": false,
+     "start": 265,
+     "decl_line": 266,
+     "end": 268,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.ofFn_coins_split",
+     "kind": "theorem",
+     "private": false,
+     "start": 269,
+     "decl_line": 270,
+     "end": 277,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.runAt_hsGen",
+     "kind": "theorem",
+     "private": false,
+     "start": 278,
+     "decl_line": 280,
+     "end": 299,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.runAt_hsSign",
+     "kind": "theorem",
+     "private": false,
+     "start": 300,
+     "decl_line": 301,
+     "end": 311,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hashAndSign",
+     "kind": "def",
+     "private": false,
+     "start": 314,
+     "decl_line": 323,
+     "end": 365,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hashAndSign_msgLen",
+     "kind": "theorem",
+     "private": false,
+     "start": 366,
+     "decl_line": 367,
+     "end": 370,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hashAndSign_sigLen",
+     "kind": "theorem",
+     "private": false,
+     "start": 371,
+     "decl_line": 372,
+     "end": 375,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hashAndSign_gen",
+     "kind": "theorem",
+     "private": false,
+     "start": 376,
+     "decl_line": 377,
+     "end": 380,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hashAndSign_sign",
+     "kind": "theorem",
+     "private": false,
+     "start": 381,
+     "decl_line": 382,
+     "end": 385,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hashAndSign_ver",
+     "kind": "theorem",
+     "private": false,
+     "start": 386,
+     "decl_line": 387,
+     "end": 390,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hsHashList_eq_hashWord",
+     "kind": "theorem",
+     "private": false,
+     "start": 393,
+     "decl_line": 395,
+     "end": 401,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.expect_hashAndSign_sign",
+     "kind": "theorem",
+     "private": false,
+     "start": 402,
+     "decl_line": 409,
+     "end": 451,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hashAndSign_accepts_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 452,
+     "decl_line": 454,
+     "end": 463,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.runAt_hsGen_split",
+     "kind": "theorem",
+     "private": false,
+     "start": 464,
+     "decl_line": 470,
+     "end": 492,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hashAndSign_forge_eq_common",
+     "kind": "theorem",
+     "private": false,
+     "start": 493,
+     "decl_line": 500,
+     "end": 535,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hashAndSign_success_cases",
+     "kind": "theorem",
+     "private": false,
+     "start": 536,
+     "decl_line": 543,
+     "end": 566,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.hashAndSign_oneTimeSecure",
+     "kind": "theorem",
+     "private": false,
+     "start": 567,
+     "decl_line": 588,
+     "end": 618,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.exists_oneTimeSecure_of_crh_owf",
+     "kind": "theorem",
+     "private": false,
+     "start": 619,
+     "decl_line": 623,
+     "end": 638,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 32,
+   "head_count": 38
+  },
+  "TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Games.MachineCodec.ext_of_fields",
+     "kind": "theorem",
+     "private": false,
+     "start": 39,
+     "decl_line": 44,
+     "end": 55,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.SignatureScheme.forgerCodec_eq_bitCodec",
+     "kind": "theorem",
+     "private": false,
+     "start": 62,
+     "decl_line": 68,
+     "end": 84,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.splitBits_append",
+     "kind": "theorem",
+     "private": false,
+     "start": 89,
+     "decl_line": 90,
+     "end": 97,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.splitBits_pad_concat",
+     "kind": "theorem",
+     "private": false,
+     "start": 98,
+     "decl_line": 100,
+     "end": 103,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 4
+  },
+  "TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.CollisionCase",
+     "kind": "def",
+     "private": false,
+     "start": 35,
+     "decl_line": 37,
+     "end": 43,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionCase_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 44,
+     "decl_line": 46,
+     "end": 53,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.exists_collisionGame_bound",
+     "kind": "theorem",
+     "private": false,
+     "start": 54,
+     "decl_line": 64,
+     "end": 170,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 3
+  },
+  "TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionKey",
+     "kind": "def",
+     "private": false,
+     "start": 44,
+     "decl_line": 46,
+     "end": 49,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionKey_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 50,
+     "decl_line": 52,
+     "end": 55,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.polyTimeComputable_collisionKey",
+     "kind": "theorem",
+     "private": false,
+     "start": 56,
+     "decl_line": 58,
+     "end": 68,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionKey_seed",
+     "kind": "theorem",
+     "private": false,
+     "start": 69,
+     "decl_line": 71,
+     "end": 78,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionAdv",
+     "kind": "def",
+     "private": false,
+     "start": 79,
+     "decl_line": 81,
+     "end": 83,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionAdv_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 84,
+     "decl_line": 85,
+     "end": 88,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.polyTimeComputable_collisionAdv",
+     "kind": "theorem",
+     "private": false,
+     "start": 89,
+     "decl_line": 90,
+     "end": 94,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionAdv_seedIn",
+     "kind": "theorem",
+     "private": false,
+     "start": 95,
+     "decl_line": 97,
+     "end": 103,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionAdv_seed",
+     "kind": "theorem",
+     "private": false,
+     "start": 104,
+     "decl_line": 106,
+     "end": 112,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionHash",
+     "kind": "def",
+     "private": false,
+     "start": 113,
+     "decl_line": 116,
+     "end": 121,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionHash_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 122,
+     "decl_line": 124,
+     "end": 129,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.polyTimeComputable_collisionHash",
+     "kind": "theorem",
+     "private": false,
+     "start": 130,
+     "decl_line": 132,
+     "end": 141,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionRun",
+     "kind": "def",
+     "private": false,
+     "start": 142,
+     "decl_line": 144,
+     "end": 152,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionRun_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 153,
+     "decl_line": 154,
+     "end": 162,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.polyTimeComputable_collisionRun",
+     "kind": "theorem",
+     "private": false,
+     "start": 163,
+     "decl_line": 165,
+     "end": 183,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionOut",
+     "kind": "def",
+     "private": false,
+     "start": 184,
+     "decl_line": 186,
+     "end": 189,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionOut_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 190,
+     "decl_line": 191,
+     "end": 194,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.polyTimeComputable_collisionOut",
+     "kind": "theorem",
+     "private": false,
+     "start": 195,
+     "decl_line": 197,
+     "end": 205,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionHandler",
+     "kind": "def",
+     "private": false,
+     "start": 206,
+     "decl_line": 208,
+     "end": 219,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionHandler_run_input",
+     "kind": "theorem",
+     "private": false,
+     "start": 223,
+     "decl_line": 226,
+     "end": 239,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionReply",
+     "kind": "def",
+     "private": false,
+     "start": 240,
+     "decl_line": 242,
+     "end": 250,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionReply_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 251,
+     "decl_line": 252,
+     "end": 259,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionReply_seed",
+     "kind": "theorem",
+     "private": false,
+     "start": 260,
+     "decl_line": 262,
+     "end": 270,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.ofFn_collisionReply",
+     "kind": "theorem",
+     "private": false,
+     "start": 271,
+     "decl_line": 273,
+     "end": 284,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionHandler_impl",
+     "kind": "theorem",
+     "private": false,
+     "start": 285,
+     "decl_line": 287,
+     "end": 296,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionHandler_result",
+     "kind": "theorem",
+     "private": false,
+     "start": 297,
+     "decl_line": 299,
+     "end": 306,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionHandler_transcript",
+     "kind": "theorem",
+     "private": false,
+     "start": 307,
+     "decl_line": 316,
+     "end": 353,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.collisionHandler_collision",
+     "kind": "theorem",
+     "private": false,
+     "start": 354,
+     "decl_line": 363,
+     "end": 394,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.exists_collisionMachine",
+     "kind": "theorem",
+     "private": false,
+     "start": 395,
+     "decl_line": 398,
+     "end": 413,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.exists_collisionMachine_transcript",
+     "kind": "theorem",
+     "private": false,
+     "start": 414,
+     "decl_line": 423,
+     "end": 450,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 30
+  },
+  "TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.hashedReply",
+     "kind": "def",
+     "private": false,
+     "start": 43,
+     "decl_line": 45,
+     "end": 50,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.hashedReply_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 51,
+     "decl_line": 52,
+     "end": 58,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.fixedSign",
+     "kind": "def",
+     "private": false,
+     "start": 59,
+     "decl_line": 61,
+     "end": 66,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.fixedSign_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 67,
+     "decl_line": 68,
+     "end": 71,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.fixedSign_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 72,
+     "decl_line": 73,
+     "end": 76,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.transcript",
+     "kind": "def",
+     "private": false,
+     "start": 77,
+     "decl_line": 79,
+     "end": 87,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.transcript_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 88,
+     "decl_line": 89,
+     "end": 95,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.sampledHashSign",
+     "kind": "def",
+     "private": false,
+     "start": 96,
+     "decl_line": 98,
+     "end": 103,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.sampledHashSign_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 104,
+     "decl_line": 106,
+     "end": 110,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.sampledHashSign_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 111,
+     "decl_line": 113,
+     "end": 120,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.expect_sampledHashSign_eq_transcript",
+     "kind": "theorem",
+     "private": false,
+     "start": 121,
+     "decl_line": 127,
+     "end": 143,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.Success",
+     "kind": "def",
+     "private": false,
+     "start": 144,
+     "decl_line": 147,
+     "end": 155,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.success_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 156,
+     "decl_line": 158,
+     "end": 167,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 13
+  },
+  "TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.queryHash",
+     "kind": "def",
+     "private": false,
+     "start": 38,
+     "decl_line": 39,
+     "end": 42,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.queryHash_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 43,
+     "decl_line": 44,
+     "end": 48,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.origFixedSign",
+     "kind": "def",
+     "private": false,
+     "start": 49,
+     "decl_line": 50,
+     "end": 56,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.origFixedSign_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 57,
+     "decl_line": 58,
+     "end": 62,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.origFixedSign_apply",
+     "kind": "theorem",
+     "private": false,
+     "start": 63,
+     "decl_line": 64,
+     "end": 68,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.forwardEntry",
+     "kind": "def",
+     "private": false,
+     "start": 69,
+     "decl_line": 71,
+     "end": 75,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.forwardEntry_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 76,
+     "decl_line": 77,
+     "end": 80,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.forwardOutput",
+     "kind": "def",
+     "private": false,
+     "start": 81,
+     "decl_line": 82,
+     "end": 86,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.forwardOutput_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 87,
+     "decl_line": 88,
+     "end": 92,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.handlerOutput",
+     "kind": "def",
+     "private": false,
+     "start": 93,
+     "decl_line": 94,
+     "end": 98,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.handlerOutput_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 99,
+     "decl_line": 100,
+     "end": 104,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.origFixedSign_queryHash",
+     "kind": "theorem",
+     "private": false,
+     "start": 105,
+     "decl_line": 107,
+     "end": 112,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.handler_finish_output",
+     "kind": "theorem",
+     "private": false,
+     "start": 113,
+     "decl_line": 114,
+     "end": 121,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.forward_transcript",
+     "kind": "theorem",
+     "private": false,
+     "start": 122,
+     "decl_line": 131,
+     "end": 162,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.forwardOutput_message",
+     "kind": "theorem",
+     "private": false,
+     "start": 163,
+     "decl_line": 164,
+     "end": 169,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.forwardOutput_signature",
+     "kind": "theorem",
+     "private": false,
+     "start": 170,
+     "decl_line": 171,
+     "end": 176,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.forward_fresh",
+     "kind": "theorem",
+     "private": false,
+     "start": 177,
+     "decl_line": 179,
+     "end": 190,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.ForwardSuccess",
+     "kind": "def",
+     "private": false,
+     "start": 191,
+     "decl_line": 193,
+     "end": 199,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.forwardSuccess_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 200,
+     "decl_line": 202,
+     "end": 210,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.OriginalSuccess",
+     "kind": "def",
+     "private": false,
+     "start": 211,
+     "decl_line": 213,
+     "end": 219,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.originalSuccess_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 220,
+     "decl_line": 222,
+     "end": 229,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.originalSuccess_forwardOutput",
+     "kind": "theorem",
+     "private": false,
+     "start": 230,
+     "decl_line": 232,
+     "end": 247,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.forgeGame_eq_fixed",
+     "kind": "theorem",
+     "private": false,
+     "start": 248,
+     "decl_line": 254,
+     "end": 284,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.ofFn_handlerOutput",
+     "kind": "theorem",
+     "private": false,
+     "start": 285,
+     "decl_line": 286,
+     "end": 292,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.forward_prob_transcript",
+     "kind": "theorem",
+     "private": false,
+     "start": 293,
+     "decl_line": 299,
+     "end": 322,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.exists_forwardGame",
+     "kind": "theorem",
+     "private": false,
+     "start": 323,
+     "decl_line": 331,
+     "end": 383,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 26
+  },
+  "TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.indexWord",
+     "kind": "def",
+     "private": false,
+     "start": 42,
+     "decl_line": 43,
+     "end": 45,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.indexWord_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 46,
+     "decl_line": 47,
+     "end": 49,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.hashWord",
+     "kind": "def",
+     "private": false,
+     "start": 50,
+     "decl_line": 51,
+     "end": 53,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.hashWord_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 54,
+     "decl_line": 55,
+     "end": 58,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.advWord",
+     "kind": "def",
+     "private": false,
+     "start": 59,
+     "decl_line": 60,
+     "end": 63,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.advWord_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 64,
+     "decl_line": 65,
+     "end": 68,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.roundWord",
+     "kind": "def",
+     "private": false,
+     "start": 69,
+     "decl_line": 71,
+     "end": 76,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.roundWord_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 77,
+     "decl_line": 79,
+     "end": 85,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.finalWord",
+     "kind": "def",
+     "private": false,
+     "start": 86,
+     "decl_line": 88,
+     "end": 93,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.finalWord_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 94,
+     "decl_line": 95,
+     "end": 100,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.polyTimeComputable_indexWord",
+     "kind": "theorem",
+     "private": false,
+     "start": 101,
+     "decl_line": 103,
+     "end": 110,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.polyTimeComputable_hashWord",
+     "kind": "theorem",
+     "private": false,
+     "start": 111,
+     "decl_line": 113,
+     "end": 123,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.polyTimeComputable_advWord",
+     "kind": "theorem",
+     "private": false,
+     "start": 124,
+     "decl_line": 126,
+     "end": 130,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.polyTimeComputable_roundWord",
+     "kind": "theorem",
+     "private": false,
+     "start": 131,
+     "decl_line": 133,
+     "end": 144,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.polyTimeComputable_finalWord",
+     "kind": "theorem",
+     "private": false,
+     "start": 145,
+     "decl_line": 151,
+     "end": 163,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.handler",
+     "kind": "def",
+     "private": false,
+     "start": 164,
+     "decl_line": 167,
+     "end": 182,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.indexWord_unary",
+     "kind": "theorem",
+     "private": false,
+     "start": 186,
+     "decl_line": 188,
+     "end": 191,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.hashWord_unary",
+     "kind": "theorem",
+     "private": false,
+     "start": 192,
+     "decl_line": 194,
+     "end": 198,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.handler_advInput",
+     "kind": "theorem",
+     "private": false,
+     "start": 199,
+     "decl_line": 201,
+     "end": 207,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.handler_impl",
+     "kind": "theorem",
+     "private": false,
+     "start": 208,
+     "decl_line": 214,
+     "end": 232,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.handler_finish",
+     "kind": "theorem",
+     "private": false,
+     "start": 233,
+     "decl_line": 240,
+     "end": 255,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.hashWord_eq_hash",
+     "kind": "theorem",
+     "private": false,
+     "start": 256,
+     "decl_line": 258,
+     "end": 268,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.exists_forwardMachine",
+     "kind": "theorem",
+     "private": false,
+     "start": 269,
+     "decl_line": 277,
+     "end": 300,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.handler_output_width",
+     "kind": "theorem",
+     "private": false,
+     "start": 301,
+     "decl_line": 302,
+     "end": 306,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignForward.handler_finish_split",
+     "kind": "theorem",
+     "private": false,
+     "start": 307,
+     "decl_line": 314,
+     "end": 336,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 25
+  },
+  "TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuery.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.eq_pure_of_cost_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 34,
+     "decl_line": 36,
+     "end": 44,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.one_query_cases",
+     "kind": "theorem",
+     "private": false,
+     "start": 45,
+     "decl_line": 48,
+     "end": 62,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 2
+  },
+  "TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Authentication.HashSignFill.expect_simulate_sample_once",
+     "kind": "theorem",
+     "private": false,
+     "start": 35,
+     "decl_line": 43,
+     "end": 62,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  }
+ }
+}
