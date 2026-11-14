@@ -574,8 +574,8 @@ logged transcript, including no-query and codec-timeout outputs.
    `(m′, σ′)` with `m′ ≠ m` and `Ver_pk(h_i(m′), σ′)` accepting.
 2. *Case `h_i(m′) = h_i(m)`.* The collision finder `B(1^n, i)` samples `(pk, sk) ← Gen(1^n)`,
    runs `A` on `⟨pk, i⟩` answering its query with `Sign_sk(h_i(m))`, and outputs `(m, m′)`
-   (aborting if `A` made no query). Since `m′ ≠ m` and both lie in `D_i` (`hdom`), this is a
-   collision. `B` answers `A`'s queries itself, so it is a machine by T1
+   (using the initial zero word if no query was made). For the queried case, freshness and
+   `hdom` give a collision. `B` answers `A`'s queries itself, so it is a machine by T1
    (`Games.exists_handlerMachine`), with `advIn` supplying `⟨pk, i⟩`, `out` returning `(m, m′)`,
    and the seed holding the coins of `Gen` and `Sign`.
 3. *Case `A` made no query or `h_i(m′) ≠ h_i(m)`.* The forger `C^{Sign_sk}(1^n, pk)` samples
