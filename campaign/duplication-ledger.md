@@ -2013,3 +2013,14 @@ readers beside each definition: one lemma per constructor or branch, field lemma
 configuration constructors, and an iff for each predicate. `setupCfg`'s home is
 `Robustness/ObliviousSetup` (not `ObliviousCandidate`). The full API still goes to Seyoon before
 the PR opens.
+
+**API approved (Seyoon, 2026-11-14)** as drafted on `codex/ab34-call-clean-oblivious-readers`
+(`a61910f7`): 53 readers, none `@[simp]` (Layout 11, Program 2, Sim 14, CallReturn 8, CleanSweep 8,
+ObliviousCandidate 5, ObliviousSetup 5), with `obliviousSchedule_ready`'s private statement
+through `obliviousSchedule_k`/`_State`. Same ruling, two extensions within the PR:
+- the producers `clockStageCfg_captures` (ObliviousCandidate) and `setupCfg_initializes` and
+  `setupCfg_finish` (ObliviousSetup), whose public statements equate configurations across
+  `(obliviousSchedule W a).k` and `W.k + 3`, are restated through `_k`/`_State` and their users
+  adapted, so that both Oblivious consumers seal with `obliviousSchedule` irreducible;
+- `Call.regPos_box` is re-proved through the new readers, and `off_zero` moves beside `off` in
+  `Machines/Layout` (same name and namespace).
