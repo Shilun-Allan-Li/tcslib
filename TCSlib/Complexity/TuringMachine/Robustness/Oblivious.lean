@@ -927,15 +927,15 @@ gives the required unary tape, guide, state, and initial macrostep head position
 private lemma obliviousSchedule_ready (W : FinTM Bool) (a b : ℕ) (T : ℕ → ℕ)
     (hW : ∀ x, W.ComputesInTime x (T x.length).bits (b * (T x.length + 1)))
     (hT : ∀ n, n ≤ T n) (x : List Bool) :
-    ∃ t,
-      let c := (obliviousSchedule W a).tm.runFrom ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) t
+    ∃ t, ∃ c : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) (x.map oblEmbed),
+      (obliviousSchedule W a).tm.runFrom ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) t =
+        obliviousScheduleCfg W a c ∧
       c.state = some .macroCheck ∧
       c.workTapePos (Fin.natAdd W.k (1 : Fin 3)) = 1 ∧
       c.workTapePos (Fin.natAdd W.k (2 : Fin 3)) = 0 ∧
       c.workTapes (Fin.natAdd W.k (1 : Fin 3)) = unaryTape ((a + 1) * (T x.length + 1)) ∧
       c.workTapes (Fin.natAdd W.k (2 : Fin 3)) = guideTape (3 * ((a + 1) * (T x.length + 1))) := by
   obtain ⟨τ, _, c, hs, ho, hclock⟩ := clockStageCfg_captures W a b T hW x
-  simp only [id_eq] at hclock
   have hv : budgetValue c.output = T x.length := by rw [ho, budgetValue_bits]
   have hn : (x.map oblEmbed).length + 1 ≤ (a + 1) * (T x.length + 1) := by
     simp only [List.length_map]
@@ -944,12 +944,12 @@ private lemma obliviousSchedule_ready (W : FinTM Bool) (a b : ℕ) (T : ℕ → 
   obtain ⟨w', _, hinit⟩ := setupCfg_initializes W a (clockStageCfg W a c)
     (clockStageCfg W a c).inputPos c.output (T x.length) hv hn
   rw [← clockStageCfg_setup W a c hs] at hinit
-  refine ⟨(τ + 1) + (((clockStageCfg W a c).inputPos.val - 1 + 2) +
-    ((2 * (x.map oblEmbed).length + 4) + ((T x.length + 1) * (2 * c.output.length + (a + 1) + 4) +
-      (14 * ((a + 1) * (T x.length + 1)) + 10)))), ?_⟩
-  dsimp only
-  rw [MultiTapeTM.runFrom_add, hclock, hinit]
-  simp [setupCfg]
+  refine ⟨_, _, by rw [MultiTapeTM.runFrom_add, hclock, hinit], ?_, ?_, ?_, ?_, ?_⟩
+  · rw [setupCfg_state]
+  · simp only [setupCfg_workTapePos, Fin.addCases_right]; rfl
+  · simp only [setupCfg_workTapePos, Fin.addCases_right]; rfl
+  · simp only [setupCfg_workTapes, Fin.addCases_right]; rfl
+  · simp only [setupCfg_workTapes, Fin.addCases_right]; rfl
 
 /-- The actual logical machine reaches the first macrostep with the initial
 source configuration represented on its data tapes and with no output yet.
@@ -967,13 +967,9 @@ private lemma dataTM_ready (W M : FinTM Bool) (a b : ℕ) (T : ℕ → ℕ)
       (dataTM W M a).tm.runFrom ((dataTM W M a).tm.initCfg (x.map oblEmbed)) t =
         dataCfg W M a base .macroCheck 1 0 (obliviousDataInit M) tapes [] ∧
       (∀ i z, (dataCell (tapes i z)).1 = sourcePayload (M.tm.initCfg x) z i) := by
-  obtain ⟨t, hs, hu, hg, hut, hgt⟩ := obliviousSchedule_ready W a b T hW hT x
+  obtain ⟨t, base, hrun0, hs, hu, hg, hut, hgt⟩ := obliviousSchedule_ready W a b T hW hT x
   obtain ⟨d, tapes, out, hrun, hinv⟩ := prepInvariant_run W M a x t
-  let base := (obliviousSchedule W a).tm.runFrom ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) t
-  change prepInvariant W M a x base d tapes out at hinv
-  change base.state = some .macroCheck at hs
-  change base.workTapePos (Fin.natAdd W.k (1 : Fin 3)) = 1 at hu
-  change base.workTapePos (Fin.natAdd W.k (2 : Fin 3)) = 0 at hg
+  rw [hrun0, obliviousScheduleCfg_eq_id, id_eq] at hinv
   simp only [prepInvariant, hs, hu, prepCondition] at hinv
   obtain ⟨hd, ho, ht⟩ := hinv.2.2 trivial
   subst d
@@ -983,7 +979,7 @@ private lemma dataTM_ready (W M : FinTM Bool) (a b : ℕ) (T : ℕ → ℕ)
     have hm := macroCfg_self W a base
     rw [hs, hu, hg] at hm
     simp only [dataCfg, hm]
-    rfl
+    rw [hrun0, obliviousScheduleCfg_eq_id, id_eq]
   · simpa only [copiedPayload_full] using ht
 
 /-- The padded sequence of actual macrosteps represents the source run at every

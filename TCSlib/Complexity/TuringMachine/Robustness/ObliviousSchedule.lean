@@ -683,6 +683,46 @@ lemma obliviousSchedule_k (W : FinTM Bool) (a : ℕ) :
 lemma obliviousSchedule_State (W : FinTM Bool) (a : ℕ) :
     (obliviousSchedule W a).State = OblPhase W.State a := rfl
 
+/-- A configuration over the schedule's tapes (the witness's `W.k` and three administrative
+ones) and phases, read as a configuration of `obliviousSchedule W a`. -/
+def obliviousScheduleCfg (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (c : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) :
+    Cfg (obliviousSchedule W a).k OblSymbol (obliviousSchedule W a).State x := c
+
+/-- `obliviousScheduleCfg W a c` is `c` itself, read at the schedule's tape count and state type. -/
+lemma obliviousScheduleCfg_eq_id (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (c : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) :
+    obliviousScheduleCfg W a c =
+      @id (Cfg (obliviousSchedule W a).k OblSymbol (obliviousSchedule W a).State x) c := rfl
+
+/-- The state of `obliviousScheduleCfg W a c` is the state of `c`. -/
+lemma obliviousScheduleCfg_state (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (c : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) :
+    (obliviousScheduleCfg W a c).state = c.state.map (cast (obliviousSchedule_State W a).symm) :=
+  by cases h : c.state <;> simp [obliviousScheduleCfg, h]
+
+/-- The input head of `obliviousScheduleCfg W a c` is the input head of `c`. -/
+lemma obliviousScheduleCfg_inputPos (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (c : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) :
+    (obliviousScheduleCfg W a c).inputPos = c.inputPos := rfl
+
+/-- Tape `i` of `obliviousScheduleCfg W a c` is tape `i` of `c`. -/
+lemma obliviousScheduleCfg_workTapes (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (c : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (i : Fin (W.k + 3)) :
+    (obliviousScheduleCfg W a c).workTapes (Fin.cast (obliviousSchedule_k W a).symm i) =
+      c.workTapes i := rfl
+
+/-- Head `i` of `obliviousScheduleCfg W a c` is head `i` of `c`. -/
+lemma obliviousScheduleCfg_workTapePos (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (c : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (i : Fin (W.k + 3)) :
+    (obliviousScheduleCfg W a c).workTapePos (Fin.cast (obliviousSchedule_k W a).symm i) =
+      c.workTapePos i := rfl
+
+/-- The output of `obliviousScheduleCfg W a c` is the output of `c`. -/
+lemma obliviousScheduleCfg_output (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (c : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) :
+    (obliviousScheduleCfg W a c).output = c.output := rfl
+
 /-- The length-only schedule emits no symbols; a decoration supplies the final
 answer at the schedule's final halting transition. -/
 lemma obliviousSchedule_output (W : FinTM Bool) (a : ℕ)

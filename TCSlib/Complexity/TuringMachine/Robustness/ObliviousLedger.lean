@@ -85,7 +85,6 @@ private lemma obliviousSchedule_halts (W : FinTM Bool) (a b : ℕ) (T : ℕ → 
       ((obliviousSchedule W a).tm.runFrom
         ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) t).state = none := by
   obtain ⟨τ, hτ, c, hs, ho, hclock⟩ := clockStageCfg_captures W a b T hW x
-  simp only [id_eq] at hclock
   have hv : budgetValue c.output = T x.length := by rw [ho, budgetValue_bits]
   have hn : (x.map oblEmbed).length + 1 ≤ (a + 1) * (T x.length + 1) := by
     simp only [List.length_map]
@@ -110,7 +109,7 @@ private lemma obliviousSchedule_halts (W : FinTM Bool) (a b : ℕ) (T : ℕ → 
       simpa only [ho] using hl
     have hp : (clockStageCfg W a c).inputPos.val - 1 ≤ x.length := by
       have hh := c.inputPos.isLt
-      change c.inputPos.val - 1 ≤ x.length
+      rw [clockStageCfg_inputPos_val]
       omega
     have ht : t = τ + ((clockStageCfg W a c).inputPos.val - 1) + 2 * x.length + 18 +
         (T x.length + 1) * (2 * c.output.length + (a + 1) + 4) + 22 * B + 18 * B ^ 2 := by
@@ -127,7 +126,7 @@ private lemma obliviousSchedule_halts (W : FinTM Bool) (a b : ℕ) (T : ℕ → 
     rw [MultiTapeTM.runFrom_add, hclock, MultiTapeTM.runFrom_add, hinit]
     have hf := setupCfg_finish W a (clockStageCfg W a c)
       ⟨(x.map oblEmbed).length + 1, by omega⟩ (c.output.length + 1) (clockTape w') B
-    rw [hf]
+    rw [hf, obliviousScheduleCfg_state, setupCfg_state]
     rfl
 
 /-- The exact binary coding and schedule decoration preserve the schedule's
