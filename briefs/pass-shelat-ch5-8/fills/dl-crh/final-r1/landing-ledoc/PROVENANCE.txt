@@ -1,0 +1,103 @@
+dl-crh landing edit LE-doc (formula docstrings, proof-sketch and module-docstring audit), maintainer, 2026-11-14 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+BUILD: DONE (see the BUILD section at the end; head after the r3 rebase 649c4888). The text below this line up to that
+  section is the original LE-doc record (no Lean run then); its hashes refer to the pre-rebase head 35a407ee.
+landing: branch land/pass-shelat-dl-crh (local only, no upstream, not pushed), worktree $SP/wt-land-dl-crh.
+  parent LE-facade a882dd03f14a3c9dc9b3ea3d9d6eb1fed37dda66 (tree d392e50744a9b550686b3ac2862f863e3c662804)
+  head   LE-doc    35a407ee338f02b066fa4351132a6727d8ffac5c (tree d14580ec78ea5fde324d63a0511d15b53918d675)
+  author = committer = Claude <noreply@anthropic.com> (checks/commit.txt). Patch: 0001-LE-doc.patch (git format-patch).
+  Commit message: logs/commit-msg.txt. /home/user/tcslib not touched (no second git worktree; exports via git archive).
+scope: the 59 NO-FORMULA rows of dl-crh-r1/statements/docaudit.tsv among its 68 new/changed public declarations:
+  FromDiscreteLog.lean 21, Algebra 2, Coins 2, Encoding 9, Probability 2, Reduction 18, Sampling 3, and in
+  Candidates/DiscreteLog.lean the two new readers expGenFun_eq, expSampleRaw_eq. Those two stated their equations in
+  prose only (no backticked relation, hence NO-FORMULA); the instruction was to leave them alone if fine, and the
+  docaudit acceptance check (0 NO-FORMULA) requires a formula, so each got a backticked equation in its first sentence
+  (prose kept, 2 hunks, nothing else in DiscreteLog.lean changes: checks/discretelog-diff.txt). Plus one module-docstring
+  re-wrap in FromDiscreteLog.lean: the pre-existing 121-column line 31 split into two lines, words unchanged.
+  The target dlHash_crh is untouched (docstring, first line, reference tag, header, body: UNCHANGED in
+  statements/touched-a882dd03-vs-head.tsv); it was already OK in docaudit.
+  Edit script: tools-used/ledoc_edit.py (60 exact old -> new doc-comment texts, each occurring once; logs/ledoc_edit.out).
+  Proof sketches: none added; every touched declaration with a >= 15-line proof already has one (below).
+  Module docstrings: none changed for sections; all 7 files (FromDiscreteLog.lean + 6 helpers) already have
+  `## Main definitions` and `## Main results` (Algebra and Probability state "There are no new definitions.").
+tools-used/: r1/ = dl-crh-r1/tools/{docaudit,touched,headerbytes,decls2}.py and cca2-ett-r1/tools/sketchaudit.py, copied
+  unmodified. hunkdoc.py = extnosrc-r1-ledoc/tools-used/hunkdoc.py unmodified. New: ledoc_edit.py; hunkdoc2.py (hunkdoc.py
+  extended to `/-! -/` module docstrings; separates pre-existing over-width/oversize findings from new ones);
+  sketchaudit_fix.py (sketchaudit.py with one fix, below); prooflen.py (independent proof-length cross-check, all kinds,
+  body cut at the header's top-level `:=` as in headerbytes.py). All run with python3 -I.
+statements/ (files.txt = the 8 files):
+  touched-before.json/.tsv (base eff2dcd0 vs a882dd03) and touched-after.json/.tsv (eff2dcd0 vs 35a407ee): 23 ADDED,
+    1 CHANGED (target), 46 NEW_FILE, 127 UNCHANGED both. touched-a882dd03-vs-head.tsv: 59 CHANGED = exactly the 59
+    NO-FORMULA names, 138 UNCHANGED (target included).
+  docaudit-before.tsv (run on a git-archive export of a882dd03) = dl-crh-r1/statements/docaudit.tsv byte for byte:
+    59 NO-FORMULA, 9 OK. docaudit-after.tsv: 68 OK, 0 NO-FORMULA, 0 NO-DOC, 0 LABEL.
+  sketchaudit-before.tsv (export of a882dd03): 11 theorems with >= 15 proof lines, 0 without sketch.
+    sketchaudit-after.tsv: 12 / 1 NO-SKETCH = collisionPost_eq, a TOOL ARTIFACT: its proof is `:= rfl` (0 lines). When no
+    line ends in `:=`/`:= by`, sketchaudit.py counts from span line 0, i.e. docstring + statement (12 lines before, 17
+    after the 4 added docstring lines). sketchaudit_fix.py (proof starts after the first `:=` at/below the keyword line):
+    before 11/0 (sketchaudit-fix-before.tsv), after 11/0 (sketchaudit-fix-after.tsv). prooflen.py: 12 declarations
+    (11 theorems + def boundedInputEquiv) with >= 15 body lines, all with a Proof sketch, same set before and after.
+    No sketch was added to the rfl reader.
+  header-bytes-vs-a882dd03.txt (headerbytes.py, touched-before/-after.json): all 197 declarations of the 8 files
+    (private included) IDENTICAL from keyword to top-level `:=`, 0 different or missing.
+  decls2-vs-a882dd03.tsv: empty (0 ADDED/REMOVED/CHANGED statements). decls2-vs-base.tsv: 67 ADDED, identical to
+    dl-crh-r1/statements/decls2.tsv except line numbers (checks/decls2-vs-base-vs-r1.diff empty).
+checks/:
+  hunk-in-doccomment.txt (hunkdoc2.py a882dd03 -> 35a407ee): 8 files, 60 hunks, all IN-DOCCOMMENT; every file
+    CODE-IDENTICAL with `/-- -/` and `/-! -/` bodies blanked; 0 failures. hunkdoc-precedent.txt (unmodified hunkdoc.py,
+    `/--` only): 5 "failures", all expected: the `/-!` re-wrap hunk (OUTSIDE + CODE-DIFFERS for FromDiscreteLog.lean,
+    since that tool does not know `/-!`), and DiscreteLog.lean's pre-existing size and over-width lines.
+  widths.txt (Python len): FromDiscreteLog 785 lines max 100 (was 728, max 121); Algebra 134/88, Coins 67/91,
+    Encoding 199/96, Probability 73/93, Reduction 374/100, Sampling 97/94: 0 lines over 100. DiscreteLog.lean
+    1209 -> 1212 lines, its 7 over-100 lines (101-106 columns) all pre-existing, outside the edited docstrings and out of scope.
+  changed-paths.txt: exactly the 8 files. commit.txt, discretelog-diff.txt.
+SIZE NOTE: DiscreteLog.lean was already over the 1000-line threshold at a882dd03 (1209, noted in the r1 review); the two
+  reader formulas add 3 lines (1212). All other files stay well under 1000.
+logs/: campaign_style_lint.py TCSlib/Cryptography, run from the worktree at 35a407ee (lint-head.log) and, as in the
+  review, at a882dd03 from a git-archive export of scripts/ + TCSlib/ (lint-a882dd03.log, byte-identical to
+  dl-crh-r1/logs/lint-head-final.log): 216 FAIL, 102 WARN over 309 files at both. FAIL lines identical; lint-diff.txt
+  (FAIL/WARN lines): one WARN line differs only in the reported line count, DiscreteLog.lean "1209 lines > 1000" ->
+  "1212 lines > 1000"; lint-diff-full.txt: otherwise only INFO line counts of the 8 files.
+incident (no effect on the commit): during the checks one command ended with a stray `git checkout a882dd03 -- .` in the
+  worktree, which put the parent's versions of the 8 files into the index and working tree; it was undone immediately
+  with `git checkout HEAD -- .` (status clean, HEAD 35a407ee unchanged). All head-side audits were re-run after the
+  restore; the before-side audits were re-run on a git-archive export of a882dd03 (a first sketchaudit_fix run had
+  read head files with a882dd03 line ranges and was discarded).
+SHA256SUMS: every file here except itself.
+BUILD (maintainer, 2026-11-14 UTC, after the cca2-ett LE-doc build on the same tree). Method: the cca2-ett and dl-crh reviews
+  (cca2-ett-r1/, dl-crh-r1/PROVENANCE.txt) and the ext-nosrc LE-doc build. Tools: tools-used/review/{runner,treecheck,downorder}.py =
+  cca2-ett-r1/tools/ unmodified; tools-used/review-build-rebase.sh (new, the rebase and its checks). python3 -I throughout. One Lean
+  process at a time, scripts/lean_check_tree.sh with TCSLIB_OLEANS=$SP/dl-oleans only (dl-oleans-2 not touched); no lake command.
+rebase r3 (landing/rebase-r3.log): git fetch origin, then git rebase of land/pass-shelat-dl-crh (old head 35a407ee, base 48cd45ab) onto
+  origin/cryptography/pass-shelat-ch2-4 = a757b6a18785377c158312ed051b1789cf45badf (dee0de32 an ancestor; since 48cd45ab outside briefs/
+  only PassShelatChapter5-8Plan.md and scripts/campaign_style_lint.py, no .lean or audits/ path). rc 0, no conflict; patch ids of the
+  6 commits identical; the 9 unit files' blob ids identical before and after (landing/unit-files-{before,after}.txt); TCSlib/ and audits/
+  identical to 35a407ee. New head 649c4888f23fbb9df71d555e952d1149a0aaa00b, tree 1d9f6d52d136f8bc8229bfaffe3c714aadb5eebd (LE-facade
+  d84381ee). landing/commits-r3.txt, landing/series-r3/0001-0006. Authors kept; committer of all 6 commits now Claude (git rebase
+  rewrites the committer; the 4 worker commits had committer rev@local). Not pushed.
+tree pre (build/tree-check-pre.txt): $SP/dl-oleans at base (after the cca2-ett restore): 1199 modules (order/basefull-1199.txt) rc 0 at
+  eff2dcd0 source and at the object hashes of build/base-records.jsonl (= hash-sign-r1/tree/all-results-restored.jsonl); no stray
+  olean or empty dir; build/snapshot-pre.txt (1230 files) byte-equal to hash-sign-r1/tree/snapshot-post.txt. RESULT OK.
+order (order/head-vs-base/, downorder.py 649c4888 vs eff2dcd0): changed 13 (the 9 unit files + #303's 4), downstream 22.
+  order/head-build.txt = the 22 in imports-first order: DiscreteLog, DiscreteLogHardcore, DDH, ElGamal, Candidates, Encryption/PublicKey,
+  Encryption, the 6 helpers (Encoding, Algebra, Coins, Reduction, Probability, Sampling), FromDiscreteLog, Authentication, Hashing,
+  Rejection, Sampler, Extraction, Randomness, TCSlib, audits/pass-shelat/Checks. Its set = dl-crh-r1 order/head-build-queue.txt +
+  final-build-queue.txt (DlProbe excluded), and it keeps head-build-queue's relative order.
+build/ (runner.py from $SP/wt-land-dl-crh at 649c4888, logs/build-runner.out): 22/22 rc 0, 0 errors, 0 sorry; warnings only DDH 3,
+  Rejection 10, Extraction 2 (all inherited). Checks log byte-identical to dl-crh-r1's, Checks olean = base record (87f45334...).
+  Source SHA-256 and blob ids: build/source-hashes.txt (DiscreteLog 53dc62e2..., FromDiscreteLog fd4128f9..., Hashing 8a072ec7...).
+  Head check build/tree-check-head.txt: 1207 modules (order/headfull-order.txt = dl-crh-r1 order/final-tree-modules.txt; = order/
+  head-vs-base/order.txt + audits/garg-ch1-3/Checks), every module's last record rc 0 at the 649c4888 source and olean hash
+  (build/all-results-head.jsonl), no stray olean: RESULT OK (build/snapshot-head.txt, 1238 files).
+lint (logs/): python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography (new #305 lint) at the head from the worktree
+  (lint-crypto-head-649c4888.log) and at the records tip a757b6a1 from a git-archive export (lint-crypto-tip-a757b6a1.log, the same run
+  as in the cca2-ett build): 92 FAIL, 102 WARN at both (303 / 309 files). FAIL lines identical; logs/lint-crypto-tip-vs-head-r3.diff
+  (whitespace-normalised FAIL/WARN): only the two pre-existing DiscreteLog.lean WARN lines change their parameters (1192 -> 1212 lines;
+  check 8 list loses expSampleRaw, which now has the reader expSampleRaw_eq), as approved in the dl-crh review. No new FAIL or WARN line.
+  WARN lines identical to the pre-rebase head's lint-head.log (logs/lint-warn-35a407ee-vs-head-r3.diff empty).
+restore/ (logs/restore-runner.out): deleted the 8 head-only oleans (6 helpers, Rejection, Sampler) and the 2 emptied directories
+  (restore/restore-deleted.txt); rebuilt order/restore-base.txt (= dl-crh-r1's, 14 modules through TCSlib and audits/pass-shelat/Checks)
+  from a git-archive export of eff2dcd0 (.lake/packages symlinked): 14/14 rc 0, 0 errors (base FromDiscreteLog and Extraction carry
+  their base sorry), source and object hashes = base records (restore/restore-vs-base-records.txt). restore/tree-check-post.txt:
+  RESULT OK; restore/snapshot-post.txt byte-identical to build/snapshot-pre.txt and hash-sign-r1/tree/snapshot-post.txt (457ba704...).
+SHA256SUMS: refreshed, every file here except itself; ../dl-crh-r1-ledoc-evidence.zip holds exactly the manifest paths.

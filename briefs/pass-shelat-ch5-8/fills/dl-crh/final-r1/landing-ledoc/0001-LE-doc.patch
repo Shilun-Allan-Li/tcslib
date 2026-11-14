@@ -1,0 +1,719 @@
+From 35a407ee338f02b066fa4351132a6727d8ffac5c Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 14 Nov 2026 18:03:01 +0000
+Subject: [PATCH] dl-crh landing edit LE-doc: formula docstrings and proof
+ sketches
+
+Docstrings only (policy.md: each public declaration's docstring states its formula; every
+nontrivial proof has a proof sketch; module docstrings carry Main definitions/Main results).
+A backticked formula matching the statement is added to the first sentence of every
+NO-FORMULA row of the r1 docaudit among the 68 new or changed public declarations (59 rows);
+existing reference tags and proof sketches are kept. The two new DiscreteLog readers
+expGenFun_eq and expSampleRaw_eq stated their equations in prose only (no backticked
+relation) and get the same treatment; nothing else in DiscreteLog.lean changes.
+Proof sketches: all 12 touched declarations with proofs of 15 or more lines already carry a
+Proof sketch, so none is added. Module docstrings: all 7 already have Main definitions and
+Main results. One pre-existing 121-column line of the FromDiscreteLog.lean module docstring
+is re-wrapped (words unchanged). No statement, proof, name, attribute or import changes.
+The target dlHash_crh is unchanged.
+
+- TCSlib/Cryptography/Candidates/DiscreteLog.lean: 2
+- TCSlib/Cryptography/Hashing/FromDiscreteLog.lean: 21 (+ 1 module-docstring re-wrap)
+- TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean: 2
+- TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins.lean: 2
+- TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean: 9
+- TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean: 2
+- TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean: 18
+- TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean: 3
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Cryptography/Candidates/DiscreteLog.lean  |   9 +-
+ .../Cryptography/Hashing/FromDiscreteLog.lean | 107 ++++++++++++++----
+ .../Hashing/FromDiscreteLog/Algebra.lean      |   8 +-
+ .../Hashing/FromDiscreteLog/Coins.lean        |   8 +-
+ .../Hashing/FromDiscreteLog/Encoding.lean     |  26 +++--
+ .../Hashing/FromDiscreteLog/Probability.lean  |   9 +-
+ .../Hashing/FromDiscreteLog/Reduction.lean    |  77 +++++++++----
+ .../Hashing/FromDiscreteLog/Sampling.lean     |  11 +-
+ 8 files changed, 189 insertions(+), 66 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLog.lean b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+index 37f3272c8..a423be2b5 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLog.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+@@ -482,7 +482,9 @@ def expGenFun {V : List Bool → Prop} (G : ExpGroupGen V) (z : List Bool) : Lis
+   else pairEncode dlDefaultIndex []
+ 
+ /-- The raw index generator pairs the instance generator's output with the empty trapdoor
+-when the parameter length is at least `G.n₀`, and otherwise pairs `dlDefaultIndex` with it. -/
++when the parameter length is at least `G.n₀`, and otherwise pairs `dlDefaultIndex` with it:
++`expGenFun G z = if G.n₀ ≤ u.length then pairEncode o [] else pairEncode dlDefaultIndex []`,
++where `u = NUPPT.inParam z` and `o = G.gen.output (NUPPT.layout u [] [] (NUPPT.inCoins z))`. -/
+ theorem expGenFun_eq {V : List Bool → Prop} (G : ExpGroupGen V) (z : List Bool) :
+     expGenFun G z =
+       if G.n₀ ≤ (NUPPT.inParam z).length then
+@@ -652,8 +654,9 @@ def expSampleRaw (z : List Bool) : List Bool :=
+       (NUPPT.inParam z).length (NUPPT.inParam z).length (NUPPT.inCoins z)).getD 0)
+ 
+ /-- The raw exponent sampler writes the result of `sampleBelowL m (Nat.size m) n n r`,
+-with fallback zero, at the width of the input index; `n` and `r` are the input parameter
+-length and coins. -/
++with fallback zero, at the width of the input index:
++`expSampleRaw z = natToList (dlW i) ((sampleBelowL m (Nat.size m) n n r).getD 0)`, where
++`i = NUPPT.inArg z`, `m = dlM i`, and `n` and `r` are the input parameter length and coins. -/
+ theorem expSampleRaw_eq (z : List Bool) :
+     expSampleRaw z =
+       natToList (dlW (NUPPT.inArg z))
+diff --git a/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean b/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean
+index e1f03a928..aa748c253 100644
+--- a/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean
++++ b/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean
+@@ -28,8 +28,8 @@ compresses by one bit.
+ `G : ExpGroupGen V` through the collection's generator `expGen` (indices `⟨p, ⟨m, g⟩⟩`, valid at
+ every parameter, D10). `y = g^w` for `w` drawn by the collection's domain sampler
+ (`expSampleRaw`, within `2^{-n}` of uniform on `Z_m`). Consequently `y` is within `2^{-n}`
+-of uniform on `⟨g⟩`, and, when `m = p − 1` (hypothesis `hV` of the theorem), on `Z_p^*`. Arithmetic is through the bundle
+-`ArithmeticFP` (D11), as for every ch. 2–4 candidate.
++of uniform on `⟨g⟩`, and, when `m = p − 1` (hypothesis `hV` of the theorem), on `Z_p^*`.
++Arithmetic is through the bundle `ArithmeticFP` (D11), as for every ch. 2–4 candidate.
+ 
+ **Source notes.**
+ - The domain: the source says "an `n`-bit string `x`", but its proof needs `x < p − 1`, since
+@@ -87,7 +87,9 @@ theorem dlHashIdx_eq (G : ExpGroupGen V) (z : List Bool) :
+         ((NUPPT.inCoins z).take (G.gen.coins.eval (NUPPT.inParam z).length)))) := rfl
+ 
+ /-- On generator coins followed by sampler coins, the raw hash index is the instance
+-generator's output above its threshold and the fixed default index below it. -/
++generator's output above its threshold and the fixed default index below it:
++`dlHashIdx G z₀ = if G.n₀ ≤ n then G.gen.runAt n [] r else dlDefaultIndex`, where
++`z₀ = NUPPT.layout (List.replicate n true) [] [] (List.ofFn r ++ s)`. -/
+ theorem dlHashIdx_layout (G : ExpGroupGen V) (n : ℕ) (r : G.gen.Coins n)
+     (s : List Bool) :
+     dlHashIdx G (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r ++ s)) =
+@@ -117,7 +119,10 @@ theorem dlHashGenFun_eq (G : ExpGroupGen V) (z : List Bool) :
+           ((NUPPT.inCoins z).drop (G.gen.coins.eval (NUPPT.inParam z).length)))))) := rfl
+ 
+ /-- Above the threshold, generator coins followed by sampler coins produce the group
+-index and the exponentiation of the rejection-sampled exponent [PS10, Protocol 142.2]. -/
++index and the exponentiation of the rejection-sampled exponent: for `G.n₀ ≤ n`,
++`dlHashGenFun G z₀ = pairEncode i (expEval (pairEncode i (natToList (dlW i) w)))`, where
++`z₀ = NUPPT.layout (List.replicate n true) [] [] (List.ofFn r ++ s)`, `i = G.gen.runAt n [] r`
++and `w = (sampleBelowL (dlM i) (Nat.size (dlM i)) n n s).getD 0` [PS10, Protocol 142.2]. -/
+ theorem dlHashGenFun_layout (G : ExpGroupGen V) (n : ℕ) (r : G.gen.Coins n)
+     (s : List Bool) (hn : G.n₀ ≤ n) :
+     dlHashGenFun G (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r ++ s)) =
+@@ -133,7 +138,10 @@ theorem dlHashGenFun_layout (G : ExpGroupGen V) (n : ℕ) (r : G.gen.Coins n)
+   simp only [NUPPT.inArg_layout]
+ 
+ /-- Above the generator threshold, every raw generated key has the form `⟨i, g^z⟩`
+-for an exponent in the domain of its valid group index [PS10, Protocol 142.2].
++for an exponent in the domain of its valid group index: for `G.n₀ ≤ n`,
++`∃ z : ZMod (expOrd i), dlHashGenFun G z₀ = pairEncode i (expF i z)`, where
++`i = G.gen.runAt n [] r` and `z₀ = NUPPT.layout (List.replicate n true) [] [] (List.ofFn r ++ s)`
++[PS10, Protocol 142.2].
+ 
+ **Proof sketch.** Every accepted rejection-sampler output is below `m`; its fallback zero
+ is also below the positive group order. Its residue therefore has exactly that value,
+@@ -172,7 +180,10 @@ theorem dlHashPow_eq (z : List Bool) :
+         ((pairSndD (pairSndD z)).take (pairFstD z).length)) := rfl
+ 
+ /-- At a well-formed valid index, the exponentiation part reads the first `n` input bits
+-and returns the `n`-bit numeral of their power of `g` modulo `p`. -/
++and returns the `n`-bit numeral of their power of `g` modulo `p`:
++`dlHashPow a = natToList n (dlG i ^ x₀ % dlP i)`, where
++`a = atParam n (pairEncode (pairEncode i y) (List.ofFn x))` and
++`x₀ = listToNat ((List.ofFn x).take n) < dlM i`. -/
+ theorem dlHashPow_atParam (n : ℕ) (i y : List Bool) (x : Fin (n + 1) → Bool)
+     (hi : ExpValid i) (hw : WellFormedIndex n i)
+     (hx : listToNat ((List.ofFn x).take n) < dlM i) :
+@@ -208,7 +219,10 @@ theorem dlHashMul_eq (z : List Bool) :
+         (pairFstD (pairFstD (pairFstD (pairSndD z)))))) := rfl
+ 
+ /-- The multiplication part returns the `n`-bit numeral of the power of `g` times the
+-key element, reduced modulo `p`, at a valid well-formed index. -/
++key element, reduced modulo `p`, at a valid well-formed index:
++`dlHashMul a = natToList n ((dlG i ^ x₀ % dlP i * listToNat y) % dlP i)`, where
++`a = atParam n (pairEncode (pairEncode i y) (List.ofFn x))` and
++`x₀ = listToNat ((List.ofFn x).take n) < dlM i`. -/
+ theorem dlHashMul_atParam (n : ℕ) (i y : List Bool) (x : Fin (n + 1) → Bool)
+     (hi : ExpValid i) (hw : WellFormedIndex n i)
+     (hx : listToNat ((List.ofFn x).take n) < dlM i) :
+@@ -243,8 +257,10 @@ theorem dlHashEval_eq (z : List Bool) :
+       else dlHashPow z := rfl
+ 
+ /-- Hash evaluation at a valid well-formed index is the `n`-bit numeral of `g^x mod p`
+-for selector false, and of `(g^x mod p) y mod p` for selector true
+-[PS10, Protocol 142.2]. -/
++for selector false, and of `(g^x mod p) y mod p` for selector true:
++`dlHashEval a = natToList n (if x (Fin.last n) then (e * listToNat y) % dlP i else e)`, where
++`a = atParam n (pairEncode (pairEncode i y) (List.ofFn x))`, `e = dlG i ^ x₀ % dlP i` and
++`x₀ = listToNat ((List.ofFn x).take n) < dlM i` [PS10, Protocol 142.2]. -/
+ theorem dlHashEval_atParam (n : ℕ) (i y : List Bool) (x : Fin (n + 1) → Bool)
+     (hi : ExpValid i) (hw : WellFormedIndex n i)
+     (hx : listToNat ((List.ofFn x).take n) < dlM i) :
+@@ -259,8 +275,11 @@ theorem dlHashEval_atParam (n : ℕ) (i y : List Bool) (x : Fin (n + 1) → Bool
+   split_ifs <;> rfl
+ 
+ /-- For the key element `g^z`, evaluation writes the residue of the unit
+-`(if b then g^z else 1) * g^x`, where `x` is the exponent prefix and `b` is the last bit
+-[PS10, Protocol 142.2]. -/
++`(if b then g^z else 1) * g^x`, where `x` is the exponent prefix and `b` is the last bit:
++`dlHashEval a = natToList n (v : ZMod (dlP i)).val`, where
++`a = atParam n (pairEncode (pairEncode i (expF i z)) (List.ofFn x))`, the unit is
++`v = (if x (Fin.last n) then u ^ z.val else 1) * u ^ x₀ : (ZMod (dlP i))ˣ`, `u = expUnit hi`
++and `x₀ = listToNat ((List.ofFn x).take n) < dlM i` [PS10, Protocol 142.2]. -/
+ theorem dlHashEval_expF (n : ℕ) (i : List Bool) (z : ZMod (expOrd i))
+     (x : Fin (n + 1) → Bool) (hi : ExpValid i) (hw : WellFormedIndex n i)
+     (hx : listToNat ((List.ofFn x).take n) < dlM i) :
+@@ -283,7 +302,11 @@ theorem dlHashEval_expF (n : ℕ) (i : List Bool) (z : ZMod (expOrd i))
+     rw [Nat.mul_comm]
+ 
+ /-- Equal evaluations on two distinct domain inputs force different selectors and reveal
+-the challenge exponent as the corresponding difference modulo `m`
++the challenge exponent as the corresponding difference modulo `m`: if `x ≠ x'`, `x₀ < m`,
++`x₀' < m` and `dlHashEval a = dlHashEval a'`, then `x (Fin.last n) ≠ x' (Fin.last n)` and
++`z.val = if x (Fin.last n) then (x₀' + (m - x₀)) % m else (x₀ + (m - x₀')) % m`, where
++`a = atParam n (pairEncode (pairEncode i (expF i z)) (List.ofFn x))` (`a'` likewise for `x'`),
++`x₀ = listToNat ((List.ofFn x).take n)`, `x₀'` likewise and `m = dlM i`
+ [PS10, proof of Theorem 142.3].
+ 
+ **Proof sketch.** Evaluation writes the residue of the associated unit. Equal fixed-width
+@@ -317,7 +340,10 @@ theorem dlHashEval_collision (n : ℕ) (i : List Bool) (z : ZMod (expOrd i))
+   exact FromDiscreteLog.unitCollision_extract hi hx hx' z hd hu
+ 
+ /-- Evaluation on a domain input at a valid well-formed key has exactly `n` bits and
+-reads as a positive residue below `p` [PS10, compression in Theorem 142.3].
++reads as a positive residue below `p`:
++`(dlHashEval a).length = n ∧ 0 < listToNat (dlHashEval a) ∧ listToNat (dlHashEval a) < dlP i`,
++where `a = atParam n (pairEncode (pairEncode i (expF i z)) (List.ofFn x))` and
++`listToNat ((List.ofFn x).take n) < dlM i` [PS10, compression in Theorem 142.3].
+ 
+ **Proof sketch.** The evaluation is the numeral of a unit's residue. A unit has positive
+ residue below `p`, and the well-formed width is large enough to encode it exactly. -/
+@@ -436,13 +462,14 @@ noncomputable def dlHash (H : ArithmeticFP) (G : ExpGroupGen V) : CRH where
+ attribute [simps (config := { isSimp := false }) domLen rangeLen gen eval inDom inRange] dlHash
+ 
+ /-- The hash generator uses the instance generator's coin polynomial plus `n²` sampler
+-coins [PS10, Protocol 142.2]. -/
++coins: `(dlHash H G).gen.coins = .add G.gen.coins (.mul .var .var)` [PS10, Protocol 142.2]. -/
+ theorem dlHash_gen_coins (H : ArithmeticFP) (G : ExpGroupGen V) :
+     (dlHash H G).gen.coins = .add G.gen.coins (.mul .var .var) := by
+   rw [dlHash_gen, NUPPT.coins_ofPolyTimeUniform]
+ 
+ /-- The hash generator's coins are the instance generator's coins and an independent
+-`n²`-bit sampler tape [PS10, Protocol 142.2]. -/
++`n²`-bit sampler tape: `(dlHash H G).gen.Coins n ≃ G.gen.Coins n × (Fin (n * n) → Bool)`
++[PS10, Protocol 142.2]. -/
+ noncomputable def dlHash_coinsEquiv (H : ArithmeticFP) (G : ExpGroupGen V) (n : ℕ) :
+     (dlHash H G).gen.Coins n ≃ G.gen.Coins n × (Fin (n * n) → Bool) :=
+   (FromDiscreteLog.sumCoinsEquiv (dlHash H G).gen (dlHash_gen_coins H G) n).trans
+@@ -451,7 +478,11 @@ noncomputable def dlHash_coinsEquiv (H : ArithmeticFP) (G : ExpGroupGen V) (n :
+         (Equiv.refl Bool)))
+ 
+ /-- The hash coin equivalence splits the sum polynomial, identifies its first component
+-with the generator's coins, and reads the second component as `n²` bits. -/
++with the generator's coins, and reads the second component as `n²` bits:
++`dlHash_coinsEquiv H G n = (sumCoinsEquiv (dlHash H G).gen _ n).trans (Equiv.prodCongr e₁ e₂)`,
++where `e₁ = (NUPPT.coinsEquivPoly (A := G.gen) rfl n).symm` and
++`e₂ = Equiv.arrowCongr (finCongr _) (Equiv.refl Bool)` transports
++`(.mul .var .var).eval n = n * n`. -/
+ theorem dlHash_coinsEquiv_eq (H : ArithmeticFP) (G : ExpGroupGen V) (n : ℕ) :
+     dlHash_coinsEquiv H G n =
+       (FromDiscreteLog.sumCoinsEquiv (dlHash H G).gen (dlHash_gen_coins H G) n).trans
+@@ -459,7 +490,8 @@ theorem dlHash_coinsEquiv_eq (H : ArithmeticFP) (G : ExpGroupGen V) (n : ℕ) :
+           (Equiv.arrowCongr (finCongr (by rw [PolyExpr.eval_mul, PolyExpr.eval_var]))
+             (Equiv.refl Bool))) := rfl
+ 
+-/-- Combining a generator tape and a sampler tape concatenates their encoded words. -/
++/-- Combining a generator tape and a sampler tape concatenates their encoded words:
++`List.ofFn ((dlHash_coinsEquiv H G n).symm (r, s)) = List.ofFn r ++ List.ofFn s`. -/
+ theorem dlHash_coinsEquiv_symm_ofFn (H : ArithmeticFP) (G : ExpGroupGen V) (n : ℕ)
+     (r : G.gen.Coins n) (s : Fin (n * n) → Bool) :
+     List.ofFn ((dlHash_coinsEquiv H G n).symm (r, s)) = List.ofFn r ++ List.ofFn s := by
+@@ -470,7 +502,10 @@ theorem dlHash_coinsEquiv_symm_ofFn (H : ArithmeticFP) (G : ExpGroupGen V) (n :
+     ofFn_arrowCongr_finCongr]
+ 
+ /-- On recombined generator and sampler coins, the hash generator runs its raw function
+-on their concatenation [PS10, Protocol 142.2]. -/
++on their concatenation:
++`(dlHash H G).gen.runAt n [] ((dlHash_coinsEquiv H G n).symm (r, s)) = dlHashGenFun G z₀`,
++where `z₀ = NUPPT.layout (List.replicate n true) [] [] (List.ofFn r ++ List.ofFn s)`
++[PS10, Protocol 142.2]. -/
+ theorem dlHash_gen_runAt (H : ArithmeticFP) (G : ExpGroupGen V) (n : ℕ)
+     (r : G.gen.Coins n) (s : Fin (n * n) → Bool) :
+     (dlHash H G).gen.runAt n [] ((dlHash_coinsEquiv H G n).symm (r, s)) =
+@@ -480,7 +515,8 @@ theorem dlHash_gen_runAt (H : ArithmeticFP) (G : ExpGroupGen V) (n : ℕ)
+     NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq, NUPPT.layout_eq]
+ 
+ /-- The discrete-log hash compresses at every parameter above the instance generator's
+-threshold when its groups are the full unit groups [PS10, Theorem 142.3].
++threshold when its groups are the full unit groups:
++`(∀ i, V i → ExpValid i ∧ dlM i = dlP i - 1) → (dlHash H G).Compresses` [PS10, Theorem 142.3].
+ 
+ **Proof sketch.** Split a generated key's coins into the instance and sampler tapes. Its
+ index is valid and well formed, and its key element is a power of the generator. Evaluation
+@@ -519,7 +555,11 @@ theorem dlHash_compresses (H : ArithmeticFP) (G : ExpGroupGen V)
+     omega
+ 
+ /-- The collision test for a raw finder output on key `⟨i, y⟩`: its two padded inputs
+-are distinct, have exponent prefixes below `m`, and have equal padded hash values
++are distinct, have exponent prefixes below `m`, and have equal padded hash values,
++`dlHashCollision n i y raw = (x₀ < dlM i ∧ x₀' < dlM i ∧ xx.1 ≠ xx.2 ∧ h xx.1 = h xx.2)`, where
++`xx = splitBits (padFin ((n + 1) + (n + 1)) raw)` (blocks of `n + 1` bits),
++`x₀ = listToNat ((List.ofFn xx.1).take n)`, `x₀'` likewise for `xx.2`, and
++`h v = padFin n (dlHashEval (atParam n (pairEncode (pairEncode i y) (List.ofFn v))))`
+ [PS10, Definition 140.1]. -/
+ def dlHashCollision (n : ℕ) (i y raw : List Bool) : Prop :=
+   let xx := splitBits (a := n + 1) (b := n + 1) (padFin ((n + 1) + (n + 1)) raw)
+@@ -529,7 +569,9 @@ def dlHashCollision (n : ℕ) (i y raw : List Bool) : Prop :=
+       padFin n (dlHashEval (atParam n (pairEncode (pairEncode i y) (List.ofFn xx.2))))
+ 
+ /-- The raw collision predicate is exactly the domain, distinctness, and equal-hash test
+-on its two padded output halves. -/
++on its two padded output halves:
++`dlHashCollision n i y raw ↔ x₀ < dlM i ∧ x₀' < dlM i ∧ xx.1 ≠ xx.2 ∧ h xx.1 = h xx.2`,
++with `xx`, `x₀`, `x₀'` and `h` as in `dlHashCollision`. -/
+ theorem dlHashCollision_iff (n : ℕ) (i y raw : List Bool) :
+     dlHashCollision n i y raw ↔
+       let xx := splitBits (a := n + 1) (b := n + 1) (padFin ((n + 1) + (n + 1)) raw)
+@@ -540,7 +582,12 @@ theorem dlHashCollision_iff (n : ℕ) (i y raw : List Bool) :
+   Iff.rfl
+ 
+ /-- Above the generator threshold, collision acceptance is the average over instance
+-coins of the joint probability over sampler and finder coins of the raw collision test
++coins of the joint probability over sampler and finder coins of the raw collision test:
++for `G.n₀ ≤ n`, `accept ((dlHash H G).collisionGame A n) = uexp (fun r => uprob (fun rs =>`
++`dlHashCollision n i y (A.runAt n (pairEncode i y) rs.2)))` over `r : G.gen.Coins n` and
++`rs : (Fin (n * n) → Bool) × A.Coins n`, where `i = G.gen.runAt n [] r`,
++`y = expEval (pairEncode i (natToList n w))` and
++`w = (sampleBelowL (dlM i) (Nat.size (dlM i)) n n (List.ofFn rs.1)).getD 0`
+ [PS10, key distribution in Theorem 142.3].
+ 
+ **Proof sketch.** Reindex the generator's uniform coins by their two independent tapes,
+@@ -573,7 +620,12 @@ theorem dlHash_collision_accept_eq (H : ArithmeticFP) (G : ExpGroupGen V) (A : N
+     PolyExpr.eval_const]
+ 
+ /-- Whenever the finder produces a collision on a valid key `⟨i, g^z⟩`, the reduction's
+-answer decodes to the challenge exponent [PS10, reduction in Theorem 142.3].
++answer decodes to the challenge exponent: if the finder's output
++`A.runAt n k (NUPPT.coinsCongr (collisionReduction_coins H A) n r)` passes the
++`dlHashCollision n i (expF i z)` test (stated unfolded), then
++`∃ out : Fin n → Bool, decodeFin n (B.runAt n k r) = some out ∧ bitsToNat out = z.val`, where
++`k = pairEncode i (expF i z)` and `B = collisionReduction H A`
++[PS10, reduction in Theorem 142.3].
+ 
+ **Proof sketch.** Remove the hash-output padding using its proved exact length. The
+ collision-extraction lemma identifies the postprocessor's modular difference with `z`.
+@@ -622,7 +674,11 @@ theorem dlHash_reduction_success (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
+       simpa only [hw.dlW_eq] using val_lt_two_pow_dlW i z)
+ 
+ /-- For a fixed valid well-formed index and a uniform challenge exponent, the finder's
+-collision probability is bounded by the reduction's discrete-log success probability
++collision probability is bounded by the reduction's discrete-log success probability:
++`uprob CA ≤ uprob DB`, where `CA (z, r) = dlHashCollision n i (expF i z) (A.runAt n k r)` on
++`ZMod (expOrd i) × A.Coins n`, and on `ZMod (expOrd i) × B.Coins n`,
++`DB (z, r) = ∃ out : Fin n → Bool, decodeFin n (B.runAt n k r) = some out ∧ bitsToNat out = z.val`,
++with `k = pairEncode i (expF i z)` and `B = collisionReduction H A`
+ [PS10, reduction in Theorem 142.3].
+ 
+ **Proof sketch.** Reindex the reduction's coins by the finder's equal-length coin tape.
+@@ -648,7 +704,8 @@ theorem dlHash_ideal_collision_le (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
+     ((dlHashCollision_iff n i (expF i zr.1) _).1 hh)
+ 
+ /-- Above the generator threshold, collision acceptance is at most the concrete
+-reduction's discrete-log success probability plus `(1/2)^n`
++reduction's discrete-log success probability plus `(1/2)^n`: for `G.n₀ ≤ n`,
++`accept ((dlHash H G).collisionGame A n) ≤ G.dlProb (collisionReduction H A) n + (1/2)^n`
+ [PS10, probability bound in Theorem 142.3].
+ 
+ **Proof sketch.** Read the honest key distribution as the average over instance coins
+diff --git a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean
+index 0dd1c4917..b4f079b8f 100644
+--- a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean
++++ b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean
+@@ -68,7 +68,9 @@ private theorem residue_of_unit_pow_mul {i : List Bool} (hi : ExpValid i)
+   exact residue_difference ha hb.le hm
+ 
+ /-- A collision between two distinct bounded exponent/selector pairs has different
+-selector bits [PS10, proof of Theorem 142.3].
++selector bits: if `(x, b) ≠ (x', b')`, `x < dlM i`, `x' < dlM i` and
++`(if b then u ^ z.val else 1) * u ^ x = (if b' then u ^ z.val else 1) * u ^ x'` for
++`u = expUnit hi`, then `b ≠ b'` [PS10, proof of Theorem 142.3].
+ 
+ **Proof sketch.** With equal selectors, cancel their common unit factor. Read the
+ remaining powers through their numerals and apply the published injectivity of
+@@ -101,7 +103,9 @@ theorem unitCollision_selector_ne {i : List Bool} (hi : ExpValid i)
+ 
+ /-- A collision between distinct bounded exponent/selector pairs reveals the
+ challenge exponent: it is `(x' + (m - x)) mod m` when the first selector is true,
+-and `(x + (m - x')) mod m` otherwise [PS10, proof of Theorem 142.3].
++and `(x + (m - x')) mod m` otherwise, that is,
++`b ≠ b' ∧ z.val = if b then (x' + (m - x)) % m else (x + (m - x')) % m` for `m = dlM i`,
++under the hypotheses of `unitCollision_selector_ne` [PS10, proof of Theorem 142.3].
+ 
+ **Proof sketch.** Equal selectors are impossible by cancellation. In the two remaining
+ cases the collision reads either `g^z g^x = g^x'` or `g^z g^x' = g^x`. The order of
+diff --git a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins.lean b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins.lean
+index f07ce998c..8805d7d15 100644
+--- a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins.lean
++++ b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins.lean
+@@ -35,7 +35,8 @@ namespace TCSlib.Cryptography.Authentication.FromDiscreteLog
+ open Complexity TCSlib.Cryptography
+ 
+ /-- A machine with coin polynomial `c + d` has coins equivalent to a `c(n)`-bit vector and
+-a `d(n)`-bit vector. -/
++a `d(n)`-bit vector: for `h : A.coins = .add c d`,
++`A.Coins n ≃ (Fin (c.eval n) → Bool) × (Fin (d.eval n) → Bool)`. -/
+ def sumCoinsEquiv (A : NUPPT) {c d : PolyExpr} (h : A.coins = .add c d) (n : ℕ) :
+     A.Coins n ≃ (Fin (c.eval n) → Bool) × (Fin (d.eval n) → Bool) :=
+   (NUPPT.coinsEquivPoly h n).trans
+@@ -43,7 +44,10 @@ def sumCoinsEquiv (A : NUPPT) {c d : PolyExpr} (h : A.coins = .add c d) (n : ℕ
+       (splitCoins (c.eval n) (d.eval n)))
+ 
+ /-- The sum-coin equivalence first identifies the machine's polynomial-length coin vector,
+-then transports its length through evaluation of addition and applies `splitCoins`. -/
++then transports its length through evaluation of addition and applies `splitCoins`:
++`sumCoinsEquiv A h n = (NUPPT.coinsEquivPoly h n).trans (e.trans s)`, where
++`e = Equiv.arrowCongr (finCongr (PolyExpr.eval_add c d n)) (Equiv.refl Bool)` and
++`s = splitCoins (c.eval n) (d.eval n)`. -/
+ theorem sumCoinsEquiv_eq (A : NUPPT) {c d : PolyExpr} (h : A.coins = .add c d) (n : ℕ) :
+     sumCoinsEquiv A h n =
+       (NUPPT.coinsEquivPoly h n).trans
+diff --git a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean
+index db8c01a7a..cca76894e 100644
+--- a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean
++++ b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean
+@@ -39,7 +39,8 @@ namespace TCSlib.Cryptography.Authentication.FromDiscreteLog
+ 
+ open TCSlib.Cryptography TCSlib.Cryptography.Candidates TCSlib.Cryptography.NumberTheory
+ 
+-/-- The word of the first component of `splitBits w` is the first `a` bits of `w`. -/
++/-- The word of the first component of `splitBits w` is the first `a` bits of `w`:
++`List.ofFn (splitBits w).1 = (List.ofFn w).take a`. -/
+ theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
+     List.ofFn (splitBits w).1 = (List.ofFn w).take a := by
+   have hfst : (splitBits w).1 = fun j : Fin a => w (Fin.castAdd b j) :=
+@@ -49,7 +50,7 @@ theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
+   simpa only [List.drop_zero, Nat.zero_add] using hwindow.symm
+ 
+ /-- The word of the second component of `splitBits w` is the word of `w` after its first
+-`a` bits. -/
++`a` bits: `List.ofFn (splitBits w).2 = (List.ofFn w).drop a`. -/
+ theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
+     List.ofFn (splitBits w).2 = (List.ofFn w).drop a := by
+   have hsnd : (splitBits w).2 = fun j : Fin b => w (Fin.natAdd a j) :=
+@@ -61,22 +62,26 @@ theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
+   rw [List.take_of_length_le hlen.le] at hwindow
+   exact hwindow.symm
+ 
+-/-- The word of an `(n + 1)`-bit vector is its first `n` bits followed by its final bit. -/
++/-- The word of an `(n + 1)`-bit vector is its first `n` bits followed by its final bit:
++`List.ofFn x = List.ofFn (fun j : Fin n => x j.castSucc) ++ [x (Fin.last n)]`. -/
+ theorem inputWord_split {n : ℕ} (x : Fin (n + 1) → Bool) :
+     List.ofFn x = List.ofFn (fun j : Fin n => x j.castSucc) ++ [x (Fin.last n)] := by
+   rw [List.ofFn_succ', List.concat_eq_append]
+ 
+-/-- Taking the first `n` bits of an `(n + 1)`-bit word gives its restricted vector. -/
++/-- Taking the first `n` bits of an `(n + 1)`-bit word gives its restricted vector:
++`(List.ofFn x).take n = List.ofFn (fun j : Fin n => x j.castSucc)`. -/
+ theorem inputWord_take {n : ℕ} (x : Fin (n + 1) → Bool) :
+     (List.ofFn x).take n = List.ofFn (fun j : Fin n => x j.castSucc) := by
+   rw [inputWord_split, List.take_left' (by simp)]
+ 
+-/-- Dropping the first `n` bits of an `(n + 1)`-bit word leaves its final bit. -/
++/-- Dropping the first `n` bits of an `(n + 1)`-bit word leaves its final bit:
++`(List.ofFn x).drop n = [x (Fin.last n)]`. -/
+ theorem inputWord_drop {n : ℕ} (x : Fin (n + 1) → Bool) :
+     (List.ofFn x).drop n = [x (Fin.last n)] := by
+   rw [inputWord_split, List.drop_left' (by simp)]
+ 
+-/-- An `(n + 1)`-bit input is determined by its first `n` bits and its final bit. -/
++/-- An `(n + 1)`-bit input is determined by its first `n` bits and its final bit:
++`(List.ofFn x).take n = (List.ofFn y).take n → x (Fin.last n) = y (Fin.last n) → x = y`. -/
+ theorem inputWord_ext {n : ℕ} {x y : Fin (n + 1) → Bool}
+     (hprefix : (List.ofFn x).take n = (List.ofFn y).take n)
+     (hlast : x (Fin.last n) = y (Fin.last n)) : x = y := by
+@@ -85,7 +90,8 @@ theorem inputWord_ext {n : ℕ} {x y : Fin (n + 1) → Bool}
+     hprefix, hlast]
+ 
+ /-- An `(n + 1)`-bit input is determined by the number read from its first `n` bits
+-and its final selector bit. -/
++and its final selector bit: `x = y` whenever `x (Fin.last n) = y (Fin.last n)` and
++`listToNat ((List.ofFn x).take n) = listToNat ((List.ofFn y).take n)`. -/
+ theorem inputWord_num_ext {n : ℕ} {x y : Fin (n + 1) → Bool}
+     (hnum : listToNat ((List.ofFn x).take n) = listToNat ((List.ofFn y).take n))
+     (hlast : x (Fin.last n) = y (Fin.last n)) : x = y := by
+@@ -136,13 +142,15 @@ noncomputable def boundedInputEquiv (n m : ℕ) (hm : m ≤ 2 ^ n) :
+       rw [ofFn_padFin_of_length (by simp), List.drop_left' (by simp)] at hword
+       exact List.singleton_inj.mp hword.symm
+ 
+-/-- The bounded-input equivalence reads the exponent and the final selector bit. -/
++/-- The bounded-input equivalence reads the exponent and the final selector bit:
++`boundedInputEquiv n m hm x = (⟨listToNat ((List.ofFn x.1).take n), x.2⟩, x.1 (Fin.last n))`. -/
+ theorem boundedInputEquiv_apply (n m : ℕ) (hm : m ≤ 2 ^ n)
+     (x : {x : Fin (n + 1) → Bool // listToNat ((List.ofFn x).take n) < m}) :
+     boundedInputEquiv n m hm x =
+       (⟨listToNat ((List.ofFn x.1).take n), x.2⟩, x.1 (Fin.last n)) := rfl
+ 
+-/-- The inverse equivalence writes an `n`-bit exponent and appends its selector bit. -/
++/-- The inverse equivalence writes an `n`-bit exponent and appends its selector bit:
++`((boundedInputEquiv n m hm).symm z).1 = padFin (n + 1) (natToList n z.1.val ++ [z.2])`. -/
+ theorem boundedInputEquiv_symm_apply (n m : ℕ) (hm : m ≤ 2 ^ n) (z : Fin m × Bool) :
+     ((boundedInputEquiv n m hm).symm z).1 =
+       padFin (n + 1) (natToList n z.1.val ++ [z.2]) := rfl
+diff --git a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean
+index a9a7fa9ac..d27c5c702 100644
+--- a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean
++++ b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean
+@@ -35,14 +35,19 @@ namespace TCSlib.Cryptography.Authentication.FromDiscreteLog
+ open Complexity TCSlib.Cryptography TCSlib.Cryptography.Games
+ 
+ /-- The expectation of `f` after sampling a nonempty finite type is the uniform
+-average `uexp f`. Both expressions are the sum of `f` divided by the type's size. -/
++average `uexp f`: `ProbComp.expect (ProbComp.sample α) f = uexp f`. Both expressions
++are the sum of `f` divided by the type's size. -/
+ theorem expect_sample_eq_uexp {α : Type} [Fintype α] [Nonempty α] (f : α → ℝ) :
+     ProbComp.expect (ProbComp.sample α) f = uexp f := by
+   rw [ProbComp.expect_sample, uexp_def, inv_mul_eq_div]
+ 
+ /-- Collision-game acceptance is the average over generator coins of the probability,
+ over finder coins, that the two padded output halves are distinct domain elements
+-with equal hashes [PS10, Definition 140.1].
++with equal hashes: `accept (C.collisionGame A n) = uexp (fun rg => uprob (fun r => W rg r))`,
++where `W rg r` is `C.inDom n i xx.1 = true ∧ C.inDom n i xx.2 = true ∧ xx.1 ≠ xx.2 ∧`
++`C.hash n i xx.1 = C.hash n i xx.2` for `i = C.gen.runAt n [] rg` and
++`xx = splitBits (padFin (C.domLen.eval n + C.domLen.eval n) (A.runAt n i r))`
++[PS10, Definition 140.1].
+ 
+ **Proof sketch.** Read the collision game and apply total probability to its two
+ samples. A pure Boolean verdict accepts exactly when its collision predicate holds;
+diff --git a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean
+index 4b25faebb..d6a54f0eb 100644
+--- a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean
++++ b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean
+@@ -51,14 +51,18 @@ def modularDifference (a b m : List Bool) : List Bool :=
+     (addStr (pairEncode a (subStr (pairEncode m b)))) m))
+ 
+ /-- The modular-difference routine adds `a` to the truncated subtraction of `b`
+-from `m`, divides by `m`, and keeps the remainder. -/
++from `m`, divides by `m`, and keeps the remainder:
++`modularDifference a b m = pairSndD (divModStr (pairEncode (addStr (pairEncode a s)) m))`,
++where `s = subStr (pairEncode m b)`. -/
+ theorem modularDifference_eq (a b m : List Bool) :
+     modularDifference a b m =
+       pairSndD (divModStr (pairEncode
+         (addStr (pairEncode a (subStr (pairEncode m b)))) m)) := rfl
+ 
+ /-- The modular-difference routine writes the `|m|`-bit numeral of
+-`(⟦a⟧ + (⟦m⟧ - ⟦b⟧)) mod ⟦m⟧`. -/
++`(⟦a⟧ + (⟦m⟧ - ⟦b⟧)) mod ⟦m⟧`:
++`modularDifference a b m = natToList m.length ((⟦a⟧ + (⟦m⟧ - ⟦b⟧)) % ⟦m⟧)`, where
++`⟦w⟧ = listToNat w`. -/
+ theorem modularDifference_value (a b m : List Bool) :
+     modularDifference a b m = natToList m.length
+       ((NumberTheory.listToNat a +
+@@ -67,7 +71,9 @@ theorem modularDifference_value (a b m : List Bool) :
+     listToNat_addStr, listToNat_subStr]
+ 
+ /-- Applying the modular-difference routine to three polynomial-time word functions
+-is polynomial-time under the arithmetic bundle. -/
++is polynomial-time under the arithmetic bundle: given `H : ArithmeticFP`,
++`PolyTimeComputable a → PolyTimeComputable b → PolyTimeComputable m →`
++`PolyTimeComputable fun w => modularDifference (a w) (b w) (m w)`. -/
+ theorem polyTimeComputable_modularDifference (H : ArithmeticFP)
+     {a b m : List Bool → List Bool} (ha : PolyTimeComputable a)
+     (hb : PolyTimeComputable b) (hm : PolyTimeComputable m) :
+@@ -78,9 +84,10 @@ theorem polyTimeComputable_modularDifference (H : ArithmeticFP)
+   refine h.congr fun w => ?_
+   simp only [Function.comp_apply, modularDifference_eq]
+ 
+-/-- On `⟨u, ⟨⟨i,y⟩, raw⟩⟩`, pad or truncate `raw` to two blocks of `|u|+1` bits.
+-Read exponents from each block's first `|u|` bits and the first selector from its
+-last bit. Output `x' - x mod m` if that selector is true and `x - x' mod m`
++/-- On `w = ⟨u, ⟨⟨i,y⟩, raw⟩⟩`, pad or truncate `raw` to two blocks of `|u|+1` bits and output
++`collisionPost w = if s then modularDifference x' x m else modularDifference x x' m`.
++Here `x`, `x'` are read from each block's first `|u|` bits and the first selector `s` from its
++last bit, so the output is `x' - x mod m` if that selector is true and `x - x' mod m`
+ otherwise, where `m` is the order word in the index `i` [PS10, Theorem 142.3]. -/
+ def collisionPost (w : List Bool) : List Bool :=
+   let u := pairFstD w
+@@ -94,7 +101,12 @@ def collisionPost (w : List Bool) : List Bool :=
+   else modularDifference x x' m
+ 
+ /-- The postprocessor pads the raw output, reads two exponent prefixes and the first
+-selector, and applies the corresponding modular difference. -/
++selector, and applies the corresponding modular difference:
++`collisionPost w = if s then modularDifference x' x m else modularDifference x x' m`, where
++`u = pairFstD w`, `m = pairFstD (pairSndD (pairFstD (pairFstD (pairSndD w))))`,
++`p = padStr (.add (.add .var (.const 1)) (.add .var (.const 1))) u (pairSndD (pairSndD w))`,
++`x = p.take u.length`, `x' = (p.drop (u.length + 1)).take u.length` and
++`s = (p.drop u.length).headD false`. -/
+ theorem collisionPost_eq (w : List Bool) :
+     collisionPost w =
+       let u := pairFstD w
+@@ -107,7 +119,8 @@ theorem collisionPost_eq (w : List Bool) :
+       if (padded.drop u.length).headD false then modularDifference x' x m
+       else modularDifference x x' m := rfl
+ 
+-/-- The collision postprocessor is polynomial-time under the arithmetic bundle.
++/-- The collision postprocessor is polynomial-time under the arithmetic bundle:
++`ArithmeticFP → PolyTimeComputable collisionPost`.
+ 
+ **Proof sketch.** Pair projections read the parameter, raw output, and order word.
+ The existing padding and polynomial-prefix cuts read the two exponents and selector.
+@@ -163,7 +176,10 @@ theorem polyTimeComputable_collisionPost (H : ArithmeticFP) :
+ 
+ /-- At a well-formed index, postprocessing the concatenation of two `(n + 1)`-bit
+ inputs writes the `n`-bit numeral of their selected exponent difference modulo
+-`dlM i`. The first input's final bit chooses `x' - x` when true and `x - x'`
++`dlM i`: `collisionPost (pairEncode (List.replicate n true) (pairEncode (pairEncode i y) v)) =`
++`natToList n (if x (Fin.last n) then (x₀' + (m - x₀)) % m else (x₀ + (m - x₀')) % m)`, where
++`v = List.ofFn x ++ List.ofFn x'`, `x₀ = listToNat ((List.ofFn x).take n)`, `x₀'` likewise and
++`m = dlM i`. The first input's final bit chooses `x' - x` when true and `x - x'`
+ otherwise [PS10, proof of Theorem 142.3].
+ 
+ **Proof sketch.** The concatenation already has the padding width. Cutting after
+@@ -211,7 +227,11 @@ theorem collisionPost_ofFn_append (n : ℕ) (i y : List Bool)
+   split_ifs <;> rfl
+ 
+ /-- For any raw finder output, the postprocessor writes the selected difference
+-of the two inputs obtained by the collision game's padding and splitting. It writes
++of the two inputs obtained by the collision game's padding and splitting:
++`collisionPost (pairEncode (List.replicate n true) (pairEncode (pairEncode i y) raw)) =`
++`natToList n (if xx.1 (Fin.last n) then (x₀' + (m - x₀)) % m else (x₀ + (m - x₀')) % m)`,
++where `xx = splitBits (padFin ((n + 1) + (n + 1)) raw)`, `x₀ = listToNat ((List.ofFn xx.1).take n)`,
++`x₀'` likewise for `xx.2` and `m = dlM i`. It writes
+ `x' - x mod m` when the first selector is true and `x - x' mod m` otherwise
+ [PS10, proof of Theorem 142.3].
+ 
+@@ -264,19 +284,24 @@ theorem collisionPost_split (n : ℕ) (i y raw : List Bool) (hw : WellFormedInde
+   exact hpost.trans (collisionPost_ofFn_append n i y xx.1 xx.2 hw)
+ 
+ /-- On a raw NUPPT layout, run `A` and apply `collisionPost` to the parameter,
+-the original key, and `A`'s raw output [PS10, proof of Theorem 142.3]. -/
++the original key, and `A`'s raw output:
++`reductionRaw A z = collisionPost (pairEncode (inParam z) (pairEncode (inArg z) (A.output z)))`
++[PS10, proof of Theorem 142.3]. -/
+ def reductionRaw (A : NUPPT) (z : List Bool) : List Bool :=
+   collisionPost (pairEncode (NUPPT.inParam z) (pairEncode (NUPPT.inArg z) (A.output z)))
+ 
+ /-- The raw reduction passes its parameter and original argument together with
+-the finder's raw output to the postprocessor. -/
++the finder's raw output to the postprocessor:
++`reductionRaw A z = collisionPost (pairEncode (inParam z) (pairEncode (inArg z) (A.output z)))`,
++with `inParam = NUPPT.inParam` and `inArg = NUPPT.inArg`. -/
+ theorem reductionRaw_eq (A : NUPPT) (z : List Bool) :
+     reductionRaw A z =
+       collisionPost (pairEncode (NUPPT.inParam z)
+         (pairEncode (NUPPT.inArg z) (A.output z))) := rfl
+ 
+ /-- Running a polynomial-time finder and then postprocessing its output is
+-polynomial-time under the arithmetic bundle. -/
++polynomial-time under the arithmetic bundle:
++`ArithmeticFP → PolyTimeComputable (reductionRaw A)`. -/
+ theorem polyTimeComputable_reductionRaw (H : ArithmeticFP) (A : NUPPT) :
+     PolyTimeComputable (reductionRaw A) := by
+   have h := (polyTimeComputable_collisionPost H).comp
+@@ -286,34 +311,43 @@ theorem polyTimeComputable_reductionRaw (H : ArithmeticFP) (A : NUPPT) :
+   simp only [Function.comp_apply, reductionRaw_eq]
+ 
+ /-- The discrete-log reduction runs the collision finder and extracts the exponent
+-difference, using the same coins and advice [PS10, proof of Theorem 142.3]. -/
++difference, using the same coins and advice: it realizes `reductionRaw A` in polynomial time
++with `(collisionReduction H A).coins = A.coins` and `(collisionReduction H A).advice = A.advice`
++[PS10, proof of Theorem 142.3]. -/
+ noncomputable def collisionReduction (H : ArithmeticFP) (A : NUPPT) : NUPPT :=
+   NUPPT.ofPolyTime (polyTimeComputable_reductionRaw H A)
+     A.coins A.adv A.advice A.advice_length
+ 
+ /-- The reduction is the polynomial-time realization of `reductionRaw A`, with
+-the finder's coin polynomial, advice bound, and advice function. -/
++the finder's coin polynomial, advice bound, and advice function:
++`collisionReduction H A = NUPPT.ofPolyTime hraw A.coins A.adv A.advice A.advice_length`,
++where `hraw = polyTimeComputable_reductionRaw H A`. -/
+ theorem collisionReduction_eq (H : ArithmeticFP) (A : NUPPT) :
+     collisionReduction H A = NUPPT.ofPolyTime (polyTimeComputable_reductionRaw H A)
+       A.coins A.adv A.advice A.advice_length := rfl
+ 
+-/-- The reduction uses the collision finder's coin polynomial. -/
++/-- The reduction uses the collision finder's coin polynomial:
++`(collisionReduction H A).coins = A.coins`. -/
+ theorem collisionReduction_coins (H : ArithmeticFP) (A : NUPPT) :
+     (collisionReduction H A).coins = A.coins := by
+   rw [collisionReduction_eq, NUPPT.coins_ofPolyTime]
+ 
+-/-- The reduction has the collision finder's advice bound. -/
++/-- The reduction has the collision finder's advice bound:
++`(collisionReduction H A).adv = A.adv`. -/
+ theorem collisionReduction_adv (H : ArithmeticFP) (A : NUPPT) :
+     (collisionReduction H A).adv = A.adv := by
+   rw [collisionReduction_eq, NUPPT.adv_ofPolyTime]
+ 
+-/-- The reduction uses the collision finder's advice at every parameter. -/
++/-- The reduction uses the collision finder's advice at every parameter:
++`(collisionReduction H A).advice = A.advice`. -/
+ theorem collisionReduction_advice (H : ArithmeticFP) (A : NUPPT) :
+     (collisionReduction H A).advice = A.advice := by
+   rw [collisionReduction_eq, NUPPT.advice_ofPolyTime]
+ 
+ /-- At parameter `n` on key `key` and coin list `r`, the reduction postprocesses
+-`A.runAtL n key r` while retaining `1^n` and the original key. -/
++`A.runAtL n key r` while retaining `1^n` and the original key:
++`(collisionReduction H A).runAtL n key r = collisionPost (pairEncode u (pairEncode key o))`,
++where `u = List.replicate n true` and `o = A.runAtL n key r`. -/
+ theorem collisionReduction_runAtL (H : ArithmeticFP) (A : NUPPT)
+     (n : ℕ) (key r : List Bool) :
+     (collisionReduction H A).runAtL n key r =
+@@ -324,7 +358,10 @@ theorem collisionReduction_runAtL (H : ArithmeticFP) (A : NUPPT)
+     pairFstD_pairEncode, pairSndD_pairEncode, NUPPT.runAtL_eq]
+ 
+ /-- On typed coins, the reduction postprocesses the finder's output on the same
+-coin string, transported along the equality of their coin polynomials. -/
++coin string, transported along the equality of their coin polynomials:
++`(collisionReduction H A).runAt n key r = collisionPost (pairEncode u (pairEncode key o))`,
++where `u = List.replicate n true`, `o = A.runAt n key r'` and
++`r' = NUPPT.coinsCongr (collisionReduction_coins H A) n r`. -/
+ theorem collisionReduction_runAt (H : ArithmeticFP) (A : NUPPT)
+     (n : ℕ) (key : List Bool) (r : (collisionReduction H A).Coins n) :
+     (collisionReduction H A).runAt n key r =
+diff --git a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean
+index ec75349a7..c5e2b8245 100644
+--- a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean
++++ b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean
+@@ -48,7 +48,8 @@ def residueFinEquiv {m k : ℕ} [NeZero m] (h : m = k) : ZMod m ≃ Fin k :=
+   (ZMod.finEquiv m).symm.toEquiv.trans (finCongr h)
+ 
+ /-- The residue-to-finite equivalence is Mathlib's inverse `finEquiv`, followed by
+-transport along the equality of the moduli. -/
++transport along the equality of the moduli:
++`residueFinEquiv h = (ZMod.finEquiv m).symm.toEquiv.trans (finCongr h)`. -/
+ theorem residueFinEquiv_eq {m k : ℕ} [NeZero m] (h : m = k) :
+     residueFinEquiv h = (ZMod.finEquiv m).symm.toEquiv.trans (finCongr h) := rfl
+ 
+@@ -62,7 +63,8 @@ theorem residueFinEquiv_val {m k : ℕ} [NeZero m] (h : m = k) (z : ZMod m) :
+   | succ m => rfl
+ 
+ /-- At an index well formed at parameter `n`, evaluating the `n`-bit numeral of
+-a residue's natural representative returns `expF i z`. -/
++a residue's natural representative returns `expF i z`:
++`expEval (pairEncode i (natToList n z.val)) = expF i z`. -/
+ theorem expEval_natToList_val {n : ℕ} {i : List Bool} (hw : WellFormedIndex n i)
+     (z : ZMod (expOrd i)) :
+     expEval (Turing.pairEncode i (natToList n z.val)) = expF i z := by
+@@ -71,7 +73,10 @@ theorem expEval_natToList_val {n : ℕ} {i : List Bool} (hw : WellFormedIndex n
+ 
+ /-- For a valid group index of order below `2^n`, any test of the rejection-sampled
+ exponent and independent finite auxiliary coins has probability at most its
+-probability for a uniform exponent in `ZMod (expOrd i)` plus `(1/2)^n`
++probability for a uniform exponent in `ZMod (expOrd i)` plus `(1/2)^n`: for `m = dlM i < 2^n`,
++`uprob (fun (s, a) => P ((sampleBelowL m (Nat.size m) n n (List.ofFn s)).getD 0) a) ≤`
++`uprob (fun (z, a) => P z.val a) + (1/2)^n` over `s : Fin (n * n) → Bool`,
++`z : ZMod (expOrd i)` and `a : ρ`
+ [PS10, proof of Theorem 142.3, using the candidate-layer sampler convention].
+ 
+ **Proof sketch.** Apply the published statistical-closeness theorem for bounded
+-- 
+2.43.0
+

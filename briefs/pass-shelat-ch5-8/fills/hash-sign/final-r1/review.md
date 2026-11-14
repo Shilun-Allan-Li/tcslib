@@ -99,3 +99,17 @@ one sketch, docstrings only) is in progress.
 | M3b | minor | `splitBits_pad_concat` is a corollary of `Games.padFin_append_split`. `expect_simulate_sample_once` is close to `Games.expect_simulate_eager` but does not restate it. | Ledger **DL-42**: promote, as the worker requests. |
 | M3c | minor | Overlap with the parallel `lamport` delivery: its `lamport_codec_ext` ≈ `MachineCodec.ext_of_fields`, `lamport_forgerCodec` is an instance of `forgerCodec_eq_bitCodec`, and its `exists_pure_of_cost_zero` ≈ `eq_pure_of_cost_zero`. | Ledger **DL-42**: fold after both land. The lamport review records the same overlap from its side. |
 | O1 | obs | `MachineCodec.ext_of_fields` destructures a foreign structure with `cases`. This reads no foreign definition. | Accepted. Promote to `Games/Machines` with no attribute. |
+
+## LE-doc · `4f0280c8` (built)
+
+- **Head:** `4f0280c85fae8730ca0dfad980b41749452980fa`, tree `4485fafd1abee34129c24c8aa76f4325230eb442`.
+- **Change:** 109 formula docstrings and 1 proof sketch (`polyTimeComputable_collisionRun`). Docstrings only:
+  - every hunk lies inside a doc comment, and with doc comments blanked the files are byte-identical;
+  - all headers are byte-identical, and decls2 against the previous head is empty;
+  - every new public declaration now passes the docaudit, except the target, whose first line is prose.
+- **Rebase:** No rebase was needed: origin had only records commits after `dee0de32`.
+- **Build** on `$SP/dl-oleans`: 15 modules (the 8 helpers, `HashAndSign`, `Authentication`, base-delta, root `TCSlib`) rc 0; full head check 1209 modules OK. The tree was restored to the base snapshot afterwards.
+- **Lint (#305):** 92 FAIL / 102 WARN, with the same lines at the head as at the records tip.
+- **Evidence:** `ledoc-evidence.zip`, SHA-256 `ab6c3d6492425d73d0b1caf35fa1d2ec0960696796daaa9e5cf9af2aa16dd7c9`, 110 entries. Its manifest is `ledoc-evidence-SHA256SUMS`, and extracts
+  are in `landing-ledoc/`.
+- **PR:** draft [PR #308](https://github.com/Shilun-Allan-Li/tcslib/pull/308).

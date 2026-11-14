@@ -118,3 +118,17 @@ The disclosed overlaps re-derive private lemmas from public readers:
 - `inputWord_num_ext`, against `fac_listToNat_inj`;
 - `sumCoinsEquiv`, against `ofFn_splitCoins_symm_cast`;
 - the `Sampling` switch, against `dla_statClose_expDec`.
+
+## LE-doc · `649c4888` (built)
+
+- **Head:** `649c4888f23fbb9df71d555e952d1149a0aaa00b`, tree `1d9f6d52d136f8bc8229bfaffe3c714aadb5eebd`.
+- **Change:** 59 formula docstrings, including backticked equations in the docstrings of the two approved `DiscreteLog` readers (`DiscreteLog.lean` 1209 → 1212 lines). Docstrings only:
+  - every hunk lies inside a doc comment, and with doc comments blanked the files are byte-identical;
+  - all headers are byte-identical, and decls2 against the previous head is empty;
+  - every new public declaration now passes the docaudit, except the target, whose first line is prose.
+- **Rebase:** The branch was rebased onto `a757b6a1`; the unit files are byte-identical, and LE-facade is now `d84381ee`. The rebase makes Claude the committer of the worker commits; authors are unchanged.
+- **Build** on `$SP/dl-oleans`: 22 modules (`DiscreteLog` and everything downstream, the helpers, `Hashing`, base-delta, root `TCSlib`, `audits/pass-shelat/Checks`) rc 0; Checks byte-identical to the base; full head check 1207 modules OK. The tree was restored to the base snapshot afterwards.
+- **Lint (#305):** 92 FAIL / 102 WARN, with the same lines at the head as at the records tip.
+- **Evidence:** `ledoc-evidence.zip`, SHA-256 `172de674962865dc2f1ab2eb754a2ee40fe13a92d35204b995b2d26d67eec4b6`, 128 entries. Its manifest is `ledoc-evidence-SHA256SUMS`, and extracts
+  are in `landing-ledoc/`.
+- **PR:** draft [PR #307](https://github.com/Shilun-Allan-Li/tcslib/pull/307).

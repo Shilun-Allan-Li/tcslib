@@ -1,0 +1,116 @@
+hash-sign landing edit LE-doc (formula docstrings, proof sketch), maintainer, 2026-11-14 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: the cca2-ett and dl-crh LE-doc jobs (cca2-ett-r1-ledoc/, dl-crh-r1-ledoc/). Inputs read only: hash-sign-r1/ (review);
+  tools were copied out of it, nothing in it was written.
+BUILD: DONE (see the BUILD section at the end; head unchanged, 4f0280c8, no rebase needed). The text below this line up to
+  that section is the original LE-doc record (no Lean run then).
+landing: branch land/pass-shelat-hash-sign (local only, no upstream, not pushed), worktree $SP/wt-land-hash-sign.
+  parent LE-facade 6056f3ed7774d308846f7293e2c6ed992ce9d4f8 (tree 683ac79ce6e8f7c8a00321293a81c344a1fa05b1)
+  head   LE-doc    4f0280c85fae8730ca0dfad980b41749452980fa (tree 4485fafd1abee34129c24c8aa76f4325230eb442)
+  author = committer = Claude <noreply@anthropic.com> (checks/commit.txt). One commit; patch 0001-LE-doc.patch
+  (git format-patch -1). Commit message logs/commit-msg.txt. Changed paths (checks/changed-paths.txt): exactly the owned
+  HashAndSign.lean and the 8 helpers under HashAndSign/; Authentication.lean not touched (0-line diff).
+  /home/user/tcslib: working tree not touched (status clean, HEAD a757b6a1 as before); the landing worktree shares its object
+  store, so the commit objects live there, as for the earlier landing edits.
+scope (9 files, statements/files.txt):
+  (1) formulas: the 109 NO-FORMULA public declarations of hash-sign-r1/statements/docaudit.tsv (110 rows minus the target
+      hashAndSign_oneTimeSecure, whose frozen first line is untouched by instruction): HashAndSign.lean 6, CodecReaders 4,
+      CollisionGame 3, CollisionHandler 30, FixedGame 13, ForwardGame 26, ForwardHandler 25, OneQuery 1, OneQuerySampling 1.
+      Each first sentence gains a backticked formula transcribed from the Lean statement (defs: their defining equation or,
+      for the two handler structures, their field equations; Prop defs: the unfolding `↔`). Long statements use local
+      abbreviations named in a `where`/`with` clause (`pk`, `sk`, `i`, `cod`, `K`, `σ`, `u`, ...) and, for nested uniform
+      expectations, `𝔼 x : X, f x` defined in the same sentence as `ProbComp.expect (ProbComp.sample X) (fun x => f x)`.
+      Reference tags are kept and stay at the end of the first sentence. Formula code spans may run over a line break
+      (CommonMark), as in the cca2-ett precedent.
+      Eight polynomial-time readers state `PolyTimeComputable (f)` together with the type `f : List Bool → List Bool`
+      (docaudit counts only backticked spans with a relation symbol; `PolyTimeComputable (f)` alone has none).
+  (2) sketches: one added, to HashSignFill.polyTimeComputable_collisionRun (CollisionHandler.lean; 16-line term proof), the
+      only touched proof of >= 15 lines without one (sketchaudit, sketchaudit_fix and prooflen agree; prooflen counts all
+      kinds). Its descriptive docstring keeps its text after the new formula line; the sketch follows the proof's `let`
+      steps (pair projections, polynomial drop of the generator prefix, collisionKey/collisionHash, signer, padding, pair).
+      No other touched declaration needed one; existing sketches are unchanged in text.
+  (3) module docstrings: none changed (all 9 have Main definitions/Main results; owned file has Contents: r1 logs/module-docs.txt).
+  Edit script: tools-used/ledoc_edit.py (109 exact old -> new doc-comment texts, each old text the docstring opening through its
+  first sentence and occurring once; logs/ledoc_edit.out). Where the original first sentence was followed by more text on the
+  same line and the joined line would exceed 100 characters, the script moves that continuation to the next line (whitespace
+  only, inside the docstring).
+  checks/repro.txt: the final script applied to a git-archive export of 6056f3ed reproduces HEAD's TCSlib/Cryptography/Authentication
+  byte for byte.
+incident (no effect on the final commit): the first drafts left 20 (then 1) over-width lines and 8 docaudit NO-FORMULA rows (bare
+  `PolyTimeComputable (f)`); the script was corrected and re-applied. For the second correction the 9 files were restored with
+  `git checkout 6056f3ed -- <paths>`, which also reset the index entry of HashAndSign.lean, and the first amend (a62f704b, staged
+  from HashAndSign/ only) therefore lacked HashAndSign.lean's 6 edits. Caught by `git status`/`git diff --stat` right after;
+  amended again with that file staged (4f0280c8). Superseded commits 0dd24b7f and a62f704b are unreachable (not on any branch).
+  All checks below were run on the final head 4f0280c8 with a clean worktree, and the repro check confirms its content.
+tools-used/: r1/ = hash-sign-r1/tools/{touched,docaudit,sketchaudit,headerbytes,decls2,hunkdoc}.py copied unmodified (byte-equal).
+  hunkdoc2.py, sketchaudit_fix.py, prooflen.py = dl-crh-r1-ledoc/tools-used/ unmodified; headerbytes_perfile.py =
+  cca2-ett-r1-ledoc/tools-used/ unmodified; ledoc_edit.py new. All run with python3 -I.
+statements/:
+  touched-before.json/.tsv (eff2dcd0 vs 6056f3ed) and touched-after.json/.tsv (eff2dcd0 vs 4f0280c8): 6 ADDED, 1 CHANGED (target),
+    104 NEW_FILE, 31 UNCHANGED both (= r1 head-final/touched.tsv counts). touched-6056f3ed-vs-head.tsv: 109 CHANGED = exactly
+    the 109 NO-FORMULA names (checks/changed-vs-noformula.diff empty), 33 UNCHANGED, target hashAndSign_oneTimeSecure
+    UNCHANGED (docstring, tag, sketch, header and body).
+  docaudit-before.tsv (worktree at 6056f3ed): 110 NO-FORMULA, 1 OK; rows = r1 statements/docaudit.tsv except line numbers
+    (LE-width moved 5 rows by one line). docaudit-after.tsv: 110 OK, 1 NO-FORMULA = the target only; 0 NO-DOC, 0 LABEL.
+  sketchaudit-before.tsv / sketchaudit-fix-before.tsv / prooflen-before.tsv: 11 declarations with >= 15 proof lines, 1 without
+    a sketch (polyTimeComputable_collisionRun, as r1). sketchaudit-after.tsv / sketchaudit-fix-after.tsv / prooflen-after.tsv:
+    11, 0 without a sketch.
+  header-bytes-vs-6056f3ed.txt (r1/headerbytes.py, keyed by name) and header-bytes-perfile-vs-6056f3ed.txt
+    (headerbytes_perfile.py, keyed by file, name and occurrence): all 142 declarations of the 9 files IDENTICAL from keyword to
+    top-level `:=`/`where`, 0 different or missing.
+  decls2-vs-6056f3ed.tsv/.err: empty (0 ADDED/REMOVED/CHANGED statements). decls2-vs-base.tsv: 110 ADDED, identical to
+    r1 statements/head-final/decls2-vs-base.tsv in status, name, kind and statement (checks/decls2-vs-base-vs-r1.diff empty;
+    only line numbers move).
+checks/:
+  hunk-in-doccomment.txt (hunkdoc2.py 6056f3ed -> 4f0280c8): 9 files, 109 hunks, all IN-DOCCOMMENT; every file CODE-IDENTICAL
+    with `/-- -/` and `/-! -/` bodies blanked; 0 failures, 0 over-width or size findings. hunkdoc-precedent.txt (r1/hunkdoc.py,
+    `/--` only): same result, 0 failures.
+  widths.txt (Python len): HashAndSign 660 lines max 100, CodecReaders 110/97, CollisionGame 180/94, CollisionHandler 541/100,
+    FixedGame 199/97, ForwardGame 445/99, ForwardHandler 382/99, OneQuery 65/94, OneQuerySampling 67/94: 0 lines over 100,
+    all files < 1000 lines (were 640/104/171/450/168/384/337/63/63).
+  changed-paths.txt, commit.txt, repro.txt, changed-vs-noformula.diff, decls2-vs-base-vs-r1.diff.
+logs/: python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography, run from the worktree at 4f0280c8 (lint-head.log) and at
+  6056f3ed from a git-archive export of scripts/ + TCSlib/ (lint-6056f3ed.log, removed after): 92 FAIL, 102 WARN over 311 files
+  at both; lint-diff.txt (FAIL/WARN lines old vs new) empty; lint-diff-full.txt: only the INFO line counts of the 9 files.
+  The r1 review ran the brief's form with --check8b: lint-check8b-{6056f3ed,head}.log, also 92 FAIL / 102 WARN both,
+  lint-check8b-diff.txt empty, and the FAIL/WARN lines equal r1 logs/lint-crypto-head-r2.log.
+  ledoc_edit.out, commit-msg.txt.
+open points for the maintainer: (a) BUILD PENDING (above). (b) The formulas are hand transcriptions of the statements, checked
+  by reading each statement against its formula; no tool compares them semantically. (c) Statement abbreviations are local to
+  each docstring (`where`/`with` clauses); the `𝔼` shorthand is defined inline where used and is not Lean notation.
+SHA256SUMS: every file here except itself.
+BUILD (maintainer, 2026-11-14 UTC, after the cca2-ett and dl-crh LE-doc builds on the same tree). Method: the hash-sign review
+  (hash-sign-r1/PROVENANCE.txt: tree/, build/, restore-build/) and the ext-nosrc LE-doc build. Tools: tools-used/review/{runner,
+  treecheck,downorder}.py = cca2-ett-r1/tools/ unmodified (runner.py, treecheck.py byte-equal to hash-sign-r1/tools/). python3 -I
+  throughout. One Lean process at a time, scripts/lean_check_tree.sh with TCSLIB_OLEANS=$SP/dl-oleans only (dl-oleans-2 not
+  touched); no lake command.
+rebase decision (landing/rebase-decision-r3.log): after git fetch origin, origin/cryptography/pass-shelat-ch2-4 =
+  a757b6a18785377c158312ed051b1789cf45badf; the branch base is dee0de32 (merge-base). dee0de32..a757b6a1 is one commit (hash-sign
+  review records, DL-42) touching only PassShelatChapter5-8Plan.md and briefs/; no .lean, audits/, lean-toolchain or lake file.
+  Records-only, so NOT rebased (by instruction): head stays 4f0280c85fae8730ca0dfad980b41749452980fa, tree
+  4485fafd1abee34129c24c8aa76f4325230eb442 (landing/commits.txt). Not pushed.
+tree pre (build/tree-check-pre.txt): $SP/dl-oleans at base (after the dl-crh restore): 1199 modules (order/basefull-1199.txt) rc 0 at
+  eff2dcd0 source and at the object hashes of build/base-records.jsonl (= hash-sign-r1/tree/all-results-restored.jsonl); no stray
+  olean or empty dir; build/snapshot-pre.txt (1230 files) byte-equal to hash-sign-r1/tree/snapshot-post.txt. RESULT OK.
+order (order/head-vs-base/, downorder.py 4f0280c8 vs eff2dcd0): changed 14 (HashAndSign, 8 helpers, Authentication facade, #303's 4),
+  downstream 15 (= hash-sign-r1 order/head-vs-base/down.txt); audits/*/Checks import none. order/head-build.txt = the 15 in
+  imports-first order, identical to hash-sign-r1 order/head-build-queue.txt: ForwardHandler, OneQuery, OneQuerySampling, FixedGame,
+  CodecReaders, CollisionHandler, CollisionGame, ForwardGame, HashAndSign, Authentication, Rejection, Sampler, Extraction,
+  Randomness, TCSlib.
+build/ (runner.py from $SP/wt-land-hash-sign at 4f0280c8, logs/build-runner.out): 15/15 rc 0, 0 errors, 0 sorry; warnings only
+  Rejection 10 and Extraction 2 (inherited). Source SHA-256 and blob ids: build/source-hashes.txt (HashAndSign 6ca4cde1...,
+  Authentication 29820071...). Head check build/tree-check-head.txt: 1209 modules (order/headfull-order.txt = hash-sign-r1's, roots
+  TCSlib + both audits Checks), every module's last record rc 0 at the 4f0280c8 source and olean hash (build/all-results-head.jsonl),
+  no stray olean: RESULT OK (build/snapshot-head.txt, 1240 files).
+lint (logs/): python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography (new #305 lint) from the worktree at 4f0280c8
+  (lint-crypto-head-4f0280c8.log) and at the records tip a757b6a1 from a git-archive export (lint-crypto-tip-a757b6a1.log): 92 FAIL,
+  102 WARN at both (311 / 303 files); FAIL/WARN lines identical (lint-crypto-tip-vs-head-r3.diff empty, whitespace-normalised). Same with
+  --check8b (lint-crypto-check8b-{head-4f0280c8,tip-a757b6a1}.log, 92/102, lint-check8b-tip-vs-head-r3.diff empty). No new FAIL or
+  WARN line; FAIL/WARN lines equal to the LE-doc job's lint-head.log.
+restore/ (logs/restore-runner.out): deleted the 10 head-only oleans (8 helpers, Rejection, Sampler) and the 2 emptied directories
+  (restore/restore-deleted.txt); rebuilt order/restore-base.txt (= hash-sign-r1's: HashAndSign, Authentication, Extraction, Randomness,
+  TCSlib) from a git-archive export of eff2dcd0 (.lake/packages symlinked): 5/5 rc 0, 0 errors (base HashAndSign and Extraction carry
+  their base sorry), source and object hashes = base records (restore/restore-vs-base-records.txt). restore/tree-check-post.txt:
+  RESULT OK; restore/snapshot-post.txt byte-identical to build/snapshot-pre.txt and hash-sign-r1/tree/snapshot-post.txt (457ba704...).
+SHA256SUMS: refreshed, every file here except itself (paths without "./"); ../hash-sign-r1-ledoc-evidence.zip holds exactly the
+  manifest paths.

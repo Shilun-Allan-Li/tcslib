@@ -100,3 +100,17 @@ equalities: malformed words, a refused challenge, repeated challenges, nonce col
 | 7 | low | Generic or parallel restatements, none of them exact copies: `ETTGame.tapeImpl` with `simulate_tapeImpl_congr` and `expect_simulate_tapeImpl` (AdaptiveCPA); `recBits`; `ovr` (PRFGame); `expect_simulate_abs` (`Games.simulate_eq_of_abs_bounded`); and a private `abs_expect_sub_le_expect` (`ProbComp.abs_expect_sub_le`). | Ledger **DL-40**. The worker's promotion requests cover most of them. |
 | 8 | info | The disclosed PRFGame overlaps (`rY_one`, `log_ne_nil`, the handler-field readers) and the disclosed route deviation (see Content). | Accepted. |
 | 9 | info | The delivery has no top-level manifest. The brief requires only `evidence/SHA256SUMS`. | Recorded. |
+
+## LE-doc · `c1a3ba56` (built)
+
+- **Head:** `c1a3ba5623febf318a56a0f84be885f262e0f86e`, tree `a64aea92b6384058304ee8cb8f48f61d97d4ad71`.
+- **Change:** 94 formula docstrings, 15 proof sketches, `## Main definitions` in `Forgery` and `Transfer`. Docstrings only:
+  - every hunk lies inside a doc comment, and with doc comments blanked the files are byte-identical;
+  - all headers are byte-identical, and decls2 against the previous head is empty;
+  - every new public declaration now passes the docaudit, except the target, whose first line is prose.
+- **Rebase:** The branch was rebased onto `a757b6a1`; the unit files are byte-identical, and LE-width is now `edcbb3c1`.
+- **Build** on `$SP/dl-oleans`: 19 modules (the 11 unit modules, `PrivateKey`, `Encryption`, `Composability`, the #303 base-delta modules, root `TCSlib`) rc 0; full head check 1211 modules OK. The tree was restored to the base snapshot afterwards.
+- **Lint (#305):** 92 FAIL / 102 WARN, with the same lines at the head as at the records tip.
+- **Evidence:** `ledoc-evidence.zip`, SHA-256 `38505c81c18bfc28982d47e63c56c6b7f363024439e4d9210054d13920836416`, 116 entries. Its manifest is `ledoc-evidence-SHA256SUMS`, and extracts
+  are in `landing-ledoc/`.
+- **PR:** draft [PR #306](https://github.com/Shilun-Allan-Li/tcslib/pull/306).

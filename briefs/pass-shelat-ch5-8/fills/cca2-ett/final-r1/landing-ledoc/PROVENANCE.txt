@@ -1,0 +1,87 @@
+cca2-ett landing edit LE-doc (formula docstrings, proof sketches, module contents), maintainer, 2026-11-14 UTC
+Method: the ext-nosrc LE-doc job (extnosrc-r1-ledoc/PROVENANCE.txt). Inputs read only: cca2-ett-r1/ (review).
+landing: branch land/pass-shelat-cca2-ett (local only, no upstream, not pushed), worktree $SP/wt-land-cca2-ett.
+  parent LE-width 8c3e6496a8ce95c77e61067ad3067394081ed80b (tree 9ecb64f2cc73b51361bcf7d217b7a1422d8b14ab)
+  head   LE-doc   399bc1f287ba644a7dc95f2d26e266e8fbd64143 (tree 2e94c2fa2c7bc702d1d7e2110e9a8bc4379d6714)
+  author = committer = Claude <noreply@anthropic.com>. Patch: 0001-LE-doc.patch (git format-patch -1).
+BUILD: DONE (see the BUILD section at the end; head after the r3 rebase c1a3ba56). The text below this line up to
+  that section is the original LE-doc record (no Lean run then); its hashes refer to the pre-rebase head 399bc1f2.
+scope: the 11 files TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag{.lean,/*.lean}.
+  (1) formulas: the 94 NO-FORMULA public declarations of cca2-ett-r1/statements/head-le/docaudit.tsv (95 rows
+      minus the target ccaScheme_cca2, untouched by instruction): Games 24, Lazy 24, Handler 15, CPAHandler 11,
+      Forgery 6, CPAReduction 5, Reduction 4, Machines 3, Tools 2.
+  (2) sketches: the 15 NO-SKETCH rows of cca2-ett-r1/statements/head-le/sketchaudit.tsv (proofs >= 15 lines):
+      public bHandler_impl_challenge_none, ettLazyTape_bInv, dHandler_impl_dec_ref, dHandler_impl_dec_wf,
+      dHandler_impl_dec_nwf, dHandler_impl_challenge_none; private ofFn_cca_decAnswer, fields_bState,
+      polyTimeComputable_bRun, bTag_fields, bDecL_fields, revInv_enc_new, revInv_chal_new, fields_dState,
+      fields_input (Handler). All 15 already had docstrings; none was added. polyTimeComputable_bRun's
+      descriptive docstring was rewritten as a formula line plus a sketch paragraph with the same content.
+  (3) module docstrings: `## Main definitions` added to Forgery.lean (RevInv) and Transfer.lean (stRec), the
+      only public defs of those files.
+  Edit script: tools-used/ledoc_edit.py (exact old -> new texts, each occurring once; where an old text includes
+  the next declaration line, for the two identical ettAcc bound docstrings, that line is repeated unchanged).
+  A first application left 2 lines in Machines.lean over 100 characters; the two Machines replacements were
+  re-wrapped and the script re-applied from a clean checkout (git checkout -- TCSlib) before committing.
+statements/ (reviewer tools copied unmodified to tools-used/r1/, byte-equal to cca2-ett-r1/tools/):
+  docaudit-before.tsv (touched-before.json: eff2dcd0 vs 8c3e6496): 155 OK, 95 NO-FORMULA; rows identical to
+    cca2-ett-r1 head-le/docaudit.tsv (docaudit-before-vs-r1.diff empty; only line numbers/excerpts move with LE-width).
+  docaudit-after.tsv (touched-after.json: eff2dcd0 vs 399bc1f2): 249 OK, 1 NO-FORMULA = the target ccaScheme_cca2
+    (first line prose, kept by instruction).
+  sketchaudit-before.tsv: 37 theorems with >= 15 proof lines, 15 without a sketch (= r1). sketchaudit-after.tsv:
+    37, 0 without a sketch.
+  hunk-in-docstring.txt (tools-used/hunkdoc2.py, 8c3e6496 vs 399bc1f2): hunkdoc.py extended to module doc
+    comments `/-! -/` as well as `/-- -/` (diff with r1/hunkdoc.py: only the span start). 108 hunks, all
+    IN-DOCSTRING; with doc comments blanked, every old and new file byte-identical (11 CODE-IDENTICAL); 0 failures.
+  widths.txt: max width 100 (Reduction 99), 0 lines over 100 (Python len); sizes 753/806/370/559/460/886/630/
+    359/395/295/222 lines (EncryptThenTag, CPAHandler, CPAReduction, Forgery, Games, Handler, Lazy, Machines,
+    Reduction, Tools, Transfer), all < 1000.
+  header-bytes-vs-8c3e6496.txt (r1/headerbytes.py): TOTAL 369 compared, 0 different or missing (it keys by name,
+    so the 3 private names repeated in Handler and CPAHandler collapse); header-bytes-perfile-vs-8c3e6496.txt
+    (tools-used/headerbytes_perfile.py, same cut, keyed by file, name and occurrence): 372 compared, all IDENTICAL.
+  decls2-vs-8c3e6496.tsv/.err: empty (0 ADDED/REMOVED/CHANGED statements). decls2-vs-base.tsv: 249 ADDED (as r1).
+  touched-8c3e6496-vs-head.tsv: 106 CHANGED = exactly the 94 formula declarations and the 15 sketch proofs
+    (3 in both: dHandler_impl_dec_ref, dHandler_impl_dec_nwf, ettLazyTape_bInv); 266 UNCHANGED, target included
+    (ccaScheme_cca2 UNCHANGED: first line, reference tag, sketch and header untouched).
+logs/: python3 -I scripts/campaign_style_lint.py, run from the worktree at 8c3e6496 and at 399bc1f2, as the review:
+  TCSlib/Cryptography/Encryption/PrivateKey --check8b: 0 FAIL, 5 WARN over 26 files both (FAIL/WARN lines at
+  8c3e6496 = cca2-ett-r1 lint-pk-head-r2.log); TCSlib/Cryptography: 235 FAIL, 102 WARN over 313 files both
+  (= lint-crypto-head-r2.log). lint-{pk,crypto}-diff.txt (FAIL and WARN lines old vs new): empty. Only INFO line
+  counts differ; Lazy.lean now has an INFO "630 lines > target 600" (soft target; hard limit 1000).
+BUILD (maintainer, 2026-11-14 UTC). Method: the cca2-ett review (cca2-ett-r1/PROVENANCE.txt: tree/, build/, restore-build/)
+  and the ext-nosrc LE-doc build (extnosrc-r1-ledoc/PROVENANCE.txt). Tools: tools-used/review/{runner,treecheck,downorder}.py =
+  cca2-ett-r1/tools/ unmodified (runner.py and treecheck.py also byte-equal to hash-sign-r1/tools/); tools-used/review-build-rebase.sh
+  (new, the rebase and its checks). All Python run with python3 -I. One Lean process at a time, scripts/lean_check_tree.sh with
+  TCSLIB_OLEANS=$SP/dl-oleans only (dl-oleans-2 not touched); no lake command.
+rebase r3 (landing/rebase-r3.log): git fetch origin, then git rebase of land/pass-shelat-cca2-ett (old head 399bc1f2, base 48cd45ab)
+  onto origin/cryptography/pass-shelat-ch2-4 = a757b6a18785377c158312ed051b1789cf45badf (dee0de32 is an ancestor). Since 48cd45ab the
+  tip adds bc0cdd7c, 8b27fd69, 3faaf477/689825ee/8d0db401 (#305), dee0de32, a757b6a1: outside briefs/ only PassShelatChapter5-8Plan.md
+  and scripts/campaign_style_lint.py; no .lean or audits/ path. rc 0, no conflict; patch ids of the 10 commits identical; the 11 unit
+  files' blob ids identical before and after (landing/unit-files-{before,after}.txt), TCSlib/ and audits/ identical to 399bc1f2.
+  New head c1a3ba5623febf318a56a0f84be885f262e0f86e, tree a64aea92b6384058304ee8cb8f48f61d97d4ad71 (LE-width edcbb3c1, tree fd00e1cb).
+  landing/commits-r3.txt, landing/series-r3/0001-0010 (git format-patch a757b6a1..c1a3ba56). Committer Claude. Not pushed.
+tree pre (build/tree-check-pre.txt): $SP/dl-oleans verified at base before any build: 1199 modules (order/basefull-1199.txt) rc 0 at the
+  eff2dcd0 source and at the object hashes of build/base-records.jsonl (= hash-sign-r1/tree/all-results-restored.jsonl), no stray olean,
+  no empty dir; build/snapshot-pre.txt (1230 files, PFR included) byte-equal to hash-sign-r1/tree/snapshot-post.txt
+  (copied as build/snapshot-ref-hash-sign-post.txt). RESULT OK.
+order (order/head-vs-base/, downorder.py c1a3ba56 vs eff2dcd0): changed 15 (the 11 unit files + #303's 4), downstream 19, two disjoint
+  chains; audits/*/Checks import none. order/head-build.txt = the 19 in imports-first order: the 10 helpers, EncryptThenTag, PrivateKey,
+  Encryption, Composability, base-delta Rejection, Sampler, Extraction, Randomness, root TCSlib.
+build/ (runner.py from $SP/wt-land-cca2-ett at c1a3ba56, logs/build-runner.out): 19/19 rc 0, 0 errors, 0 sorry; warnings 0 except
+  Rejection 10 and Extraction 2 (the inherited linter warnings, as in the ext-nosrc and cca2-ett reviews). Source SHA-256 and blob ids:
+  build/source-hashes.txt (EncryptThenTag e885b55c..., helpers Tools df401817..., CPAHandler 2f33c3d6..., ...; TCSlib 942193a0...).
+  Head check build/tree-check-head.txt: 1211 modules (order/headfull-order.txt = cca2-ett-r1 headfull-r2-order.txt, roots TCSlib + both
+  audits Checks; same set as order/head-vs-base/order.txt plus the 2 Checks) every module's last record rc 0 at the c1a3ba56 source and
+  olean hash (build/all-results-head.jsonl), no stray olean: RESULT OK (build/snapshot-head.txt, 1242 files).
+lint (logs/, run from the worktree at c1a3ba56 and from a git-archive export of a757b6a1's scripts/ + TCSlib/):
+  python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography (new #305 lint): 92 FAIL, 102 WARN at both (303 files at the tip, 313 at
+  the head); FAIL/WARN lines identical (logs/lint-crypto-tip-vs-head-r3.diff empty, whitespace-normalised; also identical raw). No new
+  FAIL or WARN line; no FAIL/WARN line names an EncryptThenTag file. --check8b on TCSlib/Cryptography/Encryption/PrivateKey: 0 FAIL,
+  5 WARN at both (16 / 26 files), FAIL/WARN lines identical (logs/lint-pk-tip-vs-head-r3.diff empty) and equal to lint-pk-8c3e6496.log.
+restore/ (logs/restore-runner.out): deleted the 12 head-only oleans (10 helpers, Rejection, Sampler) and the 2 emptied directories
+  (restore/restore-deleted.txt), rebuilt order/restore-base.txt (= cca2-ett-r1's: EncryptThenTag, PrivateKey, Encryption, Composability,
+  Extraction, Randomness, TCSlib) from a git-archive export of eff2dcd0 (TCSlib, TCSlib.lean, audits, scripts, lean-toolchain; .lake/packages
+  symlinked to the repository's packages): 7/7 rc 0, 0 errors (base EncryptThenTag and Extraction carry their base sorry), source and
+  object hashes = base records (restore/restore-vs-base-records.txt). restore/tree-check-post.txt: RESULT OK, restore/snapshot-post.txt
+  byte-identical to build/snapshot-pre.txt and to hash-sign-r1/tree/snapshot-post.txt (SHA-256 457ba704...).
+SHA256SUMS: refreshed, every file here except itself (paths without "./"); the evidence zip
+  ../cca2-ett-r1-ledoc-evidence.zip holds exactly the manifest paths (as cca2-ett-r1-evidence.zip).
