@@ -21,16 +21,21 @@ shift-and-add loop, run through `Complexity.BinArith.polyTimeComputable_iterate`
 * `Complexity.BinArith.mul` — the product of the two components of a pair.
 * `Complexity.BinArith.mulStep` — one round of shift-and-add on `⟨A, ⟨B, acc⟩⟩`.
 * `Complexity.BinArith.revStep` — one round of reversal on `⟨src, acc⟩`.
+* `Complexity.BinArith.sqStep` — one round of binary repeated squaring on `⟨p, ⟨E, ⟨b, acc⟩⟩⟩`
+  for a given product, shared by modular exponentiation and `powCap`.
+* `Complexity.BinArith.powCap` — the power of the first value to the second, capped at one plus
+  the third.
 
 ## Main results
 
 * `Complexity.BinArith.polyTimeComputable_mul` — binary multiplication is polynomial-time.
 * `Complexity.BinArith.polyTimeComputable_reverse` — word reversal is polynomial-time.
+* `Complexity.BinArith.polyTimeComputable_powCap` — the saturated power is polynomial-time.
 
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
-  Cambridge University Press, 2009. (§7.2.)
+  Cambridge University Press, 2009. (§7.2; Exercise 7.3.)
 -/
 
 namespace Complexity
@@ -241,6 +246,66 @@ theorem polyTimeComputable_mul : PolyTimeComputable mul := by
   simp only [bitsVal, mul_zero, add_zero] at hv
   rw [hv]
 
+/-! ### Repeated-squaring rounds -/
+
+/-- One round of binary repeated squaring [AB09, Exercise 7.3] on `⟨p, ⟨E, ⟨b, acc⟩⟩⟩`, for
+a product `op` that reads its parameter from the first component of `⟨p, ⟨x, y⟩⟩` and its
+factors from the second: if the low bit of `E` is set, `acc := op ⟨p, ⟨acc, b⟩⟩`; then
+`b := op ⟨p, ⟨b, b⟩⟩` and `E` loses its low bit. States with `E = []`, or on which `stop`
+holds, are fixed. -/
+def sqStep (op : List Bool → List Bool) (stop : List Bool → Bool) (S : List Bool) :
+    List Bool :=
+  if decide (pairFstD (pairSndD S) = []) || stop S then S
+  else pairEncode (pairFstD S) (pairEncode ((pairFstD (pairSndD S)).drop 1)
+    (pairEncode (op (pairEncode (pairFstD S) (pairEncode (pairFstD (pairSndD (pairSndD S)))
+        (pairFstD (pairSndD (pairSndD S))))))
+      (if (pairFstD (pairSndD S)).headD false then
+        op (pairEncode (pairFstD S) (pairEncode (pairSndD (pairSndD (pairSndD S)))
+          (pairFstD (pairSndD (pairSndD S)))))
+      else pairSndD (pairSndD (pairSndD S)))))
+
+/-- A repeated-squaring round fixes a state with an empty exponent or a stopped state. -/
+theorem sqStep_of_stop {op : List Bool → List Bool} {stop : List Bool → Bool}
+    {S : List Bool} (h : pairFstD (pairSndD S) = [] ∨ stop S = true) :
+    sqStep op stop S = S := by
+  unfold sqStep
+  rw [if_pos]
+  rcases h with h | h
+  · rw [h]
+    rfl
+  · rw [h, Bool.or_true]
+
+/-- A repeated-squaring round on a live state consumes the low exponent bit `c`. -/
+theorem sqStep_cons (op : List Bool → List Bool) (stop : List Bool → Bool)
+    (p : List Bool) (c : Bool) (E' b acc : List Bool)
+    (h : stop (pairEncode p (pairEncode (c :: E') (pairEncode b acc))) = false) :
+    sqStep op stop (pairEncode p (pairEncode (c :: E') (pairEncode b acc))) =
+      pairEncode p (pairEncode E' (pairEncode (op (pairEncode p (pairEncode b b)))
+        (if c then op (pairEncode p (pairEncode acc b)) else acc))) := by
+  unfold sqStep
+  rw [if_neg (by simp only [pairFstD_pairEncode, pairSndD_pairEncode, h, reduceCtorEq,
+    decide_false, Bool.or_false, Bool.false_eq_true, not_false_eq_true])]
+  simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.drop_succ_cons, List.drop_zero,
+    List.headD_cons]
+
+/-- A repeated-squaring round is polynomial-time when its product and stop test are. -/
+theorem polyTimeComputable_sqStep {op : List Bool → List Bool} {stop : List Bool → Bool}
+    (hop : PolyTimeComputable op) (hstop : PolyTimeComputable (fun S => [stop S])) :
+    PolyTimeComputable (sqStep op stop) := by
+  have hb := polyTimeComputable_pairFstD.comp polyTimeComputable_slot3
+  have hm : ∀ {f g : List Bool → List Bool}, PolyTimeComputable f → PolyTimeComputable g →
+      PolyTimeComputable (fun S => op (pairEncode (pairFstD S) (pairEncode (f S) (g S)))) :=
+    fun hf hg => hop.comp (polyTimeComputable_pairFstD.pairEncode (hf.pairEncode hg))
+  unfold sqStep
+  exact polyTimeComputable_ite
+    (polyTimeComputable_or (polyTimeComputable_isNil.comp polyTimeComputable_slot2) hstop)
+    polyTimeComputable_id
+    (polyTimeComputable_pairFstD.pairEncode
+      ((polyTimeComputable_tail.comp polyTimeComputable_slot2).pairEncode
+        ((hm hb hb).pairEncode (polyTimeComputable_ite
+          (polyTimeComputable_headD.comp polyTimeComputable_slot2)
+          (hm polyTimeComputable_slot4 hb) polyTimeComputable_slot4))))
+
 /-! ### Saturated powers -/
 
 /-- The power of the first value to the second, capped at one plus the third value.
@@ -347,38 +412,13 @@ private theorem powCapMul_pair (C a b : ℕ) :
   rw [powCapMin_eq]
   simp only [pairFstD_pairEncode, pairSndD_pairEncode, mul_pairEncode, bitsVal_bits]
 
-/-- One saturated repeated-squaring round on `⟨C, ⟨E, ⟨b, acc⟩⟩⟩`.
-An empty exponent word fixes the state. -/
-private def powCapStep (S : List Bool) : List Bool :=
-  if pairFstD (pairSndD S) = [] then S
-  else pairEncode (pairFstD S)
-    (pairEncode ((pairFstD (pairSndD S)).drop 1)
-      (pairEncode
-        (powCapMul (pairEncode (pairFstD S)
-          (pairEncode (pairFstD (pairSndD (pairSndD S)))
-            (pairFstD (pairSndD (pairSndD S))))))
-        (if (pairFstD (pairSndD S)).headD false then
-          powCapMul (pairEncode (pairFstD S)
-            (pairEncode (pairSndD (pairSndD (pairSndD S)))
-              (pairFstD (pairSndD (pairSndD S)))))
-        else pairSndD (pairSndD (pairSndD S)))))
+/-- One saturated repeated-squaring round on `⟨C, ⟨E, ⟨b, acc⟩⟩⟩`: the shared round `sqStep`
+with multiplication saturated at `C`. An empty exponent word fixes the state. -/
+private def powCapStep : List Bool → List Bool := sqStep powCapMul (fun _ => false)
 
 /-- A saturated squaring round is polynomial-time. -/
-private theorem powCapStep_FP : PolyTimeComputable powCapStep := by
-  have hb := polyTimeComputable_pairFstD.comp polyTimeComputable_slot3
-  have hm : ∀ {f g : List Bool → List Bool}, PolyTimeComputable f → PolyTimeComputable g →
-      PolyTimeComputable (fun S => powCapMul (pairEncode (pairFstD S) (pairEncode (f S) (g S)))) :=
-    fun hf hg => powCapMul_FP.comp (polyTimeComputable_pairFstD.pairEncode (hf.pairEncode hg))
-  unfold powCapStep
-  convert polyTimeComputable_ite
-    (polyTimeComputable_isNil.comp polyTimeComputable_slot2) polyTimeComputable_id
-    (polyTimeComputable_pairFstD.pairEncode
-      ((polyTimeComputable_tail.comp polyTimeComputable_slot2).pairEncode
-        ((hm hb hb).pairEncode (polyTimeComputable_ite
-          (polyTimeComputable_headD.comp polyTimeComputable_slot2)
-          (hm polyTimeComputable_slot4 hb) polyTimeComputable_slot4)))) using 1
-  funext S
-  simp only [decide_eq_true_eq, Function.comp_apply, id_eq]
+private theorem powCapStep_FP : PolyTimeComputable powCapStep :=
+  polyTimeComputable_sqStep powCapMul_FP (polyTimeComputable_const [false])
 
 /-- The initial saturated squaring state has cap `c+1` and accumulator one. -/
 private def powCapInit (z : List Bool) : List Bool :=
@@ -428,16 +468,18 @@ private theorem powCapInv_step {z S : List Bool} (h : PowCapInv z S) :
   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
   by_cases he : E = []
   · subst E
-    simp only [powCapStep, pairFstD_pairEncode, pairSndD_pairEncode]
+    unfold powCapStep
+    rw [sqStep_of_stop (Or.inl (by simp only [pairFstD_pairEncode, pairSndD_pairEncode]))]
     exact ⟨⟨[], b, acc, rfl, hE, hb, ha, hv⟩, fun h => (h rfl).elim, fun _ => rfl⟩
   have hs : powCapStep (pairEncode (Nat.bits C)
       (pairEncode E (pairEncode (Nat.bits b) (Nat.bits acc)))) =
       pairEncode (Nat.bits C) (pairEncode (E.drop 1)
         (pairEncode (Nat.bits (min (b * b) C))
           (Nat.bits (if E.headD false then min (acc * b) C else acc)))) := by
-    simp only [powCapStep, pairFstD_pairEncode, pairSndD_pairEncode, he, if_false,
-      powCapMul_pair]
-    cases E.headD false <;> rfl
+    obtain ⟨c, E', rfl⟩ := List.exists_cons_of_ne_nil he
+    unfold powCapStep
+    rw [sqStep_cons _ _ _ _ _ _ _ rfl, powCapMul_pair, powCapMul_pair]
+    cases c <;> rfl
   rw [hs]
   refine ⟨⟨E.drop 1, min (b * b) C, if E.headD false then min (acc * b) C else acc,
     rfl, ?_, min_le_right _ _, ?_, ?_⟩, ?_, fun h => (he h).elim⟩
