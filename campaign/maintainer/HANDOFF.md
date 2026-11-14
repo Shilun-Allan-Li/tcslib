@@ -16,7 +16,7 @@ Campaign Lean is `aeeda36452d6fbdf76b8670bb6cf1f569b7d1203`. Its replay output i
 
 | PR / gate | Current state |
 |---|---|
-| #302 / 135 | **Gate closed (CLEAR, 0/0/0, 13 notes)** at `50bb801a`. Clear to merge once the fresh replay on campaign `aeeda364` (after #300) passes; running. Base of Ladner fill 1 (dispatched 2026-11-14). See campaign/gates/135-ladner-readers/. |
+| #302 / 135 | **Clear to merge.** Gate 135 closed (CLEAR, 0/0/0, 13 notes) at `50bb801a`; fresh replay on campaign `aeeda364` (after #300, still current) passed; merges cleanly. Draft: mark ready, then merge; then adopt `oleans-lr135-caeed`. Base of Ladner fill 1 (dispatched 2026-11-14). |
 | #301 / 134 | **Merged** at `b313afe522991f2114390952f26ffe7de825bace` (2026-11-14). Gate closed (CLEAR). Its replay output is the campaign snapshot `oleans-cb313` (876 objects; campaign/status/2026-11-14-merge-301/). |
 | #300 / 133 | **Merged** at `aeeda36452d6fbdf76b8670bb6cf1f569b7d1203` (2026-11-14). Gate closed (round 2 CLEAR). Its replay output is the campaign snapshot `oleans-caeed` (876 objects; campaign/status/2026-11-14-merge-300/). |
 | #296 / 132 | **Merged** at `5ab222167eb12664d97d255766c5def15b6d5d50` (2026-11-14). Gate closed (round 3 CLEAR). Its replay output is the campaign snapshot `oleans-c5ab2` (876 objects; campaign/status/2026-11-14-merge-296/). |
