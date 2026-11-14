@@ -493,7 +493,7 @@ private theorem fields_input {i : Fin 3} (x L : List Bool) (j : ℕ)
     (InteractiveHandler.rS_input ..).trans (ofFn_dHState q E hE b n j o)
   have hcnt : rCnt (InteractiveHandler.input n z (List.ofFn (dHSeed q E hE b n (k, W)))
       (List.ofFn (dHState q E hE b n j o)) i x L) = List.replicate j true := by
-    rw [rCnt, hS, h₁]
+    rw [InteractiveHandler.rCnt_input, ofFn_dHState, h₁]
   have hU := InteractiveHandler.rU_input (k := 3) n z (List.ofFn (dHSeed q E hE b n (k, W)))
     (List.ofFn (dHState q E hE b n j o)) i x L
   refine ⟨hU, InteractiveHandler.rS_input .., InteractiveHandler.rI_input ..,
