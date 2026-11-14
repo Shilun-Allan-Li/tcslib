@@ -76,6 +76,13 @@ def DecidesInTime (M : FinTM Bool) (L : Language Bool) (T : ℕ → ℕ) : Prop 
   ∀ x : List Bool,
     M.ComputesInTime x [MultiTapeTM.indicator (L : Set (List Bool)) x] (T x.length)
 
+/-- `M` decides `L` in time `T` exactly when it computes `L`'s Boolean indicator, as a one-bit
+output, in time `T`. -/
+theorem decidesInTime_iff (M : FinTM Bool) (L : Language Bool) (T : ℕ → ℕ) :
+    M.DecidesInTime L T ↔
+      M.ComputesFunInTime (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) T := by
+  rw [computesFunInTime_iff]; rfl
+
 end Turing.FinTM
 
 namespace Complexity

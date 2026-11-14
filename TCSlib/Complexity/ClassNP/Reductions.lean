@@ -56,6 +56,12 @@ string `x`. -/
 def PolyTimeReducible (L L' : Language Bool) : Prop :=
   ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L'
 
+/-- `L` reduces to `L'` in polynomial time exactly when a polynomial-time computable `f` maps
+members of `L` to members of `L'` and non-members to non-members. -/
+theorem polyTimeReducible_iff (L L' : Language Bool) :
+    PolyTimeReducible L L' ↔
+      ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L' := Iff.rfl
+
 @[inherit_doc] scoped infix:50 " ≤ₚ " => PolyTimeReducible
 
 /-- Karp reducibility is reflexive [AB09, Exercise 2.9]: the identity reduces
@@ -125,9 +131,16 @@ theorem mem_P_of_polyTimeReducible {L L' : Language Bool}
 def NPHard (L : Language Bool) : Prop :=
   ∀ L' ∈ NP, L' ≤ₚ L
 
+/-- `L` is `NP`-hard exactly when every language in `NP` reduces to it in polynomial time. -/
+theorem NPHard_iff (L : Language Bool) :
+    NPHard L ↔ ∀ L' : Language Bool, L' ∈ NP → PolyTimeReducible L' L := Iff.rfl
+
 /-- **`NP`-completeness** [AB09, Definition 2.7]: `L` is in `NP` and `NP`-hard. -/
 def NPComplete (L : Language Bool) : Prop :=
   L ∈ NP ∧ NPHard L
+
+/-- `L` is `NP`-complete exactly when it is in `NP` and `NP`-hard. -/
+theorem NPComplete_iff (L : Language Bool) : NPComplete L ↔ L ∈ NP ∧ NPHard L := Iff.rfl
 
 /-- **If an `NP`-hard language is in `P`, then `P = NP`** [AB09, Theorem 2.8.2].
 
