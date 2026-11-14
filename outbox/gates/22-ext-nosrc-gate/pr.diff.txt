@@ -1,0 +1,1029 @@
+diff --git a/TCSlib/Cryptography/Randomness.lean b/TCSlib/Cryptography/Randomness.lean
+index 9020b6d8a..a2e2c484e 100644
+--- a/TCSlib/Cryptography/Randomness.lean
++++ b/TCSlib/Cryptography/Randomness.lean
+@@ -3,6 +3,8 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Randomness.Extraction
++import TCSlib.Cryptography.Randomness.Extraction.Rejection
++import TCSlib.Cryptography.Randomness.Extraction.Sampler
+ import TCSlib.Cryptography.Randomness.Learning
+ import TCSlib.Cryptography.Randomness.BPPBridge
+ import TCSlib.Cryptography.Randomness.Derandomization
+diff --git a/TCSlib/Cryptography/Randomness/Extraction.lean b/TCSlib/Cryptography/Randomness/Extraction.lean
+index 77cd11f44..f7bf668c8 100644
+--- a/TCSlib/Cryptography/Randomness/Extraction.lean
++++ b/TCSlib/Cryptography/Randomness/Extraction.lean
+@@ -5,13 +5,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.InformationTheory.Entropy
+ import TCSlib.InformationTheory.Extractors
+ import TCSlib.Cryptography.Asymptotic.Adversary
++import TCSlib.Cryptography.Randomness.Extraction.Rejection
++import TCSlib.Cryptography.Randomness.Extraction.Sampler
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# No efficient one-bit extractor for efficient sources (statement phase)
++# No efficient one-bit extractor for efficient sources
+ 
+ [PS10, Theorem 183.6]: let `C` be the set of all efficiently computable `(n − 2)`-sources on
+ `{0,1}^n`; then there is no 1-bit `1/4`-extractor for `C`.
+@@ -38,6 +40,11 @@ because `Ext` is. And `Pr[Ext(X) = 1] ≥ 1 − (3/4)^{10} > 0.9`, so `Ext(X)` i
+   trivial, since every distribution is a `(n − 2)`-source there (a point mass is a witness); the
+   content is at `n ≥ 3`.
+ 
++## Contents
++
++* `Randomness.Extraction.Rejection`: finite rejection laws and source-preserving mixtures.
++* `Randomness.Extraction.Sampler`: the uniform machine and its consecutive coin blocks.
++
+ ## Main definitions
+ 
+ * `Randomness.samplerLaw`: the law of a machine's `n`-bit output.
+@@ -46,8 +53,8 @@ because `Ext` is. And `Pr[Ext(X) = 1] ≥ 1 − (3/4)^{10} > 0.9`, so `Ext(X)` i
+ 
+ ## Main results
+ 
+-* `Randomness.not_isExtractor_effSources` (Thm 183.6, stated; a `sorry` under the source's
+-  sketch).
++* `Randomness.not_isExtractor_effSources` (Thm 183.6): no efficient one-bit extractor for
++  efficiently samplable `(n−2)`-sources, proved by bounded rejection sampling.
+ 
+ ## References
+ 
+@@ -102,6 +109,188 @@ def extBit (Ext : List Bool → List Bool) (n : ℕ) : (Fin n → Bool) → (Fin
+ theorem extBit_eq (Ext : List Bool → List Bool) (n : ℕ) (x : Fin n → Bool) :
+     extBit Ext n x = padFin 1 (Ext (List.ofFn x)) := rfl
+ 
++/-- The uniform sampler at the fixed width `n` outputs its `n` coin bits and has no advice:
++`(uniformSampler n).runAt n [] r = List.ofFn r` and `(uniformSampler n).coins = .const n`. -/
++noncomputable def uniformSampler (n : ℕ) : NUPPT :=
++  NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD (.const n)
++
++/-- The uniform sampler uses the constant coin polynomial `n`:
++`(uniformSampler n).coins = .const n`. -/
++theorem uniformSampler_coins (n : ℕ) : (uniformSampler n).coins = .const n :=
++  NUPPT.coins_ofPolyTimeUniform polyTimeComputable_pairSndD (.const n)
++
++/-- The uniform sampler has empty advice at every activation parameter:
++`(uniformSampler n).Uniform`, i.e. `∀ m, (uniformSampler n).advice m = []`. -/
++theorem uniformSampler_uniform (n : ℕ) : (uniformSampler n).Uniform :=
++  NUPPT.ofPolyTimeUniform_uniform polyTimeComputable_pairSndD (.const n)
++
++/-- The uniform sampler returns the encoding of its coin vector:
++`(uniformSampler n).runAt n [] r = List.ofFn r`. -/
++theorem uniformSampler_runAt (n : ℕ) (r : (uniformSampler n).Coins n) :
++    (uniformSampler n).runAt n [] r = List.ofFn r := by
++  rw [NUPPT.runAt_eq]
++  change (NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD (.const n)).runAtL
++    n [] (List.ofFn r) = _
++  rw [NUPPT.runAtL_ofPolyTimeUniform, pairSndD_pairEncode]
++
++/-- The coins of the uniform sampler are canonically the `n`-bit vectors:
++`(uniformSampler n).Coins n ≃ (Fin n → Bool)`. -/
++noncomputable def uniformSamplerCoins (n : ℕ) :
++    (uniformSampler n).Coins n ≃ (Fin n → Bool) :=
++  (NUPPT.coinsEquivPoly (uniformSampler_coins n) n).trans
++    (Equiv.arrowCongr (finCongr (PolyExpr.eval_const n n)) (Equiv.refl Bool))
++
++/-- The canonical uniform-sampler coin equivalence is the composition of the published
++coin-polynomial identification with the constant-polynomial width equality:
++`uniformSamplerCoins n = e₁.trans e₂`, where `e₁ = NUPPT.coinsEquivPoly (uniformSampler_coins n) n`
++and `e₂ = Equiv.arrowCongr (finCongr (PolyExpr.eval_const n n)) (Equiv.refl Bool)`. -/
++theorem uniformSamplerCoins_eq (n : ℕ) : uniformSamplerCoins n =
++    (NUPPT.coinsEquivPoly (uniformSampler_coins n) n).trans
++      (Equiv.arrowCongr (finCongr (PolyExpr.eval_const n n)) (Equiv.refl Bool)) := rfl
++
++/-- The uniform sampler's coin equivalence preserves the encoded word:
++`List.ofFn (uniformSamplerCoins n r) = List.ofFn r`. -/
++theorem uniformSamplerCoins_ofFn (n : ℕ) (r : (uniformSampler n).Coins n) :
++    List.ofFn (uniformSamplerCoins n r) = List.ofFn r := by
++  rw [uniformSamplerCoins, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
++    NUPPT.coinsEquivPoly_ofFn]
++
++/-- The law of the sampler that returns its coins is the uniform law on `n`-bit strings:
++`samplerLaw (uniformSampler n) n = U_n`.
++The coin equivalence preserves encodings, and a bijection preserves uniformity. -/
++theorem samplerLaw_uniformSampler (n : ℕ) :
++    samplerLaw (uniformSampler n) n = FinDist.uniform (Fin n → Bool) := by
++  have hread : (fun r : (uniformSampler n).Coins n =>
++      padFin n ((uniformSampler n).runAt n [] r)) = uniformSamplerCoins n := by
++    funext r
++    rw [uniformSampler_runAt, ← uniformSamplerCoins_ofFn n r, padFin_ofFn]
++  rw [samplerLaw, hread]
++  exact Rejection.map_uniform_equiv (uniformSamplerCoins n)
++
++/-- Uniform `n`-bit strings form an efficiently samplable `(n−2)`-source:
++`U_n ∈ effSources (fun n => n - 2) n`. -/
++theorem uniform_mem_effSources (n : ℕ) :
++    FinDist.uniform (Fin n → Bool) ∈ effSources (fun n => (n : ℝ) - 2) n := by
++  have hu : FinDist.IsSource (n : ℝ) (FinDist.uniform (Fin n → Bool)) := by
++    simpa [Fintype.card_bool, Fintype.card_fin, Real.logb_pow] using
++      (FinDist.isSource_uniform (α := Fin n → Bool))
++  exact (effSources_iff _ _ _).2
++    ⟨uniformSampler n, uniformSampler_uniform n, (samplerLaw_uniformSampler n).symm,
++      hu.mono (by linarith)⟩
++
++/-- The first output bit read by `extBit` is the head of the extractor's output,
++with `false` for an empty output: `extBit Ext n x 0 = (Ext (List.ofFn x)).headD false`. -/
++theorem extBit_zero (Ext : List Bool → List Bool) (n : ℕ) (x : Fin n → Bool) :
++    extBit Ext n x 0 = (Ext (List.ofFn x)).headD false := by
++  rw [extBit_eq, padFin_apply]
++  cases Ext (List.ofFn x) <;> rfl
++
++/-- A uniform one-bit word has its first bit true with probability `1/2`:
++`Pr_{U_1}[fun x => x 0] = 1/2`. -/
++theorem uniform_one_probTrue :
++    (FinDist.uniform (Fin 1 → Bool)).probTrue (fun x => x 0) = 1 / 2 := by
++  classical
++  rw [FinDist.probTrue_eq]
++  have hs : (Finset.univ : Finset (Fin 1 → Bool)).filter (fun x => x 0 = true) =
++      {fun _ => true} := by
++    ext x
++    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
++    constructor
++    · intro h
++      funext i
++      have hi : i = 0 := Subsingleton.elim _ _
++      simpa only [hi] using h
++    · rintro rfl
++      rfl
++  rw [hs, Finset.sum_singleton, FinDist.uniform_apply]
++  norm_num
++
++/-- If the candidate extractor succeeds on every efficient `(n−2)`-source, then its first
++bit on the uniform source is true with probability at least `1/4`:
++`IsExtractor (effSources (fun n => n - 2) n) (1/4) (extBit Ext n) →
++1/4 ≤ Pr_{U_n}[fun x => extBit Ext n x 0]`.
++The uniform source is efficient, so its output is within `1/4` of a fair bit. -/
++theorem uniform_acceptance_lower (Ext : List Bool → List Bool) (n : ℕ)
++    (h : IsExtractor (effSources (fun n => (n : ℝ) - 2) n) (1 / 4) (extBit Ext n)) :
++    1 / 4 ≤ (FinDist.uniform (Fin n → Bool)).probTrue (fun x => extBit Ext n x 0) := by
++  have hclose := (isExtractor_iff.1 h) _ (uniform_mem_effSources n)
++  have hb := (abs_probTrue_sub_le_statDist
++    ((FinDist.uniform (Fin n → Bool)).map (extBit Ext n))
++    (FinDist.uniform (Fin 1 → Bool)) (fun x => x 0)).trans
++      (epsClose_iff_statDist_le.1 hclose)
++  rw [Rejection.probTrue_map, uniform_one_probTrue] at hb
++  have hl := (abs_le.1 hb).1
++  linarith
++
++/-- The bounded rejection machine's law at width `n` is the finite first-success law
++on `t` trials and an independent uniform fallback:
++`samplerLaw (RejectionSampler.machine hExt n t) n = Rejection.law D t`, where
++`D a = (Ext (List.ofFn a)).headD false`.
++
++**Proof sketch.** Its coin equivalence followed by the canonical block equivalence is a
++bijection onto independent uniform blocks. The machine reader identifies its output with
++the typed selector, whose pushforward is the rejection law. -/
++theorem samplerLaw_rejection {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t : ℕ) :
++    samplerLaw (RejectionSampler.machine hExt n t) n =
++      Rejection.law (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) t := by
++  let D := fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false
++  let e := (RejectionSampler.coinEquiv hExt n t n).trans (FunFamily.blocks (t + 1) n)
++  have hread : (fun r : (RejectionSampler.machine hExt n t).Coins n =>
++      padFin n ((RejectionSampler.machine hExt n t).runAt n [] r)) =
++      (fun r => Rejection.select D t (e r)) := by
++    funext r
++    rw [RejectionSampler.machine_runAt, ← RejectionSampler.coinEquiv_ofFn hExt n t n r,
++      RejectionSampler.chooseWord_blocks, padFin_ofFn]
++    rfl
++  rw [samplerLaw, hread,
++    ← Rejection.map_map (FinDist.uniform ((RejectionSampler.machine hExt n t).Coins n))
++      e (Rejection.select D t), Rejection.map_uniform_equiv e]
++  exact Rejection.select_uniform_law D t
++
++/-- Dividing a uniform `n`-bit point mass by `1/4` gives the exact `(n−2)`-source bound,
++including `n=0,1,2`: `4 / 2^n = 2^(-(n-2))`. -/
++theorem uniform_card_div_quarter (n : ℕ) :
++    (Fintype.card (Fin n → Bool) : ℝ)⁻¹ / (1 / 4) =
++      (2 : ℝ) ^ (-((n : ℝ) - 2)) := by
++  simp only [Fintype.card_fun, Fintype.card_fin, Fintype.card_bool, Nat.cast_pow,
++    Nat.cast_ofNat]
++  rw [show -((n : ℝ) - 2) = 2 - (n : ℝ) by ring,
++    Real.rpow_sub (by norm_num : (0 : ℝ) < 2), Real.rpow_natCast]
++  norm_num
++  ring
++
++/-- When uniform acceptance is at least `1/4`, ten rejection trials and a fresh fallback
++produce an efficiently samplable `(n−2)`-source:
++`1/4 ≤ Pr_{U_n}[D] → Rejection.law D 10 ∈ effSources (fun n => n - 2) n`, where
++`D a = (Ext (List.ofFn a)).headD false`.
++
++**Proof sketch.** The accepted flat source has point mass at most `1/(2^n q) ≤ 4/2^n`,
++so it and the uniform law are `(n−2)`-sources. The exact convex mixture identity preserves
++that bound, and the uniform machine realizes the mixture with `11n` coins. -/
++theorem rejection_mem_effSources {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n : ℕ)
++    (hq : 1 / 4 ≤ (FinDist.uniform (Fin n → Bool)).probTrue
++      (fun a => (Ext (List.ofFn a)).headD false)) :
++    Rejection.law (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) 10 ∈
++      effSources (fun n => (n : ℝ) - 2) n := by
++  let D := fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false
++  have hqpos : 0 < (FinDist.uniform (Fin n → Bool)).probTrue D := by
++    dsimp only [D]
++    linarith
++  have hbound : (Fintype.card (Fin n → Bool) : ℝ)⁻¹ /
++      (FinDist.uniform (Fin n → Bool)).probTrue D ≤ (2 : ℝ) ^ (-((n : ℝ) - 2)) := by
++    calc _ ≤ (Fintype.card (Fin n → Bool) : ℝ)⁻¹ / (1 / 4) :=
++        div_le_div_of_nonneg_left (by positivity) (by norm_num) hq
++      _ = _ := uniform_card_div_quarter n
++  obtain ⟨_, _, _, hU⟩ := (effSources_iff _ _ _).1 (uniform_mem_effSources n)
++  have hflat := Rejection.accepted_flat_isSource D (Rejection.accepted_nonempty D hqpos)
++    ((n : ℝ) - 2) hbound
++  exact (effSources_iff _ _ _).2
++    ⟨RejectionSampler.machine hExt n 10, RejectionSampler.machine_uniform hExt n 10,
++      (samplerLaw_rejection hExt n 10).symm,
++      Rejection.law_isSource D hqpos 10 ((n : ℝ) - 2) hU hflat⟩
++
+ /-- **Theorem 183.6: no efficient `1`-bit `1/4`-extractor for efficient `(n − 2)`-sources**
+ [PS10, Theorem 183.6]: for every polynomial-time `Ext` and every `n`, `Ext` is not a
+ `1/4`-extractor for the efficiently samplable `(n − 2)`-sources on `{0,1}^n`.
+@@ -112,8 +301,9 @@ theorem extBit_eq (Ext : List Bool → List Bool) (n : ℕ) (x : Fin n → Bool)
+    it, `U_n` is the witness.
+ 2. Otherwise `q = Pr[Ext(U_n) = 1] ≥ 1/4`, so `S = {x : Ext(x) = 1}` has `|S| ≥ 2^{n−2}`.
+ 3. The sampler `X` with `11n` coins tries up to 10 `n`-bit blocks for `Ext(x) = 1`, else outputs
+-   the 11th block. It is a uniform PPT because `Ext` is polynomial-time (`polyTimeComputable_ite`,
+-   `polyTimeComputable_iterateFind`).
++   the 11th block. At this fixed `n`, ten applications of the polynomial-time conditional
++   combinator construct the sampler with constant coin polynomial `11n` and empty advice.
++   The canonical block equivalence identifies its coins with eleven independent uniform blocks.
+ 4. Its law is the mixture `(1 − q)^{10} U_n + (1 − (1 − q)^{10}) flat(S)` (rejection sampling).
+    Both components are `(n − 2)`-sources, and min-entropy is preserved by mixtures (each point has
+    probability at most `2^{−(n−2)}`).
+@@ -122,6 +312,28 @@ theorem extBit_eq (Ext : List Bool → List Bool) (n : ℕ) (x : Fin n → Bool)
+ theorem not_isExtractor_effSources (Ext : List Bool → List Bool) (hExt : PolyTimeComputable Ext)
+     (n : ℕ) :
+     ¬ IsExtractor (effSources (fun n => (n : ℝ) - 2) n) (1 / 4) (extBit Ext n) := by
+-  sorry
++  intro h
++  have hq := uniform_acceptance_lower Ext n h
++  simp only [extBit_zero] at hq
++  have hsource := rejection_mem_effSources hExt n hq
++  have hclose := (isExtractor_iff.1 h) _ hsource
++  have hb := (abs_probTrue_sub_le_statDist
++    ((Rejection.law (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) 10).map
++      (extBit Ext n))
++    (FinDist.uniform (Fin 1 → Bool)) (fun x => x 0)).trans
++      (epsClose_iff_statDist_le.1 hclose)
++  rw [Rejection.probTrue_map, uniform_one_probTrue] at hb
++  simp only [extBit_zero] at hb
++  rw [Rejection.law_probTrue] at hb
++  have hq1 := Rejection.probTrue_le_one (FinDist.uniform (Fin n → Bool))
++    (fun a => (Ext (List.ofFn a)).headD false)
++  have hpow :
++      (1 - (FinDist.uniform (Fin n → Bool)).probTrue
++        (fun a => (Ext (List.ofFn a)).headD false)) ^ 11 ≤ (3 / 4 : ℝ) ^ 11 :=
++    pow_le_pow_left₀ (by linarith) (by linarith) 11
++  have hnum : (3 / 4 : ℝ) ^ 11 < 1 / 4 := by norm_num
++  have hu := (abs_le.1 hb).2
++  norm_num only [Nat.reduceAdd] at hu
++  linarith
+ 
+ end TCSlib.Cryptography.Randomness
+diff --git a/TCSlib/Cryptography/Randomness/Extraction/Rejection.lean b/TCSlib/Cryptography/Randomness/Extraction/Rejection.lean
+new file mode 100644
+index 000000000..397b447bb
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Extraction/Rejection.lean
+@@ -0,0 +1,492 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.InformationTheory.Samples
++import TCSlib.InformationTheory.Entropy
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Finite rejection sampling
++
++The first accepted point among `t` independent trials is returned; a final independent point
++is returned when all trials fail. The resulting law and its acceptance probability are computed
++from the published finite-distribution readers.
++
++## Main definitions
++
++* `Rejection.select`: the first accepted point among the first `t` entries, otherwise entry `t`.
++* `Rejection.law`: the recursive distribution of this rejection sampler.
++
++## Main results
++
++* `Rejection.select_uniform_law`: the recursive law is the law of the finite tuple selector.
++* `Rejection.law_eq_mixture`: the law is a mixture of uniform and the accepted flat law.
++* `Rejection.law_probTrue`: its acceptance probability is `1-(1-q)^(t+1)`.
++* `Rejection.law_isSource`: the source bound is preserved by this mixture.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §8.3.2, Theorem 183.6.
++-/
++
++namespace TCSlib.Cryptography.Randomness.Rejection
++
++open TCSlib.InformationTheory Finset
++
++variable {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]
++
++/-- Pushing the uniform distribution through a bijection preserves uniformity:
++`map e U_α = U_β`. -/
++theorem map_uniform_equiv [DecidableEq β] [Nonempty α] [Nonempty β] (e : α ≃ β) :
++    (FinDist.uniform α).map e = FinDist.uniform β := by
++  classical
++  apply FinDist.ext
++  intro b
++  rw [FinDist.map_apply]
++  have hf : (univ : Finset α).filter (fun a => e a = b) = {e.symm b} := by
++    ext a
++    simp only [mem_filter, mem_univ, true_and, mem_singleton]
++    constructor
++    · intro h
++      exact e.injective (h.trans (e.apply_symm_apply b).symm)
++    · rintro rfl
++      exact e.apply_symm_apply b
++  rw [hf, sum_singleton, FinDist.uniform_apply, FinDist.uniform_apply,
++    Fintype.card_congr e]
++
++/-- Summing a function over a pushforward is summing its composite over the original law:
++`∑ b, map f p b · g b = ∑ a, p a · g (f a)`. The proof exchanges the two finite sums and
++uses the unique image `f a` of each input. -/
++theorem sum_map [DecidableEq β] (p : FinDist α) (f : α → β) (g : β → ℝ) :
++    (∑ b, (p.map f) b * g b) = ∑ a, p a * g (f a) := by
++  classical
++  simp only [FinDist.map_apply, sum_mul, sum_filter]
++  rw [sum_comm]
++  apply sum_congr rfl
++  intro a _
++  rw [sum_eq_single (f a)]
++  · simp
++  · intro b _ hba
++    simp only [if_neg (Ne.symm hba), zero_mul]
++  · intro h
++    exact False.elim (h (mem_univ _))
++
++/-- Expectation under a pushforward composes the test:
++`E_{map f p}[g] = E_p[g ∘ f]`. -/
++theorem expect_map [DecidableEq β] (p : FinDist α) (f : α → β) (g : β → ℝ) :
++    (p.map f).expect g = p.expect (fun a => g (f a)) := by
++  rw [FinDist.expect_eq, FinDist.expect_eq]
++  exact sum_map p f g
++
++/-- Acceptance under a pushforward composes the Boolean test:
++`Pr_{map f p}[D] = Pr_p[D ∘ f]`. -/
++theorem probTrue_map [DecidableEq β] (p : FinDist α) (f : α → β) (D : β → Bool) :
++    (p.map f).probTrue D = p.probTrue (fun a => D (f a)) := by
++  rw [FinDist.probTrue_eq_expect, expect_map, FinDist.probTrue_eq_expect]
++
++/-- A Boolean acceptance probability is nonnegative: `0 ≤ Pr_p[D]`. -/
++theorem probTrue_nonneg (p : FinDist α) (D : α → Bool) : 0 ≤ p.probTrue D := by
++  rw [FinDist.probTrue_eq]
++  exact sum_nonneg fun a _ => p.nonneg a
++
++/-- A Boolean acceptance probability is at most one: `Pr_p[D] ≤ 1`. -/
++theorem probTrue_le_one (p : FinDist α) (D : α → Bool) : p.probTrue D ≤ 1 := by
++  rw [FinDist.probTrue_eq, ← p.sum_prob]
++  exact sum_le_sum_of_subset_of_nonneg (filter_subset _ _) (fun a _ _ => p.nonneg a)
++
++/-- A pushforward's mass at `b` is the expectation of its preimage indicator:
++`map f p b = E_p[1_{f(a)=b}]`. -/
++theorem map_apply_expect [DecidableEq β] (p : FinDist α) (f : α → β) (b : β) :
++    (p.map f) b = p.expect (fun a => if f a = b then 1 else 0) := by
++  classical
++  rw [FinDist.map_apply, FinDist.expect_eq, sum_filter]
++  apply sum_congr rfl
++  intro a _
++  split_ifs <;> simp
++
++/-- Successive pushforwards compose: `map g (map f p) = map (g ∘ f) p`. -/
++theorem map_map [DecidableEq β] [DecidableEq γ] (p : FinDist α) (f : α → β) (g : β → γ) :
++    (p.map f).map g = p.map (fun a => g (f a)) := by
++  classical
++  apply FinDist.ext
++  intro c
++  rw [map_apply_expect, expect_map, map_apply_expect]
++
++/-- Mapping only the second coordinate of an independent pair can be done before or after
++pairing: `map g (p × map f q) = map (fun (x,y) => g (x,f y)) (p × q)`. -/
++theorem map_prod_snd [DecidableEq β] [DecidableEq γ] {δ : Type*} [Fintype δ]
++    [DecidableEq δ] (p : FinDist α) (q : FinDist β) (f : β → γ) (g : α × γ → δ) :
++    (p.prod (q.map f)).map g = (p.prod q).map (fun z => g (z.1, f z.2)) := by
++  classical
++  apply FinDist.ext
++  intro d
++  rw [map_apply_expect, map_apply_expect, FinDist.expect_prod, FinDist.expect_prod]
++  congr 1
++  funext a
++  exact expect_map q f (fun c => if g (a, c) = d then 1 else 0)
++
++/-- The product of two uniform laws is the uniform law on pairs: `U_α × U_β = U_(α×β)`. -/
++theorem uniform_prod [Nonempty α] [Nonempty β] :
++    (FinDist.uniform α).prod (FinDist.uniform β) = FinDist.uniform (α × β) := by
++  apply FinDist.ext
++  intro z
++  rw [FinDist.prod_apply, FinDist.uniform_apply, FinDist.uniform_apply,
++    FinDist.uniform_apply, Fintype.card_prod, Nat.cast_mul, mul_inv_rev]
++  ring
++
++/-- A nonempty tuple is equivalent to its first entry and its tail:
++`(Fin (t+1+1) → α) ≃ α × (Fin (t+1) → α)`. -/
++def tupleEquiv (t : ℕ) : (Fin (t + 1 + 1) → α) ≃ α × (Fin (t + 1) → α) where
++  toFun x := (x 0, fun i => x i.succ)
++  invFun z := Fin.cons z.1 z.2
++  left_inv x := by
++    funext i
++    refine Fin.cases ?_ (fun j => ?_) i
++    · simp
++    · simp
++  right_inv z := by
++    apply Prod.ext
++    · simp
++    · funext i
++      simp
++
++/-- The tuple equivalence reads the first entry and the tail:
++`tupleEquiv t x = (x 0, fun i => x i.succ)`. -/
++theorem tupleEquiv_apply (t : ℕ) (x : Fin (t + 1 + 1) → α) :
++    tupleEquiv t x = (x 0, fun i => x i.succ) := rfl
++
++/-- The inverse tuple equivalence prepends its first coordinate:
++`(tupleEquiv t).symm (a,x) = Fin.cons a x`. -/
++theorem tupleEquiv_symm_apply (t : ℕ) (z : α × (Fin (t + 1) → α)) :
++    (tupleEquiv t).symm z = Fin.cons z.1 z.2 := rfl
++
++/-- The first entry of the inverse tuple equivalence is the pair's first coordinate:
++`(tupleEquiv t).symm z 0 = z.1`. -/
++theorem tupleEquiv_symm_zero (t : ℕ) (z : α × (Fin (t + 1) → α)) :
++    (tupleEquiv t).symm z 0 = z.1 := by
++  rw [tupleEquiv_symm_apply]
++  simp
++
++/-- Each successor entry of the inverse tuple equivalence is the corresponding tail entry:
++`(tupleEquiv t).symm z i.succ = z.2 i`. -/
++theorem tupleEquiv_symm_succ (t : ℕ) (z : α × (Fin (t + 1) → α)) (i : Fin (t + 1)) :
++    (tupleEquiv t).symm z i.succ = z.2 i := by
++  rw [tupleEquiv_symm_apply]
++  simp
++
++/-- Select the first accepted entry among `t` trials; if all fail, return the final entry:
++`select D 0 x = x 0` and `select D (t+1) x = if D (x 0) then x 0 else select D t (x ∘ succ)`.
++There are `t+1` entries in total, so the fallback is always present. -/
++def select (D : α → Bool) : (t : ℕ) → (Fin (t + 1) → α) → α
++  | 0, x => x 0
++  | t + 1, x => if D (x 0) then x 0 else select D t (fun i => x i.succ)
++
++/-- With no rejection trials, the selector returns its sole entry: `select D 0 x = x 0`. -/
++theorem select_zero (D : α → Bool) (x : Fin 1 → α) : select D 0 x = x 0 := rfl
++
++/-- With one more rejection trial, accept the first entry if its test succeeds, otherwise
++select from the tail: `select D (t+1) x = if D (x 0) then x 0 else select D t (x ∘ succ)`. -/
++theorem select_succ (D : α → Bool) (t : ℕ) (x : Fin (t + 1 + 1) → α) :
++    select D (t + 1) x = if D (x 0) then x 0 else select D t (fun i => x i.succ) := rfl
++
++/-- The law of rejection sampling with `t` trials and an independent uniform fallback:
++`law D 0 = U_α` and `law D (t+1) = map (fun (x,y) => if D x then x else y) (U_α × law D t)`.
++At each trial, a fresh uniform point is accepted if its test succeeds. -/
++noncomputable def law [DecidableEq α] [Nonempty α] (D : α → Bool) : ℕ → FinDist α
++  | 0 => FinDist.uniform α
++  | t + 1 => ((FinDist.uniform α).prod (law D t)).map
++      (fun z => if D z.1 then z.1 else z.2)
++
++/-- With zero trials, the rejection law is uniform: `law D 0 = U_α`. -/
++theorem law_zero [DecidableEq α] [Nonempty α] (D : α → Bool) :
++    law D 0 = FinDist.uniform α := rfl
++
++/-- One more trial draws a fresh uniform point independently of the remaining sampler:
++`law D (t+1) = map (fun (x,y) => if D x then x else y) (U_α × law D t)`. -/
++theorem law_succ [DecidableEq α] [Nonempty α] (D : α → Bool) (t : ℕ) :
++    law D (t + 1) = ((FinDist.uniform α).prod (law D t)).map
++      (fun z => if D z.1 then z.1 else z.2) := rfl
++
++/-- Selecting from `t+1` independent uniform entries has the recursive rejection law:
++`map (select D t) U_(α^(t+1)) = law D t`.
++
++**Proof sketch.** Split a tuple into its first entry and its tail. Uniformity is preserved by
++this bijection, and uniformity on pairs is the product of the two uniform laws. The induction
++hypothesis identifies the selected tail with the remaining rejection sampler. -/
++theorem select_uniform_law [DecidableEq α] [Nonempty α] (D : α → Bool) (t : ℕ) :
++    (FinDist.uniform (Fin (t + 1) → α)).map (select D t) = law D t := by
++  classical
++  induction t with
++  | zero =>
++    rw [law_zero]
++    let e : (Fin 1 → α) ≃ α :=
++      { toFun := fun x => x 0
++        invFun := fun a _ => a
++        left_inv := by
++          intro x
++          funext i
++          have hi : i = 0 := Subsingleton.elim _ _
++          rw [hi]
++        right_inv := fun _ => rfl }
++    exact map_uniform_equiv e
++  | succ t ih =>
++    rw [law_succ, ← ih]
++    have hu : FinDist.uniform (Fin (t + 1 + 1) → α) =
++        (FinDist.uniform (α × (Fin (t + 1) → α))).map (tupleEquiv t).symm :=
++      (map_uniform_equiv (tupleEquiv (α := α) t).symm).symm
++    rw [hu, map_map, ← uniform_prod, map_prod_snd]
++    congr 1
++
++/-- Independent branching returns the first point on acceptance and the second on rejection:
++`map (fun (x,y) => if D x then x else y) (p × q) a = 1_{D(a)} p(a) + (1-Pr_p[D]) q(a)`.
++
++**Proof sketch.** Expand the map and product readers. For a fixed first point, the inner sum
++is either its whole mass or the mass of the second point at `a`. Split the outer sum into
++accepted and rejected first points. -/
++theorem branch_apply [DecidableEq α] (p q : FinDist α) (D : α → Bool) (a : α) :
++    ((p.prod q).map (fun z => if D z.1 then z.1 else z.2)) a =
++      (if D a then p a else 0) + (1 - p.probTrue D) * q a := by
++  classical
++  rw [FinDist.map_apply, sum_filter, Fintype.sum_prod_type]
++  simp only [FinDist.prod_apply]
++  have inner (x : α) :
++      (∑ y, if (if D x then x else y) = a then p x * q y else 0) =
++        if D x then (if x = a then p x else 0) else p x * q a := by
++    cases hd : D x
++    · simp [hd]
++    · by_cases hxa : x = a
++      · simp [hd, hxa, ← mul_sum, q.sum_prob]
++      · simp [hd, hxa]
++  simp_rw [inner]
++  have split (x : α) :
++      (if D x then (if x = a then p x else 0) else p x * q a) =
++        (if x = a then (if D a then p a else 0) else 0) +
++          (if !D x then p x * q a else 0) := by
++    by_cases hxa : x = a
++    · subst x
++      cases D a <;> simp
++    · cases hd : D x <;> simp [hd, hxa]
++  simp_rw [split]
++  rw [sum_add_distrib]
++  have hn : (∑ x, if !D x then p x * q a else 0) =
++      (1 - p.probTrue D) * q a := by
++    rw [← FinDist.probTrue_not, FinDist.probTrue_eq, sum_mul, sum_filter]
++  rw [hn]
++  simp
++
++/-- One rejection trial satisfies the point recurrence
++`law D (t+1) a = 1_{D(a)} / |α| + (1-q) law D t a`, where `q = Pr_{U_α}[D]`. -/
++theorem law_succ_apply [DecidableEq α] [Nonempty α] (D : α → Bool) (t : ℕ) (a : α) :
++    law D (t + 1) a =
++      (if D a then (Fintype.card α : ℝ)⁻¹ else 0) +
++        (1 - (FinDist.uniform α).probTrue D) * law D t a := by
++  rw [law_succ, branch_apply, FinDist.uniform_apply]
++
++/-- The acceptance probabilities obey
++`Pr_{law D (t+1)}[D] = q + (1-q) Pr_{law D t}[D]`. -/
++theorem law_succ_probTrue [DecidableEq α] [Nonempty α] (D : α → Bool) (t : ℕ) :
++    (law D (t + 1)).probTrue D =
++      (FinDist.uniform α).probTrue D +
++        (1 - (FinDist.uniform α).probTrue D) * (law D t).probTrue D := by
++  classical
++  rw [FinDist.probTrue_eq]
++  simp_rw [law_succ_apply]
++  rw [sum_add_distrib, ← mul_sum]
++  have hi : (∑ a ∈ (univ : Finset α).filter (fun a => D a = true),
++      if D a then (Fintype.card α : ℝ)⁻¹ else 0) = (FinDist.uniform α).probTrue D := by
++    rw [FinDist.probTrue_eq]
++    apply sum_congr rfl
++    intro a ha
++    simp [(mem_filter.1 ha).2, FinDist.uniform_apply]
++  rw [hi, ← FinDist.probTrue_eq (law D t) D]
++
++/-- The rejection sampler accepts with probability `1-(1-q)^(t+1)`, including the independent
++fallback's chance to accept. This formula also holds for `q=0` and `q=1`.
++
++**Proof sketch.** The zero-trial law has acceptance `q`. Each additional trial fails with
++probability `1-q`, multiplying the probability that the remaining sampler fails by that factor. -/
++theorem law_probTrue [DecidableEq α] [Nonempty α] (D : α → Bool) (t : ℕ) :
++    (law D t).probTrue D = 1 - (1 - (FinDist.uniform α).probTrue D) ^ (t + 1) := by
++  induction t with
++  | zero => rw [law_zero]; ring
++  | succ t ih => rw [law_succ_probTrue, ih, pow_succ]; ring
++
++/-- For positive uniform acceptance `q = Pr_{U_α}[D] > 0`, the rejection law's point mass is
++`law D t a = (1-q)^t / |α| + 1_{D(a)} (1-(1-q)^t) / (|α| q)`.
++
++**Proof sketch.** Induct on the trial count using the point recurrence. On accepted points the
++geometric sum contributes `(1-(1-q)^t)/q`; on rejected points only the fallback contributes. -/
++theorem law_apply [DecidableEq α] [Nonempty α] (D : α → Bool)
++    (hq : 0 < (FinDist.uniform α).probTrue D) (t : ℕ) (a : α) :
++    law D t a =
++      (1 - (FinDist.uniform α).probTrue D) ^ t * (Fintype.card α : ℝ)⁻¹ +
++        (if D a then
++          (1 - (1 - (FinDist.uniform α).probTrue D) ^ t) *
++            (Fintype.card α : ℝ)⁻¹ / (FinDist.uniform α).probTrue D else 0) := by
++  have hq0 : (FinDist.uniform α).probTrue D ≠ 0 := ne_of_gt hq
++  induction t with
++  | zero => rw [law_zero, FinDist.uniform_apply]; simp
++  | succ t ih =>
++    rw [law_succ_apply, ih, pow_succ]
++    cases D a <;> simp
++    · ring
++    · field_simp [hq0]
++      <;> ring
++
++/-- Uniform acceptance is the cardinality of the accepted set divided by the whole cardinality:
++`Pr_{U_α}[D] = |{a : D a}| / |α|`. -/
++theorem uniform_probTrue [Nonempty α] (D : α → Bool) :
++    (FinDist.uniform α).probTrue D =
++      (((univ : Finset α).filter (fun a => D a = true)).card : ℝ) *
++        (Fintype.card α : ℝ)⁻¹ := by
++  classical
++  rw [FinDist.probTrue_eq]
++  simp only [FinDist.uniform_apply, sum_const, nsmul_eq_mul]
++
++/-- Positive uniform acceptance implies that the accepted set is nonempty:
++`0 < Pr_{U_α}[D] → {a : D a}.Nonempty`. -/
++theorem accepted_nonempty [Nonempty α] (D : α → Bool)
++    (hq : 0 < (FinDist.uniform α).probTrue D) :
++    ((univ : Finset α).filter (fun a => D a = true)).Nonempty := by
++  classical
++  by_contra h
++  have he := Finset.not_nonempty_iff_eq_empty.1 h
++  have hz : (FinDist.uniform α).probTrue D = 0 := by
++    rw [FinDist.probTrue_eq, he, sum_empty]
++  linarith
++
++/-- The flat law on the accepted set has point mass `1/(|α| q)` at accepted points and zero
++elsewhere, where `q=Pr_{U_α}[D]`. -/
++theorem accepted_flat_apply [DecidableEq α] [Nonempty α] (D : α → Bool)
++    (hs : ((univ : Finset α).filter (fun a => D a = true)).Nonempty) (a : α) :
++    FinDist.flat ((univ : Finset α).filter (fun a => D a = true)) hs a =
++      if D a then (Fintype.card α : ℝ)⁻¹ / (FinDist.uniform α).probTrue D else 0 := by
++  classical
++  rw [FinDist.flat_apply]
++  have hm : a ∈ (univ : Finset α).filter (fun a => D a = true) ↔ D a = true := by simp
++  simp only [hm]
++  by_cases hd : D a = true
++  · rw [if_pos hd, if_pos hd, uniform_probTrue]
++    have hc : (Fintype.card α : ℝ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
++    have hs0 : ((((univ : Finset α).filter (fun a => D a = true)).card : ℕ) : ℝ) ≠ 0 :=
++      Nat.cast_ne_zero.2 hs.card_pos.ne'
++    field_simp [hc, hs0]
++  · rw [if_neg hd, if_neg hd]
++
++/-- The rejection law is the pointwise mixture
++`(1-q)^t U_α + (1-(1-q)^t) flat({a : D a})` for `q>0`. -/
++theorem law_apply_flat [DecidableEq α] [Nonempty α] (D : α → Bool)
++    (hq : 0 < (FinDist.uniform α).probTrue D) (t : ℕ) (a : α) :
++    law D t a =
++      (1 - (FinDist.uniform α).probTrue D) ^ t * (FinDist.uniform α) a +
++        (1 - (1 - (FinDist.uniform α).probTrue D) ^ t) *
++          FinDist.flat ((univ : Finset α).filter (fun a => D a = true))
++            (accepted_nonempty D hq) a := by
++  rw [law_apply D hq, FinDist.uniform_apply, accepted_flat_apply]
++  cases D a <;> simp <;> ring
++
++/-- A mixture of `p` and `q` with weight `w∈[0,1]` gives mass
++`w p(a) + (1-w) q(a)` to each point. -/
++noncomputable def mixture (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1)
++    (p q : FinDist α) : FinDist α where
++  prob a := w * p a + (1 - w) * q a
++  nonneg a := add_nonneg (mul_nonneg hw0 (p.nonneg a))
++    (mul_nonneg (sub_nonneg.2 hw1) (q.nonneg a))
++  sum_prob := by
++    rw [sum_add_distrib, ← mul_sum, ← mul_sum, p.sum_prob, q.sum_prob]
++    ring
++
++/-- The point probability of the mixture is its defining convex combination:
++`mixture w p q a = w p(a) + (1-w) q(a)`. -/
++theorem mixture_apply (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1)
++    (p q : FinDist α) (a : α) :
++    mixture w hw0 hw1 p q a = w * p a + (1 - w) * q a := rfl
++
++/-- Mixtures of two `k`-sources are `k`-sources:
++`IsSource k p → IsSource k q → IsSource k (mixture w p q)`. Their point probabilities share
++the same upper bound `2^(-k)`, which is preserved by a convex combination. -/
++theorem mixture_isSource (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1)
++    (p q : FinDist α) (k : ℝ) (hp : FinDist.IsSource k p) (hq : FinDist.IsSource k q) :
++    FinDist.IsSource k (mixture w hw0 hw1 p q) := by
++  have hp' := (FinDist.hasMinEntropy_iff p k).1
++    (FinDist.isSource_iff_hasMinEntropy.1 hp)
++  have hq' := (FinDist.hasMinEntropy_iff q k).1
++    (FinDist.isSource_iff_hasMinEntropy.1 hq)
++  apply FinDist.isSource_iff_hasMinEntropy.2
++  apply (FinDist.hasMinEntropy_iff _ _).2
++  intro a
++  rw [mixture_apply]
++  calc w * p a + (1 - w) * q a
++      ≤ w * (2 : ℝ) ^ (-k) + (1 - w) * (2 : ℝ) ^ (-k) :=
++        add_le_add (mul_le_mul_of_nonneg_left (hp' a) hw0)
++          (mul_le_mul_of_nonneg_left (hq' a) (sub_nonneg.2 hw1))
++    _ = (2 : ℝ) ^ (-k) := by ring
++
++/-- The probability `(1-q)^t` that all rejection trials fail is nonnegative:
++`0 ≤ (1-Pr_{U_α}[D])^t`. -/
++theorem failure_pow_nonneg [Nonempty α] (D : α → Bool) (t : ℕ) :
++    0 ≤ (1 - (FinDist.uniform α).probTrue D) ^ t :=
++  pow_nonneg (sub_nonneg.2 (probTrue_le_one _ _)) _
++
++/-- The probability `(1-q)^t` that all rejection trials fail is at most one:
++`(1-Pr_{U_α}[D])^t ≤ 1`. -/
++theorem failure_pow_le_one [Nonempty α] (D : α → Bool) (t : ℕ) :
++    (1 - (FinDist.uniform α).probTrue D) ^ t ≤ 1 := by
++  have hb0 : 0 ≤ 1 - (FinDist.uniform α).probTrue D :=
++    sub_nonneg.2 (probTrue_le_one _ _)
++  have hb1 : 1 - (FinDist.uniform α).probTrue D ≤ 1 := by
++    linarith [probTrue_nonneg (FinDist.uniform α) D]
++  induction t with
++  | zero => simp
++  | succ t ih =>
++    rw [pow_succ]
++    calc (1 - (FinDist.uniform α).probTrue D) ^ t *
++        (1 - (FinDist.uniform α).probTrue D) ≤ 1 * 1 := mul_le_mul ih hb1 hb0 zero_le_one
++      _ = 1 := one_mul _
++
++/-- The rejection law is exactly the convex mixture
++`law D t = mixture ((1-q)^t) U_α flat({a : D a})` for `q = Pr_{U_α}[D] > 0`, that is,
++`(1-q)^t U_α + (1-(1-q)^t) flat({a : D a})`. -/
++theorem law_eq_mixture [DecidableEq α] [Nonempty α] (D : α → Bool)
++    (hq : 0 < (FinDist.uniform α).probTrue D) (t : ℕ) :
++    law D t = mixture ((1 - (FinDist.uniform α).probTrue D) ^ t)
++      (failure_pow_nonneg D t) (failure_pow_le_one D t) (FinDist.uniform α)
++      (FinDist.flat ((univ : Finset α).filter (fun a => D a = true))
++        (accepted_nonempty D hq)) := by
++  apply FinDist.ext
++  intro a
++  rw [mixture_apply]
++  exact law_apply_flat D hq t a
++
++/-- If `1/(|α|q) ≤ 2^(-k)`, the flat law on the accepted set is a `k`-source. -/
++theorem accepted_flat_isSource [DecidableEq α] [Nonempty α] (D : α → Bool)
++    (hs : ((univ : Finset α).filter (fun a => D a = true)).Nonempty) (k : ℝ)
++    (hbound : (Fintype.card α : ℝ)⁻¹ / (FinDist.uniform α).probTrue D ≤ (2 : ℝ) ^ (-k)) :
++    FinDist.IsSource k (FinDist.flat ((univ : Finset α).filter (fun a => D a = true)) hs) := by
++  apply FinDist.isSource_iff_hasMinEntropy.2
++  apply (FinDist.hasMinEntropy_iff _ _).2
++  intro a
++  rw [accepted_flat_apply]
++  split_ifs
++  · exact hbound
++  · positivity
++
++/-- The rejection law is a `k`-source whenever its uniform and accepted-flat components are
++`k`-sources: `IsSource k U_α → IsSource k flat({a : D a}) → IsSource k (law D t)`.
++This follows from its exact mixture identity and convexity of the point bound. -/
++theorem law_isSource [DecidableEq α] [Nonempty α] (D : α → Bool)
++    (hq : 0 < (FinDist.uniform α).probTrue D) (t : ℕ) (k : ℝ)
++    (hU : FinDist.IsSource k (FinDist.uniform α))
++    (hflat : FinDist.IsSource k
++      (FinDist.flat ((univ : Finset α).filter (fun a => D a = true))
++        (accepted_nonempty D hq))) :
++    FinDist.IsSource k (law D t) := by
++  rw [law_eq_mixture D hq t]
++  exact mixture_isSource _ _ _ _ _ _ hU hflat
++
++end TCSlib.Cryptography.Randomness.Rejection
+diff --git a/TCSlib/Cryptography/Randomness/Extraction/Sampler.lean b/TCSlib/Cryptography/Randomness/Extraction/Sampler.lean
+new file mode 100644
+index 000000000..c0f49b816
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Extraction/Sampler.lean
+@@ -0,0 +1,237 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Asymptotic.OneWay
++import TCSlib.Complexity.ClassP.BinaryArith.Basic
++import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
++import TCSlib.Cryptography.Randomness.Extraction.Rejection
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# A bounded rejection sampler on consecutive coin blocks
++
++The sampler used in [PS10, Theorem 183.6] reads a fixed number of blocks and returns the
++first whose extractor output starts with `true`, using the last block as a fallback.
++The security parameter at which the counterexample is needed is fixed before the sampler
++is chosen, so fixed block widths and a constant coin polynomial suffice. The resulting
++machine has no advice and is therefore uniform.
++
++## Main definitions
++
++* `RejectionSampler.chooseWord`: bounded first-success selection from a bit tape.
++* `RejectionSampler.machine`: the uniform PPT implementing the selection.
++* `RejectionSampler.coinEquiv`: its coins as a tape of exactly `(t + 1) * n` bits.
++
++## Main results
++
++* `RejectionSampler.chooseWord_poly`: fixed-width bounded selection is polynomial-time.
++* `RejectionSampler.chooseWord_blocks`: its typed interpretation is `Rejection.select`.
++* `RejectionSampler.machine_runAt_coinEquiv`: the machine implements that tape selection.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, §8.3.2, Theorem 183.6.
++-/
++
++namespace TCSlib.Cryptography.Randomness.RejectionSampler
++
++open Complexity Turing
++
++/-- Trying `t` blocks of width `n` and falling back to block `t` means returning the first
++block whose extractor output starts with `true`, or the final block if every test fails:
++`chooseWord Ext n 0 r = r.take n`, and `chooseWord Ext n (t+1) r = r.take n` if
++`(Ext (r.take n)).headD false`, otherwise
++`chooseWord Ext n (t+1) r = chooseWord Ext n t (r.drop n)`.
++[PS10, Theorem 183.6]. Short input tapes are truncated by `List.take`. -/
++def chooseWord (Ext : List Bool → List Bool) (n : ℕ) : ℕ → List Bool → List Bool
++  | 0, r => r.take n
++  | t + 1, r =>
++      if (Ext (r.take n)).headD false then r.take n else chooseWord Ext n t (r.drop n)
++
++/-- With no trials, `chooseWord` returns the first `n` bits: `chooseWord Ext n 0 r = r.take n`.
++-/
++theorem chooseWord_zero (Ext : List Bool → List Bool) (n : ℕ) (r : List Bool) :
++    chooseWord Ext n 0 r = r.take n := rfl
++
++/-- One additional trial tests the first block, returning it on acceptance and otherwise
++running the remaining trials on the tape with that block dropped:
++`chooseWord Ext n (t+1) r = if (Ext (r.take n)).headD false then r.take n else
++chooseWord Ext n t (r.drop n)`. -/
++theorem chooseWord_succ (Ext : List Bool → List Bool) (n t : ℕ) (r : List Bool) :
++    chooseWord Ext n (t + 1) r =
++      if (Ext (r.take n)).headD false then r.take n else chooseWord Ext n t (r.drop n) := rfl
++
++/-- Taking any fixed number `n` of input bits is polynomial-time computable:
++`PolyTimeComputable (fun r : List Bool => r.take n)`.
++
++**Proof sketch.** Pair a constant unary word of length `n` with the input and apply the
++published length-gated prefix machine. -/
++theorem take_poly (n : ℕ) : PolyTimeComputable (fun r : List Bool => r.take n) := by
++  have henc : PolyTimeComputable fun r => pairEncode (List.replicate n true) r :=
++    (polyTimeComputable_const (List.replicate n true)).pairEncode polyTimeComputable_id
++  have h := polyTimeComputable_takePrefixByLength.comp henc
++  convert h using 1
++  funext r
++  change r.take n = PrefixByLength.take (pairEncode (List.replicate n true) r)
++  rw [PrefixByLength.take_def, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
++
++/-- If `Ext` is polynomial-time, the fixed-width sampler with any fixed number of trials is
++polynomial-time: `PolyTimeComputable Ext → PolyTimeComputable (chooseWord Ext n t)`.
++[PS10, Theorem 183.6, the efficiency claim].
++
++**Proof sketch.** Induct on the fixed number of trials. The head-bit test composes the
++extractor with a fixed prefix, and the conditional combinator joins that prefix with the
++inductively constructed sampler on the fixed-width suffix. -/
++theorem chooseWord_poly {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t : ℕ) : PolyTimeComputable (chooseWord Ext n t) := by
++  induction t with
++  | zero =>
++    convert take_poly n using 1
++  | succ t ih =>
++    have htest : PolyTimeComputable fun r => [(Ext (r.take n)).headD false] :=
++      polyTimeComputable_headD.comp (hExt.comp (take_poly n))
++    have h := polyTimeComputable_ite htest (take_poly n)
++      (ih.comp (BinArith.polyTimeComputable_drop n))
++    convert h using 1
++
++/-- On a concatenated tuple of `n`-bit blocks, string selection encodes typed selection:
++`chooseWord Ext n t (flatten (ofFn (ofFn ∘ x))) = ofFn (select D t x)`, where
++`D a = (Ext (ofFn a)).headD false`.
++
++**Proof sketch.** At each successor trial, `take n` reads the first encoded block and
++`drop n` leaves the concatenation of the remaining blocks. Both selectors therefore make
++the same branch choice; induction identifies the remaining trials. -/
++theorem chooseWord_flatten (Ext : List Bool → List Bool) (n t : ℕ)
++    (x : Fin (t + 1) → Fin n → Bool) :
++    chooseWord Ext n t (List.ofFn fun i => List.ofFn (x i)).flatten =
++      List.ofFn
++        (Rejection.select (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) t x) := by
++  induction t with
++  | zero =>
++    rw [Rejection.select_zero, List.ofFn_succ, List.ofFn_zero, List.flatten_cons,
++      List.flatten_nil, List.append_nil, chooseWord_zero]
++    exact List.take_of_length_le (by simp only [List.length_ofFn, le_refl])
++  | succ t ih =>
++    have hflat : (List.ofFn fun i : Fin (t + 1 + 1) => List.ofFn (x i)).flatten =
++        List.ofFn (x 0) ++ (List.ofFn fun i : Fin (t + 1) => List.ofFn (x i.succ)).flatten := by
++      rw [List.ofFn_succ, List.flatten_cons]
++    have ht : (List.ofFn (x 0) ++
++        (List.ofFn fun i : Fin (t + 1) => List.ofFn (x i.succ)).flatten).take n =
++        List.ofFn (x 0) := List.take_left' List.length_ofFn
++    have hd : (List.ofFn (x 0) ++
++        (List.ofFn fun i : Fin (t + 1) => List.ofFn (x i.succ)).flatten).drop n =
++        (List.ofFn fun i : Fin (t + 1) => List.ofFn (x i.succ)).flatten :=
++      List.drop_left' List.length_ofFn
++    rw [hflat, chooseWord_succ, ht, hd, Rejection.select_succ]
++    split_ifs
++    · rfl
++    · exact ih (fun i => x i.succ)
++
++/-- On `(t + 1) * n` uniform coin bits, `chooseWord` encodes typed first-success selection
++from the canonical `(t + 1)` blocks. This includes `n = 0`. -/
++theorem chooseWord_blocks (Ext : List Bool → List Bool) (n t : ℕ)
++    (r : Fin ((t + 1) * n) → Bool) :
++    chooseWord Ext n t (List.ofFn r) =
++      List.ofFn (Rejection.select (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) t
++        (FunFamily.blocks (t + 1) n r)) := by
++  have h := FunFamily.ofFn_blocks_symm (t + 1) n (FunFamily.blocks (t + 1) n r)
++  rw [Equiv.symm_apply_apply] at h
++  rw [h]
++  exact chooseWord_flatten Ext n t _
++
++/-- The bounded rejection machine on `(t + 1) * n` coins has empty advice and runs
++`chooseWord Ext n t` on its coin tape: `(machine hExt n t).runAtL m y r = chooseWord Ext n t r`
++and `(machine hExt n t).coins = .const ((t + 1) * n)`. [PS10, Theorem 183.6]. -/
++noncomputable def machine {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t : ℕ) : NUPPT :=
++  NUPPT.ofPolyTimeUniform ((chooseWord_poly hExt n t).comp polyTimeComputable_pairSndD)
++    (.const ((t + 1) * n))
++
++/-- The rejection machine packages the polynomial-time coin function with constant coin
++polynomial `(t + 1) * n` and empty advice:
++`machine hExt n t = NUPPT.ofPolyTimeUniform f (.const ((t + 1) * n))`, where `f` is
++`(chooseWord_poly hExt n t).comp polyTimeComputable_pairSndD`. -/
++theorem machine_eq {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext) (n t : ℕ) :
++    machine hExt n t =
++      NUPPT.ofPolyTimeUniform ((chooseWord_poly hExt n t).comp polyTimeComputable_pairSndD)
++        (.const ((t + 1) * n)) := rfl
++
++/-- The bounded rejection machine is uniform: it has empty advice at every parameter,
++`(machine hExt n t).Uniform`, i.e. `∀ m, (machine hExt n t).advice m = []`. -/
++theorem machine_uniform {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t : ℕ) : (machine hExt n t).Uniform := by
++  rw [machine_eq]
++  exact NUPPT.ofPolyTimeUniform_uniform _ _
++
++/-- The rejection machine's coin polynomial is the constant `(t + 1) * n`:
++`(machine hExt n t).coins = .const ((t + 1) * n)`. -/
++theorem machine_coins {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t : ℕ) : (machine hExt n t).coins = .const ((t + 1) * n) := by
++  rw [machine_eq, NUPPT.coins_ofPolyTimeUniform]
++
++/-- On an untyped coin tape `r`, at every activation parameter and argument, the rejection
++machine returns `chooseWord Ext n t r`: `(machine hExt n t).runAtL m y r = chooseWord Ext n t r`.
++-/
++theorem machine_runAtL {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) (y r : List Bool) :
++    (machine hExt n t).runAtL m y r = chooseWord Ext n t r := by
++  rw [machine_eq, NUPPT.runAtL_ofPolyTimeUniform]
++  change chooseWord Ext n t (pairSndD (pairEncode (pairEncode (NUPPT.advInput m y) []) r)) = _
++  rw [pairSndD_pairEncode]
++
++/-- On typed coins, the rejection machine runs `chooseWord` on the coin string:
++`(machine hExt n t).runAt m y r = chooseWord Ext n t (List.ofFn r)`. -/
++theorem machine_runAt {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) (y : List Bool) (r : (machine hExt n t).Coins m) :
++    (machine hExt n t).runAt m y r = chooseWord Ext n t (List.ofFn r) := by
++  rw [NUPPT.runAt_eq, machine_runAtL]
++
++/-- At every activation parameter, the rejection machine uses exactly `(t + 1) * n` bits:
++`(machine hExt n t).coinLen m = (t + 1) * n`. -/
++theorem machine_coinLen {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) : (machine hExt n t).coinLen m = (t + 1) * n := by
++  rw [NUPPT.coinLen_eq, machine_coins, PolyExpr.eval_const]
++
++/-- The rejection machine's coins are canonically the bit tape of length `(t + 1) * n`,
++independently of its activation parameter:
++`(machine hExt n t).Coins m ≃ (Fin ((t + 1) * n) → Bool)`. -/
++noncomputable def coinEquiv {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) : (machine hExt n t).Coins m ≃ (Fin ((t + 1) * n) → Bool) :=
++  Equiv.arrowCongr (finCongr (machine_coinLen hExt n t m)) (Equiv.refl Bool)
++
++/-- The canonical rejection-coin equivalence is the arrow equivalence induced by the
++published equality `coinLen m = (t + 1) * n`. -/
++theorem coinEquiv_eq {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) : coinEquiv hExt n t m =
++      Equiv.arrowCongr (finCongr (machine_coinLen hExt n t m)) (Equiv.refl Bool) := rfl
++
++/-- The canonical rejection-coin equivalence preserves the encoded coin string:
++`List.ofFn (coinEquiv hExt n t m r) = List.ofFn r`. -/
++theorem coinEquiv_ofFn {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) (r : (machine hExt n t).Coins m) :
++    List.ofFn (coinEquiv hExt n t m r) = List.ofFn r :=
++  (List.ofFn_congr (machine_coinLen hExt n t m) r).symm
++
++/-- The inverse canonical rejection-coin equivalence preserves the encoded coin string:
++`List.ofFn ((coinEquiv hExt n t m).symm r) = List.ofFn r`. -/
++theorem coinEquiv_symm_ofFn {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) (r : Fin ((t + 1) * n) → Bool) :
++    List.ofFn ((coinEquiv hExt n t m).symm r) = List.ofFn r := by
++  rw [← coinEquiv_ofFn hExt n t m, Equiv.apply_symm_apply]
++
++/-- Running the rejection machine on a tape transported through `coinEquiv` is precisely
++`chooseWord Ext n t` on that tape:
++`(machine hExt n t).runAt m y ((coinEquiv hExt n t m).symm r) = chooseWord Ext n t (List.ofFn r)`.
++-/
++theorem machine_runAt_coinEquiv {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
++    (n t m : ℕ) (y : List Bool) (r : Fin ((t + 1) * n) → Bool) :
++    (machine hExt n t).runAt m y ((coinEquiv hExt n t m).symm r) =
++      chooseWord Ext n t (List.ofFn r) := by
++  rw [machine_runAt, coinEquiv_symm_ofFn]
++
++end TCSlib.Cryptography.Randomness.RejectionSampler
