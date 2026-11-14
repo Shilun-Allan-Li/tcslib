@@ -148,12 +148,18 @@ theorem powInv_step {z S : List Bool} (h : PowInv z S) :
   have hp0 : bitsVal p ≠ 0 := fun h => hfix (Or.inr h)
   have hp : 0 < bitsVal p := Nat.pos_of_ne_zero hp0
   obtain ⟨c, E', rfl⟩ := List.exists_cons_of_ne_nil hne
+  have hbb : mul (pairEncode b b) = Nat.bits (bitsVal b * bitsVal b) := by
+    rw [hb, mul_pairEncode, bitsVal_bits]
+  have hab : mul (pairEncode acc b) = Nat.bits (bitsVal acc * bitsVal b) := by
+    rw [hacc, hb, mul_pairEncode, bitsVal_bits, bitsVal_bits]
+  have hcons : ∀ (d : Bool) (w : List Bool), bitsVal (d :: w) = d.toNat + 2 * bitsVal w :=
+    fun d w => by rw [bitsVal_eq_headD]; rfl
   have hstep : powStep (pairEncode p (pairEncode (c :: E') (pairEncode b acc))) =
       pairEncode p (pairEncode E' (pairEncode (Nat.bits (bitsVal b * bitsVal b % bitsVal p))
         (if c then Nat.bits (bitsVal acc * bitsVal b % bitsVal p) else acc))) := by
     rw [powStep, sqStep_cons _ _ _ _ _ _ _ (by
       simpa only [pairFstD_pairEncode, decide_eq_false_iff_not] using hp0)]
-    simp only [pairFstD_pairEncode, pairSndD_pairEncode, mod, mul, bitsVal_bits]
+    simp only [pairFstD_pairEncode, pairSndD_pairEncode, mod_eq, hbb, hab, bitsVal_bits]
   rw [hstep]
   refine ⟨?_, fun _ _ => by simp⟩
   obtain ⟨hb1, hacc1, hmod⟩ := hv hp
@@ -171,11 +177,11 @@ theorem powInv_step {z S : List Bool} (h : PowInv z S) :
       cases c
       · have := (Nat.ModEq.refl (n := bitsVal p) (bitsVal acc)).mul hsq
         refine this.trans (congrArg (· % bitsVal p) ?_)
-        simp only [bitsVal, Bool.toNat_false, zero_add, pow_mul, ← pow_two]
+        simp only [hcons, Bool.toNat_false, zero_add, pow_mul, ← pow_two]
       · have := (Nat.mod_modEq (bitsVal acc * bitsVal b) (bitsVal p)).mul hsq
         simp only [if_true, bitsVal_bits]
         refine this.trans (congrArg (· % bitsVal p) ?_)
-        simp only [bitsVal, Bool.toNat_true, pow_add, pow_mul, ← pow_two]; ring
+        simp only [hcons, Bool.toNat_true, pow_add, pow_mul, ← pow_two]; ring
 
 /-- A state satisfying the repeated-squaring invariant has length at most `9(|z| + 1)`. -/
 theorem length_le_of_powInv {z S : List Bool} (h : PowInv z S) :
@@ -234,7 +240,8 @@ theorem polyTimeComputable_powMod : PolyTimeComputable powMod := by
   simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_eq_zero_iff] at hμ ⊢
   subst hμ
   obtain ⟨-, hacc1, hmod⟩ := hv (Nat.pos_of_ne_zero hp)
-  simp only [bitsVal, pow_zero, mul_one] at hmod
+  have hnil : bitsVal ([] : List Bool) = 0 := by simpa only [Nat.zero_bits] using bitsVal_bits 0
+  simp only [hnil, pow_zero, mul_one] at hmod
   rw [hacc, ← Nat.mod_eq_of_lt hacc1, hmod]
 
 /-! ### The gcd -/
