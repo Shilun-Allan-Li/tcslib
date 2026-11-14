@@ -1,0 +1,51 @@
+start=2026-11-14T08:49:42.672632+00:00
+command=["python3", "-I", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/lean_host_guard.py", "--", "/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability"]
+source-sha256=e056a67ddede401bc956430860196ba11e108783aa9695cc32b0aed43fa83e60
+TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean:69:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (ProbComp.sample (B.Coins n)).expect ?g
+in the target expression
+  ((ProbComp.sample Bool).expect fun c => redProbability (F.f n) adv (i, c)) ≤
+    (ProbComp.sample (Fin (F.inLen.eval n) → Bool)).expect fun a =>
+      (ProbComp.sample (B.Coins n)).expect fun a_1 =>
+        if ∃ x', B.runAt n (List.ofFn (F.f n a)) a_1 = List.ofFn x' ∧ F.f n x' = F.f n a then 1 else 0
+
+F : FunFamily
+n : ℕ
+A B : NUPPT
+i : Fin (F.inLen.eval n)
+adv :
+  (Fin (F.inLen.eval n) × Bool → Fin (F.outLen.eval n) → Bool) →
+    A.Coins n →
+      OracleComp (bitSpec (fun x => F.inLen.eval n) fun x => F.inLen.eval n * F.inLen.eval n)
+        (Fin (F.inLen.eval n + F.inLen.eval n * F.inLen.eval n) → Bool)
+e : (Bool × Table (F.inLen.eval n)) × A.Coins n ≃ B.Coins n
+hreal :
+  ∀ (y : Fin (F.outLen.eval n) → Bool) (T : Table (F.inLen.eval n)) (c : Bool) (r : A.Coins n),
+    RedSuccess (F.f n) adv y T r (i, c) → ∃ x', B.runAt n (List.ofFn y) (e ((c, T), r)) = List.ofFn x' ∧ F.f n x' = y
+⊢ ((ProbComp.sample Bool).expect fun c => redProbability (F.f n) adv (i, c)) ≤
+    (ProbComp.sample (Fin (F.inLen.eval n) → Bool)).expect fun a =>
+      (ProbComp.sample (B.Coins n)).expect fun a_1 =>
+        if ∃ x', B.runAt n (List.ofFn (F.f n a)) a_1 = List.ofFn x' ∧ F.f n x' = F.f n a then 1 else 0
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability): no fresh .olean produced
+        2.28 real         1.41 user         0.91 sys
+          2167881728  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172522  page reclaims
+                  38  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                  21  voluntary context switches
+                3767  involuntary context switches
+            30557286  instructions retired
+            18370823  cycles elapsed
+             1605968  peak memory footprint
+end=2026-11-14T08:49:45.920155+00:00
+exit=1

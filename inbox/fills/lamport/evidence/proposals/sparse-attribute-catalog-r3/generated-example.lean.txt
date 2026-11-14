@@ -1,0 +1,81 @@
+
+set_option maxHeartbeats 0
+run_cmd do
+  Lean.Elab.Command.liftCoreM do
+    let label : String := "SPARSE_PROPOSAL_INSTALL"
+    let payload : String := "BoolCircuit.CompileListSpec.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.CompileSpec.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.IsFaninTwo\tTCSlib.Complexity.CircuitComplexity.DAGCircuit"
+    let lines := if payload.isEmpty then [] else payload.splitOn "\n"
+    unless lines.length == 3 do throwError "LAMP-HARNESS bad serialized count"
+    let mut wanted : Std.HashSet String := {}
+    for row in lines do
+      let [spelling, _home] := row.splitOn "\t" | throwError "LAMP-HARNESS malformed row"
+      wanted := wanted.insert spelling
+    let env ← Lean.getEnv
+    let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+    for (n, _) in env.constants.map₁.toList do
+      let spelling := n.toString
+      unless wanted.contains spelling do continue
+      let some mi := env.getModuleIdxFor? n | continue
+      unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+      catalog := catalog.insert spelling (((catalog[spelling]?).getD #[]).push n)
+    let attr ← Lean.ofExcept <| Lean.getAttributeImpl (← Lean.getEnv) `irreducible
+    let mut count : Nat := 0
+    for row in lines do
+      let [spelling, home] := row.splitOn "\t" | throwError "LAMP-HARNESS malformed row"
+      let ns := (catalog[spelling]?).getD #[]
+      unless ns.size == 1 do throwError "LAMP-HARNESS absent/ambiguous {spelling}"
+      let n := ns[0]!
+      let some mi := env.getModuleIdxFor? n | throwError "LAMP-HARNESS no home {spelling}"
+      unless env.header.moduleNames[mi.toNat]!.toString == home do
+        throwError "LAMP-HARNESS wrong home {spelling}"
+      let some ci := env.find? n | throwError "LAMP-HARNESS no constant {spelling}"
+      unless ci.isDefinition do throwError "LAMP-HARNESS not definition {spelling}"
+      let before ← Lean.getReducibilityStatus n
+      unless before == .irreducible do
+        Lean.withExporting (isExporting := false) do
+          attr.add n Lean.Syntax.missing .local
+      let after ← Lean.getReducibilityStatus n
+      unless after == .irreducible do throwError "LAMP-HARNESS unsealed {spelling}"
+      Lean.logInfo m!"LAMP-SEAL-NAME\t{label}\tINSTALL\t{spelling}\t{home}"
+      count := count + 1
+    unless count == 3 do throwError "LAMP-HARNESS wrong verified count"
+    Lean.logInfo m!"LAMP-SEAL-INSTALL\t{label}\t{count}"
+
+
+set_option maxHeartbeats 0
+run_cmd do
+  Lean.Elab.Command.liftCoreM do
+    let label : String := "SPARSE_PROPOSAL_EOF"
+    let payload : String := "BoolCircuit.CompileListSpec.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.CompileSpec.mk._flat_ctor\tTCSlib.Complexity.CircuitComplexity.TreeDAG\nBoolCircuit.DAGCircuit.IsFaninTwo\tTCSlib.Complexity.CircuitComplexity.DAGCircuit"
+    let lines := if payload.isEmpty then [] else payload.splitOn "\n"
+    unless lines.length == 3 do throwError "LAMP-HARNESS bad serialized count"
+    let mut wanted : Std.HashSet String := {}
+    for row in lines do
+      let [spelling, _home] := row.splitOn "\t" | throwError "LAMP-HARNESS malformed row"
+      wanted := wanted.insert spelling
+    let env ← Lean.getEnv
+    let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+    for (n, _) in env.constants.map₁.toList do
+      let spelling := n.toString
+      unless wanted.contains spelling do continue
+      let some mi := env.getModuleIdxFor? n | continue
+      unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+      catalog := catalog.insert spelling (((catalog[spelling]?).getD #[]).push n)
+    let mut count : Nat := 0
+    for row in lines do
+      let [spelling, home] := row.splitOn "\t" | throwError "LAMP-HARNESS malformed row"
+      let ns := (catalog[spelling]?).getD #[]
+      unless ns.size == 1 do throwError "LAMP-HARNESS absent/ambiguous {spelling}"
+      let n := ns[0]!
+      let some mi := env.getModuleIdxFor? n | throwError "LAMP-HARNESS no home {spelling}"
+      unless env.header.moduleNames[mi.toNat]!.toString == home do
+        throwError "LAMP-HARNESS wrong home {spelling}"
+      let some ci := env.find? n | throwError "LAMP-HARNESS no constant {spelling}"
+      unless ci.isDefinition do throwError "LAMP-HARNESS not definition {spelling}"
+      let after ← Lean.getReducibilityStatus n
+      unless after == .irreducible do throwError "LAMP-HARNESS unsealed {spelling}"
+      Lean.logInfo m!"LAMP-SEAL-NAME\t{label}\tEOF\t{spelling}\t{home}"
+      count := count + 1
+    unless count == 3 do throwError "LAMP-HARNESS wrong verified count"
+    Lean.logInfo m!"LAMP-SEAL-EOF\t{label}\t{count}"
+

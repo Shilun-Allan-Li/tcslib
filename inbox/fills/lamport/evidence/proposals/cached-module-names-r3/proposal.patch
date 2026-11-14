@@ -1,0 +1,24 @@
+--- prepare_seals_final_r2.py
++++ prepare_seals_cached_module_names.py
+@@ -208,10 +208,11 @@
+   let lines := if payload.isEmpty then [] else payload.splitOn "\\n"
+   unless lines.length == {len(rows)} do throwError "LAMP-HARNESS bad serialized count"
+   let env ← Lean.getEnv
++  let moduleNames := env.header.moduleNames
+   let mut catalog : Std.HashMap String (Array Lean.Name) := {{}}
+   for (n, _) in env.constants.map₁.toList do
+     let some mi := env.getModuleIdxFor? n | continue
+-    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
++    unless (`TCSlib).isPrefixOf moduleNames[mi.toNat]! do continue
+     catalog := catalog.insert n.toString (((catalog[n.toString]?).getD #[]).push n)
+   let mut count : Nat := 0
+   for row in lines do
+@@ -220,7 +221,7 @@
+     unless ns.size == 1 do throwError "LAMP-HARNESS absent/ambiguous {{spelling}}"
+     let n := ns[0]!
+     let some mi := env.getModuleIdxFor? n | throwError "LAMP-HARNESS no home {{spelling}}"
+-    unless env.header.moduleNames[mi.toNat]!.toString == home do
++    unless moduleNames[mi.toNat]!.toString == home do
+       throwError "LAMP-HARNESS wrong home {{spelling}}"
+     let some ci := env.find? n | throwError "LAMP-HARNESS no constant {{spelling}}"
+     unless ci.isDefinition do throwError "LAMP-HARNESS not definition {{spelling}}"

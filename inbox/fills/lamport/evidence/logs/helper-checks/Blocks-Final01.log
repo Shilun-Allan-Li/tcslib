@@ -1,0 +1,34 @@
+start=2026-11-14T08:48:33.211599+00:00
+command=["python3", "-I", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/lean_host_guard.py", "--", "/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks"]
+source-sha256=420769e6211757c16690191c9075ae6f81346acdca6f18b6a1bcd90482a75149
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks.lean:50:51: error: unsolved goals
+B q : ℕ
+g : Fin (q + 1) → List Bool
+hg : ∀ (j : Fin (q + 1)), (g j).length = B
+i : Fin (q + 1)
+h : List Bool
+hh : h.length = B
+⊢ g 0 ++ (List.ofFn fun i => g i.succ).flatten = g 0 ++ (List.ofFn (Fin.tail g)).flatten
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks): no fresh .olean produced
+        1.60 real         0.96 user         0.67 sys
+          1370783744  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              113840  page reclaims
+                  12  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                  17  voluntary context switches
+                3264  involuntary context switches
+            30483086  instructions retired
+            17281578  cycles elapsed
+             1589584  peak memory footprint
+end=2026-11-14T08:48:35.428139+00:00
+exit=1

@@ -10,6 +10,15 @@ import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
 import TCSlib.Cryptography.Authentication.Signatures.Lamport.AveragingExtra
 import TCSlib.Cryptography.Authentication.Signatures.Lamport.Statistics
 import TCSlib.Cryptography.Authentication.Signatures.Lamport.Experiment
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Advice
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Blocks
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Closing
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.InversionProbability
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Seed
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.MachineSpec
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Nonabort
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization
 import TCSlib.Cryptography.Games.Hopping
 import TCSlib.Cryptography.Authentication.Encoding
 import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
@@ -22,7 +31,7 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Lamport's one-time signatures (statement phase)
+# Lamport's one-time signatures
 
 [PS10, Protocol 137.1]: for a one-way function `f`,
 - `Gen(1^n)` samples `x_i^b ← U_n` for `i ∈ [n]` and `b ∈ {0, 1}`, and outputs
@@ -60,6 +69,15 @@ Theorem 137.2: if `f` is one-way, the scheme is one-time secure.
 * `Signatures.Lamport.AveragingExtra`: optional-query counting and fixed-position selection.
 * `Signatures.Lamport.Statistics`: independent-coordinate averaging.
 * `Signatures.Lamport.Experiment`: the typed honest and planted probability bounds.
+* `Signatures.Lamport.Advice`: binary advice and bounded decoding for the best position.
+* `Signatures.Lamport.Blocks`: updating a fixed-width serialized tuple block.
+* `Signatures.Lamport.Closing`: negligibility under the linear reduction loss.
+* `Signatures.Lamport.InversionProbability`: transport to the actual machine inversion probability.
+* `Signatures.Lamport.Machine`: the polynomial-time planting handler.
+* `Signatures.Lamport.Seed`: the fair-bit and random-table seed equivalence.
+* `Signatures.Lamport.MachineSpec`: functional contracts for planting, signing and extraction.
+* `Signatures.Lamport.Nonabort`: nonaborting one-query runs have a safe query.
+* `Signatures.Lamport.Realization`: T1 realization with an explicit coin equivalence.
 
 ## Main definitions
 
@@ -73,7 +91,7 @@ Theorem 137.2: if `f` is one-way, the scheme is one-time secure.
 * `Authentication.lamport_msgLen`, `lamport_sigLen`, `lamport_gen`, `lamport_sign`, `lamport_ver`:
   the signature-scheme data fields.
 * `Authentication.lamportVerFun_sign`: correctness, `Ver` accepts honest signatures.
-* `Authentication.lamport_oneTimeSecure` (Thm 137.2, stated; a `sorry` under the source's sketch).
+* `Authentication.lamport_oneTimeSecure` (Thm 137.2): one-time security from strong one-wayness.
 
 ## References
 
@@ -683,11 +701,6 @@ theorem lamportVerFun_publicWord_iff (n : ℕ)
     lamportVerFun L E (atParam n (pairEncode (LamportFill.publicWord Y)
       (pairEncode (List.ofFn m) (List.ofFn σ)))) = [true] ↔
       ∀ i, f n (LamportFill.signatureBlock σ i) = Y (i, m i) := by
-  have hflat (g : Fin n → List Bool) :
-      encodeList (List.ofFn g) = (List.ofFn fun i => pairEncode (g i) []).flatten := by
-    rw [encodeList_eq_flatMap]
-    simp only [List.flatMap_def, List.map_ofFn]
-    rfl
   have hb : FunFamily.blocks n n σ = fun i => LamportFill.signatureBlock σ i := by
     funext i k
     rw [FunFamily.blocks_apply, LamportFill.signatureBlock_eq]
@@ -707,7 +720,7 @@ theorem lamportVerFun_publicWord_iff (n : ℕ)
   simp only [lamportVerFun_eq, atParam_eq, pairFstD_pairEncode, pairSndD_pairEncode,
     List.length_replicate, List.length_ofFn, decide_true, Bool.true_and,
     List.cons.injEq, and_true, decide_eq_true_eq]
-  rw [LamportFill.publicWord_eq, hflat, hσ, blockEncFun_ofFn, blockEncFun_ofFn]
+  rw [LamportFill.publicWord_flatten, hσ, blockEncFun_ofFn, blockEncFun_ofFn]
   have hleft : (fun i : Fin n =>
       lamportEvalEmit E (NUPPT.layout (List.replicate n true) (pairEncode [] [m i]) []
         (coinBlock n i (List.ofFn fun j => List.ofFn (LamportFill.signatureBlock σ j)).flatten))) =
@@ -892,14 +905,69 @@ theorem lamport_exists_best_position (A : NUPPT) (n : ℕ) (hn : 0 < n) :
    A best position at each length is at least as good as the uniform-position average; supply
    it as `O(log n)` bits of non-uniform advice and sample only the fair bit `c`. Thus the
    machine need not sample an exactly uniform element of `[n]` from a fixed finite coin tape.
-5. `f` is one-way, so this lower bound is negligible, and polynomial-factor closure makes `ε`
-   negligible. Apply T1 (`Games.exists_handlerMachine`) to the extended input `⟨y,i(n)⟩`, then
-   `NUPPT.exists_withAdvice` supplies the bounded advised position. `advIn` builds the public
-   key from that input and the seed, the handler answers or aborts, and `out` extracts `σ′_i`.
+5. T1 (`Games.exists_handlerMachine`) realizes the handler on `⟨y,1^i⟩`, using a fair
+   bit, a complete sampled table, and the forger's coins. A successful nonaborting typed run
+   has a safe query, so the handler's real output is the extracted preimage. Bounded decoding
+   expands the `Nat.size n`-bit best-position advice to unary; `NUPPT.exists_withAdvice`
+   supplies it without changing the coin polynomial. One-wayness makes this fixed machine's
+   inversion probability negligible. Since `ε(n) ≤ 2n·inv_B(n)` for `n ≥ 1`, polynomial-factor
+   closure proves one-time security, with zero handled by the finite exception.
 
 For zero-query successful runs the extraction fraction is `1/2`, rather than just `1/(2n)`. -/
 theorem lamport_oneTimeSecure (hf : (lamportOWF L f).StrongOneWay) :
     (lamport L f E hE hfE).OneTimeSecure := by
-  sorry
+  classical
+  apply LamportReduction.oneTimeSecure_of_inversion_lower
+    (lamport L f E hE hfE) (lamportOWF L f) hf
+  intro A
+  have hW (n : ℕ) : (lamportPkBlock L).eval n = 6 * L.eval n + 6 := by
+    rw [lamportPkBlock_eq]
+    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+  have hEval (n : ℕ) (x : Fin n → Bool) :
+      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (f n x) := by
+    simpa only [NUPPT.advInput_eq] using hfE n x
+  obtain ⟨B, hB⟩ := LamportFill.exists_realization_machine L (lamportPkBlock L) f
+    E (lamportGenFun E) lamportSignFun hE
+    (polyTimeComputable_lamportGenFun hE) polyTimeComputable_lamportSignFun
+    hW hEval (lamportGenFun_table L f E hE hfE) lamportSignFun_table
+    coinBlock_flatten_ofFn A
+  have hbest (n : ℕ) (hn : 0 < n) : ∃ i : Fin n,
+      accept ((lamport L f E hE hfE).forgeGame A 1 n) / (2 * (n : ℝ)) ≤
+        ProbComp.expect (ProbComp.sample Bool)
+          (fun c => LamportFill.redProbability (f n)
+            (LamportFill.machineForger L A n) (i, c)) := by
+    simpa only [LamportFill.machineForger_eq_fun] using
+      lamport_exists_best_position L f E hE hfE A n hn
+  let idx : ℕ → ℕ := fun n => if hn : 0 < n then (Classical.choose (hbest n hn)).val else 0
+  have hidx_le (n : ℕ) : idx n ≤ n := by
+    dsimp only [idx]
+    split_ifs with hn
+    · exact (Classical.choose (hbest n hn)).isLt.le
+    · exact Nat.zero_le n
+  obtain ⟨C, hCcoins, hC⟩ := LamportFill.exists_withIndexAdvice B idx hidx_le
+  refine ⟨C, fun n hn => ?_⟩
+  have hnpos : 0 < n := hn
+  let i : Fin n := Classical.choose (hbest n hnpos)
+  have hi := Classical.choose_spec (hbest n hnpos)
+  have hidx : idx n = i.val := by
+    dsimp only [idx]
+    rw [dif_pos hnpos]
+  obtain ⟨φ, hφ⟩ := hB n
+  let e : ((Bool × LamportFill.Table n) × A.Coins n) ≃ C.Coins n :=
+    φ.trans (NUPPT.coinsCongr hCcoins.symm n)
+  have hreal (y : Fin (L.eval n) → Bool) (T : LamportFill.Table n) (c : Bool)
+      (r : A.Coins n)
+      (hs : LamportFill.RedSuccess (f n) (LamportFill.machineForger L A n) y T r (i, c)) :
+      ∃ x' : Fin n → Bool,
+        C.runAt n (List.ofFn y) (e ((c, T), r)) = List.ofFn x' ∧ f n x' = y := by
+    obtain ⟨x', hout, hfx⟩ := hφ i y T c r hs
+    refine ⟨x', ?_, hfx⟩
+    change C.runAt n (List.ofFn y)
+      (NUPPT.coinsCongr hCcoins.symm n (φ ((c, T), r))) = List.ofFn x'
+    rw [LamportFill.runAt_indexAdvice hCcoins idx hC, hidx]
+    exact hout
+  have hInv := LamportFill.fairBit_redProbability_le_invProbAt (lamportOWF L f)
+    n A C i (LamportFill.machineForger L A n) e hreal
+  exact hi.trans (by simpa only [lamportOWF_f] using hInv)
 
 end TCSlib.Cryptography.Authentication

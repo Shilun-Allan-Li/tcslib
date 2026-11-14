@@ -1,0 +1,120 @@
+start=2026-11-14T08:53:19.793116+00:00
+command=["python3", "-I", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/lean_host_guard.py", "--", "/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization"]
+source-sha256=d67baa44bfeb14f4b141ffcc82b2da3928def186995957c53d06fd629ccbd4f6
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean:159:25: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (a, false).1
+in the target expression
+  OracleComp.pure (a, H.init n) = OracleComp.pure (a₀, H.init n)
+
+case pure
+L W : PolyExpr
+f : (n : ℕ) → (Fin n → Bool) → Fin (L.eval n) → Bool
+E G S : List Bool → List Bool
+hE : PolyTimeComputable E
+hG : PolyTimeComputable G
+hS : PolyTimeComputable S
+hW : ∀ (n : ℕ), W.eval n = 6 * L.eval n + 6
+hEval : ∀ (n : ℕ) (x : Fin n → Bool), E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (f n x)
+hGen :
+  ∀ (n : ℕ) (T : Table n),
+    G (NUPPT.layout (List.replicate n true) [] [] (secretWord T)) =
+      pairEncode (publicWord (tablePublic (f n) T)) (secretWord T)
+hSign :
+  ∀ (n : ℕ) (T : Table n) (m : Fin n → Bool),
+    S (NUPPT.layout (List.replicate n true) (pairEncode (secretWord T) (List.ofFn m)) [] []) =
+      List.ofFn (tableSignature T m)
+hcoin :
+  ∀ {q B : ℕ} (g : Fin q → List Bool),
+    (∀ (j : Fin q), (g j).length = B) → ∀ (i : Fin q), coinBlock B (↑i) (List.ofFn g).flatten = g i
+A : NUPPT
+H : PolyHandler 1 (fun x => PolyExpr.var) fun x => PolyExpr.var.mul PolyExpr.var :=
+  LamportMachine.handler W E G S hE hG hS
+B : NUPPT
+hB :
+  ∀ (n : ℕ),
+    ∃ φ,
+      ∀ (z : List Bool) (ω : Fin (H.seedLen.eval n) → Bool) (r : A.Coins n),
+        ∃ a s,
+          simulate (H.impl n z ω)
+                (A.toCompOn
+                  (bitCodec (fun i => PolyExpr.var.eval n) (fun i => (PolyExpr.var.mul PolyExpr.var).eval n)
+                    ((PolyExpr.var.add (PolyExpr.var.mul PolyExpr.var)).eval n))
+                  n ((PolyExpr.const 1).eval n) (H.advInput n z ω) r)
+                (H.init n) =
+              OracleComp.pure (a, s) ∧
+            B.runAt n z (φ (ω, r)) = H.result n z ω s a
+n : ℕ
+ψ : (Fin (H.seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n
+hψ :
+  ∀ (z : List Bool) (ω : Fin (H.seedLen.eval n) → Bool) (r : A.Coins n),
+    ∃ a s,
+      simulate (H.impl n z ω)
+            (A.toCompOn
+              (bitCodec (fun i => PolyExpr.var.eval n) (fun i => (PolyExpr.var.mul PolyExpr.var).eval n)
+                ((PolyExpr.var.add (PolyExpr.var.mul PolyExpr.var)).eval n))
+              n ((PolyExpr.const 1).eval n) (H.advInput n z ω) r)
+            (H.init n) =
+          OracleComp.pure (a, s) ∧
+        B.runAt n z (ψ (ω, r)) = H.result n z ω s a
+hseed : H.seedLen.eval n = 1 + 2 * n * n
+hstate : H.stateLen.eval n = 1
+toSeed : Bool × Table n ≃ (Fin (H.seedLen.eval n) → Bool) :=
+  (seedCoins n).symm.trans ((finCongr ⋯).arrowCongr (Equiv.refl Bool))
+φ : (Bool × Table n) × A.Coins n ≃ B.Coins n := (toSeed.prodCongr (Equiv.refl (A.Coins n))).trans ψ
+i : Fin n
+y : Fin (L.eval n) → Bool
+T : Table n
+c : Bool
+r : A.Coins n
+hred : RedSuccess (f n) (machineForger L A n) y T r (i, c)
+z : List Bool := pairEncode (List.ofFn y) (List.replicate (↑i) true)
+ω : Fin (H.seedLen.eval n) → Bool := toSeed (c, T)
+hω : List.ofFn ω = c :: secretWord T
+hinit : H.init n = fun x => false
+hinitWord : List.ofFn (H.init n) = [false]
+hadv : H.advInput n z ω = publicWord (plantedPublic (f n) T i c y)
+tree : OracleComp (bitSpec (fun x => n) fun x => n * n) (Fin (n + n * n) → Bool) :=
+  machineForger L A n (plantedPublic (f n) T i c y) r
+hcost : OracleComp.CostBoundedBy (fun x => 1) tree 1
+a₀ : Fin (n + n * n) → Bool
+hinverts : f n (signatureBlock (splitBits a₀).2 (i, c).1) = y
+hsafe : Safe tree i c
+hrunread : H.run = LamportMachine.run S
+hcall :
+  ∀ (j : Fin 1) (m : Fin n → Bool),
+    m i ≠ c → H.impl n z ω j m (H.init n) = OracleComp.pure (tableSignature T m, H.init n)
+a : Fin (n + n * n) → Bool
+habort : simulate (abortingImpl T i c) (OracleComp.pure a) false = OracleComp.pure (a₀, false)
+ht : tree = OracleComp.pure a
+hp : (a, false) = (a₀, false)
+⊢ OracleComp.pure (a, H.init n) = OracleComp.pure (a₀, H.init n)
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean:167:8: error: Type mismatch: After simplification, term
+  habort
+ has type
+  simulate (abortingImpl T i c) (k (if False then zeroBits (n * n) else tableSignature T m)) false =
+    OracleComp.pure (a₀, false)
+but is expected to have type
+  OracleComp.pure (a, false) = OracleComp.pure (a₀, false)
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization): no fresh .olean produced
+        2.27 real         1.51 user         0.85 sys
+          2206498816  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175073  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  16  voluntary context switches
+                4992  involuntary context switches
+            30248343  instructions retired
+            16563294  cycles elapsed
+             1605968  peak memory footprint
+end=2026-11-14T08:53:23.032159+00:00
+exit=1

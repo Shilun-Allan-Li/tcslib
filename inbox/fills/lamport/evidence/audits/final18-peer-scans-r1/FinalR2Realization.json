@@ -1,0 +1,468 @@
+{
+  "commit": "47ced271090f45918645c842cd358c5079092754",
+  "phase": "FinalR2Realization",
+  "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization",
+  "source_sha256": "94d45325952bf01dbe6665f4fa85d2eee10f117df9b3babd34e62639f5a85ee3",
+  "scan_sha256": "ff68d1e04664edbf768d35f54f4ec1d476521b33285aaa925ee02dc1d1a508a0",
+  "token_readings": 77,
+  "foreign_candidate_rows": 8,
+  "genuine_forbidden_explicit_foreign_unfolds": 0,
+  "reviews": [
+    {
+      "index": 19,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization",
+        "line": 136,
+        "operation": "simp",
+        "identifier": "z",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.z",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.z",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 132,
+        "lines": [
+          "  have hinitWord : List.ofFn (H.init n) = [false] := by",
+          "    rw [hinit, List.ofFn_const, hstate]",
+          "    rfl",
+          "  have hadv : H.advInput n z \u03c9 = publicWord (plantedPublic (f n) T i c y) := by",
+          "    simp only [PolyHandler.advInput_eq, H, LamportMachine.handler_advIn, h\u03c9, z]",
+          "    exact advIn_context hcoin W (hW n) (f n) E G (hEval n) (hGen n) T i c y",
+          "  let tree := machineForger L A n (plantedPublic (f n) T i c y) r",
+          "  have hcost : tree.CostBoundedBy (fun _ => 1) 1 := machineForger_cost L A n _ r",
+          "  obtain \u27e8a\u2080, habort, hinverts\u27e9 := (redSuccess_iff (f n) (machineForger L A n) y T r (i, c)).1 hred",
+          "  change simulate (abortingImpl T i c) tree false = .pure (a\u2080, false) at habort"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local let-bound encoded challenge z at line123",
+      "reason": "The simp/simpa entry unfolds the locally bound z, not the unrelated GGMRed.Data.z projection.",
+      "forbidden_explicit_foreign_unfold": false,
+      "binding_context": {
+        "first_line": 123,
+        "lines": [
+          "  let z := pairEncode (List.ofFn y) (List.replicate i.val true)",
+          "  let \u03c9 := toSeed (c, T)",
+          "  have h\u03c9 : List.ofFn \u03c9 = c :: secretWord T := by"
+        ]
+      }
+    },
+    {
+      "index": 24,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization",
+        "line": 152,
+        "operation": "simpa",
+        "identifier": "z",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.z",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.z",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 148,
+        "lines": [
+          "    rw [PolyHandler.impl_apply]",
+          "    apply congrArg OracleComp.pure",
+          "    apply PolyHandler.answer_of_run_eq H",
+          "    simp only [hrunread, h\u03c9, hinitWord]",
+          "    simpa only [z] using run_safe S (hSign n) T i c (List.ofFn y) j m hm",
+          "  have hsim : simulate (H.impl n z \u03c9) tree (H.init n) = .pure (a\u2080, H.init n) := by",
+          "    cases ht : tree with",
+          "    | pure a =>",
+          "      rw [ht] at habort",
+          "      have hp : (a, false) = (a\u2080, false) :="
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local let-bound encoded challenge z at line123",
+      "reason": "The simp/simpa entry unfolds the locally bound z, not the unrelated GGMRed.Data.z projection.",
+      "forbidden_explicit_foreign_unfold": false,
+      "binding_context": {
+        "first_line": 123,
+        "lines": [
+          "  let z := pairEncode (List.ofFn y) (List.replicate i.val true)",
+          "  let \u03c9 := toSeed (c, T)",
+          "  have h\u03c9 : List.ofFn \u03c9 = c :: secretWord T := by"
+        ]
+      }
+    },
+    {
+      "index": 45,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization",
+        "line": 171,
+        "operation": "rw",
+        "identifier": "j",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.j",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.j",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 167,
+        "lines": [
+          "      have hp : (a, false) = (a\u2080, false) := OracleComp.pure.inj (by",
+          "        simpa only [simulate_query, abortingImpl_apply, abortingAnswer_eq, if_neg hm,",
+          "          hm, if_false, decide_false, Bool.false_or, OracleComp.pure_bind, ha, simulate_pure] using habort)",
+          "      have haa : a = a\u2080 := congrArg Prod.fst hp",
+          "      rw [simulate_query, hcall j m hm, OracleComp.pure_bind, ha, simulate_pure,",
+          "        haa]",
+          "  obtain \u27e8a, s, hsimulation, houtput\u27e9 := h\u03c8 z \u03c9 r",
+          "  have hsimulation' : simulate (H.impl n z \u03c9) tree (H.init n) = .pure (a, s) := by",
+          "    simpa only [PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_mul, PolyExpr.eval_add,",
+          "      hadv, tree, machineForger_eq] using hsimulation"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "locally bound safe-query index/message",
+      "reason": "This is a term argument to the local hcall equality in the query case, not the unrelated GGMRed/YaoMachine definition.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 46,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization",
+        "line": 171,
+        "operation": "rw",
+        "identifier": "m",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 167,
+        "lines": [
+          "      have hp : (a, false) = (a\u2080, false) := OracleComp.pure.inj (by",
+          "        simpa only [simulate_query, abortingImpl_apply, abortingAnswer_eq, if_neg hm,",
+          "          hm, if_false, decide_false, Bool.false_or, OracleComp.pure_bind, ha, simulate_pure] using habort)",
+          "      have haa : a = a\u2080 := congrArg Prod.fst hp",
+          "      rw [simulate_query, hcall j m hm, OracleComp.pure_bind, ha, simulate_pure,",
+          "        haa]",
+          "  obtain \u27e8a, s, hsimulation, houtput\u27e9 := h\u03c8 z \u03c9 r",
+          "  have hsimulation' : simulate (H.impl n z \u03c9) tree (H.init n) = .pure (a, s) := by",
+          "    simpa only [PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_mul, PolyExpr.eval_add,",
+          "      hadv, tree, machineForger_eq] using hsimulation"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "locally bound safe-query index/message",
+      "reason": "This is a term argument to the local hcall equality in the query case, not the unrelated GGMRed/YaoMachine definition.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 64,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization",
+        "line": 184,
+        "operation": "rw",
+        "identifier": "LamportMachine.out",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Authentication.LamportMachine.out",
+            "home": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Authentication.LamportMachine.out",
+            "home": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 180,
+        "lines": [
+          "  have hs : s = H.init n := congrArg Prod.snd hp",
+          "  rw [ha, hs] at houtput",
+          "  have hresult : H.result n z \u03c9 (H.init n) a\u2080 =",
+          "      List.ofFn (signatureBlock (splitBits a\u2080).2 i) := by",
+          "    rw [PolyHandler.result_eq, show H.out = LamportMachine.out from",
+          "      LamportMachine.handler_out W E G S hE hG hS, h\u03c9, hinitWord]",
+          "    apply out_nonabort i z (c :: secretWord T) a\u2080",
+          "    simpa only [z] using LamportMachine.pos_seedIn n (List.ofFn y)",
+          "      (List.replicate i.val true) (c :: secretWord T)",
+          "  refine \u27e8signatureBlock (splitBits a\u2080).2 i, ?_, hinverts\u27e9"
+        ]
+      },
+      "classification": "published_reader_application_equality",
+      "resolved_role": "TCSlib.Cryptography.Authentication.LamportMachine.out",
+      "reason": "The foreign function appears only as the RHS of the equality `show H.out = LamportMachine.out from LamportMachine.handler_out ...`. rw uses the equality delivered by the published handler_out reader; it does not unfold the out definition.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 67,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization",
+        "line": 184,
+        "operation": "rw",
+        "identifier": "W",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.W",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.W",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 180,
+        "lines": [
+          "  have hs : s = H.init n := congrArg Prod.snd hp",
+          "  rw [ha, hs] at houtput",
+          "  have hresult : H.result n z \u03c9 (H.init n) a\u2080 =",
+          "      List.ofFn (signatureBlock (splitBits a\u2080).2 i) := by",
+          "    rw [PolyHandler.result_eq, show H.out = LamportMachine.out from",
+          "      LamportMachine.handler_out W E G S hE hG hS, h\u03c9, hinitWord]",
+          "    apply out_nonabort i z (c :: secretWord T) a\u2080",
+          "    simpa only [z] using LamportMachine.pos_seedIn n (List.ofFn y)",
+          "      (List.replicate i.val true) (c :: secretWord T)",
+          "  refine \u27e8signatureBlock (splitBits a\u2080).2 i, ?_, hinverts\u27e9"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "theorem parameter W",
+      "reason": "This is a PolyExpr/function parameter supplied to the published LamportMachine.handler_out reader, not an unrelated GGMRed/PRG projection.",
+      "forbidden_explicit_foreign_unfold": false,
+      "binding_context": {
+        "first_line": 81,
+        "lines": [
+          "theorem exists_realization_machine",
+          "    (L W : PolyExpr)",
+          "    (f : \u2200 n, (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool)",
+          "    (E G S : List Bool \u2192 List Bool)",
+          "    (hE : PolyTimeComputable E) (hG : PolyTimeComputable G) (hS : PolyTimeComputable S)",
+          "    (hW : \u2200 n, W.eval n = 6 * L.eval n + 6)",
+          "    (hEval : \u2200 n (x : Fin n \u2192 Bool),",
+          "      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (f n x))",
+          "    (hGen : \u2200 n (T : Table n),",
+          "      G (NUPPT.layout (List.replicate n true) [] [] (secretWord T)) ="
+        ]
+      }
+    },
+    {
+      "index": 69,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization",
+        "line": 184,
+        "operation": "rw",
+        "identifier": "G",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PRG.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PRG.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 180,
+        "lines": [
+          "  have hs : s = H.init n := congrArg Prod.snd hp",
+          "  rw [ha, hs] at houtput",
+          "  have hresult : H.result n z \u03c9 (H.init n) a\u2080 =",
+          "      List.ofFn (signatureBlock (splitBits a\u2080).2 i) := by",
+          "    rw [PolyHandler.result_eq, show H.out = LamportMachine.out from",
+          "      LamportMachine.handler_out W E G S hE hG hS, h\u03c9, hinitWord]",
+          "    apply out_nonabort i z (c :: secretWord T) a\u2080",
+          "    simpa only [z] using LamportMachine.pos_seedIn n (List.ofFn y)",
+          "      (List.replicate i.val true) (c :: secretWord T)",
+          "  refine \u27e8signatureBlock (splitBits a\u2080).2 i, ?_, hinverts\u27e9"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "theorem parameter G",
+      "reason": "This is a PolyExpr/function parameter supplied to the published LamportMachine.handler_out reader, not an unrelated GGMRed/PRG projection.",
+      "forbidden_explicit_foreign_unfold": false,
+      "binding_context": {
+        "first_line": 81,
+        "lines": [
+          "theorem exists_realization_machine",
+          "    (L W : PolyExpr)",
+          "    (f : \u2200 n, (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool)",
+          "    (E G S : List Bool \u2192 List Bool)",
+          "    (hE : PolyTimeComputable E) (hG : PolyTimeComputable G) (hS : PolyTimeComputable S)",
+          "    (hW : \u2200 n, W.eval n = 6 * L.eval n + 6)",
+          "    (hEval : \u2200 n (x : Fin n \u2192 Bool),",
+          "      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (f n x))",
+          "    (hGen : \u2200 n (T : Table n),",
+          "      G (NUPPT.layout (List.replicate n true) [] [] (secretWord T)) ="
+        ]
+      }
+    },
+    {
+      "index": 76,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization",
+        "line": 187,
+        "operation": "simpa",
+        "identifier": "z",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.z",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.z",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 183,
+        "lines": [
+          "      List.ofFn (signatureBlock (splitBits a\u2080).2 i) := by",
+          "    rw [PolyHandler.result_eq, show H.out = LamportMachine.out from",
+          "      LamportMachine.handler_out W E G S hE hG hS, h\u03c9, hinitWord]",
+          "    apply out_nonabort i z (c :: secretWord T) a\u2080",
+          "    simpa only [z] using LamportMachine.pos_seedIn n (List.ofFn y)",
+          "      (List.replicate i.val true) (c :: secretWord T)",
+          "  refine \u27e8signatureBlock (splitBits a\u2080).2 i, ?_, hinverts\u27e9",
+          "  change B.runAt n z (\u03c8 (\u03c9, r)) = List.ofFn (signatureBlock (splitBits a\u2080).2 i)",
+          "  exact houtput.trans hresult",
+          ""
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local let-bound encoded challenge z at line123",
+      "reason": "The simp/simpa entry unfolds the locally bound z, not the unrelated GGMRed.Data.z projection.",
+      "forbidden_explicit_foreign_unfold": false,
+      "binding_context": {
+        "first_line": 123,
+        "lines": [
+          "  let z := pairEncode (List.ofFn y) (List.replicate i.val true)",
+          "  let \u03c9 := toSeed (c, T)",
+          "  have h\u03c9 : List.ofFn \u03c9 = c :: secretWord T := by"
+        ]
+      }
+    }
+  ],
+  "method": "Source-only manual context review of every foreign-definition candidate; separate whole-file seals test hidden definitional closure.",
+  "created_at": "2026-11-14T10:32:12.127364+00:00"
+}

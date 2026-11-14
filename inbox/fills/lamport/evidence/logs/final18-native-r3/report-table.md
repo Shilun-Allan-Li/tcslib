@@ -1,0 +1,20 @@
+| File | Closure | Stored constants | A requests | B requests | A errors | B errors | Controls passed |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Planted | 100 | 67 | 1438 | 1439 | 0 | 0 | 6 |
+| Encoding | 53 | 3 | 813 | 814 | 0 | 0 | 6 |
+| TableCoins | 101 | 6 | 1455 | 1456 | 0 | 0 | 6 |
+| Averaging | 3 | 7 | 38 | 38 | 0 | 0 | 6 |
+| AveragingExtra | 9 | 3 | 50 | 50 | 0 | 0 | 6 |
+| Statistics | 102 | 2 | 1455 | 1456 | 0 | 0 | 6 |
+| Experiment | 107 | 23 | 1462 | 1463 | 0 | 0 | 6 |
+| Advice | 67 | 12 | 911 | 912 | 0 | 0 | 6 |
+| Blocks | 0 | 2 | 0 | 0 | 0 | 0 | 0 |
+| Closing | 78 | 4 | 1057 | 1058 | 0 | 0 | 6 |
+| InversionProbability | 108 | 2 | 1468 | 1469 | 0 | 0 | 6 |
+| Machine | 138 | 73 | 1930 | 1931 | 0 | 0 | 6 |
+| Seed | 102 | 6 | 1456 | 1457 | 0 | 0 | 6 |
+| MachineSpec | 148 | 13 | 2003 | 2004 | 0 | 0 | 6 |
+| Nonabort | 101 | 1 | 1455 | 1456 | 0 | 0 | 6 |
+| Realization | 156 | 6 | 2014 | 2015 | 0 | 6 | 6 |
+| Main | 163 | 91 | 2025 | 2026 | 0 | 26 | 6 |
+| Auth | 176 | 0 | 2149 | 2150 | 0 | 0 | 6 |

@@ -1,0 +1,33 @@
+$ rg -n theorem (takeLen_poly|dropLen_poly)|lemma (takeLen_poly|dropLen_poly) TCSlib
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:248:theorem takeLen_poly {a b : List Bool → List Bool} (ha : PolyTimeComputable a)
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:256:theorem dropLen_poly {a b : List Bool → List Bool} (ha : PolyTimeComputable a)
+EXIT 0
+
+$ rg -n tmsat_pt_take TCSlib/Complexity/ClassNP/TMSAT.lean
+1100:private lemma tmsat_pt_take {f g : List Bool → List Bool}
+1290:    ((hclock.pairEncode ha).pairEncode (hx.pairEncode (tmsat_pt_take hn hw)))
+EXIT 0
+
+$ rg -n clA5Drop_native TCSlib/Complexity/CookLevin/Hardness.lean
+6889:private lemma clA5Drop_native {s u : List Bool → List Bool}
+6985:  have h := clA5_pt_eq (clA5Drop_native hf hg) []
+7682:  simpa only [List.length_replicate, List.drop_replicate] using clA5Drop_native hf hg
+7963:  have h := clA5_pt_eq (clA5_pt_head.comp (clA5Drop_native hf hi)) [true]
+EXIT 0
+
+$ rg -n private theorem dlb_(take|drop)_poly TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+1082:private theorem dlb_take_poly {fa fb : List Bool → List Bool} (ha : PolyTimeComputable fa)
+1088:private theorem dlb_drop_poly {fa fb : List Bool → List Bool} (ha : PolyTimeComputable fa)
+EXIT 0
+
+$ rg -n ReductionSupport /private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/inputs/order.txt /private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/inputs/final-r1-order.txt
+/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/inputs/order.txt:105:TCSlib/Cryptography/Asymptotic/ReductionSupport
+/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/inputs/final-r1-order.txt:105:TCSlib/Cryptography/Asymptotic/ReductionSupport
+EXIT 0
+
+$ rg -n ofFn_blocks_two_symm TCSlib/Cryptography/Asymptotic/OneWay.lean
+723:private theorem ofFn_blocks_two_symm (ℓ : ℕ) (t : Fin 2 → Fin ℓ → Bool) :
+785:    rw [← ofFn_blocks_two_symm, ← List.ofFn_fin_append]
+824:  rw [NUPPT.inverter_eq_some_iff, ofFn_blocks_two_symm, Function.update_self,
+EXIT 0
+

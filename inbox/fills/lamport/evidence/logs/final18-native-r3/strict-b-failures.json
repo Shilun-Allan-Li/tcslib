@@ -1,0 +1,265 @@
+[
+  {
+    "phase": "FinalR2Realization",
+    "mode": "B",
+    "errors": 6,
+    "raw_log": "logs/seals/finalr2realization-native-r1/FinalR2Realization_0_B.log",
+    "raw_result": "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/logs/seals/finalr2realization-native-r1/FinalR2Realization_0_B.result.json",
+    "declarations": [
+      "TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine"
+    ],
+    "diagnostics": [
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean",
+        "original_line": 146,
+        "declaration": "TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Realization/Seal0B.lean:183:21: error: Application type mismatch: The argument\n  m\nhas type\n  Fin n \u2192 Bool\nbut is expected to have type\n  (bitSpecAt (fun x => PolyExpr.var) (fun x => PolyExpr.var.mul PolyExpr.var) n).dom j\nin the application\n  H.impl n z \u03c9 j m"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean",
+        "original_line": 146,
+        "declaration": "TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Realization/Seal0B.lean:183:43: error: Application type mismatch: The argument\n  tableSignature T m\nhas type\n  Fin (n * n) \u2192 Bool\nbut is expected to have type\n  (bitSpecAt (fun x => PolyExpr.var) (fun x => PolyExpr.var.mul PolyExpr.var) n).rng j\nin the application\n  Prod.mk (tableSignature T m)"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean",
+        "original_line": 153,
+        "declaration": "TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Realization/Seal0B.lean:190:38: error: Application type mismatch: The argument\n  tree\nhas type\n  OracleComp (bitSpec (fun x => n) fun x => n * n) (Fin (n + n * n) \u2192 Bool)\nbut is expected to have type\n  OracleComp (bitSpecAt (fun x => PolyExpr.var) (fun x => PolyExpr.var.mul PolyExpr.var) n) ?m.424\nin the application\n  simulate (H.impl n z \u03c9) tree"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean",
+        "original_line": 174,
+        "declaration": "TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Realization/Seal0B.lean:211:46: error: Application type mismatch: The argument\n  tree\nhas type\n  OracleComp (bitSpec (fun x => n) fun x => n * n) (Fin (n + n * n) \u2192 Bool)\nbut is expected to have type\n  OracleComp (bitSpecAt (fun x => PolyExpr.var) (fun x => PolyExpr.var.mul PolyExpr.var) n) ?m.673\nin the application\n  simulate (H.impl n z \u03c9) tree"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean",
+        "original_line": 177,
+        "declaration": "TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine",
+        "message": "Type mismatch",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Realization/Seal0B.lean:214:21: error: Type mismatch\n  (a\u2080, H.init n)\nhas type\n  (Fin (n + n * n) \u2192 Bool) \u00d7 (Fin (H.stateLen.eval n) \u2192 Bool)\nbut is expected to have type\n  (Fin ((PolyExpr.var.add (PolyExpr.var.mul PolyExpr.var)).eval n) \u2192 Bool) \u00d7 (Fin (H.stateLen.eval n) \u2192 Bool)"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean",
+        "original_line": 179,
+        "declaration": "TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine",
+        "message": "Type mismatch",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Realization/Seal0B.lean:216:16: error: Type mismatch\n  a\u2080\nhas type\n  Fin (n + n * n) \u2192 Bool\nbut is expected to have type\n  Fin ((PolyExpr.var.add (PolyExpr.var.mul PolyExpr.var)).eval n) \u2192 Bool"
+      }
+    ]
+  },
+  {
+    "phase": "FinalR2Main",
+    "mode": "B",
+    "errors": 26,
+    "raw_log": "logs/seals/finalr2main-native-r1/FinalR2Main_0_B.log",
+    "raw_result": "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/logs/seals/finalr2main-native-r1/FinalR2Main_0_B.result.json",
+    "declarations": [
+      "TCSlib.Cryptography.Authentication.lamport",
+      "TCSlib.Cryptography.Authentication.lamportOWF",
+      "TCSlib.Cryptography.Authentication.lamportOWF_f",
+      "TCSlib.Cryptography.Authentication.lamportOWF_inLen",
+      "TCSlib.Cryptography.Authentication.lamportOWF_outLen",
+      "TCSlib.Cryptography.Authentication.lamport_exists_best_position",
+      "TCSlib.Cryptography.Authentication.lamport_forgeGame_accept_eq_honestProbability",
+      "TCSlib.Cryptography.Authentication.lamport_forgerCodec",
+      "TCSlib.Cryptography.Authentication.lamport_gen",
+      "TCSlib.Cryptography.Authentication.lamport_loggedSignImpl_expect",
+      "TCSlib.Cryptography.Authentication.lamport_msgLen",
+      "TCSlib.Cryptography.Authentication.lamport_oneTimeSecure",
+      "TCSlib.Cryptography.Authentication.lamport_sigLen",
+      "TCSlib.Cryptography.Authentication.lamport_sign",
+      "TCSlib.Cryptography.Authentication.lamport_signImpl_expect",
+      "TCSlib.Cryptography.Authentication.lamport_ver"
+    ],
+    "diagnostics": [
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 499,
+        "declaration": "TCSlib.Cryptography.Authentication.lamportOWF",
+        "message": "Type mismatch",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:536:7: error: Type mismatch\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (PolyExpr.var.eval n) \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 502,
+        "declaration": "TCSlib.Cryptography.Authentication.lamportOWF_inLen",
+        "message": "Function expected at",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:539:28: error: Function expected at\n  lamportOWF L\nbut this term has type\n  FunFamily\n\nNote: Expected a function because this term is being applied to the argument\n  f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 502,
+        "declaration": "TCSlib.Cryptography.Authentication.lamportOWF_inLen",
+        "message": "Invalid dotted identifier notation: The expected type of `.var` could not be determined",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:539:52: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.var` could not be determined"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 505,
+        "declaration": "TCSlib.Cryptography.Authentication.lamportOWF_outLen",
+        "message": "Function expected at",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:542:29: error: Function expected at\n  lamportOWF L\nbut this term has type\n  FunFamily\n\nNote: Expected a function because this term is being applied to the argument\n  f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 508,
+        "declaration": "TCSlib.Cryptography.Authentication.lamportOWF_f",
+        "message": "Function expected at",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:545:24: error: Function expected at\n  lamportOWF L\nbut this term has type\n  FunFamily\n\nNote: Expected a function because this term is being applied to the argument\n  f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 598,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:635:64: error: Application type mismatch: The argument\n  m\nhas type\n  Fin (PolyExpr.var.eval n) \u2192 Bool\nbut is expected to have type\n  Fin n \u2192 Bool\nin the application\n  lamportVerFun_sign L f E hE hfE n m"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 601,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_msgLen",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:638:36: error: Application type mismatch: The argument\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  List Bool \u2192 List Bool\nin the application\n  lamport L f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 601,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_msgLen",
+        "message": "Invalid dotted identifier notation: The expected type of `.var` could not be determined",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:638:57: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.var` could not be determined"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 604,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_sigLen",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:641:36: error: Application type mismatch: The argument\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  List Bool \u2192 List Bool\nin the application\n  lamport L f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 604,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_sigLen",
+        "message": "Invalid dotted identifier notation: The expected type of `.mul` could not be determined",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:641:57: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.mul` could not be determined"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 607,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_gen",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:644:33: error: Application type mismatch: The argument\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  List Bool \u2192 List Bool\nin the application\n  lamport L f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 610,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_sign",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:647:34: error: Application type mismatch: The argument\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  List Bool \u2192 List Bool\nin the application\n  lamport L f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 613,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_ver",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:650:33: error: Application type mismatch: The argument\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  List Bool \u2192 List Bool\nin the application\n  lamport L f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 766,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_forgerCodec",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:803:15: error: Application type mismatch: The argument\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  List Bool \u2192 List Bool\nin the application\n  lamport L f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 791,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_signImpl_expect",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:828:20: error: Application type mismatch: The argument\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  List Bool \u2192 List Bool\nin the application\n  lamport L f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 807,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_loggedSignImpl_expect",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:844:21: error: Application type mismatch: The argument\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  List Bool \u2192 List Bool\nin the application\n  lamport L f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 810,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_loggedSignImpl_expect",
+        "message": "Invalid argument name `L` for function `lamport_signImpl_expect`",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:847:32: error: Invalid argument name `L` for function `lamport_signImpl_expect`\n\nHint: Perhaps you meant one of the following parameter names:\n  \u2022 `n`: L\u0335n\u0332\n  \u2022 `T`: L\u0335T\u0332\n  \u2022 `i`: L\u0335i\u0332\n  \u2022 `m`: L\u0335m\u0332\n  \u2022 `s`: L\u0335s\u0332\n  \u2022 `G`: L\u0335G\u0332"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 826,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_forgeGame_accept_eq_honestProbability",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:863:23: error: Application type mismatch: The argument\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  List Bool \u2192 List Bool\nin the application\n  lamport L f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 876,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_exists_best_position",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:913:36: error: Application type mismatch: The argument\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  List Bool \u2192 List Bool\nin the application\n  lamport L f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 881,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_exists_best_position",
+        "message": "unsolved goals",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:918:57: error: unsolved goals\ncase E\nL : PolyExpr\nf : (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nA : NUPPT\nn : \u2115\nhn : 0 < n\nthis : NeZero n := \u22ef\n\u22a2 List Bool \u2192 List Bool\n\ncase hfE\nL : PolyExpr\nf : (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nA : NUPPT\nn : \u2115\nhn : 0 < n\nthis : NeZero n := { out := Nat.ne_of_gt hn }\n\u22a2 \u2200 (n : \u2115) (x : Fin n \u2192 Bool), ?E (NUPPT.advInput n (List.ofFn x)) = List.ofFn (f n x)"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 917,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_oneTimeSecure",
+        "message": "Function expected at",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:954:37: error: Function expected at\n  lamportOWF L\nbut this term has type\n  FunFamily\n\nNote: Expected a function because this term is being applied to the argument\n  f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 918,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_oneTimeSecure",
+        "message": "Application type mismatch: The argument",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:955:15: error: Application type mismatch: The argument\n  f\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (L.eval n) \u2192 Bool\nbut is expected to have type\n  List Bool \u2192 List Bool\nin the application\n  lamport L f"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 921,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_oneTimeSecure",
+        "message": "Unknown identifier `L`",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:958:13: error(lean.unknownIdentifier): Unknown identifier `L`"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 921,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_oneTimeSecure",
+        "message": "Unknown identifier `f`",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:958:15: error(lean.unknownIdentifier): Unknown identifier `f`"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 921,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_oneTimeSecure",
+        "message": "Unknown identifier `E`",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:958:17: error(lean.unknownIdentifier): Unknown identifier `E`"
+      },
+      {
+        "original_file": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+        "original_line": 921,
+        "declaration": "TCSlib.Cryptography.Authentication.lamport_oneTimeSecure",
+        "message": "Unknown identifier `L`",
+        "diagnostic_excerpt_before_markers": "LamportEvidence/Seals/FinalR2Main/Seal0B.lean:958:39: error(lean.unknownIdentifier): Unknown identifier `L`"
+      }
+    ]
+  }
+]

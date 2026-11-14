@@ -1,0 +1,1705 @@
+{
+  "commit": "47ced271090f45918645c842cd358c5079092754",
+  "phase": "FinalR2Main",
+  "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+  "source_sha256": "762c6e08e15f8abc69e15c7a3401e00458a641a1d0cd8dc11760e7323f5f5304",
+  "scan_sha256": "0eee310be82ecf66ff72b2c67ea74ac8d8e16171b051de070d31fa07ab04bcb4",
+  "token_readings": 386,
+  "foreign_candidate_rows": 32,
+  "genuine_forbidden_explicit_foreign_unfolds": 0,
+  "reviews": [
+    {
+      "index": 8,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 127,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 123,
+        "lines": [
+          "theorem length_flatten_ofFn {B : \u2115} : \u2200 {q : \u2115} (g : Fin q \u2192 List Bool),",
+          "    (\u2200 i, (g i).length = B) \u2192 (List.ofFn g).flatten.length = q * B",
+          "  | 0, _, _ => by simp",
+          "  | q + 1, g, hg => by",
+          "    rw [List.ofFn_succ, List.flatten_cons, List.length_append, hg 0,",
+          "      length_flatten_ofFn (fun i => g i.succ) (fun i => hg i.succ), Nat.succ_mul]",
+          "    omega",
+          "",
+          "/-- Segment `i` of the concatenation of `B`-bit blocks `g 0, \u2026, g (q \u2212 1)` is `g i`. -/",
+          "theorem coinBlock_flatten_ofFn {q B : \u2115} (g : Fin q \u2192 List Bool) (hg : \u2200 i, (g i).length = B)"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local Fin position/lambda binder i",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 9,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 127,
+        "operation": "rw",
+        "identifier": "g",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 123,
+        "lines": [
+          "theorem length_flatten_ofFn {B : \u2115} : \u2200 {q : \u2115} (g : Fin q \u2192 List Bool),",
+          "    (\u2200 i, (g i).length = B) \u2192 (List.ofFn g).flatten.length = q * B",
+          "  | 0, _, _ => by simp",
+          "  | q + 1, g, hg => by",
+          "    rw [List.ofFn_succ, List.flatten_cons, List.length_append, hg 0,",
+          "      length_flatten_ofFn (fun i => g i.succ) (fun i => hg i.succ), Nat.succ_mul]",
+          "    omega",
+          "",
+          "/-- Segment `i` of the concatenation of `B`-bit blocks `g 0, \u2026, g (q \u2212 1)` is `g i`. -/",
+          "theorem coinBlock_flatten_ofFn {q B : \u2115} (g : Fin q \u2192 List Bool) (hg : \u2200 i, (g i).length = B)"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local block family g",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 12,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 127,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 123,
+        "lines": [
+          "theorem length_flatten_ofFn {B : \u2115} : \u2200 {q : \u2115} (g : Fin q \u2192 List Bool),",
+          "    (\u2200 i, (g i).length = B) \u2192 (List.ofFn g).flatten.length = q * B",
+          "  | 0, _, _ => by simp",
+          "  | q + 1, g, hg => by",
+          "    rw [List.ofFn_succ, List.flatten_cons, List.length_append, hg 0,",
+          "      length_flatten_ofFn (fun i => g i.succ) (fun i => hg i.succ), Nat.succ_mul]",
+          "    omega",
+          "",
+          "/-- Segment `i` of the concatenation of `B`-bit blocks `g 0, \u2026, g (q \u2212 1)` is `g i`. -/",
+          "theorem coinBlock_flatten_ofFn {q B : \u2115} (g : Fin q \u2192 List Bool) (hg : \u2200 i, (g i).length = B)"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local Fin position/lambda binder i",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 18,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 134,
+        "operation": "rw",
+        "identifier": "g",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 130,
+        "lines": [
+          "",
+          "/-- Segment `i` of the concatenation of `B`-bit blocks `g 0, \u2026, g (q \u2212 1)` is `g i`. -/",
+          "theorem coinBlock_flatten_ofFn {q B : \u2115} (g : Fin q \u2192 List Bool) (hg : \u2200 i, (g i).length = B)",
+          "    (i : Fin q) : coinBlock B i (List.ofFn g).flatten = g i := by",
+          "  rw [coinBlock_flatten (List.ofFn g) (fun c hc => by",
+          "    obtain \u27e8j, rfl\u27e9 := List.mem_ofFn.mp hc",
+          "    exact hg j) i (by simp)]",
+          "  simp",
+          "",
+          "/-- **The block loop over a message** (`blockEncFun` with one-bit blocks): its output is the"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local block family g",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 24,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 134,
+        "operation": "rw",
+        "identifier": "j",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.j",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.j",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 130,
+        "lines": [
+          "",
+          "/-- Segment `i` of the concatenation of `B`-bit blocks `g 0, \u2026, g (q \u2212 1)` is `g i`. -/",
+          "theorem coinBlock_flatten_ofFn {q B : \u2115} (g : Fin q \u2192 List Bool) (hg : \u2200 i, (g i).length = B)",
+          "    (i : Fin q) : coinBlock B i (List.ofFn g).flatten = g i := by",
+          "  rw [coinBlock_flatten (List.ofFn g) (fun c hc => by",
+          "    obtain \u27e8j, rfl\u27e9 := List.mem_ofFn.mp hc",
+          "    exact hg j) i (by simp)]",
+          "  simp",
+          "",
+          "/-- **The block loop over a message** (`blockEncFun` with one-bit blocks): its output is the"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local index j introduced by List.mem_ofFn",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 30,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 134,
+        "operation": "rw",
+        "identifier": "j",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.j",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.j",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 130,
+        "lines": [
+          "",
+          "/-- Segment `i` of the concatenation of `B`-bit blocks `g 0, \u2026, g (q \u2212 1)` is `g i`. -/",
+          "theorem coinBlock_flatten_ofFn {q B : \u2115} (g : Fin q \u2192 List Bool) (hg : \u2200 i, (g i).length = B)",
+          "    (i : Fin q) : coinBlock B i (List.ofFn g).flatten = g i := by",
+          "  rw [coinBlock_flatten (List.ofFn g) (fun c hc => by",
+          "    obtain \u27e8j, rfl\u27e9 := List.mem_ofFn.mp hc",
+          "    exact hg j) i (by simp)]",
+          "  simp",
+          "",
+          "/-- **The block loop over a message** (`blockEncFun` with one-bit blocks): its output is the"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local index j introduced by List.mem_ofFn",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 31,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 134,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 130,
+        "lines": [
+          "",
+          "/-- Segment `i` of the concatenation of `B`-bit blocks `g 0, \u2026, g (q \u2212 1)` is `g i`. -/",
+          "theorem coinBlock_flatten_ofFn {q B : \u2115} (g : Fin q \u2192 List Bool) (hg : \u2200 i, (g i).length = B)",
+          "    (i : Fin q) : coinBlock B i (List.ofFn g).flatten = g i := by",
+          "  rw [coinBlock_flatten (List.ofFn g) (fun c hc => by",
+          "    obtain \u27e8j, rfl\u27e9 := List.mem_ofFn.mp hc",
+          "    exact hg j) i (by simp)]",
+          "  simp",
+          "",
+          "/-- **The block loop over a message** (`blockEncFun` with one-bit blocks): its output is the"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local Fin position/lambda binder i",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 39,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 150,
+        "operation": "rw",
+        "identifier": "G",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PRG.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PRG.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 146,
+        "lines": [
+          "  have hlen : (List.ofFn m).length \u2264 (blockState u pk (List.ofFn m) r).length := by",
+          "    simp only [blockState_eq, length_pairEncode, List.length_ofFn]",
+          "    omega",
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local evaluator function G",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 42,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 150,
+        "operation": "rw",
+        "identifier": "u",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Authentication.LamportMachine.u",
+            "home": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Authentication.LamportMachine.u",
+            "home": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 146,
+        "lines": [
+          "  have hlen : (List.ofFn m).length \u2264 (blockState u pk (List.ofFn m) r).length := by",
+          "    simp only [blockState_eq, length_pairEncode, List.length_ofFn]",
+          "    omega",
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local parameter word u",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 44,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 150,
+        "operation": "rw",
+        "identifier": "blockState",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.blockState",
+            "home": "TCSlib.Cryptography.Asymptotic.BlockEncryptor",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.blockState",
+            "home": "TCSlib.Cryptography.Asymptotic.BlockEncryptor",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 146,
+        "lines": [
+          "  have hlen : (List.ofFn m).length \u2264 (blockState u pk (List.ofFn m) r).length := by",
+          "    simp only [blockState_eq, length_pairEncode, List.length_ofFn]",
+          "    omega",
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/"
+        ]
+      },
+      "classification": "published_reader_application_term_argument",
+      "resolved_role": "TCSlib.Cryptography.blockState",
+      "reason": "blockState occurs in the fuel-length term passed to the published blockEncFun_spec reader. It is not a rewrite head or an unfolded identifier.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 45,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 150,
+        "operation": "rw",
+        "identifier": "u",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Authentication.LamportMachine.u",
+            "home": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Authentication.LamportMachine.u",
+            "home": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 146,
+        "lines": [
+          "  have hlen : (List.ofFn m).length \u2264 (blockState u pk (List.ofFn m) r).length := by",
+          "    simp only [blockState_eq, length_pairEncode, List.length_ofFn]",
+          "    omega",
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local parameter word u",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 48,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 150,
+        "operation": "rw",
+        "identifier": "m",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 146,
+        "lines": [
+          "  have hlen : (List.ofFn m).length \u2264 (blockState u pk (List.ofFn m) r).length := by",
+          "    simp only [blockState_eq, length_pairEncode, List.length_ofFn]",
+          "    omega",
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local message function m",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 49,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 150,
+        "operation": "rw",
+        "identifier": "r",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.r",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.r",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 146,
+        "lines": [
+          "  have hlen : (List.ofFn m).length \u2264 (blockState u pk (List.ofFn m) r).length := by",
+          "    simp only [blockState_eq, length_pairEncode, List.length_ofFn]",
+          "    omega",
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local coin word r",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 52,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 150,
+        "operation": "rw",
+        "identifier": "m",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 146,
+        "lines": [
+          "  have hlen : (List.ofFn m).length \u2264 (blockState u pk (List.ofFn m) r).length := by",
+          "    simp only [blockState_eq, length_pairEncode, List.length_ofFn]",
+          "    omega",
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local message function m",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 53,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 150,
+        "operation": "rw",
+        "identifier": "r",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.r",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.r",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 146,
+        "lines": [
+          "  have hlen : (List.ofFn m).length \u2264 (blockState u pk (List.ofFn m) r).length := by",
+          "    simp only [blockState_eq, length_pairEncode, List.length_ofFn]",
+          "    omega",
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local coin word r",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 60,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 153,
+        "operation": "rw",
+        "identifier": "G",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PRG.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PRG.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 149,
+        "lines": [
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/",
+          "theorem decListFun_pairSndD (l : List (List Bool)) :",
+          "    decListFun pairSndD (pairEncode [] (encodeList l)) = l.flatten := by",
+          "  have hlen : l.length \u2264 (pairEncode [] (encodeList l)).length := by"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local evaluator function G",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 62,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 153,
+        "operation": "rw",
+        "identifier": "u",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Authentication.LamportMachine.u",
+            "home": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Authentication.LamportMachine.u",
+            "home": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 149,
+        "lines": [
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/",
+          "theorem decListFun_pairSndD (l : List (List Bool)) :",
+          "    decListFun pairSndD (pairEncode [] (encodeList l)) = l.flatten := by",
+          "  have hlen : l.length \u2264 (pairEncode [] (encodeList l)).length := by"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local parameter word u",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 65,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 153,
+        "operation": "rw",
+        "identifier": "m",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 149,
+        "lines": [
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/",
+          "theorem decListFun_pairSndD (l : List (List Bool)) :",
+          "    decListFun pairSndD (pairEncode [] (encodeList l)) = l.flatten := by",
+          "  have hlen : l.length \u2264 (pairEncode [] (encodeList l)).length := by"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local message function m",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 66,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 153,
+        "operation": "rw",
+        "identifier": "r",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.r",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.r",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 149,
+        "lines": [
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/",
+          "theorem decListFun_pairSndD (l : List (List Bool)) :",
+          "    decListFun pairSndD (pairEncode [] (encodeList l)) = l.flatten := by",
+          "  have hlen : l.length \u2264 (pairEncode [] (encodeList l)).length := by"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local coin word r",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 75,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 163,
+        "operation": "rw",
+        "identifier": "pairSndD",
+        "candidates": [
+          {
+            "spelling": "Complexity.pairSndD",
+            "home": "TCSlib.Complexity.ClassNP.PolyTimePairing",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "Complexity.pairSndD",
+            "home": "TCSlib.Complexity.ClassNP.PolyTimePairing",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 159,
+        "lines": [
+          "    have := length_le_length_encodeList l",
+          "    simp only [length_pairEncode]",
+          "    omega",
+          "  rw [decListFun_eq]",
+          "  rw [decListFun_spec pairSndD [] _ l hlen]",
+          "  simp",
+          "",
+          "/-! ### The algorithms as string functions -/",
+          "",
+          "/-- `f(x)` on the layout `\u27e8\u27e8\u27e81^n, y\u27e9, \u03b1\u27e9, x\u27e9`: `E(\u27e81^n, x\u27e9)`. -/"
+        ]
+      },
+      "classification": "published_reader_application_term_argument",
+      "resolved_role": "Complexity.pairSndD",
+      "reason": "pairSndD is a function argument to the published decListFun_spec reader, not a rewrite head or an unfolded definition.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 115,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 465,
+        "operation": "rw",
+        "identifier": "blockState",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.blockState",
+            "home": "TCSlib.Cryptography.Asymptotic.BlockEncryptor",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.blockState",
+            "home": "TCSlib.Cryptography.Asymptotic.BlockEncryptor",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 461,
+        "lines": [
+          "  rw [NUPPT.runAtL_ofPolyTimeUniform]",
+          "  simp only [lamportGenFun, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq,",
+          "    pairFstD_pairEncode,",
+          "    pairSndD_pairEncode, List.length_replicate]",
+          "  rw [show blockState (List.replicate n true) [] (List.replicate n true) (List.ofFn \u03c1) =",
+          "    blockState (List.replicate n true) [] (List.ofFn fun _ : Fin n => true) (List.ofFn \u03c1) by simp,",
+          "    blockEncFun_ofFn]",
+          "  simp [lamportPairEmit, lamportHalf]",
+          "",
+          "/-- `Sign` on `\u27e8sk, m\u27e9`: the concatenation of the halves `x_i^{m_i}` of the `2n`-bit segments"
+        ]
+      },
+      "classification": "ordinary_term_congruence_equality",
+      "resolved_role": "TCSlib.Cryptography.blockState",
+      "reason": "The displayed equality keeps blockState opaque on both sides and changes only its message argument using List.ofFn_const/list length identities. The `simp` body has no explicit blockState unfold; whole-file A independently validates opacity.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 195,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 583,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 579,
+        "lines": [
+          "  funext i",
+          "  simp only [lamportEvalEmit, lamportPkEmit, NUPPT.inParam_layout, NUPPT.inCoins_layout,",
+          "    NUPPT.inArg_layout, pairSndD_pairEncode, List.headD_cons, PolyExpr.eval_var,",
+          "    List.length_replicate]",
+          "  rw [coinBlock_flatten_ofFn _ hsel i, coinBlock_flatten_ofFn _ hpk i]",
+          "  cases m i <;> simp [lamportHalf]",
+          "",
+          "include hfE in",
+          "/-- **Lamport's one-time signature scheme** [PS10, Protocol 137.1] for `f` with evaluator `E`:",
+          "`n`-bit messages, `n\u00b2`-bit signatures. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local Fin position/lambda binder i",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 199,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 583,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 579,
+        "lines": [
+          "  funext i",
+          "  simp only [lamportEvalEmit, lamportPkEmit, NUPPT.inParam_layout, NUPPT.inCoins_layout,",
+          "    NUPPT.inArg_layout, pairSndD_pairEncode, List.headD_cons, PolyExpr.eval_var,",
+          "    List.length_replicate]",
+          "  rw [coinBlock_flatten_ofFn _ hsel i, coinBlock_flatten_ofFn _ hpk i]",
+          "  cases m i <;> simp [lamportHalf]",
+          "",
+          "include hfE in",
+          "/-- **Lamport's one-time signature scheme** [PS10, Protocol 137.1] for `f` with evaluator `E`:",
+          "`n`-bit messages, `n\u00b2`-bit signatures. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local Fin position/lambda binder i",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 207,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 630,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 626,
+        "lines": [
+          "    omega",
+          "  have hhalf (i : Fin n) (b : Bool) :",
+          "      lamportHalf n b (coinBlock (2 * n) i (LamportFill.secretWord T)) =",
+          "        List.ofFn (T (i, b)) := by",
+          "    rw [LamportFill.secretWord_eq, coinBlock_flatten_ofFn _ hrow i]",
+          "    cases b <;> simp [lamportHalf_eq]",
+          "  have hE' (x : Fin n \u2192 Bool) :",
+          "      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (f n x) := by",
+          "    simpa only [NUPPT.advInput_eq] using hfE n x",
+          "  rw [runAt_lamportGen, h\u03c1, LamportFill.publicWord_eq]"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local Fin position/lambda binder i",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 214,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 640,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 636,
+        "lines": [
+          "  congr 1",
+          "  apply congrArg encodeList",
+          "  apply congrArg List.ofFn",
+          "  funext i",
+          "  rw [hhalf i false, hhalf i true, hE', hE',",
+          "    LamportFill.tablePublic_eq, LamportFill.tablePublic_eq]",
+          "",
+          "/-- On a serialized preimage table, signing returns the typed signature selected from",
+          "that table, independently of its signing coins [PS10, Protocol 137.1]. -/",
+          "theorem runAt_lamportSign_table (n : \u2115) (T : LamportFill.Table n) (m : Fin n \u2192 Bool)"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local Fin position/lambda binder i",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 217,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 640,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 636,
+        "lines": [
+          "  congr 1",
+          "  apply congrArg encodeList",
+          "  apply congrArg List.ofFn",
+          "  funext i",
+          "  rw [hhalf i false, hhalf i true, hE', hE',",
+          "    LamportFill.tablePublic_eq, LamportFill.tablePublic_eq]",
+          "",
+          "/-- On a serialized preimage table, signing returns the typed signature selected from",
+          "that table, independently of its signing coins [PS10, Protocol 137.1]. -/",
+          "theorem runAt_lamportSign_table (n : \u2115) (T : LamportFill.Table n) (m : Fin n \u2192 Bool)"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local Fin position/lambda binder i",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 231,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 657,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 653,
+        "lines": [
+          "    omega",
+          "  apply congrArg List.flatten",
+          "  apply congrArg List.ofFn",
+          "  funext i",
+          "  rw [LamportFill.secretWord_eq, coinBlock_flatten_ofFn _ hrow i]",
+          "  cases m i <;> simp [lamportHalf_eq]",
+          "",
+          "include hE hfE in",
+          "/-- On the canonical layout of a table, the generator string function returns its public",
+          "images paired with its secret serialization [PS10, Protocol 137.1]. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local Fin position/lambda binder i",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 291,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 730,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 726,
+        "lines": [
+          "        (coinBlock n i (List.ofFn fun j => List.ofFn (LamportFill.signatureBlock \u03c3 j)).flatten))) =",
+          "        fun i => List.ofFn (f n (LamportFill.signatureBlock \u03c3 i)) := by",
+          "    funext i",
+          "    simp only [lamportEvalEmit_eq, NUPPT.inParam_layout, NUPPT.inCoins_layout]",
+          "    rw [coinBlock_flatten_ofFn _ hsig i, hE']",
+          "  have hright : (fun i : Fin n =>",
+          "      lamportPkEmit (NUPPT.layout (List.replicate n true) (pairEncode [] [m i]) []",
+          "        (coinBlock ((lamportPkBlock L).eval n) i",
+          "          (List.ofFn fun j => pairEncode",
+          "            (pairEncode (List.ofFn (Y (j, false))) (List.ofFn (Y (j, true)))) []).flatten))) ="
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local Fin position/lambda binder i",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 296,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 738,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 734,
+        "lines": [
+          "          (List.ofFn fun j => pairEncode",
+          "            (pairEncode (List.ofFn (Y (j, false))) (List.ofFn (Y (j, true)))) []).flatten))) =",
+          "        fun i => List.ofFn (Y (i, m i)) := by",
+          "    funext i",
+          "    rw [coinBlock_flatten_ofFn _ hpk i]",
+          "    simp only [lamportPkEmit_eq, NUPPT.inArg_layout, NUPPT.inCoins_layout,",
+          "      pairFstD_pairEncode, pairSndD_pairEncode, List.headD_cons]",
+          "    cases m i <;> rfl",
+          "  simp only [PolyExpr.eval_var, List.length_replicate]",
+          "  rw [hleft, hright, LamportReduction.encodeList_ofFn_eq_iff]"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local Fin position/lambda binder i",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 362,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 859,
+        "operation": "simp",
+        "identifier": "f",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Collection.f",
+            "home": "TCSlib.Cryptography.Asymptotic.Collections",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.FunFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PermFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Collection.f",
+            "home": "TCSlib.Cryptography.Asymptotic.Collections",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.FunFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PermFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 855,
+        "lines": [
+          "      (fun i m s H => lamport_loggedSignImpl_expect",
+          "        (L := L) (f := f) (E := E) (hE := hE) (hfE := hfE) n T i m s H)",
+          "      tree ((), []) G",
+          "  rw [hsim, LamportFill.honest_transcript T tree hcost, ProbComp.expect_pure]",
+          "  simp only [SignatureScheme.accepts_iff, lamport_ver,",
+          "    lamportVerFun_publicWord_iff (L := L) (f := f) (E := E) (hfE := hfE),",
+          "    LamportFill.tablePublic_eq,",
+          "    LamportFill.honestSuccess_iff, LamportFill.honestOutput_eq]",
+          "  apply if_congr ?_ rfl rfl",
+          "  apply and_congr_right"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_named_argument_label",
+      "resolved_role": "named argument label f in (f := f)",
+      "reason": "This token is syntax naming the argument of the owned lamportVerFun_publicWord_iff theorem, not a constant expression.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 363,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 859,
+        "operation": "simp",
+        "identifier": "f",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Collection.f",
+            "home": "TCSlib.Cryptography.Asymptotic.Collections",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.FunFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PermFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Collection.f",
+            "home": "TCSlib.Cryptography.Asymptotic.Collections",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.FunFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PermFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 855,
+        "lines": [
+          "      (fun i m s H => lamport_loggedSignImpl_expect",
+          "        (L := L) (f := f) (E := E) (hE := hE) (hfE := hfE) n T i m s H)",
+          "      tree ((), []) G",
+          "  rw [hsim, LamportFill.honest_transcript T tree hcost, ProbComp.expect_pure]",
+          "  simp only [SignatureScheme.accepts_iff, lamport_ver,",
+          "    lamportVerFun_publicWord_iff (L := L) (f := f) (E := E) (hfE := hfE),",
+          "    LamportFill.tablePublic_eq,",
+          "    LamportFill.honestSuccess_iff, LamportFill.honestOutput_eq]",
+          "  apply if_congr ?_ rfl rfl",
+          "  apply and_congr_right"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "section parameter function family f",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 382,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 967,
+        "operation": "rw",
+        "identifier": "idx",
+        "candidates": [
+          {
+            "spelling": "BoolCircuit.Lit.idx",
+            "home": "TCSlib.Complexity.CircuitComplexity.Basic",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "BoolCircuit.Lit.idx",
+            "home": "TCSlib.Complexity.CircuitComplexity.Basic",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 963,
+        "lines": [
+          "    obtain \u27e8x', hout, hfx\u27e9 := h\u03c6 i y T c r hs",
+          "    refine \u27e8x', ?_, hfx\u27e9",
+          "    change C.runAt n (List.ofFn y)",
+          "      (NUPPT.coinsCongr hCcoins.symm n (\u03c6 ((c, T), r))) = List.ofFn x'",
+          "    rw [LamportFill.runAt_indexAdvice hCcoins idx hC, hidx]",
+          "    exact hout",
+          "  have hInv := LamportFill.fairBit_redProbability_le_invProbAt (lamportOWF L f)",
+          "    n A C i (LamportFill.machineForger L A n) e hreal",
+          "  exact hi.trans (by simpa only [lamportOWF_f] using hInv)",
+          ""
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local best-position advice function idx",
+      "reason": "The token resolves to this local binder/definition in an owned or published reader application, lambda, or equality; the suffix-matched foreign projection is unrelated.",
+      "forbidden_explicit_foreign_unfold": false,
+      "binding_context": {
+        "first_line": 941,
+        "lines": [
+          "  let idx : \u2115 \u2192 \u2115 := fun n => if hn : 0 < n then (Classical.choose (hbest n hn)).val else 0",
+          "  have hidx_le (n : \u2115) : idx n \u2264 n := by",
+          "    dsimp only [idx]",
+          "    split_ifs with hn",
+          "    \u00b7 exact (Classical.choose (hbest n hn)).isLt.le",
+          "    \u00b7 exact Nat.zero_le n"
+        ]
+      }
+    }
+  ],
+  "method": "Source-only manual context review of every foreign-definition candidate; separate whole-file seals test hidden definitional closure.",
+  "created_at": "2026-11-14T10:32:12.129102+00:00"
+}

@@ -1,0 +1,81 @@
+{
+  "phase": "FinalR2Main",
+  "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+  "revision": "47ced271090f45918645c842cd358c5079092754",
+  "end": "2026-11-14T10:28:48.303158+00:00",
+  "snapshot_attempts": [
+    {
+      "attempt": "FinalR2MainSnapshot01",
+      "raw_log": "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/logs/helper-checks/Snapshot0-FinalR2MainSnapshot01.log",
+      "raw_log_sha256": "c3f9fc366f3ea5c8914b1d73ee816cc089d90518f2eeb2a5df89f9100d2c2fda",
+      "result": {
+        "module": "LamportEvidence/Seals/FinalR2Main/Snapshot0",
+        "attempt": "FinalR2MainSnapshot01",
+        "start": "2026-11-14T10:27:13.100368+00:00",
+        "end": "2026-11-14T10:27:58.762840+00:00",
+        "exit": 0,
+        "log": "logs/helper-checks/Snapshot0-FinalR2MainSnapshot01.log",
+        "source_sha256": "762c6e08e15f8abc69e15c7a3401e00458a641a1d0cd8dc11760e7323f5f5304"
+      }
+    }
+  ],
+  "collector_attempts": [
+    {
+      "attempt": "FinalR2MainInventory01",
+      "raw_log": "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/logs/helper-checks/Inventory-FinalR2MainInventory01.log",
+      "raw_log_sha256": "55296928f1b1a2d80211df3b87a4f892bf6057661ece51ec05e9ddff31513281",
+      "result": {
+        "module": "LamportEvidence/Seals/FinalR2Main/Inventory",
+        "attempt": "FinalR2MainInventory01",
+        "start": "2026-11-14T10:27:58.807190+00:00",
+        "end": "2026-11-14T10:28:16.516266+00:00",
+        "exit": 0,
+        "log": "logs/helper-checks/Inventory-FinalR2MainInventory01.log",
+        "source_sha256": "d1092ad172fe772fe143097bf7fb754461f5c03c7a19c88cd3820ce10ae86f95"
+      }
+    }
+  ],
+  "stored_own_constants": 91,
+  "exact_foreign_closure": 163,
+  "own_axioms": "ALL_STORED_CONSTANT_AXIOMS_STANDARD_SUBSET",
+  "explicit_scan": "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/seals/FinalR2Main/explicit-unfold-scan.json",
+  "seals": {
+    "attempts": [
+      "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/logs/seals/finalr2main-native-r1"
+    ],
+    "counts": {
+      "SOURCE_PASS": 1,
+      "SOURCE_FAIL": 1,
+      "CONTROL_PASS": 6
+    },
+    "A_failures": [],
+    "harness_control_process_failures": [],
+    "B_failures": [
+      {
+        "label": "FinalR2Main_0_B",
+        "errors": 26,
+        "declarations": [
+          "TCSlib.Cryptography.Authentication.lamport",
+          "TCSlib.Cryptography.Authentication.lamportOWF",
+          "TCSlib.Cryptography.Authentication.lamportOWF_f",
+          "TCSlib.Cryptography.Authentication.lamportOWF_inLen",
+          "TCSlib.Cryptography.Authentication.lamportOWF_outLen",
+          "TCSlib.Cryptography.Authentication.lamport_exists_best_position",
+          "TCSlib.Cryptography.Authentication.lamport_forgeGame_accept_eq_honestProbability",
+          "TCSlib.Cryptography.Authentication.lamport_forgerCodec",
+          "TCSlib.Cryptography.Authentication.lamport_gen",
+          "TCSlib.Cryptography.Authentication.lamport_loggedSignImpl_expect",
+          "TCSlib.Cryptography.Authentication.lamport_msgLen",
+          "TCSlib.Cryptography.Authentication.lamport_oneTimeSecure",
+          "TCSlib.Cryptography.Authentication.lamport_sigLen",
+          "TCSlib.Cryptography.Authentication.lamport_sign",
+          "TCSlib.Cryptography.Authentication.lamport_signImpl_expect",
+          "TCSlib.Cryptography.Authentication.lamport_ver"
+        ]
+      }
+    ]
+  },
+  "source_hashes_unchanged": true,
+  "native_results_adopted": false,
+  "adopted_native_queue": null
+}

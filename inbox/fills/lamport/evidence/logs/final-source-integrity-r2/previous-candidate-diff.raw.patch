@@ -1,0 +1,90 @@
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean
+index 8d931469c8b7db2a91db39e9957beb2007b401ba..39e1d0375725761dc4a20024c85a243360ca57ec 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Games.Efficiency
+ import TCSlib.Cryptography.Asymptotic.OneWayLemmas
++import TCSlib.Cryptography.Asymptotic.ReductionSupport
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -115,24 +116,6 @@ theorem tape_seedIn (n : ℕ) (z ρ : List Bool) (c : Bool) :
+   rw [tape_eq, seed_seedIn]
+   rfl
+ 
+-/-- Taking as many bits of `xs` as there are symbols in a polynomial-time word `a`
+-is polynomial-time. This is the variable-prefix primitive's public lambda form. -/
+-theorem take_poly {a xs : List Bool → List Bool} (ha : PolyTimeComputable a)
+-    (hxs : PolyTimeComputable xs) :
+-    PolyTimeComputable (fun v => (xs v).take (a v).length) := by
+-  refine ((polyTimeComputable_pairTakePoly .var).comp (ha.pairEncode hxs)).congr ?_
+-  intro v
+-  simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
+-
+-/-- Dropping as many bits of `xs` as there are symbols in a polynomial-time word `a`
+-is polynomial-time. This is the variable-prefix primitive's public lambda form. -/
+-theorem drop_poly {a xs : List Bool → List Bool} (ha : PolyTimeComputable a)
+-    (hxs : PolyTimeComputable xs) :
+-    PolyTimeComputable (fun v => (xs v).drop (a v).length) := by
+-  refine ((polyTimeComputable_pairDropPoly .var).comp (ha.pairEncode hxs)).congr ?_
+-  intro v
+-  simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
+-
+ /-- A fixed polynomial width, encoded as a unary word of length `W(|u|)`. -/
+ def width (W : PolyExpr) (v : List Bool) : List Bool := List.replicate (W.eval (u v).length) true
+ /-- `width W v = 1^(W(|u v|))`. -/
+@@ -163,7 +146,7 @@ theorem first_eq (v : List Bool) : first v =
+     ((tape v).drop (offset (.mul (.const 2) .var) v).length).take (u v).length := rfl
+ /-- Selecting the first preimage is polynomial-time. -/
+ theorem first_poly : PolyTimeComputable first :=
+-  take_poly u_poly (drop_poly (offset_poly _) tape_poly)
++  TCSlib.Cryptography.takeLen_poly u_poly (TCSlib.Cryptography.dropLen_poly (offset_poly _) tape_poly)
+ 
+ /-- The second preimage is the next `n` bits after offset `2ni+n`. -/
+ def second (v : List Bool) : List Bool :=
+@@ -173,8 +156,8 @@ theorem second_eq (v : List Bool) : second v =
+     ((tape v).drop ((offset (.mul (.const 2) .var) v).length + (u v).length)).take (u v).length := rfl
+ /-- Selecting the second preimage is polynomial-time. -/
+ theorem second_poly : PolyTimeComputable second := by
+-  refine (take_poly u_poly
+-    (drop_poly ((offset_poly (.mul (.const 2) .var)).append u_poly) tape_poly)).congr ?_
++  refine (TCSlib.Cryptography.takeLen_poly u_poly
++    (TCSlib.Cryptography.dropLen_poly ((offset_poly (.mul (.const 2) .var)).append u_poly) tape_poly)).congr ?_
+   intro v
+   simp only [second_eq, List.length_append]
+ 
+@@ -224,8 +207,8 @@ take the prefix and drop the suffix, then concatenate the replacement block betw
+ theorem advIn_poly (W : PolyExpr) {E G : List Bool → List Bool}
+     (hE : PolyTimeComputable E) (hG : PolyTimeComputable G) :
+     PolyTimeComputable (advIn W E G) := by
+-  refine (((take_poly (offset_poly W) (honestPk_poly hG)).append (replacement_poly hE)).append
+-    (drop_poly ((offset_poly W).append (width_poly W)) (honestPk_poly hG))).congr ?_
++  refine (((TCSlib.Cryptography.takeLen_poly (offset_poly W) (honestPk_poly hG)).append (replacement_poly hE)).append
++    (TCSlib.Cryptography.dropLen_poly ((offset_poly W).append (width_poly W)) (honestPk_poly hG))).congr ?_
+   intro v
+   simp only [advIn_eq, List.length_append]
+ 
+@@ -275,7 +258,7 @@ theorem blocked_eq (w : List Bool) : blocked w =
+     decide (((message w).drop (pos (context w)).length).headD false = bit (context w)) := rfl
+ /-- Testing whether a query requests the planted half is polynomial-time. -/
+ theorem blocked_poly : PolyTimeComputable (fun w => [blocked w]) := by
+-  have hq := polyTimeComputable_headD.comp (drop_poly (pos_poly.comp context_poly) message_poly)
++  have hq := polyTimeComputable_headD.comp (TCSlib.Cryptography.dropLen_poly (pos_poly.comp context_poly) message_poly)
+   have hb := bit_poly.comp context_poly
+   refine (polyTimeComputable_pairEq.comp (hq.pairEncode hb)).congr ?_
+   intro w
+@@ -316,9 +299,9 @@ theorem out_eq (w : List Bool) : out w =
+ /-- Finalization is polynomial-time by three variable-prefix operations and one branch. -/
+ theorem out_poly : PolyTimeComputable out :=
+   polyTimeComputable_ite (polyTimeComputable_headD.comp state_poly) (polyTimeComputable_const [])
+-    (take_poly (u_poly.comp context_poly)
+-      (drop_poly ((offset_poly .var).comp context_poly)
+-        (drop_poly (u_poly.comp context_poly)
++    (TCSlib.Cryptography.takeLen_poly (u_poly.comp context_poly)
++      (TCSlib.Cryptography.dropLen_poly ((offset_poly .var).comp context_poly)
++        (TCSlib.Cryptography.dropLen_poly (u_poly.comp context_poly)
+           (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))))
+ 
+ /-- The planted Lamport handler has one abort bit and `1+2n²` seed bits, with the fair planted

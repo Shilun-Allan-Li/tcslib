@@ -1,0 +1,254 @@
+{
+  "commit": "47ced271090f45918645c842cd358c5079092754",
+  "phase": "FinalR2MachineSpec",
+  "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.MachineSpec",
+  "source_sha256": "5f62137b95e2ac0998c504033cc120b2cbd25265b1ede9637edf95e6b35b8b6e",
+  "scan_sha256": "67580a2f762cdba081f64f74d7775ca548d929300e4c5b9279a3757e4171a3d5",
+  "token_readings": 175,
+  "foreign_candidate_rows": 5,
+  "genuine_forbidden_explicit_foreign_unfolds": 0,
+  "reviews": [
+    {
+      "index": 91,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.MachineSpec",
+        "line": 159,
+        "operation": "simp",
+        "identifier": "g",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 154,
+        "lines": [
+          "    rw [publicWord_flatten]",
+          "    simp only [tablePublic_eq, rows]",
+          "  have hplant : publicWord (plantedPublic g T i c challenge) =",
+          "      (List.ofFn plantedRows).flatten := by",
+          "    rw [publicWord_flatten]",
+          "  simp only [LamportMachine.advIn_eq, hpk, replacement_context hcoin g E hE,",
+          "    LamportMachine.offset_eq, LamportMachine.width_eq, LamportMachine.pos_seedIn,",
+          "    LamportMachine.u_seedIn, List.length_replicate]",
+          "  simp only [hnormal, hplant]",
+          "  change (List.ofFn rows).flatten.take (i.val * W.eval n) ++ plantedRows i ++"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "local function-family parameter g in advIn_context",
+      "reason": "The identifier denotes the local parameter in the displayed theorem, not the unrelated YaoMachine.g/GGMRed.Data.i definition. It is an argument inside an owned reader application or arithmetic equality, not a foreign definition being unfolded.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 115,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.MachineSpec",
+        "line": 166,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 161,
+        "lines": [
+          "    LamportMachine.u_seedIn, List.length_replicate]",
+          "  simp only [hnormal, hplant]",
+          "  change (List.ofFn rows).flatten.take (i.val * W.eval n) ++ plantedRows i ++",
+          "    (List.ofFn rows).flatten.drop (i.val * W.eval n + W.eval n) =",
+          "      (List.ofFn plantedRows).flatten",
+          "  rw [show i.val * W.eval n + W.eval n = (i.val + 1) * W.eval n by ring,",
+          "    flatten_ofFn_update rows hrows i (plantedRows i) hnew, hupdate]",
+          "",
+          "end KeyWindows",
+          ""
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "locally bound Fin n position i",
+      "reason": "The identifier denotes the local parameter in the displayed theorem, not the unrelated YaoMachine.g/GGMRed.Data.i definition. It is an argument inside an owned reader application or arithmetic equality, not a foreign definition being unfolded.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 117,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.MachineSpec",
+        "line": 166,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 161,
+        "lines": [
+          "    LamportMachine.u_seedIn, List.length_replicate]",
+          "  simp only [hnormal, hplant]",
+          "  change (List.ofFn rows).flatten.take (i.val * W.eval n) ++ plantedRows i ++",
+          "    (List.ofFn rows).flatten.drop (i.val * W.eval n + W.eval n) =",
+          "      (List.ofFn plantedRows).flatten",
+          "  rw [show i.val * W.eval n + W.eval n = (i.val + 1) * W.eval n by ring,",
+          "    flatten_ofFn_update rows hrows i (plantedRows i) hnew, hupdate]",
+          "",
+          "end KeyWindows",
+          ""
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "locally bound Fin n position i",
+      "reason": "The identifier denotes the local parameter in the displayed theorem, not the unrelated YaoMachine.g/GGMRed.Data.i definition. It is an argument inside an owned reader application or arithmetic equality, not a foreign definition being unfolded.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 170,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.MachineSpec",
+        "line": 229,
+        "operation": "rw",
+        "identifier": "splitBits",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Authentication.splitBits",
+            "home": "TCSlib.Cryptography.Authentication.Encoding",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.Authentication.splitBits",
+            "home": "TCSlib.Cryptography.Authentication.Encoding",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 224,
+        "lines": [
+          "  have hs : List.ofFn (splitBits a).2 = (List.ofFn a).drop n := by",
+          "    have hsplit : (splitBits a).2 = fun j => a (Fin.natAdd n j) := by",
+          "      funext j",
+          "      exact splitBits_snd a j",
+          "    rw [hsplit, ofFn_natAdd_eq_drop]",
+          "  rw [\u2190 hs, \u2190 FunFamily.ofFn_blocks n n (splitBits a).2 i]",
+          "  apply congrArg List.ofFn",
+          "  funext k",
+          "  rw [FunFamily.blocks_apply, signatureBlock_eq]",
+          ""
+        ]
+      },
+      "classification": "published_reader_application_term_argument",
+      "resolved_role": "TCSlib.Cryptography.Authentication.splitBits",
+      "reason": "splitBits a occurs only as a term argument to the published FunFamily.ofFn_blocks theorem used by rw, not as a rewrite/unfold head. The preceding equality is obtained through splitBits_snd, and the block contents are read through FunFamily.blocks_apply.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 172,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.MachineSpec",
+        "line": 229,
+        "operation": "rw",
+        "identifier": "i",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.GGMRed.Data.i",
+            "home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 224,
+        "lines": [
+          "  have hs : List.ofFn (splitBits a).2 = (List.ofFn a).drop n := by",
+          "    have hsplit : (splitBits a).2 = fun j => a (Fin.natAdd n j) := by",
+          "      funext j",
+          "      exact splitBits_snd a j",
+          "    rw [hsplit, ofFn_natAdd_eq_drop]",
+          "  rw [\u2190 hs, \u2190 FunFamily.ofFn_blocks n n (splitBits a).2 i]",
+          "  apply congrArg List.ofFn",
+          "  funext k",
+          "  rw [FunFamily.blocks_apply, signatureBlock_eq]",
+          ""
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "locally bound Fin n position i",
+      "reason": "The identifier denotes the local parameter in the displayed theorem, not the unrelated YaoMachine.g/GGMRed.Data.i definition. It is an argument inside an owned reader application or arithmetic equality, not a foreign definition being unfolded.",
+      "forbidden_explicit_foreign_unfold": false
+    }
+  ],
+  "method": "Source-only manual context review of every foreign-definition candidate; separate whole-file seals test hidden definitional closure.",
+  "created_at": "2026-11-14T10:27:00.093825+00:00"
+}

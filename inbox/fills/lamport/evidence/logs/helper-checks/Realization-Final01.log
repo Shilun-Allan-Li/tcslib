@@ -1,0 +1,54 @@
+start=2026-11-14T08:52:51.757455+00:00
+command=["python3", "-I", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/lean_host_guard.py", "--", "/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization"]
+source-sha256=a2dfb320d7ef2219c312e0c2ff987dc10972f4fd4c45be09292402d50a99c7bf
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean:157:32: error: Type mismatch: After simplification, term
+  habort
+ has type
+  simulate (abortingImpl T i c) tree false = OracleComp.pure (a₀, false)
+but is expected to have type
+  OracleComp.pure (a, false) = OracleComp.pure (a₀, false)
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean:160:54: error: Application type mismatch: The argument
+  firstQuery_query j m k
+has type
+  firstQuery (OracleComp.query j m k) = some m
+but is expected to have type
+  firstQuery tree = some m
+in the application
+  (safe_iff tree i c).mp hsafe m (firstQuery_query j m k)
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean:161:73: error: Application type mismatch: The argument
+  hcost
+has type
+  OracleComp.CostBoundedBy (fun x => 1) tree 1
+but is expected to have type
+  OracleComp.CostBoundedBy (fun x => 1) (OracleComp.query j m k) 1
+in the application
+  (OracleComp.costBoundedBy_query (fun x => 1) j m k 1).mp hcost
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean:165:8: error: Type mismatch: After simplification, term
+  habort
+ has type
+  simulate (abortingImpl T i c) tree false = OracleComp.pure (a₀, false)
+but is expected to have type
+  OracleComp.pure (a, false) = OracleComp.pure (a₀, false)
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization): no fresh .olean produced
+        2.25 real         1.48 user         0.85 sys
+          2204205056  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174748  page reclaims
+                  18  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                  17  voluntary context switches
+                5107  involuntary context switches
+            30278914  instructions retired
+            16731061  cycles elapsed
+             1605968  peak memory footprint
+end=2026-11-14T08:52:54.991307+00:00
+exit=1

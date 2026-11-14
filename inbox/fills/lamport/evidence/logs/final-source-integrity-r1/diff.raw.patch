@@ -1,0 +1,3136 @@
+diff --git a/TCSlib/Cryptography/Authentication.lean b/TCSlib/Cryptography/Authentication.lean
+index e33d4b40f767c5ec30cdf0af686965a19826a78b..eebb97d99adfd60cdd77fc11cfa47aad280c1287 100644
+--- a/TCSlib/Cryptography/Authentication.lean
++++ b/TCSlib/Cryptography/Authentication.lean
+@@ -12,6 +12,22 @@ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
+ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
+ import TCSlib.Cryptography.Authentication.MAC.FromPRF
+ import TCSlib.Cryptography.Authentication.Signatures.Lamport
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Encoding
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Planted
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.TableCoins
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.AveragingExtra
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Statistics
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Experiment
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Advice
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Blocks
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Closing
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.InversionProbability
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Seed
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.MachineSpec
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Nonabort
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization
+ import TCSlib.Cryptography.Hashing.FromDiscreteLog
+ import TCSlib.Cryptography.Authentication.Signatures.HashAndSign
+ 
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean
+index 2f4b0795f211fe35895d52fa9e9098dfe5be375b..f19614b6f8e8b8bdd99b740d364bb0ee62201119 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean
+@@ -3,6 +3,23 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Authentication.Signatures.Defs
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Planted
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Encoding
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.TableCoins
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.AveragingExtra
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Statistics
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Experiment
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Advice
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Blocks
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Closing
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.InversionProbability
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Seed
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.MachineSpec
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Nonabort
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization
++import TCSlib.Cryptography.Games.Hopping
+ import TCSlib.Cryptography.Authentication.Encoding
+ import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
+ import TCSlib.Cryptography.Asymptotic.BlockEncryptor
+@@ -14,7 +31,7 @@ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Lamport's one-time signatures (statement phase)
++# Lamport's one-time signatures
+ 
+ [PS10, Protocol 137.1]: for a one-way function `f`,
+ - `Gen(1^n)` samples `x_i^b ← U_n` for `i ∈ [n]` and `b ∈ {0, 1}`, and outputs
+@@ -43,6 +60,25 @@ Theorem 137.2: if `f` is one-way, the scheme is one-time secure.
+ - **The one-way function is strong** ([PS10, Definition 27.3], `FunFamily.StrongOneWay`), the
+   notes' "one-way function"; by §2.4 a weak one suffices.
+ 
++## Contents
++
++* `Signatures.Lamport.Encoding`: injectivity of the cryptographic tuple encoding.
++* `Signatures.Lamport.Planted`: the typed planted experiment and safe-run coupling.
++* `Signatures.Lamport.TableCoins`: the equivalence between key tapes and typed tables.
++* `Signatures.Lamport.Averaging`: finite favourable-pair counting.
++* `Signatures.Lamport.AveragingExtra`: optional-query counting and fixed-position selection.
++* `Signatures.Lamport.Statistics`: independent-coordinate averaging.
++* `Signatures.Lamport.Experiment`: the typed honest and planted probability bounds.
++* `Signatures.Lamport.Advice`: binary advice and bounded decoding for the best position.
++* `Signatures.Lamport.Blocks`: updating a fixed-width serialized tuple block.
++* `Signatures.Lamport.Closing`: negligibility under the linear reduction loss.
++* `Signatures.Lamport.InversionProbability`: transport to the actual machine inversion probability.
++* `Signatures.Lamport.Machine`: the polynomial-time planting handler.
++* `Signatures.Lamport.Seed`: the fair-bit and random-table seed equivalence.
++* `Signatures.Lamport.MachineSpec`: functional contracts for planting, signing and extraction.
++* `Signatures.Lamport.Nonabort`: nonaborting one-query runs have a safe query.
++* `Signatures.Lamport.Realization`: T1 realization with an explicit coin equivalence.
++
+ ## Main definitions
+ 
+ * `Authentication.lamportOWF`: `f` as a `FunFamily`.
+@@ -55,7 +91,7 @@ Theorem 137.2: if `f` is one-way, the scheme is one-time secure.
+ * `Authentication.lamport_msgLen`, `lamport_sigLen`, `lamport_gen`, `lamport_sign`, `lamport_ver`:
+   the signature-scheme data fields.
+ * `Authentication.lamportVerFun_sign`: correctness, `Ver` accepts honest signatures.
+-* `Authentication.lamport_oneTimeSecure` (Thm 137.2, stated; a `sorry` under the source's sketch).
++* `Authentication.lamport_oneTimeSecure` (Thm 137.2): one-time security from strong one-wayness.
+ 
+ ## References
+ 
+@@ -366,6 +402,49 @@ noncomputable def lamportGen : NUPPT :=
+ noncomputable def lamportSign : NUPPT :=
+   NUPPT.ofPolyTimeUniform polyTimeComputable_lamportSignFun (.const 0)
+ 
++/-- Lamport's generator uses the coin polynomial `2n²`. -/
++theorem lamportGen_coins : (lamportGen hE).coins = .mul (.mul (.const 2) .var) .var := by
++  unfold lamportGen
++  exact NUPPT.coins_ofPolyTimeUniform _ _
++
++/-- The generator's coin tape has `2n²` bits at parameter `n`. -/
++theorem lamportGen_coinLen (n : ℕ) : (lamportGen hE).coinLen n = 2 * n * n := by
++  rw [NUPPT.coinLen_eq, lamportGen_coins]
++  simp only [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
++
++/-- Lamport's generator coin tapes are equivalent to its row-major preimage tables. -/
++noncomputable def lamportCoinTables (n : ℕ) : (lamportGen hE).Coins n ≃ LamportFill.Table n :=
++  (Equiv.arrowCongr (finCongr (lamportGen_coinLen hE n)) (Equiv.refl Bool)).trans
++    (LamportFill.tableCoins n)
++
++/-- The coin-table equivalence first casts the tape width to `2n²`, then groups its blocks. -/
++theorem lamportCoinTables_eq (n : ℕ) :
++    lamportCoinTables hE n =
++      (Equiv.arrowCongr (finCongr (lamportGen_coinLen hE n)) (Equiv.refl Bool)).trans
++        (LamportFill.tableCoins n) := rfl
++
++/-- The inverse coin-table equivalence serializes the table and casts back to the generator's
++declared coin length. -/
++theorem lamportCoinTables_symm (n : ℕ) (T : LamportFill.Table n) :
++    (lamportCoinTables hE n).symm T =
++      (Equiv.arrowCongr (finCongr (lamportGen_coinLen hE n).symm) (Equiv.refl Bool))
++        ((LamportFill.tableCoins n).symm T) := rfl
++
++/-- The coin tape for table `T` is exactly its row-major secret word. -/
++theorem ofFn_lamportCoinTables_symm (n : ℕ) (T : LamportFill.Table n) :
++    List.ofFn ((lamportCoinTables hE n).symm T) = LamportFill.secretWord T := by
++  rw [lamportCoinTables_symm, ofFn_arrowCongr_finCongr, LamportFill.ofFn_tableCoins_symm]
++
++/-- Serializing the table of a generator coin tape recovers that tape's word. -/
++theorem secretWord_lamportCoinTables (n : ℕ) (ρ : (lamportGen hE).Coins n) :
++    LamportFill.secretWord (lamportCoinTables hE n ρ) = List.ofFn ρ := by
++  rw [← ofFn_lamportCoinTables_symm, Equiv.symm_apply_apply]
++
++/-- Lamport's deterministic signer uses the zero coin polynomial. -/
++theorem lamportSign_coins : lamportSign.coins = .const 0 := by
++  unfold lamportSign
++  exact NUPPT.coins_ofPolyTimeUniform _ _
++
+ /-- `Gen` on coins `ρ`: `⟨pk, ρ⟩`, `pk` the tuple of the pairs `⟨f(x_i^0), f(x_i^1)⟩` over the
+ `2n`-bit segments `x_i^0 ‖ x_i^1` of `ρ`. -/
+ theorem runAt_lamportGen (n : ℕ) (ρ : (lamportGen hE).Coins n) :
+@@ -533,6 +612,278 @@ theorem lamport_sign : (lamport L f E hE hfE).sign = lamportSign := rfl
+ /-- Lamport uses its length-guarded block verifier. -/
+ theorem lamport_ver : (lamport L f E hE hfE).ver = lamportVerFun L E := rfl
+ 
++include hfE in
++/-- On a serialized preimage table, key generation returns its public images and the table
++itself [PS10, Protocol 137.1]. -/
++theorem runAt_lamportGen_table (n : ℕ) (T : LamportFill.Table n)
++    (ρ : (lamportGen hE).Coins n) (hρ : List.ofFn ρ = LamportFill.secretWord T) :
++    (lamportGen hE).runAt n [] ρ =
++      pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T))
++        (LamportFill.secretWord T) := by
++  have hrow (i : Fin n) :
++      (List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))).length = 2 * n := by
++    simp only [List.length_append, List.length_ofFn]
++    omega
++  have hhalf (i : Fin n) (b : Bool) :
++      lamportHalf n b (coinBlock (2 * n) i (LamportFill.secretWord T)) =
++        List.ofFn (T (i, b)) := by
++    rw [LamportFill.secretWord_eq, coinBlock_flatten_ofFn _ hrow i]
++    cases b <;> simp [lamportHalf_eq]
++  have hE' (x : Fin n → Bool) :
++      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (f n x) := by
++    simpa only [NUPPT.advInput_eq] using hfE n x
++  rw [runAt_lamportGen, hρ, LamportFill.publicWord_eq]
++  congr 1
++  apply congrArg encodeList
++  apply congrArg List.ofFn
++  funext i
++  rw [hhalf i false, hhalf i true, hE', hE',
++    LamportFill.tablePublic_eq, LamportFill.tablePublic_eq]
++
++/-- On a serialized preimage table, signing returns the typed signature selected from
++that table, independently of its signing coins [PS10, Protocol 137.1]. -/
++theorem runAt_lamportSign_table (n : ℕ) (T : LamportFill.Table n) (m : Fin n → Bool)
++    (r : lamportSign.Coins n) :
++    lamportSign.runAt n (pairEncode (LamportFill.secretWord T) (List.ofFn m)) r =
++      List.ofFn (LamportFill.tableSignature T m) := by
++  rw [runAt_lamportSign, LamportFill.ofFn_tableSignature]
++  have hrow (i : Fin n) :
++      (List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))).length = 2 * n := by
++    simp only [List.length_append, List.length_ofFn]
++    omega
++  apply congrArg List.flatten
++  apply congrArg List.ofFn
++  funext i
++  rw [LamportFill.secretWord_eq, coinBlock_flatten_ofFn _ hrow i]
++  cases m i <;> simp [lamportHalf_eq]
++
++include hE hfE in
++/-- On the canonical layout of a table, the generator string function returns its public
++images paired with its secret serialization [PS10, Protocol 137.1]. -/
++theorem lamportGenFun_table (n : ℕ) (T : LamportFill.Table n) :
++    lamportGenFun E (NUPPT.layout (List.replicate n true) [] [] (LamportFill.secretWord T)) =
++      pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T))
++        (LamportFill.secretWord T) := by
++  have h := runAt_lamportGen_table L f E hE hfE n T
++    ((lamportCoinTables hE n).symm T) (ofFn_lamportCoinTables_symm hE n T)
++  rw [NUPPT.runAt_eq] at h
++  rw [ofFn_lamportCoinTables_symm (E := E) hE n T] at h
++  unfold lamportGen at h
++  rw [NUPPT.runAtL_ofPolyTimeUniform] at h
++  simpa only [NUPPT.layout_eq, NUPPT.advInput_eq] using h
++
++/-- On the canonical signing layout, the signing string function returns the selected
++preimage vector [PS10, Protocol 137.1]. -/
++theorem lamportSignFun_table (n : ℕ) (T : LamportFill.Table n) (m : Fin n → Bool) :
++    lamportSignFun (NUPPT.layout (List.replicate n true)
++      (pairEncode (LamportFill.secretWord T) (List.ofFn m)) [] []) =
++        List.ofFn (LamportFill.tableSignature T m) := by
++  let r : lamportSign.Coins n := fun _ => false
++  have hr : List.ofFn r = [] := by
++    apply List.eq_nil_of_length_eq_zero
++    rw [List.length_ofFn, NUPPT.coinLen_eq, lamportSign_coins, PolyExpr.eval_const]
++  have h := runAt_lamportSign_table n T m r
++  rw [NUPPT.runAt_eq] at h
++  unfold lamportSign at h
++  rw [NUPPT.runAtL_ofPolyTimeUniform, hr] at h
++  simpa only [NUPPT.layout_eq, NUPPT.advInput_eq] using h
++
++include hfE in
++/-- Verification of a typed public table accepts exactly when each signature block maps
++to the image selected by the corresponding message bit [PS10, Protocol 137.1].
++
++**Proof sketch.** Both length guards pass. The two block loops are tuple encodings of
++the signature-block images and selected public images. Injectivity of the tuple encoding
++and of bit-vector serialization turns their equality into coordinatewise equality. -/
++theorem lamportVerFun_publicWord_iff (n : ℕ)
++    (Y : (Fin n × Bool) → Fin (L.eval n) → Bool) (m : Fin n → Bool)
++    (σ : Fin (n * n) → Bool) :
++    lamportVerFun L E (atParam n (pairEncode (LamportFill.publicWord Y)
++      (pairEncode (List.ofFn m) (List.ofFn σ)))) = [true] ↔
++      ∀ i, f n (LamportFill.signatureBlock σ i) = Y (i, m i) := by
++  have hb : FunFamily.blocks n n σ = fun i => LamportFill.signatureBlock σ i := by
++    funext i k
++    rw [FunFamily.blocks_apply, LamportFill.signatureBlock_eq]
++  have hσ := FunFamily.ofFn_blocks_symm n n (FunFamily.blocks n n σ)
++  rw [Equiv.symm_apply_apply, hb] at hσ
++  have hsig (i : Fin n) : (List.ofFn (LamportFill.signatureBlock σ i)).length = n :=
++    List.length_ofFn
++  have hpk (i : Fin n) :
++      (pairEncode (pairEncode (List.ofFn (Y (i, false))) (List.ofFn (Y (i, true)))) []).length =
++        (lamportPkBlock L).eval n := by
++    simp only [length_pairEncode, List.length_ofFn, List.length_nil, lamportPkBlock_eq,
++      PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++    ring
++  have hE' (x : Fin n → Bool) :
++      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (f n x) := by
++    simpa only [NUPPT.advInput_eq] using hfE n x
++  simp only [lamportVerFun_eq, atParam_eq, pairFstD_pairEncode, pairSndD_pairEncode,
++    List.length_replicate, List.length_ofFn, decide_true, Bool.true_and,
++    List.cons.injEq, and_true, decide_eq_true_eq]
++  rw [LamportFill.publicWord_flatten, hσ, blockEncFun_ofFn, blockEncFun_ofFn]
++  have hleft : (fun i : Fin n =>
++      lamportEvalEmit E (NUPPT.layout (List.replicate n true) (pairEncode [] [m i]) []
++        (coinBlock n i (List.ofFn fun j => List.ofFn (LamportFill.signatureBlock σ j)).flatten))) =
++        fun i => List.ofFn (f n (LamportFill.signatureBlock σ i)) := by
++    funext i
++    simp only [lamportEvalEmit_eq, NUPPT.inParam_layout, NUPPT.inCoins_layout]
++    rw [coinBlock_flatten_ofFn _ hsig i, hE']
++  have hright : (fun i : Fin n =>
++      lamportPkEmit (NUPPT.layout (List.replicate n true) (pairEncode [] [m i]) []
++        (coinBlock ((lamportPkBlock L).eval n) i
++          (List.ofFn fun j => pairEncode
++            (pairEncode (List.ofFn (Y (j, false))) (List.ofFn (Y (j, true)))) []).flatten))) =
++        fun i => List.ofFn (Y (i, m i)) := by
++    funext i
++    rw [coinBlock_flatten_ofFn _ hpk i]
++    simp only [lamportPkEmit_eq, NUPPT.inArg_layout, NUPPT.inCoins_layout,
++      pairFstD_pairEncode, pairSndD_pairEncode, List.headD_cons]
++    cases m i <;> rfl
++  simp only [PolyExpr.eval_var, List.length_replicate]
++  rw [hleft, hright, LamportReduction.encodeList_ofFn_eq_iff]
++  constructor
++  · intro h i
++    exact List.ofFn_injective (congrFun h i)
++  · intro h
++    funext i
++    exact congrArg List.ofFn (h i)
++
++
++/-- Machine codecs with equal move decoders, entry encoders and timeout values are equal. -/
++private theorem lamport_codec_ext {ι α : Type} {spec : OracleSpec ι}
++    (a b : MachineCodec spec α) (hd : a.decodeMove = b.decodeMove)
++    (he : a.encodeEntry = b.encodeEntry) (ht : a.timeout = b.timeout) : a = b := by
++  cases a
++  cases b
++  cases hd
++  cases he
++  cases ht
++  rfl
++
++/-- Lamport's forger codec is the canonical bit codec with query width `n`, answer width
++`n²` and final width `n+n²`. -/
++theorem lamport_forgerCodec (n : ℕ) :
++    (lamport L f E hE hfE).forgerCodec n =
++      bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n) := by
++  apply lamport_codec_ext
++  · funext w
++    rw [SignatureScheme.forgerCodec_decodeMove, bitCodec_decodeMove]
++    simp only [lamport_msgLen, lamport_sigLen, PolyExpr.eval_var, PolyExpr.eval_mul]
++  · funext e
++    rw [SignatureScheme.forgerCodec_encodeEntry, bitCodec_encodeEntry]
++  · rw [SignatureScheme.forgerCodec_timeout, bitCodec_timeout]
++    simp only [lamport_msgLen, lamport_sigLen, PolyExpr.eval_var, PolyExpr.eval_mul]
++
++-- Probability proofs read their laws rather than reducing the sample interpreter.
++run_cmd do
++  for n in [``ProbComp.expect, ``ProbComp.sample, ``OracleComp.bind] do
++    let status ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
++    unless status == .irreducible do
++      let id := Lean.mkIdent n
++      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
++
++/-- Against a serialized key table, every Lamport signing call has exactly the deterministic
++selected-preimage law. The equality holds for every function of the answer and state. -/
++theorem lamport_signImpl_expect (n : ℕ) (T : LamportFill.Table n)
++    (i : Fin 1) (m : Fin n → Bool) (s : Unit)
++    (G : (Fin (n * n) → Bool) × Unit → ℝ) :
++    ProbComp.expect
++        ((lamport L f E hE hfE).signImpl n (LamportFill.secretWord T) i m s) G =
++      ProbComp.expect (LamportFill.tableSigner T i m s) G := by
++  rw [SignatureScheme.signImpl_eq, LamportFill.tableSigner_eq]
++  simp only [QueryImpl.ofComp_apply, ProbComp.expect_bind, ProbComp.expect_pure,
++    lamport_sign, lamport_sigLen, PolyExpr.eval_mul, PolyExpr.eval_var,
++    runAt_lamportSign_table, padFin_ofFn]
++  exact ProbComp.expect_const _ _
++
++/-- Logging preserves the equality between actual Lamport signing and typed table signing,
++including the full appended query and answer log. -/
++theorem lamport_loggedSignImpl_expect (n : ℕ) (T : LamportFill.Table n)
++    (i : Fin 1) (m : Fin n → Bool)
++    (s : Unit × QueryLog (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)))
++    (G : (Fin (n * n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n))) → ℝ) :
++    ProbComp.expect
++        (((lamport L f E hE hfE).signImpl n (LamportFill.secretWord T)).withLog i m s) G =
++      ProbComp.expect ((LamportFill.tableSigner T).withLog i m s) G := by
++  simp only [QueryImpl.withLog_apply, ProbComp.expect_bind]
++  exact lamport_signImpl_expect (L := L) (f := f) (E := E) (hE := hE) (hfE := hfE)
++    n T i m s.1 (fun ys =>
++      ProbComp.expect (.pure (ys.1, (ys.2, s.2 ++ [⟨i, m, ys.1⟩]))) G)
++
++include hfE in
++/-- The actual one-query Lamport forgery game has exactly the typed honest-table success
++probability [PS10, Definition 136.2 and proof of Theorem 137.2].
++
++**Proof sketch.** Reindex key-generation coins by the table equivalence and use the generator
++reader to identify public and secret keys. The signing machine ignores its signing coins, so
++its call expectation is the deterministic table signer's expectation; the simulation
++congruence theorem lifts this equality to the logged forger execution. The one-query
++transcript reader identifies its output and first-query log. Finally the verifier reader
++identifies acceptance with coordinatewise verification, and the freshness reader identifies
++absence from the log with inequality to the optional query. -/
++theorem lamport_forgeGame_accept_eq_honestProbability (A : NUPPT) (n : ℕ) :
++    accept ((lamport L f E hE hfE).forgeGame A 1 n) =
++      LamportFill.honestProbability (f n)
++        (fun Y r => A.toCompOn
++          (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
++          n 1 (LamportFill.publicWord Y) r) := by
++  classical
++  rw [accept_eq, SignatureScheme.forgeGame_eq]
++  simp only [ProbComp.prob_bind, ProbComp.prob_pure, decide_eq_true_eq,
++    lamport_gen, lamport_forgerCodec]
++  rw [← ProbComp.expect_sample_equiv (lamportCoinTables hE n).symm,
++    LamportFill.honestProbability_eq]
++  apply congrArg (ProbComp.expect (ProbComp.sample (LamportFill.Table n)))
++  funext T
++  have hgen := runAt_lamportGen_table
++    (L := L) (f := f) (E := E) (hE := hE) (hfE := hfE) n T
++    ((lamportCoinTables hE n).symm T) (ofFn_lamportCoinTables_symm hE n T)
++  rw [hgen, pairFstD_pairEncode, pairSndD_pairEncode]
++  apply congrArg (ProbComp.expect (ProbComp.sample (A.Coins n)))
++  funext r
++  let codec := bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n)
++  let tree := A.toCompOn codec n 1
++    (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) r
++  have hcost : tree.CostBoundedBy (fun _ => 1) 1 :=
++    A.toCompOn_costBoundedBy codec n 1 _ r
++  have hsim (G : (Fin (n + n * n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n))) → ℝ) :=
++    ProbComp.expect_simulate_congr
++      (((lamport L f E hE hfE).signImpl n (LamportFill.secretWord T)).withLog)
++      ((LamportFill.tableSigner T).withLog)
++      (fun i m s H => lamport_loggedSignImpl_expect
++        (L := L) (f := f) (E := E) (hE := hE) (hfE := hfE) n T i m s H)
++      tree ((), []) G
++  rw [hsim, LamportFill.honest_transcript T tree hcost, ProbComp.expect_pure]
++  simp only [SignatureScheme.accepts_iff, lamport_ver,
++    lamportVerFun_publicWord_iff (L := L) (f := f) (E := E) (hfE := hfE),
++    LamportFill.tablePublic_eq,
++    LamportFill.honestSuccess_iff, LamportFill.honestOutput_eq]
++  apply if_congr ?_ rfl rfl
++  apply and_congr_right
++  intro _
++  exact LamportFill.fresh_firstLog_iff T tree _
++
++
++/-- For every positive parameter, some fixed position with a fair planted bit gives
++reduction success at least the actual one-query forgery probability divided by `2n`
++[PS10, averaging step in the proof of Theorem 137.2].
++
++**Proof sketch.** Read the actual forgery game as the typed honest probability, then apply
++the counted favorable-pair bound and select a position at least as good as its average. -/
++theorem lamport_exists_best_position (A : NUPPT) (n : ℕ) (hn : 0 < n) :
++    ∃ i : Fin n, accept ((lamport L f E hE hfE).forgeGame A 1 n) / (2 * (n : ℝ)) ≤
++      ProbComp.expect (ProbComp.sample Bool) (fun c =>
++        LamportFill.redProbability (f n)
++          (fun Y r => A.toCompOn
++            (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
++            n 1 (LamportFill.publicWord Y) r) (i, c)) := by
++  letI : NeZero n := ⟨Nat.ne_of_gt hn⟩
++  rw [lamport_forgeGame_accept_eq_honestProbability]
++  exact LamportFill.exists_best_position (f n) _
++    (fun Y r => A.toCompOn_costBoundedBy _ n 1 (LamportFill.publicWord Y) r)
++
+ /-- **Theorem 137.2: Lamport's scheme is one-time secure** [PS10, Theorem 137.2] when `f` is a
+ (strong) one-way function.
+ 
+@@ -554,14 +905,69 @@ theorem lamport_ver : (lamport L f E hE hfE).ver = lamportVerFun L E := rfl
+    A best position at each length is at least as good as the uniform-position average; supply
+    it as `O(log n)` bits of non-uniform advice and sample only the fair bit `c`. Thus the
+    machine need not sample an exactly uniform element of `[n]` from a fixed finite coin tape.
+-5. `f` is one-way, so this lower bound is negligible, and polynomial-factor closure makes `ε`
+-   negligible. Apply T1 (`Games.exists_handlerMachine`) to the extended input `⟨y,i(n)⟩`, then
+-   `NUPPT.exists_withAdvice` supplies the bounded advised position. `advIn` builds the public
+-   key from that input and the seed, the handler answers or aborts, and `out` extracts `σ′_i`.
++5. T1 (`Games.exists_handlerMachine`) realizes the handler on `⟨y,1^i⟩`, using a fair
++   bit, a complete sampled table, and the forger's coins. A successful nonaborting typed run
++   has a safe query, so the handler's real output is the extracted preimage. Bounded decoding
++   expands the `Nat.size n`-bit best-position advice to unary; `NUPPT.exists_withAdvice`
++   supplies it without changing the coin polynomial. One-wayness makes this fixed machine's
++   inversion probability negligible. Since `ε(n) ≤ 2n·inv_B(n)` for `n ≥ 1`, polynomial-factor
++   closure proves one-time security, with zero handled by the finite exception.
+ 
+ For zero-query successful runs the extraction fraction is `1/2`, rather than just `1/(2n)`. -/
+ theorem lamport_oneTimeSecure (hf : (lamportOWF L f).StrongOneWay) :
+     (lamport L f E hE hfE).OneTimeSecure := by
+-  sorry
++  classical
++  apply LamportReduction.oneTimeSecure_of_inversion_lower
++    (lamport L f E hE hfE) (lamportOWF L f) hf
++  intro A
++  have hW (n : ℕ) : (lamportPkBlock L).eval n = 6 * L.eval n + 6 := by
++    rw [lamportPkBlock_eq]
++    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++  have hEval (n : ℕ) (x : Fin n → Bool) :
++      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (f n x) := by
++    simpa only [NUPPT.advInput_eq] using hfE n x
++  obtain ⟨B, hB⟩ := LamportFill.exists_realization_machine L (lamportPkBlock L) f
++    E (lamportGenFun E) lamportSignFun hE
++    (polyTimeComputable_lamportGenFun hE) polyTimeComputable_lamportSignFun
++    hW hEval (lamportGenFun_table L f E hE hfE) lamportSignFun_table
++    coinBlock_flatten_ofFn A
++  have hbest (n : ℕ) (hn : 0 < n) : ∃ i : Fin n,
++      accept ((lamport L f E hE hfE).forgeGame A 1 n) / (2 * (n : ℝ)) ≤
++        ProbComp.expect (ProbComp.sample Bool)
++          (fun c => LamportFill.redProbability (f n)
++            (LamportFill.machineForger L A n) (i, c)) := by
++    simpa only [LamportFill.machineForger_eq_fun] using
++      lamport_exists_best_position L f E hE hfE A n hn
++  let idx : ℕ → ℕ := fun n => if hn : 0 < n then (Classical.choose (hbest n hn)).val else 0
++  have hidx_le (n : ℕ) : idx n ≤ n := by
++    dsimp only [idx]
++    split_ifs with hn
++    · exact (Classical.choose (hbest n hn)).isLt.le
++    · exact Nat.zero_le n
++  obtain ⟨C, hCcoins, hC⟩ := LamportFill.exists_withIndexAdvice B idx hidx_le
++  refine ⟨C, fun n hn => ?_⟩
++  have hnpos : 0 < n := hn
++  let i : Fin n := Classical.choose (hbest n hnpos)
++  have hi := Classical.choose_spec (hbest n hnpos)
++  have hidx : idx n = i.val := by
++    dsimp only [idx]
++    rw [dif_pos hnpos]
++  obtain ⟨φ, hφ⟩ := hB n
++  let e : ((Bool × LamportFill.Table n) × A.Coins n) ≃ C.Coins n :=
++    φ.trans (NUPPT.coinsCongr hCcoins.symm n)
++  have hreal (y : Fin (L.eval n) → Bool) (T : LamportFill.Table n) (c : Bool)
++      (r : A.Coins n)
++      (hs : LamportFill.RedSuccess (f n) (LamportFill.machineForger L A n) y T r (i, c)) :
++      ∃ x' : Fin n → Bool,
++        C.runAt n (List.ofFn y) (e ((c, T), r)) = List.ofFn x' ∧ f n x' = y := by
++    obtain ⟨x', hout, hfx⟩ := hφ i y T c r hs
++    refine ⟨x', ?_, hfx⟩
++    change C.runAt n (List.ofFn y)
++      (NUPPT.coinsCongr hCcoins.symm n (φ ((c, T), r))) = List.ofFn x'
++    rw [LamportFill.runAt_indexAdvice hCcoins idx hC, hidx]
++    exact hout
++  have hInv := LamportFill.fairBit_redProbability_le_invProbAt (lamportOWF L f)
++    n A C i (LamportFill.machineForger L A n) e hreal
++  exact hi.trans (by simpa only [lamportOWF_f] using hInv)
+ 
+ end TCSlib.Cryptography.Authentication
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..2b746e2692b7d9aa7adcd3a7be0356ff04f54210
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean
+@@ -0,0 +1,134 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Asymptotic.OneWayLemmas
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Binary advice for a best Lamport position
++
++## Main definitions
++
++* `indexBits n i`: an index bounded by `n` encoded using exactly `Nat.size n` bits.
++* `expandIndex U`: expand binary index advice to unary using a parameter-bounded decoder.
++
++## Main results
++
++* `indexBits_value`: the encoded index reads back as `i`.
++* `exists_withIndexAdvice`: a machine expecting unary index data can receive that index
++  through binary non-uniform advice of exactly `Nat.size n` bits.
++
++`Nat.size n` is the binary digit count, hence the added advice has logarithmic length.
++The polynomial bound supplied to the machine constructor is the weaker `Nat.size n ≤ n`.
++The zero parameter uses an empty binary word encoding zero.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, proof of Theorem 137.2, choosing the best position as non-uniform advice.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportFill
++
++open Complexity Turing TCSlib.Cryptography
++
++/-- An index `i ≤ n` is encoded as the inverse of the published binary-number equivalence
++at width `Nat.size n`. Its width is logarithmic, including an empty encoding at `n=0`. -/
++noncomputable def indexBits (n i : ℕ) (hi : i ≤ n) : List Bool :=
++  List.ofFn ((bitsEquiv (Nat.size n)).symm ⟨i, hi.trans_lt (Nat.lt_size_self n)⟩)
++
++/-- The index word is the serialized inverse image of `i` under `bitsEquiv`. -/
++theorem indexBits_eq (n i : ℕ) (hi : i ≤ n) : indexBits n i hi =
++    List.ofFn ((bitsEquiv (Nat.size n)).symm ⟨i, hi.trans_lt (Nat.lt_size_self n)⟩) := rfl
++
++/-- The binary index word has exactly `Nat.size n` bits. -/
++theorem length_indexBits (n i : ℕ) (hi : i ≤ n) :
++    (indexBits n i hi).length = Nat.size n := by
++  rw [indexBits_eq, List.length_ofFn]
++
++/-- Its logarithmic width is bounded by the polynomial width `n`. -/
++theorem length_indexBits_le (n i : ℕ) (hi : i ≤ n) : (indexBits n i hi).length ≤ n := by
++  rw [length_indexBits]
++  exact Nat.size_le.2 n.lt_two_pow_self
++
++/-- Reading the binary index word gives the original natural number `i`.
++
++**Proof sketch.** Apply `bitsEquiv` to its inverse image, read the natural-number value
++using `bitsEquiv_val`, then use the published equivalence between typed and list numerals. -/
++theorem indexBits_value (n i : ℕ) (hi : i ≤ n) :
++    OneWay.bitListToNat (indexBits n i hi) = i := by
++  have h := congrArg Fin.val ((bitsEquiv (Nat.size n)).apply_symm_apply
++    ⟨i, hi.trans_lt (Nat.lt_size_self n)⟩)
++  rw [bitsEquiv_val, OneWay.bitsToNat_eq_bitListToNat] at h
++  rw [indexBits_eq]
++  exact h
++
++/-- On a parameter-aware input `⟨1^n,⟨y,b⟩⟩`, decode the bounded binary index `b` to unary
++and return `⟨y,U(⟨1^n,b⟩)⟩`. -/
++def expandIndex (U : List Bool → List Bool) (w : List Bool) : List Bool :=
++  pairEncode (pairFstD (pairSndD w))
++    (U (pairEncode (pairFstD w) (pairSndD (pairSndD w))))
++
++/-- The expansion pairs the challenge with `U` applied to the parameter and binary index. -/
++theorem expandIndex_eq (U : List Bool → List Bool) (w : List Bool) : expandIndex U w =
++    pairEncode (pairFstD (pairSndD w))
++      (U (pairEncode (pairFstD w) (pairSndD (pairSndD w)))) := rfl
++
++/-- Expanding binary index advice is polynomial-time whenever the bounded decoder is. -/
++theorem expandIndex_poly {U : List Bool → List Bool} (hU : PolyTimeComputable U) :
++    PolyTimeComputable (expandIndex U) :=
++  (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD).pairEncode
++    (hU.comp (polyTimeComputable_pairFstD.pairEncode
++      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)))
++
++/-- On canonical parameter-aware input, the bounded decoder expands `b` to its unary
++numeric value. This reads `advInput` and pairing only through their public equations. -/
++theorem expandIndex_advInput (U : List Bool → List Bool)
++    (hU : ∀ p b : List Bool, OneWay.bitListToNat b ≤ p.length →
++      U (pairEncode p b) = List.replicate (OneWay.bitListToNat b) true)
++    (n : ℕ) (y b : List Bool) (hb : OneWay.bitListToNat b ≤ n) :
++    expandIndex U (NUPPT.advInput n (pairEncode y b)) =
++      pairEncode y (List.replicate (OneWay.bitListToNat b) true) := by
++  simp only [expandIndex_eq, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++  rw [hU _ b (by simpa only [List.length_replicate] using hb)]
++
++/-- A machine expecting `⟨y,1^(i n)⟩` can instead receive `i n ≤ n` as non-uniform binary
++advice of exactly `Nat.size n` bits, keeping its coin polynomial. This is the best-position
++advice step in [PS10, proof of Theorem 137.2].
++
++**Proof sketch.** The public bounded binary-to-unary decoder expands an index using `1^n`
++as its output cap. Parameter-aware preprocessing composes that decoder with the original
++machine. Hard-wire the binary word using `exists_withAdvice`, bounded by `Nat.size n ≤ n`.
++The preprocessor recovers the chosen unary index at every parameter, including zero. -/
++theorem exists_withIndexAdvice (A : NUPPT) (i : ℕ → ℕ) (hi : ∀ n, i n ≤ n) :
++    ∃ B : NUPPT, B.coins = A.coins ∧
++      ∀ n y r, B.runAtL n y r = A.runAtL n (pairEncode y (List.replicate (i n) true)) r := by
++  obtain ⟨U, hU, hUread⟩ := OneWay.exists_unaryOf
++  obtain ⟨D, hDcoins, _, _, hD⟩ := NUPPT.exists_compParam A
++    (expandIndex_poly hU) polyTimeComputable_pairSndD
++  let β : ℕ → List Bool := fun n => indexBits n (i n) (hi n)
++  have hβ : ∀ n, (β n).length ≤ PolyExpr.var.eval n := by
++    intro n
++    rw [PolyExpr.eval_var]
++    exact length_indexBits_le n (i n) (hi n)
++  obtain ⟨B, hBcoins, hB⟩ := NUPPT.exists_withAdvice D β .var hβ
++  refine ⟨B, hBcoins.trans hDcoins, fun n y r => ?_⟩
++  have hvalue : OneWay.bitListToNat (β n) = i n := indexBits_value n (i n) (hi n)
++  have hcap : OneWay.bitListToNat (β n) ≤ n := by rw [hvalue]; exact hi n
++  rw [hB, hD, pairSndD_pairEncode, expandIndex_advInput U hUread n y (β n) hcap, hvalue]
++
++/-- A same-coins machine with the indexed untyped activation equation has the corresponding
++typed activation equation through the published `coinsCongr` equivalence. -/
++theorem runAt_indexAdvice {A B : NUPPT} (hcoins : B.coins = A.coins)
++    (i : ℕ → ℕ)
++    (hB : ∀ n y r, B.runAtL n y r = A.runAtL n (pairEncode y (List.replicate (i n) true)) r)
++    (n : ℕ) (y : List Bool) (r : A.Coins n) :
++    B.runAt n y (NUPPT.coinsCongr hcoins.symm n r) =
++      A.runAt n (pairEncode y (List.replicate (i n) true)) r := by
++  rw [NUPPT.runAt_coinsCongr hcoins.symm, hB, ← NUPPT.runAt_eq]
++
++end TCSlib.Cryptography.Authentication.LamportFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..2cfd27b57a63d53efecc9b5ac82aea545e2b1c78
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean
+@@ -0,0 +1,135 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Probability
++import Mathlib.Data.Finset.Max
++import Mathlib.Data.Fintype.Prod
++import Mathlib.Tactic.FieldSimp
++import Mathlib.Tactic.Linarith
++import Mathlib.Tactic.Positivity
++import Mathlib.Tactic.Ring
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Finite position averaging for Lamport's reduction
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `sum_favourable_bits`: a differing pair of message bits has one favourable plant bit.
++* `one_le_favourable_sum`: distinct messages have at least one favourable position and bit.
++* `favourable_expect_ge`: the favourable fraction is at least `1 / (2 |I|)`.
++* `noQuery_expect_eq_half`: without a query the favourable fraction is exactly `1 / 2`.
++* `exists_expect_sample_le`: a finite uniform average is bounded by a value it averages.
++* `expect_favourable_of_success`: pointwise favourable mass bounds its average on successes.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, Theorem 137.2. The finite arithmetic is generic glue for its reduction.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportReduction
++
++open Finset TCSlib.Cryptography.Games
++
++/-- For two bits `a` and `b`, the number of bits `c` satisfying `a ≠ c = b` is one
++when `a ≠ b`, and zero otherwise. -/
++theorem sum_favourable_bits (a b : Bool) :
++    (∑ c : Bool, if a ≠ c ∧ b = c then (1 : ℝ) else 0) = if a ≠ b then 1 else 0 := by
++  cases a <;> cases b <;> simp
++
++/-- The number of position-bit pairs with `m i ≠ c = m' i` is the number of positions at
++which the messages differ. [PS10, proof of Theorem 137.2]. -/
++theorem sum_favourable_pairs {ι : Type} [Fintype ι] (m m' : ι → Bool) :
++    (∑ p : ι × Bool, if m p.1 ≠ p.2 ∧ m' p.1 = p.2 then (1 : ℝ) else 0) =
++      ∑ i : ι, if m i ≠ m' i then (1 : ℝ) else 0 := by
++  rw [Fintype.sum_prod_type]
++  exact Finset.sum_congr rfl fun i _ => sum_favourable_bits (m i) (m' i)
++
++/-- Distinct messages have at least one jointly favourable position and bit:
++`1 ≤ ∑_(i,c) 1[m_i ≠ c = m'_i]`. [PS10, proof of Theorem 137.2].
++
++**Proof sketch.** Extensional inequality supplies a differing coordinate. Its indicator is
++one, and all other indicators in the sum are nonnegative. -/
++theorem one_le_favourable_sum {ι : Type} [Fintype ι] {m m' : ι → Bool} (h : m ≠ m') :
++    1 ≤ ∑ p : ι × Bool, if m p.1 ≠ p.2 ∧ m' p.1 = p.2 then (1 : ℝ) else 0 := by
++  classical
++  have hex : ∃ i, m i ≠ m' i := by
++    by_contra hh
++    push_neg at hh
++    exact h (funext hh)
++  obtain ⟨i, hi⟩ := hex
++  rw [sum_favourable_pairs]
++  have hle := Finset.single_le_sum
++    (s := Finset.univ) (a := i)
++    (f := fun j => if m j ≠ m' j then (1 : ℝ) else 0)
++    (fun j _ => by dsimp only; split_ifs <;> positivity) (Finset.mem_univ i)
++  calc
++    1 = (if m i ≠ m' i then (1 : ℝ) else 0) := (if_pos hi).symm
++    _ ≤ ∑ j : ι, if m j ≠ m' j then (1 : ℝ) else 0 := hle
++
++/-- For distinct messages on a nonempty finite position type, uniform `(i,c)` is jointly
++favourable with probability at least `1 / (2 |I|)`. [PS10, proof of Theorem 137.2]. -/
++theorem favourable_expect_ge {ι : Type} [Fintype ι] [Nonempty ι]
++    {m m' : ι → Bool} (h : m ≠ m') :
++    1 / (2 * (Fintype.card ι : ℝ)) ≤
++      ProbComp.expect (ProbComp.sample (ι × Bool))
++        (fun p => if m p.1 ≠ p.2 ∧ m' p.1 = p.2 then (1 : ℝ) else 0) := by
++  rw [ProbComp.expect_sample]
++  simp only [Fintype.card_prod, Fintype.card_bool, Nat.cast_mul, Nat.cast_ofNat]
++  have hcount := one_le_favourable_sum h
++  have hden : 0 ≤ ((Fintype.card ι : ℝ) * 2)⁻¹ := by positivity
++  have hmul := mul_le_mul_of_nonneg_left hcount hden
++  simpa only [mul_one, one_div, mul_comm 2 (Fintype.card ι : ℝ)] using hmul
++
++/-- When there was no signing query, a uniform position and bit agrees with the forged
++message bit with probability exactly `1 / 2`. [PS10, proof of Theorem 137.2]. -/
++theorem noQuery_expect_eq_half {ι : Type} [Fintype ι] [Nonempty ι] (m' : ι → Bool) :
++    ProbComp.expect (ProbComp.sample (ι × Bool))
++        (fun p => if m' p.1 = p.2 then (1 : ℝ) else 0) = 1 / 2 := by
++  have hbit (b : Bool) : (∑ c : Bool, if b = c then (1 : ℝ) else 0) = 1 := by
++    cases b <;> simp
++  rw [ProbComp.expect_sample, Fintype.sum_prod_type]
++  simp only [hbit, sum_const, card_univ, nsmul_eq_mul, mul_one,
++    Fintype.card_prod, Fintype.card_bool, Nat.cast_mul, Nat.cast_ofNat]
++  have hcard : (Fintype.card ι : ℝ) ≠ 0 := by positivity
++  field_simp
++
++/-- A uniform finite average has a position whose value is at least the average.
++
++**Proof sketch.** A maximum exists on the nonempty finite type. Every term of the sum is at
++most that maximum, so the uniform average is at most it. -/
++theorem exists_expect_sample_le {ι : Type} [Fintype ι] [Nonempty ι] (g : ι → ℝ) :
++    ∃ i, ProbComp.expect (ProbComp.sample ι) g ≤ g i := by
++  classical
++  obtain ⟨i, _, hi⟩ := Finset.exists_max_image Finset.univ g Finset.univ_nonempty
++  refine ⟨i, ?_⟩
++  calc
++    ProbComp.expect (ProbComp.sample ι) g ≤
++        ProbComp.expect (ProbComp.sample ι) (fun _ => g i) :=
++      ProbComp.expect_mono _ (fun j => hi j (Finset.mem_univ j))
++    _ = g i := ProbComp.expect_const _ _
++
++/-- If nonnegative favourable mass is at least `b` on every successful output, its average
++is at least `b` times the success probability. This is the finite averaging step in
++[PS10, proof of Theorem 137.2]. -/
++theorem expect_favourable_of_success {α : Type} (c : ProbComp α) (P : α → Prop)
++    (q : α → ℝ) (b : ℝ) (hq : ∀ a, 0 ≤ q a) (hP : ∀ a, P a → b ≤ q a) :
++    b * ProbComp.prob c P ≤ ProbComp.expect c q := by
++  classical
++  rw [ProbComp.prob_eq_expect, ← ProbComp.expect_const_mul]
++  apply ProbComp.expect_mono
++  intro a
++  by_cases ha : P a
++  · simpa only [ha, if_true, mul_one] using hP a ha
++  · simpa only [ha, if_false, mul_zero] using hq a
++
++end TCSlib.Cryptography.Authentication.LamportReduction
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..364a845820632200904ecd72f1903521682f7c44
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean
+@@ -0,0 +1,89 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
++import TCSlib.Cryptography.Games.Bridges.Experiments
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Optional-query and fair-bit position averaging
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `optionQuery_favourable_expect_ge`: fresh forged messages have favourable fraction
++  at least `1 / (2 |I|)`, with or without a query.
++* `exists_position_fairBit_expect_ge`: some fixed position with a fresh fair bit performs
++  at least as well as a uniform position and bit.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, Theorem 137.2. These are the counting and best-position steps of its reduction.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportReduction
++
++open TCSlib.Cryptography.Games
++
++/-- If an optional queried message differs from the forged message, a uniform position and
++bit avoids revealing the planted preimage and selects the forged preimage with probability
++at least `1 / (2 |I|)`. An absent query imposes no avoidance constraint.
++[PS10, proof of Theorem 137.2].
++
++**Proof sketch.** With a query, freshness gives distinct messages and the differing-coordinate
++bound applies. Without a query, half of the position-bit pairs select the forged preimage;
++this is at least `1 / (2 |I|)` because the position type is nonempty. -/
++theorem optionQuery_favourable_expect_ge {ι : Type} [Fintype ι] [Nonempty ι]
++    (q : Option (ι → Bool)) (m' : ι → Bool) (hfresh : q ≠ some m') :
++    1 / (2 * (Fintype.card ι : ℝ)) ≤
++      ProbComp.expect (ProbComp.sample (ι × Bool))
++        (fun p => if (∀ m, q = some m → m p.1 ≠ p.2) ∧ m' p.1 = p.2
++          then (1 : ℝ) else 0) := by
++  classical
++  cases q with
++  | none =>
++    simp only [reduceCtorEq, false_implies, forall_const, true_and]
++    rw [noQuery_expect_eq_half]
++    have hcard : (1 : ℝ) ≤ (Fintype.card ι : ℝ) := by
++      exact_mod_cast (Nat.succ_le_iff.mpr (Fintype.card_pos : 0 < Fintype.card ι))
++    exact one_div_le_one_div_of_le (by positivity) (by linarith)
++  | some m =>
++    have hne : m ≠ m' := by
++      intro h
++      exact hfresh (congrArg some h)
++    simpa using (favourable_expect_ge hne)
++
++/-- For every payoff `v(i,c)` on a nonempty finite position type and a bit, there is a
++position whose average over a fair bit is at least the average over a uniform position and
++fair bit. [PS10, proof of Theorem 137.2].
++
++**Proof sketch.** Apply finite maximum averaging to the payoff already averaged over the bit.
++The published product-sampling equation identifies its average over positions with the
++uniform-pair expectation. -/
++theorem exists_position_fairBit_expect_ge {ι : Type} [Fintype ι] [Nonempty ι]
++    (v : ι → Bool → ℝ) :
++    ∃ i, ProbComp.expect (ProbComp.sample (ι × Bool)) (fun p => v p.1 p.2) ≤
++      ProbComp.expect (ProbComp.sample Bool) (v i) := by
++  obtain ⟨i, hi⟩ := exists_expect_sample_le
++    (fun j : ι => ProbComp.expect (ProbComp.sample Bool) (v j))
++  refine ⟨i, ?_⟩
++  calc
++    ProbComp.expect (ProbComp.sample (ι × Bool)) (fun p => v p.1 p.2) =
++        ProbComp.expect
++          ((ProbComp.sample ι).bind fun j =>
++            (ProbComp.sample Bool).bind fun c => .pure (j, c)) (fun p => v p.1 p.2) :=
++      (Bridge.expect_sample_pair (fun p : ι × Bool => v p.1 p.2)).symm
++    _ = ProbComp.expect (ProbComp.sample ι)
++        (fun j => ProbComp.expect (ProbComp.sample Bool) (v j)) := by
++      simp only [ProbComp.expect_bind, ProbComp.expect_pure]
++    _ ≤ ProbComp.expect (ProbComp.sample Bool) (v i) := hi
++
++end TCSlib.Cryptography.Authentication.LamportReduction
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..e9f9796aa8a9d8c3695d984577abf7cb059e0a47
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks.lean
+@@ -0,0 +1,78 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import Mathlib.Data.List.OfFn
++import Mathlib.Data.List.Basic
++import Mathlib.Tactic.Ring
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Replacing a fixed-width block in a concatenated tuple
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `flatten_ofFn_update`: replacing a block by prefix, replacement and suffix agrees with a
++  function update before serialization.
++
++## References
++
++Generic list and finite-tuple glue; no textbook counterpart.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportFill
++
++/-- Replacing block `i` of a concatenation of `B`-bit blocks by the `B`-bit word `h` is
++serialization of the updated tuple:
++`take(iB, flatten(g)) ++ h ++ drop((i+1)B, flatten(g)) = flatten(update(g,i,h))`.
++
++**Proof sketch.** Induct on the number of blocks and split the updated index into zero or a
++successor. At zero, dropping the first block leaves the unchanged tail. At a successor,
++taking and dropping pass the initial block, so the induction hypothesis applies to the tail;
++the untouched initial block is then prepended. All length calculations use the given uniform
++block-width equations. -/
++theorem flatten_ofFn_update {B : ℕ} :
++    ∀ {q : ℕ} (g : Fin q → List Bool) (hg : ∀ j, (g j).length = B)
++      (i : Fin q) (h : List Bool) (hh : h.length = B),
++      (List.ofFn g).flatten.take (i.val * B) ++ h ++
++          (List.ofFn g).flatten.drop ((i.val + 1) * B) =
++        (List.ofFn (Function.update g i h)).flatten
++  | 0, _, _, i, _, _ => i.elim0
++  | q + 1, g, hg, i, h, hh => by
++    have hflat : (List.ofFn g).flatten =
++        g 0 ++ (List.ofFn (Fin.tail g)).flatten := by
++      rw [List.ofFn_succ, List.flatten_cons, Fin.tail_def]
++    cases i using Fin.cases with
++    | zero =>
++      have hupdate : Function.update g 0 h = Fin.cons h (Fin.tail g) := by
++        have hu := Fin.update_cons_zero (x := g 0) (p := Fin.tail g) (z := h)
++        simpa only [Fin.cons_self_tail] using hu
++      rw [hflat, hupdate, List.ofFn_cons, List.flatten_cons]
++      simp only [Fin.val_zero, Nat.zero_mul, List.take_zero, List.nil_append,
++        Nat.zero_add, Nat.one_mul]
++      rw [List.drop_left' (hg 0)]
++    | succ j =>
++      have hstart : (j.succ : Fin (q + 1)).val * B = (g 0).length + j.val * B := by
++        simp only [Fin.val_succ, hg 0]
++        ring
++      have hend : ((j.succ : Fin (q + 1)).val + 1) * B =
++          (g 0).length + (j.val + 1) * B := by
++        simp only [Fin.val_succ, hg 0]
++        ring
++      have hupdate : Function.update g j.succ h =
++          Fin.cons (g 0) (Function.update (Fin.tail g) j h) := by
++        rw [Fin.cons_update, Fin.cons_self_tail]
++      rw [hflat, hstart, hend, List.take_length_add_append,
++        List.drop_length_add_append, hupdate, List.ofFn_cons, List.flatten_cons]
++      have ht : ∀ k : Fin q, ((Fin.tail g) k).length = B := fun k => hg k.succ
++      simpa only [List.append_assoc] using congrArg (List.append (g 0))
++        (flatten_ofFn_update (Fin.tail g) ht j h hh)
++
++end TCSlib.Cryptography.Authentication.LamportFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Closing.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Closing.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..12b3ac8a2d29b742b013f7d9ee94a15bf76bdfe7
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Closing.lean
+@@ -0,0 +1,94 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.Defs
++import TCSlib.Cryptography.Asymptotic.OneWay
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Closing Lamport's linear-loss reduction
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `negligible_of_linear_bound`: a nonnegative function bounded by `2n` times a negligible
++  nonnegative function for `n ≥ 1` is negligible.
++* `oneTimeSecure_of_inversion_bound`: the same bound for each forger proves one-time security.
++
++The zero parameter is excluded only from the eventual comparison supplied to
++`Negligible.mono`; no value at zero is changed or assumed.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, proof of Theorem 137.2.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportReduction
++
++open Complexity TCSlib.Cryptography.Games
++
++/-- If `e` and `p` are nonnegative, `p` is negligible, and `e(n) ≤ 2n·p(n)` for `n ≥ 1`,
++then `e` is negligible. [PS10, final step of the proof of Theorem 137.2].
++
++**Proof sketch.** Multiplication by `n` and then by two preserves negligibility. The eventual
++comparison starts at one, so the zero parameter is a finite exception. -/
++theorem negligible_of_linear_bound {e p : ℕ → ℝ} (hp : Negligible p)
++    (hp0 : ∀ n, 0 ≤ p n) (he0 : ∀ n, 0 ≤ e n)
++    (hbound : ∀ n ≥ 1, e n ≤ 2 * (n : ℝ) * p n) : Negligible e := by
++  have hmajorant : Negligible (fun n => (2 : ℝ) * ((n : ℝ) ^ 1 * p n)) :=
++    (hp.mul_pow 1).const_mul 2
++  apply hmajorant.mono
++  refine ⟨1, fun n hn => ?_⟩
++  have hnonneg : 0 ≤ (2 : ℝ) * ((n : ℝ) ^ 1 * p n) :=
++    mul_nonneg (by norm_num) (mul_nonneg (pow_nonneg (Nat.cast_nonneg n) 1) (hp0 n))
++  rw [abs_of_nonneg (he0 n), abs_of_nonneg hnonneg]
++  simpa only [pow_one, mul_assoc] using hbound n hn
++
++/-- A nonnegative advantage bounded by `2n` times the inversion probability of a fixed
++machine against a strong one-way family is negligible for all parameters, with no condition
++needed at zero. [PS10, final step of the proof of Theorem 137.2]. -/
++theorem negligible_of_inversion_bound (F : FunFamily) (hf : F.StrongOneWay) (B : NUPPT)
++    (e : ℕ → ℝ) (he0 : ∀ n, 0 ≤ e n)
++    (hbound : ∀ n ≥ 1, e n ≤ 2 * (n : ℝ) * F.invProbAt B n) : Negligible e :=
++  negligible_of_linear_bound (hf.hard B) (F.invProbAt_nonneg B) he0 hbound
++
++/-- A signature scheme is one-time secure if each forger yields a fixed machine whose
++inversion probability against a strong one-way family bounds its forgery probability with
++loss `2n` for `n ≥ 1`. [PS10, reduction conclusion in Theorem 137.2].
++
++**Proof sketch.** Use each forger's own acceptance probability as its security majorant.
++Polynomial-factor closure proves that majorant negligible; its pointwise bound is equality. -/
++theorem oneTimeSecure_of_inversion_bound (S : SignatureScheme) (F : FunFamily)
++    (hf : F.StrongOneWay)
++    (hred : ∀ A : NUPPT, ∃ B : NUPPT, ∀ n ≥ 1,
++      accept (S.forgeGame A 1 n) ≤ 2 * (n : ℝ) * F.invProbAt B n) : S.OneTimeSecure := by
++  apply (S.oneTimeSecure_iff).2
++  intro A
++  obtain ⟨B, hB⟩ := hred A
++  refine ⟨fun n => accept (S.forgeGame A 1 n), ?_, fun _ => le_rfl⟩
++  exact negligible_of_inversion_bound F hf B _ (fun n => accept_nonneg _) hB
++
++/-- The probability-form reduction `ε(n)/(2n) ≤ inv_B(n)` also implies one-time security.
++[PS10, averaging bound and conclusion in Theorem 137.2]. -/
++theorem oneTimeSecure_of_inversion_lower (S : SignatureScheme) (F : FunFamily)
++    (hf : F.StrongOneWay)
++    (hred : ∀ A : NUPPT, ∃ B : NUPPT, ∀ n ≥ 1,
++      accept (S.forgeGame A 1 n) / (2 * (n : ℝ)) ≤ F.invProbAt B n) : S.OneTimeSecure := by
++  apply oneTimeSecure_of_inversion_bound S F hf
++  intro A
++  obtain ⟨B, hB⟩ := hred A
++  refine ⟨B, fun n hn => ?_⟩
++  have hn0 : (0 : ℝ) < n := by exact_mod_cast (show 0 < n from hn)
++  have hden : 0 < (2 : ℝ) * (n : ℝ) := mul_pos (by norm_num) hn0
++  have h := (div_le_iff₀ hden).1 (hB n hn)
++  simpa only [mul_comm (F.invProbAt B n) (2 * (n : ℝ))] using h
++
++end TCSlib.Cryptography.Authentication.LamportReduction
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..8a8a387be468ca1cc47d4ec2fa94b7231a8f130a
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding.lean
+@@ -0,0 +1,84 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity
++import TCSlib.Complexity.TuringMachine.Encoding
++import Mathlib.Data.List.OfFn
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Injectivity of the cryptographic tuple encoding
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `encodeList_injective`: equality of encoded lists implies equality of their blocks.
++* `encodeList_eq_iff`: list encodings agree exactly when the lists agree.
++* `encodeList_ofFn_eq_iff`: encodings of finite tuples agree exactly when the tuples agree.
++
++## References
++
++Generic encoding lemmas; no textbook counterpart. These use the list encoding of
++[PS10, Definition 93.1] through its published equations only.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportReduction
++
++open Turing
++open TCSlib.Cryptography.PrivateKeyScheme (encodeList encodeList_nil encodeList_cons)
++
++/-- The nested-pair list encoding is injective: `encodeList xs = encodeList ys` implies
++`xs = ys`.
++
++**Proof sketch.** Induct on the first list. An empty encoding cannot equal a cons encoding,
++since a pair encoding is nonempty. For two cons encodings, injectivity of pairing identifies
++the heads and the encoded tails, and induction identifies the tails. -/
++theorem encodeList_injective : Function.Injective encodeList := by
++  have haux : ∀ xs ys : List (List Bool), encodeList xs = encodeList ys → xs = ys := by
++    intro xs
++    induction xs with
++    | nil =>
++      intro ys h
++      cases ys with
++      | nil => rfl
++      | cons y ys =>
++        rw [encodeList_nil, encodeList_cons] at h
++        exact False.elim (pairEncode_ne_nil y (encodeList ys) h.symm)
++    | cons x xs ih =>
++      intro ys h
++      cases ys with
++      | nil =>
++        rw [encodeList_cons, encodeList_nil] at h
++        exact False.elim (pairEncode_ne_nil x (encodeList xs) h)
++      | cons y ys =>
++        rw [encodeList_cons, encodeList_cons] at h
++        have hp : (x, encodeList xs) = (y, encodeList ys) := pairEncode_injective h
++        have hx : x = y := congrArg Prod.fst hp
++        have hxs : xs = ys := ih ys (congrArg Prod.snd hp)
++        exact congrArg₂ List.cons hx hxs
++  intro xs ys h
++  exact haux xs ys h
++
++/-- Two nested-pair list encodings agree exactly when their lists of blocks agree. -/
++theorem encodeList_eq_iff (xs ys : List (List Bool)) :
++    encodeList xs = encodeList ys ↔ xs = ys :=
++  ⟨fun h => encodeList_injective h, congrArg encodeList⟩
++
++/-- Encodings of two tuples with the same finite index length agree exactly when the tuples
++agree: `encodeList (List.ofFn g) = encodeList (List.ofFn h) ↔ g = h`. -/
++theorem encodeList_ofFn_eq_iff {q : ℕ} (g h : Fin q → List Bool) :
++    encodeList (List.ofFn g) = encodeList (List.ofFn h) ↔ g = h := by
++  constructor
++  · intro heq
++    exact List.ofFn_injective (encodeList_injective heq)
++  · intro heq
++    exact congrArg (fun k : Fin q → List Bool => encodeList (List.ofFn k)) heq
++
++end TCSlib.Cryptography.Authentication.LamportReduction
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..2a296d739ceeba9f3f135ee551eaa1c17b2cd3e2
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean
+@@ -0,0 +1,226 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Statistics
++import TCSlib.Cryptography.Authentication.Encoding
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.AveragingExtra
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The typed Lamport reduction and its average success
++
++## Main definitions
++
++* `honestOutput` and `HonestSuccess`: the honest typed forgery and its acceptance/freshness test.
++* `Favourable`: the sole query avoids the planted preimage and the forgery uses it.
++* `RedSuccess`: a nonaborting planted simulation whose extracted block inverts its challenge.
++* `honestProbability` and `redProbability`: the honest and independently challenged averages.
++
++## Main results
++
++* `favourable_mass_of_success`: favorable position mass is at least `1/(2n)` on successes.
++* `diagonal_red_of_success_favourable`: favorable honest successes invert their table entry.
++* `averaged_redProbability_ge`: uniform planted reduction success is at least `H/(2n)`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, Protocol 137.1 and Theorem 137.2.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportFill
++
++open TCSlib.Cryptography.Games
++open scoped Classical
++
++-- Keep elaboration on the published probability readers.
++run_cmd do
++  for n in [``ProbComp.expect, ``ProbComp.sample, ``OracleComp.bind] do
++    let status ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
++    unless status == .irreducible do
++      let id := Lean.mkIdent n
++      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
++
++section TypedExperiment
++
++variable {n ℓ : ℕ} {ρ : Type}
++  (g : (Fin n → Bool) → Fin ℓ → Bool)
++  (adv : ((Fin n × Bool) → Fin ℓ → Bool) → ρ →
++    OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) (Fin (n + n * n) → Bool))
++
++/-- Evaluate the forger on the honest public table with deterministic table signing. -/
++def honestOutput (T : Table n) (r : ρ) : Fin (n + n * n) → Bool :=
++  (adv (tablePublic g T) r).evalFn (fun _ m => tableSignature T m)
++
++/-- The honest output is functional evaluation against the selected-preimage signing function. -/
++theorem honestOutput_eq (T : Table n) (r : ρ) :
++    honestOutput g adv T r =
++      (adv (tablePublic g T) r).evalFn (fun _ m => tableSignature T m) := rfl
++
++/-- An honest output succeeds when all its signature blocks verify and its message was
++not the optional signing query [PS10, Definition 136.2]. -/
++def HonestSuccess (T : Table n) (r : ρ) : Prop :=
++  (∀ j, g (signatureBlock (splitBits (honestOutput g adv T r)).2 j) =
++    g (T (j, (splitBits (honestOutput g adv T r)).1 j))) ∧
++    firstQuery (adv (tablePublic g T) r) ≠ some (splitBits (honestOutput g adv T r)).1
++
++/-- Honest success is coordinate verification together with inequality to the optional query. -/
++theorem honestSuccess_iff (T : Table n) (r : ρ) :
++    HonestSuccess g adv T r ↔
++      (∀ j, g (signatureBlock (splitBits (honestOutput g adv T r)).2 j) =
++        g (T (j, (splitBits (honestOutput g adv T r)).1 j))) ∧
++      firstQuery (adv (tablePublic g T) r) ≠ some (splitBits (honestOutput g adv T r)).1 :=
++  Iff.rfl
++
++/-- A position-bit pair is favorable when its signing query is safe and its forged message
++uses the planted bit [PS10, proof of Theorem 137.2]. -/
++def Favourable (T : Table n) (r : ρ) (p : Fin n × Bool) : Prop :=
++  Safe (adv (tablePublic g T) r) p.1 p.2 ∧
++    (splitBits (honestOutput g adv T r)).1 p.1 = p.2
++
++/-- Favorability is signing-query safety conjoined with the forged message's planted bit. -/
++theorem favourable_iff (T : Table n) (r : ρ) (p : Fin n × Bool) :
++    Favourable g adv T r p ↔ Safe (adv (tablePublic g T) r) p.1 p.2 ∧
++      (splitBits (honestOutput g adv T r)).1 p.1 = p.2 := Iff.rfl
++
++/-- The planted reduction succeeds if it ends without abort and its extracted signature
++block is a preimage of the challenge [PS10, proof of Theorem 137.2]. -/
++def RedSuccess (y : Fin ℓ → Bool) (T : Table n) (r : ρ) (p : Fin n × Bool) : Prop :=
++  ∃ a, simulate (abortingImpl T p.1 p.2)
++      (adv (plantedPublic g T p.1 p.2 y) r) false = .pure (a, false) ∧
++    g (signatureBlock (splitBits a).2 p.1) = y
++
++/-- Reduction success means a pure nonaborting simulation output whose selected block
++maps to the challenge. -/
++theorem redSuccess_iff (y : Fin ℓ → Bool) (T : Table n) (r : ρ) (p : Fin n × Bool) :
++    RedSuccess g adv y T r p ↔
++      ∃ a, simulate (abortingImpl T p.1 p.2)
++          (adv (plantedPublic g T p.1 p.2 y) r) false = .pure (a, false) ∧
++        g (signatureBlock (splitBits a).2 p.1) = y := Iff.rfl
++
++/-- Replacing a table coordinate by its present value leaves the table unchanged. -/
++theorem plantTable_self (T : Table n) (i : Fin n) (c : Bool) :
++    plantTable T i c (T (i, c)) = T := by
++  funext p
++  rw [plantTable_eq]
++  by_cases hp : p = (i, c)
++  · rw [if_pos hp, hp]
++  · rw [if_neg hp]
++
++/-- Reduction success ignores the original table preimage at the planted position. -/
++theorem redSuccess_plant_iff (y : Fin ℓ → Bool) (T : Table n) (r : ρ)
++    (p : Fin n × Bool) (x : Fin n → Bool) :
++    RedSuccess g adv y (plantTable T p.1 p.2 x) r p ↔ RedSuccess g adv y T r p := by
++  rw [redSuccess_iff, redSuccess_iff, plantedPublic_plant, abortingImpl_plant]
++
++/-- A favorable successful honest run is a successful planted reduction when challenged
++with the image of its own selected table entry [PS10, proof of Theorem 137.2]. -/
++theorem diagonal_red_of_success_favourable
++    (hcost : ∀ Y r, (adv Y r).CostBoundedBy (fun _ => 1) 1)
++    (T : Table n) (r : ρ) (p : Fin n × Bool)
++    (hs : HonestSuccess g adv T r) (hq : Favourable g adv T r p) :
++    RedSuccess g adv (g (T p)) T r p := by
++  obtain ⟨hacc, hfresh⟩ := (honestSuccess_iff g adv T r).1 hs
++  obtain ⟨hsafe, hbit⟩ := (favourable_iff g adv T r p).1 hq
++  apply (redSuccess_iff g adv (g (T p)) T r p).2
++  refine ⟨honestOutput g adv T r, ?_, ?_⟩
++  · rw [plantedPublic_image, plantTable_self]
++    have h := planted_coupling T p.1 p.2 (T p) (adv (tablePublic g T) r)
++      (hcost _ r) hsafe
++    rw [plantTable_self, ← honestOutput_eq g adv T r] at h
++    exact h
++  · have h := hacc p.1
++    rw [hbit] at h
++    exact h
++
++/-- On every successful honest run, favorable position-bit mass is at least `1/(2n)`;
++the no-query case has mass exactly `1/2` [PS10, proof of Theorem 137.2]. -/
++theorem favourable_mass_of_success [Nonempty (Fin n)] (T : Table n) (r : ρ)
++    (hs : HonestSuccess g adv T r) :
++    1 / (2 * (n : ℝ)) ≤ ProbComp.expect (ProbComp.sample (Fin n × Bool))
++      (fun p => if Favourable g adv T r p then (1 : ℝ) else 0) := by
++  have h := LamportReduction.optionQuery_favourable_expect_ge
++    (firstQuery (adv (tablePublic g T) r)) (splitBits (honestOutput g adv T r)).1
++    ((honestSuccess_iff g adv T r).1 hs).2
++  simp only [Fintype.card_fin] at h
++  apply h.trans
++  apply ProbComp.expect_mono
++  intro p
++  by_cases hp : Favourable g adv T r p
++  · obtain ⟨hsafe, hbit⟩ := (favourable_iff g adv T r p).1 hp
++    have hr : (∀ m, firstQuery (adv (tablePublic g T) r) = some m → m p.1 ≠ p.2) ∧
++        (splitBits (honestOutput g adv T r)).1 p.1 = p.2 :=
++      ⟨(safe_iff _ p.1 p.2).1 hsafe, hbit⟩
++    simp only [if_pos hr, if_pos hp, le_refl]
++  · have hr : ¬ ((∀ m, firstQuery (adv (tablePublic g T) r) = some m → m p.1 ≠ p.2) ∧
++        (splitBits (honestOutput g adv T r)).1 p.1 = p.2) := by
++      intro hh
++      exact hp ((favourable_iff g adv T r p).2 ⟨(safe_iff _ p.1 p.2).2 hh.1, hh.2⟩)
++    simp only [if_neg hr, if_neg hp, le_refl]
++
++variable [Fintype ρ] [Nonempty ρ]
++
++/-- Honest success probability averages over the complete key table and forger coins. -/
++noncomputable def honestProbability : ℝ :=
++  ProbComp.expect (ProbComp.sample (Table n)) fun T =>
++    ProbComp.expect (ProbComp.sample ρ) fun r => if HonestSuccess g adv T r then 1 else 0
++
++/-- Honest probability is the nested uniform expectation of the honest-success indicator. -/
++theorem honestProbability_eq : honestProbability g adv =
++    ProbComp.expect (ProbComp.sample (Table n)) (fun T =>
++      ProbComp.expect (ProbComp.sample ρ) fun r => if HonestSuccess g adv T r then 1 else 0) := rfl
++
++/-- The fixed-position reduction's success probability uses an independent challenge
++preimage, a complete random table, and forger coins. -/
++noncomputable def redProbability (p : Fin n × Bool) : ℝ :=
++  ProbComp.expect (ProbComp.sample (Fin n → Bool)) fun x =>
++    ProbComp.expect (ProbComp.sample (Table n)) fun T =>
++      ProbComp.expect (ProbComp.sample ρ) fun r => if RedSuccess g adv (g x) T r p then 1 else 0
++
++/-- Fixed-position reduction probability is the nested average of its nonaborting inversion
++indicator over independent challenge, key-table and forger samples. -/
++theorem redProbability_eq (p : Fin n × Bool) : redProbability g adv p =
++    ProbComp.expect (ProbComp.sample (Fin n → Bool)) (fun x =>
++      ProbComp.expect (ProbComp.sample (Table n)) fun T =>
++        ProbComp.expect (ProbComp.sample ρ) fun r => if RedSuccess g adv (g x) T r p then 1 else 0) :=
++  rfl
++
++/-- A uniform position-bit planted reduction succeeds with probability at least the honest
++forgery probability divided by `2n` [PS10, proof of Theorem 137.2].
++
++**Proof sketch.** Favorable pairs occupy at least `1/(2n)` of every successful honest run.
++On those pairs the planted simulation is safe and its extracted signature block inverts
++the image of the corresponding honest preimage. The reduction ignores that preimage,
++so coordinate resampling makes the challenge independent while preserving the average. -/
++theorem averaged_redProbability_ge [Nonempty (Fin n)]
++    (hcost : ∀ Y r, (adv Y r).CostBoundedBy (fun _ => 1) 1) :
++    honestProbability g adv / (2 * (n : ℝ)) ≤
++      ProbComp.expect (ProbComp.sample (Fin n × Bool)) (redProbability g adv) := by
++  classical
++  have h := coordinate_reduction_bound
++    (HonestSuccess g adv) (Favourable g adv)
++    (fun x T r p => RedSuccess g adv (g x) T r p) (1 / (2 * (n : ℝ)))
++    (favourable_mass_of_success g adv)
++    (diagonal_red_of_success_favourable g adv hcost)
++    (fun x x' T r p => by
++      rw [← plantTable_update T p.1 p.2 x']
++      exact redSuccess_plant_iff g adv (g x) T r p x')
++  simpa only [honestProbability_eq, redProbability_eq, one_div_mul_eq_div] using h
++
++/-- Some fixed position, while its planted bit remains fair, has reduction probability at
++least `H/(2n)` [PS10, proof of Theorem 137.2]. This is the position supplied as advice. -/
++theorem exists_best_position [Nonempty (Fin n)]
++    (hcost : ∀ Y r, (adv Y r).CostBoundedBy (fun _ => 1) 1) :
++    ∃ i : Fin n, honestProbability g adv / (2 * (n : ℝ)) ≤
++      ProbComp.expect (ProbComp.sample Bool) (fun c => redProbability g adv (i, c)) := by
++  obtain ⟨i, hi⟩ := LamportReduction.exists_position_fairBit_expect_ge
++    (fun i : Fin n => fun c : Bool => redProbability g adv (i, c))
++  exact ⟨i, (averaged_redProbability_ge g adv hcost).trans hi⟩
++
++end TypedExperiment
++
++end TCSlib.Cryptography.Authentication.LamportFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..997e53d20f1f07921da16e25c17693b449c56eca
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean
+@@ -0,0 +1,87 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Experiment
++import TCSlib.Cryptography.Asymptotic.OneWay
++import TCSlib.Cryptography.Games.Bridges.Experiments
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The planted reduction probability is bounded by machine inversion
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `fairBit_redProbability_le_invProbAt`: a realization of successful typed reductions by a
++  machine transfers the typed fair-bit success probability to the family's inversion game.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, proof of Theorem 137.2. This is generic probability and machine transport glue.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportFill
++
++open Complexity TCSlib.Cryptography.Games
++
++/-- Suppose a machine's coins are a fair planting bit, a complete key table and forger coins,
++and every successful typed planted run yields the machine's correctly encoded preimage.
++Then the typed reduction's success averaged over the fair bit is at most the machine's
++inversion probability against the function family. The preimage width is the family's
++actual input width, so no dependent width casts are needed.
++[PS10, proof of Theorem 137.2].
++
++**Proof sketch.** Read the machine inversion probability as the uniform probability that its
++output encodes a preimage. Product sampling separates the challenge preimage and machine
++coins. Reindex the latter by the given coin equivalence, and split the resulting product
++sample into its bit, table and forger coins using the published product-sampling law.
++Commute the independent bit and challenge samples on the typed side. All remaining samples
++have the same order, and the realization hypothesis implies the pointwise event inclusion.
++No query-cost assumption is needed for this transport: it is already encapsulated in the
++realization hypothesis. -/
++theorem fairBit_redProbability_le_invProbAt (F : FunFamily) (n : ℕ) (A B : NUPPT)
++    (i : Fin (F.inLen.eval n))
++    (adv : ((Fin (F.inLen.eval n) × Bool) → Fin (F.outLen.eval n) → Bool) →
++      A.Coins n → OracleComp
++        (bitSpec (fun _ : Fin 1 => F.inLen.eval n)
++          (fun _ => F.inLen.eval n * F.inLen.eval n))
++        (Fin (F.inLen.eval n + F.inLen.eval n * F.inLen.eval n) → Bool))
++    (e : ((Bool × Table (F.inLen.eval n)) × A.Coins n) ≃ B.Coins n)
++    (hreal : ∀ (y : Fin (F.outLen.eval n) → Bool) (T : Table (F.inLen.eval n))
++        (c : Bool) (r : A.Coins n),
++      RedSuccess (F.f n) adv y T r (i, c) →
++        ∃ x' : Fin (F.inLen.eval n) → Bool,
++          B.runAt n (List.ofFn y) (e ((c, T), r)) = List.ofFn x' ∧ F.f n x' = y) :
++    ProbComp.expect (ProbComp.sample Bool)
++        (fun c => redProbability (F.f n) adv (i, c)) ≤ F.invProbAt B n := by
++  classical
++  rw [FunFamily.invProbAt_eq_uprob, ← Bridge.prob_sample_eq_uprob,
++    ProbComp.prob_eq_expect, ← Bridge.expect_sample_pair]
++  simp only [ProbComp.expect_bind, ProbComp.expect_pure]
++  simp_rw [← ProbComp.expect_sample_equiv e]
++  simp only [redProbability_eq]
++  rw [ProbComp.expect_sample_comm]
++  simp only [← Bridge.expect_sample_pair, ProbComp.expect_bind, ProbComp.expect_pure]
++  apply ProbComp.expect_mono
++  intro x
++  apply ProbComp.expect_mono
++  intro c
++  apply ProbComp.expect_mono
++  intro T
++  apply ProbComp.expect_mono
++  intro r
++  by_cases hs : RedSuccess (F.f n) adv (F.f n x) T r (i, c)
++  · have hwin := hreal (F.f n x) T c r hs
++    rw [if_pos hs, if_pos hwin] <;> exact le_rfl
++  · rw [if_neg hs]
++    split_ifs <;> positivity
++
++end TCSlib.Cryptography.Authentication.LamportFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..8d931469c8b7db2a91db39e9957beb2007b401ba
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean
+@@ -0,0 +1,357 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Efficiency
++import TCSlib.Cryptography.Asymptotic.OneWayLemmas
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# String machine for Lamport's planted experiment
++
++## Main definitions
++
++* `advIn` replaces one fixed-width public-key block with a planted image.
++* `run` signs from the sampled tape and records whether the planted half was requested.
++* `out` extracts one signature block unless the run aborted.
++* `handler` packages these string functions for T1.
++
++The generator and signer are parameters, so this module does not import its consumer.
++The generator is expected to return `⟨pk, tape⟩`; the signer is expected to implement the
++deterministic Lamport string function. Their mathematical contracts belong to the consumer.
++
++## Main results
++
++All string functions are polynomial-time; every public definition has an equation reader.
++The functional contracts and machine realization are proved in `MachineSpec` and
++`Realization`; the owned Lamport module closes the security reduction.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, Protocol 137.1 and proof of Theorem 137.2.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportMachine
++
++open Complexity Turing TCSlib.Cryptography.Games
++
++/-- The context's unary parameter is its first component. -/
++def u (v : List Bool) : List Bool := pairFstD v
++/-- `u v = pairFstD v`. -/
++theorem u_eq (v : List Bool) : u v = pairFstD v := rfl
++/-- The unary parameter projection is polynomial-time. -/
++theorem u_poly : PolyTimeComputable u := polyTimeComputable_pairFstD
++
++/-- The context's challenge is the first component of its reduction input. -/
++def y (v : List Bool) : List Bool := pairFstD (pairFstD (pairSndD v))
++/-- `y v = fst (fst (snd v))`. -/
++theorem y_eq (v : List Bool) : y v = pairFstD (pairFstD (pairSndD v)) := rfl
++/-- The challenge projection is polynomial-time. -/
++theorem y_poly : PolyTimeComputable y :=
++  polyTimeComputable_pairFstD.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
++
++/-- The planted position is the second component of the reduction input, encoded in unary. -/
++def pos (v : List Bool) : List Bool := pairSndD (pairFstD (pairSndD v))
++/-- `pos v = snd (fst (snd v))`. -/
++theorem pos_eq (v : List Bool) : pos v = pairSndD (pairFstD (pairSndD v)) := rfl
++/-- The position projection is polynomial-time. -/
++theorem pos_poly : PolyTimeComputable pos :=
++  polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
++
++/-- The handler seed is the second component of the context's second component. -/
++def seed (v : List Bool) : List Bool := pairSndD (pairSndD v)
++/-- `seed v = snd (snd v)`. -/
++theorem seed_eq (v : List Bool) : seed v = pairSndD (pairSndD v) := rfl
++/-- The seed projection is polynomial-time. -/
++theorem seed_poly : PolyTimeComputable seed :=
++  polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD
++
++/-- The planted half is the first seed bit, defaulting to false. -/
++def bit (v : List Bool) : Bool := (seed v).headD false
++/-- `bit v = (seed v).headD false`. -/
++theorem bit_eq (v : List Bool) : bit v = (seed v).headD false := rfl
++/-- The planted bit is polynomial-time as a one-bit output. -/
++theorem bit_poly : PolyTimeComputable (fun v => [bit v]) :=
++  polyTimeComputable_headD.comp seed_poly
++
++/-- The sampled preimage tape is the seed after its planted bit. -/
++def tape (v : List Bool) : List Bool := (seed v).drop 1
++/-- `tape v = (seed v).drop 1`. -/
++theorem tape_eq (v : List Bool) : tape v = (seed v).drop 1 := rfl
++/-- Removing the planted bit is polynomial-time. -/
++theorem tape_poly : PolyTimeComputable tape := polyTimeComputable_tail.comp seed_poly
++
++/-- A canonical context exposes its unary parameter. -/
++theorem u_seedIn (n : ℕ) (z ω : List Bool) :
++    u (seedIn n z ω) = List.replicate n true := by
++  rw [u_eq, seedIn_eq, pairFstD_pairEncode]
++
++/-- A canonical context with input `⟨challenge,index⟩` exposes its challenge. -/
++theorem y_seedIn (n : ℕ) (challenge index ω : List Bool) :
++    y (seedIn n (pairEncode challenge index) ω) = challenge := by
++  simp only [y_eq, seedIn_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- A canonical context with input `⟨challenge,index⟩` exposes its unary position. -/
++theorem pos_seedIn (n : ℕ) (challenge index ω : List Bool) :
++    pos (seedIn n (pairEncode challenge index) ω) = index := by
++  simp only [pos_eq, seedIn_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- A canonical context exposes its seed. -/
++theorem seed_seedIn (n : ℕ) (z ω : List Bool) : seed (seedIn n z ω) = ω := by
++  simp only [seed_eq, seedIn_eq, pairSndD_pairEncode]
++
++/-- A seed beginning with `c` supplies the planted half `c`. -/
++theorem bit_seedIn (n : ℕ) (z ρ : List Bool) (c : Bool) :
++    bit (seedIn n z (c :: ρ)) = c := by
++  rw [bit_eq, seed_seedIn, List.headD_cons]
++
++/-- A seed beginning with `c` leaves exactly the sampled preimage tape after it. -/
++theorem tape_seedIn (n : ℕ) (z ρ : List Bool) (c : Bool) :
++    tape (seedIn n z (c :: ρ)) = ρ := by
++  rw [tape_eq, seed_seedIn]
++  rfl
++
++/-- Taking as many bits of `xs` as there are symbols in a polynomial-time word `a`
++is polynomial-time. This is the variable-prefix primitive's public lambda form. -/
++theorem take_poly {a xs : List Bool → List Bool} (ha : PolyTimeComputable a)
++    (hxs : PolyTimeComputable xs) :
++    PolyTimeComputable (fun v => (xs v).take (a v).length) := by
++  refine ((polyTimeComputable_pairTakePoly .var).comp (ha.pairEncode hxs)).congr ?_
++  intro v
++  simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
++
++/-- Dropping as many bits of `xs` as there are symbols in a polynomial-time word `a`
++is polynomial-time. This is the variable-prefix primitive's public lambda form. -/
++theorem drop_poly {a xs : List Bool → List Bool} (ha : PolyTimeComputable a)
++    (hxs : PolyTimeComputable xs) :
++    PolyTimeComputable (fun v => (xs v).drop (a v).length) := by
++  refine ((polyTimeComputable_pairDropPoly .var).comp (ha.pairEncode hxs)).congr ?_
++  intro v
++  simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
++
++/-- A fixed polynomial width, encoded as a unary word of length `W(|u|)`. -/
++def width (W : PolyExpr) (v : List Bool) : List Bool := List.replicate (W.eval (u v).length) true
++/-- `width W v = 1^(W(|u v|))`. -/
++theorem width_eq (W : PolyExpr) (v : List Bool) :
++    width W v = List.replicate (W.eval (u v).length) true := rfl
++/-- A polynomial width is polynomial-time in the context. -/
++theorem width_poly (W : PolyExpr) : PolyTimeComputable (width W) :=
++  (polyTimeComputable_unaryPoly W).comp u_poly
++
++/-- The unary offset to block `i` at width `W(n)` has `i · W(n)` symbols. -/
++def offset (W : PolyExpr) (v : List Bool) : List Bool :=
++  List.replicate ((pos v).length * W.eval (u v).length) true
++/-- `offset W v = 1^(|pos v| · W(|u v|))`. -/
++theorem offset_eq (W : PolyExpr) (v : List Bool) :
++    offset W v = List.replicate ((pos v).length * W.eval (u v).length) true := rfl
++/-- Block offsets are polynomial-time by the existing unary multiplication machine. -/
++theorem offset_poly (W : PolyExpr) : PolyTimeComputable (offset W) := by
++  refine (OneWay.polyTimeComputable_unaryMulPair.comp (pos_poly.pairEncode (width_poly W))).congr ?_
++  intro v
++  simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
++    width_eq, offset_eq, List.length_replicate]
++
++/-- The first preimage at the selected position consists of `n` bits after offset `2ni`. -/
++def first (v : List Bool) : List Bool :=
++  ((tape v).drop (offset (.mul (.const 2) .var) v).length).take (u v).length
++/-- `first` is the first `n`-bit half of the selected preimage pair. -/
++theorem first_eq (v : List Bool) : first v =
++    ((tape v).drop (offset (.mul (.const 2) .var) v).length).take (u v).length := rfl
++/-- Selecting the first preimage is polynomial-time. -/
++theorem first_poly : PolyTimeComputable first :=
++  take_poly u_poly (drop_poly (offset_poly _) tape_poly)
++
++/-- The second preimage is the next `n` bits after offset `2ni+n`. -/
++def second (v : List Bool) : List Bool :=
++  ((tape v).drop ((offset (.mul (.const 2) .var) v).length + (u v).length)).take (u v).length
++/-- `second` is the second `n`-bit half of the selected preimage pair. -/
++theorem second_eq (v : List Bool) : second v =
++    ((tape v).drop ((offset (.mul (.const 2) .var) v).length + (u v).length)).take (u v).length := rfl
++/-- Selecting the second preimage is polynomial-time. -/
++theorem second_poly : PolyTimeComputable second := by
++  refine (take_poly u_poly
++    (drop_poly ((offset_poly (.mul (.const 2) .var)).append u_poly) tape_poly)).congr ?_
++  intro v
++  simp only [second_eq, List.length_append]
++
++/-- The ordinary generated public key on the sampled tape. -/
++def honestPk (G : List Bool → List Bool) (v : List Bool) : List Bool :=
++  pairFstD (G (NUPPT.layout (u v) [] [] (tape v)))
++/-- `honestPk G` runs `G` on the sampled preimage tape and reads its public-key component. -/
++theorem honestPk_eq (G : List Bool → List Bool) (v : List Bool) : honestPk G v =
++    pairFstD (G (NUPPT.layout (u v) [] [] (tape v))) := rfl
++/-- Generating the ordinary public key is polynomial-time when `G` is. -/
++theorem honestPk_poly {G : List Bool → List Bool} (hG : PolyTimeComputable G) :
++    PolyTimeComputable (honestPk G) :=
++  polyTimeComputable_pairFstD.comp (hG.comp (NUPPT.polyTimeComputable_layout u_poly
++    (polyTimeComputable_const []) (polyTimeComputable_const []) tape_poly))
++
++/-- The replacement public-key block is `⟨⟨y,E(x¹)⟩,[]⟩` for bit false and
++`⟨⟨E(x⁰),y⟩,[]⟩` for bit true. -/
++def replacement (E : List Bool → List Bool) (v : List Bool) : List Bool :=
++  pairEncode (pairEncode
++    (if bit v then E (pairEncode (u v) (first v)) else y v)
++    (if bit v then y v else E (pairEncode (u v) (second v)))) []
++/-- The replacement block plants the challenge in the selected half. -/
++theorem replacement_eq (E : List Bool → List Bool) (v : List Bool) : replacement E v =
++    pairEncode (pairEncode
++      (if bit v then E (pairEncode (u v) (first v)) else y v)
++      (if bit v then y v else E (pairEncode (u v) (second v)))) [] := rfl
++/-- Building the replacement public-key block is polynomial-time when `E` is. -/
++theorem replacement_poly {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
++    PolyTimeComputable (replacement E) :=
++  ((polyTimeComputable_ite bit_poly (hE.comp (u_poly.pairEncode first_poly)) y_poly).pairEncode
++    (polyTimeComputable_ite bit_poly y_poly (hE.comp (u_poly.pairEncode second_poly)))).pairEncode
++      (polyTimeComputable_const [])
++
++/-- The adversary's public key replaces one width-`W(n)` block of the ordinary generated key
++with the planted block. [PS10, proof of Theorem 137.2]. -/
++def advIn (W : PolyExpr) (E G : List Bool → List Bool) (v : List Bool) : List Bool :=
++  (honestPk G v).take (offset W v).length ++ replacement E v ++
++    (honestPk G v).drop ((offset W v).length + (width W v).length)
++/-- `advIn` keeps the prefix and suffix around the planted block. -/
++theorem advIn_eq (W : PolyExpr) (E G : List Bool → List Bool) (v : List Bool) :
++    advIn W E G v = (honestPk G v).take (offset W v).length ++ replacement E v ++
++      (honestPk G v).drop ((offset W v).length + (width W v).length) := rfl
++/-- Planting one public-key block is polynomial-time.
++
++**Proof sketch.** Compute both unary offsets by the existing multiplication primitive,
++take the prefix and drop the suffix, then concatenate the replacement block between them. -/
++theorem advIn_poly (W : PolyExpr) {E G : List Bool → List Bool}
++    (hE : PolyTimeComputable E) (hG : PolyTimeComputable G) :
++    PolyTimeComputable (advIn W E G) := by
++  refine (((take_poly (offset_poly W) (honestPk_poly hG)).append (replacement_poly hE)).append
++    (drop_poly ((offset_poly W).append (width_poly W)) (honestPk_poly hG))).congr ?_
++  intro v
++  simp only [advIn_eq, List.length_append]
++
++/-- The context of a query or finalization input is its first component. -/
++def context (w : List Bool) : List Bool := pairFstD w
++/-- `context w = fst w`. -/
++theorem context_eq (w : List Bool) : context w = pairFstD w := rfl
++/-- The context of an activation is polynomial-time. -/
++theorem context_poly : PolyTimeComputable context := polyTimeComputable_pairFstD
++
++/-- The current abort state is the first component of the second input component. -/
++def state (w : List Bool) : List Bool := pairFstD (pairSndD w)
++/-- `state w = fst (snd w)`. -/
++theorem state_eq (w : List Bool) : state w = pairFstD (pairSndD w) := rfl
++/-- The current state projection is polynomial-time. -/
++theorem state_poly : PolyTimeComputable state :=
++  polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
++
++/-- The query message is the second component after the state and oracle index. -/
++def message (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))
++/-- `message w = snd (snd (snd w))`. -/
++theorem message_eq (w : List Bool) : message w = pairSndD (pairSndD (pairSndD w)) := rfl
++/-- The query message projection is polynomial-time. -/
++theorem message_poly : PolyTimeComputable message :=
++  polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
++
++/-- The context of a canonical handler query is its original seed context. -/
++theorem context_input {k : ℕ} (n : ℕ) (z ω s : List Bool) (i : Fin k) (x : List Bool) :
++    context (PolyHandler.input n z ω s i x) = seedIn n z ω := by
++  simp only [context_eq, PolyHandler.input_eq, seedIn_eq, pairFstD_pairEncode]
++
++/-- A canonical handler query exposes its state. -/
++theorem state_input {k : ℕ} (n : ℕ) (z ω s : List Bool) (i : Fin k) (x : List Bool) :
++    state (PolyHandler.input n z ω s i x) = s := by
++  simp only [state_eq, PolyHandler.input_eq, pairSndD_pairEncode, pairFstD_pairEncode]
++
++/-- A canonical handler query exposes its message. -/
++theorem message_input {k : ℕ} (n : ℕ) (z ω s : List Bool) (i : Fin k) (x : List Bool) :
++    message (PolyHandler.input n z ω s i x) = x := by
++  simp only [message_eq, PolyHandler.input_eq, pairSndD_pairEncode]
++
++/-- A query is blocked precisely when its selected message bit is the planted bit. -/
++def blocked (w : List Bool) : Bool :=
++  decide (((message w).drop (pos (context w)).length).headD false = bit (context w))
++/-- `blocked` tests equality of the query bit at the planted position and the planted half. -/
++theorem blocked_eq (w : List Bool) : blocked w =
++    decide (((message w).drop (pos (context w)).length).headD false = bit (context w)) := rfl
++/-- Testing whether a query requests the planted half is polynomial-time. -/
++theorem blocked_poly : PolyTimeComputable (fun w => [blocked w]) := by
++  have hq := polyTimeComputable_headD.comp (drop_poly (pos_poly.comp context_poly) message_poly)
++  have hb := bit_poly.comp context_poly
++  refine (polyTimeComputable_pairEq.comp (hq.pairEncode hb)).congr ?_
++  intro w
++  simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, blocked_eq,
++    List.cons.injEq, and_true]
++
++/-- A handler query returns the ordinary sampled-tape signature and sets the persistent
++abort bit if the planted half was requested. Continuing after an abort is harmless because
++finalization returns no candidate. [PS10, proof of Theorem 137.2]. -/
++def run (S : List Bool → List Bool) (w : List Bool) : List Bool :=
++  pairEncode
++    (S (NUPPT.layout (u (context w)) (pairEncode (tape (context w)) (message w)) [] []))
++    [(state w).headD false || blocked w]
++/-- The query answer uses the sampled tape and records the disjunction of old and new aborts. -/
++theorem run_eq (S : List Bool → List Bool) (w : List Bool) : run S w =
++    pairEncode
++      (S (NUPPT.layout (u (context w)) (pairEncode (tape (context w)) (message w)) [] []))
++      [(state w).headD false || blocked w] := rfl
++/-- Query answering and the abort-state update are polynomial-time when `S` is. -/
++theorem run_poly {S : List Bool → List Bool} (hS : PolyTimeComputable S) :
++    PolyTimeComputable (run S) :=
++  (hS.comp (NUPPT.polyTimeComputable_layout (u_poly.comp context_poly)
++    ((tape_poly.comp context_poly).pairEncode message_poly)
++    (polyTimeComputable_const []) (polyTimeComputable_const []))).pairEncode
++      (polyTimeComputable_or (polyTimeComputable_headD.comp state_poly) blocked_poly)
++
++/-- The final output is empty after an abort; otherwise it is block `i` of the forged signature
++(the adversary's word begins with the `n` message bits). [PS10, proof of Theorem 137.2]. -/
++def out (w : List Bool) : List Bool :=
++  if (state w).headD false then [] else
++    (((pairSndD (pairSndD w)).drop (u (context w)).length).drop
++      (offset .var (context w)).length).take (u (context w)).length
++/-- Finalization suppresses aborted runs and extracts the selected signature block otherwise. -/
++theorem out_eq (w : List Bool) : out w =
++    if (state w).headD false then [] else
++      (((pairSndD (pairSndD w)).drop (u (context w)).length).drop
++        (offset .var (context w)).length).take (u (context w)).length := rfl
++/-- Finalization is polynomial-time by three variable-prefix operations and one branch. -/
++theorem out_poly : PolyTimeComputable out :=
++  polyTimeComputable_ite (polyTimeComputable_headD.comp state_poly) (polyTimeComputable_const [])
++    (take_poly (u_poly.comp context_poly)
++      (drop_poly ((offset_poly .var).comp context_poly)
++        (drop_poly (u_poly.comp context_poly)
++          (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))))
++
++/-- The planted Lamport handler has one abort bit and `1+2n²` seed bits, with the fair planted
++half first. It signs at most one query and extracts one candidate preimage. -/
++def handler (W : PolyExpr) (E G S : List Bool → List Bool)
++    (hE : PolyTimeComputable E) (hG : PolyTimeComputable G) (hS : PolyTimeComputable S) :
++    PolyHandler 1 (fun _ => .var) (fun _ => .mul .var .var) where
++  stateLen := .const 1
++  seedLen := .add (.const 1) (.mul (.mul (.const 2) .var) .var)
++  init := fun _ _ => false
++  run := run S
++  poly := run_poly hS
++  advIn := advIn W E G
++  advIn_poly := advIn_poly W hE hG
++  out := out
++  out_poly := out_poly
++
++variable (W : PolyExpr) (E G S : List Bool → List Bool)
++  (hE : PolyTimeComputable E) (hG : PolyTimeComputable G) (hS : PolyTimeComputable S)
++
++/-- The handler state-length polynomial is the constant one. -/
++theorem handler_stateLen : (handler W E G S hE hG hS).stateLen = .const 1 := rfl
++/-- The handler seed-length polynomial is `1+2n²`. -/
++theorem handler_seedLen : (handler W E G S hE hG hS).seedLen =
++    .add (.const 1) (.mul (.mul (.const 2) .var) .var) := rfl
++/-- Every bit of the initial abort state is false. -/
++theorem handler_init (n : ℕ) (i : Fin ((handler W E G S hE hG hS).stateLen.eval n)) :
++    (handler W E G S hE hG hS).init n i = false := rfl
++/-- The handler's query function is `run S`. -/
++theorem handler_run : (handler W E G S hE hG hS).run = run S := rfl
++/-- The handler's adversary-input function is the planted public-key function. -/
++theorem handler_advIn : (handler W E G S hE hG hS).advIn = advIn W E G := rfl
++/-- The handler's output function is the signature-block extractor. -/
++theorem handler_out : (handler W E G S hE hG hS).out = out := rfl
++
++end TCSlib.Cryptography.Authentication.LamportMachine
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..3ee00416cfe0f2ce3a3f62cf2fb6af6b22149ad0
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean
+@@ -0,0 +1,234 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Blocks
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Seed
++import TCSlib.Cryptography.Authentication.Encoding
++import TCSlib.Cryptography.Foundations.BitLists
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Functional contracts of the planted Lamport machine
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `advIn_context` identifies the machine's public key with the typed planted public table.
++* `run_input` identifies its query answer and abort flag.
++* `out_nonabort` identifies its final signature-block extraction.
++
++The exact finite-tuple `coinBlock` reader is passed as a parameter, so this helper neither
++imports the owned consumer nor copies that consumer's public lemma.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, proof of Theorem 137.2.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportFill
++
++open Complexity Turing TCSlib.Cryptography.Games
++open TCSlib.Cryptography
++
++/-- The serialized public table is the concatenation of its self-delimiting image-pair
++blocks. This reads the public tuple encoding through `encodeList_eq_flatMap`. -/
++theorem publicWord_flatten {n ℓ : ℕ} (Y : (Fin n × Bool) → Fin ℓ → Bool) :
++    publicWord Y = (List.ofFn fun i : Fin n =>
++      pairEncode (pairEncode (List.ofFn (Y (i, false))) (List.ofFn (Y (i, true)))) []).flatten := by
++  rw [publicWord_eq, encodeList_eq_flatMap, List.flatMap_def, List.map_ofFn]
++  rw [Function.comp_def]
++
++section KeyWindows
++
++variable (hcoin : ∀ {q B : ℕ} (g : Fin q → List Bool) (hg : ∀ j, (g j).length = B)
++  (i : Fin q), coinBlock B i (List.ofFn g).flatten = g i)
++
++include hcoin in
++/-- Reading the first `n`-bit half of the selected sampled row returns `T(i,false)`. -/
++theorem first_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge : List Bool) :
++    LamportMachine.first (seedIn n (pairEncode challenge (List.replicate i.val true))
++      (c :: secretWord T)) = List.ofFn (T (i, false)) := by
++  rw [LamportMachine.first_eq, LamportMachine.tape_seedIn, LamportMachine.offset_eq,
++    LamportMachine.pos_seedIn, LamportMachine.u_seedIn]
++  simp only [List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
++  have hrow := hcoin (B := 2 * n) (fun j : Fin n => List.ofFn (T (j, false)) ++ List.ofFn (T (j, true)))
++    (fun j => by simp only [List.length_append, List.length_ofFn]; omega) i
++  rw [coinBlock_eq, ← secretWord_eq] at hrow
++  have h := congrArg (fun w : List Bool => w.take n) hrow
++  dsimp only at h
++  rw [List.take_take, Nat.min_eq_left (by omega), List.take_left' List.length_ofFn] at h
++  exact h
++
++include hcoin in
++/-- Reading the second `n`-bit half of the selected sampled row returns `T(i,true)`. -/
++theorem second_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge : List Bool) :
++    LamportMachine.second (seedIn n (pairEncode challenge (List.replicate i.val true))
++      (c :: secretWord T)) = List.ofFn (T (i, true)) := by
++  rw [LamportMachine.second_eq, LamportMachine.tape_seedIn, LamportMachine.offset_eq,
++    LamportMachine.pos_seedIn, LamportMachine.u_seedIn]
++  simp only [List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
++  have hrow := hcoin (B := 2 * n) (fun j : Fin n => List.ofFn (T (j, false)) ++ List.ofFn (T (j, true)))
++    (fun j => by simp only [List.length_append, List.length_ofFn]; omega) i
++  rw [coinBlock_eq, ← secretWord_eq] at hrow
++  have h := congrArg (fun w : List Bool => w.drop n) hrow
++  dsimp only at h
++  rw [List.drop_take, show 2 * n - n = n by omega, List.drop_drop,
++    List.drop_left' List.length_ofFn] at h
++  exact h
++
++include hcoin in
++/-- The machine's replacement block serializes the planted row, using the evaluator's
++published agreement on `n`-bit inputs. -/
++theorem replacement_context {n ℓ : ℕ} (g : (Fin n → Bool) → Fin ℓ → Bool)
++    (E : List Bool → List Bool)
++    (hE : ∀ x : Fin n → Bool,
++      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (g x))
++    (T : Table n) (i : Fin n) (c : Bool) (challenge : Fin ℓ → Bool) :
++    LamportMachine.replacement E
++        (seedIn n (pairEncode (List.ofFn challenge) (List.replicate i.val true))
++          (c :: secretWord T)) =
++      pairEncode (pairEncode
++        (List.ofFn (plantedPublic g T i c challenge (i, false)))
++        (List.ofFn (plantedPublic g T i c challenge (i, true)))) [] := by
++  rw [LamportMachine.replacement_eq, LamportMachine.bit_seedIn, LamportMachine.u_seedIn,
++    LamportMachine.y_seedIn, first_context hcoin, second_context hcoin, hE, hE]
++  cases c <;> simp [plantedPublic_eq]
++
++include hcoin in
++/-- On a canonical seed context, the machine's public-key input is exactly the serialized
++typed planted table. The only generator/evaluator facts required are their stated functional
++contracts; the owned Lamport module supplies them.
++
++**Proof sketch.** The ordinary generated key is a concatenation of width `6ℓ+6` blocks.
++The machine takes the blocks before `i`, inserts the planted block, and drops through block
++`i`. The general fixed-width replacement lemma identifies this with updating row `i` before
++serialization. Every other row retains both images. -/
++theorem advIn_context {n ℓ : ℕ} (W : PolyExpr)
++    (hW : W.eval n = 6 * ℓ + 6) (g : (Fin n → Bool) → Fin ℓ → Bool)
++    (E G : List Bool → List Bool)
++    (hE : ∀ x : Fin n → Bool,
++      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (g x))
++    (hG : ∀ T : Table n,
++      G (NUPPT.layout (List.replicate n true) [] [] (secretWord T)) =
++        pairEncode (publicWord (tablePublic g T)) (secretWord T))
++    (T : Table n) (i : Fin n) (c : Bool) (challenge : Fin ℓ → Bool) :
++    LamportMachine.advIn W E G
++        (seedIn n (pairEncode (List.ofFn challenge) (List.replicate i.val true))
++          (c :: secretWord T)) =
++      publicWord (plantedPublic g T i c challenge) := by
++  have hpk : LamportMachine.honestPk G
++      (seedIn n (pairEncode (List.ofFn challenge) (List.replicate i.val true))
++        (c :: secretWord T)) = publicWord (tablePublic g T) := by
++    rw [LamportMachine.honestPk_eq, LamportMachine.u_seedIn, LamportMachine.tape_seedIn,
++      hG, pairFstD_pairEncode]
++  let rows : Fin n → List Bool := fun j => pairEncode (pairEncode
++    (List.ofFn (g (T (j, false)))) (List.ofFn (g (T (j, true))))) []
++  let plantedRows : Fin n → List Bool := fun j => pairEncode (pairEncode
++    (List.ofFn (plantedPublic g T i c challenge (j, false)))
++    (List.ofFn (plantedPublic g T i c challenge (j, true)))) []
++  have hrows (j : Fin n) : (rows j).length = W.eval n := by
++    simp only [rows, length_pairEncode, List.length_ofFn, List.length_nil, hW]
++    ring
++  have hnew : (plantedRows i).length = W.eval n := by
++    simp only [plantedRows, length_pairEncode, List.length_ofFn, List.length_nil, hW]
++    ring
++  have hupdate : Function.update rows i (plantedRows i) = plantedRows := by
++    funext j
++    by_cases hj : j = i
++    · subst j
++      rw [Function.update_self]
++    · have hp0 : (j, false) ≠ (i, c) := fun hp => hj (congrArg Prod.fst hp)
++      have hp1 : (j, true) ≠ (i, c) := fun hp => hj (congrArg Prod.fst hp)
++      rw [Function.update_of_ne hj]
++      simp only [rows, plantedRows, plantedPublic_eq, if_neg hp0, if_neg hp1]
++  have hnormal : publicWord (tablePublic g T) = (List.ofFn rows).flatten := by
++    rw [publicWord_flatten]
++    simp only [tablePublic_eq, rows]
++  have hplant : publicWord (plantedPublic g T i c challenge) =
++      (List.ofFn plantedRows).flatten := by
++    rw [publicWord_flatten]
++  simp only [LamportMachine.advIn_eq, hpk, replacement_context hcoin g E hE,
++    LamportMachine.offset_eq, LamportMachine.width_eq, LamportMachine.pos_seedIn,
++    LamportMachine.u_seedIn, List.length_replicate]
++  simp only [hnormal, hplant]
++  change (List.ofFn rows).flatten.take (i.val * W.eval n) ++ plantedRows i ++
++    (List.ofFn rows).flatten.drop (i.val * W.eval n + W.eval n) =
++      (List.ofFn plantedRows).flatten
++  rw [show i.val * W.eval n + W.eval n = (i.val + 1) * W.eval n by ring,
++    flatten_ofFn_update rows hrows i (plantedRows i) hnew, hupdate]
++
++end KeyWindows
++
++/-- The selected bit of a serialized message is its typed bit at that position. -/
++theorem headD_drop_ofFn {n : ℕ} (m : Fin n → Bool) (i : Fin n) :
++    ((List.ofFn m).drop i.val).headD false = m i := by
++  simp only [headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn,
++    dif_pos i.isLt, Option.getD_some]
++
++/-- On canonical input, the machine returns the typed signature and records the old abort
++bit or equality `m_i=c`. This statement covers both safe and aborting calls. -/
++theorem run_input {n : ℕ} (S : List Bool → List Bool)
++    (hS : ∀ (T : Table n) (m : Fin n → Bool),
++      S (NUPPT.layout (List.replicate n true) (pairEncode (secretWord T) (List.ofFn m)) [] []) =
++        List.ofFn (tableSignature T m))
++    (T : Table n) (i : Fin n) (c bad : Bool) (challenge : List Bool)
++    (j : Fin 1) (m : Fin n → Bool) :
++    LamportMachine.run S (PolyHandler.input n
++        (pairEncode challenge (List.replicate i.val true)) (c :: secretWord T)
++        [bad] j (List.ofFn m)) =
++      pairEncode (List.ofFn (tableSignature T m)) [bad || decide (m i = c)] := by
++  have hb : LamportMachine.blocked (PolyHandler.input n
++      (pairEncode challenge (List.replicate i.val true)) (c :: secretWord T)
++      [bad] j (List.ofFn m)) = decide (m i = c) := by
++    rw [LamportMachine.blocked_eq, LamportMachine.context_input, LamportMachine.message_input,
++      LamportMachine.pos_seedIn, LamportMachine.bit_seedIn, List.length_replicate,
++      headD_drop_ofFn]
++  simp only [LamportMachine.run_eq, LamportMachine.context_input, LamportMachine.state_input,
++    LamportMachine.message_input, LamportMachine.u_seedIn, LamportMachine.tape_seedIn, hS,
++    List.headD_cons, hb]
++
++/-- A safe query from non-abort state returns the typed signature and a false abort bit. -/
++theorem run_safe {n : ℕ} (S : List Bool → List Bool)
++    (hS : ∀ (T : Table n) (m : Fin n → Bool),
++      S (NUPPT.layout (List.replicate n true) (pairEncode (secretWord T) (List.ofFn m)) [] []) =
++        List.ofFn (tableSignature T m))
++    (T : Table n) (i : Fin n) (c : Bool) (challenge : List Bool)
++    (j : Fin 1) (m : Fin n → Bool) (hm : m i ≠ c) :
++    LamportMachine.run S (PolyHandler.input n
++        (pairEncode challenge (List.replicate i.val true)) (c :: secretWord T)
++        [false] j (List.ofFn m)) =
++      pairEncode (List.ofFn (tableSignature T m)) [false] := by
++  rw [run_input S hS]
++  simp only [hm, decide_false, Bool.false_or]
++
++/-- Finalization in non-abort state returns exactly the selected block of the typed forged
++signature, after its first `n` message bits. -/
++theorem out_nonabort {n : ℕ} (i : Fin n) (z ρ : List Bool)
++    (a : Fin (n + n * n) → Bool)
++    (hz : LamportMachine.pos (seedIn n z ρ) = List.replicate i.val true) :
++    LamportMachine.out (pairEncode (seedIn n z ρ) (pairEncode [false] (List.ofFn a))) =
++      List.ofFn (signatureBlock (splitBits a).2 i) := by
++  rw [LamportMachine.out_eq, LamportMachine.state_eq, LamportMachine.context_eq]
++  simp only [LamportMachine.context_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.headD_cons, Bool.false_eq_true,
++    if_false, LamportMachine.u_seedIn, LamportMachine.offset_eq, hz,
++    List.length_replicate, PolyExpr.eval_var]
++  have hs : List.ofFn (splitBits a).2 = (List.ofFn a).drop n := by
++    have hsplit : (splitBits a).2 = fun j => a (Fin.natAdd n j) := by
++      funext j
++      exact splitBits_snd a j
++    rw [hsplit, ofFn_natAdd_eq_drop]
++  rw [← hs, ← FunFamily.ofFn_blocks n n (splitBits a).2 i]
++  apply congrArg List.ofFn
++  funext k
++  rw [FunFamily.blocks_apply, signatureBlock_eq]
++
++end TCSlib.Cryptography.Authentication.LamportFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Nonabort.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Nonabort.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..b7aadc9153231ddd00d120ed3876f78a70c50f8c
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Nonabort.lean
+@@ -0,0 +1,64 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Planted
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Reading nonabort as query safety
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `safe_of_nonabort`: a nonaborting one-query planted transcript has a safe query.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
++  January 2010, proof of Theorem 137.2.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportFill
++
++open TCSlib.Cryptography.Games
++
++/-- A planted run with at most one query ending with a false abort bit queried no message
++that reveals the planted cell [PS10, proof of Theorem 137.2].
++
++**Proof sketch.** An immediate return has no query. A query leaves cost zero, so its
++continuation is a return; the final abort flag is exactly equality of its selected bit with
++the planted bit. A false flag therefore says that the query was safe. -/
++theorem safe_of_nonabort {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bool)
++    (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (hcost : tree.CostBoundedBy (fun _ => 1) 1) (a' : α)
++    (hsim : simulate (abortingImpl T i c) tree false = .pure (a', false)) :
++    Safe tree i c := by
++  cases tree with
++  | pure a =>
++    apply (safe_iff _ i c).2
++    intro m hm
++    rw [firstQuery_pure] at hm
++    cases hm
++  | query j m k =>
++    have hk := (OracleComp.costBoundedBy_query (fun _ => 1) j m k 1).1 hcost
++    obtain ⟨a, ha⟩ := exists_pure_of_cost_zero (k (abortingAnswer T i c m))
++      (by simpa only [Nat.sub_self] using (hk.2 (abortingAnswer T i c m)))
++    rw [simulate_query, abortingImpl_apply, OracleComp.pure_bind, ha, simulate_pure] at hsim
++    have hp : (a, false || decide (m i = c)) = (a', false) := OracleComp.pure.inj hsim
++    have hb : decide (m i = c) = false := by
++      simpa only [Bool.false_or] using congrArg Prod.snd hp
++    have hm : m i ≠ c := of_decide_eq_false hb
++    apply (safe_iff _ i c).2
++    intro m' hm'
++    rw [firstQuery_query, Option.some.injEq] at hm'
++    rw [← hm']
++    exact hm
++
++end TCSlib.Cryptography.Authentication.LamportFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..4d43de0986a9d6bb163ee1c544bf4a90ac90ee46
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean
+@@ -0,0 +1,452 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.BitCodec
++import TCSlib.Cryptography.Games.Bridges.QueryTree
++import TCSlib.Cryptography.Asymptotic.BlockEncryptor
++import TCSlib.Cryptography.Asymptotic.OneWay
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The fixed-position Lamport planting coupling
++
++## Main definitions
++
++* `plantTable` replaces one preimage in a typed Lamport key table.
++* `tableSignature` selects one preimage per message bit.
++* `plantedPublic` replaces one image without reading its preimage.
++* `firstQuery` and `Safe` record whether the sole query avoids the planted cell.
++* `abortingImpl` answers safe queries and remembers an unsafe query.
++
++## Main results
++
++* `planted_coupling`: on the safe branch of a computation with at most one query,
++  the planted implementation returns the honest output and never aborts.
++* `extract_planted`: an accepting signature with the planted message bit inverts
++  the planted image.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
++  January 2010, Protocol 137.1 and Theorem 137.2.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportFill
++
++open TCSlib.Cryptography TCSlib.Cryptography.Games
++open Complexity Turing
++
++/-- A table has an `n`-bit preimage at each coordinate `(i,c)`. -/
++abbrev Table (n : ℕ) := (Fin n × Bool) → Fin n → Bool
++
++/-- The type of tables is the function type `(Fin n × Bool) → Fin n → Bool`. -/
++theorem Table_eq (n : ℕ) : Table n = ((Fin n × Bool) → Fin n → Bool) := rfl
++
++/-- Serialize a public table as the tuple of its pairs of images. -/
++def publicWord {n ℓ : ℕ} (Y : (Fin n × Bool) → Fin ℓ → Bool) : List Bool :=
++  PrivateKeyScheme.encodeList (List.ofFn fun i : Fin n =>
++    pairEncode (List.ofFn (Y (i, false))) (List.ofFn (Y (i, true))))
++
++/-- The public word is the tuple of the encoded pairs `⟨Y(i,0),Y(i,1)⟩`. -/
++theorem publicWord_eq {n ℓ : ℕ} (Y : (Fin n × Bool) → Fin ℓ → Bool) :
++    publicWord Y = PrivateKeyScheme.encodeList (List.ofFn fun i : Fin n =>
++      pairEncode (List.ofFn (Y (i, false))) (List.ofFn (Y (i, true)))) := rfl
++
++/-- Serialize a preimage table in row order, with its false and true cells adjacent. -/
++def secretWord {n : ℕ} (T : Table n) : List Bool :=
++  (List.ofFn fun i : Fin n => List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))).flatten
++
++/-- The secret word concatenates `T(i,0) ‖ T(i,1)` for consecutive rows `i`. -/
++theorem secretWord_eq {n : ℕ} (T : Table n) :
++    secretWord T =
++      (List.ofFn fun i : Fin n => List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))).flatten :=
++  rfl
++
++/-- A serialized table contains `n` rows of `2n` bits, hence `2n²` bits. -/
++theorem length_secretWord {n : ℕ} (T : Table n) : (secretWord T).length = 2 * n * n := by
++  have hrow : (List.length ∘ fun i : Fin n =>
++      List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))) = fun _ => n + n := by
++    funext i
++    simp only [Function.comp_apply, List.length_append, List.length_ofFn]
++  rw [secretWord_eq, List.length_flatten, List.map_ofFn, hrow, List.ofFn_const,
++    List.sum_replicate]
++  simp only [nsmul_eq_mul, Nat.cast_id]
++  ring
++
++/-- Replace preimage `(i,c)` by `x`, leaving every other cell unchanged. -/
++def plantTable {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool)
++    (p : Fin n × Bool) : Fin n → Bool :=
++  if p = (i, c) then x else T p
++
++/-- Planting returns `x` at the selected cell and `T p` elsewhere. -/
++theorem plantTable_eq {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool)
++    (p : Fin n × Bool) :
++    plantTable T i c x p = if p = (i, c) then x else T p := rfl
++
++/-- The planted cell contains `x`. -/
++theorem plantTable_at {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool) :
++    plantTable T i c x (i, c) = x := by
++  simp only [plantTable, if_true]
++
++/-- A cell different from `(i,c)` retains its original preimage. -/
++theorem plantTable_ne {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool)
++    {p : Fin n × Bool} (hp : p ≠ (i, c)) : plantTable T i c x p = T p := by
++  rw [plantTable_eq, if_neg hp]
++
++/-- Planting a table is the ordinary update of its selected coordinate. -/
++theorem plantTable_update {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
++    (x : Fin n → Bool) : plantTable T i c x = Function.update T (i, c) x := by
++  funext p
++  rw [plantTable_eq, Function.update_apply]
++
++/-- The signature is the flattened table of preimages selected by the message bits. -/
++def tableSignature {n : ℕ} (T : Table n) (m : Fin n → Bool) : Fin (n * n) → Bool :=
++  fun j => T ((finProdFinEquiv.symm j).1, m (finProdFinEquiv.symm j).1)
++    (finProdFinEquiv.symm j).2
++
++/-- At the flattened index for `(i,k)`, the signature reads bit `k` of `T(i,m i)`. -/
++theorem tableSignature_apply {n : ℕ} (T : Table n) (m : Fin n → Bool)
++    (i k : Fin n) : tableSignature T m (finProdFinEquiv (i, k)) = T (i, m i) k := by
++  simp only [tableSignature, Equiv.symm_apply_apply]
++
++/-- The word of a selected signature concatenates the selected preimage words. -/
++theorem ofFn_tableSignature {n : ℕ} (T : Table n) (m : Fin n → Bool) :
++    List.ofFn (tableSignature T m) =
++      (List.ofFn fun i : Fin n => List.ofFn (T (i, m i))).flatten := by
++  have hblocks : FunFamily.blocks n n (tableSignature T m) = fun i => T (i, m i) := by
++    funext i k
++    rw [FunFamily.blocks_apply, tableSignature_apply]
++  have h := FunFamily.ofFn_blocks_symm n n (FunFamily.blocks n n (tableSignature T m))
++  rw [Equiv.symm_apply_apply, hblocks] at h
++  exact h
++
++/-- A message avoiding the planted cell has exactly its original signature. -/
++theorem tableSignature_plant_of_safe {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
++    (x : Fin n → Bool) (m : Fin n → Bool) (hm : m i ≠ c) :
++    tableSignature (plantTable T i c x) m = tableSignature T m := by
++  funext j
++  simp only [tableSignature]
++  have hp : ((finProdFinEquiv.symm j).1, m (finProdFinEquiv.symm j).1) ≠ (i, c) := by
++    intro h
++    have hi := congrArg Prod.fst h
++    have hc := congrArg Prod.snd h
++    simp only at hi hc
++    rw [hi] at hc
++    exact hm hc
++  rw [plantTable_ne T i c x hp]
++
++/-- The public table applies the one-way map to every preimage. -/
++def tablePublic {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
++    (p : Fin n × Bool) : Y := g (T p)
++
++/-- The public image at cell `p` is `g (T p)`. -/
++theorem tablePublic_eq {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
++    (p : Fin n × Bool) : tablePublic g T p = g (T p) := rfl
++
++/-- Replace the public image at `(i,c)` by `y`, without knowing a preimage of `y`. -/
++def plantedPublic {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
++    (i : Fin n) (c : Bool) (y : Y) (p : Fin n × Bool) : Y :=
++  if p = (i, c) then y else g (T p)
++
++/-- The planted public table reads `y` at `(i,c)` and the original images elsewhere. -/
++theorem plantedPublic_eq {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
++    (i : Fin n) (c : Bool) (y : Y) (p : Fin n × Bool) :
++    plantedPublic g T i c y p = if p = (i, c) then y else g (T p) := rfl
++
++/-- When `y=g(x)`, the planted public table is the honest public table of the updated key. -/
++theorem plantedPublic_image {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
++    (i : Fin n) (c : Bool) (x : Fin n → Bool) :
++    plantedPublic g T i c (g x) = tablePublic g (plantTable T i c x) := by
++  funext p
++  by_cases hp : p = (i, c)
++  · simp only [plantedPublic, tablePublic, plantTable, hp, if_true]
++  · simp only [plantedPublic, tablePublic, plantTable, hp, if_false]
++
++/-- The planted public table ignores the original preimage at its planted coordinate. -/
++theorem plantedPublic_plant {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
++    (i : Fin n) (c : Bool) (x : Fin n → Bool) (y : Y) :
++    plantedPublic g (plantTable T i c x) i c y = plantedPublic g T i c y := by
++  funext p
++  by_cases hp : p = (i, c)
++  · rw [plantedPublic_eq, plantedPublic_eq, if_pos hp, if_pos hp]
++  · rw [plantedPublic_eq, plantedPublic_eq, if_neg hp, if_neg hp,
++      plantTable_ne T i c x hp]
++
++/-- Extract the `i`-th preimage block from a flattened signature. -/
++def signatureBlock {n : ℕ} (σ : Fin (n * n) → Bool) (i : Fin n) : Fin n → Bool :=
++  fun k => σ (finProdFinEquiv (i, k))
++
++/-- Extracted block `i` reads the flattened signature at indices `(i,k)`. -/
++theorem signatureBlock_eq {n : ℕ} (σ : Fin (n * n) → Bool) (i : Fin n) :
++    signatureBlock σ i = fun k => σ (finProdFinEquiv (i, k)) := rfl
++
++/-- An accepting signature on a message with bit `c` at `i` supplies a preimage of `g(x)`
++under the planted public table [PS10, Theorem 137.2]. -/
++theorem extract_planted {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
++    (i : Fin n) (c : Bool) (x : Fin n → Bool) (m : Fin n → Bool)
++    (σ : Fin (n * n) → Bool)
++    (hacc : ∀ j, g (signatureBlock σ j) = plantedPublic g T i c (g x) (j, m j))
++    (hm : m i = c) : g (signatureBlock σ i) = g x := by
++  have h := hacc i
++  rw [plantedPublic_eq, hm, if_pos rfl] at h
++  exact h
++
++/-- A computation of cost zero under unit query costs is a return. -/
++theorem exists_pure_of_cost_zero {ι α : Type} {spec : OracleSpec ι}
++    (tree : OracleComp spec α) (h : tree.CostBoundedBy (fun _ => 1) 0) :
++    ∃ a, tree = .pure a := by
++  cases tree with
++  | pure a => exact ⟨a, rfl⟩
++  | query j m k =>
++    have hcost := (OracleComp.costBoundedBy_query (fun _ => 1) j m k 0).1 h
++    omega
++
++/-- The first query of a typed signature-forging computation, or `none` if it returns. -/
++def firstQuery {n : ℕ} {α : Type} :
++    OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α → Option (Fin n → Bool)
++  | .pure _ => none
++  | .query _ m _ => some m
++
++/-- A return has no first query. -/
++theorem firstQuery_pure {n : ℕ} {α : Type} (a : α) :
++    firstQuery (.pure a : OracleComp
++      (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α) = none := rfl
++
++/-- A query node's first query is its own message. -/
++theorem firstQuery_query {n : ℕ} {α : Type} (j : Fin 1) (m : Fin n → Bool)
++    (k : (Fin (n * n) → Bool) → OracleComp
++      (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α) :
++    firstQuery (.query j m k) = some m := rfl
++
++/-- The deterministic typed signing oracle returns the table's selected preimages. -/
++def tableSigner {n : ℕ} (T : Table n) :
++    QueryImpl (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) Unit unifSpec :=
++  QueryImpl.ofComp fun _ m => .pure (tableSignature T m)
++
++/-- The table signer is the stateless implementation of `m ↦ pure (tableSignature T m)`. -/
++theorem tableSigner_eq {n : ℕ} (T : Table n) :
++    tableSigner T = QueryImpl.ofComp (fun _ m => .pure (tableSignature T m)) := rfl
++
++/-- The log of a computation with at most one query consists of its first query and answer,
++or is empty if it returns immediately. -/
++def firstLog {n : ℕ} {α : Type} (T : Table n) :
++    OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α →
++      QueryLog (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n))
++  | .pure _ => []
++  | .query j m _ => [⟨j, m, tableSignature T m⟩]
++
++/-- A return has an empty first-query log. -/
++theorem firstLog_pure {n : ℕ} {α : Type} (T : Table n) (a : α) :
++    firstLog T (.pure a : OracleComp
++      (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α) = [] := rfl
++
++/-- A query node's first-query log contains exactly its message and deterministic answer. -/
++theorem firstLog_query {n : ℕ} {α : Type} (T : Table n) (j : Fin 1) (m : Fin n → Bool)
++    (k : (Fin (n * n) → Bool) → OracleComp
++      (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α) :
++    firstLog T (.query j m k) = [⟨j, m, tableSignature T m⟩] := rfl
++
++/-- A computation with at most one query against the logged deterministic signer returns its
++functional evaluation and exactly its first-query log.
++
++**Proof sketch.** An immediate return has no log. At a query, the signer returns its selected
++preimages and appends one entry. Unit query cost leaves cost zero for the continuation, so
++the continuation is a return and appends no further entry. -/
++theorem honest_transcript {n : ℕ} {α : Type} (T : Table n)
++    (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (hcost : tree.CostBoundedBy (fun _ => 1) 1) :
++    simulate (tableSigner T).withLog tree ((), []) =
++      .pure (tree.evalFn (fun _ m => tableSignature T m), ((), firstLog T tree)) := by
++  cases tree with
++  | pure a => rw [simulate_pure, OracleComp.evalFn_pure, firstLog_pure]
++  | query j m k =>
++    have hk := (OracleComp.costBoundedBy_query (fun _ => 1) j m k 1).1 hcost
++    obtain ⟨a, ha⟩ := exists_pure_of_cost_zero (k (tableSignature T m))
++      (by simpa only [Nat.sub_self] using hk.2 (tableSignature T m))
++    simp only [simulate_query, QueryImpl.withLog_apply, tableSigner_eq, QueryImpl.ofComp_apply,
++      OracleComp.pure_bind, ha, simulate_pure, OracleComp.evalFn_query,
++      OracleComp.evalFn_pure, firstLog_query, List.nil_append]
++
++/-- Freshness against the first-query log is exactly inequality with the optional first
++message: no logged entry queried `m` if and only if `firstQuery tree ≠ some m`. -/
++theorem fresh_firstLog_iff {n : ℕ} {α : Type} (T : Table n)
++    (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (m : Fin n → Bool) :
++    (∀ e ∈ firstLog T tree, e.2.1 ≠ m) ↔ firstQuery tree ≠ some m := by
++  cases tree <;> simp [firstLog, firstQuery]
++
++/-- The logged one-query signing run has an output and log whose freshness condition is
++equivalent to avoiding the optional first query, for any projection of a forgery's message. -/
++theorem exists_honest_transcript {n : ℕ} {α : Type} (T : Table n)
++    (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (hcost : tree.CostBoundedBy (fun _ => 1) 1) (message : α → Fin n → Bool) :
++    ∃ a log, simulate (tableSigner T).withLog tree ((), []) = .pure (a, ((), log)) ∧
++      a = tree.evalFn (fun _ m => tableSignature T m) ∧
++      ((∀ e ∈ log, e.2.1 ≠ message a) ↔ firstQuery tree ≠ some (message a)) := by
++  exact ⟨_, _, honest_transcript T tree hcost, rfl, fresh_firstLog_iff T tree _⟩
++
++/-- The sole signing query, if present, avoids the planted cell. -/
++def Safe {n : ℕ} {α : Type}
++    (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (i : Fin n) (c : Bool) : Prop :=
++  ∀ m, firstQuery tree = some m → m i ≠ c
++
++/-- Safety means that every message recorded as the first query has bit different from `c`. -/
++theorem safe_iff {n : ℕ} {α : Type}
++    (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (i : Fin n) (c : Bool) :
++    Safe tree i c ↔ ∀ m, firstQuery tree = some m → m i ≠ c := Iff.rfl
++
++/-- The aborting oracle answers an unsafe query with zero and answers a safe one honestly. -/
++def abortingAnswer {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (m : Fin n → Bool) :
++    Fin (n * n) → Bool :=
++  if m i = c then zeroBits _ else tableSignature T m
++
++/-- An aborting answer is zero when `m i=c`, and otherwise is the original signature. -/
++theorem abortingAnswer_eq {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (m : Fin n → Bool) :
++    abortingAnswer T i c m = if m i = c then zeroBits _ else tableSignature T m := rfl
++
++/-- The aborting answer ignores the original preimage at the planted coordinate. -/
++theorem abortingAnswer_plant {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
++    (x : Fin n → Bool) (m : Fin n → Bool) :
++    abortingAnswer (plantTable T i c x) i c m = abortingAnswer T i c m := by
++  rw [abortingAnswer_eq, abortingAnswer_eq]
++  by_cases hm : m i = c
++  · rw [if_pos hm, if_pos hm]
++  · rw [if_neg hm, if_neg hm, tableSignature_plant_of_safe T i c x m hm]
++
++/-- The planted implementation remembers whether an unsafe query has occurred. -/
++def abortingImpl {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) :
++    QueryImpl (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) Bool unifSpec :=
++  fun _ m bad => .pure (abortingAnswer T i c m, bad || decide (m i = c))
++
++/-- A call returns the aborting answer and sets its abort bit to `bad ∨ (m i=c)`. -/
++theorem abortingImpl_apply {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
++    (j : Fin 1) (m : Fin n → Bool) (bad : Bool) :
++    abortingImpl T i c j m bad =
++      .pure (abortingAnswer T i c m, bad || decide (m i = c)) := rfl
++
++/-- The aborting implementation ignores the original preimage at its planted coordinate. -/
++theorem abortingImpl_plant {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
++    (x : Fin n → Bool) :
++    abortingImpl (plantTable T i c x) i c = abortingImpl T i c := by
++  funext j m bad
++  rw [abortingImpl_apply, abortingImpl_apply, abortingAnswer_plant]
++
++/-- A safe call agrees with the updated key and leaves the abort bit false. -/
++theorem abortingImpl_safe {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)
++    (x : Fin n → Bool) (j : Fin 1) (m : Fin n → Bool) (hm : m i ≠ c) :
++    abortingImpl T i c j m false = .pure (tableSignature (plantTable T i c x) m, false) := by
++  rw [abortingImpl_apply, abortingAnswer_eq, if_neg hm,
++    tableSignature_plant_of_safe T i c x m hm]
++  simp only [hm, decide_false, Bool.false_or]
++
++/-- A safe run with at most one signing query has exactly the honest output for the updated
++key and never aborts [PS10, Theorem 137.2].
++
++**Proof sketch.** A return needs no coupling. At a query, safety says that the queried message
++does not reveal the planted cell, so its answer is exactly the updated key's honest answer.
++The remaining computation has query cost zero and is a return; therefore the final outputs
++agree and the abort flag stays false. -/
++theorem planted_coupling {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bool)
++    (x : Fin n → Bool)
++    (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (hcost : tree.CostBoundedBy (fun _ => 1) 1) (hsafe : Safe tree i c) :
++    simulate (abortingImpl T i c) tree false =
++      .pure (tree.evalFn (fun _ m => tableSignature (plantTable T i c x) m), false) := by
++  cases tree with
++  | pure a => rw [simulate_pure, OracleComp.evalFn_pure]
++  | query j m k =>
++    have hm : m i ≠ c := (safe_iff _ i c).1 hsafe m (firstQuery_query j m k)
++    have hk := (OracleComp.costBoundedBy_query (fun _ => 1) j m k 1).1 hcost
++    obtain ⟨a, ha⟩ := exists_pure_of_cost_zero
++      (k (tableSignature (plantTable T i c x) m))
++      (by simpa only [Nat.sub_self] using (hk.2 (tableSignature (plantTable T i c x) m)))
++    rw [simulate_query, abortingImpl_safe T i c x j m hm, OracleComp.pure_bind, ha,
++      simulate_pure, OracleComp.evalFn_query, ha, OracleComp.evalFn_pure]
++
++/-- Run a fixed-position planted forger and extract block `i`, returning zero after an abort. -/
++def extractionExperiment {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bool)
++    (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (signature : α → Fin (n * n) → Bool) : ProbComp (Fin n → Bool) :=
++  (simulate (abortingImpl T i c) tree false).bind fun res =>
++    .pure (if res.2 then zeroBits n else signatureBlock (signature res.1) i)
++
++/-- The extraction experiment simulates the aborting implementation and selects the `i`-th
++signature block when the final abort bit is false. -/
++theorem extractionExperiment_eq {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bool)
++    (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (signature : α → Fin (n * n) → Bool) :
++    extractionExperiment T i c tree signature =
++      (simulate (abortingImpl T i c) tree false).bind (fun res =>
++        .pure (if res.2 then zeroBits n else signatureBlock (signature res.1) i)) := rfl
++
++/-- The extraction experiment ignores the original preimage at the planted coordinate. -/
++theorem extractionExperiment_plant {n : ℕ} {α : Type} (T : Table n) (i : Fin n)
++    (c : Bool) (x : Fin n → Bool)
++    (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (signature : α → Fin (n * n) → Bool) :
++    extractionExperiment (plantTable T i c x) i c tree signature =
++      extractionExperiment T i c tree signature := by
++  rw [extractionExperiment_eq, extractionExperiment_eq, abortingImpl_plant]
++
++/-- The fixed-position reduction builds the planted public table, runs the forger against
++the aborting signer, and extracts the `i`-th signature block. -/
++def plantedExperiment {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
++    (i : Fin n) (c : Bool) (y : Y)
++    (adv : ((Fin n × Bool) → Y) →
++      OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (signature : α → Fin (n * n) → Bool) : ProbComp (Fin n → Bool) :=
++  extractionExperiment T i c (adv (plantedPublic g T i c y)) signature
++
++/-- The planted experiment is extraction after running the adversary on the planted public
++table. -/
++theorem plantedExperiment_eq {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)
++    (i : Fin n) (c : Bool) (y : Y)
++    (adv : ((Fin n × Bool) → Y) →
++      OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (signature : α → Fin (n * n) → Bool) :
++    plantedExperiment g T i c y adv signature =
++      extractionExperiment T i c (adv (plantedPublic g T i c y)) signature := rfl
++
++/-- The entire planted experiment ignores the original preimage at `(i,c)`; this is the
++coordinate-invariance hypothesis for sampling that preimage independently. -/
++theorem plantedExperiment_plant {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y)
++    (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool) (y : Y)
++    (adv : ((Fin n × Bool) → Y) →
++      OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (signature : α → Fin (n * n) → Bool) :
++    plantedExperiment g (plantTable T i c x) i c y adv signature =
++      plantedExperiment g T i c y adv signature := by
++  rw [plantedExperiment_eq, plantedExperiment_eq, plantedPublic_plant,
++    extractionExperiment_plant]
++
++/-- A safe, accepting honest run whose forged message uses the planted bit produces an
++inverse of the planted image in the reduction experiment [PS10, Theorem 137.2].
++
++**Proof sketch.** The safe coupling identifies the reduction's output with the honest forged
++signature block and keeps its abort bit false. Acceptance at the planted position then says
++that applying the one-way map to that block gives the planted image. -/
++theorem favorable_extraction {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y)
++    (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool)
++    (tree : OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) α)
++    (signature : α → Fin (n * n) → Bool) (message : α → Fin n → Bool)
++    (hcost : tree.CostBoundedBy (fun _ => 1) 1) (hsafe : Safe tree i c)
++    (hacc : ∀ j, g (signatureBlock
++        (signature (tree.evalFn (fun _ m => tableSignature (plantTable T i c x) m))) j) =
++      plantedPublic g T i c (g x)
++        (j, message (tree.evalFn (fun _ m => tableSignature (plantTable T i c x) m)) j))
++    (hm : message (tree.evalFn (fun _ m => tableSignature (plantTable T i c x) m)) i = c) :
++    ∃ z, extractionExperiment T i c tree signature = .pure z ∧ g z = g x := by
++  refine ⟨signatureBlock
++    (signature (tree.evalFn (fun _ m => tableSignature (plantTable T i c x) m))) i, ?_, ?_⟩
++  · rw [extractionExperiment_eq, planted_coupling T i c x tree hcost hsafe,
++      OracleComp.pure_bind]
++    rfl
++  · exact extract_planted g T i c x _ _ hacc hm
++
++end TCSlib.Cryptography.Authentication.LamportFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..b2e0af9fd96a72d2a5182ea0f3d92fda84631876
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean
+@@ -0,0 +1,193 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.MachineSpec
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Nonabort
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Experiment
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Realizing the planted Lamport experiment as a machine
++
++## Main definitions
++
++* `machineForger`: a machine forger on a typed public-key table, with budget one.
++
++## Main results
++
++* `exists_realization_machine`: T1 realizes every nonaborting successful planted transcript
++  by an actual machine output, with an explicit uniform coin equivalence.
++
++The generator, signer, evaluator, and fixed-width block reader are parameters. Their
++functional contracts are assumptions about algorithms, rather than additional hardness
++assumptions. The owned Lamport module discharges them from its published readers.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, proof of Theorem 137.2.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportFill
++
++open Complexity Turing TCSlib.Cryptography.Games
++open TCSlib.Cryptography
++
++/-- Run a machine forger on the serialized typed public table, using the canonical
++message/signature codec and a budget of one signing query. -/
++def machineForger (L : PolyExpr) (A : NUPPT) (n : ℕ)
++    (Y : (Fin n × Bool) → Fin (L.eval n) → Bool) (r : A.Coins n) :
++    OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n))
++      (Fin (n + n * n) → Bool) :=
++  A.toCompOn (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
++    n 1 (publicWord Y) r
++
++/-- The typed machine forger is `A.toCompOn` on the serialized public table. -/
++theorem machineForger_eq (L : PolyExpr) (A : NUPPT) (n : ℕ)
++    (Y : (Fin n × Bool) → Fin (L.eval n) → Bool) (r : A.Coins n) :
++    machineForger L A n Y r =
++      A.toCompOn (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
++        n 1 (publicWord Y) r := rfl
++
++/-- As a function of the public table and coins, the machine forger is the canonical
++one-query `toCompOn` construction. This form also reads it beneath an opaque expectation. -/
++theorem machineForger_eq_fun (L : PolyExpr) (A : NUPPT) (n : ℕ) :
++    machineForger L A n = fun Y r =>
++      A.toCompOn (bitCodec (fun _ : Fin 1 => n) (fun _ => n * n) (n + n * n))
++        n 1 (publicWord Y) r := rfl
++
++/-- Every typed machine-forger tree has unit-query cost at most one. -/
++theorem machineForger_cost (L : PolyExpr) (A : NUPPT) (n : ℕ)
++    (Y : (Fin n × Bool) → Fin (L.eval n) → Bool) (r : A.Coins n) :
++    (machineForger L A n Y r).CostBoundedBy (fun _ => 1) 1 := by
++  rw [machineForger_eq]
++  exact A.toCompOn_costBoundedBy _ _ _ _ _
++
++/-- The planted experiment's successful nonaborting outputs are actual inverter outputs.
++The machine uses one fair seed bit, one random table, and the forger's own random tape.
++[PS10, machine-realization step in the proof of Theorem 137.2].
++
++**Proof sketch.** T1 gives a machine for the polynomial-time planting handler. Reindex its
++seed by the public seed/table equivalence. On a successful planted transcript the final
++abort flag is false, so its sole query was safe. A return needs no oracle call; a safe query
++has the ordinary sampled-table signature and leaves the false handler state unchanged.
++The remaining tree has cost zero and is a return. Thus the handler simulation and the
++typed planted simulation have the same output. T1's output equation and the public
++nonabort-extraction contract identify the actual machine output with that signature block. -/
++theorem exists_realization_machine
++    (L W : PolyExpr)
++    (f : ∀ n, (Fin n → Bool) → Fin (L.eval n) → Bool)
++    (E G S : List Bool → List Bool)
++    (hE : PolyTimeComputable E) (hG : PolyTimeComputable G) (hS : PolyTimeComputable S)
++    (hW : ∀ n, W.eval n = 6 * L.eval n + 6)
++    (hEval : ∀ n (x : Fin n → Bool),
++      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (f n x))
++    (hGen : ∀ n (T : Table n),
++      G (NUPPT.layout (List.replicate n true) [] [] (secretWord T)) =
++        pairEncode (publicWord (tablePublic (f n) T)) (secretWord T))
++    (hSign : ∀ n (T : Table n) (m : Fin n → Bool),
++      S (NUPPT.layout (List.replicate n true) (pairEncode (secretWord T) (List.ofFn m)) [] []) =
++        List.ofFn (tableSignature T m))
++    (hcoin : ∀ {q B : ℕ} (g : Fin q → List Bool) (hg : ∀ j, (g j).length = B)
++      (i : Fin q), coinBlock B i (List.ofFn g).flatten = g i)
++    (A : NUPPT) :
++    ∃ B : NUPPT, ∀ n,
++      ∃ φ : ((Bool × Table n) × A.Coins n) ≃ B.Coins n,
++        ∀ (i : Fin n) (y : Fin (L.eval n) → Bool) (T : Table n) (c : Bool) (r : A.Coins n),
++          RedSuccess (f n) (machineForger L A n) y T r (i, c) →
++            ∃ x' : Fin n → Bool,
++              B.runAt n (pairEncode (List.ofFn y) (List.replicate i.val true))
++                  (φ ((c, T), r)) = List.ofFn x' ∧
++                f n x' = y := by
++  let H := LamportMachine.handler W E G S hE hG hS
++  obtain ⟨B, hB⟩ := exists_handlerMachine A (.const 1)
++    (fun _ : Fin 1 => PolyExpr.var) (fun _ => PolyExpr.mul .var .var)
++    (.add .var (.mul .var .var)) H
++  refine ⟨B, fun n => ?_⟩
++  obtain ⟨ψ, hψ⟩ := hB n
++  have hseed : H.seedLen.eval n = 1 + 2 * n * n := by
++    simp only [H, LamportMachine.handler_seedLen, PolyExpr.eval_add, PolyExpr.eval_const,
++      PolyExpr.eval_mul, PolyExpr.eval_var]
++  have hstate : H.stateLen.eval n = 1 := by
++    simp only [H, LamportMachine.handler_stateLen, PolyExpr.eval_const]
++  let toSeed : (Bool × Table n) ≃ (Fin (H.seedLen.eval n) → Bool) :=
++    (seedCoins n).symm.trans
++      (Equiv.arrowCongr (finCongr hseed.symm) (Equiv.refl Bool))
++  let φ : ((Bool × Table n) × A.Coins n) ≃ B.Coins n :=
++    (toSeed.prodCongr (Equiv.refl (A.Coins n))).trans ψ
++  refine ⟨φ, fun i y T c r hred => ?_⟩
++  let z := pairEncode (List.ofFn y) (List.replicate i.val true)
++  let ω := toSeed (c, T)
++  have hω : List.ofFn ω = c :: secretWord T := by
++    change List.ofFn ((Equiv.arrowCongr (finCongr hseed.symm) (Equiv.refl Bool))
++      ((seedCoins n).symm (c, T))) = c :: secretWord T
++    rw [ofFn_arrowCongr_finCongr, ofFn_seedCoins_symm]
++  have hinit : H.init n = fun _ => false := by
++    funext j
++    exact LamportMachine.handler_init W E G S hE hG hS n j
++  have hinitWord : List.ofFn (H.init n) = [false] := by
++    rw [hinit, List.ofFn_const, hstate]
++    rfl
++  have hadv : H.advInput n z ω = publicWord (plantedPublic (f n) T i c y) := by
++    simp only [PolyHandler.advInput_eq, H, LamportMachine.handler_advIn, hω, z]
++    exact advIn_context hcoin W (hW n) (f n) E G (hEval n) (hGen n) T i c y
++  let tree := machineForger L A n (plantedPublic (f n) T i c y) r
++  have hcost : tree.CostBoundedBy (fun _ => 1) 1 := machineForger_cost L A n _ r
++  obtain ⟨a₀, habort, hinverts⟩ := (redSuccess_iff (f n) (machineForger L A n) y T r (i, c)).1 hred
++  change simulate (abortingImpl T i c) tree false = .pure (a₀, false) at habort
++  have hsafe : Safe tree i c := safe_of_nonabort T i c tree hcost a₀ habort
++  have hrunread : H.run = LamportMachine.run S :=
++    LamportMachine.handler_run W E G S hE hG hS
++  have hcall : ∀ (j : Fin 1) (m : Fin n → Bool), m i ≠ c →
++      H.impl n z ω j m (H.init n) = .pure (tableSignature T m, H.init n) := by
++    intro j m hm
++    rw [PolyHandler.impl_apply]
++    apply congrArg OracleComp.pure
++    apply PolyHandler.answer_of_run_eq H
++    simp only [hrunread, hω, hinitWord]
++    simpa only [z] using run_safe S (hSign n) T i c (List.ofFn y) j m hm
++  have hsim : simulate (H.impl n z ω) tree (H.init n) = .pure (a₀, H.init n) := by
++    cases ht : tree with
++    | pure a =>
++      rw [ht] at habort
++      have hp : (a, false) = (a₀, false) :=
++        OracleComp.pure.inj (by simpa only [simulate_pure] using habort)
++      have haa : a = a₀ := congrArg Prod.fst hp
++      rw [simulate_pure, haa]
++    | query j m k =>
++      rw [ht] at habort hcost hsafe
++      have hm : m i ≠ c := (safe_iff _ i c).1 hsafe m (firstQuery_query j m k)
++      have hk := (OracleComp.costBoundedBy_query (fun _ => 1) j m k 1).1 hcost
++      obtain ⟨a, ha⟩ := exists_pure_of_cost_zero (k (tableSignature T m))
++        (by simpa only [Nat.sub_self] using hk.2 (tableSignature T m))
++      have hp : (a, false) = (a₀, false) := OracleComp.pure.inj (by
++        simpa only [simulate_query, abortingImpl_apply, abortingAnswer_eq, if_neg hm,
++          hm, if_false, decide_false, Bool.false_or, OracleComp.pure_bind, ha, simulate_pure] using habort)
++      have haa : a = a₀ := congrArg Prod.fst hp
++      rw [simulate_query, hcall j m hm, OracleComp.pure_bind, ha, simulate_pure,
++        haa]
++  obtain ⟨a, s, hsimulation, houtput⟩ := hψ z ω r
++  have hsimulation' : simulate (H.impl n z ω) tree (H.init n) = .pure (a, s) := by
++    simpa only [PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_mul, PolyExpr.eval_add,
++      hadv, tree, machineForger_eq] using hsimulation
++  have hp : (a, s) = (a₀, H.init n) :=
++    OracleComp.pure.inj (hsimulation'.symm.trans hsim)
++  have ha : a = a₀ := congrArg Prod.fst hp
++  have hs : s = H.init n := congrArg Prod.snd hp
++  rw [ha, hs] at houtput
++  have hresult : H.result n z ω (H.init n) a₀ =
++      List.ofFn (signatureBlock (splitBits a₀).2 i) := by
++    rw [PolyHandler.result_eq, show H.out = LamportMachine.out from
++      LamportMachine.handler_out W E G S hE hG hS, hω, hinitWord]
++    apply out_nonabort i z (c :: secretWord T) a₀
++    simpa only [z] using LamportMachine.pos_seedIn n (List.ofFn y)
++      (List.replicate i.val true) (c :: secretWord T)
++  refine ⟨signatureBlock (splitBits a₀).2 i, ?_, hinverts⟩
++  change B.runAt n z (ψ (ω, r)) = List.ofFn (signatureBlock (splitBits a₀).2 i)
++  exact houtput.trans hresult
++
++end TCSlib.Cryptography.Authentication.LamportFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Seed.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Seed.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..2e8c17615918405b45487146a26ccbe3952dc55b
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Seed.lean
+@@ -0,0 +1,73 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.TableCoins
++import Mathlib.Data.List.OfFn
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# A fair planting bit and a uniform Lamport table
++
++## Main definitions
++
++* `seedCoins`: a seed of `1 + 2n²` bits is a fair bit paired with a Lamport preimage table.
++
++## Main results
++
++* `seedCoins_apply` and `seedCoins_symm`: forward and inverse equations.
++* `ofFn_seedCoins_symm`: the inverse seed word is `c :: secretWord T`.
++* `ofFn_seedCoins`: the seed word decomposes into its planting bit and table serialization.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, Theorem 137.2. This is generic seed serialization glue for its reduction.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportFill
++
++/-- The seed width `1 + 2n²` is the successor width `2n² + 1`. -/
++theorem seedCoins_width (n : ℕ) : 1 + 2 * n * n = 2 * n * n + 1 :=
++  Nat.add_comm _ _
++
++/-- A seed of `1 + 2n²` bits is equivalent to a Boolean planting bit and a typed key table.
++The bit is the first seed entry and the table occupies the remaining entries in row order. -/
++def seedCoins (n : ℕ) : (Fin (1 + 2 * n * n) → Bool) ≃ Bool × Table n :=
++  ((Equiv.arrowCongr (finCongr (seedCoins_width n)) (Equiv.refl Bool)).trans
++    (Fin.consEquiv (fun _ : Fin (2 * n * n + 1) => Bool)).symm).trans
++      ((Equiv.refl Bool).prodCongr (tableCoins n))
++
++/-- `seedCoins n x` consists of the first entry of `x` and the table represented by its
++remaining entries, after the equality cast to successor width. -/
++theorem seedCoins_apply (n : ℕ) (x : Fin (1 + 2 * n * n) → Bool) :
++    seedCoins n x =
++      (((Equiv.arrowCongr (finCongr (seedCoins_width n)) (Equiv.refl Bool)) x) 0,
++        tableCoins n
++          (Fin.tail ((Equiv.arrowCongr (finCongr (seedCoins_width n))
++            (Equiv.refl Bool)) x))) := rfl
++
++/-- The inverse seed equivalence prepends `c` to the coin tape represented by `T`, and casts
++back from successor width to `1 + 2n²`. -/
++theorem seedCoins_symm (n : ℕ) (c : Bool) (T : Table n) :
++    (seedCoins n).symm (c, T) =
++      (Equiv.arrowCongr (finCongr (seedCoins_width n).symm) (Equiv.refl Bool))
++        (Fin.cons c ((tableCoins n).symm T)) := rfl
++
++/-- The inverse seed word is the planting bit followed by the serialized key table:
++`List.ofFn ((seedCoins n).symm (c,T)) = c :: secretWord T`. -/
++theorem ofFn_seedCoins_symm {n : ℕ} (c : Bool) (T : Table n) :
++    List.ofFn ((seedCoins n).symm (c, T)) = c :: secretWord T := by
++  rw [seedCoins_symm, ofFn_arrowCongr_finCongr, List.ofFn_cons, ofFn_tableCoins_symm]
++
++/-- Every seed word is its extracted planting bit followed by its extracted key table's
++serialization. -/
++theorem ofFn_seedCoins {n : ℕ} (x : Fin (1 + 2 * n * n) → Bool) :
++    List.ofFn x = (seedCoins n x).1 :: secretWord (seedCoins n x).2 := by
++  have h := ofFn_seedCoins_symm (seedCoins n x).1 (seedCoins n x).2
++  simpa only [Prod.mk.eta, Equiv.symm_apply_apply] using h
++
++end TCSlib.Cryptography.Authentication.LamportFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..f6cea0ed8606cf90a23964068c0c40f80a9439f7
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean
+@@ -0,0 +1,149 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Planted
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Sampling a planted coordinate independently
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `coordinate_reduction_bound`: a pointwise favorable-position bound and a
++  coordinate-invariant reduction give the same bound with the challenge sampled
++  independently of the table.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
++  January 2010, proof of Theorem 137.2.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportFill
++
++open TCSlib.Cryptography.Games
++open scoped Classical
++
++-- Keep elaboration on the published probability readers.
++run_cmd do
++  for n in [``ProbComp.expect, ``ProbComp.sample, ``OracleComp.bind] do
++    let status ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
++    unless status == .irreducible do
++      let id := Lean.mkIdent n
++      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
++
++/-- Suppose every successful honest run has favorable position mass at least `b`, and
++every successful favorable run makes a reduction succeed when challenged at its own
++table coordinate. If the reduction ignores that original coordinate, the average
++reduction success for an independent challenge is at least `b` times honest success.
++
++**Proof sketch.** Bound the reduction's position average pointwise by favorable mass
++on successful honest runs, and by zero on unsuccessful ones. Average over tables and
++forger coins. Exchange the position average with those samples. Finally use the
++coordinate-invariance hypothesis to sample the challenge preimage independently
++(`ProbComp.expect_sample_coord`). This is generic probability glue for the planting
++argument of [PS10, Theorem 137.2]. -/
++theorem coordinate_reduction_bound {n : ℕ} [Nonempty (Fin n)]
++    {ρ : Type} [Fintype ρ] [Nonempty ρ]
++    (P : Table n → ρ → Prop)
++    (Q : Table n → ρ → (Fin n × Bool) → Prop)
++    (R : (Fin n → Bool) → Table n → ρ → (Fin n × Bool) → Prop)
++    (b : ℝ)
++    (hgood : ∀ T r, P T r → b ≤
++      ProbComp.expect (ProbComp.sample (Fin n × Bool))
++        (fun p => if Q T r p then (1 : ℝ) else 0))
++    (himp : ∀ T r p, P T r → Q T r p → R (T p) T r p)
++    (hinv : ∀ x x' T r p,
++      R x (Function.update T p x') r p ↔ R x T r p) :
++    b * ProbComp.expect (ProbComp.sample (Table n))
++        (fun T => ProbComp.expect (ProbComp.sample ρ)
++          (fun r => if P T r then (1 : ℝ) else 0)) ≤
++      ProbComp.expect (ProbComp.sample (Fin n × Bool)) (fun p =>
++        ProbComp.expect (ProbComp.sample (Fin n → Bool)) (fun x =>
++          ProbComp.expect (ProbComp.sample (Table n)) (fun T =>
++            ProbComp.expect (ProbComp.sample ρ)
++              (fun r => if R x T r p then (1 : ℝ) else 0)))) := by
++  have hpoint (T : Table n) (r : ρ) :
++      b * (if P T r then (1 : ℝ) else 0) ≤
++        ProbComp.expect (ProbComp.sample (Fin n × Bool))
++          (fun p => if R (T p) T r p then (1 : ℝ) else 0) := by
++    by_cases hp : P T r
++    · simp only [hp, if_true, mul_one]
++      refine (hgood T r hp).trans (ProbComp.expect_mono _ fun p => ?_)
++      by_cases hq : Q T r p
++      · have hr := himp T r p hp hq
++        simp only [hq, hr, if_true, le_refl]
++      · simp only [hq, if_false]
++        split_ifs <;> positivity
++    · simp only [hp, if_false, mul_zero]
++      exact ProbComp.expect_nonneg _ (fun p => by split_ifs <;> positivity)
++  calc
++    b * ProbComp.expect (ProbComp.sample (Table n))
++        (fun T => ProbComp.expect (ProbComp.sample ρ)
++          (fun r => if P T r then (1 : ℝ) else 0)) =
++      ProbComp.expect (ProbComp.sample (Table n))
++        (fun T => ProbComp.expect (ProbComp.sample ρ)
++          (fun r => b * (if P T r then (1 : ℝ) else 0))) := by
++      symm
++      calc
++        ProbComp.expect (ProbComp.sample (Table n))
++            (fun T => ProbComp.expect (ProbComp.sample ρ)
++              (fun r => b * (if P T r then (1 : ℝ) else 0))) =
++          ProbComp.expect (ProbComp.sample (Table n))
++            (fun T => b * ProbComp.expect (ProbComp.sample ρ)
++              (fun r => if P T r then (1 : ℝ) else 0)) := by
++          apply congrArg (ProbComp.expect (ProbComp.sample (Table n)))
++          funext T
++          exact ProbComp.expect_const_mul (ProbComp.sample ρ) b
++            (fun r => if P T r then (1 : ℝ) else 0)
++        _ = b * ProbComp.expect (ProbComp.sample (Table n))
++            (fun T => ProbComp.expect (ProbComp.sample ρ)
++              (fun r => if P T r then (1 : ℝ) else 0)) :=
++          ProbComp.expect_const_mul (ProbComp.sample (Table n)) b
++            (fun T => ProbComp.expect (ProbComp.sample ρ)
++              (fun r => if P T r then (1 : ℝ) else 0))
++    _ ≤ ProbComp.expect (ProbComp.sample (Table n))
++        (fun T => ProbComp.expect (ProbComp.sample ρ)
++          (fun r => ProbComp.expect (ProbComp.sample (Fin n × Bool))
++            (fun p => if R (T p) T r p then (1 : ℝ) else 0))) :=
++      ProbComp.expect_mono _ (fun T => ProbComp.expect_mono _ (hpoint T))
++    _ = ProbComp.expect (ProbComp.sample (Table n))
++        (fun T => ProbComp.expect (ProbComp.sample (Fin n × Bool))
++          (fun p => ProbComp.expect (ProbComp.sample ρ)
++            (fun r => if R (T p) T r p then (1 : ℝ) else 0))) := by
++      apply congrArg (ProbComp.expect (ProbComp.sample (Table n)))
++      funext T
++      exact ProbComp.expect_sample_comm
++        (fun r p => if R (T p) T r p then (1 : ℝ) else 0)
++    _ = ProbComp.expect (ProbComp.sample (Fin n × Bool))
++        (fun p => ProbComp.expect (ProbComp.sample (Table n))
++          (fun T => ProbComp.expect (ProbComp.sample ρ)
++            (fun r => if R (T p) T r p then (1 : ℝ) else 0))) :=
++      ProbComp.expect_sample_comm
++        (fun T p => ProbComp.expect (ProbComp.sample ρ)
++          (fun r => if R (T p) T r p then (1 : ℝ) else 0))
++    _ = ProbComp.expect (ProbComp.sample (Fin n × Bool)) (fun p =>
++        ProbComp.expect (ProbComp.sample (Fin n → Bool)) (fun x =>
++          ProbComp.expect (ProbComp.sample (Table n)) (fun T =>
++            ProbComp.expect (ProbComp.sample ρ)
++              (fun r => if R x T r p then (1 : ℝ) else 0)))) := by
++      apply congrArg (ProbComp.expect (ProbComp.sample (Fin n × Bool)))
++      funext p
++      exact ProbComp.expect_sample_coord p
++        (fun x T => ProbComp.expect (ProbComp.sample ρ)
++          (fun r => if R x T r p then (1 : ℝ) else 0))
++        (fun x x' T => by
++          apply congrArg (ProbComp.expect (ProbComp.sample ρ))
++          funext r
++          rw [hinv x x' T r p])
++
++end TCSlib.Cryptography.Authentication.LamportFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/TableCoins.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/TableCoins.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..a2414bf74b038e76f0b047b20b45b9b78e75e61b
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/TableCoins.lean
+@@ -0,0 +1,88 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.Lamport.Planted
++import TCSlib.Cryptography.Asymptotic.OneWay
++import Mathlib.Logic.Equiv.Prod
++import Mathlib.Tactic.Ring
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Lamport coin tapes as typed key tables
++
++## Main definitions
++
++* `tableCoins`: regroup a `2n²`-bit tape as the false and true `n`-bit preimages in each row.
++
++## Main results
++
++* `tableCoins_apply` and `tableCoins_symm`: the forward and inverse block equations.
++* `ofFn_tableCoins_symm`: the inverse equivalence serializes a table as `secretWord`.
++* `secretWord_tableCoins`: serializing the table of a tape recovers the tape's word.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January
++  2010, Protocol 137.1 and Theorem 137.2. This module is generic serialization glue for the
++  protocol's preimage table.
++-/
++
++namespace TCSlib.Cryptography.Authentication.LamportFill
++
++/-- The row-major tape width `n(2n)` equals the generator width `2n²`. -/
++theorem tableCoins_width (n : ℕ) : 2 * n * n = n * (2 * n) := by ring
++
++/-- A `2n²`-bit coin tape is equivalent to a table with an `n`-bit cell for each
++`(i,c) ∈ Fin n × Bool`. The first cell of each row is indexed by `false`, the second by
++`true`. Zero-width tapes and empty tables are included. -/
++def tableCoins (n : ℕ) : (Fin (2 * n * n) → Bool) ≃ Table n :=
++  ((((Equiv.arrowCongr (finCongr (tableCoins_width n)) (Equiv.refl Bool)).trans
++      (FunFamily.blocks n (2 * n))).trans
++      (Equiv.piCongrRight fun _ : Fin n =>
++        (FunFamily.blocks 2 n).trans
++          (Equiv.arrowCongr finTwoEquiv (Equiv.refl (Fin n → Bool))))).trans
++      (Equiv.curry (Fin n) Bool (Fin n → Bool)).symm)
++
++/-- The cell `(i,c)` of `tableCoins n x` is block `c` of the `i`th two-preimage row
++of `x`, with `false` selecting block zero and `true` block one. -/
++theorem tableCoins_apply (n : ℕ) (x : Fin (2 * n * n) → Bool) (i : Fin n) (c : Bool) :
++    tableCoins n x (i, c) =
++      FunFamily.blocks 2 n
++        (FunFamily.blocks n (2 * n)
++          ((Equiv.arrowCongr (finCongr (tableCoins_width n)) (Equiv.refl Bool)) x) i)
++        (finTwoEquiv.symm c) := rfl
++
++/-- The inverse of `tableCoins` concatenates the two preimage cells of each row and then
++concatenates the rows, casting only between the equal widths `n(2n)` and `2n²`. -/
++theorem tableCoins_symm (n : ℕ) (T : Table n) :
++    (tableCoins n).symm T =
++      (Equiv.arrowCongr (finCongr (tableCoins_width n).symm) (Equiv.refl Bool))
++        ((FunFamily.blocks n (2 * n)).symm fun i =>
++          (FunFamily.blocks 2 n).symm fun j => T (i, finTwoEquiv j)) := rfl
++
++/-- The word of the inverse tape is exactly the row-major secret word:
++`List.ofFn ((tableCoins n).symm T) = secretWord T`.
++
++**Proof sketch.** Reading the width cast preserves the word. The block-equivalence inverse
++concatenates the words of its rows. Inside each row, the two-block inverse concatenates the
++false and true preimages, which is the published serialization equation for `secretWord`. -/
++theorem ofFn_tableCoins_symm {n : ℕ} (T : Table n) :
++    List.ofFn ((tableCoins n).symm T) = secretWord T := by
++  rw [tableCoins_symm, ofFn_arrowCongr_finCongr, FunFamily.ofFn_blocks_symm, secretWord_eq]
++  apply congrArg List.flatten
++  apply congrArg List.ofFn
++  funext i
++  rw [FunFamily.ofFn_blocks_symm, OneWay.flatten_ofFn_two]
++  rfl
++
++/-- Serializing the table obtained from a tape recovers the tape's word:
++`secretWord (tableCoins n x) = List.ofFn x`. -/
++theorem secretWord_tableCoins {n : ℕ} (x : Fin (2 * n * n) → Bool) :
++    secretWord (tableCoins n x) = List.ofFn x := by
++  rw [← ofFn_tableCoins_symm, Equiv.symm_apply_apply]
++
++end TCSlib.Cryptography.Authentication.LamportFill

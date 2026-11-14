@@ -1,0 +1,962 @@
+[
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean",
+    "sha256": "c9a3d84f7ab85a89f6ce7632fa8ccc1f3c27382896b4d657d0da777f82d21cb0",
+    "lines": 134,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        41,
+        "noncomputable def indexBits (n i : ℕ) (hi : i ≤ n) : List Bool :="
+      ],
+      [
+        45,
+        "theorem indexBits_eq (n i : ℕ) (hi : i ≤ n) : indexBits n i hi ="
+      ],
+      [
+        49,
+        "theorem length_indexBits (n i : ℕ) (hi : i ≤ n) :"
+      ],
+      [
+        54,
+        "theorem length_indexBits_le (n i : ℕ) (hi : i ≤ n) : (indexBits n i hi).length ≤ n := by"
+      ],
+      [
+        62,
+        "theorem indexBits_value (n i : ℕ) (hi : i ≤ n) :"
+      ],
+      [
+        72,
+        "def expandIndex (U : List Bool → List Bool) (w : List Bool) : List Bool :="
+      ],
+      [
+        77,
+        "theorem expandIndex_eq (U : List Bool → List Bool) (w : List Bool) : expandIndex U w ="
+      ],
+      [
+        82,
+        "theorem expandIndex_poly {U : List Bool → List Bool} (hU : PolyTimeComputable U) :"
+      ],
+      [
+        90,
+        "theorem expandIndex_advInput (U : List Bool → List Bool)"
+      ],
+      [
+        107,
+        "theorem exists_withIndexAdvice (A : NUPPT) (i : ℕ → ℕ) (hi : ∀ n, i n ≤ n) :"
+      ],
+      [
+        126,
+        "theorem runAt_indexAdvice {A B : NUPPT} (hcoins : B.coins = A.coins)"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean",
+    "sha256": "5dddc3a741399216792dfc4ffa6d43d2e2043e37e3a16bd9e61d90409c456313",
+    "lines": 135,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        45,
+        "theorem sum_favourable_bits (a b : Bool) :"
+      ],
+      [
+        51,
+        "theorem sum_favourable_pairs {ι : Type} [Fintype ι] (m m' : ι → Bool) :"
+      ],
+      [
+        62,
+        "theorem one_le_favourable_sum {ι : Type} [Fintype ι] {m m' : ι → Bool} (h : m ≠ m') :"
+      ],
+      [
+        81,
+        "theorem favourable_expect_ge {ι : Type} [Fintype ι] [Nonempty ι]"
+      ],
+      [
+        95,
+        "theorem noQuery_expect_eq_half {ι : Type} [Fintype ι] [Nonempty ι] (m' : ι → Bool) :"
+      ],
+      [
+        110,
+        "theorem exists_expect_sample_le {ι : Type} [Fintype ι] [Nonempty ι] (g : ι → ℝ) :"
+      ],
+      [
+        124,
+        "theorem expect_favourable_of_success {α : Type} (c : ProbComp α) (P : α → Prop)"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean",
+    "sha256": "de5f7ebae3004094abfa4d29045c203e04d0ec14314fee54ed6270d90f095209",
+    "lines": 89,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        44,
+        "theorem optionQuery_favourable_expect_ge {ι : Type} [Fintype ι] [Nonempty ι]"
+      ],
+      [
+        71,
+        "theorem exists_position_fairBit_expect_ge {ι : Type} [Fintype ι] [Nonempty ι]"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks.lean",
+    "sha256": "4bc9467a3aa179fe80feb71ae7c01ade5fcb52104adebbd0cdac140498f24fdf",
+    "lines": 78,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        41,
+        "theorem flatten_ofFn_update {B : ℕ} :"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Closing.lean",
+    "sha256": "dcb590df332d77b6c8f78cb18ce2041ffa070b5d2bfed2076c994f31225d1f33",
+    "lines": 94,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        43,
+        "theorem negligible_of_linear_bound {e p : ℕ → ℝ} (hp : Negligible p)"
+      ],
+      [
+        58,
+        "theorem negligible_of_inversion_bound (F : FunFamily) (hf : F.StrongOneWay) (B : NUPPT)"
+      ],
+      [
+        69,
+        "theorem oneTimeSecure_of_inversion_bound (S : SignatureScheme) (F : FunFamily)"
+      ],
+      [
+        81,
+        "theorem oneTimeSecure_of_inversion_lower (S : SignatureScheme) (F : FunFamily)"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding.lean",
+    "sha256": "3b02b5e0b3c3e7ba4ada04cd61b7af4f8898b9892922e62aeec8e85dfeb916e8",
+    "lines": 84,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        43,
+        "theorem encodeList_injective : Function.Injective encodeList := by"
+      ],
+      [
+        70,
+        "theorem encodeList_eq_iff (xs ys : List (List Bool)) :"
+      ],
+      [
+        76,
+        "theorem encodeList_ofFn_eq_iff {q : ℕ} (g h : Fin q → List Bool) :"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean",
+    "sha256": "cb87f805bcd2dd7d44c22b2335c989675baa82ff7b1c7c531938556a6c322476",
+    "lines": 226,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        56,
+        "def honestOutput (T : Table n) (r : ρ) : Fin (n + n * n) → Bool :="
+      ],
+      [
+        60,
+        "theorem honestOutput_eq (T : Table n) (r : ρ) :"
+      ],
+      [
+        66,
+        "def HonestSuccess (T : Table n) (r : ρ) : Prop :="
+      ],
+      [
+        72,
+        "theorem honestSuccess_iff (T : Table n) (r : ρ) :"
+      ],
+      [
+        81,
+        "def Favourable (T : Table n) (r : ρ) (p : Fin n × Bool) : Prop :="
+      ],
+      [
+        86,
+        "theorem favourable_iff (T : Table n) (r : ρ) (p : Fin n × Bool) :"
+      ],
+      [
+        92,
+        "def RedSuccess (y : Fin ℓ → Bool) (T : Table n) (r : ρ) (p : Fin n × Bool) : Prop :="
+      ],
+      [
+        99,
+        "theorem redSuccess_iff (y : Fin ℓ → Bool) (T : Table n) (r : ρ) (p : Fin n × Bool) :"
+      ],
+      [
+        106,
+        "theorem plantTable_self (T : Table n) (i : Fin n) (c : Bool) :"
+      ],
+      [
+        115,
+        "theorem redSuccess_plant_iff (y : Fin ℓ → Bool) (T : Table n) (r : ρ)"
+      ],
+      [
+        122,
+        "theorem diagonal_red_of_success_favourable"
+      ],
+      [
+        142,
+        "theorem favourable_mass_of_success [Nonempty (Fin n)] (T : Table n) (r : ρ)"
+      ],
+      [
+        168,
+        "noncomputable def honestProbability : ℝ :="
+      ],
+      [
+        173,
+        "theorem honestProbability_eq : honestProbability g adv ="
+      ],
+      [
+        179,
+        "noncomputable def redProbability (p : Fin n × Bool) : ℝ :="
+      ],
+      [
+        186,
+        "theorem redProbability_eq (p : Fin n × Bool) : redProbability g adv p ="
+      ],
+      [
+        199,
+        "theorem averaged_redProbability_ge [Nonempty (Fin n)]"
+      ],
+      [
+        216,
+        "theorem exists_best_position [Nonempty (Fin n)]"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean",
+    "sha256": "729c50e6e5b7551ee3c39f8dc53df132eb845d6418de3d40a056471036f0cdec",
+    "lines": 87,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        50,
+        "theorem fairBit_redProbability_le_invProbAt (F : FunFamily) (n : ℕ) (A B : NUPPT)"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean",
+    "sha256": "2d3b601277737cb739dd2d7ced6dae4e7173841822f8fdf50ea7a265461f4b1a",
+    "lines": 357,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        43,
+        "def u (v : List Bool) : List Bool := pairFstD v"
+      ],
+      [
+        45,
+        "theorem u_eq (v : List Bool) : u v = pairFstD v := rfl"
+      ],
+      [
+        47,
+        "theorem u_poly : PolyTimeComputable u := polyTimeComputable_pairFstD"
+      ],
+      [
+        50,
+        "def y (v : List Bool) : List Bool := pairFstD (pairFstD (pairSndD v))"
+      ],
+      [
+        52,
+        "theorem y_eq (v : List Bool) : y v = pairFstD (pairFstD (pairSndD v)) := rfl"
+      ],
+      [
+        54,
+        "theorem y_poly : PolyTimeComputable y :="
+      ],
+      [
+        58,
+        "def pos (v : List Bool) : List Bool := pairSndD (pairFstD (pairSndD v))"
+      ],
+      [
+        60,
+        "theorem pos_eq (v : List Bool) : pos v = pairSndD (pairFstD (pairSndD v)) := rfl"
+      ],
+      [
+        62,
+        "theorem pos_poly : PolyTimeComputable pos :="
+      ],
+      [
+        66,
+        "def seed (v : List Bool) : List Bool := pairSndD (pairSndD v)"
+      ],
+      [
+        68,
+        "theorem seed_eq (v : List Bool) : seed v = pairSndD (pairSndD v) := rfl"
+      ],
+      [
+        70,
+        "theorem seed_poly : PolyTimeComputable seed :="
+      ],
+      [
+        74,
+        "def bit (v : List Bool) : Bool := (seed v).headD false"
+      ],
+      [
+        76,
+        "theorem bit_eq (v : List Bool) : bit v = (seed v).headD false := rfl"
+      ],
+      [
+        78,
+        "theorem bit_poly : PolyTimeComputable (fun v => [bit v]) :="
+      ],
+      [
+        82,
+        "def tape (v : List Bool) : List Bool := (seed v).drop 1"
+      ],
+      [
+        84,
+        "theorem tape_eq (v : List Bool) : tape v = (seed v).drop 1 := rfl"
+      ],
+      [
+        86,
+        "theorem tape_poly : PolyTimeComputable tape := polyTimeComputable_tail.comp seed_poly"
+      ],
+      [
+        89,
+        "theorem u_seedIn (n : ℕ) (z ω : List Bool) :"
+      ],
+      [
+        94,
+        "theorem y_seedIn (n : ℕ) (challenge index ω : List Bool) :"
+      ],
+      [
+        99,
+        "theorem pos_seedIn (n : ℕ) (challenge index ω : List Bool) :"
+      ],
+      [
+        104,
+        "theorem seed_seedIn (n : ℕ) (z ω : List Bool) : seed (seedIn n z ω) = ω := by"
+      ],
+      [
+        108,
+        "theorem bit_seedIn (n : ℕ) (z ρ : List Bool) (c : Bool) :"
+      ],
+      [
+        113,
+        "theorem tape_seedIn (n : ℕ) (z ρ : List Bool) (c : Bool) :"
+      ],
+      [
+        120,
+        "theorem take_poly {a xs : List Bool → List Bool} (ha : PolyTimeComputable a)"
+      ],
+      [
+        129,
+        "theorem drop_poly {a xs : List Bool → List Bool} (ha : PolyTimeComputable a)"
+      ],
+      [
+        137,
+        "def width (W : PolyExpr) (v : List Bool) : List Bool := List.replicate (W.eval (u v).length) true"
+      ],
+      [
+        139,
+        "theorem width_eq (W : PolyExpr) (v : List Bool) :"
+      ],
+      [
+        142,
+        "theorem width_poly (W : PolyExpr) : PolyTimeComputable (width W) :="
+      ],
+      [
+        146,
+        "def offset (W : PolyExpr) (v : List Bool) : List Bool :="
+      ],
+      [
+        149,
+        "theorem offset_eq (W : PolyExpr) (v : List Bool) :"
+      ],
+      [
+        152,
+        "theorem offset_poly (W : PolyExpr) : PolyTimeComputable (offset W) := by"
+      ],
+      [
+        159,
+        "def first (v : List Bool) : List Bool :="
+      ],
+      [
+        162,
+        "theorem first_eq (v : List Bool) : first v ="
+      ],
+      [
+        165,
+        "theorem first_poly : PolyTimeComputable first :="
+      ],
+      [
+        169,
+        "def second (v : List Bool) : List Bool :="
+      ],
+      [
+        172,
+        "theorem second_eq (v : List Bool) : second v ="
+      ],
+      [
+        175,
+        "theorem second_poly : PolyTimeComputable second := by"
+      ],
+      [
+        182,
+        "def honestPk (G : List Bool → List Bool) (v : List Bool) : List Bool :="
+      ],
+      [
+        185,
+        "theorem honestPk_eq (G : List Bool → List Bool) (v : List Bool) : honestPk G v ="
+      ],
+      [
+        188,
+        "theorem honestPk_poly {G : List Bool → List Bool} (hG : PolyTimeComputable G) :"
+      ],
+      [
+        195,
+        "def replacement (E : List Bool → List Bool) (v : List Bool) : List Bool :="
+      ],
+      [
+        200,
+        "theorem replacement_eq (E : List Bool → List Bool) (v : List Bool) : replacement E v ="
+      ],
+      [
+        205,
+        "theorem replacement_poly {E : List Bool → List Bool} (hE : PolyTimeComputable E) :"
+      ],
+      [
+        213,
+        "def advIn (W : PolyExpr) (E G : List Bool → List Bool) (v : List Bool) : List Bool :="
+      ],
+      [
+        217,
+        "theorem advIn_eq (W : PolyExpr) (E G : List Bool → List Bool) (v : List Bool) :"
+      ],
+      [
+        224,
+        "theorem advIn_poly (W : PolyExpr) {E G : List Bool → List Bool}"
+      ],
+      [
+        233,
+        "def context (w : List Bool) : List Bool := pairFstD w"
+      ],
+      [
+        235,
+        "theorem context_eq (w : List Bool) : context w = pairFstD w := rfl"
+      ],
+      [
+        237,
+        "theorem context_poly : PolyTimeComputable context := polyTimeComputable_pairFstD"
+      ],
+      [
+        240,
+        "def state (w : List Bool) : List Bool := pairFstD (pairSndD w)"
+      ],
+      [
+        242,
+        "theorem state_eq (w : List Bool) : state w = pairFstD (pairSndD w) := rfl"
+      ],
+      [
+        244,
+        "theorem state_poly : PolyTimeComputable state :="
+      ],
+      [
+        248,
+        "def message (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))"
+      ],
+      [
+        250,
+        "theorem message_eq (w : List Bool) : message w = pairSndD (pairSndD (pairSndD w)) := rfl"
+      ],
+      [
+        252,
+        "theorem message_poly : PolyTimeComputable message :="
+      ],
+      [
+        256,
+        "theorem context_input {k : ℕ} (n : ℕ) (z ω s : List Bool) (i : Fin k) (x : List Bool) :"
+      ],
+      [
+        261,
+        "theorem state_input {k : ℕ} (n : ℕ) (z ω s : List Bool) (i : Fin k) (x : List Bool) :"
+      ],
+      [
+        266,
+        "theorem message_input {k : ℕ} (n : ℕ) (z ω s : List Bool) (i : Fin k) (x : List Bool) :"
+      ],
+      [
+        271,
+        "def blocked (w : List Bool) : Bool :="
+      ],
+      [
+        274,
+        "theorem blocked_eq (w : List Bool) : blocked w ="
+      ],
+      [
+        277,
+        "theorem blocked_poly : PolyTimeComputable (fun w => [blocked w]) := by"
+      ],
+      [
+        288,
+        "def run (S : List Bool → List Bool) (w : List Bool) : List Bool :="
+      ],
+      [
+        293,
+        "theorem run_eq (S : List Bool → List Bool) (w : List Bool) : run S w ="
+      ],
+      [
+        298,
+        "theorem run_poly {S : List Bool → List Bool} (hS : PolyTimeComputable S) :"
+      ],
+      [
+        307,
+        "def out (w : List Bool) : List Bool :="
+      ],
+      [
+        312,
+        "theorem out_eq (w : List Bool) : out w ="
+      ],
+      [
+        317,
+        "theorem out_poly : PolyTimeComputable out :="
+      ],
+      [
+        326,
+        "def handler (W : PolyExpr) (E G S : List Bool → List Bool)"
+      ],
+      [
+        343,
+        "theorem handler_stateLen : (handler W E G S hE hG hS).stateLen = .const 1 := rfl"
+      ],
+      [
+        345,
+        "theorem handler_seedLen : (handler W E G S hE hG hS).seedLen ="
+      ],
+      [
+        348,
+        "theorem handler_init (n : ℕ) (i : Fin ((handler W E G S hE hG hS).stateLen.eval n)) :"
+      ],
+      [
+        351,
+        "theorem handler_run : (handler W E G S hE hG hS).run = run S := rfl"
+      ],
+      [
+        353,
+        "theorem handler_advIn : (handler W E G S hE hG hS).advIn = advIn W E G := rfl"
+      ],
+      [
+        355,
+        "theorem handler_out : (handler W E G S hE hG hS).out = out := rfl"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean",
+    "sha256": "5f62137b95e2ac0998c504033cc120b2cbd25265b1ede9637edf95e6b35b8b6e",
+    "lines": 234,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        44,
+        "theorem publicWord_flatten {n ℓ : ℕ} (Y : (Fin n × Bool) → Fin ℓ → Bool) :"
+      ],
+      [
+        57,
+        "theorem first_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge : List Bool) :"
+      ],
+      [
+        73,
+        "theorem second_context {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (challenge : List Bool) :"
+      ],
+      [
+        91,
+        "theorem replacement_context {n ℓ : ℕ} (g : (Fin n → Bool) → Fin ℓ → Bool)"
+      ],
+      [
+        115,
+        "theorem advIn_context {n ℓ : ℕ} (W : PolyExpr)"
+      ],
+      [
+        172,
+        "theorem headD_drop_ofFn {n : ℕ} (m : Fin n → Bool) (i : Fin n) :"
+      ],
+      [
+        179,
+        "theorem run_input {n : ℕ} (S : List Bool → List Bool)"
+      ],
+      [
+        200,
+        "theorem run_safe {n : ℕ} (S : List Bool → List Bool)"
+      ],
+      [
+        215,
+        "theorem out_nonabort {n : ℕ} (i : Fin n) (z ρ : List Bool)"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Nonabort.lean",
+    "sha256": "9c47635c2aed69e74b718389cd905983e708b2565191edbd55bd1202ccd0e8d0",
+    "lines": 64,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        38,
+        "theorem safe_of_nonabort {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bool)"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean",
+    "sha256": "ddc015a571c7fe841b53e819e497358069ad50aa421c05edae070cde69c8beed",
+    "lines": 452,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        44,
+        "abbrev Table (n : ℕ) := (Fin n × Bool) → Fin n → Bool"
+      ],
+      [
+        47,
+        "theorem Table_eq (n : ℕ) : Table n = ((Fin n × Bool) → Fin n → Bool) := rfl"
+      ],
+      [
+        50,
+        "def publicWord {n ℓ : ℕ} (Y : (Fin n × Bool) → Fin ℓ → Bool) : List Bool :="
+      ],
+      [
+        55,
+        "theorem publicWord_eq {n ℓ : ℕ} (Y : (Fin n × Bool) → Fin ℓ → Bool) :"
+      ],
+      [
+        60,
+        "def secretWord {n : ℕ} (T : Table n) : List Bool :="
+      ],
+      [
+        64,
+        "theorem secretWord_eq {n : ℕ} (T : Table n) :"
+      ],
+      [
+        70,
+        "theorem length_secretWord {n : ℕ} (T : Table n) : (secretWord T).length = 2 * n * n := by"
+      ],
+      [
+        81,
+        "def plantTable {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool)"
+      ],
+      [
+        86,
+        "theorem plantTable_eq {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool)"
+      ],
+      [
+        91,
+        "theorem plantTable_at {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool) :"
+      ],
+      [
+        96,
+        "theorem plantTable_ne {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (x : Fin n → Bool)"
+      ],
+      [
+        101,
+        "theorem plantTable_update {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)"
+      ],
+      [
+        107,
+        "def tableSignature {n : ℕ} (T : Table n) (m : Fin n → Bool) : Fin (n * n) → Bool :="
+      ],
+      [
+        112,
+        "theorem tableSignature_apply {n : ℕ} (T : Table n) (m : Fin n → Bool)"
+      ],
+      [
+        117,
+        "theorem ofFn_tableSignature {n : ℕ} (T : Table n) (m : Fin n → Bool) :"
+      ],
+      [
+        128,
+        "theorem tableSignature_plant_of_safe {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)"
+      ],
+      [
+        143,
+        "def tablePublic {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)"
+      ],
+      [
+        147,
+        "theorem tablePublic_eq {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)"
+      ],
+      [
+        151,
+        "def plantedPublic {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)"
+      ],
+      [
+        156,
+        "theorem plantedPublic_eq {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)"
+      ],
+      [
+        161,
+        "theorem plantedPublic_image {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)"
+      ],
+      [
+        170,
+        "theorem plantedPublic_plant {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)"
+      ],
+      [
+        180,
+        "def signatureBlock {n : ℕ} (σ : Fin (n * n) → Bool) (i : Fin n) : Fin n → Bool :="
+      ],
+      [
+        184,
+        "theorem signatureBlock_eq {n : ℕ} (σ : Fin (n * n) → Bool) (i : Fin n) :"
+      ],
+      [
+        189,
+        "theorem extract_planted {n : ℕ} {Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)"
+      ],
+      [
+        199,
+        "theorem exists_pure_of_cost_zero {ι α : Type} {spec : OracleSpec ι}"
+      ],
+      [
+        209,
+        "def firstQuery {n : ℕ} {α : Type} :"
+      ],
+      [
+        215,
+        "theorem firstQuery_pure {n : ℕ} {α : Type} (a : α) :"
+      ],
+      [
+        220,
+        "theorem firstQuery_query {n : ℕ} {α : Type} (j : Fin 1) (m : Fin n → Bool)"
+      ],
+      [
+        226,
+        "def tableSigner {n : ℕ} (T : Table n) :"
+      ],
+      [
+        231,
+        "theorem tableSigner_eq {n : ℕ} (T : Table n) :"
+      ],
+      [
+        236,
+        "def firstLog {n : ℕ} {α : Type} (T : Table n) :"
+      ],
+      [
+        243,
+        "theorem firstLog_pure {n : ℕ} {α : Type} (T : Table n) (a : α) :"
+      ],
+      [
+        248,
+        "theorem firstLog_query {n : ℕ} {α : Type} (T : Table n) (j : Fin 1) (m : Fin n → Bool)"
+      ],
+      [
+        259,
+        "theorem honest_transcript {n : ℕ} {α : Type} (T : Table n)"
+      ],
+      [
+        276,
+        "theorem fresh_firstLog_iff {n : ℕ} {α : Type} (T : Table n)"
+      ],
+      [
+        284,
+        "theorem exists_honest_transcript {n : ℕ} {α : Type} (T : Table n)"
+      ],
+      [
+        293,
+        "def Safe {n : ℕ} {α : Type}"
+      ],
+      [
+        299,
+        "theorem safe_iff {n : ℕ} {α : Type}"
+      ],
+      [
+        305,
+        "def abortingAnswer {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (m : Fin n → Bool) :"
+      ],
+      [
+        310,
+        "theorem abortingAnswer_eq {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) (m : Fin n → Bool) :"
+      ],
+      [
+        314,
+        "theorem abortingAnswer_plant {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)"
+      ],
+      [
+        323,
+        "def abortingImpl {n : ℕ} (T : Table n) (i : Fin n) (c : Bool) :"
+      ],
+      [
+        328,
+        "theorem abortingImpl_apply {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)"
+      ],
+      [
+        334,
+        "theorem abortingImpl_plant {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)"
+      ],
+      [
+        341,
+        "theorem abortingImpl_safe {n : ℕ} (T : Table n) (i : Fin n) (c : Bool)"
+      ],
+      [
+        355,
+        "theorem planted_coupling {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bool)"
+      ],
+      [
+        373,
+        "def extractionExperiment {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bool)"
+      ],
+      [
+        381,
+        "theorem extractionExperiment_eq {n : ℕ} {α : Type} (T : Table n) (i : Fin n) (c : Bool)"
+      ],
+      [
+        389,
+        "theorem extractionExperiment_plant {n : ℕ} {α : Type} (T : Table n) (i : Fin n)"
+      ],
+      [
+        399,
+        "def plantedExperiment {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)"
+      ],
+      [
+        408,
+        "theorem plantedExperiment_eq {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y) (T : Table n)"
+      ],
+      [
+        418,
+        "theorem plantedExperiment_plant {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y)"
+      ],
+      [
+        434,
+        "theorem favorable_extraction {n : ℕ} {α Y : Type} (g : (Fin n → Bool) → Y)"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean",
+    "sha256": "94d45325952bf01dbe6665f4fa85d2eee10f117df9b3babd34e62639f5a85ee3",
+    "lines": 193,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        42,
+        "def machineForger (L : PolyExpr) (A : NUPPT) (n : ℕ)"
+      ],
+      [
+        50,
+        "theorem machineForger_eq (L : PolyExpr) (A : NUPPT) (n : ℕ)"
+      ],
+      [
+        58,
+        "theorem machineForger_eq_fun (L : PolyExpr) (A : NUPPT) (n : ℕ) :"
+      ],
+      [
+        64,
+        "theorem machineForger_cost (L : PolyExpr) (A : NUPPT) (n : ℕ)"
+      ],
+      [
+        81,
+        "theorem exists_realization_machine"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Seed.lean",
+    "sha256": "5c7ef53b9cf27919af022cf74981c21f2fb828f8c806006539979fb6b30ff4d5",
+    "lines": 73,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        34,
+        "theorem seedCoins_width (n : ℕ) : 1 + 2 * n * n = 2 * n * n + 1 :="
+      ],
+      [
+        39,
+        "def seedCoins (n : ℕ) : (Fin (1 + 2 * n * n) → Bool) ≃ Bool × Table n :="
+      ],
+      [
+        46,
+        "theorem seedCoins_apply (n : ℕ) (x : Fin (1 + 2 * n * n) → Bool) :"
+      ],
+      [
+        55,
+        "theorem seedCoins_symm (n : ℕ) (c : Bool) (T : Table n) :"
+      ],
+      [
+        62,
+        "theorem ofFn_seedCoins_symm {n : ℕ} (c : Bool) (T : Table n) :"
+      ],
+      [
+        68,
+        "theorem ofFn_seedCoins {n : ℕ} (x : Fin (1 + 2 * n * n) → Bool) :"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean",
+    "sha256": "e7784454b84694ea703c29e8c35e9412c3cfee3c9ae6e02deb429d6f2933055c",
+    "lines": 149,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        55,
+        "theorem coordinate_reduction_bound {n : ℕ} [Nonempty (Fin n)]"
+      ]
+    ]
+  },
+  {
+    "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/TableCoins.lean",
+    "sha256": "c05f676260541ad80ba0cf0a54445e837fdf57beee063440fd486dcda71bab68",
+    "lines": 88,
+    "missing_header_fields": [],
+    "undocumented_declarations": [],
+    "declarations": [
+      [
+        37,
+        "theorem tableCoins_width (n : ℕ) : 2 * n * n = n * (2 * n) := by ring"
+      ],
+      [
+        42,
+        "def tableCoins (n : ℕ) : (Fin (2 * n * n) → Bool) ≃ Table n :="
+      ],
+      [
+        52,
+        "theorem tableCoins_apply (n : ℕ) (x : Fin (2 * n * n) → Bool) (i : Fin n) (c : Bool) :"
+      ],
+      [
+        61,
+        "theorem tableCoins_symm (n : ℕ) (T : Table n) :"
+      ],
+      [
+        73,
+        "theorem ofFn_tableCoins_symm {n : ℕ} (T : Table n) :"
+      ],
+      [
+        84,
+        "theorem secretWord_tableCoins {n : ℕ} (x : Fin (2 * n * n) → Bool) :"
+      ]
+    ]
+  }
+]

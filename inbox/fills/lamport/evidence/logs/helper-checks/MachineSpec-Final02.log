@@ -1,0 +1,78 @@
+start=2026-11-14T08:51:50.475876+00:00
+command=["python3", "-I", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/lean_host_guard.py", "--", "/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec"]
+source-sha256=cef99a696025b8e28c756bd53dcbd7fc89f0e34c990a4b6ce2116ca66f0eb074
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:48:2: error: `simp` made no progress
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:52:55: warning: unused variable `hg`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:67:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.take ?m.93 (List.take ?m.94 ?m.95)
+in the target expression
+  (fun w => List.take n w) (List.take (2 * n) (List.drop (↑i * (2 * n)) (secretWord T))) =
+    (fun w => List.take n w) (List.ofFn (T (i, false)) ++ List.ofFn (T (i, true)))
+
+hcoin :
+  ∀ {q B : ℕ} (g : Fin q → List Bool),
+    (∀ (j : Fin q), (g j).length = B) → ∀ (i : Fin q), coinBlock B (↑i) (List.ofFn g).flatten = g i
+n : ℕ
+T : Table n
+i : Fin n
+c : Bool
+challenge : List Bool
+hrow : List.take (2 * n) (List.drop (↑i * (2 * n)) (secretWord T)) = List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))
+h :
+  (fun w => List.take n w) (List.take (2 * n) (List.drop (↑i * (2 * n)) (secretWord T))) =
+    (fun w => List.take n w) (List.ofFn (T (i, false)) ++ List.ofFn (T (i, true)))
+⊢ List.take n (List.drop (↑i * (2 * n)) (secretWord T)) = List.ofFn (T (i, false))
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:82:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.drop ?m.93 (List.take ?m.94 ?m.95)
+in the target expression
+  (fun w => List.drop n w) (List.take (2 * n) (List.drop (↑i * (2 * n)) (secretWord T))) =
+    (fun w => List.drop n w) (List.ofFn (T (i, false)) ++ List.ofFn (T (i, true)))
+
+hcoin :
+  ∀ {q B : ℕ} (g : Fin q → List Bool),
+    (∀ (j : Fin q), (g j).length = B) → ∀ (i : Fin q), coinBlock B (↑i) (List.ofFn g).flatten = g i
+n : ℕ
+T : Table n
+i : Fin n
+c : Bool
+challenge : List Bool
+hrow : List.take (2 * n) (List.drop (↑i * (2 * n)) (secretWord T)) = List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))
+h :
+  (fun w => List.drop n w) (List.take (2 * n) (List.drop (↑i * (2 * n)) (secretWord T))) =
+    (fun w => List.drop n w) (List.ofFn (T (i, false)) ++ List.ofFn (T (i, true)))
+⊢ List.take n (List.drop (↑i * (2 * n) + n) (secretWord T)) = List.ofFn (T (i, true))
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:219:13: warning: This simp argument is unused:
+  LamportMachine.context_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [L̵a̵m̵po̵r̵t̵M̵ac̵h̵in̵e̵.̵c̵o̵n̵t̵e̵x̵t̵_̵e̵q̵,̵ ̵p̵a̵i̵rFstD_pairEncode, pairSndD_pairEncode, List.headD_cons, Bool.false_eq_true,
+      if_false, LamportMachine.u_seedIn, LamportMachine.offset_eq, hz,
+  ̵  ̵ ̵ ̵List.length_replicate,
+  ̲  ̲ ̲ ̲PolyExpr.eval_var]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec): no fresh .olean produced
+        2.25 real         1.57 user         0.95 sys
+          2211725312  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175989  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  15  voluntary context switches
+                6815  involuntary context switches
+            30729420  instructions retired
+            14706010  cycles elapsed
+             1605968  peak memory footprint
+end=2026-11-14T08:51:53.705713+00:00
+exit=1

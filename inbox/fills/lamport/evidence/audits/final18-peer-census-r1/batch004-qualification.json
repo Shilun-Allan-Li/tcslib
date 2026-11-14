@@ -1,0 +1,12 @@
+{
+  "original_batch": "batch004.json",
+  "original_sha256": "95e321c30a31f302260b8681f35d6dd6133233806b9b2ab0d3407e1549fc7a27",
+  "original_report_preserved": true,
+  "qualification": "batch004 overlay_pass=false is a peer-audit adaptation assumption failure: its unchanged original_queue_backup test compared the new cached-overlay immediate-base backup against the prehardening original queue. The overlay intentionally retains its immediate cached-installer base; all per-phase native census/request tests passed. No harness/native-source failure is inferred.",
+  "corrected_tool": "peer_census_audit.r3.1.py",
+  "corrected_tool_sha256": "fd1884c8035fa2c4ec450f784ea1ee4e3701e3c5e20a50ed671610d18683612a",
+  "corrected_batch": "batch005.json",
+  "corrected_batch_sha256": "358d16edd3cf921c31bc07ff5baea4e22788f175fdfd1c1809dd44c736bd8a22",
+  "corrected_checks": "Independently verifies original native-hardening queue.original against original queue, cached overlay queue.original against its declared immediate base, immediate-base SHA, and prior complete static cached-overlay review.",
+  "no_Lean_or_active_changes": true
+}

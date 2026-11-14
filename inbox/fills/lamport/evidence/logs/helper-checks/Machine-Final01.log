@@ -1,0 +1,49 @@
+start=2026-11-14T08:50:20.738201+00:00
+command=["python3", "-I", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/lean_host_guard.py", "--", "/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine"]
+source-sha256=b58a71c9adcf04bdb9a765d6fa2ab1304217ecf667a07226f400cf4dbb9acc41
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:175:9: error: don't know how to synthesize implicit argument `f`
+  @PolyTimeComputable.congr (fun v => List.take (u v).length (List.drop (offset ?m.6 v ++ u v).length (tape v))) second
+    (take_poly u_poly (drop_poly (PolyTimeComputable.append (offset_poly ?m.6) u_poly) tape_poly)) ?m.11
+context:
+⊢ List Bool → List Bool
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:175:10: error: don't know how to synthesize implicit argument `xs`
+  @take_poly u (fun v => List.drop (offset ?m.6 v ++ u v).length (tape v)) u_poly
+    (drop_poly (PolyTimeComputable.append (offset_poly ?m.6) u_poly) tape_poly)
+context:
+⊢ List Bool → List Bool
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:175:28: error: don't know how to synthesize implicit argument `a`
+  @drop_poly (fun x => offset ?m.6 x ++ u x) tape (PolyTimeComputable.append (offset_poly ?m.6) u_poly) tape_poly
+context:
+⊢ List Bool → List Bool
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:175:39: error: don't know how to synthesize implicit argument `f`
+  @PolyTimeComputable.append (offset ?m.6) u (offset_poly ?m.6) u_poly
+context:
+⊢ List Bool → List Bool
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:175:52: error: don't know how to synthesize placeholder for argument `W`
+context:
+⊢ PolyExpr
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:174:51: error: unsolved goals
+⊢ PolyTimeComputable second
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine): no fresh .olean produced
+        2.78 real         2.11 user         1.34 sys
+          2200436736  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173580  page reclaims
+                 981  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                 105  voluntary context switches
+               18371  involuntary context switches
+            30586448  instructions retired
+            17094178  cycles elapsed
+             1589584  peak memory footprint
+end=2026-11-14T08:50:24.009945+00:00
+exit=1

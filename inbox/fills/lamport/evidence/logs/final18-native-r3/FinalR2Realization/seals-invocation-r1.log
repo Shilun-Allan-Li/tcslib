@@ -1,0 +1,21 @@
+START 2026-11-14T10:26:40.349124+00:00
+COMMAND ["python3", "-I", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/preparation/final18-r2/cached-collectors-r3/tools/run_seals.py", "--root", "/private/tmp/tcslib-lamport-01a1d88f/proof", "--evidence", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence", "--manifest", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/seals/FinalR2Realization/seal-manifest.json", "--attempt", "finalr2realization-native-r1"]
+START FinalR2Realization_0_A
+END FinalR2Realization_0_A: SOURCE_PASS; 0 error(s)
+START FinalR2Realization_0_B
+END FinalR2Realization_0_B: SOURCE_FAIL; 6 error(s)
+START FinalR2Realization_ControlAUnsealed
+END FinalR2Realization_ControlAUnsealed: CONTROL_PASS; 0 error(s)
+START FinalR2Realization_ControlANegative
+END FinalR2Realization_ControlANegative: CONTROL_PASS; 1 error(s)
+START FinalR2Realization_ControlAReader
+END FinalR2Realization_ControlAReader: CONTROL_PASS; 0 error(s)
+START FinalR2Realization_ControlBUnsealed
+END FinalR2Realization_ControlBUnsealed: CONTROL_PASS; 0 error(s)
+START FinalR2Realization_ControlBNegative
+END FinalR2Realization_ControlBNegative: CONTROL_PASS; 1 error(s)
+START FinalR2Realization_ControlBReader
+END FinalR2Realization_ControlBReader: CONTROL_PASS; 0 error(s)
+{"end": "2026-11-14T10:27:12.864086+00:00", "expected_probes": 8, "checked_probes": 8, "queue_complete": true, "resource_stop": false, "status_counts": {"SOURCE_PASS": 1, "SOURCE_FAIL": 1, "CONTROL_PASS": 6}, "failing_declarations": [["TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean", "TCSlib.Cryptography.Authentication.LamportFill.exists_realization_machine"]], "all_harnesses_and_controls_valid": true, "all_source_seals_pass": false, "raw_results": "results.jsonl"}
+END 2026-11-14T10:27:12.871401+00:00
+EXIT 1

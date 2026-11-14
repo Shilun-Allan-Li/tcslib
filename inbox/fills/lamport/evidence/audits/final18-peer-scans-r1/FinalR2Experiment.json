@@ -1,0 +1,148 @@
+{
+  "commit": "47ced271090f45918645c842cd358c5079092754",
+  "phase": "FinalR2Experiment",
+  "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Experiment",
+  "source_sha256": "cb87f805bcd2dd7d44c22b2335c989675baa82ff7b1c7c531938556a6c322476",
+  "scan_sha256": "aeccdae86b0056f4a5486e6d2c622ceec378fef794459a6a329c1fcd28877666",
+  "token_readings": 38,
+  "foreign_candidate_rows": 2,
+  "genuine_forbidden_explicit_foreign_unfolds": 0,
+  "reviews": [
+    {
+      "index": 14,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Experiment",
+        "line": 134,
+        "operation": "rw",
+        "identifier": "g",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 129,
+        "lines": [
+          "  apply (redSuccess_iff g adv (g (T p)) T r p).2",
+          "  refine \u27e8honestOutput g adv T r, ?_, ?_\u27e9",
+          "  \u00b7 rw [plantedPublic_image, plantTable_self]",
+          "    have h := planted_coupling T p.1 p.2 (T p) (adv (tablePublic g T) r)",
+          "      (hcost _ r) hsafe",
+          "    rw [plantTable_self, \u2190 honestOutput_eq g adv T r] at h",
+          "    exact h",
+          "  \u00b7 have h := hacc p.1",
+          "    rw [hbit] at h",
+          "    exact h"
+        ]
+      },
+      "binding_context": {
+        "first_line": 50,
+        "lines": [
+          "variable {n \u2113 : \u2115} {\u03c1 : Type}",
+          "  (g : (Fin n \u2192 Bool) \u2192 Fin \u2113 \u2192 Bool)",
+          "  (adv : ((Fin n \u00d7 Bool) \u2192 Fin \u2113 \u2192 Bool) \u2192 \u03c1 \u2192",
+          "    OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) (Fin (n + n * n) \u2192 Bool))",
+          "",
+          "/-- Evaluate the forger on the honest public table with deterministic table signing. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "section parameter g (function family)",
+      "reason": "This token is a term argument to the owned honestOutput_eq theorem application. It resolves to the section parameter, not the unrelated YaoMachine/NUPPT projection, and is not a rewrite head being unfolded.",
+      "forbidden_explicit_foreign_unfold": false
+    },
+    {
+      "index": 15,
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport.Experiment",
+        "line": 134,
+        "operation": "rw",
+        "identifier": "adv",
+        "candidates": [
+          {
+            "spelling": "Complexity.NUPPT.adv",
+            "home": "TCSlib.Complexity.Randomized.PPT",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.adv",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "Complexity.NUPPT.adv",
+            "home": "TCSlib.Complexity.Randomized.PPT",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.adv",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "source_context": {
+        "first_line": 129,
+        "lines": [
+          "  apply (redSuccess_iff g adv (g (T p)) T r p).2",
+          "  refine \u27e8honestOutput g adv T r, ?_, ?_\u27e9",
+          "  \u00b7 rw [plantedPublic_image, plantTable_self]",
+          "    have h := planted_coupling T p.1 p.2 (T p) (adv (tablePublic g T) r)",
+          "      (hcost _ r) hsafe",
+          "    rw [plantTable_self, \u2190 honestOutput_eq g adv T r] at h",
+          "    exact h",
+          "  \u00b7 have h := hacc p.1",
+          "    rw [hbit] at h",
+          "    exact h"
+        ]
+      },
+      "binding_context": {
+        "first_line": 50,
+        "lines": [
+          "variable {n \u2113 : \u2115} {\u03c1 : Type}",
+          "  (g : (Fin n \u2192 Bool) \u2192 Fin \u2113 \u2192 Bool)",
+          "  (adv : ((Fin n \u00d7 Bool) \u2192 Fin \u2113 \u2192 Bool) \u2192 \u03c1 \u2192",
+          "    OracleComp (bitSpec (fun _ : Fin 1 => n) (fun _ => n * n)) (Fin (n + n * n) \u2192 Bool))",
+          "",
+          "/-- Evaluate the forger on the honest public table with deterministic table signing. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_role": "section parameter adv (typed adversary)",
+      "reason": "This token is a term argument to the owned honestOutput_eq theorem application. It resolves to the section parameter, not the unrelated YaoMachine/NUPPT projection, and is not a rewrite head being unfolded.",
+      "forbidden_explicit_foreign_unfold": false
+    }
+  ],
+  "method": "Source-only manual context review of every foreign-definition candidate; separate whole-file seals test hidden definitional closure.",
+  "created_at": "2026-11-14T10:23:27.490683+00:00"
+}

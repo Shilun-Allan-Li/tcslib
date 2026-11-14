@@ -1,0 +1,32 @@
+START 2026-11-14T09:23:56.375898+00:00
+COMMAND ['python3', '-I', '/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/lean_host_guard.py', '--', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation']
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:94:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.owpPredictor_apply`:
+  [Fintype α]
+  [Fintype β]
+  [Fintype ρ]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] [Fintype β] [Fintype ρ] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+        2.48 real         1.93 user         0.95 sys
+          2159116288  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174940  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                  17  voluntary context switches
+                8275  involuntary context switches
+            30772837  instructions retired
+            15558408  cycles elapsed
+             1589584  peak memory footprint
+END 2026-11-14T09:23:59.622697+00:00
+EXIT 0
+SOURCE_SHA256 a37cbcf65eb1438dcea25384523e8adc56b4fbd01f8ce33aee23b057ed015db3
+SOURCE_AFTER_SHA256 a37cbcf65eb1438dcea25384523e8adc56b4fbd01f8ce33aee23b057ed015db3

@@ -1,0 +1,174 @@
+{
+  "base": "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+  "commit": "47ced271090f45918645c842cd358c5079092754",
+  "created_at": "2026-11-14T09:28:29.616543+00:00",
+  "method": "Git blobs and bounded human source inspection; no Lean invocation",
+  "mechanical_results_sha256": "fa3e29725a260053237378dd18d2c037fd5d981a307492436b93edc3e305a837",
+  "all_intermediate_auth_import_only": [
+    {
+      "commit": "a89069800a2b04c9fa9e6969bfedaab044d14c25",
+      "nonimport_bytes_equal": true,
+      "original_imports_preserved": true,
+      "added_imports_only_helpers": true
+    },
+    {
+      "commit": "09ac6b6c8c7f5997928ee5dfb4f18984ba2709b5",
+      "nonimport_bytes_equal": true,
+      "original_imports_preserved": true,
+      "added_imports_only_helpers": true
+    },
+    {
+      "commit": "11cc4e54fb63bb1c6310e90e6fbaa07e7031fb07",
+      "nonimport_bytes_equal": true,
+      "original_imports_preserved": true,
+      "added_imports_only_helpers": true
+    },
+    {
+      "commit": "77ec7bb1255852eb6288c6c38577a540a5e1a266",
+      "nonimport_bytes_equal": true,
+      "original_imports_preserved": true,
+      "added_imports_only_helpers": true
+    },
+    {
+      "commit": "252ec646b9a5605c11aa245629a4ce8f404f74e8",
+      "nonimport_bytes_equal": true,
+      "original_imports_preserved": true,
+      "added_imports_only_helpers": true
+    },
+    {
+      "commit": "47ced271090f45918645c842cd358c5079092754",
+      "nonimport_bytes_equal": true,
+      "original_imports_preserved": true,
+      "added_imports_only_helpers": true
+    }
+  ],
+  "all_changed_files_plain_lean_source_modes": true,
+  "modes": [
+    {
+      "base_mode": "100644",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication.lean"
+    },
+    {
+      "base_mode": "100644",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Closing.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Nonabort.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Seed.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/TableCoins.lean"
+    }
+  ],
+  "manual_review": {
+    "title": "Only statement-phase status removed.",
+    "main_results": "Only target status updated to proved one-time security from strong one-wayness.",
+    "contents": "Added listing contains exactly the sixteen delivered Lamport helper module names and descriptions.",
+    "target_doc": "Theorem title, strong-one-way premise, steps1-4, and zero-query final sentence preserved; step5 expanded to actual T1/unary-index/binary-advice realization and polynomial-factor closure.",
+    "include_command": "Main line660 include hE hfE in is a one-command include attached only to new lamportGenFun_table; it does not persist across original declarations.",
+    "local_reducibility_command": "Main lines778-783 installs local irreducibility for exactly ProbComp.expect, ProbComp.sample, OracleComp.bind only if not already irreducible. It adds no axiom, declaration, global simp or global reducibility attribute; it appears after all46 original non-target declarations. It can affect elaboration of the final target proof, so native checks and Rule10 seals are separate evidence.",
+    "context": "Namespace, section structure, original variables/open/options and declaration ordering preserved. Added include occurrences at615,660,691,814 have one-command in scopes on new lemmas. Local irreducibility intentionally affects the later target proof transparency context; no claim that this proof context is unchanged is made."
+  },
+  "limitations": [
+    "Lexical declaration-boundary extraction is not a full Lean parser.",
+    "Exact header/text preservation does not by itself certify elaborated theorem type or kernel axioms; use compiled target/census evidence.",
+    "No claim that final Rule10 seals or full sweep passed is made by this source-only audit."
+  ],
+  "previous_candidate": "252ec646b9a5605c11aa245629a4ce8f404f74e8",
+  "candidate_delta_review": {
+    "previous_candidate": "252ec646b9a5605c11aa245629a4ce8f404f74e8",
+    "changed_paths": [
+      "TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean"
+    ],
+    "main_bytes_unchanged": true,
+    "authentication_bytes_unchanged": true,
+    "other15helper_bytes_unchanged": true,
+    "published_provider": "TCSlib/Cryptography/Asymptotic/ReductionSupport.lean",
+    "provider_unchanged_from_base": true,
+    "provider_sha256": "e79e05e05d01a6fff4e9d65970aa9e73ad457c9455b1ff987971c4eab7210934",
+    "removed_local_wrappers": [
+      "TCSlib.Cryptography.Authentication.LamportFill.ReductionMachine.take_poly",
+      "TCSlib.Cryptography.Authentication.LamportFill.ReductionMachine.drop_poly"
+    ],
+    "published_reuse": [
+      "TCSlib.Cryptography.takeLen_poly",
+      "TCSlib.Cryptography.dropLen_poly"
+    ],
+    "conclusion": "The two generic prefix-efficiency wrappers are removed and all former use sites now call already-published provider APIs. No promotion request remains for those wrappers. No main theorem/header/interface edit is present in this candidate delta."
+  }
+}

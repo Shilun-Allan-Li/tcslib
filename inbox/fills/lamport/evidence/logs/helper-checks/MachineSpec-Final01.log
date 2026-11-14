@@ -1,0 +1,73 @@
+start=2026-11-14T08:51:18.328588+00:00
+command=["python3", "-I", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/lean_host_guard.py", "--", "/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec"]
+source-sha256=86b55e73f568b2afe1c25d3816a899a801add209dd523d0fbc0cc6b8bf17b919
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:46:98: error: unsolved goals
+n ℓ : ℕ
+Y : Fin n × Bool → Fin ℓ → Bool
+⊢ (List.ofFn
+        ((fun c => pairEncode c []) ∘ fun i =>
+          pairEncode (List.ofFn (Y (i, false))) (List.ofFn (Y (i, true))))).flatten =
+    (List.ofFn fun i => pairEncode (pairEncode (List.ofFn (Y (i, false))) (List.ofFn (Y (i, true)))) []).flatten
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:51:55: warning: unused variable `hg`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:63:67: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  b ≥ 0
+  a ≥ 0
+  a - 2*b ≥ 1
+where
+ a := ↑?m.40
+ b := ↑n
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:78:67: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  b ≥ 0
+  a ≥ 0
+  a - 2*b ≥ 1
+where
+ a := ↑?m.40
+ b := ↑n
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:222:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (splitBits ?w).2 ?j
+in the target expression
+  List.ofFn (splitBits a).2 = List.drop n (List.ofFn a)
+
+n : ℕ
+i : Fin n
+z ρ : List Bool
+a : Fin (n + n * n) → Bool
+hz : LamportMachine.pos (seedIn n z ρ) = List.replicate (↑i) true
+⊢ List.ofFn (splitBits a).2 = List.drop n (List.ofFn a)
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:218:13: warning: This simp argument is unused:
+  LamportMachine.context_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [L̵a̵m̵po̵r̵t̵M̵ac̵h̵in̵e̵.̵c̵o̵n̵t̵e̵x̵t̵_̵e̵q̵,̵ ̵p̵a̵i̵rFstD_pairEncode, pairSndD_pairEncode, List.headD_cons, Bool.false_eq_true,
+      if_false, LamportMachine.u_seedIn, LamportMachine.offset_eq, hz,
+  ̵  ̵ ̵ ̵List.length_replicate,
+  ̲  ̲ ̲ ̲PolyExpr.eval_var]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec): no fresh .olean produced
+        2.17 real         1.51 user         0.87 sys
+          2209300480  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175841  page reclaims
+                  22  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  24  voluntary context switches
+                6535  involuntary context switches
+            31383390  instructions retired
+            16437990  cycles elapsed
+             1605968  peak memory footprint
+end=2026-11-14T08:51:21.553384+00:00
+exit=1

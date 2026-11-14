@@ -1,0 +1,60 @@
+{
+  "commit": "47ced271090f45918645c842cd358c5079092754",
+  "detector_limitation": "new_context_commands_for_review compares command texts by set membership and therefore lists only novel text, not every added occurrence. The complete streams remain retained for manual comparison.",
+  "additional_include_occurrences": [
+    {
+      "line": 615,
+      "command": "include hfE in",
+      "following_excerpt": [
+        "/-- On a serialized preimage table, key generation returns its public images and the table",
+        "itself [PS10, Protocol 137.1]. -/",
+        "theorem runAt_lamportGen_table (n : \u2115) (T : LamportFill.Table n)",
+        "    (\u03c1 : (lamportGen hE).Coins n) (h\u03c1 : List.ofFn \u03c1 = LamportFill.secretWord T) :",
+        "    (lamportGen hE).runAt n [] \u03c1 =",
+        "      pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T))",
+        "        (LamportFill.secretWord T) := by"
+      ]
+    },
+    {
+      "line": 660,
+      "command": "include hE hfE in",
+      "following_excerpt": [
+        "/-- On the canonical layout of a table, the generator string function returns its public",
+        "images paired with its secret serialization [PS10, Protocol 137.1]. -/",
+        "theorem lamportGenFun_table (n : \u2115) (T : LamportFill.Table n) :",
+        "    lamportGenFun E (NUPPT.layout (List.replicate n true) [] [] (LamportFill.secretWord T)) =",
+        "      pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T))",
+        "        (LamportFill.secretWord T) := by",
+        "  have h := runAt_lamportGen_table L f E hE hfE n T"
+      ]
+    },
+    {
+      "line": 691,
+      "command": "include hfE in",
+      "following_excerpt": [
+        "/-- Verification of a typed public table accepts exactly when each signature block maps",
+        "to the image selected by the corresponding message bit [PS10, Protocol 137.1].",
+        "",
+        "**Proof sketch.** Both length guards pass. The two block loops are tuple encodings of",
+        "the signature-block images and selected public images. Injectivity of the tuple encoding",
+        "and of bit-vector serialization turns their equality into coordinatewise equality. -/",
+        "theorem lamportVerFun_publicWord_iff (n : \u2115)"
+      ]
+    },
+    {
+      "line": 814,
+      "command": "include hfE in",
+      "following_excerpt": [
+        "/-- The actual one-query Lamport forgery game has exactly the typed honest-table success",
+        "probability [PS10, Definition 136.2 and proof of Theorem 137.2].",
+        "",
+        "**Proof sketch.** Reindex key-generation coins by the table equivalence and use the generator",
+        "reader to identify public and secret keys. The signing machine ignores its signing coins, so",
+        "its call expectation is the deterministic table signer's expectation; the simulation",
+        "congruence theorem lifts this equality to the logged forger execution. The one-query"
+      ]
+    }
+  ],
+  "conclusion": "All four inserted include occurrences are one-command `in` scopes on newly added lemmas; no original declaration context is altered. The idempotent local irreducibility run_cmd is the other added context command. No source integrity failure was found.",
+  "main_source_sha256": "762c6e08e15f8abc69e15c7a3401e00458a641a1d0cd8dc11760e7323f5f5304"
+}

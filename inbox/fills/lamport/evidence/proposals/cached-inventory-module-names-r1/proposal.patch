@@ -1,0 +1,23 @@
+--- prepare_seals_final_r2.py
++++ prepare_seals_inventory_cached_module_names.py
+@@ -128,16 +128,17 @@
+   let payload : String := {lean_string(payload)}
+   let homes := if payload.isEmpty then [] else payload.splitOn "\\n"
+   let env ← getEnv
+-  unless env.header.moduleNames.any (fun m => m.toString == ownHome) do
++  let moduleNames := env.header.moduleNames
++  unless moduleNames.any (fun m => m.toString == ownHome) do
+     throwError "LAMP-INVENTORY missing own snapshot {{ownHome}}"
+   for home in homes do
+-    unless env.header.moduleNames.any (fun m => m.toString == home) do
++    unless moduleNames.any (fun m => m.toString == home) do
+       throwError "LAMP-INVENTORY missing closure module {{home}}"
+   let mut rows : Array String := #[]
+   let mut axs : Array String := #[]
+   for (n, ci) in env.constants.map₁.toList do
+     let some mi := env.getModuleIdxFor? n | continue
+-    let home := env.header.moduleNames[mi.toNat]!.toString
++    let home := moduleNames[mi.toNat]!.toString
+     unless home == ownHome || homes.contains home do continue
+     let status ← liftCoreM <| getReducibilityStatus n
+     let matcher := (Match.Extension.getMatcherInfo? env n).isSome

@@ -1,0 +1,146 @@
+{
+  "base": "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+  "commit": "252ec646b9a5605c11aa245629a4ce8f404f74e8",
+  "created_at": "2026-11-14T09:09:10.553878+00:00",
+  "method": "Git blobs and bounded human source inspection; no Lean invocation",
+  "mechanical_results_sha256": "9416169508ed05bbd471fa128428647d82a06451b7bb4bb907345aaa7b3eb495",
+  "all_intermediate_auth_import_only": [
+    {
+      "commit": "a89069800a2b04c9fa9e6969bfedaab044d14c25",
+      "nonimport_bytes_equal": true,
+      "original_imports_preserved": true,
+      "added_imports_only_helpers": true
+    },
+    {
+      "commit": "09ac6b6c8c7f5997928ee5dfb4f18984ba2709b5",
+      "nonimport_bytes_equal": true,
+      "original_imports_preserved": true,
+      "added_imports_only_helpers": true
+    },
+    {
+      "commit": "11cc4e54fb63bb1c6310e90e6fbaa07e7031fb07",
+      "nonimport_bytes_equal": true,
+      "original_imports_preserved": true,
+      "added_imports_only_helpers": true
+    },
+    {
+      "commit": "77ec7bb1255852eb6288c6c38577a540a5e1a266",
+      "nonimport_bytes_equal": true,
+      "original_imports_preserved": true,
+      "added_imports_only_helpers": true
+    },
+    {
+      "commit": "252ec646b9a5605c11aa245629a4ce8f404f74e8",
+      "nonimport_bytes_equal": true,
+      "original_imports_preserved": true,
+      "added_imports_only_helpers": true
+    }
+  ],
+  "all_changed_files_plain_lean_source_modes": true,
+  "modes": [
+    {
+      "base_mode": "100644",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication.lean"
+    },
+    {
+      "base_mode": "100644",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Closing.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Nonabort.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Seed.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean"
+    },
+    {
+      "base_mode": "000000",
+      "final_mode": "100644",
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/TableCoins.lean"
+    }
+  ],
+  "manual_review": {
+    "title": "Only statement-phase status removed.",
+    "main_results": "Only target status updated to proved one-time security from strong one-wayness.",
+    "contents": "Added listing contains exactly the sixteen delivered Lamport helper module names and descriptions.",
+    "target_doc": "Theorem title, strong-one-way premise, steps1-4, and zero-query final sentence preserved; step5 expanded to actual T1/unary-index/binary-advice realization and polynomial-factor closure.",
+    "include_command": "Main line660 include hE hfE in is a one-command include attached only to new lamportGenFun_table; it does not persist across original declarations.",
+    "local_reducibility_command": "Main lines778-783 installs local irreducibility for exactly ProbComp.expect, ProbComp.sample, OracleComp.bind only if not already irreducible. It adds no axiom, declaration, global simp or global reducibility attribute; it appears after all46 original non-target declarations. It can affect elaboration of the final target proof, so native checks and Rule10 seals are separate evidence.",
+    "context": "Namespace, section structure, original variables/open/options and declaration ordering preserved; additional includes apply to newly inserted declarations. No extra global variable, persistent include/omit, notation, or namespace mutation was found."
+  },
+  "limitations": [
+    "Lexical declaration-boundary extraction is not a full Lean parser.",
+    "Exact header/text preservation does not by itself certify elaborated theorem type or kernel axioms; use compiled target/census evidence.",
+    "No claim that final Rule10 seals or full sweep passed is made by this source-only audit."
+  ]
+}
