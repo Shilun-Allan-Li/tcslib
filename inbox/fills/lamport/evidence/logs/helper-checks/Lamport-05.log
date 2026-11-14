@@ -1,0 +1,45 @@
+start=2026-11-14T07:17:29.188446+00:00
+command=["python3", "-I", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/lean_host_guard.py", "--", "/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport"]
+source-sha256=1ac7dee0a8f31dd5ca765368488ab1ac878a094edad51a0d1159cc87b3977b0a
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:654:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn ((lamportCoinTables hE n).symm T)
+in the target expression
+  lamportGenFun E (pairEncode (pairEncode (NUPPT.advInput n []) []) (List.ofFn ((lamportCoinTables hE n).symm T))) =
+    pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) (LamportFill.secretWord T)
+
+L : PolyExpr
+f : (n : ℕ) → (Fin n → Bool) → Fin (L.eval n) → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hfE : ∀ (n : ℕ) (x : Fin n → Bool), E (NUPPT.advInput n (List.ofFn x)) = List.ofFn (f n x)
+n : ℕ
+T : LamportFill.Table n
+h :
+  lamportGenFun E (pairEncode (pairEncode (NUPPT.advInput n []) []) (List.ofFn ((lamportCoinTables hE n).symm T))) =
+    pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) (LamportFill.secretWord T)
+⊢ lamportGenFun E (NUPPT.layout (List.replicate n true) [] [] (LamportFill.secretWord T)) =
+    pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) (LamportFill.secretWord T)
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:878:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport): no fresh .olean produced
+       52.26 real        87.95 user         2.58 sys
+          2204254208  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              134297  page reclaims
+               61393  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                6951  voluntary context switches
+              149887  involuntary context switches
+            32237876  instructions retired
+            16885195  cycles elapsed
+             1622352  peak memory footprint
+end=2026-11-14T07:18:22.317501+00:00
+exit=1

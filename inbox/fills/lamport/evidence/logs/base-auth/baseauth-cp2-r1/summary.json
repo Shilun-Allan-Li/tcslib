@@ -1,0 +1,125 @@
+{
+  "end": "2026-11-14T08:04:56.763152+00:00",
+  "base_phase_error": "RuntimeError('runSeals exited 1'); final rebuild stopped at prerequisite failure: RuntimeError('finalLamport exited 254')",
+  "source_restored": true,
+  "final_rebuild_ok": false,
+  "checks": [
+    {
+      "label": "baseLamport",
+      "command": [
+        "python3",
+        "-I",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/check_helper.py",
+        "TCSlib/Cryptography/Authentication/Signatures/Lamport",
+        "baseauth-cp2-r1-baseLamport"
+      ],
+      "status": 0,
+      "end": "2026-11-14T07:49:13.685811+00:00"
+    },
+    {
+      "label": "baseHashSign",
+      "command": [
+        "python3",
+        "-I",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/check_helper.py",
+        "TCSlib/Cryptography/Authentication/Signatures/HashAndSign",
+        "baseauth-cp2-r1-baseHashSign"
+      ],
+      "status": 0,
+      "end": "2026-11-14T07:49:16.960768+00:00"
+    },
+    {
+      "label": "prepareInventory",
+      "command": [
+        "python3",
+        "-I",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/prepare_seals.py",
+        "inventory",
+        "--root",
+        "/private/tmp/tcslib-lamport-01a1d88f/proof",
+        "--evidence",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence",
+        "--phase",
+        "BaseAuthCp2",
+        "--revision",
+        "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+        "TCSlib.Cryptography.Authentication"
+      ],
+      "status": 0,
+      "end": "2026-11-14T07:49:22.814876+00:00"
+    },
+    {
+      "label": "inventory0",
+      "command": [
+        "python3",
+        "-I",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/check_helper.py",
+        "LamportEvidence/Seals/BaseAuthCp2/Snapshot0",
+        "baseauth-cp2-r1-inventory0"
+      ],
+      "status": 0,
+      "end": "2026-11-14T07:49:36.761142+00:00"
+    },
+    {
+      "label": "inventory1",
+      "command": [
+        "python3",
+        "-I",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/check_helper.py",
+        "LamportEvidence/Seals/BaseAuthCp2/Inventory",
+        "baseauth-cp2-r1-inventory1"
+      ],
+      "status": 0,
+      "end": "2026-11-14T07:49:41.002801+00:00"
+    },
+    {
+      "label": "prepareSeals",
+      "command": [
+        "python3",
+        "-I",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/prepare_seals.py",
+        "prepare",
+        "--root",
+        "/private/tmp/tcslib-lamport-01a1d88f/proof",
+        "--evidence",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence",
+        "--phase",
+        "BaseAuthCp2",
+        "--catalog-log",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/logs/helper-checks/Inventory-baseauth-cp2-r1-inventory1.log"
+      ],
+      "status": 0,
+      "end": "2026-11-14T07:49:41.096139+00:00"
+    },
+    {
+      "label": "runSeals",
+      "command": [
+        "python3",
+        "-I",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/run_seals.py",
+        "--root",
+        "/private/tmp/tcslib-lamport-01a1d88f/proof",
+        "--evidence",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence",
+        "--manifest",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/seals/BaseAuthCp2/seal-manifest.json",
+        "--attempt",
+        "baseauth-cp2-r1-seals"
+      ],
+      "status": 1,
+      "end": "2026-11-14T07:59:25.819186+00:00"
+    },
+    {
+      "label": "finalLamport",
+      "command": [
+        "python3",
+        "-I",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/check_helper.py",
+        "TCSlib/Cryptography/Authentication/Signatures/Lamport",
+        "baseauth-cp2-r1-finalLamport"
+      ],
+      "status": 254,
+      "end": "2026-11-14T08:04:56.762894+00:00"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+start=2026-11-14T06:20:45.437506+00:00
+command=["/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra"]
+source-sha256=641e5124adc766a6860ba8501ad64d5620e45923d6d4696e1ccec438ee04fa6f
+TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean:60:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  fun p => if (∀ (m : ι → Bool), none = some m → m p.1 ≠ p.2) ∧ m' p.1 = p.2 then 1 else 0
+in the target expression
+  1 / (2 * ↑(Fintype.card ι)) ≤
+    (ProbComp.sample (ι × Bool)).expect fun p =>
+      if (∀ (m : ι → Bool), none = some m → m p.1 ≠ p.2) ∧ m' p.1 = p.2 then 1 else 0
+
+case none
+ι : Type
+inst✝¹ : Fintype ι
+inst✝ : Nonempty ι
+m' : ι → Bool
+hfresh : none ≠ some m'
+hfun :
+  (fun p => if (∀ (m : ι → Bool), none = some m → m p.1 ≠ p.2) ∧ m' p.1 = p.2 then 1 else 0) = fun p =>
+    if m' p.1 = p.2 then 1 else 0
+⊢ 1 / (2 * ↑(Fintype.card ι)) ≤
+    (ProbComp.sample (ι × Bool)).expect fun p =>
+      if (∀ (m : ι → Bool), none = some m → m p.1 ≠ p.2) ∧ m' p.1 = p.2 then 1 else 0
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra): no fresh .olean produced
+        6.35 real         1.40 user         1.43 sys
+          2112241664  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              114664  page reclaims
+               54425  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                5368  voluntary context switches
+               42195  involuntary context switches
+            30857058  instructions retired
+            14434646  cycles elapsed
+             1605968  peak memory footprint
+end=2026-11-14T06:20:51.793092+00:00
+exit=1

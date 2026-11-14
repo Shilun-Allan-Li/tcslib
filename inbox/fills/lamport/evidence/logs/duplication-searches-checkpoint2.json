@@ -1,0 +1,81 @@
+{
+  "utc": "2026-11-14T07:57:29.198336+00:00",
+  "root": "/private/tmp/tcslib-lamport-01a1d88f/proof",
+  "searches": [
+    {
+      "description": "published probability and simulation providers",
+      "command": [
+        "rg",
+        "-n",
+        "expect_sample_pair|prob_sample_pair|expect_sample_comm|expect_sample_coord|expect_simulate_congr",
+        "TCSlib/Cryptography/Games"
+      ],
+      "status": 0,
+      "stdout": "TCSlib/Cryptography/Games/Hopping.lean:40:* `ProbComp.expect_simulate_congr`: implementations with the same laws simulate alike.\nTCSlib/Cryptography/Games/Hopping.lean:384:theorem expect_simulate_congr {\u03b9 : Type} {spec : OracleSpec \u03b9} {\u03c3 \u03b1 : Type}\nTCSlib/Cryptography/Games/Bridges/Experiments.lean:25:(`prob_sample_pair`), so the games may sample the seed and the coins in sequence.\nTCSlib/Cryptography/Games/Bridges/Experiments.lean:37:* `Games.Bridge.prob_sample_pair`: sampling `\u03b1` then `\u03b2` is sampling `\u03b1 \u00d7 \u03b2`.\nTCSlib/Cryptography/Games/Bridges/Experiments.lean:72:theorem expect_sample_pair [Fintype \u03b1] [Nonempty \u03b1] [Fintype \u03b2] [Nonempty \u03b2] (g : \u03b1 \u00d7 \u03b2 \u2192 \u211d) :\nTCSlib/Cryptography/Games/Bridges/Experiments.lean:81:theorem prob_sample_pair [Fintype \u03b1] [Nonempty \u03b1] [Fintype \u03b2] [Nonempty \u03b2] (p : \u03b1 \u00d7 \u03b2 \u2192 Prop) :\nTCSlib/Cryptography/Games/Bridges/Experiments.lean:85:  rw [prob_eq_expect, prob_eq_expect, expect_sample_pair]\nTCSlib/Cryptography/Games/Bridges/Experiments.lean:94:  rw [invProb_def, prob_sample_pair, prob_sample_eq_uprob]\nTCSlib/Cryptography/Games/Bridges/Experiments.lean:103:  rw [predProb_def, prob_sample_pair, prob_sample_eq_uprob]\nTCSlib/Cryptography/Games/Bridges/Experiments.lean:127:    (p := fun z : \u03c3 \u00d7 \u03c1 => D (X z.1) z.2 = true), prob_sample_pair, prob_sample_eq_uprob]\nTCSlib/Cryptography/Games/Probability.lean:46:* `ProbComp.expect_sample_equiv`, `expect_sample_comm`, `expect_sample_unique`,\nTCSlib/Cryptography/Games/Probability.lean:47:  `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform\nTCSlib/Cryptography/Games/Probability.lean:312:theorem expect_sample_comm [Fintype \u03b1] [Nonempty \u03b1] [Fintype \u03b2] [Nonempty \u03b2]\nTCSlib/Cryptography/Games/Probability.lean:379:**Proof sketch.** Exchange the samples on the right (`expect_sample_comm`) and resample the\nTCSlib/Cryptography/Games/Probability.lean:382:theorem expect_sample_coord {\u03b9 : Type} [Fintype \u03b9] [DecidableEq \u03b9] [Fintype \u03b2] [Nonempty \u03b2]\nTCSlib/Cryptography/Games/Probability.lean:386:  rw [expect_sample_comm, \u2190 expect_sample_update j (fun T => F (T j) T)]\n",
+      "stderr": ""
+    },
+    {
+      "description": "codec extensionality provider",
+      "command": [
+        "rg",
+        "-n",
+        "MachineCodec.*ext|theorem.*codec.*ext|structure MachineCodec",
+        "TCSlib/Cryptography/Games"
+      ],
+      "status": 0,
+      "stdout": "TCSlib/Cryptography/Games/Machines.lean:78:structure MachineCodec (spec : OracleSpec \u03b9) (\u03b1 : Type) where\n",
+      "stderr": ""
+    },
+    {
+      "description": "codec extensionality in completed canonical-base runtime catalogs",
+      "command": [
+        "rg",
+        "-n",
+        "MachineCodec\\.ext",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/logs/helper-checks/Inventory-baseauth-cp2-r1-inventory1.log",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/logs/readers-01/LamportEvidence_Seals_Base_Inventory.log"
+      ],
+      "status": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "description": "cost-zero return provider",
+      "command": [
+        "rg",
+        "-n",
+        "costBoundedBy.*zero|CostBoundedBy.*0|exists_pure_of_cost_zero",
+        "TCSlib/Cryptography/Games"
+      ],
+      "status": 0,
+      "stdout": "TCSlib/Cryptography/Games/Simulate.lean:285:`(simulate impl c s).CostBoundedBy cost (if used s then 0 else 1)`.\nTCSlib/Cryptography/Games/Simulate.lean:294:      (impl i x s).CostBoundedBy cost 0 \u2227 (impl i x s).AllOutputs fun p => good p.2 \u2227 used p.2)\nTCSlib/Cryptography/Games/Simulate.lean:296:      ((impl i x s).CostBoundedBy cost 0 \u2227\nTCSlib/Cryptography/Games/Simulate.lean:300:    \u2200 s, good s \u2192 (simulate impl c s).CostBoundedBy cost (if used s then 0 else 1) := by\n",
+      "stderr": ""
+    },
+    {
+      "description": "tuple encoding injectivity outside the owned helpers",
+      "command": [
+        "rg",
+        "-n",
+        "--glob",
+        "!**/Signatures/Lamport/**",
+        "encodeList_(injective|eq_iff|ofFn_eq_iff)",
+        "TCSlib/Cryptography"
+      ],
+      "status": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "description": "two-block overlap and public reader providers",
+      "command": [
+        "rg",
+        "-n",
+        "ofFn_blocks_two_symm|flatten_ofFn_two|ofFn_blocks_symm",
+        "TCSlib/Cryptography/Asymptotic/OneWay.lean"
+      ],
+      "status": 0,
+      "stdout": "380:theorem ofFn_blocks_symm (q \u2113 : \u2115) (t : Fin q \u2192 Fin \u2113 \u2192 Bool) :\n449:(`ofFn_blocks_symm`, the hypothesis on `F`). -/\n454:  rw [NUPPT.advInput_eq, hspec, prod_f, ofFn_blocks_symm]\n723:private theorem ofFn_blocks_two_symm (\u2113 : \u2115) (t : Fin 2 \u2192 Fin \u2113 \u2192 Bool) :\n725:  rw [FunFamily.ofFn_blocks_symm, OneWay.flatten_ofFn_two]\n746:`Fin.appendEquiv`, `uprob_comp_equiv`, `ofFn_blocks_symm`). Probability: `invProbAt_prod_eq`\n785:    rw [\u2190 ofFn_blocks_two_symm, \u2190 List.ofFn_fin_append]\n824:  rw [NUPPT.inverter_eq_some_iff, ofFn_blocks_two_symm, Function.update_self,\n",
+      "stderr": ""
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "utc": "2026-11-14T08:03:54.061699+00:00",
+  "read_only_observation": true,
+  "bootstrap_coordination": "User-authorized dl-crh note specifically requested a slot for its bootstrap.",
+  "observations": [
+    {
+      "phase": "bootstrap-1",
+      "path": "/Users/seyoonr/.codex/worktrees/ps-dl-crh/tcslib-exchange/evidence/logs/bootstrap-1/results.jsonl",
+      "sha256": "95137f37cfed725701d03de8671fc1e0c36b754ff6f9acda83280f400e1e3eab",
+      "rows": 98,
+      "tail": {
+        "module": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding",
+        "source_sha256": "112c5ff4de4e40c30da158fe40fc1accf6e0c870d62b1d18552a8a2e6e1bf725",
+        "start": "2026-11-14T06:39:51.668235+00:00",
+        "end": "2026-11-14T06:39:54.222419+00:00",
+        "exit_code": 1,
+        "log": "evidence/logs/bootstrap-1/TCSlib_Cryptography_Hashing_FromDiscreteLog_Encoding.001.log",
+        "log_sha256": "7fbc597e06cd539fc7650ee63a99aad0a7668ce603517e9e02cdf5afa6a7a1e3",
+        "olean_sha256": null
+      },
+      "nonzero": [
+        {
+          "module": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding",
+          "source_sha256": "112c5ff4de4e40c30da158fe40fc1accf6e0c870d62b1d18552a8a2e6e1bf725",
+          "start": "2026-11-14T06:39:51.668235+00:00",
+          "end": "2026-11-14T06:39:54.222419+00:00",
+          "exit_code": 1,
+          "log": "evidence/logs/bootstrap-1/TCSlib_Cryptography_Hashing_FromDiscreteLog_Encoding.001.log",
+          "log_sha256": "7fbc597e06cd539fc7650ee63a99aad0a7668ce603517e9e02cdf5afa6a7a1e3",
+          "olean_sha256": null
+        }
+      ]
+    },
+    {
+      "phase": "rule10/checkpoint1/base-bootstrap",
+      "path": "/Users/seyoonr/.codex/worktrees/ps-dl-crh/tcslib-exchange/evidence/logs/rule10/checkpoint1/base-bootstrap/results.jsonl",
+      "sha256": "de6be6bb0c968cecba4c3e0bf1e948d8397a4cd04247cef177346fecf3dfd7a0",
+      "rows": 98,
+      "tail": {
+        "module": "TCSlib/Cryptography/Hashing/FromDiscreteLog",
+        "side": "base",
+        "phase": "base-bootstrap",
+        "start": "2026-11-14T07:42:54.806532+00:00",
+        "end": "2026-11-14T07:42:56.863311+00:00",
+        "exit_code": 0,
+        "log": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Hashing_FromDiscreteLog.001.log",
+        "log_sha256": "dcf301d96947e786fa5251ed7f96016ae4ac5c362c94d940dbffa67a946bdc3a",
+        "source_sha256": "7da640421f1dee49589c31700d117273e9a3250191b5765f16611423f9a2cf39",
+        "source_after_sha256": "7da640421f1dee49589c31700d117273e9a3250191b5765f16611423f9a2cf39",
+        "source_unchanged": true,
+        "olean_sha256": "59be803e5c8ed1a35c2b0793b7e7916243f7177122574e31f8171f27c4d28546",
+        "maximum_resident_set_sizes": [
+          2344157184,
+          2344157184
+        ],
+        "peak_memory_footprints": [
+          356123392,
+          1638736
+        ],
+        "errors": []
+      },
+      "nonzero": []
+    },
+    {
+      "phase": "final-sweep",
+      "path": "/Users/seyoonr/.codex/worktrees/ps-dl-crh/tcslib-exchange/evidence/logs/final-sweep/results.jsonl",
+      "sha256": "086c929c1051d3a1e3727dbc8120b0d6a85cabd3ea2beed7436444b2bc9ad87a",
+      "rows": 61,
+      "tail": {
+        "module": "TCSlib/Complexity/Randomized/PolyExpr",
+        "source_sha256": "b451da6f4486facf83c10c154fc77ac39bb24936a3fdb29a1d3a1fd3d43c1766",
+        "source_after_sha256": "b451da6f4486facf83c10c154fc77ac39bb24936a3fdb29a1d3a1fd3d43c1766",
+        "source_unchanged": true,
+        "start": "2026-11-14T08:01:28.360880+00:00",
+        "end": "2026-11-14T08:01:30.723597+00:00",
+        "exit_code": 0,
+        "log": "evidence/logs/final-sweep/TCSlib_Complexity_Randomized_PolyExpr.001.log",
+        "log_sha256": "aeebeae38cb8408cb5e25b9eaa2e8b97487b8900ecfc5164aae404ba67c2bf50",
+        "olean_sha256": "fc50fae768ad5f9c52ecd39f0118a1f4d044e58304e2b2e653a34086a9eaa8c2"
+      },
+      "nonzero": []
+    }
+  ],
+  "conclusion": "The exactbase 98-module bootstrap is complete with exit0 throughout. Current active work is the final sweep, not bootstrap. Release the additional bootstrap-only reservation; retain the user shared cap3 and our one module at a time."
+}

@@ -1,0 +1,1 @@
+These are source-only inputs to the preparatory machine-helper installation audit. They are not part of checkpoint 2's proof patch and have not yet passed native Lean checks. The source snapshots exactly match the historical audit hashes; later reader additions are separate working material.

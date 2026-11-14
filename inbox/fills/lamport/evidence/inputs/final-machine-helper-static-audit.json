@@ -1,0 +1,611 @@
+{
+  "records": [
+    {
+      "file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean",
+      "lines": 355,
+      "sha256": "b58a71c9adcf04bdb9a765d6fa2ab1304217ecf667a07226f400cf4dbb9acc41",
+      "missing_header_fields": [],
+      "undocumented_public_declarations": [],
+      "declarations": [
+        [
+          42,
+          "def u (v : List Bool) : List Bool := pairFstD v"
+        ],
+        [
+          44,
+          "theorem u_eq (v : List Bool) : u v = pairFstD v := rfl"
+        ],
+        [
+          46,
+          "theorem u_poly : PolyTimeComputable u := polyTimeComputable_pairFstD"
+        ],
+        [
+          49,
+          "def y (v : List Bool) : List Bool := pairFstD (pairFstD (pairSndD v))"
+        ],
+        [
+          51,
+          "theorem y_eq (v : List Bool) : y v = pairFstD (pairFstD (pairSndD v)) := rfl"
+        ],
+        [
+          53,
+          "theorem y_poly : PolyTimeComputable y :="
+        ],
+        [
+          57,
+          "def pos (v : List Bool) : List Bool := pairSndD (pairFstD (pairSndD v))"
+        ],
+        [
+          59,
+          "theorem pos_eq (v : List Bool) : pos v = pairSndD (pairFstD (pairSndD v)) := rfl"
+        ],
+        [
+          61,
+          "theorem pos_poly : PolyTimeComputable pos :="
+        ],
+        [
+          65,
+          "def seed (v : List Bool) : List Bool := pairSndD (pairSndD v)"
+        ],
+        [
+          67,
+          "theorem seed_eq (v : List Bool) : seed v = pairSndD (pairSndD v) := rfl"
+        ],
+        [
+          69,
+          "theorem seed_poly : PolyTimeComputable seed :="
+        ],
+        [
+          73,
+          "def bit (v : List Bool) : Bool := (seed v).headD false"
+        ],
+        [
+          75,
+          "theorem bit_eq (v : List Bool) : bit v = (seed v).headD false := rfl"
+        ],
+        [
+          77,
+          "theorem bit_poly : PolyTimeComputable (fun v => [bit v]) :="
+        ],
+        [
+          81,
+          "def tape (v : List Bool) : List Bool := (seed v).drop 1"
+        ],
+        [
+          83,
+          "theorem tape_eq (v : List Bool) : tape v = (seed v).drop 1 := rfl"
+        ],
+        [
+          85,
+          "theorem tape_poly : PolyTimeComputable tape := polyTimeComputable_tail.comp seed_poly"
+        ],
+        [
+          88,
+          "theorem u_seedIn (n : \u2115) (z \u03c9 : List Bool) :"
+        ],
+        [
+          93,
+          "theorem y_seedIn (n : \u2115) (challenge index \u03c9 : List Bool) :"
+        ],
+        [
+          98,
+          "theorem pos_seedIn (n : \u2115) (challenge index \u03c9 : List Bool) :"
+        ],
+        [
+          103,
+          "theorem seed_seedIn (n : \u2115) (z \u03c9 : List Bool) : seed (seedIn n z \u03c9) = \u03c9 := by"
+        ],
+        [
+          107,
+          "theorem bit_seedIn (n : \u2115) (z \u03c1 : List Bool) (c : Bool) :"
+        ],
+        [
+          112,
+          "theorem tape_seedIn (n : \u2115) (z \u03c1 : List Bool) (c : Bool) :"
+        ],
+        [
+          119,
+          "theorem take_poly {a xs : List Bool \u2192 List Bool} (ha : PolyTimeComputable a)"
+        ],
+        [
+          128,
+          "theorem drop_poly {a xs : List Bool \u2192 List Bool} (ha : PolyTimeComputable a)"
+        ],
+        [
+          136,
+          "def width (W : PolyExpr) (v : List Bool) : List Bool := List.replicate (W.eval (u v).length) true"
+        ],
+        [
+          138,
+          "theorem width_eq (W : PolyExpr) (v : List Bool) :"
+        ],
+        [
+          141,
+          "theorem width_poly (W : PolyExpr) : PolyTimeComputable (width W) :="
+        ],
+        [
+          145,
+          "def offset (W : PolyExpr) (v : List Bool) : List Bool :="
+        ],
+        [
+          148,
+          "theorem offset_eq (W : PolyExpr) (v : List Bool) :"
+        ],
+        [
+          151,
+          "theorem offset_poly (W : PolyExpr) : PolyTimeComputable (offset W) := by"
+        ],
+        [
+          158,
+          "def first (v : List Bool) : List Bool :="
+        ],
+        [
+          161,
+          "theorem first_eq (v : List Bool) : first v ="
+        ],
+        [
+          164,
+          "theorem first_poly : PolyTimeComputable first :="
+        ],
+        [
+          168,
+          "def second (v : List Bool) : List Bool :="
+        ],
+        [
+          171,
+          "theorem second_eq (v : List Bool) : second v ="
+        ],
+        [
+          174,
+          "theorem second_poly : PolyTimeComputable second := by"
+        ],
+        [
+          180,
+          "def honestPk (G : List Bool \u2192 List Bool) (v : List Bool) : List Bool :="
+        ],
+        [
+          183,
+          "theorem honestPk_eq (G : List Bool \u2192 List Bool) (v : List Bool) : honestPk G v ="
+        ],
+        [
+          186,
+          "theorem honestPk_poly {G : List Bool \u2192 List Bool} (hG : PolyTimeComputable G) :"
+        ],
+        [
+          193,
+          "def replacement (E : List Bool \u2192 List Bool) (v : List Bool) : List Bool :="
+        ],
+        [
+          198,
+          "theorem replacement_eq (E : List Bool \u2192 List Bool) (v : List Bool) : replacement E v ="
+        ],
+        [
+          203,
+          "theorem replacement_poly {E : List Bool \u2192 List Bool} (hE : PolyTimeComputable E) :"
+        ],
+        [
+          211,
+          "def advIn (W : PolyExpr) (E G : List Bool \u2192 List Bool) (v : List Bool) : List Bool :="
+        ],
+        [
+          215,
+          "theorem advIn_eq (W : PolyExpr) (E G : List Bool \u2192 List Bool) (v : List Bool) :"
+        ],
+        [
+          222,
+          "theorem advIn_poly (W : PolyExpr) {E G : List Bool \u2192 List Bool}"
+        ],
+        [
+          231,
+          "def context (w : List Bool) : List Bool := pairFstD w"
+        ],
+        [
+          233,
+          "theorem context_eq (w : List Bool) : context w = pairFstD w := rfl"
+        ],
+        [
+          235,
+          "theorem context_poly : PolyTimeComputable context := polyTimeComputable_pairFstD"
+        ],
+        [
+          238,
+          "def state (w : List Bool) : List Bool := pairFstD (pairSndD w)"
+        ],
+        [
+          240,
+          "theorem state_eq (w : List Bool) : state w = pairFstD (pairSndD w) := rfl"
+        ],
+        [
+          242,
+          "theorem state_poly : PolyTimeComputable state :="
+        ],
+        [
+          246,
+          "def message (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD w))"
+        ],
+        [
+          248,
+          "theorem message_eq (w : List Bool) : message w = pairSndD (pairSndD (pairSndD w)) := rfl"
+        ],
+        [
+          250,
+          "theorem message_poly : PolyTimeComputable message :="
+        ],
+        [
+          254,
+          "theorem context_input {k : \u2115} (n : \u2115) (z \u03c9 s : List Bool) (i : Fin k) (x : List Bool) :"
+        ],
+        [
+          259,
+          "theorem state_input {k : \u2115} (n : \u2115) (z \u03c9 s : List Bool) (i : Fin k) (x : List Bool) :"
+        ],
+        [
+          264,
+          "theorem message_input {k : \u2115} (n : \u2115) (z \u03c9 s : List Bool) (i : Fin k) (x : List Bool) :"
+        ],
+        [
+          269,
+          "def blocked (w : List Bool) : Bool :="
+        ],
+        [
+          272,
+          "theorem blocked_eq (w : List Bool) : blocked w ="
+        ],
+        [
+          275,
+          "theorem blocked_poly : PolyTimeComputable (fun w => [blocked w]) := by"
+        ],
+        [
+          286,
+          "def run (S : List Bool \u2192 List Bool) (w : List Bool) : List Bool :="
+        ],
+        [
+          291,
+          "theorem run_eq (S : List Bool \u2192 List Bool) (w : List Bool) : run S w ="
+        ],
+        [
+          296,
+          "theorem run_poly {S : List Bool \u2192 List Bool} (hS : PolyTimeComputable S) :"
+        ],
+        [
+          305,
+          "def out (w : List Bool) : List Bool :="
+        ],
+        [
+          310,
+          "theorem out_eq (w : List Bool) : out w ="
+        ],
+        [
+          315,
+          "theorem out_poly : PolyTimeComputable out :="
+        ],
+        [
+          324,
+          "def handler (W : PolyExpr) (E G S : List Bool \u2192 List Bool)"
+        ],
+        [
+          341,
+          "theorem handler_stateLen : (handler W E G S hE hG hS).stateLen = .const 1 := rfl"
+        ],
+        [
+          343,
+          "theorem handler_seedLen : (handler W E G S hE hG hS).seedLen ="
+        ],
+        [
+          346,
+          "theorem handler_init (n : \u2115) (i : Fin ((handler W E G S hE hG hS).stateLen.eval n)) :"
+        ],
+        [
+          349,
+          "theorem handler_run : (handler W E G S hE hG hS).run = run S := rfl"
+        ],
+        [
+          351,
+          "theorem handler_advIn : (handler W E G S hE hG hS).advIn = advIn W E G := rfl"
+        ],
+        [
+          353,
+          "theorem handler_out : (handler W E G S hE hG hS).out = out := rfl"
+        ]
+      ]
+    },
+    {
+      "file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Seed.lean",
+      "lines": 73,
+      "sha256": "5c7ef53b9cf27919af022cf74981c21f2fb828f8c806006539979fb6b30ff4d5",
+      "missing_header_fields": [],
+      "undocumented_public_declarations": [],
+      "declarations": [
+        [
+          34,
+          "theorem seedCoins_width (n : \u2115) : 1 + 2 * n * n = 2 * n * n + 1 :="
+        ],
+        [
+          39,
+          "def seedCoins (n : \u2115) : (Fin (1 + 2 * n * n) \u2192 Bool) \u2243 Bool \u00d7 Table n :="
+        ],
+        [
+          46,
+          "theorem seedCoins_apply (n : \u2115) (x : Fin (1 + 2 * n * n) \u2192 Bool) :"
+        ],
+        [
+          55,
+          "theorem seedCoins_symm (n : \u2115) (c : Bool) (T : Table n) :"
+        ],
+        [
+          62,
+          "theorem ofFn_seedCoins_symm {n : \u2115} (c : Bool) (T : Table n) :"
+        ],
+        [
+          68,
+          "theorem ofFn_seedCoins {n : \u2115} (x : Fin (1 + 2 * n * n) \u2192 Bool) :"
+        ]
+      ]
+    },
+    {
+      "file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Closing.lean",
+      "lines": 94,
+      "sha256": "dcb590df332d77b6c8f78cb18ce2041ffa070b5d2bfed2076c994f31225d1f33",
+      "missing_header_fields": [],
+      "undocumented_public_declarations": [],
+      "declarations": [
+        [
+          43,
+          "theorem negligible_of_linear_bound {e p : \u2115 \u2192 \u211d} (hp : Negligible p)"
+        ],
+        [
+          58,
+          "theorem negligible_of_inversion_bound (F : FunFamily) (hf : F.StrongOneWay) (B : NUPPT)"
+        ],
+        [
+          69,
+          "theorem oneTimeSecure_of_inversion_bound (S : SignatureScheme) (F : FunFamily)"
+        ],
+        [
+          81,
+          "theorem oneTimeSecure_of_inversion_lower (S : SignatureScheme) (F : FunFamily)"
+        ]
+      ]
+    },
+    {
+      "file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks.lean",
+      "lines": 78,
+      "sha256": "420769e6211757c16690191c9075ae6f81346acdca6f18b6a1bcd90482a75149",
+      "missing_header_fields": [],
+      "undocumented_public_declarations": [],
+      "declarations": [
+        [
+          41,
+          "theorem flatten_ofFn_update {B : \u2115} :"
+        ]
+      ]
+    },
+    {
+      "file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean",
+      "lines": 228,
+      "sha256": "86b55e73f568b2afe1c25d3816a899a801add209dd523d0fbc0cc6b8bf17b919",
+      "missing_header_fields": [],
+      "undocumented_public_declarations": [],
+      "declarations": [
+        [
+          44,
+          "theorem publicWord_flatten {n \u2113 : \u2115} (Y : (Fin n \u00d7 Bool) \u2192 Fin \u2113 \u2192 Bool) :"
+        ],
+        [
+          56,
+          "theorem first_context {n : \u2115} (T : Table n) (i : Fin n) (c : Bool) (challenge : List Bool) :"
+        ],
+        [
+          71,
+          "theorem second_context {n : \u2115} (T : Table n) (i : Fin n) (c : Bool) (challenge : List Bool) :"
+        ],
+        [
+          88,
+          "theorem replacement_context {n \u2113 : \u2115} (g : (Fin n \u2192 Bool) \u2192 Fin \u2113 \u2192 Bool)"
+        ],
+        [
+          112,
+          "theorem advIn_context {n \u2113 : \u2115} (W : PolyExpr)"
+        ],
+        [
+          169,
+          "theorem headD_drop_ofFn {n : \u2115} (m : Fin n \u2192 Bool) (i : Fin n) :"
+        ],
+        [
+          176,
+          "theorem run_input {n : \u2115} (S : List Bool \u2192 List Bool)"
+        ],
+        [
+          197,
+          "theorem run_safe {n : \u2115} (S : List Bool \u2192 List Bool)"
+        ],
+        [
+          212,
+          "theorem out_nonabort {n : \u2115} (i : Fin n) (z \u03c1 : List Bool)"
+        ]
+      ]
+    },
+    {
+      "file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean",
+      "lines": 134,
+      "sha256": "c9a3d84f7ab85a89f6ce7632fa8ccc1f3c27382896b4d657d0da777f82d21cb0",
+      "missing_header_fields": [],
+      "undocumented_public_declarations": [],
+      "declarations": [
+        [
+          41,
+          "noncomputable def indexBits (n i : \u2115) (hi : i \u2264 n) : List Bool :="
+        ],
+        [
+          45,
+          "theorem indexBits_eq (n i : \u2115) (hi : i \u2264 n) : indexBits n i hi ="
+        ],
+        [
+          49,
+          "theorem length_indexBits (n i : \u2115) (hi : i \u2264 n) :"
+        ],
+        [
+          54,
+          "theorem length_indexBits_le (n i : \u2115) (hi : i \u2264 n) : (indexBits n i hi).length \u2264 n := by"
+        ],
+        [
+          62,
+          "theorem indexBits_value (n i : \u2115) (hi : i \u2264 n) :"
+        ],
+        [
+          72,
+          "def expandIndex (U : List Bool \u2192 List Bool) (w : List Bool) : List Bool :="
+        ],
+        [
+          77,
+          "theorem expandIndex_eq (U : List Bool \u2192 List Bool) (w : List Bool) : expandIndex U w ="
+        ],
+        [
+          82,
+          "theorem expandIndex_poly {U : List Bool \u2192 List Bool} (hU : PolyTimeComputable U) :"
+        ],
+        [
+          90,
+          "theorem expandIndex_advInput (U : List Bool \u2192 List Bool)"
+        ],
+        [
+          107,
+          "theorem exists_withIndexAdvice (A : NUPPT) (i : \u2115 \u2192 \u2115) (hi : \u2200 n, i n \u2264 n) :"
+        ],
+        [
+          126,
+          "theorem runAt_indexAdvice {A B : NUPPT} (hcoins : B.coins = A.coins)"
+        ]
+      ]
+    },
+    {
+      "file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Nonabort.lean",
+      "lines": 64,
+      "sha256": "9c47635c2aed69e74b718389cd905983e708b2565191edbd55bd1202ccd0e8d0",
+      "missing_header_fields": [],
+      "undocumented_public_declarations": [],
+      "declarations": [
+        [
+          38,
+          "theorem safe_of_nonabort {n : \u2115} {\u03b1 : Type} (T : Table n) (i : Fin n) (c : Bool)"
+        ]
+      ]
+    },
+    {
+      "file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean",
+      "lines": 87,
+      "sha256": "e056a67ddede401bc956430860196ba11e108783aa9695cc32b0aed43fa83e60",
+      "missing_header_fields": [],
+      "undocumented_public_declarations": [],
+      "declarations": [
+        [
+          50,
+          "theorem fairBit_redProbability_le_invProbAt (F : FunFamily) (n : \u2115) (A B : NUPPT)"
+        ]
+      ]
+    },
+    {
+      "file": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean",
+      "lines": 182,
+      "sha256": "3b17c59f5d996fe24dfabd7faa65eb6759cbf23adda2918c7da4b23e24989f0b",
+      "missing_header_fields": [],
+      "undocumented_public_declarations": [],
+      "declarations": [
+        [
+          42,
+          "def machineForger (L : PolyExpr) (A : NUPPT) (n : \u2115)"
+        ],
+        [
+          50,
+          "theorem machineForger_eq (L : PolyExpr) (A : NUPPT) (n : \u2115)"
+        ],
+        [
+          57,
+          "theorem machineForger_cost (L : PolyExpr) (A : NUPPT) (n : \u2115)"
+        ],
+        [
+          74,
+          "theorem exists_realization_machine"
+        ]
+      ]
+    }
+  ],
+  "new_mathlib_roots": [],
+  "all_closure_mathlib_roots": [
+    "Mathlib.Algebra.BigOperators.Field",
+    "Mathlib.Algebra.BigOperators.Fin",
+    "Mathlib.Algebra.BigOperators.Ring.Finset",
+    "Mathlib.Algebra.Group.Pi.Lemmas",
+    "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+    "Mathlib.Algebra.Order.BigOperators.Group.List",
+    "Mathlib.Algebra.Order.BigOperators.Group.Multiset",
+    "Mathlib.Algebra.Order.Chebyshev",
+    "Mathlib.Algebra.Order.Group.Abs",
+    "Mathlib.Algebra.Order.Group.Int",
+    "Mathlib.Algebra.Order.Group.Nat",
+    "Mathlib.Algebra.Ring.BooleanRing",
+    "Mathlib.Analysis.SpecialFunctions.Exp",
+    "Mathlib.Analysis.SpecialFunctions.Log.Base",
+    "Mathlib.Analysis.SpecialFunctions.Pow.Real",
+    "Mathlib.Analysis.SpecialFunctions.Sqrt",
+    "Mathlib.Analysis.SpecificLimits.Normed",
+    "Mathlib.Computability.Language",
+    "Mathlib.Computability.MyhillNerode",
+    "Mathlib.Data.Bool.Count",
+    "Mathlib.Data.Fin.Tuple.Basic",
+    "Mathlib.Data.Finite.Card",
+    "Mathlib.Data.Finset.Dedup",
+    "Mathlib.Data.Finset.Max",
+    "Mathlib.Data.Fintype.Basic",
+    "Mathlib.Data.Fintype.BigOperators",
+    "Mathlib.Data.Fintype.EquivFin",
+    "Mathlib.Data.Fintype.Option",
+    "Mathlib.Data.Fintype.Pi",
+    "Mathlib.Data.Fintype.Powerset",
+    "Mathlib.Data.Fintype.Prod",
+    "Mathlib.Data.Fintype.Sigma",
+    "Mathlib.Data.Fintype.Sum",
+    "Mathlib.Data.Int.Interval",
+    "Mathlib.Data.List.Basic",
+    "Mathlib.Data.List.Dedup",
+    "Mathlib.Data.List.FinRange",
+    "Mathlib.Data.List.GetD",
+    "Mathlib.Data.List.Induction",
+    "Mathlib.Data.List.Nodup",
+    "Mathlib.Data.List.OfFn",
+    "Mathlib.Data.List.Pairwise",
+    "Mathlib.Data.List.Sort",
+    "Mathlib.Data.Nat.Bits",
+    "Mathlib.Data.Nat.Count",
+    "Mathlib.Data.Nat.Log",
+    "Mathlib.Data.Nat.Notation",
+    "Mathlib.Data.Nat.Size",
+    "Mathlib.Data.Real.Basic",
+    "Mathlib.Data.Set.Card",
+    "Mathlib.Data.Set.Operations",
+    "Mathlib.Data.Sigma.Basic",
+    "Mathlib.Data.Sign.Defs",
+    "Mathlib.GroupTheory.Index",
+    "Mathlib.Logic.Embedding.Basic",
+    "Mathlib.Logic.Equiv.Fin.Basic",
+    "Mathlib.Logic.Equiv.Prod",
+    "Mathlib.Logic.Function.Basic",
+    "Mathlib.Logic.Function.Iterate",
+    "Mathlib.Order.Monotone.Defs",
+    "Mathlib.SetTheory.Cardinal.Finite",
+    "Mathlib.Tactic.Cases",
+    "Mathlib.Tactic.DeriveFintype",
+    "Mathlib.Tactic.FieldSimp",
+    "Mathlib.Tactic.FinCases",
+    "Mathlib.Tactic.Linarith",
+    "Mathlib.Tactic.Positivity",
+    "Mathlib.Tactic.Ring",
+    "Mathlib.Tactic.Simps.Basic",
+    "Mathlib.Tactic.SplitIfs"
+  ],
+  "new_foreign_prerequisites": [
+    "TCSlib/Cryptography/Games/Bridges/Experiments"
+  ],
+  "exact_foreign_definition_reader_review": "manual, documented in final-machine-helper-audit.md",
+  "compiler_run": false
+}

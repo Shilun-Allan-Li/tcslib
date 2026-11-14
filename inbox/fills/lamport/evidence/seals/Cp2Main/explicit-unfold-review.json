@@ -1,0 +1,802 @@
+{
+  "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+  "source_revision": "11cc4e54fb63bb1c6310e90e6fbaa07e7031fb07",
+  "source_sha256": "68cf73f632d1497e08af49abcfb22cd5bb0a43fdf3f1b4577e638a6994af091e",
+  "scan_path": "explicit-unfold-scan.json",
+  "scan_sha256": "7225e90d7af46880bc4ea7ea6e552ee9e5f01293d579791776c6f4323dc25735",
+  "scope": "Source review of every scanner row with foreign-definition candidates. This classifies explicit operations only; whole-file seals independently test hidden definitional closure.",
+  "total_token_readings": 376,
+  "foreign_candidate_rows": 15,
+  "classification_counts": {
+    "ambiguous_suffix_false_positive_local_binder": 11,
+    "ambiguous_suffix_false_positive_named_argument_label": 1,
+    "ordinary_term_congruence_equality": 1,
+    "published_reader_application_term_argument": 2
+  },
+  "genuine_forbidden_explicit_foreign_unfolds": 0,
+  "fix_required": false,
+  "reviews": [
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 9
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 109,
+        "operation": "rw",
+        "identifier": "g",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "operation_start_line": 109,
+      "source_context": {
+        "first_line": 108,
+        "lines": [
+          "  | q + 1, g, hg => by",
+          "    rw [List.ofFn_succ, List.flatten_cons, List.length_append, hg 0,",
+          "      length_flatten_ofFn (fun i => g i.succ) (fun i => hg i.succ), Nat.succ_mul]",
+          "    omega",
+          "",
+          "/-- Segment `i` of the concatenation of `B`-bit blocks `g 0, \u2026, g (q \u2212 1)` is `g i`. -/"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_identifier_role": "local block family g",
+      "published_reader_or_rewrite": "length_flatten_ofFn",
+      "reason": "The token denotes the locally bound block family g, not OneWay.YaoMachine.g.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 18
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 116,
+        "operation": "rw",
+        "identifier": "g",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.g",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "operation_start_line": 116,
+      "source_context": {
+        "first_line": 115,
+        "lines": [
+          "    (i : Fin q) : coinBlock B i (List.ofFn g).flatten = g i := by",
+          "  rw [coinBlock_flatten (List.ofFn g) (fun c hc => by",
+          "    obtain \u27e8j, rfl\u27e9 := List.mem_ofFn.mp hc",
+          "    exact hg j) i (by simp)]",
+          "  simp",
+          ""
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_identifier_role": "local block family g",
+      "published_reader_or_rewrite": "coinBlock_flatten",
+      "reason": "The token denotes the locally bound block family g, not OneWay.YaoMachine.g.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 39
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 132,
+        "operation": "rw",
+        "identifier": "G",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.PRG.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.PRG.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "operation_start_line": 132,
+      "source_context": {
+        "first_line": 131,
+        "lines": [
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          ""
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_identifier_role": "local evaluator G",
+      "published_reader_or_rewrite": "blockEncFun_spec",
+      "reason": "G is a local function parameter of blockEncFun_ofFn, not the unrelated reducible PRG.G projection.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 42
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 132,
+        "operation": "rw",
+        "identifier": "u",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "operation_start_line": 132,
+      "source_context": {
+        "first_line": 131,
+        "lines": [
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          ""
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_identifier_role": "local parameter word u",
+      "published_reader_or_rewrite": "blockEncFun_spec",
+      "reason": "u is the local List Bool parameter of blockEncFun_ofFn, not OneWay.ProdEval.u.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 44
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 132,
+        "operation": "rw",
+        "identifier": "blockState",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.blockState",
+            "home": "TCSlib.Cryptography.Asymptotic.BlockEncryptor",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.blockState",
+            "home": "TCSlib.Cryptography.Asymptotic.BlockEncryptor",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "operation_start_line": 132,
+      "source_context": {
+        "first_line": 131,
+        "lines": [
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          ""
+        ]
+      },
+      "classification": "published_reader_application_term_argument",
+      "resolved_identifier_role": "TCSlib.Cryptography.blockState",
+      "published_reader_or_rewrite": "TCSlib.Cryptography.blockEncFun_spec",
+      "reason": "The definition occurs inside a word-length expression supplied as the fuel argument to the published blockEncFun_spec theorem. It is not a rewrite rule or an unfolded identifier. The preceding length bound reads it via blockState_eq.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 45
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 132,
+        "operation": "rw",
+        "identifier": "u",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "operation_start_line": 132,
+      "source_context": {
+        "first_line": 131,
+        "lines": [
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          ""
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_identifier_role": "local parameter word u",
+      "published_reader_or_rewrite": "blockEncFun_spec",
+      "reason": "u is the local List Bool parameter of blockEncFun_ofFn, not OneWay.ProdEval.u.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 48
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 132,
+        "operation": "rw",
+        "identifier": "m",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "operation_start_line": 132,
+      "source_context": {
+        "first_line": 131,
+        "lines": [
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          ""
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_identifier_role": "local message function m",
+      "published_reader_or_rewrite": "blockEncFun_spec",
+      "reason": "m is the locally bound Fin q to Bool message, not OneWay.YaoMachine.Data.m.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 52
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 132,
+        "operation": "rw",
+        "identifier": "m",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "operation_start_line": 132,
+      "source_context": {
+        "first_line": 131,
+        "lines": [
+          "  rw [blockEncFun_eq]",
+          "  rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length",
+          "    (List.ofFn m) r (by simpa using hlen)]",
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          ""
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_identifier_role": "local message function m",
+      "published_reader_or_rewrite": "blockEncFun_spec",
+      "reason": "m is the locally bound Fin q to Bool message, not OneWay.YaoMachine.Data.m.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 60
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 135,
+        "operation": "rw",
+        "identifier": "G",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.PRG.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.PRG.G",
+            "home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "operation_start_line": 135,
+      "source_context": {
+        "first_line": 134,
+        "lines": [
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/",
+          "theorem decListFun_pairSndD (l : List (List Bool)) :",
+          "    decListFun pairSndD (pairEncode [] (encodeList l)) = l.flatten := by"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_identifier_role": "local evaluator G",
+      "published_reader_or_rewrite": "blockList_ofFn",
+      "reason": "G is a local function parameter of blockEncFun_ofFn, not the unrelated reducible PRG.G projection.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 62
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 135,
+        "operation": "rw",
+        "identifier": "u",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.ProdEval.u",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "operation_start_line": 135,
+      "source_context": {
+        "first_line": 134,
+        "lines": [
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/",
+          "theorem decListFun_pairSndD (l : List (List Bool)) :",
+          "    decListFun pairSndD (pairEncode [] (encodeList l)) = l.flatten := by"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_identifier_role": "local parameter word u",
+      "published_reader_or_rewrite": "blockList_ofFn",
+      "reason": "u is the local List Bool parameter of blockEncFun_ofFn, not OneWay.ProdEval.u.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 65
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 135,
+        "operation": "rw",
+        "identifier": "m",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.OneWay.YaoMachine.Data.m",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "operation_start_line": 135,
+      "source_context": {
+        "first_line": 134,
+        "lines": [
+          "  simp only [PolyExpr.eval_const]",
+          "  rw [blockList_ofFn G _ u pk q m r _ (by simp only [List.length_ofFn] at hlen; omega)]",
+          "",
+          "/-- **The tuple flattener** (`decListFun pairSndD`): on `\u27e8[], encodeList l\u27e9` it concatenates `l`. -/",
+          "theorem decListFun_pairSndD (l : List (List Bool)) :",
+          "    decListFun pairSndD (pairEncode [] (encodeList l)) = l.flatten := by"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_identifier_role": "local message function m",
+      "published_reader_or_rewrite": "blockList_ofFn",
+      "reason": "m is the locally bound Fin q to Bool message, not OneWay.YaoMachine.Data.m.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 75
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 145,
+        "operation": "rw",
+        "identifier": "pairSndD",
+        "candidates": [
+          {
+            "spelling": "Complexity.pairSndD",
+            "home": "TCSlib.Complexity.ClassNP.PolyTimePairing",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "Complexity.pairSndD",
+            "home": "TCSlib.Complexity.ClassNP.PolyTimePairing",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "operation_start_line": 145,
+      "source_context": {
+        "first_line": 144,
+        "lines": [
+          "  rw [decListFun_eq]",
+          "  rw [decListFun_spec pairSndD [] _ l hlen]",
+          "  simp",
+          "",
+          "/-! ### The algorithms as string functions -/",
+          ""
+        ]
+      },
+      "classification": "published_reader_application_term_argument",
+      "resolved_identifier_role": "Complexity.pairSndD",
+      "published_reader_or_rewrite": "TCSlib.Cryptography.decListFun_spec",
+      "reason": "pairSndD is the evaluator function supplied to the published decListFun_spec theorem, not a rewrite rule. Its behavior on pairs is handled by the public projection simp reader.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 115
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 447,
+        "operation": "rw",
+        "identifier": "blockState",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.blockState",
+            "home": "TCSlib.Cryptography.Asymptotic.BlockEncryptor",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.blockState",
+            "home": "TCSlib.Cryptography.Asymptotic.BlockEncryptor",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "semireducible"
+          }
+        ]
+      },
+      "operation_start_line": 447,
+      "source_context": {
+        "first_line": 446,
+        "lines": [
+          "    pairSndD_pairEncode, List.length_replicate]",
+          "  rw [show blockState (List.replicate n true) [] (List.replicate n true) (List.ofFn \u03c1) =",
+          "    blockState (List.replicate n true) [] (List.ofFn fun _ : Fin n => true) (List.ofFn \u03c1) by simp,",
+          "    blockEncFun_ofFn]",
+          "  simp [lamportPairEmit, lamportHalf]",
+          ""
+        ]
+      },
+      "classification": "ordinary_term_congruence_equality",
+      "resolved_identifier_role": "TCSlib.Cryptography.blockState",
+      "published_reader_or_rewrite": "owned blockEncFun_ofFn follows the shown equality",
+      "reason": "blockState is the same opaque outer function on both sides of a show equality. The proof changes List.replicate n true to List.ofFn of the constant function; the definition blockState is not named as an unfolding or rewrite rule.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 366
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 841,
+        "operation": "simp",
+        "identifier": "f",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.FunFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PermFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.FunFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PermFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "operation_start_line": 841,
+      "source_context": {
+        "first_line": 840,
+        "lines": [
+          "  rw [hsim, LamportFill.honest_transcript T tree hcost, ProbComp.expect_pure]",
+          "  simp only [SignatureScheme.accepts_iff, lamport_ver,",
+          "    lamportVerFun_publicWord_iff (L := L) (f := f) (E := E) (hfE := hfE),",
+          "    LamportFill.tablePublic_eq,",
+          "    LamportFill.honestSuccess_iff, LamportFill.honestOutput_eq]",
+          "  apply if_congr ?_ rfl rfl"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_named_argument_label",
+      "resolved_identifier_role": "named parameter label f in (f := f)",
+      "published_reader_or_rewrite": "owned lamportVerFun_publicWord_iff",
+      "reason": "The first f token in the named argument is a parameter label for the owned lamportVerFun_publicWord_iff reader, not either FunFamily.f or PermFamily.f.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    },
+    {
+      "scan_reference": {
+        "path": "explicit-unfold-scan.json",
+        "zero_based_index": 367
+      },
+      "raw_candidate": {
+        "target": "TCSlib.Cryptography.Authentication.Signatures.Lamport",
+        "line": 841,
+        "operation": "simp",
+        "identifier": "f",
+        "candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.FunFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PermFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ],
+        "foreign_definition_candidates": [
+          {
+            "spelling": "TCSlib.Cryptography.FunFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          },
+          {
+            "spelling": "TCSlib.Cryptography.PermFamily.f",
+            "home": "TCSlib.Cryptography.Asymptotic.OneWay",
+            "is_definition": true,
+            "instance": false,
+            "matcher": false,
+            "status": "reducible"
+          }
+        ]
+      },
+      "operation_start_line": 841,
+      "source_context": {
+        "first_line": 840,
+        "lines": [
+          "  rw [hsim, LamportFill.honest_transcript T tree hcost, ProbComp.expect_pure]",
+          "  simp only [SignatureScheme.accepts_iff, lamport_ver,",
+          "    lamportVerFun_publicWord_iff (L := L) (f := f) (E := E) (hfE := hfE),",
+          "    LamportFill.tablePublic_eq,",
+          "    LamportFill.honestSuccess_iff, LamportFill.honestOutput_eq]",
+          "  apply if_congr ?_ rfl rfl"
+        ]
+      },
+      "classification": "ambiguous_suffix_false_positive_local_binder",
+      "resolved_identifier_role": "section variable f",
+      "published_reader_or_rewrite": "owned lamportVerFun_publicWord_iff",
+      "reason": "The second f token in (f := f) is the section-bound function family, not either imported structure projection FunFamily.f or PermFamily.f.",
+      "forbidden_explicit_foreign_unfold": false,
+      "fix_required": false
+    }
+  ]
+}

@@ -218,7 +218,8 @@ def run(args):
             (attempt / 'sources' / (record['label'] + '.original.lean')).write_bytes(original_raw)
             maps = original_maps(original_raw, source_raw, record.get('original_line_map'))
             decls = declarations(original_raw)
-        command = ['/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', probe_path]
+        command = ['python3', '-I', str(evidence / 'tools/lean_host_guard.py'), '--',
+                   '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', probe_path]
         log_path = attempt / (record['label'] + '.log')
         start = utc_now()
         print(f'START {record["label"]}', flush=True)

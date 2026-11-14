@@ -1,0 +1,68 @@
+From 77ec7bb1255852eb6288c6c38577a540a5e1a266 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sat, 14 Nov 2026 00:35:36 -0800
+Subject: [PATCH 4/4] Make Lamport local opacity installation idempotent
+
+---
+ TCSlib/Cryptography/Authentication/Signatures/Lamport.lean | 7 ++++++-
+ .../Authentication/Signatures/Lamport/Experiment.lean      | 7 ++++++-
+ .../Authentication/Signatures/Lamport/Statistics.lean      | 7 ++++++-
+ 3 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean
+index 93a5a276c..d336891ca 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport.lean
+@@ -762,7 +762,12 @@ theorem lamport_forgerCodec (n : ℕ) :
+     simp only [lamport_msgLen, lamport_sigLen, PolyExpr.eval_var, PolyExpr.eval_mul]
+ 
+ -- Probability proofs read their laws rather than reducing the sample interpreter.
+-attribute [local irreducible] ProbComp.expect ProbComp.sample OracleComp.bind
++run_cmd do
++  for n in [``ProbComp.expect, ``ProbComp.sample, ``OracleComp.bind] do
++    let status ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
++    unless status == .irreducible do
++      let id := Lean.mkIdent n
++      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
+ 
+ /-- Against a serialized key table, every Lamport signing call has exactly the deterministic
+ selected-preimage law. The equality holds for every function of the answer and state. -/
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean
+index 33a91050f..2a296d739 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean
+@@ -38,7 +38,12 @@ open TCSlib.Cryptography.Games
+ open scoped Classical
+ 
+ -- Keep elaboration on the published probability readers.
+-attribute [local irreducible] ProbComp.expect ProbComp.sample OracleComp.bind
++run_cmd do
++  for n in [``ProbComp.expect, ``ProbComp.sample, ``OracleComp.bind] do
++    let status ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
++    unless status == .irreducible do
++      let id := Lean.mkIdent n
++      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
+ 
+ section TypedExperiment
+ 
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean
+index 80328b057..f6cea0ed8 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean
+@@ -34,7 +34,12 @@ open TCSlib.Cryptography.Games
+ open scoped Classical
+ 
+ -- Keep elaboration on the published probability readers.
+-attribute [local irreducible] ProbComp.expect ProbComp.sample OracleComp.bind
++run_cmd do
++  for n in [``ProbComp.expect, ``ProbComp.sample, ``OracleComp.bind] do
++    let status ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
++    unless status == .irreducible do
++      let id := Lean.mkIdent n
++      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
+ 
+ /-- Suppose every successful honest run has favorable position mass at least `b`, and
+ every successful favorable run makes a reduction succeed when challenged at its own
+-- 
+2.50.1 (Apple Git-155)
+

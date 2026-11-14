@@ -1,0 +1,32 @@
+$ rg -n tmsat_pt_take TCSlib/Complexity/ClassNP/TMSAT.lean
+1100:private lemma tmsat_pt_take {f g : List Bool → List Bool}
+1290:    ((hclock.pairEncode ha).pairEncode (hx.pairEncode (tmsat_pt_take hn hw)))
+EXIT 0
+
+$ rg -n clA5Drop_native TCSlib/Complexity/CookLevin/Hardness.lean
+6889:private lemma clA5Drop_native {s u : List Bool → List Bool}
+6985:  have h := clA5_pt_eq (clA5Drop_native hf hg) []
+7682:  simpa only [List.length_replicate, List.drop_replicate] using clA5Drop_native hf hg
+7963:  have h := clA5_pt_eq (clA5_pt_head.comp (clA5Drop_native hf hi)) [true]
+EXIT 0
+
+$ rg -n flatten.*Function.update|Function.update.*flatten TCSlib
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks.lean:46:        (List.ofFn (Function.update g i h)).flatten
+EXIT 0
+
+$ rg -n headD_drop_ofFn|publicWord_flatten|indexBits_value|exists_withIndexAdvice TCSlib
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:44:theorem publicWord_flatten {n ℓ : ℕ} (Y : (Fin n × Bool) → Fin ℓ → Bool) :
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:151:    rw [publicWord_flatten]
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:155:    rw [publicWord_flatten]
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:169:theorem headD_drop_ofFn {n : ℕ} (m : Fin n → Bool) (i : Fin n) :
+TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:191:      headD_drop_ofFn]
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:21:* `indexBits_value`: the encoded index reads back as `i`.
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:22:* `exists_withIndexAdvice`: a machine expecting unary index data can receive that index
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:62:theorem indexBits_value (n i : ℕ) (hi : i ≤ n) :
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:107:theorem exists_withIndexAdvice (A : NUPPT) (i : ℕ → ℕ) (hi : ∀ n, i n ≤ n) :
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:120:  have hvalue : OneWay.bitListToNat (β n) = i n := indexBits_value n (i n) (hi n)
+EXIT 0
+
+$ rg -n sorry|admit|^axiom|unsafe|@\[simp TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean TCSlib/Cryptography/Authentication/Signatures/Lamport/Seed.lean TCSlib/Cryptography/Authentication/Signatures/Lamport/Closing.lean TCSlib/Cryptography/Authentication/Signatures/Lamport/Blocks.lean TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean TCSlib/Cryptography/Authentication/Signatures/Lamport/Nonabort.lean TCSlib/Cryptography/Authentication/Signatures/Lamport/InversionProbability.lean TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean
+EXIT 1
+

@@ -1,0 +1,146 @@
+{
+  "base": "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+  "head": "77ec7bb1255852eb6288c6c38577a540a5e1a266",
+  "reproduction": "/private/tmp/tcslib-lamport-01a1d88f/reproduce-checkpoint2-r2",
+  "source_records": [
+    {
+      "path": "TCSlib/Cryptography/Authentication.lean",
+      "sha256": "8f3f0f451bbf81306e6e10faddebf24c6cefbe6ea279116414058eebdae27ee0",
+      "lines": 59
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+      "sha256": "dd01629b74f59f1847b39a4832be7b2f0ce0cd51ded2bcdae92f7a222fac5c7c",
+      "lines": 905
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean",
+      "sha256": "5dddc3a741399216792dfc4ffa6d43d2e2043e37e3a16bd9e61d90409c456313",
+      "lines": 135
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean",
+      "sha256": "de5f7ebae3004094abfa4d29045c203e04d0ec14314fee54ed6270d90f095209",
+      "lines": 89
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding.lean",
+      "sha256": "3b02b5e0b3c3e7ba4ada04cd61b7af4f8898b9892922e62aeec8e85dfeb916e8",
+      "lines": 84
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean",
+      "sha256": "cb87f805bcd2dd7d44c22b2335c989675baa82ff7b1c7c531938556a6c322476",
+      "lines": 226
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean",
+      "sha256": "ddc015a571c7fe841b53e819e497358069ad50aa421c05edae070cde69c8beed",
+      "lines": 452
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean",
+      "sha256": "e7784454b84694ea703c29e8c35e9412c3cfee3c9ae6e02deb429d6f2933055c",
+      "lines": 149
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/TableCoins.lean",
+      "sha256": "c05f676260541ad80ba0cf0a54445e837fdf57beee063440fd486dcda71bab68",
+      "lines": 88
+    }
+  ],
+  "patches": [
+    "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0001-Prove-Lamport-planted-coupling-and-algorithm-readers.patch",
+    "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0002-Register-Lamport-proof-helpers-in-authentication-fac.patch",
+    "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0003-Prove-Lamport-averaging-bound-for-the-actual-forgery.patch",
+    "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0004-Make-Lamport-local-opacity-installation-idempotent.patch"
+  ],
+  "checks": [
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0001-Prove-Lamport-planted-coupling-and-algorithm-readers.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0001-Prove-Lamport-planted-coupling-and-algorithm-readers.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0002-Register-Lamport-proof-helpers-in-authentication-fac.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0002-Register-Lamport-proof-helpers-in-authentication-fac.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0003-Prove-Lamport-averaging-bound-for-the-actual-forgery.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0003-Prove-Lamport-averaging-bound-for-the-actual-forgery.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0004-Make-Lamport-local-opacity-installation-idempotent.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0004-Make-Lamport-local-opacity-installation-idempotent.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "exact_reproduction": true,
+  "compiler_run": false
+}

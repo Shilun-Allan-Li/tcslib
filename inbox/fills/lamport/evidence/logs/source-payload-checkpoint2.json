@@ -1,0 +1,124 @@
+{
+  "base": "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+  "head": "11cc4e54fb63bb1c6310e90e6fbaa07e7031fb07",
+  "reproduction": "/private/tmp/tcslib-lamport-01a1d88f/reproduce-checkpoint2",
+  "source_records": [
+    {
+      "path": "TCSlib/Cryptography/Authentication.lean",
+      "sha256": "8f3f0f451bbf81306e6e10faddebf24c6cefbe6ea279116414058eebdae27ee0",
+      "lines": 59
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean",
+      "sha256": "68cf73f632d1497e08af49abcfb22cd5bb0a43fdf3f1b4577e638a6994af091e",
+      "lines": 900
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean",
+      "sha256": "5dddc3a741399216792dfc4ffa6d43d2e2043e37e3a16bd9e61d90409c456313",
+      "lines": 135
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean",
+      "sha256": "de5f7ebae3004094abfa4d29045c203e04d0ec14314fee54ed6270d90f095209",
+      "lines": 89
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding.lean",
+      "sha256": "3b02b5e0b3c3e7ba4ada04cd61b7af4f8898b9892922e62aeec8e85dfeb916e8",
+      "lines": 84
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean",
+      "sha256": "f94a74568f2c002caf53b62b8fce6d4bda31f795f96557c2e76a05e9239216bd",
+      "lines": 221
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean",
+      "sha256": "ddc015a571c7fe841b53e819e497358069ad50aa421c05edae070cde69c8beed",
+      "lines": 452
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean",
+      "sha256": "a65f32557dea3e6cf0f9bf32f5ee4184d3fff056a967962506d392bafc25fe25",
+      "lines": 144
+    },
+    {
+      "path": "TCSlib/Cryptography/Authentication/Signatures/Lamport/TableCoins.lean",
+      "sha256": "c05f676260541ad80ba0cf0a54445e837fdf57beee063440fd486dcda71bab68",
+      "lines": 88
+    }
+  ],
+  "patches": [
+    "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0001-Prove-Lamport-planted-coupling-and-algorithm-readers.patch",
+    "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0002-Register-Lamport-proof-helpers-in-authentication-fac.patch",
+    "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0003-Prove-Lamport-averaging-bound-for-the-actual-forgery.patch"
+  ],
+  "checks": [
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0001-Prove-Lamport-planted-coupling-and-algorithm-readers.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0001-Prove-Lamport-planted-coupling-and-algorithm-readers.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0002-Register-Lamport-proof-helpers-in-authentication-fac.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0002-Register-Lamport-proof-helpers-in-authentication-fac.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0003-Prove-Lamport-averaging-bound-for-the-actual-forgery.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/patches/0003-Prove-Lamport-averaging-bound-for-the-actual-forgery.patch"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "exact_reproduction": true,
+  "compiler_run": false
+}

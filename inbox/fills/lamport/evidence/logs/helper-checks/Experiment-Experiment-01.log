@@ -1,0 +1,48 @@
+start=2026-11-14T07:08:58.439327+00:00
+command=["python3", "-I", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/lean_host_guard.py", "--", "/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment"]
+source-sha256=e8d00cf4dc32ca52b08ea810270c5ff7cfc03fb4a45924ce79aae9bdb43f102f
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean:144:2: error: Type mismatch: After simplification, term
+  h
+ has type
+  1 / (2 * ↑n) ≤
+    (ProbComp.sample (Fin n × Bool)).expect fun p =>
+      @ite ℝ
+        ((∀ (m : Fin n → Bool), firstQuery (adv (tablePublic g T) r) = some m → m p.1 ≠ p.2) ∧
+          (splitBits (honestOutput g adv T r)).1 p.1 = p.2)
+        (@instDecidableAnd (∀ (m : Fin n → Bool), firstQuery (adv (tablePublic g T) r) = some m → m p.1 ≠ p.2)
+          ((splitBits (honestOutput g adv T r)).1 p.1 = p.2) (firstQuery (adv (tablePublic g T) r)).decidableForallMem
+          (instDecidableEqBool ((splitBits (honestOutput g adv T r)).1 p.1) p.2))
+        1 0
+but is expected to have type
+  1 / (2 * ↑n) ≤
+    (ProbComp.sample (Fin n × Bool)).expect fun p =>
+      @ite ℝ
+        ((∀ (m : Fin n → Bool), firstQuery (adv (tablePublic g T) r) = some m → m p.1 ≠ p.2) ∧
+          (splitBits (honestOutput g adv T r)).1 p.1 = p.2)
+        (@instDecidableAnd (∀ (m : Fin n → Bool), firstQuery (adv (tablePublic g T) r) = some m → m p.1 ≠ p.2)
+          ((splitBits (honestOutput g adv T r)).1 p.1 = p.2) Fintype.decidableForallFintype
+          (instDecidableEqBool ((splitBits (honestOutput g adv T r)).1 p.1) p.2))
+        1 0
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment): no fresh .olean produced
+       13.74 real         2.84 user         2.23 sys
+          2176040960  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               72931  page reclaims
+              102841  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+               17308  voluntary context switches
+               87002  involuntary context switches
+            32706217  instructions retired
+            21941743  cycles elapsed
+             1605968  peak memory footprint
+end=2026-11-14T07:09:13.159585+00:00
+exit=1

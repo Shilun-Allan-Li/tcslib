@@ -15,6 +15,10 @@ import TCSlib.Cryptography.Authentication.Signatures.Lamport
 import TCSlib.Cryptography.Authentication.Signatures.Lamport.Encoding
 import TCSlib.Cryptography.Authentication.Signatures.Lamport.Planted
 import TCSlib.Cryptography.Authentication.Signatures.Lamport.TableCoins
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.AveragingExtra
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Statistics
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Experiment
 import TCSlib.Cryptography.Hashing.FromDiscreteLog
 import TCSlib.Cryptography.Authentication.Signatures.HashAndSign
 

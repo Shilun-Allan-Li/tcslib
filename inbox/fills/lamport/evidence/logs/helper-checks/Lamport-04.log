@@ -1,0 +1,120 @@
+start=2026-11-14T07:13:41.012613+00:00
+command=["python3", "-I", "/private/tmp/tcslib-lamport-01a1d88f/delivery/lamport/evidence/tools/lean_host_guard.py", "--", "/usr/bin/time", "-l", "/bin/bash", "scripts/lean_check_tree.sh", "TCSlib/Cryptography/Authentication/Signatures/Lamport"]
+source-sha256=49007eae6e1f9ed03642be6df22526b3060439b1b06813b69e275cee686dd334
+WAIT: 3 active Lean processes; preserving one slot for dl-crh
+WAIT: 2 active Lean processes; preserving one slot for dl-crh
+WAIT: 2 active Lean processes; preserving one slot for dl-crh
+WAIT: 2 active Lean processes; preserving one slot for dl-crh
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:398:4: error: failed to compile definition, compiler IR check failed at `TCSlib.Cryptography.Authentication.lamportCoinTables._redArg`. Error: depends on declaration 'TCSlib.Cryptography.Authentication.lamportGen', which has no executable code; consider marking definition as 'noncomputable'
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:653:38: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn ((lamportCoinTables ?hE ?n).symm ?T)
+in the target expression
+  lamportGenFun E (pairEncode (pairEncode (NUPPT.advInput n []) []) (List.ofFn ((lamportCoinTables hE n).symm T))) =
+    pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) (LamportFill.secretWord T)
+
+L : PolyExpr
+f : (n : ℕ) → (Fin n → Bool) → Fin (L.eval n) → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hfE : ∀ (n : ℕ) (x : Fin n → Bool), E (NUPPT.advInput n (List.ofFn x)) = List.ofFn (f n x)
+n : ℕ
+T : LamportFill.Table n
+h :
+  lamportGenFun E (pairEncode (pairEncode (NUPPT.advInput n []) []) (List.ofFn ((lamportCoinTables hE n).symm T))) =
+    pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) (LamportFill.secretWord T)
+⊢ lamportGenFun E (NUPPT.layout (List.replicate n true) [] [] (LamportFill.secretWord T)) =
+    pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) (LamportFill.secretWord T)
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:811:47: error: unsolved goals
+case h.h
+L : PolyExpr
+f : (n : ℕ) → (Fin n → Bool) → Fin (L.eval n) → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hfE : ∀ (n : ℕ) (x : Fin n → Bool), E (NUPPT.advInput n (List.ofFn x)) = List.ofFn (f n x)
+A : NUPPT
+n : ℕ
+T : LamportFill.Table n
+hgen :
+  (lamportGen hE).runAt n [] ((lamportCoinTables hE n).symm T) =
+    pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) (LamportFill.secretWord T)
+r : A.Coins n
+codec : MachineCodec (bitSpec (fun x => n) fun x => n * n) (Fin (n + n * n) → Bool) :=
+  bitCodec (fun x => n) (fun x => n * n) (n + n * n)
+tree : OracleComp (bitSpec (fun x => n) fun x => n * n) (Fin (n + n * n) → Bool) :=
+  A.toCompOn codec n 1 (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) r
+hcost : OracleComp.CostBoundedBy (fun x => 1) tree 1
+hsim :
+  ∀ (G : (Fin (n + n * n) → Bool) × Unit × QueryLog (bitSpec (fun x => n) fun x => n * n) → ℝ),
+    ProbComp.expect (simulate ((lamport L f E hE hfE).signImpl n (LamportFill.secretWord T)).withLog tree ((), [])) G =
+      ProbComp.expect (simulate (LamportFill.tableSigner T).withLog tree ((), [])) G
+⊢ (if
+        (∀ (i : Fin n),
+            f n
+                (LamportFill.signatureBlock
+                  (splitBits (OracleComp.evalFn (fun x m => LamportFill.tableSignature T m) tree)).2 i) =
+              f n (T (i, (splitBits (OracleComp.evalFn (fun x m => LamportFill.tableSignature T m) tree)).1 i))) ∧
+          ∀ e ∈ LamportFill.firstLog T tree,
+            e.snd.1 ≠ (splitBits (OracleComp.evalFn (fun x m => LamportFill.tableSignature T m) tree)).1 then
+      1
+    else 0) =
+    if
+        (∀ (j : Fin n),
+            f n
+                (LamportFill.signatureBlock
+                  (splitBits
+                      (OracleComp.evalFn (fun x m => LamportFill.tableSignature T m)
+                        (A.toCompOn (bitCodec (fun x => n) (fun x => n * n) (n + n * n)) n 1
+                          (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) r))).2
+                  j) =
+              f n
+                (T
+                  (j,
+                    (splitBits
+                          (OracleComp.evalFn (fun x m => LamportFill.tableSignature T m)
+                            (A.toCompOn (bitCodec (fun x => n) (fun x => n * n) (n + n * n)) n 1
+                              (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) r))).1
+                      j))) ∧
+          LamportFill.firstQuery
+              (A.toCompOn (bitCodec (fun x => n) (fun x => n * n) (n + n * n)) n 1
+                (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) r) ≠
+            some
+              (splitBits
+                  (OracleComp.evalFn (fun x m => LamportFill.tableSignature T m)
+                    (A.toCompOn (bitCodec (fun x => n) (fun x => n * n) (n + n * n)) n 1
+                      (LamportFill.publicWord (LamportFill.tablePublic (f n) T)) r))).1 then
+      1
+    else 0
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:842:32: warning: This simp argument is unused:
+  LamportFill.fresh_firstLog_iff
+
+Hint: Omit it from the simp argument list.
+  simp only [SignatureScheme.accepts_iff, lamport_ver,
+      lamportVerFun_publicWord_iff (L := L) (f := f) (E := E) (hfE := hfE),
+      LamportFill.tablePublic_eq, LamportFill.f̵r̵e̵s̵h_̵f̵i̵r̵s̵t̵L̵og̵_̵i̵f̵f̵,̵
+  ̵ ̵ ̵ ̵ ̵L̵a̵m̵p̵o̵r̵t̵F̵i̵l̵l̵.̵h̵o̵nestSuccess_iff, LamportFill.honestOutput_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:873:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Signatures/Lamport): no fresh .olean produced
+       53.29 real        87.47 user         2.64 sys
+          2225913856  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              121596  page reclaims
+               78922  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                9708  voluntary context switches
+              148166  involuntary context switches
+            35680158  instructions retired
+            24084386  cycles elapsed
+             1622352  peak memory footprint
+end=2026-11-14T07:15:15.166986+00:00
+exit=1

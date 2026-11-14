@@ -1,0 +1,1383 @@
+{
+  "issue_base": "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+  "checkpoint1": "09ac6b6c8c7f5997928ee5dfb4f18984ba2709b5",
+  "checkpoint2": "11cc4e54fb63bb1c6310e90e6fbaa07e7031fb07",
+  "method": "Explicit source declaration names, namespace-qualified; compare immutable Git sources. Private lexical names are not Lean-mangled stored names. Generated constants are covered by the separate runtime census.",
+  "checkpoint1_inventory_preserved": {
+    "path": "new-declarations-checkpoint1.json",
+    "sha256": "0e00166b9eca265096b8b83cbdf9b2f371c4dd7a2760313a1e2c2b14f764bc34"
+  },
+  "totals": {
+    "public_since_issue": 109,
+    "private_since_issue": 1,
+    "public_since_checkpoint1": 40,
+    "private_since_checkpoint1": 1
+  },
+  "files": {
+    "TCSlib/Cryptography/Authentication.lean": {
+      "source_sha256": {
+        "issue": "27e81654251b751d1078c62548650712e56f2c605180824bacfe09699b01771d",
+        "checkpoint1": "ae96fa118113361dc3f2f8f2da4bcee8abf8fc361564f1ba711d3471202ba228",
+        "checkpoint2": "8f3f0f451bbf81306e6e10faddebf24c6cefbe6ea279116414058eebdae27ee0"
+      },
+      "explicit_declarations_checkpoint2": 0,
+      "public_since_issue": [],
+      "private_since_issue": [],
+      "removed_since_issue": [],
+      "public_since_checkpoint1": [],
+      "private_since_checkpoint1": [],
+      "removed_since_checkpoint1": []
+    },
+    "TCSlib/Cryptography/Authentication/Signatures/Lamport.lean": {
+      "source_sha256": {
+        "issue": "30151f6b3f6ce3dd329b2457f260de9736c9260a955069420287a4b2f5701dc4",
+        "checkpoint1": "8b163888464058a1873025e6d3cb457dac3b861881ad84adc04cec37de1783ba",
+        "checkpoint2": "68cf73f632d1497e08af49abcfb22cd5bb0a43fdf3f1b4577e638a6994af091e"
+      },
+      "explicit_declarations_checkpoint2": 66,
+      "public_since_issue": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportGen_coins",
+          "source_name": "lamportGen_coins",
+          "kind": "theorem",
+          "line": 388,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportGen_coinLen",
+          "source_name": "lamportGen_coinLen",
+          "kind": "theorem",
+          "line": 393,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportCoinTables",
+          "source_name": "lamportCoinTables",
+          "kind": "def",
+          "line": 398,
+          "visibility": "public",
+          "modifiers": [
+            "noncomputable"
+          ]
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportCoinTables_eq",
+          "source_name": "lamportCoinTables_eq",
+          "kind": "theorem",
+          "line": 403,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportCoinTables_symm",
+          "source_name": "lamportCoinTables_symm",
+          "kind": "theorem",
+          "line": 410,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.ofFn_lamportCoinTables_symm",
+          "source_name": "ofFn_lamportCoinTables_symm",
+          "kind": "theorem",
+          "line": 416,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.secretWord_lamportCoinTables",
+          "source_name": "secretWord_lamportCoinTables",
+          "kind": "theorem",
+          "line": 421,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportSign_coins",
+          "source_name": "lamportSign_coins",
+          "kind": "theorem",
+          "line": 426,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.runAt_lamportGen_table",
+          "source_name": "runAt_lamportGen_table",
+          "kind": "theorem",
+          "line": 600,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.runAt_lamportSign_table",
+          "source_name": "runAt_lamportSign_table",
+          "kind": "theorem",
+          "line": 627,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportGenFun_table",
+          "source_name": "lamportGenFun_table",
+          "kind": "theorem",
+          "line": 645,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportSignFun_table",
+          "source_name": "lamportSignFun_table",
+          "kind": "theorem",
+          "line": 659,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportVerFun_publicWord_iff",
+          "source_name": "lamportVerFun_publicWord_iff",
+          "kind": "theorem",
+          "line": 680,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_forgerCodec",
+          "source_name": "lamport_forgerCodec",
+          "kind": "theorem",
+          "line": 752,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_signImpl_expect",
+          "source_name": "lamport_signImpl_expect",
+          "kind": "theorem",
+          "line": 769,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_loggedSignImpl_expect",
+          "source_name": "lamport_loggedSignImpl_expect",
+          "kind": "theorem",
+          "line": 783,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_forgeGame_accept_eq_honestProbability",
+          "source_name": "lamport_forgeGame_accept_eq_honestProbability",
+          "kind": "theorem",
+          "line": 807,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_exists_best_position",
+          "source_name": "lamport_exists_best_position",
+          "kind": "theorem",
+          "line": 857,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_issue": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_codec_ext",
+          "source_name": "lamport_codec_ext",
+          "kind": "theorem",
+          "line": 740,
+          "visibility": "private",
+          "modifiers": [
+            "private"
+          ]
+        }
+      ],
+      "removed_since_issue": [],
+      "public_since_checkpoint1": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportCoinTables",
+          "source_name": "lamportCoinTables",
+          "kind": "def",
+          "line": 398,
+          "visibility": "public",
+          "modifiers": [
+            "noncomputable"
+          ]
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportCoinTables_eq",
+          "source_name": "lamportCoinTables_eq",
+          "kind": "theorem",
+          "line": 403,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportCoinTables_symm",
+          "source_name": "lamportCoinTables_symm",
+          "kind": "theorem",
+          "line": 410,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.ofFn_lamportCoinTables_symm",
+          "source_name": "ofFn_lamportCoinTables_symm",
+          "kind": "theorem",
+          "line": 416,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.secretWord_lamportCoinTables",
+          "source_name": "secretWord_lamportCoinTables",
+          "kind": "theorem",
+          "line": 421,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportGenFun_table",
+          "source_name": "lamportGenFun_table",
+          "kind": "theorem",
+          "line": 645,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamportSignFun_table",
+          "source_name": "lamportSignFun_table",
+          "kind": "theorem",
+          "line": 659,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_forgerCodec",
+          "source_name": "lamport_forgerCodec",
+          "kind": "theorem",
+          "line": 752,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_signImpl_expect",
+          "source_name": "lamport_signImpl_expect",
+          "kind": "theorem",
+          "line": 769,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_loggedSignImpl_expect",
+          "source_name": "lamport_loggedSignImpl_expect",
+          "kind": "theorem",
+          "line": 783,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_forgeGame_accept_eq_honestProbability",
+          "source_name": "lamport_forgeGame_accept_eq_honestProbability",
+          "kind": "theorem",
+          "line": 807,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_exists_best_position",
+          "source_name": "lamport_exists_best_position",
+          "kind": "theorem",
+          "line": 857,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_checkpoint1": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.lamport_codec_ext",
+          "source_name": "lamport_codec_ext",
+          "kind": "theorem",
+          "line": 740,
+          "visibility": "private",
+          "modifiers": [
+            "private"
+          ]
+        }
+      ],
+      "removed_since_checkpoint1": []
+    },
+    "TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean": {
+      "source_sha256": {
+        "issue": null,
+        "checkpoint1": null,
+        "checkpoint2": "5dddc3a741399216792dfc4ffa6d43d2e2043e37e3a16bd9e61d90409c456313"
+      },
+      "explicit_declarations_checkpoint2": 7,
+      "public_since_issue": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.sum_favourable_bits",
+          "source_name": "sum_favourable_bits",
+          "kind": "theorem",
+          "line": 45,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.sum_favourable_pairs",
+          "source_name": "sum_favourable_pairs",
+          "kind": "theorem",
+          "line": 51,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.one_le_favourable_sum",
+          "source_name": "one_le_favourable_sum",
+          "kind": "theorem",
+          "line": 62,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.favourable_expect_ge",
+          "source_name": "favourable_expect_ge",
+          "kind": "theorem",
+          "line": 81,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.noQuery_expect_eq_half",
+          "source_name": "noQuery_expect_eq_half",
+          "kind": "theorem",
+          "line": 95,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.exists_expect_sample_le",
+          "source_name": "exists_expect_sample_le",
+          "kind": "theorem",
+          "line": 110,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.expect_favourable_of_success",
+          "source_name": "expect_favourable_of_success",
+          "kind": "theorem",
+          "line": 124,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_issue": [],
+      "removed_since_issue": [],
+      "public_since_checkpoint1": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.sum_favourable_bits",
+          "source_name": "sum_favourable_bits",
+          "kind": "theorem",
+          "line": 45,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.sum_favourable_pairs",
+          "source_name": "sum_favourable_pairs",
+          "kind": "theorem",
+          "line": 51,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.one_le_favourable_sum",
+          "source_name": "one_le_favourable_sum",
+          "kind": "theorem",
+          "line": 62,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.favourable_expect_ge",
+          "source_name": "favourable_expect_ge",
+          "kind": "theorem",
+          "line": 81,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.noQuery_expect_eq_half",
+          "source_name": "noQuery_expect_eq_half",
+          "kind": "theorem",
+          "line": 95,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.exists_expect_sample_le",
+          "source_name": "exists_expect_sample_le",
+          "kind": "theorem",
+          "line": 110,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.expect_favourable_of_success",
+          "source_name": "expect_favourable_of_success",
+          "kind": "theorem",
+          "line": 124,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_checkpoint1": [],
+      "removed_since_checkpoint1": []
+    },
+    "TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean": {
+      "source_sha256": {
+        "issue": null,
+        "checkpoint1": null,
+        "checkpoint2": "de5f7ebae3004094abfa4d29045c203e04d0ec14314fee54ed6270d90f095209"
+      },
+      "explicit_declarations_checkpoint2": 2,
+      "public_since_issue": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.optionQuery_favourable_expect_ge",
+          "source_name": "optionQuery_favourable_expect_ge",
+          "kind": "theorem",
+          "line": 44,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.exists_position_fairBit_expect_ge",
+          "source_name": "exists_position_fairBit_expect_ge",
+          "kind": "theorem",
+          "line": 71,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_issue": [],
+      "removed_since_issue": [],
+      "public_since_checkpoint1": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.optionQuery_favourable_expect_ge",
+          "source_name": "optionQuery_favourable_expect_ge",
+          "kind": "theorem",
+          "line": 44,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.exists_position_fairBit_expect_ge",
+          "source_name": "exists_position_fairBit_expect_ge",
+          "kind": "theorem",
+          "line": 71,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_checkpoint1": [],
+      "removed_since_checkpoint1": []
+    },
+    "TCSlib/Cryptography/Authentication/Signatures/Lamport/Encoding.lean": {
+      "source_sha256": {
+        "issue": null,
+        "checkpoint1": "3b02b5e0b3c3e7ba4ada04cd61b7af4f8898b9892922e62aeec8e85dfeb916e8",
+        "checkpoint2": "3b02b5e0b3c3e7ba4ada04cd61b7af4f8898b9892922e62aeec8e85dfeb916e8"
+      },
+      "explicit_declarations_checkpoint2": 3,
+      "public_since_issue": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.encodeList_injective",
+          "source_name": "encodeList_injective",
+          "kind": "theorem",
+          "line": 43,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.encodeList_eq_iff",
+          "source_name": "encodeList_eq_iff",
+          "kind": "theorem",
+          "line": 70,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportReduction.encodeList_ofFn_eq_iff",
+          "source_name": "encodeList_ofFn_eq_iff",
+          "kind": "theorem",
+          "line": 76,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_issue": [],
+      "removed_since_issue": [],
+      "public_since_checkpoint1": [],
+      "private_since_checkpoint1": [],
+      "removed_since_checkpoint1": []
+    },
+    "TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean": {
+      "source_sha256": {
+        "issue": null,
+        "checkpoint1": null,
+        "checkpoint2": "f94a74568f2c002caf53b62b8fce6d4bda31f795f96557c2e76a05e9239216bd"
+      },
+      "explicit_declarations_checkpoint2": 18,
+      "public_since_issue": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.honestOutput",
+          "source_name": "honestOutput",
+          "kind": "def",
+          "line": 51,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.honestOutput_eq",
+          "source_name": "honestOutput_eq",
+          "kind": "theorem",
+          "line": 55,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.HonestSuccess",
+          "source_name": "HonestSuccess",
+          "kind": "def",
+          "line": 61,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.honestSuccess_iff",
+          "source_name": "honestSuccess_iff",
+          "kind": "theorem",
+          "line": 67,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.Favourable",
+          "source_name": "Favourable",
+          "kind": "def",
+          "line": 76,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.favourable_iff",
+          "source_name": "favourable_iff",
+          "kind": "theorem",
+          "line": 81,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.RedSuccess",
+          "source_name": "RedSuccess",
+          "kind": "def",
+          "line": 87,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.redSuccess_iff",
+          "source_name": "redSuccess_iff",
+          "kind": "theorem",
+          "line": 94,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantTable_self",
+          "source_name": "plantTable_self",
+          "kind": "theorem",
+          "line": 101,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.redSuccess_plant_iff",
+          "source_name": "redSuccess_plant_iff",
+          "kind": "theorem",
+          "line": 110,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.diagonal_red_of_success_favourable",
+          "source_name": "diagonal_red_of_success_favourable",
+          "kind": "theorem",
+          "line": 117,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.favourable_mass_of_success",
+          "source_name": "favourable_mass_of_success",
+          "kind": "theorem",
+          "line": 137,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.honestProbability",
+          "source_name": "honestProbability",
+          "kind": "def",
+          "line": 163,
+          "visibility": "public",
+          "modifiers": [
+            "noncomputable"
+          ]
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.honestProbability_eq",
+          "source_name": "honestProbability_eq",
+          "kind": "theorem",
+          "line": 168,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.redProbability",
+          "source_name": "redProbability",
+          "kind": "def",
+          "line": 174,
+          "visibility": "public",
+          "modifiers": [
+            "noncomputable"
+          ]
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.redProbability_eq",
+          "source_name": "redProbability_eq",
+          "kind": "theorem",
+          "line": 181,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.averaged_redProbability_ge",
+          "source_name": "averaged_redProbability_ge",
+          "kind": "theorem",
+          "line": 194,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.exists_best_position",
+          "source_name": "exists_best_position",
+          "kind": "theorem",
+          "line": 211,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_issue": [],
+      "removed_since_issue": [],
+      "public_since_checkpoint1": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.honestOutput",
+          "source_name": "honestOutput",
+          "kind": "def",
+          "line": 51,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.honestOutput_eq",
+          "source_name": "honestOutput_eq",
+          "kind": "theorem",
+          "line": 55,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.HonestSuccess",
+          "source_name": "HonestSuccess",
+          "kind": "def",
+          "line": 61,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.honestSuccess_iff",
+          "source_name": "honestSuccess_iff",
+          "kind": "theorem",
+          "line": 67,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.Favourable",
+          "source_name": "Favourable",
+          "kind": "def",
+          "line": 76,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.favourable_iff",
+          "source_name": "favourable_iff",
+          "kind": "theorem",
+          "line": 81,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.RedSuccess",
+          "source_name": "RedSuccess",
+          "kind": "def",
+          "line": 87,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.redSuccess_iff",
+          "source_name": "redSuccess_iff",
+          "kind": "theorem",
+          "line": 94,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantTable_self",
+          "source_name": "plantTable_self",
+          "kind": "theorem",
+          "line": 101,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.redSuccess_plant_iff",
+          "source_name": "redSuccess_plant_iff",
+          "kind": "theorem",
+          "line": 110,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.diagonal_red_of_success_favourable",
+          "source_name": "diagonal_red_of_success_favourable",
+          "kind": "theorem",
+          "line": 117,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.favourable_mass_of_success",
+          "source_name": "favourable_mass_of_success",
+          "kind": "theorem",
+          "line": 137,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.honestProbability",
+          "source_name": "honestProbability",
+          "kind": "def",
+          "line": 163,
+          "visibility": "public",
+          "modifiers": [
+            "noncomputable"
+          ]
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.honestProbability_eq",
+          "source_name": "honestProbability_eq",
+          "kind": "theorem",
+          "line": 168,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.redProbability",
+          "source_name": "redProbability",
+          "kind": "def",
+          "line": 174,
+          "visibility": "public",
+          "modifiers": [
+            "noncomputable"
+          ]
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.redProbability_eq",
+          "source_name": "redProbability_eq",
+          "kind": "theorem",
+          "line": 181,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.averaged_redProbability_ge",
+          "source_name": "averaged_redProbability_ge",
+          "kind": "theorem",
+          "line": 194,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.exists_best_position",
+          "source_name": "exists_best_position",
+          "kind": "theorem",
+          "line": 211,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_checkpoint1": [],
+      "removed_since_checkpoint1": []
+    },
+    "TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean": {
+      "source_sha256": {
+        "issue": null,
+        "checkpoint1": "ddc015a571c7fe841b53e819e497358069ad50aa421c05edae070cde69c8beed",
+        "checkpoint2": "ddc015a571c7fe841b53e819e497358069ad50aa421c05edae070cde69c8beed"
+      },
+      "explicit_declarations_checkpoint2": 54,
+      "public_since_issue": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.Table",
+          "source_name": "Table",
+          "kind": "abbrev",
+          "line": 44,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.Table_eq",
+          "source_name": "Table_eq",
+          "kind": "theorem",
+          "line": 47,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.publicWord",
+          "source_name": "publicWord",
+          "kind": "def",
+          "line": 50,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.publicWord_eq",
+          "source_name": "publicWord_eq",
+          "kind": "theorem",
+          "line": 55,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.secretWord",
+          "source_name": "secretWord",
+          "kind": "def",
+          "line": 60,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.secretWord_eq",
+          "source_name": "secretWord_eq",
+          "kind": "theorem",
+          "line": 64,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.length_secretWord",
+          "source_name": "length_secretWord",
+          "kind": "theorem",
+          "line": 70,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantTable",
+          "source_name": "plantTable",
+          "kind": "def",
+          "line": 81,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantTable_eq",
+          "source_name": "plantTable_eq",
+          "kind": "theorem",
+          "line": 86,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantTable_at",
+          "source_name": "plantTable_at",
+          "kind": "theorem",
+          "line": 91,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantTable_ne",
+          "source_name": "plantTable_ne",
+          "kind": "theorem",
+          "line": 96,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantTable_update",
+          "source_name": "plantTable_update",
+          "kind": "theorem",
+          "line": 101,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.tableSignature",
+          "source_name": "tableSignature",
+          "kind": "def",
+          "line": 107,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.tableSignature_apply",
+          "source_name": "tableSignature_apply",
+          "kind": "theorem",
+          "line": 112,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.ofFn_tableSignature",
+          "source_name": "ofFn_tableSignature",
+          "kind": "theorem",
+          "line": 117,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.tableSignature_plant_of_safe",
+          "source_name": "tableSignature_plant_of_safe",
+          "kind": "theorem",
+          "line": 128,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.tablePublic",
+          "source_name": "tablePublic",
+          "kind": "def",
+          "line": 143,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.tablePublic_eq",
+          "source_name": "tablePublic_eq",
+          "kind": "theorem",
+          "line": 147,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantedPublic",
+          "source_name": "plantedPublic",
+          "kind": "def",
+          "line": 151,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantedPublic_eq",
+          "source_name": "plantedPublic_eq",
+          "kind": "theorem",
+          "line": 156,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantedPublic_image",
+          "source_name": "plantedPublic_image",
+          "kind": "theorem",
+          "line": 161,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantedPublic_plant",
+          "source_name": "plantedPublic_plant",
+          "kind": "theorem",
+          "line": 170,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.signatureBlock",
+          "source_name": "signatureBlock",
+          "kind": "def",
+          "line": 180,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.signatureBlock_eq",
+          "source_name": "signatureBlock_eq",
+          "kind": "theorem",
+          "line": 184,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.extract_planted",
+          "source_name": "extract_planted",
+          "kind": "theorem",
+          "line": 189,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.exists_pure_of_cost_zero",
+          "source_name": "exists_pure_of_cost_zero",
+          "kind": "theorem",
+          "line": 199,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.firstQuery",
+          "source_name": "firstQuery",
+          "kind": "def",
+          "line": 209,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.firstQuery_pure",
+          "source_name": "firstQuery_pure",
+          "kind": "theorem",
+          "line": 215,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.firstQuery_query",
+          "source_name": "firstQuery_query",
+          "kind": "theorem",
+          "line": 220,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.tableSigner",
+          "source_name": "tableSigner",
+          "kind": "def",
+          "line": 226,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.tableSigner_eq",
+          "source_name": "tableSigner_eq",
+          "kind": "theorem",
+          "line": 231,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.firstLog",
+          "source_name": "firstLog",
+          "kind": "def",
+          "line": 236,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.firstLog_pure",
+          "source_name": "firstLog_pure",
+          "kind": "theorem",
+          "line": 243,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.firstLog_query",
+          "source_name": "firstLog_query",
+          "kind": "theorem",
+          "line": 248,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.honest_transcript",
+          "source_name": "honest_transcript",
+          "kind": "theorem",
+          "line": 259,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.fresh_firstLog_iff",
+          "source_name": "fresh_firstLog_iff",
+          "kind": "theorem",
+          "line": 276,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.exists_honest_transcript",
+          "source_name": "exists_honest_transcript",
+          "kind": "theorem",
+          "line": 284,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.Safe",
+          "source_name": "Safe",
+          "kind": "def",
+          "line": 293,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.safe_iff",
+          "source_name": "safe_iff",
+          "kind": "theorem",
+          "line": 299,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.abortingAnswer",
+          "source_name": "abortingAnswer",
+          "kind": "def",
+          "line": 305,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.abortingAnswer_eq",
+          "source_name": "abortingAnswer_eq",
+          "kind": "theorem",
+          "line": 310,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.abortingAnswer_plant",
+          "source_name": "abortingAnswer_plant",
+          "kind": "theorem",
+          "line": 314,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.abortingImpl",
+          "source_name": "abortingImpl",
+          "kind": "def",
+          "line": 323,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.abortingImpl_apply",
+          "source_name": "abortingImpl_apply",
+          "kind": "theorem",
+          "line": 328,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.abortingImpl_plant",
+          "source_name": "abortingImpl_plant",
+          "kind": "theorem",
+          "line": 334,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.abortingImpl_safe",
+          "source_name": "abortingImpl_safe",
+          "kind": "theorem",
+          "line": 341,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.planted_coupling",
+          "source_name": "planted_coupling",
+          "kind": "theorem",
+          "line": 355,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.extractionExperiment",
+          "source_name": "extractionExperiment",
+          "kind": "def",
+          "line": 373,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.extractionExperiment_eq",
+          "source_name": "extractionExperiment_eq",
+          "kind": "theorem",
+          "line": 381,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.extractionExperiment_plant",
+          "source_name": "extractionExperiment_plant",
+          "kind": "theorem",
+          "line": 389,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantedExperiment",
+          "source_name": "plantedExperiment",
+          "kind": "def",
+          "line": 399,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantedExperiment_eq",
+          "source_name": "plantedExperiment_eq",
+          "kind": "theorem",
+          "line": 408,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.plantedExperiment_plant",
+          "source_name": "plantedExperiment_plant",
+          "kind": "theorem",
+          "line": 418,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.favorable_extraction",
+          "source_name": "favorable_extraction",
+          "kind": "theorem",
+          "line": 434,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_issue": [],
+      "removed_since_issue": [],
+      "public_since_checkpoint1": [],
+      "private_since_checkpoint1": [],
+      "removed_since_checkpoint1": []
+    },
+    "TCSlib/Cryptography/Authentication/Signatures/Lamport/Statistics.lean": {
+      "source_sha256": {
+        "issue": null,
+        "checkpoint1": null,
+        "checkpoint2": "a65f32557dea3e6cf0f9bf32f5ee4184d3fff056a967962506d392bafc25fe25"
+      },
+      "explicit_declarations_checkpoint2": 1,
+      "public_since_issue": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.coordinate_reduction_bound",
+          "source_name": "coordinate_reduction_bound",
+          "kind": "theorem",
+          "line": 50,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_issue": [],
+      "removed_since_issue": [],
+      "public_since_checkpoint1": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.coordinate_reduction_bound",
+          "source_name": "coordinate_reduction_bound",
+          "kind": "theorem",
+          "line": 50,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_checkpoint1": [],
+      "removed_since_checkpoint1": []
+    },
+    "TCSlib/Cryptography/Authentication/Signatures/Lamport/TableCoins.lean": {
+      "source_sha256": {
+        "issue": null,
+        "checkpoint1": "c05f676260541ad80ba0cf0a54445e837fdf57beee063440fd486dcda71bab68",
+        "checkpoint2": "c05f676260541ad80ba0cf0a54445e837fdf57beee063440fd486dcda71bab68"
+      },
+      "explicit_declarations_checkpoint2": 6,
+      "public_since_issue": [
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.tableCoins_width",
+          "source_name": "tableCoins_width",
+          "kind": "theorem",
+          "line": 37,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.tableCoins",
+          "source_name": "tableCoins",
+          "kind": "def",
+          "line": 42,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.tableCoins_apply",
+          "source_name": "tableCoins_apply",
+          "kind": "theorem",
+          "line": 52,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.tableCoins_symm",
+          "source_name": "tableCoins_symm",
+          "kind": "theorem",
+          "line": 61,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.ofFn_tableCoins_symm",
+          "source_name": "ofFn_tableCoins_symm",
+          "kind": "theorem",
+          "line": 73,
+          "visibility": "public",
+          "modifiers": []
+        },
+        {
+          "name": "TCSlib.Cryptography.Authentication.LamportFill.secretWord_tableCoins",
+          "source_name": "secretWord_tableCoins",
+          "kind": "theorem",
+          "line": 84,
+          "visibility": "public",
+          "modifiers": []
+        }
+      ],
+      "private_since_issue": [],
+      "removed_since_issue": [],
+      "public_since_checkpoint1": [],
+      "private_since_checkpoint1": [],
+      "removed_since_checkpoint1": []
+    }
+  }
+}
