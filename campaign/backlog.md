@@ -3837,8 +3837,15 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   Gate 128 closed (Codex PASS on the frozen statement scope, 0/0/0, 22 notes) and #249 merged.
   **LD9 approved (Seyoon, 2026-11-14):** `SAT_exists_linear_verifier` after `SAT_mem_NP`; merged as
   #301 (gate 134 CLEAR) at `b313afe5`. Concrete quantitative memo/simulator/SAT-search obligations remain fill-route
-  work; a Codex route draft for the six holes is requested
-  (`campaign/items/ladner/fill-routes-request/brief.md`). No proof fill is dispatched yet. See
+  work; the Codex route draft is in (`campaign/items/ladner/fill-routes-request/delivery/`).
+  **Ruled (Seyoon, 2026-11-14), from that draft:** (i) the eight owner readers R1–R6
+  (`polyTimeComputable_iff` in ClassNP/PolyTime; `polyTimeReducible_iff`, `NPHard_iff`,
+  `NPComplete_iff` in ClassNP/Reductions; `Turing.FinTM.decidesInTime_iff` in ClassP/DTIME;
+  `Turing.MultiTapeTM.indicator_of_mem`/`_of_not_mem` in Deterministic), landed by the maintainer
+  as one gated PR; (ii) `BinArith.powCap` with `powCap_eq`, `powCap_pairEncode` and
+  `polyTimeComputable_powCap`, public in ClassP/BinaryArith/Mul (a fill); (iii) Ladner.lean may
+  import `ClassP.BinaryArith.Loops` and `ClassP.ModelInvariance` where a fill's route needs them.
+  Fills edit Ladner.lean serially, in the draft's order (targets 3, 4, 1, 2, 5, 6). See
   `campaign/items/ladner/LADNER-design.md`, roadmap3/PLAN§(f) and HANDOFF§0. *Origin:
   `AroraBarakChapters3-4Plan.md`§4(P3.4), CH34-Q6.*
 * **ARM extensions + colleague sync (moved to backlog 2026-10-09; user
