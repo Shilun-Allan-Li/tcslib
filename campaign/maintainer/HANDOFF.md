@@ -10,13 +10,14 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 ## 0. Current state (2026-11-14; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
-only go directly after fetch/rebase. The latest merge is #300 (Call/Clean/Oblivious readers, gate 133).
-Campaign Lean is `aeeda36452d6fbdf76b8670bb6cf1f569b7d1203`. Its replay output is the cloud snapshot `oleans-caeed`
-(876 objects); use it whole. See campaign/status/2026-11-14-merge-300/. Earlier merges are in the table.
+only go directly after fetch/rebase. The latest merge is #302 (Ladner owner readers, gate 135).
+Campaign Lean is `210d87481ad6837ec34ac8ef99e267e13ff8c95b`. Its replay output is the cloud snapshot `oleans-c210d`
+(876 objects); use it whole. See campaign/status/2026-11-14-merge-302/. Ladner fill 1 (the
+selector theorems) is dispatched to Codex (campaign/fills/ladner-selectors/). Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
-| #302 / 135 | **Clear to merge.** Gate 135 closed (CLEAR, 0/0/0, 13 notes) at `50bb801a`; fresh replay on campaign `aeeda364` (after #300, still current) passed; merges cleanly. Draft: mark ready, then merge; then adopt `oleans-lr135-caeed`. Base of Ladner fill 1 (dispatched 2026-11-14). |
+| #302 / 135 | **Merged** at `210d87481ad6837ec34ac8ef99e267e13ff8c95b` (2026-11-14). Gate closed (CLEAR). Its fresh replay output is the campaign snapshot `oleans-c210d` (876 objects; campaign/status/2026-11-14-merge-302/). Ladner fill 1 (dispatched) builds on its head `50bb801a`. |
 | #301 / 134 | **Merged** at `b313afe522991f2114390952f26ffe7de825bace` (2026-11-14). Gate closed (CLEAR). Its replay output is the campaign snapshot `oleans-cb313` (876 objects; campaign/status/2026-11-14-merge-301/). |
 | #300 / 133 | **Merged** at `aeeda36452d6fbdf76b8670bb6cf1f569b7d1203` (2026-11-14). Gate closed (round 2 CLEAR). Its replay output is the campaign snapshot `oleans-caeed` (876 objects; campaign/status/2026-11-14-merge-300/). |
 | #296 / 132 | **Merged** at `5ab222167eb12664d97d255766c5def15b6d5d50` (2026-11-14). Gate closed (round 3 CLEAR). Its replay output is the campaign snapshot `oleans-c5ab2` (876 objects; campaign/status/2026-11-14-merge-296/). |

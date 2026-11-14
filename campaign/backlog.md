@@ -3842,7 +3842,7 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   (`polyTimeComputable_iff` in ClassNP/PolyTime; `polyTimeReducible_iff`, `NPHard_iff`,
   `NPComplete_iff` in ClassNP/Reductions; `Turing.FinTM.decidesInTime_iff` in ClassP/DTIME;
   `Turing.MultiTapeTM.indicator_of_mem`/`_of_not_mem` in Deterministic), landed by the maintainer
-  as one gated PR; (ii) `BinArith.powCap` with `powCap_eq`, `powCap_pairEncode` and
+  as one gated PR (merged as #302, gate 135 CLEAR); (ii) `BinArith.powCap` with `powCap_eq`, `powCap_pairEncode` and
   `polyTimeComputable_powCap`, public in ClassP/BinaryArith/Mul (a fill); (iii) Ladner.lean may
   import `ClassP.BinaryArith.Loops` and `ClassP.ModelInvariance` where a fill's route needs them.
   Fills edit Ladner.lean serially, in the draft's order (targets 3, 4, 1, 2, 5, 6). See
