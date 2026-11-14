@@ -239,8 +239,11 @@ theorem collisionPost_split (n : ℕ) (i y raw : List Bool) (hw : WellFormedInde
         (padFin ((n + 1) + (n + 1)) raw)).2 = _
     rw [ofFn_splitBits_fst, ofFn_splitBits_snd, List.take_append_drop]
   have hword : List.ofFn (padFin ((n + 1) + (n + 1)) raw) = padStr width u raw := by
-    simpa only [width, u, List.length_replicate, PolyExpr.eval_add, PolyExpr.eval_var,
-      PolyExpr.eval_const] using ofFn_padFin_eq_padStr width u raw
+    have hwidth : width.eval u.length = ((n + 1) + (n + 1)) := by
+      simp only [width, u, List.length_replicate, PolyExpr.eval_add, PolyExpr.eval_var,
+        PolyExpr.eval_const]
+    exact (congrArg (fun k : ℕ => List.ofFn (padFin k raw)) hwidth).symm.trans
+      (ofFn_padFin_eq_padStr width u raw)
   have hidem : padStr width u (padStr width u raw) = padStr width u raw := by
     calc
       padStr width u (padStr width u raw) =

@@ -504,8 +504,9 @@ theorem dlHash_compresses (H : ArithmeticFP) (G : ExpGroupGen V)
   have hm : dlM (G.gen.runAt n [] r) < 2 ^ n :=
     ((expValid_iff _).1 hi).2.2.1.trans hp
   simp only [dlHash_inDom, dlHash_inRange, CRH.hash_eq, dlHash_eval,
-    dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
-    PolyExpr.eval_const, pairFstD_pairEncode, decide_eq_true_eq]
+    pairFstD_pairEncode, decide_eq_true_eq]
+  simp only [dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
+    PolyExpr.eval_const]
   constructor
   · intro x hx
     have hr := dlHashEval_range n _ z x hi hw hx
@@ -567,8 +568,9 @@ theorem dlHash_collision_accept_eq (H : ArithmeticFP) (G : ExpGroupGen V) (A : N
   rw [dlHash_gen_runAt, dlHashGenFun_layout G n r (List.ofFn s) hn]
   have hw := G.wellFormed n r hn
   simp only [dlHashCollision_iff, dlHash_inDom, CRH.hash_eq, dlHash_eval,
-    dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
-    PolyExpr.eval_const, pairFstD_pairEncode, decide_eq_true_eq, hw.dlW_eq]
+    pairFstD_pairEncode, decide_eq_true_eq, hw.dlW_eq]
+  simp only [dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
+    PolyExpr.eval_const]
 
 /-- Whenever the finder produces a collision on a valid key `⟨i, g^z⟩`, the reduction's
 answer decodes to the challenge exponent [PS10, reduction in Theorem 142.3].
