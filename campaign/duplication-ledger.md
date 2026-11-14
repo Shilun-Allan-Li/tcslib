@@ -2028,4 +2028,10 @@ through `obliviousSchedule_k`/`_State`. Same ruling, two extensions within the P
 **Transport (Seyoon, 2026-11-14): designed in this PR.** Restating the three producers through
 `_k`/`_State` needs a transport between `Cfg (W.k + 3) OblSymbol (OblPhase W.State a)` and the
 configurations of `obliviousSchedule W a`. The design (its new API and the exact restated
-statements) goes to Seyoon before it is implemented; the PR waits for it.
+statements) goes to Seyoon before it is implemented; the PR waits for it. **Approved (Seyoon, 2026-11-14):**
+`obliviousScheduleCfg` in `Robustness/ObliviousSchedule` (a configuration over `W.k + 3` tapes and
+`OblPhase` states, read as one of `obliviousSchedule W a`) with five field readers; the run
+equations of `clockStageCfg_captures`, `setupCfg_initializes` and `setupCfg_finish` restated
+through it; and the private `obliviousSchedule_ready` as `∃ t c, runFrom … t =
+obliviousScheduleCfg W a c ∧ …`, superseding its cast form. Route probe:
+`rd/Transport-route-probe.lean.txt` (scratch), archived with the gate.
