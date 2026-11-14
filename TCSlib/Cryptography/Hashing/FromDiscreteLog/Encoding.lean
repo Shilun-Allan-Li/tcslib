@@ -6,6 +6,7 @@ import TCSlib.Cryptography.Candidates.Arithmetic
 import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.Authentication.Encoding
 import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
+import TCSlib.Cryptography.Asymptotic.ReductionSupport
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -65,14 +66,15 @@ theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
 /-- The word of an `(n + 1)`-bit vector is its first `n` bits followed by its final bit:
 `List.ofFn x = List.ofFn (fun j : Fin n => x j.castSucc) ++ [x (Fin.last n)]`. -/
 theorem inputWord_split {n : ℕ} (x : Fin (n + 1) → Bool) :
-    List.ofFn x = List.ofFn (fun j : Fin n => x j.castSucc) ++ [x (Fin.last n)] := by
-  rw [List.ofFn_succ', List.concat_eq_append]
+    List.ofFn x = List.ofFn (fun j : Fin n => x j.castSucc) ++ [x (Fin.last n)] :=
+  ofFn_eq_init_append x
 
 /-- Taking the first `n` bits of an `(n + 1)`-bit word gives its restricted vector:
 `(List.ofFn x).take n = List.ofFn (fun j : Fin n => x j.castSucc)`. -/
 theorem inputWord_take {n : ℕ} (x : Fin (n + 1) → Bool) :
-    (List.ofFn x).take n = List.ofFn (fun j : Fin n => x j.castSucc) := by
-  rw [inputWord_split, List.take_left' (by simp)]
+    (List.ofFn x).take n = List.ofFn (fun j : Fin n => x j.castSucc) :=
+  (take_ofFn_castLE (Nat.le_succ n) x).trans
+    (congrArg List.ofFn (funext fun _ => congrArg x (Fin.ext rfl)))
 
 /-- Dropping the first `n` bits of an `(n + 1)`-bit word leaves its final bit:
 `(List.ofFn x).drop n = [x (Fin.last n)]`. -/
