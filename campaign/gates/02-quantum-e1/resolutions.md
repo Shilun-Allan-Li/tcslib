@@ -2,8 +2,8 @@
 
 The epoch gate follows the phase-gate rule (`workflow.md` §3–4): it closes only on a round
 reporting zero blockers and zero majors, and a debt major closes only by explicit human
-acknowledgment recorded here. Round 1 reported two debt majors, so this file records the repairs
-and opens round 2, a full re-audit.
+acknowledgment recorded here. Round 1 reported two debt majors, repaired and acknowledged; round 2,
+a full re-audit, reported zero blockers and zero majors. **The gate is closed** (§ Closing).
 
 ## Round 1
 
@@ -13,7 +13,7 @@ and opens round 2, a full re-audit.
 | Pack | `pack.md` (shipped; not edited since, errata below) |
 | Bundle | not committed; SHA-256 `3b73500309d40d61bd133f630ddafb2b991a6539d3b1815a2f3298bc3afde812`, built by `evidence/make_bundle.sh` |
 | Auditor | an external model from a different vendor, in a fresh chat, with the bundle |
-| Findings | `findings.md`, verbatim: **0 blockers, 2 majors, 7 minors**. Statement freeze confirmed independently from the diff (135 → 169 named declarations in the five files; every carried-over name, signature and relative order unchanged; exactly 52 bodies went from `sorry` to proofs); all six new public declarations restated and argued true; answers to all seven questions |
+| Findings | `findings.md`, verbatim: **0 blockers, 2 majors, 7 minors**. Statement freeze confirmed independently from the diff (134 → 168 named declarations in the five files, plus the unchanged anonymous instance, which `findings.md` counts in its 135 → 169; round 2, R2-3; every carried-over name, signature and relative order unchanged; exactly 52 bodies went from `sorry` to proofs); all six new public declarations restated and argued true; answers to all seven questions |
 
 ### Dispositions
 
@@ -77,3 +77,49 @@ acknowledges is that disposition.
 `campaign/gates/02-quantum-e1/evidence-r1/` holds the scripts (E1's sweep, axiom probe and lint
 wrapper unchanged; the revised `drift.py`, `copy_screen.sh`, and the new `axiom_diff.py`) and all
 logs above.
+
+## Round 2
+
+| Item | Value |
+|---|---|
+| Lean commit audited | `647511e33e2c8b2a8c567362b0f3c756da78d2c9` (records on top in `c678475b`, `a7a507eb`) |
+| Pack | `pack-r2.md` (shipped; not edited since) |
+| Bundle | not committed; SHA-256 `b7d6d29769401c3c8faa45f4d1b1fe246e9a372d959c49dbfc12458f781458c7`, 326,038 bytes, 30 attachment sections after the pack, built by `evidence-r1/make_bundle.sh` (the auditor confirmed the hash) |
+| Auditor | an external model from a different vendor, in a fresh chat, with the bundle |
+| Findings | `findings-r2.md`, verbatim: **0 blockers, 0 majors, 3 minors, 1 note**. All nine round-1 repairs verified, major 2 confirmed as the proposed construction; the cumulative freeze re-checked independently by reverse-applying both diffs (134 → 171 named declarations in the five files, 52 former `sorry` bodies, 82 other baseline bodies unchanged, no removal, re-signature or reordering); both new public declarations restated and argued true, with a targeted check that pinned Mathlib has no duplicate; every copy-screen row reclassified (15 E1 rows, all idiom; `H_mul_Z_mul_H` a different character sum from `H H = 1`); `axiom_diff.py` re-run on the logs, reproducing all three breakdowns |
+
+### Dispositions
+
+Under the gate rule, minors may be swept in the closing commit and re-verified (`workflow.md` §3).
+All four items are swept in `9cbfdc60`.
+
+| # | Severity | Finding | Disposition | Where |
+|---|---|---|---|---|
+| R2-1 | minor | E1 still passed core/Mathlib definitions to `simp`/`rw` (`mulVec`, `dotProduct`, `Function.comp`, `finTwoArrowEquiv`), against policy §1 | **Repaired.** Pinned Mathlib has no equation lemma for `dotProduct` or for an entry of `mulVec`, so each use becomes the definitional step policy §1 permits: `rw [show (M *ᵥ v) y = ∑ z, M y z * v z from rfl]` (`permMat_mulVec_basis`, `applyOn_mulVec_apply`, `applyOn_mulVec_basis`, `wire_sum_eq_mulVec`), the same for `star w ⬝ᵥ w` (`sum_norm_sq_eq_dotProduct`), a local `rfl` fact `hdot` (`no_cloning_of_overlap`), a `show` (`applyOn_mulVec_proj`) and a `change … at h` (`applyOn_mul`). `Function.comp` becomes core's `Function.comp_apply` (`applyOn_mul_applyOn_of_disjoint`), and `finTwoArrowEquiv` its `simps` lemma `finTwoArrowEquiv_symm_apply` (`sum_norm_sq_bellVec`). A scan of every `simp`/`rw` argument in the five files finds no other definition outside its own file. No public declaration was added. (Visible in the census: `finTwoArrowEquiv.eq_1`, generated only by that unfolding, is gone.) | `Register`, `Gates`, `ApplyOn`, `Measure`, `Protocols` |
+| R2-2 | minor | The fill report's historical ledger still said "Copies of proved material: none" | **Repaired.** The ledger in `campaign/fills/e1/REPORT.md` is marked superseded, names both admitted duplicates, points to this file's current ledger, and keeps its counts tied to `a97fceca`. The errata list the change | `campaign/fills/e1/REPORT.md` |
+| R2-3 | minor | "135 → 169 named" counted the anonymous instance; the report's "Sixteen sketches" listed 17 | **Repaired.** Round 1's row now reads 134 → 168 named declarations plus the unchanged instance; round 1's `findings.md`, which says 135 → 169, stays verbatim, and this row records the correction. The report says seventeen. (The round-1 `pack.md` also says sixteen; packs are not edited, so this is a pack erratum.) | this file, `REPORT.md` |
+| R2-4 | note | `pow_mul_self_of_mul_self` is Mathlib's `pow_mul_pow_eq_one` at `a = b = g` | **Taken.** The private helper is deleted, and `teleport_correct` uses `pow_mul_pow_eq_one _ Gate.X_mul_X` and `… Gate.Z_mul_Z`; its sketch names the lemma | `Protocols.lean` |
+
+The auditor's notes on tooling limits are recorded, not acted on now: `drift.py` is a source-text
+heuristic (not nested-comment aware, short names, first `:=` split), which did not affect any
+comparison here; a non-empty `example` list from `copy_screen.sh` would invalidate the screen's
+rows until the examples are delimited (a fix to the shared screen is a suggested separate task);
+and `axiom_diff.py` does not yet classify `_simp_N` or public instances derived for private types,
+neither of which occurs.
+
+## Closing
+
+| Item | Value |
+|---|---|
+| Closing Lean commit | `9cbfdc606cf8ee585395cdb1e5b93bfb54bbef11` |
+| Change since round 2 | `evidence-close/tcslib-r2-close.diff`: the five files, 23 insertions, 21 deletions |
+| Drift from round 2 (`evidence-close/logs/drift_vs_r2.log`) | 248 → 247 named declarations; **0 signatures changed**; 1 private removed (`pow_mul_self_of_mul_self`, R2-4); 0 added; 11 bodies changed, exactly the R2-1 and R2-4 sites: `sum_norm_sq_eq_dotProduct`, `permMat_mulVec_basis`, `applyOn_mulVec_apply`, `applyOn_mul`, `applyOn_mul_applyOn_of_disjoint`, `applyOn_mulVec_basis`, `applyOn_mulVec_proj`, `no_cloning_of_overlap`, `sum_norm_sq_bellVec`, `wire_sum_eq_mulVec`, `teleport_correct`; 236 unchanged; order the same; anonymous commands unchanged (`ApplyOn`'s instance only) |
+| Drift from the gate baseline (`evidence-close/logs/drift_vs_gate.log`) | 211 → 247 named declarations: **0 removed, 0 signatures changed, exactly 52 bodies changed** (the former `sorry`s), 36 added (8 public, 28 private), 159 unchanged; order the same in every file |
+| Sweep (`evidence-close/logs/sweep.log`) | 14 modules pass; the 7 `Quantum` modules have no `sorry` warning and no other warning or error line; 33 `sorry` warnings, all in `Promise` and `Counting` |
+| Axiom census (`evidence-close/logs/axioms.log`) | 266 non-internal constants. All **173** `Quantum` constants use only `propext`, `Classical.choice`, `Quot.sound` (or none). Against round 2 (`axiom_diff_vs_r2.log`): 0 added, 1 removed (`finTwoArrowEquiv.eq_1`). Against the gate (`axiom_diff_vs_gate.log`): 20 added (8 source theorems, 10 equation lemmas, 2 `congr_simp`), 0 removed, 90 carried over from `SORRY` to `CLEAN` |
+| Lints | `style_lint.py`: 0 findings over the 14 P1 files. `campaign_style_lint.py`: 0 FAIL, 0 WARN. No line exceeds 100 characters |
+| Copy screen (`evidence-close/logs/copy_screen.log`) | boundary check: no `example`. 22 pairs, unchanged: the same 15 E1 rows and 7 older rows as round 2. The screen now reports 135 declarations screened (132 in round 2) because it screens only bodies of at least 60 characters, and the `show … from rfl` steps lengthened three short proofs past that threshold |
+
+**Gate closed** (2026-11-14): round 2 reported zero blockers and zero majors; its three minors and
+its note are swept in `9cbfdc60` and re-verified above; both round-1 debt majors and the process
+departure are acknowledged by the owner (§ Round 1). Epoch E1 is complete.

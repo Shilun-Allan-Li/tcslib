@@ -1,0 +1,159 @@
+diff --git a/TCSlib/Quantum/Basic/ApplyOn.lean b/TCSlib/Quantum/Basic/ApplyOn.lean
+index 7956c322..01c054e9 100644
+--- a/TCSlib/Quantum/Basic/ApplyOn.lean
++++ b/TCSlib/Quantum/Basic/ApplyOn.lean
+@@ -154,7 +154,8 @@ bijection is the key step; `applyOn_mul` is derived from this lemma. -/
+ theorem applyOn_mulVec_apply (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (v : Reg n → ℂ)
+     (y : Reg n) :
+     (applyOn w U *ᵥ v) y = ∑ u : Reg k, U (y ∘ w) u * v (Function.extend w u y) := by
+-  simp only [mulVec, dotProduct, applyOn_apply]
++  rw [show (applyOn w U *ᵥ v) y = ∑ z, applyOn w U y z * v z from rfl]
++  simp only [applyOn_apply]
+   have key : (∑ z, (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z) =
+       ∑ z ∈ Finset.univ.filter (fun z => AgreeOff w z y),
+         (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z := by
+@@ -183,7 +184,7 @@ theorem applyOn_mul (w : Fin k ↪ Fin n) (U V : Matrix (Reg k) (Reg k) ℂ) :
+     applyOn w (U * V) = applyOn w U * applyOn w V := by
+   ext y x
+   have h := applyOn_mulVec_apply w U (fun z => applyOn w V z x) y
+-  simp only [mulVec, dotProduct] at h
++  change ∑ z, applyOn w U y z * applyOn w V z x = _ at h
+   rw [Matrix.mul_apply, h]
+   simp only [applyOn_apply, extend_comp]
+   by_cases hyx : AgreeOff w y x
+@@ -254,10 +255,10 @@ private theorem applyOn_mul_applyOn_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w
+   -- The candidate intermediate register `z*` of the sketch, and its four properties.
+   set zs : Reg n := fun i => if ∃ j, w₂ j = i then y i else x i with hzs
+   have hz1 : zs ∘ w₁ = x ∘ w₁ := by
+-    funext j; simp only [Function.comp, hzs]
++    funext j; simp only [Function.comp_apply, hzs]
+     rw [if_neg (fun ⟨j', hj'⟩ => hd j j' hj'.symm)]
+   have hz2 : zs ∘ w₂ = y ∘ w₂ := by
+-    funext j; simp only [Function.comp, hzs]; rw [if_pos ⟨j, rfl⟩]
++    funext j; simp only [Function.comp_apply, hzs]; rw [if_pos ⟨j, rfl⟩]
+   have hA2 : AgreeOff w₂ zs x := by
+     intro i hi; simp only [hzs]; rw [if_neg (fun ⟨j, hj⟩ => hi j hj)]
+   have hA1 : AgreeOff w₁ y zs ↔ ∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i := by
+@@ -363,7 +364,9 @@ theorem applyOn_mulVec_basis (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) 
+     applyOn w U *ᵥ (Ket.basis x).vec =
+       fun y => if AgreeOff w y x then U (y ∘ w) (x ∘ w) else 0 := by
+   ext y
+-  simp [mulVec, dotProduct, applyOn_apply, Ket.basis_vec]
++  rw [show (applyOn w U *ᵥ (Ket.basis x).vec) y =
++    ∑ z, applyOn w U y z * (Ket.basis x).vec z from rfl]
++  simp [applyOn_apply, Ket.basis_vec]
+ 
+ /-- With no wires (`k = 0`), `applyOn` scales the identity by the single entry of the `1 × 1`
+ matrix `U`: a zero-qubit operator acts as a global scalar (round-1 audit, sanity statement 2).
+diff --git a/TCSlib/Quantum/Basic/Gates.lean b/TCSlib/Quantum/Basic/Gates.lean
+index ff76b148..37df32fb 100644
+--- a/TCSlib/Quantum/Basic/Gates.lean
++++ b/TCSlib/Quantum/Basic/Gates.lean
+@@ -102,7 +102,8 @@ theorem permMat_mem_unitaryGroup (σ : Equiv.Perm d) : permMat σ ∈ 𝐔[d] :=
+ theorem permMat_mulVec_basis (σ : Equiv.Perm d) (x : d) :
+     permMat σ *ᵥ (Ket.basis x).vec = (Ket.basis (σ x)).vec := by
+   ext y
+-  simp [mulVec, dotProduct, permMat, Ket.basis_vec, eq_comm]
++  rw [show (permMat σ *ᵥ (Ket.basis x).vec) y = ∑ z, permMat σ y z * (Ket.basis x).vec z from rfl]
++  simp [permMat, Ket.basis_vec, eq_comm]
+ 
+ /-- A diagonal matrix whose entries all have norm `1` is unitary. [dW26, App. A.4]
+ 
+diff --git a/TCSlib/Quantum/Basic/Measure.lean b/TCSlib/Quantum/Basic/Measure.lean
+index 70de7361..3276db6e 100644
+--- a/TCSlib/Quantum/Basic/Measure.lean
++++ b/TCSlib/Quantum/Basic/Measure.lean
+@@ -128,7 +128,8 @@ private theorem applyOn_mulVec_proj (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (R
+     (fun x => if x i = b then (applyOn w U *ᵥ v) x else 0) =
+       applyOn w U *ᵥ (fun x => if x i = b then v x else 0) := by
+   funext x
+-  simp only [mulVec, dotProduct]
++  show (if x i = b then ∑ z, applyOn w U x z * v z else 0) =
++    ∑ z, applyOn w U x z * (if z i = b then v z else 0)
+   split_ifs with hx
+   · refine Finset.sum_congr rfl fun z _ => ?_
+     by_cases hA : AgreeOff w x z
+diff --git a/TCSlib/Quantum/Basic/Protocols.lean b/TCSlib/Quantum/Basic/Protocols.lean
+index 63522331..ca527155 100644
+--- a/TCSlib/Quantum/Basic/Protocols.lean
++++ b/TCSlib/Quantum/Basic/Protocols.lean
+@@ -87,14 +87,15 @@ theorem no_cloning_of_overlap {d : Type*} [Fintype d] [DecidableEq d] (e : d) (
+       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (φ ⊗ᵠ Ket.basis e).vec = c₂ • (φ ⊗ᵠ φ).vec := by
+   rintro ⟨U, c₁, c₂, hc₁, hc₂, hψ, hφ⟩
+   set t := ∑ x, star (ψ.vec x) * φ.vec x with ht
++  have hdot : ∀ a b : d × d → ℂ, star a ⬝ᵥ b = ∑ p, star (a p) * b p := fun _ _ => rfl
+   -- The inner product of the inputs is `t`, and that of the outputs is `conj c₁ · c₂ · t²`.
+   have hin : star (ψ ⊗ᵠ Ket.basis e).vec ⬝ᵥ (φ ⊗ᵠ Ket.basis e).vec = t := by
+-    simp only [dotProduct, Pi.star_apply, Ket.prod_vec, Ket.basis_vec, Fintype.sum_prod_type,
+-      mul_ite, mul_one, mul_zero]
++    simp only [hdot, Ket.prod_vec, Ket.basis_vec, Fintype.sum_prod_type, mul_ite, mul_one,
++      mul_zero]
+     simp [Finset.sum_ite_eq, ht, mul_comm]
+   have hout : star (c₁ • (ψ ⊗ᵠ ψ).vec) ⬝ᵥ (c₂ • (φ ⊗ᵠ φ).vec) = star c₁ * c₂ * t ^ 2 := by
+-    simp only [dotProduct, Pi.star_apply, Pi.smul_apply, smul_eq_mul, Ket.prod_vec,
+-      Fintype.sum_prod_type, star_mul']
++    simp only [hdot, Pi.smul_apply, smul_eq_mul, Ket.prod_vec, Fintype.sum_prod_type,
++      star_mul']
+     rw [ht, sq, Finset.mul_sum, Finset.mul_sum]
+     refine Finset.sum_congr rfl fun a _ => ?_
+     rw [Finset.sum_mul, Finset.mul_sum]
+@@ -186,7 +187,7 @@ theorem bellVec_eq (x : Reg 2) :
+ `‖1/√2‖² = 1/2`. -/
+ theorem sum_norm_sq_bellVec : ∑ x, ‖bellVec x‖ ^ 2 = 1 := by
+   rw [← (finTwoArrowEquiv Qubit).symm.sum_comp, Fintype.sum_prod_type]
+-  simp [Fin.sum_univ_two, bellVec, finTwoArrowEquiv]
++  simp [Fin.sum_univ_two, bellVec, finTwoArrowEquiv_symm_apply]
+   norm_num
+ 
+ /-- The EPR pair `(|00⟩ + |11⟩)/√2`. [dW26, §1.5] -/
+@@ -349,17 +350,12 @@ def bobVec (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) : Reg 1 → ℂ :=
+ theorem bobVec_apply (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) (b : Reg 1) :
+     bobVec ψ m₀ m₁ b = (teleportState ψ).vec ![m₀, m₁, b 0] := rfl
+ 
+-/-- A gate that is its own inverse has `gᵐ gᵐ = 1` for every `m` (used for `X` and `Z`). -/
+-private theorem pow_mul_self_of_mul_self {g : Gate 1} (h : g * g = 1) (m : ℕ) :
+-    g ^ m * g ^ m = 1 := by
+-  rw [← pow_add, ← two_mul, pow_mul, sq, h, one_pow]
+-
+ /-- **Teleportation is correct.** After Alice's outcome `(m₀, m₁)`, Bob applies `X^{m₁}` and
+ then `Z^{m₀}`, and holds `ψ` (scaled by `½`, the amplitude of the outcome). [dW26, §1.5]
+ 
+ **Proof sketch.** By `teleportState_vec`, `bobVec ψ m₀ m₁ = ½ X^{m₁} Z^{m₀} ψ`. Then
+ `Z^{m₀} X^{m₁} X^{m₁} Z^{m₀} = 1` in the unitary group, since `Xᵐ Xᵐ = 1` and `Zᵐ Zᵐ = 1`
+-(`Gate.X_mul_X`, `Gate.Z_mul_Z`, through one private power lemma). -/
++(`Gate.X_mul_X`, `Gate.Z_mul_Z`, and Mathlib's `pow_mul_pow_eq_one`). -/
+ theorem teleport_correct (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
+     ((Gate.Z ^ m₀.val * Gate.X ^ m₁.val : Gate 1) : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ
+         bobVec ψ m₀ m₁ =
+@@ -373,7 +369,7 @@ theorem teleport_correct (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
+       Matrix.tail_cons, hb']
+   have key : (Gate.Z ^ m₀.val * Gate.X ^ m₁.val) * (Gate.X ^ m₁.val * Gate.Z ^ m₀.val) = 1 := by
+     rw [mul_assoc, ← mul_assoc (Gate.X ^ m₁.val),
+-      pow_mul_self_of_mul_self Gate.X_mul_X, one_mul, pow_mul_self_of_mul_self Gate.Z_mul_Z]
++      pow_mul_pow_eq_one _ Gate.X_mul_X, one_mul, pow_mul_pow_eq_one _ Gate.Z_mul_Z]
+   rw [hb, mulVec_smul, mulVec_mulVec, ← Submonoid.coe_mul, key, Submonoid.coe_one, one_mulVec]
+ 
+ /-! ### Superdense coding -/
+@@ -404,7 +400,7 @@ theorem superdenseState_eq (b₀ b₁ : Qubit) :
+ vector, evaluated at a basis state. -/
+ private theorem wire_sum_eq_mulVec (D : Matrix (Reg 1) (Reg 1) ℂ) (g : Qubit → ℂ) (c : Qubit) :
+     ∑ a : Qubit, D (fun _ => c) (fun _ => a) * g a = (D *ᵥ fun x => g (x 0)) (fun _ => c) := by
+-  simp only [mulVec, dotProduct]
++  rw [show (D *ᵥ fun x => g (x 0)) (fun _ => c) = ∑ z, D (fun _ => c) z * g (z 0) from rfl]
+   rw [← (Equiv.funUnique (Fin 1) Qubit).symm.sum_comp]
+   rfl
+ 
+diff --git a/TCSlib/Quantum/Basic/Register.lean b/TCSlib/Quantum/Basic/Register.lean
+index a85e6c14..4d37295f 100644
+--- a/TCSlib/Quantum/Basic/Register.lean
++++ b/TCSlib/Quantum/Basic/Register.lean
+@@ -180,7 +180,8 @@ theorem sum_norm_sq_mul_prod (v : d₁ → ℂ) (w : d₂ → ℂ) :
+ private theorem sum_norm_sq_eq_dotProduct (w : d → ℂ) :
+     ((∑ x, ‖w x‖ ^ 2 : ℝ) : ℂ) = star w ⬝ᵥ w := by
+   push_cast
+-  simp [dotProduct, Complex.conj_mul']
++  rw [show star w ⬝ᵥ w = ∑ x, star (w x) * w x from rfl]
++  simp [Complex.conj_mul']
+ 
+ /-- A unitary matrix preserves the Hermitian inner product: `⟨U a, U b⟩ = ⟨a, b⟩`, where
+ `⟨a, b⟩ = star a ⬝ᵥ b = ∑ₓ conj (a x) · b x`. [dW26, App. A.4] (Added in fill epoch E1; the

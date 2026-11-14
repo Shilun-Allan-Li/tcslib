@@ -98,6 +98,15 @@ characters), over the five E1 files plus `ErrorCorrectingCodes/QuantumHamming.le
   removed by promoting the shared fact to a public lemma, and the register-splitting lemma was
   promoted before any copy was made.
 
+> **Superseded (E1 epoch audit).** The classification below is the fill's own, at `a97fceca`,
+> and two of its rows were wrong: the `probQubit_zero_add_one` / `probQubit_basis` row was an
+> anonymous `example` duplicating `probQubit_basis` (round 1, major 1), and the Hadamard rows hid
+> the same square computed twice in `hadamardMat_mem_unitaryGroup` and `H_mul_H` (round 1,
+> major 2). "Copies of proved material: none" was therefore false. Both duplicates are removed
+> and acknowledged; the current ledger (15 E1 pairs, all idiom) is in
+> `campaign/gates/02-quantum-e1/resolutions.md`, § Round-2 baseline. The counts below stay valid
+> for `a97fceca`.
+
 **Remaining pairs at the final commit: 21 among the E1 files** (the screen's other 7 pairs are
 inside `QuantumHamming.lean` and `QuantumSingleton.lean`, which predate E1). None reproduces the
 proof of the same fact. Each shares a tactic idiom across *different* statements:
@@ -110,14 +119,14 @@ proof of the same fact. Each shares a tactic idiom across *different* statements
 | `superdenseState_vec_aux` / `teleportState_vec` (62%) | the closing `fin_cases … <;> simp […] <;> ring_nf <;> rw [inv_sqrt_two_sq]` | Idiom; two different protocols |
 | `probQubit_zero_add_one` / `probQubit_basis` (69 characters) | `rw [probQubit_eq …]` and a `simp` call | Idiom |
 
-- **Copies of proved material: none.**
+- **Copies of proved material: none.** (Superseded: see the note above.)
 - **Unchanged from the gate:** the acknowledged overlap with Physlib (plan FD-1, FD-2) and with
   `QuantumHamming`'s `sigmaX`/`sigmaZ` (plan OQ-6). The screen finds no text shared between the
   E1 files and `QuantumHamming.lean`.
 
 ## Notes for the epoch-boundary audit
 
-- **Sketches synchronized (policy §3).** Sixteen sketches written at skeleton time described
+- **Sketches synchronized (policy §3).** Seventeen sketches written at skeleton time described
   routes the fills did not take. Before this report, each was rewritten to describe the proof that
   is there: `sum_norm_sq_mulVec_of_mem_unitaryGroup`; in `Gates.lean`, `permMat_mem_unitaryGroup`,
   `H_mul_H`, `X_mul_X`, `Z_mul_Z`, `S_mul_S`, `H_mul_Z_mul_H`, `Toffoli_apply_of_control_one`; in
@@ -150,6 +159,8 @@ report; the text above is corrected in place, and the repairs to the Lean files 
 - **Finding 9.** The axiom census covers non-internal constants only. By kind, its 22 additions
   over the gate's census were 6 source theorems, 12 generated equation lemmas, 2 matchers and 2
   `congr_simp` lemmas, with no removals.
+- **Round 2, findings R2-2 and R2-3.** The duplication ledger above is marked superseded, and
+  the sketch count is 17, not 16 (the list was right).
 - **Finding 1 and finding 7.** The final commit carried an anonymous `example` in `Measure.lean`
   restating `probQubit_basis` with the same proof. Neither `drift.py` nor the copy screen treats
   `example` as a command boundary, so both read it as part of `probQubit_zero_add_one`. The
