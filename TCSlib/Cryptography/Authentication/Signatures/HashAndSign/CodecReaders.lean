@@ -37,7 +37,9 @@ The two split-word readers are promotion requests for `Authentication/Encoding`.
 namespace TCSlib.Cryptography.Games.MachineCodec
 
 /-- Two machine codecs are equal when their move decoders, entry encoders and timeout
-outputs are equal. These are all three fields of `MachineCodec`.
+outputs are equal:
+`a.decodeMove = b.decodeMove → a.encodeEntry = b.encodeEntry → a.timeout = b.timeout → a = b`.
+These are all three fields of `MachineCodec`.
 
 **Proof sketch.** Destructure the two records. Substituting the three field equalities
 leaves the same constructor on both sides. -/
@@ -60,7 +62,9 @@ namespace TCSlib.Cryptography.Authentication.SignatureScheme
 open TCSlib.Cryptography.Games
 
 /-- The signature forger codec is the bit codec with message-length queries,
-signature-length answers and a message-plus-signature-length final output.
+signature-length answers and a message-plus-signature-length final output:
+`S.forgerCodec n = bitCodec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ : Fin 1 => S.sigLen.eval n)
+(S.msgLen.eval n + S.sigLen.eval n)`.
 
 **Proof sketch.** The published decoding, entry-encoding and timeout equations agree
 with those of the bit codec. Codec extensionality turns those field equations into
@@ -86,7 +90,8 @@ end TCSlib.Cryptography.Authentication.SignatureScheme
 
 namespace TCSlib.Cryptography.Authentication.HashSignFill
 
-/-- Splitting the concatenation of two fixed-width words recovers the two words. -/
+/-- Splitting the concatenation of two fixed-width words recovers the two words:
+`splitBits (Fin.append x y) = (x, y)`. -/
 theorem splitBits_append {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
     splitBits (Fin.append x y) = (x, y) := by
   apply Prod.ext
@@ -96,7 +101,8 @@ theorem splitBits_append {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
     rw [splitBits_snd, Fin.append_right]
 
 /-- Reading the concatenated encodings of two words at their total width and splitting the
-result recovers the original words. This also covers zero widths. -/
+result recovers the original words: `splitBits (padFin (a + b) (List.ofFn x ++ List.ofFn y)) =
+(x, y)`. This also covers zero widths. -/
 theorem splitBits_pad_concat {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
     splitBits (padFin (a + b) (List.ofFn x ++ List.ofFn y)) = (x, y) := by
   rw [← List.ofFn_fin_append, padFin_ofFn, splitBits_append]

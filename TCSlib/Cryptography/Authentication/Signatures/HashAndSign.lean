@@ -391,7 +391,9 @@ theorem hashAndSign_ver (H : CRH) (S : SignatureScheme)
 /-! ### Theorem 144.1 -/
 
 /-- When hash and signature message widths agree, the hash-and-sign hash word equals the
-word used by the two reduction handlers, including on arbitrary list inputs. -/
+word used by the two reduction handlers, including on arbitrary list inputs: under `hlen`,
+`hsHashList H (List.replicate n true) i m =
+HashSignForward.hashWord H S (List.replicate n true) i m`. -/
 theorem hsHashList_eq_hashWord (H : CRH) (S : SignatureScheme)
     (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (i m : List Bool) :
     hsHashList H (List.replicate n true) i m =
@@ -400,7 +402,11 @@ theorem hsHashList_eq_hashWord (H : CRH) (S : SignatureScheme)
     List.length_replicate, hlen n]
 
 /-- For a computation making at most one signing query, the hash-and-sign signing oracle
-has the same expected logged payoff as sampling one original signing tape before the run.
+has the same expected logged payoff as sampling one original signing tape before the run:
+if `c.CostBoundedBy (fun _ => 1) 1`, then
+`ProbComp.expect (simulate ((hashAndSign H S hlen).signImpl n (pairEncode sk i)).withLog c
+((), [])) g = ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
+ProbComp.expect (simulate (HashSignFill.fixedSign H S n sk i rs).withLog c ((), [])) g)`.
 
 **Proof sketch.** First move the wrapper signer's randomness outside the simulation using
 the one-query sampling law. Its coin bijection with the original signer preserves uniform
@@ -451,7 +457,9 @@ theorem expect_hashAndSign_sign (H : CRH) (S : SignatureScheme)
   rw [hi]
 
 /-- Hash-and-sign accepts a message/signature pair exactly when the original scheme accepts
-the padded hash of that message with the same signature. -/
+the padded hash of that message with the same signature:
+`(hashAndSign H S hlen).Accepts n (pairEncode pk i) m σ ↔
+S.Accepts n pk (padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn m))))) σ`. -/
 theorem hashAndSign_accepts_iff (H : CRH) (S : SignatureScheme)
     (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (pk i : List Bool)
     (m : Fin (H.domLen.eval n) → Bool) (σ : Fin (S.sigLen.eval n) → Bool) :
@@ -463,7 +471,11 @@ theorem hashAndSign_accepts_iff (H : CRH) (S : SignatureScheme)
     HashSignForward.hashWord_unary]
 
 /-- On concatenated original-generator and hash-generator tapes, the combined generator
-returns the original public and secret keys each paired with the same generated hash index.
+returns the original public and secret keys each paired with the same generated hash index:
+`(hsGen S H).runAt n [] (EnsembleLemmas.coinsEquiv (hsGen_coinLen S H n) (rg, ri)) =
+pairEncode (pairEncode pk i) (pairEncode sk i)`, where
+`pk = pairFstD (S.gen.runAt n [] rg)`, `sk = pairSndD (S.gen.runAt n [] rg)` and
+`i = H.gen.runAt n [] ri`.
 
 **Proof sketch.** The published coin-splitting bijection has the concatenated encoding.
 Transporting to the combined width preserves that encoding, so its two projections are
@@ -492,7 +504,13 @@ theorem runAt_hsGen_split (S : SignatureScheme) (H : CRH) (n : ℕ)
   simp only [hσ, Fin.append_left, Fin.append_right]
 
 /-- The hash-and-sign forgery probability equals the common transcript's success
-probability averaged over independent original key, hash-index, adversary and signing tapes.
+probability averaged over independent original key, hash-index, adversary and signing tapes:
+`accept ((hashAndSign H S hlen).forgeGame A 1 n) = 𝔼 rg : S.gen.Coins n, 𝔼 ri : H.gen.Coins n,
+𝔼 rA : A.Coins n, 𝔼 rs : S.sign.Coins n, ProbComp.prob
+(HashSignFill.transcript H S A n pk sk i rs rA) (HashSignFill.Success H S n pk i)`,
+writing `𝔼 x : X, f x` for `ProbComp.expect (ProbComp.sample X) (fun x => f x)`, with
+`pk = pairFstD (S.gen.runAt n [] rg)`, `sk = pairSndD (S.gen.runAt n [] rg)` and
+`i = H.gen.runAt n [] ri`.
 
 **Proof sketch.** Read the forgery experiment through its published equation. Reindex the
 combined generator tape by the product of the original generator tapes and use its run
@@ -535,7 +553,9 @@ theorem hashAndSign_forge_eq_common (H : CRH) (S : SignatureScheme)
   split <;> rfl
 
 /-- Every successful common transcript either gives a fresh-message hash collision or
-is a successful forgery after forwarding hashes to the original signing oracle.
+is a successful forgery after forwarding hashes to the original signing oracle: under `hlen`,
+`HashSignFill.Success H S n pk i res →
+HashSignFill.CollisionCase H S n i res ∨ HashSignFill.ForwardSuccess H S n pk i res`.
 
 **Proof sketch.** If a queried message has the final message's hash, use source freshness
 for the collision case. Otherwise the final hash is fresh among forwarded queries.

@@ -41,14 +41,20 @@ namespace TCSlib.Cryptography.Authentication.HashSignFill
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 
 /-- With signing tape `rs` fixed, hash `m` and run the original signer under `sk`, padding
-the signature to the declared signature width [PS10, Theorem 144.1]. -/
+the signature to the declared signature width, `hashedReply H S n sk i rs m =
+padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (hashWord H S u i (List.ofFn m))) rs)`,
+where `u = List.replicate n true` and `hashWord = HashSignForward.hashWord`
+[PS10, Theorem 144.1]. -/
 def hashedReply (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
     (rs : S.sign.Coins n) (m : Fin (H.domLen.eval n) → Bool) :
     Fin (S.sigLen.eval n) → Bool :=
   padFin (S.sigLen.eval n) (S.sign.runAt n
     (pairEncode sk (HashSignForward.hashWord H S (List.replicate n true) i (List.ofFn m))) rs)
 
-/-- The fixed-tape hashed reply is the padded original signer output on `⟨sk, h_i(m)⟩`. -/
+/-- The fixed-tape hashed reply is the padded original signer output on `⟨sk, h_i(m)⟩`:
+`hashedReply H S n sk i rs m =
+padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (hashWord H S u i (List.ofFn m))) rs)`,
+where `u = List.replicate n true` and `hashWord = HashSignForward.hashWord`. -/
 theorem hashedReply_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
     (rs : S.sign.Coins n) (m : Fin (H.domLen.eval n) → Bool) :
     hashedReply H S n sk i rs m =
@@ -57,25 +63,31 @@ theorem hashedReply_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bo
         rs) := rfl
 
 /-- The fixed-tape signing oracle answers every query using `hashedReply` and has trivial
-state [PS10, Theorem 144.1]. -/
+state, `fixedSign H S n sk i rs j m s = .pure (hashedReply H S n sk i rs m, ())`
+[PS10, Theorem 144.1]. -/
 def fixedSign (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
     (rs : S.sign.Coins n) :
     QueryImpl (bitSpec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n))
       Unit unifSpec :=
   fun _ m _ => .pure (hashedReply H S n sk i rs m, ())
 
-/-- The fixed-tape oracle is the pure answer function `m ↦ (hashedReply m, ())`. -/
+/-- The fixed-tape oracle is the pure answer function `m ↦ (hashedReply m, ())`:
+`fixedSign H S n sk i rs = fun _ m _ => .pure (hashedReply H S n sk i rs m, ())`. -/
 theorem fixedSign_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
     (rs : S.sign.Coins n) :
     fixedSign H S n sk i rs = fun _ m _ => .pure (hashedReply H S n sk i rs m, ()) := rfl
 
-/-- Applying the fixed-tape oracle returns the hashed signature and trivial state. -/
+/-- Applying the fixed-tape oracle returns the hashed signature and trivial state:
+`fixedSign H S n sk i rs j m s = .pure (hashedReply H S n sk i rs m, ())`. -/
 theorem fixedSign_apply (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
     (rs : S.sign.Coins n) (j : Fin 1) (m : Fin (H.domLen.eval n) → Bool) (s : Unit) :
     fixedSign H S n sk i rs j m s = .pure (hashedReply H S n sk i rs m, ()) := rfl
 
 /-- The common transcript runs `A` on `⟨pk,i⟩` with one query allowed, fixed signing tape,
-and a full query log [PS10, Theorem 144.1]. -/
+and a full query log, `transcript H S A n pk sk i rs rA =
+simulate (fixedSign H S n sk i rs).withLog (A.toCompOn cod n 1 (pairEncode pk i) rA) ((), [])`,
+where `cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
+(H.domLen.eval n + S.sigLen.eval n)` [PS10, Theorem 144.1]. -/
 def transcript (H : CRH) (S : SignatureScheme) (A : NUPPT) (n : ℕ)
     (pk sk i : List Bool) (rs : S.sign.Coins n) (rA : A.Coins n) :
     ProbComp ((Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
@@ -85,7 +97,11 @@ def transcript (H : CRH) (S : SignatureScheme) (A : NUPPT) (n : ℕ)
     (A.toCompOn (bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
       (H.domLen.eval n + S.sigLen.eval n)) n 1 (pairEncode pk i) rA) ((), [])
 
-/-- The common transcript is the logged simulation with the fixed-tape signing oracle. -/
+/-- The common transcript is the logged simulation with the fixed-tape signing oracle:
+`transcript H S A n pk sk i rs rA =
+simulate (fixedSign H S n sk i rs).withLog (A.toCompOn cod n 1 (pairEncode pk i) rA) ((), [])`,
+where `cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
+(H.domLen.eval n + S.sigLen.eval n)`. -/
 theorem transcript_eq (H : CRH) (S : SignatureScheme) (A : NUPPT) (n : ℕ)
     (pk sk i : List Bool) (rs : S.sign.Coins n) (rA : A.Coins n) :
     transcript H S A n pk sk i rs rA =
@@ -94,7 +110,9 @@ theorem transcript_eq (H : CRH) (S : SignatureScheme) (A : NUPPT) (n : ℕ)
           (H.domLen.eval n + S.sigLen.eval n)) n 1 (pairEncode pk i) rA) ((), []) := rfl
 
 /-- The fresh-tape hash-and-sign oracle samples an original signing tape independently
-for every query and keeps trivial state [PS10, Theorem 144.1]. -/
+for every query and keeps trivial state, `sampledHashSign H S n sk i = QueryImpl.ofComp
+fun _ m => (ProbComp.sample (S.sign.Coins n)).bind fun rs => .pure (hashedReply H S n sk i rs m)`
+[PS10, Theorem 144.1]. -/
 noncomputable def sampledHashSign (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool) :
     QueryImpl (bitSpec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n))
       Unit unifSpec :=
@@ -102,14 +120,17 @@ noncomputable def sampledHashSign (H : CRH) (S : SignatureScheme) (n : ℕ) (sk 
     .pure (hashedReply H S n sk i rs m)
 
 /-- The fresh-tape oracle is `ofComp` of the original signing-tape sample followed by
-the corresponding fixed-tape hashed reply. -/
+the corresponding fixed-tape hashed reply: `sampledHashSign H S n sk i = QueryImpl.ofComp
+(fun _ m => (ProbComp.sample (S.sign.Coins n)).bind fun rs =>
+.pure (hashedReply H S n sk i rs m))`. -/
 theorem sampledHashSign_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool) :
     sampledHashSign H S n sk i =
       QueryImpl.ofComp (fun _ m => (ProbComp.sample (S.sign.Coins n)).bind fun rs =>
         .pure (hashedReply H S n sk i rs m)) := rfl
 
 /-- Applying the fresh-tape oracle samples one signing tape, returns its hashed signature,
-and preserves the trivial state. -/
+and preserves the trivial state: `sampledHashSign H S n sk i j m s =
+(ProbComp.sample (S.sign.Coins n)).bind fun rs => .pure (hashedReply H S n sk i rs m, s)`. -/
 theorem sampledHashSign_apply (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
     (j : Fin 1) (m : Fin (H.domLen.eval n) → Bool) (s : Unit) :
     sampledHashSign H S n sk i j m s =
@@ -119,7 +140,13 @@ theorem sampledHashSign_apply (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : 
     OracleComp.bind_assoc, OracleComp.pure_bind]
 
 /-- The expected payoff of a fresh-tape hash-and-sign simulation equals the expectation
-obtained by drawing one signing tape and running the common transcript, including its log.
+obtained by drawing one signing tape and running the common transcript, including its log:
+`ProbComp.expect (simulate (sampledHashSign H S n sk i).withLog
+(A.toCompOn cod n 1 (pairEncode pk i) rA) ((), [])) g = ProbComp.expect
+(ProbComp.sample (S.sign.Coins n)) (fun rs =>
+ProbComp.expect (transcript H S A n pk sk i rs rA) g)`,
+where `cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
+(H.domLen.eval n + S.sigLen.eval n)`.
 
 **Proof sketch.** The machine computation has unit query cost at most one by its published
 budget contract. `expect_simulate_sample_once` therefore moves the signing-tape sample
@@ -142,8 +169,10 @@ theorem expect_sampledHashSign_eq_transcript (H : CRH) (S : SignatureScheme) (A 
       (A.toCompOn_costBoundedBy _ n 1 (pairEncode pk i) rA) g
 
 /-- The common transcript is a successful hash-and-sign forgery when the original verifier
-accepts the hashed final message and that message did not occur in the inner query log
-[PS10, Theorem 144.1]. -/
+accepts the hashed final message and that message did not occur in the inner query log,
+`Success H S n pk i res ↔ S.Accepts n pk (padFin (S.msgLen.eval n)
+(H.eval (atParam n (pairEncode i (List.ofFn m))))) σ ∧ ∀ e ∈ res.2.2, e.2.1 ≠ m`, where
+`(m, σ) = splitBits res.1` [PS10, Theorem 144.1]. -/
 def Success (H : CRH) (S : SignatureScheme) (n : ℕ) (pk i : List Bool)
     (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
       (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
@@ -154,7 +183,9 @@ def Success (H : CRH) (S : SignatureScheme) (n : ℕ) (pk i : List Bool)
     ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1
 
 /-- Success is original-scheme acceptance on the hash, together with freshness of the
-unhashed final message in the common query log. -/
+unhashed final message in the common query log: `Success H S n pk i res ↔
+S.Accepts n pk (padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn m))))) σ ∧
+∀ e ∈ res.2.2, e.2.1 ≠ m`, where `(m, σ) = splitBits res.1`. -/
 theorem success_iff (H : CRH) (S : SignatureScheme) (n : ℕ) (pk i : List Bool)
     (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
       (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)

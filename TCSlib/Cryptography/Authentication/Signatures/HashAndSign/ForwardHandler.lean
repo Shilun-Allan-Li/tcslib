@@ -39,35 +39,45 @@ namespace TCSlib.Cryptography.Authentication.HashSignForward
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 open InteractiveHandler
 
-/-- The index generator on parameter word `u` and seed `ω`, with empty input and advice. -/
+/-- The index generator on parameter word `u` and seed `ω`, with empty input and advice:
+`indexWord H u ω = H.gen.output (NUPPT.layout u [] [] ω)`. -/
 def indexWord (H : CRH) (u ω : List Bool) : List Bool :=
   H.gen.output (NUPPT.layout u [] [] ω)
 
-/-- The index word is `H.gen.output (NUPPT.layout u [] [] ω)`. -/
+/-- The index word is `H.gen.output (NUPPT.layout u [] [] ω)`:
+`indexWord H u ω = H.gen.output (NUPPT.layout u [] [] ω)`. -/
 theorem indexWord_eq (H : CRH) (u ω : List Bool) :
     indexWord H u ω = H.gen.output (NUPPT.layout u [] [] ω) := rfl
 
-/-- The hash of `m` at index `i`, padded to the original scheme's message length. -/
+/-- The hash of `m` at index `i`, padded to the original scheme's message length:
+`hashWord H S u i m = padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m)))`. -/
 def hashWord (H : CRH) (S : SignatureScheme) (u i m : List Bool) : List Bool :=
   padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m)))
 
-/-- The hash word is the evaluator output padded to `S.msgLen(|u|)` bits. -/
+/-- The hash word is the evaluator output padded to `S.msgLen(|u|)` bits:
+`hashWord H S u i m = padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m)))`. -/
 theorem hashWord_eq (H : CRH) (S : SignatureScheme) (u i m : List Bool) :
     hashWord H S u i m =
       padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m))) := rfl
 
-/-- The reduction gives its adversary the public key paired with its sampled index. -/
+/-- The reduction gives its adversary the public key paired with its sampled index:
+`advWord H w =
+pairEncode (pairFstD (pairSndD w)) (indexWord H (pairFstD w) (pairSndD (pairSndD w)))`. -/
 def advWord (H : CRH) (w : List Bool) : List Bool :=
   pairEncode (pairFstD (pairSndD w))
     (indexWord H (pairFstD w) (pairSndD (pairSndD w)))
 
-/-- The adversary input pairs the reduction input with the index obtained from its seed. -/
+/-- The adversary input pairs the reduction input with the index obtained from its seed:
+`advWord H w =
+pairEncode (pairFstD (pairSndD w)) (indexWord H (pairFstD w) (pairSndD (pairSndD w)))`. -/
 theorem advWord_eq (H : CRH) (w : List Bool) :
     advWord H w = pairEncode (pairFstD (pairSndD w))
       (indexWord H (pairFstD w) (pairSndD (pairSndD w))) := rfl
 
 /-- The first round asks the original signing oracle the hashed message; the second
-round returns the outer signature and preserves the state. -/
+round returns the outer signature and preserves the state: `roundWord H S w =
+if decide (rL w = []) then pairEncode [false] (pairEncode [] (hashWord H S u (indexWord H u (rW w))
+(rX w))) else pairEncode [true] (rAns w ++ rS w)`, where `u = rU w`. -/
 def roundWord (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
   if decide (rL w = []) then
     pairEncode [false] (pairEncode []
@@ -75,7 +85,9 @@ def roundWord (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
   else pairEncode [true] (rAns w ++ rS w)
 
 /-- The round asks the hashed query when its outer log is empty, and otherwise returns
-the first outer answer together with its unchanged state. -/
+the first outer answer together with its unchanged state: `roundWord H S w =
+if decide (rL w = []) then pairEncode [false] (pairEncode [] (hashWord H S u (indexWord H u (rW w))
+(rX w))) else pairEncode [true] (rAns w ++ rS w)`, where `u = rU w`. -/
 theorem roundWord_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
     roundWord H S w =
       if decide (rL w = []) then
@@ -84,14 +96,19 @@ theorem roundWord_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
       else pairEncode [true] (rAns w ++ rS w) := rfl
 
 /-- The finalization hashes the message prefix of the adversary output and retains
-its signature suffix, making no further oracle query. -/
+its signature suffix, making no further oracle query: `finalWord H S w =
+pairEncode [true] (hashWord H S u (indexWord H u (rW w)) (a.take k) ++ a.drop k)`, where
+`u = rU w`, `a = finA w` and `k = H.domLen.eval u.length`. -/
 def finalWord (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
   pairEncode [true]
     (hashWord H S (rU w) (indexWord H (rU w) (rW w))
       ((finA w).take (H.domLen.eval (rU w).length)) ++
       (finA w).drop (H.domLen.eval (rU w).length))
 
-/-- The final output is the hashed message prefix concatenated with the signature suffix. -/
+/-- The final output is the hashed message prefix concatenated with the signature suffix:
+`finalWord H S w =
+pairEncode [true] (hashWord H S u (indexWord H u (rW w)) (a.take k) ++ a.drop k)`, where
+`u = rU w`, `a = finA w` and `k = H.domLen.eval u.length`. -/
 theorem finalWord_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
     finalWord H S w = pairEncode [true]
       (hashWord H S (rU w) (indexWord H (rU w) (rW w))
@@ -99,7 +116,8 @@ theorem finalWord_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
         (finA w).drop (H.domLen.eval (rU w).length)) := rfl
 
 /-- Running the index generator on polynomial-time parameter and seed words is
-polynomial-time. -/
+polynomial-time: `PolyTimeComputable u → PolyTimeComputable ω →
+PolyTimeComputable fun w => indexWord H (u w) (ω w)`. -/
 theorem polyTimeComputable_indexWord (H : CRH) {u ω : List Bool → List Bool}
     (hu : PolyTimeComputable u) (hω : PolyTimeComputable ω) :
     PolyTimeComputable fun w => indexWord H (u w) (ω w) := by
@@ -109,7 +127,9 @@ theorem polyTimeComputable_indexWord (H : CRH) {u ω : List Bool → List Bool}
         (polyTimeComputable_const []) hω)
 
 /-- Hashing polynomial-time parameter, index and message words and padding the result
-to the original signature message length is polynomial-time. -/
+to the original signature message length is polynomial-time: `PolyTimeComputable u →
+PolyTimeComputable i → PolyTimeComputable m →
+PolyTimeComputable fun w => hashWord H S (u w) (i w) (m w)`. -/
 theorem polyTimeComputable_hashWord (H : CRH) (S : SignatureScheme)
     {u i m : List Bool → List Bool} (hu : PolyTimeComputable u)
     (hi : PolyTimeComputable i) (hm : PolyTimeComputable m) :
@@ -122,14 +142,15 @@ theorem polyTimeComputable_hashWord (H : CRH) (S : SignatureScheme)
   simp only [hashWord_eq, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- Pairing the supplied public key with the index generated from the seed is
-polynomial-time. -/
+polynomial-time: `PolyTimeComputable (advWord H)`, for `advWord H : List Bool → List Bool`. -/
 theorem polyTimeComputable_advWord (H : CRH) : PolyTimeComputable (advWord H) := by
   exact (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD).pairEncode
     (polyTimeComputable_indexWord H polyTimeComputable_pairFstD
       (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
 
-/-- One hashing-and-forwarding round is polynomial-time: it tests whether the outer
-log is empty, then either emits the hash query or returns the recorded answer. -/
+/-- One hashing-and-forwarding round is polynomial-time, `PolyTimeComputable (roundWord H S)`
+for `roundWord H S : List Bool → List Bool`: it tests whether the outer log is empty, then
+either emits the hash query or returns the recorded answer. -/
 theorem polyTimeComputable_roundWord (H : CRH) (S : SignatureScheme) :
     PolyTimeComputable (roundWord H S) := by
   exact polyTimeComputable_ite
@@ -142,7 +163,8 @@ theorem polyTimeComputable_roundWord (H : CRH) (S : SignatureScheme) :
     ((polyTimeComputable_const [true]).pairEncode
       (polyTimeComputable_rAns.append polyTimeComputable_rS))
 
-/-- Finalization is polynomial-time: split at the polynomial domain width, hash the
+/-- Finalization is polynomial-time, `PolyTimeComputable (finalWord H S)` for
+`finalWord H S : List Bool → List Bool`: split at the polynomial domain width, hash the
 message prefix and concatenate the original signature suffix.
 
 **Proof sketch.** The published polynomial take and drop operations apply to the parameter
@@ -162,7 +184,9 @@ theorem polyTimeComputable_finalWord (H : CRH) (S : SignatureScheme) :
   simp only [finalWord_eq, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- The hash-and-sign reduction handler [PS10, Theorem 144.1]: sample one hash index,
-provide `⟨pk,i⟩`, forward each query after hashing it, and hash the final message. Its state
+provide `⟨pk,i⟩`, forward each query after hashing it, and hash the final message, with
+`seedLen = H.gen.coins`, `advIn = advWord H`, `run = roundWord H S`, `finRun = finalWord H S`,
+`init _ = zeroBits _` and `outLen = .add S.msgLen S.sigLen`. Its state
 is empty, each inner call makes one outer call and finalization makes none. -/
 def handler (H : CRH) (S : SignatureScheme) :
     InteractiveHandler 1 (fun _ => H.domLen) (fun _ => S.sigLen)
@@ -184,20 +208,21 @@ attribute [simps (config := { isSimp := false }) stateLen seedLen perCall init r
   finCall finRun] handler
 
 /-- At a unary parameter, the generated index word is the hash generator's literal run
-with the supplied list of coins. -/
+with the supplied list of coins: `indexWord H (List.replicate n true) ω = H.gen.runAtL n [] ω`. -/
 theorem indexWord_unary (H : CRH) (n : ℕ) (ω : List Bool) :
     indexWord H (List.replicate n true) ω = H.gen.runAtL n [] ω := by
   rw [indexWord_eq, H.gen_uniform.runAtL_eq, NUPPT.layout_eq, NUPPT.advInput_eq]
 
 /-- At unary parameter `1^n`, the hash word is the list of the padded evaluator at
-the original signature message length. -/
+the original signature message length: `hashWord H S (List.replicate n true) i m =
+List.ofFn (padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i m))))`. -/
 theorem hashWord_unary (H : CRH) (S : SignatureScheme) (n : ℕ) (i m : List Bool) :
     hashWord H S (List.replicate n true) i m =
       List.ofFn (padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i m)))) := by
   rw [hashWord_eq, ← ofFn_padFin_eq_padStr, List.length_replicate, atParam_eq]
 
 /-- The handler gives the adversary `⟨pk,i⟩`, where `i` is the hash generator's run
-on its seed. -/
+on its seed: `(handler H S).advInput n pk ω = pairEncode pk (H.gen.runAtL n [] (List.ofFn ω))`. -/
 theorem handler_advInput (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
     (ω : Fin ((handler H S).seedLen.eval n) → Bool) :
     (handler H S).advInput n pk ω =
@@ -206,7 +231,10 @@ theorem handler_advInput (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bo
   simp only [pairFstD_pairEncode, pairSndD_pairEncode, indexWord_unary]
 
 /-- Each call asks the original signing oracle for the hash of its inner message and
-returns the outer signature unchanged, preserving the handler state.
+returns the outer signature unchanged, preserving the handler state:
+`(handler H S).impl n pk ω i x s = .query 0 (padFin (S.msgLen.eval n)
+(H.eval (atParam n (pairEncode (H.gen.runAtL n [] (List.ofFn ω)) (List.ofFn x)))))
+fun y => .pure (y, s)`.
 
 **Proof sketch.** The first round has an empty outer log and emits precisely the padded
 hash query. The second round reads the first outer answer and returns it with the state.
@@ -231,7 +259,10 @@ theorem handler_impl (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
       if_neg (fun h => pairEncode_ne_nil _ _ (of_decide_eq_true h))]
 
 /-- Finalization makes no oracle query and returns the hash of the adversary's message
-prefix concatenated with its signature suffix, read at the handler's output length.
+prefix concatenated with its signature suffix, read at the handler's output length:
+`(handler H S).finish n pk ω s a = .pure (padFin ((handler H S).outLen.eval n)
+(hashWord H S (List.replicate n true) i ((List.ofFn a).take d) ++ (List.ofFn a).drop d))`,
+where `i = H.gen.runAtL n [] (List.ofFn ω)` and `d = H.domLen.eval n`.
 
 **Proof sketch.** The hash word has the signature scheme's message width. The suffix of
 the correctly sized adversary output has the signature width, so the concatenation has
@@ -254,7 +285,10 @@ theorem handler_finish (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool
       indexWord_unary, List.length_replicate]
 
 /-- When the hash range and signature message widths agree, hashing a typed domain
-message gives the list of the CRH hash, transported to the signature message width. -/
+message gives the list of the CRH hash, transported to the signature message width: for
+`hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n`,
+`hashWord H S (List.replicate n true) i (List.ofFn x) =
+List.ofFn (fun j : Fin (S.msgLen.eval n) => H.hash n i x (Fin.cast (hlen n).symm j))`. -/
 theorem hashWord_eq_hash (H : CRH) (S : SignatureScheme)
     (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (i : List Bool)
     (x : Fin (H.domLen.eval n) → Bool) :
@@ -266,8 +300,14 @@ theorem hashWord_eq_hash (H : CRH) (S : SignatureScheme)
   funext j
   rw [CRH.hash_eq, padFin_apply, padFin_apply, Fin.coe_cast]
 
-/-- The hash-and-sign forwarding reduction is a one-query oracle machine
-[PS10, Theorem 144.1]. For every parameter, a bijection identifies its coins with the
+/-- The hash-and-sign forwarding reduction is a one-query oracle machine,
+`∃ C : NUPPT, ∀ n, ∃ φ : (Fin (K.seedLen.eval n) → Bool) × A.Coins n ≃ C.Coins n, ∀ pk ω r,
+(simulate (K.impl n pk ω) (A.toCompOn cod n 1 (K.advInput n pk ω) r) (K.init n)).bind
+(fun res => K.finish n pk ω res.2 res.1) = C.toCompOn cod' n 1 pk (φ (ω, r))`, where
+`K = handler H S`, `cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
+(H.domLen.eval n + S.sigLen.eval n)` and `cod' = bitCodec (fun _ : Fin 1 => S.msgLen.eval n)
+(fun _ => S.sigLen.eval n) (K.outLen.eval n)` [PS10, Theorem 144.1].
+For every parameter, a bijection identifies its coins with the
 handler seed and the original adversary coins, and its computation is the handler's
 simulation followed by finalization.
 
@@ -298,14 +338,19 @@ theorem exists_forwardMachine (H : CRH) (S : SignatureScheme) (A : NUPPT) :
     handler_finCall, Nat.one_mul, Nat.add_zero] at hC
   exact ⟨C, hC⟩
 
-/-- The handler output width is the sum of the original message and signature widths. -/
+/-- The handler output width is the sum of the original message and signature widths:
+`(handler H S).outLen.eval n = S.msgLen.eval n + S.sigLen.eval n`. -/
 theorem handler_output_width (H : CRH) (S : SignatureScheme) (n : ℕ) :
     (handler H S).outLen.eval n = S.msgLen.eval n + S.sigLen.eval n :=
   (congrArg (fun p : PolyExpr => p.eval n) (handler_outLen H S)).trans
     (PolyExpr.eval_add S.msgLen S.sigLen n)
 
 /-- Finalization returns the hashed message component paired by concatenation with
-the adversary's signature component. The displayed cast transports the declared handler
+the adversary's signature component: `(handler H S).finish n pk ω s a = .pure (fun j =>
+Fin.append
+(padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn (splitBits a).1)))))
+(splitBits a).2 (Fin.cast (handler_output_width H S n) j))`, where
+`i = H.gen.runAtL n [] (List.ofFn ω)`. The displayed cast transports the declared handler
 output width to the sum of message and signature widths.
 
 **Proof sketch.** Read finalization as a padded list, split the adversary list at the

@@ -42,18 +42,24 @@ namespace TCSlib.Cryptography.Authentication.HashSignFill
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 
 /-- The signature key word generated from the first `S.gen.coins(n)` bits of the
-context seed, with empty argument and advice [PS10, Theorem 144.1]. -/
+context seed, with empty argument and advice,
+`collisionKey S c = S.gen.output (NUPPT.layout u [] [] (ω.take (S.gen.coins.eval u.length)))`,
+where `u = pairFstD c` and `ω = pairSndD (pairSndD c)` [PS10, Theorem 144.1]. -/
 def collisionKey (S : SignatureScheme) (c : List Bool) : List Bool :=
   S.gen.output (NUPPT.layout (pairFstD c) [] []
     ((pairSndD (pairSndD c)).take (S.gen.coins.eval (pairFstD c).length)))
 
 /-- `collisionKey S c` runs the original key generator on the parameter and the first
-generator-sized segment of the context seed. -/
+generator-sized segment of the context seed:
+`collisionKey S c = S.gen.output (NUPPT.layout u [] [] (ω.take (S.gen.coins.eval u.length)))`,
+where `u = pairFstD c` and `ω = pairSndD (pairSndD c)`. -/
 theorem collisionKey_eq (S : SignatureScheme) (c : List Bool) :
     collisionKey S c = S.gen.output (NUPPT.layout (pairFstD c) [] []
       ((pairSndD (pairSndD c)).take (S.gen.coins.eval (pairFstD c).length))) := rfl
 
-/-- Generating the signature key from a context is polynomial-time. The tape segment is
+/-- Generating the signature key from a context is polynomial-time:
+`PolyTimeComputable (collisionKey S)`, for `collisionKey S : List Bool → List Bool`.
+The tape segment is
 computed by the published polynomial-length take construction. -/
 theorem polyTimeComputable_collisionKey (S : SignatureScheme) :
     PolyTimeComputable (collisionKey S) :=
@@ -67,7 +73,8 @@ theorem polyTimeComputable_collisionKey (S : SignatureScheme) :
     (polyTimeComputable_const []) hT)
 
 /-- When the context seed concatenates generator and signing tapes, `collisionKey` is
-exactly the original generator's run on its own tape. -/
+exactly the original generator's run on its own tape:
+`collisionKey S (seedIn n i (List.ofFn rg ++ List.ofFn rs)) = S.gen.runAt n [] rg`. -/
 theorem collisionKey_seed (S : SignatureScheme) (n : ℕ) (i : List Bool)
     (rg : S.gen.Coins n) (rs : S.sign.Coins n) :
     collisionKey S (seedIn n i (List.ofFn rg ++ List.ofFn rs)) = S.gen.runAt n [] rg := by
@@ -77,23 +84,29 @@ theorem collisionKey_seed (S : SignatureScheme) (n : ℕ) (i : List Bool)
     S.gen_uniform.runAt_eq, NUPPT.layout_eq, NUPPT.advInput_eq]
 
 /-- The adversary receives `⟨pk, i⟩`, where the context supplies the hash index and
-`collisionKey` supplies the public signature key [PS10, Theorem 144.1]. -/
+`collisionKey` supplies the public signature key,
+`collisionAdv S c = pairEncode (pairFstD (collisionKey S c)) (pairFstD (pairSndD c))`
+[PS10, Theorem 144.1]. -/
 def collisionAdv (S : SignatureScheme) (c : List Bool) : List Bool :=
   pairEncode (pairFstD (collisionKey S c)) (pairFstD (pairSndD c))
 
-/-- The adversary input is the original public key paired with the context index. -/
+/-- The adversary input is the original public key paired with the context index:
+`collisionAdv S c = pairEncode (pairFstD (collisionKey S c)) (pairFstD (pairSndD c))`. -/
 theorem collisionAdv_eq (S : SignatureScheme) (c : List Bool) :
     collisionAdv S c =
       pairEncode (pairFstD (collisionKey S c)) (pairFstD (pairSndD c)) := rfl
 
-/-- Pairing the generated public key with the index is polynomial-time. -/
+/-- Pairing the generated public key with the index is polynomial-time:
+`PolyTimeComputable (collisionAdv S)`, for `collisionAdv S : List Bool → List Bool`. -/
 theorem polyTimeComputable_collisionAdv (S : SignatureScheme) :
     PolyTimeComputable (collisionAdv S) :=
   (polyTimeComputable_pairFstD.comp' (polyTimeComputable_collisionKey S)).pairEncode
     (polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD)
 
 /-- At `seedIn n i ω`, the adversary input is `⟨pk, i⟩`, where the original generator
-runs with the first `S.gen.coins(n)` seed bits. -/
+runs with the first `S.gen.coins(n)` seed bits: `collisionAdv S (seedIn n i ω) =
+pairEncode (pairFstD (S.gen.output (NUPPT.layout (List.replicate n true) [] []
+(ω.take (S.gen.coins.eval n))))) i`. -/
 theorem collisionAdv_seedIn (S : SignatureScheme) (n : ℕ) (i ω : List Bool) :
     collisionAdv S (seedIn n i ω) =
       pairEncode (pairFstD (S.gen.output (NUPPT.layout (List.replicate n true) [] []
@@ -102,7 +115,9 @@ theorem collisionAdv_seedIn (S : SignatureScheme) (n : ℕ) (i ω : List Bool) :
     pairSndD_pairEncode, List.length_replicate]
 
 /-- On concatenated generator and signing tapes, the adversary receives the public key
-from that generator run paired with the supplied hash index. -/
+from that generator run paired with the supplied hash index:
+`collisionAdv S (seedIn n i (List.ofFn rg ++ List.ofFn rs)) =
+pairEncode (pairFstD (S.gen.runAt n [] rg)) i`. -/
 theorem collisionAdv_seed (S : SignatureScheme) (n : ℕ) (i : List Bool)
     (rg : S.gen.Coins n) (rs : S.sign.Coins n) :
     collisionAdv S (seedIn n i (List.ofFn rg ++ List.ofFn rs)) =
@@ -111,7 +126,10 @@ theorem collisionAdv_seed (S : SignatureScheme) (n : ℕ) (i : List Bool)
     pairSndD_pairEncode, pairFstD_pairEncode]
 
 /-- The query hash in a handler-round word is the CRH evaluator padded to the signature
-message length. The theorem's length hypothesis later identifies this with `H.hash`
+message length: `collisionHash H S w = padStr S.msgLen u (H.eval (pairEncode u (pairEncode i x)))`,
+where `u = pairFstD (pairFstD w)`, `i = pairFstD (pairSndD (pairFstD w))` and
+`x = pairSndD (pairSndD (pairSndD w))`.
+The theorem's length hypothesis later identifies this with `H.hash`
 [PS10, Theorem 144.1]. -/
 def collisionHash (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
   padStr S.msgLen (pairFstD (pairFstD w))
@@ -120,7 +138,10 @@ def collisionHash (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
         (pairSndD (pairSndD (pairSndD w))))))
 
 /-- The query hash runs the evaluator at the context parameter and index on the query
-word and pads its output to the signature message length. -/
+word and pads its output to the signature message length:
+`collisionHash H S w = padStr S.msgLen u (H.eval (pairEncode u (pairEncode i x)))`, where
+`u = pairFstD (pairFstD w)`, `i = pairFstD (pairSndD (pairFstD w))` and
+`x = pairSndD (pairSndD (pairSndD w))`. -/
 theorem collisionHash_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
     collisionHash H S w = padStr S.msgLen (pairFstD (pairFstD w))
       (H.eval (pairEncode (pairFstD (pairFstD w))
@@ -128,7 +149,8 @@ theorem collisionHash_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
           (pairSndD (pairSndD (pairSndD w)))))) := rfl
 
 /-- Evaluating and padding the query hash is polynomial-time by the CRH evaluator and
-the published padding construction. -/
+the published padding construction: `PolyTimeComputable (collisionHash H S)`, for
+`collisionHash H S : List Bool → List Bool`. -/
 theorem polyTimeComputable_collisionHash (H : CRH) (S : SignatureScheme) :
     PolyTimeComputable (collisionHash H S) :=
   let hU := polyTimeComputable_pairFstD.comp' polyTimeComputable_pairFstD
@@ -140,7 +162,11 @@ theorem polyTimeComputable_collisionHash (H : CRH) (S : SignatureScheme) :
     (HashSignForward.hashWord_eq H S _ _ _).trans (collisionHash_eq H S w).symm)
 
 /-- A collision-finder round signs the query hash using the remaining seed and records
-the query as its new state [PS10, Theorem 144.1]. -/
+the query as its new state, `collisionRun H S w = pairEncode (padStr S.sigLen u
+(S.sign.output (NUPPT.layout u (pairEncode (pairSndD (collisionKey S (pairFstD w)))
+(collisionHash H S w)) [] (ω.drop (S.gen.coins.eval u.length))))) x`, where
+`u = pairFstD (pairFstD w)`, `ω = pairSndD (pairSndD (pairFstD w))` and
+`x = pairSndD (pairSndD (pairSndD w))` [PS10, Theorem 144.1]. -/
 def collisionRun (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
   pairEncode
     (padStr S.sigLen (pairFstD (pairFstD w))
@@ -150,7 +176,11 @@ def collisionRun (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
           (S.gen.coins.eval (pairFstD (pairFstD w)).length)))))
     (pairSndD (pairSndD (pairSndD w)))
 
-/-- A round returns the padded original signature and the queried message. -/
+/-- A round returns the padded original signature and the queried message:
+`collisionRun H S w = pairEncode (padStr S.sigLen u (S.sign.output (NUPPT.layout u
+(pairEncode (pairSndD (collisionKey S (pairFstD w))) (collisionHash H S w)) []
+(ω.drop (S.gen.coins.eval u.length))))) x`, where `u = pairFstD (pairFstD w)`,
+`ω = pairSndD (pairSndD (pairFstD w))` and `x = pairSndD (pairSndD (pairSndD w))`. -/
 theorem collisionRun_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
     collisionRun H S w = pairEncode
       (padStr S.sigLen (pairFstD (pairFstD w))
@@ -160,8 +190,19 @@ theorem collisionRun_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
             (S.gen.coins.eval (pairFstD (pairFstD w)).length)))))
       (pairSndD (pairSndD (pairSndD w))) := rfl
 
-/-- The collision-finder round is polynomial-time. It uses a polynomial-length coin
-suffix, the polynomial-time signer and padding, then pairs the result with the query. -/
+/-- The collision-finder round is polynomial-time: `PolyTimeComputable (collisionRun H S)`,
+for `collisionRun H S : List Bool → List Bool`. It uses a polynomial-length coin suffix,
+the polynomial-time signer and padding, then pairs the result with the query.
+
+**Proof sketch.** Write `u` for the parameter word, `ω` for the context seed and `x` for the
+query word of a round input; each is a composition of pair projections, hence polynomial-time.
+The signer's tape is `ω` with its first `S.gen.coins(|u|)` bits dropped, computed by the
+published polynomial-length drop construction on the pair `⟨u, ω⟩`. The secret key is the
+second component of the polynomial-time `collisionKey`, and the query hash is polynomial-time
+(`polyTimeComputable_collisionHash`). The original signer's output on the layout of `u`, the
+pair of key and hash, empty advice and that tape is then polynomial-time, and so is padding
+it to `S.sigLen(|u|)` bits by the published padding construction on `⟨u, ·⟩`. Pairing the
+padded signature with `x` gives the round. -/
 theorem polyTimeComputable_collisionRun (H : CRH) (S : SignatureScheme) :
     PolyTimeComputable (collisionRun H S) :=
   let hU := polyTimeComputable_pairFstD.comp' polyTimeComputable_pairFstD
@@ -182,18 +223,23 @@ theorem polyTimeComputable_collisionRun (H : CRH) (S : SignatureScheme) :
     (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD))
 
 /-- The collision output concatenates the remembered query with the first `H.domLen(n)`
-bits of the adversary's final word [PS10, Theorem 144.1]. -/
+bits of the adversary's final word, `collisionOut H w = pairFstD (pairSndD w) ++
+(pairSndD (pairSndD w)).take (H.domLen.eval (pairFstD (pairFstD w)).length)`
+[PS10, Theorem 144.1]. -/
 def collisionOut (H : CRH) (w : List Bool) : List Bool :=
   pairFstD (pairSndD w) ++
     (pairSndD (pairSndD w)).take (H.domLen.eval (pairFstD (pairFstD w)).length)
 
-/-- The collision output is the state followed by the message prefix of the forgery. -/
+/-- The collision output is the state followed by the message prefix of the forgery:
+`collisionOut H w = pairFstD (pairSndD w) ++
+(pairSndD (pairSndD w)).take (H.domLen.eval (pairFstD (pairFstD w)).length)`. -/
 theorem collisionOut_eq (H : CRH) (w : List Bool) :
     collisionOut H w = pairFstD (pairSndD w) ++
       (pairSndD (pairSndD w)).take (H.domLen.eval (pairFstD (pairFstD w)).length) := rfl
 
 /-- Reading a polynomial-length forgery prefix and appending it to the stored query is
-polynomial-time. -/
+polynomial-time: `PolyTimeComputable (collisionOut H)`, for
+`collisionOut H : List Bool → List Bool`. -/
 theorem polyTimeComputable_collisionOut (H : CRH) :
     PolyTimeComputable (collisionOut H) :=
   let hU := polyTimeComputable_pairFstD.comp' polyTimeComputable_pairFstD
@@ -204,7 +250,10 @@ theorem polyTimeComputable_collisionOut (H : CRH) :
   (polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD).append hT
 
 /-- The T1 collision finder samples signature-generation and signing coins, remembers one
-domain-width query, and emits the query followed by the forged message [PS10, Theorem 144.1]. -/
+domain-width query, and emits the query followed by the forged message: its fields are
+`stateLen = H.domLen`, `seedLen = .add S.gen.coins S.sign.coins`, `init _ = zeroBits _`,
+`run = collisionRun H S`, `advIn = collisionAdv S` and `out = collisionOut H`
+[PS10, Theorem 144.1]. -/
 def collisionHandler (H : CRH) (S : SignatureScheme) :
     PolyHandler 1 (fun _ => H.domLen) (fun _ => S.sigLen) where
   stateLen := H.domLen
@@ -221,7 +270,12 @@ attribute [simps (config := { isSimp := false }) stateLen seedLen init run advIn
   collisionHandler
 
 /-- On a well-formed round input, the collision handler returns the padded signature on
-the query hash and stores exactly the query. The generator reads the seed prefix and
+the query hash and stores exactly the query:
+`(collisionHandler H S).run (PolyHandler.input n i ω s j m) = pairEncode (padStr S.sigLen u σ) m`,
+where `u = List.replicate n true` and
+`σ = S.sign.output (NUPPT.layout u (pairEncode (pairSndD (collisionKey S (seedIn n i ω)))
+(padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m))))) [] (ω.drop (S.gen.coins.eval n)))`.
+The generator reads the seed prefix and
 the signer reads its suffix; the old state and oracle index are ignored. -/
 theorem collisionHandler_run_input (H : CRH) (S : SignatureScheme) (n : ℕ)
     (i ω s : List Bool) (j : Fin 1) (m : List Bool) :
@@ -238,7 +292,10 @@ theorem collisionHandler_run_input (H : CRH) (S : SignatureScheme) (n : ℕ)
     seedIn_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
 
 /-- The typed signature returned by the collision handler: run the original signer on the
-hashed message with the seed suffix and pad its output to `S.sigLen(n)` bits. -/
+hashed message with the seed suffix and pad its output to `S.sigLen(n)` bits,
+`collisionReply H S n i ω m = padFin (S.sigLen.eval n) σ`, where `u = List.replicate n true` and
+`σ = S.sign.output (NUPPT.layout u (pairEncode (pairSndD (collisionKey S (seedIn n i ω)))
+(padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m))))) [] (ω.drop (S.gen.coins.eval n)))`. -/
 def collisionReply (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : List Bool) :
     Fin (S.sigLen.eval n) → Bool :=
   padFin (S.sigLen.eval n)
@@ -248,7 +305,10 @@ def collisionReply (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : List Bool
           (H.eval (pairEncode (List.replicate n true) (pairEncode i m))))) []
       (ω.drop (S.gen.coins.eval n))))
 
-/-- The typed reply is the original signer output padded to the signature length. -/
+/-- The typed reply is the original signer output padded to the signature length:
+`collisionReply H S n i ω m = padFin (S.sigLen.eval n) σ`, where `u = List.replicate n true` and
+`σ = S.sign.output (NUPPT.layout u (pairEncode (pairSndD (collisionKey S (seedIn n i ω)))
+(padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m))))) [] (ω.drop (S.gen.coins.eval n)))`. -/
 theorem collisionReply_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : List Bool) :
     collisionReply H S n i ω m = padFin (S.sigLen.eval n)
       (S.sign.output (NUPPT.layout (List.replicate n true)
@@ -258,7 +318,9 @@ theorem collisionReply_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : Li
         (ω.drop (S.gen.coins.eval n)))) := rfl
 
 /-- With the generator and signing tapes concatenated into the context seed, the collision
-handler's reply is the fixed experiment's hashed reply under those same generated keys. -/
+handler's reply is the fixed experiment's hashed reply under those same generated keys:
+`collisionReply H S n i (List.ofFn rg ++ List.ofFn rs) (List.ofFn m) =
+hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m`. -/
 theorem collisionReply_seed (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
     (rg : S.gen.Coins n) (rs : S.sign.Coins n) (m : Fin (H.domLen.eval n) → Bool) :
     collisionReply H S n i (List.ofFn rg ++ List.ofFn rs) (List.ofFn m) =
@@ -269,7 +331,10 @@ theorem collisionReply_seed (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List 
     NUPPT.layout_eq, NUPPT.advInput_eq]
 
 /-- Encoding the typed reply gives exactly the padded signature word emitted by a
-collision-handler round. -/
+collision-handler round: `List.ofFn (collisionReply H S n i ω m) = padStr S.sigLen u σ`, where
+`u = List.replicate n true` and
+`σ = S.sign.output (NUPPT.layout u (pairEncode (pairSndD (collisionKey S (seedIn n i ω)))
+(padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m))))) [] (ω.drop (S.gen.coins.eval n)))`. -/
 theorem ofFn_collisionReply (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : List Bool) :
     List.ofFn (collisionReply H S n i ω m) =
       padStr S.sigLen (List.replicate n true)
@@ -281,7 +346,8 @@ theorem ofFn_collisionReply (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : 
   simp only [collisionReply_eq, ofFn_padFin_eq_take, padStr_eq, List.length_replicate]
 
 /-- The collision handler answers each typed query with its padded original signature and
-sets the state to that query, asking no further oracle. -/
+sets the state to that query, asking no further oracle: `(collisionHandler H S).impl n i ω j m s =
+.pure (collisionReply H S n i (List.ofFn ω) (List.ofFn m), m)`. -/
 theorem collisionHandler_impl (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
     (ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool) (j : Fin 1)
     (m s : Fin (H.domLen.eval n) → Bool) :
@@ -293,7 +359,8 @@ theorem collisionHandler_impl (H : CRH) (S : SignatureScheme) (n : ℕ) (i : Lis
   rw [collisionHandler_run_input, ofFn_collisionReply]
 
 /-- Finalization returns the remembered query followed by the domain-width message prefix
-of the adversary's output. -/
+of the adversary's output: `(collisionHandler H S).result n i ω s a =
+List.ofFn s ++ (List.ofFn a).take (H.domLen.eval n)`. -/
 theorem collisionHandler_result (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
     (ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool)
     (s : Fin (H.domLen.eval n) → Bool) {d : ℕ} (a : Fin d → Bool) :
@@ -303,7 +370,15 @@ theorem collisionHandler_result (H : CRH) (S : SignatureScheme) (n : ℕ) (i : L
     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
 
 /-- The collision handler and common fixed-tape transcript return the same adversary
-output. Their query log is empty, or consists of one query which is exactly the handler's
+output: if `List.ofFn ω = List.ofFn rg ++ List.ofFn rs`, then `∃ a s L,
+simulate ((collisionHandler H S).impl n i ω) (A.toCompOn cod n 1
+((collisionHandler H S).advInput n i ω) rA) ((collisionHandler H S).init n) = .pure (a, s) ∧
+transcript H S A n pk sk i rs rA = .pure (a, ((), L)) ∧
+(L = [] ∨ ∃ j m, L = [⟨j, m, hashedReply H S n sk i rs m⟩] ∧ s = m)`, where
+`pk = pairFstD (S.gen.runAt n [] rg)`, `sk = pairSndD (S.gen.runAt n [] rg)` and
+`cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
+(H.domLen.eval n + S.sigLen.eval n)`.
+Their query log is empty, or consists of one query which is exactly the handler's
 final state, answered by the same original signing tape.
 
 **Proof sketch.** The adversary's computation has at most one query. If it returns
@@ -351,7 +426,12 @@ theorem collisionHandler_transcript (H : CRH) (S : SignatureScheme) (A : NUPPT) 
 
 /-- If the common transcript is fresh and contains a query with the forged message's
 hash, the collision handler's final output satisfies the CRH game's exact collision
-predicate on the full domain [PS10, Theorem 144.1, collision case].
+predicate on the full domain: given `∀ n i x, H.inDom n i x = true`,
+`L = [] ∨ ∃ j m, L = [⟨j, m, hashedReply H S n sk i rs m⟩] ∧ s = m`,
+`∀ e ∈ L, e.2.1 ≠ (splitBits a).1` and `∃ e ∈ L, H.hash n i e.2.1 = H.hash n i (splitBits a).1`,
+then `H.inDom n i x₁ = true ∧ H.inDom n i x₂ = true ∧ x₁ ≠ x₂ ∧ H.hash n i x₁ = H.hash n i x₂`,
+where `(x₁, x₂) = splitBits (padFin (H.domLen.eval n + H.domLen.eval n)
+((collisionHandler H S).result n i ω s a))` [PS10, Theorem 144.1, collision case].
 
 **Proof sketch.** The equal-hash witness rules out an empty log. The one-query invariant
 then identifies its query with the final handler state. Freshness makes that query distinct
@@ -392,7 +472,12 @@ theorem collisionHandler_collision (H : CRH) (S : SignatureScheme)
     exact ⟨hdom n i m, hdom n i _, hne, hhash⟩
 
 /-- T1 realizes the collision handler as a machine: on matching seed/adversary coins,
-its output equals `collisionHandler.result` after the deterministic simulation. This is
+its output equals `collisionHandler.result` after the deterministic simulation,
+`∃ B : NUPPT, ∀ n, ∃ φ : (Fin (K.seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n, ∀ i ω r,
+∃ a s, simulate (K.impl n i ω) (A.toCompOn cod n ((.const 1 : PolyExpr).eval n)
+(K.advInput n i ω) r) (K.init n) = .pure (a, s) ∧ B.runAt n i (φ (ω, r)) = K.result n i ω s a`,
+where `K = collisionHandler H S` and `cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n)
+(fun _ : Fin 1 => S.sigLen.eval n) ((PolyExpr.add H.domLen S.sigLen).eval n)`. This is
 the machine-construction part of [PS10, Theorem 144.1], before relating the collision event. -/
 theorem exists_collisionMachine (H : CRH) (S : SignatureScheme) (A : NUPPT) :
     ∃ B : NUPPT, ∀ n : ℕ, ∃ φ :
@@ -411,7 +496,13 @@ theorem exists_collisionMachine (H : CRH) (S : SignatureScheme) (A : NUPPT) :
     (.add H.domLen S.sigLen) (collisionHandler H S)
 
 /-- T1 supplies a collision machine whose output is the finalization of the common
-fixed-tape transcript. Its coins correspond bijectively to the handler seed and adversary
+fixed-tape transcript: `∃ B : NUPPT, ∀ n, ∃ φ : (Fin (K.seedLen.eval n) → Bool) × A.Coins n ≃
+B.Coins n, ∀ i rg rs ω rA, List.ofFn ω = List.ofFn rg ++ List.ofFn rs → ∃ a s L,
+transcript H S A n pk sk i rs rA = .pure (a, ((), L)) ∧
+(L = [] ∨ ∃ j m, L = [⟨j, m, hashedReply H S n sk i rs m⟩] ∧ s = m) ∧
+B.runAt n i (φ (ω, rA)) = K.result n i ω s a`, where `K = collisionHandler H S`,
+`pk = pairFstD (S.gen.runAt n [] rg)` and `sk = pairSndD (S.gen.runAt n [] rg)`.
+Its coins correspond bijectively to the handler seed and adversary
 tape; concatenated generator/signing tapes give the same adversary output and one-query
 invariant as `collisionHandler_transcript` [PS10, Theorem 144.1].
 

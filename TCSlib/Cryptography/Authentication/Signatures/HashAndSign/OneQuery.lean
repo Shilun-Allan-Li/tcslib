@@ -43,7 +43,9 @@ theorem eq_pure_of_cost_zero {ι α : Type} {spec : OracleSpec ι}
     omega
 
 /-- A computation with unit query costs and budget one either returns immediately or is one
-query followed by a return. The continuation of a query has budget zero, so each of its
+query followed by a return: `c.CostBoundedBy (fun _ => 1) 1 →
+(∃ a, c = .pure a) ∨ ∃ i x f, c = .query i x (fun y => .pure (f y))`.
+The continuation of a query has budget zero, so each of its
 branches is pure; choosing those return values gives its answer function. -/
 theorem one_query_cases {ι α : Type} {spec : OracleSpec ι}
     (c : OracleComp spec α) (h : c.CostBoundedBy (fun _ => 1) 1) :

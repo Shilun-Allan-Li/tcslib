@@ -33,7 +33,10 @@ namespace TCSlib.Cryptography.Authentication.HashSignFill
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 
 /-- The collision case of a common transcript: its final message is distinct from every
-logged query, and some logged query has its hash [PS10, Theorem 144.1]. -/
+logged query, and some logged query has its hash,
+`CollisionCase H S n i res ↔ (∀ e ∈ res.2.2, e.2.1 ≠ m) ∧
+∃ e ∈ res.2.2, H.hash n i e.2.1 = H.hash n i m`, where `m = (splitBits res.1).1`
+[PS10, Theorem 144.1]. -/
 def CollisionCase (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
     (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
       (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
@@ -42,7 +45,8 @@ def CollisionCase (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
     ∃ e ∈ res.2.2, H.hash n i e.2.1 = H.hash n i (splitBits res.1).1
 
 /-- The collision case holds exactly when the final message is fresh and a logged query
-has the same hash as that message. -/
+has the same hash as that message: `CollisionCase H S n i res ↔ (∀ e ∈ res.2.2, e.2.1 ≠ m) ∧
+∃ e ∈ res.2.2, H.hash n i e.2.1 = H.hash n i m`, where `m = (splitBits res.1).1`. -/
 theorem collisionCase_iff (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
     (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
       (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
@@ -52,8 +56,13 @@ theorem collisionCase_iff (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bo
         ∃ e ∈ res.2.2, H.hash n i e.2.1 = H.hash n i (splitBits res.1).1 := Iff.rfl
 
 /-- A machine's collision probability bounds the collision case of the common transcript,
-averaged over the original keys, hash index, adversary tape and signing tape
-[PS10, Theorem 144.1].
+averaged over the original keys, hash index, adversary tape and signing tape: if
+`∀ n i x, H.inDom n i x = true`, then `∃ B : NUPPT, ∀ n, 𝔼 rg : S.gen.Coins n,
+𝔼 ri : H.gen.Coins n, 𝔼 rA : A.Coins n, 𝔼 rs : S.sign.Coins n, ProbComp.prob
+(transcript H S A n pk sk i rs rA) (CollisionCase H S n i) ≤ accept (H.collisionGame B n)`,
+writing `𝔼 x : X, f x` for `ProbComp.expect (ProbComp.sample X) (fun x => f x)`, with
+`pk = pairFstD (S.gen.runAt n [] rg)`, `sk = pairSndD (S.gen.runAt n [] rg)` and
+`i = H.gen.runAt n [] ri` [PS10, Theorem 144.1].
 
 **Proof sketch.** T1 constructs a machine with the same deterministic transcript on each
 choice of seed and adversary tape. In the collision case its output satisfies the exact

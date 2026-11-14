@@ -34,7 +34,11 @@ open TCSlib.Cryptography.Games
 
 /-- For a computation making at most one query, sampling an independent tape for every
 oracle answer is equivalent to sampling one tape before the computation, for every real
-payoff of the returned value and full query log.
+payoff of the returned value and full query log: if `c.CostBoundedBy (fun _ => 1) 1`, then
+`ProbComp.expect (simulate (QueryImpl.ofComp (σ := Unit) (fun i x =>
+(ProbComp.sample R).bind fun r => .pure (ans i x r))).withLog c ((), [])) g =
+ProbComp.expect (ProbComp.sample R) (fun r => ProbComp.expect
+(simulate (QueryImpl.withLog (fun i x _ => .pure (ans i x r, ()))) c ((), [])) g)`.
 
 **Proof sketch.** A computation of unit cost at most one either returns immediately or
 asks a fixed query and returns a function of its answer (`one_query_cases`). In the first
