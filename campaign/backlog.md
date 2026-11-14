@@ -3850,7 +3850,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   (user low on Codex tokens, 2026-11-14): fill 2 (`powCap` and the private parser leaves,
   `campaign/fills/ladner-common-leaves/`) and fill 3 (target 1 part A, up to the candidate
   test, `campaign/fills/ladner-poly-candidate/`), both pre-shipped at #304's head. Target 1 is
-  split in two (part B: selection, memo driver, readout, the target); the route's 5–12 agent-day
+  split in two (part B: selection, memo driver, readout, the target); **Fill 2 delivered (2026-11-14); dedup
+  ruling (Seyoon):** its `powCap` repeated-squaring round copied `ModPow.powStep` (screen pairs
+  50–86%), so before gating, a generic public `BinArith.sqStep op stop` with readers
+  `sqStep_of_stop`, `sqStep_cons` and `polyTimeComputable_sqStep` goes in ClassP/BinaryArith/Mul;
+  `ModPow.powStep`'s body becomes `sqStep (mod ∘ mul) (p = 0)` (type and all statements unchanged,
+  proofs re-pointed) and `powCap`'s private step becomes `sqStep powCapMul (fun _ => false)`; the
+  two invariants stay separate. Implemented by the maintainer on the fill 2 branch. the route's 5–12 agent-day
   estimate for it was Codex's, and fill 1 took one session against its 1.5–5-day estimate. See
   `campaign/items/ladner/LADNER-design.md`, roadmap3/PLAN§(f) and HANDOFF§0. *Origin:
   `AroraBarakChapters3-4Plan.md`§4(P3.4), CH34-Q6.*
