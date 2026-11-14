@@ -1,0 +1,120 @@
+dl-crh landing edit LE-reuse (Codex finding G24-01; review item DL-41), with build, Rule 10 seals, maintainer, 2026-11-14 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0 (cdd38ac5115b), PATH=$HOME/.elan/bin:$PATH; one Lean process at a time, only
+  scripts/lean_check_tree.sh (worktree copy byte-equal to /home/user/tcslib/scripts/) through tools-used/review/runner.py with
+  TCSLIB_OLEANS=$SP/dl-oleans (dl-oleans-2 not touched); no lake command; nothing pushed; /home/user/tcslib not edited (status clean).
+
+landing: branch land/pass-shelat-dl-crh (PR #307), worktree $SP/wt-land-dl-crh. Not pushed: the branch is 1 commit ahead of
+  origin/land/pass-shelat-dl-crh.
+  parent LE-doc    649c4888f23fbb9df71d555e952d1149a0aaa00b (tree 1d9f6d52d136f8bc8229bfaffe3c714aadb5eebd)
+  head   LE-reuse  d356381aadc350860f9a0e97123e84d9aefa585b (tree c7b77d28fa11c95a00789102e8d9410fc931bf63)
+  author = committer = Claude <noreply@anthropic.com>; message logs/commit-msg.txt, ending with the two trailer lines
+  (checks/commit.txt). Patch: 0001-LE-reuse.patch (git format-patch); diff checks/le-reuse.diff.
+  checks/changed-paths.txt: one path, M TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean
+  (blob cca76894 -> fd751608; 199 -> 201 lines, max width 96, checks/widths.txt). The worktree is clean at the head.
+
+edit (Encoding.lean; proof-only):
+  (1) G24-01. inputWord_take now reads the public TCSlib.Cryptography.take_ofFn_castLE (Asymptotic/ReductionSupport.lean):
+        (take_ofFn_castLE (Nat.le_succ n) x).trans
+          (congrArg List.ofFn (funext fun _ => congrArg x (Fin.ext rfl)))
+      Fin.ext rfl identifies Fin.castLE (Nat.le_succ n) j with j.castSucc. It no longer goes through inputWord_split.
+  (2) DL-41. inputWord_split is now the term `ofFn_eq_init_append x` (same file of ReductionSupport); its statement is the lemma's
+      with Fin.init x unfolded, which the elaborator accepts by unfolding Fin.init (a core/Mathlib definition, not sealed).
+  (3) import TCSlib.Cryptography.Asymptotic.ReductionSupport added after the existing four imports.
+  Statements and docstrings unchanged. Neither docstring had a `**Proof sketch.**` paragraph, so none was edited or added (the
+  new proofs are one and two lines). An intermediate version used `fun j` and drew an unused-variable warning
+  (logs/iteration/encoding-attempt1.log); the committed version compiles without a warning (attempt2.log, and the build below).
+
+imports (checks/imports.txt; tools-used/impcheck.py, impdelta.py, source-level import graph):
+  ReductionSupport was NOT in Encoding's transitive import closure at 649c4888 (65 project modules), so the import is not
+  merely redundant. It adds 4 modules to Encoding's closure: Asymptotic.ReductionSupport, Foundations.Negligible,
+  Pseudorandom.Generators, Pseudorandom.Indistinguishability. It also adds 3 modules to the closures of FromDiscreteLog/Reduction
+  and Hashing.FromDiscreteLog, 2 to the closure of the Hashing facade, and 0 to Authentication and root TCSlib, which already had it.
+  No cycle: ReductionSupport's closure (35 modules) contains none of the 9 unit modules. The build compiles it (rc 0).
+  The effect on the build: Encoding's olean changes. Every other rebuilt olean, Reduction and FromDiscreteLog included, is
+  byte-identical to the 649c4888 build (build/vs-ledoc-build.txt). No name clash, no new warning.
+
+statements (statements/; tools-used/review/ = dl-crh review tools, below):
+  unit-paths.txt = the 9 unit files (dl-crh-r1-ledoc landing/unit-paths.txt).
+  decls2-vs-649c4888.tsv and .err: both empty (decls2g.py, 9 files): 0 ADDED/REMOVED/CHANGED/MOVED statements.
+  decls2-vs-base.tsv (vs eff2dcd0): 67 ADDED. It equals the LE-doc record dl-crh-r1-ledoc statements/decls2-vs-base.tsv
+    except for line numbers: decls2-vs-base-vs-ledoc.diff is empty, with `file:line` reduced to `file`.
+  header-bytes-vs-649c4888.txt (headerbytes.py with touched-before.json = eff2dcd0 vs 649c4888 and touched-after.json = eff2dcd0 vs
+    head, endpoint dlHash_crh): 198 compared (all 197 declarations of the 8 Lean files with declarations, private included, plus
+    the endpoint), 0 different or missing. Hashing.lean has no declarations (imports only, unchanged).
+  touched-649c4888-vs-head.tsv: 2 CHANGED (inputWord_split, inputWord_take), 195 UNCHANGED.
+  checks/docstring-header.txt (tools-used/docheader.py): for both theorems, the docstring and the keyword-to-`:=` header are
+    byte-identical; only the bodies differ (both shown).
+
+build (build/, order/head-build.txt, logs/build-runner.out): the tree starts at base (below), so the full 22-module set of the
+  LE-doc build was rebuilt (order/head-build.txt = dl-crh-r1-ledoc order/head-build.txt; its set = order/head-vs-base/down.txt from
+  downorder.py d356381a vs eff2dcd0, imports-first consistent with order.txt). That set contains everything the brief names:
+  Encoding; its unit downstream Reduction (order/head-vs-649c4888/down.txt: Encoding, Reduction, Hashing/FromDiscreteLog,
+  Authentication, Hashing, TCSlib); Hashing/FromDiscreteLog; Hashing; Authentication, which imports Hashing.FromDiscreteLog
+  directly (Authentication.lean:15) and so is downstream of Encoding; the #303 base-delta modules Rejection, Sampler,
+  Extraction and Randomness; and root TCSlib. It also contains the DiscreteLog chain, needed because the base tree holds base
+  DiscreteLog oleans, and audits/pass-shelat/Checks.
+  22/22 rc 0, 0 errors, 0 sorry; warnings DDH 3, Rejection 10, Extraction 2 (all inherited, as in the LE-doc build).
+  Sources: Encoding 0cea7598..., FromDiscreteLog fd4128f9..., Hashing 8a072ec7..., Authentication 27e81654..., TCSlib 942193a0...
+  (build/results.jsonl). Checks log byte-identical to the LE-doc build's.
+  Whole-tree head check build/tree-check-head.txt (treecheck.py; order/headfull-order.txt = LE-doc's, 1207 modules; records
+  build/all-results-head.jsonl = base records + build/): every module's last record rc 0 at the d356381a source and olean hash,
+  no stray olean, no empty dir: RESULT OK (build/snapshot-head.txt, 1238 files).
+
+Rule 10 (rule10/). Tools: the dl-crh review tools from /home/user/tcslib/briefs/pass-shelat-ch5-8/fills/dl-crh/final-r1/
+  review-evidence.zip (SHA-256 57461de5fb2cb5a8b9936864f3f813e1535a70535cb8b4306bc3ef030172e502; byte-equal to
+  $SP/dl-review/dl-crh-r1-evidence.zip), extracted into the fresh directory $SP/dlcrh-r1-x and deleted after the job. Its tools/
+  were copied unmodified to tools-used/review/ (diff -r empty) and run from that copy.
+  collector: probe-sources/CollectHead.lean.txt = mkcollect.py(NmCollect.template.lean, order/head-owners.txt = the review's 8
+    owners, title "dl-crh review collector (head)"), byte-identical to the review's probe-sources/head/CollectHead.lean. Run as
+    DlProbe/CollectHead (probe-runs/, rc 0): CAT rows 2141 (review 2119: the definitions of the newly imported modules); MODULE
+    stored counts equal to the review's (Encoding 25).
+  seals for Encoding.lean (mkseals_ab.py strict, mkseals_coe.py coe; A, and B with SEAL_EVAL=1): seals/{A,B}, seals-coe/{A,B},
+    mkseals-*.log. Requests A 948, B 949, coe A 947, coe B 948 (review 924/925/923/924). seal-rows-vs-review.txt: per variant, no
+    review row is gone and all common rows are identical. There are 24 new rows, all homed in the 4 newly imported modules
+    (preComp, wrap, finCastEquiv, Negligible, prgAdv, ...). Term readers and excluded terms are identical to the review's
+    (6 terms, 0 excluded).
+    Runs in seal-runs/ (seal-runner.out); summaries seals-A.tsv, seals-B.tsv, seals-coe-A.tsv, seals-coe-B.tsv (sealsum.py with
+    statements/touched-after.json):
+      strict A pass, strict B pass, coe A pass, coe B pass (each rc 0, 0 errors, install and EOF records present).
+    As in the review (logs/seal-table.txt there: Encoding pass in A and B, strict and coe).
+  paired controls for Encoding.lean (mkctl_dlcrh.py, run once on the strict records (seals-flat/) and once on the coe records
+    (seals-coe-flat/); controls/, controls-coe/, controls-plan-all.json, control-runs/, controls-runner.out). Encoding's request
+    sets contain 3 of the tool's rows, each a negative `rfl` body paired with its published reader: padFin (padFin_apply),
+    Authentication.splitBits (splitBits_fst), and in B only Complexity.PolyExpr.eval (eval_const). The other rows
+    (expSampleRaw, modularDifference, residueFinEquiv) are outside Encoding's closure. 8 probes (ControlS/ControlU for strict A,
+    strict B, coe A and coe B) with 10 sealed negatives; each negative fails exactly once when sealed, and all positives and unsealed
+    controls pass. ctlcheck.log (ctlcheck2.py): ALL_OK True.
+
+axioms (axioms/, probe axioms/AxiomsHead.lean.txt run as DlProbe/AxiomsHead at d356381a, rc 0):
+  TCSlib.Cryptography.Authentication.dlHash_crh depends on [propext, Classical.choice, Quot.sound];
+  inputWord_take on [propext, Classical.choice, Quot.sound]; inputWord_split on [propext, Quot.sound].
+
+lint (logs/): python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography from the worktree at d356381a
+  (lint-crypto-head-d356381a.log): 92 FAIL, 102 WARN over 309 files. lint-crypto-head-649c4888.log = the LE-doc build's head
+  lint (copied from dl-crh-r1-ledoc logs/): also 92/102. lint-649c4888-vs-head.diff (FAIL/WARN lines, whitespace-normalised) is
+  empty: the FAIL and WARN lines are identical. lint-649c4888-vs-head-full.diff changes one line only, Encoding.lean's INFO line
+  count (199 -> 201 lines).
+
+olean tree $SP/dl-oleans:
+  pre (tree/tree-check-pre.txt): at base before any Lean run: 1199 modules (order/basefull-1199.txt) rc 0 at eff2dcd0 source and
+    at the object hashes of tree/base-records.jsonl (= dl-crh-r1-ledoc build/base-records.jsonl); no stray olean or empty dir;
+    tree/snapshot-pre.txt (1230 files) byte-equal to dl-crh-r1-ledoc restore/snapshot-post.txt
+    (tree/snapshot-ref-dl-crh-ledoc-post.txt; SHA-256 457ba704..., the same as the cca2-ett, hash-sign and lamport restores). RESULT OK.
+  restore (restore/, logs/restore-runner.out): deleted the 10 probe oleans (restore/probe-oleans-deleted.txt; the 4 sealed
+    controls fail by design and leave no olean), then the 8 head-only oleans (6 helpers, Rejection, Sampler) and the 2 emptied
+    directories (restore/restore-deleted.txt). Then rebuilt order/restore-base.txt (= LE-doc's, 14 modules) from a git-archive
+    export of eff2dcd0 (TCSlib, TCSlib.lean, audits, scripts, lean-toolchain; .lake/packages symlinked; removed afterwards):
+    14/14 rc 0, 0 errors; the base FromDiscreteLog and Extraction keep their base sorry. Source and object hashes equal the
+    base records (restore/restore-vs-base-records.txt RESULT OK). restore/tree-check-post.txt: RESULT OK; restore/snapshot-post.txt
+    is byte-identical to tree/snapshot-pre.txt (SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f).
+  The worktree's DlProbe/ (untracked probe sources) was removed; git status clean.
+
+tools-used/: review/ = dl-crh review tools/ unmodified (runner, treecheck, downorder, touched, headerbytes, decls2g, mkcollect,
+  mkseals_ab, mkseals_coe, mkctl_dlcrh, ctlcheck2, sealsum, archived-gate10-tools/, NmCollect.template.lean, ...).
+  hunkdoc2.py, sketchaudit.py, sketchaudit_fix.py, prooflen.py = dl-crh-r1-ledoc tools-used/ unmodified (copied for
+  reference, not needed here). New: impcheck.py, impdelta.py (import closure and cycle), docheader.py (docstring and header bytes).
+  The cca2-ett-r1-ledoc directory no longer exists (only its zip). The build order and method are the dl-crh LE-doc job's
+  (dl-crh-r1-ledoc-evidence.zip, extracted into the fresh directory $SP/dlcrh-ledoc-x, deleted after the job).
+  $SP/ledoc-build-tools/ holds the LE-doc zip manifests and the rebase script; no rebase was done here.
+SHA256SUMS: every file here except itself (paths without "./"); ../dl-crh-r1-reuse-evidence.zip holds exactly the manifest paths.
