@@ -3,6 +3,9 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Authentication.Signatures.Defs
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Planted
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Encoding
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.TableCoins
 import TCSlib.Cryptography.Authentication.Encoding
 import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
 import TCSlib.Cryptography.Asymptotic.BlockEncryptor
@@ -42,6 +45,12 @@ Theorem 137.2: if `f` is one-way, the scheme is one-time secure.
   that do not invert `f`.
 - **The one-way function is strong** ([PS10, Definition 27.3], `FunFamily.StrongOneWay`), the
   notes' "one-way function"; by §2.4 a weak one suffices.
+
+## Contents
+
+* `Signatures.Lamport.Encoding`: injectivity of the cryptographic tuple encoding.
+* `Signatures.Lamport.Planted`: the typed planted experiment and safe-run coupling.
+* `Signatures.Lamport.TableCoins`: the equivalence between key tapes and typed tables.
 
 ## Main definitions
 
@@ -366,6 +375,21 @@ noncomputable def lamportGen : NUPPT :=
 noncomputable def lamportSign : NUPPT :=
   NUPPT.ofPolyTimeUniform polyTimeComputable_lamportSignFun (.const 0)
 
+/-- Lamport's generator uses the coin polynomial `2n²`. -/
+theorem lamportGen_coins : (lamportGen hE).coins = .mul (.mul (.const 2) .var) .var := by
+  unfold lamportGen
+  exact NUPPT.coins_ofPolyTimeUniform _ _
+
+/-- The generator's coin tape has `2n²` bits at parameter `n`. -/
+theorem lamportGen_coinLen (n : ℕ) : (lamportGen hE).coinLen n = 2 * n * n := by
+  rw [NUPPT.coinLen_eq, lamportGen_coins]
+  simp only [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+
+/-- Lamport's deterministic signer uses the zero coin polynomial. -/
+theorem lamportSign_coins : lamportSign.coins = .const 0 := by
+  unfold lamportSign
+  exact NUPPT.coins_ofPolyTimeUniform _ _
+
 /-- `Gen` on coins `ρ`: `⟨pk, ρ⟩`, `pk` the tuple of the pairs `⟨f(x_i^0), f(x_i^1)⟩` over the
 `2n`-bit segments `x_i^0 ‖ x_i^1` of `ρ`. -/
 theorem runAt_lamportGen (n : ℕ) (ρ : (lamportGen hE).Coins n) :
@@ -532,6 +556,117 @@ theorem lamport_sign : (lamport L f E hE hfE).sign = lamportSign := rfl
 
 /-- Lamport uses its length-guarded block verifier. -/
 theorem lamport_ver : (lamport L f E hE hfE).ver = lamportVerFun L E := rfl
+
+include hfE in
+/-- On a serialized preimage table, key generation returns its public images and the table
+itself [PS10, Protocol 137.1]. -/
+theorem runAt_lamportGen_table (n : ℕ) (T : LamportFill.Table n)
+    (ρ : (lamportGen hE).Coins n) (hρ : List.ofFn ρ = LamportFill.secretWord T) :
+    (lamportGen hE).runAt n [] ρ =
+      pairEncode (LamportFill.publicWord (LamportFill.tablePublic (f n) T))
+        (LamportFill.secretWord T) := by
+  have hrow (i : Fin n) :
+      (List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))).length = 2 * n := by
+    simp only [List.length_append, List.length_ofFn]
+    omega
+  have hhalf (i : Fin n) (b : Bool) :
+      lamportHalf n b (coinBlock (2 * n) i (LamportFill.secretWord T)) =
+        List.ofFn (T (i, b)) := by
+    rw [LamportFill.secretWord_eq, coinBlock_flatten_ofFn _ hrow i]
+    cases b <;> simp [lamportHalf_eq]
+  have hE' (x : Fin n → Bool) :
+      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (f n x) := by
+    simpa only [NUPPT.advInput_eq] using hfE n x
+  rw [runAt_lamportGen, hρ, LamportFill.publicWord_eq]
+  congr 1
+  apply congrArg encodeList
+  apply congrArg List.ofFn
+  funext i
+  rw [hhalf i false, hhalf i true, hE', hE',
+    LamportFill.tablePublic_eq, LamportFill.tablePublic_eq]
+
+/-- On a serialized preimage table, signing returns the typed signature selected from
+that table, independently of its signing coins [PS10, Protocol 137.1]. -/
+theorem runAt_lamportSign_table (n : ℕ) (T : LamportFill.Table n) (m : Fin n → Bool)
+    (r : lamportSign.Coins n) :
+    lamportSign.runAt n (pairEncode (LamportFill.secretWord T) (List.ofFn m)) r =
+      List.ofFn (LamportFill.tableSignature T m) := by
+  rw [runAt_lamportSign, LamportFill.ofFn_tableSignature]
+  have hrow (i : Fin n) :
+      (List.ofFn (T (i, false)) ++ List.ofFn (T (i, true))).length = 2 * n := by
+    simp only [List.length_append, List.length_ofFn]
+    omega
+  apply congrArg List.flatten
+  apply congrArg List.ofFn
+  funext i
+  rw [LamportFill.secretWord_eq, coinBlock_flatten_ofFn _ hrow i]
+  cases m i <;> simp [lamportHalf_eq]
+
+include hfE in
+/-- Verification of a typed public table accepts exactly when each signature block maps
+to the image selected by the corresponding message bit [PS10, Protocol 137.1].
+
+**Proof sketch.** Both length guards pass. The two block loops are tuple encodings of
+the signature-block images and selected public images. Injectivity of the tuple encoding
+and of bit-vector serialization turns their equality into coordinatewise equality. -/
+theorem lamportVerFun_publicWord_iff (n : ℕ)
+    (Y : (Fin n × Bool) → Fin (L.eval n) → Bool) (m : Fin n → Bool)
+    (σ : Fin (n * n) → Bool) :
+    lamportVerFun L E (atParam n (pairEncode (LamportFill.publicWord Y)
+      (pairEncode (List.ofFn m) (List.ofFn σ)))) = [true] ↔
+      ∀ i, f n (LamportFill.signatureBlock σ i) = Y (i, m i) := by
+  have hflat (g : Fin n → List Bool) :
+      encodeList (List.ofFn g) = (List.ofFn fun i => pairEncode (g i) []).flatten := by
+    rw [encodeList_eq_flatMap]
+    simp only [List.flatMap_def, List.map_ofFn]
+    rfl
+  have hb : FunFamily.blocks n n σ = fun i => LamportFill.signatureBlock σ i := by
+    funext i k
+    rw [FunFamily.blocks_apply, LamportFill.signatureBlock_eq]
+  have hσ := FunFamily.ofFn_blocks_symm n n (FunFamily.blocks n n σ)
+  rw [Equiv.symm_apply_apply, hb] at hσ
+  have hsig (i : Fin n) : (List.ofFn (LamportFill.signatureBlock σ i)).length = n :=
+    List.length_ofFn
+  have hpk (i : Fin n) :
+      (pairEncode (pairEncode (List.ofFn (Y (i, false))) (List.ofFn (Y (i, true)))) []).length =
+        (lamportPkBlock L).eval n := by
+    simp only [length_pairEncode, List.length_ofFn, List.length_nil, lamportPkBlock_eq,
+      PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+    ring
+  have hE' (x : Fin n → Bool) :
+      E (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (f n x) := by
+    simpa only [NUPPT.advInput_eq] using hfE n x
+  simp only [lamportVerFun_eq, atParam_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    List.length_replicate, List.length_ofFn, decide_true, Bool.true_and,
+    List.cons.injEq, and_true, decide_eq_true_eq]
+  rw [LamportFill.publicWord_eq, hflat, hσ, blockEncFun_ofFn, blockEncFun_ofFn]
+  have hleft : (fun i : Fin n =>
+      lamportEvalEmit E (NUPPT.layout (List.replicate n true) (pairEncode [] [m i]) []
+        (coinBlock n i (List.ofFn fun j => List.ofFn (LamportFill.signatureBlock σ j)).flatten))) =
+        fun i => List.ofFn (f n (LamportFill.signatureBlock σ i)) := by
+    funext i
+    simp only [lamportEvalEmit_eq, NUPPT.inParam_layout, NUPPT.inCoins_layout]
+    rw [coinBlock_flatten_ofFn _ hsig i, hE']
+  have hright : (fun i : Fin n =>
+      lamportPkEmit (NUPPT.layout (List.replicate n true) (pairEncode [] [m i]) []
+        (coinBlock ((lamportPkBlock L).eval n) i
+          (List.ofFn fun j => pairEncode
+            (pairEncode (List.ofFn (Y (j, false))) (List.ofFn (Y (j, true)))) []).flatten))) =
+        fun i => List.ofFn (Y (i, m i)) := by
+    funext i
+    rw [coinBlock_flatten_ofFn _ hpk i]
+    simp only [lamportPkEmit_eq, NUPPT.inArg_layout, NUPPT.inCoins_layout,
+      pairFstD_pairEncode, pairSndD_pairEncode, List.headD_cons]
+    cases m i <;> rfl
+  simp only [PolyExpr.eval_var, List.length_replicate]
+  rw [hleft, hright, LamportReduction.encodeList_ofFn_eq_iff]
+  constructor
+  · intro h i
+    exact List.ofFn_injective (congrFun h i)
+  · intro h
+    funext i
+    exact congrArg List.ofFn (h i)
+
 
 /-- **Theorem 137.2: Lamport's scheme is one-time secure** [PS10, Theorem 137.2] when `f` is a
 (strong) one-way function.
