@@ -874,9 +874,7 @@ lemma clockStageCfg_captures (W : FinTM Bool) (a b : ℕ) (T : ℕ → ℕ)
       c.state = none ∧ c.output = (T x.length).bits ∧
       (obliviousSchedule W a).tm.runFrom
         ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) (τ + 1) =
-          (show Cfg (obliviousSchedule W a).k OblSymbol (obliviousSchedule W a).State
-            (x.map oblEmbed) from by
-              simpa only [obliviousSchedule_k, obliviousSchedule_State] using clockStageCfg W a c) := by
+          obliviousScheduleCfg W a (clockStageCfg W a c) := by
   classical
   have hspec := (FinTM.computesInTime_iff _ _ _ _).mp (maskedClock_computes W T b hW x)
   obtain ⟨τ, hτ, hlive, hend⟩ := MultiTapeTM.exists_first_halt

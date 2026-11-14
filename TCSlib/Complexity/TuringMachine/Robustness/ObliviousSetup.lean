@@ -1101,9 +1101,11 @@ lemma setupCfg_finish (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x)
     (p : Fin (x.length + 2)) (b : ℤ) (bt : ℤ → Option OblSymbol) (B : ℕ) :
     (obliviousSchedule W a).tm.runFrom
-      (setupCfg W a base (some .macroCheck) p b 1 0 bt (unaryTape B) (guideTape (3 * B)))
+      (obliviousScheduleCfg W a
+        (setupCfg W a base (some .macroCheck) p b 1 0 bt (unaryTape B) (guideTape (3 * B))))
       (B * (6 * (3 * B) + 8) + 1) =
-      setupCfg W a base none p b (B + 1) 0 bt (unaryTape B) (guideTape (3 * B)) := by
+      obliviousScheduleCfg W a
+        (setupCfg W a base none p b (B + 1) 0 bt (unaryTape B) (guideTape (3 * B))) := by
   have h := macroCfg_finish W a
     (setupCfg W a base (some .macroCheck) p b 1 0 bt (unaryTape B) (guideTape (3 * B))) (3 * B) B
     (by simp [setupCfg])
@@ -1119,15 +1121,18 @@ lemma setupCfg_initializes (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     (hn : x.length + 1 ≤ (a + 1) * (v + 1)) :
     ∃ w', w'.length = w.length ∧
       (obliviousSchedule W a).tm.runFrom
-        (setupCfg W a base (some .resetStart) p (w.length + 1) 1 0
-          (clockTape w) (unaryTape 0) (fun _ => none))
+        (obliviousScheduleCfg W a (setupCfg W a base (some .resetStart) p (w.length + 1) 1 0
+          (clockTape w) (unaryTape 0) (fun _ => none)))
         ((p.val - 1 + 2) + ((2 * x.length + 4) +
           ((v + 1) * (2 * w.length + (a + 1) + 4) + (14 * ((a + 1) * (v + 1)) + 10)))) =
-        setupCfg W a base (some .macroCheck) ⟨x.length + 1, by omega⟩ (w.length + 1) 1 0
-          (clockTape w') (unaryTape ((a + 1) * (v + 1))) (guideTape (3 * ((a + 1) * (v + 1)))) := by
+        obliviousScheduleCfg W a (setupCfg W a base (some .macroCheck) ⟨x.length + 1, by omega⟩
+          (w.length + 1) 1 0 (clockTape w') (unaryTape ((a + 1) * (v + 1)))
+          (guideTape (3 * ((a + 1) * (v + 1))))) := by
   obtain ⟨w', hlen, hcounter⟩ := setupCfg_budget_all W a base ⟨x.length + 1, by omega⟩
     0 (copyGuide (x.length + 1)) v w 0 hv
   refine ⟨w', hlen, ?_⟩
+  change (obliviousSchedule W a).tm.runFrom (setupCfg W a base _ _ _ _ _ _ _ _) _ =
+    setupCfg W a base _ _ _ _ _ _ _ _
   simp only [Nat.cast_zero, zero_add] at hcounter
   rw [MultiTapeTM.runFrom_add, setupCfg_reset, MultiTapeTM.runFrom_add, setupCfg_copy,
     MultiTapeTM.runFrom_add, hcounter]
