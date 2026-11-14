@@ -64,13 +64,13 @@ section Words
 
 variable {n : ℕ}
 
-/-- The pair `r ‖ c₁` read as a `2n`-bit vector. -/
+/-- The pair `r ‖ c₁` read as a `2n`-bit vector: `pairV n r c = padFin (2n) (r ++ c)`. -/
 def pairV (n : ℕ) (r c : List Bool) : Fin (2 * n) → Bool := padFin (2 * n) (r ++ c)
 
 /-- `pairV n r c = padFin (2n) (r ++ c)`. -/
 theorem pairV_eq (n : ℕ) (r c : List Bool) : pairV n r c = padFin (2 * n) (r ++ c) := rfl
 
-/-- The tag `⟦g (r ‖ c₁)⟧`. -/
+/-- The tag `⟦g (r ‖ c₁)⟧`: `tagL g r c = ⟦g (pairV n r c)⟧`. -/
 def tagL (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r c : List Bool) : List Bool :=
   List.ofFn (g (pairV n r c))
 
@@ -78,7 +78,7 @@ def tagL (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r c : List Boo
 theorem tagL_eq (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r c : List Bool) :
     tagL g r c = List.ofFn (g (pairV n r c)) := rfl
 
-/-- The ciphertext word `⟨r, ⟨c₁, t⟩⟩`. -/
+/-- The ciphertext word `⟨r, ⟨c₁, t⟩⟩`: `ctW r c t = pairEncode r (pairEncode c t)`. -/
 def ctW (r c t : List Bool) : List Bool := pairEncode r (pairEncode c t)
 
 /-- `ctW r c t = ⟨r, ⟨c, t⟩⟩`. -/
@@ -158,7 +158,8 @@ def validW (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (w : List Boo
 theorem validW_eq (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (w : List Bool) :
     validW g w = (wfW n w && decide (wT w = tagL g (wR w) (wC w))) := rfl
 
-/-- **The decryption** of a word: `⟨1, wC w ⊕ ⟦f (wR w)⟧⟩`. -/
+/-- **The decryption** of a word, `⟨1, wC w ⊕ ⟦f (wR w)⟧⟩`:
+`decL f w = true :: (wC w ⊕ ⟦f (padFin n (wR w))⟧)`. -/
 def decL (f : (Fin n → Bool) → (Fin n → Bool)) (w : List Bool) : List Bool :=
   true :: List.zipWith xor (wC w) (List.ofFn (f (padFin n (wR w))))
 
@@ -172,12 +173,13 @@ def pairW (n : ℕ) (w : List Bool) : Fin (2 * n) → Bool := pairV n (wR w) (wC
 /-- `pairW n w = pairV n (wR w) (wC w)`. -/
 theorem pairW_eq (n : ℕ) (w : List Bool) : pairW n w = pairV n (wR w) (wC w) := rfl
 
-/-- The mask of an `n`-bit message has `n` bits. -/
+/-- The mask of an `n`-bit message has `n` bits: `|m| = n → |maskL f r m| = n`. -/
 theorem length_maskL (f : (Fin n → Bool) → (Fin n → Bool)) (r : Fin n → Bool) {m : List Bool}
     (hm : m.length = n) : (maskL f r m).length = n := by
   rw [maskL_eq, List.length_zipWith, List.length_ofFn, hm, Nat.min_self]
 
-/-- **The ciphertext length:** an encryption of an `n`-bit message has `6n + 4` bits. -/
+/-- **The ciphertext length:** an encryption of an `n`-bit message has `6n + 4` bits:
+`|m| = n → |encW f g r m| = 6n + 4`. -/
 theorem length_encW (f : (Fin n → Bool) → (Fin n → Bool))
     (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r : Fin n → Bool) {m : List Bool}
     (hm : m.length = n) : (encW f g r m).length = 6 * n + 4 := by
@@ -203,7 +205,8 @@ theorem eq_ctW_of_wfW {w : List Bool} (hn : 0 < n) (hw : wfW n w = true) :
   rw [ctW_eq, wR_eq, wC_eq, wT_eq, ← eq_pairEncode_of_pairFstD_ne h₂]
   exact eq_pairEncode_of_pairFstD_ne h₁
 
-/-- An encryption is well formed: `wfW n (encW f g r m)` for an `n`-bit `m`. -/
+/-- An encryption of an `n`-bit message is well formed:
+`|m| = n → wfW n (encW f g r m) = true`. -/
 theorem wfW_encW (f : (Fin n → Bool) → (Fin n → Bool))
     (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r : Fin n → Bool) {m : List Bool}
     (hm : m.length = n) : wfW n (encW f g r m) = true := by
@@ -230,7 +233,8 @@ section State
 
 variable {n d : ℕ}
 
-/-- **The state of the experiment:** the recorded challenge and the pairs of the `Enc` answers. -/
+/-- **The state of the experiment:** the recorded challenge and the pairs of the `Enc` answers,
+`St n d = Option (Fin d → Bool) × List (Fin (2n) → Bool)`. -/
 abbrev St (n d : ℕ) : Type := Option (Fin d → Bool) × List (Fin (2 * n) → Bool)
 
 /-- `St n d = Option (Fin d → Bool) × List (Fin (2n) → Bool)`. -/
@@ -250,8 +254,10 @@ theorem refW_none (w : List Bool) : refW (none : Option (Fin d → Bool)) w = fa
 theorem refW_some (c : Fin d → Bool) (w : List Bool) : refW (some c) w = decide (List.ofFn c = w) :=
   rfl
 
-/-- **The decryption answer** in state `s`, with fresh pairs rejected when `rej` holds: `decL f w`
-if `w` is not refused, valid, and (when `rej`) its pair is in the list; else `[]` (read as `⊥`). -/
+/-- **The decryption answer** in state `s`, with fresh pairs rejected when `rej` holds:
+`decAnsW f g rej s w = if !refW s.1 w && validW g w && (!rej || pairW n w ∈ s.2) then decL f w
+else []`, that is, `decL f w` if `w` is not refused, valid, and (when `rej`) its pair is in the
+list; else `[]` (read as `⊥`). -/
 def decAnsW (f : (Fin n → Bool) → (Fin n → Bool)) (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool))
     (rej : Bool) (s : St n d) (w : List Bool) : List Bool :=
   if (!refW s.1 w && validW g w && (!rej || decide (pairW n w ∈ s.2))) = true then decL f w else []
@@ -264,7 +270,8 @@ theorem decAnsW_eq (f : (Fin n → Bool) → (Fin n → Bool))
       if (!refW s.1 w && validW g w && (!rej || decide (pairW n w ∈ s.2))) = true then decL f w
       else [] := rfl
 
-/-- **The bad event of a decryption query:** not refused, valid, and a fresh pair. -/
+/-- **The bad event of a decryption query:** not refused, valid, and a fresh pair,
+`hitW g s w = (!refW s.1 w && validW g w && !decide (pairW n w ∈ s.2))`. -/
 def hitW (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (s : St n d) (w : List Bool) : Bool :=
   !refW s.1 w && validW g w && !decide (pairW n w ∈ s.2)
 
@@ -291,7 +298,12 @@ section Experiments
 variable (ins outs : Fin 3 → ℕ) (d n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool))
   (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (rej b : Bool)
 
-/-- **One step of the experiment with the nonce `r`** (see the module docstring). -/
+/-- **One step of the experiment with the nonce `r`** (see the module docstring), with inputs read
+by `⟦·⟧` and answers and records written by `padFin`:
+`ettStep … r 0 m s = (encW f g r m, (s.1, pairV n ⟦r⟧ (maskL f r m) :: s.2))`,
+`ettStep … r 1 w s = (decAnsW f g rej s w, s)`,
+`ettStep … r 2 mm (some c, T) = (⟦c⟧, (some c, T))` and
+`ettStep … r 2 mm (none, T) = (e, (some e, T))` with `e = encW f g r (msgOf n b mm)`. -/
 def ettStep (r : Fin n → Bool) :
     ∀ i : Fin 3, (Fin (ins i) → Bool) → St n d → (Fin (outs i) → Bool) × St n d
   | 0, m, s => (padFin _ (encW f g r (List.ofFn m)),
@@ -301,22 +313,27 @@ def ettStep (r : Fin n → Bool) :
   | 2, mm, (none, T) => (padFin _ (encW f g r (AdaptiveCPA.msgOf n b (List.ofFn mm))),
       (some (padFin d (encW f g r (AdaptiveCPA.msgOf n b (List.ofFn mm)))), T))
 
-/-- `Enc` on `m` answers `encW f g r m` and adds the pair `r ‖ maskL f r m` to the list. -/
+/-- `Enc` on `m` answers `encW f g r m` and adds the pair `r ‖ maskL f r m` to the list:
+`ettStep … r 0 m s = (padFin _ (encW f g r ⟦m⟧), (s.1, pairV n ⟦r⟧ (maskL f r ⟦m⟧) :: s.2))`. -/
 theorem ettStep_enc (r : Fin n → Bool) (m : Fin (ins 0) → Bool) (s : St n d) :
     ettStep ins outs d n f g rej b r 0 m s =
       (padFin _ (encW f g r (List.ofFn m)),
         (s.1, pairV n (List.ofFn r) (maskL f r (List.ofFn m)) :: s.2)) := rfl
 
-/-- `Dec` on `w` answers `decAnsW f g rej s w` and keeps the state. -/
+/-- `Dec` on `w` answers `decAnsW f g rej s w` and keeps the state:
+`ettStep … r 1 w s = (padFin _ (decAnsW f g rej s ⟦w⟧), s)`. -/
 theorem ettStep_dec (r : Fin n → Bool) (w : Fin (ins 1) → Bool) (s : St n d) :
     ettStep ins outs d n f g rej b r 1 w s = (padFin _ (decAnsW f g rej s (List.ofFn w)), s) := rfl
 
-/-- A later challenge repeats the record and keeps the state. -/
+/-- A later challenge repeats the record and keeps the state:
+`ettStep … r 2 mm (some c, T) = (padFin _ ⟦c⟧, (some c, T))`. -/
 theorem ettStep_challenge_some (r : Fin n → Bool) (mm : Fin (ins 2) → Bool) (c : Fin d → Bool)
     (T : List (Fin (2 * n) → Bool)) :
     ettStep ins outs d n f g rej b r 2 mm (some c, T) = (padFin _ (List.ofFn c), (some c, T)) := rfl
 
-/-- The first challenge encrypts `m_b` with the nonce `r` and records it. -/
+/-- The first challenge encrypts `m_b` with the nonce `r` and records it:
+`ettStep … r 2 mm (none, T) = (padFin _ e, (some (padFin d e), T))` with
+`e = encW f g r (msgOf n b ⟦mm⟧)`. -/
 theorem ettStep_challenge_none (r : Fin n → Bool) (mm : Fin (ins 2) → Bool)
     (T : List (Fin (2 * n) → Bool)) :
     ettStep ins outs d n f g rej b r 2 mm (none, T) =
@@ -324,7 +341,8 @@ theorem ettStep_challenge_none (r : Fin n → Bool) (mm : Fin (ins 2) → Bool)
         (some (padFin d (encW f g r (AdaptiveCPA.msgOf n b (List.ofFn mm)))), T)) := rfl
 
 /-- **The experiment with pad function `f` and tag function `g`:** every query draws a nonce `r`
-and takes one `ettStep`. -/
+and takes one `ettStep`,
+`ettImpl … i x s = (sample (Fin n → Bool)).bind fun r => pure (ettStep … r i x s)`. -/
 noncomputable def ettImpl : QueryImpl (bitSpec ins outs) (St n d) unifSpec :=
   fun i x s => (sample (Fin n → Bool)).bind fun r => .pure (ettStep ins outs d n f g rej b r i x s)
 
@@ -333,30 +351,34 @@ theorem ettImpl_apply (i : Fin 3) (x : Fin (ins i) → Bool) (s : St n d) :
     ettImpl ins outs d n f g rej b i x s =
       (sample (Fin n → Bool)).bind fun r => .pure (ettStep ins outs d n f g rej b r i x s) := rfl
 
-/-- The experiment draws one coin per query (`freshImpl`). -/
+/-- The experiment draws one coin per query (`freshImpl`):
+`ettImpl … = freshImpl fun i x s r => pure (ettStep … r i x s)`. -/
 theorem ettImpl_eq_freshImpl :
     ettImpl ins outs d n f g rej b =
       freshImpl fun i x s r => .pure (ettStep ins outs d n f g rej b r i x s) := by
   funext i x s
   rw [ettImpl_apply, freshImpl_apply]
 
-/-- The bad event of a query: a decryption query with `hitW`. -/
+/-- The bad event of a query: a decryption query with `hitW`, `hitQ … 1 w s = hitW g s ⟦w⟧`,
+and `hitQ … 0 m s = hitQ … 2 mm s = false`. -/
 def hitQ : ∀ i : Fin 3, (Fin (ins i) → Bool) → St n d → Bool
   | 0, _, _ => false
   | 1, w, s => hitW g s (List.ofFn w)
   | 2, _, _ => false
 
-/-- An encryption query never raises the bad flag. -/
+/-- An encryption query never raises the bad flag: `hitQ … 0 m s = false`. -/
 theorem hitQ_zero (m : Fin (ins 0) → Bool) (s : St n d) : hitQ ins d n g 0 m s = false := rfl
 
-/-- A decryption query raises the bad flag by `hitW`. -/
+/-- A decryption query raises the bad flag by `hitW`: `hitQ … 1 w s = hitW g s ⟦w⟧`. -/
 theorem hitQ_one (w : Fin (ins 1) → Bool) (s : St n d) :
     hitQ ins d n g 1 w s = hitW g s (List.ofFn w) := rfl
 
-/-- A challenge query never raises the bad flag. -/
+/-- A challenge query never raises the bad flag: `hitQ … 2 mm s = false`. -/
 theorem hitQ_two (mm : Fin (ins 2) → Bool) (s : St n d) : hitQ ins d n g 2 mm s = false := rfl
 
-/-- **The experiment with the bad flag:** `ettImpl`, and the flag raised by `hitQ`. -/
+/-- **The experiment with the bad flag:** `ettImpl`, and the flag raised by `hitQ`,
+`ettBad … i x s = (ettImpl … i x s.1).bind fun p =>
+pure (p.1, (p.2, s.2 || hitQ … i x s.1))`. -/
 noncomputable def ettBad : QueryImpl (bitSpec ins outs) (St n d × Bool) unifSpec :=
   fun i x s => (ettImpl ins outs d n f g rej b i x s.1).bind fun p =>
     .pure (p.1, (p.2, s.2 || hitQ ins d n g i x s.1))
@@ -420,13 +442,13 @@ theorem ettAcc_eq (A : NUPPT) (Q : ℕ) :
           (none, [])) (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0) :=
   rfl
 
-/-- The acceptance probability lies in `[0, 1]`. -/
+/-- The acceptance probability lies in `[0, 1]`; the lower bound: `0 ≤ ettAcc … A Q`. -/
 theorem ettAcc_nonneg (A : NUPPT) (Q : ℕ) : 0 ≤ ettAcc ins outs d n f g rej b A Q := by
   rw [ettAcc_eq]
   refine expect_nonneg _ fun r => expect_nonneg _ fun p => ?_
   split <;> norm_num
 
-/-- The acceptance probability lies in `[0, 1]`. -/
+/-- The acceptance probability lies in `[0, 1]`; the upper bound: `ettAcc … A Q ≤ 1`. -/
 theorem ettAcc_le_one (A : NUPPT) (Q : ℕ) : ettAcc ins outs d n f g rej b A Q ≤ 1 := by
   rw [ettAcc_eq]
   refine (expect_mono _ fun r => ?_).trans (le_of_eq (expect_const _ 1))

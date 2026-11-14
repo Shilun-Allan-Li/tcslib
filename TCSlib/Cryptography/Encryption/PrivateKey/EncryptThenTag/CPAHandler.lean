@@ -63,19 +63,20 @@ section Table
 
 variable {n : ℕ}
 
-/-- The string entry of a lazy-table entry `(p, t, m)`: `(⟦p⟧, ⟦t⟧ ++ m)`. -/
+/-- The string entry of a lazy-table entry `(p, t, m)`: `encE (p, t, m) = (⟦p⟧, ⟦t⟧ ++ m)`. -/
 def encE (e : LEntry n) : List Bool × List Bool := (List.ofFn e.1, List.ofFn e.2.1 ++ e.2.2)
 
 /-- `encE e = (⟦e.1⟧, ⟦e.2.1⟧ ++ e.2.2)`. -/
 theorem encE_eq (e : LEntry n) : encE e = (List.ofFn e.1, List.ofFn e.2.1 ++ e.2.2) := rfl
 
-/-- **The table word** of a lazy table: the nested pairs of its string entries (`GGMRed.tblEnc`). -/
+/-- **The table word** of a lazy table: the nested pairs of its string entries (`GGMRed.tblEnc`),
+`tblW L = GGMRed.tblEnc (L.map encE)`. -/
 def tblW (L : List (LEntry n)) : List Bool := GGMRed.tblEnc (L.map encE)
 
 /-- `tblW L = GGMRed.tblEnc (L.map encE)`. -/
 theorem tblW_eq (L : List (LEntry n)) : tblW L = GGMRed.tblEnc (L.map encE) := rfl
 
-/-- The table word of the empty table is empty. -/
+/-- The table word of the empty table is empty: `tblW [] = []`. -/
 theorem tblW_nil : tblW ([] : List (LEntry n)) = [] := by
   rw [tblW_eq, List.map_nil, GGMRed.tblEnc_nil]
 
@@ -128,7 +129,8 @@ end Table
 
 variable (q : PolyExpr)
 
-/-- The state length `2q(14n + 6) + 2q + 6n + 9`. -/
+/-- The state length `2q(14n + 6) + 2q + 6n + 9`:
+`(bStLen q).eval n = 2 q(n) (14n + 6) + 2 q(n) + (6n + 9)`. -/
 def bStLen : PolyExpr :=
   .add
     (.add (.mul (.const 2) (.mul q (.add (.mul (.const 14) .var) (.const 6)))) (.mul (.const 2) q))
@@ -139,7 +141,8 @@ theorem bStLen_eval (n : ℕ) :
     (bStLen q).eval n = 2 * (q.eval n * (14 * n + 6)) + 2 * q.eval n + (6 * n + 9) := by
   simp only [bStLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
-/-- The seed length `q(n) · 2n`: one tag tape per query. -/
+/-- The seed length `q(n) · 2n`: one tag tape per query, `bSeedLen q = q · tagLen`, so
+`(bSeedLen q).eval n = q(n) · 2n`. -/
 def bSeedLen : PolyExpr := .mul q tagLen
 
 /-- `(bSeedLen q).eval n = q(n) · 2n`. -/
@@ -147,7 +150,8 @@ theorem bSeedLen_eval (n : ℕ) : (bSeedLen q).eval n = q.eval n * (2 * n) := by
   rw [bSeedLen, PolyExpr.eval_mul, tagLen_eval]
 
 /-- **The encoded state** with the table `L`, the query count `j` and the record `o`:
-`⟨tblW L, ⟨1^j, recBits o⟩⟩`, padded with `false` to the state length. -/
+`⟨tblW L, ⟨1^j, recBits o⟩⟩`, padded with `false` to the state length,
+`bState q n j L o = padFin _ ⟨tblW L, ⟨1^j, recBits n o⟩⟩`. -/
 def bState (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval n) → Bool)) :
     Fin ((bStLen q).eval n) → Bool :=
   padFin _ (pairEncode (tblW L) (pairEncode (List.replicate j true) (recBits n o)))
@@ -171,7 +175,8 @@ theorem ofFn_bSeed (n : ℕ) (W : Fin (q.eval n * (2 * n)) → Bool) :
     List.ofFn (bSeed q n W) = List.ofFn W := by
   rw [bSeed, ofFn_arrowCongr_finCongr]
 
-/-- The tag tape `j` of the tape word: block `j` of `W`. -/
+/-- The tag tape `j` of the tape word: block `j` of `W`,
+`bTapeOf q n W j hj = blocks (q n) (2n) W ⟨j, hj⟩`. -/
 def bTapeOf (n : ℕ) (W : Fin (q.eval n * (2 * n)) → Bool) (j : ℕ) (hj : j < q.eval n) :
     Fin (2 * n) → Bool :=
   EnsembleLemmas.blocks (q.eval n) (2 * n) W ⟨j, hj⟩
@@ -181,7 +186,13 @@ theorem bTapeOf_eq (n : ℕ) (W : Fin (q.eval n * (2 * n)) → Bool) (j : ℕ) (
     bTapeOf q n W j hj = EnsembleLemmas.blocks (q.eval n) (2 * n) W ⟨j, hj⟩ := rfl
 
 /-- The fields of an encoded state that fits: the table word, the count `1^j`, the flag and the
-record. -/
+record.
+
+**Proof sketch.** The encoded triple fits in the state length: `|tblW L| = |L| · (14n + 6)` with
+`|L| ≤ q(n)` (`length_tblW`) and `j ≤ q(n)` (`bStLen_eval`). So the padding only appends `false`s
+to the innermost component (`ofFn_padFin_of_le`, `pairEncode_append_right` twice), and the
+projections read `tblW L`, `1^j` and `recBits n o` followed by `false`s, whose head is the flag and
+whose next `ct(n)` bits are the record (by cases on `o`). -/
 private theorem fields_bState (n j : ℕ) (L : List (LEntry n))
     (o : Option (Fin (ettCt.eval n) → Bool))
     (hj : j ≤ q.eval n) (hL : L.length ≤ q.eval n) (hm : ∀ e ∈ L, e.2.2.length = n) :
@@ -287,10 +298,13 @@ private def bRun (w : List Bool) : List Bool :=
     else pairEncode [true] (bCt w ++
       bNew q w (pairEncode (pairEncode (bKey w) (bTag w ++ rX w)) (bTbl w)) (bFlag w :: bRec w))
 
-/-- The round function is polynomial-time: pair projections, the table lookup
-(`GGMRed.lookup_poly`), padding (`EnsembleLemmas.polyTimeComputable_padL`), the tape by
-`unaryMulPair`, `dropPrefixByLength` and `pairTakePoly`, word tests (`pairEq`, `lenEq_poly`) and
-`polyTimeComputable_ite`. -/
+/-- The round function is polynomial-time: `PolyTimeComputable (bRun q)`.
+
+**Proof sketch.** Every reader of `bRun` is assembled from the generic input readers (`rU`, `rW`,
+`rS`, `rI`, `rX`, `rL`, `rAns`) and pair projections: the record by `pairTakePoly`; the tape by
+`unaryMulPair`, `dropPrefixByLength` and `pairTakePoly`; the table lookup by `GGMRed.lookup_poly`;
+padding by `EnsembleLemmas.polyTimeComputable_padL`; word tests by `pairEq`, `isNil` and
+`lenEq_poly`. The branches for the three oracles are combined with `polyTimeComputable_ite`. -/
 private theorem polyTimeComputable_bRun : PolyTimeComputable (bRun q) := by
   have hF := polyTimeComputable_pairFstD
   have hD := polyTimeComputable_pairSndD
@@ -406,7 +420,9 @@ private theorem polyTimeComputable_bFin : PolyTimeComputable bFin :=
 
 /-- **The handler of the CPA reduction** for the budget `q`: state `bState` (initially the empty
 table, count `0`, no record), seed `q(n)` tag tapes, one outer call per inner query, the adversary
-run on the empty input, and the finalization outputting the adversary's bit. -/
+run on the empty input, and the finalization outputting the adversary's bit:
+`stateLen = bStLen q`, `seedLen = bSeedLen q`, `init n = bState q n 0 [] none`, `run = bRun q`,
+`perCall = 1`, `advIn _ = []`, `outLen = 1`, `finCall = 0` and `finRun = bFin`. -/
 noncomputable def bHandler : InteractiveHandler 3 ettDin ettDout 3 pkDin pkDout where
   stateLen := bStLen q
   seedLen := bSeedLen q
@@ -449,10 +465,11 @@ theorem ofFn_bHSeed (n : ℕ) (W : Fin (q.eval n * (2 * n)) → Bool) :
     List.ofFn (bHSeed q n W) = List.ofFn W :=
   ofFn_bSeed q n W
 
-/-- The initial state is the empty table, count `0` and no record. -/
+/-- The initial state is the empty table, count `0` and no record:
+`(bHandler q).init n = bHState q n 0 [] none`. -/
 theorem bHandler_init_hstate (n : ℕ) : (bHandler q).init n = bHState q n 0 [] none := rfl
 
-/-- The adversary's input is empty. -/
+/-- The adversary's input is empty: `(bHandler q).advInput n z ω = []`. -/
 theorem bHandler_advInput (n : ℕ) (z : List Bool)
     (ω : Fin ((bHandler q).seedLen.eval n) → Bool) : (bHandler q).advInput n z ω = [] := by
   rw [InteractiveHandler.advInput_eq]
@@ -540,7 +557,13 @@ private theorem bNew_fields (w : List Bool) (j : ℕ) (L' : List (LEntry n))
   rw [bNew, hU, hJ, List.length_replicate, ofFn_bHState, bState_eq,
     EnsembleLemmas.ofFn_padFin_eq_padL, List.replicate_succ]
 
-/-- **The tag of a pair `p`:** the table's, else the record's, else the tape `t`. -/
+/-- **The tag of a pair `p`:** the table's, else the record's, else the tape `t`.
+
+**Proof sketch.** The lookup on the table word is `lookL L p` (`lookup_tblW`). On an entry `e`
+the lookup is nonempty and its first `2n` bits are `⟦e.2.1⟧`. Without an entry, by cases on `o`:
+with no record the flag is false and the tape is taken; with the record `c`, its pair and tag
+read at `2n` bits are `pairW n ⟦c⟧` and `padFin (2n) (wT ⟦c⟧)` (`bPad2_fields`), and the test
+`pairW n ⟦c⟧ = p` selects the record's tag or the tape, as `tagOf` does. -/
 private theorem bTag_fields (w : List Bool) (L : List (LEntry n))
     (o : Option (Fin (ettCt.eval n) → Bool)) (p t : Fin (2 * n) → Bool)
     (hU : rU w = List.replicate n true) (hT : bTbl w = tblW L) (hF : bFlag w = o.isSome)
@@ -570,7 +593,13 @@ private theorem bTag_fields (w : List Bool) (L : List (LEntry n))
       · simp only [hc, decide_true, if_true, hCT, Option.getD_some]
       · simp only [hc, decide_false, Bool.false_eq_true, if_false, hTp, Option.getD_none]
 
-/-- **The lazy decryption answer of the query `⟦x⟧`:** `bDecL w = lazyDec (o, L) ⟦x⟧`. -/
+/-- **The lazy decryption answer of the query `⟦x⟧`:** `bDecL w = lazyDec (o, L) ⟦x⟧`.
+
+**Proof sketch.** The handler's tests are the lazy ones: `bRef w = refW o x` (by cases on `o`,
+reading the record `c` from `recBits`), `bWF w = wfW n x`, and the decryption key read at `2n`
+bits is `pairW n x` (`bPad2_fields`). The lookup on the table word is `lookL L (pairW n x)`
+(`lookup_tblW`); on an entry `e` its first `2n` bits are `⟦e.2.1⟧` and the rest is `e.2.2`, so the
+tag test and the answer `true :: e.2.2` are those of `lazyDec`. -/
 private theorem bDecL_fields (w x : List Bool) (L : List (LEntry n))
     (o : Option (Fin (ettCt.eval n) → Bool))
     (hU : rU w = List.replicate n true) (hX : rX w = x) (hT : bTbl w = tblW L)
@@ -685,7 +714,9 @@ theorem bHandler_impl_dec (x : Fin ((ettDin 1).eval n) → Bool) (j : ℕ) (L : 
   rw [EnsembleLemmas.ofFn_padFin_eq_padL, ettDout_one]
 
 /-- **A recorded challenge is repeated:** from `bState j L (some c)`, a challenge is answered `c`
-and the state is `bState (j + 1) L (some c)`. -/
+and the state is `bState (j + 1) L (some c)`: for `j < q(n)`, `|L| ≤ q(n)` and `n`-bit messages
+in `L`, `(bHandler q).impl n z (bHSeed q n W) 2 x (bHState q n j L (some c)) =
+pure (padFin _ ⟦c⟧, bHState q n (j + 1) L (some c))`. -/
 theorem bHandler_impl_challenge_some (x : Fin ((ettDin 2).eval n) → Bool) (j : ℕ)
     (L : List (LEntry n)) (c : Fin (ettCt.eval n) → Bool) (hj : j < q.eval n)
     (hL : L.length ≤ q.eval n) (hm : ∀ e ∈ L, e.2.2.length = n) :
@@ -707,7 +738,14 @@ theorem bHandler_impl_challenge_some (x : Fin ((ettDin 2).eval n) → Bool) (j :
 /-- **The first challenge:** from `bState j L none` with `j < q(n)`, the challenge `⟦x⟧` asks the
 CPA challenge oracle at `⟦x⟧`; its answer `y` gives the ciphertext
 `c = ⟨pairFstD y, ⟨pairSndD y, t⟩⟩` with the tag `t` of `bKeyOf n y` (`tagOf (none, L)`, else the
-tape `j`), recorded in the state `bState (j + 1) L (some c)`. -/
+tape `j`), recorded in the state `bState (j + 1) L (some c)`.
+
+**Proof sketch.** As for `bHandler_impl_enc`: read the round input field by field
+(`fields_input`); the first round, with no record (flag false) and an empty log, asks the CPA
+challenge oracle (oracle `2`) at `⟦x⟧`; the second, with the answer `y` in the log (`rAns_one`),
+takes the tag of `bKeyOf n y` (`bTag_fields` with no record), returns the ciphertext `c`, and
+writes the record bits `true :: ⟦c⟧ = recBits n (some c)` with the table unchanged
+(`bNew_fields`); `InteractiveHandler.impl_of_query` assembles the two rounds. -/
 theorem bHandler_impl_challenge_none (x : Fin ((ettDin 2).eval n) → Bool) (j : ℕ)
     (L : List (LEntry n)) (hj : j < q.eval n) (hL : L.length ≤ q.eval n)
     (hm : ∀ e ∈ L, e.2.2.length = n) :

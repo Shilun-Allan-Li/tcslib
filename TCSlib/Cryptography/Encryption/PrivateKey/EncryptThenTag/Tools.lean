@@ -81,7 +81,8 @@ theorem expect_simulate_abs (impl₁ : QueryImpl spec σ₁ unifSpec)
 
 /-- **Simulation through a state abstraction, in law, along runs with a query budget and an
 invariant:** as `expect_simulate_abs`, with the hypotheses only on the states satisfying an
-invariant `P` that every call of `impl₂` keeps.
+invariant `P` that every call of `impl₂` keeps: for `c` with at most `m` queries, `P s` and
+`cnt s + m ≤ κ`, `𝔼[G | simulate impl₁ c (f s)] = 𝔼[fun p => G (p.1, f p.2) | simulate impl₂ c s]`.
 
 **Proof sketch.** As `expect_simulate_abs`, carrying `P` through the possible outcomes. -/
 theorem expect_simulate_abs_inv (impl₁ : QueryImpl spec σ₁ unifSpec)
@@ -124,7 +125,8 @@ theorem freshImpl_apply [Fintype τ] [Nonempty τ]
   rfl
 
 /-- **One coin per query, from tapes in advance:** the query `x` to oracle `i` in state `(s, j)`
-runs `K i x s (T j)` and advances the query counter `j`. -/
+runs `K i x s (T j)` and advances the query counter `j`,
+`tapeImpl K T i x (s, j) = (K i x s (T j)).bind fun p => pure (p.1, (p.2, j + 1))`. -/
 def tapeImpl (K : ∀ i, spec.dom i → σ → τ → ProbComp (spec.rng i × σ)) (T : ℕ → τ) :
     QueryImpl spec (σ × ℕ) unifSpec :=
   fun i x s => (K i x s.1 (T s.2)).bind fun p => .pure (p.1, (p.2, s.2 + 1))

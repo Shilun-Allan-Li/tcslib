@@ -61,7 +61,8 @@ theorem cpaRec_eq (n : ℕ) (c : Fin (ettCt.eval n) → Bool) :
     cpaRec n c = padFin _ (pairEncode (wR (List.ofFn c)) (wC (List.ofFn c))) := rfl
 
 /-- **The abstraction:** the handler's state `bState j L o` and the CPA record of `o`, as functions
-of the lazy experiment's state `(o, L)` with the counter `j`. -/
+of the lazy experiment's state `(o, L)` with the counter `j`,
+`bAbs q n ((o, L), j) = (bHState q n j L o, o.map (cpaRec n))`. -/
 def bAbs (q : PolyExpr) (n : ℕ) (s : LSt n (ettCt.eval n) × ℕ) :
     (Fin ((bHandler q).stateLen.eval n) → Bool) × Option (Fin (ctP.eval n) → Bool) :=
   (bHState q n s.2 s.1.2 s.1.1, s.1.1.map (cpaRec n))
@@ -70,7 +71,8 @@ def bAbs (q : PolyExpr) (n : ℕ) (s : LSt n (ettCt.eval n) × ℕ) :
 theorem bAbs_eq (q : PolyExpr) (n : ℕ) (s : LSt n (ettCt.eval n) × ℕ) :
     bAbs q n s = (bHState q n s.2 s.1.2 s.1.1, s.1.1.map (cpaRec n)) := rfl
 
-/-- **The invariant:** the table has at most one entry per query, each with an `n`-bit message. -/
+/-- **The invariant:** the table has at most one entry per query, each with an `n`-bit message,
+`bInv n ((o, L), j) ↔ |L| ≤ j ∧ ∀ e ∈ L, |e.2.2| = n`. -/
 def bInv (n : ℕ) (s : LSt n (ettCt.eval n) × ℕ) : Prop :=
   s.1.2.length ≤ s.2 ∧ ∀ e ∈ s.1.2, e.2.2.length = n
 
@@ -83,7 +85,8 @@ section Composed
 variable (q : PolyExpr) (b : Bool) (n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)) (z : List Bool)
   (W : Fin (q.eval n * (2 * n)) → Bool)
 
-/-- The tag tapes of the tape word, extended to every index (`AdaptiveCPA.extTape`). -/
+/-- The tag tapes of the tape word, extended to every index (`AdaptiveCPA.extTape`):
+`bTapes q n W = extTape (blocks (q n) (2n) W)`. -/
 noncomputable def bTapes : ℕ → Fin (2 * n) → Bool :=
   AdaptiveCPA.extTape (EnsembleLemmas.blocks (q.eval n) (2 * n) W)
 
@@ -200,7 +203,14 @@ theorem comp_bAbs (i : Fin 3) (x : (bitSpecAt ettDin ettDout n).dom i)
       simp only [Option.map_some, hrec]
 
 /-- **The calls of the lazy experiment keep the invariant** and raise the counter by one: an
-encryption adds one entry with the `n`-bit message; the other calls keep the table. -/
+encryption adds one entry with the `n`-bit message; the other calls keep the table,
+`bInv n s → (ettLazyTape … T i x s).AllOutputs fun p => bInv n p.2 ∧ p.2.2 ≤ s.2 + 1`.
+
+**Proof sketch.** Unfold one call (`ettLazyTape_eq`, `tapeImpl_apply`, `ettLazyK_eq`): for every
+nonce it is a pure step to the counter `j + 1`, so the counter bound holds by `le_rfl`. By the
+oracle: an encryption adds the entry with the message `⟦x⟧` of `n` bits (`lazyStep_enc`), so
+`|L| ≤ j` becomes `|L| + 1 ≤ j + 1`; decryption and both challenge cases keep the table
+(`lazyStep_dec`, `lazyStep_challenge_some`, `lazyStep_challenge_none`), and `|L| ≤ j ≤ j + 1`. -/
 theorem ettLazyTape_bInv (T : ℕ → Fin (2 * n) → Bool) (i : Fin 3)
     (x : (bitSpecAt ettDin ettDout n).dom i) (s : LSt n (ettCt.eval n) × ℕ) (hP : bInv n s) :
     (ettLazyTape (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n) (ettCt.eval n) n f b T
@@ -239,7 +249,10 @@ end Composed
 /-! ### The reduction -/
 
 /-- **Step 3 of [PS10, Thm 170.4]: the rejecting experiment with a random tag function is a CPA
-experiment of the §3.9 scheme.** For a machine adversary `A` with budget `q` there is a machine
+experiment of the §3.9 scheme**,
+`∃ B, ∀ b n f, 𝔼_R ettAcc … f R true b A (q n) =
+𝔼_r 𝔼[⟦output⟧₀ = 1 | simulate (fImpl … (atkOf false) b f) (B.toComp … (qRed q n) r) none]`.
+For a machine adversary `A` with budget `q` there is a machine
 `B` such that, for every challenge bit `b`, every `n` and every pad function `f` on `n` bits, the
 average over a uniform random tag function `R` of `A`'s acceptance probability in the experiment
 that rejects fresh decryption queries is `B`'s acceptance probability in the CPA experiment with

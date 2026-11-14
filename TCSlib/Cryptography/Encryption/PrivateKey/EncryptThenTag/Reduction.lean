@@ -52,7 +52,8 @@ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp
 
 /-! ### The outer oracle and the composed calls -/
 
-/-- **The outer oracle answering with `g`:** a query `x` is answered `g x`, lengths adjusted. -/
+/-- **The outer oracle answering with `g`:** a query `x` is answered `g x`, lengths adjusted,
+`gOuter n g i x s = pure (padFin _ ⟦g (padFin (2n) ⟦x⟧)⟧, s)`. -/
 noncomputable def gOuter (n : ℕ) (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) :
     QueryImpl (bitSpecAt tagOut tagOut n) Unit unifSpec :=
   QueryImpl.ofComp fun _ x => .pure (padFin _ (List.ofFn (g (padFin (2 * n) (List.ofFn x)))))
@@ -72,7 +73,8 @@ variable (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
   (q : PolyExpr) (b : Bool) (n : ℕ) (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool))
   (z : List Bool) (k : Fin n → Bool) (W : Fin (q.eval n * n) → Bool)
 
-/-- The handler's state and the (trivial) outer state, as functions of `ettTape`'s state. -/
+/-- The handler's state and the (trivial) outer state, as functions of `ettTape`'s state:
+`dAbs … (σ, j) = (dHState q E hE b n j σ.1, ())`. -/
 def dAbs (s : St n (ettCt.eval n) × ℕ) :
     (Fin ((dHandler q E hE b).stateLen.eval n) → Bool) × Unit :=
   (dHState q E hE b n s.2 s.1.1, ())
@@ -82,7 +84,8 @@ theorem dAbs_eq (s : St n (ettCt.eval n) × ℕ) :
     dAbs E hE q b n s = (dHState q E hE b n s.2 s.1.1, ()) :=
   rfl
 
-/-- The tapes of the tape word, extended to every index (`AdaptiveCPA.extTape`). -/
+/-- The tapes of the tape word, extended to every index (`AdaptiveCPA.extTape`):
+`dTapes q n W = extTape (blocks (q n) n W)`. -/
 noncomputable def dTapes : ℕ → Fin n → Bool :=
   AdaptiveCPA.extTape (EnsembleLemmas.blocks (q.eval n) n W)
 
@@ -357,8 +360,12 @@ theorem prfAdv_eq_expect {m : ℕ} (Fm : (Fin m → Bool) → (Fin m → Bool) �
     simp only [prob_bind, prob_pure, oracleDist_apply, randomFunction_apply]
 
 include hE hFE in
-/-- **Step 1 of [PS10, Thm 170.4]: the tag key becomes a random function.** For a machine
-adversary `A` with budget `q` and a challenge bit `b` there is a next-query machine `D` such that at
+/-- **Step 1 of [PS10, Thm 170.4]: the tag key becomes a random function**,
+`∃ D, ∀ n, |𝔼_{k₁} 𝔼_{k₂} ettAcc … (F n k₁) (F (2n) k₂) false b A (q n) -
+𝔼_{k₁} 𝔼_R ettAcc … (F n k₁) R false b A (q n)| =
+prfAdv (F (2n)) (D.toOracleAdversary (2n) (2n) (2n) (q (2n)))`.
+For a machine adversary `A` with budget `q` and a challenge bit `b` there is a next-query machine
+`D` such that at
 every `n` the gap between the experiments with the tag functions `f_{k₂}` (`k₂` a uniform `2n`-bit
 key) and a uniform random function on `2n` bits, the pad function being `f_{k₁}`, is the PRF
 advantage of `D` at parameter `2n` with budget `q(2n)`.

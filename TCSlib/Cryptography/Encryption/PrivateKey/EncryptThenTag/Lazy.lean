@@ -61,26 +61,29 @@ section Tables
 
 variable {n d : ℕ}
 
-/-- An entry of the lazy table: a pair, its tag and the message of the encryption. -/
+/-- An entry of the lazy table: a pair, its tag and the message of the encryption,
+`LEntry n = (Fin (2n) → Bool) × (Fin (2n) → Bool) × List Bool`. -/
 abbrev LEntry (n : ℕ) : Type := (Fin (2 * n) → Bool) × (Fin (2 * n) → Bool) × List Bool
 
 /-- `LEntry n = pair × tag × message`. -/
 theorem LEntry_eq (n : ℕ) :
     LEntry n = ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool) × List Bool) := rfl
 
-/-- The lazy state: the recorded challenge and the table, newest entry first. -/
+/-- The lazy state: the recorded challenge and the table, newest entry first,
+`LSt n d = Option (Fin d → Bool) × List (LEntry n)`. -/
 abbrev LSt (n d : ℕ) : Type := Option (Fin d → Bool) × List (LEntry n)
 
 /-- `LSt n d = Option (Fin d → Bool) × List (LEntry n)`. -/
 theorem LSt_eq (n d : ℕ) : LSt n d = (Option (Fin d → Bool) × List (LEntry n)) := rfl
 
-/-- The pairs of the table. -/
+/-- The pairs of the table: `keysL L = L.map Prod.fst`. -/
 def keysL (L : List (LEntry n)) : List (Fin (2 * n) → Bool) := L.map Prod.fst
 
 /-- `keysL L = L.map Prod.fst`. -/
 theorem keysL_eq (L : List (LEntry n)) : keysL L = L.map Prod.fst := rfl
 
-/-- **The table's entry at a pair:** the first (newest) entry with the pair `p`, if any. -/
+/-- **The table's entry at a pair:** the first (newest) entry with the pair `p`, if any,
+`lookL L p = if p ∈ keysL L then some (L.getD ((keysL L).idxOf p) default) else none`. -/
 def lookL (L : List (LEntry n)) (p : Fin (2 * n) → Bool) : Option (LEntry n) :=
   if p ∈ keysL L then some (L.getD ((keysL L).idxOf p) default) else none
 
@@ -88,7 +91,10 @@ def lookL (L : List (LEntry n)) (p : Fin (2 * n) → Bool) : Option (LEntry n) :
 theorem lookL_eq (L : List (LEntry n)) (p : Fin (2 * n) → Bool) :
     lookL L p = if p ∈ keysL L then some (L.getD ((keysL L).idxOf p) default) else none := rfl
 
-/-- **The tag of a pair:** the table's, else the challenge's at its pair, else none. -/
+/-- **The tag of a pair:** the table's, else the challenge's at its pair, else none:
+`tagOf s p = some e.2.1` if `lookL s.2 p = some e`; else
+`tagOf s p = some (padFin (2n) (wT ⟦c⟧))` if `s.1 = some c` and `pairW n ⟦c⟧ = p`; else
+`tagOf s p = none`. -/
 def tagOf (s : LSt n d) (p : Fin (2 * n) → Bool) : Option (Fin (2 * n) → Bool) :=
   match lookL s.2 p with
   | some e => some e.2.1
@@ -97,7 +103,10 @@ def tagOf (s : LSt n d) (p : Fin (2 * n) → Bool) : Option (Fin (2 * n) → Boo
     | some c => if pairW n (List.ofFn c) = p then some (padFin (2 * n) (wT (List.ofFn c))) else none
     | none => none
 
-/-- `tagOf s p`: the table's tag, else the challenge's at its pair. -/
+/-- `tagOf s p` unfolded: the table's tag, else the challenge's at its pair,
+`tagOf s p = some e.2.1` if `lookL s.2 p = some e`; else
+`tagOf s p = some (padFin (2n) (wT ⟦c⟧))` if `s.1 = some c` and `pairW n ⟦c⟧ = p`; else
+`tagOf s p = none`. -/
 theorem tagOf_eq (s : LSt n d) (p : Fin (2 * n) → Bool) :
     tagOf s p = match lookL s.2 p with
       | some e => some e.2.1
@@ -108,7 +117,9 @@ theorem tagOf_eq (s : LSt n d) (p : Fin (2 * n) → Bool) :
         | none => none := rfl
 
 /-- **The lazy decryption answer:** `⊥` on the record; on a well-formed word whose pair is in the
-table with the word's tag, `⟨1, m⟩` with the table's message; `⊥` otherwise. -/
+table with the word's tag, `⟨1, m⟩` with the table's message; `⊥` otherwise:
+`lazyDec s w = true :: e.2.2` if `refW s.1 w = false`, `wfW n w = true`,
+`lookL s.2 (pairW n w) = some e` and `⟦e.2.1⟧ = wT w`; else `lazyDec s w = []`. -/
 def lazyDec (s : LSt n d) (w : List Bool) : List Bool :=
   if (!refW s.1 w && wfW n w) = true then
     match lookL s.2 (pairW n w) with
@@ -116,7 +127,9 @@ def lazyDec (s : LSt n d) (w : List Bool) : List Bool :=
     | none => []
   else []
 
-/-- `lazyDec s w` unfolded. -/
+/-- `lazyDec s w` unfolded: `lazyDec s w = true :: e.2.2` if `refW s.1 w = false`,
+`wfW n w = true`, `lookL s.2 (pairW n w) = some e` and `⟦e.2.1⟧ = wT w`; else
+`lazyDec s w = []`. -/
 theorem lazyDec_eq (s : LSt n d) (w : List Bool) :
     lazyDec s w = if (!refW s.1 w && wfW n w) = true then
       match lookL s.2 (pairW n w) with
@@ -124,14 +137,18 @@ theorem lazyDec_eq (s : LSt n d) (w : List Bool) :
       | none => []
     else [] := rfl
 
-/-- **The tag table of a lazy state:** the entries' tags, newest first, then the challenge's. -/
+/-- **The tag table of a lazy state:** the entries' tags, newest first, then the challenge's,
+`tagTbl s = s.2.map (fun e => (e.1, e.2.1)) ++ [(pairW n ⟦c⟧, padFin (2n) (wT ⟦c⟧))]` for
+`s.1 = some c`, and `tagTbl s = s.2.map (fun e => (e.1, e.2.1))` for `s.1 = none`. -/
 def tagTbl (s : LSt n d) : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool)) :=
   s.2.map (fun e => (e.1, e.2.1)) ++
     match s.1 with
     | some c => [(pairW n (List.ofFn c), padFin (2 * n) (wT (List.ofFn c)))]
     | none => []
 
-/-- `tagTbl s` unfolded. -/
+/-- `tagTbl s` unfolded:
+`tagTbl s = s.2.map (fun e => (e.1, e.2.1)) ++ [(pairW n ⟦c⟧, padFin (2n) (wT ⟦c⟧))]` for
+`s.1 = some c`, and `tagTbl s = s.2.map (fun e => (e.1, e.2.1)) ++ []` for `s.1 = none`. -/
 theorem tagTbl_eq (s : LSt n d) :
     tagTbl s = s.2.map (fun e => (e.1, e.2.1)) ++
       match s.1 with
@@ -200,7 +217,9 @@ theorem ovr_tags_of_mem (L : List (LEntry n))
       simp only [show (e.1 == p) = false from beq_false_of_ne h, cond_false, List.getD_cons_succ]
       exact ih hp'
 
-/-- The keys of the tag table: the listed pairs, then the challenge's pair. -/
+/-- The keys of the tag table: the listed pairs, then the challenge's pair,
+`(tagTbl s).map Prod.fst = keysL s.2 ++ [pairW n ⟦c⟧]` for `s.1 = some c`, and
+`(tagTbl s).map Prod.fst = keysL s.2 ++ []` for `s.1 = none`. -/
 theorem keys_tagTbl (s : LSt n d) :
     (tagTbl s).map Prod.fst = keysL s.2 ++
       match s.1 with
@@ -211,7 +230,8 @@ theorem keys_tagTbl (s : LSt n d) :
   cases s.1 <;> rfl
 
 /-- **`tagOf` reads the tag table:** for every `R`, `tagOf s p` is `ovr (tagTbl s) R p` on the keys
-of the tag table, and none elsewhere. -/
+of the tag table, and none elsewhere,
+`tagOf s p = if p ∈ (tagTbl s).map Prod.fst then some (ovr (tagTbl s) R p) else none`. -/
 theorem tagOf_eq_ovr (s : LSt n d) (p : Fin (2 * n) → Bool)
     (R : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) :
     tagOf s p = if p ∈ (tagTbl s).map Prod.fst then some (ovr (tagTbl s) R p) else none := by
@@ -289,13 +309,15 @@ pair `p = r ‖ (m ⊕ f(r))` of some nonce `r`. -/
 def LInv {d : ℕ} (s : LSt n d) : Prop :=
   ∀ e ∈ s.2, ∃ r : Fin n → Bool, e.1 = pairV n (List.ofFn r) (maskL f r e.2.2) ∧ e.2.2.length = n
 
-/-- `LInv f s` unfolded. -/
+/-- `LInv f s` unfolded:
+`LInv n f s ↔ ∀ e ∈ s.2, ∃ r, e.1 = pairV n ⟦r⟧ (maskL f r e.2.2) ∧ |e.2.2| = n`. -/
 theorem lInv_iff {d : ℕ} (s : LSt n d) :
     LInv n f s ↔ ∀ e ∈ s.2,
       ∃ r : Fin n → Bool, e.1 = pairV n (List.ofFn r) (maskL f r e.2.2) ∧ e.2.2.length = n :=
   Iff.rfl
 
-/-- The empty table has the invariant: `LInv f (o, [])`. -/
+/-- The empty table has the invariant: `LInv n f (o, [])`, vacuously, since `LInv n f s`
+quantifies over `e ∈ s.2` and here `s.2 = []`. -/
 theorem lInv_nil {d : ℕ} (o : Option (Fin d → Bool)) : LInv n f ((o, []) : LSt n d) :=
   fun _ he => absurd he List.not_mem_nil
 
@@ -342,7 +364,13 @@ theorem decAnsW_tagTbl {d : ℕ} (s : LSt n d) (hs : LInv n f s)
       simp [hw]
 
 /-- **One step of the lazy experiment** with the nonce `r` and the tape `t` (see the module
-docstring). -/
+docstring), with inputs read by `⟦·⟧` and answers and records written by `padFin`: for
+`c₁ = maskL f r m`, `p = pairV n ⟦r⟧ c₁` and `τ = (tagOf s p).getD t`,
+`lazyStep … r t 0 m s = (ctW ⟦r⟧ c₁ ⟦τ⟧, (s.1, (p, τ, m) :: s.2))`,
+`lazyStep … r t 1 w s = (lazyDec s w, s)`,
+`lazyStep … r t 2 mm (some c, L) = (⟦c⟧, (some c, L))` and
+`lazyStep … r t 2 mm (none, L) = (e, (some e, L))` with `e = ctW ⟦r⟧ c₁ ⟦τ⟧`, where here
+`m = msgOf n b mm` and `s = (none, L)`. -/
 def lazyStep (r : Fin n → Bool) (t : Fin (2 * n) → Bool) :
     ∀ i : Fin 3, (Fin (ins i) → Bool) → LSt n d → (Fin (outs i) → Bool) × LSt n d
   | 0, m, s => (padFin _ (ctW (List.ofFn r) (maskL f r (List.ofFn m))
@@ -359,7 +387,9 @@ def lazyStep (r : Fin n → Bool) (t : Fin (2 * n) → Bool) :
         (List.ofFn ((tagOf ((none, L) : LSt n d) (pairV n (List.ofFn r)
           (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))))).getD t)))), L))
 
-/-- `Enc′` in the lazy experiment: the tag `tagOf s p` or the tape, and a new entry. -/
+/-- `Enc′` in the lazy experiment: the tag `tagOf s p` or the tape, and a new entry,
+`lazyStep … r t 0 m s = (padFin _ (ctW ⟦r⟧ c₁ ⟦τ⟧), (s.1, (p, τ, ⟦m⟧) :: s.2))` with
+`c₁ = maskL f r ⟦m⟧`, `p = pairV n ⟦r⟧ c₁` and `τ = (tagOf s p).getD t`. -/
 theorem lazyStep_enc (r : Fin n → Bool) (t : Fin (2 * n) → Bool) (m : Fin (ins 0) → Bool)
     (s : LSt n d) :
     lazyStep ins outs d n f b r t 0 m s =
@@ -369,17 +399,22 @@ theorem lazyStep_enc (r : Fin n → Bool) (t : Fin (2 * n) → Bool) (m : Fin (i
           (tagOf s (pairV n (List.ofFn r) (maskL f r (List.ofFn m)))).getD t,
           List.ofFn m) :: s.2)) := rfl
 
-/-- `Dec′` in the lazy experiment answers `lazyDec`. -/
+/-- `Dec′` in the lazy experiment answers `lazyDec`:
+`lazyStep … r t 1 w s = (padFin _ (lazyDec s ⟦w⟧), s)`. -/
 theorem lazyStep_dec (r : Fin n → Bool) (t : Fin (2 * n) → Bool) (w : Fin (ins 1) → Bool)
     (s : LSt n d) :
     lazyStep ins outs d n f b r t 1 w s = (padFin _ (lazyDec s (List.ofFn w)), s) := rfl
 
-/-- A repeated challenge in the lazy experiment. -/
+/-- A repeated challenge in the lazy experiment:
+`lazyStep … r t 2 mm (some c, L) = (padFin _ ⟦c⟧, (some c, L))`. -/
 theorem lazyStep_challenge_some (r : Fin n → Bool) (t : Fin (2 * n) → Bool)
     (mm : Fin (ins 2) → Bool) (c : Fin d → Bool) (L : List (LEntry n)) :
     lazyStep ins outs d n f b r t 2 mm (some c, L) = (padFin _ (List.ofFn c), (some c, L)) := rfl
 
-/-- The first challenge in the lazy experiment. -/
+/-- The first challenge in the lazy experiment:
+`lazyStep … r t 2 mm (none, L) = (padFin _ e, (some (padFin d e), L))` with
+`e = ctW ⟦r⟧ c₁ ⟦(tagOf (none, L) (pairV n ⟦r⟧ c₁)).getD t⟧` and
+`c₁ = maskL f r (msgOf n b ⟦mm⟧)`. -/
 theorem lazyStep_challenge_none (r : Fin n → Bool) (t : Fin (2 * n) → Bool)
     (mm : Fin (ins 2) → Bool) (L : List (LEntry n)) :
     lazyStep ins outs d n f b r t 2 mm (none, L) =
@@ -390,7 +425,8 @@ theorem lazyStep_challenge_none (r : Fin n → Bool) (t : Fin (2 * n) → Bool)
           (List.ofFn ((tagOf ((none, L) : LSt n d) (pairV n (List.ofFn r)
             (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))))).getD t)))), L)) := rfl
 
-/-- One call of the lazy experiment with the tape `t`: draw the nonce and take `lazyStep`. -/
+/-- One call of the lazy experiment with the tape `t`: draw the nonce and take `lazyStep`,
+`ettLazyK … i x s t = (sample (Fin n → Bool)).bind fun r => pure (lazyStep … r t i x s)`. -/
 noncomputable def ettLazyK (i : Fin 3) (x : Fin (ins i) → Bool) (s : LSt n d)
     (t : Fin (2 * n) → Bool) : ProbComp ((Fin (outs i) → Bool) × LSt n d) :=
   (sample (Fin n → Bool)).bind fun r => .pure (lazyStep ins outs d n f b r t i x s)
@@ -400,14 +436,16 @@ theorem ettLazyK_eq (i : Fin 3) (x : Fin (ins i) → Bool) (s : LSt n d) (t : Fi
     ettLazyK ins outs d n f b i x s t =
       (sample (Fin n → Bool)).bind fun r => .pure (lazyStep ins outs d n f b r t i x s) := rfl
 
-/-- **The lazy experiment:** one fresh tape per query (`freshImpl`). -/
+/-- **The lazy experiment:** one fresh tape per query (`freshImpl`):
+`ettLazy … = freshImpl (ettLazyK …)`. -/
 noncomputable def ettLazy : QueryImpl (bitSpec ins outs) (LSt n d) unifSpec :=
   freshImpl (ettLazyK ins outs d n f b)
 
 /-- `ettLazy … = freshImpl (ettLazyK …)`. -/
 theorem ettLazy_eq : ettLazy ins outs d n f b = freshImpl (ettLazyK ins outs d n f b) := rfl
 
-/-- **The lazy experiment with tapes in advance** (`tapeImpl`). -/
+/-- **The lazy experiment with tapes in advance** (`tapeImpl`):
+`ettLazyTape … T = tapeImpl (ettLazyK …) T`. -/
 noncomputable def ettLazyTape (T : ℕ → Fin (2 * n) → Bool) :
     QueryImpl (bitSpec ins outs) (LSt n d × ℕ) unifSpec :=
   tapeImpl (ettLazyK ins outs d n f b) T
@@ -416,7 +454,10 @@ noncomputable def ettLazyTape (T : ℕ → Fin (2 * n) → Bool) :
 theorem ettLazyTape_eq (T : ℕ → Fin (2 * n) → Bool) :
     ettLazyTape ins outs d n f b T = tapeImpl (ettLazyK ins outs d n f b) T := rfl
 
-/-- **Tapes in advance have the law of fresh tapes** (`expect_simulate_tapeImpl`). -/
+/-- **Tapes in advance have the law of fresh tapes** (`expect_simulate_tapeImpl`): for a
+computation with at most `m` queries and `j + m ≤ κ`,
+`𝔼_{T ← ({0,1}^{2n})^κ} 𝔼[G (simulate (ettLazyTape … (extTape T)) c (s, j))] =
+𝔼[G (simulate (ettLazy …) c s)]`. -/
 theorem expect_ettLazyTape (κ : ℕ) {α : Type} (G : α → ℝ) (c : OracleComp (bitSpec ins outs) α)
     (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : LSt n d) (j : ℕ) (hj : j + m ≤ κ) :
     expect (sample (Fin κ → Fin (2 * n) → Bool))
@@ -433,7 +474,9 @@ section LazyLaw
 
 variable (ins outs : Fin 3 → ℕ) (d n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)) (b : Bool)
 
-/-- One call of the lazy experiment: draw the tape, then the nonce, and take `lazyStep`. -/
+/-- One call of the lazy experiment: draw the tape, then the nonce, and take `lazyStep`,
+`ettLazy … i x s = (sample (Fin (2n) → Bool)).bind fun t =>
+(sample (Fin n → Bool)).bind fun r => pure (lazyStep … r t i x s)`. -/
 theorem ettLazy_apply (i : Fin 3) (x : Fin (ins i) → Bool) (s : LSt n d) :
     ettLazy ins outs d n f b i x s =
       (sample (Fin (2 * n) → Bool)).bind fun t =>

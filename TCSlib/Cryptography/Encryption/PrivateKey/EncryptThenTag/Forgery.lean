@@ -29,6 +29,12 @@ most `q / 2^{2n}` for an adversary making at most `q` queries.
   challenge's pair is the challenge itself, for `n > 0` (canonical parsing, `eq_ctW_of_wfW`), and is
   refused. The union bound over the queries gives `q / 2^{2n}` (`expect_prob_bad_le`).
 
+## Main definitions
+
+* `ETTGame.RevInv M s`: the invariant of the revealed pairs, with `keys M = M.map Prod.fst`,
+  `keys M ⊆ s.2 ∪ {pairW n ⟦c⟧ | s.1 = some c}`, `s.2 ⊆ keys M`, and a record `s.1 = some c` with
+  `⟦c⟧ = ctW ⟦r⟧ c₁ ⟦y⟧`, `|c₁| = n`, `pairV n ⟦r⟧ c₁ ∈ keys M` and `ovr M R (pairV n ⟦r⟧ c₁) = y`.
+
 ## Main results
 
 * `ETTGame.ettBad_agree`, `ettBad_stick`, `simulate_ettBad_fst`.
@@ -57,7 +63,8 @@ variable (ins outs : Fin 3 → ℕ) (d n : ℕ) (f : (Fin n → Bool) → (Fin n
 
 /-- **From a good state the two experiments agree on good successors:** for every function `G`
 vanishing on flagged states, the calls of `ettBad … false` and `ettBad … true` have the same
-expectation of `G`.
+expectation of `G`: for `s.2 ≠ true` and `G̃ ys = if ys.2.2 = true then 0 else G ys`,
+`𝔼[G̃ | ettBad … false b i x s] = 𝔼[G̃ | ettBad … true b i x s]`.
 
 **Proof sketch.** Both draw the same nonce and raise the flag by the same `hitQ`; only a
 decryption answer reads `rej`, and off the flag the two answers agree (`decAnsW_agree`). -/
@@ -87,7 +94,8 @@ theorem ettBad_agree (i : Fin 3) (x : (bitSpec ins outs).dom i) (s : St n d × B
     | some c => rw [ettStep_challenge_some, ettStep_challenge_some]
     | none => rw [ettStep_challenge_none, ettStep_challenge_none]
 
-/-- **The flag is sticky:** from a flagged state every successor is flagged. -/
+/-- **The flag is sticky:** from a flagged state every successor is flagged,
+`s.2 = true → (ettBad … rej b i x s).AllOutputs fun ys => ys.2.2 = true`. -/
 theorem ettBad_stick (rej : Bool) (i : Fin 3) (x : (bitSpec ins outs).dom i) (s : St n d × Bool)
     (hs : s.2 = true) :
     (ettBad ins outs d n f g rej b i x s).AllOutputs fun ys => ys.2.2 = true := by
@@ -97,7 +105,9 @@ theorem ettBad_stick (rej : Bool) (i : Fin 3) (x : (bitSpec ins outs).dom i) (s 
   exact OracleComp.allOutputs_pure.2 (by rw [hs, Bool.true_or])
 
 /-- **The flag is a ghost:** forgetting it, the simulation of `ettBad` is the simulation of
-`ettImpl`, from every flag (`simulate_eq_of_abs` with the projection). -/
+`ettImpl`, from every flag (`simulate_eq_of_abs` with the projection):
+`(simulate (ettBad … rej b) c (s, β)).bind (fun p => pure (p.1, p.2.1)) =
+simulate (ettImpl … rej b) c s`. -/
 theorem simulate_ettBad_fst (rej : Bool) {α : Type} (c : OracleComp (bitSpec ins outs) α)
     (s : St n d) (β : Bool) :
     (simulate (ettBad ins outs d n f g rej b) c (s, β)).bind (fun p => .pure (p.1, p.2.1)) =
@@ -150,7 +160,11 @@ variable {d n : ℕ}
 
 /-- **The invariant of the revealed pairs** for a table `M` and a state `s`: every key of `M` is a
 listed pair or the challenge's pair; every listed pair is a key; and the recorded challenge is the
-word `⟨r, ⟨c₁, y⟩⟩` of a nonce, an `n`-bit mask and the table's value `y` at their pair. -/
+word `⟨r, ⟨c₁, y⟩⟩` of a nonce, an `n`-bit mask and the table's value `y` at their pair: with
+`keys M = M.map Prod.fst`,
+`RevInv M s ↔ (∀ p ∈ keys M, p ∈ s.2 ∨ ∃ c, s.1 = some c ∧ p = pairW n ⟦c⟧) ∧
+(∀ p ∈ s.2, p ∈ keys M) ∧ (∀ c, s.1 = some c → ∃ r c₁ y, ⟦c⟧ = ctW ⟦r⟧ c₁ ⟦y⟧ ∧ |c₁| = n ∧
+pairV n ⟦r⟧ c₁ ∈ keys M ∧ ∀ R, ovr M R (pairV n ⟦r⟧ c₁) = y)`. -/
 def RevInv (M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))) (s : St n d) : Prop :=
   (∀ p ∈ M.map Prod.fst, p ∈ s.2 ∨ ∃ c, s.1 = some c ∧ p = pairW n (List.ofFn c)) ∧
   (∀ p ∈ s.2, p ∈ M.map Prod.fst) ∧
@@ -158,7 +172,10 @@ def RevInv (M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))) (s : St
     List.ofFn c = ctW (List.ofFn r) c₁ (List.ofFn y) ∧ c₁.length = n ∧
     pairV n (List.ofFn r) c₁ ∈ M.map Prod.fst ∧ ∀ R, ovr M R (pairV n (List.ofFn r) c₁) = y)
 
-/-- `RevInv M s` unfolded. -/
+/-- `RevInv M s` unfolded, with `keys M = M.map Prod.fst`:
+`RevInv M s ↔ (∀ p ∈ keys M, p ∈ s.2 ∨ ∃ c, s.1 = some c ∧ p = pairW n ⟦c⟧) ∧
+(∀ p ∈ s.2, p ∈ keys M) ∧ (∀ c, s.1 = some c → ∃ r c₁ y, ⟦c⟧ = ctW ⟦r⟧ c₁ ⟦y⟧ ∧ |c₁| = n ∧
+pairV n ⟦r⟧ c₁ ∈ keys M ∧ ∀ R, ovr M R (pairV n ⟦r⟧ c₁) = y)`. -/
 theorem revInv_iff (M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))) (s : St n d) :
     RevInv M s ↔
       (∀ p ∈ M.map Prod.fst, p ∈ s.2 ∨ ∃ c, s.1 = some c ∧ p = pairW n (List.ofFn c)) ∧
@@ -169,7 +186,8 @@ theorem revInv_iff (M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool)))
         ∀ R, ovr M R (pairV n (List.ofFn r) c₁) = y) :=
   Iff.rfl
 
-/-- The empty table and the initial state satisfy the invariant. -/
+/-- The empty table and the initial state satisfy the invariant: `RevInv [] (none, [])`, since its
+clauses quantify over `p ∈ []`, over `p ∈ []` and over `none = some c`. -/
 theorem revInv_nil : RevInv (d := d) (n := n) [] (none, []) :=
   ⟨fun _ h => by simp at h, fun _ h => by simp at h, fun _ h => by cases h⟩
 
@@ -186,7 +204,13 @@ private theorem revInv_enc_old {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n)
     · exact hp
     · exact h₂ p' h
 
-/-- An encryption at a new pair `p` with the value `t` keeps the invariant of the extended table. -/
+/-- An encryption at a new pair `p` with the value `t` keeps the invariant of the extended table.
+
+**Proof sketch.** Clause by clause. A key of `(p, t) :: M` is `p`, now listed, or a key of `M`,
+listed or the challenge's pair as before. A listed pair of `p :: s.2` is `p`, now a key, or a key
+of `M`. The challenge's witnesses `r, c₁, y` are kept: their pair is still a key, and it differs
+from the new `p ∉ keys M`, so `ovr ((p, t) :: M) R` still gives `y` there (`ovr_cons`,
+`Function.update_of_ne`). -/
 private theorem revInv_enc_new {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
     {s : St n d} (h : RevInv M s) {p : Fin (2 * n) → Bool} (hp : p ∉ M.map Prod.fst)
     (t : Fin (2 * n) → Bool) : RevInv ((p, t) :: M) (s.1, p :: s.2) := by
@@ -225,7 +249,13 @@ private theorem revInv_chal_old {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n
     exact ⟨r, c₁, y, hc, hl, hk, hy⟩
 
 /-- Recording a challenge at a new pair with the value `t` keeps the invariant of the extended
-table. -/
+table.
+
+**Proof sketch.** Clause by clause. The new key `pairV n ⟦r⟧ c₁` is the pair of the recorded `c`
+(`pairW_eq`, `wR_ctW`, `wC_ctW` on `⟦c⟧ = ctW ⟦r⟧ c₁ ⟦t⟧`); the old keys are listed, since the
+state had no record. The list is unchanged and its pairs are still keys. The record's witnesses
+are `r, c₁, t`: the new key is a key, and `ovr` of the extended table gives `t` there (`ovr_cons`,
+`Function.update_self`). -/
 private theorem revInv_chal_new {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
     {T : List (Fin (2 * n) → Bool)} (h : RevInv (d := d) M (none, T)) (r : Fin n → Bool)
     {c₁ : List Bool}

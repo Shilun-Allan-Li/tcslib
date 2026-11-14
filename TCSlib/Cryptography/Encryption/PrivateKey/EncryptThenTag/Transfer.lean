@@ -20,6 +20,10 @@ call by call, the oracles `ettImpl … f g false b` of the CCA2 experiment
 (`expect_indImpl_ettImpl`); so the experiment `IND_b` is the experiment with `f` and `g`, averaged
 over the key (`accept_indGame_eq`).
 
+## Main definitions
+
+* `ETTGame.stRec`: the challenge record of the experiment's state, `stRec s = s.1`.
+
 ## Main results
 
 * `ETTGame.expect_indImpl_ettImpl`: one call of `IND_b` has the law of `ettImpl`.

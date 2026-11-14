@@ -497,7 +497,15 @@ private theorem ofFn_cca_encryptAt (n : ℕ) (k₁ : Fin n → Bool) (k₂ : Fin
 
 /-- **`Dec′` with the keys `k₁`, `k₂`** on a word `w`: `⟨1, wC w ⊕ ⟦F n k₁ (wR w)⟧⟩` if `w` is valid
 for the tag function `F (2n) k₂`, and `⊥` otherwise (`ccaDecFun_eq`, `ccaDecOK_eq`, `hFE`). The
-zero-parameter malformed words are read alike: their total projections are empty. -/
+zero-parameter malformed words are read alike: their total projections are empty.
+
+**Proof sketch.** Unfold the decryption machine (`ccaScheme_dec`, `runAtL_ofPolyTimeUniform`,
+`ccaDecFun_eq`, `ccaDecOK_eq`). Its test is `|wR w| = n`, `|wC w| = n` and
+`E⟨⟦k₂⟧, wR w ++ wC w⟩ = wT w`; on `n`-bit fields `E⟨⟦k₂⟧, wR w ++ wC w⟩` is
+`tagL (F (2n) k₂) (wR w) (wC w)` (`hFE`, `pairV_eq`), so the test is `validW`. On a valid word
+the output `wC w ⊕ E⟨⟦k₁⟧, wR w⟩` has `n` bits and decodes, giving `decL (F n k₁) w` (`hFE`,
+`decodeFin_ofFn`, `decAnswer_some`); otherwise the output `true :: 1^n` has `n + 1` bits, decodes
+to nothing and is read as `0^{n+1}` (`decodeFin_eq`, `decAnswer_none`, `ofFn_zeroBits`). -/
 private theorem ofFn_cca_decAnswer (n : ℕ) (k₁ : Fin n → Bool) (k₂ : Fin (2 * n) → Bool)
     (w : List Bool) (rd : (ccaScheme F E hE hFE).dec.Coins n) :
     List.ofFn (FixedLengthScheme.decAnswer (decodeFin n ((ccaScheme F E hE hFE).dec.runAt n

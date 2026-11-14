@@ -62,8 +62,10 @@ theorem logCount_eq (L : List Bool) :
       (List.range (PolyExpr.var.eval L.length + 1)).flatMap fun i => cntRead (pairSndD^[i] L) :=
   rfl
 
-/-- The entry count is polynomial-time: an iterated emission (`polyTimeComputable_iterateEmit`)
-along `pairSndD`, which does not lengthen its argument (`length_pairSndD_le`). -/
+/-- The entry count is polynomial-time, `PolyTimeComputable logCount`, i.e.
+`∃ M C c, M.ComputesFunInTime logCount (fun n => C * (n + 1)^c)`: an iterated emission
+(`polyTimeComputable_iterateEmit`) along `pairSndD`, which does not lengthen its argument
+(`length_pairSndD_le`). -/
 theorem polyTimeComputable_logCount : PolyTimeComputable logCount := by
   have horb : ∀ (x : List Bool) (i : ℕ), (pairSndD^[i] x).length ≤ x.length := by
     intro x i
@@ -223,7 +225,8 @@ private theorem pairFstD_of_query {k : ℕ} {din dout : Fin k → ℕ} {dα : �
 
 /-- The raw function of the capped machine: `A`'s output, except that once the argument (the
 encoded log) has `q(n)` entries, an output with first component `[false]` (a query word) becomes
-the empty word. -/
+the empty word: `capRaw A q z = if |logCount (inArg z)| = q(|inParam z|) ∧
+pairFstD (A.output z) = [false] then [] else A.output z`. -/
 noncomputable def capRaw (A : NUPPT) (q : PolyExpr) (z : List Bool) : List Bool :=
   if decide ((logCount (NUPPT.inArg z)).length = q.eval (NUPPT.inParam z).length) &&
       decide (pairFstD (A.output z) = [false]) then [] else A.output z
@@ -236,9 +239,11 @@ theorem capRaw_eq (A : NUPPT) (q : PolyExpr) (z : List Bool) :
           decide (pairFstD (A.output z) = [false]) then [] else A.output z :=
   rfl
 
-/-- The capped raw function is polynomial-time: the entry count (`polyTimeComputable_logCount`),
-a length comparison with `1^{q(n)}` (`EffFill.lenEq_poly`, `polyTimeComputable_unaryPoly`), a
-word comparison (`polyTimeComputable_pairEq`) and `A`'s output. -/
+/-- The capped raw function is polynomial-time, `PolyTimeComputable (capRaw A q)`, i.e.
+`∃ M C c, M.ComputesFunInTime (capRaw A q) (fun n => C * (n + 1)^c)`: the entry count
+(`polyTimeComputable_logCount`), a length comparison with `1^{q(n)}` (`EffFill.lenEq_poly`,
+`polyTimeComputable_unaryPoly`), a word comparison (`polyTimeComputable_pairEq`) and `A`'s output.
+-/
 theorem polyTimeComputable_capRaw (A : NUPPT) (q : PolyExpr) :
     PolyTimeComputable (capRaw A q) := by
   have hc := EffFill.lenEq_poly (polyTimeComputable_logCount.comp NUPPT.polyTimeComputable_inArg)

@@ -58,7 +58,7 @@ open TCSlib.Cryptography.Games.InteractiveHandler (rU rW rS rI rX rL rCnt rAns)
 
 /-! ### Lengths -/
 
-/-- The ciphertext length `6n + 4`. -/
+/-- The ciphertext length `6n + 4`: `ettCt = 6 · var + 4`, so `ettCt.eval n = 6n + 4`. -/
 def ettCt : PolyExpr := .add (.mul (.const 6) .var) (.const 4)
 
 /-- `ettCt.eval n = 6n + 4`. -/
@@ -67,7 +67,7 @@ theorem ettCt_eval (n : ℕ) : ettCt.eval n = 6 * n + 4 := by
     PolyExpr.eval_var]
 
 /-- The query lengths: `n`-bit messages to `Enc`, `(6n + 4)`-bit ciphertexts to `Dec`, `2n`-bit
-challenge queries. -/
+challenge queries: `ettDin 0 = var`, `ettDin 1 = ettCt` and `ettDin 2 = var + var`. -/
 def ettDin : Fin 3 → PolyExpr
   | 0 => .var
   | 1 => ettCt
@@ -82,7 +82,8 @@ theorem ettDin_one : ettDin 1 = ettCt := rfl
 /-- `ettDin 2 = var + var`. -/
 theorem ettDin_two : ettDin 2 = .add .var .var := rfl
 
-/-- The answer lengths: ciphertexts, `(n + 1)`-bit decryption answers, ciphertexts. -/
+/-- The answer lengths: ciphertexts, `(n + 1)`-bit decryption answers, ciphertexts:
+`ettDout 0 = ettCt`, `ettDout 1 = var + 1` and `ettDout 2 = ettCt`. -/
 def ettDout : Fin 3 → PolyExpr
   | 0 => ettCt
   | 1 => .add .var (.const 1)
@@ -97,14 +98,14 @@ theorem ettDout_one : ettDout 1 = .add .var (.const 1) := rfl
 /-- `ettDout 2 = ettCt`. -/
 theorem ettDout_two : ettDout 2 = ettCt := rfl
 
-/-- The tag length `2n`. -/
+/-- The tag length `2n`: `tagLen = 2 · var`, so `tagLen.eval n = 2n`. -/
 def tagLen : PolyExpr := .mul (.const 2) .var
 
 /-- `tagLen.eval n = 2n`. -/
 theorem tagLen_eval (n : ℕ) : tagLen.eval n = 2 * n := by
   rw [tagLen, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
-/-- The outer oracle: `2n`-bit queries and answers. -/
+/-- The outer oracle: `2n`-bit queries and answers, `tagOut j = tagLen` for `j : Fin 1`. -/
 abbrev tagOut : Fin 1 → PolyExpr := fun _ => tagLen
 
 /-- `tagOut j = tagLen`. -/
@@ -112,20 +113,24 @@ theorem tagOut_eq (j : Fin 1) : tagOut j = tagLen := rfl
 
 variable (q : PolyExpr)
 
-/-- The state length `2q + 3 + (6n + 4)`. -/
+/-- The state length `2q + 3 + (6n + 4)`: `dStLen q = 2 · q + 3 + ettCt`, so
+`(dStLen q).eval n = 2 q(n) + 3 + (6n + 4)`. -/
 def dStLen : PolyExpr := .add (.add (.mul (.const 2) q) (.const 3)) ettCt
 
 /-- `dStLen q = 2q + 3 + ettCt`. -/
 theorem dStLen_eq : dStLen q = .add (.add (.mul (.const 2) q) (.const 3)) ettCt := rfl
 
-/-- The seed length `n + q(n) · n`: the key and the tapes. -/
+/-- The seed length `n + q(n) · n`: the key and the tapes, `dSeedLen q = var + q · var`, so
+`(dSeedLen q).eval n = n + q(n) · n`. -/
 def dSeedLen : PolyExpr := .add .var (.mul q .var)
 
 /-- `(dSeedLen q).eval n = n + q(n) · n`. -/
 theorem dSeedLen_eval (n : ℕ) : (dSeedLen q).eval n = n + q.eval n * n := by
   rw [dSeedLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_var]
 
-/-- The record of the challenge: `1 :: c` once recorded, `0^{1 + ct(n)}` before. -/
+/-- The record of the challenge: `1 :: c` once recorded, `0^{1 + ct(n)}` before,
+`recBits n (some c) = true :: ⟦c⟧` and
+`recBits n none = false :: List.replicate (ettCt.eval n) false`. -/
 def recBits (n : ℕ) : Option (Fin (ettCt.eval n) → Bool) → List Bool
   | none => false :: List.replicate (ettCt.eval n) false
   | some c => true :: List.ofFn c
@@ -138,7 +143,7 @@ theorem recBits_none (n : ℕ) : recBits n none = false :: List.replicate (ettCt
 theorem recBits_some (n : ℕ) (c : Fin (ettCt.eval n) → Bool) :
     recBits n (some c) = true :: List.ofFn c := rfl
 
-/-- The record has `1 + ct(n)` bits. -/
+/-- The record has `1 + ct(n)` bits: `|recBits n o| = ettCt.eval n + 1`. -/
 theorem length_recBits (n : ℕ) (o : Option (Fin (ettCt.eval n) → Bool)) :
     (recBits n o).length = ettCt.eval n + 1 := by
   cases o with
@@ -146,7 +151,8 @@ theorem length_recBits (n : ℕ) (o : Option (Fin (ettCt.eval n) → Bool)) :
   | some c => rw [recBits_some, List.length_cons, List.length_ofFn]
 
 /-- **The encoded state** after `j` queries, with the challenge record `o`:
-`⟨1^j, recBits o⟩`, padded with `false` to the state length. -/
+`⟨1^j, recBits o⟩`, padded with `false` to the state length,
+`dState q n j o = padFin _ (pairEncode (List.replicate j true) (recBits n o))`. -/
 def dState (n j : ℕ) (o : Option (Fin (ettCt.eval n) → Bool)) :
     Fin ((dStLen q).eval n) → Bool :=
   padFin _ (pairEncode (List.replicate j true) (recBits n o))
@@ -168,7 +174,8 @@ theorem ofFn_dSeed (n : ℕ) (kW : (Fin n → Bool) × (Fin (q.eval n * n) → B
     List.ofFn (dSeed q n kW) = List.ofFn kW.1 ++ List.ofFn kW.2 :=
   EnsembleLemmas.ofFn_coinsEquiv _ _
 
-/-- The tape `j` of the tape word: block `j` of `W` (`EnsembleLemmas.blocks`). -/
+/-- The tape `j` of the tape word: block `j` of `W` (`EnsembleLemmas.blocks`),
+`dTape q n W j hj = blocks (q n) n W ⟨j, hj⟩`. -/
 def dTape (n : ℕ) (W : Fin (q.eval n * n) → Bool) (j : ℕ) (hj : j < q.eval n) : Fin n → Bool :=
   EnsembleLemmas.blocks (q.eval n) n W ⟨j, hj⟩
 
@@ -178,7 +185,13 @@ theorem dTape_eq (n : ℕ) (W : Fin (q.eval n * n) → Bool) (j : ℕ) (hj : j <
 
 /-! ### Strings -/
 
-/-- The fields of an encoded state with `j ≤ q(n)`: the count `1^j`, the flag and the record. -/
+/-- The fields of an encoded state with `j ≤ q(n)`: the count `1^j`, the flag and the record.
+
+**Proof sketch.** The pair `⟨1^j, recBits n o⟩` fits in the state length (`length_pairEncode`,
+`length_recBits`, `j ≤ q(n)`), so the padding only appends `false`s to its second component
+(`ofFn_padFin_of_le`, `pairEncode_append_right`). The projections then read `1^j` and
+`recBits n o` followed by `false`s; its head is the flag and its next `ct(n)` bits are the record
+(by cases on `o`, `recBits_none`, `recBits_some`). -/
 private theorem fields_dState (n j : ℕ) (o : Option (Fin (ettCt.eval n) → Bool))
     (hj : j ≤ q.eval n) :
     pairFstD (List.ofFn (dState q n j o)) = List.replicate j true ∧
@@ -423,7 +436,8 @@ def dHSeed (n : ℕ) :
 /-- `dHSeed q E hE b n = dSeed q n`. -/
 theorem dHSeed_eq (n : ℕ) : dHSeed q E hE b n = dSeed q n := rfl
 
-/-- The initial state is the encoded `(0, none)`. -/
+/-- The initial state is the encoded `(0, none)`:
+`(dHandler q E hE b).init n = dHState q E hE b n 0 none`. -/
 theorem dHandler_init_hstate (n : ℕ) : (dHandler q E hE b).init n = dHState q E hE b n 0 none :=
   rfl
 
@@ -476,7 +490,13 @@ variable (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
   (n : ℕ) (z : List Bool) (k : Fin n → Bool) (W : Fin (q.eval n * n) → Bool)
 
 /-- The round input of a call, field by field, on an encoded state with `j < q(n)` and the seed
-`dHSeed (k, W)`. -/
+`dHSeed (k, W)`.
+
+**Proof sketch.** The generic readers of the round input (`rU_input`, `rS_input`, `rI_input`,
+`rX_input`, `rL_input`, `rW_input`, `rCnt_input`) give the parameter, state, oracle index, query,
+log, seed word `⟦k⟧ ++ ⟦W⟧` (`ofFn_dHSeed`) and count; `fields_dState` gives the count `1^j`, the
+flag and the record. The key is then the first `n` bits of the seed word, and the nonce is the
+`n` bits after the offset `n + j · n`, which is block `j` of `W` (`take_drop_ofFn_blocks`). -/
 private theorem fields_input {i : Fin 3} (x L : List Bool) (j : ℕ)
     (o : Option (Fin (ettCt.eval n) → Bool)) (hj : j < q.eval n) :
     let w := InteractiveHandler.input n z (List.ofFn (dHSeed q E hE b n (k, W)))
@@ -605,7 +625,14 @@ theorem dHandler_impl_enc (x : Fin ((ettDin 0).eval n) → Bool) (j : ℕ)
       hRec, recBits_fields, rNew_fields q E hE b n z k W (i := 0) _ _ j o o hj, ctW_eq]
 
 /-- **A refused decryption:** from `dState j o` with the query the recorded challenge, the answer
-is `⊥` and the state is `dState (j + 1) o`. -/
+is `⊥` and the state is `dState (j + 1) o`: for `j < q(n)` and `refW o ⟦x⟧ = true`,
+`(dHandler …).impl n z (dHSeed … (k, W)) 1 x (dHState … j o) =
+pure (padFin _ [], dHState … (j + 1) o)`.
+
+**Proof sketch.** The handler answers in one round (`impl_of_ret`). Reading the round input
+(`fields_input`), `href` makes the refusal test true (`rRef`, by cases on `o`: with the record `c`,
+`⟦x⟧ = ⟦c⟧`), so `dRun` takes the refusal branch: the answer `rZero = ⊥` (`rZero_fields`) and the
+new state with count `j + 1` and the same record bits (`recBits_fields`, `rNew_fields`). -/
 theorem dHandler_impl_dec_ref (x : Fin ((ettDin 1).eval n) → Bool) (j : ℕ)
     (o : Option (Fin (ettCt.eval n) → Bool)) (hj : j < q.eval n)
     (href : refW o (List.ofFn x) = true) :
@@ -632,7 +659,14 @@ theorem dHandler_impl_dec_ref (x : Fin ((ettDin 1).eval n) → Bool) (j : ℕ)
 include hFE in
 /-- **A well-formed decryption:** from `dState j o` with a query `w = ⟦x⟧` that is not refused and
 has `n`-bit `wR w` and `wC w`, the query asks the outer oracle at `wR w ‖ wC w`; its answer `y`
-gives `decL f_k w` if `⟦y⟧ = wT w` and `⊥` otherwise; the state is `dState (j + 1) o`. -/
+gives `decL f_k w` if `⟦y⟧ = wT w` and `⊥` otherwise; the state is `dState (j + 1) o`.
+
+**Proof sketch.** On every log the refusal test is false (`href`, by cases on `o`) and the
+well-formedness test is true (`hwf`), by `fields_input`. With `impl_of_query`: the first round,
+with an empty log, asks `wR w ++ wC w` (`ofFn_padFin_pair`); the second, with the answer `y` in
+the log (`rY_one`), compares `⟦y⟧` with `wT w` (`rOK`) and answers `rDec`, which is `decL f_k w` by
+`hFE` on the `n`-bit nonce, or `rZero = ⊥` (`rZero_fields`); the new state is `dState (j + 1) o`
+(`recBits_fields`, `rNew_fields`). -/
 theorem dHandler_impl_dec_wf (x : Fin ((ettDin 1).eval n) → Bool) (j : ℕ)
     (o : Option (Fin (ettCt.eval n) → Bool)) (hj : j < q.eval n)
     (href : refW o (List.ofFn x) = false) (hwf : wfW n (List.ofFn x) = true) :
@@ -709,7 +743,15 @@ theorem dHandler_impl_dec_wf (x : Fin ((ettDin 1).eval n) → Bool) (j : ℕ)
       hFlag, hRec, recBits_fields, rNew_fields q E hE b n z k W (i := 1) _ _ j o o hj]
 
 /-- **A malformed decryption:** from `dState j o` with a query that is not refused and not well
-formed, the answer is `⊥` and the state is `dState (j + 1) o`. -/
+formed, the answer is `⊥` and the state is `dState (j + 1) o`: for `j < q(n)`,
+`refW o ⟦x⟧ = false` and `wfW n ⟦x⟧ = false`,
+`(dHandler …).impl n z (dHSeed … (k, W)) 1 x (dHState … j o) =
+pure (padFin _ [], dHState … (j + 1) o)`.
+
+**Proof sketch.** As for `dHandler_impl_dec_ref`, the handler answers in one round
+(`impl_of_ret`); now the refusal test is false (`href`, by cases on `o`) and the well-formedness
+test is false (`hwf`, through `wfW_eq`), so `dRun` takes the malformed branch: the answer
+`rZero = ⊥` and the state `dState (j + 1) o` (`rZero_fields`, `recBits_fields`, `rNew_fields`). -/
 theorem dHandler_impl_dec_nwf (x : Fin ((ettDin 1).eval n) → Bool) (j : ℕ)
     (o : Option (Fin (ettCt.eval n) → Bool)) (hj : j < q.eval n)
     (href : refW o (List.ofFn x) = false) (hwf : wfW n (List.ofFn x) = false) :
@@ -738,7 +780,9 @@ theorem dHandler_impl_dec_nwf (x : Fin ((ettDin 1).eval n) → Bool) (j : ℕ)
     rNew_fields q E hE b n z k W (i := 1) _ _ j o o hj]
 
 /-- **A recorded challenge is repeated:** from `dState j (some c)`, a challenge is answered `c`
-and the state is `dState (j + 1) (some c)`. -/
+and the state is `dState (j + 1) (some c)`: for `j < q(n)`,
+`(dHandler …).impl n z (dHSeed … (k, W)) 2 x (dHState … j (some c)) =
+pure (padFin _ ⟦c⟧, dHState … (j + 1) (some c))`. -/
 theorem dHandler_impl_challenge_some (x : Fin ((ettDin 2).eval n) → Bool) (j : ℕ)
     (c : Fin (ettCt.eval n) → Bool) (hj : j < q.eval n) :
     (dHandler q E hE b).impl n z (dHSeed q E hE b n (k, W)) 2 x (dHState q E hE b n j (some c)) =
@@ -760,7 +804,14 @@ include hFE in
 /-- **The first challenge with the next tape:** from `dState j none` with `j < q(n)`, the
 challenge `⟨m₀, m₁⟩` asks the outer oracle at `r ‖ c₁` with the tape `r` and
 `c₁ = maskL f_k r m_b`; its answer `y` gives the ciphertext `c = ⟨r, ⟨c₁, y⟩⟩`, recorded in the
-state `dState (j + 1) (some c)`. -/
+state `dState (j + 1) (some c)`.
+
+**Proof sketch.** The selected message read from the round input is `msgOf n b ⟦x⟧` (`rMsg`,
+`fields_input`), of `n` bits. With `impl_of_query`: the first round, with no record (flag false)
+and an empty log, asks `r ‖ c₁` with the tape `r` (`mask_eval`, `ofFn_padFin_pair`); the second,
+with `y` in the log (`rY_one`), returns `c = ⟨r, ⟨c₁, y⟩⟩` (`ctW_eq`, of `6n + 4` bits by
+`length_ctW_tag`) and the new state with count `j + 1` and the record bits
+`true :: ⟦c⟧ = recBits n (some c)` (`rNew_fields`). -/
 theorem dHandler_impl_challenge_none (x : Fin ((ettDin 2).eval n) → Bool) (j : ℕ)
     (hj : j < q.eval n) :
     (dHandler q E hE b).impl n z (dHSeed q E hE b n (k, W)) 2 x (dHState q E hE b n j none) =
