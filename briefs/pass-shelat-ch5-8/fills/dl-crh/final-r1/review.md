@@ -91,7 +91,7 @@ lines and removes none.)*
 
 **Content.** The proof follows the source.
 1. **Compression:** from the counts `|D| = 2m` and `|R| = p − 1 = m`.
-2. **Different selector bits:** equal images under different selector bits are impossible, by `expF_injective`.
+2. **Equal selector bits:** a collision with *equal* selector bits is impossible, by cancellation and `expF_injective`; with different selector bits the reduction of step 3 applies. *(Erratum 2026-11-14, Gate 24 G24-02: this step previously said "different"; e.g. `p=3, m=2, g=2`: `(0,false)` and `(0,true)` both hash to `1`.)*
 3. **The reduction:** it outputs `x' − x` or `x − x'` mod `m`, and it succeeds whenever the finder collides.
 4. **Sampler switch:** switching to the close sampler costs `(1/2)^n`.
 5. **Negligibility:** it follows from `hDL` from `G.n₀` on.
