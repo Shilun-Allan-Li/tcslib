@@ -887,8 +887,9 @@ lemma clockStageCfg_captures (W : FinTM Bool) (a b : ℕ) (T : ℕ → ℕ)
   refine ⟨τ, hτ, c, ?_, ?_, ?_⟩
   · simpa only [c, maskedClock_k, maskedClock_State] using hstate
   · simpa only [c, maskedClock_k, maskedClock_State] using hout
-  · simpa only [c, run, maskedClock_k, maskedClock_State,
-      obliviousSchedule_k, obliviousSchedule_State] using
+  · rw [obliviousScheduleCfg_eq_id]
+    simpa only [c, run, maskedClock_k, maskedClock_State,
+      obliviousSchedule_k, obliviousSchedule_State, id_eq] using
       clockStageCfg_run W a x τ hlive τ (le_refl _)
 
 /-- The fixed sweep guide has one marked origin and two structural boundaries. -/

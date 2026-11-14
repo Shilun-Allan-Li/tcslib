@@ -1111,7 +1111,8 @@ lemma setupCfg_finish (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     (by simp [setupCfg])
     (fun j hj => by simpa [setupCfg] using unaryTape_unit B j hj)
     (by simpa [setupCfg] using unaryTape_end B)
-  simpa only [macroCfg_setup] using h
+  rw [obliviousScheduleCfg_eq_id, obliviousScheduleCfg_eq_id]
+  simpa only [macroCfg_setup, id_eq] using h
 
 /-- Initialization connects the arbitrary clock endpoint to the completely
 allocated macrostep configuration. The binary counter retains its full width. -/
@@ -1131,8 +1132,8 @@ lemma setupCfg_initializes (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
   obtain ⟨w', hlen, hcounter⟩ := setupCfg_budget_all W a base ⟨x.length + 1, by omega⟩
     0 (copyGuide (x.length + 1)) v w 0 hv
   refine ⟨w', hlen, ?_⟩
-  change (obliviousSchedule W a).tm.runFrom (setupCfg W a base _ _ _ _ _ _ _ _) _ =
-    setupCfg W a base _ _ _ _ _ _ _ _
+  rw [obliviousScheduleCfg_eq_id, obliviousScheduleCfg_eq_id]
+  simp only [obliviousSchedule_k, obliviousSchedule_State, id_eq]
   simp only [Nat.cast_zero, zero_add] at hcounter
   rw [MultiTapeTM.runFrom_add, setupCfg_reset, MultiTapeTM.runFrom_add, setupCfg_copy,
     MultiTapeTM.runFrom_add, hcounter]

@@ -689,6 +689,12 @@ def obliviousScheduleCfg (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     (c : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) :
     Cfg (obliviousSchedule W a).k OblSymbol (obliviousSchedule W a).State x := c
 
+/-- `obliviousScheduleCfg W a c` is `c` itself, read at the schedule's tape count and state type. -/
+lemma obliviousScheduleCfg_eq_id (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (c : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) :
+    obliviousScheduleCfg W a c =
+      @id (Cfg (obliviousSchedule W a).k OblSymbol (obliviousSchedule W a).State x) c := rfl
+
 /-- The state of `obliviousScheduleCfg W a c` is the state of `c`. -/
 lemma obliviousScheduleCfg_state (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     (c : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) :
