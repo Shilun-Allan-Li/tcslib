@@ -1,0 +1,98 @@
+Trial-merge build of PR #307 (dl-crh, head d356381a) onto the records tip after #308 + #309, maintainer, 2026-11-14 UTC.
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: as combined-308-309 (/home/user/tcslib/briefs/pass-shelat-ch5-8/maintainer/combined-308-309-2026-11-14/), whose
+  evidence zip (SHA-256 2bf080d74de543025b9531b0ac7a43606dd60adba928eac55743502c967b51bb, = its README) was extracted into the fresh
+  directory $SP/ref-308-309 (sha256sum -c of its SHA256SUMS OK; manifest byte-equal to evidence-SHA256SUMS) and deleted after the job.
+  Its tools-used/ was copied unmodified to tools-used/ (diff -r empty) and run from that copy.
+  Per-PR #307 records: /home/user/tcslib/briefs/pass-shelat-ch5-8/gates/24-dl-crh/landing-r1/gate24-r1-evidence.zip (SHA-256
+  6c1802139817f3fc033a50ecec1e9a8ff6f953bccad5b82b02f4c9bddb94fa22, byte-equal to $SP/dl-review/dl-crh-r1-reuse-evidence.zip),
+  extracted into the fresh directory $SP/ref-307-reuse (all 209 files OK against landing-r1/evidence-SHA256SUMS), deleted after.
+Rules: Lean 4.25.0 (cdd38ac5115b), PATH=$HOME/.elan/bin:$PATH. One Lean process at a time. Every module checked by the export's own
+  scripts/lean_check_tree.sh (SHA-256 366dab40e8e8f0f13e14118e14c3d6be1bc1b36604e6c9ccdebb03bc96cdf335, byte-equal to
+  /home/user/tcslib/scripts/lean_check_tree.sh in all three exports; the script resolves ROOT from its own location, so the export
+  copy is the one that compiles the trial sources) via tools-used/runner.py, TCSLIB_OLEANS=$SP/dl-oleans-2 only ($SP/dl-oleans not
+  touched). No lake command. Python python3 -I. Nothing pushed; /home/user/tcslib not edited (git status clean before and after;
+  only `git fetch`, `git ls-remote` and `git merge-tree --write-tree`, which writes objects to .git, were run against it).
+  Full hashes from git rev-parse (order/commits.txt).
+
+tip: origin/cryptography/pass-shelat-ch2-4 at fetch = 996d7cc2c08870c98ea6133def3f3d614fd7e9c8 (tree 64c26e6d15c0...). Records only
+  after 53fb144d (b1c3cb6a, 996d7cc2; 0 .lean files changed 53fb144d..996d7cc2), so its .lean content is the combined-308-309 tip's.
+  PR #307: refs/pull/307/head = d356381aadc350860f9a0e97123e84d9aefa585b (tree c7b77d28...), parent 649c4888; merge base with the tip
+  a757b6a18785377c158312ed051b1789cf45badf.
+
+step 1 (build/): build/tree-check-pre.txt: dl-oleans-2 at base before any Lean run: 1199 modules (order/basefull-1199.txt) rc 0 at
+  eff2dcd0 source and at the object hashes of build/base-records.jsonl (= combined-308-309's = gate24 landing-r1 tree/base-records.jsonl);
+  1230 files; no stray olean, no empty dir; build/snapshot-pre.txt byte-equal to combined-308-309 build/snapshot-pre.txt
+  (build/snapshot-ref-308-309-pre.txt), SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f. RESULT OK.
+
+step 2 (trial/): git merge-tree --write-tree --messages origin/cryptography/pass-shelat-ch2-4 d356381a: rc 0, no conflict, tree
+  c60af4c22099ad1d595a3d8f763770c79cc25202 (trial/merge-tree.out, merge-tree.rc; trial/merge-base.txt).
+  trial/tip-vs-merge-name-status.txt: the tree differs from the tip only in #307's 9 files (3 M: Candidates/DiscreteLog,
+  Hashing, Hashing/FromDiscreteLog; 6 A: FromDiscreteLog/{Algebra,Coins,Encoding,Probability,Reduction,Sampling}); the path set equals
+  `git diff --name-only a757b6a1 d356381a` (trial/pr307-files.txt), and every blob equals d356381a's (trial/merge-blobs-vs-307.txt, 9 SAME).
+  The tip-side changes since a757b6a1 touch none of the 9 files.
+  Export: git archive c60af4c2 (TCSlib, TCSlib.lean, audits, scripts, lean-toolchain = leanprover/lean4:v4.25.0; .lake/packages
+  symlinked; no .lake/build) into $SP/exp-trial-307.
+  order/git-diff-name-only.txt (git diff --name-only eff2dcd0 c60af4c2 -- '*.lean'): 40 files, no deletions or renames,
+  = order/trial-vs-base/changed.txt (tools-used/downorder.py c60af4c2 vs eff2dcd0): #303 4, #308 9, #309 17, Authentication facade,
+  #307 9. Downstream (order/trial-vs-base/down.txt) 48 = the 40 + DiscreteLogHardcore, DDH, ElGamal, Candidates, Encryption/PublicKey,
+  Encryption, root TCSlib, audits/pass-shelat/Checks. order/trial-build.txt: the 48 in imports-first order (order.txt filtered to
+  down.txt); order/order-check.txt: no import of a later module, and all 1182 other upstream modules are base modules with an olean.
+
+step 3 (build/, logs/build-runner.out): 48/48 rc 0, 0 errors, 0 `declaration uses 'sorry'` (build/results.jsonl, build/mods/).
+  Warnings (22): DDH 3, Lamport/Blocks 2, InversionProbability 2, MachineSpec 2, Realization 1, Rejection 10, Extraction 2; all others 0.
+  build/objects-and-warnings-vs-pr-builds.txt (against the #307 per-PR build = gate24 landing-r1 build/results.jsonl at d356381a, and
+  the combined-308-309 tip build): every module's source hash, olean hash and warning count equal those of a per-PR build (the #307
+  modules and the DiscreteLog chain and Checks = #307's; Lamport*, HashAndSign* and Authentication = combined-308-309's; Rejection,
+  Sampler, Extraction, Randomness, TCSlib = both). build/logs-vs-pr-builds.txt: every module log is byte-identical to the per-PR log
+  of the same module (0 differ). So no new warning, and no new olean: the trial tree's objects are the union of the per-PR objects.
+  Name clash / ambiguity: none. No log contains `ambiguous`, `already declared`, `already contains`, `import failed` or `overloaded`.
+  The modules where #307's environment meets hash-sign and lamport (Authentication imports Hashing.FromDiscreteLog; root TCSlib imports
+  the Hashing facade and Authentication; Checks) all give rc 0. HashAndSign* import only Hashing.CollisionResistant, not the facade.
+  Supplementary probe (not in the 308-309 method), axioms/NameOverlapTrial.lean (run like the axioms probe, below): in the root
+  environment, 211 constants declared in #307's 9 modules vs 430 in HashAndSign*, Lamport* and the Authentication facade:
+  0 fully-qualified collisions; 12 last-component overlaps, all auto-generated `congr_simp` lemmas
+  (dlHash.congr_simp, FromDiscreteLog.residueFinEquiv.congr_simp vs lamport, lamportGen, hashAndSign, LamportFill.*, LamportMachine.handler
+  .congr_simp); no user-level short-name overlap.
+  build/tree-check-trial.txt: 1231 modules (order/trialfull-order.txt = base 1199 + 32 new, order/trial-new-modules.txt) rc 0 at
+  c60af4c2 source and olean hash (records build/all-results-trial.jsonl), 1262 files, no stray olean, no empty dir: RESULT OK
+  (build/snapshot-trial.txt).
+
+step 4 (axioms/): axioms/AxiomsTrial.lean (`import TCSlib`) run with tools-used/probe.sh (plain `lean`, same LEAN_PATH as the check
+  script, no -o) from the export root; axioms/AxiomsTrial.log, lean rc 0:
+    TCSlib.Cryptography.Authentication.{dlHash_crh, hashAndSign_oneTimeSecure, lamport_oneTimeSecure, exists_oneTimeSecure_of_crh_owf}:
+    each depends on axioms [propext, Classical.choice, Quot.sound]; no sorryAx.
+  A first attempt from axioms/ failed before Lean started (elan: no default toolchain outside a directory with lean-toolchain;
+  axioms/AxiomsTrial-attempt1-no-toolchain.log). File count of dl-oleans-2 1262 before and after both probes (files-*.txt).
+  Sorry census (census/): build census (tools-used/buildcensus.py, base records + build/): Authentication 1 warning in 1 of 32 modules
+  (MAC/FromPRF, base, not rebuilt); Hashing 0 of 17. Source census (tools-used/srcsorry.py at c60af4c2): Authentication 1 token in 1 of
+  31 files (MAC/FromPRF.lean); Hashing 0 of 16.
+
+step 5 (lint/): python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography (script blob 88a2256b at 53fb144d, 996d7cc2, d356381a and
+  c60af4c2; file SHA-256 016c1cb7...) from the trial export and from a git-archive export of the tip 996d7cc2 ($SP/exp-tip-996d):
+  tip 92 FAIL, 101 WARN over 327 files; trial 92 FAIL, 101 WARN over 333 files (both rc 1, as FAIL lines exist).
+  fw-*.txt = FAIL/WARN lines, whitespace-normalised. fw-tip.txt = combined-308-309 lint/fw-tip.txt (53fb144d) after normalisation.
+  lint-tip-vs-trial.diff: exactly the two expected #307 WARN text changes on Candidates/DiscreteLog.lean:
+    1192 -> 1212 lines > 1000; check 8: 6 -> 5 public defs without a lemma (expSampleRaw now has expSampleRaw_eq).
+  lint-307head-vs-trial.diff (vs gate24 landing-r1 lint at d356381a, 92/102): one WARN fewer, Lamport.lean check 8 (lamportGen,
+  lamportSign), resolved by #309. No FAIL/WARN line names an Authentication, Hashing or Randomness file.
+
+step 6 (restore/): deleted the 32 trial-only oleans (restore/restore-delete-list.txt) and the 4 emptied directories not in the base
+  snapshot (Randomness/Extraction, Hashing/FromDiscreteLog, Signatures/Lamport, Signatures/HashAndSign; restore/restore-deleted.txt).
+  Rebuilt order/restore-base.txt (the 16 base modules overwritten, basefull order; imports-first checked on base sources) from a
+  git-archive export of eff2dcd0 ($SP/exp-base-eff2): restore/results.jsonl, logs/restore-runner.out 16/16 rc 0, 0 errors (base
+  Lamport, HashAndSign, Hashing/FromDiscreteLog, Extraction carry their base sorry). restore/restore-vs-base-records.txt: 16/16
+  source and object hashes = base records. restore/tree-check-post.txt RESULT OK (1199 modules, 1230 files); restore/snapshot-post.txt
+  byte-identical to build/snapshot-pre.txt and the combined-308-309 reference, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f.
+
+addendum (trial/addendum-*): the tip moved during the job. At 22:02 UTC origin/cryptography/pass-shelat-ch2-4 became
+  fb674b963b71ecdec6359133b37f0571013b6a05 ("Record #306 merge"; merge 7fdf3a9b of #306 cca2-ett, head b422ab5f): 11 .lean files
+  (EncryptThenTag + 10 helpers). The build above is of #307 onto 996d7cc2 (the tip at fetch), not onto fb674b96.
+  Not built: git merge-tree --write-tree fb674b96 d356381a: rc 0, clean, tree 84a1cbd822d41ffe01ac4c4a6a7cabaa04e77e0d; it differs from
+  fb674b96 only in #307's 9 files, and from c60af4c2 only in #306's 11 .lean files plus records (addendum-trial1-vs-trial2.txt).
+  #306's downstream from c60af4c2 (addendum-order/down.txt, 15: the 11, PrivateKey, Encryption, Composability, TCSlib) shares two
+  modules with #307's (addendum-shared-downstream.txt): the Encryption facade and root TCSlib. That combination has not been built.
+
+scratch: the three exports (trial, tip, base) and the two reference-zip extractions were deleted after use.
+SHA256SUMS: every file here except itself (paths without "./"); ../trial-307-evidence.zip holds exactly the manifest paths plus SHA256SUMS.
