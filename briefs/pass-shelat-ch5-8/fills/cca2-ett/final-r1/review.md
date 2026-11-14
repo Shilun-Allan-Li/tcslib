@@ -1,7 +1,8 @@
 # cca2-ett · maintainer delivery review (r1)
 
-**Verdict: ACCEPT WITH LANDING EDITS.** The landing edit **LE-width** is done. The landing edit **LE-doc**
-(formula docstrings, proof sketches and module contents) has been written and waits for its rebuild.
+**Verdict: ACCEPT WITH LANDING EDITS.** LE-width and LE-doc are both done and built; see the LE-doc section at the
+end (head `c1a3ba56`, PR #306). *(Erratum 2026-11-14: this line said LE-doc was waiting for its rebuild. Note also that
+"551 stored constants" counts census rows; there are 545 distinct names.)*
 
 ## Delivery and landing branch
 

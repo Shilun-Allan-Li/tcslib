@@ -1,7 +1,7 @@
 # hash-sign · maintainer delivery review (r1)
 
-**Verdict: ACCEPT WITH LANDING EDITS.** The landing edits LE-width and LE-facade are done. LE-doc (109 formulas and
-one sketch, docstrings only) is in progress.
+**Verdict: ACCEPT WITH LANDING EDITS.** LE-width, LE-facade and LE-doc are all done and built; see the LE-doc section
+at the end (head `4f0280c8`, PR #308). *(Erratum 2026-11-14: this line said LE-doc was in progress.)*
 
 ## Delivery and landing branch
 

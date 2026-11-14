@@ -1,7 +1,9 @@
 # dl-crh · maintainer delivery review (r1)
 
-**Verdict: ACCEPT WITH LANDING EDITS.** LE-facade is done. LE-doc (formula docstrings) is written and waits for its
-rebuild.
+**Verdict: ACCEPT WITH LANDING EDITS.** LE-facade and LE-doc are both done and built; see the LE-doc section at the
+end (head `649c4888`, PR #307). *(Erratum 2026-11-14: this line said LE-doc was waiting for its rebuild. `DiscreteLog.lean`
+goes 1192 → 1209 with the worker's readers and → 1212 with LE-doc; the issue-base-to-head diff of that file adds 20
+lines and removes none.)*
 
 ## Delivery and landing branch
 
@@ -125,7 +127,7 @@ The disclosed overlaps re-derive private lemmas from public readers:
 - **Change:** 59 formula docstrings, including backticked equations in the docstrings of the two approved `DiscreteLog` readers (`DiscreteLog.lean` 1209 → 1212 lines). Docstrings only:
   - every hunk lies inside a doc comment, and with doc comments blanked the files are byte-identical;
   - all headers are byte-identical, and decls2 against the previous head is empty;
-  - every new public declaration now passes the docaudit, except the target, whose first line is prose.
+  - every new public declaration now passes the docaudit (68/68 OK; the target was already OK).
 - **Rebase:** The branch was rebased onto `a757b6a1`; the unit files are byte-identical, and LE-facade is now `d84381ee`. The rebase makes Claude the committer of the worker commits; authors are unchanged.
 - **Build** on `$SP/dl-oleans`: 22 modules (`DiscreteLog` and everything downstream, the helpers, `Hashing`, base-delta, root `TCSlib`, `audits/pass-shelat/Checks`) rc 0; Checks byte-identical to the base; full head check 1207 modules OK. The tree was restored to the base snapshot afterwards.
 - **Lint (#305):** 92 FAIL / 102 WARN, with the same lines at the head as at the records tip.
