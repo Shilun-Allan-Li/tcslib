@@ -3835,8 +3835,8 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   choices and stronger NPHard premise follow the user's LD1–LD7 rulings. Source citations
   use the approved Theorem3.3/proof fallback; exact2009 Exercise3.6 parts remain unpinned.
   Gate 128 closed (Codex PASS on the frozen statement scope, 0/0/0, 22 notes) and #249 merged.
-  **LD9 approved (Seyoon, 2026-11-14):** `SAT_exists_linear_verifier` after `SAT_mem_NP`, by its
-  own gated PR. Concrete quantitative memo/simulator/SAT-search obligations remain fill-route
+  **LD9 approved (Seyoon, 2026-11-14):** `SAT_exists_linear_verifier` after `SAT_mem_NP`; merged as
+  #301 (gate 134 CLEAR) at `b313afe5`. Concrete quantitative memo/simulator/SAT-search obligations remain fill-route
   work; a Codex route draft for the six holes is requested
   (`campaign/items/ladner/fill-routes-request/brief.md`). No proof fill is dispatched yet. See
   `campaign/items/ladner/LADNER-design.md`, roadmap3/PLAN§(f) and HANDOFF§0. *Origin:

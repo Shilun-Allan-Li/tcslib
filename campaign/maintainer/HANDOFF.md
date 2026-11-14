@@ -36,7 +36,7 @@ the main open theorem. No fill is dispatched. RD-2/H6 remains separately
 held (41 direct admissions in the recorded scopes, outside the merged TQBF
 proof). See campaign/status/2026-11-08-roadmap-readiness/.
 
-Pending design: SAT PolyTimeBlockLoop import. **LD9 approved (Seyoon, 2026-11-14):** `SAT_exists_linear_verifier` (ClassNP/SAT, after `SAT_mem_NP`), own gated PR. Codex drafts the six Ladner fill routes (`campaign/items/ladner/fill-routes-request/brief.md`).
+Pending design: SAT PolyTimeBlockLoop import. **LD9 approved (Seyoon, 2026-11-14):** `SAT_exists_linear_verifier` (ClassNP/SAT, after `SAT_mem_NP`), merged as #301. Codex drafts the six Ladner fill routes (`campaign/items/ladner/fill-routes-request/brief.md`).
 Scheduled: a reader PR for `Call.call_run`/`Clean.cleanTM_run` and the Oblivious consumers `obliviousSchedule_ready`/`_halts` (ruled out of #242's scope 2026-11-12; ledger "Gate 122 held Call and Clean fronts").
 **RO1 home ruled (Seyoon, 2026-11-12): `Deterministic`** (the alternative in
 `campaign/items/dedup/overnight-2026-11-08/review/ro1-deterministic-option/`),
