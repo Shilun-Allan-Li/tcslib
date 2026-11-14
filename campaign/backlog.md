@@ -3845,7 +3845,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   as one gated PR (merged as #302, gate 135 CLEAR); (ii) `BinArith.powCap` with `powCap_eq`, `powCap_pairEncode` and
   `polyTimeComputable_powCap`, public in ClassP/BinaryArith/Mul (a fill); (iii) Ladner.lean may
   import `ClassP.BinaryArith.Loops` and `ClassP.ModelInvariance` where a fill's route needs them.
-  Fills edit Ladner.lean serially, in the draft's order (targets 3, 4, 1, 2, 5, 6). See
+  Fills edit Ladner.lean serially, in the draft's order (targets 3, 4, 1, 2, 5, 6).
+  Fill 1 (targets 3 and 4) delivered and landed as #304 (gate 136). Prepared, not dispatched
+  (user low on Codex tokens, 2026-11-14): fill 2 (`powCap` and the private parser leaves,
+  `campaign/fills/ladner-common-leaves/`) and fill 3 (target 1 part A, up to the candidate
+  test, `campaign/fills/ladner-poly-candidate/`), both pre-shipped at #304's head. Target 1 is
+  split in two (part B: selection, memo driver, readout, the target); the route's 5–12 agent-day
+  estimate for it was Codex's, and fill 1 took one session against its 1.5–5-day estimate. See
   `campaign/items/ladner/LADNER-design.md`, roadmap3/PLAN§(f) and HANDOFF§0. *Origin:
   `AroraBarakChapters3-4Plan.md`§4(P3.4), CH34-Q6.*
 * **ARM extensions + colleague sync (moved to backlog 2026-10-09; user
