@@ -1,0 +1,57 @@
+polyTimeComputable_iff : ∀ (f : List Bool → List Bool),
+  PolyTimeComputable f ↔ ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+polyTimeReducible_iff : ∀ (L L' : Language Bool),
+  L ≤ₚ L' ↔ ∃ f, PolyTimeComputable f ∧ ∀ (x : List Bool), x ∈ L ↔ f x ∈ L'
+NPHard_iff : ∀ (L : Language Bool), NPHard L ↔ ∀ L' ∈ NP, L' ≤ₚ L
+NPComplete_iff : ∀ (L : Language Bool), NPComplete L ↔ L ∈ NP ∧ NPHard L
+FinTM.decidesInTime_iff : ∀ (M : FinTM Bool) (L : Language Bool) (T : ℕ → ℕ),
+  M.DecidesInTime L T ↔ M.ComputesFunInTime (fun x => [MultiTapeTM.indicator L x]) T
+@MultiTapeTM.indicator_of_mem : ∀ {α : Type u_1} {L : Set α} {x : α}, x ∈ L → MultiTapeTM.indicator L x = true
+@MultiTapeTM.indicator_of_not_mem : ∀ {α : Type u_1} {L : Set α} {x : α}, x ∉ L → MultiTapeTM.indicator L x = false
+@mem_P_iff_one_work_tape : ∀ {L : Language Bool}, L ∈ P ↔ ∃ M C d, M.k = 1 ∧ M.DecidesInTime L fun n => C * (n + 1) ^ d
+FinTM.toCodeTM_computesInTime_iff : ∀ (M : FinTM Bool) (hk : M.k = 1) (x output : List Bool) (t : ℕ),
+  (M.toCodeTM hk).toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t
+MachineCode.decode_encode_pad : ∀ (self : MachineCode) (M : CodeTM) (m : ℕ),
+  self.decode (self.encode M ++ List.replicate m true) = M
+UniformMachineCode.simulator_accepts : ∀ (self : UniformMachineCode) (α x : List Bool) (t : ℕ),
+  (self.decode α).toFinTM.ComputesInTime x [true] t →
+    self.simulator.ComputesInTime (pairEncode (pairEncode t.bits α) x) [true]
+      (self.simDegree * (α.length + x.length + t + 1) ^ self.simDegree)
+UniformMachineCode.simulator_rejects : ∀ (self : UniformMachineCode) (α x : List Bool) (t : ℕ),
+  ¬(self.decode α).toFinTM.ComputesInTime x [true] t →
+    self.simulator.ComputesInTime (pairEncode (pairEncode t.bits α) x) [false]
+      (self.simDegree * (α.length + x.length + t + 1) ^ self.simDegree)
+FinTM.exists_comp_on_image : ∀ (M U : FinTM Bool) (f g : List Bool → List Bool) (T₁ T₂ : ℕ → ℕ),
+  M.ComputesFunInTime f T₁ →
+    (∀ (x : List Bool), U.ComputesInTime (f x) (g x) (T₂ x.length)) →
+      ∃ N, N.ComputesFunInTime g fun n => 2 * T₁ n + T₂ n + 2
+@mem_P_of_test : ∀ {b : List Bool → Bool}, (PolyTimeComputable fun z => [b z]) → {z | b z = true} ∈ P
+@FinTM.ComputesInTime.output_unique : ∀ {Symbol : Type} {M : FinTM Symbol} {input w w' : List Symbol} {t t' : ℕ},
+  M.ComputesInTime input w t → M.ComputesInTime input w' t' → w = w'
+@FinTM.not_computesInTime_zero : ∀ {Symbol : Type} (M : FinTM Symbol) (input output : List Symbol),
+  ¬M.ComputesInTime input output 0
+ladnerH_eq : ∀ (n : ℕ),
+  ladnerH n =
+    if hex :
+        ∃ i < Nat.log 2 (Nat.log 2 n),
+          ∀ (x : List Bool),
+            x.length ≤ Nat.log 2 n →
+              ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT ladnerH) then
+      Nat.find hex
+    else Nat.log 2 (Nat.log 2 n)
+ladnerMachine_eq : ∀ (i : ℕ), ladnerMachine i = (expCode.decode i.bits).toFinTM
+@mem_padSAT_iff : ∀ {h : ℕ → ℕ} {y : List Bool},
+  y ∈ padSAT h ↔ ∃ ψ ∈ SAT, y = ψ ++ false :: List.replicate (ψ.length ^ h ψ.length) true
+SAT_H_eq : SAT_H = padSAT ladnerH
+SAT_exists_linear_verifier : ∃ V ∈ P, ∀ (x : List Bool), x ∈ SAT ↔ ∃ u, u.length = x.length + 1 ∧ x ++ u ∈ V
+Preship.lean:40:8: warning: declaration uses 'sorry'
+Preship.lean:42:8: warning: declaration uses 'sorry'
+Preship.lean:45:8: warning: declaration uses 'sorry'
+Preship.lean:49:8: warning: declaration uses 'sorry'
+Preship.lean:54:8: warning: declaration uses 'sorry'
+Preship.lean:62:8: warning: declaration uses 'sorry'
+Preship.lean:66:8: warning: declaration uses 'sorry'
+Preship.lean:70:8: warning: declaration uses 'sorry'
+Preship.lean:75:8: warning: declaration uses 'sorry'
+Preship.lean:80:8: warning: declaration uses 'sorry'
+Preship.lean:85:8: warning: declaration uses 'sorry'

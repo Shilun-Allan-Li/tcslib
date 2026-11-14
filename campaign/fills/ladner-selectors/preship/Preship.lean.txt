@@ -1,0 +1,90 @@
+/- Pre-ship probe for the Ladner selectors fill brief: the route statements (admitted) and the
+named API, elaborated at the fill base. Scratch, not library code. -/
+import TCSlib.Complexity.Diagonalization.Ladner
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.Complexity.ClassP.ModelInvariance
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing Complexity
+open scoped Classical
+noncomputable section
+
+
+-- Pre-ship: the readers and existing API the brief names resolve at the fill base.
+#check @Complexity.polyTimeComputable_iff
+#check @Complexity.polyTimeReducible_iff
+#check @Complexity.NPHard_iff
+#check @Complexity.NPComplete_iff
+#check @Turing.FinTM.decidesInTime_iff
+#check @Turing.MultiTapeTM.indicator_of_mem
+#check @Turing.MultiTapeTM.indicator_of_not_mem
+#check @Complexity.mem_P_iff_one_work_tape
+#check @Turing.FinTM.toCodeTM_computesInTime_iff
+#check @Turing.MachineCode.decode_encode_pad
+#check @Turing.UniformMachineCode.simulator_accepts
+#check @Turing.UniformMachineCode.simulator_rejects
+#check @Turing.FinTM.exists_comp_on_image
+#check @Complexity.mem_P_of_test
+#check @Turing.FinTM.ComputesInTime.output_unique
+#check @Turing.FinTM.not_computesInTime_zero
+#check @Complexity.ladnerH_eq
+#check @Complexity.ladnerMachine_eq
+#check @Complexity.mem_padSAT_iff
+#check @Complexity.SAT_H_eq
+#check @Complexity.SAT_exists_linear_verifier
+
+namespace LadnerRouteBounded
+theorem pad_nil (h : ℕ → ℕ) : ([] : List Bool) ∉ padSAT h := by sorry
+
+theorem padded_index (M : CodeTM) (B : ℕ) :
+    ∃ i, B < i ∧ ladnerMachine i = M.toFinTM := by sorry
+
+theorem indexed_deadline (a d i m : ℕ)
+    (hd : d ≤ i) (ha : a * 2 ^ d ≤ i) (hm : 1 ≤ m) :
+    a * (m + 1) ^ d ≤ i * m ^ i := by sorry
+
+theorem correct_index (hP : SAT_H ∈ P) :
+    ∃ i, ∀ x : List Bool,
+      (ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH := by sorry
+
+theorem selector_bound (i : ℕ)
+    (good : ∀ x : List Bool,
+      (ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH) :
+    ∀ n, ladnerH n ≤ i := by sorry
+end LadnerRouteBounded
+
+namespace LadnerRouteUnbounded
+theorem fixed_clock_preparation (code : List Bool) (a d : ℕ) :
+    PolyTimeComputable (fun x : List Bool =>
+      pairEncode (pairEncode (Nat.bits (a * x.length ^ d)) code) x) := by sorry
+
+theorem fixed_clock_budget (D u a d n : ℕ) :
+    D * (u + n + a * n ^ d + 1) ^ D ≤
+      (D * (u + a + 2) ^ D) * (n + 1) ^ (max 1 d * D) := by sorry
+
+theorem fixed_clock_FP (code : List Bool) (a d : ℕ) :
+    PolyTimeComputable (fun x : List Bool =>
+      [decide ((expCode.decode code).toFinTM.ComputesInTime
+        x [true] (a * x.length ^ d))]) := by sorry
+
+theorem all_tests_imply_P (i : ℕ)
+    (good : ∀ x : List Bool,
+      (ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH) : SAT_H ∈ P := by sorry
+
+theorem failing_words (hP : SAT_H ∉ P) :
+    ∀ i : ℕ, ∃ x : List Bool,
+      ¬ ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH) := by sorry
+
+theorem selector_threshold
+    (bad : ∀ i : ℕ, ∃ x : List Bool,
+      ¬ ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH)) :
+    ∀ C, ∃ N, ∀ n ≥ N, C ≤ ladnerH n := by sorry
+end LadnerRouteUnbounded
