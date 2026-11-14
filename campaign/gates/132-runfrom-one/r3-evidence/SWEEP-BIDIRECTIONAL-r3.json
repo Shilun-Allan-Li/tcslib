@@ -1,0 +1,64 @@
+{
+  "head": "befb73f97a63ce449fe1a9a1b7dfc3fdbda65969",
+  "snapshot": "oleans-ro1r3-c7b6b (the replay of the head on the campaign snapshot after #242)",
+  "scope": "TCSlib/Complexity/TuringMachine/Robustness/Bidirectional.lean",
+  "why_only_this_file": "befb73f9 changes only this file (one line) after the round 2 head ce427bde; the round 2 library-wide sweep stands for every other file",
+  "mutation": {
+    "jobs": 2,
+    "site_mutations": 4,
+    "rows": [
+      {
+        "line": 303,
+        "decl": "foldCfg_run",
+        "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih, foldCfg_step,",
+        "outcome": "fail",
+        "reading": "foldCfg_run's successor case, `runFrom … (t + 1 + 1)` against `step (runFrom … (t + 1))`"
+      },
+      {
+        "line": 304,
+        "decl": "foldCfg_run",
+        "text": "MultiTapeTM.runFrom_succ_eq_step']",
+        "outcome": "fail",
+        "reading": "foldCfg_run's successor case, folding back to `runFrom … (t + 1)`"
+      },
+      {
+        "line": 410,
+        "decl": "foldTM_nonnegative",
+        "text": "rw [MultiTapeTM.runFrom_succ_eq_step']",
+        "outcome": "fail",
+        "reading": "foldTM_nonnegative's inner induction, `runFrom (step c) (t + 1)` at a general `t`"
+      },
+      {
+        "line": 412,
+        "decl": "foldTM_nonnegative",
+        "text": "rw [MultiTapeTM.runFrom_succ_eq_step]",
+        "outcome": "fail",
+        "reading": "foldTM_nonnegative, `runFrom c (t + 1)` at a general `t`"
+      }
+    ],
+    "confirmations": []
+  },
+  "irreducibility": {
+    "errors": [
+      {
+        "line": 408,
+        "col": 16,
+        "sev": "error",
+        "msg": "Type mismatch"
+      }
+    ],
+    "one_step_rows": [],
+    "note": "the error is at source line 408 (the sweep maps the irreducible copy's lines back to the source): a zero-step run, outside RO-1"
+  },
+  "tagged_errors": [],
+  "one_step_rows": [],
+  "round2_row_superseded": {
+    "file": "TuringMachine/Robustness/Bidirectional.lean",
+    "line": 301,
+    "decl": "foldCfg_run",
+    "round2_disposition": "the mutant needs runFrom unfolded natively: the original closes a step shift or a definitional equation, not a one-step run; Bidirectional foldCfg_run is the disclosed definitional zero-step base",
+    "corrected": "a one-step run (duration `0 + 1`) from a zero-step source run; the round 2 mutant failed with runFrom irreducible only because it did not normalize `0 + 1`. Repaired in befb73f9 (G132-04)."
+  },
+  "verdict_ok": true,
+  "summary": "4 site mutations in 2 jobs, 0 passing natively; the irreducibility pass has 1 error, `foldTM_nonnegative`'s zero-step base `exact foldSafe_init M x` (408), as at ce427bde; no one-step row and no tagged error"
+}

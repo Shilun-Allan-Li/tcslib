@@ -1,0 +1,513 @@
+{
+ "head": "befb73f97a63ce449fe1a9a1b7dfc3fdbda65969",
+ "files_with_successor_rewrites": 97,
+ "tight": [
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 550,
+   "text": "MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]",
+   "disposition": "two-step run `show (2 : ℕ) = (0 + 1) + 1`, disclosed outside RO-1"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 662,
+   "text": "MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]",
+   "disposition": "two-step run `show (2 : ℕ) = (0 + 1) + 1`, disclosed outside RO-1"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 955,
+   "text": "MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]",
+   "disposition": "two-step run `show (2 : ℕ) = (0 + 1) + 1`, disclosed outside RO-1"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 1888,
+   "text": "MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]",
+   "disposition": "two-step run `show (2 : ℕ) = (0 + 1) + 1`, disclosed outside RO-1"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 1938,
+   "text": "MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]",
+   "disposition": "two-step run `show (2 : ℕ) = (0 + 1) + 1`, disclosed outside RO-1"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 8166,
+   "text": "simp only [show (2 : ℕ) = (0 + 1) + 1 by rfl, MultiTapeTM.runFrom_succ_eq_step',",
+   "disposition": "two-step run `show (2 : ℕ) = (0 + 1) + 1`, disclosed outside RO-1"
+  },
+  {
+   "file": "TuringMachine/CodeSimulator.lean",
+   "line": 8456,
+   "text": "MultiTapeTM.runFrom_zero, MultiTapeTM.runFrom_succ_eq_step, *]",
+   "disposition": "`summaryClock_correct`: one simp set for both cases of an induction on a general deadline `t`; the successor rewrite is at `t + 1`"
+  },
+  {
+   "file": "TuringMachine/Deterministic.lean",
+   "line": 38,
+   "text": "`runFrom_zero` and `runFrom_succ_eq_step`, so that every one-step site cites one public lemma",
+   "disposition": "the vendored file's list of local modifications (prose)"
+  },
+  {
+   "file": "TuringMachine/Deterministic.lean",
+   "line": 228,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]",
+   "disposition": "the proof of `runFrom_one` itself"
+  }
+ ],
+ "wide": [
+  {
+   "file": "CircuitComplexity/MeyerMachineParse.lean",
+   "line": 279,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega) (by omega), acfg_step,",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "CircuitComplexity/PSubsetPPolyConfigStep.lean",
+   "line": 196,
+   "text": "simp only [cfgAt, MultiTapeTM.runFrom_succ_eq_step'] at h ih ⊢",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "ClassNP/EXP.lean",
+   "line": 1991,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "ClassNP/ExhaustiveReplay.lean",
+   "line": 256,
+   "text": "| succ n ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, hd]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "ClassNP/Nondeterminism.lean",
+   "line": 689,
+   "text": "simp only [List.length_cons, MultiTapeTM.runFrom_succ_eq_step]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "ClassNP/SAT.lean",
+   "line": 3230,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "ClassP/Examples.lean",
+   "line": 134,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "CookLevin/Snapshot.lean",
+   "line": 203,
+   "text": "**Proof sketch.** `Turing.MultiTapeTM.runFrom_succ_eq_step'` and the",
+   "disposition": "docstring (Proof sketch), not code"
+  },
+  {
+   "file": "Diagonalization/NTimeDiagonalizer.lean",
+   "line": 1102,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "Diagonalization/NTimeDiagonalizer.lean",
+   "line": 1289,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "Diagonalization/NTimeDiagonalizer.lean",
+   "line": 1311,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "Diagonalization/NTimeDiagonalizer.lean",
+   "line": 1459,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "Diagonalization/NTimeHierarchy.lean",
+   "line": 486,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), hstep r (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/CfgRecord.lean",
+   "line": 793,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step']",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/CfgRecord.lean",
+   "line": 952,
+   "text": "have h := MultiTapeTM.runFrom_succ_eq_step' (tm := recordStepProbe) (cfg := d) (t := 1)",
+   "disposition": "`(t := 1)` instantiates the two-step equation `runFrom d 2 = step (runFrom d 1)`, then cites `runFrom_one` for the inner run"
+  },
+  {
+   "file": "TuringMachine/Build/EmitIterEmbed.lean",
+   "line": 276,
+   "text": "rw [runFrom_succ_eq_step, runFrom_succ_eq_step, hstep]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/InputDevice.lean",
+   "line": 360,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/InputDevice.lean",
+   "line": 1123,
+   "text": "· rw [hcost, MultiTapeTM.runFrom_succ_eq_step, first]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/InputDevice.lean",
+   "line": 1130,
+   "text": "· rw [show u = (u - 1) + 1 by omega, MultiTapeTM.runFrom_succ_eq_step, first]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/InputDevice.lean",
+   "line": 1136,
+   "text": "· rw [show u = (u - 1) + 1 by omega, MultiTapeTM.runFrom_succ_eq_step, first]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/InputRewind.lean",
+   "line": 151,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), hstep r (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/NDClockHost.lean",
+   "line": 363,
+   "text": "MultiTapeTM.runFrom_succ_eq_step]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/NDClockHost.lean",
+   "line": 365,
+   "text": "rw [← MultiTapeTM.runFrom_succ_eq_step]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 246,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 782,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 2129,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 2594,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step']",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 3515,
+   "text": "· simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb'",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 3516,
+   "text": "· rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 3544,
+   "text": "| succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, he]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 3569,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun u hu => h u (by omega)),",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 3570,
+   "text": "fwdMapSetup_step M _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 3629,
+   "text": "| succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', fwdMapSetup_head_step, ih]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 4409,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 4659,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun j hj => hlive j (by omega)),",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 4660,
+   "text": "hstep _ (hlive t (by omega)), MultiTapeTM.runFrom_succ_eq_step']",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 4801,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 4943,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 4944,
+   "text": "MultiTapeTM.runFrom_succ_eq_step']",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Primitives.lean",
+   "line": 5282,
+   "text": "MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Rewind.lean",
+   "line": 195,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), hF t (by omega)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/Rewind.lean",
+   "line": 197,
+   "text": "rw [show n + 2 = (n + 1) + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/StepBlock.lean",
+   "line": 3428,
+   "text": "rw [← MultiTapeTM.runFrom_succ_eq_step]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/StepBlock.lean",
+   "line": 3441,
+   "text": "MultiTapeTM.runFrom_succ_eq_step (tm := M)]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/StepBlockForward.lean",
+   "line": 550,
+   "text": "simpa only [MultiTapeTM.runFrom_succ_eq_step'] using heq.symm",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/VirtualInput.lean",
+   "line": 293,
+   "text": "· simpa only [MultiTapeTM.runFrom_succ_eq_step'] using htag'",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/VirtualInput.lean",
+   "line": 294,
+   "text": "· rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/WindowRun.lean",
+   "line": 219,
+   "text": "refine ⟨by omega, by rw [MultiTapeTM.runFrom_succ_eq_step]; exact b, ?_⟩",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Build/WindowRun.lean",
+   "line": 220,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Deterministic.lean",
+   "line": 217,
+   "text": "lemma runFrom_succ_eq_step {cfg : Cfg k Symbol State input} {t : ℕ} :",
+   "disposition": "the upstream statement of `runFrom_succ_eq_step`"
+  },
+  {
+   "file": "TuringMachine/Deterministic.lean",
+   "line": 221,
+   "text": "lemma runFrom_succ_eq_step' {cfg : Cfg k Symbol State input} {t : ℕ} :",
+   "disposition": "the upstream statement of `runFrom_succ_eq_step'`"
+  },
+  {
+   "file": "TuringMachine/Deterministic.lean",
+   "line": 397,
+   "text": "· exact ⟨v + 1, by omega, by rw [MultiTapeTM.runFrom_succ_eq_step]⟩",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Finite.lean",
+   "line": 254,
+   "text": "| succ n ih => rw [runFrom_succ_eq_step, hfixed]; exact ih",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/AlphabetReduction.lean",
+   "line": 509,
+   "text": "MultiTapeTM.runFrom_succ_eq_step']",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/Bidirectional.lean",
+   "line": 303,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih, foldCfg_step,",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/Bidirectional.lean",
+   "line": 304,
+   "text": "MultiTapeTM.runFrom_succ_eq_step']",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/Oblivious.lean",
+   "line": 287,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), dataCfg_step,",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/Oblivious.lean",
+   "line": 293,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', hp _ (le_refl _), dataCfg_step,",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/Oblivious.lean",
+   "line": 321,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), dataCfg_step,",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/Oblivious.lean",
+   "line": 327,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', hp _ (le_refl _),",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/ObliviousCandidate.lean",
+   "line": 311,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/ObliviousCandidate.lean",
+   "line": 839,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), clockStageCfg_step W a _ q hs,",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/ObliviousCandidate.lean",
+   "line": 840,
+   "text": "← MultiTapeTM.runFrom_succ_eq_step']",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/TwoTapes.lean",
+   "line": 1323,
+   "text": "have hc : tt_c M x (r + 1) = M.tm.step (tt_c M x r) := MultiTapeTM.runFrom_succ_eq_step'",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Robustness/TwoTapes.lean",
+   "line": 2272,
+   "text": "have hc : tt_c M x (r + 1) = M.tm.step (tt_c M x r) := MultiTapeTM.runFrom_succ_eq_step'",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Simulation.lean",
+   "line": 115,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_of_some hstate, htr]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Simulation.lean",
+   "line": 652,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step, he]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Simulation.lean",
+   "line": 676,
+   "text": "· rw [MultiTapeTM.runFrom_succ_eq_step, hstep, rewind_scan tm scan dest hscan _ rfl hp]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Simulation.lean",
+   "line": 681,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step, hstep]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Simulation.lean",
+   "line": 1079,
+   "text": "· simpa only [MultiTapeTM.runFrom_succ_eq_step'] using htag'",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Simulation.lean",
+   "line": 1080,
+   "text": "· rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Sweep.lean",
+   "line": 138,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Sweep.lean",
+   "line": 203,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/Universal.lean",
+   "line": 1861,
+   "text": "rw [MultiTapeTM.runFrom_succ_eq_step]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  },
+  {
+   "file": "TuringMachine/UniversalK.lean",
+   "line": 1224,
+   "text": "| succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, hs]",
+   "disposition": "the successor rewrite is at a general duration (an induction successor case, `u + 1`, `(u - 1) + 1`, a cons over a list, or a hypothesis-fixed cost); `runFrom_zero` nearby closes a separate zero-step case"
+  }
+ ],
+ "summary": "9 tight and 75 wide co-occurrences in 97 files; none is an uncited one-step run (foldCfg_run 301 now cites runFrom_one)"
+}

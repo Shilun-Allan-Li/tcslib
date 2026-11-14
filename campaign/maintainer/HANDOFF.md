@@ -18,7 +18,7 @@ snapshot. See campaign/status/2026-11-09-merge-243-244/.
 
 | PR / gate | Current state |
 |---|---|
-| #296 / 132 | **Not yet clear to merge.** Round 1 (Codex) HOLD (G132-01/02/03), resolved at `ce427bde`. Round 2 (Codex) **HOLD**: one minor, G132-04 (Bidirectional `foldCfg_run`'s `zero` case is an uncited one-step run, wrongly disposed as outside RO-1). No soundness defect or new failing seal root. Repair and round 3 in progress. See campaign/gates/132-runfrom-one/. |
+| #296 / 132 | **Not yet clear to merge.** Round 1 (Codex) HOLD (G132-01/02/03), resolved at `ce427bde`. Round 2 (Codex) HOLD: one minor, G132-04 (Bidirectional `foldCfg_run`'s `zero` case, an uncited one-step run), repaired at `befb73f9` (70 files, 69 citing owners). Round 3 pack ready (fresh replay, seals, controls, screen; census and Bidirectional re-sweep); Codex bundle being staged. See campaign/gates/132-runfrom-one/. |
 | #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
 | #242 / 122 | **Merged** at `7b6bd1685a1436313dfbc13ce191f40c7dd065d3` (2026-11-12). Gate closed. Its replay output is the campaign snapshot `oleans-c7b6b` (campaign/status/2026-11-12-merge-242/). |
@@ -46,7 +46,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
 with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132).** The archived `CfgFacts` draft is superseded. The approved
-Hardness CfgFacts import stays separate. Next free gate 132. Use complete
+Hardness CfgFacts import stays separate. Next free gate 133. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.
 

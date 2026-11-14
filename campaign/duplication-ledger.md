@@ -1204,13 +1204,15 @@ vendored file's local modifications. It needs no import changes and also covers 
 `bufferedScanCfg_run`, which the `CfgFacts` home could not reach (cycle through `StateRenaming`).
 The proposal is `campaign/items/dedup/overnight-2026-11-08/review/ro1-deterministic-option/`. It
 is rebuilt after #251, #241 and #242 merge.
-**Rebuilt (2026-11-12/13):** draft PR #296, gate 132, at `ce427bde` after round 1's HOLD (G132-01/02:
-eighteen further one-step sites, three owners outside the PR). It cites the lemma in 68 owners and deletes
-the five copies (the Bool-only public one and four privates). Round 2's library-wide sweep (each
-`runFrom_succ_eq_step` mutated to the lemma, and every file elaborated with `runFrom` irreducible) leaves no
-uncited one-step run. The campaign text stays at the runs that are not one-step: `RecordTable`'s two- and
-three-step `rt_boundaryTM` sites, `Primitives`' six `(0 + 1) + 1` two-step `show`s, `pre_scan`'s two-step
-branch, zero-step induction bases, and `Bidirectional`'s definitional `foldCfg_run`.
+**Rebuilt (2026-11-12/13):** draft PR #296, gate 132, at `befb73f9` after round 1's HOLD (G132-01/02:
+eighteen further one-step sites, three owners outside the PR) and round 2's (G132-04: `Bidirectional`'s
+`foldCfg_run` base, a one-step run written with the successor and zero equations). It cites the lemma in
+69 owners and deletes the five copies (the Bool-only public one and four privates). Round 2's library-wide
+sweep (each `runFrom_succ_eq_step` mutated to the lemma, and every file elaborated with `runFrom`
+irreducible) and round 3's census of explicit successor-and-zero rewrites leave no uncited one-step run.
+The campaign text stays at the runs that are not one-step: `RecordTable`'s two- and three-step
+`rt_boundaryTM` sites, `Primitives`' six `(0 + 1) + 1` two-step `show`s, `pre_scan`'s two-step branch and
+zero-step induction bases.
 
 **NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
 `qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and
