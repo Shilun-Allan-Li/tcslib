@@ -3834,10 +3834,11 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   existential packaging theorem. The bounded-acceptance/uniform-code/literal-padding
   choices and stronger NPHard premise follow the user's LD1–LD7 rulings. Source citations
   use the approved Theorem3.3/proof fallback; exact2009 Exercise3.6 parts remain unpinned.
-  Current native/replay/AX/reader-boundary checks pass; full comparison/publication and
-  external statement audit remain pending. The sharp SAT-reader proposal and concrete
-  quantitative memo/simulator/SAT-search obligations remain separate fill-route work.
-  No mathematical proof fill is dispatched; all6 holes stay for external agents. See
+  Gate 128 closed (Codex PASS on the frozen statement scope, 0/0/0, 22 notes) and #249 merged.
+  **LD9 approved (Seyoon, 2026-11-14):** `SAT_exists_linear_verifier` after `SAT_mem_NP`, by its
+  own gated PR. Concrete quantitative memo/simulator/SAT-search obligations remain fill-route
+  work; a Codex route draft for the six holes is requested
+  (`campaign/items/ladner/fill-routes-request/brief.md`). No proof fill is dispatched yet. See
   `campaign/items/ladner/LADNER-design.md`, roadmap3/PLAN§(f) and HANDOFF§0. *Origin:
   `AroraBarakChapters3-4Plan.md`§4(P3.4), CH34-Q6.*
 * **ARM extensions + colleague sync (moved to backlog 2026-10-09; user
