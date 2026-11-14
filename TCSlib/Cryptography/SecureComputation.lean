@@ -6,6 +6,7 @@ import TCSlib.Cryptography.SecureComputation.Defs
 import TCSlib.Cryptography.SecureComputation.ObliviousTransfer
 import TCSlib.Cryptography.SecureComputation.SpecialEncryption
 import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity
+import TCSlib.Cryptography.SecureComputation.SpecialEncryptionMulti
 import TCSlib.Cryptography.SecureComputation.Garbling
 import TCSlib.Cryptography.SecureComputation.GarblingSpecial
 import TCSlib.Cryptography.SecureComputation.GarblingSecurity
@@ -40,6 +41,7 @@ See the theorem statements and correctness results in the constituent modules.
 * `ObliviousTransfer` — five-message oblivious transfer from trapdoor permutations.
 * `SpecialEncryption` — the nested special-encryption construction and correctness.
 * `SpecialEncryptionSecurity` — special-encryption security statements.
+* `SpecialEncryptionMulti` — joint, length-generic multi-message security of special encryption.
 * `Garbling` — deterministic garbling and correctness.
 * `GarblingSpecial` — garbling with the special-encryption construction.
 * `GarblingSecurity` — the probabilistic garbling-security statement.
