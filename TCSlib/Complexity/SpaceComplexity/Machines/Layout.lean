@@ -75,6 +75,12 @@ def rlen (s : Seg) : ℕ := if s.2 then 2 * s.1.length else s.1.length
 /-- A plain segment renders to its word's length. -/
 @[simp] lemma rlen_false (w : List Bool) : rlen (w, false) = w.length := rfl
 
+/-- A doubled segment renders to twice its word's length. -/
+lemma rlen_of_doubled {s : Seg} (h : s.2 = true) : rlen s = 2 * s.1.length := if_pos h
+
+/-- A plain segment renders to its word's length. -/
+lemma rlen_of_plain {s : Seg} (h : s.2 = false) : rlen s = s.1.length := if_neg (by simp [h])
+
 /-- The rendering of a segment has length `rlen`. -/
 @[simp] lemma length_render (s : Seg) : (render s).length = rlen s := by
   unfold render rlen; split <;> simp
@@ -205,14 +211,35 @@ inductive TPos where
 /-- The underlying word length of segment `s`. -/
 def wlen (segs : List Seg) (s : ℕ) : ℕ := (seg segs s).1.length
 
+/-- The underlying word length of segment `s` is the length of its word. -/
+lemma wlen_eq (segs : List Seg) (s : ℕ) : wlen segs s = (seg segs s).1.length := rfl
+
 /-- A track position is valid when its cell lies in the word. -/
 def TPos.Valid (segs : List Seg) (s : ℕ) : TPos → Prop
   | .cell c _ => c < wlen segs s
   | _ => True
 
+/-- The left end of a segment is a valid track position. -/
+lemma TPos.valid_left (segs : List Seg) (s : ℕ) : TPos.left.Valid segs s := trivial
+
+/-- The right end of a segment is a valid track position. -/
+lemma TPos.valid_right (segs : List Seg) (s : ℕ) : TPos.right.Valid segs s := trivial
+
+/-- A cell is a valid track position exactly when it lies in the segment's word. -/
+lemma TPos.valid_cell_iff (segs : List Seg) (s c : ℕ) (p : Bool) :
+    (TPos.cell c p).Valid segs s ↔ c < wlen segs s := Iff.rfl
+
 /-- The rendered offset of a cell inside its segment. -/
 def cellOff (segs : List Seg) (s c : ℕ) (p : Bool) : ℕ :=
   if (seg segs s).2 then 2 * c + p.toNat else c
+
+/-- In a doubled segment, the copy `p` of cell `c` sits at rendered offset `2 * c + p`. -/
+lemma cellOff_of_doubled (segs : List Seg) (s c : ℕ) (p : Bool) (h : (seg segs s).2 = true) :
+    cellOff segs s c p = 2 * c + p.toNat := if_pos h
+
+/-- In a plain segment, cell `c` sits at rendered offset `c`. -/
+lemma cellOff_of_plain (segs : List Seg) (s c : ℕ) (p : Bool) (h : (seg segs s).2 = false) :
+    cellOff segs s c p = c := if_neg (by simp [h])
 
 /-- The virtual position (`inputPos`-style: `0` is the left blank, cell `j` of the virtual
 input is position `j + 1`) of a track position. -/
@@ -220,6 +247,17 @@ def vpos (segs : List Seg) (s : ℕ) : TPos → ℕ
   | .left => off segs s
   | .cell c p => off segs s + 1 + cellOff segs s c p
   | .right => off segs s + 1 + rlen (seg segs s)
+
+/-- The left end of segment `s` is at its offset. -/
+lemma vpos_left (segs : List Seg) (s : ℕ) : vpos segs s .left = off segs s := rfl
+
+/-- A cell of segment `s` is past the left end by one plus its rendered offset. -/
+lemma vpos_cell (segs : List Seg) (s c : ℕ) (p : Bool) :
+    vpos segs s (.cell c p) = off segs s + 1 + cellOff segs s c p := rfl
+
+/-- The right end of segment `s` is past the left end by one plus the rendered length. -/
+lemma vpos_right (segs : List Seg) (s : ℕ) :
+    vpos segs s .right = off segs s + 1 + rlen (seg segs s) := rfl
 
 /-- The rendered offset of a cell of a segment's word lies within the segment's rendering. -/
 lemma cellOff_lt (segs : List Seg) (s c : ℕ) (p : Bool) (hc : c < wlen segs s) :

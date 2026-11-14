@@ -50,6 +50,26 @@ def mkCfg (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2)) (rt : Fin m → 
     (dt : Fin kD → ℤ → Option Bool) dp out :
     (mkCfg st ip rt rp dt dp out).state = st := rfl
 
+/-- The configuration built by `mkCfg … ip …` has its input head at `ip`. -/
+lemma mkCfg_inputPos (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2)) rt rp
+    (dt : Fin kD → ℤ → Option Bool) dp out :
+    (mkCfg st ip rt rp dt dp out).inputPos = ip := rfl
+
+/-- The work tapes of `mkCfg` are the register tapes followed by the decider tapes. -/
+lemma mkCfg_workTapes (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2)) rt rp
+    (dt : Fin kD → ℤ → Option Bool) dp out :
+    (mkCfg st ip rt rp dt dp out).workTapes = Fin.append rt dt := rfl
+
+/-- The work-head positions of `mkCfg` are the register heads followed by the decider heads. -/
+lemma mkCfg_workTapePos (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2)) rt rp
+    (dt : Fin kD → ℤ → Option Bool) (dp : Fin kD → ℤ) out :
+    (mkCfg st ip rt rp dt dp out).workTapePos = Fin.append rp dp := rfl
+
+/-- The configuration built by `mkCfg … out` has output `out`. -/
+lemma mkCfg_output (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2)) rt rp
+    (dt : Fin kD → ℤ → Option Bool) dp (out : List Bool) :
+    (mkCfg st ip rt rp dt dp out).output = out := rfl
+
 /-- An action moving only the input head and register heads. -/
 lemma apply_moves (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2))
     (rt : Fin m → ℤ → Option Bool) (rp : Fin m → ℤ) (dt : Fin kD → ℤ → Option Bool)
@@ -387,11 +407,29 @@ lemma retR_run (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)
 def retPos (cs : CallSpec m d Λ) (rp0 : Fin m → ℤ) (a : ℕ) (r : Fin m) : ℤ :=
   if r ∈ cs.args ∧ cs.args.idxOf r < a then 0 else rp0 r
 
+/-- An argument register among the first `a` is restored to the origin. -/
+lemma retPos_of_lt (cs : CallSpec m d Λ) (rp0 : Fin m → ℤ) {a : ℕ} {r : Fin m}
+    (hr : r ∈ cs.args) (h : cs.args.idxOf r < a) : retPos cs rp0 a r = 0 := if_pos ⟨hr, h⟩
+
+/-- A register outside the call's arguments keeps its position. -/
+lemma retPos_of_not_mem (cs : CallSpec m d Λ) (rp0 : Fin m → ℤ) (a : ℕ) {r : Fin m}
+    (hr : r ∉ cs.args) : retPos cs rp0 a r = rp0 r := if_neg fun h => hr h.1
+
+/-- An argument register not yet among the first `a` keeps its position. -/
+lemma retPos_of_le (cs : CallSpec m d Λ) (rp0 : Fin m → ℤ) {a : ℕ} {r : Fin m}
+    (h : a ≤ cs.args.idxOf r) : retPos cs rp0 a r = rp0 r := if_neg fun h' => by omega
+
 /-- Register positions within the call's range: non-arguments untouched, argument `r` in
 `[-1, |W r|]`. -/
 def RegBox (cs : CallSpec m d Λ) (c0pos : Fin m → ℤ) (W : Fin m → List Bool)
     (p : Fin m → ℤ) : Prop :=
   ∀ r, (r ∉ cs.args → p r = c0pos r) ∧ (r ∈ cs.args → -1 ≤ p r ∧ p r ≤ (W r).length)
+
+/-- `RegBox` unfolds to its per-register condition. -/
+lemma regBox_iff {cs : CallSpec m d Λ} {c0pos : Fin m → ℤ} {W : Fin m → List Bool}
+    {p : Fin m → ℤ} : RegBox cs c0pos W p ↔
+      ∀ r, (r ∉ cs.args → p r = c0pos r) ∧ (r ∈ cs.args → -1 ≤ p r ∧ p r ≤ (W r).length) :=
+  Iff.rfl
 
 /-- Restoring all argument registers, one after the other.
 

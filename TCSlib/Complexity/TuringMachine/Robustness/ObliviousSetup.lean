@@ -53,6 +53,42 @@ def setupCfg (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     Fin.addCases (fun i => base.workTapePos (i.castAdd 3))
     (fun j => if j.val = 0 then b else if j.val = 1 then u else g), base.output⟩
 
+/-- The setup configuration is in state `q`. -/
+lemma setupCfg_state (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (q : Option (OblPhase W.State a))
+    (p : Fin (x.length + 2)) (b u g : ℤ) (bt ut gt : ℤ → Option OblSymbol) :
+    (setupCfg W a base q p b u g bt ut gt).state = q := rfl
+
+/-- The setup configuration has its input head at `p`. -/
+lemma setupCfg_inputPos (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (q : Option (OblPhase W.State a))
+    (p : Fin (x.length + 2)) (b u g : ℤ) (bt ut gt : ℤ → Option OblSymbol) :
+    (setupCfg W a base q p b u g bt ut gt).inputPos = p := rfl
+
+/-- The setup configuration keeps the base's witness tapes and holds the three explicit
+administrative tapes. -/
+lemma setupCfg_workTapes (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (q : Option (OblPhase W.State a))
+    (p : Fin (x.length + 2)) (b u g : ℤ) (bt ut gt : ℤ → Option OblSymbol) :
+    (setupCfg W a base q p b u g bt ut gt).workTapes =
+      Fin.addCases (fun i => base.workTapes (i.castAdd 3))
+        (fun j => if j.val = 0 then bt else if j.val = 1 then ut else gt) := rfl
+
+/-- The setup configuration keeps the base's witness heads and places the three explicit
+administrative heads. -/
+lemma setupCfg_workTapePos (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (q : Option (OblPhase W.State a))
+    (p : Fin (x.length + 2)) (b u g : ℤ) (bt ut gt : ℤ → Option OblSymbol) :
+    (setupCfg W a base q p b u g bt ut gt).workTapePos =
+      Fin.addCases (fun i => base.workTapePos (i.castAdd 3))
+        (fun j => if j.val = 0 then b else if j.val = 1 then u else g) := rfl
+
+/-- The setup configuration keeps the base's output. -/
+lemma setupCfg_output (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
+    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (q : Option (OblPhase W.State a))
+    (p : Fin (x.length + 2)) (b u g : ℤ) (bt ut gt : ℤ → Option OblSymbol) :
+    (setupCfg W a base q p b u g bt ut gt).output = base.output := rfl
+
 /-- Applying a controller write to one explicit setup tape. -/
 def setupWrite {A : Type} (t : ℤ → Option A) (z : ℤ)
     (w : Option (Option A)) : ℤ → Option A :=

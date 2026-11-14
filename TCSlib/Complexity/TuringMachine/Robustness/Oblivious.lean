@@ -929,11 +929,13 @@ private lemma obliviousSchedule_ready (W : FinTM Bool) (a b : ℕ) (T : ℕ → 
     (hT : ∀ n, n ≤ T n) (x : List Bool) :
     ∃ t,
       let c := (obliviousSchedule W a).tm.runFrom ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) t
-      c.state = some .macroCheck ∧
-      c.workTapePos (Fin.natAdd W.k (1 : Fin 3)) = 1 ∧
-      c.workTapePos (Fin.natAdd W.k (2 : Fin 3)) = 0 ∧
-      c.workTapes (Fin.natAdd W.k (1 : Fin 3)) = unaryTape ((a + 1) * (T x.length + 1)) ∧
-      c.workTapes (Fin.natAdd W.k (2 : Fin 3)) = guideTape (3 * ((a + 1) * (T x.length + 1))) := by
+      c.state = some (cast (obliviousSchedule_State W a).symm (.macroCheck : OblPhase W.State a)) ∧
+      c.workTapePos (Fin.cast (obliviousSchedule_k W a).symm (Fin.natAdd W.k (1 : Fin 3))) = 1 ∧
+      c.workTapePos (Fin.cast (obliviousSchedule_k W a).symm (Fin.natAdd W.k (2 : Fin 3))) = 0 ∧
+      c.workTapes (Fin.cast (obliviousSchedule_k W a).symm (Fin.natAdd W.k (1 : Fin 3))) =
+        unaryTape ((a + 1) * (T x.length + 1)) ∧
+      c.workTapes (Fin.cast (obliviousSchedule_k W a).symm (Fin.natAdd W.k (2 : Fin 3))) =
+        guideTape (3 * ((a + 1) * (T x.length + 1))) := by
   obtain ⟨τ, _, c, hs, ho, hclock⟩ := clockStageCfg_captures W a b T hW x
   simp only [id_eq] at hclock
   have hv : budgetValue c.output = T x.length := by rw [ho, budgetValue_bits]
@@ -949,7 +951,20 @@ private lemma obliviousSchedule_ready (W : FinTM Bool) (a b : ℕ) (T : ℕ → 
       (14 * ((a + 1) * (T x.length + 1)) + 10)))), ?_⟩
   dsimp only
   rw [MultiTapeTM.runFrom_add, hclock, hinit]
-  simp [setupCfg]
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rw [setupCfg_state]; rfl
+  · rw [setupCfg_workTapePos]
+    show Fin.addCases (motive := fun _ => ℤ) _ _ (Fin.natAdd W.k (1 : Fin 3)) = _
+    rw [Fin.addCases_right]; rfl
+  · rw [setupCfg_workTapePos]
+    show Fin.addCases (motive := fun _ => ℤ) _ _ (Fin.natAdd W.k (2 : Fin 3)) = _
+    rw [Fin.addCases_right]; rfl
+  · rw [setupCfg_workTapes]
+    show Fin.addCases (motive := fun _ => ℤ → Option OblSymbol) _ _ (Fin.natAdd W.k (1 : Fin 3)) = _
+    rw [Fin.addCases_right]; rfl
+  · rw [setupCfg_workTapes]
+    show Fin.addCases (motive := fun _ => ℤ → Option OblSymbol) _ _ (Fin.natAdd W.k (2 : Fin 3)) = _
+    rw [Fin.addCases_right]; rfl
 
 /-- The actual logical machine reaches the first macrostep with the initial
 source configuration represented on its data tapes and with no output yet.

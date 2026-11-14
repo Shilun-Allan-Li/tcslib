@@ -723,6 +723,32 @@ def clockStageCfg (W : FinTM Bool) (a : ℕ) {x : List Bool}
     Fin.addCases c.workTapePos (fun j => if j.val = 0 then c.output.length + 1 else if j.val = 1 then 1 else 0),
     []⟩
 
+/-- The clock stage runs the witness's state, and enters the reset once the witness halts. -/
+lemma clockStageCfg_state (W : FinTM Bool) (a : ℕ) {x : List Bool} (c : Cfg W.k Bool W.State x) :
+    (clockStageCfg W a c).state = some ((c.state.map OblPhase.clock).getD .resetStart) := rfl
+
+/-- The clock stage keeps the witness's input head position. -/
+lemma clockStageCfg_inputPos_val (W : FinTM Bool) (a : ℕ) {x : List Bool}
+    (c : Cfg W.k Bool W.State x) : (clockStageCfg W a c).inputPos.val = c.inputPos.val := rfl
+
+/-- The clock stage's tapes: the witness's tapes as bits, the clock tape holding the witness's
+output, a clock tape holding nothing, and a blank guide tape. -/
+lemma clockStageCfg_workTapes (W : FinTM Bool) (a : ℕ) {x : List Bool}
+    (c : Cfg W.k Bool W.State x) :
+    (clockStageCfg W a c).workTapes = Fin.addCases (fun i z => (c.workTapes i z).map OblSymbol.bit)
+      (fun j => if j.val = 0 then clockTape c.output else if j.val = 1 then clockTape [] else
+        fun _ => none) := rfl
+
+/-- The clock stage's heads: the witness's heads, then the three administrative heads. -/
+lemma clockStageCfg_workTapePos (W : FinTM Bool) (a : ℕ) {x : List Bool}
+    (c : Cfg W.k Bool W.State x) :
+    (clockStageCfg W a c).workTapePos = Fin.addCases c.workTapePos
+      (fun j => if j.val = 0 then c.output.length + 1 else if j.val = 1 then 1 else 0) := rfl
+
+/-- The clock stage emits nothing. -/
+lemma clockStageCfg_output (W : FinTM Bool) (a : ℕ) {x : List Bool} (c : Cfg W.k Bool W.State x) :
+    (clockStageCfg W a c).output = [] := rfl
+
 /-- The clock-stage input read agrees with the masked native read. -/
 private lemma clockStageCfg_input (W : FinTM Bool) (a : ℕ) {x : List Bool}
     (c : Cfg W.k Bool W.State x) :

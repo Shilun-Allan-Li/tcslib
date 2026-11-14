@@ -54,6 +54,16 @@ def trackPos (segs : List Seg) (s : ℕ) : TPos → ℤ
   | .cell c _ => c
   | .right => wlen segs s
 
+/-- The left end of a segment is at register position `-1`. -/
+lemma trackPos_left (segs : List Seg) (s : ℕ) : trackPos segs s .left = -1 := rfl
+
+/-- A cell of a segment is at its own index. -/
+lemma trackPos_cell (segs : List Seg) (s c : ℕ) (p : Bool) :
+    trackPos segs s (.cell c p) = c := rfl
+
+/-- The right end of a segment is at its word length. -/
+lemma trackPos_right (segs : List Seg) (s : ℕ) : trackPos segs s .right = wlen segs s := rfl
+
 /-- Whether a track position is a cell. -/
 def TPos.isCell : TPos → Bool
   | .cell _ _ => true
@@ -64,6 +74,18 @@ def Consistent (segs : List Seg) (s : ℕ) (par dir : Bool) : TPos → Prop
   | .left => dir = false
   | .right => dir = true
   | .cell _ p => (seg segs s).2 = true → p = par
+
+/-- At the left end, consistency says the last track move went left. -/
+lemma consistent_left_iff (segs : List Seg) (s : ℕ) (par dir : Bool) :
+    Consistent segs s par dir .left ↔ dir = false := Iff.rfl
+
+/-- At the right end, consistency says the last track move went right. -/
+lemma consistent_right_iff (segs : List Seg) (s : ℕ) (par dir : Bool) :
+    Consistent segs s par dir .right ↔ dir = true := Iff.rfl
+
+/-- On a cell, consistency says the stored parity is the cell's copy, in a doubled segment. -/
+lemma consistent_cell_iff (segs : List Seg) (s c : ℕ) (p par dir : Bool) :
+    Consistent segs s par dir (.cell c p) ↔ ((seg segs s).2 = true → p = par) := Iff.rfl
 
 /-- **The local bookkeeping is `tmove`**: `gstep` computes the new segment of `tmove`, a
 consistent parity and direction, and moves the current track's head to the new track
@@ -211,6 +233,14 @@ def inPos (cs : CallSpec m d Λ) (x : List Bool) (W : Fin m → List Bool) (s : 
     ℕ :=
   if s = 0 then (trackPos (callSegs cs x W) 0 tp + 1).toNat else wlen (callSegs cs x W) 0 + 1
 
+/-- In segment `0` the real input head is one cell right of the track position. -/
+lemma inPos_zero (cs : CallSpec m d Λ) (x : List Bool) (W : Fin m → List Bool) (tp : TPos) :
+    inPos cs x W 0 tp = (trackPos (callSegs cs x W) 0 tp + 1).toNat := rfl
+
+/-- Past segment `0` the real input head rests on the cell after the input word. -/
+lemma inPos_of_ne_zero (cs : CallSpec m d Λ) (x : List Bool) (W : Fin m → List Bool) {s : ℕ}
+    (tp : TPos) (hs : s ≠ 0) : inPos cs x W s tp = wlen (callSegs cs x W) 0 + 1 := if_neg hs
+
 /-- The compiled configuration `g` represents the decider configuration `dc` with the
 virtual head at segment `s`, track position `tp`; registers hold their call-time contents. -/
 structure TrackRel (g : Cfg (m + kD) Bool (CSt Λ SD m) x)
@@ -242,6 +272,44 @@ def HaltRel (g : Cfg (m + kD) Bool (CSt Λ SD m) x)
     TrackRel c0 cs W g dc s par dir tp
 
 variable {c0 cs W}
+
+variable {l} in
+/-- `SimRel` unfolds to its witnesses: the decider state, segment, parity, direction and
+track position, with the compiled state, the decider state and the track relation. -/
+lemma simRel_iff {g : Cfg (m + kD) Bool (CSt Λ SD m) x}
+    {dc : Cfg kD Bool SD (vword (callSegs cs x W))} :
+    SimRel c0 l cs W g dc ↔ ∃ (q : SD) (s : Fin (m + 1)) (par dir : Bool) (tp : TPos),
+      g.state = some (.sim l q s par dir dc.output.head?) ∧ dc.state = some q ∧
+      TrackRel c0 cs W g dc s par dir tp := Iff.rfl
+
+variable {l} in
+/-- `HaltRel` unfolds to its witnesses: the segment, parity, direction and track position,
+with the compiled return state, the decider's halt and the track relation. -/
+lemma haltRel_iff {g : Cfg (m + kD) Bool (CSt Λ SD m) x}
+    {dc : Cfg kD Bool SD (vword (callSegs cs x W))} :
+    HaltRel c0 l cs W g dc ↔ ∃ (s : Fin (m + 1)) (par dir : Bool) (tp : TPos),
+      g.state = some (.ret1 l s dir (dc.output.head?.getD false)) ∧ dc.state = none ∧
+      TrackRel c0 cs W g dc s par dir tp := Iff.rfl
+
+/-- A register outside the call's arguments keeps its program position. -/
+lemma regPos_of_not_mem {s : ℕ} {r : Fin m} (tp : TPos) (hr : r ∉ cs.args) :
+    regPos c0 cs W s tp r = c0.workTapePos r := if_neg hr
+
+/-- An argument register whose segment is behind the current one rests on its right end. -/
+lemma regPos_of_lt {s : ℕ} {r : Fin m} (tp : TPos) (hr : r ∈ cs.args)
+    (h : cs.args.idxOf r + 1 < s) :
+    regPos c0 cs W s tp r = wlen (callSegs cs x W) (cs.args.idxOf r + 1) := by
+  rw [regPos, if_pos hr, if_pos h]
+
+/-- An argument register whose segment is ahead of the current one rests on its left end. -/
+lemma regPos_of_gt {s : ℕ} {r : Fin m} (tp : TPos) (hr : r ∈ cs.args)
+    (h : s < cs.args.idxOf r + 1) : regPos c0 cs W s tp r = -1 := by
+  rw [regPos, if_pos hr, if_neg (by omega), if_pos h]
+
+/-- The argument register of the current segment is at the track position. -/
+lemma regPos_of_eq {s : ℕ} {r : Fin m} (tp : TPos) (hr : r ∈ cs.args)
+    (h : s = cs.args.idxOf r + 1) : regPos c0 cs W s tp r = trackPos (callSegs cs x W) s tp := by
+  rw [regPos, if_pos hr, if_neg (by omega), if_neg (by omega)]
 
 /-- **The track reading**: the compiled machine's reading of the current track classifies
 the track position correctly and yields the virtual input symbol there.

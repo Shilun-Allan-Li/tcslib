@@ -119,6 +119,28 @@ def ccfg {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))
     (Dt : Fin k → ℤ → Option Bool) (Dp : Fin k → ℤ) (Mt : Fin k → ℤ → Option Bool)
     (Mp : Fin k → ℤ) (out : List Bool) : (ccfg st ip Dt Dp Mt Mp out).state = st := rfl
 
+/-- The configuration built by `ccfg … ip …` has its input head at `ip`. -/
+lemma ccfg_inputPos {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))
+    (Dt : Fin k → ℤ → Option Bool) (Dp : Fin k → ℤ) (Mt : Fin k → ℤ → Option Bool)
+    (Mp : Fin k → ℤ) (out : List Bool) : (ccfg st ip Dt Dp Mt Mp out).inputPos = ip := rfl
+
+/-- The work tapes of `ccfg` are the decider tapes followed by the mark tapes. -/
+lemma ccfg_workTapes {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))
+    (Dt : Fin k → ℤ → Option Bool) (Dp : Fin k → ℤ) (Mt : Fin k → ℤ → Option Bool)
+    (Mp : Fin k → ℤ) (out : List Bool) :
+    (ccfg st ip Dt Dp Mt Mp out).workTapes = Fin.append Dt Mt := rfl
+
+/-- The work-head positions of `ccfg` are the decider heads followed by the mark heads. -/
+lemma ccfg_workTapePos {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))
+    (Dt : Fin k → ℤ → Option Bool) (Dp : Fin k → ℤ) (Mt : Fin k → ℤ → Option Bool)
+    (Mp : Fin k → ℤ) (out : List Bool) :
+    (ccfg st ip Dt Dp Mt Mp out).workTapePos = Fin.append Dp Mp := rfl
+
+/-- The configuration built by `ccfg … out` has output `out`. -/
+lemma ccfg_output {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))
+    (Dt : Fin k → ℤ → Option Bool) (Dp : Fin k → ℤ) (Mt : Fin k → ℤ → Option Bool)
+    (Mp : Fin k → ℤ) (out : List Bool) : (ccfg st ip Dt Dp Mt Mp out).output = out := rfl
+
 /-- A `ccfg` configuration reads mark tape `i` at the mark head position. -/
 @[simp] lemma ccfg_mark {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))
     (Dt : Fin k → ℤ → Option Bool) (Dp : Fin k → ℤ) (Mt : Fin k → ℤ → Option Bool)
@@ -180,9 +202,24 @@ marks on the rest of `[a, b]`. -/
 def markI (a b : ℤ) (z : ℤ) : Option Bool :=
   if z = 0 then some true else if a ≤ z ∧ z ≤ b then some false else none
 
+/-- The interval mark tape has the origin mark at `0`. -/
+lemma markI_zero (a b : ℤ) : markI a b 0 = some true := if_pos rfl
+
+/-- The interval mark tape has a plain mark on the rest of `[a, b]`. -/
+lemma markI_of_mem {a b z : ℤ} (hz : z ≠ 0) (h : a ≤ z ∧ z ≤ b) : markI a b z = some false := by
+  rw [markI, if_neg hz, if_pos h]
+
+/-- The interval mark tape is blank outside `[a, b]` and away from the origin. -/
+lemma markI_of_not_mem {a b z : ℤ} (hz : z ≠ 0) (h : ¬(a ≤ z ∧ z ≤ b)) : markI a b z = none := by
+  rw [markI, if_neg hz, if_neg h]
+
 /-- All heads of a configuration of the cleaned machine lie in `[-B, B]`. -/
 def PB {x : List Bool} (B : ℤ) (g : Cfg (k + k) Bool (CleanSt S k) x) : Prop :=
   ∀ j, |g.workTapePos j| ≤ B
+
+/-- `PB B g` says that every work head of `g` lies in `[-B, B]`. -/
+lemma PB_iff {x : List Bool} {B : ℤ} {g : Cfg (k + k) Bool (CleanSt S k) x} :
+    PB B g ↔ ∀ j, |g.workTapePos j| ≤ B := Iff.rfl
 
 /-- A `ccfg` configuration whose decider and mark heads are within `B` of the origin has all
 work heads within `B`. -/

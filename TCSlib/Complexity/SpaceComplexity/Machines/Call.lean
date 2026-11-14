@@ -168,11 +168,8 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
       mkCfg (some (.sim l (q0 cs.dec) 0 false true none)) c0.inputPos c0.workTapes
         (fun r => c0.workTapePos r + ((if r ∈ cs.args then -1 else 0 : SignType) : ℤ))
         (fun _ _ => none) (fun _ => 0) c0.output := by
-    rw [seam_eq_mkCfg]
-    unfold MultiTapeTM.step
-    simp only [mkCfg_state, hl, Option.map_some]
-    simp only [compileTM, ctr, hcall]
-    rw [apply_moves, moveInputPos_zero]
+    rw [seam_eq_mkCfg, MultiTapeTM.step_of_some (q := .prog l) (by rw [mkCfg_state, hl]; rfl),
+      compileTM_tr_prog_call P l₀ D q0 hcall, apply_moves, moveInputPos_zero]
   -- the first halting time of the decider
   have hex : ∃ t, (D.runFrom dc0 t).state = none := ⟨T, hTh⟩
   set T0 := Nat.find hex with hT0def
@@ -184,41 +181,59 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
       MultiTapeTM.runFrom_of_halt _ hT0]
   have hT0pos : 0 < T0 := by
     rcases Nat.eq_zero_or_pos T0 with h | h
-    · rw [h] at hT0; simp [dc0] at hT0
+    · rw [h, MultiTapeTM.runFrom_zero, hdc0, Cfg.init_state] at hT0
+      exact absurd hT0 (Option.some_ne_none _)
     · exact h
   -- the simulation relation at the start
   have hsim0 : SimRel c0 l cs W ((compileTM P l₀ D q0).step (seam c0)) dc0 := by
     have hw0 := wlen_zero_le cs x W
     let tp : TPos := if wlen (callSegs cs x W) 0 = 0 then .right else .cell 0 false
-    refine ⟨q0 cs.dec, 0, false, true, tp, ?_, rfl, ?_⟩
-    · rw [hsetup]; rfl
+    refine simRel_iff.mpr ⟨q0 cs.dec, 0, false, true, tp, ?_, by rw [hdc0, Cfg.init_state], ?_⟩
+    · rw [hsetup, mkCfg_state, hdc0, Cfg.init_output]; rfl
     refine ⟨by simp, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-    · simp only [tp]; split_ifs with h <;> simp [TPos.Valid]; omega
-    · simp only [tp]; split_ifs <;> simp [Consistent]
-    · simp only [tp, dc0, Cfg.init]
+    · simp only [tp, Fin.val_zero]
       split_ifs with h
-      · simp only [vpos, wlen, rlen] at h ⊢; split <;> simp_all
-      · simp [vpos, off_zero, cellOff]
-    · rw [hsetup]
-      simp only [mkCfg, tp, inPos, Fin.val_zero, ↓reduceIte, hin]
-      split_ifs with h <;> simp [trackPos, h]
-    · intro r; rw [hsetup]; simp [mkCfg]
+      · exact TPos.valid_right _ _
+      · rw [TPos.valid_cell_iff]; omega
+    · simp only [tp, Fin.val_zero]
+      split_ifs
+      · exact (consistent_right_iff _ _ _ _).mpr rfl
+      · exact (consistent_cell_iff _ _ _ _ _ _).mpr fun _ => rfl
+    · simp only [tp, hdc0, Cfg.init_inputPos, Fin.val_zero]
+      split_ifs with h
+      · rw [vpos_right, off_zero]
+        rw [wlen_eq] at h
+        cases hb : (seg (callSegs cs x W) 0).2
+        · rw [rlen_of_plain hb, h]; rfl
+        · rw [rlen_of_doubled hb, h]; rfl
+      · rw [vpos_cell, off_zero]
+        cases hb : (seg (callSegs cs x W) 0).2
+        · rw [cellOff_of_plain _ _ _ _ hb]; rfl
+        · rw [cellOff_of_doubled _ _ _ _ hb]; rfl
+    · rw [hsetup, mkCfg_inputPos, Fin.val_zero, inPos_zero, hin]
+      simp only [tp]
+      split_ifs with h
+      · rw [trackPos_right, h]; rfl
+      · rw [trackPos_cell]; rfl
+    · intro r; rw [hsetup, mkCfg_workTapes, Fin.append_left]
     · intro r
-      rw [hsetup]
-      simp only [mkCfg, Fin.append_left, regPos]
+      rw [hsetup, mkCfg_workTapePos, Fin.append_left]
       by_cases hr : r ∈ cs.args
-      · simp [hr, hW0 r hr]
-      · simp [hr]
-    · intro i; rw [hsetup]; simp [mkCfg, dc0, Cfg.init]
-    · intro i; rw [hsetup]; simp [mkCfg, dc0, Cfg.init]
-    · rw [hsetup]; rfl
+      · rw [regPos_of_gt _ hr (by simp)]; simp [hr, hW0 r hr]
+      · rw [regPos_of_not_mem _ hr]; simp [hr]
+    · intro i; rw [hsetup, mkCfg_workTapes, Fin.append_right, hdc0]; funext z; rw [Cfg.init_workTapes]
+    · intro i; rw [hsetup, mkCfg_workTapePos, Fin.append_right, hdc0, Cfg.init_workTapePos]
+    · rw [hsetup, mkCfg_output]
   -- the simulation, up to the halt
   have hsim : ∀ t ≤ T0, (t < T0 → SimRel c0 l cs W ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) t)
         (D.runFrom dc0 t)) ∧
       (t = T0 → HaltRel c0 l cs W ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) t) (D.runFrom dc0 t)) := by
     intro t
     induction t with
-    | zero => intro _; exact ⟨fun _ => hsim0, fun h => absurd h (by omega)⟩
+    | zero =>
+      intro _
+      rw [MultiTapeTM.runFrom_zero, MultiTapeTM.runFrom_zero]
+      exact ⟨fun _ => hsim0, fun h => absurd h (by omega)⟩
     | succ t ih =>
       intro ht
       have h := (ih (by omega)).1 (by omega)
@@ -234,32 +249,29 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
         rw [← MultiTapeTM.runFrom_succ_eq_step', heq]
         exact hT0
   -- the halt
-  obtain ⟨s, par, dir, tp, hgst, -, R⟩ := (hsim T0 le_rfl).2 rfl
+  obtain ⟨s, par, dir, tp, hgst, -, R⟩ := haltRel_iff.mp ((hsim T0 le_rfl).2 rfl)
   have hout0 : (D.runFrom dc0 T0).output = [b] := by rw [← hfin]; exact hTo
   have hb : ((D.runFrom dc0 T0).output.head?.getD false) = b := by rw [hout0]; rfl
   set gH := (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0 with hgH
   have hgHeq : gH = mkCfg (some (.ret1 l s dir b)) gH.inputPos c0.workTapes
       (regPos c0 cs W s tp) (fun _ _ => none) (fun _ => 0) c0.output := by
-    refine Cfg.ext (by rw [hgst, hb]; rfl) rfl ?_ ?_ R.out
+    refine Cfg.ext (by rw [mkCfg_state, hgst, hb]) (mkCfg_inputPos ..).symm ?_ ?_
+      (R.out.trans (mkCfg_output ..).symm)
     · funext i z
       refine Fin.addCases (fun r => ?_) (fun j => ?_) i
-      · simp [mkCfg, R.regTape]
-      · simp only [mkCfg, Fin.append_right, R.dTape]
-        rw [← hfin, hTt]
+      · rw [mkCfg_workTapes, Fin.append_left, R.regTape]
+      · rw [mkCfg_workTapes, Fin.append_right, R.dTape, ← hfin, hTt]
     · funext i
       refine Fin.addCases (fun r => ?_) (fun j => ?_) i
-      · simp [mkCfg, R.regPos]
-      · simp only [mkCfg, Fin.append_right, R.dPos]
-        rw [← hfin, hTp]
+      · rw [mkCfg_workTapePos, Fin.append_left, R.regPos]
+      · rw [mkCfg_workTapePos, Fin.append_right, R.dPos, ← hfin, hTp]
   -- the return: input rewind
   have hret1 : (compileTM P l₀ D q0).step gH =
       mkCfg (some (.ret2 l s dir b)) (moveInputPos gH.inputPos (-1)) c0.workTapes
         (regPos c0 cs W s tp) (fun _ _ => none) (fun _ => 0) c0.output := by
     conv_lhs => rw [hgHeq]
-    unfold MultiTapeTM.step
-    simp only [mkCfg_state]
-    simp only [compileTM, ctr]
-    rw [apply_inputOnly]
+    rw [MultiTapeTM.step_of_some (q := .ret1 l s dir b) (mkCfg_state ..), compileTM_tr_ret1,
+      apply_inputOnly]
   have hj : (moveInputPos gH.inputPos (-1)).val ≤ x.length := by
     rw [show (-1 : SignType) = .neg from rfl, FinTM.moveInputPos_neg_val]
     have := gH.inputPos.isLt; omega
@@ -268,7 +280,7 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
   -- the return: argument registers
   have hbox0 := regPos_box (c0 := c0) hnd s tp R.valid R.hs
   have hret0 : retPos cs (regPos c0 cs W s tp) 0 = regPos c0 cs W s tp := by
-    funext r; simp [retPos]
+    funext r; exact retPos_of_le _ _ (Nat.zero_le _)
   obtain ⟨T₃, hb3, hr3⟩ := regs_run P l₀ D q0 l cs hcall hnd s dir b W c0.workTapes hW
     (fun _ _ => none) (fun _ => 0) c0.output 1 c0.workTapePos (regPos c0 cs W s tp) hbox0
     (fun a ha hm => regPos_side hnd s par dir tp R.cons R.valid a ha hm)
@@ -276,10 +288,9 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
   rw [hret0] at hb3 hr3
   have hretL : retPos cs (regPos c0 cs W s tp) cs.args.length = c0.workTapePos := by
     funext r
-    unfold retPos
     by_cases hr : r ∈ cs.args
-    · simp [hr, List.idxOf_lt_length_of_mem hr, hW0 r hr]
-    · simp [hr, regPos]
+    · rw [retPos_of_lt _ _ hr (List.idxOf_lt_length_of_mem hr), hW0 r hr]
+    · rw [retPos_of_not_mem _ _ _ hr, regPos_of_not_mem _ hr]
   rw [hretL] at hr3
   -- assemble
   have hfinal : (mkCfg (some (CSt.prog (if b then cs.yes else cs.no))) 1 c0.workTapes
@@ -289,10 +300,8 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
     rw [seam_eq_mkCfg]; rfl
   refine ⟨1 + (T0 + (1 + ((moveInputPos gH.inputPos (-1)).val + 1 + T₃))), ?_, ?_⟩
   · -- the box along the whole call
-    have hregBoxSeam : RegBox cs c0.workTapePos W c0.workTapePos := by
-      intro r
-      refine ⟨fun _ => rfl, fun hr => ?_⟩
-      rw [hW0 r hr]; simp
+    have hregBoxSeam : RegBox cs c0.workTapePos W c0.workTapePos :=
+      regBox_iff.mpr fun r => ⟨fun _ => rfl, fun hr => by rw [hW0 r hr]; simp⟩
     let Q : Cfg (m + kD) Bool (CSt Λ SD m) x → Prop := fun g =>
       RegBox cs c0.workTapePos W (fun r => g.workTapePos (Fin.castAdd kD r)) ∧
         ∀ i, |g.workTapePos (Fin.natAdd m i)| ≤ B
@@ -301,13 +310,14 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
     · intro t ht
       rcases Nat.eq_zero_or_pos t with h | h
       · subst h
-        refine ⟨by simpa [seam] using hregBoxSeam, fun i => by simp [seam]⟩
+        rw [MultiTapeTM.runFrom_zero, seam_eq_mkCfg]
+        refine ⟨by simpa only [mkCfg_workTapePos, Fin.append_left] using hregBoxSeam, fun i => ?_⟩
+        rw [mkCfg_workTapePos, Fin.append_right]; simp
       · obtain rfl : t = 1 := by omega
         rw [show (compileTM P l₀ D q0).runFrom (seam c0) 1 = ((compileTM P l₀ D q0).step (seam c0)) from MultiTapeTM.runFrom_one _ _]
-        obtain ⟨_, _, _, _, _, _, _, R0⟩ := hsim0
-        refine ⟨?_, fun i => ?_⟩
-        · intro r; simp only [R0.regPos]; exact regPos_box hnd _ _ R0.valid R0.hs r
-        · rw [R0.dPos]; simp [dc0, Cfg.init]
+        obtain ⟨_, _, _, _, _, _, _, R0⟩ := simRel_iff.mp hsim0
+        refine ⟨by simpa only [R0.regPos] using regPos_box hnd _ _ R0.valid R0.hs, fun i => ?_⟩
+        rw [R0.dPos, hdc0, Cfg.init_workTapePos]; simp
     rw [show (compileTM P l₀ D q0).runFrom (seam c0) 1 = (compileTM P l₀ D q0).step (seam c0)
       from MultiTapeTM.runFrom_one _ _]
     apply runFrom_forall_append (Q := Q)
@@ -315,31 +325,33 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
       have hTR : ∃ s par dir tp, TrackRel c0 cs W ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) t)
           (D.runFrom dc0 t) s par dir tp := by
         rcases Nat.lt_or_ge t T0 with h | h
-        · obtain ⟨_, s', par', dir', tp', -, -, R'⟩ := (hsim t ht).1 h
+        · obtain ⟨_, s', par', dir', tp', -, -, R'⟩ := simRel_iff.mp ((hsim t ht).1 h)
           exact ⟨s', par', dir', tp', R'⟩
-        · obtain ⟨s', par', dir', tp', -, -, R'⟩ := (hsim t ht).2 (by omega)
+        · obtain ⟨s', par', dir', tp', -, -, R'⟩ := haltRel_iff.mp ((hsim t ht).2 (by omega))
           exact ⟨s', par', dir', tp', R'⟩
       obtain ⟨s', par', dir', tp', R'⟩ := hTR
       refine ⟨?_, fun i => ?_⟩
-      · intro r; simp only [R'.regPos]; exact regPos_box hnd s' tp' R'.valid R'.hs r
+      · simpa only [R'.regPos] using regPos_box hnd s' tp' R'.valid R'.hs
       · rw [R'.dPos]; exact hTb t (by omega) i
     apply runFrom_forall_append (Q := Q)
     · intro t ht
       rcases Nat.eq_zero_or_pos t with h | h
       · subst h
         rw [MultiTapeTM.runFrom_zero, ← hgH, hgHeq]
-        exact ⟨fun r => by simpa [mkCfg] using hbox0 r, fun i => by simp [mkCfg]⟩
+        exact ⟨by simpa only [mkCfg_workTapePos, Fin.append_left] using hbox0,
+          fun i => by rw [mkCfg_workTapePos, Fin.append_right]; simp⟩
       · obtain rfl : t = 1 := by omega
         rw [show (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0) 1 =
           (compileTM P l₀ D q0).step gH from MultiTapeTM.runFrom_one _ _, hret1]
-        exact ⟨fun r => by simpa [mkCfg] using hbox0 r, fun i => by simp [mkCfg]⟩
+        exact ⟨by simpa only [mkCfg_workTapePos, Fin.append_left] using hbox0,
+          fun i => by rw [mkCfg_workTapePos, Fin.append_right]; simp⟩
     rw [show (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0) 1 =
       (compileTM P l₀ D q0).step gH from MultiTapeTM.runFrom_one _ _, hret1]
     apply runFrom_forall_append (Q := Q)
     · intro t ht
       dsimp only [Q]
       rw [hb2 t ht]
-      exact ⟨fun r => by simpa using hbox0 r, fun i => by simp⟩
+      exact ⟨by simpa using hbox0, fun i => by simp⟩
     rw [hr2]
     intro t ht
     dsimp only [Q]
