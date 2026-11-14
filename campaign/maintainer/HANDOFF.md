@@ -16,7 +16,7 @@ Campaign Lean is `b313afe522991f2114390952f26ffe7de825bace`. Its replay output i
 
 | PR / gate | Current state |
 |---|---|
-| #302 / 135 | **Not yet clear to merge.** The 7 Ladner owner readers R1–R6 at `50bb801a` (approved 2026-11-14). Replay, seals, controls, screen done; Codex gate 135 being staged. Base of Ladner fill 1. See campaign/gates/135-ladner-readers/. |
+| #302 / 135 | **Not yet clear to merge.** The 7 Ladner owner readers R1–R6 at `50bb801a` (approved 2026-11-14). Replay, seals, controls, screen done; Codex gate 135 ready to dispatch (prompt.md, exchange `7c8981c9`). Base of Ladner fill 1. See campaign/gates/135-ladner-readers/. |
 | #301 / 134 | **Merged** at `b313afe522991f2114390952f26ffe7de825bace` (2026-11-14). Gate closed (CLEAR). Its replay output is the campaign snapshot `oleans-cb313` (876 objects; campaign/status/2026-11-14-merge-301/). |
 | #300 / 133 | **Clear to merge.** Gate 133 closed: round 2 CLEAR (0/0/0, 9 notes) at `4ddce70c45e0a397fbc4d9a25ac925da80e05cda` (round 1 HOLD, repaired). Replay on campaign Lean `b313afe5` (still current); merges cleanly. Draft: mark ready, then merge; then adopt `oleans-rd133-cb313`. |
 | #296 / 132 | **Merged** at `5ab222167eb12664d97d255766c5def15b6d5d50` (2026-11-14). Gate closed (round 3 CLEAR). Its replay output is the campaign snapshot `oleans-c5ab2` (876 objects; campaign/status/2026-11-14-merge-296/). |
