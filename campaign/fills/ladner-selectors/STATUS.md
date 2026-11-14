@@ -1,3 +1,2 @@
-**Dispatched (2026-11-14) to Codex** on the user's Mac, in a checkout of the exchange branch (at most 3 Lean processes machine-wide).
-Ladner fill 1: targets 3 and 4, the selector theorems. Base `50bb801a` (#302). Pre-shipped (preship/).
-Delivery expected under `arora-barak-ch3-4/inbox/fill-ladner-selectors/` (checkpoints and final zip) and attached in chat.
+**Delivered (2026-11-14) and landed as #304** (gate 136 pending). Codex proved both targets
+(`fill-ladner-selectors.zip`, SHA-256 `fc3b3d9aa5dc89666d4fa0a93907d0527cf2f22ec18446722d45c11a6fa61403`, in the gate 136 carrier).
