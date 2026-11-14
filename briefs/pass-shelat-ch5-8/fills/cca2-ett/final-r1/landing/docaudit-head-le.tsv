@@ -1,0 +1,250 @@
+NO-FORMULA	EncryptThenTag.lean:626	ccaScheme_cca2	theorem	**Theorem 170.4: `π′` is CCA2-secure** [PS10, Theorem 170.4] when `F` is a pseudorandom function family.  **Pr
+NO-FORMULA	EncryptThenTag/CPAHandler.lean:66	ETTGame.encE	def	The string entry of a lazy-table entry `(p, t, m)`: `(⟦p⟧, ⟦t⟧ ++ m)`.
+OK	EncryptThenTag/CPAHandler.lean:69	ETTGame.encE_eq	theorem	`encE e = (⟦e.1⟧, ⟦e.2.1⟧ ++ e.2.2)`.
+NO-FORMULA	EncryptThenTag/CPAHandler.lean:72	ETTGame.tblW	def	**The table word** of a lazy table: the nested pairs of its string entries (`GGMRed.tblEnc`).
+OK	EncryptThenTag/CPAHandler.lean:75	ETTGame.tblW_eq	theorem	`tblW L = GGMRed.tblEnc (L.map encE)`.
+NO-FORMULA	EncryptThenTag/CPAHandler.lean:78	ETTGame.tblW_nil	theorem	The table word of the empty table is empty.
+OK	EncryptThenTag/CPAHandler.lean:82	ETTGame.tblW_cons	theorem	A new entry is the first pair of the table word: `tblW (e :: L) = ⟨⟨⟦p⟧, ⟦t⟧ ++ m⟩, tblW L⟩`.
+OK	EncryptThenTag/CPAHandler.lean:89	ETTGame.length_tblW	theorem	With `n`-bit messages, each entry adds `14n + 6` bits: `|tblW L| = |L| · (14n + 6)`.
+OK	EncryptThenTag/CPAHandler.lean:112	ETTGame.lookup_tblW	theorem	**The lookup on the table word is `lookL`:** `lookup ⟨⟦p⟧, tblW L⟩ = ⟨[], ⟦t⟧ ++ m⟩` for the newest entry `(p,
+NO-FORMULA	EncryptThenTag/CPAHandler.lean:131	ETTGame.bStLen	def	The state length `2q(14n + 6) + 2q + 6n + 9`.
+OK	EncryptThenTag/CPAHandler.lean:137	ETTGame.bStLen_eval	theorem	`(bStLen q).eval n = 2 q(n) (14n + 6) + 2 q(n) + 6n + 9`.
+NO-FORMULA	EncryptThenTag/CPAHandler.lean:142	ETTGame.bSeedLen	def	The seed length `q(n) · 2n`: one tag tape per query.
+OK	EncryptThenTag/CPAHandler.lean:145	ETTGame.bSeedLen_eval	theorem	`(bSeedLen q).eval n = q(n) · 2n`.
+NO-FORMULA	EncryptThenTag/CPAHandler.lean:149	ETTGame.bState	def	**The encoded state** with the table `L`, the query count `j` and the record `o`: `⟨tblW L, ⟨1^j, recBits o⟩⟩`
+OK	EncryptThenTag/CPAHandler.lean:155	ETTGame.bState_eq	theorem	`bState q n j L o = padFin _ ⟨tblW L, ⟨1^j, recBits n o⟩⟩`.
+OK	EncryptThenTag/CPAHandler.lean:161	ETTGame.bSeed	def	**The seed** from the tape word: `⟦bSeed q n W⟧ = ⟦W⟧`.
+OK	EncryptThenTag/CPAHandler.lean:165	ETTGame.bSeed_eq	theorem	`bSeed q n = arrowCongr (finCongr _) (refl Bool)`.
+OK	EncryptThenTag/CPAHandler.lean:169	ETTGame.ofFn_bSeed	theorem	`⟦bSeed q n W⟧ = ⟦W⟧`.
+NO-FORMULA	EncryptThenTag/CPAHandler.lean:174	ETTGame.bTapeOf	def	The tag tape `j` of the tape word: block `j` of `W`.
+OK	EncryptThenTag/CPAHandler.lean:179	ETTGame.bTapeOf_eq	theorem	`bTapeOf q n W j hj = blocks (q n) (2n) W ⟨j, hj⟩`.
+NO-FORMULA	EncryptThenTag/CPAHandler.lean:407	ETTGame.bHandler	def	**The handler of the CPA reduction** for the budget `q`: state `bState` (initially the empty table, count `0`,
+OK	EncryptThenTag/CPAHandler.lean:426	ETTGame.bHState	def	The encoded state at the handler's state type: `bHState q n j L o = bState q n j L o`.
+OK	EncryptThenTag/CPAHandler.lean:431	ETTGame.bHState_eq	theorem	`bHState q n j L o = bState q n j L o`.
+OK	EncryptThenTag/CPAHandler.lean:435	ETTGame.ofFn_bHState	theorem	`⟦bHState q n j L o⟧ = ⟦bState q n j L o⟧`.
+OK	EncryptThenTag/CPAHandler.lean:439	ETTGame.bHSeed	def	The seed at the handler's seed type: `bHSeed q n = bSeed q n`.
+OK	EncryptThenTag/CPAHandler.lean:444	ETTGame.bHSeed_eq	theorem	`bHSeed q n = bSeed q n`.
+OK	EncryptThenTag/CPAHandler.lean:447	ETTGame.ofFn_bHSeed	theorem	`⟦bHSeed q n W⟧ = ⟦W⟧`.
+NO-FORMULA	EncryptThenTag/CPAHandler.lean:452	ETTGame.bHandler_init_hstate	theorem	The initial state is the empty table, count `0` and no record.
+NO-FORMULA	EncryptThenTag/CPAHandler.lean:455	ETTGame.bHandler_advInput	theorem	The adversary's input is empty.
+OK	EncryptThenTag/CPAHandler.lean:461	ETTGame.bHandler_finish	theorem	The finalization outputs the adversary's bit and asks nothing: `(bHandler q).finish n z ω s a = pure (padFin _
+OK	EncryptThenTag/CPAHandler.lean:481	ETTGame.bKeyOf	def	The pair of an outer answer `y = ⟨r, c₁⟩`, read at `2n` bits: `bKeyOf n y = padFin (2n) (pairFstD ⟦y⟧ ++ pairS
+OK	EncryptThenTag/CPAHandler.lean:486	ETTGame.bKeyOf_eq	theorem	`bKeyOf n y = padFin (2n) (pairFstD ⟦y⟧ ++ pairSndD ⟦y⟧)`.
+OK	EncryptThenTag/CPAHandler.lean:620	ETTGame.bHandler_impl_enc	theorem	**Encryption:** from `bState j L o` with `j < q(n)`, the query `m = ⟦x⟧` asks the CPA encryption oracle at `m`
+OK	EncryptThenTag/CPAHandler.lean:667	ETTGame.bHandler_impl_dec	theorem	**Decryption:** from `bState j L o` with `j < q(n)`, the query `⟦x⟧` is answered by `lazyDec (o, L) ⟦x⟧` witho
+NO-FORMULA	EncryptThenTag/CPAHandler.lean:687	ETTGame.bHandler_impl_challenge_some	theorem	**A recorded challenge is repeated:** from `bState j L (some c)`, a challenge is answered `c` and the state is
+OK	EncryptThenTag/CPAHandler.lean:707	ETTGame.bHandler_impl_challenge_none	theorem	**The first challenge:** from `bState j L none` with `j < q(n)`, the challenge `⟦x⟧` asks the CPA challenge or
+OK	EncryptThenTag/CPAReduction.lean:55	ETTGame.cpaRec	def	**The CPA record** of a CCA2 record `c = ⟨r, ⟨c₁, t⟩⟩`: the pair `⟨r, c₁⟩` at `3n + 2` bits.
+OK	EncryptThenTag/CPAReduction.lean:59	ETTGame.cpaRec_eq	theorem	`cpaRec n c = padFin _ ⟨wR ⟦c⟧, wC ⟦c⟧⟩`.
+NO-FORMULA	EncryptThenTag/CPAReduction.lean:63	ETTGame.bAbs	def	**The abstraction:** the handler's state `bState j L o` and the CPA record of `o`, as functions of the lazy ex
+OK	EncryptThenTag/CPAReduction.lean:69	ETTGame.bAbs_eq	theorem	`bAbs q n ((o, L), j) = (bHState q n j L o, o.map (cpaRec n))`.
+NO-FORMULA	EncryptThenTag/CPAReduction.lean:73	ETTGame.bInv	def	**The invariant:** the table has at most one entry per query, each with an `n`-bit message.
+OK	EncryptThenTag/CPAReduction.lean:77	ETTGame.bInv_iff	theorem	`bInv n ((o, L), j) ↔ |L| ≤ j ∧ every message of `L` has `n` bits`.
+NO-FORMULA	EncryptThenTag/CPAReduction.lean:86	ETTGame.bTapes	def	The tag tapes of the tape word, extended to every index (`AdaptiveCPA.extTape`).
+OK	EncryptThenTag/CPAReduction.lean:90	ETTGame.bTapes_eq	theorem	`bTapes q n W = extTape (blocks (q n) (2n) W)`.
+OK	EncryptThenTag/CPAReduction.lean:95	ETTGame.bTapes_of_lt	theorem	Below `q(n)`, the extended tapes are the tapes: `bTapes q n W j = bTapeOf q n W j hj`.
+OK	EncryptThenTag/CPAReduction.lean:114	ETTGame.comp_bAbs	theorem	**One composed call has the law of a call of the lazy experiment with tapes in advance:** from `bAbs ((o, L), 
+NO-FORMULA	EncryptThenTag/CPAReduction.lean:202	ETTGame.ettLazyTape_bInv	theorem	**The calls of the lazy experiment keep the invariant** and raise the counter by one: an encryption adds one e
+NO-FORMULA	EncryptThenTag/CPAReduction.lean:241	ETTGame.exists_cpaStep	theorem	**Step 3 of [PS10, Thm 170.4]: the rejecting experiment with a random tag function is a CPA experiment of the 
+NO-FORMULA	EncryptThenTag/Forgery.lean:58	ETTGame.ettBad_agree	theorem	**From a good state the two experiments agree on good successors:** for every function `G` vanishing on flagge
+NO-FORMULA	EncryptThenTag/Forgery.lean:90	ETTGame.ettBad_stick	theorem	**The flag is sticky:** from a flagged state every successor is flagged.
+NO-FORMULA	EncryptThenTag/Forgery.lean:99	ETTGame.simulate_ettBad_fst	theorem	**The flag is a ghost:** forgetting it, the simulation of `ettBad` is the simulation of `ettImpl`, from every 
+OK	EncryptThenTag/Forgery.lean:111	ETTGame.abs_prob_ettImpl_rej_sub_le	theorem	**Identical until bad** [BR06]: for every event `P` on the output, the probabilities under the experiments wit
+NO-FORMULA	EncryptThenTag/Forgery.lean:151	ETTGame.RevInv	def	**The invariant of the revealed pairs** for a table `M` and a state `s`: every key of `M` is a listed pair or 
+NO-FORMULA	EncryptThenTag/Forgery.lean:161	ETTGame.revInv_iff	theorem	`RevInv M s` unfolded.
+NO-FORMULA	EncryptThenTag/Forgery.lean:172	ETTGame.revInv_nil	theorem	The empty table and the initial state satisfy the invariant.
+OK	EncryptThenTag/Forgery.lean:345	ETTGame.expect_prob_bad_le	theorem	**The bad probability with a random tag function** [PS10, Thm 170.4, proof]: for `n > 0`, `(6n + 4)`-bit recor
+OK	EncryptThenTag/Forgery.lean:495	ETTGame.abs_ettAcc_rej_sub_le	theorem	**Step 2 of [PS10, Thm 170.4]: fresh decryption queries are rejected.** For `n > 0`, `(6n + 4)`-bit records an
+NO-FORMULA	EncryptThenTag/Games.lean:67	ETTGame.pairV	def	The pair `r ‖ c₁` read as a `2n`-bit vector.
+OK	EncryptThenTag/Games.lean:70	ETTGame.pairV_eq	theorem	`pairV n r c = padFin (2n) (r ++ c)`.
+NO-FORMULA	EncryptThenTag/Games.lean:73	ETTGame.tagL	def	The tag `⟦g (r ‖ c₁)⟧`.
+OK	EncryptThenTag/Games.lean:77	ETTGame.tagL_eq	theorem	`tagL g r c = ⟦g (pairV n r c)⟧`.
+NO-FORMULA	EncryptThenTag/Games.lean:81	ETTGame.ctW	def	The ciphertext word `⟨r, ⟨c₁, t⟩⟩`.
+OK	EncryptThenTag/Games.lean:84	ETTGame.ctW_eq	theorem	`ctW r c t = ⟨r, ⟨c, t⟩⟩`.
+OK	EncryptThenTag/Games.lean:87	ETTGame.maskL	def	The mask `c₁ = m ⊕ ⟦f r⟧`.
+OK	EncryptThenTag/Games.lean:91	ETTGame.maskL_eq	theorem	`maskL f r m = m ⊕ ⟦f r⟧`.
+OK	EncryptThenTag/Games.lean:95	ETTGame.encW	def	**The encryption** of the message list `m` with the nonce `r`: `⟨r, ⟨c₁, ⟦g (r ‖ c₁)⟧⟩⟩` with `c₁ = maskL f r 
+OK	EncryptThenTag/Games.lean:101	ETTGame.encW_eq	theorem	`encW f g r m = ctW ⟦r⟧ c₁ (tagL g ⟦r⟧ c₁)` with `c₁ = maskL f r m`.
+OK	EncryptThenTag/Games.lean:106	ETTGame.encW_eq_ctW	theorem	**An encryption reads the tag function at its pair only:** `encW f g r m = ctW ⟦r⟧ c₁ ⟦g (pairV n ⟦r⟧ c₁)⟧` wi
+OK	EncryptThenTag/Games.lean:114	ETTGame.wR	def	The nonce field of a word: `wR w = pairFstD w`.
+OK	EncryptThenTag/Games.lean:117	ETTGame.wC	def	The mask field of a word: `wC w = pairFstD (pairSndD w)`.
+OK	EncryptThenTag/Games.lean:120	ETTGame.wT	def	The tag field of a word: `wT w = pairSndD (pairSndD w)`.
+OK	EncryptThenTag/Games.lean:123	ETTGame.wR_eq	theorem	`wR w = pairFstD w`.
+OK	EncryptThenTag/Games.lean:126	ETTGame.wC_eq	theorem	`wC w = pairFstD (pairSndD w)`.
+OK	EncryptThenTag/Games.lean:129	ETTGame.wT_eq	theorem	`wT w = pairSndD (pairSndD w)`.
+OK	EncryptThenTag/Games.lean:132	ETTGame.wR_ctW	theorem	The fields of a ciphertext word: `wR (ctW r c t) = r`.
+OK	EncryptThenTag/Games.lean:136	ETTGame.wC_ctW	theorem	The fields of a ciphertext word: `wC (ctW r c t) = c`.
+OK	EncryptThenTag/Games.lean:140	ETTGame.wT_ctW	theorem	The fields of a ciphertext word: `wT (ctW r c t) = t`.
+OK	EncryptThenTag/Games.lean:144	ETTGame.wfW	def	**Well-formedness:** the nonce and the mask fields have `n` bits, `wfW n w = (|wR w| = n && |wC w| = n)`.
+OK	EncryptThenTag/Games.lean:149	ETTGame.wfW_eq	theorem	`wfW n w = (decide (|wR w| = n) && decide (|wC w| = n))`.
+OK	EncryptThenTag/Games.lean:153	ETTGame.validW	def	**A valid word:** well formed, with the tag `wT w = tagL g (wR w) (wC w)`.
+OK	EncryptThenTag/Games.lean:157	ETTGame.validW_eq	theorem	`validW g w = (wfW n w && decide (wT w = tagL g (wR w) (wC w)))`.
+NO-FORMULA	EncryptThenTag/Games.lean:161	ETTGame.decL	def	**The decryption** of a word: `⟨1, wC w ⊕ ⟦f (wR w)⟧⟩`.
+OK	EncryptThenTag/Games.lean:165	ETTGame.decL_eq	theorem	`decL f w = true :: (wC w ⊕ ⟦f (padFin n (wR w))⟧)`.
+OK	EncryptThenTag/Games.lean:169	ETTGame.pairW	def	The pair of a word, as a `2n`-bit vector: `pairW n w = pairV n (wR w) (wC w)`.
+OK	EncryptThenTag/Games.lean:172	ETTGame.pairW_eq	theorem	`pairW n w = pairV n (wR w) (wC w)`.
+NO-FORMULA	EncryptThenTag/Games.lean:175	ETTGame.length_maskL	theorem	The mask of an `n`-bit message has `n` bits.
+NO-FORMULA	EncryptThenTag/Games.lean:180	ETTGame.length_encW	theorem	**The ciphertext length:** an encryption of an `n`-bit message has `6n + 4` bits.
+OK	EncryptThenTag/Games.lean:188	ETTGame.eq_ctW_of_wfW	theorem	**Canonical parsing:** for `n > 0`, a well-formed word is the ciphertext word of its fields, `w = ctW (wR w) (
+NO-FORMULA	EncryptThenTag/Games.lean:206	ETTGame.wfW_encW	theorem	An encryption is well formed: `wfW n (encW f g r m)` for an `n`-bit `m`.
+OK	EncryptThenTag/Games.lean:213	ETTGame.eq_of_pairV_eq	theorem	**Pairs of `n`-bit fields determine the fields:** if `|r| = |c| = |r'| = |c'| = n` and `pairV n r c = pairV n 
+NO-FORMULA	EncryptThenTag/Games.lean:233	ETTGame.St	abbrev	**The state of the experiment:** the recorded challenge and the pairs of the `Enc` answers.
+OK	EncryptThenTag/Games.lean:236	ETTGame.St_eq	theorem	`St n d = Option (Fin d → Bool) × List (Fin (2n) → Bool)`.
+OK	EncryptThenTag/Games.lean:239	ETTGame.refW	def	**The refusal test:** the word `w` is the recorded challenge, `refW (some c) w = (⟦c⟧ = w)`, `refW none w = fa
+OK	EncryptThenTag/Games.lean:246	ETTGame.refW_none	theorem	`refW none w = false`.
+OK	EncryptThenTag/Games.lean:249	ETTGame.refW_some	theorem	`refW (some c) w = decide (⟦c⟧ = w)`.
+NO-FORMULA	EncryptThenTag/Games.lean:253	ETTGame.decAnsW	def	**The decryption answer** in state `s`, with fresh pairs rejected when `rej` holds: `decL f w` if `w` is not r
+OK	EncryptThenTag/Games.lean:259	ETTGame.decAnsW_eq	theorem	`decAnsW f g rej s w = if !refW s.1 w && validW g w && (!rej || pairW n w ∈ s.2) then decL f w else []`.
+NO-FORMULA	EncryptThenTag/Games.lean:267	ETTGame.hitW	def	**The bad event of a decryption query:** not refused, valid, and a fresh pair.
+OK	EncryptThenTag/Games.lean:271	ETTGame.hitW_eq	theorem	`hitW g s w = (!refW s.1 w && validW g w && !decide (pairW n w ∈ s.2))`.
+OK	EncryptThenTag/Games.lean:275	ETTGame.decAnsW_agree	theorem	**Off the bad event the two decryption answers agree:** `hitW g s w = false → decAnsW f g false s w = decAnsW 
+NO-FORMULA	EncryptThenTag/Games.lean:294	ETTGame.ettStep	def	**One step of the experiment with the nonce `r`** (see the module docstring).
+NO-FORMULA	EncryptThenTag/Games.lean:304	ETTGame.ettStep_enc	theorem	`Enc` on `m` answers `encW f g r m` and adds the pair `r ‖ maskL f r m` to the list.
+NO-FORMULA	EncryptThenTag/Games.lean:310	ETTGame.ettStep_dec	theorem	`Dec` on `w` answers `decAnsW f g rej s w` and keeps the state.
+NO-FORMULA	EncryptThenTag/Games.lean:314	ETTGame.ettStep_challenge_some	theorem	A later challenge repeats the record and keeps the state.
+NO-FORMULA	EncryptThenTag/Games.lean:319	ETTGame.ettStep_challenge_none	theorem	The first challenge encrypts `m_b` with the nonce `r` and records it.
+NO-FORMULA	EncryptThenTag/Games.lean:326	ETTGame.ettImpl	def	**The experiment with pad function `f` and tag function `g`:** every query draws a nonce `r` and takes one `et
+OK	EncryptThenTag/Games.lean:331	ETTGame.ettImpl_apply	theorem	`ettImpl … i x s = (sample (Fin n → Bool)).bind fun r => pure (ettStep … r i x s)`.
+NO-FORMULA	EncryptThenTag/Games.lean:336	ETTGame.ettImpl_eq_freshImpl	theorem	The experiment draws one coin per query (`freshImpl`).
+NO-FORMULA	EncryptThenTag/Games.lean:343	ETTGame.hitQ	def	The bad event of a query: a decryption query with `hitW`.
+NO-FORMULA	EncryptThenTag/Games.lean:349	ETTGame.hitQ_zero	theorem	An encryption query never raises the bad flag.
+NO-FORMULA	EncryptThenTag/Games.lean:352	ETTGame.hitQ_one	theorem	A decryption query raises the bad flag by `hitW`.
+NO-FORMULA	EncryptThenTag/Games.lean:356	ETTGame.hitQ_two	theorem	A challenge query never raises the bad flag.
+NO-FORMULA	EncryptThenTag/Games.lean:359	ETTGame.ettBad	def	**The experiment with the bad flag:** `ettImpl`, and the flag raised by `hitQ`.
+OK	EncryptThenTag/Games.lean:364	ETTGame.ettBad_apply	theorem	`ettBad … i x s = (ettImpl … i x s.1).bind fun p => pure (p.1, (p.2, s.2 || hitQ … i x s.1))`.
+OK	EncryptThenTag/Games.lean:371	ETTGame.ettTape	def	**The experiment with nonces in advance** (`rej = false`): the `j`-th query uses the nonce `T j` (`tapeImpl`).
+OK	EncryptThenTag/Games.lean:376	ETTGame.ettTape_apply	theorem	`ettTape … T i x (s, j) = pure (ettStep … false b (T j) i x s)` with the counter advanced.
+OK	EncryptThenTag/Games.lean:384	ETTGame.expect_ettTape	theorem	**Nonces in advance have the law of fresh nonces:** for a computation with at most `m` queries and `j + m ≤ κ`
+OK	EncryptThenTag/Games.lean:397	ETTGame.expect_ettImpl_transport	theorem	**The experiment along equal lengths:** for `ins = ins'`, `outs = outs'` and `d = d'`, the expected first outp
+OK	EncryptThenTag/Games.lean:408	ETTGame.ettAcc	def	**The acceptance probability of a machine** in the experiment with `f` and `g`, averaged over its coins: `𝔼_r 
+OK	EncryptThenTag/Games.lean:415	ETTGame.ettAcc_eq	theorem	`ettAcc … A Q = 𝔼_r 𝔼[⟦output⟧₀ = 1 | simulate (ettImpl …) (A.toComp … r) (none, [])]`.
+NO-FORMULA	EncryptThenTag/Games.lean:423	ETTGame.ettAcc_nonneg	theorem	The acceptance probability lies in `[0, 1]`.
+NO-FORMULA	EncryptThenTag/Games.lean:429	ETTGame.ettAcc_le_one	theorem	The acceptance probability lies in `[0, 1]`.
+NO-FORMULA	EncryptThenTag/Handler.lean:61	ETTGame.ettCt	def	The ciphertext length `6n + 4`.
+OK	EncryptThenTag/Handler.lean:64	ETTGame.ettCt_eval	theorem	`ettCt.eval n = 6n + 4`.
+NO-FORMULA	EncryptThenTag/Handler.lean:69	ETTGame.ettDin	def	The query lengths: `n`-bit messages to `Enc`, `(6n + 4)`-bit ciphertexts to `Dec`, `2n`-bit challenge queries.
+OK	EncryptThenTag/Handler.lean:76	ETTGame.ettDin_zero	theorem	`ettDin 0 = var`.
+OK	EncryptThenTag/Handler.lean:79	ETTGame.ettDin_one	theorem	`ettDin 1 = ettCt`.
+OK	EncryptThenTag/Handler.lean:82	ETTGame.ettDin_two	theorem	`ettDin 2 = var + var`.
+NO-FORMULA	EncryptThenTag/Handler.lean:85	ETTGame.ettDout	def	The answer lengths: ciphertexts, `(n + 1)`-bit decryption answers, ciphertexts.
+OK	EncryptThenTag/Handler.lean:91	ETTGame.ettDout_zero	theorem	`ettDout 0 = ettCt`.
+OK	EncryptThenTag/Handler.lean:94	ETTGame.ettDout_one	theorem	`ettDout 1 = var + 1`.
+OK	EncryptThenTag/Handler.lean:97	ETTGame.ettDout_two	theorem	`ettDout 2 = ettCt`.
+NO-FORMULA	EncryptThenTag/Handler.lean:100	ETTGame.tagLen	def	The tag length `2n`.
+OK	EncryptThenTag/Handler.lean:103	ETTGame.tagLen_eval	theorem	`tagLen.eval n = 2n`.
+NO-FORMULA	EncryptThenTag/Handler.lean:107	ETTGame.tagOut	abbrev	The outer oracle: `2n`-bit queries and answers.
+OK	EncryptThenTag/Handler.lean:110	ETTGame.tagOut_eq	theorem	`tagOut j = tagLen`.
+NO-FORMULA	EncryptThenTag/Handler.lean:115	ETTGame.dStLen	def	The state length `2q + 3 + (6n + 4)`.
+OK	EncryptThenTag/Handler.lean:118	ETTGame.dStLen_eq	theorem	`dStLen q = 2q + 3 + ettCt`.
+NO-FORMULA	EncryptThenTag/Handler.lean:121	ETTGame.dSeedLen	def	The seed length `n + q(n) · n`: the key and the tapes.
+OK	EncryptThenTag/Handler.lean:124	ETTGame.dSeedLen_eval	theorem	`(dSeedLen q).eval n = n + q(n) · n`.
+NO-FORMULA	EncryptThenTag/Handler.lean:128	ETTGame.recBits	def	The record of the challenge: `1 :: c` once recorded, `0^{1 + ct(n)}` before.
+OK	EncryptThenTag/Handler.lean:133	ETTGame.recBits_none	theorem	`recBits n none = 0^{1 + ct(n)}`.
+OK	EncryptThenTag/Handler.lean:137	ETTGame.recBits_some	theorem	`recBits n (some c) = 1 :: ⟦c⟧`.
+NO-FORMULA	EncryptThenTag/Handler.lean:141	ETTGame.length_recBits	theorem	The record has `1 + ct(n)` bits.
+NO-FORMULA	EncryptThenTag/Handler.lean:148	ETTGame.dState	def	**The encoded state** after `j` queries, with the challenge record `o`: `⟨1^j, recBits o⟩`, padded with `false
+OK	EncryptThenTag/Handler.lean:154	ETTGame.dState_eq	theorem	`dState q n j o = padFin _ ⟨1^j, recBits n o⟩`.
+OK	EncryptThenTag/Handler.lean:158	ETTGame.dSeed	def	**The seed** from the key `k₁` and the tape word: `⟦dSeed q n (k, W)⟧ = ⟦k⟧ ++ ⟦W⟧`.
+OK	EncryptThenTag/Handler.lean:163	ETTGame.dSeed_eq	theorem	`dSeed q n = coinsEquiv (dSeedLen_eval q n)`.
+OK	EncryptThenTag/Handler.lean:166	ETTGame.ofFn_dSeed	theorem	`⟦dSeed q n (k, W)⟧ = ⟦k⟧ ++ ⟦W⟧`.
+NO-FORMULA	EncryptThenTag/Handler.lean:171	ETTGame.dTape	def	The tape `j` of the tape word: block `j` of `W` (`EnsembleLemmas.blocks`).
+OK	EncryptThenTag/Handler.lean:175	ETTGame.dTape_eq	theorem	`dTape q n W j hj = blocks (q n) n W ⟨j, hj⟩`.
+OK	EncryptThenTag/Handler.lean:384	ETTGame.dHandler	def	**The handler of the tag-key PRF reduction** for the evaluator `E`, the budget `q` and the challenge bit `b`: 
+OK	EncryptThenTag/Handler.lean:408	ETTGame.dHState	def	The encoded state at the handler's state type: `dHState … n j o = dState q n j o`.
+OK	EncryptThenTag/Handler.lean:413	ETTGame.dHState_eq	theorem	`dHState q E hE b n j o = dState q n j o`.
+OK	EncryptThenTag/Handler.lean:417	ETTGame.dHSeed	def	The seed at the handler's seed type: `dHSeed … n = dSeed q n`.
+OK	EncryptThenTag/Handler.lean:423	ETTGame.dHSeed_eq	theorem	`dHSeed q E hE b n = dSeed q n`.
+NO-FORMULA	EncryptThenTag/Handler.lean:426	ETTGame.dHandler_init_hstate	theorem	The initial state is the encoded `(0, none)`.
+OK	EncryptThenTag/Handler.lean:430	ETTGame.dHandler_advInput	theorem	The adversary's input is empty: `(dHandler q E hE b).advInput n z ω = []`.
+OK	EncryptThenTag/Handler.lean:437	ETTGame.dHandler_finish	theorem	The finalization outputs the adversary's bit and asks nothing: `(dHandler q E hE b).finish n z ω s a = pure (p
+OK	EncryptThenTag/Handler.lean:461	ETTGame.ofFn_dHSeed	theorem	`⟦dHSeed … n (k, W)⟧ = ⟦k⟧ ++ ⟦W⟧`.
+OK	EncryptThenTag/Handler.lean:466	ETTGame.ofFn_dHState	theorem	`⟦dHState … n j o⟧ = ⟦dState q n j o⟧`.
+OK	EncryptThenTag/Handler.lean:559	ETTGame.dHandler_impl_enc	theorem	**Encryption with the next tape:** from `dState j o` with `j < q(n)`, the query `m` asks the outer oracle at `
+NO-FORMULA	EncryptThenTag/Handler.lean:607	ETTGame.dHandler_impl_dec_ref	theorem	**A refused decryption:** from `dState j o` with the query the recorded challenge, the answer is `⊥` and the s
+OK	EncryptThenTag/Handler.lean:633	ETTGame.dHandler_impl_dec_wf	theorem	**A well-formed decryption:** from `dState j o` with a query `w = ⟦x⟧` that is not refused and has `n`-bit `wR
+NO-FORMULA	EncryptThenTag/Handler.lean:711	ETTGame.dHandler_impl_dec_nwf	theorem	**A malformed decryption:** from `dState j o` with a query that is not refused and not well formed, the answer
+NO-FORMULA	EncryptThenTag/Handler.lean:740	ETTGame.dHandler_impl_challenge_some	theorem	**A recorded challenge is repeated:** from `dState j (some c)`, a challenge is answered `c` and the state is `
+OK	EncryptThenTag/Handler.lean:760	ETTGame.dHandler_impl_challenge_none	theorem	**The first challenge with the next tape:** from `dState j none` with `j < q(n)`, the challenge `⟨m₀, m₁⟩` ask
+NO-FORMULA	EncryptThenTag/Lazy.lean:64	ETTGame.LEntry	abbrev	An entry of the lazy table: a pair, its tag and the message of the encryption.
+OK	EncryptThenTag/Lazy.lean:67	ETTGame.LEntry_eq	theorem	`LEntry n = pair × tag × message`.
+NO-FORMULA	EncryptThenTag/Lazy.lean:71	ETTGame.LSt	abbrev	The lazy state: the recorded challenge and the table, newest entry first.
+OK	EncryptThenTag/Lazy.lean:74	ETTGame.LSt_eq	theorem	`LSt n d = Option (Fin d → Bool) × List (LEntry n)`.
+NO-FORMULA	EncryptThenTag/Lazy.lean:77	ETTGame.keysL	def	The pairs of the table.
+OK	EncryptThenTag/Lazy.lean:80	ETTGame.keysL_eq	theorem	`keysL L = L.map Prod.fst`.
+NO-FORMULA	EncryptThenTag/Lazy.lean:83	ETTGame.lookL	def	**The table's entry at a pair:** the first (newest) entry with the pair `p`, if any.
+OK	EncryptThenTag/Lazy.lean:87	ETTGame.lookL_eq	theorem	`lookL L p = if p ∈ keysL L then some (L.getD ((keysL L).idxOf p) default) else none`.
+NO-FORMULA	EncryptThenTag/Lazy.lean:91	ETTGame.tagOf	def	**The tag of a pair:** the table's, else the challenge's at its pair, else none.
+NO-FORMULA	EncryptThenTag/Lazy.lean:100	ETTGame.tagOf_eq	theorem	`tagOf s p`: the table's tag, else the challenge's at its pair.
+NO-FORMULA	EncryptThenTag/Lazy.lean:110	ETTGame.lazyDec	def	**The lazy decryption answer:** `⊥` on the record; on a well-formed word whose pair is in the table with the w
+NO-FORMULA	EncryptThenTag/Lazy.lean:119	ETTGame.lazyDec_eq	theorem	`lazyDec s w` unfolded.
+NO-FORMULA	EncryptThenTag/Lazy.lean:127	ETTGame.tagTbl	def	**The tag table of a lazy state:** the entries' tags, newest first, then the challenge's.
+NO-FORMULA	EncryptThenTag/Lazy.lean:134	ETTGame.tagTbl_eq	theorem	`tagTbl s` unfolded.
+OK	EncryptThenTag/Lazy.lean:141	ETTGame.keysL_nil	theorem	The empty table has no pairs: `keysL [] = []`.
+OK	EncryptThenTag/Lazy.lean:145	ETTGame.tagTbl_none_nil	theorem	The empty lazy state has the empty tag table: `tagTbl (none, []) = []`.
+OK	EncryptThenTag/Lazy.lean:157	ETTGame.ovr_append	theorem	Writing a concatenation is writing its parts: `ovr (A ++ B) R = ovr A (ovr B R)`.
+OK	EncryptThenTag/Lazy.lean:166	ETTGame.getD_idxOf_fst	theorem	The entry at a listed pair has that pair: `p ∈ keysL L → (L.getD ((keysL L).idxOf p) _).1 = p`.
+OK	EncryptThenTag/Lazy.lean:182	ETTGame.ovr_tags_of_mem	theorem	**On a listed pair the tag table gives the newest entry's tag:** `p ∈ keysL L → ovr (L-tags ++ X) R p = (L.get
+NO-FORMULA	EncryptThenTag/Lazy.lean:203	ETTGame.keys_tagTbl	theorem	The keys of the tag table: the listed pairs, then the challenge's pair.
+NO-FORMULA	EncryptThenTag/Lazy.lean:213	ETTGame.tagOf_eq_ovr	theorem	**`tagOf` reads the tag table:** for every `R`, `tagOf s p` is `ovr (tagTbl s) R p` on the keys of the tag tab
+OK	EncryptThenTag/Lazy.lean:273	ETTGame.zipWith_xor_cancel	theorem	**XOR twice with the same pad is the identity** (generic; several modules keep a private copy): `(m ⊕ p) ⊕ p =
+OK	EncryptThenTag/Lazy.lean:287	ETTGame.LInv	def	**The invariant of the lazy table:** every entry `(p, t, m)` has an `n`-bit message `m` and the pair `p = r ‖ 
+NO-FORMULA	EncryptThenTag/Lazy.lean:292	ETTGame.lInv_iff	theorem	`LInv f s` unfolded.
+NO-FORMULA	EncryptThenTag/Lazy.lean:298	ETTGame.lInv_nil	theorem	The empty table has the invariant: `LInv f (o, [])`.
+OK	EncryptThenTag/Lazy.lean:302	ETTGame.decAnsW_tagTbl	theorem	**The rejecting decryption answer with the table's tags is the lazy answer:** under the invariant, `decAnsW f 
+NO-FORMULA	EncryptThenTag/Lazy.lean:344	ETTGame.lazyStep	def	**One step of the lazy experiment** with the nonce `r` and the tape `t` (see the module docstring).
+NO-FORMULA	EncryptThenTag/Lazy.lean:362	ETTGame.lazyStep_enc	theorem	`Enc′` in the lazy experiment: the tag `tagOf s p` or the tape, and a new entry.
+NO-FORMULA	EncryptThenTag/Lazy.lean:372	ETTGame.lazyStep_dec	theorem	`Dec′` in the lazy experiment answers `lazyDec`.
+NO-FORMULA	EncryptThenTag/Lazy.lean:377	ETTGame.lazyStep_challenge_some	theorem	A repeated challenge in the lazy experiment.
+NO-FORMULA	EncryptThenTag/Lazy.lean:382	ETTGame.lazyStep_challenge_none	theorem	The first challenge in the lazy experiment.
+NO-FORMULA	EncryptThenTag/Lazy.lean:393	ETTGame.ettLazyK	def	One call of the lazy experiment with the tape `t`: draw the nonce and take `lazyStep`.
+OK	EncryptThenTag/Lazy.lean:398	ETTGame.ettLazyK_eq	theorem	`ettLazyK … i x s t = (sample (Fin n → Bool)).bind fun r => pure (lazyStep … r t i x s)`.
+NO-FORMULA	EncryptThenTag/Lazy.lean:403	ETTGame.ettLazy	def	**The lazy experiment:** one fresh tape per query (`freshImpl`).
+OK	EncryptThenTag/Lazy.lean:407	ETTGame.ettLazy_eq	theorem	`ettLazy … = freshImpl (ettLazyK …)`.
+NO-FORMULA	EncryptThenTag/Lazy.lean:410	ETTGame.ettLazyTape	def	**The lazy experiment with tapes in advance** (`tapeImpl`).
+OK	EncryptThenTag/Lazy.lean:415	ETTGame.ettLazyTape_eq	theorem	`ettLazyTape … T = tapeImpl (ettLazyK …) T`.
+NO-FORMULA	EncryptThenTag/Lazy.lean:419	ETTGame.expect_ettLazyTape	theorem	**Tapes in advance have the law of fresh tapes** (`expect_simulate_tapeImpl`).
+NO-FORMULA	EncryptThenTag/Lazy.lean:436	ETTGame.ettLazy_apply	theorem	One call of the lazy experiment: draw the tape, then the nonce, and take `lazyStep`.
+OK	EncryptThenTag/Lazy.lean:444	ETTGame.expect_ettImpl_lazy	theorem	**The rejecting experiment with a uniform random tag function is the lazy experiment** [PS10, Thm 170.4, proof
+OK	EncryptThenTag/Machines.lean:54	ETTGame.logCount	def	**The number of entries of a nested-pair log `⟨e₁, ⟨e₂, …⟩⟩`, in unary:** one `true` for every nonempty suffix
+OK	EncryptThenTag/Machines.lean:59	ETTGame.logCount_eq	theorem	`logCount L = ⋃_{i ≤ |L|} cntRead (pairSndD^[i] L)`.
+NO-FORMULA	EncryptThenTag/Machines.lean:65	ETTGame.polyTimeComputable_logCount	theorem	The entry count is polynomial-time: an iterated emission (`polyTimeComputable_iterateEmit`) along `pairSndD`, 
+OK	EncryptThenTag/Machines.lean:101	ETTGame.length_logCount_encodeLog	theorem	**`logCount` counts the entries of an encoded log:** `|logCount (codec.encodeLog h)| = |h|`.  **Proof sketch.*
+OK	EncryptThenTag/Machines.lean:150	ETTGame.buildComp_cap	theorem	**Budget cap for `buildComp`.** Let `next'` agree with `next` on logs shorter than `q`, and on logs of length 
+NO-FORMULA	EncryptThenTag/Machines.lean:224	ETTGame.capRaw	def	The raw function of the capped machine: `A`'s output, except that once the argument (the encoded log) has `q(n
+OK	EncryptThenTag/Machines.lean:231	ETTGame.capRaw_eq	theorem	`capRaw A q z = if |logCount (inArg z)| = q(|inParam z|) ∧ pairFstD (A.output z) = [false] then [] else A.outp
+NO-FORMULA	EncryptThenTag/Machines.lean:239	ETTGame.polyTimeComputable_capRaw	theorem	The capped raw function is polynomial-time: the entry count (`polyTimeComputable_logCount`), a length comparis
+OK	EncryptThenTag/Machines.lean:254	ETTGame.exists_capMachine	theorem	**A budget cap** (generic; candidate for promotion). For a machine `A` and a polynomial `q` there is a machine
+OK	EncryptThenTag/Machines.lean:299	ETTGame.exists_halfMachine	theorem	**Halving the parameter** (generic; candidate for promotion). For a next-query machine `B` there is a machine 
+OK	EncryptThenTag/Machines.lean:337	ETTGame.eval_toOracleAdversary_len	theorem	**An oracle adversary read at equal widths** (generic; the width-changing form of `PRFGame.eval_toOracleAdvers
+NO-FORMULA	EncryptThenTag/Reduction.lean:55	ETTGame.gOuter	def	**The outer oracle answering with `g`:** a query `x` is answered `g x`, lengths adjusted.
+OK	EncryptThenTag/Reduction.lean:60	ETTGame.gOuter_apply	theorem	`gOuter n g i x s = pure (padFin _ ⟦g (padFin (2n) ⟦x⟧)⟧, s)`.
+NO-FORMULA	EncryptThenTag/Reduction.lean:75	ETTGame.dAbs	def	The handler's state and the (trivial) outer state, as functions of `ettTape`'s state.
+OK	EncryptThenTag/Reduction.lean:80	ETTGame.dAbs_eq	theorem	`dAbs q E hE b n s = (dHState q E hE b n s.2 s.1.1, ())`.
+NO-FORMULA	EncryptThenTag/Reduction.lean:85	ETTGame.dTapes	def	The tapes of the tape word, extended to every index (`AdaptiveCPA.extTape`).
+OK	EncryptThenTag/Reduction.lean:89	ETTGame.dTapes_eq	theorem	`dTapes q n W = extTape (blocks (q n) n W)`.
+OK	EncryptThenTag/Reduction.lean:93	ETTGame.dTapes_of_lt	theorem	Below `q(n)`, the extended tapes are the tapes: `dTapes q n W j = dTape q n W j hj`.
+OK	EncryptThenTag/Reduction.lean:108	ETTGame.comp_dAbs	theorem	**One composed call is a call of `ettTape` with the tapes in advance:** from the encoded state `dState j o` wi
+OK	EncryptThenTag/Reduction.lean:187	ETTGame.eval_subst_tagLen	theorem	The budget `q(2n)` of the handler's adversary: `(q.subst tagLen).eval n = q(2n)`.
+OK	EncryptThenTag/Reduction.lean:191	ETTGame.expect_ettImpl_outLen	theorem	**The experiment does not see the output width:** for `d = d'`, the expected first output bit of the run throu
+OK	EncryptThenTag/Reduction.lean:213	ETTGame.exists_tagReduction	theorem	**The tag-key PRF reduction** [PS10, Theorem 170.4, step 1]: for a machine adversary `A` with budget `q` and a
+OK	EncryptThenTag/Reduction.lean:337	ETTGame.prfAdv_eq_expect	theorem	**The PRF advantage as expectations** (PRFGame overlap: `prfAdv_prfReduction`, re-derived here in general form
+NO-FORMULA	EncryptThenTag/Reduction.lean:360	ETTGame.exists_tagStep	theorem	**Step 1 of [PS10, Thm 170.4]: the tag key becomes a random function.** For a machine adversary `A` with budge
+OK	EncryptThenTag/Tools.lean:55	ETTGame.expect_simulate_abs	theorem	**Simulation through a state abstraction, in law, along runs with a query budget.** Let every call of `impl₂` 
+NO-FORMULA	EncryptThenTag/Tools.lean:82	ETTGame.expect_simulate_abs_inv	theorem	**Simulation through a state abstraction, in law, along runs with a query budget and an invariant:** as `expec
+OK	EncryptThenTag/Tools.lean:113	ETTGame.freshImpl	def	**One fresh coin per query:** the query `x` to oracle `i` in state `s` draws a uniform `t ∈ τ`, then runs `K i
+OK	EncryptThenTag/Tools.lean:120	ETTGame.freshImpl_apply	theorem	`freshImpl K i x s = (sample τ).bind (K i x s)`.
+NO-FORMULA	EncryptThenTag/Tools.lean:126	ETTGame.tapeImpl	def	**One coin per query, from tapes in advance:** the query `x` to oracle `i` in state `(s, j)` runs `K i x s (T 
+OK	EncryptThenTag/Tools.lean:132	ETTGame.tapeImpl_apply	theorem	`tapeImpl K T i x (s, j) = (K i x s (T j)).bind fun p => pure (p.1, (p.2, j + 1))`.
+OK	EncryptThenTag/Tools.lean:138	ETTGame.simulate_tapeImpl_congr	theorem	**The run from the counter `j` ignores the tapes below `j`:** if `T m = T' m` for every `m ≥ j`, the runs of `
+OK	EncryptThenTag/Tools.lean:156	ETTGame.expect_simulate_tapeImpl	theorem	**Coins in advance have the law of fresh coins:** for a computation with at most `m` queries, a counter `j` wi
+OK	EncryptThenTag/Tools.lean:214	ETTGame.ovr	def	**A function overridden by a table:** `ovr M R` is `R` with the entries `(p, y)` of `M` written over it, the f
+OK	EncryptThenTag/Tools.lean:221	ETTGame.ovr_nil	theorem	`ovr [] R = R`.
+OK	EncryptThenTag/Tools.lean:225	ETTGame.ovr_cons	theorem	`ovr ((p, y) :: M) R = update (ovr M R) p y`.
+OK	EncryptThenTag/Tools.lean:230	ETTGame.ovr_of_not_mem	theorem	Outside the keys of the table, the overridden function is `R`: `p ∉ M.map Prod.fst → ovr M R p = R p`.
+OK	EncryptThenTag/Tools.lean:242	ETTGame.ovr_of_mem	theorem	On the keys of the table, the overridden function does not read `R`: `p ∈ M.map Prod.fst → ovr M R p = ovr M R
+OK	EncryptThenTag/Tools.lean:258	ETTGame.ovr_update	theorem	Changing `R` at a point outside the table changes the overridden function there only: `p ∉ M.map Prod.fst → ov
+OK	EncryptThenTag/Tools.lean:272	ETTGame.expect_sample_ovr	theorem	**Resampling a point outside the table moves it into the table:** for `p` not a key of `M`, `𝔼_R F (R p) (ovr 
+OK	EncryptThenTag/Transfer.lean:39	ETTGame.stRec	def	The challenge record of the experiment's state: `stRec s = s.1`.
+OK	EncryptThenTag/Transfer.lean:42	ETTGame.stRec_eq	theorem	`stRec s = s.1`.
+OK	EncryptThenTag/Transfer.lean:50	ETTGame.expect_indImpl_ettImpl	theorem	**One call of `IND_b` under CCA2 with the key `key` has the law of `ettImpl` with `f` and `g`**, for every fun
+OK	EncryptThenTag/Transfer.lean:172	ETTGame.accept_indGame_eq	theorem	**The CCA2 experiment is the experiment with a pad and a tag function** (step 1 of [PS10, Thm 170.4], transfer

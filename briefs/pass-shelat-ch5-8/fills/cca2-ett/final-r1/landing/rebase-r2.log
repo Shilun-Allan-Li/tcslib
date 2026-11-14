@@ -1,0 +1,41 @@
+# rebase r2 (coordinator note: #303 merged), 2026-11-14T17:38:05Z
+new origin tip 48cd45ab291695f07da6093b4756fea446a4296b
+d82e9a50 (#303 merge) is an ancestor
+commits 083d928faf2d1dc109cdd466969f5b1004bf641f..48cd45ab291695f07da6093b4756fea446a4296b:
+48cd45ab291695f07da6093b4756fea446a4296b Record #303 merge (ext-nosrc)
+d82e9a50414c6be160bcb3bd63ffdeb95e41e21c Merge pull request #303 from Shilun-Allan-Li/land/pass-shelat-ext-nosrc
+606dcc0ebfab0646948814a2013dd2e564c1f12d Gate 22 closed: Codex CLEAR on ext-nosrc (#303)
+122e9144f49c1234e24fb06f9129cfe0fb1d5a17 Record Seyoon's confirmation of the three Codex fill scope exceptions
+8759e9b531ad249d3305e2b2835ac03571fdbbf5 Gate 22 pushed; ext-nosrc review erratum
+b6030ef9c53c0c92aa75c367c1f78a958afd14f5 Records: Gate 22 staged on the exchange (7e841419)
+1d109ff037d12cc6520ba0fb7826e320da348d73 Records: Gate 22 pack (ext-nosrc, PR #303)
+e99a6055ff6b24cdf4b25993e83d045bd569028f ext-nosrc landing edit LE-doc: formula docstrings for 44 public declarations
+653d6c1bd0514ca4225bb92db80a9b7754af60bb ext-nosrc landing edit LE-width: re-wrap one statement line of Extraction/Sampler
+a86ad95616fc488db3c75942655b302802ca52ed Prove no efficient extractor for efficient sources
+6fbfa12788b033420a900e56eff183c23b996966 Prove ext-nosrc efficient rejection source
+6ba3a4ec221deeb40e535bacc1923609554a55c4 Prove ext-nosrc uniform witness and rejection-law helpers
+Lean/audits paths changed eff2dcd0..48cd45ab291695f07da6093b4756fea446a4296b:
+TCSlib/Cryptography/Randomness.lean
+TCSlib/Cryptography/Randomness/Extraction.lean
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean
+TCSlib/Cryptography/Randomness/Extraction/Sampler.lean
+non-briefs paths changed eff2dcd0..48cd45ab291695f07da6093b4756fea446a4296b:
+PassShelatChapter5-8Plan.md
+TCSlib/Cryptography/Randomness.lean
+TCSlib/Cryptography/Randomness/Extraction.lean
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean
+TCSlib/Cryptography/Randomness/Extraction/Sampler.lean
+landing head before: 3f4a7a4e927ed8f9836990810abac246835e3297
+rebase rc=0
+8c3e6496a8ce95c77e61067ad3067394081ed80b 9ecb64f2cc73b51361bcf7d217b7a1422d8b14ab Claude | cca2-ett landing edit LE-width: re-wrap the 40 lines over 100 characters
+68bc48938fb9f28d6d05a9077d85ef3bc69410c6 94d49710715a72f82e775f52361071072e8e97ae Claude | cca2-ett: read rCnt through InteractiveHandler.rCnt_input (explicit-unfold scan)
+692ae6b8de27e9a27709e75616e4c9699ff16335 81ebf4fcc97520526a81e30f17b52e8f0f198812 Claude | cca2-ett: general form of the one-entry log readers in Handler
+942e89da7e17ec57d13a54bd8d24270e0758bc3a 5c4e80ac74a1df9dad9ca53b2cce935e52331010 Claude | cca2-ett: use the public Games.expect_toCompOn_outLen for the width transport
+0a11e216afde8d251165bc622d65a7c04afdb638 cd1a1ac83f6bc627b3403957d307de9ba55fa2ee Claude | cca2-ett: published readers only (seal fixes), docstrings, lint
+a2ec4efe9cc822291b8c02840bf689d6ea61e41c 419c1324434d7c9968a65d342d98e41650d62b24 Claude | cca2-ett: Theorem 170.4 proved (combination of steps 1–3)
+8f4309ada4f2d54d6e6d5edbbef57acb0f2174be b026a2acc6dbc27f733536ff43e9622cfd712269 Claude | cca2-ett: step 3 — CPA reduction (lazy tags, handler, reduction)
+524754acd818165e3ad10980fbafa6d4cf58737b a63d4a1981d590ff0c7e1206929786ba216680c0 Claude | cca2-ett: checkpoint 2 — step 2 (fresh decryption queries are rejected)
+8a8528fd6497c38dd6db0adc80f1f20af0104574 e9aa4a66745f240fe574c7aa27a81fb6972ec6ce Claude | cca2-ett: checkpoint 1 — step 1 (tag key becomes a random function)
+head tree 9ecb64f2cc73b51361bcf7d217b7a1422d8b14ab
+range content check (TCSlib diff of the 9 commits, old vs new):
+IDENTICAL patch content

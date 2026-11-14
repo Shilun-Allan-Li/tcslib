@@ -1,0 +1,74 @@
+cca2-ett (Theorem 170.4, Composability.ccaScheme_cca2) maintainer delivery review r1, 2026-11-14 UTC
+Method: the ext-nosrc review (extnosrc-r1/PROVENANCE.txt); its tools copied to tools/ (changes listed under tools).
+brief: briefs/pass-shelat-ch5-8/fills/cca2-ett/issued-r1/brief.md, SHA-256 ebffc5220138b4ae0a02c938284add41d37373886d3c8f5f83dbb24f9b60ccf0
+  (logs/brief.md; issue package SHA256SUMS 7/7 OK, logs/issue-package-check.txt); SOURCE-SHA256SUMS 264/264 OK at the issue base
+  (logs/source-sums-check.txt); base-sorries logs/base-sorries.txt (24 in 10 modules). Issue base eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9.
+delivery: exchange/pass-shelat-ch5-8 74f0ba5ffcf82e33c6b3be5da7ba63087a1bca07 ("fill cca2-ett: final"; checkpoints ad6b9ec33 (1) and
+  60778ff1d (2) touch only inbox/fills/cca2-ett; no later commit touches that path), git archive of inbox/fills/cca2-ett into a scratch
+  directory (removed). Payload: REPORT.md (logs/worker-REPORT.md), evidence/ (118 files + SHA256SUMS), patches/ (8), src/ (11);
+  inventory logs/payload-inventory.sha256 (139 files). No top-level manifest (the brief requires only evidence/SHA256SUMS).
+integrity: evidence/SHA256SUMS 118/118 OK, delivered paths exactly the manifest's (logs/evidence-check.txt). git am of the 8 patches at
+  the base: rc 0, tree 80b8d3303ff3a98889195d02acbee827cca84b91; the 11 changed paths byte-identical to src/, src/ holds nothing else
+  (logs/git-am-integrity.log). With committer = author and committer dates = author dates the worker's hashes reproduce exactly
+  (9015e943d … b66a81a1af45bc158fa2405cf8150058a4a805b4 = worker head named in REPORT.md).
+scope: changed paths = the owned file PrivateKey/EncryptThenTag.lean + 10 new helpers under PrivateKey/EncryptThenTag/ (permitted);
+  no other file changed (frozen facades PrivateKey.lean, Encryption.lean, Games/Efficiency.lean untouched). Every foreign name used
+  exists at the base (InteractiveHandler.rCnt_input Efficiency.lean:525; Games.expect_toCompOn_outLen Efficiency.lean:924; all modules
+  compile against the base tree). Imports acyclic; no OracleFromPRF file imports EncryptThenTag (logs/imports.txt).
+landing: branch land/pass-shelat-cca2-ett (local only, no upstream), worktree $SP/wt-land-cca2-ett (sparse, briefs/ excluded).
+  r1: git am at eff2dcd0 (committer = author, worker hashes reproduced), rebased onto origin tip 083d928f (records only), no conflict
+  (landing/landing.log); LE-width committed (3f4a7a4e). r2 (coordinator note: #303 ext-nosrc merged at d82e9a50): rebased onto
+  origin tip 48cd45ab291695f07da6093b4756fea446a4296b; the only Lean changes eff2dcd0..48cd45ab are #303's 4 files
+  (Randomness.lean, Randomness/Extraction{,/Rejection,/Sampler}.lean); rc 0, no conflict, patch content identical, the 11 files
+  byte-identical to 3f4a7a4e (landing/rebase-r2.log, rebase-r2-files.txt). Head 8c3e6496a8ce95c77e61067ad3067394081ed80b,
+  tree 9ecb64f2cc73b51361bcf7d217b7a1422d8b14ab; commits landing/commits.txt, series landing/series/0001-0009.
+  Authors: Claude <noreply@anthropic.com> (as delivered); committer Claude.
+LE-width (0009): tools/lewidth_edit.py (39 exact replacements, covering the 40 lines over 100 characters by Python len in 9 files);
+  whitespace-only: tools/wscheck.py, every file's whitespace-separated token sequence unchanged (landing/lewidth-wscheck.txt); max
+  width 100 in all 11 files afterwards. (A first application left 3 docstring lines over 100 because three replacements joined the
+  following line; the script was corrected and re-applied from a clean checkout before committing.)
+olean tree $SP/dl-oleans: verified a full base tree first (tree/tree-check-pre.txt: 1199 modules at the base source and the r1-restored
+  records' object hashes, tree/base-records.jsonl = extnosrc-r1 logs/all-results-restored.jsonl; tree/snapshot-pre.txt (1230 files)
+  byte-equal to the LE-doc job's snapshot-post, tree/snapshot-ref-ledoc-post.txt).
+build: build/ (pre-LE head 5e63c6df: the 10 helpers, owned file, PrivateKey, Encryption, Composability, TCSlib; 15/15 rc 0, 0 errors,
+  0 sorry, 0 warnings); edit-build/ (LE-width 3f4a7a4e: Machines … TCSlib, 14/14 rc 0); r2-build/ (base-delta modules of #303 at head
+  8c3e6496: Rejection, Sampler, Extraction, Randomness, TCSlib, 5/5 rc 0, 0 errors; Rejection's 10 linter warnings as in the ext-nosrc
+  review). order/head-build-queue.txt, order/delta-r2-build.txt. audits/*/Checks import none of the changed modules.
+  Final head check tree/tree-check-head-r2.txt: 1211 modules (order/headfull-r2-order.txt, roots TCSlib + both audits Checks) + 31 PFR,
+  every module's last record rc 0 at the head 8c3e6496 source and olean hash, no extra olean (probe oleans deleted first): RESULT OK.
+statements (vs eff2dcd0): statements/decls2.tsv (pre-LE) and head-le/, head-r2/ decls2-vs-base: 249 ADDED, 0 CHANGED, 0 REMOVED;
+  head-le/decls2-vs-worker.tsv: empty. head-le/header-bytes.txt: the 25 pre-existing declarations of the owned file (target included)
+  byte-identical (16 MISSING = new private ones). touched: target CHANGED (body and sketch), 16 new private in the owned file, 331 in
+  new files, 24 UNCHANGED. docaudit (head-le/docaudit.tsv): 155 OK, 95 NO-FORMULA (94 new public declarations + the target's base first
+  line). sketchaudit (tools/sketchaudit.py, new): 37 theorems with >= 15 proof lines, 15 without a Proof sketch (6 public).
+axioms: probe-sources/head/Census_head.lean (tools/mkcensus_cca2.py) -> probe-runs/: ccaScheme_cca2 [propext, Classical.choice,
+  Quot.sound]; all 551 stored constants of the 11 files use subsets of these, no sorryAx, no simp, no instance; hand-written abbrevs
+  St, tagOut, LEntry, LSt (with _eq readers) (logs/census-summary.txt, statements/census-head.tsv). Base: Census_base (45 constants,
+  target with sorryAx); logs/census-base-vs-head.txt: all 45 present at head with identical type hash and flags.
+  superseded/census-attempt1/: first head census, rc 1 only for 12 inherited endpoints outside the import closure (DISPOSITION.txt).
+admissions: logs/sorry-census.txt (r1) and logs/sorry-census-r2.txt: issued modules 24 -> 23, only EncryptThenTag differs (target
+  removed); outside modules unchanged in source.
+Rule 10: collector probe-sources/head/CollectHead.lean (tools/mkcollect.py) -> probe-runs/; seals tools/mkseals_ab.py (strict) ->
+  seals/{A,B} and tools/mkseals_coe.py (FinDist CoeFun as notation, canonical) -> seals-coe/{A,B} (logs/mkseals-*.log), 44 probes run
+  in seal-runs/ (the first runner was stopped by the session's 30-min background limit during SealB_…_CPAHandler with no record
+  written; resumed at that probe, logs/head-seal-runner.out). Base (owned file only): base worktree at eff2dcd0 (removed),
+  CollectBase -> base-probe-runs/, base-seals{,-coe}/{A,B} -> base-seal-runs/ (run on the restored base tree). Summaries
+  logs/seal-{head,base}{,-coe}-{A,B}.tsv (tools/sealsum.py; the base tsv labels' "Base" prefix stripped with sed for sealtable),
+  logs/seal-table.txt: all 11 files pass A and B, strict and coe, head and base; 0 failing declarations; strict = coe (no difference).
+  controls: tools/mkctl_cca2.py (rows padFin, PolyExpr.eval, ETTGame.wR, ETTGame.ovr, ETTGame.recBits, PRFGame.recBits,
+  InteractiveHandler.rCnt, GGMRed.tblEnc, AdaptiveCPA.extTape) on the coe records -> controls/ (20 probes, 51 sealed negatives),
+  control-runs/, logs/ctlcheck.log + ctlcheck.json: ALL_OK (each sealed negative fails exactly once, readers pass, unsealed rc 0).
+  scan: tools/scan1.py/scan2.py -> scan/items-head.json, explicit-head.json (2290 items, 0 foreign definitions; logs/scan2-head.log),
+  base scan/explicit-base.json (88 items, 0 foreign).
+lint: logs/lint-pk-{base,land,head-r2}.log (brief's command, --check8b): 0 FAIL / 5 WARN at base and head, no new line.
+  logs/lint-crypto-{base,land,head-r2}.log (TCSlib/Cryptography): 216 -> 235 FAIL, 102 WARN; logs/lint-crypto-diff.txt: +19 FAIL, all
+  "facade does not import child module" for the 10 helpers in the frozen facades PrivateKey.lean (10) and Encryption.lean (10, minus the
+  base line for EncryptThenTag); r2 identical (lint-crypto-land-vs-r2.diff empty).
+other: logs/sizes-widths.txt (pre-LE), logs/module-docs.txt, logs/duplication-grep.txt, statements/samename-at-base.txt,
+  logs/probe-copies-check.txt (the 68 seal/control probe files equal their record copies *.lean.txt).
+restore: deleted the 10 helper oleans and Rejection/Sampler oleans (logs/restore-deleted.txt), rebuilt base EncryptThenTag,
+  PrivateKey, Encryption, Composability, Extraction, Randomness, TCSlib from the base worktree (restore-build/, object hashes = base
+  records), ran the base probes, deleted all DlProbe oleans; tree/tree-check-post.txt RESULT OK and tree/snapshot-post.txt
+  byte-identical to tree/snapshot-pre.txt (every file, PFR included).
+tools: copied from extnosrc-r1/tools (+ treecheck.py, hunkdoc.py from extnosrc-r1-ledoc). New: mkcensus_cca2.py (target as only endpoint),
+  mkctl_cca2.py (rows above), lewidth_edit.py, wscheck.py, sketchaudit.py. Others unmodified.

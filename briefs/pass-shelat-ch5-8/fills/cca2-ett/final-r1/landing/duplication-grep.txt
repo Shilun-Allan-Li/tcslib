@@ -1,0 +1,73 @@
+# duplication searches at the issue base eff2dcd0 (base worktree), cca2-ett review, 2026-11-14T16:40:25Z
+# 1. same-named declarations at the base for every new declaration name: statements/samename-at-base.txt (30 hits)
+
+### grep -rnE 'zipWith_xor_xor_self|zipWith_xor_cancel' TCSlib --include=*.lean
+TCSlib/Cryptography/Foundations/BitLists.lean:31:* `TCSlib.Cryptography.zipWith_xor_cancel_left`: `(a ⊕ c) ⊕ a = c`.
+TCSlib/Cryptography/Foundations/BitLists.lean:79:theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:239:    pairSndD_pairEncode, zipWith_xor_cancel_left (by rw [hm, List.length_ofFn]), padFin_ofFn]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:310:private theorem zipWith_xor_xor_self' : ∀ (m p : List Bool), m.length ≤ p.length →
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:316:    exact ⟨by cases a <;> cases b <;> rfl, zipWith_xor_xor_self' m p (by simpa using h)⟩
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:341:      zipWith_xor_xor_self' _ _ (by simp [hp]), decodeFin_ofFn]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:170:private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:176:    exact ⟨by cases a <;> cases b <;> rfl, zipWith_xor_xor_self m p (by simpa using h)⟩
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:207:      zipWith_xor_xor_self _ _ (by simp), decodeFin_ofFn]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:147:private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:153:    exact ⟨by cases a <;> cases b <;> rfl, zipWith_xor_xor_self m p (by simpa using h)⟩
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:176:    rw [runAt_coinKey, runAt_prgPad hF, runAt_prgPad hF, hG, zipWith_xor_xor_self, decodeFin_ofFn]
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:101:private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:107:    exact ⟨by cases a <;> cases b <;> rfl, zipWith_xor_xor_self m p (by simpa using h)⟩
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:125:    List.drop_left' h1, zipWith_xor_xor_self _ _ (by rw [hm, h2])]
+
+### grep -rnE 'eval_toOracleAdversary_(width|len)' TCSlib --include=*.lean
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:228:theorem eval_toOracleAdversary_width (D : NUPPT) (n q : ℕ) (c : D.Coins n) {m : ℕ} (hm : m = n)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:257:`eval_toOracleAdversary_width`. -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:303:    rw [eval_toOracleAdversary_width D n _ _ (PolyExpr.eval_var n), hφ₄, ← hQ, key,
+
+### grep -rnE 'theorem prfAdv_(eq|def|prfReduction|toOracleAdversary)\b|private theorem prfAdv_prfReduction' TCSlib --include=*.lean
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:286:private theorem prfAdv_prfReduction (atkBit b : Bool) (A : NUPPT) (q : PolyExpr) (D : NUPPT)
+TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean:79:theorem prfAdv_def [Fintype K] [Fintype I] [DecidableEq I] [Fintype O] [Fintype ρ]
+TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean:87:theorem prfAdv_eq [Fintype K] [Fintype I] [DecidableEq I] [Fintype O] [Fintype ρ]
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:430:theorem prfAdv_toOracleAdversary (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
+
+### grep -rnE '^(noncomputable )?def tapeImpl|theorem (simulate_tapeImpl_congr|expect_tapeImpl)|def extTape' TCSlib --include=*.lean
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:116:noncomputable def tapeImpl (T : ℕ → C) (kst : ℕ) :
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:170:theorem simulate_tapeImpl_congr {α : Type} (T' : ℕ → C) (c : OracleComp (bitSpec ins outs) α)
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:211:noncomputable def extTape {κ : ℕ} (T : Fin κ → C) (m : ℕ) : C :=
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:244:theorem expect_tapeImpl (κ : ℕ) (E : Bool → (Fin (ins 1) → Bool) → C → (Fin L → Bool))
+
+### grep -rnE '^def ovr|theorem expect_sample_coord|theorem expect_sample_update' TCSlib --include=*.lean
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:102:def ovr (b : Bool) (st : LState n d) (R : (Fin n → Bool) → (Fin n → Bool)) :
+TCSlib/Cryptography/Games/Probability.lean:354:theorem expect_sample_update {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+TCSlib/Cryptography/Games/Probability.lean:382:theorem expect_sample_coord {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+
+### grep -rnE 'theorem simulate_eq_of_abs(_bounded)?' TCSlib --include=*.lean
+TCSlib/Cryptography/Games/Simulate.lean:334:theorem simulate_eq_of_abs {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+TCSlib/Cryptography/Games/Simulate.lean:357:theorem simulate_eq_of_abs_bounded {ι ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+
+### grep -rnE '^def recBits|theorem (length_recBits|recBits_none|recBits_some)' TCSlib --include=*.lean
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:109:def recBits (n : ℕ) : Option (Fin (ctP.eval n) → Bool) → List Bool
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:114:theorem recBits_none (n : ℕ) : recBits n none = false :: List.replicate (ctP.eval n) false := rfl
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:117:theorem recBits_some (n : ℕ) (c : Fin (ctP.eval n) → Bool) :
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:121:theorem length_recBits (n : ℕ) (o : Option (Fin (ctP.eval n) → Bool)) :
+
+### grep -rnE 'private theorem (rY_one|log_ne_nil|fields_input|recBits_fields|rNew_fields)' TCSlib --include=*.lean
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean:376:private theorem fields_input {i : Fin 2} (x : List Bool) (L : List Bool) (j : ℕ)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:409:private theorem fields_input {i : Fin 3} (x L : List Bool) (j : ℕ)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:431:private theorem rNew_fields {i : Fin 3} (x L : List Bool) (j : ℕ)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:440:private theorem recBits_fields (o : Option (Fin (ctP.eval n) → Bool)) :
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:445:private theorem rY_one (w : List Bool) (x' y : List Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:457:private theorem log_ne_nil (x' y : List Bool) :
+
+### grep -rnE 'theorem abs_expect_sub_le' TCSlib --include=*.lean
+TCSlib/Cryptography/Games/Probability.lean:392:theorem abs_expect_sub_le (c : ProbComp α) {f g : α → ℝ} {ε : ℝ}
+
+### grep -rnE 'theorem (exists_reparam|exists_reparam_advice)\b' TCSlib --include=*.lean
+TCSlib/Complexity/Randomized/Closure.lean:292:theorem exists_reparam (A : NUPPT) (p : PolyExpr) :
+TCSlib/Complexity/Randomized/Closure.lean:325:theorem exists_reparam_advice (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr)
+
+### grep -rnE 'theorem (buildComp_budget_eq|_root_.Complexity.NUPPT.toCompOn_budget_eq)' TCSlib --include=*.lean
+TCSlib/Cryptography/Games/Machines.lean:186:theorem buildComp_budget_eq {spec : OracleSpec ι} (next : QueryLog spec → Move spec α) (t : α) :
+TCSlib/Cryptography/Games/Machines.lean:270:theorem _root_.Complexity.NUPPT.toCompOn_budget_eq {spec : OracleSpec ι} (D : NUPPT) {β : Type}
+
+### grep -rnE 'theorem length_le_length_encodeLog|def logCount|encodeLog_length' TCSlib --include=*.lean
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:108:private theorem length_le_length_encodeLog (codec : MachineCodec spec α) (h : QueryLog spec) :
