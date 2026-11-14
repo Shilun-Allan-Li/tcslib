@@ -17,7 +17,7 @@ selector theorems) is dispatched to Codex (campaign/fills/ladner-selectors/). Ea
 
 | PR / gate | Current state |
 |---|---|
-| #304 / 136 | **Not yet clear to merge.** Ladner fill 1 (Codex): `ladnerH_bounded_of_mem_P` and `ladnerH_unbounded_of_not_mem_P` at `bd8cd565`. Replay, seals, controls, screens done; Codex gate 136 being staged. See campaign/gates/136-ladner-selectors/. |
+| #304 / 136 | **Not yet clear to merge.** Ladner fill 1 (Codex): `ladnerH_bounded_of_mem_P` and `ladnerH_unbounded_of_not_mem_P` at `bd8cd565`. Replay, seals, controls, screens done; Codex gate 136 ready to dispatch (prompt.md, exchange `c8e269af`). See campaign/gates/136-ladner-selectors/. |
 | #302 / 135 | **Merged** at `210d87481ad6837ec34ac8ef99e267e13ff8c95b` (2026-11-14). Gate closed (CLEAR). Its fresh replay output is the campaign snapshot `oleans-c210d` (876 objects; campaign/status/2026-11-14-merge-302/). Ladner fill 1 (dispatched) builds on its head `50bb801a`. |
 | #301 / 134 | **Merged** at `b313afe522991f2114390952f26ffe7de825bace` (2026-11-14). Gate closed (CLEAR). Its replay output is the campaign snapshot `oleans-cb313` (876 objects; campaign/status/2026-11-14-merge-301/). |
 | #300 / 133 | **Merged** at `aeeda36452d6fbdf76b8670bb6cf1f569b7d1203` (2026-11-14). Gate closed (round 2 CLEAR). Its replay output is the campaign snapshot `oleans-caeed` (876 objects; campaign/status/2026-11-14-merge-300/). |
