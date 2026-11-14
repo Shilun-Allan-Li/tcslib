@@ -7,6 +7,9 @@ import TCSlib.Cryptography.Authentication.Signatures.Defs
 import TCSlib.Cryptography.Hashing.CollisionResistant
 import TCSlib.Cryptography.Authentication.Encoding
 import TCSlib.Cryptography.Asymptotic.CollectionsLemmas
+import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.FixedGame
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CodecReaders
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -368,6 +371,106 @@ theorem hashAndSign_ver (H : CRH) (S : SignatureScheme)
     (hashAndSign H S hlen).ver = hsVerFun S H := rfl
 
 /-! ### Theorem 144.1 -/
+
+/-- When hash and signature message widths agree, the hash-and-sign hash word equals the
+word used by the two reduction handlers, including on arbitrary list inputs. -/
+theorem hsHashList_eq_hashWord (H : CRH) (S : SignatureScheme)
+    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (i m : List Bool) :
+    hsHashList H (List.replicate n true) i m =
+      HashSignForward.hashWord H S (List.replicate n true) i m := by
+  simp only [hsHashList_eq, HashSignForward.hashWord_eq, padStr_eq,
+    List.length_replicate, hlen n]
+
+/-- For a computation making at most one signing query, the hash-and-sign signing oracle
+has the same expected logged payoff as sampling one original signing tape before the run.
+
+**Proof sketch.** First move the wrapper signer's randomness outside the simulation using
+the one-query sampling law. Its coin bijection with the original signer preserves uniform
+sampling. The published wrapper run equation and the hash-width equation identify each
+fixed-tape answer with the common experiment's answer. -/
+theorem expect_hashAndSign_sign (H : CRH) (S : SignatureScheme)
+    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (sk i : List Bool)
+    (c : OracleComp (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
+      (fun _ => S.sigLen.eval n)) (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool))
+    (hc : c.CostBoundedBy (fun _ => 1) 1)
+    (g : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
+      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
+        (fun _ => S.sigLen.eval n))) → ℝ) :
+    ProbComp.expect
+        (simulate ((hashAndSign H S hlen).signImpl n (pairEncode sk i)).withLog c ((), [])) g =
+      ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
+        ProbComp.expect (simulate (HashSignFill.fixedSign H S n sk i rs).withLog c ((), [])) g) := by
+  have hraw := HashSignFill.expect_simulate_sample_once
+    (fun (_ : Fin 1) (m : Fin (H.domLen.eval n) → Bool) (rs : (hsSign S H).Coins n) =>
+      padFin (S.sigLen.eval n)
+        ((hsSign S H).runAt n (pairEncode (pairEncode sk i) (List.ofFn m)) rs)) c hc g
+  have hfirst : ProbComp.expect
+      (simulate ((hashAndSign H S hlen).signImpl n (pairEncode sk i)).withLog c ((), [])) g =
+      ProbComp.expect (ProbComp.sample ((hsSign S H).Coins n)) (fun rs =>
+        ProbComp.expect
+          (simulate (QueryImpl.withLog (fun (_ : Fin 1) (m : Fin (H.domLen.eval n) → Bool)
+            (_ : Unit) => (OracleComp.pure
+              (padFin (S.sigLen.eval n)
+                ((hsSign S H).runAt n (pairEncode (pairEncode sk i) (List.ofFn m)) rs), ()) :
+              ProbComp ((Fin (S.sigLen.eval n) → Bool) × Unit)))) c ((), [])) g) := by
+    simpa only [SignatureScheme.signImpl_eq, hashAndSign_sign, hashAndSign_sigLen] using hraw
+  rw [hfirst]
+  let e : S.sign.Coins n ≃ (hsSign S H).Coins n :=
+    NUPPT.coinsCongr (A := S.sign) (B := hsSign S H)
+      (NUPPT.coins_ofPolyTimeUniform (polyTimeComputable_hsSignFun S H) S.sign.coins).symm n
+  rw [← ProbComp.expect_sample_equiv e]
+  apply congrArg (ProbComp.expect (ProbComp.sample (S.sign.Coins n)))
+  funext rs
+  have hi : (fun (_ : Fin 1) (m : Fin (H.domLen.eval n) → Bool) (_ : Unit) =>
+      (OracleComp.pure (padFin (S.sigLen.eval n)
+        ((hsSign S H).runAt n (pairEncode (pairEncode sk i) (List.ofFn m)) (e rs)), ()) :
+        ProbComp ((Fin (S.sigLen.eval n) → Bool) × Unit))) =
+      HashSignFill.fixedSign H S n sk i rs := by
+    funext j m s
+    rw [HashSignFill.fixedSign_apply, HashSignFill.hashedReply_eq,
+      runAt_hsSign, hsHashList_eq_hashWord H S hlen]
+  rw [hi]
+
+/-- Hash-and-sign accepts a message/signature pair exactly when the original scheme accepts
+the padded hash of that message with the same signature. -/
+theorem hashAndSign_accepts_iff (H : CRH) (S : SignatureScheme)
+    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (pk i : List Bool)
+    (m : Fin (H.domLen.eval n) → Bool) (σ : Fin (S.sigLen.eval n) → Bool) :
+    (hashAndSign H S hlen).Accepts n (pairEncode pk i) m σ ↔
+      S.Accepts n pk (padFin (S.msgLen.eval n)
+        (H.eval (atParam n (pairEncode i (List.ofFn m))))) σ := by
+  simp only [SignatureScheme.accepts_iff, hashAndSign_ver, hsVerFun_eq, atParam_eq,
+    pairFstD_pairEncode, pairSndD_pairEncode, hsHashList_eq_hashWord H S hlen,
+    HashSignForward.hashWord_unary]
+
+/-- On concatenated original-generator and hash-generator tapes, the combined generator
+returns the original public and secret keys each paired with the same generated hash index.
+
+**Proof sketch.** The published coin-splitting bijection has the concatenated encoding.
+Transporting to the combined width preserves that encoding, so its two projections are
+the original tapes. The combined generator's run equation then gives the paired keys. -/
+theorem runAt_hsGen_split (S : SignatureScheme) (H : CRH) (n : ℕ)
+    (rg : S.gen.Coins n) (ri : H.gen.Coins n) :
+    (hsGen S H).runAt n []
+        (EnsembleLemmas.coinsEquiv (hsGen_coinLen S H n) (rg, ri)) =
+      pairEncode
+        (pairEncode (pairFstD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri))
+        (pairEncode (pairSndD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri)) := by
+  let ρ := EnsembleLemmas.coinsEquiv (hsGen_coinLen S H n) (rg, ri)
+  let σ : Fin (S.gen.coinLen n + H.gen.coinLen n) → Bool :=
+    fun j => ρ (Fin.cast (hsGen_coinLen S H n).symm j)
+  have hσ : σ = Fin.append rg ri := by
+    apply List.ofFn_injective
+    exact (List.ofFn_congr (hsGen_coinLen S H n) ρ).symm.trans
+      ((EnsembleLemmas.ofFn_coinsEquiv (hsGen_coinLen S H n) (rg, ri)).trans
+        (List.ofFn_fin_append rg ri).symm)
+  rw [runAt_hsGen]
+  change pairEncode
+    (pairEncode (pairFstD (S.gen.runAt n [] (fun j => σ (Fin.castAdd (H.gen.coinLen n) j))))
+      (H.gen.runAt n [] (fun j => σ (Fin.natAdd (S.gen.coinLen n) j))))
+    (pairEncode (pairSndD (S.gen.runAt n [] (fun j => σ (Fin.castAdd (H.gen.coinLen n) j))))
+      (H.gen.runAt n [] (fun j => σ (Fin.natAdd (S.gen.coinLen n) j)))) = _
+  simp only [hσ, Fin.append_left, Fin.append_right]
 
 /-- **Theorem 144.1: hash-and-sign is one-time secure** [PS10, Theorem 144.1] when the hash
 family is collision resistant on its full domain and the signature scheme is one-time secure.
