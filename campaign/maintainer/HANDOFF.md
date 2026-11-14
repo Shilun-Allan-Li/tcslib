@@ -17,6 +17,7 @@ campaign/status/2026-11-14-merge-296/. Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
+| #300 / 133 | **Not yet clear to merge.** Readers for Call, Clean and the Oblivious consumers at `829648df` (60 readers and the `obliviousScheduleCfg` transport; rulings 2026-11-14). Replay, seals, controls, screen done; Codex gate 133 being staged. See campaign/gates/133-call-clean-oblivious-readers/. |
 | #296 / 132 | **Merged** at `5ab222167eb12664d97d255766c5def15b6d5d50` (2026-11-14). Gate closed (round 3 CLEAR). Its replay output is the campaign snapshot `oleans-c5ab2` (876 objects; campaign/status/2026-11-14-merge-296/). |
 | #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
@@ -45,7 +46,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
 with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132), merged 2026-11-14.** The archived `CfgFacts` draft is superseded. The approved
-Hardness CfgFacts import stays separate. Next free gate 133. Use complete
+Hardness CfgFacts import stays separate. Next free gate 135 (134: the SAT linear-verifier reader). Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.
 
