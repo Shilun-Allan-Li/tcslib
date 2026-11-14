@@ -969,8 +969,7 @@ private lemma dataTM_ready (W M : FinTM Bool) (a b : ℕ) (T : ℕ → ℕ)
       (∀ i z, (dataCell (tapes i z)).1 = sourcePayload (M.tm.initCfg x) z i) := by
   obtain ⟨t, base, hrun0, hs, hu, hg, hut, hgt⟩ := obliviousSchedule_ready W a b T hW hT x
   obtain ⟨d, tapes, out, hrun, hinv⟩ := prepInvariant_run W M a x t
-  rw [hrun0] at hinv
-  change prepInvariant W M a x base d tapes out at hinv
+  rw [hrun0, obliviousScheduleCfg_eq_id, id_eq] at hinv
   simp only [prepInvariant, hs, hu, prepCondition] at hinv
   obtain ⟨hd, ho, ht⟩ := hinv.2.2 trivial
   subst d
@@ -980,8 +979,7 @@ private lemma dataTM_ready (W M : FinTM Bool) (a b : ℕ) (T : ℕ → ℕ)
     have hm := macroCfg_self W a base
     rw [hs, hu, hg] at hm
     simp only [dataCfg, hm]
-    rw [hrun0]
-    rfl
+    rw [hrun0, obliviousScheduleCfg_eq_id, id_eq]
   · simpa only [copiedPayload_full] using ht
 
 /-- The padded sequence of actual macrosteps represents the source run at every
