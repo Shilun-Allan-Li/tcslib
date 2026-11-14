@@ -1,7 +1,7 @@
 # lamport · maintainer delivery review (r1)
 
-**Verdict: ACCEPT WITH LANDING EDITS.** LE-facade and LE-width are done. The landing edits LE-rule10 (a proof-only width
-transport in one declaration) and LE-doc are in progress.
+**Verdict: ACCEPT WITH LANDING EDITS.** LE-facade, LE-width, LE-rule10 and LE-doc are all done and built; see the last
+section (head `987efb51`, PR #309).
 
 ## Delivery and landing branch
 
@@ -72,7 +72,7 @@ transport in one declaration) and LE-doc are in progress.
     follow-up will restate the frozen hypothesis over `Fin (var.eval n)` with a published reader, which would clear
     all 16.
   - **`LamportFill.exists_realization_machine`** in `Realization.lean`, inside its proof. It treats T1's
-    `(bitSpecAt var (var·var) n).dom j` as `Fin n → Bool`. This is being fixed by **LE-rule10**, a proof-only change.
+    `(bitSpecAt var (var·var) n).dom j` as `Fin n → Bool`. **Fixed by LE-rule10** `32b17308` (proof only); seal B now passes for it.
 - **Paired controls:** 16 probes with 37 sealed negatives, ALL_OK.
 - **Explicit-unfold scan:** 797 items, 0 foreign.
 - **Opacity blocks (patch 4).** `Lamport.lean:777`, `Experiment.lean:40` and `Statistics.lean:36` each run a
@@ -104,9 +104,36 @@ and success only on non-aborting runs. No `take_poly` or `drop_poly` remains.
 | # | Severity | Finding | Disposition |
 |---|---|---|---|
 | 1 | minor | Seal B fails on 5 new helper statements, for the same reason as the 11 base failures (frozen `f` over `Fin n`). | **Accepted as inherited** (Seyoon, 2026-11-14). The follow-up restating the frozen hypothesis is recorded. |
-| 2 | minor | Seal B fails inside the proof of `exists_realization_machine`. | **LE-rule10**: an explicit width transport, proof only. In progress. |
-| 3 | minor | 189 of the 221 new public declarations have no formula in their docstrings, and 8 long proofs have no sketch. | **LE-doc**: docstrings only. In progress. |
+| 2 | minor | Seal B fails inside the proof of `exists_realization_machine`. | **Fixed** by LE-rule10 `32b17308`. |
+| 3 | minor | 189 of the 221 new public declarations have no formula in their docstrings, and 8 long proofs have no sketch. | **Fixed** by LE-doc `987efb51`. |
 | 4 | minor | Undisclosed duplicate: `LamportFill.signatureBlock σ i` is `FunFamily.blocks n n σ i` (via `blocks_apply`). | Ledger **DL-43**. |
 | 5 | ledger | Overlaps with the parallel `hash-sign` delivery: `lamport_codec_ext` is `MachineCodec.ext_of_fields`; `lamport_forgerCodec` is an instance of `forgerCodec_eq_bitCodec`; `exists_pure_of_cost_zero` is `eq_pure_of_cost_zero` (`landing/hash-sign-overlaps.txt`). | Ledger **DL-42**, already recorded from the hash-sign side. Fold once both units have landed. |
 | 6 | ledger | Near relatives: `Blocks.flatten_ofFn_update` (`CommitmentLemmas.ofFn_update_eq`) and `Averaging.expect_favourable_of_success` (the `ProbComp` counterpart of `HardcoreBit.uprob_mul_le_uexp`). | Ledger **DL-43**. |
 | 7 | nit | 7 linter warnings: unused hypotheses, an unused `simp` argument, and a dead `exact le_rfl`. | Optional follow-up. |
+
+## Landing edits LE-rule10 and LE-doc (built)
+
+- **Head:** `987efb5156b3ae20cff4576b379eb1c607f33cb0`, tree `dc1fb8fb5ba7fb427c6c94a03a6d64accf04e695`.
+  - No rebase was needed: since `dee0de32` the records tip has only records commits.
+- **LE-rule10** `32b1730838292add4c844ca1cf34b747412831d3` changes the proof of `exists_realization_machine` and nothing
+  else. All 268 headers are byte-identical, and decls2 is empty.
+  - T1's widths are now read through `PolyExpr.eval_var`, `eval_mul`, `eval_add` and `eval_const`, with `Fin.cast`
+    and `List.ofFn_congr`.
+  - Seals for `Realization.lean`: A and B pass in both the strict and the coe variant. Before the edit, B failed
+    with 6 errors in this one declaration.
+  - Paired controls: 8 probes with 30 sealed negatives, ALL_OK.
+- **LE-doc** `987efb51` changes docstrings only: 188 formulas in 16 files and 7 sketches.
+  - All hunks are inside doc comments. With doc comments blanked the code is identical, `run_cmd` blocks included.
+  - Docaudit: 220 OK. The one exception is the target, whose first line is prose.
+  - Every proof of 15 or more lines has a sketch.
+  - One 10-line proof, `runAt_lamportSign_table`, has no sketch, because adding one would push `Lamport.lean` to
+    1000 lines.
+  - **`Lamport.lean` now has 999 lines.** It must be split before it grows any further. This is recorded as a
+    follow-up.
+- **Build:** 24/24 modules give rc 0 through root `TCSlib`. The whole-tree check at the head (1217 modules) gives OK.
+  - Both `lamport_oneTimeSecure` and `exists_realization_machine` print only the standard axioms.
+  - The tree was restored to the base snapshot.
+- **Lint (#305):** 92 FAIL / 101 WARN at the head and 92 / 102 at the tip. No FAIL or WARN is new.
+- **Evidence:** `le-evidence.zip`, SHA-256 `329b830f6398997d621ea5ad36a7515b79cae6edc564a8db449dee1e44a68fe3`, 217 entries.
+  Its manifest is `le-evidence-SHA256SUMS`, and the patches are in `landing-le/`.
+- **PR:** draft [PR #309](https://github.com/Shilun-Allan-Li/tcslib/pull/309).

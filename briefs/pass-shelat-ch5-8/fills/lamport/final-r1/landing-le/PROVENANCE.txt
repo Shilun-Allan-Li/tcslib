@@ -1,0 +1,120 @@
+lamport landing edits LE-rule10 and LE-doc, with build, maintainer, 2026-11-14 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: the hash-sign, cca2-ett and dl-crh LE-doc jobs (hash-sign-r1-ledoc/, cca2-ett-r1-ledoc/, dl-crh-r1-ledoc/) and the lamport
+  review (lamport-r1/, read only: tools were copied out of it, nothing in it was written). Rules: python3 -I throughout; Lean 4.25.0;
+  one Lean process at a time, only scripts/lean_check_tree.sh (the worktree's copy, byte-equal to /home/user/tcslib/scripts/) with
+  TCSLIB_OLEANS=$SP/dl-oleans-2; no lake command; nothing pushed; /home/user/tcslib not edited (status clean).
+landing: branch land/pass-shelat-lamport (local only, no upstream), worktree $SP/wt-land-lamport, base dee0de32 (unchanged).
+  parent LE-width  1023834eb030197ef2fc94c7270cc0d5ac85ab12 (tree 94aff1a580494d50002c6dde390c0112ea3212b6)
+  LE-rule10        32b1730838292add4c844ca1cf34b747412831d3 (tree 2e5ce9a300635a18a53f3c3173a9e14937322d11)
+  head LE-doc      987efb5156b3ae20cff4576b379eb1c607f33cb0 (tree dc1fb8fb5ba7fb427c6c94a03a6d64accf04e695)
+  Both new commits: author = committer = Claude <noreply@anthropic.com>, ending with the two trailer lines (landing/commits.txt;
+  messages logs/commit-msg-le-rule10.txt, logs/commit-msg-le-doc.txt; patches landing/0009-*, 0010-* by git format-patch).
+  The worktree is clean at the head (LpProbe/ removed).
+rebase (landing/rebase-decision.log): git fetch origin. The tip was d497b087 and moved during the job to 8461689b (the records
+  commit of the lamport review, DL-43). dee0de32..tip touches only PassShelatChapter5-8Plan.md and briefs/: no .lean, audits/,
+  scripts/, toolchain or lake file. Case: NO Lean change after dee0de32, so the base is kept (merge-base dee0de32), not rebased.
+tree pre (tree/tree-check-pre.txt): $SP/dl-oleans-2 at the base before any build: 1199 modules (lamport-r1/order/base-tree-modules.txt)
+  rc 0 at eff2dcd0 source and at the object hashes of lamport-r1/logs/all-results-restored.jsonl; no stray olean or empty dir;
+  tree/snapshot-pre.txt (1230 files) byte-equal to lamport-r1/tree/snapshot-post.txt. RESULT OK.
+
+LE-rule10 (32b17308): proof-only change to LamportFill.exists_realization_machine (Lamport/Realization.lean). SUCCEEDED.
+  Cause (lamport-r1 seal table): under seal B (PolyExpr.eval sealed) the old proof used T1's oracle domain
+  `(bitSpecAt var (var·var) n).dom j`, its answer type and its output width as `Fin n → Bool`, `Fin (n * n) → Bool` and
+  `Fin (n + n * n) → Bool` (hcall, hsim, hsimulation', hp, ha), which holds only by unfolding PolyExpr.eval.
+  Fix: hd/he/ho read T1's widths through PolyExpr.eval_var/eval_mul/eval_add; hcall states the safe-query answer at T1's
+  widths with the query and the table signature moved by Fin.cast (lists read by List.ofFn_congr, Fin.cast_cast, Fin.cast_refl);
+  htransport proves the planted simulation for arbitrary widths d, e, o, budget q and input Y with equations to n, n * n,
+  n + n * n, 1 (PolyExpr.eval_const) and the public word (hadv), substitutes them (`subst d e o q Y`) and reads the typed tree
+  as before; T1's simulation is then matched at the evaluated widths, and the output word `fun k => a₀ (Fin.cast ho k)` is read
+  back for out_nonabort by List.ofFn_congr. The casts' simp lemmas are applied in two steps so that the same lemmas are used
+  sealed and unsealed (no new linter warning).
+  Statement and other declarations (rule10/checks/): touched 1023834e vs 32b17308 over the 18 files: 1 CHANGED
+  (exists_realization_machine, span 70-219), 267 UNCHANGED; header-bytes-perfile.txt (headerbytes_perfile.py, 1023834e vs
+  32b17308): 268 compared, 0 different; decls2-vs-parent.tsv/.err empty (0 statement changes); changed-paths.txt: Realization.lean
+  only. The docstring of exists_realization_machine is unchanged by this commit.
+  Iteration: tools-used/mkiter.py spliced the edited source into lamport-r1's seal-B probe for Realization (iteration only; the
+  scratch probe and its logs were removed). Final verification below used the review's tools unmodified.
+  Build at 32b17308 (rule10/build/, rule10/order/realization-down.txt, runner.py): Realization, Lamport, HashAndSign,
+  Authentication, Rejection, Sampler, Extraction, Randomness, TCSlib: 9/9 rc 0, 0 errors; warnings Realization 1 (unused
+  variable `hg`, as in the review), HashAndSign 1 (its issued sorry), Rejection 10, Extraction 2.
+  Seals at 32b17308 (rule10/): collector probe-sources/CollectHead.lean.txt = lamport-r1/probe-sources/head/CollectHead.lean.txt
+  byte for byte (mkcollect.py), run in probe-runs/ (rc 0). mkseals_ab.py (strict) and mkseals_coe.py (coe, canonical), variants
+  A and B (SEAL_EVAL=1), for Realization only: seals/{A,B}, seals-coe/{A,B}, mkseals-*.log. Requests 2099/2100/2098/2099 (= the
+  review's); request rows identical to the review's records; one new term reference TCSlib.Cryptography.Games.QueryImpl, an
+  abbrev (excluded as notation by the seal rules). Runs in seal-runs/ (seal-runner.out), summaries seal-{A,B}.tsv and
+  seal-coe-{A,B}.tsv (sealsum.py with touched-realization.json):
+    strict A pass, strict B PASS, coe A pass, coe B PASS (rc 0, 0 errors, install and EOF records present in each).
+  Seal B for Realization.lean was FAIL 6e/1d (exists_realization_machine) in the review; it now passes in both variants.
+  Paired controls for Realization (rule10/controls, controls-coe, control-runs; mkctl_lamport.py run once on the strict records
+  and once on the coe records, so each variant's A and B record gets a ControlS/ControlU pair): 8 probes, 30 sealed negatives
+  (padFin, expect, sample, bind, secretWord, signatureBlock, LamportMachine.u in A; also PolyExpr.eval in B), each failing exactly
+  once; all positives and unsealed controls pass; rule10/ctlcheck.log ALL_OK True (ctlcheck2.py).
+
+LE-doc (987efb51): docstrings only, 16 files (checks/changed-paths.txt); Authentication.lean not touched.
+  Edit: tools-used/ledoc_edit.py with the texts in tools-used/ledoc_spec.py (logs/ledoc_edit.out). Each edited docstring's first
+  paragraph is replaced by the same words plus a backticked formula transcribed from the statement (defs: the defining
+  equation, or for an equivalence the declared `≃` type, whose reader follows; Prop defs: the unfolding `↔`; `_poly` readers:
+  `PolyTimeComputable …` with the function's type, or its hypotheses as `→`). Later paragraphs, including existing sketches,
+  are kept byte for byte. Lines are filled to at most 100 characters and never start with a Markdown block marker. In
+  Lamport.lean the edited first paragraphs are refilled from their start to keep the file under 1000 lines.
+  checks/repro.txt: the script applied to a git-archive export of 32b17308 reproduces HEAD's TCSlib/ byte for byte.
+  (1) formulas: the 188 NO-FORMULA public declarations of the review (189 minus the target lamport_oneTimeSecure, whose first
+      line, tag, sketch, header and body are untouched): Lamport.lean 18, Advice 9, Averaging 4, AveragingExtra 2, Closing 1,
+      Encoding 1, Experiment 18, InversionProbability 1, Machine 62, MachineSpec 8, Nonabort 1, Planted 49, Realization 5,
+      Seed 5, Statistics 1, TableCoins 3.
+  (2) sketches: 7 added. Both proofs of >= 15 lines without one: runAt_lamportGen_table (19), favourable_mass_of_success (18).
+      Of the six 10-14-line ones, 5 sketched: diagonal_red_of_success_favourable (12), first_context (11), second_context (12),
+      out_nonabort (14), tableSignature_plant_of_safe (10). Not sketched: runAt_lamportSign_table (10, Lamport.lean), since a
+      sketch would take Lamport.lean to 1000+ lines.
+  statements/: docaudit-before.tsv (at 32b17308; rows = lamport-r1/statements/docaudit.tsv): 189 NO-FORMULA, 32 OK.
+    docaudit-after.tsv: 220 OK, 1 NO-FORMULA = the target only (prose first line), 0 NO-DOC, 0 LABEL.
+    sketchaudit-fix{15,10}-before.tsv (export of 32b17308): >= 15 lines 12 theorems / 2 without sketch; >= 10 lines 24 / 8 (the
+    review's 8). sketchaudit-fix{15,10}-after.tsv: 12 / 0 and 24 / 1 (runAt_lamportSign_table).
+    touched-before/after (eff2dcd0 vs 32b17308 / 987efb51): 19 ADDED, 1 CHANGED (target), 202 NEW_FILE, 46 UNCHANGED both.
+    touched-rule10-vs-head.tsv: 188 CHANGED = exactly the 188 formula names (checks/changed-vs-noformula.txt), 80 UNCHANGED,
+    target UNCHANGED.
+    header-bytes-perfile-vs-32b17308.txt: 268 compared, all IDENTICAL; header-bytes-vs-32b17308.txt (review headerbytes.py, with
+    the target as endpoint): 269 compared, 0 different. decls2-vs-32b17308.tsv/.err empty. decls2-vs-base.tsv: 220 ADDED, the
+    same names and statements as lamport-r1/statements/decls2.tsv (checks/decls2-vs-base-vs-r1.txt).
+  checks/hunk-in-doccomment.txt (hunkdoc2.py 32b17308 -> 987efb51): 16 files, 188 hunks, all IN-DOCCOMMENT; all 16 files
+    CODE-IDENTICAL with doc comments blanked (so the run_cmd opacity blocks and all code are byte-identical); 0 failures; one
+    pre-existing over-width line (Lamport.lean:90, 101 characters).
+  checks/widths.txt (Python len): 0 new lines over 100; the two over-100 lines are the pre-existing Lamport.lean:90 and
+    Authentication.lean:60. Sizes: Lamport.lean 973 -> 999 (< 1000); helpers Advice 148, Averaging 140, AveragingExtra 91,
+    Blocks 78, Closing 95, Encoding 85, Experiment 270, InversionProbability 89, Machine 407, MachineSpec 268, Nonabort 65,
+    Planted 513, Realization 230, Seed 77, Statistics 153, TableCoins 92.
+
+BUILD at the head 987efb51 (build/, order/head-build.txt = lamport-r1/order/head-build-queue.txt, logs/build-runner.out):
+  the 16 helpers, Lamport, HashAndSign, Authentication, base-delta Rejection, Sampler, Extraction, Randomness, root TCSlib:
+  24/24 rc 0, 0 errors. Warnings as in the review: Blocks 2, InversionProbability 2, MachineSpec 2, Realization 1, HashAndSign 1
+  (its issued sorry), Rejection 10, Extraction 2. Source/object hashes per module in build/results.jsonl (Realization source
+  bb89cf7c..., Lamport e175dd7d..., Authentication 0835aea3..., TCSlib 942193a0...).
+  Whole-tree head check build/tree-check-head.txt (treecheck.py; order lamport-r1/order/final-tree-modules.txt, 1217 modules;
+  records build/all-results-head.jsonl = base records + rule10/build + build): every module's last record rc 0 at the 987efb51
+  source and olean hash, no stray olean (probe oleans deleted first, restore/probe-oleans-deleted.txt), no empty dir: RESULT OK
+  (build/snapshot-head.txt, 1248 files).
+lint (logs/): python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography from the worktree at 987efb51
+  (lint-crypto-head-987efb51.log): 92 FAIL, 101 WARN over 319 files; at the records tip 8461689b from a git-archive export of
+  scripts/ + TCSlib/ (lint-crypto-tip-8461689b.log): 92 FAIL, 102 WARN over 303 files. lint-crypto-tip-vs-head.diff (FAIL/WARN
+  lines, whitespace-normalised): only the tip's Lamport.lean check-8 WARN (lamportGen, lamportSign) is gone at the head, as in
+  the review. No new FAIL or WARN. FAIL/WARN lines equal the review's landing-head lint (lint-landinghead1023834e-vs-head.diff
+  empty); the tip's equal the review's dee0de32 lint (lint-tip-dee0de32-vs-8461689b.diff empty).
+axioms (axioms/, LpProbe/AxiomsHead at 987efb51): lamport_oneTimeSecure depends on [propext, Classical.choice, Quot.sound];
+  LamportFill.exists_realization_machine likewise.
+restore (restore/, logs/restore-runner.out): deleted the 10 probe oleans (restore/probe-oleans-deleted.txt), then the 18 head-only
+  oleans (16 helpers, Rejection, Sampler) and the 2 emptied directories (restore/restore-deleted.txt, with their hashes); rebuilt
+  order/restore-base.txt (= lamport-r1's: Lamport, HashAndSign, Authentication, Extraction, Randomness, TCSlib) from a git-archive
+  export of eff2dcd0 (TCSlib, TCSlib.lean, audits, scripts, lean-toolchain; .lake/packages symlinked; removed after): 6/6 rc 0,
+  0 errors (base Lamport, HashAndSign and Extraction carry their base sorry); source and object hashes = base records
+  (restore/restore-vs-base-records.txt RESULT OK). restore/tree-check-post.txt: RESULT OK; restore/snapshot-post.txt is
+  byte-identical to tree/snapshot-pre.txt and to lamport-r1/tree/snapshot-post.txt (SHA-256 457ba704...).
+tools-used/: review/ = lamport-r1/tools/ copied unmodified (runner, treecheck, touched, docaudit, headerbytes, decls2, mkcollect,
+  mkseals_ab, mkseals_coe, mkctl_lamport, ctlcheck2, sealsum, ..., archived-gate10-tools/, NmCollect.template.lean).
+  hunkdoc2.py, sketchaudit_fix.py = dl-crh-r1-ledoc/tools-used/ unmodified; headerbytes_perfile.py =
+  cca2-ett-r1-ledoc/tools-used/ unmodified. New: ledoc_edit.py, ledoc_spec.py, mkiter.py (LE-rule10 iteration only).
+open points: (a) the formulas are hand transcriptions of the statements, checked by reading each statement against its formula;
+  no tool compares them semantically. (b) `LamportFill.` prefixes are omitted in Lamport.lean's formulas; the Statistics formula
+  defines its `𝔼`/`[A]` shorthand inline (not Lean notation). (c) runAt_lamportSign_table (10-line proof) has no sketch, because of
+  the 1000-line limit of Lamport.lean.
+SHA256SUMS: every file here except itself (paths without "./"); ../lamport-r1-le-evidence.zip holds exactly the manifest paths.
