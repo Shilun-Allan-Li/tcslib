@@ -6,6 +6,12 @@ import TCSlib.Complexity.Randomized.Repetition
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleSecurity
 import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Tools
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Machines
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Games
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Handler
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Reduction
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Transfer
 import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
@@ -364,6 +370,215 @@ noncomputable def ccaScheme : FixedLengthScheme where
     omega
 
 attribute [simps (config := { isSimp := false }) gen enc dec ctLen] ccaScheme
+
+/-! ### The proof of Theorem 170.4 -/
+
+section Proof
+
+open ETTGame ProbComp
+
+/-- The ciphertext length is `6n + 4` (`ccaScheme_ctLen`). -/
+private theorem cca_ctLen_eval (n : ℕ) : (ccaScheme F E hE hFE).ctLen.eval n = 6 * n + 4 := by
+  rw [ccaScheme_ctLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
+    PolyExpr.eval_const, PolyExpr.eval_var]
+
+/-- The scheme's query lengths are the reduction's: `inLens n = fun i => (ettDin i).eval n`. -/
+private theorem cca_inLens (n : ℕ) :
+    (ccaScheme F E hE hFE).inLens n = fun i => (ettDin i).eval n := by
+  funext i
+  match i with
+  | 0 => rw [FixedLengthScheme.inLens_zero, ettDin_zero, PolyExpr.eval_var]
+  | 1 => rw [FixedLengthScheme.inLens_one, ettDin_one, cca_ctLen_eval, ettCt_eval]
+  | 2 => rw [FixedLengthScheme.inLens_two, ettDin_two, PolyExpr.eval_add, PolyExpr.eval_var]
+
+/-- The scheme's answer lengths are the reduction's: `outLens n = fun i => (ettDout i).eval n`. -/
+private theorem cca_outLens (n : ℕ) :
+    (ccaScheme F E hE hFE).outLens n = fun i => (ettDout i).eval n := by
+  funext i
+  match i with
+  | 0 => rw [FixedLengthScheme.outLens_zero, ettDout_zero, cca_ctLen_eval, ettCt_eval]
+  | 1 =>
+    rw [FixedLengthScheme.outLens_one, ettDout_one, PolyExpr.eval_add, PolyExpr.eval_var,
+      PolyExpr.eval_const]
+  | 2 => rw [FixedLengthScheme.outLens_two, ettDout_two, cca_ctLen_eval, ettCt_eval]
+
+/-- `Gen′` has `3n` coins. -/
+private theorem cca_gen_coins : (ccaScheme F E hE hFE).gen.coins = .mul (.const 3) .var := by
+  rw [ccaScheme_gen, NUPPT.coins_ofPolyTimeUniform]
+
+/-- `Enc′` has `n` coins. -/
+private theorem cca_enc_coins : (ccaScheme F E hE hFE).enc.coins = .var := by
+  rw [ccaScheme_enc, NUPPT.coins_ofPolyTimeUniform]
+
+/-- `3n = n + 2n`, for the key coins. -/
+private theorem cca_gen_len (n : ℕ) : (PolyExpr.mul (.const 3) .var).eval n = n + 2 * n := by
+  rw [PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+  ring
+
+/-- The `3n` key coins as the keys `k₁` (`n` bits) and `k₂` (`2n` bits). -/
+private noncomputable def ccaKeyEq (n : ℕ) :
+    (ccaScheme F E hE hFE).gen.Coins n ≃ (Fin n → Bool) × (Fin (2 * n) → Bool) :=
+  (NUPPT.coinsEquivPoly (cca_gen_coins F E hE hFE) n).trans
+    (EnsembleLemmas.coinsEquiv (cca_gen_len n)).symm
+
+/-- `⟦rg⟧ = ⟦k₁⟧ ++ ⟦k₂⟧` for `(k₁, k₂) = ccaKeyEq rg`. -/
+private theorem ofFn_ccaKeyEq (n : ℕ) (rg : (ccaScheme F E hE hFE).gen.Coins n) :
+    List.ofFn rg = List.ofFn (ccaKeyEq F E hE hFE n rg).1 ++
+      List.ofFn (ccaKeyEq F E hE hFE n rg).2 := by
+  rw [← EnsembleLemmas.ofFn_coinsEquiv (cca_gen_len n), ccaKeyEq, Equiv.trans_apply,
+    Equiv.apply_symm_apply, NUPPT.coinsEquivPoly_ofFn]
+
+/-- **`Gen′` outputs the pair of the two keys:** `Gen′(1^n; rg) = ⟨⟦k₁⟧, ⟦k₂⟧⟩` for
+`(k₁, k₂) = ccaKeyEq rg` (`runAt_ccaGen`). -/
+private theorem cca_gen_runAt (n : ℕ) (rg : (ccaScheme F E hE hFE).gen.Coins n) :
+    (ccaScheme F E hE hFE).gen.runAt n [] rg =
+      pairEncode (List.ofFn (ccaKeyEq F E hE hFE n rg).1)
+        (List.ofFn (ccaKeyEq F E hE hFE n rg).2) := by
+  have h := ofFn_ccaKeyEq F E hE hFE n rg
+  generalize ccaKeyEq F E hE hFE n rg = kk at h
+  revert rg
+  rw [ccaScheme_gen]
+  intro rg h
+  rw [runAt_ccaGen, h, List.take_left' List.length_ofFn, List.drop_left' List.length_ofFn]
+
+/-- The encryption coins as an `n`-bit nonce, keeping the string. -/
+private noncomputable def ccaNonceEq (n : ℕ) : (ccaScheme F E hE hFE).enc.Coins n ≃ (Fin n → Bool) :=
+  (NUPPT.coinsEquivPoly (cca_enc_coins F E hE hFE) n).trans
+    (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool))
+
+/-- `⟦ccaNonceEq n re⟧ = ⟦re⟧`. -/
+private theorem ofFn_ccaNonceEq (n : ℕ) (re : (ccaScheme F E hE hFE).enc.Coins n) :
+    List.ofFn (ccaNonceEq F E hE hFE n re) = List.ofFn re := by
+  rw [ccaNonceEq, Equiv.trans_apply, ofFn_arrowCongr_finCongr, NUPPT.coinsEquivPoly_ofFn]
+
+/-- **`Enc′` with the keys `k₁`, `k₂` and the coins `re`** is `encW (F n k₁) (F (2n) k₂)` with the
+nonce `ccaNonceEq re` (`runAt_ccaEnc`, `hFE` at `n` and at `2n`). -/
+private theorem ofFn_cca_encryptAt (n : ℕ) (k₁ : Fin n → Bool) (k₂ : Fin (2 * n) → Bool)
+    (m : Fin n → Bool) (re : (ccaScheme F E hE hFE).enc.Coins n) :
+    List.ofFn ((ccaScheme F E hE hFE).encryptAt n (pairEncode (List.ofFn k₁) (List.ofFn k₂)) m re) =
+      encW (F n k₁) (F (2 * n) k₂) (ccaNonceEq F E hE hFE n re) (List.ofFn m) := by
+  have hx : List.ofFn re = List.ofFn (ccaNonceEq F E hE hFE n re) :=
+    (ofFn_ccaNonceEq F E hE hFE n re).symm
+  generalize ccaNonceEq F E hE hFE n re = r at hx
+  revert re
+  simp only [FixedLengthScheme.encryptAt_eq]
+  rw [ccaScheme_enc]
+  intro re hx
+  have hm : (List.ofFn m).length = n := List.length_ofFn
+  have hc := length_maskL (F n k₁) r hm
+  have hp : List.ofFn r ++ maskL (F n k₁) r (List.ofFn m) =
+      List.ofFn (pairV n (List.ofFn r) (maskL (F n k₁) r (List.ofFn m))) := by
+    rw [pairV_eq, ofFn_padFin_of_length (by rw [List.length_append, List.length_ofFn, hc]; omega)]
+  rw [runAt_ccaEnc, hx, hFE, ← maskL_eq, hp, hFE, ← tagL_eq, ← ctW_eq, ← encW_eq,
+    ofFn_padFin_of_length (by rw [length_encW _ _ _ hm, cca_ctLen_eval])]
+
+/-- **`Dec′` with the keys `k₁`, `k₂`** on a word `w`: `⟨1, wC w ⊕ ⟦F n k₁ (wR w)⟧⟩` if `w` is valid
+for the tag function `F (2n) k₂`, and `⊥` otherwise (`ccaDecFun_eq`, `ccaDecOK_eq`, `hFE`). The
+zero-parameter malformed words are read alike: their total projections are empty. -/
+private theorem ofFn_cca_decAnswer (n : ℕ) (k₁ : Fin n → Bool) (k₂ : Fin (2 * n) → Bool)
+    (w : List Bool) (rd : (ccaScheme F E hE hFE).dec.Coins n) :
+    List.ofFn (FixedLengthScheme.decAnswer (decodeFin n ((ccaScheme F E hE hFE).dec.runAt n
+        (pairEncode (pairEncode (List.ofFn k₁) (List.ofFn k₂)) w) rd))) =
+      if validW (F (2 * n) k₂) w = true then decL (F n k₁) w
+      else List.replicate (n + 1) false := by
+  revert rd
+  rw [ccaScheme_dec]
+  intro rd
+  rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, ccaDecFun_eq, ccaDecOK_eq]
+  simp only [NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode, List.length_replicate]
+  have htag : ∀ (hr : (pairFstD w).length = n) (hc : (pairFstD (pairSndD w)).length = n),
+      E (pairEncode (List.ofFn k₂) (pairFstD w ++ pairFstD (pairSndD w))) =
+        tagL (F (2 * n) k₂) (wR w) (wC w) := by
+    intro hr hc
+    have he : pairFstD w ++ pairFstD (pairSndD w) =
+        List.ofFn (pairV n (pairFstD w) (pairFstD (pairSndD w))) := by
+      rw [pairV_eq, ofFn_padFin_of_length (by rw [List.length_append, hr, hc]; omega)]
+    rw [he, hFE, tagL_eq, wR_eq, wC_eq]
+  by_cases hv : validW (F (2 * n) k₂) w = true
+  · rw [if_pos hv]
+    have hv' := hv
+    rw [validW_eq, Bool.and_eq_true, wfW_eq, Bool.and_eq_true, decide_eq_true_eq,
+      decide_eq_true_eq, decide_eq_true_eq] at hv'
+    obtain ⟨⟨hr, hc⟩, ht⟩ := hv'
+    rw [wR_eq] at hr
+    rw [wC_eq] at hc
+    have hok : (decide ((pairFstD w).length = n) && decide ((pairFstD (pairSndD w)).length = n) &&
+        decide (E (pairEncode (List.ofFn k₂) (pairFstD w ++ pairFstD (pairSndD w))) =
+          pairSndD (pairSndD w))) = true := by
+      rw [htag hr hc, ← wT_eq, ← ht]
+      simp [hr, hc]
+    rw [if_pos hok]
+    have hk : pairFstD w = List.ofFn (padFin n (pairFstD w)) := (ofFn_padFin_of_length hr).symm
+    have hlen : (List.zipWith xor (pairFstD (pairSndD w))
+        (List.ofFn (F n k₁ (padFin n (pairFstD w))))).length = n := by
+      rw [List.length_zipWith, List.length_ofFn, hc, Nat.min_self]
+    have hdec : List.zipWith xor (pairFstD (pairSndD w))
+        (List.ofFn (F n k₁ (padFin n (pairFstD w)))) =
+        List.ofFn (padFin n (List.zipWith xor (pairFstD (pairSndD w))
+          (List.ofFn (F n k₁ (padFin n (pairFstD w)))))) := (ofFn_padFin_of_length hlen).symm
+    conv_lhs => rw [hk, hFE, hdec, decodeFin_ofFn, FixedLengthScheme.decAnswer_some]
+    rw [List.ofFn_succ, Fin.cons_zero]
+    simp only [Fin.cons_succ]
+    rw [← hdec, decL_eq, wC_eq, wR_eq]
+  · rw [if_neg hv]
+    have hnok : (decide ((pairFstD w).length = n) && decide ((pairFstD (pairSndD w)).length = n) &&
+        decide (E (pairEncode (List.ofFn k₂) (pairFstD w ++ pairFstD (pairSndD w))) =
+          pairSndD (pairSndD w))) = false := by
+      by_contra hc'
+      rw [Bool.not_eq_false, Bool.and_eq_true, Bool.and_eq_true, decide_eq_true_eq,
+        decide_eq_true_eq, decide_eq_true_eq] at hc'
+      obtain ⟨⟨hr, hc⟩, ht⟩ := hc'
+      apply hv
+      rw [validW_eq, wfW_eq, wR_eq, wC_eq, hr, hc, wT_eq, ← ht, htag hr hc, wR_eq, wC_eq]
+      simp
+    rw [if_neg (by rw [hnok]; exact Bool.false_ne_true), decodeFin_eq,
+      dif_neg (by rw [List.length_cons, List.length_replicate]; omega),
+      FixedLengthScheme.decAnswer_none, ofFn_zeroBits]
+
+/-- **The CCA2 experiment of `π′` is the experiment with `f_{k₁}` and `f_{k₂}`:**
+`Pr[IND_b = 1] = 𝔼_{k₁} 𝔼_{k₂} ettAcc (F n k₁) (F (2n) k₂) false b A Q`, on the reduction's lengths.
+
+**Proof sketch.** `ETTGame.accept_indGame_eq` with the key split (`ccaKeyEq`, `cca_gen_runAt`), the
+nonce (`ccaNonceEq`) and the readers `ofFn_cca_encryptAt`, `ofFn_cca_decAnswer`; the key coins are
+uniform pairs (`expect_sample_equiv`, `expect_sample_prod`), and the lengths are the reduction's
+(`cca_inLens`, `cca_outLens`, `cca_ctLen_eval`, `expect_ettImpl_transport`). -/
+private theorem accept_cca_indGame (A : NUPPT) (Q : ℕ) (b : Bool) (n : ℕ) :
+    accept ((ccaScheme F E hE hFE).indGame .cca2 A Q b n) =
+      expect (sample (Fin n → Bool)) fun k₁ => expect (sample (Fin (2 * n) → Bool)) fun k₂ =>
+        ettAcc (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n) (ettCt.eval n) n
+          (F n k₁) (F (2 * n) k₂) false b A Q := by
+  rw [accept_indGame_eq (ccaScheme F E hE hFE) b n A Q (cca_ctLen_eval F E hE hFE n)
+      (fun rg => F n (ccaKeyEq F E hE hFE n rg).1)
+      (fun rg => F (2 * n) (ccaKeyEq F E hE hFE n rg).2) (ccaNonceEq F E hE hFE n)
+      (fun rg m re => by rw [cca_gen_runAt]; exact ofFn_cca_encryptAt F E hE hFE n _ _ m re)
+      (fun rg w rd => by rw [cca_gen_runAt]; exact ofFn_cca_decAnswer F E hE hFE n _ _ w rd),
+    ← expect_sample_equiv (ccaKeyEq F E hE hFE n).symm, ChallengeSim.expect_sample_prod]
+  refine congrArg _ (funext fun k₁ => congrArg _ (funext fun k₂ => ?_))
+  simp only [Equiv.apply_symm_apply]
+  rw [ettAcc_eq]
+  refine congrArg _ (funext fun r => ?_)
+  exact expect_ettImpl_transport n _ _ false b (cca_inLens F E hE hFE n)
+    (cca_outLens F E hE hFE n) (by rw [cca_ctLen_eval, ettCt_eval]) A Q r
+
+/-- **Step 1: the tag key becomes a random function** [PS10, Thm 170.4, proof]. For a machine
+adversary `A` with budget `q` and a bit `b`, there is a PRF distinguisher `D` such that at every
+`n`, `|Pr[IND_b = 1] − 𝔼_{k₁} 𝔼_R ettAcc (F n k₁) R false b A (q n)|` is the PRF advantage of `D`
+at parameter `2n` with budget `q(2n)`.
+
+**Proof sketch.** `accept_cca_indGame` and `ETTGame.exists_tagStep`. -/
+private theorem cca_tag_step (A : NUPPT) (q : PolyExpr) (b : Bool) :
+    ∃ D : NUPPT, ∀ n : ℕ,
+      |accept ((ccaScheme F E hE hFE).indGame .cca2 A (q.eval n) b n) -
+          expect (sample (Fin n → Bool)) (fun k₁ =>
+            expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool))) fun R =>
+              ettAcc (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n) (ettCt.eval n) n
+                (F n k₁) R false b A (q.eval n))| =
+        prfAdv (F (2 * n)) (D.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n))) := by
+  obtain ⟨D, hD⟩ := exists_tagStep F E hE hFE A q b
+  exact ⟨D, fun n => by rw [accept_cca_indGame, hD n]⟩
+
+end Proof
 
 /-- **Theorem 170.4: `π′` is CCA2-secure** [PS10, Theorem 170.4] when `F` is a pseudorandom
 function family.
