@@ -1,28 +1,39 @@
-# ext-nosrc · checkpoint 2
+# ext-nosrc · checkpoint 3
 
 Issue base: `eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9`. Local branch: `fill/ext-nosrc` (never pushed).
-Local proof head: `406330fe72e7c6fe92ed2e9dca7e8ab3de1574a3`. Issued exchange pack: `b436d19a0310265b214447ea6710deba32df6dd8`.
+Local proof head: `7aa5cf513f964ddfe32c1282673329f2187b42fc`. Issued exchange pack: `b436d19a0310265b214447ea6710deba32df6dd8`.
 
 ## Status
 
-Checkpoints 1 and 2 are proved and module-checked. The target remains admitted pending the
-final numerical contradiction. The frozen statement is unchanged.
+The frozen theorem is now proved, with no statement change. The complete owned module passed
+Lean. Its axioms are exactly Classical.choice, Quot.sound and propext; the same holds for all
+108 stored constants in the three proof modules. Checkpoints 1 and 2 are complete. The exact
+acceptance law `1−(1−q)^11` and `q≥1/4` yield the final contradiction.
 
-The uniform PPT witness gives `q≥1/4`. The uniform rejection machine uses exactly `11n` coins,
-tries ten consecutive `n`-bit blocks, and falls back to the eleventh. Its law is exactly
-`(1−q)^10 U_n + (1−(1−q)^10) flat(S)`. Uniform and accepted-flat components are `(n−2)`-sources,
-and the checked mixture theorem gives the required efficient source. This includes small n,
-q=1 and empty extractor outputs through the general formulas.
+This checkpoint is not the final validated delivery. Both base Extraction whole-file seals
+passed. All eleven final controls passed their expected outcomes. Six final proof-file seals,
+the 203-module sweep/admission comparison and additional facade seals remain queued, because
+the user explicitly confirmed a limit of three Lean jobs across the whole Mac and other chats
+have continuously occupied at least three slots. The worker is not exceeding that limit.
+
+The required lint initially reported two missing direct helper imports in the frozen facade.
+The user explicitly approved exactly those two imports. They are applied and committed in
+this checkpoint, with approval and the exact patch recorded under evidence/scope-request/.
+The approved lint run has 216 pre-existing FAIL findings, identical to base: zero new FAIL.
+
+The three-patch series was replayed at the pinned base and reproduced all four delivered
+source files byte-for-byte. The independent frozen-surface review and census-backed explicit
+unfold scan pass; the latter has zero foreign definition rule heads across92 argument lists.
 
 ## Files and declarations
 
-Changed: `TCSlib/Cryptography/Randomness/Extraction.lean`.
+Changed: `TCSlib/Cryptography/Randomness/Extraction.lean`, plus exactly two user-approved direct imports in `TCSlib/Cryptography/Randomness.lean`.
 New: `TCSlib/Cryptography/Randomness/Extraction/Rejection.lean` and `Extraction/Sampler.lean`.
 The patch and `src/` carry their exact committed bytes. The target statement is unchanged.
 New declarations are visible in those sources; probability helper promotions and searches are
 listed in `evidence/rejection-review.md`. No private foreign proof was copied or re-derived.
 `uniform_one_probTrue` is a promotion request to the finite-probability layer.
-No foreign reader request is currently needed. The original target sketch is unchanged so far; the owned module now lists both helper modules in Contents.
+No foreign reader request is currently needed. The module title/status and target proof sketch describe the delivered proof; Contents lists both helpers. Every other original declaration and statement prose is unchanged.
 
 ## Environment and checks
 
@@ -47,12 +58,10 @@ attempts and successful rechecks are included. Every module invocation uses
 `scripts/lean_check_tree.sh`, one module at a time, with timestamps and maximum resident memory.
 No lake build or unfiltered cache fetch was run.
 
-The final 201-module sweep, admission comparison, all-stored-constant axioms, both whole-file
-seal variants at base/final, paired controls, explicit scan and style-lint comparison remain
-pending. No success is claimed for those final requirements at this checkpoint.
+The all-stored-constant axioms, controls, explicit scan and no-new-FAIL lint comparison are complete. Final whole-file seals, full203-module sweep, admission comparison and additional facade coverage remain pending. No success is claimed for those pending checks.
 
 ## Evidence
 
 `evidence/SHA256SUMS` covers exactly all evidence files except itself. The root SHA256SUMS
 covers the complete checkpoint payload except itself. Logs were copied as a completed
-checkpoint snapshot between completed check stages. All named paths are delivered.
+checkpoint snapshot as a snapshot while the final driver waits for a host-wide concurrency slot. All named paths are delivered.

@@ -1,0 +1,36 @@
+START 2026-11-14T06:08:11.918131+00:00
+SOURCE_SHA256 923e37e2125652e4f16fc7c679825e909b02a92fa37137558a58e7e144c1ee05
+FILL_SEAL_NAME {"home":"TCSlib.Cryptography.Asymptotic.Adversary","label":"ControlPadFinA","name":"TCSlib.Cryptography.padFin","phase":"install"}
+FILL_SEAL_DONE ControlPadFinA install 1 1
+evidence/rule10/final/probes/ControlPadFinA.lean:43:62: error: Tactic `rfl` failed: The left-hand side
+  padFin 1 w 0
+is not definitionally equal to the right-hand side
+  w.getD 0 false
+
+w : List Bool
+⊢ padFin 1 w 0 = w.getD 0 false
+FILL_SEAL_NAME {"home":"TCSlib.Cryptography.Asymptotic.Adversary","label":"ControlPadFinA","name":"TCSlib.Cryptography.padFin","phase":"eof"}
+FILL_SEAL_DONE ControlPadFinA eof 1 1
+FAIL(evidence/rule10/final/probes/ControlPadFinA): lean exited with status 1
+FAIL(evidence/rule10/final/probes/ControlPadFinA): error diagnostics reported
+FAIL(evidence/rule10/final/probes/ControlPadFinA): no fresh .olean produced
+        5.67 real         4.05 user         1.34 sys
+          2184740864  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              182186  page reclaims
+                 215  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 122  voluntary context switches
+               15242  involuntary context switches
+            33106258  instructions retired
+            21965244  cycles elapsed
+             1655120  peak memory footprint
+
+END 2026-11-14T06:08:17.600102+00:00 RC 1

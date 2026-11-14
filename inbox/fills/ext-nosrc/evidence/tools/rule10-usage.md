@@ -32,8 +32,21 @@ The default is the checkout's `.lake/tcslib-check-oleans`. The driver calls
 `scripts/lean_check_tree.sh` once per module and records native timing and RSS;
 it does not run Lake or a direct Lean command. It does not impose timeouts.
 It rejects existing logs/results rather than overwriting earlier attempts. A
-retry should use a new evidence directory/module name or preserve the prior
-attempt first and explicitly regenerate its prepared metadata.
+retry uses `--attempt r2` (or another fresh suffix) on both preparation and
+driver commands; this emits a new area such as `evidence/rule10/base-r2` and
+keeps the prior attempt untouched. Filesystem-derived import name components
+containing the hyphen are escaped with Lean's `«...»` identifier syntax, and
+the ownership string matches native `Name.toString` escaping.
+
+The initial base census failed before collection because a generated local
+variable used the Lean keyword `abbrev`. That attempt remains intact under
+`evidence/rule10/base`. The corrected, separately prepared retry is used as:
+
+```sh
+python3 -I evidence/tools/run_rule10.py census base --attempt r2
+python3 -I evidence/tools/prepare_rule10.py seals base --attempt r2 --census-log evidence/rule10/base-r2/logs/Census.log
+python3 -I evidence/tools/run_rule10.py seals base --attempt r2
+```
 
 The source/import hashes, complete TCSlib import closures, raw owned-source
 snapshots, census collector source, census log, census results, all constant
@@ -79,3 +92,43 @@ seal instrumentation of
 and its `tool-inputs/request_payload_adapter.py` bounded-AST payload design.
 Those files were read as working material. Their old fixed campaign pins,
 51-module assumptions, skips and entrypoints are not executed by this tool.
+
+## Approved import-only facade extension
+
+The separately approved two direct imports in `Randomness.lean` require four
+additional A/B seals. `prepare_facade_rule10.py` and `run_facade_rule10.py` use
+separate `evidence/rule10/facade-base` and `facade-final` areas and share the
+existing insertion/census functions and capped checker driver. Both initial
+preparations already exist. After the full downstream sweep, run:
+
+```sh
+python3 -I evidence/tools/run_facade_rule10.py census base
+python3 -I evidence/tools/prepare_facade_rule10.py seals base
+python3 -I evidence/tools/run_facade_rule10.py seals base
+python3 -I evidence/tools/run_facade_rule10.py census final
+python3 -I evidence/tools/prepare_facade_rule10.py seals final
+python3 -I evidence/tools/run_facade_rule10.py seals final
+```
+
+The pinned base facade's single direct `Extraction` import is replaced in its
+probe by the already compiled exact base-r2 Extraction snapshot. Original and
+effective source bytes and the exact one-line transformation are delivered.
+All three other base direct-import closures exclude Extraction, and their 199
+foreign module source files were checked equal to the pinned base bytes. The
+base native closure has 200 foreign modules after remapping the one Extraction
+home; the final native closure has 202. The final census imports the actual
+approved facade after it is checked in the downstream sweep.
+
+Facade census commands verify that the expected module is actually imported.
+The shared parser's `allow_empty_owners` option defaults to false for all prior
+callers; the facade preparation explicitly enables it and then separately
+asserts exactly zero facade-owned stored constants and axiom rows. Base census
+also records the foreign Extraction snapshot's constants for candidate coverage.
+Only the facade's own empty axiom list is reported as its all-stored coverage.
+
+No new control proofs are run for the facade extension. Its manifests reference
+the eleven already-proven base-r2/final controls by exact source, result, log and
+manifest SHA-256 values, validating their expected counts and installed seals
+before reuse. The four new seal probes still perform full installation and EOF
+actual-name/home verification for every foreign definition in the corresponding
+complete native import closure.

@@ -1,0 +1,36 @@
+START 2026-11-14T06:05:04.747280+00:00
+SOURCE_SHA256 6bfbb5523c5cc11cf9668ec9d001a57fc2e8e5ea65de244653a4b0333f6dc537
+FILL_SEAL_NAME {"home":"TCSlib.Complexity.Randomized.PolyExpr","label":"ControlPolyEvalB","name":"Complexity.PolyExpr.eval","phase":"install"}
+FILL_SEAL_DONE ControlPolyEvalB install 1 1
+evidence/rule10/base-r2/probes/ControlPolyEvalB.lean:43:51: error: Tactic `rfl` failed: The left-hand side
+  PolyExpr.var.eval n
+is not definitionally equal to the right-hand side
+  n
+
+n : ℕ
+⊢ PolyExpr.var.eval n = n
+FILL_SEAL_NAME {"home":"TCSlib.Complexity.Randomized.PolyExpr","label":"ControlPolyEvalB","name":"Complexity.PolyExpr.eval","phase":"eof"}
+FILL_SEAL_DONE ControlPolyEvalB eof 1 1
+FAIL(evidence/rule10/base-r2/probes/ControlPolyEvalB): lean exited with status 1
+FAIL(evidence/rule10/base-r2/probes/ControlPolyEvalB): error diagnostics reported
+FAIL(evidence/rule10/base-r2/probes/ControlPolyEvalB): no fresh .olean produced
+        3.50 real         2.51 user         0.86 sys
+          1531510784  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              127731  page reclaims
+                  25  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  35  voluntary context switches
+                6297  involuntary context switches
+            33123996  instructions retired
+            20636553  cycles elapsed
+             1655120  peak memory footprint
+
+END 2026-11-14T06:05:08.257477+00:00 RC 1

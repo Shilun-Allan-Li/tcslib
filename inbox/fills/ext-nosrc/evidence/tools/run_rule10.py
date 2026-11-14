@@ -145,11 +145,15 @@ def main() -> None:
     parser.add_argument("stage", choices=("census", "seals"))
     parser.add_argument("side", choices=("base", "final"))
     parser.add_argument("--tree", type=Path, default=Path(".lake/tcslib-check-oleans"))
+    parser.add_argument("--attempt", help="fresh evidence suffix, e.g. r2; preserves prior areas")
     args = parser.parse_args()
-    area = Path("evidence/rule10") / args.side
+    if args.attempt is not None and not re.fullmatch(r"[a-z][a-z0-9_-]*", args.attempt):
+        raise ValueError("attempt must be a short lowercase identifier such as r2")
+    area = Path("evidence/rule10") / (args.side if args.attempt is None else args.side + "-" + args.attempt)
     tree = args.tree.resolve()
     assert tree.is_dir(), "bootstrap the tree before running probes"
     init = json.loads((area / "init.json").read_bytes())
+    assert init["side"] == args.side and init.get("attempt") == args.attempt
     if args.stage == "census":
         rows = []
         if args.side == "base":

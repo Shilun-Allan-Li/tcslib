@@ -1,0 +1,38 @@
+START 2026-11-14T06:04:36.786160+00:00
+SOURCE_SHA256 3b93234e054ad235effc1955777ba073f7990dcaf95d114d96f4e882d9e2a4d1
+FILL_SEAL_NAME {"home":"TCSlib.Complexity.Randomized.PPT","label":"ControlRunAtLA","name":"Complexity.NUPPT.runAtL","phase":"install"}
+FILL_SEAL_DONE ControlRunAtLA install 1 1
+evidence/rule10/base-r2/probes/ControlRunAtLA.lean:44:98: error: Tactic `rfl` failed: The left-hand side
+  A.runAtL n y r
+is not definitionally equal to the right-hand side
+  A.output (pairEncode (pairEncode (NUPPT.advInput n y) (A.advice n)) r)
+
+A : NUPPT
+n : ℕ
+y r : List Bool
+⊢ A.runAtL n y r = A.output (pairEncode (pairEncode (NUPPT.advInput n y) (A.advice n)) r)
+FILL_SEAL_NAME {"home":"TCSlib.Complexity.Randomized.PPT","label":"ControlRunAtLA","name":"Complexity.NUPPT.runAtL","phase":"eof"}
+FILL_SEAL_DONE ControlRunAtLA eof 1 1
+FAIL(evidence/rule10/base-r2/probes/ControlRunAtLA): lean exited with status 1
+FAIL(evidence/rule10/base-r2/probes/ControlRunAtLA): error diagnostics reported
+FAIL(evidence/rule10/base-r2/probes/ControlRunAtLA): no fresh .olean produced
+        5.84 real         2.47 user         1.14 sys
+          1522155520  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              105315  page reclaims
+               22620  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                3035  voluntary context switches
+               21518  involuntary context switches
+            33691201  instructions retired
+            20285795  cycles elapsed
+             1655120  peak memory footprint
+
+END 2026-11-14T06:04:42.640238+00:00 RC 1

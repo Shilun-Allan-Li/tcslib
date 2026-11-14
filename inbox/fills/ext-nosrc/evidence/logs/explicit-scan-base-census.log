@@ -1,0 +1,12 @@
+side=base registry=source+census self_checks=passed
+modules=1 explicit_arguments=2
+possible_foreign_definition_arguments=0
+nested_foreign_term_parameters=0 (ordinary theorem parameters; review separately)
+LIMITATIONS
+This is a lexical review aid, not an elaborator or proof of Rule 10. Suffix name
+matching is conservative and does not resolve namespaces, local notation,
+macros, binders or shadowing as Lean does. Source mode cannot enumerate generated
+matchers/projections or anonymous instances; census mode improves that name
+coverage. Tactic quotations/macros, escaped/Unicode names and implicit reduction
+may evade the scan. Core/Mathlib definitions are outside this TCSlib-only name
+registry. Whole-file seals independently test implicit definitional reduction.

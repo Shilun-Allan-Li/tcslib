@@ -1,0 +1,31 @@
+START 2026-11-14T06:20:33.970634+00:00
+COMMAND /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Configuration
+TCSlib/Complexity/TuringMachine/Configuration.lean:157:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Configuration.lean:160:61: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/Configuration.lean:175:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+        1.86 real         1.50 user         0.70 sys
+          1483440128  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              120065  page reclaims
+                 766  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  23  voluntary context switches
+                6314  involuntary context switches
+            32522120  instructions retired
+            15014108  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-14T06:20:35.838145+00:00
+EXIT 0

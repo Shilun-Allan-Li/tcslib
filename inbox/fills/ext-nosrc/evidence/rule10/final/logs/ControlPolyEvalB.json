@@ -1,0 +1,87 @@
+{
+  "label": "ControlPolyEvalB",
+  "module": "evidence/rule10/final/probes/ControlPolyEvalB",
+  "expected_errors": 1,
+  "requests": [
+    {
+      "abbrev": false,
+      "home": "TCSlib.Complexity.Randomized.PolyExpr",
+      "kind": "def",
+      "matcher": false,
+      "name": "Complexity.PolyExpr.eval",
+      "record": "constant",
+      "status": "Lean.ReducibilityStatus.semireducible"
+    }
+  ],
+  "probe_sha256": "6bfbb5523c5cc11cf9668ec9d001a57fc2e8e5ea65de244653a4b0333f6dc537",
+  "source_sha256": "6bfbb5523c5cc11cf9668ec9d001a57fc2e8e5ea65de244653a4b0333f6dc537",
+  "insertions": [
+    {
+      "kind": "import_Lean",
+      "source_character_offset": 0,
+      "probe_character_offset": 0,
+      "characters": 12,
+      "probe_byte_offset": 0,
+      "bytes": 12,
+      "sha256": "f9d646b1e1b6498ec413286e9310c564c992f6fd6479ae9cc9e9cdd29058ab78"
+    },
+    {
+      "kind": "install",
+      "source_character_offset": 45,
+      "probe_character_offset": 57,
+      "characters": 2187,
+      "probe_byte_offset": 57,
+      "bytes": 2197,
+      "sha256": "effbddb5ce908e5cb80513029484f12f7be1fc11b12d2b01bf524a0c3cc791ca"
+    },
+    {
+      "kind": "eof",
+      "source_character_offset": 116,
+      "probe_character_offset": 2315,
+      "characters": 1945,
+      "probe_byte_offset": 2325,
+      "bytes": 1951,
+      "sha256": "90c0871b610f645aec7c4e5db07a882c549c4e302fd936d3d96b9ab9ee97d511"
+    }
+  ],
+  "line_map": [
+    {
+      "source_line": 1,
+      "probe_line": 2
+    },
+    {
+      "source_line": 2,
+      "probe_line": 42
+    },
+    {
+      "source_line": 3,
+      "probe_line": 43
+    }
+  ],
+  "start_utc": "2026-11-14T06:11:33.870296+00:00",
+  "end_utc": "2026-11-14T06:11:37.265595+00:00",
+  "seconds": 3.396,
+  "command": [
+    "/usr/bin/time",
+    "-l",
+    "bash",
+    "scripts/lean_check_tree.sh",
+    "evidence/rule10/final/probes/ControlPolyEvalB"
+  ],
+  "olean_tree": "/Users/seyoonr/.codex/worktrees/ext-nosrc-fill/tcslib-exchange/.lake/tcslib-check-oleans",
+  "rc": 1,
+  "errors": [
+    {
+      "probe_line": 43,
+      "column": 51,
+      "source_line": 3
+    }
+  ],
+  "fresh_nonempty_object": false,
+  "source_unchanged": true,
+  "log": "evidence/rule10/final/logs/ControlPolyEvalB.log",
+  "log_sha256": "db7a0f95f5456ba281da85c29ef2d1213add6b840bce21efac917636f19e6767",
+  "valid_harness": true,
+  "problem": null,
+  "meets_expected_error_count": true
+}

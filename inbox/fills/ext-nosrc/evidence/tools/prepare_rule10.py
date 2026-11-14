@@ -155,6 +155,19 @@ def lean_literal(value: str) -> str:
     return json.dumps(value, ensure_ascii=False)
 
 
+def area_for(side: str, attempt: str | None) -> Path:
+    if attempt is not None and not re.fullmatch(r"[a-z][a-z0-9_-]*", attempt):
+        raise ValueError("attempt must be a short lowercase identifier such as r2")
+    return Path("evidence/rule10") / (side if attempt is None else side + "-" + attempt)
+
+
+def module_syntax(home: str) -> str:
+    """Escape filesystem-derived module components such as `base-r2`."""
+    pieces = home.split(".")
+    assert all(p and "«" not in p and "»" not in p for p in pieces)
+    return ".".join(p if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_']*", p) else "«" + p + "»" for p in pieces)
+
+
 CENSUS_BODY = r'''
 set_option maxHeartbeats 0
 open Lean Meta Elab Command
@@ -177,7 +190,7 @@ run_cmd do
       | .inductInfo _ => "inductive"
       | .ctorInfo _ => "constructor"
       | .recInfo _ => "recursor"
-    let abbrev := match ci with
+    let isAbbreviation := match ci with
       | .defnInfo d => match d.hints with
         | .abbrev => true
         | _ => false
@@ -190,7 +203,7 @@ run_cmd do
     let row := Json.mkObj [
       ("record", toJson ("constant" : String)),
       ("name", toJson n.toString), ("home", toJson home.toString),
-      ("kind", toJson kind), ("abbrev", toJson abbrev),
+      ("kind", toJson kind), ("abbrev", toJson isAbbreviation),
       ("status", toJson status), ("matcher", toJson matcher)]
     logInfo m!"FILL_CENSUS {row.compress}"
     seen := seen + 1
@@ -211,8 +224,8 @@ run_cmd do
 '''
 
 
-def init(side: str) -> None:
-    area = Path("evidence/rule10") / side
+def init(side: str, attempt: str | None) -> None:
+    area = area_for(side, attempt)
     modules = OWNED[:1] if side == "base" else OWNED
     graph, hashes, entries = {}, {}, []
     for module in modules:
@@ -224,14 +237,14 @@ def init(side: str) -> None:
             snapshot = area / "probes/BaseExtraction.lean"
             write_new(snapshot, raw)
             home = snapshot.with_suffix("").as_posix().replace("/", ".")
-        entries.append({"module": module, "loaded_home": home, "source_sha256": digest(raw),
+        entries.append({"module": module, "loaded_home": module_syntax(home), "source_sha256": digest(raw),
                         "import_closure": deps, "header": header(raw)})
     owners = [e["loaded_home"] for e in entries]
     text = "import Lean\n" + "".join("import " + home + "\n" for home in owners)
     text += CENSUS_BODY.replace("OWNERS", "[" + ", ".join(map(lean_literal, owners)) + "]")
     probe = area / "probes/Census.lean"
     write_new(probe, text.encode())
-    save_json(area / "init.json", {"base": BASE, "side": side, "entries": entries,
+    save_json(area / "init.json", {"base": BASE, "side": side, "attempt": attempt, "entries": entries,
                                   "source_hashes": hashes, "graph": graph,
                                   "census_module": probe.with_suffix("").as_posix(),
                                   "census_source_sha256": digest(text.encode()),
@@ -239,10 +252,10 @@ def init(side: str) -> None:
                                   "status": "PREPARED_NOT_RUN"})
     print(f"Prepared {side} census: {probe.with_suffix('').as_posix()}")
     if side == "base":
-        print("First check evidence/rule10/base/probes/BaseExtraction")
+        print("First check " + (area / "probes/BaseExtraction").as_posix())
 
 
-def read_census(log: Path, owners: list[str]) -> tuple[dict, dict]:
+def read_census(log: Path, owners: list[str], *, allow_empty_owners: bool = False) -> tuple[dict, dict]:
     constants, axioms, complete = {}, {}, None
     for line in log.read_text().splitlines():
         if TAG not in line:
@@ -266,7 +279,8 @@ def read_census(log: Path, owners: list[str]) -> tuple[dict, dict]:
     assert complete["owners"] == owners and complete["owned"] == len(axioms)
     expected = {n for n, r in constants.items() if r["home"] in owners}
     assert set(axioms) == expected
-    assert all(any(r["home"] == owner for r in axioms.values()) for owner in owners)
+    if not allow_empty_owners:
+        assert all(any(r["home"] == owner for r in axioms.values()) for owner in owners)
     return constants, axioms
 
 
@@ -368,10 +382,10 @@ CONTROL_SOURCE = {
 }
 
 
-def prepare_seals(side: str, census_log: Path) -> None:
-    area = Path("evidence/rule10") / side
+def prepare_seals(side: str, census_log: Path, attempt: str | None) -> None:
+    area = area_for(side, attempt)
     config = json.loads((area / "init.json").read_bytes())
-    assert config["base"] == BASE and config["side"] == side
+    assert config["base"] == BASE and config["side"] == side and config.get("attempt") == attempt
     result = json.loads(census_log.with_suffix(".json").read_bytes())
     assert result["rc"] == 0 and result["fresh_nonempty_object"] and not result["errors"]
     assert result["source_unchanged"] and result["source_sha256"] == config["census_source_sha256"]
@@ -383,12 +397,21 @@ def prepare_seals(side: str, census_log: Path) -> None:
         raw = (area / "sources" / (module.replace(".", "/") + ".lean")).read_bytes()
         assert digest(raw) == entry["source_sha256"]
         candidates = [r for r in constants.values() if r["home"] in entry["import_closure"] and r["kind"] == "def"]
-        # Actual abbreviation hints are excluded, not every reducible definition.
-        # Generated matchers stay in the candidate set even if marked reducible.
-        abbrevs = [r for r in candidates if r["abbrev"] and not r["matcher"]]
-        assert all(r["status"].rsplit(".", 1)[-1] == "reducible" for r in abbrevs)
+        # Hints alone do not determine current reducibility. Generated splitter,
+        # matcher and flat-constructor definitions can have .abbrev hints while
+        # their registered status is semireducible; those remain fully sealed.
+        # Lean 4.25's local validator accepts semireducible -> irreducible and
+        # rejects reducible -> irreducible regardless of definition hints.
+        abbrevs = [r for r in candidates if r["abbrev"] and not r["matcher"] and
+                   r["status"].rsplit(".", 1)[-1] == "reducible"]
         candidates = [r for r in candidates if r not in abbrevs]
-        exclusions.append({"module": module, "validated_abbreviations": abbrevs})
+        blocked = [r for r in candidates if r["status"].rsplit(".", 1)[-1] == "reducible"]
+        if blocked:
+            raise RuntimeError("non-notation reducible candidates cannot be safely sealed: " +
+                               ", ".join(r["name"] for r in blocked))
+        exclusions.append({"module": module, "validated_abbreviations": abbrevs,
+                           "abbrev_hint_semireducible_retained": [r for r in candidates if r["abbrev"] and
+                               r["status"].rsplit(".", 1)[-1] == "semireducible"]})
         for variant in ("A", "B"):
             requested = sorted((r for r in candidates if variant == "B" or r["name"] != EVAL), key=lambda r: r["name"])
             label = "Seal" + variant + "_" + module.rsplit(".", 1)[-1]
@@ -441,7 +464,7 @@ def prepare_seals(side: str, census_log: Path) -> None:
     save_json(area / "all-stored-axioms.json", list(axioms.values()))
     save_json(area / "census-constants.json", list(constants.values()))
     save_json(area / "abbreviation-exclusions.json", exclusions)
-    save_json(area / "manifest.json", {"base": BASE, "side": side,
+    save_json(area / "manifest.json", {"base": BASE, "side": side, "attempt": attempt,
                                       "census_log": str(census_log), "census_log_sha256": digest(census_log.read_bytes()),
                                       "init_sha256": digest((area / "init.json").read_bytes()),
                                       "status": "PREPARED_NOT_RUN", "seals": probes, "controls": controls})
@@ -453,12 +476,13 @@ def main() -> None:
     parser.add_argument("action", choices=("init", "seals"))
     parser.add_argument("side", choices=("base", "final"))
     parser.add_argument("--census-log", type=Path)
+    parser.add_argument("--attempt", help="fresh evidence suffix, e.g. r2; preserves prior areas")
     args = parser.parse_args()
     if args.action == "init":
-        init(args.side)
+        init(args.side, args.attempt)
     else:
         assert args.census_log, "seals requires the completed raw census log"
-        prepare_seals(args.side, args.census_log)
+        prepare_seals(args.side, args.census_log, args.attempt)
 
 
 if __name__ == "__main__":

@@ -26,8 +26,20 @@ elif mode=='prerequisites':
  modules=[m for m in order if m in seen and m!=target and not Path('.lake/tcslib-check-oleans',m+'.olean').exists()]
  modules += [m for m in sorted(seen-set(order)) if not Path('.lake/tcslib-check-oleans',m+'.olean').exists()]
 elif mode=='sweep':
- modules=order[:]
- for extra in sorted(seen-set(order),reverse=True):modules.insert(modules.index(target),extra)
+ allowed=set(order)|seen
+ modules=[]
+ scheduled=set()
+ def visit(module):
+  if module in scheduled:return
+  for line in Path(module+'.lean').read_text().splitlines():
+   if line.startswith('import '):
+    for imported in line.split()[1:]:
+     if imported.startswith('TCSlib.'):
+      dep=imported.replace('.','/')
+      if dep not in allowed:raise SystemExit('Import outside issued order and owned helper closure: '+dep)
+      visit(dep)
+  scheduled.add(module);modules.append(module)
+ for module in order:visit(module)
 else:
  modules=sys.argv[1:]
  mode='check-'+str(time.time_ns())

@@ -1,0 +1,91 @@
+{
+  "label": "ControlRunAtLB",
+  "module": "evidence/rule10/final/probes/ControlRunAtLB",
+  "expected_errors": 1,
+  "requests": [
+    {
+      "abbrev": false,
+      "home": "TCSlib.Complexity.Randomized.PPT",
+      "kind": "def",
+      "matcher": false,
+      "name": "Complexity.NUPPT.runAtL",
+      "record": "constant",
+      "status": "Lean.ReducibilityStatus.semireducible"
+    }
+  ],
+  "probe_sha256": "2dac87df84ca745c0e3620595c82b3d3391ceca47aec5646c1fa3a77247c4ed2",
+  "source_sha256": "2dac87df84ca745c0e3620595c82b3d3391ceca47aec5646c1fa3a77247c4ed2",
+  "insertions": [
+    {
+      "kind": "import_Lean",
+      "source_character_offset": 0,
+      "probe_character_offset": 0,
+      "characters": 12,
+      "probe_byte_offset": 0,
+      "bytes": 12,
+      "sha256": "f9d646b1e1b6498ec413286e9310c564c992f6fd6479ae9cc9e9cdd29058ab78"
+    },
+    {
+      "kind": "install",
+      "source_character_offset": 40,
+      "probe_character_offset": 52,
+      "characters": 2179,
+      "probe_byte_offset": 52,
+      "bytes": 2189,
+      "sha256": "a00b5bc30d70283759d5608a11593c2a904df777b8db97987821c4579c5bb8b9"
+    },
+    {
+      "kind": "eof",
+      "source_character_offset": 215,
+      "probe_character_offset": 2406,
+      "characters": 1937,
+      "probe_byte_offset": 2416,
+      "bytes": 1943,
+      "sha256": "0617925531c837402508688f33d181878c6b3fbddead7a0734f3f5e6d6ff5a98"
+    }
+  ],
+  "line_map": [
+    {
+      "source_line": 1,
+      "probe_line": 2
+    },
+    {
+      "source_line": 2,
+      "probe_line": 42
+    },
+    {
+      "source_line": 3,
+      "probe_line": 43
+    },
+    {
+      "source_line": 4,
+      "probe_line": 44
+    }
+  ],
+  "start_utc": "2026-11-14T06:09:27.950480+00:00",
+  "end_utc": "2026-11-14T06:09:42.399406+00:00",
+  "seconds": 14.451,
+  "command": [
+    "/usr/bin/time",
+    "-l",
+    "bash",
+    "scripts/lean_check_tree.sh",
+    "evidence/rule10/final/probes/ControlRunAtLB"
+  ],
+  "olean_tree": "/Users/seyoonr/.codex/worktrees/ext-nosrc-fill/tcslib-exchange/.lake/tcslib-check-oleans",
+  "rc": 1,
+  "errors": [
+    {
+      "probe_line": 44,
+      "column": 98,
+      "source_line": 4
+    }
+  ],
+  "fresh_nonempty_object": false,
+  "source_unchanged": true,
+  "log": "evidence/rule10/final/logs/ControlRunAtLB.log",
+  "log_sha256": "1ba45470d5e2b6b28fc82d6f17ebf51b3fe09e4c57ac08eaee2e80b560ca6cd2",
+  "valid_harness": true,
+  "problem": null,
+  "meets_expected_error_count": true
+}

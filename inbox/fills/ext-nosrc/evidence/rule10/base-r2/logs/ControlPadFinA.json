@@ -1,0 +1,87 @@
+{
+  "label": "ControlPadFinA",
+  "module": "evidence/rule10/base-r2/probes/ControlPadFinA",
+  "expected_errors": 1,
+  "requests": [
+    {
+      "abbrev": false,
+      "home": "TCSlib.Cryptography.Asymptotic.Adversary",
+      "kind": "def",
+      "matcher": false,
+      "name": "TCSlib.Cryptography.padFin",
+      "record": "constant",
+      "status": "Lean.ReducibilityStatus.semireducible"
+    }
+  ],
+  "probe_sha256": "923e37e2125652e4f16fc7c679825e909b02a92fa37137558a58e7e144c1ee05",
+  "source_sha256": "923e37e2125652e4f16fc7c679825e909b02a92fa37137558a58e7e144c1ee05",
+  "insertions": [
+    {
+      "kind": "import_Lean",
+      "source_character_offset": 0,
+      "probe_character_offset": 0,
+      "characters": 12,
+      "probe_byte_offset": 0,
+      "bytes": 12,
+      "sha256": "f9d646b1e1b6498ec413286e9310c564c992f6fd6479ae9cc9e9cdd29058ab78"
+    },
+    {
+      "kind": "install",
+      "source_character_offset": 48,
+      "probe_character_offset": 60,
+      "characters": 2190,
+      "probe_byte_offset": 60,
+      "bytes": 2200,
+      "sha256": "5da91420fdfa00bf38be17de396a729ec836d2d232c608d86ded75f6a7a94524"
+    },
+    {
+      "kind": "eof",
+      "source_character_offset": 139,
+      "probe_character_offset": 2341,
+      "characters": 1948,
+      "probe_byte_offset": 2351,
+      "bytes": 1954,
+      "sha256": "a7cba730f7dd26f3e259b7162d84b7a329b0b5614dcb91ebf78998fb412127b9"
+    }
+  ],
+  "line_map": [
+    {
+      "source_line": 1,
+      "probe_line": 2
+    },
+    {
+      "source_line": 2,
+      "probe_line": 42
+    },
+    {
+      "source_line": 3,
+      "probe_line": 43
+    }
+  ],
+  "start_utc": "2026-11-14T06:04:14.689060+00:00",
+  "end_utc": "2026-11-14T06:04:20.068560+00:00",
+  "seconds": 5.381,
+  "command": [
+    "/usr/bin/time",
+    "-l",
+    "bash",
+    "scripts/lean_check_tree.sh",
+    "evidence/rule10/base-r2/probes/ControlPadFinA"
+  ],
+  "olean_tree": "/Users/seyoonr/.codex/worktrees/ext-nosrc-fill/tcslib-exchange/.lake/tcslib-check-oleans",
+  "rc": 1,
+  "errors": [
+    {
+      "probe_line": 43,
+      "column": 62,
+      "source_line": 3
+    }
+  ],
+  "fresh_nonempty_object": false,
+  "source_unchanged": true,
+  "log": "evidence/rule10/base-r2/logs/ControlPadFinA.log",
+  "log_sha256": "8e9739d1966b3ea18764d258c9e78aac0d3eba7099b74ac35a3637104fcbc86e",
+  "valid_harness": true,
+  "problem": null,
+  "meets_expected_error_count": true
+}

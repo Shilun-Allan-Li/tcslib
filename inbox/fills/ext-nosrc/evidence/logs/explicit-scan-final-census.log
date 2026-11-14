@@ -1,0 +1,17 @@
+side=final registry=source+census self_checks=passed
+modules=3 explicit_arguments=92
+possible_foreign_definition_arguments=0
+nested_foreign_term_parameters=5 (ordinary theorem parameters; review separately)
+TERM TCSlib.Cryptography.Randomness.Extraction:232:25: FinDist.uniform => TCSlib.InformationTheory.FinDist.uniform @ TCSlib.InformationTheory.FinDist
+TERM TCSlib.Cryptography.Randomness.Extraction:232:43: RejectionSampler.machine => TCSlib.Cryptography.Randomness.RejectionSampler.machine @ TCSlib.Cryptography.Randomness.Extraction.Sampler
+TERM TCSlib.Cryptography.Randomness.Extraction:232:78: Coins => Complexity.NUPPT.Coins @ TCSlib.Complexity.Randomized.PPT
+TERM TCSlib.Cryptography.Randomness.Extraction:233:9: Rejection.select => TCSlib.Cryptography.Randomness.Rejection.select @ TCSlib.Cryptography.Randomness.Extraction.Rejection
+TERM TCSlib.Cryptography.Randomness.Extraction.Sampler:206:32: m => TCSlib.Cryptography.OneWay.YaoMachine.Data.m @ TCSlib.Cryptography.Asymptotic.OneWayYao
+LIMITATIONS
+This is a lexical review aid, not an elaborator or proof of Rule 10. Suffix name
+matching is conservative and does not resolve namespaces, local notation,
+macros, binders or shadowing as Lean does. Source mode cannot enumerate generated
+matchers/projections or anonymous instances; census mode improves that name
+coverage. Tactic quotations/macros, escaped/Unicode names and implicit reduction
+may evade the scan. Core/Mathlib definitions are outside this TCSlib-only name
+registry. Whole-file seals independently test implicit definitional reduction.

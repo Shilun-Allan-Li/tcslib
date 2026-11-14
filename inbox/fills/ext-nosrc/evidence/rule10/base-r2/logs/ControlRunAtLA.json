@@ -1,0 +1,91 @@
+{
+  "label": "ControlRunAtLA",
+  "module": "evidence/rule10/base-r2/probes/ControlRunAtLA",
+  "expected_errors": 1,
+  "requests": [
+    {
+      "abbrev": false,
+      "home": "TCSlib.Complexity.Randomized.PPT",
+      "kind": "def",
+      "matcher": false,
+      "name": "Complexity.NUPPT.runAtL",
+      "record": "constant",
+      "status": "Lean.ReducibilityStatus.semireducible"
+    }
+  ],
+  "probe_sha256": "3b93234e054ad235effc1955777ba073f7990dcaf95d114d96f4e882d9e2a4d1",
+  "source_sha256": "3b93234e054ad235effc1955777ba073f7990dcaf95d114d96f4e882d9e2a4d1",
+  "insertions": [
+    {
+      "kind": "import_Lean",
+      "source_character_offset": 0,
+      "probe_character_offset": 0,
+      "characters": 12,
+      "probe_byte_offset": 0,
+      "bytes": 12,
+      "sha256": "f9d646b1e1b6498ec413286e9310c564c992f6fd6479ae9cc9e9cdd29058ab78"
+    },
+    {
+      "kind": "install",
+      "source_character_offset": 40,
+      "probe_character_offset": 52,
+      "characters": 2179,
+      "probe_byte_offset": 52,
+      "bytes": 2189,
+      "sha256": "5a31c0f995fba17082dede55dfee0805c27419d671d620cc4096c6566763c833"
+    },
+    {
+      "kind": "eof",
+      "source_character_offset": 215,
+      "probe_character_offset": 2406,
+      "characters": 1937,
+      "probe_byte_offset": 2416,
+      "bytes": 1943,
+      "sha256": "73bf68d66252584cc9804e54f87253f9dadf3511d1bd97eccad5ac63becc8275"
+    }
+  ],
+  "line_map": [
+    {
+      "source_line": 1,
+      "probe_line": 2
+    },
+    {
+      "source_line": 2,
+      "probe_line": 42
+    },
+    {
+      "source_line": 3,
+      "probe_line": 43
+    },
+    {
+      "source_line": 4,
+      "probe_line": 44
+    }
+  ],
+  "start_utc": "2026-11-14T06:04:36.786160+00:00",
+  "end_utc": "2026-11-14T06:04:42.640238+00:00",
+  "seconds": 5.855,
+  "command": [
+    "/usr/bin/time",
+    "-l",
+    "bash",
+    "scripts/lean_check_tree.sh",
+    "evidence/rule10/base-r2/probes/ControlRunAtLA"
+  ],
+  "olean_tree": "/Users/seyoonr/.codex/worktrees/ext-nosrc-fill/tcslib-exchange/.lake/tcslib-check-oleans",
+  "rc": 1,
+  "errors": [
+    {
+      "probe_line": 44,
+      "column": 98,
+      "source_line": 4
+    }
+  ],
+  "fresh_nonempty_object": false,
+  "source_unchanged": true,
+  "log": "evidence/rule10/base-r2/logs/ControlRunAtLA.log",
+  "log_sha256": "f3dd2d55dc2102f6686d6a57f8e0f30e9db9aeefa20502d7fd1a6701bdce5e73",
+  "valid_harness": true,
+  "problem": null,
+  "meets_expected_error_count": true
+}
