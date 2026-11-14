@@ -1,4 +1,4 @@
-# dl-crh — checkpoint 1 escalation
+# dl-crh — final escalation payload (checkpoint 1)
 
 **Status: stopped at the missing-reader escalation required by the issued brief.**
 `Authentication.dlHash_crh` is still admitted. No compression lemma, reduction,
@@ -20,6 +20,9 @@ no mathematical counterexample is claimed.
   `evidence/logs/source-inspection.log`.
 - The local proof branch has zero commits beyond the issue base and has never
   been pushed. Deliveries are restricted to `inbox/fills/dl-crh/` on the exchange.
+- Checkpoint 1 was committed and pushed as
+  `396c734fac3ba4a0e8d06320517f56017962f734` after the required pull with rebase.
+  This final payload retains that stop and adds the independent payload review.
 
 ## Exact stop and reader requests
 
