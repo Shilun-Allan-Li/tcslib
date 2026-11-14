@@ -1,0 +1,15 @@
+{"check":"issued-pack-sha256","status":"PASS","count":7,"log":"logs/pack-verification.log"}
+{"check":"issue-source-sha256","status":"PASS","count":170,"log":"logs/source-inspection.log"}
+{"check":"proof-branch-and-source-diff","status":"PASS","head":"eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9","commits":0,"changed_lean_files":0,"log":"logs/source-inspection.log"}
+{"check":"reader-search","status":"ESCALATE","request":"reader-request.md","log":"logs/source-inspection.log"}
+{"check":"native-host-diagnostic","status":"RECORDED_NOT_CERTIFIED","log":"logs/preflight.log","reason":"macOS has no prescribed Linux headroom counters; no cache/Lean work started"}
+{"check":"cache-store","status":"NOT_RUN","reason":"no cache command was attempted"}
+{"check":"package-pins-and-cache-probe","status":"NOT_RUN","reason":"no packages or cache acquired before reader escalation"}
+{"check":"bootstrap-and-module-checks","status":"NOT_RUN","reason":"brief requires stopping for missing foreign reader; no Lean prerequisites built"}
+{"check":"final-sweep-and-compiled-sorry-delta","status":"NOT_RUN","reason":"target remains admitted; no completed proof submitted"}
+{"check":"target-and-all-stored-constant-axioms","status":"NOT_RUN","reason":"no Lean checks or changed/new declarations"}
+{"check":"base-final-seals-A-B-both-PolyExpr.eval-modes","status":"NOT_RUN","reason":"no changed/new Lean files and no bootstrap"}
+{"check":"paired-controls","status":"NOT_RUN","reason":"no seals or probes generated"}
+{"check":"explicit-unfold-scan","status":"EMPTY_SCOPE","changed_lean_files":0}
+{"check":"campaign-style-lint-check8b","status":"BASELINE_ONLY","exit_code":1,"fail":216,"warn":102,"files":301,"new_fail":0,"log":"logs/style-lint.log"}
+{"check":"format-patch","status":"PASS_EMPTY","commits":0,"log":"logs/format-patch.stdout"}
