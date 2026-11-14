@@ -654,10 +654,8 @@ private theorem ladner_parse_prefix {y p : List Bool} {t : ℕ}
     (hp : ladner_parse y = some (p, t)) : (BinArith.uRest y.reverse).reverse = p := by
   have hr (n : ℕ) (w : List Bool) :
       BinArith.uRest (List.replicate n true ++ false :: w) = w := by
-    induction n with
-    | zero => simp only [List.replicate_zero, List.nil_append, BinArith.uRest_false_cons]
-    | succ n ih => simp only [List.replicate_succ, List.cons_append,
-        BinArith.uRest_true_cons, ih]
+    have h := BinArith.uRest_encodeNat n w
+    rwa [BoolCircuit.encodeNat_eq, List.append_assoc, List.singleton_append] at h
   rw [(ladner_parse_some y p t).mp hp]
   simp only [List.reverse_append, List.reverse_cons, List.reverse_replicate,
     List.append_assoc, List.singleton_append, hr, List.reverse_reverse]
