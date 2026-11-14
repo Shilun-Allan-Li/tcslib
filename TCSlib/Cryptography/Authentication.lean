@@ -12,6 +12,9 @@ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
 import TCSlib.Cryptography.Authentication.MAC.FromPRF
 import TCSlib.Cryptography.Authentication.Signatures.Lamport
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Encoding
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Planted
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.TableCoins
 import TCSlib.Cryptography.Hashing.FromDiscreteLog
 import TCSlib.Cryptography.Authentication.Signatures.HashAndSign
 
