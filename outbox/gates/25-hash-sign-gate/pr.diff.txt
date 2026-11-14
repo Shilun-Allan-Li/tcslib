@@ -1,0 +1,2361 @@
+diff --git a/TCSlib/Cryptography/Authentication.lean b/TCSlib/Cryptography/Authentication.lean
+index e33d4b40f..2f5b41765 100644
+--- a/TCSlib/Cryptography/Authentication.lean
++++ b/TCSlib/Cryptography/Authentication.lean
+@@ -14,6 +14,14 @@ import TCSlib.Cryptography.Authentication.MAC.FromPRF
+ import TCSlib.Cryptography.Authentication.Signatures.Lamport
+ import TCSlib.Cryptography.Hashing.FromDiscreteLog
+ import TCSlib.Cryptography.Authentication.Signatures.HashAndSign
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CodecReaders
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionGame
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionHandler
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.FixedGame
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardGame
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardHandler
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuery
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuerySampling
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean
+index e18032a6f..d9a0eef41 100644
+--- a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean
++++ b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean
+@@ -7,13 +7,23 @@ import TCSlib.Cryptography.Authentication.Signatures.Defs
+ import TCSlib.Cryptography.Hashing.CollisionResistant
+ import TCSlib.Cryptography.Authentication.Encoding
+ import TCSlib.Cryptography.Asymptotic.CollectionsLemmas
++import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.FixedGame
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CodecReaders
++import TCSlib.Cryptography.Games.Bridges.Experiments
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionGame
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardGame
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionHandler
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardHandler
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuery
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuerySampling
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Hash-and-sign (statement phase)
++# Hash-and-sign
+ 
+ [PS10, Protocol 144.2]: from a family of collision-resistant hash functions `{h_i}` and a
+ signature scheme `(Gen, Sign, Ver)` for the hash values,
+@@ -53,11 +63,22 @@ collisions the CRH game counts.
+ * The `hsHashList_eq`, key/index and algorithm equations expose the string computations.
+ * `Authentication.hashAndSign_msgLen`, `hashAndSign_sigLen`, `hashAndSign_gen`,
+   `hashAndSign_sign`, `hashAndSign_ver`: the signature-scheme data fields.
+-* `Authentication.hashAndSign_oneTimeSecure` (Thm 144.1, stated; a `sorry` under the source's
+-  sketch).
++* `Authentication.hashAndSign_oneTimeSecure` (Thm 144.1): one-time security from collision
++  resistance and one-time security of the original scheme, proved by the two reductions.
+ * `Authentication.exists_oneTimeSecure_of_crh_owf`: the source's existential form, with
+   Lamport's scheme (proved from Theorems 137.2 and 144.1).
+ 
++## Contents
++
++* `HashAndSign.CodecReaders`: canonical forger codecs and split-word readers.
++* `HashAndSign.OneQuery`: zero/one-query computation normal forms.
++* `HashAndSign.OneQuerySampling`: drawing one signing tape in advance.
++* `HashAndSign.ForwardHandler`: the efficient hashing/forwarding handler.
++* `HashAndSign.FixedGame`: the common fixed-tape transcript.
++* `HashAndSign.CollisionHandler`: the efficient collision finder and its soundness.
++* `HashAndSign.CollisionGame`: the collision-finding probability bound.
++* `HashAndSign.ForwardGame`: the original-scheme forgery probability equality.
++
+ ## References
+ 
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+@@ -369,16 +390,213 @@ theorem hashAndSign_ver (H : CRH) (S : SignatureScheme)
+ 
+ /-! ### Theorem 144.1 -/
+ 
++/-- When hash and signature message widths agree, the hash-and-sign hash word equals the
++word used by the two reduction handlers, including on arbitrary list inputs: under `hlen`,
++`hsHashList H (List.replicate n true) i m =
++HashSignForward.hashWord H S (List.replicate n true) i m`. -/
++theorem hsHashList_eq_hashWord (H : CRH) (S : SignatureScheme)
++    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (i m : List Bool) :
++    hsHashList H (List.replicate n true) i m =
++      HashSignForward.hashWord H S (List.replicate n true) i m := by
++  simp only [hsHashList_eq, HashSignForward.hashWord_eq, padStr_eq,
++    List.length_replicate, hlen n]
++
++/-- For a computation making at most one signing query, the hash-and-sign signing oracle
++has the same expected logged payoff as sampling one original signing tape before the run:
++if `c.CostBoundedBy (fun _ => 1) 1`, then
++`ProbComp.expect (simulate ((hashAndSign H S hlen).signImpl n (pairEncode sk i)).withLog c
++((), [])) g = ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
++ProbComp.expect (simulate (HashSignFill.fixedSign H S n sk i rs).withLog c ((), [])) g)`.
++
++**Proof sketch.** First move the wrapper signer's randomness outside the simulation using
++the one-query sampling law. Its coin bijection with the original signer preserves uniform
++sampling. The published wrapper run equation and the hash-width equation identify each
++fixed-tape answer with the common experiment's answer. -/
++theorem expect_hashAndSign_sign (H : CRH) (S : SignatureScheme)
++    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (sk i : List Bool)
++    (c : OracleComp (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++      (fun _ => S.sigLen.eval n)) (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool))
++    (hc : c.CostBoundedBy (fun _ => 1) 1)
++    (g : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n))) → ℝ) :
++    ProbComp.expect
++        (simulate ((hashAndSign H S hlen).signImpl n (pairEncode sk i)).withLog c ((), [])) g =
++      ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
++        ProbComp.expect (simulate (HashSignFill.fixedSign H S n sk i rs).withLog c ((), []))
++          g) := by
++  have hraw := HashSignFill.expect_simulate_sample_once
++    (fun (_ : Fin 1) (m : Fin (H.domLen.eval n) → Bool) (rs : (hsSign S H).Coins n) =>
++      padFin (S.sigLen.eval n)
++        ((hsSign S H).runAt n (pairEncode (pairEncode sk i) (List.ofFn m)) rs)) c hc g
++  have hfirst : ProbComp.expect
++      (simulate ((hashAndSign H S hlen).signImpl n (pairEncode sk i)).withLog c ((), [])) g =
++      ProbComp.expect (ProbComp.sample ((hsSign S H).Coins n)) (fun rs =>
++        ProbComp.expect
++          (simulate (QueryImpl.withLog (fun (_ : Fin 1) (m : Fin (H.domLen.eval n) → Bool)
++            (_ : Unit) => (OracleComp.pure
++              (padFin (S.sigLen.eval n)
++                ((hsSign S H).runAt n (pairEncode (pairEncode sk i) (List.ofFn m)) rs), ()) :
++              ProbComp ((Fin (S.sigLen.eval n) → Bool) × Unit)))) c ((), [])) g) := by
++    simpa only [SignatureScheme.signImpl_eq, hashAndSign_sign, hashAndSign_sigLen] using hraw
++  rw [hfirst]
++  let e : S.sign.Coins n ≃ (hsSign S H).Coins n :=
++    NUPPT.coinsCongr (A := S.sign) (B := hsSign S H)
++      (NUPPT.coins_ofPolyTimeUniform (polyTimeComputable_hsSignFun S H) S.sign.coins).symm n
++  rw [← ProbComp.expect_sample_equiv e]
++  apply congrArg (ProbComp.expect (ProbComp.sample (S.sign.Coins n)))
++  funext rs
++  have hi : (fun (_ : Fin 1) (m : Fin (H.domLen.eval n) → Bool) (_ : Unit) =>
++      (OracleComp.pure (padFin (S.sigLen.eval n)
++        ((hsSign S H).runAt n (pairEncode (pairEncode sk i) (List.ofFn m)) (e rs)), ()) :
++        ProbComp ((Fin (S.sigLen.eval n) → Bool) × Unit))) =
++      HashSignFill.fixedSign H S n sk i rs := by
++    funext j m s
++    rw [HashSignFill.fixedSign_apply, HashSignFill.hashedReply_eq,
++      runAt_hsSign, hsHashList_eq_hashWord H S hlen]
++  rw [hi]
++
++/-- Hash-and-sign accepts a message/signature pair exactly when the original scheme accepts
++the padded hash of that message with the same signature:
++`(hashAndSign H S hlen).Accepts n (pairEncode pk i) m σ ↔
++S.Accepts n pk (padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn m))))) σ`. -/
++theorem hashAndSign_accepts_iff (H : CRH) (S : SignatureScheme)
++    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (pk i : List Bool)
++    (m : Fin (H.domLen.eval n) → Bool) (σ : Fin (S.sigLen.eval n) → Bool) :
++    (hashAndSign H S hlen).Accepts n (pairEncode pk i) m σ ↔
++      S.Accepts n pk (padFin (S.msgLen.eval n)
++        (H.eval (atParam n (pairEncode i (List.ofFn m))))) σ := by
++  simp only [SignatureScheme.accepts_iff, hashAndSign_ver, hsVerFun_eq, atParam_eq,
++    pairFstD_pairEncode, pairSndD_pairEncode, hsHashList_eq_hashWord H S hlen,
++    HashSignForward.hashWord_unary]
++
++/-- On concatenated original-generator and hash-generator tapes, the combined generator
++returns the original public and secret keys each paired with the same generated hash index:
++`(hsGen S H).runAt n [] (EnsembleLemmas.coinsEquiv (hsGen_coinLen S H n) (rg, ri)) =
++pairEncode (pairEncode pk i) (pairEncode sk i)`, where
++`pk = pairFstD (S.gen.runAt n [] rg)`, `sk = pairSndD (S.gen.runAt n [] rg)` and
++`i = H.gen.runAt n [] ri`.
++
++**Proof sketch.** The published coin-splitting bijection has the concatenated encoding.
++Transporting to the combined width preserves that encoding, so its two projections are
++the original tapes. The combined generator's run equation then gives the paired keys. -/
++theorem runAt_hsGen_split (S : SignatureScheme) (H : CRH) (n : ℕ)
++    (rg : S.gen.Coins n) (ri : H.gen.Coins n) :
++    (hsGen S H).runAt n []
++        (EnsembleLemmas.coinsEquiv (hsGen_coinLen S H n) (rg, ri)) =
++      pairEncode
++        (pairEncode (pairFstD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri))
++        (pairEncode (pairSndD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri)) := by
++  let ρ := EnsembleLemmas.coinsEquiv (hsGen_coinLen S H n) (rg, ri)
++  let σ : Fin (S.gen.coinLen n + H.gen.coinLen n) → Bool :=
++    fun j => ρ (Fin.cast (hsGen_coinLen S H n).symm j)
++  have hσ : σ = Fin.append rg ri := by
++    apply List.ofFn_injective
++    exact (List.ofFn_congr (hsGen_coinLen S H n) ρ).symm.trans
++      ((EnsembleLemmas.ofFn_coinsEquiv (hsGen_coinLen S H n) (rg, ri)).trans
++        (List.ofFn_fin_append rg ri).symm)
++  rw [runAt_hsGen]
++  change pairEncode
++    (pairEncode (pairFstD (S.gen.runAt n [] (fun j => σ (Fin.castAdd (H.gen.coinLen n) j))))
++      (H.gen.runAt n [] (fun j => σ (Fin.natAdd (S.gen.coinLen n) j))))
++    (pairEncode (pairSndD (S.gen.runAt n [] (fun j => σ (Fin.castAdd (H.gen.coinLen n) j))))
++      (H.gen.runAt n [] (fun j => σ (Fin.natAdd (S.gen.coinLen n) j)))) = _
++  simp only [hσ, Fin.append_left, Fin.append_right]
++
++/-- The hash-and-sign forgery probability equals the common transcript's success
++probability averaged over independent original key, hash-index, adversary and signing tapes:
++`accept ((hashAndSign H S hlen).forgeGame A 1 n) = 𝔼 rg : S.gen.Coins n, 𝔼 ri : H.gen.Coins n,
++𝔼 rA : A.Coins n, 𝔼 rs : S.sign.Coins n, ProbComp.prob
++(HashSignFill.transcript H S A n pk sk i rs rA) (HashSignFill.Success H S n pk i)`,
++writing `𝔼 x : X, f x` for `ProbComp.expect (ProbComp.sample X) (fun x => f x)`, with
++`pk = pairFstD (S.gen.runAt n [] rg)`, `sk = pairSndD (S.gen.runAt n [] rg)` and
++`i = H.gen.runAt n [] ri`.
++
++**Proof sketch.** Read the forgery experiment through its published equation. Reindex the
++combined generator tape by the product of the original generator tapes and use its run
++equation. Finally move the single signing tape outside the logged simulation and identify
++verification with original-scheme verification on the hash. -/
++theorem hashAndSign_forge_eq_common (H : CRH) (S : SignatureScheme)
++    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (A : NUPPT) (n : ℕ) :
++    accept ((hashAndSign H S hlen).forgeGame A 1 n) =
++      ProbComp.expect (ProbComp.sample (S.gen.Coins n)) (fun rg =>
++        ProbComp.expect (ProbComp.sample (H.gen.Coins n)) (fun ri =>
++          ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA =>
++            ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
++              ProbComp.prob
++                (HashSignFill.transcript H S A n (pairFstD (S.gen.runAt n [] rg))
++                  (pairSndD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri) rs rA)
++                (HashSignFill.Success H S n (pairFstD (S.gen.runAt n [] rg))
++                  (H.gen.runAt n [] ri)))))) := by
++  classical
++  rw [SignatureScheme.forgeGame_eq, accept_eq, ProbComp.prob_eq_expect]
++  simp only [ProbComp.expect_bind, ProbComp.expect_pure, decide_eq_true_eq,
++    hashAndSign_gen]
++  rw [← ProbComp.expect_sample_equiv (EnsembleLemmas.coinsEquiv (hsGen_coinLen S H n))]
++  rw [← Bridge.expect_sample_pair]
++  simp only [ProbComp.expect_bind, ProbComp.expect_pure]
++  apply congrArg (ProbComp.expect (ProbComp.sample (S.gen.Coins n)))
++  funext rg
++  apply congrArg (ProbComp.expect (ProbComp.sample (H.gen.Coins n)))
++  funext ri
++  simp only [runAt_hsGen_split, pairFstD_pairEncode, pairSndD_pairEncode,
++    SignatureScheme.forgerCodec_eq_bitCodec, hashAndSign_msgLen, hashAndSign_sigLen]
++  apply congrArg (ProbComp.expect (ProbComp.sample (A.Coins n)))
++  funext rA
++  rw [expect_hashAndSign_sign H S hlen n _ _ _ (A.toCompOn_costBoundedBy _ n 1 _ rA)]
++  apply congrArg (ProbComp.expect (ProbComp.sample (S.sign.Coins n)))
++  funext rs
++  simp only [HashSignFill.transcript_eq, ProbComp.prob_eq_expect,
++    HashSignFill.success_iff, hashAndSign_accepts_iff]
++  apply congrArg (ProbComp.expect _)
++  funext res
++  split <;> rfl
++
++/-- Every successful common transcript either gives a fresh-message hash collision or
++is a successful forgery after forwarding hashes to the original signing oracle: under `hlen`,
++`HashSignFill.Success H S n pk i res →
++HashSignFill.CollisionCase H S n i res ∨ HashSignFill.ForwardSuccess H S n pk i res`.
++
++**Proof sketch.** If a queried message has the final message's hash, use source freshness
++for the collision case. Otherwise the final hash is fresh among forwarded queries.
++The range-width equation transports equality of the forwarded hash vectors back to
++equality of CRH hash vectors, including at width zero. -/
++theorem hashAndSign_success_cases (H : CRH) (S : SignatureScheme)
++    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (pk i : List Bool)
++    (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n))))
++    (h : HashSignFill.Success H S n pk i res) :
++    HashSignFill.CollisionCase H S n i res ∨
++      HashSignFill.ForwardSuccess H S n pk i res := by
++  classical
++  obtain ⟨haccept, hfresh⟩ := (HashSignFill.success_iff H S n pk i res).mp h
++  by_cases heq : ∃ e ∈ res.2.2,
++      H.hash n i e.2.1 = H.hash n i (splitBits res.1).1
++  · exact Or.inl ((HashSignFill.collisionCase_iff H S n i res).mpr ⟨hfresh, heq⟩)
++  · apply Or.inr
++    apply (HashSignFill.forwardSuccess_iff H S n pk i res).mpr
++    constructor
++    · simpa only [HashSignFill.queryHash_eq] using haccept
++    · intro e hem hsame
++      apply heq
++      refine ⟨e, hem, ?_⟩
++      funext j
++      have hv := congrFun hsame (Fin.cast (hlen n) j)
++      simpa only [HashSignFill.queryHash_eq, CRH.hash_eq, padFin_apply, Fin.coe_cast] using hv
++
+ /-- **Theorem 144.1: hash-and-sign is one-time secure** [PS10, Theorem 144.1] when the hash
+ family is collision resistant on its full domain and the signature scheme is one-time secure.
+ 
+-**Proof sketch** (the source's).
++**Proof sketch.** The source's two reductions are implemented with independent key,
++hash-index, adversary and signing tapes; a one-query sampling law couples their common
++logged transcript, including no-query and codec-timeout outputs.
+ 1. Let `A` be a one-time forger against `hashAndSign`, querying `m` (or nothing) and outputting
+    `(m′, σ′)` with `m′ ≠ m` and `Ver_pk(h_i(m′), σ′)` accepting.
+ 2. *Case `h_i(m′) = h_i(m)`.* The collision finder `B(1^n, i)` samples `(pk, sk) ← Gen(1^n)`,
+    runs `A` on `⟨pk, i⟩` answering its query with `Sign_sk(h_i(m))`, and outputs `(m, m′)`
+-   (aborting if `A` made no query). Since `m′ ≠ m` and both lie in `D_i` (`hdom`), this is a
+-   collision. `B` answers `A`'s queries itself, so it is a machine by T1
++   (using the initial zero word if no query was made). For the queried case, freshness and
++   `hdom` give a collision. `B` answers `A`'s queries itself, so it is a machine by T1
+    (`Games.exists_handlerMachine`), with `advIn` supplying `⟨pk, i⟩`, `out` returning `(m, m′)`,
+    and the seed holding the coins of `Gen` and `Sign`.
+ 3. *Case `A` made no query or `h_i(m′) ≠ h_i(m)`.* The forger `C^{Sign_sk}(1^n, pk)` samples
+@@ -392,7 +610,32 @@ theorem hashAndSign_oneTimeSecure (H : CRH) (S : SignatureScheme)
+     (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (hdom : ∀ n i x, H.inDom n i x = true)
+     (hH : H.CollisionResistant) (hS : S.OneTimeSecure) :
+     (hashAndSign H S hlen).OneTimeSecure := by
+-  sorry
++  classical
++  apply (SignatureScheme.oneTimeSecure_iff _).mpr
++  intro A
++  obtain ⟨B, hB⟩ := HashSignFill.exists_collisionGame_bound H S A hdom
++  obtain ⟨C, hC⟩ := HashSignFill.exists_forwardGame H S A
++  obtain ⟨εB, hεB, hboundB⟩ := (CRH.collisionResistant_iff H).mp hH B
++  obtain ⟨εC, hεC, hboundC⟩ := (SignatureScheme.oneTimeSecure_iff S).mp hS C
++  refine ⟨fun n => εB n + εC n, hεB.add hεC, fun n => ?_⟩
++  rw [hashAndSign_forge_eq_common H S hlen A n]
++  refine le_trans ?_ (add_le_add (hboundB n) (hboundC n))
++  refine le_trans ?_ (add_le_add (hB n) (le_of_eq (hC n).symm))
++  -- Bound the success event by the union before averaging the independent tapes.
++  rw [← ProbComp.expect_add]
++  apply ProbComp.expect_mono
++  intro rg
++  rw [← ProbComp.expect_add]
++  apply ProbComp.expect_mono
++  intro ri
++  rw [← ProbComp.expect_add]
++  apply ProbComp.expect_mono
++  intro rA
++  rw [← ProbComp.expect_add]
++  apply ProbComp.expect_mono
++  intro rs
++  exact (ProbComp.prob_mono _ (fun res hs =>
++    hashAndSign_success_cases H S hlen n _ _ res hs)).trans (ProbComp.prob_or_le _ _ _)
+ 
+ /-- **The existential form of Theorem 144.1** [PS10]: a collision-resistant hash family
+ `{0,1}^{d(n)} → {0,1}^n` on its full domain, and a one-way function, give a one-time secure
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean
+new file mode 100644
+index 000000000..d0681b48f
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean
+@@ -0,0 +1,110 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.Defs
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Signature forger codecs read through their published fields
++
++## Main definitions
++
++This module introduces no definitions.
++
++## Main results
++
++* `Games.MachineCodec.ext_of_fields`: codecs with equal decoding, entry encoding,
++  and timeout fields are equal.
++* `Authentication.SignatureScheme.forgerCodec_eq_bitCodec`: the signature
++  forger codec equals the canonical bit codec at its declared lengths.
++* `HashSignFill.splitBits_append`, `splitBits_pad_concat`: splitting fixed-width
++  concatenated words recovers their components, including zero widths.
++
++The generic extensionality lemma is a promotion request for `Games/Machines`;
++the signature-specific reader belongs beside its definition in `Signatures/Defs`.
++The two split-word readers are promotion requests for `Authentication/Encoding`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
++  January 2010, Theorem 144.1 (technical support for its machine reductions).
++-/
++
++namespace TCSlib.Cryptography.Games.MachineCodec
++
++/-- Two machine codecs are equal when their move decoders, entry encoders and timeout
++outputs are equal:
++`a.decodeMove = b.decodeMove → a.encodeEntry = b.encodeEntry → a.timeout = b.timeout → a = b`.
++These are all three fields of `MachineCodec`.
++
++**Proof sketch.** Destructure the two records. Substituting the three field equalities
++leaves the same constructor on both sides. -/
++theorem ext_of_fields {ι α : Type} {spec : OracleSpec ι}
++    (a b : MachineCodec spec α)
++    (hdecode : a.decodeMove = b.decodeMove)
++    (hentry : a.encodeEntry = b.encodeEntry)
++    (htimeout : a.timeout = b.timeout) : a = b := by
++  cases a
++  cases b
++  cases hdecode
++  cases hentry
++  cases htimeout
++  rfl
++
++end TCSlib.Cryptography.Games.MachineCodec
++
++namespace TCSlib.Cryptography.Authentication.SignatureScheme
++
++open TCSlib.Cryptography.Games
++
++/-- The signature forger codec is the bit codec with message-length queries,
++signature-length answers and a message-plus-signature-length final output:
++`S.forgerCodec n = bitCodec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ : Fin 1 => S.sigLen.eval n)
++(S.msgLen.eval n + S.sigLen.eval n)`.
++
++**Proof sketch.** The published decoding, entry-encoding and timeout equations agree
++with those of the bit codec. Codec extensionality turns those field equations into
++equality of the complete records; neither codec's definition is unfolded. -/
++theorem forgerCodec_eq_bitCodec (S : SignatureScheme) (n : ℕ) :
++    S.forgerCodec n =
++      bitCodec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ : Fin 1 => S.sigLen.eval n)
++        (S.msgLen.eval n + S.sigLen.eval n) := by
++  apply MachineCodec.ext_of_fields
++  · funext w
++    exact (S.forgerCodec_decodeMove n w).trans
++      (bitCodec_decodeMove (fun _ : Fin 1 => S.msgLen.eval n)
++        (fun _ : Fin 1 => S.sigLen.eval n) (S.msgLen.eval n + S.sigLen.eval n) w).symm
++  · funext e
++    exact (S.forgerCodec_encodeEntry n e).trans
++      (bitCodec_encodeEntry (fun _ : Fin 1 => S.msgLen.eval n)
++        (fun _ : Fin 1 => S.sigLen.eval n) (S.msgLen.eval n + S.sigLen.eval n) e).symm
++  · exact (S.forgerCodec_timeout n).trans
++      (bitCodec_timeout (fun _ : Fin 1 => S.msgLen.eval n)
++        (fun _ : Fin 1 => S.sigLen.eval n) (S.msgLen.eval n + S.sigLen.eval n)).symm
++
++end TCSlib.Cryptography.Authentication.SignatureScheme
++
++namespace TCSlib.Cryptography.Authentication.HashSignFill
++
++/-- Splitting the concatenation of two fixed-width words recovers the two words:
++`splitBits (Fin.append x y) = (x, y)`. -/
++theorem splitBits_append {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
++    splitBits (Fin.append x y) = (x, y) := by
++  apply Prod.ext
++  · funext j
++    rw [splitBits_fst, Fin.append_left]
++  · funext j
++    rw [splitBits_snd, Fin.append_right]
++
++/-- Reading the concatenated encodings of two words at their total width and splitting the
++result recovers the original words: `splitBits (padFin (a + b) (List.ofFn x ++ List.ofFn y)) =
++(x, y)`. This also covers zero widths. -/
++theorem splitBits_pad_concat {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
++    splitBits (padFin (a + b) (List.ofFn x ++ List.ofFn y)) = (x, y) := by
++  rw [← List.ofFn_fin_append, padFin_ofFn, splitBits_append]
++
++end TCSlib.Cryptography.Authentication.HashSignFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean
+new file mode 100644
+index 000000000..24885ee92
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionGame.lean
+@@ -0,0 +1,180 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionHandler
++import TCSlib.Cryptography.Games.Bridges.Experiments
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The collision probability in the hash-and-sign reduction
++
++## Main definitions
++
++* `HashSignFill.CollisionCase`: the final message is fresh and has the same hash as some
++  logged query.
++
++## Main results
++
++* `HashSignFill.exists_collisionGame_bound`: the common transcript's collision case is
++  bounded by the collision probability of one machine.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 144.1, collision-finding case.
++-/
++
++namespace TCSlib.Cryptography.Authentication.HashSignFill
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++
++/-- The collision case of a common transcript: its final message is distinct from every
++logged query, and some logged query has its hash,
++`CollisionCase H S n i res ↔ (∀ e ∈ res.2.2, e.2.1 ≠ m) ∧
++∃ e ∈ res.2.2, H.hash n i e.2.1 = H.hash n i m`, where `m = (splitBits res.1).1`
++[PS10, Theorem 144.1]. -/
++def CollisionCase (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n)))) : Prop :=
++  (∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1) ∧
++    ∃ e ∈ res.2.2, H.hash n i e.2.1 = H.hash n i (splitBits res.1).1
++
++/-- The collision case holds exactly when the final message is fresh and a logged query
++has the same hash as that message: `CollisionCase H S n i res ↔ (∀ e ∈ res.2.2, e.2.1 ≠ m) ∧
++∃ e ∈ res.2.2, H.hash n i e.2.1 = H.hash n i m`, where `m = (splitBits res.1).1`. -/
++theorem collisionCase_iff (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n)))) :
++    CollisionCase H S n i res ↔
++      (∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1) ∧
++        ∃ e ∈ res.2.2, H.hash n i e.2.1 = H.hash n i (splitBits res.1).1 := Iff.rfl
++
++/-- A machine's collision probability bounds the collision case of the common transcript,
++averaged over the original keys, hash index, adversary tape and signing tape: if
++`∀ n i x, H.inDom n i x = true`, then `∃ B : NUPPT, ∀ n, 𝔼 rg : S.gen.Coins n,
++𝔼 ri : H.gen.Coins n, 𝔼 rA : A.Coins n, 𝔼 rs : S.sign.Coins n, ProbComp.prob
++(transcript H S A n pk sk i rs rA) (CollisionCase H S n i) ≤ accept (H.collisionGame B n)`,
++writing `𝔼 x : X, f x` for `ProbComp.expect (ProbComp.sample X) (fun x => f x)`, with
++`pk = pairFstD (S.gen.runAt n [] rg)`, `sk = pairSndD (S.gen.runAt n [] rg)` and
++`i = H.gen.runAt n [] ri` [PS10, Theorem 144.1].
++
++**Proof sketch.** T1 constructs a machine with the same deterministic transcript on each
++choice of seed and adversary tape. In the collision case its output satisfies the exact
++CRH collision predicate. Average this pointwise indicator inequality. The seed equivalence
++concatenates the original generator and signer tapes; the T1 coin equivalence then turns
++the seed and adversary tapes into uniform collision-finder coins. Independent samples may
++be exchanged, so the resulting average is exactly the CRH game's acceptance probability. -/
++theorem exists_collisionGame_bound (H : CRH) (S : SignatureScheme) (A : NUPPT)
++    (hdom : ∀ n i x, H.inDom n i x = true) :
++    ∃ B : NUPPT, ∀ n,
++      ProbComp.expect (ProbComp.sample (S.gen.Coins n)) (fun rg =>
++        ProbComp.expect (ProbComp.sample (H.gen.Coins n)) (fun ri =>
++          ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA =>
++            ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
++              ProbComp.prob (transcript H S A n (pairFstD (S.gen.runAt n [] rg))
++                (pairSndD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri) rs rA)
++                (CollisionCase H S n (H.gen.runAt n [] ri)))))) ≤
++        accept (H.collisionGame B n) := by
++  classical
++  obtain ⟨B, hB⟩ := exists_collisionMachine_transcript H S A
++  refine ⟨B, fun n => ?_⟩
++  obtain ⟨φ, hφ⟩ := hB n
++  let seed : S.gen.Coins n × S.sign.Coins n ≃
++      (Fin ((collisionHandler H S).seedLen.eval n) → Bool) :=
++    EnsembleLemmas.seedEquiv (A := S.gen) (B := S.sign) (collisionHandler_seedLen H S) n
++  let win : List Bool → B.Coins n → Prop := fun i r =>
++    let xx := splitBits (padFin (H.domLen.eval n + H.domLen.eval n) (B.runAt n i r))
++    H.inDom n i xx.1 = true ∧ H.inDom n i xx.2 = true ∧ xx.1 ≠ xx.2 ∧
++      H.hash n i xx.1 = H.hash n i xx.2
++  let payoff : List Bool → B.Coins n → ℝ := fun i r => if win i r then 1 else 0
++  have hpoint (rg : S.gen.Coins n) (rs : S.sign.Coins n) (rA : A.Coins n) (i : List Bool) :
++      ProbComp.prob (transcript H S A n (pairFstD (S.gen.runAt n [] rg))
++        (pairSndD (S.gen.runAt n [] rg)) i rs rA) (CollisionCase H S n i) ≤
++        payoff i (φ (seed (rg, rs), rA)) := by
++    obtain ⟨a, s, L, ht, hinv, hrun⟩ := hφ i rg rs (seed (rg, rs)) rA
++      (EnsembleLemmas.seedEquiv_ofFn (collisionHandler_seedLen H S) n (rg, rs))
++    rw [ht, ProbComp.prob_pure]
++    dsimp only [payoff]
++    by_cases hcase : CollisionCase H S n i (a, ((), L))
++    · have hclauses := (collisionCase_iff H S n i (a, ((), L))).mp hcase
++      have hw : win i (φ (seed (rg, rs), rA)) := by
++        dsimp only [win]
++        rw [hrun]
++        exact collisionHandler_collision H S hdom n (pairSndD (S.gen.runAt n [] rg)) i rs
++          (seed (rg, rs)) a s L hinv hclauses.1 hclauses.2
++      simp only [hcase, hw, if_true]
++      exact le_rfl
++    · simp only [hcase, if_false]
++      split_ifs <;> norm_num
++  have hcoins (i : List Bool) :
++      ProbComp.expect (ProbComp.sample (S.gen.Coins n)) (fun rg =>
++        ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
++          ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA =>
++            payoff i (φ (seed (rg, rs), rA))))) =
++        ProbComp.expect (ProbComp.sample (B.Coins n)) (fun r =>
++          payoff i r) := by
++    calc
++      _ = ProbComp.expect (ProbComp.sample (S.gen.Coins n × S.sign.Coins n)) (fun p =>
++          ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA =>
++            payoff i (φ (seed p, rA)))) := by
++        simpa only [ProbComp.expect_bind, ProbComp.expect_pure] using
++          Bridge.expect_sample_pair (fun p : S.gen.Coins n × S.sign.Coins n =>
++            ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA =>
++              payoff i (φ (seed p, rA))))
++      _ = ProbComp.expect
++          (ProbComp.sample (Fin ((collisionHandler H S).seedLen.eval n) → Bool)) (fun ω =>
++          ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA =>
++            payoff i (φ (ω, rA)))) := by
++        exact ProbComp.expect_sample_equiv seed (fun ω =>
++          ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA => payoff i (φ (ω, rA))))
++      _ = ProbComp.expect (ProbComp.sample
++          ((Fin ((collisionHandler H S).seedLen.eval n) → Bool) × A.Coins n)) (fun p =>
++          payoff i (φ p)) := by
++        simpa only [ProbComp.expect_bind, ProbComp.expect_pure] using
++          Bridge.expect_sample_pair (fun p :
++            (Fin ((collisionHandler H S).seedLen.eval n) → Bool) × A.Coins n =>
++            payoff i (φ p))
++      _ = _ := by
++        exact ProbComp.expect_sample_equiv φ (payoff i)
++  calc
++    _ ≤ ProbComp.expect (ProbComp.sample (S.gen.Coins n)) (fun rg =>
++        ProbComp.expect (ProbComp.sample (H.gen.Coins n)) (fun ri =>
++          ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA =>
++            ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
++              payoff (H.gen.runAt n [] ri) (φ (seed (rg, rs), rA)))))) := by
++      apply ProbComp.expect_mono
++      intro rg
++      apply ProbComp.expect_mono
++      intro ri
++      apply ProbComp.expect_mono
++      intro rA
++      exact ProbComp.expect_mono _ (fun rs => hpoint rg rs rA (H.gen.runAt n [] ri))
++    _ = ProbComp.expect (ProbComp.sample (H.gen.Coins n)) (fun ri =>
++        ProbComp.expect (ProbComp.sample (S.gen.Coins n)) (fun rg =>
++          ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
++            ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA =>
++              payoff (H.gen.runAt n [] ri) (φ (seed (rg, rs), rA)))))) := by
++      rw [ProbComp.expect_sample_comm]
++      congr 1
++      funext ri
++      congr 1
++      funext rg
++      exact ProbComp.expect_sample_comm _
++    _ = ProbComp.expect (ProbComp.sample (H.gen.Coins n)) (fun ri =>
++        ProbComp.expect (ProbComp.sample (B.Coins n)) (fun r =>
++          payoff (H.gen.runAt n [] ri) r)) := by
++      congr 1
++      funext ri
++      exact hcoins (H.gen.runAt n [] ri)
++    _ = accept (H.collisionGame B n) := by
++      conv_rhs =>
++        simp only [accept_eq, CRH.collisionGame_eq, ProbComp.prob_bind, ProbComp.prob_pure,
++          decide_eq_true_eq]
++
++end TCSlib.Cryptography.Authentication.HashSignFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean
+new file mode 100644
+index 000000000..b8292c00c
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean
+@@ -0,0 +1,541 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Efficiency
++import TCSlib.Cryptography.Authentication.Signatures.Defs
++import TCSlib.Cryptography.Hashing.CollisionResistant
++import TCSlib.Cryptography.Asymptotic.CollectionsLemmas
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.FixedGame
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CodecReaders
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The collision-finding handler for hash-and-sign
++
++The non-interactive reduction in [PS10, Theorem 144.1] receives the hash index, samples
++signature keys, and answers the sole signing query itself. Its state remembers that query;
++the final output concatenates the query and the forged message for the CRH collision game.
++
++## Main definitions
++
++* `HashSignFill.collisionKey`, `collisionAdv`, `collisionHash`, `collisionRun`,
++  `collisionOut`: the string computations of the reduction.
++* `HashSignFill.collisionHandler`: their polynomial-time T1 handler.
++
++## Main results
++
++* The string equations and handler field equations expose every computation.
++* `HashSignFill.exists_collisionMachine`: T1 realizes this handler as a machine.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
++  January 2010, Theorem 144.1, collision-finding case.
++-/
++
++namespace TCSlib.Cryptography.Authentication.HashSignFill
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++
++/-- The signature key word generated from the first `S.gen.coins(n)` bits of the
++context seed, with empty argument and advice,
++`collisionKey S c = S.gen.output (NUPPT.layout u [] [] (ω.take (S.gen.coins.eval u.length)))`,
++where `u = pairFstD c` and `ω = pairSndD (pairSndD c)` [PS10, Theorem 144.1]. -/
++def collisionKey (S : SignatureScheme) (c : List Bool) : List Bool :=
++  S.gen.output (NUPPT.layout (pairFstD c) [] []
++    ((pairSndD (pairSndD c)).take (S.gen.coins.eval (pairFstD c).length)))
++
++/-- `collisionKey S c` runs the original key generator on the parameter and the first
++generator-sized segment of the context seed:
++`collisionKey S c = S.gen.output (NUPPT.layout u [] [] (ω.take (S.gen.coins.eval u.length)))`,
++where `u = pairFstD c` and `ω = pairSndD (pairSndD c)`. -/
++theorem collisionKey_eq (S : SignatureScheme) (c : List Bool) :
++    collisionKey S c = S.gen.output (NUPPT.layout (pairFstD c) [] []
++      ((pairSndD (pairSndD c)).take (S.gen.coins.eval (pairFstD c).length))) := rfl
++
++/-- Generating the signature key from a context is polynomial-time:
++`PolyTimeComputable (collisionKey S)`, for `collisionKey S : List Bool → List Bool`.
++The tape segment is
++computed by the published polynomial-length take construction. -/
++theorem polyTimeComputable_collisionKey (S : SignatureScheme) :
++    PolyTimeComputable (collisionKey S) :=
++  let hW := polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD
++  let hT := ((polyTimeComputable_pairTakePoly S.gen.coins).comp'
++    (polyTimeComputable_pairFstD.pairEncode hW)).congr (fun _ =>
++      congrArg₂ (fun u w : List Bool => w.take (S.gen.coins.eval u.length))
++        (pairFstD_pairEncode _ _) (pairSndD_pairEncode _ _))
++  S.gen.polyTimeComputable_output.comp' (NUPPT.polyTimeComputable_layout
++    polyTimeComputable_pairFstD (polyTimeComputable_const [])
++    (polyTimeComputable_const []) hT)
++
++/-- When the context seed concatenates generator and signing tapes, `collisionKey` is
++exactly the original generator's run on its own tape:
++`collisionKey S (seedIn n i (List.ofFn rg ++ List.ofFn rs)) = S.gen.runAt n [] rg`. -/
++theorem collisionKey_seed (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (rg : S.gen.Coins n) (rs : S.sign.Coins n) :
++    collisionKey S (seedIn n i (List.ofFn rg ++ List.ofFn rs)) = S.gen.runAt n [] rg := by
++  simp only [collisionKey_eq, seedIn_eq, pairFstD_pairEncode, pairSndD_pairEncode,
++    List.length_replicate]
++  rw [← NUPPT.coinLen_eq S.gen n, List.take_left' List.length_ofFn,
++    S.gen_uniform.runAt_eq, NUPPT.layout_eq, NUPPT.advInput_eq]
++
++/-- The adversary receives `⟨pk, i⟩`, where the context supplies the hash index and
++`collisionKey` supplies the public signature key,
++`collisionAdv S c = pairEncode (pairFstD (collisionKey S c)) (pairFstD (pairSndD c))`
++[PS10, Theorem 144.1]. -/
++def collisionAdv (S : SignatureScheme) (c : List Bool) : List Bool :=
++  pairEncode (pairFstD (collisionKey S c)) (pairFstD (pairSndD c))
++
++/-- The adversary input is the original public key paired with the context index:
++`collisionAdv S c = pairEncode (pairFstD (collisionKey S c)) (pairFstD (pairSndD c))`. -/
++theorem collisionAdv_eq (S : SignatureScheme) (c : List Bool) :
++    collisionAdv S c =
++      pairEncode (pairFstD (collisionKey S c)) (pairFstD (pairSndD c)) := rfl
++
++/-- Pairing the generated public key with the index is polynomial-time:
++`PolyTimeComputable (collisionAdv S)`, for `collisionAdv S : List Bool → List Bool`. -/
++theorem polyTimeComputable_collisionAdv (S : SignatureScheme) :
++    PolyTimeComputable (collisionAdv S) :=
++  (polyTimeComputable_pairFstD.comp' (polyTimeComputable_collisionKey S)).pairEncode
++    (polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD)
++
++/-- At `seedIn n i ω`, the adversary input is `⟨pk, i⟩`, where the original generator
++runs with the first `S.gen.coins(n)` seed bits: `collisionAdv S (seedIn n i ω) =
++pairEncode (pairFstD (S.gen.output (NUPPT.layout (List.replicate n true) [] []
++(ω.take (S.gen.coins.eval n))))) i`. -/
++theorem collisionAdv_seedIn (S : SignatureScheme) (n : ℕ) (i ω : List Bool) :
++    collisionAdv S (seedIn n i ω) =
++      pairEncode (pairFstD (S.gen.output (NUPPT.layout (List.replicate n true) [] []
++        (ω.take (S.gen.coins.eval n))))) i := by
++  simp only [collisionAdv_eq, collisionKey_eq, seedIn_eq, pairFstD_pairEncode,
++    pairSndD_pairEncode, List.length_replicate]
++
++/-- On concatenated generator and signing tapes, the adversary receives the public key
++from that generator run paired with the supplied hash index:
++`collisionAdv S (seedIn n i (List.ofFn rg ++ List.ofFn rs)) =
++pairEncode (pairFstD (S.gen.runAt n [] rg)) i`. -/
++theorem collisionAdv_seed (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (rg : S.gen.Coins n) (rs : S.sign.Coins n) :
++    collisionAdv S (seedIn n i (List.ofFn rg ++ List.ofFn rs)) =
++      pairEncode (pairFstD (S.gen.runAt n [] rg)) i := by
++  rw [collisionAdv_eq, collisionKey_seed, seedIn_eq,
++    pairSndD_pairEncode, pairFstD_pairEncode]
++
++/-- The query hash in a handler-round word is the CRH evaluator padded to the signature
++message length: `collisionHash H S w = padStr S.msgLen u (H.eval (pairEncode u (pairEncode i x)))`,
++where `u = pairFstD (pairFstD w)`, `i = pairFstD (pairSndD (pairFstD w))` and
++`x = pairSndD (pairSndD (pairSndD w))`.
++The theorem's length hypothesis later identifies this with `H.hash`
++[PS10, Theorem 144.1]. -/
++def collisionHash (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
++  padStr S.msgLen (pairFstD (pairFstD w))
++    (H.eval (pairEncode (pairFstD (pairFstD w))
++      (pairEncode (pairFstD (pairSndD (pairFstD w)))
++        (pairSndD (pairSndD (pairSndD w))))))
++
++/-- The query hash runs the evaluator at the context parameter and index on the query
++word and pads its output to the signature message length:
++`collisionHash H S w = padStr S.msgLen u (H.eval (pairEncode u (pairEncode i x)))`, where
++`u = pairFstD (pairFstD w)`, `i = pairFstD (pairSndD (pairFstD w))` and
++`x = pairSndD (pairSndD (pairSndD w))`. -/
++theorem collisionHash_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
++    collisionHash H S w = padStr S.msgLen (pairFstD (pairFstD w))
++      (H.eval (pairEncode (pairFstD (pairFstD w))
++        (pairEncode (pairFstD (pairSndD (pairFstD w)))
++          (pairSndD (pairSndD (pairSndD w)))))) := rfl
++
++/-- Evaluating and padding the query hash is polynomial-time by the CRH evaluator and
++the published padding construction: `PolyTimeComputable (collisionHash H S)`, for
++`collisionHash H S : List Bool → List Bool`. -/
++theorem polyTimeComputable_collisionHash (H : CRH) (S : SignatureScheme) :
++    PolyTimeComputable (collisionHash H S) :=
++  let hU := polyTimeComputable_pairFstD.comp' polyTimeComputable_pairFstD
++  let hI := polyTimeComputable_pairFstD.comp'
++    (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairFstD)
++  let hX := polyTimeComputable_pairSndD.comp'
++    (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD)
++  (HashSignForward.polyTimeComputable_hashWord H S hU hI hX).congr (fun w =>
++    (HashSignForward.hashWord_eq H S _ _ _).trans (collisionHash_eq H S w).symm)
++
++/-- A collision-finder round signs the query hash using the remaining seed and records
++the query as its new state, `collisionRun H S w = pairEncode (padStr S.sigLen u
++(S.sign.output (NUPPT.layout u (pairEncode (pairSndD (collisionKey S (pairFstD w)))
++(collisionHash H S w)) [] (ω.drop (S.gen.coins.eval u.length))))) x`, where
++`u = pairFstD (pairFstD w)`, `ω = pairSndD (pairSndD (pairFstD w))` and
++`x = pairSndD (pairSndD (pairSndD w))` [PS10, Theorem 144.1]. -/
++def collisionRun (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
++  pairEncode
++    (padStr S.sigLen (pairFstD (pairFstD w))
++      (S.sign.output (NUPPT.layout (pairFstD (pairFstD w))
++        (pairEncode (pairSndD (collisionKey S (pairFstD w))) (collisionHash H S w)) []
++        ((pairSndD (pairSndD (pairFstD w))).drop
++          (S.gen.coins.eval (pairFstD (pairFstD w)).length)))))
++    (pairSndD (pairSndD (pairSndD w)))
++
++/-- A round returns the padded original signature and the queried message:
++`collisionRun H S w = pairEncode (padStr S.sigLen u (S.sign.output (NUPPT.layout u
++(pairEncode (pairSndD (collisionKey S (pairFstD w))) (collisionHash H S w)) []
++(ω.drop (S.gen.coins.eval u.length))))) x`, where `u = pairFstD (pairFstD w)`,
++`ω = pairSndD (pairSndD (pairFstD w))` and `x = pairSndD (pairSndD (pairSndD w))`. -/
++theorem collisionRun_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
++    collisionRun H S w = pairEncode
++      (padStr S.sigLen (pairFstD (pairFstD w))
++        (S.sign.output (NUPPT.layout (pairFstD (pairFstD w))
++          (pairEncode (pairSndD (collisionKey S (pairFstD w))) (collisionHash H S w)) []
++          ((pairSndD (pairSndD (pairFstD w))).drop
++            (S.gen.coins.eval (pairFstD (pairFstD w)).length)))))
++      (pairSndD (pairSndD (pairSndD w))) := rfl
++
++/-- The collision-finder round is polynomial-time: `PolyTimeComputable (collisionRun H S)`,
++for `collisionRun H S : List Bool → List Bool`. It uses a polynomial-length coin suffix,
++the polynomial-time signer and padding, then pairs the result with the query.
++
++**Proof sketch.** Write `u` for the parameter word, `ω` for the context seed and `x` for the
++query word of a round input; each is a composition of pair projections, hence polynomial-time.
++The signer's tape is `ω` with its first `S.gen.coins(|u|)` bits dropped, computed by the
++published polynomial-length drop construction on the pair `⟨u, ω⟩`. The secret key is the
++second component of the polynomial-time `collisionKey`, and the query hash is polynomial-time
++(`polyTimeComputable_collisionHash`). The original signer's output on the layout of `u`, the
++pair of key and hash, empty advice and that tape is then polynomial-time, and so is padding
++it to `S.sigLen(|u|)` bits by the published padding construction on `⟨u, ·⟩`. Pairing the
++padded signature with `x` gives the round. -/
++theorem polyTimeComputable_collisionRun (H : CRH) (S : SignatureScheme) :
++    PolyTimeComputable (collisionRun H S) :=
++  let hU := polyTimeComputable_pairFstD.comp' polyTimeComputable_pairFstD
++  let hW := polyTimeComputable_pairSndD.comp'
++    (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairFstD)
++  let hR := ((polyTimeComputable_pairDropPoly S.gen.coins).comp'
++    (hU.pairEncode hW)).congr (fun _ =>
++      congrArg₂ (fun u r : List Bool => r.drop (S.gen.coins.eval u.length))
++        (pairFstD_pairEncode _ _) (pairSndD_pairEncode _ _))
++  let hK := polyTimeComputable_pairSndD.comp'
++    ((polyTimeComputable_collisionKey S).comp' polyTimeComputable_pairFstD)
++  let hSig := S.sign.polyTimeComputable_output.comp' (NUPPT.polyTimeComputable_layout hU
++    (hK.pairEncode (polyTimeComputable_collisionHash H S)) (polyTimeComputable_const []) hR)
++  let hPad := ((polyTimeComputable_padStr S.sigLen).comp' (hU.pairEncode hSig)).congr
++    (fun _ => congrArg₂ (padStr S.sigLen)
++      (pairFstD_pairEncode _ _) (pairSndD_pairEncode _ _))
++  hPad.pairEncode (polyTimeComputable_pairSndD.comp'
++    (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD))
++
++/-- The collision output concatenates the remembered query with the first `H.domLen(n)`
++bits of the adversary's final word, `collisionOut H w = pairFstD (pairSndD w) ++
++(pairSndD (pairSndD w)).take (H.domLen.eval (pairFstD (pairFstD w)).length)`
++[PS10, Theorem 144.1]. -/
++def collisionOut (H : CRH) (w : List Bool) : List Bool :=
++  pairFstD (pairSndD w) ++
++    (pairSndD (pairSndD w)).take (H.domLen.eval (pairFstD (pairFstD w)).length)
++
++/-- The collision output is the state followed by the message prefix of the forgery:
++`collisionOut H w = pairFstD (pairSndD w) ++
++(pairSndD (pairSndD w)).take (H.domLen.eval (pairFstD (pairFstD w)).length)`. -/
++theorem collisionOut_eq (H : CRH) (w : List Bool) :
++    collisionOut H w = pairFstD (pairSndD w) ++
++      (pairSndD (pairSndD w)).take (H.domLen.eval (pairFstD (pairFstD w)).length) := rfl
++
++/-- Reading a polynomial-length forgery prefix and appending it to the stored query is
++polynomial-time: `PolyTimeComputable (collisionOut H)`, for
++`collisionOut H : List Bool → List Bool`. -/
++theorem polyTimeComputable_collisionOut (H : CRH) :
++    PolyTimeComputable (collisionOut H) :=
++  let hU := polyTimeComputable_pairFstD.comp' polyTimeComputable_pairFstD
++  let hA := polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD
++  let hT := ((polyTimeComputable_pairTakePoly H.domLen).comp' (hU.pairEncode hA)).congr
++    (fun _ => congrArg₂ (fun u a : List Bool => a.take (H.domLen.eval u.length))
++      (pairFstD_pairEncode _ _) (pairSndD_pairEncode _ _))
++  (polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD).append hT
++
++/-- The T1 collision finder samples signature-generation and signing coins, remembers one
++domain-width query, and emits the query followed by the forged message: its fields are
++`stateLen = H.domLen`, `seedLen = .add S.gen.coins S.sign.coins`, `init _ = zeroBits _`,
++`run = collisionRun H S`, `advIn = collisionAdv S` and `out = collisionOut H`
++[PS10, Theorem 144.1]. -/
++def collisionHandler (H : CRH) (S : SignatureScheme) :
++    PolyHandler 1 (fun _ => H.domLen) (fun _ => S.sigLen) where
++  stateLen := H.domLen
++  seedLen := .add S.gen.coins S.sign.coins
++  init _ := zeroBits _
++  run := collisionRun H S
++  poly := polyTimeComputable_collisionRun H S
++  advIn := collisionAdv S
++  advIn_poly := polyTimeComputable_collisionAdv S
++  out := collisionOut H
++  out_poly := polyTimeComputable_collisionOut H
++
++attribute [simps (config := { isSimp := false }) stateLen seedLen init run advIn out]
++  collisionHandler
++
++/-- On a well-formed round input, the collision handler returns the padded signature on
++the query hash and stores exactly the query:
++`(collisionHandler H S).run (PolyHandler.input n i ω s j m) = pairEncode (padStr S.sigLen u σ) m`,
++where `u = List.replicate n true` and
++`σ = S.sign.output (NUPPT.layout u (pairEncode (pairSndD (collisionKey S (seedIn n i ω)))
++(padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m))))) [] (ω.drop (S.gen.coins.eval n)))`.
++The generator reads the seed prefix and
++the signer reads its suffix; the old state and oracle index are ignored. -/
++theorem collisionHandler_run_input (H : CRH) (S : SignatureScheme) (n : ℕ)
++    (i ω s : List Bool) (j : Fin 1) (m : List Bool) :
++    (collisionHandler H S).run (PolyHandler.input n i ω s j m) =
++      pairEncode
++        (padStr S.sigLen (List.replicate n true)
++          (S.sign.output (NUPPT.layout (List.replicate n true)
++            (pairEncode
++              (pairSndD (collisionKey S (seedIn n i ω)))
++              (padStr S.msgLen (List.replicate n true)
++                (H.eval (pairEncode (List.replicate n true) (pairEncode i m))))) []
++            (ω.drop (S.gen.coins.eval n))))) m := by
++  simp only [collisionHandler_run, collisionRun_eq, collisionHash_eq, PolyHandler.input_eq,
++    seedIn_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
++
++/-- The typed signature returned by the collision handler: run the original signer on the
++hashed message with the seed suffix and pad its output to `S.sigLen(n)` bits,
++`collisionReply H S n i ω m = padFin (S.sigLen.eval n) σ`, where `u = List.replicate n true` and
++`σ = S.sign.output (NUPPT.layout u (pairEncode (pairSndD (collisionKey S (seedIn n i ω)))
++(padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m))))) [] (ω.drop (S.gen.coins.eval n)))`. -/
++def collisionReply (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : List Bool) :
++    Fin (S.sigLen.eval n) → Bool :=
++  padFin (S.sigLen.eval n)
++    (S.sign.output (NUPPT.layout (List.replicate n true)
++      (pairEncode (pairSndD (collisionKey S (seedIn n i ω)))
++        (padStr S.msgLen (List.replicate n true)
++          (H.eval (pairEncode (List.replicate n true) (pairEncode i m))))) []
++      (ω.drop (S.gen.coins.eval n))))
++
++/-- The typed reply is the original signer output padded to the signature length:
++`collisionReply H S n i ω m = padFin (S.sigLen.eval n) σ`, where `u = List.replicate n true` and
++`σ = S.sign.output (NUPPT.layout u (pairEncode (pairSndD (collisionKey S (seedIn n i ω)))
++(padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m))))) [] (ω.drop (S.gen.coins.eval n)))`. -/
++theorem collisionReply_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : List Bool) :
++    collisionReply H S n i ω m = padFin (S.sigLen.eval n)
++      (S.sign.output (NUPPT.layout (List.replicate n true)
++        (pairEncode (pairSndD (collisionKey S (seedIn n i ω)))
++          (padStr S.msgLen (List.replicate n true)
++            (H.eval (pairEncode (List.replicate n true) (pairEncode i m))))) []
++        (ω.drop (S.gen.coins.eval n)))) := rfl
++
++/-- With the generator and signing tapes concatenated into the context seed, the collision
++handler's reply is the fixed experiment's hashed reply under those same generated keys:
++`collisionReply H S n i (List.ofFn rg ++ List.ofFn rs) (List.ofFn m) =
++hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m`. -/
++theorem collisionReply_seed (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (rg : S.gen.Coins n) (rs : S.sign.Coins n) (m : Fin (H.domLen.eval n) → Bool) :
++    collisionReply H S n i (List.ofFn rg ++ List.ofFn rs) (List.ofFn m) =
++      hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m := by
++  rw [collisionReply_eq, collisionKey_seed, hashedReply_eq,
++    ← NUPPT.coinLen_eq S.gen n, List.drop_left' List.length_ofFn,
++    S.sign_uniform.runAt_eq, HashSignForward.hashWord_eq,
++    NUPPT.layout_eq, NUPPT.advInput_eq]
++
++/-- Encoding the typed reply gives exactly the padded signature word emitted by a
++collision-handler round: `List.ofFn (collisionReply H S n i ω m) = padStr S.sigLen u σ`, where
++`u = List.replicate n true` and
++`σ = S.sign.output (NUPPT.layout u (pairEncode (pairSndD (collisionKey S (seedIn n i ω)))
++(padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m))))) [] (ω.drop (S.gen.coins.eval n)))`. -/
++theorem ofFn_collisionReply (H : CRH) (S : SignatureScheme) (n : ℕ) (i ω m : List Bool) :
++    List.ofFn (collisionReply H S n i ω m) =
++      padStr S.sigLen (List.replicate n true)
++        (S.sign.output (NUPPT.layout (List.replicate n true)
++          (pairEncode (pairSndD (collisionKey S (seedIn n i ω)))
++            (padStr S.msgLen (List.replicate n true)
++              (H.eval (pairEncode (List.replicate n true) (pairEncode i m))))) []
++          (ω.drop (S.gen.coins.eval n)))) := by
++  simp only [collisionReply_eq, ofFn_padFin_eq_take, padStr_eq, List.length_replicate]
++
++/-- The collision handler answers each typed query with its padded original signature and
++sets the state to that query, asking no further oracle: `(collisionHandler H S).impl n i ω j m s =
++.pure (collisionReply H S n i (List.ofFn ω) (List.ofFn m), m)`. -/
++theorem collisionHandler_impl (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool) (j : Fin 1)
++    (m s : Fin (H.domLen.eval n) → Bool) :
++    (collisionHandler H S).impl n i ω j m s =
++      .pure (collisionReply H S n i (List.ofFn ω) (List.ofFn m), m) := by
++  rw [PolyHandler.impl_apply]
++  congr 1
++  apply PolyHandler.answer_of_run_eq
++  rw [collisionHandler_run_input, ofFn_collisionReply]
++
++/-- Finalization returns the remembered query followed by the domain-width message prefix
++of the adversary's output: `(collisionHandler H S).result n i ω s a =
++List.ofFn s ++ (List.ofFn a).take (H.domLen.eval n)`. -/
++theorem collisionHandler_result (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool)
++    (s : Fin (H.domLen.eval n) → Bool) {d : ℕ} (a : Fin d → Bool) :
++    (collisionHandler H S).result n i ω s a =
++      List.ofFn s ++ (List.ofFn a).take (H.domLen.eval n) := by
++  simp only [PolyHandler.result_eq, collisionHandler_out, collisionOut_eq, seedIn_eq,
++    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
++
++/-- The collision handler and common fixed-tape transcript return the same adversary
++output: if `List.ofFn ω = List.ofFn rg ++ List.ofFn rs`, then `∃ a s L,
++simulate ((collisionHandler H S).impl n i ω) (A.toCompOn cod n 1
++((collisionHandler H S).advInput n i ω) rA) ((collisionHandler H S).init n) = .pure (a, s) ∧
++transcript H S A n pk sk i rs rA = .pure (a, ((), L)) ∧
++(L = [] ∨ ∃ j m, L = [⟨j, m, hashedReply H S n sk i rs m⟩] ∧ s = m)`, where
++`pk = pairFstD (S.gen.runAt n [] rg)`, `sk = pairSndD (S.gen.runAt n [] rg)` and
++`cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
++(H.domLen.eval n + S.sigLen.eval n)`.
++Their query log is empty, or consists of one query which is exactly the handler's
++final state, answered by the same original signing tape.
++
++**Proof sketch.** The adversary's computation has at most one query. If it returns
++immediately, both simulations return that value and the transcript log is empty. Otherwise,
++the seed equations identify the handler's response with the fixed experiment's response;
++the handler stores the query while the fixed experiment logs it. Both continuations
++therefore return the same function of that response. -/
++theorem collisionHandler_transcript (H : CRH) (S : SignatureScheme) (A : NUPPT) (n : ℕ)
++    (i : List Bool) (rg : S.gen.Coins n) (rs : S.sign.Coins n) (rA : A.Coins n)
++    (ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool)
++    (hω : List.ofFn ω = List.ofFn rg ++ List.ofFn rs) :
++    ∃ (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool)
++      (s : Fin (H.domLen.eval n) → Bool)
++      (L : QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n))),
++      simulate ((collisionHandler H S).impl n i ω)
++          (A.toCompOn (bitCodec (fun _ : Fin 1 => H.domLen.eval n)
++            (fun _ => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
++            ((collisionHandler H S).advInput n i ω) rA) ((collisionHandler H S).init n) =
++          .pure (a, s) ∧
++        transcript H S A n (pairFstD (S.gen.runAt n [] rg))
++          (pairSndD (S.gen.runAt n [] rg)) i rs rA = .pure (a, ((), L)) ∧
++        (L = [] ∨ ∃ (j : Fin 1) (m : Fin (H.domLen.eval n) → Bool),
++          L = [⟨j, m, hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m⟩] ∧ s = m) := by
++  have hinput : (collisionHandler H S).advInput n i ω =
++      pairEncode (pairFstD (S.gen.runAt n [] rg)) i := by
++    rw [PolyHandler.advInput_eq, collisionHandler_advIn, hω, collisionAdv_seed]
++  let c := A.toCompOn (bitCodec (fun _ : Fin 1 => H.domLen.eval n)
++    (fun _ => S.sigLen.eval n) (H.domLen.eval n + S.sigLen.eval n)) n 1
++    (pairEncode (pairFstD (S.gen.runAt n [] rg)) i) rA
++  have hc : c.CostBoundedBy (fun _ => 1) 1 := A.toCompOn_costBoundedBy _ n 1 _ rA
++  rcases one_query_cases c hc with ⟨a, hcase⟩ | ⟨j, m, f, hcase⟩
++  all_goals dsimp only [c] at hcase
++  · refine ⟨a, (collisionHandler H S).init n, [], ?_, ?_, Or.inl rfl⟩
++    · rw [hinput, hcase, simulate_pure]
++    · rw [transcript_eq, hcase, simulate_pure]
++  · let y := hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m
++    refine ⟨f y, m, [⟨j, m, y⟩], ?_, ?_, Or.inr ⟨j, m, rfl, rfl⟩⟩
++    · rw [hinput, hcase, simulate_query, collisionHandler_impl, hω, collisionReply_seed,
++        OracleComp.pure_bind, simulate_pure]
++    · rw [transcript_eq, hcase]
++      simp only [simulate_query, QueryImpl.withLog_apply, fixedSign_apply,
++        OracleComp.pure_bind, simulate_pure, List.nil_append]
++      rfl
++
++/-- If the common transcript is fresh and contains a query with the forged message's
++hash, the collision handler's final output satisfies the CRH game's exact collision
++predicate on the full domain: given `∀ n i x, H.inDom n i x = true`,
++`L = [] ∨ ∃ j m, L = [⟨j, m, hashedReply H S n sk i rs m⟩] ∧ s = m`,
++`∀ e ∈ L, e.2.1 ≠ (splitBits a).1` and `∃ e ∈ L, H.hash n i e.2.1 = H.hash n i (splitBits a).1`,
++then `H.inDom n i x₁ = true ∧ H.inDom n i x₂ = true ∧ x₁ ≠ x₂ ∧ H.hash n i x₁ = H.hash n i x₂`,
++where `(x₁, x₂) = splitBits (padFin (H.domLen.eval n + H.domLen.eval n)
++((collisionHandler H S).result n i ω s a))` [PS10, Theorem 144.1, collision case].
++
++**Proof sketch.** The equal-hash witness rules out an empty log. The one-query invariant
++then identifies its query with the final handler state. Freshness makes that query distinct
++from the forged message. The finalization reader and fixed-width concatenation reader show
++that the CRH game decodes precisely these two messages. Full domain membership supplies
++the remaining two clauses of the collision predicate. -/
++theorem collisionHandler_collision (H : CRH) (S : SignatureScheme)
++    (hdom : ∀ n i x, H.inDom n i x = true) (n : ℕ) (sk i : List Bool)
++    (rs : S.sign.Coins n) (ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) (s : Fin (H.domLen.eval n) → Bool)
++    (L : QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)))
++    (hinv : L = [] ∨ ∃ (j : Fin 1) (m : Fin (H.domLen.eval n) → Bool),
++      L = [⟨j, m, hashedReply H S n sk i rs m⟩] ∧ s = m)
++    (hfresh : ∀ e ∈ L, e.2.1 ≠ (splitBits a).1)
++    (hsame : ∃ e ∈ L, H.hash n i e.2.1 = H.hash n i (splitBits a).1) :
++    let xx := splitBits (padFin (H.domLen.eval n + H.domLen.eval n)
++      ((collisionHandler H S).result n i ω s a))
++    H.inDom n i xx.1 = true ∧ H.inDom n i xx.2 = true ∧ xx.1 ≠ xx.2 ∧
++      H.hash n i xx.1 = H.hash n i xx.2 := by
++  rcases hinv with hnil | ⟨j, m, hL, hs⟩
++  · obtain ⟨e, he, _⟩ := hsame
++    rw [hnil] at he
++    exact False.elim (List.not_mem_nil he)
++  · subst L
++    subst s
++    obtain ⟨e, he, hhash⟩ := hsame
++    have heq := List.mem_singleton.mp he
++    subst e
++    have hne : m ≠ (splitBits a).1 := hfresh _ (List.mem_singleton_self _)
++    have hp : (List.ofFn a).take (H.domLen.eval n) = List.ofFn (splitBits a).1 :=
++      (EffFill.ofFn_take_drop_add a).1.trans
++        (congrArg List.ofFn (funext fun j => splitBits_fst a j)).symm
++    have hdecode : splitBits (padFin (H.domLen.eval n + H.domLen.eval n)
++        ((collisionHandler H S).result n i ω m a)) = (m, (splitBits a).1) := by
++      rw [collisionHandler_result, hp, splitBits_pad_concat]
++    dsimp only
++    rw [hdecode]
++    exact ⟨hdom n i m, hdom n i _, hne, hhash⟩
++
++/-- T1 realizes the collision handler as a machine: on matching seed/adversary coins,
++its output equals `collisionHandler.result` after the deterministic simulation,
++`∃ B : NUPPT, ∀ n, ∃ φ : (Fin (K.seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n, ∀ i ω r,
++∃ a s, simulate (K.impl n i ω) (A.toCompOn cod n ((.const 1 : PolyExpr).eval n)
++(K.advInput n i ω) r) (K.init n) = .pure (a, s) ∧ B.runAt n i (φ (ω, r)) = K.result n i ω s a`,
++where `K = collisionHandler H S` and `cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n)
++(fun _ : Fin 1 => S.sigLen.eval n) ((PolyExpr.add H.domLen S.sigLen).eval n)`. This is
++the machine-construction part of [PS10, Theorem 144.1], before relating the collision event. -/
++theorem exists_collisionMachine (H : CRH) (S : SignatureScheme) (A : NUPPT) :
++    ∃ B : NUPPT, ∀ n : ℕ, ∃ φ :
++      (Fin ((collisionHandler H S).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n,
++      ∀ (i : List Bool) (ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool)
++        (r : A.Coins n),
++        ∃ (a : Fin ((PolyExpr.add H.domLen S.sigLen).eval n) → Bool)
++          (s : Fin ((collisionHandler H S).stateLen.eval n) → Bool),
++          simulate ((collisionHandler H S).impl n i ω)
++              (A.toCompOn (bitCodec (fun _ : Fin 1 => H.domLen.eval n)
++                (fun _ : Fin 1 => S.sigLen.eval n) ((PolyExpr.add H.domLen S.sigLen).eval n))
++                n ((.const 1 : PolyExpr).eval n) ((collisionHandler H S).advInput n i ω) r)
++              ((collisionHandler H S).init n) = .pure (a, s) ∧
++            B.runAt n i (φ (ω, r)) = (collisionHandler H S).result n i ω s a :=
++  exists_handlerMachine A (.const 1) (fun _ => H.domLen) (fun _ => S.sigLen)
++    (.add H.domLen S.sigLen) (collisionHandler H S)
++
++/-- T1 supplies a collision machine whose output is the finalization of the common
++fixed-tape transcript: `∃ B : NUPPT, ∀ n, ∃ φ : (Fin (K.seedLen.eval n) → Bool) × A.Coins n ≃
++B.Coins n, ∀ i rg rs ω rA, List.ofFn ω = List.ofFn rg ++ List.ofFn rs → ∃ a s L,
++transcript H S A n pk sk i rs rA = .pure (a, ((), L)) ∧
++(L = [] ∨ ∃ j m, L = [⟨j, m, hashedReply H S n sk i rs m⟩] ∧ s = m) ∧
++B.runAt n i (φ (ω, rA)) = K.result n i ω s a`, where `K = collisionHandler H S`,
++`pk = pairFstD (S.gen.runAt n [] rg)` and `sk = pairSndD (S.gen.runAt n [] rg)`.
++Its coins correspond bijectively to the handler seed and adversary
++tape; concatenated generator/signing tapes give the same adversary output and one-query
++invariant as `collisionHandler_transcript` [PS10, Theorem 144.1].
++
++**Proof sketch.** Apply the T1 machine contract and the common-transcript coupling to the
++same seed and adversary tape. Both describe the same deterministic handler simulation as
++a pure computation. Injectivity of the pure constructor identifies their final outputs
++and states, so the T1 run equation becomes the claimed common-transcript run equation. -/
++theorem exists_collisionMachine_transcript (H : CRH) (S : SignatureScheme) (A : NUPPT) :
++    ∃ B : NUPPT, ∀ n : ℕ, ∃ φ :
++      (Fin ((collisionHandler H S).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n,
++      ∀ (i : List Bool) (rg : S.gen.Coins n) (rs : S.sign.Coins n)
++        (ω : Fin ((collisionHandler H S).seedLen.eval n) → Bool) (rA : A.Coins n),
++        List.ofFn ω = List.ofFn rg ++ List.ofFn rs →
++        ∃ (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool)
++          (s : Fin (H.domLen.eval n) → Bool)
++          (L : QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++            (fun _ => S.sigLen.eval n))),
++          transcript H S A n (pairFstD (S.gen.runAt n [] rg))
++            (pairSndD (S.gen.runAt n [] rg)) i rs rA = .pure (a, ((), L)) ∧
++          (L = [] ∨ ∃ (j : Fin 1) (m : Fin (H.domLen.eval n) → Bool),
++            L = [⟨j, m, hashedReply H S n (pairSndD (S.gen.runAt n [] rg)) i rs m⟩] ∧ s = m) ∧
++          B.runAt n i (φ (ω, rA)) = (collisionHandler H S).result n i ω s a := by
++  obtain ⟨B, hB⟩ := exists_collisionMachine H S A
++  refine ⟨B, fun n => ?_⟩
++  obtain ⟨φ, hφ⟩ := hB n
++  refine ⟨φ, fun i rg rs ω rA hω => ?_⟩
++  simp only [PolyExpr.eval_add, PolyExpr.eval_const] at hφ
++  obtain ⟨a₀, s₀, hsim, hrun⟩ := hφ i ω rA
++  obtain ⟨a, s, L, hsame, ht, hinv⟩ :=
++    collisionHandler_transcript H S A n i rg rs rA ω hω
++  have heq : (a₀, s₀) = (a, s) := OracleComp.pure.inj (hsim.symm.trans hsame)
++  obtain ⟨ha, hs⟩ := Prod.mk.inj heq
++  refine ⟨a, s, L, ht, hinv, ?_⟩
++  simpa only [ha, hs] using hrun
++
++end TCSlib.Cryptography.Authentication.HashSignFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean
+new file mode 100644
+index 000000000..06dce554d
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/FixedGame.lean
+@@ -0,0 +1,199 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardHandler
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuerySampling
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# A common transcript for the hash-and-sign reductions
++
++Fix the signature keys, hash index, adversary tape and signing tape. The resulting
++transcript is shared by the collision-finding and signature-forging reductions of
++[PS10, Theorem 144.1]. Because the adversary makes at most one query, sampling signing
++coins per query has the same law as drawing the signing tape before this transcript.
++
++## Main definitions
++
++* `HashSignFill.hashedReply`: the original signer applied to the hashed message.
++* `HashSignFill.fixedSign`, `sampledHashSign`: the fixed-tape and fresh-tape signing oracles.
++* `HashSignFill.transcript`: the adversary's output and full signing-query log.
++* `HashSignFill.Success`: acceptance and message freshness in a common transcript.
++
++## Main results
++
++* The defining equations and application readers expose each computation.
++* `HashSignFill.expect_sampledHashSign_eq_transcript`: signing randomness may be sampled
++  before the common transcript.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 144.1, book pp. 144–145.
++-/
++
++namespace TCSlib.Cryptography.Authentication.HashSignFill
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++
++/-- With signing tape `rs` fixed, hash `m` and run the original signer under `sk`, padding
++the signature to the declared signature width, `hashedReply H S n sk i rs m =
++padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (hashWord H S u i (List.ofFn m))) rs)`,
++where `u = List.replicate n true` and `hashWord = HashSignForward.hashWord`
++[PS10, Theorem 144.1]. -/
++def hashedReply (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
++    (rs : S.sign.Coins n) (m : Fin (H.domLen.eval n) → Bool) :
++    Fin (S.sigLen.eval n) → Bool :=
++  padFin (S.sigLen.eval n) (S.sign.runAt n
++    (pairEncode sk (HashSignForward.hashWord H S (List.replicate n true) i (List.ofFn m))) rs)
++
++/-- The fixed-tape hashed reply is the padded original signer output on `⟨sk, h_i(m)⟩`:
++`hashedReply H S n sk i rs m =
++padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (hashWord H S u i (List.ofFn m))) rs)`,
++where `u = List.replicate n true` and `hashWord = HashSignForward.hashWord`. -/
++theorem hashedReply_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
++    (rs : S.sign.Coins n) (m : Fin (H.domLen.eval n) → Bool) :
++    hashedReply H S n sk i rs m =
++      padFin (S.sigLen.eval n) (S.sign.runAt n
++        (pairEncode sk (HashSignForward.hashWord H S (List.replicate n true) i (List.ofFn m)))
++        rs) := rfl
++
++/-- The fixed-tape signing oracle answers every query using `hashedReply` and has trivial
++state, `fixedSign H S n sk i rs j m s = .pure (hashedReply H S n sk i rs m, ())`
++[PS10, Theorem 144.1]. -/
++def fixedSign (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
++    (rs : S.sign.Coins n) :
++    QueryImpl (bitSpec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n))
++      Unit unifSpec :=
++  fun _ m _ => .pure (hashedReply H S n sk i rs m, ())
++
++/-- The fixed-tape oracle is the pure answer function `m ↦ (hashedReply m, ())`:
++`fixedSign H S n sk i rs = fun _ m _ => .pure (hashedReply H S n sk i rs m, ())`. -/
++theorem fixedSign_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
++    (rs : S.sign.Coins n) :
++    fixedSign H S n sk i rs = fun _ m _ => .pure (hashedReply H S n sk i rs m, ()) := rfl
++
++/-- Applying the fixed-tape oracle returns the hashed signature and trivial state:
++`fixedSign H S n sk i rs j m s = .pure (hashedReply H S n sk i rs m, ())`. -/
++theorem fixedSign_apply (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
++    (rs : S.sign.Coins n) (j : Fin 1) (m : Fin (H.domLen.eval n) → Bool) (s : Unit) :
++    fixedSign H S n sk i rs j m s = .pure (hashedReply H S n sk i rs m, ()) := rfl
++
++/-- The common transcript runs `A` on `⟨pk,i⟩` with one query allowed, fixed signing tape,
++and a full query log, `transcript H S A n pk sk i rs rA =
++simulate (fixedSign H S n sk i rs).withLog (A.toCompOn cod n 1 (pairEncode pk i) rA) ((), [])`,
++where `cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
++(H.domLen.eval n + S.sigLen.eval n)` [PS10, Theorem 144.1]. -/
++def transcript (H : CRH) (S : SignatureScheme) (A : NUPPT) (n : ℕ)
++    (pk sk i : List Bool) (rs : S.sign.Coins n) (rA : A.Coins n) :
++    ProbComp ((Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n)))) :=
++  simulate (fixedSign H S n sk i rs).withLog
++    (A.toCompOn (bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
++      (H.domLen.eval n + S.sigLen.eval n)) n 1 (pairEncode pk i) rA) ((), [])
++
++/-- The common transcript is the logged simulation with the fixed-tape signing oracle:
++`transcript H S A n pk sk i rs rA =
++simulate (fixedSign H S n sk i rs).withLog (A.toCompOn cod n 1 (pairEncode pk i) rA) ((), [])`,
++where `cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
++(H.domLen.eval n + S.sigLen.eval n)`. -/
++theorem transcript_eq (H : CRH) (S : SignatureScheme) (A : NUPPT) (n : ℕ)
++    (pk sk i : List Bool) (rs : S.sign.Coins n) (rA : A.Coins n) :
++    transcript H S A n pk sk i rs rA =
++      simulate (fixedSign H S n sk i rs).withLog
++        (A.toCompOn (bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
++          (H.domLen.eval n + S.sigLen.eval n)) n 1 (pairEncode pk i) rA) ((), []) := rfl
++
++/-- The fresh-tape hash-and-sign oracle samples an original signing tape independently
++for every query and keeps trivial state, `sampledHashSign H S n sk i = QueryImpl.ofComp
++fun _ m => (ProbComp.sample (S.sign.Coins n)).bind fun rs => .pure (hashedReply H S n sk i rs m)`
++[PS10, Theorem 144.1]. -/
++noncomputable def sampledHashSign (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool) :
++    QueryImpl (bitSpec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n))
++      Unit unifSpec :=
++  QueryImpl.ofComp fun _ m => (ProbComp.sample (S.sign.Coins n)).bind fun rs =>
++    .pure (hashedReply H S n sk i rs m)
++
++/-- The fresh-tape oracle is `ofComp` of the original signing-tape sample followed by
++the corresponding fixed-tape hashed reply: `sampledHashSign H S n sk i = QueryImpl.ofComp
++(fun _ m => (ProbComp.sample (S.sign.Coins n)).bind fun rs =>
++.pure (hashedReply H S n sk i rs m))`. -/
++theorem sampledHashSign_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool) :
++    sampledHashSign H S n sk i =
++      QueryImpl.ofComp (fun _ m => (ProbComp.sample (S.sign.Coins n)).bind fun rs =>
++        .pure (hashedReply H S n sk i rs m)) := rfl
++
++/-- Applying the fresh-tape oracle samples one signing tape, returns its hashed signature,
++and preserves the trivial state: `sampledHashSign H S n sk i j m s =
++(ProbComp.sample (S.sign.Coins n)).bind fun rs => .pure (hashedReply H S n sk i rs m, s)`. -/
++theorem sampledHashSign_apply (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
++    (j : Fin 1) (m : Fin (H.domLen.eval n) → Bool) (s : Unit) :
++    sampledHashSign H S n sk i j m s =
++      (ProbComp.sample (S.sign.Coins n)).bind fun rs =>
++        .pure (hashedReply H S n sk i rs m, s) := by
++  simp only [sampledHashSign_eq, QueryImpl.ofComp_apply,
++    OracleComp.bind_assoc, OracleComp.pure_bind]
++
++/-- The expected payoff of a fresh-tape hash-and-sign simulation equals the expectation
++obtained by drawing one signing tape and running the common transcript, including its log:
++`ProbComp.expect (simulate (sampledHashSign H S n sk i).withLog
++(A.toCompOn cod n 1 (pairEncode pk i) rA) ((), [])) g = ProbComp.expect
++(ProbComp.sample (S.sign.Coins n)) (fun rs =>
++ProbComp.expect (transcript H S A n pk sk i rs rA) g)`,
++where `cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
++(H.domLen.eval n + S.sigLen.eval n)`.
++
++**Proof sketch.** The machine computation has unit query cost at most one by its published
++budget contract. `expect_simulate_sample_once` therefore moves the signing-tape sample
++outside the logged simulation; the fixed-tape implementation is exactly `fixedSign`. -/
++theorem expect_sampledHashSign_eq_transcript (H : CRH) (S : SignatureScheme) (A : NUPPT)
++    (n : ℕ) (pk sk i : List Bool) (rA : A.Coins n)
++    (g : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n))) → ℝ) :
++    ProbComp.expect
++        (simulate (sampledHashSign H S n sk i).withLog
++          (A.toCompOn (bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
++            (H.domLen.eval n + S.sigLen.eval n)) n 1 (pairEncode pk i) rA) ((), [])) g =
++      ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
++        ProbComp.expect (transcript H S A n pk sk i rs rA) g) := by
++  simpa only [sampledHashSign_eq, transcript_eq, fixedSign_eq] using
++    expect_simulate_sample_once (fun (_ : Fin 1) m rs => hashedReply H S n sk i rs m)
++      (A.toCompOn (bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
++        (H.domLen.eval n + S.sigLen.eval n)) n 1 (pairEncode pk i) rA)
++      (A.toCompOn_costBoundedBy _ n 1 (pairEncode pk i) rA) g
++
++/-- The common transcript is a successful hash-and-sign forgery when the original verifier
++accepts the hashed final message and that message did not occur in the inner query log,
++`Success H S n pk i res ↔ S.Accepts n pk (padFin (S.msgLen.eval n)
++(H.eval (atParam n (pairEncode i (List.ofFn m))))) σ ∧ ∀ e ∈ res.2.2, e.2.1 ≠ m`, where
++`(m, σ) = splitBits res.1` [PS10, Theorem 144.1]. -/
++def Success (H : CRH) (S : SignatureScheme) (n : ℕ) (pk i : List Bool)
++    (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n)))) : Prop :=
++  S.Accepts n pk (padFin (S.msgLen.eval n)
++      (H.eval (atParam n (pairEncode i (List.ofFn (splitBits res.1).1)))))
++    (splitBits res.1).2 ∧
++    ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1
++
++/-- Success is original-scheme acceptance on the hash, together with freshness of the
++unhashed final message in the common query log: `Success H S n pk i res ↔
++S.Accepts n pk (padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn m))))) σ ∧
++∀ e ∈ res.2.2, e.2.1 ≠ m`, where `(m, σ) = splitBits res.1`. -/
++theorem success_iff (H : CRH) (S : SignatureScheme) (n : ℕ) (pk i : List Bool)
++    (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n)))) :
++    Success H S n pk i res ↔
++      S.Accepts n pk (padFin (S.msgLen.eval n)
++        (H.eval (atParam n (pairEncode i (List.ofFn (splitBits res.1).1)))))
++        (splitBits res.1).2 ∧
++      ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1 := Iff.rfl
++
++end TCSlib.Cryptography.Authentication.HashSignFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean
+new file mode 100644
+index 000000000..2db10388d
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean
+@@ -0,0 +1,445 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.FixedGame
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CodecReaders
++import TCSlib.Cryptography.Games.Bridges.Experiments
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The common transcript of the forwarding reduction
++
++## Main definitions
++
++* `HashSignFill.queryHash`: the typed hash at the original signature message width.
++* `HashSignFill.origFixedSign`: the original signer with one fixed signing tape.
++* `HashSignFill.forwardEntry`, `forwardOutput`: hashing the query log and final message.
++
++## Main results
++
++The forwarding handler and the common fixed-tape transcript have the same adversary
++output, with the outer log obtained by hashing every query. Distinct queried hashes
++therefore give freshness in the original signature game.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
++  January 2010, Theorem 144.1, book pp. 144–145.
++-/
++
++namespace TCSlib.Cryptography.Authentication.HashSignFill
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++
++/-- The hash of a domain-width message, padded to the original signature message width:
++`queryHash H S n i m =
++padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn m))))`. -/
++def queryHash (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (m : Fin (H.domLen.eval n) → Bool) : Fin (S.msgLen.eval n) → Bool :=
++  padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn m))))
++
++/-- The typed hash reads the evaluator output at the original message width:
++`queryHash H S n i m =
++padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn m))))`. -/
++theorem queryHash_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (m : Fin (H.domLen.eval n) → Bool) :
++    queryHash H S n i m =
++      padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn m)))) := rfl
++
++/-- The original signature oracle with a fixed signing tape and trivial state:
++`origFixedSign S n sk rs j m s =
++.pure (padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (List.ofFn m)) rs), ())`. -/
++def origFixedSign (S : SignatureScheme) (n : ℕ) (sk : List Bool)
++    (rs : S.sign.Coins n) :
++    QueryImpl (bitSpec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ => S.sigLen.eval n))
++      Unit unifSpec :=
++  fun _ m _ => .pure (padFin (S.sigLen.eval n)
++    (S.sign.runAt n (pairEncode sk (List.ofFn m)) rs), ())
++
++/-- The fixed original signer returns its padded signature and trivial state:
++`origFixedSign S n sk rs = fun _ m _ =>
++.pure (padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (List.ofFn m)) rs), ())`. -/
++theorem origFixedSign_eq (S : SignatureScheme) (n : ℕ) (sk : List Bool)
++    (rs : S.sign.Coins n) :
++    origFixedSign S n sk rs = fun _ m _ =>
++      .pure (padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (List.ofFn m)) rs), ()) := rfl
++
++/-- Applying the fixed original signer returns its padded signature:
++`origFixedSign S n sk rs j m s =
++.pure (padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (List.ofFn m)) rs), ())`. -/
++theorem origFixedSign_apply (S : SignatureScheme) (n : ℕ) (sk : List Bool)
++    (rs : S.sign.Coins n) (j : Fin 1) (m : Fin (S.msgLen.eval n) → Bool) (s : Unit) :
++    origFixedSign S n sk rs j m s =
++      .pure (padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (List.ofFn m)) rs), ()) := rfl
++
++/-- A forwarded log entry asks oracle zero the hash of the inner query and records the
++same signature answer: `forwardEntry H S n i e = ⟨0, queryHash H S n i e.2.1, e.2.2⟩`. -/
++def forwardEntry (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (e : Σ _ : Fin 1, (Fin (H.domLen.eval n) → Bool) × (Fin (S.sigLen.eval n) → Bool)) :
++    Σ _ : Fin 1, (Fin (S.msgLen.eval n) → Bool) × (Fin (S.sigLen.eval n) → Bool) :=
++  ⟨0, queryHash H S n i e.2.1, e.2.2⟩
++
++/-- Forwarding an entry replaces its query by its hash and retains its signature answer:
++`forwardEntry H S n i e = ⟨0, queryHash H S n i e.2.1, e.2.2⟩`. -/
++theorem forwardEntry_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (e : Σ _ : Fin 1, (Fin (H.domLen.eval n) → Bool) × (Fin (S.sigLen.eval n) → Bool)) :
++    forwardEntry H S n i e = ⟨0, queryHash H S n i e.2.1, e.2.2⟩ := rfl
++
++/-- The forwarded output is the hashed message followed by the unchanged signature:
++`forwardOutput H S n i a = Fin.append (queryHash H S n i (splitBits a).1) (splitBits a).2`. -/
++def forwardOutput (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
++    Fin (S.msgLen.eval n + S.sigLen.eval n) → Bool :=
++  Fin.append (queryHash H S n i (splitBits a).1) (splitBits a).2
++
++/-- The forwarded output concatenates the hash of the message with the signature:
++`forwardOutput H S n i a = Fin.append (queryHash H S n i (splitBits a).1) (splitBits a).2`. -/
++theorem forwardOutput_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
++    forwardOutput H S n i a =
++      Fin.append (queryHash H S n i (splitBits a).1) (splitBits a).2 := rfl
++
++/-- The forwarded output transported to the declared handler output width:
++`handlerOutput H S n i a j =
++forwardOutput H S n i a (Fin.cast (HashSignForward.handler_output_width H S n) j)`. -/
++def handlerOutput (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
++    Fin ((HashSignForward.handler H S).outLen.eval n) → Bool :=
++  fun j => forwardOutput H S n i a (Fin.cast (HashSignForward.handler_output_width H S n) j)
++
++/-- The handler output is the forwarded output evaluated through its width cast:
++`handlerOutput H S n i a =
++fun j => forwardOutput H S n i a (Fin.cast (HashSignForward.handler_output_width H S n) j)`. -/
++theorem handlerOutput_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
++    handlerOutput H S n i a = fun j => forwardOutput H S n i a
++      (Fin.cast (HashSignForward.handler_output_width H S n) j) := rfl
++
++/-- Querying the original fixed signer on a typed hash gives the common transcript's
++hashed reply: `origFixedSign S n sk rs 0 (queryHash H S n i m) () =
++.pure (hashedReply H S n sk i rs m, ())`. -/
++theorem origFixedSign_queryHash (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
++    (rs : S.sign.Coins n) (m : Fin (H.domLen.eval n) → Bool) :
++    origFixedSign S n sk rs 0 (queryHash H S n i m) () =
++      .pure (hashedReply H S n sk i rs m, ()) := by
++  rw [origFixedSign_apply, hashedReply_eq, HashSignForward.hashWord_unary, queryHash_eq]
++
++/-- The forwarding handler's finalization returns the transported forwarded output:
++`(HashSignForward.handler H S).finish n pk ω s a =
++.pure (handlerOutput H S n (H.gen.runAtL n [] (List.ofFn ω)) a)`. -/
++theorem handler_finish_output (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
++    (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool)
++    (s : Fin ((HashSignForward.handler H S).stateLen.eval n) → Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
++    (HashSignForward.handler H S).finish n pk ω s a =
++      .pure (handlerOutput H S n (H.gen.runAtL n [] (List.ofFn ω)) a) := by
++  rw [HashSignForward.handler_finish_split, handlerOutput_eq, forwardOutput_eq, queryHash_eq]
++
++/-- Fixing the signing tape gives a common adversary output for the inner transcript
++and the forwarding reduction: if `c.CostBoundedBy (fun _ => 1) 1`, then `∃ a L,
++simulate (fixedSign H S n sk i rs).withLog c ((), []) = .pure (a, ((), L)) ∧
++simulate (origFixedSign S n sk rs).withLog ((simulate (K.impl n pk ω) c (K.init n)).bind
++fun res => K.finish n pk ω res.2 res.1) ((), []) =
++.pure (handlerOutput H S n i a, ((), L.map (forwardEntry H S n i)))`, where
++`K = HashSignForward.handler H S` and `i = H.gen.runAtL n [] (List.ofFn ω)`.
++The outer query log is obtained by hashing each inner
++query and retaining its signature answer.
++
++**Proof sketch.** A one-query computation either returns immediately or asks one query
++and returns a function of its answer. In the first case both logs are empty. In the
++second case the handler forwards the typed hash, the original fixed signer gives the
++same hashed reply as the inner fixed signer, and both continuations return the same
++adversary output. Finalization hashes that output's message component. -/
++theorem forward_transcript (H : CRH) (S : SignatureScheme) (n : ℕ) (pk sk : List Bool)
++    (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool)
++    (rs : S.sign.Coins n)
++    (c : OracleComp
++      (bitSpec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n))
++      (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool))
++    (hc : c.CostBoundedBy (fun _ => 1) 1) :
++    ∃ (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool)
++      (L : QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n))),
++      simulate (fixedSign H S n sk (H.gen.runAtL n [] (List.ofFn ω)) rs).withLog c
++          ((), []) = .pure (a, ((), L)) ∧
++        simulate (origFixedSign S n sk rs).withLog
++          ((simulate ((HashSignForward.handler H S).impl n pk ω) c
++            ((HashSignForward.handler H S).init n)).bind
++              (fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1))
++          ((), []) =
++          .pure (handlerOutput H S n (H.gen.runAtL n [] (List.ofFn ω)) a,
++            ((), L.map (forwardEntry H S n (H.gen.runAtL n [] (List.ofFn ω))))) := by
++  rcases one_query_cases c hc with ⟨a, rfl⟩ | ⟨j, m, f, rfl⟩
++  · refine ⟨a, [], ?_, ?_⟩
++    · rw [simulate_pure]
++    · simp only [simulate_pure, OracleComp.pure_bind, handler_finish_output, List.map_nil]
++  · refine ⟨f (hashedReply H S n sk (H.gen.runAtL n [] (List.ofFn ω)) rs m),
++      [⟨j, m, hashedReply H S n sk (H.gen.runAtL n [] (List.ofFn ω)) rs m⟩], ?_, ?_⟩
++    · simp only [simulate_query, QueryImpl.withLog_apply, fixedSign_apply,
++        OracleComp.pure_bind, simulate_pure, List.nil_append]
++    · simp only [simulate_query, HashSignForward.handler_impl, ← queryHash_eq,
++        OracleComp.query_bind, OracleComp.pure_bind, simulate_pure, handler_finish_output,
++        QueryImpl.withLog_apply, origFixedSign_queryHash, List.nil_append,
++        List.map_cons, List.map_nil, forwardEntry_eq]
++
++/-- The message component of the forwarded output is the hash of the inner message:
++`(splitBits (forwardOutput H S n i a)).1 = queryHash H S n i (splitBits a).1`. -/
++theorem forwardOutput_message (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
++    (splitBits (forwardOutput H S n i a)).1 = queryHash H S n i (splitBits a).1 := by
++  funext j
++  rw [splitBits_fst, forwardOutput_eq, Fin.append_left]
++
++/-- The signature component of the forwarded output is the original signature component:
++`(splitBits (forwardOutput H S n i a)).2 = (splitBits a).2`. -/
++theorem forwardOutput_signature (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
++    (splitBits (forwardOutput H S n i a)).2 = (splitBits a).2 := by
++  funext j
++  rw [splitBits_snd, forwardOutput_eq, Fin.append_right]
++
++/-- If no logged inner query has the hash of the final message, the final hashed message
++is fresh in the forwarded log:
++`(∀ e ∈ L, queryHash H S n i e.2.1 ≠ queryHash H S n i (splitBits a).1) →
++∀ e ∈ L.map (forwardEntry H S n i), e.2.1 ≠ (splitBits (forwardOutput H S n i a)).1`.
++This includes the case of an empty inner log. -/
++theorem forward_fresh (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool)
++    (L : QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++      (fun _ => S.sigLen.eval n)))
++    (hfresh : ∀ e ∈ L, queryHash H S n i e.2.1 ≠ queryHash H S n i (splitBits a).1) :
++    ∀ e ∈ L.map (forwardEntry H S n i),
++      e.2.1 ≠ (splitBits (forwardOutput H S n i a)).1 := by
++  intro e he
++  obtain ⟨e', he', rfl⟩ := List.mem_map.mp he
++  rw [forwardEntry_eq, forwardOutput_message]
++  exact hfresh e' he'
++
++/-- Forwarding succeeds when the original verifier accepts the final hashed message and
++no inner query has that hash, `ForwardSuccess H S n pk i res ↔
++S.Accepts n pk (queryHash H S n i m) σ ∧
++∀ e ∈ res.2.2, queryHash H S n i e.2.1 ≠ queryHash H S n i m`,
++where `(m, σ) = splitBits res.1` [PS10, Theorem 144.1]. -/
++def ForwardSuccess (H : CRH) (S : SignatureScheme) (n : ℕ) (pk i : List Bool)
++    (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n)))) : Prop :=
++  S.Accepts n pk (queryHash H S n i (splitBits res.1).1) (splitBits res.1).2 ∧
++    ∀ e ∈ res.2.2, queryHash H S n i e.2.1 ≠ queryHash H S n i (splitBits res.1).1
++
++/-- Forwarding success is original-scheme acceptance and freshness of the final hash
++among all hashed inner queries: `ForwardSuccess H S n pk i res ↔
++S.Accepts n pk (queryHash H S n i m) σ ∧
++∀ e ∈ res.2.2, queryHash H S n i e.2.1 ≠ queryHash H S n i m`,
++where `(m, σ) = splitBits res.1`. -/
++theorem forwardSuccess_iff (H : CRH) (S : SignatureScheme) (n : ℕ) (pk i : List Bool)
++    (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++        (fun _ => S.sigLen.eval n)))) :
++    ForwardSuccess H S n pk i res ↔
++      S.Accepts n pk (queryHash H S n i (splitBits res.1).1) (splitBits res.1).2 ∧
++        ∀ e ∈ res.2.2, queryHash H S n i e.2.1 ≠ queryHash H S n i (splitBits res.1).1 :=
++  Iff.rfl
++
++/-- The original forgery event tests acceptance and message freshness on a logged
++original-signature transcript,
++`OriginalSuccess S n pk res ↔ S.Accepts n pk m σ ∧ ∀ e ∈ res.2.2, e.2.1 ≠ m`, where
++`(m, σ) = splitBits res.1` [PS10, Definition 136.2]. -/
++def OriginalSuccess (S : SignatureScheme) (n : ℕ) (pk : List Bool)
++    (res : (Fin (S.msgLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => S.msgLen.eval n)
++        (fun _ => S.sigLen.eval n)))) : Prop :=
++  S.Accepts n pk (splitBits res.1).1 (splitBits res.1).2 ∧
++    ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1
++
++/-- The original forgery event is acceptance together with freshness in its logged
++original-message queries:
++`OriginalSuccess S n pk res ↔ S.Accepts n pk m σ ∧ ∀ e ∈ res.2.2, e.2.1 ≠ m`, where
++`(m, σ) = splitBits res.1`. -/
++theorem originalSuccess_iff (S : SignatureScheme) (n : ℕ) (pk : List Bool)
++    (res : (Fin (S.msgLen.eval n + S.sigLen.eval n) → Bool) ×
++      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => S.msgLen.eval n)
++        (fun _ => S.sigLen.eval n)))) :
++    OriginalSuccess S n pk res ↔
++      S.Accepts n pk (splitBits res.1).1 (splitBits res.1).2 ∧
++        ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1 := Iff.rfl
++
++/-- Hashing the output and every logged query turns the original forgery event into
++the common transcript's forwarding-success event:
++`OriginalSuccess S n pk (forwardOutput H S n i a, ((), L.map (forwardEntry H S n i))) ↔
++ForwardSuccess H S n pk i (a, ((), L))`. -/
++theorem originalSuccess_forwardOutput (H : CRH) (S : SignatureScheme) (n : ℕ)
++    (pk i : List Bool) (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool)
++    (L : QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
++      (fun _ => S.sigLen.eval n))) :
++    OriginalSuccess S n pk (forwardOutput H S n i a, ((), L.map (forwardEntry H S n i))) ↔
++      ForwardSuccess H S n pk i (a, ((), L)) := by
++  rw [originalSuccess_iff, forwardSuccess_iff, forwardOutput_message, forwardOutput_signature]
++  apply and_congr_right
++  intro _
++  constructor
++  · intro hf e he
++    exact hf (forwardEntry H S n i e) (List.mem_map.mpr ⟨e, he, rfl⟩)
++  · intro hf e he
++    obtain ⟨e', he', rfl⟩ := List.mem_map.mp he
++    exact hf e' he'
++
++/-- The original one-query forgery game may draw its signing tape before the logged
++simulation, `accept (S.forgeGame C 1 n) = 𝔼 rg : S.gen.Coins n, 𝔼 r : C.Coins n,
++𝔼 rs : S.sign.Coins n, ProbComp.prob (simulate (origFixedSign S n sk rs).withLog
++(C.toCompOn cod n 1 pk r) ((), [])) (OriginalSuccess S n pk)`,
++writing `𝔼 x : X, f x` for `ProbComp.expect (ProbComp.sample X) (fun x => f x)`, with
++`pk = pairFstD (S.gen.runAt n [] rg)`, `sk = pairSndD (S.gen.runAt n [] rg)` and
++`cod = bitCodec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
++(S.msgLen.eval n + S.sigLen.eval n)` [PS10, Definition 136.2, one-time specialization].
++
++**Proof sketch.** Read key sampling, adversary sampling and the forgery test from the
++published game equation. The adversary has at most one query, so the one-query sampling
++lemma moves its fresh signing-tape sample outside the simulation. -/
++theorem forgeGame_eq_fixed (S : SignatureScheme) (C : NUPPT) (n : ℕ) :
++    accept (S.forgeGame C 1 n) =
++      ProbComp.expect (ProbComp.sample (S.gen.Coins n)) (fun rg =>
++        ProbComp.expect (ProbComp.sample (C.Coins n)) (fun r =>
++          ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
++            ProbComp.prob
++              (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
++                (C.toCompOn
++                  (bitCodec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
++                    (S.msgLen.eval n + S.sigLen.eval n)) n 1
++                  (pairFstD (S.gen.runAt n [] rg)) r) ((), []))
++              (OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)))))) := by
++  classical
++  rw [S.forgeGame_eq, accept_eq, ProbComp.prob_eq_expect]
++  simp only [ProbComp.expect_bind, ProbComp.expect_pure, decide_eq_true_eq,
++    S.forgerCodec_eq_bitCodec]
++  apply congrArg (ProbComp.expect (ProbComp.sample (S.gen.Coins n)))
++  funext rg
++  apply congrArg (ProbComp.expect (ProbComp.sample (C.Coins n)))
++  funext r
++  have hraw := expect_simulate_sample_once
++    (fun (_ : Fin 1) m rs => padFin (S.sigLen.eval n)
++      (S.sign.runAt n (pairEncode (pairSndD (S.gen.runAt n [] rg)) (List.ofFn m)) rs))
++    (C.toCompOn
++      (bitCodec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
++        (S.msgLen.eval n + S.sigLen.eval n)) n 1 (pairFstD (S.gen.runAt n [] rg)) r)
++    (C.toCompOn_costBoundedBy _ n 1 _ r)
++    (fun res => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) res then 1 else 0)
++  simpa only [S.signImpl_eq, originalSuccess_iff, origFixedSign_eq,
++    ProbComp.prob_eq_expect] using hraw
++
++/-- The transported handler output and the forwarded output have the same bit list:
++`List.ofFn (handlerOutput H S n i a) = List.ofFn (forwardOutput H S n i a)`. -/
++theorem ofFn_handlerOutput (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
++    List.ofFn (handlerOutput H S n i a) = List.ofFn (forwardOutput H S n i a) := by
++  rw [handlerOutput_eq]
++  exact (List.ofFn_congr (HashSignForward.handler_output_width H S n).symm
++    (forwardOutput H S n i a)).symm
++
++/-- With all tapes fixed, reading the forwarding reduction's output list at the original
++game's width gives the common transcript's forwarding-success probability: if
++`c.CostBoundedBy (fun _ => 1) 1`, then `ProbComp.prob ((simulate (origFixedSign S n sk rs).withLog
++R ((), [])).bind fun res => .pure (padFin (S.msgLen.eval n + S.sigLen.eval n) (List.ofFn res.1),
++res.2)) (OriginalSuccess S n pk) = ProbComp.prob
++(simulate (fixedSign H S n sk i rs).withLog c ((), [])) (ForwardSuccess H S n pk i)`, where
++`R = (simulate (K.impl n pk ω) c (K.init n)).bind fun res => K.finish n pk ω res.2 res.1`,
++`K = HashSignForward.handler H S` and `i = H.gen.runAtL n [] (List.ofFn ω)`.
++
++**Proof sketch.** The deterministic coupling gives the same adversary output and a log
++whose queries are precisely the inner query hashes. The output-component and event
++readers identify the two success tests, so their probabilities on these pure runs agree. -/
++theorem forward_prob_transcript (H : CRH) (S : SignatureScheme) (n : ℕ) (pk sk : List Bool)
++    (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool)
++    (rs : S.sign.Coins n)
++    (c : OracleComp
++      (bitSpec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n))
++      (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool))
++    (hc : c.CostBoundedBy (fun _ => 1) 1) :
++    ProbComp.prob
++      ((simulate (origFixedSign S n sk rs).withLog
++        ((simulate ((HashSignForward.handler H S).impl n pk ω) c
++          ((HashSignForward.handler H S).init n)).bind
++            (fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1))
++        ((), [])).bind (fun res =>
++          .pure (padFin (S.msgLen.eval n + S.sigLen.eval n) (List.ofFn res.1), res.2)))
++      (OriginalSuccess S n pk) =
++      ProbComp.prob
++        (simulate (fixedSign H S n sk (H.gen.runAtL n [] (List.ofFn ω)) rs).withLog c ((), []))
++        (ForwardSuccess H S n pk (H.gen.runAtL n [] (List.ofFn ω))) := by
++  classical
++  obtain ⟨a, L, hinner, houter⟩ := forward_transcript H S n pk sk ω rs c hc
++  rw [houter, hinner, OracleComp.pure_bind, ProbComp.prob_pure, ofFn_handlerOutput,
++    padFin_ofFn, ProbComp.prob_pure]
++  exact if_congr (originalSuccess_forwardOutput H S n pk _ a L) rfl rfl
++
++/-- A one-query machine against the original scheme realizes exactly the common
++transcript's forwarding-success probability, `∃ C : NUPPT, ∀ n, accept (S.forgeGame C 1 n) =
++𝔼 rg : S.gen.Coins n, 𝔼 ri : H.gen.Coins n, 𝔼 rA : A.Coins n, 𝔼 rs : S.sign.Coins n,
++ProbComp.prob (transcript H S A n pk sk i rs rA) (ForwardSuccess H S n pk i)`,
++writing `𝔼 x : X, f x` for `ProbComp.expect (ProbComp.sample X) (fun x => f x)`, with
++`pk = pairFstD (S.gen.runAt n [] rg)`, `sk = pairSndD (S.gen.runAt n [] rg)` and
++`i = H.gen.runAt n [] ri` [PS10, Theorem 144.1].
++
++**Proof sketch.** T2 supplies the forwarding machine and a bijection between its coins
++and the independent hash-generator seed and original adversary coins. Reindex the
++original forgery experiment by this bijection and then by the hash generator's published
++coin equivalence. Drawing the single signing tape in advance gives the deterministic
++coupling, whose mapped query log and hashed output identify the two success events. -/
++theorem exists_forwardGame (H : CRH) (S : SignatureScheme) (A : NUPPT) :
++    ∃ C : NUPPT, ∀ n : ℕ,
++      accept (S.forgeGame C 1 n) =
++        ProbComp.expect (ProbComp.sample (S.gen.Coins n)) (fun rg =>
++          ProbComp.expect (ProbComp.sample (H.gen.Coins n)) (fun ri =>
++            ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA =>
++              ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
++                ProbComp.prob
++                  (transcript H S A n (pairFstD (S.gen.runAt n [] rg))
++                    (pairSndD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri) rs rA)
++                  (ForwardSuccess H S n (pairFstD (S.gen.runAt n [] rg))
++                    (H.gen.runAt n [] ri)))))) := by
++  classical
++  obtain ⟨C, hC⟩ := HashSignForward.exists_forwardMachine H S A
++  refine ⟨C, fun n => ?_⟩
++  obtain ⟨φ, hφ⟩ := hC n
++  let e := NUPPT.coinsEquivPoly (A := H.gen) (HashSignForward.handler_seedLen H S).symm n
++  have he : ∀ ri : H.gen.Coins n, List.ofFn (e ri) = List.ofFn ri :=
++    NUPPT.coinsEquivPoly_ofFn _ n
++  rw [forgeGame_eq_fixed]
++  apply congrArg (ProbComp.expect (ProbComp.sample (S.gen.Coins n)))
++  funext rg
++  rw [← ProbComp.expect_sample_equiv φ, ← Bridge.expect_sample_pair]
++  simp only [ProbComp.expect_bind, ProbComp.expect_pure]
++  rw [← ProbComp.expect_sample_equiv e]
++  apply congrArg (ProbComp.expect (ProbComp.sample (H.gen.Coins n)))
++  funext ri
++  apply congrArg (ProbComp.expect (ProbComp.sample (A.Coins n)))
++  funext rA
++  apply congrArg (ProbComp.expect (ProbComp.sample (S.sign.Coins n)))
++  funext rs
++  have hout := expect_toCompOn_outLen
++    (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog C n 1
++    (pairFstD (S.gen.runAt n [] rg)) (φ (e ri, rA)) ((), [])
++    (HashSignForward.handler_output_width H S n).symm
++    (fun res => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg))
++      (padFin (S.msgLen.eval n + S.sigLen.eval n) res.1, res.2) then 1 else 0)
++  simp only [padFin_ofFn] at hout
++  rw [ProbComp.prob_eq_expect, hout]
++  rw [← hφ _ (e ri) rA]
++  let c := A.toCompOn
++    (bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
++      (H.domLen.eval n + S.sigLen.eval n)) n 1
++    ((HashSignForward.handler H S).advInput n (pairFstD (S.gen.runAt n [] rg)) (e ri)) rA
++  have hforward := forward_prob_transcript H S n (pairFstD (S.gen.runAt n [] rg))
++    (pairSndD (S.gen.runAt n [] rg)) (e ri) rs c
++    (A.toCompOn_costBoundedBy _ n 1 _ rA)
++  rw [ProbComp.prob_bind] at hforward
++  simp only [ProbComp.prob_pure, padFin_ofFn] at hforward
++  rw [hforward]
++  dsimp only [c]
++  rw [HashSignForward.handler_advInput, he, ← NUPPT.runAt_eq, transcript_eq]
++
++end TCSlib.Cryptography.Authentication.HashSignFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean
+new file mode 100644
+index 000000000..7cbc4dda5
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean
+@@ -0,0 +1,382 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Forwarding
++import TCSlib.Cryptography.Authentication.Signatures.Defs
++import TCSlib.Cryptography.Hashing.CollisionResistant
++import TCSlib.Cryptography.Asymptotic.CollectionsLemmas
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The hash-and-sign forwarding handler
++
++The one-time forger reduction samples a hash index, gives the public key and index to
++its adversary, hashes each query before forwarding it, and hashes the final message.
++
++## Main definitions
++
++* `HashSignForward.indexWord`: the hash index obtained from the handler's seed.
++* `HashSignForward.hashWord`: the hash read at the original signature message length.
++* `HashSignForward.handler`: the interactive handler of [PS10, Theorem 144.1].
++
++## Main results
++
++The string functions are polynomial-time, and the handler's published field equations
++expose its seed, budgets, adversary input, round and finalization.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
++  January 2010, Theorem 144.1, book pp. 144–145.
++-/
++
++namespace TCSlib.Cryptography.Authentication.HashSignForward
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++open InteractiveHandler
++
++/-- The index generator on parameter word `u` and seed `ω`, with empty input and advice:
++`indexWord H u ω = H.gen.output (NUPPT.layout u [] [] ω)`. -/
++def indexWord (H : CRH) (u ω : List Bool) : List Bool :=
++  H.gen.output (NUPPT.layout u [] [] ω)
++
++/-- The index word is `H.gen.output (NUPPT.layout u [] [] ω)`:
++`indexWord H u ω = H.gen.output (NUPPT.layout u [] [] ω)`. -/
++theorem indexWord_eq (H : CRH) (u ω : List Bool) :
++    indexWord H u ω = H.gen.output (NUPPT.layout u [] [] ω) := rfl
++
++/-- The hash of `m` at index `i`, padded to the original scheme's message length:
++`hashWord H S u i m = padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m)))`. -/
++def hashWord (H : CRH) (S : SignatureScheme) (u i m : List Bool) : List Bool :=
++  padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m)))
++
++/-- The hash word is the evaluator output padded to `S.msgLen(|u|)` bits:
++`hashWord H S u i m = padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m)))`. -/
++theorem hashWord_eq (H : CRH) (S : SignatureScheme) (u i m : List Bool) :
++    hashWord H S u i m =
++      padStr S.msgLen u (H.eval (pairEncode u (pairEncode i m))) := rfl
++
++/-- The reduction gives its adversary the public key paired with its sampled index:
++`advWord H w =
++pairEncode (pairFstD (pairSndD w)) (indexWord H (pairFstD w) (pairSndD (pairSndD w)))`. -/
++def advWord (H : CRH) (w : List Bool) : List Bool :=
++  pairEncode (pairFstD (pairSndD w))
++    (indexWord H (pairFstD w) (pairSndD (pairSndD w)))
++
++/-- The adversary input pairs the reduction input with the index obtained from its seed:
++`advWord H w =
++pairEncode (pairFstD (pairSndD w)) (indexWord H (pairFstD w) (pairSndD (pairSndD w)))`. -/
++theorem advWord_eq (H : CRH) (w : List Bool) :
++    advWord H w = pairEncode (pairFstD (pairSndD w))
++      (indexWord H (pairFstD w) (pairSndD (pairSndD w))) := rfl
++
++/-- The first round asks the original signing oracle the hashed message; the second
++round returns the outer signature and preserves the state: `roundWord H S w =
++if decide (rL w = []) then pairEncode [false] (pairEncode [] (hashWord H S u (indexWord H u (rW w))
++(rX w))) else pairEncode [true] (rAns w ++ rS w)`, where `u = rU w`. -/
++def roundWord (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
++  if decide (rL w = []) then
++    pairEncode [false] (pairEncode []
++      (hashWord H S (rU w) (indexWord H (rU w) (rW w)) (rX w)))
++  else pairEncode [true] (rAns w ++ rS w)
++
++/-- The round asks the hashed query when its outer log is empty, and otherwise returns
++the first outer answer together with its unchanged state: `roundWord H S w =
++if decide (rL w = []) then pairEncode [false] (pairEncode [] (hashWord H S u (indexWord H u (rW w))
++(rX w))) else pairEncode [true] (rAns w ++ rS w)`, where `u = rU w`. -/
++theorem roundWord_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
++    roundWord H S w =
++      if decide (rL w = []) then
++        pairEncode [false] (pairEncode []
++          (hashWord H S (rU w) (indexWord H (rU w) (rW w)) (rX w)))
++      else pairEncode [true] (rAns w ++ rS w) := rfl
++
++/-- The finalization hashes the message prefix of the adversary output and retains
++its signature suffix, making no further oracle query: `finalWord H S w =
++pairEncode [true] (hashWord H S u (indexWord H u (rW w)) (a.take k) ++ a.drop k)`, where
++`u = rU w`, `a = finA w` and `k = H.domLen.eval u.length`. -/
++def finalWord (H : CRH) (S : SignatureScheme) (w : List Bool) : List Bool :=
++  pairEncode [true]
++    (hashWord H S (rU w) (indexWord H (rU w) (rW w))
++      ((finA w).take (H.domLen.eval (rU w).length)) ++
++      (finA w).drop (H.domLen.eval (rU w).length))
++
++/-- The final output is the hashed message prefix concatenated with the signature suffix:
++`finalWord H S w =
++pairEncode [true] (hashWord H S u (indexWord H u (rW w)) (a.take k) ++ a.drop k)`, where
++`u = rU w`, `a = finA w` and `k = H.domLen.eval u.length`. -/
++theorem finalWord_eq (H : CRH) (S : SignatureScheme) (w : List Bool) :
++    finalWord H S w = pairEncode [true]
++      (hashWord H S (rU w) (indexWord H (rU w) (rW w))
++        ((finA w).take (H.domLen.eval (rU w).length)) ++
++        (finA w).drop (H.domLen.eval (rU w).length)) := rfl
++
++/-- Running the index generator on polynomial-time parameter and seed words is
++polynomial-time: `PolyTimeComputable u → PolyTimeComputable ω →
++PolyTimeComputable fun w => indexWord H (u w) (ω w)`. -/
++theorem polyTimeComputable_indexWord (H : CRH) {u ω : List Bool → List Bool}
++    (hu : PolyTimeComputable u) (hω : PolyTimeComputable ω) :
++    PolyTimeComputable fun w => indexWord H (u w) (ω w) := by
++  simpa only [indexWord, Function.comp_apply] using
++    H.gen.polyTimeComputable_output.comp
++      (NUPPT.polyTimeComputable_layout hu (polyTimeComputable_const [])
++        (polyTimeComputable_const []) hω)
++
++/-- Hashing polynomial-time parameter, index and message words and padding the result
++to the original signature message length is polynomial-time: `PolyTimeComputable u →
++PolyTimeComputable i → PolyTimeComputable m →
++PolyTimeComputable fun w => hashWord H S (u w) (i w) (m w)`. -/
++theorem polyTimeComputable_hashWord (H : CRH) (S : SignatureScheme)
++    {u i m : List Bool → List Bool} (hu : PolyTimeComputable u)
++    (hi : PolyTimeComputable i) (hm : PolyTimeComputable m) :
++    PolyTimeComputable fun w => hashWord H S (u w) (i w) (m w) := by
++  have h := (polyTimeComputable_padStr S.msgLen).comp
++    (hu.pairEncode (H.eval_poly.comp (hu.pairEncode (hi.pairEncode hm))))
++  refine (congrArg PolyTimeComputable
++    (?_ : (fun w => hashWord H S (u w) (i w) (m w)) = _)).mpr h
++  funext w
++  simp only [hashWord_eq, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- Pairing the supplied public key with the index generated from the seed is
++polynomial-time: `PolyTimeComputable (advWord H)`, for `advWord H : List Bool → List Bool`. -/
++theorem polyTimeComputable_advWord (H : CRH) : PolyTimeComputable (advWord H) := by
++  exact (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD).pairEncode
++    (polyTimeComputable_indexWord H polyTimeComputable_pairFstD
++      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
++
++/-- One hashing-and-forwarding round is polynomial-time, `PolyTimeComputable (roundWord H S)`
++for `roundWord H S : List Bool → List Bool`: it tests whether the outer log is empty, then
++either emits the hash query or returns the recorded answer. -/
++theorem polyTimeComputable_roundWord (H : CRH) (S : SignatureScheme) :
++    PolyTimeComputable (roundWord H S) := by
++  exact polyTimeComputable_ite
++    (polyTimeComputable_isNil.comp polyTimeComputable_rL)
++    ((polyTimeComputable_const [false]).pairEncode
++      ((polyTimeComputable_const []).pairEncode
++        (polyTimeComputable_hashWord H S polyTimeComputable_rU
++          (polyTimeComputable_indexWord H polyTimeComputable_rU polyTimeComputable_rW)
++          polyTimeComputable_rX)))
++    ((polyTimeComputable_const [true]).pairEncode
++      (polyTimeComputable_rAns.append polyTimeComputable_rS))
++
++/-- Finalization is polynomial-time, `PolyTimeComputable (finalWord H S)` for
++`finalWord H S : List Bool → List Bool`: split at the polynomial domain width, hash the
++message prefix and concatenate the original signature suffix.
++
++**Proof sketch.** The published polynomial take and drop operations apply to the parameter
++and output fields. The parameter, seed and output readers and the index and hash operations
++are polynomial-time, so composition and concatenation give the result. -/
++theorem polyTimeComputable_finalWord (H : CRH) (S : SignatureScheme) :
++    PolyTimeComputable (finalWord H S) := by
++  have hm := (polyTimeComputable_pairTakePoly H.domLen).comp
++    (polyTimeComputable_rU.pairEncode polyTimeComputable_finA)
++  have hs := (polyTimeComputable_pairDropPoly H.domLen).comp
++    (polyTimeComputable_rU.pairEncode polyTimeComputable_finA)
++  have h := (polyTimeComputable_const [true]).pairEncode
++    ((polyTimeComputable_hashWord H S polyTimeComputable_rU
++      (polyTimeComputable_indexWord H polyTimeComputable_rU polyTimeComputable_rW) hm).append hs)
++  refine (congrArg PolyTimeComputable (?_ : finalWord H S = _)).mpr h
++  funext w
++  simp only [finalWord_eq, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- The hash-and-sign reduction handler [PS10, Theorem 144.1]: sample one hash index,
++provide `⟨pk,i⟩`, forward each query after hashing it, and hash the final message, with
++`seedLen = H.gen.coins`, `advIn = advWord H`, `run = roundWord H S`, `finRun = finalWord H S`,
++`init _ = zeroBits _` and `outLen = .add S.msgLen S.sigLen`. Its state
++is empty, each inner call makes one outer call and finalization makes none. -/
++def handler (H : CRH) (S : SignatureScheme) :
++    InteractiveHandler 1 (fun _ => H.domLen) (fun _ => S.sigLen)
++      1 (fun _ => S.msgLen) (fun _ => S.sigLen) where
++  stateLen := .const 0
++  seedLen := H.gen.coins
++  perCall := .const 1
++  init _ := zeroBits _
++  run := roundWord H S
++  poly := polyTimeComputable_roundWord H S
++  advIn := advWord H
++  advIn_poly := polyTimeComputable_advWord H
++  outLen := .add S.msgLen S.sigLen
++  finCall := .const 0
++  finRun := finalWord H S
++  finRun_poly := polyTimeComputable_finalWord H S
++
++attribute [simps (config := { isSimp := false }) stateLen seedLen perCall init run advIn outLen
++  finCall finRun] handler
++
++/-- At a unary parameter, the generated index word is the hash generator's literal run
++with the supplied list of coins: `indexWord H (List.replicate n true) ω = H.gen.runAtL n [] ω`. -/
++theorem indexWord_unary (H : CRH) (n : ℕ) (ω : List Bool) :
++    indexWord H (List.replicate n true) ω = H.gen.runAtL n [] ω := by
++  rw [indexWord_eq, H.gen_uniform.runAtL_eq, NUPPT.layout_eq, NUPPT.advInput_eq]
++
++/-- At unary parameter `1^n`, the hash word is the list of the padded evaluator at
++the original signature message length: `hashWord H S (List.replicate n true) i m =
++List.ofFn (padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i m))))`. -/
++theorem hashWord_unary (H : CRH) (S : SignatureScheme) (n : ℕ) (i m : List Bool) :
++    hashWord H S (List.replicate n true) i m =
++      List.ofFn (padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i m)))) := by
++  rw [hashWord_eq, ← ofFn_padFin_eq_padStr, List.length_replicate, atParam_eq]
++
++/-- The handler gives the adversary `⟨pk,i⟩`, where `i` is the hash generator's run
++on its seed: `(handler H S).advInput n pk ω = pairEncode pk (H.gen.runAtL n [] (List.ofFn ω))`. -/
++theorem handler_advInput (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
++    (ω : Fin ((handler H S).seedLen.eval n) → Bool) :
++    (handler H S).advInput n pk ω =
++      pairEncode pk (H.gen.runAtL n [] (List.ofFn ω)) := by
++  rw [InteractiveHandler.advInput_eq, handler_advIn, advWord_eq, seedIn_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, indexWord_unary]
++
++/-- Each call asks the original signing oracle for the hash of its inner message and
++returns the outer signature unchanged, preserving the handler state:
++`(handler H S).impl n pk ω i x s = .query 0 (padFin (S.msgLen.eval n)
++(H.eval (atParam n (pairEncode (H.gen.runAtL n [] (List.ofFn ω)) (List.ofFn x)))))
++fun y => .pure (y, s)`.
++
++**Proof sketch.** The first round has an empty outer log and emits precisely the padded
++hash query. The second round reads the first outer answer and returns it with the state.
++The published one-query call rule therefore identifies the entire call computation. -/
++theorem handler_impl (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
++    (ω : Fin ((handler H S).seedLen.eval n) → Bool) (i : Fin 1)
++    (x : Fin (H.domLen.eval n) → Bool)
++    (s : Fin ((handler H S).stateLen.eval n) → Bool) :
++    (handler H S).impl n pk ω i x s =
++      .query 0
++        (padFin (S.msgLen.eval n) (H.eval
++          (atParam n (pairEncode (H.gen.runAtL n [] (List.ofFn ω)) (List.ofFn x)))))
++        fun y => .pure (y, s) := by
++  refine InteractiveHandler.impl_of_query (handler H S) n pk ω x s 0 _
++    (fun y => y) (fun _ => s) ?_ ?_ ?_
++  · rw [handler_perCall, PolyExpr.eval_const]
++  · rw [handler_run, roundWord_eq, rL_input, rU_input, rW_input, rX_input,
++      indexWord_unary, hashWord_unary, if_pos (decide_eq_true rfl)]
++    rfl
++  · intro y
++    rw [handler_run, roundWord_eq, rL_input, rAns_input, rS_input,
++      if_neg (fun h => pairEncode_ne_nil _ _ (of_decide_eq_true h))]
++
++/-- Finalization makes no oracle query and returns the hash of the adversary's message
++prefix concatenated with its signature suffix, read at the handler's output length:
++`(handler H S).finish n pk ω s a = .pure (padFin ((handler H S).outLen.eval n)
++(hashWord H S (List.replicate n true) i ((List.ofFn a).take d) ++ (List.ofFn a).drop d))`,
++where `i = H.gen.runAtL n [] (List.ofFn ω)` and `d = H.domLen.eval n`.
++
++**Proof sketch.** The hash word has the signature scheme's message width. The suffix of
++the correctly sized adversary output has the signature width, so the concatenation has
++the declared output width. The first finalization round returns this word; the published
++immediate-return finalization rule identifies its computation. -/
++theorem handler_finish (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
++    (ω : Fin ((handler H S).seedLen.eval n) → Bool)
++    (s : Fin ((handler H S).stateLen.eval n) → Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
++    (handler H S).finish n pk ω s a =
++      .pure (padFin ((handler H S).outLen.eval n)
++        (hashWord H S (List.replicate n true) (H.gen.runAtL n [] (List.ofFn ω))
++          ((List.ofFn a).take (H.domLen.eval n)) ++
++          (List.ofFn a).drop (H.domLen.eval n))) := by
++  refine InteractiveHandler.finish_of_ret_padFin (handler H S) n pk ω s a _ ?_ ?_
++  · rw [List.length_append, hashWord_unary, List.length_ofFn, List.length_drop,
++      List.length_ofFn, handler_outLen, PolyExpr.eval_add]
++    omega
++  · rw [handler_finRun, finalWord_eq, rU_finInput, rW_finInput, finA_finInput,
++      indexWord_unary, List.length_replicate]
++
++/-- When the hash range and signature message widths agree, hashing a typed domain
++message gives the list of the CRH hash, transported to the signature message width: for
++`hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n`,
++`hashWord H S (List.replicate n true) i (List.ofFn x) =
++List.ofFn (fun j : Fin (S.msgLen.eval n) => H.hash n i x (Fin.cast (hlen n).symm j))`. -/
++theorem hashWord_eq_hash (H : CRH) (S : SignatureScheme)
++    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (n : ℕ) (i : List Bool)
++    (x : Fin (H.domLen.eval n) → Bool) :
++    hashWord H S (List.replicate n true) i (List.ofFn x) =
++      List.ofFn (fun j : Fin (S.msgLen.eval n) =>
++        H.hash n i x (Fin.cast (hlen n).symm j)) := by
++  rw [hashWord_unary]
++  apply congrArg List.ofFn
++  funext j
++  rw [CRH.hash_eq, padFin_apply, padFin_apply, Fin.coe_cast]
++
++/-- The hash-and-sign forwarding reduction is a one-query oracle machine,
++`∃ C : NUPPT, ∀ n, ∃ φ : (Fin (K.seedLen.eval n) → Bool) × A.Coins n ≃ C.Coins n, ∀ pk ω r,
++(simulate (K.impl n pk ω) (A.toCompOn cod n 1 (K.advInput n pk ω) r) (K.init n)).bind
++(fun res => K.finish n pk ω res.2 res.1) = C.toCompOn cod' n 1 pk (φ (ω, r))`, where
++`K = handler H S`, `cod = bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
++(H.domLen.eval n + S.sigLen.eval n)` and `cod' = bitCodec (fun _ : Fin 1 => S.msgLen.eval n)
++(fun _ => S.sigLen.eval n) (K.outLen.eval n)` [PS10, Theorem 144.1].
++For every parameter, a bijection identifies its coins with the
++handler seed and the original adversary coins, and its computation is the handler's
++simulation followed by finalization.
++
++**Proof sketch.** Apply T2 to the hashing handler and the constant-one inner query
++budget. One outer query per inner query and zero finalization queries give outer
++budget `1 · 1 + 0 = 1`; the codec widths are the signature message and signature widths. -/
++theorem exists_forwardMachine (H : CRH) (S : SignatureScheme) (A : NUPPT) :
++    ∃ C : NUPPT, ∀ n : ℕ,
++      ∃ φ : (Fin ((handler H S).seedLen.eval n) → Bool) × A.Coins n ≃ C.Coins n,
++        ∀ (pk : List Bool) (ω : Fin ((handler H S).seedLen.eval n) → Bool)
++          (r : A.Coins n),
++          (simulate ((handler H S).impl n pk ω)
++            (A.toCompOn
++              (bitCodec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n)
++                (H.domLen.eval n + S.sigLen.eval n))
++              n 1 ((handler H S).advInput n pk ω) r)
++            ((handler H S).init n)).bind
++              (fun res => (handler H S).finish n pk ω res.2 res.1) =
++            C.toCompOn
++              (bitCodec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
++                ((handler H S).outLen.eval n))
++              n 1 pk (φ (ω, r)) := by
++  obtain ⟨C, hC⟩ := exists_interactiveHandlerMachine A (.const 1)
++    (fun _ : Fin 1 => H.domLen) (fun _ => S.sigLen)
++    (fun _ : Fin 1 => S.msgLen) (fun _ => S.sigLen)
++    (.add H.domLen S.sigLen) (handler H S)
++  simp only [PolyExpr.eval_const, PolyExpr.eval_add, handler_perCall,
++    handler_finCall, Nat.one_mul, Nat.add_zero] at hC
++  exact ⟨C, hC⟩
++
++/-- The handler output width is the sum of the original message and signature widths:
++`(handler H S).outLen.eval n = S.msgLen.eval n + S.sigLen.eval n`. -/
++theorem handler_output_width (H : CRH) (S : SignatureScheme) (n : ℕ) :
++    (handler H S).outLen.eval n = S.msgLen.eval n + S.sigLen.eval n :=
++  (congrArg (fun p : PolyExpr => p.eval n) (handler_outLen H S)).trans
++    (PolyExpr.eval_add S.msgLen S.sigLen n)
++
++/-- Finalization returns the hashed message component paired by concatenation with
++the adversary's signature component: `(handler H S).finish n pk ω s a = .pure (fun j =>
++Fin.append
++(padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn (splitBits a).1)))))
++(splitBits a).2 (Fin.cast (handler_output_width H S n) j))`, where
++`i = H.gen.runAtL n [] (List.ofFn ω)`. The displayed cast transports the declared handler
++output width to the sum of message and signature widths.
++
++**Proof sketch.** Read finalization as a padded list, split the adversary list at the
++domain width with the published take/drop lemma, and identify the concatenation as the
++list of a `Fin.append` vector. Reading that list at its width recovers the vector. -/
++theorem handler_finish_split (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
++    (ω : Fin ((handler H S).seedLen.eval n) → Bool)
++    (s : Fin ((handler H S).stateLen.eval n) → Bool)
++    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
++    (handler H S).finish n pk ω s a =
++      .pure (fun j =>
++        Fin.append
++          (padFin (S.msgLen.eval n) (H.eval (atParam n
++            (pairEncode (H.gen.runAtL n [] (List.ofFn ω))
++              (List.ofFn (splitBits a).1)))))
++          (splitBits a).2 (Fin.cast (handler_output_width H S n) j)) := by
++  have hf : (splitBits a).1 = fun j => a (Fin.castAdd (S.sigLen.eval n) j) :=
++    funext fun j => splitBits_fst a j
++  have hs : (splitBits a).2 = fun j => a (Fin.natAdd (H.domLen.eval n) j) :=
++    funext fun j => splitBits_snd a j
++  rw [hf, hs]
++  rw [handler_finish, (EffFill.ofFn_take_drop_add a).1,
++    (EffFill.ofFn_take_drop_add a).2, hashWord_unary, ← List.ofFn_fin_append]
++  congr 1
++  funext j
++  rw [padFin_apply, ← Fin.coe_cast (handler_output_width H S n) j,
++    ← padFin_apply, padFin_ofFn]
++
++end TCSlib.Cryptography.Authentication.HashSignForward
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuery.lean b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuery.lean
+new file mode 100644
+index 000000000..3b9536d97
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuery.lean
+@@ -0,0 +1,65 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Machines
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Computations with at most one oracle query
++
++## Main definitions
++
++This module introduces no definitions.
++
++## Main results
++
++* `HashSignFill.eq_pure_of_cost_zero`: a zero-budget computation returns a value.
++* `HashSignFill.one_query_cases`: a one-budget computation either returns immediately or
++  asks one query and returns a function of its answer.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 144.1 (technical support for its one-query reductions).
++-/
++
++namespace TCSlib.Cryptography.Authentication.HashSignFill
++
++open TCSlib.Cryptography.Games
++
++/-- A computation whose every query costs one and whose budget is zero is `pure a` for some
++value `a`: a query would require `1 ≤ 0`. -/
++theorem eq_pure_of_cost_zero {ι α : Type} {spec : OracleSpec ι}
++    (c : OracleComp spec α) (h : c.CostBoundedBy (fun _ => 1) 0) :
++    ∃ a, c = .pure a := by
++  cases c with
++  | pure a => exact ⟨a, rfl⟩
++  | query i x k =>
++    have hbad := (OracleComp.costBoundedBy_query _ _ _ _ _).mp h
++    omega
++
++/-- A computation with unit query costs and budget one either returns immediately or is one
++query followed by a return: `c.CostBoundedBy (fun _ => 1) 1 →
++(∃ a, c = .pure a) ∨ ∃ i x f, c = .query i x (fun y => .pure (f y))`.
++The continuation of a query has budget zero, so each of its
++branches is pure; choosing those return values gives its answer function. -/
++theorem one_query_cases {ι α : Type} {spec : OracleSpec ι}
++    (c : OracleComp spec α) (h : c.CostBoundedBy (fun _ => 1) 1) :
++    (∃ a, c = .pure a) ∨
++      ∃ (i : ι) (x : spec.dom i) (f : spec.rng i → α),
++        c = .query i x (fun y => .pure (f y)) := by
++  classical
++  cases c with
++  | pure a => exact Or.inl ⟨a, rfl⟩
++  | query i x k =>
++    have hk := (OracleComp.costBoundedBy_query _ _ _ _ _).mp h
++    have hp : ∀ y, ∃ a, k y = .pure a :=
++      fun y => eq_pure_of_cost_zero (k y) (hk.2 y)
++    choose f hf using hp
++    exact Or.inr ⟨i, x, f, congrArg (OracleComp.query i x) (funext hf)⟩
++
++end TCSlib.Cryptography.Authentication.HashSignFill
+diff --git a/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling.lean b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling.lean
+new file mode 100644
+index 000000000..386e80a5d
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/Signatures/HashAndSign/OneQuerySampling.lean
+@@ -0,0 +1,67 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuery
++import TCSlib.Cryptography.Games.Probability
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Drawing one-query oracle randomness in advance
++
++## Main definitions
++
++This module introduces no definitions.
++
++## Main results
++
++* `HashSignFill.expect_simulate_sample_once`: for a computation making at most one query,
++  freshly sampling the oracle's answer tape has the same law, including its query log, as
++  drawing that tape before the computation.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 144.1 (technical support for the collision-finding reduction).
++-/
++
++namespace TCSlib.Cryptography.Authentication.HashSignFill
++
++open TCSlib.Cryptography.Games
++
++/-- For a computation making at most one query, sampling an independent tape for every
++oracle answer is equivalent to sampling one tape before the computation, for every real
++payoff of the returned value and full query log: if `c.CostBoundedBy (fun _ => 1) 1`, then
++`ProbComp.expect (simulate (QueryImpl.ofComp (σ := Unit) (fun i x =>
++(ProbComp.sample R).bind fun r => .pure (ans i x r))).withLog c ((), [])) g =
++ProbComp.expect (ProbComp.sample R) (fun r => ProbComp.expect
++(simulate (QueryImpl.withLog (fun i x _ => .pure (ans i x r, ()))) c ((), [])) g)`.
++
++**Proof sketch.** A computation of unit cost at most one either returns immediately or
++asks a fixed query and returns a function of its answer (`one_query_cases`). In the first
++case the extra sample integrates a constant. In the second case both expectations reduce
++to the same expectation over the single answer tape, with the same one-entry log. -/
++theorem expect_simulate_sample_once {ι α R : Type} {spec : OracleSpec ι}
++    [Fintype R] [Nonempty R] (ans : ∀ i, spec.dom i → R → spec.rng i)
++    (c : OracleComp spec α) (hc : c.CostBoundedBy (fun _ => 1) 1)
++    (g : α × (Unit × QueryLog spec) → ℝ) :
++    ProbComp.expect
++        (simulate
++          (QueryImpl.ofComp (σ := Unit) (fun i x =>
++            (ProbComp.sample R).bind fun r => .pure (ans i x r))).withLog c ((), [])) g =
++      ProbComp.expect (ProbComp.sample R) (fun r =>
++        ProbComp.expect
++          (simulate
++            (QueryImpl.withLog (fun (i : ι) (x : spec.dom i) (_ : Unit) =>
++              (OracleComp.pure (ans i x r, ()) : ProbComp (spec.rng i × Unit))))
++            c ((), [])) g) := by
++  rcases one_query_cases c hc with ⟨a, rfl⟩ | ⟨i, x, f, rfl⟩
++  · simp only [simulate_pure, ProbComp.expect_pure]
++    exact (ProbComp.expect_const _ _).symm
++  · simp only [simulate_query, QueryImpl.withLog_apply, QueryImpl.ofComp_apply,
++      ProbComp.expect_bind, ProbComp.expect_pure, simulate_pure]
++
++end TCSlib.Cryptography.Authentication.HashSignFill
