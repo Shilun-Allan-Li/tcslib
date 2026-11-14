@@ -109,19 +109,23 @@ def extBit (Ext : List Bool → List Bool) (n : ℕ) : (Fin n → Bool) → (Fin
 theorem extBit_eq (Ext : List Bool → List Bool) (n : ℕ) (x : Fin n → Bool) :
     extBit Ext n x = padFin 1 (Ext (List.ofFn x)) := rfl
 
-/-- The uniform sampler at the fixed width `n` outputs its `n` coin bits and has no advice. -/
+/-- The uniform sampler at the fixed width `n` outputs its `n` coin bits and has no advice:
+`(uniformSampler n).runAt n [] r = List.ofFn r` and `(uniformSampler n).coins = .const n`. -/
 noncomputable def uniformSampler (n : ℕ) : NUPPT :=
   NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD (.const n)
 
-/-- The uniform sampler uses the constant coin polynomial `n`. -/
+/-- The uniform sampler uses the constant coin polynomial `n`:
+`(uniformSampler n).coins = .const n`. -/
 theorem uniformSampler_coins (n : ℕ) : (uniformSampler n).coins = .const n :=
   NUPPT.coins_ofPolyTimeUniform polyTimeComputable_pairSndD (.const n)
 
-/-- The uniform sampler has empty advice at every activation parameter. -/
+/-- The uniform sampler has empty advice at every activation parameter:
+`(uniformSampler n).Uniform`, i.e. `∀ m, (uniformSampler n).advice m = []`. -/
 theorem uniformSampler_uniform (n : ℕ) : (uniformSampler n).Uniform :=
   NUPPT.ofPolyTimeUniform_uniform polyTimeComputable_pairSndD (.const n)
 
-/-- The uniform sampler returns the encoding of its coin vector. -/
+/-- The uniform sampler returns the encoding of its coin vector:
+`(uniformSampler n).runAt n [] r = List.ofFn r`. -/
 theorem uniformSampler_runAt (n : ℕ) (r : (uniformSampler n).Coins n) :
     (uniformSampler n).runAt n [] r = List.ofFn r := by
   rw [NUPPT.runAt_eq]
@@ -129,25 +133,30 @@ theorem uniformSampler_runAt (n : ℕ) (r : (uniformSampler n).Coins n) :
     n [] (List.ofFn r) = _
   rw [NUPPT.runAtL_ofPolyTimeUniform, pairSndD_pairEncode]
 
-/-- The coins of the uniform sampler are canonically the `n`-bit vectors. -/
+/-- The coins of the uniform sampler are canonically the `n`-bit vectors:
+`(uniformSampler n).Coins n ≃ (Fin n → Bool)`. -/
 noncomputable def uniformSamplerCoins (n : ℕ) :
     (uniformSampler n).Coins n ≃ (Fin n → Bool) :=
   (NUPPT.coinsEquivPoly (uniformSampler_coins n) n).trans
     (Equiv.arrowCongr (finCongr (PolyExpr.eval_const n n)) (Equiv.refl Bool))
 
 /-- The canonical uniform-sampler coin equivalence is the composition of the published
-coin-polynomial identification with the constant-polynomial width equality. -/
+coin-polynomial identification with the constant-polynomial width equality:
+`uniformSamplerCoins n = e₁.trans e₂`, where `e₁ = NUPPT.coinsEquivPoly (uniformSampler_coins n) n`
+and `e₂ = Equiv.arrowCongr (finCongr (PolyExpr.eval_const n n)) (Equiv.refl Bool)`. -/
 theorem uniformSamplerCoins_eq (n : ℕ) : uniformSamplerCoins n =
     (NUPPT.coinsEquivPoly (uniformSampler_coins n) n).trans
       (Equiv.arrowCongr (finCongr (PolyExpr.eval_const n n)) (Equiv.refl Bool)) := rfl
 
-/-- The uniform sampler's coin equivalence preserves the encoded word. -/
+/-- The uniform sampler's coin equivalence preserves the encoded word:
+`List.ofFn (uniformSamplerCoins n r) = List.ofFn r`. -/
 theorem uniformSamplerCoins_ofFn (n : ℕ) (r : (uniformSampler n).Coins n) :
     List.ofFn (uniformSamplerCoins n r) = List.ofFn r := by
   rw [uniformSamplerCoins, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
     NUPPT.coinsEquivPoly_ofFn]
 
-/-- The law of the sampler that returns its coins is the uniform law on `n`-bit strings.
+/-- The law of the sampler that returns its coins is the uniform law on `n`-bit strings:
+`samplerLaw (uniformSampler n) n = U_n`.
 The coin equivalence preserves encodings, and a bijection preserves uniformity. -/
 theorem samplerLaw_uniformSampler (n : ℕ) :
     samplerLaw (uniformSampler n) n = FinDist.uniform (Fin n → Bool) := by
@@ -158,7 +167,8 @@ theorem samplerLaw_uniformSampler (n : ℕ) :
   rw [samplerLaw, hread]
   exact Rejection.map_uniform_equiv (uniformSamplerCoins n)
 
-/-- Uniform `n`-bit strings form an efficiently samplable `(n−2)`-source. -/
+/-- Uniform `n`-bit strings form an efficiently samplable `(n−2)`-source:
+`U_n ∈ effSources (fun n => n - 2) n`. -/
 theorem uniform_mem_effSources (n : ℕ) :
     FinDist.uniform (Fin n → Bool) ∈ effSources (fun n => (n : ℝ) - 2) n := by
   have hu : FinDist.IsSource (n : ℝ) (FinDist.uniform (Fin n → Bool)) := by
@@ -169,13 +179,14 @@ theorem uniform_mem_effSources (n : ℕ) :
       hu.mono (by linarith)⟩
 
 /-- The first output bit read by `extBit` is the head of the extractor's output,
-with `false` for an empty output. -/
+with `false` for an empty output: `extBit Ext n x 0 = (Ext (List.ofFn x)).headD false`. -/
 theorem extBit_zero (Ext : List Bool → List Bool) (n : ℕ) (x : Fin n → Bool) :
     extBit Ext n x 0 = (Ext (List.ofFn x)).headD false := by
   rw [extBit_eq, padFin_apply]
   cases Ext (List.ofFn x) <;> rfl
 
-/-- A uniform one-bit word has its first bit true with probability `1/2`. -/
+/-- A uniform one-bit word has its first bit true with probability `1/2`:
+`Pr_{U_1}[fun x => x 0] = 1/2`. -/
 theorem uniform_one_probTrue :
     (FinDist.uniform (Fin 1 → Bool)).probTrue (fun x => x 0) = 1 / 2 := by
   classical
@@ -195,7 +206,9 @@ theorem uniform_one_probTrue :
   norm_num
 
 /-- If the candidate extractor succeeds on every efficient `(n−2)`-source, then its first
-bit on the uniform source is true with probability at least `1/4`.
+bit on the uniform source is true with probability at least `1/4`:
+`IsExtractor (effSources (fun n => n - 2) n) (1/4) (extBit Ext n) →
+1/4 ≤ Pr_{U_n}[fun x => extBit Ext n x 0]`.
 The uniform source is efficient, so its output is within `1/4` of a fair bit. -/
 theorem uniform_acceptance_lower (Ext : List Bool → List Bool) (n : ℕ)
     (h : IsExtractor (effSources (fun n => (n : ℝ) - 2) n) (1 / 4) (extBit Ext n)) :
@@ -210,7 +223,9 @@ theorem uniform_acceptance_lower (Ext : List Bool → List Bool) (n : ℕ)
   linarith
 
 /-- The bounded rejection machine's law at width `n` is the finite first-success law
-on `t` trials and an independent uniform fallback.
+on `t` trials and an independent uniform fallback:
+`samplerLaw (RejectionSampler.machine hExt n t) n = Rejection.law D t`, where
+`D a = (Ext (List.ofFn a)).headD false`.
 
 **Proof sketch.** Its coin equivalence followed by the canonical block equivalence is a
 bijection onto independent uniform blocks. The machine reader identifies its output with
@@ -246,7 +261,9 @@ theorem uniform_card_div_quarter (n : ℕ) :
   ring
 
 /-- When uniform acceptance is at least `1/4`, ten rejection trials and a fresh fallback
-produce an efficiently samplable `(n−2)`-source.
+produce an efficiently samplable `(n−2)`-source:
+`1/4 ≤ Pr_{U_n}[D] → Rejection.law D 10 ∈ effSources (fun n => n - 2) n`, where
+`D a = (Ext (List.ofFn a)).headD false`.
 
 **Proof sketch.** The accepted flat source has point mass at most `1/(2^n q) ≤ 4/2^n`,
 so it and the uniform law are `(n−2)`-sources. The exact convex mixture identity preserves

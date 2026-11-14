@@ -43,7 +43,10 @@ namespace TCSlib.Cryptography.Randomness.RejectionSampler
 open Complexity Turing
 
 /-- Trying `t` blocks of width `n` and falling back to block `t` means returning the first
-block whose extractor output starts with `true`, or the final block if every test fails.
+block whose extractor output starts with `true`, or the final block if every test fails:
+`chooseWord Ext n 0 r = r.take n`, and `chooseWord Ext n (t+1) r = r.take n` if
+`(Ext (r.take n)).headD false`, otherwise
+`chooseWord Ext n (t+1) r = chooseWord Ext n t (r.drop n)`.
 [PS10, Theorem 183.6]. Short input tapes are truncated by `List.take`. -/
 def chooseWord (Ext : List Bool → List Bool) (n : ℕ) : ℕ → List Bool → List Bool
   | 0, r => r.take n
@@ -56,12 +59,15 @@ theorem chooseWord_zero (Ext : List Bool → List Bool) (n : ℕ) (r : List Bool
     chooseWord Ext n 0 r = r.take n := rfl
 
 /-- One additional trial tests the first block, returning it on acceptance and otherwise
-running the remaining trials on the tape with that block dropped. -/
+running the remaining trials on the tape with that block dropped:
+`chooseWord Ext n (t+1) r = if (Ext (r.take n)).headD false then r.take n else
+chooseWord Ext n t (r.drop n)`. -/
 theorem chooseWord_succ (Ext : List Bool → List Bool) (n t : ℕ) (r : List Bool) :
     chooseWord Ext n (t + 1) r =
       if (Ext (r.take n)).headD false then r.take n else chooseWord Ext n t (r.drop n) := rfl
 
-/-- Taking any fixed number `n` of input bits is polynomial-time computable.
+/-- Taking any fixed number `n` of input bits is polynomial-time computable:
+`PolyTimeComputable (fun r : List Bool => r.take n)`.
 
 **Proof sketch.** Pair a constant unary word of length `n` with the input and apply the
 published length-gated prefix machine. -/
@@ -75,7 +81,8 @@ theorem take_poly (n : ℕ) : PolyTimeComputable (fun r : List Bool => r.take n)
   rw [PrefixByLength.take_def, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
 
 /-- If `Ext` is polynomial-time, the fixed-width sampler with any fixed number of trials is
-polynomial-time. [PS10, Theorem 183.6, the efficiency claim].
+polynomial-time: `PolyTimeComputable Ext → PolyTimeComputable (chooseWord Ext n t)`.
+[PS10, Theorem 183.6, the efficiency claim].
 
 **Proof sketch.** Induct on the fixed number of trials. The head-bit test composes the
 extractor with a fixed prefix, and the conditional combinator joins that prefix with the
@@ -138,32 +145,38 @@ theorem chooseWord_blocks (Ext : List Bool → List Bool) (n t : ℕ)
   exact chooseWord_flatten Ext n t _
 
 /-- The bounded rejection machine on `(t + 1) * n` coins has empty advice and runs
-`chooseWord Ext n t` on its coin tape. [PS10, Theorem 183.6]. -/
+`chooseWord Ext n t` on its coin tape: `(machine hExt n t).runAtL m y r = chooseWord Ext n t r`
+and `(machine hExt n t).coins = .const ((t + 1) * n)`. [PS10, Theorem 183.6]. -/
 noncomputable def machine {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
     (n t : ℕ) : NUPPT :=
   NUPPT.ofPolyTimeUniform ((chooseWord_poly hExt n t).comp polyTimeComputable_pairSndD)
     (.const ((t + 1) * n))
 
-/-- The defining equation of `machine` packages the polynomial-time coin function with
-constant coin polynomial `(t + 1) * n` and empty advice. -/
+/-- The rejection machine packages the polynomial-time coin function with constant coin
+polynomial `(t + 1) * n` and empty advice:
+`machine hExt n t = NUPPT.ofPolyTimeUniform f (.const ((t + 1) * n))`, where `f` is
+`(chooseWord_poly hExt n t).comp polyTimeComputable_pairSndD`. -/
 theorem machine_eq {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext) (n t : ℕ) :
     machine hExt n t =
       NUPPT.ofPolyTimeUniform ((chooseWord_poly hExt n t).comp polyTimeComputable_pairSndD)
         (.const ((t + 1) * n)) := rfl
 
-/-- The bounded rejection machine is uniform: it has empty advice at every parameter. -/
+/-- The bounded rejection machine is uniform: it has empty advice at every parameter,
+`(machine hExt n t).Uniform`, i.e. `∀ m, (machine hExt n t).advice m = []`. -/
 theorem machine_uniform {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
     (n t : ℕ) : (machine hExt n t).Uniform := by
   rw [machine_eq]
   exact NUPPT.ofPolyTimeUniform_uniform _ _
 
-/-- The rejection machine's coin polynomial is the constant `(t + 1) * n`. -/
+/-- The rejection machine's coin polynomial is the constant `(t + 1) * n`:
+`(machine hExt n t).coins = .const ((t + 1) * n)`. -/
 theorem machine_coins {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
     (n t : ℕ) : (machine hExt n t).coins = .const ((t + 1) * n) := by
   rw [machine_eq, NUPPT.coins_ofPolyTimeUniform]
 
 /-- On an untyped coin tape `r`, at every activation parameter and argument, the rejection
-machine returns `chooseWord Ext n t r`. -/
+machine returns `chooseWord Ext n t r`: `(machine hExt n t).runAtL m y r = chooseWord Ext n t r`.
+-/
 theorem machine_runAtL {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
     (n t m : ℕ) (y r : List Bool) :
     (machine hExt n t).runAtL m y r = chooseWord Ext n t r := by
@@ -171,19 +184,22 @@ theorem machine_runAtL {Ext : List Bool → List Bool} (hExt : PolyTimeComputabl
   change chooseWord Ext n t (pairSndD (pairEncode (pairEncode (NUPPT.advInput m y) []) r)) = _
   rw [pairSndD_pairEncode]
 
-/-- On typed coins, the rejection machine runs `chooseWord` on the coin string. -/
+/-- On typed coins, the rejection machine runs `chooseWord` on the coin string:
+`(machine hExt n t).runAt m y r = chooseWord Ext n t (List.ofFn r)`. -/
 theorem machine_runAt {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
     (n t m : ℕ) (y : List Bool) (r : (machine hExt n t).Coins m) :
     (machine hExt n t).runAt m y r = chooseWord Ext n t (List.ofFn r) := by
   rw [NUPPT.runAt_eq, machine_runAtL]
 
-/-- At every activation parameter, the rejection machine uses exactly `(t + 1) * n` bits. -/
+/-- At every activation parameter, the rejection machine uses exactly `(t + 1) * n` bits:
+`(machine hExt n t).coinLen m = (t + 1) * n`. -/
 theorem machine_coinLen {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
     (n t m : ℕ) : (machine hExt n t).coinLen m = (t + 1) * n := by
   rw [NUPPT.coinLen_eq, machine_coins, PolyExpr.eval_const]
 
 /-- The rejection machine's coins are canonically the bit tape of length `(t + 1) * n`,
-independently of its activation parameter. -/
+independently of its activation parameter:
+`(machine hExt n t).Coins m ≃ (Fin ((t + 1) * n) → Bool)`. -/
 noncomputable def coinEquiv {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
     (n t m : ℕ) : (machine hExt n t).Coins m ≃ (Fin ((t + 1) * n) → Bool) :=
   Equiv.arrowCongr (finCongr (machine_coinLen hExt n t m)) (Equiv.refl Bool)
@@ -194,20 +210,24 @@ theorem coinEquiv_eq {Ext : List Bool → List Bool} (hExt : PolyTimeComputable 
     (n t m : ℕ) : coinEquiv hExt n t m =
       Equiv.arrowCongr (finCongr (machine_coinLen hExt n t m)) (Equiv.refl Bool) := rfl
 
-/-- The canonical rejection-coin equivalence preserves the encoded coin string. -/
+/-- The canonical rejection-coin equivalence preserves the encoded coin string:
+`List.ofFn (coinEquiv hExt n t m r) = List.ofFn r`. -/
 theorem coinEquiv_ofFn {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
     (n t m : ℕ) (r : (machine hExt n t).Coins m) :
     List.ofFn (coinEquiv hExt n t m r) = List.ofFn r :=
   (List.ofFn_congr (machine_coinLen hExt n t m) r).symm
 
-/-- The inverse canonical rejection-coin equivalence preserves the encoded coin string. -/
+/-- The inverse canonical rejection-coin equivalence preserves the encoded coin string:
+`List.ofFn ((coinEquiv hExt n t m).symm r) = List.ofFn r`. -/
 theorem coinEquiv_symm_ofFn {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
     (n t m : ℕ) (r : Fin ((t + 1) * n) → Bool) :
     List.ofFn ((coinEquiv hExt n t m).symm r) = List.ofFn r := by
   rw [← coinEquiv_ofFn hExt n t m, Equiv.apply_symm_apply]
 
 /-- Running the rejection machine on a tape transported through `coinEquiv` is precisely
-`chooseWord Ext n t` on that tape. -/
+`chooseWord Ext n t` on that tape:
+`(machine hExt n t).runAt m y ((coinEquiv hExt n t m).symm r) = chooseWord Ext n t (List.ofFn r)`.
+-/
 theorem machine_runAt_coinEquiv {Ext : List Bool → List Bool} (hExt : PolyTimeComputable Ext)
     (n t m : ℕ) (y : List Bool) (r : Fin ((t + 1) * n) → Bool) :
     (machine hExt n t).runAt m y ((coinEquiv hExt n t m).symm r) =

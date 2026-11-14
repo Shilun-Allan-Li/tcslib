@@ -89,12 +89,12 @@ theorem probTrue_map [DecidableEq β] (p : FinDist α) (f : α → β) (D : β �
     (p.map f).probTrue D = p.probTrue (fun a => D (f a)) := by
   rw [FinDist.probTrue_eq_expect, expect_map, FinDist.probTrue_eq_expect]
 
-/-- A Boolean acceptance probability is nonnegative. -/
+/-- A Boolean acceptance probability is nonnegative: `0 ≤ Pr_p[D]`. -/
 theorem probTrue_nonneg (p : FinDist α) (D : α → Bool) : 0 ≤ p.probTrue D := by
   rw [FinDist.probTrue_eq]
   exact sum_nonneg fun a _ => p.nonneg a
 
-/-- A Boolean acceptance probability is at most one. -/
+/-- A Boolean acceptance probability is at most one: `Pr_p[D] ≤ 1`. -/
 theorem probTrue_le_one (p : FinDist α) (D : α → Bool) : p.probTrue D ≤ 1 := by
   rw [FinDist.probTrue_eq, ← p.sum_prob]
   exact sum_le_sum_of_subset_of_nonneg (filter_subset _ _) (fun a _ _ => p.nonneg a)
@@ -139,7 +139,8 @@ theorem uniform_prod [Nonempty α] [Nonempty β] :
     FinDist.uniform_apply, Fintype.card_prod, Nat.cast_mul, mul_inv_rev]
   ring
 
-/-- A nonempty tuple is equivalent to its first entry and its tail. -/
+/-- A nonempty tuple is equivalent to its first entry and its tail:
+`(Fin (t+1+1) → α) ≃ α × (Fin (t+1) → α)`. -/
 def tupleEquiv (t : ℕ) : (Fin (t + 1 + 1) → α) ≃ α × (Fin (t + 1) → α) where
   toFun x := (x 0, fun i => x i.succ)
   invFun z := Fin.cons z.1 z.2
@@ -164,19 +165,22 @@ theorem tupleEquiv_apply (t : ℕ) (x : Fin (t + 1 + 1) → α) :
 theorem tupleEquiv_symm_apply (t : ℕ) (z : α × (Fin (t + 1) → α)) :
     (tupleEquiv t).symm z = Fin.cons z.1 z.2 := rfl
 
-/-- The first entry of the inverse tuple equivalence is the pair's first coordinate. -/
+/-- The first entry of the inverse tuple equivalence is the pair's first coordinate:
+`(tupleEquiv t).symm z 0 = z.1`. -/
 theorem tupleEquiv_symm_zero (t : ℕ) (z : α × (Fin (t + 1) → α)) :
     (tupleEquiv t).symm z 0 = z.1 := by
   rw [tupleEquiv_symm_apply]
   simp
 
-/-- Each successor entry of the inverse tuple equivalence is the corresponding tail entry. -/
+/-- Each successor entry of the inverse tuple equivalence is the corresponding tail entry:
+`(tupleEquiv t).symm z i.succ = z.2 i`. -/
 theorem tupleEquiv_symm_succ (t : ℕ) (z : α × (Fin (t + 1) → α)) (i : Fin (t + 1)) :
     (tupleEquiv t).symm z i.succ = z.2 i := by
   rw [tupleEquiv_symm_apply]
   simp
 
-/-- Select the first accepted entry among `t` trials; if all fail, return the final entry.
+/-- Select the first accepted entry among `t` trials; if all fail, return the final entry:
+`select D 0 x = x 0` and `select D (t+1) x = if D (x 0) then x 0 else select D t (x ∘ succ)`.
 There are `t+1` entries in total, so the fallback is always present. -/
 def select (D : α → Bool) : (t : ℕ) → (Fin (t + 1) → α) → α
   | 0, x => x 0
@@ -190,7 +194,8 @@ select from the tail: `select D (t+1) x = if D (x 0) then x 0 else select D t (x
 theorem select_succ (D : α → Bool) (t : ℕ) (x : Fin (t + 1 + 1) → α) :
     select D (t + 1) x = if D (x 0) then x 0 else select D t (fun i => x i.succ) := rfl
 
-/-- The law of rejection sampling with `t` trials and an independent uniform fallback.
+/-- The law of rejection sampling with `t` trials and an independent uniform fallback:
+`law D 0 = U_α` and `law D (t+1) = map (fun (x,y) => if D x then x else y) (U_α × law D t)`.
 At each trial, a fresh uniform point is accepted if its test succeeds. -/
 noncomputable def law [DecidableEq α] [Nonempty α] (D : α → Bool) : ℕ → FinDist α
   | 0 => FinDist.uniform α
@@ -238,7 +243,7 @@ theorem select_uniform_law [DecidableEq α] [Nonempty α] (D : α → Bool) (t :
     congr 1
 
 /-- Independent branching returns the first point on acceptance and the second on rejection:
-its mass at `a` is `1_{D(a)} p(a) + Pr_p[¬D] q(a)`.
+`map (fun (x,y) => if D x then x else y) (p × q) a = 1_{D(a)} p(a) + (1-Pr_p[D]) q(a)`.
 
 **Proof sketch.** Expand the map and product readers. For a fixed first point, the inner sum
 is either its whole mass or the mass of the second point at `a`. Split the outer sum into
@@ -311,8 +316,8 @@ theorem law_probTrue [DecidableEq α] [Nonempty α] (D : α → Bool) (t : ℕ) 
   | zero => rw [law_zero]; ring
   | succ t ih => rw [law_succ_probTrue, ih, pow_succ]; ring
 
-/-- For positive uniform acceptance `q`, the rejection law's point mass is
-`(1-q)^t / |α| + 1_{D(a)} (1-(1-q)^t) / (|α| q)`.
+/-- For positive uniform acceptance `q = Pr_{U_α}[D] > 0`, the rejection law's point mass is
+`law D t a = (1-q)^t / |α| + 1_{D(a)} (1-(1-q)^t) / (|α| q)`.
 
 **Proof sketch.** Induct on the trial count using the point recurrence. On accepted points the
 geometric sum contributes `(1-(1-q)^t)/q`; on rejected points only the fallback contributes. -/
@@ -343,7 +348,8 @@ theorem uniform_probTrue [Nonempty α] (D : α → Bool) :
   rw [FinDist.probTrue_eq]
   simp only [FinDist.uniform_apply, sum_const, nsmul_eq_mul]
 
-/-- Positive uniform acceptance implies that the accepted set is nonempty. -/
+/-- Positive uniform acceptance implies that the accepted set is nonempty:
+`0 < Pr_{U_α}[D] → {a : D a}.Nonempty`. -/
 theorem accepted_nonempty [Nonempty α] (D : α → Bool)
     (hq : 0 < (FinDist.uniform α).probTrue D) :
     ((univ : Finset α).filter (fun a => D a = true)).Nonempty := by
@@ -401,8 +407,9 @@ theorem mixture_apply (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1)
     (p q : FinDist α) (a : α) :
     mixture w hw0 hw1 p q a = w * p a + (1 - w) * q a := rfl
 
-/-- Mixtures of two `k`-sources are `k`-sources: their point probabilities share the same
-upper bound `2^(-k)`, which is preserved by a convex combination. -/
+/-- Mixtures of two `k`-sources are `k`-sources:
+`IsSource k p → IsSource k q → IsSource k (mixture w p q)`. Their point probabilities share
+the same upper bound `2^(-k)`, which is preserved by a convex combination. -/
 theorem mixture_isSource (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1)
     (p q : FinDist α) (k : ℝ) (hp : FinDist.IsSource k p) (hq : FinDist.IsSource k q) :
     FinDist.IsSource k (mixture w hw0 hw1 p q) := by
@@ -420,12 +427,14 @@ theorem mixture_isSource (w : ℝ) (hw0 : 0 ≤ w) (hw1 : w ≤ 1)
           (mul_le_mul_of_nonneg_left (hq' a) (sub_nonneg.2 hw1))
     _ = (2 : ℝ) ^ (-k) := by ring
 
-/-- The probability `(1-q)^t` that all rejection trials fail is nonnegative. -/
+/-- The probability `(1-q)^t` that all rejection trials fail is nonnegative:
+`0 ≤ (1-Pr_{U_α}[D])^t`. -/
 theorem failure_pow_nonneg [Nonempty α] (D : α → Bool) (t : ℕ) :
     0 ≤ (1 - (FinDist.uniform α).probTrue D) ^ t :=
   pow_nonneg (sub_nonneg.2 (probTrue_le_one _ _)) _
 
-/-- The probability `(1-q)^t` that all rejection trials fail is at most one. -/
+/-- The probability `(1-q)^t` that all rejection trials fail is at most one:
+`(1-Pr_{U_α}[D])^t ≤ 1`. -/
 theorem failure_pow_le_one [Nonempty α] (D : α → Bool) (t : ℕ) :
     (1 - (FinDist.uniform α).probTrue D) ^ t ≤ 1 := by
   have hb0 : 0 ≤ 1 - (FinDist.uniform α).probTrue D :=
@@ -441,6 +450,7 @@ theorem failure_pow_le_one [Nonempty α] (D : α → Bool) (t : ℕ) :
       _ = 1 := one_mul _
 
 /-- The rejection law is exactly the convex mixture
+`law D t = mixture ((1-q)^t) U_α flat({a : D a})` for `q = Pr_{U_α}[D] > 0`, that is,
 `(1-q)^t U_α + (1-(1-q)^t) flat({a : D a})`. -/
 theorem law_eq_mixture [DecidableEq α] [Nonempty α] (D : α → Bool)
     (hq : 0 < (FinDist.uniform α).probTrue D) (t : ℕ) :
@@ -467,7 +477,8 @@ theorem accepted_flat_isSource [DecidableEq α] [Nonempty α] (D : α → Bool)
   · positivity
 
 /-- The rejection law is a `k`-source whenever its uniform and accepted-flat components are
-`k`-sources. This follows from its exact mixture identity and convexity of the point bound. -/
+`k`-sources: `IsSource k U_α → IsSource k flat({a : D a}) → IsSource k (law D t)`.
+This follows from its exact mixture identity and convexity of the point bound. -/
 theorem law_isSource [DecidableEq α] [Nonempty α] (D : α → Bool)
     (hq : 0 < (FinDist.uniform α).probTrue D) (t : ℕ) (k : ℝ)
     (hU : FinDist.IsSource k (FinDist.uniform α))
