@@ -1,0 +1,52 @@
+rCt def private [('rY', 'rAns')]
+pkRun def private [('rY', 'rAns')]
+acRun def private [('rFwd', 'rAns')]
+dCnt def private [('finL', 'rL')]
+dCt def private [('finU', 'rU')]
+dIn def private [('finL', 'rL'), ('finU', 'rU'), ('finW', 'rW'), ('finZ', 'rZ')]
+dFin def private [('finU', 'rU')]
+eMsg def private [('finU', 'rU')]
+eTape def private [('finU', 'rU'), ('finW', 'rW')]
+eCt def private [('finU', 'rU'), ('finZ', 'rZ')]
+logEmit def [('( List.range', 'iterEmit pairSndD G'), (')', ''), (') . flatMap fun i = > G ( pairSndD ^ [ i ]', '')]
+ChalParams structure [('rdU', 'rU')]
+chalRun def [('rdIdx', 'rI'), ('rdLog', 'rL'), ('rdQuery', 'rX'), ('rdState', 'rS'), ('rdU', 'rU')]
+chunkMap def [('', 'iterEmit'), (')', ''), (') . flatMap fun i = > chunkEmit c f ( ( chunkStep c ) ^ [ i ]', ''), ('List.range', 'chunkStep c ) ( chunkEmit c f )')]
+realView def [('chunkAt', 'coinBlock')]
+idealView def [('chunkAt', 'coinBlock')]
+altMsg def [('rdQuery', 'rX'), ('rdU', 'rU'), ('rdW', 'rW'), ('rdZ', 'rZ')]
+nmOutL def [('chunkAt', 'coinBlock')]
+nmFin def [('finSt', 'rS'), ('finU', 'rU'), ('finW', 'rW'), ('finZ', 'rZ')]
+nmParams def [('polyTimeComputable_rd.1', 'polyTimeComputable_rU'), ('polyTimeComputable_rd.1 polyTimeComputable_rd.2.2.2.2.2.2.2', 'polyTimeComputable_rU polyTimeComputable_rAns'), ('rdAns', 'rAns'), ('rdU', 'rU')]
+copyHandler def []
+simMsg def [('rdQuery', 'rX'), ('rdU', 'rU'), ('rdW', 'rW'), ('rdZ', 'rZ')]
+simCt def [('rdU', 'rU'), ('rdW', 'rW'), ('rdZ', 'rZ')]
+simOutL def [('chunkAt', 'coinBlock')]
+simFin def [('finSt', 'rS'), ('finU', 'rU')]
+simParams def [('polyTimeComputable_rd.1 polyTimeComputable_rd.2.2.2.2.2.1', 'polyTimeComputable_rU polyTimeComputable_rX'), ('polyTimeComputable_rd.1 polyTimeComputable_rd.2.2.2.2.2.2.2', 'polyTimeComputable_rU polyTimeComputable_rAns'), ('rdAns', 'rAns'), ('rdQuery', 'rX'), ('rdU', 'rU')]
+distinct replacements:
+  '' -> 'iterEmit': 1
+  '( List.range' -> 'iterEmit pairSndD G': 1
+  ')' -> '': 2
+  ') . flatMap fun i = > G ( pairSndD ^ [ i ]' -> '': 1
+  ') . flatMap fun i = > chunkEmit c f ( ( chunkStep c ) ^ [ i ]' -> '': 1
+  'List.range' -> 'chunkStep c ) ( chunkEmit c f )': 1
+  'chunkAt' -> 'coinBlock': 6
+  'finL' -> 'rL': 2
+  'finSt' -> 'rS': 6
+  'finU' -> 'rU': 25
+  'finW' -> 'rW': 6
+  'finZ' -> 'rZ': 5
+  'polyTimeComputable_rd.1' -> 'polyTimeComputable_rU': 2
+  'polyTimeComputable_rd.1 polyTimeComputable_rd.2.2.2.2.2.1' -> 'polyTimeComputable_rU polyTimeComputable_rX': 1
+  'polyTimeComputable_rd.1 polyTimeComputable_rd.2.2.2.2.2.2.2' -> 'polyTimeComputable_rU polyTimeComputable_rAns': 2
+  'rFwd' -> 'rAns': 2
+  'rY' -> 'rAns': 2
+  'rdAns' -> 'rAns': 2
+  'rdIdx' -> 'rI': 1
+  'rdLog' -> 'rL': 1
+  'rdQuery' -> 'rX': 4
+  'rdState' -> 'rS': 4
+  'rdU' -> 'rU': 21
+  'rdW' -> 'rW': 3
+  'rdZ' -> 'rZ': 3
