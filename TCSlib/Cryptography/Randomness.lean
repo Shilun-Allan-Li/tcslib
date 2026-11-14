@@ -3,6 +3,8 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Randomness.Extraction
+import TCSlib.Cryptography.Randomness.Extraction.Rejection
+import TCSlib.Cryptography.Randomness.Extraction.Sampler
 import TCSlib.Cryptography.Randomness.Learning
 import TCSlib.Cryptography.Randomness.BPPBridge
 import TCSlib.Cryptography.Randomness.Derandomization
