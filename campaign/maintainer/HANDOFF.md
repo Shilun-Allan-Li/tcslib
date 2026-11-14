@@ -17,6 +17,7 @@ campaign/status/2026-11-14-merge-296/. Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
+| #301 / 134 | **Not yet clear to merge.** `SAT_exists_linear_verifier` (LD9, approved 2026-11-14) at `785e3426`. Replay, seal, controls, screen done; Codex gate 134 being staged. See campaign/gates/134-sat-linear-verifier/. |
 | #300 / 133 | **Not yet clear to merge.** Readers for Call, Clean and the Oblivious consumers at `829648df` (60 readers and the `obliviousScheduleCfg` transport; rulings 2026-11-14). Replay, seals, controls, screen done; Codex gate 133 ready to dispatch (prompt.md, exchange `a0fbf073`). See campaign/gates/133-call-clean-oblivious-readers/. |
 | #296 / 132 | **Merged** at `5ab222167eb12664d97d255766c5def15b6d5d50` (2026-11-14). Gate closed (round 3 CLEAR). Its replay output is the campaign snapshot `oleans-c5ab2` (876 objects; campaign/status/2026-11-14-merge-296/). |
 | #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |

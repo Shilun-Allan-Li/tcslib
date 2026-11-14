@@ -1,0 +1,15 @@
+{
+ "base_summary": "declarations screened: 193; copy pairs (target reproduces >= half of source): 39; reproduced text: 11,122 chars",
+ "head_summary": "declarations screened: 194; copy pairs (target reproduces >= half of source): 40; reproduced text: 11,185 chars",
+ "new": 1,
+ "gone": 0,
+ "pairs": [
+  {
+   "kind": "NEW",
+   "target": "SAT.lean::SAT_mem_NP",
+   "source": "SAT.lean::SAT_exists_linear_verifier",
+   "head": "63/90 = 70%",
+   "disposition": "T: shared witness citations. Both proofs name the same three private witnesses, `satVerifier false`, `satVerifier_of_poly false satVerdict_false_poly` and `sat_verifier_equiv`; the reader packages them with the exact `x.length + 1` certificate length, while `SAT_mem_NP` packages them with the exponents `1, 1` and rewrites `Nat.pow_one, Nat.one_mul`. Neither restates a proof. `SAT_mem_NP` could later be derived from the reader; that proof change is outside the approved addition and is disclosed, not made."
+  }
+ ]
+}
