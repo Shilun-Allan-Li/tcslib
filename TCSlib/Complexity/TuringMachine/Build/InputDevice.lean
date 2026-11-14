@@ -552,7 +552,7 @@ private theorem rd_call_run {z : List Bool} (op : Option SignType) (ℓ : ℕ)
     · funext j; simp only [Cfg.mapState_workTapePos, e]
     · simp only [Cfg.mapState_output, e]
   have hleaf : (rd_family i).runFrom c 1 = f := by
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     exact step_of_inputMoveAction (rd_callLeaf op b) c (rd_leafMove op b) hc rfl
   have leaf := phaseHostTM_run rd_family ⟨.inl none, .inl ()⟩ rd_redirect i c f 1
     hleaf (.inr a) rfl ⟨.inr (.inr ()), .inr a⟩ rfl (by

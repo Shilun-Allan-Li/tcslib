@@ -90,9 +90,9 @@ theorem field_some {y : List Bool} (f : Bool) (bits : Fin (nbits M) → Bool) :
     have r1 : y[p + 1 - 1]? = some false := by
       have := getElem?_of_drop hd 1; rw [show p - 1 + 1 = p + 1 - 1 by omega] at this; simpa using this
     rw [show 2 * ([] : List Bool).length + 2 = 0 + 1 + 1 by rfl,
-      MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_succ_eq_step,
+      MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_one,
       pcfg_fA M f bits p h1 (by omega) e r0,
-      pcfg_fB_false M f e bits (p + 1) (by omega) (by omega) r1, MultiTapeTM.runFrom_zero]
+      pcfg_fB_false M f e bits (p + 1) (by omega) (by omega) r1]
     cases f <;> simp
   | [], _, _, _, _, _, _, _, hr => by simp [readField] at hr
   | [_], _, _, _, _, _, _, _, hr => by simp [readField] at hr
@@ -136,7 +136,7 @@ theorem field_none {y : List Bool} (f : Bool) (bits : Fin (nbits M) → Bool) :
   | [], p, wC, wO, h1, hlen, hd, _ => by
     have r0 : y[p - 1]? = none := by simpa using getElem?_of_drop hd 0
     refine ⟨0 + 1, by simp, ?_⟩
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     exact pcfg_reject M _ (fun _ => rfl) p h1 (by simp at hlen; omega) r0 _ _ _
   | [b], p, wC, wO, h1, hlen, hd, _ => by
     have r0 : y[p - 1]? = some b := by simpa using getElem?_of_drop hd 0
@@ -144,8 +144,7 @@ theorem field_none {y : List Bool} (f : Bool) (bits : Fin (nbits M) → Bool) :
       have := getElem?_of_drop hd 1; rw [show p - 1 + 1 = p + 1 - 1 by omega] at this; simpa using this
     simp only [List.length_cons, List.length_nil] at hlen
     refine ⟨0 + 1 + 1, by simp, ?_⟩
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero, pcfg_fA M f bits p h1 (by omega) b r0]
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_one, pcfg_fA M f bits p h1 (by omega) b r0]
     exact pcfg_reject M _ (fun _ => rfl) (p + 1) (by omega) (by omega) r1 _ _ _
 
 /-- **Copying the input suffix** onto the copy tape, then stepping its head back onto the
@@ -162,7 +161,7 @@ theorem cpy_run {y : List Bool} (bits : Fin (nbits M) → Bool) :
   | [], p, wX, wC, wO, h1, hlen, hd => by
     have r0 : y[p - 1]? = none := by simpa using getElem?_of_drop hd 0
     simp only [List.length_nil] at hlen
-    rw [MultiTapeTM.runFrom_succ_eq_step, List.length_nil, MultiTapeTM.runFrom_zero,
+    rw [List.length_nil, MultiTapeTM.runFrom_one,
       pcfg_step M _ p h1 (by omega), r0]
     simp only [tabTr]
     rw [pcfg, tact_idle_apply]
@@ -224,7 +223,7 @@ theorem rewX_run (w : List Bool) (τ1 τ2 : ℤ → Option Bool) (z1 z2 : ℤ) :
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, acfg_step]
+    rw [MultiTapeTM.runFrom_one, acfg_step]
     simp only [tabTr, aux_read0, Nat.cast_zero, zero_sub, bufferTape_left]
     rw [tact_idle_apply]
     simp [SignType.neg_eq_neg_one, sub_eq_add_neg]
@@ -251,7 +250,7 @@ theorem rewC_run (w : List Bool) (τ0 τ2 : ℤ → Option Bool) (z0 z2 : ℤ) :
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, acfg_step]
+    rw [MultiTapeTM.runFrom_one, acfg_step]
     simp only [tabTr, aux_read1, Nat.cast_zero, zero_sub, bufferTape_left]
     rw [tact_idle_apply]
     simp [SignType.neg_eq_neg_one, sub_eq_add_neg]
@@ -279,7 +278,7 @@ theorem rewO_run (w : List Bool) (τ0 τ1 : ℤ → Option Bool) (z0 z1 : ℤ) :
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, acfg_step]
+    rw [MultiTapeTM.runFrom_one, acfg_step]
     simp only [tabTr, aux_read2, Nat.cast_zero, zero_sub, bufferTape_left]
     rw [tact_idle_apply]
     simp

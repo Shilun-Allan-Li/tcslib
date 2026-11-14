@@ -351,8 +351,9 @@ theorem cleanTM_run (M : MultiTapeTM k Bool S) (q₁ q : S) (V : List Bool) (T :
       intro ht
       rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), sim_step_clean M q₁ q V t
         (hlive t (by omega))]
-  have hstart : (cleanTM M q₁).runFrom (Cfg.init (.init q) V) 1 = simCfg M q V 0 :=
-    init_step M q₁ q V
+  have hstart : (cleanTM M q₁).runFrom (Cfg.init (.init q) V) 1 = simCfg M q V 0 := by
+    rw [MultiTapeTM.runFrom_one]
+    exact init_step M q₁ q V
   -- the interval data of every tape at the halt
   set c := M.runFrom (Cfg.init q V) T0 with hc
   have htape : ∀ j : Fin k, ∃ a b : ℤ, a ≤ 0 ∧ 0 ≤ b ∧ -(s : ℤ) ≤ a - 1 ∧ b + 1 ≤ s ∧

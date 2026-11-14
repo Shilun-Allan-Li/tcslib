@@ -779,7 +779,7 @@ private lemma loopReplay_run (x : List Bool) (p : Fin (x.length + 2))
   induction rest with
   | nil =>
     intro pre out
-    simpa [MultiTapeTM.runFrom_succ_eq_step] using loopReplay_step x p pre [] out
+    simpa [MultiTapeTM.runFrom_one] using loopReplay_step x p pre [] out
   | cons b rest ih =>
     intro pre out
     rw [List.length_cons, MultiTapeTM.runFrom_succ_eq_step, loopReplay_step]
@@ -910,7 +910,7 @@ private lemma loop_scan_left {k : ℕ} {S : Type*} {x : List Bool}
     (hstep : ∀ j < n, tm.step (frame (j + 1)) = frame j)
     (hexit : tm.step (frame 0) = done) :
     ∀ j ≤ n, tm.runFrom (frame j) (j + 1) = done := by
-  refine Nat.rec (fun _ => hexit) ?_
+  refine Nat.rec (fun _ => (MultiTapeTM.runFrom_one _ _).trans hexit) ?_
   intro j ih hj
   calc
     tm.runFrom (frame (j + 1)) (j + 1 + 1) =
@@ -1017,7 +1017,7 @@ private lemma loopHost_fuel_copy (body F : FinTM Bool) (anchor : body.State) (fo
   induction rest with
   | nil =>
     intro pre
-    rw [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [List.length_nil, MultiTapeTM.runFrom_one]
     change (match (loopFrame body F base (some (.inr (.inr 2))) p flag (bufferTape pre)
         (loopCopyTape pre []) pre.length pre.length out).workTapeSymbols
           (Fin.last (body.k + 1 + (1 + F.k))) with
@@ -1691,13 +1691,13 @@ private lemma loopHost_borrow_run (body F : FinTM Bool) (anchor : body.State) (f
   induction word with
   | nil =>
     intro pre
-    simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_succ_eq_step] using
+    simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_one] using
       loopHost_borrow_step body F anchor forward findMode base p pre []
   | cons b word ih =>
     intro pre
     cases b with
     | true =>
-      simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_succ_eq_step] using
+      simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_one] using
         loopHost_borrow_step body F anchor forward findMode base p pre (true :: word)
     | false =>
       simp only [loopBorrowPos]
@@ -1939,6 +1939,7 @@ private lemma loopHost_accept (body F : FinTM Bool) (anchor : body.State)
   cases findMode with
   | false =>
     refine ⟨1, by omega, ?_⟩
+    rw [MultiTapeTM.runFrom_one]
     change ((loopHostTM body F anchor false).tm.step base).state = none ∧
       ((loopHostTM body F anchor false).tm.step base).output = [true]
     rw [hstep]
@@ -3210,6 +3211,7 @@ private lemma emCall_clear_origin (w : List Bool) (p : Fin (w.length + 2)) :
   intro n
   induction n with
   | zero =>
+    rw [Nat.zero_add, MultiTapeTM.runFrom_one]
     change (⟨0, (fun i : Fin 3 => (if i = 2 then some none else none, 0)),
       none, some (3 : Fin 4)⟩ : Action 3 Bool (Fin 4)).apply
       (emCallClearCfg w p 2 (fun _ => none) (fun _ => none) (bufferTape [true]) 0) = _
@@ -3481,7 +3483,7 @@ leaving source work blank, the source input head at one, and output empty. -/
 private lemma emCall_track_initial (M : FinTM Bool) (x : List Bool) :
     (emCallTrackTM M).tm.runFrom ((emCallTrackTM M).tm.initCfg x) 1 =
       emCallTrackCfg M (M.tm.initCfg x) (fun _ => 0) (fun _ => 0) := by
-  change (emCallTrackTM M).tm.step ((emCallTrackTM M).tm.initCfg x) = _
+  rw [MultiTapeTM.runFrom_one]
   simp only [MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init, emCallTrackTM]
   refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
   · funext i
@@ -3733,7 +3735,7 @@ private lemma emCall_right_scan (M : FinTM Bool) {x : List Bool}
     intro j hj he
     have hje : j = x.length := by omega
     subst j
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     have hin : (emCallRightScan M c (some true) x.length (le_refl _)).inputSymbol = none := by
       simp [emCallRightScan, Cfg.inputSymbol]
     simp only [MultiTapeTM.step, emCallRightScan, Option.map_some]
@@ -3785,7 +3787,8 @@ private lemma emCall_right_finish (M : FinTM Bool) {x : List Bool}
     change p.val = j + 1
     dsimp [j]; omega
   refine ⟨1 + (x.length - j + 1), by omega, ?_⟩
-  rw [MultiTapeTM.runFrom_add, show (emCallRightTM M).tm.runFrom (emCallRightCfg M c) 1 = _ from hs]
+  rw [MultiTapeTM.runFrom_add, show (emCallRightTM M).tm.runFrom (emCallRightCfg M c) 1 = _ from
+    (MultiTapeTM.runFrom_one _ _).trans hs]
   exact emCall_right_scan M c (x.length - j) j hj (by omega)
 
 /-- Right-boundary normalization preserves the entire completed source
@@ -3963,7 +3966,7 @@ private lemma emCall_finish_arg (emit : Bool) (x arg cap : List Bool)
     have hblank : bufferTape (if emit then arg else []) (-1) = none := by
       simp [bufferTape]
     simp only [List.length_nil, Nat.cast_zero, zero_sub, zero_add]
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols,
       Fin.isValue, show (1 : Fin 2) ≠ 0 by decide, ↓reduceIte, hblank]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
@@ -4010,7 +4013,7 @@ private lemma emCall_finish_rewind (emit : Bool) (x cap : List Bool)
     intro suf hcap
     have hblank : bufferTape cap (-1) = none := by simp [bufferTape]
     simp only [List.length_nil, Nat.cast_zero, zero_sub, zero_add]
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols,
       Fin.isValue, show (1 : Fin 2) ≠ 0 by decide, ↓reduceIte, hblank]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
@@ -4053,7 +4056,7 @@ private lemma emCall_finish_transfer (emit : Bool) (x arg cap : List Bool)
     subst cap
     simp only [List.append_nil, List.length_nil]
     have hblank : bufferTape pre pre.length = none := by simp [bufferTape_nat]
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols,
       Fin.isValue, show (1 : Fin 2) ≠ 0 by decide, ↓reduceIte, hblank]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ (by simp [Action.apply])
@@ -4097,7 +4100,7 @@ private lemma emCall_finish_erase (emit : Bool) (x : List Bool)
   induction pre using List.reverseRecOn with
   | nil =>
     simp only [List.length_nil, Nat.cast_zero, zero_sub, zero_add, bufferTape_nil]
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols,
       Fin.isValue, show (1 : Fin 2) ≠ 0 by decide, ↓reduceIte]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ (by simp [Action.apply])
@@ -4155,7 +4158,7 @@ private lemma emCall_finish_run (emit : Bool) (x arg cap : List Bool)
         arg.length cap.length []) 1 =
       emCallFinishCfg emit x p 1 (bufferTape arg) (bufferTape cap)
         ((arg.length : ℤ) - 1) cap.length [] := by
-    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using hs
+    simpa only [MultiTapeTM.runFrom_one] using hs
   have h1 := (emCallFinishTM emit).tm.runFrom_add
     (emCallFinishCfg emit x p 0 (bufferTape arg) (bufferTape cap)
       arg.length cap.length []) 1 (arg.length + 1)
@@ -4840,6 +4843,7 @@ private lemma emCall_exit_fixed (M : FinTM Bool) (emit : Bool) (x : List Bool)
       · exact ((embedEmitTM_frame (emCallPairEmbedding M) (emCallFinishTM emit).tm
           z.workTapes z.workTapePos [] c 0).1 j hj).2
   have hs : (emCallFinishTM emit).tm.runFrom c 1 = c := by
+    rw [MultiTapeTM.runFrom_one]
     change (controlAction 0 (some (5 : Fin 6))).apply c = c
     rw [controlAction_apply, moveInputPos_zero]
   have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
@@ -4854,7 +4858,7 @@ private lemma emCall_exit_fixed (M : FinTM Bool) (emit : Bool) (x : List Bool)
     emCallEmbeddedCfg (emCallPairEmbedding M) (fun q => .inr (.inr q))
       z.workTapes z.workTapePos c at he
   rw [hframe] at he
-  exact he
+  exact (MultiTapeTM.runFrom_one _ _).symm.trans he
 
 /-- The complete clean call returns at its actual first positive exit.
 **Proof sketch.** Cut the bounded complete run at the least exit visit.

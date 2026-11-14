@@ -279,7 +279,7 @@ private theorem inputLength_round {x : List Bool}
   have reachesF : ∀ r ≤ p, inputLengthMachine.runFrom d (r + 1) = F r := by
     intro r
     induction r with
-    | zero => intro _; exact fzero
+    | zero => intro _; rw [Nat.zero_add, MultiTapeTM.runFrom_one]; exact fzero
     | succ r ih =>
       intro hr
       rw [step_run, ih (by omega), forward r (by omega)]

@@ -445,7 +445,7 @@ private def zr_cellContract {k : ℕ} (i : Fin 2) (choose : Option (ZoneSym k) �
   lo _ d j := min (d.workTapePos j) ((zr_cellPost i choose wr dir d).workTapePos j)
   hi _ d j := max (d.workTapePos j) ((zr_cellPost i choose wr dir d).workTapePos j)
   run _ d hd _ := by
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       zr_cell_step i choose wr dir d hd]
   exit_mem _ d _ _ := ⟨choose (d.workTapeSymbols i), rfl⟩
   cut _ d hd _ u hu := by
@@ -459,7 +459,7 @@ private def zr_cellContract {k : ℕ} (i : Fin 2) (choose : Option (ZoneSym k) �
     rcases he with rfl | rfl
     · rw [MultiTapeTM.runFrom_zero]
       exact Finset.mem_Icc.mpr ⟨min_le_left _ _, le_max_left _ _⟩
-    · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+    · rw [MultiTapeTM.runFrom_one,
         zr_cell_step i choose wr dir d hd]
       exact Finset.mem_Icc.mpr ⟨min_le_right _ _, le_max_right _ _⟩
 
@@ -14868,7 +14868,7 @@ private lemma zr_mir_lockstep {k : ℕ} {S : Type} {x : List (ZoneSym k)}
     (M : MultiTapeTM 2 (ZoneSym k) S) (X : Set (Option S)) :
     Lockstep (x := x) (x' := x) M (zr_mirTM M) zr_mir (fun _ => 1) X X :=
   ⟨fun c _ => by
-      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, zr_mir_step],
+      rw [MultiTapeTM.runFrom_one, zr_mir_step],
     fun _ h => h, fun c h v hv => by
       obtain rfl : v = 0 := by omega
       rw [MultiTapeTM.runFrom_zero]
@@ -14900,7 +14900,7 @@ private lemma zr_mir_box {k : ℕ} {S : Type} {x : List (ZoneSym k)}
     rcases (by omega : v = 0 ∨ v = 1) with rfl | rfl
     · rw [MultiTapeTM.runFrom_zero]
       exact ⟨min_le_left _ _, le_max_left _ _⟩
-    · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, zr_mir_step]
+    · rw [MultiTapeTM.runFrom_one, zr_mir_step]
       exact ⟨min_le_right _ _, le_max_right _ _⟩
 
 /-- The data with every track's two sides exchanged. -/

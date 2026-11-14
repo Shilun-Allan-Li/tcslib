@@ -598,7 +598,7 @@ private theorem sc_body_step {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool 
         (M.step c) ct cp := by
   have hE := embedEmitTM_runFrom Fin.castSuccEmb M (fun _ => ct) (fun _ => cp) [] c 1
   rw [sc_layout, sc_layout, hs] at hE
-  simp only [MultiTapeTM.runFrom, Function.iterate_one] at hE
+  simp only [MultiTapeTM.runFrom_one] at hE
   rw [show (embedEmitTM Fin.castSuccEmb M).step (clockCfg (some s) c ct cp) =
       ((embedEmitTM Fin.castSuccEmb M).tr s (clockCfg (some s) c ct cp).inputSymbol
         (clockCfg (some s) c ct cp).workTapeSymbols).apply (clockCfg (some s) c ct cp)
@@ -799,7 +799,8 @@ private theorem sc_rounds {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪
       omega
     rw [time]
     refine ⟨?_, combined, ?_⟩
-    · rw [MultiTapeTM.runFrom_add, reached, MultiTapeTM.runFrom_add, debit]
+    · rw [MultiTapeTM.runFrom_add, reached, MultiTapeTM.runFrom_add, debit,
+        MultiTapeTM.runFrom_one]
       exact action
     · intro u hu
       by_cases old : u ≤ counterOverhead w n + n
@@ -814,7 +815,7 @@ private theorem sc_rounds {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪
           exact ⟨n, by omega, _, _, _, seen, bound⟩
         · have last : u - (counterOverhead w n + n) =
               (2 * ((counterWord w n).takeWhile not).length + 2) + 1 := by omega
-          rw [last, MultiTapeTM.runFrom_add, debit]
+          rw [last, MultiTapeTM.runFrom_add, debit, MultiTapeTM.runFrom_one]
           change ∃ v ≤ n + 1, ∃ z tape head,
             H.step middle = clockCfg z (M.runFrom c v) tape head ∧ _
           rw [action]
@@ -957,13 +958,13 @@ private theorem sc_finish {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪
       sc_State.finish (counterWord w τ) (counterOverhead w τ + τ + 1)
       (counterWord_length w τ) (by omega) ⟨_, Or.inl rfl⟩
     · rw [MultiTapeTM.runFrom_add, reached]
-      simpa only [state] using dispatch
+      simpa only [state, MultiTapeTM.runFrom_one] using dispatch
     · simpa only [state] using joined
     · intro u hu
       by_cases old : u ≤ counterOverhead w τ + τ
       · exact trajectory u old
       · have last : u = counterOverhead w τ + τ + 1 := by omega
-        rw [last, MultiTapeTM.runFrom_add, reached]
+        rw [last, MultiTapeTM.runFrom_add, reached, MultiTapeTM.runFrom_one]
         change ∃ v ≤ τ, ∃ z tape head,
           (sc_clockTM e M stopAt).step lastStart = clockCfg z (M.runFrom c v) tape head ∧ _
         rw [dispatch]

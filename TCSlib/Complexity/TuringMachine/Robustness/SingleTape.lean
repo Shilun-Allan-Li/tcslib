@@ -2261,7 +2261,7 @@ theorem one_work_tape_spaceUsed {Γ : Type} [Fintype Γ] [DecidableEq Γ]
         | nil => rfl
         | cons a as => exact (hΓ ⟨a⟩).elim
       apply (computesInTime_iff _ _ _ _).mpr
-      rw [hx]
+      rw [hx, MultiTapeTM.runFrom_one]
       exact ⟨rfl, rfl⟩
     refine ⟨Γ, inferInstance, inferInstance, Function.Embedding.refl Γ,
       unusedTapeTM Z rfl, 1, rfl, ?_, ?_⟩

@@ -755,7 +755,7 @@ private lemma succFieldTM_trace {m n : ℕ} {x : List Bool} (src dst : Fin m)
       subst t
       have hs : d.workTapeSymbols src = some false := by
         simpa [Cfg.workTapeSymbols, optStateBits] using hw 0 (by simp [optStateBits])
-      change (succFieldTM src dst copy).step d = _
+      rw [Nat.zero_add, MultiTapeTM.runFrom_one]
       rw [step_of_tapeAction_move (succFieldTM src dst copy) d
         (q' := SuccPhase.done false) src 0 .pos hq (by simp [succFieldTM, hs])]
       apply Cfg.ext <;> simp [succFieldCfg, afterTag, optStateBits]
@@ -1497,7 +1497,9 @@ private lemma seekTM_rank {k n : ℕ} {x : List Bool}
   · subst records
     have hz : rank.val = 0 := hlen.symm
     simp only [hz, ↓reduceDIte] at step
-    have he : (seekTM k).runFrom (seekCfg d (.state rank)) 1 = seekCfg d .done := step
+    have he : (seekTM k).runFrom (seekCfg d (.state rank)) 1 = seekCfg d .done := by
+      rw [MultiTapeTM.runFrom_one]
+      exact step
     simp only [seekCost, List.flatMap_nil, List.length_nil, Nat.mul_zero,
       Nat.cast_zero, add_zero, Function.update_eq_self]
     refine ⟨he, ?_, ?_⟩
@@ -1740,20 +1742,18 @@ private lemma seekTM_observe {k : ℕ} {x : List Bool}
       · simp [hj, ht]
   have run : (seekTM k).runFrom (seekCfg d .observe) 2 =
       seekCfg (seekShift d 0 2) (.state rank) := by
-    change (seekTM k).step ((seekTM k).step _) = _
-    rw [first, second]
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, first, second]
   refine ⟨run, ?_, ?_⟩
   · intro u hu
     rcases (show u = 0 ∨ u = 1 by omega) with rfl | rfl
     · simp [seekCfg, Cfg.mapState, hq]
-    · change ((seekTM k).step _).state ≠ _
-      rw [first]
+    · rw [MultiTapeTM.runFrom_one, first]
       simp [seekCfg, Cfg.mapState, next, hq]
   · intro u hu
     rcases (show u = 0 ∨ u = 1 ∨ u = 2 by omega) with rfl | rfl | rfl
     · exact ⟨rfl, rfl, rfl, fun _ _ => rfl⟩
     · rw [show (seekTM k).runFrom (seekCfg d .observe) 1 = seekCfg next (.advance rank)
-      from first]
+      from (MultiTapeTM.runFrom_one _ _).trans first]
       exact ⟨rfl, rfl, rfl, fun j hj => by simp [seekCfg, Cfg.mapState, next, hj]⟩
     · rw [run]
       refine ⟨rfl, rfl, rfl, ?_⟩

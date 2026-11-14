@@ -157,10 +157,11 @@ private lemma setupCfg_reset (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
   have hs1 : (obliviousSchedule W a).tm.runFrom
       (setupCfg W a base (some .resetStart) p b u g bt ut gt) 1 =
       setupCfg W a base (some .resetScan) ⟨p.val - 1, by have := p.isLt; omega⟩ b u g bt ut gt := by
-    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using hs
+    simpa only [MultiTapeTM.runFrom_one] using hs
   rw [show p.val - 1 + 2 = 1 + (p.val - 1) + 1 by omega,
     MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hs1,
-    setupCfg_reset_scan W a base b u g bt ut gt _ (by have := p.isLt; omega)]
+    setupCfg_reset_scan W a base b u g bt ut gt _ (by have := p.isLt; omega),
+    MultiTapeTM.runFrom_one]
   change ((obliviousSchedule W a).tm.tr .resetScan _ _).apply _ = _
   simp only [obliviousSchedule, setupCfg_input, Fin.val_zero, if_true]
   rw [setupCfg_apply]
@@ -207,8 +208,7 @@ private lemma setupCfg_copy_left (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
     funext z
     simp only [Function.update_apply, copyGuide, Int.natCast_zero]
     split_ifs <;> first | rfl | omega
-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_succ_eq_step,
-    MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_one]
   change (obliviousSchedule W a).tm.step
       (((obliviousSchedule W a).tm.tr .copyLeft _ _).apply _) = _
   simp only [obliviousSchedule]
@@ -289,7 +289,7 @@ private lemma setupCfg_copy_return (W : FinTM Bool) (a : ℕ) {x : List OblSymbo
       setupCfg W a base (some .budgetStart) p b u 0 bt ut (copyGuide (n + 1)) := by
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     change ((obliviousSchedule W a).tm.tr .copyReturn _ _).apply _ = _
     have hr : (setupCfg W a base (some .copyReturn) p b u 0 bt ut (copyGuide (n + 1))).workTapeSymbols
         (Fin.natAdd W.k (2 : Fin 3)) = copyGuide (n + 1) 0 := by
@@ -359,7 +359,7 @@ private lemma setupCfg_budget_back (W : FinTM Bool) (a : ℕ) {x : List OblSymbo
     split <;> rw [setupCfg_apply] <;> simp_all [setupWrite, sub_eq_add_neg]
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
+    rw [MultiTapeTM.runFrom_one, step, if_pos rfl]
   | succ j ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step, step, if_neg (by omega)]
     simpa only [Nat.cast_add, Nat.cast_one, add_sub_cancel_right] using ih
@@ -641,7 +641,7 @@ private lemma setupCfg_unary_rewind (W : FinTM Bool) (a : ℕ) {x : List OblSymb
       split <;> rw [setupCfg_apply] <;> simp_all [setupWrite, sub_eq_add_neg]
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
+    rw [MultiTapeTM.runFrom_one, step, if_pos rfl]
   | succ j ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step, step, if_neg (by omega)]
     simpa only [Nat.cast_add, Nat.cast_one, add_sub_cancel_right] using ih
@@ -966,7 +966,7 @@ private lemma setupCfg_start_center (W : FinTM Bool) (a : ℕ) {x : List OblSymb
     split <;> rw [setupCfg_apply] <;> simp_all [setupWrite]
   induction j with
   | zero =>
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
+    rw [MultiTapeTM.runFrom_one, step, if_pos rfl]
   | succ j ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step, step, if_neg (by omega)]
     rw [show -((j + 1 : ℕ) : ℤ) + 1 = -(j : ℤ) by omega]

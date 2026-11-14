@@ -449,12 +449,13 @@ theorem zero {a : Cfg k Γ S x} (h : P a.workTapePos) : Segment M F P a a 0 :=
 /-- A single step from a start outside the forbidden set. -/
 theorem one {a : Cfg k Γ S x} (ha : a.state ∉ F) (h₀ : P a.workTapePos)
     (h₁ : P (M.step a).workTapePos) : Segment M F P a (M.step a) 1 := by
-  refine ⟨rfl, fun u hu => ?_, fun u hu => ?_⟩
+  refine ⟨MultiTapeTM.runFrom_one _ _, fun u hu => ?_, fun u hu => ?_⟩
   · obtain rfl : u = 0 := by omega
     exact ha
   · rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hu with rfl | rfl
     · exact h₀
-    · exact h₁
+    · rw [MultiTapeTM.runFrom_one]
+      exact h₁
 
 /-- **Same-machine concatenation** (the `recordRun_trans` pattern): segments sharing the forbidden
 set and the relation concatenate, with lengths adding and **no dispatch step**.

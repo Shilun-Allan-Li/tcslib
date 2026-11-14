@@ -829,7 +829,10 @@ private lemma clockStageCfg_run (W : FinTM Bool) (a : ℕ) (x : List Bool) (τ :
       clockStageCfg W a ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) t) := by
   intro t
   induction t with
-  | zero => intro _; exact clockStageCfg_init W a x
+  | zero =>
+    intro _
+    rw [Nat.zero_add, MultiTapeTM.runFrom_one, MultiTapeTM.runFrom_zero]
+    exact clockStageCfg_init W a x
   | succ t ih =>
     intro ht
     obtain ⟨q, hs⟩ := Option.ne_none_iff_exists'.mp (hlive t (by omega))
@@ -1059,6 +1062,7 @@ private lemma macroCfg_cycle (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}
       macroCfg W a base (some .macroCheck) (u + 1) 0 := by
   have hcheck : (obliviousSchedule W a).tm.runFrom
       (macroCfg W a base (some .macroCheck) u 0) 1 = macroCfg W a base (some .seekLeft) u 0 := by
+    rw [MultiTapeTM.runFrom_one]
     simpa only [hu, ↓reduceIte] using macroCfg_check W a base u 0
   have hseek : (obliviousSchedule W a).tm.runFrom
       (macroCfg W a base (some .seekLeft) u 0) (R + 2) =

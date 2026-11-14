@@ -452,7 +452,7 @@ lemma cScanCfg_run {x : List Bool} (s : List Bool) (p : Fin (x.length + 2))
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       clockTM_step_some K W _ .cScan rfl]
     simp only [clockTr, cScanCfg, ctrCfg_ctr, Nat.cast_zero, zero_sub, bufferTape_left,
       if_true]

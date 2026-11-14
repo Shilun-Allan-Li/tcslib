@@ -50,9 +50,7 @@ private def iw_body : MultiTapeTM 1 Bool Bool where
 private theorem iw_one {k : ℕ} {S : Type} {z : List Bool} (M : MultiTapeTM k Bool S)
     (c : Cfg k Bool S z) (q : S) (hc : c.state = some q) :
     M.runFrom c 1 = (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by
-  calc
-    _ = M.step (M.runFrom c 0) := MultiTapeTM.runFrom_succ_eq_step'
-    _ = _ := by rw [MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hc]
+  rw [MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hc]
 
 /-- One successful copy step writes the scanned bit, advances both heads and emits nothing. -/
 private theorem iw_body_copy {z : List Bool} (c : Cfg 1 Bool Bool z) (b : Bool)

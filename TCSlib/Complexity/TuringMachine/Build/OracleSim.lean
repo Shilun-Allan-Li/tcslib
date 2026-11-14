@@ -976,7 +976,7 @@ private theorem oraclePrepare {x : List Bool} (f : ℤ → Option Bool) (p : ℤ
     rcases cases_u with rfl | rfl
     · exact Or.inl rfl
     · right; right
-      change (oracleDispatchTM.step (oracleLocalCfg f 0 (.bookmark side) ip out)).state = _
+      rw [MultiTapeTM.runFrom_one]
       simp [MultiTapeTM.step, oracleDispatchTM,
         oracleDispatchAction, oracleLocalCfg, Cfg.workTapeSymbols, oracleOrigin,
         Fin.cons, Fin.cases, Fin.induction, Fin.induction.go]
@@ -988,10 +988,8 @@ private theorem oraclePrepare {x : List Bool} (f : ℤ → Option Bool) (p : ℤ
     refine ⟨p.natAbs + 3, le_rfl, ?_, ?_⟩
     · rw [show p.natAbs + 3 = 1 + (p.natAbs + 2) from by omega,
         MultiTapeTM.runFrom_add]
-      change oracleDispatchTM.runFrom
-        (oracleDispatchTM.step (oracleLocalCfg f p (.bookmark side) ip out)) (p.natAbs + 2) = _
-      rw [oracleMark_step f p side hp, MultiTapeTM.runFrom_add, reach,
-        oraclePrepare_tail f p side hp]
+      rw [MultiTapeTM.runFrom_one, oracleMark_step f p side hp, MultiTapeTM.runFrom_add,
+        reach, oraclePrepare_tail f p side hp]
     · intro u hu
       by_cases hu0 : u = 0
       · subst u
@@ -999,16 +997,13 @@ private theorem oraclePrepare {x : List Bool} (f : ℤ → Option Bool) (p : ℤ
       · by_cases hwalk : u ≤ p.natAbs + 1
         · right; left
           rw [show u = 1 + (u - 1) from by omega, MultiTapeTM.runFrom_add]
-          change (oracleDispatchTM.runFrom
-            (oracleDispatchTM.step (oracleLocalCfg f p (.bookmark side) ip out)) (u - 1)).state = _
-          rw [oracleMark_step f p side hp, oracleOrigin_run f p side hb ip out
-            (u - 1) (by omega)]
+          rw [MultiTapeTM.runFrom_one, oracleMark_step f p side hp,
+            oracleOrigin_run f p side hb ip out (u - 1) (by omega)]
           rfl
         · right; right
           rw [show u = 1 + (p.natAbs + 1) from by omega, MultiTapeTM.runFrom_add]
-          change (oracleDispatchTM.runFrom
-            (oracleDispatchTM.step (oracleLocalCfg f p (.bookmark side) ip out)) (p.natAbs + 1)).state = _
-          rw [oracleMark_step f p side hp, MultiTapeTM.runFrom_succ_eq_step', reach]
+          rw [MultiTapeTM.runFrom_one, oracleMark_step f p side hp,
+            MultiTapeTM.runFrom_succ_eq_step', reach]
           simp [MultiTapeTM.step, oracleDispatchTM, oracleDispatchAction, oracleWalkCfg,
             oracleMarkedCfg, Cfg.workTapeSymbols, oracleOrigin, Ne.symm hp,
             Fin.cons, Fin.cases, Fin.induction, Fin.induction.go]
@@ -1130,8 +1125,9 @@ private theorem oracleRestore_cut {x : List Bool} (f : ℤ → Option Bool) (p :
     · have he : q = .read := (Option.some.inj hq).symm
       subst q
       trivial
-    · have he : q = .restore verdict (if p = 0 then none else some side) := by
-        simpa [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step, oracleDispatchTM,
+    · rw [MultiTapeTM.runFrom_one] at hq
+      have he : q = .restore verdict (if p = 0 then none else some side) := by
+        simpa [MultiTapeTM.step, oracleDispatchTM,
           oracleDispatchAction, oracleReadyCfg, Cfg.workTapeSymbols,
           Fin.cons, Fin.cases, Fin.induction, Fin.induction.go] using (Option.some.inj hq).symm
       subst q
@@ -1874,7 +1870,7 @@ private theorem oracleHost_initial (M : FinOracleTM Bool) (C : FinTM Bool)
     · intro i
       rfl
   have boot : oracleDispatchTM.runFrom localInit 1 = localDone := by
-    change oracleDispatchTM.step localInit = _
+    rw [MultiTapeTM.runFrom_one]
     simp [localInit, localDone, MultiTapeTM.step, oracleDispatchTM, oracleDispatchAction,
       Cfg.ofWords, Cfg.mapState, oracleOrigin, Cfg.ext_iff, funext_iff, Fin.forall_fin_succ,
       Function.update_apply]

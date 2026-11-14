@@ -416,7 +416,7 @@ private lemma pairDiag_rewind (x out : List Bool) : ∀ j, (hj : j ≤ x.length)
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       pairDiag_step _ _ _ _ none (by simp [pairDiagCfg, Cfg.inputSymbol])]
     simp only [pairDiagTM, Option.toList_none, List.append_nil]
     rw [moveInputPos_pos_of_ne_right _ (by simp)]
@@ -467,7 +467,7 @@ private lemma pairDiag_separator (x out : List Bool) :
       pairDiagCfg x (some 4) ⟨x.length, by omega⟩ (out ++ [false, true]) := by
   rw [show 3 = (0 + 1) + 1 + 1 from rfl,
     MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    MultiTapeTM.runFrom_one]
   rw [pairDiag_step _ _ _ _ _ (pairDiag_right x (some 0) out)]
   simp only [pairDiagTM, SignType.zero_eq_zero, moveInputPos_zero, Option.toList_some]
   rw [pairDiag_step _ _ _ _ _ (pairDiag_right x (some 2) _)]

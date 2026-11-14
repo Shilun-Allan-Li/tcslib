@@ -303,13 +303,13 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
       · subst h
         refine ⟨by simpa [seam] using hregBoxSeam, fun i => by simp [seam]⟩
       · obtain rfl : t = 1 := by omega
-        rw [show (compileTM P l₀ D q0).runFrom (seam c0) 1 = ((compileTM P l₀ D q0).step (seam c0)) from rfl]
+        rw [show (compileTM P l₀ D q0).runFrom (seam c0) 1 = ((compileTM P l₀ D q0).step (seam c0)) from MultiTapeTM.runFrom_one _ _]
         obtain ⟨_, _, _, _, _, _, _, R0⟩ := hsim0
         refine ⟨?_, fun i => ?_⟩
         · intro r; simp only [R0.regPos]; exact regPos_box hnd _ _ R0.valid R0.hs r
         · rw [R0.dPos]; simp [dc0, Cfg.init]
     rw [show (compileTM P l₀ D q0).runFrom (seam c0) 1 = (compileTM P l₀ D q0).step (seam c0)
-      from rfl]
+      from MultiTapeTM.runFrom_one _ _]
     apply runFrom_forall_append (Q := Q)
     · intro t ht
       have hTR : ∃ s par dir tp, TrackRel c0 cs W ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) t)
@@ -331,10 +331,10 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
         exact ⟨fun r => by simpa [mkCfg] using hbox0 r, fun i => by simp [mkCfg]⟩
       · obtain rfl : t = 1 := by omega
         rw [show (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0) 1 =
-          (compileTM P l₀ D q0).step gH from rfl, hret1]
+          (compileTM P l₀ D q0).step gH from MultiTapeTM.runFrom_one _ _, hret1]
         exact ⟨fun r => by simpa [mkCfg] using hbox0 r, fun i => by simp [mkCfg]⟩
     rw [show (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0) 1 =
-      (compileTM P l₀ D q0).step gH from rfl, hret1]
+      (compileTM P l₀ D q0).step gH from MultiTapeTM.runFrom_one _ _, hret1]
     apply runFrom_forall_append (Q := Q)
     · intro t ht
       dsimp only [Q]
@@ -349,9 +349,9 @@ theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0
     simp only [Function.comp_apply] at this
     rw [this]; simp
   · rw [MultiTapeTM.runFrom_add]
-    change (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) _ = _
+    rw [MultiTapeTM.runFrom_one]
     rw [MultiTapeTM.runFrom_add, ← hgH, MultiTapeTM.runFrom_add]
-    rw [show (compileTM P l₀ D q0).runFrom gH 1 = (compileTM P l₀ D q0).step gH from rfl, hret1,
+    rw [show (compileTM P l₀ D q0).runFrom gH 1 = (compileTM P l₀ D q0).step gH from MultiTapeTM.runFrom_one _ _, hret1,
       MultiTapeTM.runFrom_add, hr2, hr3, hfinal]
 
 

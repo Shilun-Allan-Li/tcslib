@@ -1066,8 +1066,7 @@ private lemma counter_body {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq 
     ⟨counterLoopRedirect a exit, counter_redirect_injective a exit⟩
   have first : (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.body a)) c ct cp) 1 =
       (E.runFrom ec 1).mapState emb := by
-    change (counterLoopTMVia e M a exit).step (counterLoopCfg (some (.body a)) c ct cp) =
-      (E.step ec).mapState emb
+    rw [MultiTapeTM.runFrom_one, MultiTapeTM.runFrom_one]
     have hec : ec.state = some a := hc
     simp only [MultiTapeTM.step, hec, counterLoopCfg, Cfg.mapState]
     rfl

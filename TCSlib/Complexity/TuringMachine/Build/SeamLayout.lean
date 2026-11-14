@@ -183,8 +183,7 @@ private lemma sl_pairSkip_two_steps {k : ℕ} {x : List Bool} (src : Fin k)
       { d with
         state := some (.after b₀)
         workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } := by
-    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, hs1]
+    rw [MultiTapeTM.runFrom_one, hs1]
   refine ⟨hrun1, ?_⟩
   have hr1 : ({ d with
       state := some (sl_PairPhase.after b₀)
@@ -457,8 +456,7 @@ private theorem sl_unarySplit_copy {k : ℕ} {x : List Bool} (src sm : Fin k) (h
     have hs := sl_split_step_exit src sm hne hstate
       (by rw [Cfg.workTapeSymbols_eq]; exact h0)
     have hrun1 : (sl_unarySplitTM k src sm).runFrom d 1 = (sl_unarySplitTM k src sm).step d := by
-      rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-        MultiTapeTM.runFrom_zero]
+      rw [MultiTapeTM.runFrom_one]
     refine ⟨?_, ?_, ?_⟩
     · rw [show ((0 : ℕ) : ℤ) = 0 from by norm_num, hrun1, hs]
       apply Cfg.ext <;> dsimp only <;> try rfl
@@ -617,8 +615,7 @@ private theorem sl_unarySplitTM_run {k : ℕ} {x : List Bool} (src sm : Fin k) (
       { d with
         state := some .mv2
         workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 1) } := by
-    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, hs1]
+    rw [MultiTapeTM.runFrom_one, hs1]
   have hrun2 : (sl_unarySplitTM k src sm).runFrom d 2 =
       { d with
         state := some .copy

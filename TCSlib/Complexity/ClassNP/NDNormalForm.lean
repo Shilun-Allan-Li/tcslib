@@ -1763,7 +1763,7 @@ private theorem nf_leaf_block (N : FinNDTM Bool) (t : Fin N.k) {x : List Bool}
         (Function.update (e.workTapes 1) (e.workTapePos 1) (some n.isSome))
       workTapePos := Function.update e.workTapePos 1 (e.workTapePos 1 + 1) } with he₁
   have h1 : (nf_leaf N (some t)).runFrom e 1 = e₁ := by
-    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+    rw [MultiTapeTM.runFrom_one,
       step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1 0
         (some n.isSome) 1 hst rfl, SignType.coe_one, Cfg.workTapeSymbols_eq]
   have hsym1 : e₁.workTapeSymbols 1 = e.workTapes 1 (b + 1) := by

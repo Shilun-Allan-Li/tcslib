@@ -389,7 +389,7 @@ private lemma arMoveCfg_run {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
       (r + 1) = arCfg E e (a.apply c) := by
   intro r
   induction r with
-  | zero => intro hr; exact arMoveCfg_finish E e M c a
+  | zero => intro hr; exact (MultiTapeTM.runFrom_one _ _).trans (arMoveCfg_finish E e M c a)
   | succ r ih =>
     intro hr
     rw [MultiTapeTM.runFrom_succ_eq_step, arMoveCfg_step E e M c a ⟨r + 1, by omega⟩ (by simp)]
@@ -445,7 +445,7 @@ private lemma arWriteCfg_run {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
       (j + 1) = arMoveCfg E e c a ⟨N + 1, by omega⟩ := by
   intro j
   induction j with
-  | zero => intro hj; exact arWriteCfg_finish E e M c a
+  | zero => intro hj; exact (MultiTapeTM.runFrom_one _ _).trans (arWriteCfg_finish E e M c a)
   | succ j ih =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step, arWriteCfg_step E e M c a ⟨j + 1, by omega⟩ (by simp)]
@@ -492,9 +492,7 @@ private lemma arCfg_cycle {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
   | some q =>
     rw [show 3 * (N + 1) + 2 = (N + 1) + (1 + ((N + 1) + ((N + 1) + 1))) by omega,
       MultiTapeTM.runFrom_add, arReadCfg_run E e M c q hs (N + 1) (le_refl _)]
-    rw [MultiTapeTM.runFrom_add]
-    change (arTM E e M).tm.runFrom
-      ((arTM E e M).tm.step (arReadCfg E e c q ⟨N + 1, by omega⟩)) _ = _
+    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_one]
     rw [arReadCfg_dispatch, MultiTapeTM.runFrom_add,
       arWriteCfg_run E e M c _ N (le_refl _), arMoveCfg_run E e M c _ (N + 1) (le_refl _)]
     simp only [MultiTapeTM.step, hs]

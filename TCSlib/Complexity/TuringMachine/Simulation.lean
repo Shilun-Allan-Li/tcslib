@@ -546,7 +546,7 @@ lemma rewind_scan {k : ℕ} {S : Type} {x : List Bool}
       intro cfg hs hj _
       have hz : cfg.inputPos = 0 := Fin.ext hj
       have hsym := Cfg.inputSymbol_of_zero hz
-      rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+      rw [MultiTapeTM.runFrom_one,
         MultiTapeTM.step_of_some hs, htr, hsym]
       rw [controlAction_apply]
       have hm : moveInputPos cfg.inputPos .pos = 1 := by
@@ -637,7 +637,7 @@ theorem rewind_scan_heads {k : ℕ} {S : Type} {x : List Bool}
     · rw [MultiTapeTM.runFrom_zero]
     · have hz : cfg.inputPos = 0 := Fin.ext hj
       have hi := Cfg.inputSymbol_of_zero hz
-      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+      rw [MultiTapeTM.runFrom_one,
         MultiTapeTM.step_of_some hs, htr, hi, controlAction_apply]
   | succ j ih =>
     intro cfg hs hj hp u hu
@@ -1114,7 +1114,7 @@ lemma bufferedScanCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool} (y : List Boo
   induction j with
   | zero =>
     intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.runFrom_one]
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols_eq,
       tapeBlocks_buffer, Nat.cast_zero, zero_sub, bufferTape_left]
