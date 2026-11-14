@@ -1,0 +1,60 @@
+From fa33b9b8fa3a9b801a7db8857d7a2739c61c1e16 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sat, 14 Nov 2026 01:24:23 -0800
+Subject: [PATCH 4/4] Make dependent length transports explicit under Rule 10
+ seals
+
+---
+ TCSlib/Cryptography/Hashing/FromDiscreteLog.lean       | 10 ++++++----
+ .../Hashing/FromDiscreteLog/Reduction.lean             |  7 +++++--
+ 2 files changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean b/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean
+index 7f14ba4c3..e1f03a928 100644
+--- a/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean
++++ b/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean
+@@ -504,8 +504,9 @@ theorem dlHash_compresses (H : ArithmeticFP) (G : ExpGroupGen V)
+   have hm : dlM (G.gen.runAt n [] r) < 2 ^ n :=
+     ((expValid_iff _).1 hi).2.2.1.trans hp
+   simp only [dlHash_inDom, dlHash_inRange, CRH.hash_eq, dlHash_eval,
+-    dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
+-    PolyExpr.eval_const, pairFstD_pairEncode, decide_eq_true_eq]
++    pairFstD_pairEncode, decide_eq_true_eq]
++  simp only [dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
++    PolyExpr.eval_const]
+   constructor
+   · intro x hx
+     have hr := dlHashEval_range n _ z x hi hw hx
+@@ -567,8 +568,9 @@ theorem dlHash_collision_accept_eq (H : ArithmeticFP) (G : ExpGroupGen V) (A : N
+   rw [dlHash_gen_runAt, dlHashGenFun_layout G n r (List.ofFn s) hn]
+   have hw := G.wellFormed n r hn
+   simp only [dlHashCollision_iff, dlHash_inDom, CRH.hash_eq, dlHash_eval,
+-    dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
+-    PolyExpr.eval_const, pairFstD_pairEncode, decide_eq_true_eq, hw.dlW_eq]
++    pairFstD_pairEncode, decide_eq_true_eq, hw.dlW_eq]
++  simp only [dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
++    PolyExpr.eval_const]
+ 
+ /-- Whenever the finder produces a collision on a valid key `⟨i, g^z⟩`, the reduction's
+ answer decodes to the challenge exponent [PS10, reduction in Theorem 142.3].
+diff --git a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean
+index d7296fa8b..4b25faebb 100644
+--- a/TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean
++++ b/TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean
+@@ -239,8 +239,11 @@ theorem collisionPost_split (n : ℕ) (i y raw : List Bool) (hw : WellFormedInde
+         (padFin ((n + 1) + (n + 1)) raw)).2 = _
+     rw [ofFn_splitBits_fst, ofFn_splitBits_snd, List.take_append_drop]
+   have hword : List.ofFn (padFin ((n + 1) + (n + 1)) raw) = padStr width u raw := by
+-    simpa only [width, u, List.length_replicate, PolyExpr.eval_add, PolyExpr.eval_var,
+-      PolyExpr.eval_const] using ofFn_padFin_eq_padStr width u raw
++    have hwidth : width.eval u.length = ((n + 1) + (n + 1)) := by
++      simp only [width, u, List.length_replicate, PolyExpr.eval_add, PolyExpr.eval_var,
++        PolyExpr.eval_const]
++    exact (congrArg (fun k : ℕ => List.ofFn (padFin k raw)) hwidth).symm.trans
++      (ofFn_padFin_eq_padStr width u raw)
+   have hidem : padStr width u (padStr width u raw) = padStr width u raw := by
+     calc
+       padStr width u (padStr width u raw) =
+-- 
+2.50.1 (Apple Git-155)
+

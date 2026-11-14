@@ -1,0 +1,83 @@
+{
+  "archive": "evidence/initial-escalation.zip",
+  "archive_sha256": "cbfd18e8dbddde11bee3d25e63552117c587c61990e72d0fb285fe8798c40965",
+  "entry": "dl-crh/evidence/logs/style-lint.log",
+  "base_log": "evidence/logs/style-base.log",
+  "base_sha256": "952fdf49768e45f34e4755b46a41b02e539f61b22804774e5867859276377fde",
+  "base_bytes": 109997,
+  "final_log": "evidence/logs/style-repaired.log",
+  "final_sha256": "89d59ed75ea288f34c53efddc9daae4a4618b71b8b1c1845f011259928df62a9",
+  "final_bytes": 111974,
+  "base_counts": {
+    "FAIL": 216,
+    "WARN": 102
+  },
+  "final_counts": {
+    "FAIL": 222,
+    "WARN": 102
+  },
+  "added": [
+    {
+      "status": "FAIL",
+      "path": "TCSlib/Cryptography/Hashing.lean",
+      "message": "facade does not import child module `TCSlib.Cryptography.Hashing.FromDiscreteLog.Algebra`",
+      "count": 1
+    },
+    {
+      "status": "FAIL",
+      "path": "TCSlib/Cryptography/Hashing.lean",
+      "message": "facade does not import child module `TCSlib.Cryptography.Hashing.FromDiscreteLog.Coins`",
+      "count": 1
+    },
+    {
+      "status": "FAIL",
+      "path": "TCSlib/Cryptography/Hashing.lean",
+      "message": "facade does not import child module `TCSlib.Cryptography.Hashing.FromDiscreteLog.Encoding`",
+      "count": 1
+    },
+    {
+      "status": "FAIL",
+      "path": "TCSlib/Cryptography/Hashing.lean",
+      "message": "facade does not import child module `TCSlib.Cryptography.Hashing.FromDiscreteLog.Probability`",
+      "count": 1
+    },
+    {
+      "status": "FAIL",
+      "path": "TCSlib/Cryptography/Hashing.lean",
+      "message": "facade does not import child module `TCSlib.Cryptography.Hashing.FromDiscreteLog.Reduction`",
+      "count": 1
+    },
+    {
+      "status": "FAIL",
+      "path": "TCSlib/Cryptography/Hashing.lean",
+      "message": "facade does not import child module `TCSlib.Cryptography.Hashing.FromDiscreteLog.Sampling`",
+      "count": 1
+    },
+    {
+      "status": "WARN",
+      "path": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+      "message": "1209 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)",
+      "count": 1
+    },
+    {
+      "status": "WARN",
+      "path": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+      "message": "5 public def(s) without a lemma beside them (check 8): DLAssumption, DLHard, FullLength, dlDefaultIndex, expUnit",
+      "count": 1
+    }
+  ],
+  "removed": [
+    {
+      "status": "WARN",
+      "path": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+      "message": "1192 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)",
+      "count": 1
+    },
+    {
+      "status": "WARN",
+      "path": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+      "message": "6 public def(s) without a lemma beside them (check 8): DLAssumption, DLHard, FullLength, dlDefaultIndex, expSampleRaw, expUnit",
+      "count": 1
+    }
+  ]
+}

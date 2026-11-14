@@ -53,3 +53,19 @@ coin reindexing in EnsemblesLemmas but no exact sum-polynomial machine split.
 overlap: TCSlib/Cryptography/Asymptotic/UniversalPadding.lean ofFn_splitCoins_symm_cast
 The cast/split concatenation fact was rederived using public
 ofFn_arrowCongr_finCongr and ofFn_splitCoins_symm; no private proof was copied.
+
+`Algebra.expUnit_pow_val` is also requested for promotion to the candidate
+unit-power interface. `Reduction.modularDifference`, its value/equation readers
+and polynomial-time contract belong in the shared arithmetic string layer.
+
+`Sampling.residueFinEquiv`, its equation/value readers, and
+`Sampling.sampleBelowL_uprob_le` are requested for the shared finite-residue
+encoding and candidate sampler interfaces. `Sampling.expEval_natToList_val`
+is requested for the candidate evaluator interface: it specializes the public
+`expEval_spec` using `expEnc_eq` and the published well-formed-width reader.
+
+overlap: TCSlib/Cryptography/Candidates/DiscreteLog.lean dla_statClose_expDec
+Conservative disclosure of overlapping residue relabel/statistical-switch
+submaterial: the new switch is rederived through the public
+`statClose_sampleBelowL`, using Mathlib's exact `ZMod.finEquiv`. No private
+proof or equivalence implementation was copied or imported.

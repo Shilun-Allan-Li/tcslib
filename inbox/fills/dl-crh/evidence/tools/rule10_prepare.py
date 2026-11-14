@@ -23,6 +23,8 @@ BASE = "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9"
 BASE_OWNERS = ["TCSlib.Cryptography.Candidates.DiscreteLog",
                "TCSlib.Cryptography.Hashing.FromDiscreteLog"]
 ARCH = ROOT / "evidence/tools/archived-dl-folds"
+CHUNK_SIZE = 2048
+HARNESS_REVISION = "batch2048-ordinary-local-attribute-api-v2"
 sys.dont_write_bytecode = True
 
 
@@ -182,6 +184,12 @@ def load_tool(path, name):
     return module
 
 
+def seal_chunks(label, rows):
+    return [dict(label=label+"_part"+str(i//CHUNK_SIZE+1), start=i,
+                 count=len(rows[i:i+CHUNK_SIZE])) for i in range(0,len(rows),CHUNK_SIZE)] or \
+           [dict(label=label+"_part1",start=0,count=0)]
+
+
 def builders():
     old = ARCH / "archived-gate10-tools"
     bs = load_tool(old / "build_seals.py", "dl_crh_archived_bs")
@@ -190,9 +198,21 @@ def builders():
     adapter.configure_builders(bs, ctl)
     original = bs.seal_command
     def chunked(label, rows, *, end):
-        chunks = [rows[i:i+128] for i in range(0, len(rows), 128)] or [[]]
-        return b"".join(original(label + "_part" + str(i+1), part, end=end)
-                        for i, part in enumerate(chunks))
+        probes=[]
+        for chunk in seal_chunks(label,rows):
+            part=rows[chunk["start"]:chunk["start"]+chunk["count"]]
+            raw=original(chunk["label"],part,end=end)
+            old=(b"      let id := Lean.mkIdent n\n"
+                 b"      Lean.Elab.Command.elabCommand (\xe2\x86\x90 `(command| attribute [local irreducible] $id:ident))\n")
+            new=b"      Lean.Elab.Command.liftCoreM <| Lean.Attribute.add n `irreducible Lean.Syntax.missing .local\n"
+            need(raw.count(old)==(0 if end else 1),"ordinary attribute installation anchor changed")
+            # This public API invokes the same registered local-attribute
+            # handler, including safety validation, without command parsing.
+            raw=raw.replace(old,new)
+            need(b"allowUnsafeReducibility" not in raw and b"setReducibilityStatus" not in raw,
+                 "unsafe/direct reducibility setter in generated harness")
+            probes.append(raw)
+        return b"".join(probes)
     bs.seal_command = chunked
     return bs, adapter
 
@@ -274,9 +294,9 @@ def seals(edition, side, log):
                           stored_constants=counts[owner], collector_log=str(log.relative_to(ROOT)),
                           collector_log_sha256=sha(log.read_bytes()), insertions=insertions,
                           source_to_probe_lines=line_map,
-                          chunks=[dict(label=label+"_part"+str(i//128+1), start=i,
-                                       count=len(rows[i:i+128])) for i in range(0,len(rows),128)] or
-                                 [dict(label=label+"_part1",start=0,count=0)],
+                          chunks=seal_chunks(label,rows), chunk_size=CHUNK_SIZE,
+                          harness_revision=HARNESS_REVISION,
+                          attribute_installation="Lean.Attribute.add n `irreducible Lean.Syntax.missing .local",
                           unsealable_reducible=[r for r in cat.values()
                               if r["home"]["display"] in expected_closure and r["kind"] == "def"
                               and r["status"] == "reducible" and not r["matcher"]])

@@ -1,0 +1,689 @@
+{
+  "base": "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+  "head": "fa33b9b8fa3a9b801a7db8857d7a2739c61c1e16",
+  "method": "committed Lean source commands; generated kernel constants excluded",
+  "changed_files": [
+    {
+      "path": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+      "base_sha256": "4b9324db9ec79c686679aae86a63a4f5bdf604c81488a5aa39658e0681b770be",
+      "head_sha256": "ef7cf001f483ce0a5c47025924ee9c10fb78a9b59f73e4e5482091ad05a2aa67",
+      "base_declarations": 111,
+      "head_declarations": 113
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "base_sha256": "7da640421f1dee49589c31700d117273e9a3250191b5765f16611423f9a2cf39",
+      "head_sha256": "9d500a96e0e112a092ec0f2e548c5a648752dba89faa4bee40272ef55fcf78d0",
+      "base_declarations": 17,
+      "head_declarations": 38
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean",
+      "base_sha256": null,
+      "head_sha256": "adffb2ec4b9a064aa2a21948ab8a0b79510efda5b1d9be8b48bbc055e02bd221",
+      "base_declarations": 0,
+      "head_declarations": 5
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins.lean",
+      "base_sha256": null,
+      "head_sha256": "1ab5d3ece9c424a456e380d2e40eba45b6f0a8f76b69d12d03bd36842eecd6cb",
+      "base_declarations": 0,
+      "head_declarations": 3
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "base_sha256": null,
+      "head_sha256": "79669605ededcae778a0d719f0db5bd6a998f221ded322fd283c65e04411aaa4",
+      "base_declarations": 0,
+      "head_declarations": 12
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean",
+      "base_sha256": null,
+      "head_sha256": "bf943d5aea5c9da86ada6d9171576b40949b96f2dc4882699dd66112f00f610b",
+      "base_declarations": 0,
+      "head_declarations": 2
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "base_sha256": null,
+      "head_sha256": "27e4d37dc581ff2db70336b8b19ce3a92531de09c0e42ff260a9ffd4685b04c6",
+      "base_declarations": 0,
+      "head_declarations": 19
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean",
+      "base_sha256": null,
+      "head_sha256": "398337fbdf7e1e2d46f6658262ee47cf887a5d3707e18c6c8807dda9f0a55c15",
+      "base_declarations": 0,
+      "head_declarations": 5
+    }
+  ],
+  "added_count": 69,
+  "removed_count": 0,
+  "added": [
+    {
+      "path": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+      "line": 486,
+      "kind": "theorem",
+      "source_name": "expGenFun_eq",
+      "qualified_source_name": "TCSlib.Cryptography.Candidates.expGenFun_eq",
+      "private": false,
+      "source_header": "theorem expGenFun_eq {V : List Bool \u2192 Prop} (G : ExpGroupGen V) (z : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+      "line": 657,
+      "kind": "theorem",
+      "source_name": "expSampleRaw_eq",
+      "qualified_source_name": "TCSlib.Cryptography.Candidates.expSampleRaw_eq",
+      "private": false,
+      "source_header": "theorem expSampleRaw_eq (z : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 91,
+      "kind": "theorem",
+      "source_name": "dlHashIdx_layout",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHashIdx_layout",
+      "private": false,
+      "source_header": "theorem dlHashIdx_layout (G : ExpGroupGen V) (n : \u2115) (r : G.gen.Coins n)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 121,
+      "kind": "theorem",
+      "source_name": "dlHashGenFun_layout",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHashGenFun_layout",
+      "private": false,
+      "source_header": "theorem dlHashGenFun_layout (G : ExpGroupGen V) (n : \u2115) (r : G.gen.Coins n)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 141,
+      "kind": "theorem",
+      "source_name": "dlHashGenFun_key",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHashGenFun_key",
+      "private": false,
+      "source_header": "theorem dlHashGenFun_key (G : ExpGroupGen V) (hV : \u2200 i, V i \u2192 ExpValid i)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 176,
+      "kind": "theorem",
+      "source_name": "dlHashPow_atParam",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHashPow_atParam",
+      "private": false,
+      "source_header": "theorem dlHashPow_atParam (n : \u2115) (i y : List Bool) (x : Fin (n + 1) \u2192 Bool)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 212,
+      "kind": "theorem",
+      "source_name": "dlHashMul_atParam",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHashMul_atParam",
+      "private": false,
+      "source_header": "theorem dlHashMul_atParam (n : \u2115) (i y : List Bool) (x : Fin (n + 1) \u2192 Bool)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 248,
+      "kind": "theorem",
+      "source_name": "dlHashEval_atParam",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHashEval_atParam",
+      "private": false,
+      "source_header": "theorem dlHashEval_atParam (n : \u2115) (i y : List Bool) (x : Fin (n + 1) \u2192 Bool)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 264,
+      "kind": "theorem",
+      "source_name": "dlHashEval_expF",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHashEval_expF",
+      "private": false,
+      "source_header": "theorem dlHashEval_expF (n : \u2115) (i : List Bool) (z : ZMod (expOrd i))"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 292,
+      "kind": "theorem",
+      "source_name": "dlHashEval_collision",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHashEval_collision",
+      "private": false,
+      "source_header": "theorem dlHashEval_collision (n : \u2115) (i : List Bool) (z : ZMod (expOrd i))"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 324,
+      "kind": "theorem",
+      "source_name": "dlHashEval_range",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHashEval_range",
+      "private": false,
+      "source_header": "theorem dlHashEval_range (n : \u2115) (i : List Bool) (z : ZMod (expOrd i))"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 440,
+      "kind": "theorem",
+      "source_name": "dlHash_gen_coins",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHash_gen_coins",
+      "private": false,
+      "source_header": "theorem dlHash_gen_coins (H : ArithmeticFP) (G : ExpGroupGen V) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 446,
+      "kind": "def",
+      "source_name": "dlHash_coinsEquiv",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHash_coinsEquiv",
+      "private": false,
+      "source_header": "noncomputable def dlHash_coinsEquiv (H : ArithmeticFP) (G : ExpGroupGen V) (n : \u2115) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 455,
+      "kind": "theorem",
+      "source_name": "dlHash_coinsEquiv_eq",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHash_coinsEquiv_eq",
+      "private": false,
+      "source_header": "theorem dlHash_coinsEquiv_eq (H : ArithmeticFP) (G : ExpGroupGen V) (n : \u2115) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 463,
+      "kind": "theorem",
+      "source_name": "dlHash_coinsEquiv_symm_ofFn",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHash_coinsEquiv_symm_ofFn",
+      "private": false,
+      "source_header": "theorem dlHash_coinsEquiv_symm_ofFn (H : ArithmeticFP) (G : ExpGroupGen V) (n : \u2115)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 474,
+      "kind": "theorem",
+      "source_name": "dlHash_gen_runAt",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHash_gen_runAt",
+      "private": false,
+      "source_header": "theorem dlHash_gen_runAt (H : ArithmeticFP) (G : ExpGroupGen V) (n : \u2115)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 489,
+      "kind": "theorem",
+      "source_name": "dlHash_compresses",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHash_compresses",
+      "private": false,
+      "source_header": "theorem dlHash_compresses (H : ArithmeticFP) (G : ExpGroupGen V)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 524,
+      "kind": "def",
+      "source_name": "dlHashCollision",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHashCollision",
+      "private": false,
+      "source_header": "def dlHashCollision (n : \u2115) (i y raw : List Bool) : Prop :="
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 533,
+      "kind": "theorem",
+      "source_name": "dlHashCollision_iff",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHashCollision_iff",
+      "private": false,
+      "source_header": "theorem dlHashCollision_iff (n : \u2115) (i y raw : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 549,
+      "kind": "theorem",
+      "source_name": "dlHash_collision_accept_eq",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHash_collision_accept_eq",
+      "private": false,
+      "source_header": "theorem dlHash_collision_accept_eq (H : ArithmeticFP) (G : ExpGroupGen V) (A : NUPPT)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 581,
+      "kind": "theorem",
+      "source_name": "dlHash_reduction_success",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHash_reduction_success",
+      "private": false,
+      "source_header": "theorem dlHash_reduction_success (H : ArithmeticFP) (A : NUPPT) (n : \u2115)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 631,
+      "kind": "theorem",
+      "source_name": "dlHash_ideal_collision_le",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHash_ideal_collision_le",
+      "private": false,
+      "source_header": "theorem dlHash_ideal_collision_le (H : ArithmeticFP) (A : NUPPT) (n : \u2115)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "line": 658,
+      "kind": "theorem",
+      "source_name": "dlHash_collision_bound",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.dlHash_collision_bound",
+      "private": false,
+      "source_header": "theorem dlHash_collision_bound (H : ArithmeticFP) (G : ExpGroupGen V)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean",
+      "line": 40,
+      "kind": "theorem",
+      "source_name": "expUnit_pow_val",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.expUnit_pow_val",
+      "private": false,
+      "source_header": "theorem expUnit_pow_val {i : List Bool} (hi : ExpValid i) (e : \u2115) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean",
+      "line": 49,
+      "kind": "theorem",
+      "source_name": "residue_difference",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.residue_difference",
+      "private": true,
+      "source_header": "private theorem residue_difference {m a b c : \u2115} (ha : a < m) (hb : b \u2264 m)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean",
+      "line": 59,
+      "kind": "theorem",
+      "source_name": "residue_of_unit_pow_mul",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.residue_of_unit_pow_mul",
+      "private": true,
+      "source_header": "private theorem residue_of_unit_pow_mul {i : List Bool} (hi : ExpValid i)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean",
+      "line": 76,
+      "kind": "theorem",
+      "source_name": "unitCollision_selector_ne",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.unitCollision_selector_ne",
+      "private": false,
+      "source_header": "theorem unitCollision_selector_ne {i : List Bool} (hi : ExpValid i)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Algebra.lean",
+      "line": 110,
+      "kind": "theorem",
+      "source_name": "unitCollision_extract",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.unitCollision_extract",
+      "private": false,
+      "source_header": "theorem unitCollision_extract {i : List Bool} (hi : ExpValid i)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins.lean",
+      "line": 39,
+      "kind": "def",
+      "source_name": "sumCoinsEquiv",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.sumCoinsEquiv",
+      "private": false,
+      "source_header": "def sumCoinsEquiv (A : NUPPT) {c d : PolyExpr} (h : A.coins = .add c d) (n : \u2115) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins.lean",
+      "line": 47,
+      "kind": "theorem",
+      "source_name": "sumCoinsEquiv_eq",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.sumCoinsEquiv_eq",
+      "private": false,
+      "source_header": "theorem sumCoinsEquiv_eq (A : NUPPT) {c d : PolyExpr} (h : A.coins = .add c d) (n : \u2115) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Coins.lean",
+      "line": 55,
+      "kind": "theorem",
+      "source_name": "sumCoinsEquiv_symm_ofFn",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.sumCoinsEquiv_symm_ofFn",
+      "private": false,
+      "source_header": "theorem sumCoinsEquiv_symm_ofFn (A : NUPPT) {c d : PolyExpr}"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 43,
+      "kind": "theorem",
+      "source_name": "ofFn_splitBits_fst",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.ofFn_splitBits_fst",
+      "private": false,
+      "source_header": "theorem ofFn_splitBits_fst {a b : \u2115} (w : Fin (a + b) \u2192 Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 53,
+      "kind": "theorem",
+      "source_name": "ofFn_splitBits_snd",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.ofFn_splitBits_snd",
+      "private": false,
+      "source_header": "theorem ofFn_splitBits_snd {a b : \u2115} (w : Fin (a + b) \u2192 Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 65,
+      "kind": "theorem",
+      "source_name": "inputWord_split",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.inputWord_split",
+      "private": false,
+      "source_header": "theorem inputWord_split {n : \u2115} (x : Fin (n + 1) \u2192 Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 70,
+      "kind": "theorem",
+      "source_name": "inputWord_take",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.inputWord_take",
+      "private": false,
+      "source_header": "theorem inputWord_take {n : \u2115} (x : Fin (n + 1) \u2192 Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 75,
+      "kind": "theorem",
+      "source_name": "inputWord_drop",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.inputWord_drop",
+      "private": false,
+      "source_header": "theorem inputWord_drop {n : \u2115} (x : Fin (n + 1) \u2192 Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 80,
+      "kind": "theorem",
+      "source_name": "inputWord_ext",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.inputWord_ext",
+      "private": false,
+      "source_header": "theorem inputWord_ext {n : \u2115} {x y : Fin (n + 1) \u2192 Bool}"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 89,
+      "kind": "theorem",
+      "source_name": "inputWord_num_ext",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.inputWord_num_ext",
+      "private": false,
+      "source_header": "theorem inputWord_num_ext {n : \u2115} {x y : Fin (n + 1) \u2192 Bool}"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 111,
+      "kind": "def",
+      "source_name": "boundedInputEquiv",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.boundedInputEquiv",
+      "private": false,
+      "source_header": "noncomputable def boundedInputEquiv (n m : \u2115) (hm : m \u2264 2 ^ n) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 140,
+      "kind": "theorem",
+      "source_name": "boundedInputEquiv_apply",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.boundedInputEquiv_apply",
+      "private": false,
+      "source_header": "theorem boundedInputEquiv_apply (n m : \u2115) (hm : m \u2264 2 ^ n)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 146,
+      "kind": "theorem",
+      "source_name": "boundedInputEquiv_symm_apply",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.boundedInputEquiv_symm_apply",
+      "private": false,
+      "source_header": "theorem boundedInputEquiv_symm_apply (n m : \u2115) (hm : m \u2264 2 ^ n) (z : Fin m \u00d7 Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 152,
+      "kind": "theorem",
+      "source_name": "card_boundedInput",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.card_boundedInput",
+      "private": false,
+      "source_header": "theorem card_boundedInput (n m : \u2115) (hm : m \u2264 2 ^ n) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean",
+      "line": 164,
+      "kind": "theorem",
+      "source_name": "card_boundedRange",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.card_boundedRange",
+      "private": false,
+      "source_header": "theorem card_boundedRange (n p : \u2115) (hp : 0 < p) (hpw : p \u2264 2 ^ n) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean",
+      "line": 39,
+      "kind": "theorem",
+      "source_name": "expect_sample_eq_uexp",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.expect_sample_eq_uexp",
+      "private": false,
+      "source_header": "theorem expect_sample_eq_uexp {\u03b1 : Type} [Fintype \u03b1] [Nonempty \u03b1] (f : \u03b1 \u2192 \u211d) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean",
+      "line": 50,
+      "kind": "theorem",
+      "source_name": "collision_accept_eq",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collision_accept_eq",
+      "private": false,
+      "source_header": "theorem collision_accept_eq (C : CRH) (A : NUPPT) (n : \u2115) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 49,
+      "kind": "def",
+      "source_name": "modularDifference",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.modularDifference",
+      "private": false,
+      "source_header": "def modularDifference (a b m : List Bool) : List Bool :="
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 55,
+      "kind": "theorem",
+      "source_name": "modularDifference_eq",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.modularDifference_eq",
+      "private": false,
+      "source_header": "theorem modularDifference_eq (a b m : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 62,
+      "kind": "theorem",
+      "source_name": "modularDifference_value",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.modularDifference_value",
+      "private": false,
+      "source_header": "theorem modularDifference_value (a b m : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 71,
+      "kind": "theorem",
+      "source_name": "polyTimeComputable_modularDifference",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.polyTimeComputable_modularDifference",
+      "private": false,
+      "source_header": "theorem polyTimeComputable_modularDifference (H : ArithmeticFP)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 85,
+      "kind": "def",
+      "source_name": "collisionPost",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionPost",
+      "private": false,
+      "source_header": "def collisionPost (w : List Bool) : List Bool :="
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 98,
+      "kind": "theorem",
+      "source_name": "collisionPost_eq",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionPost_eq",
+      "private": false,
+      "source_header": "theorem collisionPost_eq (w : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 116,
+      "kind": "theorem",
+      "source_name": "polyTimeComputable_collisionPost",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.polyTimeComputable_collisionPost",
+      "private": false,
+      "source_header": "theorem polyTimeComputable_collisionPost (H : ArithmeticFP) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 173,
+      "kind": "theorem",
+      "source_name": "collisionPost_ofFn_append",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionPost_ofFn_append",
+      "private": false,
+      "source_header": "theorem collisionPost_ofFn_append (n : \u2115) (i y : List Bool)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 222,
+      "kind": "theorem",
+      "source_name": "collisionPost_split",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionPost_split",
+      "private": false,
+      "source_header": "theorem collisionPost_split (n : \u2115) (i y raw : List Bool) (hw : WellFormedIndex n i) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 268,
+      "kind": "def",
+      "source_name": "reductionRaw",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.reductionRaw",
+      "private": false,
+      "source_header": "def reductionRaw (A : NUPPT) (z : List Bool) : List Bool :="
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 273,
+      "kind": "theorem",
+      "source_name": "reductionRaw_eq",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.reductionRaw_eq",
+      "private": false,
+      "source_header": "theorem reductionRaw_eq (A : NUPPT) (z : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 280,
+      "kind": "theorem",
+      "source_name": "polyTimeComputable_reductionRaw",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.polyTimeComputable_reductionRaw",
+      "private": false,
+      "source_header": "theorem polyTimeComputable_reductionRaw (H : ArithmeticFP) (A : NUPPT) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 290,
+      "kind": "def",
+      "source_name": "collisionReduction",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionReduction",
+      "private": false,
+      "source_header": "noncomputable def collisionReduction (H : ArithmeticFP) (A : NUPPT) : NUPPT :="
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 296,
+      "kind": "theorem",
+      "source_name": "collisionReduction_eq",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionReduction_eq",
+      "private": false,
+      "source_header": "theorem collisionReduction_eq (H : ArithmeticFP) (A : NUPPT) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 301,
+      "kind": "theorem",
+      "source_name": "collisionReduction_coins",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionReduction_coins",
+      "private": false,
+      "source_header": "theorem collisionReduction_coins (H : ArithmeticFP) (A : NUPPT) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 306,
+      "kind": "theorem",
+      "source_name": "collisionReduction_adv",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionReduction_adv",
+      "private": false,
+      "source_header": "theorem collisionReduction_adv (H : ArithmeticFP) (A : NUPPT) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 311,
+      "kind": "theorem",
+      "source_name": "collisionReduction_advice",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionReduction_advice",
+      "private": false,
+      "source_header": "theorem collisionReduction_advice (H : ArithmeticFP) (A : NUPPT) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 317,
+      "kind": "theorem",
+      "source_name": "collisionReduction_runAtL",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionReduction_runAtL",
+      "private": false,
+      "source_header": "theorem collisionReduction_runAtL (H : ArithmeticFP) (A : NUPPT)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean",
+      "line": 328,
+      "kind": "theorem",
+      "source_name": "collisionReduction_runAt",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.collisionReduction_runAt",
+      "private": false,
+      "source_header": "theorem collisionReduction_runAt (H : ArithmeticFP) (A : NUPPT)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean",
+      "line": 47,
+      "kind": "def",
+      "source_name": "residueFinEquiv",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.residueFinEquiv",
+      "private": false,
+      "source_header": "def residueFinEquiv {m k : \u2115} [NeZero m] (h : m = k) : ZMod m \u2243 Fin k :="
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean",
+      "line": 52,
+      "kind": "theorem",
+      "source_name": "residueFinEquiv_eq",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.residueFinEquiv_eq",
+      "private": false,
+      "source_header": "theorem residueFinEquiv_eq {m k : \u2115} [NeZero m] (h : m = k) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean",
+      "line": 57,
+      "kind": "theorem",
+      "source_name": "residueFinEquiv_val",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.residueFinEquiv_val",
+      "private": false,
+      "source_header": "theorem residueFinEquiv_val {m k : \u2115} [NeZero m] (h : m = k) (z : ZMod m) :"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean",
+      "line": 66,
+      "kind": "theorem",
+      "source_name": "expEval_natToList_val",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.expEval_natToList_val",
+      "private": false,
+      "source_header": "theorem expEval_natToList_val {n : \u2115} {i : List Bool} (hw : WellFormedIndex n i)"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/FromDiscreteLog/Sampling.lean",
+      "line": 81,
+      "kind": "theorem",
+      "source_name": "sampleBelowL_uprob_le",
+      "qualified_source_name": "TCSlib.Cryptography.Authentication.FromDiscreteLog.sampleBelowL_uprob_le",
+      "private": false,
+      "source_header": "theorem sampleBelowL_uprob_le {i : List Bool} (hi : ExpValid i) {n : \u2115}"
+    }
+  ],
+  "removed": []
+}

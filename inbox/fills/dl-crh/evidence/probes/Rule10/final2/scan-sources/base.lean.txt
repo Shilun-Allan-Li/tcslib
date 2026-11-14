@@ -1,0 +1,24 @@
+import Lean
+import TCSlib.Cryptography.Candidates.DiscreteLog
+import TCSlib.Cryptography.Hashing.FromDiscreteLog
+
+set_option maxHeartbeats 0
+set_option maxRecDepth 65536
+open Lean Elab Command
+
+def scanHeads : Array String := #["Collection.index_eq", "Collection.invProbAt_eq", "Collection.sampleClose_iff", "Equiv.apply_symm_apply", "Equiv.prodCongr_apply", "Equiv.refl_apply", "Equiv.symm_apply_apply", "ExpGroupGen.dlProb_eq", "Function.comp_apply", "List.findSome?_eq_some_iff", "List.length_replicate", "List.ofFn_congr", "List.ofFn_get", "List.tail_nil", "NUPPT.Uniform.runAtL_eq", "NUPPT.advInput_eq", "NUPPT.coinLen_eq", "NUPPT.coinsEquivPoly_ofFn", "NUPPT.inArg_eq", "NUPPT.inCoins_eq", "NUPPT.inParam_eq", "NUPPT.layout_eq", "NUPPT.runAtL_ofPolyTimeUniform", "NUPPT.runAt_eq", "Nat.cast_pow", "Nat.mod_eq_of_lt", "Nat.not_le", "Nat.sub_self", "Option.getD_none", "Option.getD_some", "Option.map_some", "Option.some.inj", "Option.some.injEq", "PolyExpr.eval_mul", "PolyExpr.eval_var", "Prod.map_fst", "Prod.map_snd", "Units.val_pow_eq_pow_val", "ZMod.natCast_mod", "ZMod.natCast_zmod_val", "ZMod.val_natCast", "abs_of_nonneg", "abs_zero", "advInput_eq", "apply_symm_apply", "bitsEquiv_val", "bitsToNat_eq_listToNat", "cast_pow", "coe_expUnit", "coinLen_eq", "coinsEquivPoly_ofFn", "comp_apply", "decide_eq_decide", "decide_eq_true_eq", "decide_not", "decodeFin_eq", "dif_pos", "dlDefaultIndex", "dlG", "dlHashGenFun", "dlHashMul", "dlHashPow", "dlM", "dlM_eq", "dlP", "dlProb", "dlProb_eq", "dlW", "dla_belowAcc", "eval_mul", "eval_var", "expCollection_decD", "expCollection_f", "expCollection_index", "expCollection_sample", "expDec", "expDec_expEnc", "expEnc", "expEnc_eq", "expEval", "expEval_spec", "expF", "expGen", "expGenFun", "expGen_coins", "expGen_coinsEquiv_ofFn", "expGen_runAt", "expOrd", "expSampleRaw", "expSampler", "expSampler_runAt", "findSome?_eq_some_iff", "getD_none", "getD_some", "h1", "h2", "h3", "hX", "hY", "ha", "hacc", "hb", "hc", "he", "henc", "hg", "hl", "hofn", "hs", "hvdef", "hw", "if_neg", "if_pos", "inArg_eq", "inCoins_eq", "inParam_eq", "index_eq", "inj", "injEq", "invProbAt_eq", "layout_eq", "length_pairEncode", "length_replicate", "length_sizeStr", "listToNat_natToList", "listToNat_nil", "map_fst", "map_snd", "map_some", "modExpStr_pairEncode", "mod_eq_of_lt", "natCast_mod", "natCast_zmod_val", "natToList_val_natCast", "natToList_zero_append_drop", "not_le", "ofFn_congr", "ofFn_get", "one_div", "orderOf_expUnit", "orderOf_units", "pairFstD_pairEncode", "pairSndD_pairEncode", "prodCongr_apply", "refl_apply", "rejectBlocksL_eq", "runAtL_eq", "runAtL_ofPolyTimeUniform", "runAt_eq", "sampleBelowL", "sampleBelowL_eq_rejectBlocksL", "sampleClose_iff", "show", "subStr_pairEncode", "sub_self", "symm_apply_apply", "tail_nil", "uexp_def", "uprob_comp_equiv", "uprob_false", "uprob_rejectionSample_none", "val_natCast", "val_pow_eq_pow_val"]
+def scanKind : ConstantInfo → String
+  | .axiomInfo _ => "axiom" | .defnInfo _ => "def" | .thmInfo _ => "theorem" | .opaqueInfo _ => "opaque"
+  | .quotInfo _ => "quotient" | .inductInfo _ => "inductive" | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+run_cmd do
+  let env ← getEnv
+  let names := env.header.moduleNames
+  let mut count := 0
+  for (n, ci) in env.constants.toList do
+    let display := n.toString
+    let user := ((Lean.privateToUserName? n).getD n).toString
+    unless scanHeads.any (fun h => display == h || display.endsWith ("." ++ h) || user == h || user.endsWith ("." ++ h)) do continue
+    let home := match env.getModuleIdxFor? n with | some i => names[i.toNat]!.toString | none => "<builtin>"
+    IO.println ("SCAN-CAND " ++ (Json.mkObj [("name",toJson display),("user_name",toJson user),("home",toJson home),("kind",toJson (scanKind ci)),("private",toJson (Lean.privateToUserName? n).isSome)]).compress)
+    count := count + 1
+  IO.println s!"SCAN-COUNT {count}"

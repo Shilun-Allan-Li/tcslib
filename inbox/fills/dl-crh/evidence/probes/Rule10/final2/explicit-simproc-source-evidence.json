@@ -1,0 +1,39 @@
+{
+  "lean_pin": "4.25.0",
+  "purpose": "Disposition of actual native def candidates reduceIte in four explicit simp entries",
+  "source_review": "Pinned source registers reduceIte as a builtin_simproc. resolveSimpIdTheorem? returns .simproc for a registered procedure; elabSimpLemma returns .addSimproc, and elabSimpArgs adds it to the procedure set. This bypasses the .expr/elabDeclToUnfoldOrTheorem path. The procedure constructs proofs with ite_cond_eq_true or ite_cond_eq_false.",
+  "sources": [
+    {
+      "path": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Meta/Tactic/Simp/BuiltinSimprocs/Core.lean",
+      "whole_file_sha256": "afb764e9ab1bd7750115c1c9e839f2f148f2052f76cecc9168ca1b0b64a0a884",
+      "excerpts": [
+        {
+          "start_line": 10,
+          "end_line": 25,
+          "source": "public import Lean.Meta.Tactic.Simp.Simproc\n\npublic section\n\nopen Lean Meta Simp\n\nbuiltin_simproc ↓ [simp, seval] reduceIte (ite _ _ _) := fun e => do\n  let_expr f@ite α c i tb eb ← e | return .continue\n  let r ← simp c\n  if r.expr.isTrue then\n    let pr    := mkApp (mkApp5 (mkConst ``ite_cond_eq_true f.constLevels!) α c i tb eb) (← r.getProof)\n    return .visit { expr := tb, proof? := pr }\n  if r.expr.isFalse then\n    let pr    := mkApp (mkApp5 (mkConst ``ite_cond_eq_false f.constLevels!) α c i tb eb) (← r.getProof)\n    return .visit { expr := eb, proof? := pr }\n  return .continue\n"
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Elab/Tactic/Simp.lean",
+      "whole_file_sha256": "531b17f323f416d0b53b3874681d707b65c3d4dec7814ee54c04aa0fda58f360",
+      "excerpts": [
+        {
+          "start_line": 94,
+          "end_line": 128,
+          "source": "\ninductive ResolveSimpIdResult where\n  | none\n  | expr (e : Expr)\n  | simproc (declName : Name)\n  /--\n  Recall that when we declare a `simp` attribute using `register_simp_attr`, we automatically\n  create a `simproc` attribute. However, if the user creates `simp` and `simproc` attributes\n  programmatically, then one of them may be missing. Moreover, when we write `simp [seval]`,\n  we want to retrieve both the simp and simproc sets. We want to hide from users that\n  `simp` and `simproc` sets are stored in different data-structures.\n  -/\n  | ext  (ext₁? : Option SimpExtension) (ext₂? : Option Simp.SimprocExtension) (h : ext₁?.isSome || ext₂?.isSome)\n\nprivate def resolveSimpIdTheorem? (simpArgTerm : Term) : TermElabM ResolveSimpIdResult := do\n    let resolveExt (n : Name) : TermElabM ResolveSimpIdResult := do\n      let ext₁? ← getSimpExtension? n\n      let ext₂? ← Simp.getSimprocExtension? n\n      if h : ext₁?.isSome || ext₂?.isSome then\n        return .ext ext₁? ext₂? h\n      else\n        return .none\n    match simpArgTerm with\n    | `($id:ident) =>\n      try\n        if let some e ← Term.resolveId? simpArgTerm (withInfo := true) then\n          if let some simprocDeclName ← isSimproc? e then\n            return .simproc simprocDeclName\n          else\n            return .expr e\n        else\n          let name := id.getId.eraseMacroScopes\n          if (← Simp.isBuiltinSimproc name) then\n            return .simproc name\n          else\n"
+        },
+        {
+          "start_line": 250,
+          "end_line": 266,
+          "source": "    else if arg.getKind == ``Lean.Parser.Tactic.simpLemma then\n      let post :=\n        if arg[0].isNone then\n          true\n        else\n          arg[0][0].getKind == ``Parser.Tactic.simpPost\n      let inv  := !arg[1].isNone\n      let term := arg[2]\n      match (← resolveSimpIdTheorem? term) with\n      | .expr e  =>\n        let name ← mkFreshId\n        elabDeclToUnfoldOrTheorem indexConfig (.stx name arg) e post inv kind\n      | .simproc declName =>\n        return .addSimproc declName post\n      | .ext ext₁? ext₂? h =>\n        return .ext ext₁? ext₂? h\n      | .none    =>\n"
+        },
+        {
+          "start_line": 333,
+          "end_line": 344,
+          "source": "        let mut simprocs  := simprocs\n        for (ref, arg) in args do\n          match arg with\n          | .addEntries entries =>\n            for entry in entries do\n              thms := thms.uneraseSimpEntry entry\n              thms := thms.addSimpEntry entry\n          | .addLetToUnfold fvarId =>\n            thms := thms.addLetDeclToUnfold fvarId\n          | .addSimproc declName post =>\n            simprocs ← simprocs.add declName post\n          | .erase origin =>\n"
+        }
+      ]
+    }
+  ]
+}

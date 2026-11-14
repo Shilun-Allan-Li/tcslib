@@ -61,6 +61,14 @@ theorem residueFinEquiv_val {m k : ℕ} [NeZero m] (h : m = k) (z : ZMod m) :
   | zero => exact (NeZero.ne 0 rfl).elim
   | succ m => rfl
 
+/-- At an index well formed at parameter `n`, evaluating the `n`-bit numeral of
+a residue's natural representative returns `expF i z`. -/
+theorem expEval_natToList_val {n : ℕ} {i : List Bool} (hw : WellFormedIndex n i)
+    (z : ZMod (expOrd i)) :
+    expEval (Turing.pairEncode i (natToList n z.val)) = expF i z := by
+  have h := expEval_spec i z
+  simpa only [expEnc_eq, hw.dlW_eq] using h
+
 /-- For a valid group index of order below `2^n`, any test of the rejection-sampled
 exponent and independent finite auxiliary coins has probability at most its
 probability for a uniform exponent in `ZMod (expOrd i)` plus `(1/2)^n`

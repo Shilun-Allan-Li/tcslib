@@ -1,0 +1,93 @@
+From 8b2e828cd2d9d5562aa0e868aae12b59472cc48d Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 13 Nov 2026 23:28:49 -0800
+Subject: [PATCH 2/3] Prove the collision finder reduction recovers discrete
+ logarithms
+
+---
+ .../Cryptography/Hashing/FromDiscreteLog.lean | 55 +++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean b/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean
+index f6589c1b8..b3f2a12d1 100644
+--- a/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean
++++ b/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean
+@@ -7,6 +7,9 @@ import TCSlib.Cryptography.Candidates.DiscreteLog
+ import TCSlib.Cryptography.Hashing.FromDiscreteLog.Encoding
+ import TCSlib.Cryptography.Hashing.FromDiscreteLog.Algebra
+ import TCSlib.Cryptography.Hashing.FromDiscreteLog.Coins
++import TCSlib.Cryptography.Hashing.FromDiscreteLog.Reduction
++import TCSlib.Cryptography.Hashing.FromDiscreteLog.Probability
++import TCSlib.Cryptography.Hashing.FromDiscreteLog.Sampling
+ import Mathlib.Tactic.Simps.Basic
+ 
+ set_option maxHeartbeats 0
+@@ -51,6 +54,9 @@ of uniform on `⟨g⟩`, and, when `m = p − 1` (hypothesis `hV` of the theorem
+ * `FromDiscreteLog.Encoding`: bounded domain/range cardinalities and bit-vector readers.
+ * `FromDiscreteLog.Algebra`: collision shape and exponent extraction in the unit group.
+ * `FromDiscreteLog.Coins`: coin splitting through published machine readers.
++* `FromDiscreteLog.Reduction`: the efficient collision-to-discrete-log machine.
++* `FromDiscreteLog.Probability`: collision acceptance as a uniform average.
++* `FromDiscreteLog.Sampling`: the statistical switch to uniform exponents.
+ 
+ ## References
+ 
+@@ -512,6 +518,55 @@ theorem dlHash_compresses (H : ArithmeticFP) (G : ExpGroupGen V)
+     have hpos := ((expValid_iff _).1 hi).2.1
+     omega
+ 
++/-- Whenever the finder produces a collision on a valid key `⟨i, g^z⟩`, the reduction's
++answer decodes to the challenge exponent [PS10, reduction in Theorem 142.3].
++
++**Proof sketch.** Remove the hash-output padding using its proved exact length. The
++collision-extraction lemma identifies the postprocessor's modular difference with `z`.
++The reduction therefore writes the canonical `n`-bit numeral of `z`, which decodes exactly. -/
++theorem dlHash_reduction_success (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
++    (i : List Bool) (z : ZMod (expOrd i)) (hi : ExpValid i) (hw : WellFormedIndex n i)
++    (r : (FromDiscreteLog.collisionReduction H A).Coins n)
++    (hc :
++      let xx := splitBits (a := n + 1) (b := n + 1)
++        (padFin ((n + 1) + (n + 1)) (A.runAt n (pairEncode i (expF i z))
++          (NUPPT.coinsCongr (FromDiscreteLog.collisionReduction_coins H A) n r)))
++      listToNat ((List.ofFn xx.1).take n) < dlM i ∧
++        listToNat ((List.ofFn xx.2).take n) < dlM i ∧ xx.1 ≠ xx.2 ∧
++        padFin n (dlHashEval (atParam n (pairEncode (pairEncode i (expF i z))
++          (List.ofFn xx.1)))) =
++        padFin n (dlHashEval (atParam n (pairEncode (pairEncode i (expF i z))
++          (List.ofFn xx.2))))) :
++    ∃ out : Fin n → Bool,
++      decodeFin n ((FromDiscreteLog.collisionReduction H A).runAt n
++        (pairEncode i (expF i z)) r) = some out ∧ bitsToNat out = z.val := by
++  let key := pairEncode i (expF i z)
++  let ra := NUPPT.coinsCongr (FromDiscreteLog.collisionReduction_coins H A) n r
++  let xx := splitBits (a := n + 1) (b := n + 1)
++    (padFin ((n + 1) + (n + 1)) (A.runAt n key ra))
++  change listToNat ((List.ofFn xx.1).take n) < dlM i ∧
++    listToNat ((List.ofFn xx.2).take n) < dlM i ∧ xx.1 ≠ xx.2 ∧
++      padFin n (dlHashEval (atParam n (pairEncode key (List.ofFn xx.1)))) =
++        padFin n (dlHashEval (atParam n (pairEncode key (List.ofFn xx.2)))) at hc
++  obtain ⟨hx, hx', hne, hhash⟩ := hc
++  have heq : dlHashEval (atParam n (pairEncode key (List.ofFn xx.1))) =
++      dlHashEval (atParam n (pairEncode key (List.ofFn xx.2))) := by
++    have hh := congrArg List.ofFn hhash
++    change List.ofFn (padFin n (dlHashEval (atParam n (pairEncode key (List.ofFn xx.1))))) =
++      List.ofFn (padFin n (dlHashEval (atParam n (pairEncode key (List.ofFn xx.2))))) at hh
++    rw [ofFn_padFin_of_length (dlHashEval_range n i z xx.1 hi hw hx).1,
++      ofFn_padFin_of_length (dlHashEval_range n i z xx.2 hi hw hx').1] at hh
++    exact hh
++  have hz := (dlHashEval_collision n i z xx.1 xx.2 hi hw hx hx' hne heq).2
++  have hb := FromDiscreteLog.collisionReduction_runAt H A n key r
++  rw [FromDiscreteLog.collisionPost_split n i (expF i z) _ hw] at hb
++  have hanswer : (FromDiscreteLog.collisionReduction H A).runAt n key r =
++      natToList n z.val := hb.trans (congrArg (natToList n) hz.symm)
++  refine ⟨natToBits n z.val, ?_, ?_⟩
++  · rw [hanswer, natToList_eq, decodeFin_ofFn]
++  · exact bitsToNat_natToBits (by
++      simpa only [hw.dlW_eq] using val_lt_two_pow_dlW i z)
++
+ /-- **Theorem 142.3: Protocol 142.2 is a collision-resistant hash compressing by one bit**
+ [PS10, Theorem 142.3], under the discrete-log assumption for an instance generator of the full
+ groups `Z_p^*` (`m = p − 1`).
+-- 
+2.50.1 (Apple Git-155)
+

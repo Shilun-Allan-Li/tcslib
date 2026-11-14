@@ -1,0 +1,126 @@
+--- evidence/tools/rule10_prepare-v1.py
++++ evidence/tools/rule10_prepare.py
+@@ -23,6 +23,8 @@
+ BASE_OWNERS = ["TCSlib.Cryptography.Candidates.DiscreteLog",
+                "TCSlib.Cryptography.Hashing.FromDiscreteLog"]
+ ARCH = ROOT / "evidence/tools/archived-dl-folds"
++CHUNK_SIZE = 2048
++HARNESS_REVISION = "batch2048-ordinary-local-attribute-api-v2"
+ sys.dont_write_bytecode = True
+ 
+ 
+@@ -182,6 +184,12 @@
+     return module
+ 
+ 
++def seal_chunks(label, rows):
++    return [dict(label=label+"_part"+str(i//CHUNK_SIZE+1), start=i,
++                 count=len(rows[i:i+CHUNK_SIZE])) for i in range(0,len(rows),CHUNK_SIZE)] or \
++           [dict(label=label+"_part1",start=0,count=0)]
++
++
+ def builders():
+     old = ARCH / "archived-gate10-tools"
+     bs = load_tool(old / "build_seals.py", "dl_crh_archived_bs")
+@@ -190,9 +198,21 @@
+     adapter.configure_builders(bs, ctl)
+     original = bs.seal_command
+     def chunked(label, rows, *, end):
+-        chunks = [rows[i:i+128] for i in range(0, len(rows), 128)] or [[]]
+-        return b"".join(original(label + "_part" + str(i+1), part, end=end)
+-                        for i, part in enumerate(chunks))
++        probes=[]
++        for chunk in seal_chunks(label,rows):
++            part=rows[chunk["start"]:chunk["start"]+chunk["count"]]
++            raw=original(chunk["label"],part,end=end)
++            old=(b"      let id := Lean.mkIdent n\n"
++                 b"      Lean.Elab.Command.elabCommand (\xe2\x86\x90 `(command| attribute [local irreducible] $id:ident))\n")
++            new=b"      Lean.Elab.Command.liftCoreM <| Lean.Attribute.add n `irreducible Lean.Syntax.missing .local\n"
++            need(raw.count(old)==(0 if end else 1),"ordinary attribute installation anchor changed")
++            # This public API invokes the same registered local-attribute
++            # handler, including safety validation, without command parsing.
++            raw=raw.replace(old,new)
++            need(b"allowUnsafeReducibility" not in raw and b"setReducibilityStatus" not in raw,
++                 "unsafe/direct reducibility setter in generated harness")
++            probes.append(raw)
++        return b"".join(probes)
+     bs.seal_command = chunked
+     return bs, adapter
+ 
+@@ -274,9 +294,9 @@
+                           stored_constants=counts[owner], collector_log=str(log.relative_to(ROOT)),
+                           collector_log_sha256=sha(log.read_bytes()), insertions=insertions,
+                           source_to_probe_lines=line_map,
+-                          chunks=[dict(label=label+"_part"+str(i//128+1), start=i,
+-                                       count=len(rows[i:i+128])) for i in range(0,len(rows),128)] or
+-                                 [dict(label=label+"_part1",start=0,count=0)],
++                          chunks=seal_chunks(label,rows), chunk_size=CHUNK_SIZE,
++                          harness_revision=HARNESS_REVISION,
++                          attribute_installation="Lean.Attribute.add n `irreducible Lean.Syntax.missing .local",
+                           unsealable_reducible=[r for r in cat.values()
+                               if r["home"]["display"] in expected_closure and r["kind"] == "def"
+                               and r["status"] == "reducible" and not r["matcher"]])
+--- evidence/tools/rule10_controls-v1.py
++++ evidence/tools/rule10_controls.py
+@@ -126,8 +126,9 @@
+                       delivered_source=str(copy.relative_to(ROOT)),controls=controls,
+                       expected_errors=[c["start_line"] for c in controls if c["negative"]] if sealed else [],
+                       seal_record=entry["record"],rows=seal["rows"],
+-                      chunks=[dict(label=label+"_part"+str(i//128+1),start=i,count=len(seal["rows"][i:i+128]))
+-                              for i in range(0,len(seal["rows"]),128)] or [dict(label=label+"_part1",start=0,count=0)])
++                      chunks=P.seal_chunks(label,seal["rows"]), chunk_size=P.CHUNK_SIZE,
++                      harness_revision=P.HARNESS_REVISION,
++                      attribute_installation="Lean.Attribute.add n `irreducible Lean.Syntax.missing .local")
+             plans.append(plan)
+     P.save(directory/(side+"-controls-plan.json"),dict(status="PREPARED_NOT_RUN",side=side,edition=edition,probes=plans))
+     print("Prepared",len(plans),side,"control probes; sealed negatives:",sum(len(p["expected_errors"]) for p in plans))
+--- evidence/tools/RULE10-README-v1.md
++++ evidence/tools/RULE10-README.md
+@@ -79,7 +79,7 @@
+ metadata, ordinary local irreducibility attributes and a scoped
+ instance-unfolding mask that preserves typeclass lookup state. It never enables
+ unsafe reducibility. Installation and EOF checks are validated for every
+-128-row chunk. Original source bytes are preserved by insertion-only
++request batch. Original source bytes are preserved by insertion-only
+ instrumentation with source/probe line maps.
+ 
+ Source failures are retained (not treated as harness passes); harness failures
+@@ -151,3 +151,38 @@
+ `evidence/tools/archived-dl-folds/`. The new orchestration is in
+ `rule10_prepare.py`, `rule10_run.py`, `rule10_controls.py`, `rule10_scan.py` and
+ `rule10_summary.py`.
++
++## Future harness batching revision (native pilot required)
++
++The original orchestration bytes are retained as `rule10_prepare-v1.py`,
++`rule10_controls-v1.py` and `RULE10-README-v1.md`. Existing `final1` sources,
++request records and active native checks are unchanged. New editions use the
++shared `rule10_prepare.CHUNK_SIZE = 2048` and shared `seal_chunks` metadata.
++The current closures have fewer than 1600 requests, so each new install/EOF
++phase uses one runtime String-encoded batch instead of twelve 128-row batches.
++This removes repeated full-environment catalogue scans and repeated complete
++instance-lookup snapshot pairs; it removes no requested name or per-row check.
++
++For newly generated install commands only, per-name command elaboration is
++replaced by:
++
++```lean
++Lean.Elab.Command.liftCoreM <|
++  Lean.Attribute.add n `irreducible Lean.Syntax.missing .local
++```
++
++At the pinned Lean 4.25.0 source, `AttrM` is `CoreM`, `Attribute.add` retrieves
++the registered attribute implementation and calls its `add` handler, and
++`irreducible` registers `addAttr .irreducible`. That handler accepts the simple
++attribute's missing syntax, runs the ordinary reducibility safety validation,
++and applies the requested **local** attribute in the current namespace.
++The harness never calls the direct status setter and never enables unsafe
++reducibility. Exact Name/display ambiguity, home, definition kind, components,
++matcher/abbreviation/instance metadata, installed status, full unfolding-mask
++installation/EOF checks and unchanged typeclass lookup comparisons remain.
++
++This is a source-reviewed performance change, not a native success assertion.
++The root must use a fresh edition, pilot the paired controls and a complete
++whole-file seal serially, and verify every raw mask/component/count record
++before relying on the new harness. Preserve the original `final1` run and all
++new pilot attempts in the evidence payload.

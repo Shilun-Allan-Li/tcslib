@@ -1,0 +1,68 @@
+PHASE evidence/tools/rule10_scan.py run --edition final2 --side base
+CHECK scan-base evidence/probes/Rule10/final2/ScanBase 2026-11-14T08:50:41.626847+00:00
+RESULT scan-base evidence/probes/Rule10/final2/ScanBase 0 errors 0 2026-11-14T08:52:07.276485+00:00
+Native-backed scan: 208 items; 0 foreign-definition candidate items; 10 unresolved/ambiguous retained
+PHASE evidence/tools/rule10_scan.py run --edition final2 --side final
+CHECK scan-final evidence/probes/Rule10/final2/ScanFinal 2026-11-14T08:52:07.735898+00:00
+RESULT scan-final evidence/probes/Rule10/final2/ScanFinal 0 errors 0 2026-11-14T08:55:53.910853+00:00
+Native-backed scan: 595 items; 4 foreign-definition candidate items; 15 unresolved/ambiguous retained
+CHECK seals-base evidence/probes/Rule10/final2/seals/base/A/DlCrh_base_A_TCSlib_Cryptography_Candidates_DiscreteLog 2026-11-14T08:55:55.297535+00:00
+RESULT seals-base evidence/probes/Rule10/final2/seals/base/A/DlCrh_base_A_TCSlib_Cryptography_Candidates_DiscreteLog 0 errors 0 2026-11-14T08:56:52.261085+00:00
+PHASE evidence/tools/seal_provenance.py
+{
+  "status": "COMPLETE",
+  "path": "evidence/probes/Rule10/final2/seal-provenance.json",
+  "probe_pairs": 20,
+  "base_controls": 8,
+  "benchmark": {
+    "old_duration_seconds": 637.935793,
+    "new_duration_seconds": 56.96355,
+    "old_seconds": 637.935793,
+    "new_seconds": 56.96355,
+    "old_start": "2026-11-14T08:29:32.109619+00:00",
+    "old_end": "2026-11-14T08:40:10.045412+00:00",
+    "new_start": "2026-11-14T08:55:55.297535+00:00",
+    "new_end": "2026-11-14T08:56:52.261085+00:00"
+  }
+}
+CHECK seals-base evidence/probes/Rule10/final2/seals/base/B/DlCrh_base_B_TCSlib_Cryptography_Candidates_DiscreteLog 2026-11-14T08:56:53.900673+00:00
+RESULT seals-base evidence/probes/Rule10/final2/seals/base/B/DlCrh_base_B_TCSlib_Cryptography_Candidates_DiscreteLog 0 errors 0 2026-11-14T08:57:48.605330+00:00
+CHECK seals-base evidence/probes/Rule10/final2/seals/base/A/DlCrh_base_A_TCSlib_Cryptography_Hashing_FromDiscreteLog 2026-11-14T08:57:48.711511+00:00
+RESULT seals-base evidence/probes/Rule10/final2/seals/base/A/DlCrh_base_A_TCSlib_Cryptography_Hashing_FromDiscreteLog 0 errors 0 2026-11-14T08:58:47.487340+00:00
+CHECK seals-base evidence/probes/Rule10/final2/seals/base/B/DlCrh_base_B_TCSlib_Cryptography_Hashing_FromDiscreteLog 2026-11-14T08:58:47.582609+00:00
+RESULT seals-base evidence/probes/Rule10/final2/seals/base/B/DlCrh_base_B_TCSlib_Cryptography_Hashing_FromDiscreteLog 0 errors 0 2026-11-14T08:59:46.182777+00:00
+PHASE evidence/tools/rule10_run.py seals --edition final2 --side final
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Candidates_DiscreteLog 2026-11-14T08:59:46.329822+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Candidates_DiscreteLog 0 errors 0 2026-11-14T09:00:45.134352+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Candidates_DiscreteLog 2026-11-14T09:00:45.246487+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Candidates_DiscreteLog 0 errors 0 2026-11-14T09:01:43.642873+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Algebra 2026-11-14T09:01:43.754855+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Algebra 0 errors 0 2026-11-14T09:02:41.149889+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Algebra 2026-11-14T09:02:41.250009+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Algebra 0 errors 0 2026-11-14T09:03:36.452293+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Coins 2026-11-14T09:03:36.543746+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Coins 0 errors 0 2026-11-14T09:04:22.811279+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Coins 2026-11-14T09:04:22.882902+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Coins 0 errors 0 2026-11-14T09:05:09.334834+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Encoding 2026-11-14T09:05:09.404013+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Encoding 0 errors 0 2026-11-14T09:06:03.450838+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Encoding 2026-11-14T09:06:03.529179+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Encoding 0 errors 0 2026-11-14T09:06:57.083571+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Probability 2026-11-14T09:06:57.162719+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Probability 0 errors 0 2026-11-14T09:07:42.667311+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Probability 2026-11-14T09:07:42.728489+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Probability 0 errors 0 2026-11-14T09:08:28.457759+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Reduction 2026-11-14T09:08:28.529147+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Reduction 1 errors 1 2026-11-14T09:09:24.040749+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Reduction 2026-11-14T09:09:24.146015+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Reduction 1 errors 1 2026-11-14T09:10:19.520333+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Sampling 2026-11-14T09:10:19.626330+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog_Sampling 0 errors 0 2026-11-14T09:11:13.738212+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Sampling 2026-11-14T09:11:13.837806+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog_Sampling 0 errors 0 2026-11-14T09:12:09.077289+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog 2026-11-14T09:12:09.178135+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/A/DlCrh_final_A_TCSlib_Cryptography_Hashing_FromDiscreteLog 0 errors 0 2026-11-14T09:13:03.262284+00:00
+CHECK seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog 2026-11-14T09:13:03.366383+00:00
+RESULT seals-final evidence/probes/Rule10/final2/seals/final/B/DlCrh_final_B_TCSlib_Cryptography_Hashing_FromDiscreteLog 1 errors 4 2026-11-14T09:13:58.668164+00:00
+PHASE evidence/tools/rule10_controls.py run --edition final2 --side final
+CHECK controls-final evidence/probes/Rule10/final2/controls/final/DlCrhControlU_final_A_TCSlib_Cryptography_Candidates_DiscreteLog 2026-11-14T09:13:59.154054+00:00

@@ -5,8 +5,9 @@ The native proxy is identified explicitly; it is not Linux MemAvailable.
 """
 from pathlib import Path
 import re
+import sys
 
-raw = Path("evidence/logs/resume-1/preflight.log").read_text()
+raw = Path(sys.argv[1] if len(sys.argv) > 1 else "evidence/logs/resume-1/preflight.log").read_text()
 fields = {name: int(value) for name, value in re.findall(
     r"^(Pages [^:]+|Anonymous pages):\s+(\d+)\.", raw, re.M)}
 physical = int(re.search(r"hw.memsize: (\d+)", raw)[1])

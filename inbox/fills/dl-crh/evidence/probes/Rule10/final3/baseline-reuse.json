@@ -1,0 +1,3606 @@
+{
+  "status": "COMPLETE",
+  "edition": "final3",
+  "base_edition": "final2",
+  "base": "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+  "baseline_unchanged": true,
+  "raw_records_reused_without_relabeling": true,
+  "fresh_final_evidence_edition": "final3",
+  "base_state": {
+    "path": "evidence/probes/Rule10/base-state.json",
+    "sha256": "90d7473fecdffaa6ba5c2032def02734bedf0549cee520619e8908a14f57cd58"
+  },
+  "source_hashes": {
+    "TCSlib/Complexity/CircuitComplexity/Advice.lean": "512af5c3fa784b4f04318f657d1c325c36b4182e5c9bea28cd7e64cd50c77a4e",
+    "TCSlib/Complexity/CircuitComplexity/Basic.lean": "05d5f8769bfa5384b306f4f9d51f092d6e23368c748f994438a98bbf56bf39af",
+    "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean": "3cee08a85212761d81b14a6e09a4b4b298fb62096af418c284e8658a704ffaaa",
+    "TCSlib/Complexity/CircuitComplexity/DAGFanin.lean": "b98f2bba415114f9b18fd1e34427d35d32df526a043787359c49c5d925b1c9ed",
+    "TCSlib/Complexity/CircuitComplexity/DAGTransform.lean": "023b6115dd010206120f1c0cb642db8f5588db7c4be5d9e699572b4f68488a9f",
+    "TCSlib/Complexity/CircuitComplexity/LayeredCircuit.lean": "cde5dd40b1350f8d6356bba7a612618189b030a225cdf54faf244e3efd20dbaf",
+    "TCSlib/Complexity/CircuitComplexity/LayeredDAG.lean": "bf677328d1f77e164ce3de30bf51602a1b9e05f147000f312560bffab2be0684",
+    "TCSlib/Complexity/CircuitComplexity/LayeredPPoly.lean": "e5c6cb3c13f2fb60b4f5ed4944d51fb300b3e8a9d02c095ccabf13fe230d77cf",
+    "TCSlib/Complexity/CircuitComplexity/PPoly.lean": "e50d0e4981997f5ecc4201c919331961b6e8a573ae311d5f27bd298e908fe11d",
+    "TCSlib/Complexity/CircuitComplexity/SizeClasses.lean": "c1825d1aa9e761d49c16616915d8ccc8d4e93f058c8e510472d2d0c5bdaf2765",
+    "TCSlib/Complexity/CircuitComplexity/TreeDAG.lean": "2b9824996de35e2f56a69e589113bebaf035a5c05de4062eef781151cb01f8a2",
+    "TCSlib/Complexity/CircuitComplexity/UnaryCode.lean": "f9b30332707930268fe8077b5940528a534f2bab3c6ba59916c4cea4e7d13034",
+    "TCSlib/Complexity/ClassNP/CoNP.lean": "bcf23fe2e091282f6ed51d417e47d04503e2247180edfbe093a8905ffdd0955c",
+    "TCSlib/Complexity/ClassNP/CounterProgPolyTime.lean": "a40e9e33042e619444ae2d89f46a55113bdcc92aa6e84536524720f95c988428",
+    "TCSlib/Complexity/ClassNP/NP.lean": "efe31055353bf652e3ca410a7f58e2e578af0b4ccaf036586095b1e03a5dbf68",
+    "TCSlib/Complexity/ClassNP/PClosure.lean": "4967e19a746a5a602018b6b8dca89363aee7b3e691d0786fdc3a490015338d44",
+    "TCSlib/Complexity/ClassNP/PolyTime.lean": "1e79bd74264f41adfdec3c624da06e84fb78aefb72d52f7e7670e64a1e25a50f",
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean": "346a52d4751decd7e164490c57f93bbfe07156354fb3e3d81c2228ab33238909",
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean": "6416d537aa1de62932ed3d74f3c22a7314ec6fe18087663fc559452ea62baa87",
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean": "80e7340961c1a2aca231c56bd2e1df6279fbeea3a2697d10f7ef6bb8fcbae839",
+    "TCSlib/Complexity/ClassNP/PolyTimePairing.lean": "8915fe2b3029ab96ffcc6dbfbd7f198abe9de97c08ab44009861e892598acdc0",
+    "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean": "5d29d9360c66f769ffeef2fbf61d0cdd1f95e7940118722a954a12909a532597",
+    "TCSlib/Complexity/ClassNP/Transducer.lean": "b5161060c58754b13439d2397356e16640ba0b046fe6ebd2d3f5efea1efcea83",
+    "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean": "7a9465a9129ca96a5c7e62d33d9d91609474695933274d0b1e65c87d04e4db55",
+    "TCSlib/Complexity/ClassP/BinaryArith/Basic.lean": "1864fec060a1e0b6703acde827906baef9b9ca1cf1214a19ebf4144eab4f36ab",
+    "TCSlib/Complexity/ClassP/BinaryArith/Div.lean": "9bcd67e88694e4f268bc1aaa35d9a1b3c31122fe9fcc060b5a7837cdf24293cc",
+    "TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean": "9e4b133ba94c552dec10a5aea4b3ced2f372411ccdc65107db5b4937a8aac487",
+    "TCSlib/Complexity/ClassP/BinaryArith/Loops.lean": "bfc635654c877d0dbd4b38d8d18d40a350b6517dd1c6d5150ea6bc9b2b5ff87b",
+    "TCSlib/Complexity/ClassP/BinaryArith/Mul.lean": "6897ee8ccb8fcdac67d38585feeea29bb6d3e7f3f42b3e70b02a247af03f5e38",
+    "TCSlib/Complexity/ClassP/BinaryArith/Words.lean": "0c29613c259feeb5d9733f23657ef39d0f172d31a42c3eab44f758d8ee3ea6fa",
+    "TCSlib/Complexity/ClassP/DTIME.lean": "54795908ce0a394d59cc7ca91a0c9f9377ff687e1bc805af3e65889212c3cc84",
+    "TCSlib/Complexity/ClassP/P.lean": "a4c5e2287b5eddea4139813d6fc0110fc55e0faa4d1e2bb873f79b842df3344a",
+    "TCSlib/Complexity/ClassP/TimeConstructible.lean": "9dbfce574194ed387488b24eafe9500a384e8ba8cf7b21846e7023582c9ed481",
+    "TCSlib/Complexity/PolyHierarchy/Padding.lean": "61ecc05184a2c5b06f34d947bc00a5697cc7594dfbffce6dfb246932cef0c981",
+    "TCSlib/Complexity/Randomized/Build/IterateFind.lean": "c8f58e091cbb6e9c07e548f286638fa8a78420dc6dce81dd86711acfa0af317b",
+    "TCSlib/Complexity/Randomized/Build/IterateFindHost.lean": "0348140038e0978463a4d727e97b2e3f034829a0313dee432371c84ad743f4ca",
+    "TCSlib/Complexity/Randomized/Build/PairSplit.lean": "059cef36d526f27bb3b15de8d4bc9054d3944f15719fc94d20fd3125f7a41d50",
+    "TCSlib/Complexity/Randomized/Build/StateLoop.lean": "1e77690dd9b5de66842b3f1dc0292d1c113004a70423e497757cbc6d928e5e26",
+    "TCSlib/Complexity/Randomized/Build/StringLoops.lean": "ca30aa1d973baa4e77c8dc4e5fcf5519add57714c185c6ee1b2595b2f38914d1",
+    "TCSlib/Complexity/Randomized/Build/UnaryMul.lean": "131790bd75b421ab914a10cfa5ce27a28c4c49f5bb4b2b03899f104f7b56018f",
+    "TCSlib/Complexity/Randomized/Closure.lean": "869d10a947a0a2a6e230e866e10ea1ae48e0e283c039ab002ca44ec7f0d3e474",
+    "TCSlib/Complexity/Randomized/NonUniform.lean": "93d6e6d0a8bed8ea6b6344ce08dc6cb69a0ce7167d16002f0e95d7c4c1474ff7",
+    "TCSlib/Complexity/Randomized/PPT.lean": "97248e5603fc118c4343d564b60747bddba1443fa86c3ea60e74018e95da63ff",
+    "TCSlib/Complexity/Randomized/PolyExpr.lean": "b451da6f4486facf83c10c154fc77ac39bb24936a3fdb29a1d3a1fd3d43c1766",
+    "TCSlib/Complexity/Randomized/Primitives.lean": "0612ba120fab6fe4cac4770a6e15228f718949627d31b00100a0535efb0bd0ec",
+    "TCSlib/Complexity/Randomized/Repetition.lean": "f94702f4f5e17f71bfead906aa25e9993b25e6a20ad57c6e6b43c770a4bc329e",
+    "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean": "d045d7ec07a252220812dfccd42e02175fcb081286c884c508f5e84f5d4ab72c",
+    "TCSlib/Complexity/TuringMachine/Build/Convention.lean": "3a65edcd89bf39d8a465329ceaf9c55796cf5e92ca17a3671e71ea4b2c831c25",
+    "TCSlib/Complexity/TuringMachine/Build/Embed.lean": "95ae78fafbc8c7585f9b0c603796ae843d1e7ae25788359cb6a94c8e9ad25575",
+    "TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean": "51ba37e814d006573c5627ae096192ebcc1f5f9afc60c63927c8448f30858cd2",
+    "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean": "6efd087c48a57a14b9dca6bff6a89209174c014f37c4019dad6eef8585d1ce43",
+    "TCSlib/Complexity/TuringMachine/Build/Loop.lean": "d993af6f3d31495ea2ae34d7f9cbcfc1a1c522de825a88b5345236351c7ab9b5",
+    "TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean": "4d3824deab3cbaf5ba3b2303e58610801ceb9d44e3b6913848047f7e9bc5b7bb",
+    "TCSlib/Complexity/TuringMachine/Build/Primitives.lean": "9da69d03720beef640dc27b310c0e99bc8d298dd36ae4a22b97943d13a2a2b27",
+    "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean": "e2dcc306bc4572038508f9f7ba7abb65a541ca1c74fb5b1bbad19b3068ee58f3",
+    "TCSlib/Complexity/TuringMachine/Composition.lean": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526",
+    "TCSlib/Complexity/TuringMachine/Configuration.lean": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+    "TCSlib/Complexity/TuringMachine/CounterProg.lean": "a9d858f6cb848fef51d41cf44589328e363a02ea98e1e431a6f9fba1969658c4",
+    "TCSlib/Complexity/TuringMachine/CounterProgInput.lean": "770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3",
+    "TCSlib/Complexity/TuringMachine/CounterProgRun.lean": "9bfc54704f6f86e6925741753872da717e685cca7f2ba118fb3722510b817928",
+    "TCSlib/Complexity/TuringMachine/Deterministic.lean": "4b992ab2344562478c03d9aac8a8189f752fb5db337c08f2134488b88dc75379",
+    "TCSlib/Complexity/TuringMachine/Encoding.lean": "15b0f286ca1048ea6c86f7b93e5eae99b7ddea65d8d304f99c229a85950dbbd0",
+    "TCSlib/Complexity/TuringMachine/Finite.lean": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+    "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean": "0bf453573719a9a1bb6a9ab13cf1728318668aa76fd3578d3a94f08fc2a5d1dd",
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7",
+    "TCSlib/Complexity/TuringMachine/Simulation.lean": "5d11537175140aa3f905baa8142ec5fd534022e41ff6bf2c645adc4bdcb61fab",
+    "TCSlib/Complexity/TuringMachine/StateRenaming.lean": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+    "TCSlib/Complexity/TuringMachine/Sweep.lean": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3",
+    "TCSlib/Complexity/TuringMachine/UnaryTape.lean": "3c7c639b324fa577af524310b93e7ec8c39494cbd5ddf5f5482ed90ae6d134d4",
+    "TCSlib/Cryptography/Asymptotic/Adversary.lean": "9ab69ef62a368c35c818fc1a4e65b36370df35bc4023f10d5641bead6edae7c3",
+    "TCSlib/Cryptography/Asymptotic/Collections.lean": "627d44400fb9dfec4b772be3fa1c0be5bc9305dbe333cca492286bd712956153",
+    "TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean": "29716bdb4b048b45e331ab18311908b2b250985445d57ba25583211f07e91beb",
+    "TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean": "d8a8352ad0e176ec2badb7a63fce8bd576d54e824b3509955e14777058db552f",
+    "TCSlib/Cryptography/Asymptotic/OneWay.lean": "d091dc49b988899d0a2d2235390701c9a7265eb70cd28bddc9002aa307270ec3",
+    "TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean": "4a2ed3f8d9e84f218d7344301d5060f88f407be4f2a2ce38b3c81800c44e028a",
+    "TCSlib/Cryptography/Asymptotic/OneWayYao.lean": "bd5c284e3d08636b108f25cb91f72a39ced7e70e27be8784e96ce5dbc36c1ae1",
+    "TCSlib/Cryptography/Asymptotic/Sampling.lean": "353f3dd6e00625151a7d01c14b550fa84fab1f1e3b9c5f9da80ee28cba401c8a",
+    "TCSlib/Cryptography/Authentication/Encoding.lean": "d9ebad935ac9fb11fc0133237502cc32befc5c8de0dc8534736aa6f026c400ce",
+    "TCSlib/Cryptography/Candidates/Arithmetic.lean": "3cd1e07b3e5ccdb06a978d23babd34fdf098de649ec0f4f4fe6dc3dc83b61efd",
+    "TCSlib/Cryptography/Candidates/Concrete.lean": "09adc5fc8565e28d0bb3e49fa4e95bfe26872ac6f74761fb5bd0d4782d5ff2f5",
+    "TCSlib/Cryptography/Candidates/DiscreteLog.lean": "4b9324db9ec79c686679aae86a63a4f5bdf604c81488a5aa39658e0681b770be",
+    "TCSlib/Cryptography/Foundations/BitLists.lean": "dcbc36460b5d553cd2294572630ed014fd1797740dda6fd42fd54ec84e03be54",
+    "TCSlib/Cryptography/Foundations/Experiments.lean": "426ecc19b13a50fcb2bf7db87eca6425285ba47e48f50c72c5088906765fa220",
+    "TCSlib/Cryptography/Foundations/Negligible.lean": "56dc45fc34915f176899a3f6c1585cc3356929ff12519da77eee6a2f3b364a6d",
+    "TCSlib/Cryptography/Foundations/Probability.lean": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+    "TCSlib/Cryptography/Games/Advantage.lean": "c5e265db3e9748ac48542ff408e994edd38748eca22020d9f1f9218742c25999",
+    "TCSlib/Cryptography/Games/OracleComp.lean": "4c9470a976489fa899b037eb10b15da2f4ad0f54768d8a5b57db936c373dafc1",
+    "TCSlib/Cryptography/Games/Probability.lean": "a7d79d12d14ae90d88b7eec368afa8f311eb30864ee8c9b9b72f9f75548dee32",
+    "TCSlib/Cryptography/HardcoreBit/Basic.lean": "684f0c5337ed8394f14bc4cccdce8db657fb1b963a9dda4a575b2cd3086a1a63",
+    "TCSlib/Cryptography/Hashing/CollisionResistant.lean": "fc01b447911ba683a01fc4b694a93b527590e4b490ecf4c57b492083ec8f056b",
+    "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean": "7da640421f1dee49589c31700d117273e9a3250191b5765f16611423f9a2cf39",
+    "TCSlib/Cryptography/NumberTheory/Chebyshev.lean": "397f9a14c8ab21501b8135d007459ca0b3ba210dadf48d9ac78849acdaccddf1",
+    "TCSlib/Cryptography/NumberTheory/Primality.lean": "bc3bede2d28fc0842dff52184365197310f286a5a723779a6c7a80b0bf639287",
+    "TCSlib/Cryptography/NumberTheory/Units.lean": "e26735e6597b429ce1eae556e9497595f97d96edd822562b89553e38cc147aa4",
+    "TCSlib/Cryptography/OneWayFunctions/Amplification.lean": "c051bbdcd17e652b524f6ba95e3d45a841e54c264b06593d7615715d18879fff",
+    "TCSlib/Cryptography/OneWayFunctions/Basic.lean": "68b66cde472539498d0c0913fd591b739c4918301387f7f92cf2e40facce0ab0",
+    "TCSlib/InformationTheory/FinDist.lean": "e17e81d5ecfaccbfd548018f00ad9298c705c263d14f2e4b5792d5dc0351eeb6",
+    "TCSlib/InformationTheory/StatisticalDistance.lean": "74880af40edf4f64d84f8a311487c79ff95daeecfa4417a28e8b4d5fbacbaa6f"
+  },
+  "source_bindings": [
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.Advice",
+      "source": "TCSlib/Complexity/CircuitComplexity/Advice.lean",
+      "sha256": "512af5c3fa784b4f04318f657d1c325c36b4182e5c9bea28cd7e64cd50c77a4e",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/Advice.lean",
+        "sha256": "512af5c3fa784b4f04318f657d1c325c36b4182e5c9bea28cd7e64cd50c77a4e"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.Basic",
+      "source": "TCSlib/Complexity/CircuitComplexity/Basic.lean",
+      "sha256": "05d5f8769bfa5384b306f4f9d51f092d6e23368c748f994438a98bbf56bf39af",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/Basic.lean",
+        "sha256": "05d5f8769bfa5384b306f4f9d51f092d6e23368c748f994438a98bbf56bf39af"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.DAGCircuit",
+      "source": "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+      "sha256": "3cee08a85212761d81b14a6e09a4b4b298fb62096af418c284e8658a704ffaaa",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+        "sha256": "3cee08a85212761d81b14a6e09a4b4b298fb62096af418c284e8658a704ffaaa"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.DAGFanin",
+      "source": "TCSlib/Complexity/CircuitComplexity/DAGFanin.lean",
+      "sha256": "b98f2bba415114f9b18fd1e34427d35d32df526a043787359c49c5d925b1c9ed",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/DAGFanin.lean",
+        "sha256": "b98f2bba415114f9b18fd1e34427d35d32df526a043787359c49c5d925b1c9ed"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.DAGTransform",
+      "source": "TCSlib/Complexity/CircuitComplexity/DAGTransform.lean",
+      "sha256": "023b6115dd010206120f1c0cb642db8f5588db7c4be5d9e699572b4f68488a9f",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/DAGTransform.lean",
+        "sha256": "023b6115dd010206120f1c0cb642db8f5588db7c4be5d9e699572b4f68488a9f"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.LayeredCircuit",
+      "source": "TCSlib/Complexity/CircuitComplexity/LayeredCircuit.lean",
+      "sha256": "cde5dd40b1350f8d6356bba7a612618189b030a225cdf54faf244e3efd20dbaf",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/LayeredCircuit.lean",
+        "sha256": "cde5dd40b1350f8d6356bba7a612618189b030a225cdf54faf244e3efd20dbaf"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.LayeredDAG",
+      "source": "TCSlib/Complexity/CircuitComplexity/LayeredDAG.lean",
+      "sha256": "bf677328d1f77e164ce3de30bf51602a1b9e05f147000f312560bffab2be0684",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/LayeredDAG.lean",
+        "sha256": "bf677328d1f77e164ce3de30bf51602a1b9e05f147000f312560bffab2be0684"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.LayeredPPoly",
+      "source": "TCSlib/Complexity/CircuitComplexity/LayeredPPoly.lean",
+      "sha256": "e5c6cb3c13f2fb60b4f5ed4944d51fb300b3e8a9d02c095ccabf13fe230d77cf",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/LayeredPPoly.lean",
+        "sha256": "e5c6cb3c13f2fb60b4f5ed4944d51fb300b3e8a9d02c095ccabf13fe230d77cf"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.PPoly",
+      "source": "TCSlib/Complexity/CircuitComplexity/PPoly.lean",
+      "sha256": "e50d0e4981997f5ecc4201c919331961b6e8a573ae311d5f27bd298e908fe11d",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/PPoly.lean",
+        "sha256": "e50d0e4981997f5ecc4201c919331961b6e8a573ae311d5f27bd298e908fe11d"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.SizeClasses",
+      "source": "TCSlib/Complexity/CircuitComplexity/SizeClasses.lean",
+      "sha256": "c1825d1aa9e761d49c16616915d8ccc8d4e93f058c8e510472d2d0c5bdaf2765",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/SizeClasses.lean",
+        "sha256": "c1825d1aa9e761d49c16616915d8ccc8d4e93f058c8e510472d2d0c5bdaf2765"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.TreeDAG",
+      "source": "TCSlib/Complexity/CircuitComplexity/TreeDAG.lean",
+      "sha256": "2b9824996de35e2f56a69e589113bebaf035a5c05de4062eef781151cb01f8a2",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/TreeDAG.lean",
+        "sha256": "2b9824996de35e2f56a69e589113bebaf035a5c05de4062eef781151cb01f8a2"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.UnaryCode",
+      "source": "TCSlib/Complexity/CircuitComplexity/UnaryCode.lean",
+      "sha256": "f9b30332707930268fe8077b5940528a534f2bab3c6ba59916c4cea4e7d13034",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/UnaryCode.lean",
+        "sha256": "f9b30332707930268fe8077b5940528a534f2bab3c6ba59916c4cea4e7d13034"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.CoNP",
+      "source": "TCSlib/Complexity/ClassNP/CoNP.lean",
+      "sha256": "bcf23fe2e091282f6ed51d417e47d04503e2247180edfbe093a8905ffdd0955c",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/CoNP.lean",
+        "sha256": "bcf23fe2e091282f6ed51d417e47d04503e2247180edfbe093a8905ffdd0955c"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.CounterProgPolyTime",
+      "source": "TCSlib/Complexity/ClassNP/CounterProgPolyTime.lean",
+      "sha256": "a40e9e33042e619444ae2d89f46a55113bdcc92aa6e84536524720f95c988428",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/CounterProgPolyTime.lean",
+        "sha256": "a40e9e33042e619444ae2d89f46a55113bdcc92aa6e84536524720f95c988428"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.NP",
+      "source": "TCSlib/Complexity/ClassNP/NP.lean",
+      "sha256": "efe31055353bf652e3ca410a7f58e2e578af0b4ccaf036586095b1e03a5dbf68",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/NP.lean",
+        "sha256": "efe31055353bf652e3ca410a7f58e2e578af0b4ccaf036586095b1e03a5dbf68"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PClosure",
+      "source": "TCSlib/Complexity/ClassNP/PClosure.lean",
+      "sha256": "4967e19a746a5a602018b6b8dca89363aee7b3e691d0786fdc3a490015338d44",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PClosure.lean",
+        "sha256": "4967e19a746a5a602018b6b8dca89363aee7b3e691d0786fdc3a490015338d44"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTime",
+      "source": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+      "sha256": "1e79bd74264f41adfdec3c624da06e84fb78aefb72d52f7e7670e64a1e25a50f",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTime.lean",
+        "sha256": "1e79bd74264f41adfdec3c624da06e84fb78aefb72d52f7e7670e64a1e25a50f"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTimeBlockLoop",
+      "source": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+      "sha256": "346a52d4751decd7e164490c57f93bbfe07156354fb3e3d81c2228ab33238909",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+        "sha256": "346a52d4751decd7e164490c57f93bbfe07156354fb3e3d81c2228ab33238909"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTimeBlockMajority",
+      "source": "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean",
+      "sha256": "6416d537aa1de62932ed3d74f3c22a7314ec6fe18087663fc559452ea62baa87",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean",
+        "sha256": "6416d537aa1de62932ed3d74f3c22a7314ec6fe18087663fc559452ea62baa87"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTimeBlockTests",
+      "source": "TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean",
+      "sha256": "80e7340961c1a2aca231c56bd2e1df6279fbeea3a2697d10f7ef6bb8fcbae839",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean",
+        "sha256": "80e7340961c1a2aca231c56bd2e1df6279fbeea3a2697d10f7ef6bb8fcbae839"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTimePairing",
+      "source": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+      "sha256": "8915fe2b3029ab96ffcc6dbfbd7f198abe9de97c08ab44009861e892598acdc0",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+        "sha256": "8915fe2b3029ab96ffcc6dbfbd7f198abe9de97c08ab44009861e892598acdc0"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTimePrefix",
+      "source": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+      "sha256": "5d29d9360c66f769ffeef2fbf61d0cdd1f95e7940118722a954a12909a532597",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+        "sha256": "5d29d9360c66f769ffeef2fbf61d0cdd1f95e7940118722a954a12909a532597"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.Transducer",
+      "source": "TCSlib/Complexity/ClassNP/Transducer.lean",
+      "sha256": "b5161060c58754b13439d2397356e16640ba0b046fe6ebd2d3f5efea1efcea83",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/Transducer.lean",
+        "sha256": "b5161060c58754b13439d2397356e16640ba0b046fe6ebd2d3f5efea1efcea83"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.BinaryArith.AddSub",
+      "source": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean",
+      "sha256": "7a9465a9129ca96a5c7e62d33d9d91609474695933274d0b1e65c87d04e4db55",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean",
+        "sha256": "7a9465a9129ca96a5c7e62d33d9d91609474695933274d0b1e65c87d04e4db55"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.BinaryArith.Basic",
+      "source": "TCSlib/Complexity/ClassP/BinaryArith/Basic.lean",
+      "sha256": "1864fec060a1e0b6703acde827906baef9b9ca1cf1214a19ebf4144eab4f36ab",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Basic.lean",
+        "sha256": "1864fec060a1e0b6703acde827906baef9b9ca1cf1214a19ebf4144eab4f36ab"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.BinaryArith.Div",
+      "source": "TCSlib/Complexity/ClassP/BinaryArith/Div.lean",
+      "sha256": "9bcd67e88694e4f268bc1aaa35d9a1b3c31122fe9fcc060b5a7837cdf24293cc",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Div.lean",
+        "sha256": "9bcd67e88694e4f268bc1aaa35d9a1b3c31122fe9fcc060b5a7837cdf24293cc"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.BinaryArith.Iterate",
+      "source": "TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean",
+      "sha256": "9e4b133ba94c552dec10a5aea4b3ced2f372411ccdc65107db5b4937a8aac487",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean",
+        "sha256": "9e4b133ba94c552dec10a5aea4b3ced2f372411ccdc65107db5b4937a8aac487"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.BinaryArith.Loops",
+      "source": "TCSlib/Complexity/ClassP/BinaryArith/Loops.lean",
+      "sha256": "bfc635654c877d0dbd4b38d8d18d40a350b6517dd1c6d5150ea6bc9b2b5ff87b",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Loops.lean",
+        "sha256": "bfc635654c877d0dbd4b38d8d18d40a350b6517dd1c6d5150ea6bc9b2b5ff87b"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.BinaryArith.Mul",
+      "source": "TCSlib/Complexity/ClassP/BinaryArith/Mul.lean",
+      "sha256": "6897ee8ccb8fcdac67d38585feeea29bb6d3e7f3f42b3e70b02a247af03f5e38",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Mul.lean",
+        "sha256": "6897ee8ccb8fcdac67d38585feeea29bb6d3e7f3f42b3e70b02a247af03f5e38"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.BinaryArith.Words",
+      "source": "TCSlib/Complexity/ClassP/BinaryArith/Words.lean",
+      "sha256": "0c29613c259feeb5d9733f23657ef39d0f172d31a42c3eab44f758d8ee3ea6fa",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Words.lean",
+        "sha256": "0c29613c259feeb5d9733f23657ef39d0f172d31a42c3eab44f758d8ee3ea6fa"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.DTIME",
+      "source": "TCSlib/Complexity/ClassP/DTIME.lean",
+      "sha256": "54795908ce0a394d59cc7ca91a0c9f9377ff687e1bc805af3e65889212c3cc84",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/DTIME.lean",
+        "sha256": "54795908ce0a394d59cc7ca91a0c9f9377ff687e1bc805af3e65889212c3cc84"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.P",
+      "source": "TCSlib/Complexity/ClassP/P.lean",
+      "sha256": "a4c5e2287b5eddea4139813d6fc0110fc55e0faa4d1e2bb873f79b842df3344a",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/P.lean",
+        "sha256": "a4c5e2287b5eddea4139813d6fc0110fc55e0faa4d1e2bb873f79b842df3344a"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.TimeConstructible",
+      "source": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "sha256": "9dbfce574194ed387488b24eafe9500a384e8ba8cf7b21846e7023582c9ed481",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/TimeConstructible.lean",
+        "sha256": "9dbfce574194ed387488b24eafe9500a384e8ba8cf7b21846e7023582c9ed481"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.PolyHierarchy.Padding",
+      "source": "TCSlib/Complexity/PolyHierarchy/Padding.lean",
+      "sha256": "61ecc05184a2c5b06f34d947bc00a5697cc7594dfbffce6dfb246932cef0c981",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/PolyHierarchy/Padding.lean",
+        "sha256": "61ecc05184a2c5b06f34d947bc00a5697cc7594dfbffce6dfb246932cef0c981"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.IterateFind",
+      "source": "TCSlib/Complexity/Randomized/Build/IterateFind.lean",
+      "sha256": "c8f58e091cbb6e9c07e548f286638fa8a78420dc6dce81dd86711acfa0af317b",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/IterateFind.lean",
+        "sha256": "c8f58e091cbb6e9c07e548f286638fa8a78420dc6dce81dd86711acfa0af317b"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.IterateFindHost",
+      "source": "TCSlib/Complexity/Randomized/Build/IterateFindHost.lean",
+      "sha256": "0348140038e0978463a4d727e97b2e3f034829a0313dee432371c84ad743f4ca",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean",
+        "sha256": "0348140038e0978463a4d727e97b2e3f034829a0313dee432371c84ad743f4ca"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.PairSplit",
+      "source": "TCSlib/Complexity/Randomized/Build/PairSplit.lean",
+      "sha256": "059cef36d526f27bb3b15de8d4bc9054d3944f15719fc94d20fd3125f7a41d50",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/PairSplit.lean",
+        "sha256": "059cef36d526f27bb3b15de8d4bc9054d3944f15719fc94d20fd3125f7a41d50"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.StateLoop",
+      "source": "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+      "sha256": "1e77690dd9b5de66842b3f1dc0292d1c113004a70423e497757cbc6d928e5e26",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+        "sha256": "1e77690dd9b5de66842b3f1dc0292d1c113004a70423e497757cbc6d928e5e26"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.StringLoops",
+      "source": "TCSlib/Complexity/Randomized/Build/StringLoops.lean",
+      "sha256": "ca30aa1d973baa4e77c8dc4e5fcf5519add57714c185c6ee1b2595b2f38914d1",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/StringLoops.lean",
+        "sha256": "ca30aa1d973baa4e77c8dc4e5fcf5519add57714c185c6ee1b2595b2f38914d1"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.UnaryMul",
+      "source": "TCSlib/Complexity/Randomized/Build/UnaryMul.lean",
+      "sha256": "131790bd75b421ab914a10cfa5ce27a28c4c49f5bb4b2b03899f104f7b56018f",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/UnaryMul.lean",
+        "sha256": "131790bd75b421ab914a10cfa5ce27a28c4c49f5bb4b2b03899f104f7b56018f"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Closure",
+      "source": "TCSlib/Complexity/Randomized/Closure.lean",
+      "sha256": "869d10a947a0a2a6e230e866e10ea1ae48e0e283c039ab002ca44ec7f0d3e474",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Closure.lean",
+        "sha256": "869d10a947a0a2a6e230e866e10ea1ae48e0e283c039ab002ca44ec7f0d3e474"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.NonUniform",
+      "source": "TCSlib/Complexity/Randomized/NonUniform.lean",
+      "sha256": "93d6e6d0a8bed8ea6b6344ce08dc6cb69a0ce7167d16002f0e95d7c4c1474ff7",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/NonUniform.lean",
+        "sha256": "93d6e6d0a8bed8ea6b6344ce08dc6cb69a0ce7167d16002f0e95d7c4c1474ff7"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PPT",
+      "source": "TCSlib/Complexity/Randomized/PPT.lean",
+      "sha256": "97248e5603fc118c4343d564b60747bddba1443fa86c3ea60e74018e95da63ff",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/PPT.lean",
+        "sha256": "97248e5603fc118c4343d564b60747bddba1443fa86c3ea60e74018e95da63ff"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyExpr",
+      "source": "TCSlib/Complexity/Randomized/PolyExpr.lean",
+      "sha256": "b451da6f4486facf83c10c154fc77ac39bb24936a3fdb29a1d3a1fd3d43c1766",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/PolyExpr.lean",
+        "sha256": "b451da6f4486facf83c10c154fc77ac39bb24936a3fdb29a1d3a1fd3d43c1766"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Primitives",
+      "source": "TCSlib/Complexity/Randomized/Primitives.lean",
+      "sha256": "0612ba120fab6fe4cac4770a6e15228f718949627d31b00100a0535efb0bd0ec",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Primitives.lean",
+        "sha256": "0612ba120fab6fe4cac4770a6e15228f718949627d31b00100a0535efb0bd0ec"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Repetition",
+      "source": "TCSlib/Complexity/Randomized/Repetition.lean",
+      "sha256": "f94702f4f5e17f71bfead906aa25e9993b25e6a20ad57c6e6b43c770a4bc329e",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Repetition.lean",
+        "sha256": "f94702f4f5e17f71bfead906aa25e9993b25e6a20ad57c6e6b43c770a4bc329e"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.SpaceComplexity.Machines.Bin",
+      "source": "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean",
+      "sha256": "d045d7ec07a252220812dfccd42e02175fcb081286c884c508f5e84f5d4ab72c",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean",
+        "sha256": "d045d7ec07a252220812dfccd42e02175fcb081286c884c508f5e84f5d4ab72c"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Convention",
+      "source": "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+      "sha256": "3a65edcd89bf39d8a465329ceaf9c55796cf5e92ca17a3671e71ea4b2c831c25",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+        "sha256": "3a65edcd89bf39d8a465329ceaf9c55796cf5e92ca17a3671e71ea4b2c831c25"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Embed",
+      "source": "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+      "sha256": "95ae78fafbc8c7585f9b0c603796ae843d1e7ae25788359cb6a94c8e9ad25575",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+        "sha256": "95ae78fafbc8c7585f9b0c603796ae843d1e7ae25788359cb6a94c8e9ad25575"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.EmitIterBody",
+      "source": "TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean",
+      "sha256": "51ba37e814d006573c5627ae096192ebcc1f5f9afc60c63927c8448f30858cd2",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean",
+        "sha256": "51ba37e814d006573c5627ae096192ebcc1f5f9afc60c63927c8448f30858cd2"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed",
+      "source": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "sha256": "6efd087c48a57a14b9dca6bff6a89209174c014f37c4019dad6eef8585d1ce43",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+        "sha256": "6efd087c48a57a14b9dca6bff6a89209174c014f37c4019dad6eef8585d1ce43"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Loop",
+      "source": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "sha256": "d993af6f3d31495ea2ae34d7f9cbcfc1a1c522de825a88b5345236351c7ab9b5",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+        "sha256": "d993af6f3d31495ea2ae34d7f9cbcfc1a1c522de825a88b5345236351c7ab9b5"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.ModuleHost",
+      "source": "TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean",
+      "sha256": "4d3824deab3cbaf5ba3b2303e58610801ceb9d44e3b6913848047f7e9bc5b7bb",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean",
+        "sha256": "4d3824deab3cbaf5ba3b2303e58610801ceb9d44e3b6913848047f7e9bc5b7bb"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "source": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "sha256": "9da69d03720beef640dc27b310c0e99bc8d298dd36ae4a22b97943d13a2a2b27",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+        "sha256": "9da69d03720beef640dc27b310c0e99bc8d298dd36ae4a22b97943d13a2a2b27"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+      "source": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "sha256": "e2dcc306bc4572038508f9f7ba7abb65a541ca1c74fb5b1bbad19b3068ee58f3",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+        "sha256": "e2dcc306bc4572038508f9f7ba7abb65a541ca1c74fb5b1bbad19b3068ee58f3"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Composition",
+      "source": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "sha256": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Composition.lean",
+        "sha256": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Configuration",
+      "source": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Configuration.lean",
+        "sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.CounterProg",
+      "source": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+      "sha256": "a9d858f6cb848fef51d41cf44589328e363a02ea98e1e431a6f9fba1969658c4",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/CounterProg.lean",
+        "sha256": "a9d858f6cb848fef51d41cf44589328e363a02ea98e1e431a6f9fba1969658c4"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.CounterProgInput",
+      "source": "TCSlib/Complexity/TuringMachine/CounterProgInput.lean",
+      "sha256": "770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/CounterProgInput.lean",
+        "sha256": "770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.CounterProgRun",
+      "source": "TCSlib/Complexity/TuringMachine/CounterProgRun.lean",
+      "sha256": "9bfc54704f6f86e6925741753872da717e685cca7f2ba118fb3722510b817928",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/CounterProgRun.lean",
+        "sha256": "9bfc54704f6f86e6925741753872da717e685cca7f2ba118fb3722510b817928"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "source": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "sha256": "4b992ab2344562478c03d9aac8a8189f752fb5db337c08f2134488b88dc75379",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Deterministic.lean",
+        "sha256": "4b992ab2344562478c03d9aac8a8189f752fb5db337c08f2134488b88dc75379"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Encoding",
+      "source": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "sha256": "15b0f286ca1048ea6c86f7b93e5eae99b7ddea65d8d304f99c229a85950dbbd0",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Encoding.lean",
+        "sha256": "15b0f286ca1048ea6c86f7b93e5eae99b7ddea65d8d304f99c229a85950dbbd0"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Finite",
+      "source": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Finite.lean",
+        "sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+      "source": "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean",
+      "sha256": "0bf453573719a9a1bb6a9ab13cf1728318668aa76fd3578d3a94f08fc2a5d1dd",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean",
+        "sha256": "0bf453573719a9a1bb6a9ab13cf1728318668aa76fd3578d3a94f08fc2a5d1dd"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "source": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "sha256": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+        "sha256": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Simulation",
+      "source": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "sha256": "5d11537175140aa3f905baa8142ec5fd534022e41ff6bf2c645adc4bdcb61fab",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Simulation.lean",
+        "sha256": "5d11537175140aa3f905baa8142ec5fd534022e41ff6bf2c645adc4bdcb61fab"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "source": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+        "sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Sweep",
+      "source": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Sweep.lean",
+        "sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.UnaryTape",
+      "source": "TCSlib/Complexity/TuringMachine/UnaryTape.lean",
+      "sha256": "3c7c639b324fa577af524310b93e7ec8c39494cbd5ddf5f5482ed90ae6d134d4",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/UnaryTape.lean",
+        "sha256": "3c7c639b324fa577af524310b93e7ec8c39494cbd5ddf5f5482ed90ae6d134d4"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.Adversary",
+      "source": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+      "sha256": "9ab69ef62a368c35c818fc1a4e65b36370df35bc4023f10d5641bead6edae7c3",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/Adversary.lean",
+        "sha256": "9ab69ef62a368c35c818fc1a4e65b36370df35bc4023f10d5641bead6edae7c3"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.Collections",
+      "source": "TCSlib/Cryptography/Asymptotic/Collections.lean",
+      "sha256": "627d44400fb9dfec4b772be3fa1c0be5bc9305dbe333cca492286bd712956153",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/Collections.lean",
+        "sha256": "627d44400fb9dfec4b772be3fa1c0be5bc9305dbe333cca492286bd712956153"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.CollectionsHelpers",
+      "source": "TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean",
+      "sha256": "29716bdb4b048b45e331ab18311908b2b250985445d57ba25583211f07e91beb",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean",
+        "sha256": "29716bdb4b048b45e331ab18311908b2b250985445d57ba25583211f07e91beb"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.CollectionsLemmas",
+      "source": "TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean",
+      "sha256": "d8a8352ad0e176ec2badb7a63fce8bd576d54e824b3509955e14777058db552f",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean",
+        "sha256": "d8a8352ad0e176ec2badb7a63fce8bd576d54e824b3509955e14777058db552f"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.OneWay",
+      "source": "TCSlib/Cryptography/Asymptotic/OneWay.lean",
+      "sha256": "d091dc49b988899d0a2d2235390701c9a7265eb70cd28bddc9002aa307270ec3",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/OneWay.lean",
+        "sha256": "d091dc49b988899d0a2d2235390701c9a7265eb70cd28bddc9002aa307270ec3"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.OneWayLemmas",
+      "source": "TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean",
+      "sha256": "4a2ed3f8d9e84f218d7344301d5060f88f407be4f2a2ce38b3c81800c44e028a",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean",
+        "sha256": "4a2ed3f8d9e84f218d7344301d5060f88f407be4f2a2ce38b3c81800c44e028a"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.OneWayYao",
+      "source": "TCSlib/Cryptography/Asymptotic/OneWayYao.lean",
+      "sha256": "bd5c284e3d08636b108f25cb91f72a39ced7e70e27be8784e96ce5dbc36c1ae1",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/OneWayYao.lean",
+        "sha256": "bd5c284e3d08636b108f25cb91f72a39ced7e70e27be8784e96ce5dbc36c1ae1"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.Sampling",
+      "source": "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+      "sha256": "353f3dd6e00625151a7d01c14b550fa84fab1f1e3b9c5f9da80ee28cba401c8a",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/Sampling.lean",
+        "sha256": "353f3dd6e00625151a7d01c14b550fa84fab1f1e3b9c5f9da80ee28cba401c8a"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Authentication.Encoding",
+      "source": "TCSlib/Cryptography/Authentication/Encoding.lean",
+      "sha256": "d9ebad935ac9fb11fc0133237502cc32befc5c8de0dc8534736aa6f026c400ce",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Authentication/Encoding.lean",
+        "sha256": "d9ebad935ac9fb11fc0133237502cc32befc5c8de0dc8534736aa6f026c400ce"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Candidates.Arithmetic",
+      "source": "TCSlib/Cryptography/Candidates/Arithmetic.lean",
+      "sha256": "3cd1e07b3e5ccdb06a978d23babd34fdf098de649ec0f4f4fe6dc3dc83b61efd",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Candidates/Arithmetic.lean",
+        "sha256": "3cd1e07b3e5ccdb06a978d23babd34fdf098de649ec0f4f4fe6dc3dc83b61efd"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Candidates.Concrete",
+      "source": "TCSlib/Cryptography/Candidates/Concrete.lean",
+      "sha256": "09adc5fc8565e28d0bb3e49fa4e95bfe26872ac6f74761fb5bd0d4782d5ff2f5",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Candidates/Concrete.lean",
+        "sha256": "09adc5fc8565e28d0bb3e49fa4e95bfe26872ac6f74761fb5bd0d4782d5ff2f5"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Candidates.DiscreteLog",
+      "source": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+      "sha256": "4b9324db9ec79c686679aae86a63a4f5bdf604c81488a5aa39658e0681b770be",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+        "sha256": "4b9324db9ec79c686679aae86a63a4f5bdf604c81488a5aa39658e0681b770be"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Foundations.BitLists",
+      "source": "TCSlib/Cryptography/Foundations/BitLists.lean",
+      "sha256": "dcbc36460b5d553cd2294572630ed014fd1797740dda6fd42fd54ec84e03be54",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Foundations/BitLists.lean",
+        "sha256": "dcbc36460b5d553cd2294572630ed014fd1797740dda6fd42fd54ec84e03be54"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Foundations.Experiments",
+      "source": "TCSlib/Cryptography/Foundations/Experiments.lean",
+      "sha256": "426ecc19b13a50fcb2bf7db87eca6425285ba47e48f50c72c5088906765fa220",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Foundations/Experiments.lean",
+        "sha256": "426ecc19b13a50fcb2bf7db87eca6425285ba47e48f50c72c5088906765fa220"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Foundations.Negligible",
+      "source": "TCSlib/Cryptography/Foundations/Negligible.lean",
+      "sha256": "56dc45fc34915f176899a3f6c1585cc3356929ff12519da77eee6a2f3b364a6d",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Foundations/Negligible.lean",
+        "sha256": "56dc45fc34915f176899a3f6c1585cc3356929ff12519da77eee6a2f3b364a6d"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Foundations.Probability",
+      "source": "TCSlib/Cryptography/Foundations/Probability.lean",
+      "sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Foundations/Probability.lean",
+        "sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Games.Advantage",
+      "source": "TCSlib/Cryptography/Games/Advantage.lean",
+      "sha256": "c5e265db3e9748ac48542ff408e994edd38748eca22020d9f1f9218742c25999",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Games/Advantage.lean",
+        "sha256": "c5e265db3e9748ac48542ff408e994edd38748eca22020d9f1f9218742c25999"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Games.OracleComp",
+      "source": "TCSlib/Cryptography/Games/OracleComp.lean",
+      "sha256": "4c9470a976489fa899b037eb10b15da2f4ad0f54768d8a5b57db936c373dafc1",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Games/OracleComp.lean",
+        "sha256": "4c9470a976489fa899b037eb10b15da2f4ad0f54768d8a5b57db936c373dafc1"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Games.Probability",
+      "source": "TCSlib/Cryptography/Games/Probability.lean",
+      "sha256": "a7d79d12d14ae90d88b7eec368afa8f311eb30864ee8c9b9b72f9f75548dee32",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Games/Probability.lean",
+        "sha256": "a7d79d12d14ae90d88b7eec368afa8f311eb30864ee8c9b9b72f9f75548dee32"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.HardcoreBit.Basic",
+      "source": "TCSlib/Cryptography/HardcoreBit/Basic.lean",
+      "sha256": "684f0c5337ed8394f14bc4cccdce8db657fb1b963a9dda4a575b2cd3086a1a63",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/HardcoreBit/Basic.lean",
+        "sha256": "684f0c5337ed8394f14bc4cccdce8db657fb1b963a9dda4a575b2cd3086a1a63"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Hashing.CollisionResistant",
+      "source": "TCSlib/Cryptography/Hashing/CollisionResistant.lean",
+      "sha256": "fc01b447911ba683a01fc4b694a93b527590e4b490ecf4c57b492083ec8f056b",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Hashing/CollisionResistant.lean",
+        "sha256": "fc01b447911ba683a01fc4b694a93b527590e4b490ecf4c57b492083ec8f056b"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Hashing.FromDiscreteLog",
+      "source": "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "sha256": "7da640421f1dee49589c31700d117273e9a3250191b5765f16611423f9a2cf39",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+        "sha256": "7da640421f1dee49589c31700d117273e9a3250191b5765f16611423f9a2cf39"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.NumberTheory.Chebyshev",
+      "source": "TCSlib/Cryptography/NumberTheory/Chebyshev.lean",
+      "sha256": "397f9a14c8ab21501b8135d007459ca0b3ba210dadf48d9ac78849acdaccddf1",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/NumberTheory/Chebyshev.lean",
+        "sha256": "397f9a14c8ab21501b8135d007459ca0b3ba210dadf48d9ac78849acdaccddf1"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.NumberTheory.Primality",
+      "source": "TCSlib/Cryptography/NumberTheory/Primality.lean",
+      "sha256": "bc3bede2d28fc0842dff52184365197310f286a5a723779a6c7a80b0bf639287",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/NumberTheory/Primality.lean",
+        "sha256": "bc3bede2d28fc0842dff52184365197310f286a5a723779a6c7a80b0bf639287"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.NumberTheory.Units",
+      "source": "TCSlib/Cryptography/NumberTheory/Units.lean",
+      "sha256": "e26735e6597b429ce1eae556e9497595f97d96edd822562b89553e38cc147aa4",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/NumberTheory/Units.lean",
+        "sha256": "e26735e6597b429ce1eae556e9497595f97d96edd822562b89553e38cc147aa4"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.OneWayFunctions.Amplification",
+      "source": "TCSlib/Cryptography/OneWayFunctions/Amplification.lean",
+      "sha256": "c051bbdcd17e652b524f6ba95e3d45a841e54c264b06593d7615715d18879fff",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/OneWayFunctions/Amplification.lean",
+        "sha256": "c051bbdcd17e652b524f6ba95e3d45a841e54c264b06593d7615715d18879fff"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "source": "TCSlib/Cryptography/OneWayFunctions/Basic.lean",
+      "sha256": "68b66cde472539498d0c0913fd591b739c4918301387f7f92cf2e40facce0ab0",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/OneWayFunctions/Basic.lean",
+        "sha256": "68b66cde472539498d0c0913fd591b739c4918301387f7f92cf2e40facce0ab0"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.InformationTheory.FinDist",
+      "source": "TCSlib/InformationTheory/FinDist.lean",
+      "sha256": "e17e81d5ecfaccbfd548018f00ad9298c705c263d14f2e4b5792d5dc0351eeb6",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/InformationTheory/FinDist.lean",
+        "sha256": "e17e81d5ecfaccbfd548018f00ad9298c705c263d14f2e4b5792d5dc0351eeb6"
+      },
+      "runtime_source_unchanged": true
+    },
+    {
+      "module": "TCSlib.InformationTheory.StatisticalDistance",
+      "source": "TCSlib/InformationTheory/StatisticalDistance.lean",
+      "sha256": "74880af40edf4f64d84f8a311487c79ff95daeecfa4417a28e8b4d5fbacbaa6f",
+      "snapshot": {
+        "path": "evidence/probes/Rule10/BaseTree/TCSlib/InformationTheory/StatisticalDistance.lean",
+        "sha256": "74880af40edf4f64d84f8a311487c79ff95daeecfa4417a28e8b4d5fbacbaa6f"
+      },
+      "runtime_source_unchanged": true
+    }
+  ],
+  "exact_module_pins": {
+    "base": "eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9",
+    "compiler": "leanprover/lean4:v4.25.0",
+    "source_module_count": 98,
+    "owner_modules": [
+      "TCSlib.Cryptography.Candidates.DiscreteLog",
+      "TCSlib.Cryptography.Hashing.FromDiscreteLog"
+    ],
+    "pin_sources": {
+      "lean-toolchain": {
+        "path": "evidence/probes/Rule10/BaseTree/lean-toolchain",
+        "sha256": "dbbf063fc415c8e718172605f23a8f86679a3c320eff6d3890cc009534452925"
+      },
+      "lake-manifest.json": {
+        "path": "evidence/probes/Rule10/BaseTree/lake-manifest.json",
+        "sha256": "cad7de215c4cc216d03acb77cb1abfbe9f3b4062a8988b29459504f932015100"
+      }
+    }
+  },
+  "runtime_object_verifications": [
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Configuration",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Configuration.olean",
+      "sha256": "ce9ee2e58b28c9226eeaa3e8733b57f698ece429a22c614edb107b2bbbc326b3",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Deterministic",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Deterministic.olean",
+      "sha256": "9de130ecf4af0c68a509d08f0d18e806225b4aed077ba5505441d810ee942f44",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Finite",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Finite.olean",
+      "sha256": "dc9e88160da06cba4b8c5214caf9ea517a6ae67f54c70f17c3f4a53b9ec1335a",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/DTIME",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassP/DTIME.olean",
+      "sha256": "517d1cb340b855bde31e38e3f00dfb789ecdc16b6c7c4a26b7d3d2eaee4c2ae2",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/P",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassP/P.olean",
+      "sha256": "0a427477f0280a02de4085afce007b47a68e0794eb28e2067d647d0e2dea83ef",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Simulation",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Simulation.olean",
+      "sha256": "e12d17becbd084e7b90db443f8a4f09d8824699aa08959ed10bb50e6dd36ed24",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/StateRenaming",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/StateRenaming.olean",
+      "sha256": "50b350669fb1b82782ba0c0771a9dbb7a03ab4027816ba46b4102a499b1d77b0",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.olean",
+      "sha256": "b5ea1e8f588b7aea32779cd6603da27a4e2c428dcf396ed59e403bb54c5e9adb",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Sweep",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Sweep.olean",
+      "sha256": "1615718b1145577a5b0d3d5fb697858acf95f1f8a7790bfcd1389eec2a7abe4b",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.olean",
+      "sha256": "1aafbf9041b538db9ebc692295906f7a50fe7dffee595d46e0894df838a1803c",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Encoding",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Encoding.olean",
+      "sha256": "759d5e8f763994b89657c7533c96ee2749c4d70aea00bbd91c1726000e3c4df2",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/TimeConstructible",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassP/TimeConstructible.olean",
+      "sha256": "589a938db9e2a251191f4fa52a0bb26066c396bee5b4b860b11ac113971d720c",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Convention",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Build/Convention.olean",
+      "sha256": "1904784e938c5135c26c8dd18b230b3ff5212305741b4841c052f8afde92ec02",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Composition",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Composition.olean",
+      "sha256": "6c4add455df46c06c56c6e563000799fd4be57d39afa706af75891d30d964cf0",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Wrappers",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Build/Wrappers.olean",
+      "sha256": "ad831d535ee1b2f95f7995d22056c77124b239727c6453369810170aa13b3266",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Embed",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Build/Embed.olean",
+      "sha256": "8d9efd3966f147d1b525ab2a52e0afa110032292f5449422bca5182b8304bd47",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Loop",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Build/Loop.olean",
+      "sha256": "ddcc738075b9cc03515e7b058e7fe7684bc18304b33d99dcd5fe98c8a42638b3",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Primitives",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Build/Primitives.olean",
+      "sha256": "6f147f43418796e707edd5b270bddbe69023e41c71e204f723f2b8fb82adf991",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/DAGCircuit",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/DAGCircuit.olean",
+      "sha256": "118d5d6c4c932686929f5e8f438e6ed04db181157302bc45137f978ec2ef6f92",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/Basic",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/Basic.olean",
+      "sha256": "7379adf14d255bda30678431882d87d84da5e54452ad53cf955f152a76b11dee",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/TreeDAG",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/TreeDAG.olean",
+      "sha256": "22c479da2756bb03db4d80f0d7ee9db49bb764086815a45a8826b39c2bb1e684",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/DAGTransform",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/DAGTransform.olean",
+      "sha256": "9ce97a41dd84676bdbfc497488b3b7754f16a920ffe73104c9847a3aa992634c",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/DAGFanin",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/DAGFanin.olean",
+      "sha256": "87415f814a5c9c90f723b3c3eb37638f55ffd5c6598603a355ca2ba8e5b0319f",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/LayeredCircuit",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/LayeredCircuit.olean",
+      "sha256": "da5c7d2a1daec7d40672e7fe1bad2f8d55c17ac0729e48a8f942ea8781fab254",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/LayeredPPoly",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/LayeredPPoly.olean",
+      "sha256": "7f5386255b1c1f7153437eeee07aec2ea3efd8f65860e2009f03755369fd769d",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/PPoly",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/PPoly.olean",
+      "sha256": "a2020feca57d2bab278ddfdcf6b5bf793b967fa0a1c4ced0aed4f3ad2ae033e8",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/LayeredDAG",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/LayeredDAG.olean",
+      "sha256": "94c420532c81e6d0e222f61ed42822037695c8787055e260164b4f3a759872bc",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/SizeClasses",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/SizeClasses.olean",
+      "sha256": "e983fbd89ff56dfbf2bda96d4a495e76a5fab3053f60d8865b371d2425bf5e4e",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/Advice",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/Advice.olean",
+      "sha256": "78ad607c93867b0ebb7a71d7c57a67e3ad449afde82ec615927e81b17aec0c87",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/UnaryCode",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/CircuitComplexity/UnaryCode.olean",
+      "sha256": "53469a91506f6258e718a19ccce7c27994c3961b5e106f432c048f890678e3cf",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTime",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassNP/PolyTime.olean",
+      "sha256": "b8a257b09dd605a3e200b85d0a8aed419fb7ed73e4f0f522f072680a543c5b23",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimePairing",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassNP/PolyTimePairing.olean",
+      "sha256": "b49dbe41ad479e0c47f40c78b4f91ce81c391760063fcbb032e29bc1e8ec9120",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/NP",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassNP/NP.olean",
+      "sha256": "3c6a86c381aac040e0c70de24ed6f2b76e7682f7870928e6b2628bbd391cbe10",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/CoNP",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassNP/CoNP.olean",
+      "sha256": "01583fb8bf0afe961fb80a6f85f489c776b630280eb1891f44e6eee61771d503",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/UnaryTape",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/UnaryTape.olean",
+      "sha256": "c4fca9a3bc6fa4ff043057b1054db236617f67ac211528461e8108dd4d0521be",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/CounterProg",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/CounterProg.olean",
+      "sha256": "8e212501f3b03676f1a6a13820320eea5f478df2db7b1ea5588e8b52e24255b3",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/CounterProgRun",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/CounterProgRun.olean",
+      "sha256": "51ed7d55c15427f7f2a48b29750d1c7c18a82cede66b8a76e5cf0332b66b52da",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/CounterProgPolyTime",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassNP/CounterProgPolyTime.olean",
+      "sha256": "fd05df7282f4ee25b2ba959a6ab1e39449259dafb58da52eb760cba5565cb955",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/CounterProgInput",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/CounterProgInput.olean",
+      "sha256": "c56d7549fd8b1eff10e08516638cd920604936d4fce718b1e241b6156374182c",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimePrefix",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassNP/PolyTimePrefix.olean",
+      "sha256": "2174609991df59e6bf68d8bac218725a602d23bfd9ef66b411b0d026fe83373c",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.olean",
+      "sha256": "1b99dfac4953c9378f74937548ce7a34900c29f8d734cdcdde833b5e9e726162",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/EmitIterBody",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Build/EmitIterBody.olean",
+      "sha256": "c88979284645961643ec8cc759ec71ec9ad6323203af7966c7c3b887a73c142b",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.olean",
+      "sha256": "66b3e9fe4aee76c5c4e569e783c231d8d5d59471a09c28af81a52bf8c20bcc5b",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimeBlockTests",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassNP/PolyTimeBlockTests.olean",
+      "sha256": "3e3c509a1ccefaf6ca0e5721c7b3a026d0e84553b06ebe3248dae31f8d900e64",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.olean",
+      "sha256": "26a77aa4cf00f4b59b1ea9335da4f8cdf80d19488d9484085dd2d988b445aaff",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PClosure",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassNP/PClosure.olean",
+      "sha256": "c27f219c0331c18387353c1b8fef60869c43a6d8243db0ba4ac024b963a6bd0c",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/Transducer",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassNP/Transducer.olean",
+      "sha256": "a5eeaefaa1c4a7185fb43c65654495ec3942fba38624468a974a5cf8b62ed361",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/BinaryArith/Iterate",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassP/BinaryArith/Iterate.olean",
+      "sha256": "936a0510fc89fcacdf5ba94a9bf0b9fc0d9a2ec5c926186231772c9a193ce699",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/SpaceComplexity/Machines/Bin",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/SpaceComplexity/Machines/Bin.olean",
+      "sha256": "397c802cee47c0130e8dc4783c4c1ca4a832b6e166e9818a11616aa2a78f998f",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/BinaryArith/Basic",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassP/BinaryArith/Basic.olean",
+      "sha256": "ba938210d7fc02de70242e15997a657bfb3111aabccaa9e6e1ec9c7c85fb7adc",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/BinaryArith/AddSub",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassP/BinaryArith/AddSub.olean",
+      "sha256": "ea8cc0d3c74dd23e620bbf40191064a5d4b9b59ae4120dc0fc8b829dcc6b8a04",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/BinaryArith/Mul",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassP/BinaryArith/Mul.olean",
+      "sha256": "fef94feab107d897ea90da87a0a1c3307adcfeabd8db322c8b8fce3c14933af4",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/BinaryArith/Div",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassP/BinaryArith/Div.olean",
+      "sha256": "f535b93e6e424a08fdc750476533fb8c8cb5f30a058b0c3c43b121e26ddb8da4",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/BinaryArith/Words",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassP/BinaryArith/Words.olean",
+      "sha256": "6e84fac955d32591a97a533cb0d01468a3ffa5624e10f78db66efd0ae12a12e7",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/BinaryArith/Loops",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/ClassP/BinaryArith/Loops.olean",
+      "sha256": "e86e7d0f64b1e3a9ed251570624bd9ff81b1859420dbcd88607f0690124479d2",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/PolyHierarchy/Padding",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/PolyHierarchy/Padding.olean",
+      "sha256": "21882905da610c9805bc5d0233df8685add957595de66ced1ddd4a80a1f5f0a3",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/ModuleHost",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/TuringMachine/Build/ModuleHost.olean",
+      "sha256": "7ccc9ff72231406b51a63c412bdc731a32b06083b63ffc7795437a4336cb8992",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/IterateFindHost",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/Build/IterateFindHost.olean",
+      "sha256": "78adafa1c46b0a391868eaa246deb9780c06e400b23a7be272548d4b07686e2d",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/PairSplit",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/Build/PairSplit.olean",
+      "sha256": "61e117938c81ad7d0e8606576ff66a6361e5929cd4398d56bdcb81359dcca947",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/UnaryMul",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/Build/UnaryMul.olean",
+      "sha256": "cfc227f6908b84478e1cac468c7ae2241571daf2b60513efcd46130a3c86d59e",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/PolyExpr",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/PolyExpr.olean",
+      "sha256": "fc50fae768ad5f9c52ecd39f0118a1f4d044e58304e2b2e653a34086a9eaa8c2",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Primitives",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/Primitives.olean",
+      "sha256": "dae7d582a6e23c26a4ba4f29f7d1f184b52b7c680c4a0b9bc1dd851346b200ea",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/IterateFind",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/Build/IterateFind.olean",
+      "sha256": "14ad058b510e0ffa3ebf10d29cd5c54ac587b5b053404a4a2df89441459678fe",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/StateLoop",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/Build/StateLoop.olean",
+      "sha256": "a80c7d630c9808dc467f0753cc7a20c4c807e99610871d192de68de010024c9f",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/StringLoops",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/Build/StringLoops.olean",
+      "sha256": "0849ebf8dd7be4693c2073f894a2dc8fbd53c86be25f0af906317ac384ac0326",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/PPT",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/PPT.olean",
+      "sha256": "28df4da567cc89b585ebc1183e985700f70652108c83e7e0db1689d930677880",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Closure",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/Closure.olean",
+      "sha256": "0fc0f614ae385a1d0877a8f1afbc7cd3512f235f28048f98414454bad7c4d554",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/NonUniform",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/NonUniform.olean",
+      "sha256": "10dd63b5a7f504d396a96281a3dabc59c0c55b89b1c3ff5f4006c331a6c6ca3b",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Repetition",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Complexity/Randomized/Repetition.olean",
+      "sha256": "9a25e6663f0981ed9602ed7772e7d38c7ceaa3a8c8e43899cc90d27305e96fd7",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Foundations/Probability",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Foundations/Probability.olean",
+      "sha256": "339604cd349d7cf1e3d3e1e262f4ffac2fe3a74aabb6d7b923df0e7cc6f83410",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/InformationTheory/FinDist",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/InformationTheory/FinDist.olean",
+      "sha256": "935c0b518a88a6a5167556eab055cdfdba58a8182fa41815edb6ad5410ae2870",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/InformationTheory/StatisticalDistance",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/InformationTheory/StatisticalDistance.olean",
+      "sha256": "e52d2e19b168165931479ab34a90ce98f5572faa519ea2382b76dbfeba38b2ae",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Foundations/Experiments",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Foundations/Experiments.olean",
+      "sha256": "2eaeb274ded66f8168654d11b5a8ec3f11430a41feea7333b7f078d6c4f15384",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/HardcoreBit/Basic",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/HardcoreBit/Basic.olean",
+      "sha256": "4262c3ac09b3bf9ca9ab942495a815e02c33909d0e8736242696377372e9ed21",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Foundations/BitLists",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Foundations/BitLists.olean",
+      "sha256": "329151bfad745a3b042148fa5007e1479fcd97a6e3146aefb2041e34cb4a10f2",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/Adversary",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Asymptotic/Adversary.olean",
+      "sha256": "72a05cdd334d170e542f2d4ee591510d6c4da3c8347b1ca679614556df82948e",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/OneWayFunctions/Basic",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/OneWayFunctions/Basic.olean",
+      "sha256": "ed30356b86e3f228f5925202503e065d447ed91b14a631595d04c79bde2aea89",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/Sampling",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Asymptotic/Sampling.olean",
+      "sha256": "97ec7454fdde5f50b22c27bac6cb9b699c03678f0f517f51f53ddb01a7dc1296",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Foundations/Negligible",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Foundations/Negligible.olean",
+      "sha256": "993abb2398dbfcb5197a5090e41a3a0c0ccd09f451e910ab8488d243f01b62a3",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/OneWayFunctions/Amplification",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/OneWayFunctions/Amplification.olean",
+      "sha256": "d20f83a1ace68c0cfafd40d6fc2e54dd99fff7e81caf3c5d74ddaf07ffbdcca4",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/OneWayLemmas",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Asymptotic/OneWayLemmas.olean",
+      "sha256": "f1137cb2a150253e58f15c797ec906955682b95786fea0fe2da124d52cdca959",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/OneWayYao",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Asymptotic/OneWayYao.olean",
+      "sha256": "1d4eaaa1a18f19ce79301faf43b8511a7950fb86c96b15d0233df631e1379388",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/OneWay",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Asymptotic/OneWay.olean",
+      "sha256": "cdd6ea141e9c6bc8f87b302c774b98bcffab440d36a58c6e0fc30578afa57a7d",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/CollectionsHelpers",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.olean",
+      "sha256": "6886138e318c42d15979591b06e8af77cd6e51b6e2ec5aabac9a3dad4cb87967",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/CollectionsLemmas",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Asymptotic/CollectionsLemmas.olean",
+      "sha256": "c8fe92d876daf7b6a102e79dcaddd785eaf0738682f9ae8211b412c5295a3164",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/Collections",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Asymptotic/Collections.olean",
+      "sha256": "886d8e84f1b7a9a8811c67e3d2ce3302ebb07a338a8e8ef3662089191d4aa276",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Games/OracleComp",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Games/OracleComp.olean",
+      "sha256": "e87d4a7431874e9d4e2efb804cdd74e319f2f7f3e6c501be95c1ce2c53980266",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Games/Probability",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Games/Probability.olean",
+      "sha256": "4ce059718bd6c8dacdb3fec08c1c4c147eebdb6c20ee087b653ba994052227fc",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Games/Advantage",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Games/Advantage.olean",
+      "sha256": "0069ed42b0e048ec7c4c0d51195161c426e0f689a3c7f86da30fb5c3197ecb8a",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Authentication/Encoding",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Authentication/Encoding.olean",
+      "sha256": "12aa4eda541bb68ab52351acc835537847daea37423de92dbeabbb1b1c40c460",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Hashing/CollisionResistant",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Hashing/CollisionResistant.olean",
+      "sha256": "f62f5d1af6e223a57491289037f8146f820e311824323706f015b8348059b38d",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/NumberTheory/Chebyshev",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/NumberTheory/Chebyshev.olean",
+      "sha256": "2e8467b6f4171bd700b2c14fbcff4c1e23b6b7b3716908df577252a0c4113985",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/NumberTheory/Primality",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/NumberTheory/Primality.olean",
+      "sha256": "935d6605ed9b211840ef40471801abe7a25f72d7cc7aef614471e586640b0a00",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Candidates/Arithmetic",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Candidates/Arithmetic.olean",
+      "sha256": "2f2f04a58ea27180b834228074626f24f009a94d5bc284107e38aa51814cd3cf",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/NumberTheory/Units",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/NumberTheory/Units.olean",
+      "sha256": "103a2715f61ddb6972dfd89c4f8105274f44ac3a3fb15bf33bc9df9c4c93fb67",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Candidates/Concrete",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Candidates/Concrete.olean",
+      "sha256": "094d0b4f93033a15e395b1402a00ebf41be04502c4d4b3b26677adbf11325dd2",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Candidates/DiscreteLog",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Candidates/DiscreteLog.olean",
+      "sha256": "19a75269261cf2e0d26a4adeffc2f79f985d3cf69190968221e9697f91469d47",
+      "matches_original_bootstrap": true
+    },
+    {
+      "module": "TCSlib/Cryptography/Hashing/FromDiscreteLog",
+      "runtime_olean_path": ".lake/dl-crh-base-oleans/TCSlib/Cryptography/Hashing/FromDiscreteLog.olean",
+      "sha256": "59be803e5c8ed1a35c2b0793b7e7916243f7177122574e31f8171f27c4d28546",
+      "matches_original_bootstrap": true
+    }
+  ],
+  "base_seals": [
+    {
+      "owner": "TCSlib.Cryptography.Candidates.DiscreteLog",
+      "variant": "A",
+      "raw_log": {
+        "path": "evidence/logs/rule10/final2/seals-base/evidence_probes_Rule10_final2_seals_base_A_DlCrh_base_A_TCSlib_Cryptography_Candidates_DiscreteLog.001.log",
+        "sha256": "03493add28c2105f92cfa6ad1fd4c874cffdabddba358d793a29400310fee4de"
+      },
+      "source_sha256": "4b9324db9ec79c686679aae86a63a4f5bdf604c81488a5aa39658e0681b770be",
+      "probe_sha256": "3fc2ddfa0da5e653880dc784df7ddfd01b030eb2c26780f75efb647fe527cec7",
+      "requested": 1409,
+      "valid": true,
+      "failing_declarations": []
+    },
+    {
+      "owner": "TCSlib.Cryptography.Candidates.DiscreteLog",
+      "variant": "B",
+      "raw_log": {
+        "path": "evidence/logs/rule10/final2/seals-base/evidence_probes_Rule10_final2_seals_base_B_DlCrh_base_B_TCSlib_Cryptography_Candidates_DiscreteLog.001.log",
+        "sha256": "e9058264407b87655553ed790ebf6520a243394bc73d63400b3d68eb3f994e9a"
+      },
+      "source_sha256": "4b9324db9ec79c686679aae86a63a4f5bdf604c81488a5aa39658e0681b770be",
+      "probe_sha256": "2cdc8157f256bbf5323d170a31e5e48b82a86d6f59d8d9209201141158c0f31f",
+      "requested": 1410,
+      "valid": true,
+      "failing_declarations": []
+    },
+    {
+      "owner": "TCSlib.Cryptography.Hashing.FromDiscreteLog",
+      "variant": "A",
+      "raw_log": {
+        "path": "evidence/logs/rule10/final2/seals-base/evidence_probes_Rule10_final2_seals_base_A_DlCrh_base_A_TCSlib_Cryptography_Hashing_FromDiscreteLog.001.log",
+        "sha256": "c59a940e971cad012a4f78d68f164e873112a53e273672242115a09012649d86"
+      },
+      "source_sha256": "7da640421f1dee49589c31700d117273e9a3250191b5765f16611423f9a2cf39",
+      "probe_sha256": "abe4c2e85badc8f77009233123a8112a1afa6a4f3c636fde9c3190f35c36e6fc",
+      "requested": 1491,
+      "valid": true,
+      "failing_declarations": []
+    },
+    {
+      "owner": "TCSlib.Cryptography.Hashing.FromDiscreteLog",
+      "variant": "B",
+      "raw_log": {
+        "path": "evidence/logs/rule10/final2/seals-base/evidence_probes_Rule10_final2_seals_base_B_DlCrh_base_B_TCSlib_Cryptography_Hashing_FromDiscreteLog.001.log",
+        "sha256": "d8a64a1100b28c62189551660064ac16c3cbcdf4caaa390955f77fe0e41d2ed5"
+      },
+      "source_sha256": "7da640421f1dee49589c31700d117273e9a3250191b5765f16611423f9a2cf39",
+      "probe_sha256": "e5220b877381c4908d969590a663c4ae669228250b34e8798c1d02439b59000c",
+      "requested": 1492,
+      "valid": true,
+      "failing_declarations": []
+    }
+  ],
+  "base_controls": {
+    "probe_count": 8,
+    "all_pass": true
+  },
+  "base_scan": {
+    "path": "evidence/probes/Rule10/final2/base-explicit-scan.json",
+    "sha256": "9df0cb915a2347bd64137443cc4ca626c29855b78f0673666bdc1dd18196298d",
+    "items": 208
+  },
+  "base_manual_review": {
+    "path": "evidence/probes/Rule10/final2/base-explicit-manual-review.json",
+    "sha256": "9ff0fcf99932d2a46b42d9e086a333f1425d8bca6cb651ad5236794a48256afd",
+    "rows": 208
+  },
+  "base_census": {
+    "path": "evidence/logs/rule10/checkpoint1/base-collect/evidence_probes_Rule10_CensusBase.001.log",
+    "sha256": "c27ec1d80a2b401cad2f557ecd6ba8c8d585b699712ade1693f6ae53b2cf7bec",
+    "stored_constants": 172
+  },
+  "historical_harness_provenance": {
+    "path": "evidence/probes/Rule10/final2/seal-provenance.json",
+    "sha256": "47da8df048526401948663d2c5f89d5252b546a382bdacc9df67773913fc5178",
+    "edition": "final2",
+    "harness_revision": "batch2048-ordinary-local-attribute-api-v2",
+    "chunk_size": 2048,
+    "same_generator_tools": true
+  },
+  "fresh_final_snapshot": {
+    "path": "evidence/probes/Rule10/final3/snapshot.json",
+    "sha256": "eff1943af135d87490fdd993b25f18b5eea0944eb71d0de195227fa2b4065112",
+    "changed_since_final2": [
+      "TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "TCSlib/Cryptography/Hashing/FromDiscreteLog/Reduction.lean"
+    ]
+  },
+  "original_evidence": [
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_Advice.001.log",
+      "sha256": "e7bff850b36a3c0b53ab597cf339d363fed739c92d49f5134e8ae24af526ac6a",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_Basic.001.log",
+      "sha256": "97b9fe6f905670aca08ad5a928554d8f533cdde757f969df1af37fc093878d16",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_DAGCircuit.001.log",
+      "sha256": "655b109e0bb66b63c6b4608e36ead15f193a69871cdd2b63563f50d3e2321669",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_DAGFanin.001.log",
+      "sha256": "0a2ff3f10ba66eb176ce4407bd74dc4d432a423d14eb998327ff42c325b054d0",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_DAGTransform.001.log",
+      "sha256": "c8c0ac0380d2b13d39c6828608f102d58635d34a578a4c8427c8d46514bfe913",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_LayeredCircuit.001.log",
+      "sha256": "835eaea03a051685e0c343e7e2965cba6bf64d9607dfa629d6647e9adea05cc2",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_LayeredDAG.001.log",
+      "sha256": "130689c5b55240cff9bbf8f16cc934bf3464f607409a829a012715361585a5c5",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_LayeredPPoly.001.log",
+      "sha256": "4c5a03339733e596362cf0d3cd335320dbeac1ed934055254b1ace51a4a6af7b",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_PPoly.001.log",
+      "sha256": "6230ea02798c750af4a391fd099329b93219c11cb1deffd6c5857e2b1f60cb2d",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_SizeClasses.001.log",
+      "sha256": "82b68a80a7dd93794b3213065126f967405c883e7e503679a659609ec9d91359",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_TreeDAG.001.log",
+      "sha256": "358c70f2117e6692ee8b92f6858582489bbdf94670226fd7ba7f4fc2715ab30e",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_CircuitComplexity_UnaryCode.001.log",
+      "sha256": "fe55ffdc2050acc7ee22616b942c255a2db8fcedcf65befe73dadf1cb917f17e",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassNP_CoNP.001.log",
+      "sha256": "026acf46563c302037644969fe4167c729e5275b9d9dafe8207ca67502913373",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassNP_CounterProgPolyTime.001.log",
+      "sha256": "33f137de9c8995c00eea5748b7957f6936c4aba26388fd12522f1d557ece7704",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassNP_NP.001.log",
+      "sha256": "d82b7c58bf846fcf73bb6415c79971cc7d546352d85684ed1ce31c5c951f4a61",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassNP_PClosure.001.log",
+      "sha256": "1eb39b6aedbe8491c2f57f0e7324a94f5dac21b400c3cab2b9fc5d33e31f9814",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassNP_PolyTime.001.log",
+      "sha256": "9237a50ca92146368ebc49470cefe22d624a75903eb6d83324fdf05e33ba339f",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassNP_PolyTimeBlockLoop.001.log",
+      "sha256": "36dbf542ee1883ada9e77dd5aa3e35de946e961230956132b04199c9d118455a",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassNP_PolyTimeBlockMajority.001.log",
+      "sha256": "6544321e7862b1d71a94dd4ab17d3cb0e42f6a8d55059df5e28f8b26baee3100",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassNP_PolyTimeBlockTests.001.log",
+      "sha256": "390bfdd5053259a4d81e164c97e4fcc0efdc04022eb15283246c50499b948888",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassNP_PolyTimePairing.001.log",
+      "sha256": "d2784dc128355522948ac9088e4941dad49df09f82aab4ab26c3f88de1d67c01",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassNP_PolyTimePrefix.001.log",
+      "sha256": "ea4b3426fde1c2c31bcf590ebd1662f5e442298f2ef62ed245b78f06557d3fba",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassNP_Transducer.001.log",
+      "sha256": "d004feb05cf354a3575f5dd56cc8e0ae46399e8ce57f2a0d879195fcf2ceffba",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassP_BinaryArith_AddSub.001.log",
+      "sha256": "e76a055194d60cd85949c3efb7c7a1d1587d0b6fab7a172259d8d4d077f3ab57",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassP_BinaryArith_Basic.001.log",
+      "sha256": "f56844e45dadb00092994ee0fdea629abdada607e5d49783abaf110cbb76f6b7",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassP_BinaryArith_Div.001.log",
+      "sha256": "5b5158dfb9b9afa8ee0ca23a3437328ff629f041c0358c337b7a9c171fc4d858",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassP_BinaryArith_Iterate.001.log",
+      "sha256": "8343cd7472a30e5436b099452ea5a29838a721781871df4eaf309bb334371f7d",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassP_BinaryArith_Loops.001.log",
+      "sha256": "5208df8225a84125af12c68f4db74f3d4b7ef9ee30cebd32c8cdbe65901c44aa",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassP_BinaryArith_Mul.001.log",
+      "sha256": "bbb6b2d735b77385ed1dc421d9964990f3e6cb20ff097acf6aad2d97a7f6a8b4",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassP_BinaryArith_Words.001.log",
+      "sha256": "c9ba485f453aec4ef4b71a3c2d63913f6153f66e46607d71591061388b1973d4",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassP_DTIME.001.log",
+      "sha256": "67631a1e7b8d7051d9a1da31d0853e2e54efd78e418b54bc3a8eaf251afbbc2e",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassP_P.001.log",
+      "sha256": "288b81d76e50f1e5806d7f209672bd9842acc8582ac19146e903a173c43bbe1e",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_ClassP_TimeConstructible.001.log",
+      "sha256": "e4069ca114b68fdc254ffbf477b540b061c9e80c9bb41561c4d5bfb3630733a2",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_PolyHierarchy_Padding.001.log",
+      "sha256": "f5652f075d446338e16b8b4beec2712bee228be6aa9355eccd39e0a965ee7ab5",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_Build_IterateFind.001.log",
+      "sha256": "f682b84c21c632f0e8e6aa17545119b107c92961ae6b481e4e7aff1685621e6b",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_Build_IterateFindHost.001.log",
+      "sha256": "9db2315cbc27b8361a47225bc858af0894a2e73f2a8438d2fcfc14fbd784bf1c",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_Build_PairSplit.001.log",
+      "sha256": "0a1417af89e1b1b936eef8677a091f47aff32b9e5a5fe112a5ca00da7923aa9d",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_Build_StateLoop.001.log",
+      "sha256": "796d00f68defab96d7ae030e34a2692159e4bd8fea8fbcb9b712af210b7033b7",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_Build_StringLoops.001.log",
+      "sha256": "140ae2c15dee33e6b500f379654dbfc4ba90224d470e69c86de36ff98579c067",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_Build_UnaryMul.001.log",
+      "sha256": "03c1fe9e64ec39d3cc7fd6185aba61d765cb8b15710ca8cb329b608f3f62d6bb",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_Closure.001.log",
+      "sha256": "7a88c9ba67bf11ec73815683e62a53e81a9e2941ae573e70cc8c4887b01e43df",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_NonUniform.001.log",
+      "sha256": "533a0f7ec85a14f5d5e4413f57b007c4d36b510e4f86706f664180b661ee4d75",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_PPT.001.log",
+      "sha256": "5aec9bf6534ab86adbbff81673e881a9a4cb07eca4347020aecc8daaec8e3653",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_PolyExpr.001.log",
+      "sha256": "5e269d8fc2c8bd9adf97b119584ddb653afe51665c2599f6359467703eebbb40",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_Primitives.001.log",
+      "sha256": "23cb0b08cb2e0ab835b21d779326a14732115bd6f19f0a8091030a23b5cb168c",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_Randomized_Repetition.001.log",
+      "sha256": "aea7c530676a82484fcdd2cf5725ce13827a52ce4466f378838c2dc5c2d79023",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_SpaceComplexity_Machines_Bin.001.log",
+      "sha256": "55438b40043c85c47c385321fddc3609328359b74f7ed057036e7d0eba764bdc",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Build_Convention.001.log",
+      "sha256": "6acf56805ab3b84bf00a7944ae4ed06cf964a7d436e12f632b8f29b69781c072",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Build_Embed.001.log",
+      "sha256": "aaccd289d9b15cad46e599f848682beccc8137b1e54082066145bd354149d146",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Build_EmitIterBody.001.log",
+      "sha256": "371590ff1cb6206aeabc45de6dcef2771cf99b41006229b13d2f30897cfdff50",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Build_EmitIterEmbed.001.log",
+      "sha256": "02e72d298209e47fef18f6bd75b9eeecf71f2464258618035a28f40708ab3a2a",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Build_Loop.001.log",
+      "sha256": "4c8c4afc014c7584cd1416c536c56a1b55f6888424b97ad4747f5ce92750206b",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Build_ModuleHost.001.log",
+      "sha256": "b1f7b1b22a75a217726f5060207425d77fb7a8ddc80e1a2fb9d898dd7ac6b7be",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Build_Primitives.001.log",
+      "sha256": "052aab3b399db9253a75981c814572e9eecdbbcde2edbebf22c374020f9e4d92",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Build_Wrappers.001.log",
+      "sha256": "e0fd6ee6968e819a35449292ec461c23ed7868f9dfbc4c08c5d7cf6237f9db73",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Composition.001.log",
+      "sha256": "68ef880e7e74e3802beae890eb01b8481cb64f911174f1266ba7b3e3f1fb11a9",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Configuration.001.log",
+      "sha256": "59acecd2dfd124bd2386dc985c395d064675d0a858948478585a4cfd8e4c6fbb",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_CounterProg.001.log",
+      "sha256": "e0e6172a7a1bb390fdb8a098f7767f7bdf3e220e7cdd395201d05541c0084243",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_CounterProgInput.001.log",
+      "sha256": "f4e72fc53ddc746db6784c9dda5a70123f699c55880737d979ec33a2cfedda47",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_CounterProgRun.001.log",
+      "sha256": "be4aec789662206ede147891342ff4527028f93ee9ac679b61372374eb986458",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Deterministic.001.log",
+      "sha256": "3a8a17b2fd349d32268ea9a4ea163d1aedf5520f3ce3038cce8bbe3ccfcbb741",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Encoding.001.log",
+      "sha256": "c905b97dd2fe75554fa12641d1fc3ac2efc93070bbb2068e5ff5bfbdcf60f56e",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Finite.001.log",
+      "sha256": "afd8681f0d991e20d1ce153ceeeb31b2149cb9800a3fc7f45f9a3050a6970eeb",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Robustness_AlphabetReduction.001.log",
+      "sha256": "6b3cf0c79be79c562e085cf4455ae4379e6aec6dc4c872792d2c7ef7fa4256c4",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Robustness_SingleTape.001.log",
+      "sha256": "1b3d2c58c16979b89e6ee05d211757ff96298ed70a46519d17e5357491bc9bfc",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Simulation.001.log",
+      "sha256": "ad5f00f9c0d63985d8679ce7bd21b075f084b74c75fbbb3b4ecd1554f36da345",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_StateRenaming.001.log",
+      "sha256": "2b76ebdbdbc6eb5de79694dd31b6f2a3332d9470be2268714576ce5eb4314e63",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_Sweep.001.log",
+      "sha256": "842512d35d195bb440ecb1cbd109283312356458b3b3beb8c955ba525fe9e0bd",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Complexity_TuringMachine_UnaryTape.001.log",
+      "sha256": "4d9bedb263be58ba79812be716d071f050553638b71a737764e51876c9373cad",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Asymptotic_Adversary.001.log",
+      "sha256": "f7edbd814b110853c27a8513cc8fa0b45325854e0e41e1895524ac7f6ed3b8a3",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Asymptotic_Collections.001.log",
+      "sha256": "785927e357d68fb7a063d3bf78f76515b207ba0ff570dbab5e6dea4577bee207",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Asymptotic_CollectionsHelpers.001.log",
+      "sha256": "0dd79a240697c128e32355797eb78a0cfefcbfe12bb37440b82b792595c2174d",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Asymptotic_CollectionsLemmas.001.log",
+      "sha256": "993e9bb3eb8376f1a14369452741e7bc7ffc06903204dc436be2cd5bac783dd0",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Asymptotic_OneWay.001.log",
+      "sha256": "4ce2de10f553de339502586aa4fafe57326f11c79f18f91b9b949f6ce64255c3",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Asymptotic_OneWayLemmas.001.log",
+      "sha256": "c7d871123a2ed5e94dca1d735097e626bf90f7829176837de08fb515de9ad5b0",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Asymptotic_OneWayYao.001.log",
+      "sha256": "9e345531da6531daa69ac5f7e7c616d9ad454b2ae41e561037a7518cd0991095",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Asymptotic_Sampling.001.log",
+      "sha256": "444d36560a2ae51c3f753ffaa966e1b95f6e7b2ac428aa3cf3788fe76e1059c4",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Authentication_Encoding.001.log",
+      "sha256": "81f2a237860dcdab54ad5271360d71692e7e1ce561132da90e82e0425ed4dc8e",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Candidates_Arithmetic.001.log",
+      "sha256": "ad3e371dfa116d097391740774788153d70fcb6672bac614ed232fe259cf4d2d",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Candidates_Concrete.001.log",
+      "sha256": "b376de6f23f3dc5c7c77d3d184f2c43ec1b4eee7bde1e2a67811f4172e5aba46",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Candidates_DiscreteLog.001.log",
+      "sha256": "d931bb713ef971b84927dc2933ed78677f7f0a2f85d6ae40aa979407d556e76e",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Foundations_BitLists.001.log",
+      "sha256": "ccb6498c6ad55ea36403ebdfec528863346cc65da01403303f97e38156dc9231",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Foundations_Experiments.001.log",
+      "sha256": "b1aac207a60b242eaa159d5478d937c29eb3e59b8889c92afbc9b5977cc35a5f",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Foundations_Negligible.001.log",
+      "sha256": "6e82f882dcff3c2b9647eaf9bbba03f3e63906981a6e03a1a95c948e8369bee2",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Foundations_Probability.001.log",
+      "sha256": "3e03ac9a5dff148b63c4c9f4cdefd335dc0a84da039d0a195687d89a471a8550",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Games_Advantage.001.log",
+      "sha256": "a96eabce251a0147854c3398ebbdf2c74292c6d190ee4548e468db6e3aada802",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Games_OracleComp.001.log",
+      "sha256": "7f8d80402982c8fcb0814d5f517e19db730b7f9e78047251f7e7f2e0ac69e700",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Games_Probability.001.log",
+      "sha256": "d986dfdb1d86699c26ea4a41d787658a1fa787b78f907f26a998eb55f624567f",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_HardcoreBit_Basic.001.log",
+      "sha256": "c2262a78433f3dba05c9fe7a055de32d42179ea95c1b859cae027244a1b9b0b4",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Hashing_CollisionResistant.001.log",
+      "sha256": "852423a1f22a34562598eef0f7611f3a622cfcbc70bc339308e5e38b0715e99c",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_Hashing_FromDiscreteLog.001.log",
+      "sha256": "dcf301d96947e786fa5251ed7f96016ae4ac5c362c94d940dbffa67a946bdc3a",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_NumberTheory_Chebyshev.001.log",
+      "sha256": "648617e02d85e982c96923d6fb2a1f4214388654eee853b304c595a391194de7",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_NumberTheory_Primality.001.log",
+      "sha256": "7021dc672848aa21db122aae3f8e7418c0163f872e10b0e93cc75d57b1fedf62",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_NumberTheory_Units.001.log",
+      "sha256": "81fbef38e649d516f6355c54d10479349134d0bb5abe71fe9fcca0902526b8d7",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_OneWayFunctions_Amplification.001.log",
+      "sha256": "eaaa9d579df782d112569f67c55ac4ff4504a18e0238b097c2c5edeaef0e755a",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_Cryptography_OneWayFunctions_Basic.001.log",
+      "sha256": "5492cf37b2ebe998b564e602a4f5610fb8bb3eae3c8fa42a4f43cd84526bc321",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_InformationTheory_FinDist.001.log",
+      "sha256": "83c509899b496cbb5b37f55884421f04d3f493b8a9d913b3fb41382e4d285d7c",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/TCSlib_InformationTheory_StatisticalDistance.001.log",
+      "sha256": "282f43b6e94e047f70626d122657ed560a6d69a50e31b326a8e850e7e0d8f423",
+      "roles": [
+        "original exact-base bootstrap log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-bootstrap/results.jsonl",
+      "sha256": "de6be6bb0c968cecba4c3e0bf1e948d8397a4cd04247cef177346fecf3dfd7a0",
+      "roles": [
+        "original exact-base bootstrap results"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-collect/evidence_probes_Rule10_CensusBase.001.log",
+      "sha256": "c27ec1d80a2b401cad2f557ecd6ba8c8d585b699712ade1693f6ae53b2cf7bec",
+      "roles": [
+        "original exact-base collector/census raw log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-collect/evidence_probes_Rule10_CollectBase.001.log",
+      "sha256": "3711c4261a384df9423d29a94711a6aa1bf9a26ba7a3f09642d157e94a103c71",
+      "roles": [
+        "original exact-base collector/census raw log",
+        "original exact-base native closure collector"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/checkpoint1/base-collect/results.jsonl",
+      "sha256": "e89b9cb445f004982623d07b30a0a1bfb27dc1eb046629bad97efcf070aebcc3",
+      "roles": [
+        "original exact-base collector/census results"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final1/seals-base/evidence_probes_Rule10_final1_seals_base_A_DlCrh_base_A_TCSlib_Cryptography_Candidates_DiscreteLog.001.log",
+      "sha256": "dcb788f985cf7c44c56147cda112c090c389ec324f8ff5939d1e33ba29e660d3",
+      "roles": [
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/controls-base/control-validation.jsonl",
+      "sha256": "093f92f4460ea27a4f5e8563d7c3ca27a83f28a1b97531794e1de93390cbc9ae",
+      "roles": [
+        "original baseline paired controls evidence",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/controls-base/evidence_probes_Rule10_final2_controls_base_DlCrhControlS_base_A_TCSlib_Cryptography_Candidates_DiscreteLog.001.log",
+      "sha256": "6daa0da0dcfcdc97f65f5adedd577c31d631e036e735774d19735818f0a55359",
+      "roles": [
+        "original baseline paired controls evidence",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/controls-base/evidence_probes_Rule10_final2_controls_base_DlCrhControlS_base_A_TCSlib_Cryptography_Hashing_FromDiscreteLog.001.log",
+      "sha256": "a9a374bb42aba08c121b25a899edb5ac7dae1c1c87d19e8c55dc6a7125374f8e",
+      "roles": [
+        "original baseline paired controls evidence",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/controls-base/evidence_probes_Rule10_final2_controls_base_DlCrhControlS_base_B_TCSlib_Cryptography_Candidates_DiscreteLog.001.log",
+      "sha256": "e15b1b2c601b2d739b0bcf2417da2d1a4138d2cfd5a4aa009757fc13746f6933",
+      "roles": [
+        "original baseline paired controls evidence",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/controls-base/evidence_probes_Rule10_final2_controls_base_DlCrhControlS_base_B_TCSlib_Cryptography_Hashing_FromDiscreteLog.001.log",
+      "sha256": "fcc622bfcf5f42af290eccdc5f84c46e588f07e829960d4e24209d93e804fbd8",
+      "roles": [
+        "original baseline paired controls evidence",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/controls-base/evidence_probes_Rule10_final2_controls_base_DlCrhControlU_base_A_TCSlib_Cryptography_Candidates_DiscreteLog.001.log",
+      "sha256": "433dfcd11f27abe9daae43103aebf191ca77fed8ef003f1e6c30a1b7b43054a8",
+      "roles": [
+        "original baseline paired controls evidence",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/controls-base/evidence_probes_Rule10_final2_controls_base_DlCrhControlU_base_A_TCSlib_Cryptography_Hashing_FromDiscreteLog.001.log",
+      "sha256": "169f555e2abaa800eb19d9b38fe49364541db4dadf09ed43097708260eab9d2c",
+      "roles": [
+        "original baseline paired controls evidence",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/controls-base/evidence_probes_Rule10_final2_controls_base_DlCrhControlU_base_B_TCSlib_Cryptography_Candidates_DiscreteLog.001.log",
+      "sha256": "e3c24cc6f932644190ac92436d1c7161390d63d85ce4e71735fd237c03b4dd12",
+      "roles": [
+        "original baseline paired controls evidence",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/controls-base/evidence_probes_Rule10_final2_controls_base_DlCrhControlU_base_B_TCSlib_Cryptography_Hashing_FromDiscreteLog.001.log",
+      "sha256": "05f2ce034f5e2224c69585d8d6b2456afc1978e3b158217723beefa90906b04b",
+      "roles": [
+        "original baseline paired controls evidence",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/controls-base/results.jsonl",
+      "sha256": "81040a6674dcea633e92e8158cb4015f85d8d616ab0abb510b46bfcc83260e35",
+      "roles": [
+        "original baseline paired controls evidence",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/scan-base/evidence_probes_Rule10_final2_ScanBase.001.log",
+      "sha256": "cea59e12d6de61e46d9569f6a07f9cfc6b86d909e71ee5606d5781f87a884682",
+      "roles": [
+        "original baseline native scan raw log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/scan-base/results.jsonl",
+      "sha256": "92603e766c03af2eb469335bfb4ad1e48b39c44f12193a734d55b849bfe61d3c",
+      "roles": [
+        "original baseline native scan results"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/seals-base/evidence_probes_Rule10_final2_seals_base_A_DlCrh_base_A_TCSlib_Cryptography_Candidates_DiscreteLog.001.log",
+      "sha256": "03493add28c2105f92cfa6ad1fd4c874cffdabddba358d793a29400310fee4de",
+      "roles": [
+        "original baseline whole-file seal raw log",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/seals-base/evidence_probes_Rule10_final2_seals_base_A_DlCrh_base_A_TCSlib_Cryptography_Hashing_FromDiscreteLog.001.log",
+      "sha256": "c59a940e971cad012a4f78d68f164e873112a53e273672242115a09012649d86",
+      "roles": [
+        "original baseline whole-file seal raw log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/seals-base/evidence_probes_Rule10_final2_seals_base_B_DlCrh_base_B_TCSlib_Cryptography_Candidates_DiscreteLog.001.log",
+      "sha256": "e9058264407b87655553ed790ebf6520a243394bc73d63400b3d68eb3f994e9a",
+      "roles": [
+        "original baseline whole-file seal raw log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/seals-base/evidence_probes_Rule10_final2_seals_base_B_DlCrh_base_B_TCSlib_Cryptography_Hashing_FromDiscreteLog.001.log",
+      "sha256": "d8a64a1100b28c62189551660064ac16c3cbcdf4caaa390955f77fe0e41d2ed5",
+      "roles": [
+        "original baseline whole-file seal raw log"
+      ]
+    },
+    {
+      "path": "evidence/logs/rule10/final2/seals-base/results.jsonl",
+      "sha256": "db3cea0fd9af698c0e148f3c25e0a8f0b4a001b98680013f84cfa62b47686cfa",
+      "roles": [
+        "original four baseline seal results"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/Advice.lean",
+      "sha256": "512af5c3fa784b4f04318f657d1c325c36b4182e5c9bea28cd7e64cd50c77a4e",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/Basic.lean",
+      "sha256": "05d5f8769bfa5384b306f4f9d51f092d6e23368c748f994438a98bbf56bf39af",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+      "sha256": "3cee08a85212761d81b14a6e09a4b4b298fb62096af418c284e8658a704ffaaa",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/DAGFanin.lean",
+      "sha256": "b98f2bba415114f9b18fd1e34427d35d32df526a043787359c49c5d925b1c9ed",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/DAGTransform.lean",
+      "sha256": "023b6115dd010206120f1c0cb642db8f5588db7c4be5d9e699572b4f68488a9f",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/LayeredCircuit.lean",
+      "sha256": "cde5dd40b1350f8d6356bba7a612618189b030a225cdf54faf244e3efd20dbaf",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/LayeredDAG.lean",
+      "sha256": "bf677328d1f77e164ce3de30bf51602a1b9e05f147000f312560bffab2be0684",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/LayeredPPoly.lean",
+      "sha256": "e5c6cb3c13f2fb60b4f5ed4944d51fb300b3e8a9d02c095ccabf13fe230d77cf",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/PPoly.lean",
+      "sha256": "e50d0e4981997f5ecc4201c919331961b6e8a573ae311d5f27bd298e908fe11d",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/SizeClasses.lean",
+      "sha256": "c1825d1aa9e761d49c16616915d8ccc8d4e93f058c8e510472d2d0c5bdaf2765",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/TreeDAG.lean",
+      "sha256": "2b9824996de35e2f56a69e589113bebaf035a5c05de4062eef781151cb01f8a2",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/CircuitComplexity/UnaryCode.lean",
+      "sha256": "f9b30332707930268fe8077b5940528a534f2bab3c6ba59916c4cea4e7d13034",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/CoNP.lean",
+      "sha256": "bcf23fe2e091282f6ed51d417e47d04503e2247180edfbe093a8905ffdd0955c",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/CounterProgPolyTime.lean",
+      "sha256": "a40e9e33042e619444ae2d89f46a55113bdcc92aa6e84536524720f95c988428",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/NP.lean",
+      "sha256": "efe31055353bf652e3ca410a7f58e2e578af0b4ccaf036586095b1e03a5dbf68",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PClosure.lean",
+      "sha256": "4967e19a746a5a602018b6b8dca89363aee7b3e691d0786fdc3a490015338d44",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTime.lean",
+      "sha256": "1e79bd74264f41adfdec3c624da06e84fb78aefb72d52f7e7670e64a1e25a50f",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+      "sha256": "346a52d4751decd7e164490c57f93bbfe07156354fb3e3d81c2228ab33238909",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean",
+      "sha256": "6416d537aa1de62932ed3d74f3c22a7314ec6fe18087663fc559452ea62baa87",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean",
+      "sha256": "80e7340961c1a2aca231c56bd2e1df6279fbeea3a2697d10f7ef6bb8fcbae839",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+      "sha256": "8915fe2b3029ab96ffcc6dbfbd7f198abe9de97c08ab44009861e892598acdc0",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+      "sha256": "5d29d9360c66f769ffeef2fbf61d0cdd1f95e7940118722a954a12909a532597",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassNP/Transducer.lean",
+      "sha256": "b5161060c58754b13439d2397356e16640ba0b046fe6ebd2d3f5efea1efcea83",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean",
+      "sha256": "7a9465a9129ca96a5c7e62d33d9d91609474695933274d0b1e65c87d04e4db55",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Basic.lean",
+      "sha256": "1864fec060a1e0b6703acde827906baef9b9ca1cf1214a19ebf4144eab4f36ab",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Div.lean",
+      "sha256": "9bcd67e88694e4f268bc1aaa35d9a1b3c31122fe9fcc060b5a7837cdf24293cc",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean",
+      "sha256": "9e4b133ba94c552dec10a5aea4b3ced2f372411ccdc65107db5b4937a8aac487",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Loops.lean",
+      "sha256": "bfc635654c877d0dbd4b38d8d18d40a350b6517dd1c6d5150ea6bc9b2b5ff87b",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Mul.lean",
+      "sha256": "6897ee8ccb8fcdac67d38585feeea29bb6d3e7f3f42b3e70b02a247af03f5e38",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/BinaryArith/Words.lean",
+      "sha256": "0c29613c259feeb5d9733f23657ef39d0f172d31a42c3eab44f758d8ee3ea6fa",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/DTIME.lean",
+      "sha256": "54795908ce0a394d59cc7ca91a0c9f9377ff687e1bc805af3e65889212c3cc84",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/P.lean",
+      "sha256": "a4c5e2287b5eddea4139813d6fc0110fc55e0faa4d1e2bb873f79b842df3344a",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "sha256": "9dbfce574194ed387488b24eafe9500a384e8ba8cf7b21846e7023582c9ed481",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/PolyHierarchy/Padding.lean",
+      "sha256": "61ecc05184a2c5b06f34d947bc00a5697cc7594dfbffce6dfb246932cef0c981",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/IterateFind.lean",
+      "sha256": "c8f58e091cbb6e9c07e548f286638fa8a78420dc6dce81dd86711acfa0af317b",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean",
+      "sha256": "0348140038e0978463a4d727e97b2e3f034829a0313dee432371c84ad743f4ca",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/PairSplit.lean",
+      "sha256": "059cef36d526f27bb3b15de8d4bc9054d3944f15719fc94d20fd3125f7a41d50",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+      "sha256": "1e77690dd9b5de66842b3f1dc0292d1c113004a70423e497757cbc6d928e5e26",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/StringLoops.lean",
+      "sha256": "ca30aa1d973baa4e77c8dc4e5fcf5519add57714c185c6ee1b2595b2f38914d1",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Build/UnaryMul.lean",
+      "sha256": "131790bd75b421ab914a10cfa5ce27a28c4c49f5bb4b2b03899f104f7b56018f",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Closure.lean",
+      "sha256": "869d10a947a0a2a6e230e866e10ea1ae48e0e283c039ab002ca44ec7f0d3e474",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/NonUniform.lean",
+      "sha256": "93d6e6d0a8bed8ea6b6344ce08dc6cb69a0ce7167d16002f0e95d7c4c1474ff7",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/PPT.lean",
+      "sha256": "97248e5603fc118c4343d564b60747bddba1443fa86c3ea60e74018e95da63ff",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/PolyExpr.lean",
+      "sha256": "b451da6f4486facf83c10c154fc77ac39bb24936a3fdb29a1d3a1fd3d43c1766",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Primitives.lean",
+      "sha256": "0612ba120fab6fe4cac4770a6e15228f718949627d31b00100a0535efb0bd0ec",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/Randomized/Repetition.lean",
+      "sha256": "f94702f4f5e17f71bfead906aa25e9993b25e6a20ad57c6e6b43c770a4bc329e",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean",
+      "sha256": "d045d7ec07a252220812dfccd42e02175fcb081286c884c508f5e84f5d4ab72c",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+      "sha256": "3a65edcd89bf39d8a465329ceaf9c55796cf5e92ca17a3671e71ea4b2c831c25",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+      "sha256": "95ae78fafbc8c7585f9b0c603796ae843d1e7ae25788359cb6a94c8e9ad25575",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean",
+      "sha256": "51ba37e814d006573c5627ae096192ebcc1f5f9afc60c63927c8448f30858cd2",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "sha256": "6efd087c48a57a14b9dca6bff6a89209174c014f37c4019dad6eef8585d1ce43",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "sha256": "d993af6f3d31495ea2ae34d7f9cbcfc1a1c522de825a88b5345236351c7ab9b5",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean",
+      "sha256": "4d3824deab3cbaf5ba3b2303e58610801ceb9d44e3b6913848047f7e9bc5b7bb",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "sha256": "9da69d03720beef640dc27b310c0e99bc8d298dd36ae4a22b97943d13a2a2b27",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "sha256": "e2dcc306bc4572038508f9f7ba7abb65a541ca1c74fb5b1bbad19b3068ee58f3",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Composition.lean",
+      "sha256": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/CounterProg.lean",
+      "sha256": "a9d858f6cb848fef51d41cf44589328e363a02ea98e1e431a6f9fba1969658c4",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/CounterProgInput.lean",
+      "sha256": "770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/CounterProgRun.lean",
+      "sha256": "9bfc54704f6f86e6925741753872da717e685cca7f2ba118fb3722510b817928",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "sha256": "4b992ab2344562478c03d9aac8a8189f752fb5db337c08f2134488b88dc75379",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "sha256": "15b0f286ca1048ea6c86f7b93e5eae99b7ddea65d8d304f99c229a85950dbbd0",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Finite.lean",
+      "sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean",
+      "sha256": "0bf453573719a9a1bb6a9ab13cf1728318668aa76fd3578d3a94f08fc2a5d1dd",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "sha256": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "sha256": "5d11537175140aa3f905baa8142ec5fd534022e41ff6bf2c645adc4bdcb61fab",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Complexity/TuringMachine/UnaryTape.lean",
+      "sha256": "3c7c639b324fa577af524310b93e7ec8c39494cbd5ddf5f5482ed90ae6d134d4",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/Adversary.lean",
+      "sha256": "9ab69ef62a368c35c818fc1a4e65b36370df35bc4023f10d5641bead6edae7c3",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/Collections.lean",
+      "sha256": "627d44400fb9dfec4b772be3fa1c0be5bc9305dbe333cca492286bd712956153",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean",
+      "sha256": "29716bdb4b048b45e331ab18311908b2b250985445d57ba25583211f07e91beb",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean",
+      "sha256": "d8a8352ad0e176ec2badb7a63fce8bd576d54e824b3509955e14777058db552f",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/OneWay.lean",
+      "sha256": "d091dc49b988899d0a2d2235390701c9a7265eb70cd28bddc9002aa307270ec3",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean",
+      "sha256": "4a2ed3f8d9e84f218d7344301d5060f88f407be4f2a2ce38b3c81800c44e028a",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/OneWayYao.lean",
+      "sha256": "bd5c284e3d08636b108f25cb91f72a39ced7e70e27be8784e96ce5dbc36c1ae1",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Asymptotic/Sampling.lean",
+      "sha256": "353f3dd6e00625151a7d01c14b550fa84fab1f1e3b9c5f9da80ee28cba401c8a",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Authentication/Encoding.lean",
+      "sha256": "d9ebad935ac9fb11fc0133237502cc32befc5c8de0dc8534736aa6f026c400ce",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Candidates/Arithmetic.lean",
+      "sha256": "3cd1e07b3e5ccdb06a978d23babd34fdf098de649ec0f4f4fe6dc3dc83b61efd",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Candidates/Concrete.lean",
+      "sha256": "09adc5fc8565e28d0bb3e49fa4e95bfe26872ac6f74761fb5bd0d4782d5ff2f5",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+      "sha256": "4b9324db9ec79c686679aae86a63a4f5bdf604c81488a5aa39658e0681b770be",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Foundations/BitLists.lean",
+      "sha256": "dcbc36460b5d553cd2294572630ed014fd1797740dda6fd42fd54ec84e03be54",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Foundations/Experiments.lean",
+      "sha256": "426ecc19b13a50fcb2bf7db87eca6425285ba47e48f50c72c5088906765fa220",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Foundations/Negligible.lean",
+      "sha256": "56dc45fc34915f176899a3f6c1585cc3356929ff12519da77eee6a2f3b364a6d",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Foundations/Probability.lean",
+      "sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Games/Advantage.lean",
+      "sha256": "c5e265db3e9748ac48542ff408e994edd38748eca22020d9f1f9218742c25999",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Games/OracleComp.lean",
+      "sha256": "4c9470a976489fa899b037eb10b15da2f4ad0f54768d8a5b57db936c373dafc1",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Games/Probability.lean",
+      "sha256": "a7d79d12d14ae90d88b7eec368afa8f311eb30864ee8c9b9b72f9f75548dee32",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/HardcoreBit/Basic.lean",
+      "sha256": "684f0c5337ed8394f14bc4cccdce8db657fb1b963a9dda4a575b2cd3086a1a63",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Hashing/CollisionResistant.lean",
+      "sha256": "fc01b447911ba683a01fc4b694a93b527590e4b490ecf4c57b492083ec8f056b",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/Hashing/FromDiscreteLog.lean",
+      "sha256": "7da640421f1dee49589c31700d117273e9a3250191b5765f16611423f9a2cf39",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/NumberTheory/Chebyshev.lean",
+      "sha256": "397f9a14c8ab21501b8135d007459ca0b3ba210dadf48d9ac78849acdaccddf1",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/NumberTheory/Primality.lean",
+      "sha256": "bc3bede2d28fc0842dff52184365197310f286a5a723779a6c7a80b0bf639287",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/NumberTheory/Units.lean",
+      "sha256": "e26735e6597b429ce1eae556e9497595f97d96edd822562b89553e38cc147aa4",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/OneWayFunctions/Amplification.lean",
+      "sha256": "c051bbdcd17e652b524f6ba95e3d45a841e54c264b06593d7615715d18879fff",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/Cryptography/OneWayFunctions/Basic.lean",
+      "sha256": "68b66cde472539498d0c0913fd591b739c4918301387f7f92cf2e40facce0ab0",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/InformationTheory/FinDist.lean",
+      "sha256": "e17e81d5ecfaccbfd548018f00ad9298c705c263d14f2e4b5792d5dc0351eeb6",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/TCSlib/InformationTheory/StatisticalDistance.lean",
+      "sha256": "74880af40edf4f64d84f8a311487c79ff95daeecfa4417a28e8b4d5fbacbaa6f",
+      "roles": [
+        "exact Git-base source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/evidence/probes/Rule10/CensusBase.lean",
+      "sha256": "56e8cb74f6e1776657a92addaece48c235d50ec1b8a987cee36da07244be570f",
+      "roles": [
+        "original exact-base collector/census source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/evidence/probes/Rule10/CollectBase.lean",
+      "sha256": "4b84f29565873d59cd5787bade880d42eb72ecaa765a26e31b35196090fea58f",
+      "roles": [
+        "original exact-base collector/census source"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/lake-manifest.json",
+      "sha256": "cad7de215c4cc216d03acb77cb1abfbe9f3b4062a8988b29459504f932015100",
+      "roles": [
+        "exact issued compiler/package pin"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/BaseTree/lean-toolchain",
+      "sha256": "dbbf063fc415c8e718172605f23a8f86679a3c320eff6d3890cc009534452925",
+      "roles": [
+        "exact issued compiler/package pin"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/base-order.txt",
+      "sha256": "f0cfebbcbbf24f65f9ba6a5a6db31e4c4b2035be019411605834588e69869eb2",
+      "roles": [
+        "original 98-module baseline order"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/base-state.json",
+      "sha256": "90d7473fecdffaa6ba5c2032def02734bedf0549cee520619e8908a14f57cd58",
+      "roles": [
+        "original unchanged exact-base state"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/base-controls-plan.json",
+      "sha256": "8948902cb01bf6ac7855bd8e635d15625147fe71eaac2ad9de02c47537014879",
+      "roles": [
+        "original baseline paired controls evidence",
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/base-explicit-manual-review.json",
+      "sha256": "9ff0fcf99932d2a46b42d9e086a333f1425d8bca6cb651ad5236794a48256afd",
+      "roles": [
+        "original complete base manual review"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/base-explicit-manual-review.md",
+      "sha256": "064d76eb718e6f8134753238ce1c6ee9d0d4fc967f769285fa413a11494bcf76",
+      "roles": [
+        "original complete base manual review text"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/base-explicit-scan.json",
+      "sha256": "9df0cb915a2347bd64137443cc4ca626c29855b78f0673666bdc1dd18196298d",
+      "roles": [
+        "original baseline native explicit scan"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/base-scan-plan.json",
+      "sha256": "e23a222fb789d83d442a6453a46439ba8fa5efe21b25828a1adc25f0857c761b",
+      "roles": [
+        "original baseline scan plan"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/base-seal-manifest.json",
+      "sha256": "1fcd6c01963252b2ceac91037c975fc3b8bcfc392c9b335a04f1e63443990a87",
+      "roles": [
+        "original baseline whole-file seal manifest"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/control-sources/base/DlCrhControlS_base_A_TCSlib_Cryptography_Candidates_DiscreteLog.lean.txt",
+      "sha256": "2e7954f58370c8af7359e3989679b58832f456c65a666d833d56aa6334443945",
+      "roles": [
+        "original baseline paired control source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/control-sources/base/DlCrhControlS_base_A_TCSlib_Cryptography_Hashing_FromDiscreteLog.lean.txt",
+      "sha256": "07dda6ee508a099f6da7a53dd0df6194afd4530ee6d61008176ac6d19a01dc74",
+      "roles": [
+        "original baseline paired control source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/control-sources/base/DlCrhControlS_base_B_TCSlib_Cryptography_Candidates_DiscreteLog.lean.txt",
+      "sha256": "659766f878b6a6bbf42432f9bcede2c7b529b7fd616e95a0cb67251a91f99be3",
+      "roles": [
+        "original baseline paired control source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/control-sources/base/DlCrhControlS_base_B_TCSlib_Cryptography_Hashing_FromDiscreteLog.lean.txt",
+      "sha256": "71d9c67a5211f784cb9d12436a498a1a1b7f004f1325a1c6108f5903f52e3d20",
+      "roles": [
+        "original baseline paired control source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/control-sources/base/DlCrhControlU_base_A_TCSlib_Cryptography_Candidates_DiscreteLog.lean.txt",
+      "sha256": "69ca426cd6c6edbf4084ccd3c54a9c5998b3c9314a27fad87a93ad2a1542727a",
+      "roles": [
+        "original baseline paired control source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/control-sources/base/DlCrhControlU_base_A_TCSlib_Cryptography_Hashing_FromDiscreteLog.lean.txt",
+      "sha256": "90c115004e66ab142b15505bd0394d1f033303a476a4911ddeeabbec996e0ec7",
+      "roles": [
+        "original baseline paired control source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/control-sources/base/DlCrhControlU_base_B_TCSlib_Cryptography_Candidates_DiscreteLog.lean.txt",
+      "sha256": "8115a60e22b350ea43fe72e50cdf68ff9ff9b27b624dd382fcf94a095f36e1ef",
+      "roles": [
+        "original baseline paired control source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/control-sources/base/DlCrhControlU_base_B_TCSlib_Cryptography_Hashing_FromDiscreteLog.lean.txt",
+      "sha256": "26b76a7beab6c862a5a2cd65b4fb6ad8c780d79f80ebb490b4756399fa6f49e7",
+      "roles": [
+        "original baseline paired control source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/probe-sources/base/A/DlCrh_base_A_TCSlib_Cryptography_Candidates_DiscreteLog.lean.txt",
+      "sha256": "3fc2ddfa0da5e653880dc784df7ddfd01b030eb2c26780f75efb647fe527cec7",
+      "roles": [
+        "original baseline executed seal source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/probe-sources/base/A/DlCrh_base_A_TCSlib_Cryptography_Hashing_FromDiscreteLog.lean.txt",
+      "sha256": "abe4c2e85badc8f77009233123a8112a1afa6a4f3c636fde9c3190f35c36e6fc",
+      "roles": [
+        "original baseline executed seal source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/probe-sources/base/B/DlCrh_base_B_TCSlib_Cryptography_Candidates_DiscreteLog.lean.txt",
+      "sha256": "2cdc8157f256bbf5323d170a31e5e48b82a86d6f59d8d9209201141158c0f31f",
+      "roles": [
+        "original baseline executed seal source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/probe-sources/base/B/DlCrh_base_B_TCSlib_Cryptography_Hashing_FromDiscreteLog.lean.txt",
+      "sha256": "e5220b877381c4908d969590a663c4ae669228250b34e8798c1d02439b59000c",
+      "roles": [
+        "original baseline executed seal source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/records/base/A/DlCrh_base_A_TCSlib_Cryptography_Candidates_DiscreteLog.json",
+      "sha256": "a7816de9450d573b57778f52ee240949046126c8b3eeee2f1fedb9c8a58944a0",
+      "roles": [
+        "original baseline seal request record"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/records/base/A/DlCrh_base_A_TCSlib_Cryptography_Hashing_FromDiscreteLog.json",
+      "sha256": "aa67233e8d1f8d47068abaa39cad99ffd44594be9787c4400112a6f535f00b7e",
+      "roles": [
+        "original baseline seal request record"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/records/base/B/DlCrh_base_B_TCSlib_Cryptography_Candidates_DiscreteLog.json",
+      "sha256": "3142e2fde0e0c448ef847c4cfed28dc5f606c30849042dc64246c6c9f6868141",
+      "roles": [
+        "original baseline seal request record"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/records/base/B/DlCrh_base_B_TCSlib_Cryptography_Hashing_FromDiscreteLog.json",
+      "sha256": "8acceb04bbd28f43f20dab1f5e5bca12fe18ab53ad9bfd2bced040ab6c93cd86",
+      "roles": [
+        "original baseline seal request record"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/scan-sources/base.lean.txt",
+      "sha256": "9ab1f2326f02b9c33f9f47507f099a58964c92f4930c84ef1521b03107dea959",
+      "roles": [
+        "original baseline native scan source copy"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/seal-provenance-native-records.json",
+      "sha256": "ca43ef0c6a25c4bd9f0aee9406d59ed72f0834e2d2e5514d41936e1cc2dbcd15",
+      "roles": [
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/probes/Rule10/final2/seal-provenance.json",
+      "sha256": "47da8df048526401948663d2c5f89d5252b546a382bdacc9df67773913fc5178",
+      "roles": [
+        "completed historical final2 optimization pilot"
+      ]
+    },
+    {
+      "path": "evidence/tools/harness-v2-api/Attributes.lean.txt",
+      "sha256": "c470cb39ba369b177a0627c2d8397696371f7a9944fdd258977d4700b9f5b963",
+      "roles": [
+        "retained ordinary attribute API source"
+      ]
+    },
+    {
+      "path": "evidence/tools/harness-v2-api/ReducibilityAttrs.lean.txt",
+      "sha256": "55a47ffbabe3d2e1eb5c6d5c5d2561a818351208e8b0fd4f0663b7115085eabb",
+      "roles": [
+        "retained ordinary attribute API source"
+      ]
+    },
+    {
+      "path": "evidence/tools/harness-v2-static-assembly.json",
+      "sha256": "f15eaa648a2f5900c60195f7421915be21304c58465fb09cb0af13463bfaa3ec",
+      "roles": [
+        "original historical harness pilot evidence"
+      ]
+    },
+    {
+      "path": "evidence/tools/rule10_controls-v1.py",
+      "sha256": "a94133794258a98cb73d59390ffa0632e3c44db6d80a8b328a7e4450adf0dd04",
+      "roles": [
+        "unchanged historical/current generator bytes"
+      ]
+    },
+    {
+      "path": "evidence/tools/rule10_controls.py",
+      "sha256": "a0c7bfef40064fe4e56be259d4faa6bb5433b3c01286d46c536d7b8c9d65ff15",
+      "roles": [
+        "unchanged historical/current generator bytes"
+      ]
+    },
+    {
+      "path": "evidence/tools/rule10_prepare-v1.py",
+      "sha256": "4e59d1aace7db6e8ffe6550e9a5acbe4826eea85fb3a594496de7f59363d6ce9",
+      "roles": [
+        "unchanged historical/current generator bytes"
+      ]
+    },
+    {
+      "path": "evidence/tools/rule10_prepare.py",
+      "sha256": "7f11714454b984a7d562cb103b34221991a74823a8bf4096c0b970af9c614c3f",
+      "roles": [
+        "unchanged historical/current generator bytes"
+      ]
+    }
+  ],
+  "limits": [
+    "Original final2 base runs are reused under their original paths and identities; no new base run is claimed.",
+    "Historical final2 optimization pilots validate the unchanged harness, not the repaired final3 proof bodies.",
+    "Fresh final3 collectors, final seals, final controls, final scan/review and sweep remain independently required.",
+    "Runtime baseline oleans are checked in place and are intentionally not included in delivery caches."
+  ]
+}

@@ -47,7 +47,7 @@ of uniform on `⟨g⟩`, and, when `m = p − 1` (hypothesis `hV` of the theorem
 ## Main results
 
 * `Authentication.dlHash_compresses`: the compression part of Theorem 142.3 (proved).
-* `Authentication.dlHash_crh`: Theorem 142.3 (collision-resistance proof in progress).
+* `Authentication.dlHash_crh`: Theorem 142.3 (proved).
 
 ## Contents
 
@@ -130,8 +130,7 @@ theorem dlHashGenFun_layout (G : ExpGroupGen V) (n : ℕ) (r : G.gen.Coins n)
     rw [List.length_ofFn, NUPPT.coinLen_eq]
   simp only [dlHashGenFun_eq, dlHashIdx_layout, if_pos hn, NUPPT.inParam_layout,
     NUPPT.inCoins_layout, List.length_replicate, List.drop_left' hr, expSampleRaw_eq]
-  simp only [NUPPT.inParam_layout, NUPPT.inArg_layout, NUPPT.inCoins_layout,
-    List.length_replicate]
+  simp only [NUPPT.inArg_layout]
 
 /-- Above the generator threshold, every raw generated key has the form `⟨i, g^z⟩`
 for an exponent in the domain of its valid group index [PS10, Protocol 142.2].
@@ -277,9 +276,9 @@ theorem dlHashEval_expF (n : ℕ) (i : List Bool) (z : ZMod (expOrd i))
   rw [dlHashEval_atParam n i (expF i z) x hi hw hx, expF_eq, hw.dlW_eq,
     listToNat_natToList hz]
   cases hb : x (Fin.last n)
-  · simp only [hb, Bool.false_eq_true, ↓reduceIte, one_mul,
+  · simp only [Bool.false_eq_true, ↓reduceIte, one_mul,
       FromDiscreteLog.expUnit_pow_val]
-  · simp only [hb, ↓reduceIte, Units.val_mul, ZMod.val_mul,
+  · simp only [↓reduceIte, Units.val_mul, ZMod.val_mul,
       FromDiscreteLog.expUnit_pow_val]
     rw [Nat.mul_comm]
 
@@ -505,8 +504,9 @@ theorem dlHash_compresses (H : ArithmeticFP) (G : ExpGroupGen V)
   have hm : dlM (G.gen.runAt n [] r) < 2 ^ n :=
     ((expValid_iff _).1 hi).2.2.1.trans hp
   simp only [dlHash_inDom, dlHash_inRange, CRH.hash_eq, dlHash_eval,
-    dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
-    PolyExpr.eval_const, pairFstD_pairEncode, decide_eq_true_eq]
+    pairFstD_pairEncode, decide_eq_true_eq]
+  simp only [dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
+    PolyExpr.eval_const]
   constructor
   · intro x hx
     have hr := dlHashEval_range n _ z x hi hw hx
@@ -517,6 +517,60 @@ theorem dlHash_compresses (H : ArithmeticFP) (G : ExpGroupGen V)
       ← hmfull]
     have hpos := ((expValid_iff _).1 hi).2.1
     omega
+
+/-- The collision test for a raw finder output on key `⟨i, y⟩`: its two padded inputs
+are distinct, have exponent prefixes below `m`, and have equal padded hash values
+[PS10, Definition 140.1]. -/
+def dlHashCollision (n : ℕ) (i y raw : List Bool) : Prop :=
+  let xx := splitBits (a := n + 1) (b := n + 1) (padFin ((n + 1) + (n + 1)) raw)
+  listToNat ((List.ofFn xx.1).take n) < dlM i ∧
+    listToNat ((List.ofFn xx.2).take n) < dlM i ∧ xx.1 ≠ xx.2 ∧
+    padFin n (dlHashEval (atParam n (pairEncode (pairEncode i y) (List.ofFn xx.1)))) =
+      padFin n (dlHashEval (atParam n (pairEncode (pairEncode i y) (List.ofFn xx.2))))
+
+/-- The raw collision predicate is exactly the domain, distinctness, and equal-hash test
+on its two padded output halves. -/
+theorem dlHashCollision_iff (n : ℕ) (i y raw : List Bool) :
+    dlHashCollision n i y raw ↔
+      let xx := splitBits (a := n + 1) (b := n + 1) (padFin ((n + 1) + (n + 1)) raw)
+      listToNat ((List.ofFn xx.1).take n) < dlM i ∧
+        listToNat ((List.ofFn xx.2).take n) < dlM i ∧ xx.1 ≠ xx.2 ∧
+        padFin n (dlHashEval (atParam n (pairEncode (pairEncode i y) (List.ofFn xx.1)))) =
+          padFin n (dlHashEval (atParam n (pairEncode (pairEncode i y) (List.ofFn xx.2)))) :=
+  Iff.rfl
+
+/-- Above the generator threshold, collision acceptance is the average over instance
+coins of the joint probability over sampler and finder coins of the raw collision test
+[PS10, key distribution in Theorem 142.3].
+
+**Proof sketch.** Reindex the generator's uniform coins by their two independent tapes,
+read its activation, and expose the collision game's fields through their public readers.
+Fubini combines the sampler and finder tapes into a product probability. -/
+theorem dlHash_collision_accept_eq (H : ArithmeticFP) (G : ExpGroupGen V) (A : NUPPT)
+    (n : ℕ) (hn : G.n₀ ≤ n) :
+    accept ((dlHash H G).collisionGame A n) =
+      uexp (fun r : G.gen.Coins n =>
+        uprob (fun rs : (Fin (n * n) → Bool) × A.Coins n =>
+          let i := G.gen.runAt n [] r
+          let y := expEval (pairEncode i (natToList n
+            ((sampleBelowL (dlM i) (Nat.size (dlM i)) n n (List.ofFn rs.1)).getD 0)))
+          dlHashCollision n i y (A.runAt n (pairEncode i y) rs.2))) := by
+  rw [FromDiscreteLog.collision_accept_eq,
+    ← HardcoreBit.uexp_comp_equiv (dlHash_coinsEquiv H G n).symm,
+    HardcoreBit.uexp_prod]
+  congr 1
+  funext r
+  rw [uprob_prod]
+  congr 1
+  funext s
+  apply OneWay.uprob_congr
+  intro ra
+  rw [dlHash_gen_runAt, dlHashGenFun_layout G n r (List.ofFn s) hn]
+  have hw := G.wellFormed n r hn
+  simp only [dlHashCollision_iff, dlHash_inDom, CRH.hash_eq, dlHash_eval,
+    pairFstD_pairEncode, decide_eq_true_eq, hw.dlW_eq]
+  simp only [dlHash_domLen, dlHash_rangeLen, PolyExpr.eval_add, PolyExpr.eval_var,
+    PolyExpr.eval_const]
 
 /-- Whenever the finder produces a collision on a valid key `⟨i, g^z⟩`, the reduction's
 answer decodes to the challenge exponent [PS10, reduction in Theorem 142.3].
@@ -567,6 +621,75 @@ theorem dlHash_reduction_success (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
   · exact bitsToNat_natToBits (by
       simpa only [hw.dlW_eq] using val_lt_two_pow_dlW i z)
 
+/-- For a fixed valid well-formed index and a uniform challenge exponent, the finder's
+collision probability is bounded by the reduction's discrete-log success probability
+[PS10, reduction in Theorem 142.3].
+
+**Proof sketch.** Reindex the reduction's coins by the finder's equal-length coin tape.
+Every collision in the reindexed experiment implies successful decoding of the challenge
+exponent by the pointwise reduction theorem. Monotonicity of uniform probability concludes. -/
+theorem dlHash_ideal_collision_le (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
+    (i : List Bool) (hi : ExpValid i) (hw : WellFormedIndex n i) :
+    uprob (fun zr : ZMod (expOrd i) × A.Coins n =>
+      dlHashCollision n i (expF i zr.1) (A.runAt n (pairEncode i (expF i zr.1)) zr.2)) ≤
+      uprob (fun zr : ZMod (expOrd i) × (FromDiscreteLog.collisionReduction H A).Coins n =>
+        ∃ out : Fin n → Bool,
+          decodeFin n ((FromDiscreteLog.collisionReduction H A).runAt n
+            (pairEncode i (expF i zr.1)) zr.2) = some out ∧ bitsToNat out = zr.1.val) := by
+  rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl (ZMod (expOrd i)))
+    (NUPPT.coinsCongr (FromDiscreteLog.collisionReduction_coins H A) n))]
+  apply uprob_mono
+  intro zr hc
+  have hh : dlHashCollision n i (expF i zr.1)
+      (A.runAt n (pairEncode i (expF i zr.1))
+        (NUPPT.coinsCongr (FromDiscreteLog.collisionReduction_coins H A) n zr.2)) := by
+    simpa only [Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.refl_apply] using hc
+  exact dlHash_reduction_success H A n i zr.1 hi hw zr.2
+    ((dlHashCollision_iff n i (expF i zr.1) _).1 hh)
+
+/-- Above the generator threshold, collision acceptance is at most the concrete
+reduction's discrete-log success probability plus `(1/2)^n`
+[PS10, probability bound in Theorem 142.3].
+
+**Proof sketch.** Read the honest key distribution as the average over instance coins
+and independent sampler/finder tapes. The bounded sampler is within `(1/2)^n` of a
+uniform exponent. For the uniform experiment every collision makes the reduction
+succeed. Average the pointwise bounds and identify the discrete-log experiment. -/
+theorem dlHash_collision_bound (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) (A : NUPPT) (n : ℕ) (hn : G.n₀ ≤ n) :
+    accept ((dlHash H G).collisionGame A n) ≤
+      G.dlProb (FromDiscreteLog.collisionReduction H A) n + (1 / 2 : ℝ) ^ n := by
+  rw [dlHash_collision_accept_eq H G A n hn, ExpGroupGen.dlProb_eq]
+  calc
+    _ ≤ uexp (fun r : G.gen.Coins n =>
+        uprob (fun zr : ZMod (expOrd (G.gen.runAt n [] r)) × A.Coins n =>
+          dlHashCollision n (G.gen.runAt n [] r) (expF _ zr.1)
+            (A.runAt n (pairEncode (G.gen.runAt n [] r) (expF _ zr.1)) zr.2)) +
+          (1 / 2 : ℝ) ^ n) := by
+      apply HardcoreBit.uexp_mono
+      intro r
+      have hi := hV _ (G.valid n r hn)
+      have hw := G.wellFormed n r hn
+      have hp : dlP (G.gen.runAt n [] r) < 2 ^ n := by
+        simpa only [hw.dlW_eq] using dlP_lt_two_pow (G.gen.runAt n [] r)
+      have hm : dlM (G.gen.runAt n [] r) < 2 ^ n :=
+        ((expValid_iff _).1 hi).2.2.1.trans hp
+      have hs := FromDiscreteLog.sampleBelowL_uprob_le hi hm
+        (ρ := A.Coins n) (fun v ra =>
+          let i := G.gen.runAt n [] r
+          let y := expEval (pairEncode i (natToList n v))
+          dlHashCollision n i y (A.runAt n (pairEncode i y) ra))
+      simpa only [FromDiscreteLog.expEval_natToList_val hw] using hs
+    _ = uexp (fun r : G.gen.Coins n =>
+        uprob (fun zr : ZMod (expOrd (G.gen.runAt n [] r)) × A.Coins n =>
+          dlHashCollision n (G.gen.runAt n [] r) (expF _ zr.1)
+            (A.runAt n (pairEncode (G.gen.runAt n [] r) (expF _ zr.1)) zr.2))) +
+          (1 / 2 : ℝ) ^ n := by
+      rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const]
+    _ ≤ _ := add_le_add_right (HardcoreBit.uexp_mono fun r =>
+      dlHash_ideal_collision_le H A n _ (hV _ (G.valid n r hn))
+        (G.wellFormed n r hn)) _
+
 /-- **Theorem 142.3: Protocol 142.2 is a collision-resistant hash compressing by one bit**
 [PS10, Theorem 142.3], under the discrete-log assumption for an instance generator of the full
 groups `Z_p^*` (`m = p − 1`).
@@ -588,6 +711,18 @@ theorem dlHash_crh (H : ArithmeticFP) (G : ExpGroupGen V)
     (hV : ∀ i, V i → ExpValid i ∧ dlM i = dlP i - 1) (hDL : G.DLHard) :
     (dlHash H G).Compresses ∧ (dlHash H G).CollisionResistant := by
   refine ⟨dlHash_compresses H G hV, ?_⟩
-  sorry
+  rw [CRH.collisionResistant_iff]
+  intro A
+  have hhard := (ExpGroupGen.dlHard_iff G).1 hDL
+    (FromDiscreteLog.collisionReduction H A)
+  have hhalf : Negligible (fun n : ℕ => (1 / 2 : ℝ) ^ n) := by
+    simpa only [one_div] using negligible_two_pow_neg
+  have hneg : Negligible (fun n => accept ((dlHash H G).collisionGame A n)) := by
+    refine (hhard.add hhalf).mono ⟨G.n₀, ?_⟩
+    intro n hn
+    rw [abs_of_nonneg (accept_nonneg _),
+      abs_of_nonneg (add_nonneg (G.dlProb_nonneg _ n) (pow_nonneg (by norm_num) _))]
+    exact dlHash_collision_bound H G (fun i hi => (hV i hi).1) A n hn
+  exact ⟨_, hneg, fun _ => le_rfl⟩
 
 end TCSlib.Cryptography.Authentication
