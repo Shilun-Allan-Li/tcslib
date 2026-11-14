@@ -7,9 +7,9 @@ import re
 import subprocess
 
 records = []
-for path in (Path("evidence/logs/bootstrap-1/results.jsonl"),
-             Path("evidence/logs/helper-1/results.jsonl")):
+for path in sorted(Path("evidence/logs").glob("*/results.jsonl")):
     records.extend(json.loads(line) for line in path.read_text().splitlines())
+records.sort(key=lambda record: record["start"])
 latest = {record["module"]: record for record in records}
 paths = [Path("TCSlib/Cryptography/Candidates/DiscreteLog.lean"),
          Path("TCSlib/Cryptography/Hashing/FromDiscreteLog.lean")]

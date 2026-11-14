@@ -128,14 +128,14 @@ def init(edition):
         target = base_root / path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(git(path))
+    # Keep the delivered source snapshot free of cache links: copytree callers
+    # must never accidentally traverse a package tree while staging evidence.
     cache = base_root / ".lake/packages"
-    cache.parent.mkdir(parents=True, exist_ok=True)
     actual_cache = ROOT / ".lake/packages"
     if cache.is_symlink():
         need(cache.resolve() == actual_cache.resolve(), "baseline cache link changed")
-    else:
-        need(not cache.exists(), "baseline cache path is not a symlink")
-        cache.symlink_to(actual_cache, target_is_directory=True)
+        cache.unlink()
+    need(not cache.exists(), "delivered baseline snapshot contains a cache tree")
     issued = (ROOT / "evidence/order.txt").read_text().splitlines()
     wanted = {p[:-5] for p in base_sources}
     order = [m for m in issued if m in wanted]
@@ -149,7 +149,8 @@ def init(edition):
     base_probe.mkdir(parents=True, exist_ok=True)
     (base_probe / "CollectBase.lean").write_text(collector(BASE_OWNERS, "dl-crh exact-base closure collector"))
     (base_probe / "CensusBase.lean").write_text(census(BASE_OWNERS, "base"))
-    base_state = dict(base=BASE, root=str(base_root.relative_to(ROOT)), owners=BASE_OWNERS,
+    base_state = dict(base=BASE, root=".lake/dl-crh-base-work",
+                      snapshot_root=str(base_root.relative_to(ROOT)), owners=BASE_OWNERS,
                       source_hashes={p: sha(r) for p, r in sorted(base_sources.items())},
                       package_cache_link=str(actual_cache), olean_tree=".lake/dl-crh-base-oleans",
                       method="Exact git-base own-source snapshot, original TCSlib module identities; own package cache symlink; independent own TCSlib oleans.")
@@ -170,7 +171,7 @@ def init(edition):
          base_absent=[m for m in owners if m not in BASE_OWNERS],
          generated_at=datetime.datetime.now(datetime.timezone.utc).isoformat()))
     print("Prepared exact baseline:", len(order), "modules; final owners:", len(owners))
-    print("Baseline packages are a symlink to this checkout's own cache; exclude traversal of that symlink from delivery.")
+    print("Delivered baseline is source-only; runner materializes an isolated runtime with this checkout's own cache symlink outside evidence/.")
 
 
 def load_tool(path, name):
@@ -251,6 +252,9 @@ def seals(edition, side, log):
             target.parent.mkdir(parents=True, exist_ok=True)
             need(not target.exists(), "seal source already exists")
             target.write_bytes(probe)
+            copy = out / "probe-sources" / side / letter / (label + ".lean.txt")
+            copy.parent.mkdir(parents=True, exist_ok=True)
+            copy.write_bytes(probe)
             own_terms = {ref["display"] for root in roots[owner]
                          for ref in root["type_refs"] + root["value_refs"]}
             selected = {r["spelling"] for r in rows}
@@ -264,6 +268,7 @@ def seals(edition, side, log):
             record = dict(label=label, side=side, variant=letter, owner=owner,
                           probe_module=relative.with_suffix("").as_posix(),
                           source=modpath(owner), source_sha256=sha(raw), probe_sha256=sha(probe),
+                          delivered_probe_source=str(copy.relative_to(ROOT)),
                           requested=len(rows), rows=rows, closure=expected_closure,
                           excluded_notation=sorted(excluded), term_exclusions=excluded_terms,
                           stored_constants=counts[owner], collector_log=str(log.relative_to(ROOT)),

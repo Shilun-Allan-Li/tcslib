@@ -1,15 +1,20 @@
 import Lean
 import TCSlib.Cryptography.Candidates.DiscreteLog
-import TCSlib.Cryptography.Hashing.FromDiscreteLog.Encoding
 import TCSlib.Cryptography.Hashing.FromDiscreteLog.Algebra
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Coins
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Encoding
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Probability
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Reduction
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Sampling
 import TCSlib.Cryptography.Hashing.FromDiscreteLog
 
 set_option maxHeartbeats 0
 set_option maxRecDepth 65536
 open Lean Elab Command
 #print axioms TCSlib.Cryptography.Authentication.dlHash_crh
-def owners : List Name := [`TCSlib.Cryptography.Candidates.DiscreteLog, `TCSlib.Cryptography.Hashing.FromDiscreteLog.Encoding, `TCSlib.Cryptography.Hashing.FromDiscreteLog.Algebra, `TCSlib.Cryptography.Hashing.FromDiscreteLog]
+def owners : List Name := [`TCSlib.Cryptography.Candidates.DiscreteLog, `TCSlib.Cryptography.Hashing.FromDiscreteLog.Algebra, `TCSlib.Cryptography.Hashing.FromDiscreteLog.Coins, `TCSlib.Cryptography.Hashing.FromDiscreteLog.Encoding, `TCSlib.Cryptography.Hashing.FromDiscreteLog.Probability, `TCSlib.Cryptography.Hashing.FromDiscreteLog.Reduction, `TCSlib.Cryptography.Hashing.FromDiscreteLog.Sampling, `TCSlib.Cryptography.Hashing.FromDiscreteLog]
 def nameMap : Std.HashMap String String := {}
+/- dl-crh all-stored census, final. -/
 
 def normName (n : Name) : String := ((Lean.privateToUserName? n).getD n).toString
 

@@ -1,0 +1,2 @@
+import TCSlib.Cryptography.Hashing.FromDiscreteLog
+#print axioms TCSlib.Cryptography.Authentication.dlHash_reduction_success
