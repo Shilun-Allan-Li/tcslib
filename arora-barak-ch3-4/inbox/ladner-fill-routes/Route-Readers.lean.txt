@@ -1,0 +1,52 @@
+/- Scratch statement-elaboration probe, not a library fill.
+Source/import pin: 5ab222167eb12664d97d255766c5def15b6d5d50.
+Every theorem body below is intentionally admitted. No target body is replaced.
+Additional imports and proposed public interfaces need the decisions in the route report.
+-/
+import TCSlib.Complexity.Diagonalization.Ladner
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.Complexity.ClassP.ModelInvariance
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing Complexity
+open scoped Classical
+noncomputable section
+
+namespace Complexity
+-- Approved pending reader. It is absent at the import pin.
+theorem SAT_exists_linear_verifier :
+    ∃ V : Language Bool, V ∈ P ∧
+      ∀ x : List Bool, x ∈ SAT ↔
+        ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V := by sorry
+
+-- Proposed owner readers, not existing API at the import pin.
+theorem polyTimeComputable_iff (f : List Bool → List Bool) :
+    PolyTimeComputable f ↔ ∃ (M : FinTM Bool) (C d : ℕ),
+      M.ComputesFunInTime f (fun n => C * (n + 1) ^ d) := by sorry
+
+theorem polyTimeReducible_iff (L L' : Language Bool) :
+    PolyTimeReducible L L' ↔ ∃ f : List Bool → List Bool,
+      PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L' := by sorry
+
+theorem NPHard_iff (L : Language Bool) :
+    NPHard L ↔ ∀ L' : Language Bool, L' ∈ NP → PolyTimeReducible L' L := by sorry
+
+theorem NPComplete_iff (L : Language Bool) :
+    NPComplete L ↔ L ∈ NP ∧ NPHard L := by sorry
+end Complexity
+
+namespace Turing.FinTM
+theorem decidesInTime_iff (M : FinTM Bool) (L : Language Bool) (T : ℕ → ℕ) :
+    M.DecidesInTime L T ↔ M.ComputesFunInTime
+      (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) T := by sorry
+end Turing.FinTM
+
+namespace Turing.MultiTapeTM
+theorem indicator_of_mem {α : Type} {L : Set α} {x : α} (hx : x ∈ L) :
+    indicator L x = true := by sorry
+theorem indicator_of_not_mem {α : Type} {L : Set α} {x : α} (hx : x ∉ L) :
+    indicator L x = false := by sorry
+end Turing.MultiTapeTM

@@ -1,0 +1,112 @@
+/- Scratch statement-elaboration probe, not a library fill.
+Source/import pin: 5ab222167eb12664d97d255766c5def15b6d5d50.
+Every theorem body below is intentionally admitted. No target body is replaced.
+Additional imports and proposed public interfaces need the decisions in the route report.
+-/
+import TCSlib.Complexity.Diagonalization.Ladner
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.Complexity.ClassP.ModelInvariance
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing Complexity
+open scoped Classical
+noncomputable section
+
+namespace LadnerRouteShrink
+
+-- Mathematical parser specification; implement through reverse/uRest/hasFalse,
+-- not by compiling a new private parser host.
+def parse : List Bool → Option (List Bool × ℕ)
+  | [] => none
+  | b :: bs => match parse bs with
+    | some (p, t) => some (b :: p, t)
+    | none => if b then none else some ([], bs.length)
+
+def padSyntax (h : ℕ → ℕ) (y : List Bool) : Bool :=
+  match parse y with
+  | none => false
+  | some (p, t) => decide (t = p.length ^ h p.length)
+
+def parseWord (y : List Bool) : List Bool :=
+  match parse y with
+  | none => []
+  | some (p, t) => pairEncode [true] (pairEncode p (Nat.bits t))
+
+def smallSAT (B : ℕ) (x : List Bool) : Bool := decide (x.length < B ∧ x ∈ SAT)
+
+def step (h : ℕ → ℕ) (f : List Bool → List Bool) (B K : ℕ)
+    (S : List Bool) : List Bool :=
+  let x := pairSndD S
+  if pairFstD S ≠ [] then S
+  else if x.length < K then pairEncode [smallSAT K x] []
+  else match parse (f x) with
+    | none => pairEncode [false] []
+    | some (p, t) =>
+      if t ≠ p.length ^ h p.length then pairEncode [false] []
+      else if p.length < B then pairEncode [smallSAT B p] []
+      else pairEncode [] p
+
+def Inv (x S : List Bool) : Prop :=
+  (∃ y, S = pairEncode [] y ∧ y.length ≤ x.length ∧ (y ∈ SAT ↔ x ∈ SAT)) ∨
+  (∃ b : Bool, S = pairEncode [b] [] ∧ (b = true ↔ x ∈ SAT))
+
+def measure (S : List Bool) : ℕ :=
+  if pairFstD S = [] then (pairSndD S).length + 1 else 0
+
+theorem reduction_from_hardness {h : ℕ → ℕ} (hH : NPHard (padSAT h)) :
+    ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
+      ∀ x, x ∈ SAT ↔ f x ∈ padSAT h := by sorry
+
+theorem prefix_square_bound {h : ℕ → ℕ} (A d B n m : ℕ)
+    (hh : ∀ r ≥ B, 2 * (d + 1) ≤ h r)
+    (hn : A * 2 ^ d + 2 ≤ n) (hm : B ≤ m)
+    (hsize : m ^ h m ≤ A * (n + 1) ^ d) : m ^ 2 ≤ n := by sorry
+
+theorem reduction_shrinks {h : ℕ → ℕ} {f : List Bool → List Bool}
+    (hf : PolyTimeComputable f)
+    (hu : ∀ C, ∃ N, ∀ n ≥ N, C ≤ h n) :
+    ∃ B K, 2 ≤ K ∧ ∀ x p t,
+      K ≤ x.length → parse (f x) = some (p, t) →
+      t = p.length ^ h p.length → B ≤ p.length →
+        p.length ^ 2 ≤ x.length ∧ p.length < x.length := by sorry
+
+theorem smallSAT_FP (B : ℕ) :
+    PolyTimeComputable (fun x => [smallSAT B x]) := by sorry
+
+theorem step_FP {h : ℕ → ℕ} {f : List Bool → List Bool}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)))
+    (hf : PolyTimeComputable f) (B K : ℕ) :
+    PolyTimeComputable (step h f B K) := by sorry
+
+theorem progress {h : ℕ → ℕ} {f : List Bool → List Bool} {B K : ℕ}
+    (hK : 2 ≤ K)
+    (hred : ∀ x, x ∈ SAT ↔ f x ∈ padSAT h)
+    (hshrink : ∀ x p t, K ≤ x.length → parse (f x) = some (p, t) →
+      t = p.length ^ h p.length → B ≤ p.length → p.length < x.length)
+    (x S : List Bool) (hI : Inv x S) :
+    Inv x (step h f B K S) ∧
+      (0 < measure S → measure (step h f B K S) < measure S) ∧
+      (measure S = 0 → step h f B K S = S) := by sorry
+
+theorem orbit_size {h : ℕ → ℕ} {f : List Bool → List Bool} {B K : ℕ}
+    (hinv : ∀ x S, Inv x S → Inv x (step h f B K S)) (x : List Bool) (j : ℕ) :
+    ((step h f B K)^[j] (pairEncode [] x)).length ≤ 4 * (x.length + 1) ^ 1 := by sorry
+
+theorem final_readout {h : ℕ → ℕ} {f : List Bool → List Bool} {B K : ℕ}
+    (hprogress : ∀ x S, Inv x S →
+      Inv x (step h f B K S) ∧
+        (0 < measure S → measure (step h f B K S) < measure S) ∧
+        (measure S = 0 → step h f B K S = S)) (x : List Bool) :
+    pairFstD ((step h f B K)^[1 * (x.length + 1) ^ 1] (pairEncode [] x)) =
+      [decide (x ∈ SAT)] := by sorry
+
+theorem shrinking_transfer {h : ℕ → ℕ} {f : List Bool → List Bool} (B K : ℕ)
+    (hstep : PolyTimeComputable (step h f B K))
+    (hsize : ∀ x j, j ≤ 1 * (x.length + 1) ^ 1 →
+      ((step h f B K)^[j] (pairEncode [] x)).length ≤ 4 * (x.length + 1) ^ 1)
+    (hout : ∀ x, pairFstD ((step h f B K)^[1 * (x.length + 1) ^ 1]
+      (pairEncode [] x)) = [decide (x ∈ SAT)]) : SAT ∈ P := by sorry
+end LadnerRouteShrink

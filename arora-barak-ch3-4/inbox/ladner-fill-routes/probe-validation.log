@@ -1,0 +1,1195 @@
+Ladner route validation — source pin 5ab222167eb12664d97d255766c5def15b6d5d50
+Scope: statement elaboration and bounded existing-API axiom inventory. No filled target, no foreign-definition seal, no downstream replay.
+Task-owned Lean processes: serial, -j4. Later coordination tightened the shared machine cap to 3; one slot is reserved for dl-crh. Before launching the two statement-check batches, process-name inspection showed 2 external Lean executables (one v4.25.0 and one v4.33.1), so this task added at most the third. Lake parent processes were not counted as an additional Lean executable.
+All objects are freshly produced by this task from the source pin; no borrowed TCSlib snapshot/olean tree.
+Source extraction: git archive of the pinned repository paths into /private/tmp; library .lean files left unchanged.
+No lake build, no Lake command, no cache fetch; pinned packages linked read-only for imports.
+No executable-path shim used.
+
+$ lean --version
+Lean (version 4.25.0, arm64-apple-darwin24.6.0, commit cdd38ac5115bdeec5f609e9126cce00f51ae88b3, Release)
+exit=0
+
+Initial preflight; native macOS equivalents used because cgroup/procfs fields do not exist:
+Host: Darwin/APFS; Linux cgroup and /proc fields are not applicable.
+os.cpu_count(): 12
+$ df -k /private/tmp/ladner-fill-routes-tpgw3o3y
+Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on
+/dev/disk3s5   971350180 690311604 252314760    74% 7152339 2523147600    0%   /System/Volumes/Data
+
+
+exit=0
+$ df -k /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-exchange
+Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on
+/dev/disk3s5   971350180 690311608 252314756    74% 7152338 2523147560    0%   /System/Volumes/Data
+
+
+exit=0
+$ memory_pressure -Q
+The system has 19327352832 (1179648 pages with a page size of 16384).
+System-wide memory free percentage: 42%
+
+
+exit=0
+$ vm_stat
+Mach Virtual Memory Statistics: (page size of 16384 bytes)
+Pages free:                                     3179.
+Pages active:                                 240944.
+Pages inactive:                               226619.
+Pages speculative:                             13000.
+Pages throttled:                                   0.
+Pages wired down:                             276654.
+Pages purgeable:                                 168.
+"Translation faults":                    20592044996.
+Pages copy-on-write:                       531259585.
+Pages zero filled:                       14455696433.
+Pages reactivated:                         997970492.
+Pages purged:                              118010915.
+File-backed pages:                            381723.
+Anonymous pages:                               98841.
+Pages stored in compressor:                  1277811.
+Pages occupied by compressor:                 363263.
+Decompressions:                            524385955.
+Compressions:                              734357401.
+Pageins:                                   641831327.
+Pageouts:                                    2730583.
+Swapins:                                      515312.
+Swapouts:                                    1217944.
+
+
+exit=0
+Filesystem: /dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)
+Initial free memory estimate: 41% of 19327352832 bytes = approximately 7.38 GiB; later bootstrap reading 34% = approximately 6.12 GiB. Native memory_pressure percentages are coarse available-memory indicators, not Linux cgroup accounting. Both exceed the 4 GiB preflight floor.
+Initial available disk: 252333804 KiB, approximately 240.64 GiB; exceeds 12 GiB floor.
+
+Package URL/revision check:
+«doc-gen4» ABSENT
+PFR MATCH e1095d58b7c6f10734988816f7764f2103b9bf29 https://github.com/teorth/pfr.git
+mathlib MATCH 029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e https://github.com/leanprover-community/mathlib4.git
+Cli MATCH 1dae8b12f8ba27576ffe5ddee78bebf6458157b0 https://github.com/leanprover/lean4-cli
+UnicodeBasic ABSENT
+BibtexQuery ABSENT
+MD4Lean ABSENT
+LeanAPAP MATCH 5bbd91f52aa2e2d413a19afc10d30362e4872527 https://github.com/YaelDillies/LeanAPAP.git
+plausible MATCH 2503bfb5e2d4d8202165f5bd2cc39e44a3be31c3 https://github.com/leanprover-community/plausible
+LeanSearchClient MATCH 2ed4ba69b6127de8f5c2af83cccacd3c988b06bf https://github.com/leanprover-community/LeanSearchClient
+importGraph MATCH 009064c21bad4d7f421f2901c5e817c8bf3468cb https://github.com/leanprover-community/import-graph
+proofwidgets MATCH fb8ed0a85a96e3176f6e94b20d413ea72d92576d https://github.com/leanprover-community/ProofWidgets4
+aesop MATCH 26e4c7c0e63eb3e6cce3cf7faba27b8526ea8349 https://github.com/leanprover-community/aesop
+Qq MATCH 2781d8ad404303b2fe03710ac7db946ddfe3539f https://github.com/leanprover-community/quote4
+batteries MATCH 39260e31b7b3f7f05643da95242463b462dc05f1 https://github.com/leanprover-community/batteries
+PASS: every present package matches the pinned manifest; no Lake command run.
+
+Zero-size package oleans found: 0.
+Dependency cache import probe: CacheProbe.lean contained `import Mathlib.Data.Nat.Log`; run through leanelab.sh, tool exit 0. nice reported setpriority denied. This startup result was observed in the tool output; no separate cache-fetch log exists because no fetch occurred.
+
+Mathlib roots of the archived TCSlib import closure:
+Mathlib.Algebra.BigOperators.Fin
+Mathlib.Algebra.BigOperators.Group.Finset.Basic
+Mathlib.Algebra.BigOperators.Ring.Finset
+Mathlib.Algebra.Group.Action.Defs
+Mathlib.Algebra.Order.BigOperators.Group.Finset
+Mathlib.Algebra.Order.Group.Abs
+Mathlib.Algebra.Order.Group.Int
+Mathlib.Algebra.Order.Ring.GeomSum
+Mathlib.Computability.Language
+Mathlib.Computability.TMToPartrec
+Mathlib.Data.Finset.Dedup
+Mathlib.Data.Finset.Max
+Mathlib.Data.Fintype.Basic
+Mathlib.Data.Fintype.BigOperators
+Mathlib.Data.Fintype.EquivFin
+Mathlib.Data.Fintype.Option
+Mathlib.Data.Fintype.Pi
+Mathlib.Data.Fintype.Prod
+Mathlib.Data.Fintype.Sigma
+Mathlib.Data.Fintype.Sum
+Mathlib.Data.Fintype.Vector
+Mathlib.Data.Int.Interval
+Mathlib.Data.List.Basic
+Mathlib.Data.List.FinRange
+Mathlib.Data.List.Induction
+Mathlib.Data.List.MinMax
+Mathlib.Data.List.TakeDrop
+Mathlib.Data.Nat.Bits
+Mathlib.Data.Nat.Digits.Defs
+Mathlib.Data.Nat.Log
+Mathlib.Data.Nat.Notation
+Mathlib.Data.Nat.Size
+Mathlib.Data.Sigma.Basic
+Mathlib.Data.Sign.Defs
+Mathlib.Logic.Embedding.Basic
+Mathlib.Logic.Equiv.Bool
+Mathlib.Logic.Function.Basic
+Mathlib.Order.Interval.Finset.Nat
+Mathlib.Order.Monotone.Basic
+Mathlib.Order.Monotone.Defs
+Mathlib.Tactic.DeriveFintype
+Mathlib.Tactic.FinCases
+Mathlib.Tactic.Linarith
+Mathlib.Tactic.Ring
+Mathlib.Tactic.SplitIfs
+
+
+Bootstrap final status:
+{"exit": 0, "modules": 127, "source_commit": "5ab222167eb12664d97d255766c5def15b6d5d50"}
+
+Bootstrap module start/end records (UTC, elapsed time, cumulative child maximum RSS bytes):
+START 1 TCSlib.Complexity.TuringMachine.Configuration 2026-11-14T06:13:33Z
+END 1 TCSlib.Complexity.TuringMachine.Configuration exit=0 seconds=7.70 cumulative_child_maxrss_bytes=1444806656
+START 2 TCSlib.Complexity.TuringMachine.Deterministic 2026-11-14T06:13:41Z
+END 2 TCSlib.Complexity.TuringMachine.Deterministic exit=0 seconds=2.95 cumulative_child_maxrss_bytes=1444806656
+START 3 TCSlib.Complexity.TuringMachine.Finite 2026-11-14T06:13:44Z
+END 3 TCSlib.Complexity.TuringMachine.Finite exit=0 seconds=2.78 cumulative_child_maxrss_bytes=1444806656
+START 4 TCSlib.Complexity.TuringMachine.Simulation 2026-11-14T06:13:46Z
+END 4 TCSlib.Complexity.TuringMachine.Simulation exit=0 seconds=6.44 cumulative_child_maxrss_bytes=1473593344
+START 5 TCSlib.Complexity.TuringMachine.Composition 2026-11-14T06:13:53Z
+END 5 TCSlib.Complexity.TuringMachine.Composition exit=0 seconds=3.90 cumulative_child_maxrss_bytes=1473593344
+START 6 TCSlib.Complexity.ClassNP.PolyTime 2026-11-14T06:13:57Z
+END 6 TCSlib.Complexity.ClassNP.PolyTime exit=0 seconds=2.87 cumulative_child_maxrss_bytes=1473593344
+START 7 TCSlib.Complexity.TuringMachine.NatBits 2026-11-14T06:13:59Z
+END 7 TCSlib.Complexity.TuringMachine.NatBits exit=0 seconds=3.07 cumulative_child_maxrss_bytes=1473593344
+START 8 TCSlib.Complexity.TuringMachine.StateRenaming 2026-11-14T06:14:03Z
+END 8 TCSlib.Complexity.TuringMachine.StateRenaming exit=0 seconds=3.06 cumulative_child_maxrss_bytes=1473593344
+START 9 TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction 2026-11-14T06:14:06Z
+END 9 TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction exit=0 seconds=4.05 cumulative_child_maxrss_bytes=1561952256
+START 10 TCSlib.Complexity.TuringMachine.Sweep 2026-11-14T06:14:10Z
+END 10 TCSlib.Complexity.TuringMachine.Sweep exit=0 seconds=2.70 cumulative_child_maxrss_bytes=1561952256
+START 11 TCSlib.Complexity.TuringMachine.Build.Contract.Basic 2026-11-14T06:14:12Z
+END 11 TCSlib.Complexity.TuringMachine.Build.Contract.Basic exit=0 seconds=4.47 cumulative_child_maxrss_bytes=1561952256
+START 12 TCSlib.Complexity.TuringMachine.Robustness.SingleTape 2026-11-14T06:14:17Z
+END 12 TCSlib.Complexity.TuringMachine.Robustness.SingleTape exit=0 seconds=8.14 cumulative_child_maxrss_bytes=1649049600
+START 13 TCSlib.Complexity.TuringMachine.Encoding 2026-11-14T06:14:25Z
+END 13 TCSlib.Complexity.TuringMachine.Encoding exit=0 seconds=3.41 cumulative_child_maxrss_bytes=1649049600
+START 14 TCSlib.Complexity.ClassP.TimeConstructible 2026-11-14T06:14:28Z
+END 14 TCSlib.Complexity.ClassP.TimeConstructible exit=0 seconds=3.45 cumulative_child_maxrss_bytes=1649049600
+START 15 TCSlib.Complexity.TuringMachine.Build.Convention 2026-11-14T06:14:32Z
+END 15 TCSlib.Complexity.TuringMachine.Build.Convention exit=0 seconds=2.34 cumulative_child_maxrss_bytes=1649049600
+START 16 TCSlib.Complexity.TuringMachine.Build.Wrappers 2026-11-14T06:14:34Z
+END 16 TCSlib.Complexity.TuringMachine.Build.Wrappers exit=0 seconds=8.28 cumulative_child_maxrss_bytes=1649049600
+START 17 TCSlib.Complexity.TuringMachine.Build.Embed 2026-11-14T06:14:42Z
+END 17 TCSlib.Complexity.TuringMachine.Build.Embed exit=0 seconds=6.15 cumulative_child_maxrss_bytes=1649049600
+START 18 TCSlib.Complexity.TuringMachine.Build.Loop 2026-11-14T06:14:49Z
+END 18 TCSlib.Complexity.TuringMachine.Build.Loop exit=0 seconds=26.34 cumulative_child_maxrss_bytes=1649049600
+START 19 TCSlib.Complexity.TuringMachine.Build.Primitives 2026-11-14T06:15:15Z
+END 19 TCSlib.Complexity.TuringMachine.Build.Primitives exit=0 seconds=33.10 cumulative_child_maxrss_bytes=1649049600
+START 20 TCSlib.Complexity.ClassNP.PolyTimePairing 2026-11-14T06:15:48Z
+END 20 TCSlib.Complexity.ClassNP.PolyTimePairing exit=0 seconds=8.44 cumulative_child_maxrss_bytes=1649049600
+START 21 TCSlib.Complexity.ClassP.DTIME 2026-11-14T06:15:56Z
+END 21 TCSlib.Complexity.ClassP.DTIME exit=0 seconds=2.31 cumulative_child_maxrss_bytes=1649049600
+START 22 TCSlib.Complexity.ClassP.P 2026-11-14T06:15:59Z
+END 22 TCSlib.Complexity.ClassP.P exit=0 seconds=2.24 cumulative_child_maxrss_bytes=1649049600
+START 23 TCSlib.Complexity.ClassNP.NP 2026-11-14T06:16:01Z
+END 23 TCSlib.Complexity.ClassNP.NP exit=0 seconds=3.17 cumulative_child_maxrss_bytes=1649049600
+START 24 TCSlib.Complexity.ClassNP.EXP 2026-11-14T06:16:04Z
+END 24 TCSlib.Complexity.ClassNP.EXP exit=0 seconds=14.82 cumulative_child_maxrss_bytes=1649049600
+START 25 TCSlib.Complexity.TuringMachine.UniversalStartup 2026-11-14T06:16:19Z
+END 25 TCSlib.Complexity.TuringMachine.UniversalStartup exit=0 seconds=8.88 cumulative_child_maxrss_bytes=1649049600
+START 26 TCSlib.Complexity.TuringMachine.UniversalInterpreter 2026-11-14T06:16:28Z
+END 26 TCSlib.Complexity.TuringMachine.UniversalInterpreter exit=0 seconds=9.13 cumulative_child_maxrss_bytes=1649049600
+START 27 TCSlib.Complexity.TuringMachine.UniversalBlock 2026-11-14T06:16:37Z
+END 27 TCSlib.Complexity.TuringMachine.UniversalBlock exit=0 seconds=7.71 cumulative_child_maxrss_bytes=1649049600
+START 28 TCSlib.Complexity.TuringMachine.Universal 2026-11-14T06:16:45Z
+END 28 TCSlib.Complexity.TuringMachine.Universal exit=0 seconds=15.80 cumulative_child_maxrss_bytes=1649049600
+START 29 TCSlib.Complexity.Uncomputability.Computable 2026-11-14T06:17:01Z
+END 29 TCSlib.Complexity.Uncomputability.Computable exit=0 seconds=6.37 cumulative_child_maxrss_bytes=1649049600
+START 30 TCSlib.Complexity.Uncomputability.Diagonalization 2026-11-14T06:17:07Z
+END 30 TCSlib.Complexity.Uncomputability.Diagonalization exit=0 seconds=2.47 cumulative_child_maxrss_bytes=1649049600
+START 31 TCSlib.Complexity.Uncomputability.Halting 2026-11-14T06:17:09Z
+END 31 TCSlib.Complexity.Uncomputability.Halting exit=0 seconds=3.08 cumulative_child_maxrss_bytes=1649049600
+START 32 TCSlib.Complexity.ClassNP.Reductions 2026-11-14T06:17:12Z
+END 32 TCSlib.Complexity.ClassNP.Reductions exit=0 seconds=4.47 cumulative_child_maxrss_bytes=1649049600
+START 33 TCSlib.Complexity.ClassNP.CoNP 2026-11-14T06:17:17Z
+END 33 TCSlib.Complexity.ClassNP.CoNP exit=0 seconds=3.17 cumulative_child_maxrss_bytes=1649049600
+START 34 TCSlib.Complexity.TuringMachine.UnaryTape 2026-11-14T06:17:20Z
+END 34 TCSlib.Complexity.TuringMachine.UnaryTape exit=0 seconds=1.95 cumulative_child_maxrss_bytes=1649049600
+START 35 TCSlib.Complexity.TuringMachine.CounterProg 2026-11-14T06:17:22Z
+END 35 TCSlib.Complexity.TuringMachine.CounterProg exit=0 seconds=5.47 cumulative_child_maxrss_bytes=1649049600
+START 36 TCSlib.Complexity.TuringMachine.CounterProgRun 2026-11-14T06:17:28Z
+END 36 TCSlib.Complexity.TuringMachine.CounterProgRun exit=0 seconds=4.69 cumulative_child_maxrss_bytes=1649049600
+START 37 TCSlib.Complexity.ClassNP.CounterProgPolyTime 2026-11-14T06:17:32Z
+END 37 TCSlib.Complexity.ClassNP.CounterProgPolyTime exit=0 seconds=3.45 cumulative_child_maxrss_bytes=1649049600
+START 38 TCSlib.Complexity.TuringMachine.CounterProgInput 2026-11-14T06:17:36Z
+END 38 TCSlib.Complexity.TuringMachine.CounterProgInput exit=0 seconds=2.33 cumulative_child_maxrss_bytes=1649049600
+START 39 TCSlib.Complexity.ClassNP.PolyTimePrefix 2026-11-14T06:17:38Z
+END 39 TCSlib.Complexity.ClassNP.PolyTimePrefix exit=0 seconds=3.64 cumulative_child_maxrss_bytes=1649049600
+START 40 TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed 2026-11-14T06:17:42Z
+END 40 TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed exit=0 seconds=3.05 cumulative_child_maxrss_bytes=1649049600
+START 41 TCSlib.Complexity.TuringMachine.Build.EmitIterBody 2026-11-14T06:17:45Z
+END 41 TCSlib.Complexity.TuringMachine.Build.EmitIterBody exit=0 seconds=5.80 cumulative_child_maxrss_bytes=1663107072
+START 42 TCSlib.Complexity.ClassNP.PolyTimeBlockLoop 2026-11-14T06:17:50Z
+END 42 TCSlib.Complexity.ClassNP.PolyTimeBlockLoop exit=0 seconds=3.49 cumulative_child_maxrss_bytes=1663107072
+START 43 TCSlib.Complexity.ClassNP.PolyTimeBlockTests 2026-11-14T06:17:54Z
+END 43 TCSlib.Complexity.ClassNP.PolyTimeBlockTests exit=0 seconds=2.64 cumulative_child_maxrss_bytes=1663107072
+START 44 TCSlib.Complexity.ClassNP.PolyTimeBlockMajority 2026-11-14T06:17:57Z
+END 44 TCSlib.Complexity.ClassNP.PolyTimeBlockMajority exit=0 seconds=2.50 cumulative_child_maxrss_bytes=1663107072
+START 45 TCSlib.Complexity.ClassNP.PClosure 2026-11-14T06:17:59Z
+END 45 TCSlib.Complexity.ClassNP.PClosure exit=0 seconds=2.62 cumulative_child_maxrss_bytes=1663107072
+START 46 TCSlib.Complexity.Formulas.CNF 2026-11-14T06:18:02Z
+END 46 TCSlib.Complexity.Formulas.CNF exit=0 seconds=2.31 cumulative_child_maxrss_bytes=1663107072
+START 47 TCSlib.Complexity.Formulas.CNFEncoding 2026-11-14T06:18:04Z
+END 47 TCSlib.Complexity.Formulas.CNFEncoding exit=0 seconds=2.69 cumulative_child_maxrss_bytes=1663107072
+START 48 TCSlib.Complexity.ClassNP.SAT 2026-11-14T06:18:07Z
+END 48 TCSlib.Complexity.ClassNP.SAT exit=0 seconds=30.54 cumulative_child_maxrss_bytes=1712308224
+START 49 TCSlib.Complexity.TuringMachine.Build.WordTests 2026-11-14T06:18:37Z
+END 49 TCSlib.Complexity.TuringMachine.Build.WordTests exit=0 seconds=8.80 cumulative_child_maxrss_bytes=1712308224
+START 50 TCSlib.Complexity.ClassNP.TMSAT 2026-11-14T06:18:46Z
+END 50 TCSlib.Complexity.ClassNP.TMSAT exit=0 seconds=6.65 cumulative_child_maxrss_bytes=1712308224
+START 51 TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule 2026-11-14T06:18:53Z
+END 51 TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule exit=0 seconds=5.47 cumulative_child_maxrss_bytes=1712308224
+START 52 TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate 2026-11-14T06:18:58Z
+END 52 TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate exit=0 seconds=3.77 cumulative_child_maxrss_bytes=1712308224
+START 53 TCSlib.Complexity.TuringMachine.Robustness.ObliviousSetup 2026-11-14T06:19:02Z
+END 53 TCSlib.Complexity.TuringMachine.Robustness.ObliviousSetup exit=0 seconds=5.58 cumulative_child_maxrss_bytes=1712308224
+START 54 TCSlib.Complexity.TuringMachine.Robustness.ObliviousLedger 2026-11-14T06:19:08Z
+END 54 TCSlib.Complexity.TuringMachine.Robustness.ObliviousLedger exit=0 seconds=2.24 cumulative_child_maxrss_bytes=1712308224
+START 55 TCSlib.Complexity.TuringMachine.Robustness.Oblivious 2026-11-14T06:19:10Z
+END 55 TCSlib.Complexity.TuringMachine.Robustness.Oblivious exit=0 seconds=6.29 cumulative_child_maxrss_bytes=1712308224
+START 56 TCSlib.Complexity.CookLevin.Snapshot 2026-11-14T06:19:16Z
+END 56 TCSlib.Complexity.CookLevin.Snapshot exit=0 seconds=2.31 cumulative_child_maxrss_bytes=1712308224
+START 57 TCSlib.Complexity.TuringMachine.CfgFacts 2026-11-14T06:19:18Z
+END 57 TCSlib.Complexity.TuringMachine.CfgFacts exit=0 seconds=2.12 cumulative_child_maxrss_bytes=1712308224
+START 58 TCSlib.Complexity.TuringMachine.Build.Seam 2026-11-14T06:19:21Z
+END 58 TCSlib.Complexity.TuringMachine.Build.Seam exit=0 seconds=2.43 cumulative_child_maxrss_bytes=1712308224
+START 59 TCSlib.Complexity.CookLevin.Hardness 2026-11-14T06:19:23Z
+END 59 TCSlib.Complexity.CookLevin.Hardness exit=0 seconds=215.19 cumulative_child_maxrss_bytes=2262433792
+START 60 TCSlib.Complexity.TuringMachine.Oracle 2026-11-14T06:22:58Z
+END 60 TCSlib.Complexity.TuringMachine.Oracle exit=0 seconds=10.90 cumulative_child_maxrss_bytes=2262433792
+START 61 TCSlib.Complexity.TuringMachine.OracleFinite 2026-11-14T06:23:09Z
+END 61 TCSlib.Complexity.TuringMachine.OracleFinite exit=0 seconds=1.85 cumulative_child_maxrss_bytes=2262433792
+START 62 TCSlib.Complexity.TuringMachine.Nondeterministic 2026-11-14T06:23:11Z
+END 62 TCSlib.Complexity.TuringMachine.Nondeterministic exit=0 seconds=2.61 cumulative_child_maxrss_bytes=2262433792
+START 63 TCSlib.Complexity.TuringMachine.OracleNondeterministic 2026-11-14T06:23:14Z
+END 63 TCSlib.Complexity.TuringMachine.OracleNondeterministic exit=0 seconds=2.06 cumulative_child_maxrss_bytes=2262433792
+START 64 TCSlib.Complexity.TuringMachine.Build.OracleCall 2026-11-14T06:23:16Z
+END 64 TCSlib.Complexity.TuringMachine.Build.OracleCall exit=0 seconds=2.18 cumulative_child_maxrss_bytes=2262433792
+START 65 TCSlib.Complexity.TuringMachine.Build.VirtualInput 2026-11-14T06:23:18Z
+END 65 TCSlib.Complexity.TuringMachine.Build.VirtualInput exit=0 seconds=2.38 cumulative_child_maxrss_bytes=2262433792
+START 66 TCSlib.Complexity.TuringMachine.Build.Catalog 2026-11-14T06:23:20Z
+END 66 TCSlib.Complexity.TuringMachine.Build.Catalog exit=0 seconds=31.25 cumulative_child_maxrss_bytes=2262433792
+START 67 TCSlib.Complexity.TuringMachine.Build.Scan 2026-11-14T06:23:51Z
+END 67 TCSlib.Complexity.TuringMachine.Build.Scan exit=0 seconds=8.00 cumulative_child_maxrss_bytes=2262433792
+START 68 TCSlib.Complexity.TuringMachine.SymbolLift 2026-11-14T06:23:59Z
+END 68 TCSlib.Complexity.TuringMachine.SymbolLift exit=0 seconds=2.38 cumulative_child_maxrss_bytes=2262433792
+START 69 TCSlib.Complexity.TuringMachine.CodeParser 2026-11-14T06:24:02Z
+END 69 TCSlib.Complexity.TuringMachine.CodeParser exit=0 seconds=2.41 cumulative_child_maxrss_bytes=2262433792
+START 70 TCSlib.Complexity.TuringMachine.Build.CounterLoop 2026-11-14T06:24:04Z
+END 70 TCSlib.Complexity.TuringMachine.Build.CounterLoop exit=0 seconds=9.61 cumulative_child_maxrss_bytes=2262433792
+START 71 TCSlib.Complexity.TuringMachine.Build.InputCall 2026-11-14T06:24:14Z
+END 71 TCSlib.Complexity.TuringMachine.Build.InputCall exit=0 seconds=3.74 cumulative_child_maxrss_bytes=2262433792
+START 72 TCSlib.Complexity.TuringMachine.ChoiceWords 2026-11-14T06:24:18Z
+END 72 TCSlib.Complexity.TuringMachine.ChoiceWords exit=0 seconds=1.80 cumulative_child_maxrss_bytes=2262433792
+START 73 TCSlib.Complexity.TuringMachine.Build.OracleSim 2026-11-14T06:24:19Z
+END 73 TCSlib.Complexity.TuringMachine.Build.OracleSim exit=0 seconds=6.67 cumulative_child_maxrss_bytes=2262433792
+START 74 TCSlib.Complexity.ClassOracle.Classes 2026-11-14T06:24:26Z
+END 74 TCSlib.Complexity.ClassOracle.Classes exit=0 seconds=2.27 cumulative_child_maxrss_bytes=2262433792
+START 75 TCSlib.Complexity.TimeHierarchy.ClockMachine 2026-11-14T06:24:28Z
+END 75 TCSlib.Complexity.TimeHierarchy.ClockMachine exit=0 seconds=2.65 cumulative_child_maxrss_bytes=2262433792
+START 76 TCSlib.Complexity.TimeHierarchy.ClockLoop 2026-11-14T06:24:31Z
+END 76 TCSlib.Complexity.TimeHierarchy.ClockLoop exit=0 seconds=2.43 cumulative_child_maxrss_bytes=2262433792
+START 77 TCSlib.Complexity.TimeHierarchy.CodePrefix 2026-11-14T06:24:33Z
+END 77 TCSlib.Complexity.TimeHierarchy.CodePrefix exit=0 seconds=2.64 cumulative_child_maxrss_bytes=2262433792
+START 78 TCSlib.Complexity.TuringMachine.CodeFormat 2026-11-14T06:24:36Z
+END 78 TCSlib.Complexity.TuringMachine.CodeFormat exit=0 seconds=2.79 cumulative_child_maxrss_bytes=2262433792
+START 79 TCSlib.Complexity.TuringMachine.MathlibBridge 2026-11-14T06:24:39Z
+END 79 TCSlib.Complexity.TuringMachine.MathlibBridge exit=0 seconds=3.58 cumulative_child_maxrss_bytes=2262433792
+START 80 TCSlib.Complexity.TuringMachine.Build.Zone 2026-11-14T06:24:42Z
+END 80 TCSlib.Complexity.TuringMachine.Build.Zone exit=0 seconds=3.63 cumulative_child_maxrss_bytes=2262433792
+START 81 TCSlib.Complexity.TuringMachine.Build.ZoneTape 2026-11-14T06:24:46Z
+END 81 TCSlib.Complexity.TuringMachine.Build.ZoneTape exit=0 seconds=2.83 cumulative_child_maxrss_bytes=2262433792
+START 82 TCSlib.Complexity.TuringMachine.Build.Contract.Catalog 2026-11-14T06:24:49Z
+END 82 TCSlib.Complexity.TuringMachine.Build.Contract.Catalog exit=0 seconds=3.06 cumulative_child_maxrss_bytes=2262433792
+START 83 TCSlib.Complexity.TuringMachine.Build.Contract.Seam 2026-11-14T06:24:52Z
+END 83 TCSlib.Complexity.TuringMachine.Build.Contract.Seam exit=0 seconds=3.29 cumulative_child_maxrss_bytes=2262433792
+START 84 TCSlib.Complexity.TuringMachine.Build.ZoneRebalance 2026-11-14T06:24:55Z
+END 84 TCSlib.Complexity.TuringMachine.Build.ZoneRebalance exit=0 seconds=267.97 cumulative_child_maxrss_bytes=2262433792
+START 85 TCSlib.Complexity.TuringMachine.Build.ZoneStep 2026-11-14T06:29:23Z
+END 85 TCSlib.Complexity.TuringMachine.Build.ZoneStep exit=0 seconds=5.67 cumulative_child_maxrss_bytes=2262433792
+START 86 TCSlib.Complexity.TuringMachine.Robustness.TwoTapes 2026-11-14T06:29:29Z
+END 86 TCSlib.Complexity.TuringMachine.Robustness.TwoTapes exit=0 seconds=6.08 cumulative_child_maxrss_bytes=2262433792
+START 87 TCSlib.Complexity.TuringMachine.NDCodes 2026-11-14T06:29:35Z
+END 87 TCSlib.Complexity.TuringMachine.NDCodes exit=0 seconds=3.43 cumulative_child_maxrss_bytes=2262433792
+START 88 TCSlib.Complexity.TuringMachine.Build.StepBlock 2026-11-14T06:29:38Z
+END 88 TCSlib.Complexity.TuringMachine.Build.StepBlock exit=0 seconds=11.52 cumulative_child_maxrss_bytes=2262433792
+START 89 TCSlib.Complexity.TuringMachine.Build.StepBlockLoop 2026-11-14T06:29:50Z
+END 89 TCSlib.Complexity.TuringMachine.Build.StepBlockLoop exit=0 seconds=2.72 cumulative_child_maxrss_bytes=2262433792
+START 90 TCSlib.Complexity.TuringMachine.Build.InputRewind 2026-11-14T06:29:53Z
+END 90 TCSlib.Complexity.TuringMachine.Build.InputRewind exit=0 seconds=2.08 cumulative_child_maxrss_bytes=2262433792
+START 91 TCSlib.Complexity.TuringMachine.Build.InputWindow 2026-11-14T06:29:55Z
+END 91 TCSlib.Complexity.TuringMachine.Build.InputWindow exit=0 seconds=2.54 cumulative_child_maxrss_bytes=2262433792
+START 92 TCSlib.Complexity.TuringMachine.BufferWords 2026-11-14T06:29:57Z
+END 92 TCSlib.Complexity.TuringMachine.BufferWords exit=0 seconds=1.83 cumulative_child_maxrss_bytes=2262433792
+START 93 TCSlib.Complexity.TuringMachine.Build.SeamLayout 2026-11-14T06:29:59Z
+END 93 TCSlib.Complexity.TuringMachine.Build.SeamLayout exit=0 seconds=5.66 cumulative_child_maxrss_bytes=2262433792
+START 94 TCSlib.Complexity.TuringMachine.Build.InputDevice 2026-11-14T06:30:05Z
+END 94 TCSlib.Complexity.TuringMachine.Build.InputDevice exit=0 seconds=3.81 cumulative_child_maxrss_bytes=2262433792
+START 95 TCSlib.Complexity.TuringMachine.Build.Rewind 2026-11-14T06:30:08Z
+END 95 TCSlib.Complexity.TuringMachine.Build.Rewind exit=0 seconds=2.64 cumulative_child_maxrss_bytes=2262433792
+START 96 TCSlib.Complexity.TuringMachine.Build.InterpreterStartup 2026-11-14T06:30:11Z
+END 96 TCSlib.Complexity.TuringMachine.Build.InterpreterStartup exit=0 seconds=68.54 cumulative_child_maxrss_bytes=2262433792
+START 97 TCSlib.Complexity.TuringMachine.CodeSimulator 2026-11-14T06:31:20Z
+END 97 TCSlib.Complexity.TuringMachine.CodeSimulator exit=0 seconds=35.24 cumulative_child_maxrss_bytes=2262433792
+START 98 TCSlib.Complexity.TuringMachine.Codes2Tape 2026-11-14T06:31:55Z
+END 98 TCSlib.Complexity.TuringMachine.Codes2Tape exit=0 seconds=7.67 cumulative_child_maxrss_bytes=2262433792
+START 99 TCSlib.Complexity.TuringMachine.Build.StepBlockForward 2026-11-14T06:32:03Z
+END 99 TCSlib.Complexity.TuringMachine.Build.StepBlockForward exit=0 seconds=2.53 cumulative_child_maxrss_bytes=2262433792
+START 100 TCSlib.Complexity.SpaceComplexity.Machines.Layout 2026-11-14T06:32:05Z
+END 100 TCSlib.Complexity.SpaceComplexity.Machines.Layout exit=0 seconds=3.61 cumulative_child_maxrss_bytes=2262433792
+START 101 TCSlib.Complexity.SpaceComplexity.Machines.Program 2026-11-14T06:32:09Z
+END 101 TCSlib.Complexity.SpaceComplexity.Machines.Program exit=0 seconds=2.61 cumulative_child_maxrss_bytes=2262433792
+START 102 TCSlib.Complexity.SpaceComplexity.Machines.Sim 2026-11-14T06:32:11Z
+END 102 TCSlib.Complexity.SpaceComplexity.Machines.Sim exit=0 seconds=5.54 cumulative_child_maxrss_bytes=2262433792
+START 103 TCSlib.Complexity.SpaceComplexity.Machines.CallReturn 2026-11-14T06:32:17Z
+END 103 TCSlib.Complexity.SpaceComplexity.Machines.CallReturn exit=0 seconds=2.93 cumulative_child_maxrss_bytes=2262433792
+START 104 TCSlib.Complexity.SpaceComplexity.Machines.Call 2026-11-14T06:32:20Z
+END 104 TCSlib.Complexity.SpaceComplexity.Machines.Call exit=0 seconds=3.79 cumulative_child_maxrss_bytes=2262433792
+START 105 TCSlib.Complexity.SpaceComplexity.Machines.Compile 2026-11-14T06:32:24Z
+END 105 TCSlib.Complexity.SpaceComplexity.Machines.Compile exit=0 seconds=2.25 cumulative_child_maxrss_bytes=2262433792
+START 106 TCSlib.Complexity.SpaceComplexity.Basic 2026-11-14T06:32:26Z
+END 106 TCSlib.Complexity.SpaceComplexity.Basic exit=0 seconds=2.30 cumulative_child_maxrss_bytes=2262433792
+START 107 TCSlib.Complexity.SpaceComplexity.ConfigCount 2026-11-14T06:32:28Z
+END 107 TCSlib.Complexity.SpaceComplexity.ConfigCount exit=0 seconds=2.52 cumulative_child_maxrss_bytes=2262433792
+START 108 TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep 2026-11-14T06:32:31Z
+END 108 TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep exit=0 seconds=3.26 cumulative_child_maxrss_bytes=2262433792
+START 109 TCSlib.Complexity.SpaceComplexity.Machines.Clean 2026-11-14T06:32:34Z
+END 109 TCSlib.Complexity.SpaceComplexity.Machines.Clean exit=0 seconds=2.64 cumulative_child_maxrss_bytes=2262433792
+START 110 TCSlib.Complexity.TuringMachine.Build.UniversalParts 2026-11-14T06:32:37Z
+END 110 TCSlib.Complexity.TuringMachine.Build.UniversalParts exit=0 seconds=3.62 cumulative_child_maxrss_bytes=2262433792
+START 111 TCSlib.Complexity.TuringMachine.UniversalK 2026-11-14T06:32:40Z
+END 111 TCSlib.Complexity.TuringMachine.UniversalK exit=0 seconds=4.75 cumulative_child_maxrss_bytes=2262433792
+START 112 TCSlib.Complexity.TimeHierarchy.Diagonal 2026-11-14T06:32:45Z
+END 112 TCSlib.Complexity.TimeHierarchy.Diagonal exit=0 seconds=6.15 cumulative_child_maxrss_bytes=2262433792
+START 113 TCSlib.Complexity.TuringMachine.Build.CertShell 2026-11-14T06:32:51Z
+END 113 TCSlib.Complexity.TuringMachine.Build.CertShell exit=0 seconds=9.61 cumulative_child_maxrss_bytes=2262433792
+START 114 TCSlib.Complexity.ClassNP.ExpPoly 2026-11-14T06:33:01Z
+END 114 TCSlib.Complexity.ClassNP.ExpPoly exit=0 seconds=2.47 cumulative_child_maxrss_bytes=2262433792
+START 115 TCSlib.Complexity.Diagonalization.EXPCOM 2026-11-14T06:33:03Z
+END 115 TCSlib.Complexity.Diagonalization.EXPCOM exit=0 seconds=2.97 cumulative_child_maxrss_bytes=2262433792
+START 116 TCSlib.Complexity.Diagonalization.Ladner 2026-11-14T06:33:06Z
+END 116 TCSlib.Complexity.Diagonalization.Ladner exit=0 seconds=2.98 cumulative_child_maxrss_bytes=2262433792
+START 117 TCSlib.Complexity.ClassP.BinaryArith.Iterate 2026-11-14T06:33:09Z
+END 117 TCSlib.Complexity.ClassP.BinaryArith.Iterate exit=0 seconds=4.10 cumulative_child_maxrss_bytes=2262433792
+START 118 TCSlib.Complexity.ClassNP.Transducer 2026-11-14T06:33:13Z
+END 118 TCSlib.Complexity.ClassNP.Transducer exit=0 seconds=2.61 cumulative_child_maxrss_bytes=2262433792
+START 119 TCSlib.Complexity.SpaceComplexity.Machines.Bin 2026-11-14T06:33:16Z
+END 119 TCSlib.Complexity.SpaceComplexity.Machines.Bin exit=0 seconds=3.40 cumulative_child_maxrss_bytes=2262433792
+START 120 TCSlib.Complexity.ClassP.BinaryArith.Basic 2026-11-14T06:33:19Z
+END 120 TCSlib.Complexity.ClassP.BinaryArith.Basic exit=0 seconds=4.48 cumulative_child_maxrss_bytes=2262433792
+START 121 TCSlib.Complexity.ClassP.BinaryArith.AddSub 2026-11-14T06:33:24Z
+END 121 TCSlib.Complexity.ClassP.BinaryArith.AddSub exit=0 seconds=2.72 cumulative_child_maxrss_bytes=2262433792
+START 122 TCSlib.Complexity.ClassP.BinaryArith.Mul 2026-11-14T06:33:26Z
+END 122 TCSlib.Complexity.ClassP.BinaryArith.Mul exit=0 seconds=2.34 cumulative_child_maxrss_bytes=2262433792
+START 123 TCSlib.Complexity.ClassP.BinaryArith.Div 2026-11-14T06:33:29Z
+END 123 TCSlib.Complexity.ClassP.BinaryArith.Div exit=0 seconds=3.11 cumulative_child_maxrss_bytes=2262433792
+START 124 TCSlib.Complexity.ClassP.BinaryArith.Words 2026-11-14T06:33:32Z
+END 124 TCSlib.Complexity.ClassP.BinaryArith.Words exit=0 seconds=2.60 cumulative_child_maxrss_bytes=2262433792
+START 125 TCSlib.Complexity.CircuitComplexity.UnaryCode 2026-11-14T06:33:34Z
+END 125 TCSlib.Complexity.CircuitComplexity.UnaryCode exit=0 seconds=2.25 cumulative_child_maxrss_bytes=2262433792
+START 126 TCSlib.Complexity.ClassP.BinaryArith.Loops 2026-11-14T06:33:37Z
+END 126 TCSlib.Complexity.ClassP.BinaryArith.Loops exit=0 seconds=5.76 cumulative_child_maxrss_bytes=2262433792
+START 127 TCSlib.Complexity.ClassP.ModelInvariance 2026-11-14T06:33:42Z
+END 127 TCSlib.Complexity.ClassP.ModelInvariance exit=0 seconds=2.22 cumulative_child_maxrss_bytes=2262433792
+
+Bootstrap error diagnostics: 0
+Bootstrap declaration-sorry warnings: 6
+Bootstrap highest cumulative child maximum RSS: 2262433792 bytes.
+
+Environment deviations:
+1. The first /usr/bin/time -l wrapper returned 1 because sandboxed sysctl kern.clockrate was unavailable, after the underlying first object was emitted. That attempt was not accepted as a pass. The bootstrap restarted at module 1 without the resource wrapper; all 127 final child exits were 0.
+2. nice -n 10 reported setpriority denied. Lean nevertheless ran and returned its actual status; serial execution and -j4 were maintained. Resource figures are cumulative child maxima, not per-module peaks.
+3. The Linux-only preflight commands were replaced by native macOS readings; no cache rebuild/cleanup was required.
+
+First route statement pass (superseded, retained for disclosure):
+[
+  {
+    "file": "Route-API.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 0,
+    "sorry_bodies": 0,
+    "seconds": 19.76,
+    "sha256": "dfd257f9d22ae6ac26acc1a698391e63d7ea752c8e2fca968b1543093b709fb7"
+  },
+  {
+    "file": "Route-Readers.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 8,
+    "sorry_bodies": 8,
+    "seconds": 2.74,
+    "sha256": "15658238e830997dc176050eb50bcc1acf3e22ff5c8c3a88bf5a10be2ba0a10b"
+  },
+  {
+    "file": "Route-SAT_H_intermediate.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 6,
+    "sorry_bodies": 6,
+    "seconds": 2.24,
+    "sha256": "2ce60d1d45453bdd4038ead4ab18edae8f0ecd09c34a8ac16621d2cb1d0222ae"
+  },
+  {
+    "file": "Route-SAT_H_mem_NP.lean.txt",
+    "exit": 1,
+    "errors": 1,
+    "sorry_warnings": 3,
+    "sorry_bodies": 3,
+    "seconds": 2.78,
+    "sha256": "45052d5030c286ccb81b87a3e003bfd8ab6f1c19760c4464c4fad00507e212b6"
+  },
+  {
+    "file": "Route-SAT_mem_P_of_padSAT_NPHard.lean.txt",
+    "exit": 1,
+    "errors": 1,
+    "sorry_warnings": 9,
+    "sorry_bodies": 9,
+    "seconds": 2.27,
+    "sha256": "0f357e6654f20b4335cc88735ebeeffa5f6b89ef0a6c3b232651ee7710ca3b91"
+  },
+  {
+    "file": "Route-Shared.lean.txt",
+    "exit": 1,
+    "errors": 3,
+    "sorry_warnings": 9,
+    "sorry_bodies": 10,
+    "seconds": 2.04,
+    "sha256": "44e49af5ea75ce37f73cac3499e33b6e78e2d3b680e8ba93c9e98a595f3f6670"
+  },
+  {
+    "file": "Route-ladnerH_bounded_of_mem_P.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 5,
+    "sorry_bodies": 5,
+    "seconds": 1.95,
+    "sha256": "db1af1666e2682455b6e272b78c66a385be152f40183ccae2cffc04a8dd40354"
+  },
+  {
+    "file": "Route-ladnerH_polyTime.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 21,
+    "sorry_bodies": 21,
+    "seconds": 2.15,
+    "sha256": "8b23b9aa07d14a69a6294e67b4a2ab35c8cd6f36a80500c39d5ac01c9b314105"
+  },
+  {
+    "file": "Route-ladnerH_unbounded_of_not_mem_P.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 6,
+    "sorry_bodies": 6,
+    "seconds": 2.06,
+    "sha256": "9e9336ba4245afe702ea71d6ba96145ff273636f07404e99d3562e13068d15ab"
+  }
+]
+
+Correction: the identifier `syntax` is a Lean keyword. It was renamed to `padSyntax` in the three standalone parser specifications and the one affected statement. Final files were elaborated successfully; no target/source statement was changed.
+After the first pass, the memo route was expanded with concrete guarded query preparation and finite scan state contracts. A final all-probe pass succeeded. The full powCap equation and two additional API checks were then added; only those two changed probes were rerun.
+
+Final route statement results:
+[
+  {
+    "file": "Route-API.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 0,
+    "sorry_bodies": 0,
+    "seconds": 16.31,
+    "sha256": "c6c35ee8297a10b004edd6d2bc7f3e557aceac4e3894ca3fa3a6b26b611695a4"
+  },
+  {
+    "file": "Route-Readers.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 8,
+    "sorry_bodies": 8,
+    "seconds": 2.81,
+    "sha256": "15658238e830997dc176050eb50bcc1acf3e22ff5c8c3a88bf5a10be2ba0a10b"
+  },
+  {
+    "file": "Route-SAT_H_intermediate.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 6,
+    "sorry_bodies": 6,
+    "seconds": 2.2,
+    "sha256": "2ce60d1d45453bdd4038ead4ab18edae8f0ecd09c34a8ac16621d2cb1d0222ae"
+  },
+  {
+    "file": "Route-SAT_H_mem_NP.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 3,
+    "sorry_bodies": 3,
+    "seconds": 2.11,
+    "sha256": "09ca12f34af5d192b3a5a6ea4cd19c15357931d19d8076365fcf1ca13d06a6d6"
+  },
+  {
+    "file": "Route-SAT_mem_P_of_padSAT_NPHard.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 9,
+    "sorry_bodies": 9,
+    "seconds": 2.17,
+    "sha256": "6522c52a9059b75a38f6c9aa9df3455728922169af72605e26bbdbbde3c6c06f"
+  },
+  {
+    "file": "Route-Shared.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 11,
+    "sorry_bodies": 11,
+    "seconds": 5.76,
+    "sha256": "e38c9a0540c759c6a116278cbab948c754acd450a9c236cb8fb1bc39c28e70fb"
+  },
+  {
+    "file": "Route-ladnerH_bounded_of_mem_P.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 5,
+    "sorry_bodies": 5,
+    "seconds": 2.47,
+    "sha256": "db1af1666e2682455b6e272b78c66a385be152f40183ccae2cffc04a8dd40354"
+  },
+  {
+    "file": "Route-ladnerH_polyTime.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 34,
+    "sorry_bodies": 34,
+    "seconds": 3.28,
+    "sha256": "1efda4b1f349d3916f367824a7f5f990c4601c51de2b64aee381fab411df07bd"
+  },
+  {
+    "file": "Route-ladnerH_unbounded_of_not_mem_P.lean.txt",
+    "exit": 0,
+    "errors": 0,
+    "sorry_warnings": 6,
+    "sorry_bodies": 6,
+    "seconds": 1.97,
+    "sha256": "9e9336ba4245afe702ea71d6ba96145ff273636f07404e99d3562e13068d15ab"
+  }
+]
+
+Existing API full-name checks: 144.
+Existing API declarations with sorryAx in the inspected axiom inventory:
+'Complexity.ladnerH_polyTime' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.SAT_H_mem_NP' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.ladnerH_bounded_of_mem_P' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.ladnerH_unbounded_of_not_mem_P' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.SAT_mem_P_of_padSAT_NPHard' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.SAT_H_intermediate' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.ladner' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+All other inspected existing API entries have no sorryAx dependency (standard axioms or no axioms). This is not a census of every declaration in TCSlib.
+
+Bundle binding receipts (the owner also has code-fence framing):
+[
+  {
+    "section": "campaign/items/ladner/fill-routes-request/brief.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "policy.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "workflow.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/maintainer/WORKFLOW.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/standards/fill-environment-addendum.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "TCSlib/Complexity/Diagonalization/Ladner.lean",
+    "ref": "5ab222167eb12664d97d255766c5def15b6d5d50",
+    "matches_ignoring_framing_blank_lines": false,
+    "matches_after_removing_owner_code_fence": true
+  },
+  {
+    "section": "campaign/items/ladner/LADNER-design.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/2026-11-08-source-check.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/gates/128-ladner-statements/findings.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/clock-envelope-probe/README.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/clock-envelope-probe/checked/Envelope.lean.txt",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/clock-envelope-probe/short-sat/README.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/clock-envelope-probe/short-sat/ShortSAT.lean.txt",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/padded-index-probe/README.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/padded-index-probe/PaddedIndexFixed.lean.txt",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/selector-probe/README.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/selector-probe/SelectorFixed.lean.txt",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/dedup/overnight-2026-11-08/review/ladner-v2/Conditional-bounded-simulator.lean.txt",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/dedup/overnight-2026-11-08/review/ladner-v2/Conditional-linear-SAT-search.lean.txt",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/dedup/overnight-2026-11-08/review/ladner-v2/Conditional-memo-driver.lean.txt",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/sat-linear-verifier-proposal/README.md",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/sat-linear-verifier-proposal/proposed-reader.lean.txt",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  },
+  {
+    "section": "campaign/items/ladner/sat-linear-verifier-proposal/Consumer.lean.txt",
+    "ref": "624196fbcb402019e3762565b2964d0027ec8c51",
+    "matches_ignoring_framing_blank_lines": true
+  }
+]
+
+
+Final probe diagnostics and complete full-name/axiom outputs:
+
+===== Route-API.lean.txt =====
+Complexity.mem_padSAT_iff {h : ℕ → ℕ} {y : List Bool} :
+  y ∈ padSAT h ↔ ∃ ψ ∈ SAT, y = ψ ++ false :: List.replicate (ψ.length ^ h ψ.length) true
+Complexity.padSAT_congr {h g : ℕ → ℕ} {y : List Bool} (hfg : ∀ m < y.length, h m = g m) : y ∈ padSAT h ↔ y ∈ padSAT g
+Complexity.ladnerMachine_eq (i : ℕ) : ladnerMachine i = (expCode.decode i.bits).toFinTM
+Complexity.ladnerH_eq (n : ℕ) :
+  ladnerH n =
+    if hex :
+        ∃ i < Nat.log 2 (Nat.log 2 n),
+          ∀ (x : List Bool),
+            x.length ≤ Nat.log 2 n →
+              ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT ladnerH) then
+      Nat.find hex
+    else Nat.log 2 (Nat.log 2 n)
+Complexity.ladnerH_le (n : ℕ) : ladnerH n ≤ Nat.log 2 (Nat.log 2 n)
+Complexity.SAT_H_eq : SAT_H = padSAT ladnerH
+Complexity.padSAT (h : ℕ → ℕ) : Language Bool
+Complexity.ladnerMachine (i : ℕ) : FinTM Bool
+Complexity.ladnerH (n : ℕ) : ℕ
+Complexity.SAT_H : Language Bool
+Complexity.ladnerH_polyTime : PolyTimeComputable fun x => (ladnerH x.length).bits
+Complexity.SAT_H_mem_NP : SAT_H ∈ NP
+Complexity.ladnerH_bounded_of_mem_P : SAT_H ∈ P → ∃ C, ∀ (n : ℕ), ladnerH n ≤ C
+Complexity.ladnerH_unbounded_of_not_mem_P : SAT_H ∉ P → ∀ (C : ℕ), ∃ N, ∀ n ≥ N, C ≤ ladnerH n
+Complexity.SAT_mem_P_of_padSAT_NPHard {h : ℕ → ℕ} (hp : PolyTimeComputable fun x => (h x.length).bits)
+  (hu : ∀ (C : ℕ), ∃ N, ∀ n ≥ N, C ≤ h n) (hH : NPHard (padSAT h)) : SAT ∈ P
+Complexity.SAT_H_intermediate (h : P ≠ NP) : SAT_H ∈ NP ∧ SAT_H ∉ P ∧ ¬NPComplete SAT_H
+Complexity.mem_P_iff {L : Language Bool} : L ∈ P ↔ ∃ C d M, M.DecidesInTime L fun n => C * (n + 1) ^ d
+Complexity.mem_P_iff_one_work_tape {L : Language Bool} :
+  L ∈ P ↔ ∃ M C d, M.k = 1 ∧ M.DecidesInTime L fun n => C * (n + 1) ^ d
+Complexity.mem_NP_iff_exists_length_le {L : Language Bool} :
+  L ∈ NP ↔ ∃ C c, ∃ V ∈ P, ∀ (x : List Bool), x ∈ L ↔ ∃ u, u.length ≤ C * (x.length + 1) ^ c ∧ pairEncode x u ∈ V
+Complexity.SAT_mem_NP : SAT ∈ NP
+Complexity.SAT_NPHard : NPHard SAT
+Complexity.mem_P_of_polyTimeReducible {L L' : Language Bool} (h : L ≤ₚ L') (h' : L' ∈ P) : L ∈ P
+Complexity.P_eq_NP_of_NPHard_mem_P {L : Language Bool} (hL : NPHard L) (h : L ∈ P) : P = NP
+Complexity.PolyTimeComputable.output_length_le {f : List Bool → List Bool} (h : PolyTimeComputable f) :
+  ∃ C c, ∀ (x : List Bool), (f x).length ≤ C * (x.length + 1) ^ c
+Complexity.PolyTimeComputable.comp {f g : List Bool → List Bool} (hg : PolyTimeComputable g)
+  (hf : PolyTimeComputable f) : PolyTimeComputable (g ∘ f)
+Complexity.PolyTimeComputable.pairEncode {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
+  (hg : PolyTimeComputable g) : PolyTimeComputable fun x => pairEncode (f x) (g x)
+Complexity.PolyTimeComputable.append {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
+  (hg : PolyTimeComputable g) : PolyTimeComputable fun x => f x ++ g x
+Complexity.mem_P_of_test {b : List Bool → Bool} (h : PolyTimeComputable fun z => [b z]) : {z | b z = true} ∈ P
+Complexity.test_of_mem_P {L : Language Bool} (h : L ∈ P) : PolyTimeComputable fun z => [MultiTapeTM.indicator L z]
+Complexity.mem_P_iff_polyTimeComputable {V : Language Bool} :
+  V ∈ P ↔ PolyTimeComputable fun x => [MultiTapeTM.indicator V x]
+Complexity.preimage_mem_P {V : Language Bool} {g : List Bool → List Bool} (hV : V ∈ P) (hg : PolyTimeComputable g) :
+  g ⁻¹' V ∈ P
+Complexity.inter_mem_P {L₁ L₂ : Language Bool} (h₁ : L₁ ∈ P) (h₂ : L₂ ∈ P) : {z | z ∈ L₁ ∧ z ∈ L₂} ∈ P
+Complexity.polyTimeComputable_of_linear {f : List Bool → List Bool}
+  (h : ∃ M a, M.ComputesFunInTime f fun n => a * (n + 1)) : PolyTimeComputable f
+Complexity.polyTimeComputable_const (w : List Bool) : PolyTimeComputable fun x => w
+Complexity.polyTimeComputable_id : PolyTimeComputable id
+Complexity.polyTimeComputable_unary : PolyTimeComputable fun x => List.replicate x.length true
+Complexity.polyTimeComputable_polyUnary (C d : ℕ) :
+  PolyTimeComputable fun x => List.replicate (C * (x.length + 1) ^ d) true
+Complexity.polyTimeComputable_pairFstD : PolyTimeComputable pairFstD
+Complexity.polyTimeComputable_pairSndD : PolyTimeComputable pairSndD
+Complexity.polyTimeComputable_ite {p : List Bool → Bool} {f g : List Bool → List Bool}
+  (hp : PolyTimeComputable fun x => [p x]) (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+  PolyTimeComputable fun x => if p x = true then f x else g x
+Complexity.polyTimeComputable_and {p q : List Bool → Bool} (hp : PolyTimeComputable fun x => [p x])
+  (hq : PolyTimeComputable fun x => [q x]) : PolyTimeComputable fun x => [p x && q x]
+Complexity.polyTimeComputable_or {p q : List Bool → Bool} (hp : PolyTimeComputable fun x => [p x])
+  (hq : PolyTimeComputable fun x => [q x]) : PolyTimeComputable fun x => [p x || q x]
+Complexity.polyTimeComputable_not {p : List Bool → Bool} (hp : PolyTimeComputable fun x => [p x]) :
+  PolyTimeComputable fun x => [!p x]
+Complexity.polyTimeComputable_tail : PolyTimeComputable fun w => List.drop 1 w
+Complexity.polyTimeComputable_takePrefixByLength : PolyTimeComputable PrefixByLength.take
+Complexity.polyTimeComputable_dropPrefixByLength : PolyTimeComputable PrefixByLength.drop
+Complexity.pairFstD_pairEncode (a b : List Bool) : pairFstD (pairEncode a b) = a
+Complexity.pairSndD_pairEncode (a b : List Bool) : pairSndD (pairEncode a b) = b
+Complexity.length_pairFstD_le (z : List Bool) : (pairFstD z).length ≤ z.length
+Complexity.length_pairSndD_le (z : List Bool) : (pairSndD z).length ≤ z.length
+Complexity.transduce_nil {σ : Type} (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) (q : σ) : transduce δ o q [] = []
+Complexity.transduce_cons {σ : Type} (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) (q : σ) (b : Bool)
+  (l : List Bool) : transduce δ o q (b :: l) = (o q b).toList ++ transduce δ o (δ q b) l
+Complexity.polyTimeComputable_transduce {σ : Type} [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ)
+  (o : σ → Bool → Option Bool) (q₀ : σ) : PolyTimeComputable (transduce δ o q₀)
+Complexity.exists_proj_decider (C c : ℕ) (V : Language Bool) (Tv : ℕ → ℕ) (MV : FinTM Bool)
+  (hV : MV.DecidesInTime V Tv) :
+  ∃ b E,
+    E.DecidesInTime {x | ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V} fun n =>
+      b * 2 ^ (C * (n + 1) ^ c) * (Tv (n + C * (n + 1) ^ c) + (n + C * (n + 1) ^ c + 1) ^ (c + 1))
+Complexity.expCode : UniformMachineCode
+Turing.UniformMachineCode.simulator_accepts (self : UniformMachineCode) (α x : List Bool) (t : ℕ) :
+  (self.decode α).toFinTM.ComputesInTime x [true] t →
+    self.simulator.ComputesInTime (pairEncode (pairEncode t.bits α) x) [true]
+      (self.simDegree * (α.length + x.length + t + 1) ^ self.simDegree)
+Turing.UniformMachineCode.simulator_rejects (self : UniformMachineCode) (α x : List Bool) (t : ℕ) :
+  ¬(self.decode α).toFinTM.ComputesInTime x [true] t →
+    self.simulator.ComputesInTime (pairEncode (pairEncode t.bits α) x) [false]
+      (self.simDegree * (α.length + x.length + t + 1) ^ self.simDegree)
+Turing.MachineCode.decode_encode_pad (self : MachineCode) (M : CodeTM) (m : ℕ) :
+  self.decode (self.encode M ++ List.replicate m true) = M
+Turing.FinTM.toCodeTM_computesInTime_iff (M : FinTM Bool) (hk : M.k = 1) (x output : List Bool) (t : ℕ) :
+  (M.toCodeTM hk).toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t
+Turing.FinTM.not_computesInTime_zero {Symbol : Type} (M : FinTM Symbol) (input output : List Symbol) :
+  ¬M.ComputesInTime input output 0
+Turing.FinTM.ComputesInTime.mono {Symbol : Type} {M : FinTM Symbol} {input output : List Symbol} {t t' : ℕ}
+  (h : M.ComputesInTime input output t) (hle : t ≤ t') : M.ComputesInTime input output t'
+Turing.FinTM.ComputesInTime.output_unique {Symbol : Type} {M : FinTM Symbol} {input w w' : List Symbol} {t t' : ℕ}
+  (h : M.ComputesInTime input w t) (h' : M.ComputesInTime input w' t') : w = w'
+Turing.FinTM.computesFunInTime_iff {Symbol : Type} (M : FinTM Symbol) (f : List Symbol → List Symbol) (T : ℕ → ℕ) :
+  M.ComputesFunInTime f T ↔ ∀ (input : List Symbol), M.ComputesInTime input (f input) (T input.length)
+Turing.FinTM.computesInTime_iff {Symbol : Type} (M : FinTM Symbol) (x w : List Symbol) (t : ℕ) :
+  M.ComputesInTime x w t ↔
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state = none ∧
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).output = w
+Turing.FinTM.exists_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool) (T₁ T₂ : ℕ → ℕ)
+  (hM : M.ComputesFunInTime f T₁) (hU : ∀ (x : List Bool), U.ComputesInTime (f x) (g x) (T₂ x.length)) :
+  ∃ N, N.ComputesFunInTime g fun n => 2 * T₁ n + T₂ n + 2
+Turing.FinTM.computesFunInTime_lengthBits : ∃ M c, M.ComputesFunInTime (fun x => x.length.bits) fun n => c * (n + 1)
+Turing.FinTM.computesFunInTime_polyBits (C e : ℕ) :
+  ∃ M c, M.ComputesFunInTime (fun x => (C * (x.length + 1) ^ e).bits) fun n => c * (n + 1) ^ (e + 1)
+Turing.FinTM.computesFunInTime_decideEq (w : List Bool) :
+  ∃ M c, M.ComputesFunInTime (fun x => [decide (x = w)]) fun n => c * (n + 1)
+Turing.length_bits_le_self (m : ℕ) : m.bits.length ≤ m
+Turing.length_pairEncode (x y : List Bool) : (pairEncode x y).length = 2 * x.length + 2 + y.length
+Turing.pairEncode_injective : Function.Injective fun p => pairEncode p.1 p.2
+Complexity.BinArith.polyTimeComputable_iterate {g init : List Bool → List Bool} (hg : PolyTimeComputable g)
+  (hinit : PolyTimeComputable init) (a k B b : ℕ)
+  (hbound : ∀ (z : List Bool), ∀ i ≤ a * (z.length + 1) ^ k, (g^[i] (init z)).length ≤ B * (z.length + 1) ^ b) :
+  PolyTimeComputable fun z => g^[a * (z.length + 1) ^ k] (init z)
+Complexity.BinArith.iterate_invariant {α : Type} {g : α → α} (I : α → Prop) (hI : ∀ (s : α), I s → I (g s)) (n : ℕ)
+  {s : α} (hs : I s) : I (g^[n] s)
+Complexity.BinArith.iterate_measure_eq_zero {α : Type} {g : α → α} (I : α → Prop) (μ : α → ℕ)
+  (hI : ∀ (s : α), I s → I (g s)) (hdec : ∀ (s : α), I s → 0 < μ s → μ (g s) < μ s)
+  (hfix : ∀ (s : α), I s → μ s = 0 → g s = s) (n : ℕ) (s : α) : I s → μ s ≤ n → μ (g^[n] s) = 0
+Complexity.BinArith.polyTimeComputable_forLoop {f : List Bool → List Bool} (hf : PolyTimeComputable f) (B b : ℕ)
+  (hbound : ∀ (c d : List Bool), ∀ j ≤ c.length, (f^[j] d).length ≤ B * ((pairEncode c d).length + 1) ^ b) :
+  PolyTimeComputable (BinArith.forLoop f)
+Complexity.BinArith.forLoop_pairEncode (f : List Bool → List Bool) (c d : List Bool) :
+  BinArith.forLoop f (pairEncode c d) = pairEncode [] (f^[c.length] d)
+Complexity.BinArith.polyTimeComputable_normBits : PolyTimeComputable fun w => (LogProg.bitsVal w).bits
+Complexity.BinArith.polyTimeComputable_reverse : PolyTimeComputable fun w => w.reverse
+Complexity.BinArith.polyTimeComputable_add : PolyTimeComputable BinArith.add
+Complexity.BinArith.polyTimeComputable_sub : PolyTimeComputable BinArith.sub
+Complexity.BinArith.polyTimeComputable_mul : PolyTimeComputable BinArith.mul
+Complexity.BinArith.polyTimeComputable_lt : PolyTimeComputable fun z => [BinArith.lt z]
+Complexity.BinArith.polyTimeComputable_le : PolyTimeComputable fun z => [BinArith.le z]
+Complexity.BinArith.polyTimeComputable_beq : PolyTimeComputable fun z => [BinArith.beq z]
+Complexity.BinArith.add_pairEncode (a b : ℕ) : BinArith.add (pairEncode a.bits b.bits) = (a + b).bits
+Complexity.BinArith.sub_pairEncode (a b : ℕ) : BinArith.sub (pairEncode a.bits b.bits) = (a - b).bits
+Complexity.BinArith.mul_pairEncode (a b : ℕ) : BinArith.mul (pairEncode a.bits b.bits) = (a * b).bits
+Complexity.BinArith.lt_pairEncode (a b : ℕ) : BinArith.lt (pairEncode a.bits b.bits) = decide (a < b)
+Complexity.BinArith.le_pairEncode (a b : ℕ) : BinArith.le (pairEncode a.bits b.bits) = decide (a ≤ b)
+Complexity.BinArith.beq_pairEncode (a b : ℕ) : BinArith.beq (pairEncode a.bits b.bits) = decide (a = b)
+Complexity.BinArith.bitsVal_eq_headD (w : List Bool) :
+  LogProg.bitsVal w = (w.headD false).toNat + 2 * LogProg.bitsVal (List.drop 1 w)
+Complexity.BinArith.bitsVal_drop_one (w : List Bool) : LogProg.bitsVal (List.drop 1 w) = LogProg.bitsVal w / 2
+Complexity.BinArith.polyTimeComputable_uRest : PolyTimeComputable BinArith.uRest
+Complexity.BinArith.polyTimeComputable_hasFalse : PolyTimeComputable fun w => [BinArith.hasFalse w]
+Complexity.BinArith.uRest_nil : BinArith.uRest [] = []
+Complexity.BinArith.uRest_true_cons (w : List Bool) : BinArith.uRest (true :: w) = BinArith.uRest w
+Complexity.BinArith.uRest_false_cons (w : List Bool) : BinArith.uRest (false :: w) = w
+Complexity.BinArith.hasFalse_nil : BinArith.hasFalse [] = false
+Complexity.BinArith.hasFalse_cons (b : Bool) (w : List Bool) : BinArith.hasFalse (b :: w) = (!b || BinArith.hasFalse w)
+Complexity.BinArith.encWords_nil : BinArith.encWords [] = []
+Complexity.BinArith.encWords_cons (w : List Bool) (L : List (List Bool)) :
+  BinArith.encWords (w :: L) = pairEncode w (BinArith.encWords L)
+Complexity.BinArith.encWords_append_singleton (L : List (List Bool)) (w : List Bool) :
+  BinArith.encWords (L ++ [w]) = BinArith.encWords L ++ pairEncode w []
+Complexity.BinArith.length_encWords_le (L : List (List Bool)) (c : ℕ) (h : ∀ w ∈ L, w.length ≤ c) :
+  (BinArith.encWords L).length ≤ L.length * (2 * c + 2)
+Complexity.BinArith.length_decWords_le (w : List Bool) : (BinArith.decWords w).length ≤ w.length
+Complexity.BinArith.polyTimeComputable_countW : PolyTimeComputable BinArith.countW
+Complexity.BinArith.countW_eq (w : List Bool) : BinArith.countW w = List.replicate (BinArith.decWords w).length true
+Complexity.BinArith.polyTimeComputable_getW : PolyTimeComputable BinArith.getW
+Complexity.BinArith.getW_pairEncode_bits (J : List Bool) (vs : List ℕ) :
+  BinArith.getW (pairEncode J (BinArith.encWords (List.map Nat.bits vs))) = (vs.getD J.length 0).bits
+Complexity.BinArith.polyTimeComputable_mapW {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
+  PolyTimeComputable (BinArith.mapW g)
+Complexity.BinArith.mapW_pairEncode (g : List Bool → List Bool) (q w : List Bool) :
+  BinArith.mapW g (pairEncode q w) = BinArith.encWords (List.map (fun x => g (pairEncode q x)) (BinArith.decWords w))
+Complexity.BinArith.polyTimeComputable_eqW : PolyTimeComputable fun z => [BinArith.eqW z]
+Complexity.BinArith.eqW_pairEncode (a b : List Bool) : BinArith.eqW (pairEncode a b) = decide (a = b)
+Complexity.BinArith.polyTimeComputable_mulU : PolyTimeComputable BinArith.mulU
+Complexity.BinArith.length_mulU (a b : List Bool) : (BinArith.mulU (pairEncode a b)).length = a.length * b.length
+Complexity.LogProg.bitsVal_bits (n : ℕ) : LogProg.bitsVal n.bits = n
+Complexity.LogProg.bits_injective : Function.Injective Nat.bits
+Complexity.LogProg.bitsVal_lt_two_pow (w : List Bool) : LogProg.bitsVal w < 2 ^ w.length
+Nat.find_spec {p : ℕ → Prop} [DecidablePred p] (H : ∃ n, p n) : p (Nat.find H)
+Nat.find_min' {p : ℕ → Prop} [DecidablePred p] (H : ∃ n, p n) {m : ℕ} (h : p m) : Nat.find H ≤ m
+Nat.log_lt_self (b : ℕ) {x : ℕ} (hx : x ≠ 0) : Nat.log b x < x
+Nat.log_le_self (b x : ℕ) : Nat.log b x ≤ x
+Nat.le_log_of_pow_le {b x y : ℕ} (hb : 1 < b) (h : b ^ x ≤ y) : x ≤ Nat.log b y
+Nat.pow_log_le_self (b : ℕ) {x : ℕ} (hx : x ≠ 0) : b ^ Nat.log b x ≤ x
+Nat.pow_le_of_le_log {b x y : ℕ} (hy : y ≠ 0) (h : x ≤ Nat.log b y) : b ^ x ≤ y
+Nat.lt_pow_succ_log_self {b : ℕ} (hb : 1 < b) (x : ℕ) : x < b ^ (Nat.log b x).succ
+Nat.bits_append_bit (n : ℕ) (b : Bool) (hn : n = 0 → b = true) : (Nat.bit b n).bits = b :: n.bits
+Nat.bit_val (b : Bool) (n : ℕ) : Nat.bit b n = 2 * n + b.toNat
+Nat.one_bits : Nat.bits 1 = [true]
+Nat.pow_le_pow_left {n m : ℕ} (h : n ≤ m) (i : ℕ) : n ^ i ≤ m ^ i
+Nat.pow_le_pow_right {n : ℕ} (hx : n > 0) {i j : ℕ} : i ≤ j → n ^ i ≤ n ^ j
+Function.iterate_succ_apply.{u} {α : Type u} (f : α → α) (n : ℕ) (x : α) : f^[n.succ] x = f^[n] (f x)
+Function.iterate_succ_apply'.{u} {α : Type u} (f : α → α) (n : ℕ) (x : α) : f^[n.succ] x = f (f^[n] x)
+Finset.le_sup.{u_2, u_3} {α : Type u_2} {β : Type u_3} [SemilatticeSup α] [OrderBot α] {s : Finset β} {f : β → α}
+  {b : β} (hb : b ∈ s) : f b ≤ s.sup f
+Finset.mem_range {n m : ℕ} : m ∈ Finset.range n ↔ m < n
+Complexity.ladner (h : P ≠ NP) : ∃ L ∈ NP, L ∉ P ∧ ¬NPComplete L
+Complexity.PolyTimeReducible (L L' : Language Bool) : Prop
+Complexity.NPHard (L : Language Bool) : Prop
+Complexity.NPComplete (L : Language Bool) : Prop
+Complexity.PolyTimeComputable (f : List Bool → List Bool) : Prop
+Complexity.LogProg.bitsVal : List Bool → ℕ
+Turing.MultiTapeTM.indicator.{u_3} {α : Type u_3} (L : Set α) : α → Bool
+'Complexity.mem_padSAT_iff' depends on axioms: [propext]
+'Complexity.padSAT_congr' depends on axioms: [propext, Quot.sound]
+'Complexity.ladnerMachine_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.ladnerH_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.ladnerH_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.SAT_H_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.padSAT' depends on axioms: [propext]
+'Complexity.ladnerMachine' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.ladnerH' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.SAT_H' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.ladnerH_polyTime' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.SAT_H_mem_NP' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.ladnerH_bounded_of_mem_P' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.ladnerH_unbounded_of_not_mem_P' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.SAT_mem_P_of_padSAT_NPHard' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.SAT_H_intermediate' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.mem_P_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.mem_P_iff_one_work_tape' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.mem_NP_iff_exists_length_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.SAT_mem_NP' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.SAT_NPHard' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.mem_P_of_polyTimeReducible' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.P_eq_NP_of_NPHard_mem_P' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.PolyTimeComputable.output_length_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.PolyTimeComputable.comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.PolyTimeComputable.pairEncode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.PolyTimeComputable.append' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.mem_P_of_test' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.test_of_mem_P' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.mem_P_iff_polyTimeComputable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.preimage_mem_P' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.inter_mem_P' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_of_linear' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_const' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_id' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_unary' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_polyUnary' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_pairFstD' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_pairSndD' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_ite' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_and' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_or' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_not' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_tail' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_takePrefixByLength' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_dropPrefixByLength' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.pairFstD_pairEncode' depends on axioms: [propext, Quot.sound]
+'Complexity.pairSndD_pairEncode' depends on axioms: [propext, Quot.sound]
+'Complexity.length_pairFstD_le' depends on axioms: [propext, Quot.sound]
+'Complexity.length_pairSndD_le' depends on axioms: [propext, Quot.sound]
+'Complexity.transduce_nil' does not depend on any axioms
+'Complexity.transduce_cons' does not depend on any axioms
+'Complexity.polyTimeComputable_transduce' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.exists_proj_decider' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.expCode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.UniformMachineCode.simulator_accepts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.UniformMachineCode.simulator_rejects' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.MachineCode.decode_encode_pad' does not depend on any axioms
+'Turing.FinTM.toCodeTM_computesInTime_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.not_computesInTime_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.ComputesInTime.mono' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.ComputesInTime.output_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesInTime_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.exists_comp_on_image' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_lengthBits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_polyBits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_decideEq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.length_bits_le_self' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.length_pairEncode' depends on axioms: [propext, Quot.sound]
+'Turing.pairEncode_injective' depends on axioms: [propext, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_iterate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.iterate_invariant' depends on axioms: [propext, Quot.sound]
+'Complexity.BinArith.iterate_measure_eq_zero' depends on axioms: [propext, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_forLoop' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.forLoop_pairEncode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_normBits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_reverse' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_add' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_mul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_beq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.add_pairEncode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.sub_pairEncode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.mul_pairEncode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.lt_pairEncode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.le_pairEncode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.beq_pairEncode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.bitsVal_eq_headD' depends on axioms: [propext]
+'Complexity.BinArith.bitsVal_drop_one' depends on axioms: [propext, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_uRest' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_hasFalse' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.uRest_nil' does not depend on any axioms
+'Complexity.BinArith.uRest_true_cons' depends on axioms: [propext]
+'Complexity.BinArith.uRest_false_cons' depends on axioms: [propext]
+'Complexity.BinArith.hasFalse_nil' does not depend on any axioms
+'Complexity.BinArith.hasFalse_cons' depends on axioms: [propext]
+'Complexity.BinArith.encWords_nil' does not depend on any axioms
+'Complexity.BinArith.encWords_cons' depends on axioms: [propext]
+'Complexity.BinArith.encWords_append_singleton' depends on axioms: [propext]
+'Complexity.BinArith.length_encWords_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.length_decWords_le' depends on axioms: [propext, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_countW' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.countW_eq' depends on axioms: [propext, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_getW' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.getW_pairEncode_bits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_mapW' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.mapW_pairEncode' depends on axioms: [propext, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_eqW' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.eqW_pairEncode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.polyTimeComputable_mulU' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.BinArith.length_mulU' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.bitsVal_bits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.bits_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.bitsVal_lt_two_pow' depends on axioms: [propext, Quot.sound]
+'Nat.find_spec' does not depend on any axioms
+'Nat.find_min'' does not depend on any axioms
+'Nat.log_lt_self' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Nat.log_le_self' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Nat.le_log_of_pow_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Nat.pow_log_le_self' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Nat.pow_le_of_le_log' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Nat.lt_pow_succ_log_self' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Nat.bits_append_bit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Nat.bit_val' does not depend on any axioms
+'Nat.one_bits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Nat.pow_le_pow_left' does not depend on any axioms
+'Nat.pow_le_pow_right' does not depend on any axioms
+'Function.iterate_succ_apply' does not depend on any axioms
+'Function.iterate_succ_apply'' depends on axioms: [propext, Quot.sound]
+'Finset.le_sup' depends on axioms: [propext, Quot.sound]
+'Finset.mem_range' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.ladner' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.PolyTimeReducible' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NPHard' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NPComplete' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.PolyTimeComputable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.bitsVal' does not depend on any axioms
+'Turing.MultiTapeTM.indicator' depends on axioms: [propext, Classical.choice, Quot.sound]
+Complexity.BinArith.decWords_encWords (L : List (List Bool)) : BinArith.decWords (BinArith.encWords L) = L
+'Complexity.BinArith.decWords_encWords' depends on axioms: [propext, Quot.sound]
+Complexity.polyTimeComputable_headD : PolyTimeComputable fun w => [w.headD false]
+'Complexity.polyTimeComputable_headD' depends on axioms: [propext, Classical.choice, Quot.sound]
+Complexity.BinArith.polyTimeComputable_cons {p : List Bool → Bool} {f : List Bool → List Bool}
+  (hp : PolyTimeComputable fun x => [p x]) (hf : PolyTimeComputable f) : PolyTimeComputable fun x => p x :: f x
+'Complexity.BinArith.polyTimeComputable_cons' depends on axioms: [propext, Classical.choice, Quot.sound]
+nice: setpriority: Operation not permitted
+
+
+===== Route-Readers.lean.txt =====
+Route-Readers.lean:20:8: warning: declaration uses 'sorry'
+Route-Readers.lean:26:8: warning: declaration uses 'sorry'
+Route-Readers.lean:30:8: warning: declaration uses 'sorry'
+Route-Readers.lean:34:8: warning: declaration uses 'sorry'
+Route-Readers.lean:37:8: warning: declaration uses 'sorry'
+Route-Readers.lean:42:8: warning: declaration uses 'sorry'
+Route-Readers.lean:48:8: warning: declaration uses 'sorry'
+Route-Readers.lean:50:8: warning: declaration uses 'sorry'
+nice: setpriority: Operation not permitted
+
+
+===== Route-SAT_H_intermediate.lean.txt =====
+Route-SAT_H_intermediate.lean:22:8: warning: declaration uses 'sorry'
+Route-SAT_H_intermediate.lean:25:8: warning: declaration uses 'sorry'
+Route-SAT_H_intermediate.lean:29:8: warning: declaration uses 'sorry'
+Route-SAT_H_intermediate.lean:33:8: warning: declaration uses 'sorry'
+Route-SAT_H_intermediate.lean:37:8: warning: declaration uses 'sorry'
+Route-SAT_H_intermediate.lean:41:8: warning: declaration uses 'sorry'
+nice: setpriority: Operation not permitted
+
+
+===== Route-SAT_H_mem_NP.lean.txt =====
+Route-SAT_H_mem_NP.lean:44:8: warning: declaration uses 'sorry'
+Route-SAT_H_mem_NP.lean:48:8: warning: declaration uses 'sorry'
+Route-SAT_H_mem_NP.lean:54:8: warning: declaration uses 'sorry'
+nice: setpriority: Operation not permitted
+
+
+===== Route-SAT_mem_P_of_padSAT_NPHard.lean.txt =====
+Route-SAT_mem_P_of_padSAT_NPHard.lean:59:8: warning: declaration uses 'sorry'
+Route-SAT_mem_P_of_padSAT_NPHard.lean:63:8: warning: declaration uses 'sorry'
+Route-SAT_mem_P_of_padSAT_NPHard.lean:68:8: warning: declaration uses 'sorry'
+Route-SAT_mem_P_of_padSAT_NPHard.lean:76:8: warning: declaration uses 'sorry'
+Route-SAT_mem_P_of_padSAT_NPHard.lean:79:8: warning: declaration uses 'sorry'
+Route-SAT_mem_P_of_padSAT_NPHard.lean:84:8: warning: declaration uses 'sorry'
+Route-SAT_mem_P_of_padSAT_NPHard.lean:94:8: warning: declaration uses 'sorry'
+Route-SAT_mem_P_of_padSAT_NPHard.lean:98:8: warning: declaration uses 'sorry'
+Route-SAT_mem_P_of_padSAT_NPHard.lean:106:8: warning: declaration uses 'sorry'
+nice: setpriority: Operation not permitted
+
+
+===== Route-Shared.lean.txt =====
+Route-Shared.lean:38:8: warning: declaration uses 'sorry'
+Route-Shared.lean:41:8: warning: declaration uses 'sorry'
+Route-Shared.lean:44:8: warning: declaration uses 'sorry'
+Route-Shared.lean:47:8: warning: declaration uses 'sorry'
+Route-Shared.lean:49:8: warning: declaration uses 'sorry'
+Route-Shared.lean:53:8: warning: declaration uses 'sorry'
+Route-Shared.lean:57:8: warning: declaration uses 'sorry'
+Route-Shared.lean:60:8: warning: declaration uses 'sorry'
+Route-Shared.lean:70:8: warning: declaration uses 'sorry'
+Route-Shared.lean:75:8: warning: declaration uses 'sorry'
+Route-Shared.lean:79:8: warning: declaration uses 'sorry'
+nice: setpriority: Operation not permitted
+
+
+===== Route-ladnerH_bounded_of_mem_P.lean.txt =====
+Route-ladnerH_bounded_of_mem_P.lean:19:8: warning: declaration uses 'sorry'
+Route-ladnerH_bounded_of_mem_P.lean:21:8: warning: declaration uses 'sorry'
+Route-ladnerH_bounded_of_mem_P.lean:24:8: warning: declaration uses 'sorry'
+Route-ladnerH_bounded_of_mem_P.lean:28:8: warning: declaration uses 'sorry'
+Route-ladnerH_bounded_of_mem_P.lean:33:8: warning: declaration uses 'sorry'
+nice: setpriority: Operation not permitted
+
+
+===== Route-ladnerH_polyTime.lean.txt =====
+Route-ladnerH_polyTime.lean:48:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:51:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:54:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:58:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:63:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:70:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:75:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:104:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:108:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:115:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:119:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:126:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:162:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:165:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:168:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:174:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:176:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:181:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:187:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:190:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:226:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:228:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:231:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:236:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:239:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:243:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:248:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:252:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:256:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:260:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:262:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:267:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:270:8: warning: declaration uses 'sorry'
+Route-ladnerH_polyTime.lean:275:8: warning: declaration uses 'sorry'
+nice: setpriority: Operation not permitted
+
+
+===== Route-ladnerH_unbounded_of_not_mem_P.lean.txt =====
+Route-ladnerH_unbounded_of_not_mem_P.lean:19:8: warning: declaration uses 'sorry'
+Route-ladnerH_unbounded_of_not_mem_P.lean:23:8: warning: declaration uses 'sorry'
+Route-ladnerH_unbounded_of_not_mem_P.lean:27:8: warning: declaration uses 'sorry'
+Route-ladnerH_unbounded_of_not_mem_P.lean:32:8: warning: declaration uses 'sorry'
+Route-ladnerH_unbounded_of_not_mem_P.lean:37:8: warning: declaration uses 'sorry'
+Route-ladnerH_unbounded_of_not_mem_P.lean:42:8: warning: declaration uses 'sorry'
+nice: setpriority: Operation not permitted
+
+
+Delivery file SHA-256 values (this log excludes its own hash):
+c6c35ee8297a10b004edd6d2bc7f3e557aceac4e3894ca3fa3a6b26b611695a4  Route-API.lean.txt
+15658238e830997dc176050eb50bcc1acf3e22ff5c8c3a88bf5a10be2ba0a10b  Route-Readers.lean.txt
+2ce60d1d45453bdd4038ead4ab18edae8f0ecd09c34a8ac16621d2cb1d0222ae  Route-SAT_H_intermediate.lean.txt
+09ca12f34af5d192b3a5a6ea4cd19c15357931d19d8076365fcf1ca13d06a6d6  Route-SAT_H_mem_NP.lean.txt
+6522c52a9059b75a38f6c9aa9df3455728922169af72605e26bbdbbde3c6c06f  Route-SAT_mem_P_of_padSAT_NPHard.lean.txt
+e38c9a0540c759c6a116278cbab948c754acd450a9c236cb8fb1bc39c28e70fb  Route-Shared.lean.txt
+db1af1666e2682455b6e272b78c66a385be152f40183ccae2cffc04a8dd40354  Route-ladnerH_bounded_of_mem_P.lean.txt
+1efda4b1f349d3916f367824a7f5f990c4601c51de2b64aee381fab411df07bd  Route-ladnerH_polyTime.lean.txt
+9e9336ba4245afe702ea71d6ba96145ff273636f07404e99d3562e13068d15ab  Route-ladnerH_unbounded_of_not_mem_P.lean.txt
+4702a1baf939fd9f69a81565b451ae93756a0cf3cd36d5c07a63af3a0b4d4712  ladner-fill-routes.md
+
+Final archived library source byte audit: 930 .lean files match their Git blobs at the Lean pin; none edited.

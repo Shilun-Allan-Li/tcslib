@@ -1,0 +1,81 @@
+/- Scratch statement-elaboration probe, not a library fill.
+Source/import pin: 5ab222167eb12664d97d255766c5def15b6d5d50.
+Every theorem body below is intentionally admitted. No target body is replaced.
+Additional imports and proposed public interfaces need the decisions in the route report.
+-/
+import TCSlib.Complexity.Diagonalization.Ladner
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.Complexity.ClassP.ModelInvariance
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing Complexity
+open scoped Classical
+noncomputable section
+
+namespace LadnerRouteShared
+
+-- Mathematical parser specification; implement through reverse/uRest/hasFalse,
+-- not by compiling a new private parser host.
+def parse : List Bool → Option (List Bool × ℕ)
+  | [] => none
+  | b :: bs => match parse bs with
+    | some (p, t) => some (b :: p, t)
+    | none => if b then none else some ([], bs.length)
+
+def padSyntax (h : ℕ → ℕ) (y : List Bool) : Bool :=
+  match parse y with
+  | none => false
+  | some (p, t) => decide (t = p.length ^ h p.length)
+
+def parseWord (y : List Bool) : List Bool :=
+  match parse y with
+  | none => []
+  | some (p, t) => pairEncode [true] (pairEncode p (Nat.bits t))
+
+theorem parse_some (y p : List Bool) (t : ℕ) :
+    parse y = some (p, t) ↔ y = p ++ false :: List.replicate t true := by sorry
+
+theorem parse_none (y : List Bool) :
+    parse y = none ↔ ∀ b ∈ y, b = true := by sorry
+
+theorem parsed_length {y p : List Bool} {t : ℕ} (hp : parse y = some (p, t)) :
+    y.length = p.length + 1 + t ∧ p.length < y.length := by sorry
+
+theorem parse_FP : PolyTimeComputable parseWord := by sorry
+
+theorem syntax_FP {h : ℕ → ℕ}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length))) :
+    PolyTimeComputable (fun y => [padSyntax h y]) := by sorry
+
+theorem pad_membership {h : ℕ → ℕ} {y : List Bool} :
+    y ∈ padSAT h ↔ ∃ p t, parse y = some (p, t) ∧
+      t = p.length ^ h p.length ∧ p ∈ SAT := by sorry
+
+theorem finite_lookup_FP (S : Finset (List Bool)) :
+    PolyTimeComputable (fun x : List Bool => [decide (x ∈ S)]) := by sorry
+
+theorem small_SAT_table (B : ℕ) :
+    ∃ S : Finset (List Bool), ∀ x : List Bool,
+      x ∈ S ↔ x.length < B ∧ x ∈ SAT := by sorry
+
+-- Proposed shared arithmetic leaf in BinaryArith/Mul.lean (public decision).
+def powCap (z : List Bool) : List Bool :=
+  Nat.bits (min
+    ((LogProg.bitsVal (pairFstD z)) ^ (LogProg.bitsVal (pairFstD (pairSndD z))))
+    (LogProg.bitsVal (pairSndD (pairSndD z)) + 1))
+
+theorem powCap_eq (z : List Bool) :
+    powCap z = Nat.bits (min
+      ((LogProg.bitsVal (pairFstD z)) ^ (LogProg.bitsVal (pairFstD (pairSndD z))))
+      (LogProg.bitsVal (pairSndD (pairSndD z)) + 1)) := by sorry
+
+theorem powCap_pair (m e c : ℕ) :
+    powCap (pairEncode (Nat.bits m) (pairEncode (Nat.bits e) (Nat.bits c))) =
+      Nat.bits (min (m ^ e) (c + 1)) := by sorry
+
+theorem powCap_FP : PolyTimeComputable powCap := by sorry
+
+end LadnerRouteShared

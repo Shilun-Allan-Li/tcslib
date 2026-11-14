@@ -1,0 +1,49 @@
+/- Scratch statement-elaboration probe, not a library fill.
+Source/import pin: 5ab222167eb12664d97d255766c5def15b6d5d50.
+Every theorem body below is intentionally admitted. No target body is replaced.
+Additional imports and proposed public interfaces need the decisions in the route report.
+-/
+import TCSlib.Complexity.Diagonalization.Ladner
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.ClassP.BinaryArith.Words
+import TCSlib.Complexity.ClassP.ModelInvariance
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing Complexity
+open scoped Classical
+noncomputable section
+
+namespace LadnerRouteFinal
+def padWord (h : ℕ → ℕ) (x : List Bool) : List Bool :=
+  x ++ false :: List.replicate (x.length ^ h x.length) true
+
+theorem bounded_pad_length {h : ℕ → ℕ} {C : ℕ} (hb : ∀ n, h n ≤ C)
+    (x : List Bool) : (padWord h x).length ≤ 2 * (x.length + 1) ^ (C + 1) := by sorry
+
+theorem bounded_pad_FP {h : ℕ → ℕ} {C : ℕ}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)))
+    (hb : ∀ n, h n ≤ C) : PolyTimeComputable (padWord h) := by sorry
+
+theorem padWord_membership (h : ℕ → ℕ) (x : List Bool) :
+    padWord h x ∈ padSAT h ↔ x ∈ SAT := by sorry
+
+-- Private obligation, not a seventh public Ladner target.
+theorem bounded_pad_reduction {h : ℕ → ℕ} {C : ℕ}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)))
+    (hb : ∀ n, h n ≤ C) : PolyTimeReducible SAT (padSAT h) := by sorry
+
+theorem outside_P (hne : P ≠ NP)
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (ladnerH x.length)))
+    (hbounded : SAT_H ∈ P → ∃ C, ∀ n, ladnerH n ≤ C) : SAT_H ∉ P := by sorry
+
+theorem not_complete (hne : P ≠ NP)
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (ladnerH x.length)))
+    (hout : SAT_H ∉ P)
+    (hdiv : SAT_H ∉ P → ∀ C, ∃ N, ∀ n ≥ N, C ≤ ladnerH n)
+    (hpadding : ∀ h : ℕ → ℕ,
+      PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)) →
+      (∀ C, ∃ N, ∀ n ≥ N, C ≤ h n) → NPHard (padSAT h) → SAT ∈ P) :
+    ¬ NPComplete SAT_H := by sorry
+end LadnerRouteFinal
