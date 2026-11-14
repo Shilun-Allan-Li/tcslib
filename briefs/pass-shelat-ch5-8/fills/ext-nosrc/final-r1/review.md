@@ -76,7 +76,7 @@ The landing head is `e99a6055`, pushed as `land/pass-shelat-ext-nosrc`.
 2. The rejection sampler runs 10 trials, then a fallback, over 11 blocks of `n` coins. The blocks are read through `FunFamily.blocks`.
 3. Its law is the mixture `(1−q)^10 U_n + (1−(1−q)^10) flat(S)`.
 4. The flat point mass is at most `1/(2^n q) ≤ 2^{−(n−2)}`.
-5. Then `Pr = 1−(1−q)^11 ≥ 1−(3/4)^11 > 1/4`, which contradicts the extractor bound.
+5. Then `Pr = 1−(1−q)^11 ≥ 1−(3/4)^11 > 3/4`, since `(3/4)^11 < 1/4`. This contradicts the extractor bound `Pr ≤ 1/2 + 1/4`. *(Erratum 2026-11-14: this line previously read "`> 1/4`"; the Gate 22 pack discloses the slip.)*
 
 The edge cases `n = 0`, `n ≤ 2`, `q = 1` and empty `Ext` output are handled.
 
