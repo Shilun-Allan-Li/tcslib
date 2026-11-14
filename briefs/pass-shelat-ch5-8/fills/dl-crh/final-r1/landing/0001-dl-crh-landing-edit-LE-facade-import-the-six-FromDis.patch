@@ -1,0 +1,36 @@
+From a882dd03f14a3c9dc9b3ea3d9d6eb1fed37dda66 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 14 Nov 2026 17:05:07 +0000
+Subject: [PATCH] dl-crh landing edit LE-facade: import the six FromDiscreteLog
+ helpers in the Hashing facade
+
+Imports only. The six helper modules of Hashing/FromDiscreteLog/ are imported
+directly by the Hashing facade, so the campaign facade-completeness lint shows
+no new FAIL (ruling by Seyoon, 2026-11-14).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Hashing.lean | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Hashing.lean b/TCSlib/Cryptography/Hashing.lean
+index c19d2562c..5240b73b9 100644
+--- a/TCSlib/Cryptography/Hashing.lean
++++ b/TCSlib/Cryptography/Hashing.lean
+@@ -4,6 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Hashing.CollisionResistant
+ import TCSlib.Cryptography.Hashing.FromDiscreteLog
++import TCSlib.Cryptography.Hashing.FromDiscreteLog.Algebra
++import TCSlib.Cryptography.Hashing.FromDiscreteLog.Coins
++import TCSlib.Cryptography.Hashing.FromDiscreteLog.Encoding
++import TCSlib.Cryptography.Hashing.FromDiscreteLog.Probability
++import TCSlib.Cryptography.Hashing.FromDiscreteLog.Reduction
++import TCSlib.Cryptography.Hashing.FromDiscreteLog.Sampling
+ import TCSlib.Cryptography.Hashing.SIS
+ 
+ set_option maxHeartbeats 0
+-- 
+2.43.0
+

@@ -1,0 +1,80 @@
+dl-crh (Theorem 142.3, Authentication.dlHash_crh) maintainer delivery review r1, 2026-11-14 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+
+brief: briefs/pass-shelat-ch5-8/fills/dl-crh/issued-r1/brief.md, SHA-256 21119b8ad307b53edce3fda1227f55dc9378c3a36cef8030a88340c9379b1220
+  (logs/brief.md); issued package SHA256SUMS 7/7 OK and SOURCE-SHA256SUMS 170/170 OK at eff2dcd0 (logs/issue-package-check.txt);
+  base-sorries logs/base-sorries-issued.txt (22 in 12 modules). Issue base eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9.
+delivery: exchange/pass-shelat-ch5-8 9ad236d16ccc8054b947bb2e294f05b41842a29c ("fill dl-crh: final"); the 5 commits touching
+  inbox/fills/dl-crh touch nothing else (logs/exchange-commits.txt). Payload extracted with git archive into $SP/dlcrh-payload
+  (removed after use; cited files kept in logs/delivery-extracts/, hashes there in extract-hashes.txt).
+integrity: logs/payload-check.txt (tools/mancheck.py, exact path-set equality): top SHA256SUMS 2034/2034 OK, evidence/SHA256SUMS
+  2020/2020 OK. logs/git-am-integrity.log, logs/integrity.log: git am of the 4 patches at eff2dcd0 in a scratch base worktree
+  (detached, removed at the end): rc 0, head b4d5cd3cd47389da4a095bcbb93c0ff547c6f3e6 tree b14cc004edfe8b2348eaee554d9d8a2f908e93fe;
+  8 changed paths (M DiscreteLog, M FromDiscreteLog, A 6 helpers) byte-identical to src/, src/ holds exactly these 8 files; their
+  SHA-256 equal the worker's patch-reproduction hashes (REPORT). Worker commit hashes (proof commit fa33b9b8) not reproducible:
+  no committer metadata is delivered.
+olean tree: $SP/dl-oleans-2 only. tree/tree-check-pre.txt: 1199 modules at the eff2dcd0 source and recorded olean hashes
+  (records logs/prior-results-base.jsonl = the ext-nosrc review's all-results-restored.jsonl), 1230 files, and the full snapshot
+  tree/snapshot-pre.txt equal to the ext-nosrc LE-doc job's restored snapshot (extnosrc-r1-ledoc/tree/snapshot-post.txt): a byte
+  copy of the base tree dl-oleans.
+base side (on the base tree, base worktree at eff2dcd0): base-probe-runs/ (collector, owners DiscreteLog + FromDiscreteLog),
+  base-seals/{A,B} strict and base-seals-coe/{A,B} coe variant, run in base-seal-runs/ (all 8 rc 0); base census in
+  base-census-run/ (first attempt logs/census-base-attempt1-endpoints.log failed only on campaign endpoints absent from this
+  import set; tools/mkcensus.py was then narrowed to the target endpoint).
+landing: branch land/pass-shelat-dl-crh (local, no upstream), worktree $SP/wt-land-dl-crh (sparse, briefs/ excluded).
+  git am at eff2dcd0 (authors kept: Seyoon Ragavan as committed by the worker; committer rev@local), rebased first onto
+  083d928f (landing/rebase.log), then, after #303 merged, onto origin tip 48cd45ab291695f07da6093b4756fea446a4296b
+  (landing/rebase2.log, rc 0, no conflict). Origin delta since eff2dcd0: PassShelatChapter5-8Plan.md, briefs/, and #303's four
+  Randomness files (landing/origin-delta-nonbriefs.txt, origin-commits.txt). Final commits (landing/landing-log.txt):
+    7a79c9cea47f554a758184a01b04045df9bed41f  Prove discrete-log hash compression and collision extraction
+    d833008503fd92c10283d190a0e32658a2faad64  Prove the collision finder reduction recovers discrete logarithms
+    770789110b4f39ac55992770595cec5d2233a390  Complete the discrete-log hash collision-resistance proof
+    5fcd585def9027dceb9922cc9f36eedf5598fdb4  Make dependent length transports explicit under Rule 10 seals
+    a882dd03f14a3c9dc9b3ea3d9d6eb1fed37dda66  dl-crh landing edit LE-facade (author = committer = Claude <noreply@anthropic.com>)
+  head a882dd03f14a3c9dc9b3ea3d9d6eb1fed37dda66, tree d392e50744a9b550686b3ac2862f863e3c662804.
+  The dl-crh paths are identical to the pre-rebase heads e1f90ff1 (worker commits) and 46b818bf (LE-facade).
+LE-facade (maintainer ruling, Seyoon 2026-11-14): exactly six imports `TCSlib.Cryptography.Hashing.FromDiscreteLog.{Algebra,
+  Coins,Encoding,Probability,Reduction,Sampling}` after `...Hashing.FromDiscreteLog` in TCSlib/Cryptography/Hashing.lean
+  (landing/le-facade-diff.txt, 6 insertions, 0 deletions; landing/0001-*.patch). Downstream of Hashing: Hashing, TCSlib only
+  (order/lefacade/). Rebuilt in final-build/ (rc 0, no error, no clash). Lint at the head: 216 FAIL / 102 WARN
+  (logs/lint-head-final.log, lint-diff-final.txt: no FAIL line differs from base; only the 2 approved DiscreteLog WARN lines
+  change). Facade seals A/B, strict and coe, head (seals-facade*, seal-runs-facade/) vs base (base-seals-facade*,
+  base-seal-runs-facade/, run on the restored base tree): all pass (logs/seal-table-facade.txt).
+build (head e1f90ff1 sources of the 8 dl-crh files): build/ = order/head-build-queue.txt, the 18 modules downstream of the
+  changed files through root TCSlib and audits/pass-shelat/Checks: all rc 0, 0 errors, 0 sorry (DDH's 3 warnings pre-existing).
+  Checks log byte-identical to the base Checks log, olean identical. final-build/ at a882dd03: Hashing (LE-facade) and the
+  base-delta modules Randomness/Extraction/Rejection, Sampler, Extraction, the Randomness facade, then TCSlib: rc 0 (warnings
+  10/0/2/0 as in the ext-nosrc review). logs/final-tree-check-head.txt: 1207 modules (+31 PFR) all rc 0 at the a882dd03 source
+  and olean hash, no stray olean.
+statements (base eff2dcd0 vs worker head e1f90ff1): statements/decls2.tsv 67 ADDED, 0 CHANGED, 0 REMOVED; touched.tsv 1 CHANGED
+  (the target, body only; docstring unchanged), 127 UNCHANGED, 23 ADDED in existing files, 46 in new files; header-bytes.txt:
+  all 128 pre-existing declarations of DiscreteLog.lean (111) and FromDiscreteLog.lean (17), and the target, IDENTICAL.
+  logs/discretelog-readers-check.txt: DiscreteLog.lean 17 added lines, 0 removed, in 2 hunks = expGenFun_eq, expSampleRaw_eq;
+  no attribute; census simp=false.
+axioms: logs/axioms-summary.txt. dlHash_crh [propext, Classical.choice, Quot.sound] (base: + sorryAx). Census (statements/census.tsv,
+  logs/census-summary.txt): base 172 -> head 265 stored constants, 93 added (69 named), 0 removed/type-changed/attr-changed; no
+  simp, instance or abbrev; all 265 within {propext, Classical.choice, Quot.sound}.
+Rule 10: head collector probe-runs/ (owners: the 8 files), seals/{A,B} strict and seals-coe/{A,B} canonical coe variant, all in
+  seal-runs/ (runner stopped once by the review tool's 30-minute background limit during SealCoeB_..._Reduction; partial log
+  logs/seal-run-interrupted-SealCoeB_Reduction.partial.log, marker line in seal-runs/results.jsonl; resumed from that module).
+  logs/seal-table.txt: 8/8 files pass A and B in both variants at head, the 2 pre-existing files pass at base; strict = coe, no
+  difference to attribute. controls/ + control-runs/ (tools/mkctl_dlcrh.py on the coe seal records; rows padFin, PolyExpr.eval,
+  Authentication.splitBits, Candidates.expSampleRaw (new reader), FromDiscreteLog.modularDifference, residueFinEquiv): 12 probes,
+  21 sealed negatives each failing exactly once, positives and unsealed pass: logs/ctlcheck.log ALL_OK True.
+  superseded/controls-attempt1/: first run, 4 owned-file probes failed because two control rows misnamed Complexity.pairSndD
+  (DISPOSITION.txt). Explicit scan: scan/items-head.json, scan/explicit-head.json, logs/scan2-head.log: 595 items, 0 foreign
+  definitions (36 owned-definition items, all in pre-existing declarations; 4 ↓reduceIte simprocs).
+admissions: logs/sorry-census.txt (head e1f90ff1) and logs/sorry-census-final.txt (head a882dd03): issued 22 -> 21, only
+  FromDiscreteLog (dlHash_crh) differs; modules outside the issued order unchanged since eff2dcd0.
+lint/size: logs/lint-base.log, lint-head.log (worker head: 222 FAIL, the 6 Hashing facade FAILs), lint-head-lefacade.log and
+  lint-head-final.log (216/102). logs/sizes-widths.txt. Widths: no new line over 100 characters (the over-width lines of DiscreteLog.lean and line 31
+  of FromDiscreteLog.lean are pre-existing). Sizes: DiscreteLog 1209, FromDiscreteLog 728, Algebra 130, Coins 63, Encoding 191,
+  Probability 68, Reduction 337, Sampling 92, Hashing.lean 37. docaudit: statements/docaudit.tsv (59 NO-FORMULA, 9 OK of 68).
+duplication: logs/duplication-grep.txt.
+restore: restore-build/ (base worktree at eff2dcd0, order/restore-base.txt: DiscreteLog, DiscreteLogHardcore, DDH, ElGamal,
+  Candidates, Encryption/PublicKey, Encryption, FromDiscreteLog, Authentication, Hashing, Extraction, Randomness, TCSlib,
+  audits/pass-shelat/Checks, all rc 0); the 6 helper oleans and Rejection/Sampler oleans deleted with their directories; all
+  probe oleans (DlProbe/) deleted. tree/tree-check-post.txt: RESULT OK, tree/snapshot-post.txt byte-identical to snapshot-pre.txt.
+tools/: copied from the ext-nosrc review tools (extnosrc-r1/tools, since archived) unchanged, except: mkcensus.py (endpoints =
+  dlHash_crh only, no Implications import), mkctl_dlcrh.py (new, from mkctl_extnosrc.py with dl-crh rows), mancheck.py (new),
+  treecheck.py (from extnosrc-r1-ledoc/tools-used). seals-coe/flat/ is a flat copy of seals-coe/{A,B}/*.json for mkctl.

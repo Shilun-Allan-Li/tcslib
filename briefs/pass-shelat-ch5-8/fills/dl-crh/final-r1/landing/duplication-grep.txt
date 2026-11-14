@@ -1,0 +1,121 @@
+dl-crh review duplication grep (base eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9; git grep over TCSlib/*.lean, declaration lines only; Mathlib at .lake/packages/mathlib)
+
+=== /splitBits/
+TCSlib/Cryptography/Authentication/Encoding.lean:35:def splitBits {a b : ℕ} (w : Fin (a + b) → Bool) : (Fin a → Bool) × (Fin b → Bool) :=
+
+=== /ofFn_splitCoins_(fst|snd|symm)|ofFn_splitHalf_(fst|snd)/
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:149:theorem ofFn_splitCoins_fst (a b : ℕ) (r : Fin (a + b) → Bool) :
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:160:theorem ofFn_splitCoins_snd (a b : ℕ) (r : Fin (a + b) → Bool) :
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:172:theorem ofFn_splitCoins_symm (a b : ℕ) (r₁ : Fin a → Bool) (r₂ : Fin b → Bool) :
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:189:private theorem ofFn_splitCoins_symm_cast {a b n : ℕ} (h : a + b = n)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:186:theorem ofFn_splitHalf_fst {m : ℕ} (y : Fin (m + m) → Bool) :
+TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean:196:theorem ofFn_splitHalf_snd {m : ℕ} (y : Fin (m + m) → Bool) :
+
+=== /ofFn_eq_init_append|ofFn_snoc_eq/
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:52:theorem ofFn_snoc_eq {n : ℕ} (v : Fin n → Bool) (b : Bool) :
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:58:theorem ofFn_eq_init_append {n : ℕ} (v : Fin (n + 1) → Bool) :
+
+=== /theorem [^ ]*(take_ofFn|drop_ofFn|ofFn_drop_take)/
+TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.lean:52:theorem ofFn_drop_take (τ : ℕ → Bool) {M i k : ℕ} (h : i + k ≤ M) :
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:210:theorem ofFn_drop_take {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k ≤ L) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:151:theorem take_ofFn_coinsEquiv {m a b : ℕ} (h : m = a + b) (c : (Fin a → Bool) × (Fin b → Bool)) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:156:theorem drop_ofFn_coinsEquiv {m a b : ℕ} (h : m = a + b) (c : (Fin a → Bool) × (Fin b → Bool)) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:427:theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:494:private theorem take_drop_ofFn {n a k : ℕ} (h : a + k ≤ n) (z : Fin n → Bool) :
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:121:theorem padTrue_drop_ofFn {q ℓ : ℕ} (x : Fin (q * ℓ) → Bool) (i : Fin q) :
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:69:theorem take_ofFn_append {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:74:theorem drop_ofFn_append {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:288:theorem take_ofFn_castLE {ℓ m : ℕ} (h : m ≤ ℓ) (f : Fin ℓ → Bool) :
+TCSlib/Cryptography/Candidates/Concrete.lean:846:private theorem dla_take_drop_ofFn {k B T : ℕ} (hkB : k ≤ B) (r : Fin (T * B) → Bool) (t : Fin T) :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:221:theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Planted.lean:58:theorem take_ofFn_flatten {p n j : ℕ} (hp : p = 1) (m : Fin n → Bool) (hj : j ≤ n) :
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Planted.lean:72:theorem drop_ofFn_flatten {p n j : ℕ} (hp : p = 1) (m : Fin n → Bool) (hj : j < n) :
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator.lean:55:theorem drop_take_ofFn_blocks (q ℓ : ℕ) (w : Fin (q * ℓ) → Bool) {k : ℕ} (hk : k < q) :
+
+=== /expect_sample|prob_sample_eq_uprob/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:135:theorem expect_sample_halfCoins (n : ℕ) (g : (halfSamp S).Coins n → ℝ) :
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:332:theorem expect_sample_prod [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:65:theorem prob_sample_eq_uprob [Fintype α] [Nonempty α] (p : α → Prop) :
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:72:theorem expect_sample_pair [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (g : α × β → ℝ) :
+TCSlib/Cryptography/Games/Hopping.lean:451:theorem expect_sample_mem_le {T : Type} [Fintype T] [Nonempty T] [DecidableEq T] (L : List T) :
+TCSlib/Cryptography/Games/Probability.lean:139:theorem expect_sampleFin (m : ℕ) (g : Fin (m + 1) → ℝ) :
+TCSlib/Cryptography/Games/Probability.lean:146:theorem expect_sample (T : Type) [Fintype T] [Nonempty T] (g : T → ℝ) :
+TCSlib/Cryptography/Games/Probability.lean:303:theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] (e : α ≃ β)
+TCSlib/Cryptography/Games/Probability.lean:312:theorem expect_sample_comm [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
+TCSlib/Cryptography/Games/Probability.lean:325:theorem expect_expect_sample (c : ProbComp α) (T : Type) [Fintype T] [Nonempty T]
+TCSlib/Cryptography/Games/Probability.lean:333:theorem expect_sample_unique [Fintype α] [Unique α] (g : α → ℝ) :
+TCSlib/Cryptography/Games/Probability.lean:354:theorem expect_sample_update {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+TCSlib/Cryptography/Games/Probability.lean:382:theorem expect_sample_coord {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+
+=== /padStr_padStr|padStr_idem|padFin_ofFn|ofFn_padFin_eq_padStr|ofFn_padFin_of_length/
+TCSlib/Cryptography/Asymptotic/Adversary.lean:211:theorem padFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : padFin ℓ (List.ofFn x) = x := by
+TCSlib/Cryptography/Asymptotic/Adversary.lean:216:theorem ofFn_padFin_of_length {L : ℕ} {w : List Bool} (hw : w.length = L) :
+TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean:109:theorem ofFn_padFin_eq_padStr (p : PolyExpr) (u w : List Bool) :
+TCSlib/Cryptography/Games/BitCodec.lean:139:theorem padFin_ofFn_zeroBits (d m : ℕ) : padFin d (List.ofFn (zeroBits m)) = zeroBits d := by
+
+=== /finEquiv/
+TCSlib/Cryptography/Candidates/DDH.lean:290:private theorem natCast_val_finEquiv_symm {m : ℕ} [NeZero m] (t : ZMod m) :
+
+=== /statClose_sampleBelowL|dla_statClose_expDec/
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:608:theorem statClose_sampleBelowL {m n : ℕ} (hm : 0 < m) (hmn : m < 2 ^ n) :
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:908:private theorem dla_statClose_expDec (H : ArithmeticFP) {n : ℕ} {i : List Bool} (hv : ExpValid i)
+
+=== /sumCoins|coinsEquivPoly|ofFn_splitCoins_symm_cast|ofFn_appendEquiv/
+TCSlib/Complexity/Randomized/PPT.lean:266:def coinsEquivPoly {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ) :
+TCSlib/Complexity/Randomized/PPT.lean:272:theorem coinsEquivPoly_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ) (r : A.Coins n) :
+TCSlib/Complexity/Randomized/PPT.lean:278:theorem coinsEquivPoly_symm_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ)
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:64:theorem ofFn_appendEquiv {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:181:private theorem ofFn_appendEquiv {a b n : ℕ} (h : a + b = n) (q : (Fin a → Bool) × (Fin b → Bool)) :
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:189:private theorem ofFn_splitCoins_symm_cast {a b n : ℕ} (h : a + b = n)
+
+=== /modSub|subMod|modularDifference|subModStr/
+
+=== /card_bounded|boundedInput|boundedRange/
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Basic.lean:514:lemma card_bounded_subsets_le {α : Type*} [DecidableEq α] (s : Finset α) (k : ℕ) :
+
+=== /val_units_pow|expUnit_pow|dlb_expo_val|orderOf_expUnit/
+TCSlib/Cryptography/Candidates/Arithmetic.lean:473:theorem val_units_pow (M : ℕ) [NeZero M] (x : (ZMod M)ˣ) (e : ℕ) :
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:227:theorem orderOf_expUnit {i : List Bool} (h : ExpValid i) : orderOf (expUnit h) = dlM i := by
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2475:private theorem dlb_expo_val {i : List Bool} (hx : ExpValid i) [Fact (dlP i).Prime]
+
+=== /listToNat_inj|fac_listToNat_inj|natToList_injOn|natToList_length_listToNat/
+TCSlib/Cryptography/Asymptotic/Sampling.lean:395:private theorem listToNat_inj : ∀ (l l' : List Bool), l.length = l'.length →
+TCSlib/Cryptography/Candidates/Arithmetic.lean:161:theorem natToList_injOn {k M N : ℕ} (hM : M < 2 ^ k) (hN : N < 2 ^ k)
+TCSlib/Cryptography/Candidates/Arithmetic.lean:173:theorem natToList_length_listToNat (w : List Bool) : natToList w.length (listToNat w) = w := by
+TCSlib/Cryptography/Candidates/Factoring.lean:1320:private theorem fac_listToNat_inj {a b : List Bool} (h : a.length = b.length) :
+
+=== /collisionGame_eq|accept_collisionGame|collision_accept/
+TCSlib/Cryptography/Hashing/CollisionResistant.lean:122:theorem collisionGame_eq (A : NUPPT) (n : ℕ) :
+
+=== /expEval_spec|expEnc_eq|expEval_natToList/
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:238:theorem expEnc_eq (i : List Bool) (x : ZMod (expOrd i)) : expEnc i x = natToList (dlW i) x.val :=
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:278:theorem expEval_spec (i : List Bool) (x : ZMod (expOrd i)) :
+
+=== /residue_difference|ModEq.*sub/
+
+=== /FunFamily.blocks|theorem blocks_/
+TCSlib/Cryptography/Asymptotic/Adversary.lean:258:def FunFamily.blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Asymptotic/Adversary.lean:262:theorem FunFamily.blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:267:theorem FunFamily.blocks_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) (k : Fin (q * ℓ)) :
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:218:private theorem blocks_eq (q ℓ : ℕ) : blocks q ℓ = FunFamily.blocks q ℓ := rfl
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:404:theorem blocks_eq (q ℓ : ℕ) : blocks q ℓ = FunFamily.blocks q ℓ := rfl
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:407:theorem blocks_apply (q ℓ : ℕ) (w : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:413:theorem blocks_symm_apply (q ℓ : ℕ) (V : Fin q → Fin ℓ → Bool) (x : Fin (q * ℓ)) :
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:74:theorem blocksEquiv_eq (q ℓ : ℕ) : blocksEquiv q ℓ = FunFamily.blocks q ℓ := rfl
+TCSlib/Cryptography/Asymptotic/OneWay.lean:619:private theorem blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ :=
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:67:theorem blocksE_eq (q ℓ : ℕ) : blocksE q ℓ = FunFamily.blocks q ℓ := rfl
+TCSlib/Cryptography/Candidates/Factoring.lean:685:private theorem fac_blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ :=
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean:554:private theorem blocks_append (L : ℕ) (A M E : List Bool) (hA : A.length = L + L)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:212:theorem blocksEquiv_eq (m c : ℕ) : blocksEquiv m c = (FunFamily.blocks m c).symm := rfl
+
+=== /bitCodec_/
+TCSlib/Cryptography/Games/BitCodec.lean:229:theorem bitCodec_decodeMove (din dout : Fin k → ℕ) (dα : ℕ) (w : List Bool) :
+TCSlib/Cryptography/Games/BitCodec.lean:234:theorem bitCodec_encodeEntry (din dout : Fin k → ℕ) (dα : ℕ)
+TCSlib/Cryptography/Games/BitCodec.lean:242:theorem bitCodec_timeout (din dout : Fin k → ℕ) (dα : ℕ) :
+
+=== Mathlib: List.ofFn_succ', ZMod.finEquiv, Fin.snocEquiv/consEquiv/init
+.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:52:theorem ofFn_succ' {n} (f : Fin (succ n) → α) :
+.lake/packages/mathlib/Mathlib/Data/ZMod/Basic.lean:41:def finEquiv : ∀ (n : ℕ) [NeZero n], Fin n ≃+* ZMod n
+.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean:169:def consEquiv (α : Fin (n + 1) → Type*) : α 0 × (∀ i, α (succ i)) ≃ ∀ i, α i where
+.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean:486:def init (q : ∀ i, α i) (i : Fin n) : α i.castSucc :=
+.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean:701:def snocEquiv (α : Fin (n + 1) → Type*) : α (last n) × (∀ i, α (castSucc i)) ≃ ∀ i, α i where
