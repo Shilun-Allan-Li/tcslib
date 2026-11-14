@@ -3838,7 +3838,7 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   **LD9 approved (Seyoon, 2026-11-14):** `SAT_exists_linear_verifier` after `SAT_mem_NP`; merged as
   #301 (gate 134 CLEAR) at `b313afe5`. Concrete quantitative memo/simulator/SAT-search obligations remain fill-route
   work; the Codex route draft is in (`campaign/items/ladner/fill-routes-request/delivery/`).
-  **Ruled (Seyoon, 2026-11-14), from that draft:** (i) the eight owner readers R1–R6
+  **Ruled (Seyoon, 2026-11-14), from that draft:** (i) the seven owner readers R1–R6
   (`polyTimeComputable_iff` in ClassNP/PolyTime; `polyTimeReducible_iff`, `NPHard_iff`,
   `NPComplete_iff` in ClassNP/Reductions; `Turing.FinTM.decidesInTime_iff` in ClassP/DTIME;
   `Turing.MultiTapeTM.indicator_of_mem`/`_of_not_mem` in Deterministic), landed by the maintainer

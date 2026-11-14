@@ -16,6 +16,7 @@ Campaign Lean is `b313afe522991f2114390952f26ffe7de825bace`. Its replay output i
 
 | PR / gate | Current state |
 |---|---|
+| #302 / 135 | **Not yet clear to merge.** The 7 Ladner owner readers R1–R6 at `50bb801a` (approved 2026-11-14). Replay, seals, controls, screen done; Codex gate 135 being staged. Base of Ladner fill 1. See campaign/gates/135-ladner-readers/. |
 | #301 / 134 | **Merged** at `b313afe522991f2114390952f26ffe7de825bace` (2026-11-14). Gate closed (CLEAR). Its replay output is the campaign snapshot `oleans-cb313` (876 objects; campaign/status/2026-11-14-merge-301/). |
 | #300 / 133 | **Clear to merge.** Gate 133 closed: round 2 CLEAR (0/0/0, 9 notes) at `4ddce70c45e0a397fbc4d9a25ac925da80e05cda` (round 1 HOLD, repaired). Replay on campaign Lean `b313afe5` (still current); merges cleanly. Draft: mark ready, then merge; then adopt `oleans-rd133-cb313`. |
 | #296 / 132 | **Merged** at `5ab222167eb12664d97d255766c5def15b6d5d50` (2026-11-14). Gate closed (round 3 CLEAR). Its replay output is the campaign snapshot `oleans-c5ab2` (876 objects; campaign/status/2026-11-14-merge-296/). |
@@ -46,7 +47,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
 with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132), merged 2026-11-14.** The archived `CfgFacts` draft is superseded. The approved
-Hardness CfgFacts import stays separate. Next free gate 135 (134: the SAT linear-verifier reader). Use complete
+Hardness CfgFacts import stays separate. Next free gate 136. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.
 
