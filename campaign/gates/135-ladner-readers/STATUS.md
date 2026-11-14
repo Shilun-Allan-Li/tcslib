@@ -1,2 +1,2 @@
-**Not yet clear to merge: #302.** Gate 135 (Codex) dispatched (prompt.md, exchange `7c8981c9`) on evidence at campaign `b313afe5`; a fresh replay on the campaign after #300 is running.
-The 7 Ladner owner readers R1-R6 (approved 2026-11-14). 403-module replay passes; 7 seals and 34 controls pass; screen unchanged.
+**Gate 135 closed: round 1 CLEAR** (0/0/0, 13 notes; `findings.md`) on evidence at campaign `b313afe5`.
+**#302 becomes clear to merge** once the fresh replay on the campaign after #300 (`aeeda364`) passes; it is running.
