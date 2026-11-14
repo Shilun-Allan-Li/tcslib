@@ -1,0 +1,102 @@
+## Promotion-list searches (base tree eff2dcd0a, TCSlib/), run 2026-11-14T04:31:37Z
+### grep -rn "simulate_eq_of_abs" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:29:along every run (`Games.simulate_eq_of_abs_bounded`). Drawing the seed uniformly then gives fresh
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:255:(`simulate_eq_of_abs_bounded`, `comp_pkAbs`). Drawing `ω` uniformly gives fresh nonces
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:319:      simulate_eq_of_abs_bounded _ _ (pkAbs q atkBit b n) (fun s => s.1) (q.eval n)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:31:along equal length functions (`Games.simulate_castImpl_toCompOn`), and `Games.simulate_eq_of_abs`
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:186:`simulate_eq_of_abs`, `comp_acAbs`). -/
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean:226:    simulate_eq_of_abs _ _ (acAbs S cap ist n) (comp_acAbs S cap ist b n hist pk sk ω),
+### grep -rn "expect_simulate_congr" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:244:agree (`ProbComp.expect_simulate_congr`); the game's codec and lengths are the reduction's
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:271:  rw [h1, expect_simulate_congr _ _ (fun i x s g => expect_indImpl_fImpl _ atkBit b n _ _ hct
+eff2dcd0a:TCSlib/Cryptography/Games/Hopping.lean:40:* `ProbComp.expect_simulate_congr`: implementations with the same laws simulate alike.
+eff2dcd0a:TCSlib/Cryptography/Games/Hopping.lean:384:theorem expect_simulate_congr {ι : Type} {spec : OracleSpec ι} {σ α : Type}
+### grep -rn "expect_eImpl" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:28:`κ` queries (`expect_eImpl`); the proof resamples one tape at a time
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:42:* `PRFGame.expect_eImpl`: tapes in advance have the distribution of fresh nonces.
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:237:theorem expect_eImpl (κ : ℕ) {α : Type} (G : α → ℝ) (c : OracleComp (bitSpec ins outs) α)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:30:nonces (`PRFGame.expect_eImpl`).
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:256:(`expect_eImpl`). Widths are transported by `ofFn_evalFn_toCompOn`, `expect_fImpl_width` and
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:333:    expect_eImpl _ _ _ _ _ _ _ (q.eval n)
+### grep -rn "extTape" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1275:    let nextTape := counterPatch ct cp ((counterWord w (n + 1)).map e)
+eff2dcd0a:TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1285:    obtain ⟨body, bs⟩ := counter_body e M a exit cn nextTape cp w.length (τ cn) ha ht hg
+eff2dcd0a:TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1289:          (counterLoopOrbit M τ c (n + 1)) nextTape cp := by
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:229:`𝔼_{T ← ({0,1}^n)^κ} 𝔼[G (simulate (eImpl (extTape T)) c (j, s))] =
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:234:continuation runs from `j + 1`, so it ignores `T j` (`simulate_eImpl_congr`, `extTape_update`);
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:241:        (fun T => expect (simulate (eImpl ins outs d n atk b f (AdaptiveCPA.extTape T)) c (j, s))
+### grep -rn "expect_sample_coord" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:29:(`ProbComp.expect_sample_coord`), using that the run from the counter `j` ignores the tapes
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:235:`ProbComp.expect_sample_coord` replaces `T j` by the fresh sample of `fImpl`. The other
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:272:      refine (ProbComp.expect_sample_coord jj (fun r T => expect (simulate
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:27:  (`ProbComp.expect_sample_coord`), using that the run from a history of length `j + 1` ignores the
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:242:`ProbComp.expect_sample_coord` replaces `T j` by fresh coins; then apply the induction
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:272:          refine (expect_sample_coord j (fun r T => expect (simulate
+### grep -rn "def ovr" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:102:def ovr (b : Bool) (st : LState n d) (R : (Fin n → Bool) → (Fin n → Bool)) :
+### grep -rn "toCompOn_budget_eq" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:758:   it never queries. Its run at budget `1` is its run at T2's budget (`NUPPT.toCompOn_budget_eq`;
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:22:(`Games.buildComp_budget_eq`, `Complexity.NUPPT.toCompOn_budget_eq`), output-length transport
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:529:the run at T2's budget (`NUPPT.toCompOn_budget_eq`: the handler asks at most one query,
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:577:  rw [NUPPT.toCompOn_budget_eq Sim₀ _ n 1 _ z (φ (ω, rA)) hK (by
+eff2dcd0a:TCSlib/Cryptography/Games/Machines.lean:46:* `Games.buildComp_budget_eq`, `NUPPT.toCompOn_budget_eq`: a computation at budget `K ≥ j` that
+eff2dcd0a:TCSlib/Cryptography/Games/Machines.lean:270:theorem _root_.Complexity.NUPPT.toCompOn_budget_eq {spec : OracleSpec ι} (D : NUPPT) {β : Type}
+### grep -rn "buildComp_budget_eq" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:22:(`Games.buildComp_budget_eq`, `Complexity.NUPPT.toCompOn_budget_eq`), output-length transport
+eff2dcd0a:TCSlib/Cryptography/Games/Machines.lean:46:* `Games.buildComp_budget_eq`, `NUPPT.toCompOn_budget_eq`: a computation at budget `K ≥ j` that
+eff2dcd0a:TCSlib/Cryptography/Games/Machines.lean:186:theorem buildComp_budget_eq {spec : OracleSpec ι} (next : QueryLog spec → Move spec α) (t : α) :
+eff2dcd0a:TCSlib/Cryptography/Games/Machines.lean:269:`D.toCompOn codec n j x r = D.toCompOn codec n K x r` (`buildComp_budget_eq`). -/
+eff2dcd0a:TCSlib/Cryptography/Games/Machines.lean:276:  exact buildComp_budget_eq _ _ j K [] hjK hc
+### grep -rn "exists_reparam_advice" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Complexity/Randomized/Closure.lean:37:| `exists_reparam_advice φ p` | advice `⟨1^{φ n}, A.advice (φ n)⟩`; cut `A.coins (φ n)` coins | `pairTakePoly`, `eval_mono` |
+eff2dcd0a:TCSlib/Complexity/Randomized/Closure.lean:62:* `Complexity.NUPPT.exists_reparam_advice` — parameter change along a polynomially bounded
+eff2dcd0a:TCSlib/Complexity/Randomized/Closure.lean:325:theorem exists_reparam_advice (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr)
+eff2dcd0a:TCSlib/Complexity/Randomized/PPT.lean:77:evaluating its coin polynomial at `ℓ(n)` (`exists_reparam_advice` with `φ := ℓ.eval`); for
+eff2dcd0a:TCSlib/Complexity/Randomized/PolyExpr.lean:71:`Complexity.NUPPT.exists_reparam_advice` (an abstract `φ : ℕ → ℕ` with a `PolyExpr`
+eff2dcd0a:TCSlib/Cryptography/Asymptotic/CollectionShift.lean:229:  obtain ⟨B, hBc, hB⟩ := A.exists_reparam_advice (fun m => m - c) .var
+### grep -rn "acceptProb_reparam_advice" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Asymptotic/Ensembles.lean:385:discarding the unread coins (`EnsembleLemmas.acceptProb_reparam_advice`: the coin split
+eff2dcd0a:TCSlib/Cryptography/Asymptotic/Ensembles.lean:413:  rw [EnsembleLemmas.acceptProb_reparam_advice hAc hA (ℓ.eval n) hle',
+eff2dcd0a:TCSlib/Cryptography/Asymptotic/Ensembles.lean:414:    EnsembleLemmas.acceptProb_reparam_advice hAc hA (ℓ.eval n) hle', hφn]
+eff2dcd0a:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:54:* `TCSlib.Cryptography.EnsembleLemmas.acceptProb_reparam`, `acceptProb_reparam_advice`,
+eff2dcd0a:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:291:theorem acceptProb_reparam_advice {σ : Type*} [Fintype σ] {A D : NUPPT} {φ : ℕ → ℕ} {p : PolyExpr}
+### grep -rn "eval_toOracleAdversary_width" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:228:theorem eval_toOracleAdversary_width (D : NUPPT) (n q : ℕ) (c : D.Coins n) {m : ℕ} (hm : m = n)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:257:`eval_toOracleAdversary_width`. -/
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:303:    rw [eval_toOracleAdversary_width D n _ _ (PolyExpr.eval_var n), hφ₄, ← hQ, key,
+### grep -rn "cntRead" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:27:The per-entry readings of a log are `Games.cntRead` and `Games.ansRead`.
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:35:* `NMCCA2.length_logEmit_cntRead`, `NMCCA2.logEmit_ansRead`: counting the entries of a log and
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:61:/-- **Counting the entries:** `|logEmit cntRead ⟦h⟧| = |h|`. -/
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:62:theorem length_logEmit_cntRead (h : QueryLog (bitSpec din dout)) :
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:63:    (logEmit cntRead ((bitCodec din dout dα).encodeLog h)).length = h.length := by
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:64:  rw [logEmit_encodeLog _ cntRead (fun _ => [true]) (by rw [cntRead_eq]; rfl)
+### grep -rn "logEmit" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:35:* `NMCCA2.length_logEmit_cntRead`, `NMCCA2.logEmit_ansRead`: counting the entries of a log and
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:61:/-- **Counting the entries:** `|logEmit cntRead ⟦h⟧| = |h|`. -/
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:62:theorem length_logEmit_cntRead (h : QueryLog (bitSpec din dout)) :
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:63:    (logEmit cntRead ((bitCodec din dout dα).encodeLog h)).length = h.length := by
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:64:  rw [logEmit_encodeLog _ cntRead (fun _ => [true]) (by rw [cntRead_eq]; rfl)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:69:/-- **Collecting the answers:** `logEmit ansRead ⟦h⟧` is the concatenation of the entries'
+### grep -rn "length_logEmit_cntRead" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:35:* `NMCCA2.length_logEmit_cntRead`, `NMCCA2.logEmit_ansRead`: counting the entries of a log and
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:62:theorem length_logEmit_cntRead (h : QueryLog (bitSpec din dout)) :
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:214:`j` (`length_logEmit_cntRead`), so for `j < ℓ(n)` the round asks block `j` (its offset is
+eff2dcd0a:TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:266:      rw [dCnt, hL, length_logEmit_cntRead, hhist, List.length_map, List.length_range]
+### grep -rn "prfAdv_prfReduction" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:286:private theorem prfAdv_prfReduction (atkBit b : Bool) (A : NUPPT) (q : PolyExpr) (D : NUPPT)
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:324:`prfAdv(F_n, D_b)` of its random-function experiment (`prfAdv_prfReduction`), and the two
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:360:    rw [advantage_eq, prfAdv_prfReduction F E hE hFE atkBit false A q D₀ hD₀ n hn,
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:361:      prfAdv_prfReduction F E hE hFE atkBit true A q D₁ hD₁ n hn]
+eff2dcd0a:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:398:1. *PRF → random function* (`PRFGame.exists_prfReduction`, `prfAdv_prfReduction`): for each bit
+### grep -rn "theorem prfAdv_eq" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean:87:theorem prfAdv_eq [Fintype K] [Fintype I] [DecidableEq I] [Fintype O] [Fintype ρ]
+### grep -rn "def lookup" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:349:def lookup (v : List Bool) : List Bool :=
+### grep -rn "tblEnc" TCSlib --include=*.lean (first 6 hits)
+eff2dcd0a:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:53:* `TCSlib.Cryptography.GGMRed.tblEnc`, `GGMRed.tblOf`, `GGMRed.lookup` — the lazily sampled
+eff2dcd0a:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:180:def tblEnc (tbl : List (List Bool × List Bool)) : List Bool :=
+eff2dcd0a:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:185:theorem tblEnc_append_single (tbl : List (List Bool × List Bool)) (e : List Bool × List Bool) :
+eff2dcd0a:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:186:    tblEnc (tbl ++ [e]) = tblEnc tbl ++ pairEncode (pairEncode e.1 e.2) [] := by
+eff2dcd0a:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:188:  | nil => simp [tblEnc]
+eff2dcd0a:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:190:    simp only [List.cons_append, tblEnc, List.foldr_cons] at ih ⊢

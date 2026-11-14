@@ -1,0 +1,71 @@
+# preflight 2026-11-14T03:16:36Z (checkout /workspace/ett, a git worktree of the local clone; own .lake)
+## nproc
+4
+## cgroup v1 memory.limit_in_bytes
+9223372036854771712
+## cgroup v1 memory.usage_in_bytes
+2971496448
+## cgroup v1 memory.stat
+cache 44904448
+rss 9400320
+rss_huge 0
+shmem 17035264
+mapped_file 31199232
+dirty 49152
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 17945
+pgpgout 4724
+pgfault 8230
+pgmajfault 35
+inactive_anon 11964416
+active_anon 4096
+inactive_file 22548480
+active_file 5324800
+unevictable 14471168
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 2955743232
+total_rss 16011264
+total_rss_huge 0
+total_shmem 17035264
+total_mapped_file 34750464
+total_dirty 473088000
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 592416
+total_pgpgout 340182
+total_pgfault 414680
+total_pgmajfault 1159
+total_inactive_anon 17756160
+total_active_anon 24576
+total_inactive_file 2577100800
+total_active_file 361611264
+total_unevictable 15134720
+## /proc/meminfo
+MemTotal:       16473776 kB
+MemFree:        13241580 kB
+MemAvailable:   16061500 kB
+Buffers:          141884 kB
+Cached:          2744416 kB
+## df -B1 (clone /workspace/ett, scratch /workspace/ett-work, /tmp)
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 29944307712 13927960576  69% /
+/dev/vda       270553174016 29944307712 13927960576  69% /
+/dev/vda       270553174016 29944307712 13927960576  69% /
+## df -T
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 29242488  13601524  69% /
+/dev/vda       ext4 264212084 29242488  13601524  69% /
+/dev/vda       ext4 264212084 29242488  13601524  69% /
+## headroom computation
+cgroup v1 limit 9223372036854771712 (effectively unlimited: > MemTotal 16869146624); headroom = MemAvailable = 16442974208 B = 15.31 GiB
+(usage_in_bytes - total_cache + total_shmem = 37396480 B in use)
+disk free on clone fs: 13927960576 B = 12.97 GiB (floor 12 GiB)
+PREFLIGHT PASS

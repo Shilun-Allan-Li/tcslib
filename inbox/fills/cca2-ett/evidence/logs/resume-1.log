@@ -1,0 +1,37 @@
+## resume after host restart: 2026-11-14T03:48:19Z
+## uptime
+ 03:48:19 up 0 min,  0 user,  load average: 0.00, 0.00, 0.00
+## dmesg (boot lines: the VM was restarted from a snapshot; the background bootstrap was terminated)
+[    0.000000] Linux version 6.18.44-fc-v470 (builder@sandboxing) (gcc (GCC) 15.3.0, GNU ld (GNU Binutils) 2.46) #1 SMP PREEMPT_DYNAMIC @0
+[    0.000000] Command line: console=ttyS0 quiet reboot=k panic=1 nomodule random.trust_cpu=1 swiotlb=noforce psi=1 nvproxy.enable=1 page_reporting.page_reporting_order=11 deferred_init=lazy ipv6.disable=1 dhash_entries=131072 ihash_entries=65536 rdinit=/process_api -- --firecracker-init --addr 0.0.0.0:2024 --max-ws-buffer-size 32768 --block-local-connections --log-vsock-port 5002 --control-vsock-port 5001 --listen-vsock-port 2024 --tcp-readiness-only
+[    0.000000] BIOS-provided physical RAM map:
+[    1.241154] random: crng reseeded due to virtual machine fork
+## bootstrap state before resume (modules completed)
+198
+## bootstrap.log tail (module 199 started, no end line: interrupted by the restart, not by Lean)
+end 2026-11-14T03:36:36Z status=0
+=== TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge
+start 2026-11-14T03:36:36Z
+## nproc
+4
+## cgroup v1 memory
+limit_in_bytes 9223372036854771712
+usage_in_bytes 83431424
+total_cache 65654784
+total_rss 17809408
+total_shmem 17035264
+total_inactive_file 29143040
+total_active_file 19480576
+## /proc/meminfo
+MemTotal:       16473776 kB
+MemFree:        16346464 kB
+MemAvailable:   16257636 kB
+Buffers:            9588 kB
+Cached:            54512 kB
+## df -B1 / df -T (clone /workspace/ett)
+/dev/vda       270553174016 32912318464 10959949824  76% /
+/dev/vda       ext4 264212084 32140936  10703076  76% /
+## no oom events: memory.oom_control
+oom_kill_disable 0
+under_oom 0
+oom_kill 0
