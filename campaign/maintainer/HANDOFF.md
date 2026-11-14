@@ -10,14 +10,13 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 ## 0. Current state (2026-11-14; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
-only go directly after fetch/rebase. The latest merge is #296 (RO-1, gate 132).
-Campaign Lean is `5ab222167eb12664d97d255766c5def15b6d5d50`. Its replay output
-is the cloud snapshot `oleans-c5ab2` (876 objects); use it whole. See
-campaign/status/2026-11-14-merge-296/. Earlier merges are in the table.
+only go directly after fetch/rebase. The latest merge is #301 (LD9 SAT reader, gate 134).
+Campaign Lean is `b313afe522991f2114390952f26ffe7de825bace`. Its replay output is the cloud snapshot `oleans-cb313`
+(876 objects); use it whole. See campaign/status/2026-11-14-merge-301/. Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
-| #301 / 134 | **Clear to merge.** Gate 134 closed: round 1 CLEAR (0/0/0, 7 notes) at `785e34262460b8ad9330e3c403ebfa76cc641cc1`. Replay on campaign Lean `5ab22216` (still current); merges cleanly. Draft: mark ready, then merge. |
+| #301 / 134 | **Merged** at `b313afe522991f2114390952f26ffe7de825bace` (2026-11-14). Gate closed (CLEAR). Its replay output is the campaign snapshot `oleans-cb313` (876 objects; campaign/status/2026-11-14-merge-301/). |
 | #300 / 133 | **Not yet clear to merge.** Round 1 (Codex) **HOLD**: G133-01 major (`dataTM_ready` reads the new transport by definition), G133-02 minor (base comparison counted a guard-only failure). Repair and round 2 in progress. See campaign/gates/133-call-clean-oblivious-readers/. |
 | #296 / 132 | **Merged** at `5ab222167eb12664d97d255766c5def15b6d5d50` (2026-11-14). Gate closed (round 3 CLEAR). Its replay output is the campaign snapshot `oleans-c5ab2` (876 objects; campaign/status/2026-11-14-merge-296/). |
 | #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
