@@ -1,4 +1,4 @@
-**Not yet clear to merge: #296.** Gate 132 round 3 pack at `befb73f9` (pack-r3.md); the Codex bundle is being staged.
+**Not yet clear to merge: #296.** Gate 132 round 3 (Codex) is ready to dispatch: pack-r3.md, prompt-r3.md, bundle staged at exchange `17ae49c5`.
 - Round 2 (Codex) HOLD, one minor: G132-04, `Bidirectional.foldCfg_run`'s `zero` case, an uncited one-step run.
 - Repaired in `befb73f9` with round 2's proposed replacement; Bidirectional joins the PR (70 files, 69 citing owners).
 - Round 3 evidence: 403-module replay passes; no new failing seal root (30/70 owners pass at head, 26 at base);
