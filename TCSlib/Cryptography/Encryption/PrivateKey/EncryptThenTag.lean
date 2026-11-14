@@ -12,6 +12,7 @@ import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Games
 import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Handler
 import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Reduction
 import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Transfer
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Forgery
 import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
@@ -577,6 +578,26 @@ private theorem cca_tag_step (A : NUPPT) (q : PolyExpr) (b : Bool) :
         prfAdv (F (2 * n)) (D.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n))) := by
   obtain ⟨D, hD⟩ := exists_tagStep F E hE hFE A q b
   exact ⟨D, fun n => by rw [accept_cca_indGame, hD n]⟩
+
+/-- **Step 2: fresh decryption queries are rejected** [PS10, Thm 170.4, proof]. For `n > 0`, the
+experiments with a random tag function without and with the rejection of fresh pairs, averaged
+over the key `k₁`, differ by at most `q(n) / 2^{2n}`.
+
+**Proof sketch.** `ETTGame.abs_ettAcc_rej_sub_le` for each `k₁` (the ciphertexts have
+`6n + 4 = ettCt(n)` bits and the challenge queries `2n`), averaged over `k₁`
+(`abs_expect_sub_le`). -/
+private theorem cca_rej_step (A : NUPPT) (Q : ℕ) (b : Bool) (n : ℕ) (hn : 0 < n) :
+    |expect (sample (Fin n → Bool)) (fun k₁ =>
+          expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool))) fun R =>
+            ettAcc (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n) (ettCt.eval n) n
+              (F n k₁) R false b A Q) -
+        expect (sample (Fin n → Bool)) (fun k₁ =>
+          expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool))) fun R =>
+            ettAcc (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n) (ettCt.eval n) n
+              (F n k₁) R true b A Q)| ≤ Q * ((2 : ℝ) ^ (2 * n))⁻¹ :=
+  abs_expect_sub_le _ fun k₁ => abs_ettAcc_rej_sub_le _ _ _ n (F n k₁) b hn (ettCt_eval n)
+    (by show (ettDin 2).eval n = n + n; rw [ettDin_two, PolyExpr.eval_add, PolyExpr.eval_var])
+    A Q
 
 end Proof
 

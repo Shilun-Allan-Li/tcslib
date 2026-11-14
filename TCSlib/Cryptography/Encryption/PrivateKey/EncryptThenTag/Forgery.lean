@@ -1,0 +1,536 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Games
+import TCSlib.Cryptography.Games.Hopping
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Fresh decryption queries are rejected
+
+Step 2 of [PS10, Theorem 170.4]: with a random tag function `R` on `2n` bits, the experiment that
+answers every valid decryption query (`rej = false`) and the experiment that rejects the valid
+queries whose pair `r ‖ c₁` is not the pair of an earlier `Enc′` answer (`rej = true`) differ by at
+most `q / 2^{2n}` for an adversary making at most `q` queries.
+
+* *Identical until bad.* The two experiments draw the same nonces and agree until the first
+  decryption query that is not refused, is valid and has a fresh pair (`hitW`); the flag of
+  `ettBad` records it (`ettBad_agree`, `ettBad_stick`), and forgetting the flag gives `ettImpl`
+  (`simulate_ettBad_fst`).
+* *The bad probability.* In the rejecting experiment the answers never read `R` outside the
+  revealed pairs (the pairs of the `Enc′` answers and of the challenge). Averaging over `R`, write
+  `R` overridden on the revealed pairs by a table `M` (`ovr`): an encryption at a new pair moves
+  the value `R p` into the table (`expect_sample_ovr`), and a decryption query with a fresh pair
+  guesses the unrevealed `R p`, with probability at most `2^{-2n}`. A valid query with the
+  challenge's pair is the challenge itself, for `n > 0` (canonical parsing, `eq_ctW_of_wfW`), and is
+  refused. The union bound over the queries gives `q / 2^{2n}` (`expect_prob_bad_le`).
+
+## Main results
+
+* `ETTGame.ettBad_agree`, `ettBad_stick`, `simulate_ettBad_fst`.
+* `ETTGame.abs_prob_ettImpl_rej_sub_le`: identical until bad.
+* `ETTGame.expect_prob_bad_le`: the bad probability with a random tag function.
+* `ETTGame.abs_ettAcc_rej_sub_le`: step 2, for machine adversaries.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+  Theorem 170.4 (book pp. 170–171).
+* [BR06] M. Bellare, P. Rogaway, *The Security of Triple Encryption and a Framework for
+  Code-Based Game-Playing Proofs*, EUROCRYPT 2006 (identical until bad).
+-/
+
+namespace TCSlib.Cryptography.Composability.ETTGame
+
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp
+
+/-! ### Identical until bad -/
+
+section Agree
+
+variable (ins outs : Fin 3 → ℕ) (d n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool))
+  (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (b : Bool)
+
+/-- **From a good state the two experiments agree on good successors:** for every function `G`
+vanishing on flagged states, the calls of `ettBad … false` and `ettBad … true` have the same
+expectation of `G`.
+
+**Proof sketch.** Both draw the same nonce and raise the flag by the same `hitQ`; only a
+decryption answer reads `rej`, and off the flag the two answers agree (`decAnsW_agree`). -/
+theorem ettBad_agree (i : Fin 3) (x : (bitSpec ins outs).dom i) (s : St n d × Bool)
+    (hs : ¬ s.2 = true) (G : (bitSpec ins outs).rng i × (St n d × Bool) → ℝ) :
+    expect (ettBad ins outs d n f g false b i x s) (fun ys => if ys.2.2 = true then 0 else G ys) =
+      expect (ettBad ins outs d n f g true b i x s)
+        (fun ys => if ys.2.2 = true then 0 else G ys) := by
+  obtain ⟨s, β⟩ := s
+  have hβ : β = false := Bool.eq_false_iff.2 hs
+  subst hβ
+  rw [ettBad_apply, ettBad_apply, ettImpl_apply, ettImpl_apply]
+  simp only [OracleComp.bind_assoc, OracleComp.pure_bind, expect_bind, expect_pure,
+    Bool.false_or]
+  refine congrArg _ (funext fun r => ?_)
+  match i, x with
+  | 0, m => rw [ettStep_enc, ettStep_enc]
+  | 1, w =>
+    rw [hitQ_one, ettStep_dec, ettStep_dec]
+    by_cases h : hitW g s (List.ofFn w) = true
+    · rw [if_pos h, if_pos h]
+    · rw [Bool.not_eq_true] at h
+      rw [decAnsW_agree f g s _ h]
+  | 2, mm =>
+    obtain ⟨o, T⟩ := s
+    cases o with
+    | some c => rw [ettStep_challenge_some, ettStep_challenge_some]
+    | none => rw [ettStep_challenge_none, ettStep_challenge_none]
+
+/-- **The flag is sticky:** from a flagged state every successor is flagged. -/
+theorem ettBad_stick (rej : Bool) (i : Fin 3) (x : (bitSpec ins outs).dom i) (s : St n d × Bool)
+    (hs : s.2 = true) :
+    (ettBad ins outs d n f g rej b i x s).AllOutputs fun ys => ys.2.2 = true := by
+  rw [ettBad_apply, ettImpl_apply, OracleComp.bind_assoc]
+  refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun r _ => ?_
+  rw [OracleComp.pure_bind]
+  exact OracleComp.allOutputs_pure.2 (by rw [hs, Bool.true_or])
+
+/-- **The flag is a ghost:** forgetting it, the simulation of `ettBad` is the simulation of
+`ettImpl`, from every flag (`simulate_eq_of_abs` with the projection). -/
+theorem simulate_ettBad_fst (rej : Bool) {α : Type} (c : OracleComp (bitSpec ins outs) α)
+    (s : St n d) (β : Bool) :
+    (simulate (ettBad ins outs d n f g rej b) c (s, β)).bind (fun p => .pure (p.1, p.2.1)) =
+      simulate (ettImpl ins outs d n f g rej b) c s := by
+  refine (simulate_eq_of_abs (ettImpl ins outs d n f g rej b) (ettBad ins outs d n f g rej b)
+    Prod.fst (fun i x s => ?_) c (s, β)).symm
+  rw [ettBad_apply, OracleComp.bind_assoc]
+  simp only [OracleComp.pure_bind]
+  exact (OracleComp.bind_pure _).symm
+
+/-- **Identical until bad** [BR06]: for every event `P` on the output, the probabilities under the
+experiments with `rej = false` and `rej = true` differ by at most the probability that the
+rejecting experiment raises the flag.
+
+**Proof sketch.** `identical_until_bad` on `ettBad` (`ettBad_agree`, `ettBad_stick`), with the bad
+probability moved to `rej = true` (`prob_eq_until_bad`) and the flag forgotten
+(`simulate_ettBad_fst`). -/
+theorem abs_prob_ettImpl_rej_sub_le {α : Type} (c : OracleComp (bitSpec ins outs) α)
+    (P : α → Prop) (s : St n d) :
+    |prob (simulate (ettImpl ins outs d n f g false b) c s) (fun p => P p.1) -
+        prob (simulate (ettImpl ins outs d n f g true b) c s) (fun p => P p.1)| ≤
+      prob (simulate (ettBad ins outs d n f g true b) c (s, false)) (fun p => p.2.2 = true) := by
+  classical
+  have hfst : ∀ rej : Bool, prob (simulate (ettImpl ins outs d n f g rej b) c s)
+      (fun p => P p.1) =
+      prob (simulate (ettBad ins outs d n f g rej b) c (s, false)) (fun p => P p.1) := by
+    intro rej
+    rw [← simulate_ettBad_fst ins outs d n f g b rej c s false, prob_bind]
+    simp only [prob_pure]
+    rw [prob_eq_expect]
+  rw [hfst false, hfst true]
+  refine (identical_until_bad (fun st : St n d × Bool => st.2 = true)
+    (fun i x st hst G => ettBad_agree ins outs d n f g b i x st hst G)
+    (fun i x st hst => ettBad_stick ins outs d n f g b false i x st hst)
+    (fun i x st hst => ettBad_stick ins outs d n f g b true i x st hst) c P
+    (s := (s, false)) Bool.false_ne_true).trans (le_of_eq ?_)
+  exact (prob_eq_until_bad (fun st : St n d × Bool => st.2 = true)
+    (fun i x st hst G => ettBad_agree ins outs d n f g b i x st hst G)
+    (fun i x st hst => ettBad_stick ins outs d n f g b false i x st hst)
+    (fun i x st hst => ettBad_stick ins outs d n f g b true i x st hst) c P
+    (s := (s, false)) Bool.false_ne_true).2
+
+end Agree
+
+/-! ### The bad probability with a random tag function -/
+
+section Bound
+
+variable {d n : ℕ}
+
+/-- **The invariant of the revealed pairs** for a table `M` and a state `s`: every key of `M` is a
+listed pair or the challenge's pair; every listed pair is a key; and the recorded challenge is the
+word `⟨r, ⟨c₁, y⟩⟩` of a nonce, an `n`-bit mask and the table's value `y` at their pair. -/
+def RevInv (M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))) (s : St n d) : Prop :=
+  (∀ p ∈ M.map Prod.fst, p ∈ s.2 ∨ ∃ c, s.1 = some c ∧ p = pairW n (List.ofFn c)) ∧
+  (∀ p ∈ s.2, p ∈ M.map Prod.fst) ∧
+  (∀ c, s.1 = some c → ∃ (r : Fin n → Bool) (c₁ : List Bool) (y : Fin (2 * n) → Bool),
+    List.ofFn c = ctW (List.ofFn r) c₁ (List.ofFn y) ∧ c₁.length = n ∧
+    pairV n (List.ofFn r) c₁ ∈ M.map Prod.fst ∧ ∀ R, ovr M R (pairV n (List.ofFn r) c₁) = y)
+
+/-- `RevInv M s` unfolded. -/
+theorem revInv_iff (M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))) (s : St n d) :
+    RevInv M s ↔
+      (∀ p ∈ M.map Prod.fst, p ∈ s.2 ∨ ∃ c, s.1 = some c ∧ p = pairW n (List.ofFn c)) ∧
+      (∀ p ∈ s.2, p ∈ M.map Prod.fst) ∧
+      (∀ c, s.1 = some c → ∃ (r : Fin n → Bool) (c₁ : List Bool) (y : Fin (2 * n) → Bool),
+        List.ofFn c = ctW (List.ofFn r) c₁ (List.ofFn y) ∧ c₁.length = n ∧
+        pairV n (List.ofFn r) c₁ ∈ M.map Prod.fst ∧
+        ∀ R, ovr M R (pairV n (List.ofFn r) c₁) = y) :=
+  Iff.rfl
+
+/-- The empty table and the initial state satisfy the invariant. -/
+theorem revInv_nil : RevInv (d := d) (n := n) [] (none, []) :=
+  ⟨fun _ h => by simp at h, fun _ h => by simp at h, fun _ h => by cases h⟩
+
+/-- An encryption at a pair already in the table keeps the invariant. -/
+private theorem revInv_enc_old {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
+    {s : St n d} (h : RevInv M s) {p : Fin (2 * n) → Bool} (hp : p ∈ M.map Prod.fst) :
+    RevInv M (s.1, p :: s.2) := by
+  obtain ⟨h₁, h₂, h₃⟩ := h
+  refine ⟨fun p' hp' => ?_, fun p' hp' => ?_, h₃⟩
+  · rcases h₁ p' hp' with h | h
+    · exact Or.inl (List.mem_cons_of_mem _ h)
+    · exact Or.inr h
+  · rcases List.mem_cons.1 hp' with rfl | h
+    · exact hp
+    · exact h₂ p' h
+
+/-- An encryption at a new pair `p` with the value `t` keeps the invariant of the extended table. -/
+private theorem revInv_enc_new {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
+    {s : St n d} (h : RevInv M s) {p : Fin (2 * n) → Bool} (hp : p ∉ M.map Prod.fst)
+    (t : Fin (2 * n) → Bool) : RevInv ((p, t) :: M) (s.1, p :: s.2) := by
+  obtain ⟨h₁, h₂, h₃⟩ := h
+  refine ⟨fun p' hp' => ?_, fun p' hp' => ?_, fun c hc => ?_⟩
+  · simp only [List.map_cons, List.mem_cons] at hp'
+    rcases hp' with rfl | hp'
+    · exact Or.inl (List.mem_cons_self ..)
+    · rcases h₁ p' hp' with h | h
+      · exact Or.inl (List.mem_cons_of_mem _ h)
+      · exact Or.inr h
+  · simp only [List.map_cons, List.mem_cons]
+    rcases List.mem_cons.1 hp' with rfl | h
+    · exact Or.inl rfl
+    · exact Or.inr (h₂ p' h)
+  · obtain ⟨r, c₁, y, hw, hl, hk, hy⟩ := h₃ c hc
+    have hne : pairV n (List.ofFn r) c₁ ≠ p := fun h => hp (h ▸ hk)
+    refine ⟨r, c₁, y, hw, hl, ?_, fun R => ?_⟩
+    · simp only [List.map_cons, List.mem_cons]
+      exact Or.inr hk
+    · rw [ovr_cons, Function.update_of_ne hne, hy]
+
+/-- Recording a challenge whose pair is already in the table keeps the invariant. -/
+private theorem revInv_chal_old {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
+    {T : List (Fin (2 * n) → Bool)} (h : RevInv (d := d) M (none, T)) (r : Fin n → Bool)
+    {c₁ : List Bool}
+    (hl : c₁.length = n) (hk : pairV n (List.ofFn r) c₁ ∈ M.map Prod.fst)
+    (y : Fin (2 * n) → Bool) (hy : ∀ R, ovr M R (pairV n (List.ofFn r) c₁) = y) (c : Fin d → Bool)
+    (hc : List.ofFn c = ctW (List.ofFn r) c₁ (List.ofFn y)) : RevInv M (some c, T) := by
+  obtain ⟨h₁, h₂, -⟩ := h
+  refine ⟨fun p hp => ?_, h₂, fun c' hc' => ?_⟩
+  · rcases h₁ p hp with h | ⟨c'', hc'', -⟩
+    · exact Or.inl h
+    · cases hc''
+  · cases hc'
+    exact ⟨r, c₁, y, hc, hl, hk, hy⟩
+
+/-- Recording a challenge at a new pair with the value `t` keeps the invariant of the extended
+table. -/
+private theorem revInv_chal_new {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
+    {T : List (Fin (2 * n) → Bool)} (h : RevInv (d := d) M (none, T)) (r : Fin n → Bool)
+    {c₁ : List Bool}
+    (hl : c₁.length = n) (t : Fin (2 * n) → Bool) (c : Fin d → Bool)
+    (hc : List.ofFn c = ctW (List.ofFn r) c₁ (List.ofFn t)) :
+    RevInv ((pairV n (List.ofFn r) c₁, t) :: M) (some c, T) := by
+  obtain ⟨h₁, h₂, -⟩ := h
+  refine ⟨fun p hp' => ?_, fun p hp' => ?_, fun c' hc' => ?_⟩
+  · simp only [List.map_cons, List.mem_cons] at hp'
+    rcases hp' with rfl | hp'
+    · refine Or.inr ⟨c, rfl, ?_⟩
+      rw [pairW_eq, hc, wR_ctW, wC_ctW]
+    · rcases h₁ p hp' with h | ⟨c'', hc'', -⟩
+      · exact Or.inl h
+      · cases hc''
+  · simp only [List.map_cons, List.mem_cons]
+    exact Or.inr (h₂ p hp')
+  · cases hc'
+    refine ⟨r, c₁, t, hc, hl, ?_, fun R => ?_⟩
+    · simp only [List.map_cons, List.mem_cons, true_or]
+    · rw [ovr_cons, Function.update_self]
+
+/-- The tag of a word read through the pair: `validW g w = (wfW n w && decide (wT w = ⟦g (pairW n w)⟧))`. -/
+private theorem validW_pairW (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (w : List Bool) :
+    validW g w = (wfW n w && decide (wT w = List.ofFn (g (pairW n w)))) := by
+  rw [validW_eq, tagL_eq, pairW_eq]
+
+/-- An encryption reads the tag function at its pair only:
+`encW f g r m = ctW ⟦r⟧ c₁ ⟦g (pairV n ⟦r⟧ c₁)⟧`, `c₁ = maskL f r m`. -/
+private theorem encW_pairV (f : (Fin n → Bool) → (Fin n → Bool))
+    (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (r : Fin n → Bool) (m : List Bool) :
+    encW f g r m = ctW (List.ofFn r) (maskL f r m)
+      (List.ofFn (g (pairV n (List.ofFn r) (maskL f r m)))) := by
+  rw [encW_eq, tagL_eq]
+
+/-- **A fresh guess hits the random tag with probability at most `2^{-2n}`:** under the
+invariant, `𝔼_R [hitW (ovr M R) s w] ≤ 2^{-2n}` for `n > 0`.
+
+**Proof sketch.** A hit needs a pair outside the list. A key of the table outside the list is the
+challenge's pair; there a valid word has the challenge's fields (`eq_of_pairV_eq`), so it is the
+challenge (`eq_ctW_of_wfW`) and is refused. Outside the keys the tag is `R` at the pair
+(`ovr_of_not_mem`), uniform (`expect_sample_coord`, `expect_sample_mem_le`). -/
+private theorem expect_hitW_le (hn : 0 < n) {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
+    {s : St n d} (hM : RevInv M s) (w : List Bool) :
+    expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)))
+        (fun R => if hitW (ovr M R) s w = true then (1 : ℝ) else 0) ≤ ((2 : ℝ) ^ (2 * n))⁻¹ := by
+  have hδ : (0 : ℝ) ≤ ((2 : ℝ) ^ (2 * n))⁻¹ := by positivity
+  by_cases hk : pairW n w ∈ M.map Prod.fst
+  · -- a key: the list or the challenge, and then no hit
+    have h0 : ∀ R, hitW (ovr M R) s w = false := by
+      intro R
+      rw [hitW_eq]
+      obtain ⟨h₁, -, h₃⟩ := hM
+      rcases h₁ _ hk with hl | ⟨c, hc, hp⟩
+      · simp [hl]
+      · obtain ⟨r, c₁, y, hw, hl, -, hy⟩ := h₃ c hc
+        by_cases hv : validW (ovr M R) w = true
+        · have hv' := hv
+          rw [validW_pairW, Bool.and_eq_true, decide_eq_true_eq] at hv'
+          obtain ⟨hwf, ht⟩ := hv'
+          have hwf' := hwf
+          rw [wfW_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq] at hwf'
+          have hpc : pairW n (List.ofFn c) = pairV n (List.ofFn r) c₁ := by
+            rw [pairW_eq, hw, wR_ctW, wC_ctW]
+          rw [hp, hpc, hy] at ht
+          rw [pairW_eq, hpc] at hp
+          obtain ⟨hr, hcc⟩ := eq_of_pairV_eq hwf'.1 hwf'.2 List.length_ofFn hl hp
+          have hweq : w = List.ofFn c := by
+            rw [hw, eq_ctW_of_wfW hn hwf, hr, hcc, ht]
+          rw [hc, refW_some, hweq]
+          simp
+        · rw [Bool.not_eq_true] at hv
+          simp [hv]
+    simp only [h0, Bool.false_eq_true, if_false, expect_const]
+    exact hδ
+  · -- not a key: the tag is `R` at the pair
+    have hle : ∀ R, (if hitW (ovr M R) s w = true then (1 : ℝ) else 0) ≤
+        if R (pairW n w) ∈ [padFin (2 * n) (wT w)] then 1 else 0 := by
+      intro R
+      by_cases h : hitW (ovr M R) s w = true
+      · rw [if_pos h]
+        rw [hitW_eq, Bool.and_eq_true, Bool.and_eq_true, validW_pairW, Bool.and_eq_true,
+          decide_eq_true_eq, ovr_of_not_mem hk] at h
+        rw [if_pos (by rw [List.mem_singleton, h.1.2.2, padFin_ofFn])]
+      · rw [if_neg h]
+        split <;> norm_num
+    refine (expect_mono _ hle).trans ?_
+    rw [expect_sample_coord (pairW n w) (fun t (_ : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) =>
+      if t ∈ [padFin (2 * n) (wT w)] then (1 : ℝ) else 0) (fun _ _ _ => rfl)]
+    simp only [expect_const]
+    refine (expect_sample_mem_le _).trans (le_of_eq ?_)
+    rw [List.length_singleton, Fintype.card_fun, Fintype.card_fin, Fintype.card_bool]
+    push_cast
+    rw [one_div]
+
+end Bound
+
+section Induction
+
+variable (ins outs : Fin 3 → ℕ) (d n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)) (b : Bool)
+
+/-- From a flagged state the simulation ends flagged: its bad probability is `1`. -/
+private theorem prob_bad_of_flag (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) {α : Type}
+    (c : OracleComp (bitSpec ins outs) α) (s : St n d) :
+    prob (simulate (ettBad ins outs d n f g true b) c (s, true)) (fun p => p.2.2 = true) = 1 :=
+  prob_eq_one_of_allOutputs (simulate_allOutputs_bad (fun st : St n d × Bool => st.2 = true)
+    (fun i x st hst => ettBad_stick ins outs d n f g b true i x st hst) c rfl)
+
+/-- One query of the flagged simulation: draw the nonce, take the step, raise the flag by
+`hitQ`, continue. -/
+private theorem prob_simulate_ettBad_query (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool))
+    {α : Type} (i : Fin 3) (x : (bitSpec ins outs).dom i)
+    (k : (bitSpec ins outs).rng i → OracleComp (bitSpec ins outs) α) (s : St n d) :
+    prob (simulate (ettBad ins outs d n f g true b) (.query i x k) (s, false))
+        (fun p => p.2.2 = true) =
+      expect (sample (Fin n → Bool)) fun r =>
+        prob (simulate (ettBad ins outs d n f g true b)
+          (k (ettStep ins outs d n f g true b r i x s).1)
+          ((ettStep ins outs d n f g true b r i x s).2, hitQ ins d n g i x s))
+          (fun p => p.2.2 = true) := by
+  rw [simulate_query, prob_bind, ettBad_apply, ettImpl_apply, OracleComp.bind_assoc, expect_bind]
+  simp only [OracleComp.pure_bind, expect_pure, Bool.false_or]
+
+/-- **The bad probability with a random tag function** [PS10, Thm 170.4, proof]: for `n > 0`,
+`(6n + 4)`-bit records and `2n`-bit challenge queries, from a state and a table with the invariant
+`RevInv`, a computation making at most `m` queries raises the flag of the rejecting experiment
+with probability at most `m / 2^{2n}`, averaged over `R` with the table written over it:
+`𝔼_R Pr[bad | simulate (ettBad … (ovr M R) true b) c (s, false)] ≤ m · 2^{-2n}`.
+
+**Proof sketch.** Induction on `c`. An encryption, or a first challenge, at a pair already in the
+table reads the table only; at a new pair it reads `R` there, which `expect_sample_ovr` moves into
+the table (the invariant follows, `revInv_enc_new`, `revInv_chal_new`). A decryption answer of the
+rejecting experiment reads the tag function only at listed pairs, which are keys, so it does not
+depend on `R`; it raises the flag with probability at most `2^{-2n}` (`expect_hitW_le`), and the
+union bound adds it to the continuation's bound. A repeated challenge reads nothing. -/
+theorem expect_prob_bad_le (hn : 0 < n) (hd : d = 6 * n + 4) (hi2 : ins 2 = n + n) {α : Type}
+    (c : OracleComp (bitSpec ins outs) α) (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m)
+    (M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))) (s : St n d) (hM : RevInv M s) :
+    expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)))
+        (fun R => prob (simulate (ettBad ins outs d n f (ovr M R) true b) c (s, false))
+          (fun p => p.2.2 = true)) ≤ m * ((2 : ℝ) ^ (2 * n))⁻¹ := by
+  have hδ : (0 : ℝ) ≤ ((2 : ℝ) ^ (2 * n))⁻¹ := by positivity
+  induction c generalizing m M s with
+  | pure a =>
+    simp only [simulate_pure, prob_pure, Bool.false_eq_true, if_false, expect_const]
+    positivity
+  | query i x k ih =>
+    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+    have hm1 : 1 ≤ m := hm
+    have IH : ∀ y (M' : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))) (s' : St n d),
+        RevInv M' s' →
+        expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)))
+          (fun R => prob (simulate (ettBad ins outs d n f (ovr M' R) true b) (k y) (s', false))
+            (fun p => p.2.2 = true)) ≤ ((m - 1 : ℕ) : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹ :=
+      fun y M' s' h => ih y (m - 1) (hk y) M' s' h
+    have hm' : ((m - 1 : ℕ) : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹ + ((2 : ℝ) ^ (2 * n))⁻¹ =
+        (m : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹ := by
+      rw [Nat.cast_sub hm1]
+      ring
+    have hle : ((m - 1 : ℕ) : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹ ≤ (m : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹ := by
+      linarith
+    simp only [prob_simulate_ettBad_query]
+    -- a step that reads the tag function at the pair `p` of a fresh nonce
+    have fresh : ∀ (p : (Fin n → Bool) → Fin (2 * n) → Bool)
+        (Y : (Fin n → Bool) → (Fin (2 * n) → Bool) → (bitSpec ins outs).rng i)
+        (S : (Fin n → Bool) → (Fin (2 * n) → Bool) → St n d),
+        (∀ r, p r ∈ M.map Prod.fst → ∀ t, (∀ R, ovr M R (p r) = t) → RevInv M (S r t)) →
+        (∀ r, p r ∉ M.map Prod.fst → ∀ t, RevInv ((p r, t) :: M) (S r t)) →
+        expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool))) (fun R =>
+          expect (sample (Fin n → Bool)) fun r =>
+            prob (simulate (ettBad ins outs d n f (ovr M R) true b)
+              (k (Y r (ovr M R (p r)))) (S r (ovr M R (p r)), false))
+              (fun q => q.2.2 = true)) ≤ (m : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹ := by
+      intro p Y S hold hnew
+      rw [expect_sample_comm]
+      refine (expect_mono _ fun r => ?_).trans ((le_of_eq (expect_const _ _)).trans hle)
+      by_cases hp : p r ∈ M.map Prod.fst
+      · have hc : ∀ R, ovr M R (p r) = ovr M (fun _ => p r) (p r) :=
+          fun R => ovr_of_mem hp R _
+        simp only [hc]
+        exact IH _ M _ (hold r hp _ hc)
+      · have e : ∀ R, ovr M R (p r) = R (p r) := fun R => ovr_of_not_mem hp R
+        simp only [e]
+        rw [expect_sample_ovr M hp (fun t g => prob (simulate (ettBad ins outs d n f g true b)
+            (k (Y r t)) (S r t, false)) (fun q => q.2.2 = true))]
+        refine (expect_mono _ fun t => IH _ _ _ (hnew r hp t)).trans (le_of_eq ?_)
+        exact expect_const _ _
+    match i, x, k, ih, IH, fresh with
+    | 0, x, k, ih, IH, fresh =>
+      simp only [ettStep_enc, hitQ_zero, encW_pairV]
+      exact fresh (fun r => pairV n (List.ofFn r) (maskL f r (List.ofFn x)))
+        (fun r t => padFin _ (ctW (List.ofFn r) (maskL f r (List.ofFn x)) (List.ofFn t)))
+        (fun r _ => (s.1, pairV n (List.ofFn r) (maskL f r (List.ofFn x)) :: s.2))
+        (fun r hp _ _ => revInv_enc_old hM hp) (fun r hp t => revInv_enc_new hM hp t)
+    | 1, w, k, ih, IH, fresh =>
+      simp only [ettStep_dec, hitQ_one, expect_const]
+      -- the answer does not read `R`
+      have hans : ∀ R, decAnsW f (ovr M R) true s (List.ofFn w) =
+          decAnsW f (ovr M (fun _ => pairW n (List.ofFn w))) true s (List.ofFn w) := by
+        intro R
+        rw [decAnsW_eq, decAnsW_eq]
+        by_cases hl : pairW n (List.ofFn w) ∈ s.2
+        · have hkey := hM.2.1 _ hl
+          rw [validW_pairW, validW_pairW, ovr_of_mem hkey R]
+        · simp [hl]
+      simp only [hans]
+      have hsplit : ∀ R, prob (simulate (ettBad ins outs d n f (ovr M R) true b)
+          (k (padFin _ (decAnsW f (ovr M (fun _ => pairW n (List.ofFn w))) true s (List.ofFn w))))
+          (s, hitW (ovr M R) s (List.ofFn w))) (fun q => q.2.2 = true) ≤
+          (if hitW (ovr M R) s (List.ofFn w) = true then (1 : ℝ) else 0) +
+            prob (simulate (ettBad ins outs d n f (ovr M R) true b)
+              (k (padFin _ (decAnsW f (ovr M (fun _ => pairW n (List.ofFn w))) true s
+                (List.ofFn w)))) (s, false)) (fun q => q.2.2 = true) := by
+        intro R
+        by_cases h : hitW (ovr M R) s (List.ofFn w) = true
+        · rw [h, prob_bad_of_flag, if_pos rfl]
+          linarith [prob_nonneg (simulate (ettBad ins outs d n f (ovr M R) true b)
+            (k (padFin _ (decAnsW f (ovr M (fun _ => pairW n (List.ofFn w))) true s
+              (List.ofFn w)))) (s, false)) (fun q => q.2.2 = true)]
+        · rw [Bool.not_eq_true] at h
+          rw [h]
+          simp
+      refine (expect_mono _ hsplit).trans ?_
+      rw [expect_add]
+      have h1 := expect_hitW_le hn hM (List.ofFn w)
+      have h2 := IH (padFin _ (decAnsW f (ovr M (fun _ => pairW n (List.ofFn w))) true s
+        (List.ofFn w))) M s hM
+      linarith
+    | 2, mm, k, ih, IH, fresh =>
+      obtain ⟨o, T⟩ := s
+      cases o with
+      | some c =>
+        simp only [ettStep_challenge_some, hitQ_two, expect_const]
+        exact (IH _ M _ hM).trans hle
+      | none =>
+        have hmsg : (AdaptiveCPA.msgOf n b (List.ofFn mm)).length = n := by
+          have : (List.ofFn mm).length = n + n := by rw [List.length_ofFn, hi2]
+          rw [AdaptiveCPA.msgOf_eq]
+          cases b <;> simp [this]
+        have hl : ∀ r : Fin n → Bool,
+            (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))).length = n :=
+          fun r => length_maskL f r hmsg
+        have hrec : ∀ (r : Fin n → Bool) (t : Fin (2 * n) → Bool),
+            List.ofFn (padFin d (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b
+              (List.ofFn mm))) (List.ofFn t))) =
+            ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn mm))) (List.ofFn t) := by
+          intro r t
+          refine ofFn_padFin_of_length ?_
+          rw [ctW_eq, length_pairEncode, length_pairEncode, List.length_ofFn, hl r,
+            List.length_ofFn, hd]
+          omega
+        simp only [ettStep_challenge_none, hitQ_two, encW_pairV]
+        exact fresh (fun r => pairV n (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b
+            (List.ofFn mm))))
+          (fun r t => padFin _ (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b
+            (List.ofFn mm))) (List.ofFn t)))
+          (fun r t => (some (padFin d (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b
+            (List.ofFn mm))) (List.ofFn t))), T))
+          (fun r hp t ht => revInv_chal_old hM r (hl r) hp t ht _ (hrec r t))
+          (fun r _ t => revInv_chal_new hM r (hl r) t _ (hrec r t))
+
+/-- Expectations of functions within a pointwise bound of each other:
+`(∀ x, |f x - g x| ≤ h x) → |𝔼 f - 𝔼 g| ≤ 𝔼 h`. -/
+private theorem abs_expect_sub_le_expect {β : Type} (c : ProbComp β) {f g h : β → ℝ}
+    (hb : ∀ x, |f x - g x| ≤ h x) : |expect c f - expect c g| ≤ expect c h := by
+  rw [← expect_sub, abs_le]
+  constructor
+  · have := expect_mono c fun x => (neg_le_of_abs_le (hb x))
+    rw [show (fun x => -h x) = fun x => (-1) * h x from funext fun x => by ring,
+      expect_const_mul] at this
+    linarith
+  · exact expect_mono c fun x => le_of_abs_le (hb x)
+
+/-- **Step 2 of [PS10, Thm 170.4]: fresh decryption queries are rejected.** For `n > 0`,
+`(6n + 4)`-bit records and `2n`-bit challenge queries, and a machine adversary `A` with budget `Q`,
+the acceptance probabilities in the experiments with and without the rejection of fresh pairs,
+averaged over a uniform random tag function `R`, differ by at most `Q / 2^{2n}`.
+
+**Proof sketch.** For each of `A`'s coins and each `R`, identical until bad
+(`abs_prob_ettImpl_rej_sub_le`); average over `R` (`abs_expect_sub_le_expect`) and bound the bad
+probability from the empty table (`expect_prob_bad_le`, `revInv_nil`, `ovr_nil`); average over the
+coins (`abs_expect_sub_le`). -/
+theorem abs_ettAcc_rej_sub_le (hn : 0 < n) (hd : d = 6 * n + 4) (hi2 : ins 2 = n + n)
+    (A : NUPPT) (Q : ℕ) :
+    |expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)))
+          (fun R => ettAcc ins outs d n f R false b A Q) -
+        expect (sample ((Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)))
+          (fun R => ettAcc ins outs d n f R true b A Q)| ≤ Q * ((2 : ℝ) ^ (2 * n))⁻¹ := by
+  classical
+  simp only [ettAcc_eq]
+  rw [expect_sample_comm (α := (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (β := A.Coins n),
+    expect_sample_comm (α := (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (β := A.Coins n)]
+  refine abs_expect_sub_le _ fun r => ?_
+  refine (abs_expect_sub_le_expect (h := fun R => prob (simulate (ettBad ins outs d n f R true b)
+      (A.toComp (bitCodec ins outs 1) n Q r) ((none, []), false)) (fun p => p.2.2 = true)) _
+      fun R => ?_).trans ?_
+  · have h := abs_prob_ettImpl_rej_sub_le ins outs d n f R b (A.toComp (bitCodec ins outs 1) n Q r)
+      (fun a => (List.ofFn a).headD false = true) (none, [])
+    rw [prob_eq_expect, prob_eq_expect] at h
+    exact h
+  · have h := expect_prob_bad_le ins outs d n f b hn hd hi2 (A.toComp (bitCodec ins outs 1) n Q r)
+      Q (A.toComp_costBoundedBy _ n Q r) [] (none, []) revInv_nil
+    simp only [ovr_nil] at h
+    exact h
+
+end Induction
+
+end TCSlib.Cryptography.Composability.ETTGame
