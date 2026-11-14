@@ -7,18 +7,17 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-11T19:34:37.561713-08:00; authoritative)
+## 0. Current state (2026-11-14; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
-only go directly after fetch/rebase. #243 and #244 merged after #245–#247.
-Campaign Lean is `ef98f1685ddfb8da40d8e97890c0fff6d145523b`. The 82-module
-combined replay matches the actual #244 merge at all 1,004 Lean blobs and
-896 physical object hashes. Use the whole `oleans-pr243-244-current`
-snapshot. See campaign/status/2026-11-09-merge-243-244/.
+only go directly after fetch/rebase. The latest merge is #296 (RO-1, gate 132).
+Campaign Lean is `5ab222167eb12664d97d255766c5def15b6d5d50`. Its replay output
+is the cloud snapshot `oleans-c5ab2` (876 objects); use it whole. See
+campaign/status/2026-11-14-merge-296/. Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
-| #296 / 132 | **Clear to merge.** Gate 132 closed: round 3 CLEAR (0/0/0, 9 notes) at `befb73f97a63ce449fe1a9a1b7dfc3fdbda65969` (rounds 1 and 2 HOLD, repaired). Replay on campaign Lean `7b6bd168` (still current); merges cleanly. Draft: mark ready, then merge; then adopt `oleans-ro1r3-c7b6b`. |
+| #296 / 132 | **Merged** at `5ab222167eb12664d97d255766c5def15b6d5d50` (2026-11-14). Gate closed (round 3 CLEAR). Its replay output is the campaign snapshot `oleans-c5ab2` (876 objects; campaign/status/2026-11-14-merge-296/). |
 | #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
 | #242 / 122 | **Merged** at `7b6bd1685a1436313dfbc13ce191f40c7dd065d3` (2026-11-12). Gate closed. Its replay output is the campaign snapshot `oleans-c7b6b` (campaign/status/2026-11-12-merge-242/). |
@@ -45,7 +44,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 `runFrom_succ_eq_step`, with no import changes, and is added to the file's
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
-with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132).** The archived `CfgFacts` draft is superseded. The approved
+with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132), merged 2026-11-14.** The archived `CfgFacts` draft is superseded. The approved
 Hardness CfgFacts import stays separate. Next free gate 133. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.

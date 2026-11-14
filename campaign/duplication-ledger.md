@@ -1204,7 +1204,7 @@ vendored file's local modifications. It needs no import changes and also covers 
 `bufferedScanCfg_run`, which the `CfgFacts` home could not reach (cycle through `StateRenaming`).
 The proposal is `campaign/items/dedup/overnight-2026-11-08/review/ro1-deterministic-option/`. It
 is rebuilt after #251, #241 and #242 merge.
-**Rebuilt (2026-11-12/13):** draft PR #296, gate 132, at `befb73f9` after round 1's HOLD (G132-01/02:
+**Rebuilt (2026-11-12/13):** PR #296 (merged 2026-11-14 at `5ab22216`), gate 132, at `befb73f9` after round 1's HOLD (G132-01/02:
 eighteen further one-step sites, three owners outside the PR) and round 2's (G132-04: `Bidirectional`'s
 `foldCfg_run` base, a one-step run written with the successor and zero equations). It cites the lemma in
 69 owners and deletes the five copies (the Bool-only public one and four privates). Round 2's library-wide
