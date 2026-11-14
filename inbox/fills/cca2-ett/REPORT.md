@@ -1,11 +1,49 @@
-# Fill cca2-ett — checkpoint 1 (step 1: the tag key becomes a random function)
+# Fill cca2-ett — checkpoint 2 (steps 1 and 2)
 
 **Unit** `cca2-ett` · **Worker** Claude · **Issue base** `eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9`
 (`cryptography/pass-shelat-ch2-4`, the merge of #299) · **Proof branch** `fill/cca2-ett` (local),
-checkpoint commit `9015e943d` · **Lean** 4.25.0, Mathlib at the base's manifest.
+checkpoints `9015e943d` (1) and `9262d2ba6` (2) · **Lean** 4.25.0, Mathlib at the base's manifest.
 
-**Target status at this checkpoint:** `Composability.ccaScheme_cca2` is still `sorry`. Step 1 of the
-route is proved (no `sorry`); steps 2 and 3 are in progress.
+**Target status at this checkpoint:** `Composability.ccaScheme_cca2` is still `sorry`. Steps 1 and 2
+of the route are proved (no `sorry`); step 3 is in progress.
+
+## 0. Checkpoint 2: step 2, as proved
+
+New helper `EncryptThenTag/Forgery.lean` (536 lines) and, in the owned file, `cca_rej_step`: for
+`n > 0`, a machine adversary `A` with budget `Q` and a bit `b`,
+
+`|𝔼_{k₁} 𝔼_R ettAcc(f_{k₁}, R, rej = false, b) − 𝔼_{k₁} 𝔼_R ettAcc(f_{k₁}, R, rej = true, b)| ≤ Q / 2^{2n}`
+
+(`ETTGame.abs_ettAcc_rej_sub_le`, averaged over `k₁`). The route of the brief: couple both
+experiments with the same tapes and random function; they agree until the first fresh valid query.
+- *Identical until bad* (`ettBad_agree`, `ettBad_stick`, `simulate_ettBad_fst`,
+  `abs_prob_ettImpl_rej_sub_le`): `identical_until_bad` with the flag `hitW` (a decryption query
+  that is not refused, is valid and whose pair is not the pair of an earlier `Enc′` answer), and
+  `prob_eq_until_bad` to read the flag's probability in the rejecting experiment.
+- *The flag's probability* (`expect_prob_bad_le`, an equal-until-bad argument through the union
+  bound rather than `prob_bad_le`, because the per-query bound needs the average over `R`): by
+  induction over the computation with `R` overridden on the revealed pairs (`ovr`, invariant
+  `RevInv`). A new pair moves `R`'s value into the table (`expect_sample_ovr`); the rejecting
+  experiment's decryption answers read the tag function only at listed pairs, so they do not
+  depend on `R`; a fresh guess hits the unrevealed value with probability at most `2^{-2n}`
+  (`expect_hitW_le`), "even if the pair was queried before" (each guess is bounded separately; no
+  conditional probability after failed guesses is used). A valid query with the challenge's pair
+  is the challenge itself for `n > 0` (`eq_of_pairV_eq`, `eq_ctW_of_wfW`: canonical parsing through
+  `pairEncode` and the two length guards) and is refused, so it is not a hit.
+- The bound is `Q / 2^{2n}`, the brief's `q(n) / 2^{2n}`.
+
+New public declarations (Forgery): `ettBad_agree`, `ettBad_stick`, `simulate_ettBad_fst`,
+`abs_prob_ettImpl_rej_sub_le`, `RevInv`, `revInv_iff`, `revInv_nil`, `expect_prob_bad_le`,
+`abs_ettAcc_rej_sub_le`; private: `revInv_enc_old`, `revInv_enc_new`, `revInv_chal_old`,
+`revInv_chal_new`, `validW_pairW`, `encW_pairV`, `expect_hitW_le`, `prob_bad_of_flag`,
+`prob_simulate_ettBad_query`, `abs_expect_sub_le_expect` (generic: candidate for promotion,
+`|𝔼 f − 𝔼 g| ≤ 𝔼 h` under a pointwise bound; `ProbComp.abs_expect_sub_le` has a constant bound).
+Owned file: `cca_rej_step` (private).
+
+Evidence added: `logs/checkpoint2-checks.log` (fresh checks of the seven helpers and the owned
+module, status 0), `checkpoint2-census.txt`, `checkpoint2-axioms.log` (`propext`,
+`Classical.choice`, `Quot.sound`), `checkpoint2-lint.log` (0 FAIL), `probes/AxiomsCP2.lean`;
+`order-with-helpers.txt` now lists Forgery before the owned module.
 
 ## 1. Environment (addendum v1)
 
@@ -80,14 +118,8 @@ decryption answer is matched, including malformed words and, at `n = 0`, the mal
 words that decrypt to the empty message: the experiment parses with the same total projections
 (`wR`, `wC`, `wT`) and guards (`validW`).
 
-## 4. Remaining route (steps 2 and 3)
+## 4. Remaining route (step 3)
 
-- **Step 2** (`rej = false` vs `rej = true`, random `R`): identical until the first non-refused,
-  valid `Dec′` query with a pair outside the `Enc′` list (`hitW`, `ettBad`); the probability of the
-  flag is bounded by `q(n) / 2^{2n}` by induction over the computation with `R` overridden on the
-  revealed pairs (`ovr`, `expect_sample_ovr`): a fresh guess hits `R` at an unrevealed point with
-  probability `2^{-2n}`; canonical parsing (`eq_ctW_of_wfW`) excludes the challenge pair for
-  `n > 0`.
 - **Step 3**: the rejecting experiment with `R` averaged equals a CPA experiment of a T2 machine
   against the §3.9 scheme, with the tags sampled lazily from seed tapes and the decryption answers
   read from a table in the handler's state (GGM's public table lookup `GGMRed.lookup`,
