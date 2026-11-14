@@ -1,8 +1,10 @@
 # ext-nosrc · maintainer delivery review (r1)
 
-**Verdict: ACCEPT WITH LANDING EDITS.** Two items are open before the PR is marked ready:
-- **M1:** a Rule-10 ruling on `FinDist`'s `CoeFun` instance. It is asked of Seyoon.
-- **M2:** the formula-docstring landing edit LE-doc. It is in progress.
+**Verdict: ACCEPT WITH LANDING EDITS.** Both medium items are closed:
+- **M1** by Seyoon's ruling of 2026-11-14: a `CoeFun` instance whose body is a structure projection is notation.
+- **M2** by landing edit **LE-doc** `e99a6055ff6b24cdf4b25993e83d045bd569028f` (tree `962374efbcb153c8f696b96f74aae0cab4a2baff`).
+
+The landing head is `e99a6055`, pushed as `land/pass-shelat-ext-nosrc`.
 
 ## Delivery and landing branch
 
@@ -82,10 +84,33 @@ The edge cases `n = 0`, `n ≤ 2`, `q = 1` and empty `Ext` output are handled.
 
 | # | Severity | Finding | Disposition |
 |---|---|---|---|
-| M1 | medium | **Rule 10, coercion.** 16 Rejection declarations read `FinDist`'s `CoeFun` instance `⟨FinDist.prob⟩`. The file mixes `p a` with `p.prob a`, and the strict seal masks the instance. The worker's harness does not mask instances. Base precedent: coercion reads already occur at the base, for example `Games/Probability.dist_apply` at Gates 20 and 21, and the Extractors replay of Gate 06. | **Ruling asked** (2026-11-14). Either treat a `CoeFun` instance whose body is a structure projection as notation, or have `FinDist` publish `coe_eq_prob : p a = p.prob a` and re-point the 16 declarations. |
-| M2 | medium | **Policy, formula docstrings.** 44 of the 73 new public declarations have prose-only docstrings (`landing/docaudit.tsv`). | **Landing edit LE-doc**, docstrings only, as in the nm-sim precedent (#297). In progress. |
+| M1 | medium | **Rule 10, coercion.** 16 Rejection declarations read `FinDist`'s `CoeFun` instance `⟨FinDist.prob⟩`. The file mixes `p a` with `p.prob a`, and the strict seal masks the instance. The worker's harness does not mask instances. Base precedent: coercion reads already occur at the base, for example `Games/Probability.dist_apply` at Gates 20 and 21, and the Extractors replay of Gate 06. | **Ruled notation (Seyoon, 2026-11-14):** a `CoeFun` instance whose body is a structure projection is notation, like a reducible abbreviation. Every file passes A and B under this reading. Not a finding. |
+| M2 | medium | **Policy, formula docstrings.** 44 of the 73 new public declarations have prose-only docstrings (`landing/docaudit.tsv`). | **Fixed by LE-doc** `e99a6055`. See below. |
 | 3 | low | 10 linter warnings in `Rejection.lean`: an unused `[Fintype α]` on 4 lemmas (which cascades), 4 unused `simp` arguments, and 2 unnecessary `<;>`. | Follow-up. The fix needs `omit … in` plus cascading edits. |
 | 4 | low | `Rejection.tupleEquiv` restates Mathlib's `(Fin.consEquiv _).symm`. | Ledger **DL-39**. |
 | 5 | low | Generic `FinDist` facts are local to `Rejection`: `sum_map`, `probTrue_map`, `probTrue_le_one`, `probTrue_nonneg`, `map_map`, `map_prod_snd`, `uniform_prod`, `map_uniform_equiv`, `mixture`, `mixture_isSource` and `uniform_probTrue`. The worker requests their promotion. No exact duplicate exists (`landing/duplication-grep.txt`). The nearest relatives are `SamplingFinDist.uprob_comp_eq_probTrue_map`, `Experiments.uprob_comp_eq_sum_map` and `ProbComp.expect_map`, which works on `ProbComp`. | Ledger **DL-39**: promote them to `InformationTheory/FinDist` in a later job, since `FinDist` is frozen for this fill. |
 | 6 | info | The worker's commit hashes cannot be reproduced, because no committer metadata is recorded. | Recorded. The content is verified. |
 | 7 | info | The two facade imports. | Approved by Seyoon (2026-11-14). |
+
+## LE-doc · formula docstrings (`e99a6055`)
+
+The evidence is `ledoc-evidence.zip`.
+- SHA-256 `c425d6893d8590c476368edb2475939df1e253e6d7160ae5516af8fcd66f8b28`, 53 entries.
+- Its manifest is `ledoc-evidence-SHA256SUMS`.
+- Extracts are in `landing-ledoc/`.
+
+**What changed**
+- 44 docstrings gain a formula: Rejection 15, Sampler 15, Extraction 14.
+- The target's docstring is untouched, as instructed. It keeps its book-statement first line and its `[PS10, Theorem 183.6]` tag.
+
+**Checks**
+- **Docaudit:** 73/73 new declarations are OK.
+- **Docstrings only:**
+  - All 44 hunks lie inside `/-- -/` spans.
+  - With docstrings blanked, the old and new files are byte-identical.
+  - All 81 headers are byte-identical, and decls2 against `653d6c1b` is empty.
+- **Widths:** at most 99 characters, by Python `len`.
+- **Lengths:** Rejection 492, Sampler 237, Extraction 339 lines.
+- **Lint:** FAIL and WARN lines are identical.
+- **Build:** Rejection, Sampler, Extraction, the facade and root `TCSlib` all give rc 0 and 0 errors on the full tree. Each module is built at the head's source hash.
+- **Restore:** `$SP/dl-oleans` is back at base. A whole-tree file snapshot is byte-identical before and after (`landing-ledoc/tree-check-post.txt`).

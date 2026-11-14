@@ -1,0 +1,36 @@
+ext-nosrc landing edit LE-doc (formula docstrings), maintainer, 2026-11-14 UTC
+landing: branch land/pass-shelat-ext-nosrc (local only, not pushed), worktree $SP/wt-land-extnosrc.
+  parent LE-width 653d6c1bd0514ca4225bb92db80a9b7754af60bb (tree cc890fca133c7ebbaa2d925ae31f5c32525b6eb9)
+  head   LE-doc   e99a6055ff6b24cdf4b25993e83d045bd569028f (tree 962374efbcb153c8f696b96f74aae0cab4a2baff)
+  author = committer = Claude <noreply@anthropic.com> (as 653d6c1b). Patch: 0001-LE-doc.patch.
+scope: docstrings of the 44 NO-FORMULA rows of extnosrc-r1/statements/docaudit.tsv among the 73 new
+  public declarations: Rejection.lean 15, Sampler.lean 15, Extraction.lean 14. The 45th non-OK row,
+  the target not_isExtractor_effSources (CHANGED, not new), is untouched by instruction (first line,
+  reference tag and header kept); it stays NO-FORMULA. The LABEL flag on machine_eq is also gone.
+  Edit script: tools-used/ledoc_edit.py (exact old -> new docstring texts, each occurring once).
+statements/ (reviewer tools copied to tools-used/r1/, unmodified):
+  docaudit-before.tsv (touched-before.json, base eff2dcd0 vs 653d6c1b) = r1 docaudit.tsv byte for byte:
+    44 NO-FORMULA + 1 NO-FORMULA,LABEL (target) + 29 OK. docaudit-after.tsv (touched-after.json, base
+    eff2dcd0 vs e99a6055): 73 OK, 1 NO-FORMULA (the target only).
+  decls2-vs-653d6c1b.tsv: empty (0 ADDED/REMOVED/CHANGED statements). decls2-vs-base.tsv: 73 ADDED,
+    identical to r1 decls2.tsv except line numbers.
+  header-bytes-vs-653d6c1b.txt (headerbytes.py, touched-653d6c1b.json / touched-e99a6055.json): all 81
+    declarations of the 4 files (private included) IDENTICAL, 0 different or missing.
+  touched-653d6c1b-vs-head.tsv: 44 CHANGED (exactly the edited ones), 37 UNCHANGED (target included).
+  hunk-in-docstring.txt (tools-used/hunkdoc.py): 44 hunks, all IN-DOCSTRING (old and new line ranges
+    inside /-- -/ spans); with docstrings blanked, old and new files byte-identical (CODE-IDENTICAL);
+    widths by Python len. widths.txt: max 99/98/98 columns, 0 lines over 100; 339/492/237 lines.
+logs/: campaign_style_lint.py TCSlib/Cryptography at 653d6c1b and at head: 216 FAIL, 102 WARN over 303
+  files both; FAIL/WARN lines identical (lint-diff.txt empty); only INFO line counts differ.
+build/ (tools-used/r1/runner.py, scripts/lean_check_tree.sh, TCSLIB_OLEANS=$SP/dl-oleans, from the
+  landing worktree at e99a6055, order/head-build.txt): Rejection, Sampler, Extraction, Randomness, TCSlib
+  all rc 0, 0 errors, 0 sorry; warnings 10/0/2/0/0, identical to r1 build/ modulo positions.
+tree/ + restore-build/: tree-check-pre.txt verified $SP/dl-oleans at base before the build (1199 modules
+  at the r1 restored records' source and olean hashes; snapshot-pre.txt = SHA-256 of all 1230 files).
+  Restore: base Extraction, Randomness, TCSlib rebuilt from a git-archive export of ba0adb6b (Lean sources
+  identical to eff2dcd0; source hashes 640704.., 535cf8.., 942193.. as in r1 restore-build) with object
+  hashes 7f81fc.., 67ddb5.., 27e40e.. = r1 records; Rejection.olean and Sampler.olean deleted and the
+  emptied Extraction/ directory removed. restore-build-attempt1-no-toolchain/: first attempt, failed
+  before compiling (export lacked lean-toolchain; elan had no default); it only removed the head
+  Extraction.olean, rebuilt by the second attempt. tree-check-post.txt: RESULT OK, and snapshot-post.txt
+  is byte-identical to snapshot-pre.txt (every file under the tree, PFR included).
