@@ -20,8 +20,8 @@ import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CollisionHandle
 import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.FixedGame
 import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardGame
 import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.ForwardHandler
-import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuerySampling
 import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuery
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.OneQuerySampling
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
