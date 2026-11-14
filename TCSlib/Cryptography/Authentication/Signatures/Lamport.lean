@@ -762,7 +762,12 @@ theorem lamport_forgerCodec (n : ℕ) :
     simp only [lamport_msgLen, lamport_sigLen, PolyExpr.eval_var, PolyExpr.eval_mul]
 
 -- Probability proofs read their laws rather than reducing the sample interpreter.
-attribute [local irreducible] ProbComp.expect ProbComp.sample OracleComp.bind
+run_cmd do
+  for n in [``ProbComp.expect, ``ProbComp.sample, ``OracleComp.bind] do
+    let status ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless status == .irreducible do
+      let id := Lean.mkIdent n
+      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
 
 /-- Against a serialized key table, every Lamport signing call has exactly the deterministic
 selected-preimage law. The equality holds for every function of the answer and state. -/

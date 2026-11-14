@@ -34,7 +34,12 @@ open TCSlib.Cryptography.Games
 open scoped Classical
 
 -- Keep elaboration on the published probability readers.
-attribute [local irreducible] ProbComp.expect ProbComp.sample OracleComp.bind
+run_cmd do
+  for n in [``ProbComp.expect, ``ProbComp.sample, ``OracleComp.bind] do
+    let status ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless status == .irreducible do
+      let id := Lean.mkIdent n
+      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
 
 /-- Suppose every successful honest run has favorable position mass at least `b`, and
 every successful favorable run makes a reduction succeed when challenged at its own
