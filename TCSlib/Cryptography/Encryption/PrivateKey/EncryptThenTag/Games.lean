@@ -14,8 +14,8 @@ set_option autoImplicit false
 # The CCA2 games of the encrypt-then-tag scheme with a pad and a tag function
 
 The scheme of [PS10, Algorithm 169.3] encrypts `m` as `⟨r, ⟨c₁, t⟩⟩` with a fresh `n`-bit nonce
-`r`, the mask `c₁ = m ⊕ f(r)` and the tag `t = g(r ‖ c₁)`, where `f = f_{k₁}` and `g = f_{k₂}` are the
-keyed functions at parameters `n` and `2n`. The proof of [PS10, Theorem 170.4] replaces them by
+`r`, the mask `c₁ = m ⊕ f(r)` and the tag `t = g(r ‖ c₁)`, where `f = f_{k₁}` and `g = f_{k₂}` are
+the keyed functions at parameters `n` and `2n`. The proof of [PS10, Theorem 170.4] replaces them by
 other functions; this file states the CCA2 experiment's oracles with `f` and `g` arbitrary, on
 bit-string oracles of arbitrary lengths (`bitSpec ins outs`; oracle `0` is `Enc`, `1` is `Dec`,
 `2` is `Challenge`), with the challenge recorded at width `d`.
@@ -361,7 +361,8 @@ noncomputable def ettBad : QueryImpl (bitSpec ins outs) (St n d × Bool) unifSpe
   fun i x s => (ettImpl ins outs d n f g rej b i x s.1).bind fun p =>
     .pure (p.1, (p.2, s.2 || hitQ ins d n g i x s.1))
 
-/-- `ettBad … i x s = (ettImpl … i x s.1).bind fun p => pure (p.1, (p.2, s.2 || hitQ … i x s.1))`. -/
+/-- `ettBad … i x s =
+(ettImpl … i x s.1).bind fun p => pure (p.1, (p.2, s.2 || hitQ … i x s.1))`. -/
 theorem ettBad_apply (i : Fin 3) (x : Fin (ins i) → Bool) (s : St n d × Bool) :
     ettBad ins outs d n f g rej b i x s =
       (ettImpl ins outs d n f g rej b i x s.1).bind fun p =>

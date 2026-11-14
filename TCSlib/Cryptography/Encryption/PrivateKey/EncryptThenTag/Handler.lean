@@ -18,8 +18,8 @@ set_option autoImplicit false
 
 Step 1 of [PS10, Theorem 170.4] replaces the tag function `f_{k₂}` by a random function: a
 reduction with oracle access to a function `g` on `2n` bits samples `k₁` itself, runs the CCA2
-adversary and answers its queries with `g` in place of `f_{k₂}`. This file builds that reduction as a
-`Games.InteractiveHandler` (`dHandler`) with one outer oracle (the function), so that T2
+adversary and answers its queries with `g` in place of `f_{k₂}`. This file builds that reduction as
+a `Games.InteractiveHandler` (`dHandler`) with one outer oracle (the function), so that T2
 (`Games.exists_interactiveHandlerMachine`) and T4 (`Games.exists_toOracleAdversary_of_bitCodec`)
 make it a next-query machine.
 
@@ -241,8 +241,8 @@ private def rNew (w t : List Bool) : List Bool :=
   EnsembleLemmas.padL ((dStLen q).eval (rU w).length) (pairEncode (true :: rCnt w) t)
 
 /-- **One round of the handler** (see the module docstring), for the challenge bit `b`. A first
-round of `Enc`, of a first challenge or of a well-formed decryption asks the outer oracle; the second
-round, with the answer `y` in the log, returns the answer and the new state. -/
+round of `Enc`, of a first challenge or of a well-formed decryption asks the outer oracle; the
+second round, with the answer `y` in the log, returns the answer and the new state. -/
 private def dRun (E : List Bool → List Bool) (b : Bool) (w : List Bool) : List Bool :=
   if (rI w).headD false then
     if ((rI w).drop 1).headD false then
@@ -416,7 +416,8 @@ theorem dHState_eq (n j : ℕ) (o : Option (Fin (ettCt.eval n) → Bool)) :
 
 /-- The seed at the handler's seed type: `dHSeed … n = dSeed q n`. -/
 def dHSeed (n : ℕ) :
-    (Fin n → Bool) × (Fin (q.eval n * n) → Bool) ≃ (Fin ((dHandler q E hE b).seedLen.eval n) → Bool) :=
+    (Fin n → Bool) × (Fin (q.eval n * n) → Bool) ≃
+      (Fin ((dHandler q E hE b).seedLen.eval n) → Bool) :=
   dSeed q n
 
 /-- `dHSeed q E hE b n = dSeed q n`. -/
@@ -768,9 +769,10 @@ theorem dHandler_impl_challenge_none (x : Fin ((ettDin 2).eval n) → Bool) (j :
         .pure (padFin _ (ctW (List.ofFn (dTape q n W j hj))
             (maskL (F n k) (dTape q n W j hj) (AdaptiveCPA.msgOf n b (List.ofFn x)))
             (List.ofFn y)),
-          dHState q E hE b n (j + 1) (some (padFin (ettCt.eval n) (ctW (List.ofFn (dTape q n W j hj))
-            (maskL (F n k) (dTape q n W j hj) (AdaptiveCPA.msgOf n b (List.ofFn x)))
-            (List.ofFn y))))) := by
+          dHState q E hE b n (j + 1) (some (padFin (ettCt.eval n)
+            (ctW (List.ofFn (dTape q n W j hj))
+              (maskL (F n k) (dTape q n W j hj) (AdaptiveCPA.msgOf n b (List.ofFn x)))
+              (List.ofFn y))))) := by
   have hmsg : (AdaptiveCPA.msgOf n b (List.ofFn x)).length = n := by
     have hx : (List.ofFn x).length = n + n := by
       rw [List.length_ofFn, ettDin_two, PolyExpr.eval_add, PolyExpr.eval_var]

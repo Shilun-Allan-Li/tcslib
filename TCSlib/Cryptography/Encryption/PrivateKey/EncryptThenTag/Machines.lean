@@ -254,7 +254,8 @@ theorem polyTimeComputable_capRaw (A : NUPPT) (q : PolyExpr) :
 /-- **A budget cap** (generic; candidate for promotion). For a machine `A` and a polynomial `q`
 there is a machine `A'` with `A`'s coins whose computation through any bit codec, at any budget
 `K ≥ q(n)`, is `A`'s computation at budget `q(n)`:
-`A'.toComp (bitCodec ins outs dα) n K (coinsCongr h n r) = A.toComp (bitCodec ins outs dα) n (q n) r`.
+`A'.toComp (bitCodec ins outs dα) n K (coinsCongr h n r) =
+A.toComp (bitCodec ins outs dα) n (q n) r`.
 
 **Proof sketch.** `A' := NUPPT.ofPolyTime` of `capRaw A q` with `A`'s coins and advice
 (`runAtL_ofPolyTime`). On the encoded log of `hist` the entry count is `|hist|`
@@ -324,7 +325,8 @@ theorem exists_halfMachine (B : NUPPT) :
   rw [← expect_sample_equiv (EnsembleLemmas.coinsEquiv hlen), ChallengeSim.expect_sample_prod]
   refine congrArg _ (funext fun c₁ => ?_)
   refine (congrArg _ (funext fun c₂ => ?_)).trans (expect_const _ _)
-  have hrun : ∀ y, D.runAt (2 * n) y (EnsembleLemmas.coinsEquiv hlen (c₁, c₂)) = B.runAt n y c₁ := by
+  have hrun :
+      ∀ y, D.runAt (2 * n) y (EnsembleLemmas.coinsEquiv hlen (c₁, c₂)) = B.runAt n y c₁ := by
     intro y
     rw [NUPPT.runAt_eq D, hD, NUPPT.runAt_eq B]
     simp only [h2]

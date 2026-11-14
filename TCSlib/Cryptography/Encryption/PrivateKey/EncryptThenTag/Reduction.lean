@@ -78,7 +78,8 @@ def dAbs (s : St n (ettCt.eval n) × ℕ) :
   (dHState q E hE b n s.2 s.1.1, ())
 
 /-- `dAbs q E hE b n s = (dHState q E hE b n s.2 s.1.1, ())`. -/
-theorem dAbs_eq (s : St n (ettCt.eval n) × ℕ) : dAbs E hE q b n s = (dHState q E hE b n s.2 s.1.1, ()) :=
+theorem dAbs_eq (s : St n (ettCt.eval n) × ℕ) :
+    dAbs E hE q b n s = (dHState q E hE b n s.2 s.1.1, ()) :=
   rfl
 
 /-- The tapes of the tape word, extended to every index (`AdaptiveCPA.extTape`). -/
@@ -232,7 +233,8 @@ composite is `ettTape` with the tapes of `W` (`simulate_eq_of_abs_bounded`, `com
 theorem exists_tagReduction (A : NUPPT) (q : PolyExpr) (b : Bool) :
     ∃ D : NUPPT, ∀ (n : ℕ) (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)),
       expect (sample (D.Coins (2 * n)))
-          (fun c => if (D.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n)) c).eval g = true
+          (fun c =>
+            if (D.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n)) c).eval g = true
             then (1 : ℝ) else 0) =
         expect (sample (Fin n → Bool)) fun k => expect (sample (A.Coins n)) fun r =>
           expect (simulate (ettImpl (fun i => (ettDin i).eval n) (fun i => (ettDout i).eval n)

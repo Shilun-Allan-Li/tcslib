@@ -20,18 +20,18 @@ tag function (`expect_ettImpl_lazy`).
 
 **The lazy state** (`LSt n d`) is the recorded challenge and the table of the `Enc′` answers, newest
 first: each entry is the pair `r ‖ c₁`, its tag and the encrypted message.
-- `Enc′` on `m` with the nonce `r`: the tag of the pair `p = r ‖ c₁` is the table's tag at `p` if `p`
-  is in the table, else the challenge's tag if `p` is the challenge's pair, else the query's tape
-  (`tagOf`); the entry `(p, tag, m)` is added.
-- `Dec′` on `w` refuses the record; a well-formed `w` whose pair is in the table and whose tag is the
-  table's tag gets `⟨1, m⟩` with the table's message, every other word `⊥` (`lazyDec`).
+- `Enc′` on `m` with the nonce `r`: the tag of the pair `p = r ‖ c₁` is the table's tag at `p` if
+  `p` is in the table, else the challenge's tag if `p` is the challenge's pair, else the query's
+  tape (`tagOf`); the entry `(p, tag, m)` is added.
+- `Dec′` on `w` refuses the record; a well-formed `w` whose pair is in the table and whose tag is
+  the table's tag gets `⟨1, m⟩` with the table's message, every other word `⊥` (`lazyDec`).
 - `Challenge` on `⟨m₀, m₁⟩`: the first time, as `Enc′` on `m_b` (without an entry), recorded.
 
 **The law** (`expect_ettImpl_lazy`). Average the rejecting experiment over `R` with the table's tags
-written over it (`tagTbl`, `ovr`). A new pair moves `R`'s value into the table (`expect_sample_ovr`);
-a pair in the table has its tag; a decryption with a listed pair reads the table's tag, and its
-answer `⟨1, c₁ ⊕ f(r)⟩` is the table's message, because the entry's pair is `r ‖ (m ⊕ f(r))` with an
-`n`-bit `m` (`LInv`).
+written over it (`tagTbl`, `ovr`). A new pair moves `R`'s value into the table
+(`expect_sample_ovr`); a pair in the table has its tag; a decryption with a listed pair reads the
+table's tag, and its answer `⟨1, c₁ ⊕ f(r)⟩` is the table's message, because the entry's pair is
+`r ‖ (m ⊕ f(r))` with an `n`-bit `m` (`LInv`).
 
 ## Main definitions
 
@@ -163,7 +163,8 @@ theorem ovr_append (A B : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool)
     obtain ⟨p, y⟩ := e
     rw [List.cons_append, ovr_cons, ovr_cons, ih]
 
-/-- The entry at a listed pair has that pair: `p ∈ keysL L → (L.getD ((keysL L).idxOf p) _).1 = p`. -/
+/-- The entry at a listed pair has that pair:
+`p ∈ keysL L → (L.getD ((keysL L).idxOf p) _).1 = p`. -/
 theorem getD_idxOf_fst {L : List (LEntry n)} {p : Fin (2 * n) → Bool} (hp : p ∈ keysL L) :
     (L.getD ((keysL L).idxOf p) default).1 = p := by
   induction L with
@@ -303,8 +304,8 @@ invariant, `decAnsW f (ovr (tagTbl s) R) true (s.1, keysL s.2) w = lazyDec s w`.
 
 **Proof sketch.** A refused or malformed word gets `⊥` in both. A well-formed word with a listed
 pair reads the newest entry `(p, t, m)` at it (`ovr_tags_of_mem`, `getD_idxOf_fst`); its fields are
-`r` and `m ⊕ f(r)` (`eq_of_pairV_eq`), so `decL f w = ⟨1, m⟩` (`zipWith_xor_cancel`). A fresh pair is
-rejected by both. -/
+`r` and `m ⊕ f(r)` (`eq_of_pairV_eq`), so `decL f w = ⟨1, m⟩` (`zipWith_xor_cancel`). A fresh pair
+is rejected by both. -/
 theorem decAnsW_tagTbl {d : ℕ} (s : LSt n d) (hs : LInv n f s)
     (R : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (w : List Bool) :
     decAnsW f (ovr (tagTbl s) R) true (s.1, keysL s.2) w = lazyDec s w := by
@@ -407,7 +408,8 @@ noncomputable def ettLazy : QueryImpl (bitSpec ins outs) (LSt n d) unifSpec :=
 theorem ettLazy_eq : ettLazy ins outs d n f b = freshImpl (ettLazyK ins outs d n f b) := rfl
 
 /-- **The lazy experiment with tapes in advance** (`tapeImpl`). -/
-noncomputable def ettLazyTape (T : ℕ → Fin (2 * n) → Bool) : QueryImpl (bitSpec ins outs) (LSt n d × ℕ) unifSpec :=
+noncomputable def ettLazyTape (T : ℕ → Fin (2 * n) → Bool) :
+    QueryImpl (bitSpec ins outs) (LSt n d × ℕ) unifSpec :=
   tapeImpl (ettLazyK ins outs d n f b) T
 
 /-- `ettLazyTape … T = tapeImpl (ettLazyK …) T`. -/

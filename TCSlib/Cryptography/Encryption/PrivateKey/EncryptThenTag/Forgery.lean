@@ -248,7 +248,8 @@ private theorem revInv_chal_new {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n
     · simp only [List.map_cons, List.mem_cons, true_or]
     · rw [ovr_cons, Function.update_self]
 
-/-- The tag of a word read through the pair: `validW g w = (wfW n w && decide (wT w = ⟦g (pairW n w)⟧))`. -/
+/-- The tag of a word read through the pair:
+`validW g w = (wfW n w && decide (wT w = ⟦g (pairW n w)⟧))`. -/
 private theorem validW_pairW (g : (Fin (2 * n) → Bool) → (Fin (2 * n) → Bool)) (w : List Bool) :
     validW g w = (wfW n w && decide (wT w = List.ofFn (g (pairW n w)))) := by
   rw [validW_eq, tagL_eq, pairW_eq]

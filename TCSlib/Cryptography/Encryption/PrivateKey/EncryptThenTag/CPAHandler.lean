@@ -82,7 +82,8 @@ theorem tblW_nil : tblW ([] : List (LEntry n)) = [] := by
 /-- A new entry is the first pair of the table word:
 `tblW (e :: L) = ⟨⟨⟦p⟧, ⟦t⟧ ++ m⟩, tblW L⟩`. -/
 theorem tblW_cons (e : LEntry n) (L : List (LEntry n)) :
-    tblW (e :: L) = pairEncode (pairEncode (List.ofFn e.1) (List.ofFn e.2.1 ++ e.2.2)) (tblW L) := by
+    tblW (e :: L) =
+      pairEncode (pairEncode (List.ofFn e.1) (List.ofFn e.2.1 ++ e.2.2)) (tblW L) := by
   rw [tblW_eq, tblW_eq, List.map_cons, GGMRed.tblEnc_cons, encE_eq]
 
 /-- With `n`-bit messages, each entry adds `14n + 6` bits:
@@ -93,8 +94,8 @@ theorem length_tblW (L : List (LEntry n)) (hL : ∀ e ∈ L, e.2.2.length = n) :
   | nil => rw [tblW_nil, List.length_nil, List.length_nil, Nat.zero_mul]
   | cons e L ih =>
     rw [tblW_cons, length_pairEncode, length_pairEncode, List.length_append, List.length_ofFn,
-      List.length_ofFn, hL e (List.mem_cons_self ..), ih fun e' he' => hL e' (List.mem_cons_of_mem _ he'),
-      List.length_cons]
+      List.length_ofFn, hL e (List.mem_cons_self ..),
+      ih fun e' he' => hL e' (List.mem_cons_of_mem _ he'), List.length_cons]
     ring
 
 /-- The table of string entries is `GGMRed.tblOf` of the pairs, with the entries' values. -/
@@ -109,8 +110,8 @@ private theorem map_encE_eq_tblOf (L : List (LEntry n)) :
   · rw [GGMRed.tblOf_getElem_snd, List.getElem_map, Nat.zero_add, List.getD_eq_getElem _ _ hk]
 
 /-- **The lookup on the table word is `lookL`:**
-`lookup ⟨⟦p⟧, tblW L⟩ = ⟨[], ⟦t⟧ ++ m⟩` for the newest entry `(p, t, m)` at `p`, and `[]` if there is
-none (`GGMRed.lookup_tblOf`). -/
+`lookup ⟨⟦p⟧, tblW L⟩ = ⟨[], ⟦t⟧ ++ m⟩` for the newest entry `(p, t, m)` at `p`, and `[]` if there
+is none (`GGMRed.lookup_tblOf`). -/
 theorem lookup_tblW (L : List (LEntry n)) (p : Fin (2 * n) → Bool) :
     GGMRed.lookup (pairEncode (List.ofFn p) (tblW L)) =
       match lookL L p with
@@ -129,7 +130,8 @@ variable (q : PolyExpr)
 
 /-- The state length `2q(14n + 6) + 2q + 6n + 9`. -/
 def bStLen : PolyExpr :=
-  .add (.add (.mul (.const 2) (.mul q (.add (.mul (.const 14) .var) (.const 6)))) (.mul (.const 2) q))
+  .add
+    (.add (.mul (.const 2) (.mul q (.add (.mul (.const 14) .var) (.const 6)))) (.mul (.const 2) q))
     (.add (.mul (.const 6) .var) (.const 9))
 
 /-- `(bStLen q).eval n = 2 q(n) (14n + 6) + 2 q(n) + 6n + 9`. -/
@@ -152,7 +154,8 @@ def bState (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval n) →
 
 /-- `bState q n j L o = padFin _ ⟨tblW L, ⟨1^j, recBits n o⟩⟩`. -/
 theorem bState_eq (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval n) → Bool)) :
-    bState q n j L o = padFin _ (pairEncode (tblW L) (pairEncode (List.replicate j true) (recBits n o))) :=
+    bState q n j L o =
+      padFin _ (pairEncode (tblW L) (pairEncode (List.replicate j true) (recBits n o))) :=
   rfl
 
 /-- **The seed** from the tape word: `⟦bSeed q n W⟧ = ⟦W⟧`. -/
@@ -179,7 +182,8 @@ theorem bTapeOf_eq (n : ℕ) (W : Fin (q.eval n * (2 * n)) → Bool) (j : ℕ) (
 
 /-- The fields of an encoded state that fits: the table word, the count `1^j`, the flag and the
 record. -/
-private theorem fields_bState (n j : ℕ) (L : List (LEntry n)) (o : Option (Fin (ettCt.eval n) → Bool))
+private theorem fields_bState (n j : ℕ) (L : List (LEntry n))
+    (o : Option (Fin (ettCt.eval n) → Bool))
     (hj : j ≤ q.eval n) (hL : L.length ≤ q.eval n) (hm : ∀ e ∈ L, e.2.2.length = n) :
     pairFstD (List.ofFn (bState q n j L o)) = tblW L ∧
       pairFstD (pairSndD (List.ofFn (bState q n j L o))) = List.replicate j true ∧
@@ -340,7 +344,8 @@ private theorem polyTimeComputable_bRun : PolyTimeComputable (bRun q) := by
       PolyTimeComputable fun w => (u w).drop (tagLen.eval (rU w).length) := fun hu =>
     ((polyTimeComputable_pairDropPoly tagLen).comp (hU.pairEncode hu)).congr fun w => by
       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
-  have hChalKey : PolyTimeComputable bChalKey := hPad2 ((hF.comp hRec).append ((hF.comp hD).comp hRec))
+  have hChalKey : PolyTimeComputable bChalKey :=
+    hPad2 ((hF.comp hRec).append ((hF.comp hD).comp hRec))
   have hChalTag : PolyTimeComputable bChalTag := hPad2 ((hD.comp hD).comp hRec)
   have hTag : PolyTimeComputable bTag :=
     polyTimeComputable_ite (hNil (hLook hKey))
@@ -370,13 +375,15 @@ private theorem polyTimeComputable_bRun : PolyTimeComputable (bRun q) := by
   have hRet : ∀ {f : List Bool → List Bool}, PolyTimeComputable f →
       PolyTimeComputable fun w => pairEncode [true] (f w) := fun hf =>
     (polyTimeComputable_const [true]).pairEncode hf
-  have hKeep : PolyTimeComputable fun w => bFlag w :: bRec w := (hFlag.append hRec).congr fun _ => rfl
+  have hKeep : PolyTimeComputable fun w => bFlag w :: bRec w :=
+    (hFlag.append hRec).congr fun _ => rfl
   have cNil : PolyTimeComputable fun w => [decide (rL w = [])] := polyTimeComputable_isNil.comp hL
   have hChal := polyTimeComputable_ite hFlag
     (hRet ((EnsembleLemmas.polyTimeComputable_padL ettCt hU hRec).append
       (hNew hTbl ((polyTimeComputable_const [true]).append hRec))))
     (polyTimeComputable_ite cNil
-      ((polyTimeComputable_const [false]).pairEncode ((polyTimeComputable_const [true, true]).pairEncode hX))
+      ((polyTimeComputable_const [false]).pairEncode
+        ((polyTimeComputable_const [true, true]).pairEncode hX))
       (hRet (hCt.append (hNew hTbl ((polyTimeComputable_const [true]).append hCt)))))
   have hDec := hRet (hDecAns.append (hNew hTbl hKeep))
   have hEnc := polyTimeComputable_ite cNil
@@ -392,7 +399,8 @@ private def bFin (w : List Bool) : List Bool := pairEncode [true] (pairFstD (pai
 /-- The finalization's round is polynomial-time. -/
 private theorem polyTimeComputable_bFin : PolyTimeComputable bFin :=
   (polyTimeComputable_const [true]).pairEncode
-    (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
+    (polyTimeComputable_pairFstD.comp
+      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
 
 /-! ### The handler -/
 
@@ -596,7 +604,8 @@ private theorem bDecL_fields (w x : List Bool) (L : List (LEntry n))
       · rw [if_neg (by rw [decide_eq_true_eq]; exact ht), if_neg ht]
   · rw [if_neg hc, if_neg hc]
 
-/-- The flag and the record rebuild the record bits: `o.isSome :: (recBits o).drop 1 = recBits o`. -/
+/-- The flag and the record rebuild the record bits:
+`o.isSome :: (recBits o).drop 1 = recBits o`. -/
 private theorem recBits_fields (o : Option (Fin (ettCt.eval n) → Bool)) :
     o.isSome :: (recBits n o).drop 1 = recBits n o := by
   cases o with
@@ -649,8 +658,10 @@ theorem bHandler_impl_enc (x : Fin ((ettDin 0).eval n) → Bool) (j : ℕ) (L : 
     have hTag := bTag_fields n _ L o (bKeyOf n y) (bTapeOf q n W j hj) hU hT hF hR hTp hK
     rw [bRun, hI, Fin.val_zero, List.replicate_zero, List.headD_nil, if_neg Bool.false_ne_true,
       hL', log_ne_nil, if_neg Bool.false_ne_true, bCt, hY, hTag, hU, List.length_replicate, hK,
-      hX, hT, hF, hR, recBits_fields, ← tblW_cons (bKeyOf n y, (tagOf ((o, L) : LSt n (ettCt.eval n))
-        (bKeyOf n y)).getD (bTapeOf q n W j hj), List.ofFn x) L, bNew_fields q n _ j _ o hU hJ, ← ctW_eq]
+      hX, hT, hF, hR, recBits_fields,
+      ← tblW_cons (bKeyOf n y, (tagOf ((o, L) : LSt n (ettCt.eval n))
+        (bKeyOf n y)).getD (bTapeOf q n W j hj), List.ofFn x) L,
+      bNew_fields q n _ j _ o hU hJ, ← ctW_eq]
     rw [EnsembleLemmas.ofFn_padFin_eq_padL, ettDout_zero]
 
 /-- **Decryption:** from `bState j L o` with `j < q(n)`, the query `⟦x⟧` is answered by
@@ -694,9 +705,9 @@ theorem bHandler_impl_challenge_some (x : Fin ((ettDin 2).eval n) → Bool) (j :
   rw [EnsembleLemmas.ofFn_padFin_eq_padL, ettDout_two]
 
 /-- **The first challenge:** from `bState j L none` with `j < q(n)`, the challenge `⟦x⟧` asks the
-CPA challenge oracle at `⟦x⟧`; its answer `y` gives the ciphertext `c = ⟨pairFstD y, ⟨pairSndD y, t⟩⟩`
-with the tag `t` of `bKeyOf n y` (`tagOf (none, L)`, else the tape `j`), recorded in the state
-`bState (j + 1) L (some c)`. -/
+CPA challenge oracle at `⟦x⟧`; its answer `y` gives the ciphertext
+`c = ⟨pairFstD y, ⟨pairSndD y, t⟩⟩` with the tag `t` of `bKeyOf n y` (`tagOf (none, L)`, else the
+tape `j`), recorded in the state `bState (j + 1) L (some c)`. -/
 theorem bHandler_impl_challenge_none (x : Fin ((ettDin 2).eval n) → Bool) (j : ℕ)
     (L : List (LEntry n)) (hj : j < q.eval n) (hL : L.length ≤ q.eval n)
     (hm : ∀ e ∈ L, e.2.2.length = n) :

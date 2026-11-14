@@ -464,7 +464,8 @@ private theorem cca_gen_runAt (n : ℕ) (rg : (ccaScheme F E hE hFE).gen.Coins n
   rw [runAt_ccaGen, h, List.take_left' List.length_ofFn, List.drop_left' List.length_ofFn]
 
 /-- The encryption coins as an `n`-bit nonce, keeping the string. -/
-private noncomputable def ccaNonceEq (n : ℕ) : (ccaScheme F E hE hFE).enc.Coins n ≃ (Fin n → Bool) :=
+private noncomputable def ccaNonceEq (n : ℕ) :
+    (ccaScheme F E hE hFE).enc.Coins n ≃ (Fin n → Bool) :=
   (NUPPT.coinsEquivPoly (cca_enc_coins F E hE hFE) n).trans
     (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool))
 
@@ -663,15 +664,18 @@ theorem ccaScheme_cca2 (hF : PRF F) : (ccaScheme F E hE hFE).INDSecure .cca2 := 
   obtain ⟨B, hB⟩ := ETTGame.exists_cpaStep A q
   obtain ⟨C₀, hC₀⟩ := PRFGame.exists_prfReduction B (PRFGame.qRed q) false false
   obtain ⟨C₁, hC₁⟩ := PRFGame.exists_prfReduction B (PRFGame.qRed q) false true
-  refine ⟨fun n => prfAdv (F (2 * n)) (D₀.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n))) +
+  refine ⟨fun n =>
+      prfAdv (F (2 * n)) (D₀.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n))) +
       prfAdv (F (2 * n)) (D₁.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n))) +
       2 * ((q.eval n : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹) +
       prfAdv (F n) (C₀.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n)) +
       prfAdv (F n) (C₁.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n)) +
       ((PRFGame.qRed q).eval n : ℝ) ^ 2 / 2 ^ n + (if n = 0 then 1 else 0), ?_, fun n => ?_⟩
   · -- Each term is negligible.
-    have hT₀ := (hF.negligible_prfAdv D₀ q).comp_of_le (fun n => 2 * n) fun N => by show N ≤ 2 * N; omega
-    have hT₁ := (hF.negligible_prfAdv D₁ q).comp_of_le (fun n => 2 * n) fun N => by show N ≤ 2 * N; omega
+    have hT₀ := (hF.negligible_prfAdv D₀ q).comp_of_le (fun n => 2 * n)
+      fun N => by show N ≤ 2 * N; omega
+    have hT₁ := (hF.negligible_prfAdv D₁ q).comp_of_le (fun n => 2 * n)
+      fun N => by show N ≤ 2 * N; omega
     have hR : Negligible fun n => 2 * ((q.eval n : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹) := by
       refine ((EnsembleLemmas.negligible_polyExpr_mul q negligible_two_pow_neg).const_mul 2).mono
         ⟨0, fun n _ => ?_⟩
@@ -694,8 +698,10 @@ theorem ccaScheme_cca2 (hF : PRF F) : (ccaScheme F E hE hFE).INDSecure .cca2 := 
       (D₀.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n)))
     have n₁ := prfAdv_nonneg (F (2 * n))
       (D₁.toOracleAdversary (2 * n) (2 * n) (2 * n) (q.eval (2 * n)))
-    have m₀ := prfAdv_nonneg (F n) (C₀.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
-    have m₁ := prfAdv_nonneg (F n) (C₁.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
+    have m₀ := prfAdv_nonneg (F n)
+      (C₀.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
+    have m₁ := prfAdv_nonneg (F n)
+      (C₁.toOracleAdversary n n n ((PRFGame.qRed (PRFGame.qRed q)).eval n))
     have hc : (0 : ℝ) ≤ 2 * ((q.eval n : ℝ) * ((2 : ℝ) ^ (2 * n))⁻¹) := by positivity
     have hs : (0 : ℝ) ≤ ((PRFGame.qRed q).eval n : ℝ) ^ 2 / 2 ^ n := by positivity
     beta_reduce

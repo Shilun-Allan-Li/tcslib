@@ -88,14 +88,16 @@ noncomputable def bTapes : ℕ → Fin (2 * n) → Bool :=
   AdaptiveCPA.extTape (EnsembleLemmas.blocks (q.eval n) (2 * n) W)
 
 /-- `bTapes q n W = extTape (blocks (q n) (2n) W)`. -/
-theorem bTapes_eq : bTapes q n W = AdaptiveCPA.extTape (EnsembleLemmas.blocks (q.eval n) (2 * n) W) :=
+theorem bTapes_eq :
+    bTapes q n W = AdaptiveCPA.extTape (EnsembleLemmas.blocks (q.eval n) (2 * n) W) :=
   rfl
 
 /-- Below `q(n)`, the extended tapes are the tapes: `bTapes q n W j = bTapeOf q n W j hj`. -/
 theorem bTapes_of_lt (j : ℕ) (hj : j < q.eval n) : bTapes q n W j = bTapeOf q n W j hj := by
   rw [bTapes_eq, AdaptiveCPA.extTape_of_lt _ hj, bTapeOf_eq]
 
-/-- The CPA ciphertext of an `n`-bit message as a list: `⟦padFin _ (ctOf r m (f r))⟧ = ⟨r, m ⊕ f(r)⟩`. -/
+/-- The CPA ciphertext of an `n`-bit message as a list:
+`⟦padFin _ (ctOf r m (f r))⟧ = ⟨r, m ⊕ f(r)⟩`. -/
 private theorem ofFn_ctOf {k : ℕ} (hk : k = ctP.eval n) (r : Fin n → Bool) {m : List Bool}
     (hm : m.length = n) :
     List.ofFn (padFin k (ctOf r m (f r))) = pairEncode (List.ofFn r) (maskL f r m) := by
@@ -181,7 +183,8 @@ theorem comp_bAbs (i : Fin 3) (x : (bitSpecAt ettDin ettDout n).dom i)
         rw [PRFGame.pkDout_two]
       have hlen : (ctW (List.ofFn r) (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn x)))
           (List.ofFn ((tagOf ((none, L) : LSt n (ettCt.eval n)) (pairV n (List.ofFn r)
-            (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn x))))).getD (bTapeOf q n W j hj)))).length =
+            (maskL f r (AdaptiveCPA.msgOf n b (List.ofFn x))))).getD
+              (bTapeOf q n W j hj)))).length =
           ettCt.eval n := by
         rw [ctW_eq, length_pairEncode, length_pairEncode, List.length_ofFn,
           length_maskL f r hmsg, List.length_ofFn, ettCt_eval]
