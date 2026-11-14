@@ -1,11 +1,11 @@
-# hash-sign — checkpoint 1
+# hash-sign — checkpoint 2
 
 Issue base: `eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9`.
 Issued exchange pack: `b436d19a0310265b214447ea6710deba32df6dd8`.
 Local proof branch: `fill/hash-sign`, never pushed.
-Checkpoint source commit: `6bb523434` (full revision in evidence).
+Checkpoint source commit: `15f43fd73` (full revision in evidence).
 
-**Status:** checkpoint 1 is proved. The frozen `hashAndSign_oneTimeSecure`
+**Status:** checkpoints 1 and 2 are proved. The frozen `hashAndSign_oneTimeSecure`
 statement is unchanged and its original admission remains. This is an intermediate
 delivery, not a claim that the final security theorem is proved.
 
@@ -19,6 +19,14 @@ logged query has the same hash. Full domain membership is supplied by `hdom`.
 Empty logs cannot satisfy the equal-hash witness. Decoded defaults and exhausted
 budgets are already included in the arbitrary one-query computation contract.
 
+The T2 forger is also proved. It samples one hash index, forwards at most one
+hashed signing query, and hashes the message component of the final output.
+Its exact original-scheme forgery probability equals the common transcript's
+acceptance-and-hash-freshness probability. Thus source success gives a valid
+original-scheme forgery when there was no query or every queried hash differs
+from the final message's hash. The final union and complete final checks remain
+outside this checkpoint snapshot.
+
 ## Source and declarations
 
 Changed owned facade: `TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean`.
@@ -29,7 +37,9 @@ New helpers under its owned `HashAndSign/` directory:
 - `CollisionHandler.lean`: the T1 construction, tape and transcript coupling,
   conditional collision soundness, and the machine/transcript wrapper.
 - `ForwardHandler.lean`: the T2 construction and its typed call/finalization readers;
-  the second checkpoint's game comparison remains pending.
+  used by the second checkpoint's game comparison.
+- `ForwardGame.lean`: fixed-tape original signer, mapped transcript/output readers,
+  forwarded freshness and exact original-game probability equality.
 - `FixedGame.lean`: fixed/fresh-tape signing oracles, common transcript and success predicate.
 - `OneQuery.lean`: zero/one-query normal forms.
 - `OneQuerySampling.lean`: moving a single oracle answer tape before the computation.
@@ -55,6 +65,8 @@ Promotion requests:
 - `splitBits_append` and `splitBits_pad_concat` to `Authentication/Encoding.lean`;
 - `eq_pure_of_cost_zero` and `one_query_cases` to `Games/OracleComp.lean`;
 - `expect_simulate_sample_once` to `Games/Hopping.lean`.
+- Original-signature fixed-tape helpers `origFixedSign`, `OriginalSuccess`, and
+  `forgeGame_eq_fixed` to a signature-game helper module.
 
 Searches are recorded in the evidence logs. Existing public facts are used,
 including `expect_sample_pair`, `seedEquiv`, coin/list readers and

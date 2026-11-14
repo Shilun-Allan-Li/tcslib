@@ -23,7 +23,9 @@ for p in (current / 'evidence/logs').iterdir():
         if p.name == 'bootstrap':
             shutil.copytree(p, logs / p.name)
         continue
-    if p.name.startswith(('collision-game-', 'forward-game-')):
+    if p.name.startswith('collision-game-'):
+        continue
+    if commit.startswith('6bb523434') and p.name.startswith('forward-game-'):
         continue
     if p.name.startswith('owned-check-') and p.name not in [f'owned-check-{i}.log' for i in range(1, 5)]:
         continue
