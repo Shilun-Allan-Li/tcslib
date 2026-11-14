@@ -1,0 +1,33 @@
+From 653d6c1bd0514ca4225bb92db80a9b7754af60bb Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 14 Nov 2026 08:48:40 +0000
+Subject: [PATCH] ext-nosrc landing edit LE-width: re-wrap one statement line
+ of Extraction/Sampler
+
+The delivery adds one line over 100 characters (Sampler.lean:105, 102 characters, in the
+statement of chooseWord's flatten lemma). Re-wrapped; whitespace only, no change to any
+statement, proof or name.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Randomness/Extraction/Sampler.lean | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Randomness/Extraction/Sampler.lean b/TCSlib/Cryptography/Randomness/Extraction/Sampler.lean
+index 92bbe93f4..2f4e27286 100644
+--- a/TCSlib/Cryptography/Randomness/Extraction/Sampler.lean
++++ b/TCSlib/Cryptography/Randomness/Extraction/Sampler.lean
+@@ -102,7 +102,8 @@ the same branch choice; induction identifies the remaining trials. -/
+ theorem chooseWord_flatten (Ext : List Bool → List Bool) (n t : ℕ)
+     (x : Fin (t + 1) → Fin n → Bool) :
+     chooseWord Ext n t (List.ofFn fun i => List.ofFn (x i)).flatten =
+-      List.ofFn (Rejection.select (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) t x) := by
++      List.ofFn
++        (Rejection.select (fun a : Fin n → Bool => (Ext (List.ofFn a)).headD false) t x) := by
+   induction t with
+   | zero =>
+     rw [Rejection.select_zero, List.ofFn_succ, List.ofFn_zero, List.flatten_cons,
+-- 
+2.43.0
+

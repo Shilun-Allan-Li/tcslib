@@ -1,0 +1,38 @@
+seal table (whole-file closure seals; A = PolyExpr.eval exempt, B = sealed; 'strict' = archived gate10 harness, 'coe' = the same with FinDist's CoeFun instance treated as notation)
+== logs/seal-base-A.tsv
+  BaseSealA_Cryptography_Randomness                              requests  3365 rc 0 errors 0 install 1 eof 1 
+  BaseSealA_Cryptography_Randomness_Extraction                   requests   608 rc 0 errors 0 install 1 eof 1 
+== logs/seal-base-B.tsv
+  BaseSealB_Cryptography_Randomness                              requests  3366 rc 0 errors 0 install 1 eof 1 
+  BaseSealB_Cryptography_Randomness_Extraction                   requests   609 rc 0 errors 0 install 1 eof 1 
+== logs/seal-base-coe-A.tsv
+  BaseSealCoeA_Cryptography_Randomness                           requests  3364 rc 0 errors 0 install 1 eof 1 
+  BaseSealCoeA_Cryptography_Randomness_Extraction                requests   607 rc 0 errors 0 install 1 eof 1 
+== logs/seal-base-coe-B.tsv
+  BaseSealCoeB_Cryptography_Randomness                           requests  3365 rc 0 errors 0 install 1 eof 1 
+  BaseSealCoeB_Cryptography_Randomness_Extraction                requests   608 rc 0 errors 0 install 1 eof 1 
+== logs/seal-head-A.tsv
+  SealA_Cryptography_Randomness                                  requests  3382 rc 0 errors 0 install 1 eof 1 
+  SealA_Cryptography_Randomness_Extraction                       requests  1046 rc 0 errors 0 install 1 eof 1 
+  SealA_Cryptography_Randomness_Extraction_Rejection             requests    18 rc 1 errors 18 install 1 eof 1 failing: TCSlib.Cryptography.Randomness.Rejection.accepted_flat_apply,TCSlib.Cryptography.Randomness.Rejection.accepted_flat_isSource,TCSlib.Cryptography.Randomness.Rejection.branch_apply,TCSlib.Cryptography.Randomness.Rejection.expect_map,TCSlib.Cryptography.Randomness.Rejection.law_apply,TCSlib.Cryptography.Randomness.Rejection.law_apply_flat,TCSlib.Cryptography.Randomness.Rejection.law_eq_mixture,TCSlib.Cryptography.Randomness.Rejection.law_succ_apply,TCSlib.Cryptography.Randomness.Rejection.law_succ_probTrue,TCSlib.Cryptography.Randomness.Rejection.map_apply_expect,TCSlib.Cryptography.Randomness.Rejection.map_map,TCSlib.Cryptography.Randomness.Rejection.map_prod_snd,TCSlib.Cryptography.Randomness.Rejection.mixture,TCSlib.Cryptography.Randomness.Rejection.mixture_apply,TCSlib.Cryptography.Randomness.Rejection.mixture_isSource,TCSlib.Cryptography.Randomness.Rejection.sum_map
+== logs/seal-head-B.tsv
+  SealB_Cryptography_Randomness                                  requests  3383 rc 0 errors 0 install 1 eof 1 
+  SealB_Cryptography_Randomness_Extraction                       requests  1047 rc 0 errors 0 install 1 eof 1 
+  SealB_Cryptography_Randomness_Extraction_Rejection             requests    18 rc 1 errors 18 install 1 eof 1 failing: TCSlib.Cryptography.Randomness.Rejection.accepted_flat_apply,TCSlib.Cryptography.Randomness.Rejection.accepted_flat_isSource,TCSlib.Cryptography.Randomness.Rejection.branch_apply,TCSlib.Cryptography.Randomness.Rejection.expect_map,TCSlib.Cryptography.Randomness.Rejection.law_apply,TCSlib.Cryptography.Randomness.Rejection.law_apply_flat,TCSlib.Cryptography.Randomness.Rejection.law_eq_mixture,TCSlib.Cryptography.Randomness.Rejection.law_succ_apply,TCSlib.Cryptography.Randomness.Rejection.law_succ_probTrue,TCSlib.Cryptography.Randomness.Rejection.map_apply_expect,TCSlib.Cryptography.Randomness.Rejection.map_map,TCSlib.Cryptography.Randomness.Rejection.map_prod_snd,TCSlib.Cryptography.Randomness.Rejection.mixture,TCSlib.Cryptography.Randomness.Rejection.mixture_apply,TCSlib.Cryptography.Randomness.Rejection.mixture_isSource,TCSlib.Cryptography.Randomness.Rejection.sum_map
+== logs/seal-le-A.tsv
+  SealA_Cryptography_Randomness_Extraction_Sampler               requests  1034 rc 0 errors 0 install 1 eof 1 
+== logs/seal-le-B.tsv
+  SealB_Cryptography_Randomness_Extraction_Sampler               requests  1035 rc 0 errors 0 install 1 eof 1 
+== logs/seal-head-coe-A.tsv
+  SealCoeA_Cryptography_Randomness                               requests  3381 rc 0 errors 0 install 1 eof 1 
+  SealCoeA_Cryptography_Randomness_Extraction                    requests  1045 rc 0 errors 0 install 1 eof 1 
+  SealCoeA_Cryptography_Randomness_Extraction_Rejection          requests    17 rc 0 errors 0 install 1 eof 1 
+== logs/seal-head-coe-B.tsv
+  SealCoeB_Cryptography_Randomness                               requests  3382 rc 0 errors 0 install 1 eof 1 
+  SealCoeB_Cryptography_Randomness_Extraction                    requests  1046 rc 0 errors 0 install 1 eof 1 
+  SealCoeB_Cryptography_Randomness_Extraction_Rejection          requests    17 rc 0 errors 0 install 1 eof 1 
+== logs/seal-le-coe-A.tsv
+  SealCoeA_Cryptography_Randomness_Extraction_Sampler            requests  1033 rc 0 errors 0 install 1 eof 1 
+== logs/seal-le-coe-B.tsv
+  SealCoeB_Cryptography_Randomness_Extraction_Sampler            requests  1034 rc 0 errors 0 install 1 eof 1 
+note: head strict Sampler rows are in seal-le-* (final head 653d6c1b after LE-width); the pre-LE-width Sampler seals passed too (superseded/).

@@ -1,0 +1,9 @@
+controls-strict/, control-runs-strict/, ctlcheck-strict.log: paired controls on the strict seals (FinDist CoeFun instance
+  sealed). Diagnostic, kept: the negative `p a = p.prob a := rfl` fails sealed, but so do the published readers
+  `FinDist.uniform_apply` and `FinDist.coe_mk` used through coercion notation, because under the instance-unfolding mask
+  `p a` elaborates to `CoeFun.coe p a` instead of `p.prob a`. This shows the strict Rejection failures are an artefact of
+  sealing coercion notation; the canonical controls are controls/ (coe variant, ALL_OK) and controls-le/.
+probe-runs-pre-LE-width/: head collector, census and kinds probes before the LE-width re-wrap of Sampler.lean; replaced
+  by probe-runs/ (same 108 constants; the collector of probe-runs-pre-LE-width generated seals/ and seals-coe/).
+Seal*_..._Sampler.json/.lean.txt: the Sampler seal records of seals/ and seals-coe/ before LE-width (moved here; their
+  runs, which passed, remain in seal-runs/ and seal-runs-coe/); the final-head Sampler seals are seals-le/, seals-le-coe/.

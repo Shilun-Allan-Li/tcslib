@@ -1,0 +1,34 @@
+ext-nosrc (Theorem 183.6, Randomness.not_isExtractor_effSources) maintainer delivery review r1, 2026-11-14 UTC
+brief: briefs/pass-shelat-ch5-8/fills/ext-nosrc/issued-r1/brief.md (= exchange outbox b436d19a), SHA-256
+  30a0e02d3d5973b41c937fb13b044b49722290ad837fc99ed45bbc7c159dde52 (logs/brief.md); base-sorries logs/base-sorries-issued.txt
+  (21 in 11 modules). Issue base eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9 (merge of #299).
+delivery: exchange/pass-shelat-ch5-8 a5da5cc3b2f37f8a8540cf74eb2762cd1e2a08d4 ("fill ext-nosrc: final"; checkpoints a0c36ef90,
+  dfec1f17d, a2c2e1b2c touch only inbox/fills/ext-nosrc), extracted with git archive into a scratch directory (removed).
+integrity (logs/payload-check.txt, evidence-check.txt, integrity.log, git-am-integrity.log): top-level SHA256SUMS 846/846 OK and
+  evidence/SHA256SUMS 837/837 OK, delivered paths exactly the manifests' paths in both. git am of the 3 patches at the base: rc 0,
+  tree fd59faf0ec012eaf3adddd1c260765413ae859a8; the 4 changed paths byte-identical to src/ and to the worker's
+  patch-reproduction hashes. The worker's commit hashes (e0b0d226, 406330fe, 7aa5cf51) are not reproduced with committer =
+  author and committer dates = author dates (the committer metadata is not recorded in the delivery; the REPORT gives no tree
+  hash). Facade diff = exactly the two import lines of evidence/scope-request/facade-imports.patch.
+landing: branch land/pass-shelat-ext-nosrc (local only, no upstream), worktree $SP/wt-land-extnosrc (sparse, briefs/
+  excluded): git am at eff2dcd0 (authors kept: Seyoon Ragavan, as committed by the worker; committer rev@local), rebased onto
+  origin tip ba0adb6b1a69787805340d06cb5ce9216b6277a0 (7 records-only commits since eff2dcd0: PassShelatChapter5-8Plan.md and
+  briefs/ only, landing/origin-delta-nonbriefs.txt, origin-commits.txt), no conflict. Commits 6ba3a4ec221deeb40e535bacc1923609554a55c4,
+  6fbfa12788b033420a900e56eff183c23b996966, a86ad95616fc488db3c75942655b302802ca52ed; landing edit LE-width
+  653d6c1bd0514ca4225bb92db80a9b7754af60bb (head; tree cc890fca133c7ebbaa2d925ae31f5c32525b6eb9), landing/0001-*.patch.
+olean tree $SP/dl-oleans: verified a full base tree first (logs/base-tree-check.txt: every module's last record at the base source
+  and olean hash, except Games/Efficiency, rebuilt by the maintainer for LE-gate21 outside these records; re-checked in build/).
+  Base side: base worktree (detached at eff2dcd0, removed) collector base-probe-runs/, base seals base-seals/{A,B} and the
+  census Census_base in base-seal-runs/, coe-variant base seals base-seals-coe/ base-seal-runs-coe/. Head: build/ (Efficiency,
+  Rejection, Sampler, Extraction, Randomness, TCSlib: rc 0), edit-build/ (LE-width rebuild), logs/final-tree-check-head.txt
+  (1201 modules + 31 PFR, all rc 0 at the head source and olean hash). audits/*/Checks do not import Randomness.
+  Restored to base: restore-build/ (base Extraction, Randomness, TCSlib), helper and probe oleans deleted,
+  logs/restore-base-check.txt (1199 modules at the base source and olean hash, no helper or probe olean left).
+statements: statements/decls2.tsv (73 ADDED, 0 CHANGED/REMOVED), header-bytes.txt (the 8 pre-existing declarations of
+  Extraction.lean byte-identical), touched.tsv (only the target CHANGED, body and sketch), docaudit.tsv, census.tsv,
+  logs/census-summary.txt. axioms: logs/axioms-summary.txt (probe-runs/ Census_head; base-seal-runs/ Census_base).
+seals: tools/mkseals_ab.py (strict archived gate10 harness) -> seals/, seal-runs/; tools/mkseals_coe.py (FinDist CoeFun instance
+  treated as notation) -> seals-coe/, seal-runs-coe/; Sampler after LE-width: seals-le/, seals-le-coe/, seal-runs-le/; logs/seal-
+  table.txt and seal-*.tsv (tools/sealsum.py). controls: tools/mkctl_extnosrc.py on the coe seals -> controls/, control-runs/,
+  controls-le/, control-runs-le/ (ALL_OK); strict controls superseded/ (diagnostic, DISPOSITION.txt). scan: scan/, logs/scan2-head.log.
+other: logs/sorry-census.txt, lint-{base,head}.log, lint-diff.txt, sizes-widths.txt (pre-LE-width), duplication-grep.txt.
