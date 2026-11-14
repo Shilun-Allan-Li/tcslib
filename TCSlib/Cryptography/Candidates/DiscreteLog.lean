@@ -481,6 +481,16 @@ def expGenFun {V : List Bool → Prop} (G : ExpGroupGen V) (z : List Bool) : Lis
     pairEncode (G.gen.output (NUPPT.layout (NUPPT.inParam z) [] [] (NUPPT.inCoins z))) []
   else pairEncode dlDefaultIndex []
 
+/-- The raw index generator pairs the instance generator's output with the empty trapdoor
+when the parameter length is at least `G.n₀`, and otherwise pairs `dlDefaultIndex` with it:
+`expGenFun G z = if G.n₀ ≤ u.length then pairEncode o [] else pairEncode dlDefaultIndex []`,
+where `u = NUPPT.inParam z` and `o = G.gen.output (NUPPT.layout u [] [] (NUPPT.inCoins z))`. -/
+theorem expGenFun_eq {V : List Bool → Prop} (G : ExpGroupGen V) (z : List Bool) :
+    expGenFun G z =
+      if G.n₀ ≤ (NUPPT.inParam z).length then
+        pairEncode (G.gen.output (NUPPT.layout (NUPPT.inParam z) [] [] (NUPPT.inCoins z))) []
+      else pairEncode dlDefaultIndex [] := rfl
+
 /-- The index generator's string function is polynomial-time: the threshold test compares
 the length of `1^n` with the constant `1^{n₀}` (`polyTimeComputable_lenLe`), then
 `polyTimeComputable_ite` between the instance generator's output and a constant. -/
@@ -642,6 +652,16 @@ def expSampleRaw (z : List Bool) : List Bool :=
   natToList (dlW (NUPPT.inArg z))
     ((sampleBelowL (dlM (NUPPT.inArg z)) (Nat.size (dlM (NUPPT.inArg z)))
       (NUPPT.inParam z).length (NUPPT.inParam z).length (NUPPT.inCoins z)).getD 0)
+
+/-- The raw exponent sampler writes the result of `sampleBelowL m (Nat.size m) n n r`,
+with fallback zero, at the width of the input index:
+`expSampleRaw z = natToList (dlW i) ((sampleBelowL m (Nat.size m) n n r).getD 0)`, where
+`i = NUPPT.inArg z`, `m = dlM i`, and `n` and `r` are the input parameter length and coins. -/
+theorem expSampleRaw_eq (z : List Bool) :
+    expSampleRaw z =
+      natToList (dlW (NUPPT.inArg z))
+        ((sampleBelowL (dlM (NUPPT.inArg z)) (Nat.size (dlM (NUPPT.inArg z)))
+          (NUPPT.inParam z).length (NUPPT.inParam z).length (NUPPT.inCoins z)).getD 0) := rfl
 
 /-! ### The comparison test of the domain sampler (helper of `polyTimeComputable_expSampleRaw`) -/
 

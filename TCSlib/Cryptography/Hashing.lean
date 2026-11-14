@@ -4,6 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Hashing.CollisionResistant
 import TCSlib.Cryptography.Hashing.FromDiscreteLog
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Algebra
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Coins
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Encoding
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Probability
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Reduction
+import TCSlib.Cryptography.Hashing.FromDiscreteLog.Sampling
 import TCSlib.Cryptography.Hashing.SIS
 
 set_option maxHeartbeats 0
