@@ -19,6 +19,15 @@ import TCSlib.Cryptography.Authentication.Signatures.Lamport.Averaging
 import TCSlib.Cryptography.Authentication.Signatures.Lamport.AveragingExtra
 import TCSlib.Cryptography.Authentication.Signatures.Lamport.Statistics
 import TCSlib.Cryptography.Authentication.Signatures.Lamport.Experiment
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Advice
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Blocks
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Closing
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.InversionProbability
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Machine
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Seed
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.MachineSpec
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Nonabort
+import TCSlib.Cryptography.Authentication.Signatures.Lamport.Realization
 import TCSlib.Cryptography.Hashing.FromDiscreteLog
 import TCSlib.Cryptography.Authentication.Signatures.HashAndSign
 
