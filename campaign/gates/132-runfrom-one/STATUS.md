@@ -1,6 +1,6 @@
-**Not yet clear to merge: #296.** Gate 132 round 3 dispatched to Codex on 2026-11-14 (prompt-r3.md, exchange `17ae49c5`); awaiting `gate132-runfrom-one-r3-findings.md`.
-- Round 2 (Codex) HOLD, one minor: G132-04, `Bidirectional.foldCfg_run`'s `zero` case, an uncited one-step run.
-- Repaired in `befb73f9` with round 2's proposed replacement; Bidirectional joins the PR (70 files, 69 citing owners).
-- Round 3 evidence: 403-module replay passes; no new failing seal root (30/70 owners pass at head, 26 at base);
-  454 controls pass; Bidirectional re-sweep has no one-step row; the successor-and-zero census has no uncited
-  one-step run; all 864 changed copy pairs are dispositioned. Round 2's records are corrected (resolutions-r3.md).
+**Clear to merge: #296** at `befb73f97a63ce449fe1a9a1b7dfc3fdbda65969`.
+Gate 132 closed: round 3 CLEAR (0 blockers, 0 majors, 0 minors, 9 notes; `findings-r3.md`).
+The 403-module merged-tree replay ran on campaign Lean `7b6bd168`, which is still current (no Lean,
+toolchain or manifest change since), and the head merges cleanly. The PR is a draft; mark it ready
+before merging. After the merge the replay output `oleans-ro1r3-c7b6b` becomes the campaign
+snapshot. See findings-r3.md and resolutions-r3.md.

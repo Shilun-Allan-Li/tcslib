@@ -65,3 +65,13 @@ seal, control and screen inputs. The qualifications stand:
   classified. The census covers the explicit-equation form that both passes missed.
 - N4: the seals give a comparative result (no new failing root), not universal rule-10
   compliance.
+
+## Round 3 result (2026-11-14)
+
+Codex returned **CLEAR (0 blockers, 0 majors, 0 minors, 9 notes)**, recorded verbatim as
+`findings-r3.md` (SHA-256 `333f0f11a070052675bcc7cb27484e9117db07a6f03c54149351750976d3e2a4`).
+It finds G132-04 resolved and G132-01 to G132-03 still resolved, and identifies no further uncited
+one-step conversion. N4 (the seals are comparative evidence, not universal rule-10 compliance; the
+ObliviousSetup kernel error and the unsealed private `universalInputCfg`) and N3 (earlier errors can
+hide later tactics; hypothesis-dependent durations are not classified) keep their stated
+qualifications. The other notes need no action. **Gate 132 is closed.**
