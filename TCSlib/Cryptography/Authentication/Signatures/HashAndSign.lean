@@ -417,7 +417,8 @@ theorem expect_hashAndSign_sign (H : CRH) (S : SignatureScheme)
     ProbComp.expect
         (simulate ((hashAndSign H S hlen).signImpl n (pairEncode sk i)).withLog c ((), [])) g =
       ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
-        ProbComp.expect (simulate (HashSignFill.fixedSign H S n sk i rs).withLog c ((), [])) g) := by
+        ProbComp.expect (simulate (HashSignFill.fixedSign H S n sk i rs).withLog c ((), []))
+          g) := by
   have hraw := HashSignFill.expect_simulate_sample_once
     (fun (_ : Fin 1) (m : Fin (H.domLen.eval n) → Bool) (rs : (hsSign S H).Coins n) =>
       padFin (S.sigLen.eval n)
