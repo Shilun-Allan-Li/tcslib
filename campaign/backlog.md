@@ -3846,7 +3846,7 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `polyTimeComputable_powCap`, public in ClassP/BinaryArith/Mul (a fill); (iii) Ladner.lean may
   import `ClassP.BinaryArith.Loops` and `ClassP.ModelInvariance` where a fill's route needs them.
   Fills edit Ladner.lean serially, in the draft's order (targets 3, 4, 1, 2, 5, 6).
-  Fill 1 (targets 3 and 4) delivered and landed as #304 (gate 136). Prepared, not dispatched
+  Fill 1 (targets 3 and 4) delivered and merged as #304 (gate 136 CLEAR) at `a052f889`. Prepared, not dispatched
   (user low on Codex tokens, 2026-11-14): fill 2 (`powCap` and the private parser leaves,
   `campaign/fills/ladner-common-leaves/`) and fill 3 (target 1 part A, up to the candidate
   test, `campaign/fills/ladner-poly-candidate/`), both pre-shipped at #304's head. Target 1 is
