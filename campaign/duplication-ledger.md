@@ -2034,7 +2034,7 @@ statements) goes to Seyoon before it is implemented; the PR waits for it. **Appr
 equations of `clockStageCfg_captures`, `setupCfg_initializes` and `setupCfg_finish` restated
 through it; and the private `obliviousSchedule_ready` as `∃ t c, runFrom … t =
 obliviousScheduleCfg W a c ∧ …`, superseding its cast form. Route probe:
-`rd/Transport-route-probe.lean.txt` (scratch), archived with the gate. **Added (Seyoon, 2026-11-14):** a sixth transport reader,
+`rd/Transport-route-probe.lean.txt` (scratch), archived with the gate. **Merged as #300** (gate 133 round 2 CLEAR) at `aeeda364`; the four fronts are closed. **Added (Seyoon, 2026-11-14):** a sixth transport reader,
 `obliviousScheduleCfg_eq_id` (the transport is the identity at the schedule's types), used by the
 three producers' proofs, so that restating them reads `obliviousScheduleCfg` only through its
 readers. `setupCfg_initializes` still reaches ObliviousSetup's private steps, which are stated
