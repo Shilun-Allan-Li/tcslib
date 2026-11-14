@@ -1,0 +1,366 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.FixedGame
+import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CodecReaders
+import TCSlib.Cryptography.Games.Bridges.Experiments
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The common transcript of the forwarding reduction
+
+## Main definitions
+
+* `HashSignFill.queryHash`: the typed hash at the original signature message width.
+* `HashSignFill.origFixedSign`: the original signer with one fixed signing tape.
+* `HashSignFill.forwardEntry`, `forwardOutput`: hashing the query log and final message.
+
+## Main results
+
+The forwarding handler and the common fixed-tape transcript have the same adversary
+output, with the outer log obtained by hashing every query. Distinct queried hashes
+therefore give freshness in the original signature game.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
+  January 2010, Theorem 144.1, book pp. 144–145.
+-/
+
+namespace TCSlib.Cryptography.Authentication.HashSignFill
+
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
+
+/-- The hash of a domain-width message, padded to the original signature message width. -/
+def queryHash (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (m : Fin (H.domLen.eval n) → Bool) : Fin (S.msgLen.eval n) → Bool :=
+  padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn m))))
+
+/-- The typed hash reads the evaluator output at the original message width. -/
+theorem queryHash_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (m : Fin (H.domLen.eval n) → Bool) :
+    queryHash H S n i m =
+      padFin (S.msgLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn m)))) := rfl
+
+/-- The original signature oracle with a fixed signing tape and trivial state. -/
+def origFixedSign (S : SignatureScheme) (n : ℕ) (sk : List Bool)
+    (rs : S.sign.Coins n) :
+    QueryImpl (bitSpec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ => S.sigLen.eval n))
+      Unit unifSpec :=
+  fun _ m _ => .pure (padFin (S.sigLen.eval n)
+    (S.sign.runAt n (pairEncode sk (List.ofFn m)) rs), ())
+
+/-- The fixed original signer returns its padded signature and trivial state. -/
+theorem origFixedSign_eq (S : SignatureScheme) (n : ℕ) (sk : List Bool)
+    (rs : S.sign.Coins n) :
+    origFixedSign S n sk rs = fun _ m _ =>
+      .pure (padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (List.ofFn m)) rs), ()) := rfl
+
+/-- Applying the fixed original signer returns its padded signature. -/
+theorem origFixedSign_apply (S : SignatureScheme) (n : ℕ) (sk : List Bool)
+    (rs : S.sign.Coins n) (j : Fin 1) (m : Fin (S.msgLen.eval n) → Bool) (s : Unit) :
+    origFixedSign S n sk rs j m s =
+      .pure (padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (List.ofFn m)) rs), ()) := rfl
+
+/-- A forwarded log entry asks oracle zero the hash of the inner query and records the
+same signature answer. -/
+def forwardEntry (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (e : Σ _ : Fin 1, (Fin (H.domLen.eval n) → Bool) × (Fin (S.sigLen.eval n) → Bool)) :
+    Σ _ : Fin 1, (Fin (S.msgLen.eval n) → Bool) × (Fin (S.sigLen.eval n) → Bool) :=
+  ⟨0, queryHash H S n i e.2.1, e.2.2⟩
+
+/-- Forwarding an entry replaces its query by its hash and retains its signature answer. -/
+theorem forwardEntry_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (e : Σ _ : Fin 1, (Fin (H.domLen.eval n) → Bool) × (Fin (S.sigLen.eval n) → Bool)) :
+    forwardEntry H S n i e = ⟨0, queryHash H S n i e.2.1, e.2.2⟩ := rfl
+
+/-- The forwarded output is the hashed message followed by the unchanged signature. -/
+def forwardOutput (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
+    Fin (S.msgLen.eval n + S.sigLen.eval n) → Bool :=
+  Fin.append (queryHash H S n i (splitBits a).1) (splitBits a).2
+
+/-- The forwarded output concatenates the hash of the message with the signature. -/
+theorem forwardOutput_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
+    forwardOutput H S n i a =
+      Fin.append (queryHash H S n i (splitBits a).1) (splitBits a).2 := rfl
+
+/-- The forwarded output transported to the declared handler output width. -/
+def handlerOutput (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
+    Fin ((HashSignForward.handler H S).outLen.eval n) → Bool :=
+  fun j => forwardOutput H S n i a (Fin.cast (HashSignForward.handler_output_width H S n) j)
+
+/-- The handler output is the forwarded output evaluated through its width cast. -/
+theorem handlerOutput_eq (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
+    handlerOutput H S n i a = fun j => forwardOutput H S n i a
+      (Fin.cast (HashSignForward.handler_output_width H S n) j) := rfl
+
+/-- Querying the original fixed signer on a typed hash gives the common transcript's
+hashed reply. -/
+theorem origFixedSign_queryHash (H : CRH) (S : SignatureScheme) (n : ℕ) (sk i : List Bool)
+    (rs : S.sign.Coins n) (m : Fin (H.domLen.eval n) → Bool) :
+    origFixedSign S n sk rs 0 (queryHash H S n i m) () =
+      .pure (hashedReply H S n sk i rs m, ()) := by
+  rw [origFixedSign_apply, hashedReply_eq, HashSignForward.hashWord_unary, queryHash_eq]
+
+/-- The forwarding handler's finalization returns the transported forwarded output. -/
+theorem handler_finish_output (H : CRH) (S : SignatureScheme) (n : ℕ) (pk : List Bool)
+    (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool)
+    (s : Fin ((HashSignForward.handler H S).stateLen.eval n) → Bool)
+    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
+    (HashSignForward.handler H S).finish n pk ω s a =
+      .pure (handlerOutput H S n (H.gen.runAtL n [] (List.ofFn ω)) a) := by
+  rw [HashSignForward.handler_finish_split, handlerOutput_eq, forwardOutput_eq, queryHash_eq]
+
+/-- Fixing the signing tape gives a common adversary output for the inner transcript
+and the forwarding reduction. The outer query log is obtained by hashing each inner
+query and retaining its signature answer.
+
+**Proof sketch.** A one-query computation either returns immediately or asks one query
+and returns a function of its answer. In the first case both logs are empty. In the
+second case the handler forwards the typed hash, the original fixed signer gives the
+same hashed reply as the inner fixed signer, and both continuations return the same
+adversary output. Finalization hashes that output's message component. -/
+theorem forward_transcript (H : CRH) (S : SignatureScheme) (n : ℕ) (pk sk : List Bool)
+    (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool)
+    (rs : S.sign.Coins n)
+    (c : OracleComp
+      (bitSpec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n))
+      (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool))
+    (hc : c.CostBoundedBy (fun _ => 1) 1) :
+    ∃ (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool)
+      (L : QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
+        (fun _ => S.sigLen.eval n))),
+      simulate (fixedSign H S n sk (H.gen.runAtL n [] (List.ofFn ω)) rs).withLog c
+          ((), []) = .pure (a, ((), L)) ∧
+        simulate (origFixedSign S n sk rs).withLog
+          ((simulate ((HashSignForward.handler H S).impl n pk ω) c
+            ((HashSignForward.handler H S).init n)).bind
+              (fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1))
+          ((), []) =
+          .pure (handlerOutput H S n (H.gen.runAtL n [] (List.ofFn ω)) a,
+            ((), L.map (forwardEntry H S n (H.gen.runAtL n [] (List.ofFn ω))))) := by
+  rcases one_query_cases c hc with ⟨a, rfl⟩ | ⟨j, m, f, rfl⟩
+  · refine ⟨a, [], ?_, ?_⟩
+    · rw [simulate_pure]
+    · simp only [simulate_pure, OracleComp.pure_bind, handler_finish_output, List.map_nil]
+  · refine ⟨f (hashedReply H S n sk (H.gen.runAtL n [] (List.ofFn ω)) rs m),
+      [⟨j, m, hashedReply H S n sk (H.gen.runAtL n [] (List.ofFn ω)) rs m⟩], ?_, ?_⟩
+    · simp only [simulate_query, QueryImpl.withLog_apply, fixedSign_apply,
+        OracleComp.pure_bind, simulate_pure, List.nil_append]
+    · simp only [simulate_query, HashSignForward.handler_impl, ← queryHash_eq,
+        OracleComp.query_bind, OracleComp.pure_bind, simulate_pure, handler_finish_output,
+        QueryImpl.withLog_apply, origFixedSign_queryHash, List.nil_append,
+        List.map_cons, List.map_nil, forwardEntry_eq]
+
+/-- The message component of the forwarded output is the hash of the inner message. -/
+theorem forwardOutput_message (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
+    (splitBits (forwardOutput H S n i a)).1 = queryHash H S n i (splitBits a).1 := by
+  funext j
+  rw [splitBits_fst, forwardOutput_eq, Fin.append_left]
+
+/-- The signature component of the forwarded output is the original signature component. -/
+theorem forwardOutput_signature (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
+    (splitBits (forwardOutput H S n i a)).2 = (splitBits a).2 := by
+  funext j
+  rw [splitBits_snd, forwardOutput_eq, Fin.append_right]
+
+/-- If no logged inner query has the hash of the final message, the final hashed message
+is fresh in the forwarded log. This includes the case of an empty inner log. -/
+theorem forward_fresh (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool)
+    (L : QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
+      (fun _ => S.sigLen.eval n)))
+    (hfresh : ∀ e ∈ L, queryHash H S n i e.2.1 ≠ queryHash H S n i (splitBits a).1) :
+    ∀ e ∈ L.map (forwardEntry H S n i),
+      e.2.1 ≠ (splitBits (forwardOutput H S n i a)).1 := by
+  intro e he
+  obtain ⟨e', he', rfl⟩ := List.mem_map.mp he
+  rw [forwardEntry_eq, forwardOutput_message]
+  exact hfresh e' he'
+
+/-- Forwarding succeeds when the original verifier accepts the final hashed message and
+no inner query has that hash [PS10, Theorem 144.1]. -/
+def ForwardSuccess (H : CRH) (S : SignatureScheme) (n : ℕ) (pk i : List Bool)
+    (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
+      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
+        (fun _ => S.sigLen.eval n)))) : Prop :=
+  S.Accepts n pk (queryHash H S n i (splitBits res.1).1) (splitBits res.1).2 ∧
+    ∀ e ∈ res.2.2, queryHash H S n i e.2.1 ≠ queryHash H S n i (splitBits res.1).1
+
+/-- Forwarding success is original-scheme acceptance and freshness of the final hash
+among all hashed inner queries. -/
+theorem forwardSuccess_iff (H : CRH) (S : SignatureScheme) (n : ℕ) (pk i : List Bool)
+    (res : (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) ×
+      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
+        (fun _ => S.sigLen.eval n)))) :
+    ForwardSuccess H S n pk i res ↔
+      S.Accepts n pk (queryHash H S n i (splitBits res.1).1) (splitBits res.1).2 ∧
+        ∀ e ∈ res.2.2, queryHash H S n i e.2.1 ≠ queryHash H S n i (splitBits res.1).1 :=
+  Iff.rfl
+
+/-- The original forgery event tests acceptance and message freshness on a logged
+original-signature transcript [PS10, Definition 136.2]. -/
+def OriginalSuccess (S : SignatureScheme) (n : ℕ) (pk : List Bool)
+    (res : (Fin (S.msgLen.eval n + S.sigLen.eval n) → Bool) ×
+      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => S.msgLen.eval n)
+        (fun _ => S.sigLen.eval n)))) : Prop :=
+  S.Accepts n pk (splitBits res.1).1 (splitBits res.1).2 ∧
+    ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1
+
+/-- The original forgery event is acceptance together with freshness in its logged
+original-message queries. -/
+theorem originalSuccess_iff (S : SignatureScheme) (n : ℕ) (pk : List Bool)
+    (res : (Fin (S.msgLen.eval n + S.sigLen.eval n) → Bool) ×
+      (Unit × QueryLog (bitSpec (fun _ : Fin 1 => S.msgLen.eval n)
+        (fun _ => S.sigLen.eval n)))) :
+    OriginalSuccess S n pk res ↔
+      S.Accepts n pk (splitBits res.1).1 (splitBits res.1).2 ∧
+        ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1 := Iff.rfl
+
+/-- Hashing the output and every logged query turns the original forgery event into
+the common transcript's forwarding-success event. -/
+theorem originalSuccess_forwardOutput (H : CRH) (S : SignatureScheme) (n : ℕ)
+    (pk i : List Bool) (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool)
+    (L : QueryLog (bitSpec (fun _ : Fin 1 => H.domLen.eval n)
+      (fun _ => S.sigLen.eval n))) :
+    OriginalSuccess S n pk (forwardOutput H S n i a, ((), L.map (forwardEntry H S n i))) ↔
+      ForwardSuccess H S n pk i (a, ((), L)) := by
+  rw [originalSuccess_iff, forwardSuccess_iff, forwardOutput_message, forwardOutput_signature]
+  apply and_congr_right
+  intro _
+  constructor
+  · intro hf e he
+    exact hf (forwardEntry H S n i e) (List.mem_map.mpr ⟨e, he, rfl⟩)
+  · intro hf e he
+    obtain ⟨e', he', rfl⟩ := List.mem_map.mp he
+    exact hf e' he'
+
+/-- The original one-query forgery game may draw its signing tape before the logged
+simulation [PS10, Definition 136.2, one-time specialization].
+
+**Proof sketch.** Read key sampling, adversary sampling and the forgery test from the
+published game equation. The adversary has at most one query, so the one-query sampling
+lemma moves its fresh signing-tape sample outside the simulation. -/
+theorem forgeGame_eq_fixed (S : SignatureScheme) (C : NUPPT) (n : ℕ) :
+    accept (S.forgeGame C 1 n) =
+      ProbComp.expect (ProbComp.sample (S.gen.Coins n)) (fun rg =>
+        ProbComp.expect (ProbComp.sample (C.Coins n)) (fun r =>
+          ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
+            ProbComp.prob
+              (simulate (origFixedSign S n (pairSndD (S.gen.runAt n [] rg)) rs).withLog
+                (C.toCompOn
+                  (bitCodec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
+                    (S.msgLen.eval n + S.sigLen.eval n)) n 1
+                  (pairFstD (S.gen.runAt n [] rg)) r) ((), []))
+              (OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)))))) := by
+  classical
+  rw [S.forgeGame_eq, accept_eq, ProbComp.prob_eq_expect]
+  simp only [ProbComp.expect_bind, ProbComp.expect_pure, decide_eq_true_eq,
+    S.forgerCodec_eq_bitCodec]
+  apply congrArg (ProbComp.expect (ProbComp.sample (S.gen.Coins n)))
+  funext rg
+  apply congrArg (ProbComp.expect (ProbComp.sample (C.Coins n)))
+  funext r
+  have hraw := expect_simulate_sample_once
+    (fun (_ : Fin 1) m rs => padFin (S.sigLen.eval n)
+      (S.sign.runAt n (pairEncode (pairSndD (S.gen.runAt n [] rg)) (List.ofFn m)) rs))
+    (C.toCompOn
+      (bitCodec (fun _ : Fin 1 => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
+        (S.msgLen.eval n + S.sigLen.eval n)) n 1 (pairFstD (S.gen.runAt n [] rg)) r)
+    (C.toCompOn_costBoundedBy _ n 1 _ r)
+    (fun res => if OriginalSuccess S n (pairFstD (S.gen.runAt n [] rg)) res then 1 else 0)
+  simpa only [S.signImpl_eq, originalSuccess_iff, origFixedSign_eq,
+    ProbComp.prob_eq_expect] using hraw
+
+/-- Normalizing the declared handler output width identifies its transported output
+with the forwarded output. -/
+theorem handlerOutput_forwardOutput (H : CRH) (S : SignatureScheme) (n : ℕ) (i : List Bool)
+    (a : Fin (H.domLen.eval n + S.sigLen.eval n) → Bool) :
+    handlerOutput H S n i a = forwardOutput H S n i a := by
+  funext j
+  rw [handlerOutput_eq]
+  exact congrArg (forwardOutput H S n i a)
+    (Fin.ext (Fin.coe_cast (HashSignForward.handler_output_width H S n) j))
+
+/-- With all tapes fixed, the original forgery event of the forwarding reduction has
+the common transcript's forwarding-success probability.
+
+**Proof sketch.** The deterministic coupling gives the same adversary output and a log
+whose queries are precisely the inner query hashes. The output-component and event
+readers identify the two success tests, so their probabilities on these pure runs agree. -/
+theorem forward_prob_transcript (H : CRH) (S : SignatureScheme) (n : ℕ) (pk sk : List Bool)
+    (ω : Fin ((HashSignForward.handler H S).seedLen.eval n) → Bool)
+    (rs : S.sign.Coins n)
+    (c : OracleComp
+      (bitSpec (fun _ : Fin 1 => H.domLen.eval n) (fun _ => S.sigLen.eval n))
+      (Fin (H.domLen.eval n + S.sigLen.eval n) → Bool))
+    (hc : c.CostBoundedBy (fun _ => 1) 1) :
+    ProbComp.prob
+      (simulate (origFixedSign S n sk rs).withLog
+        ((simulate ((HashSignForward.handler H S).impl n pk ω) c
+          ((HashSignForward.handler H S).init n)).bind
+            (fun res => (HashSignForward.handler H S).finish n pk ω res.2 res.1))
+        ((), [])) (OriginalSuccess S n pk) =
+      ProbComp.prob
+        (simulate (fixedSign H S n sk (H.gen.runAtL n [] (List.ofFn ω)) rs).withLog c ((), []))
+        (ForwardSuccess H S n pk (H.gen.runAtL n [] (List.ofFn ω))) := by
+  classical
+  obtain ⟨a, L, hinner, houter⟩ := forward_transcript H S n pk sk ω rs c hc
+  rw [houter, hinner, handlerOutput_forwardOutput,
+    ProbComp.prob_pure, ProbComp.prob_pure]
+  exact if_congr (originalSuccess_forwardOutput H S n pk _ a L) rfl rfl
+
+/-- A one-query machine against the original scheme realizes exactly the common
+transcript's forwarding-success probability [PS10, Theorem 144.1].
+
+**Proof sketch.** T2 supplies the forwarding machine and a bijection between its coins
+and the independent hash-generator seed and original adversary coins. Reindex the
+original forgery experiment by this bijection and then by the hash generator's published
+coin equivalence. Drawing the single signing tape in advance gives the deterministic
+coupling, whose mapped query log and hashed output identify the two success events. -/
+theorem exists_forwardGame (H : CRH) (S : SignatureScheme) (A : NUPPT) :
+    ∃ C : NUPPT, ∀ n : ℕ,
+      accept (S.forgeGame C 1 n) =
+        ProbComp.expect (ProbComp.sample (S.gen.Coins n)) (fun rg =>
+          ProbComp.expect (ProbComp.sample (H.gen.Coins n)) (fun ri =>
+            ProbComp.expect (ProbComp.sample (A.Coins n)) (fun rA =>
+              ProbComp.expect (ProbComp.sample (S.sign.Coins n)) (fun rs =>
+                ProbComp.prob
+                  (transcript H S A n (pairFstD (S.gen.runAt n [] rg))
+                    (pairSndD (S.gen.runAt n [] rg)) (H.gen.runAt n [] ri) rs rA)
+                  (ForwardSuccess H S n (pairFstD (S.gen.runAt n [] rg))
+                    (H.gen.runAt n [] ri)))))) := by
+  obtain ⟨C, hC⟩ := HashSignForward.exists_forwardMachine H S A
+  refine ⟨C, fun n => ?_⟩
+  obtain ⟨φ, hφ⟩ := hC n
+  let e := NUPPT.coinsEquivPoly (A := H.gen) (HashSignForward.handler_seedLen H S).symm n
+  have he : ∀ ri : H.gen.Coins n, List.ofFn (e ri) = List.ofFn ri :=
+    NUPPT.coinsEquivPoly_ofFn _ n
+  rw [forgeGame_eq_fixed]
+  apply congrArg (ProbComp.expect (ProbComp.sample (S.gen.Coins n)))
+  funext rg
+  rw [← ProbComp.expect_sample_equiv φ, ← Bridge.expect_sample_pair]
+  simp only [ProbComp.expect_bind, ProbComp.expect_pure]
+  rw [← ProbComp.expect_sample_equiv e]
+  apply congrArg (ProbComp.expect (ProbComp.sample (H.gen.Coins n)))
+  funext ri
+  apply congrArg (ProbComp.expect (ProbComp.sample (A.Coins n)))
+  funext rA
+  apply congrArg (ProbComp.expect (ProbComp.sample (S.sign.Coins n)))
+  funext rs
+  rw [← hφ _ (e ri) rA]
+  rw [forward_prob_transcript H S n _ _ (e ri) rs _
+    (A.toCompOn_costBoundedBy _ n 1 _ rA)]
+  rw [HashSignForward.handler_advInput, he, ← NUPPT.runAt_eq, transcript_eq]
+
+end TCSlib.Cryptography.Authentication.HashSignFill
