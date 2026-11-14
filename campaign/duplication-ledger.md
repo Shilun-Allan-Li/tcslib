@@ -2003,3 +2003,13 @@ not debt:
 The reader PR needs public field readers for `clockStageCfg` and `setupCfg`
 (`Robustness/ObliviousCandidate`) and a statement rewrite of `obliviousSchedule_ready` through
 `obliviousSchedule_k`/`_State`; its API and the statement change go to Seyoon first.
+
+**Scoped (Seyoon, 2026-11-14): one PR, full rule-10 repair.** A seal probe and a tactic-argument
+inventory at campaign `5ab22216` show that `call_run` also names, in `simp`/`rw`/`unfold`,
+`TPos.Valid`, `vpos`, `wlen`, `rlen` and `cellOff` (`Machines/Layout`), `Consistent`, `trackPos`,
+`inPos` and `regPos` (`Machines/Sim`), `mkCfg` and `retPos` (`Machines/CallReturn`), and the
+`compileTM`/`ctr` transitions (`Machines/Program`). The one reader PR repairs all four proofs, with
+readers beside each definition: one lemma per constructor or branch, field lemmas for
+configuration constructors, and an iff for each predicate. `setupCfg`'s home is
+`Robustness/ObliviousSetup` (not `ObliviousCandidate`). The full API still goes to Seyoon before
+the PR opens.
