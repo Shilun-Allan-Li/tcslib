@@ -1,0 +1,40 @@
+{
+ "base_summary": "declarations screened: 275; copy pairs (target reproduces >= half of source): 258; reproduced text: 42,997 chars",
+ "head_summary": "declarations screened: 274; copy pairs (target reproduces >= half of source): 256; reproduced text: 42,681 chars",
+ "new": 1,
+ "gone": 3,
+ "pairs": [
+  {
+   "kind": "NEW",
+   "target": "Call.lean::call_run",
+   "source": "ObliviousCandidate.lean::clockStageCfg_run",
+   "base": "134/312 = 43%",
+   "head": "168/312 = 54%",
+   "disposition": "T: shared run-equation citations. The repaired zero case of `call_run`'s simulation induction now rewrites `MultiTapeTM.runFrom_zero` twice where it closed by definition, and its successor case already rewrites with `MultiTapeTM.runFrom_succ_eq_step'`; `clockStageCfg_run` cites the same Deterministic equations (`runFrom_one`, `runFrom_zero`, `runFrom_succ_eq_step'`). The lemmas are about different machines (a compiled call of `compileTM` and the oblivious schedule's clock stage), so neither can cite the other; the shared text is citations, not a restated proof."
+  },
+  {
+   "kind": "GONE",
+   "target": "CallReturn.lean::regs_run",
+   "source": "Call.lean::runFrom_forall_append",
+   "base": "98/139 = 71%",
+   "head": "98/212 = 46%",
+   "disposition": "extraction: both declarations are unchanged and share the same 98 characters. The screen takes a declaration's body up to the next declaration; `off_zero`, which followed `runFrom_forall_append` in Call, moved beside `off` in Layout, so the extracted body of `runFrom_forall_append` now also covers the following `section Whole` and `variable` lines (139 to 212 characters)."
+  },
+  {
+   "kind": "GONE",
+   "target": "Clean.lean::cleanTM_run",
+   "source": "CleanSweep.lean::PB_ccfg",
+   "base": "94/128 = 73%",
+   "head": "40/128 = 31%",
+   "disposition": "improvement: `cleanTM_run` no longer unfolds `ccfg` with `simp only [ccfg, Fin.append_left, Fin.append_right]`, the text it shared with `PB_ccfg`'s proof; it reads the fields through `ccfg_workTapes` and `ccfg_workTapePos`."
+  },
+  {
+   "kind": "GONE",
+   "target": "Sim.lean::SimRel",
+   "source": "Sim.lean::HaltRel",
+   "base": "75/142 = 53%",
+   "head": "75/155 = 48%",
+   "disposition": "extraction: both definitions are unchanged and share the same 75 characters. The extracted body of `HaltRel` now also covers the `variable {l} in` line before the new reader `simRel_iff` (142 to 155 characters). The two relations are the pre-existing parallel simulation and halt relations."
+  }
+ ]
+}
