@@ -1,0 +1,178 @@
+sc-garble (PS10 §6.2.2-6.2.3: Claim 157.a (i)/(ii), Claim 159.a, Yao's seed, the B1 statement, requirement B2) maintainer delivery review r1, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: the common review brief ($SP/review-brief-common.md, Updates 1-3) with the sc-ot review as template (records
+  briefs/pass-shelat-ch5-8/fills/sc-ot/final-r1/; its evidence dir $SP/dl-review/sc-ot-r1/), the canonizer review's full-file seal
+  rule (-DmaxErrors=0, EOF record; C-F02) and the int-315 tools. Nothing pushed, no PR opened, the records checkout only read
+  (git fetch and git worktree only). No lake build, no cache get. python3 -I throughout. One Lean process at a time, only on
+  $SP/dl-oleans; dl-oleans-2 (the other review) was never touched; only my own PIDs were stopped (the control attempt 1 runner).
+
+issue package: briefs/pass-shelat-ch5-8/fills/sc-garble/issued-r1/ (brief.md SHA-256 203d42ea… = dispatch.md; ruling-SG-1.md; copies
+  in logs/). SHA256SUMS 8/8 OK (logs/issue-package-check.txt); SOURCE-SHA256SUMS 166/166 OK at the issue base
+  fbd37f447596d4207c8d08b7ef7602f57fe95198 (logs/source-sums-check.txt). base-sorries.txt: 32 in 15 modules. The worker was Codex on
+  Seyoon's Mac (host addendum codex-host-2026-11-15), though the brief names Claude.
+delivery: exchange/pass-shelat-ch5-8 a73072f19787ee437f2201777711c7eb3154c714 ("fill sc-garble: final"; checkpoints 8313d3d2, 11b3b808).
+  The three commits touch only inbox/fills/sc-garble/; no later exchange commit touches it (logs/exchange-commits*.txt). git archive into
+  a fresh directory (removed after use); inventory logs/payload-inventory.sha256 (1279 files); cited extracts logs/delivery-extracts/
+  (REPORT, both manifests, COMMITS.tsv, scope-request/, final-axiom-summary, seals B-attribution and final-summary, slots.log,
+  preflight.log, checkpoint1-push-review, evidence/headers/), 61 files byte-equal to the payload (logs/delivery-extract-hashes.txt).
+  Worker REPORT: logs/worker-REPORT.md.
+integrity (logs/payload-check.txt, tools/mancheck.py, exact path-set equality):
+  - top SHA256SUMS 1278/1278 OK (1279 delivered, manifest excluded); evidence/SHA256SUMS 1254/1254 OK; no missing, no extra, no "./".
+  - git am of the 7 patches at fbd37f44 with committer name/email/date from patches/COMMITS.tsv and commit.gpgsign=false
+    (logs/git-am-integrity.log): all 7 hashes reproduce (13f745ed … 81795f776e7de58a6ab112d12fbd5be4e7aaa2f8), tree 93f268a6. COMMITS.tsv
+    has the signing column, "none" for every row (Update 3 / prf-long F-03 fixed).
+  - The 14 changed paths are byte-identical to src/, which holds exactly these 14 files (logs/src-equality.txt): M the 5 owned files
+    and M TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean (the approved reader, below); A 8 helpers (Garbling/{CoinBlocks,Probability},
+    GarblingSecurity/{CoinMarginals,NestedBounds}, SpecialEncryptionMulti/{SliceParser,SliceReduction},
+    SpecialEncryptionSecurity/{Pad,WrongKey}).
+  - Codex host (Update 3): logs/delivery-extracts/evidence/logs/preflight.log: headroom 5.05 GiB >= 4 GiB, 219 GiB free; slots.log 543
+    acquire/release pairs, all tag sc-garble, never two own holds at once, every lake call -k 3, no lake build. Environment notes
+    (REPORT): the auto-approval rejection of the first checkpoint push, the overnight "best judgment" authorization
+    (scope-request/autonomy.md): information, not findings.
+olean tree: $SP/dl-oleans. tree/snapshot-pre.txt (tools/snapshot.py): 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the required value (byte-equal to the sc-ot and canonizer
+  post-restore snapshots); tree/base-records.jsonl copied from sc-ot-r1.
+landing: branch land/pass-shelat-sc-garble (local, no upstream), worktree $SP/wt-land-sc-garble (sparse, briefs/ excluded; .lake/packages
+  symlinked). The worker head 81795f77 rebased onto origin/cryptography/pass-shelat-ch2-4 1321b9cb358867f5b51974b8c5d0781519a9cfdb
+  (#315 merged as 10b9be17, then #317 1d9b2ac3 and #316 1c09448c; landing/landing.log): rc 0, no conflict, range-diff 7/7 identical,
+  the 14 paths equal the worker head. A first rebase made with commit.gpgsign=false (9ff9bec5) was discarded and redone with the
+  environment's default signing, as for sc-ot. Origin Lean delta since the issue base: #314, #316, #317 (10 files, none a unit file;
+  landing/origin-delta-since-issue-base.txt, origin-commits-since-issue-base.txt).
+  FINAL head cd9a48438c2a6548fe9e246ce569be57c9df96b3, tree 13aa553d035fd55cf73c7123ebb73c1940019f1c (landing/commits.txt, series
+  landing/series/0001-0008), 14 files +1901/-122 vs origin (landing/changed-paths-vs-origin.txt). Worker commits keep Seyoon's
+  authorship (committer Claude); all 8 SSH-signed by the environment default:
+    6b23a7b1 Prove special encryption and nested wrong-key security   69f7fc89 Prove permutation-independent garbling and Yao seed bounds
+    2ca68a8e Prove slice multi-message security from the D4 total      60c71312 Wrap slice reduction proof within the source width limit
+    f48ec526 Use explicit local coin-map aliases in the wrong-key proof 04adb34c Use the local prefix-test coin alias in the preservation proof
+    e5cb6129 Reuse the published pair-state length bound in slice parsing
+    cd9a4843 sc-garble landing edit LE-doc (Claude <noreply@anthropic.com>)
+LE-doc (cd9a4843; tools/ledoc_sg.py, 3 exact replacements; landing/le-doc.diff; message landing/commit-msg-le-doc.txt): docstring-only.
+  NestedBounds and WrongKey `## Main results` now list their main theorems (nestedSpecial_wrongKeyBot_of_string_bounds,
+  uprob_not_good_distinct_le_of_uniform_data; exists_negligible_prefix_collision, spDecStr_none_iff_prefix_ne); the
+  `**Proof sketch.**` of nestedSpecial_wrongKeyBot, left as issued by the worker, gains one sentence naming the delivered route.
+  landing/le-doc-doconly.txt (tools/doconly_sg.py = doconly.py also stripping /-! -/): code-identical True in the 3 files, same
+  docstring counts, 1 changed each, max width 98: RESULT OK. statements/frozen/frozen-check-le.txt: 0 differences after the edit.
+build (order/ from tools/downorder.py against eff2dcd0 at the pre-edit head e5cb6129: changed 82 = 68 base delta + 14 unit; down 388 =
+  the downstream through root TCSlib and both audits/{pass-shelat,garg-ch1-3}/Checks; DAGCircuit alone puts 273 modules downstream of
+  the unit, order/unit-vs-origin/):
+  - build/ (order/build-queue.txt, 388 modules, from the base tree): build/summary.txt 388/388 rc 0, 0 errors (G26-N1, both forms),
+    substring "error" 0, 2322 s. Unit modules: 0 sorry; non-sorry warnings only SliceParser:168 and NestedBounds:89, both the
+    unused-simp-argument linter (SG-F06). Sorry warnings elsewhere only in admitted modules.
+  - edit-build/ (order/le-build-queue.txt, 9 modules: WrongKey, SpecialEncryptionSecurity, SpecialEncryptionMulti, NestedBounds,
+    GarblingSecurity, Yao, YaoReal, SecureComputation, TCSlib): 9/9 rc 0, 0 errors.
+  - Before building, the 330 base oleans the build overwrote were copied aside (tree/backed-up.txt, every hash = snapshot-pre) and the
+    58 new ones listed (tree/new-oleans.txt). The tree itself was not copied.
+  - tree/tree-check-head.txt (tools/treecheck.py; order/headfull-order.txt, 1257 modules; logs/records-head.jsonl = base records +
+    build + edit-build): every module rc 0 at the final-head source with the tree's olean, no stray olean, no empty dir: RESULT OK.
+statements (base fbd37f44; the 6 pre-existing files are byte-identical at fbd37f44 and 1321b9cb):
+  - tools/frozencheck_sg.py (frozencheck.py + --expect-removed and a `remove` control): statements/frozen/frozen-check.txt (and
+    frozen-check-le.txt at the final head): 139 base declarations of the 5 owned files (6+18+37+2+76; the worker's count) and the 72 of
+    DAGCircuit: same file, kind, name and order; headers, statement prose and every definition body identical: 0 differences;
+    SpecialEncryptionMulti: EXPECTED-REMOVED exactly the six SG-1 helpers (specialScheme_gen_runAt, specialScheme_enc_runAt,
+    specialKeyEq, ofFn_specialKeyEq, specialNonceEq, ofFn_specialNonceEq), 6 of 6, zero CHANGED. Controls, each exactly 1 difference
+    (statements/frozen/controls-summary.txt): one-character header of specialScheme_multiMessageSecure_of_joint; removal of a seventh
+    private declaration (zipWith_xor_append_of_le) -> 1 MISSING; removal of sliceEnc; prose of of_joint; header of spDecStr_wrongKey;
+    body of specialScheme; prose of uprob_not_good_le; body of GarbleSeed; header of nestedSpecial_wrongKeyBot; header of
+    yaoSeed_good_whp; body of DAGCircuit.IsFaninTwo.
+  - Raw diffs: statements/frozen/yao.diff (only the yaoSeed_good_whp body, its sketch and its Main-results bullet; Yao 970 lines),
+    specialEncryptionMulti.diff (imports, title, Main results/Contents, the B1 proof and sketch, the six removals, of_joint proof only:
+    four reader names and one re-wrap; its docstring untouched), dagcircuit.diff (= the approved fanin-reader.patch line for line).
+  - statements/frozen/sg1-private-uses.txt: at fbd37f44 the six names occur only in SpecialEncryptionMulti.lean (project and audits/);
+    at the head only the new public readers in SpecialEncryptionSecurity.lean and their uses.
+  - statements/head/touched.tsv: 8 CHANGED (the 7 targets, proofs and sketches; of_joint, proof only), 6 REMOVED (SG-1), 15 ADDED,
+    40 in new files, 197 UNCHANGED. decls2-vs-base.tsv: 55 ADDED, 0 CHANGED, 0 REMOVED (public). No @[simp], no instance, no abbrev.
+  - docaudit: 55 OK, 8 NO-FORMULA = the 6 frozen target proses, of_joint (frozen docstring) and 2 Prop formulas without a relation
+    symbol (nestedSpecial_wrongKeyBot_of_string_bounds, polyTimeComputable_slicePost; tool artifact). sketchaudit: 21 theorems with
+    >= 15 proof lines, all with a sketch. sizes-widths: max width 100, 0 over 100, Yao 970 <= 1000, all files <= 659.
+  - Name clash (clash/nameclash-head.txt, tools/nameclash.py over all TCSlib files at the head): 0 exact full-name clashes, private
+    included; zipWith_xor_append_of_le occurs only in SpecialEncryptionMulti.lean. One short-name relative (SG-F07-note):
+    SliceReduction.length_encodeList_le vs the private CircuitComplexity/Uniform.lean:208 one (different encodeList).
+axioms: probe-sources/head/CensusHead.lean (tools/mkcensus_sg.py) -> probe-runs/ (tools/runner_full.py, nothing written to the tree):
+  the 7 targets, uprob_not_good_le_of_perm (B2), uprob_not_good_le_of_uniform_data, uprob_not_good_distinct_le_of_uniform_data,
+  garbling_good_whp, specialScheme_multiMessageSecure_of_joint and the helper endpoints: [propext, Classical.choice, Quot.sound];
+  DAGCircuit.isFaninTwo_iff: no axioms. yaoHybrid_hbcSecure and yaoProtocol_hbcSecure keep sorryAx. probe-sources/head/DepTrace.lean
+  (probe-runs/mods/PlProbe_H_DepTrace.log; its first attempt, a name clash, superseded in the same results.jsonl): the admitted
+  declarations in their closures are yaoHybrid_polyTime, yaoHybrid_simulators (sc-yao) for both, plus otProtocol_polyTime,
+  otProtocol_simulators (sc-ot, #318) and HybridProtocol.hbcSecure_compose (sc-compose) for yaoProtocol_hbcSecure; yaoSeed_good_whp
+  is no longer among them. logs/census-summary.txt: 531 stored constants (= the worker's), sorryAx only in the three Yao hybrid
+  constants above. Base: probe-sources/base/CensusBase.lean on the base-phase tree (below) -> base-probe-runs/: every target and
+  garbling_good_whp had sorryAx; of_joint was standard. logs/census-base-vs-head.tsv (tools/censuscmp.py, name map
+  statements/namemap-sg1.txt: specialKeyEq -> specialScheme_keyCoinsEquiv etc., 4/4 verified same type): removed = the SG-1 privates
+  and their auxiliaries; specialScheme_gen_runAt/_enc_runAt moved private -> public with equal types; type-changed 0; axioms-changed
+  8 (the 7 targets and garbling_good_whp: sorryAx dropped); added simp/instance/abbrev none.
+admissions: logs/sorry-census.txt (tools/sorrycensus.py, records-head.jsonl): issued 32 in 15 modules -> 25 in 11: SpecialEncryptionSecurity
+  3 -> 0, SpecialEncryptionMulti 1 -> 0, Garbling 1 -> 0, GarblingSecurity 1 -> 0, Yao 3 -> 2 (yaoHybrid_polyTime:869,
+  yaoHybrid_simulators:935); every other issued module unchanged; outside the issued order no module whose source changed since the
+  issue base differs.
+Rule 10 (final head cd9a4843):
+  - Collector probe-sources/head/CollectHead.lean (tools/mkcollect.py) -> probe-runs/. Seals tools/mkseals_ab.py (strict) -> seals/{A,B},
+    tools/mkseals_coe.py (FinDist CoeFun instance as notation; canonical) -> seals-coe/{A,B}; logs/mkseals-*.log (requests 0 for
+    DAGCircuit, whose closure has no TCSlib definition, up to 2106). 56 head probes seal-runs/ (order/seal-probes-head.txt), each run
+    with lean -DmaxErrors=0 (tools/runner_full.py; C-F02); install and EOF records present in every probe.
+  - Base: the six base files at the tip (= fbd37f44) need their own closure (a base SpecialEncryptionMulti cannot be sealed against the
+    head SpecialEncryptionSecurity, whose public specialScheme_gen_runAt would clash with its private copy). Base phase: sparse
+    worktree $SP/wt-sg-base at 1321b9cb (removed), base-build/ = order/base-phase/base-build-queue.txt (32 modules: DAGCircuit up to
+    Yao and YaoReal; 32/32 rc 0), then CensusBase, CollectBase (base-probe-runs/), base seals base-seals{,-coe}/{A,B} and 24 probes
+    base-seal-runs/ (order/seal-probes-base.txt).
+  - logs/seal-head-*.tsv, seal-base-*.tsv (tools/sealsum.py), logs/seal-table-seals.txt and seal-table-seals-coe.txt
+    (tools/sealtable.py): A (PolyExpr.eval notation, the canonical rule) head 14/14, base 6/6, strict and coe. B (PolyExpr.eval sealed,
+    diagnostic): head 30 errors in 5 files, base 21 in 3 (GarblingSecurity 2, SpecialEncryptionSecurity 4, Yao 15), strict = coe.
+    Every head B error read from the raw logs and attributed (logs/seal-B-attribution.txt): all PolyExpr.eval conversions; the 9 new
+    ones are in new bodies (spDecStr_wrongKey, specialScheme_wrongKey and nestedSpecial_wrongKeyBot calls; WrongKey 5, NestedBounds 1),
+    none a foreign-definition unfold; matches the worker's B-attribution.md.
+  - SG-1: specialScheme_multiMessageSecure_of_joint passes A and B, strict and coe, with the new readers (SpecialEncryptionMulti seals).
+  - Paired controls tools/mkctl_sg.py (rows PolyExpr.eval, the FinDist CoeFun instance, DAGCircuit.IsFaninTwo (the approved reader),
+    spEncStr, Good, and the helper definitions sliceMask, SliceReduction.slicePost, SpecialWrongKey.prefixTest; negative = rfl/Iff.rfl
+    unfolding, positive = published reader) -> controls/ (coe, 24 probes, 43 sealed negatives) and controls-strict/ (28, 57); runs
+    control-runs/ (order/control-probes.txt). logs/ctlcheck.log: ALL_OK True. logs/ctlcheck-strict.log: every sealed negative fails
+    exactly once and every unsealed probe passes; only ctlCoeReader fails in the 14 strict sealed probes (harness effect, as sc-ot
+    F-09; logs/controls-strict-attribution.txt). Under the seal the Iff.rfl form of IsFaninTwo fails and isFaninTwo_iff passes: the new
+    reader is needed and sufficient. controls-attempt1/, controls-strict-attempt1/, control-runs-attempt1/: the first attempt opened
+    Turing in the Garbling probes, which Garbling's closure lacks (every Garbling control failed unsealed); superseded, the runner was
+    stopped (my PID only) and the controls regenerated with per-row `open … in` prefixes.
+  - Explicit-unfold scan (tools/scan1.py, scan2.py; probe-sources/head/ScanKindsHead.lean -> probe-runs/): scan/items-head.json,
+    scan/explicit-head.json, logs/scan2-head.log: 774 items, 594 THEOREM, 31 OWNED_DEFINITION, 147 LOCAL_OR_UNRESOLVED, 2 flagged
+    foreign, both local `let` binders (P, g) resolved to global names (logs/scan-attribution.txt): 0 foreign definitions.
+lint (scripts/campaign_style_lint.py --check8b, #305 version, identical in the worktree and at the tip):
+  - Cryptography: tip 1321b9cb 92 FAIL / 101 WARN (lint/lint-records-tip-1321b9cb.txt, from a git-archive export, removed), landing
+    head 92/101 (lint/lint-landing-head.txt); identical line sets (lint/linediff.txt: only the file count 350 -> 358).
+  - Complexity: 25 / 391 at both; the one changed line is DAGCircuit's check-8 WARN, which loses IsFaninTwo (it now has a reader).
+  - Old lint for continuity (tools/campaign_style_lint_old_rooted.py, LINT_ROOT): 241/101 -> 249/101; the +8 are the facade class
+    "SecureComputation.lean does not import child module …" for the 8 helpers (lint/oldlint-linediff.txt), fixed by #305: recorded.
+content: every changed hunk and the helpers read. specialScheme_multiMessageSecure is proved directly from D4
+  (MultiMsg.exists_negligible_distAdv_prfEncRealOut at masks 0^n ++ m_i, relabelled coins, acceptProb_comp_equiv), upstream of the
+  corollary, as the import direction requires. spDecStr_wrongKey: hG'.easy's evaluator, exists_oneQuery_nuppt, D1 at budget 1
+  (exists_negligible_prefix_collision: prfAdv + 2^-n), ε = that + 2^-n for the strict < (n = 0 included). specialScheme_wrongKey:
+  the string bound at ℓ = n, coin relabelling, the dec coins averaged out (uprob_fst), the overlong failure word decodes to none.
+  nestedSpecial_wrongKeyBot: two string bounds, δ = ε₁ + ε₂, the case analysis in nestedSpecial_wrongKeyBot_of_string_bounds
+  (0, 1, 2 positions). B2 uprob_not_good_le_of_perm has the brief's exact signature; it is a corollary of the stronger
+  uprob_not_good_le_of_uniform_data (uniform keys/row coins, permutations may depend on the seed), proved through
+  good_of_no_crossOpening (correct row opens, no cross-opening => first success is the right key; row order irrelevant), 12 events per
+  gate (arity <= 2, Finset count), uprob_exists_le twice. uprob_not_good_le averages B2 over uniform permutations. yaoSeed_good_whp
+  uses the uniform-data form with Yao's XOR shifts as the seed-dependent permutations, pushesUniform_key_row_blocks for the disjoint
+  key/row-coin blocks (b*S+v and 2S+2(4i+idx(a))+b, injective below 10S), and the output collision m/|K| = outLen·2^-n;
+  δ = 12·S·δ₀ + outLen·2^-n. B1: Option of fitting configurations, none = 0 (empty-fit convention), unary slice advice, slicePost
+  parser, D' = D ∘ P by exists_slicePost_nuppt, D4's ε before the masks, distAdv_comp and acceptProb_coins_equiv; the none branch
+  uses D4 at equal zero masks for 0 <= ε. Gate 27 hand-off obligations (1)-(6) map as REPORT § Gate 27 says. Edge cases listed in
+  the brief are covered (n = 0 strictness, no fitting slice, q = 0, empty messages, exact fits, arity 0/1/2, constant gates,
+  |gates| = 0, repeated outputs).
+duplication: logs/duplication-review.txt; dup/getd-headd-added-lines.txt. Findings SG-F04 (new undisclosed getD-of-ofFn chain,
+  CoinBlocks:73), SG-F05 (placement), notes.
+open PRs (logs/open-prs.txt, logs/open-pr-overlap.txt; heads fetched): #313 94b31964, #318 f62a25b3, #319 6421ac16 (#320 is the
+  Arora-Barak Ladner PR, out of scope). git merge-tree --write-tree of the landing head (pre-edit e5cb6129) with each: clean (#313
+  a345574e, #318 9fdd95fd, #319 a53254aa); no shared file; no PR-changed module in the unit's upstream closure; shared downstream
+  #313: Randomness, Randomness/Learning, TCSlib; #318: YaoReal, SecureComputation, TCSlib; #319: 33 modules through DAGCircuit's
+  downstream (CircuitComplexity, Randomized, Randomness, Asymptotic, audits/pass-shelat/Checks). No short-name coincidence with any PR's
+  added declarations (clash/unit-new-short-names.txt). The merge trees were not built (integration builds are the maintainer's).
+restore (restore/restore-log.txt, tools/restore.sh): 330 backups copied back (0 hash failures), 58 new oleans deleted, 10 emptied
+  directories pruned (restore/empty-dirs-before-prune.txt); the base-phase oleans were among the 330. No probe olean was ever written
+  (runner_full.py has no -o). tree/snapshot-post.txt: 1230 files, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f,
+  byte-identical to tree/snapshot-pre.txt (SNAPSHOT EQUAL); tree/tree-check-post.txt: 1199 base modules at the eff2dcd0 source and
+  record hashes, snapshot equal: RESULT OK.
+tools/: sc-ot-r1 tools, plus canonizer's probefull.sh, fullsealmap.py, mkcensus_canon.py, mkctl_canon.py and int-315's buildset.py,
+  bothdown.py, refunion.py, refcmp.py, restoreplan.py. New here: frozencheck_sg.py, mkcensus_sg.py, mkctl_sg.py, ledoc_sg.py,
+  doconly_sg.py, runner_full.py (runner.py's records with lean -DmaxErrors=0 and no -o). runner.py unchanged (G26-N1).
+cleanup: payload extraction, olean backups (bk-sg), the integrity worktree wt-sg-int and the base worktree wt-sg-base (git worktree
+  remove --force), the tip lint export and the PlProbe/ directories removed. The landing worktree is clean at cd9a4843.
+SHA256SUMS: every file here except itself (paths without "./"). ../sc-garble-r1-evidence.zip holds exactly the manifest's paths plus
+  SHA256SUMS.

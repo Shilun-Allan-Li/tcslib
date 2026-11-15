@@ -1,0 +1,60 @@
+#313 (learning) LE-gate29b (Gate 29 G29-02, proof only) and #313's integration build against #314-#317, maintainer, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I; Lean 4.25.0; one Lean process at a time, only on $SP/dl-oleans (dl-oleans-2 not touched); builds through
+  scripts/lean_check_tree.sh via tools-used/review/runner.py (G26-N1); probes through tools-used/runner_full.py (lean -DmaxErrors=0,
+  no -o); no lake command; the records checkout only read (git fetch, git worktree). Run after the sc-garble review, whose restore
+  left the tree at the base snapshot. Method and tools: gate29-le-a (tools-used/ = its tools-used/ plus the sc-garble review's
+  runner_full.py, frozencheck*.py, buildset.py, mancheck.py, snapshot.py, treecheck.py, restore.sh, sorrycensus.py); new:
+  legate29b_edit.py, rule10_b.sh (rule10.sh with runner_full.py).
+
+landing: branch land/pass-shelat-learning, worktree $SP/wt-land-learning (sparse, briefs/ excluded; .lake/packages link).
+  - Rebase (landing/rebase.log): 94b31964 (= origin land/pass-shelat-learning = refs/pull/313/head) onto
+    origin/cryptography/pass-shelat-ch2-4 6ce4658db08a1dc2a03a149987197660db078011 (1321b9cb + records-only commits; includes #314,
+    #315 10b9be17, #316 1c09448c, #317 1d9b2ac3): rc 0, no conflict; range-diff 6/6 identical; the 5 unit files unchanged
+    (landing/changed-paths-vs-origin.txt: 5 files +856/-13 incl. the edit). All commits SSH-signed by the environment default.
+  - Edit commit 2b6c29816de4cb1cd0e6b74fa3ae848c9f0f1be9 "learning landing edit LE-gate29b: firstBit_of_pos from the published
+    headD_drop_ofFn (G29-02)", tree 34ebd47d02248455919f7eda5dfc17f0090e34f3, parent 9b40c7ce (the rebased LE-gate29a), author =
+    committer = Claude <noreply@anthropic.com>, message logs/commit-msg.txt with the two trailers; patch landing/0001-*.patch;
+    commits landing/commits.txt. Worktree clean (checks/worktree-status.txt empty).
+  - PUSH: NOT DONE. The authorised `git push --force-with-lease` was refused by the session's permission system; no workaround was
+    tried (landing/push.log, with the exact command; the remote is still 94b31964).
+edit (checks/le-gate29b.diff; tools-used/legate29b_edit.py, 2 exact replacements), Learning/Random.lean, firstBit_of_pos:
+  proof `obtain ⟨k, rfl⟩ … ; rw [firstBit_eq, List.ofFn_succ, List.headD_cons]; rfl` replaced by
+    rw [firstBit_eq]
+    simpa only [List.drop_zero] using TCSlib.Cryptography.headD_drop_ofFn y ⟨0, hn⟩ false
+  (compiled first time, no warning; no import added: Foundations/BitLists is already in Random's closure, build queue position 3).
+  docstring: "This is the published `TCSlib.Cryptography.headD_drop_ofFn` at index `0`." inserted before `-/`
+  (statements/docstring-delta.txt: removed '', inserted that line: pure insertion). Max width 98 -> 98, 0 lines over 100.
+statements (statements/): decls2-vs-parent.tsv and decls2.err (decls2.py over the 5 unit files vs 9b40c7ce): both empty.
+  touched-parent-vs-head.tsv: 1 CHANGED (firstBit_of_pos), 60 UNCHANGED. frozen-check-vs-parent.txt (frozencheck.py): every header
+  and definition body identical; the single difference is the PROSE of firstBit_of_pos (the instructed docstring insertion; the
+  docstring has no sketch). docstring-header.txt: header (keyword .. :=) identical True.
+build (build/, order/buildset/build-queue.txt from tools-used/buildset.py: seeds = the 5 unit modules and both audits/*/Checks;
+  base delta since eff2dcd0 = order/vs-eff2dcd0/changed.txt (74), excluded 0): 268 modules = every module changed since eff2dcd0
+  that is needed (#303, #305-#309, #311, #312, #314-#317) and their downstream, the 5 unit modules, Randomness, root TCSlib,
+  audits/pass-shelat/Checks and audits/garg-ch1-3/Checks. build/summary.txt: 268/268 rc 0, 0 errors (both forms), substring "error"
+  0, 1605 s; the 5 Learning modules 0 warnings, 0 sorry; sorry warnings only in admitted modules. This is #313's integration build
+  against #314-#317. tree/tree-check-head.txt (order/headfull-order.txt, 1253 modules; records admissions/records-head.jsonl =
+  base records + build): RESULT OK.
+axioms (axioms/AxiomsHead.lean.txt -> AxiomsHead.log, LaProbe/AxiomsHead rc 0): predictAdv_prfConcept_negligible and
+  not_weakLearnsUnder_prfConcept [propext, Classical.choice, Quot.sound]; firstBit_of_pos, firstBit_flip0, headD_drop_ofFn [propext].
+admissions (admissions/sorry-census.txt; sorrycensus.py over prf-long's issued base-sorries (= the integration builds' list, 40 in
+  19 modules; issue base 7b307d62), records-head.jsonl): the tip count 39 (MAC/FromPRF discharged by #317) -> 38; the only further
+  difference is Randomness/Learning 1 -> 0 (predictAdv_prfConcept_negligible, #313's target). 215 sorry warnings tree-wide (216 at
+  int-317, minus this one).
+Rule 10 (rule10/; tools-used/rule10_b.sh), Random.lean at 2b6c2981: collector LaProbe/CollectHead (= le-a's source; 2390 CAT
+  lines; MODULE Random stored 11, le-a 12: one fewer stored constant after the proof change; the 11 public declarations are unchanged). Seals strict A 1753 / B 1754, coe A 1752 /
+  B 1753 requests (B with SEAL_EVAL=1): seals-{A,B,coe-A,coe-B}.tsv all pass (rc 0, 0 errors, install and EOF records), runs with
+  -DmaxErrors=0. Paired controls (mkctl_reuse.py unmodified: uprob, uexp, PAC.label, PolyExpr.eval in B) on the strict and coe
+  records: 4 probes each, 7 sealed negatives each; ctlcheck-strict.log and ctlcheck-coe.log ALL_OK True.
+lint (lint/): campaign_style_lint.py TCSlib/Cryptography --check8b: tip 6ce4658d 92 FAIL / 101 WARN (350 files), parent 9b40c7ce
+  92/101 (354), head 92/101 (354); FAIL/WARN line sets identical (lint-tip-vs-head.diff, lint-parent-vs-head.diff empty). Exports
+  removed.
+trial merges (checks/trial-merges.txt): git merge-tree --write-tree of the head with #318 f62a25b3 clean (8ad47d31) and #319 6421ac16
+  clean (dfcec563); no shared file; shared downstream #318: TCSlib; #319: Randomness, TCSlib.
+olean tree $SP/dl-oleans: pre tree/snapshot-pre.txt 1230 files SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f;
+  214 base oleans backed up (tree/backed-up.txt), 54 new listed (tree/new-oleans.txt); restore/restore-log.txt (tools-used/restore.sh):
+  0 hash failures, 214 restored, 54 deleted, emptied dirs pruned (its snapshot call used a tools/ path absent here; the snapshot was
+  taken with tools-used/snapshot.py); tree/snapshot-post.txt byte-identical to snapshot-pre.txt; restore/tree-check-post.txt: 1199
+  base modules, snapshot equal: RESULT OK. Backups and LaProbe/ removed.
+SHA256SUMS: every file here except itself (paths without "./"); ../gate29-le-b-evidence.zip holds exactly these paths plus SHA256SUMS.

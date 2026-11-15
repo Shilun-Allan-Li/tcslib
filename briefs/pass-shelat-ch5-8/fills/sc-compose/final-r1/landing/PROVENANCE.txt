@@ -1,0 +1,101 @@
+sc-compose ([Gol04, §7.3.1, Theorem 7.3.3]: composeP_efficient, composeV_efficient, hbcSecure_compose) maintainer delivery review r1, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: as the sc-garble review ($SP/dl-review/sc-garble-r1/, the common brief with Updates 1-3, the sc-ot template, C-F02 full-file
+  seals); run after it and after LE-gate29b, whose restores left the tree at the base snapshot. Nothing pushed, no PR opened, the
+  records checkout only read (git fetch, git worktree). No lake build, no cache get. python3 -I. One Lean process at a time, only on
+  $SP/dl-oleans (dl-oleans-2 never touched).
+
+issue package: briefs/pass-shelat-ch5-8/fills/sc-compose/issued-r1/ (brief.md in logs/): SHA256SUMS 7/7 OK (logs/issue-package-check.txt);
+  SOURCE-SHA256SUMS 152/152 OK at the issue base 107f1e8c218733eac12d6b9bee6fece441271317 (logs/source-sums-check.txt); base-sorries 31 in
+  14 modules. ComposeSecurity.lean is byte-identical (blob 3041d93f) at eff2dcd0, 107f1e8c and the tip (statements/owned-file-blobs.txt).
+delivery: exchange/pass-shelat-ch5-8 bdfdcb76d0d78bedd61025b33cb7382b26ee7c70 ("Claude fill sc-compose: final"; checkpoints 419c4ceb, f1ba0b1a);
+  the three commits touch only inbox/fills/sc-compose/, no later commit touches it (logs/exchange-commits.txt). git archive into a fresh
+  directory (removed after use); inventory logs/payload-inventory.sha256 (1063 files); cited extracts logs/delivery-extracts/ (11 files
+  byte-equal, logs/delivery-extract-hashes.txt) and the two checkpoint REPORTs from the exchange (checkpoint-reports/; the final REPORT's
+  Overlap section says their tables "stand"). Worker REPORT: logs/worker-REPORT.md.
+integrity (logs/payload-check.txt): top SHA256SUMS 1062/1062 OK; evidence/SHA256SUMS 1031/1031 OK; exact path sets, no "./".
+  git am of the 12 patches at 107f1e8c with committer data from patches/COMMITS.tsv: with commit.gpgsign=false no hash reproduces
+  (logs/git-am-integrity-unsigned.log); with the environment's default SSH signing all 12 reproduce (a3cb219d … d3f405d4671a3ad0ffd3930ef182a43cb12ed134,
+  each with a gpgsig; logs/git-am-integrity.log); the tree is 25be113b either way. COMMITS.tsv has no signing column (this brief did not
+  ask for one; as sc-ot F-05). The 16 changed paths (M ComposeSecurity.lean; A 15 helpers under ComposeSecurity/) are byte-identical to
+  src/, which holds exactly these (logs/src-equality.txt): scope as briefed.
+olean tree: tree/snapshot-pre.txt 1230 files, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f (required value).
+landing: branch land/pass-shelat-sc-compose (local), worktree $SP/wt-land-sc-compose (sparse, briefs/ excluded). Worker head d3f405d4
+  rebased onto origin/cryptography/pass-shelat-ch2-4 6ce4658db08a1dc2a03a149987197660db078011 (landing/landing.log): rc 0, range-diff
+  12/12 identical, the 16 paths equal the worker head. Origin Lean delta since 107f1e8c: 29 files (#307, #311, #312, #314-#317; the only
+  SecureComputation file is SpecialEncryptionMulti; landing/origin-delta-since-issue-base.txt). LE-doc on top.
+  FINAL head f61ce08fa74401660345f1f50c36dffb37588391, tree f7432799ee26f287a4e3055a1b5f6eba97305972 (landing/commits.txt, series
+  landing/series/0001-0013); 16 files +4578/-58 vs origin. 13 commits, all SSH-signed by the environment default; the 12 worker commits
+  keep author Claude <noreply@anthropic.com>; LE-doc f61ce08f authored Claude <noreply@anthropic.com>.
+LE-doc (f61ce08f; tools/ledoc_sc.py, plan landing/le-doc-plan.tsv, diff landing/le-doc.diff, message landing/commit-msg-le-doc.txt):
+  for the 70 new public declarations docaudit flagged NO-FORMULA (all but the two frozen targets and 2 whose docstring already states
+  the formula), the declaration's own Lean conclusion (for a def whose type is no relation, its _eq/_iff reader's) is added as a
+  backticked formula at the end of the statement prose; 15 long conclusions cut at 240 characters with " …". tools/ledoc_list_sc.py
+  lists the candidates (statements/head/ledoc-candidates.tsv). landing/le-doc-doconly.txt (tools/doconly_sg.py): code-identical True in
+  all 13 edited files, docstring counts unchanged, max width 100: RESULT OK. statements/head-le/decls2-vs-worker.tsv empty.
+build (order/ from downorder.py against eff2dcd0 at the pre-edit head f3036c69: changed 85 = 69 base delta + 16 unit; down 279):
+  - build/: 279/279 rc 0, 0 errors (G26-N1, both forms), substring "error" 0, 1558 s; the 16 unit modules 0 warnings, 0 sorry; sorry
+    warnings only in admitted modules. Unit downstream: ComposeSecurity, YaoReal, the SecureComputation facade, root TCSlib.
+  - edit-build/ (order/le-build-queue.txt, 18 modules: the 13 edited helpers, their dependants, ComposeSecurity, YaoReal, SecureComputation,
+    TCSlib): 18/18 rc 0, 0 errors, 0 warnings.
+  - tree/backed-up.txt (214 base oleans, hashes = snapshot-pre), tree/new-oleans.txt (65). tree/tree-check-head.txt (1264 modules;
+    logs/records-head.jsonl = base records + build + edit-build): RESULT OK.
+statements (base 107f1e8c):
+  - statements/frozen/frozen-check.txt and statements/head-le/frozen-check.txt (tools/frozencheck.py): the 11 base declarations of the
+    owned file present, same kind, name and order; headers and statement prose identical: 0 differences. Controls
+    (statements/frozen/controls-summary.txt): headers of hbcSecure_compose and composeP_efficient, prose of composeV_efficient, removal of
+    the private exists_ofFn_eq: each exactly 1 difference; the polyTime_compose prose control is a harness artifact (its docstring has no
+    sketch, so the changed character was the closing `-/`), noted there. statements/frozen/owned.diff: imports, title, ## Contents,
+    ## Main results, the three proofs and their sketches only.
+  - statements/head-le/touched.tsv: 3 CHANGED (the targets), 8 UNCHANGED, 186 in new files; decls2-vs-base.tsv 185 ADDED, 0 CHANGED,
+    0 REMOVED; no @[simp], no instance. docaudit (head-le): 145 OK, 29 LABEL (all state their equation), 14 NO-FORMULA = the two frozen
+    targets + 12 `PolyTimeComputable …` Prop formulas (no relation symbol; tool artifact). sketchaudit: 37 theorems with >= 15 proof lines,
+    3 without a sketch: runW_eq, composePW_eq, composeVW_eq, `:= rfl` readers under long statements (tool artifact). Sizes: max 604 lines
+    (Runs), owned file 449, max width 100, 0 over 100. Name clash (clash/nameclash-head.txt): 0 exact clashes; the private exists_ofFn_eq
+    of Lengths.lean has the same short name as the owned file's private one (disclosed by the worker).
+axioms: probe-sources/head/CensusHead.lean (tools/mkcensus_sc.py) -> probe-runs/: composeP_efficient, composeV_efficient,
+  hbcSecure_compose, polyTime_compose, exists_simA/B and the helper endpoints [propext, Classical.choice, Quot.sound]; yaoProtocol_hbcSecure
+  keeps sorryAx. DepTrace.lean (copy of the sc-garble probe): the admitted declarations under yaoProtocol_hbcSecure are now only
+  otProtocol_polyTime, otProtocol_simulators (sc-ot, #318) and yaoHybrid_polyTime, yaoHybrid_simulators (sc-yao); hbcSecure_compose is
+  gone. logs/census-summary.txt: 258 stored constants (= the worker's), axiom union the standard three, no sorryAx, simp or instance;
+  the 3 "abbrev" rows are compiler match auxiliaries (`…match_1_1`). Base (CensusBase on the base-phase tree): the 3 targets and
+  polyTime_compose had sorryAx. logs/census-base-vs-head.tsv: removed 0, type-changed 0, axioms-changed 4 (those, sorryAx dropped).
+admissions: logs/sorry-census.txt (issued base-sorries, issue base 107f1e8c, records-head.jsonl): 31 in 14 modules -> 28 in 13; the only
+  issued module differing is ComposeSecurity (3 -> 0). Outside the issued order only SeedMajority (#312) and SpecialEncryptionMulti (#311)
+  differ, both base delta with changed sources.
+Rule 10 (final head f61ce08f):
+  - Collector CollectHead -> probe-runs/; seals mkseals_ab.py (strict) seals/{A,B}, mkseals_coe.py (canonical) seals-coe/{A,B}
+    (logs/mkseals-*.log; 561-1192 requests); 64 probes seal-runs/ (lean -DmaxErrors=0, tools/runner_full.py): logs/seal-head-*.tsv:
+    64/64 rc 0, 0 errors, install and EOF records present: A and B, strict and coe, all 16 files pass.
+  - Base: ComposeSecurity's closure contains base-delta modules, so the tip version (= 107f1e8c) was rebuilt from a sparse worktree
+    $SP/wt-sc-base at 6ce4658d (base-build/, 1 module, rc 0; worktree removed), then CensusBase, CollectBase (base-probe-runs/) and 4 base
+    seals (base-seals{,-coe}/, base-seal-runs/): 4/4 pass (670/671/669/670 requests = the worker's). logs/seal-table-seals.txt,
+    seal-table-seals-coe.txt: head A 16/16, B 16/16; new failing declarations 0; strict = coe.
+  - Paired controls tools/mkctl_sc.py (rows PolyExpr.eval, the FinDist CoeFun instance, HybridProtocol.answersA (frozen Hybrid.lean),
+    ComposeMachines.padTo, ComposeSim.tmplW) -> controls/ (coe, 14 probes, 16 sealed negatives), controls-strict/ (16, 24), runs
+    control-runs/: logs/ctlcheck.log ALL_OK True; logs/ctlcheck-strict.log: every sealed negative fails exactly once, every unsealed probe
+    passes, only ctlCoeReader fails under the strict seal (harness effect; logs/controls-strict-attribution.txt).
+  - Explicit-unfold scan (scan/items-head.json, explicit-head.json, logs/scan2-head.log; at the final head): 1189 items, 1036 THEOREM,
+    2 OWNED_DEFINITION, 151 LOCAL_OR_UNRESOLVED, 0 foreign.
+lint (#305 script): tip 6ce4658d 92 FAIL / 101 WARN (lint/lint-records-tip-6ce4658d.txt, from the LE-gate29b job's export) and the
+  landing head before LE-doc 92/101 (lint-landing-head-preLE.txt); identical line sets (linediff-preLE.txt empty). LE-doc only edits
+  docstrings.
+content: the three targets read. composeP/V_efficient: composePW/composeVW on the layout are polynomial-time
+  (polyTimeComputable_composePW/VW from runW/ansW/mainW and polyTimeComputable_flatMap_range), the strategy equals it
+  (composeP_next_eq_composePW), GI.efficient_of_polyTime. hbcSecure_compose: hbcSecure_iff with polyTime_compose, simulators
+  exists_simA/exists_simB and, per D, ε = ε_A + ε_B (each nonnegative as it bounds a distAdv); the two sides follow the five-step sketch
+  (simulator Φ ∘ S_A^H, correct answers off GoodRuns with L·ε_c, the hybrid chain over the runs with the worst-case template as advice
+  at ε₂ per step, the hybrid model via H.HBCSecure F, total L(ε_c + ε₂) + ε₃). hM is used in realA/realB_compose_eq. Edge cases listed in
+  the brief are covered as the REPORT says (L = 0, rounds = 0, fillers, cut lengths, padFin readback, Bob's side).
+duplication: checkpoint REPORTs (logs/delivery-extracts/checkpoint-reports/) disclose restatements of public lemmas the worker judged
+  "not importable" under the brief's helper-import sentence (finding SC-F01); the final REPORT relies on those tables.
+open PRs (logs/open-pr-overlap.txt): merge-tree of the landing head (pre-edit f3036c69) with #313 94b31964 (and the local LE-gate29b head
+  2b6c2981), #318 f62a25b3, #319 6421ac16 and the local sc-garble landing cd9a4843: all clean; no shared file; shared downstream #313:
+  TCSlib; #318 and sc-garble: YaoReal, SecureComputation, TCSlib; #319: TCSlib.
+restore (restore/restore-log.txt): 214 backups back (0 hash failures), 65 new oleans deleted, emptied dirs pruned; SNAPSHOT EQUAL;
+  tree/snapshot-post.txt 1230 files SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = snapshot-pre;
+  tree/tree-check-post.txt: 1199 base modules, snapshot equal: RESULT OK.
+tools/: the sc-garble review's tools plus mkcensus_sc.py, mkctl_sc.py, ledoc_sc.py, ledoc_list_sc.py.
+cleanup: payload extraction, backups bk-sc, the integrity worktree wt-sc-int and the base worktree (git worktree remove --force), the
+  LE-doc trial copy and PlProbe/ removed; the landing worktree is clean at f61ce08f.
+SHA256SUMS: every file here except itself (paths without "./"); ../sc-compose-r1-evidence.zip holds exactly these paths plus SHA256SUMS.
