@@ -4,11 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Complexity.ClassP.P
-import TCSlib.Complexity.ClassP.ModelInvariance
 import TCSlib.Complexity.ClassNP.PolyTime
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.Randomized.Classes
-import TCSlib.Complexity.Randomized.QuasiPolyHierarchy
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -26,9 +24,9 @@ derandomized verifier on every seed of the generator and take the majority). It 
 the sense of `policy.md` §1 (*Hosts come first*): an odometer over all seeds, generic in the
 leaf test `V` and in the width `w`. Its contract is stated here, ahead of its consumers, by
 Seyoon's rulings of 2026-11-14 (the host) and 2026-11-15 (the machine-level contract with a
-head envelope, Gate 28, G28-02). **Proof owner:** the `derand` fill proves both the host
-contract `Complexity.exists_seedMajorityTM` and Theorem 180.1
-(`TCSlib.Cryptography.Randomness.bpp_subset_dtime_subexp`).
+head envelope, Gate 28, G28-02). **Proof owner:** the `derand` fill proves the host contract
+`Complexity.exists_seedMajorityTM`, its corollary `Complexity.seedMajority_mem_DTIME`, and
+Theorem 180.1 (`TCSlib.Cryptography.Randomness.bpp_subset_dtime_subexp`).
 
 **The formal reading.**
 - **The test** is a language `V ∈ P` read on `Turing.pairEncode x u`, the library's two-argument
@@ -52,9 +50,11 @@ contract `Complexity.exists_seedMajorityTM` and Theorem 180.1
     from the time bound, in the form of the clean-module host's `Turing.ModuleHost.Clean.envelope`
     (`machine-library-design.md` §14, rows H14 and H16).
 - **The class** `DTIME (n ↦ 2^{w(n)} · (n+1)^e)` is a corollary (`seedMajority_mem_DTIME`),
-  proved from the contract through `DTIME`'s published lemmas only: the introduction lemma
-  `Complexity.mem_DTIME_of_decidesInTimeVia`, `DTIME.mono` and
-  `Randomized.DTIME_const_mul_subset`.
+  which follows from the contract through the reader `Complexity.mem_DTIME_iff`. The `derand`
+  fill adds that reader beside `DTIME` (`ClassP/DTIME.lean`) under its pre-approval (Seyoon,
+  2026-11-15). Until then the corollary is admitted: without the reader its proof would read
+  `Turing.FinTM.DecidesInTime`, `Turing.FinTM.DecidesInTimeVia` and `DTIME` by their
+  definitions (Rule 10).
 
 ## Main results
 
@@ -62,7 +62,8 @@ contract `Complexity.exists_seedMajorityTM` and Theorem 180.1
   head envelope of one machine (stated; a `sorry` under the route below, for the `derand` fill).
   [AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4 of the proof]
 * `Complexity.seedMajority_mem_DTIME` — the decision-class corollary
-  `∃ e, {x | 2^{w(|x|)} < 2 · count} ∈ DTIME (n ↦ 2^{w(n)} · (n+1)^e)` (proved from the contract).
+  `∃ e, {x | 2^{w(|x|)} < 2 · count} ∈ DTIME (n ↦ 2^{w(n)} · (n+1)^e)` (stated; a `sorry`
+  until the `derand` fill adds `mem_DTIME_iff`, then read off the contract).
 * `Randomized.half_lt_randProb_iff` — majority as a probability:
   `1/2 < randProb m A ↔ 2^m < 2 · #{r | A r}` (proved).
 
@@ -210,12 +211,17 @@ puts the strict-majority language in `DTIME (n ↦ 2^{w(n)} · (n+1)^e)`:
 ∈ DTIME (fun n => 2^{w(n)} · (n+1)^e)`. Ties (`2 · count = 2^w`) reject. It is the corollary
 of the machine contract `exists_seedMajorityTM` that the consumers of the class read.
 
+**Status.** Admitted (a `sorry`). It follows from `exists_seedMajorityTM` through the reader
+`Complexity.mem_DTIME_iff`, which the `derand` fill adds beside `DTIME` (`ClassP/DTIME.lean`)
+under its pre-approval (Seyoon, 2026-11-15). The `derand` fill proves both the contract and
+this corollary. Until the reader exists, a proof would read `Turing.FinTM.DecidesInTime`,
+`Turing.FinTM.DecidesInTimeVia` and `DTIME` by their definitions, which Rule 10 forbids.
+
 **Proof sketch.** Take the machine `M` and constants `c, e` of `exists_seedMajorityTM` (the
-envelope is not needed here). With the identity embedding `Bool ↪ Bool` (`x.map id = x`), `M`
-decides the language in `DTIME (n ↦ c · (2^{w(n)} · (n+1)^e) + 1)`
-(`mem_DTIME_of_decidesInTimeVia`, the published introduction lemma of `DTIME`). That
-bound is at most `(c + 1) · (2^{w(n)} · (n+1)^e)`, since `2^{w(n)} · (n+1)^e ≥ 1`
-(`DTIME.mono`), and the constant `c + 1` is absorbed (`Randomized.DTIME_const_mul_subset`). -/
+envelope is not needed here). `M` decides the language within
+`n ↦ c · (2^{w(n)} · (n+1)^e)`, which is `c · T n` for `T n = 2^{w(n)} · (n+1)^e`. By
+`mem_DTIME_iff` (membership in `DTIME T` is a constant `c` together with a machine deciding
+within `c · T`), the language is in `DTIME T`, with the witness `e`. -/
 theorem seedMajority_mem_DTIME {V : Language Bool} (hV : V ∈ P) (w : ℕ → ℕ)
     (hw : PolyTimeComputable fun x => List.replicate (w x.length) true) :
     ∃ e : ℕ,
@@ -223,15 +229,6 @@ theorem seedMajority_mem_DTIME {V : Language Bool} (hV : V ∈ P) (w : ℕ → �
           2 * (Finset.univ.filter fun u : Fin (w x.length) → Bool =>
             pairEncode x (List.ofFn u) ∈ V).card} ∈
         DTIME fun n => 2 ^ w n * (n + 1) ^ e := by
-  obtain ⟨M, c, e, hM, -⟩ := exists_seedMajorityTM hV w hw
-  refine ⟨e, Randomized.DTIME_const_mul_subset (c + 1) _ (DTIME.mono (fun n => ?_)
-    (mem_DTIME_of_decidesInTimeVia (Function.Embedding.refl Bool) (M := M)
-      (T := fun n => c * (2 ^ w n * (n + 1) ^ e)) fun x => by
-        rw [Function.Embedding.coe_refl, List.map_id]
-        exact hM x))⟩
-  have h1 : 1 ≤ 2 ^ w n * (n + 1) ^ e := Nat.one_le_iff_ne_zero.2 (by positivity)
-  calc c * (2 ^ w n * (n + 1) ^ e) + 1
-      ≤ c * (2 ^ w n * (n + 1) ^ e) + 2 ^ w n * (n + 1) ^ e := Nat.add_le_add_left h1 _
-    _ = (c + 1) * (2 ^ w n * (n + 1) ^ e) := by ring
+  sorry
 
 end Complexity
