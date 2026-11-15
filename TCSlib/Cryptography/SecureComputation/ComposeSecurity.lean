@@ -364,8 +364,8 @@ theorem composeV_efficient {F : Functionality} (hH : H.PolyTime F) (hρ : G.Poly
 /-- **The composed parties run in polynomial time** [Gol04, §7.3.1, the efficiency of the
 protocol of Theorem 7.3.3]: if `H` runs in polynomial time on `F`'s inputs (`H.PolyTime F`) and
 `ρ` on `G`'s (`G.PolyTime ρ`), then `H.compose ρ` runs in polynomial time on `F`'s inputs.
-The two strategies are PPT (`composeP_efficient`, `composeV_efficient`; `sorry`s under their
-sketches), and the messages are bounded by `B_main + B_ρ` (`compose_msg_bound`, proved). The
+The two strategies are PPT (`composeP_efficient`, `composeV_efficient`, proved), and the
+messages are bounded by `B_main + B_ρ` (`compose_msg_bound`, proved). The
 message bound uses that `H.PolyTime` bounds `main`'s messages for **any** answers of the right
 lengths, since `main` runs on `ρ`'s outputs. -/
 theorem polyTime_compose {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyTime ρ) :
