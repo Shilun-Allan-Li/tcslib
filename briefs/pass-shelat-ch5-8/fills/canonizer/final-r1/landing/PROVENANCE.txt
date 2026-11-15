@@ -1,0 +1,139 @@
+canonizer (PS10 §2.13, run-3 audit P3-4: exists_canonizerExp) maintainer delivery review r1, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: as the sc-ot-r1 review (../sc-ot-r1/PROVENANCE.txt), run after it on the same tree; tools copied from sc-ot-r1/tools
+  (changes under "tools"). Nothing pushed, no PR opened, the records checkout only read. No lake build, no cache get. python3 -I
+  throughout. One Lean process at a time, only on $SP/dl-oleans; dl-oleans-2 never touched.
+
+brief: briefs/pass-shelat-ch5-8/fills/canonizer/issued-r1/brief.md, SHA-256 505b3eb669f9bb31db5841d08bdfa3805951d2252546182825e16c042d146fb7
+  (= dispatch.md's "Brief SHA-256"; logs/brief.md). Issue package SHA256SUMS 7/7 OK (logs/issue-package-check.txt);
+  SOURCE-SHA256SUMS 183/183 OK at the issue base 107f1e8c218733eac12d6b9bee6fece441271317 (logs/source-sums-check.txt). Issued
+  admissions 19 in 9 modules. Ruling: fills/canonizer/rulings/2026-11-14-readers.md (logs/ruling-2026-11-14-readers.md).
+delivery: exchange/pass-shelat-ch5-8 27ae588db3952fb508f02184f9ea2adbb726cf6c ("fill canonizer: final"; checkpoint 3d65c246). Both
+  commits touch only inbox/fills/canonizer/ (logs/exchange-commits.txt). git archive into a fresh directory (removed after use);
+  inventory logs/payload-inventory.sha256 (170 files); extracts logs/delivery-extracts/ (patches/ + COMMITS.tsv, both manifests,
+  pre-approval.md, probes/ReaderNeed.lean, probe-cp1/ (the worker's reader-need seal runs), final/checkpoint1 axioms, census and
+  lint diffs, repro, searches, seals-compare.log), each byte-equal to a delivered file (logs/delivery-extract-hashes.txt, 26 EQUAL).
+  Worker REPORT: logs/worker-REPORT.md.
+integrity (logs/payload-check.txt, tools/mancheck.py): top SHA256SUMS 169/169 OK (170 delivered), evidence/SHA256SUMS 160/160 OK,
+  exact path sets. git am of the 2 patches at 107f1e8c with COMMITS.tsv committer data (logs/git-am-integrity.log): both hashes
+  reproduce (7064488b, ba7096e8e479e480f37bb3b7e7669225ec8d6c51), tree d39eff79d01e05c40facda9286c2724fc8df4ec8, only with the
+  environment's SSH signing on; unsigned the tree is identical and the ids differ (logs/git-am-integrity-unsigned.log); COMMITS.tsv
+  records no signing (C-F04). The 4 changed paths are byte-identical to src/, which holds exactly them (logs/src-equality.txt).
+scope and the readers: changed paths M Universal.lean (owned), A Universal/Canonizer.lean (permitted helper), M CodeFormat.lean,
+  M CodeSimulator.lean. The frozen files change by pure additions (git diff: 5 and 7 added lines, nothing removed), exactly the two
+  pre-approved readers: Turing.oneTapeFormat_serialize_decode (xs : List Bool) : oneTapeFormat.serialize (oneTapeFormat.decode xs)
+  = (codeDecode xs).serialize := rfl, after codeDecode_serialize_pad; Turing.oneTapeMachineFormat_serialize_decode (α : List Bool) :
+  oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α) = oneTapeFormat.serialize (oneTapeFormat.decode α) := rfl, after
+  oneTapeMachineFormat. Each `rfl`, beside its definitions, formula docstring, no attribute, between List Bool values: as the
+  ruling. frozencheck on both files: 0 differences (CodeFormat 50 -> 51, CodeSimulator 208 -> 209 declarations). The worker's
+  verbatim record of the dispatch-time pre-approval (delivery-extracts/pre-approval.md) agrees with the records ruling.
+  Reader need: the worker's probe-cp1 (3 errors per variant, one per theorem) and this review's paired controls (below).
+olean tree: $SP/dl-oleans. tree/snapshot-pre.txt: 1230 files, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f
+  (= the sc-ot review's verified pre and post snapshots; records tree/base-records.jsonl copied from there).
+landing: branch land/pass-shelat-canonizer (local), worktree $SP/wt-land-canonizer (sparse, briefs/ excluded; .lake/packages
+  symlinked). Worker head ba7096e8 rebased onto origin 59c2c1fbf8c1bb08f9d191012b7cdd7e15248531 (#314 merged; rc 0, no conflict,
+  the 4 paths equal the worker head; landing/landing.log). Origin delta since the issue base: landing/origin-delta-since-issue-base.txt
+  (#307, #311, #312, #314), landing/origin-commits-since-issue-base.txt. LE-doc on top.
+  r1 head da08374d4e5d1d00bf15aba9716407729e549f82 on 59c2c1fb (series landing/series-r1/); all probes, seals and controls below ran
+  at r1. r3: #315 (prf-long) merged at the end of the review (origin a334ec2e1d87dbde7eac40812286ba60e85c9078); rebased onto it
+  (landing/rebase-r3.log): rc 0, range-diff 3/3 identical, the 4 unit files and the 110-module closure unchanged.
+  FINAL head 6421ac1631ef08feed297c810f0839b178d2a2bb, tree 3e16398e47f1c57b1d26c85ed731650dd094940b on a334ec2e; commits
+  landing/commits.txt, series landing/series/0001-0003, author = committer = Claude <noreply@anthropic.com>:
+    523d98cc canonizer: checkpoint 1 — the two rfl readers   11b24a7e canonizer: exists_canonizerExp proved
+    6421ac16 canonizer landing edit LE-doc
+  4 files, +133/-28 vs origin (landing/changed-paths-vs-origin.txt).
+LE-doc (da08374d; tools/ledoc_canon.py; landing/le-doc.diff): exists_codeCanonizer gets its formula `∃ C d, C.ComputesFunInTime
+  (fun α => (codeDecode α).serialize) fun n => d * (n + 1) ^ d`. landing/le-doc-doconly.txt: code-identical True, 1 docstring changed,
+  max width 97: RESULT OK. statements/head-le/docaudit.tsv: 6 OK, 1 NO-FORMULA = length_univArg's unchanged base prose.
+build (landing head, order/build-queue.txt from tools/downorder.py vs eff2dcd0): build/ 190 modules = the downstream, through root
+  TCSlib and audits/pass-shelat/Checks, of the 60 modules changed since eff2dcd0 (56 base delta #303-#312, #314: order/basedelta/;
+  4 unit: order/unit-vs-origin/, 64 downstream modules, including the full CodeSimulator/CodeFormat downstream through TCSlib and
+  audits/pass-shelat/Checks; audits/garg-ch1-3/Checks is downstream of the base delta only, and is in the 190). build/summary.txt: 190/190 rc 0, 0 errors (G26-N1),
+  substring "error" 0, 1143 s (CodeSimulator 46 s). The unit files: warnings 0 except Universal's base `unused variable hc` in
+  fUniversal_hard (base line 797, untouched proof). Sorry warnings only in admitted modules (build/summary.txt).
+  Backups tree/backed-up.txt (145) and new tree/new-oleans.txt (45). tree/tree-check-head.txt (order/headfull-order.txt, 1244 modules;
+  records logs/records-head.jsonl = base records + build): RESULT OK (23 head-probe oleans deleted first, logs/probe-oleans-deleted-head.txt).
+  build-r3/ (FINAL head 6421ac16, order/r3-build-queue.txt, from the restored base tree: the downstream of all modules changed since
+  eff2dcd0 = base delta #303-#312, #314, #315 + the unit): 191/191 rc 0, 0 errors (G26-N1), substring "error" 0, 1120 s.
+  tree/r3/tree-check-head.txt (order/headfull-order-r3.txt, 1245 modules; logs/records-head-r3.jsonl): RESULT OK.
+  logs/sorry-census-r3.txt: 19 -> 18, only Universal differs. Backups tree/r3/backed-up.txt (145), new tree/r3/new-oleans.txt (46);
+  restore/r3/: 0 hash failures, 145 restored, 46 deleted, snapshot-post.txt byte-equal to tree/snapshot-pre.txt, tree-check-post.txt
+  RESULT OK. Lint at the final head: lint/lint-landing-head-r3.txt 92/101, lint-complexity-landing-head-r3.txt 25/391; against the
+  tip a334ec2e (lint/lint-records-tip-a334ec2e.txt 92/101, lint-complexity-records-tip-a334ec2e.txt 25/391): Cryptography line sets
+  identical, Complexity the same 3 disclosed WARN changes.
+statements (base 107f1e8c; the three pre-existing files are identical at eff2dcd0, 107f1e8c and 59c2c1fb):
+  - statements/frozen/frozen-check.txt: CodeFormat 0, CodeSimulator 0, Universal 3 differences: PROSE of exists_canonizerExp (the
+    brief: "Update the target's docstring (no longer an open problem)"; its header is identical), and HEADER of length_univArg and of
+    the private exists_preimage_of_fUniversal_eq: the worker's whitespace-only re-wrap of over-100 lines (C-F01).
+    statements/frozen/whitespace-check.txt: outside the target, the module docstring and the import, the owned file is identical
+    after collapsing whitespace (18 changed lines, all re-wraps). Controls (one character changed each, statements/frozen/control-*):
+    3 -> 4 for the Universal ones, 0 -> 1 for oneTapeFormat (CodeFormat body) and exists_polyCanonizer (CodeSimulator header).
+    statements/frozen/topcmds.txt: no top-level command removed.
+  - statements/head-le/decls2-vs-base.tsv: 4 ADDED (the two readers, the two helper theorems), 0 CHANGED, 0 REMOVED;
+    decls2-vs-worker.tsv empty. touched.tsv: 5 CHANGED (exists_canonizerExp: prose, sketch, proof; length_univArg,
+    exists_preimage_of_fUniversal_eq, invProbAt_reduction_ge, fUniversal_hard: whitespace only), 2 ADDED, 2 NEW_FILE, 296 UNCHANGED.
+  - sketchaudit: 3 theorems with >= 15 proof lines, all with a sketch. Sizes (statements/head-le/sizes-widths.txt): Universal 955
+    (<= 1000), Canonizer 83; both max width <= 100. CodeFormat 600 and CodeSimulator 9133 lines keep their 10 and 1 pre-existing wide
+    lines (statements/base-widths.txt) and CodeSimulator its pre-existing size; the added lines are within 100.
+axioms: probe-sources/head/CensusHead.lean (tools/mkcensus_canon.py) and DepTrace.lean (written here) -> probe-runs/:
+  exists_canonizerExp, exists_polyCanonizer, computesFunInTime_appendBit, the helper theorems and the four conditional headlines:
+  [propext, Classical.choice, Quot.sound]; oneTapeFormat_serialize_decode [propext, Quot.sound]. appendBitTM_computes itself has
+  sorryAx. probe-runs/mods/PlProbe_DepTrace.log: the transitive constant closure of exists_canonizerExp (8151 constants) contains
+  Turing.FinTM.computesFunInTime_appendBit, exists_polyCanonizer and both readers, and contains neither
+  Turing.FinTM.appendBitTM_computes nor sorryAx: the route uses the proved lemma, not the admitted one.
+  logs/census-summary.txt: 1077 stored constants (Universal 67, Canonizer 2, CodeFormat 122, CodeSimulator 886 = the worker's), axiom
+  union the standard three, no sorryAx. Base (CensusBase on the restored tree): logs/census-base-vs-head.tsv: 1073 -> 1077, 4 added,
+  0 removed, 0 type/attr changes, axioms-changed 1 (the target), no added simp, instance or abbrev.
+admissions: logs/sorry-census.txt: issued 19 in 9 modules -> 18; only Asymptotic/Universal differs (1 -> 0). Outside the issued
+  order only SeedMajority (#312) and SpecialEncryptionMulti (#311) changed since the issue base (base delta).
+Rule 10 (landing head):
+  - Collector probe-sources/head/CollectHead.lean -> probe-runs/; seals tools/mkseals_ab.py (strict) -> seals/{A,B},
+    tools/mkseals_coe.py -> seals-coe/{A,B} (logs/mkseals-*.log; Universal 2061-2063 requests, Canonizer 1340, CodeFormat 234,
+    CodeSimulator 1232; for the last three all four variants have the same request set). 16 head probes seal-runs/; base
+    (CollectBase, restored tree) -> base-seals{,-coe}/{A,B}, 12 probes base-seal-runs/.
+  - logs/seal-table-seals.txt, seal-table-seals-coe.txt (tools/sealtable.py over the sealsum rows without CodeSimulator, whose rows
+    lack the EOF record; see below): Canonizer passes A and B, strict and coe; Universal head = base (A 10 errors in 4 declarations,
+    B 12 in 6, all pre-existing; exists_canonizerExp not among them); CodeFormat base 14 in 5, head 16 in 6: the only new failing
+    declaration is the reader oneTapeFormat_serialize_decode, attributed in logs/seal-attribution.txt (cascade of the base failure
+    of oneTapeFormat under the seal; its siblings codeDecode, codeDecode_serialize_pad fail identically at the base). strict = coe.
+  - CodeSimulator: every whole-file probe, head and base, stops at Lean's default maxErrors 100 (probe line 3929 of 9311; 101 errors
+    in 48 declarations; no G06-SEAL-END), here and in the worker's delivered seals (C-F02). Full-file reruns with -DmaxErrors=0
+    (seal-full/: tools/probefull.sh = tools/probe.sh with -DmaxErrors=0, tools/fullsealmap.py; the head run with the head CodeFormat
+    olean rebuilt in the tree for it, seal-full/codeformat-head-build/, then the base olean restored from its backup, hash
+    9ada8a3c… checked): base 177 errors in 58 declarations, head 177 in the same 58 with equal per-declaration counts
+    (seal-full/{base,head}-full-decls.txt), both reaching the EOF record; the reader is not among them. seal-full/runs-{head,base}/:
+    a first attempt with an in-file `set_option maxErrors 0`, which the frontend ignores (still cut at 100): superseded.
+  - Paired controls tools/mkctl_canon.py (rows PolyExpr.eval, FinDist CoeFun instance, Turing.unaryFin, Turing.oneTapeFormat,
+    Turing.oneTapeMachineFormat) -> controls/ (coe, 14 probes, 16 negatives), controls-strict/ (16, 21), runs control-runs/:
+    logs/ctlcheck.log ALL_OK True; logs/ctlcheck-strict.log: all negatives fail exactly once, ctlCoeReader fails in the two strict
+    Universal probes (attributed, logs/controls-attribution.txt, as in sc-ot-r1). Under the Canonizer seal the `rfl` forms of both
+    reader statements fail exactly once and the readers pass: each reader is needed and sufficient.
+  - Explicit-unfold scan (scan/items-head.json, scan/explicit-head.json, logs/scan2-head.log): 3256 items; 224 foreign items, all in
+    untouched (byte-identical, pre-existing) declarations of CodeFormat (10) and CodeSimulator (214); 0 in any touched declaration
+    (the readers, the target, the helper, the re-wrapped declarations).
+lint (#305 script): Cryptography 92 FAIL / 101 WARN at the records tip 59c2c1fb (lint/lint-records-tip-59c2c1fb.txt) and at the
+  landing head (lint-landing-head-f15ffa0b.txt; the LE edits only a docstring), identical line sets (lint/linediff-crypto.txt).
+  Complexity 25 / 391 at both; lint/linediff-complexity.txt: two check-8 WARN lines shortened by the readers (oneTapeFormat,
+  oneTapeMachineFormat now have a lemma beside them) and CodeSimulator's pre-existing size WARN reading 9133 for 9126, as the REPORT
+  discloses; no new FAIL or WARN line.
+content: the target is `obtain ⟨c, d, h⟩ := exists_effectiveMachineCode_canonizerTime_le; exact ⟨c, d, d, h⟩` (CanonizerExp is
+  the owned file's own definition). The helper takes C, d from exists_polyCanonizer at oneTapeMachineFormat, transports its
+  specification along the two readers (`hf ▸ hC`), builds ⟨⟨CodeTM.serialize, codeDecode, codeDecode_serialize_pad⟩, C,
+  n ↦ d (n+1)^d, hC⟩ and bounds d (k+1)^d ≤ d 2^{dk} by k+1 ≤ 2^k, pow_mul, pow_le_pow_left. Edge cases k = 0, d = 0 and malformed
+  codes hold (the polynomial bound is on every input). The conditional headlines are unchanged and stay conditional.
+duplication: logs/duplication-review.txt. Info notes only (C-F05, C-F06).
+open PRs (logs/open-pr-overlap.txt): #314 merged during the review and #315 at its end (base delta, built at r1 and r3 resp.). #313 and #315 touch no unit file and no
+  module of the unit's 110-module closure; merge-tree of the landing head with #313 94b31964 clean (847e7ac3; shared downstream
+  Randomness facade, TCSlib) and with #315 fbd37f44 clean (18e75536; shared downstream Asymptotic facade, Randomness, TCSlib,
+  audits/pass-shelat/Checks); no name clash. Also sc-ot landing 93c20338 x canonizer landing da08374d: merge-tree clean (712155d1).
+restore (restore/restore-log.txt, tools/restore.sh): 145 backups back (0 hash failures), 45 new oleans deleted, 6 emptied directories
+  pruned: SNAPSHOT EQUAL; base probes then run, CodeFormat head olean (full-seal step) replaced by its backup, and the 2 base-probe
+  oleans deleted (restore/probe-oleans-deleted-base.txt). tree/snapshot-post.txt: 1230 files, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, byte-identical to tree/snapshot-pre.txt; tree/tree-check-post.txt:
+  1199 base modules, RESULT OK.
+tools/: sc-ot-r1 tools plus mkcensus_canon.py, mkctl_canon.py, ledoc_canon.py, probefull.sh, fullsealmap.py (and DepTrace.lean in
+  probe-sources/head/).
+worker environment note (REPORT §8.1): to pass preflight the worker removed its host's learning-fill worktree (/workspace/learn,
+  branch kept) and that fill's scratch directories. Environment-only, on the worker's host (info).
+cleanup: payload extraction, olean backups (bk-canon, bk-canon3), the integrity worktree removed; PlProbe/ removed from the landing worktree, which is clean.
+SHA256SUMS: every file here except itself. ../canonizer-r1-evidence.zip holds exactly the manifest's paths plus SHA256SUMS.

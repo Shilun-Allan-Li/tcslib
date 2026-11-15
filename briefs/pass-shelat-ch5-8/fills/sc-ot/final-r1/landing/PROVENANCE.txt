@@ -1,0 +1,170 @@
+sc-ot (PS10 Protocol 160.4 and Proposition 161.5: otProtocol_polyTime, otProtocol_simulators) maintainer delivery review r1, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: the common review brief (Updates 1-2) with the corrections for this job. Templates: records
+  briefs/pass-shelat-ch5-8/fills/prf-long/final-r1/landing/PROVENANCE.txt and fills/learning/final-r1/landing/PROVENANCE.txt. Tools:
+  $SP/review-tools-template/ plus the prf-long review zip's tools (records fills/prf-long/final-r1/review-evidence.zip: the
+  G26-N1-fixed runner.py, frozencheck.py and the rest); changes under "tools". Nothing pushed, no PR opened, the records checkout
+  only read (git fetch only). No lake build, no cache get. python3 -I throughout. One Lean process at a time, only on
+  $SP/dl-oleans; dl-oleans-2 (in use by another job) was never touched.
+
+brief: briefs/pass-shelat-ch5-8/fills/sc-ot/issued-r1/brief.md, SHA-256 b4b5c73a81b7bd5f590f1f53c6c793f898f81cb68889f4495c9b314eefdfd876
+  (= dispatch.md's "Brief SHA-256"; logs/brief.md). Issue package SHA256SUMS 7/7 OK (logs/issue-package-check.txt);
+  SOURCE-SHA256SUMS 159/159 OK at the issue base 107f1e8c218733eac12d6b9bee6fece441271317 (logs/source-sums-check.txt).
+  Issued admissions base-sorries.txt: 31 in 14 modules.
+delivery: exchange/pass-shelat-ch5-8 a8972fa063a58ad2ffbfd221d625653d34a53ee8 ("fill sc-ot: final"; checkpoints b55e341b, 13003ddf).
+  The three commits touch only inbox/fills/sc-ot/; the one later exchange commit (419c4ceb, sc-compose cp1) does not touch it
+  (logs/exchange-commits.txt). git archive into a fresh directory (removed after use); inventory logs/payload-inventory.sha256
+  (220 files); cited extracts logs/delivery-extracts/ (patches/ with COMMITS.tsv, both manifests, final-axioms, census diff, lint
+  diff, repro, preflight, searches, seals-compare), all byte-equal to the payload (logs/delivery-extract-hashes.txt, 13 EQUAL).
+  Worker REPORT: logs/worker-REPORT.md.
+integrity (logs/payload-check.txt, tools/mancheck.py, exact path-set equality, leading "./" stripped):
+  - top SHA256SUMS 219/219 OK (220 delivered, manifest excluded); evidence/SHA256SUMS 206/206 OK; no missing, no extra.
+  - git am of the 3 patches at 107f1e8c with committer name/email/date from patches/COMMITS.tsv (logs/git-am-integrity.log): all
+    three worker hashes reproduce (fc7d0366, a643e566, e2c6f1a8f9e16d830e07f9cd3b1158553edb5500), tree 54166c99f2390858551727c58a9fe00014658931,
+    but only with the environment's SSH commit signing on (the final commit carries a gpgsig). With commit.gpgsign=false the tree is
+    identical and the ids differ (logs/git-am-integrity-unsigned.log). COMMITS.tsv has no signing column (finding F-05).
+  - The 7 changed paths (M ObliviousTransfer.lean; A ObliviousTransfer/{Efficiency,Predictor,Shape,Simulators,ViewA,ViewB}.lean)
+    are byte-identical to src/, which holds exactly these 7 files (logs/src-equality.txt). No other path changed: scope as briefed.
+olean tree: $SP/dl-oleans. tree/snapshot-pre.txt (tools/snapshot.py): 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the required base value (byte-equal to the prf-long review's
+  tree/snapshot-post.txt, whose tree-check-post was RESULT OK against the same tree/base-records.jsonl, copied here).
+landing: branch land/pass-shelat-sc-ot (local, no upstream), worktree $SP/wt-land-sc-ot (sparse, briefs/ excluded; .lake/packages
+  symlinked to /home/user/tcslib/.lake/packages).
+  - r1: worker head e2c6f1a8 rebased onto origin/cryptography/pass-shelat-ch2-4 0e5e725dc80c94575ea27b863399ff1119926c96 (rc 0, no
+    conflict, the 7 paths equal the worker head; landing/landing.log); LE-doc and LE-reuse committed on top (r1 head fb6075d8).
+    Origin delta since the issue base: #307, #311, #312 and records (landing/origin-delta-since-issue-base.txt,
+    origin-commits-since-issue-base.txt).
+  - r2: #314 (prfAdv_eq_expect promotion) merged during the review (origin 59c2c1fbf8c1bb08f9d191012b7cdd7e15248531; Lean delta
+    Pseudorandom/Functions/Defs.lean and EncryptThenTag/Reduction.lean). Rebased onto it (landing/rebase-r2.log): rc 0, range-diff
+    5/5 identical, the 7 unit files and all 128 modules of the unit's import closure (order/unit-closure.txt) unchanged r1 -> r2.
+    The r2 tree e40614e5f436295d6b1e665c3f0bf8c92a1f51ac equals the earlier merge-tree trial with #314's head.
+  - r2 head 93c20338335c6afd10052ed0636d8f4ba26e9171, tree e40614e5f436295d6b1e665c3f0bf8c92a1f51ac (series landing/series-r2/).
+  - r3: #315 (prf-long) merged at the end of the review (origin a334ec2e1d87dbde7eac40812286ba60e85c9078; Lean delta the 6 prf-long
+    files). Rebased onto it (landing/rebase-r3.log): rc 0, range-diff 5/5 identical, the 7 unit files and the 128-module closure
+    unchanged r2 -> r3. Integration build build-r3/ (below).
+  - FINAL head f62a25b3eda099c9cf9371900664752e7b89007d, tree 163be55abcd012eac6595af41807ce5cc57ef8f3 on a334ec2e; commits
+    landing/commits.txt, series landing/series/0001-0005; author = committer = Claude <noreply@anthropic.com>, SSH-signed by the
+    environment default.
+      8d429067 sc-ot: checkpoint 1   53969e06 sc-ot: checkpoint 2   b2e817ca sc-ot: final
+      7a1fa29b sc-ot landing edit LE-doc   f62a25b3 sc-ot landing edit LE-reuse
+    7 files, +2256/-40 vs origin (landing/changed-paths-vs-origin.txt).
+LE-doc (386307d1; tools/ledoc_scot.py, 50 exact replacements; landing/le-doc.diff): formulas, in Lean argument order, for the 50 new
+  public declarations that statements/docaudit.tsv flagged NO-FORMULA (3 owned file, 18 Efficiency, 6 Predictor, 4 Shape,
+  11 Simulators, 1 ViewA, 7 ViewB). The frozen target
+  otProtocol_polyTime keeps its base prose. landing/le-doc-doconly.txt (tools/doconly.py): code-identical True in all 7 files, same
+  docstring counts, 50 docstrings changed, max width 100: RESULT OK. statements/head-le/docaudit.tsv: 110 OK, 25 LABEL (all state
+  the equation), 8 NO-FORMULA = the frozen target's base prose + 7 whose docstring states a Prop formula without a relation symbol
+  (`OT.IsOT T H (otProtocol T H)`, `PolyTimeComputable (genRaw T)`, …; the tool only accepts relation symbols).
+LE-reuse (93c20338; tools/lereuse_scot.py; landing/le-reuse.diff): OT.pairSndD_nil' (`pairSndD [] = []`) is now
+  `BinArith.iterate_pairSndD_nil 1` (public, Complexity/ClassP/BinaryArith/Words.lean:158, already in Efficiency's closure; no new
+  import); its docstring's provenance parenthesis names it. Statement unchanged (statements/head-le/decls2-vs-worker.tsv empty).
+  Trial build lereuse-trial/ (Efficiency rc 0, 0 warnings) before the commit.
+build:
+  - build/ (r1 pre-edit head 84742663, order/build-queue.txt from tools/downorder.py vs eff2dcd0): 73 modules = the downstream
+    closure, through root TCSlib and audits/pass-shelat/Checks, of the 62 modules changed since eff2dcd0 (55 base delta: #303,
+    #306-#309, #311, #312, order/basedelta/; 7 unit, order/unit-vs-origin/: unit downstream = the 7 + YaoReal, the
+    SecureComputation facade, root TCSlib). build/summary.txt: 73/73 rc 0, 0 errors in the G26-N1 form, substring "error" 0, 452 s.
+    Unit modules 0 warnings. Sorry warnings only in admitted base-delta modules (SeedMajority 2, SpecialEncryptionMulti 1).
+    Linter warnings DDH 3, Lamport 7, Rejection 10, Extraction 2 (as in earlier reviews).
+  - edit-build/ (r1 head fb6075d8, order/le-build-queue.txt): the 7 unit modules, YaoReal, SecureComputation, TCSlib: 10/10 rc 0,
+    0 warnings.
+  - build-r2/ (r2 head 93c20338, order/r2-build-queue.txt): #314's 2 modules and their downstream, 96 modules: 96/96 rc 0, 0 errors;
+    sorry warnings only in admitted modules (MAC/FromPRF, SpecialEncryptionSecurity, SpecialEncryptionMulti, GarblingSecurity, Yao,
+    Learning). Base-delta modules built: the 55 (#303-#312) and #314's 2.
+  - build-r3/ (FINAL head f62a25b3, order/r3-build-queue.txt: the downstream of all 69 modules changed since eff2dcd0 at the final
+    head = base delta #303-#312, #314, #315 + the unit, from the restored base tree): 139/139 rc 0, 0 errors (G26-N1), substring
+    "error" 0, 779 s; sorry warnings only in admitted modules. tree/r3/tree-check-head.txt (order/headfull-order-r3.txt, 1250
+    modules; records logs/records-head-r3.jsonl = base records + build-r3): RESULT OK. logs/sorry-census-r3.txt: 31 -> 29, only
+    ObliviousTransfer differs. Backups tree/r3/backed-up.txt (88) and new tree/r3/new-oleans.txt (51); restore/r3/restore-log.txt:
+    0 hash failures, 88 restored, 51 deleted, restore/r3/snapshot-post.txt byte-equal to tree/snapshot-pre.txt. Lint at the final
+    head: lint/lint-landing-head-r3.txt 92/101 and lint-complexity-landing-head-r3.txt 25/391, line sets identical to the tip
+    a334ec2e (lint/lint-records-tip-a334ec2e.txt, 92/101; lint-complexity-records-tip-a334ec2e.txt, 25/391; lint/linediff-r3.txt empty).
+    Probes, seals and controls were run at r1 (fb6075d8): the 7 files and their closure are byte-identical at the final head.
+  - Before building, the base oleans each run overwrote were copied aside (tree/backed-up.txt, 88 files, every hash equal to
+    tree/snapshot-pre.txt) and the 50 new ones listed (tree/new-oleans.txt). The tree itself was not copied.
+  - tree/tree-check-head.txt (tools/treecheck.py, order/headfull-order.txt = 1249 modules at the r2 head, records
+    logs/records-head.jsonl = tree/base-records.jsonl + build + lereuse-trial + edit-build + build-r2): every module rc 0 at the head
+    source and the tree's olean, no stray olean, no empty dir: RESULT OK (the 50 head-probe oleans deleted first,
+    logs/probe-oleans-deleted-head.txt).
+statements (base 107f1e8c; ObliviousTransfer.lean is identical at eff2dcd0, 107f1e8c and both origins):
+  - statements/frozen/frozen-check.txt (r1) and statements/head-le/frozen-check.txt (LE head): every base declaration of the owned
+    file present, same kind, name and order; header bytes, statement prose and every definition (EnhancedHardCore included, G3-8)
+    identical: 0 differences (52 -> 55 declarations). Controls, each exactly 1 difference: statements/frozen/control-header-
+    otProtocol_simulators.txt, control-header-otProtocol_hbcSecure.txt, control-body-otSender.txt, control-body-EnhancedHardCore.txt,
+    control-prose-otProtocol_polyTime.txt. statements/frozen/topcmds.txt: no base top-level command removed; added: the 6 imports.
+  - statements/head-le/touched.tsv: 2 CHANGED (the two targets: proofs and sketches only), 50 UNCHANGED, 3 ADDED (otProtocol_isOT,
+    otSimA_isSimA, otSimB_isSimB), 138 in the new files. decls2-vs-base.tsv: 141 ADDED, 0 CHANGED, 0 REMOVED. No private
+    declaration, no @[simp].
+  - sketchaudit: 13 theorems with >= 15 proof lines, all with a sketch except receiverNext_eq, whose proof is `:= rfl` under a
+    19-line statement (tool artifact). Sizes/widths (statements/head-le/sizes-widths.txt): owned file 748 lines, helpers 545, 212,
+    216, 435, 186, 545; max width 100; 0 lines over 100.
+axioms: probe-sources/head/CensusHead.lean (tools/mkcensus_scot.py) -> probe-runs/CensusHead.log (tools/probe.sh, nothing written
+  to the tree): otProtocol_polyTime, otProtocol_simulators and the consumer otProtocol_hbcSecure: [propext, Classical.choice,
+  Quot.sound] (the REPORT's claim holds); yaoProtocol_hbcSecure still has sorryAx (Yao.lean's admitted hybrid; base). The helper
+  endpoints (polyTime_of_isOT, simulators_of_isOT, exists_negligible_bob, distAdv_realA_idealA_le, uprob_signedPredictor_false/_true,
+  negligible_finset_sum) the standard three; pairSndD_nil' no axioms. logs/census-summary.txt (tools/censussum.py): 234 stored
+  constants (OT 70, Shape 15, Efficiency 49, Simulators 55, ViewA 7, Predictor 15, ViewB 23 = the worker's counts), axiom union
+  {propext, Classical.choice, Quot.sound}, no sorryAx, no simp, instance, reducible or abbrev.
+  Base (probe-sources/base/CensusBase.lean, restored tree, base-probe-runs/): logs/census-base-vs-head.tsv (tools/censuscmp.py):
+  66 -> 234; removed 0, type-changed 0, attr-changed 0, added 168 (141 named), axioms-changed 3 (the two targets and
+  otProtocol_hbcSecure: sorryAx dropped).
+admissions: logs/sorry-census.txt (tools/sorrycensus.py, records-head.jsonl): issued 31 in 14 modules -> 29; the only issued module
+  differing is SecureComputation/ObliviousTransfer (2 -> 0). Outside the issued order only SeedMajority (#312) and
+  SpecialEncryptionMulti (#311) changed since the issue base (base delta); all others unchanged sources.
+Rule 10 (seals generated at r1 head fb6075d8; the 7 files and their 128-module closure are byte-identical at the r2 head):
+  - Collector probe-sources/head/CollectHead.lean (tools/mkcollect.py) -> probe-runs/. Seals tools/mkseals_ab.py (strict) ->
+    seals/{A,B}; tools/mkseals_coe.py (FinDist.instCoeFunForallReal as notation, canonical) -> seals-coe/{A,B}; logs/mkseals-*.log.
+    Requests per file 1105-1723 (coe = strict - 1, the instance). 28 head probes seal-runs/ (order/seal-probes-head.txt).
+  - logs/seal-head-{seals,seals-coe}-{A,B}.tsv (tools/sealsum.py): all 28 rc 0, 0 errors, install and EOF records present, no
+    failing declaration. Base: CollectBase -> base-seals{,-coe}/{A,B}, 4 probes base-seal-runs/ on the restored tree: all pass.
+  - logs/seal-table-seals.txt, seal-table-seals-coe.txt (tools/sealtable.py): head A 7/7, B 7/7 in both variants; base 1/1;
+    new failing declarations 0; strict = coe. (Seals with PolyExpr.eval excluded = A, sealed = B.)
+  - Paired controls tools/mkctl_scot.py (rows PolyExpr.eval, the FinDist CoeFun instance, NUPPT.layout, Strategy.encodeMsgs,
+    otFunctionality, OT.mask, OT.simSeg, OT.inA2, OT.bobView, OT.hcBit; negative = rfl unfolding, positive = published reader) on the
+    coe records -> controls/ (20 probes, 61 sealed negatives) and strict -> controls-strict/ (20 probes, 71), runs control-runs/
+    (order/control-probes.txt). logs/ctlcheck.log: ALL_OK True. logs/ctlcheck-strict.log: every negative fails exactly once and
+    every unsealed probe passes, but ctlCoeReader fails in the 10 strict sealed probes (the CoeFun statement elaborates to
+    `CoeFun.coe`); attributed in logs/controls-strict-attribution.txt (same effect as learning-r1). The two seal-record directories
+    were combined through temporary symlinks for the generator (removed).
+  - Explicit-unfold scan (tools/scan1.py, scan2.py; probe-sources/head/ScanKindsHead.lean -> probe-runs/): scan/items-head.json,
+    scan/explicit-head.json, logs/scan2-head.log: 742 items, 645 THEOREM, 21 OWNED_DEFINITION, 76 LOCAL_OR_UNRESOLVED, 0 foreign.
+    logs/scan-owned-and-local.txt: the owned items are the base file's 18 (pre-existing proofs: otProtocol_outV/outP,
+    polyTimeComputable_*, runAt_otSimA/B) and 3 in-file helper definitions (viewDist, simACoins, simBCoins); the unresolved heads
+    are local hypotheses and `T.f_perm` field notation.
+lint (scripts/campaign_style_lint.py --check8b, #305 version; identical in the records checkout and the worktrees):
+  - Cryptography: records tip 0e5e725d 92 FAIL / 101 WARN (lint/lint-records-tip-0e5e725d.txt), new tip 59c2c1fb 92/101
+    (lint-records-tip-59c2c1fb.txt, from a git-archive export, removed), r1 head 84742663 92/101, r2 head 93c20338 92/101;
+    FAIL/WARN line sets identical (lint/linediff.txt, linediff-r2.txt: only the file count 344 -> 350). Complexity: 25 / 391 at both
+    tips and the r2 head, identical line sets.
+  - Old (pre-#305) lint for continuity (tools/campaign_style_lint_old_rooted.py): 235/101 -> 241/101; the +6 are the facade class
+    "SecureComputation.lean does not import child module ObliviousTransfer.<helper>" (lint/oldlint-linediff.txt), the class #305
+    fixed: recorded, not a finding.
+content: every changed hunk and all six helpers read. otProtocol_polyTime = polyTime_of_isOT at otProtocol_isOT (raw machines
+  ofPolyTimeUniform of senderRaw/receiverRaw, message bound Q₁ + 3(Q₂+Q₃) + 7); otProtocol_simulators = simulators_of_isOT:
+  Alice's side ≤ 2δ(n) at every n (statClose_eval_sample, dependent product, distAdv_le_of_statClose); Bob's side through the
+  enhanced predicate: the published tdpPredictor around viewDist (which rebuilds Bob's view around the challenge ⟨i, s'⟩, Bob's tape
+  containing s'), the signed-predictor identity, hEHC at 16 machines (8 triples × 2 signs) summed into one negligible ε_B; ε = 2|δ| + ε_B.
+  EnhancedHardCore enters only through enhancedHardCore_iff (unchanged). The edge cases listed in the brief are covered as the REPORT
+  says (b = 0/1 branches, eight triples, empty fillers in exec_five/transcriptWith_isOT, apply_of_decD, the all-true inverter tape,
+  SampleClose at every n, D's advice kept in viewDist).
+duplication: logs/duplication-review.txt (independent searches). Findings F-01 (fixed by LE-reuse), F-02, F-04, F-06, F-07.
+open PRs (logs/open-pr-overlap.txt; PR heads fetched by REST + git fetch): no PR touches a unit file and no PR file is in the unit's
+  closure. git merge-tree --write-tree of the landing head (r1 fb6075d8) with each head: #313 94b31964 clean (795289cf; shared
+  downstream: root TCSlib only); #314 a24a6313 clean (e40614e5; shared downstream YaoReal, SecureComputation, TCSlib; since merged,
+  = r2 base delta, built here); #315 fbd37f44 clean (6dbe7e55; shared downstream YaoReal, SecureComputation, TCSlib). No name in the
+  SecureComputation namespace and no short-name coincidence in any PR diff. The merge trees of #313/#315 were not built.
+restore (restore/restore-log.txt, tools/restore.sh): 88 backups copied back (hashes checked, 0 failures), 50 new oleans deleted, the
+  6 emptied directories pruned (restore/empty-dirs-before-prune.txt); SNAPSHOT EQUAL. Base probes then ran on the restored tree and
+  their 6 oleans were deleted (restore/probe-oleans-deleted-base.txt). tree/snapshot-post.txt: 1230 files, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, byte-identical to tree/snapshot-pre.txt; tree/tree-check-post.txt:
+  1199 base modules at the eff2dcd0 source and record hashes, snapshot equal: RESULT OK.
+tools/: copied from the prf-long-r1 zip (= review-tools-template + its changes). New here: mkcensus_scot.py (endpoints above),
+  censussum.py, mkctl_scot.py (rows above), ledoc_scot.py, lereuse_scot.py. runner.py unchanged (G26-N1 fix).
+worker environment note (REPORT §1): to pass preflight the worker removed the git worktree of its host's canonizer fill
+  (/workspace/canon, branch kept). Environment-only, on the worker's host, not ours (F-08).
+open PRs at the end: #315 merged (r3, built); #313 (learning) still open: merge-tree clean and no shared file or closure module
+  (above; its shared downstream is root TCSlib only).
+cleanup: payload extraction, olean backups (bk-scot, bk-scot3), the integrity worktree (git worktree remove --force) and the reference zip
+  extract removed; PlProbe/ removed from the landing worktree, which is clean at f62a25b3. No base worktree was kept.
+SHA256SUMS: every file here except itself (paths without "./"). ../sc-ot-r1-evidence.zip holds exactly the manifest's paths plus
+  SHA256SUMS.

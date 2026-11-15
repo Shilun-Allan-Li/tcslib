@@ -1,0 +1,14 @@
+diff --git a/TCSlib/Cryptography/Asymptotic/Universal/Canonizer.lean b/TCSlib/Cryptography/Asymptotic/Universal/Canonizer.lean
+index b4e062b0c..4bf78f3cb 100644
+--- a/TCSlib/Cryptography/Asymptotic/Universal/Canonizer.lean
++++ b/TCSlib/Cryptography/Asymptotic/Universal/Canonizer.lean
+@@ -40,7 +40,8 @@ open Turing
+ 
+ /-- **A polynomial canonizer of the one-tape codes:** there are a machine `C` and a degree `d`
+ such that `C` computes `α ↦ (codeDecode α).serialize` in time `n ↦ d · (n + 1)^d`, on every input
+-(malformed codes included: they decode to the fallback machine).
++(malformed codes included: they decode to the fallback machine):
++`∃ C d, C.ComputesFunInTime (fun α => (codeDecode α).serialize) fun n => d * (n + 1) ^ d`.
+ 
+ **Proof sketch.** `Turing.MachineFormat.exists_polyCanonizer` at `oneTapeMachineFormat` computes
+ `α ↦ oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α)`, which is
