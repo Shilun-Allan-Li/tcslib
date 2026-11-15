@@ -1,0 +1,326 @@
+[
+  {
+    "name": "Complexity.IterateFind.computesFunInTime_find",
+    "source": "TCSlib/Complexity/Randomized/Build/IterateFind.lean:575",
+    "nearest": "TCSlib/Complexity/Randomized/Build/IterateFind.lean:331",
+    "disclosure": "Generalizes polyTimeComputable_find to binary numerical fuel and an arbitrary initializer. The brief requires this assembly repetition in place; all private helpers and the old theorem/final_bound are retained unchanged."
+  },
+  {
+    "name": "Turing.FinTM.decidesInTime_iff",
+    "source": "TCSlib/Complexity/ClassP/DTIME.lean:83",
+    "nearest": "TCSlib/Complexity/ClassP/DTIME.lean:75",
+    "disclosure": "Required home-file reader of DecidesInTime by Iff.rfl (E3); no existing reader has this contract."
+  },
+  {
+    "name": "Complexity.mem_DTIME_iff",
+    "source": "TCSlib/Complexity/ClassP/DTIME.lean:105",
+    "nearest": "TCSlib/Complexity/ClassP/DTIME.lean:88",
+    "disclosure": "Required home-file reader of DTIME by Iff.rfl (E2); no existing reader has this contract."
+  },
+  {
+    "name": "Randomized.inBPP_iff",
+    "source": "TCSlib/Complexity/Randomized/Classes.lean:299",
+    "nearest": "TCSlib/Complexity/Randomized/Classes.lean:288",
+    "disclosure": "SR-01 approved home-file reader of InBPP by Iff.rfl; no existing reader exposed these witnesses."
+  },
+  {
+    "name": "Complexity.SeedMajority.exists_countingTM",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Enumeration.lean:54",
+    "nearest": "TCSlib/Complexity/ClassNP/EXP.lean:2419; TCSlib/Complexity/Randomized/Build/IterateFind.lean:575 (new E1)",
+    "disclosure": "The existential projection decider accepts some witness and does not count acceptances or give this linear-in-2^w bound. The new host instead reuses E1. H16 is unary-counter driven and would require exponential unary fuel; it is not copied."
+  },
+  {
+    "name": "Complexity.SeedMajority.envelope_of_computesInTime",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Envelope.lean:43",
+    "nearest": "TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:244; TCSlib/Complexity/TuringMachine/Finite.lean:471",
+    "disclosure": "Generalizes the envelope argument to a native initial configuration with only a completed computation. Clean.envelope requires a clean seam contract, absent for the composite machine. Reuses the public interval/run readers; promotion to Finite.lean is requested."
+  },
+  {
+    "name": "Complexity.SeedMajority.seedFor",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:51",
+    "nearest": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean:46",
+    "disclosure": "Specializes the total prefix operation to a raw counting state and its unary width; reuses the existing prefix machine."
+  },
+  {
+    "name": "Complexity.SeedMajority.seedFor_eq",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:57",
+    "nearest": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:51 (new definition)",
+    "disclosure": "Required home-file equation reader for this new definition, proved by rfl; no pre-existing reader can refer to the new symbol."
+  },
+  {
+    "name": "Complexity.SeedMajority.seedFor_state",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:64",
+    "nearest": "TCSlib/Complexity/TuringMachine/Encoding.lean:325",
+    "disclosure": "Representation-specific bridge from the raw-state seed to word; all projections use published pair readers."
+  },
+  {
+    "name": "Complexity.SeedMajority.polyTimeComputable_seedFuel",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:71",
+    "nearest": "TCSlib/Complexity/ClassP/BinaryArith/Unary.lean:43",
+    "disclosure": "Composition of polyTimeComputable_powerOfTwo with the FP unary width; no exponential unary fuel or competing evaluator is introduced."
+  },
+  {
+    "name": "Complexity.SeedMajority.polyTimeComputable_seedFor",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:84",
+    "nearest": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean:355",
+    "disclosure": "Reuses polyTimeComputable_takePrefixByLength, pairing, and the published binary-fuel composition for the new state."
+  },
+  {
+    "name": "Complexity.SeedMajority.advance",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:100",
+    "nearest": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:147",
+    "disclosure": "Counting-state-specific round using the published binary adder and P indicator. No arithmetic implementation or private loop lemma is copied."
+  },
+  {
+    "name": "Complexity.SeedMajority.advance_eq",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:110",
+    "nearest": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:100 (new definition)",
+    "disclosure": "Required home-file equation reader for this new definition, proved by rfl; no pre-existing reader can refer to the new symbol."
+  },
+  {
+    "name": "Complexity.SeedMajority.polyTimeComputable_advance",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:125",
+    "nearest": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:162",
+    "disclosure": "Composes published FP addition, indicator, branching, pairing, and seedFor; the input is an arbitrary raw word."
+  },
+  {
+    "name": "Complexity.SeedMajority.advance_state",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:143",
+    "nearest": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:147",
+    "disclosure": "Specializes add_pairEncode and the indicator reader to the new state representation."
+  },
+  {
+    "name": "Complexity.SeedMajority.finished",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:156",
+    "nearest": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:206",
+    "disclosure": "Terminal-rank comparison expressed using the existing binary equality test."
+  },
+  {
+    "name": "Complexity.SeedMajority.finished_eq",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:161",
+    "nearest": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:156 (new definition)",
+    "disclosure": "Required home-file equation reader for this new definition, proved by rfl; no pre-existing reader can refer to the new symbol."
+  },
+  {
+    "name": "Complexity.SeedMajority.polyTimeComputable_finished",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:167",
+    "nearest": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:227",
+    "disclosure": "Reuses the existing FP equality comparator and binary fuel on projected state words."
+  },
+  {
+    "name": "Complexity.SeedMajority.finished_state",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:176",
+    "nearest": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:206",
+    "disclosure": "Specializes the equality comparator reader to the terminal rank; no new equality algorithm."
+  },
+  {
+    "name": "Complexity.SeedMajority.payload",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:184",
+    "nearest": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:198",
+    "disclosure": "Strict-majority bit using existing addition and strict comparison; ties reject."
+  },
+  {
+    "name": "Complexity.SeedMajority.payload_eq",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:190",
+    "nearest": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:184 (new definition)",
+    "disclosure": "Required home-file equation reader for this new definition, proved by rfl; no pre-existing reader can refer to the new symbol."
+  },
+  {
+    "name": "Complexity.SeedMajority.polyTimeComputable_payload",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:196",
+    "nearest": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:211",
+    "disclosure": "Reuses FP strict comparison and addition; only the counting-state wiring is new."
+  },
+  {
+    "name": "Complexity.SeedMajority.payload_state",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:207",
+    "nearest": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:198",
+    "disclosure": "Representation-specific interpretation of the existing strict comparator and doubled binary count."
+  },
+  {
+    "name": "Complexity.SeedMajority.polyTimeComputable_initial",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:213",
+    "nearest": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean:71; TCSlib/Complexity/ClassNP/PolyTimePairing.lean:129",
+    "disclosure": "Pairs the input with two constant zero words using existing FP closure."
+  },
+  {
+    "name": "Complexity.SeedMajority.length_state_le",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/State.lean:221",
+    "nearest": "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:123",
+    "disclosure": "Applies the public binary-width bound to both counters, including rank 2^m, then the pairing-length reader. The result is specific to the new state layout."
+  },
+  {
+    "name": "Complexity.SeedMajority.word",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:46",
+    "nearest": "TCSlib/Complexity/TuringMachine/Encoding.lean:325",
+    "disclosure": "Uses the published binary power-of-two padding. This names the fixed-width rank word; it does not define another binary encoding engine."
+  },
+  {
+    "name": "Complexity.SeedMajority.word_eq",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:50",
+    "nearest": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:46 (new definition)",
+    "disclosure": "Required home-file equation reader for this new definition, proved by rfl; no pre-existing reader can refer to the new symbol."
+  },
+  {
+    "name": "Complexity.SeedMajority.length_word",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:54",
+    "nearest": "TCSlib/Complexity/TuringMachine/Encoding.lean:325",
+    "disclosure": "Specializes binary padding and Mathlib List.length_take to the new rank word; both published operations are reused."
+  },
+  {
+    "name": "Complexity.SeedMajority.word_eq_ofFn",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:67",
+    "nearest": "TCSlib/Complexity/Randomized/RandomBits.lean:228; TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:300",
+    "disclosure": "Reuses bitsEquiv_apply and eq_bits_append_replicate. The new glue identifies the padded word with the inverse of the existing bijection; no bijection is re-proved."
+  },
+  {
+    "name": "Complexity.SeedMajority.count",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:89",
+    "nearest": "TCSlib/Complexity/Randomized/SeedMajority.lean:147",
+    "disclosure": "Defines the finite prefix of accepted ranks needed by the machine. The existing majority reader counts all tuples, not rank prefixes."
+  },
+  {
+    "name": "Complexity.SeedMajority.count_eq",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:95",
+    "nearest": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:89 (new definition)",
+    "disclosure": "Required home-file equation reader for this new definition, proved by rfl; no pre-existing reader can refer to the new symbol."
+  },
+  {
+    "name": "Complexity.SeedMajority.count_zero",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:100",
+    "nearest": "Mathlib/Data/Finset/Card.lean:163",
+    "disclosure": "Specializes the empty range/filter cardinality to the new prefix count through its reader."
+  },
+  {
+    "name": "Complexity.SeedMajority.count_le",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:106",
+    "nearest": "Mathlib/Data/Finset/Card.lean:62; Mathlib/Data/Finset/Card.lean:163",
+    "disclosure": "Direct application of card_le_card and card_range to the new count."
+  },
+  {
+    "name": "Complexity.SeedMajority.count_succ",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:117",
+    "nearest": "Mathlib/Data/Finset/Card.lean:100",
+    "disclosure": "Specializes card_insert_of_notMem after range_add_one/filter_insert; this is the machine-count recurrence, not a new cardinality identity."
+  },
+  {
+    "name": "Complexity.SeedMajority.count_all",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:136",
+    "nearest": "Mathlib/Data/Finset/Card.lean:337; TCSlib/Complexity/Randomized/RandomBits.lean:224",
+    "disclosure": "Applies card_bij using the existing bitsEquiv. The language predicate is preserved by word_eq_ofFn; no separate rank bijection is constructed."
+  },
+  {
+    "name": "Complexity.SeedMajority.state",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:164",
+    "nearest": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean:129",
+    "disclosure": "Retained-input binary rank/count representation built from the published pairing; existing clean-host stateWord is a tape layout, not this payload."
+  },
+  {
+    "name": "Complexity.SeedMajority.state_eq",
+    "source": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:169",
+    "nearest": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean:164 (new definition)",
+    "disclosure": "Required home-file equation reader for this new definition, proved by rfl; no pre-existing reader can refer to the new symbol."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.eff_mapCoins",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:46",
+    "nearest": "TCSlib/Complexity/Randomized/PolyTimeModel.lean:86; TCSlib/Complexity/ClassNP/PClosure.lean:69",
+    "disclosure": "Generic verifier-level wrapper around the existing efficiency reader and P-preimage closure. No identical published coin-map wrapper was found; promotion to PolyTimeModel.lean is requested."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.exists_verifier_gap_bound",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:80",
+    "nearest": "TCSlib/Cryptography/Randomness/BPPBridge.lean:80; TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Defs.lean:186",
+    "disclosure": "New non-uniform bad-advice threshold argument. Reuses verifier_toNUPPT, secure_iff, negligible_iff, prgAdv/acceptance readers and uprob_fst. No advantage/expectation or uniform-projection identity is re-proved."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.exists_coin_gap_threshold",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/CoinGap.lean:50",
+    "nearest": "TCSlib/Cryptography/Randomness/BPPBridge.lean:113; TCSlib/Complexity/Randomized/Classes.lean:238",
+    "disclosure": "Reuses randProb_eq_uprob and randProb_take to identify the generic gap. The new content is the root/input threshold and generator envelope."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.exists_secure_cover",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/Expanded.lean:47",
+    "nearest": "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:209; TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:397",
+    "disclosure": "Specializes the existing secure one-bit truncation/expansion to the syntactic envelope and extracts its existing evaluator."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.short_poly",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/Majority.lean:39",
+    "nearest": "TCSlib/Complexity/Randomized/Build/StateLoop.lean:79",
+    "disclosure": "Private specialization of lenLe_comp to |f z|+1\u2264N. No length-comparison machine is copied. A generic threshold-wrapper promotion beside StateLoop.lenLe_comp is requested."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.exists_seed_majority",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/Majority.lean:63",
+    "nearest": "TCSlib/Complexity/Randomized/SeedMajority.lean:147; TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:179",
+    "disclosure": "Reuses the majority-probability reader. Existing blockMajorityTest handles polynomially many blocks, not this full seed-space majority with piecewise PRG/true coins. No block-majority engine is copied."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:44",
+    "nearest": "Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129",
+    "disclosure": "A ceiling root from the existing floor root of n-1; no root algorithm is copied."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_eq",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:48",
+    "nearest": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:44 (new definition)",
+    "disclosure": "Required home-file equation reader for this new definition, proved by rfl; no pre-existing reader can refer to the new symbol."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_iff",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:53",
+    "nearest": "Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129",
+    "disclosure": "Transports nthRoot_lt_iff to the new ceiling convention, with zero handled separately."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.le_ceilRoot_pow",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:65",
+    "nearest": "Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129",
+    "disclosure": "Immediate least-root specialization through ceilRoot_le_iff, not a separate root construction."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_zero",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:69",
+    "nearest": "Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129",
+    "disclosure": "Zero-case equation of the new ceiling schedule, through its own reader."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_nat",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:75",
+    "nearest": "Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129",
+    "disclosure": "Least-root specialization using n\u2264n^d. The schedule is ceiling, unlike the floor-root provider."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.lt_ceilRoot_iff",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:86",
+    "nearest": "Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129",
+    "disclosure": "Strict-order dual of the new least-root reader; no new arithmetic algorithm."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_real",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:98",
+    "nearest": "Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:57; Mathlib/Analysis/SpecialFunctions/Pow/Real.lean:562",
+    "disclosure": "Reuses pow_nthRoot_le and the real inverse-power comparison, then adds the ceiling increment."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.polyTimeComputable_ceilRoot",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:128",
+    "nearest": "TCSlib/Cryptography/Asymptotic/UniversalPadding/BinaryRoot.lean:171; TCSlib/Complexity/Randomized/Repetition.lean:241",
+    "disclosure": "The existing evaluator returns a shifted binary floor root; this needs an exact unary ceiling root of input length. Reuses the published stateFind search and unary fixed-power/length comparisons, with no binary-root implementation copied."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.exists_root_degree",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/TimeBound.lean:40",
+    "nearest": "Mathlib/Algebra/Order/Archimedean/Basic.lean:175",
+    "disclosure": "Specializes exists_nat_gt to reciprocal exponent bounds, including \u03b5\u22651."
+  },
+  {
+    "name": "TCSlib.Cryptography.Randomness.Derand.seed_time_le_subexp",
+    "source": "TCSlib/Cryptography/Randomness/Derandomization/TimeBound.lean:64",
+    "nearest": "Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.lean:323; TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:279",
+    "disclosure": "Uses existing logarithm/rpow limits and the existing DTIME constant-factor transport later in the consumer. The new inequality combines the ceiling-root time and finite exceptions; no new general asymptotic or DTIME transport theorem is re-proved."
+  }
+]

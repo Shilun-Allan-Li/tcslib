@@ -1,0 +1,54 @@
+START 2026-11-15T10:32:30.680990+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Cryptography/Randomness/Derandomization/Majority']
+TCSlib/Cryptography/Randomness/Derandomization/Majority.lean:68:13: error: failed to synthesize
+  DecidablePred fun u => pairEncode x (List.ofFn u) ∈ V
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/Randomness/Derandomization/Majority.lean:80:4: error: Type mismatch: After simplification, term
+  PolyTimeComputable.comp (polyTimeComputable_pairTakePoly (polyLenExpr a k))
+    (PolyTimeComputable.pairEncode polyTimeComputable_pairFstD (PolyTimeComputable.comp hF polyTimeComputable_pairSndD))
+ has type
+  PolyTimeComputable
+    ((fun z => List.take (Randomized.polyLen a k (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+      pairEncode (pairFstD x) (F (pairSndD x)))
+but is expected to have type
+  PolyTimeComputable fun z => List.take (Randomized.polyLen a k (pairFstD z).length) (F (pairSndD z))
+TCSlib/Cryptography/Randomness/Derandomization/Majority.lean:122:8: error: mod_cast has type
+  (2 : ℚ) / 3 ≤ Randomized.randProb (Randomized.polyLen a k x.length) fun r => M x r = true
+but is expected to have type
+  (2 : ℝ) / 3 ≤ ↑(Randomized.randProb (Randomized.polyLen a k x.length) fun r => M x r = true)
+TCSlib/Cryptography/Randomness/Derandomization/Majority.lean:126:6: error: mod_cast has type
+  (1 : ℝ) / 2 < ↑(Randomized.randProb (w x.length) fun u => M' x u = true)
+but is expected to have type
+  (1 : ℚ) / 2 < Randomized.randProb (w x.length) fun u => M' x u = true
+TCSlib/Cryptography/Randomness/Derandomization/Majority.lean:134:8: error: mod_cast has type
+  (Randomized.randProb (Randomized.polyLen a k x.length) fun r => M x r = true) ≤ 1 / 3
+but is expected to have type
+  ↑(Randomized.randProb (Randomized.polyLen a k x.length) fun r => M x r = true) ≤ 1 / 3
+TCSlib/Cryptography/Randomness/Derandomization/Majority.lean:138:8: error: mod_cast has type
+  (1 : ℚ) / 2 < Randomized.randProb (w x.length) fun u => M' x u = true
+but is expected to have type
+  (1 : ℝ) / 2 < ↑(Randomized.randProb (w x.length) fun u => M' x u = true)
+FAIL(TCSlib/Cryptography/Randomness/Derandomization/Majority): lean exited with status 1
+FAIL(TCSlib/Cryptography/Randomness/Derandomization/Majority): error diagnostics reported
+FAIL(TCSlib/Cryptography/Randomness/Derandomization/Majority): no fresh .olean produced
+        3.25 real         2.12 user         1.21 sys
+          2281979904  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184181  page reclaims
+                  90  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  20  voluntary context switches
+                5849  involuntary context switches
+            32427304  instructions retired
+            16988651  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T10:32:33.975260+00:00
+EXIT 1

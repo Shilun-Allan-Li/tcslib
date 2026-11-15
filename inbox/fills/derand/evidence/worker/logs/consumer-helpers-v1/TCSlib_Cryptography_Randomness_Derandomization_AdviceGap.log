@@ -1,0 +1,43 @@
+START 2026-11-15T10:28:12.186610+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Cryptography/Randomness/Derandomization/AdviceGap']
+TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:53:2: error: Type mismatch: After simplification, term
+  hV x (C (pairEncode x r))
+ has type
+  (some (M x (C (pairEncode x r))) = some true ↔ pairEncode x (C (pairEncode x r)) ∈ V₁) ∧
+    (some (M x (C (pairEncode x r))) = some false ↔ pairEncode x (C (pairEncode x r)) ∈ V₀)
+but is expected to have type
+  (some (M x (C (pairEncode x r))) = some true ↔ pairEncode x r ∈ {x | pairEncode (pairFstD x) (C x) ∈ V₁}) ∧
+    (some (M x (C (pairEncode x r))) = some false ↔ pairEncode x r ∈ {x | pairEncode (pairFstD x) (C x) ∈ V₀})
+TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:107:12: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.221
+TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:111:6: error: Type mismatch
+  uprob_fst ?m.239
+has type
+  (@uprob (?m.235 × D.Coins s) (instFintypeProd ?m.235 (D.Coins s)) fun z => ?m.239 z.1) = uprob ?m.239
+but is expected to have type
+  (@uprob ((Fin (G.stretch.eval s) → Bool) × D.Coins s) (instFintypeProd (Fin (G.stretch.eval s) → Bool) (D.Coins s))
+      fun z => M (xs s) (List.ofFn z.1) = true) =
+    uprob fun r => M (xs s) (List.ofFn r) = true
+FAIL(TCSlib/Cryptography/Randomness/Derandomization/AdviceGap): lean exited with status 1
+FAIL(TCSlib/Cryptography/Randomness/Derandomization/AdviceGap): error diagnostics reported
+FAIL(TCSlib/Cryptography/Randomness/Derandomization/AdviceGap): no fresh .olean produced
+       83.30 real        82.09 user         1.33 sys
+          2518859776  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              197641  page reclaims
+                  16  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  20  voluntary context switches
+                5144  involuntary context switches
+            32473928  instructions retired
+            15195129  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T10:29:35.521430+00:00
+EXIT 1

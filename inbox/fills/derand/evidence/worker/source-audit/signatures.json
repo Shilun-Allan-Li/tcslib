@@ -1,0 +1,843 @@
+[
+  {
+    "declaration": {
+      "name": "Complexity.IterateFind.computesFunInTime_find",
+      "path": "TCSlib/Complexity/Randomized/Build/IterateFind.lean",
+      "line": 575,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.IterateFind.computesFunInTime_find",
+    "type": "\u2200 {g : List Bool \u2192 List Bool},\n  Complexity.PolyTimeComputable g \u2192\n    \u2200 {acc : List Bool \u2192 Bool},\n      (Complexity.PolyTimeComputable fun s => [acc s]) \u2192\n        \u2200 {out : List Bool \u2192 List Bool},\n          Complexity.PolyTimeComputable out \u2192\n            \u2200 {init : List Bool \u2192 List Bool},\n              Complexity.PolyTimeComputable init \u2192\n                \u2200 (R : \u2115 \u2192 \u2115) (P : Complexity.PolyExpr),\n                  (\u2200 (x : List Bool), (init x).length \u2264 P.eval x.length) \u2192\n                    \u2200 (F : Turing.FinTM Bool) (aF dF : \u2115),\n                      (F.ComputesFunInTime (fun x => (R x.length).bits) fun n => aF * (n + 1) ^ dF) \u2192\n                        \u2203 M c A D,\n                          M.ComputesFunInTime\n                            (fun x =>\n                              match\n                                List.find?\n                                  (fun i =>\n                                    acc\n                                      (Complexity.pairSndD\n                                        ((Complexity.IterateFind.step g P x)^[i] (Turing.pairEncode x (init x)))))\n                                  (List.range (R x.length + 1)) with\n                              | some i =>\n                                out\n                                  (Complexity.pairSndD\n                                    ((Complexity.IterateFind.step g P x)^[i] (Turing.pairEncode x (init x))))\n                              | none => [])\n                            fun n => c * (A * (2 * n + 2 + P.eval n + 5) ^ D + 1) * (R n + 2)",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Turing.FinTM.decidesInTime_iff",
+      "path": "TCSlib/Complexity/ClassP/DTIME.lean",
+      "line": 83,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Turing.FinTM.decidesInTime_iff",
+    "type": "\u2200 (M : Turing.FinTM Bool) (L : Language Bool) (T : \u2115 \u2192 \u2115),\n  M.DecidesInTime L T \u2194 \u2200 (x : List Bool), M.ComputesInTime x [Turing.MultiTapeTM.indicator L x] (T x.length)",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.mem_DTIME_iff",
+      "path": "TCSlib/Complexity/ClassP/DTIME.lean",
+      "line": 105,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.mem_DTIME_iff",
+    "type": "\u2200 {T : \u2115 \u2192 \u2115} {L : Language Bool}, L \u2208 Complexity.DTIME T \u2194 \u2203 c M, M.DecidesInTime L fun n => c * T n",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Randomized.inBPP_iff",
+      "path": "TCSlib/Complexity/Randomized/Classes.lean",
+      "line": 299,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Randomized.inBPP_iff",
+    "type": "\u2200 (E : Randomized.VerifierModel) (L : Language Bool),\n  Randomized.InBPP E L \u2194\n    \u2203 M a k,\n      E.Eff (Randomized.boolVerifier M) \u2227\n        \u2200 (x : List Bool),\n          (x \u2208 L \u2192 2 / 3 \u2264 Randomized.randProb (Randomized.polyLen a k x.length) fun r => M x r = true) \u2227\n            (x \u2209 L \u2192 2 / 3 \u2264 Randomized.randProb (Randomized.polyLen a k x.length) fun r => M x r = false)",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.exists_countingTM",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Enumeration.lean",
+      "line": 54,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.exists_countingTM",
+    "type": "\u2200 {V : Language Bool},\n  V \u2208 Complexity.P \u2192\n    \u2200 (w : \u2115 \u2192 \u2115),\n      (Complexity.PolyTimeComputable fun x => List.replicate (w x.length) true) \u2192\n        \u2203 M c e,\n          M.ComputesFunInTime\n            (fun x => [decide (2 ^ w x.length < 2 * {u | Turing.pairEncode x (List.ofFn u) \u2208 V}.card)]) fun n =>\n            c * (2 ^ w n * (n + 1) ^ e)",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.envelope_of_computesInTime",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Envelope.lean",
+      "line": 43,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.envelope_of_computesInTime",
+    "type": "\u2200 {M : Turing.FinTM Bool} {x y : List Bool} {t : \u2115},\n  M.ComputesInTime x y t \u2192\n    \u2200 (v : \u2115) (j : Fin M.k), |(Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) v).workTapePos j| \u2264 \u2191t",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.seedFor",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 51,
+      "kind": "def",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.seedFor",
+    "type": "(\u2115 \u2192 \u2115) \u2192 List Bool \u2192 List Bool",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.seedFor_eq",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 57,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.seedFor_eq",
+    "type": "\u2200 (w : \u2115 \u2192 \u2115) (z : List Bool),\n  Complexity.SeedMajority.seedFor w z =\n    List.take (w (Complexity.pairFstD z).length)\n      (Complexity.pairFstD (Complexity.pairSndD z) ++ (2 ^ w (Complexity.pairFstD z).length).bits)",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.seedFor_state",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 64,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.seedFor_state",
+    "type": "\u2200 (w : \u2115 \u2192 \u2115) (x : List Bool) (i a : \u2115),\n  Complexity.SeedMajority.seedFor w (Complexity.SeedMajority.state x i a) = Complexity.SeedMajority.word (w x.length) i",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.polyTimeComputable_seedFuel",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 71,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.polyTimeComputable_seedFuel",
+    "type": "\u2200 {w : \u2115 \u2192 \u2115},\n  (Complexity.PolyTimeComputable fun x => List.replicate (w x.length) true) \u2192\n    Complexity.PolyTimeComputable fun x => (2 ^ w x.length).bits",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.polyTimeComputable_seedFor",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 84,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.polyTimeComputable_seedFor",
+    "type": "\u2200 {w : \u2115 \u2192 \u2115},\n  (Complexity.PolyTimeComputable fun x => List.replicate (w x.length) true) \u2192\n    Complexity.PolyTimeComputable (Complexity.SeedMajority.seedFor w)",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.advance",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 100,
+      "kind": "def",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.advance",
+    "type": "Language Bool \u2192 (\u2115 \u2192 \u2115) \u2192 List Bool \u2192 List Bool",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.advance_eq",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 110,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.advance_eq",
+    "type": "\u2200 (V : Language Bool) (w : \u2115 \u2192 \u2115) (z : List Bool),\n  Complexity.SeedMajority.advance V w z =\n    Turing.pairEncode (Complexity.pairFstD z)\n      (Turing.pairEncode\n        (Complexity.BinArith.add (Turing.pairEncode (Complexity.pairFstD (Complexity.pairSndD z)) (Nat.bits 1)))\n        (Complexity.BinArith.add\n          (Turing.pairEncode (Complexity.pairSndD (Complexity.pairSndD z))\n            (if\n                Turing.MultiTapeTM.indicator V\n                    (Turing.pairEncode (Complexity.pairFstD z) (Complexity.SeedMajority.seedFor w z)) =\n                  true then\n              Nat.bits 1\n            else Nat.bits 0))))",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.polyTimeComputable_advance",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 125,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.polyTimeComputable_advance",
+    "type": "\u2200 {V : Language Bool},\n  V \u2208 Complexity.P \u2192\n    \u2200 {w : \u2115 \u2192 \u2115},\n      (Complexity.PolyTimeComputable fun x => List.replicate (w x.length) true) \u2192\n        Complexity.PolyTimeComputable (Complexity.SeedMajority.advance V w)",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.advance_state",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 143,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.advance_state",
+    "type": "\u2200 (V : Language Bool) (w : \u2115 \u2192 \u2115) (x : List Bool) (i a : \u2115),\n  Complexity.SeedMajority.advance V w (Complexity.SeedMajority.state x i a) =\n    Complexity.SeedMajority.state x (i + 1)\n      (a + if Turing.pairEncode x (Complexity.SeedMajority.word (w x.length) i) \u2208 V then 1 else 0)",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.finished",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 156,
+      "kind": "def",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.finished",
+    "type": "(\u2115 \u2192 \u2115) \u2192 List Bool \u2192 Bool",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.finished_eq",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 161,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.finished_eq",
+    "type": "\u2200 (w : \u2115 \u2192 \u2115) (z : List Bool),\n  Complexity.SeedMajority.finished w z =\n    Complexity.BinArith.beq\n      (Turing.pairEncode (Complexity.pairFstD (Complexity.pairSndD z)) (2 ^ w (Complexity.pairFstD z).length).bits)",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.polyTimeComputable_finished",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 167,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.polyTimeComputable_finished",
+    "type": "\u2200 {w : \u2115 \u2192 \u2115},\n  (Complexity.PolyTimeComputable fun x => List.replicate (w x.length) true) \u2192\n    Complexity.PolyTimeComputable fun z => [Complexity.SeedMajority.finished w z]",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.finished_state",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 176,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.finished_state",
+    "type": "\u2200 (w : \u2115 \u2192 \u2115) (x : List Bool) (i a : \u2115),\n  Complexity.SeedMajority.finished w (Complexity.SeedMajority.state x i a) = decide (i = 2 ^ w x.length)",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.payload",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 184,
+      "kind": "def",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.payload",
+    "type": "(\u2115 \u2192 \u2115) \u2192 List Bool \u2192 List Bool",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.payload_eq",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 190,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.payload_eq",
+    "type": "\u2200 (w : \u2115 \u2192 \u2115) (z : List Bool),\n  Complexity.SeedMajority.payload w z =\n    [Complexity.BinArith.lt\n        (Turing.pairEncode (2 ^ w (Complexity.pairFstD z).length).bits\n          (Complexity.BinArith.add\n            (Turing.pairEncode (Complexity.pairSndD (Complexity.pairSndD z))\n              (Complexity.pairSndD (Complexity.pairSndD z)))))]",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.polyTimeComputable_payload",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 196,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.polyTimeComputable_payload",
+    "type": "\u2200 {w : \u2115 \u2192 \u2115},\n  (Complexity.PolyTimeComputable fun x => List.replicate (w x.length) true) \u2192\n    Complexity.PolyTimeComputable (Complexity.SeedMajority.payload w)",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.payload_state",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 207,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.payload_state",
+    "type": "\u2200 (w : \u2115 \u2192 \u2115) (x : List Bool) (i a : \u2115),\n  Complexity.SeedMajority.payload w (Complexity.SeedMajority.state x i a) = [decide (2 ^ w x.length < 2 * a)]",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.polyTimeComputable_initial",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 213,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.polyTimeComputable_initial",
+    "type": "Complexity.PolyTimeComputable fun x => Complexity.SeedMajority.state x 0 0",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.length_state_le",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/State.lean",
+      "line": 221,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.length_state_le",
+    "type": "\u2200 (x : List Bool) (m i a : \u2115),\n  i \u2264 2 ^ m \u2192 a \u2264 i \u2192 (Complexity.SeedMajority.state x i a).length \u2264 2 * x.length + 3 * m + 7",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.word",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 46,
+      "kind": "def",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.word",
+    "type": "\u2115 \u2192 \u2115 \u2192 List Bool",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.word_eq",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 50,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.word_eq",
+    "type": "\u2200 (m i : \u2115), Complexity.SeedMajority.word m i = List.take m (i.bits ++ (2 ^ m).bits)",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.length_word",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 54,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.length_word",
+    "type": "\u2200 (m i : \u2115), (Complexity.SeedMajority.word m i).length = m",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.word_eq_ofFn",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 67,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.word_eq_ofFn",
+    "type": "\u2200 (m i : \u2115) (hi : i < 2 ^ m), Complexity.SeedMajority.word m i = List.ofFn ((Randomized.bitsEquiv m).symm \u27e8i, hi\u27e9)",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.count",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 89,
+      "kind": "def",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.count",
+    "type": "Language Bool \u2192 List Bool \u2192 \u2115 \u2192 \u2115 \u2192 \u2115",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.count_eq",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 95,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.count_eq",
+    "type": "\u2200 (V : Language Bool) (x : List Bool) (m i : \u2115),\n  Complexity.SeedMajority.count V x m i =\n    {j \u2208 Finset.range i | Turing.pairEncode x (Complexity.SeedMajority.word m j) \u2208 V}.card",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.count_zero",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 100,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.count_zero",
+    "type": "\u2200 (V : Language Bool) (x : List Bool) (m : \u2115), Complexity.SeedMajority.count V x m 0 = 0",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.count_le",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 106,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.count_le",
+    "type": "\u2200 (V : Language Bool) (x : List Bool) (m i : \u2115), Complexity.SeedMajority.count V x m i \u2264 i",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.count_succ",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 117,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.count_succ",
+    "type": "\u2200 (V : Language Bool) (x : List Bool) (m i : \u2115),\n  Complexity.SeedMajority.count V x m (i + 1) =\n    Complexity.SeedMajority.count V x m i + if Turing.pairEncode x (Complexity.SeedMajority.word m i) \u2208 V then 1 else 0",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.count_all",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 136,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.count_all",
+    "type": "\u2200 (V : Language Bool) (x : List Bool) (m : \u2115),\n  Complexity.SeedMajority.count V x m (2 ^ m) = {u | Turing.pairEncode x (List.ofFn u) \u2208 V}.card",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.state",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 164,
+      "kind": "def",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.state",
+    "type": "List Bool \u2192 \u2115 \u2192 \u2115 \u2192 List Bool",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "Complexity.SeedMajority.state_eq",
+      "path": "TCSlib/Complexity/Randomized/SeedMajority/Words.lean",
+      "line": 169,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "Complexity.SeedMajority.state_eq",
+    "type": "\u2200 (x : List Bool) (i a : \u2115), Complexity.SeedMajority.state x i a = Turing.pairEncode x (Turing.pairEncode i.bits a.bits)",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.eff_mapCoins",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean",
+      "line": 46,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.eff_mapCoins",
+    "type": "\u2200 {M : List Bool \u2192 List Bool \u2192 Bool},\n  Randomized.polyTimeModel.Eff (Randomized.boolVerifier M) \u2192\n    \u2200 {C : List Bool \u2192 List Bool},\n      Complexity.PolyTimeComputable C \u2192\n        Randomized.polyTimeModel.Eff (Randomized.boolVerifier fun x r => M x (C (Turing.pairEncode x r)))",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.exists_verifier_gap_bound",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean",
+      "line": 80,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.exists_verifier_gap_bound",
+    "type": "\u2200 {M : List Bool \u2192 List Bool \u2192 Bool},\n  Randomized.polyTimeModel.Eff (Randomized.boolVerifier M) \u2192\n    \u2200 (w : \u2115 \u2192 \u2115) (p : Complexity.PolyExpr),\n      (\u2200 (n : \u2115), n \u2264 p.eval (w n)) \u2192\n        \u2200 (G : TCSlib.Cryptography.PRG),\n          G.Secure \u2192\n            \u2203 S,\n              \u2200 (x : List Bool),\n                S \u2264 w x.length \u2192\n                  |(TCSlib.Cryptography.uprob fun r => M x (List.ofFn (G.G (w x.length) r)) = true) -\n                        TCSlib.Cryptography.uprob fun r => M x (List.ofFn r) = true| \u2264\n                    1 / 12",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.exists_coin_gap_threshold",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/CoinGap.lean",
+      "line": 50,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.exists_coin_gap_threshold",
+    "type": "(\u2203 G, G.Secure) \u2192\n  \u2200 {M : List Bool \u2192 List Bool \u2192 Bool},\n    Randomized.polyTimeModel.Eff (Randomized.boolVerifier M) \u2192\n      \u2200 (a k d : \u2115),\n        0 < d \u2192\n          \u2203 F n\u2080,\n            Complexity.PolyTimeComputable F \u2227\n              \u2200 (x : List Bool),\n                n\u2080 \u2264 x.length \u2192\n                  |\u2191(Randomized.randProb (TCSlib.Cryptography.Randomness.Derand.ceilRoot d x.length) fun u =>\n                            M x (List.take (Randomized.polyLen a k x.length) (F u)) = true) -\n                        \u2191(Randomized.randProb (Randomized.polyLen a k x.length) fun r => M x r = true)| \u2264\n                    1 / 12",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.exists_secure_cover",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/Expanded.lean",
+      "line": 47,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.exists_secure_cover",
+    "type": "(\u2203 G, G.Secure) \u2192\n  \u2200 (a k d : \u2115),\n    0 < d \u2192\n      \u2203 G F,\n        G.Secure \u2227\n          Complexity.PolyTimeComputable F \u2227\n            (\u2200 (n : \u2115) (s : Fin n \u2192 Bool), F (List.ofFn s) = List.ofFn (G.G n s)) \u2227\n              \u2200 (n : \u2115), Randomized.polyLen a k n \u2264 G.stretch.eval (TCSlib.Cryptography.Randomness.Derand.ceilRoot d n)",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.short_poly",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/Majority.lean",
+      "line": 39,
+      "kind": "theorem",
+      "private": true
+    },
+    "kernel_name": "_private.TCSlib.Cryptography.Randomness.Derandomization.Majority.0.TCSlib.Cryptography.Randomness.Derand.short_poly",
+    "type": "\u2200 {f : List Bool \u2192 List Bool},\n  Complexity.PolyTimeComputable f \u2192 \u2200 (N : \u2115), Complexity.PolyTimeComputable fun z => [decide ((f z).length < N)]",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.exists_seed_majority",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/Majority.lean",
+      "line": 63,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.exists_seed_majority",
+    "type": "(\u2203 G, G.Secure) \u2192\n  \u2200 {L : Language Bool},\n    Randomized.InBPP Randomized.polyTimeModel L \u2192\n      \u2200 (d : \u2115),\n        0 < d \u2192\n          \u2203 V w n\u2080,\n            V \u2208 Complexity.P \u2227\n              (Complexity.PolyTimeComputable fun x => List.replicate (w x.length) true) \u2227\n                (\u2200 (n : \u2115), n\u2080 \u2264 n \u2192 w n = TCSlib.Cryptography.Randomness.Derand.ceilRoot d n) \u2227\n                  L = {x | 2 ^ w x.length < 2 * {u | Turing.pairEncode x (List.ofFn u) \u2208 V}.card}",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean",
+      "line": 44,
+      "kind": "def",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot",
+    "type": "\u2115 \u2192 \u2115 \u2192 \u2115",
+    "axioms": []
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_eq",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean",
+      "line": 48,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_eq",
+    "type": "\u2200 (d n : \u2115), TCSlib.Cryptography.Randomness.Derand.ceilRoot d n = if n = 0 then 0 else d.nthRoot (n - 1) + 1",
+    "axioms": []
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_iff",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean",
+      "line": 53,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_iff",
+    "type": "\u2200 {d : \u2115}, 0 < d \u2192 \u2200 (n t : \u2115), TCSlib.Cryptography.Randomness.Derand.ceilRoot d n \u2264 t \u2194 n \u2264 t ^ d",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.le_ceilRoot_pow",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean",
+      "line": 65,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.le_ceilRoot_pow",
+    "type": "\u2200 {d : \u2115}, 0 < d \u2192 \u2200 (n : \u2115), n \u2264 TCSlib.Cryptography.Randomness.Derand.ceilRoot d n ^ d",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_zero",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean",
+      "line": 69,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_zero",
+    "type": "\u2200 (d : \u2115), TCSlib.Cryptography.Randomness.Derand.ceilRoot d 0 = 0",
+    "axioms": []
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_nat",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean",
+      "line": 75,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_nat",
+    "type": "\u2200 {d : \u2115}, 0 < d \u2192 \u2200 (n : \u2115), TCSlib.Cryptography.Randomness.Derand.ceilRoot d n \u2264 n",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.lt_ceilRoot_iff",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean",
+      "line": 86,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.lt_ceilRoot_iff",
+    "type": "\u2200 {d : \u2115}, 0 < d \u2192 \u2200 (n t : \u2115), t < TCSlib.Cryptography.Randomness.Derand.ceilRoot d n \u2194 t ^ d < n",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_real",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean",
+      "line": 98,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_real",
+    "type": "\u2200 {d : \u2115}, 0 < d \u2192 \u2200 (n : \u2115), \u2191(TCSlib.Cryptography.Randomness.Derand.ceilRoot d n) \u2264 \u2191n ^ (1 / \u2191d) + 1",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.polyTimeComputable_ceilRoot",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean",
+      "line": 128,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.polyTimeComputable_ceilRoot",
+    "type": "\u2200 {d : \u2115},\n  0 < d \u2192\n    Complexity.PolyTimeComputable fun x =>\n      List.replicate (TCSlib.Cryptography.Randomness.Derand.ceilRoot d x.length) true",
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.exists_root_degree",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/TimeBound.lean",
+      "line": 40,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.exists_root_degree",
+    "type": "\u2200 {\u03b5 : \u211d}, 0 < \u03b5 \u2192 \u2203 d, 2 \u2264 d \u2227 1 / \u2191d < \u03b5 \u2227 1 / \u2191d < 1",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "declaration": {
+      "name": "TCSlib.Cryptography.Randomness.Derand.seed_time_le_subexp",
+      "path": "TCSlib/Cryptography/Randomness/Derandomization/TimeBound.lean",
+      "line": 64,
+      "kind": "theorem",
+      "private": false
+    },
+    "kernel_name": "TCSlib.Cryptography.Randomness.Derand.seed_time_le_subexp",
+    "type": "\u2200 {d : \u2115},\n  0 < d \u2192\n    \u2200 {\u03b5 : \u211d},\n      0 < \u03b5 \u2192\n        1 / \u2191d < \u03b5 \u2192\n          \u2200 (w : \u2115 \u2192 \u2115) (n\u2080 : \u2115),\n            (\u2200 (n : \u2115), n\u2080 \u2264 n \u2192 w n = TCSlib.Cryptography.Randomness.Derand.ceilRoot d n) \u2192\n              \u2200 (e : \u2115), \u2203 C, \u2200 (n : \u2115), 2 ^ w n * (n + 1) ^ e \u2264 C * \u23082 ^ \u2191n ^ \u03b5\u2309\u208a",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  }
+]

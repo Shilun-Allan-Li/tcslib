@@ -1,0 +1,30 @@
+START 2026-11-15T12:21:38.562063+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation']
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:94:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.owpPredictor_apply`:
+  [Fintype α]
+  [Fintype β]
+  [Fintype ρ]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] [Fintype β] [Fintype ρ] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+        2.49 real         1.90 user         0.97 sys
+          2159050752  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174924  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  15  voluntary context switches
+                8848  involuntary context switches
+            31034896  instructions retired
+            14028702  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T12:21:41.074981+00:00
+EXIT 0

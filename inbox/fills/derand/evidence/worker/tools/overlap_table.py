@@ -1,0 +1,83 @@
+"""Give every added source declaration an explicit nearest-relative disclosure."""
+import json
+from pathlib import Path
+
+rows = json.loads(Path('evidence/clash/all-additions/results.json').read_text())['additions']
+by_name = {row['name']: row for row in rows}
+shared = {
+ 'Complexity.IterateFind.computesFunInTime_find': ('TCSlib/Complexity/Randomized/Build/IterateFind.lean:331',
+  'Generalizes polyTimeComputable_find to binary numerical fuel and an arbitrary initializer. The brief requires this assembly repetition in place; all private helpers and the old theorem/final_bound are retained unchanged.'),
+ 'Turing.FinTM.decidesInTime_iff': ('TCSlib/Complexity/ClassP/DTIME.lean:75',
+  'Required home-file reader of DecidesInTime by Iff.rfl (E3); no existing reader has this contract.'),
+ 'Complexity.mem_DTIME_iff': ('TCSlib/Complexity/ClassP/DTIME.lean:88',
+  'Required home-file reader of DTIME by Iff.rfl (E2); no existing reader has this contract.'),
+ 'Randomized.inBPP_iff': ('TCSlib/Complexity/Randomized/Classes.lean:288',
+  'SR-01 approved home-file reader of InBPP by Iff.rfl; no existing reader exposed these witnesses.'),
+}
+word = {
+ 'word': ('TCSlib/Complexity/TuringMachine/Encoding.lean:325', 'Uses the published binary power-of-two padding. This names the fixed-width rank word; it does not define another binary encoding engine.'),
+ 'length_word': ('TCSlib/Complexity/TuringMachine/Encoding.lean:325', 'Specializes binary padding and Mathlib List.length_take to the new rank word; both published operations are reused.'),
+ 'word_eq_ofFn': ('TCSlib/Complexity/Randomized/RandomBits.lean:228; TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:300', 'Reuses bitsEquiv_apply and eq_bits_append_replicate. The new glue identifies the padded word with the inverse of the existing bijection; no bijection is re-proved.'),
+ 'count': ('TCSlib/Complexity/Randomized/SeedMajority.lean:147', 'Defines the finite prefix of accepted ranks needed by the machine. The existing majority reader counts all tuples, not rank prefixes.'),
+ 'count_zero': ('Mathlib/Data/Finset/Card.lean:163', 'Specializes the empty range/filter cardinality to the new prefix count through its reader.'),
+ 'count_le': ('Mathlib/Data/Finset/Card.lean:62; Mathlib/Data/Finset/Card.lean:163', 'Direct application of card_le_card and card_range to the new count.'),
+ 'count_succ': ('Mathlib/Data/Finset/Card.lean:100', 'Specializes card_insert_of_notMem after range_add_one/filter_insert; this is the machine-count recurrence, not a new cardinality identity.'),
+ 'count_all': ('Mathlib/Data/Finset/Card.lean:337; TCSlib/Complexity/Randomized/RandomBits.lean:224', 'Applies card_bij using the existing bitsEquiv. The language predicate is preserved by word_eq_ofFn; no separate rank bijection is constructed.'),
+ 'state': ('TCSlib/Complexity/ClassNP/PolyTimePairing.lean:129', 'Retained-input binary rank/count representation built from the published pairing; existing clean-host stateWord is a tape layout, not this payload.'),
+ 'seedFor': ('TCSlib/Complexity/ClassNP/PolyTimePrefix.lean:46', 'Specializes the total prefix operation to a raw counting state and its unary width; reuses the existing prefix machine.'),
+ 'seedFor_state': ('TCSlib/Complexity/TuringMachine/Encoding.lean:325', 'Representation-specific bridge from the raw-state seed to word; all projections use published pair readers.'),
+ 'polyTimeComputable_seedFuel': ('TCSlib/Complexity/ClassP/BinaryArith/Unary.lean:43', 'Composition of polyTimeComputable_powerOfTwo with the FP unary width; no exponential unary fuel or competing evaluator is introduced.'),
+ 'polyTimeComputable_seedFor': ('TCSlib/Complexity/ClassNP/PolyTimePrefix.lean:355', 'Reuses polyTimeComputable_takePrefixByLength, pairing, and the published binary-fuel composition for the new state.'),
+ 'advance': ('TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:147', 'Counting-state-specific round using the published binary adder and P indicator. No arithmetic implementation or private loop lemma is copied.'),
+ 'polyTimeComputable_advance': ('TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:162', 'Composes published FP addition, indicator, branching, pairing, and seedFor; the input is an arbitrary raw word.'),
+ 'advance_state': ('TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:147', 'Specializes add_pairEncode and the indicator reader to the new state representation.'),
+ 'finished': ('TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:206', 'Terminal-rank comparison expressed using the existing binary equality test.'),
+ 'polyTimeComputable_finished': ('TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:227', 'Reuses the existing FP equality comparator and binary fuel on projected state words.'),
+ 'finished_state': ('TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:206', 'Specializes the equality comparator reader to the terminal rank; no new equality algorithm.'),
+ 'payload': ('TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:198', 'Strict-majority bit using existing addition and strict comparison; ties reject.'),
+ 'polyTimeComputable_payload': ('TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:211', 'Reuses FP strict comparison and addition; only the counting-state wiring is new.'),
+ 'payload_state': ('TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:198', 'Representation-specific interpretation of the existing strict comparator and doubled binary count.'),
+ 'polyTimeComputable_initial': ('TCSlib/Complexity/ClassNP/PolyTimePairing.lean:71; TCSlib/Complexity/ClassNP/PolyTimePairing.lean:129', 'Pairs the input with two constant zero words using existing FP closure.'),
+ 'length_state_le': ('TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:123', 'Applies the public binary-width bound to both counters, including rank 2^m, then the pairing-length reader. The result is specific to the new state layout.'),
+ 'exists_countingTM': ('TCSlib/Complexity/ClassNP/EXP.lean:2419; TCSlib/Complexity/Randomized/Build/IterateFind.lean:575 (new E1)', 'The existential projection decider accepts some witness and does not count acceptances or give this linear-in-2^w bound. The new host instead reuses E1. H16 is unary-counter driven and would require exponential unary fuel; it is not copied.'),
+ 'envelope_of_computesInTime': ('TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:244; TCSlib/Complexity/TuringMachine/Finite.lean:471', 'Generalizes the envelope argument to a native initial configuration with only a completed computation. Clean.envelope requires a clean seam contract, absent for the composite machine. Reuses the public interval/run readers; promotion to Finite.lean is requested.'),
+}
+consumer = {
+ 'ceilRoot': ('Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129', 'A ceiling root from the existing floor root of n-1; no root algorithm is copied.'),
+ 'ceilRoot_le_iff': ('Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129', 'Transports nthRoot_lt_iff to the new ceiling convention, with zero handled separately.'),
+ 'le_ceilRoot_pow': ('Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129', 'Immediate least-root specialization through ceilRoot_le_iff, not a separate root construction.'),
+ 'ceilRoot_zero': ('Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129', 'Zero-case equation of the new ceiling schedule, through its own reader.'),
+ 'ceilRoot_le_nat': ('Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129', 'Least-root specialization using n≤n^d. The schedule is ceiling, unlike the floor-root provider.'),
+ 'lt_ceilRoot_iff': ('Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:129', 'Strict-order dual of the new least-root reader; no new arithmetic algorithm.'),
+ 'ceilRoot_le_real': ('Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.lean:57; Mathlib/Analysis/SpecialFunctions/Pow/Real.lean:562', 'Reuses pow_nthRoot_le and the real inverse-power comparison, then adds the ceiling increment.'),
+ 'polyTimeComputable_ceilRoot': ('TCSlib/Cryptography/Asymptotic/UniversalPadding/BinaryRoot.lean:171; TCSlib/Complexity/Randomized/Repetition.lean:241', 'The existing evaluator returns a shifted binary floor root; this needs an exact unary ceiling root of input length. Reuses the published stateFind search and unary fixed-power/length comparisons, with no binary-root implementation copied.'),
+ 'eff_mapCoins': ('TCSlib/Complexity/Randomized/PolyTimeModel.lean:86; TCSlib/Complexity/ClassNP/PClosure.lean:69', 'Generic verifier-level wrapper around the existing efficiency reader and P-preimage closure. No identical published coin-map wrapper was found; promotion to PolyTimeModel.lean is requested.'),
+ 'exists_verifier_gap_bound': ('TCSlib/Cryptography/Randomness/BPPBridge.lean:80; TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Defs.lean:186', 'New non-uniform bad-advice threshold argument. Reuses verifier_toNUPPT, secure_iff, negligible_iff, prgAdv/acceptance readers and uprob_fst. No advantage/expectation or uniform-projection identity is re-proved.'),
+ 'exists_secure_cover': ('TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:209; TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:397', 'Specializes the existing secure one-bit truncation/expansion to the syntactic envelope and extracts its existing evaluator.'),
+ 'exists_coin_gap_threshold': ('TCSlib/Cryptography/Randomness/BPPBridge.lean:113; TCSlib/Complexity/Randomized/Classes.lean:238', 'Reuses randProb_eq_uprob and randProb_take to identify the generic gap. The new content is the root/input threshold and generator envelope.'),
+ 'short_poly': ('TCSlib/Complexity/Randomized/Build/StateLoop.lean:79', 'Private specialization of lenLe_comp to |f z|+1≤N. No length-comparison machine is copied. A generic threshold-wrapper promotion beside StateLoop.lenLe_comp is requested.'),
+ 'exists_seed_majority': ('TCSlib/Complexity/Randomized/SeedMajority.lean:147; TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:179', 'Reuses the majority-probability reader. Existing blockMajorityTest handles polynomially many blocks, not this full seed-space majority with piecewise PRG/true coins. No block-majority engine is copied.'),
+ 'exists_root_degree': ('Mathlib/Algebra/Order/Archimedean/Basic.lean:175', 'Specializes exists_nat_gt to reciprocal exponent bounds, including ε≥1.'),
+ 'seed_time_le_subexp': ('Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.lean:323; TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:279', 'Uses existing logarithm/rpow limits and the existing DTIME constant-factor transport later in the consumer. The new inequality combines the ceiling-root time and finite exceptions; no new general asymptotic or DTIME transport theorem is re-proved.'),
+}
+result = []
+for row in rows:
+    name = row['name']
+    short = name.rsplit('.', 1)[-1]
+    if name in shared:
+        relative, reason = shared[name]
+    elif short.endswith('_eq') and name[:-3] in by_name:
+        definition = by_name[name[:-3]]
+        relative = f'{definition["path"]}:{definition["line"]} (new definition)'
+        reason = 'Required home-file equation reader for this new definition, proved by rfl; no pre-existing reader can refer to the new symbol.'
+    elif name.startswith('Complexity.SeedMajority.'):
+        relative, reason = word[short]
+    else:
+        relative, reason = consumer[short]
+    result.append(dict(name=name, source=f'{row["path"]}:{row["line"]}', nearest=relative, disclosure=reason))
+folder = Path('evidence/overlap')
+folder.mkdir(parents=True, exist_ok=True)
+(folder / 'all-declarations.json').write_text(json.dumps(result, indent=2) + '\n')
+(folder / 'all-declarations.md').write_text('| New declaration | Nearest relative | Relation and reuse decision |\n'
+    '|---|---|---|\n' + ''.join(f'| `{row["name"]}` | `{row["nearest"]}` | {row["disclosure"]} |\n' for row in result))
+print(f'OVERLAP COVERAGE PASS: {len(result)} of {len(rows)} added declarations disclosed')

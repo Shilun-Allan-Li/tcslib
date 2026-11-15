@@ -1,0 +1,24 @@
+TCSlib/Cryptography/Asymptotic/UniversalPadding/Machine.lean:380:      (polyTimeComputable_shifted_root d hd)
+TCSlib/Cryptography/Asymptotic/UniversalPadding/BinaryRoot.lean:24:* `TCSlib.Cryptography.PadQuad.polyTimeComputable_shifted_root` computes the canonical binary word of the recovered parameter minus one.
+TCSlib/Cryptography/Asymptotic/UniversalPadding/BinaryRoot.lean:171:theorem polyTimeComputable_shifted_root (d : ℕ) (hd : 1 ≤ d) :
+TCSlib/Cryptography/Candidates/Rabin.lean:3370:/-- **The root finder is polynomial-time**: `A.polyTimeComputable_output` on the re-paired
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:17:`n ≤ t ^ d`. It uses the existing natural `nthRoot`; its unary implementation
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:22:* `TCSlib.Cryptography.Randomness.Derand.ceilRoot`: a ceiling root, defined over naturals.
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:26:* `TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_iff`: its least-root property.
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:40:`ceilRoot d n = if n = 0 then 0 else Nat.nthRoot d (n - 1) + 1`.
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:42:def ceilRoot (d n : ℕ) : ℕ := if n = 0 then 0 else Nat.nthRoot d (n - 1) + 1
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:45:`ceilRoot d n = if n = 0 then 0 else Nat.nthRoot d (n - 1) + 1`. -/
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:46:theorem ceilRoot_eq (d n : ℕ) :
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:47:    ceilRoot d n = if n = 0 then 0 else Nat.nthRoot d (n - 1) + 1 := rfl
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:50:`ceilRoot d n ≤ t ↔ n ≤ t ^ d`. [PS10, §8.2, Theorem 180.1] -/
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:51:theorem ceilRoot_le_iff {d : ℕ} (hd : 0 < d) (n t : ℕ) :
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:52:    ceilRoot d n ≤ t ↔ n ≤ t ^ d := by
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:53:  rw [ceilRoot_eq]
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:58:    have h := Nat.nthRoot_lt_iff (n := d) (a := n - 1) (b := t) hd.ne'
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:62:`n ≤ (ceilRoot d n) ^ d`. [PS10, §8.2, Theorem 180.1] -/
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:63:theorem le_ceilRoot_pow {d : ℕ} (hd : 0 < d) (n : ℕ) : n ≤ (ceilRoot d n) ^ d :=
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:64:  (ceilRoot_le_iff hd n (ceilRoot d n)).mp le_rfl
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:66:/-- The zero input has zero seed length: `ceilRoot d 0 = 0`. -/
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:67:theorem ceilRoot_zero (d : ℕ) : ceilRoot d 0 = 0 := by
+TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean:68:  rw [ceilRoot_eq, if_pos rfl]
+TCSlib/Complexity/CircuitComplexity/KarpLipton.lean:244:  have hroot : PolyTimeComputable

@@ -1,0 +1,26 @@
+From 5e12a169e671dc16b6766e21067b79c16835af67 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 03:55:14 -0800
+Subject: [PATCH 4/4] fill derand: final
+
+---
+ TCSlib/Complexity/Randomized/SeedMajority/State.lean | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Complexity/Randomized/SeedMajority/State.lean b/TCSlib/Complexity/Randomized/SeedMajority/State.lean
+index f6f52085a84bcaf5559b8a7f05140a8dc0b8129c..c5d7331de7abe2d425afeb56aa4360c0cbd06dc6 100644
+--- a/TCSlib/Complexity/Randomized/SeedMajority/State.lean
++++ b/TCSlib/Complexity/Randomized/SeedMajority/State.lean
+@@ -93,8 +93,10 @@ theorem polyTimeComputable_seedFor {w : ℕ → ℕ}
+   simp only [Function.comp_apply, seedFor_eq, PrefixByLength.take_def,
+     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
+ 
+-/-- One total counting round keeps the input, increments the binary rank,
+-and adds the test bit to the binary count. [AB09, §7.1, p. 126] -/
++/-- One total counting round keeps the input and increments the binary counters:
++`advance V w (state x i a) = state x (i+1) (a + [⟨x,word (w |x|) i⟩ ∈ V])`.
++The step is total; the outer host retains its size guard after termination.
++[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4] -/
+ noncomputable def advance (V : Language Bool) (w : ℕ → ℕ) (z : List Bool) : List Bool :=
+   pairEncode (pairFstD z)
+     (pairEncode (BinArith.add (pairEncode (pairFstD (pairSndD z)) (Nat.bits 1)))

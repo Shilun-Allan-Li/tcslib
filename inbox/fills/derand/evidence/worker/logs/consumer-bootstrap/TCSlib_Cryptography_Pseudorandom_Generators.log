@@ -1,0 +1,28 @@
+START 2026-11-15T10:27:08.352751+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Cryptography/Pseudorandom/Generators']
+TCSlib/Cryptography/Pseudorandom/Generators.lean:107:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.prgExt_def`:
+  [Fintype S]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype S] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+        2.52 real         1.90 user         1.11 sys
+          2147287040  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171166  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  16  voluntary context switches
+                7855  involuntary context switches
+            32033638  instructions retired
+            16555072  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T10:27:10.906586+00:00
+EXIT 0

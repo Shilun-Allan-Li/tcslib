@@ -1,0 +1,807 @@
+From 904123d3780cc1f5daf4f37ad49d90395595c1a9 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 03:39:35 -0800
+Subject: [PATCH 3/4] fill derand: checkpoint 2, prove the seed-majority
+ machine contract
+
+---
+ .../Randomized/Build/IterateFind.lean         |   4 +-
+ .../Complexity/Randomized/SeedMajority.lean   |  38 ++-
+ .../Randomized/SeedMajority/Enumeration.lean  | 127 ++++++++++
+ .../Randomized/SeedMajority/Envelope.lean     |  63 +++++
+ .../Randomized/SeedMajority/State.lean        | 231 ++++++++++++++++++
+ .../Randomized/SeedMajority/Words.lean        | 172 +++++++++++++
+ .../Randomness/Derandomization.lean           |   6 +-
+ .../Randomness/Derandomization/AdviceGap.lean |   7 +-
+ .../Derandomization/RootSchedule.lean         |   8 +-
+ 9 files changed, 645 insertions(+), 11 deletions(-)
+ create mode 100644 TCSlib/Complexity/Randomized/SeedMajority/Enumeration.lean
+ create mode 100644 TCSlib/Complexity/Randomized/SeedMajority/Envelope.lean
+ create mode 100644 TCSlib/Complexity/Randomized/SeedMajority/State.lean
+ create mode 100644 TCSlib/Complexity/Randomized/SeedMajority/Words.lean
+
+diff --git a/TCSlib/Complexity/Randomized/Build/IterateFind.lean b/TCSlib/Complexity/Randomized/Build/IterateFind.lean
+index 7550fe81d38dce29f33b1b303f2e015a6cdfa0f2..27bf3615de5b55716ce50dc65e8c2e302ab53069 100644
+--- a/TCSlib/Complexity/Randomized/Build/IterateFind.lean
++++ b/TCSlib/Complexity/Randomized/Build/IterateFind.lean
+@@ -794,6 +794,8 @@ theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeCompu
+     (fun _ w => acc (pairSndD w)) (fun _ w => out (pairSndD w)) (fun x => pairEncode x (init x))
+     R T hFuel (fun x => ⟨init x, rfl, hbound x⟩)
+     (fun x w h => inv_step g P x w h) hstart hround
+-  exact ⟨L, c, A, D, by simpa only [T, pow] using hL⟩
++  refine ⟨L, c, A, D, (FinTM.computesFunInTime_iff _ _ _).mpr fun x => ?_⟩
++  have hx := (FinTM.computesFunInTime_iff _ _ _).mp hL x
++  simpa only [T, pow] using hx
+ 
+ end Complexity.IterateFind
+diff --git a/TCSlib/Complexity/Randomized/SeedMajority.lean b/TCSlib/Complexity/Randomized/SeedMajority.lean
+index d2c42f55574662129add9dd9faa83be849e3d5e8..ca7471f0af614518a5a39c66f9cf1195ef5685e5 100644
+--- a/TCSlib/Complexity/Randomized/SeedMajority.lean
++++ b/TCSlib/Complexity/Randomized/SeedMajority.lean
+@@ -7,13 +7,17 @@ import TCSlib.Complexity.ClassP.P
+ import TCSlib.Complexity.ClassNP.PolyTime
+ import TCSlib.Complexity.TuringMachine.Encoding
+ import TCSlib.Complexity.Randomized.Classes
++import TCSlib.Complexity.Randomized.SeedMajority.Words
++import TCSlib.Complexity.Randomized.SeedMajority.State
++import TCSlib.Complexity.Randomized.SeedMajority.Enumeration
++import TCSlib.Complexity.Randomized.SeedMajority.Envelope
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Deterministic majority over all seeds (statement phase)
++# Deterministic majority over all seeds
+ 
+ The counting enumeration host: a deterministic machine that, on input `x`, runs a
+ polynomial-time test on `⟨x, u⟩` for **every** seed `u ∈ {0,1}^{w(|x|)}`, counts the accepting
+@@ -56,10 +60,17 @@ Theorem 180.1 (`TCSlib.Cryptography.Randomness.bpp_subset_dtime_subexp`).
+   `Turing.FinTM.DecidesInTime`, `Turing.FinTM.DecidesInTimeVia` and `DTIME` by their
+   definitions (Rule 10).
+ 
++## Contents
++
++* `Complexity.Randomized.SeedMajority.Words`: binary seed words and prefix counts.
++* `Complexity.Randomized.SeedMajority.State`: the FP counting round and terminal tests.
++* `Complexity.Randomized.SeedMajority.Enumeration`: the finite binary-fuel machine.
++* `Complexity.Randomized.SeedMajority.Envelope`: the all-times work-head bound.
++
+ ## Main results
+ 
+ * `Complexity.exists_seedMajorityTM` — the host's machine-level contract: correctness, time and
+-  head envelope of one machine (stated; a `sorry` under the route below, for the `derand` fill).
++  head envelope of one machine, proved through the generic binary-fuel harvest.
+   [AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4 of the proof]
+ * `Complexity.seedMajority_mem_DTIME` — the decision-class corollary
+   `∃ e, {x | 2^{w(|x|)} < 2 · count} ∈ DTIME (n ↦ 2^{w(n)} · (n+1)^e)`, proved from
+@@ -175,7 +186,11 @@ open Classical in
+ `Fin (w |x|) → Bool`, the numerator of `Randomized.randProb` (`Randomized.half_lt_randProb_iff`).
+ The head envelope is not in the source; it is the host clause of `policy.md` §1.
+ 
+-**Proof sketch** (the route of the module docstring; the `derand` fill).
++**Status.** Proved through `SeedMajority.exists_countingTM` and
++`SeedMajority.envelope_of_computesInTime`, using only the published decision and
++computation readers.
++
++**Proof sketch** (the route of the module docstring; implemented in the helpers).
+ 1. Run the state loop `⟨x, ⟨i, a⟩⟩ ↦ ⟨x, ⟨i + 1, a + [⟨x, word_w(i)⟩ ∈ V]⟩⟩` from
+    `⟨x, ⟨0, 0⟩⟩`, stopping at `i = 2^{w(|x|)}` with the payload `[2^w < 2a]`; each piece is a
+    polynomial-time word function of the state.
+@@ -200,7 +215,20 @@ theorem exists_seedMajorityTM {V : Language Bool} (hV : V ∈ P) (w : ℕ → 
+         ∀ (x : List Bool) (v : ℕ) (j : Fin M.k),
+           |(M.tm.runFrom (M.tm.initCfg x) v).workTapePos j| ≤
+             ((c * (2 ^ w x.length * (x.length + 1) ^ e) : ℕ) : ℤ) := by
+-  sorry
++  obtain ⟨M, c, e, hM⟩ := SeedMajority.exists_countingTM hV w hw
++  refine ⟨M, c, e, ?_, ?_⟩
++  · apply (FinTM.decidesInTime_iff _ _ _).mpr
++    intro x
++    have hx := (FinTM.computesFunInTime_iff _ _ _).mp hM x
++    rw [MultiTapeTM.indicator_def]
++    by_cases h : 2 ^ w x.length <
++        2 * (Finset.univ.filter fun u : Fin (w x.length) → Bool =>
++          pairEncode x (List.ofFn u) ∈ V).card
++    · simpa only [Set.mem_setOf_eq, if_pos h, decide_eq_true h] using hx
++    · simpa only [Set.mem_setOf_eq, if_neg h, decide_eq_false h] using hx
++  · intro x v j
++    exact SeedMajority.envelope_of_computesInTime
++      ((FinTM.computesFunInTime_iff _ _ _).mp hM x) v j
+ 
+ open Classical in
+ /-- **Deterministic majority over all seeds: the decision class** [AB09, §7.1, p. 126];
+@@ -211,7 +239,7 @@ puts the strict-majority language in `DTIME (n ↦ 2^{w(n)} · (n+1)^e)`:
+ ∈ DTIME (fun n => 2^{w(n)} · (n+1)^e)`. Ties (`2 · count = 2^w`) reject. It is the corollary
+ of the machine contract `exists_seedMajorityTM` that the consumers of the class read.
+ 
+-**Status.** Proved modulo `exists_seedMajorityTM`. The proof reads the machine contract
++**Status.** Proved from `exists_seedMajorityTM`. The proof reads the machine contract
+ through `Complexity.mem_DTIME_iff`, added beside `DTIME` under the pre-approval of
+ 2026-11-15. It uses no definitional reading of either `DTIME` or `DecidesInTime`.
+ 
+diff --git a/TCSlib/Complexity/Randomized/SeedMajority/Enumeration.lean b/TCSlib/Complexity/Randomized/SeedMajority/Enumeration.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..ef3da4e3afca7e550cc86aca3c2e69a112311868
+--- /dev/null
++++ b/TCSlib/Complexity/Randomized/SeedMajority/Enumeration.lean
+@@ -0,0 +1,127 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.Randomized.SeedMajority.State
++import TCSlib.Complexity.Randomized.Build.IterateFind
++import TCSlib.Complexity.Randomized.Build.StateLoop
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The finite seed-enumeration machine
++
++Instantiate the generic binary-fuel harvest with a retained-input counting
++state. The size guard stays in the total step; it never fires on a genuine
++prefix of at most `2^w` rounds. The terminal rank is included in the search.
++
++## Main results
++
++* `Complexity.SeedMajority.exists_countingTM`: a finite machine computes
++  the strict seed-majority bit in time `c * 2^w(n) * (n+1)^e`.
++
++## References
++
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009, §7.1, p. 126.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, §8.2, Theorem 180.1, step 4.
++-/
++
++namespace Complexity.SeedMajority
++
++open Turing
++
++open Classical in
++/-- A finite machine computes the seed-majority bit with the claimed time:
++`M.ComputesFunInTime (x ↦ [decide (2^(w |x|) < 2 * count_all)])`
++`(n ↦ c * (2^(w n) * (n+1)^e))` for some `M,c,e`.
++[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4]
++
++**Proof sketch.** Bound the unary width by a polynomial. Then the retained
++input and the two counters, including their terminal values, fit in a
++fixed polynomial state bound. Induct along the guarded orbit: its rank is
++`i`, and its count is `count V x (w |x|) i`. The guard never fires up to the
++fuel rank. The terminal test is false before that rank and true there,
++so the inclusive first-hit search returns it. Apply the generic-fuel
++harvest with the shared binary power-of-two evaluator. The rank bijection
++identifies the final prefix count with the count over all seed tuples.
++Finally bound the per-round polynomial with `PolyExpr.eval_le` and use
++`2^w+2 ≤ 3*2^w` to obtain the required time normal form. -/
++theorem exists_countingTM {V : Language Bool} (hV : V ∈ P) (w : ℕ → ℕ)
++    (hw : PolyTimeComputable fun x => List.replicate (w x.length) true) :
++    ∃ (M : FinTM Bool) (c e : ℕ), M.ComputesFunInTime
++      (fun x => [decide (2 ^ w x.length <
++        2 * (Finset.univ.filter fun u : Fin (w x.length) → Bool =>
++          pairEncode x (List.ofFn u) ∈ V).card)])
++      (fun n => c * (2 ^ w n * (n + 1) ^ e)) := by
++  obtain ⟨C, c, hwidth⟩ := hw.output_length_le
++  have hwlen (x : List Bool) : w x.length ≤ C * (x.length + 1) ^ c := by
++    simpa only [List.length_replicate] using hwidth x
++  let P : PolyExpr := .add (.add (.mul (.const 2) .var)
++    (.mul (.const (3 * C)) (.pow (.add .var (.const 1)) c))) (.const 7)
++  have hstate (x : List Bool) (i : ℕ) (hi : i ≤ 2 ^ w x.length) :
++      (state x i (count V x (w x.length) i)).length ≤ P.eval x.length := by
++    have hs := length_state_le x (w x.length) i (count V x (w x.length) i) hi
++      (count_le V x (w x.length) i)
++    have hwx := hwlen x
++    simp only [P, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
++      PolyExpr.eval_pow, PolyExpr.eval_var]
++    nlinarith
++  have hinit (x : List Bool) : (state x 0 0).length ≤ P.eval x.length := by
++    simpa only [count_zero] using hstate x 0 (Nat.zero_le _)
++  have horbit (x : List Bool) (i : ℕ) (hi : i ≤ 2 ^ w x.length) :
++      (IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0)) =
++        pairEncode x (state x i (count V x (w x.length) i)) := by
++    induction i with
++    | zero => simp only [Function.iterate_zero_apply, count_zero]
++    | succ i ih =>
++        rw [Function.iterate_succ_apply', ih (by omega), IterateFind.step_eq,
++          pairSndD_pairEncode, advance_state, ← count_succ]
++        rw [if_pos (hstate x (i + 1) hi)]
++  have hfind (x : List Bool) :
++      (List.range (2 ^ w x.length + 1)).find?
++        (fun i => finished w (pairSndD
++          ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0))))) =
++        some (2 ^ w x.length) := by
++    apply StateLoop.find?_range_eq_some le_rfl
++    · intro i hi
++      rw [horbit x i hi.le, pairSndD_pairEncode, finished_state]
++      exact decide_eq_false (by omega)
++    · rw [horbit x (2 ^ w x.length) le_rfl, pairSndD_pairEncode, finished_state]
++      exact decide_eq_true rfl
++  obtain ⟨F, aF, dF, hF⟩ :=
++    (polyTimeComputable_iff _).mp (polyTimeComputable_seedFuel hw)
++  obtain ⟨M, c₀, A, D, hM⟩ := IterateFind.computesFunInTime_find
++    (polyTimeComputable_advance hV hw) (polyTimeComputable_finished hw)
++    (polyTimeComputable_payload hw) polyTimeComputable_initial (fun n => 2 ^ w n)
++    P hinit F aF dF hF
++  have hcomputed (x : List Bool) : M.ComputesInTime x
++      [decide (2 ^ w x.length <
++        2 * (Finset.univ.filter fun u : Fin (w x.length) → Bool =>
++          pairEncode x (List.ofFn u) ∈ V).card)]
++      (c₀ * (A * (2 * x.length + 2 + P.eval x.length + 5) ^ D + 1) *
++        (2 ^ w x.length + 2)) := by
++    have hx := (FinTM.computesFunInTime_iff _ _ _).mp hM x
++    simpa only [hfind, horbit x (2 ^ w x.length) le_rfl, pairSndD_pairEncode,
++      payload_state, count_all] using hx
++  let Q : PolyExpr := .add (.mul (.const A) (.pow
++    (.add (.add (.add (.mul (.const 2) .var) (.const 2)) P) (.const 5)) D)) (.const 1)
++  obtain ⟨B, b, hB⟩ := Q.eval_le
++  have hbudget (n : ℕ) : A * (2 * n + 2 + P.eval n + 5) ^ D + 1 ≤ B * (n + 1) ^ b := by
++    simpa only [Q, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
++      PolyExpr.eval_pow, PolyExpr.eval_var] using hB n
++  refine ⟨M, c₀ * B * 3, b, (FinTM.computesFunInTime_iff _ _ _).mpr fun x => ?_⟩
++  apply (hcomputed x).mono
++  calc
++    c₀ * (A * (2 * x.length + 2 + P.eval x.length + 5) ^ D + 1) *
++        (2 ^ w x.length + 2) ≤
++        c₀ * (B * (x.length + 1) ^ b) * (3 * 2 ^ w x.length) :=
++      Nat.mul_le_mul (Nat.mul_le_mul_left c₀ (hbudget x.length))
++        (by have hpos := Nat.two_pow_pos (w x.length); omega)
++    _ = c₀ * B * 3 * (2 ^ w x.length * (x.length + 1) ^ b) := by ring
++
++end Complexity.SeedMajority
+diff --git a/TCSlib/Complexity/Randomized/SeedMajority/Envelope.lean b/TCSlib/Complexity/Randomized/SeedMajority/Envelope.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8ea8b6ad7f49c2071e5a7084a4c19737efb29d9
+--- /dev/null
++++ b/TCSlib/Complexity/Randomized/SeedMajority/Envelope.lean
+@@ -0,0 +1,63 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.TuringMachine.Finite
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# A timed computation bounds every work head
++
++The coarse head envelope follows from a completed computation: before its
++time bound every head is within that many cells of its initial position;
++afterward the halted run is constant. This is the native-initial-configuration
++version of the clean-module envelope, stated without a clean seam hypothesis.
++
++## Main results
++
++* `Complexity.SeedMajority.envelope_of_computesInTime`: the all-times head bound.
++
++## References
++
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009, §1.2, multitape machines.
++-/
++
++namespace Complexity.SeedMajority
++
++open Turing
++
++/-- A finite machine computing `y` on `x` by time `t` keeps each work head
++within `t` cells at every time `v`:
++`|(M.tm.runFrom (M.tm.initCfg x) v).workTapePos j| ≤ (t : ℤ)`.
++[AB09, §1.2]
++
++**Proof sketch.** The published interval bound puts the head within `u`
++cells of its start after `u ≤ t` steps, and `Cfg.init_workTapePos` makes the
++start zero. For `v > t`, the computation reader says the configuration at
++`t` is halted; split the run there and use `runFrom_of_halt`. -/
++theorem envelope_of_computesInTime {M : FinTM Bool} {x y : List Bool} {t : ℕ}
++    (h : M.ComputesInTime x y t) (v : ℕ) (j : Fin M.k) :
++    |(M.tm.runFrom (M.tm.initCfg x) v).workTapePos j| ≤ (t : ℤ) := by
++  have bound (u : ℕ) (hu : u ≤ t) :
++      |(M.tm.runFrom (M.tm.initCfg x) u).workTapePos j| ≤ (t : ℤ) := by
++    have hp := M.tm.workTapePos_runFrom_mem_Icc (M.tm.initCfg x) u j
++    rw [Finset.mem_Icc] at hp
++    simp only [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, zero_sub, zero_add] at hp
++    have hut : (u : ℤ) ≤ t := by exact_mod_cast hu
++    rw [MultiTapeTM.initCfg_eq]
++    exact abs_le.mpr ⟨by omega, by omega⟩
++  by_cases hv : v ≤ t
++  · exact bound v hv
++  · have hh := ((FinTM.computesInTime_iff M x y t).mp h).1
++    have heq : M.tm.runFrom (M.tm.initCfg x) v = M.tm.runFrom (M.tm.initCfg x) t := by
++      rw [show v = t + (v - t) by omega, MultiTapeTM.runFrom_add,
++        MultiTapeTM.runFrom_of_halt _ hh]
++    rw [heq]
++    exact bound t le_rfl
++
++end Complexity.SeedMajority
+diff --git a/TCSlib/Complexity/Randomized/SeedMajority/State.lean b/TCSlib/Complexity/Randomized/SeedMajority/State.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..f6f52085a84bcaf5559b8a7f05140a8dc0b8129c
+--- /dev/null
++++ b/TCSlib/Complexity/Randomized/SeedMajority/State.lean
+@@ -0,0 +1,231 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.Randomized.SeedMajority.Words
++import TCSlib.Complexity.ClassNP.PClosure
++import TCSlib.Complexity.ClassNP.PolyTimePrefix
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The counting state of the seed-majority host
++
++Each state retains the original input and two binary counters. The total
++step reads one padded seed word, increments the rank, and increments the
++acceptance count by the test bit. The outer iteration keeps its length guard,
++so no fixed state bound is claimed after termination.
++
++## Main definitions
++
++* `Complexity.SeedMajority.seedFor`: the seed read from a raw counting state.
++* `Complexity.SeedMajority.advance`: one counting round.
++* `Complexity.SeedMajority.finished`: the terminal-rank test.
++* `Complexity.SeedMajority.payload`: the strict-majority bit.
++
++## Main results
++
++* The four maps are polynomial-time when the test is in `P` and the width
++  has an FP unary word.
++* `Complexity.SeedMajority.length_state_le`: the counters fit in `w+1` bits
++  up to and including the terminal rank.
++
++## References
++
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009, §7.1, p. 126.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, §8.2, Theorem 180.1, step 4.
++-/
++
++namespace Complexity.SeedMajority
++
++open Turing
++
++/-- The seed extracted from `z` is the first `w |fst z|` letters of its raw
++rank word followed by the binary power-of-two padding. On counting states,
++`seedFor w (state x i a) = word (w |x|) i`. [AB09, §7.1, p. 126] -/
++def seedFor (w : ℕ → ℕ) (z : List Bool) : List Bool :=
++  (pairFstD (pairSndD z) ++ Nat.bits (2 ^ w (pairFstD z).length)).take
++    (w (pairFstD z).length)
++
++/-- The raw-state seed reader satisfies
++`seedFor w z = (fst(snd z) ++ bits(2^(w |fst z|))).take (w |fst z|)`. -/
++theorem seedFor_eq (w : ℕ → ℕ) (z : List Bool) :
++    seedFor w z =
++      (pairFstD (pairSndD z) ++ Nat.bits (2 ^ w (pairFstD z).length)).take
++        (w (pairFstD z).length) := rfl
++
++/-- On a counting state the extracted seed is its width-`w |x|` rank word:
++`seedFor w (state x i a) = word (w |x|) i`. -/
++theorem seedFor_state (w : ℕ → ℕ) (x : List Bool) (i a : ℕ) :
++    seedFor w (state x i a) = word (w x.length) i := by
++  simp only [seedFor_eq, state_eq, pairFstD_pairEncode, pairSndD_pairEncode, word_eq]
++
++/-- Binary exponential fuel is FP when the width has an FP unary word:
++`x ↦ bits(2^(w |x|))` is FP. This reuses the shared power-of-two evaluator.
++[PS10, Theorem 180.1, step 4] -/
++theorem polyTimeComputable_seedFuel {w : ℕ → ℕ}
++    (hw : PolyTimeComputable fun x => List.replicate (w x.length) true) :
++    PolyTimeComputable fun x => Nat.bits (2 ^ w x.length) := by
++  convert BinArith.polyTimeComputable_powerOfTwo.comp hw using 1
++  funext x
++  simp only [Function.comp_apply, List.length_replicate]
++
++/-- Reading the rank seed is FP:
++`PolyTimeComputable (seedFor w)` when the unary width is FP.
++
++**Proof sketch.** Compose the unary width and binary fuel evaluators with
++the first projection. Append the raw rank to the padding word and apply
++the existing prefix-by-length machine to the pair of unary width and data. -/
++theorem polyTimeComputable_seedFor {w : ℕ → ℕ}
++    (hw : PolyTimeComputable fun x => List.replicate (w x.length) true) :
++    PolyTimeComputable (seedFor w) := by
++  have hwidth := hw.comp polyTimeComputable_pairFstD
++  have hpad := (polyTimeComputable_seedFuel hw).comp polyTimeComputable_pairFstD
++  have hrank := polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
++  have hdata := hrank.append hpad
++  convert polyTimeComputable_takePrefixByLength.comp (hwidth.pairEncode hdata) using 1
++  funext z
++  simp only [Function.comp_apply, seedFor_eq, PrefixByLength.take_def,
++    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
++
++/-- One total counting round keeps the input, increments the binary rank,
++and adds the test bit to the binary count. [AB09, §7.1, p. 126] -/
++noncomputable def advance (V : Language Bool) (w : ℕ → ℕ) (z : List Bool) : List Bool :=
++  pairEncode (pairFstD z)
++    (pairEncode (BinArith.add (pairEncode (pairFstD (pairSndD z)) (Nat.bits 1)))
++      (BinArith.add (pairEncode (pairSndD (pairSndD z))
++        (if MultiTapeTM.indicator V (pairEncode (pairFstD z) (seedFor w z))
++          then Nat.bits 1 else Nat.bits 0))))
++
++/-- The counting-round reader exposes the binary additions and indicator:
++`advance V w z = ⟨fst z, ⟨add(⟨fst(snd z),bits 1⟩),
++add(⟨snd(snd z), if indicator V ⟨fst z,seedFor w z⟩ then bits 1 else bits 0⟩)⟩⟩`. -/
++theorem advance_eq (V : Language Bool) (w : ℕ → ℕ) (z : List Bool) :
++    advance V w z = pairEncode (pairFstD z)
++      (pairEncode (BinArith.add (pairEncode (pairFstD (pairSndD z)) (Nat.bits 1)))
++        (BinArith.add (pairEncode (pairSndD (pairSndD z))
++          (if MultiTapeTM.indicator V (pairEncode (pairFstD z) (seedFor w z))
++            then Nat.bits 1 else Nat.bits 0)))) := rfl
++
++/-- Each counting round is FP for `V ∈ P` and an FP unary width:
++`PolyTimeComputable (advance V w)`.
++
++**Proof sketch.** Read the input and counters with total pair projections.
++The seed is `polyTimeComputable_seedFor`; apply the `P` indicator to its
++pair with the input. Its Boolean result selects the constant increment
++zero or one. Pairing and the published binary adder assemble the next state.
++This proof establishes FP for every raw word, including malformed states. -/
++theorem polyTimeComputable_advance {V : Language Bool} (hV : V ∈ P) {w : ℕ → ℕ}
++    (hw : PolyTimeComputable fun x => List.replicate (w x.length) true) :
++    PolyTimeComputable (advance V w) := by
++  have hrank := polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
++  have hcount := polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD
++  have htest := (mem_P_iff_polyTimeComputable.mp hV).comp
++    (polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_seedFor hw))
++  have hbit := polyTimeComputable_ite htest
++    (polyTimeComputable_const (Nat.bits 1)) (polyTimeComputable_const (Nat.bits 0))
++  have hi := BinArith.polyTimeComputable_add.comp
++    (hrank.pairEncode (polyTimeComputable_const (Nat.bits 1)))
++  have ha := BinArith.polyTimeComputable_add.comp (hcount.pairEncode hbit)
++  convert polyTimeComputable_pairFstD.pairEncode (hi.pairEncode ha) using 1
++
++open Classical in
++/-- On a counting state one round has its intended arithmetic meaning:
++`advance V w (state x i a) = state x (i+1) (a + [⟨x,word(w |x|) i⟩ ∈ V])`.
++[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4] -/
++theorem advance_state (V : Language Bool) (w : ℕ → ℕ) (x : List Bool) (i a : ℕ) :
++    advance V w (state x i a) = state x (i + 1)
++      (a + if pairEncode x (word (w x.length) i) ∈ V then 1 else 0) := by
++  rw [advance_eq, seedFor_state]
++  simp only [state_eq, pairFstD_pairEncode, pairSndD_pairEncode, BinArith.add_pairEncode,
++    MultiTapeTM.indicator_def]
++  by_cases h : pairEncode x (word (w x.length) i) ∈ V
++  · simp only [if_pos h, ↓reduceIte, BinArith.add_pairEncode]
++  · simp only [if_neg h, Bool.false_eq_true, ↓reduceIte, BinArith.add_pairEncode, Nat.add_zero]
++
++/-- The terminal test compares the rank with its binary fuel:
++`finished w z = beq ⟨fst(snd z), bits(2^(w |fst z|))⟩`.
++[PS10, Theorem 180.1, step 4] -/
++def finished (w : ℕ → ℕ) (z : List Bool) : Bool :=
++  BinArith.beq (pairEncode (pairFstD (pairSndD z)) (Nat.bits (2 ^ w (pairFstD z).length)))
++
++/-- The terminal test satisfies
++`finished w z = beq ⟨fst(snd z),bits(2^(w |fst z|))⟩`. -/
++theorem finished_eq (w : ℕ → ℕ) (z : List Bool) :
++    finished w z = BinArith.beq
++      (pairEncode (pairFstD (pairSndD z)) (Nat.bits (2 ^ w (pairFstD z).length))) := rfl
++
++/-- The terminal test is FP:
++`z ↦ [finished w z]` is FP when the unary width is FP. -/
++theorem polyTimeComputable_finished {w : ℕ → ℕ}
++    (hw : PolyTimeComputable fun x => List.replicate (w x.length) true) :
++    PolyTimeComputable fun z => [finished w z] := by
++  have hrank := polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
++  have hpower := (polyTimeComputable_seedFuel hw).comp polyTimeComputable_pairFstD
++  convert BinArith.polyTimeComputable_beq.comp (hrank.pairEncode hpower) using 1
++
++/-- A counting state is terminal exactly at the fuel rank:
++`finished w (state x i a) = decide (i = 2^(w |x|))`. -/
++theorem finished_state (w : ℕ → ℕ) (x : List Bool) (i a : ℕ) :
++    finished w (state x i a) = decide (i = 2 ^ w x.length) := by
++  simp only [finished_eq, state_eq, pairFstD_pairEncode, pairSndD_pairEncode,
++    BinArith.beq_pairEncode]
++
++/-- The output bit tests whether the doubled count exceeds the fuel:
++`payload w z = [lt ⟨bits(2^(w |fst z|)),add ⟨snd(snd z),snd(snd z)⟩⟩]`.
++[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4] -/
++def payload (w : ℕ → ℕ) (z : List Bool) : List Bool :=
++  [BinArith.lt (pairEncode (Nat.bits (2 ^ w (pairFstD z).length))
++    (BinArith.add (pairEncode (pairSndD (pairSndD z)) (pairSndD (pairSndD z)))))]
++
++/-- The output reader satisfies
++`payload w z = [lt ⟨bits(2^(w |fst z|)),add ⟨snd(snd z),snd(snd z)⟩⟩]`. -/
++theorem payload_eq (w : ℕ → ℕ) (z : List Bool) :
++    payload w z = [BinArith.lt (pairEncode (Nat.bits (2 ^ w (pairFstD z).length))
++      (BinArith.add (pairEncode (pairSndD (pairSndD z)) (pairSndD (pairSndD z)))))] := rfl
++
++/-- The payload is FP: `PolyTimeComputable (payload w)` for an FP unary width.
++It composes binary doubling by addition with the shared strict comparator. -/
++theorem polyTimeComputable_payload {w : ℕ → ℕ}
++    (hw : PolyTimeComputable fun x => List.replicate (w x.length) true) :
++    PolyTimeComputable (payload w) := by
++  have hcount := polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD
++  have hdouble := BinArith.polyTimeComputable_add.comp (hcount.pairEncode hcount)
++  have hpower := (polyTimeComputable_seedFuel hw).comp polyTimeComputable_pairFstD
++  convert BinArith.polyTimeComputable_lt.comp (hpower.pairEncode hdouble) using 1
++
++/-- On a counting state, the payload is the strict majority test:
++`payload w (state x i a) = [decide (2^(w |x|) < 2*a)]`.
++Equality of the two sides of the comparison rejects. -/
++theorem payload_state (w : ℕ → ℕ) (x : List Bool) (i a : ℕ) :
++    payload w (state x i a) = [decide (2 ^ w x.length < 2 * a)] := by
++  simp only [payload_eq, state_eq, pairFstD_pairEncode, pairSndD_pairEncode,
++    BinArith.add_pairEncode, BinArith.lt_pairEncode, two_mul]
++
++/-- The initial state `x ↦ state x 0 0` is FP, by pairing with two constant words. -/
++theorem polyTimeComputable_initial : PolyTimeComputable fun x => state x 0 0 := by
++  simpa only [state_eq] using polyTimeComputable_id.pairEncode
++    ((polyTimeComputable_const (Nat.bits 0)).pairEncode
++      (polyTimeComputable_const (Nat.bits 0)))
++
++/-- Through the terminal rank, the state has linear width in the input and
++seed length: `|state x i a| ≤ 2|x|+3m+7` if `a ≤ i ≤ 2^m`.
++[AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4] -/
++theorem length_state_le (x : List Bool) (m i a : ℕ) (hi : i ≤ 2 ^ m) (ha : a ≤ i) :
++    (state x i a).length ≤ 2 * x.length + 3 * m + 7 := by
++  have hlen (j : ℕ) (hj : j ≤ 2 ^ m) : (Nat.bits j).length ≤ m + 1 := by
++    apply LogProg.length_bits_le
++    have hp : 0 < 2 ^ m := Nat.two_pow_pos m
++    rw [pow_succ]
++    omega
++  have hi' := hlen i hi
++  have ha' := hlen a (ha.trans hi)
++  rw [state_eq, length_pairEncode, length_pairEncode]
++  omega
++
++end Complexity.SeedMajority
+diff --git a/TCSlib/Complexity/Randomized/SeedMajority/Words.lean b/TCSlib/Complexity/Randomized/SeedMajority/Words.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..db8b7b7c9053abeb5d5b6e02ed6cf6c8b661b58f
+--- /dev/null
++++ b/TCSlib/Complexity/Randomized/SeedMajority/Words.lean
+@@ -0,0 +1,172 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.Randomized.RandomBits
++import TCSlib.Complexity.SpaceComplexity.Codec.Word
++import TCSlib.Complexity.ClassP.BinaryArith.Unary
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Binary seed words for the majority host
++
++The rank encoding and finite prefix count used by the counting enumeration host H17.
++The existing `Randomized.bitsEquiv` identifies ranks with fixed-width Boolean tuples;
++the configuration codec's binary normalization lemma identifies its inverse with the
++word computed by padding and prefix truncation.
++
++## Main definitions
++
++* `Complexity.SeedMajority.word`: the width-`m` low bits of a natural rank.
++
++## Main results
++
++* `Complexity.SeedMajority.length_word`: every encoded seed has exactly its width.
++
++## References
++
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009, §7.1, p. 126.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, §8.2, Theorem 180.1.
++-/
++
++namespace Complexity.SeedMajority
++
++open Turing
++
++/-- The width-`m` seed word for rank `i` is the first `m` bits of `Nat.bits i`
++followed by the binary word for `2 ^ m`, whose first `m` letters are zero:
++`word m i = (Nat.bits i ++ Nat.bits (2 ^ m)).take m`.
++[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4] -/
++def word (m i : ℕ) : List Bool := (Nat.bits i ++ Nat.bits (2 ^ m)).take m
++
++/-- The rank encoder satisfies
++`word m i = (Nat.bits i ++ Nat.bits (2 ^ m)).take m`. -/
++theorem word_eq (m i : ℕ) :
++    word m i = (Nat.bits i ++ Nat.bits (2 ^ m)).take m := rfl
++
++/-- The rank encoder has its declared width: `(word m i).length = m`. -/
++theorem length_word (m i : ℕ) : (word m i).length = m := by
++  rw [word_eq, bits_two_pow_eq_replicate, List.length_take, List.length_append,
++    List.length_append, List.length_replicate, List.length_singleton]
++  exact Nat.min_eq_left (by omega)
++
++/-- For `i < 2 ^ m`, `word m i` is the tuple of the existing rank bijection:
++`word m i = List.ofFn ((Randomized.bitsEquiv m).symm ⟨i, hi⟩)`.
++
++**Proof sketch.** Decode the inverse tuple with `bitsEquiv_apply`. Its value is `i`
++and its length is `m`. The codec's normalization theorem therefore writes it as
++`Nat.bits i` padded by exactly `m - |Nat.bits i|` zeros. Taking `m` letters of
++`Nat.bits i` followed by `m` zeros gives this same word, since `i < 2 ^ m` bounds
++the normalized binary length by `m`. -/
++theorem word_eq_ofFn (m i : ℕ) (hi : i < 2 ^ m) :
++    word m i = List.ofFn ((Randomized.bitsEquiv m).symm ⟨i, hi⟩) := by
++  let u := (Randomized.bitsEquiv m).symm ⟨i, hi⟩
++  have hv : LogProg.bitsVal (List.ofFn u) = i := by
++    rw [← Randomized.bitsEquiv_apply]
++    exact congrArg Fin.val ((Randomized.bitsEquiv m).apply_symm_apply ⟨i, hi⟩)
++  have hnorm := Codec.eq_bits_append_replicate (List.ofFn u)
++  rw [hv, List.length_ofFn] at hnorm
++  have hlen := LogProg.length_bits_le hi
++  calc
++    word m i = Nat.bits i ++ List.replicate (m - (Nat.bits i).length) false := by
++      rw [word_eq, List.take_append, List.take_of_length_le hlen,
++        bits_two_pow_eq_replicate,
++        List.take_append_of_le_length (by simp),
++        List.take_replicate,
++        Nat.min_eq_left (Nat.sub_le m _)]
++    _ = List.ofFn u := hnorm.symm
++
++open Classical in
++/-- The prefix acceptance count is
++`count V x m i = #{j ∈ Finset.range i | pairEncode x (word m j) ∈ V}`.
++[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4] -/
++noncomputable def count (V : Language Bool) (x : List Bool) (m i : ℕ) : ℕ :=
++  (Finset.range i |>.filter fun j => pairEncode x (word m j) ∈ V).card
++
++open Classical in
++/-- The prefix count satisfies
++`count V x m i = #{j ∈ Finset.range i | pairEncode x (word m j) ∈ V}`. -/
++theorem count_eq (V : Language Bool) (x : List Bool) (m i : ℕ) :
++    count V x m i = (Finset.range i |>.filter fun j => pairEncode x (word m j) ∈ V).card :=
++  rfl
++
++/-- The empty prefix has no accepted ranks: `count V x m 0 = 0`. -/
++theorem count_zero (V : Language Bool) (x : List Bool) (m : ℕ) : count V x m 0 = 0 := by
++  classical
++  rw [count_eq]
++  simp
++
++/-- At most `i` ranks are accepted in the first `i` tests: `count V x m i ≤ i`. -/
++theorem count_le (V : Language Bool) (x : List Bool) (m i : ℕ) : count V x m i ≤ i := by
++  classical
++  rw [count_eq]
++  calc
++    _ ≤ (Finset.range i).card := Finset.card_le_card (Finset.filter_subset _ _)
++    _ = i := Finset.card_range i
++
++open Classical in
++/-- One more seed increases the prefix count by its acceptance bit:
++`count V x m (i + 1) = count V x m i + if pairEncode x (word m i) ∈ V then 1 else 0`.
++[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4] -/
++theorem count_succ (V : Language Bool) (x : List Bool) (m i : ℕ) :
++    count V x m (i + 1) =
++      count V x m i + if pairEncode x (word m i) ∈ V then 1 else 0 := by
++  rw [count_eq, count_eq, Finset.range_add_one, Finset.filter_insert]
++  by_cases h : pairEncode x (word m i) ∈ V
++  · have hnot : i ∉ (Finset.range i).filter (fun j => pairEncode x (word m j) ∈ V) := by
++      intro hi
++      exact (Nat.lt_irrefl i) (Finset.mem_range.mp (Finset.mem_filter.mp hi).1)
++    rw [if_pos h, if_pos h, Finset.card_insert_of_notMem hnot]
++  · rw [if_neg h, if_neg h, Nat.add_zero]
++
++open Classical in
++/-- Counting every rank is counting every width-`m` Boolean tuple:
++`count V x m (2 ^ m) = #{u : Fin m → Bool | pairEncode x (List.ofFn u) ∈ V}`.
++[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4]
++
++**Proof sketch.** Map an accepted rank to the inverse of `Randomized.bitsEquiv`.
++`word_eq_ofFn` preserves its test result. Injectivity follows by applying that
++equivalence, and every accepted tuple has its rank as a preimage. -/
++theorem count_all (V : Language Bool) (x : List Bool) (m : ℕ) :
++    count V x m (2 ^ m) =
++      (Finset.univ.filter fun u : Fin m → Bool => pairEncode x (List.ofFn u) ∈ V).card := by
++  rw [count_eq]
++  refine Finset.card_bij (fun i hi => (Randomized.bitsEquiv m).symm
++    ⟨i, Finset.mem_range.mp (Finset.mem_filter.mp hi).1⟩) ?_ ?_ ?_
++  · intro i hi
++    refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩
++    rw [← word_eq_ofFn m i (Finset.mem_range.mp (Finset.mem_filter.mp hi).1)]
++    exact (Finset.mem_filter.mp hi).2
++  · intro i hi j hj hij
++    have := congrArg (fun u => ((Randomized.bitsEquiv m) u).val) hij
++    simpa only [Equiv.apply_symm_apply] using this
++  · intro u hu
++    let i := ((Randomized.bitsEquiv m) u).val
++    have hi : i < 2 ^ m := ((Randomized.bitsEquiv m) u).isLt
++    have hiFin : (⟨i, hi⟩ : Fin (2 ^ m)) = (Randomized.bitsEquiv m) u := by
++      apply Fin.ext
++      rfl
++    refine ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_range.mpr hi, ?_⟩, ?_⟩
++    · rw [word_eq_ofFn m i hi, hiFin, Equiv.symm_apply_apply]
++      exact (Finset.mem_filter.mp hu).2
++    · exact (congrArg (Randomized.bitsEquiv m).symm hiFin).trans
++        ((Randomized.bitsEquiv m).symm_apply_apply u)
++
++/-- The state word stores the input, binary rank, and binary acceptance count:
++`state x i a = pairEncode x (pairEncode (Nat.bits i) (Nat.bits a))`.
++[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4] -/
++def state (x : List Bool) (i a : ℕ) : List Bool :=
++  pairEncode x (pairEncode (Nat.bits i) (Nat.bits a))
++
++/-- The state encoder satisfies
++`state x i a = pairEncode x (pairEncode (Nat.bits i) (Nat.bits a))`. -/
++theorem state_eq (x : List Bool) (i a : ℕ) :
++    state x i a = pairEncode x (pairEncode (Nat.bits i) (Nat.bits a)) := rfl
++
++end Complexity.SeedMajority
+diff --git a/TCSlib/Cryptography/Randomness/Derandomization.lean b/TCSlib/Cryptography/Randomness/Derandomization.lean
+index d5373f10318e93c902ea1671917f5b36ef5614e4..42ea99345c98281bb736a560a2849f1ff3c5fab1 100644
+--- a/TCSlib/Cryptography/Randomness/Derandomization.lean
++++ b/TCSlib/Cryptography/Randomness/Derandomization.lean
+@@ -55,8 +55,8 @@ constant `ε > 0`.
+ ## Main results
+ 
+ * `Randomness.subexpBound_pos`: the bound is positive.
+-* `Randomness.bpp_subset_dtime_subexp` (Thm 180.1), proved modulo the shared
+-  seed-majority machine contract through its DTIME corollary.
++* `Randomness.bpp_subset_dtime_subexp` (Thm 180.1), proved through the shared
++  seed-majority machine contract and its DTIME corollary.
+ 
+ ## References
+ 
+@@ -86,7 +86,7 @@ theorem subexpBound_pos (ε : ℝ) (n : ℕ) : 0 < subexpBound ε n :=
+ [PS10, Theorem 180.1]: if a secure PRG exists, then every language of `main`'s `BPP` is in
+ `DTIME(2^{n^ε})` for every `ε > 0`.
+ 
+-**Status.** Proved modulo `Complexity.exists_seedMajorityTM`, through
++**Status.** Proved through `Complexity.exists_seedMajorityTM` and
+ `Complexity.seedMajority_mem_DTIME`; the helpers introduce no admissions.
+ 
+ **Proof sketch** ([PS10, Theorem 180.1], with an explicit piecewise test).
+diff --git a/TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean b/TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean
+index cccac66cb56db5d767c36c8e519da20ad0583651..e86499bff2db85d5169145c72dc1201b0400a33e 100644
+--- a/TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean
++++ b/TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean
+@@ -37,7 +37,12 @@ open Complexity Turing
+ /-- An efficient Boolean verifier remains efficient after an FP coin map:
+ if `C` is FP on encoded pairs, then `(x,r) ↦ M x (C ⟨x,r⟩)` is efficient.
+ This is `P`-preimage closure for the existing true and false languages.
+-[PS10, §8.2, Theorem 180.1] -/
++[PS10, §8.2, Theorem 180.1]
++
++**Proof sketch.** Extract the verifier's two `P` languages with the published
++efficiency reader. Take their preimages under `z ↦ ⟨fst z,C z⟩`, which is FP
++by pairing. The Boolean-verifier and pair-projection readers identify the
++resulting true and false events on every encoded pair. -/
+ theorem eff_mapCoins {M : List Bool → List Bool → Bool}
+     (hM : Randomized.polyTimeModel.Eff (Randomized.boolVerifier M))
+     {C : List Bool → List Bool} (hC : PolyTimeComputable C) :
+diff --git a/TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean b/TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean
+index a4b8418bc76680299d4364172f2fecb758968b46..21cfd102e7623aec79c5d5520841f90eac6231ba 100644
+--- a/TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean
++++ b/TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean
+@@ -24,6 +24,8 @@ searches through `0, …, n` with integer length comparisons and fixed powers.
+ ## Main results
+ 
+ * `TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_iff`: its least-root property.
++* `TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_real`: the real-root upper bound.
++* `TCSlib.Cryptography.Randomness.Derand.polyTimeComputable_ceilRoot`: its FP unary word.
+ 
+ ## References
+ 
+@@ -88,7 +90,11 @@ theorem lt_ceilRoot_iff {d : ℕ} (hd : 0 < d) (n t : ℕ) :
+ 
+ /-- The integer schedule is within one of the real root:
+ `(ceilRoot d n : ℝ) ≤ (n : ℝ) ^ (1 / d) + 1` for `0 < d`.
+-[PS10, §8.2, Theorem 180.1] -/
++[PS10, §8.2, Theorem 180.1]
++
++**Proof sketch.** Handle zero separately. At a positive input the floor root
++of `n-1` has `d`th power at most `n`. Cast this bound to the reals, apply
++the monotonic inverse-power comparison, and add one on both sides. -/
+ theorem ceilRoot_le_real {d : ℕ} (hd : 0 < d) (n : ℕ) :
+     (ceilRoot d n : ℝ) ≤ (n : ℝ) ^ (1 / (d : ℝ)) + 1 := by
+   by_cases hn : n = 0

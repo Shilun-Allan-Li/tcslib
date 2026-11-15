@@ -1,0 +1,518 @@
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:297:split, `uprob_comp_equiv`); `henc` gives `(encD i default).length = m n`, so the second
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:304:`Gen`'s coins (`OneWay.uexp_mono`), split the inner `uprob` over `D_i × ({0,1}^{m n} × A.Coins n)`
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:305:against `D_i × B.Coins n` by `uprob_comp_equiv` on `splitCoins`, and `uprob_mono`: a decoded
+TCSlib/Cryptography/Asymptotic/CollectionShift.lean:241:  rw [← HardcoreBit.uexp_comp_equiv (T.shiftGenCoins c n)]
+TCSlib/Cryptography/Asymptotic/CollectionShift.lean:253:  rw [← uprob_comp_equiv e]
+TCSlib/Cryptography/Foundations/Probability.lean:38:* `uprob_comp_equiv`: probability is invariant under relabelling by a bijection.
+TCSlib/Cryptography/Foundations/Probability.lean:72:theorem uexp_def (f : α → ℝ) : uexp f = (∑ a, f a) / Fintype.card α := rfl
+TCSlib/Cryptography/Foundations/Probability.lean:165:theorem uprob_comp_equiv (e : α ≃ β) (p : β → Prop) : uprob (fun a => p (e a)) = uprob p := by
+TCSlib/Cryptography/Foundations/Experiments.lean:109:  uprob_comp_equiv (e.prodCongr (Equiv.refl ρ)) (fun z : τ × ρ => D (X z.1) z.2 = true)
+TCSlib/Cryptography/Foundations/Experiments.lean:117:theorem uprob_comp_eq_sum_map [Nonempty σ] [Fintype γ] [DecidableEq γ] (X : σ → γ)
+TCSlib/Cryptography/Foundations/Experiments.lean:136:`uprob_comp_eq_sum_map`. -/
+TCSlib/Cryptography/Foundations/Experiments.lean:137:theorem acceptProb_eq_uexp_sum_map [Nonempty σ] [Fintype γ] [DecidableEq γ] (X : σ → γ)
+TCSlib/Cryptography/Foundations/Experiments.lean:141:  rw [acceptProb, ← uprob_comp_equiv (Equiv.prodComm ρ σ), uprob_prod]
+TCSlib/Cryptography/Foundations/Experiments.lean:144:  exact uprob_comp_eq_sum_map X (fun g => D g r = true)
+TCSlib/Cryptography/Foundations/Experiments.lean:169:**Proof sketch.** Average over the coins (`acceptProb_eq_uexp_sum_map`): for fixed coins
+TCSlib/Cryptography/Foundations/Experiments.lean:178:  rw [distAdv, acceptProb_eq_uexp_sum_map X, acceptProb_eq_uexp_sum_map Y, uexp_def, uexp_def,
+TCSlib/Cryptography/HardcoreBit/Basic.lean:31:* `uexp_add`, `uexp_const_mul`, `uexp_sum`, `uexp_mono`, `uexp_prod`: linearity,
+TCSlib/Cryptography/HardcoreBit/Basic.lean:40:* `pushesUniform_restrict`: restricting a uniform table along an injection gives a uniform
+TCSlib/Cryptography/HardcoreBit/Basic.lean:59:theorem uexp_add (f g : Ω → ℝ) : uexp (fun ω => f ω + g ω) = uexp f + uexp g := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:60:  simp only [uexp_def, sum_add_distrib, add_div]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:63:theorem uexp_sub (f g : Ω → ℝ) : uexp (fun ω => f ω - g ω) = uexp f - uexp g := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:64:  simp only [uexp_def, sum_sub_distrib, sub_div]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:67:theorem uexp_const_mul (c : ℝ) (f : Ω → ℝ) : uexp (fun ω => c * f ω) = c * uexp f := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:68:  simp only [uexp_def, ← mul_sum, mul_div_assoc]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:71:theorem uexp_const [Nonempty Ω] (c : ℝ) : uexp (fun _ : Ω => c) = c := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:73:  simp only [uexp_def, sum_const, card_univ, nsmul_eq_mul]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:77:theorem uexp_sum {ι : Type*} (s : Finset ι) (f : ι → Ω → ℝ) :
+TCSlib/Cryptography/HardcoreBit/Basic.lean:79:  simp only [uexp_def, ← sum_div]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:83:theorem uexp_mono {f g : Ω → ℝ} (h : ∀ ω, f ω ≤ g ω) : uexp f ≤ uexp g := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:84:  rw [uexp_def, uexp_def]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:88:theorem uexp_comp_equiv (e : Ω ≃ α) (F : α → ℝ) : uexp (fun ω => F (e ω)) = uexp F := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:89:  simp only [uexp_def, Fintype.card_congr e]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:94:theorem uexp_prod (F : α × β → ℝ) : uexp F = uexp (fun a => uexp (fun b => F (a, b))) := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:95:  simp only [uexp_def, Fintype.card_prod, Fintype.sum_prod_type, ← sum_div, Nat.cast_mul, div_div,
+TCSlib/Cryptography/HardcoreBit/Basic.lean:99:theorem uexp_fst [Nonempty β] (F : α → ℝ) : uexp (fun z : α × β => F z.1) = uexp F := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:100:  rw [uexp_prod]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:101:  simp only [uexp_const]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:105:theorem uprob_eq_uexp_ite (p : Ω → Prop) [DecidablePred p] :
+TCSlib/Cryptography/HardcoreBit/Basic.lean:132:  rw [uprob_prod, uprob_eq_uexp_ite p, mul_comm, ← uexp_const_mul]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:145:  rw [uprob_eq_uexp_ite G, mul_comm, ← uexp_const_mul]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:146:  refine uexp_mono fun ω => ?_
+TCSlib/Cryptography/HardcoreBit/Basic.lean:167:  have h1 := uexp_mono hpt
+TCSlib/Cryptography/HardcoreBit/Basic.lean:168:  rw [uexp_add, uexp_const, ← uprob_eq_uexp_ite] at h1
+TCSlib/Cryptography/HardcoreBit/Basic.lean:187:  rw [uprob_eq_uexp_ite, uprob_eq_uexp_ite]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:196:theorem pushesUniform_equiv (e : Ω ≃ γ) : PushesUniform e := uexp_comp_equiv e
+TCSlib/Cryptography/HardcoreBit/Basic.lean:207:theorem pushesUniform_fst [Nonempty β] : PushesUniform (Prod.fst : α × β → α) := uexp_fst
+TCSlib/Cryptography/HardcoreBit/Basic.lean:220:theorem pushesUniform_restrict {I J O : Type*} [Fintype I] [DecidableEq I] [Fintype J]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:244:  rw [uexp_prod, uexp_prod F]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:256:    simp only [uexp_def, univ_eq_empty, sum_empty, zero_div]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:290:  simp only [uexp_def, hsum, hcard, Nat.cast_mul]
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:151:  exact uprob_comp_equiv (Equiv.prodAssoc _ _ _)
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:174:  have h := uprob_comp_equiv e
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:85:probability (`uprob_comp_equiv` on the coin factor of the sample space). -/
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:90:  rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl σ) e)]
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:225:(`uprob_comp_equiv`). Now `h A` gives a negligible `ε` with `nextBitProb … ≤ 1/2 + ε n` for
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:254:    rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl (X.σ n)) (e n))]
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:305:    rw [← uprob_comp_equiv ((Equiv.cast (Ensemble.uniform_σ ℓ n)).prodCongr (Equiv.refl _))]
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:41:* `uexp_sq_sum_sub_eq`: the variance of a sum of pairwise independent bits is the sum
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:122:theorem uexp_ind (X : Ω → Bool) : uexp (fun ω => ind (X ω)) = uprob (fun ω => X ω = true) := by
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:124:  rw [uprob_eq_uexp_ite]
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:129:theorem uexp_ind_mul_ind (X Y : Ω → Bool) :
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:132:  rw [uprob_eq_uexp_ite]
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:143:theorem uexp_cov [Nonempty Ω] (X Y : Ω → Bool) :
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:153:  rw [h, uexp_add, uexp_sub, uexp_sub, uexp_const_mul, uexp_const_mul, uexp_const,
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:154:    uexp_ind_mul_ind, uexp_ind, uexp_ind]
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:164:theorem uexp_sq_sum_sub_eq [Nonempty Ω] [Fintype ι] {X : ι → Ω → Bool}
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:173:  rw [hsq, uexp_sum]
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:175:  rw [uexp_sum, sum_eq_single i]
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:176:  · rw [uexp_cov]
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:180:    rw [uexp_cov, hX i j (Ne.symm hji), sub_self]
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:207:  have hv := uexp_sq_sum_sub_eq hX
+TCSlib/Cryptography/HardcoreBit/NoFixedBit.lean:109:  rw [uexp_add, uexp_const, uexp_const_mul, uexp_prod]
+TCSlib/Cryptography/HardcoreBit/NoFixedBit.lean:113:      uexp fun b : Fin (n + 1) => if b = i then (1 : ℝ) else 0 := uexp_const _
+TCSlib/Cryptography/HardcoreBit/NoFixedBit.lean:114:  rw [hc, ← uprob_eq_uexp_ite, uprob_fin_eq]
+TCSlib/Cryptography/Hashing/SIS/Universality.lean:96:    (uprob_comp_equiv (move a) (· = z)).trans huniform
+TCSlib/Cryptography/Hashing/SIS/Universality.lean:98:  rw [← uprob_comp_equiv split.symm (fun A => hash P A x - hash P A y = z), uprob_prod]
+TCSlib/Cryptography/Hashing/SIS/Universality.lean:99:  simp only [hhash, Equiv.apply_symm_apply, hsection, uexp_def, Finset.sum_const,
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:606:    ← HardcoreBit.uexp_comp_equiv (dlHash_coinsEquiv H G n).symm,
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:607:    HardcoreBit.uexp_prod]
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:695:  rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl (ZMod (expOrd i)))
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:726:      apply HardcoreBit.uexp_mono
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:745:      rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const]
+TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:746:    _ ≤ _ := add_le_add_right (HardcoreBit.uexp_mono fun r =>
+TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:96:    rw [← uprob_comp_equiv e]
+TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean:52:  rw [uprob_comp_eq_sum_map X (fun g => D g = true), FinDist.probTrue]
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:244:      idealRecover f A x ω.1 ω.2 = x), ← uexp_const_mul]
+TCSlib/Cryptography/Hashing/FromDiscreteLog/Probability.lean:42:  rw [ProbComp.expect_sample, uexp_def, inv_mul_eq_div]
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:629:  rw [← uprob_comp_equiv (Equiv.prodAssoc Bool (σ₀ × σ₁) ρ).symm, uprob_bool_prod]
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:660:experiment of the statement and `predict_eq` is `uprob_comp_equiv`. -/
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean:50:is an instance of `uprob_comp_equiv`. For Claim-78.b, the concrete example
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean:186:(`uprob_comp_equiv`). Then `hh.hard A` gives a negligible `ε` with the left side `≤ 1/2 + ε n`,
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:225:  rw [← uprob_comp_equiv ((Equiv.refl σ).prodCongr e)]
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:241:  rw [← uprob_comp_equiv ((Equiv.refl α).prodCongr e)]
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:206:(`uprob_comp_equiv`). By `h.2 M` the left side is negligible; `ℓ(n) ≤ C (n+1)^c`
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:394:`ℓ(n)`-bit string projects to a uniform `(n+1)`-bit string, `uprob_comp_equiv` on
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:417:projection `Fin (2n + 1) → Fin (2n)` and `uprob_comp_equiv` identify the advantages, and the
+TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:355:`uprob_comp_equiv` on the coin split `splitCoins`, `uprob_mono` (if `A`'s decoded answer
+TCSlib/Cryptography/Asymptotic/OneWay.lean:279:`B.Coins n ≃ A.Coins (outLen n)` (`PolyExpr.eval_subst`, `finCongr`); `uprob_comp_equiv`
+TCSlib/Cryptography/Asymptotic/OneWay.lean:291:  rw [← uprob_comp_equiv e]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:311:(`uprob_comp_equiv`, `uprob_fst`). -/
+TCSlib/Cryptography/Asymptotic/OneWay.lean:344:  rw [← uprob_comp_equiv e]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:416:(`uprob_comp_equiv` on the first coordinate); `f'` is `blocks⁻¹ ∘ prodFun ∘ blocks` by
+TCSlib/Cryptography/Asymptotic/OneWay.lean:425:  rw [← uprob_comp_equiv (Equiv.prodCongr (blocks (q.eval n) (𝓕.inLen.eval n)) (Equiv.refl _))]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:746:`Fin.appendEquiv`, `uprob_comp_equiv`, `ofFn_blocks_symm`). Probability: `invProbAt_prod_eq`
+TCSlib/Cryptography/Asymptotic/OneWay.lean:815:  rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl _) e)]
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:246:  rw [← uprob_comp_equiv ((Equiv.refl (F.D i × (Fin (mP.eval n) → Bool))).prodCongr
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:258:  refine le_of_le_of_eq ?_ (uprob_comp_equiv ((Equiv.prodAssoc (F.D i × (Fin (mP.eval n) → Bool))
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:355:      refine (OneWay.uprob_congr fun z => ?_).trans (uprob_comp_equiv
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:374:    simp only [uexp_def]
+TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:79:(`uprob_comp_equiv` with `Equiv.prodAssoc`, `uprob_prod`) the hypothesis says
+TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:100:    rw [← uprob_comp_equiv (Equiv.prodAssoc α (Fin m → Bool) ρ).symm, uprob_prod]
+TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:152:independent unused component (`uprob_fst`, `uprob_comp_equiv`). -/
+TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:170:    _ = _ := uprob_comp_equiv e fun z : (α × (Fin m → Bool)) × GuessCoins m k ρ =>
+TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:210:  rw [invProbOpt_def, invProb_def, ← uprob_comp_equiv
+TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:232:  rw [← uprob_comp_equiv ((Equiv.prodAssoc ((Fin (𝓕.inLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool))
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:66:  (uprob_comp_equiv (Equiv.prodComm β α) (fun z : α × β => p z.1 z.2)).symm
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:95:  exact (uprob_comp_equiv e (fun w => f w.1.1 w.1.2)).trans
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:107:  exact (uprob_comp_equiv e (fun w => f w.1)).trans (uprob_fst f)
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:318:    ← uprob_comp_equiv (Equiv.prodCongr e (Equiv.refl (A'.Coins m))),
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:319:    ← uprob_comp_equiv (eArr.trans (Equiv.prodCongr (Equiv.refl _) eC))]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:245:  refine le_of_eq_of_le (uprob_comp_equiv
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:247:  refine le_of_le_of_eq ?_ ((uprob_comp_equiv
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:249:    (uprob_comp_equiv ((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:396:**Proof sketch.** Pointwise in the generator's coins (`OneWay.uexp_mono`); for a fixed index
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:415:  refine OneWay.uexp_mono fun r => ?_
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:416:  refine le_of_eq_of_le (uprob_comp_equiv
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:419:  refine le_of_le_of_eq ?_ ((uprob_comp_equiv
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:421:    (uprob_comp_equiv ((Equiv.refl (F.D (F.index n r))).prodCongr
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:429:`PermFamily.glPad_inEquiv` on the `glPad` side; `uprob_comp_equiv`) and compare pointwise
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:440:  rw [invProb_def, invProb_def, ← uprob_comp_equiv (snocCoins m ρ)]
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:442:    (uprob_comp_equiv ((P.glPad_inEquiv m).symm.prodCongr (Equiv.refl (Bool × ρ))) _)
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:647:coins through `reparamCoins` (`uprob_comp_equiv`). The encodings of the two values agree
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:667:  refine (OneWay.uprob_congr fun z => ?_).trans (uprob_comp_equiv
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:684:`glPad_inEquiv` and `oddCoins` (`uprob_comp_equiv`); then compare pointwise (`uprob_mono`). A
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:699:    ← uprob_comp_equiv (d.symm.prodCongr (Equiv.refl (A.Coins (m + m + 1))))]
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:700:  refine le_of_eq_of_le (uprob_comp_equiv (snocCoins m (A.Coins (m + m + 1))) _).symm ?_
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:701:  refine le_of_le_of_eq ?_ (uprob_comp_equiv
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:774:`finCongr`); by `invProbAt_eq_uprob`, `uprob_comp_equiv` and `invProb_glHalf_even`,
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:798:(`uprob_comp_equiv` on the coin split `A''.Coins m ≃ Bool × A.Coins (m + m + 1)`). The single
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:141:    rw [acceptProb_def, ← uprob_comp_equiv e
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:146:    rw [subHybridProb, acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc _ _ _).symm
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:189:    rw [acceptProb_def, ← uprob_comp_equiv e
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:195:    rw [subHybridProb, acceptProb_def, ← uprob_comp_equiv e'
+TCSlib/Cryptography/Asymptotic/Sampling.lean:88:* `TCSlib.Cryptography.statClose_one`, `TCSlib.Cryptography.abs_uexp_sub_le`,
+TCSlib/Cryptography/Asymptotic/Sampling.lean:181:  rw [uprob_comp_equiv e (fun s => T (X s))]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:187:  rw [uprob_comp_equiv e (fun t => T (Y t))]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:210:theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c : ℝ} (hc : 0 ≤ c)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:212:  rw [← HardcoreBit.uexp_sub, uexp_def]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:240:  have e1 := uprob_comp_equiv (Equiv.prodComm ρ σ) (fun z : σ × ρ => P (X z.1) z.2)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:241:  have e2 := uprob_comp_equiv (Equiv.prodComm ρ τ) (fun z : τ × ρ => P (Y z.1) z.2)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:243:  exact abs_uexp_sub_le h.nonneg fun r => h fun g => P g r
+TCSlib/Cryptography/Asymptotic/Sampling.lean:269:  rw [← uprob_comp_equiv (Equiv.prodComm τ σ') (fun z : σ' × τ => T (X' z.2, Y z.1)),
+TCSlib/Cryptography/Asymptotic/Sampling.lean:270:    ← uprob_comp_equiv (Equiv.prodComm τ τ') (fun z : τ' × τ => T (X' z.2, Y' z.1))] at h2
+TCSlib/Cryptography/Asymptotic/Sampling.lean:284:theorem uexp_le_of_statClose {σ τ γ : Type*}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:293:    have h := uprob_comp_equiv (Equiv.piSplitAt c Aux) (fun w => Q c w.1)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:333:  simp only [uexp_def, hsum, hcard, Nat.cast_mul]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:443:    uprob_comp_equiv (bitsEquiv k) (fun x : Fin (2 ^ k) => x.val < m), uprob_def, Fintype.card_fin,
+TCSlib/Cryptography/Asymptotic/Sampling.lean:488:  have key := uprob_comp_equiv (bitsEquiv k)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:490:  rw [OneWay.uprob_eq_one_div_card, Fintype.card_fin] at key
+TCSlib/Cryptography/Asymptotic/Sampling.lean:575:(`uprob_comp_equiv`), and it maps the event `{first hit = a}` onto `{first hit = a'}`. -/
+TCSlib/Cryptography/Asymptotic/Sampling.lean:600:  rw [← uprob_comp_equiv (Equiv.piCongrRight fun _ : Fin T => Equiv.swap a a')
+TCSlib/Cryptography/Asymptotic/Sampling.lean:761:    uprob_comp_equiv (Equiv.piCongrRight fun _ : Fin T => bitsEquiv k)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:845:    rw [← uprob_bitsToNat_lt hk, ← uprob_comp_equiv (bitsEquiv k) (fun x : Fin (2 ^ k) => x.val < m)]
+TCSlib/Cryptography/Asymptotic/Collections.lean:279:  simp only [uexp_def]
+TCSlib/Cryptography/Asymptotic/Collections.lean:286:  exact (OneWay.uexp_mono fun r => uprob_le_one _).trans (OneWay.uexp_const 1).le
+TCSlib/Cryptography/Asymptotic/Collections.lean:582:  rw [← OneWay.uexp_const (α := (𝓕.toCollection F hF hspec).gen.Coins n)
+TCSlib/Cryptography/Asymptotic/Collections.lean:591:  refine Eq.trans ?_ (uprob_comp_equiv ((𝓕.toCollection_domEquiv F hF hspec i).prodCongr
+TCSlib/Cryptography/Asymptotic/Collections.lean:1029:    refine Eq.trans ?_ (uprob_comp_equiv ((Equiv.refl (G.D (G.index n r₁))).prodCongr
+TCSlib/Cryptography/Asymptotic/Collections.lean:1041:reassociate (`uprob_comp_equiv`); average over `r₁` (`uprob_prod`); on each fibre apply
+TCSlib/Cryptography/Asymptotic/Collections.lean:1042:`fiber_le`; the right-hand side is `uexp (fun r₁ => ⋯ + δ n)` by `uexp_add`, `uexp_const`. -/
+TCSlib/Cryptography/Asymptotic/Collections.lean:1053:  rw [← uprob_comp_equiv e, uprob_prod]
+TCSlib/Cryptography/Asymptotic/Collections.lean:1055:  rw [← OneWay.uexp_const (α := G.gen.Coins n) (δ n), ← OneWay.uexp_add]
+TCSlib/Cryptography/Asymptotic/Collections.lean:1056:  exact OneWay.uexp_mono fun r₁ => G.fiber_le L hL A' hδ n r₁
+TCSlib/Cryptography/Asymptotic/Collections.lean:1092:uniform `x ∈ D_i` at the cost `δ(n)`; averaging over `r₁` (`uprob_comp_equiv` on `splitCoins`,
+TCSlib/Cryptography/Asymptotic/Collections.lean:1093:`uprob_prod`, `OneWay.uexp_add`, `OneWay.uexp_const`) gives
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:61:  rw [uprob_prod, uexp_def, Fintype.sum_bool, Fintype.card_bool]
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:953:    rw [← uprob_comp_equiv (Equiv.prodComm (A.Coins n) (Fin (inLen.eval n) → Bool))]
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:966:    rw [← uprob_comp_equiv (Equiv.prodComm _ _)]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:66:  rw [← uprob_comp_equiv e q]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:177:  simp only [hX, hY, uexp_def, Fintype.card_fin]
+TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:55:by `uprob_comp_equiv`. This is the bridge by which a machine obtained from the closure
+TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:67:  have := uprob_comp_equiv ((Equiv.refl σ).prodCongr e)
+TCSlib/Cryptography/LWE/BitNoise.lean:137:    (uprob_comp_equiv e (fun r : Fin (t + t) → Bool => centeredValue t r = -z))
+TCSlib/Cryptography/LWE/BitNoise.lean:168:  rw [uexp_def, hz, zero_div]
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:151:`Bool × ((σ × {0,1}^ℓ) × ρ)` (`uprob_comp_equiv`; `ψ ∘ ψ = id` by `Function.update_idem`,
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:161:    rw [← uprob_comp_equiv (Equiv.prodComm ((σ × (Fin ℓ → Bool)) × ρ) Bool)
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:175:  rw [← h1, ← uprob_comp_equiv ψ, uprob_bool_prod]
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:297:  rw [nextBitProb_eq, ← uprob_comp_equiv (Equiv.prodAssoc σ (Fin ℓ → Bool) ρ)
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:451:so `Pr[success] = Pr[failure] = 1 − Pr[success]` (`uprob_comp_equiv`, `uprob_not`). -/
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:484:    rw [← uprob_comp_equiv e]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:243:  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv e]
+TCSlib/Cryptography/LWE/Sampling.lean:110:  rw [acceptProb_eq_uexp_sum_map, acceptProb_eq_uexp_sum_map,
+TCSlib/Cryptography/Asymptotic/Universal.lean:508:**Proof sketch.** Split `y` as `(prefix, rest)` by `Fin.appendEquiv` (`uprob_comp_equiv`); the
+TCSlib/Cryptography/Asymptotic/Universal.lean:509:event is a point event on the first component (`uprob_fst`, `OneWay.uprob_eq_one_div_card`),
+TCSlib/Cryptography/Asymptotic/Universal.lean:519:  rw [← uprob_comp_equiv e]
+TCSlib/Cryptography/Asymptotic/Universal.lean:527:  rw [hP, uprob_fst (fun a : Fin (Nat.log 2 n) → Bool => a = code), OneWay.uprob_eq_one_div_card]
+TCSlib/Cryptography/Asymptotic/Universal.lean:559:  rw [uprob_prod, uexp_def]
+TCSlib/Cryptography/Asymptotic/Universal.lean:691:(`invProbAt_eq_uprob`, `uprob_comp_equiv`), so `claim_65_2_cond` with
+TCSlib/Cryptography/Asymptotic/Universal.lean:694:are `A`'s followed by unread coins (`uprob_comp_equiv`, `uprob_fst`), and `A`'s success gives
+TCSlib/Cryptography/Asymptotic/Universal.lean:727:    rw [← uprob_comp_equiv e']
+TCSlib/Cryptography/Asymptotic/Universal.lean:739:  rw [← uprob_comp_equiv e₂]
+TCSlib/Cryptography/Asymptotic/Universal.lean:778:(`Fin.appendEquiv`, `uprob_comp_equiv`, as in `claim_65_1`); `claim_65_2_cond` with
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:40:* `ETTGame.prfAdv_eq_expect`: the PRF advantage as expectations.
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:347:theorem prfAdv_eq_expect {m : ℕ} (Fm : (Fin m → Bool) → (Fin m → Bool) → (Fin m → Bool))
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:374:`prfAdv_eq_expect` writes the advantage as the gap between the averages over `k₂` and over the
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:388:  rw [prfAdv_eq_expect]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:656:   (`ETTGame.prfAdv_eq_expect`), and with a random function the two bits are `Q²/2^n` apart,
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:730:      have p₀ := ETTGame.prfAdv_eq_expect (F n)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:732:      have p₁ := ETTGame.prfAdv_eq_expect (F n)
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:183:    exact uprob_comp_equiv hybridGroup (fun z : Hybrid => event t z.2.1 z.1 z.2.2.1 z.2.2.2)
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:187:    rw [acceptProb_def, ← uprob_comp_equiv realGroup]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:205:    rw [acceptProb_def, ← uprob_comp_equiv idealGroup]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:224:  rw [← uprob_comp_equiv swap (fun z : Ideal => event k.val z.2.1 z.2.2.1 z.1 z.2.2.2)]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:255:      ← uprob_comp_equiv group (fun z => test z.1)]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:267:      ← uprob_comp_equiv group (fun z => test z.1)]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:338:      exact (uprob_comp_equiv (move.prodCongr (Equiv.refl ρ))
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:27:* `MultiMsg.abs_uexp_sub_le_uprob` bounds the difference of two expectations by the
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:49:theorem abs_uexp_le_uexp_abs {Ω : Type*} [Fintype Ω] (f : Ω → ℝ) :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:51:  rw [uexp_def, uexp_def]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:59:**Proof sketch.** `|E a − E b| = |E (a − b)| ≤ E |a − b|` (`abs_uexp_le_uexp_abs`), and
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:61:theorem abs_uexp_sub_le_uprob {Ω : Type*} [Fintype Ω] (a b : Ω → ℝ) (E : Ω → Prop)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:65:  rw [← HardcoreBit.uexp_sub, uprob_eq_uexp]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:66:  refine (abs_uexp_le_uexp_abs _).trans (HardcoreBit.uexp_mono fun ω => ?_)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:110:`1 / |α|` (Fubini and `OneWay.uprob_eq_one_div_card`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:116:    rw [← OneWay.uprob_eq_one_div_card a]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:119:  exact HardcoreBit.uexp_const _
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:165:  rw [← uprob_comp_equiv ((Equiv.refl σ).prodCongr φ)]
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:142:    exact uprob_comp_equiv (Equiv.prodAssoc RealSeed SubsetSeed ρ)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:147:    exact uprob_comp_equiv (Equiv.prodAssoc PublicKey SubsetSeed ρ)
+TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:109:  rw [← uprob_fst (β := Fin n → Bool), ← uprob_comp_equiv e]
+TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:198:    rw [← uprob_comp_equiv (Equiv.prodAssoc (Fin (m + 1) → Bool) (Fin (m + 1) → Bool) ρ).symm,
+TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:209:    rw [← uprob_comp_equiv e, uprob_prod]
+TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:227:                rw [uprob_fst (fun y' : Fin (m + 1) → Bool => y' = y), uprob_eq_one_div_card,
+TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:229:              simp only [this, uexp_const]
+TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:248:        rw [← uprob_fst (β := Fin (m + 1) → Bool), ← uprob_comp_equiv e]
+TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:263:    rw [uprob_eq_one_div_card, hcard]
+TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:264:  have havg := uexp_mono hpt
+TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:265:  rw [uexp_add, uexp_const_mul, uexp_indicator, hzero] at havg
+TCSlib/Cryptography/OneWayFunctions/OutputLength.lean:77:  rw [← uprob_comp_equiv (Equiv.prodAssoc α γ ρ)]
+TCSlib/Cryptography/NumberTheory/Chebyshev.lean:280:  uprob_comp_equiv (bitsEquiv n) (fun x : Fin (2 ^ n) => (x : ℕ).Prime)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:147:  rw [← uprob_comp_equiv (Equiv.prodAssoc K (Fin (q + 1) → Fin n → Bool) ρ)]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:214:restriction along the injective `r` (`HardcoreBit.pushesUniform_restrict`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:224:    simp only [uexp_def, univ_eq_empty, sum_empty, zero_div]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:225:  · exact HardcoreBit.pushesUniform_restrict hr
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:242:and `|∑| ≤ ∑ |·|`, `uprob_eq_uexp_ite`), and `uprob_not_injective_le` bounds the last term. -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:258:    exact (uprob_comp_equiv ((Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:264:    exact (uprob_comp_equiv (Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:273:  exact (MultiMsg.abs_uexp_sub_le_uprob a b (fun r => ¬ Function.Injective r)
+TCSlib/Cryptography/OneWayFunctions/Robustness.lean:172:  rw [hg, ← uprob_eq_one_div_card x₀]
+TCSlib/Cryptography/OneWayFunctions/Robustness.lean:204:    rw [uprob_fst (fun x₁ : Fin m → Bool => x₁ = fun _ => false), uprob_eq_one_div_card]
+TCSlib/Cryptography/Randomness/Derandomization.lean:82:   agree through `randProb_eq_uprob`. Each seed length has only finitely many corresponding
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:132:(`uprob_comp_equiv`) gives `Pr[D(H_j)]`, and likewise `m'_j` gives `Pr[D(H_{j+1})]`
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:357:`multiDist` with one-bit blocks (the coin bijection `coinBlocks`, `uprob_comp_equiv`). -/
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:363:  rw [← uprob_comp_equiv
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:223:          rw [← uprob_comp_equiv e, mul_assoc]
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:261:        apply uexp_mono
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:278:        rw [uexp_add (fun x => if S x then (1 : ℝ) else 0) (fun _ => (1 - θ) ^ T),
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:279:          uexp_indicator, uexp_const, one_mul]
+TCSlib/Cryptography/Randomness/BPPBridge.lean:29:2. **The two probabilities agree** (`randProb_eq_uprob`): `main`'s counting ratio `randProb` over
+TCSlib/Cryptography/Randomness/BPPBridge.lean:41:* `Randomness.randProb_eq_uprob`: the two probability notions agree.
+TCSlib/Cryptography/Randomness/BPPBridge.lean:113:theorem randProb_eq_uprob (m : ℕ) (A : List Bool → Prop) [DecidablePred A] :
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:50:`(Fin (q+1) → ρ) × (κ × ρ')` (`uprob_comp_equiv`); the event on the left is then
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:70:  rw [← uprob_comp_equiv e₁, ← uprob_comp_equiv e₂]
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:79:theorem exists_abs_uexp_le {κ : Type*} [Fintype κ] [Nonempty κ] (f : κ → ℝ) :
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:83:    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, uexp_def, abs_div, abs_of_pos hcard,
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:92:theorem acceptProb_eq_uexp_fst {σ γ κ ρ : Type*} [Fintype σ] [Fintype κ] [Fintype ρ]
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:96:  refine ((uprob_comp_equiv (EnsembleLemmas.swapAux κ σ ρ)
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:108:(`acceptProb_eq_uexp_fst`), so the advantage is `|E_{c₀}[a(c₀) − b(c₀)]|`, and some `c₀` has
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:109:`|a(c₀) − b(c₀)|` at least the average (`exists_abs_uexp_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:113:  obtain ⟨c₀, hc₀⟩ := exists_abs_uexp_le fun c₀ : κ =>
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:117:  rw [acceptProb_eq_uexp_fst X D, acceptProb_eq_uexp_fst Y D]
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:119:  rw [uexp_def, uexp_def, uexp_def, ← sub_div, Finset.sum_sub_distrib]
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:28:* `uexp_mono`, `uexp_add`, `uexp_const`, `uexp_indicator`: laws of the uniform average.
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:34:* `uprob_eq_one_div_card`: a uniform element hits a fixed point with probability
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:54:theorem uexp_mono {f g : α → ℝ} (h : ∀ a, f a ≤ g a) : uexp f ≤ uexp g := by
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:59:theorem uexp_add (f g : α → ℝ) : uexp (fun a => f a + g a) = uexp f + uexp g := by
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:64:theorem uexp_const_mul (c : ℝ) (f : α → ℝ) : uexp (fun a => c * f a) = c * uexp f := by
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:69:theorem uexp_const [Nonempty α] (c : ℝ) : uexp (fun _ : α => c) = c := by
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:76:theorem uexp_indicator (p : α → Prop) [DecidablePred p] (c : ℝ) :
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:78:  rw [uprob_eq_uexp, ← uexp_const_mul]
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:93:  rw [uprob_prod, ← uexp_indicator]
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:94:  apply uexp_mono
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:140:  rw [← uprob_fst (β := α) (fun w : (ι → α) × ρ => P w.1 w.2), ← uprob_comp_equiv e]
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:144:theorem uprob_eq_one_div_card (a : α) : uprob (fun x : α => x = a) = 1 / Fintype.card α := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:420:  rw [← uprob_comp_equiv (giRepCoins P' (encInstance G₀ G₁))]
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:559:    rw [sum_const, card_univ, nsmul_eq_mul, uexp_def, mul_div_cancel₀ _ hcard.ne']
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:368:  rw [← uprob_comp_equiv (gniTapes (encInstance G₀ G₁).length), OneWay.uprob_congr hev,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:369:    ← uprob_comp_equiv (Equiv.prodComm (Fin (encInstance G₀ G₁).length →
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:381:    rw [← uprob_comp_equiv ((Equiv.prodPUnit ((Fin (encInstance G₀ G₁).length → Bool) ×
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:147:  rw [OneWay.uprob_congr hev, ← uprob_comp_equiv (vTapeSplit (encInstance G₀ G₁).length)]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:156:    ← uprob_comp_equiv (Equiv.prodComm (Fin (1 * ((encInstance G₀ G₁).length + 1) ^ 2) → Bool) Bool)]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:161:    rw [← uprob_comp_equiv (Equiv.prodComm Bool (Equiv.Perm (Fin n)))]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:291:  rw [← uprob_comp_equiv (giCoinEquiv P' (encInstance G₀ G₁))]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:811:tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:815:  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:896:  rw [← uprob_comp_equiv (Equiv.mulRight σ₀) (fun σ : Equiv.Perm (Fin n) => p (permGraph G₀ σ))]
+TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:396:and `A` on `X` agree (`uprob_comp_equiv` on the coin factor). -/
+TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:402:  rw [← uprob_comp_equiv ((Equiv.refl σ).prodCongr e)]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:156:`uprob_comp_equiv` with the coin bijection `adaptiveEquiv`, `uprob_fst` (here `W ≠ ∅` is
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:157:used) and `OneWay.uprob_eq_one_div_card` give `1 / 2^m` (`Fintype.card_fun`). Equivalently,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:170:    uprob_comp_equiv (adaptiveEquiv g) (fun z : (Fin m → Bool) × W => z.1 = fun _ => false),
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:172:    OneWay.uprob_eq_one_div_card (fun _ : Fin m => false), Fintype.card_fun, Fintype.card_bool,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:266:coins fixing `b` and `w` (`gniShear`, with `uprob_comp_equiv`); then every `H_i = σ'_i(G₀)`
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:277:  have h1 := uprob_comp_equiv (gniShear (m := m) ρ σ₀)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:130:composed with the bijection `giReindex σ` (`uprob_comp_equiv`). -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:135:  rw [← uprob_comp_equiv (giReindex σ) (fun w => T (giHVSim G₀ G₁ w))]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:164:  rw [← uprob_comp_equiv (Equiv.prodComm Bool (Equiv.Perm (Fin n))), uprob_bool_prod]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:183:  rw [← uprob_comp_equiv (coinAssoc Bool (Equiv.Perm (Fin n)) ρ), uprob_bool_prod]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:267:  rw [← uprob_comp_equiv (simReindex ρ σ)]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:274:  rw [OneWay.uprob_congr key, ← uprob_comp_equiv (coinAssoc Bool (Equiv.Perm (Fin n)) ρ),
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:358:(`uprob_prod`, `OneWay.uexp_indicator`). -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:362:  rw [uprob_prod, mul_comm, ← OneWay.uexp_indicator]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:373:attempts) by `Fin.consEquiv` (`uprob_comp_equiv`) and the event along "the first attempt
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:386:  rw [← uprob_comp_equiv (Fin.consEquiv fun _ => (Equiv.Perm (Fin n) × Bool) × ρ)]
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1234:n` (`fullLengthExcept_iff`, `uprob_eq_uexp`, `HardcoreBit.uexp_mono`, `HardcoreBit.uexp_add`,
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1235:`HardcoreBit.uexp_const`). -/
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1263:  refine (HardcoreBit.uexp_mono hpt).trans ?_
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1264:  rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const, ← uprob_eq_uexp]
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1312:  rw [← uprob_comp_equiv (Equiv.addRight ((k : ℕ) : ZMod q))
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1525:(u₃, (r_M, r_D))))` (`acceptProb_def`, `uprob_comp_equiv` with `E₁`, built from `dlc_genEquiv` and
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1557:  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv E₁, ← uprob_comp_equiv E₂]
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1694:(`acceptProb_def`, `uprob_comp_equiv` with `E e_b` using `ddhRandom_σ`), split them off
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1696:gap of the averages by the pointwise gap (`abs_uexp_sub_le`, `dlc_hyb3_point`). -/
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1719:  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv (E e₀), ← uprob_comp_equiv (E e₁),
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1721:  refine abs_uexp_sub_le (by positivity) fun ρ => ?_
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1752:`a` and `b'`, and the coins of `M` and `D` (`uprob_comp_equiv`; `egGen_runAt`, `egEnc_runAt`,
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1766:`uprob_comp_equiv`) shows that `h^z · m'_b` has the law of `h^z`; averaging (`uprob_prod`) gives
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:296:    rw [← uprob_comp_equiv (Equiv.prodComm _ _)]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:19:fields (`pushesUniform_offsetTable`, through `HardcoreBit.pushesUniform_restrict` of
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:73:so `HardcoreBit.pushesUniform_restrict` applies; the pair of fields is that restriction followed
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:96:  exact (HardcoreBit.pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:106:`HardcoreBit.pushesUniform_restrict` applies, followed by the bijection
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:138:  exact (HardcoreBit.pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:155:(`HardcoreBit.uexp_const`); some `k₀` has the absolute difference at least the average's
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:156:(`HardcoreBit.uexp_sub`, `CommitmentLemmas.exists_abs_uexp_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:161:    rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc κ σ ρ).symm, uprob_prod]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:164:  obtain ⟨k₀, hk₀⟩ := CommitmentLemmas.exists_abs_uexp_le fun k =>
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:167:  rw [distAdv_def, hX, ← HardcoreBit.uexp_const (Ω := κ) (acceptProb Y D), ← HardcoreBit.uexp_sub,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:168:    HardcoreBit.uexp_const]
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:140:(`uprob_comp_equiv` along the bijection, then `uprob_fst`). -/
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:148:  exact (uprob_comp_equiv e (fun z : Ω' × K => q z.1)).trans (uprob_fst q)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:103:tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:107:  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:61:`OneWay.uprob_eq_one_div_card`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:73:    rw [this, OneWay.uprob_eq_one_div_card, Fintype.card_fin]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:75:    from funext h, OneWay.uexp_const]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:78:`a` lies in `T` with probability `(1/m) · Pr[T]` (`uprob_prod`, `OneWay.uexp_indicator`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:84:  rw [uprob_prod, ← OneWay.uexp_indicator]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:92:    rw [this, OneWay.uprob_eq_one_div_card, Fintype.card_fin]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:146:(`uprob_prod`, `OneWay.uexp_indicator`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:150:  rw [uprob_prod, mul_comm, ← OneWay.uexp_indicator]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:238:tuple (`swapEP` is a bijection, `uprob_comp_equiv`, `uprob_fst`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:244:  have h := uprob_comp_equiv (swapEP (m := m) (R := R) (τ := τ) k ρ')
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:249:  rw [h, ← uprob_comp_equiv (Equiv.prodComm _ _)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:281:**Proof sketch.** Reindex the coins by the involution `swapR` (`uprob_comp_equiv`), which
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:293:  have h := uprob_comp_equiv (swapR (m := m) (τ := τ) k p ρ')
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:307:  rw [h, ← uprob_comp_equiv (Equiv.prodComm _ _)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:331:attempts) by `Fin.consEquiv` (`uprob_comp_equiv`) and the event along "the first attempt
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:344:  rw [← uprob_comp_equiv (Fin.consEquiv fun _ : Fin (N + 1) => W)]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:547:(`CommitmentLemmas.exists_abs_uexp_le`), which is the reduction's advantage
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:575:  obtain ⟨ep₀, hep₀⟩ := CommitmentLemmas.exists_abs_uexp_le
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:582:        rw [hPk, hPk1, HardcoreBit.uexp_sub]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:301:`(Fin (k+1) → Fin m) ≃ (Fin k → Fin m) × Fin m`, `Fin.snocEquiv`; `uprob_comp_equiv`); by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:320:    rw [← uprob_comp_equiv (snocEquivW k m W)]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:790:  rw [← uprob_comp_equiv (ColProofs.finOneEquiv (edgeCount G))]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:384:tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:388:  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
+TCSlib/Cryptography/Candidates/Concrete.lean:180:  uprob_comp_equiv (Equiv.prodSubtypeFstEquivSubtypeProd (p := E)).symm fun z => S z.1
+TCSlib/Cryptography/Candidates/Concrete.lean:187:  simp only [uprob_eq_one_div_card]
+TCSlib/Cryptography/Candidates/Concrete.lean:188:  exact uexp_const _
+TCSlib/Cryptography/Candidates/Concrete.lean:266:          rw [← uprob_comp_equiv e]
+TCSlib/Cryptography/Candidates/Concrete.lean:328:  rw [← uprob_comp_equiv (Equiv.prodCongr (bitsEquiv n) (bitsEquiv n))] at h
+TCSlib/Cryptography/Candidates/Concrete.lean:874:`(Fin (T·B) → Bool) ≃ (Fin T → Fin k → Bool) × (Fin T → Fin (B − k) → Bool)` (`uprob_comp_equiv`,
+TCSlib/Cryptography/Candidates/Concrete.lean:888:      HardcoreBit.pushesUniform_restrict (O := Bool) (dla_blockPos_injective (T := T) hkB)
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:398:`D_i (y, c) ρ := D.distinguisherL n ⟨i, ⟨encD i y, [c]⟩⟩ ρ` (`f_perm`, `uprob_comp_equiv` on the
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:401:Averaging over `r` (`OneWay.uexp_add`, `uexp_const`) gives
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:407:(`OneWay.uexp_mono`). Hence `μ n ≤ 2 (ε_false n + ε_true n) + 2 δ n` for every `n` (the sign of
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:436:      rw [acceptProb_def, ← uprob_comp_equiv ((Equiv.prodAssoc (T.gen.Coins n) (T.sample.Coins n)
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:453:    refine abs_uexp_sub_le (hδS n (fun _ => false)).nonneg fun r => ?_
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:485:    rw [uexp_half_add] at e
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:501:    rw [uexp_half_sub] at e
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:195:bijection `simCoinsEquiv` (`uprob_comp_equiv`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:200:  rw [← uprob_comp_equiv (simCoinsEquiv ℓn G (ρ := ρ) hc)]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:242:  rw [← uprob_comp_equiv (Equiv.piCongrRight fun _ : Fin N => simCoinsEquiv ℓn G (ρ := ρ) hc)]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:250:`uprob_comp_equiv`) and conditioning on the second component (`uprob_prod`), the failure event
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:252:(`OneWay.uprob_eq_one_div_card`, `uprob_not`, `edgeIdxOfMsg_lt`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:256:  rw [← uprob_comp_equiv (attemptCoinsEquiv (edgeCount G) (Fin n → Fin ℓn → Bool) ρ).symm]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:286:`1/|E|` if `T (colRealView …)` holds and `0` otherwise (`OneWay.uprob_eq_one_div_card`,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:294:  rw [← uprob_comp_equiv (attemptCoinsEquiv (edgeCount G) (Fin n → Fin ℓn → Bool) ρ).symm]
+TCSlib/Cryptography/Candidates/Factoring.lean:411:  rw [← uprob_comp_equiv (fac_halvesEquiv n)] at h
+TCSlib/Cryptography/Candidates/Factoring.lean:555:      (uprob_comp_equiv (Equiv.prodCongr (fac_goodEquiv n) (Equiv.refl (A.Coins n))) _)
+TCSlib/Cryptography/Candidates/Factoring.lean:563:    refine (OneWay.uprob_congr ?_).trans (uprob_comp_equiv (Equiv.prodCongr
+TCSlib/Cryptography/Candidates/Factoring.lean:599:Transport the subtype to `Π_n × Π_n` by `primesPairEquiv` (`uprob_comp_equiv`), drop the
+TCSlib/Cryptography/Candidates/Factoring.lean:750:coins: the pair of primes) with `uprob_comp_equiv` for the coin and coordinate bijections gives
+TCSlib/Cryptography/Candidates/Factoring.lean:812:    rw [factorProb_eq, ← uprob_comp_equiv ((Equiv.prodComm _ _).trans
+TCSlib/Cryptography/Candidates/Factoring.lean:837:    rw [← uprob_comp_equiv (Equiv.prodComm (DistinctPrimes n) _)]
+TCSlib/Cryptography/Candidates/Factoring.lean:978:      (uprob_comp_equiv (Equiv.prodCongr (fac_goodEquiv n) (Equiv.refl _)) _)
+TCSlib/Cryptography/Candidates/Factoring.lean:1027:`primesPairEquiv`, `uprob_comp_equiv`); on it `fmult_inv_factor` turns a preimage into a
+TCSlib/Cryptography/Candidates/Factoring.lean:1221:`(Fin (2L) → Bool) ≃ (Fin L → Bool) × (Fin L → Bool)` (`uprob_comp_equiv`), which pushes the
+TCSlib/Cryptography/Candidates/Factoring.lean:1506:(`uprob_comp_equiv`, `StatClose.comp_equiv_right`). -/
+TCSlib/Cryptography/Candidates/Factoring.lean:1513:`φ = factoringCollection_domEquiv H i` (`uprob_comp_equiv`), the form in which uniform
+TCSlib/Cryptography/Candidates/Factoring.lean:1519:  uprob_comp_equiv _ P
+TCSlib/Cryptography/Candidates/Factoring.lean:1738:  refine le_trans (uprob_mono ?_) (le_of_eq (uprob_comp_equiv (Equiv.prodCongr
+TCSlib/Cryptography/Candidates/Factoring.lean:1755:probability at the index `1^n` (`OneWay.uexp_const`, `factoringCollection_index`), whose
+TCSlib/Cryptography/Candidates/Factoring.lean:1765:`uprob_comp_equiv`). -/
+TCSlib/Cryptography/Candidates/Factoring.lean:1770:  refine (OneWay.uexp_mono fun r => ?_).trans (OneWay.uexp_const _).le
+TCSlib/Cryptography/Candidates/Factoring.lean:1777:  refine (OneWay.uprob_congr ?_).trans (uprob_comp_equiv (Equiv.prodCongr
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:593:  rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.mulRight σ₀) (Equiv.refl ρ))
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:604:  rw [← uprob_comp_equiv (Equiv.mulRight σ₀) (fun σ : Equiv.Perm (Fin n) => p (permGraph G₀ σ))]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:682:`uprob_comp_equiv` with the coin bijection `adaptiveEquiv`, `uprob_fst` (here `W ≠ ∅` is
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:683:used) and `OneWay.uprob_eq_one_div_card` give `1 / 2^m` (`Fintype.card_fun`). Equivalently,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:696:    uprob_comp_equiv (adaptiveEquiv g) (fun z : (Fin m → Bool) × W => z.1 = fun _ => false),
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:698:    OneWay.uprob_eq_one_div_card (fun _ : Fin m => false), Fintype.card_fun, Fintype.card_bool,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:820:coins fixing `b` and `w` (`gniShear`, with `uprob_comp_equiv`); then every `H_i = σ'_i(G₀)`
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:831:  have h1 := uprob_comp_equiv (gniShear (m := m) ρ σ₀)
+TCSlib/Cryptography/Candidates/RSA.lean:134:  rw [uexp_def]
+TCSlib/Cryptography/Candidates/RSA.lean:141:    rw [uexp_def]
+TCSlib/Cryptography/Candidates/RSA.lean:144:    exact (OneWay.uexp_mono fun z => uprob_le_one _).trans (OneWay.uexp_const 1).le
+TCSlib/Cryptography/Candidates/RSA.lean:150:  rw [uexp_def]
+TCSlib/Cryptography/Candidates/RSA.lean:1332:uniform statements over `D i` transport along it (`uprob_comp_equiv`,
+TCSlib/Cryptography/Candidates/RSA.lean:1339:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rsaTrapdoor_domEquiv H i` (`uprob_comp_equiv`),
+TCSlib/Cryptography/Candidates/RSA.lean:1344:  uprob_comp_equiv _ P
+TCSlib/Cryptography/Candidates/RSA.lean:1426:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rsaCollection_domEquiv H i` (`uprob_comp_equiv`),
+TCSlib/Cryptography/Candidates/RSA.lean:1431:  uprob_comp_equiv _ P
+TCSlib/Cryptography/Candidates/RSA.lean:1709:**Proof sketch.** Read the domain through `rsaCollection_domEquiv` (`uprob_comp_equiv`); by
+TCSlib/Cryptography/Candidates/RSA.lean:1726:  refine le_of_le_of_eq ?_ (uprob_comp_equiv (Equiv.prodCongr (rsaPermAt (rsaIndexOf _ P))
+TCSlib/Cryptography/Candidates/RSA.lean:1728:  rw [← uprob_comp_equiv (Equiv.prodCongr φ.symm (Equiv.refl (A.Coins n)))]
+TCSlib/Cryptography/Candidates/RSA.lean:1936:`uexp_le_of_statClose` applies. -/
+TCSlib/Cryptography/Candidates/RSA.lean:1951:  exact uexp_le_of_statClose hX' (rsa_Aux A n) fun z a =>
+TCSlib/Cryptography/Candidates/RSA.lean:1965:`uprob_comp_equiv`, `uprob_mono`), the inner probability is at most the RSA inner probability
+TCSlib/Cryptography/Candidates/RSA.lean:1970:`HardcoreBit.uexp_prod`, `uprob_prod`, `HardcoreBit.uexp_comp_equiv`). (i) For each fixed prime
+TCSlib/Cryptography/Candidates/RSA.lean:1991:        OneWay.uexp_mono fun r => rsa_inner_le H A hn r
+TCSlib/Cryptography/Candidates/RSA.lean:1995:        (HardcoreBit.uexp_comp_equiv (rsa_genCoinsEquiv H n) _).symm
+TCSlib/Cryptography/Candidates/RSA.lean:2004:            (rsa_eNum (rsa_zOf hn (rsa_pr n s₁)) s₂)) := HardcoreBit.uexp_prod _
+TCSlib/Cryptography/Candidates/RSA.lean:2007:        OneWay.uexp_mono fun s₁ => rsa_step_i (rsaBreaker A) (rsa_zOf hn (rsa_pr n s₁))
+TCSlib/Cryptography/Candidates/RSA.lean:2010:        rw [HardcoreBit.uexp_add, OneWay.uexp_const]
+TCSlib/Cryptography/Candidates/RSA.lean:2383:`uprob_fst`-style marginalization with the coordinates reordered by `uprob_comp_equiv`);
+TCSlib/Cryptography/Candidates/RSA.lean:2384:and `factorProb A n = uexp_z Pr_r[A factors | z]` (`uprob_prod`). -/
+TCSlib/Cryptography/Candidates/RSA.lean:2389:  apply OneWay.uexp_mono
+TCSlib/Cryptography/Candidates/RSA.lean:2397:  refine le_of_le_of_eq ?_ (uprob_comp_equiv E _)
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:33:  the prediction lemma. `TCSlib.Cryptography.uexp_half_add` and
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:34:  `TCSlib.Cryptography.uexp_half_sub` evaluate the corresponding averages.
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:150:(`uprob_comp_equiv` along `predCoins`, `tdpPredictor_runAtL`). -/
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:158:  rw [← uprob_comp_equiv ((Equiv.refl α).prodCongr (predCoins D flip n))]
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:167:/-- The average of `1/2 + (a − b)/2` is `1/2 + (E a − E b)/2` (`OneWay.uexp_add`,
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:168:`OneWay.uexp_const_mul`, `HardcoreBit.uexp_sub`). -/
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:169:theorem uexp_half_add {κ : Type*} [Fintype κ] [Nonempty κ] (a b : κ → ℝ) :
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:173:  rw [e, OneWay.uexp_add, OneWay.uexp_const, OneWay.uexp_const_mul, HardcoreBit.uexp_sub]
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:177:theorem uexp_half_sub {κ : Type*} [Fintype κ] [Nonempty κ] (a b : κ → ℝ) :
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:181:  rw [e, uexp_half_add]
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:463:predProb (expo g) half A ≥ 1/2 + ε` (`uprob_comp_equiv`). For `e < s`, `half(e + r) ≠ half(r)`
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:511:    exact uprob_comp_equiv ((Equiv.addLeft (e : ZMod m)).prodCongr (Equiv.refl ρ))
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:620:(`pushesUniform_fst`, `uprob_eq_one_div_card`); then `y · g^{−ts} = g^{e − ts}` with
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:655:    rw [h1, OneWay.uprob_eq_one_div_card, Fintype.card_fin, div_eq_mul_inv, one_div, mul_comm]
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:658:  calc (1 - δ) / T = uexp (fun _ : ZMod (p - 1) => (1 - δ) / (T : ℝ)) := (HardcoreBit.uexp_const _).symm
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:659:    _ ≤ _ := HardcoreBit.uexp_mono hsec
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:842:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = fullDLCollection_domEquiv H G i` (`uprob_comp_equiv`),
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:847:  uprob_comp_equiv _ P
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:889:  uprob_comp_equiv _ P
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:897:  HardcoreBit.uexp_comp_equiv _ F
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2437:(`HardcoreBit.pushesUniform_restrict`), and it is read by `bitsEquiv`. -/
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2455:  exact (HardcoreBit.pushesUniform_restrict (Fin.castLE_injective hκ)).comp
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2497:  rw [predProb_def, ← uprob_comp_equiv (((fullDLCollection_domEquiv H G i).trans ψ.toEquiv).prodCongr
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2609:    rw [← uprob_comp_equiv eR]
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:416:  rw [uexp_def]
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:423:  exact (OneWay.uexp_mono fun r => uprob_le_one _).trans (OneWay.uexp_const 1).le
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:548:(`uprob_comp_equiv`). -/
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:552:  uprob_comp_equiv _ P
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:556:(`HardcoreBit.uexp_comp_equiv`). -/
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:560:  HardcoreBit.uexp_comp_equiv _ F
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:637:    rw [← uprob_comp_equiv (bitsEquiv (Nat.size m)) (fun v : Fin (2 ^ Nat.size m) => (v : ℕ) < m)]
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:819:uniform statements over `D i` transport along it (`uprob_comp_equiv`,
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:827:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = expCollection_domEquiv H G hV i` (`uprob_comp_equiv`),
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:833:  uprob_comp_equiv _ P
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:883:  uprob_comp_equiv _ P
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:891:  HardcoreBit.uexp_comp_equiv _ F
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:979:coins (`uprob_comp_equiv` on the block decomposition `NumberTheory.chunk`), accepted iff the
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:1040:**Proof sketch.** Unfold both averages over the generator's coins (`OneWay.uexp_mono`) and
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:1052:  refine le_of_le_of_eq (OneWay.uexp_mono fun r => ?_) (expCollection_coinsEquiv_uexp H G hV n _)
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:1059:  rw [← uprob_comp_equiv
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:1137:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = dlCollection_domEquiv H G i` (`uprob_comp_equiv`),
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:1142:  uprob_comp_equiv _ P
+TCSlib/Cryptography/Candidates/Rabin.lean:153:(`OneWay.uprob_eq_one_div_card`). -/
+TCSlib/Cryptography/Candidates/Rabin.lean:158:    rw [← OneWay.uprob_eq_one_div_card a0]
+TCSlib/Cryptography/Candidates/Rabin.lean:183:  · rw [← uprob_comp_equiv (Equiv.prodComm (Primes n) (Primes n))]
+TCSlib/Cryptography/Candidates/Rabin.lean:223:(`uprob_diag`, `OneWay.uprob_eq_one_div_card` on each coordinate, `uprob_fst`), and
+TCSlib/Cryptography/Candidates/Rabin.lean:413:`Pr[B] = Pr[B ∘ (σ × id)] ≤ Pr[G]` (`uprob_comp_equiv (Equiv.prodCongr σ (Equiv.refl ρ))`,
+TCSlib/Cryptography/Candidates/Rabin.lean:432:    rw [← uprob_comp_equiv e]
+TCSlib/Cryptography/Candidates/Rabin.lean:1180:uniform statements over `D i` transport along it (`uprob_comp_equiv`,
+TCSlib/Cryptography/Candidates/Rabin.lean:1187:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rabinCollection_domEquiv H i` (`uprob_comp_equiv`),
+TCSlib/Cryptography/Candidates/Rabin.lean:1192:  uprob_comp_equiv _ P
+TCSlib/Cryptography/Candidates/Rabin.lean:1738:    rw [rabin_F, ← uprob_comp_equiv (rabin_fCoinsEquiv H A n)]
+TCSlib/Cryptography/Candidates/Rabin.lean:1798:conditioned on `D` is the uniform distinct class pair (`rabin_diagEquiv`, `uprob_comp_equiv`).
+TCSlib/Cryptography/Candidates/Rabin.lean:1819:    rw [← uprob_comp_equiv (rabin_diagEquiv P n)]
+TCSlib/Cryptography/Candidates/Rabin.lean:2074:`rabin_unitsCongr`, `uprob_comp_equiv`); the challenge `f_N(x)` is the numeral of `x²`
+TCSlib/Cryptography/Candidates/Rabin.lean:2088:  rw [← uprob_comp_equiv (Equiv.prodCongr (e.toEquiv.symm.trans (rabinCollection_domEquiv H (rabin_idx z)).symm)
+TCSlib/Cryptography/Candidates/Rabin.lean:2169:(`rabin_genCoinsEquiv`, `HardcoreBit.uexp_comp_equiv`), and the index is `⟦pq⟧_{2n}` for the
+TCSlib/Cryptography/Candidates/Rabin.lean:2177:depending on the index, so its average moves by at most that distance (`uexp_le_of_statClose`, the
+TCSlib/Cryptography/Candidates/Rabin.lean:2208:  rw [Collection.invProbAt_eq, ← HardcoreBit.uexp_comp_equiv (rabin_genCoinsEquiv _ hG n)]
+TCSlib/Cryptography/Candidates/Rabin.lean:2217:        uexp_le_of_statClose hlaw (fun c => (rabinCollection H).D (rabin_idx c) × A.Coins n)
+TCSlib/Cryptography/Candidates/Rabin.lean:2222:        refine add_le_add_right (OneWay.uexp_mono fun t => ?_) _
+TCSlib/Cryptography/Candidates/Rabin.lean:2227:        rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const_mul, OneWay.uexp_const, rabin_oddFactorProb_eq,
+TCSlib/Cryptography/Candidates/Rabin.lean:2861:(`uprob_comp_equiv`, `StatClose.comp_equiv_right`). -/
+TCSlib/Cryptography/Candidates/Rabin.lean:2867:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rabinBlumTrapdoor_domEquiv H i` (`uprob_comp_equiv`),
+TCSlib/Cryptography/Candidates/Rabin.lean:2872:  uprob_comp_equiv _ P
+TCSlib/Cryptography/Candidates/Rabin.lean:3088:  rw [← uprob_comp_equiv (Equiv.prodCongr ((blumPermAt i).symm.trans (rabinBlumTrapdoor_domEquiv H i).symm) (Equiv.refl (A.Coins n)))]
+TCSlib/Cryptography/Candidates/Rabin.lean:3115:  rw [← uprob_comp_equiv (Equiv.prodCongr e.toEquiv.symm (Equiv.refl (A.Coins n)))]
+TCSlib/Cryptography/Candidates/Rabin.lean:3174:`HardcoreBit.uexp_comp_equiv`); the index is `rabin_idx` of the selection `rabin_X`
+TCSlib/Cryptography/Candidates/Rabin.lean:3176:`rabin_card_blum`) and `uexp_le_of_statClose` applied to it and to its symmetric give both
+TCSlib/Cryptography/Candidates/Rabin.lean:3207:    rw [← HardcoreBit.uexp_comp_equiv (rabin_genCoinsEquiv _ hG n)]
+TCSlib/Cryptography/Candidates/Rabin.lean:3211:  have h1 := uexp_le_of_statClose hlaw (fun c => Aux (rabin_idx c)) (fun c => Q (rabin_idx c))
+TCSlib/Cryptography/Candidates/Rabin.lean:3212:  have h2 := uexp_le_of_statClose hlaw.symm (fun c => Aux (rabin_idx c)) (fun c => Q (rabin_idx c))
+TCSlib/Cryptography/Candidates/Rabin.lean:3243:    refine OneWay.uexp_mono fun t => ?_
+TCSlib/Cryptography/Candidates/Rabin.lean:3247:  rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const_mul, OneWay.uexp_const, ← rabin_blumFactorProb_eq]
+TCSlib/Cryptography/Candidates/Rabin.lean:3432:only on the coins of `A` (`uprob_fst`, `rabinBlumInverter_coinsEquiv`, `uprob_comp_equiv`). -/
+TCSlib/Cryptography/Candidates/Rabin.lean:3457:            (bitsToNat x = z.p ∨ bitsToNat x = z.q)) := (uprob_comp_equiv _ _).symm
+TCSlib/Cryptography/Candidates/Rabin.lean:3462:      _ = _ := (uprob_comp_equiv (Equiv.prodComm _ _) (fun a : (rabinBlumInverter H A).Coins n ×
+TCSlib/Cryptography/Candidates/Rabin.lean:3521:    refine OneWay.uexp_mono fun t => ?_

@@ -1,0 +1,68 @@
+TCSlib/Complexity/ClassNP/PClosure.lean:238:  have h := mem_P_of_test (polyTimeComputable_blockMajorityTest (test_of_mem_P hV) a k a' k')
+TCSlib/Cryptography/Randomness/Learning.lean:134:  obtain ⟨n₂, hn₂⟩ := exists_nat_gt (2 / (γ - δ))
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:300:lemma eq_bits_append_replicate (w : List Bool) :
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:338:  conv_lhs => rw [eq_bits_append_replicate p]
+TCSlib/Cryptography/Randomness/Derandomization/Majority.lean:58:by `eff_mapCoins`; its accepting language is therefore in `P`. The unary
+TCSlib/Cryptography/Randomness/Derandomization/Majority.lean:91:  have hM' : Randomized.polyTimeModel.Eff (Randomized.boolVerifier M') := eff_mapCoins hM hC
+TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:23:* `TCSlib.Cryptography.Randomness.Derand.eff_mapCoins`: efficient coin reindexing.
+TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:46:theorem eff_mapCoins {M : List Bool → List Bool → Bool}
+TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:27:* `Complexity.polyTimeComputable_blockMajorityTest` — the strict-majority
+TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:179:theorem polyTimeComputable_blockMajorityTest {V : Language Bool}
+TCSlib/Complexity/Randomized/Primality.lean:32:* `Randomized.eff_compositeVerifier` — the verifier is polynomial-time.
+TCSlib/Complexity/Randomized/Primality.lean:217:theorem eff_compositeVerifier : polyTimeModel.Eff (boolVerifier compositeVerifier) :=
+TCSlib/Complexity/Randomized/Primality.lean:232:  refine ⟨compositeVerifier, 6, 1, eff_compositeVerifier, fun x => ⟨fun hx => ?_, fun hx r => ?_⟩⟩
+TCSlib/Cryptography/Randomness/Derandomization/CoinGap.lean:44:which stays efficient by `eff_mapCoins` and `polyTimeComputable_pairTakePoly`.
+TCSlib/Cryptography/Randomness/Derandomization/CoinGap.lean:66:      eff_mapCoins hM (polyTimeComputable_pairTakePoly (polyLenExpr a k))
+TCSlib/Complexity/Randomized/RandomBits.lean:27:* `Randomized.bitsEquiv`, `Randomized.blocksEquiv` — bits as numbers, as bijections.
+TCSlib/Complexity/Randomized/RandomBits.lean:224:def bitsEquiv (L : ℕ) : (Fin L → Bool) ≃ Fin (2 ^ L) :=
+TCSlib/Complexity/Randomized/RandomBits.lean:227:/-- `bitsEquiv` is `bitsVal`. -/
+TCSlib/Complexity/Randomized/RandomBits.lean:228:theorem bitsEquiv_apply {L : ℕ} (f : Fin L → Bool) :
+TCSlib/Complexity/Randomized/RandomBits.lean:229:    (bitsEquiv L f : ℕ) = bitsVal (List.ofFn f) := by
+TCSlib/Complexity/Randomized/RandomBits.lean:230:  rw [bitsVal_ofFn, bitsEquiv, Equiv.trans_apply, finFunctionFinEquiv_apply]
+TCSlib/Complexity/Randomized/RandomBits.lean:237:**Proof sketch.** `r ↦ bitsVal r` is the bijection `bitsEquiv` from `{0,1}^L` onto
+TCSlib/Complexity/Randomized/RandomBits.lean:250:    rw [← bitsEquiv_apply, ← bitsEquiv_apply] at h
+TCSlib/Complexity/Randomized/RandomBits.lean:251:    exact (bitsEquiv L).injective (Fin.ext h)
+TCSlib/Complexity/Randomized/RandomBits.lean:254:    have hr : bitsVal (List.ofFn ((bitsEquiv L).symm ⟨v, hv.1⟩)) = v := by
+TCSlib/Complexity/Randomized/RandomBits.lean:255:      rw [← bitsEquiv_apply, Equiv.apply_symm_apply]
+TCSlib/Complexity/Randomized/RandomBits.lean:256:    refine ⟨(bitsEquiv L).symm ⟨v, hv.1⟩, ?_, hr⟩
+TCSlib/Complexity/Randomized/RandomBits.lean:264:    (Equiv.curry _ _ _)).trans (Equiv.arrowCongr (Equiv.refl _) (bitsEquiv b))
+TCSlib/Complexity/Randomized/RandomBits.lean:283:  rw [blockVal, hlist, ← bitsEquiv_apply]
+TCSlib/Cryptography/Randomness/Derandomization/TimeBound.lean:42:  obtain ⟨d, hd⟩ := exists_nat_gt (max (1 / ε) 1)
+TCSlib/Complexity/Randomized/ExpectedTime.lean:200:  obtain ⟨n, ht⟩ := exists_nat_gt (B / ε)
+TCSlib/Complexity/Randomized/Classes.lean:69:  which discharges the closure hypotheses; `Randomized/BPPAmplify.lean` instantiates
+TCSlib/Complexity/Randomized/SeedMajority.lean:97:* The nearest relative is the existential projection decider `Complexity.exists_proj_decider`
+TCSlib/Complexity/Randomized/SeedMajority.lean:99:  the test on `x ++ u`. Its engine `enumMachine_contracts` and the `enumCont_*` body are
+TCSlib/Complexity/Randomized/SeedMajority.lean:101:* The polynomial block-majority tests (`Complexity.polyTimeComputable_blockMajorityTest`) count
+TCSlib/Complexity/Randomized/SeedMajority.lean:104:  `exists_proj_decider`: both consumers have polynomial tests, and the clean-module host below
+.lake/packages/mathlib/Mathlib/Algebra/Order/Archimedean/Basic.lean:175:lemma exists_nat_gt (x : R) : ∃ n : ℕ, x < n :=
+.lake/packages/mathlib/Mathlib/Algebra/Order/Archimedean/Basic.lean:218:  let ⟨n, h⟩ := exists_nat_gt x
+.lake/packages/mathlib/Mathlib/Algebra/Order/Archimedean/Basic.lean:262:  obtain ⟨n, hn⟩ := exists_nat_gt (1 / ε)
+.lake/packages/mathlib/Mathlib/Algebra/Order/Archimedean/Basic.lean:361:  ⟨@exists_nat_gt K _ _ _, fun H =>
+.lake/packages/mathlib/Mathlib/Algebra/Order/Archimedean/Basic.lean:387:    let ⟨n, h⟩ := exists_nat_gt x
+.lake/packages/mathlib/Mathlib/Algebra/Order/Archimedean/Basic.lean:421:  obtain ⟨n, nh⟩ := exists_nat_gt (y - x)⁻¹
+TCSlib/Complexity/Randomized/RandomWalkHitting.lean:497:  obtain ⟨M, hM'⟩ := exists_nat_gt (N * A / ε)
+TCSlib/Complexity/Randomized/PPT.lean:44:So `∃ A : NUPPT, A.Computes f` does not say that a PPT computes `f`. Efficient computation of
+TCSlib/Complexity/Randomized/RandomWalkPad.lean:167:per step through any bijection `e` (e.g. `Randomized.bitsEquiv`), visits `t` with probability
+TCSlib/Complexity/ClassNP/EXP.lean:61:live checkpoint route `enumLoop_run` (consumed by `exists_proj_decider`) is
+TCSlib/Complexity/ClassNP/EXP.lean:2302:private theorem enumMachine_contracts (C c : ℕ) (V : Language Bool) (Tv : ℕ → ℕ)
+TCSlib/Complexity/ClassNP/EXP.lean:2401:freeze. The former `enumMachine_contracts` admission is now discharged.
+TCSlib/Complexity/ClassNP/EXP.lean:2419:theorem exists_proj_decider (C c : ℕ) (V : Language Bool) (Tv : ℕ → ℕ)
+TCSlib/Complexity/ClassNP/EXP.lean:2426:  obtain ⟨b, E, hE⟩ := enumMachine_contracts C c V Tv MV hV
+TCSlib/Complexity/ClassNP/EXP.lean:2482:reset between rounds. This is the enumerator `Complexity.exists_proj_decider`
+TCSlib/Complexity/ClassNP/EXP.lean:2491:  obtain ⟨b, E, hE⟩ := exists_proj_decider C c V (fun n => a * (n + 1) ^ d) MV hMV
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:18:The existing `Randomized.bitsEquiv` identifies ranks with fixed-width Boolean tuples;
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:60:`word m i = List.ofFn ((Randomized.bitsEquiv m).symm ⟨i, hi⟩)`.
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:62:**Proof sketch.** Decode the inverse tuple with `bitsEquiv_apply`. Its value is `i`
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:68:    word m i = List.ofFn ((Randomized.bitsEquiv m).symm ⟨i, hi⟩) := by
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:69:  let u := (Randomized.bitsEquiv m).symm ⟨i, hi⟩
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:71:    rw [← Randomized.bitsEquiv_apply]
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:72:    exact congrArg Fin.val ((Randomized.bitsEquiv m).apply_symm_apply ⟨i, hi⟩)
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:73:  have hnorm := Codec.eq_bits_append_replicate (List.ofFn u)
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:133:**Proof sketch.** Map an accepted rank to the inverse of `Randomized.bitsEquiv`.
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:140:  refine Finset.card_bij (fun i hi => (Randomized.bitsEquiv m).symm
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:147:    have := congrArg (fun u => ((Randomized.bitsEquiv m) u).val) hij
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:150:    let i := ((Randomized.bitsEquiv m) u).val
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:151:    have hi : i < 2 ^ m := ((Randomized.bitsEquiv m) u).isLt
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:152:    have hiFin : (⟨i, hi⟩ : Fin (2 ^ m)) = (Randomized.bitsEquiv m) u := by
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:158:    · exact (congrArg (Randomized.bitsEquiv m).symm hiFin).trans
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:159:        ((Randomized.bitsEquiv m).symm_apply_apply u)

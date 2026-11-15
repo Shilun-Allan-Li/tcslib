@@ -1,0 +1,938 @@
+From 0c7862af4943c075a9db31ad5e6ac79665c39c49 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 03:07:59 -0800
+Subject: [PATCH 2/4] fill derand: prove Theorem 180.1 from the seed-majority
+ contract
+
+---
+ .../Randomness/Derandomization.lean           |  78 +++++---
+ .../Randomness/Derandomization/AdviceGap.lean | 134 ++++++++++++++
+ .../Randomness/Derandomization/CoinGap.lean   |  95 ++++++++++
+ .../Randomness/Derandomization/Expanded.lean  |  70 ++++++++
+ .../Randomness/Derandomization/Majority.lean  | 159 +++++++++++++++++
+ .../Derandomization/RootSchedule.lean         | 167 ++++++++++++++++++
+ .../Randomness/Derandomization/TimeBound.lean | 142 +++++++++++++++
+ 7 files changed, 821 insertions(+), 24 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean
+ create mode 100644 TCSlib/Cryptography/Randomness/Derandomization/CoinGap.lean
+ create mode 100644 TCSlib/Cryptography/Randomness/Derandomization/Expanded.lean
+ create mode 100644 TCSlib/Cryptography/Randomness/Derandomization/Majority.lean
+ create mode 100644 TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean
+ create mode 100644 TCSlib/Cryptography/Randomness/Derandomization/TimeBound.lean
+
+diff --git a/TCSlib/Cryptography/Randomness/Derandomization.lean b/TCSlib/Cryptography/Randomness/Derandomization.lean
+index 251191e53802d6c0454b5ea69c5b7905e979fd3c..d5373f10318e93c902ea1671917f5b36ef5614e4 100644
+--- a/TCSlib/Cryptography/Randomness/Derandomization.lean
++++ b/TCSlib/Cryptography/Randomness/Derandomization.lean
+@@ -5,13 +5,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.Randomness.BPPBridge
+ import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs
+ import TCSlib.Complexity.ClassP.DTIME
++import TCSlib.Cryptography.Randomness.Derandomization.RootSchedule
++import TCSlib.Cryptography.Randomness.Derandomization.AdviceGap
++import TCSlib.Cryptography.Randomness.Derandomization.Expanded
++import TCSlib.Cryptography.Randomness.Derandomization.CoinGap
++import TCSlib.Cryptography.Randomness.Derandomization.Majority
++import TCSlib.Cryptography.Randomness.Derandomization.TimeBound
++import TCSlib.Complexity.Randomized.QuasiPolyHierarchy
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Derandomization from pseudorandom generators (statement phase)
++# Derandomization from pseudorandom generators
+ 
+ [PS10, Theorem 180.1]: if pseudorandom generators exist, then `BPP ⊆ DTIME(2^{n^ε})` for every
+ constant `ε > 0`.
+@@ -36,10 +43,20 @@ constant `ε > 0`.
+ 
+ * `Randomness.subexpBound`: `n ↦ ⌈2^{n^ε}⌉`.
+ 
++## Contents
++
++* `Randomness.Derandomization.RootSchedule`: the integer-root seed schedule.
++* `Randomness.Derandomization.AdviceGap`: the non-uniform advice gap bound.
++* `Randomness.Derandomization.Expanded`: the secure polynomial output envelope.
++* `Randomness.Derandomization.CoinGap`: the uniform prefix probability identification.
++* `Randomness.Derandomization.Majority`: the piecewise verifier and strict majority.
++* `Randomness.Derandomization.TimeBound`: the asymptotic estimate and finite exceptions.
++
+ ## Main results
+ 
+ * `Randomness.subexpBound_pos`: the bound is positive.
+-* `Randomness.bpp_subset_dtime_subexp` (Thm 180.1, stated; a `sorry` under the source's sketch).
++* `Randomness.bpp_subset_dtime_subexp` (Thm 180.1), proved modulo the shared
++  seed-majority machine contract through its DTIME corollary.
+ 
+ ## References
+ 
+@@ -69,29 +86,42 @@ theorem subexpBound_pos (ε : ℝ) (n : ℕ) : 0 < subexpBound ε n :=
+ [PS10, Theorem 180.1]: if a secure PRG exists, then every language of `main`'s `BPP` is in
+ `DTIME(2^{n^ε})` for every `ε > 0`.
+ 
+-**Proof sketch** (the source's, with the steps it leaves implicit; route note S3c).
+-1. Let `L ∈ BPP` have verifier `M` and randomness `m(n) = a(n+1)^k`. Fix an integer `d ≥ 2`
+-   with `1/d < min(ε,1)`. Compute `ℓ(n)` as the least natural `t` with `n ≤ t^d`, using integer
+-   comparisons and powers. Then `n ≤ ℓ(n)^d` and `ℓ(n) ≤ n^{1/d}+1`. No computation of an
+-   arbitrary real exponent is required. Expand the PRG to the syntactic polynomial envelope
+-   `P(s) = a(s^d+1)^k+s+1`, which exceeds `s` and covers `m(n)` whenever `s = ℓ(n)`.
+-2. Let `M'(x; u) = M(x; G(u)↾m(|x|))`, with seed length `ℓ(|x|)`. If infinitely many lengths
+-   have an input with acceptance-probability gap `> 1/12`, choose one corresponding bad input
+-   at each bad seed length. Its advice length is at most `s^d`. The verifier bridge, composed
+-   with prefix truncation, is therefore a distinguisher polynomial in `s`; the probabilities
+-   agree through `randProb_eq_uprob`. Each seed length has only finitely many corresponding
+-   input lengths, so infinitely many bad input lengths give infinitely many bad seed lengths,
+-   contradicting PRG security. The fixed `1/12` threshold leaves an explicit majority margin.
+-3. Eventually every input has probability gap at most `1/12`. Since `M` is correct with
+-   probability at least `2/3`, `M'` is correct with probability at least `7/12 > 1/2`.
+-   The majority over all seeds is correct. A finite table handles the remaining input lengths.
+-4. Construct a deterministic multi-tape machine enumerating the seeds, running `G` and `M`,
+-   and counting, using the shared TM construction layer. For some constants `C,C'`, its time
+-   is at most `2^{ℓ(n)} · poly(n) ≤ 2^{n^{1/d}+1+C log₂(n+1)+C'}`. Since `1/d < ε`, this is
+-   eventually at most `2^{n^ε}`; a constant factor absorbs the finite exceptions. This machine
+-   construction is the substantive remaining fill obligation, not supplied by the sketch. -/
++**Status.** Proved modulo `Complexity.exists_seedMajorityTM`, through
++`Complexity.seedMajority_mem_DTIME`; the helpers introduce no admissions.
++
++**Proof sketch** ([PS10, Theorem 180.1], with an explicit piecewise test).
++1. Choose an integer `d ≥ 2` with `1/d < min(ε,1)`. The least natural root
++   `ℓ(n) = min{t | n ≤ t^d}` has an FP unary word and satisfies
++   `n ≤ ℓ(n)^d` and `ℓ(n) ≤ n^(1/d)+1`, including at zero.
++2. Expand a secure generator to `a(s^d+1)^k+s+1` and extract its FP evaluator.
++   Apply the verifier bridge to one bad input at each bad seed length, with
++   advice bound `s^d`. The published probability bridge and prefix projection
++   identify its PRG advantage with the verifier gap. Negligibility's inverse-linear
++   bound rules out every gap above `1/12` beyond a seed threshold, hence beyond
++   some input threshold `n₀`.
++3. Below `n₀`, use the original verifier with its true polynomial coin width;
++   from `n₀` on, use the generated prefix and width `ℓ(n)`. Both this paired
++   test and its unary width are polynomial-time. Acceptance is above `1/2`
++   exactly on members, with margins at least `7/12` and at most `5/12` in the
++   generated case. `half_lt_randProb_iff` identifies `L` with the strict seed
++   majority, including ties and zero widths. No exceptional-input table is used.
++4. Apply `seedMajority_mem_DTIME`. The logarithm of `2^w(n)(n+1)^e`, divided
++   by `n^ε`, tends to zero because `1/d < ε`; thus the time is eventually at
++   most `2^(n^ε)`. A natural constant absorbs all earlier lengths, since the
++   rounded bound is positive. Finish through `DTIME.mono` and
++   `Randomized.DTIME_const_mul_subset`. -/
+ theorem bpp_subset_dtime_subexp (hPRG : ∃ G : PRG, G.Secure) (ε : ℝ) (hε : 0 < ε) :
+     {L | Randomized.InBPP Randomized.polyTimeModel L} ⊆ DTIME (subexpBound ε) := by
+-  sorry
++  intro L hL
++  obtain ⟨d, hd, hdε, _⟩ := Derand.exists_root_degree hε
++  have hdpos : 0 < d := by omega
++  obtain ⟨V, w, n₀, hV, hw, hevent, hmajority⟩ :=
++    Derand.exists_seed_majority hPRG hL d hdpos
++  obtain ⟨e, htime⟩ := seedMajority_mem_DTIME hV w hw
++  rw [← hmajority] at htime
++  obtain ⟨C, hbound⟩ := Derand.seed_time_le_subexp hdpos hε hdε w n₀ hevent e
++  apply Randomized.DTIME_const_mul_subset C (subexpBound ε)
++  apply DTIME.mono (fun n => ?_) htime
++  simpa only [subexpBound_eq] using hbound n
+ 
+ end TCSlib.Cryptography.Randomness
+diff --git a/TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean b/TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..cccac66cb56db5d767c36c8e519da20ad0583651
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean
+@@ -0,0 +1,134 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Randomness.BPPBridge
++import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# A non-uniform advice bound for verifier gaps
++
++The bad input in [PS10, Theorem 180.1] is advice for a distinguisher. A
++polynomial bound on its length in the seed parameter suffices to rule out
++every large-parameter gap, including when several input lengths share that
++parameter. No computable choice of advice is required by non-uniform security.
++
++## Main results
++
++* `TCSlib.Cryptography.Randomness.Derand.eff_mapCoins`: efficient coin reindexing.
++* `TCSlib.Cryptography.Randomness.Derand.exists_verifier_gap_bound`: a uniform
++  constant bound on the verifier's PRG gap beyond a seed threshold.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, §8.2, Theorem 180.1.
++-/
++
++namespace TCSlib.Cryptography.Randomness.Derand
++
++open Complexity Turing
++
++/-- An efficient Boolean verifier remains efficient after an FP coin map:
++if `C` is FP on encoded pairs, then `(x,r) ↦ M x (C ⟨x,r⟩)` is efficient.
++This is `P`-preimage closure for the existing true and false languages.
++[PS10, §8.2, Theorem 180.1] -/
++theorem eff_mapCoins {M : List Bool → List Bool → Bool}
++    (hM : Randomized.polyTimeModel.Eff (Randomized.boolVerifier M))
++    {C : List Bool → List Bool} (hC : PolyTimeComputable C) :
++    Randomized.polyTimeModel.Eff
++      (Randomized.boolVerifier fun x r => M x (C (pairEncode x r))) := by
++  obtain ⟨V₁, V₀, h₁, h₀, hV⟩ :=
++    (Randomized.polyTimeModel_eff_iff (Randomized.boolVerifier M)).mp hM
++  let f : List Bool → List Bool := fun z => pairEncode (pairFstD z) (C z)
++  have hf : PolyTimeComputable f := polyTimeComputable_pairFstD.pairEncode hC
++  refine (Randomized.polyTimeModel_eff_iff _).mpr
++    ⟨f ⁻¹' V₁, f ⁻¹' V₀, preimage_mem_P h₁ hf, preimage_mem_P h₀ hf, ?_⟩
++  intro x r
++  change
++    (Randomized.boolVerifier (fun x r => M x (C (pairEncode x r))) x r = some true ↔
++      f (pairEncode x r) ∈ V₁) ∧
++    (Randomized.boolVerifier (fun x r => M x (C (pairEncode x r))) x r = some false ↔
++      f (pairEncode x r) ∈ V₀)
++  simpa only [Randomized.boolVerifier_apply, f, pairFstD_pairEncode]
++    using hV x (C (pairEncode x r))
++
++/-- For a secure PRG, any efficient Boolean verifier has gap at most `1/12`
++on every input whose seed parameter is sufficiently large, provided the input
++length is polynomial in that parameter:
++`|Pr[M(x;G(U_s))=1] - Pr[M(x;U_stretch(s))=1]| ≤ 1/12` for `s = w |x| ≥ S`.
++[PS10, §8.2, Theorem 180.1]
++
++**Proof sketch.** At each seed length with a gap above `1/12`, choose one bad
++input as advice. Else use the empty word. The hypothesis bounds this advice
++by `p`, so `verifier_toNUPPT` gives one non-uniform distinguisher for all seed
++lengths. Its advantage is exactly the selected gap: use the published PRG,
++acceptance-probability and distinguisher readers, then `uprob_fst` to remove
++the unused coins. Security bounds that advantage by `1/s` eventually, which
++is at most `1/12` for `s ≥ 12`. Hence no such bad input exists beyond the
++maximum of these two thresholds. -/
++theorem exists_verifier_gap_bound {M : List Bool → List Bool → Bool}
++    (hM : Randomized.polyTimeModel.Eff (Randomized.boolVerifier M))
++    (w : ℕ → ℕ) (p : PolyExpr) (hsize : ∀ n, n ≤ p.eval (w n))
++    (G : PRG) (hG : G.Secure) :
++    ∃ S : ℕ, ∀ x : List Bool, S ≤ w x.length →
++      |uprob (fun r : Fin (w x.length) → Bool =>
++          M x (List.ofFn (G.G (w x.length) r)) = true) -
++        uprob (fun r : Fin (G.stretch.eval (w x.length)) → Bool =>
++          M x (List.ofFn r) = true)| ≤ (1 : ℝ) / 12 := by
++  classical
++  let gap (x : List Bool) (s : ℕ) : ℝ :=
++    |uprob (fun r : Fin s → Bool => M x (List.ofFn (G.G s r)) = true) -
++      uprob (fun r : Fin (G.stretch.eval s) → Bool => M x (List.ofFn r) = true)|
++  let bad (s : ℕ) : Prop := ∃ x : List Bool, w x.length = s ∧ (1 : ℝ) / 12 < gap x s
++  let xs (s : ℕ) : List Bool := if h : bad s then Classical.choose h else []
++  have hselected (s : ℕ) (hs : bad s) :
++      w (xs s).length = s ∧ (1 : ℝ) / 12 < gap (xs s) s := by
++    dsimp only [xs]
++    rw [dif_pos hs]
++    exact Classical.choose_spec hs
++  have hxs (s : ℕ) : (xs s).length ≤ p.eval s := by
++    by_cases hs : bad s
++    · have h := hsize (xs s).length
++      rw [(hselected s hs).1] at h
++      exact h
++    · simp only [xs, dif_neg hs, List.length_nil]
++      exact Nat.zero_le _
++  obtain ⟨D, _, hD⟩ := verifier_toNUPPT hM xs p hxs
++  have hadv (s : ℕ) :
++      prgAdv (G.G s) (D.distinguisher s (G.stretch.eval s)) = gap (xs s) s := by
++    rw [prgAdv_eq, distAdv_def]
++    dsimp only [gap]
++    congr 1
++    congr 1
++    · rw [acceptProb_def]
++      simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, hD,
++        List.cons.injEq, and_true, decide_eq_true_eq]
++      exact uprob_fst (α := Fin s → Bool) (β := D.Coins s)
++        (fun r => M (xs s) (List.ofFn (G.G s r)) = true)
++    · rw [acceptProb_def]
++      simp only [id_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, hD,
++        List.cons.injEq, and_true, decide_eq_true_eq]
++      exact uprob_fst (α := Fin (G.stretch.eval s) → Bool) (β := D.Coins s)
++        (fun r => M (xs s) (List.ofFn r) = true)
++  have hneg := ((PRG.secure_iff G).mp hG).2 D
++  obtain ⟨N, hN⟩ := (negligible_iff _).mp hneg 1
++  refine ⟨max N 12, fun x hx => ?_⟩
++  change gap x (w x.length) ≤ (1 : ℝ) / 12
++  by_contra hgap
++  have hb : bad (w x.length) := ⟨x, rfl, lt_of_not_ge hgap⟩
++  have hlow := (hselected (w x.length) hb).2
++  have hhigh := hN (w x.length) ((le_max_left N 12).trans hx)
++  rw [hadv, abs_of_nonneg (abs_nonneg _), pow_one] at hhigh
++  have hs : (12 : ℝ) ≤ (w x.length : ℝ) := by
++    exact_mod_cast (le_max_right N 12).trans hx
++  have hinv : 1 / (w x.length : ℝ) ≤ (1 : ℝ) / 12 :=
++    one_div_le_one_div_of_le (by norm_num) hs
++  linarith
++
++end TCSlib.Cryptography.Randomness.Derand
+diff --git a/TCSlib/Cryptography/Randomness/Derandomization/CoinGap.lean b/TCSlib/Cryptography/Randomness/Derandomization/CoinGap.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..0fa9736b0463e60e5926cff6ca00bc155b765afb
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Derandomization/CoinGap.lean
+@@ -0,0 +1,95 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Randomness.Derandomization.AdviceGap
++import TCSlib.Cryptography.Randomness.Derandomization.Expanded
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Replacing a verifier's coins by generated bits
++
++The expanded generator and the non-uniform advice bound give a single FP
++evaluator whose acceptance gap is at most `1/12` on every sufficiently long
++input. The probability identification reuses the published counting bridge
++and uniform prefix projection, including zero coin lengths.
++
++## Main results
++
++* `TCSlib.Cryptography.Randomness.Derand.exists_coin_gap_threshold`: the
++  input-length threshold needed by the piecewise verifier.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, §8.2, Theorem 180.1.
++-/
++
++namespace TCSlib.Cryptography.Randomness.Derand
++
++open Complexity Turing
++
++/-- There are an FP generator evaluator `F` and a threshold `n₀` such that,
++for every `|x| ≥ n₀`,
++`|randProb (ceilRoot d |x|) (M x (F(u)↾m)) - randProb m (M x)| ≤ 1/12`,
++where the rational probabilities are cast to `ℝ` and `m = polyLen a k |x|`.
++[PS10, §8.2, Theorem 180.1]
++
++**Proof sketch.** Expand a secure generator to cover the verifier's entire
++coin width. Apply the advice-gap theorem to the prefix-truncated verifier,
++which stays efficient by `eff_mapCoins` and `polyTimeComputable_pairTakePoly`.
++Advice has bound `s^d` because `|x| ≤ (ceilRoot d |x|)^d`. If the seed threshold
++is `S`, input lengths from `S^d+1` on have root greater than `S`. Identify the
++generated probability with the first advantage term using the evaluator's
++typed contract and `randProb_eq_uprob`; identify the uniform term using
++`randProb_take`. No new expectation or probability-reindexing identity is used. -/
++theorem exists_coin_gap_threshold (hPRG : ∃ G : PRG, G.Secure)
++    {M : List Bool → List Bool → Bool}
++    (hM : Randomized.polyTimeModel.Eff (Randomized.boolVerifier M))
++    (a k d : ℕ) (hd : 0 < d) :
++    ∃ (F : List Bool → List Bool) (n₀ : ℕ), PolyTimeComputable F ∧
++      ∀ x : List Bool, n₀ ≤ x.length →
++        |(Randomized.randProb (ceilRoot d x.length)
++            (fun u => M x ((F u).take (Randomized.polyLen a k x.length)) = true) : ℝ) -
++          (Randomized.randProb (Randomized.polyLen a k x.length)
++            (fun r => M x r = true) : ℝ)| ≤ (1 : ℝ) / 12 := by
++  classical
++  obtain ⟨G, F, hG, hF, hFs, hcover⟩ := exists_secure_cover hPRG a k d hd
++  let M' : List Bool → List Bool → Bool :=
++    fun x r => M x (r.take (Randomized.polyLen a k x.length))
++  have hM' : Randomized.polyTimeModel.Eff (Randomized.boolVerifier M') := by
++    simpa only [pairFstD_pairEncode, pairSndD_pairEncode, eval_polyLenExpr, M'] using
++      eff_mapCoins hM (polyTimeComputable_pairTakePoly (polyLenExpr a k))
++  have hsize (n : ℕ) : n ≤ (PolyExpr.pow .var d).eval (ceilRoot d n) := by
++    simpa only [PolyExpr.eval_pow, PolyExpr.eval_var] using le_ceilRoot_pow hd n
++  obtain ⟨S, hS⟩ := exists_verifier_gap_bound hM' (ceilRoot d) (.pow .var d) hsize G hG
++  refine ⟨F, S ^ d + 1, hF, fun x hx => ?_⟩
++  have hs : S ≤ ceilRoot d x.length :=
++    ((lt_ceilRoot_iff hd x.length S).mpr (by omega)).le
++  have h := hS x hs
++  have hgen :
++      (Randomized.randProb (ceilRoot d x.length)
++        (fun u => M x ((F u).take (Randomized.polyLen a k x.length)) = true) : ℝ) =
++        uprob (fun r : Fin (ceilRoot d x.length) → Bool =>
++          M' x (List.ofFn (G.G (ceilRoot d x.length) r)) = true) := by
++    rw [randProb_eq_uprob]
++    congr 1
++    funext r
++    rw [hFs]
++  have huniform :
++      uprob (fun r : Fin (G.stretch.eval (ceilRoot d x.length)) → Bool =>
++        M' x (List.ofFn r) = true) =
++        (Randomized.randProb (Randomized.polyLen a k x.length)
++          (fun r => M x r = true) : ℝ) := by
++    rw [← randProb_eq_uprob (G.stretch.eval (ceilRoot d x.length))
++      (fun r => M' x r = true)]
++    exact congrArg (fun q : ℚ => (q : ℝ))
++      (Randomized.randProb_take (hcover x.length) (fun r => M x r = true))
++  rw [hgen, ← huniform]
++  exact h
++
++end TCSlib.Cryptography.Randomness.Derand
+diff --git a/TCSlib/Cryptography/Randomness/Derandomization/Expanded.lean b/TCSlib/Cryptography/Randomness/Derandomization/Expanded.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..03df855ef37e62710d5a5a65125898834519d593
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Derandomization/Expanded.lean
+@@ -0,0 +1,70 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Randomness.Derandomization.RootSchedule
++import TCSlib.Cryptography.Randomness.BPPBridge
++import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Stretch
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Expanding a PRG to cover the verifier's coins
++
++The polynomial stretch `a(s^d+1)^k+s+1` exceeds the seed length even at zero.
++At the ceiling-root schedule it covers `a(n+1)^k` true random bits.
++
++## Main results
++
++* `TCSlib.Cryptography.Randomness.Derand.exists_secure_cover`: a secure
++  generator with an FP evaluator and the required output-length envelope.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, Lemma 80.5 and Theorem 180.1.
++-/
++
++namespace TCSlib.Cryptography.Randomness.Derand
++
++open Complexity
++
++/-- A secure PRG can cover every polynomial coin schedule at the integer-root
++seed length: there are a secure `G` and an FP evaluator `F` such that
++`F(ofFn s) = ofFn(G n s)` and
++`polyLen a k n ≤ G.stretch.eval (ceilRoot d n)` for every `n`.
++[PS10, Lemma 80.5 and Theorem 180.1]
++
++**Proof sketch.** Truncate the given generator to one-bit stretch and use
++`prg_expand` at the syntactic polynomial `a(s^d+1)^k+s+1`. The last two terms
++make its expansion clause strict at every seed length. Extract the existing
++FP evaluator through `PRG.secure_iff` and `PRG.easy_iff`. Finally
++`n ≤ (ceilRoot d n)^d` gives the verifier's length bound by monotonicity of
++fixed natural powers and multiplication. -/
++theorem exists_secure_cover (hPRG : ∃ G : PRG, G.Secure) (a k d : ℕ) (hd : 0 < d) :
++    ∃ (G : PRG) (F : List Bool → List Bool),
++      G.Secure ∧ PolyTimeComputable F ∧
++      (∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G.G n s)) ∧
++      ∀ n, Randomized.polyLen a k n ≤ G.stretch.eval (ceilRoot d n) := by
++  obtain ⟨G₀, hG₀⟩ := hPRG
++  let p : PolyExpr := .add (.add
++    (.mul (.const a) (.pow (.add (.pow .var d) (.const 1)) k)) .var) (.const 1)
++  have hp (s : ℕ) : s < p.eval s := by
++    simp only [p, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
++      PolyExpr.eval_pow, PolyExpr.eval_var]
++    omega
++  let G := PRG.expand G₀.truncate p hp
++  have hG : G.Secure := prg_expand G₀.truncate p hp hG₀.truncate
++  obtain ⟨F, hF, hFs⟩ := (PRG.easy_iff G).mp ((PRG.secure_iff G).mp hG).1
++  refine ⟨G, F, hG, hF, hFs, fun n => ?_⟩
++  rw [show G.stretch = p from PRG.expand_stretch G₀.truncate p hp]
++  simp only [p, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
++    PolyExpr.eval_pow, PolyExpr.eval_var, Randomized.polyLen_eq]
++  have hpow := Nat.pow_le_pow_left (Nat.add_le_add_right (le_ceilRoot_pow hd n) 1) k
++  have hmul := Nat.mul_le_mul_left a hpow
++  omega
++
++end TCSlib.Cryptography.Randomness.Derand
+diff --git a/TCSlib/Cryptography/Randomness/Derandomization/Majority.lean b/TCSlib/Cryptography/Randomness/Derandomization/Majority.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..91a3b5a766d36283ce405b3783f03fac290b1cf1
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Derandomization/Majority.lean
+@@ -0,0 +1,159 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import Mathlib.Data.Rat.Cast.Order
++import TCSlib.Cryptography.Randomness.Derandomization.CoinGap
++import TCSlib.Complexity.Randomized.SeedMajority
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The piecewise verifier and its seed majority
++
++Below the security threshold, both the verifier and its width use the true
++random coins. At and above the threshold, they use the expanded generator
++and the ceiling-root seed length. The `1/12` gap gives a strict majority in
++both cases, so no finite table of exceptional input words is needed.
++
++## Main results
++
++* `TCSlib.Cryptography.Randomness.Derand.exists_seed_majority`: a `P` test
++  and an FP unary width whose strict seed majority equals the BPP language.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, §8.2, Theorem 180.1.
++-/
++
++namespace TCSlib.Cryptography.Randomness.Derand
++
++open Complexity Turing
++
++/-- A fixed upper threshold on the length of an FP word is an FP test.
++The existing length comparison tests `|f z| + 1 ≤ N`. -/
++private theorem short_poly {f : List Bool → List Bool} (hf : PolyTimeComputable f) (N : ℕ) :
++    PolyTimeComputable fun z => [decide ((f z).length < N)] := by
++  convert StateLoop.lenLe_comp (polyTimeComputable_const (List.replicate N true))
++    (hf.append (polyTimeComputable_const [true])) using 1
++  funext z
++  simp only [List.length_append, List.length_singleton, List.length_replicate,
++    Nat.add_one_le_iff]
++
++open Classical in
++/-- A BPP language is the strict seed-majority language of a `P` test with an
++FP unary width `w`, where `w n = ceilRoot d n` beyond some threshold:
++`L = {x | 2^(w |x|) < 2 * #{u | ⟨x,ofFn u⟩ ∈ V}}`.
++[PS10, §8.2, Theorem 180.1]
++
++**Proof sketch.** Extract the efficient Boolean verifier and polynomial coin
++schedule through `inBPP_iff`. Use the coin-gap threshold and hard-code it
++in a polynomial-time branch. Below it, the test uses the original coins and
++the width is the original polynomial schedule. Above it, the test uses the
++generated prefix and the width is the ceiling root. The test stays efficient
++by `eff_mapCoins`; its accepting language is therefore in `P`. The unary
++width is FP by the same fixed length branch. The true-coin acceptance bound
++`2/3` and the gap bound give acceptance above `1/2` on members and below
++`1/2` on nonmembers. Finally `half_lt_randProb_iff` identifies exactly the
++strict seed count, with ties rejected and zero widths included. -/
++theorem exists_seed_majority (hPRG : ∃ G : PRG, G.Secure)
++    {L : Language Bool} (hL : Randomized.InBPP Randomized.polyTimeModel L)
++    (d : ℕ) (hd : 0 < d) :
++    ∃ (V : Language Bool) (w : ℕ → ℕ) (n₀ : ℕ), V ∈ P ∧
++      PolyTimeComputable (fun x => List.replicate (w x.length) true) ∧
++      (∀ n, n₀ ≤ n → w n = ceilRoot d n) ∧
++      L = {x : List Bool | 2 ^ w x.length <
++        2 * (Finset.univ.filter fun u : Fin (w x.length) → Bool =>
++          pairEncode x (List.ofFn u) ∈ V).card} := by
++  classical
++  obtain ⟨M, a, k, hM, hcorrect⟩ :=
++    (Randomized.inBPP_iff Randomized.polyTimeModel L).mp hL
++  obtain ⟨F, n₀, hF, hgap⟩ := exists_coin_gap_threshold hPRG hM a k d hd
++  let w (n : ℕ) := if n < n₀ then Randomized.polyLen a k n else ceilRoot d n
++  let C (z : List Bool) := if (pairFstD z).length < n₀ then pairSndD z
++    else (F (pairSndD z)).take (Randomized.polyLen a k (pairFstD z).length)
++  let M' (x u : List Bool) := M x (C (pairEncode x u))
++  have hprefix : PolyTimeComputable fun z =>
++      (F (pairSndD z)).take (Randomized.polyLen a k (pairFstD z).length) := by
++    convert (polyTimeComputable_pairTakePoly (polyLenExpr a k)).comp
++      (polyTimeComputable_pairFstD.pairEncode (hF.comp polyTimeComputable_pairSndD)) using 1
++    funext z
++    simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
++      eval_polyLenExpr]
++  have hC : PolyTimeComputable C := by
++    simpa only [C, decide_eq_true_eq] using
++      polyTimeComputable_ite (short_poly polyTimeComputable_pairFstD n₀)
++        polyTimeComputable_pairSndD hprefix
++  have hM' : Randomized.polyTimeModel.Eff (Randomized.boolVerifier M') := eff_mapCoins hM hC
++  obtain ⟨V, _, hV, _, hMV⟩ :=
++    (Randomized.polyTimeModel_eff_iff (Randomized.boolVerifier M')).mp hM'
++  have hVeq (x u : List Bool) : M' x u = true ↔ pairEncode x u ∈ V := by
++    simpa only [Randomized.boolVerifier_apply, Option.some.injEq] using (hMV x u).1
++  have hw : PolyTimeComputable fun x => List.replicate (w x.length) true := by
++    have h := polyTimeComputable_ite (short_poly polyTimeComputable_id n₀)
++      (polyTimeComputable_unaryPoly (polyLenExpr a k)) (polyTimeComputable_ceilRoot hd)
++    convert h using 1
++    funext x
++    simp only [id_eq, decide_eq_true_eq, eval_polyLenExpr, w]
++    split_ifs <;> rfl
++  have hclose (x : List Bool) :
++      |(Randomized.randProb (w x.length) (fun u => M' x u = true) : ℝ) -
++        (Randomized.randProb (Randomized.polyLen a k x.length)
++          (fun r => M x r = true) : ℝ)| ≤ (1 : ℝ) / 12 := by
++    by_cases hx : x.length < n₀
++    · have heq : Randomized.randProb (w x.length) (fun u => M' x u = true) =
++          Randomized.randProb (Randomized.polyLen a k x.length) (fun r => M x r = true) := by
++        simp only [w, if_pos hx]
++        apply Randomized.randProb_congr
++        intro u
++        simp only [M', C, pairFstD_pairEncode, pairSndD_pairEncode, if_pos hx]
++      rw [heq, sub_self, abs_zero]
++      norm_num
++    · simpa only [w, if_neg hx, M', C, pairFstD_pairEncode, pairSndD_pairEncode]
++        using hgap x (by omega)
++  have hmajority (x : List Bool) : x ∈ L ↔
++      (1 / 2 : ℚ) < Randomized.randProb (w x.length) (fun u => M' x u = true) := by
++    have hb := abs_le.mp (hclose x)
++    constructor
++    · intro hx
++      have htrue : (2 : ℝ) / 3 ≤
++          (Randomized.randProb (Randomized.polyLen a k x.length)
++            (fun r => M x r = true) : ℝ) := by
++        rw [show (2 : ℝ) / 3 = ((2 / 3 : ℚ) : ℝ) by norm_num, Rat.cast_le]
++        exact (hcorrect x).1 hx
++      have hhalf : (1 : ℝ) / 2 <
++          (Randomized.randProb (w x.length) (fun u => M' x u = true) : ℝ) := by
++        linarith
++      apply (Rat.cast_lt (K := ℝ)).mp
++      simpa only [Rat.cast_div, Rat.cast_one, Rat.cast_ofNat] using hhalf
++    · intro hx
++      by_contra hnot
++      have hfalse := (hcorrect x).2 hnot
++      rw [Randomized.randProb_bool_false] at hfalse
++      have htrue :
++          (Randomized.randProb (Randomized.polyLen a k x.length)
++            (fun r => M x r = true) : ℝ) ≤ (1 : ℝ) / 3 := by
++        rw [show (1 : ℝ) / 3 = ((1 / 3 : ℚ) : ℝ) by norm_num, Rat.cast_le]
++        linarith
++      have hhalf : (1 : ℝ) / 2 <
++          (Randomized.randProb (w x.length) (fun u => M' x u = true) : ℝ) := by
++        simpa only [Rat.cast_div, Rat.cast_one, Rat.cast_ofNat] using
++          (Rat.cast_lt (K := ℝ)).mpr hx
++      linarith
++  refine ⟨V, w, n₀, hV, hw, fun n hn => if_neg (Nat.not_lt_of_ge hn), ?_⟩
++  ext x
++  change x ∈ L ↔ 2 ^ w x.length <
++    2 * (Finset.univ.filter fun u : Fin (w x.length) → Bool =>
++      pairEncode x (List.ofFn u) ∈ V).card
++  rw [← Randomized.half_lt_randProb_iff (w x.length) (fun u => pairEncode x u ∈ V)]
++  have hp := Randomized.randProb_congr (m := w x.length)
++    (A := fun u => M' x u = true) (B := fun u => pairEncode x u ∈ V)
++    (fun u => hVeq x (List.ofFn u))
++  rw [← hp]
++  exact hmajority x
++
++end TCSlib.Cryptography.Randomness.Derand
+diff --git a/TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean b/TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..a4b8418bc76680299d4364172f2fecb758968b46
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Derandomization/RootSchedule.lean
+@@ -0,0 +1,167 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import Mathlib.Analysis.SpecialFunctions.Pow.NthRootLemmas
++import TCSlib.Complexity.Randomized.Repetition
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# An integer-root seed schedule
++
++The schedule in the proof of [PS10, Theorem 180.1] is the least natural `t` with
++`n ≤ t ^ d`. It uses the existing natural `nthRoot`; its unary implementation
++searches through `0, …, n` with integer length comparisons and fixed powers.
++
++## Main definitions
++
++* `TCSlib.Cryptography.Randomness.Derand.ceilRoot`: a ceiling root, defined over naturals.
++
++## Main results
++
++* `TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_iff`: its least-root property.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, §8.2, Theorem 180.1.
++-/
++
++namespace TCSlib.Cryptography.Randomness.Derand
++
++open Complexity Turing
++
++/-- The natural ceiling-root schedule is zero at zero and otherwise one more than
++the existing floor root of `n - 1`:
++`ceilRoot d n = if n = 0 then 0 else Nat.nthRoot d (n - 1) + 1`.
++For `0 < d`, this is `min {t | n ≤ t ^ d}`. [PS10, §8.2, Theorem 180.1] -/
++def ceilRoot (d n : ℕ) : ℕ := if n = 0 then 0 else Nat.nthRoot d (n - 1) + 1
++
++/-- The ceiling-root schedule satisfies
++`ceilRoot d n = if n = 0 then 0 else Nat.nthRoot d (n - 1) + 1`. -/
++theorem ceilRoot_eq (d n : ℕ) :
++    ceilRoot d n = if n = 0 then 0 else Nat.nthRoot d (n - 1) + 1 := rfl
++
++/-- For `0 < d`, the root is at most `t` exactly when `n ≤ t ^ d`:
++`ceilRoot d n ≤ t ↔ n ≤ t ^ d`. [PS10, §8.2, Theorem 180.1] -/
++theorem ceilRoot_le_iff {d : ℕ} (hd : 0 < d) (n t : ℕ) :
++    ceilRoot d n ≤ t ↔ n ≤ t ^ d := by
++  rw [ceilRoot_eq]
++  by_cases hn : n = 0
++  · subst n
++    simp
++  · rw [if_neg hn]
++    have h := Nat.nthRoot_lt_iff (n := d) (a := n - 1) (b := t) hd.ne'
++    omega
++
++/-- For `0 < d`, the scheduled seed length covers the input:
++`n ≤ (ceilRoot d n) ^ d`. [PS10, §8.2, Theorem 180.1] -/
++theorem le_ceilRoot_pow {d : ℕ} (hd : 0 < d) (n : ℕ) : n ≤ (ceilRoot d n) ^ d :=
++  (ceilRoot_le_iff hd n (ceilRoot d n)).mp le_rfl
++
++/-- The zero input has zero seed length: `ceilRoot d 0 = 0`. -/
++theorem ceilRoot_zero (d : ℕ) : ceilRoot d 0 = 0 := by
++  rw [ceilRoot_eq, if_pos rfl]
++
++
++/-- The schedule is bounded by the input length:
++`ceilRoot d n ≤ n` when `0 < d`. [PS10, §8.2, Theorem 180.1] -/
++theorem ceilRoot_le_nat {d : ℕ} (hd : 0 < d) (n : ℕ) : ceilRoot d n ≤ n := by
++  apply (ceilRoot_le_iff hd n n).mpr
++  by_cases hn : n = 0
++  · subst n
++    exact Nat.zero_le _
++  · calc
++      n = n ^ 1 := (pow_one n).symm
++      _ ≤ n ^ d := Nat.pow_le_pow_right (by omega) hd
++
++/-- The strict lower-bound form of the least-root property is
++`t < ceilRoot d n ↔ t ^ d < n` when `0 < d`. -/
++theorem lt_ceilRoot_iff {d : ℕ} (hd : 0 < d) (n t : ℕ) :
++    t < ceilRoot d n ↔ t ^ d < n := by
++  have h := ceilRoot_le_iff hd n t
++  omega
++
++/-- The integer schedule is within one of the real root:
++`(ceilRoot d n : ℝ) ≤ (n : ℝ) ^ (1 / d) + 1` for `0 < d`.
++[PS10, §8.2, Theorem 180.1] -/
++theorem ceilRoot_le_real {d : ℕ} (hd : 0 < d) (n : ℕ) :
++    (ceilRoot d n : ℝ) ≤ (n : ℝ) ^ (1 / (d : ℝ)) + 1 := by
++  by_cases hn : n = 0
++  · subst n
++    rw [ceilRoot_zero]
++    simpa only [Nat.cast_zero] using
++      add_nonneg (Real.rpow_nonneg (show (0 : ℝ) ≤ 0 from le_rfl) (1 / (d : ℝ)))
++        zero_le_one
++  · have hpow : ((Nat.nthRoot d (n - 1) : ℕ) : ℝ) ^ d ≤ (n : ℝ) := by
++      exact_mod_cast (Nat.pow_nthRoot_le (n := d) (a := n - 1) (Or.inl hd.ne')).trans
++        (Nat.sub_le n 1)
++    have hr := (Real.le_rpow_inv_iff_of_pos
++      (show 0 ≤ ((Nat.nthRoot d (n - 1) : ℕ) : ℝ) from Nat.cast_nonneg _)
++      (show 0 ≤ (n : ℝ) from Nat.cast_nonneg _)
++      (show 0 < (d : ℝ) by exact_mod_cast hd)).mpr
++        (by simpa only [Real.rpow_natCast] using hpow)
++    rw [ceilRoot_eq, if_neg hn, Nat.cast_add, Nat.cast_one]
++    simpa only [one_div] using add_le_add_right hr 1
++
++/-- The unary ceiling-root word is polynomial-time computable:
++`x ↦ 1 ^ (ceilRoot d |x|)` belongs to `FP` for each fixed positive `d`.
++[PS10, §8.2, Theorem 180.1]
++
++**Proof sketch.** Use `polyTimeComputable_stateFind` with the unary counter as
++state. Each round appends one token. The test compares `|x|` with the fixed
++power of the counter length, using `StateLoop.unaryPoly_comp` and
++`StateLoop.lenLe_comp`. The least-root property makes the test false before
++`ceilRoot d |x|` and true there. All states up to that round have length at
++most `|x|` by `ceilRoot_le_nat`, so both the iteration and state bounds are
++the identity polynomial. The output is the counter itself. -/
++theorem polyTimeComputable_ceilRoot {d : ℕ} (hd : 0 < d) :
++    PolyTimeComputable fun x => List.replicate (ceilRoot d x.length) true := by
++  let start : List Bool → List Bool := fun _ => []
++  let step : List Bool → List Bool := fun z => pairSndD z ++ [true]
++  let acc : List Bool → Bool := fun z =>
++    decide ((pairFstD z).length ≤ (pairSndD z).length ^ d)
++  have hstart : PolyTimeComputable start := polyTimeComputable_const []
++  have hstep : PolyTimeComputable step :=
++    polyTimeComputable_pairSndD.append (polyTimeComputable_const [true])
++  have hpower : PolyTimeComputable fun z =>
++      List.replicate ((pairSndD z).length ^ d) true := by
++    simpa only [PolyExpr.eval_pow, PolyExpr.eval_var] using
++      StateLoop.unaryPoly_comp (.pow .var d) polyTimeComputable_pairSndD
++  have hacc : PolyTimeComputable fun z => [acc z] := by
++    simpa only [acc, List.length_replicate] using
++      StateLoop.lenLe_comp hpower polyTimeComputable_pairFstD
++  have horbit (x : List Bool) (i : ℕ) :
++      StateLoop.orbit start step x i = List.replicate i true := by
++    induction i with
++    | zero => rw [StateLoop.orbit_zero]; rfl
++    | succ i ih =>
++        rw [StateLoop.orbit_succ, ih]
++        simp only [step, pairSndD_pairEncode]
++        change List.replicate i true ++ List.replicate 1 true = _
++        rw [← List.replicate_add]
++  have hN (x : List Bool) : ceilRoot d x.length ≤ PolyExpr.var.eval x.length := by
++    simpa only [PolyExpr.eval_var] using ceilRoot_le_nat hd x.length
++  have hbound (x : List Bool) (i : ℕ) (hi : i ≤ ceilRoot d x.length) :
++      (StateLoop.orbit start step x i).length ≤ PolyExpr.var.eval x.length := by
++    rw [horbit, List.length_replicate]
++    exact hi.trans (hN x)
++  have hfirst (x : List Bool) (i : ℕ) (hi : i < ceilRoot d x.length) :
++      acc (pairEncode x (StateLoop.orbit start step x i)) = false := by
++    simp only [acc, horbit, pairFstD_pairEncode, pairSndD_pairEncode,
++      List.length_replicate, decide_eq_false_iff_not]
++    exact Nat.not_le_of_lt ((lt_ceilRoot_iff hd x.length i).mp hi)
++  have hlast (x : List Bool) :
++      acc (pairEncode x (StateLoop.orbit start step x (ceilRoot d x.length))) = true := by
++    simp only [acc, horbit, pairFstD_pairEncode, pairSndD_pairEncode,
++      List.length_replicate, decide_eq_true_eq]
++    exact le_ceilRoot_pow hd x.length
++  have h := polyTimeComputable_stateFind hstart hstep hacc polyTimeComputable_pairSndD
++    .var .var (fun x => ceilRoot d x.length) hN hbound hfirst hlast
++  simpa only [horbit, pairSndD_pairEncode] using h
++
++end TCSlib.Cryptography.Randomness.Derand
+diff --git a/TCSlib/Cryptography/Randomness/Derandomization/TimeBound.lean b/TCSlib/Cryptography/Randomness/Derandomization/TimeBound.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..4ecbaba98110b91d74daaa2c73649197c440a7b3
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Derandomization/TimeBound.lean
+@@ -0,0 +1,142 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
++import TCSlib.Cryptography.Randomness.Derandomization.RootSchedule
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The subexponential seed-enumeration bound
++
++A ceiling-root seed width eventually satisfies `w(n) ≤ n^(1/d)+1`.
++For `1/d < ε`, its exponential times any fixed polynomial is eventually
++below `2^(n^ε)`. A single natural constant absorbs every earlier length.
++
++## Main results
++
++* `TCSlib.Cryptography.Randomness.Derand.exists_root_degree`: a positive
++  integer degree valid for every real `ε > 0`.
++* `TCSlib.Cryptography.Randomness.Derand.seed_time_le_subexp`: the global
++  time bound, including the finite exceptional lengths.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes,
++  3rd ed., January 2010, §8.2, Theorem 180.1.
++-/
++
++namespace TCSlib.Cryptography.Randomness.Derand
++
++open Filter Topology
++
++/-- Every positive real exponent admits a fixed integer degree:
++`∃ d ≥ 2, 1 / (d : ℝ) < ε ∧ 1 / (d : ℝ) < 1`.
++[PS10, §8.2, Theorem 180.1] -/
++theorem exists_root_degree {ε : ℝ} (hε : 0 < ε) :
++    ∃ d : ℕ, 2 ≤ d ∧ 1 / (d : ℝ) < ε ∧ 1 / (d : ℝ) < 1 := by
++  obtain ⟨d, hd⟩ := exists_nat_gt (max (1 / ε) 1)
++  have hd1 : (1 : ℝ) < d := (le_max_right _ _).trans_lt hd
++  have hdp : (0 : ℝ) < d := lt_trans zero_lt_one hd1
++  have hde : 1 / ε < (d : ℝ) := (le_max_left _ _).trans_lt hd
++  have hmul := (div_lt_iff₀ hε).mp hde
++  refine ⟨d, ?_, (div_lt_iff₀ hdp).mpr (by nlinarith), (div_lt_one hdp).mpr hd1⟩
++  have : 1 < d := by exact_mod_cast hd1
++  omega
++
++/-- If `w n = ceilRoot d n` from some length onward and `1/d < ε`, then
++`2^(w n) * (n+1)^e ≤ C * ⌈2^(n^ε)⌉₊` for one natural `C` and every `n`.
++[PS10, §8.2, Theorem 180.1]
++
++**Proof sketch.** Divide the logarithmic upper bound
++`(n^(1/d)+1) log 2 + e(log 2 + log n)` by `n^ε`. Its root term tends to zero
++as `n^(1/d-ε)`, its constant term does so because `n^ε → ∞`, and its logarithm
++term does so by Mathlib's `isLittleO_log_rpow_atTop`. Eventually the quotient
++is below `log 2`. For `n ≥ 1`, use `n+1 ≤ 2n`, the ceiling-root bound and
++monotonicity of logarithms to bound the actual enumeration time. Exponentiating
++gives the desired real bound, and rounding up preserves it. For earlier lengths,
++one plus the sum of their time bounds is enough, because the rounded bound
++is positive at every length. -/
++theorem seed_time_le_subexp {d : ℕ} (hd : 0 < d) {ε : ℝ} (hε : 0 < ε)
++    (hr : 1 / (d : ℝ) < ε) (w : ℕ → ℕ) (n₀ : ℕ)
++    (hw : ∀ n, n₀ ≤ n → w n = ceilRoot d n) (e : ℕ) :
++    ∃ C : ℕ, ∀ n, 2 ^ w n * (n + 1) ^ e ≤
++      C * ⌈(2 : ℝ) ^ ((n : ℝ) ^ ε)⌉₊ := by
++  let r : ℝ := 1 / (d : ℝ)
++  have hratio : Tendsto (fun x : ℝ => x ^ r / x ^ ε) atTop (𝓝 0) := by
++    apply (tendsto_rpow_neg_atTop (sub_pos.mpr hr)).congr'
++    filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
++    rw [show -(ε - r) = r - ε by ring, Real.rpow_sub hx]
++  have hconst : Tendsto (fun x : ℝ => 1 / x ^ ε) atTop (𝓝 0) := by
++    simpa only [one_div] using (tendsto_rpow_atTop hε).inv_tendsto_atTop
++  have hlog : Tendsto (fun x : ℝ => Real.log x / x ^ ε) atTop (𝓝 0) :=
++    (isLittleO_log_rpow_atTop hε).tendsto_div_nhds_zero
++  have hsum : Tendsto (fun x : ℝ => Real.log 2 * (x ^ r / x ^ ε) +
++      (((e : ℝ) + 1) * Real.log 2) * (1 / x ^ ε) +
++      (e : ℝ) * (Real.log x / x ^ ε)) atTop (𝓝 0) := by
++    simpa only [mul_zero, zero_add, add_zero] using
++      ((hratio.const_mul (Real.log 2)).add
++        (hconst.const_mul (((e : ℝ) + 1) * Real.log 2))).add (hlog.const_mul (e : ℝ))
++  have hlim : Tendsto (fun x : ℝ =>
++      ((x ^ r + 1) * Real.log 2 + (e : ℝ) * (Real.log 2 + Real.log x)) / x ^ ε)
++      atTop (𝓝 0) := by
++    apply hsum.congr'
++    exact Eventually.of_forall fun x => by ring
++  have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
++  obtain ⟨N, hN⟩ := eventually_atTop.mp
++    ((hlim.comp tendsto_natCast_atTop_atTop).eventually (gt_mem_nhds hlog2))
++  let K := max N (max n₀ 1)
++  let f (n : ℕ) := 2 ^ w n * (n + 1) ^ e
++  have hevent (n : ℕ) (hn : K ≤ n) : f n ≤ ⌈(2 : ℝ) ^ ((n : ℝ) ^ ε)⌉₊ := by
++    have hnN : N ≤ n := (le_max_left _ _).trans hn
++    have hnn₀ : n₀ ≤ n := (le_max_left n₀ 1).trans ((le_max_right _ _).trans hn)
++    have hn1 : 1 ≤ n := (le_max_right n₀ 1).trans ((le_max_right _ _).trans hn)
++    have hnr : (1 : ℝ) ≤ n := by exact_mod_cast hn1
++    have hnp : (0 : ℝ) < n := lt_of_lt_of_le zero_lt_one hnr
++    have hbudget := (div_lt_iff₀ (Real.rpow_pos_of_pos hnp ε)).mp (hN n hnN)
++    have hroot : (w n : ℝ) ≤ (n : ℝ) ^ r + 1 := by
++      rw [hw n hnn₀]
++      exact ceilRoot_le_real hd n
++    have hsucc : Real.log ((n : ℝ) + 1) ≤ Real.log 2 + Real.log (n : ℝ) := by
++      calc
++        Real.log ((n : ℝ) + 1) ≤ Real.log (2 * (n : ℝ)) :=
++          Real.log_le_log (by positivity) (by linarith)
++        _ = Real.log 2 + Real.log (n : ℝ) := Real.log_mul (by norm_num) hnp.ne'
++    have hactual : Real.log (f n : ℝ) ≤ Real.log 2 * (n : ℝ) ^ ε := by
++      calc
++        Real.log (f n : ℝ) = (w n : ℝ) * Real.log 2 +
++            (e : ℝ) * Real.log ((n : ℝ) + 1) := by
++          simp only [f, Nat.cast_mul, Nat.cast_pow, Nat.cast_add, Nat.cast_one,
++            Nat.cast_ofNat]
++          rw [Real.log_mul (by positivity) (by positivity), Real.log_pow, Real.log_pow]
++        _ ≤ ((n : ℝ) ^ r + 1) * Real.log 2 +
++            (e : ℝ) * (Real.log 2 + Real.log (n : ℝ)) :=
++          add_le_add (mul_le_mul_of_nonneg_right hroot hlog2.le)
++            (mul_le_mul_of_nonneg_left hsucc (Nat.cast_nonneg e))
++        _ ≤ Real.log 2 * (n : ℝ) ^ ε := hbudget.le
++    have hreal : (f n : ℝ) ≤ (2 : ℝ) ^ ((n : ℝ) ^ ε) := by
++      apply (Real.log_le_log_iff (by dsimp only [f]; positivity)
++        (Real.rpow_pos_of_pos (by norm_num) _)).mp
++      rw [Real.log_rpow (by norm_num)]
++      nlinarith [hactual]
++    exact_mod_cast hreal.trans (Nat.le_ceil _)
++  let C := 1 + ∑ i ∈ Finset.range K, f i
++  refine ⟨C, fun n => ?_⟩
++  have hC : 1 ≤ C := by dsimp only [C]; omega
++  by_cases hn : K ≤ n
++  · exact (hevent n hn).trans (Nat.le_mul_of_pos_left _ hC)
++  · have hsmall : f n ≤ ∑ i ∈ Finset.range K, f i :=
++      Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_range.mpr (by omega))
++    have hb : 1 ≤ ⌈(2 : ℝ) ^ ((n : ℝ) ^ ε)⌉₊ :=
++      Nat.ceil_pos.mpr (Real.rpow_pos_of_pos (by norm_num) _)
++    have hsmallC : f n ≤ C := by
++      dsimp only [C]
++      omega
++    exact hsmallC.trans
++      (by simpa only [Nat.mul_one] using Nat.mul_le_mul_left C hb)
++
++end TCSlib.Cryptography.Randomness.Derand

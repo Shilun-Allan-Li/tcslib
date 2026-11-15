@@ -1,0 +1,11 @@
+2026-11-15T12:04:05.553946+00:00 Waiting for the existing final-full writer; no slot held by this controller
+2026-11-15T12:24:08.119992+00:00 387/387 final modules passed; starting post-checks in the now-idle olean tree
+2026-11-15T12:24:54.519848+00:00 ['python3', '-I', 'evidence/tools/check_modules.py', 'final-replay-axioms', 'evidence/axioms/final/order.txt']: exit=0 log=evidence/logs/post-replay-01.log
+2026-11-15T12:25:01.293176+00:00 ['python3', '-I', 'evidence/tools/check_modules.py', 'final-replay-paths', 'evidence/axioms/final/host-paths-order.txt']: exit=0 log=evidence/logs/post-replay-02.log
+2026-11-15T12:25:06.369875+00:00 ['python3', '-I', 'evidence/tools/final_validate.py']: exit=0 log=evidence/logs/post-replay-03.log
+2026-11-15T12:25:06.657139+00:00 ['python3', '-I', 'evidence/tools/check_sorries.py', '.', 'final-full', '--removed', 'exists_seedMajorityTM', '--removed', 'seedMajority_mem_DTIME', '--removed', 'bpp_subset_dtime_subexp']: exit=0 log=evidence/logs/post-replay-04.log
+2026-11-15T12:25:06.842304+00:00 ['python3', '-I', 'evidence/tools/frozen_headers.py', '--out', 'evidence/headers/final-replay']: exit=0 log=evidence/logs/post-replay-05.log
+2026-11-15T12:25:11.141721+00:00 ['python3', '-I', 'evidence/tools/lint_compare.py']: exit=0 log=evidence/logs/post-replay-06.log
+2026-11-15T12:25:14.695072+00:00 ['python3', '-I', 'evidence/tools/name_clash_all.py']: exit=0 log=evidence/logs/post-replay-07.log
+2026-11-15T12:25:15.379949+00:00 ['python3', '-I', 'evidence/tools/explicit_unfold_scan.py']: exit=0 log=evidence/logs/post-replay-08.log
+2026-11-15T12:25:15.380170+00:00 POST-REPLAY PASS

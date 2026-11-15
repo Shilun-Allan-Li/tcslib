@@ -1,13 +1,31 @@
-$ git clone --quiet --shared --no-checkout /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-exchange /private/tmp/derand-worker/reproduction-checkpoint1
+$ git clone --quiet --shared --no-checkout /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-exchange /private/tmp/derand-worker/reproduction-checkpoint2
 EXIT 0
 
 $ git checkout --quiet --detach 01de2d8baed9113e4a099e13c5d50c81e6dbc66f
 EXIT 0
 
-$ git -c commit.gpgsign=false am --quiet /private/tmp/derand-worker/payloads/checkpoint1/derand/patches/0001-fill-derand-checkpoint-1.patch
+$ git -c commit.gpgsign=false am --quiet /private/tmp/derand-worker/payloads/checkpoint2/derand/patches/0001-fill-derand-checkpoint-1.patch
 EXIT 0
 
 EXPECTED 776dabdabb276c75b98780e5018275fbcdc25e3a
 ACTUAL 776dabdabb276c75b98780e5018275fbcdc25e3a
+
+$ git -c commit.gpgsign=false am --quiet /private/tmp/derand-worker/payloads/checkpoint2/derand/patches/0002-fill-derand-prove-Theorem-180.1-from-the-seed-majori.patch
+EXIT 0
+
+EXPECTED 0c7862af4943c075a9db31ad5e6ac79665c39c49
+ACTUAL 0c7862af4943c075a9db31ad5e6ac79665c39c49
+
+$ git -c commit.gpgsign=false am --quiet /private/tmp/derand-worker/payloads/checkpoint2/derand/patches/0003-fill-derand-checkpoint-2-prove-the-seed-majority-mac.patch
+EXIT 0
+
+EXPECTED 904123d3780cc1f5daf4f37ad49d90395595c1a9
+ACTUAL 904123d3780cc1f5daf4f37ad49d90395595c1a9
+
+$ git -c commit.gpgsign=false am --quiet /private/tmp/derand-worker/payloads/checkpoint2/derand/patches/0004-fill-derand-final.patch
+EXIT 0
+
+EXPECTED 5e12a169e671dc16b6766e21067b79c16835af67
+ACTUAL 5e12a169e671dc16b6766e21067b79c16835af67
 
 REPRODUCTION PASS

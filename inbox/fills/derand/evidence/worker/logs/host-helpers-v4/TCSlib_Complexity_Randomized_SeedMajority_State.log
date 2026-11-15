@@ -1,0 +1,49 @@
+START 2026-11-15T11:02:47.628031+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Complexity/Randomized/SeedMajority/State']
+TCSlib/Complexity/Randomized/SeedMajority/State.lean:149:2: error: unsolved goals
+case neg
+V : Language Bool
+w : ℕ → ℕ
+x : List Bool
+i a : ℕ
+h : pairEncode x (word (w x.length) i) ∉ V
+⊢ pairEncode x
+      (pairEncode (i + 1).bits (BinArith.add (pairEncode a.bits (if false = true then Nat.bits 1 else Nat.bits 0)))) =
+    pairEncode x (pairEncode (i + 1).bits a.bits)
+TCSlib/Complexity/Randomized/SeedMajority/State.lean:149:25: warning: This simp argument is unused:
+  ↓reduceIte
+
+Hint: Omit it from the simp argument list.
+  simp only [if_neg h, ↓̵r̵e̵d̵u̵c̵e̵I̵t̵e̵,̵ ̵BinArith.add_pairEncode, Nat.add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/Randomized/SeedMajority/State.lean:149:37: warning: This simp argument is unused:
+  BinArith.add_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [if_neg h, ↓reduceIte, B̵i̵n̵A̵r̵i̵t̵h̵.̵a̵d̵d̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵,̵ ̵Nat.add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Complexity/Randomized/SeedMajority/State): lean exited with status 1
+FAIL(TCSlib/Complexity/Randomized/SeedMajority/State): error diagnostics reported
+FAIL(TCSlib/Complexity/Randomized/SeedMajority/State): no fresh .olean produced
+        2.11 real         1.46 user         0.97 sys
+          1993687040  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              159471  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  15  voluntary context switches
+                8241  involuntary context switches
+            33005300  instructions retired
+            15745507  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T11:02:49.772502+00:00
+EXIT 1

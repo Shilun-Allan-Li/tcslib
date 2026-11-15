@@ -1,0 +1,29 @@
+START 2026-11-15T12:20:23.053418+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Cryptography/OneWayFunctions/Amplification']
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:113:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.OneWay.yaoInverter_def`:
+  [Fintype α]
+  [Fintype ρ]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] [Fintype ρ] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+        3.20 real         2.87 user         0.98 sys
+          2188820480  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179174  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  15  voluntary context switches
+                7829  involuntary context switches
+            30983632  instructions retired
+            14356646  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T12:20:26.281932+00:00
+EXIT 0

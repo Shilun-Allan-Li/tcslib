@@ -1,0 +1,146 @@
+START 2026-11-15T11:04:39.225413+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Complexity/Randomized/SeedMajority/Enumeration']
+TCSlib/Complexity/Randomized/SeedMajority/Enumeration.lean:112:15: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (IterateFind.step (advance V w) P x)^[2 ^ w x.length] (pairEncode x (state x 0 0))
+in the target expression
+  (match some (2 ^ w x.length) with
+    | some i => payload w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0))))
+    | none => []) =
+    [decide (2 ^ w x.length < 2 * {u | pairEncode x (List.ofFn u) ∈ V}.card)]
+
+case h
+V : Language Bool
+hV : V ∈ Complexity.P
+w : ℕ → ℕ
+hw : PolyTimeComputable fun x => List.replicate (w x.length) true
+C c : ℕ
+hwidth : ∀ (x : List Bool), (List.replicate (w x.length) true).length ≤ C * (x.length + 1) ^ c
+hwlen : ∀ (x : List Bool), w x.length ≤ C * (x.length + 1) ^ c
+P : PolyExpr :=
+  (((PolyExpr.const 2).mul PolyExpr.var).add
+        ((PolyExpr.const (3 * C)).mul ((PolyExpr.var.add (PolyExpr.const 1)).pow c))).add
+    (PolyExpr.const 7)
+hstate : ∀ (x : List Bool), ∀ i ≤ 2 ^ w x.length, (state x i (count V x (w x.length) i)).length ≤ P.eval x.length
+hinit : ∀ (x : List Bool), (state x 0 0).length ≤ P.eval x.length
+horbit :
+  ∀ (x : List Bool),
+    ∀ i ≤ 2 ^ w x.length,
+      (IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0)) =
+        pairEncode x (state x i (count V x (w x.length) i))
+hfind :
+  ∀ (x : List Bool),
+    List.find? (fun i => finished w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0)))))
+        (List.range (2 ^ w x.length + 1)) =
+      some (2 ^ w x.length)
+F : FinTM Bool
+aF dF : ℕ
+hF : F.ComputesFunInTime (fun x => (2 ^ w x.length).bits) fun n => aF * (n + 1) ^ dF
+M : FinTM Bool
+c₀ A D : ℕ
+hM :
+  M.ComputesFunInTime
+    (fun x =>
+      match
+        List.find?
+          (fun i => finished w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0)))))
+          (List.range (2 ^ w x.length + 1)) with
+      | some i => payload w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0))))
+      | none => [])
+    fun n => c₀ * (A * (2 * n + 2 + P.eval n + 5) ^ D + 1) * (2 ^ w n + 2)
+x : List Bool
+⊢ (match some (2 ^ w x.length) with
+    | some i => payload w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0))))
+    | none => []) =
+    [decide (2 ^ w x.length < 2 * {u | pairEncode x (List.ofFn u) ∈ V}.card)]
+TCSlib/Complexity/Randomized/SeedMajority/Enumeration.lean:114:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  fun x =>
+    match
+      List.find?
+        (fun i => finished w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0)))))
+        (List.range (2 ^ w x.length + 1)) with
+    | some i => payload w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0))))
+    | none => []
+in the target expression
+  M.ComputesFunInTime
+    (fun x =>
+      match
+        List.find?
+          (fun i => finished w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0)))))
+          (List.range (2 ^ w x.length + 1)) with
+      | some i => payload w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0))))
+      | none => [])
+    fun n => c₀ * (A * (2 * n + 2 + P.eval n + 5) ^ D + 1) * (2 ^ w n + 2)
+
+V : Language Bool
+hV : V ∈ Complexity.P
+w : ℕ → ℕ
+hw : PolyTimeComputable fun x => List.replicate (w x.length) true
+C c : ℕ
+hwidth : ∀ (x : List Bool), (List.replicate (w x.length) true).length ≤ C * (x.length + 1) ^ c
+hwlen : ∀ (x : List Bool), w x.length ≤ C * (x.length + 1) ^ c
+P : PolyExpr :=
+  (((PolyExpr.const 2).mul PolyExpr.var).add
+        ((PolyExpr.const (3 * C)).mul ((PolyExpr.var.add (PolyExpr.const 1)).pow c))).add
+    (PolyExpr.const 7)
+hstate : ∀ (x : List Bool), ∀ i ≤ 2 ^ w x.length, (state x i (count V x (w x.length) i)).length ≤ P.eval x.length
+hinit : ∀ (x : List Bool), (state x 0 0).length ≤ P.eval x.length
+horbit :
+  ∀ (x : List Bool),
+    ∀ i ≤ 2 ^ w x.length,
+      (IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0)) =
+        pairEncode x (state x i (count V x (w x.length) i))
+hfind :
+  ∀ (x : List Bool),
+    List.find? (fun i => finished w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0)))))
+        (List.range (2 ^ w x.length + 1)) =
+      some (2 ^ w x.length)
+F : FinTM Bool
+aF dF : ℕ
+hF : F.ComputesFunInTime (fun x => (2 ^ w x.length).bits) fun n => aF * (n + 1) ^ dF
+M : FinTM Bool
+c₀ A D : ℕ
+hM :
+  M.ComputesFunInTime
+    (fun x =>
+      match
+        List.find?
+          (fun i => finished w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0)))))
+          (List.range (2 ^ w x.length + 1)) with
+      | some i => payload w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0))))
+      | none => [])
+    fun n => c₀ * (A * (2 * n + 2 + P.eval n + 5) ^ D + 1) * (2 ^ w n + 2)
+hresult :
+  (fun x =>
+      match
+        List.find?
+          (fun i => finished w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0)))))
+          (List.range (2 ^ w x.length + 1)) with
+      | some i => payload w (pairSndD ((IterateFind.step (advance V w) P x)^[i] (pairEncode x (state x 0 0))))
+      | none => []) =
+    fun x => [decide (2 ^ w x.length < 2 * {u | pairEncode x (List.ofFn u) ∈ V}.card)]
+⊢ ∃ M c e,
+    M.ComputesFunInTime (fun x => [decide (2 ^ w x.length < 2 * {u | pairEncode x (List.ofFn u) ∈ V}.card)]) fun n =>
+      c * (2 ^ w n * (n + 1) ^ e)
+FAIL(TCSlib/Complexity/Randomized/SeedMajority/Enumeration): lean exited with status 1
+FAIL(TCSlib/Complexity/Randomized/SeedMajority/Enumeration): error diagnostics reported
+FAIL(TCSlib/Complexity/Randomized/SeedMajority/Enumeration): no fresh .olean produced
+        2.34 real         1.39 user         0.96 sys
+          2001141760  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              161984  page reclaims
+                 262  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  80  voluntary context switches
+                3608  involuntary context switches
+            33019511  instructions retired
+            15066858  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T11:04:41.603932+00:00
+EXIT 1

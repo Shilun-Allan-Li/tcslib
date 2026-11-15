@@ -1,0 +1,39 @@
+START 2026-11-15T10:58:00.036088+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Complexity/Randomized/SeedMajority/Words']
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:80:42: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:120:26: warning: `Finset.range_succ` has been deprecated: Use `Finset.range_add_one` instead
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:122:28: warning: `Finset.card_insert_of_not_mem` has been deprecated: Use `Finset.card_insert_of_notMem` instead
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:123:6: error: omega could not prove the goal:
+No usable constraints found. You may need to unfold definitions so `omega` can see linear arithmetic facts about `Nat` and `Int`, which may also involve multiplication, division, and modular remainder by constants.
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:124:4: error: No goals to be solved
+TCSlib/Complexity/Randomized/SeedMajority/Words.lean:154:8: error: Type mismatch: After simplification, term
+  word_eq_ofFn m i hi
+ has type
+  word m i = List.ofFn ((Randomized.bitsEquiv m).symm ⟨i, hi⟩)
+but is expected to have type
+  word m i = List.ofFn u
+FAIL(TCSlib/Complexity/Randomized/SeedMajority/Words): lean exited with status 1
+FAIL(TCSlib/Complexity/Randomized/SeedMajority/Words): error diagnostics reported
+FAIL(TCSlib/Complexity/Randomized/SeedMajority/Words): no fresh .olean produced
+        3.01 real         1.29 user         1.10 sys
+          1981235200  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              140535  page reclaims
+               17702  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1268  voluntary context switches
+               10917  involuntary context switches
+            32961114  instructions retired
+            17638045  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T10:58:03.071977+00:00
+EXIT 1

@@ -1,0 +1,36 @@
+START 2026-11-15T10:27:31.360931+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'TCSlib/Cryptography/Randomness/Derandomization/AdviceGap']
+TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:53:2: error: Type mismatch: After simplification, term
+  hV x (C (pairEncode x r))
+ has type
+  (some (M x (C (pairEncode x r))) = some true ↔ pairEncode x (C (pairEncode x r)) ∈ V₁) ∧
+    (some (M x (C (pairEncode x r))) = some false ↔ pairEncode x (C (pairEncode x r)) ∈ V₀)
+but is expected to have type
+  (some (M x (C (pairEncode x r))) = some true ↔ pairEncode x r ∈ (fun z => pairEncode (pairFstD z) (C z)) ⁻¹' V₁) ∧
+    (some (M x (C (pairEncode x r))) = some false ↔ pairEncode x r ∈ (fun z => pairEncode (pairFstD z) (C z)) ⁻¹' V₀)
+TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:106:12: error: typeclass instance problem is stuck, it is often due to metavariables
+  Nonempty ?m.207
+TCSlib/Cryptography/Randomness/Derandomization/AdviceGap.lean:107:4: error: No goals to be solved
+FAIL(TCSlib/Cryptography/Randomness/Derandomization/AdviceGap): lean exited with status 1
+FAIL(TCSlib/Cryptography/Randomness/Derandomization/AdviceGap): error diagnostics reported
+FAIL(TCSlib/Cryptography/Randomness/Derandomization/AdviceGap): no fresh .olean produced
+        2.57 real         1.65 user         1.04 sys
+          2264334336  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              182010  page reclaims
+                  14  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  17  voluntary context switches
+                4279  involuntary context switches
+            32358373  instructions retired
+            15832320  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T10:27:33.955364+00:00
+EXIT 1

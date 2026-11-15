@@ -1,0 +1,120 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean
+@@ -669,4 +669,88 @@
+   have hB : (t : ℤ) ≤ B arg.length := by exact_mod_cast ht
+   exact (host_call_envelope M K hk ctrl ret q₀ i x arg pre t v hv j).trans hB
+ 
++/-- A typed view of the existing finite host: its tape count is `K`, its state type
++is `State C M`, and its underlying machine is that of `hostTM M K hk ctrl ret q₀`.
++The explicit constructor fields keep those types available when `hostTM` is sealed;
++this reducible view has exactly the same machine, rather than a new transition table. -/
++abbrev hostTMView {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
++    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M) : FinTM Bool where
++  k := K
++  State := State C M
++  tm := (hostTM M K hk ctrl ret q₀).tm
++
++/-- The typed view is the original bundled host:
++`hostTMView M K hk ctrl ret q₀ = hostTM M K hk ctrl ret q₀`. -/
++theorem hostTMView_eq {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
++    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M) :
++    hostTMView M K hk ctrl ret q₀ = hostTM M K hk ctrl ret q₀ := rfl
++
++/-- The typed host starts in the supplied state:
++`(hostTMView M K hk ctrl ret q₀).tm.q₀ = q₀`. -/
++theorem hostTMView_q₀ {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
++    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M) :
++    (hostTMView M K hk ctrl ret q₀).tm.q₀ = q₀ := rfl
++
++/-- A control step of the typed host applies the supplied action:
++for `cfg.state = some (.inl c)`,
++`(hostTMView M K hk ctrl ret q₀).tm.step cfg =
++(ctrl c cfg.inputSymbol cfg.workTapeSymbols).apply cfg`.
++This is `hostTM_step_inl` with explicit tape and state types. -/
++theorem hostTMView_step_inl {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
++    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M) {x : List Bool}
++    (cfg : Cfg K Bool (State C M) x) (c : C) (hc : cfg.state = some (.inl c)) :
++    (hostTMView M K hk ctrl ret q₀).tm.step cfg =
++      (ctrl c cfg.inputSymbol cfg.workTapeSymbols).apply cfg :=
++  hostTM_step_inl M K hk ctrl ret q₀ cfg c hc
++
++/-- A first-halting call of duration `t` transfers to the typed host: all times
++`v < t` avoid every control state, and at `t` the seam is at `ret i`, holding
++`result` and emitting `pre ++ out`. This is exactly `host_call` for
++`hostTMView M K hk ctrl ret q₀`, with its tape and state types explicit. -/
++theorem host_call_view {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n → FinTM Bool)
++    (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M)
++    (i : Fin n) (hp : 0 < (M i).k) (x arg result out pre : List Bool)
++    (q : (M i).State) (t : ℕ)
++    (hg : ∀ v < t, ¬((M i).tm.runFrom
++      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) v).Halted)
++    (he : (M i).tm.runFrom
++      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) t =
++      {Cfg.ofWords q (stateWord (M i).k result) with state := none, output := out}) :
++    (∀ v < t, ∀ c : C, ((hostTMView M K hk ctrl ret q₀).tm.runFrom
++      {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).state
++        ≠ some (.inl c)) ∧
++    (hostTMView M K hk ctrl ret q₀).tm.runFrom
++      {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} t =
++      {Cfg.ofWords (ret i) (stateWord K result) with output := pre ++ out} :=
++  host_call M K hk ctrl ret q₀ i hp x arg result out pre q t hg he
++
++/-- A clean call in the typed host reaches `ret i` in some `0 < t ≤ B |arg|`,
++holding `f arg`, emitting `pre ++ g arg`, and avoiding every control state
++before `t`. This is exactly `host_clean` for `hostTMView M K hk ctrl ret q₀`,
++with its tape and state types explicit. -/
++theorem host_clean_view {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n → FinTM Bool)
++    (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M)
++    (i : Fin n) (f g : List Bool → List Bool) (B : ℕ → ℕ)
++    (h : Clean (M i) f g B) (x arg pre : List Bool) :
++    ∃ t, 0 < t ∧ t ≤ B arg.length ∧
++      (∀ v < t, ∀ c : C, ((hostTMView M K hk ctrl ret q₀).tm.runFrom
++        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).state
++          ≠ some (.inl c)) ∧
++      (hostTMView M K hk ctrl ret q₀).tm.runFrom
++        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} t =
++        {Cfg.ofWords (ret i) (stateWord K (f arg)) with output := pre ++ g arg} :=
++  host_clean M K hk ctrl ret q₀ i f g B h x arg pre
++
+ end Turing.ModuleHost
+--- a/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
++++ b/TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
+@@ -359,4 +359,26 @@
+   change (FinTM.controlAction 0 none).apply _ = _
+   rw [FinTM.controlAction_apply, moveInputPos_zero]
+ 
++/-- A typed view of the input copier: one work tape, state type `Fin 2`, and
++the existing `copyTM.tm` as its underlying machine. Explicit constructor fields
++keep these types available when `copyTM` is sealed. -/
++abbrev copyTMView : FinTM Bool where
++  k := 1
++  State := Fin 2
++  tm := copyTM.tm
++
++/-- The typed input copier is the original machine: `copyTMView = copyTM`. -/
++theorem copyTMView_eq : copyTMView = copyTM := rfl
++
++/-- The typed copier stays live before `2 * |x| + 2` and reaches the halted seam
++holding `x` at that time. This is `copy_clean x` with the one-tape, two-state
++types explicit; it adds no copying implementation. -/
++lemma copy_clean_view (x : List Bool) :
++    (∀ v < 2 * x.length + 2,
++      ¬(copyTMView.tm.runFrom (Cfg.ofWords (input := x) (0 : Fin 2) (stateWord 1 [])) v).Halted) ∧
++    copyTMView.tm.runFrom (Cfg.ofWords (input := x) (0 : Fin 2) (stateWord 1 []))
++        (2 * x.length + 2) =
++      {Cfg.ofWords (input := x) (0 : Fin 2) (stateWord 1 x) with state := none} :=
++  copy_clean x
++
+ end Complexity.IterateFind
