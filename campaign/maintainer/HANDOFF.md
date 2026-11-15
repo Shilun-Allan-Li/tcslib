@@ -10,15 +10,15 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 ## 0. Current state (2026-11-15; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
-only go directly after fetch/rebase. The latest merge is #310 (Ladner fill 2, gate 137).
-Campaign Lean is `fe8a8520f65a9feaa4c960c11874b68ebf8798db`. Its replay output is the cloud snapshot `oleans-cfe8a`
-(876 objects); use it whole. See campaign/status/2026-11-15-merge-310/. Ladner has four admitted
-targets left. Fills 1 and 2 are merged (#304, #310). Fill 3 (target 1 part A) is delivered and in gate 138
-(PR #320, clear to merge, with the ruled in-file dedup repair). Earlier merges are in the table.
+only go directly after fetch/rebase. The latest merge is #320 (Ladner fill 3, gate 138).
+Campaign Lean is `1320a5c8ce93f4644c2c92ed32e2768ed07ea9bb`. Its replay output is the cloud snapshot `oleans-c1320`
+(876 objects); use it whole. See campaign/status/2026-11-15-merge-320/. Ladner has four admitted
+targets left. Fills 1–3 are merged (#304, #310, #320). Next: fill 4, target 1 part B
+(selection, memo driver, readout, `ladnerH_polyTime`), brief in preparation at campaign/fills/ladner-poly-memo/. Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
-| #320 / 138 | **Clear to merge** at `fc72e67b25e79231fbb04a324d9978d9e9f00349` (round 1 CLEAR, 2026-11-15; one records minor fixed). Ladner fill 3 (target 1 part A, through `ladner_candidate_FP`) plus the ruled private dedup helpers. Replay 2/2 (`oleans-cl138-cfe8a`, prospective tree `f46a0aed`); seals 45/45. campaign/gates/138-ladner-poly-candidate/. |
+| #320 / 138 | **Merged** at `1320a5c8ce93f4644c2c92ed32e2768ed07ea9bb` (2026-11-15). Gate closed (CLEAR). Ladner fill 3: target 1 part A through `ladner_candidate_FP`, with private dedup helpers. Its replay output is the campaign snapshot `oleans-c1320` (876 objects; campaign/status/2026-11-15-merge-320/). |
 | #310 / 137 | **Merged** at `fe8a8520f65a9feaa4c960c11874b68ebf8798db` (2026-11-15). Gate closed (round 2 CLEAR). Ladner fill 2: `powCap`, padding parser, shared `sqStep` (ModPow's `powStep` re-pointed), readers `mod_eq` and `encodeNat_eq`. Its replay output is the campaign snapshot `oleans-cfe8a` (876 objects; campaign/status/2026-11-15-merge-310/). |
 | #304 / 136 | **Merged** at `a052f8891d3c4520407bf9d976421148fc0f7a02` (2026-11-14). Gate closed (CLEAR). Ladner fill 1: `ladnerH_bounded_of_mem_P`, `ladnerH_unbounded_of_not_mem_P`. Its replay output is the campaign snapshot `oleans-ca052` (876 objects; campaign/status/2026-11-14-merge-304/). |
 | #302 / 135 | **Merged** at `210d87481ad6837ec34ac8ef99e267e13ff8c95b` (2026-11-14). Gate closed (CLEAR). Its fresh replay output is the campaign snapshot `oleans-c210d` (876 objects; campaign/status/2026-11-14-merge-302/). Ladner fill 1 (dispatched) builds on its head `50bb801a`. |
