@@ -127,7 +127,7 @@ def IsOT (π : Protocol) : Prop :=
     π.V.coins = .add T.sample.coins T.sample.coins ∧ π.rounds = .const 5 ∧
       π.verifierFirst = false
 
-/-- The defining property of `IsOT`: the six field equations. -/
+/-- The defining property of `IsOT`: `IsOT T H π` iff the six field equations hold. -/
 theorem isOT_iff (π : Protocol) :
     IsOT T H π ↔
       π.P.next = senderNext T H ∧ π.V.next = receiverNext T H ∧ π.P.coins = T.gen.coins ∧

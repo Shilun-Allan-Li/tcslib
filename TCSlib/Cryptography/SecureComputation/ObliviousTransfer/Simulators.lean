@@ -66,7 +66,8 @@ of `coinSeg`): `(inCoins z).drop p(|inParam z|) |>.take q(|inParam z|)`. -/
 def simSeg (p q : PolyExpr) (z : List Bool) : List Bool :=
   ((NUPPT.inCoins z).drop (p.eval (NUPPT.inParam z).length)).take (q.eval (NUPPT.inParam z).length)
 
-/-- The defining equation of `simSeg`. -/
+/-- The defining equation of `simSeg`: `simSeg p q z =
+((inCoins z).drop p(|inParam z|)).take q(|inParam z|)`. -/
 theorem simSeg_eq (p q : PolyExpr) (z : List Bool) :
     simSeg p q z =
       ((NUPPT.inCoins z).drop (p.eval (NUPPT.inParam z).length)).take
@@ -77,7 +78,8 @@ def simIndex (z : List Bool) : List Bool :=
   pairFstD (T.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
     (simSeg (.const 0) T.gen.coins z)))
 
-/-- The defining equation of `simIndex`. -/
+/-- The defining equation of `simIndex`: `simIndex T z =
+fst Gen.output (layout (inParam z) [] [] (simSeg 0 coins_Gen z))`. -/
 theorem simIndex_eq (z : List Bool) :
     simIndex T z = pairFstD (T.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
       (simSeg (.const 0) T.gen.coins z))) := rfl
@@ -87,7 +89,8 @@ theorem simIndex_eq (z : List Bool) :
 def simSampled (p : PolyExpr) (z : List Bool) : List Bool :=
   T.sample.output (NUPPT.layout (NUPPT.inParam z) (simIndex T z) [] (simSeg p T.sample.coins z))
 
-/-- The defining equation of `simSampled`. -/
+/-- The defining equation of `simSampled`: `simSampled T p z =
+Sample.output (layout (inParam z) (simIndex T z) [] (simSeg p coins_Sample z))`. -/
 theorem simSampled_eq (p : PolyExpr) (z : List Bool) :
     simSampled T p z =
       T.sample.output (NUPPT.layout (NUPPT.inParam z) (simIndex T z) []
@@ -102,7 +105,8 @@ def simAView (z : List Bool) : List Bool :=
           (simSampled T (.add T.gen.coins T.sample.coins) z))
         (pairEncode [] [])))
 
-/-- The defining equation of `simAView`. -/
+/-- The defining equation of `simAView`: `simAView T z = ⟨⟨inParam z, fst (inArg z)⟩,
+⟨simSeg 0 coins_Gen z, [⟨y₁, y₂⟩, []]⟩⟩` with the two simulated samples `y₁, y₂`. -/
 theorem simAView_eq (z : List Bool) :
     simAView T z =
       pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
@@ -116,7 +120,8 @@ def simZbit (z : List Bool) : List Bool :=
   List.zipWith xor (H (pairEncode (simIndex T z) (simSampled T T.gen.coins z)))
     (pairSndD (NUPPT.inArg z))
 
-/-- The defining equation of `simZbit`. -/
+/-- The defining equation of `simZbit`: `simZbit T H z =
+zipWith xor (H ⟨simIndex T z, simSampled T coins_Gen z⟩) (snd (inArg z))`. -/
 theorem simZbit_eq (z : List Bool) :
     simZbit T H z =
       List.zipWith xor (H (pairEncode (simIndex T z) (simSampled T T.gen.coins z)))
@@ -131,7 +136,8 @@ def simZpair (z : List Bool) : List Bool :=
     pairEncode (simZbit T H z)
       (simSeg (.add T.gen.coins (.add T.sample.coins T.sample.coins)) (.const 1) z)
 
-/-- The defining equation of `simZpair`. -/
+/-- The defining equation of `simZpair`: `⟨c, z_b⟩` if the choice bit is set, else `⟨z_b, c⟩`,
+with `c` the last coin segment and `z_b = simZbit T H z`. -/
 theorem simZpair_eq (z : List Bool) :
     simZpair T H z =
       if (pairFstD (NUPPT.inArg z)).headD false then
@@ -148,7 +154,8 @@ def simBView (z : List Bool) : List Bool :=
     (pairEncode (simSeg T.gen.coins (.add T.sample.coins T.sample.coins) z)
       (pairEncode (simIndex T z) (pairEncode (simZpair T H z) (pairEncode [] []))))
 
-/-- The defining equation of `simBView`. -/
+/-- The defining equation of `simBView`: `simBView T H z = ⟨⟨inParam z, fst (inArg z)⟩,
+⟨simSeg coins_Gen (2 coins_Sample) z, [simIndex T z, simZpair T H z, []]⟩⟩`. -/
 theorem simBView_eq (z : List Bool) :
     simBView T H z =
       pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
@@ -162,7 +169,8 @@ def IsSimA (S : NUPPT) : Prop :=
     ∀ n y (r : S.Coins n),
       S.runAt n y r = simAView T (NUPPT.layout (List.replicate n true) y [] (List.ofFn r))
 
-/-- The defining property of `IsSimA`. -/
+/-- The defining property of `IsSimA`: `IsSimA T S` iff `S.coins = coins_Gen + (coins_Sample +
+coins_Sample)` and `S(1^n, y; r) = simAView T (layout 1^n y [] r)`. -/
 theorem isSimA_iff (S : NUPPT) :
     IsSimA T S ↔
       S.coins = .add T.gen.coins (.add T.sample.coins T.sample.coins) ∧
@@ -177,7 +185,8 @@ def IsSimB (S : NUPPT) : Prop :=
     ∀ n y (r : S.Coins n),
       S.runAt n y r = simBView T H (NUPPT.layout (List.replicate n true) y [] (List.ofFn r))
 
-/-- The defining property of `IsSimB`. -/
+/-- The defining property of `IsSimB`: `IsSimB T H S` iff its coins are `coins_Gen +
+(coins_Sample + (coins_Sample + 1))` and `S(1^n, y; r) = simBView T H (layout 1^n y [] r)`. -/
 theorem isSimB_iff (S : NUPPT) :
     IsSimB T H S ↔
       S.coins = .add T.gen.coins (.add T.sample.coins (.add T.sample.coins (.const 1))) ∧
@@ -251,7 +260,11 @@ theorem simAView_layout (n : ℕ) (y : List Bool) (r : T.gen.Coins n)
 
 /-- **`S_B`'s view on the tape `r ++ (s₁ ++ (s₂ ++ c))`**:
 `⟨⟨1^n, fst y⟩, ⟨s₁ ++ s₂, [i, Z, []]⟩⟩` with `i = index n r`, `z_b = H ⟨i, Sample(i; s₁)⟩ ⊕ snd y`
-and `Z = ⟨c, z_b⟩` if `(fst y).headD false`, else `⟨z_b, c⟩`. -/
+and `Z = ⟨c, z_b⟩` if `(fst y).headD false`, else `⟨z_b, c⟩`.
+
+**Proof sketch.** The coin segments of the tape are `s₁ ++ s₂` and `c` (`simSeg_layout`), the
+simulated index is `index n r` (`simIndex_layout`) and the first simulated sample is
+`Sample(i; s₁)` (`simSampled_layout`); rewrite `simBView`, `simZpair` and `simZbit` with them. -/
 theorem simBView_layout (n : ℕ) (y : List Bool) (r : T.gen.Coins n)
     (s₁ s₂ : T.sample.Coins n) (c : Fin 1 → Bool) :
     simBView T H (NUPPT.layout (List.replicate n true) y []

@@ -107,7 +107,8 @@ def maskRaw (z yj bt : List Bool) : List Bool :=
     (T.inv.output (NUPPT.layout (NUPPT.inParam z) (pairEncode (pairSndD (genRaw T z)) yj) []
       (List.replicate (T.inv.coins.eval (NUPPT.inParam z).length) true))))) bt
 
-/-- The defining equation of `maskRaw`. -/
+/-- The defining equation of `maskRaw`: `maskRaw T H z yj bt =
+zipWith xor (H ⟨i, Inv(inParam z, ⟨t, yj⟩; 1^{inv})⟩) bt` with `⟨i, t⟩ = genRaw T z`. -/
 theorem maskRaw_eq (z yj bt : List Bool) :
     maskRaw T H z yj bt =
       List.zipWith xor (H (pairEncode (pairFstD (genRaw T z))
@@ -144,7 +145,8 @@ def senderRaw (z : List Bool) : List Bool :=
         [((pairSndD (pairFstD (NUPPT.inArg z))).drop 1).headD false])
   else []
 
-/-- The defining equation of `senderRaw`. -/
+/-- The defining equation of `senderRaw`: with `w = snd (inArg z)`, `fst (genRaw T z)` if
+`w = []`, the two raw masks if `snd w = []`, else `[]`. -/
 theorem senderRaw_eq (z : List Bool) :
     senderRaw T H z =
       if decide (pairSndD (NUPPT.inArg z) = []) then pairFstD (genRaw T z)
@@ -226,7 +228,8 @@ def knownRaw (z : List Bool) : List Bool :=
   T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (pairSndD (NUPPT.inArg z))) []
     ((NUPPT.inCoins z).take (T.sample.coins.eval (NUPPT.inParam z).length)))
 
-/-- The defining equation of `knownRaw`. -/
+/-- The defining equation of `knownRaw`: `knownRaw T z = Sample(inParam z, fst w;
+(inCoins z).take coins_Sample(n))` with `w = snd (inArg z)`. -/
 theorem knownRaw_eq (z : List Bool) :
     knownRaw T z =
       T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (pairSndD (NUPPT.inArg z))) []
@@ -237,7 +240,8 @@ def rawRaw (z : List Bool) : List Bool :=
   T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (pairSndD (NUPPT.inArg z))) []
     ((NUPPT.inCoins z).drop (T.sample.coins.eval (NUPPT.inParam z).length)))
 
-/-- The defining equation of `rawRaw`. -/
+/-- The defining equation of `rawRaw`: `rawRaw T z = Sample(inParam z, fst w;
+(inCoins z).drop coins_Sample(n))` with `w = snd (inArg z)`. -/
 theorem rawRaw_eq (z : List Bool) :
     rawRaw T z =
       T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (pairSndD (NUPPT.inArg z))) []
@@ -251,7 +255,8 @@ def outRaw (z : List Bool) : List Bool :=
       pairSndD (pairFstD (pairSndD (pairSndD (NUPPT.inArg z))))
     else pairFstD (pairFstD (pairSndD (pairSndD (NUPPT.inArg z)))))
 
-/-- The defining equation of `outRaw`. -/
+/-- The defining equation of `outRaw`: `outRaw T H z = zipWith xor (H ⟨fst w, knownRaw T z⟩) z_b`
+with `z_b` the second or first projection of `fst (snd w)` by the choice bit. -/
 theorem outRaw_eq (z : List Bool) :
     outRaw T H z =
       List.zipWith xor (H (pairEncode (pairFstD (pairSndD (NUPPT.inArg z))) (knownRaw T z)))
@@ -269,7 +274,8 @@ def pairRaw (z : List Bool) : List Bool :=
     pairEncode (T.eval (pairEncode (pairFstD (pairSndD (NUPPT.inArg z))) (knownRaw T z)))
       (rawRaw T z)
 
-/-- The defining equation of `pairRaw`. -/
+/-- The defining equation of `pairRaw`: `⟨rawRaw, eval ⟨fst w, knownRaw⟩⟩` if `b`, else
+`⟨eval ⟨fst w, knownRaw⟩, rawRaw⟩`. -/
 theorem pairRaw_eq (z : List Bool) :
     pairRaw T z =
       if (pairSndD (pairFstD (NUPPT.inArg z))).headD false then
@@ -287,7 +293,8 @@ def receiverRaw (z : List Bool) : List Bool :=
   else if decide (pairSndD (pairSndD (pairSndD (NUPPT.inArg z))) = []) then []
   else outRaw T H z
 
-/-- The defining equation of `receiverRaw`. -/
+/-- The defining equation of `receiverRaw`: with `w = snd (inArg z)`, `outRaw` if `w = []`,
+`pairRaw` if `snd w = []`, `[]` if `snd (snd w) = []`, else `outRaw`. -/
 theorem receiverRaw_eq (z : List Bool) :
     receiverRaw T H z =
       if decide (pairSndD (NUPPT.inArg z) = []) then outRaw T H z
