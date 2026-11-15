@@ -202,10 +202,13 @@ theorem runW_ilayout (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr)
     argZ_ilayout, argM_ilayout, inCoins_ilayout, ilayout_eq, encodeMsgs_slotMsgs,
     Compose.runTape_eq]
 
-/-- **`runW` is polynomial-time** when `Fρ` and `fcall` are: the layout is assembled from the
-slot projections, the unary polynomials `c₀(n)`, `c(n)`, `R(n)`, the typed cuts of the coins
-(`EncodingMachines.truncate_poly`, `Complexity.polyTimeComputable_pairDropPoly`) and the
-interleaved-slot map (`polyTimeComputable_slots`). -/
+/-- **`runW` is polynomial-time** when `Fρ` and `fcall` are.
+
+**Proof sketch.** The layout is assembled (`NUPPT.polyTimeComputable_layout`) from the slot
+projections, the unary polynomials `c₀(n)`, `c(n)`, `R(n)` (`unaryPoly_comp`), the call input
+(`fcall` after `pairEncode`), the typed cuts of the coins (`EncodingMachines.truncate_poly`,
+`Complexity.polyTimeComputable_pairDropPoly` at the unary count `c₀(n) + j·c(n)`) and the
+interleaved-slot map at the offset `R(n)·j` (`polyTimeComputable_slots`). -/
 theorem polyTimeComputable_runW {Fρ fcall : List Bool → List Bool} (hFρ : PolyTimeComputable Fρ)
     (hcall : PolyTimeComputable fcall) (c₀ c R : PolyExpr) (vF b : Bool) :
     PolyTimeComputable (runW Fρ fcall c₀ c R vF b) := by
@@ -543,11 +546,13 @@ theorem composeV_next_eq_composeVW {Fρ Fm fcall : List Bool → List Bool}
     refine List.flatMap_congr fun j hj => ?_
     rw [ofFn_padFin, hrun _ _ (List.mem_range.1 hj), runW_ilayout]
 
-/-- **`composePW` is polynomial-time** when `Fρ`, `Fm` and `fcall` are: three branches
-(`Complexity.polyTimeComputable_ite`) on unary tests of the message count `GI.msgCount_poly`
-against `L(n)·R(n)` (`ltTest_poly`, `eqTest_poly`), the mover test at `k % R`
-(`polyTimeComputable_moverW`, `modNum_poly`), and the pieces `polyTimeComputable_runW` (at
-`k / R`, `divNum_poly`), `polyTimeComputable_ansW` and `polyTimeComputable_mainW`. -/
+/-- **`composePW` is polynomial-time** when `Fρ`, `Fm` and `fcall` are.
+
+**Proof sketch.** Three branches (`Complexity.polyTimeComputable_ite`) on unary tests of the
+message count (`GI.msgCount_poly`) against `L(n)·R(n)` (`ltTest_poly`, `eqTest_poly`), the
+mover test at `k % R` (`polyTimeComputable_moverW`, `modNum_poly`), and the pieces
+`polyTimeComputable_runW` (at `k / R`, `divNum_poly`), `polyTimeComputable_ansW` and
+`polyTimeComputable_mainW`. -/
 theorem polyTimeComputable_composePW {Fρ Fm fcall : List Bool → List Bool}
     (hFρ : PolyTimeComputable Fρ) (hFm : PolyTimeComputable Fm)
     (hcall : PolyTimeComputable fcall) : PolyTimeComputable (H.composePW ρ Fρ Fm fcall) := by
@@ -578,9 +583,10 @@ theorem polyTimeComputable_composePW {Fρ Fm fcall : List Bool → List Bool}
     (polyTimeComputable_ite hlead (polyTimeComputable_const []) hmain)).congr
     fun w => (H.composePW_eq ρ Fρ Fm fcall w).symm
 
-/-- **`composeVW` is polynomial-time** when `Fρ`, `Fm` and `fcall` are (as
-`polyTimeComputable_composePW`, with the count `k − 1`, `unarySub_poly`, and the drop count
-`L(n)·R(n) + lead`). -/
+/-- **`composeVW` is polynomial-time** when `Fρ`, `Fm` and `fcall` are.
+
+**Proof sketch.** As `polyTimeComputable_composePW`, with the count `k − 1` (`unarySub_poly`),
+two branches in the run phase and the drop count `L(n)·R(n) + lead` (`unaryAdd_poly`). -/
 theorem polyTimeComputable_composeVW {Fρ Fm fcall : List Bool → List Bool}
     (hFρ : PolyTimeComputable Fρ) (hFm : PolyTimeComputable Fm)
     (hcall : PolyTimeComputable fcall) : PolyTimeComputable (H.composeVW ρ Fρ Fm fcall) := by
