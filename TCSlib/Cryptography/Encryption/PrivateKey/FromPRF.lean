@@ -8,6 +8,7 @@ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
 import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.Hybrid
 import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
 import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.MultiMsgOut
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
 
 set_option maxHeartbeats 0
@@ -30,7 +31,8 @@ Decryption recomputes the mask and checks the ciphertext format [PS10, Algorithm
 
 * `prfScheme_multiEncDist` identifies the ciphertext sampler with the encoded real hybrid.
 * `prfScheme_multiMessageSecure` lifts the six-hybrid bound to a negligible advantage against
-  non-uniform polynomial-time distinguishers [PS10, Theorem 99.2].
+  non-uniform polynomial-time distinguishers [PS10, Theorem 99.2]; it is the case `ℓ = var` of
+  `MultiMsg.exists_negligible_distAdv_prfEncRealOut` (`FromPRF.MultiMsgOut`).
 * `exists_multiMessageSecure_of_prf` and `exists_multiMessageSecure_of_exists_prg` give the
   existence results from a PRF and, via GGM, from a PRG.
 
@@ -38,7 +40,9 @@ Decryption recomputes the mask and checks the ciphertext format [PS10, Algorithm
 
 * `FromPRF.Hybrid` proves the concrete six-hybrid bound.
 * `FromPRF.HybridLemmas` supplies the collision and coin-relabelling estimates.
-* `FromPRF.ReductionMachine` implements the next-query reduction and proves its run agreement.
+* `FromPRF.ReductionMachine` implements the next-query reduction and proves its run agreement,
+  at `ℓ(n)`-bit answers as well.
+* `FromPRF.MultiMsgOut` proves the multi-message bound for a family with `ℓ(n)`-bit outputs.
 
 ## References
 
@@ -237,6 +241,12 @@ distinguisher: `encodeList` of the pairs `⟨r_j, c_j⟩`. -/
 def encodeTuple {n q : ℕ} (v : Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) : List Bool :=
   PrivateKeyScheme.encodeList (List.ofFn fun j => pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2))
 
+/-- The encoded tuple is the case `l = n` of `encodeTupleOut`:
+`encodeTuple v = encodeTupleOut v` (both are `encodeList` of the pairs `⟨⟦r_j⟧, ⟦c_j⟧⟩`). -/
+theorem encodeTuple_eq_encodeTupleOut {n q : ℕ}
+    (v : Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) : encodeTuple v = encodeTupleOut v := by
+  rw [encodeTuple, encodeTupleOut_eq]
+
 /-- `encodeList l` is the concatenation of the self-delimited chunks `⟨c, []⟩`, `c ∈ l`. -/
 private theorem encodeList_eq_flatMap : ∀ l : List (List Bool),
     PrivateKeyScheme.encodeList l = l.flatMap fun c => pairEncode c []
@@ -251,7 +261,8 @@ theorem encodeTuple_eq_flatten {n q : ℕ} (v : Fin (q + 1) → (Fin n → Bool)
     encodeTuple v =
       (List.ofFn fun j =>
         pairEncode (pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2)) []).flatten := by
-  rw [encodeTuple, encodeList_eq_flatMap, MultiMsg.flatMap_ofFn]
+  rw [encodeTuple_eq_encodeTupleOut]
+  exact encodeTupleOut_eq_flatten v
 
 /-- **The coins of the multi-message experiment of Algorithm 99.1 are bit strings**: the key
 coins of `Gen` and the `q + 1` coin strings of `Enc` are `n`-bit strings,
@@ -316,96 +327,33 @@ a pseudorandom function family.
 **Deviation:** the collision bound is `C(q(n)+1, 2) · 2^{−n}` for the `q(n) + 1` values
 `r₀, …, r_{q(n)}` (the text writes `C(q(n), 2) · 2^{−n}`; source error 35 of the plan).
 
-**Proof sketch.** Fix a non-uniform PPT `D` and a budget polynomial `q`. At each `n` choose a
-pair of message vectors `(mⁿ, m'ⁿ)` maximizing
-`distAdv (multiEncDist n (q n) m) (multiEncDist n (q n) m') (D.distinguisherL n)` over the finite
-type of pairs (`Finset.exists_max_image`; the text: "there exists messages `m̄`, `m̄'` … for
-infinitely many `n`", hard-wired as advice). *Concrete step:* by `prfScheme_multiEncDist` both
-samplers are `encodeTuple ∘ prfEncReal (F n) mⁿ` resp. `m'ⁿ` on the seed space
-`K × (Fin (q n + 1) → {0,1}^n)` (the gen coins are the `n`-bit key and the enc coins the points,
-definitionally), so with `Dⁿ v c := D.distinguisherL n (encodeTuple v) c` the sunglass identity
-`distAdv_comp` and `distAdv_prfEncReal_le` bound the advantage at `n` by
-`prfAdv (F n) (multiMsgAdv mⁿ Dⁿ) + prfAdv (F n) (multiMsgAdv m'ⁿ Dⁿ) + 2 · C(q n + 1, 2) / 2^n`
-— the six hybrids `H¹, …, H⁶` of the text. *Machine step* (Thm-99.2.1 as an `NUPPT`): for
-`v ∈ {m, m'}` the next-query machine `B_v` has advice `⟨encodeList (ofFn (ofFn ∘ vⁿ)), D.advice n⟩`
-(`NUPPT.exists_withAdvice`, bound `.add (.mul (.add q (.const 1)) (.add (.mul (.const 2) .var) (.const 2))) D.adv`-style),
-coins `(q + 1) · var + D.coins` (`NUPPT.exists_split` with `p := .mul (.add q (.const 1)) .var`: the
-first `(q n + 1) n` coins are the points `r₀ … r_{q n}`, read as blocks by
-`Complexity.polyTimeComputable_blockMap .var`), and on the encoded history `hist` outputs: if
-`|hist| ≤ q n` the query `⟨[false], r_{|hist|}⟩` (history length by `polyTimeComputable_blockMap`
-counting, `pairDecode`/`decodeFin` are FP), else the verdict `[true, b]` where `b` is `D`'s
-verdict on `encodeTuple (r_j, v_j ⊕ ans_j)_j` (`polyTimeComputable_pairXor` blockwise,
-`NUPPT.exists_comp`). By induction on the history, `buildTree` with budget `q n + 1` from `[]`
-is the chain `chainTree (q n + 1) r (…)`, i.e.
-`B_v.toOracleAdversary n n n (q n + 1) = multiMsgAdv vⁿ Dⁿ` up to the coin bijection
-`B_v.Coins n ≃ (Fin (q n + 1) → {0,1}^n) × D.Coins n` (`FunFamily.blocks`, `Fin.appendEquiv`),
-so `acceptProb_comp_equiv` gives `prfAdv (F n) (B_v^{(q n + 1)}) = prfAdv (F n) (multiMsgAdv vⁿ Dⁿ)`.
-*Asymptotic step:* `hF.negligible_prfAdv B_v (.add q (.const 1))` makes both PRF terms
-negligible; the collision term is negligible by `negligible_two_pow_neg` and
-`Negligible.mul_pow`/`Negligible.const_mul` with `C(q n + 1, 2) ≤ (q n + 1)^2 ≤ C'(n + 1)^{2d}`
-from `PolyExpr.eval_le` (`Nat.choose_le_pow`); `Negligible.add` twice, and by maximality
-`ε n := ` this sum bounds the advantage for every `n, m, m'`. -/
+**Proof sketch.** The case `ℓ = var` of `MultiMsg.exists_negligible_distAdv_prfEncRealOut`
+(applied to `hF.pseudorandom`), which maximizes over the message pairs, builds the next-query
+machines of Thm-99.2.1 (`MultiMsg.exists_queryChainOut_nuppt`) and bounds the advantage by the
+six hybrids (`distAdv_prfEncRealOut_le`), two PRF advantages and the collision term. The
+ciphertext tuples of Algorithm 99.1 are `encodeTuple ∘ prfEncReal (F n) m` on the seeds
+`prfScheme_coinsEquiv` (`prfScheme_multiEncDist`), i.e. `encodeTupleOut ∘ prfEncRealOut (F n) m`
+(`encodeTuple_eq_encodeTupleOut`, `prfEncReal_eq_prfEncRealOut`); relabel the seeds
+(`acceptProb_comp_equiv`). -/
 theorem prfScheme_multiMessageSecure (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
     (hF : PRF F) (E : List Bool → List Bool) (hE : PolyTimeComputable E)
     (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)) :
     (prfScheme F E hE hFE).MultiMessageSecure := by
   refine (PrivateKeyScheme.multiMessageSecure_iff _).2 fun D q => ?_
-  -- the worst message pair at each parameter (hard-wired into the reductions)
-  have hmax : ∀ n, ∃ p : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool),
-      ∀ w : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool),
-        distAdv ((prfScheme F E hE hFE).multiEncDist n (q.eval n) w.1)
-            ((prfScheme F E hE hFE).multiEncDist n (q.eval n) w.2) (D.distinguisherL n) ≤
-          distAdv ((prfScheme F E hE hFE).multiEncDist n (q.eval n) p.1)
-            ((prfScheme F E hE hFE).multiEncDist n (q.eval n) p.2) (D.distinguisherL n) := by
-    intro n
-    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
-      (fun w : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool) =>
-        distAdv ((prfScheme F E hE hFE).multiEncDist n (q.eval n) w.1)
-          ((prfScheme F E hE hFE).multiEncDist n (q.eval n) w.2) (D.distinguisherL n))
-      Finset.univ_nonempty
-    exact ⟨p, fun w => hp w (Finset.mem_univ w)⟩
-  choose μ hμ using hmax
-  -- the next-query machines of Thm-99.2.1 for the two hard-wired message vectors
-  obtain ⟨B₀, hB₀⟩ := MultiMsg.exists_queryChain_nuppt D q fun n => (μ n).1
-  obtain ⟨B₁, hB₁⟩ := MultiMsg.exists_queryChain_nuppt D q fun n => (μ n).2
-  refine ⟨fun n => prfAdv (F n) (B₀.toOracleAdversary n n n (q.eval n + 1)) +
-      prfAdv (F n) (B₁.toOracleAdversary n n n (q.eval n + 1)) +
-      2 * ((Nat.choose (q.eval n + 1) 2 : ℝ) / 2 ^ n), ?_, fun n m m' => ?_⟩
-  · -- the asymptotic step: two PRF advantages and the collision term
-    simpa only [PolyExpr.eval_add, PolyExpr.eval_const] using
-      ((hF.negligible_prfAdv B₀ (.add q (.const 1))).add
-        (hF.negligible_prfAdv B₁ (.add q (.const 1)))).add
-        ((MultiMsg.negligible_choose_div_two_pow q).const_mul 2)
-  · refine (hμ n (m, m')).trans ?_
-    -- the concrete step: the ciphertext tuples are `encodeTuple ∘ prfEncReal`
-    have key : ∀ m₀ : Fin (q.eval n + 1) → Fin n → Bool,
-        (prfScheme F E hE hFE).multiEncDist n (q.eval n) m₀ =
-          fun r => encodeTuple (prfEncReal (F n) m₀ (prfScheme_coinsEquiv F E hE hFE n (q.eval n) r)) :=
-      fun m₀ => funext fun r => prfScheme_multiEncDist F E hE hFE n (q.eval n) m₀ r
-    -- the machine step: the oracle adversaries of `B₀`, `B₁` are the `multiMsgAdv`
-    have hadv : ∀ (B : NUPPT) (v : Fin (q.eval n + 1) → Fin n → Bool)
-        (φ : (Fin (q.eval n + 1) → Fin n → Bool) × D.Coins n ≃ B.Coins n),
-        (∀ (g : (Fin n → Bool) → (Fin n → Bool)) ρ c,
-          (B.toOracleAdversary n n n (q.eval n + 1) (φ (ρ, c))).eval g =
-            decide (D.runAt n (List.ofFn fun j =>
-              pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (v j + g (ρ j)))) []).flatten c =
-                [true])) →
-        prfAdv (F n) (B.toOracleAdversary n n n (q.eval n + 1)) =
-          prfAdv (F n) (multiMsgAdv v fun w c => D.distinguisherL n (encodeTuple w) c) := by
-      intro B v φ hφ
-      refine MultiMsg.prfAdv_congr_equiv (F n) _ _ φ fun g w => ?_
-      rw [hφ g w.1 w.2, eval_multiMsgAdv, NUPPT.distinguisherL_eq, encodeTuple_eq_flatten]
-    obtain ⟨φ₀, hφ₀⟩ := hB₀ n
-    obtain ⟨φ₁, hφ₁⟩ := hB₁ n
-    dsimp only
-    rw [hadv B₀ (μ n).1 φ₀ hφ₀, hadv B₁ (μ n).2 φ₁ hφ₁, key, key, distAdv_def,
-      acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
-        (fun s => encodeTuple (prfEncReal (F n) (μ n).1 s)),
-      acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
-        (fun s => encodeTuple (prfEncReal (F n) (μ n).2 s)), ← distAdv_def]
-    exact (distAdv_comp encodeTuple (prfEncReal (F n) (μ n).1) (prfEncReal (F n) (μ n).2)
-      (D.distinguisherL n)).symm.trans_le (distAdv_prfEncReal_le (F n) (μ n).1 (μ n).2
-        (fun w c => D.distinguisherL n (encodeTuple w) c))
+  obtain ⟨ε, hε, hb⟩ := MultiMsg.exists_negligible_distAdv_prfEncRealOut hF.pseudorandom D q
+  refine ⟨ε, hε, fun n m m' => ?_⟩
+  -- the ciphertext tuples are `encodeTupleOut ∘ prfEncRealOut` on relabelled seeds
+  have key : ∀ m₀ : Fin (q.eval n + 1) → Fin n → Bool,
+      (prfScheme F E hE hFE).multiEncDist n (q.eval n) m₀ = fun r =>
+        encodeTupleOut (prfEncRealOut (F n) m₀ (prfScheme_coinsEquiv F E hE hFE n (q.eval n) r)) :=
+    fun m₀ => funext fun r => by
+      rw [prfScheme_multiEncDist, encodeTuple_eq_encodeTupleOut, prfEncReal_eq_prfEncRealOut]
+  rw [key, key, distAdv_def,
+    acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+      (fun s => encodeTupleOut (prfEncRealOut (F n) m s)),
+    acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+      (fun s => encodeTupleOut (prfEncRealOut (F n) m' s)), ← distAdv_def]
+  exact hb n m m'
 
 /-- **Multi-message secure private-key encryption exists if a PRF exists** ([PS10, §3.9]):
 the scheme of Algorithm 99.1 with the evaluator of `PRF.easy`. -/
