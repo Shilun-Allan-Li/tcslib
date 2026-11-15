@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Accept
+import TCSlib.Cryptography.HardcoreBit.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -146,8 +147,9 @@ theorem inB_val (n : ℕ) (zB rB : List Bool) (j : Fin (H.calls.eval n)) :
 **Proof sketch.** `¬ GoodRuns` is the union over the calls `j` of the event that run `j`'s
 outputs are wrong (`goodRuns_iff`; `uprob_exists_le`). For fixed `main`-tapes `m` that event
 concerns the run tapes `t j` only, on the call inputs of `m`, which have `G`'s lengths
-(`inA_val`, `inB_val`): its probability is at most `ε_c` (`uprob_coord`), hence so is its
-average over `m` (`uprob_prod`, `uexp_le_of_le`). -/
+(`inA_val`, `inB_val`): its probability is at most `ε_c` (`HardcoreBit.pushesUniform_eval`),
+hence so is its average over `m` (`uprob_prod`, `HardcoreBit.uexp_mono`,
+`HardcoreBit.uexp_const`). -/
 theorem uprob_not_goodRuns_le (n : ℕ) (zA zB : List Bool) (εc : ℝ)
     (hc : ∀ (xA : Fin (G.inA.eval n) → Bool) (yB : Fin (G.inB.eval n) → Bool),
       uprob (fun t : ρ.ExecCoins ρ.P (List.replicate n true) =>
@@ -192,8 +194,8 @@ theorem uprob_not_goodRuns_le (n : ℕ) (zA zB : List Bool) (εc : ℝ)
         uprob_exists_le _ _
     _ ≤ ∑ _j ∈ (univ : Finset (Fin (H.calls.eval n))), εc := sum_le_sum fun j _ => by
         rw [uprob_prod]
-        refine ComposeProb.uexp_le_of_le fun m => ?_
-        rw [ComposeProb.uprob_coord j (bad m j)]
+        refine (HardcoreBit.uexp_mono fun m => ?_).trans_eq (HardcoreBit.uexp_const (εc))
+        rw [(HardcoreBit.pushesUniform_eval j).uprob_eq (bad m j)]
         exact hc _ _
     _ = H.calls.eval n * εc := by rw [sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul]
 

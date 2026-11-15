@@ -15,20 +15,19 @@ set_option autoImplicit false
 
 The distinguishing-advantage manipulations of the proof of [Gol04, §7.3.1, Theorem 7.3.3]
 (`HybridProtocol.hbcSecure_compose`), on uniform seeds and coins (`acceptProb`, `distAdv`):
-* the triangle inequality for `distAdv`;
 * the statistical switch: two samplers on one seed space that agree off a bad event are within
   the bad event's probability;
-* unused seeds: adding a seed coordinate the sampler ignores does not change acceptance;
 * fixing coordinates: the advantage between two samplers on `σ × τ` is at most the advantage of
   their sections at the worst `a : σ` (the advice of a non-uniform reduction);
-* a probability over `Fin L → Y` of an event of one coordinate is that event's probability;
 * a negligible function times a polynomial is negligible.
+
+Unused seed coordinates are dropped by the published `acceptProb_fst`, `acceptProb_snd`
+(`Pseudorandom/Indistinguishability.lean`).
 
 ## Main results
 
-* `ComposeProb.distAdv_triangle`, `ComposeProb.distAdv_le_uprob_of_eq`,
-  `ComposeProb.acceptProb_seed_fst`, `ComposeProb.exists_abs_sub_le_sections`,
-  `ComposeProb.uprob_coord`, `ComposeProb.negligible_polyExpr_mul`.
+* `ComposeProb.abs_uprob_sub_le`, `ComposeProb.distAdv_le_uprob_of_eq`,
+  `ComposeProb.exists_abs_sub_le_sections`, `ComposeProb.negligible_polyExpr_mul`.
 
 ## References
 
@@ -43,13 +42,6 @@ namespace TCSlib.Cryptography.SecureComputation.ComposeProb
 open Finset Complexity
 
 variable {σ τ υ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype υ] [Fintype ρ]
-
-/-- **Triangle inequality** for the distinguishing advantage:
-`distAdv X Z D ≤ distAdv X Y D + distAdv Y Z D`. -/
-theorem distAdv_triangle (X : σ → γ) (Y : τ → γ) (Z : υ → γ) (D : γ → ρ → Bool) :
-    distAdv X Z D ≤ distAdv X Y D + distAdv Y Z D := by
-  rw [distAdv_def, distAdv_def, distAdv_def]
-  exact abs_sub_le _ _ _
 
 /-- Two events that agree off a third: `|Pr[A] − Pr[B]| ≤ Pr[C]` when `A ↔ B` outside `C`. -/
 theorem abs_uprob_sub_le {A B C : υ → Prop} (h : ∀ u, ¬ C u → (A u ↔ B u)) :
@@ -67,11 +59,6 @@ theorem abs_uprob_sub_le {A B C : υ → Prop} (h : ∀ u, ¬ C u → (A u ↔ B
   rw [abs_le]
   constructor <;> linarith
 
-/-- An event of the first coordinate has the same probability on the product with the coins:
-`uprob (fun z : σ × ρ => p z.1) = uprob p` (`uprob_fst`). -/
-theorem uprob_fst_eq [Nonempty ρ] (p : σ → Prop) : uprob (fun z : σ × ρ => p z.1) = uprob p :=
-  uprob_fst p
-
 /-- **The statistical switch** ("agree off a bad event"): if the samplers `X`, `Y` on one seed
 space agree at every seed outside `bad`, then `distAdv X Y D ≤ Pr_s[bad s]`.
 
@@ -79,26 +66,8 @@ space agree at every seed outside `bad`, then `distAdv X Y D ≤ Pr_s[bad s]`.
 (`abs_uprob_sub_le`), whose probability is `Pr[bad]` (`uprob_fst`). -/
 theorem distAdv_le_uprob_of_eq [Nonempty ρ] (X Y : σ → γ) (D : γ → ρ → Bool) (bad : σ → Prop)
     (h : ∀ s, ¬ bad s → X s = Y s) : distAdv X Y D ≤ uprob bad := by
-  rw [distAdv_def, acceptProb_def, acceptProb_def, ← uprob_fst_eq (ρ := ρ) bad]
+  rw [distAdv_def, acceptProb_def, acceptProb_def, ← uprob_fst (β := ρ) bad]
   exact abs_uprob_sub_le fun z hz => by rw [h z.1 hz]
-
-/-- **Unused seeds**: a sampler that ignores the second seed coordinate has the acceptance
-probability of its first-coordinate sampler:
-`acceptProb (fun z : σ × τ => X z.1) D = acceptProb X D` (`uprob_comp_equiv`, `uprob_fst`). -/
-theorem acceptProb_seed_fst [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
-    acceptProb (fun z : σ × τ => X z.1) D = acceptProb X D := by
-  rw [acceptProb_def, acceptProb_def]
-  let f : (σ × ρ) × τ ≃ (σ × τ) × ρ :=
-    { toFun := fun v => ((v.1.1, v.2), v.1.2)
-      invFun := fun w => ((w.1.1, w.2), w.1.2)
-      left_inv := fun _ => rfl
-      right_inv := fun _ => rfl }
-  calc uprob (fun w : (σ × τ) × ρ => D (X w.1.1) w.2 = true)
-      = uprob (fun v : (σ × ρ) × τ => D (X (f v).1.1) (f v).2 = true) :=
-        (uprob_comp_equiv f (fun w : (σ × τ) × ρ => D (X w.1.1) w.2 = true)).symm
-    _ = uprob (fun v : (σ × ρ) × τ => D (X v.1.1) v.1.2 = true) := rfl
-    _ = uprob (fun v : σ × ρ => D (X v.1) v.2 = true) :=
-        uprob_fst (fun v : σ × ρ => D (X v.1) v.2 = true)
 
 /-- **Acceptance as an average of sections**: `acceptProb X D` is the average over `a : σ` of
 the acceptance probability of the section `t ↦ X (a, t)` (`uprob_prod` after reassociating). -/
@@ -129,21 +98,6 @@ theorem exists_abs_sub_le_sections [Nonempty σ] (X Y : σ × τ → γ) (D : γ
       |acceptProb (fun t => X (a, t)) D - acceptProb (fun t => Y (a, t)) D| := by
   rw [acceptProb_eq_uexp_sections X, acceptProb_eq_uexp_sections Y]
   exact exists_abs_uexp_sub_le _ _
-
-/-- **An event of one coordinate**: over `t : Fin L → Y`, the probability of an event of `t j`
-is the probability of the event (`Equiv.piSplitAt`, `uprob_fst`). -/
-theorem uprob_coord {Y : Type*} [Fintype Y] {L : ℕ} (j : Fin L) (p : Y → Prop) :
-    uprob (fun t : Fin L → Y => p (t j)) = uprob p := by
-  rcases isEmpty_or_nonempty Y with hY | hY
-  · have h1 : Fintype.card (Fin L → Y) = 0 :=
-      Fintype.card_eq_zero_iff.2 ⟨fun t => hY.false (t j)⟩
-    rw [uprob_def, uprob_def, h1, Fintype.card_eq_zero, Nat.cast_zero, div_zero, div_zero]
-  · calc uprob (fun t : Fin L → Y => p (t j))
-        = uprob (fun t => (fun z : Y × ({k // k ≠ j} → Y) => p z.1)
-            (Equiv.funSplitAt j Y t)) := rfl
-      _ = uprob (fun z : Y × ({k // k ≠ j} → Y) => p z.1) :=
-        uprob_comp_equiv (Equiv.funSplitAt j Y) (fun z : Y × ({k // k ≠ j} → Y) => p z.1)
-      _ = uprob p := uprob_fst p
 
 /-- **A negligible function times a polynomial is negligible**: for `p : PolyExpr`,
 `n ↦ p(n) · μ(n)` is negligible.

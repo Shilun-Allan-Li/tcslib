@@ -34,7 +34,6 @@ The bookkeeping between the distinguishers and simulators of the composition the
 
 * `ComposeProb.acceptProb_pre`, `ComposeProb.acceptProb_post_pre`, `ComposeProb.acceptProb_test`,
   `ComposeProb.exists_test`.
-* `ComposeProb.uexp_le_of_le`: an average below a bound.
 
 ## References
 
@@ -89,15 +88,6 @@ theorem coinBlock_blocksCoins {m q b : ℕ} (h : m = q * b) (t : Fin q → Fin b
       exact List.length_ofFn) j (by rw [List.length_ofFn]; exact j.2), List.getElem_ofFn]
 
 /-! ### Acceptance -/
-
-/-- **An average below a bound**: `(∀ a, f a ≤ c) → uexp f ≤ c` (for nonempty `α`). -/
-theorem uexp_le_of_le {α : Type*} [Fintype α] [Nonempty α] {f : α → ℝ} {c : ℝ}
-    (h : ∀ a, f a ≤ c) : uexp f ≤ c := by
-  have hc : (0 : ℝ) < Fintype.card α := Nat.cast_pos.2 Fintype.card_pos
-  rw [uexp_def, div_le_iff₀ hc]
-  calc ∑ a, f a ≤ ∑ _a : α, c := Finset.sum_le_sum fun a _ => h a
-    _ = c * Fintype.card α := by
-      rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_comm]
 
 /-- **A distinguisher with pre-processing and extra coins**: if `B` has coins `p + D.coins` and
 `B(1^n, w; r) = D(1^n, Ψ w r_{<p(n)}; r_{≥p(n)})`, then
