@@ -41,7 +41,7 @@ theorem acceptProb_prod {A B O C : Type*} [Fintype A] [Fintype B] [Fintype C]
     (F : A × B → O) (D : O → C → Bool) :
     acceptProb F D = uexp (fun a => acceptProb (fun b => F (a, b)) D) := by
   rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc A B C).symm, uprob_prod]
-  rfl
+  simp only [acceptProb_def, Equiv.prodAssoc_symm_apply]
 
 /-- Replacing coordinate `i` of a uniform tuple by an independent uniform value leaves
 acceptance unchanged: `Pr[D(F(update table i fresh))] = Pr[D(F table)]`. -/
