@@ -1,0 +1,109 @@
+Seed-majority host statement, round 2b (Rule 10: corollary admitted until mem_DTIME_iff), #312.
+Nothing pushed. Prepared 2026-11-15 UTC by Claude (session_01PqpVTiuDcjSqhyfbqnsVxA).
+Method and tools: ../stmt-derand-r2/ (PROVENANCE.txt), copied into tools/ unchanged, plus
+tools/rawheaders.py, tools/mkprobes.py, tools/edit.py (new; each has its own docstring).
+
+why      seedMajority_mem_DTIME was proved from exists_seedMajorityTM through
+         mem_DTIME_of_decidesInTimeVia, DTIME.mono and DTIME_const_mul_subset, but its proof
+         read Turing.FinTM.DecidesInTime (ClassP/DTIME.lean) and Turing.FinTM.DecidesInTimeVia
+         (ClassP/ModelInvariance.lean) by their definitions (round 2's StrictSealSeedMajority
+         failed exactly there). Rule 10 forbids that.
+
+source
+  branch   stmt/pass-shelat-derand-host (local), worktree $SP/wt-stmt-derand: sparse checkout
+           (no-cone, '/*' '!/briefs/'; per-worktree config.worktree), so briefs/ was never
+           checked out; .lake/packages symlinked to the main checkout. Worktree removed at the
+           end (symlink unlinked, then `git worktree remove`); branch kept.
+  parent   2f9333b99b83fdd6accb29926fab38fd75f66897 (round-2 head; git rev-parse)
+  head     0c04d1eb1e5450372632a23f3e94f3b7bfc37606
+  tree     2a3a58ab0e422d06f2d8d13d1d9e8a8820f09bea
+           1 commit, author = committer = Claude <noreply@anthropic.com>, 2026-11-15T03:59:49Z
+           (patches/COMMITS.tsv, patches/0001-*.patch, patches/commit-message.txt)
+           origin/stmt/pass-shelat-derand-host still 8972fb4e (round 1): nothing pushed.
+  changed  M TCSlib/Complexity/Randomized/SeedMajority.lean only (234 lines, max width 98,
+           sha256 c992181ea4cf9e85af6cb1982aa100a5ecd2aabf46e0a8955ba0398e7e0d5356; src/ holds it).
+           patches/diff-r2-r2b.txt (vs 2f9333b9), patches/diff-r1-r2b-SeedMajority.txt (vs 8972fb4).
+
+edit
+  proof    seedMajority_mem_DTIME: body is now `sorry` (10 proof lines removed).
+  docs     its docstring gains a **Status** paragraph: admitted; it follows from
+           exists_seedMajorityTM via the reader Complexity.mem_DTIME_iff, which the derand fill
+           adds beside DTIME (ClassP/DTIME.lean) under its pre-approval (Seyoon, 2026-11-15);
+           the derand fill proves both the contract and this corollary; without the reader a
+           proof would read DecidesInTime, DecidesInTimeVia and DTIME by their definitions
+           (Rule 10). Its proof sketch now runs through mem_DTIME_iff only: the contract's
+           budget is literally c * T n with T n = 2^{w n} (n+1)^e, so <c, M, hM> is the
+           witness, with no mono / constant absorption.
+           Module docstring, for consistency with that: "The class" bullet (was "proved from
+           the contract through DTIME's published lemmas only") and the Main results entry
+           (was "proved from the contract") now say admitted until mem_DTIME_iff; the
+           Proof owner sentence names the corollary as well. Facade entry neutral, unchanged.
+  imports  dropped TCSlib.Complexity.ClassP.ModelInvariance and
+           TCSlib.Complexity.Randomized.QuasiPolyHierarchy: round 2 added both for the removed
+           proof only (mem_DTIME_of_decidesInTimeVia / DTIME_const_mul_subset); every name the
+           statements use (FinTM, DecidesInTime, runFrom, workTapePos, DTIME, P) comes through
+           ClassP.P -> ClassP.DTIME -> TuringMachine.Finite. The module builds without them.
+           Imports are now identical to round 1 (8972fb4).
+
+checks
+  headers  checks/headers.txt: codecmp.py (comment-blanked, whitespace-normalised): 3 headers,
+           identical to 2f9333b9. rawheaders.py (raw bytes, keyword to first :=): 3/3
+           byte-identical (half_lt_randProb_iff, exists_seedMajorityTM, seedMajority_mem_DTIME,
+           SHA-256 of each listed). Only file changed: SeedMajority.lean.
+  widths   checks/widths.txt: 234 lines, max width 98. RESULT OK.
+  lint     campaign_style_lint.py --check8b, base = 2f9333b9 (git archive of scripts/ and
+           TCSlib/ to $SP/r2bwork/base-2f9333b9, removed afterwards), head = worktree:
+           Cryptography 92 FAIL / 101 WARN both; Complexity 25 FAIL / 391 WARN both.
+           FAIL/WARN sets identical (lint/failwarn-*.diff empty); full diffs: Cryptography
+           empty, Complexity the one INFO size line (237 -> 234 lines). Raw FAIL/WARN lines
+           also identical to round 2's head logs. No new FAIL. (fw-*.txt here collapse runs
+           of spaces, unlike round 2's; the raw comparison above is the like-for-like one.)
+
+olean tree $SP/dl-oleans only (dl-oleans-2 untouched; a concurrent job's Lean process used
+         dl-oleans-2 exclusively, checked from its command line and environment)
+  pre      tree/snapshot-pre.txt: 1230 files, 0 empty dirs, SHA-256
+           457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, byte-identical to
+           ../stmt-derand-r2/tree/snapshot-pre.txt; tree/snapshot-prebuild.txt same.
+  order    order/changed.txt (git diff eff2dcd0..head, 53 modules) -> downorder.py ->
+           order/build-head.txt, 63 modules imports-first; changed, order, backup and new lists
+           identical to round 2. order/backup.txt: 20 base oleans copied aside to
+           $SP/r2bwork/backup (order/backup-sha256.txt); order/new.txt: 43 head-only.
+  build    runner.py via scripts/lean_check_tree.sh (byte-identical to /home/user/tcslib's),
+           TCSLIB_OLEANS=$SP/dl-oleans, one Lean process at a time: build/results.jsonl,
+           build/mods/*.log, build/runner.out (runner rc=0).
+           63/63 rc 0; errors 0 (both forms); substring "error" 0 times; 24 warnings (round 2:
+           23; the one extra is the new intended sorry). The only sorry warnings:
+             SeedMajority.lean:192:8  exists_seedMajorityTM   (intended, as before)
+             SeedMajority.lean:225:8  seedMajority_mem_DTIME  (intended, new)
+           SeedMajority, facade TCSlib/Complexity/Randomized and root TCSlib rc 0, source
+           SHA-256 = head blobs. Full downstream incl. audits/pass-shelat/Checks rc 0.
+  probes   tools/probe.sh (lean without -o, cwd = worktree), run while the build's oleans were
+           in the tree; probe files generated by tools/mkprobes.py from the head source; logs
+           name them by their scratch path $SP/r2bwork/probes/.
+           Whole-file seal now: randProb, DTIME, P, PolyTimeComputable, pairEncode,
+           Turing.FinTM.DecidesInTime, Turing.FinTM.DecidesInTimeVia. SeedMajority no longer
+           imports ModelInvariance, so the sealed probes add that one import line (marked
+           PROBE ONLY) solely so the seal can name DecidesInTimeVia.
+           SealSeedMajority: rc 0, only the two intended sorry warnings (198, 231 = 192, 225 + 6).
+           SealSeedMajorityOwnImports (file's own imports, the six names in scope): rc 0, the
+             two sorry warnings only.
+           SealSeedMajorityControl: + 4 paired controls (1 randProb by rfl; 2 DTIME by
+             anonymous constructor; 3 DecidesInTime applied as its body; 4 DecidesInTimeVia
+             applied as its body): rc 1, exactly 4 errors, one at each control (245, 249, 255,
+             263). UnsealedSeedMajorityControl: rc 0 (all four controls elaborate).
+             Axioms: exists_seedMajorityTM, seedMajority_mem_DTIME [propext, sorryAx,
+             Classical.choice, Quot.sound]; half_lt_randProb_iff [propext, Classical.choice,
+             Quot.sound].
+           ConsumerProbe (round 2's file, unchanged; sealed DTIME, randProb, P,
+             PolyTimeComputable, pairEncode, subexpBound): rc 1, its control (DTIME through its
+             body, line 56) the only error; transport_general and the subexpBound instance
+             elaborate. ConsumerProbeUnsealed: rc 0.
+  restore  restore/restore-log.txt: 20 backups copied back, 43 new oleans removed (incl.
+           SeedMajority), 5 emptied directories removed. restore/snapshot-post.txt
+           byte-identical to tree/snapshot-pre.txt (and to round 2's), SHA-256
+           457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, 1230 files,
+           0 empty dirs. RESULT OK.
+
+toolchain  Lean 4.25.0 (PATH=$HOME/.elan/bin:$PATH). No lake build, no lake exe cache get.
+           Python: python3 -I. /home/user/tcslib working tree not edited (git status clean).
+SHA256SUMS: every file here except itself; ../stmt-derand-r2b-evidence.zip holds this folder.
