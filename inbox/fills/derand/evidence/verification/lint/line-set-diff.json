@@ -1,0 +1,94 @@
+[
+  {
+    "corpus": "complexity",
+    "command": [
+      "python3",
+      "-I",
+      "scripts/campaign_style_lint.py",
+      "TCSlib/Complexity",
+      "--check8b"
+    ],
+    "exit": 1,
+    "base_counts": [
+      25,
+      391
+    ],
+    "final_counts": [
+      25,
+      390
+    ],
+    "added": [
+      [
+        "WARN",
+        "TCSlib/Complexity/Randomized/Classes.lean",
+        "1415 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)"
+      ],
+      [
+        "WARN",
+        "TCSlib/Complexity/Randomized/Classes.lean",
+        "2 public def(s) without a lemma beside them (check 8): InBPPStrong, InCoRP"
+      ]
+    ],
+    "removed": [
+      [
+        "WARN",
+        "TCSlib/Complexity/ClassP/DTIME.lean",
+        "1 public def(s) without a lemma beside them (check 8): DecidesInTime"
+      ],
+      [
+        "WARN",
+        "TCSlib/Complexity/Randomized/Classes.lean",
+        "1403 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)"
+      ],
+      [
+        "WARN",
+        "TCSlib/Complexity/Randomized/Classes.lean",
+        "3 public def(s) without a lemma beside them (check 8): InBPP, InBPPStrong, InCoRP"
+      ]
+    ],
+    "new_fail": [],
+    "warn_changes": [
+      {
+        "line": [
+          "WARN",
+          "TCSlib/Complexity/Randomized/Classes.lean",
+          "1415 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)"
+        ],
+        "allowed": true,
+        "justification": "SR-01 approved inherited size / reduced missing-reader warning"
+      },
+      {
+        "line": [
+          "WARN",
+          "TCSlib/Complexity/Randomized/Classes.lean",
+          "2 public def(s) without a lemma beside them (check 8): InBPPStrong, InCoRP"
+        ],
+        "allowed": true,
+        "justification": "SR-01 approved inherited size / reduced missing-reader warning"
+      }
+    ]
+  },
+  {
+    "corpus": "cryptography",
+    "command": [
+      "python3",
+      "-I",
+      "scripts/campaign_style_lint.py",
+      "TCSlib/Cryptography",
+      "--check8b"
+    ],
+    "exit": 1,
+    "base_counts": [
+      92,
+      101
+    ],
+    "final_counts": [
+      92,
+      101
+    ],
+    "added": [],
+    "removed": [],
+    "new_fail": [],
+    "warn_changes": []
+  }
+]

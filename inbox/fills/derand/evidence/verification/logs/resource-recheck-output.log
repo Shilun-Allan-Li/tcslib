@@ -1,0 +1,56 @@
+UTC 2026-11-15T09:05:41.909865+00:00
+$ sysctl -n hw.ncpu hw.memsize
+12
+19327352832
+exit=0
+$ vm_stat
+Mach Virtual Memory Statistics: (page size of 16384 bytes)
+Pages free:                                     3717.
+Pages active:                                 312520.
+Pages inactive:                               309881.
+Pages speculative:                             21645.
+Pages throttled:                                   0.
+Pages wired down:                             209421.
+Pages purgeable:                                4394.
+"Translation faults":                    22167416372.
+Pages copy-on-write:                       571546416.
+Pages zero filled:                       15121307964.
+Pages reactivated:                        1182179426.
+Pages purged:                              123307685.
+File-backed pages:                            392436.
+Anonymous pages:                              251610.
+Pages stored in compressor:                  1054808.
+Pages occupied by compressor:                 266901.
+Decompressions:                            616908581.
+Compressions:                              843288791.
+Pageins:                                   742195688.
+Pageouts:                                    2981032.
+Swapins:                                      545067.
+Swapouts:                                    1266256.
+exit=0
+$ memory_pressure -Q
+The system has 19327352832 (1179648 pages with a page size of 16384).
+System-wide memory free percentage: 57%
+exit=0
+$ df -k /Users/seyoonr/.codex/worktrees/derand/tcslib-exchange /private/tmp /var/folders/gc/93nsn68n4g9fgyjj6sjjmy180000gn/T /Users/seyoonr/.codex/worktrees/exchange-derand/tcslib-exchange
+Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on
+/dev/disk3s5   971350180 734554116 208073184    78% 7349233 2080731840    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 734554116 208073184    78% 7349233 2080731840    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 734554116 208073184    78% 7349233 2080731840    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 734554116 208073184    78% 7349233 2080731840    0%   /System/Volumes/Data
+exit=0
+$ mount
+/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+devfs on /dev (devfs, local, nobrowse)
+/dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
+/dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
+/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)
+/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)
+/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)
+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
+exit=0
+HEADROOM: {'free': 3717, 'inactive': 309881, 'speculative': 21645, 'purgeable': 4394}; sum=339637 pages * 16384 bytes/page = 5564612608 bytes = 5.182449 GiB
+DISK: 213066940416 bytes = 198.434052 GiB
+PREFLIGHT PASS

@@ -1,0 +1,89 @@
+START 2026-11-15T09:48:04.127006+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'evidence/probes/TypedHostProbe']
+evidence/probes/TypedHostProbe.lean:29:6: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a => ∀ v < 2 * x.length + 2, ¬(MultiTapeTM.runFrom (Cfg.ofWords 0 (stateWord 1 [])) v).Halted
+Error: Application type mismatch: The argument
+  0
+has type
+  Fin 2
+but is expected to have type
+  _a.State
+in the application
+  Cfg.ofWords 0
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+x : List Bool
+tm : MultiTapeTM 1 Bool (Fin 2)
+htm : copyTM = { k := 1, State := Fin 2, fintypeState := Fin.fintype 2, decEqState := instDecidableEqFin 2, tm := tm }
+h : ∀ v < 2 * x.length + 2, ¬(MultiTapeTM.runFrom (Cfg.ofWords 0 (stateWord 1 [])) v).Halted
+⊢ ∀ t < 2 * x.length + 2, (MultiTapeTM.runFrom (Cfg.ofWords 0 (stateWord 1 [])) t).state ≠ some 0
+evidence/probes/TypedHostProbe.lean:39:43: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.inl` could not be determined
+evidence/probes/TypedHostProbe.lean:40:37: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.inl` could not be determined
+evidence/probes/TypedHostProbe.lean:46:6: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    MultiTapeTM.step (Cfg.ofWords (Sum.inl c) w) =
+      (ctrl c (Cfg.ofWords (Sum.inl c) w).inputSymbol (Cfg.ofWords (Sum.inl c) w).workTapeSymbols).apply
+        (Cfg.ofWords (Sum.inl c) w)
+Error: Application type mismatch: The argument
+  Cfg.ofWords (Sum.inl c) w
+has type
+  Cfg K Bool (ModuleHost.State C M) x
+but is expected to have type
+  Cfg _a.k Bool _a.State x
+in the application
+  MultiTapeTM.step (Cfg.ofWords (Sum.inl c) w)
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+C : Type
+inst✝¹ : Fintype C
+inst✝ : DecidableEq C
+n : ℕ
+M : Fin n → FinTM Bool
+K : ℕ
+hk : ∀ (i : Fin n), (M i).k ≤ K
+ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (ModuleHost.State C M)
+ret : Fin n → ModuleHost.State C M
+q₀ : ModuleHost.State C M
+x : List Bool
+c : C
+w : Fin K → List Bool
+tm : MultiTapeTM K Bool (ModuleHost.State C M)
+htm :
+  ModuleHost.hostTM M K hk ctrl ret q₀ =
+    { k := K, State := ModuleHost.State C M, fintypeState := instFintypeSum C ((i : Fin n) × (M i).State),
+      decEqState := fun a b => instDecidableEqSum a b, tm := tm }
+h :
+  MultiTapeTM.step (Cfg.ofWords (Sum.inl c) w) =
+    (ctrl c (Cfg.ofWords (Sum.inl c) w).inputSymbol (Cfg.ofWords (Sum.inl c) w).workTapeSymbols).apply
+      (Cfg.ofWords (Sum.inl c) w)
+⊢ MultiTapeTM.step (Cfg.ofWords (Sum.inl c) w) =
+    (ctrl c (Cfg.ofWords ?m.20 w).inputSymbol (Cfg.ofWords ?m.27 w).workTapeSymbols).apply (Cfg.ofWords (Sum.inl c) w)
+FAIL(evidence/probes/TypedHostProbe): lean exited with status 1
+FAIL(evidence/probes/TypedHostProbe): error diagnostics reported
+FAIL(evidence/probes/TypedHostProbe): no fresh .olean produced
+        2.15 real         0.91 user         0.83 sys
+          1467449344  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              114717  page reclaims
+                5610  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  89  voluntary context switches
+                5988  involuntary context switches
+            32408852  instructions retired
+            21903682  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T09:48:06.325372+00:00
+EXIT 1

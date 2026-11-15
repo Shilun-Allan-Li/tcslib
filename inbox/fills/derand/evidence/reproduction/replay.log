@@ -1,0 +1,13 @@
+$ git clone --quiet --shared --no-checkout /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-exchange /private/tmp/derand-worker/reproduction-checkpoint1
+EXIT 0
+
+$ git checkout --quiet --detach 01de2d8baed9113e4a099e13c5d50c81e6dbc66f
+EXIT 0
+
+$ git -c commit.gpgsign=false am --quiet /private/tmp/derand-worker/payloads/checkpoint1/derand/patches/0001-fill-derand-checkpoint-1.patch
+EXIT 0
+
+EXPECTED 776dabdabb276c75b98780e5018275fbcdc25e3a
+ACTUAL 776dabdabb276c75b98780e5018275fbcdc25e3a
+
+REPRODUCTION PASS

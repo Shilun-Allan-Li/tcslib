@@ -1,0 +1,38 @@
+TCSlib/Complexity/Randomized/Primality.lean:265:theorem inBPP_PRIMESBin : InBPP polyTimeModel PRIMESBin :=
+TCSlib/Complexity/Randomized/Reductions.lean:61:def InBPPAt (p : ℚ) (L : Language Bool) : Prop :=
+TCSlib/Complexity/Randomized/Reductions.lean:71:theorem InBPPAt.mono {p p' : ℚ} {L : Language Bool} (h : InBPPAt E p L) (hp : p' ≤ p) :
+TCSlib/Complexity/Randomized/Reductions.lean:78:theorem inBPP_iff_inBPPAt (L : Language Bool) : InBPP E L ↔ InBPPAt E (2/3) L := Iff.rfl
+TCSlib/Complexity/Randomized/Reductions.lean:89:theorem InBPPAt.amplify (hMaj : ClosedUnderMajority E) (K : ℕ) {ε η : ℚ} (hε : 0 ≤ ε)
+TCSlib/Complexity/Randomized/Reductions.lean:147:theorem InBPP.inBPPAt_23_24 (hMaj : ClosedUnderMajority E) {L : Language Bool}
+TCSlib/Complexity/Randomized/Reductions.lean:158:theorem InBPPAt.inBPP_of_5_8 (hMaj : ClosedUnderMajority E) {L : Language Bool}
+TCSlib/Complexity/Randomized/Reductions.lean:289:theorem InBPP.of_randReducible {B C : Language Bool} (hred : B ≤ᵣ C)
+TCSlib/Complexity/Randomized/BPPAmplify.lean:67:theorem inBPPWith_iff_inBPPWeak (c : ℕ) (L : Language Bool) :
+TCSlib/Complexity/Randomized/BPPAmplify.lean:71:theorem inBPPWith_iff_inBPPStrong (d : ℕ) (L : Language Bool) :
+TCSlib/Complexity/Randomized/BPPAmplify.lean:83:theorem inBPPWeak_polyTimeModel_iff_inBPP (c : ℕ) (L : Language Bool) :
+TCSlib/Complexity/Randomized/Inclusions.lean:129:theorem InRP.inBPP {E : VerifierModel} {L : Language Bool} (h : InRP E L) : InBPP E L := by
+TCSlib/Complexity/Randomized/Inclusions.lean:136:theorem InCoRP.inBPP {E : VerifierModel} (hNot : ClosedUnderNot E) {L : Language Bool}
+TCSlib/Complexity/Randomized/Inclusions.lean:142:theorem InCoRP.inBPP_polyTime {L : Language Bool} (h : InCoRP polyTimeModel L) :
+TCSlib/Complexity/Randomized/Inclusions.lean:148:theorem inBPP_polyTimeModel_of_mem_P {L : Language Bool} (hL : L ∈ P) :
+TCSlib/Complexity/Randomized/Inclusions.lean:207:theorem mem_EXP_of_inBPP_polyTimeModel {L : Language Bool} (h : InBPP polyTimeModel L) :
+TCSlib/Complexity/Randomized/Inclusions.lean:213:theorem inBPP_polyTimeModel_iff_mem_P_of_P_eq_NP (h : P = NP) (L : Language Bool) :
+TCSlib/Complexity/Randomized/Inclusions.lean:267:theorem InBPP.of_polyTimeReducible {L L' : Language Bool} (hred : L' ≤ₚ L)
+TCSlib/Complexity/Randomized/Inclusions.lean:310:theorem PH_eq_SigmaP_two_of_inBPP_SAT3 (h : InBPP polyTimeModel SAT3) : PH = SigmaP 2 :=
+TCSlib/Complexity/Randomized/BPOperator.lean:86:theorem BPdot_P_eq_BPP : BPdot P = {L | InBPP polyTimeModel L} := by
+TCSlib/Complexity/Randomized/Matching.lean:503:theorem inBPP_BipartitePerfectMatching : InBPP polyTimeModel BipartitePerfectMatching :=
+TCSlib/Complexity/Randomized/ZeroPPIT.lean:287:theorem inBPP_PITLang : InBPP polyTimeModel PITLang :=
+TCSlib/Complexity/Randomized/ZeroP.lean:502:theorem inBPP_ZEROP_polyTime : InBPP polyTimeModel ZEROP :=
+TCSlib/Complexity/Randomized/ZPPEquiv.lean:245:theorem inBPP_of_mem_BPP_ExpPTM {L : Language Bool} (h : L ∈ BPP_ExpPTM) :
+TCSlib/Complexity/Randomized/PTMEquiv.lean:208:def InBPPWith (p : ℕ → ℚ) (L : Language Bool) : Prop :=
+TCSlib/Complexity/Randomized/PTMEquiv.lean:216:theorem inBPPWith_iff_inBPP (L : Language Bool) :
+TCSlib/Complexity/Randomized/PTMEquiv.lean:227:theorem inBPPWith_of_mem_BPP_PTMWith {p : ℕ → ℚ} {L : Language Bool}
+TCSlib/Complexity/Randomized/PTMEquiv.lean:253:theorem inBPP_of_mem_BPP_PTM {L : Language Bool} (h : L ∈ BPP_PTM) :
+TCSlib/Complexity/Randomized/PTMEquiv.lean:341:theorem mem_BPP_PTMWith_of_inBPPWith {p : ℕ → ℚ} {L : Language Bool}
+TCSlib/Complexity/Randomized/PTMEquiv.lean:359:theorem mem_BPP_PTM_of_inBPP {L : Language Bool} (h : InBPP polyTimeModel L) :
+TCSlib/Complexity/Randomized/PTMEquiv.lean:365:theorem mem_BPP_PTM_iff (L : Language Bool) : L ∈ BPP_PTM ↔ InBPP polyTimeModel L :=
+TCSlib/Complexity/Randomized/PTMEquiv.lean:369:theorem BPP_PTM_eq : BPP_PTM = {L | InBPP polyTimeModel L} :=
+TCSlib/Complexity/Randomized/Classes.lean:288:def InBPP (L : Language Bool) : Prop :=
+TCSlib/Complexity/Randomized/Classes.lean:797:theorem InBPP.compl (hNot : ClosedUnderNot E) {L : Language Bool}
+TCSlib/Complexity/Randomized/Classes.lean:1208:def InBPPWeak (c : ℕ) (L : Language Bool) : Prop :=
+TCSlib/Complexity/Randomized/Classes.lean:1228:def InBPPStrong (d : ℕ) (L : Language Bool) : Prop :=
+TCSlib/Complexity/Randomized/Classes.lean:1365:theorem InBPPStrong.toInBPP {d : ℕ} {L : Language Bool}
+TCSlib/Complexity/Randomized/Classes.lean:1389:theorem inBPPWeak_iff_inBPP (hMaj : ClosedUnderMajority E) (c : ℕ)

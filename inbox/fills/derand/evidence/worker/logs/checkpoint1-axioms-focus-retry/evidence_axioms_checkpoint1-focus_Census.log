@@ -1,0 +1,79 @@
+START 2026-11-15T09:35:34.833099+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'evidence/axioms/checkpoint1-focus/Census']
+evidence/axioms/checkpoint1-focus/Census.lean:14:19: error: failed to synthesize
+  OfNat Lean.MessageData 0
+numerals are polymorphic in Lean, but the numeral `0` cannot be used in a context where the expected type is
+  Lean.MessageData
+due to the absence of the instance above
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+evidence/axioms/checkpoint1-focus/Census.lean:15:20: error: Invalid field `qsort`: The environment does not contain `List.qsort`
+  Lean.SMap.toList env.constants
+has type
+  List (Lean.Name × Lean.ConstantInfo)
+evidence/axioms/checkpoint1-focus/Census.lean:15:2: error: failed to construct 'ForIn' instance for collection
+  ?m.61
+and monad
+  ReaderT Lean.Elab.Command.Context (StateRefT' IO.RealWorld Lean.Elab.Command.State (EIO Lean.Exception))
+'Complexity.exists_seedMajorityTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.seedMajority_mem_DTIME' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.IterateFind.polyTimeComputable_find' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_iterateFind' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.IterateFind.computesFunInTime_find' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.mem_DTIME_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.decidesInTime_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+@Complexity.IterateFind.computesFunInTime_find : ∀ {g : List Bool → List Bool},
+  Complexity.PolyTimeComputable g →
+    ∀ {acc : List Bool → Bool},
+      (Complexity.PolyTimeComputable fun s => [acc s]) →
+        ∀ {out : List Bool → List Bool},
+          Complexity.PolyTimeComputable out →
+            ∀ {init : List Bool → List Bool},
+              Complexity.PolyTimeComputable init →
+                ∀ (R : ℕ → ℕ) (P : Complexity.PolyExpr),
+                  (∀ (x : List Bool), (init x).length ≤ P.eval x.length) →
+                    ∀ (F : Turing.FinTM Bool) (aF dF : ℕ),
+                      (F.ComputesFunInTime (fun x => (R x.length).bits) fun n => aF * (n + 1) ^ dF) →
+                        ∃ M c A D,
+                          M.ComputesFunInTime
+                            (fun x =>
+                              match
+                                List.find?
+                                  (fun i =>
+                                    acc
+                                      (Complexity.pairSndD
+                                        ((Complexity.IterateFind.step g P x)^[i] (Turing.pairEncode x (init x)))))
+                                  (List.range (R x.length + 1)) with
+                              | some i =>
+                                out
+                                  (Complexity.pairSndD
+                                    ((Complexity.IterateFind.step g P x)^[i] (Turing.pairEncode x (init x))))
+                              | none => [])
+                            fun n => c * (A * (2 * n + 2 + P.eval n + 5) ^ D + 1) * (R n + 2)
+@Complexity.mem_DTIME_iff : ∀ {T : ℕ → ℕ} {L : Language Bool},
+  L ∈ Complexity.DTIME T ↔ ∃ c M, M.DecidesInTime L fun n => c * T n
+Turing.FinTM.decidesInTime_iff : ∀ (M : Turing.FinTM Bool) (L : Language Bool) (T : ℕ → ℕ),
+  M.DecidesInTime L T ↔ ∀ (x : List Bool), M.ComputesInTime x [Turing.MultiTapeTM.indicator L x] (T x.length)
+FAIL(evidence/axioms/checkpoint1-focus/Census): lean exited with status 1
+FAIL(evidence/axioms/checkpoint1-focus/Census): error diagnostics reported
+FAIL(evidence/axioms/checkpoint1-focus/Census): no fresh .olean produced
+        3.18 real         1.93 user         0.91 sys
+          1555218432  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              123111  page reclaims
+                4062  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 188  voluntary context switches
+                6989  involuntary context switches
+            33297306  instructions retired
+            16937017  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T09:35:38.053560+00:00
+EXIT 1

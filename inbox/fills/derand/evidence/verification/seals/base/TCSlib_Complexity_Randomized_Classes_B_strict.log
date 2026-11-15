@@ -1,0 +1,34 @@
+START 2026-11-15T09:50:12.467518+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'evidence/seals/base/TCSlib_Complexity_Randomized_Classes_B_strict']
+DERAND-INSTALL base_TCSlib_Complexity_Randomized_Classes_B_strict requested=0 active=0 already=0 excluded=0 tc_state=preserved
+evidence/seals/base/TCSlib_Complexity_Randomized_Classes_B_strict.lean:666:59: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+evidence/seals/base/TCSlib_Complexity_Randomized_Classes_B_strict.lean:1382:35: warning: This simp argument is unused:
+  hp
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵h̵p̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+DERAND-EOF base_TCSlib_Complexity_Randomized_Classes_B_strict
+       16.10 real        23.72 user         1.08 sys
+          1783414784  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              150876  page reclaims
+                  33  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  22  voluntary context switches
+               29908  involuntary context switches
+            31315728  instructions retired
+            16296637  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T09:50:28.596836+00:00
+EXIT 0

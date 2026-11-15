@@ -1,0 +1,251 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.LearningTheory.PAC.Defs
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The prediction game, and its bridge to PAC learning
+
+[PS10, §8.1] (Def 179.a of the inventory) asks whether a learner, given labelled examples of a
+random concept `C_i`, can predict the label of a fresh point. Under the uniform distribution
+(the reading under which the source's Theorem 179.1 works) the game is:
+`i ← I`, `m` examples `s ← X^m`, coins `r ← ρ`, a fresh point `x ← X`, all uniform and
+independent; the learner wins when `L(s labelled by C_i, r)(x) = C_i(x)`.
+
+**The bridge.** The fresh point is independent of the sample, so for fixed `(i, s, r)` the
+probability of a correct prediction is `1 − err_U(h, C_i)` for the hypothesis `h = L(s, r)`.
+So the prediction success is `1 − E_{i,s,r}[err_U(L(s, r), C_i)]`
+(`predictSuccess_eq_one_sub_expectedErr`), with no collision issue between the fresh point and
+the sample. A learner that PAC-learns under the uniform distribution with accuracy `ε ≥ 0` and
+confidence `δ` has expected error at most `ε + δ`: split the expectation over the accuracy event,
+where the error is at most `ε`, and its complement, of probability at most `δ`, where the error is
+at most `1`. Hence its prediction success is at least `1 − ε − δ`, and a learner whose prediction
+advantage is at most `γ` does not satisfy `WeakLearnsUnder` under the uniform distribution at an
+edge `γ'` and confidence `δ` with `γ + δ < γ' ≤ ½` (`not_weakLearnsUnder_of_predictAdv_le`).
+
+**Use in layer 2.** Layer 2 applies this to each efficient learner, turning [PS10, Thm 179.1]
+into a statement at a confidence `δ` below the gap `γ' − γ`. A weak learner of
+[KV94, §4.1, p. 74] need only succeed with probability `1/q(n, size(c))`, that is, at the
+confidence `δ = 1 − 1/q(n, size(c))`. Starting only from that guarantee, the required small `δ`
+is obtained by amplification ([KV94, §4.2, pp. 76–77]), unless the learner is already certified
+at it; amplification gives a different learner, and layer 2 must account for that learner's
+sample count, running time and edge before applying the bridge.
+Information-theoretically the class is learnable; the hardness is computational.
+
+**Source notes.** [PS10] leaves the sample distribution and "a new sample" implicit; uniform
+and independent is the reading (design note S3d). "Better than `½ + ε`" is the advantage
+`|Pr[correct] − ½|`.
+
+## Main definitions
+
+* `PAC.trialDist X I ρ m`: the joint law of the concept index, the examples and the coins.
+* `PAC.predictSuccess C m L`, `PAC.predictAdv C m L`: the success probability of the prediction
+  game, and its advantage over `½`.
+* `PAC.expectedErr C m L`: the expected uniform error of the learner's hypothesis.
+
+## Main results
+
+* `PAC.predictSuccess_eq_one_sub_expectedErr`: **the bridge**, success `= 1 − E[err]`.
+* `PAC.expectedErr_le_of_pacLearnsUnder`, `PAC.one_sub_sub_le_predictSuccess`: PAC learning
+  under the uniform distribution with accuracy `ε ≥ 0` gives expected error at most `ε + δ` and
+  success at least `1 − ε − δ`.
+* `PAC.sub_le_predictAdv_of_weakLearnsUnder`, `PAC.not_weakLearnsUnder_of_predictAdv_le`: the
+  weak-learning condition at edge `γ' ≤ ½` and confidence `δ` gives advantage at least `γ' − δ`;
+  so advantage at most `γ` rules it out when `γ + δ < γ' ≤ ½`.
+* `PAC.predictSuccess_coin`: the learner that outputs its coin succeeds with probability exactly
+  `½` (non-vacuity).
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+  §8.1 (book p. 179).
+* [KV94] M. Kearns, U. Vazirani, *An Introduction to Computational Learning Theory*, MIT Press,
+  1994, §1.2, §4.1 (p. 74) and §4.2 (pp. 76–77).
+* [SSBD14] S. Shalev-Shwartz, S. Ben-David, *Understanding Machine Learning: From Theory to
+  Algorithms*, Cambridge University Press, 2014, ch. 3.
+-/
+
+namespace TCSlib.LearningTheory.PAC
+
+open TCSlib.InformationTheory Finset
+
+variable {X I ρ : Type*} [Fintype X] [Nonempty X] [Fintype I] [Nonempty I] [Fintype ρ]
+  [Nonempty ρ]
+
+/-! ### The game -/
+
+variable (X I ρ) in
+/-- The joint law of a trial of the prediction game: a uniform concept index, `m` uniform
+independent examples and uniform coins. -/
+noncomputable def trialDist (m : ℕ) : FinDist (I × ((Fin m → X) × ρ)) :=
+  (FinDist.uniform I).prod (((FinDist.uniform X).iid m).prod (FinDist.uniform ρ))
+
+/-- The trial law is the product of the uniform index, the `m` uniform examples and the uniform
+coins. -/
+theorem trialDist_eq (m : ℕ) :
+    trialDist X I ρ m =
+      (FinDist.uniform I).prod (((FinDist.uniform X).iid m).prod (FinDist.uniform ρ)) := rfl
+
+/-- **The prediction game** [PS10, §8.1]: the probability that the learner `L`, given `m`
+uniform examples labelled by a uniform concept `C_i` and uniform coins, predicts the label of a
+fresh uniform point. [PS10] leaves the sample law and "a new sample" implicit. Here both are
+uniform and independent, so the fresh point may coincide with an example. -/
+noncomputable def predictSuccess (C : I → X → Bool) (m : ℕ)
+    (L : (Fin m → X × Bool) → ρ → X → Bool) : ℝ :=
+  ((trialDist X I ρ m).prod (FinDist.uniform X)).probTrue
+    fun w => L (label (C w.1.1) w.1.2.1) w.1.2.2 w.2 == C w.1.1 w.2
+
+/-- The success probability is the probability, over a trial `(i, (s, r)) ← trialDist` and an
+independent uniform point `x`, of the event `L(s labelled by C_i, r)(x) = C_i(x)`. -/
+theorem predictSuccess_eq (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool) :
+    predictSuccess C m L = ((trialDist X I ρ m).prod (FinDist.uniform X)).probTrue
+      (fun w => L (label (C w.1.1) w.1.2.1) w.1.2.2 w.2 == C w.1.1 w.2) := rfl
+
+/-- The **prediction advantage** `|Pr[correct] − ½|` [PS10, §8.1, proof of Thm 179.1]: "better
+than `½ + ε`", read two-sidedly. An upper bound on it bounds the one-sided success. -/
+noncomputable def predictAdv (C : I → X → Bool) (m : ℕ)
+    (L : (Fin m → X × Bool) → ρ → X → Bool) : ℝ :=
+  |predictSuccess C m L - 1 / 2|
+
+/-- The prediction advantage is `|predictSuccess − ½|`. -/
+theorem predictAdv_eq (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool) :
+    predictAdv C m L = |predictSuccess C m L - 1 / 2| := rfl
+
+/-- The **expected error** `E_{i,s,r}[err_U(L(s labelled by C_i, r), C_i)]` of the learner's
+hypothesis under the uniform distribution. -/
+noncomputable def expectedErr (C : I → X → Bool) (m : ℕ)
+    (L : (Fin m → X × Bool) → ρ → X → Bool) : ℝ :=
+  (trialDist X I ρ m).expect
+    fun t => err (FinDist.uniform X) (L (label (C t.1) t.2.1) t.2.2) (C t.1)
+
+/-- The expected error is the expectation, over a trial `(i, (s, r)) ← trialDist`, of the
+uniform error `err_U(L(s labelled by C_i, r), C_i)`. -/
+theorem expectedErr_eq (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool) :
+    expectedErr C m L = (trialDist X I ρ m).expect
+      (fun t => err (FinDist.uniform X) (L (label (C t.1) t.2.1) t.2.2) (C t.1)) := rfl
+
+/-! ### The bridge -/
+
+/-- **The bridge: prediction success is one minus the expected error.**
+
+**Proof sketch.** Split the fresh point off the trial (`expect_prod`). For a fixed trial with
+hypothesis `h`, the correct-prediction indicator is one minus the disagreement indicator, so its
+expectation over the uniform fresh point is `1 − err_U(h, C_i)` (`expect_one_sub`); then take the
+expectation over the trial. -/
+theorem predictSuccess_eq_one_sub_expectedErr (C : I → X → Bool) (m : ℕ)
+    (L : (Fin m → X × Bool) → ρ → X → Bool) :
+    predictSuccess C m L = 1 - expectedErr C m L := by
+  rw [predictSuccess_eq, FinDist.probTrue_eq_expect, FinDist.expect_prod, expectedErr_eq,
+    ← FinDist.expect_one_sub]
+  congr 1
+  funext t
+  dsimp only
+  rw [err_eq, FinDist.probTrue_eq_expect, ← FinDist.expect_one_sub]
+  congr 1
+  funext x
+  cases L (label (C t.1) t.2.1) t.2.2 x <;> cases C t.1 x <;> simp
+
+/-- **PAC learning under the uniform distribution bounds the expected error** by `ε + δ`
+(for `ε ≥ 0`).
+
+**Proof sketch.** For each concept `C_i`, the error is at most `1`, and at most `ε` except with
+probability at most `δ` (the hypothesis `PACLearnsUnder`), so its expectation over the examples
+and coins is at most `ε + δ` (`expect_le_add_of_le_one`, `probTrue_not`); average over `i`. -/
+theorem expectedErr_le_of_pacLearnsUnder {C : I → X → Bool} {m : ℕ}
+    {L : (Fin m → X × Bool) → ρ → X → Bool} {ε δ : ℝ}
+    (h : PACLearnsUnder (FinDist.uniform X) C m L ε δ) (hε : 0 ≤ ε) :
+    expectedErr C m L ≤ ε + δ := by
+  rw [expectedErr_eq, trialDist_eq, FinDist.expect_prod]
+  calc _ ≤ (FinDist.uniform I).expect (fun _ => ε + δ) := FinDist.expect_le_expect _ fun i => ?_
+    _ = ε + δ := FinDist.expect_const _ _
+  dsimp only
+  have h1 := FinDist.expect_le_add_of_le_one (((FinDist.uniform X).iid m).prod
+    (FinDist.uniform ρ)) (f := fun b => err (FinDist.uniform X) (L (label (C i) b.1) b.2) (C i))
+    (fun b => err_le_one _ _ _) hε
+  have h2 := (pacLearnsUnder_iff (FinDist.uniform X) C m L ε δ).mp h i
+  rw [accuracyProb_eq] at h2
+  have h3 := FinDist.probTrue_not (((FinDist.uniform X).iid m).prod (FinDist.uniform ρ))
+    (fun b => decide (err (FinDist.uniform X) (L (label (C i) b.1) b.2) (C i) ≤ ε))
+  dsimp only at h1 h2 h3
+  linarith
+
+/-- **PAC learning under the uniform distribution gives prediction success at least
+`1 − ε − δ`** (for `ε ≥ 0`): the bridge and `expectedErr_le_of_pacLearnsUnder`. -/
+theorem one_sub_sub_le_predictSuccess {C : I → X → Bool} {m : ℕ}
+    {L : (Fin m → X × Bool) → ρ → X → Bool} {ε δ : ℝ}
+    (h : PACLearnsUnder (FinDist.uniform X) C m L ε δ) (hε : 0 ≤ ε) :
+    1 - ε - δ ≤ predictSuccess C m L := by
+  rw [predictSuccess_eq_one_sub_expectedErr]
+  linarith [expectedErr_le_of_pacLearnsUnder h hε]
+
+/-- **Weak learning under the uniform distribution gives prediction advantage at least
+`γ − δ`** (for `γ ≤ ½`): success is at least `1 − (½ − γ) − δ = ½ + γ − δ`. -/
+theorem sub_le_predictAdv_of_weakLearnsUnder {C : I → X → Bool} {m : ℕ}
+    {L : (Fin m → X × Bool) → ρ → X → Bool} {γ δ : ℝ}
+    (h : WeakLearnsUnder (FinDist.uniform X) C m L γ δ) (hγ : γ ≤ 1 / 2) :
+    γ - δ ≤ predictAdv C m L := by
+  have hs := one_sub_sub_le_predictSuccess ((weakLearnsUnder_iff _ _ _ _ _ _).1 h)
+    (by linarith)
+  rw [predictAdv_eq]
+  exact le_trans (by linarith) (le_abs_self _)
+
+/-- **Small prediction advantage rules out the weak-learning condition below the gap**: if the
+learner's prediction advantage is at most `γ`, it does not satisfy `WeakLearnsUnder` under the
+uniform distribution at any edge `γ' ≤ ½` and confidence `δ` with `γ + δ < γ'`. The confidence
+must be below the gap: at a constant confidence such as `δ = ½`, a learner with zero prediction
+advantage can satisfy `WeakLearnsUnder`.
+
+A weak learner of [KV94, §4.1, p. 74] need only succeed with probability `1/q(n, size(c))`, that
+is, at the confidence `δ = 1 − 1/q(n, size(c))`, which in general is not below the gap. Starting
+only from that guarantee, the small `δ` this lemma needs is obtained by confidence amplification
+([KV94, §4.2, pp. 76–77]), unless the learner is already certified at it; amplification gives a
+different learner, with its own sample count, running time and edge. It is the certified edge
+`γ'`, sample count `m` and prediction advantage `γ` of the learner actually used that enter
+here. -/
+theorem not_weakLearnsUnder_of_predictAdv_le {C : I → X → Bool} {m : ℕ}
+    {L : (Fin m → X × Bool) → ρ → X → Bool} {γ γ' δ : ℝ} (hadv : predictAdv C m L ≤ γ)
+    (hlt : γ + δ < γ') (hγ' : γ' ≤ 1 / 2) :
+    ¬ WeakLearnsUnder (FinDist.uniform X) C m L γ' δ := fun h => by
+  have := sub_le_predictAdv_of_weakLearnsUnder h hγ'
+  linarith
+
+/-! ### Non-vacuity -/
+
+omit [Nonempty X] [Fintype I] [Nonempty I] in
+/-- Against any target, the two constant hypotheses have errors summing to one, so a fair coin
+between them has expected error `½`. -/
+theorem expect_err_coin (D : FinDist X) (c : X → Bool) :
+    (FinDist.uniform Bool).expect (fun r => err D (fun _ => r) c) = 1 / 2 := by
+  have hnot : err D (fun _ => true) c = 1 - err D (fun _ => false) c := by
+    simpa using err_not D (fun _ => false) c
+  rw [FinDist.expect_eq, Fintype.sum_bool]
+  simp only [FinDist.uniform_apply, Fintype.card_bool]
+  rw [hnot]
+  push_cast
+  ring
+
+/-- **The coin-flipping learner predicts with probability exactly `½`** (non-vacuity of the
+game): the learner that ignores its examples and outputs its coin.
+
+**Proof sketch.** By the bridge, the success is one minus the expected error; for every concept
+and every sample, the error averaged over the coin is `½` (`expect_err_coin`). -/
+theorem predictSuccess_coin (C : I → X → Bool) (m : ℕ) :
+    predictSuccess C m (fun (_ : Fin m → X × Bool) (r : Bool) (_ : X) => r) = 1 / 2 := by
+  rw [predictSuccess_eq_one_sub_expectedErr, expectedErr_eq, trialDist_eq, FinDist.expect_prod]
+  dsimp only
+  have hin : ∀ i, (((FinDist.uniform X).iid m).prod (FinDist.uniform Bool)).expect
+      (fun b => err (FinDist.uniform X) (fun _ => b.2) (C i)) = 1 / 2 := by
+    intro i
+    rw [FinDist.expect_prod]
+    dsimp only
+    simp only [expect_err_coin]
+    exact FinDist.expect_const _ _
+  simp only [hin, FinDist.expect_const]
+  norm_num
+
+end TCSlib.LearningTheory.PAC

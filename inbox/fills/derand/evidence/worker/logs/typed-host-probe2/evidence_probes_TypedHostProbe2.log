@@ -1,0 +1,34 @@
+START 2026-11-15T09:50:08.042840+00:00
+COMMAND ['/private/tmp/derand-worker/lean-slot.sh', '/usr/bin/time', '-l', 'bash', 'scripts/lean_check_tree.sh', 'evidence/probes/TypedHostProbe2']
+evidence/probes/TypedHostProbe2.lean:35:11: error: `simp` made no progress
+evidence/probes/TypedHostProbe2.lean:50:2: error: Type mismatch
+  ModuleHost.hostTM_step_inl M K hk ctrl ret q₀ cfg c hcfg
+has type
+  @Eq (Cfg (ModuleHost.hostTM M K hk ctrl ret q₀).k Bool (ModuleHost.hostTM M K hk ctrl ret q₀).State x)
+    (MultiTapeTM.step cfg) ((ctrl c cfg.inputSymbol cfg.workTapeSymbols).apply cfg)
+but is expected to have type
+  @Eq (Cfg K Bool (ModuleHost.State C M) x) (MultiTapeTM.step cfg)
+    ((ctrl c cfg.inputSymbol cfg.workTapeSymbols).apply cfg)
+FAIL(evidence/probes/TypedHostProbe2): lean exited with status 1
+FAIL(evidence/probes/TypedHostProbe2): error diagnostics reported
+FAIL(evidence/probes/TypedHostProbe2): no fresh .olean produced
+        1.86 real         0.95 user         0.78 sys
+          1473544192  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              118952  page reclaims
+                1736  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 113  voluntary context switches
+                5289  involuntary context switches
+            32736257  instructions retired
+            16808888  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T09:50:09.949338+00:00
+EXIT 1
