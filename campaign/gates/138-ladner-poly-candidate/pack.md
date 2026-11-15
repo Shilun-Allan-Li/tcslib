@@ -72,7 +72,8 @@ whole change and the maintainer's part.
    - **Narrow** (`Ladner.lean` alone): BASE 32 declarations and 1 pair; the delivered head 82
      and 58; this head 86 and 53, with 52 new and none gone. Reproduced text fell from 14,266
      to 9,488 characters.
-   - **Wide** (`Ladner.lean` with eleven API files; population in `screen-wide/POPULATION.txt`): BASE 591 and 248; the
+   - **Wide** (`Ladner.lean` with eleven API files; population in
+     `screen-wide/POPULATION.txt`): BASE 591 and 248; the
      delivered head 641 and 319; this head 645 and 312, with 64 new and none gone.
 
    The four repairs are listed under `repaired`. The delivered and intermediate screens are in
@@ -86,8 +87,8 @@ whole change and the maintainer's part.
    - `helper-citation`: text shared with a new helper is its call.
 
    Check whether any classification hides a copied argument. The screen is textual: also
-   check semantically that no new helper re-proves a public fact in the import closure (the
-   delivery's `proof-search.log`; the maintainer found none beyond the repaired bits-prepend
+   check semantically that no new helper re-proves a public fact in the import closure (`evidence/logs/proof-search.log`
+   in the delivery zip; the maintainer found none beyond the repaired bits-prepend
    induction). Report any proof a new helper should cite instead.
 6. **Delivery conduct (data).** The report discloses three things. Codex coordinated with other
    jobs on the Mac through a shared slot protocol, reserving one slot for about five minutes
