@@ -337,27 +337,22 @@ theorem exists_tagReduction (A : NUPPT) (q : PolyExpr) (b : Bool) :
     hφ₀, hA₁ n _ _ _ _ _ hle]
   exact expect_ettImpl_outLen (PolyExpr.eval_const 1 n) _ _ _ _ A _ r
 
-/-- **The PRF advantage as expectations** (PRFGame overlap: `prfAdv_prfReduction`, re-derived here
-in general form from the published readers): for an oracle adversary `A'` on `m`-bit strings,
+/-- **The PRF advantage as expectations** (PRFGame overlap: `prfAdv_prfReduction`): for an oracle
+adversary `A'` on `m`-bit strings,
 `prfAdv F A' = |𝔼_k 𝔼_c [A'(c)^{F k} = 1] − 𝔼_R 𝔼_c [A'(c)^R = 1]|`.
 
-**Proof sketch.** `prfAdv_def`, `distAdv_def`; each acceptance probability is an average over the
-key (resp. the function table) and the coins (`Bridge.acceptProb_eq`, `accept_eq`,
-`Bridge.acceptGame_eq`, `prob_bind`, `oracleDist_apply`, `randomFunction_apply`). -/
+This is the published `TCSlib.Cryptography.prfAdv_eq_expect` at `K = I = O = {0,1}^m`.
+
+**Proof sketch.** A direct specialization of `TCSlib.Cryptography.prfAdv_eq_expect` to the family
+`Fm` and the adversary `A'`. -/
 theorem prfAdv_eq_expect {m : ℕ} (Fm : (Fin m → Bool) → (Fin m → Bool) → (Fin m → Bool))
     {ρ : Type} [Fintype ρ] [Nonempty ρ] (A' : OracleAdversary ρ (Fin m → Bool) (Fin m → Bool)) :
     prfAdv Fm A' =
       |expect (sample (Fin m → Bool))
           (fun k => expect (sample ρ) fun c => if (A' c).eval (Fm k) = true then (1 : ℝ) else 0) -
         expect (sample ((Fin m → Bool) → (Fin m → Bool)))
-          (fun R => expect (sample ρ) fun c => if (A' c).eval R = true then (1 : ℝ) else 0)| := by
-  rw [prfAdv_def, distAdv_def, Bridge.acceptProb_eq, Bridge.acceptProb_eq, accept_eq, accept_eq,
-    Bridge.acceptGame_eq, Bridge.acceptGame_eq, prob_bind, prob_bind]
-  congr 2
-  · refine congrArg _ (funext fun k => ?_)
-    simp only [prob_bind, prob_pure, oracleDist_apply]
-  · refine congrArg _ (funext fun R => ?_)
-    simp only [prob_bind, prob_pure, oracleDist_apply, randomFunction_apply]
+          (fun R => expect (sample ρ) fun c => if (A' c).eval R = true then (1 : ℝ) else 0)| :=
+  TCSlib.Cryptography.prfAdv_eq_expect Fm A'
 
 include hE hFE in
 /-- **Step 1 of [PS10, Thm 170.4]: the tag key becomes a random function**,
