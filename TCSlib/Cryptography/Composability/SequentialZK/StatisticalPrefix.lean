@@ -64,6 +64,7 @@ theorem statClose_step {π ρ : Protocol} {x : List Bool} {q p : ℕ}
     (i : ℕ) (pre : List (List Bool)) :
     StatClose (realStep π V x y z rV p i pre)
       (simStep S x z rV (π.rounds.eval x.length) B p i pre) δ := by
+  -- Read the wrapper's zero-coin contract and the original phase-count equation.
   let aux := phaseAux z rV i pre
   have hcoins : (π.withV (phaseVerifier V)).V.coinLen x.length = 0 := by
     rw [Protocol.withV_V, phaseVerifier_coinLen]
@@ -90,6 +91,7 @@ theorem statClose_step {π ρ : Protocol} {x : List Bool} {q p : ℕ}
   have hn : StatClose F G δ := by
     with_reducible exact (statClose_normalized_step (π.withV (phaseVerifier V)) S x y aux
       pre p B δ hcoins hP hcount (hclose aux))
+  -- Reindex the unchanged prover tape through its explicit coin-length equality.
   have hlen : π.P.coinLen x.length = (π.withV (phaseVerifier V)).P.coinLen x.length := by
     rw [Protocol.withV_P]
   let e : π.P.Coins x.length ≃ (π.withV (phaseVerifier V)).P.Coins x.length :=
@@ -98,6 +100,7 @@ theorem statClose_step {π ρ : Protocol} {x : List Bool} {q p : ℕ}
     (List.ofFn_congr hlen r).symm
   have hindex : StatClose (fun r : π.P.Coins x.length => F (e r)) G δ :=
     StatClose.comp_equiv_left (X := F) (Y := G) hn e
+  -- Identify both concrete samplers with the public prefix-update readers.
   have hleft : (fun r : π.P.Coins x.length => F (e r)) =
       realStep π V x y z rV p i pre := by
     funext r

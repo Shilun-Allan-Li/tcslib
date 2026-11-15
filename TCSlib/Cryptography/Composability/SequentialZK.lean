@@ -464,6 +464,7 @@ theorem seqVerifier_exec_first (π : Protocol) (Q : PolyExpr) (P' : Strategy)
     (ht : t ≤ π.rounds.eval x.length) :
     exec P' (π.seqVerifier Q) π.verifierFirst x y z rP rV t =
       exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t := by
+  -- Induct through the first phase, keeping both received histories synchronized.
   induction t with
   | zero => rw [exec_zero, exec_zero]
   | succ t ih =>
@@ -471,6 +472,7 @@ theorem seqVerifier_exec_first (π : Protocol) (Q : PolyExpr) (P' : Strategy)
     rw [exec_succ, exec_succ, ih (by omega)]
     by_cases hm : moverIsV π.verifierFirst t = true
     · simp only [hm, if_true]
+      -- The active move count excludes the aggregate-verdict branch in this prefix.
       have hl := exec_length P' π.V π.verifierFirst x y z rP
         (coinBlock (π.V.coinLen x.length) 0 rV) t
       have hkQ : π.rounds.eval x.length ≤ Q.eval x.length * π.rounds.eval x.length := by
@@ -564,6 +566,7 @@ theorem seqRep_complete (π : Protocol) (Q : PolyExpr) (x y z : List Bool)
     (hc : uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1) :
     uprob (fun r : (π.seqRep Q).ExecCoins (π.seqRep Q).P x =>
       (π.seqRep Q).outV (π.seqRep Q).P x y z r = [true]) = 1 := by
+  -- Reduce completeness to pointwise acceptance on every repeated coin tape.
   apply HardcoreBit.uprob_eq_one_of_forall
   intro r
   rw [seqRep_outV_eq, seqVerdict_eq]
@@ -578,6 +581,7 @@ theorem seqRep_complete (π : Protocol) (Q : PolyExpr) (x y z : List Bool)
     apply decide_eq_true
     rw [transcriptWith_eq, seqRep_verifierFirst, seqRep_rounds_eval,
       seqRep_exec_phase_take π Q x y z (List.ofFn r.1) (List.ofFn r.2) hjQ]
+    -- Each phase uses original-length tapes, so the base acceptance fact applies.
     have hlP : (List.ofFn r.1).length = Q.eval x.length * π.P.coinLen x.length := by
       rw [List.length_ofFn, Strategy.coinLen_eq, seqRep_P, seqProver_coins,
         PolyExpr.eval_mul, Strategy.coinLen_eq]
@@ -613,6 +617,7 @@ theorem seqRep_reject_of_first (π : Protocol) (Q : PolyExpr) (P' : Strategy)
         (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
         (π.rounds.eval x.length)).2 = [false]) :
     (π.seqRep Q).outV P' x y z r = [false] := by
+  -- Compare the first real phase with its prefix in the complete transcript.
   let k := π.rounds.eval x.length
   have hkQ : k ≤ Q.eval x.length * k := by
     simpa only [one_mul] using Nat.mul_le_mul_right k hQ
@@ -630,6 +635,7 @@ theorem seqRep_reject_of_first (π : Protocol) (Q : PolyExpr) (P' : Strategy)
     rw [exec_snd_length, proverMoves_eq]
   rw [hl] at hp
   rw [seqRep_outV_eq, seqVerdict_eq]
+  -- A failed initial phase test makes the aggregate conjunction false.
   have hnot : (List.range (Q.eval x.length)).all (fun j => decide
       (π.V.next x z (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2))
         ((((π.seqRep Q).transcriptWith P' x y z r).2.drop (j * k)).take
@@ -715,6 +721,7 @@ theorem seqRep_verifierSpec (π : Protocol) (Q : PolyExpr) (x : List Bool) :
     PaddedVerifierSpec π (π.seqRep Q) x (Q.eval x.length)
       (proverMoves π.verifierFirst (π.rounds.eval x.length))
       (fun z r hist => π.seqVerdict (Q.eval x.length) x z r hist) := by
+  -- Expose the construction equations through the abstract verifier contract.
   refine {
     coinLen_eq := ?_
     rounds_eq := seqRep_rounds_eval π Q x.length
@@ -732,6 +739,7 @@ theorem seqRep_verifierSpec (π : Protocol) (Q : PolyExpr) (x : List Bool) :
     rw [seqRep_V, seqVerifier_next, verifierMoveIndex_eq]
   · intro z r hist
     exact seqVerdict_eq π (Q.eval x.length) x z r hist
+  -- Recover active indices and phase counts through the published execution readers.
   · intro P y z rP rV t hm
     simpa only [verifierMoveIndex_eq] using
       verifierMoveIndex_exec P (π.seqRep Q).V π.verifierFirst x y z rP rV t hm
@@ -757,6 +765,7 @@ theorem seqRep_proverSpec (π : Protocol) (Q : PolyExpr) (x : List Bool) :
     SequentialZK.PaddedProverSpec π (π.seqRep Q) x (Q.eval x.length)
       (if π.verifierFirst then π.rounds.eval x.length / 2
         else (π.rounds.eval x.length + 1) / 2) := by
+  -- Expose the prover construction and its padded execution fields.
   refine {
     prover_coinLen := ?_
     rounds_eval := seqRep_rounds_eval π Q x.length
@@ -772,6 +781,7 @@ theorem seqRep_proverSpec (π : Protocol) (Q : PolyExpr) (x : List Bool) :
       Strategy.coinLen_eq]
   · intro y r hist
     rw [seqRep_P, seqProver_next, proverMoveIndex_eq]
+  -- The same index, boundary and mover readers discharge the remaining contract.
   · intro V y z rP rV n hm
     simpa only [proverMoveIndex_eq] using
       proverMoveIndex_exec (π.seqRep Q).P V π.verifierFirst x y z rP rV n hm
