@@ -64,8 +64,8 @@ functions (`ComposeSecurity/Efficiency.lean`).
   data-dependent range, the interleaved-slot map, strategies as functions of the layout).
 * `ComposeSecurity/Efficiency.lean`: the composed parties as polynomial-time functions of the
   machine layout.
-* `ComposeSecurity/Probability.lean`: distinguishing-advantage tools (triangle inequality, the
-  statistical switch, unused seeds, fixing coordinates, events of one coordinate).
+* `ComposeSecurity/Probability.lean`: distinguishing-advantage tools (the statistical switch,
+  fixing coordinates, a negligible function times a polynomial).
 * `ComposeSecurity/Reductions.lean`: machines with advice-dependent pre- and post-processing.
 * `ComposeSecurity/Assembly.lean`: a view of the composed protocol assembled from run views.
 * `ComposeSecurity/Runs.lean`: the coins of the composed protocol run by run, and the real
