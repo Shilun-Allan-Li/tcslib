@@ -71,28 +71,17 @@ theorem slicePost_eq (z : List Bool) :
 /-- Dropping both list heads never lengthens the state beyond the empty pair:
 `(parserStep z).length ≤ max z.length 2`.
 
-**Proof sketch.** On malformed words both projections vanish, so the new state is the empty
-pair. On genuine pairs each second projection is no longer than its component. Reassemble
-them with the public pairing length formula. -/
+**Proof sketch.** Reuse the published pair-state bound after shortening the second
+component. Shortening the first component can only reduce its contribution to the public
+pairing length formula. -/
 theorem length_parserStep_le (z : List Bool) : (parserStep z).length ≤ max z.length 2 := by
+  rw [parserStep_eq]
   have hf := length_pairSndD_le (pairFstD z)
-  have hs := length_pairSndD_le (pairSndD z)
-  cases hd : pairDecode z with
-  | none =>
-    have hf0 : pairFstD z = [] := by rw [pairFstD_eq, hd]; rfl
-    have hs0 : pairSndD z = [] := by rw [pairSndD_eq, hd]; rfl
-    rw [parserStep_eq, hf0, hs0, pairSndD_eq, pairDecode_nil]
-    simp only [Option.map_none, Option.getD_none, length_pairEncode,
-      List.length_nil, Nat.mul_zero, Nat.zero_add]
-    exact le_max_right _ _
-  | some ab =>
-    obtain ⟨a, b⟩ := ab
-    have hz := eq_pairEncode_of_pairDecode z a b hd
-    simp only [hz, pairFstD_pairEncode, pairSndD_pairEncode] at hf hs
-    rw [parserStep_eq, hz, pairFstD_pairEncode, pairSndD_pairEncode,
-      length_pairEncode, length_pairEncode]
-    exact (by omega : 2 * (pairSndD a).length + 2 + (pairSndD b).length ≤
-      2 * a.length + 2 + b.length).trans (le_max_left _ _)
+  have hs := OneWay.PosLoop.length_pairEncode_pairFstD_le z
+    (pairSndD (pairSndD z)) (length_pairSndD_le (pairSndD z))
+  refine le_trans ?_ hs
+  rw [length_pairEncode, length_pairEncode]
+  omega
 
 /-- The slice parser is polynomial-time on every input word:
 `PolyTimeComputable slicePost`.
