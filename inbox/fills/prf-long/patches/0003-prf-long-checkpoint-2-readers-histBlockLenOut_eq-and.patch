@@ -1,0 +1,46 @@
+From eff869dc9e20b37b5252f9681b616d8b74d7d4d5 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 03:55:23 +0000
+Subject: [PATCH 3/3] prf-long checkpoint 2: readers histBlockLenOut_eq and
+ adviceBoundOut_eq
+
+The two new PolyExpr definitions of D3 get their defining equations, so that every new public
+def has a reader beside it (lint check 8).
+---
+ .../PrivateKey/FromPRF/ReductionMachine.lean        | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean
+index 99facd0f6..d9e2a9a75 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean
+@@ -112,6 +112,11 @@ theorem eval_histBlockLen (n : ℕ) : histBlockLen.eval n = 6 * n + 6 := by
+ def histBlockLenOut (ℓ : PolyExpr) : PolyExpr :=
+   .add (.add (.mul (.const 4) .var) (.mul (.const 2) ℓ)) (.const 6)
+ 
++/-- `histBlockLenOut ℓ = 4 · var + 2 · ℓ + 6` (the defining equation). -/
++theorem histBlockLenOut_eq (ℓ : PolyExpr) :
++    histBlockLenOut ℓ = .add (.add (.mul (.const 4) .var) (.mul (.const 2) ℓ)) (.const 6) :=
++  rfl
++
+ /-- `(histBlockLenOut ℓ).eval n = 4n + 2ℓ(n) + 6`. -/
+ theorem eval_histBlockLenOut (ℓ : PolyExpr) (n : ℕ) :
+     (histBlockLenOut ℓ).eval n = 4 * n + 2 * ℓ.eval n + 6 := by
+@@ -561,6 +566,14 @@ def adviceBoundOut (q ℓ : PolyExpr) : PolyExpr :=
+   .add (.add (.mul (.const 2) (.mul (.add q (.const 1)) (histBlockLenOut ℓ))) (.const 2))
+     (.add q (.const 1))
+ 
++/-- `adviceBoundOut q ℓ = 2 · ((q + 1) · histBlockLenOut ℓ) + 2 + (q + 1)` (the defining
++equation). -/
++theorem adviceBoundOut_eq (q ℓ : PolyExpr) :
++    adviceBoundOut q ℓ =
++      .add (.add (.mul (.const 2) (.mul (.add q (.const 1)) (histBlockLenOut ℓ))) (.const 2))
++        (.add q (.const 1)) :=
++  rfl
++
+ /-- `(adviceBoundOut q ℓ).eval n = 2 ((q(n) + 1)(4n + 2ℓ(n) + 6)) + 2 + (q(n) + 1)`. -/
+ theorem eval_adviceBoundOut (q ℓ : PolyExpr) (n : ℕ) :
+     (adviceBoundOut q ℓ).eval n =
+-- 
+2.43.0
+
