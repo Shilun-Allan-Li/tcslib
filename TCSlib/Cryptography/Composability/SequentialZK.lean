@@ -5,10 +5,26 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.ZeroKnowledge.Defs
 import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
+import TCSlib.Cryptography.Composability.SequentialZK.Congruence
 import TCSlib.Cryptography.Composability.SequentialZK.Efficiency
-import TCSlib.Cryptography.Composability.SequentialZK.Soundness
+import TCSlib.Cryptography.Composability.SequentialZK.ErrSoundness
+import TCSlib.Cryptography.Composability.SequentialZK.ExecutionBounds
 import TCSlib.Cryptography.Composability.SequentialZK.Normalization
 import TCSlib.Cryptography.Composability.SequentialZK.NormalizationMachine
+import TCSlib.Cryptography.Composability.SequentialZK.PaddedProverSpec
+import TCSlib.Cryptography.Composability.SequentialZK.PhaseView
+import TCSlib.Cryptography.Composability.SequentialZK.Phases
+import TCSlib.Cryptography.Composability.SequentialZK.PrefixFolds
+import TCSlib.Cryptography.Composability.SequentialZK.PrefixLaws
+import TCSlib.Cryptography.Composability.SequentialZK.ProofTransfers
+import TCSlib.Cryptography.Composability.SequentialZK.RealPhases
+import TCSlib.Cryptography.Composability.SequentialZK.RepeatedSoundness
+import TCSlib.Cryptography.Composability.SequentialZK.RepeatedVerifier
+import TCSlib.Cryptography.Composability.SequentialZK.SimulatorMachine
+import TCSlib.Cryptography.Composability.SequentialZK.Soundness
+import TCSlib.Cryptography.Composability.SequentialZK.Statistical
+import TCSlib.Cryptography.Composability.SequentialZK.VerifierPrefix
+import TCSlib.Cryptography.Composability.SequentialZK.WrappedVerifier
 import TCSlib.Cryptography.Asymptotic.ReductionSupport
 
 set_option maxHeartbeats 0
@@ -68,10 +84,26 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
 
 ## Contents
 
-* `SequentialZK.Efficiency`: polynomial-time phase messages and aggregate verdicts.
-* `SequentialZK.Soundness`: execution prefixes and the adaptive success bound.
-* `SequentialZK.Normalization`: bounded canonical message slots.
-* `SequentialZK.NormalizationMachine`: polynomial-time bounded-slot normalization.
+* `SequentialZK.Congruence`: reached-history execution congruence.
+* `SequentialZK.Efficiency`: phase and verdict machines.
+* `SequentialZK.ErrSoundness`: acceptance bounds from soundness.
+* `SequentialZK.ExecutionBounds`: bounded real messages.
+* `SequentialZK.Normalization`: bounded message slots.
+* `SequentialZK.NormalizationMachine`: normalization machines.
+* `SequentialZK.PaddedProverSpec`: the repeated-prover contract.
+* `SequentialZK.PhaseView`: canonical view validation.
+* `SequentialZK.Phases`: fixed-prefix phase executions.
+* `SequentialZK.PrefixFolds`: typed phase-prefix samplers.
+* `SequentialZK.PrefixLaws`: phase-fold recursion equations.
+* `SequentialZK.ProofTransfers`: bounded completeness transfer.
+* `SequentialZK.RealPhases`: real and filler phase endpoints.
+* `SequentialZK.RepeatedSoundness`: the exact power soundness bound.
+* `SequentialZK.RepeatedVerifier`: the repeated-verifier contract.
+* `SequentialZK.SimulatorMachine`: the uniform normalized simulator.
+* `SequentialZK.Soundness`: execution prefixes and adaptive probability.
+* `SequentialZK.Statistical`: averaging and finite chains.
+* `SequentialZK.VerifierPrefix`: prefix tape dependence.
+* `SequentialZK.WrappedVerifier`: the deterministic phase verifier.
 
 ## Main definitions
 
@@ -93,9 +125,9 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
   `StatZK.seqRep`, with error `Q(n) · 2^{-n}`.
 * `InteractiveProof.seqRep` (proved): sequential repetition with at least one phase preserves
   interactive proofs, using the same negligible soundness bound.
-* `InteractiveProofErr.seqRep`, `EfficientProverProofErr.seqRep` (stated; `sorry`s under their
-  sketches): sequential repetition multiplies the soundness error, `s ↦ s^Q` (ruling G3-7d, for
-  the text's form of Thm 124.1).
+* `InteractiveProofErr.seqRep`, `EfficientProverProofErr.seqRep` (proved): sequential
+  repetition multiplies the soundness error, `s ↦ s^Q` (ruling G3-7d, for the text's form of
+  Thm 124.1).
 
 ## References
 
@@ -196,6 +228,21 @@ theorem verifierMoveIndex_exec (P V : Strategy) (vFirst : Bool) (x zP zV rP rV :
     verifierMoveIndex vFirst (exec P V vFirst x zP zV rP rV g).2.length = g := by
   rw [exec_snd_length, countP_not_moverIsV]
   cases vFirst <;> simp [moverIsV_true, moverIsV_false, verifierMoveIndex] at hg ⊢ <;> omega
+
+/-- For `P,V,vFirst,x,zP,zV,rP,rV,k,j`, each party has received exactly `j*k` messages
+at move `2*k*j`: both components of `exec P V vFirst x zP zV rP rV (2*k*j)` have length
+`j*k`. [PS10, Theorem 175.1, padded-phase boundaries]. -/
+theorem exec_boundary_lengths (P V : Strategy) (vFirst : Bool)
+    (x zP zV rP rV : List Bool) (k j : ℕ) :
+    (exec P V vFirst x zP zV rP rV (2 * k * j)).1.length = j * k ∧
+      (exec P V vFirst x zP zV rP rV (2 * k * j)).2.length = j * k := by
+  constructor
+  · rw [exec_fst_length, countP_moverIsV,
+      show 2 * k * j = 2 * (j * k) by ring]
+    cases vFirst <;> simp only [Bool.false_eq_true, if_false, if_true] <;> omega
+  · rw [exec_snd_length, countP_not_moverIsV,
+      show 2 * k * j = 2 * (j * k) by ring]
+    cases vFirst <;> simp only [Bool.false_eq_true, if_false, if_true] <;> omega
 
 end Composability
 
@@ -640,6 +687,88 @@ theorem seqVerifier_efficient (π : Protocol) (Q : PolyExpr) (hV : π.V.Efficien
     countP_not_moverIsV]
   simp only [List.all_eq_true, List.mem_range, decide_eq_true_eq]
 
+/-- The repeated verifier satisfies the padded-verifier equations on `x`, with
+`q=Q.eval |x|` and `p=proverMoves π.verifierFirst (π.rounds.eval |x|)`.
+[PS10, Theorem 175.1].
+
+**Proof sketch.** Read the coin, round, mover and next-message fields of the construction.
+The existing move-index and message-count readers give each remaining contract field.
+The aggregate verdict is its published conjunction of phase tests. -/
+theorem seqRep_verifierSpec (π : Protocol) (Q : PolyExpr) (x : List Bool) :
+    PaddedVerifierSpec π (π.seqRep Q) x (Q.eval x.length)
+      (proverMoves π.verifierFirst (π.rounds.eval x.length))
+      (fun z r hist => π.seqVerdict (Q.eval x.length) x z r hist) := by
+  refine {
+    coinLen_eq := ?_
+    rounds_eq := seqRep_rounds_eval π Q x.length
+    first_eq := seqRep_verifierFirst π Q
+    next_eq := ?_
+    terminal_eq := ?_
+    index_eq := ?_
+    boundary_lengths := ?_
+    local_length := ?_
+    period := ?_
+  }
+  · rw [Strategy.coinLen_eq, seqRep_V, seqVerifier_coins, PolyExpr.eval_mul,
+      Strategy.coinLen_eq]
+  · intro z r hist
+    rw [seqRep_V, seqVerifier_next, verifierMoveIndex_eq]
+  · intro z r hist
+    exact seqVerdict_eq π (Q.eval x.length) x z r hist
+  · intro P y z rP rV t hm
+    simpa only [verifierMoveIndex_eq] using
+      verifierMoveIndex_exec P (π.seqRep Q).V π.verifierFirst x y z rP rV t hm
+  · intro P y z rP rV j _
+    exact exec_boundary_lengths P (π.seqRep Q).V π.verifierFirst x y z rP rV
+      (π.rounds.eval x.length) j
+  · intro P y z rP rV
+    rw [exec_snd_length, proverMoves_eq]
+  · intro j t
+    rw [show 2 * π.rounds.eval x.length * j + t =
+      2 * (π.rounds.eval x.length * j) + t by ring]
+    exact moverIsV_two_mul_add _ _ _
+
+/-- The repeated prover satisfies the padded-prover equations on `x`, with
+`q=Q.eval |x|` and `p=if π.verifierFirst then k/2 else (k+1)/2`, for
+`k=π.rounds.eval |x|`. [PS10, Theorem 175.1].
+
+**Proof sketch.** Read the prover's coin and reply equations. Recover actual move indices
+using the existing prover index reader and obtain phase-boundary and local counts from
+the published execution-length readers. The even phase length preserves the mover pattern.
+-/
+theorem seqRep_proverSpec (π : Protocol) (Q : PolyExpr) (x : List Bool) :
+    SequentialZK.PaddedProverSpec π (π.seqRep Q) x (Q.eval x.length)
+      (if π.verifierFirst then π.rounds.eval x.length / 2
+        else (π.rounds.eval x.length + 1) / 2) := by
+  refine {
+    prover_coinLen := ?_
+    rounds_eval := seqRep_rounds_eval π Q x.length
+    first := seqRep_verifierFirst π Q
+    next := ?_
+    prover_index := ?_
+    boundary := ?_
+    original_count := ?_
+    real_le := ?_
+    period := ?_
+  }
+  · rw [Strategy.coinLen_eq, seqRep_P, seqProver_coins, PolyExpr.eval_mul,
+      Strategy.coinLen_eq]
+  · intro y r hist
+    rw [seqRep_P, seqProver_next, proverMoveIndex_eq]
+  · intro V y z rP rV n hm
+    simpa only [proverMoveIndex_eq] using
+      proverMoveIndex_exec (π.seqRep Q).P V π.verifierFirst x y z rP rV n hm
+  · intro V y z rP rV j
+    exact exec_boundary_lengths (π.seqRep Q).P V π.verifierFirst x y z rP rV
+      (π.rounds.eval x.length) j
+  · intro V y z rP rV
+    rw [exec_snd_length, countP_not_moverIsV]
+  · cases π.verifierFirst <;> simp only [Bool.false_eq_true, if_false, if_true] <;> omega
+  · intro j t
+    rw [show 2 * π.rounds.eval x.length * j + t =
+      2 * (π.rounds.eval x.length * j) + t by ring]
+    exact moverIsV_two_mul_add _ _ _
+
 end Protocol
 
 /-! ### Theorem 175.1 -/
@@ -751,15 +880,8 @@ theorem InteractiveProof.seqRep {L : Language Bool} (h : InteractiveProof π L) 
   constructor
   · rw [Protocol.seqRep_V]
     exact π.seqVerifier_efficient Q h.efficientV
-  · obtain ⟨B, hcomplete⟩ := h.complete
-    refine ⟨B, fun x hx => ?_⟩
-    obtain ⟨y, hbound, hc⟩ := hcomplete x hx
-    refine ⟨y, ?_, fun z => π.seqRep_complete Q x y z (hc z)⟩
-    intro r hist
-    rw [Protocol.seqRep_P, Protocol.seqProver_next]
-    split_ifs
-    · exact hbound _ _
-    · exact Nat.zero_le _
+  · exact SequentialZK.PaddedProverSpec.complete (fun x => π.seqRep_proverSpec Q x)
+      (fun x y z hc => π.seqRep_complete Q x y z hc) h.complete
   · obtain ⟨ε, hε, hs⟩ := h.sound
     refine ⟨ε, hε, fun x hx P' z => ?_⟩
     exact (hs x hx P' z).trans_le (π.seqRep_sound_first Q P' x [] z (hQ x.length))
@@ -784,7 +906,13 @@ repeated many times … to drive the probability of error as low as desired"; an
 theorem InteractiveProofErr.seqRep {L : Language Bool} {s : ℕ → ℝ} (h : InteractiveProofErr π L s)
     (Q : PolyExpr) (hQ : ∀ n, 1 ≤ Q.eval n) :
     InteractiveProofErr (π.seqRep Q) L (fun n => s n ^ Q.eval n) := by
-  sorry
+  constructor
+  · rw [Protocol.seqRep_V]
+    exact π.seqVerifier_efficient Q h.efficientV
+  · exact SequentialZK.PaddedProverSpec.complete (fun x => π.seqRep_proverSpec Q x)
+      (fun x y z hc => π.seqRep_complete Q x y z hc) h.complete
+  · intro x hx P' z
+    exact (π.seqRep_verifierSpec Q x).sound h hx P' z
 
 /-- **The efficient-prover form**: the sequential repetition of an interactive proof with an
 efficient prover and soundness error `s` is one with soundness error `s^Q`; the repeated prover
@@ -796,6 +924,17 @@ every witness phase by phase, as in `InteractiveProof.seqRep`. -/
 theorem EfficientProverProofErr.seqRep {L : Language Bool} {s : ℕ → ℝ}
     (h : EfficientProverProofErr π L R s) (Q : PolyExpr) (hQ : ∀ n, 1 ≤ Q.eval n) :
     EfficientProverProofErr (π.seqRep Q) L R (fun n => s n ^ Q.eval n) := by
-  sorry
+  refine {
+    toInteractiveProofErr := h.toInteractiveProofErr.seqRep Q hQ
+    efficientP := ?_
+    boundedP := ?_
+    completeWitness := ?_
+  }
+  · rw [Protocol.seqRep_P]
+    exact π.seqProver_efficient Q h.efficientP
+  · obtain ⟨B, hB⟩ := h.boundedP
+    exact ⟨B, hB.seqRep Q⟩
+  · intro x y hxy z
+    exact π.seqRep_complete Q x y z (h.completeWitness x y hxy z)
 
 end TCSlib.Cryptography
