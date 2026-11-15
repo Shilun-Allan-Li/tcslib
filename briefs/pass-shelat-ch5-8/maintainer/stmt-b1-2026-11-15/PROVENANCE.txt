@@ -1,0 +1,62 @@
+B1 statement PR evidence (maintainer statement, ruling B1, Seyoon, 2026-11-14). Nothing pushed.
+
+source
+  base branch   origin/cryptography/pass-shelat-ch2-4 = 013119f006af40d03b88b0fc2d9b453cf0a9b348 (fetched before work)
+  local branch  stmt/pass-shelat-b1-multimsg, worktree $SP/wt-stmt-b1 (.lake/packages symlinked to the main checkout)
+  head          46b780dc1b286f59da18e2d10f188b0faaab8088, tree e4056622589640b722e43251359f6901d978b984
+                (1 commit, author Claude <noreply@anthropic.com>; patches/0001-*.patch, patches/COMMITS.tsv)
+  changed       A TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean (325 lines)
+                M TCSlib/Cryptography/SecureComputation.lean (facade: import + ## Contents line)
+                (patches/changed-files.txt; statements/ holds both files at head)
+  frozen files  none changed (SpecialEncryptionSecurity.lean, Yao.lean, GarblingSpecial.lean byte-identical to the tip)
+
+toolchain       Lean 4.25.0 (PATH=$HOME/.elan/bin:$PATH); checks only through scripts/lean_check_tree.sh, one module
+                at a time, TCSLIB_OLEANS=$SP/dl-oleans. No lake build, no lake exe cache get. One Lean process on the tree.
+
+olean tree $SP/dl-oleans
+  pre   tree/snapshot-pre.txt (sha256 of every file, relative paths, LC_ALL=C order; 1230 files, no empty dir):
+        SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the base snapshot (source eff2dcd0). OK.
+  order tools-used/downorder.py <wt> 46b780dc eff2dcd0 order/  -> changed 53, down 63 (order/down.txt);
+        order/build-head.txt = down in imports-first order (63 modules, incl. root TCSlib and audits/pass-shelat/Checks).
+        SecureComputation's upstream closure is unchanged since eff2dcd0, so the new module was first checked directly.
+  head  build/head-summary.tsv (module, rc, error lines, sorry warnings, seconds), logs/head/*.log: 63/63 rc 0, 0 errors.
+        Only sorry warning: SpecialEncryptionMulti.lean:231 (sliceMultiMessageSecure_of_prfOut), the intended one.
+        The facade TCSlib/Cryptography/SecureComputation and the root TCSlib: rc 0, no warnings.
+  restore  deleted the 43 head-only oleans (order/head-only.txt; restore/restore-deleted.txt) and the 5 emptied
+        directories (restore/empty-dirs-removed.txt); rebuilt order/restore-base.txt (20 modules = down ∩ eff2dcd0 files,
+        base import order) from a git-archive export of eff2dcd0 (removed afterwards): build/restore-summary.tsv,
+        logs/restore/: 20/20 rc 0 (base sorries kept, as in the base).
+  post  restore/snapshot-post.txt byte-identical to tree/snapshot-pre.txt, SHA-256
+        457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f; 1230 files; no empty directory. RESULT OK.
+
+lint (python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography, from the worktree)
+  lint/lint-crypto-base-013119f0.log  92 FAIL, 101 WARN over 343 files (tip)
+  lint/lint-crypto-head-46b780dc.log  92 FAIL, 101 WARN over 344 files (head)
+  lint/failwarn.diff (sorted, whitespace-normalised FAIL/WARN lines): empty. lint/lint-full.diff: only the new module's
+  INFO line, the facade's INFO line count (57 -> 59) and the totals line. No check-8 warning on the new defs.
+  Widths: every line of both changed files <= 100 characters (Unicode-aware count). Sizes 325 and 59 lines.
+
+probes (probe-sources/, probe-runs/; lean run directly on the probe file, no olean written)
+  StmtB1Probe.lean, log StmtB1Probe.log (rc 1 by design):
+    A  sealed (attribute [local irreducible] spEncStr specialScheme sliceEnc sliceMultiEncDist SliceMultiMessageSecure
+       PrivateKeyScheme.multiEncDist/.MultiMessageSecure/.encodeList distAdv acceptProb NUPPT.coinsCongr
+       NUPPT.coinsEquiv_ofPolyTimeUniform NUPPT.coinsEquivPoly NUPPT.runAt NUPPT.coinLen NUPPT.ofPolyTimeUniform
+       NUPPT.distinguisherL PolyExpr.eval pairEncode): copies of sliceEnc_eq_spEncStr, sliceEnc_append_left/right and
+       specialScheme_multiMessageSecure_of_joint (with its private helpers) elaborate with no error.
+    B  frozen_from_joint: specialScheme_multiMessageSecure's exact statement from
+       specialScheme_multiMessageSecure_of_joint G E hE hGE (sliceMultiMessageSecure_of_prfOut hG).
+       yao_step3_instance: with exactly the hypothesis hG12 of yaoHybrid_simulators (G = Fin.append G1 G2,
+       l = (n+n)+(n+innerLen)), the joint family is slice multi-message secure; its (0,n) slices are spEncStr E1 and
+       its (2n, 4n+2) slices spEncStr E2; both shapes fit (the second exactly). The list identity needed is
+       List.ofFn_fin_append.
+    C  two sealed controls (sliceEnc and spEncStr read through their bodies by rfl): the only 2 errors of the run,
+       at lines 247 and 252.
+    D  axioms: sliceMultiMessageSecure_of_prfOut [propext, sorryAx, Classical.choice, Quot.sound] (intended);
+       specialScheme_multiMessageSecure_of_joint, sliceEnc_append_left, sliceMultiMessageSecure_iff
+       [propext, Classical.choice, Quot.sound]; sliceEnc_append_right [propext]; sliceEnc_eq, sliceEnc_eq_spEncStr,
+       sliceMultiEncDist_apply no axioms; frozen_from_joint, yao_step3_instance add sorryAx through the target only.
+  StmtB1Control.lean, log StmtB1Control.log: the two controls unsealed, rc 0.
+
+other
+  pr-body.md     draft PR description (not opened).
+  tools-used/    downorder.py (dl-review tools, unmodified), runner.sh (this job's per-module loop).
