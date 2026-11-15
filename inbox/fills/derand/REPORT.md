@@ -1,4 +1,4 @@
-# derand · checkpoint 2
+# derand · final
 
 ## Status and review disposition
 
@@ -961,8 +961,8 @@ finished. No package tree, toolchain, or compiled TCSlib olean is delivered.
 Hash verification and exact path-set checks run before each push; the delivery Git
 index is checked against that same physical set. Nothing named in a manifest is
 omitted. Invalid/failed research attempts are retained transparently, not substituted
-for the final accepted checks. This checkpoint has no ZIP. The final delivery separately supplies its own
-payload ZIP, with `derand/` at the root and ZIP/hash validation before its push.
+for the final accepted checks. The final ZIP has `derand/` at its root. Every ZIP entry is compared by SHA256
+to this payload and checked by ZIP CRC before the final push.
 
 ## Commit reproduction and delivery
 
@@ -986,6 +986,7 @@ commands, expected/actual hashes and metadata are delivered under `reproduction/
 Earlier delivery records:
 
 * checkpoint 1: `d90a03638e06f560f02ddce1f5aeba1bfba0e25c`; ordinary push to exchange/pass-shelat-ch5-8 succeeded
+* checkpoint 2: `aa23fc19cdba95238e822d963660f315030452aa`; ordinary push to exchange/pass-shelat-ch5-8 succeeded
 
 The worker uses its own `codex/delivery-derand` exchange worktree and stages only
 `inbox/fills/derand/`. Each delivery commit uses `commit.gpgsign=false`, pulls with

@@ -34,9 +34,9 @@ for declaration in added:
                row['name'].endswith('.' + name)]
     assert len(matches) == 1, (name, matches)
     row = matches[0]
-    signatures.append('### `' + name + '`' + (' (private)' if declaration['private'] else '') +
-        '\n\nSource: `' + declaration['path'] + ':' + str(declaration['line']) + '`.\n\n' +
-        '```lean\n' + name + ' :\n' + row['type'] + '\n```')
+    signatures.append('```lean\n-- ' + declaration['path'] + ':' + str(declaration['line']) +
+        (' (private)' if declaration['private'] else '') + '\n' +
+        name + ' :\n' + row['type'] + '\n```')
     signature_rows.append(dict(declaration=declaration, kernel_name=row['name'],
                                type=row['type'], axioms=row['axioms']))
 (worker / 'source-audit/signatures.json').write_text(json.dumps(signature_rows, indent=2) + '\n')
@@ -52,7 +52,20 @@ rejection = (scope / 'SR-02/automatic-review-rejection.txt').read_text().rstrip(
 ex01 = (scope / 'EX-01.md').read_text().rstrip()
 ex02 = (scope / 'EX-02.md').read_text().rstrip()
 overlap = (worker / 'overlap/all-declarations.md').read_text().rstrip()
-seals = (worker / 'seals/summary/final-canonical.md').read_text().rstrip()
+seal_rows = json.loads((worker / 'seals/summary/final-canonical.json').read_text())
+seal_table = ['| File | Base (each variant) | Final A strict | A coe | B strict | B coe | Status |',
+              '|---|---:|---:|---:|---:|---:|---|']
+for path in dict.fromkeys(row['source'] for row in seal_rows):
+    subset = [row for row in seal_rows if row['source'] == path]
+    assert len(subset) == 4 and len({row['base_errors'] for row in subset}) == 1
+    before = subset[0]['base_errors']
+    numbers = [next(row['final_errors'] for row in subset
+                    if row['mode'] == mode and row['coe'] == coe)
+               for mode, coe in [('A', False), ('A', True), ('B', False), ('B', True)]]
+    seal_table.append('| `' + path + '` | ' + ('new file' if before is None else str(before)) +
+                      ' | ' + ' | '.join(map(str, numbers)) + ' | ' +
+                      ('HOLD EX-02' if any(numbers) else 'PASS') + ' |')
+seals = '\n'.join(seal_table)
 commit_table = '\n'.join(f'| `{row["commit"]}` | `{row["signing"]}` |'
                           for row in record['commits'])
 history = Path('/private/tmp/derand-worker/delivery-history.json')
@@ -60,6 +73,11 @@ deliveries = json.loads(history.read_text()) if history.exists() else []
 delivery_text = '\n'.join('* ' + row['phase'] + ': `' + row['commit'] + '`; ' + row['status']
                           for row in deliveries) or '* No earlier delivery recorded.'
 title = 'checkpoint 2' if phase == 'checkpoint2' else 'final'
+zip_statement = (
+    'The final ZIP has `derand/` at its root. Every ZIP entry is compared by SHA256\n'
+    'to this payload and checked by ZIP CRC before the final push.' if phase == 'final' else
+    'This checkpoint has no ZIP. The final delivery separately supplies its own\n'
+    'payload ZIP, with `derand/` at the root and ZIP/hash validation before its push.')
 text = f'''# derand · {title}
 
 ## Status and review disposition
@@ -244,11 +262,25 @@ claim that standing discretion overruled this automatic rejection.
 
 ### EX-01: execution arrangement
 
-{ex01}
+The standing instruction was used to run independent baseline/verification and
+proof worktrees with separate single-writer TCSlib olean trees. The proof worktree
+links the verification worktree's job-owned packages read-only by convention and
+runs no Lake. No dependency tree or TCSlib olean was copied. An initial evidence
+symlink was replaced by physical evidence after a root-containment probe failure;
+that failure is retained. This is an exception to the single-checkout environment
+arrangement, not a mathematical-scope change. The complete decision and exact paths
+are in `evidence/worker/scope-request/EX-01.md`; resource details are below.
 
 ### EX-02: remaining Rule 10 finding
 
-{ex02}
+The worker used standing discretion to deliver the completed mathematics with
+the uncleared E1 Rule 10 finding, while leaving both further frozen providers
+untouched. Eight initial new diagnostics involve opaque tape/state carriers;
+the ninth is a computation-transport mismatch with matching printed types. The
+explicit per-input reader transport does not clear them. A supplementary probe
+excluding two constructors still has five E1 diagnostics, so it is not clearance.
+The exact exception, limits and review implication are in
+`evidence/worker/scope-request/EX-02.md` and the full seal accounting below.
 
 These are the complete exceptions used. E1/E2/E3 were pre-approved by the issue;
 SR-01 and its inherited-size exception were expressly approved. No other frozen-file
@@ -425,8 +457,7 @@ finished. No package tree, toolchain, or compiled TCSlib olean is delivered.
 Hash verification and exact path-set checks run before each push; the delivery Git
 index is checked against that same physical set. Nothing named in a manifest is
 omitted. Invalid/failed research attempts are retained transparently, not substituted
-for the final accepted checks. The final ZIP has `derand/` at its root, and each ZIP
-entry is compared byte-for-byte by SHA256 to this payload and checked by ZIP CRC.
+for the final accepted checks. {zip_statement}
 
 ## Commit reproduction and delivery
 
