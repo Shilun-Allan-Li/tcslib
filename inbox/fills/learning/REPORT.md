@@ -1,12 +1,49 @@
-# Fill learning — checkpoint 1 (step 1: the distinguisher and the real game)
+# Fill learning — checkpoint 2 (steps 1 and 2)
 
 **Unit** `learning` · **Worker** Claude · **Issue base** `107f1e8c218733eac12d6b9bee6fece441271317`
-(`cryptography/pass-shelat-ch2-4`) · **Proof branch** `fill/learning` (local), checkpoint commit
-`c323e6041a6696356bca538366c219dc04f464a1` · **Lean** 4.25.0, Mathlib at the base's manifest.
+(`cryptography/pass-shelat-ch2-4`) · **Proof branch** `fill/learning` (local), checkpoint commits
+`c323e6041a6696356bca538366c219dc04f464a1` (1) and `d80d3e5e3528cdf3086662f185ef331eba5a9fff` (2) ·
+**Lean** 4.25.0, Mathlib at the base's manifest.
 
 **Target status at this checkpoint:** `Randomness.predictAdv_prfConcept_negligible` is still
-`sorry`. Step 1 of the route is proved (no `sorry`): the distinguisher, and its acceptance
-probability with any keyed family as the prediction game's probability.
+`sorry`. Steps 1 and 2 of the route are proved (no `sorry`).
+
+## 0. Checkpoint 2: step 2, as proved
+
+New helper `Randomness/Learning/Random.lean` (203 lines), imported by the owned file:
+`abs_gameProb_random_sub_half_le`: for `n ≥ 1`, every learner `ℓ` and `m` examples,
+`|gameProb m (fun R => R) ℓ − ½| ≤ m / 2^n`, the game with a uniform random function
+`R : {0,1}^n → {0,1}^n` in place of the keyed family (with step 1, `acceptProb (randomFunction …) D`
+is this game, `randomFunction_apply`).
+
+- Put `R` last and average over it first (`uprob_comp_equiv`, `uprob_prod`). For fixed examples
+  `s`, coins `r` and fresh point `x`:
+  - if `x` is none of the examples, `flipAt hn x R = update R x (flip0 (R x))` (flip the first bit
+    of `R x`) is an involution of the functions (`flipAt_involutive`) that keeps the labels of the
+    examples (`Function.update_of_ne`) and negates the label of `x` (`firstBit_flip0`); it maps the
+    winning functions onto the losing ones, so the probability is exactly `½` (`uprob_flip_half`,
+    `uprob_comp_equiv`, `uprob_not`);
+  - otherwise the probability is in `[0, 1]`.
+- So `|gameProb − ½| ≤ Pr[∃ j, s_j = x]` (the average of `|p − ½| ≤ [x ∈ s]`), and the union bound
+  (`uprob_exists_le`) with `Pr[s_j = x] = 2^{-n}` (`uprob_prod`, `uprob_eq_point`) gives `m / 2^n`.
+- `n ≥ 1` is needed for the first bit; at `n = 0` the final step uses an eventual bound.
+
+New declarations: `flip0` (`flip0_eq`, `flip0_flip0`), `firstBit_of_pos`, `firstBit_flip0`,
+`flipAt` (`flipAt_eq`, `flipAt_involutive`), `uprob_flip_half`, `uprob_eq_point`,
+`abs_gameProb_random_sub_half_le`.
+
+Overlap (step 2): the flip argument has no TCSlib relative (searched `update`/`involutive`/`flip`
+with `uprob` in `TCSlib/Cryptography`); `uprob_eq_point` (`Pr[x = y] = 1/2^n`) is the uniform
+point mass, which `Rejection.uniform_probTrue` would give through `FinDist`; the `uprob` form is
+stated directly from `uprob_eq_card_filter`. The PRFGame collision bound
+(`OracleFromPRF/Collision.lean:375`, `abs_expect_fImpl_sub_le`) bounds the repetition of a nonce
+in the CPA game (lazy sampling, `q²/2ⁿ`); here the bad event is one fixed point among `m` samples,
+bounded directly.
+
+Evidence added: `logs/checkpoint2-checks.log` (status 0; the one `sorry` warning is the target),
+`checkpoint2-axioms.log` (`propext`, `Classical.choice`, `Quot.sound`), `checkpoint2-lint.log`
+(92 FAIL / 101 WARN, the base's line sets), `checkpoint2-width.log`, `checkpoint2-repro.log`
+(both hashes reproduced), `probes/AxiomsCP2.lean`.
 
 ## 1. Environment (addendum v1)
 
