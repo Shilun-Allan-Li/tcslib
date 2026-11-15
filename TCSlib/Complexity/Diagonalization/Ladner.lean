@@ -8,6 +8,7 @@ import TCSlib.Complexity.ClassNP.PClosure
 import TCSlib.Complexity.CookLevin.Hardness
 import TCSlib.Complexity.Diagonalization.EXPCOM
 import TCSlib.Complexity.ClassP.ModelInvariance
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
 import Mathlib.Data.Nat.Log
 
 set_option maxHeartbeats 0
@@ -536,5 +537,247 @@ theorem SAT_H_intermediate (h : P ≠ NP) :
 /-- If P differs from NP, an NP-intermediate language exists. [AB09, Theorem 3.3] -/
 theorem ladner (h : P ≠ NP) : ∃ L ∈ NP, L ∉ P ∧ ¬ NPComplete L :=
   ⟨SAT_H, SAT_H_intermediate h⟩
+
+/-! ### Padding syntax and fixed finite tables -/
+
+/-- Parse the final false separator and its true suffix.
+This is the mathematical padding parser of [AB09, Theorem 3.3 and its proof]. -/
+private def ladner_parse : List Bool → Option (List Bool × ℕ)
+  | [] => none
+  | b :: bs => match ladner_parse bs with
+    | some (p, t) => some (b :: p, t)
+    | none => if b then none else some ([], bs.length)
+
+/-- Padding syntax requires the suffix length to be the prescribed power.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_padSyntax (h : ℕ → ℕ) (y : List Bool) : Bool :=
+  match ladner_parse y with
+  | none => false
+  | some (p, t) => decide (t = p.length ^ h p.length)
+
+/-- Serialize a successful parse with a nonempty marker; failure is the empty word.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_parseWord (y : List Bool) : List Bool :=
+  match ladner_parse y with
+  | none => []
+  | some (p, t) => pairEncode [true] (pairEncode p (Nat.bits t))
+
+/-- The parser fails exactly on words with no false separator.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_parse_none (y : List Bool) :
+    ladner_parse y = none ↔ ∀ b ∈ y, b = true := by
+  induction y with
+  | nil => simp only [ladner_parse, List.not_mem_nil, false_implies, implies_true]
+  | cons b bs ih =>
+    rw [List.forall_mem_cons, ← ih]
+    cases hs : ladner_parse bs with
+    | none => cases b <;> simp only [ladner_parse, hs, Bool.false_eq_true,
+        if_false, if_true, Option.some_ne_none, and_true]
+    | some pt =>
+      obtain ⟨p, t⟩ := pt
+      simp only [ladner_parse, hs, Option.some_ne_none, and_false]
+
+/-- A successful parse reconstructs the input around the final separator.
+
+**Proof sketch.** Induct on the input. A successful recursive parse extends the prefix.
+When the recursive parse fails, the tail is all true and the current false bit is the
+final separator. [AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_parse_sound {y p : List Bool} {t : ℕ}
+    (hp : ladner_parse y = some (p, t)) : y = p ++ false :: List.replicate t true := by
+  induction y generalizing p t with
+  | nil => cases hp
+  | cons b bs ih =>
+    cases hs : ladner_parse bs with
+    | none =>
+      cases b with
+      | false =>
+        simp only [ladner_parse, hs, Bool.false_eq_true, if_false,
+          Option.some.injEq, Prod.mk.injEq] at hp
+        obtain ⟨rfl, rfl⟩ := hp
+        have he : bs = List.replicate bs.length true :=
+          List.eq_replicate_iff.mpr ⟨rfl, (ladner_parse_none bs).mp hs⟩
+        simpa only [List.nil_append] using congrArg (List.cons false) he
+      | true =>
+        simp only [ladner_parse, hs, if_true] at hp
+        cases hp
+    | some pt =>
+      obtain ⟨q, u⟩ := pt
+      simp only [ladner_parse, hs, Option.some.injEq, Prod.mk.injEq] at hp
+      obtain ⟨rfl, rfl⟩ := hp
+      simpa only [List.cons_append] using congrArg (List.cons b) (ih hs)
+
+/-- The parser reads any prefix followed by a false separator and a true suffix.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_parse_pad (p : List Bool) (t : ℕ) :
+    ladner_parse (p ++ false :: List.replicate t true) = some (p, t) := by
+  have hn : ladner_parse (List.replicate t true) = none :=
+    (ladner_parse_none _).mpr (by simp only [List.mem_replicate]; aesop)
+  induction p with
+  | nil => simp only [List.nil_append, ladner_parse, hn, Bool.false_eq_true,
+      if_false, List.length_replicate]
+  | cons b p ih => simp only [List.cons_append, ladner_parse, ih]
+
+/-- Parsing succeeds exactly on the indicated padded word.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_parse_some (y p : List Bool) (t : ℕ) :
+    ladner_parse y = some (p, t) ↔ y = p ++ false :: List.replicate t true :=
+  ⟨ladner_parse_sound, fun he => he ▸ ladner_parse_pad p t⟩
+
+/-- A parsed prefix is shorter than the input, whose length includes the separator.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_parsed_length {y p : List Bool} {t : ℕ}
+    (hp : ladner_parse y = some (p, t)) :
+    y.length = p.length + 1 + t ∧ p.length < y.length := by
+  rw [(ladner_parse_some y p t).mp hp]
+  simp only [List.length_append, List.length_cons, List.length_replicate]
+  omega
+
+/-- The public false-bit test is false exactly on all-true words. -/
+private theorem ladner_hasFalse_false (y : List Bool) :
+    BinArith.hasFalse y = false ↔ ∀ b ∈ y, b = true := by
+  induction y with
+  | nil => simp only [BinArith.hasFalse_nil, List.not_mem_nil, false_implies, implies_true]
+  | cons b bs ih => cases b <;> simp only [BinArith.hasFalse_cons, Bool.not_false,
+      Bool.not_true, Bool.true_or, Bool.false_or, Bool.true_eq_false,
+      List.forall_mem_cons, Bool.false_eq_true, false_and, true_and, ih]
+
+/-- The public false-bit test distributes over append. -/
+private theorem ladner_hasFalse_append (u v : List Bool) :
+    BinArith.hasFalse (u ++ v) = (BinArith.hasFalse u || BinArith.hasFalse v) := by
+  induction u with
+  | nil => simp only [List.nil_append, BinArith.hasFalse_nil, Bool.false_or]
+  | cons b u ih => simp only [List.cons_append, BinArith.hasFalse_cons, ih, Bool.or_assoc]
+
+/-- Reverse and the public unary-rest reader recover a successful parse's prefix.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_parse_prefix {y p : List Bool} {t : ℕ}
+    (hp : ladner_parse y = some (p, t)) : (BinArith.uRest y.reverse).reverse = p := by
+  have hr (n : ℕ) (w : List Bool) :
+      BinArith.uRest (List.replicate n true ++ false :: w) = w := by
+    have h := BinArith.uRest_encodeNat n w
+    rwa [BoolCircuit.encodeNat_eq, List.append_assoc, List.singleton_append] at h
+  rw [(ladner_parse_some y p t).mp hp]
+  simp only [List.reverse_append, List.reverse_cons, List.reverse_replicate,
+    List.append_assoc, List.singleton_append, hr, List.reverse_reverse]
+
+/-- The mathematical padding parser has a polynomial-time serialization.
+
+**Proof sketch.** Reverse the input, skip its true suffix and separator with the existing
+unary-rest reader, and reverse the remainder. Subtract the prefix length and one from
+the input length to get the suffix length. The public false-bit test distinguishes a
+missing separator from an empty prefix. [AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_parse_FP : PolyTimeComputable ladner_parseWord := by
+  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
+    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hpre := BinArith.polyTimeComputable_reverse.comp
+    (BinArith.polyTimeComputable_uRest.comp BinArith.polyTimeComputable_reverse)
+  have ht := BinArith.polyTimeComputable_sub.comp
+    ((BinArith.polyTimeComputable_sub.comp (hl.pairEncode (hl.comp hpre))).pairEncode
+      (polyTimeComputable_const (Nat.bits 1)))
+  have hout := polyTimeComputable_ite BinArith.polyTimeComputable_hasFalse
+    ((polyTimeComputable_const [true]).pairEncode (hpre.pairEncode ht))
+    (polyTimeComputable_const [])
+  convert hout using 1
+  funext y
+  cases hp : ladner_parse y with
+  | none =>
+    have hf := (ladner_hasFalse_false y).mpr ((ladner_parse_none y).mp hp)
+    simp only [ladner_parseWord, hp, Function.comp_apply, hf, Bool.false_eq_true, if_false]
+  | some pt =>
+    obtain ⟨p, t⟩ := pt
+    have hpre' := ladner_parse_prefix hp
+    have hlen := (ladner_parsed_length hp).1
+    have hf : BinArith.hasFalse y = true := by
+      rw [(ladner_parse_some y p t).mp hp, ladner_hasFalse_append,
+        BinArith.hasFalse_cons]
+      simp only [Bool.not_false, Bool.true_or, Bool.or_true]
+    have ht' : y.length - p.length - 1 = t := by omega
+    simp only [ladner_parseWord, hp, Function.comp_apply, hf, if_true, hpre',
+      BinArith.sub_pairEncode, ht']
+
+/-- The padding syntax test is polynomial-time when its exponent function is.
+
+**Proof sketch.** Parse the word and compute the prefix length and exponent in binary.
+Use the saturated power with cap parameter equal to the suffix length. Its result equals
+the suffix length exactly when the full power does; this avoids allocating an enormous
+power. [AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_syntax_FP {h : ℕ → ℕ}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length))) :
+    PolyTimeComputable (fun y => [ladner_padSyntax h y]) := by
+  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
+    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hpre := BinArith.polyTimeComputable_slot2.comp ladner_parse_FP
+  have ht := BinArith.polyTimeComputable_slot3.comp ladner_parse_FP
+  have hpow := BinArith.polyTimeComputable_powCap.comp
+    ((hl.comp hpre).pairEncode ((hp.comp hpre).pairEncode ht))
+  have heq := BinArith.polyTimeComputable_beq.comp (ht.pairEncode hpow)
+  have hout := polyTimeComputable_ite (polyTimeComputable_isNil.comp ladner_parse_FP)
+    (polyTimeComputable_const [false]) heq
+  convert hout using 1
+  funext y
+  cases hy : ladner_parse y with
+  | none => simp only [ladner_padSyntax, ladner_parseWord, hy, Function.comp_apply,
+      decide_true, if_true]
+  | some pt =>
+    obtain ⟨p, t⟩ := pt
+    have hne : pairEncode [true] (pairEncode p (Nat.bits t)) ≠ [] := by
+      intro he
+      have he' := congrArg List.length he
+      rw [length_pairEncode] at he'
+      simp only [List.length_cons, List.length_nil] at he'
+      omega
+    simp only [ladner_padSyntax, ladner_parseWord, hy, Function.comp_apply,
+      hne, decide_false, Bool.false_eq_true, if_false, pairFstD_pairEncode,
+      pairSndD_pairEncode, BinArith.powCap_pairEncode, BinArith.beq_pairEncode]
+    have heq' : (t = min (p.length ^ h p.length) (t + 1)) ↔
+        t = p.length ^ h p.length := by omega
+    simp only [heq']
+
+/-- Padding membership is successful parsing, the prescribed suffix length, and SAT
+membership of the prefix. [AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_pad_membership {h : ℕ → ℕ} {y : List Bool} :
+    y ∈ padSAT h ↔ ∃ p t, ladner_parse y = some (p, t) ∧
+      t = p.length ^ h p.length ∧ p ∈ SAT := by
+  rw [mem_padSAT_iff]
+  constructor
+  · rintro ⟨p, hp, he⟩
+    exact ⟨p, p.length ^ h p.length, (ladner_parse_some _ _ _).mpr he, rfl, hp⟩
+  · rintro ⟨p, t, hparse, rfl, hp⟩
+    exact ⟨p, hp, (ladner_parse_some _ _ _).mp hparse⟩
+
+/-- Every fixed finite table of words has a polynomial-time membership test.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_finite_lookup_FP (S : Finset (List Bool)) :
+    PolyTimeComputable (fun x : List Bool => [decide (x ∈ S)]) := by
+  induction S using Finset.induction_on with
+  | empty => exact polyTimeComputable_const [false]
+  | @insert w S hw ih =>
+    have heq := polyTimeComputable_of_linear (FinTM.computesFunInTime_decideEq w)
+    convert polyTimeComputable_or heq ih using 1
+    funext x
+    simp only [Finset.mem_insert, Bool.decide_or]
+
+/-- SAT on words shorter than a fixed bound is represented by a finite table.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Enumerate Boolean functions on each `Fin n` for `n < B`, turn them
+into lists, and filter this finite universe by SAT. No SAT computation is performed at
+runtime; the table is fixed once the bound is chosen. -/
+private theorem ladner_small_SAT_table (B : ℕ) :
+    ∃ S : Finset (List Bool), ∀ x : List Bool,
+      x ∈ S ↔ x.length < B ∧ x ∈ SAT := by
+  classical
+  let U : Finset (List Bool) := (Finset.range B).biUnion (fun n =>
+    (Finset.univ : Finset (Fin n → Bool)).image List.ofFn)
+  have hu (x : List Bool) : x ∈ U ↔ x.length < B := by
+    simp only [U, Finset.mem_biUnion, Finset.mem_range, Finset.mem_image,
+      Finset.mem_univ, true_and]
+    constructor
+    · rintro ⟨n, hn, f, rfl⟩
+      simpa only [List.length_ofFn] using hn
+    · intro hx
+      exact ⟨x.length, hx, x.get, List.ofFn_get x⟩
+  exact ⟨U.filter (fun x => x ∈ SAT), fun x => by rw [Finset.mem_filter, hu]⟩
+
 
 end Complexity
