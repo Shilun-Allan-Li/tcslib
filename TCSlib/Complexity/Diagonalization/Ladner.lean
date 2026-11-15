@@ -1774,6 +1774,324 @@ private theorem ladner_candidate_FP
   funext C
   simpa only [Function.comp_apply, ladner_testOut, decide_eq_true_eq] using ladner_candidate_readout C
 
+/-! ### Polynomial-time selection and memo-table evaluation -/
+
+/-- Prepare a candidate context using the number of decoded memo entries.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_selectCtx (T : List Bool) (i : ℕ) : List Bool :=
+  pairEncode (List.replicate (ladner_values T).length true) (pairEncode (Nat.bits i) T)
+
+/-- Initialize the candidate rank and the absorbing completion flag.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_selectInit (T : List Bool) : List Bool :=
+  pairEncode T (pairEncode [] (pairEncode [] []))
+
+/-- Test the next candidate, recording the first success or the exact cap.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_selectStep (S : List Bool) : List Bool :=
+  let T := pairFstD S
+  let rank := pairFstD (pairSndD S)
+  let flag := pairFstD (pairSndD (pairSndD S))
+  let cap := Nat.log 2 (Nat.log 2 (ladner_values T).length)
+  if flag ≠ [] then S else
+    if rank.length < cap then
+      if ladner_candidate (ladner_selectCtx T rank.length) then
+        pairEncode T (pairEncode rank (pairEncode [true] (Nat.bits rank.length)))
+      else pairEncode T (pairEncode (rank ++ [true]) (pairEncode [] []))
+    else pairEncode T (pairEncode rank (pairEncode [true] (Nat.bits cap)))
+
+/-- Read the selected index from a completed selection state.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_selectOut (S : List Bool) : List Bool :=
+  pairSndD (pairSndD (pairSndD S))
+
+/-- In a prepared context the candidate predicate is precisely the bounded stage test.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_candidate_selectCtx (T : List Bool) (i : ℕ) :
+    ladner_candidate (ladner_selectCtx T i) = decide
+      (i < Nat.log 2 (Nat.log 2 (ladner_values T).length) ∧
+        ∀ x : List Bool, x.length ≤ Nat.log 2 (ladner_values T).length →
+          ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+            x ∈ padSAT (fun m => (ladner_values T).getD m 0))) := by
+  simp only [ladner_candidate, ladner_selectCtx, pairFstD_pairEncode,
+    pairSndD_pairEncode, List.length_replicate, LogProg.bitsVal_bits, true_and]
+
+/-- The stage is at most its cap, every earlier candidate fails, and a stage below
+the cap succeeds. [AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Apply `Nat.find_spec` and `Nat.find_min` when a bounded candidate
+exists. Otherwise every bounded candidate fails and the stage is exactly the cap. -/
+private theorem ladner_stage_spec (T : List Bool) :
+    ladner_stage (ladner_values T) ≤ Nat.log 2 (Nat.log 2 (ladner_values T).length) ∧
+      (∀ i < ladner_stage (ladner_values T),
+        ladner_candidate (ladner_selectCtx T i) = false) ∧
+      (ladner_stage (ladner_values T) < Nat.log 2 (Nat.log 2 (ladner_values T).length) →
+        ladner_candidate (ladner_selectCtx T (ladner_stage (ladner_values T))) = true) := by
+  simp only [ladner_stage]
+  split_ifs with h
+  · refine ⟨(Nat.find_spec h).1.le, ?_, ?_⟩
+    · intro i hi
+      rw [ladner_candidate_selectCtx]
+      exact decide_eq_false (Nat.find_min h hi)
+    · intro _
+      rw [ladner_candidate_selectCtx]
+      exact decide_eq_true (Nat.find_spec h)
+  · refine ⟨le_rfl, ?_, ?_⟩
+    · intro i _
+      rw [ladner_candidate_selectCtx]
+      exact decide_eq_false (fun hi => h ⟨i, hi⟩)
+    · intro hi
+      exact False.elim (Nat.lt_irrefl _ hi)
+
+/-- Selection initialization uses only pairing with fixed empty words.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_selectInit_FP : PolyTimeComputable ladner_selectInit := by
+  exact polyTimeComputable_id.pairEncode ((polyTimeComputable_const []).pairEncode
+    ((polyTimeComputable_const []).pairEncode (polyTimeComputable_const [])))
+
+/-- The selection transition is polynomial-time whenever the candidate test is.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Count entries through `countW`, encode the unary rank's length,
+and compute the cap with two binary logarithms. Compose the candidate test on this
+prepared context, then use FP conditionals for success, exhaustion and completion. -/
+private theorem ladner_selectStep_FP
+    (hc : PolyTimeComputable (fun C => [ladner_candidate C])) :
+    PolyTimeComputable ladner_selectStep := by
+  have hcount : PolyTimeComputable
+      (fun T => List.replicate (ladner_values T).length true) := by
+    convert BinArith.polyTimeComputable_countW using 1
+    funext T
+    simp only [BinArith.countW_eq, ladner_values, List.length_map]
+  have hT := polyTimeComputable_pairFstD
+  have hr := BinArith.polyTimeComputable_slot2
+  have hi := ladner_lengthBits_FP.comp hr
+  have hcap := ladner_binary_log_FP.comp
+    (ladner_binary_log_FP.comp (ladner_values_length_FP.comp hT))
+  have hctx := (hcount.comp hT).pairEncode (hi.pairEncode hT)
+  have htest := hc.comp hctx
+  have hlt : PolyTimeComputable (fun S => [decide
+      ((pairFstD (pairSndD S)).length <
+        Nat.log 2 (Nat.log 2 (ladner_values (pairFstD S)).length))]) := by
+    convert ladner_index_lt_loglog_FP hi (hcount.comp hT) using 1
+    funext S
+    simp only [Function.comp_apply, LogProg.bitsVal_bits, List.length_replicate]
+  have hsuccess := hT.pairEncode
+    (hr.pairEncode ((polyTimeComputable_const [true]).pairEncode hi))
+  have hnext := hT.pairEncode ((hr.append (polyTimeComputable_const [true])).pairEncode
+    ((polyTimeComputable_const []).pairEncode (polyTimeComputable_const [])))
+  have hfinish := hT.pairEncode
+    (hr.pairEncode ((polyTimeComputable_const [true]).pairEncode hcap))
+  convert polyTimeComputable_ite
+    (polyTimeComputable_isNil.comp
+      (polyTimeComputable_pairFstD.comp BinArith.polyTimeComputable_slot3))
+    (polyTimeComputable_ite hlt (polyTimeComputable_ite htest hsuccess hnext) hfinish)
+    polyTimeComputable_id using 1
+  funext S
+  simp only [Function.comp_apply, ladner_selectStep, ladner_selectCtx,
+    LogProg.bitsVal_bits, decide_eq_true_eq, id_eq]
+  by_cases hf : pairFstD (pairSndD (pairSndD S)) = [] <;>
+    simp only [hf, ne_eq, not_true_eq_false, not_false_eq_true, if_true, if_false]
+
+/-- The exact selection orbit: before selection the rank is the iteration count;
+after selection the completed state is fixed. [AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Every index strictly below the stage fails by `ladner_stage_spec`.
+At the stage either its candidate succeeds or the cap is reached. Both cases record
+the same value and set the completion flag, which makes all later steps fixed. -/
+private theorem ladner_select_orbit (T : List Bool) (j : ℕ) :
+    ladner_selectStep^[j] (ladner_selectInit T) =
+      if j ≤ ladner_stage (ladner_values T) then
+        pairEncode T (pairEncode (List.replicate j true) (pairEncode [] []))
+      else pairEncode T (pairEncode (List.replicate (ladner_stage (ladner_values T)) true)
+        (pairEncode [true] (Nat.bits (ladner_stage (ladner_values T))))) := by
+  obtain ⟨hcap, hprev, hsuccess⟩ := ladner_stage_spec T
+  induction j with
+  | zero => simp only [Function.iterate_zero_apply, ladner_selectInit, Nat.zero_le,
+      if_true, List.replicate_zero]
+  | succ j ih =>
+    rw [Function.iterate_succ_apply', ih]
+    by_cases hj : j < ladner_stage (ladner_values T)
+    · have hj' : j + 1 ≤ ladner_stage (ladner_values T) := by omega
+      have hr : j < Nat.log 2 (Nat.log 2 (ladner_values T).length) := hj.trans_le hcap
+      simp only [if_pos hj.le, if_pos hj', ladner_selectStep, pairFstD_pairEncode,
+        pairSndD_pairEncode, List.length_replicate, ne_eq, not_true_eq_false,
+        if_false, if_pos hr, hprev j hj, Bool.false_eq_true, ← List.replicate_succ']
+    · by_cases he : j = ladner_stage (ladner_values T)
+      · subst j
+        have hn : ¬ ladner_stage (ladner_values T) + 1 ≤ ladner_stage (ladner_values T) :=
+          by omega
+        simp only [if_pos le_rfl, if_neg hn, ladner_selectStep, pairFstD_pairEncode,
+          pairSndD_pairEncode, List.length_replicate, ne_eq, not_true_eq_false, if_false]
+        by_cases hs : ladner_stage (ladner_values T) <
+            Nat.log 2 (Nat.log 2 (ladner_values T).length)
+        · simp only [if_pos hs, hsuccess hs, if_true]
+        · have heq : ladner_stage (ladner_values T) =
+              Nat.log 2 (Nat.log 2 (ladner_values T).length) := by omega
+          rw [if_neg hs, ← heq]
+      · have hn : ¬ j ≤ ladner_stage (ladner_values T) := by omega
+        have hn' : ¬ j + 1 ≤ ladner_stage (ladner_values T) := by omega
+        simp only [if_neg hn, if_neg hn', ladner_selectStep, pairFstD_pairEncode,
+          pairSndD_pairEncode, List.cons_ne_nil, ne_eq, not_false_eq_true, if_true]
+
+/-- The selected stage is bounded by the serialized table length.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_stage_length_le (T : List Bool) :
+    ladner_stage (ladner_values T) ≤ T.length := by
+  exact (ladner_stage_spec T).1.trans ((Nat.log_le_self 2 _).trans
+    ((Nat.log_le_self 2 _).trans (ladner_values_length_le T)))
+
+/-- Every selection state, including every fixed state after completion, has linear
+serialized length. [AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_select_size (T : List Bool) (j : ℕ) :
+    (ladner_selectStep^[j] (ladner_selectInit T)).length ≤ 12 * (T.length + 1) ^ 1 := by
+  have hstage := ladner_stage_length_le T
+  have hbits := (length_bits_le_self (ladner_stage (ladner_values T))).trans hstage
+  rw [ladner_select_orbit]
+  split_ifs with hj <;>
+    simp only [length_pairEncode, List.length_replicate, List.length_nil,
+      List.length_cons, pow_one] <;> omega
+
+/-- After `|T|+1` rounds the selected word is exactly the stage's binary digits.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_select_readout (T : List Bool) :
+    ladner_selectOut (ladner_selectStep^[1 * (T.length + 1) ^ 1] (ladner_selectInit T)) =
+      Nat.bits (ladner_stage (ladner_values T)) := by
+  have hstage := ladner_stage_length_le T
+  have hn : ¬ 1 * (T.length + 1) ^ 1 ≤ ladner_stage (ladner_values T) := by
+    simp only [pow_one, one_mul]
+    omega
+  simp only [ladner_select_orbit, if_neg hn, ladner_selectOut, pairSndD_pairEncode]
+
+/-- The stage is computed by the public bounded iterator followed by its fourth-slot
+readout. [AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_stage_FP
+    (hcheck : PolyTimeComputable (fun S => [ladner_candidate S])) :
+    PolyTimeComputable (fun T => Nat.bits (ladner_stage (ladner_values T))) := by
+  have hloop := BinArith.polyTimeComputable_iterate (ladner_selectStep_FP hcheck)
+    ladner_selectInit_FP 1 1 12 1 (fun T j _ => ladner_select_size T j)
+  convert BinArith.polyTimeComputable_slot4.comp hloop using 1
+  funext T
+  exact (ladner_select_readout T).symm
+
+/-- A table of all earlier correct values computes the global delayed index at its
+length. [AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Every padding exponent queried by a word of length at most `log₂ n`
+has index strictly below that word's length, hence below `n`. Apply `padSAT_congr`
+with the table hypothesis, then identify the two minimum-index equations. -/
+private theorem ladner_stage_correct (vs : List ℕ)
+    (hvs : ∀ m < vs.length, vs.getD m 0 = ladnerH m) :
+    ladner_stage vs = ladnerH vs.length := by
+  have htests (i : ℕ) :
+      (∀ x : List Bool, x.length ≤ Nat.log 2 vs.length →
+        ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+          x ∈ padSAT (fun m => vs.getD m 0))) ↔
+      ∀ x : List Bool, x.length ≤ Nat.log 2 vs.length →
+        ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+          x ∈ padSAT ladnerH) := by
+    apply forall_congr'
+    intro x
+    apply imp_congr_right
+    intro hx
+    exact iff_congr Iff.rfl (padSAT_congr (fun m hm =>
+      hvs m (hm.trans_le (hx.trans (Nat.log_le_self 2 vs.length)))))
+  rw [ladner_stage, ladnerH_eq]
+  simp_rw [htests]
+
+/-- The memo driver starts with the immutable unary input length and an empty table.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_memoInit (z : List Bool) : List Bool :=
+  pairEncode (List.replicate z.length true) []
+
+/-- Append the next stage value to the memo table, preserving the requested index.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_memoStep (S : List Bool) : List Bool :=
+  pairEncode (pairFstD S)
+    (pairSndD S ++ pairEncode (Nat.bits (ladner_stage (ladner_values (pairSndD S)))) [])
+
+/-- One memo step composes the stage computation, append and pairing.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_memoStep_FP
+    (hstage : PolyTimeComputable (fun T => Nat.bits (ladner_stage (ladner_values T)))) :
+    PolyTimeComputable ladner_memoStep := by
+  exact polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_pairSndD.append
+    ((hstage.comp polyTimeComputable_pairSndD).pairEncode (polyTimeComputable_const [])))
+
+/-- The unary input-length marker and empty initial table are polynomial-time.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_memoInit_FP : PolyTimeComputable ladner_memoInit := by
+  exact polyTimeComputable_unary.pairEncode (polyTimeComputable_const [])
+
+/-- Every memo orbit consists exactly of the first `j` delayed-index values.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Decode the canonical encoded table with `decWords_encWords` and
+`bitsVal_bits`. Its in-range entries satisfy the hypothesis of `ladner_stage_correct`.
+That theorem supplies the next value, and `encWords_append_singleton` identifies the
+serialized append with the longer history. -/
+private theorem ladner_memo_orbit (z : List Bool) (j : ℕ) :
+    ladner_memoStep^[j] (ladner_memoInit z) =
+      pairEncode (List.replicate z.length true)
+        (BinArith.encWords ((List.range j).map (fun m => Nat.bits (ladnerH m)))) := by
+  induction j with
+  | zero => simp only [Function.iterate_zero_apply, ladner_memoInit, List.range_zero,
+      List.map_nil, BinArith.encWords_nil]
+  | succ j ih =>
+    have hv : ladner_values (BinArith.encWords
+        ((List.range j).map (fun m => Nat.bits (ladnerH m)))) =
+        (List.range j).map ladnerH := by
+      rw [ladner_values, BinArith.decWords_encWords, List.map_map]
+      congr 1
+      funext m
+      show LogProg.bitsVal (Nat.bits (ladnerH m)) = ladnerH m
+      exact LogProg.bitsVal_bits _
+    have hcorrect : ladner_stage (ladner_values (BinArith.encWords
+        ((List.range j).map (fun m => Nat.bits (ladnerH m))))) = ladnerH j := by
+      rw [hv]
+      have h := ladner_stage_correct ((List.range j).map ladnerH) (fun m hm => by
+        have hm' : m < j := by simpa only [List.length_map, List.length_range] using hm
+        simp only [List.getD_eq_getElem?_getD, List.getElem?_map,
+          List.getElem?_range hm', Option.map_some, Option.getD_some])
+      simpa only [List.length_map, List.length_range] using h
+    rw [Function.iterate_succ_apply', ih]
+    simp only [ladner_memoStep, pairFstD_pairEncode, pairSndD_pairEncode, hcorrect,
+      List.range_succ, List.map_append, List.map_singleton, BinArith.encWords_append_singleton]
+
+/-- Every memo state through the requested final round has quadratic serialized length.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_memo_size (z : List Bool) (j : ℕ) (hj : j ≤ z.length + 1) :
+    (ladner_memoStep^[j] (ladner_memoInit z)).length ≤ 4 * (z.length + 1) ^ 2 := by
+  have hwords : ∀ w ∈ (List.range j).map (fun m => Nat.bits (ladnerH m)),
+      w.length ≤ z.length := by
+    intro w hw
+    obtain ⟨m, hm, rfl⟩ := List.mem_map.mp hw
+    have hm' := List.mem_range.mp hm
+    exact (length_bits_le_self _).trans ((ladnerH_le m).trans
+      ((Nat.log_le_self 2 _).trans ((Nat.log_le_self 2 m).trans (by omega))))
+  have htable := BinArith.length_encWords_le _ z.length hwords
+  simp only [List.length_map, List.length_range] at htable
+  have hbound := htable.trans (Nat.mul_le_mul_right (2 * z.length + 2) hj)
+  rw [ladner_memo_orbit]
+  simp only [length_pairEncode, List.length_replicate]
+  nlinarith
+
+/-- The existing word-table lookup reads the delayed index at the requested input length.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_memo_readout (z : List Bool) :
+    BinArith.getW (ladner_memoStep^[1 * (z.length + 1) ^ 1] (ladner_memoInit z)) =
+      Nat.bits (ladnerH z.length) := by
+  simp only [pow_one, one_mul, ladner_memo_orbit]
+  show BinArith.getW (pairEncode (List.replicate z.length true)
+    (BinArith.encWords ((List.range (z.length + 1)).map (Nat.bits ∘ ladnerH)))) =
+      Nat.bits (ladnerH z.length)
+  rw [← List.map_map (g := Nat.bits) (f := ladnerH),
+    BinArith.getW_pairEncode_bits, List.length_replicate]
+  congr 1
+  rw [List.getD_eq_getElem _ _ (by simp only [List.length_map, List.length_range]; omega),
+    List.getElem_map, List.getElem_range]
+
+
 /-! ### The theorem and its remaining targets -/
 
 /-- The binary digits of the delayed index at an input's length are polynomial-time
@@ -1784,8 +2102,13 @@ inputs through the uniformly timed acceptance simulator, and test SAT on short w
 Polynomially bounded iteration supplies the memo-table driver; the short-SAT search,
 poly-bounded simulator invocation and state-size ledger are separate route obligations. -/
 theorem ladnerH_polyTime :
-    PolyTimeComputable (fun x => Nat.bits (ladnerH x.length)) :=
-  sorry
+    PolyTimeComputable (fun x => Nat.bits (ladnerH x.length)) := by
+  have hloop := BinArith.polyTimeComputable_iterate
+    (ladner_memoStep_FP (ladner_stage_FP (ladner_candidate_FP SAT_exists_linear_verifier)))
+    ladner_memoInit_FP 1 1 4 2 (fun z j hj => ladner_memo_size z j (by simpa using hj))
+  convert BinArith.polyTimeComputable_getW.comp hloop using 1
+  funext z
+  exact (ladner_memo_readout z).symm
 
 /-- The padded SAT witness is in NP. [AB09, Theorem 3.3 and its proof]
 
