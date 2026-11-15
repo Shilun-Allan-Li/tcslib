@@ -756,6 +756,361 @@ private theorem ladner_small_SAT_table (B : ℕ) :
   exact ⟨U.filter (fun x => x ∈ SAT), fun x => by rw [Finset.mem_filter, hu]⟩
 
 
+/-! ### Shrinking a reduction into the padded language -/
+
+/-- The fixed finite SAT table below a length threshold.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_smallSAT (B : ℕ) (x : List Bool) : Bool :=
+  decide (x.length < B ∧ x ∈ SAT)
+
+/-- One shrinking round: finish small inputs, reject invalid padding, tabulate short
+prefixes, and otherwise keep just the parsed prefix. A nonempty answer flag is fixed.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_shrinkStep (h : ℕ → ℕ) (f : List Bool → List Bool) (B K : ℕ)
+    (S : List Bool) : List Bool :=
+  let x := pairSndD S
+  if pairFstD S ≠ [] then S
+  else if x.length < K then pairEncode [ladner_smallSAT K x] []
+  else match ladner_parse (f x) with
+    | none => pairEncode [false] []
+    | some (p, t) =>
+      if t ≠ p.length ^ h p.length then pairEncode [false] []
+      else if p.length < B then pairEncode [ladner_smallSAT B p] []
+      else pairEncode [] p
+
+/-- A live state holds a word no longer than the original input with the same SAT answer;
+a terminal state holds that answer as one bit. In particular `[false]` is terminal.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_ShrinkInv (x S : List Bool) : Prop :=
+  (∃ y, S = pairEncode [] y ∧ y.length ≤ x.length ∧ (y ∈ SAT ↔ x ∈ SAT)) ∨
+  (∃ b : Bool, S = pairEncode [b] [] ∧ (b = true ↔ x ∈ SAT))
+
+/-- The live-word length plus one is the shrinking measure; terminal states have measure zero.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_shrinkMeasure (S : List Bool) : ℕ :=
+  if pairFstD S = [] then (pairSndD S).length + 1 else 0
+
+/-- NP-hardness supplies a polynomial reduction from SAT through the published
+`NPHard_iff` and `polyTimeReducible_iff` readers. -/
+private theorem ladner_reduction_from_hardness {h : ℕ → ℕ} (hH : NPHard (padSAT h)) :
+    ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
+      ∀ x, x ∈ SAT ↔ f x ∈ padSAT h := by
+  exact (polyTimeReducible_iff _ _).mp ((NPHard_iff _).mp hH SAT SAT_mem_NP)
+
+/-- A sufficiently large exponent forces every polynomially bounded padded prefix
+below the square root of the original input length.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** If `m² > n`, then `(n+1)^(d+1) ≤ (m²)^(d+1) ≤ m^(h m)`.
+The output bound would give `(n+1)^(d+1) ≤ A(n+1)^d`, contradicting `A ≤ n`.
+Treat the zero prefix separately; no monotonicity of `h` is needed. -/
+private theorem ladner_prefix_square_bound {h : ℕ → ℕ} (A d B n m : ℕ)
+    (hh : ∀ r ≥ B, 2 * (d + 1) ≤ h r)
+    (hn : A * 2 ^ d + 2 ≤ n) (hm : B ≤ m)
+    (hsize : m ^ h m ≤ A * (n + 1) ^ d) : m ^ 2 ≤ n := by
+  rcases Nat.eq_zero_or_pos m with rfl | hmpos
+  · simp only [zero_pow (by decide : (2 : ℕ) ≠ 0), Nat.zero_le]
+  · by_contra hbad
+    have hmn : n + 1 ≤ m ^ 2 := by omega
+    have hlarge : (n + 1) ^ (d + 1) ≤ m ^ h m := calc
+      _ ≤ (m ^ 2) ^ (d + 1) := Nat.pow_le_pow_left hmn _
+      _ = m ^ (2 * (d + 1)) := (pow_mul _ _ _).symm
+      _ ≤ m ^ h m := Nat.pow_le_pow_right hmpos (hh m hm)
+    have hpos : 0 < (n + 1) ^ d := Nat.pow_pos (by omega)
+    have hpoly : (n + 1) ^ d * (n + 1) ≤ A * (n + 1) ^ d := by
+      rw [← pow_succ]
+      exact hlarge.trans hsize
+    have hAn : A ≤ n := calc
+      A ≤ A * 2 ^ d := Nat.le_mul_of_pos_right _ (Nat.pow_pos (by decide))
+      _ ≤ n := by omega
+    have hmul := Nat.mul_le_mul_right ((n + 1) ^ d) hAn
+    nlinarith
+
+/-- Every syntactically valid reduction output with a sufficiently long prefix shrinks
+that prefix below both the square root and the length of the current input.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Extract the reduction's polynomial output-length bound. Divergence
+supplies a threshold where the padding exponent dominates twice its degree plus two.
+The parsed suffix fits inside the output, so the square bound applies on yes- and
+no-instances alike. The input threshold is at least two, making the square bound strict. -/
+private theorem ladner_reduction_shrinks {h : ℕ → ℕ} {f : List Bool → List Bool}
+    (hf : PolyTimeComputable f)
+    (hu : ∀ C, ∃ N, ∀ n ≥ N, C ≤ h n) :
+    ∃ B K, 2 ≤ K ∧ ∀ x p t,
+      K ≤ x.length → ladner_parse (f x) = some (p, t) →
+      t = p.length ^ h p.length → B ≤ p.length →
+        p.length ^ 2 ≤ x.length ∧ p.length < x.length := by
+  obtain ⟨A, d, hsize⟩ := hf.output_length_le
+  obtain ⟨B, hB⟩ := hu (2 * (d + 1))
+  refine ⟨B, A * 2 ^ d + 2, by omega, ?_⟩
+  intro x p t hK hparse ht hpB
+  have hlen := (ladner_parsed_length hparse).1
+  have hpower : p.length ^ h p.length ≤ A * (x.length + 1) ^ d := by
+    rw [← ht]
+    have hfsize := hsize x
+    omega
+  have hsquare := ladner_prefix_square_bound A d B x.length p.length hB hK hpB hpower
+  refine ⟨hsquare, ?_⟩
+  have hx2 : 2 ≤ x.length := by omega
+  by_contra hnot
+  have hnp : x.length ≤ p.length := by omega
+  have hsq := Nat.pow_le_pow_left hnp 2
+  nlinarith
+
+/-- A fixed short-input SAT test is polynomial-time by the existing finite-table leaves.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_smallSAT_FP (B : ℕ) :
+    PolyTimeComputable (fun x => [ladner_smallSAT B x]) := by
+  obtain ⟨S, hS⟩ := ladner_small_SAT_table B
+  convert ladner_finite_lookup_FP S using 1
+  funext x
+  simp only [ladner_smallSAT, hS]
+
+/-- A shrinking round is FP independently of hardness or divergence of the padding.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Compose the reduction with the existing parser and capped syntax test.
+Use separate fixed SAT tables for small current inputs and small parsed prefixes.
+Only valid syntax reaches a prefix branch; all remaining operations are FP length tests,
+projections, pairing, and conditional composition. Large exponent values are never expanded. -/
+private theorem ladner_shrinkStep_FP {h : ℕ → ℕ} {f : List Bool → List Bool}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)))
+    (hf : PolyTimeComputable f) (B K : ℕ) :
+    PolyTimeComputable (ladner_shrinkStep h f B K) := by
+  have hfx := hf.comp polyTimeComputable_pairSndD
+  have hpre := BinArith.polyTimeComputable_slot2.comp (ladner_parse_FP.comp hfx)
+  have hsyntax := (ladner_syntax_FP hp).comp hfx
+  have hxsmall := BinArith.polyTimeComputable_lt.comp
+    ((ladner_lengthBits_FP.comp polyTimeComputable_pairSndD).pairEncode
+      (polyTimeComputable_const (Nat.bits K)))
+  have hpsmall := BinArith.polyTimeComputable_lt.comp
+    ((ladner_lengthBits_FP.comp hpre).pairEncode (polyTimeComputable_const (Nat.bits B)))
+  have hprefix := polyTimeComputable_ite hpsmall
+    (((ladner_smallSAT_FP B).comp hpre).pairEncode (polyTimeComputable_const []))
+    ((polyTimeComputable_const []).pairEncode hpre)
+  have hlarge := polyTimeComputable_ite hsyntax hprefix
+    (polyTimeComputable_const (pairEncode [false] []))
+  have hlive := polyTimeComputable_ite hxsmall
+    (((ladner_smallSAT_FP K).comp polyTimeComputable_pairSndD).pairEncode
+      (polyTimeComputable_const [])) hlarge
+  have hout := polyTimeComputable_ite
+    (polyTimeComputable_isNil.comp polyTimeComputable_pairFstD) hlive polyTimeComputable_id
+  convert hout using 1
+  funext S
+  by_cases hflag : pairFstD S = []
+  · by_cases hx : (pairSndD S).length < K
+    · simp only [ladner_shrinkStep, ne_eq, Function.comp_apply, hflag, not_true_eq_false,
+        if_false, decide_true, if_true, BinArith.lt_pairEncode, hx]
+    · cases hparse : ladner_parse (f (pairSndD S)) with
+      | none =>
+        simp only [ladner_shrinkStep, ne_eq, Function.comp_apply, hflag, not_true_eq_false,
+          if_false, hx, BinArith.lt_pairEncode, decide_false, Bool.false_eq_true,
+          decide_true, if_true, hparse, ladner_padSyntax]
+      | some pt =>
+        obtain ⟨p, t⟩ := pt
+        by_cases ht : t = p.length ^ h p.length <;>
+          simp only [ladner_shrinkStep, ne_eq, Function.comp_apply, hflag, not_true_eq_false,
+            if_false, hx, BinArith.lt_pairEncode, decide_false, Bool.false_eq_true,
+            decide_true, if_true, hparse, ladner_padSyntax, ladner_parseWord,
+            pairFstD_pairEncode, pairSndD_pairEncode, ht, not_false_eq_true,
+            decide_eq_true_eq]
+  · simp only [ladner_shrinkStep, ne_eq, Function.comp_apply, hflag, not_false_eq_true,
+      if_true, decide_false, Bool.false_eq_true, if_false, id_eq]
+
+/-- A correct one-bit terminal answer preserves the invariant and strictly lowers the
+measure of any live state. This common ledger covers both answers and both finite tables.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_shrink_terminal_result (x y : List Bool) (b : Bool)
+    (hb : b = true ↔ x ∈ SAT) :
+    ladner_ShrinkInv x (pairEncode [b] []) ∧
+      (0 < ladner_shrinkMeasure (pairEncode [] y) →
+        ladner_shrinkMeasure (pairEncode [b] []) < ladner_shrinkMeasure (pairEncode [] y)) ∧
+      (ladner_shrinkMeasure (pairEncode [] y) = 0 → pairEncode [b] [] = pairEncode [] y) := by
+  have hne : ([b] : List Bool) ≠ [] := by intro h; cases h
+  have hlive : ladner_shrinkMeasure (pairEncode [] y) = y.length + 1 := by
+    rw [ladner_shrinkMeasure, pairFstD_pairEncode, if_pos rfl, pairSndD_pairEncode]
+  have hdone : ladner_shrinkMeasure (pairEncode [b] []) = 0 := by
+    rw [ladner_shrinkMeasure, pairFstD_pairEncode, if_neg hne]
+  refine ⟨Or.inr ⟨b, rfl, hb⟩, ?_, ?_⟩
+  · intro _
+    rw [hdone, hlive]
+    omega
+  · intro hz
+    rw [hlive] at hz
+    omega
+
+/-- A shrinking round preserves the SAT answer, lowers every positive live measure,
+and fixes terminal states, including the false terminal bit.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Terminal flags are fixed. A short current input is answered by its
+fixed table. For a large input, failed parsing or a wrong padding length contradicts
+SAT membership through the reduction. Valid padding preserves the SAT answer at its
+unique prefix. A short prefix is tabulated; every remaining prefix is strictly shorter
+by hypothesis and becomes the sole next live word. -/
+private theorem ladner_shrink_progress {h : ℕ → ℕ} {f : List Bool → List Bool} {B K : ℕ}
+    (hK : 2 ≤ K)
+    (hred : ∀ x, x ∈ SAT ↔ f x ∈ padSAT h)
+    (hshrink : ∀ x p t, K ≤ x.length → ladner_parse (f x) = some (p, t) →
+      t = p.length ^ h p.length → B ≤ p.length → p.length < x.length)
+    (x S : List Bool) (hI : ladner_ShrinkInv x S) :
+    ladner_ShrinkInv x (ladner_shrinkStep h f B K S) ∧
+      (0 < ladner_shrinkMeasure S →
+        ladner_shrinkMeasure (ladner_shrinkStep h f B K S) < ladner_shrinkMeasure S) ∧
+      (ladner_shrinkMeasure S = 0 → ladner_shrinkStep h f B K S = S) := by
+  rcases hI with ⟨y, rfl, hylen, hySAT⟩ | ⟨b, rfl, hb⟩
+  · have hmeasure : ladner_shrinkMeasure (pairEncode [] y) = y.length + 1 := by
+      rw [ladner_shrinkMeasure, pairFstD_pairEncode, if_pos rfl, pairSndD_pairEncode]
+    by_cases hsmall : y.length < K
+    · have hstep : ladner_shrinkStep h f B K (pairEncode [] y) =
+          pairEncode [ladner_smallSAT K y] [] := by
+        simp only [ladner_shrinkStep, ne_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+          not_true_eq_false, if_false, hsmall, if_true]
+      rw [hstep]
+      apply ladner_shrink_terminal_result
+      simpa only [ladner_smallSAT, decide_eq_true_eq, hsmall, true_and] using hySAT
+    · have hlarge : K ≤ y.length := by omega
+      cases hparse : ladner_parse (f y) with
+      | none =>
+        have hstep : ladner_shrinkStep h f B K (pairEncode [] y) = pairEncode [false] [] := by
+          simp only [ladner_shrinkStep, ne_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+            not_true_eq_false, if_false, hsmall, hparse]
+        have hnot : x ∉ SAT := by
+          intro hx
+          obtain ⟨p, t, hp, -, -⟩ := ladner_pad_membership.mp ((hred y).mp (hySAT.mpr hx))
+          rw [hparse] at hp
+          cases hp
+        rw [hstep]
+        exact ladner_shrink_terminal_result x y false (iff_of_false (by decide) hnot)
+      | some pt =>
+        obtain ⟨p, t⟩ := pt
+        have hpad : f y ∈ padSAT h ↔ t = p.length ^ h p.length ∧ p ∈ SAT := by
+          simp only [ladner_pad_membership, hparse, Option.some.injEq, Prod.mk.injEq,
+            and_assoc, exists_and_left, exists_eq_left']
+        by_cases ht : t = p.length ^ h p.length
+        · have hprefix : p ∈ SAT ↔ x ∈ SAT := by
+            have hparsed : f y ∈ padSAT h ↔ p ∈ SAT := by
+              simpa only [ht, true_and] using hpad
+            exact hparsed.symm.trans ((hred y).symm.trans hySAT)
+          by_cases hpB : p.length < B
+          · have hstep : ladner_shrinkStep h f B K (pairEncode [] y) =
+                pairEncode [ladner_smallSAT B p] [] := by
+              simp only [ladner_shrinkStep, ne_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+                not_true_eq_false, if_false, hsmall, hparse, ht, hpB, if_true]
+            rw [hstep]
+            apply ladner_shrink_terminal_result
+            simpa only [ladner_smallSAT, decide_eq_true_eq, hpB, true_and] using hprefix
+          · have hshort := hshrink y p t hlarge hparse ht (by omega)
+            have hy2 := hK.trans hlarge
+            have hstep : ladner_shrinkStep h f B K (pairEncode [] y) = pairEncode [] p := by
+              simp only [ladner_shrinkStep, ne_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+                not_true_eq_false, if_false, hsmall, hparse, ht, hpB]
+            have hnext : ladner_shrinkMeasure (pairEncode [] p) = p.length + 1 := by
+              rw [ladner_shrinkMeasure, pairFstD_pairEncode, if_pos rfl, pairSndD_pairEncode]
+            rw [hstep]
+            refine ⟨Or.inl ⟨p, rfl, hshort.le.trans hylen, hprefix⟩, ?_, ?_⟩
+            · intro _
+              rw [hnext, hmeasure]
+              omega
+            · intro hz
+              rw [hmeasure] at hz
+              omega
+        · have hstep : ladner_shrinkStep h f B K (pairEncode [] y) = pairEncode [false] [] := by
+            simp only [ladner_shrinkStep, ne_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+              not_true_eq_false, if_false, hsmall, hparse, ht, not_false_eq_true, if_true]
+          have hnot : x ∉ SAT := fun hx => ht (hpad.mp ((hred y).mp (hySAT.mpr hx))).1
+          rw [hstep]
+          exact ladner_shrink_terminal_result x y false (iff_of_false (by decide) hnot)
+  · have hne : ([b] : List Bool) ≠ [] := by intro he; cases he
+    have hstep : ladner_shrinkStep h f B K (pairEncode [b] []) = pairEncode [b] [] := by
+      simp only [ladner_shrinkStep, pairFstD_pairEncode, if_pos hne]
+    have hz : ladner_shrinkMeasure (pairEncode [b] []) = 0 := by
+      rw [ladner_shrinkMeasure, pairFstD_pairEncode, if_neg hne]
+    rw [hstep]
+    refine ⟨Or.inr ⟨b, rfl, hb⟩, ?_, fun _ => rfl⟩
+    simp only [hz, Nat.lt_irrefl, false_implies]
+
+/-- The shrinking iterator starts live with the original input and its unchanged SAT answer.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_shrink_initial (x : List Bool) :
+    ladner_ShrinkInv x (pairEncode [] x) :=
+  Or.inl ⟨x, rfl, le_rfl, Iff.rfl⟩
+
+/-- Every state in the initialized shrinking orbit has a linear serialized length bound.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_shrink_orbit_size {h : ℕ → ℕ} {f : List Bool → List Bool} {B K : ℕ}
+    (hinv : ∀ x S, ladner_ShrinkInv x S → ladner_ShrinkInv x (ladner_shrinkStep h f B K S))
+    (x : List Bool) (j : ℕ) :
+    ((ladner_shrinkStep h f B K)^[j] (pairEncode [] x)).length ≤ 4 * (x.length + 1) ^ 1 := by
+  have hI := BinArith.iterate_invariant (ladner_ShrinkInv x) (hinv x) j (ladner_shrink_initial x)
+  rcases hI with ⟨y, hy, hlen, -⟩ | ⟨b, hb, -⟩
+  · rw [hy, length_pairEncode]
+    simp only [List.length_nil, pow_one]
+    omega
+  · rw [hb, length_pairEncode]
+    simp only [List.length_cons, List.length_nil, pow_one]
+    omega
+
+/-- The bounded shrinking orbit finishes with exactly the original SAT decision bit.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** The initial measure is `|x|+1`. Apply the public decreasing-measure
+iterator theorem for that many rounds and retain the invariant along the whole orbit.
+A live state cannot have measure zero, so the invariant's terminal alternative supplies
+the unique correct answer bit. -/
+private theorem ladner_shrink_final_readout {h : ℕ → ℕ} {f : List Bool → List Bool} {B K : ℕ}
+    (hprogress : ∀ x S, ladner_ShrinkInv x S →
+      ladner_ShrinkInv x (ladner_shrinkStep h f B K S) ∧
+        (0 < ladner_shrinkMeasure S →
+          ladner_shrinkMeasure (ladner_shrinkStep h f B K S) < ladner_shrinkMeasure S) ∧
+        (ladner_shrinkMeasure S = 0 → ladner_shrinkStep h f B K S = S)) (x : List Bool) :
+    pairFstD ((ladner_shrinkStep h f B K)^[1 * (x.length + 1) ^ 1] (pairEncode [] x)) =
+      [decide (x ∈ SAT)] := by
+  have hI := BinArith.iterate_invariant (g := ladner_shrinkStep h f B K) (ladner_ShrinkInv x)
+    (fun S hS => (hprogress x S hS).1) (1 * (x.length + 1) ^ 1) (ladner_shrink_initial x)
+  have hz := BinArith.iterate_measure_eq_zero (g := ladner_shrinkStep h f B K)
+    (ladner_ShrinkInv x) ladner_shrinkMeasure
+    (fun S hS => (hprogress x S hS).1)
+    (fun S hS hpos => (hprogress x S hS).2.1 hpos)
+    (fun S hS hzero => (hprogress x S hS).2.2 hzero)
+    (1 * (x.length + 1) ^ 1) (pairEncode [] x) (ladner_shrink_initial x)
+    (by simpa only [ladner_shrinkMeasure, pairFstD_pairEncode, if_pos rfl,
+        pairSndD_pairEncode, pow_one, one_mul] using Nat.le_refl (x.length + 1))
+  rcases hI with ⟨y, hy, -, -⟩ | ⟨b, hb, hans⟩
+  · rw [hy, ladner_shrinkMeasure, pairFstD_pairEncode, if_pos rfl,
+      pairSndD_pairEncode] at hz
+    omega
+  · rw [hb, pairFstD_pairEncode]
+    apply congrArg (fun b : Bool => [b])
+    apply Bool.eq_iff_iff.mpr
+    simpa only [decide_eq_true_eq] using hans
+
+/-- The public polynomial iterator and a correct shrinking readout put SAT in P.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Initialize a live pair, run the supplied FP step for `|x|+1` rounds
+under its linear all-orbit bound, and project the answer flag. The readout identifies
+this FP bit with SAT; `mem_P_of_test` supplies the language-class conclusion. -/
+private theorem ladner_shrinking_transfer {h : ℕ → ℕ} {f : List Bool → List Bool} (B K : ℕ)
+    (hstep : PolyTimeComputable (ladner_shrinkStep h f B K))
+    (hsize : ∀ x j, j ≤ 1 * (x.length + 1) ^ 1 →
+      ((ladner_shrinkStep h f B K)^[j] (pairEncode [] x)).length ≤ 4 * (x.length + 1) ^ 1)
+    (hout : ∀ x, pairFstD ((ladner_shrinkStep h f B K)^[1 * (x.length + 1) ^ 1]
+      (pairEncode [] x)) = [decide (x ∈ SAT)]) : SAT ∈ P := by
+  have hinit : PolyTimeComputable (fun x : List Bool => pairEncode [] x) :=
+    (polyTimeComputable_const []).pairEncode polyTimeComputable_id
+  have hloop := BinArith.polyTimeComputable_iterate hstep hinit 1 1 4 1 hsize
+  have htest : PolyTimeComputable (fun x : List Bool => [decide (x ∈ SAT)]) := by
+    convert polyTimeComputable_pairFstD.comp hloop using 1
+    funext x
+    exact (hout x).symm
+  convert mem_P_of_test htest using 1
+  ext x
+  simp only [decide_eq_true_eq]
+  rfl
+
+
 /-! ### Polynomial-time preparation for the bounded candidate test -/
 
 /-- Read the numeric memo entries through `BinArith.decWords`.
@@ -2126,8 +2481,14 @@ instance to a satisfiable-prefix candidate at most the square root of its length
 Repeatedly shrink, with the finite small cases tabulated, to obtain a polynomial SAT decider. -/
 theorem SAT_mem_P_of_padSAT_NPHard {h : ℕ → ℕ}
     (hp : PolyTimeComputable (fun x => Nat.bits (h x.length)))
-    (hu : ∀ C, ∃ N, ∀ n ≥ N, C ≤ h n) (hH : NPHard (padSAT h)) : SAT ∈ P :=
-  sorry
+    (hu : ∀ C, ∃ N, ∀ n ≥ N, C ≤ h n) (hH : NPHard (padSAT h)) : SAT ∈ P := by
+  obtain ⟨f, hf, hred⟩ := ladner_reduction_from_hardness hH
+  obtain ⟨B, K, hK, hshr⟩ := ladner_reduction_shrinks hf hu
+  have hprog := fun x S hI => ladner_shrink_progress (B := B) hK hred
+    (fun x p t a b c d => (hshr x p t a b c d).2) x S hI
+  exact ladner_shrinking_transfer B K (ladner_shrinkStep_FP hp hf B K)
+    (fun x j _ => ladner_shrink_orbit_size (fun x S hI => (hprog x S hI).1) x j)
+    (ladner_shrink_final_readout hprog)
 
 /-- If P differs from NP, the explicit padded SAT language is in NP, outside P and
 not NP-complete. [AB09, Theorem 3.3]
