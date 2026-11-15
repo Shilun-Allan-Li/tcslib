@@ -1,0 +1,53 @@
+START 2026-11-15T11:13:14.522139+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:80:23: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  pairDecode z
+in the target expression
+  (Option.map Prod.snd (pairDecode (pairSndD z))).getD [] = []
+
+z : List Bool
+hd : pairDecode z = none
+hf hs : ((Option.map Prod.snd (pairDecode [])).getD []).length ≤ [].length
+hf0 : pairSndD (pairFstD z) = []
+⊢ (Option.map Prod.snd (pairDecode (pairSndD z))).getD [] = []
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:87:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  pairFstD (pairEncode ?a ?b)
+in the target expression
+  (pairSndD (pairSndD (pairEncode a b))).length ≤ (pairSndD (pairEncode a b)).length
+
+case some
+z a b : List Bool
+hs : (pairSndD (pairSndD (pairEncode a b))).length ≤ (pairSndD (pairEncode a b)).length
+hf : (pairSndD a).length ≤ a.length
+hd : pairDecode z = some (a, b)
+hz : z = pairEncode a b
+⊢ (parserStep z).length ≤ max z.length 2
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:186:2: error: No goals to be solved
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:175:36: warning: This simp argument is unused:
+  pairSndD_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [pairFstD_pairEncode, p̵a̵i̵r̵S̵n̵d̵D̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵,̵ ̵g]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser): no fresh .olean produced
+        2.37 real         1.44 user         1.12 sys
+          2211758080  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              176007  page reclaims
+                 331  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  46  voluntary context switches
+                7573  involuntary context switches
+            15865261  instructions retired
+             6479208  cycles elapsed
+             1311032  peak memory footprint
+END 2026-11-15T11:13:16.934416+00:00 EXIT 1

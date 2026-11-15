@@ -1,0 +1,50 @@
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:111:theorem uprob_eq_pair {α : Type*} [Fintype α] [Nonempty α] :
+TCSlib/Cryptography/HardcoreBit/Basic.lean:40:* `pushesUniform_restrict`: restricting a uniform table along an injection gives a uniform
+TCSlib/Cryptography/HardcoreBit/Basic.lean:218:`Equiv.Set.sumCompl`). A table is the pair of its two restrictions (`Equiv.sumArrowEquivProdArrow`),
+TCSlib/Cryptography/HardcoreBit/Basic.lean:220:theorem pushesUniform_restrict {I J O : Type*} [Fintype I] [DecidableEq I] [Fintype J]
+.lake/packages/mathlib/Mathlib/Logic/Equiv/Basic.lean:169:def piCurry {α} {β : α → Type*} (γ : ∀ a, β a → Type*) :
+.lake/packages/mathlib/Mathlib/Logic/Equiv/Basic.lean:177:@[simp] theorem piCurry_apply {α} {β : α → Type*} (γ : ∀ a, β a → Type*)
+.lake/packages/mathlib/Mathlib/Logic/Equiv/Basic.lean:179:    piCurry γ f = Sigma.curry f :=
+.lake/packages/mathlib/Mathlib/Logic/Equiv/Basic.lean:182:@[simp] theorem piCurry_symm_apply {α} {β : α → Type*} (γ : ∀ a, β a → Type*) (f : ∀ a b, γ a b) :
+.lake/packages/mathlib/Mathlib/Logic/Equiv/Basic.lean:183:    (piCurry γ).symm f = Sigma.uncurry f :=
+.lake/packages/mathlib/Mathlib/Logic/Equiv/Basic.lean:341:/-- If the outer subtype has more restrictive predicate than the inner one,
+.lake/packages/mathlib/Mathlib/Logic/Equiv/Basic.lean:585:of this predicate to `α`: `p₁ a ↔ p₂ ⟦a⟧`. Let `~₂` be the restriction of `~` to `{x // p₁ x}`.
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:184:      _ = 1 / Fintype.card K := MultiMsg.uprob_eq_pair
+TCSlib/Cryptography/SecureComputation/Garbling.lean:49:- **The evaluator** opens the first row that decrypts (`List.findSome?`). The formal `Good`
+TCSlib/Cryptography/SecureComputation/Garbling.lean:202:private theorem map_range_getD_ofFn {len : ℕ} (ass : Fin len → Bool) :
+TCSlib/Cryptography/SecureComputation/Garbling.lean:203:    (List.range len).map (fun a => (List.ofFn ass).getD a false) = List.ofFn ass := by
+TCSlib/Cryptography/SecureComputation/Garbling.lean:213:  have hA := map_range_getD_ofFn (fun t : Fin g.args.length => vals.getD (g.args[t]) false)
+TCSlib/Cryptography/SecureComputation/Garbling.lean:311:  ((T v).findSome? (M.dec (g.args.map fun a => vs.getD a default))).getD default
+TCSlib/Cryptography/SecureComputation/Garbling.lean:317:      ((T v).findSome? (M.dec (g.args.map fun a => vs.getD a default))).getD default := rfl
+TCSlib/Cryptography/SecureComputation/Garbling.lean:353:    (garbledTable M Cc s i).findSome? (M.dec (argKeys Cc s i a)) =
+TCSlib/Cryptography/SecureComputation/Garbling.lean:361:        (garbledTable M Cc s i).findSome? (M.dec (argKeys Cc s i a)) =
+TCSlib/Cryptography/SecureComputation/Garbling.lean:440:  apply GarblingProbability.findSome_eq_some_of_dichotomy
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:242:by the uniform evaluation and restriction laws and point probability. The budget-one PRF
+TCSlib/Cryptography/SecureComputation/Yao.lean:612:private theorem getD_ofFn' {α : Type} {k : ℕ} (f : Fin k → α) (i : Fin k) (d : α) :
+TCSlib/Cryptography/SecureComputation/Yao.lean:614:  rw [List.getD_eq_getElem _ _ (by simp), List.getElem_ofFn]
+TCSlib/Cryptography/SecureComputation/Yao.lean:627:    · rw [dif_pos ⟨h1, h2⟩, List.getD_eq_getElem _ _ (by simpa using h2), List.getElem_ofFn,
+TCSlib/Cryptography/SecureComputation/Yao.lean:652:  · rw [if_pos hv, getD_ofFn' _ ⟨v, hv⟩, padFin_ofFn, getD_ofFn' x ⟨v, hv⟩]
+TCSlib/Cryptography/SecureComputation/Yao.lean:701:    pairSndD_pairEncode, yaoPairs_eq, decodeMsgs_encodeMsgs, getD_ofFn', YaoCircuit.output_apply]
+TCSlib/Cryptography/SecureComputation/Yao.lean:725:  rw [h, hj, getD_ofFn', otFunctionality_f_snd_apply,
+TCSlib/Cryptography/SecureComputation/Yao.lean:772:    (fun i t => by rw [yaoHybrid_answersB_getD, getD_ofFn']) hgood hdist
+TCSlib/Cryptography/SecureComputation/Yao.lean:800:row coins: vertices and gates are below `S`, and binary assignment indices are injective
+TCSlib/Cryptography/SecureComputation/Yao.lean:801:below four for fan-in at most two. The generic block restriction theorem gives their joint
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean:79:  have hprob := (HardcoreBit.pushesUniform_restrict (O := Bool) hcast).uprob_eq
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean:94:`2^{-n}` by uniform evaluation, restriction, and point probability. The difference is at
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:49:Compose this injection with the inclusion into the raw coin space and restrict its uniform
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:50:bit table. Currying the restricted table gives the claimed family of independent blocks. -/
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:66:  have h := (HardcoreBit.pushesUniform_restrict (O := Bool) hselect).comp
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:73:  rw [← heq, List.getD_eq_getElem _ _ (by simp only [List.length_ofFn]; exact (select (i, t)).isLt),
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:158:intervals, and restrict the raw uniform bit table to those blocks. Split the sum of the
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:186:      Equiv.boolArrowEquivProd K).trans (Equiv.piCurry fun i (_ : A i) => K × K))
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:22:* `SecureComputation.GarblingProbability.findSome_eq_some_of_dichotomy`: a successful
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:38:  l.findSome? f = some b`. -/
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:39:theorem findSome_eq_some_of_dichotomy {α β : Type} (l : List α) (f : α → Option β) (b : β)
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:41:    (hall : ∀ a ∈ l, f a = none ∨ f a = some b) : l.findSome? f = some b := by
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:42:  cases hfind : l.findSome? f with
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:45:    have hn := List.findSome?_eq_none_iff.mp hfind a ha
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:48:    obtain ⟨a, ha, hfa⟩ := List.exists_of_findSome?_eq_some hfind
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:60:that restricted table along the sum, evaluate the unit coordinate and output bit, and
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:81:  have hrestrict := HardcoreBit.pushesUniform_restrict (O := Bool → K) hselect
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:82:  have hsplit := hrestrict.comp (HardcoreBit.pushesUniform_equiv
+TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean:96:  exact (HardcoreBit.pushesUniform_equiv (Equiv.piCurry (fun i (_ : A i) => ρ)).symm).comp

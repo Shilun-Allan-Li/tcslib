@@ -1,0 +1,200 @@
+START 2026-11-15T10:53:44.792868+00:00 TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:59:41: error: Application type mismatch: The argument
+  Fin.castAdd_injective tail ?m.67 ?m.70
+has type
+  ?m.68 = ?m.69
+but is expected to have type
+  finProdFinEquiv ?m.65 = finProdFinEquiv ?m.66
+in the application
+  Equiv.injective finProdFinEquiv (Fin.castAdd_injective tail ?m.67 ?m.70)
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:67:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  e ≥ 0
+  d ≥ 0
+  b ≥ 0
+  b - e ≤ -1
+  a ≥ 0
+  a - d ≥ 1
+where
+ a := ↑↑(c i) * ↑n
+ b := ↑↑t
+ d := ↑n * ↑↑(c i)
+ e := ↑n
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:68:42: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:66:67: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only [select, Fin.coe_castAdd, finProdFinEquiv_apply_val,̵ ̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:116:79: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  d ≥ 0
+  c ≥ 0
+  b ≥ 0
+  b - d ≥ 1
+  a ≥ 0
+  a - b ≥ 0
+  a - c ≥ 0
+where
+ a := ↑S
+ b := ↑V
+ c := ↑G
+ d := ↑↑y
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:116:79: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  d ≥ 0
+  c ≥ 0
+  b ≥ 0
+  b - d ≥ 1
+  a ≥ 0
+  a - b ≥ 0
+  a - c ≥ 0
+where
+ a := ↑S
+ b := ↑V
+ c := ↑G
+ d := ↑↑y
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:115:27: warning: This simp argument is unused:
+  Prod.fst
+
+Hint: Omit it from the simp argument list.
+  simp only [Sum.elim_inl, Bool.toNat_false, Bool.toNat_true,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲P̵r̵o̵d̵.̵f̵s̵t̵,̵ ̵Prod.snd, Nat.zero_mul, Nat.one_mul] at hxy
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:115:37: warning: This simp argument is unused:
+  Prod.snd
+
+Hint: Omit it from the simp argument list.
+  simp only [Sum.elim_inl, Bool.toNat_false, Bool.toNat_true,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Prod.fst, P̵r̵o̵d̵.̵s̵n̵d̵,̵ ̵Nat.zero_mul, Nat.one_mul] at hxy
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:188:4: error: unsolved goals
+case h.e'_5.h.snd.h.h.fst.h
+S V G n : ℕ
+hV : V ≤ S
+hG : G ≤ S
+A : Fin G → Type
+inst✝¹ : (i : Fin G) → Fintype (A i)
+inst✝ : (i : Fin G) → DecidableEq (A i)
+idx : (i : Fin G) → A i → ℕ
+hidx : ∀ (i : Fin G) (a : A i), idx i a < 4
+hinj : ∀ (i : Fin G), Function.Injective (idx i)
+K : Type := Fin n → Bool
+I : Type := Fin V × Bool ⊕ ((i : Fin G) × A i) × Bool
+c : I → ℕ :=
+  Sum.elim (fun p => p.2.toNat * S + ↑p.1) fun p => 2 * S + (4 * ↑p.1.fst + idx p.1.fst p.1.snd) * 2 + p.2.toNat
+hc :
+  have c :=
+    Sum.elim (fun p => p.2.toNat * S + ↑p.1) fun p => 2 * S + (4 * ↑p.1.fst + idx p.1.fst p.1.snd) * 2 + p.2.toNat;
+  (∀ (p : Fin V × Bool ⊕ ((i : Fin G) × A i) × Bool), c p < 10 * S) ∧ Function.Injective c
+c' : I → Fin (10 * S) := fun p => ⟨c p, ⋯⟩
+hc' : Function.Injective c'
+eK : (Fin V × Bool → K) ≃ (Fin V → Bool → K) := Equiv.curry (Fin V) Bool K
+eR : (((i : Fin G) × A i) × Bool → K) ≃ ((i : Fin G) → A i → K × K) :=
+  (Equiv.curry ((i : Fin G) × A i) Bool K).trans
+    ((Equiv.piCongrRight fun x => Equiv.boolArrowEquivProd K).trans (Equiv.piCurry fun i x => K × K))
+h :
+  HardcoreBit.PushesUniform fun ω =>
+    (eK.prodCongr eR)
+      ((Equiv.sumArrowEquivProdArrow (Fin V × Bool) (((i : Fin G) × A i) × Bool) K) fun i t =>
+        (List.ofFn ω).getD (↑(c' i) * n + ↑t) false)
+r : Fin (10 * S * n + 2 * S) → Bool
+i : Fin G
+a : A i
+t : Fin n
+⊢ (List.ofFn fun i => r (Fin.cast ⋯ i)).getD (S * n * 2 + n * ↑i * 8 + n * idx i a * 2 + ↑t) false =
+    (((eK.prodCongr eR)
+              ((Equiv.sumArrowEquivProdArrow (Fin V × Bool) (((i : Fin G) × A i) × Bool) K) fun i t =>
+                (List.ofFn fun i => r (Fin.cast ⋯ i)).getD
+                  (n *
+                      Sum.elim (fun p => S * p.2.toNat + ↑p.1)
+                        (fun p => S * 2 + ↑p.1.fst * 8 + idx p.1.fst p.1.snd * 2 + p.2.toNat) i +
+                    ↑t)
+                  false)).2
+          i a).1
+      t
+Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:191:4: error: unsolved goals
+case h.e'_5.h.snd.h.h.snd.h
+S V G n : ℕ
+hV : V ≤ S
+hG : G ≤ S
+A : Fin G → Type
+inst✝¹ : (i : Fin G) → Fintype (A i)
+inst✝ : (i : Fin G) → DecidableEq (A i)
+idx : (i : Fin G) → A i → ℕ
+hidx : ∀ (i : Fin G) (a : A i), idx i a < 4
+hinj : ∀ (i : Fin G), Function.Injective (idx i)
+K : Type := Fin n → Bool
+I : Type := Fin V × Bool ⊕ ((i : Fin G) × A i) × Bool
+c : I → ℕ :=
+  Sum.elim (fun p => p.2.toNat * S + ↑p.1) fun p => 2 * S + (4 * ↑p.1.fst + idx p.1.fst p.1.snd) * 2 + p.2.toNat
+hc :
+  have c :=
+    Sum.elim (fun p => p.2.toNat * S + ↑p.1) fun p => 2 * S + (4 * ↑p.1.fst + idx p.1.fst p.1.snd) * 2 + p.2.toNat;
+  (∀ (p : Fin V × Bool ⊕ ((i : Fin G) × A i) × Bool), c p < 10 * S) ∧ Function.Injective c
+c' : I → Fin (10 * S) := fun p => ⟨c p, ⋯⟩
+hc' : Function.Injective c'
+eK : (Fin V × Bool → K) ≃ (Fin V → Bool → K) := Equiv.curry (Fin V) Bool K
+eR : (((i : Fin G) × A i) × Bool → K) ≃ ((i : Fin G) → A i → K × K) :=
+  (Equiv.curry ((i : Fin G) × A i) Bool K).trans
+    ((Equiv.piCongrRight fun x => Equiv.boolArrowEquivProd K).trans (Equiv.piCurry fun i x => K × K))
+h :
+  HardcoreBit.PushesUniform fun ω =>
+    (eK.prodCongr eR)
+      ((Equiv.sumArrowEquivProdArrow (Fin V × Bool) (((i : Fin G) × A i) × Bool) K) fun i t =>
+        (List.ofFn ω).getD (↑(c' i) * n + ↑t) false)
+r : Fin (10 * S * n + 2 * S) → Bool
+i : Fin G
+a : A i
+t : Fin n
+⊢ (List.ofFn fun i => r (Fin.cast ⋯ i)).getD (S * n * 2 + n + n * ↑i * 8 + n * idx i a * 2 + ↑t) false =
+    (((eK.prodCongr eR)
+              ((Equiv.sumArrowEquivProdArrow (Fin V × Bool) (((i : Fin G) × A i) × Bool) K) fun i t =>
+                (List.ofFn fun i => r (Fin.cast ⋯ i)).getD
+                  (n *
+                      Sum.elim (fun p => S * p.2.toNat + ↑p.1)
+                        (fun p => S * 2 + ↑p.1.fst * 8 + idx p.1.fst p.1.snd * 2 + p.2.toNat) i +
+                    ↑t)
+                  false)).2
+          i a).2
+      t
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks): no fresh .olean produced
+        7.19 real         3.18 user         1.41 sys
+          2170961920  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              120253  page reclaims
+               54728  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                5362  voluntary context switches
+               45129  involuntary context switches
+            16255630  instructions retired
+             7965358  cycles elapsed
+             1294648  peak memory footprint
+END 2026-11-15T10:57:08.197123+00:00 EXIT 1

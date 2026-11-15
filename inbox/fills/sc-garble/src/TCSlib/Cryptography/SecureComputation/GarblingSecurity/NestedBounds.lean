@@ -138,3 +138,73 @@ theorem nestedSpecial_wrongKeyBot_of_string_bounds
           (le_add_of_nonneg_left hε₁ : ε₂ ≤ ε₁ + ε₂)
 
 end TCSlib.Cryptography.SecureComputation.GarblingCoins
+
+namespace TCSlib.Cryptography.SecureComputation
+
+open BoolCircuit
+
+variable {K C ρ : Type} [Inhabited K] {n : ℕ} (M : MultiEnc K C ρ) (Cc : DAGCircuit n)
+
+/-- Uniform independent keys and row coins give goodness and distinct output keys:
+`Pr_w[¬ (Good M Cc (s w) ∧ ∀ j, keyAt Cc (s w) (out j) false ≠
+  keyAt Cc (s w) (out j) true)] ≤ 12*|Cc.gates|*δ + m/|K|`, if `out j < Cc.size`
+and `w ↦ ((s w).1,(s w).2.1)` pushes uniform to uniform.
+Outputs may coincide. [PS10, §6.2.3, Claim 159.a and Protocol 162.6]
+
+**Proof sketch.** Use the B2 uniform-data bound for goodness. At each output, the two
+keys are independent uniform elements of `K`, so their collision probability is `1/|K|`.
+The finite union bound over output positions does not require distinct output vertices.
+Add this collision bound to the goodness failure bound. -/
+theorem uprob_not_good_distinct_le_of_uniform_data [Fintype K] [Fintype ρ] [Nonempty ρ]
+    (hdec : M.DecCorrect) {δ : ℝ} (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo)
+    {Ω : Type} [Fintype Ω] (s : Ω → GarbleSeed Cc K ρ)
+    (hs : HardcoreBit.PushesUniform (fun w => ((s w).1, (s w).2.1)))
+    {m : ℕ} (out : Fin m → ℕ) (hout : ∀ j, out j < Cc.size) :
+    uprob (fun w => ¬ (Good M Cc (s w) ∧ ∀ j,
+      keyAt Cc (s w) (out j) false ≠ keyAt Cc (s w) (out j) true)) ≤
+      12 * Cc.gates.length * δ + m * (1 / Fintype.card K) := by
+  classical
+  let collision : Fin m → Ω → Prop := fun j w =>
+    keyAt Cc (s w) (out j) false = keyAt Cc (s w) (out j) true
+  have hpoint (j : Fin m) : uprob (collision j) = 1 / Fintype.card K := by
+    let v : Fin Cc.size := ⟨out j, hout j⟩
+    have hkeys : HardcoreBit.PushesUniform (fun w => (s w).1) :=
+      hs.comp HardcoreBit.pushesUniform_fst
+    have hpair : HardcoreBit.PushesUniform (fun w => ((s w).1 v false, (s w).1 v true)) :=
+      (hkeys.comp (HardcoreBit.pushesUniform_eval (γ := Bool → K) v)).comp
+        (HardcoreBit.pushesUniform_eval_pair (γ := K) Bool.false_ne_true)
+    have hu := hpair.uprob_eq (fun z : K × K => z.1 = z.2)
+    calc
+      _ = uprob (fun w => (s w).1 v false = (s w).1 v true) := by
+        apply OneWay.uprob_congr
+        intro w
+        simp only [collision, keyAt_eq, dif_pos (hout j)]
+        rfl
+      _ = uprob (fun z : K × K => z.1 = z.2) := hu
+      _ = 1 / Fintype.card K := MultiMsg.uprob_eq_pair
+  have hcoll : uprob (fun w => ∃ j ∈ Finset.univ, collision j w) ≤
+      m * (1 / Fintype.card K) := by
+    refine (uprob_exists_le Finset.univ collision).trans ?_
+    simp only [hpoint, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+    exact le_rfl
+  have hbad : ∀ w, ¬ (Good M Cc (s w) ∧ ∀ j,
+      keyAt Cc (s w) (out j) false ≠ keyAt Cc (s w) (out j) true) →
+        ¬ Good M Cc (s w) ∨ ∃ j ∈ Finset.univ, collision j w := by
+    intro w hw
+    by_cases hg : Good M Cc (s w)
+    · right
+      have hj : ∃ j, collision j w := by simpa only [not_and, hg, true_implies,
+        not_forall, not_not, collision] using hw
+      obtain ⟨j, hj⟩ := hj
+      exact ⟨j, Finset.mem_univ _, hj⟩
+    · exact Or.inl hg
+  calc
+    _ ≤ uprob (fun w => ¬ Good M Cc (s w) ∨ ∃ j ∈ Finset.univ, collision j w) :=
+      uprob_mono hbad
+    _ ≤ uprob (fun w => ¬ Good M Cc (s w)) +
+        uprob (fun w => ∃ j ∈ Finset.univ, collision j w) := uprob_or_le _ _
+    _ ≤ 12 * Cc.gates.length * δ + m * (1 / Fintype.card K) :=
+      add_le_add (uprob_not_good_le_of_uniform_data M Cc hdec hδ hC
+        (fun w => ((s w).1, (s w).2.1)) hs (fun w => (s w).2.2)) hcoll
+
+end TCSlib.Cryptography.SecureComputation

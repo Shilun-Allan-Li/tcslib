@@ -1,0 +1,84 @@
+START 2026-11-15T10:57:54.478481+00:00 TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:61:6: error: Tactic `apply` failed: could not unify the conclusion of `Fin.castAdd_injective tail (B * n)`
+  ?a₁ = ?a₂
+with the goal
+  finProdFinEquiv (c x.1, x.2) = finProdFinEquiv (c y.1, y.2)
+
+Note: The full type of `Fin.castAdd_injective tail (B * n)` is
+  Function.Injective (Fin.castAdd (B * n))
+
+case a
+I : Type
+inst✝¹ : Fintype I
+inst✝ : DecidableEq I
+B n tail : ℕ
+c : I → Fin B
+hinj : Function.Injective c
+select : I × Fin n → Fin (B * n + tail) := ⋯
+x y : I × Fin n
+hxy : select x = select y
+⊢ finProdFinEquiv (c x.1, x.2) = finProdFinEquiv (c y.1, y.2)
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:63:68: error: Application type mismatch: The argument
+  hp
+has type
+  (c x.1, x.2) = (c y.1, y.2)
+but is expected to have type
+  x = y
+in the application
+  congrArg Prod.snd hp
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:71:42: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:122:54: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  h ≥ 0
+  g ≥ 0
+  g - h ≥ 1
+  f ≥ 0
+  e ≥ 0
+  e ≥ 0
+  d ≥ 0
+  c ≥ 0
+  c - e ≥ 1
+  c - e ≥ 1
+  c - g ≥ 1
+  c - h ≥ 1
+  a ≥ 0
+  a - c ≥ 0
+  a - d ≥ 0
+where
+ a := ↑S
+ c := ↑V
+ d := ↑G
+ e := ↑↑y
+ f := ↑b.toNat * ↑S
+ g := ↑↑(y, b).1
+ h := ↑↑(x, b).1
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:197:14: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:201:14: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks): no fresh .olean produced
+        4.16 real         2.94 user         0.96 sys
+          2168913920  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              159127  page reclaims
+               15400  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1676  voluntary context switches
+                9606  involuntary context switches
+            15876043  instructions retired
+             6954770  cycles elapsed
+             1294648  peak memory footprint
+END 2026-11-15T10:58:13.769541+00:00 EXIT 1

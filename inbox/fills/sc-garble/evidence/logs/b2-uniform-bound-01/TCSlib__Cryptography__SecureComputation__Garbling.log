@@ -1,0 +1,40 @@
+START 2026-11-15T10:39:09.223795+00:00 TCSlib/Cryptography/SecureComputation/Garbling
+TCSlib/Cryptography/SecureComputation/Garbling.lean:499:4: error: Application type mismatch: The argument
+  GarblingProbability.pushesUniform_rowCoin i ?m.539
+has type
+  HardcoreBit.PushesUniform fun r => r i ?m.539
+but is expected to have type
+  HardcoreBit.PushesUniform fun r => r i a
+in the application
+  GarblingProbability.pushesUniform_output_argKeys_row arg hinj out hnot (gateOut Cc.gates[i] a) (fun r => r i a)
+    (GarblingProbability.pushesUniform_rowCoin i ?m.539)
+TCSlib/Cryptography/SecureComputation/Garbling.lean:577:46: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  b ≥ 3
+  0 ≤ a ≤ 2
+where
+ a := ↑Cc.gates[↑i].args.length
+ b := ↑Cc.gates[i].args.length
+TCSlib/Cryptography/SecureComputation/Garbling.lean:623:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling): no fresh .olean produced
+        9.50 real         8.30 user         1.18 sys
+          2206646272  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              142884  page reclaims
+               32545  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                3155  voluntary context switches
+               30894  involuntary context switches
+            31925217  instructions retired
+            14432897  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T10:39:18.757243+00:00 EXIT 1

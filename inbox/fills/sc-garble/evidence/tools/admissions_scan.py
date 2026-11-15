@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Compare admitted declaration names in the issued order and all new helpers."""
+import argparse
 import importlib.util
 import io
 import json
@@ -8,6 +9,10 @@ import re
 import subprocess
 import tarfile
 
+parser=argparse.ArgumentParser()
+parser.add_argument('--phase',default='checkpoint1')
+parser.add_argument('--removed',type=int,default=4)
+args=parser.parse_args()
 spec=importlib.util.spec_from_file_location('headers','evidence/tools/check_headers.py')
 h=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(h)
@@ -42,11 +47,13 @@ removed=sorted(set(before)-set(after))
 added=sorted(set(after)-set(before))
 result=dict(base_count=len(before),current_count=len(after),removed=removed,added=added,
             base=list(before.values()),current=list(after.values()))
-(out/'checkpoint1.json').write_text(json.dumps(result,indent=2)+'\n')
+(out/(args.phase+'.json')).write_text(json.dumps(result,indent=2)+'\n')
 print('BASE',len(before),'CURRENT',len(after),'REMOVED',len(removed),'ADDED',len(added))
 for name in removed: print('REMOVED',name)
 for name in added: print('ADDED',name)
-assert len(before)==32 and len(after)==28 and not added
-assert {x.rsplit(':',1)[1] for x in removed}=={
-    'spDecStr_wrongKey','specialScheme_wrongKey','specialScheme_multiMessageSecure',
-    'nestedSpecial_wrongKeyBot'}
+assert len(before)==32 and len(after)==32-args.removed and not added
+expected={'spDecStr_wrongKey','specialScheme_wrongKey','specialScheme_multiMessageSecure',
+          'nestedSpecial_wrongKeyBot','uprob_not_good_le','yaoSeed_good_whp',
+          'sliceMultiMessageSecure_of_prfOut'}
+actual={x.rsplit(':',1)[1] for x in removed}
+assert actual <= expected and len(actual)==args.removed

@@ -2,6 +2,7 @@
 """Run serialized, slotted module checks and retain all raw evidence."""
 import argparse
 import datetime
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -15,6 +16,14 @@ parser.add_argument("--order")
 parser.add_argument("--continue-on-error", action="store_true")
 parser.add_argument("modules", nargs="*")
 args = parser.parse_args()
+lock_path = Path('.lake/sc-garble-check-driver.lock')
+lock_path.parent.mkdir(parents=True, exist_ok=True)
+lock_file = lock_path.open('a+')
+try:
+    fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+except BlockingIOError:
+    print('Another sc-garble check driver is active; wait for it before starting a check.')
+    sys.exit(75)
 modules = args.modules
 if args.order:
     modules += [x.strip() for x in Path(args.order).read_text().splitlines() if x.strip()]
@@ -25,7 +34,6 @@ env["LEAN_SLOT_TAG"] = "sc-garble"
 any_failure = False
 for module in modules:
     path = dest / (module.replace("/", "__") + ".log")
-    path.with_suffix(".source.lean").write_bytes(Path(module + ".lean").read_bytes())
     start = datetime.datetime.now(datetime.timezone.utc).isoformat()
     print("START", start, module, flush=True)
     with path.open("w") as log:
@@ -33,7 +41,7 @@ for module in modules:
         log.flush()
         result = subprocess.run([
             "/private/tmp/sc-garble-runtime/lean-slot.sh", "/usr/bin/time", "-l",
-            "bash", "scripts/lean_check_tree.sh", module,
+            "bash", "evidence/tools/check_one.sh", module, str(path.with_suffix(".source.lean")),
         ], stdout=log, stderr=subprocess.STDOUT, env=env)
         end = datetime.datetime.now(datetime.timezone.utc).isoformat()
         log.write("END " + end + " EXIT " + str(result.returncode) + "\n")

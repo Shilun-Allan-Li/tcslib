@@ -1,0 +1,213 @@
+START 2026-11-15T10:51:30.208773+00:00 TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:57:69: error: Application type mismatch: The argument
+  hxy
+has type
+  select x = select y
+of sort `Prop` but is expected to have type
+  ℕ
+of sort `Type` in the application
+  Fin.castAdd_injective tail hxy
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:64:40: error(lean.unknownIdentifier): Unknown identifier `finProdFinEquiv_apply`
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:65:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  f ≥ 0
+  e ≥ 0
+  d ≥ 0
+  d - f ≤ -1
+  b ≥ 0
+  b - e ≤ -1
+  a ≥ 0
+  a + b - d ≥ 1
+where
+ a := ↑↑(c i) * ↑n
+ b := ↑↑t
+ d := ↑↑(finProdFinEquiv (c i, t))
+ e := ↑n
+ f := ↑B * ↑n
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:66:13: error(lean.unknownIdentifier): Unknown constant `List.getD_eq_getElem`
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:52:76: error: unsolved goals
+case h.e'_5.h.h.h
+I : Type
+inst✝¹ : Fintype I
+inst✝ : DecidableEq I
+B n tail : ℕ
+c : I → Fin B
+hinj : Function.Injective c
+select : I × Fin n → Fin (B * n + tail) := fun p => Fin.castAdd tail (finProdFinEquiv (c p.1, p.2))
+hselect : Function.Injective select
+h : HardcoreBit.PushesUniform fun ω => (Equiv.curry I (Fin n) Bool) fun j => ω (select j)
+r : Fin (B * n + tail) → Bool
+i : I
+t : Fin n
+heq : ↑(select (i, t)) = ↑(c i) * n + ↑t
+⊢ (List.ofFn r).getD (↑(select (i, t))) false = (Equiv.curry I (Fin n) Bool) (fun j => r (select j)) i t
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:64:63: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only [select, Fin.coe_castAdd, finProdFinEquiv_apply,̵ ̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:88:55: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  f ≥ 0
+  0 ≤ e ≤ 1
+  d ≥ 0
+  c ≥ 0
+  b ≥ 0
+  b - d ≥ 1
+  a ≥ 0
+  a - b ≥ 0
+  a - c ≥ 0
+  10*a - f ≤ 0
+where
+ a := ↑S
+ b := ↑V
+ c := ↑G
+ d := ↑↑p.1
+ e := ↑p.2.toNat
+ f := ↑(Sum.elim (fun p => p.2.toNat * S + ↑p.1) (fun p => 2 * S + (4 * ↑p.1.fst + idx p.1.fst p.1.snd) * 2 + p.2.toNat)
+    (Sum.inl p))
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:90:34: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  g ≥ 0
+  0 ≤ f ≤ 1
+  0 ≤ e ≤ 3
+  d ≥ 0
+  c ≥ 0
+  c - d ≥ 1
+  b ≥ 0
+  a ≥ 0
+  a - b ≥ 0
+  a - c ≥ 0
+  10*a - g ≤ 0
+where
+ a := ↑S
+ b := ↑V
+ c := ↑G
+ d := ↑↑p.1.fst
+ e := ↑(idx p.1.fst p.1.snd)
+ f := ↑p.2.toNat
+ g := ↑(Sum.elim (fun p => p.2.toNat * S + ↑p.1) (fun p => 2 * S + (4 * ↑p.1.fst + idx p.1.fst p.1.snd) * 2 + p.2.toNat)
+    (Sum.inr p))
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:102:79: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  f ≥ 0
+  e ≥ 0
+  d ≥ 0
+  c ≥ 0
+  b ≥ 0
+  b - d ≥ 1
+  b - e ≥ 1
+  b - f ≥ 1
+  a ≥ 0
+  a - b ≥ 0
+  a - c ≥ 0
+where
+ a := ↑S
+ b := ↑V
+ c := ↑G
+ d := ↑↑(x, false).1
+ e := ↑↑(y, false).1
+ f := ↑↑y
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:102:79: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  f ≥ 0
+  e ≥ 0
+  d ≥ 0
+  c ≥ 0
+  b ≥ 0
+  b - d ≥ 1
+  b - e ≥ 1
+  b - f ≥ 1
+  a ≥ 0
+  a - b ≥ 0
+  a - c ≥ 0
+where
+ a := ↑S
+ b := ↑V
+ c := ↑G
+ d := ↑↑(x, true).1
+ e := ↑↑(y, true).1
+ f := ↑↑y
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:108:8: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  0 ≤ h ≤ 1
+  0 ≤ g ≤ 1
+  f ≥ 0
+  e ≥ 0
+  4*e + f ≥ 0
+  d ≥ 0
+  c ≥ 0
+  c - e ≥ 1
+  b ≥ 0
+  b - d ≥ 1
+  a ≥ 0
+  a - b ≥ 0
+  a - c ≥ 0
+  2*a - d + 8*e + 2*f + g ≥ 0
+where
+ a := ↑S
+ b := ↑V
+ c := ↑G
+ d := ↑↑x.1
+ e := ↑↑y.1.fst
+ f := ↑(idx y.1.fst y.1.snd)
+ g := ↑y.2.toNat
+ h := ↑x.2.toNat
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:116:8: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  0 ≤ h ≤ 1
+  g ≥ 0
+  f ≥ 0
+  e ≥ 0
+  d ≥ 0
+  4*d + e ≥ 0
+  c ≥ 0
+  c - d ≥ 1
+  b ≥ 0
+  b - g ≥ 1
+  a ≥ 0
+  a - b ≥ 0
+  a - c ≥ 0
+  -1 ≤ 2*a + 8*d + 2*e - f - g ≤ 0
+where
+ a := ↑S
+ b := ↑V
+ c := ↑G
+ d := ↑↑x.1.fst
+ e := ↑(idx x.1.fst x.1.snd)
+ f := ↑y.2.toNat * ↑S
+ g := ↑↑y.1
+ h := ↑y.2.toNat
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:149:31: error: Invalid field notation: Type of
+  b
+is not known; cannot resolve field `toNat`
+TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean:143:0: error: stuck at solving universe constraint
+  ?u.4374+1 =?= max 1 ?u.4381
+while trying to unify
+  (v : Fin V) → ?m.68 v → Fin n → Bool : Sort (max 1 ?u.4381)
+with
+  (v : Fin V) → ?m.68 v → Fin n → Bool : Sort (max 1 ?u.4381)
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks): no fresh .olean produced
+        6.71 real         2.03 user         1.42 sys
+          2152808448  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              118410  page reclaims
+               54672  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                6592  voluntary context switches
+               44772  involuntary context switches
+            17218767  instructions retired
+             8310412  cycles elapsed
+             1294648  peak memory footprint
+END 2026-11-15T10:52:22.217029+00:00 EXIT 1

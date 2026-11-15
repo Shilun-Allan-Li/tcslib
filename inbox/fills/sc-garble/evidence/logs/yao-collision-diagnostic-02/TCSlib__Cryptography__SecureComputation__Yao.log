@@ -1,0 +1,69 @@
+START 2026-11-15T11:03:49.219138+00:00 TCSlib/Cryptography/SecureComputation/Yao
+TCSlib/Cryptography/SecureComputation/Yao.lean:844:27: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  assignIdx ?a
+in the target expression
+  (fun i a => assignIdx a) i a < 4
+
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool
+hGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)
+hGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)
+hG₁ : PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+hG₂ : PRFOut (PolyExpr.var.add innerLen) G₂
+δ₀ : ℕ → ℝ
+hδ₀ : Negligible δ₀
+hbot : ∀ (n : ℕ), (nestedSpecial E₁ E₂ n).WrongKeyBot (δ₀ n)
+n : ℕ
+hg : (Y.circ n).gates.length ≤ Y.sizeBound.eval n
+hsmall :
+  ∀ (i : Fin (Y.circ n).gates.length),
+    (∀ (a : Fin (Y.circ n).gates[i].args.length → Bool), List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a) < 4) ∧
+      Function.Injective fun a => List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)
+i : Fin (Y.circ n).gates.length
+a : (fun i => Fin (Y.circ n).gates[i].args.length → Bool) i
+⊢ (fun i a => assignIdx a) i a < 4
+TCSlib/Cryptography/SecureComputation/Yao.lean:846:6: error: No goals to be solved
+TCSlib/Cryptography/SecureComputation/Yao.lean:859:20: error: Application type mismatch: The argument
+  add_le_add_right ?m.338 ?m.339
+has type
+  ?m.336 + ?m.339 ≤ ?m.337 + ?m.339
+but is expected to have type
+  12 * ↑(Y.circ n).gates.length * δ₀ n + ↑(Y.outLen.eval n) * (2 ^ n)⁻¹ ≤
+    (fun n => 12 * ↑(Y.sizeBound.eval n) * δ₀ n + ↑(Y.outLen.eval n) * 2⁻¹ ^ n) n
+in the application
+  LE.le.trans hb (add_le_add_right ?m.338 ?m.339)
+TCSlib/Cryptography/SecureComputation/Yao.lean:858:31: warning: This simp argument is unused:
+  inv_pow
+
+Hint: Omit it from the simp argument list.
+  simp only [Fintype.card_fun, Fintype.card_fin, Fintype.card_bool, Nat.cast_pow,
+  ̵  ̵ ̵ ̵ ̵ ̵Nat.cast_ofNat,
+  ̲  ̲ ̲ ̲ ̲ ̲one_div,̵ ̵i̵n̵v̵_̵p̵o̵w̵] at hb
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/Yao.lean:883:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/SecureComputation/Yao.lean:949:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/SecureComputation/Yao): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao): no fresh .olean produced
+        2.97 real         3.05 user         1.00 sys
+          2255831040  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179895  page reclaims
+                 119  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                  31  voluntary context switches
+               11481  involuntary context switches
+            15757221  instructions retired
+             6770511  cycles elapsed
+             1294648  peak memory footprint
+END 2026-11-15T11:03:52.218382+00:00 EXIT 1

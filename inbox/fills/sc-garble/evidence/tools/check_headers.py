@@ -128,7 +128,8 @@ def mask_yao(text):
     a, b = decl['doc_range']
     sketch = text.index('**Proof sketch.**', a, b)
     spans.append((sketch, b-2, '<SKETCH>'))
-    bullet = re.search(r'^\*[^\n]*yaoSeed_good_whp[^\n]*\n(?:  [^\n]*\n)*', text, re.M)
+    bullet = re.search(r'^\*[^\n]*yaoSeed_good_whp[^\n]*\n(?:  [^\n]*\n)*'
+        r'(?:\*[^\n]*yaoHybrid_polyTime[^\n]*\n(?:  [^\n]*\n)*)?', text, re.M)
     assert bullet
     spans.append((bullet.start(), bullet.end(), '<BULLET>\n'))
     for start, end, value in sorted(spans, reverse=True):

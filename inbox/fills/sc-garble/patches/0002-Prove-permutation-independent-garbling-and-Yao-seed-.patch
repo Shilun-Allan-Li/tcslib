@@ -1,0 +1,840 @@
+From fb7971f883839c4b02805eea79fa16acd325c5c2 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 03:08:06 -0800
+Subject: [PATCH 2/2] Prove permutation-independent garbling and Yao seed
+ bounds
+
+---
+ .../CircuitComplexity/DAGCircuit.lean         |   9 +
+ .../SecureComputation/Garbling.lean           | 260 +++++++++++++++++-
+ .../Garbling/CoinBlocks.lean                  | 206 ++++++++++++++
+ .../Garbling/Probability.lean                 | 113 ++++++++
+ .../GarblingSecurity/NestedBounds.lean        |  70 +++++
+ .../Cryptography/SecureComputation/Yao.lean   |  68 +++--
+ 6 files changed, 692 insertions(+), 34 deletions(-)
+ create mode 100644 TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean
+
+diff --git a/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean b/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
+index 4bd1332fee2f00734a2de35d9d74433010495229..178ba19fc13722e856f7c6cc61a74e50394315ab 100644
+--- a/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
++++ b/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
+@@ -507,6 +507,15 @@ def IsWellFormed : Prop :=
+ def IsFaninTwo : Prop :=
+   C.IsWellFormed ∧ ∀ g ∈ C.gates, g.args.length ≤ 2
+ 
++/-- A circuit is fan-in two exactly when each gate has distinct arguments, each negation
++gate has one argument, and every gate has at most two arguments:
++`C.IsFaninTwo ↔ (∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)) ∧
++  ∀ g ∈ C.gates, g.args.length ≤ 2`. [AB09, Definition 6.1] -/
++theorem isFaninTwo_iff :
++    C.IsFaninTwo ↔
++      (∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)) ∧
++        ∀ g ∈ C.gates, g.args.length ≤ 2 := Iff.rfl
++
+ /-- The vertex-value list of a circuit has one entry per vertex: `n` inputs plus one per
+ gate. -/
+ @[simp] theorem length_values (x : Fin n → Bool) :
+diff --git a/TCSlib/Cryptography/SecureComputation/Garbling.lean b/TCSlib/Cryptography/SecureComputation/Garbling.lean
+index 21db7810bbd02bb842454ea0277f653f66ffe096..55b29ba9504144dcefd020f4a6cb7ce8bb883a1c 100644
+--- a/TCSlib/Cryptography/SecureComputation/Garbling.lean
++++ b/TCSlib/Cryptography/SecureComputation/Garbling.lean
+@@ -6,13 +6,15 @@ import TCSlib.Complexity.CircuitComplexity.DAGCircuit
+ import Mathlib.Data.Fintype.Pi
+ import Mathlib.Data.Fintype.Perm
+ import TCSlib.Cryptography.Foundations.Probability
++import TCSlib.Cryptography.SecureComputation.Garbling.Probability
++import TCSlib.Cryptography.SecureComputation.Garbling.CoinBlocks
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Garbled circuits (statement phase)
++# Garbled circuits
+ 
+ [PS10, §6.2.1–6.2.3]. Construction 158.a (inventory): to garble a circuit `C` with fan-in two,
+ associate two random keys `k_w^0, k_w^1` to every wire `w`. Each gate becomes a table with one
+@@ -65,8 +67,15 @@ The special encryption scheme of Algorithm 157.2 gives both, nested (`GarblingSp
+   encoding.
+ * `SecureComputation.garbledValues_getD`, `garbledOutput_eq` (Claim 159.a, deterministic part,
+   proved): a good garbling evaluates to the keys of the circuit's values, and of `C(x)`.
+-* `SecureComputation.uprob_not_good_le` (Claim 159.a, probabilistic part, stated; a `sorry` under
+-  a sketch): a garbling is good except with probability `12 · |gates| · δ`.
++* `SecureComputation.uprob_not_good_le_of_perm` (B2): the failure bound holds for every
++  fixed row-permutation family; `uprob_not_good_le` averages this bound over uniform permutations.
++* `SecureComputation.uprob_not_good_le_of_uniform_data`: uniform keys and row coins suffice,
++  even when row permutations depend on the seed.
++
++## Contents
++
++* `Garbling.Probability`: independent marginals and the first successful opening.
++* `Garbling.CoinBlocks`: the joint uniform law of disjoint key and row-coin blocks.
+ 
+ ## References
+ 
+@@ -403,25 +412,248 @@ theorem garbledOutput_eq (s : GarbleSeed Cc K ρ) (hgood : Good M Cc s) (x : Fin
+       ((DAGCircuit.size_eq Cc).symm ▸ Cc.output_lt)).trans
+       (congrArg (keyAt Cc s Cc.output) (DAGCircuit.eval_eq Cc x).symm))
+ 
++/-- Correct rows and no successful cross-opening imply a good garbling:
++if `M` is correct, `Cc` is fan-in two, and for every gate and `a ≠ a'`,
++`M.dec (argKeys Cc s i a') (garbledRow M Cc s i a) = none`, then `Good M Cc s`.
++[PS10, §6.2.3, Claim 159.a]
++
++**Proof sketch.** The row for the current assignment opens by correctness. It occurs
++in the permuted table because the row permutation is surjective. Every other assignment's
++row fails by the cross-opening hypothesis. Thus each table has a successful row and every
++successful row gives the specified key, so its first successful opening is that key. -/
++theorem good_of_no_crossOpening (hdec : M.DecCorrect) (hC : Cc.IsFaninTwo)
++    (s : GarbleSeed Cc K ρ)
++    (hcross : ∀ (i : Fin Cc.gates.length)
++      (a a' : Fin (Cc.gates[i]).args.length → Bool), a ≠ a' →
++        M.dec (argKeys Cc s i a') (garbledRow M Cc s i a) = none) : Good M Cc s := by
++  classical
++  rw [good_iff]
++  intro i a
++  have hlen : (argKeys Cc s i a).length ≤ 2 := by
++    rw [argKeys_eq, List.length_ofFn]
++    exact ((DAGCircuit.isFaninTwo_iff Cc).mp hC).2 _ (List.getElem_mem i.isLt)
++  have hcorrect : M.dec (argKeys Cc s i a) (garbledRow M Cc s i a) =
++      some (keyAt Cc s (n + i) (gateOut (Cc.gates[i]) a)) := by
++    rw [garbledRow_eq]
++    exact (MultiEnc.decCorrect_iff M).mp hdec _ hlen _ _
++  rw [garbledTable_eq]
++  apply GarblingProbability.findSome_eq_some_of_dichotomy
++  · refine ⟨garbledRow M Cc s i a, ?_, hcorrect⟩
++    apply List.mem_map.mpr
++    refine ⟨(s.2.2 i).symm a, ?_, ?_⟩
++    · exact Finset.mem_toList.mpr (Finset.mem_univ _)
++    · rw [Equiv.apply_symm_apply]
++  · intro row hrow
++    obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hrow
++    by_cases hba : s.2.2 i b = a
++    · right
++      rw [hba]
++      exact hcorrect
++    · exact Or.inl (hcross i (s.2.2 i b) a hba)
++
++/-- A wrong-key probability bound is nonnegative:
++`M.WrongKeyBot δ → 0 ≤ δ`. Use distinct choices at one position and any plaintext key. -/
++theorem wrongKeyBot_nonneg [Fintype K] [Fintype ρ] {δ : ℝ}
++    (hδ : M.WrongKeyBot δ) : 0 ≤ δ := by
++  have h := (MultiEnc.wrongKeyBot_iff M δ).mp hδ 1 (by decide)
++    (fun _ => false) (fun _ => true)
++    (by intro heq; have hbit := congrFun heq 0; cases hbit) default
++  exact (uprob_nonneg _).trans h
++
++/-- At a fixed gate, two distinct assignments cross-open with probability at most `δ`,
++for every fixed row-permutation family `π`:
++`Pr_t[(M.dec (argKeys Cc (t.1,t.2,π) i a')
++  (garbledRow M Cc (t.1,t.2,π) i a)).isSome = true] ≤ δ` when `a ≠ a'`.
++[PS10, §6.2.3, Claim 159.a]
++
++**Proof sketch.** The circuit's argument vertices are distinct and precede this gate's
++output vertex. Restrict the uniform key table to these vertices and the selected output
++key, and read the row's independent coins. This gives a uniform plaintext key, argument
++key table and row coin. Average `WrongKeyBot` over the plaintext key. The row order is
++unused by a cross-opening event. -/
++theorem uprob_crossOpening_le_of_perm [Fintype K] [Fintype ρ] {δ : ℝ}
++    (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo)
++    (π : (i : Fin Cc.gates.length) → Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool))
++    (i : Fin Cc.gates.length) (a a' : Fin (Cc.gates[i]).args.length → Bool) (hne : a ≠ a') :
++    uprob (fun t : (Fin Cc.size → Bool → K) ×
++        ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ) =>
++      (M.dec (argKeys Cc (t.1, t.2, π) i a')
++        (garbledRow M Cc (t.1, t.2, π) i a)).isSome = true) ≤ δ := by
++  classical
++  have hfan := (DAGCircuit.isFaninTwo_iff Cc).mp hC
++  have hmem : Cc.gates[i] ∈ Cc.gates := List.getElem_mem i.isLt
++  have hnodup := (hfan.1 _ hmem).1
++  have hlen := hfan.2 _ hmem
++  have hout : n + i < Cc.size := by rw [DAGCircuit.size_eq]; omega
++  have harglt : ∀ j : Fin (Cc.gates[i]).args.length,
++      (Cc.gates[i]).args[j] < n + i :=
++    fun j => Cc.args_lt i i.isLt _ (List.getElem_mem j.isLt)
++  have hargSize : ∀ j : Fin (Cc.gates[i]).args.length,
++      (Cc.gates[i]).args[j] < Cc.size := fun j => (harglt j).trans hout
++  let arg : Fin (Cc.gates[i]).args.length → Fin Cc.size :=
++    fun j => ⟨(Cc.gates[i]).args[j], hargSize j⟩
++  have hinj : Function.Injective arg := by
++    intro j k hjk
++    have hv := congrArg Fin.val hjk
++    change (Cc.gates[i]).args.get j = (Cc.gates[i]).args.get k at hv
++    exact hnodup.get_inj_iff.mp hv
++  let out : Fin Cc.size := ⟨n + i, hout⟩
++  have hnot : ∀ j, arg j ≠ out := fun j h =>
++    (Nat.ne_of_lt (harglt j)) (congrArg Fin.val h)
++  let R := (k : Fin Cc.gates.length) → (Fin (Cc.gates[k]).args.length → Bool) → ρ
++  have hlaw := GarblingProbability.pushesUniform_output_argKeys_row (K := K)
++    arg hinj out hnot
++    (gateOut (Cc.gates[i]) a) (fun r : R => r i a)
++    (GarblingProbability.pushesUniform_rowCoin
++      (A := fun k : Fin Cc.gates.length => Fin (Cc.gates[k]).args.length → Bool)
++      (ρ := ρ) i a)
++  let p : K × ((Fin (Cc.gates[i]).args.length → Bool → K) × ρ) → Prop := fun z =>
++    (M.dec (List.ofFn fun j => z.2.1 j (a' j))
++      (M.enc (List.ofFn fun j => z.2.1 j (a j)) z.1 z.2.2)).isSome = true
++  have hu := hlaw.uprob_eq p
++  calc
++    _ = uprob (fun t : (Fin Cc.size → Bool → K) × R =>
++        p (t.1 out (gateOut (Cc.gates[i]) a), (fun j => t.1 (arg j), t.2 i a))) := by
++      apply OneWay.uprob_congr
++      intro t
++      simp only [garbledRow_eq, argKeys_eq, keyAt_eq, hargSize, hout, dif_pos]
++      rfl
++    _ = uprob p := hu
++    _ ≤ δ := by
++      rw [uprob_prod]
++      exact (OneWay.uexp_mono (fun o : K =>
++        (MultiEnc.wrongKeyBot_iff M δ).mp hδ _ hlen a a' hne o)).trans
++          (OneWay.uexp_const δ).le
++
++/-- Uniform independent keys and row coins suffice for the garbling bound, with arbitrary
++row orders on the same seed space:
++`PushesUniform d → Pr_w[¬ Good M Cc ((d w).1,(d w).2,π w)] ≤ 12 * |Cc.gates| * δ`.
++The permutation `π w` may depend on any seed information; no independence from it is needed.
++[PS10, §6.2.3, Claim 159.a, strengthened seed-law form]
++
++**Proof sketch.** Goodness follows whenever no row cross-opens under a different assignment.
++Each cross-opening ignores row order, so its probability is transported by the uniform
++key/coin marginal and bounded by `WrongKeyBot`. A gate of arity at most two has at most
++four assignments and three different assignments per row. Apply the finite union bound
++within each gate and then over all gates. This proves the fixed-permutation B2 statement
++as a special case and also covers Yao's seed-dependent XOR shifts. -/
++theorem uprob_not_good_le_of_uniform_data [Fintype K] [Fintype ρ]
++    (hdec : M.DecCorrect) {δ : ℝ} (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo)
++    {Ω : Type} [Fintype Ω]
++    (d : Ω → (Fin Cc.size → Bool → K) ×
++      ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ))
++    (hd : HardcoreBit.PushesUniform d)
++    (π : Ω → (i : Fin Cc.gates.length) →
++      Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool)) :
++    uprob (fun w => ¬ Good M Cc ((d w).1, (d w).2, π w)) ≤
++      12 * Cc.gates.length * δ := by
++  classical
++  let event : (i : Fin Cc.gates.length) →
++      (Fin (Cc.gates[i]).args.length → Bool) →
++      (Fin (Cc.gates[i]).args.length → Bool) → Ω → Prop := fun i a a' w =>
++    (M.dec (argKeys Cc ((d w).1, (d w).2, π w) i a')
++      (garbledRow M Cc ((d w).1, (d w).2, π w) i a)).isSome = true
++  let gateBad : Fin Cc.gates.length → Ω → Prop := fun i w =>
++    ∃ a ∈ Finset.univ, ∃ a' ∈ Finset.univ.erase a, event i a a' w
++  have hpoint : ∀ i a a', a ≠ a' → uprob (event i a a') ≤ δ := by
++    intro i a a' hne
++    let π₀ : (i : Fin Cc.gates.length) →
++        Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool) := fun _ => Equiv.refl _
++    let p := fun t : (Fin Cc.size → Bool → K) ×
++        ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ) =>
++      (M.dec (argKeys Cc (t.1, t.2, π₀) i a')
++        (garbledRow M Cc (t.1, t.2, π₀) i a)).isSome = true
++    have heq : event i a a' = fun w => p (d w) := rfl
++    rw [heq, hd.uprob_eq p]
++    exact uprob_crossOpening_le_of_perm M Cc hδ hC π₀ i a a' hne
++  have hbad : ∀ w, ¬ Good M Cc ((d w).1, (d w).2, π w) →
++      ∃ i ∈ Finset.univ, gateBad i w := by
++    intro w hw
++    by_contra hn
++    apply hw
++    apply good_of_no_crossOpening M Cc hdec hC
++    intro i a a' hne
++    apply Option.not_isSome_iff_eq_none.mp
++    intro hs
++    exact hn ⟨i, Finset.mem_univ _, a, Finset.mem_univ _, a',
++      Finset.mem_erase.mpr ⟨hne.symm, Finset.mem_univ _⟩, hs⟩
++  have hgate : ∀ i, uprob (gateBad i) ≤ 12 * δ := by
++    intro i
++    let A := Fin (Cc.gates[i]).args.length → Bool
++    have hlen : (Cc.gates[i]).args.length ≤ 2 :=
++      ((DAGCircuit.isFaninTwo_iff Cc).mp hC).2 (Cc.gates[i]) (List.getElem_mem i.isLt)
++    have hcardNat : Fintype.card A * (Fintype.card A - 1) ≤ 12 := by
++      simp only [A, Fintype.card_fun, Fintype.card_fin, Fintype.card_bool]
++      have hcases : (Cc.gates[i]).args.length = 0 ∨ (Cc.gates[i]).args.length = 1 ∨
++          (Cc.gates[i]).args.length = 2 := by omega
++      rcases hcases with h0 | h1 | h2
++      · rw [h0]; decide
++      · rw [h1]; decide
++      · rw [h2]; decide
++    have hcard : ((Fintype.card A * (Fintype.card A - 1) : ℕ) : ℝ) ≤ 12 := by
++      exact_mod_cast hcardNat
++    have herase (a : A) : (Finset.univ.erase a).card = Fintype.card A - 1 := by
++      rw [Finset.card_erase_of_mem (Finset.mem_univ a), Finset.card_univ]
++    refine (uprob_exists_le (Finset.univ : Finset A)
++      (fun a w => ∃ a' ∈ Finset.univ.erase a, event i a a' w)).trans ?_
++    calc
++      _ ≤ ∑ a ∈ (Finset.univ : Finset A), ∑ a' ∈ Finset.univ.erase a, δ := by
++        apply Finset.sum_le_sum
++        intro a ha
++        refine (uprob_exists_le (Finset.univ.erase a) (fun a' w => event i a a' w)).trans ?_
++        exact Finset.sum_le_sum fun a' ha' =>
++          hpoint i a a' (Finset.mem_erase.mp ha').1.symm
++      _ = ((Fintype.card A * (Fintype.card A - 1) : ℕ) : ℝ) * δ := by
++        simp only [Finset.sum_const, herase, Finset.card_univ, nsmul_eq_mul,
++          Nat.cast_mul, mul_assoc]
++      _ ≤ 12 * δ := mul_le_mul_of_nonneg_right hcard (wrongKeyBot_nonneg M hδ)
++  calc
++    _ ≤ uprob (fun w => ∃ i ∈ Finset.univ, gateBad i w) := uprob_mono hbad
++    _ ≤ ∑ i ∈ Finset.univ, uprob (gateBad i) := uprob_exists_le _ _
++    _ ≤ ∑ i ∈ Finset.univ, 12 * δ := Finset.sum_le_sum fun i _ => hgate i
++    _ = 12 * Cc.gates.length * δ := by
++      simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
++      rw [mul_left_comm, ← mul_assoc]
++
++/-- **B2: goodness for every fixed row-permutation family.** For uniform independent
++keys and row coins and any fixed `π`,
++`Pr_t[¬ Good M Cc (t.1,t.2,π)] ≤ 12 * Cc.gates.length * δ`.
++[PS10, §6.2.3, Claim 159.a, strengthened permutation form]
++
++**Proof sketch.** Apply the uniform-data bound to the identity map on the key/coin product
++and the constant row-permutation family. This is the prescribed fixed-permutation B2 API. -/
++theorem uprob_not_good_le_of_perm [Fintype K] [Fintype ρ] (hdec : M.DecCorrect) {δ : ℝ}
++    (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo)
++    (π : (i : Fin Cc.gates.length) → Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool)) :
++    uprob (fun t : (Fin Cc.size → Bool → K) ×
++        ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ) =>
++      ¬ Good M Cc (t.1, t.2, π)) ≤ 12 * Cc.gates.length * δ := by
++  exact uprob_not_good_le_of_uniform_data M Cc hdec hδ hC
++    (fun t => t) HardcoreBit.pushesUniform_id (fun _ => π)
++
+ /-- **Claim 159.a, probabilistic part: a garbling is good with high probability** [PS10, §6.2.3,
+ "all but one row will evaluate to `⊥`"]: for a fan-in-two circuit and a multi-key encryption
+ that is correct and has the wrong-key property with error `δ`, a uniformly random garbling fails
+ to be good with probability at most `12 · |gates| · δ`. The formal conclusion bounds failure
+ of first-success correctness; it does not state the source's stronger unique-opening claim.
+ 
+-**Proof sketch.** Fix a gate `i` and an assignment `a`.
+-1. By correctness, the row of `a` decrypts under `a`'s keys to the right key. So `Good` can fail
+-   at `(i, a)` only if another row, of an assignment `a'' ≠ a`, decrypts under `a`'s keys.
+-2. The arguments are distinct vertices (`IsWellFormed`: no duplicates), and they precede the
+-   gate's own vertex. So the keys of the argument positions are independent uniform pairs, and
+-   the plaintext key and the row's coin are independent of them. By `WrongKeyBot`, averaged over
+-   the plaintext and the coin, that event has probability at most `δ`.
+-3. A gate has at most `2^2 = 4` assignments and `3` other rows each: at most `12` events per gate.
+-   The union bound over the gates gives `12 · |gates| · δ`. The permutations play no role in
+-   correctness. -/
++**Proof sketch.** Reassociate a uniform garbling seed as a permutation family and an
++independent key/coin pair. For each fixed permutation family apply the stronger B2 theorem
++`uprob_not_good_le_of_perm`. Average its constant bound with finite Fubini and the constant
++expectation identity. B2 itself bounds the at most twelve cross-opening events per gate. -/
+ theorem uprob_not_good_le [Fintype K] [Fintype ρ] (hdec : M.DecCorrect) {δ : ℝ}
+     (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo) :
+     uprob (fun s : GarbleSeed Cc K ρ => ¬ Good M Cc s) ≤ 12 * Cc.gates.length * δ := by
+-  sorry
++  let D := (Fin Cc.size → Bool → K) ×
++    ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ)
++  let P := (i : Fin Cc.gates.length) →
++    Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool)
++  let e : GarbleSeed Cc K ρ ≃ P × D :=
++    (Equiv.prodAssoc (Fin Cc.size → Bool → K)
++      ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ) P).symm.trans
++        (Equiv.prodComm D P)
++  rw [← uprob_comp_equiv e.symm, uprob_prod]
++  exact (OneWay.uexp_mono (fun π : P =>
++    uprob_not_good_le_of_perm M Cc hdec hδ hC π)).trans (OneWay.uexp_const _).le
+ 
+ end TCSlib.Cryptography.SecureComputation
+diff --git a/TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean b/TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..71d4ecf5607afe573ba0522b2b7e8fa9ea1c4dd3
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean
+@@ -0,0 +1,206 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.Garbling.Probability
++import Mathlib.Logic.Equiv.Fin.Basic
++import Mathlib.Data.List.GetD
++import Mathlib.Tactic.Ring
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Uniform key and row-coin blocks
++
++## Main definitions
++
++This module adds no definitions.
++
++## Main results
++
++* `GarblingProbability.pushesUniform_key_row_blocks`: the key and row-coin blocks used
++  by Yao have a uniform joint law, including zero-length blocks.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, §6.2.3, Claim 159.a.
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.GarblingProbability
++
++open TCSlib.Cryptography
++
++/-- For `len ≤ 2`, the binary fold `a₀ + 2(a₁ + 2(⋯))` is below four and injective:
++`(∀ a, (List.ofFn a).foldr (fun b k => b.toNat + 2*k) 0 < 4) ∧
++  Function.Injective (fun a => (List.ofFn a).foldr (fun b k => b.toNat + 2*k) 0)`. -/
++theorem assignmentFold_small (len : ℕ) (hlen : len ≤ 2) :
++    (∀ a : Fin len → Bool, (List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0 < 4) ∧
++      Function.Injective (fun a : Fin len → Bool =>
++        (List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0) := by
++  interval_cases len <;> decide
++
++/-- Selecting distinct blocks of `n` bits preserves the uniform law:
++`r ↦ (fun i t => (List.ofFn r).getD (c i * n + t) false)` pushes uniform to uniform,
++for an injection `c : I → Fin B` and any unused tail of length `tail`.
++
++**Proof sketch.** The product equivalence embeds a block and its bit into `Fin (B*n)`.
++Compose this injection with the inclusion into the raw coin space and restrict its uniform
++bit table. Currying the restricted table gives the claimed family of independent blocks. -/
++theorem pushesUniform_bits_of_blocks {I : Type} [Fintype I] [DecidableEq I]
++    {B n tail : ℕ} (c : I → Fin B) (hinj : Function.Injective c) :
++    HardcoreBit.PushesUniform (fun r : Fin (B * n + tail) → Bool =>
++      fun i (t : Fin n) => (List.ofFn r).getD ((c i : ℕ) * n + t) false) := by
++  let select : I × Fin n → Fin (B * n + tail) :=
++    fun p => Fin.castAdd tail (finProdFinEquiv (c p.1, p.2))
++  have hselect : Function.Injective select := by
++    intro x y hxy
++    have hp : (c x.1, x.2) = (c y.1, y.2) := by
++      apply (finProdFinEquiv (m := B) (n := n)).injective
++      apply Fin.castAdd_injective (B * n) tail
++      exact hxy
++    apply Prod.ext
++    · exact hinj (congrArg (fun p : Fin B × Fin n => p.1) hp)
++    · exact congrArg (fun p : Fin B × Fin n => p.2) hp
++  have h := (HardcoreBit.pushesUniform_restrict (O := Bool) hselect).comp
++    (HardcoreBit.pushesUniform_equiv (Equiv.curry I (Fin n) Bool))
++  convert h using 1
++  funext r i t
++  have heq : (select (i, t) : ℕ) = (c i : ℕ) * n + t := by
++    simp only [select, Fin.coe_castAdd, finProdFinEquiv_apply_val]
++    ring
++  rw [← heq, List.getD_eq_getElem _ _ (by simp only [List.length_ofFn]; exact (select (i, t)).isLt),
++    List.getElem_ofFn]
++  rfl
++
++/-- Key blocks `b*S+v` and row-half blocks `2*S+2*(4*i+idx i a)+b` are distinct and below
++`10*S`, if `V,G ≤ S` and each `idx i` is an injection into `{0,1,2,3}`.
++
++**Proof sketch.** Key indices are below `2*S`; row indices start there. Within keys, the
++bit separates the two intervals. Within rows, bounds on the half-bit and assignment index
++recover first the gate, then the assignment, then the half-bit. -/
++theorem key_row_blocks_injective {S V G : ℕ} (hV : V ≤ S) (hG : G ≤ S)
++    {A : Fin G → Type} (idx : (i : Fin G) → A i → ℕ)
++    (hidx : ∀ i a, idx i a < 4) (hinj : ∀ i, Function.Injective (idx i)) :
++    let c : (Fin V × Bool) ⊕ ((Σ i, A i) × Bool) → ℕ :=
++      Sum.elim (fun p => p.2.toNat * S + p.1)
++        (fun p => 2 * S + (4 * p.1.1 + idx p.1.1 p.1.2) * 2 + p.2.toNat)
++    (∀ p, c p < 10 * S) ∧ Function.Injective c := by
++  dsimp only
++  have hb (b : Bool) : b.toNat ≤ 1 := by cases b <;> decide
++  have hk (p : Fin V × Bool) : p.2.toNat * S + p.1 < 2 * S := by
++    have hm := Nat.mul_le_mul_right S (hb p.2)
++    have hv := p.1.isLt
++    simp only [Nat.one_mul] at hm
++    omega
++  constructor
++  · intro p
++    cases p with
++    | inl p =>
++      simp only [Sum.elim_inl]
++      have hh := hk p
++      omega
++    | inr p =>
++      simp only [Sum.elim_inr]
++      have hi := p.1.1.isLt
++      have ha := hidx p.1.1 p.1.2
++      have hh := hb p.2
++      omega
++  · intro x y hxy
++    cases x with
++    | inl x =>
++      cases y with
++      | inl y =>
++        obtain ⟨x, b⟩ := x
++        obtain ⟨y, c⟩ := y
++        have hx := x.isLt
++        have hy := y.isLt
++        change b.toNat * S + x.val = c.toNat * S + y.val at hxy
++        have hbc : b = c := by
++          cases b <;> cases c <;> simp_all only [Bool.toNat_false, Bool.toNat_true,
++            Nat.zero_mul, Nat.one_mul] <;> omega
++        subst c
++        have hval : x.val = y.val := Nat.add_left_cancel hxy
++        exact congrArg Sum.inl (Prod.ext (Fin.ext hval) rfl)
++      | inr y =>
++        have hx := hk x
++        simp only [Sum.elim_inl, Sum.elim_inr] at hxy
++        omega
++    | inr x =>
++      cases y with
++      | inl y =>
++        have hy := hk y
++        simp only [Sum.elim_inl, Sum.elim_inr] at hxy
++        omega
++      | inr y =>
++        obtain ⟨⟨i, a⟩, b⟩ := x
++        obtain ⟨⟨j, a'⟩, c⟩ := y
++        have ha := hidx i a
++        have ha' := hidx j a'
++        have hbit := hb b
++        have hbit' := hb c
++        simp only [Sum.elim_inr] at hxy
++        have hij : i = j := Fin.ext (by omega)
++        subst j
++        have haa : a = a' := hinj i (by omega)
++        subst a'
++        have hbc : b = c := by cases b <;> cases c <;> simp_all
++        subst c
++        rfl
++
++/-- The joint key/row-coin law of Yao's block layout is uniform. For `V,G ≤ S`, row index
++injections `idx i : A i → {0,1,2,3}`, and uniform `10*S*n+2*S` bits, the keys read at
++`(b*S+v)*n` and the two row halves read at `2*S*n+(4*i+idx i a)*(2*n)` and that offset
++plus `n` form independent uniform tables. [PS10, §6.2.3, Claim 159.a]
++
++**Proof sketch.** Embed key blocks and row-half blocks into `Fin (10*S)` using their
++intervals, and restrict the raw uniform bit table to those blocks. Split the sum of the
++key and row indices. Curry the key indices, curry the row-half indices, turn each pair
++of Boolean-indexed row halves into a product, and curry the dependent row index. All
++these maps are equivalences, so the joint uniform law is preserved. -/
++theorem pushesUniform_key_row_blocks {S V G n : ℕ} (hV : V ≤ S) (hG : G ≤ S)
++    {A : Fin G → Type} [∀ i, Fintype (A i)] [∀ i, DecidableEq (A i)]
++    (idx : (i : Fin G) → A i → ℕ) (hidx : ∀ i a, idx i a < 4)
++    (hinj : ∀ i, Function.Injective (idx i)) :
++    HardcoreBit.PushesUniform (fun r : Fin (10 * S * n + 2 * S) → Bool =>
++      ((fun (v : Fin V) (b : Bool) (t : Fin n) =>
++          (List.ofFn r).getD ((b.toNat * S + v) * n + t) false),
++        fun i a =>
++          ((fun t : Fin n =>
++            (List.ofFn r).getD (2 * S * n + (4 * i + idx i a) * (2 * n) + t) false),
++           (fun t : Fin n =>
++            (List.ofFn r).getD (2 * S * n + (4 * i + idx i a) * (2 * n) + n + t)
++              false)))) := by
++  classical
++  let K := Fin n → Bool
++  let I := (Fin V × Bool) ⊕ ((Σ i, A i) × Bool)
++  let c : I → ℕ := Sum.elim (fun p => p.2.toNat * S + p.1)
++    (fun p => 2 * S + (4 * p.1.1 + idx p.1.1 p.1.2) * 2 + p.2.toNat)
++  have hc := key_row_blocks_injective hV hG idx hidx hinj
++  let c' : I → Fin (10 * S) := fun p => ⟨c p, hc.1 p⟩
++  have hc' : Function.Injective c' := fun x y h => hc.2 (congrArg Fin.val h)
++  let eK : (Fin V × Bool → K) ≃ (Fin V → Bool → K) := Equiv.curry _ _ _
++  let eR : ((Σ i, A i) × Bool → K) ≃ ((i : Fin G) → A i → K × K) :=
++    (Equiv.curry _ _ _).trans ((Equiv.piCongrRight fun _ =>
++      Equiv.boolArrowEquivProd K).trans (Equiv.piCurry fun i (_ : A i) => K × K))
++  have h := (pushesUniform_bits_of_blocks (n := n) (tail := 2 * S) c' hc').comp
++    ((HardcoreBit.pushesUniform_equiv
++      (Equiv.sumArrowEquivProdArrow (Fin V × Bool) ((Σ i, A i) × Bool) K)).comp
++      (HardcoreBit.pushesUniform_equiv (eK.prodCongr eR)))
++  convert h using 1
++  funext r
++  apply Prod.ext
++  · rfl
++  · funext i a
++    apply Prod.ext <;> funext t
++    · change (List.ofFn _).getD
++        (2 * S * n + (4 * i + idx i a) * (2 * n) + t) false =
++          (List.ofFn _).getD ((2 * S + (4 * i + idx i a) * 2 + 0) * n + t) false
++      congr 1; ring
++    · change (List.ofFn _).getD
++        (2 * S * n + (4 * i + idx i a) * (2 * n) + n + t) false =
++          (List.ofFn _).getD ((2 * S + (4 * i + idx i a) * 2 + 1) * n + t) false
++      congr 1; ring
++
++end TCSlib.Cryptography.SecureComputation.GarblingProbability
+diff --git a/TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean b/TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..8bcc5a5a49f75c15c2ed25a23ff331c7f6b7bc53
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean
+@@ -0,0 +1,113 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.HardcoreBit.Basic
++import TCSlib.Cryptography.OneWayFunctions.Basic
++import Mathlib.Data.Fintype.Pi
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Independent marginals and first successful openings
++
++## Main definitions
++
++This module adds no definitions.
++
++## Main results
++
++* `SecureComputation.GarblingProbability.findSome_eq_some_of_dichotomy`: a successful
++  entry and no other successful value determine the first successful opening.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.2.3, Claim 159.a.
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.GarblingProbability
++
++open TCSlib.Cryptography
++
++/-- If a list contains an entry mapped to `some b`, and every entry maps to either
++`none` or `some b`, its first successful image is `some b`:
++`(∃ a ∈ l, f a = some b) → (∀ a ∈ l, f a = none ∨ f a = some b) →
++  l.findSome? f = some b`. -/
++theorem findSome_eq_some_of_dichotomy {α β : Type} (l : List α) (f : α → Option β) (b : β)
++    (hex : ∃ a ∈ l, f a = some b)
++    (hall : ∀ a ∈ l, f a = none ∨ f a = some b) : l.findSome? f = some b := by
++  cases hfind : l.findSome? f with
++  | none =>
++    obtain ⟨a, ha, hfa⟩ := hex
++    have hn := List.findSome?_eq_none_iff.mp hfind a ha
++    cases hn.symm.trans hfa
++  | some c =>
++    obtain ⟨a, ha, hfa⟩ := List.exists_of_findSome?_eq_some hfind
++    rcases hall a ha with hn | hb
++    · cases hn.symm.trans hfa
++    · exact hfa.symm.trans hb
++
++/-- Distinct argument vertices and a different output vertex give an independent output
++key and argument-key table:
++`ks ↦ (ks out b, fun j => ks (arg j))` pushes uniform to uniform, if `arg` is injective
++and `arg j ≠ out` for every `j`.
++
++**Proof sketch.** Restrict the uniform vertex table to the injection from `J ⊕ Unit`
++which selects argument vertices on the left and the output vertex on the right. Split
++that restricted table along the sum, evaluate the unit coordinate and output bit, and
++swap the two resulting independent factors. -/
++theorem pushesUniform_output_argKeys {I J K : Type} [Fintype I] [DecidableEq I]
++    [Fintype J] [DecidableEq J] [Fintype K] [Nonempty K]
++    (arg : J → I) (hinj : Function.Injective arg) (out : I)
++    (hne : ∀ j, arg j ≠ out) (b : Bool) :
++    HardcoreBit.PushesUniform (fun ks : I → Bool → K =>
++      (ks out b, fun j => ks (arg j))) := by
++  let select : J ⊕ Unit → I := Sum.elim arg (fun _ => out)
++  have hselect : Function.Injective select := by
++    intro x y hxy
++    cases x with
++    | inl x =>
++      cases y with
++      | inl y => exact congrArg Sum.inl (hinj hxy)
++      | inr y => exact (hne x hxy).elim
++    | inr x =>
++      cases y with
++      | inl y => exact (hne y hxy.symm).elim
++      | inr y => exact congrArg Sum.inr (Subsingleton.elim x y)
++  -- Restrict, then split the argument and output coordinates.
++  have hrestrict := HardcoreBit.pushesUniform_restrict (O := Bool → K) hselect
++  have hsplit := hrestrict.comp (HardcoreBit.pushesUniform_equiv
++    (Equiv.sumArrowEquivProdArrow J Unit (Bool → K)))
++  have hout := (HardcoreBit.pushesUniform_eval (γ := Bool → K) ()).comp
++    (HardcoreBit.pushesUniform_eval (γ := K) b)
++  -- Evaluate only the output coordinate; retain the full argument-key table.
++  exact (hsplit.comp (HardcoreBit.pushesUniform_id.prodMap hout)).comp
++    (HardcoreBit.pushesUniform_equiv (Equiv.prodComm (J → Bool → K) K))
++
++/-- Reading one row of a uniform dependent family of coin tables is uniform:
++`r ↦ r i a : ((i : I) → A i → ρ) → ρ` pushes uniform to uniform. -/
++theorem pushesUniform_rowCoin {I : Type} [Fintype I] [DecidableEq I] {A : I → Type}
++    [∀ i, Fintype (A i)] [∀ i, DecidableEq (A i)] {ρ : Type} [Fintype ρ] (i : I) (a : A i) :
++    HardcoreBit.PushesUniform (fun r : (i : I) → A i → ρ => r i a) := by
++  classical
++  exact (HardcoreBit.pushesUniform_equiv (Equiv.piCurry (fun i (_ : A i) => ρ)).symm).comp
++    (HardcoreBit.pushesUniform_eval (γ := ρ) ⟨i, a⟩)
++
++/-- Independent uniform keys and a uniform row-coin map give their joint marginal:
++`(ks,r) ↦ (ks out b,(fun j => ks (arg j),coin r))` pushes uniform to uniform,
++if argument vertices are distinct and exclude `out`, and `coin` pushes uniform to uniform. -/
++theorem pushesUniform_output_argKeys_row {I J K R ρ : Type}
++    [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
++    [Fintype K] [Nonempty K] [Fintype R] [Fintype ρ]
++    (arg : J → I) (hinj : Function.Injective arg) (out : I)
++    (hne : ∀ j, arg j ≠ out) (b : Bool) (coin : R → ρ)
++    (hcoin : HardcoreBit.PushesUniform coin) :
++    HardcoreBit.PushesUniform (fun t : (I → Bool → K) × R =>
++      (t.1 out b, (fun j => t.1 (arg j), coin t.2))) := by
++  exact ((pushesUniform_output_argKeys arg hinj out hne b).prodMap hcoin).comp
++    (HardcoreBit.pushesUniform_equiv (Equiv.prodAssoc K (J → Bool → K) ρ))
++
++end TCSlib.Cryptography.SecureComputation.GarblingProbability
+diff --git a/TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean b/TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean
+index b74ecf102a7dd6323f178e2e6276e4b0a1cb59ae..0ebf3cbeb91216868e69a9cd8d0916353067311f 100644
+--- a/TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean
++++ b/TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean
+@@ -138,3 +138,73 @@ theorem nestedSpecial_wrongKeyBot_of_string_bounds
+           (le_add_of_nonneg_left hε₁ : ε₂ ≤ ε₁ + ε₂)
+ 
+ end TCSlib.Cryptography.SecureComputation.GarblingCoins
++
++namespace TCSlib.Cryptography.SecureComputation
++
++open BoolCircuit
++
++variable {K C ρ : Type} [Inhabited K] {n : ℕ} (M : MultiEnc K C ρ) (Cc : DAGCircuit n)
++
++/-- Uniform independent keys and row coins give goodness and distinct output keys:
++`Pr_w[¬ (Good M Cc (s w) ∧ ∀ j, keyAt Cc (s w) (out j) false ≠
++  keyAt Cc (s w) (out j) true)] ≤ 12*|Cc.gates|*δ + m/|K|`, if `out j < Cc.size`
++and `w ↦ ((s w).1,(s w).2.1)` pushes uniform to uniform.
++Outputs may coincide. [PS10, §6.2.3, Claim 159.a and Protocol 162.6]
++
++**Proof sketch.** Use the B2 uniform-data bound for goodness. At each output, the two
++keys are independent uniform elements of `K`, so their collision probability is `1/|K|`.
++The finite union bound over output positions does not require distinct output vertices.
++Add this collision bound to the goodness failure bound. -/
++theorem uprob_not_good_distinct_le_of_uniform_data [Fintype K] [Fintype ρ] [Nonempty ρ]
++    (hdec : M.DecCorrect) {δ : ℝ} (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo)
++    {Ω : Type} [Fintype Ω] (s : Ω → GarbleSeed Cc K ρ)
++    (hs : HardcoreBit.PushesUniform (fun w => ((s w).1, (s w).2.1)))
++    {m : ℕ} (out : Fin m → ℕ) (hout : ∀ j, out j < Cc.size) :
++    uprob (fun w => ¬ (Good M Cc (s w) ∧ ∀ j,
++      keyAt Cc (s w) (out j) false ≠ keyAt Cc (s w) (out j) true)) ≤
++      12 * Cc.gates.length * δ + m * (1 / Fintype.card K) := by
++  classical
++  let collision : Fin m → Ω → Prop := fun j w =>
++    keyAt Cc (s w) (out j) false = keyAt Cc (s w) (out j) true
++  have hpoint (j : Fin m) : uprob (collision j) = 1 / Fintype.card K := by
++    let v : Fin Cc.size := ⟨out j, hout j⟩
++    have hkeys : HardcoreBit.PushesUniform (fun w => (s w).1) :=
++      hs.comp HardcoreBit.pushesUniform_fst
++    have hpair : HardcoreBit.PushesUniform (fun w => ((s w).1 v false, (s w).1 v true)) :=
++      (hkeys.comp (HardcoreBit.pushesUniform_eval (γ := Bool → K) v)).comp
++        (HardcoreBit.pushesUniform_eval_pair (γ := K) Bool.false_ne_true)
++    have hu := hpair.uprob_eq (fun z : K × K => z.1 = z.2)
++    calc
++      _ = uprob (fun w => (s w).1 v false = (s w).1 v true) := by
++        apply OneWay.uprob_congr
++        intro w
++        simp only [collision, keyAt_eq, dif_pos (hout j)]
++        rfl
++      _ = uprob (fun z : K × K => z.1 = z.2) := hu
++      _ = 1 / Fintype.card K := MultiMsg.uprob_eq_pair
++  have hcoll : uprob (fun w => ∃ j ∈ Finset.univ, collision j w) ≤
++      m * (1 / Fintype.card K) := by
++    refine (uprob_exists_le Finset.univ collision).trans ?_
++    simp only [hpoint, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
++    exact le_rfl
++  have hbad : ∀ w, ¬ (Good M Cc (s w) ∧ ∀ j,
++      keyAt Cc (s w) (out j) false ≠ keyAt Cc (s w) (out j) true) →
++        ¬ Good M Cc (s w) ∨ ∃ j ∈ Finset.univ, collision j w := by
++    intro w hw
++    by_cases hg : Good M Cc (s w)
++    · right
++      have hj : ∃ j, collision j w := by simpa only [not_and, hg, true_implies,
++        not_forall, not_not, collision] using hw
++      obtain ⟨j, hj⟩ := hj
++      exact ⟨j, Finset.mem_univ _, hj⟩
++    · exact Or.inl hg
++  calc
++    _ ≤ uprob (fun w => ¬ Good M Cc (s w) ∨ ∃ j ∈ Finset.univ, collision j w) :=
++      uprob_mono hbad
++    _ ≤ uprob (fun w => ¬ Good M Cc (s w)) +
++        uprob (fun w => ∃ j ∈ Finset.univ, collision j w) := uprob_or_le _ _
++    _ ≤ 12 * Cc.gates.length * δ + m * (1 / Fintype.card K) :=
++      add_le_add (uprob_not_good_le_of_uniform_data M Cc hdec hδ hC
++        (fun w => ((s w).1, (s w).2.1)) hs (fun w => (s w).2.2)) hcoll
++
++end TCSlib.Cryptography.SecureComputation
+diff --git a/TCSlib/Cryptography/SecureComputation/Yao.lean b/TCSlib/Cryptography/SecureComputation/Yao.lean
+index e4a546c2d187cd56346a238e3491cae0a1ed2217..a8d89e096040574fae6aec11b451daa18ab1cfd5 100644
+--- a/TCSlib/Cryptography/SecureComputation/Yao.lean
++++ b/TCSlib/Cryptography/SecureComputation/Yao.lean
+@@ -93,9 +93,10 @@ coins (`yaoSeed`): the keys, `2n` coins per row, and a shift `λ_i` per gate.
+ * `SecureComputation.yaoHybrid_answersB_getD` (proved): Bob's OT answers are his keys.
+ * `SecureComputation.yaoHybrid_correct` (proved): both parties output `f(x, y)` in the hybrid
+   execution when the garbling is good with distinct output keys.
+-* `SecureComputation.yaoSeed_good_whp`, `yaoHybrid_polyTime`, `yaoHybrid_simulators` (stated;
+-  `sorry`s under sketches): the garbling is good w.h.p., the protocol is efficient, and the
+-  simulators of Theorem 163.7.
++* `SecureComputation.yaoSeed_good_whp` (proved): the garbling is good with distinct output keys
++  except with negligible probability.
++* `SecureComputation.yaoHybrid_polyTime`, `yaoHybrid_simulators` (stated; `sorry`s under sketches):
++  the protocol is efficient, and the simulators of Theorem 163.7.
+ * `SecureComputation.yaoHybrid_hbcSecure` (Theorem 163.7 in the OT-hybrid model, proved from the
+   two previous results).
+ 
+@@ -795,29 +796,56 @@ PRFs `G₁`, `G₂` evaluated by `E₁`, `E₂`, there is a negligible `δ` such
+ uniform coins for Alice, the garbling `yaoSeed` fails to be good, or gives some output vertex two
+ equal keys, with probability at most `δ(n)`.
+ 
+-**Proof sketch.** Write `S = sizeBound(n)`.
+-1. *The coin blocks are disjoint.* Vertices are below `size(C_n) ≤ S`, gates below `S`, and a
+-   fan-in-two gate has at most four assignments, with indices below `4` (`assignIdx`). So the
+-   keys, the row coins and the shifts of `yaoSeed` read disjoint blocks of Alice's coins: the keys
+-   and row coins are independent and uniform, and independent of the shifts.
+-2. *Goodness.* The argument of `uprob_not_good_le` applies to this distribution. At gate `i` and
+-   assignment `a`, the row of `a` decrypts under `a`'s keys to the right key
+-   (`nestedSpecial_decCorrect`), so `Good` fails there only if the row of some `a'' ≠ a`
+-   decrypts under `a`'s keys. The arguments are distinct vertices below the gate's own, so that
+-   row's keys, plaintext and coins are independent and uniform. By `nestedSpecial_wrongKeyBot`
+-   the event has probability at most `δ₀(n)`, whatever the row order. At most `12` such events
+-   per gate and `S` gates give `12 · S · δ₀(n)`.
+-3. *Distinct output keys.* The two keys of an output vertex are independent uniform `n`-bit
+-   strings, equal with probability `2^{-n}`: at most `outLen(n) · 2^{-n}` in all.
+-4. `δ(n) = 12 · S(n) · δ₀(n) + outLen(n) · 2^{-n}` is negligible (a polynomial times a negligible
+-   function, `Negligible.add`). -/
++**Proof sketch.** Write `S = sizeBound(n)`. Distinct blocks contain all vertex keys and
++row coins: vertices and gates are below `S`, and binary assignment indices are injective
++below four for fan-in at most two. The generic block restriction theorem gives their joint
++uniform law, including zero-length blocks. Apply the strengthened B2 uniform-data bound
++with `nestedSpecial_wrongKeyBot` and correctness; this bound permits arbitrary seed-dependent
++row permutations, including the XOR shifts. Each output's two keys coincide with probability
++`2^{-n}`. The output union bound allows repeated vertices. Thus failure is at most
++`12*S(n)*δ₀(n) + outLen(n)*2^{-n}`, a sum of polynomial multiples of negligible functions. -/
+ theorem yaoSeed_good_whp (hG₁ : PRFOut (.add .var .var) G₁)
+     (hG₂ : PRFOut (.add .var innerLen) G₂) :
+     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ n, uprob (fun r : Fin ((yaoCoins Y).eval n) → Bool =>
+       ¬ (Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) ∧
+         ∀ j, keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) false ≠
+           keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) true)) ≤ δ n := by
+-  sorry
++  classical
++  obtain ⟨δ₀, hδ₀, hbot⟩ :=
++    nestedSpecial_wrongKeyBot G₁ G₂ E₁ E₂ hGE₁ hGE₂ hG₁ hG₂
++  refine ⟨fun n => 12 * (Y.sizeBound.eval n : ℝ) * δ₀ n +
++    (Y.outLen.eval n : ℝ) * (2 : ℝ)⁻¹ ^ n, ?_, fun n => ?_⟩
++  · simpa only [PolyExpr.eval_mul, PolyExpr.eval_const, Nat.cast_mul, Nat.cast_ofNat] using
++      (EnsembleLemmas.negligible_polyExpr_mul (.mul (.const 12) Y.sizeBound) hδ₀).add
++        (EnsembleLemmas.negligible_polyExpr_mul Y.outLen negligible_two_pow_neg)
++  · have hg : (Y.circ n).gates.length ≤ Y.sizeBound.eval n := by
++      have hs := Y.size_le n
++      rw [DAGCircuit.size_eq] at hs
++      omega
++    have hsmall (i : Fin (Y.circ n).gates.length) :=
++      GarblingProbability.assignmentFold_small ((Y.circ n).gates[i]).args.length
++        (((DAGCircuit.isFaninTwo_iff (Y.circ n)).mp (Y.fanin n)).2 _
++          (List.getElem_mem i.isLt))
++    have hlaw : HardcoreBit.PushesUniform
++        (fun r : Fin ((yaoCoins Y).eval n) → Bool =>
++          ((yaoSeed Y n (List.ofFn r)).1, (yaoSeed Y n (List.ofFn r)).2.1)) := by
++      simp only [yaoCoins_eval]
++      convert GarblingProbability.pushesUniform_key_row_blocks (n := n)
++        (A := fun i : Fin (Y.circ n).gates.length => Fin ((Y.circ n).gates[i]).args.length → Bool)
++        (Y.size_le n) hg
++        (fun i a => assignIdx a)
++        (fun i a => by change assignIdx a < 4; rw [assignIdx_eq]; exact (hsmall i).1 a)
++        (fun i => by simpa only [assignIdx_eq] using (hsmall i).2) using 1
++    have hb := uprob_not_good_distinct_le_of_uniform_data
++      (nestedSpecial E₁ E₂ n) (Y.circ n)
++      (nestedSpecial_decCorrect G₁ G₂ E₁ E₂ hGE₁ hGE₂ n) (hbot n) (Y.fanin n)
++      (fun r => yaoSeed Y n (List.ofFn r)) hlaw (Y.outs n) (Y.outs_lt n)
++    simp only [Fintype.card_fun, Fintype.card_fin, Fintype.card_bool, Nat.cast_pow,
++      Nat.cast_ofNat, one_div, ← inv_pow] at hb
++    refine hb.trans (add_le_add_right ?_ _)
++    exact mul_le_mul_of_nonneg_right
++      (mul_le_mul_of_nonneg_left (by exact_mod_cast hg) (by norm_num))
++      (wrongKeyBot_nonneg (nestedSpecial E₁ E₂ n) (hbot n))
+ 
+ /-- **Protocol 162.6 in the OT-hybrid model runs in polynomial time** (the efficiency clause of
+ [PS10, Definition 155.1], `HybridProtocol.PolyTime`, ruling of 2026-11-05) when `E₁` and `E₂`
+-- 
+2.50.1 (Apple Git-155)
+

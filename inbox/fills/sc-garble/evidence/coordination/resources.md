@@ -32,3 +32,9 @@ All outgoing messages used Codex chat coordination, only for shared Mac scheduli
 No other worker's file, process or lock was edited or removed. Every own Lean invocation
 is in `../logs/slots.log`. The legacy Ladner reservation was an exception of that worker,
 reported here because it affected shared scheduling; sc-garble never held a slot across modules.
+
+2026-11-15 10:55–10:57 UTC: Requested a 6–10 second dispatcher boundary gap from derand
+under the user's resource-coordination authorization. Derand reported pausing only its own
+Python dispatchers, leaving native checks intact, and resuming at 10:57:31 after a 12-second
+idle boundary. Our queued CoinBlocks check acquired 10:57:59 and finished normally. No other
+worker's process or lock was touched by sc-garble.

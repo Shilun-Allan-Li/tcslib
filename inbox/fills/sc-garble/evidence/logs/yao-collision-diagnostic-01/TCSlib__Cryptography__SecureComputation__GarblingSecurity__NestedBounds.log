@@ -1,0 +1,45 @@
+START 2026-11-15T11:02:29.172694+00:00 TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:89:47: warning: This simp argument is unused:
+  Fin.succ_zero_eq_one
+
+Hint: Omit it from the simp argument list.
+  simp only [List.ofFn_succ, List.ofFn_zero, F̵i̵n̵.̵s̵u̵c̵c̵_̵z̵e̵r̵o̵_̵e̵q̵_̵o̵n̵e̵,̵nestedSpecial_enc, nestedSpecial_dec] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:157:58: error: unexpected token 'set_option'; expected 'lemma'
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:171:28: error: failed to synthesize
+  Nonempty ((i : Fin Cc.gates.length) → (Fin Cc.gates[i].args.length → Bool) → ρ)
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:181:48: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (100000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:188:2: error: (deterministic) timeout at `«tactic execution»`, maximum number of heartbeats (100000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+FAIL(TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds): no fresh .olean produced
+        5.41 real         5.08 user         0.90 sys
+          2252849152  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              178462  page reclaims
+                  17  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  54  voluntary context switches
+                5285  involuntary context switches
+            15734900  instructions retired
+             7690118  cycles elapsed
+             1311032  peak memory footprint
+END 2026-11-15T11:02:34.618637+00:00 EXIT 1
