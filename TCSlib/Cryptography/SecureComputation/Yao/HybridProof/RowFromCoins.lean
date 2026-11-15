@@ -444,7 +444,7 @@ theorem rowWord_garbledRow (E₁ E₂ : List Bool → List Bool)
     by_cases hj : j < (C.gates[i]).args.length
     · rw [List.getD_eq_getElem _ _ hj]
       exact (C.args_lt i i.isLt _ (List.getElem_mem hj)).trans houtlt
-    · rw [List.getD_eq_default _ _ (by omega)]
+    · rw [List.getD_eq_default _ _ (by omega), DAGCircuit.size_eq]
       exact (Nat.zero_le C.output).trans_lt C.output_lt
   have hkeyWord (vertex : List Bool → ℕ) (bit : List Bool → Bool)
       (hv : vertex z < C.size) :
