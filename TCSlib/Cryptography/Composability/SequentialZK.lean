@@ -5,12 +5,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.ZeroKnowledge.Defs
 import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
+import TCSlib.Cryptography.Composability.SequentialZK.Advice
 import TCSlib.Cryptography.Composability.SequentialZK.Congruence
 import TCSlib.Cryptography.Composability.SequentialZK.Efficiency
+import TCSlib.Cryptography.Composability.SequentialZK.EndpointSampling
 import TCSlib.Cryptography.Composability.SequentialZK.ErrSoundness
 import TCSlib.Cryptography.Composability.SequentialZK.ExecutionBounds
 import TCSlib.Cryptography.Composability.SequentialZK.Normalization
 import TCSlib.Cryptography.Composability.SequentialZK.NormalizationMachine
+import TCSlib.Cryptography.Composability.SequentialZK.NormalizedStep
 import TCSlib.Cryptography.Composability.SequentialZK.PaddedProverSpec
 import TCSlib.Cryptography.Composability.SequentialZK.PhaseView
 import TCSlib.Cryptography.Composability.SequentialZK.Phases
@@ -23,6 +26,11 @@ import TCSlib.Cryptography.Composability.SequentialZK.RepeatedVerifier
 import TCSlib.Cryptography.Composability.SequentialZK.SimulatorMachine
 import TCSlib.Cryptography.Composability.SequentialZK.Soundness
 import TCSlib.Cryptography.Composability.SequentialZK.Statistical
+import TCSlib.Cryptography.Composability.SequentialZK.StatisticalPostprocess
+import TCSlib.Cryptography.Composability.SequentialZK.StatisticalPrefix
+import TCSlib.Cryptography.Composability.SequentialZK.StatisticalRecursion
+import TCSlib.Cryptography.Composability.SequentialZK.StatisticalTransfer
+import TCSlib.Cryptography.Composability.SequentialZK.SuffixMachine
 import TCSlib.Cryptography.Composability.SequentialZK.VerifierPrefix
 import TCSlib.Cryptography.Composability.SequentialZK.WrappedVerifier
 import TCSlib.Cryptography.Asymptotic.ReductionSupport
@@ -84,12 +92,15 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
 
 ## Contents
 
+* `SequentialZK.Advice`: uniform finite selectors.
 * `SequentialZK.Congruence`: reached-history execution congruence.
 * `SequentialZK.Efficiency`: phase and verdict machines.
+* `SequentialZK.EndpointSampling`: coin and view endpoint equivalences.
 * `SequentialZK.ErrSoundness`: acceptance bounds from soundness.
 * `SequentialZK.ExecutionBounds`: bounded real messages.
 * `SequentialZK.Normalization`: bounded message slots.
 * `SequentialZK.NormalizationMachine`: normalization machines.
+* `SequentialZK.NormalizedStep`: one normalized phase comparison.
 * `SequentialZK.PaddedProverSpec`: the repeated-prover contract.
 * `SequentialZK.PhaseView`: canonical view validation.
 * `SequentialZK.Phases`: fixed-prefix phase executions.
@@ -102,6 +113,11 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
 * `SequentialZK.SimulatorMachine`: the uniform normalized simulator.
 * `SequentialZK.Soundness`: execution prefixes and adaptive probability.
 * `SequentialZK.Statistical`: averaging and finite chains.
+* `SequentialZK.StatisticalPostprocess`: statistical mapping and marginalization.
+* `SequentialZK.StatisticalPrefix`: normalized prefix comparisons.
+* `SequentialZK.StatisticalRecursion`: linear error accumulation.
+* `SequentialZK.StatisticalTransfer`: statistical zero-knowledge transfer.
+* `SequentialZK.SuffixMachine`: strict-PPT normalized suffix simulation.
 * `SequentialZK.VerifierPrefix`: prefix tape dependence.
 * `SequentialZK.WrappedVerifier`: the deterministic phase verifier.
 
@@ -119,8 +135,9 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
   position.
 * `Protocol.seqRep_exec_phase`: phase `j` of an honest execution of `π.seqRep Q` is an execution
   of `π` with the coin slices `j`.
-* `ZK.seqRep`, `StatZK.seqRep` (Thm 175.1, stated; `sorry`s under the source's sketch), and
-  `PerfectZK.seqRep` (proved from `StatZK.seqRep`).
+* `ZK.seqRep` (Thm 175.1, stated; `sorry` under the source's sketch).
+* `StatZK.seqRep` (proved): statistical error composes as `Q · δ`;
+  `PerfectZK.seqRep` is proved from it at zero error.
 * `PerfectZKAbort.seqRep`: the aborting case, derived from `PerfectZKAbort.statZK` and
   `StatZK.seqRep`, with error `Q(n) · 2^{-n}`.
 * `InteractiveProof.seqRep` (proved): sequential repetition with at least one phase preserves
@@ -828,11 +845,12 @@ For a fixed earlier prefix, change one phase from real to simulated at distance 
 `δ(|x|)` (`StatZK π R δ` holds for every auxiliary input). The common normalization and
 simulated-suffix computation do not increase statistical distance. Average over prefixes
 and sum the `Q(|x|)` gaps by the triangle inequality, giving exactly `Q(|x|) · δ(|x|)`.
-The empty-history construction handles `k = 0` or `Q(|x|) = 0` directly. -/
+The empty-history construction handles `k = 0` or `Q(|x|) = 0` directly. The padded-prover
+contract and split/block coin equivalences identify the two endpoint laws exactly. -/
 theorem StatZK.seqRep {B : PolyExpr} {δ : ℕ → ℝ} (h : StatZK π R δ)
     (hB : π.ProverBounded R B) (Q : PolyExpr) :
     StatZK (π.seqRep Q) R (fun n => Q.eval n * δ n) := by
-  sorry
+  exact SequentialZK.statZK_of_padded_spec h hB Q (fun x => π.seqRep_proverSpec Q x)
 
 /-- **Theorem 175.1, perfect case**: the sequential repetition of a perfect zero-knowledge
 protocol with a bounded prover is perfect zero-knowledge (`StatZK.seqRep` at `δ = 0`). -/
