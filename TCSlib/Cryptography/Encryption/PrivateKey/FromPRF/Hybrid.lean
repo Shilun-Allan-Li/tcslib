@@ -205,6 +205,7 @@ theorem prfEncReal_apply (F : K → (Fin n → Bool) → (Fin n → Bool)) (m : 
     prfEncReal F m z j = (z.2 j, m j + F z.1 (z.2 j)) := by
   rw [prfEncReal_eq_prfEncRealOut]
   exact prfEncRealOut_apply F m z j
+
 /-- The ciphertext tuple `(r_j, m_j ⊕ p_j)_{j ≤ q}` with independent uniform pads `p_j`: the
 hybrid `H³` ("using OTP") of [PS10, Theorem 99.2, proof]; seeds `(r, p)`. -/
 def otpEnc (m : Fin (q + 1) → Fin n → Bool) :
