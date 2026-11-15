@@ -337,15 +337,14 @@ theorem exists_tagReduction (A : NUPPT) (q : PolyExpr) (b : Bool) :
     hφ₀, hA₁ n _ _ _ _ _ hle]
   exact expect_ettImpl_outLen (PolyExpr.eval_const 1 n) _ _ _ _ A _ r
 
-/-- **The PRF advantage as expectations** (PRFGame overlap: `prfAdv_prfReduction`, re-derived here
-in general form from the published readers): for an oracle adversary `A'` on `m`-bit strings,
+/-- **The PRF advantage as expectations** (PRFGame overlap: `prfAdv_prfReduction`): for an oracle
+adversary `A'` on `m`-bit strings,
 `prfAdv F A' = |𝔼_k 𝔼_c [A'(c)^{F k} = 1] − 𝔼_R 𝔼_c [A'(c)^R = 1]|`.
 
 This is the published `TCSlib.Cryptography.prfAdv_eq_expect` at `K = I = O = {0,1}^m`.
 
-**Proof sketch.** `prfAdv_def`, `distAdv_def`; each acceptance probability is an average over the
-key (resp. the function table) and the coins (`Bridge.acceptProb_eq`, `accept_eq`,
-`Bridge.acceptGame_eq`, `prob_bind`, `oracleDist_apply`, `randomFunction_apply`). -/
+**Proof sketch.** A direct specialization of `TCSlib.Cryptography.prfAdv_eq_expect` to the family
+`Fm` and the adversary `A'`. -/
 theorem prfAdv_eq_expect {m : ℕ} (Fm : (Fin m → Bool) → (Fin m → Bool) → (Fin m → Bool))
     {ρ : Type} [Fintype ρ] [Nonempty ρ] (A' : OracleAdversary ρ (Fin m → Bool) (Fin m → Bool)) :
     prfAdv Fm A' =
