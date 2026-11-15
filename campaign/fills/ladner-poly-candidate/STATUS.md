@@ -1,4 +1,4 @@
-**Dispatched (2026-11-15) to Codex** on the user's Mac, in a checkout of the exchange branch (at most 3 Lean processes machine-wide). Ladner fill 3 (Codex): target 1 part A, up to the polynomial-time candidate test
-`ladner_candidate_FP`. Base `fe8a8520` (after #310); pre-shipped there (preship/: 0 errors, 21 admitted, `oleans-cfe8a`).
-Bundle `outbox/fills/fill-ladner-poly-candidate/` (SHA-256 `bbb7206f`, 16 sections, exchange `88dcdab3`); prompt.md.
-Delivery expected under `arora-barak-ch3-4/inbox/fill-ladner-poly-candidate/` and attached in chat.
+**Delivered (2026-11-15); in gate 138** (draft PR #320). Codex's final zip `fill-ladner-poly-candidate.zip`
+(SHA-256 `22cfd1ee`, with checkpoints 1–2) is in `arora-barak-ch3-4/inbox/fill-ladner-poly-candidate/`. Complete through
+`ladner_candidate_FP`, no escalation: 57 private declarations in Ladner.lean. Landed verbatim as `ec0e501d`; the maintainer then
+repaired three in-file copies (`3a42f28f`, ruled by Seyoon) and hoisted the binary-length step (`fc72e67b`). See campaign/gates/138-ladner-poly-candidate/.
