@@ -7,6 +7,7 @@ import TCSlib.Cryptography.SecureComputation.GarblingSecurity
 import TCSlib.Complexity.CircuitComplexity.Uniform
 import TCSlib.Complexity.ClassP.BinaryArith.Words
 import TCSlib.Cryptography.Foundations.BitLists
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
