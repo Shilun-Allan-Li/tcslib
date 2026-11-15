@@ -1,0 +1,124 @@
+# Preflight (addendum v1, Part 1 item 1), 2026-11-15T00:12:05Z
+## host
+Linux vm 6.18.44-fc-v470 #1 SMP PREEMPT_DYNAMIC @0 x86_64 x86_64 x86_64 GNU/Linux
+ 00:12:05 up 6 min,  0 user,  load average: 0.26, 0.18, 0.07
+nproc: 4
+## cgroup
+blkio cpu cpuacct cpuset devices freezer memory pids systemd unified 
+### /sys/fs/cgroup/memory/memory.limit_in_bytes
+9223372036854771712
+### /sys/fs/cgroup/memory/memory.usage_in_bytes
+2967830528
+### /sys/fs/cgroup/memory/memory.stat
+cache 44896256
+rss 9060352
+rss_huge 0
+shmem 17035264
+mapped_file 31350784
+dirty 28672
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 17470
+pgpgout 4343
+pgfault 6877
+pgmajfault 35
+inactive_anon 11632640
+active_anon 4096
+inactive_file 22736896
+active_file 5128192
+unevictable 14454784
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 2952491008
+total_rss 15589376
+total_rss_huge 0
+total_shmem 17035264
+total_mapped_file 34947072
+total_dirty 380928
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 436398
+total_pgpgout 230402
+total_pgfault 281776
+total_pgmajfault 929
+total_inactive_anon 17297408
+total_active_anon 24576
+total_inactive_file 2771910656
+total_active_file 163549184
+total_unevictable 15114240
+## /proc/meminfo
+MemTotal:       16473776 kB
+MemFree:        13394480 kB
+MemAvailable:   16102632 kB
+Buffers:          129612 kB
+Cached:          2753488 kB
+SwapCached:            0 kB
+Active:           159628 kB
+Inactive:        2723916 kB
+Active(anon):         12 kB
+Inactive(anon):    17064 kB
+Active(file):     159616 kB
+Inactive(file):  2706852 kB
+Unevictable:       14720 kB
+Mlocked:           10764 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Zswap:                 0 kB
+Zswapped:              0 kB
+Dirty:               340 kB
+Writeback:             0 kB
+AnonPages:         15172 kB
+Mapped:            34380 kB
+Shmem:             16636 kB
+KReclaimable:     111116 kB
+Slab:             138668 kB
+SReclaimable:     111116 kB
+SUnreclaim:        27552 kB
+KernelStack:        1848 kB
+PageTables:         2112 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     8236888 kB
+Committed_AS:     306488 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:        5384 kB
+VmallocChunk:          0 kB
+Percpu:             1040 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Balloon:               0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:       20480 kB
+DirectMap2M:     2076672 kB
+DirectMap1G:    16777216 kB
+## disk
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 25700720640 18171547648  59% /
+/dev/vda       270553174016 25700720640 18171547648  59% /
+/dev/vda       270553174016 25700720640 18171547648  59% /
+/dev/vda       270553174016 25700720640 18171547648  59% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 25098360  17745652  59% /
+/dev/vda       ext4 264212084 25098360  17745652  59% /
+## space made before the preflight
+Removed (user approval in session): git worktrees /workspace/dlc (fill/dl-consolidation, delivered) and /workspace/ett (fill/cca2-ett, delivered); branches kept. No dependency tree copied or moved.
+## computation
+disk free 18171547648 B = 16.92 GiB (floor 12 GiB)
+cgroup v1 limit unlimited (9223372036854771712) -> headroom = MemAvailable = 16489095168 B = 15.36 GiB (floor 4 GiB)
+PREFLIGHT PASS
