@@ -1,0 +1,113 @@
+prf-mac landing edit LE-reuse (finding F-01, proof only), maintainer, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0, PATH=$HOME/.elan/bin:$PATH; one Lean process at a time (ours), only
+  scripts/lean_check_tree.sh (worktree copy byte-equal to /home/user/tcslib/scripts/) through tools-used/review/runner.py
+  (the G26-N1-fixed runner, byte-equal in the prf-mac-r1 and prf-long-r1 zips) with TCSLIB_OLEANS=$SP/dl-oleans-2 (dl-oleans,
+  in use by another review, not touched); no lake command; nothing pushed; /home/user/tcslib working tree not edited (its
+  HEAD moved during the job by records commits not made here: e9998722 -> 2d568af5 -> bea53eeb).
+Method and tools: the prf-mac review zip in records (briefs/pass-shelat-ch5-8/fills/prf-mac/final-r1/review-evidence.zip:
+  PROVENANCE, tools/, order/), extracted to a fresh directory; frozencheck.py (+ frozencheck_lib.py) and buildsum.py from the
+  prf-long review zip (fills/prf-long/final-r1/review-evidence.zip); runner.py there is byte-equal to prf-mac's. These are
+  tools-used/review/ unmodified. Helpers from $SP/dl-review/learning-r1-reuse/tools-used/ unmodified: snap.py, impcheck.py,
+  impdelta2.py, docheader.py, docdelta.py, sealrows.py, restoreplan.py, downstat.py. New here: lereuse_edit.py, refcmp.py.
+
+landing: branch land/pass-shelat-prf-mac (local, no upstream), worktree $SP/wt-land-prf-mac (sparse, briefs/ excluded;
+  .lake/packages -> /home/user/tcslib/.lake/packages). Start: head bd45faecffa420497557dfeba9e2818d7d3cf4a3 on e7fa2605.
+  r1: rebased onto origin/cryptography/pass-shelat-ch2-4 59c2c1fbf8c1bb08f9d191012b7cdd7e15248531 (merge of #314)
+    (landing/rebase.log, range-diff.txt: 5/5 identical; landing/rebase-summary.txt: the Lean delta e7fa2605..59c2c1fb is #311,
+    #312, #314's 6 files; the unit diff old head vs rebased LE-doc is empty). LE-reuse committed as 9a415163 (tree ca9f169f);
+    all builds and probes below ran at 9a415163.
+  r2: origin moved during the job to e99987221593020b9f7dbb87fe577bd6aac5ecbb (records only: 39 paths under briefs/ and *.md,
+    landing/origin-delta-r2-name-status.txt). Rebased (landing/rebase-r2.log): range-diff-r2.txt 6/6 identical; the Lean,
+    scripts and audits diff 9a415163..head is empty and `git ls-tree -r` of TCSlib, TCSlib.lean, audits, scripts is identical
+    (same hash) at 9a415163 and the head, so the build, probes and lint apply unchanged. Statement checks were rerun at r2.
+  head   LE-reuse  590d1a56a350d9e8e75ee33d31e0501182169f67 (tree af0609aebea492170df6d2f254ce0e7885a598d1)
+  parent LE-doc    997dd8caeb8e9dfdde28da4b85f70467fed9c998 (tree e5f7d88ea49a6a4dc98c05d35c2c9cd4e2674fed)
+  author = committer = Claude <noreply@anthropic.com>; every one of the 6 commits SSH-signed by the environment default
+  (commit.gpgsign=true, gpg.format ssh; not overridden): `git cat-file -p <c> | grep -c '^gpgsig'` = 1 each (checks/commit.txt).
+  Message logs/commit-msg.txt, subject "prf-mac landing edit LE-reuse: hadv from the published prfAdv_eq_expect (F-01)", ending
+  with the Co-Authored-By and Claude-Session lines. Patch 0001-LE-reuse.patch. Worktree clean at the head.
+
+edit (tools-used/lereuse_edit.py, 2 exact replacements; checks/le-reuse.diff; checks/changed-paths.txt: one path,
+  M TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean, +3/-17, 183 -> 169 lines, max width 99 at both revisions):
+  (1) exists_forgeGame_le: the local `hadv` (prfAdv (F n) (D^{n,n,n}) = |E_k E_c [..F n k..] - E_R E_c [..R..]|, 15 lines,
+      re-proved line for line as #314's proof) and `rw [hreal, hadv]` are replaced by
+        rw [hreal, TCSlib.Cryptography.prfAdv_eq_expect (F n) (D.toOracleAdversary n n n _)]
+      (K = I = O = {0,1}^n, ρ = D.Coins n; the `_` is the budget (macBudget q).eval n, unified by rw). The comment line
+      "-- The PRF advantage is the gap." and the final linarith are unchanged. Compiled first time, 0 warnings.
+  (2) docstring: step 3 of the sketch gains "; this is the published\n   `TCSlib.Cryptography.prfAdv_eq_expect`" before its
+      final period (checks/docstring-delta.txt: pure insertion, 1612-character common prefix, 5-character suffix). Nothing
+      else in any docstring changes; the module docstring is unchanged.
+  imports (checks/imports.txt, impcheck.py): Pseudorandom.Functions.Defs is already in Bound's closure (170 project modules;
+  chain through ...FromPRF.Random), no cycle. No import added.
+
+statements (statements/; base = parent 997dd8ca, head 590d1a56; unit-paths.txt = the 6 unit files):
+  decls2-vs-997dd8ca.tsv and .err: both empty.
+  touched-997dd8ca-vs-head.tsv: 1 CHANGED (exists_forgeGame_le: proof and sketch), 58 UNCHANGED.
+  header-bytes-vs-997dd8ca.txt (headerbytes.py; touched-before/after.json = eff2dcd0 vs parent/head; endpoints prfMAC_secure,
+    exists_forgeGame_le): 61 compared, 0 different or missing.
+  frozen/frozen-check-vs-997dd8ca.txt (frozencheck.py): 59 declarations in 6 files, header bytes, statement prose and every
+    definition body identical, order preserved: 0 differences. frozen-check-vs-eff2dcd0.txt: the owned FromPRF.lean 8/8, the
+    5 helpers new files: 0 differences. Controls (one character changed, each exactly 1 difference): control-header.txt
+    (exists_forgeGame_le HEADER), control-prose.txt (its PROSE), control-body.txt (padFunEquiv BODY).
+  checks/docstring-header.txt (docheader.py): keyword-to-`:=` header identical; docstring differs by the insertion only
+    (its RESULT FAIL is the docstring comparison, by design).
+
+build (build/; order/ by tools-used/review/downorder.py at 9a415163 vs eff2dcd0): changed.txt 62 modules (56 base delta since
+  eff2dcd0: #303, #306-#309, #311, #312, #314 incl. Pseudorandom/Functions/Defs and EncryptThenTag/Reduction; 6 unit);
+  down.txt their downstream closure through root TCSlib, audits/garg-ch1-3/Checks and audits/pass-shelat/Checks: 136 modules;
+  build-queue.txt = order.txt (imports-first) restricted to down.txt. It contains the 6 unit modules, Authentication, the whole
+  base delta, TCSlib and both audits Checks.
+  build/summary.txt (buildsum.py): 136/136 rc 0, errors 0 (G26-N1 form), substring "error" 0 times, 815 s. Sorry warnings only
+  in admitted base/base-delta modules (SeedMajority 2, SpecialEncryptionSecurity 3, SpecialEncryptionMulti 1, GarblingSecurity 1,
+  Yao 3, Learning 1; as in prf-long-r1). Other warnings all inherited from unchanged sources: DDH 3, Lamport 7, Rejection 10,
+  Extraction 2, SubHybrids 1, GGM 1, ReductionMachine 1, Encryption FromPRF 1, MAC/FromPRF 1 (base unused simp arg). Bound 0.
+  build/vs-prf-mac-r1.txt (refcmp.py against the prf-mac review's 67-module head build): 65 identical source and olean SHA-256
+  (incl. MAC/FromPRF, Authentication, TCSlib, audits/pass-shelat/Checks), 2 differ: EncryptThenTag/Reduction (#314) and Bound
+  (this edit); 69 had no record there (downstream of #311/#312/#314 only).
+  Before the build the 87 base oleans it overwrites were copied aside (tree/backed-up.txt with hashes) and the 49 new ones
+  listed (tree/new-oleans.txt).
+
+axioms (axioms/; rule10/probe-runs/, rc 0): AxiomsHead.log: prfMAC_secure, PRFMAC.exists_forgeGame_le and
+  TCSlib.Cryptography.prfAdv_eq_expect each [propext, Classical.choice, Quot.sound]. Census (rule10/probe-sources/
+  CensusHead.lean.txt = mkcensus_prfmac.py over the 6 unit modules, body identical to the review's): census-summary.txt 97 stored
+  constants, none outside the standard three, no sorryAx; census-review-bd45faec-vs-head (censuscmp.py, review head census as
+  base): 97/97 common, 0 removed, 0 added, 0 type-changed, 0 attr-changed, 0 axioms-changed.
+
+Rule 10 (rule10/), Bound.lean at 9a415163 (= head sources):
+  collector probe-sources/CollectHead.lean.txt (mkcollect.py, owners order/head-owners.txt = Bound) run as PmrProbe/CollectHead:
+    CAT 3045, MODULE Bound stored 8 (review: 8).
+  seals: mkseals_ab.py strict -> seals/{A,B} (B with SEAL_EVAL=1); mkseals_coe.py coe -> seals-coe/{A,B}; mkseals-*.log.
+    Requests strict A 2257, B 2258, coe A 2256, coe B 2257 = the review's. seal-rows-vs-review.txt (sealrows.py vs prf-mac-r1
+    seals): per variant 0 rows gone, 0 new, 0 changed. term-readers-vs-review.txt: Bound's elaborated terms reference 31 names
+    instead of 39; gone are exactly those of the re-proof (Bridge.acceptGame, OracleComp.bind, ProbComp, ProbComp.prob,
+    acceptProb, distAdv, oracleDist, randomFunction); none new; the readers of the remaining names unchanged.
+  runs seal-runs/ (order/seal-control-queue.txt, NOSTOP=1, seal-runner.out); sealsum.py with statements/touched-after.json:
+    seals-A.tsv, seals-B.tsv, seals-coe-A.tsv, seals-coe-B.tsv: strict A pass, strict B pass, coe A pass, coe B pass (rc 0,
+    0 errors, install and EOF records present). As in the review (Bound passes A and B).
+  paired controls (tools-used/review/mkctl_prfmac.py unmodified, on Bound's records only: seals-flat/ -> controls-strict/,
+    PmrProbe/KS; seals-coe-flat/ -> controls-coe/, PmrProbe/K): 4 probes each (ControlS/ControlU x A/B), 25 sealed negatives
+    each (A 12: padFin, expect, rAns, chunkMap, ovr, forgerCodec, fnImpl, FnForge, queried, macBudget, blocks, macHandler;
+    B 13: those and PolyExpr.eval). ctlcheck-strict.log and ctlcheck-coe.log (ctlcheck2.py): each negative fails exactly once
+    sealed, all readers and all unsealed probes pass, no stray error: ALL_OK True in both.
+  probe-copies-check.txt: the 15 probe sources in the worktree were byte-equal to the copies here before PmrProbe/ was removed.
+
+lint (lint/): python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography --check8b in the worktree at 9a415163
+  (lint-edit-9a415163.txt) and in a git-archive export of the parent 6341afdf (lint-parent-6341afdf.txt; TCSlib, scripts,
+  audits trees identical to 997dd8ca; export removed): both 92 FAIL, 101 WARN over 349 files. linediff-parent-vs-edit.txt: the
+  only line that differs is Bound's INFO line (183 -> 169 lines). linediff-review-bd45faec-vs-edit.txt (FAIL/WARN lines,
+  whitespace-normalised, vs the prf-mac review's lint-landing-head.txt, copied as lint-review-bd45faec-from-prf-mac-r1.txt): empty.
+
+olean tree $SP/dl-oleans-2:
+  pre: tree/snapshot-pre.txt (tools-used/review/snapshot.py): 1230 files, 0 empty dirs, SHA-256
+    457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the required base value.
+  restore (restore/): the 87 backups copied back, each hash checked (restore-log.txt: 87 restored, 0 failed); restoreplan.py
+    --delete against tree/snapshot-pre.txt: 60 extra files (= the 49 new oleans + the 11 PmrProbe/ probe oleans of
+    probe-oleans.txt; the 4 sealed controls fail by design and leave none) deleted with 11 emptied directories
+    (deleted-dirs.txt); 0 changed, 0 missing. Backups removed afterwards.
+  post: tree/snapshot-post.txt: 1230 files, 0 empty dirs, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f,
+    byte-identical to tree/snapshot-pre.txt.
+cleanup: the review-zip extracts ($SP/ex-pm-review, $SP/ex-pl-review, and $SP/ex-dlcrh-reuse, read only) removed; PmrProbe/ removed from the worktree, which is
+  clean at 590d1a56.
+SHA256SUMS: every file here except itself (paths without "./"); ../prf-mac-reuse-evidence.zip holds exactly these paths plus
+  SHA256SUMS.
