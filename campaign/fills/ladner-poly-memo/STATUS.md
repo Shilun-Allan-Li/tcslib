@@ -1,5 +1,4 @@
-**Prepared, not staged or dispatched.** Ladner fill 4 (Codex): target 1 part B (selection scan, memo driver,
-readout) and the proof of `ladnerH_polyTime`. Base `1320a5c8` (after #320). Step 1 applies the approved reorder
-(Seyoon, 2026-11-15: the five admitted declarations move, byte-identical, to the end of Ladner.lean;
-`preship/Ladner-move.patch.txt`). Pre-shipped at the moved base (preship/: 0 errors; the target assembles from 10
-admitted helpers and the merged `ladner_candidate_FP`).
+**Staged, not dispatched.** Ladner fill 4 (Codex): target 1 part B and the proof of `ladnerH_polyTime`. Base `1320a5c8`
+(after #320); step 1 applies the approved reorder patch. Pre-shipped at the moved base (preship/: 0 errors).
+Bundle `outbox/fills/fill-ladner-poly-memo/` (SHA-256 `cadf4790`, 15 sections, exchange `6e846acb`); prompt.md.
+Delivery expected under `arora-barak-ch3-4/inbox/fill-ladner-poly-memo/` and attached in chat.
