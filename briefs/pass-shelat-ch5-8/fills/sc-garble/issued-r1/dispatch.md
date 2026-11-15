@@ -1,7 +1,7 @@
 # Dispatch · sc-garble, issued-r1 (Claude)
 
-The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/47f548ecba4c901cbf2b1029f19d98c12b10ecac/outbox/fills/sc-garble) is staged on
-the exchange (local commit, for the maintainer to verify and push). Brief SHA-256 `203d42eae5b25e3ee2472e9b42ff22deeac975a29abeacf404ad4819e2fedf7a`. The worker
+The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/991232efa149dd0d94ec7e67efcc94581f8076e5/outbox/fills/sc-garble) is staged on
+the exchange (pushed; ruling SG-1 added at `991232ef`). Brief SHA-256 `203d42eae5b25e3ee2472e9b42ff22deeac975a29abeacf404ad4819e2fedf7a`. The worker
 is Claude, under Seyoon's standing ruling. Seyoon dispatches.
 
 **Base.** The issue base is `fbd37f447596d4207c8d08b7ef7602f57fe95198`, the head of draft PR #315 (`prf-long`,
@@ -17,9 +17,10 @@ You are an external Claude worker for the Pass–shelat sc-garble unit in
 https://github.com/Shilun-Allan-Li/tcslib (Lean 4.25.0 and pinned Mathlib).
 
 1. Read exchange/pass-shelat-ch5-8 at
-   47f548ecba4c901cbf2b1029f19d98c12b10ecac. Read README.md and
-   outbox/fills/sc-garble/README.md, brief.md and
-   fill-environment-addendum.md. Verify the pack with SHA256SUMS.
+   991232efa149dd0d94ec7e67efcc94581f8076e5. Read README.md and
+   outbox/fills/sc-garble/README.md, brief.md,
+   fill-environment-addendum.md and ruling-SG-1.md. Verify the pack with
+   SHA256SUMS. Ruling SG-1 overrides the brief where they differ.
 2. In a separate checkout, fetch land/pass-shelat-prf-long and start
    fill/sc-garble locally at fbd37f447596d4207c8d08b7ef7602f57fe95198, the
    head of draft PR #315 (prf-long), not the records tip: the proof uses
@@ -36,8 +37,10 @@ https://github.com/Shilun-Allan-Li/tcslib (Lean 4.25.0 and pinned Mathlib).
    route and checkpoints, the B1 consumer map and Gate 27's hand-off
    obligations, and the import direction for
    specialScheme_multiMessageSecure (prove it directly from D4; the
-   corollary sits downstream). Follow its scope (owned files, helper
-   directories, prf-long's files frozen, any other frozen-file change only
+   corollary sits downstream), removing the six private relabelling
+   helpers of SpecialEncryptionMulti.lean as ruling SG-1 allows. Follow
+   its scope (owned files, helper directories, prf-long's files frozen,
+   any other frozen-file change only
    by a scope request to Seyoon); the frozen-statement rule and its header
    check; the duplication and overlap-disclosure rule, searching for
    existing probability, expectation and list lemmas first; the docstring

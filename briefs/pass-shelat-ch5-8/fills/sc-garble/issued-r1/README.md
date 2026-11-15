@@ -12,7 +12,7 @@ of requirement B2.
 records tip.** The proof uses prf-long's D1–D4, which are not merged yet; under the proved-modulo rule the worker
 builds on that head, and `sc-garble` lands after #315 merges.
 
-Read [the brief](brief.md) and the [environment addendum](fill-environment-addendum.md). Verify the package with
+Read [the brief](brief.md), the [environment addendum](fill-environment-addendum.md) and [ruling SG-1](ruling-SG-1.md) (Seyoon, 2026-11-15: a frozen-file exception that removes six private relabelling helpers of `SpecialEncryptionMulti.lean`; it overrides the brief where they differ). Verify the package with
 `shasum -a 256 -c SHA256SUMS` from this directory.
 
 - [Build order](order.txt): 166 TCSlib modules, generated at the base. These are the upstream closure of every
