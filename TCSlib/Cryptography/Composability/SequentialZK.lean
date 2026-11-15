@@ -5,13 +5,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.ZeroKnowledge.Defs
 import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
+import TCSlib.Cryptography.Composability.SequentialZK.Efficiency
+import TCSlib.Cryptography.Composability.SequentialZK.Soundness
+import TCSlib.Cryptography.Composability.SequentialZK.Normalization
+import TCSlib.Cryptography.Composability.SequentialZK.NormalizationMachine
+import TCSlib.Cryptography.Asymptotic.ReductionSupport
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Sequential composition of zero-knowledge proofs (statement phase)
+# Sequential composition of zero-knowledge proofs
 
 [PS10, Theorem 175.1]: if `(P, V)` is a perfect or computational zero-knowledge proof for `L`
 and `Q` is a polynomial, the protocol `(P_Q, V_Q)` that runs `(P, V)` on the common input `x`
@@ -61,6 +66,13 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
 - **At least one phase** for soundness: with `Q(n) = 0`, `V_Q` accepts everything, so the
   interactive-proof statement assumes `1 ≤ Q(n)`.
 
+## Contents
+
+* `SequentialZK.Efficiency`: polynomial-time phase messages and aggregate verdicts.
+* `SequentialZK.Soundness`: execution prefixes and the adaptive success bound.
+* `SequentialZK.Normalization`: bounded canonical message slots.
+* `SequentialZK.NormalizationMachine`: polynomial-time bounded-slot normalization.
+
 ## Main definitions
 
 * `Composability.proverMoveIndex`, `Composability.verifierMoveIndex`,
@@ -79,8 +91,8 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
   `PerfectZK.seqRep` (proved from `StatZK.seqRep`).
 * `PerfectZKAbort.seqRep`: the aborting case, derived from `PerfectZKAbort.statZK` and
   `StatZK.seqRep`, with error `Q(n) · 2^{-n}`.
-* `InteractiveProof.seqRep` (stated; a `sorry` under its sketch): the repetition is an
-  interactive proof.
+* `InteractiveProof.seqRep` (proved): sequential repetition with at least one phase preserves
+  interactive proofs, using the same negligible soundness bound.
 * `InteractiveProofErr.seqRep`, `EfficientProverProofErr.seqRep` (stated; `sorry`s under their
   sketches): sequential repetition multiplies the soundness error, `s ↦ s^Q` (ruling G3-7d, for
   the text's form of Thm 124.1).
@@ -263,6 +275,19 @@ theorem seqRep_rounds_eval (π : Protocol) (Q : PolyExpr) (n : ℕ) :
   simp [seqRep, PolyExpr.eval_mul, PolyExpr.eval_const]
   ring
 
+/-- The repeated prover keeps the message bound: `π.ProverBounded R B` implies
+`(π.seqRep Q).ProverBounded R B`, since every real reply is an original reply and every
+filler reply is empty. [PS10, Theorem 175.1]. -/
+theorem ProverBounded.seqRep {π : Protocol} {R : List Bool → List Bool → Prop}
+    {B : PolyExpr} (hB : π.ProverBounded R B) (Q : PolyExpr) :
+    (π.seqRep Q).ProverBounded R B := by
+  rw [proverBounded_iff] at hB ⊢
+  intro x y r hist hxy
+  rw [seqRep_P, seqProver_next]
+  split_ifs
+  · exact hB x y _ _ hxy
+  · exact Nat.zero_le _
+
 /-- **Phase `j` of an honest execution of the repetition is an execution of `π`** with the coin
 slices `j`: after the `j` earlier phases and the `k` real moves of phase `j`, the messages each
 party received in phase `j` are those it receives in `π` with those coins.
@@ -361,6 +386,259 @@ theorem seqRep_exec_phase (π : Protocol) (Q : PolyExpr) (x y z rP rV : List Boo
       show (π.seqProver Q).next x y rP _ = _
       simp only [seqProver, ← hk, ← hvF]
       rw [hidx, hmod, if_pos htk, hdiv, ih₁]
+
+/-- Up to `t ≤ π.rounds.eval |x|`, the repeated verifier against any prover `P'` has the
+same execution as the original verifier on coin block zero, provided `1 ≤ Q.eval |x|`.
+
+**Proof sketch.** Induct on the real move index. The received history has length at most
+that index, so it cannot trigger the repeated verdict. At a verifier move the recovered
+index is the move index, its phase is zero, and its residue is the index itself. Thus the
+same original verifier reply is appended. Prover moves agree because their histories agree.
+-/
+theorem seqVerifier_exec_first (π : Protocol) (Q : PolyExpr) (P' : Strategy)
+    (x y z rP rV : List Bool) (hQ : 1 ≤ Q.eval x.length) {t : ℕ}
+    (ht : t ≤ π.rounds.eval x.length) :
+    exec P' (π.seqVerifier Q) π.verifierFirst x y z rP rV t =
+      exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t := by
+  induction t with
+  | zero => rw [exec_zero, exec_zero]
+  | succ t ih =>
+    have htk : t < π.rounds.eval x.length := by omega
+    rw [exec_succ, exec_succ, ih (by omega)]
+    by_cases hm : moverIsV π.verifierFirst t = true
+    · simp only [hm, if_true]
+      have hl := exec_length P' π.V π.verifierFirst x y z rP
+        (coinBlock (π.V.coinLen x.length) 0 rV) t
+      have hkQ : π.rounds.eval x.length ≤ Q.eval x.length * π.rounds.eval x.length := by
+        simpa only [one_mul] using Nat.mul_le_mul_right (π.rounds.eval x.length) hQ
+      have hne : (exec P' π.V π.verifierFirst x y z rP
+          (coinBlock (π.V.coinLen x.length) 0 rV) t).2.length ≠
+            Q.eval x.length * π.rounds.eval x.length := by omega
+      have hidx := verifierMoveIndex_exec P' π.V π.verifierFirst x y z rP
+        (coinBlock (π.V.coinLen x.length) 0 rV) t hm
+      have hn : (π.seqVerifier Q).next x z rV
+          (exec P' π.V π.verifierFirst x y z rP
+            (coinBlock (π.V.coinLen x.length) 0 rV) t).2 =
+          π.V.next x z (coinBlock (π.V.coinLen x.length) 0 rV)
+            (exec P' π.V π.verifierFirst x y z rP
+              (coinBlock (π.V.coinLen x.length) 0 rV) t).2 := by
+        rw [seqVerifier_next, if_neg hne, hidx,
+          Nat.mod_eq_of_lt (by omega), if_pos htk, Nat.div_eq_of_lt (by omega),
+          Nat.zero_mul, List.drop_zero]
+      rw [hn]
+    · simp only [hm, Bool.false_eq_true, if_false]
+
+/-- The repeated output is the aggregate verdict on the final received history:
+`(π.seqRep Q).outV P' x y z r = π.seqVerdict (Q.eval |x|) x z (List.ofFn r.2) hist`,
+where `hist` is the verifier component of the repeated transcript.
+
+**Proof sketch.** There are exactly `Q(|x|) · k` prover moves in the even-length repeated
+execution. This is the terminal-history test in the repeated verifier, so its terminal
+branch computes the aggregate verdict. -/
+theorem seqRep_outV_eq (π : Protocol) (Q : PolyExpr) (P' : Strategy)
+    (x y z : List Bool) (r : (π.seqRep Q).ExecCoins P' x) :
+    (π.seqRep Q).outV P' x y z r =
+      π.seqVerdict (Q.eval x.length) x z (List.ofFn r.2)
+        ((π.seqRep Q).transcriptWith P' x y z r).2 := by
+  have hl : ((π.seqRep Q).transcriptWith P' x y z r).2.length =
+      Q.eval x.length * π.rounds.eval x.length := by
+    rw [transcriptWith_eq, exec_snd_length, countP_not_moverIsV,
+      seqRep_rounds_eval, seqRep_verifierFirst]
+    rw [show 2 * π.rounds.eval x.length * Q.eval x.length =
+      2 * (Q.eval x.length * π.rounds.eval x.length) by ring]
+    cases π.verifierFirst <;> simp only [Bool.false_eq_true, if_false, if_true] <;> omega
+  rw [outV_eq]
+  have hn := congrArg (fun V : Strategy => V.next x z (List.ofFn r.2)
+    ((π.seqRep Q).transcriptWith P' x y z r).2) (seqRep_V π Q)
+  dsimp only at hn
+  rw [hn, seqVerifier_next, if_pos hl]
+
+/-- The final repeated history restricted to the real prover slots of phase `j < Q(|x|)`
+is the original verifier history on coin slices `j`. [PS10, Theorem 175.1].
+
+**Proof sketch.** The history just after the phase's real moves is a prefix of the final
+history. Its length is the `j · k` slots of preceding phases plus the number of real prover
+moves. Taking this prefix and dropping the preceding phases recovers the phase reader.
+-/
+theorem seqRep_exec_phase_take (π : Protocol) (Q : PolyExpr) (x y z rP rV : List Bool)
+    {j : ℕ} (hj : j < Q.eval x.length) :
+    ((exec (π.seqRep Q).P (π.seqRep Q).V π.verifierFirst x y z rP rV
+      (2 * π.rounds.eval x.length * Q.eval x.length)).2.drop
+        (j * π.rounds.eval x.length)).take
+          (proverMoves π.verifierFirst (π.rounds.eval x.length)) =
+      (exec π.P π.V π.verifierFirst x y z (coinBlock (π.P.coinLen x.length) j rP)
+        (coinBlock (π.V.coinLen x.length) j rV) (π.rounds.eval x.length)).2 := by
+  let k := π.rounds.eval x.length
+  have hjk := Nat.mul_le_mul_right k hj
+  have hle : 2 * k * j + k ≤ 2 * k * Q.eval x.length := by
+    have hscaled := Nat.mul_le_mul_left 2 hjk
+    rw [show 2 * ((j + 1) * k) = 2 * k * j + 2 * k by ring,
+      show 2 * (Q.eval x.length * k) = 2 * k * Q.eval x.length by ring] at hscaled
+    omega
+  have hl : (exec (π.seqRep Q).P (π.seqRep Q).V π.verifierFirst x y z rP rV
+      (2 * k * j + k)).2.length = j * k + proverMoves π.verifierFirst k := by
+    rw [exec_snd_length, countP_not_moverIsV, proverMoves_eq, countP_not_moverIsV]
+    rw [show 2 * k * j + k = 2 * (j * k) + k by ring]
+    cases π.verifierFirst <;> simp only [Bool.false_eq_true, if_false, if_true] <;> omega
+  have hp := exec_snd_take (π.seqRep Q).P (π.seqRep Q).V π.verifierFirst x y z rP rV
+    (2 * k * j + k) (2 * k * Q.eval x.length - (2 * k * j + k))
+  rw [Nat.add_sub_of_le hle, hl] at hp
+  rw [List.take_drop, hp]
+  exact (seqRep_exec_phase π Q x y z rP rV hj).2
+
+/-- Perfect completeness on `x, y, z` is preserved by every number of sequential phases:
+if `Pr[π.outV π.P x y z = [true]] = 1`, then
+`Pr[(π.seqRep Q).outV (π.seqRep Q).P x y z = [true]] = 1`.
+[PS10, Theorem 175.1].
+
+**Proof sketch.** Probability one on the finite coin space means every original coin pair
+accepts. For each repeated coin pair and phase, its coin slices have the original lengths.
+The phase-history reader therefore identifies its verdict with an accepting original run.
+All phase tests are true, so the aggregate output is true, including an empty phase list.
+-/
+theorem seqRep_complete (π : Protocol) (Q : PolyExpr) (x y z : List Bool)
+    (hc : uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1) :
+    uprob (fun r : (π.seqRep Q).ExecCoins (π.seqRep Q).P x =>
+      (π.seqRep Q).outV (π.seqRep Q).P x y z r = [true]) = 1 := by
+  apply HardcoreBit.uprob_eq_one_of_forall
+  intro r
+  rw [seqRep_outV_eq, seqVerdict_eq]
+  have hall : (List.range (Q.eval x.length)).all (fun j => decide
+      (π.V.next x z (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2))
+        ((((π.seqRep Q).transcriptWith (π.seqRep Q).P x y z r).2.drop
+          (j * π.rounds.eval x.length)).take
+            (proverMoves π.verifierFirst (π.rounds.eval x.length))) = [true])) = true := by
+    rw [List.all_eq_true]
+    intro j hj
+    have hjQ : j < Q.eval x.length := List.mem_range.mp hj
+    apply decide_eq_true
+    rw [transcriptWith_eq, seqRep_verifierFirst, seqRep_rounds_eval,
+      seqRep_exec_phase_take π Q x y z (List.ofFn r.1) (List.ofFn r.2) hjQ]
+    have hlP : (List.ofFn r.1).length = Q.eval x.length * π.P.coinLen x.length := by
+      rw [List.length_ofFn, Strategy.coinLen_eq, seqRep_P, seqProver_coins,
+        PolyExpr.eval_mul, Strategy.coinLen_eq]
+    have hlV : (List.ofFn r.2).length = Q.eval x.length * π.V.coinLen x.length := by
+      rw [List.length_ofFn, Strategy.coinLen_eq, seqRep_V, seqVerifier_coins,
+        PolyExpr.eval_mul, Strategy.coinLen_eq]
+    have hbP : (coinBlock (π.P.coinLen x.length) j (List.ofFn r.1)).length =
+        π.P.coinLen x.length := length_coinBlock (by
+      rw [hlP]; exact Nat.mul_le_mul_right _ hjQ)
+    have hbV : (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2)).length =
+        π.V.coinLen x.length := length_coinBlock (by
+      rw [hlV]; exact Nat.mul_le_mul_right _ hjQ)
+    have hrun := HardcoreBit.forall_of_uprob_eq_one hc
+      (padFin (π.P.coinLen x.length) (coinBlock (π.P.coinLen x.length) j (List.ofFn r.1)),
+       padFin (π.V.coinLen x.length) (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2)))
+    rw [outV_eq, transcriptWith_eq, ofFn_padFin_of_length hbP,
+      ofFn_padFin_of_length hbV] at hrun
+    exact hrun
+  rw [hall]
+  rfl
+
+/-- If the original verifier rejects phase zero against `P'`, then the repeated verifier
+rejects the same repeated tape, when `1 ≤ Q.eval |x|`. [PS10, Theorem 175.1].
+
+**Proof sketch.** The first real phase agrees with the original verifier on coin block zero.
+Its prover-message history is the initial segment of the final history. Rejection therefore
+makes the phase-zero test in the aggregate conjunction false, forcing the repeated output
+to be `[false]`. -/
+theorem seqRep_reject_of_first (π : Protocol) (Q : PolyExpr) (P' : Strategy)
+    (x y z : List Bool) (r : (π.seqRep Q).ExecCoins P' x) (hQ : 1 ≤ Q.eval x.length)
+    (hr : π.V.next x z (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+      (exec P' π.V π.verifierFirst x y z (List.ofFn r.1)
+        (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+        (π.rounds.eval x.length)).2 = [false]) :
+    (π.seqRep Q).outV P' x y z r = [false] := by
+  let k := π.rounds.eval x.length
+  have hkQ : k ≤ Q.eval x.length * k := by
+    simpa only [one_mul] using Nat.mul_le_mul_right k hQ
+  have hle : k ≤ 2 * k * Q.eval x.length := by
+    have hscaled := Nat.mul_le_mul_left 2 hkQ
+    rw [show 2 * (Q.eval x.length * k) = 2 * k * Q.eval x.length by ring] at hscaled
+    omega
+  have hp := exec_snd_take P' (π.seqVerifier Q) π.verifierFirst x y z
+    (List.ofFn r.1) (List.ofFn r.2) k (2 * k * Q.eval x.length - k)
+  rw [Nat.add_sub_of_le hle,
+    seqVerifier_exec_first π Q P' x y z (List.ofFn r.1) (List.ofFn r.2) hQ le_rfl] at hp
+  have hl : (exec P' π.V π.verifierFirst x y z (List.ofFn r.1)
+      (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2)) k).2.length =
+        proverMoves π.verifierFirst k := by
+    rw [exec_snd_length, proverMoves_eq]
+  rw [hl] at hp
+  rw [seqRep_outV_eq, seqVerdict_eq]
+  have hnot : (List.range (Q.eval x.length)).all (fun j => decide
+      (π.V.next x z (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2))
+        ((((π.seqRep Q).transcriptWith P' x y z r).2.drop (j * k)).take
+          (proverMoves π.verifierFirst k)) = [true])) ≠ true := by
+    intro hall
+    have hz := List.all_eq_true.mp hall 0 (List.mem_range.mpr hQ)
+    simp only [Nat.zero_mul, List.drop_zero] at hz
+    rw [transcriptWith_eq, seqRep_verifierFirst, seqRep_rounds_eval] at hz
+    have hpV := congrArg (fun V : Strategy =>
+      (exec P' V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
+        (2 * k * Q.eval x.length)).2.take (proverMoves π.verifierFirst k)) (seqRep_V π Q)
+    dsimp only at hpV
+    rw [hpV.trans hp, hr] at hz
+    contradiction
+  rw [if_neg hnot]
+
+/-- The repeated rejection probability dominates the original rejection probability on
+phase zero, against the same prover `P'`, when `1 ≤ Q.eval |x|`.
+[PS10, Theorem 175.1].
+
+**Proof sketch.** Restrict the repeated verifier's uniform tape to its initial original-length
+prefix; this map preserves uniformity and leaves the prover's tape unchanged. Original
+rejection on this projection implies repeated rejection by the first-phase reader, so
+monotonicity of probability gives the bound. -/
+theorem seqRep_sound_first (π : Protocol) (Q : PolyExpr) (P' : Strategy)
+    (x y z : List Bool) (hQ : 1 ≤ Q.eval x.length) :
+    uprob (fun r : π.ExecCoins P' x => π.outV P' x y z r = [false]) ≤
+      uprob (fun r : (π.seqRep Q).ExecCoins P' x =>
+        (π.seqRep Q).outV P' x y z r = [false]) := by
+  have hlen : (π.seqRep Q).V.coinLen x.length =
+      Q.eval x.length * π.V.coinLen x.length := by
+    rw [Strategy.coinLen_eq, seqRep_V, seqVerifier_coins, PolyExpr.eval_mul,
+      Strategy.coinLen_eq]
+  have hcle : π.V.coinLen x.length ≤ (π.seqRep Q).V.coinLen x.length := by
+    rw [hlen]
+    simpa only [one_mul] using Nat.mul_le_mul_right (π.V.coinLen x.length) hQ
+  let f : (π.seqRep Q).ExecCoins P' x → π.ExecCoins P' x :=
+    fun r => (r.1, fun i => r.2 (Fin.castLE hcle i))
+  have hf : HardcoreBit.PushesUniform f := HardcoreBit.pushesUniform_id.prodMap
+    (HardcoreBit.pushesUniform_restrict (Fin.castLE_injective hcle))
+  calc
+    _ = uprob (fun r : (π.seqRep Q).ExecCoins P' x =>
+        π.outV P' x y z (f r) = [false]) := (hf.uprob_eq _).symm
+    _ ≤ _ := uprob_mono fun r hr => by
+      apply seqRep_reject_of_first π Q P' x y z r hQ
+      rw [outV_eq, transcriptWith_eq] at hr
+      change π.V.next x z (List.ofFn (fun i => r.2 (Fin.castLE hcle i)))
+        (exec P' π.V π.verifierFirst x y z (List.ofFn r.1)
+          (List.ofFn (fun i => r.2 (Fin.castLE hcle i)))
+          (π.rounds.eval x.length)).2 = [false] at hr
+      rw [← take_ofFn_castLE hcle r.2] at hr
+      simpa only [coinBlock_eq, Nat.zero_mul, List.drop_zero] using hr
+
+/-- An efficient original prover gives an efficient sequential prover:
+`π.P.Efficient → (π.seqProver Q).Efficient`. [PS10, Theorem 175.1]. -/
+theorem seqProver_efficient (π : Protocol) (Q : PolyExpr) (hP : π.P.Efficient) :
+    (π.seqProver Q).Efficient := by
+  apply SeqEfficiency.phase_efficient (π.seqProver Q) π.P π.rounds π.verifierFirst hP
+  intro x z r hist
+  dsimp only
+  rw [seqProver_next, proverMoveIndex_eq]
+
+/-- An efficient original verifier gives an efficient sequential verifier:
+`π.V.Efficient → (π.seqVerifier Q).Efficient`. [PS10, Theorem 175.1]. -/
+theorem seqVerifier_efficient (π : Protocol) (Q : PolyExpr) (hV : π.V.Efficient) :
+    (π.seqVerifier Q).Efficient := by
+  classical
+  apply SeqEfficiency.verifier_efficient (π.seqVerifier Q) π.V π.rounds Q π.verifierFirst hV
+  intro x z r hist
+  dsimp only
+  rw [seqVerifier_next, verifierMoveIndex_eq, seqVerdict_eq, proverMoves_eq,
+    countP_not_moverIsV]
+  simp only [List.all_eq_true, List.mem_range, decide_eq_true_eq]
 
 end Protocol
 
@@ -470,7 +748,21 @@ theorem PerfectZKAbort.seqRep {B : PolyExpr} (h : PerfectZKAbort π R)
    exists since `1 ≤ Q(|x|)`. -/
 theorem InteractiveProof.seqRep {L : Language Bool} (h : InteractiveProof π L) (Q : PolyExpr)
     (hQ : ∀ n, 1 ≤ Q.eval n) : InteractiveProof (π.seqRep Q) L := by
-  sorry
+  constructor
+  · rw [Protocol.seqRep_V]
+    exact π.seqVerifier_efficient Q h.efficientV
+  · obtain ⟨B, hcomplete⟩ := h.complete
+    refine ⟨B, fun x hx => ?_⟩
+    obtain ⟨y, hbound, hc⟩ := hcomplete x hx
+    refine ⟨y, ?_, fun z => π.seqRep_complete Q x y z (hc z)⟩
+    intro r hist
+    rw [Protocol.seqRep_P, Protocol.seqProver_next]
+    split_ifs
+    · exact hbound _ _
+    · exact Nat.zero_le _
+  · obtain ⟨ε, hε, hs⟩ := h.sound
+    refine ⟨ε, hε, fun x hx P' z => ?_⟩
+    exact (hs x hx P' z).trans_le (π.seqRep_sound_first Q P' x [] z (hQ x.length))
 
 /-- **Sequential repetition multiplies the soundness error** [PS10, p. 120: the protocol "can be
 repeated many times … to drive the probability of error as low as desired"; and p. 127, the
