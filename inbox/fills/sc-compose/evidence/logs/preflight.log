@@ -1,0 +1,26 @@
+== preflight (sc-compose) 2026-11-15T05:35:01Z
+nproc: 4
+cgroup v1 memory.limit_in_bytes: 9223372036854771712
+cgroup v1 memory.usage_in_bytes: 2962731008
+--- memory.stat
+cache 44929024
+rss 9273344
+shmem 17035264
+total_cache 2946822144
+total_rss 15953920
+total_shmem 17035264
+--- /proc/meminfo
+MemTotal:       16473776 kB
+MemFree:        13214092 kB
+MemAvailable:   16048112 kB
+no cgroup limit (limit = 2^63-ish): headroom = MemAvailable = 15.30 GiB
+--- disk (clone /workspace/scc; scratch /workspace/scpay, /tmp: same filesystem)
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 28624883712 15247384576  66% /
+/dev/vda       270553174016 28624883712 15247384576  66% /
+/dev/vda       270553174016 28624883712 15247384576  66% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 27953988  14890024  66% /
+/dev/vda       ext4 264212084 27953988  14890024  66% /
+free: 14.20 GiB (floor 12 GiB)
+Before this preflight I removed only this session's own finished, delivered worktrees /workspace/prfmac (prf-mac, branch fill/prf-mac keeps its commits) and /workspace/plong (prf-long, branch fill/prf-long keeps its commits). No dependency tree was copied, moved or deduplicated.
