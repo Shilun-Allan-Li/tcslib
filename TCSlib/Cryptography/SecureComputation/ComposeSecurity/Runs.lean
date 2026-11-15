@@ -54,7 +54,9 @@ def splitCoins {m a q b : ℕ} (h : m = a + q * b) :
   ((Equiv.refl (Fin a → Bool)).prodCongr (FunFamily.blocks q b).symm).trans
     ((Fin.appendEquiv a (q * b)).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool)))
 
-/-- The defining equation of `splitCoins` (see `splitCoins`). -/
+/-- The defining equation of `splitCoins` (see `splitCoins`).
+`splitCoins h = ((Equiv.refl (Fin a → Bool)).prodCongr (FunFamily.blocks q b).symm).trans
+((Fin.appendEquiv a (q * b)).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool)))`. -/
 theorem splitCoins_eq {m a q b : ℕ} (h : m = a + q * b) :
     splitCoins h = ((Equiv.refl (Fin a → Bool)).prodCongr (FunFamily.blocks q b).symm).trans
       ((Fin.appendEquiv a (q * b)).trans
@@ -93,7 +95,8 @@ theorem ofFn_splitCoins {m a q b : ℕ} (h : m = a + q * b) (u : Fin a → Bool)
   show List.ofFn (Fin.append u ((FunFamily.blocks q b).symm t)) = _
   rw [List.ofFn_fin_append, ofFn_blocks_symm]
 
-/-- The first `a` bits of `splitCoins h (u, t)` are `u`. -/
+/-- The first `a` bits of `splitCoins h (u, t)` are `u`.
+`(List.ofFn (splitCoins h (u, t))).take a = List.ofFn u`. -/
 theorem take_ofFn_splitCoins {m a q b : ℕ} (h : m = a + q * b) (u : Fin a → Bool)
     (t : Fin q → Fin b → Bool) : (List.ofFn (splitCoins h (u, t))).take a = List.ofFn u := by
   rw [ofFn_splitCoins, List.take_left' List.length_ofFn]
@@ -132,14 +135,18 @@ section Coins
 
 variable {G : Functionality} (H : HybridProtocol G) (ρ : Protocol)
 
-/-- Alice's composed coin length at `1^n` is `main.P.coins + calls(n)·ρ.P.coins`. -/
+/-- Alice's composed coin length at `1^n` is `main.P.coins + calls(n)·ρ.P.coins`.
+`(H.compose ρ).P.coinLen (List.replicate n true).length = H.main.P.coinLen (List.replicate n
+true).length + H.calls.eval n * ρ.P.coinLen (List.replicate n true).length`. -/
 theorem composeP_coinLen_eq (n : ℕ) :
     (H.compose ρ).P.coinLen (List.replicate n true).length =
       H.main.P.coinLen (List.replicate n true).length +
         H.calls.eval n * ρ.P.coinLen (List.replicate n true).length := by
   rw [compose_P_coinLen, List.length_replicate]
 
-/-- Bob's composed coin length at `1^n` is `main.V.coins + calls(n)·ρ.V.coins`. -/
+/-- Bob's composed coin length at `1^n` is `main.V.coins + calls(n)·ρ.V.coins`.
+`(H.compose ρ).V.coinLen (List.replicate n true).length = H.main.V.coinLen (List.replicate n
+true).length + H.calls.eval n * ρ.V.coinLen (List.replicate n true).length`. -/
 theorem composeV_coinLen_eq (n : ℕ) :
     (H.compose ρ).V.coinLen (List.replicate n true).length =
       H.main.V.coinLen (List.replicate n true).length +
@@ -147,7 +154,9 @@ theorem composeV_coinLen_eq (n : ℕ) :
   rw [compose_V_coinLen, List.length_replicate]
 
 /-- **The coins of `H.compose ρ` at `1^n`** as the `main`-tapes and one pair of `ρ`-tapes per
-call: Alice's tape is her `main`-tape followed by her `ρ`-tapes, Bob's likewise. -/
+call: Alice's tape is her `main`-tape followed by her `ρ`-tapes, Bob's likewise.
+`H.Coins n × (Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) ≃ (H.compose
+ρ).ExecCoins (H.compose ρ).P (List.replicate n true)`. -/
 def composeCoins (n : ℕ) :
     H.Coins n × (Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) ≃
       (H.compose ρ).ExecCoins (H.compose ρ).P (List.replicate n true) :=
@@ -156,14 +165,16 @@ def composeCoins (n : ℕ) :
       ((splitCoins (H.composeP_coinLen_eq ρ n)).prodCongr
         (splitCoins (H.composeV_coinLen_eq ρ n))))
 
-/-- Alice's composed tape is `splitCoins` of her `main`-tape and her run tapes. -/
+/-- Alice's composed tape is `splitCoins` of her `main`-tape and her run tapes.
+`(H.composeCoins ρ n (m, t)).1 = splitCoins (H.composeP_coinLen_eq ρ n) (m.1, fun j => (t j).1)`. -/
 theorem composeCoins_fst (n : ℕ) (m : H.Coins n)
     (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) :
     (H.composeCoins ρ n (m, t)).1 =
       splitCoins (H.composeP_coinLen_eq ρ n) (m.1, fun j => (t j).1) :=
   rfl
 
-/-- Bob's composed tape is `splitCoins` of his `main`-tape and his run tapes. -/
+/-- Bob's composed tape is `splitCoins` of his `main`-tape and his run tapes.
+`(H.composeCoins ρ n (m, t)).2 = splitCoins (H.composeV_coinLen_eq ρ n) (m.2, fun j => (t j).2)`. -/
 theorem composeCoins_snd (n : ℕ) (m : H.Coins n)
     (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) :
     (H.composeCoins ρ n (m, t)).2 =
@@ -246,7 +257,9 @@ theorem runInputA_composeCoins (n : ℕ) (zA : List Bool) (m : H.Coins n)
     exact H.ofFn_callA_congr hN _ _ j hj' hj
   · rw [dif_neg hj, H.runInputA_of_ge _ _ _ (by rw [hN]; omega)]
 
-/-- Bob's run inputs at `1^n` are his call inputs (as `runInputA_composeCoins`). -/
+/-- Bob's run inputs at `1^n` are his call inputs (as `runInputA_composeCoins`).
+`H.runInputB (List.replicate n true) zB (List.ofFn (H.composeCoins ρ n (m, t)).2) j = H.inB n zB
+(List.ofFn m.2) j`. -/
 theorem runInputB_composeCoins (n : ℕ) (zB : List Bool) (m : H.Coins n)
     (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : ℕ) :
     H.runInputB (List.replicate n true) zB (List.ofFn (H.composeCoins ρ n (m, t)).2) j =
@@ -277,7 +290,10 @@ theorem runExec_composeCoins (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
     runTape_ofFn_splitCoins (H.composeV_coinLen_eq ρ n) m.2 (fun j => (t j).2) j]
 
 /-- The message of `ρ`'s move `p` in the honest run `j` at `1^n` is the move of `ρ`'s execution on
-the call inputs and the run tapes (`runMsg_eq`, as `runExec_composeCoins`). -/
+the call inputs and the run tapes (`runMsg_eq`, as `runExec_composeCoins`).
+`H.runMsg ρ (List.replicate n true) zA zB (List.ofFn (H.composeCoins ρ n (m, t)).1) (List.ofFn
+(H.composeCoins ρ n (m, t)).2) j p = moveMsg ρ.P ρ.V ρ.verifierFirst (List.replicate n true) (H.inA
+n zA (List.ofFn m.1) j) (H.inB n zB …`. -/
 theorem runMsg_composeCoins (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
     (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : Fin (H.calls.eval n))
     (p : ℕ) :
@@ -293,7 +309,10 @@ theorem runMsg_composeCoins (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
 
 /-- **Every run gives the ideal answers**: for every call `j`, Alice's and Bob's `ρ`-outputs in
 the run on the call inputs and the tapes `t j` are `⟦f_A(callA_j, callB_j)⟧` and
-`⟦f_B(callA_j, callB_j)⟧`. -/
+`⟦f_B(callA_j, callB_j)⟧`.
+`H.GoodRuns ρ n zA zB m t ↔ ∀ j : Fin (H.calls.eval n), ρ.outP (List.replicate n true) (H.inA n zA
+(List.ofFn m.1) j) (H.inB n zB (List.ofFn m.2) j) (t j) = List.ofFn (G.f n (H.callA n zA (List.ofFn
+m.1) j) (H.callB n zB (List.ofFn m.2) …`. -/
 def GoodRuns (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
     (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) : Prop :=
   ∀ j : Fin (H.calls.eval n),
@@ -304,7 +323,10 @@ def GoodRuns (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
         (H.inB n zB (List.ofFn m.2) j) (t j) =
       List.ofFn (G.f n (H.callA n zA (List.ofFn m.1) j) (H.callB n zB (List.ofFn m.2) j)).2
 
-/-- The defining property of `GoodRuns` (see `GoodRuns`). -/
+/-- The defining property of `GoodRuns` (see `GoodRuns`).
+`H.GoodRuns ρ n zA zB m t ↔ ∀ j : Fin (H.calls.eval n), ρ.outP (List.replicate n true) (H.inA n zA
+(List.ofFn m.1) j) (H.inB n zB (List.ofFn m.2) j) (t j) = List.ofFn (G.f n (H.callA n zA (List.ofFn
+m.1) j) (H.callB n zB (List.ofFn m.2) …`. -/
 theorem goodRuns_iff (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
     (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) :
     H.GoodRuns ρ n zA zB m t ↔ ∀ j : Fin (H.calls.eval n),
@@ -425,7 +447,9 @@ def realViewA (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
       (H.inB n zB (List.ofFn m.2) j) (t ⟨j, h⟩)).encode
   else []
 
-/-- The defining equation of `realViewA` (see `realViewA`). -/
+/-- The defining equation of `realViewA` (see `realViewA`).
+`H.realViewA ρ n zA zB m t j = if h : j < H.calls.eval n then (ρ.viewP (List.replicate n true)
+(H.inA n zA (List.ofFn m.1) j) (H.inB n zB (List.ofFn m.2) j) (t ⟨j, h⟩)).encode else []`. -/
 theorem realViewA_eq (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
     (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : ℕ) :
     H.realViewA ρ n zA zB m t j =
@@ -434,7 +458,9 @@ theorem realViewA_eq (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
           (H.inB n zB (List.ofFn m.2) j) (t ⟨j, h⟩)).encode
       else [] := rfl
 
-/-- **Bob's encoded views of the honest runs** (as `realViewA`, with `ρ.viewV`). -/
+/-- **Bob's encoded views of the honest runs** (as `realViewA`, with `ρ.viewV`).
+`H.realViewB ρ n zA zB m t j = if h : j < H.calls.eval n then (ρ.viewV (List.replicate n true)
+(H.inA n zA (List.ofFn m.1) j) (H.inB n zB (List.ofFn m.2) j) (t ⟨j, h⟩)).encode else []`. -/
 def realViewB (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
     (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : ℕ) : List Bool :=
   if h : j < H.calls.eval n then
@@ -442,7 +468,9 @@ def realViewB (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
       (H.inB n zB (List.ofFn m.2) j) (t ⟨j, h⟩)).encode
   else []
 
-/-- The defining equation of `realViewB` (see `realViewB`). -/
+/-- The defining equation of `realViewB` (see `realViewB`).
+`H.realViewB ρ n zA zB m t j = if h : j < H.calls.eval n then (ρ.viewV (List.replicate n true)
+(H.inA n zA (List.ofFn m.1) j) (H.inB n zB (List.ofFn m.2) j) (t ⟨j, h⟩)).encode else []`. -/
 theorem realViewB_eq (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
     (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : ℕ) :
     H.realViewB ρ n zA zB m t j =

@@ -57,13 +57,17 @@ namespace HybridProtocol
 variable {G : Functionality} (H : HybridProtocol G) (ρ : Protocol)
 
 /-- **Alice's real run word** for call `j`: her encoded view of `ρ` on the call inputs
-`inA n xs ⟦m.1⟧ j`, `inB n ys ⟦m.2⟧ j` and the tapes `t`. -/
+`inA n xs ⟦m.1⟧ j`, `inB n ys ⟦m.2⟧ j` and the tapes `t`.
+`H.viewRunA ρ n xs ys m j t = (ρ.viewP (List.replicate n true) (H.inA n xs (List.ofFn m.1) j) (H.inB
+n ys (List.ofFn m.2) j) t).encode`. -/
 def viewRunA (n : ℕ) (xs ys : List Bool) (m : H.Coins n) (j : Fin (H.calls.eval n))
     (t : ρ.ExecCoins ρ.P (List.replicate n true)) : List Bool :=
   (ρ.viewP (List.replicate n true) (H.inA n xs (List.ofFn m.1) j)
     (H.inB n ys (List.ofFn m.2) j) t).encode
 
-/-- The defining equation of `viewRunA` (see `viewRunA`). -/
+/-- The defining equation of `viewRunA` (see `viewRunA`).
+`H.viewRunA ρ n xs ys m j t = (ρ.viewP (List.replicate n true) (H.inA n xs (List.ofFn m.1) j) (H.inB
+n ys (List.ofFn m.2) j) t).encode`. -/
 theorem viewRunA_eq (n : ℕ) (xs ys : List Bool) (m : H.Coins n) (j : Fin (H.calls.eval n))
     (t : ρ.ExecCoins ρ.P (List.replicate n true)) :
     H.viewRunA ρ n xs ys m j t =
@@ -71,13 +75,17 @@ theorem viewRunA_eq (n : ℕ) (xs ys : List Bool) (m : H.Coins n) (j : Fin (H.ca
         (H.inB n ys (List.ofFn m.2) j) t).encode := rfl
 
 /-- **Alice's simulated run word** for call `j`: the output of `ρ`'s simulator `S` on her call
-input and her ideal answer `⟦f_A(callA_j, callB_j)⟧`, with coins `s`. -/
+input and her ideal answer `⟦f_A(callA_j, callB_j)⟧`, with coins `s`.
+`H.simRunA S n xs ys m j s = S.runAt n (pairEncode (H.inA n xs (List.ofFn m.1) j) (List.ofFn (G.f n
+(H.callA n xs (List.ofFn m.1) j) (H.callB n ys (List.ofFn m.2) j)).1)) s`. -/
 def simRunA (S : NUPPT) (n : ℕ) (xs ys : List Bool) (m : H.Coins n) (j : Fin (H.calls.eval n))
     (s : S.Coins n) : List Bool :=
   S.runAt n (pairEncode (H.inA n xs (List.ofFn m.1) j)
     (List.ofFn (G.f n (H.callA n xs (List.ofFn m.1) j) (H.callB n ys (List.ofFn m.2) j)).1)) s
 
-/-- The defining equation of `simRunA` (see `simRunA`). -/
+/-- The defining equation of `simRunA` (see `simRunA`).
+`H.simRunA S n xs ys m j s = S.runAt n (pairEncode (H.inA n xs (List.ofFn m.1) j) (List.ofFn (G.f n
+(H.callA n xs (List.ofFn m.1) j) (H.callB n ys (List.ofFn m.2) j)).1)) s`. -/
 theorem simRunA_eq (S : NUPPT) (n : ℕ) (xs ys : List Bool) (m : H.Coins n)
     (j : Fin (H.calls.eval n)) (s : S.Coins n) :
     H.simRunA S n xs ys m j s =
@@ -87,7 +95,10 @@ theorem simRunA_eq (S : NUPPT) (n : ℕ) (xs ys : List Bool) (m : H.Coins n)
 
 /-- **Alice's sample from run words**: the assembled view (`asmView` with `ρ.P`'s coins, Bob's
 moves read, no leading filler) of the words `V`, her input `xs`, her `main`-tape and the hybrid
-main phase on the ideal answers, paired with Bob's output in that hybrid execution. -/
+main phase on the ideal answers, paired with Bob's output in that hybrid execution.
+`H.sampleA ρ n xs ys m V = pairEncode (asmView H.calls ρ.rounds ρ.P.coins ρ.verifierFirst true 0
+(List.replicate n true) xs (List.ofFn m.1) (Strategy.encodeMsgs (H.main.transcript (List.replicate n
+true) (H.privA n xs ys (List.ofFn m.1) …`. -/
 def sampleA (n : ℕ) (xs ys : List Bool) (m : H.Coins n) (V : ℕ → List Bool) : List Bool :=
   pairEncode (asmView H.calls ρ.rounds ρ.P.coins ρ.verifierFirst true 0 (List.replicate n true)
       xs (List.ofFn m.1) (Strategy.encodeMsgs (H.main.transcript (List.replicate n true)
@@ -96,7 +107,10 @@ def sampleA (n : ℕ) (xs ys : List Bool) (m : H.Coins n) (V : ℕ → List Bool
     (H.main.outV H.main.P (List.replicate n true) (H.privA n xs ys (List.ofFn m.1) (List.ofFn m.2))
       (H.privB n xs ys (List.ofFn m.1) (List.ofFn m.2)) m)
 
-/-- The defining equation of `sampleA` (see `sampleA`). -/
+/-- The defining equation of `sampleA` (see `sampleA`).
+`H.sampleA ρ n xs ys m V = pairEncode (asmView H.calls ρ.rounds ρ.P.coins ρ.verifierFirst true 0
+(List.replicate n true) xs (List.ofFn m.1) (Strategy.encodeMsgs (H.main.transcript (List.replicate n
+true) (H.privA n xs ys (List.ofFn m.1) …`. -/
 theorem sampleA_eq (n : ℕ) (xs ys : List Bool) (m : H.Coins n) (V : ℕ → List Bool) :
     H.sampleA ρ n xs ys m V =
       pairEncode (asmView H.calls ρ.rounds ρ.P.coins ρ.verifierFirst true 0
@@ -129,6 +143,9 @@ theorem realA_compose_sampleA {F : Functionality} (hM : ∀ n, 0 < H.main.rounds
 all inputs, run indices `i` and coordinates `a`, the template (`ComposeSim.tmplW`) of the header
 `⟨⟨1^n, ⟦x⟧⟩, ⟨⟦m.1⟧, main phase⟩⟩`, the run words of hybrid `i` before and after run `i`, and
 Bob's output in `main` has at most `q(n)` bits.
+`∃ q : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (i : Fin
+(H.calls.eval n)) (a : H.Coins n × (Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true) ×
+S.Coins n)), (tmplW (pairEncode (pairEncode …`.
 
 **Proof sketch.** The main phase and Bob's output are polynomially long (`exists_main_msgs_le`,
 `exists_main_outV_le`); every run word is a real view (`exists_viewP_le`), a simulator output on

@@ -71,6 +71,7 @@ theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
 /-- **Concatenating a chunk over a data-dependent range**: if the chunk `E z i` is a
 polynomial-time function of `⟨1^i, z⟩` and the count `n z` is a unary function, then
 `z ↦ E z 0 ++ ⋯ ++ E z (n z − 1)` is polynomial-time.
+`PolyTimeComputable fun z => (List.range (n z)).flatMap (E z)`.
 
 **Proof sketch.** An instance of `Complexity.polyTimeComputable_iterateEmit` on the counter step
 `EncodingMachines.cstep` from `⟨[], z⟩`, whose `i`-th iterate is `⟨1^i, z⟩` (`cstep_iterate`),
@@ -107,6 +108,7 @@ theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
 
 /-- **The iterated second projection** `pairSndD^[i z] (s z)` is polynomial-time for a
 polynomial-time `s` and a unary count `i`.
+`PolyTimeComputable fun z => pairSndD^[i z] (s z)`.
 
 **Proof sketch.** `GI.iterUnary_poly` with the step `⟨x₀, s⟩ ↦ pairSndD s` on
 `⟨1^{i z}, s z⟩`; peeling never lengthens a word (`GI.length_iterate_le`,
@@ -228,7 +230,8 @@ theorem padTo_eq (L : ℕ) (w : List Bool) : padTo L w = (w ++ List.replicate L 
   rfl
 
 /-- Padding to a unary length is polynomial-time (`EncodingMachines.truncate_poly`, the zeros
-`GI.zeros_poly` of the unary string). -/
+`GI.zeros_poly` of the unary string).
+`PolyTimeComputable fun x => padTo (L x) (s x)`. -/
 theorem padTo_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
     {L : List Bool → ℕ} (hL : PolyTimeComputable fun x => List.replicate (L x) true) :
     PolyTimeComputable fun x => padTo (L x) (s x) :=

@@ -68,7 +68,8 @@ theorem moverW_eq (vF b : Bool) (w : List Bool) :
 
 /-- The mover test is polynomial-time: the parity of the unary length `|fst w|`
 (`EncodingMachines.modNum_poly`, `eqTest_poly`), compared with constants
-(`Complexity.polyTimeComputable_ite`). -/
+(`Complexity.polyTimeComputable_ite`).
+`PolyTimeComputable (moverW vF b)`. -/
 theorem polyTimeComputable_moverW (vF b : Bool) : PolyTimeComputable (moverW vF b) := by
   have hpar : PolyTimeComputable fun w =>
       [decide (modNum (pairFstD w).length 2 = (if vF then 0 else 1))] :=
@@ -109,7 +110,10 @@ def runW (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr) (vF b : Boo
           (pairFstD u).length * c.eval (GI.argX (pairSndD (pairSndD u))).length)).take
       (c.eval (GI.argX (pairSndD (pairSndD u))).length)))
 
-/-- The defining equation of `runW` (see `runW`). -/
+/-- The defining equation of `runW` (see `runW`).
+`runW Fρ fcall c₀ c R vF b u = Fρ (NUPPT.layout (List.replicate (GI.argX (pairSndD (pairSndD
+u))).length true) (pairEncode (pairEncode (GI.argX (pairSndD (pairSndD u))) (fcall (pairEncode
+(List.replicate (GI.argX (pairSndD (pairSndD …`. -/
 theorem runW_eq (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr) (vF b : Bool)
     (u : List Bool) :
     runW Fρ fcall c₀ c R vF b u =
@@ -149,6 +153,7 @@ theorem runW_ilayout (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr)
     Compose.runTape_eq]
 
 /-- **`runW` is polynomial-time** when `Fρ` and `fcall` are.
+`PolyTimeComputable (runW Fρ fcall c₀ c R vF b)`.
 
 **Proof sketch.** The layout is assembled (`NUPPT.polyTimeComputable_layout`) from the slot
 projections, the unary polynomials `c₀(n)`, `c(n)`, `R(n)` (`unaryPoly_comp`), the call input
@@ -209,7 +214,10 @@ def ansW (Fρ fcall : List Bool → List Bool) (c₀ c R L out : PolyExpr) (vF b
       (pairEncode (List.replicate j true)
         (pairEncode (List.replicate (R.eval (GI.argX w).length) true) w)))
 
-/-- The defining equation of `ansW` (see `ansW`). -/
+/-- The defining equation of `ansW` (see `ansW`).
+`ansW Fρ fcall c₀ c R L out vF b w = (List.range (L.eval (GI.argX w).length)).flatMap fun j => padTo
+(out.eval (GI.argX w).length) (runW Fρ fcall c₀ c R vF b (pairEncode (List.replicate j true)
+(pairEncode (List.replicate (R.eval (GI.argX …`. -/
 theorem ansW_eq (Fρ fcall : List Bool → List Bool) (c₀ c R L out : PolyExpr) (vF b : Bool)
     (w : List Bool) :
     ansW Fρ fcall c₀ c R L out vF b w =
@@ -219,7 +227,8 @@ theorem ansW_eq (Fρ fcall : List Bool → List Bool) (c₀ c R L out : PolyExpr
             (pairEncode (List.replicate (R.eval (GI.argX w).length) true) w))) := rfl
 
 /-- **The answers are polynomial-time** (`polyTimeComputable_flatMap_range` over the unary count
-`L(n)`, with the chunk `padTo_poly` of `polyTimeComputable_runW`). -/
+`L(n)`, with the chunk `padTo_poly` of `polyTimeComputable_runW`).
+`PolyTimeComputable (ansW Fρ fcall c₀ c R L out vF b)`. -/
 theorem polyTimeComputable_ansW {Fρ fcall : List Bool → List Bool} (hFρ : PolyTimeComputable Fρ)
     (hcall : PolyTimeComputable fcall) (c₀ c R L out : PolyExpr) (vF b : Bool) :
     PolyTimeComputable (ansW Fρ fcall c₀ c R L out vF b) := by
@@ -248,7 +257,10 @@ def mainW (Fm ans : List Bool → List Bool) (d : List Bool → ℕ) (c₀ : Pol
       (pairSndD^[d w] (GI.argM w)))
     [] ((NUPPT.inCoins w).take (c₀.eval (GI.argX w).length)))
 
-/-- The defining equation of `mainW` (see `mainW`). -/
+/-- The defining equation of `mainW` (see `mainW`).
+`mainW Fm ans d c₀ w = Fm (NUPPT.layout (List.replicate (GI.argX w).length true) (pairEncode
+(pairEncode (GI.argX w) (pairEncode (GI.argZ w) (ans w))) (pairSndD^[d w] (GI.argM w))) []
+((NUPPT.inCoins w).take (c₀.eval (GI.argX w).length)))`. -/
 theorem mainW_eq (Fm ans : List Bool → List Bool) (d : List Bool → ℕ) (c₀ : PolyExpr)
     (w : List Bool) :
     mainW Fm ans d c₀ w =
@@ -269,7 +281,8 @@ theorem mainW_ilayout (Fm ans : List Bool → List Bool) (d : List Bool → ℕ)
     GI.iterate_pairSndD_encodeMsgs, GI.ilayout_def, GI.ilayout_def]
 
 /-- **`mainW` is polynomial-time** when `Fm`, the answers and the unary drop count are
-(`iterSnd_poly`, `EncodingMachines.truncate_poly`). -/
+(`iterSnd_poly`, `EncodingMachines.truncate_poly`).
+`PolyTimeComputable (mainW Fm ans d c₀)`. -/
 theorem polyTimeComputable_mainW {Fm ans : List Bool → List Bool} (hFm : PolyTimeComputable Fm)
     (hans : PolyTimeComputable ans) {d : List Bool → ℕ}
     (hd : PolyTimeComputable fun w => List.replicate (d w) true) (c₀ : PolyExpr) :
@@ -340,7 +353,10 @@ def composePW (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) : List Bo
       ρ.verifierFirst true)
     (fun w => H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length) H.main.P.coins w
 
-/-- The defining equation of `composePW` (see `composePW`). -/
+/-- The defining equation of `composePW` (see `composePW`).
+`H.composePW ρ Fρ Fm fcall w = if decide (GI.msgCount (GI.argM w) < H.calls.eval (GI.argX w).length
+* ρ.rounds.eval (GI.argX w).length) then if moverIsV ρ.verifierFirst (GI.msgCount (GI.argM w) %
+ρ.rounds.eval (GI.argX w).length) then [] …`. -/
 theorem composePW_eq (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) :
     H.composePW ρ Fρ Fm fcall w =
       if decide (GI.msgCount (GI.argM w) <
@@ -380,7 +396,10 @@ def composeVW (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) : List Bo
     (fun w => H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length + H.lead)
     H.main.V.coins w
 
-/-- The defining equation of `composeVW` (see `composeVW`). -/
+/-- The defining equation of `composeVW` (see `composeVW`).
+`H.composeVW ρ Fρ Fm fcall w = if decide (GI.msgCount (GI.argM w) - 1 < H.calls.eval (GI.argX
+w).length * ρ.rounds.eval (GI.argX w).length) then if moverIsV ρ.verifierFirst ((GI.msgCount
+(GI.argM w) - 1) % ρ.rounds.eval (GI.argX w).length) …`. -/
 theorem composeVW_eq (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) :
     H.composeVW ρ Fρ Fm fcall w =
       if decide (GI.msgCount (GI.argM w) - 1 <
@@ -499,6 +518,7 @@ theorem composeV_next_eq_composeVW {Fρ Fm fcall : List Bool → List Bool}
     rw [ofFn_padFin, hrun _ _ (List.mem_range.1 hj), runW_ilayout]
 
 /-- **`composePW` is polynomial-time** when `Fρ`, `Fm` and `fcall` are.
+`PolyTimeComputable (H.composePW ρ Fρ Fm fcall)`.
 
 **Proof sketch.** Three branches (`Complexity.polyTimeComputable_ite`) on unary tests of the
 message count (`GI.msgCount_poly`) against `L(n)·R(n)` (`ltTest_poly`, `eqTest_poly`), the
@@ -537,6 +557,7 @@ theorem polyTimeComputable_composePW {Fρ Fm fcall : List Bool → List Bool}
     fun w => (H.composePW_eq ρ Fρ Fm fcall w).symm
 
 /-- **`composeVW` is polynomial-time** when `Fρ`, `Fm` and `fcall` are.
+`PolyTimeComputable (H.composeVW ρ Fρ Fm fcall)`.
 
 **Proof sketch.** As `polyTimeComputable_composePW`, with the count `k − 1` (`unarySub_poly`),
 two branches in the run phase and the drop count `L(n)·R(n) + lead` (`unaryAdd_poly`). -/

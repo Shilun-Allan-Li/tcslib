@@ -47,14 +47,16 @@ namespace HybridProtocol
 
 variable {G : Functionality} (H : HybridProtocol G)
 
-/-- Alice's ideal answers have `calls(n) · G.outA(n)` bits. -/
+/-- Alice's ideal answers have `calls(n) · G.outA(n)` bits.
+`(H.answersA n x y rA rB).length = H.calls.eval n * G.outA.eval n`. -/
 theorem length_answersA (n : ℕ) (x y rA rB : List Bool) :
     (H.answersA n x y rA rB).length = H.calls.eval n * G.outA.eval n := by
   rw [answersA_eq, List.length_flatten, List.map_ofFn]
   simp only [Function.comp_def, List.length_ofFn, List.ofFn_const, List.sum_replicate,
     smul_eq_mul]
 
-/-- Bob's ideal answers have `calls(n) · G.outB(n)` bits. -/
+/-- Bob's ideal answers have `calls(n) · G.outB(n)` bits.
+`(H.answersB n x y rA rB).length = H.calls.eval n * G.outB.eval n`. -/
 theorem length_answersB (n : ℕ) (x y rA rB : List Bool) :
     (H.answersB n x y rA rB).length = H.calls.eval n * G.outB.eval n := by
   rw [answersB_eq, List.length_flatten, List.map_ofFn]
@@ -64,6 +66,9 @@ theorem length_answersB (n : ℕ) (x y rA rB : List Bool) :
 /-- **The encoded main phase is polynomially long**: for some polynomial `E`, on common input
 `1^n`, inputs of `F`'s lengths and any `main`-tapes, both halves of the encoded transcript of
 `main` on the ideal answers have at most `E(n)` bits.
+`∃ E : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (m : H.Coins
+n), (Strategy.encodeMsgs (H.main.transcript (List.replicate n true) (H.privA n (List.ofFn x)
+(List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) …`.
 
 **Proof sketch.** The ideal answers are strings of the hybrid lengths (`length_answersA`,
 `length_answersB`), so `H.PolyTime` bounds every message by `B(n)`; each half of the transcript
@@ -108,6 +113,9 @@ theorem exists_main_msgs_le {F : Functionality} (hH : H.PolyTime F) :
 /-- **Bob's output in `main` is polynomially long**: for some polynomial `O`, on common input
 `1^n`, inputs of `F`'s lengths and any `main`-tapes, Bob's output in the hybrid execution has at
 most `O(n)` bits.
+`∃ O : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (m : H.Coins
+n), (H.main.outV H.main.P (List.replicate n true) (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn
+m.1) (List.ofFn m.2)) (H.privB n …`.
 
 **Proof sketch.** The output is `main.V.next` on `1^n`, Bob's private input, the messages he
 received and his `main`-tape (`Protocol.outV_eq`), at most `C (|layout| + 1)^c` bits
@@ -157,6 +165,9 @@ theorem exists_main_outV_le {F : Functionality} (hH : H.PolyTime F) :
 /-- **Alice's output in `main` is polynomially long**: for some polynomial `O`, on common input
 `1^n`, inputs of `F`'s lengths and any `main`-tapes, Alice's output in the hybrid execution has
 at most `O(n)` bits.
+`∃ O : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (m : H.Coins
+n), (H.main.outP (List.replicate n true) (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1)
+(List.ofFn m.2)) (H.privB n (List.ofFn x) …`.
 
 **Proof sketch.** As `exists_main_outV_le`, with `main.P.next` on her private input
 (`length_answersA`), the messages she received and her `main`-tape (`Protocol.outP_eq`). -/

@@ -56,7 +56,9 @@ def hybV (real : M → Fin L → X → List Bool) (sim : M → Fin L → S → L
     (if j < i then sim ω.1 ⟨j, h⟩ (ω.2 ⟨j, h⟩).2 else real ω.1 ⟨j, h⟩ (ω.2 ⟨j, h⟩).1)
   else []
 
-/-- The defining equation of `hybV` (see `hybV`). -/
+/-- The defining equation of `hybV` (see `hybV`).
+`hybV real sim i ω j = if h : j < L then (if j < i then sim ω.1 ⟨j, h⟩ (ω.2 ⟨j, h⟩).2 else real ω.1
+⟨j, h⟩ (ω.2 ⟨j, h⟩).1) else []`. -/
 theorem hybV_eq (real : M → Fin L → X → List Bool) (sim : M → Fin L → S → List Bool) (i : ℕ)
     (ω : M × (Fin L → X × S)) (j : ℕ) :
     hybV real sim i ω j =
@@ -70,7 +72,8 @@ def plugV (real : M → Fin L → X → List Bool) (sim : M → Fin L → S → 
     (a : M × (Fin L → X × S)) (v : List Bool) (j : ℕ) : List Bool :=
   if j = i then v else hybV real sim i a j
 
-/-- The defining equation of `plugV` (see `plugV`). -/
+/-- The defining equation of `plugV` (see `plugV`).
+`plugV real sim i a v j = if j = i then v else hybV real sim i a j`. -/
 theorem plugV_eq (real : M → Fin L → X → List Bool) (sim : M → Fin L → S → List Bool) (i : ℕ)
     (a : M × (Fin L → X × S)) (v : List Bool) (j : ℕ) :
     plugV real sim i a v j = if j = i then v else hybV real sim i a j := rfl

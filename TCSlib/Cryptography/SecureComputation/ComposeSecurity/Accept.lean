@@ -52,7 +52,9 @@ followed by the second (`Fin.appendEquiv`). -/
 def appendCoins {a b c : ℕ} (h : c = a + b) : (Fin a → Bool) × (Fin b → Bool) ≃ (Fin c → Bool) :=
   (Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool))
 
-/-- The defining equation of `appendCoins` (see `appendCoins`). -/
+/-- The defining equation of `appendCoins` (see `appendCoins`).
+`appendCoins h = (Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl
+Bool))`. -/
 theorem appendCoins_eq {a b c : ℕ} (h : c = a + b) :
     appendCoins h =
       (Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool)) := rfl
@@ -63,12 +65,14 @@ theorem ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool) (v :
   rw [appendCoins_eq, Equiv.trans_apply, ofFn_arrowCongr_finCongr]
   exact List.ofFn_fin_append u v
 
-/-- The first `a` bits of `appendCoins h (u, v)` are `u`. -/
+/-- The first `a` bits of `appendCoins h (u, v)` are `u`.
+`(List.ofFn (appendCoins h (u, v))).take a = List.ofFn u`. -/
 theorem take_ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool) (v : Fin b → Bool) :
     (List.ofFn (appendCoins h (u, v))).take a = List.ofFn u := by
   rw [ofFn_appendCoins, List.take_left' List.length_ofFn]
 
-/-- The bits of `appendCoins h (u, v)` after the first `a` are `v`. -/
+/-- The bits of `appendCoins h (u, v)` after the first `a` are `v`.
+`(List.ofFn (appendCoins h (u, v))).drop a = List.ofFn v`. -/
 theorem drop_ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool) (v : Fin b → Bool) :
     (List.ofFn (appendCoins h (u, v))).drop a = List.ofFn v := by
   rw [ofFn_appendCoins, List.drop_left' List.length_ofFn]
@@ -78,7 +82,9 @@ theorem drop_ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool)
 def blocksCoins {m q b : ℕ} (h : m = q * b) : (Fin q → Fin b → Bool) ≃ (Fin m → Bool) :=
   (FunFamily.blocks q b).symm.trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool))
 
-/-- The defining equation of `blocksCoins` (see `blocksCoins`). -/
+/-- The defining equation of `blocksCoins` (see `blocksCoins`).
+`blocksCoins h = (FunFamily.blocks q b).symm.trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl
+Bool))`. -/
 theorem blocksCoins_eq {m q b : ℕ} (h : m = q * b) :
     blocksCoins h =
       (FunFamily.blocks q b).symm.trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool)) :=

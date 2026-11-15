@@ -70,7 +70,8 @@ theorem distAdv_le_uprob_of_eq [Nonempty ρ] (X Y : σ → γ) (D : γ → ρ �
   exact abs_uprob_sub_le fun z hz => by rw [h z.1 hz]
 
 /-- **Acceptance as an average of sections**: `acceptProb X D` is the average over `a : σ` of
-the acceptance probability of the section `t ↦ X (a, t)` (`uprob_prod` after reassociating). -/
+the acceptance probability of the section `t ↦ X (a, t)` (`uprob_prod` after reassociating).
+`acceptProb X D = uexp fun a => acceptProb (fun t => X (a, t)) D`. -/
 theorem acceptProb_eq_uexp_sections (X : σ × τ → γ) (D : γ → ρ → Bool) :
     acceptProb X D = uexp fun a => acceptProb (fun t => X (a, t)) D := by
   rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc σ τ ρ).symm, uprob_prod]
@@ -102,6 +103,7 @@ theorem exists_abs_sub_le_sections [Nonempty σ] (X Y : σ × τ → γ) (D : γ
 
 /-- **A negligible function times a polynomial is negligible**: for `p : PolyExpr`,
 `n ↦ p(n) · μ(n)` is negligible.
+`Negligible fun n => (p.eval n : ℝ) * μ n`.
 
 **Proof sketch.** `p(n) ≤ C (n + 1)^c ≤ C 2^c n^c` for `n ≥ 1` (`PolyExpr.eval_le`), and
 `n ↦ (C 2^c) (n^c μ(n))` is negligible (`Negligible.mul_pow`, `Negligible.const_mul`). -/

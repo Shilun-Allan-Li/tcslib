@@ -44,12 +44,16 @@ open Finset Complexity Turing TCSlib.Cryptography ComposeProb ComposeMachines
 
 /-- **The template of a hybrid step**: `⟨⟨hdr, encodeMsgs pre⟩, ⟨encodeMsgs suf, out⟩⟩` for the
 header `hdr`, the words `pre` of the runs before the attacked one, the words `suf` of those
-after it and the output `out`. -/
+after it and the output `out`.
+`tmplW hdr pre suf out = pairEncode (pairEncode hdr (Strategy.encodeMsgs pre)) (pairEncode
+(Strategy.encodeMsgs suf) out)`. -/
 def tmplW (hdr : List Bool) (pre suf : List (List Bool)) (out : List Bool) : List Bool :=
   pairEncode (pairEncode hdr (Strategy.encodeMsgs pre))
     (pairEncode (Strategy.encodeMsgs suf) out)
 
-/-- The defining equation of `tmplW` (see `tmplW`). -/
+/-- The defining equation of `tmplW` (see `tmplW`).
+`tmplW hdr pre suf out = pairEncode (pairEncode hdr (Strategy.encodeMsgs pre)) (pairEncode
+(Strategy.encodeMsgs suf) out)`. -/
 theorem tmplW_eq (hdr : List Bool) (pre suf : List (List Bool)) (out : List Bool) :
     tmplW hdr pre suf out =
       pairEncode (pairEncode hdr (Strategy.encodeMsgs pre))
@@ -65,7 +69,10 @@ def hybW (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) (z : List Bool
             (pairFstD z)))))))
     (pairSndD (pairSndD (pairSndD (pairFstD z))))
 
-/-- The defining equation of `hybW` (see `hybW`). -/
+/-- The defining equation of `hybW` (see `hybW`).
+`hybW calls rounds cρ vF b lead z = pairEncode (asmW calls rounds cρ vF b lead (pairEncode (pairFstD
+(pairFstD (pairSndD (pairFstD z)))) (pairSndD (pairFstD (pairSndD (pairFstD z))) ++ pairEncode
+(pairFstD (pairFstD (pairSndD z))) (pairFstD …`. -/
 theorem hybW_eq (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) (z : List Bool) :
     hybW calls rounds cρ vF b lead z =
       pairEncode (asmW calls rounds cρ vF b lead
@@ -87,7 +94,8 @@ theorem hybW_tmplW (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ)
   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- **The pre-processing is polynomial-time** (`polyTimeComputable_asmW` after projections,
-`append` and `pairEncode`). -/
+`append` and `pairEncode`).
+`PolyTimeComputable (hybW calls rounds cρ vF b lead)`. -/
 theorem polyTimeComputable_hybW (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) :
     PolyTimeComputable (hybW calls rounds cρ vF b lead) := by
   have hβ : PolyTimeComputable fun z => pairSndD (pairFstD z) :=

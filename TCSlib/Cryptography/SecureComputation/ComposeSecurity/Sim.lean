@@ -82,7 +82,9 @@ def vlW (w : List Bool) : List Bool :=
   (List.range (calls.eval (pairFstD (pairFstD w)).length)).flatMap fun j =>
     pairEncode (simV Sρ fcall out (pairEncode (List.replicate j true) w)) []
 
-/-- The defining equation of `vlW` (see `vlW`). -/
+/-- The defining equation of `vlW` (see `vlW`).
+`vlW Sρ fcall calls out w = (List.range (calls.eval (pairFstD (pairFstD w)).length)).flatMap fun j
+=> pairEncode (simV Sρ fcall out (pairEncode (List.replicate j true) w)) []`. -/
 theorem vlW_eq (w : List Bool) :
     vlW Sρ fcall calls out w =
       (List.range (calls.eval (pairFstD (pairFstD w)).length)).flatMap fun j =>
@@ -99,7 +101,10 @@ def phiV (w : List Bool) : List Bool :=
         (pairSndD (pairSndD (pairFstD (pairSndD w))))))
       (vlW Sρ fcall calls out w))
 
-/-- The defining equation of `phiV` (see `phiV`). -/
+/-- The defining equation of `phiV` (see `phiV`).
+`phiV Sρ fcall calls rounds cρ out vF b lead w = asmW calls rounds cρ vF b lead (pairEncode
+(pairEncode (pairEncode (pairFstD (pairFstD (pairFstD (pairSndD w)))) (pairFstD (pairSndD (pairFstD
+(pairFstD (pairSndD w)))))) (pairEncode …`. -/
 theorem phiV_eq (w : List Bool) :
     phiV Sρ fcall calls rounds cρ out vF b lead w =
       asmW calls rounds cρ vF b lead
@@ -183,7 +188,8 @@ theorem polyTimeComputable_simV (hcall : PolyTimeComputable fcall) :
     (GI.coinSlice_poly Sρ.coins hu polyTimeComputable_pairFstD hs))).congr fun v => rfl
 
 /-- **`vlW` is polynomial-time** (`ComposeMachines.polyTimeComputable_flatMap_range` of
-`polyTimeComputable_simV` over the unary count `calls(n)`). -/
+`polyTimeComputable_simV` over the unary count `calls(n)`).
+`PolyTimeComputable (vlW Sρ fcall calls out)`. -/
 theorem polyTimeComputable_vlW (hcall : PolyTimeComputable fcall) :
     PolyTimeComputable (vlW Sρ fcall calls out) := by
   have hchunk : PolyTimeComputable fun v =>
@@ -197,7 +203,8 @@ theorem polyTimeComputable_vlW (hcall : PolyTimeComputable fcall) :
     (unaryPolyOf_poly calls (unaryLength_poly (polyTimeComputable_pairFstD.comp'
       polyTimeComputable_pairFstD)))).congr fun w => (vlW_eq Sρ fcall calls out w).symm
 
-/-- **`phiV` is polynomial-time** (`polyTimeComputable_asmW` after projections and `vlW`). -/
+/-- **`phiV` is polynomial-time** (`polyTimeComputable_asmW` after projections and `vlW`).
+`PolyTimeComputable (phiV Sρ fcall calls rounds cρ out vF b lead)`. -/
 theorem polyTimeComputable_phiV (hcall : PolyTimeComputable fcall) :
     PolyTimeComputable (phiV Sρ fcall calls rounds cρ out vF b lead) := by
   have hhv : PolyTimeComputable fun w => pairFstD (pairSndD w) :=
@@ -211,7 +218,8 @@ theorem polyTimeComputable_phiV (hcall : PolyTimeComputable fcall) :
         (polyTimeComputable_pairSndD.comp' hv2))).pairEncode
       (polyTimeComputable_vlW Sρ calls out hcall))).congr fun w => rfl
 
-/-- **`phiD` is polynomial-time** (`polyTimeComputable_phiV` after re-pairing). -/
+/-- **`phiD` is polynomial-time** (`polyTimeComputable_phiV` after re-pairing).
+`PolyTimeComputable (phiD Sρ fcall calls rounds cρ out vF b lead)`. -/
 theorem polyTimeComputable_phiD (hcall : PolyTimeComputable fcall) :
     PolyTimeComputable (phiD Sρ fcall calls rounds cρ out vF b lead) := by
   have hsmp : PolyTimeComputable fun w => pairFstD (pairSndD w) :=

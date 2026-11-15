@@ -129,12 +129,14 @@ namespace HybridProtocol
 
 variable {G : Functionality} (H : HybridProtocol G) (ρ : Protocol)
 
-/-- Alice's input to a call `j : Fin calls(n)` is `⟦callA(n, zA, rA, j)⟧` (`inA_eq`). -/
+/-- Alice's input to a call `j : Fin calls(n)` is `⟦callA(n, zA, rA, j)⟧` (`inA_eq`).
+`H.inA n zA rA j = List.ofFn (H.callA n zA rA j)`. -/
 theorem inA_val (n : ℕ) (zA rA : List Bool) (j : Fin (H.calls.eval n)) :
     H.inA n zA rA j = List.ofFn (H.callA n zA rA j) := by
   rw [inA_eq, dif_pos j.2]
 
-/-- Bob's input to a call `j : Fin calls(n)` is `⟦callB(n, zB, rB, j)⟧` (`inB_eq`). -/
+/-- Bob's input to a call `j : Fin calls(n)` is `⟦callB(n, zB, rB, j)⟧` (`inB_eq`).
+`H.inB n zB rB j = List.ofFn (H.callB n zB rB j)`. -/
 theorem inB_val (n : ℕ) (zB rB : List Bool) (j : Fin (H.calls.eval n)) :
     H.inB n zB rB j = List.ofFn (H.callB n zB rB j) := by
   rw [inB_eq, dif_pos j.2]
@@ -143,6 +145,8 @@ theorem inB_val (n : ℕ) (zB rB : List Bool) (j : Fin (H.calls.eval n)) :
 `G`'s lengths makes a party's `ρ`-output wrong with probability at most `ε_c`, then over the
 `main`-tapes and the run tapes some run gives a wrong answer with probability at most
 `calls(n) · ε_c`.
+`uprob (fun z : H.Coins n × (Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) => ¬
+H.GoodRuns ρ n zA zB z.1 z.2) ≤ H.calls.eval n * εc`.
 
 **Proof sketch.** `¬ GoodRuns` is the union over the calls `j` of the event that run `j`'s
 outputs are wrong (`goodRuns_iff`; `uprob_exists_le`). For fixed `main`-tapes `m` that event

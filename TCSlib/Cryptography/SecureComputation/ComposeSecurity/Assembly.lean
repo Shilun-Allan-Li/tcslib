@@ -116,7 +116,9 @@ def segW (vF b : Bool) (R : ℕ) (e : List Bool) : List Bool :=
   (List.range R).flatMap fun p =>
     pairEncode (if moverIsV vF p == b then pairFstD (pairSndD^[p / 2] e) else []) []
 
-/-- The defining equation of `segW` (see `segW`). -/
+/-- The defining equation of `segW` (see `segW`).
+`segW vF b R e = (List.range R).flatMap fun p => pairEncode (if moverIsV vF p == b then pairFstD
+(pairSndD^[p / 2] e) else []) []`. -/
 theorem segW_eq (vF b : Bool) (R : ℕ) (e : List Bool) :
     segW vF b R e = (List.range R).flatMap fun p =>
       pairEncode (if moverIsV vF p == b then pairFstD (pairSndD^[p / 2] e) else []) [] := rfl
@@ -154,7 +156,10 @@ def asmView (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) (x₁ xin m
           segW vF b (rounds.eval x₁.length) (pairSndD (pairSndD (V j)))) ++
         Strategy.encodeMsgs (List.replicate lead []) ++ me))
 
-/-- The defining equation of `asmView` (see `asmView`). -/
+/-- The defining equation of `asmView` (see `asmView`).
+`asmView calls rounds cρ vF b lead x₁ xin mt me V = pairEncode (pairEncode x₁ xin) (pairEncode (mt
+++ (List.range (calls.eval x₁.length)).flatMap fun j => padTo (cρ.eval x₁.length) (pairFstD
+(pairSndD (V j)))) ((List.range (calls.eval …`. -/
 theorem asmView_eq (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ)
     (x₁ xin mt me : List Bool) (V : ℕ → List Bool) :
     asmView calls rounds cρ vF b lead x₁ xin mt me V =
@@ -192,7 +197,10 @@ def asmW (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) (w : List Bool
     (pairSndD (pairFstD (pairFstD w))) (pairFstD (pairSndD (pairFstD w)))
     (pairSndD (pairSndD (pairFstD w))) fun j => pairFstD (pairSndD^[j] (pairSndD w))
 
-/-- The defining equation of `asmW` (see `asmW`). -/
+/-- The defining equation of `asmW` (see `asmW`).
+`asmW calls rounds cρ vF b lead w = asmView calls rounds cρ vF b lead (pairFstD (pairFstD (pairFstD
+w))) (pairSndD (pairFstD (pairFstD w))) (pairFstD (pairSndD (pairFstD w))) (pairSndD (pairSndD
+(pairFstD w))) fun j => pairFstD …`. -/
 theorem asmW_eq (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) (w : List Bool) :
     asmW calls rounds cρ vF b lead w =
       asmView calls rounds cρ vF b lead (pairFstD (pairFstD (pairFstD w)))
