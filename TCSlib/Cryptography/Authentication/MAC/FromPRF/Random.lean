@@ -1,0 +1,155 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Authentication.MAC.FromPRF.Reduction
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Tools
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Forging against a random function
+
+Step 4 of the proof of [PS10, Theorem 135.4]: against a uniform random function `R`, a forgery
+`(m, σ)` with `m` never queried is a guess of the value `R m`, which is uniform and independent of
+everything the forger saw, so every forger (whatever its number of queries) forges with probability
+at most `2^{-t}` for `t`-bit tags (`expect_fnForge_random_le`).
+
+The proof samples `R` lazily along the run, with the table override `ETTGame.ovr` of the
+encrypt-then-tag proof: a new query `x` reads `R x`, which `ETTGame.expect_sample_ovr` moves into
+the table; a repeated query reads the table. Every table key is a queried message, so at the end a
+fresh message is not a key, and its value is `R` there, uniform (`expect_sample_coord`,
+`expect_sample_mem_le`).
+
+## Main results
+
+* `PRFMAC.expect_fnForge_random_le`: the forgery probability against a random function is at most
+  `2^{-t}` (checkpoint 2).
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+  Theorem 135.4 (book p. 135).
+-/
+
+namespace TCSlib.Cryptography.Authentication.PRFMAC
+
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp
+open TCSlib.Cryptography.Composability.ETTGame (ovr ovr_nil ovr_of_mem ovr_of_not_mem
+  expect_sample_ovr)
+
+variable {a b : ℕ}
+
+/-- A fresh message's value under a random function is a guess: for an output `w` whose message is
+no key of the table `M` and was not queried, the forgery probability against `ovr M R`, averaged
+over a uniform `R`, is at most `2^{-b}`; a queried message is no forgery:
+`𝔼_R [FnForge (ovr M R) w log] ≤ 2^{-b}` when every key of `M` is queried.
+
+**Proof sketch.** If the message `m = (splitBits w).1` was queried, there is no forgery
+(`mem_queried`). Otherwise it is no key of `M`, so `ovr M R m = R m` (`ovr_of_not_mem`) and a
+forgery needs `R m = σ`; the coordinate `R m` of a uniform table is uniform
+(`expect_sample_coord`), and hits the one value `σ` with probability `1 / 2^b`
+(`expect_sample_mem_le`, `Fintype.card_fun`). This re-derives, from the published `ovr` readers,
+the fresh-point case of the private `ETTGame.expect_hitW_le` (disclosed). -/
+private theorem expect_forge_pure_le (w : Fin (a + b) → Bool)
+    (M : List ((Fin a → Bool) × (Fin b → Bool)))
+    (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b)))
+    (hM : ∀ p ∈ M.map Prod.fst, p ∈ queried log) :
+    expect (sample ((Fin a → Bool) → (Fin b → Bool)))
+        (fun R => if FnForge (ovr M R) w log then (1 : ℝ) else 0) ≤ ((2 : ℝ) ^ b)⁻¹ := by
+  have hδ : (0 : ℝ) ≤ ((2 : ℝ) ^ b)⁻¹ := by positivity
+  by_cases hq : (splitBits w).1 ∈ queried log
+  · have h0 : (fun R => if FnForge (ovr M R) w log then (1 : ℝ) else 0) = fun _ => 0 := by
+      funext R
+      refine if_neg fun h => ?_
+      obtain ⟨e, he, hem⟩ := (mem_queried log _).1 hq
+      exact ((fnForge_iff _ _ _).1 h).2 e he hem
+    rw [h0, expect_const]
+    exact hδ
+  · have hk : (splitBits w).1 ∉ M.map Prod.fst := fun h => hq (hM _ h)
+    have hle : ∀ R : (Fin a → Bool) → (Fin b → Bool),
+        (if FnForge (ovr M R) w log then (1 : ℝ) else 0) ≤
+          if R (splitBits w).1 ∈ [(splitBits w).2] then 1 else 0 := by
+      intro R
+      by_cases h : FnForge (ovr M R) w log
+      · rw [if_pos h, if_pos]
+        rw [List.mem_singleton, ← ovr_of_not_mem hk R]
+        exact ((fnForge_iff _ _ _).1 h).1
+      · rw [if_neg h]
+        split <;> norm_num
+    refine (expect_mono _ hle).trans ?_
+    rw [expect_sample_coord (splitBits w).1 (fun y (_ : (Fin a → Bool) → (Fin b → Bool)) =>
+      if y ∈ [(splitBits w).2] then (1 : ℝ) else 0) (fun _ _ _ => rfl)]
+    simp only [expect_const]
+    refine (expect_sample_mem_le _).trans (le_of_eq ?_)
+    rw [List.length_singleton, Fintype.card_fun, Fintype.card_fin, Fintype.card_bool]
+    push_cast
+    rw [one_div]
+
+/-- **Lazy forging against a random function:** from a log `log` and a table `M` whose keys are
+all queried, the forgery probability against `ovr M R`, averaged over a uniform `R`, is at most
+`2^{-b}`:
+`𝔼_R Pr[FnForge (ovr M R) | simulate (fnImpl (ovr M R)).withLog c ((), log)] ≤ 2^{-b}`.
+
+**Proof sketch.** Induction on `c`. A return is `expect_forge_pure_le`. A query `x` that is a key
+reads the table (`ovr_of_mem`); the continuation starts from the longer log with the same table. A
+new query reads `R x` (`ovr_of_not_mem`), which `expect_sample_ovr` moves into the table as a
+uniform `y`; the new key `x` is queried, and the continuation's bound holds for every `y`. -/
+private theorem expect_forge_ovr_le
+    (c : OracleComp (bitSpec (fun _ : Fin 1 => a) (fun _ => b)) (Fin (a + b) → Bool))
+    (M : List ((Fin a → Bool) × (Fin b → Bool)))
+    (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b)))
+    (hM : ∀ p ∈ M.map Prod.fst, p ∈ queried log) :
+    expect (sample ((Fin a → Bool) → (Fin b → Bool))) (fun R =>
+      expect (simulate (fnImpl (ovr M R)).withLog c ((), log))
+        (fun res => if FnForge (ovr M R) res.1 res.2.2 then (1 : ℝ) else 0)) ≤
+      ((2 : ℝ) ^ b)⁻¹ := by
+  induction c generalizing M log with
+  | pure w =>
+    simp only [simulate_pure, expect_pure]
+    exact expect_forge_pure_le w M log hM
+  | query i x k ih =>
+    simp only [simulate_query, QueryImpl.withLog_apply, fnImpl_apply, OracleComp.pure_bind]
+    by_cases hx : x ∈ M.map Prod.fst
+    · have e : ∀ R : (Fin a → Bool) → (Fin b → Bool),
+          ovr M R x = ovr M (fun _ _ => false) x := fun R => ovr_of_mem hx R _
+      simp only [e]
+      refine ih _ M _ fun p hp => ?_
+      rw [queried_append]
+      exact List.mem_cons_of_mem _ (hM p hp)
+    · have e : ∀ R : (Fin a → Bool) → (Fin b → Bool), ovr M R x = R x :=
+        fun R => ovr_of_not_mem hx R
+      simp only [e]
+      have hF := expect_sample_ovr M hx
+        (fun (y : Fin b → Bool) (g : (Fin a → Bool) → (Fin b → Bool)) =>
+          expect (simulate (fnImpl g).withLog (k y) ((), log ++ [⟨i, x, y⟩]))
+            (fun res => if FnForge g res.1 res.2.2 then (1 : ℝ) else 0))
+      rw [hF]
+      refine (expect_mono _ fun y => ih y ((x, y) :: M) _ fun p hp => ?_).trans
+        (le_of_eq (expect_const _ _))
+      rw [queried_append]
+      rw [List.map_cons, List.mem_cons] at hp
+      rcases hp with rfl | hp
+      · exact List.mem_cons_self
+      · exact List.mem_cons_of_mem _ (hM p hp)
+
+/-- **Forging against a random function** [PS10, Theorem 135.4, proof, step 4]: every forger
+computation `c` with `a`-bit messages and `b`-bit tags, run against the tagging oracle of a uniform
+random function `R`, forges with probability at most `2^{-b}`:
+`𝔼_R Pr[FnForge R | simulate (fnImpl R).withLog c ((), [])] ≤ 2^{-b}`.
+
+**Proof sketch.** `expect_forge_ovr_le` from the empty table and the empty log (`ovr_nil`). -/
+theorem expect_fnForge_random_le
+    (c : OracleComp (bitSpec (fun _ : Fin 1 => a) (fun _ => b)) (Fin (a + b) → Bool)) :
+    expect (sample ((Fin a → Bool) → (Fin b → Bool))) (fun R =>
+      expect (simulate (fnImpl R).withLog c ((), []))
+        (fun res => if FnForge R res.1 res.2.2 then (1 : ℝ) else 0)) ≤ ((2 : ℝ) ^ b)⁻¹ := by
+  have h := expect_forge_ovr_le c [] [] fun p hp => by
+    rw [List.map_nil] at hp
+    exact absurd hp List.not_mem_nil
+  simp only [ovr_nil] at h
+  exact h
+
+end TCSlib.Cryptography.Authentication.PRFMAC
