@@ -1,4 +1,4 @@
-# Gate 27 · resolutions, round 1 · IN PROGRESS
+# Gate 27 · resolutions, round 1 · CLOSED
 
 Codex's verdict is **CLEAR for the statement gate**: 0 blockers, 0 majors, 1 minor and 0 notes.
 - **Findings:** `findings/gate27-b1-multimsg-findings.md`.
@@ -6,7 +6,7 @@ Codex's verdict is **CLEAR for the statement gate**: 0 blockers, 0 majors, 1 min
 
 | # | Severity | Disposition |
 |---|---|---|
-| G27-01 | minor | **To fix by a docstring-only resolution edit, LE-gate27.** The docstring of `sliceMultiMessageSecure_of_prfOut` says "Both fit exactly". It will read: "Both shapes fit; the outer slice fits exactly." The edit is rebuilt before #311 is marked ready. |
+| G27-01 | minor | **Fixed** by **LE-gate27** `542bfb1ef2b64088e02385b74196854d654a719f` (tree `b25e3e0c`): the docstring now reads "Both shapes fit; the outer slice fits exactly." (3 lines re-wrapped to stay within 100 columns; code and all 18 headers identical; 63/63 rc 0 through root `TCSlib`; lint 92/101 byte-identical; evidence `landing-r1/gate27-r1-evidence.zip`, SHA-256 `8345928643b79d42a9d94dfa5c2471e67db9b2578e89ae0e51a41486bede5cef`). |
 
 ## What Codex verified
 Codex ran no Lean.
@@ -45,3 +45,7 @@ Codex ran no Lean.
 4. **sc-yao.** It must formalize the gate and row sub-hybrids, the enumeration of all occurrences with padding, the
    no-dependence argument, the sampler identities, and polynomial-time reconstruction. These go into the `sc-yao`
    brief.
+
+## Disposition
+
+**PR [#311](https://github.com/Shilun-Allan-Li/tcslib/pull/311) is marked ready at `542bfb1e`.** It is a statement PR: the main theorem stays admitted, owned by `sc-garble`.

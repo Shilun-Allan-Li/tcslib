@@ -1,0 +1,45 @@
+B1 statement resolution edit LE-gate27 (Gate 27, G27-01; docstring only). #311. Nothing pushed.
+Prepared 2026-11-15 UTC by Claude (session_01PqpVTiuDcjSqhyfbqnsVxA).
+
+source
+  branch   stmt/pass-shelat-b1-multimsg (local), worktree $SP/wt-stmt-b1 (.lake/packages symlinked to the main
+           checkout; the 1.6 GB briefs/ folder deleted from the worktree's working copy only, never staged)
+  parent   46b780dc1b286f59da18e2d10f188b0faaab8088 (= origin head, checked with git rev-parse)
+  head     542bfb1ef2b64088e02385b74196854d654a719f
+  tree     b25e3e0caf0ce1224906ca211fdd08ddeb71b3e5
+           1 commit, author = committer = Claude <noreply@anthropic.com> (patches/COMMITS.tsv, patches/0001-*.patch)
+  change   M TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean, 3 lines (204-209 hunk), docstring of
+           sliceMultiMessageSecure_of_prfOut: "Both fit exactly." -> "Both shapes fit; the outer slice fits exactly."
+           The three lines of that list item are reflowed to stay within 100 columns (same line count, 325).
+           checks/word-diff.txt (whitespace-normalised word diff of the whole file): exactly one change,
+           'fit' -> 'shapes fit; the outer slice fits'.
+
+checks
+  comments only  checks/comments-only.txt (tools/codecmp.py: nested block/doc comments and line comments blanked,
+           strings respected): code identical, 18/18 declaration headers identical, code SHA-256
+           c8292d378fe7e196056b06eeba2698279a474beabd736a5705c91e4f987e32c1 at both. Control: the facade
+           013119f0 vs head (an import added) reads "code identical: False".
+  widths   checks/widths.txt: SpecialEncryptionMulti.lean 325 lines, max width 98; vs the PR base 013119f0 the
+           facade is 59 lines, max 98. RESULT OK.
+  lint     python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography in the worktree, base (the file checked out
+           at 46b780dc, then restored) and head: 92 FAIL, 101 WARN over 344 files both; lint/failwarn.diff empty;
+           lint/lint-full.diff empty (the logs are byte-identical).
+
+olean tree $SP/dl-oleans (only this tree; dl-oleans-2 untouched)
+  pre      tree/snapshot-pre.txt (tools/snapshot.py): 1230 files, 0 empty dirs, SHA-256
+           457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the base snapshot. OK.
+           tree/snapshot-prebuild.txt: same SHA-256 just before the build.
+  order    tools/downorder.py over order/changed.txt (git diff eff2dcd0..head, 53 modules) -> order/build-head.txt,
+           63 modules, imports first (same set as the #311 round-1 order); order/backup.txt (20 base oleans copied
+           aside before the build), order/new.txt (43 head-only oleans).
+  build    tools/runner.py (one Lean process at a time, scripts/lean_check_tree.sh, byte-identical to
+           /home/user/tcslib/scripts/lean_check_tree.sh, TCSLIB_OLEANS=$SP/dl-oleans): build/results.jsonl,
+           build/mods/*.log. 63/63 rc 0, 0 errors (both forms), 0 occurrences of "error". The only sorry warning
+           is SpecialEncryptionMulti.lean:231:8 (sliceMultiMessageSecure_of_prfOut, intended). Module, facade
+           TCSlib/Cryptography/SecureComputation and root TCSlib: rc 0, source SHA-256 = the head blobs.
+  restore  restore/restore-log.txt: 20 backups copied back, 43 new oleans removed, the 5 directories left empty
+           removed. restore/snapshot-post.txt byte-identical to tree/snapshot-pre.txt, SHA-256
+           457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, 1230 files, 0 empty dirs. RESULT OK.
+
+toolchain  Lean 4.25.0 (PATH=$HOME/.elan/bin:$PATH). No lake build, no lake exe cache get. Python: python3 -I.
+SHA256SUMS: every file here except itself; ../stmt-b1-gate27-evidence.zip holds this folder.
