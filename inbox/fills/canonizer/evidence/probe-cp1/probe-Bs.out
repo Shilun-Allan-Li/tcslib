@@ -1,0 +1,28 @@
+===== lean_proof/canon/probes/ReaderNeed.lean [B-strict]
+DLC-SEAL lean_proof_canon_probes_ReaderNeed: sealed=780 (already irreducible 0) abbrev-excluded=1086 excluded=0 coe-excluded=0 []
+lean_proof/dlc/seal/cp1Bs/lean_proof_canon_probes_ReaderNeed.lean:78:85: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  oneTapeFormat.serialize (oneTapeFormat.decode xs) = (codeDecode xs).serialize
+lean_proof/dlc/seal/cp1Bs/lean_proof_canon_probes_ReaderNeed.lean:82:58: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α) = oneTapeFormat.serialize (oneTapeFormat.decode α)
+lean_proof/dlc/seal/cp1Bs/lean_proof_canon_probes_ReaderNeed.lean:87:2: error: Type mismatch
+  MachineFormat.exists_polyCanonizer oneTapeMachineFormat
+has type
+  ∃ C d,
+    C.ComputesFunInTime (fun α => oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α)) fun n =>
+      d * (n + 1) ^ d
+but is expected to have type
+  ∃ C d, C.ComputesFunInTime (fun α => (codeDecode α).serialize) fun n => d * (n + 1) ^ d
+FAIL(lean_proof/dlc/seal/cp1Bs/lean_proof_canon_probes_ReaderNeed): lean exited with status 1
+FAIL(lean_proof/dlc/seal/cp1Bs/lean_proof_canon_probes_ReaderNeed): error diagnostics reported
+FAIL(lean_proof/dlc/seal/cp1Bs/lean_proof_canon_probes_ReaderNeed): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=10.16 s, maxrss=1923908 KiB, exit=1
+

@@ -1,0 +1,75 @@
+# Searches (ripgrep over TCSlib and Mathlib), 2026-11-15T03:05:59Z, base sources
+
+## rg -n 'oneTapeMachineFormat\.serialize|oneTapeMachineFormat\.decode' TCSlib (first 20)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/UniversalK.lean:133:(`Turing.oneTapeMachineFormat.serialize_eq`). [AB09, §1.4] -/
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/UniversalK.lean:136:    oneTapeMachineFormat.serialize_eq c.decode c.canonizer c.canonizerTime c.canonizer_computes
+
+## rg -n 'oneTapeFormat\.serialize|oneTapeFormat\.decode' TCSlib (first 20)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/CodeFormat.lean:576:  oneTapeFormat.decode xs
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/CodeFormat.lean:581:  oneTapeFormat.decode_serialize_pad M m
+
+## rg -n 'serialize \(codeDecode|codeDecode .*serialize' TCSlib (first 20)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/Diagonalization/EXPCOM.lean:138:`|(codeDecode α).serialize| ≤ max |α| 84`, the fallback's exact length);
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/CodeFormat.lean:580:    codeDecode (M.serialize ++ List.replicate m true) = M :=
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/CodeFormat.lean:592:lemma codeCanonical_eq (xs : List Bool) : codeCanonical xs = (codeDecode xs).serialize :=
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/CodeParser.lean:37:  `fun xs => (codeDecode xs).serialize`.
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:1125:      M.ComputesFunInTime (fun xs => (codeDecode xs).serialize) T :=
+
+## rg -n 'exists_polyCanonizer' TCSlib (first 20)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/Diagonalization/EXPCOM.lean:157:  obtain ⟨C, dC, hC⟩ := oneTapeMachineFormat.exists_polyCanonizer
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/Diagonalization/EXPCOM.lean:641:(`MachineFormat.exists_polyCanonizer`) and the uniform simulator
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:43:  computed in polynomial time (`Turing.MachineFormat.exists_polyCanonizer`):
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:48:* **Status.** The canonizer `Turing.MachineFormat.exists_polyCanonizer` is proved, with
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:79:* `Turing.MachineFormat.exists_polyCanonizer` — a polynomial-time canonizer.
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:8364:theorem exists_polyCanonizer :
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:8566:  obtain ⟨P, d, hP⟩ := F.exists_polyCanonizer
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:9062:`Turing.MachineFormat.exists_polyCanonizer` through `Turing.FinTM.exists_installCallTM`; by
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/Codes2Tape.lean:45:(`Turing.MachineFormat.exists_polyCanonizer`, `Turing.MachineFormat.exists_uniformSimulator`) at
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/Codes2Tape.lean:324:  obtain ⟨C, dC, hC⟩ := twoTapeMachineFormat.exists_polyCanonizer
+
+## rg -n 'canonizerTime :=' TCSlib (first 20)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/Diagonalization/EXPCOM.lean:163:      canonizerTime := fun n => dC * (n + 1) ^ dC
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/Codes2Tape.lean:331:      canonizerTime := fun n => dC * (n + 1) ^ dC
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:1169:    canonizerTime := T
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/NDCodes.lean:274:    canonizerTime := time
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/TuringMachine/UniversalK.lean:125:  canonizerTime := canonizerTime
+
+## rg -n 'CanonizerExp' TCSlib (first 20)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:42:length (`CanonizerExp c`), so that the coefficient is polynomial in `n` for codes of length
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:62:* `TCSlib.Cryptography.CanonizerExp` — the hypothesis on the encoding scheme;
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:72:  length `⌊log₂ n⌋` under `CanonizerExp`; `TCSlib.Cryptography.exists_canonizerExp` — the
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:73:  open problem that some scheme satisfies `CanonizerExp` (sorried, run-3 audit P3-4).
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:282:def CanonizerExp (c : EffectiveMachineCode) : Prop :=
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:287:re-serialize), so the hypothesis `CanonizerExp c` of `theorem_63_1` is mathematically harmless
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:302:theorem exists_canonizerExp : ∃ c : EffectiveMachineCode, CanonizerExp c := by
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:309:**Proof sketch.** With `A, B` from `CanonizerExp c` and `k = |α| = ⌊log₂ n⌋`:
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:316:theorem exists_univCoeff_le (c : EffectiveMachineCode) (hc : CanonizerExp c) :
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:381:theorem polyTimeComputable_clockedAnswer (c : EffectiveMachineCode) (hc : CanonizerExp c) :
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:403:theorem polyTimeComputable_fUniversalStr (c : EffectiveMachineCode) (hc : CanonizerExp c) :
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:434:theorem fUniversal_easy (c : EffectiveMachineCode) (hc : CanonizerExp c) :
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:797:theorem fUniversal_hard (c : EffectiveMachineCode) (hc : CanonizerExp c)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:915:theorem fUniversal_weakOneWay (c : EffectiveMachineCode) (hc : CanonizerExp c)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:936:hypothesis `CanonizerExp c`; the strong one-way function is the amplified product.
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:939:theorem theorem_63_1 (c : EffectiveMachineCode) (hc : CanonizerExp c)
+
+## rg -n 'lt_two_pow_self' TCSlib (first 20)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/BooleanAnalysis/GaussianSpace/InvarianceDistribution.lean:243:      (k : ℝ) ≤ (2 : ℝ) ^ k := by exact_mod_cast k.lt_two_pow_self.le
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/CircuitComplexity/AdderLanguage.lean:179:  ⟨m + n + 1, Language.natToBits_mem_addition (Nat.lt_two_pow_self.trans
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/CircuitComplexity/Lupanov.lean:241:      have h4 : s ≤ 2 ^ s := (Nat.lt_two_pow_self).le
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/CircuitComplexity/Meyer.lean:108:  have ha : c₀ + 1 ≤ 2 ^ c₀ := Nat.lt_two_pow_self
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/CircuitComplexity/Meyer.lean:109:  have hb : n + 2 < 2 ^ (n + 2) := Nat.lt_two_pow_self
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/CircuitComplexity/MeyerTab.lean:173:  have h1 : y.length + 1 ≤ 2 ^ y.length := Nat.lt_two_pow_self
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/CircuitComplexity/PPolyAdvice.lean:239:  (Nat.lt_two_pow_self).le.trans (Nat.pow_le_pow_left hn m)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:469:        Nat.mul_le_mul (Nat.le_of_lt a.lt_two_pow_self)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/EXP.lean:98:    have hn := Nat.lt_two_pow_self (n := n ^ c)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/EXP.lean:320:      (Nat.le_of_lt (Nat.lt_two_pow_self (n := K))).trans (Nat.pow_le_pow_left hn K)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/EXP.lean:370:          Nat.pow_le_pow_left (Nat.le_of_lt (Nat.lt_two_pow_self)) d
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:175:  have hlin : T + 1 ≤ 2 ^ (T + 1) := (Nat.lt_two_pow_self).le
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/ExpPoly.lean:56:  have h1 : c < 2 ^ c := Nat.lt_two_pow_self
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/ExpPoly.lean:67:  have h1 : a < 2 ^ a := Nat.lt_two_pow_self
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/ExpPoly.lean:68:  have h2 : (n + 1) ^ d ≤ (2 ^ (n + 1)) ^ d := Nat.pow_le_pow_left Nat.lt_two_pow_self.le d
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/ExpPoly.lean:135:        (Nat.le_of_lt (Nat.lt_two_pow_self (n := K))).trans (Nat.pow_le_pow_left hn K)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3414:      (Nat.le_of_lt (Nat.lt_two_pow_self (n := K))).trans (Nat.pow_le_pow_left hn K)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3449:    (Nat.le_of_lt (Nat.lt_two_pow_self (n := n + 1))).trans
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/Nondeterminism.lean:4177:    (Nat.le_of_lt (Nat.lt_two_pow_self (n := n + 1))).trans
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:70:  have := Nat.lt_two_pow_self (n := n)

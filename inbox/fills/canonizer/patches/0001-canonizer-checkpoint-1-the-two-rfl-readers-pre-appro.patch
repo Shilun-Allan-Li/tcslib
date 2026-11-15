@@ -1,0 +1,58 @@
+From 7064488bad9323cf3eb8d45faa9fcf328a8e5b99 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 03:02:50 +0000
+Subject: [PATCH] =?UTF-8?q?canonizer:=20checkpoint=201=20=E2=80=94=20the?=
+ =?UTF-8?q?=20two=20rfl=20readers=20(pre-approved=20scope)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+CodeFormat.lean: Turing.oneTapeFormat_serialize_decode,
+  oneTapeFormat.serialize (oneTapeFormat.decode xs) = (codeDecode xs).serialize.
+CodeSimulator.lean: Turing.oneTapeMachineFormat_serialize_decode,
+  oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α)
+    = oneTapeFormat.serialize (oneTapeFormat.decode α).
+Both rfl beside their definitions, with formula docstrings and no attribute (Seyoon's scope
+pre-approval of 2026-11-14).
+---
+ TCSlib/Complexity/TuringMachine/CodeFormat.lean    | 5 +++++
+ TCSlib/Complexity/TuringMachine/CodeSimulator.lean | 7 +++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/TCSlib/Complexity/TuringMachine/CodeFormat.lean b/TCSlib/Complexity/TuringMachine/CodeFormat.lean
+index 9af1b2401..5b652d014 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeFormat.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeFormat.lean
+@@ -580,6 +580,11 @@ lemma codeDecode_serialize_pad (M : CodeTM) (m : ℕ) :
+     codeDecode (M.serialize ++ List.replicate m true) = M :=
+   oneTapeFormat.decode_serialize_pad M m
+ 
++/-- The one-tape format's canonical serialization is that of the decoded machine:
++`oneTapeFormat.serialize (oneTapeFormat.decode xs) = (codeDecode xs).serialize`. -/
++theorem oneTapeFormat_serialize_decode (xs : List Bool) :
++    oneTapeFormat.serialize (oneTapeFormat.decode xs) = (codeDecode xs).serialize := rfl
++
+ /-- The erased parser: accept exactly the strings the parser accepts, returning only the unconsumed all-true suffix. -/
+ def codeScan (xs : List Bool) : Option (List Bool) :=
+   oneTapeFormat.scan xs
+diff --git a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+index f71f40023..f7492822e 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -187,6 +187,13 @@ def oneTapeMachineFormat : MachineFormat :=
+     serialize_eq := oneTape_serialize_eq
+     skipTable_eq := oneTape_skipTable_eq }
+ 
++/-- The machine format's canonical serialization is the one-tape format's:
++`oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α) =
++oneTapeFormat.serialize (oneTapeFormat.decode α)`. -/
++theorem oneTapeMachineFormat_serialize_decode (α : List Bool) :
++    oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α) =
++      oneTapeFormat.serialize (oneTapeFormat.decode α) := rfl
++
+ namespace MachineFormat
+ 
+ variable (F : MachineFormat)
+-- 
+2.43.0
+

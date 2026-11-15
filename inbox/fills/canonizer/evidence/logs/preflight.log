@@ -1,0 +1,123 @@
+# Preflight (addendum v1, Part 1 item 1), 2026-11-15T02:37:48Z
+## host
+Linux vm 6.18.44-fc-v470 #1 SMP PREEMPT_DYNAMIC @0 x86_64 x86_64 x86_64 GNU/Linux
+ 02:37:48 up 1 min,  0 user,  load average: 0.42, 0.13, 0.04
+nproc: 4
+## cgroup
+### /sys/fs/cgroup/memory/memory.limit_in_bytes
+9223372036854771712
+### /sys/fs/cgroup/memory/memory.usage_in_bytes
+2842308608
+### /sys/fs/cgroup/memory/memory.stat
+cache 44969984
+rss 11108352
+rss_huge 0
+shmem 17035264
+mapped_file 31350784
+dirty 65536
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 17207
+pgpgout 3555
+pgfault 6508
+pgmajfault 35
+inactive_anon 13684736
+active_anon 4096
+inactive_file 22532096
+active_file 5406720
+unevictable 14450688
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 2824765440
+total_rss 17633280
+total_rss_huge 0
+total_shmem 17035264
+total_mapped_file 34914304
+total_dirty 170700800
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 415172
+total_pgpgout 226263
+total_pgfault 273947
+total_pgmajfault 919
+total_inactive_anon 19345408
+total_active_anon 24576
+total_inactive_file 2695344128
+total_active_file 112390144
+total_unevictable 15110144
+## /proc/meminfo
+MemTotal:       16473776 kB
+MemFree:        13530984 kB
+MemAvailable:   16104852 kB
+Buffers:           77776 kB
+Cached:          2680596 kB
+SwapCached:            0 kB
+Active:           109716 kB
+Inactive:        2651088 kB
+Active(anon):         20 kB
+Inactive(anon):    19044 kB
+Active(file):     109696 kB
+Inactive(file):  2632044 kB
+Unevictable:       14748 kB
+Mlocked:           10772 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Zswap:                 0 kB
+Zswapped:              0 kB
+Dirty:            166696 kB
+Writeback:             0 kB
+AnonPages:         17320 kB
+Mapped:            34192 kB
+Shmem:             16636 kB
+KReclaimable:      90992 kB
+Slab:             117932 kB
+SReclaimable:      90992 kB
+SUnreclaim:        26940 kB
+KernelStack:        1752 kB
+PageTables:         2196 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     8236888 kB
+Committed_AS:     285172 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:        5368 kB
+VmallocChunk:          0 kB
+Percpu:             1040 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Balloon:               0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:       20480 kB
+DirectMap2M:     2076672 kB
+DirectMap1G:    16777216 kB
+## disk
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 27348893696 16523374592  63% /
+/dev/vda       270553174016 27348893696 16523374592  63% /
+/dev/vda       270553174016 27348893696 16523374592  63% /
+/dev/vda       270553174016 27348893696 16523374592  63% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 26707904  16136108  63% /
+/dev/vda       ext4 264212084 26707904  16136108  63% /
+## space made before the preflight
+Removed: git worktree /workspace/learn (fill/learning, delivered at exchange 365d6639c; branch kept), and this host's own scratch directories of the learning fill (/tmp/learn-repro, a patch-reproduction clone; /tmp/lintbase). No dependency tree was copied or moved.
+## computation
+disk free 16523374592 B = 15.39 GiB (floor 12 GiB)
+cgroup v1 limit unlimited -> headroom = MemAvailable = 16491368448 B = 15.36 GiB (floor 4 GiB)
+PREFLIGHT PASS
