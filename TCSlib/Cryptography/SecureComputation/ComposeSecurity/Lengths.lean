@@ -89,7 +89,8 @@ theorem exists_main_msgs_le {F : Functionality} (hH : H.PolyTime F) :
     (l := H.answersB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
     (H.length_answersB n _ _ _ _)
   have hmsg := hB n x y aA aB m
-  rw [haA, haB, ← privA_eq, ← privB_eq] at hmsg
+  rw [haA, haB, ← privA_eq, ← privB_eq, Protocol.transcript_eq_transcriptWith] at hmsg
+  rw [Protocol.transcript_eq_transcriptWith]
   have h₁ := length_transcriptWith_fst_le H.main H.main.P (List.replicate n true)
     (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
     (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m
@@ -216,9 +217,10 @@ theorem exists_viewP_le {G : Functionality} {ρ : Protocol} (hρ : G.PolyTime ρ
         (.mul ρ.rounds (.add (.mul (.const 2) B) (.const 2)))), fun n x y t => ?_⟩
   have h₁ := length_transcriptWith_fst_le ρ ρ.P (List.replicate n true) (List.ofFn x)
     (List.ofFn y) t
+  have hb := hB n x y t
+  rw [Protocol.transcript_eq_transcriptWith] at hb
   have h₂ := (length_encodeMsgs_le _ (B.eval n) fun w hw =>
-    hB n x y t w (List.mem_append_left _ hw)).trans (Nat.mul_le_mul_right _ h₁)
-  rw [Protocol.transcript_eq_transcriptWith] at h₂
+    hb w (List.mem_append_left _ hw)).trans (Nat.mul_le_mul_right _ h₁)
   rw [Protocol.viewP_eq, View.encode_mk]
   simp only [length_pairEncode, List.length_ofFn, Strategy.coinLen_eq, List.length_replicate]
     at h₂ ⊢
@@ -238,9 +240,10 @@ theorem exists_viewV_le {G : Functionality} {ρ : Protocol} (hρ : G.PolyTime ρ
         (.mul ρ.rounds (.add (.mul (.const 2) B) (.const 2)))), fun n x y t => ?_⟩
   have h₁ := length_transcriptWith_snd_le ρ ρ.P (List.replicate n true) (List.ofFn x)
     (List.ofFn y) t
+  have hb := hB n x y t
+  rw [Protocol.transcript_eq_transcriptWith] at hb
   have h₂ := (length_encodeMsgs_le _ (B.eval n) fun w hw =>
-    hB n x y t w (List.mem_append_right _ hw)).trans (Nat.mul_le_mul_right _ h₁)
-  rw [Protocol.transcript_eq_transcriptWith] at h₂
+    hb w (List.mem_append_right _ hw)).trans (Nat.mul_le_mul_right _ h₁)
   rw [Protocol.viewV_eq, View.encode_mk]
   simp only [length_pairEncode, List.length_ofFn, Strategy.coinLen_eq, List.length_replicate]
     at h₂ ⊢

@@ -405,7 +405,8 @@ theorem exists_simB {F : Functionality} (hM : ∀ n, 0 < H.main.rounds.eval n)
             ⟨j, h⟩ (z.2 ⟨j, h⟩) else []) (D.distinguisherL n) -
       acceptProb (F.idealB SB n x y) (D.distinguisherL n)| ≤ ε₃ n := by
     rw [← H.acceptProb_realB_dPhi ρ SρB D DΦ hcallB hDΦc hDΦ n x y, e3]
-    exact (h₃ n x y).2
+    have h := (h₃ n x y).2
+    rwa [distAdv_def] at h
   rw [distAdv_def]
   calc |acceptProb (F.realB (H.compose ρ) n x y) (D.distinguisherL n) -
         acceptProb (F.idealB SB n x y) (D.distinguisherL n)|
