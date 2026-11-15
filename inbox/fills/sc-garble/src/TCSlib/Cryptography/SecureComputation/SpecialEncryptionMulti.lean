@@ -3,13 +3,15 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity
+import TCSlib.Cryptography.SecureComputation.SpecialEncryptionMulti.SliceParser
+import TCSlib.Cryptography.SecureComputation.SpecialEncryptionMulti.SliceReduction
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Joint, length-generic multi-message security of special encryption (statement phase)
+# Joint, length-generic multi-message security of special encryption
 
 [PS10, Algorithm 157.2] encrypts `m` as `⟨r, (0^n ‖ m) ⊕ f_k(r)⟩`. Yao's protocol uses it in two
 layers with two pseudorandom families `G₁` (`2n`-bit outputs, `n`-bit messages) and `G₂`
@@ -44,13 +46,19 @@ byte-identical. It imports `SpecialEncryptionSecurity` for `PRFOut` and `special
 
 ## Main results
 
-* `SecureComputation.sliceMultiMessageSecure_of_prfOut` (stated; `sorry` under a sketch): every
-  `PRFOut` family is slice multi-message secure (ruling B1, 2026-11-14).
+* `SecureComputation.sliceMultiMessageSecure_of_prfOut` (proved): every `PRFOut` family is
+  slice multi-message secure (ruling B1, 2026-11-14).
 * `SecureComputation.specialScheme_multiMessageSecure_of_joint` (proved): the frozen Claim
   157.a (i) follows.
 * `SecureComputation.sliceEnc_eq_spEncStr`, `sliceEnc_append_left`, `sliceEnc_append_right`
   (proved): slice ciphertexts are special ciphertexts, in particular those of the two layers of
   `nestedSpecial` under `G₁ ‖ G₂`.
+
+## Contents
+
+* `SpecialEncryptionMulti.SliceParser`: the total efficient slice post-processor.
+* `SpecialEncryptionMulti.SliceReduction`: polynomial advice, the reduction machine and
+  the same-seed D4 tuple identity.
 
 ## References
 
@@ -212,26 +220,103 @@ over `k, r_0, …, r_{q(n)} ← U_n`.
 length-generic and joint: the pads of different ciphertexts may come from different slices
 of one family under one key. The fit `o_i + n + ℓ_i ≤ ℓ(n)` keeps every pad inside `G_k(r_i)`.
 
-**Proof sketch.** As [PS10, Theorem 99.2] (`prfScheme_multiMessageSecure`), with `ℓ`-bit
-outputs. Fix `n` and let `A(n)` be `D`'s largest advantage over the finitely many fitting slice
-vectors and message pairs (each `o_i, ℓ_i ≤ ℓ(n)`).
-1. *PRF step.* For `b ∈ {0, 1}` the oracle machine `D_b` has as advice the maximizing slices and
-   the message vector `m` (`b = 0`) or `m'` (`b = 1`), all of polynomial length. It draws the
-   `r_i`, queries `O(r_i)` once each (`q(n) + 1` queries), forms each ciphertext from the slice
-   of the answer, and runs `D`. Against `G_k` it is the slice sampler; against a random function
-   `F` with `ℓ(n)`-bit outputs it is the same sampler for `F`. Its advantage is negligible by
-   `hG.pseudorandom`.
-2. *Random function.* If the `r_i` are distinct, the values `F(r_i)` are independent and uniform.
-   Within one ciphertext the revealed prefix and the mask are disjoint bits of the slice, so each
-   ciphertext is `⟨r_i, u_i⟩` with `u_i` uniform of length `n + ℓ_i`, whatever the message. The
-   laws for `m` and `m'` agree off the collision event, which has probability at most
-   `C(q(n) + 1, 2) · 2^{-n}` (`MultiMsg.negligible_choose_div_two_pow`).
-3. *Total.* `A(n) ≤ adv(D_0) + adv(D_1) + C(q(n) + 1, 2) · 2^{-n}`, which is negligible. Take
-   `ε = A`. The ℓ-output PRF hybrid machinery is supplied by `prf-long` (ruling B3). -/
+**Proof sketch.** Fix `D,q`. A configuration records fitting offsets and lengths bounded
+by `ℓ(n)`, together with two finite message vectors. Maximize the slice advantage over
+`Option` of these configurations, assigning `none` the value zero. This gives maximum zero
+when no slices fit. Encode the maximizing slice vector as polynomial-length unary advice.
+The total polynomial-time post-map parses descriptors and ciphertexts in parallel, keeping
+each nonce and taking `(body.drop o_i).take (n+len_i)`.
+
+For a fitting vector, use the full-width masks
+`0^{o_i+n} ++ m_i ++ 0^{ℓ(n)-(o_i+n+len_i)}`. The post-map of D4's encoded real tuple is
+pointwise the slice sampler on exactly the same key/nonce seed (`slicePost_tuple` and the
+shared `spEncStr_eq_sliceMask`). Precompose `D` with the parser and hard-wire its advice using
+the published NUPPT closure theorems. D4 supplies one negligible bound before these masks.
+The coin equivalence and `distAdv_comp` transfer it to the maximizing pair, which bounds all
+fitting choices. If the maximizing choice is `none`, D4 on equal zero masks supplies the
+required nonnegative error bound. The PRF step, uniform random pads, collision term and
+triangle bound all remain inside D4 and are not reconstructed here. -/
 theorem sliceMultiMessageSecure_of_prfOut {ℓ : PolyExpr}
     {G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (ℓ.eval n) → Bool)} (hG : PRFOut ℓ G) :
     SliceMultiMessageSecure G := by
-  sorry
+  classical
+  rw [sliceMultiMessageSecure_iff]
+  intro D q
+  -- A finite configuration stores bounded offsets and lengths, and its fit proof.
+  let Config : ℕ → Type := fun n =>
+    {c : (Fin (q.eval n + 1) → Fin (ℓ.eval n + 1)) ×
+      (Fin (q.eval n + 1) → Fin (ℓ.eval n + 1)) //
+        ∀ i, (c.1 i).val + n + (c.2 i).val ≤ ℓ.eval n}
+  let off (n : ℕ) (c : Config n) : Fin (q.eval n + 1) → ℕ := fun i => (c.1.1 i).val
+  let len (n : ℕ) (c : Config n) : Fin (q.eval n + 1) → ℕ := fun i => (c.1.2 i).val
+  let Msg (n : ℕ) (c : Config n) := (i : Fin (q.eval n + 1)) → Fin (len n c i) → Bool
+  let Pack (n : ℕ) := (c : Config n) × (Msg n c × Msg n c)
+  let adv (n : ℕ) (p : Option (Pack n)) : ℝ := p.elim 0 fun p =>
+    distAdv (sliceMultiEncDist G n (q.eval n) (off n p.1) (len n p.1) p.2.1)
+      (sliceMultiEncDist G n (q.eval n) (off n p.1) (len n p.1) p.2.2) (D.distinguisherL n)
+  -- Adding `none` with value zero implements the empty-fit-set convention.
+  have hmax : ∀ n, ∃ p : Option (Pack n), ∀ w, adv n w ≤ adv n p := by
+    intro n
+    obtain ⟨p, hp, hmax⟩ := Finset.exists_max_image Finset.univ (adv n) Finset.univ_nonempty
+    exact ⟨p, fun w => hmax w (Finset.mem_univ _)⟩
+  choose μ hμ using hmax
+  let β : ℕ → List Bool := fun n => (μ n).elim [] fun p =>
+    SliceReduction.sliceAdvice n (off n p.1) (len n p.1)
+  let b : PolyExpr := .mul (.add q (.const 1)) (.add (.mul (.const 6) ℓ) (.const 6))
+  have hβlen : ∀ n, (β n).length ≤ b.eval n := by
+    intro n
+    cases hc : μ n with
+    | none => simp only [β, hc, Option.elim_none, List.length_nil, Nat.zero_le]
+    | some p =>
+      have h := SliceReduction.length_sliceAdvice_le (ℓ.eval n) n
+        (off n p.1) (len n p.1) p.1.2
+      simpa only [β, hc, Option.elim_some, b, PolyExpr.eval_mul, PolyExpr.eval_add,
+        PolyExpr.eval_const] using h
+  obtain ⟨B, hB⟩ := SliceReduction.exists_slicePost_nuppt D β b hβlen
+  obtain ⟨ε, hε, hb⟩ := MultiMsg.exists_negligible_distAdv_prfEncRealOut hG.pseudorandom B q
+  refine ⟨ε, hε, fun n o l hfit m m' => ?_⟩
+  let c : Config n := ⟨((fun i => ⟨o i, by have h := hfit i; omega⟩),
+    (fun i => ⟨l i, by have h := hfit i; omega⟩)), hfit⟩
+  have hdom := hμ n (some ⟨c, m, m'⟩)
+  change distAdv _ _ _ ≤ ε n
+  refine hdom.trans ?_
+  cases hc : μ n with
+  | none =>
+    have hz := hb n (fun _ _ => false) (fun _ _ => false)
+    rw [distAdv_def, sub_self, abs_zero] at hz
+    simpa only [adv, hc, Option.elim_none] using hz
+  | some p =>
+    obtain ⟨e, he⟩ := hB n
+    let P : List Bool → List Bool := fun z => SliceReduction.slicePost (pairEncode (β n) z)
+    let W : Msg n p.1 → Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool := fun v i =>
+      sliceMask (ℓ.eval n) n (off n p.1 i) (List.ofFn (v i))
+    let X (v : Msg n p.1) := fun t => encodeTupleOut (prfEncRealOut (G n) (W v) t)
+    have hadvice : β n = SliceReduction.sliceAdvice n (off n p.1) (len n p.1) := by
+      simp only [β, hc, Option.elim_some]
+    have hsampler (v : Msg n p.1) :
+        sliceMultiEncDist G n (q.eval n) (off n p.1) (len n p.1) v =
+          fun t => P (X v t) := by
+      funext t
+      rw [sliceMultiEncDist_apply]
+      dsimp only [P, X, W]
+      rw [hadvice, SliceReduction.slicePost_tuple (G n) _ _ p.1.2]
+      apply congrArg PrivateKeyScheme.encodeList
+      apply congrArg List.ofFn
+      funext i
+      rw [sliceEnc_eq]
+    have hcoin : ∀ z r, B.distinguisherL n z (e r) = D.distinguisherL n (P z) r := he
+    have hadv : distAdv (X p.2.1) (X p.2.2)
+        (fun z r => D.distinguisherL n (P z) r) =
+          distAdv (X p.2.1) (X p.2.2) (B.distinguisherL n) := by
+      symm
+      rw [distAdv_def, distAdv_def,
+        acceptProb_coins_equiv (X p.2.1) (B.distinguisherL n) _ e hcoin,
+        acceptProb_coins_equiv (X p.2.2) (B.distinguisherL n) _ e hcoin]
+    change distAdv (sliceMultiEncDist G n (q.eval n) (off n p.1) (len n p.1) p.2.1)
+      (sliceMultiEncDist G n (q.eval n) (off n p.1) (len n p.1) p.2.2)
+        (D.distinguisherL n) ≤ ε n
+    rw [hsampler p.2.1, hsampler p.2.2, ← distAdv_comp P, hadv]
+    exact hb n (W p.2.1) (W p.2.2)
 
 /-! ### The frozen Claim 157.a (i) as a corollary -/
 

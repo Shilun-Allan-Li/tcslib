@@ -1,0 +1,54 @@
+START 2026-11-15T11:18:13.573970+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:77:8: error: unsolved goals
+case nil
+B : ℕ
+h : ∀ c ∈ [], c.length ≤ B
+⊢ 0 ≤ 0
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:82:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  f ≥ 0
+  e ≥ 0
+  d ≥ 0
+  d - e ≥ 0
+  b ≥ 0
+  2*b + e - f ≥ -1
+  a ≥ 0
+  a - b ≥ 0
+where
+ a := ↑B
+ b := ↑c.length
+ d := ↑l.length * ↑(2 * B + 2)
+ e := ↑(PrivateKeyScheme.encodeList l).length
+ f := ↑(l.length + 1) * ↑(2 * B + 2)
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:99:2: error: Type mismatch: After simplification, term
+  h
+ has type
+  (PrivateKeyScheme.encodeList
+        (List.ofFn fun i => pairEncode (List.replicate (o i) true) (List.replicate (n + len i) true))).length ≤
+    Q * (L * (2 * 3)) + (Q * (2 * 2) + Q * 2)
+but is expected to have type
+  (PrivateKeyScheme.encodeList
+        (List.ofFn fun i => pairEncode (List.replicate (o i) true) (List.replicate (n + len i) true))).length ≤
+    Q * (L * 6) + Q * 6
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction): no fresh .olean produced
+        2.30 real         1.33 user         1.05 sys
+          2198241280  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175085  page reclaims
+                  15  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  22  voluntary context switches
+                4187  involuntary context switches
+            16141873  instructions retired
+             8837216  cycles elapsed
+             1311032  peak memory footprint
+END 2026-11-15T11:18:15.917428+00:00 EXIT 1

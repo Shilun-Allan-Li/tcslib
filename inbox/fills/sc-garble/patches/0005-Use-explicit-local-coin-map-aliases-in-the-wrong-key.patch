@@ -1,0 +1,31 @@
+From 9c09f4471d9cb3cb9796da984c241f06fa2e10c1 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 03:46:18 -0800
+Subject: [PATCH 5/7] Use explicit local coin-map aliases in the wrong-key
+ proof
+
+---
+ .../SecureComputation/SpecialEncryptionSecurity.lean          | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+index 025bf9c5dc449c5ce76638b27abc7b06f0aeb74f..92b55b8be841d03cb02f5cba14591c044739a9a8 100644
+--- a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
++++ b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+@@ -309,11 +309,11 @@ theorem specialScheme_wrongKey (hG : PRFOut (.add .var .var) G) :
+       right_inv := by intro t; simp }
+   have hk : ∀ k : K, List.ofFn (ek.symm k) = List.ofFn k := by
+     intro k
+-    simpa only [Equiv.apply_symm_apply] using
++    simpa only [ek, Equiv.apply_symm_apply] using
+       (specialScheme_keyCoinsEquiv_ofFn G E hE hGE n (ek.symm k)).symm
+   have hr : ∀ r : K, List.ofFn (er.symm r) = List.ofFn r := by
+     intro r
+-    simpa only [Equiv.apply_symm_apply] using
++    simpa only [er, Equiv.apply_symm_apply] using
+       (specialScheme_nonceCoinsEquiv_ofFn G E hE hGE n (er.symm r)).symm
+   refine (hb n m).trans_le ?_
+   rw [← uprob_comp_equiv e.symm]
+-- 
+2.50.1 (Apple Git-155)
+

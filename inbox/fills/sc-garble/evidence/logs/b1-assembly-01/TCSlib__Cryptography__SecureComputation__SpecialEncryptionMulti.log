@@ -1,0 +1,86 @@
+START 2026-11-15T11:22:55.348868+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:312:54: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  distAdv (X p.snd.1) (X p.snd.2) fun z r => D.distinguisherL n (P z) r
+in the target expression
+  distAdv (fun s => P (X p.snd.1 s)) (fun s => P (X p.snd.2 s)) (D.distinguisherL n) ≤ ε n
+
+case some
+ℓ : PolyExpr
+G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (ℓ.eval n) → Bool
+hG : PRFOut ℓ G
+D : NUPPT
+q : PolyExpr
+Config : ℕ → Type := fun n => { c // ∀ (i : Fin (q.eval n + 1)), ↑(c.1 i) + n + ↑(c.2 i) ≤ ℓ.eval n }
+off : (n : ℕ) → Config n → Fin (q.eval n + 1) → ℕ := fun n c i => ↑((↑c).1 i)
+len : (n : ℕ) → Config n → Fin (q.eval n + 1) → ℕ := fun n c i => ↑((↑c).2 i)
+Msg : (n : ℕ) → Config n → Type := fun n c => (i : Fin (q.eval n + 1)) → Fin (len n c i) → Bool
+Pack : ℕ → Type := fun n => (c : Config n) × Msg n c × Msg n c
+adv : (n : ℕ) → Option (Pack n) → ℝ :=
+  fun n p =>
+    p.elim 0 fun p =>
+      distAdv (sliceMultiEncDist G n (q.eval n) (off n p.fst) (len n p.fst) p.snd.1)
+        (sliceMultiEncDist G n (q.eval n) (off n p.fst) (len n p.fst) p.snd.2) (D.distinguisherL n)
+μ : (n : ℕ) → Option (Pack n)
+hμ : ∀ (n : ℕ) (w : Option (Pack n)), adv n w ≤ adv n (μ n)
+β : ℕ → List Bool := fun n => (μ n).elim [] fun p => SliceReduction.sliceAdvice n (off n p.fst) (len n p.fst)
+b : PolyExpr := (q.add (PolyExpr.const 1)).mul (((PolyExpr.const 6).mul ℓ).add (PolyExpr.const 6))
+hβlen : ∀ (n : ℕ), (β n).length ≤ b.eval n
+B : NUPPT
+hB :
+  ∀ (n : ℕ),
+    ∃ e,
+      ∀ (y : List Bool) (r : D.Coins n),
+        B.distinguisherL n y (e r) = D.distinguisherL n (SliceReduction.slicePost (pairEncode (β n) y)) r
+ε : ℕ → ℝ
+hε : Negligible ε
+hb :
+  ∀ (n : ℕ) (w w' : Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool),
+    distAdv (fun z => encodeTupleOut (prfEncRealOut (G n) w z)) (fun z => encodeTupleOut (prfEncRealOut (G n) w' z))
+        (B.distinguisherL n) ≤
+      ε n
+n : ℕ
+o l : Fin (q.eval n + 1) → ℕ
+hfit : ∀ (i : Fin (q.eval n + 1)), o i + n + l i ≤ ℓ.eval n
+m m' : (i : Fin (q.eval n + 1)) → Fin (l i) → Bool
+c : Config n := ⟨(fun i => ⟨o i, ⋯⟩, fun i => ⟨l i, ⋯⟩), hfit⟩
+hdom : adv n (some ⟨c, (m, m')⟩) ≤ adv n (μ n)
+p : Pack n
+hc : μ n = some p
+e : D.Coins n ≃ B.Coins n
+he :
+  ∀ (y : List Bool) (r : D.Coins n),
+    B.distinguisherL n y (e r) = D.distinguisherL n (SliceReduction.slicePost (pairEncode (β n) y)) r
+P : List Bool → List Bool := fun z => SliceReduction.slicePost (pairEncode (β n) z)
+W : Msg n p.fst → Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool :=
+  fun v i => sliceMask (ℓ.eval n) n (off n p.fst i) (List.ofFn (v i))
+X : Msg n p.fst → (Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool) → List Bool :=
+  fun v t => encodeTupleOut (prfEncRealOut (G n) (W v) t)
+hadvice : β n = SliceReduction.sliceAdvice n (off n p.fst) (len n p.fst)
+hsampler : ∀ (v : Msg n p.fst), sliceMultiEncDist G n (q.eval n) (off n p.fst) (len n p.fst) v = fun t => P (X v t)
+hcoin : ∀ (z : List Bool) (r : D.Coins n), B.distinguisherL n z (e r) = D.distinguisherL n (P z) r
+hadv :
+  (distAdv (X p.snd.1) (X p.snd.2) fun z r => D.distinguisherL n (P z) r) =
+    distAdv (X p.snd.1) (X p.snd.2) (B.distinguisherL n)
+⊢ distAdv (fun s => P (X p.snd.1 s)) (fun s => P (X p.snd.2 s)) (D.distinguisherL n) ≤ ε n
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti): no fresh .olean produced
+        2.52 real         1.92 user         0.94 sys
+          2233319424  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              177516  page reclaims
+                  48  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  21  voluntary context switches
+                6944  involuntary context switches
+            15781442  instructions retired
+             6238656  cycles elapsed
+             1278264  peak memory footprint
+END 2026-11-15T11:22:57.898429+00:00 EXIT 1

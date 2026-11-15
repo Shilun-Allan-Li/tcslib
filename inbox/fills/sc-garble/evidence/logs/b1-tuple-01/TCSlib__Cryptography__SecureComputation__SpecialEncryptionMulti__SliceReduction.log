@@ -1,0 +1,94 @@
+START 2026-11-15T11:19:46.197987+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:131:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  slicePost
+    (pairEncode
+      (PrivateKeyScheme.encodeList
+        (List.ofFn
+          (Prod.fst ∘ fun i =>
+            (pairEncode (List.replicate (o i) true) (List.replicate (n + len i) true),
+              pairEncode (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).1)
+                (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).2)))))
+      (PrivateKeyScheme.encodeList
+        (List.ofFn
+          (Prod.snd ∘ fun i =>
+            (pairEncode (List.replicate (o i) true) (List.replicate (n + len i) true),
+              pairEncode (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).1)
+                (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).2))))))
+in the target expression
+  slicePost
+      (pairEncode
+        (PrivateKeyScheme.encodeList
+          (List.ofFn fun i => pairEncode (List.replicate (o i) true) (List.replicate (n + len i) true)))
+        (PrivateKeyScheme.encodeList
+          (List.ofFn fun j =>
+            pairEncode (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t j).1)
+              (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t j).2)))) =
+    PrivateKeyScheme.encodeList
+      (List.ofFn fun i =>
+        spEncStr (fun x => List.drop (o i) (List.ofFn (F t.1 (t.2 i)))) (List.ofFn t.1) (List.ofFn (m i))
+          (List.ofFn (t.2 i)))
+
+n L q : ℕ
+F : (Fin n → Bool) → (Fin n → Bool) → Fin L → Bool
+o len : Fin (q + 1) → ℕ
+hfit : ∀ (i : Fin (q + 1)), o i + n + len i ≤ L
+m : (i : Fin (q + 1)) → Fin (len i) → Bool
+t : (Fin n → Bool) × (Fin (q + 1) → Fin n → Bool)
+hp :
+  slicePost
+      (pairEncode
+        (PrivateKeyScheme.encodeList
+          (List.ofFn
+            (Prod.fst ∘ fun i =>
+              (pairEncode (List.replicate (o i) true) (List.replicate (n + len i) true),
+                pairEncode (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).1)
+                  (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).2)))))
+        (PrivateKeyScheme.encodeList
+          (List.ofFn
+            (Prod.snd ∘ fun i =>
+              (pairEncode (List.replicate (o i) true) (List.replicate (n + len i) true),
+                pairEncode (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).1)
+                  (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).2)))))) =
+    PrivateKeyScheme.encodeList
+      (List.ofFn
+        ((fun e =>
+            pairEncode (pairFstD e.2)
+              (List.take (pairSndD e.1).length (List.drop (pairFstD e.1).length (pairSndD e.2)))) ∘
+          fun i =>
+          (pairEncode (List.replicate (o i) true) (List.replicate (n + len i) true),
+            pairEncode (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).1)
+              (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).2))))
+⊢ slicePost
+      (pairEncode
+        (PrivateKeyScheme.encodeList
+          (List.ofFn fun i => pairEncode (List.replicate (o i) true) (List.replicate (n + len i) true)))
+        (PrivateKeyScheme.encodeList
+          (List.ofFn fun j =>
+            pairEncode (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t j).1)
+              (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t j).2)))) =
+    PrivateKeyScheme.encodeList
+      (List.ofFn fun i =>
+        spEncStr (fun x => List.drop (o i) (List.ofFn (F t.1 (t.2 i)))) (List.ofFn t.1) (List.ofFn (m i))
+          (List.ofFn (t.2 i)))
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction): no fresh .olean produced
+        2.19 real         1.43 user         0.89 sys
+          2205532160  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175564  page reclaims
+                  16  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  17  voluntary context switches
+                4451  involuntary context switches
+            15762986  instructions retired
+             7888682  cycles elapsed
+             1311032  peak memory footprint
+END 2026-11-15T11:19:48.428610+00:00 EXIT 1

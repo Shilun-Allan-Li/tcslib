@@ -1,0 +1,26 @@
+From aa40fe5a34b39e09237262ca4cd5bb7c6cc8e702 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 03:50:31 -0800
+Subject: [PATCH 6/7] Use the local prefix-test coin alias in the preservation
+ proof
+
+---
+ .../SecureComputation/SpecialEncryptionSecurity/WrongKey.lean   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
+index ba48024c5e15ba7bd5b35f0912a111b677a91825..ef53363b149273cdaac183866765444b6669ddf6 100644
+--- a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
++++ b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
+@@ -122,7 +122,7 @@ theorem exists_negligible_prefix_collision (ℓ : PolyExpr)
+           decide ((List.ofFn (g r)).take n = (List.ofFn (F n k r)).take n) := by
+       intro g r k
+       have hcoins : List.ofFn (eD.symm k) = List.ofFn k := by
+-        simpa only [Equiv.apply_symm_apply] using
++        simpa only [eD, Equiv.apply_symm_apply] using
+           (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn htest .var n (eD.symm k)).symm
+       rw [show χ (r, k) = φ (r, eD.symm k) from rfl, hφ]
+       have hrun : D.runAt n (pairEncode (List.ofFn r) (List.ofFn (g r))) (eD.symm k) =
+-- 
+2.50.1 (Apple Git-155)
+

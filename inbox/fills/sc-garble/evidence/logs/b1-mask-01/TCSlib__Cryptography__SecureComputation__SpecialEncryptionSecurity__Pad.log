@@ -1,0 +1,54 @@
+START 2026-11-15T11:15:50.152047+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:101:67: error: No goals to be solved
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:113:70: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  g ≥ 0
+  f ≥ 0
+  f - g ≥ 1
+  e ≥ 0
+  d ≥ 0
+  d - e ≥ 0
+  c ≥ 0
+  c - e ≤ 0
+  b ≥ 0
+  a ≥ 0
+  a - b - e ≥ 0
+where
+ a := ↑L
+ b := ↑o
+ c := ↑m.length
+ d := ↑(List.drop o pad).length
+ e := ↑(List.replicate r.length false ++ m).length
+ f := ↑(List.length ?m.255)
+ g := ↑?m.254
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:113:2: error: Type mismatch: After simplification, term
+  ht
+ has type
+  List.zipWith xor (List.replicate r.length false ++ m) (List.drop o pad) =
+    List.zipWith xor (List.take (r.length + m.length) (List.replicate r.length false ++ m))
+      (List.take (r.length + m.length) (List.drop o pad))
+but is expected to have type
+  List.zipWith xor (List.replicate r.length false ++ m) (List.drop o pad) =
+    List.zipWith xor (List.replicate r.length false ++ m) (List.take (r.length + m.length) (List.drop o pad))
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad): no fresh .olean produced
+        2.46 real         1.43 user         1.15 sys
+          2189066240  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174437  page reclaims
+                  23  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  25  voluntary context switches
+                5099  involuntary context switches
+            16153958  instructions retired
+             8688061  cycles elapsed
+             1311032  peak memory footprint
+END 2026-11-15T11:15:52.650832+00:00 EXIT 1

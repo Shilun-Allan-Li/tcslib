@@ -38,3 +38,15 @@ under the user's resource-coordination authorization. Derand reported pausing on
 Python dispatchers, leaving native checks intact, and resuming at 10:57:31 after a 12-second
 idle boundary. Our queued CoinBlocks check acquired 10:57:59 and finished normally. No other
 worker's process or lock was touched by sc-garble.
+
+2026-11-15 11:06–11:11 UTC: seq-zk announced a wrapper -k 3 request for two pinned
+Mathlib cache roots. Its wrapper held partial slots while its own NormalizedStep native
+check and derand's short checks occupied the rest. I asked derand for a boundary gap;
+derand reported pausing only its own dispatchers. No native job was stopped by sc-garble.
+The cache completed at 11:11:00 UTC, with no downloads and normal three-slot release.
+Our checkpoint batch then acquired and completed. Ordinary own checks remain serial.
+
+Checkpoint 2 was pushed at delivery commit 11b3b808803ae21adeb52b3c881237f66beb4ab0.
+The two unsigned proof commits replayed exactly; the copied manifests had 482 evidence
+entries and 499 top-level entries (each excludes its own manifest). No automatic-review
+rejection occurred for this push.

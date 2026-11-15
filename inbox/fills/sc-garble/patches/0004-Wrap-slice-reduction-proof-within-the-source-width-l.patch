@@ -1,0 +1,32 @@
+From 7324b0cf5dace6d980d04b636fad2ce8dd791416 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 03:39:57 -0800
+Subject: [PATCH 4/7] Wrap slice reduction proof within the source width limit
+
+---
+ .../SpecialEncryptionMulti/SliceReduction.lean              | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean
+index b690a8de45cbb555afaede8f67d6491d8a921b30..0847a5acab9a50fedca2d69b77707ea995581f9a 100644
+--- a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean
++++ b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean
+@@ -74,11 +74,13 @@ theorem length_encodeList_le (l : List (List Bool)) (B : ℕ)
+     (h : ∀ c ∈ l, c.length ≤ B) :
+     (PrivateKeyScheme.encodeList l).length ≤ l.length * (2 * B + 2) := by
+   induction l with
+-  | nil => simp only [PrivateKeyScheme.encodeList_nil, List.length_nil, Nat.zero_mul, le_refl]
++  | nil =>
++    simp only [PrivateKeyScheme.encodeList_nil, List.length_nil, Nat.zero_mul, le_refl]
+   | cons c l ih =>
+     have hc := h c (List.mem_cons_self)
+     have ht := ih (fun a ha => h a (List.mem_cons_of_mem _ ha))
+-    rw [PrivateKeyScheme.encodeList_cons, length_pairEncode, List.length_cons, Nat.add_mul, Nat.one_mul]
++    rw [PrivateKeyScheme.encodeList_cons, length_pairEncode, List.length_cons,
++      Nat.add_mul, Nat.one_mul]
+     omega
+ 
+ /-- Fitting slice advice has polynomial length:
+-- 
+2.50.1 (Apple Git-155)
+

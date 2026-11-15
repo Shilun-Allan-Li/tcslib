@@ -122,7 +122,7 @@ theorem exists_negligible_prefix_collision (ℓ : PolyExpr)
           decide ((List.ofFn (g r)).take n = (List.ofFn (F n k r)).take n) := by
       intro g r k
       have hcoins : List.ofFn (eD.symm k) = List.ofFn k := by
-        simpa only [Equiv.apply_symm_apply] using
+        simpa only [eD, Equiv.apply_symm_apply] using
           (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn htest .var n (eD.symm k)).symm
       rw [show χ (r, k) = φ (r, eD.symm k) from rfl, hφ]
       have hrun : D.runAt n (pairEncode (List.ofFn r) (List.ofFn (g r))) (eD.symm k) =

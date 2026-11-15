@@ -309,11 +309,11 @@ theorem specialScheme_wrongKey (hG : PRFOut (.add .var .var) G) :
       right_inv := by intro t; simp }
   have hk : ∀ k : K, List.ofFn (ek.symm k) = List.ofFn k := by
     intro k
-    simpa only [Equiv.apply_symm_apply] using
+    simpa only [ek, Equiv.apply_symm_apply] using
       (specialScheme_keyCoinsEquiv_ofFn G E hE hGE n (ek.symm k)).symm
   have hr : ∀ r : K, List.ofFn (er.symm r) = List.ofFn r := by
     intro r
-    simpa only [Equiv.apply_symm_apply] using
+    simpa only [er, Equiv.apply_symm_apply] using
       (specialScheme_nonceCoinsEquiv_ofFn G E hE hGE n (er.symm r)).symm
   refine (hb n m).trans_le ?_
   rw [← uprob_comp_equiv e.symm]

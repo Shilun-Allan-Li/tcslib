@@ -1,0 +1,20 @@
+"""Read balanced explicit simp/rw/dsimp/unfold argument lists from blanked Lean code."""
+import re
+IDENTIFIER=re.compile(r"[^\W\d][\w.']*",re.UNICODE)
+def arguments(code):
+ for m in re.finditer(r'\b(?:simp(?:_rw)?|simpa|dsimp|rw|erw|unfold)\b',code):
+  tail=code[m.end():]
+  b=re.match(r'(?:\s+only)?\s*\[',tail)
+  if b:
+   start=m.end()+b.end();depth=1;j=start
+   while j<len(code)and depth:
+    if code[j]=='[':depth+=1
+    elif code[j]==']':depth-=1
+    j+=1
+   if depth:raise ValueError('unclosed tactic bracket')
+   text=code[start:j-1]
+  elif m.group()=='unfold':
+   text=tail.split('\n',1)[0].split(' at ',1)[0]
+  else:continue
+  for token in IDENTIFIER.findall(text):
+   yield m.start(),m.group(),token

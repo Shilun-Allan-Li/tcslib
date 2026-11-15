@@ -1,0 +1,330 @@
+START 2026-11-15T12:12:20.698897+00:00 evidence/probes/FinalSignatures
+BoolCircuit.DAGCircuit.isFaninTwo_iff {n : ℕ} (C : BoolCircuit.DAGCircuit n) :
+  C.IsFaninTwo ↔
+    (∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = BoolCircuit.GateKind.not → g.args.length = 1)) ∧
+      ∀ g ∈ C.gates, g.args.length ≤ 2
+TCSlib.Cryptography.SecureComputation.good_of_no_crossOpening {K C ρ : Type} [Inhabited K] {n : ℕ}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc K C ρ) (Cc : BoolCircuit.DAGCircuit n) (hdec : M.DecCorrect)
+  (hC : Cc.IsFaninTwo) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed Cc K ρ)
+  (hcross :
+    ∀ (i : Fin Cc.gates.length) (a a' : Fin Cc.gates[i].args.length → Bool),
+      a ≠ a' →
+        M.dec (TCSlib.Cryptography.SecureComputation.argKeys Cc s i a')
+            (TCSlib.Cryptography.SecureComputation.garbledRow M Cc s i a) =
+          none) :
+  TCSlib.Cryptography.SecureComputation.Good M Cc s
+TCSlib.Cryptography.SecureComputation.wrongKeyBot_nonneg {K C ρ : Type} [Inhabited K]
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc K C ρ) [Fintype K] [Fintype ρ] {δ : ℝ} (hδ : M.WrongKeyBot δ) :
+  0 ≤ δ
+TCSlib.Cryptography.SecureComputation.uprob_crossOpening_le_of_perm {K C ρ : Type} [Inhabited K] {n : ℕ}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc K C ρ) (Cc : BoolCircuit.DAGCircuit n) [Fintype K] [Fintype ρ]
+  {δ : ℝ} (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo)
+  (π : (i : Fin Cc.gates.length) → Equiv.Perm (Fin Cc.gates[i].args.length → Bool)) (i : Fin Cc.gates.length)
+  (a a' : Fin Cc.gates[i].args.length → Bool) (hne : a ≠ a') :
+  (TCSlib.Cryptography.uprob fun t =>
+      (M.dec (TCSlib.Cryptography.SecureComputation.argKeys Cc (t.1, t.2, π) i a')
+            (TCSlib.Cryptography.SecureComputation.garbledRow M Cc (t.1, t.2, π) i a)).isSome =
+        true) ≤
+    δ
+TCSlib.Cryptography.SecureComputation.uprob_not_good_le_of_uniform_data {K C ρ : Type} [Inhabited K] {n : ℕ}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc K C ρ) (Cc : BoolCircuit.DAGCircuit n) [Fintype K] [Fintype ρ]
+  (hdec : M.DecCorrect) {δ : ℝ} (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo) {Ω : Type} [Fintype Ω]
+  (d : Ω → (Fin Cc.size → Bool → K) × ((i : Fin Cc.gates.length) → (Fin Cc.gates[i].args.length → Bool) → ρ))
+  (hd : TCSlib.Cryptography.HardcoreBit.PushesUniform d)
+  (π : Ω → (i : Fin Cc.gates.length) → Equiv.Perm (Fin Cc.gates[i].args.length → Bool)) :
+  (TCSlib.Cryptography.uprob fun w => ¬TCSlib.Cryptography.SecureComputation.Good M Cc ((d w).1, (d w).2, π w)) ≤
+    12 * ↑Cc.gates.length * δ
+TCSlib.Cryptography.SecureComputation.uprob_not_good_le_of_perm {K C ρ : Type} [Inhabited K] {n : ℕ}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc K C ρ) (Cc : BoolCircuit.DAGCircuit n) [Fintype K] [Fintype ρ]
+  (hdec : M.DecCorrect) {δ : ℝ} (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo)
+  (π : (i : Fin Cc.gates.length) → Equiv.Perm (Fin Cc.gates[i].args.length → Bool)) :
+  (TCSlib.Cryptography.uprob fun t => ¬TCSlib.Cryptography.SecureComputation.Good M Cc (t.1, t.2, π)) ≤
+    12 * ↑Cc.gates.length * δ
+TCSlib.Cryptography.SecureComputation.GarblingProbability.assignmentFold_small (len : ℕ) (hlen : len ≤ 2) :
+  (∀ (a : Fin len → Bool), List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a) < 4) ∧
+    Function.Injective fun a => List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)
+TCSlib.Cryptography.SecureComputation.GarblingProbability.pushesUniform_bits_of_blocks {I : Type} [Fintype I]
+  [DecidableEq I] {B n tail : ℕ} (c : I → Fin B) (hinj : Function.Injective c) :
+  TCSlib.Cryptography.HardcoreBit.PushesUniform fun r i t => (List.ofFn r).getD (↑(c i) * n + ↑t) false
+TCSlib.Cryptography.SecureComputation.GarblingProbability.key_row_blocks_injective {S V G : ℕ} (hV : V ≤ S) (hG : G ≤ S)
+  {A : Fin G → Type} (idx : (i : Fin G) → A i → ℕ) (hidx : ∀ (i : Fin G) (a : A i), idx i a < 4)
+  (hinj : ∀ (i : Fin G), Function.Injective (idx i)) :
+  have c :=
+    Sum.elim (fun p => p.2.toNat * S + ↑p.1) fun p => 2 * S + (4 * ↑p.1.fst + idx p.1.fst p.1.snd) * 2 + p.2.toNat;
+  (∀ (p : Fin V × Bool ⊕ ((i : Fin G) × A i) × Bool), c p < 10 * S) ∧ Function.Injective c
+TCSlib.Cryptography.SecureComputation.GarblingProbability.pushesUniform_key_row_blocks {S V G n : ℕ} (hV : V ≤ S)
+  (hG : G ≤ S) {A : Fin G → Type} [(i : Fin G) → Fintype (A i)] [(i : Fin G) → DecidableEq (A i)]
+  (idx : (i : Fin G) → A i → ℕ) (hidx : ∀ (i : Fin G) (a : A i), idx i a < 4)
+  (hinj : ∀ (i : Fin G), Function.Injective (idx i)) :
+  TCSlib.Cryptography.HardcoreBit.PushesUniform fun r =>
+    (fun v b t => (List.ofFn r).getD ((b.toNat * S + ↑v) * n + ↑t) false, fun i a =>
+      (fun t => (List.ofFn r).getD (2 * S * n + (4 * ↑i + idx i a) * (2 * n) + ↑t) false, fun t =>
+        (List.ofFn r).getD (2 * S * n + (4 * ↑i + idx i a) * (2 * n) + n + ↑t) false))
+TCSlib.Cryptography.SecureComputation.GarblingProbability.findSome_eq_some_of_dichotomy {α β : Type} (l : List α)
+  (f : α → Option β) (b : β) (hex : ∃ a ∈ l, f a = some b) (hall : ∀ a ∈ l, f a = none ∨ f a = some b) :
+  List.findSome? f l = some b
+TCSlib.Cryptography.SecureComputation.GarblingProbability.pushesUniform_output_argKeys {I J K : Type} [Fintype I]
+  [DecidableEq I] [Fintype J] [DecidableEq J] [Fintype K] [Nonempty K] (arg : J → I) (hinj : Function.Injective arg)
+  (out : I) (hne : ∀ (j : J), arg j ≠ out) (b : Bool) :
+  TCSlib.Cryptography.HardcoreBit.PushesUniform fun ks => (ks out b, fun j => ks (arg j))
+TCSlib.Cryptography.SecureComputation.GarblingProbability.pushesUniform_rowCoin {I : Type} [Fintype I] [DecidableEq I]
+  {A : I → Type} [(i : I) → Fintype (A i)] [(i : I) → DecidableEq (A i)] {ρ : Type} [Fintype ρ] (i : I) (a : A i) :
+  TCSlib.Cryptography.HardcoreBit.PushesUniform fun r => r i a
+TCSlib.Cryptography.SecureComputation.GarblingProbability.pushesUniform_output_argKeys_row {I J K R ρ : Type}
+  [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J] [Fintype K] [Nonempty K] [Fintype R] [Fintype ρ] (arg : J → I)
+  (hinj : Function.Injective arg) (out : I) (hne : ∀ (j : J), arg j ≠ out) (b : Bool) (coin : R → ρ)
+  (hcoin : TCSlib.Cryptography.HardcoreBit.PushesUniform coin) :
+  TCSlib.Cryptography.HardcoreBit.PushesUniform fun t => (t.1 out b, fun j => t.1 (arg j), coin t.2)
+TCSlib.Cryptography.SecureComputation.GarblingCoins.pushesUniform_position_keys_coin {K : Type} [Fintype K] [Nonempty K]
+  {len : ℕ} (j : Fin len) {b b' : Bool} (hb : b ≠ b') (c : Bool) :
+  TCSlib.Cryptography.HardcoreBit.PushesUniform fun t => (t.1 j b, t.1 j b', if c = true then t.2.2 else t.2.1)
+TCSlib.Cryptography.SecureComputation.GarblingCoins.uprob_isSome_lt_of_none {Ω α : Type} [Fintype Ω] [Nonempty Ω]
+  (X : Ω → Option α) {ε : ℝ} (h : 1 - ε < TCSlib.Cryptography.uprob fun t => X t = none) :
+  (TCSlib.Cryptography.uprob fun t => (X t).isSome = true) < ε
+TCSlib.Cryptography.SecureComputation.GarblingCoins.length_nestedInner
+  {G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool} {E : List Bool → List Bool}
+  (hGE : ∀ (n : ℕ) (k r : Fin n → Bool), E (Turing.pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (G n k r))
+  (n : ℕ) (k m r : Fin n → Bool) :
+  (TCSlib.Cryptography.SecureComputation.spEncStr E (List.ofFn k) (List.ofFn m) (List.ofFn r)).length =
+    TCSlib.Cryptography.SecureComputation.innerLen.eval n
+TCSlib.Cryptography.SecureComputation.GarblingCoins.nestedSpecial_wrongKeyBot_of_string_bounds
+  (G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool)
+  (G₂ :
+    (n : ℕ) →
+      (Fin n → Bool) →
+        (Fin n → Bool) →
+          Fin ((Complexity.PolyExpr.var.add TCSlib.Cryptography.SecureComputation.innerLen).eval n) → Bool)
+  (E₁ E₂ : List Bool → List Bool)
+  (hGE₁ : ∀ (n : ℕ) (k r : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (G₁ n k r))
+  (hGE₂ : ∀ (n : ℕ) (k r : Fin n → Bool), E₂ (Turing.pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (G₂ n k r))
+  (n : ℕ) {ε₁ ε₂ : ℝ} (hε₁ : 0 ≤ ε₁) (hε₂ : 0 ≤ ε₂)
+  (h₁ :
+    ∀ (m : Fin n → Bool),
+      (TCSlib.Cryptography.uprob fun t =>
+          (TCSlib.Cryptography.SecureComputation.spDecStr E₁ n n (List.ofFn t.2.1)
+                (TCSlib.Cryptography.SecureComputation.spEncStr E₁ (List.ofFn t.1) (List.ofFn m)
+                  (List.ofFn t.2.2))).isSome =
+            true) ≤
+        ε₁)
+  (h₂ :
+    ∀ (m : Fin (TCSlib.Cryptography.SecureComputation.innerLen.eval n) → Bool),
+      (TCSlib.Cryptography.uprob fun t =>
+          (TCSlib.Cryptography.SecureComputation.spDecStr E₂ n (TCSlib.Cryptography.SecureComputation.innerLen.eval n)
+                (List.ofFn t.2.1)
+                (TCSlib.Cryptography.SecureComputation.spEncStr E₂ (List.ofFn t.1) (List.ofFn m)
+                  (List.ofFn t.2.2))).isSome =
+            true) ≤
+        ε₂) :
+  (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).WrongKeyBot (ε₁ + ε₂)
+TCSlib.Cryptography.SecureComputation.uprob_not_good_distinct_le_of_uniform_data {K C ρ : Type} [Inhabited K] {n : ℕ}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc K C ρ) (Cc : BoolCircuit.DAGCircuit n) [Fintype K] [Fintype ρ]
+  [Nonempty ρ] (hdec : M.DecCorrect) {δ : ℝ} (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo) {Ω : Type} [Fintype Ω]
+  (s : Ω → TCSlib.Cryptography.SecureComputation.GarbleSeed Cc K ρ)
+  (hs : TCSlib.Cryptography.HardcoreBit.PushesUniform fun w => ((s w).1, (s w).2.1)) {m : ℕ} (out : Fin m → ℕ)
+  (hout : ∀ (j : Fin m), out j < Cc.size) :
+  (TCSlib.Cryptography.uprob fun w =>
+      ¬(TCSlib.Cryptography.SecureComputation.Good M Cc (s w) ∧
+          ∀ (j : Fin m),
+            TCSlib.Cryptography.SecureComputation.keyAt Cc (s w) (out j) false ≠
+              TCSlib.Cryptography.SecureComputation.keyAt Cc (s w) (out j) true)) ≤
+    12 * ↑Cc.gates.length * δ + ↑m * (1 / ↑(Fintype.card K))
+TCSlib.Cryptography.SecureComputation.SliceReduction.parserStep (z : List Bool) : List Bool
+TCSlib.Cryptography.SecureComputation.SliceReduction.parserStep_eq (z : List Bool) :
+  TCSlib.Cryptography.SecureComputation.SliceReduction.parserStep z =
+    Turing.pairEncode (Complexity.pairSndD (Complexity.pairFstD z)) (Complexity.pairSndD (Complexity.pairSndD z))
+TCSlib.Cryptography.SecureComputation.SliceReduction.parserEmit (z : List Bool) : List Bool
+TCSlib.Cryptography.SecureComputation.SliceReduction.parserEmit_eq (z : List Bool) :
+  TCSlib.Cryptography.SecureComputation.SliceReduction.parserEmit z =
+    if Complexity.pairSndD z = [] then []
+    else
+      Turing.pairEncode
+        (Turing.pairEncode (Complexity.pairFstD (Complexity.pairFstD (Complexity.pairSndD z)))
+          (List.take (Complexity.pairSndD (Complexity.pairFstD (Complexity.pairFstD z))).length
+            (List.drop (Complexity.pairFstD (Complexity.pairFstD (Complexity.pairFstD z))).length
+              (Complexity.pairSndD (Complexity.pairFstD (Complexity.pairSndD z))))))
+        []
+TCSlib.Cryptography.SecureComputation.SliceReduction.slicePost (z : List Bool) : List Bool
+TCSlib.Cryptography.SecureComputation.SliceReduction.slicePost_eq (z : List Bool) :
+  TCSlib.Cryptography.SecureComputation.SliceReduction.slicePost z =
+    TCSlib.Cryptography.Games.iterEmit TCSlib.Cryptography.SecureComputation.SliceReduction.parserStep
+      TCSlib.Cryptography.SecureComputation.SliceReduction.parserEmit (z.length + 1) z
+TCSlib.Cryptography.SecureComputation.SliceReduction.length_parserStep_le (z : List Bool) :
+  (TCSlib.Cryptography.SecureComputation.SliceReduction.parserStep z).length ≤ max z.length 2
+TCSlib.Cryptography.SecureComputation.SliceReduction.polyTimeComputable_slicePost :
+  Complexity.PolyTimeComputable TCSlib.Cryptography.SecureComputation.SliceReduction.slicePost
+TCSlib.Cryptography.SecureComputation.SliceReduction.length_le_encodeList (l : List (List Bool)) :
+  l.length ≤ (TCSlib.Cryptography.PrivateKeyScheme.encodeList l).length
+TCSlib.Cryptography.SecureComputation.SliceReduction.slicePost_encode (l : List (List Bool × List Bool)) :
+  TCSlib.Cryptography.SecureComputation.SliceReduction.slicePost
+      (Turing.pairEncode (TCSlib.Cryptography.PrivateKeyScheme.encodeList (List.map Prod.fst l))
+        (TCSlib.Cryptography.PrivateKeyScheme.encodeList (List.map Prod.snd l))) =
+    TCSlib.Cryptography.PrivateKeyScheme.encodeList
+      (List.map
+        (fun e =>
+          Turing.pairEncode (Complexity.pairFstD e.2)
+            (List.take (Complexity.pairSndD e.1).length
+              (List.drop (Complexity.pairFstD e.1).length (Complexity.pairSndD e.2))))
+        l)
+TCSlib.Cryptography.SecureComputation.SliceReduction.exists_slicePost_nuppt (D : Complexity.NUPPT) (β : ℕ → List Bool)
+  (b : Complexity.PolyExpr) (hβ : ∀ (n : ℕ), (β n).length ≤ b.eval n) :
+  ∃ B,
+    ∀ (n : ℕ),
+      ∃ e,
+        ∀ (y : List Bool) (r : D.Coins n),
+          B.distinguisherL n y (e r) =
+            D.distinguisherL n
+              (TCSlib.Cryptography.SecureComputation.SliceReduction.slicePost (Turing.pairEncode (β n) y)) r
+TCSlib.Cryptography.SecureComputation.SliceReduction.sliceAdvice {Q : ℕ} (n : ℕ) (o len : Fin Q → ℕ) : List Bool
+TCSlib.Cryptography.SecureComputation.SliceReduction.sliceAdvice_eq {Q : ℕ} (n : ℕ) (o len : Fin Q → ℕ) :
+  TCSlib.Cryptography.SecureComputation.SliceReduction.sliceAdvice n o len =
+    TCSlib.Cryptography.PrivateKeyScheme.encodeList
+      (List.ofFn fun i => Turing.pairEncode (List.replicate (o i) true) (List.replicate (n + len i) true))
+TCSlib.Cryptography.SecureComputation.SliceReduction.length_encodeList_le (l : List (List Bool)) (B : ℕ)
+  (h : ∀ c ∈ l, c.length ≤ B) : (TCSlib.Cryptography.PrivateKeyScheme.encodeList l).length ≤ l.length * (2 * B + 2)
+TCSlib.Cryptography.SecureComputation.SliceReduction.length_sliceAdvice_le {Q : ℕ} (L n : ℕ) (o len : Fin Q → ℕ)
+  (hfit : ∀ (i : Fin Q), o i + n + len i ≤ L) :
+  (TCSlib.Cryptography.SecureComputation.SliceReduction.sliceAdvice n o len).length ≤ Q * (6 * L + 6)
+TCSlib.Cryptography.SecureComputation.SliceReduction.slicePost_tuple {n L q : ℕ}
+  (F : (Fin n → Bool) → (Fin n → Bool) → Fin L → Bool) (o len : Fin (q + 1) → ℕ)
+  (hfit : ∀ (i : Fin (q + 1)), o i + n + len i ≤ L) (m : (i : Fin (q + 1)) → Fin (len i) → Bool)
+  (t : (Fin n → Bool) × (Fin (q + 1) → Fin n → Bool)) :
+  TCSlib.Cryptography.SecureComputation.SliceReduction.slicePost
+      (Turing.pairEncode (TCSlib.Cryptography.SecureComputation.SliceReduction.sliceAdvice n o len)
+        (TCSlib.Cryptography.encodeTupleOut
+          (TCSlib.Cryptography.prfEncRealOut F
+            (fun i => TCSlib.Cryptography.SecureComputation.sliceMask L n (o i) (List.ofFn (m i))) t))) =
+    TCSlib.Cryptography.PrivateKeyScheme.encodeList
+      (List.ofFn fun i =>
+        TCSlib.Cryptography.SecureComputation.spEncStr (fun x => List.drop (o i) (List.ofFn (F t.1 (t.2 i))))
+          (List.ofFn t.1) (List.ofFn (m i)) (List.ofFn (t.2 i)))
+TCSlib.Cryptography.SecureComputation.specialScheme_gen_runAt
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool) (E : List Bool → List Bool)
+  (hE : Complexity.PolyTimeComputable E)
+  (hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x))
+  (n : ℕ) (rg : (TCSlib.Cryptography.SecureComputation.specialScheme G E hE hGE).gen.Coins n) :
+  (TCSlib.Cryptography.SecureComputation.specialScheme G E hE hGE).gen.runAt n [] rg = List.ofFn rg
+TCSlib.Cryptography.SecureComputation.specialScheme_enc_runAt
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool) (E : List Bool → List Bool)
+  (hE : Complexity.PolyTimeComputable E)
+  (hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x))
+  (n : ℕ) (k m : List Bool) (re : (TCSlib.Cryptography.SecureComputation.specialScheme G E hE hGE).enc.Coins n) :
+  (TCSlib.Cryptography.SecureComputation.specialScheme G E hE hGE).enc.runAt n (Turing.pairEncode k m) re =
+    TCSlib.Cryptography.SecureComputation.spEncStr E k m (List.ofFn re)
+TCSlib.Cryptography.SecureComputation.specialScheme_dec_runAt
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool) (E : List Bool → List Bool)
+  (hE : Complexity.PolyTimeComputable E)
+  (hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x))
+  (n : ℕ) (k c : List Bool) (rd : (TCSlib.Cryptography.SecureComputation.specialScheme G E hE hGE).dec.Coins n) :
+  (TCSlib.Cryptography.SecureComputation.specialScheme G E hE hGE).dec.runAt n (Turing.pairEncode k c) rd =
+    (TCSlib.Cryptography.SecureComputation.spDecStr E n n k c).getD (true :: List.replicate n true)
+TCSlib.Cryptography.SecureComputation.specialScheme_keyCoinsEquiv
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool) (E : List Bool → List Bool)
+  (hE : Complexity.PolyTimeComputable E)
+  (hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x))
+  (n : ℕ) : (TCSlib.Cryptography.SecureComputation.specialScheme G E hE hGE).gen.Coins n ≃ (Fin n → Bool)
+TCSlib.Cryptography.SecureComputation.specialScheme_keyCoinsEquiv_eq
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool) (E : List Bool → List Bool)
+  (hE : Complexity.PolyTimeComputable E)
+  (hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x))
+  (n : ℕ) :
+  TCSlib.Cryptography.SecureComputation.specialScheme_keyCoinsEquiv G E hE hGE n =
+    (Complexity.NUPPT.coinsCongr ⋯ n).trans
+      ((Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform Complexity.polyTimeComputable_pairSndD Complexity.PolyExpr.var
+            n).trans
+        ((finCongr ⋯).arrowCongr (Equiv.refl Bool)))
+TCSlib.Cryptography.SecureComputation.specialScheme_keyCoinsEquiv_ofFn
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool) (E : List Bool → List Bool)
+  (hE : Complexity.PolyTimeComputable E)
+  (hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x))
+  (n : ℕ) (rg : (TCSlib.Cryptography.SecureComputation.specialScheme G E hE hGE).gen.Coins n) :
+  List.ofFn ((TCSlib.Cryptography.SecureComputation.specialScheme_keyCoinsEquiv G E hE hGE n) rg) = List.ofFn rg
+TCSlib.Cryptography.SecureComputation.specialScheme_nonceCoinsEquiv
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool) (E : List Bool → List Bool)
+  (hE : Complexity.PolyTimeComputable E)
+  (hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x))
+  (n : ℕ) : (TCSlib.Cryptography.SecureComputation.specialScheme G E hE hGE).enc.Coins n ≃ (Fin n → Bool)
+TCSlib.Cryptography.SecureComputation.specialScheme_nonceCoinsEquiv_eq
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool) (E : List Bool → List Bool)
+  (hE : Complexity.PolyTimeComputable E)
+  (hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x))
+  (n : ℕ) :
+  TCSlib.Cryptography.SecureComputation.specialScheme_nonceCoinsEquiv G E hE hGE n =
+    (Complexity.NUPPT.coinsCongr ⋯ n).trans
+      ((Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform ⋯ Complexity.PolyExpr.var n).trans
+        ((finCongr ⋯).arrowCongr (Equiv.refl Bool)))
+TCSlib.Cryptography.SecureComputation.specialScheme_nonceCoinsEquiv_ofFn
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool) (E : List Bool → List Bool)
+  (hE : Complexity.PolyTimeComputable E)
+  (hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x))
+  (n : ℕ) (re : (TCSlib.Cryptography.SecureComputation.specialScheme G E hE hGE).enc.Coins n) :
+  List.ofFn ((TCSlib.Cryptography.SecureComputation.specialScheme_nonceCoinsEquiv G E hE hGE n) re) = List.ofFn re
+TCSlib.Cryptography.SecureComputation.spEncStr_eq_zeroPrefixMask (E : List Bool → List Bool) (k m r : List Bool)
+  (hp : r.length + m.length ≤ (E (Turing.pairEncode k r)).length) :
+  TCSlib.Cryptography.SecureComputation.spEncStr E k m r =
+    Turing.pairEncode r (List.zipWith xor (List.replicate r.length false ++ m) (E (Turing.pairEncode k r)))
+TCSlib.Cryptography.SecureComputation.sliceMask (L n o : ℕ) (m : List Bool) : Fin L → Bool
+TCSlib.Cryptography.SecureComputation.sliceMask_eq (L n o : ℕ) (m : List Bool) :
+  TCSlib.Cryptography.SecureComputation.sliceMask L n o m =
+    TCSlib.Cryptography.padFin L (List.replicate (o + n) false ++ m ++ List.replicate (L - (o + n + m.length)) false)
+TCSlib.Cryptography.SecureComputation.ofFn_sliceMask (L n o : ℕ) (m : List Bool) (h : o + n + m.length ≤ L) :
+  List.ofFn (TCSlib.Cryptography.SecureComputation.sliceMask L n o m) =
+    List.replicate (o + n) false ++ m ++ List.replicate (L - (o + n + m.length)) false
+TCSlib.Cryptography.SecureComputation.spEncStr_eq_sliceMask (L o : ℕ) (pad k m r : List Bool) (hp : pad.length = L)
+  (hfit : o + r.length + m.length ≤ L) :
+  TCSlib.Cryptography.SecureComputation.spEncStr (fun x => List.drop o pad) k m r =
+    Turing.pairEncode r
+      (List.take (r.length + m.length)
+        (List.drop o
+          (List.zipWith xor (List.ofFn (TCSlib.Cryptography.SecureComputation.sliceMask L r.length o m)) pad)))
+TCSlib.Cryptography.SecureComputation.SpecialWrongKey.prefixTest (E : List Bool → List Bool) (z : List Bool) : List Bool
+TCSlib.Cryptography.SecureComputation.SpecialWrongKey.prefixTest_eq (E : List Bool → List Bool) (z : List Bool) :
+  TCSlib.Cryptography.SecureComputation.SpecialWrongKey.prefixTest E z =
+    [decide
+        (List.take (Complexity.NUPPT.inParam z).length (Complexity.pairSndD (Complexity.NUPPT.inArg z)) =
+          List.take (Complexity.NUPPT.inParam z).length
+            (E (Turing.pairEncode (Complexity.NUPPT.inCoins z) (Complexity.pairFstD (Complexity.NUPPT.inArg z)))))]
+TCSlib.Cryptography.SecureComputation.SpecialWrongKey.polyTimeComputable_prefixTest {E : List Bool → List Bool}
+  (hE : Complexity.PolyTimeComputable E) :
+  Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.SpecialWrongKey.prefixTest E)
+TCSlib.Cryptography.SecureComputation.SpecialWrongKey.uprob_random_prefix {n L : ℕ} (h : n ≤ L) (r v : Fin n → Bool) :
+  (TCSlib.Cryptography.uprob fun R => List.take n (List.ofFn (R r)) = List.ofFn v) = 2⁻¹ ^ n
+TCSlib.Cryptography.SecureComputation.SpecialWrongKey.exists_negligible_prefix_collision (ℓ : Complexity.PolyExpr)
+  (F : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((Complexity.PolyExpr.var.add ℓ).eval n) → Bool)
+  (E : List Bool → List Bool) (hE : Complexity.PolyTimeComputable E)
+  (hFE : ∀ (n : ℕ) (k r : Fin n → Bool), E (Turing.pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (F n k r))
+  (hF :
+    (TCSlib.Cryptography.OracleEnsemble.keyed F).Indist
+      (TCSlib.Cryptography.OracleEnsemble.random Complexity.PolyExpr.var (Complexity.PolyExpr.var.add ℓ))) :
+  ∃ ε,
+    TCSlib.Cryptography.Negligible ε ∧
+      ∀ (n : ℕ),
+        (TCSlib.Cryptography.uprob fun t =>
+            List.take n (List.ofFn (F n t.1 t.2.2)) = List.take n (List.ofFn (F n t.2.1 t.2.2))) ≤
+          ε n
+TCSlib.Cryptography.SecureComputation.SpecialWrongKey.spDecStr_none_iff_prefix_ne {n l : ℕ}
+  (F : (Fin n → Bool) → (Fin n → Bool) → Fin (n + l) → Bool) (E : List Bool → List Bool)
+  (hFE : ∀ (k r : Fin n → Bool), E (Turing.pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (F k r))
+  (k k' r : Fin n → Bool) (m : Fin l → Bool) :
+  TCSlib.Cryptography.SecureComputation.spDecStr E n l (List.ofFn k')
+        (TCSlib.Cryptography.SecureComputation.spEncStr E (List.ofFn k) (List.ofFn m) (List.ofFn r)) =
+      none ↔
+    List.take n (List.ofFn (F k r)) ≠ List.take n (List.ofFn (F k' r))
+        2.29 real         1.45 user         1.16 sys
+          2193506304  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174865  page reclaims
+                  16  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  19  voluntary context switches
+               17743  involuntary context switches
+            15689986  instructions retired
+             6189244  cycles elapsed
+             1261880  peak memory footprint
+END 2026-11-15T12:12:23.016912+00:00 EXIT 0

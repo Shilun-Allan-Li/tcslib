@@ -1,0 +1,754 @@
+{
+  "TCSlib/Complexity/TuringMachine/Configuration": [],
+  "TCSlib/Complexity/TuringMachine/Deterministic": [
+    "TCSlib/Complexity/TuringMachine/Configuration"
+  ],
+  "TCSlib/Complexity/TuringMachine/Finite": [
+    "TCSlib/Complexity/TuringMachine/Deterministic"
+  ],
+  "TCSlib/Complexity/TuringMachine/Simulation": [
+    "TCSlib/Complexity/TuringMachine/Finite"
+  ],
+  "TCSlib/Complexity/TuringMachine/Composition": [
+    "TCSlib/Complexity/TuringMachine/Simulation"
+  ],
+  "TCSlib/Complexity/ClassNP/PolyTime": [
+    "TCSlib/Complexity/TuringMachine/Composition"
+  ],
+  "TCSlib/Complexity/TuringMachine/StateRenaming": [
+    "TCSlib/Complexity/TuringMachine/Deterministic",
+    "TCSlib/Complexity/TuringMachine/Simulation"
+  ],
+  "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction": [
+    "TCSlib/Complexity/TuringMachine/Simulation"
+  ],
+  "TCSlib/Complexity/TuringMachine/Sweep": [
+    "TCSlib/Complexity/TuringMachine/Finite"
+  ],
+  "TCSlib/Complexity/TuringMachine/Robustness/SingleTape": [
+    "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction",
+    "TCSlib/Complexity/TuringMachine/Sweep",
+    "TCSlib/Complexity/TuringMachine/StateRenaming"
+  ],
+  "TCSlib/Complexity/TuringMachine/Encoding": [
+    "TCSlib/Complexity/TuringMachine/StateRenaming",
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape"
+  ],
+  "TCSlib/Complexity/ClassP/TimeConstructible": [
+    "TCSlib/Complexity/TuringMachine/Encoding"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/Convention": [
+    "TCSlib/Complexity/TuringMachine/Simulation"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/Wrappers": [
+    "TCSlib/Complexity/TuringMachine/Build/Convention",
+    "TCSlib/Complexity/TuringMachine/Composition"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/Embed": [
+    "TCSlib/Complexity/TuringMachine/Simulation",
+    "TCSlib/Complexity/TuringMachine/StateRenaming",
+    "TCSlib/Complexity/TuringMachine/Build/Convention"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/Loop": [
+    "TCSlib/Complexity/TuringMachine/Build/Convention",
+    "TCSlib/Complexity/TuringMachine/Build/Wrappers",
+    "TCSlib/Complexity/TuringMachine/Build/Embed",
+    "TCSlib/Complexity/TuringMachine/Composition"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/Primitives": [
+    "TCSlib/Complexity/ClassP/TimeConstructible",
+    "TCSlib/Complexity/TuringMachine/Build/Convention",
+    "TCSlib/Complexity/TuringMachine/Build/Loop",
+    "TCSlib/Complexity/TuringMachine/Build/Wrappers",
+    "TCSlib/Complexity/TuringMachine/Composition",
+    "TCSlib/Complexity/TuringMachine/Encoding"
+  ],
+  "TCSlib/Complexity/ClassNP/PolyTimePairing": [
+    "TCSlib/Complexity/ClassNP/PolyTime",
+    "TCSlib/Complexity/TuringMachine/Build/Primitives"
+  ],
+  "TCSlib/Complexity/Randomized/PolyExpr": [
+    "TCSlib/Complexity/ClassNP/PolyTimePairing"
+  ],
+  "TCSlib/Complexity/Randomized/PPT": [
+    "TCSlib/Complexity/Randomized/PolyExpr"
+  ],
+  "TCSlib/Complexity/Randomized/Build/PairSplit": [
+    "TCSlib/Complexity/TuringMachine/Encoding",
+    "TCSlib/Complexity/TuringMachine/Simulation"
+  ],
+  "TCSlib/Complexity/Randomized/Build/UnaryMul": [
+    "TCSlib/Complexity/TuringMachine/Encoding",
+    "TCSlib/Complexity/TuringMachine/Simulation",
+    "TCSlib/Complexity/Randomized/Build/PairSplit"
+  ],
+  "TCSlib/Complexity/Randomized/Primitives": [
+    "TCSlib/Complexity/Randomized/Build/PairSplit",
+    "TCSlib/Complexity/Randomized/Build/UnaryMul",
+    "TCSlib/Complexity/Randomized/PolyExpr"
+  ],
+  "TCSlib/Complexity/Randomized/Closure": [
+    "TCSlib/Complexity/Randomized/PPT",
+    "TCSlib/Complexity/Randomized/Primitives"
+  ],
+  "TCSlib/Complexity/ClassP/DTIME": [
+    "TCSlib/Complexity/TuringMachine/Finite"
+  ],
+  "TCSlib/Complexity/ClassP/P": [
+    "TCSlib/Complexity/ClassP/DTIME"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/DAGCircuit": [],
+  "TCSlib/Complexity/CircuitComplexity/Basic": [],
+  "TCSlib/Complexity/CircuitComplexity/TreeDAG": [
+    "TCSlib/Complexity/CircuitComplexity/DAGCircuit",
+    "TCSlib/Complexity/CircuitComplexity/Basic"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/DAGTransform": [
+    "TCSlib/Complexity/CircuitComplexity/TreeDAG"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/DAGFanin": [
+    "TCSlib/Complexity/CircuitComplexity/DAGTransform"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/LayeredCircuit": [
+    "TCSlib/Complexity/CircuitComplexity/Basic"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/LayeredPPoly": [
+    "TCSlib/Complexity/CircuitComplexity/LayeredCircuit"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/PPoly": [
+    "TCSlib/Complexity/CircuitComplexity/DAGCircuit"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/LayeredDAG": [
+    "TCSlib/Complexity/CircuitComplexity/DAGFanin",
+    "TCSlib/Complexity/CircuitComplexity/LayeredPPoly",
+    "TCSlib/Complexity/CircuitComplexity/PPoly"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/SizeClasses": [
+    "TCSlib/Complexity/CircuitComplexity/LayeredDAG"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/Advice": [
+    "TCSlib/Complexity/ClassP/P",
+    "TCSlib/Complexity/TuringMachine/Build/Primitives",
+    "TCSlib/Complexity/CircuitComplexity/SizeClasses"
+  ],
+  "TCSlib/Complexity/Randomized/NonUniform": [
+    "TCSlib/Complexity/Randomized/PPT",
+    "TCSlib/Complexity/CircuitComplexity/Advice"
+  ],
+  "TCSlib/Cryptography/Foundations/Probability": [],
+  "TCSlib/InformationTheory/FinDist": [],
+  "TCSlib/InformationTheory/StatisticalDistance": [
+    "TCSlib/InformationTheory/FinDist"
+  ],
+  "TCSlib/Cryptography/Foundations/Experiments": [
+    "TCSlib/Cryptography/Foundations/Probability",
+    "TCSlib/InformationTheory/StatisticalDistance"
+  ],
+  "TCSlib/Cryptography/HardcoreBit/Basic": [
+    "TCSlib/Cryptography/Foundations/Probability"
+  ],
+  "TCSlib/Cryptography/Foundations/BitLists": [],
+  "TCSlib/Cryptography/Asymptotic/Adversary": [
+    "TCSlib/Complexity/Randomized/PPT",
+    "TCSlib/Cryptography/Foundations/Experiments",
+    "TCSlib/Cryptography/HardcoreBit/Basic",
+    "TCSlib/Cryptography/Foundations/BitLists"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/ModuleHost": [
+    "TCSlib/Complexity/TuringMachine/Build/Loop",
+    "TCSlib/Complexity/ClassNP/PolyTime"
+  ],
+  "TCSlib/Complexity/Randomized/Build/IterateFindHost": [
+    "TCSlib/Complexity/TuringMachine/Build/ModuleHost"
+  ],
+  "TCSlib/Complexity/Randomized/Build/IterateFind": [
+    "TCSlib/Complexity/TuringMachine/Build/Primitives",
+    "TCSlib/Complexity/Randomized/Build/IterateFindHost",
+    "TCSlib/Complexity/Randomized/Primitives"
+  ],
+  "TCSlib/Complexity/Randomized/Build/StateLoop": [
+    "TCSlib/Complexity/Randomized/Primitives"
+  ],
+  "TCSlib/Complexity/TuringMachine/UnaryTape": [],
+  "TCSlib/Complexity/TuringMachine/CounterProg": [
+    "TCSlib/Complexity/TuringMachine/Simulation",
+    "TCSlib/Complexity/TuringMachine/UnaryTape"
+  ],
+  "TCSlib/Complexity/TuringMachine/CounterProgRun": [
+    "TCSlib/Complexity/TuringMachine/CounterProg"
+  ],
+  "TCSlib/Complexity/ClassNP/CounterProgPolyTime": [
+    "TCSlib/Complexity/ClassNP/PolyTime",
+    "TCSlib/Complexity/TuringMachine/CounterProgRun"
+  ],
+  "TCSlib/Complexity/TuringMachine/CounterProgInput": [
+    "TCSlib/Complexity/TuringMachine/CounterProgRun"
+  ],
+  "TCSlib/Complexity/ClassNP/PolyTimePrefix": [
+    "TCSlib/Complexity/ClassNP/CounterProgPolyTime",
+    "TCSlib/Complexity/ClassNP/PolyTimePairing",
+    "TCSlib/Complexity/TuringMachine/CounterProgInput"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed": [
+    "TCSlib/Complexity/TuringMachine/Build/Loop",
+    "TCSlib/Complexity/TuringMachine/Build/Primitives"
+  ],
+  "TCSlib/Complexity/TuringMachine/Build/EmitIterBody": [
+    "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed"
+  ],
+  "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop": [
+    "TCSlib/Complexity/ClassNP/CounterProgPolyTime",
+    "TCSlib/Complexity/ClassNP/PolyTimePairing",
+    "TCSlib/Complexity/ClassNP/PolyTimePrefix",
+    "TCSlib/Complexity/TuringMachine/CounterProgInput",
+    "TCSlib/Complexity/TuringMachine/Build/Loop",
+    "TCSlib/Complexity/TuringMachine/Build/Primitives",
+    "TCSlib/Complexity/TuringMachine/Build/EmitIterBody"
+  ],
+  "TCSlib/Complexity/ClassP/BinaryArith/Iterate": [
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop"
+  ],
+  "TCSlib/Complexity/ClassNP/Transducer": [
+    "TCSlib/Complexity/ClassNP/PolyTimePairing",
+    "TCSlib/Complexity/TuringMachine/Simulation"
+  ],
+  "TCSlib/Complexity/SpaceComplexity/Machines/Bin": [],
+  "TCSlib/Complexity/ClassP/BinaryArith/Basic": [
+    "TCSlib/Complexity/ClassP/BinaryArith/Iterate",
+    "TCSlib/Complexity/ClassNP/Transducer",
+    "TCSlib/Complexity/SpaceComplexity/Machines/Bin"
+  ],
+  "TCSlib/Complexity/Randomized/Build/StringLoops": [
+    "TCSlib/Complexity/Randomized/Build/StateLoop",
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop",
+    "TCSlib/Complexity/ClassP/BinaryArith/Basic"
+  ],
+  "TCSlib/Complexity/Randomized/Repetition": [
+    "TCSlib/Complexity/Randomized/Build/IterateFind",
+    "TCSlib/Complexity/Randomized/Build/StateLoop",
+    "TCSlib/Complexity/Randomized/Build/StringLoops",
+    "TCSlib/Complexity/Randomized/Primitives"
+  ],
+  "TCSlib/Cryptography/OneWayFunctions/Basic": [
+    "TCSlib/Cryptography/Foundations/Experiments"
+  ],
+  "TCSlib/Cryptography/Asymptotic/Sampling": [
+    "TCSlib/Cryptography/Foundations/Experiments",
+    "TCSlib/Cryptography/OneWayFunctions/Basic",
+    "TCSlib/Cryptography/HardcoreBit/Basic"
+  ],
+  "TCSlib/Cryptography/Foundations/Negligible": [],
+  "TCSlib/Cryptography/Pseudorandom/Indistinguishability": [
+    "TCSlib/Cryptography/Foundations/Experiments"
+  ],
+  "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas": [
+    "TCSlib/Complexity/Randomized/Closure",
+    "TCSlib/Complexity/Randomized/Repetition",
+    "TCSlib/Cryptography/Asymptotic/Adversary",
+    "TCSlib/Cryptography/Asymptotic/Sampling",
+    "TCSlib/Cryptography/Foundations/Negligible",
+    "TCSlib/Cryptography/Pseudorandom/Indistinguishability"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Generators": [
+    "TCSlib/Cryptography/Pseudorandom/Indistinguishability"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation": [
+    "TCSlib/Cryptography/Pseudorandom/Generators"
+  ],
+  "TCSlib/Cryptography/HardcoreBit/PairwiseIndependence": [
+    "TCSlib/Cryptography/HardcoreBit/Basic"
+  ],
+  "TCSlib/Cryptography/Asymptotic/Ensembles": [
+    "TCSlib/Complexity/Randomized/Closure",
+    "TCSlib/Complexity/Randomized/NonUniform",
+    "TCSlib/Cryptography/Asymptotic/Adversary",
+    "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas",
+    "TCSlib/Cryptography/Asymptotic/Sampling",
+    "TCSlib/Cryptography/Foundations/Negligible",
+    "TCSlib/Cryptography/Pseudorandom/Indistinguishability",
+    "TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation",
+    "TCSlib/Cryptography/HardcoreBit/PairwiseIndependence"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Defs": [
+    "TCSlib/Cryptography/Asymptotic/Ensembles",
+    "TCSlib/Cryptography/Pseudorandom/Generators"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/NextBit/Concrete": [
+    "TCSlib/Cryptography/OneWayFunctions/Basic",
+    "TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/NextBit": [
+    "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Defs",
+    "TCSlib/Cryptography/Pseudorandom/NextBit/Concrete",
+    "TCSlib/Cryptography/Foundations/BitLists"
+  ],
+  "TCSlib/Complexity/ClassNP/NP": [
+    "TCSlib/Complexity/ClassNP/PolyTimePairing",
+    "TCSlib/Complexity/ClassP/P",
+    "TCSlib/Complexity/TuringMachine/Encoding",
+    "TCSlib/Complexity/TuringMachine/Build/Primitives"
+  ],
+  "TCSlib/Complexity/ClassNP/CoNP": [
+    "TCSlib/Complexity/ClassNP/NP"
+  ],
+  "TCSlib/Complexity/ClassNP/PolyTimeBlockTests": [
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop"
+  ],
+  "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority": [
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockTests"
+  ],
+  "TCSlib/Complexity/ClassNP/PClosure": [
+    "TCSlib/Complexity/ClassNP/CoNP",
+    "TCSlib/Complexity/ClassNP/PolyTimePairing",
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority"
+  ],
+  "TCSlib/Complexity/ClassP/BinaryArith/AddSub": [
+    "TCSlib/Complexity/ClassP/BinaryArith/Basic",
+    "TCSlib/Complexity/ClassNP/PClosure"
+  ],
+  "TCSlib/Complexity/ClassP/BinaryArith/Mul": [
+    "TCSlib/Complexity/ClassP/BinaryArith/AddSub"
+  ],
+  "TCSlib/Complexity/ClassP/BinaryArith/Div": [
+    "TCSlib/Complexity/ClassP/BinaryArith/Mul"
+  ],
+  "TCSlib/Complexity/ClassP/BinaryArith/Words": [
+    "TCSlib/Complexity/ClassP/BinaryArith/Basic"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/UnaryCode": [],
+  "TCSlib/Complexity/ClassP/BinaryArith/Loops": [
+    "TCSlib/Complexity/ClassP/BinaryArith/Iterate",
+    "TCSlib/Complexity/ClassP/BinaryArith/AddSub",
+    "TCSlib/Complexity/ClassP/BinaryArith/Mul",
+    "TCSlib/Complexity/ClassP/BinaryArith/Div",
+    "TCSlib/Complexity/ClassP/BinaryArith/Words",
+    "TCSlib/Complexity/ClassNP/Transducer",
+    "TCSlib/Complexity/CircuitComplexity/UnaryCode",
+    "TCSlib/Complexity/ClassNP/PolyTimePrefix"
+  ],
+  "TCSlib/Cryptography/OneWayFunctions/Amplification": [
+    "TCSlib/Cryptography/OneWayFunctions/Basic"
+  ],
+  "TCSlib/Cryptography/Asymptotic/OneWayLemmas": [
+    "TCSlib/Complexity/ClassP/BinaryArith/Loops",
+    "TCSlib/Complexity/Randomized/Closure",
+    "TCSlib/Complexity/Randomized/Repetition",
+    "TCSlib/Cryptography/Asymptotic/Adversary",
+    "TCSlib/Cryptography/Asymptotic/Sampling",
+    "TCSlib/Cryptography/OneWayFunctions/Amplification"
+  ],
+  "TCSlib/Cryptography/Asymptotic/OneWayYao": [
+    "TCSlib/Cryptography/Asymptotic/OneWayLemmas"
+  ],
+  "TCSlib/Cryptography/Asymptotic/OneWay": [
+    "TCSlib/Complexity/Randomized/Closure",
+    "TCSlib/Complexity/Randomized/Repetition",
+    "TCSlib/Cryptography/Asymptotic/Adversary",
+    "TCSlib/Cryptography/Asymptotic/OneWayLemmas",
+    "TCSlib/Cryptography/Asymptotic/OneWayYao",
+    "TCSlib/Cryptography/Asymptotic/Sampling",
+    "TCSlib/Cryptography/Foundations/Negligible",
+    "TCSlib/Cryptography/OneWayFunctions/Amplification"
+  ],
+  "TCSlib/Complexity/PolyHierarchy/Padding": [
+    "TCSlib/Complexity/ClassNP/PClosure"
+  ],
+  "TCSlib/Cryptography/Asymptotic/CollectionsHelpers": [
+    "TCSlib/Complexity/Randomized/Closure",
+    "TCSlib/Complexity/PolyHierarchy/Padding",
+    "TCSlib/Cryptography/Asymptotic/Adversary"
+  ],
+  "TCSlib/Cryptography/Asymptotic/CollectionsLemmas": [
+    "TCSlib/Cryptography/Asymptotic/OneWay"
+  ],
+  "TCSlib/Cryptography/Asymptotic/Collections": [
+    "TCSlib/Cryptography/Asymptotic/OneWay",
+    "TCSlib/Cryptography/Asymptotic/CollectionsHelpers",
+    "TCSlib/Cryptography/Asymptotic/CollectionsLemmas",
+    "TCSlib/Cryptography/Asymptotic/Sampling",
+    "TCSlib/Complexity/PolyHierarchy/Padding"
+  ],
+  "TCSlib/Cryptography/HardcoreBit/InnerProduct": [
+    "TCSlib/Cryptography/Foundations/Experiments",
+    "TCSlib/Cryptography/HardcoreBit/Basic"
+  ],
+  "TCSlib/Cryptography/HardcoreBit/GoldreichLevin": [
+    "TCSlib/Cryptography/HardcoreBit/InnerProduct",
+    "TCSlib/Cryptography/HardcoreBit/PairwiseIndependence"
+  ],
+  "TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain": [
+    "TCSlib/Cryptography/HardcoreBit/GoldreichLevin"
+  ],
+  "TCSlib/Cryptography/HardcoreBit/ThreeQuarters": [
+    "TCSlib/Cryptography/HardcoreBit/InnerProduct",
+    "TCSlib/Cryptography/HardcoreBit/PairwiseIndependence"
+  ],
+  "TCSlib/Cryptography/OneWayFunctions/OutputLength": [
+    "TCSlib/Cryptography/OneWayFunctions/Basic"
+  ],
+  "TCSlib/Cryptography/Asymptotic/ReductionSupport": [
+    "TCSlib/Complexity/Randomized/Closure",
+    "TCSlib/Cryptography/Asymptotic/Adversary",
+    "TCSlib/Cryptography/Foundations/Negligible",
+    "TCSlib/Cryptography/OneWayFunctions/Basic",
+    "TCSlib/Cryptography/Pseudorandom/Generators"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/StretchMachine": [
+    "TCSlib/Complexity/Randomized/Repetition",
+    "TCSlib/Cryptography/Asymptotic/ReductionSupport"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreLemmas": [
+    "TCSlib/Cryptography/Pseudorandom/NextBit",
+    "TCSlib/Cryptography/Asymptotic/Collections",
+    "TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain",
+    "TCSlib/Cryptography/HardcoreBit/GoldreichLevin",
+    "TCSlib/Cryptography/HardcoreBit/ThreeQuarters",
+    "TCSlib/Cryptography/OneWayFunctions/OutputLength",
+    "TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation",
+    "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/StretchMachine"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreLoops": [
+    "TCSlib/Cryptography/Asymptotic/HardCoreLemmas"
+  ],
+  "TCSlib/Cryptography/Encryption/PrivateKey/Scheme": [
+    "TCSlib/Cryptography/Asymptotic/Adversary"
+  ],
+  "TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity": [
+    "TCSlib/Complexity/Randomized/Closure",
+    "TCSlib/Complexity/Randomized/Repetition",
+    "TCSlib/Cryptography/Encryption/PrivateKey/Scheme",
+    "TCSlib/Cryptography/Foundations/Negligible"
+  ],
+  "TCSlib/Cryptography/Encryption/PrivateKey/FromPRG": [
+    "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Defs",
+    "TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity"
+  ],
+  "TCSlib/Cryptography/Games/OracleComp": [],
+  "TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary": [
+    "TCSlib/Cryptography/Foundations/Experiments",
+    "TCSlib/Cryptography/Games/OracleComp"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Functions/Defs": [
+    "TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Functions/LazySampling": [
+    "TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary"
+  ],
+  "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas": [
+    "TCSlib/Complexity/Randomized/PolyExpr",
+    "TCSlib/Cryptography/Foundations/Negligible",
+    "TCSlib/Cryptography/HardcoreBit/Basic",
+    "TCSlib/Cryptography/OneWayFunctions/Basic",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Defs",
+    "TCSlib/Cryptography/Pseudorandom/Functions/LazySampling"
+  ],
+  "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid": [
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas",
+    "TCSlib/Cryptography/HardcoreBit/Basic"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs": [
+    "TCSlib/Cryptography/Asymptotic/Adversary",
+    "TCSlib/Cryptography/Foundations/Negligible",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Defs",
+    "TCSlib/Cryptography/Pseudorandom/Functions/LazySampling"
+  ],
+  "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine": [
+    "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas",
+    "TCSlib/Cryptography/Asymptotic/HardCoreLoops",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs"
+  ],
+  "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut": [
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid",
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas",
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine",
+    "TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs",
+    "TCSlib/Cryptography/Pseudorandom/Indistinguishability"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids": [
+    "TCSlib/Cryptography/Pseudorandom/Functions/LazySampling",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Defs"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Functions/GGM": [
+    "TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator": [
+    "TCSlib/Complexity/Randomized/Repetition",
+    "TCSlib/Cryptography/Asymptotic/ReductionSupport",
+    "TCSlib/Cryptography/Pseudorandom/Functions/GGM"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction": [
+    "TCSlib/Complexity/ClassP/BinaryArith/Loops",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run": [
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch": [
+    "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Defs",
+    "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/StretchMachine"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM": [
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run",
+    "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch"
+  ],
+  "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF": [
+    "TCSlib/Cryptography/Asymptotic/HardCoreLoops",
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRG",
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid",
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas",
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine",
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM"
+  ],
+  "TCSlib/Cryptography/Games/Simulate": [
+    "TCSlib/Cryptography/Games/OracleComp"
+  ],
+  "TCSlib/Cryptography/Games/Machines": [
+    "TCSlib/Cryptography/Games/Simulate",
+    "TCSlib/Complexity/Randomized/PPT"
+  ],
+  "TCSlib/Cryptography/Games/Probability": [
+    "TCSlib/Cryptography/Games/OracleComp",
+    "TCSlib/InformationTheory/FinDist"
+  ],
+  "TCSlib/Cryptography/Games/BitCodec": [
+    "TCSlib/Cryptography/Games/Machines",
+    "TCSlib/Cryptography/Asymptotic/Adversary",
+    "TCSlib/Cryptography/Games/Probability",
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop"
+  ],
+  "TCSlib/Cryptography/Games/Bridges/QueryTree": [
+    "TCSlib/Cryptography/Games/Simulate",
+    "TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary"
+  ],
+  "TCSlib/Programs/Compat": [],
+  "TCSlib/Programs/Util/List": [
+    "TCSlib/Programs/Compat"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreGL": [
+    "TCSlib/Cryptography/Asymptotic/HardCoreLoops",
+    "TCSlib/Programs/Util/List"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreGLColl": [
+    "TCSlib/Cryptography/Asymptotic/HardCoreGL",
+    "TCSlib/Cryptography/Asymptotic/Collections"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreCollection": [
+    "TCSlib/Cryptography/Asymptotic/HardCoreGLColl",
+    "TCSlib/Cryptography/Asymptotic/HardCoreLemmas"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreGLFamily": [
+    "TCSlib/Cryptography/Asymptotic/HardCoreGL"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCore/Functions": [
+    "TCSlib/Cryptography/Pseudorandom/NextBit",
+    "TCSlib/Cryptography/Asymptotic/Collections",
+    "TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain",
+    "TCSlib/Cryptography/Asymptotic/HardCoreGL",
+    "TCSlib/Cryptography/Asymptotic/HardCoreCollection",
+    "TCSlib/Cryptography/Asymptotic/HardCoreGLFamily",
+    "TCSlib/Cryptography/Asymptotic/HardCoreLemmas",
+    "TCSlib/Cryptography/Asymptotic/HardCoreLoops",
+    "TCSlib/Cryptography/HardcoreBit/GoldreichLevin",
+    "TCSlib/Cryptography/HardcoreBit/ThreeQuarters",
+    "TCSlib/Cryptography/OneWayFunctions/OutputLength"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin": [
+    "TCSlib/Cryptography/Asymptotic/HardCore/Functions"
+  ],
+  "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation": [
+    "TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin",
+    "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch"
+  ],
+  "TCSlib/Cryptography/Games/Bridges/Machines": [
+    "TCSlib/Cryptography/Games/Machines",
+    "TCSlib/Cryptography/Games/Bridges/QueryTree",
+    "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM"
+  ],
+  "TCSlib/Cryptography/Games/Efficiency/Strings": [
+    "TCSlib/Cryptography/Games/BitCodec",
+    "TCSlib/Complexity/Randomized/Closure",
+    "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction"
+  ],
+  "TCSlib/Cryptography/Games/Efficiency/Replay": [
+    "TCSlib/Cryptography/Games/Machines"
+  ],
+  "TCSlib/Cryptography/Games/Efficiency/Handler": [
+    "TCSlib/Cryptography/Games/Efficiency/Strings",
+    "TCSlib/Cryptography/Games/Simulate"
+  ],
+  "TCSlib/Cryptography/Games/Efficiency/OracleBridge": [
+    "TCSlib/Cryptography/Games/Efficiency/Strings",
+    "TCSlib/Cryptography/Games/Bridges/QueryTree",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs"
+  ],
+  "TCSlib/Cryptography/Games/Efficiency/Interactive": [
+    "TCSlib/Cryptography/Games/Efficiency/Strings",
+    "TCSlib/Cryptography/Asymptotic/ReductionSupport"
+  ],
+  "TCSlib/Cryptography/Games/Efficiency/InteractiveSpec": [
+    "TCSlib/Cryptography/Games/Efficiency/Interactive",
+    "TCSlib/Cryptography/Games/Efficiency/Handler",
+    "TCSlib/Cryptography/Games/Efficiency/Replay"
+  ],
+  "TCSlib/Cryptography/Games/Efficiency": [
+    "TCSlib/Cryptography/Games/BitCodec",
+    "TCSlib/Cryptography/Games/Probability",
+    "TCSlib/Cryptography/Games/Bridges/Machines",
+    "TCSlib/Cryptography/Games/Efficiency/Strings",
+    "TCSlib/Cryptography/Games/Efficiency/Replay",
+    "TCSlib/Cryptography/Games/Efficiency/Handler",
+    "TCSlib/Cryptography/Games/Efficiency/OracleBridge",
+    "TCSlib/Cryptography/Games/Efficiency/Interactive",
+    "TCSlib/Cryptography/Games/Efficiency/InteractiveSpec"
+  ],
+  "TCSlib/Cryptography/Games/Advantage": [
+    "TCSlib/Cryptography/Games/Probability",
+    "TCSlib/Cryptography/Foundations/Probability"
+  ],
+  "TCSlib/Cryptography/Games/Hopping": [
+    "TCSlib/Cryptography/Games/Simulate",
+    "TCSlib/Cryptography/Games/Advantage"
+  ],
+  "TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic": [
+    "TCSlib/Cryptography/Games/Efficiency",
+    "TCSlib/Cryptography/Games/Hopping"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/Interaction": [
+    "TCSlib/Complexity/Randomized/PPT",
+    "TCSlib/Complexity/ClassNP/PolyTimePairing",
+    "TCSlib/Cryptography/Foundations/Probability"
+  ],
+  "TCSlib/Cryptography/SecureComputation/Defs": [
+    "TCSlib/Cryptography/ZeroKnowledge/Interaction",
+    "TCSlib/Cryptography/Asymptotic/Adversary",
+    "TCSlib/Cryptography/Foundations/Experiments",
+    "TCSlib/Cryptography/Foundations/Negligible"
+  ],
+  "TCSlib/Cryptography/SecureComputation/ObliviousTransfer": [
+    "TCSlib/Cryptography/SecureComputation/Defs",
+    "TCSlib/Cryptography/Asymptotic/Collections"
+  ],
+  "TCSlib/Cryptography/SecureComputation/SpecialEncryption": [
+    "TCSlib/Complexity/Randomized/PPT",
+    "TCSlib/Complexity/Randomized/Closure",
+    "TCSlib/Complexity/Randomized/Primitives",
+    "TCSlib/Complexity/Randomized/Repetition",
+    "TCSlib/Cryptography/Asymptotic/Adversary"
+  ],
+  "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity": [
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryption",
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad",
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey",
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut",
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRG",
+    "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run",
+    "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM"
+  ],
+  "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad": [
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryption",
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine"
+  ],
+  "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey": [
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad",
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas"
+  ],
+  "TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti": [
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity",
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser",
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction"
+  ],
+  "TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser": [
+    "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut",
+    "TCSlib/Cryptography/Games/Efficiency"
+  ],
+  "TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction": [
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser",
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad"
+  ],
+  "TCSlib/Cryptography/SecureComputation/Garbling": [
+    "TCSlib/Complexity/CircuitComplexity/DAGCircuit",
+    "TCSlib/Cryptography/Foundations/Probability",
+    "TCSlib/Cryptography/SecureComputation/Garbling/Probability",
+    "TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks"
+  ],
+  "TCSlib/Cryptography/SecureComputation/Garbling/Probability": [
+    "TCSlib/Cryptography/HardcoreBit/Basic",
+    "TCSlib/Cryptography/OneWayFunctions/Basic"
+  ],
+  "TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks": [
+    "TCSlib/Cryptography/SecureComputation/Garbling/Probability"
+  ],
+  "TCSlib/Cryptography/SecureComputation/GarblingSpecial": [
+    "TCSlib/Cryptography/SecureComputation/Garbling",
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryption"
+  ],
+  "TCSlib/Cryptography/SecureComputation/GarblingSecurity": [
+    "TCSlib/Cryptography/SecureComputation/GarblingSpecial",
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity",
+    "TCSlib/Cryptography/SecureComputation/GarblingSecurity/CoinMarginals",
+    "TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds"
+  ],
+  "TCSlib/Cryptography/SecureComputation/GarblingSecurity/CoinMarginals": [
+    "TCSlib/Cryptography/HardcoreBit/Basic",
+    "TCSlib/Cryptography/OneWayFunctions/Basic"
+  ],
+  "TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds": [
+    "TCSlib/Cryptography/SecureComputation/GarblingSpecial",
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity",
+    "TCSlib/Cryptography/SecureComputation/GarblingSecurity/CoinMarginals"
+  ],
+  "TCSlib/Cryptography/SecureComputation/Hybrid": [
+    "TCSlib/Cryptography/SecureComputation/Defs"
+  ],
+  "TCSlib/Cryptography/SecureComputation/Compose": [
+    "TCSlib/Cryptography/SecureComputation/Hybrid"
+  ],
+  "TCSlib/Cryptography/SecureComputation/ComposePhases": [
+    "TCSlib/Cryptography/SecureComputation/Compose"
+  ],
+  "TCSlib/Cryptography/SecureComputation/ComposeSecurity": [
+    "TCSlib/Cryptography/SecureComputation/ComposePhases"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/Uniform": [
+    "TCSlib/Complexity/ClassNP/PolyTime",
+    "TCSlib/Complexity/CircuitComplexity/DAGCircuit",
+    "TCSlib/Complexity/CircuitComplexity/UnaryCode"
+  ],
+  "TCSlib/Cryptography/SecureComputation/Yao": [
+    "TCSlib/Cryptography/SecureComputation/Hybrid",
+    "TCSlib/Cryptography/SecureComputation/GarblingSecurity",
+    "TCSlib/Complexity/CircuitComplexity/Uniform",
+    "TCSlib/Complexity/ClassP/BinaryArith/Words",
+    "TCSlib/Cryptography/Foundations/BitLists"
+  ],
+  "TCSlib/Cryptography/SecureComputation/YaoReal": [
+    "TCSlib/Cryptography/SecureComputation/Yao",
+    "TCSlib/Cryptography/SecureComputation/ComposeSecurity",
+    "TCSlib/Cryptography/SecureComputation/ObliviousTransfer"
+  ],
+  "TCSlib/Cryptography/SecureComputation": [
+    "TCSlib/Cryptography/SecureComputation/Defs",
+    "TCSlib/Cryptography/SecureComputation/ObliviousTransfer",
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryption",
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity",
+    "TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti",
+    "TCSlib/Cryptography/SecureComputation/Garbling",
+    "TCSlib/Cryptography/SecureComputation/GarblingSpecial",
+    "TCSlib/Cryptography/SecureComputation/GarblingSecurity",
+    "TCSlib/Cryptography/SecureComputation/Hybrid",
+    "TCSlib/Cryptography/SecureComputation/Compose",
+    "TCSlib/Cryptography/SecureComputation/ComposePhases",
+    "TCSlib/Cryptography/SecureComputation/ComposeSecurity",
+    "TCSlib/Cryptography/SecureComputation/Yao",
+    "TCSlib/Cryptography/SecureComputation/YaoReal"
+  ]
+}

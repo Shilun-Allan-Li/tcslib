@@ -1,0 +1,33 @@
+START 2026-11-15T11:53:55.898252+00:00 evidence/seals/controls/Control_A_coe_sealed
+SEALED	TCSlib.Cryptography.Foundations.Probability	TCSlib.Cryptography.uprob
+SEALED	TCSlib.Cryptography.Foundations.Probability	TCSlib.Cryptography.uexp
+SEAL_COUNTS requested=2 excluded=0
+evidence/seals/controls/Control_A_coe_sealed.lean:48:2: error: Tactic `rfl` failed: The left-hand side
+  TCSlib.Cryptography.uprob p
+is not definitionally equal to the right-hand side
+  ↑(Nat.card { a // p a }) / ↑(Fintype.card (Fin 1))
+
+p : Fin 1 → Prop
+⊢ TCSlib.Cryptography.uprob p = ↑(Nat.card { a // p a }) / ↑(Fintype.card (Fin 1))
+FAIL(evidence/seals/controls/Control_A_coe_sealed): lean exited with status 1
+FAIL(evidence/seals/controls/Control_A_coe_sealed): error diagnostics reported
+FAIL(evidence/seals/controls/Control_A_coe_sealed): no fresh .olean produced
+       11.08 real        10.41 user         0.66 sys
+          1549877248  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              127331  page reclaims
+                  15  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  19  voluntary context switches
+                 719  involuntary context switches
+            15800096  instructions retired
+             6218032  cycles elapsed
+             1294648  peak memory footprint
+END 2026-11-15T11:54:07.005865+00:00 EXIT 1

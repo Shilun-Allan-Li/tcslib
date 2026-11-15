@@ -1,0 +1,174 @@
+TCSlib/Complexity/Randomized/Closure.lean:38:| `exists_withAdvice` | advice `⟨A.advice n, β n⟩`; re-pair `y` with `β n` | pairing calculus |
+TCSlib/Complexity/Randomized/Closure.lean:64:* `Complexity.NUPPT.exists_withAdvice` — hard-wiring an extra polynomial-length advice.
+TCSlib/Complexity/Randomized/Closure.lean:358:theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
+.lake/packages/mathlib/Mathlib/Data/List/Rotate.lean:183:    rotate_eq_drop_append_take_mod, h, zipWith_append, ← drop_zipWith, ←
+.lake/packages/mathlib/Mathlib/Data/List/Rotate.lean:184:    take_zipWith, List.length_zipWith, h, min_self]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:141:theorem take_zipWith : (zipWith f l l').take i = zipWith f (l.take i) (l'.take i) := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:152:theorem drop_zipWith : (zipWith f l l').drop i = zipWith f (l.drop i) (l'.drop i) := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:164:  rw [← drop_one]; simp [drop_zipWith]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/TakeDrop.lean:570:theorem zipWith_eq_zipWith_take_min : ∀ {l₁ : List α} {l₂ : List β},
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/TakeDrop.lean:574:  | a :: l₁, b :: l₂ => by simp [succ_min_succ, zipWith_eq_zipWith_take_min (l₁ := l₁) (l₂ := l₂)]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/TakeDrop.lean:591:  rw [zipWith_eq_zipWith_take_min]
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:158:  have hlen : l.length ≤ (pairEncode [] (encodeList l)).length := by
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:159:    have := length_le_length_encodeList l
+TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:937:   expands the `Nat.size n`-bit best-position advice to unary; `NUPPT.exists_withAdvice`
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:233:shared `spEncStr_eq_sliceMask`). Precompose `D` with the parser and hard-wire its advice using
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:235:The coin equivalence and `distAdv_comp` transfer it to the maximizing pair, which bounds all
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:260:    obtain ⟨p, hp, hmax⟩ := Finset.exists_max_image Finset.univ (adv n) Finset.univ_nonempty
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:292:      sliceMask (ℓ.eval n) n (off n p.1 i) (List.ofFn (v i))
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:313:        acceptProb_coins_equiv (X p.2.1) (B.distinguisherL n) _ e hcoin,
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:314:        acceptProb_coins_equiv (X p.2.2) (B.distinguisherL n) _ e hcoin]
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:318:    rw [hsampler p.2.1, hsampler p.2.2, ← distAdv_comp P, hadv]
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:125:  exact Games.polyTimeComputable_iterEmit
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:129:`l.length ≤ (PrivateKeyScheme.encodeList l).length`. -/
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:130:theorem length_le_encodeList (l : List (List Bool)) :
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:131:    l.length ≤ (PrivateKeyScheme.encodeList l).length := by
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:133:  | nil => rw [List.length_nil, PrivateKeyScheme.encodeList_nil, List.length_nil]
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:135:    rw [List.length_cons, PrivateKeyScheme.encodeList_cons, length_pairEncode]
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:181:    have h := length_le_encodeList (l.map Prod.snd)
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceParser.lean:188:  rw [Games.iterEmit_encode parserStep parserEmit enc g l hstep_nil hstep
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:52:  obtain ⟨B, hBc, hB⟩ := A.exists_withAdvice β b hβ
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:72:`(∀ c ∈ l, c.length ≤ B) → (encodeList l).length ≤ l.length*(2*B+2)`. -/
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:73:theorem length_encodeList_le (l : List (List Bool)) (B : ℕ)
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:75:    (PrivateKeyScheme.encodeList l).length ≤ l.length * (2 * B + 2) := by
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:78:    simp only [PrivateKeyScheme.encodeList_nil, List.length_nil, Nat.zero_mul, le_refl]
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:82:    rw [PrivateKeyScheme.encodeList_cons, length_pairEncode, List.length_cons,
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:97:  have h := length_encodeList_le (List.ofFn fun i =>
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:112:    ⟦t.1⟧ ⟦m i⟧ ⟦t.2 i⟧)`, where `masks i = sliceMask L n (o i) ⟦m i⟧`
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:126:      (encodeTupleOut (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t))) =
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:134:        (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).1)
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:135:        (List.ofFn (prfEncRealOut F (fun i => sliceMask L n (o i) (List.ofFn (m i))) t i).2)))
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti/SliceReduction.lean:145:  have h := spEncStr_eq_sliceMask L (o i) (List.ofFn (F t.1 (t.2 i)))
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:17:* `SecureComputation.sliceMask`: the zero/message/zero full-width mask for a fitting slice.
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:23:* `SecureComputation.spEncStr_eq_sliceMask`: cutting a full masked pad gives a slice ciphertext.
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:58:`sliceMask L n o m = padFin L (0^{o+n} ++ m ++ 0^{L-(o+n+|m|)})`.
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:60:def sliceMask (L n o : ℕ) (m : List Bool) : Fin L → Bool :=
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:64:/-- `sliceMask L n o m = padFin L (0^{o+n} ++ m ++ 0^{L-(o+n+|m|)})`. -/
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:65:theorem sliceMask_eq (L n o : ℕ) (m : List Bool) :
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:66:    sliceMask L n o m = padFin L (List.replicate (o + n) false ++ m ++
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:70:`⟦sliceMask L n o m⟧ = 0^{o+n} ++ m ++ 0^{L-(o+n+|m|)}` if `o+n+|m| ≤ L`. -/
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:71:theorem ofFn_sliceMask (L n o : ℕ) (m : List Bool) (h : o + n + m.length ≤ L) :
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:72:    List.ofFn (sliceMask L n o m) = List.replicate (o + n) false ++ m ++
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:74:  rw [sliceMask_eq]
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:81:  ⟨r, ((⟦sliceMask L |r| o m⟧ ⊕ pad).drop o).take (|r|+|m|)⟩`,
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:88:theorem spEncStr_eq_sliceMask (L o : ℕ) (pad k m r : List Bool)
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:91:      (((List.zipWith xor (List.ofFn (sliceMask L r.length o m)) pad).drop o).take
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:96:  rw [spEncStr_eq_zeroPrefixMask _ _ _ _ hdrop, ofFn_sliceMask _ _ _ _ hfit]
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:98:  rw [List.drop_zipWith, List.take_zipWith]
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:110:  have ht := List.zipWith_eq_zipWith_take_min
+TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:56:calculus (`Complexity.NUPPT.exists_comp`, `NUPPT.exists_withAdvice`) is compared with the
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:86:private theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:388:attained at some `i_n` (`Finset.exists_max_image`); then `nextBitProb ≤ 1/2 + ε n` for all
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:397:`prgAdv_nextBitDist` and `acceptProb_coins_equiv`,
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:411:    · obtain ⟨j₀, -, hj₀⟩ := Finset.exists_max_image (Finset.univ : Finset (Fin (ℓ.eval n)))
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:459:    rw [acceptProb_coins_equiv (X.X n) (e n) _ (nextBitDist j₀ (A.predictor n j₀)) hid,
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:460:      acceptProb_coins_equiv id (e n) _ (nextBitDist j₀ (A.predictor n j₀)) hid]
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:116:machine. Hard-wire the binary word using `exists_withAdvice`, bounded by `Nat.size n ≤ n`.
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Advice.lean:129:  obtain ⟨B, hBcoins, hB⟩ := NUPPT.exists_withAdvice D β .var hβ
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean:178:(`NUPPT.exists_withAdvice`, length `≤ D.adv + 6`), coins `1 + D.coins`
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:198:(the encoding moved into `Dst`, `distAdv_comp`) bounds the advantage by the sum of the `q + 1`
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:270:of the planting distinguisher `hybridAdv … (j n)` (`Finset.exists_max_image`); the machine `B`
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:295:      obtain ⟨jf, -, hjf⟩ := Finset.exists_max_image Finset.univ (term n) Finset.univ_nonempty
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:197:`M`: advice `⟨⟨1^{k_n}, 1^{ℓ(n) − k_n − 1}⟩, D.advice n⟩` (`NUPPT.exists_withAdvice`,
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:291:sunglass identity `distAdv_comp` its advantage against `G n` is the advantage of `D` between
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:312:    distAdv_comp (fun t : Fin (P.stretch.eval n) → Bool => fun i : Fin (m.eval n) =>
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:393:the sunglass identity `distAdv_comp` with the projection `t ↦ t ∘ castLE` (a uniform
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:416:distinguisher `D ∘ take (2n)` of the expansion (`NUPPT.exists_comp`), `distAdv_comp` with the
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:708:`B` is `exists_split` (the first `(q(n)+1) n` coins are the points) of `exists_withAdvice` (advice
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:732:  obtain ⟨C₂, hC₂c, hC₂⟩ := C.exists_withAdvice
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:94:1. At each `n` choose the pair of masks maximizing the advantage (`Finset.exists_max_image`).
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:99:3. `distAdv_comp` and `distAdv_prfEncRealOut_le` bound the advantage by
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:120:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:158:    exact (distAdv_comp encodeTupleOut (prfEncRealOut (F n) (μ n).1)
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:141:theorem distAdv_comp (P : γ → δ) (X : σ → γ) (Y : τ → γ) (D : δ → ρ → Bool) :
+TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:295:`j n < K(n)` and empty elsewhere (`NUPPT.exists_withAdvice`; length
+TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:336:  obtain ⟨D₂, hD₂c, hD₂⟩ := D₁.exists_withAdvice β _ hβ
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM.lean:223:**Proof sketch.** `B` has advice `⟨⟨1^{i n}, 1^{j n}⟩, D.advice n⟩` (`NUPPT.exists_withAdvice`
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Averaging.lean:117:  obtain ⟨i, _, hi⟩ := Finset.exists_max_image Finset.univ g Finset.univ_nonempty
+TCSlib/Cryptography/Games/Efficiency.lean:76:  (`NUPPT.exists_withAdvice`, with `NUPPT.exists_comp` to re-pair the input).
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:281:`(v, v')` (`Finset.exists_max_image`); `multiCom` is `encodeMsgs ∘ List.ofFn ∘ pairTuple` of
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:317:  obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:389:(`Finset.exists_max_image`), a coordinate `k_n` from the coordinatewise hybrid lemma
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:397:`⟨⟨pre_n, suf_n⟩, D.advice n⟩` and calls `D` once (`NUPPT.exists_comp`, `NUPPT.exists_withAdvice`);
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:683:(`Finset.exists_max_image`), a bit position `k` from `exists_pairRed_ge`, and by averaging over
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:721:  obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:782:(`Finset.exists_max_image`), a bit position `k_n` from the coordinatewise hybrid lemma
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:783:`exists_pairRed_ge` (after `owpComStr_ofFn`, `distAdv_comp` and the seed reindexing
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:793:`NUPPT.exists_withAdvice`); by coin transport (`CommitmentLemmas.acceptProb_distinguisher_of_runAtL`)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:48:* `TCSlib.Cryptography.EnsembleLemmas.acceptProb_coins_equiv`, `acceptProb_coins_fst`,
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:85:theorem acceptProb_coins_equiv (e : κ ≃ ρ) (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:264:  rw [← acceptProb_coins_equiv e, ← acceptProb_not]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:282:  rw [← acceptProb_coins_equiv e]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:300:  rw [← acceptProb_coins_equiv (coinsEquiv hlen)]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:363:  rw [← acceptProb_coins_equiv (coinsEquiv hlen),
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:813:`NUPPT.exists_withAdvice (NUPPT.exists_seq M₀ (NUPPT.exists_comp D pairSndD id)) (1^{k n})`,
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:831:  obtain ⟨B, hBc, hB⟩ := C.exists_withAdvice (fun n => List.replicate (k n) true) t
+TCSlib/Cryptography/Games/Forwarding.lean:26:* **Hard-wiring a second input component** (`NUPPT.exists_withAdviceOn`): a reduction that
+TCSlib/Cryptography/Games/Forwarding.lean:38:* `Complexity.NUPPT.exists_withAdviceOn`: hard-wiring a second input component.
+TCSlib/Cryptography/Games/Forwarding.lean:190:`⟨⟨x, L⟩, β⟩ ↦ ⟨⟨x, β⟩, L⟩`, then `B' := NUPPT.exists_withAdvice B₁ β`; on `⟨x, L⟩` (the input
+TCSlib/Cryptography/Games/Forwarding.lean:192:theorem _root_.Complexity.NUPPT.exists_withAdviceOn (B : NUPPT) (β : ℕ → List Bool)
+TCSlib/Cryptography/Games/Forwarding.lean:204:  obtain ⟨B', hc', hB'⟩ := NUPPT.exists_withAdvice B₁ β b hβ
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:97:(`Games.polyTimeComputable_iterEmit` with the step `pairSndD`, which never lengthens a word). -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:100:  (polyTimeComputable_iterEmit polyTimeComputable_pairSndD hG 0
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:120:**Proof sketch.** `Games.iterEmit_encode` with the encoding `codec.encodeLog`: `pairSndD` drops
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Forward.lean:128:  refine iterEmit_encode pairSndD G codec.encodeLog g h ?_ (fun e _ t => ?_) ?_
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:481:(`NUPPT.exists_withAdvice`). That form is not proved, since no consumer needs copies of a
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:491:advice (`NUPPT.exists_withAdvice`). The reduction is the `NUPPT` of
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:568:      rw [← EnsembleLemmas.acceptProb_coins_equiv e, ← EnsembleLemmas.acceptProb_multicopyRed_congr
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:37:* `Games.polyTimeComputable_iterEmit`, `Games.iterEmit_encode`, `Games.length_iterate_le_add`:
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:59:the elements one by one (`iterEmit_encode`); with polynomial-time `step` and `emit` and `|x| + 1`
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:61:(`polyTimeComputable_iterEmit`). The history translator below (`EffFill.relabel`), the log readings
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:92:theorem polyTimeComputable_iterEmit {step emit : List Bool → List Bool}
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:110:theorem iterEmit_encode {β : Type} (step emit : List Bool → List Bool) (enc : List β → List Bool)
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:263:/-- **The history translator is polynomial-time** (`polyTimeComputable_iterEmit` with the step
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:266:  have h := polyTimeComputable_iterEmit polyTimeComputable_pairSndD relabelEmit_poly 0
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:221:theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:233:  rw [acceptProb_coins_equiv G D D' e h, acceptProb_coins_equiv id D D' e h]
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability/Decrypt.lean:26:(`Complexity.NUPPT.exists_withAdviceOn`, from `NUPPT.exists_comp` and `NUPPT.exists_withAdvice`).
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:264:`NUPPT.exists_withAdvice α` (the shape of pre-ship probe R4); the run equations compose
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:274:  obtain ⟨B, hc, h⟩ := A₂.exists_withAdvice α b hα
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:285:(`EnsembleLemmas.acceptProb_coins_equiv`) and compare pointwise (`NUPPT.distinguisherL_eq`,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:302:  have hX := EnsembleLemmas.acceptProb_coins_equiv
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:304:  have hY := EnsembleLemmas.acceptProb_coins_equiv
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:278:        refine (length_le_length_encodeList _).trans ?_
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:378:(`Finset.exists_max_image`). By `bitwise_enc_runAtL` and the coin split
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:383:(`distAdv_comp`). Hence the advantage is at most `∑_{j<n}` of the advantages of
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:386:(`NUPPT.exists_withAdvice`), coins `var · S.enc.coins + D.coins` (`NUPPT.exists_split`), which
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:392:(`Finset.exists_max_image` over `j`), the total is `≤ n · ε(n)`, negligible by
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:404:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:440:(`Finset.exists_max_image`). The samples are the shared-key tuples of `distAdv_multi_le_sum`
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:442:(`distAdv_comp`), so the advantage is at most `∑_{j ≤ q n}` of the advantages of
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:445:(`NUPPT.exists_withAdvice`, bound `2(q+1)·var + …`), coins `q · S.enc.coins + D.coins`
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:465:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:604:`M.advice n` as the second input component (`NUPPT.exists_withAdviceOn`). Reindex `Sim`'s coins as
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:614:  obtain ⟨Sim, hc, hSim⟩ := NUPPT.exists_withAdviceOn Sim₀ samp.advice samp.adv
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:102:(`Games.polyTimeComputable_iterEmit` with the step `chunkStep`, which never makes a word longer
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:108:`max |x| 2` (`length_chunkStep_le`), so `polyTimeComputable_iterEmit` applies. -/
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:129:  exact (polyTimeComputable_iterEmit hstep hemit 2 (length_chunkStep_le c)).congr
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:135:**Proof sketch.** `Games.iterEmit_encode` with the encoding `l ↦ ⟨ctx, l.flatten⟩`: a step drops a
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:176:  rw [chunkMap, iterEmit_encode (chunkStep c) (chunkEmit c f) (fun l => pairEncode ctx l.flatten)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:99:are the definitions of `prgAdv` and `distAdv` (the sunglass identity `distAdv_comp`, here
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:277:message space (`Finset.exists_max_image`; the text's footnote: "`Mᵢ` is non-uniform as it has
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:285:(`NUPPT.exists_withAdvice` with the bound `var`), coins `D.coins`, and on `⟨1^n, t⟩` computes
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:307:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:321:  obtain ⟨B₀, hB₀c, hB₀⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).1) .var (fun n => by simp)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:322:  obtain ⟨B₁, hB₁c, hB₁⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).2) .var (fun n => by simp)
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean:755:   coins and `M`'s advice (hard-wired, `NUPPT.exists_withAdviceOn`), and answers
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:252:`M.advice n` (`NUPPT.exists_withAdviceOn`). Reindex `B`'s coins as `(ρ ‖ ρ̃ ‖ re, rA)`
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/IndSim.lean:263:  obtain ⟨B, hc, hB⟩ := NUPPT.exists_withAdviceOn B₀ samp.advice samp.adv samp.advice_length
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:394:`NUPPT.exists_withAdviceOn` hard-wires `D`'s advice into it (`B'`). `B'`'s budget is
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:402:  obtain ⟨B', hc, hB'⟩ := NUPPT.exists_withAdviceOn B D.advice D.adv D.advice_length
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:629:   `z = ⟨pk, α⟩` and hard-wired afterwards (`NUPPT.exists_withAdviceOn`, from the public
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean:630:   `exists_withAdvice`/`exists_comp` closure lemmas). The two games accept with the same
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:39:  (`Complexity.NUPPT.exists_comp`, `Complexity.NUPPT.exists_withAdvice`);
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:138:  rw [← EnsembleLemmas.acceptProb_coins_equiv e]
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:151:  rw [← EnsembleLemmas.acceptProb_coins_equiv e]
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:305:(`Complexity.NUPPT.exists_comp` with `spliceFun`, then `Complexity.NUPPT.exists_withAdvice`
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:311:  obtain ⟨B, hBc, hB⟩ := B₁.exists_withAdvice (fun n => pairEncode (pre n) (suf n)) b
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:324:  obtain ⟨B, hBc, hB⟩ := B₁.exists_withAdvice (fun n => pairEncode (pre n) (suf n)) b
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1624:`pre`, `post` and `D.advice (n²)` as advice (`NUPPT.exists_withAdvice`; polynomially bounded by
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:42:  `length_le_length_encodeList` — the tuple encoding as a concatenation of blocks.
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:70:theorem length_le_length_encodeList (l : List (List Bool)) :
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:71:    l.length ≤ (encodeList l).length := by
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:177:      encodeList (blockList E (L.eval u.length) (B.eval u.length) u pk (k + 1) m r) := by
+TCSlib/Cryptography/Asymptotic/Universal.lean:788:composed (`NUPPT.exists_comp`, `NUPPT.exists_withAdvice`) with the pre-processing

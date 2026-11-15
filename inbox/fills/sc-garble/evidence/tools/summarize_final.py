@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""Summarize final axioms, signatures and all-library explicit-definition arguments."""
+import collections
+import importlib.util
+import json
+from pathlib import Path
+import re
+p=Path('evidence/logs/final-probes')
+log=(p/'evidence__probes__FinalMeta.log').read_text()
+rows=[]
+allowed={'propext','Classical.choice','Quot.sound'}
+for m in re.finditer(r'AXIOMS\t([^\t\n]+)\t([^\t\n]+)\t\[([^\]]*)\]',log):
+ axioms=[a.strip()for a in m[3].split(',')if a.strip()]
+ assert set(axioms)<=allowed|{'sorryAx'},(m[2],axioms)
+ rows.append(dict(module=m[1],name=m[2],axioms=axioms,pending='sorryAx'in axioms))
+assert rows
+pending=[r['name']for r in rows if r['pending']]
+assert set(pending)=={
+'TCSlib.Cryptography.SecureComputation.yaoHybrid_hbcSecure',
+'TCSlib.Cryptography.SecureComputation.yaoHybrid_simulators',
+'TCSlib.Cryptography.SecureComputation.yaoHybrid_polyTime'},pending
+summary=dict(stored_constants=len(rows),standard_only=len(rows)-len(pending),pending=pending,
+ modules=dict(collections.Counter(r['module']for r in rows)),constants=rows)
+Path('evidence/logs/final-axiom-summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+Path('evidence/logs/final-axiom-summary.txt').write_text(
+ f"{len(rows)} stored constants, {len(rows)-len(pending)} standard-only; the three remaining "
+ "sorryAx-bearing constants are the two frozen Yao admissions and their Yao hybrid consumer.\n")
+sig=(p/'evidence__probes__FinalSignatures.log').read_text().split('\n',1)[1]
+sig=re.split(r'\n\s+\d+\.\d+ real',sig)[0]
+Path('evidence/declarations/final-signatures.txt').write_text(sig)
+
+spec=importlib.util.spec_from_file_location('headers','evidence/tools/check_headers.py')
+h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
+args=json.loads(Path('evidence/unfold/all-explicit-arguments.json').read_text())
+metadata=(p/'evidence__probes__ExplicitUnfoldMeta.log').read_text()
+defs=[]
+for line in metadata.splitlines():
+ if line.startswith('DEFINITION\t'):
+  _,home,name=line.split('\t');defs.append((home,name))
+byshort={}
+for home,name in defs:byshort.setdefault(name.split('.')[-1],[]).append((home,name))
+sources={f:Path(f).read_text()for f in {r['file']for r in args}}
+contexts={}
+for file,source in sources.items():
+ code,_=h.lex(source);contexts[file]=(code,h.declarations(source))
+all_matches=[];violations=[];ambiguous=[]
+reviewed={(r['file'],r['line'],r['argument'])for r in json.loads(
+ Path('evidence/unfold/reviewed-local-heads.json').read_text())}
+for row in args:
+ token=row['argument'];module=row['file'][:-5].replace('/','.')
+ code,decls=contexts[row['file']]
+ offset=sum(len(l)for l in code.splitlines(True)[:row['line']-1])
+ parent=next((d for d in decls if d['start']<=offset<d['end']),None)
+ context=code[parent['start']:parent['end']]if parent else code
+ local=bool(re.search(r'\b(?:let|have|set|intro)\s+'+re.escape(token)+r'\b',context))
+ candidates=byshort.get(token.split('.')[-1],[])
+ own=[c for c in candidates if c[0]==module and (c[1]==token or c[1].endswith('.'+token))]
+ if '.'not in token and own:candidates=own
+ for home,name in candidates:
+  if '.'in token and name!=token and not name.endswith('.'+token):continue
+  if home==module:classification='own_definition'
+  elif (local or (row['file'],row['line'],token)in reviewed)and '.'not in token:classification='local_alias_or_proof'
+  elif token=='PolyExpr.eval':classification='Q1_notation'
+  elif '.'not in token:classification='ambiguous_short_name'
+  else:classification='foreign_definition'
+  item=dict(**row,definition=name,home=home,classification=classification)
+  all_matches.append(item)
+  if classification=='foreign_definition':violations.append(item)
+  if classification=='ambiguous_short_name':ambiguous.append(item)
+verdict=dict(argument_occurrences=len(args),definition_candidates=len(defs),
+ matches=all_matches,ambiguous=ambiguous,violations=violations)
+Path('evidence/unfold/final-verdict.json').write_text(json.dumps(verdict,indent=2)+'\n')
+print('AXIOMS',len(rows),'STANDARD',len(rows)-len(pending),'PENDING',pending)
+print('UNFOLD MATCHES',len(all_matches),'AMBIGUOUS',len(ambiguous),'VIOLATIONS',len(violations))
+for r in violations+ambiguous:print(r)
