@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Explicit-unfold scan, step 2 (dl-folds): for each changed file, write its scan module with
+"""Explicit-unfold scan, step 2 (prf-mac): for each changed file, write its scan module with
 rwids.py, compile it against the olean tree, and collect `file<TAB>id<TAB>constant<TAB>class<TAB>module`
 rows. usage: rwids_run.py FILELIST OUTDIR"""
 import os, re, subprocess, sys
@@ -10,7 +10,7 @@ os.makedirs(out, exist_ok=True)
 LP = F + '/.lake/tcslib-check-oleans:' + ':'.join(
     f'{F}/.lake/packages/{d}/.lake/build/lib/lean' for d in sorted(os.listdir(F + '/.lake/packages')))
 env = dict(os.environ, LEAN_PATH=LP, PATH=os.path.expanduser('~/.elan/bin') + ':' + os.environ['PATH'])
-tsv = open(f'{out}/rwids-final.tsv', 'a')
+tsv = open(f'{out}/rwids.tsv', 'a')
 done = set()
 if os.path.exists(f'{out}/done.txt'):
     done = set(open(f'{out}/done.txt').read().split())

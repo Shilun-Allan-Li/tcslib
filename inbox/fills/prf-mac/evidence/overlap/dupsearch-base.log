@@ -46,10 +46,13 @@ TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:257:`eval
 TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:303:    rw [eval_toOracleAdversary_width D n _ _ (PolyExpr.eval_var n), hφ₄, ← hQ, key,
 
 === rg -n 'withLog.*length|length.*withLog|AllOutputs.*\.length|log\.length' TCSlib
-TCSlib/Cryptography/Games/Hopping.lean:155:    {q : ℕ} (hc : c.AllOutputs fun L => L.length ≤ q) :
 TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:249:    (lazyImpl ins outs d n atk b i x s).AllOutputs fun ys => ys.2.1.length ≤ s.1.length + 1 := by
+TCSlib/Cryptography/Games/Hopping.lean:155:    {q : ℕ} (hc : c.AllOutputs fun L => L.length ≤ q) :
 
 === rg -n 'QueryImpl\.ofComp fun _ [a-z]+ => \.pure|QueryImpl\.ofComp \(fun _ [a-z]+ => \.pure|def fOuter|tableSigner' TCSlib
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:59:  QueryImpl.ofComp fun _ x => .pure (padFin _ (List.ofFn (g (padFin (2 * n) (List.ofFn x)))))
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:55:noncomputable def fOuter (n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)) :
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:57:  QueryImpl.ofComp fun _ x => .pure (padFin _ (List.ofFn (f (padFin n (List.ofFn x)))))
 TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:807:(tableSigner T i m s) G`. -/
 TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:813:      ProbComp.expect (LamportFill.tableSigner T i m s) G := by
 TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:814:  rw [SignatureScheme.signImpl_eq, LamportFill.tableSigner_eq]
@@ -68,9 +71,6 @@ TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:298:    simul
 TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:306:    simp only [simulate_query, QueryImpl.withLog_apply, tableSigner_eq, QueryImpl.ofComp_apply,
 TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:320:`tree.CostBoundedBy (fun _ => 1) 1`, then `∃ a log, simulate (tableSigner T).withLog tree ((), []) =
 TCSlib/Cryptography/Authentication/Signatures/Lamport/Planted.lean:326:    ∃ a log, simulate (tableSigner T).withLog tree ((), []) = .pure (a, ((), log)) ∧
-TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:59:  QueryImpl.ofComp fun _ x => .pure (padFin _ (List.ofFn (g (padFin (2 * n) (List.ofFn x)))))
-TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:55:noncomputable def fOuter (n : ℕ) (f : (Fin n → Bool) → (Fin n → Bool)) :
-TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:57:  QueryImpl.ofComp fun _ x => .pure (padFin _ (List.ofFn (f (padFin n (List.ofFn x)))))
 
 === rg -n 'e\.2\.1 ≠|∀ e ∈ .*, e\.2\.1' TCSlib
 TCSlib/Cryptography/Authentication/Signatures/Defs.lean:168:        ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1))
@@ -119,32 +119,33 @@ TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:421:fresh sampled e
 TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:487:/-- `S_B`'s pair `(z₁, z₂)`: `z_b` from `otSimZb`, `z_{1−b}` one fresh coin. -/
 TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:568:/-- Bob's simulator uses generator coins, two sampler blocks and one fresh mask coin. -/
 TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:617:   - `S_B` produces the same, but with `z_{1−b}` a fresh coin.
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:346:   `G.outA(n)`-bit block of `a`, with fresh coins; read its output as a view of `ρ` (tape `r_j`,
+TCSlib/Cryptography/Randomness/Learning.lean:19:examples, it predicts the label of a fresh uniform point with probability at most `½` plus a
+TCSlib/Cryptography/Randomness/Learning.lean:103:prediction advantage `|Pr[A predicts C_k(x)] − ½|` at uniform `k`, uniform examples and a fresh
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:199:At each trial, a fresh uniform point is accepted if its test succeeds. -/
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:209:/-- One more trial draws a fresh uniform point independently of the remaining sampler:
+TCSlib/Cryptography/Randomness/Extraction.lean:23:`X` samples `x ← U_n` until `Ext(x) = 1`, giving up after 10 tries with a fresh `x ← U_n`. It is a
+TCSlib/Cryptography/Randomness/Extraction.lean:263:/-- When uniform acceptance is at least `1/4`, ten rejection trials and a fresh fallback
+TCSlib/Cryptography/MPC/BGW/Protocol.lean:22:  its product share with a fresh degree-`d` sharing, and all parties take the fixed Lagrange
 TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:215:`eᵢ` is the `i`-th unit vector. It makes `n` calls to `A`, each with fresh coins `c i`,
 TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:222:`A(f(x) ‖ e₁) ⋯ A(f(x) ‖ eₙ) ‖ r`, using `n` calls to `A` with fresh coins. -/
 TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:33:* Each call to `A` uses fresh coins; independence across calls is part of the analysis.
 TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:65:`b_ℓ`, and a fresh coin string of `A` for each bit `i` and each nonempty `L`. -/
-TCSlib/Cryptography/MPC/BGW/Protocol.lean:22:  its product share with a fresh degree-`d` sharing, and all parties take the fixed Lagrange
 TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:19:independent trials `A(f(x) ‖ s) ⊕ A(f(x) ‖ s ⊕ eᵢ)` with fresh `s` and fresh coins, and
 TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:51:`A(y ‖ s; c₁) ⊕ A(y ‖ s ⊕ eᵢ; c₂)`, two calls to `A` with fresh coins, one XOR of
 TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:58:`trialBit A y i (c i t)`, each with its own fresh `s` and coins. In total it makes `2 n T`
 TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:83:each uniform with fresh coins, so each call is wrong with probability at most
 TCSlib/Cryptography/SchnorrProtocol.lean:56:/-- Simulator transcript for challenge `c` and fresh response `s`,
-TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:346:   `G.outA(n)`-bit block of `a`, with fresh coins; read its output as a view of `ρ` (tape `r_j`,
-TCSlib/Cryptography/Randomness/Learning.lean:19:examples, it predicts the label of a fresh uniform point with probability at most `½` plus a
-TCSlib/Cryptography/Randomness/Learning.lean:103:prediction advantage `|Pr[A predicts C_k(x)] − ½|` at uniform `k`, uniform examples and a fresh
 TCSlib/Cryptography/Asymptotic/OneWayYao.lean:18:sample a position `i ← [m]` by rejection (D10), sample `m` fresh inputs, evaluate `f` on them,
 TCSlib/Cryptography/Asymptotic/OneWayYao.lean:213:bits of fresh inputs, and the coins of `A'`. -/
 TCSlib/Cryptography/Asymptotic/OneWayYao.lean:240:/-- The fresh inputs `x₁ ⋯ x_m` of the round. -/
 TCSlib/Cryptography/Asymptotic/OneWayYao.lean:342:/-- The fresh inputs are polynomial-time. -/
-TCSlib/Cryptography/Asymptotic/OneWayYao.lean:486:/-- The coins of one round as a triple: `n·m` position bits, `m·k` bits of fresh inputs, and the
-TCSlib/Cryptography/Asymptotic/OneWayYao.lean:532:fresh inputs as `m` blocks of `k` bits, and the coins of `A'`. -/
-TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:199:At each trial, a fresh uniform point is accepted if its test succeeds. -/
-TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:209:/-- One more trial draws a fresh uniform point independently of the remaining sampler:
 
 === rg -n 'map fun e => e\.2\.1|map \(·\.2\.1\)|map \(fun e => e\.2\.1\)' TCSlib
 
 === rg -n 'def chunkMap|chunkMap_flatten|def blocks|flatten_replicate_replicate' TCSlib
 TCSlib/Complexity/Randomized/RandomBits.lean:262:def blocksEquiv (n b : ℕ) : (Fin (n * b) → Bool) ≃ (Fin n → Fin (2 ^ b)) :=
+TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:383:noncomputable def blocksD (u : List Bool) (m : ℕ) : List (SX N) :=
 TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:207:def blocksEquiv (m c : ℕ) : (Fin m → Fin c → Bool) ≃ (Fin (m * c) → Bool) :=
 TCSlib/Cryptography/Asymptotic/OneWayYao.lean:63:def blocksE (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
 TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:400:def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
@@ -152,7 +153,6 @@ TCSlib/Cryptography/Asymptotic/Ensembles.lean:214:private def blocks (q ℓ : �
 TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:70:def blocksEquiv (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
 TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:83:def blocksStr {k m : ℕ} (s : Fin k → Fin m → Bool) : List Bool :=
 TCSlib/Cryptography/Asymptotic/Adversary.lean:242:def blocksEquivX (q ℓ : ℕ) (X : Type*) : (Fin (q * ℓ) → X) ≃ (Fin q → Fin ℓ → X) :=
-TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:383:noncomputable def blocksD (u : List Bool) (m : ℕ) : List (SX N) :=
 TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:310:(`chunkMap_flatten`). Write `aP ‖ M(aP; ρ) ‖ σ` as the flatten of its singletons, so the second,
 TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:329:    chunkMap_flatten _ _ n _ _ (fun ch hch => ?_) hct, List.map_map, nmOutL_eq, stParam_eq,
 TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean:332:    rw [hbits (List.drop _ s ++ _ ++ _), chunkMap_flatten _ _ n _ _ (fun ch hch => ?_)
@@ -169,14 +169,12 @@ TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.le
 TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean:239:      chunkMap_flatten _ _ n s _ (fun ch hch => ?_) (Nat.pos_of_ne_zero hct), List.map_map]
 
 === rg -n 'def ovr|expect_sample_ovr|expect_hitW_le|expect_sample_coord|expect_sample_mem_le' TCSlib
-TCSlib/Cryptography/Games/Probability.lean:47:  `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform
-TCSlib/Cryptography/Games/Probability.lean:382:theorem expect_sample_coord {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
-TCSlib/Cryptography/Games/Hopping.lean:38:* `ProbComp.prob_mem_le`: the collision bound; `ProbComp.expect_sample_mem_le`, its form for a
-TCSlib/Cryptography/Games/Hopping.lean:451:theorem expect_sample_mem_le {T : Type} [Fintype T] [Nonempty T] [DecidableEq T] (L : List T) :
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:32:(`expect_sample_ovr`); a pair in the table has its tag; a decryption with a listed pair reads the
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:497:`expect_sample_ovr` and matched by the lazy tape (`ovr_append_of_not_mem`). Decryption answers agree
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:546:        rw [expect_sample_ovr (tagTbl s) hp (fun t g => expect (simulate
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:617:          rw [expect_sample_ovr (tagTbl ((none, L) : LSt n d)) hp (fun t g => expect (simulate
+TCSlib/Cryptography/Games/Probability.lean:47:  `expect_sample_update`, `expect_sample_coord`: reindexing, exchanging and resampling uniform
+TCSlib/Cryptography/Games/Probability.lean:382:theorem expect_sample_coord {ι : Type} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:27:  the value `R p` into the table (`expect_sample_ovr`), and a decryption query with a fresh pair
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:293:(`ovr_of_not_mem`), uniform (`expect_sample_coord`, `expect_sample_mem_le`). -/
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Forgery.lean:294:private theorem expect_hitW_le (hn : 0 < n) {M : List ((Fin (2 * n) → Bool) × (Fin (2 * n) → Bool))}
@@ -194,6 +192,8 @@ TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:219:def ovr 
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:277:**Proof sketch.** `ProbComp.expect_sample_coord` at the coordinate `p` with
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:281:theorem expect_sample_ovr (M : List (κ × β)) {p : κ} (hp : p ∉ M.map Prod.fst)
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Tools.lean:285:  have h := expect_sample_coord p (fun y R => F y (ovr ((p, y) :: M) R)) fun y y' R => by
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:282:conclude with `expect_sample_mem_le`. -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:303:      refine (expect_mono _ fun r => ?_).trans ((expect_sample_mem_le [rStar c]).trans ?_)
 
 === rg -n 'splitBits_append|splitBits_pad_concat|append_castAdd_natAdd|ofFn_fin_append' TCSlib
 TCSlib/Complexity/Randomized/Classes.lean:200:concatenations.  `List.ofFn_fin_append` together with `List.take_left'` /
@@ -202,30 +202,30 @@ TCSlib/Complexity/Randomized/Classes.lean:217:    · rw [List.ofFn_fin_append, L
 TCSlib/Complexity/Randomized/Classes.lean:219:    · rw [List.ofFn_fin_append, List.drop_left' (by simp)]
 TCSlib/Complexity/Randomized/Classes.lean:227:        (fun i => r (Fin.natAdd m₁ i)) = r := Fin.append_castAdd_natAdd
 TCSlib/Complexity/Randomized/Classes.lean:231:    rw [← hdec, List.ofFn_fin_append] at hA hB
-TCSlib/Complexity/Randomized/RandomBits.lean:152:      rw [List.ofFn_fin_append]) rfl rfl
-TCSlib/Complexity/Randomized/RandomBits.lean:353:        rw [List.ofFn_fin_append, List.take_left' (by simp), List.drop_left' (by simp)]]
 TCSlib/Complexity/Randomized/Yap.lean:129:        (fun j => x (Fin.natAdd z.length j)) := Fin.append_castAdd_natAdd.symm
 TCSlib/Complexity/Randomized/Yap.lean:130:    rw [hxab, List.ofFn_fin_append] at hx
 TCSlib/Complexity/Randomized/Yap.lean:138:    exact ⟨_, by rw [List.ofFn_fin_append, List.ofFn_get], hev⟩
+TCSlib/Complexity/Randomized/RandomBits.lean:152:      rw [List.ofFn_fin_append]) rfl rfl
+TCSlib/Complexity/Randomized/RandomBits.lean:353:        rw [List.ofFn_fin_append, List.take_left' (by simp), List.drop_left' (by simp)]]
+TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly.lean:120:  have hz' : z = List.ofFn x ++ List.ofFn y := by rw [hz, List.ofFn_fin_append]
 TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:221:  exact List.ofFn_fin_append r₁ r₂
 TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:225:`encDist n 0^n (r₁, r₂)` (`runAtL_ofPolyTimeUniform`, `List.ofFn_fin_append`, the cuts
 TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:276:`Fin.appendEquiv` (`List.ofFn_fin_append`, `List.take_left'`, `List.drop_left'`), hence
-TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly.lean:120:  have hz' : z = List.ofFn x ++ List.ofFn y := by rw [hz, List.ofFn_fin_append]
 TCSlib/Complexity/CircuitComplexity/HardWire.lean:143:  simp only [values, hardwire, runWith_append, runWith_eval_constGates, List.ofFn_fin_append]
 TCSlib/Complexity/CircuitComplexity/HardWire.lean:261:      rw [List.ofFn_fin_append]
-TCSlib/Cryptography/Games/Efficiency/Strings.lean:546:equation; its string is `ω ++ r` (`List.ofFn_fin_append`, `List.ofFn_congr`), which the split
-TCSlib/Cryptography/Games/Efficiency/Strings.lean:565:    rw [← List.ofFn_fin_append, List.ofFn_congr hlen (Fin.append ω r)]
-TCSlib/Cryptography/Games/Efficiency.lean:663:      rw [MachineCodec.encodeLog_nil, h, ← List.ofFn_fin_append]
-TCSlib/Cryptography/Games/Efficiency.lean:668:      rw [MachineCodec.encodeLog_nil, h, ← List.ofFn_fin_append]
-TCSlib/Cryptography/Games/Efficiency.lean:706:      rw [hlog, h₁, ← List.ofFn_fin_append]
-TCSlib/Cryptography/Pseudorandom/NextBit.lean:188:    rw [← List.ofFn_fin_append]
-TCSlib/Cryptography/Authentication/Signatures/HashAndSign.lean:497:        (List.ofFn_fin_append rg ri).symm)
-TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:376:    (EffFill.ofFn_take_drop_add a).2, hashWord_unary, ← List.ofFn_fin_append]
-TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:469:      rw [collisionHandler_result, hp, splitBits_pad_concat]
-TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean:24:* `HashSignFill.splitBits_append`, `splitBits_pad_concat`: splitting fixed-width
-TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean:95:theorem splitBits_append {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
-TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean:106:theorem splitBits_pad_concat {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
-TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CodecReaders.lean:108:  rw [← List.ofFn_fin_append, padFin_ofFn, splitBits_append]
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:499:  simp only [List.ofFn_fin_append]
+TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:348:`pairDropPoly`, `PolyTimeComputable.append`; `List.ofFn_fin_append`). *Hard:* for an inverter
+TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:365:    rw [List.ofFn_fin_append, hEs, glPad_f, List.ofFn_fin_append]
+TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:406:    rw [List.ofFn_fin_append, hHx, glBit_append]
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:185:  rw [ofFn_arrowCongr_finCongr, List.ofFn_fin_append]
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:125:      exact List.ofFn_fin_append s₁ s₂
+TCSlib/Cryptography/Asymptotic/Universal.lean:524:      rw [← List.ofFn_fin_append]
+TCSlib/Cryptography/Asymptotic/Universal.lean:716:    rw [← List.ofFn_fin_append]
+TCSlib/Cryptography/Asymptotic/Universal.lean:748:    rw [← List.ofFn_fin_append]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:147:  rw [← List.ofFn_fin_append]
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:225:  rw [P.glPad_inEquiv_symm_ofFn, FunFamily.glPad_inEquiv_symm_ofFn, List.ofFn_fin_append,
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:226:    List.ofFn_fin_append, P.toFunFamily_domEquiv_symm_ofFn, P.toFunFamily_domEquiv_symm_ofFn]
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:236:    FunFamily.glPad_f_equiv, List.ofFn_fin_append, List.ofFn_fin_append,
 
 === rg -n 'Equiv.*padFin|padFin.*Equiv|arrowCongr' TCSlib
 TCSlib/Complexity/Randomized/UniformSample.lean:138:  refine Finset.card_equiv ((Equiv.refl (Fin k)).arrowCongr σ) fun f => ?_
@@ -260,11 +260,11 @@ TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:79:  Equiv.a
 TCSlib/Cryptography/Randomness/Extraction/Sampler.lean:205:  Equiv.arrowCongr (finCongr (machine_coinLen hExt n t m)) (Equiv.refl Bool)
 
 === rg -n 'forgeGame_eq_fixed|accept_prf_indGame|forgeGame.*deterministic|tagImpl_eq' TCSlib
-TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:303:theorem forgeGame_eq_fixed (S : SignatureScheme) (C : NUPPT) (n : ℕ) :
-TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:411:  rw [forgeGame_eq_fixed]
 TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:246:private theorem accept_prf_indGame (atkBit b : Bool) (A : NUPPT) (Q n : ℕ) (hn : 0 < n) :
 TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:285:experiment with that function; with the key it is the game (`accept_prf_indGame`). -/
 TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:307:  rw [prfAdv_def, distAdv_def, accept_prf_indGame F E hE hFE atkBit b A _ n hn,
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:303:theorem forgeGame_eq_fixed (S : SignatureScheme) (C : NUPPT) (n : ℕ) :
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:411:  rw [forgeGame_eq_fixed]
 TCSlib/Cryptography/Authentication/MAC/Defs.lean:107:theorem tagImpl_eq (n : ℕ) (k : List Bool) :
 
 === rg -n 'prob_mem_le|random.*forg|forg.*random' TCSlib/Cryptography
@@ -272,20 +272,19 @@ TCSlib/Cryptography/Games/Hopping.lean:38:* `ProbComp.prob_mem_le`: the collisio
 TCSlib/Cryptography/Games/Hopping.lean:154:theorem prob_mem_le {T : Type} [Fintype T] [Nonempty T] [DecidableEq T] (c : ProbComp (List T))
 TCSlib/Cryptography/Games/Hopping.lean:449:probability at most `|L| / |T|`: `𝔼_{t ← T} [t ∈ L] ≤ |L| / |T|` (`prob_mem_le` for a fixed
 TCSlib/Cryptography/Games/Hopping.lean:453:  have h := prob_mem_le (OracleComp.pure L : ProbComp (List T)) (q := L.length)
-TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:407:   a later `Enc` uses it; a query raises it with probability at most `(q + 1) / 2ⁿ` (`prob_mem_le`),
-TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:429:that it is the challenge's `r*`, again bounded by `prob_mem_le` because `r*` is drawn after those
-TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:29:  the table, `prob_mem_le`, or an encryption's nonce hits `r*`), and adds at most one point to the
-TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:278:one of the table's `|T|` points (`prob_mem_le`); decryptions and repeated challenges never.
 TCSlib/Cryptography/Authentication/Signatures/Lamport/Experiment.lean:211:preimage, a complete random table, and forger coins: `redProbability g adv p = ProbComp.expect
 TCSlib/Cryptography/Authentication/Signatures/Lamport/Realization.lean:81:random table, and the forger's own random tape. [PS10, machine-realization step in the proof of
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:407:   a later `Enc` uses it; a query raises it with probability at most `(q + 1) / 2ⁿ` (`prob_mem_le`),
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:429:that it is the challenge's `r*`, again bounded by `prob_mem_le` because `r*` is drawn after those
 TCSlib/Cryptography/Authentication/MAC/FromPRF.lean:127:4. With a random function, a forgery is a guess of a fresh uniform value: probability at most
 TCSlib/Cryptography/Authentication/MAC/FromPRF.lean:128:   `2^{-n}` (the collision bound `prob_mem_le`, or a direct count).
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:29:  the table, `prob_mem_le`, or an encryption's nonce hits `r*`), and adds at most one point to the
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean:278:one of the table's `|T|` points (`prob_mem_le`); decryptions and repeated challenges never.
 TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1304:/-- **The random world forgets the message** (hybrid 3): for `h` of order `q` in `Z_p` and
 
 === rg -n 'stateLen :=' TCSlib
 TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardHandler.lean:194:  stateLen := .const 0
 TCSlib/Cryptography/Authentication/Signatures/HashAndSign/CollisionHandler.lean:259:  stateLen := H.domLen
-TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:375:  stateLen := .const 1
 TCSlib/Cryptography/Games/Forwarding.lean:134:  stateLen := .const 0
 TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:520:              (din' := din') (dout' := dout') (stateLen := stateLen) (perCall := perCall)
 TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:591:        (dout' := dout') (stateLen := stateLen) (perCall := perCall) (outLen := outLen)
@@ -294,6 +293,7 @@ TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:702:        (dout := d
 TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:744:          (dout := dout) (din' := din') (dout' := dout') (stateLen := stateLen) (perCall := perCall)
 TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:835:          (dout' := dout') (stateLen := stateLen) (perCall := perCall) (outLen := outLen)
 TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean:840:    (dout' := dout') (stateLen := stateLen) (perCall := perCall) (outLen := outLen)
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:375:  stateLen := .const 1
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean:427:  stateLen := bStLen q
 TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean:403:  stateLen := dStLen q
 TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean:332:  stateLen := pkStLen q
@@ -324,40 +324,72 @@ TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:151:`Complexity.polyTimeComput
 TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:167:    have := (polyTimeComputable_pairTakePoly S.gen.coins).comp hcut
 TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:173:    have := (polyTimeComputable_pairDropPoly S.gen.coins).comp hcut
 
-=== rg -n 'runAt_coinKey|coinsEquivPoly' TCSlib/Cryptography
+=== rg -n 'runAt_coinKey|coinsEquivPoly|coinsEquiv_ofPolyTimeUniform|prfKeyEq|KeyEq' TCSlib/Cryptography
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:204:      (NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_zkSimFun S)
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:211:  have key : ∀ w, List.ofFn ((NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_zkSimFun S)
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:213:    rw [← NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, Equiv.apply_symm_apply]
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:89:    rw [runAt_coinKey, runAt_spEnc hE, runAt_spDec hE]
 TCSlib/Cryptography/Randomness/Extraction.lean:140:  (NUPPT.coinsEquivPoly (uniformSampler_coins n) n).trans
 TCSlib/Cryptography/Randomness/Extraction.lean:145:`uniformSamplerCoins n = e₁.trans e₂`, where `e₁ = NUPPT.coinsEquivPoly (uniformSampler_coins n) n`
 TCSlib/Cryptography/Randomness/Extraction.lean:148:    (NUPPT.coinsEquivPoly (uniformSampler_coins n) n).trans
 TCSlib/Cryptography/Randomness/Extraction.lean:156:    NUPPT.coinsEquivPoly_ofFn]
-TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:89:    rw [runAt_coinKey, runAt_spEnc hE, runAt_spDec hE]
-TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:140:theorem runAt_coinKey (coins : PolyExpr) (n : ℕ)
-TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:176:    rw [runAt_coinKey, runAt_prgPad hF, runAt_prgPad hF, hG, zipWith_xor_xor_self, decodeFin_ofFn]
-TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:220:  rw [runAt_coinKey, ← prgScheme_genCoinsEquiv_ofFn P F hF hG n r.1, runAt_prgPad hF, hG]
-TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:199:    rw [runAt_coinKey, runAt_prfEnc hE]
-TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:288:`Enc_k(m_j; r_j)`; the key machine outputs its coin string (`runAt_coinKey`) and the encryption
-TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:306:  rw [runAt_coinKey, runAt_prfEnc hE]
-TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:94:    rw [runAt_coinKey, runAt_prfEnc hE, hk, hx, hFE, length_pairEncode]
-TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:122:/-- **The key generator outputs its coins:** `Gen(1^n; rg) = ⟦rg⟧` (`runAt_coinKey`). -/
-TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:128:  exact runAt_coinKey .var n rg
-TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:443:  (NUPPT.coinsEquivPoly (cca_gen_coins F E hE hFE) n).trans
-TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:451:    Equiv.apply_symm_apply, NUPPT.coinsEquivPoly_ofFn]
-TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:469:  (NUPPT.coinsEquivPoly (cca_enc_coins F E hE hFE) n).trans
-TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:475:  rw [ccaNonceEq, Equiv.trans_apply, ofFn_arrowCongr_finCongr, NUPPT.coinsEquivPoly_ofFn]
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:121:      (NUPPT.coinsEquiv_ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m) n s)
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:123:      rw [← NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn (glPadSampleFun_poly F)
 TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:130:    have h₁ : List.ofFn ((NUPPT.coinsEquivPoly (A := F.sample) rfl n).symm s₁) = List.ofFn s₁ :=
 TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:131:      NUPPT.coinsEquivPoly_symm_ofFn rfl n s₁
 TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:132:    obtain ⟨x, hx, hev⟩ := F.sample_spec n r ((NUPPT.coinsEquivPoly (A := F.sample) rfl n).symm s₁)
-TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:693:`(glMachine A mP K k hk).Coins n ≃ {0,1}^{glCoins(n)}` (`NUPPT.coinsEquivPoly` along
-TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:698:  NUPPT.coinsEquivPoly (coins_glMachine A mP K k hk) n
-TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:705:  NUPPT.coinsEquivPoly_symm_ofFn (coins_glMachine A mP K k hk) n w
-TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:127:        (NUPPT.coinsEquivPoly (tdpPredictor_coins D flip) n).symm))
-TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:133:  rw [Equiv.trans_apply, Equiv.trans_apply, Equiv.trans_apply, NUPPT.coinsEquivPoly_symm_ofFn]
 TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:164:  ((NUPPT.coinsEquivPoly rfl n).prodCongr (NUPPT.coinsEquivPoly rfl n)).trans
 TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:172:    Prod.map_fst, Prod.map_snd, NUPPT.coinsEquivPoly_ofFn, NUPPT.coinsEquivPoly_ofFn]
 TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:178:  ((NUPPT.coinsEquivPoly rfl n).prodCongr (Equiv.refl _)).trans
 TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:186:    Prod.map_fst, Prod.map_snd, NUPPT.coinsEquivPoly_ofFn, Equiv.refl_apply]
+TCSlib/Cryptography/Asymptotic/Collections.lean:494:    have hs := NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn NUPPT.polyTimeComputable_inCoins 𝓕.inLen n s
+TCSlib/Cryptography/Asymptotic/Collections.lean:495:    refine ⟨NUPPT.coinsEquiv_ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen n s, ?_, ?_⟩
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean:715:  (NUPPT.coinsEquivPoly (coins_ggmRedMachine hE D q i j) n).trans
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean:724:  rw [Equiv.trans_apply, ← NUPPT.coinsEquivPoly_ofFn (coins_ggmRedMachine hE D q i j) n c]
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:693:`(glMachine A mP K k hk).Coins n ≃ {0,1}^{glCoins(n)}` (`NUPPT.coinsEquivPoly` along
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:698:  NUPPT.coinsEquivPoly (coins_glMachine A mP K k hk) n
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:705:  NUPPT.coinsEquivPoly_symm_ofFn (coins_glMachine A mP K k hk) n w
+TCSlib/Cryptography/Candidates/Rabin.lean:1326:`NUPPT.coinsEquivPoly` and the domain along `rabinCollection_domEquiv`
+TCSlib/Cryptography/Candidates/Rabin.lean:1341:      (NUPPT.coinsEquivPoly (rabin_coins_sampler H) n) |>.comp_equiv_right
+TCSlib/Cryptography/Candidates/Rabin.lean:1343:  simp only [NUPPT.coinsEquivPoly_ofFn, Option.map_some, Equiv.symm_apply_apply] at h1
+TCSlib/Cryptography/Candidates/Rabin.lean:1656:    (Equiv.refl Bool)).trans (NUPPT.coinsEquivPoly (rabin_coins_factorer H A) n).symm)
+TCSlib/Cryptography/Candidates/Rabin.lean:1663:  rw [Equiv.trans_apply, Equiv.trans_apply, NUPPT.coinsEquivPoly_symm_ofFn]
+TCSlib/Cryptography/Candidates/Rabin.lean:1927:    (Equiv.refl Bool)).trans (NUPPT.coinsEquivPoly hG n).symm)
+TCSlib/Cryptography/Candidates/Rabin.lean:1934:  rw [Equiv.trans_apply, Equiv.trans_apply, NUPPT.coinsEquivPoly_symm_ofFn]
+TCSlib/Cryptography/Candidates/Rabin.lean:3023:`NUPPT.coinsEquivPoly` and the domain along `rabinBlumTrapdoor_domEquiv`. -/
+TCSlib/Cryptography/Candidates/Rabin.lean:3037:      (NUPPT.coinsEquivPoly (rabin_coins_blumSampler H) n) |>.comp_equiv_right
+TCSlib/Cryptography/Candidates/Rabin.lean:3039:  simp only [NUPPT.coinsEquivPoly_ofFn, Option.map_some, Equiv.symm_apply_apply] at h1
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:140:theorem runAt_coinKey (coins : PolyExpr) (n : ℕ)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:176:    rw [runAt_coinKey, runAt_prgPad hF, runAt_prgPad hF, hG, zipWith_xor_xor_self, decodeFin_ofFn]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:182:`(prgScheme P F hF hG).gen.Coins n ≃ {0,1}^n` (`NUPPT.coinsEquiv_ofPolyTimeUniform`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:186:  NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:193:  NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn polyTimeComputable_pairSndD .var n r
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:196:`(prgScheme P F hF hG).enc.Coins n ≃ {0,1}^0` (`NUPPT.coinsEquiv_ofPolyTimeUniform`). -/
+
+=== rg -n 'eval_toOracleAdversary|ofFn_evalFn_toCompOn|expect_toCompOn_outLen' TCSlib
+TCSlib/Cryptography/Games/Efficiency.lean:116:* `Games.expect_toCompOn_outLen`: a machine's output length may be changed along an equality.
+TCSlib/Cryptography/Games/Efficiency.lean:924:theorem expect_toCompOn_outLen {ins outs : Fin k → ℕ} {σ : Type}
+TCSlib/Cryptography/Authentication/Signatures/HashAndSign/ForwardGame.lean:423:  have hout := expect_toCompOn_outLen
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:235:`eval_toOracleAdversary_len`, `PRFGame.ofFn_evalFn_toCompOn` and `expect_ettImpl_outLen`. -/
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:297:    rw [eval_toOracleAdversary_len B' n _ _ (tagLen_eval n), hφ₄, ← hQ, key,
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:298:      PRFGame.ofFn_evalFn_toCompOn hout.symm B n _ [] _, ← h2, dHandler_advInput]
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:40:* `ETTGame.exists_capMachine`, `ETTGame.exists_halfMachine`, `ETTGame.eval_toOracleAdversary_len`.
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:343:`PRFGame.eval_toOracleAdversary_width`, which fixes the widths to the parameter): for `ℓ = ℓ'`,
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:348:theorem eval_toOracleAdversary_len (D : NUPPT) (n K : ℕ) (c : D.Coins n) {ℓ ℓ' : ℕ}
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean:271:nothing). Widths are transported by `Games.expect_toCompOn_outLen` and `expect_ettImpl_outLen`. -/
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAReduction.lean:330:    rw [expect_toCompOn_outLen _ B n _ [] _ none hout.symm
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:201:theorem ofFn_evalFn_toCompOn {k : ℕ} {I O : Fin k → ℕ} {d d' : ℕ} (hd : d = d') (M : NUPPT)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:228:theorem eval_toOracleAdversary_width (D : NUPPT) (n q : ℕ) (c : D.Coins n) {m : ℕ} (hm : m = n)
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:256:(`expect_eImpl`). Widths are transported by `ofFn_evalFn_toCompOn`, `expect_fImpl_width` and
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:257:`eval_toOracleAdversary_width`. -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:303:    rw [eval_toOracleAdversary_width D n _ _ (PolyExpr.eval_var n), hφ₄, ← hQ, key,
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:304:      ofFn_evalFn_toCompOn hout.symm B n _ [] (φ₂ (ω, φ₀ r)), ← h2, InteractiveHandler.advInput_eq,
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:23:(`Games.expect_toCompOn_outLen`), reasoning on the possible outputs
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean:136:  refine (expect_toCompOn_outLen _ A' n _ _ _ none hout fun p =>
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimINDGap.lean:167:(`expect_toCompOn_outLen`). -/
 
 === Mathlib/core names used (existence)
-List.flatten_replicate_replicate: /root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean /root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Vector/Lemmas.lean 
+List.flatten_replicate_replicate: /root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Array/Lemmas.lean /root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Vector/Lemmas.lean 
 Fin.append_castAdd_natAdd: .lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean 
 List.ofFn_fin_append: .lake/packages/mathlib/Mathlib/Data/List/OfFn.lean 
 List.take_append: /root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/TakeDrop.lean 

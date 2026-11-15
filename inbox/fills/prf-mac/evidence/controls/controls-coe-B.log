@@ -1,0 +1,50 @@
+SEAL-INSTALL coe-B part 1: 400
+SEAL-INSTALL coe-B part 2: 400
+SEAL-INSTALL coe-B part 3: 400
+SEAL-INSTALL coe-B part 4: 400
+SEAL-INSTALL coe-B part 5: 400
+SEAL-INSTALL coe-B part 6: 261
+/workspace/prfmac/scratch/controls/Controls_coeB.lean:269:92: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  InteractiveHandler.rAns w = pairSndD (pairSndD (pairFstD (InteractiveHandler.rL w)))
+/workspace/prfmac/scratch/controls/Controls_coeB.lean:277:72: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (PRFMAC.macBudget q).eval n = q.eval n * (PolyExpr.const 1).eval n + (PolyExpr.const 1).eval n
+/workspace/prfmac/scratch/controls/Controls_coeB.lean:284:48: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  PRFMAC.fnImpl f 0 x () = OracleComp.pure (f x, ())
+/workspace/prfmac/scratch/controls/Controls_coeB.lean:291:78: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  M.forgerCodec n = bitCodec (fun x => M.msgLen.eval n) (fun x => M.tagLen.eval n) (M.msgLen.eval n + M.tagLen.eval n)
+/workspace/prfmac/scratch/controls/Controls_coeB.lean:298:86: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (ℓ.add t).eval n = ℓ.eval n + t.eval n
+/workspace/prfmac/scratch/controls/Controls_coeB.lean:309:77: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (PRFMAC.macHandler q ℓ t).perCall = PolyExpr.const 1
+SEAL-VERIFY coe-B part 1: 400
+SEAL-VERIFY coe-B part 2: 400
+SEAL-VERIFY coe-B part 3: 400
+SEAL-VERIFY coe-B part 4: 400
+SEAL-VERIFY coe-B part 5: 400
+SEAL-VERIFY coe-B part 6: 261
+
+EXIT 1

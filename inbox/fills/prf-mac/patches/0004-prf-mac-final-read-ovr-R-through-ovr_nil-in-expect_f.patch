@@ -1,0 +1,36 @@
+From f176a42cda28046762db199a1b82cbf2661c3f5e Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 01:19:18 +0000
+Subject: [PATCH 4/4] prf-mac final: read ovr [] R through ovr_nil in
+ expect_fnForge_random_le (Rule 10)
+
+The final step rewrote the bound's ovr [] R with simp, which left it in the Decidable
+instance of the test, and closed the goal by unfolding ETTGame.ovr; seal A flagged it.
+The step now rewrites the goal with ovr_nil (rw reaches the instance argument).
+---
+ .../Authentication/MAC/FromPRF/Random.lean             | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Random.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Random.lean
+index cd944cb26..b524809cb 100644
+--- a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Random.lean
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Random.lean
+@@ -146,10 +146,10 @@ theorem expect_fnForge_random_le
+     expect (sample ((Fin a → Bool) → (Fin b → Bool))) (fun R =>
+       expect (simulate (fnImpl R).withLog c ((), []))
+         (fun res => if FnForge R res.1 res.2.2 then (1 : ℝ) else 0)) ≤ ((2 : ℝ) ^ b)⁻¹ := by
+-  have h := expect_forge_ovr_le c [] [] fun p hp => by
+-    rw [List.map_nil] at hp
+-    exact absurd hp List.not_mem_nil
+-  simp only [ovr_nil] at h
+-  exact h
++  refine le_of_eq_of_le (congrArg _ (funext fun R => ?_))
++    (expect_forge_ovr_le c [] [] fun p hp => by
++      rw [List.map_nil] at hp
++      exact absurd hp List.not_mem_nil)
++  rw [ovr_nil]
+ 
+ end TCSlib.Cryptography.Authentication.PRFMAC
+-- 
+2.43.0
+

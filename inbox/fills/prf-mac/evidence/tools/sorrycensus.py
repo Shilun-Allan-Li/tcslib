@@ -2,7 +2,8 @@
 """Sorry census of a sweep: per module, the declarations whose check reported
 `declaration uses 'sorry'`, read from the newest log of each module.
 
-usage: sorrycensus.py ORDER LOGDIR [LOGDIR ...]   (earlier LOGDIRs take precedence)
+usage: sorrycensus.py ROOT ORDER LOGDIR [LOGDIR ...]   (earlier LOGDIRs take precedence;
+ROOT = the checkout whose sources the logs were made from)
 
 Each warning `F.lean:L:C: warning: declaration uses 'sorry'` is mapped to the declaration that
 starts at line L of the working-tree source F (the name after the declaration keyword).
@@ -10,9 +11,9 @@ Output: one line `module: count: name, name` per module with sorries, then `TOTA
 """
 import os, re, sys
 
-ROOT = "/workspace/prfmac"
-order = [l.strip() for l in open(sys.argv[1]) if l.strip()]
-dirs = sys.argv[2:]
+ROOT = sys.argv[1]
+order = [l.strip() for l in open(sys.argv[2]) if l.strip()]
+dirs = sys.argv[3:]
 KW = re.compile(r"(?:theorem|lemma|def|instance|abbrev|structure|noncomputable def)\s+([^\s(:{\[]+)")
 total, mods = 0, 0
 for m in order:

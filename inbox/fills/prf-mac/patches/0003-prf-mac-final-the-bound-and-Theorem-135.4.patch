@@ -1,0 +1,464 @@
+From 5612cab612125952212c6061ab678aedaff1750a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 00:38:25 +0000
+Subject: [PATCH 3/4] prf-mac final: the bound and Theorem 135.4
+
+PRFMAC.accept_forgeGame_eq (the forgery game of a MAC with a deterministic tag) and
+PRFMAC.exists_forgeGame_le (Pr[forge] <= prfAdv (F n) (D^{q*1+1}) + 2^{-n} at every n for a MAC
+whose tag is a keyed family); prfMAC_secure proved from it with PRF.negligible_prfAdv,
+Negligible.add and negligible_two_pow_neg. The owned file: title, main results, contents and
+the proof sketch describe the delivered proof.
+---
+ .../Authentication/MAC/FromPRF.lean           | 103 ++++++++--
+ .../Authentication/MAC/FromPRF/Bound.lean     | 183 ++++++++++++++++++
+ .../Authentication/MAC/FromPRF/Game.lean      |  99 ++++++++++
+ 3 files changed, 366 insertions(+), 19 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean
+ create mode 100644 TCSlib/Cryptography/Authentication/MAC/FromPRF/Game.lean
+
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF.lean
+index bde40178c..7aa48c8ef 100644
+--- a/TCSlib/Cryptography/Authentication/MAC/FromPRF.lean
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF.lean
+@@ -6,6 +6,8 @@ import TCSlib.Cryptography.Authentication.MAC.Defs
+ import TCSlib.Cryptography.Authentication.MAC.FromPRF.Handler
+ import TCSlib.Cryptography.Authentication.MAC.FromPRF.Reduction
+ import TCSlib.Cryptography.Authentication.MAC.FromPRF.Random
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Game
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Bound
+ import TCSlib.Cryptography.Authentication.Encoding
+ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
+ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
+@@ -17,7 +19,7 @@ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# The PRF MAC (statement phase)
++# The PRF MAC
+ 
+ [PS10, Protocol 134.3]: for a family `{f_s : {0,1}^n → {0,1}^n}`, `Gen(1^n)` samples a uniform
+ `n`-bit key, `Tag_k(m) = f_k(m)`, and `Ver_k(m, σ)` accepts iff `f_k(m) = σ`. Theorem 135.4: when
+@@ -35,8 +37,8 @@ the ch. 2–4 layer's `PRF`). `Gen` is the ch. 2–4 layer's coin-key machine (i
+ 
+ ## Main results
+ 
+-* `Authentication.prfMAC_secure` (Thm 135.4, stated; a `sorry` under its sketch): a PRF gives a
+-  secure MAC.
++* `Authentication.prfMAC_secure` (Thm 135.4, proved): a PRF gives a secure MAC, with the forgery
++  probability at most `prfAdv(F_n, D) + 2^{-n}` at every `n` for a distinguisher `D`.
+ 
+ ## Contents
+ 
+@@ -44,6 +46,9 @@ the ch. 2–4 layer's `PRF`). `Gen` is the ch. 2–4 layer's coin-key machine (i
+ * `MAC/FromPRF/Reduction`: the distinguisher, accepting against `f` iff the forger forges against
+   the tagging oracle `f`.
+ * `MAC/FromPRF/Random`: forging against a random function succeeds with probability `≤ 2^{-t}`.
++* `MAC/FromPRF/Game`: the forgery game of a MAC with a deterministic tag.
++* `MAC/FromPRF/Bound`: the bound `Pr[forge] ≤ prfAdv + 2^{-n}` for a MAC whose tag is a keyed
++  family.
+ 
+ ## References
+ 
+@@ -128,22 +133,25 @@ attribute [simps (config := { isSimp := false }) msgLen tagLen gen tag ver] prfM
+ /-- **Theorem 135.4: a PRF gives a secure MAC** [PS10, Theorem 135.4]: if `F` is a pseudorandom
+ function family, the PRF MAC is secure.
+ 
+-**Proof sketch** (the source's, with its bound).
+-1. Fix a forger `A` with budget `q`. Let `ε(n)` be its forgery probability against the PRF MAC.
+-2. The distinguisher `D` runs `A` against its own oracle, answering each tagging query `m` with
+-   the oracle's value. It then queries the oracle at `A`'s output message `m` and outputs `1`
+-   iff the answer is `σ` and `m` was not queried before.
+-3. With the oracle `f_k`, `D` outputs `1` exactly when `A` forges: probability `ε(n)`.
++**Proof sketch** (the source's, with its bound `ε(n) ≤ prfAdv(F_n, D) + 2^{-n}`).
++1. Fix a forger `A` with budget `q`; let `ε(n)` be its forgery probability. `Gen` returns its
++   coins, the key (`runAt_coinKey`, read at `n` bits by `NUPPT.coinsEquivPoly`); `Tag` returns
++   `E ⟨k, m⟩ = f_k(m)` whatever its (empty) coins (`prfTagFun_eq`, `hFE`); `Ver` accepts `(m, σ)`
++   iff `f_k(m) = σ` (`prfVerFun_eq`).
++2. The distinguisher `D` (`PRFMAC.exists_macReduction`) runs `A` against its own oracle, answering
++   each tagging query `m` with the oracle's value and storing `m` in its state. It then queries
++   the oracle at `A`'s output message `m` and outputs `1` iff the answer is `σ` and `m` was not
++   stored. It is T2 (`Games.exists_interactiveHandlerMachine`) for the handler
++   `PRFMAC.macHandler` (`finCall = 1`, `outLen = 1`, budget `q + 1`) on the input-free companion
++   of `A` (`Games.exists_toCompOn_of_toComp`), made an oracle adversary by T4
++   (`Games.exists_toOracleAdversary_of_bitCodec`).
++3. With the oracle `f_k`, `D` outputs `1` exactly when `A` forges (`PRFMAC.accept_forgeGame_eq`):
++   probability `ε(n)`.
+ 4. With a random function, a forgery is a guess of a fresh uniform value: probability at most
+-   `2^{-n}` (the collision bound `prob_mem_le`, or a direct count).
+-5. So `D`'s PRF advantage is at least `ε(n) − 2^{-n}`. Since `F` is a PRF it is negligible, so
+-   `ε` is negligible.
+-6. First use the input-free companion `Games.exists_toCompOn_of_toComp` for the forger.
+-   The forwarding reduction is a machine by T2 (`Games.exists_interactiveHandlerMachine`):
+-   its finalization makes one query at the output message, checks freshness from the state,
+-   and returns one bit (`finCall = 1`, `outLen = 1`), with budget `q + 1`. T4
+-   (`Games.exists_toOracleAdversary_of_bitCodec`) then supplies `OracleEnsemble.Indist`'s
+-   oracle adversary.
++   `2^{-n}` (`PRFMAC.expect_fnForge_random_le`, sampling the function lazily by table override).
++5. So `ε(n) ≤ prfAdv(F_n, D) + 2^{-n}` at every `n`, `n = 0` included
++   (`PRFMAC.exists_forgeGame_le`), which is negligible (`PRF.negligible_prfAdv`, `Negligible.add`,
++   `negligible_two_pow_neg`).
+ 
+ The PRF advantage is read through `OracleEnsemble.Indist`, in framework form after the F-1
+ restatement. -/
+@@ -152,6 +160,63 @@ theorem prfMAC_secure {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin
+     (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) =
+       List.ofFn (F n s x)) :
+     (prfMAC F E hE hFE).Secure := by
+-  sorry
++  -- `Gen` returns its coins, and `Tag` returns `E` of its argument.
++  have hgen : ∀ n (rg : (prfMAC F E hE hFE).gen.Coins n),
++      (prfMAC F E hE hFE).gen.runAt n [] rg = List.ofFn rg := by
++    intro n
++    have h : ∀ G : NUPPT, G = NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD .var →
++        ∀ rg : G.Coins n, G.runAt n [] rg = List.ofFn rg := by
++      rintro G rfl rg
++      exact runAt_coinKey .var n rg
++    exact h _ (prfMAC_gen F E hE hFE)
++  have htagE : ∀ n (w : List Bool) (rt : (prfMAC F E hE hFE).tag.Coins n),
++      (prfMAC F E hE hFE).tag.runAt n w rt = E w := by
++    intro n w
++    have h : ∀ T : NUPPT,
++        T = NUPPT.ofPolyTimeUniform (polyTimeComputable_prfTagFun hE) (.const 0) →
++        ∀ rt : T.Coins n, T.runAt n w rt = E w := by
++      rintro T rfl rt
++      rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, prfTagFun_eq, NUPPT.inArg_eq,
++        NUPPT.advInput_eq, pairFstD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode]
++    exact h _ (prfMAC_tag F E hE hFE)
++  -- The key is `Gen`'s coins, read at `n` bits.
++  have hcoins : (prfMAC F E hE hFE).gen.coins = .var := by
++    rw [prfMAC_gen, NUPPT.coins_ofPolyTimeUniform]
++  let key : ∀ n, (prfMAC F E hE hFE).gen.Coins n ≃ (Fin n → Bool) := fun n =>
++    (NUPPT.coinsEquivPoly hcoins n).trans
++      (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool))
++  have hkey : ∀ n rg, List.ofFn (key n rg) = List.ofFn rg := fun n rg => by
++    rw [← NUPPT.coinsEquivPoly_ofFn hcoins n rg]
++    exact (List.ofFn_congr (PolyExpr.eval_var n) _).symm
++  have hmsg : ∀ n, (prfMAC F E hE hFE).msgLen.eval n = n := fun n => by
++    rw [prfMAC_msgLen, PolyExpr.eval_var]
++  have htl : ∀ n, (prfMAC F E hE hFE).tagLen.eval n = n := fun n => by
++    rw [prfMAC_tagLen, PolyExpr.eval_var]
++  -- On the key of `rg`, `E` computes `F_{key rg}` (`hFE`).
++  have hEF : ∀ n rg (m : Fin ((prfMAC F E hE hFE).msgLen.eval n) → Bool),
++      E (pairEncode ((prfMAC F E hE hFE).gen.runAt n [] rg) (List.ofFn m)) =
++        List.ofFn (F n (key n rg) (padFin n (List.ofFn m))) := by
++    intro n rg m
++    rw [hgen, ← hFE]
++    rw [hkey, ofFn_padFin_of_length (by rw [List.length_ofFn, hmsg])]
++  have htag : ∀ n rg (m : Fin ((prfMAC F E hE hFE).msgLen.eval n) → Bool)
++      (rt : (prfMAC F E hE hFE).tag.Coins n),
++      (prfMAC F E hE hFE).tag.runAt n
++          (pairEncode ((prfMAC F E hE hFE).gen.runAt n [] rg) (List.ofFn m)) rt =
++        List.ofFn (F n (key n rg) (padFin n (List.ofFn m))) := fun n rg m rt => by
++    rw [htagE, hEF]
++  have hacc : ∀ n rg (m : Fin ((prfMAC F E hE hFE).msgLen.eval n) → Bool)
++      (σ : Fin ((prfMAC F E hE hFE).tagLen.eval n) → Bool),
++      (prfMAC F E hE hFE).Accepts n ((prfMAC F E hE hFE).gen.runAt n [] rg) m σ ↔
++        List.ofFn (F n (key n rg) (padFin n (List.ofFn m))) = List.ofFn σ := by
++    intro n rg m σ
++    rw [MAC.accepts_iff, prfMAC_ver, prfVerFun_eq, atParam_eq]
++    simp only [pairFstD_pairEncode, pairSndD_pairEncode]
++    rw [hEF, List.singleton_inj, decide_eq_true_iff]
++  -- The bound of the reduction, negligible.
++  rw [MAC.secure_iff]
++  intro A q
++  obtain ⟨D, hD⟩ := PRFMAC.exists_forgeGame_le (prfMAC F E hE hFE) F hmsg htl key htag hacc A q
++  exact ⟨_, (hF.negligible_prfAdv D (PRFMAC.macBudget q)).add negligible_two_pow_neg, hD⟩
+ 
+ end TCSlib.Cryptography.Authentication
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean
+new file mode 100644
+index 000000000..839cca8a4
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean
+@@ -0,0 +1,183 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Game
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Random
++import TCSlib.Cryptography.Games.Bridges.Experiments
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The bound of the PRF-MAC reduction
++
++Step 5 of the proof of [PS10, Theorem 135.4], for any MAC whose tag is a keyed function family
++`F` (`n`-bit messages and tags, the key read off the generator's coins, a deterministic tag
++`F_k(m)` and verification `F_k(m) = σ`): for every forger `A` and budget `q` there is a
++distinguisher `D` with, at every `n`,
++`Pr[forgeGame A q(n) n] ≤ prfAdv (F n) (D^{q(n) · 1 + 1}) + 2^{-n}` (`exists_forgeGame_le`).
++
++The forgery probability is the acceptance probability of `D` against `F_k` (`accept_forgeGame_eq`,
++`exists_macReduction`), and its acceptance probability against a uniform random function is at
++most `2^{-n}` (`exists_macReduction`, `expect_fnForge_random_le`). The functions of the scheme's
++widths are those of `n` bits read through `padFin` (`eval_toOracleAdversary_width₂`).
++
++## Main results
++
++* `PRFMAC.eval_toOracleAdversary_width₂`: an oracle adversary read at equal widths.
++* `PRFMAC.exists_forgeGame_le`: the bound.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 135.4 (book p. 135).
++-/
++
++namespace TCSlib.Cryptography.Authentication.PRFMAC
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp
++
++/-- **An oracle adversary read at equal widths:** for `m₁ = n` and `m₂ = n`, running
++`D.toOracleAdversary n n n q c` against `f` is running `D.toOracleAdversary n m₁ m₂ q c` against
++`f` with its inputs and outputs read at the widths `m₁`, `m₂`:
++`(D^{n,n} c).eval f = (D^{m₁,m₂} c).eval (fun x => padFin m₂ ⟦f (padFin n ⟦x⟧)⟧)`.
++
++**Proof sketch.** Substitute `m₁ = n` and `m₂ = n`; the readings are identities (`padFin_ofFn`). -/
++theorem eval_toOracleAdversary_width₂ (D : NUPPT) (n q : ℕ) (c : D.Coins n) {m₁ m₂ : ℕ}
++    (h₁ : m₁ = n) (h₂ : m₂ = n) (f : (Fin n → Bool) → (Fin n → Bool)) :
++    (D.toOracleAdversary n n n q c).eval f =
++      (D.toOracleAdversary n m₁ m₂ q c).eval
++        (fun x => padFin m₂ (List.ofFn (f (padFin n (List.ofFn x))))) := by
++  subst h₁ h₂
++  simp only [padFin_ofFn]
++
++/-- The functions `{0,1}^n → {0,1}^n` read at the widths `m₁ = n` and `m₂ = n`: `R` becomes
++`fun x => padFin m₂ ⟦R (padFin n ⟦x⟧)⟧`. -/
++private def padFunEquiv {n m₁ m₂ : ℕ} (h₁ : m₁ = n) (h₂ : m₂ = n) :
++    ((Fin n → Bool) → (Fin n → Bool)) ≃ ((Fin m₁ → Bool) → (Fin m₂ → Bool)) where
++  toFun R x := padFin m₂ (List.ofFn (R (padFin n (List.ofFn x))))
++  invFun R' y := padFin n (List.ofFn (R' (padFin m₁ (List.ofFn y))))
++  left_inv R := by
++    funext y
++    simp only
++    rw [ofFn_padFin_of_length (by rw [List.length_ofFn]; omega), padFin_ofFn,
++      ofFn_padFin_of_length (by rw [List.length_ofFn]; omega), padFin_ofFn]
++  right_inv R' := by
++    funext x
++    simp only
++    rw [ofFn_padFin_of_length (by rw [List.length_ofFn]; omega), padFin_ofFn,
++      ofFn_padFin_of_length (by rw [List.length_ofFn]; omega), padFin_ofFn]
++
++/-- **The bound of the PRF-MAC reduction** [PS10, Theorem 135.4, proof, step 5]: let `M` be a
++MAC with `n`-bit messages and tags (`hℓ`, `ht`) and `F` a keyed family, with a bijection `key n`
++from the generator's coins to `n`-bit keys, such that tagging `m` on the key of `rg` returns
++`F_{key rg}(m)` (`htag`) and verification accepts `(m, σ)` iff `F_{key rg}(m) = σ` (`hacc`), the
++messages read at `n` bits. Then for every forger `A` and budget `q` there is a next-query machine
++`D` with, at every `n`,
++`Pr[forgeGame A q(n) n] ≤ prfAdv (F n) (D.toOracleAdversary n n n (q(n) · 1 + 1)) + 2⁻ⁿ`.
++
++**Proof sketch.** `D` is `exists_macReduction` at the widths `msgLen`, `tagLen`.
++1. *With `F_k`.* The tag is deterministic, so the forgery probability is the average over `rg`
++   of the forgery probability against `fnImpl (g rg)`, `g rg` being `F_{key rg}` read at the
++   scheme's widths (`accept_forgeGame_eq`); by `exists_macReduction` it is `D`'s acceptance
++   probability against `g rg`, which is `D`'s against `F_{key rg}` at `n` bits
++   (`eval_toOracleAdversary_width₂`); `key` relabels the coins (`expect_sample_equiv`).
++2. *With a random function.* `D`'s acceptance probability against a uniform `R` is, through the
++   widths (`padFunEquiv`, `expect_sample_equiv`) and `exists_macReduction`, the average over `A`'s
++   coins (`expect_sample_comm`) of the forgery probability against a random function, at most
++   `2^{-n}` (`expect_fnForge_random_le`).
++3. *The PRF advantage* is the absolute gap between the two (`prfAdv_def`, `distAdv_def`,
++   `Bridge.acceptProb_eq`, `Bridge.acceptGame_eq`, `oracleDist_apply`). -/
++theorem exists_forgeGame_le (M : MAC) (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
++    (hℓ : ∀ n, M.msgLen.eval n = n) (ht : ∀ n, M.tagLen.eval n = n)
++    (key : ∀ n, M.gen.Coins n ≃ (Fin n → Bool))
++    (htag : ∀ n rg (m : Fin (M.msgLen.eval n) → Bool) (rt : M.tag.Coins n),
++      M.tag.runAt n (pairEncode (M.gen.runAt n [] rg) (List.ofFn m)) rt =
++        List.ofFn (F n (key n rg) (padFin n (List.ofFn m))))
++    (hacc : ∀ n rg (m : Fin (M.msgLen.eval n) → Bool) (σ : Fin (M.tagLen.eval n) → Bool),
++      M.Accepts n (M.gen.runAt n [] rg) m σ ↔
++        List.ofFn (F n (key n rg) (padFin n (List.ofFn m))) = List.ofFn σ)
++    (A : NUPPT) (q : PolyExpr) :
++    ∃ D : NUPPT, ∀ n, accept (M.forgeGame A (q.eval n) n) ≤
++      prfAdv (F n) (D.toOracleAdversary n n n ((macBudget q).eval n)) + (2 : ℝ)⁻¹ ^ n := by
++  obtain ⟨D, hD⟩ := exists_macReduction M.msgLen M.tagLen q A
++  refine ⟨D, fun n => ?_⟩
++  -- The tag function at the scheme's widths.
++  let g : M.gen.Coins n → (Fin (M.msgLen.eval n) → Bool) → (Fin (M.tagLen.eval n) → Bool) :=
++    fun rg m => padFin _ (List.ofFn (F n (key n rg) (padFin n (List.ofFn m))))
++  have hg_tag : ∀ rg (m : Fin (M.msgLen.eval n) → Bool) (rt : M.tag.Coins n),
++      padFin (M.tagLen.eval n) (M.tag.runAt n (pairEncode (M.gen.runAt n [] rg) (List.ofFn m))
++        rt) = g rg m := fun rg m rt => by
++    rw [htag]
++  have hg_acc : ∀ rg (m : Fin (M.msgLen.eval n) → Bool) (σ : Fin (M.tagLen.eval n) → Bool),
++      M.Accepts n (M.gen.runAt n [] rg) m σ ↔ g rg m = σ := fun rg m σ => by
++    rw [hacc]
++    constructor
++    · intro h
++      show padFin _ (List.ofFn (F n (key n rg) (padFin n (List.ofFn m)))) = σ
++      rw [h, padFin_ofFn]
++    · intro h
++      rw [← h]
++      exact (ofFn_padFin_of_length (by rw [List.length_ofFn, ht])).symm
++  -- With `F_k`: the forgery probability.
++  have hreal : accept (M.forgeGame A (q.eval n) n) =
++      expect (sample (Fin n → Bool)) fun k => expect (sample (D.Coins n)) fun c =>
++        if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval (F n k) = true
++        then (1 : ℝ) else 0 := by
++    rw [accept_forgeGame_eq M A (q.eval n) n g hg_tag hg_acc, ← expect_sample_equiv (key n)]
++    refine congrArg _ (funext fun rg => ?_)
++    rw [← hD n (g rg)]
++    refine congrArg _ (funext fun c => ?_)
++    rw [eval_toOracleAdversary_width₂ D n _ c (hℓ n) (ht n) (F n (key n rg))]
++  -- With a random function: at most `2⁻ⁿ`.
++  have hrand : expect (sample ((Fin n → Bool) → (Fin n → Bool))) (fun R =>
++      expect (sample (D.Coins n)) fun c =>
++        if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval R = true
++        then (1 : ℝ) else 0) ≤ (2 : ℝ)⁻¹ ^ n := by
++    have he : ∀ R : (Fin n → Bool) → (Fin n → Bool),
++        (expect (sample (D.Coins n)) fun c =>
++          if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval R = true
++          then (1 : ℝ) else 0) =
++        expect (sample (D.Coins n)) fun c =>
++          if (D.toOracleAdversary n (M.msgLen.eval n) (M.tagLen.eval n) ((macBudget q).eval n)
++            c).eval (padFunEquiv (hℓ n) (ht n) R) = true then (1 : ℝ) else 0 := fun R => by
++      refine congrArg _ (funext fun c => ?_)
++      rw [eval_toOracleAdversary_width₂ D n _ c (hℓ n) (ht n) R]
++      rfl
++    simp only [he]
++    rw [expect_sample_equiv (padFunEquiv (hℓ n) (ht n)) (fun R' =>
++      expect (sample (D.Coins n)) fun c =>
++        if (D.toOracleAdversary n (M.msgLen.eval n) (M.tagLen.eval n) ((macBudget q).eval n)
++          c).eval R' = true then (1 : ℝ) else 0)]
++    simp only [hD n]
++    rw [expect_sample_comm]
++    refine (expect_mono _ fun r => expect_fnForge_random_le _).trans (le_of_eq ?_)
++    rw [expect_const, ht n, inv_pow]
++  -- The PRF advantage is the gap.
++  have hadv : prfAdv (F n) (D.toOracleAdversary n n n ((macBudget q).eval n)) =
++      |(expect (sample (Fin n → Bool)) fun k => expect (sample (D.Coins n)) fun c =>
++          if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval (F n k) = true
++          then (1 : ℝ) else 0) -
++        expect (sample ((Fin n → Bool) → (Fin n → Bool))) (fun R =>
++          expect (sample (D.Coins n)) fun c =>
++            if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval R = true
++            then (1 : ℝ) else 0)| := by
++    rw [prfAdv_def, distAdv_def, Bridge.acceptProb_eq, Bridge.acceptProb_eq, accept_eq, accept_eq,
++      Bridge.acceptGame_eq, Bridge.acceptGame_eq, prob_bind, prob_bind]
++    congr 2
++    · refine congrArg _ (funext fun k => ?_)
++      simp only [prob_bind, prob_pure, oracleDist_apply]
++    · refine congrArg _ (funext fun R => ?_)
++      simp only [prob_bind, prob_pure, oracleDist_apply, randomFunction_apply]
++  rw [hreal, hadv]
++  linarith [le_abs_self ((expect (sample (Fin n → Bool)) fun k => expect (sample (D.Coins n))
++    fun c => if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval (F n k) = true
++      then (1 : ℝ) else 0) -
++    expect (sample ((Fin n → Bool) → (Fin n → Bool))) (fun R =>
++      expect (sample (D.Coins n)) fun c =>
++        if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval R = true
++        then (1 : ℝ) else 0))]
++
++end TCSlib.Cryptography.Authentication.PRFMAC
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Game.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Game.lean
+new file mode 100644
+index 000000000..2281b4619
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Game.lean
+@@ -0,0 +1,99 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Reduction
++import TCSlib.Cryptography.Authentication.MAC.Defs
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CodecReaders
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The forgery game of a MAC with a deterministic tag
++
++Step 3 of the proof of [PS10, Theorem 135.4], on the game side: when a MAC's tagging algorithm
++returns, on the key of the generator coins `rg`, a tag `g rg m` that does not depend on its own
++coins, and verification accepts `(m, σ)` exactly when `g rg m = σ`, the forgery probability is the
++average over the coins `rg` of the probability that the forger forges against the tagging oracle of
++the function `g rg` (`accept_forgeGame_eq`). The forger's codec is the bit codec
++(`forgerCodec_eq_bitCodec`).
++
++## Main results
++
++* `PRFMAC.forgerCodec_eq_bitCodec`: the forger codec of a MAC is the bit codec.
++* `PRFMAC.accept_forgeGame_eq`: the forgery game with a deterministic tag.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Definition 134.2 and Theorem 135.4 (book pp. 134–135).
++-/
++
++namespace TCSlib.Cryptography.Authentication.PRFMAC
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp
++
++/-- **The MAC forger codec is the bit codec** with message-length queries, tag-length answers and
++a message-plus-tag-length output: `M.forgerCodec n = bitCodec (fun _ => msgLen(n))
++(fun _ => tagLen(n)) (msgLen(n) + tagLen(n))`.
++
++**Proof sketch.** Codec extensionality (`MachineCodec.ext_of_fields`) on the published decoding,
++entry-encoding and timeout equations (`forgerCodec_decodeMove`, `forgerCodec_encodeEntry`,
++`forgerCodec_timeout`) and those of the bit codec. -/
++theorem forgerCodec_eq_bitCodec (M : MAC) (n : ℕ) :
++    M.forgerCodec n =
++      bitCodec (fun _ : Fin 1 => M.msgLen.eval n) (fun _ : Fin 1 => M.tagLen.eval n)
++        (M.msgLen.eval n + M.tagLen.eval n) := by
++  apply MachineCodec.ext_of_fields
++  · funext w
++    exact (M.forgerCodec_decodeMove n w).trans
++      (bitCodec_decodeMove (fun _ : Fin 1 => M.msgLen.eval n)
++        (fun _ : Fin 1 => M.tagLen.eval n) (M.msgLen.eval n + M.tagLen.eval n) w).symm
++  · funext e
++    exact (M.forgerCodec_encodeEntry n e).trans
++      (bitCodec_encodeEntry (fun _ : Fin 1 => M.msgLen.eval n)
++        (fun _ : Fin 1 => M.tagLen.eval n) (M.msgLen.eval n + M.tagLen.eval n) e).symm
++  · exact (M.forgerCodec_timeout n).trans
++      (bitCodec_timeout (fun _ : Fin 1 => M.msgLen.eval n)
++        (fun _ : Fin 1 => M.tagLen.eval n) (M.msgLen.eval n + M.tagLen.eval n)).symm
++
++/-- **The forgery game with a deterministic tag** [PS10, Definition 134.2]: if, on the key of the
++generator coins `rg`, tagging `m` returns `g rg m` whatever its coins, and verification accepts
++`(m, σ)` exactly when `g rg m = σ`, then
++`Pr[forgeGame A b n] = 𝔼_rg 𝔼_r Pr[FnForge (g rg) | simulate (fnImpl (g rg)).withLog (A.toComp … r)
++((), [])]`.
++
++**Proof sketch.** Unfold the game (`forgeGame_eq`, `prob_bind`) and the codec
++(`forgerCodec_eq_bitCodec`). Each call of the logged tagging oracle draws tag coins and returns
++`g rg m` (`tagImpl_eq`, `htag`), so it has the law of the logged `fnImpl (g rg)`
++(`expect_const`), and so do whole runs (`expect_simulate_congr`). The winning test is `FnForge` by
++`hacc`. -/
++theorem accept_forgeGame_eq (M : MAC) (A : NUPPT) (b n : ℕ)
++    (g : M.gen.Coins n → (Fin (M.msgLen.eval n) → Bool) → (Fin (M.tagLen.eval n) → Bool))
++    (htag : ∀ rg (m : Fin (M.msgLen.eval n) → Bool) (rt : M.tag.Coins n),
++      padFin (M.tagLen.eval n) (M.tag.runAt n (pairEncode (M.gen.runAt n [] rg) (List.ofFn m))
++        rt) = g rg m)
++    (hacc : ∀ rg (m : Fin (M.msgLen.eval n) → Bool) (σ : Fin (M.tagLen.eval n) → Bool),
++      M.Accepts n (M.gen.runAt n [] rg) m σ ↔ g rg m = σ) :
++    accept (M.forgeGame A b n) =
++      expect (sample (M.gen.Coins n)) fun rg => expect (sample (A.Coins n)) fun r =>
++        expect (simulate (fnImpl (g rg)).withLog
++            (A.toComp (bitCodec (fun _ : Fin 1 => M.msgLen.eval n) (fun _ => M.tagLen.eval n)
++              (M.msgLen.eval n + M.tagLen.eval n)) n b r) ((), []))
++          (fun res => if FnForge (g rg) res.1 res.2.2 then (1 : ℝ) else 0) := by
++  rw [accept_eq, MAC.forgeGame_eq, prob_bind]
++  refine congrArg _ (funext fun rg => ?_)
++  rw [prob_bind]
++  refine congrArg _ (funext fun r => ?_)
++  rw [prob_bind, forgerCodec_eq_bitCodec,
++    expect_simulate_congr (M.tagImpl n (M.gen.runAt n [] rg)).withLog (fnImpl (g rg)).withLog
++      (fun i x s G => ?_)]
++  · refine congrArg _ (funext fun res => ?_)
++    rw [prob_pure]
++    exact if_congr (by rw [decide_eq_true_iff, fnForge_iff, hacc]) rfl rfl
++  · simp only [QueryImpl.withLog_apply, MAC.tagImpl_eq, QueryImpl.ofComp_apply, fnImpl_apply,
++      expect_bind, expect_pure, OracleComp.pure_bind, htag, expect_const]
++
++end TCSlib.Cryptography.Authentication.PRFMAC
+-- 
+2.43.0
+

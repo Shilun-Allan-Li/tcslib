@@ -119,7 +119,7 @@ for f in sorted(os.listdir('/workspace/prftools')):
     p = f'/workspace/prftools/{f}'
     if os.path.isfile(p) and (f.endswith('.py') or f.endswith('.sh')):
         shutil.copy(p, f'{ev}/tools/{f}')
-for d in ('seal', 'ax', 'controls', 'probe', 'census'):
+for d in ('seal', 'ax', 'controls', 'probe', 'census', 'rwids'):
     if os.path.isdir(f'{REPO}/scratch/{d}'):
         shutil.copytree(f'{REPO}/scratch/{d}', f'{ev}/scratch-src/{d}')
 for f in os.listdir(f'{REPO}/scratch'):

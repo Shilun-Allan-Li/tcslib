@@ -20,7 +20,8 @@ s 'forgeGame_eq_fixed|accept_prf_indGame|forgeGame.*deterministic|tagImpl_eq'
 s 'prob_mem_le|random.*forg|forg.*random' TCSlib/Cryptography 30
 s 'stateLen :=' TCSlib 30
 s 'polyTimeComputable_pairTakePoly|polyTimeComputable_pairDropPoly' TCSlib/Cryptography 20
-s 'runAt_coinKey|coinsEquivPoly' TCSlib/Cryptography 30
+s 'runAt_coinKey|coinsEquivPoly|coinsEquiv_ofPolyTimeUniform|prfKeyEq|KeyEq' TCSlib/Cryptography 40
+s 'eval_toOracleAdversary|ofFn_evalFn_toCompOn|expect_toCompOn_outLen' TCSlib 20
 echo "=== Mathlib/core names used (existence)"
 for n in List.flatten_replicate_replicate Fin.append_castAdd_natAdd List.ofFn_fin_append List.take_append List.take_replicate List.flatten_eq_nil_iff decide_eq_decide; do
   echo "$n: $(rg -l --no-heading "theorem ${n##*.}\b" .lake/packages/mathlib/Mathlib ~/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init 2>/dev/null | head -2 | tr '\n' ' ')"; done

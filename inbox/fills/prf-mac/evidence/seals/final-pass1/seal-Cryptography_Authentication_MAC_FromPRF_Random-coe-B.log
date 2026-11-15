@@ -1,0 +1,26 @@
+SEAL-INSTALL final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 1: 400
+SEAL-INSTALL final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 2: 400
+SEAL-INSTALL final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 3: 400
+SEAL-INSTALL final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 4: 400
+SEAL-INSTALL final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 5: 400
+SEAL-INSTALL final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 6: 238
+/workspace/prfmac/scratch/seal/final/Seal_Cryptography_Authentication_MAC_FromPRF_Random_coeB.lean:280:2: error: Type mismatch
+  h
+has type
+  ((sample ((Fin a → Bool) → Fin b → Bool)).expect fun R =>
+      expect (simulate (fnImpl R).withLog c ((), [])) fun res =>
+        @ite ℝ (FnForge R res.1 res.2.2) (instDecidableFnForge (ovr [] R) res.1 res.2.2) 1 0) ≤
+    (2 ^ b)⁻¹
+but is expected to have type
+  ((sample ((Fin a → Bool) → Fin b → Bool)).expect fun R =>
+      expect (simulate (fnImpl R).withLog c ((), [])) fun res =>
+        @ite ℝ (FnForge R res.1 res.2.2) (instDecidableFnForge R res.1 res.2.2) 1 0) ≤
+    (2 ^ b)⁻¹
+SEAL-VERIFY final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 1: 400
+SEAL-VERIFY final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 2: 400
+SEAL-VERIFY final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 3: 400
+SEAL-VERIFY final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 4: 400
+SEAL-VERIFY final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 5: 400
+SEAL-VERIFY final/Cryptography_Authentication_MAC_FromPRF_Random/coe-B part 6: 238
+
+EXIT 1
