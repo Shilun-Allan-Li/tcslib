@@ -14,7 +14,9 @@ only go directly after fetch/rebase. The latest merge is #321 (Ladner fill 4, ga
 Campaign Lean is `34643146ee1fe6bf6d7ffdf2e543e8342a3e16a0`. Its replay output is the cloud snapshot `oleans-c3464`
 (876 objects); use it whole. See campaign/status/2026-11-15-merge-321/. Ladner has three admitted
 targets left (2, 5 and 6). Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
-(`ladnerH_polyTime`; #321). Fills 5 (target 2) and 6 (target 5) are in preparation. Earlier merges are in the table.
+(`ladnerH_polyTime`; #321). Fills 5 (target 2, campaign/fills/ladner-np/) and 6
+(target 5, campaign/fills/ladner-shrink/) are staged, not dispatched; they can run in parallel (disjoint
+anchors, clean merge checked), which departs from the recorded serial order only if Seyoon dispatches both at once. Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
