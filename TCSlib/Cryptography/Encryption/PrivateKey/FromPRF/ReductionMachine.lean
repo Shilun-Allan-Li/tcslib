@@ -393,7 +393,9 @@ theorem postCountOut_eq (ℓ : PolyExpr) (z : List Bool) :
   rfl
 
 /-- The unary offset `1^{k·n}` of the next point at answer width `ℓ(n)`: the block map emitting
-`1^{|x|}` for the query `x` of each block of length `histBlockLenOut ℓ`. -/
+`1^{|x|}` for the query `x` of each block of length `histBlockLenOut ℓ`,
+`postOffsetOut ℓ z = blockMapFun (histBlockLenOut ℓ) (fun blk => 1^{|fst (fst blk)|})
+⟨inParam z, postHist z⟩`. -/
 def postOffsetOut (ℓ : PolyExpr) (z : List Bool) : List Bool :=
   blockMapFun (histBlockLenOut ℓ) (fun blk => List.replicate (pairFstD (pairFstD blk)).length true)
     (pairEncode (NUPPT.inParam z) (postHist z))
@@ -407,7 +409,8 @@ theorem postOffsetOut_eq (ℓ : PolyExpr) (z : List Bool) :
   rfl
 
 /-- The query move `⟨[false], ρ_k⟩` at answer width `ℓ(n)`: the `n`-bit block of the points
-after the first `k·n` (`postOffsetOut ℓ`). -/
+after the first `k·n` (`postOffsetOut ℓ`), `postQueryOut ℓ z = ⟨[false], takePolyFun var
+⟨inParam z, dropPolyFun var ⟨postOffsetOut ℓ z, postPoints z⟩⟩⟩`. -/
 def postQueryOut (ℓ : PolyExpr) (z : List Bool) : List Bool :=
   pairEncode [false] (takePolyFun .var
     (pairEncode (NUPPT.inParam z)
@@ -437,7 +440,7 @@ theorem postFunOut_eq (ℓ : PolyExpr) (z : List Bool) :
       else postQueryOut ℓ z :=
   rfl
 
-/-- `postFunOut ℓ` is polynomial-time.
+/-- `postFunOut ℓ` is polynomial-time: `PolyTimeComputable (postFunOut ℓ)`.
 
 **Proof sketch.** As `polyTimeComputable_postFun`, with the block length `histBlockLenOut ℓ`:
 projections of the layout, two block maps (`polyTimeComputable_blockMapFun`), the typed cuts, a
