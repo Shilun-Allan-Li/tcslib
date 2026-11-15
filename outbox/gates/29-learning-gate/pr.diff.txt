@@ -1,0 +1,935 @@
+diff --git a/TCSlib/Cryptography/Randomness/Learning.lean b/TCSlib/Cryptography/Randomness/Learning.lean
+index 82ab19b87..ddb1a07aa 100644
+--- a/TCSlib/Cryptography/Randomness/Learning.lean
++++ b/TCSlib/Cryptography/Randomness/Learning.lean
+@@ -6,13 +6,17 @@ import TCSlib.LearningTheory.PAC
+ import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
+ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
+ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
++import TCSlib.Cryptography.Randomness.Learning.Sample
++import TCSlib.Cryptography.Randomness.Learning.Distinguisher
++import TCSlib.Cryptography.Randomness.Learning.Law
++import TCSlib.Cryptography.Randomness.Learning.Random
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Pseudorandom functions make an unlearnable concept class (statement phase)
++# Pseudorandom functions make an unlearnable concept class
+ 
+ [PS10, §8.1, Theorem 179.1]: if pseudorandom functions exist, there is a p.p.t.-decidable
+ concept class that no non-uniform p.p.t. learner can learn: given polynomially many labelled uniform
+@@ -36,14 +40,26 @@ notions are those of the information-theoretic layer `TCSlib.LearningTheory.PAC`
+ 
+ * `Randomness.prfConcept_decidable` (Thm 179.1, part (a), proved): membership is
+   polynomial-time decidable given the key.
+-* `Randomness.predictAdv_prfConcept_negligible` (Thm 179.1, part (b), stated; a `sorry` under the
+-  source's sketch): every efficient learner's prediction advantage is negligible.
++* `Randomness.predictAdv_prfConcept_negligible` (Thm 179.1, part (b), proved): every efficient
++  learner's prediction advantage is negligible.
+ * `Randomness.not_weakLearnsUnder_prfConcept` (Thm 179.1, part (c), proved from (b) and the PAC
+   layer's bridge): no efficient learner weakly PAC-learns the class under the uniform distribution
+   with a constant edge `γ` at fixed failure probability `δ < γ`. Amplifying a KV94-style
+   weak learner changes the learner and its resources; that amplification and its resource
+   bridge are additional results, not a construction already supplied by part (c).
+ 
++## Contents
++
++This file states the class, the learner and Theorem 179.1, and assembles the proof of part (b)
++from the helper modules under `Learning/` (namespace `Randomness.LearnPRF`):
++- `Sample`: the learner's input and the last label as polynomial-time functions of the encoded
++  tuple of query points and answers (`learnIn`, `lastLabel`);
++- `Distinguisher`: the PRF distinguisher built from a learner (`exists_learnDist`);
++- `Law`: the prediction game and the distinguisher's acceptance probability as one uniform
++  probability (`predictSuccess_eq_uprob`, `gameProb`, `exists_learnDist_acceptProb`);
++- `Random`: with a uniform random function the prediction is within `m/2^n` of `½`
++  (`abs_gameProb_random_sub_half_le`).
++
+ ## References
+ 
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+@@ -103,18 +119,73 @@ a PRF, then for every non-uniform PPT learner `A` and polynomial number `m` of e
+ prediction advantage `|Pr[A predicts C_k(x)] − ½|` at uniform `k`, uniform examples and a fresh
+ uniform `x` is negligible.
+ 
+-**Proof sketch** (the source's, made explicit).
+-1. The distinguisher `D` against the PRF draws `m(n) + 1` uniform points, queries its oracle at
+-   them, labels the first `m(n)` with the answers' first bits, runs `A` on the labelled sample and
+-   the last point, and outputs whether `A`'s prediction equals the last answer's first bit. With
+-   `f_k` this is the prediction game. `D` is a machine by T1 (non-adaptive queries).
+-2. With a random function, the last point's label is a uniform bit independent of the sample,
+-   unless the last point was sampled, with probability at most `m(n)/2^n`. So `D` accepts with
+-   probability at most `½ + m(n)/2^n`, and at least `½ − m(n)/2^n`.
+-3. Hence the advantage is at most the PRF advantage plus `m(n)/2^n`: negligible. -/
++**Proof sketch** (the source's, made explicit; the delivered proof).
++1. **The distinguisher and the real game.** The next-query machine `D` of
++   `LearnPRF.exists_learnDist_acceptProb` takes `m(n) + 1` uniform points from its coins, queries
++   its oracle at them (the non-adaptive query chain `MultiMsg.exists_queryChain_nuppt`), labels
++   the first `m(n)` with the answers' first bits, runs `A` (with its own coins) on the labelled
++   sample and the last point, and accepts when `A`'s prediction equals the last answer's first
++   bit. Against any keyed family its acceptance probability is a uniform probability over the
++   key, the examples, the coins and the fresh point (`LearnPRF.gameProb`); with `f_k` this is
++   the prediction game (`LearnPRF.predictSuccess_eq_uprob`), so
++   `predictSuccess = acceptProb (F n) D`. The fresh point may equal an example, in both.
++2. **The random function.** With a uniform random function `R`, for `n ≥ 1`: when the last point
++   is none of the examples, flipping the first bit of `R` there exchanges winning and losing
++   functions, so `D` wins with probability exactly `½`; the last point is an example with
++   probability at most `m(n)/2^n` (union bound). So `|acceptProb R D − ½| ≤ m(n)/2^n`
++   (`LearnPRF.abs_gameProb_random_sub_half_le`).
++3. **The bound.** For `n ≥ 1`, `predictAdv ≤ prfAdv (F n) (D^{m(n)+1}) + m(n)/2^n`, which is
++   negligible by `PRF.negligible_prfAdv` (budget `m + 1`), `EnsembleLemmas.negligible_polyExpr_mul`
++   with `negligible_two_pow_neg`, and `Negligible.add`; the eventual bound gives negligibility
++   (`Negligible.mono` from `n = 1`, so `n = 0` needs no case). -/
+ theorem predictAdv_prfConcept_negligible (hF : PRF F) (A : NUPPT) (m : PolyExpr) :
+     Negligible fun n => predictAdv (prfConcept F n) (m.eval n) (learnerOf A n (m.eval n)) := by
+-  sorry
++  obtain ⟨B, hB⟩ := LearnPRF.exists_learnDist_acceptProb A m
++  -- The owned learner and concept are the helpers' `learnerFn` and `firstBit`.
++  have hL : ∀ n, learnerOf A n (m.eval n) = LearnPRF.learnerFn A n (m.eval n) := fun n => by
++    funext S r x
++    rw [learnerOf_eq, LearnPRF.learnerFn_eq, encodeSample_eq]
++  have hC : ∀ n (k : Fin n → Bool), prfConcept F n k = fun x => LearnPRF.firstBit (F n k x) :=
++    fun n k => funext fun x => by rw [prfConcept_eq, LearnPRF.firstBit_eq]
++  -- Step 1: the prediction game is the distinguisher's game with `f_k`.
++  have hreal : ∀ n, predictSuccess (prfConcept F n) (m.eval n) (learnerOf A n (m.eval n)) =
++      acceptProb (F n) (oracleDist (B.toOracleAdversary n n n (m.eval n + 1))) := by
++    intro n
++    rw [hB, LearnPRF.predictSuccess_eq_uprob, LearnPRF.gameProb_eq, hL]
++    simp only [hC]
++  -- Step 2: with a random function the acceptance probability is within `m(n)/2^n` of `½`.
++  have hrand : ∀ n, 0 < n →
++      |acceptProb (randomFunction (Fin n → Bool) (Fin n → Bool))
++          (oracleDist (B.toOracleAdversary n n n (m.eval n + 1))) - 1 / 2| ≤
++        (m.eval n : ℝ) / 2 ^ n := by
++    intro n hn
++    rw [hB]
++    have h := LearnPRF.abs_gameProb_random_sub_half_le hn (m.eval n)
++      (LearnPRF.learnerFn A n (m.eval n))
++    rwa [show (fun R : (Fin n → Bool) → (Fin n → Bool) => R) =
++      randomFunction (Fin n → Bool) (Fin n → Bool) from
++        funext fun R => (randomFunction_apply _ _ R).symm] at h
++  -- Step 3: the bound, negligible by PRF security and `m(n)/2^n → 0`.
++  have hQ : ∀ n, (PolyExpr.add m (.const 1)).eval n = m.eval n + 1 := fun n => by
++    rw [PolyExpr.eval_add, PolyExpr.eval_const]
++  have hprf := hF.negligible_prfAdv B (.add m (.const 1))
++  simp only [hQ] at hprf
++  have hpow : Negligible fun n => (m.eval n : ℝ) / 2 ^ n := by
++    refine (EnsembleLemmas.negligible_polyExpr_mul m negligible_two_pow_neg).mono
++      ⟨0, fun n _ => le_of_eq ?_⟩
++    rw [inv_pow, div_eq_mul_inv]
++  refine (hprf.add hpow).mono ⟨1, fun n hn => ?_⟩
++  have h₁ := hrand n (by omega)
++  have h₂ := prfAdv_nonneg (F n) (B.toOracleAdversary n n n (m.eval n + 1))
++  have h₃ : (0 : ℝ) ≤ (m.eval n : ℝ) / 2 ^ n := by positivity
++  rw [predictAdv_eq, hreal, abs_abs, abs_of_nonneg (add_nonneg h₂ h₃), prfAdv_def, distAdv_def]
++  calc _ ≤ |acceptProb (F n) (oracleDist (B.toOracleAdversary n n n (m.eval n + 1))) -
++          acceptProb (randomFunction (Fin n → Bool) (Fin n → Bool))
++            (oracleDist (B.toOracleAdversary n n n (m.eval n + 1)))| +
++        |acceptProb (randomFunction (Fin n → Bool) (Fin n → Bool))
++            (oracleDist (B.toOracleAdversary n n n (m.eval n + 1))) - 1 / 2| :=
++        abs_sub_le _ _ _
++    _ ≤ _ := by linarith
+ 
+ /-- **Theorem 179.1 (c): no efficient weak PAC learner** under the uniform distribution: for edges
+ `δ < γ ≤ ½`, every efficient learner fails to `(γ, δ)`-weakly learn the class from some
+diff --git a/TCSlib/Cryptography/Randomness/Learning/Distinguisher.lean b/TCSlib/Cryptography/Randomness/Learning/Distinguisher.lean
+new file mode 100644
+index 000000000..5d114cc57
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Learning/Distinguisher.lean
+@@ -0,0 +1,137 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Randomness.Learning.Sample
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The PRF distinguisher built from a learner
++
++Step 1 of [PS10, Theorem 179.1, proof]: from a learner machine `A` and a polynomial number `m` of
++examples, a next-query machine `B` that queries its oracle `g` at `m(n) + 1` points `ρ` drawn from
++its coins, labels the first `m(n)` by the first bits of the answers, runs `A` (with its own coins)
++on the labelled sample and the last point, and accepts when `A`'s prediction (its output being
++`[true]`) equals the first bit of the last answer (`exists_learnDist`).
++
++`B` is the query chain of `MultiMsg.exists_queryChain_nuppt` (non-adaptive queries at points
++from the coins, the zero message vector) applied to the machine `C` that, on the encoded tuple,
++runs `A` on `learnIn m` (`NUPPT.exists_compParam`) and then compares with `lastLabel m`
++(`NUPPT.exists_seq` with the uniform machine of `verdictFun`).
++
++## Main definitions
++
++* `LearnPRF.verdictFun`: the comparison of the prediction with the last label.
++
++## Main results
++
++* `LearnPRF.polyTimeComputable_verdictFun`.
++* `LearnPRF.exists_learnDist`: the distinguisher and its verdict against every oracle.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §8.1, Theorem 179.1 (book p. 179).
++-/
++
++namespace TCSlib.Cryptography.Randomness.LearnPRF
++
++open Complexity Turing TCSlib.Cryptography
++
++/-- **The verdict** on the raw layout whose argument is `⟨w, a⟩` (the encoded tuple `w` and the
++learner's output `a`) at parameter `u = 1^n`: `[decide (a = [true]) == lastLabel m ⟨u, w⟩]`. -/
++def verdictFun (m : PolyExpr) (z : List Bool) : List Bool :=
++  [decide (pairSndD (NUPPT.inArg z) = [true]) ==
++    lastLabel m (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))]
++
++/-- `verdictFun m z = [decide (pairSndD (inArg z) = [true]) ==
++lastLabel m ⟨inParam z, pairFstD (inArg z)⟩]`. -/
++theorem verdictFun_eq (m : PolyExpr) (z : List Bool) :
++    verdictFun m z =
++      [decide (pairSndD (NUPPT.inArg z) = [true]) ==
++        lastLabel m (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))] := rfl
++
++/-- The verdict is polynomial-time: an equality test (`polyTimeComputable_pairEq`) selecting the
++last label or its negation (`polyTimeComputable_ite`, `polyTimeComputable_not`,
++`polyTimeComputable_lastLabel`): `PolyTimeComputable (verdictFun m)`, for
++`verdictFun m : List Bool → List Bool`. -/
++theorem polyTimeComputable_verdictFun (m : PolyExpr) : PolyTimeComputable (verdictFun m) := by
++  have hArg := NUPPT.polyTimeComputable_inArg
++  have hEq : PolyTimeComputable fun z => [decide (pairSndD (NUPPT.inArg z) = [true])] :=
++    (polyTimeComputable_pairEq.comp ((polyTimeComputable_pairSndD.comp hArg).pairEncode
++      (polyTimeComputable_const [true]))).congr fun z => by
++        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++  have hL : PolyTimeComputable fun z =>
++      [lastLabel m (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))] :=
++    (polyTimeComputable_lastLabel m).comp
++      (NUPPT.polyTimeComputable_inParam.pairEncode (polyTimeComputable_pairFstD.comp hArg))
++  refine (polyTimeComputable_ite hEq hL (polyTimeComputable_not hL)).congr fun z => ?_
++  rw [verdictFun_eq]
++  cases decide (pairSndD (NUPPT.inArg z) = [true]) <;>
++    cases lastLabel m (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z))) <;> rfl
++
++/-- The zero message vector leaves the answers unchanged: `(fun _ => false) + y = y`. -/
++private theorem zero_add_fun {n : ℕ} (y : Fin n → Bool) : (fun _ => false) + y = y := by
++  funext i
++  rw [Pi.add_apply]
++  cases y i <;> rfl
++
++/-- **The distinguisher of [PS10, Theorem 179.1, proof]:** for a learner machine `A` and a
++polynomial `m`, there is a next-query machine `B` whose coins at `n` are, up to a bijection `φ`,
++the `m(n) + 1` query points `ρ` and `A`'s coins `c`, and whose query tree with budget `m(n) + 1`,
++evaluated against any oracle `g`, is
++`decide (A(⟨S, ⟦ρ_m⟧⟩; c) = [true]) == firstBit (g ρ_m)`, where `S` is the nested labelled
++examples `⟨⟦ρ_j⟧, [firstBit (g ρ_j)]⟩` of the first `m(n)` points.
++
++**Proof sketch.** `A₁ := exists_compParam A` with `pre = learnIn m` and `post = pairSndD` runs `A`
++on the learner's input; `C := exists_seq A₁ V` with the uniform machine `V` of `verdictFun m`
++compares its output with the last label; `B := MultiMsg.exists_queryChain_nuppt C m 0`. Against
++`g` the tree of `B` gives `C`'s verdict on the encoded tuple `tupleWord ρ g` (`zero_add_fun`); the
++runs of `C`, `A₁` and `V` unfold by their equations (`NUPPT.runAtL_ofPolyTimeUniform`, the layout
++readers), the learner's input and the last label are `learnIn_tupleWord` and
++`lastLabel_tupleWord`, and `decide ([b] = [true]) = b`. The coins of `C` are those of `A`
++(`A.coins + 0`), relabelled by `finCongr` (`ofFn_arrowCongr_finCongr`). -/
++theorem exists_learnDist (A : NUPPT) (m : PolyExpr) :
++    ∃ B : NUPPT, ∀ n, ∃ φ : (Fin (m.eval n + 1) → Fin n → Bool) × A.Coins n ≃ B.Coins n,
++      ∀ (g : (Fin n → Bool) → (Fin n → Bool)) (ρ : Fin (m.eval n + 1) → Fin n → Bool)
++        (c : A.Coins n),
++        (B.toOracleAdversary n n n (m.eval n + 1) (φ (ρ, c))).eval g =
++          (decide (A.runAt n (pairEncode ((List.ofFn fun j : Fin (m.eval n) =>
++              pairEncode (List.ofFn (ρ j.castSucc)) [firstBit (g (ρ j.castSucc))]).foldr
++                pairEncode []) (List.ofFn (ρ (Fin.last _)))) c = [true]) ==
++            firstBit (g (ρ (Fin.last _)))) := by
++  obtain ⟨A₁, hA₁c, -, -, hA₁⟩ :=
++    NUPPT.exists_compParam A (polyTimeComputable_learnIn m) polyTimeComputable_pairSndD
++  obtain ⟨C, hCc, -, hC⟩ :=
++    A₁.exists_seq (NUPPT.ofPolyTimeUniform (polyTimeComputable_verdictFun m) (.const 0))
++  obtain ⟨B, hB⟩ := MultiMsg.exists_queryChain_nuppt C m (fun _ _ _ => false)
++  refine ⟨B, fun n => ?_⟩
++  obtain ⟨φ₀, hφ₀⟩ := hB n
++  have hlen : A.coinLen n = C.coinLen n := by
++    simp only [NUPPT.coinLen_eq, hCc, hA₁c, NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_add,
++      PolyExpr.eval_const, Nat.add_zero]
++  have hlen₁ : A₁.coinLen n = A.coinLen n := by simp only [NUPPT.coinLen_eq, hA₁c]
++  let ψ : A.Coins n ≃ C.Coins n := Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)
++  refine ⟨((Equiv.refl _).prodCongr ψ).trans φ₀, fun g ρ c => ?_⟩
++  have hw : (List.ofFn fun j => pairEncode (pairEncode (List.ofFn (ρ j))
++      (List.ofFn ((fun _ _ _ => false : ∀ n, Fin (m.eval n + 1) → Fin n → Bool) n j +
++        g (ρ j)))) []).flatten = tupleWord ρ g := by
++    rw [tupleWord_eq]
++    refine congrArg List.flatten (congrArg List.ofFn (funext fun j => ?_))
++    rw [zero_add_fun]
++  have hc : (List.ofFn c).length ≤ A₁.coinLen n := by rw [List.length_ofFn, hlen₁]
++  rw [Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.refl_apply, hφ₀, hw,
++    NUPPT.runAt_eq, ofFn_arrowCongr_finCongr, hC, List.take_of_length_le hc,
++    NUPPT.runAtL_ofPolyTimeUniform, hA₁, pairSndD_pairEncode, verdictFun_eq, NUPPT.inArg_eq,
++    NUPPT.inParam_eq]
++  simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++  rw [learnIn_tupleWord, lastLabel_tupleWord, ← NUPPT.runAt_eq]
++  cases decide (A.runAt n (pairEncode ((List.ofFn fun j : Fin (m.eval n) =>
++      pairEncode (List.ofFn (ρ j.castSucc)) [firstBit (g (ρ j.castSucc))]).foldr pairEncode [])
++      (List.ofFn (ρ (Fin.last _)))) c = [true]) <;>
++    cases firstBit (g (ρ (Fin.last _))) <;> rfl
++
++end TCSlib.Cryptography.Randomness.LearnPRF
+diff --git a/TCSlib/Cryptography/Randomness/Learning/Law.lean b/TCSlib/Cryptography/Randomness/Learning/Law.lean
+new file mode 100644
+index 000000000..1b106aaf5
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Learning/Law.lean
+@@ -0,0 +1,174 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Randomness.Learning.Distinguisher
++import TCSlib.Cryptography.Randomness.Extraction.Rejection
++import TCSlib.LearningTheory.PAC
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The prediction game as the distinguisher's acceptance probability
++
++Step 1 of [PS10, Theorem 179.1, proof], the law: both the prediction game of the PAC layer and
++the acceptance probability of the distinguisher of `exists_learnDist` against a keyed family are
++uniform probabilities of one event over the keys, `m` examples, the learner's coins and a fresh
++point (`gameProb`).
++
++* **The prediction game** (`predictSuccess_eq_uprob`): its law is a product of uniform laws, the
++  uniform law on the product (`iid_uniform`, `Rejection.uniform_prod`), so its success
++  probability is the uniform probability of the event (`Rejection.uniform_probTrue`).
++* **The distinguisher** (`exists_learnDist_acceptProb`): its coins are, through the bijection of
++  `exists_learnDist`, the `m(n) + 1` points and the learner's coins; the points are the examples
++  followed by the fresh point (`Fin.snoc`, `snocEquiv`), so for every family `G`,
++  `acceptProb G (oracleDist B) = gameProb m G (learnerFn A n m)`.
++
++## Main definitions
++
++* `LearnPRF.gameProb`: the game probability with a family `G` and a learner `ℓ`.
++* `LearnPRF.learnerFn`: the learner of a machine, as a function (the learner of the learning
++  game, restated here since helper modules do not import the owned file).
++* `LearnPRF.snocEquiv`: examples and a fresh point as one tuple.
++
++## Main results
++
++* `LearnPRF.iid_uniform`: independent uniform samples are a uniform tuple.
++* `LearnPRF.predictSuccess_eq_uprob`: the prediction game as a uniform probability.
++* `LearnPRF.exists_learnDist_acceptProb`: the distinguisher's acceptance probability is the game
++  probability of the machine's learner.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §8.1, Theorem 179.1 (book p. 179).
++-/
++
++namespace TCSlib.Cryptography.Randomness.LearnPRF
++
++open Complexity Turing TCSlib.Cryptography TCSlib.InformationTheory TCSlib.LearningTheory.PAC
++  Finset
++
++/-! ### Uniform laws -/
++
++/-- **Independent uniform samples are a uniform tuple:** `(U_X)^m = U_{X^m}`.
++
++**Proof sketch.** Both give every tuple `|X|^{-m}` (`FinDist.iid_apply`, `FinDist.uniform_apply`,
++`Fintype.card_fun`, `Finset.prod_const`). -/
++theorem iid_uniform {X : Type*} [Fintype X] [Nonempty X] (m : ℕ) :
++    (FinDist.uniform X).iid m = FinDist.uniform (Fin m → X) := by
++  classical
++  apply FinDist.ext
++  intro s
++  rw [FinDist.iid_apply]
++  simp only [FinDist.uniform_apply, Finset.prod_const, Finset.card_univ, Fintype.card_fin,
++    Fintype.card_fun, Nat.cast_pow, inv_pow]
++
++/-- **The prediction game as a uniform probability:** `predictSuccess C m L` is the uniform
++probability over `((i, (s, r)), x)` of `L (label (C i) s) r x == C i x`.
++
++**Proof sketch.** The law of the game is `(U_I × (U_X^m × U_ρ)) × U_X`, the uniform law on the
++product (`iid_uniform`, `Rejection.uniform_prod`); acceptance under a uniform law counts the
++accepted points (`Rejection.uniform_probTrue`, `uprob_eq_card_filter`). -/
++theorem predictSuccess_eq_uprob {X I ρ : Type*} [Fintype X] [Nonempty X] [Fintype I] [Nonempty I]
++    [Fintype ρ] [Nonempty ρ] (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool) :
++    predictSuccess C m L =
++      uprob fun w : (I × ((Fin m → X) × ρ)) × X =>
++        (L (label (C w.1.1) w.1.2.1) w.1.2.2 w.2 == C w.1.1 w.2) = true := by
++  classical
++  rw [predictSuccess_eq, trialDist_eq, iid_uniform, Rejection.uniform_prod,
++    Rejection.uniform_prod, Rejection.uniform_prod, Rejection.uniform_probTrue,
++    uprob_eq_card_filter, div_eq_mul_inv]
++
++/-! ### The game probability -/
++
++section Game
++
++variable {n : ℕ}
++
++/-- **The game probability** with a family `G : K → {0,1}^n → {0,1}^n` and a learner `ℓ`: the
++uniform probability over `((k, (s, r)), x)` that `ℓ`, on the examples `s` labelled by the first
++bits of `G k` and the coins `r`, predicts at `x` the first bit of `G k x`. -/
++noncomputable def gameProb {K ρ : Type*} [Fintype K] [Fintype ρ] (m : ℕ)
++    (G : K → (Fin n → Bool) → (Fin n → Bool))
++    (ℓ : (Fin m → (Fin n → Bool) × Bool) → ρ → (Fin n → Bool) → Bool) : ℝ :=
++  uprob fun w : (K × ((Fin m → Fin n → Bool) × ρ)) × (Fin n → Bool) =>
++    (ℓ (label (fun x => firstBit (G w.1.1 x)) w.1.2.1) w.1.2.2 w.2 == firstBit (G w.1.1 w.2)) =
++      true
++
++/-- `gameProb m G ℓ = uprob (fun ((k, (s, r)), x) =>
++(ℓ (label (firstBit ∘ G k) s) r x == firstBit (G k x)) = true)`. -/
++theorem gameProb_eq {K ρ : Type*} [Fintype K] [Fintype ρ] (m : ℕ)
++    (G : K → (Fin n → Bool) → (Fin n → Bool))
++    (ℓ : (Fin m → (Fin n → Bool) × Bool) → ρ → (Fin n → Bool) → Bool) :
++    gameProb m G ℓ =
++      uprob fun w : (K × ((Fin m → Fin n → Bool) × ρ)) × (Fin n → Bool) =>
++        (ℓ (label (fun x => firstBit (G w.1.1 x)) w.1.2.1) w.1.2.2 w.2 ==
++          firstBit (G w.1.1 w.2)) = true := rfl
++
++/-- **The learner of a machine** `A` at parameter `n` with `m` examples, as a function: on the
++labelled sample `S`, the coins `r` and the point `x`, whether `A(1^n, ⟨S', ⟦x⟧⟩; r) = [true]`,
++where `S'` is the nested pairs of the examples `⟨⟦x_j⟧, [b_j]⟩`. -/
++def learnerFn (A : NUPPT) (n m : ℕ) :
++    (Fin m → (Fin n → Bool) × Bool) → A.Coins n → (Fin n → Bool) → Bool :=
++  fun S r x => decide (A.runAt n (pairEncode ((List.ofFn fun j =>
++    pairEncode (List.ofFn (S j).1) [(S j).2]).foldr pairEncode []) (List.ofFn x)) r = [true])
++
++/-- `learnerFn A n m S r x =
++decide (A.runAt n ⟨(ofFn j ↦ ⟨⟦(S j).1⟧, [(S j).2]⟩).foldr pairEncode [], ⟦x⟧⟩ r = [true])`. -/
++theorem learnerFn_eq (A : NUPPT) (n m : ℕ) (S : Fin m → (Fin n → Bool) × Bool) (r : A.Coins n)
++    (x : Fin n → Bool) :
++    learnerFn A n m S r x = decide (A.runAt n (pairEncode ((List.ofFn fun j =>
++      pairEncode (List.ofFn (S j).1) [(S j).2]).foldr pairEncode []) (List.ofFn x)) r = [true]) :=
++  rfl
++
++/-- **Examples and a fresh point as one tuple:** `((k, (s, r)), x) ↦ (k, (snoc s x, r))`, an
++equivalence `(K × ((Fin m → X) × ρ)) × X ≃ K × ((Fin (m + 1) → X) × ρ)`. -/
++def snocEquiv (K X ρ : Type*) (m : ℕ) :
++    (K × ((Fin m → X) × ρ)) × X ≃ K × ((Fin (m + 1) → X) × ρ) where
++  toFun w := (w.1.1, (Fin.snoc w.1.2.1 w.2, w.1.2.2))
++  invFun z := ((z.1, (Fin.init z.2.1, z.2.2)), z.2.1 (Fin.last m))
++  left_inv w := by
++    obtain ⟨⟨k, s, r⟩, x⟩ := w
++    simp only [Fin.init_snoc, Fin.snoc_last]
++  right_inv z := by
++    obtain ⟨k, t, r⟩ := z
++    simp only [Fin.snoc_init_self]
++
++/-- `snocEquiv K X ρ m ((k, (s, r)), x) = (k, (Fin.snoc s x, r))`. -/
++theorem snocEquiv_apply (K X ρ : Type*) (m : ℕ) (w : (K × ((Fin m → X) × ρ)) × X) :
++    snocEquiv K X ρ m w = (w.1.1, (Fin.snoc w.1.2.1 w.2, w.1.2.2)) := rfl
++
++/-- **The distinguisher's acceptance probability is the game probability** [PS10, Theorem 179.1,
++proof, step 1]: for a learner machine `A` and a polynomial `m` there is a next-query machine `B`
++such that for every `n` and every family `G : K → {0,1}^n → {0,1}^n` (uniform keys),
++`acceptProb G (oracleDist (B.toOracleAdversary n n n (m(n) + 1)))` is
++`gameProb (m n) G (learnerFn A n (m n))`.
++
++**Proof sketch.** `B` is `exists_learnDist A m`. Relabel the seeds `(k, c)` of the acceptance
++probability by `((k, (s, r)), x) ↦ (k, φ (snoc s x, r))` (`uprob_comp_equiv`, `snocEquiv`,
++`Equiv.prodCongr`); the verdict of `B` at `φ (snoc s x, r)` against `G k` is the learner's
++prediction on the examples `s` labelled by `firstBit ∘ G k` compared with `firstBit (G k x)`
++(`exists_learnDist`, `Fin.snoc_castSucc`, `Fin.snoc_last`, `label_apply`). -/
++theorem exists_learnDist_acceptProb (A : NUPPT) (m : PolyExpr) :
++    ∃ B : NUPPT, ∀ (n : ℕ) {K : Type*} [Fintype K] (G : K → (Fin n → Bool) → (Fin n → Bool)),
++      acceptProb G (oracleDist (B.toOracleAdversary n n n (m.eval n + 1))) =
++        gameProb (m.eval n) G (learnerFn A n (m.eval n)) := by
++  obtain ⟨B, hB⟩ := exists_learnDist A m
++  refine ⟨B, fun n K _ G => ?_⟩
++  obtain ⟨φ, hφ⟩ := hB n
++  rw [acceptProb_def, gameProb_eq, ← uprob_comp_equiv ((snocEquiv K (Fin n → Bool) (A.Coins n)
++    (m.eval n)).trans ((Equiv.refl K).prodCongr φ))]
++  congr 1
++  funext w
++  have hlab : ∀ (c : (Fin n → Bool) → Bool) (s : Fin (m.eval n) → Fin n → Bool),
++      label c s = fun j => (s j, c (s j)) := fun c s => funext (label_apply c s)
++  rw [Equiv.trans_apply, snocEquiv_apply, Equiv.prodCongr_apply, Prod.map_apply,
++    Equiv.refl_apply, oracleDist_apply, hφ, learnerFn_eq, Fin.snoc_last, hlab]
++  simp only [Fin.snoc_castSucc]
++
++end Game
++
++end TCSlib.Cryptography.Randomness.LearnPRF
+diff --git a/TCSlib/Cryptography/Randomness/Learning/Random.lean b/TCSlib/Cryptography/Randomness/Learning/Random.lean
+new file mode 100644
+index 000000000..c2e90978d
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Learning/Random.lean
+@@ -0,0 +1,189 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Randomness.Learning.Law
++import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# With a random function, no learner predicts better than `½ ± m/2^n`
++
++Step 2 of [PS10, Theorem 179.1, proof]: in the game with a uniform random function
++`R : {0,1}^n → {0,1}^n` in place of the keyed family, every learner `ℓ` predicts the first bit of
++`R x` with probability within `m/2^n` of `½`, for `n ≥ 1` (`abs_gameProb_random_sub_half_le`).
++
++**Proof.** Fix the examples `s`, the coins `r` and the fresh point `x`. If `x` is none of the
++examples, flipping the first bit of `R x` (`flipAt`, an involution of the random functions) keeps
++the labelled examples and negates the label of `x`, so it exchanges the winning and the losing
++functions: the probability over `R` is exactly `½` (`uprob_flip_half`). Otherwise the probability
++is between `0` and `1`. So the game probability is within `Pr[x ∈ s]` of `½`, and
++`Pr[x ∈ s] ≤ Σ_j Pr[x = s_j] = m · 2^{-n}` (`uprob_exists_le`, `uprob_eq_point`).
++
++## Main definitions
++
++* `LearnPRF.flip0`, `LearnPRF.flipAt`: flipping the first bit of a string, and of a function's
++  value at a point.
++
++## Main results
++
++* `LearnPRF.firstBit_flip0`, `LearnPRF.flipAt_involutive`.
++* `LearnPRF.uprob_flip_half`: at a fresh point, the prediction wins with probability `½`.
++* `LearnPRF.uprob_eq_point`: a uniform point hits a given point with probability `2^{-n}`.
++* `LearnPRF.abs_gameProb_random_sub_half_le`: the bound `|gameProb − ½| ≤ m/2^n`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §8.1, Theorem 179.1 (book p. 179).
++-/
++
++namespace TCSlib.Cryptography.Randomness.LearnPRF
++
++open Complexity TCSlib.Cryptography TCSlib.LearningTheory.PAC Finset
++
++section Random
++
++variable {n : ℕ} (hn : 0 < n)
++
++/-- **Flipping the first bit** of an `n`-bit string (`n ≥ 1`):
++`flip0 hn y = update y 0 (!y 0)`. -/
++def flip0 (y : Fin n → Bool) : Fin n → Bool := Function.update y ⟨0, hn⟩ (!y ⟨0, hn⟩)
++
++/-- `flip0 hn y = Function.update y ⟨0, hn⟩ (!y ⟨0, hn⟩)`. -/
++theorem flip0_eq (y : Fin n → Bool) : flip0 hn y = Function.update y ⟨0, hn⟩ (!y ⟨0, hn⟩) := rfl
++
++/-- Flipping twice is the identity: `flip0 hn (flip0 hn y) = y`. -/
++theorem flip0_flip0 (y : Fin n → Bool) : flip0 hn (flip0 hn y) = y := by
++  rw [flip0_eq, flip0_eq, Function.update_self, Function.update_idem, Bool.not_not,
++    Function.update_eq_self]
++
++/-- The first bit of an `n`-bit string with `n ≥ 1` is its bit `0`:
++`firstBit y = y ⟨0, hn⟩`. -/
++theorem firstBit_of_pos (y : Fin n → Bool) : firstBit y = y ⟨0, hn⟩ := by
++  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by omega⟩
++  rw [firstBit_eq, List.ofFn_succ, List.headD_cons]
++  rfl
++
++/-- Flipping the first bit negates it: `firstBit (flip0 hn y) = !firstBit y`. -/
++theorem firstBit_flip0 (y : Fin n → Bool) : firstBit (flip0 hn y) = !firstBit y := by
++  rw [firstBit_of_pos hn, firstBit_of_pos hn, flip0_eq, Function.update_self]
++
++/-- **Flipping the first bit of a function's value at `x`:**
++`flipAt hn x R = update R x (flip0 hn (R x))`. -/
++def flipAt (x : Fin n → Bool) (R : (Fin n → Bool) → (Fin n → Bool)) :
++    (Fin n → Bool) → (Fin n → Bool) :=
++  Function.update R x (flip0 hn (R x))
++
++/-- `flipAt hn x R = Function.update R x (flip0 hn (R x))`. -/
++theorem flipAt_eq (x : Fin n → Bool) (R : (Fin n → Bool) → (Fin n → Bool)) :
++    flipAt hn x R = Function.update R x (flip0 hn (R x)) := rfl
++
++/-- `flipAt hn x` is an involution: `flipAt hn x (flipAt hn x R) = R`. -/
++theorem flipAt_involutive (x : Fin n → Bool) : Function.Involutive (flipAt hn x) := by
++  intro R
++  rw [flipAt_eq, flipAt_eq, Function.update_self, flip0_flip0, Function.update_idem,
++    Function.update_eq_self]
++
++include hn in
++/-- **At a fresh point the prediction wins with probability `½`:** if `x` is none of the
++examples `s`, then for every learner `ℓ` and coins `r`, the uniform probability over `R` that
++`ℓ (label (firstBit ∘ R) s) r x == firstBit (R x)` is `½`.
++
++**Proof sketch.** `flipAt hn x` is a bijection of the functions (`flipAt_involutive`), so it
++preserves the probability (`uprob_comp_equiv`). It keeps the labels of the examples
++(`Function.update_of_ne`) and negates the label of `x` (`firstBit_flip0`), so it maps the event to
++its complement; hence `p = 1 − p` (`uprob_not`). -/
++theorem uprob_flip_half {m : ℕ} {ρ : Type*}
++    (ℓ : (Fin m → (Fin n → Bool) × Bool) → ρ → (Fin n → Bool) → Bool) (s : Fin m → Fin n → Bool)
++    (r : ρ) (x : Fin n → Bool) (hx : ∀ j, s j ≠ x) :
++    uprob (fun R : (Fin n → Bool) → (Fin n → Bool) =>
++      (ℓ (label (fun z => firstBit (R z)) s) r x == firstBit (R x)) = true) = 1 / 2 := by
++  set σ := Function.Involutive.toPerm (flipAt hn x) (flipAt_involutive hn x) with hσ
++  have h1 := uprob_comp_equiv σ (fun R =>
++    (ℓ (label (fun z => firstBit (R z)) s) r x == firstBit (R x)) = true)
++  have h2 : (fun R : (Fin n → Bool) → (Fin n → Bool) =>
++      (ℓ (label (fun z => firstBit (σ R z)) s) r x ==
++        firstBit (σ R x)) = true) =
++      fun R => ¬ (ℓ (label (fun z => firstBit (R z)) s) r x == firstBit (R x)) = true := by
++    funext R
++    have hl : label (fun z => firstBit (σ R z)) s =
++        label (fun z => firstBit (R z)) s := by
++      funext j
++      rw [label_apply, label_apply, hσ, Function.Involutive.coe_toPerm, flipAt_eq,
++        Function.update_of_ne (hx j)]
++    rw [hl, hσ, Function.Involutive.coe_toPerm, flipAt_eq, Function.update_self, firstBit_flip0]
++    cases ℓ (label (fun z => firstBit (R z)) s) r x <;> cases firstBit (R x) <;> decide
++  rw [h2, uprob_not] at h1
++  linarith
++
++/-- **A uniform point hits a given point with probability `2^{-n}`:**
++`uprob (fun x : {0,1}^n => y = x) = 1 / 2^n`.
++
++**Proof sketch.** This is `OneWay.uprob_eq_one_div_card` with the equation reversed and
++`|{0,1}^n| = 2^n`. -/
++theorem uprob_eq_point (y : Fin n → Bool) :
++    uprob (fun x : Fin n → Bool => y = x) = 1 / 2 ^ n := by
++  rw [show (fun x : Fin n → Bool => y = x) = (fun x => x = y) from
++      funext fun _ => propext eq_comm, OneWay.uprob_eq_one_div_card, Fintype.card_fun,
++    Fintype.card_bool, Fintype.card_fin, Nat.cast_pow, Nat.cast_two]
++
++include hn in
++/-- **With a random function the prediction is within `m/2^n` of `½`** [PS10, Theorem 179.1,
++proof, step 2]: for `n ≥ 1`, every learner `ℓ` and `m` examples,
++`|gameProb m (fun R => R) ℓ − ½| ≤ m / 2^n`.
++
++**Proof sketch.** Put the function last (`uprob_comp_equiv`) and average over it first
++(`uprob_prod`): for fixed `((s, r), x)` the probability `p` is `½` when `x` is fresh
++(`uprob_flip_half`) and in `[0, 1]` otherwise, so `|p − ½| ≤ [x ∈ s]`. Averaging (the
++coupling bound `MultiMsg.abs_uexp_sub_le_uprob` against the constant `½`),
++`|gameProb − ½| ≤ Pr[∃ j, s_j = x]`, which the union bound (`uprob_exists_le`) bounds by
++`Σ_j Pr[s_j = x] = m · 2^{-n}` (`uprob_prod`, `uprob_eq_point`). -/
++theorem abs_gameProb_random_sub_half_le {ρ : Type*} [Fintype ρ] [Nonempty ρ] (m : ℕ)
++    (ℓ : (Fin m → (Fin n → Bool) × Bool) → ρ → (Fin n → Bool) → Bool) :
++    |gameProb m (fun R : (Fin n → Bool) → (Fin n → Bool) => R) ℓ - 1 / 2| ≤ m / 2 ^ n := by
++  classical
++  -- the random function last
++  let e : (((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool)) × ((Fin n → Bool) → (Fin n → Bool)) ≃
++      (((Fin n → Bool) → (Fin n → Bool)) × ((Fin m → Fin n → Bool) × ρ)) × (Fin n → Bool) :=
++    { toFun := fun w => ((w.2, w.1.1), w.1.2)
++      invFun := fun w => ((w.1.2, w.2), w.1.1)
++      left_inv := fun _ => rfl
++      right_inv := fun _ => rfl }
++  set p : ((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool) → ℝ := fun t =>
++    uprob (fun R : (Fin n → Bool) → (Fin n → Bool) =>
++      (ℓ (label (fun z => firstBit (R z)) t.1.1) t.1.2 t.2 == firstBit (R t.2)) = true) with hp
++  have hgame : gameProb m (fun R : (Fin n → Bool) → (Fin n → Bool) => R) ℓ = uexp p := by
++    rw [gameProb_eq, ← uprob_comp_equiv e, uprob_prod]
++    rfl
++  -- the bad event: the fresh point is an example
++  set bad : ((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool) → Prop :=
++    fun t => ∃ j ∈ (Finset.univ : Finset (Fin m)), t.1.1 j = t.2 with hbad
++  -- the coupling bound against the constant `½`: off the bad event, `p = ½`
++  have hdev : |uexp p - 1 / 2| ≤ uprob bad := by
++    have h := MultiMsg.abs_uexp_sub_le_uprob p (fun _ => 1 / 2) bad
++      (fun _ => ⟨uprob_nonneg _, uprob_le_one _⟩) (fun _ => ⟨by norm_num, by norm_num⟩)
++      (fun t hb => uprob_flip_half hn ℓ t.1.1 t.1.2 t.2 fun j hj => hb ⟨j, Finset.mem_univ j, hj⟩)
++    rwa [OneWay.uexp_const] at h
++  -- the union bound
++  have hj : ∀ j : Fin m, uprob (fun t : ((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool) =>
++      t.1.1 j = t.2) = 1 / 2 ^ n := by
++    intro j
++    rw [uprob_prod]
++    simp only [uprob_eq_point, uexp_def, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
++    have : (0 : ℝ) < Fintype.card ((Fin m → Fin n → Bool) × ρ) := by
++      exact_mod_cast Fintype.card_pos
++    field_simp
++  have hunion := uprob_exists_le (Finset.univ : Finset (Fin m))
++    (fun j (t : ((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool)) => t.1.1 j = t.2)
++  simp only [hj, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at hunion
++  rw [hgame]
++  refine hdev.trans (hunion.trans (le_of_eq ?_))
++  ring
++
++end Random
++
++end TCSlib.Cryptography.Randomness.LearnPRF
+diff --git a/TCSlib/Cryptography/Randomness/Learning/Sample.lean b/TCSlib/Cryptography/Randomness/Learning/Sample.lean
+new file mode 100644
+index 000000000..0cb257b08
+--- /dev/null
++++ b/TCSlib/Cryptography/Randomness/Learning/Sample.lean
+@@ -0,0 +1,275 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
++import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The learner's input, computed from the distinguisher's encoded tuple
++
++The distinguisher of [PS10, Theorem 179.1, proof] queries its oracle at `m(n) + 1` points
++`ρ_0, …, ρ_m` and receives the encoded tuple of the pairs `(ρ_j, g(ρ_j))`: the concatenation
++`tupleWord ρ g` of the blocks `⟨⟨ρ_j, g(ρ_j)⟩, []⟩`, each of `6n + 6` bits (the query chain of
++`MultiMsg.exists_queryChain_nuppt`). It runs the learner on the labelled sample of the first
++`m(n)` points, labelled by the first bits of the answers, and the last point, and compares the
++prediction with the first bit of the last answer.
++
++This file computes, by polynomial-time string functions of `⟨1^n, tupleWord ρ g⟩`:
++- `learnIn m`: the learner's input `⟨S, ρ_m⟩`, where `S` is the nested pairs of the labelled
++  examples `⟨ρ_j, [g(ρ_j)₁]⟩` (the sample encoding of the learning game);
++- `lastLabel m`: the first bit of the last answer.
++
++The labelled sample is a fold of pairs, which is a flat concatenation (`foldr_pairEncode_nil`),
++so it is a block map of the first `m(n)` blocks of the tuple (`MultiMsg.flatMap_range_blocks`).
++
++## Main definitions
++
++* `LearnPRF.firstBit`, `LearnPRF.tupleWord`, `LearnPRF.relabel`, `LearnPRF.sampleLen`,
++  `LearnPRF.learnIn`, `LearnPRF.lastLabel`.
++
++## Main results
++
++* `LearnPRF.foldr_pairEncode_nil`: a fold of pairs ending in `[]` is a concatenation.
++* `LearnPRF.polyTimeComputable_learnIn`, `LearnPRF.polyTimeComputable_lastLabel`.
++* `LearnPRF.learnIn_tupleWord`, `LearnPRF.lastLabel_tupleWord`: their values on an encoded tuple.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §8.1, Theorem 179.1 (book p. 179).
++-/
++
++namespace TCSlib.Cryptography.Randomness.LearnPRF
++
++open Complexity Turing TCSlib.Cryptography
++
++/-! ### Folds of pairs -/
++
++/-- **A fold of pairs ending in `[]` is a concatenation:**
++`L.foldr pairEncode [] = L.flatMap (fun a => pairEncode a [])`.
++
++**Proof sketch.** Induction on `L`; `pairEncode a w = pairEncode a [] ++ w`
++(`GGMRed.pairEncode_append_right`). -/
++theorem foldr_pairEncode_nil (L : List (List Bool)) :
++    L.foldr pairEncode [] = L.flatMap fun a => pairEncode a [] := by
++  induction L with
++  | nil => rfl
++  | cons a L ih =>
++    rw [List.foldr_cons, ih, List.flatMap_cons, ← GGMRed.pairEncode_append_right,
++      List.nil_append]
++
++/-! ### Words -/
++
++/-- The first bit of an `n`-bit string, `false` for `n = 0`: `firstBit y = ⟦y⟧.headD false`. -/
++def firstBit {n : ℕ} (y : Fin n → Bool) : Bool := (List.ofFn y).headD false
++
++/-- `firstBit y = (List.ofFn y).headD false`. -/
++theorem firstBit_eq {n : ℕ} (y : Fin n → Bool) : firstBit y = (List.ofFn y).headD false := rfl
++
++/-- **The encoded tuple** of the pairs `(ρ_j, g(ρ_j))`: the concatenation of the blocks
++`⟨⟨ρ_j, g(ρ_j)⟩, []⟩` (as in `MultiMsg.exists_queryChain_nuppt`):
++`tupleWord ρ g = (List.ofFn fun j => ⟨⟨⟦ρ j⟧, ⟦g (ρ j)⟧⟩, []⟩).flatten`. -/
++def tupleWord {n k : ℕ} (ρ : Fin k → Fin n → Bool) (g : (Fin n → Bool) → (Fin n → Bool)) :
++    List Bool :=
++  (List.ofFn fun j => pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (g (ρ j)))) []).flatten
++
++/-- `tupleWord ρ g = (List.ofFn fun j => ⟨⟨⟦ρ j⟧, ⟦g (ρ j)⟧⟩, []⟩).flatten`. -/
++theorem tupleWord_eq {n k : ℕ} (ρ : Fin k → Fin n → Bool) (g : (Fin n → Bool) → (Fin n → Bool)) :
++    tupleWord ρ g = (List.ofFn fun j =>
++      pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (g (ρ j)))) []).flatten :=
++  rfl
++
++/-- The block of a pair `(x, y)`: `⟨⟨⟦x⟧, ⟦y⟧⟩, []⟩`. -/
++private def blk {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) : List Bool :=
++  pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) []
++
++/-- A block has `6n + 6 = histBlockLen(n)` bits. -/
++private theorem length_blk {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
++    (blk p).length = MultiMsg.histBlockLen.eval n := by
++  rw [blk, length_pairEncode, length_pairEncode, List.length_ofFn, List.length_ofFn,
++    List.length_nil, MultiMsg.eval_histBlockLen]
++  omega
++
++/-- **Relabelling a block:** `⟨⟨x, y⟩, []⟩ ↦ ⟨⟨x, [y.headD false]⟩, []⟩`, the encoded labelled
++example of the pair:
++`relabel w = ⟨⟨pairFstD (pairFstD w), [(pairSndD (pairFstD w)).headD false]⟩, []⟩`. -/
++def relabel (w : List Bool) : List Bool :=
++  pairEncode (pairEncode (pairFstD (pairFstD w)) [(pairSndD (pairFstD w)).headD false]) []
++
++/-- `relabel w = ⟨⟨pairFstD (pairFstD w), [(pairSndD (pairFstD w)).headD false]⟩, []⟩`. -/
++theorem relabel_eq (w : List Bool) :
++    relabel w =
++      pairEncode (pairEncode (pairFstD (pairFstD w)) [(pairSndD (pairFstD w)).headD false]) [] :=
++  rfl
++
++/-- Relabelling is polynomial-time: `PolyTimeComputable relabel`, for
++`relabel : List Bool → List Bool`. -/
++theorem polyTimeComputable_relabel : PolyTimeComputable relabel := by
++  have hF := polyTimeComputable_pairFstD
++  have hD := polyTimeComputable_pairSndD
++  exact (((hF.comp hF).pairEncode (polyTimeComputable_headD.comp (hD.comp hF))).pairEncode
++    (polyTimeComputable_const [])).congr fun w => rfl
++
++/-- The relabelled block of `(x, y)` is `⟨⟨⟦x⟧, [firstBit y]⟩, []⟩`. -/
++private theorem relabel_blk {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
++    relabel (blk p) = pairEncode (pairEncode (List.ofFn p.1) [firstBit p.2]) [] := by
++  rw [relabel_eq, blk, pairFstD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode, firstBit_eq]
++
++/-! ### The learner's input and the last label -/
++
++/-- The length `m(n) · (6n + 6)` of the first `m(n)` blocks:
++`sampleLen m = m · histBlockLen` as a `PolyExpr`. -/
++def sampleLen (m : PolyExpr) : PolyExpr := .mul m MultiMsg.histBlockLen
++
++/-- `(sampleLen m).eval n = m(n) · (6n + 6)`. -/
++theorem sampleLen_eval (m : PolyExpr) (n : ℕ) : (sampleLen m).eval n = m.eval n * (6 * n + 6) := by
++  rw [sampleLen, PolyExpr.eval_mul, MultiMsg.eval_histBlockLen]
++
++/-- The relabelled first `m(|u|)` blocks of `s`, on `⟨u, s⟩`: the block map of `relabel` over
++`s.take (sampleLen m (|u|))` (the function of `Complexity.polyTimeComputable_blockMap`):
++`sampleOf m ⟨u, s⟩ = (range (|s'| / b)).flatMap fun i => relabel ((s'.drop (i * b)).take b)`,
++with `s' = s.take ((sampleLen m).eval |u|)` and `b = histBlockLen.eval |u|`. -/
++def sampleOf (m : PolyExpr) (z : List Bool) : List Bool :=
++  (List.range (((pairSndD z).take ((sampleLen m).eval (pairFstD z).length)).length /
++      MultiMsg.histBlockLen.eval (pairFstD z).length)).flatMap fun i =>
++    relabel ((((pairSndD z).take ((sampleLen m).eval (pairFstD z).length)).drop
++      (i * MultiMsg.histBlockLen.eval (pairFstD z).length)).take
++        (MultiMsg.histBlockLen.eval (pairFstD z).length))
++
++/-- `sampleOf m z` is the block map of `relabel` over the first `sampleLen m` bits:
++`sampleOf m ⟨u, s⟩ = (range (|s'| / b)).flatMap fun i => relabel ((s'.drop (i * b)).take b)`,
++with `s' = s.take ((sampleLen m).eval |u|)` and `b = histBlockLen.eval |u|`. -/
++theorem sampleOf_eq (m : PolyExpr) (z : List Bool) :
++    sampleOf m z =
++      (List.range (((pairSndD z).take ((sampleLen m).eval (pairFstD z).length)).length /
++          MultiMsg.histBlockLen.eval (pairFstD z).length)).flatMap fun i =>
++        relabel ((((pairSndD z).take ((sampleLen m).eval (pairFstD z).length)).drop
++          (i * MultiMsg.histBlockLen.eval (pairFstD z).length)).take
++            (MultiMsg.histBlockLen.eval (pairFstD z).length)) := rfl
++
++/-- The last block's pair `⟨x, y⟩` on `⟨u, s⟩`:
++`lastPair m ⟨u, s⟩ = pairFstD (s.drop ((sampleLen m).eval |u|))`. -/
++def lastPair (m : PolyExpr) (z : List Bool) : List Bool :=
++  pairFstD ((pairSndD z).drop ((sampleLen m).eval (pairFstD z).length))
++
++/-- `lastPair m z = pairFstD ((pairSndD z).drop ((sampleLen m).eval |pairFstD z|))`. -/
++theorem lastPair_eq (m : PolyExpr) (z : List Bool) :
++    lastPair m z = pairFstD ((pairSndD z).drop ((sampleLen m).eval (pairFstD z).length)) := rfl
++
++/-- **The learner's input** on `⟨1^n, s⟩`: `⟨sampleOf m z, x⟩`, the relabelled first `m(n)`
++blocks and the point `x` of the last block: `learnIn m z = ⟨sampleOf m z, pairFstD (lastPair m z)⟩`.
++-/
++def learnIn (m : PolyExpr) (z : List Bool) : List Bool :=
++  pairEncode (sampleOf m z) (pairFstD (lastPair m z))
++
++/-- `learnIn m z = ⟨sampleOf m z, pairFstD (lastPair m z)⟩`. -/
++theorem learnIn_eq (m : PolyExpr) (z : List Bool) :
++    learnIn m z = pairEncode (sampleOf m z) (pairFstD (lastPair m z)) := rfl
++
++/-- **The last label** on `⟨1^n, s⟩`: the first bit of the answer of the last block,
++`lastLabel m z = (pairSndD (lastPair m z)).headD false`. -/
++def lastLabel (m : PolyExpr) (z : List Bool) : Bool := (pairSndD (lastPair m z)).headD false
++
++/-- `lastLabel m z = (pairSndD (lastPair m z)).headD false`. -/
++theorem lastLabel_eq (m : PolyExpr) (z : List Bool) :
++    lastLabel m z = (pairSndD (lastPair m z)).headD false := rfl
++
++/-- The last block's pair is polynomial-time (`polyTimeComputable_pairDropPoly`):
++`PolyTimeComputable (lastPair m)`, for `lastPair m : List Bool → List Bool`. -/
++theorem polyTimeComputable_lastPair (m : PolyExpr) : PolyTimeComputable (lastPair m) :=
++  (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairDropPoly (sampleLen m))).congr
++    fun _ => rfl
++
++/-- The learner's input is polynomial-time: the block map of `relabel`
++(`Complexity.polyTimeComputable_blockMap`) after the head cut
++(`polyTimeComputable_pairTakePoly`), paired with the last point: `PolyTimeComputable (learnIn m)`,
++for `learnIn m : List Bool → List Bool`. -/
++theorem polyTimeComputable_learnIn (m : PolyExpr) : PolyTimeComputable (learnIn m) := by
++  have hcut : PolyTimeComputable fun z => pairEncode (pairFstD z)
++      ((pairSndD z).take ((sampleLen m).eval (pairFstD z).length)) :=
++    polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_pairTakePoly (sampleLen m))
++  have hS : PolyTimeComputable (sampleOf m) :=
++    ((polyTimeComputable_blockMap MultiMsg.histBlockLen polyTimeComputable_relabel).comp
++      hcut).congr fun z => by
++        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, sampleOf_eq]
++  exact (hS.pairEncode (polyTimeComputable_pairFstD.comp (polyTimeComputable_lastPair m))).congr
++    fun _ => rfl
++
++/-- The last label, as a one-bit output, is polynomial-time:
++`PolyTimeComputable fun z => [lastLabel m z]`, for `z ↦ [lastLabel m z] : List Bool → List Bool`. -/
++theorem polyTimeComputable_lastLabel (m : PolyExpr) :
++    PolyTimeComputable fun z => [lastLabel m z] :=
++  (polyTimeComputable_headD.comp (polyTimeComputable_pairSndD.comp
++    (polyTimeComputable_lastPair m))).congr fun _ => rfl
++
++/-! ### Values on an encoded tuple -/
++
++section Values
++
++variable {n : ℕ} (m : PolyExpr) (ρ : Fin (m.eval n + 1) → Fin n → Bool)
++  (g : (Fin n → Bool) → (Fin n → Bool))
++
++/-- The encoded tuple is the first `m(n)` blocks followed by the last block, and the first part
++has `sampleLen m` bits. -/
++private theorem tupleWord_split :
++    tupleWord ρ g =
++      (List.ofFn fun j : Fin (m.eval n) => blk (ρ j.castSucc, g (ρ j.castSucc))).flatten ++
++        blk (ρ (Fin.last _), g (ρ (Fin.last _))) ∧
++    ((List.ofFn fun j : Fin (m.eval n) => blk (ρ j.castSucc, g (ρ j.castSucc))).flatten).length =
++      (sampleLen m).eval n := by
++  refine ⟨?_, ?_⟩
++  · rw [tupleWord_eq, List.ofFn_succ', List.concat_eq_append, List.flatten_append,
++      List.flatten_singleton]
++    rfl
++  · rw [MultiMsg.length_flatten_of_length (MultiMsg.histBlockLen.eval n) _ (fun x hx => by
++        obtain ⟨j, rfl⟩ := List.mem_ofFn.1 hx
++        exact length_blk _), List.length_ofFn, sampleLen_eval, MultiMsg.eval_histBlockLen]
++
++/-- **The learner's input on an encoded tuple:** on `⟨1^n, tupleWord ρ g⟩`, `learnIn m` is the
++pair of the nested labelled examples `⟨⟦ρ_j⟧, [firstBit (g ρ_j)]⟩` of the first `m(n)` points and
++the last point `⟦ρ_m⟧`:
++`learnIn m ⟨1^n, tupleWord ρ g⟩ =
++⟨(ofFn j ↦ ⟨⟦ρ_j⟧, [firstBit (g ρ_j)]⟩).foldr pairEncode [], ⟦ρ_m⟧⟩` (`j < m(n)`).
++
++**Proof sketch.** Split the tuple into its first `m(n)` blocks and the last
++(`tupleWord_split`); the head cut keeps the first part and the tail cut the last block
++(`List.take_left'`, `List.drop_left'`). The block map over the first part relabels each block
++(`MultiMsg.flatMap_range_blocks`, `MultiMsg.flatMap_ofFn`, `relabel_blk`), and the fold of the
++examples is the same concatenation (`foldr_pairEncode_nil`). -/
++theorem learnIn_tupleWord :
++    learnIn m (pairEncode (List.replicate n true) (tupleWord ρ g)) =
++      pairEncode ((List.ofFn fun j : Fin (m.eval n) => pairEncode (List.ofFn (ρ j.castSucc))
++          [firstBit (g (ρ j.castSucc))]).foldr pairEncode [])
++        (List.ofFn (ρ (Fin.last _))) := by
++  obtain ⟨hsplit, hlen⟩ := tupleWord_split m ρ g
++  have hb : 0 < MultiMsg.histBlockLen.eval n := by rw [MultiMsg.eval_histBlockLen]; omega
++  have hblocks : ∀ x ∈ List.ofFn (fun j : Fin (m.eval n) => (ρ j.castSucc, g (ρ j.castSucc))),
++      (blk x).length = MultiMsg.histBlockLen.eval n := fun x _ => length_blk x
++  have hflat : (List.ofFn fun j : Fin (m.eval n) => blk (ρ j.castSucc, g (ρ j.castSucc))).flatten =
++      (List.ofFn fun j : Fin (m.eval n) => (ρ j.castSucc, g (ρ j.castSucc))).flatMap blk :=
++    (MultiMsg.flatMap_ofFn _ blk).symm
++  rw [learnIn_eq, sampleOf_eq, lastPair_eq, pairFstD_pairEncode, pairSndD_pairEncode,
++    List.length_replicate, hsplit, List.take_left' hlen, List.drop_left' hlen, blk,
++    pairFstD_pairEncode, pairFstD_pairEncode, hflat,
++    MultiMsg.flatMap_range_blocks blk relabel hb _ hblocks, foldr_pairEncode_nil,
++    MultiMsg.flatMap_ofFn, MultiMsg.flatMap_ofFn]
++  congr 2
++  exact congrArg List.ofFn (funext fun j => relabel_blk _)
++
++/-- **The last label on an encoded tuple:** on `⟨1^n, tupleWord ρ g⟩`, `lastLabel m` is the first
++bit of the last answer: `lastLabel m ⟨1^n, tupleWord ρ g⟩ = firstBit (g ρ_m)`. -/
++theorem lastLabel_tupleWord :
++    lastLabel m (pairEncode (List.replicate n true) (tupleWord ρ g)) =
++      firstBit (g (ρ (Fin.last _))) := by
++  obtain ⟨hsplit, hlen⟩ := tupleWord_split m ρ g
++  rw [lastLabel_eq, lastPair_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
++    hsplit, List.drop_left' hlen, blk, pairFstD_pairEncode, pairSndD_pairEncode, firstBit_eq]
++
++end Values
++
++end TCSlib.Cryptography.Randomness.LearnPRF

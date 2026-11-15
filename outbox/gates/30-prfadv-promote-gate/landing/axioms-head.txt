@@ -1,0 +1,14 @@
+'TCSlib.Cryptography.prfAdv_eq_expect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Composability.ETTGame.prfAdv_eq_expect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Composability.ETTGame.exists_tagStep' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Composability.ccaScheme_cca2' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.Cryptography.prfAdv_eq_expect : ∀ {I O K ρ : Type} [inst : Fintype K] [inst_1 : Nonempty K] [inst_2 : Fintype I]
+  [inst_3 : DecidableEq I] [inst_4 : Fintype O] [inst_5 : Nonempty O] [inst_6 : Fintype ρ] [inst_7 : Nonempty ρ]
+  (F : K → I → O) (A : TCSlib.Cryptography.OracleAdversary ρ I O),
+  TCSlib.Cryptography.prfAdv F A =
+    |((TCSlib.Cryptography.Games.ProbComp.sample K).expect fun k =>
+          (TCSlib.Cryptography.Games.ProbComp.sample ρ).expect fun c =>
+            if TCSlib.Cryptography.QueryTree.eval (F k) (A c) = true then 1 else 0) -
+        (TCSlib.Cryptography.Games.ProbComp.sample (I → O)).expect fun R =>
+          (TCSlib.Cryptography.Games.ProbComp.sample ρ).expect fun c =>
+            if TCSlib.Cryptography.QueryTree.eval R (A c) = true then 1 else 0|
