@@ -1,7 +1,8 @@
 # learning · maintainer delivery review (r1)
 
-**Verdict: ACCEPT WITH LANDING EDITS.** LE-doc is done. The landing edit **LE-reuse** is in progress: it re-proves two
-undisclosed restatements (findings 1 and 2) from the published lemmas, by a proof-only change.
+**Verdict: ACCEPT WITH LANDING EDITS.** LE-doc `7f5bdd51` and **LE-reuse** `8befc58966fd39f974a54250849736df194584b9` are both
+done (PR #313). LE-reuse re-proves findings 1 and 2 from the published lemmas by a proof-only change; its evidence is
+`landing-reuse/` (zip `5df65c56…`). *(Erratum 2026-11-15: this line previously said LE-reuse was in progress.)*
 
 ## Delivery and landing branch
 
@@ -65,8 +66,8 @@ The edge cases are handled: `n = 0`, `m = 0`, a fresh point equal to an example,
 
 | # | Severity | Finding | Disposition |
 |---|---|---|---|
-| 1 | minor | **Undisclosed.** `LearnPRF.uprob_eq_point` is the public `OneWay.uprob_eq_one_div_card`, reversed, with `|X| = 2^n`. The worker also asked to promote it. | **LE-reuse**, proof only. The promotion request is withdrawn. Ledger DL-45. |
-| 2 | minor | **Undisclosed inline re-proof.** `hpt`/`hdev` in `abs_gameProb_random_sub_half_le` re-prove `MultiMsg.abs_uexp_sub_le_uprob` (`FromPRF/HybridLemmas`). | **LE-reuse**, proof only, if the import is acyclic and the change modest. Otherwise ledger it. DL-45. |
+| 1 | minor | **Undisclosed.** `LearnPRF.uprob_eq_point` is the public `OneWay.uprob_eq_one_div_card`, reversed, with `|X| = 2^n`. The worker also asked to promote it. | **Fixed** by LE-reuse `8befc589`. The promotion request is withdrawn. Ledger DL-45. |
+| 2 | minor | **Undisclosed inline re-proof.** `hpt`/`hdev` in `abs_gameProb_random_sub_half_le` re-prove `MultiMsg.abs_uexp_sub_le_uprob` (`FromPRF/HybridLemmas`). | **Fixed** by LE-reuse `8befc589` (one acyclic import of `FromPRF/HybridLemmas`). DL-45. |
 | 3 | minor | The private `length_blk` re-proves `MultiMsg.length_histBlock`, for the disclosed private copy `blk` of `histBlock`. | Ledger DL-45, with the worker's reader request for `histBlock`. |
 | 4 | info | `flip0`/`flip0_flip0` duplicate `flipBit`/`flipBit_flipBit` (BooleanAnalysis) and `flipAt` (DeterministicCC); both of those are outside the crypto closure. There is also a short-name reuse of `flipAt`. | Ledger DL-45. |
 | 5 | info | The left side of `foldr_pairEncode_nil` is `Strategy.encodeMsgs`. `relabel`/`relabel_eq` share their short names with `Games.EffFill.relabel` (DL-36 family). | Ledger DL-45. |
