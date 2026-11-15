@@ -663,6 +663,11 @@ private theorem ladner_parse_prefix {y p : List Bool} {t : ℕ}
   simp only [List.reverse_append, List.reverse_cons, List.reverse_replicate,
     List.append_assoc, List.singleton_append, hr, List.reverse_reverse]
 
+/-- The binary length of a word is polynomial-time (`FinTM.computesFunInTime_lengthBits`).
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_lengthBits_FP : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
+  polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+
 /-- The mathematical padding parser has a polynomial-time serialization.
 
 **Proof sketch.** Reverse the input, skip its true suffix and separator with the existing
@@ -670,8 +675,7 @@ unary-rest reader, and reverse the remainder. Subtract the prefix length and one
 the input length to get the suffix length. The public false-bit test distinguishes a
 missing separator from an empty prefix. [AB09, Theorem 3.3 and its proof] -/
 private theorem ladner_parse_FP : PolyTimeComputable ladner_parseWord := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   have hpre := BinArith.polyTimeComputable_reverse.comp
     (BinArith.polyTimeComputable_uRest.comp BinArith.polyTimeComputable_reverse)
   have ht := BinArith.polyTimeComputable_sub.comp
@@ -710,8 +714,7 @@ private theorem ladner_padSyntax_FP {g : List Bool → List Bool} {h : List Bool
     (hh : PolyTimeComputable (fun z : List Bool =>
       Nat.bits (h (pairSndD z) (pairFstD z).length))) :
     PolyTimeComputable (fun S => [ladner_padSyntax (h S) (g S)]) := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   have hp := ladner_parse_FP.comp hg
   have hpre := BinArith.polyTimeComputable_slot2.comp hp
   have ht := BinArith.polyTimeComputable_slot3.comp hp
@@ -1033,8 +1036,7 @@ private theorem ladner_log_eq_bits_length (n : ℕ) :
 [AB09, Theorem 3.3 and its proof] -/
 private theorem ladner_binary_log_FP : PolyTimeComputable
     (fun w : List Bool => Nat.bits (Nat.log 2 (LogProg.bitsVal w))) := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   have h := BinArith.polyTimeComputable_sub.comp
     ((hl.comp BinArith.polyTimeComputable_normBits).pairEncode
       (polyTimeComputable_const (Nat.bits 1)))
@@ -1174,8 +1176,7 @@ private theorem ladner_index_lt_loglog_FP {f g : List Bool → List Bool}
     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun S => [decide
       (LogProg.bitsVal (f S) < Nat.log 2 (Nat.log 2 (g S).length))]) := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   have hi := BinArith.polyTimeComputable_normBits.comp hf
   have hcap := ladner_binary_log_FP.comp (ladner_binary_log_FP.comp (hl.comp hg))
   convert BinArith.polyTimeComputable_lt.comp (hi.pairEncode hcap) using 1
@@ -1186,8 +1187,7 @@ private theorem ladner_index_lt_loglog_FP {f g : List Bool → List Bool}
 [AB09, Theorem 3.3 and its proof] -/
 private theorem ladner_validQuery_FP :
     PolyTimeComputable (fun S => [decide (ladner_validQuery S)]) := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   have hx := hl.comp BinArith.polyTimeComputable_slot3
   have hlog := ladner_binary_log_FP.comp (hl.comp polyTimeComputable_pairFstD)
   convert polyTimeComputable_and
@@ -1208,8 +1208,7 @@ then pair them and expose the preparation witness through `polyTimeComputable_if
 private theorem ladner_query_preparation :
     ∃ (M : FinTM Bool) (C q : ℕ),
       M.ComputesFunInTime ladner_queryPrep (fun n => C * (n + 1) ^ q) := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   have hn := hl.comp polyTimeComputable_pairFstD
   have hi := BinArith.polyTimeComputable_normBits.comp BinArith.polyTimeComputable_slot2
   have hx := hl.comp BinArith.polyTimeComputable_slot3
@@ -1295,8 +1294,7 @@ private theorem ladner_table_FP : PolyTimeComputable
 [AB09, Theorem 3.3 and its proof] -/
 private theorem ladner_values_length_FP :
     PolyTimeComputable (fun T => Nat.bits (ladner_values T).length) := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   convert hl.comp BinArith.polyTimeComputable_countW using 1
   funext T
   simp only [Function.comp_apply, BinArith.countW_eq, List.length_replicate,
@@ -1341,8 +1339,7 @@ private theorem ladner_tableSyntax_FP : PolyTimeComputable (fun S => [ladner_tab
 [AB09, Theorem 3.3 and its proof] -/
 private theorem ladner_pad_guard_FP : PolyTimeComputable (fun S : List Bool =>
     [decide ((pairFstD S).length ≤ Nat.log 2 (ladner_values (pairSndD S)).length)]) := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   have h := BinArith.polyTimeComputable_le.comp ((hl.comp polyTimeComputable_pairFstD).pairEncode
     (ladner_binary_log_FP.comp (ladner_values_length_FP.comp polyTimeComputable_pairSndD)))
   convert h using 1
@@ -1421,8 +1418,7 @@ private theorem ladner_short_pad_FP
 /-- The candidate context guard is an FP test of lengths and canonical indices.
 [AB09, Theorem 3.3 and its proof] -/
 private theorem ladner_ctxGuard_FP : PolyTimeComputable (fun C => [decide (ladner_ctxGuard C)]) := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   have hcount := ladner_values_length_FP.comp BinArith.polyTimeComputable_slot3
   convert polyTimeComputable_and
     (BinArith.polyTimeComputable_beq.comp ((hl.comp polyTimeComputable_pairFstD).pairEncode hcount))
@@ -1450,8 +1446,7 @@ private theorem ladner_wordVerdict_FP
       ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
     PolyTimeComputable (fun S : List Bool =>
       [ladner_wordVerdict (pairFstD S) (pairSndD S).length]) := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   let x : List Bool → List Bool := fun S => (Nat.bits ((pairSndD S).length + 1)).dropLast
   have hx : PolyTimeComputable x := by
     convert ladner_dropLast_FP.comp (BinArith.polyTimeComputable_add.comp
@@ -1570,8 +1565,7 @@ private def ladner_countStep (S : List Bool) : List Bool :=
 /-- Query-count initialization is an FP serialization.
 [AB09, Theorem 3.3 and its proof] -/
 private theorem ladner_countInit_FP : PolyTimeComputable ladner_countInit := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   have hf : PolyTimeComputable ladner_queryFuel := by
     convert polyTimeComputable_ite (polyTimeComputable_isNil.comp polyTimeComputable_pairFstD)
       (polyTimeComputable_const [true]) (hl.comp polyTimeComputable_pairFstD) using 1
