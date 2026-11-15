@@ -194,14 +194,17 @@ theorem maskRaw_layout (n : ℕ) (a r yj : List Bool) (c : Bool) :
   rw [maskRaw_eq, genRaw_layout, NUPPT.inParam_layout, List.length_replicate, mask_eq,
     runAtL_eq_layout T.inv_uniform]
 
-/-- `y.getD 0 false` is the head bit: `y.getD 0 false = y.headD false`. -/
+/-- `y.getD 0 false` is the head bit: `y.getD 0 false = y.headD false`.
+It is the public `TCSlib.Cryptography.headD_drop` at `i = 0`, reversed. -/
 theorem getD_zero_eq (y : List Bool) : y.getD 0 false = y.headD false := by
-  cases y <;> rfl
+  simpa only [List.drop_zero] using
+    (TCSlib.Cryptography.headD_drop y 0 false).symm
 
 /-- `y.getD 1 false` is the head bit of `y.drop 1`:
-`y.getD 1 false = (y.drop 1).headD false`. -/
-theorem getD_one_eq' (y : List Bool) : y.getD 1 false = (y.drop 1).headD false := by
-  rcases y with _ | ⟨a, _ | ⟨b, t⟩⟩ <;> rfl
+`y.getD 1 false = (y.drop 1).headD false`.
+It is the public `TCSlib.Cryptography.headD_drop` at `i = 1`, reversed. -/
+theorem getD_one_eq' (y : List Bool) : y.getD 1 false = (y.drop 1).headD false :=
+  (TCSlib.Cryptography.headD_drop y 1 false).symm
 
 /-- **Alice's raw function computes her next message**: on the raw input of the activation
 `⟨⟨advInput |x| ⟨⟨x, y⟩, encodeMsgs hist⟩, []⟩, r⟩` it returns `senderNext T H x y r hist`:
