@@ -1,0 +1,60 @@
+SEAL-INSTALL coe-A part 1: 400
+SEAL-INSTALL coe-A part 2: 400
+SEAL-INSTALL coe-A part 3: 400
+SEAL-INSTALL coe-A part 4: 400
+SEAL-INSTALL coe-A part 5: 181
+/workspace/plong/scratch/controls/Controls_coeA.lean:226:92: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  MultiMsg.histBlockOut p = pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) []
+/workspace/plong/scratch/controls/Controls_coeA.lean:235:60: error: Type mismatch
+  rfl
+has type
+  ?m.33 = ?m.33
+but is expected to have type
+  prfEncRealOut F m z j = (z.2 j, m j + F z.1 (z.2 j))
+/workspace/plong/scratch/controls/Controls_coeA.lean:244:81: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  encodeTupleOut v = PrivateKeyScheme.encodeList (List.ofFn fun j => pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2))
+/workspace/plong/scratch/controls/Controls_coeA.lean:253:91: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  MultiMsg.maskOfOut 2 v = (List.ofFn fun j => MultiMsg.maskBlockOut 2 (v j)).flatten
+/workspace/plong/scratch/controls/Controls_coeA.lean:272:85: error: Application type mismatch: The argument
+  s
+has type
+  Fin n → Bool
+but is expected to have type
+  (OracleEnsemble.keyed F).σ n
+in the application
+  (OracleEnsemble.keyed F).O n s
+/workspace/plong/scratch/controls/Controls_coeA.lean:276:85: error: Application type mismatch: The argument
+  s
+has type
+  Fin n → Bool
+but is expected to have type
+  (OracleEnsemble.keyed F).σ n
+in the application
+  (OracleEnsemble.keyed F).O n s
+/workspace/plong/scratch/controls/Controls_coeA.lean:277:25: error: Application type mismatch: The argument
+  F
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (ℓ.eval n) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin (PolyExpr.eval ?m.5 n) → Bool) → Fin (PolyExpr.eval ?m.6 n) → Bool
+in the application
+  OracleEnsemble.keyed_O F
+SEAL-VERIFY coe-A part 1: 400
+SEAL-VERIFY coe-A part 2: 400
+SEAL-VERIFY coe-A part 3: 400
+SEAL-VERIFY coe-A part 4: 400
+SEAL-VERIFY coe-A part 5: 181
+
+EXIT 1

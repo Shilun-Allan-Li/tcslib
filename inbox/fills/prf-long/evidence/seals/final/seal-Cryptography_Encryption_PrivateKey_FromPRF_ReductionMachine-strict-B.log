@@ -1,0 +1,26 @@
+SEAL-INSTALL final/Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine/strict-B part 1: 400
+SEAL-INSTALL final/Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine/strict-B part 2: 400
+SEAL-INSTALL final/Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine/strict-B part 3: 400
+SEAL-INSTALL final/Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine/strict-B part 4: 378
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine_strictB.lean:744:31: error: Application type mismatch: The argument
+  hist
+has type
+  List ((Fin n → Bool) × (Fin n → Bool))
+but is expected to have type
+  List ((Fin ?m.33 → Bool) × (Fin (PolyExpr.var.eval ?m.33) → Bool))
+in the application
+  postFunOut_layout PolyExpr.var hist
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine_strictB.lean:972:38: error: Application type mismatch: The argument
+  v
+has type
+  (n : ℕ) → Fin (q.eval n + 1) → Fin n → Bool
+but is expected to have type
+  (n : ℕ) → Fin (q.eval n + 1) → Fin (PolyExpr.var.eval n) → Bool
+in the application
+  exists_queryChainOut_nuppt D q PolyExpr.var v
+SEAL-VERIFY final/Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine/strict-B part 1: 400
+SEAL-VERIFY final/Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine/strict-B part 2: 400
+SEAL-VERIFY final/Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine/strict-B part 3: 400
+SEAL-VERIFY final/Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine/strict-B part 4: 378
+
+EXIT 1

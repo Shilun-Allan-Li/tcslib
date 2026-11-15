@@ -1,0 +1,42 @@
+SEAL-INSTALL strict-A part 1: 400
+SEAL-INSTALL strict-A part 2: 400
+SEAL-INSTALL strict-A part 3: 400
+SEAL-INSTALL strict-A part 4: 400
+SEAL-INSTALL strict-A part 5: 182
+/workspace/plong/scratch/controls/Controls_strictA.lean:226:92: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  MultiMsg.histBlockOut p = pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) []
+/workspace/plong/scratch/controls/Controls_strictA.lean:235:60: error: Type mismatch
+  rfl
+has type
+  ?m.33 = ?m.33
+but is expected to have type
+  prfEncRealOut F m z j = (z.2 j, m j + F z.1 (z.2 j))
+/workspace/plong/scratch/controls/Controls_strictA.lean:244:81: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  encodeTupleOut v = PrivateKeyScheme.encodeList (List.ofFn fun j => pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2))
+/workspace/plong/scratch/controls/Controls_strictA.lean:253:91: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  MultiMsg.maskOfOut 2 v = (List.ofFn fun j => MultiMsg.maskBlockOut 2 (v j)).flatten
+/workspace/plong/scratch/controls/Controls_strictA.lean:274:2: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  encodeHist (p :: h) = pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) (encodeHist h)
+SEAL-VERIFY strict-A part 1: 400
+SEAL-VERIFY strict-A part 2: 400
+SEAL-VERIFY strict-A part 3: 400
+SEAL-VERIFY strict-A part 4: 400
+SEAL-VERIFY strict-A part 5: 182
+
+EXIT 1

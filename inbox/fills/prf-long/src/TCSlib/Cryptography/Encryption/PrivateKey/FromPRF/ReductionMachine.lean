@@ -96,8 +96,7 @@ theorem length_histBlock {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
 /-- The encoded history is the concatenation of its blocks. -/
 theorem encodeHist_eq_flatMap {n : ℕ} : ∀ h : List ((Fin n → Bool) × (Fin n → Bool)),
     encodeHist h = h.flatMap histBlock
-  | h => (encodeHist_eq_flatMapOut h).trans
-    (congrArg h.flatMap (funext fun p => (histBlock_eq_histBlockOut p).symm))
+  | h => encodeHist_eq_flatMapOut h
 
 /-- The syntactic block length `6n + 6` of a history block. -/
 def histBlockLen : PolyExpr := .add (.mul (.const 6) .var) (.const 6)

@@ -1,0 +1,306 @@
+## TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean: 2 new declarations
+
+-- line 437
+theorem prfAdv_toOracleAdversary_out {ℓ₂ : PolyExpr}
+    (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (ℓ₂.eval n) → Bool)) (D : NUPPT) (n q : ℕ) :
+    distAdv ((OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := ℓ₂) F).O n)
+        ((OracleEnsemble.random .var ℓ₂).O n)
+        (oracleDist (D.toOracleAdversary n n (ℓ₂.eval n) q)) =
+      prfAdv (F n) (D.toOracleAdversary n n (ℓ₂.eval n) q)
+
+-- line 453
+theorem OracleEnsemble.Indist.negligible_prfAdv {ℓ₂ : PolyExpr}
+    {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (ℓ₂.eval n) → Bool)}
+    (hF : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := ℓ₂) F).Indist
+      (OracleEnsemble.random .var ℓ₂))
+    (D : NUPPT) (q : PolyExpr) :
+    Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n (ℓ₂.eval n) (q.eval n))
+
+## TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean: 15 new declarations
+
+-- line 108
+def prfEncRealOut (F : K → (Fin n → Bool) → (Fin l → Bool)) (m : Fin (q + 1) → Fin l → Bool) :
+    K × (Fin (q + 1) → Fin n → Bool) → (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool))
+
+-- line 115
+theorem prfEncRealOut_apply (F : K → (Fin n → Bool) → (Fin l → Bool))
+    (m : Fin (q + 1) → Fin l → Bool) (z : K × (Fin (q + 1) → Fin n → Bool)) (j : Fin (q + 1)) :
+    prfEncRealOut F m z j = (z.2 j, m j + F z.1 (z.2 j))
+
+-- line 122
+def otpEncOut (m : Fin (q + 1) → Fin l → Bool) :
+    (Fin (q + 1) → Fin n → Bool) × (Fin (q + 1) → Fin l → Bool) →
+      (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool))
+
+-- line 128
+theorem otpEncOut_apply (m : Fin (q + 1) → Fin l → Bool)
+    (z : (Fin (q + 1) → Fin n → Bool) × (Fin (q + 1) → Fin l → Bool)) (j : Fin (q + 1)) :
+    otpEncOut m z j = (z.1 j, m j + z.2 j)
+
+-- line 136
+def multiMsgAdvOut (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    OracleAdversary ((Fin (q + 1) → Fin n → Bool) × ρ) (Fin n → Bool) (Fin l → Bool)
+
+-- line 145
+theorem eval_multiMsgAdvOut (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool)
+    (g : (Fin n → Bool) → Fin l → Bool) (c : (Fin (q + 1) → Fin n → Bool) × ρ) :
+    (multiMsgAdvOut m D c).eval g = D (fun j => (c.1 j, m j + g (c.1 j))) c.2
+
+-- line 153
+theorem multiMsgAdvOut_boundedBy (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    (multiMsgAdvOut m D).BoundedBy (q + 1)
+
+-- line 162
+theorem acceptProb_oracleDist_multiMsgAdvOut (F : K → (Fin n → Bool) → (Fin l → Bool))
+    (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    acceptProb F (oracleDist (multiMsgAdvOut m D)) = acceptProb (prfEncRealOut F m) D
+
+-- line 177
+theorem prfAdv_multiMsgAdvOut (F : K → (Fin n → Bool) → (Fin l → Bool))
+    (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    prfAdv F (multiMsgAdvOut m D) =
+      distAdv (prfEncRealOut F m)
+        (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) D
+
+-- line 197
+theorem prfEncReal_eq_prfEncRealOut (F : K → (Fin n → Bool) → (Fin n → Bool))
+    (m : Fin (q + 1) → Fin n → Bool) : prfEncReal F m = prfEncRealOut F m
+
+-- line 217
+theorem otpEnc_eq_otpEncOut (m : Fin (q + 1) → Fin n → Bool) :
+    otpEnc (n := n) m = otpEncOut m
+
+-- line 233
+theorem multiMsgAdv_eq_multiMsgAdvOut (m : Fin (q + 1) → Fin n → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
+    multiMsgAdv m D = multiMsgAdvOut m D
+
+-- line 354
+theorem distAdv_prfEncRealOut_random_otp_le (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    distAdv (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) (otpEncOut m) D ≤
+      (Nat.choose (q + 1) 2 : ℝ) / 2 ^ n
+
+-- line 395
+theorem acceptProb_otpEncOut (m m' : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    acceptProb (otpEncOut (n := n) m) D = acceptProb (otpEncOut m') D
+
+-- line 431
+theorem distAdv_prfEncRealOut_le (F : K → (Fin n → Bool) → (Fin l → Bool))
+    (m m' : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    distAdv (prfEncRealOut F m) (prfEncRealOut F m') D ≤
+      prfAdv F (multiMsgAdvOut m D) + prfAdv F (multiMsgAdvOut m' D) +
+        2 * ((Nat.choose (q + 1) 2 : ℝ) / 2 ^ n)
+
+## TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean: 38 new declarations
+
+-- line 57
+def histBlockOut {n l : ℕ} (p : (Fin n → Bool) × (Fin l → Bool)) : List Bool
+
+-- line 61
+theorem histBlockOut_eq {n l : ℕ} (p : (Fin n → Bool) × (Fin l → Bool)) :
+    histBlockOut p = pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) []
+
+-- line 66
+theorem length_histBlockOut {n l : ℕ} (p : (Fin n → Bool) × (Fin l → Bool)) :
+    (histBlockOut p).length = 4 * n + 2 * l + 6
+
+-- line 73
+theorem encodeHist_eq_flatMapOut {ℓ₁ ℓ₂ : ℕ} : ∀ h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)),
+    encodeHist h = h.flatMap histBlockOut
+
+-- line 87
+theorem histBlock_eq_histBlockOut {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
+    histBlock p = histBlockOut p
+
+-- line 111
+def histBlockLenOut (ℓ : PolyExpr) : PolyExpr
+
+-- line 115
+theorem histBlockLenOut_eq (ℓ : PolyExpr) :
+    histBlockLenOut ℓ = .add (.add (.mul (.const 4) .var) (.mul (.const 2) ℓ)) (.const 6)
+
+-- line 120
+theorem eval_histBlockLenOut (ℓ : PolyExpr) (n : ℕ) :
+    (histBlockLenOut ℓ).eval n = 4 * n + 2 * ℓ.eval n + 6
+
+-- line 189
+theorem pairFstD_pairFstD_histBlockOut {n l : ℕ} (p : (Fin n → Bool) × (Fin l → Bool)) :
+    pairFstD (pairFstD (histBlockOut p)) = List.ofFn p.1
+
+-- line 202
+def maskBlockOut {l : ℕ} (n : ℕ) (w : Fin l → Bool) : List Bool
+
+-- line 206
+theorem maskBlockOut_eq {l : ℕ} (n : ℕ) (w : Fin l → Bool) :
+    maskBlockOut n w = List.replicate (4 * n + 4) false ++ dbl (List.ofFn w) ++ [false, false]
+
+-- line 212
+theorem length_maskBlockOut {l : ℕ} (n : ℕ) (w : Fin l → Bool) :
+    (maskBlockOut n w).length = 4 * n + 2 * l + 6
+
+-- line 226
+theorem maskBlock_eq_maskBlockOut {n : ℕ} (w : Fin n → Bool) : maskBlock w = maskBlockOut n w
+
+-- line 263
+theorem zipWith_xor_histBlockOut_maskBlockOut {n l : ℕ} (x : Fin n → Bool) (y w : Fin l → Bool) :
+    List.zipWith xor (histBlockOut (x, y)) (maskBlockOut n w) =
+      pairEncode (pairEncode (List.ofFn x) (List.ofFn (w + y))) []
+
+-- line 385
+def postCountOut (ℓ : PolyExpr) (z : List Bool) : List Bool
+
+-- line 390
+theorem postCountOut_eq (ℓ : PolyExpr) (z : List Bool) :
+    postCountOut ℓ z = blockMapFun (histBlockLenOut ℓ) (fun _ => [true])
+      (pairEncode (NUPPT.inParam z) (postHist z))
+
+-- line 397
+def postOffsetOut (ℓ : PolyExpr) (z : List Bool) : List Bool
+
+-- line 403
+theorem postOffsetOut_eq (ℓ : PolyExpr) (z : List Bool) :
+    postOffsetOut ℓ z = blockMapFun (histBlockLenOut ℓ)
+      (fun blk => List.replicate (pairFstD (pairFstD blk)).length true)
+      (pairEncode (NUPPT.inParam z) (postHist z))
+
+-- line 411
+def postQueryOut (ℓ : PolyExpr) (z : List Bool) : List Bool
+
+-- line 418
+theorem postQueryOut_eq (ℓ : PolyExpr) (z : List Bool) :
+    postQueryOut ℓ z = pairEncode [false] (takePolyFun .var
+      (pairEncode (NUPPT.inParam z)
+        (dropPolyFun .var (pairEncode (postOffsetOut ℓ z) (postPoints z)))))
+
+-- line 428
+def postFunOut (ℓ : PolyExpr) (z : List Bool) : List Bool
+
+-- line 434
+theorem postFunOut_eq (ℓ : PolyExpr) (z : List Bool) :
+    postFunOut ℓ z =
+      if decide ((postBudget z).length ≤ (postCountOut ℓ z).length) = true then postVerdict z
+      else postQueryOut ℓ z
+
+-- line 445
+theorem polyTimeComputable_postFunOut (ℓ : PolyExpr) : PolyTimeComputable (postFunOut ℓ)
+
+-- line 485
+theorem postCount_eq_postCountOut (z : List Bool) : postCount z = postCountOut .var z
+
+-- line 491
+theorem postOffset_eq_postOffsetOut (z : List Bool) : postOffset z = postOffsetOut .var z
+
+-- line 497
+theorem postQuery_eq_postQueryOut (z : List Bool) : postQuery z = postQueryOut .var z
+
+-- line 502
+theorem postFun_eq_postFunOut (z : List Bool) : postFun z = postFunOut .var z
+
+-- line 515
+def maskOfOut {l k : ℕ} (n : ℕ) (v : Fin k → Fin l → Bool) : List Bool
+
+-- line 519
+theorem maskOfOut_eq {l k : ℕ} (n : ℕ) (v : Fin k → Fin l → Bool) :
+    maskOfOut n v = (List.ofFn fun j => maskBlockOut n (v j)).flatten
+
+-- line 528
+theorem maskOf_eq_maskOfOut {n k : ℕ} (v : Fin k → Fin n → Bool) : maskOf v = maskOfOut n v
+
+-- line 543
+theorem length_maskOfOut {l k : ℕ} (n : ℕ) (v : Fin k → Fin l → Bool) :
+    (maskOfOut n v).length = k * (4 * n + 2 * l + 6)
+
+-- line 564
+def adviceBoundOut (q ℓ : PolyExpr) : PolyExpr
+
+-- line 570
+theorem adviceBoundOut_eq (q ℓ : PolyExpr) :
+    adviceBoundOut q ℓ =
+      .add (.add (.mul (.const 2) (.mul (.add q (.const 1)) (histBlockLenOut ℓ))) (.const 2))
+        (.add q (.const 1))
+
+-- line 577
+theorem eval_adviceBoundOut (q ℓ : PolyExpr) (n : ℕ) :
+    (adviceBoundOut q ℓ).eval n =
+      2 * ((q.eval n + 1) * (4 * n + 2 * ℓ.eval n + 6)) + 2 + (q.eval n + 1)
+
+-- line 601
+theorem postFunOut_layout {n : ℕ} (ℓ : PolyExpr)
+    (hist : List ((Fin n → Bool) × (Fin (ℓ.eval n) → Bool))) (P M u a : List Bool) :
+    postFunOut ℓ (NUPPT.layout (List.replicate n true)
+        (pairEncode (pairEncode (pairEncode (encodeHist hist) P) (pairEncode M u)) a) [] []) =
+      if u.length ≤ hist.length then [true, decide (a = [true])]
+      else pairEncode [false] ((P.drop (hist.length * n)).take n)
+
+-- line 672
+theorem preFun_encodeHistOut {n l k : ℕ} (ρ : Fin k → Fin n → Bool) (v : Fin k → Fin l → Bool)
+    (g : (Fin n → Bool) → (Fin l → Bool)) (P u : List Bool) :
+    preFun (pairEncode (pairEncode (encodeHist (List.ofFn fun i => (ρ i, g (ρ i)))) P)
+        (pairEncode (maskOfOut n v) u)) =
+      (List.ofFn fun j =>
+        pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (v j + g (ρ j)))) []).flatten
+
+-- line 712
+theorem exists_queryChainOut_nuppt (D : NUPPT) (q ℓ : PolyExpr)
+    (v : ∀ n, Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool) :
+    ∃ B : NUPPT, ∀ n, ∃ φ : (Fin (q.eval n + 1) → Fin n → Bool) × D.Coins n ≃ B.Coins n,
+      ∀ (g : (Fin n → Bool) → (Fin (ℓ.eval n) → Bool))
+        (ρ : Fin (q.eval n + 1) → Fin n → Bool) (c : D.Coins n),
+        (B.toOracleAdversary n n (ℓ.eval n) (q.eval n + 1) (φ (ρ, c))).eval g =
+          decide (D.runAt n (List.ofFn fun j =>
+            pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (v n j + g (ρ j)))) []).flatten c =
+              [true])
+
+-- line 836
+theorem exists_oneQuery_nuppt (D : NUPPT) (ℓ : PolyExpr) :
+    ∃ B : NUPPT, ∀ n, ∃ φ : (Fin n → Bool) × D.Coins n ≃ B.Coins n,
+      ∀ (g : (Fin n → Bool) → (Fin (ℓ.eval n) → Bool)) (r : Fin n → Bool) (c : D.Coins n),
+        (B.toOracleAdversary n n (ℓ.eval n) 1 (φ (r, c))).eval g =
+          decide (D.runAt n (pairEncode (List.ofFn r) (List.ofFn (g r))) c = [true])
+
+## TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean: 5 new declarations
+
+-- line 51
+def encodeTupleOut {n l q : ℕ} (v : Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) :
+    List Bool
+
+-- line 58
+theorem encodeTupleOut_eq {n l q : ℕ} (v : Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) :
+    encodeTupleOut v = PrivateKeyScheme.encodeList
+      (List.ofFn fun j => pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2))
+
+-- line 65
+theorem MultiMsg.encodeList_eq_flatMap : ∀ l : List (List Bool),
+    PrivateKeyScheme.encodeList l = l.flatMap fun c => pairEncode c []
+
+-- line 75
+theorem encodeTupleOut_eq_flatten {n l q : ℕ}
+    (v : Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) :
+    encodeTupleOut v =
+      (List.ofFn fun j =>
+        pairEncode (pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2)) []).flatten
+
+-- line 103
+theorem MultiMsg.exists_negligible_distAdv_prfEncRealOut {ℓ : PolyExpr}
+    {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (ℓ.eval n) → Bool)}
+    (hF : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := ℓ) F).Indist (OracleEnsemble.random .var ℓ))
+    (D : NUPPT) (q : PolyExpr) :
+    ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n (w w' : Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool),
+      distAdv (fun z => encodeTupleOut (prfEncRealOut (F n) w z))
+        (fun z => encodeTupleOut (prfEncRealOut (F n) w' z)) (D.distinguisherL n) ≤ ε n
+
+## TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean: 1 new declarations
+
+-- line 246
+theorem encodeTuple_eq_encodeTupleOut {n q : ℕ}
+    (v : Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) : encodeTuple v = encodeTupleOut v
+
+TOTAL 61 new declarations

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Explicit-unfold scan, step 2 (prf-mac): for each changed file, write its scan module with
+"""Explicit-unfold scan, step 2 (prf-long; adapted from prf-mac): for each changed file, write its scan module with
 rwids.py, compile it against the olean tree, and collect `file<TAB>id<TAB>constant<TAB>class<TAB>module`
 rows. usage: rwids_run.py FILELIST OUTDIR"""
 import os, re, subprocess, sys

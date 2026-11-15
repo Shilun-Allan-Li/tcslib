@@ -1,0 +1,59 @@
+SEAL-INSTALL final/Cryptography_Encryption_PrivateKey_FromPRF/strict-B part 1: 400
+SEAL-INSTALL final/Cryptography_Encryption_PrivateKey_FromPRF/strict-B part 2: 400
+SEAL-INSTALL final/Cryptography_Encryption_PrivateKey_FromPRF/strict-B part 3: 400
+SEAL-INSTALL final/Cryptography_Encryption_PrivateKey_FromPRF/strict-B part 4: 400
+SEAL-INSTALL final/Cryptography_Encryption_PrivateKey_FromPRF/strict-B part 5: 173
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Encryption_PrivateKey_FromPRF_strictB.lean:238:8: warning: This simp argument is unused:
+  prfDecFun
+
+Hint: Omit it from the simp argument list.
+  simp [̵p̵r̵f̵D̵e̵c̵F̵u̵n̵,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵]̵[̲F̲u̲n̲c̲t̲i̲o̲n̲.̲c̲o̲m̲p̲_̲a̲p̲p̲l̲y̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Encryption_PrivateKey_FromPRF_strictB.lean:311:23: error: Application type mismatch: The argument
+  (NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n) rg
+has type
+  Fin (PolyExpr.var.eval n) → Bool
+but is expected to have type
+  Fin n → Bool
+in the application
+  F n ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n) rg)
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Encryption_PrivateKey_FromPRF_strictB.lean:383:2: error: Type mismatch
+  (NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n).prodCongr
+    (Equiv.piCongrRight fun x => NUPPT.coinsEquiv_ofPolyTimeUniform ⋯ PolyExpr.var n)
+has type
+  (NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var).Coins n ×
+      (?m.27 → (NUPPT.ofPolyTimeUniform ⋯ PolyExpr.var).Coins n) ≃
+    (Fin (PolyExpr.var.eval n) → Bool) × (?m.27 → Fin (PolyExpr.var.eval n) → Bool)
+but is expected to have type
+  (prfScheme F E hE hFE).gen.Coins n × (Fin (q + 1) → (prfScheme F E hE hFE).enc.Coins n) ≃
+    (Fin n → Bool) × (Fin (q + 1) → Fin n → Bool)
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Encryption_PrivateKey_FromPRF_strictB.lean:397:3: error: Application type mismatch: The argument
+  NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn polyTimeComputable_pairSndD PolyExpr.var n r.1
+has type
+  List.ofFn ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n) r.1) = List.ofFn r.1
+but is expected to have type
+  List.ofFn ((prfScheme_coinsEquiv F E hE hFE n q) r).1 = List.ofFn r.1
+in the application
+  And.intro (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn polyTimeComputable_pairSndD PolyExpr.var n r.1)
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Encryption_PrivateKey_FromPRF_strictB.lean:398:13: error: Type mismatch
+  NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn (polyTimeComputable_prfEncFun hE) PolyExpr.var n (r.2 j)
+has type
+  List.ofFn ((NUPPT.coinsEquiv_ofPolyTimeUniform ⋯ PolyExpr.var n) (r.2 j)) = List.ofFn (r.2 j)
+but is expected to have type
+  List.ofFn (((prfScheme_coinsEquiv F E hE hFE n q) r).2 j) = List.ofFn (r.2 j)
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Encryption_PrivateKey_FromPRF_strictB.lean:449:73: error: Application type mismatch: The argument
+  hF.pseudorandom
+has type
+  (OracleEnsemble.keyed F).Indist (OracleEnsemble.random PolyExpr.var PolyExpr.var)
+but is expected to have type
+  (OracleEnsemble.keyed ?m.19).Indist (OracleEnsemble.random PolyExpr.var ?m.18)
+in the application
+  MultiMsg.exists_negligible_distAdv_prfEncRealOut hF.pseudorandom
+SEAL-VERIFY final/Cryptography_Encryption_PrivateKey_FromPRF/strict-B part 1: 400
+SEAL-VERIFY final/Cryptography_Encryption_PrivateKey_FromPRF/strict-B part 2: 400
+SEAL-VERIFY final/Cryptography_Encryption_PrivateKey_FromPRF/strict-B part 3: 400
+SEAL-VERIFY final/Cryptography_Encryption_PrivateKey_FromPRF/strict-B part 4: 400
+SEAL-VERIFY final/Cryptography_Encryption_PrivateKey_FromPRF/strict-B part 5: 173
+
+EXIT 1

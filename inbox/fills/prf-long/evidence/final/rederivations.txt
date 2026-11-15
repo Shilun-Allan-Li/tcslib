@@ -1,0 +1,122 @@
+## TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean
+same     OracleEnsemble
+same     OracleEnsemble.random
+same     OracleEnsemble.keyed
+same     OracleEnsemble.random_O
+same     OracleEnsemble.keyed_O
+same     OracleEnsemble.acceptProb_random_eq
+same     acceptProb_random_eq_lazy
+same     decodeOracleMove
+same     pairDecode_true_two
+same     decodeOracleMove_pairEncode_false
+same     decodeOracleMove_true_two
+same     decodeOracleMove_pairEncode_ofFn
+same     decodeOracleMove_pairEncode_false_of_length_ne
+same     decodeOracleMove_of_ne
+same     encodeHist
+same     encodeHist_nil
+same     encodeHist_cons
+same     buildTree
+same     buildTree_zero_of_ret
+same     buildTree_zero_of_query
+same     buildTree_succ_of_ret
+same     buildTree_succ_of_query
+same     buildTree_boundedBy
+same     _root_.Complexity.NUPPT.toOracleAdversary
+same     _root_.Complexity.NUPPT.toOracleAdversary_eq
+same     _root_.Complexity.NUPPT.toOracleAdversary_boundedBy
+same     OracleEnsemble.Indist
+same     OracleEnsemble.indist_iff
+same     OracleEnsemble.Indist.refl
+same     OracleEnsemble.Indist.symm
+same     OracleEnsemble.Indist.trans
+same     oracle_hybrid_lemma
+same     PRF
+CHANGED  prfAdv_toOracleAdversary	:= prfAdv_toOracleAdversary_out (ℓ₂ := .var) F D n q
+CHANGED  PRF.negligible_prfAdv	:= hF.pseudorandom.negligible_prfAdv D q
+## TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean
+same     chainTree
+same     eval_chainTree
+same     boundedBy_chainTree
+same     prfEncReal
+CHANGED  prfEncReal_apply	:= by rw [prfEncReal_eq_prfEncRealOut] exact prfEncRealOut_apply F m z j
+same     otpEnc
+same     multiMsgAdv
+CHANGED  eval_multiMsgAdv	:= by rw [multiMsgAdv_eq_multiMsgAdvOut] exact eval_multiMsgAdvOut m D g c
+CHANGED  multiMsgAdv_boundedBy	:= by rw [multiMsgAdv_eq_multiMsgAdvOut] exact multiMsgAdvOut_boundedBy m D
+CHANGED  acceptProb_oracleDist_multiMsgAdv	:= by rw [multiMsgAdv_eq_multiMsgAdvOut, prfEncReal_eq_prfEncRealOut] exact acceptProb_oracleDist_multiMsgAdvOut F m D
+CHANGED  prfAdv_multiMsgAdv	:= by simp only [multiMsgAdv_eq_multiMsgAdvOut, prfEncReal_eq_prfEncRealOut] exact prfAdv_multiMsgAdvOut F m D
+same     uprob_not_injective_le
+same     pushesUniform_comp_injective
+CHANGED  distAdv_prfEncReal_random_otp_le	:= by rw [prfEncReal_eq_prfEncRealOut, otpEnc_eq_otpEncOut] exact distAdv_prfEncRealOut_random_otp_le m D
+CHANGED  acceptProb_otpEnc	:= by rw [otpEnc_eq_otpEncOut, otpEnc_eq_otpEncOut] exact acceptProb_otpEncOut m m' D
+CHANGED  distAdv_prfEncReal_le	:= by simp only [prfEncReal_eq_prfEncRealOut, multiMsgAdv_eq_multiMsgAdvOut] exact distAdv_prfEncRealOut_le F m m' D
+## TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean
+same     histBlock
+CHANGED  length_histBlock	:= by rw [histBlock_eq_histBlockOut, length_histBlockOut] omega
+CHANGED  encodeHist_eq_flatMap	 | h => encodeHist_eq_flatMapOut h
+same     histBlockLen
+same     eval_histBlockLen
+same     length_flatMap_of_length
+same     flatMap_range_blocks
+same     flatMap_const_singleton
+same     flatMap_const_replicate
+CHANGED  pairFstD_pairFstD_histBlock	:= by rw [histBlock_eq_histBlockOut, pairFstD_pairFstD_histBlockOut]
+same     maskBlock
+CHANGED  length_maskBlock	:= by rw [maskBlock_eq_maskBlockOut, length_maskBlockOut] omega
+same     dbl_append
+same     zipWith_xor_replicate_false
+same     zipWith_xor_dbl
+CHANGED  zipWith_xor_histBlock_maskBlock	:= by rw [histBlock_eq_histBlockOut, maskBlock_eq_maskBlockOut] exact zipWith_xor_histBlockOut_maskBlockOut x y w
+same     zipWith_xor_flatten_ofFn
+same     take_drop_ofFn_blocks
+same     blockMapFun
+same     polyTimeComputable_blockMapFun
+same     takePolyFun
+same     dropPolyFun
+same     preFun
+same     polyTimeComputable_preFun
+same     postHist
+same     postPoints
+same     postBudget
+same     postAns
+same     postCount
+same     postOffset
+same     postQuery
+same     postVerdict
+same     postFun
+CHANGED  polyTimeComputable_postFun	:= (polyTimeComputable_postFunOut .var).congr fun z => (postFun_eq_postFunOut z).symm
+same     maskOf
+same     length_flatten_of_length
+CHANGED  length_maskOf	:= by rw [maskOf_eq_maskOfOut, length_maskOfOut] congr 1 omega
+same     adviceBound
+same     decodeOracleMove_query
+same     decodeOracleMove_ret
+CHANGED  postFun_layout	:= by rw [postFun_eq_postFunOut] exact postFunOut_layout .var hist P M u a
+same     flatMap_ofFn
+CHANGED  preFun_encodeHist	:= by rw [maskOf_eq_maskOfOut] exact preFun_encodeHistOut ρ v g P u
+CHANGED  exists_queryChain_nuppt	:= exists_queryChainOut_nuppt D q .var v
+## TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean
+same     prfEncFun
+same     prfDecWF
+same     prfDecFun
+same     polyTimeComputable_prfEncFun
+same     polyTimeComputable_prfDecWF
+same     polyTimeComputable_prfDecFun
+same     runAt_prfEnc
+same     runAt_prfDec
+same     decodeFin_runAt_prfDec_of_not_wf
+same     zipWith_xor_xor_self
+same     prfScheme
+same     prfScheme_gen
+same     prfScheme_enc
+same     prfScheme_dec
+same     encodeTuple
+same     encodeList_eq_flatMap
+CHANGED  encodeTuple_eq_flatten	:= by rw [encodeTuple_eq_encodeTupleOut] exact encodeTupleOut_eq_flatten v
+same     prfScheme_coinsEquiv
+same     prfScheme_coinsEquiv_ofFn
+same     prfScheme_multiEncDist
+CHANGED  prfScheme_multiMessageSecure	:= by refine (PrivateKeyScheme.multiMessageSecure_iff _).2 fun D q => ?_ obtain ⟨ε, hε, hb⟩ := MultiMsg.exists_negligible_distAdv_prfEncRealOut hF.pseudorandom 
+same     exists_multiMessageSecure_of_prf
+same     exists_multiMessageSecure_of_exists_prg

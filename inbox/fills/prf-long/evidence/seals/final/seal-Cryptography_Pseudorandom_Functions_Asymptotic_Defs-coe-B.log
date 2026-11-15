@@ -1,0 +1,61 @@
+SEAL-INSTALL final/Cryptography_Pseudorandom_Functions_Asymptotic_Defs/coe-B part 1: 400
+SEAL-INSTALL final/Cryptography_Pseudorandom_Functions_Asymptotic_Defs/coe-B part 2: 252
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Pseudorandom_Functions_Asymptotic_Defs_coeB.lean:471:65: error: Application type mismatch: The argument
+  F
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (PolyExpr.var.eval n) → Bool
+in the application
+  OracleEnsemble.keyed F
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Pseudorandom_Functions_Asymptotic_Defs_coeB.lean:482:59: error: Application type mismatch: The argument
+  F
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (ℓ₂.eval n) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (ℓ₂.eval n) → Bool
+in the application
+  OracleEnsemble.keyed F
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Pseudorandom_Functions_Asymptotic_Defs_coeB.lean:484:20: error: Application type mismatch: The argument
+  D.toOracleAdversary n n (ℓ₂.eval n) q
+has type
+  OracleAdversary (D.Coins n) (Fin n → Bool) (Fin (ℓ₂.eval n) → Bool)
+but is expected to have type
+  OracleAdversary ?m.14 (Fin (PolyExpr.var.eval n) → Bool) (Fin (ℓ₂.eval n) → Bool)
+in the application
+  oracleDist (D.toOracleAdversary n n (ℓ₂.eval n) q)
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Pseudorandom_Functions_Asymptotic_Defs_coeB.lean:498:56: error: Application type mismatch: The argument
+  F
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (ℓ₂.eval n) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (ℓ₂.eval n) → Bool
+in the application
+  keyed F
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Pseudorandom_Functions_Asymptotic_Defs_coeB.lean:502:40: error(lean.unknownIdentifier): Unknown identifier `prfAdv_toOracleAdversary_out`
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Pseudorandom_Functions_Asymptotic_Defs_coeB.lean:510:61: error: Application type mismatch: The argument
+  F
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (PolyExpr.var.eval n) → Bool
+in the application
+  OracleEnsemble.keyed F
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Pseudorandom_Functions_Asymptotic_Defs_coeB.lean:511:20: error: Application type mismatch: The argument
+  D.toOracleAdversary n n n q
+has type
+  OracleAdversary (D.Coins n) (Fin n → Bool) (Fin n → Bool)
+but is expected to have type
+  OracleAdversary ?m.14 (Fin (PolyExpr.var.eval n) → Bool) (Fin (PolyExpr.var.eval n) → Bool)
+in the application
+  oracleDist (D.toOracleAdversary n n n q)
+/workspace/plong/scratch/seal/final/Seal_Cryptography_Pseudorandom_Functions_Asymptotic_Defs_coeB.lean:521:2: error: Type mismatch
+  OracleEnsemble.Indist.negligible_prfAdv hF.pseudorandom D q
+has type
+  Negligible fun n => prfAdv (?m.14 n) (D.toOracleAdversary n n (PolyExpr.var.eval n) (q.eval n))
+but is expected to have type
+  Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n n (q.eval n))
+SEAL-VERIFY final/Cryptography_Pseudorandom_Functions_Asymptotic_Defs/coe-B part 1: 400
+SEAL-VERIFY final/Cryptography_Pseudorandom_Functions_Asymptotic_Defs/coe-B part 2: 252
+
+EXIT 1

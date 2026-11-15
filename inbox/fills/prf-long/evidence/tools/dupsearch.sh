@@ -20,3 +20,8 @@ s 'encodeList_eq_flatMap|encodeTuple|encodeList' TCSlib/Cryptography 40
 s 'uprob_not_injective_le|pushesUniform_comp_injective|abs_uexp_sub_le_uprob|prfAdv_congr_equiv|negligible_choose_div_two_pow' TCSlib 30
 s 'exists_max_image' TCSlib/Cryptography 20
 s 'funUnique|coinsCongr' TCSlib/Cryptography 30
+# added for the final run (names of the delivered declarations; Mathlib/core flatten lemmas)
+s 'encodeTupleOut|prfEncRealOut|otpEncOut|multiMsgAdvOut|histBlockOut|maskBlockOut|maskOfOut|postFunOut|adviceBoundOut|histBlockLenOut' TCSlib 60
+s 'exists_negligible_distAdv|exists_queryChainOut|exists_oneQuery' TCSlib 20
+s 'flatMap.*pairEncode .* \[\]|encodeList.*flatten|encodeList.*flatMap' TCSlib 20
+s 'theorem flatMap_ofFn|flatMap_eq_flatten|flatten_ofFn' .lake/packages/mathlib/Mathlib 20

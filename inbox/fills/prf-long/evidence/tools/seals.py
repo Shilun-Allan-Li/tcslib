@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Whole-file Rule-10 seals of the prf-mac fill (resumable).
+"""Whole-file Rule-10 seals of the prf-long fill (adapted from the prf-mac fill's tool; resumable).
 
 usage: seals.py TAG ROOT FILE...      (TAG = base | final; ROOT = the checkout of the sources)
 
@@ -44,7 +44,7 @@ DECL = re.compile(r'^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable
 CENSUS = '''
 open Lean Elab Command Meta
 
-/-! Seal census (prf-mac, %s) for `%s`: the file's own imports; one `CAT` line per constant of a
+/-! Seal census (prf-long, %s) for `%s`: the file's own imports; one `CAT` line per constant of a
 TCSlib module of the import closure (all foreign to the file). -/
 
 #eval show CommandElabM Unit from do
