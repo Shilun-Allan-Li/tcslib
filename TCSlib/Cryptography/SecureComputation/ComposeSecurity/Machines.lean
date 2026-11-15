@@ -227,23 +227,13 @@ def padTo (L : ℕ) (w : List Bool) : List Bool := (w ++ List.replicate L false)
 theorem padTo_eq (L : ℕ) (w : List Bool) : padTo L w = (w ++ List.replicate L false).take L :=
   rfl
 
-/-- `L` zeros from a unary length `L` is polynomial-time (the bit-extraction principle
-`EncodingMachines.polyTimeComputable_of_getD` with the constant bit `0`). -/
-theorem zeros_poly {L : List Bool → ℕ}
-    (hL : PolyTimeComputable fun x => List.replicate (L x) true) :
-    PolyTimeComputable fun x => List.replicate (L x) false := by
-  refine polyTimeComputable_of_getD (F := fun x => List.replicate (L x) false) ?_ ?_
-  · refine (polyTimeComputable_const [false]).congr fun w => ?_
-    rw [List.getD_eq_getElem?_getD, List.getElem?_replicate]
-    split_ifs <;> rfl
-  · simpa only [List.length_replicate] using hL
-
-/-- Padding to a unary length is polynomial-time (`EncodingMachines.truncate_poly`,
-`zeros_poly`). -/
+/-- Padding to a unary length is polynomial-time (`EncodingMachines.truncate_poly`, the zeros
+`GI.zeros_poly` of the unary string). -/
 theorem padTo_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
     {L : List Bool → ℕ} (hL : PolyTimeComputable fun x => List.replicate (L x) true) :
     PolyTimeComputable fun x => padTo (L x) (s x) :=
-  truncate_poly (hs.append (zeros_poly hL)) hL
+  truncate_poly (hs.append ((GI.zeros_poly.comp' hL).congr fun x => by
+    rw [List.length_replicate])) hL
 
 /-- The padded word has length `L`: `|padTo L w| = L`. -/
 theorem length_padTo (L : ℕ) (w : List Bool) : (padTo L w).length = L := by
