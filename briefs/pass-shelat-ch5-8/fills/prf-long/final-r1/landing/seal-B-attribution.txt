@@ -1,0 +1,16 @@
+PlProbe_C_SealB_Cryptography_Encryption_PrivateKey_FromPRF.log 5 ['var.eval (Q1)', 'var.eval (Q1)', 'OTHER: on_PrivateKey_FromPRF.lean:402:3: error: Application type mismatch: The argument', 'OTHER: alB_Cryptography_Encryption_PrivateKey_FromPRF.lean:403:13: error: Type mismatch', 'OTHER: n_PrivateKey_FromPRF.lean:454:73: error: Application type mismatch: The argument']
+PlProbe_C_SealB_Cryptography_Encryption_PrivateKey_FromPRF_MultiMsgOut.log 1 ['var.eval (Q1)']
+PlProbe_C_SealB_Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine.log 2 ['var.eval (Q1)', 'var.eval (Q1)']
+PlProbe_C_SealB_Cryptography_Pseudorandom_Functions_Asymptotic_Defs.log 8 ['var.eval (Q1)', 'var.eval (Q1)', 'var.eval (Q1)', 'var.eval (Q1)', 'cascade: prfAdv_toOracleAdversary_out', 'var.eval (Q1)', 'var.eval (Q1)', 'var.eval (Q1)']
+PlProbe_S_SealB_Cryptography_Encryption_PrivateKey_FromPRF.log 5 ['var.eval (Q1)', 'var.eval (Q1)', 'OTHER: on_PrivateKey_FromPRF.lean:402:3: error: Application type mismatch: The argument', 'OTHER: alB_Cryptography_Encryption_PrivateKey_FromPRF.lean:403:13: error: Type mismatch', 'OTHER: n_PrivateKey_FromPRF.lean:454:73: error: Application type mismatch: The argument']
+PlProbe_S_SealB_Cryptography_Encryption_PrivateKey_FromPRF_MultiMsgOut.log 1 ['var.eval (Q1)']
+PlProbe_S_SealB_Cryptography_Encryption_PrivateKey_FromPRF_ReductionMachine.log 2 ['var.eval (Q1)', 'var.eval (Q1)']
+PlProbe_S_SealB_Cryptography_Pseudorandom_Functions_Asymptotic_Defs.log 8 ['var.eval (Q1)', 'var.eval (Q1)', 'var.eval (Q1)', 'var.eval (Q1)', 'cascade: prfAdv_toOracleAdversary_out', 'var.eval (Q1)', 'var.eval (Q1)', 'var.eval (Q1)']
+The three blocks classified OTHER (FromPRF.lean, both variants), read by hand:
+  probe 402:3 and 403:13: inside the BASE prfScheme_coinsEquiv_ofFn (also failing at base B): the coins of
+    NUPPT.coinsEquiv_ofPolyTimeUniform ... PolyExpr.var n are `Fin (PolyExpr.var.eval n)`; with PolyExpr.eval sealed they no
+    longer match `prfScheme_coinsEquiv`'s components (PolyExpr.eval defeq, Q1).
+  probe 454:73: inside the re-derived prfScheme_multiMessageSecure: `hF.pseudorandom : keyed F` (F n with `Fin n` outputs)
+    against `keyed (ℓ₂ := ?ℓ) ?F` needs `?ℓ.eval n =?= n`, solved by `ℓ := var` only by unfolding PolyExpr.eval (Q1).
+RESULT: every B-variant error at the head is a PolyExpr.eval (Q1) defeq or its unknown-identifier cascade; with PolyExpr.eval as
+notation (variant A, canonical) every file passes, strict and coe.

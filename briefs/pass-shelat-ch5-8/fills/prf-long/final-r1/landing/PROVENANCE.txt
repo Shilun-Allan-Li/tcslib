@@ -1,0 +1,135 @@
+prf-long (ruling B3: the PRF machinery at l(n)-bit outputs, D1-D4; no admitted target) maintainer delivery review r1, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: the common review brief (Updates 1-2) with the corrections for this unit. The template provenance files are
+  briefs/pass-shelat-ch5-8/fills/prf-mac/final-r1/landing/PROVENANCE.txt and fills/learning/final-r1/landing/PROVENANCE.txt.
+  Tools: $SP/review-tools-template/ as shipped in the prf-mac review zip (records fills/prf-mac/final-r1/review-evidence.zip),
+  which includes the G26-N1-fixed runner.py (error[:(], both forms; runner.orig.py is the unfixed copy). Changes are under tools.
+  Nothing was pushed, no PR was opened, the records checkout was only read. No lake build, no cache get. Python always python3 -I.
+  One Lean process at a time, only on $SP/dl-oleans; dl-oleans-2 was not touched (snapshotted read-only once at the start).
+
+brief: briefs/pass-shelat-ch5-8/fills/prf-long/issued-r1/brief.md, SHA-256 ce6c4becf8834c9532ededea6ad9ca4b83eb70f643cfa3bfcd512bc65a64e183
+  (= dispatch.md; logs/brief.md). Issue package SHA256SUMS 7/7 OK (logs/issue-package-check.txt). SOURCE-SHA256SUMS 434/434 OK at the
+  issue base 7b307d6254f6ed0e98f44cd563f88f9c56b7b1ee (logs/source-sums-check.txt). Base admissions: 40 in 19 modules.
+delivery: exchange/pass-shelat-ch5-8 8d44fa5b5cdd408b9361364a246697dc294151fb ("fill prf-long: final"; checkpoints 6941fe67, 36067085).
+  The three commits touch only inbox/fills/prf-long/ (861, 320 and 594 paths); the only later exchange commit is 13003ddf (sc-ot),
+  which does not touch that path (logs/exchange-commits.txt). git archive into a fresh directory, removed after use. Cited extracts
+  in logs/delivery-extracts/ (patches/, COMMITS.tsv, both manifests, amcheck, headers, axioms, lint, selected final/ logs), hashes in
+  logs/delivery-extract-hashes.txt; REPORT.md kept as logs/worker-REPORT.md.
+integrity (logs/payload-check.txt, tools/mancheck.py, exact path-set equality):
+  - top SHA256SUMS 1755/1755 OK (1756 files delivered, manifest excluded); evidence/SHA256SUMS 1742/1742 OK.
+  - git am of the 4 patches at 7b307d62 with committer name/email/date from patches/COMMITS.tsv (logs/git-am-integrity.log): all four
+    worker hashes reproduce (94e7c1eb, 200b6b50, eff869dc, 40127c58), tree 36ce6425. This works only with the environment's commit
+    signing on (gpg.format ssh, deterministic Ed25519; the exchange commits carry an SSH signature too). With commit.gpgsign=false the
+    tree is identical and the ids differ (logs/git-am-integrity-unsigned.log). Neither COMMITS.tsv nor REPORT/amcheck records the
+    signing (finding F-03; same as prf-mac F-05).
+  - The 6 changed paths (M Asymptotic/Defs, FromPRF/Hybrid, FromPRF/ReductionMachine, FromPRF.lean, Encryption/PrivateKey.lean;
+    A FromPRF/MultiMsgOut) are byte-identical to src/, which holds exactly these 6 files (logs/src-equality.txt).
+scope: the 6 files are the brief's owned files plus the permitted new module and the allowed facade line pair (PrivateKey.lean: one
+  import, one ## Contents bullet, nothing else). HybridLemmas.lean and Pseudorandom/Functions.lean unchanged. No other path changed.
+landing: branch land/pass-shelat-prf-long (local, no upstream), worktree $SP/wt-land-prf-long (sparse, briefs/ excluded;
+  .lake/packages symlinked to /home/user/tcslib/.lake/packages).
+  - r1: rebased onto origin 8f8c6121 (landing/rebase.log; delta since 7b307d62 = #311, #312 and records,
+    landing/origin-commits-since-issue-base.txt); LE-doc and LE-ws committed on top (head 1b5b802b); all building and probing at 1b5b802b.
+  - r2: the origin moved during the review (records only; Lean, scripts, audits identical 8f8c6121..dd98360d). Rebased onto
+    dd98360d4886ac68fab34899b8bd0d12ae9a0aef (landing/rebase-r2.log): Lean diff old/new head empty, range-diff 6/6 identical.
+  - head fbd37f447596d4207c8d08b7ef7602f57fe95198, tree c0609c53b694d1899f8e2b8b6b0f7fd9357dc4cf; commits landing/commits.txt,
+    series landing/series/0001-0006; authors and committer Claude <noreply@anthropic.com>. 6 files, +908/-279 vs origin.
+LE-doc (ea50e92c): docstring-only, 3 docstrings in FromPRF/ReductionMachine.lean (tools/le_edit.py doc; landing/le-doc.diff):
+  postOffsetOut and postQueryOut get their defining formula, polyTimeComputable_postFunOut gets `PolyTimeComputable (postFunOut ℓ)`.
+  landing/le-check.txt: tools/doconly.py code-identical True, docstrings 82 -> 82, 3 changed (its RESULT FAIL is its width test only:
+  the file's 4 base wide lines, kept verbatim); tools/newwide.py: 0 new wide lines.
+LE-ws (fbd37f44): restores the blank line between the re-derived prfEncReal_apply and otpEnc's docstring (Hybrid.lean; the base has
+  one). git diff --ignore-blank-lines is empty (landing/le-ws.diff, le-check.txt). No LE-width needed. No reuse edit (none warranted).
+build (head 1b5b802b, Lean sources = fbd37f44): build/ with order/build-queue.txt (imports-first, tools/downorder.py at head vs eff2dcd0).
+  - order/down.txt: the downstream closure, through root TCSlib and audits/{pass-shelat,garg-ch1-3}/Checks, of the 61 modules changed
+    between eff2dcd0 and the head (55 base delta: #303, #306-#309, #311, #312, order/basedelta/; 6 unit, order/unit-vs-origin/ with
+    86 downstream modules). 121 modules.
+  - build/summary.txt (tools/buildsum.py): 121/121 rc 0, errors 0 in the G26-N1 form ^\S+\.lean:\d+:\d+: error[:(]; the substring
+    "error" occurs 0 times; 661 s. Sorry warnings only in admitted base/base-delta modules (SeedMajority 2, SpecialEncryptionSecurity 3,
+    SpecialEncryptionMulti 1, GarblingSecurity 1, Yao 3, MAC/FromPRF 1, Learning 1). Linter warnings: the 5 unit modules 0, except
+    FromPRF.lean 1 (the base's unused simp argument prfDecFun, line 132, untouched proof); DDH 3, Lamport 7, Rejection 10, Extraction 2
+    as in earlier reviews.
+  - Before the build the 76 base oleans it overwrites were copied aside (tree/backed-up.txt with hashes) and the 45 new ones listed
+    (tree/new-oleans.txt). The olean tree itself was not copied.
+  - tree/tree-check-head.txt (tools/treecheck.py, order/order.txt = 1244 modules, records logs/records-head.jsonl = learning-r1
+    tree/base-records.jsonl (copied as tree/base-records.jsonl) + build): every module rc 0 at the head source and the tree's olean,
+    no stray olean, no empty dir: RESULT OK (head probe oleans deleted first, logs/probe-oleans-deleted-head.txt).
+olean tree: $SP/dl-oleans. tree/snapshot-pre.txt (tools/snapshot.py): 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the required value (= learning-r1 tree/snapshot-pre.txt).
+statements (base 7b307d62; the 8 scope files are byte-identical at eff2dcd0 and 7b307d62):
+  - statements/frozen/frozen-check.txt (tools/frozencheck.py, written for this review): every base declaration of the 8 scope files
+    present, same kind and full name, same relative order; header bytes (attributes, modifiers and `omit … in` lines included) and
+    statement prose (doc comment before **Proof sketch) identical; every def/abbrev/structure/inductive/class/instance identical in full.
+    0 differences (Defs 36->38, Hybrid 16->31, ReductionMachine 44->82, HybridLemmas 7->7, FromPRF 23->24, facades 0->0).
+    Controls, each exactly 1 difference: control-header.txt (prfScheme_multiMessageSecure header), control-body.txt (postFun body),
+    control-prose.txt (distAdv_prfEncReal_le prose), control-omit.txt (eval_multiMsgAdv header), control-omitline.txt (its omit line).
+    statements/frozen/topcmds.txt: no base set_option/open/variable/namespace/import line removed; added: `variable {l : ℕ}` and imports.
+  - statements/touched.tsv: 22 CHANGED (all theorems: proofs and sketches only), 104 UNCHANGED, 56 ADDED + 5 in the new file.
+    statements/decls2.tsv: 61 ADDED, 0 CHANGED, 0 REMOVED. No new private declaration, no @[simp].
+  - statements/draft-vs-delivered.txt (tools/draftcmp.py): all 23 drafted D1-D4 declarations are delivered with the drafted names and
+    signatures (bare `m D` binders of the brief = the delivered typed binders; eval_multiMsgAdvOut checked by hand).
+  - docaudit (statements/docaudit.tsv, LE head): 64 OK, 2 LABEL (histBlockLenOut_eq, encodeTupleOut_eq: both state the equation),
+    17 NO-FORMULA = 15 frozen base prose of re-derived theorems + multiMsgAdvOut_boundedBy and polyTimeComputable_postFunOut, which state
+    their Prop formula (the tool only accepts relation symbols). Pre-LE: statements/pre-le/ (19 NO-FORMULA).
+  - sketchaudit: 10 theorems with >= 15 proof lines, 0 without a sketch. logs/sizes-widths.txt and logs/new-wide-lines.txt: max 892
+    lines (ReductionMachine), 0 new lines over 100 characters (the 18 wide lines are base lines kept verbatim).
+axioms: probe-sources/head/CensusHead.lean (tools/mkcensus_prflong.py; endpoints = D1-D4 main results, the re-derived n-bit results,
+  the five downstream consumers) -> probe-runs/. All 15 endpoints [propext, Classical.choice, Quot.sound]. All 321 stored constants of
+  the 5 unit modules use subsets of these (logs/census-summary.txt); no sorryAx; no new simp lemma, instance, reducible or abbrev
+  (the 2 added abbrev-flagged constants are generated matchers).
+  Base (probe-sources/base/CensusBase.lean on the restored tree, base-probe-runs/): logs/census-base-vs-head.tsv (tools/censuscmp.py):
+  250 -> 321; removed 15, all auto-generated (named 0); added 86 (61 named); type-changed 0; attr-changed 0; axioms-changed 0.
+  Base endpoint axioms equal the head's except ccaScheme_cca2, which has sorryAx on the restored tree because its file is at eff2dcd0
+  there (proved by #306 before the issue base); its issue-base value is the worker's axioms-base.log (standard three).
+admissions: logs/sorry-census.txt (tools/sorrycensus.py, records-head.jsonl): issued 40 in 19 modules, head 40, every issued module
+  equal. Outside the issued order only SeedMajority (#312, 2) and SpecialEncryptionMulti (#311, 1) changed since the issue base (base
+  delta); all others are unchanged sources. The REPORT's "census unchanged" holds.
+Rule 10 (head 1b5b802b; probes in PlProbe/ of the worktree):
+  - Collector probe-sources/head/CollectHead.lean (tools/mkcollect.py) -> probe-runs/. Seals tools/mkseals_ab.py (strict) -> seals/{A,B},
+    tools/mkseals_coe.py (FinDist CoeFun instance as notation, canonical) -> seals-coe/{A,B}; logs/mkseals-*.log. Strict-A requests:
+    Defs 652, Hybrid 617, ReductionMachine 1577, MultiMsgOut 1640, FromPRF 1772, PrivateKey 2435 = the worker's counts.
+  - 24 head probes seal-runs/ (logs/seal-head-*.tsv, tools/sealsum.py): A pass 6/6 strict and coe; B pass 2/6. Base: CollectBase ->
+    base-seals{,-coe}/{A,B}, 20 probes base-seal-runs/ on the restored tree (the closure outside the owned files is at eff2dcd0 there,
+    hence 2290 instead of 2435 requests for the facade): A pass 5/5, B pass 3/5.
+  - logs/seal-table.txt (tools/sealtable.py): strict = coe in every row. New B failures: Defs prfAdv_toOracleAdversary_out and
+    OracleEnsemble.Indist.negligible_prfAdv (beside the base PRF, prfAdv_toOracleAdversary, PRF.negligible_prfAdv), ReductionMachine
+    postFun_layout and exists_queryChain_nuppt, MultiMsgOut the total, FromPRF prfScheme_multiMessageSecure (beside the base three).
+    logs/seal-B-attribution.txt: every B error is a PolyExpr.eval defeq (`Fin n` vs `Fin (PolyExpr.var.eval n)`, `?ℓ.eval n =?= n`) or
+    its unknown-identifier cascade, i.e. Q1 notation; none is a foreign definition. Canonical (A, coe) passes everywhere.
+  - Paired controls: tools/mkctl_prflong.py (rows PolyExpr.eval, encodeHist, prfEncRealOut, otpEncOut, MultiMsg.histBlockOut,
+    histBlockLenOut, maskOfOut, postFunOut, encodeTupleOut) on the coe records -> controls/ and on the strict records ->
+    controls-strict/, runs control-runs/ (28 probes; 14 per variant, 36 sealed negatives each). logs/ctlcheck.log and
+    ctlcheck-strict.log: ALL_OK True (each sealed negative fails exactly once, readers pass, unsealed rc 0).
+    superseded/controls-attempt1/: first attempt spelled pairEncode Complexity.pairEncode (it is Turing.pairEncode); its two rows failed
+    unsealed (DISPOSITION.txt). Fixed generator rerun as above.
+  - Explicit-unfold scan (tools/scan1.py, scan2.py; probe-sources/head/ScanKindsHead.lean): scan/items-head.json,
+    scan/explicit-head.json, logs/scan2-head.log: 570 items, 412 THEOREM, 60 OWNED_DEFINITION, 98 LOCAL_OR_UNRESOLVED, 0 foreign.
+    logs/scan-owned-and-local.txt: every owned item is a definition of the same file; the unresolved heads are local hypotheses.
+lint (scripts/campaign_style_lint.py TCSlib/Cryptography --check8b, #305 version): lint/lint-records-tip-7bd85992.txt was run in the
+  records checkout (local tip 7bd85992; TCSlib/scripts/audits identical to 8f8c6121 and dd98360d), lint/lint-landing-head-1b5b802b.txt
+  in the worktree. Both 92 FAIL / 101 WARN. lint/linediff.txt: no new FAIL or WARN line; two check-8 WARN lines changed, both shortened
+  by bridges (Hybrid: chainTree, otpEnc -> chainTree; ReductionMachine: 16 -> 10 defs), as the REPORT discloses.
+  Old (pre-#305) lint for continuity (tools/campaign_style_lint_old_rooted.py): 235/101 -> 236/101; the +1 is the facade class
+  "Encryption.lean does not import child module FromPRF.MultiMsgOut" (lint/oldlint-*.txt), the class #305 fixed: recorded, not a finding.
+content: every changed hunk and the new module were read; the n-bit results are literal cases (l = n, ℓ = var, ℓ₂ = var) through rfl
+  bridges of same-file frozen definitions or same-file defeq bridges (postCount/postOffset/postQuery/postFun at 6n+6 = 4n+2n+6).
+  Probes (probe-sources/consumer/, run in probe-runs/, all rc 0, no diagnostics): the worker's B1Probe and EdgeCases re-run here, and
+  ConsumerB1.lean (reviewer-written) applying D1/D3/D4 inside the merged SecureComputation/SpecialEncryptionMulti.lean namespace at
+  `hG : PRFOut ℓ G`, with the slice sampler's seed type equal to prfEncRealOut's.
+duplication: logs/duplication-review.txt (independent searches at the landing head). Findings F-01, F-02, F-06 in the final report.
+overlap with #314: logs/pr314-overlap.txt: merge-tree of the landing head with 5757bc06 is clean (991e4da4 for fbd37f44); prf-long
+  touches neither #314 file; Functions/Defs is upstream of every prf-long file and ETT/Reduction downstream of Asymptotic/Defs; no name
+  clash (logs/newname-clash-grep-mergetree.txt). The merge tree was not built here.
+restore (restore/restore-log.txt, tools/restore.sh): 76 backups copied back (hashes checked, 0 failures), 45 new oleans and all PlProbe/
+  head-probe oleans deleted, the 5 empty directories removed (restore/empty-dirs-before-prune.txt); snapshot equal. Base probes then ran
+  on the restored tree and their 18 oleans were deleted (restore/probe-oleans-deleted-base.txt). tree/snapshot-post.txt: 1230 files,
+  SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, byte-identical to tree/snapshot-pre.txt;
+  tree/tree-check-post.txt: 1199 base modules at the eff2dcd0 source and record hashes, RESULT OK.
+tools/: copied from the prf-mac-r1 zip (= review-tools-template + its changes) and learning-r1 (sizewidth, lewidth, ledoc_edit,
+  campaign_style_lint_old_rooted, mkctl_learning, mkcensus_learning). New here: frozencheck.py (+ frozencheck_lib.py, its scanner),
+  draftcmp.py, newwide.py, topcmds.py, le_edit.py, buildsum.py, restore.sh, mkcensus_prflong.py (endpoints above, extra import file),
+  mkctl_prflong.py (rows above). runner.py unchanged from prf-mac-r1 (G26-N1 fix).
+cleanup: the payload extraction, the reference zip extracts, the unsigned-am worktree (git worktree remove --force) and the olean
+  backups were removed. PlProbe/ removed from the landing worktree, which is clean at fbd37f44. No base worktree was kept.
+SHA256SUMS: every file here except itself (paths without "./"). ../prf-long-r1-evidence.zip holds exactly the manifest's paths plus
+  SHA256SUMS.

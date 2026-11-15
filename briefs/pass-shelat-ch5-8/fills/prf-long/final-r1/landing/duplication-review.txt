@@ -1,0 +1,66 @@
+prf-long review: independent duplication searches at the landing head 1b5b802bf5f86ecc9a723d4308c4826c1a229e27 (git grep over TCSlib/; Mathlib names checked in the build's .lake/packages sources).
+
+=== git grep -nE 'encodeList_eq_flatMap' (declarations only)
+TCSlib/Complexity/CircuitComplexity/UniformTableauEmitter.lean:256:theorem encodeList_eq_flatMap {α : Type} (f : α → List Bool) (l : List α) :
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:60:theorem encodeList_eq_flatMap (l : List (List Bool)) :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:251:private theorem encodeList_eq_flatMap : ∀ l : List (List Bool),
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:65:theorem MultiMsg.encodeList_eq_flatMap : ∀ l : List (List Bool),
+
+=== git grep -nE 'encodeHist_eq|histEnc_eq|histEnc_append_single|length_histEnc' (declarations only)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:73:theorem encodeHist_eq_flatMapOut {ℓ₁ ℓ₂ : ℕ} : ∀ h : List ((Fin ℓ₁ → Bool) ×
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:97:theorem encodeHist_eq_flatMap {n : ℕ} : ∀ h : List ((Fin n → Bool) × (Fin n → Bool)),
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM.lean:133:theorem encodeHist_eq_histEnc {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ →
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:144:theorem histEnc_eq {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → 
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:156:theorem histEnc_append_single {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin 
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:166:theorem length_histEnc {ℓ : ℕ} (h : List ((Fin ℓ → Bool) × (Fin ℓ → Bool))) :
+
+=== git grep -nE 'theorem .*negligible_prfAdv|Negligible fun n => prfAdv' (declarations only)
+
+=== git grep -nE 'prfAdv_toOracleAdversary' (declarations only)
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:437:theorem prfAdv_toOracleAdversary_out {ℓ₂ : PolyExpr}
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:465:theorem prfAdv_toOracleAdversary (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM.lean:284:private theorem prfAdv_toOracleAdversary_zero
+
+=== git grep -nE 'exists_queryChain|oneQuery|exists_toOracleAdversary_of_bitCodec|exists_interactiveHandlerMachine' (declarations only)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:715:theorem exists_queryChainOut_nuppt (D : NUPPT) (q ℓ : PolyExpr)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:839:theorem exists_oneQuery_nuppt (D : NUPPT) (ℓ : PolyExpr) :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:881:theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
+TCSlib/Cryptography/Games/Efficiency.lean:844:theorem exists_interactiveHandlerMachine (A : NUPPT) (q : PolyExpr)
+TCSlib/Cryptography/Games/Efficiency.lean:960:theorem exists_toOracleAdversary_of_bitCodec (B : NUPPT) (ℓ₁ ℓ₂ : PolyExpr) :
+
+=== git grep -nE 'eval_toOracleAdversary_len|eval_toOracleAdversary_width' (declarations only)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Machines.lean:348:theorem eval_toOracleAdversary_len (D : NUPPT) (n K : ℕ) (c : D.Coins n) {ℓ ℓ' : ℕ}
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean:228:theorem eval_toOracleAdversary_width (D : NUPPT) (n q : ℕ) (c : D.Coins n) {m : ℕ} (hm : m 
+
+=== git grep -nE 'take_drop_ofFn_blocks' (declarations only)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:427:theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:311:theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+
+=== git grep -nE 'zipWith_xor_xor_self|zipWith_xor_ofFn_add' (declarations only)
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:131:theorem zipWith_xor_ofFn_add {m : ℕ} (a b : Fin m → Bool) :
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:338:private theorem zipWith_xor_xor_self' : ∀ (m p : List Bool), m.length ≤ p.length →
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:174:private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:147:private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:101:private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+
+=== git grep -nE 'pushesUniform_restrict|pushesUniform_comp_injective' (declarations only)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:328:theorem pushesUniform_comp_injective {I O : Type*} [Fintype I] [DecidableEq I] [Fintype O]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:220:theorem pushesUniform_restrict {I J O : Type*} [Fintype I] [DecidableEq I] [Fintype J]
+
+=== git grep -nE 'uprob_not_injective_le|negligible_choose_div_two_pow|abs_uexp_sub_le_uprob|prfAdv_congr_equiv' (declarations only)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:291:theorem uprob_not_injective_le :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:61:theorem abs_uexp_sub_le_uprob {Ω : Type*} [Fintype Ω] (a b : Ω → ℝ) (E : Ω → Prop)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:129:theorem negligible_choose_div_two_pow (q : PolyExpr) :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:172:theorem prfAdv_congr_equiv {K : Type*} {I O : Type} {ρ ρ' : Type*} [Fintype K] [Fintype I] [Deci
+
+=== git grep -nE 'prfAdv_eq_expect' (declarations only)
+TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:347:theorem prfAdv_eq_expect {m : ℕ} (Fm : (Fin m → Bool) → (Fin m → Bool) → (Fin m → 
+
+=== git grep -nE 'chunkMap\b|polyTimeComputable_blockMap\b' (declarations only)
+TCSlib/Complexity/Randomized/Repetition.lean:490:theorem polyTimeComputable_blockMap (b : PolyExpr) {g : List Bool → List Bool}
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:78:def chunkMap (c : PolyExpr) (f : List Bool → List Bool → List Bool) (x : List Bool
+TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean:109:theorem polyTimeComputable_chunkMap (c : PolyExpr) {f : List Bool → List Bool → L
+
+=== git grep -nE 'theorem .*Out(_|\b)' (declarations only)
+
+=== Mathlib: encodeList/encodeHist are TCSlib definitions; no Mathlib statement mentions them (not searched further).
