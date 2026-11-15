@@ -1,0 +1,264 @@
+diff --git a/TCSlib/Complexity/TuringMachine/CodeFormat.lean b/TCSlib/Complexity/TuringMachine/CodeFormat.lean
+index 9af1b2401..5b652d014 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeFormat.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeFormat.lean
+@@ -580,6 +580,11 @@ lemma codeDecode_serialize_pad (M : CodeTM) (m : ℕ) :
+     codeDecode (M.serialize ++ List.replicate m true) = M :=
+   oneTapeFormat.decode_serialize_pad M m
+ 
++/-- The one-tape format's canonical serialization is that of the decoded machine:
++`oneTapeFormat.serialize (oneTapeFormat.decode xs) = (codeDecode xs).serialize`. -/
++theorem oneTapeFormat_serialize_decode (xs : List Bool) :
++    oneTapeFormat.serialize (oneTapeFormat.decode xs) = (codeDecode xs).serialize := rfl
++
+ /-- The erased parser: accept exactly the strings the parser accepts, returning only the unconsumed all-true suffix. -/
+ def codeScan (xs : List Bool) : Option (List Bool) :=
+   oneTapeFormat.scan xs
+diff --git a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+index f71f40023..f7492822e 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -187,6 +187,13 @@ def oneTapeMachineFormat : MachineFormat :=
+     serialize_eq := oneTape_serialize_eq
+     skipTable_eq := oneTape_skipTable_eq }
+ 
++/-- The machine format's canonical serialization is the one-tape format's:
++`oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α) =
++oneTapeFormat.serialize (oneTapeFormat.decode α)`. -/
++theorem oneTapeMachineFormat_serialize_decode (α : List Bool) :
++    oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α) =
++      oneTapeFormat.serialize (oneTapeFormat.decode α) := rfl
++
+ namespace MachineFormat
+ 
+ variable (F : MachineFormat)
+diff --git a/TCSlib/Cryptography/Asymptotic/Universal.lean b/TCSlib/Cryptography/Asymptotic/Universal.lean
+index 416f8cab3..b87bc08bc 100644
+--- a/TCSlib/Cryptography/Asymptotic/Universal.lean
++++ b/TCSlib/Cryptography/Asymptotic/Universal.lean
+@@ -10,6 +10,7 @@ import TCSlib.Cryptography.Asymptotic.CollectionsLemmas
+ import TCSlib.Cryptography.Asymptotic.UniversalLemmas
+ import TCSlib.Cryptography.Asymptotic.UniversalPadding
+ import TCSlib.Cryptography.OneWayFunctions.OutputLength
++import TCSlib.Cryptography.Asymptotic.Universal.Canonizer
+ import Mathlib.Data.Nat.Log
+ 
+ set_option maxHeartbeats 0
+@@ -44,8 +45,9 @@ length (`CanonizerExp c`), so that the coefficient is polynomial in `n` for code
+ so the headlines `fUniversal_easy`, `fUniversal_hard`, `fUniversal_weakOneWay` and
+ `theorem_63_1` are **conditional** on this hypothesis — ratified by the run-3 audit (P3-4) as
+ an explicit hypothesis in the manner of the arithmetic bundle `Candidates.ArithmeticFP`
+-(plan D11); the open problem of exhibiting a scheme with such a canonizer is the sorried
+-`exists_canonizerExp`.
++(plan D11). Some scheme satisfies the hypothesis (`exists_canonizerExp`, proved from the
++machine library's polynomial canonizer `Turing.MachineFormat.exists_polyCanonizer`), so the
++conditional headlines apply to it.
+ 
+ **Deviation (typed domains, D5):** `fUniversal c` is `FunFamily.ofString` of the string
+ function with the output-length polynomial `univOutLen` (outputs padded with `false`, never
+@@ -69,8 +71,8 @@ computable by a coded machine on the bare input (`FunFamily.QuadraticCode`).
+   `clockedAnswer` (repackaging of `Turing.timed_universal_concrete`); the serialization-length
+   facts it needs live in `TCSlib.Cryptography.Asymptotic.UniversalLemmas`;
+   `TCSlib.Cryptography.exists_univCoeff_le` — its coefficient is polynomial on codes of
+-  length `⌊log₂ n⌋` under `CanonizerExp`; `TCSlib.Cryptography.exists_canonizerExp` — the
+-  open problem that some scheme satisfies `CanonizerExp` (sorried, run-3 audit P3-4).
++  length `⌊log₂ n⌋` under `CanonizerExp`; `TCSlib.Cryptography.exists_canonizerExp` — some
++  scheme satisfies `CanonizerExp` (proved, run-3 audit P3-4 closed).
+ * `TCSlib.Cryptography.fUniversal_easy` — `f_universal` is polynomial-time computable
+   [PS10, Algorithm 64.2, "computable in time `O(|y|³)`"] (proved; the evaluator is assembled
+   from `polyTimeComputable_univCode`, `polyTimeComputable_univArg`,
+@@ -88,6 +90,12 @@ computable by a coded machine on the bare input (`FunFamily.QuadraticCode`).
+   `fUniversal_weakOneWay` are proved from the hypothesis of `lemma_64_3`; `theorem_63_1`
+   uses the quadratic-time strong one-way family supplied by `lemma_64_3`).
+ 
++## Contents
++
++The proof of `exists_canonizerExp` uses the helper module
++`TCSlib.Cryptography.Asymptotic.Universal.Canonizer` (`exists_codeCanonizer`,
++`exists_effectiveMachineCode_canonizerTime_le`).
++
+ ## References
+ 
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+@@ -189,7 +197,8 @@ def univArg (y : List Bool) : List Bool := y.drop (Nat.log 2 y.length)
+   simp [univCode, Nat.log_le_self]
+ 
+ /-- The argument field has `|y| - ⌊log₂ |y|⌋` bits. -/
+-@[simp] theorem length_univArg (y : List Bool) : (univArg y).length = y.length - Nat.log 2 y.length := by
++@[simp] theorem length_univArg (y : List Bool) :
++    (univArg y).length = y.length - Nat.log 2 y.length := by
+   simp [univArg]
+ 
+ /-- The code field of `α ++ x` is `α` when `|α| = ⌊log₂ (|α| + |x|)⌋`. -/
+@@ -282,25 +291,21 @@ through this hypothesis (no bound is known for `Turing.exists_effectiveMachineCo
+ def CanonizerExp (c : EffectiveMachineCode) : Prop :=
+   ∃ A B : ℕ, ∀ k, c.canonizerTime k ≤ A * 2 ^ (B * k)
+ 
+-/-- **Open problem (run-3 audit P3-4): some effective encoding scheme has a canonizer at most
+-exponential in the code length.** The standard encodings have polynomial canonizers (parse and
+-re-serialize), so the hypothesis `CanonizerExp c` of `theorem_63_1` is mathematically harmless
+-and is accepted as an explicit hypothesis (plan D11, like `Candidates.ArithmeticFP`); but the
+-only scheme in the library, `Turing.exists_effectiveMachineCode`, carries a `canonizerTime`
+-defined as a finite maximum of halting times with no bound, so no instance is available and the
+-headlines of this file are conditional. This statement records the gap.
+-
+-**Proof sketch.** Build a scheme in the `Build/` style: keep the serialization
+-`Turing.CodeTM.serialize` and the parser `Turing.codeDecode` of
+-`TCSlib.Complexity.TuringMachine.MathlibBridge`, and implement the canonizer as an explicit
+-finite machine performing the parse of the `9 · (numStates + 1)` fixed-format records (with the
+-up-front minimum-length guard) followed by re-serialization — the superseded composition route
+-described in `MathlibBridge` — through the combinators of
+-`TCSlib.Complexity.TuringMachine.Composition` and the primitives of
+-`TCSlib.Complexity.TuringMachine.Build`; its running time is polynomial in the code length,
+-in particular `≤ A · 2^{B k}`. -/
++/-- **Some effective encoding scheme has a canonizer at most exponential in the code length**
++[PS10, §2.13] (run-3 audit P3-4, formerly an open problem): `∃ c, CanonizerExp c`, i.e. some
++`c : EffectiveMachineCode` and `A, B` with `c.canonizerTime k ≤ A · 2^{B k}` for every `k`. So the
++hypothesis `CanonizerExp c` of `theorem_63_1` is satisfiable; the headlines of this file stay
++stated for an arbitrary scheme satisfying it (plan D11).
++
++**Proof sketch.** The scheme is the machine library's one-tape code: serialization
++`Turing.CodeTM.serialize`, parser `Turing.codeDecode`, and the canonizer of
++`Turing.MachineFormat.exists_polyCanonizer` at `Turing.oneTapeMachineFormat`, which runs in time
++`d · (n + 1)^d` on every input, malformed codes included
++(`exists_effectiveMachineCode_canonizerTime_le`, in `Universal/Canonizer`). Since `k + 1 ≤ 2^k`,
++`d · (k + 1)^d ≤ d · 2^{d k}`, so `A = B = d`. -/
+ theorem exists_canonizerExp : ∃ c : EffectiveMachineCode, CanonizerExp c := by
+-  sorry
++  obtain ⟨c, d, h⟩ := exists_effectiveMachineCode_canonizerTime_le
++  exact ⟨c, d, d, h⟩
+ 
+ /-- **The coefficient is polynomial on codes of logarithmic length.** If `c` has an
+ exponential canonizer, there is a syntactic polynomial `p` with
+@@ -654,7 +659,8 @@ private theorem exists_preimage_of_fUniversal_eq (c : EffectiveMachineCode) {L :
+     (hc₀ : c₀ ≤ n + 1) (x : Fin (n - Nat.log 2 n) → Bool)
+     (y y' : Fin ((fUniversal c).inLen.eval n) → Bool)
+     (hy : List.ofFn y = code ++ List.ofFn x) (h : (fUniversal c).f n y' = (fUniversal c).f n y) :
+-    ∃ x' : Fin (n - Nat.log 2 n) → Bool, List.ofFn x' = univArg (List.ofFn y') ∧ g _ x' = g _ x := by
++    ∃ x' : Fin (n - Nat.log 2 n) → Bool,
++      List.ofFn x' = univArg (List.ofFn y') ∧ g _ x' = g _ x := by
+   have hkn : Nat.log 2 n ≤ n := Nat.log_le_self 2 n
+   obtain ⟨x', hx'⟩ := exists_ofFn_eq_of_length (m := n - Nat.log 2 n)
+     (w := univArg (List.ofFn y')) (by simp [fUniversal_inLen_eval])
+@@ -717,7 +723,8 @@ private theorem invProbAt_reduction_ge (c : EffectiveMachineCode) {L : PolyExpr}
+     exact (List.ofFn_congr hcast (Fin.append z.1 z.2)).symm
+   obtain ⟨cf, hcf⟩ := exists_ofFn_eq_of_length (m := Nat.log 2 n) hcode
+   let Invert : (Fin (Nat.log 2 n) → Bool) × ((Fin (n - Nat.log 2 n) → Bool) × A.Coins n) → Prop :=
+-    fun w => ∃ y', A.runAt n (List.ofFn ((fUniversal c).f n (e (w.1, w.2.1)))) w.2.2 = List.ofFn y' ∧
++    fun w => ∃ y',
++      A.runAt n (List.ofFn ((fUniversal c).f n (e (w.1, w.2.1)))) w.2.2 = List.ofFn y' ∧
+       (fUniversal c).f n y' = (fUniversal c).f n (e (w.1, w.2.1))
+   have hInv : uprob Invert = (fUniversal c).invProbAt A n := by
+     rw [FunFamily.invProbAt_eq_uprob]
+@@ -752,7 +759,8 @@ private theorem invProbAt_reduction_ge (c : EffectiveMachineCode) {L : PolyExpr}
+     g _ x' = g _ w.1.1
+   have hBrun : B.runAt (n - Nat.log 2 n) (List.ofFn (g _ w.1.1)) (e₂ w).2 =
+       univArg (List.ofFn y') := by
+-    rw [NUPPT.runAt_eq, hB, hcoins, List.take_left' (List.length_ofFn (f := w.1.2)), ← NUPPT.runAt_eq,
++    rw [NUPPT.runAt_eq, hB, hcoins, List.take_left' (List.length_ofFn (f := w.1.2)),
++      ← NUPPT.runAt_eq,
+       padStr_eq_ofFn_fUniversal_f c g Mg c₀ hMg hcode hdec hc₀ w.1.1 (e (cf, w.1.1)) hy, hy']
+   obtain ⟨x', hx', hgx'⟩ :=
+     exists_preimage_of_fUniversal_eq c g Mg c₀ hMg hcode hdec hc₀ w.1.1 (e (cf, w.1.1)) y' hy hfy'
+@@ -892,8 +900,10 @@ theorem fUniversal_hard (c : EffectiveMachineCode) (hc : CanonizerExp c)
+   rw [hφm] at hkey
+   rw [abs_of_nonneg (FunFamily.invProbAt_nonneg _ _ _)]
+   refine le_trans ?_ hkey
+-  have hm2 : (2 : ℝ) ≤ ((n - Nat.log 2 n : ℕ) : ℝ) := by exact_mod_cast (show 2 ≤ n - Nat.log 2 n by omega)
+-  have hn2 : (2 : ℝ) ≤ ((φ (n - Nat.log 2 n) : ℕ) : ℝ) := by exact_mod_cast (show 2 ≤ φ (n - Nat.log 2 n) by omega)
++  have hm2 : (2 : ℝ) ≤ ((n - Nat.log 2 n : ℕ) : ℝ) := by
++    exact_mod_cast (show 2 ≤ n - Nat.log 2 n by omega)
++  have hn2 : (2 : ℝ) ≤ ((φ (n - Nat.log 2 n) : ℕ) : ℝ) := by
++    exact_mod_cast (show 2 ≤ φ (n - Nat.log 2 n) by omega)
+   have h1 : 1 / ((n - Nat.log 2 n : ℕ) : ℝ) ≤ 1 / 2 := one_div_le_one_div_of_le (by norm_num) hm2
+   have h2 : 1 / ((φ (n - Nat.log 2 n) : ℕ) : ℝ) ^ 2 ≤ 1 / 2 := by
+     refine one_div_le_one_div_of_le (by norm_num) ?_
+diff --git a/TCSlib/Cryptography/Asymptotic/Universal/Canonizer.lean b/TCSlib/Cryptography/Asymptotic/Universal/Canonizer.lean
+new file mode 100644
+index 000000000..4bf78f3cb
+--- /dev/null
++++ b/TCSlib/Cryptography/Asymptotic/Universal/Canonizer.lean
+@@ -0,0 +1,83 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Complexity.TuringMachine.CodeSimulator
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# An effective machine code with a polynomial canonizer
++
++The encoding hypothesis of [PS10, §2.13, Theorem 63.1] as formalized (`CanonizerExp`) asks for an
++effective machine code whose canonizer runs in time at most exponential in the code length. The
++machine library's one-tape code format has a canonizer running in time `d · (n + 1)^d` on every
++input (`Turing.MachineFormat.exists_polyCanonizer`, at `Turing.oneTapeMachineFormat`). This file
++reads its specification as one of `α ↦ (codeDecode α).serialize`
++(`Turing.oneTapeMachineFormat_serialize_decode`, `Turing.oneTapeFormat_serialize_decode`), builds
++the effective machine code with the serialization `CodeTM.serialize`, the decoder `codeDecode`
++and that canonizer (the scheme of `Turing.exists_uniformMachineCode`, here with its time bound
++visible), and bounds the polynomial time by an exponential: `d · (k + 1)^d ≤ d · 2^{d k}`.
++
++## Main results
++
++* `TCSlib.Cryptography.exists_codeCanonizer`: a machine computing `α ↦ (codeDecode α).serialize`
++  in time `d · (n + 1)^d`.
++* `TCSlib.Cryptography.exists_effectiveMachineCode_canonizerTime_le`: an effective machine code
++  with `canonizerTime k ≤ d · 2^{d k}` for every `k`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §2.13, Theorem 63.1 (book p. 63).
++-/
++
++namespace TCSlib.Cryptography
++
++open Turing
++
++/-- **A polynomial canonizer of the one-tape codes:** there are a machine `C` and a degree `d`
++such that `C` computes `α ↦ (codeDecode α).serialize` in time `n ↦ d · (n + 1)^d`, on every input
++(malformed codes included: they decode to the fallback machine):
++`∃ C d, C.ComputesFunInTime (fun α => (codeDecode α).serialize) fun n => d * (n + 1) ^ d`.
++
++**Proof sketch.** `Turing.MachineFormat.exists_polyCanonizer` at `oneTapeMachineFormat` computes
++`α ↦ oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α)`, which is
++`(codeDecode α).serialize` by the readers `oneTapeMachineFormat_serialize_decode` and
++`oneTapeFormat_serialize_decode`. -/
++theorem exists_codeCanonizer :
++    ∃ (C : FinTM Bool) (d : ℕ),
++      C.ComputesFunInTime (fun α => (codeDecode α).serialize) fun n => d * (n + 1) ^ d := by
++  obtain ⟨C, d, hC⟩ := oneTapeMachineFormat.exists_polyCanonizer
++  have hf : (fun α => oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α)) =
++      fun α => (codeDecode α).serialize :=
++    funext fun α =>
++      (oneTapeMachineFormat_serialize_decode α).trans (oneTapeFormat_serialize_decode α)
++  exact ⟨C, d, hf ▸ hC⟩
++
++/-- **An effective machine code with an exponential canonizer** [PS10, §2.13, the encoding
++behind Theorem 63.1]: there are an effective machine code `c` and `d : ℕ` with
++`c.canonizerTime k ≤ d · 2^{d k}` for every `k`.
++
++**Proof sketch.** Take `C, d` from `exists_codeCanonizer` and the code
++`⟨CodeTM.serialize, codeDecode, codeDecode_serialize_pad⟩` with canonizer `C` and
++`canonizerTime n = d · (n + 1)^d`. Since `k + 1 ≤ 2^k` (`Nat.lt_two_pow_self`),
++`(k + 1)^d ≤ (2^k)^d = 2^{d k}` (`Nat.pow_le_pow_left`, `pow_mul`). The case `d = 0` needs no
++care (both sides are `0`), nor does `k = 0` (`1 ≤ 1`). -/
++theorem exists_effectiveMachineCode_canonizerTime_le :
++    ∃ (c : EffectiveMachineCode) (d : ℕ), ∀ k, c.canonizerTime k ≤ d * 2 ^ (d * k) := by
++  obtain ⟨C, d, hC⟩ := exists_codeCanonizer
++  refine ⟨{ toMachineCode := ⟨CodeTM.serialize, codeDecode, codeDecode_serialize_pad⟩
++            canonizer := C
++            canonizerTime := fun n => d * (n + 1) ^ d
++            canonizer_computes := hC }, d, fun k => ?_⟩
++  show d * (k + 1) ^ d ≤ d * 2 ^ (d * k)
++  have hk : k + 1 ≤ 2 ^ k := Nat.lt_two_pow_self
++  have hpow : (k + 1) ^ d ≤ 2 ^ (d * k) := by
++    rw [mul_comm, pow_mul]
++    exact Nat.pow_le_pow_left hk d
++  exact Nat.mul_le_mul_left d hpow
++
++end TCSlib.Cryptography
