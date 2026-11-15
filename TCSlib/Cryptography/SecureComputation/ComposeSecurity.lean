@@ -5,6 +5,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.SecureComputation.ComposePhases
 import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Machines
 import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Efficiency
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Probability
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Reductions
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Assembly
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Runs
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Bounds
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Sim
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Accept
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Correct
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -56,6 +64,17 @@ functions (`ComposeSecurity/Efficiency.lean`).
   data-dependent range, the interleaved-slot map, strategies as functions of the layout).
 * `ComposeSecurity/Efficiency.lean`: the composed parties as polynomial-time functions of the
   machine layout.
+* `ComposeSecurity/Probability.lean`: distinguishing-advantage tools (triangle inequality, the
+  statistical switch, unused seeds, fixing coordinates, events of one coordinate).
+* `ComposeSecurity/Reductions.lean`: machines with advice-dependent pre- and post-processing.
+* `ComposeSecurity/Assembly.lean`: a view of the composed protocol assembled from run views.
+* `ComposeSecurity/Runs.lean`: the coins of the composed protocol run by run, and the real
+  samples when every run gives the ideal answers.
+* `ComposeSecurity/Bounds.lean`: lengths of encodings, transcripts and machine outputs.
+* `ComposeSecurity/Sim.lean`: the post-processing `Φ`, the simulators and the reduction to the
+  hybrid model.
+* `ComposeSecurity/Accept.lean`: acceptance of machines with split coins; test machines.
+* `ComposeSecurity/Correct.lean`: a secure protocol is correct; the union bound over the runs.
 
 ## Main results
 
