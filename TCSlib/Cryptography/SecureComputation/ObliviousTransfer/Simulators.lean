@@ -73,7 +73,8 @@ theorem simSeg_eq (p q : PolyExpr) (z : List Bool) :
       ((NUPPT.inCoins z).drop (p.eval (NUPPT.inParam z).length)).take
         (q.eval (NUPPT.inParam z).length) := rfl
 
-/-- The simulated index (the body of `simIdx`): `fst Gen(inParam z; simSeg 0 coins_Gen z)`. -/
+/-- The simulated index (the body of `simIdx`):
+`simIndex T z = fst Gen(inParam z; simSeg 0 coins_Gen z)`. -/
 def simIndex (z : List Bool) : List Bool :=
   pairFstD (T.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
     (simSeg (.const 0) T.gen.coins z)))
@@ -85,7 +86,7 @@ theorem simIndex_eq (z : List Bool) :
       (simSeg (.const 0) T.gen.coins z))) := rfl
 
 /-- A simulated sample after `p(n)` coins (the body of `simSample`):
-`Sample(inParam z, simIndex z; simSeg p coins_Sample z)`. -/
+`simSampled T p z = Sample(inParam z, simIndex z; simSeg p coins_Sample z)`. -/
 def simSampled (p : PolyExpr) (z : List Bool) : List Bool :=
   T.sample.output (NUPPT.layout (NUPPT.inParam z) (simIndex T z) [] (simSeg p T.sample.coins z))
 
@@ -97,7 +98,8 @@ theorem simSampled_eq (p : PolyExpr) (z : List Bool) :
         (simSeg p T.sample.coins z)) := rfl
 
 /-- **`S_A`'s raw function** [PS10, Proposition 161.5] (the body of `otSimAFun`):
-`⟨⟨1^n, ⟨a₁, a₂⟩⟩, ⟨r_Gen, [⟨y₁, y₂⟩, []]⟩⟩` with two simulated samples `y₁, y₂`. -/
+`simAView T z = ⟨⟨1^n, ⟨a₁, a₂⟩⟩, ⟨r_Gen, [⟨y₁, y₂⟩, []]⟩⟩` with two simulated samples
+`y₁, y₂`. -/
 def simAView (z : List Bool) : List Bool :=
   pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
     (pairEncode (simSeg (.const 0) T.gen.coins z)
@@ -127,7 +129,8 @@ theorem simZbit_eq (z : List Bool) :
       List.zipWith xor (H (pairEncode (simIndex T z) (simSampled T T.gen.coins z)))
         (pairSndD (NUPPT.inArg z)) := rfl
 
-/-- `S_B`'s pair `(z₁, z₂)` (the body of `otSimZ`): `z_b` from `simZbit`, `z_{1−b}` one coin. -/
+/-- `S_B`'s pair `(z₁, z₂)` (the body of `otSimZ`): `z_b` from `simZbit`, `z_{1−b}` one coin,
+`simZpair T H z = ⟨c, z_b⟩` if the choice bit is set, else `⟨z_b, c⟩`. -/
 def simZpair (z : List Bool) : List Bool :=
   if (pairFstD (NUPPT.inArg z)).headD false then
     pairEncode (simSeg (.add T.gen.coins (.add T.sample.coins T.sample.coins)) (.const 1) z)
@@ -148,7 +151,7 @@ theorem simZpair_eq (z : List Bool) :
           (simSeg (.add T.gen.coins (.add T.sample.coins T.sample.coins)) (.const 1) z) := rfl
 
 /-- **`S_B`'s raw function** [PS10, Proposition 161.5] (the body of `otSimBFun`):
-`⟨⟨1^n, [b]⟩, ⟨r_B, [i, ⟨z₁, z₂⟩, []]⟩⟩`. -/
+`simBView T H z = ⟨⟨1^n, [b]⟩, ⟨r_B, [i, ⟨z₁, z₂⟩, []]⟩⟩`. -/
 def simBView (z : List Bool) : List Bool :=
   pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
     (pairEncode (simSeg T.gen.coins (.add T.sample.coins T.sample.coins) z)
@@ -208,7 +211,8 @@ theorem length_ofFn_coins (A : NUPPT) (n : ℕ) (r : A.Coins n) :
     (List.ofFn r).length = A.coins.eval n := by
   rw [List.length_ofFn, NUPPT.coinLen_eq]
 
-/-- On a tape starting with `Gen`'s coins `r`, the simulated index is `index n r`. -/
+/-- On a tape starting with `Gen`'s coins `r`, the simulated index is `index n r`:
+`simIndex T (layout 1^n y [] (ofFn r ++ B)) = T.index n r`. -/
 theorem simIndex_layout (n : ℕ) (y : List Bool) (r : T.gen.Coins n) (B : List Bool) :
     simIndex T (NUPPT.layout (List.replicate n true) y [] (List.ofFn r ++ B)) = T.index n r := by
   have h := simSeg_layout (p := .const 0) (q := T.gen.coins) (List.replicate n true) y [] B
@@ -372,11 +376,11 @@ theorem simBCoins_symm_ofFn {S : NUPPT} (hS : IsSimB T H S) (n : ℕ)
 
 /-! ### The OT inputs and outputs -/
 
-/-- Alice's OT input length is `2` (`otFunctionality_inA`). -/
+/-- Alice's OT input length is `2`, `otFunctionality.inA.eval n = 2` (`otFunctionality_inA`). -/
 theorem inA_eval (n : ℕ) : otFunctionality.inA.eval n = 2 := by
   rw [otFunctionality_inA, PolyExpr.eval_const]
 
-/-- Bob's OT input length is `1` (`otFunctionality_inB`). -/
+/-- Bob's OT input length is `1`, `otFunctionality.inB.eval n = 1` (`otFunctionality_inB`). -/
 theorem inB_eval (n : ℕ) : otFunctionality.inB.eval n = 1 := by
   rw [otFunctionality_inB, PolyExpr.eval_const]
 
@@ -384,7 +388,7 @@ theorem inB_eval (n : ℕ) : otFunctionality.inB.eval n = 1 := by
 def inA2 {n : ℕ} (a : Fin (otFunctionality.inA.eval n) → Bool) : Fin 2 → Bool :=
   fun j => a (Fin.cast (inA_eval n).symm j)
 
-/-- The defining equation of `inA2`. -/
+/-- The defining equation of `inA2`: `inA2 a j = a (Fin.cast (inA_eval n).symm j)`. -/
 theorem inA2_apply {n : ℕ} (a : Fin (otFunctionality.inA.eval n) → Bool) (j : Fin 2) :
     inA2 a j = a (Fin.cast (inA_eval n).symm j) := rfl
 
@@ -397,7 +401,7 @@ theorem ofFn_inA2 {n : ℕ} (a : Fin (otFunctionality.inA.eval n) → Bool) :
 def inB1 {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) : Fin 1 → Bool :=
   fun j => b (Fin.cast (inB_eval n).symm j)
 
-/-- The defining equation of `inB1`. -/
+/-- The defining equation of `inB1`: `inB1 b j = b (Fin.cast (inB_eval n).symm j)`. -/
 theorem inB1_apply {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) (j : Fin 1) :
     inB1 b j = b (Fin.cast (inB_eval n).symm j) := rfl
 
@@ -406,7 +410,7 @@ theorem ofFn_inB1 {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) :
     List.ofFn (inB1 b) = List.ofFn b :=
   ((List.ofFn_congr (inB_eval n) b).trans rfl).symm
 
-/-- Bob's choice string is the one-bit list `[inB1 b 0]`. -/
+/-- Bob's choice string is the one-bit list `[inB1 b 0]`: `List.ofFn b = [inB1 b 0]`. -/
 theorem ofFn_eq_inB1 {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) :
     List.ofFn b = [inB1 b 0] := by
   rw [← ofFn_inB1, List.ofFn_succ, List.ofFn_zero]

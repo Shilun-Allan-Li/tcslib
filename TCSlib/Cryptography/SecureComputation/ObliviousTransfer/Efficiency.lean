@@ -53,7 +53,8 @@ theorem headD_eq_pairFstD (hist : List (List Bool)) :
     hist.headD [] = pairFstD (Strategy.encodeMsgs hist) :=
   (Strategy.pairFstD_encodeMsgs hist).symm
 
-/-- The second projection of the empty word is empty (`length_pairSndD_le`). -/
+/-- The second projection of the empty word is empty, `pairSndD [] = []`
+(`length_pairSndD_le`). -/
 theorem pairSndD_nil' : pairSndD ([] : List Bool) = [] :=
   List.eq_nil_of_length_eq_zero (Nat.le_zero.1 (length_pairSndD_le []))
 
@@ -84,7 +85,8 @@ theorem advInput_layout (n : ℕ) (a r : List Bool) :
 
 /-! ### Alice's machine -/
 
-/-- `Gen`'s output on the raw layout `z`: `Gen(inParam z; inCoins z)` with empty argument. -/
+/-- `Gen`'s output on the raw layout `z`: `Gen(inParam z; inCoins z)` with empty argument,
+`genRaw T z = Gen.output (layout (inParam z) [] [] (inCoins z))`. -/
 def genRaw (z : List Bool) : List Bool :=
   T.gen.output (NUPPT.layout (NUPPT.inParam z) [] [] (NUPPT.inCoins z))
 
@@ -93,7 +95,7 @@ def genRaw (z : List Bool) : List Bool :=
 theorem genRaw_eq (z : List Bool) :
     genRaw T z = T.gen.output (NUPPT.layout (NUPPT.inParam z) [] [] (NUPPT.inCoins z)) := rfl
 
-/-- `genRaw` is polynomial-time. -/
+/-- `genRaw` is polynomial-time: `PolyTimeComputable (genRaw T)`. -/
 theorem polyTimeComputable_genRaw : PolyTimeComputable (genRaw T) :=
   (T.gen.polyTimeComputable_output.comp' (NUPPT.polyTimeComputable_layout
     NUPPT.polyTimeComputable_inParam (polyTimeComputable_const [])
@@ -115,7 +117,8 @@ theorem maskRaw_eq (z yj bt : List Bool) :
         (T.inv.output (NUPPT.layout (NUPPT.inParam z) (pairEncode (pairSndD (genRaw T z)) yj) []
           (List.replicate (T.inv.coins.eval (NUPPT.inParam z).length) true))))) bt := rfl
 
-/-- The raw mask is polynomial-time in `z` for polynomial-time `yj` and `bt`.
+/-- The raw mask is polynomial-time in `z` for polynomial-time `yj` and `bt`:
+`PolyTimeComputable (fun z => maskRaw T H z (Y z) (B z))` for polynomial-time `H`, `Y`, `B`.
 
 **Proof sketch.** Pair the index (first projection of `genRaw`) with the inverter's output on
 the layout of `1^n`, `⟨t, yj⟩` and the all-`true` tape (`polyTimeComputable_unaryPoly`), apply
@@ -160,7 +163,7 @@ theorem senderRaw_eq (z : List Bool) :
 
 /-- **Alice's raw function is polynomial-time** (`polyTimeComputable_ite` on the two emptiness
 tests `polyTimeComputable_isNil`, `polyTimeComputable_maskRaw`, `polyTimeComputable_headD`,
-`polyTimeComputable_tail`). -/
+`polyTimeComputable_tail`): `PolyTimeComputable (senderRaw T H)` for polynomial-time `H`. -/
 theorem polyTimeComputable_senderRaw {H : List Bool → List Bool} (hH : PolyTimeComputable H) :
     PolyTimeComputable (senderRaw T H) := by
   have hw := polyTimeComputable_pairSndD.comp' NUPPT.polyTimeComputable_inArg
@@ -177,7 +180,8 @@ theorem polyTimeComputable_senderRaw {H : List Bool → List Bool} (hH : PolyTim
       (h₁.pairEncode h₂) (polyTimeComputable_const []))
   exact h.congr fun z => (senderRaw_eq T H z).symm
 
-/-- `Gen`'s output on the layout of an activation at `1^{|x|}` is `Gen(1^{|x|}; r)`. -/
+/-- `Gen`'s output on the layout of an activation at `1^{|x|}` is `Gen(1^{|x|}; r)`:
+`genRaw T (layout 1^n a [] r) = Gen.runAtL n [] r`. -/
 theorem genRaw_layout (n : ℕ) (a r : List Bool) :
     genRaw T (NUPPT.layout (List.replicate n true) a [] r) = T.gen.runAtL n [] r := by
   rw [genRaw_eq, NUPPT.inParam_layout, NUPPT.inCoins_layout, runAtL_eq_layout T.gen_uniform]
@@ -190,16 +194,19 @@ theorem maskRaw_layout (n : ℕ) (a r yj : List Bool) (c : Bool) :
   rw [maskRaw_eq, genRaw_layout, NUPPT.inParam_layout, List.length_replicate, mask_eq,
     runAtL_eq_layout T.inv_uniform]
 
-/-- `y.getD 0 false` is the head bit. -/
+/-- `y.getD 0 false` is the head bit: `y.getD 0 false = y.headD false`. -/
 theorem getD_zero_eq (y : List Bool) : y.getD 0 false = y.headD false := by
   cases y <;> rfl
 
-/-- `y.getD 1 false` is the head bit of `y.drop 1`. -/
+/-- `y.getD 1 false` is the head bit of `y.drop 1`:
+`y.getD 1 false = (y.drop 1).headD false`. -/
 theorem getD_one_eq' (y : List Bool) : y.getD 1 false = (y.drop 1).headD false := by
   rcases y with _ | ⟨a, _ | ⟨b, t⟩⟩ <;> rfl
 
 /-- **Alice's raw function computes her next message**: on the raw input of the activation
-`⟨⟨advInput |x| ⟨⟨x, y⟩, encodeMsgs hist⟩, []⟩, r⟩` it returns `senderNext T H x y r hist`.
+`⟨⟨advInput |x| ⟨⟨x, y⟩, encodeMsgs hist⟩, []⟩, r⟩` it returns `senderNext T H x y r hist`:
+`senderRaw T H ⟨⟨advInput |x| ⟨⟨x, y⟩, encodeMsgs hist⟩, []⟩, r⟩ =
+senderNext T H x y r hist`.
 
 **Proof sketch.** Cases on the history: `[]` (the encoding is empty), `[m]` (its second
 projection is empty), and two or more messages (neither is empty); `genRaw_layout`,
@@ -235,7 +242,9 @@ theorem knownRaw_eq (z : List Bool) :
       T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (pairSndD (NUPPT.inArg z))) []
         ((NUPPT.inCoins z).take (T.sample.coins.eval (NUPPT.inParam z).length))) := rfl
 
-/-- Bob's raw element on the raw layout `z`: the sampler on the coins after the first block. -/
+/-- Bob's raw element on the raw layout `z`: the sampler on the coins after the first block,
+`rawRaw T z = Sample(inParam z, fst w; (inCoins z).drop coins_Sample(n))` with
+`w = snd (inArg z)`. -/
 def rawRaw (z : List Bool) : List Bool :=
   T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (pairSndD (NUPPT.inArg z))) []
     ((NUPPT.inCoins z).drop (T.sample.coins.eval (NUPPT.inParam z).length)))
@@ -248,7 +257,8 @@ theorem rawRaw_eq (z : List Bool) :
         ((NUPPT.inCoins z).drop (T.sample.coins.eval (NUPPT.inParam z).length))) := rfl
 
 /-- Bob's output on the raw layout `z`: `H ⟨i, w⟩ ⊕ z_b` with `z_b` the second or first
-projection of the second message, by the choice bit `b`. -/
+projection of the second message, by the choice bit `b`:
+`outRaw T H z = zipWith xor (H ⟨fst w, knownRaw T z⟩) z_b` with `w = snd (inArg z)`. -/
 def outRaw (z : List Bool) : List Bool :=
   List.zipWith xor (H (pairEncode (pairFstD (pairSndD (NUPPT.inArg z))) (knownRaw T z)))
     (if (pairSndD (pairFstD (NUPPT.inArg z))).headD false then
@@ -265,7 +275,8 @@ theorem outRaw_eq (z : List Bool) :
         else pairFstD (pairFstD (pairSndD (pairSndD (NUPPT.inArg z))))) := rfl
 
 /-- Bob's ordered pair on the raw layout `z`: `⟨w', eval ⟨i, w⟩⟩` if `b`, else
-`⟨eval ⟨i, w⟩, w'⟩`. -/
+`⟨eval ⟨i, w⟩, w'⟩`, with `w = knownRaw T z`, `w' = rawRaw T z`, `i = fst (snd (inArg z))` and
+`b = (snd (fst (inArg z))).headD false`. -/
 def pairRaw (z : List Bool) : List Bool :=
   if (pairSndD (pairFstD (NUPPT.inArg z))).headD false then
     pairEncode (rawRaw T z)
@@ -275,7 +286,8 @@ def pairRaw (z : List Bool) : List Bool :=
       (rawRaw T z)
 
 /-- The defining equation of `pairRaw`: `⟨rawRaw, eval ⟨fst w, knownRaw⟩⟩` if `b`, else
-`⟨eval ⟨fst w, knownRaw⟩, rawRaw⟩`. -/
+`⟨eval ⟨fst w, knownRaw⟩, rawRaw⟩`, i.e. `pairRaw T z = if b then ⟨rawRaw T z, eval ⟨fst w,
+knownRaw T z⟩⟩ else ⟨eval ⟨fst w, knownRaw T z⟩, rawRaw T z⟩` with `w = snd (inArg z)`. -/
 theorem pairRaw_eq (z : List Bool) :
     pairRaw T z =
       if (pairSndD (pairFstD (NUPPT.inArg z))).headD false then
@@ -304,7 +316,8 @@ theorem receiverRaw_eq (z : List Bool) :
 
 /-- **Bob's raw function is polynomial-time**: the sampler on the two coin blocks
 (`polyTimeComputable_pairTakePoly`, `polyTimeComputable_pairDropPoly`), `eval_poly`, `H`, XOR,
-pairing, and branches on the choice bit and three emptiness tests (`polyTimeComputable_ite`).
+pairing, and branches on the choice bit and three emptiness tests (`polyTimeComputable_ite`):
+`PolyTimeComputable (receiverRaw T H)` for polynomial-time `H`.
 
 **Proof sketch.** Build `knownRaw`, `rawRaw`, `outRaw`, `pairRaw` from the projections and the
 machines' output functions, then nest three `polyTimeComputable_ite`. -/
@@ -344,7 +357,9 @@ theorem polyTimeComputable_receiverRaw {H : List Bool → List Bool} (hH : PolyT
         (polyTimeComputable_const []) ho))
   exact h.congr fun z => (receiverRaw_eq T H z).symm
 
-/-- On the layout of an activation, `knownRaw` is the sampler on the first coin block. -/
+/-- On the layout of an activation, `knownRaw` is the sampler on the first coin block:
+`knownRaw T (layout 1^n ⟨u, encodeMsgs hist⟩ [] r) =
+Sample.runAtL n (hist.headD []) (r.take coins_Sample(n))`. -/
 theorem knownRaw_layout (n : ℕ) (u r : List Bool) (hist : List (List Bool)) :
     knownRaw T
         (NUPPT.layout (List.replicate n true) (pairEncode u (Strategy.encodeMsgs hist)) [] r) =
@@ -353,7 +368,9 @@ theorem knownRaw_layout (n : ℕ) (u r : List Bool) (hist : List (List Bool)) :
     pairSndD_pairEncode, ← headD_eq_pairFstD, List.length_replicate,
     runAtL_eq_layout T.sample_uniform]
 
-/-- On the layout of an activation, `rawRaw` is the sampler on the second coin block. -/
+/-- On the layout of an activation, `rawRaw` is the sampler on the second coin block:
+`rawRaw T (layout 1^n ⟨u, encodeMsgs hist⟩ [] r) =
+Sample.runAtL n (hist.headD []) (r.drop coins_Sample(n))`. -/
 theorem rawRaw_layout (n : ℕ) (u r : List Bool) (hist : List (List Bool)) :
     rawRaw T
         (NUPPT.layout (List.replicate n true) (pairEncode u (Strategy.encodeMsgs hist)) [] r) =
@@ -363,7 +380,9 @@ theorem rawRaw_layout (n : ℕ) (u r : List Bool) (hist : List (List Bool)) :
     runAtL_eq_layout T.sample_uniform]
 
 /-- **Bob's raw function computes his next message**: on the raw input of the activation
-`⟨⟨advInput |x| ⟨⟨x, z⟩, encodeMsgs hist⟩, []⟩, r⟩` it returns `receiverNext T H x z r hist`.
+`⟨⟨advInput |x| ⟨⟨x, z⟩, encodeMsgs hist⟩, []⟩, r⟩` it returns `receiverNext T H x z r hist`:
+`receiverRaw T H ⟨⟨advInput |x| ⟨⟨x, z⟩, encodeMsgs hist⟩, []⟩, r⟩ =
+receiverNext T H x z r hist`.
 
 **Proof sketch.** `knownRaw_layout`, `rawRaw_layout`, `headD_eq_pairFstD` and `getD_one_eq`
 identify `outRaw` with the last branch of `receiverNext` on every history and `pairRaw` with the
@@ -508,7 +527,7 @@ theorem exists_messages_le {π : Protocol} (hπ : IsOT T H π) :
 /-- **Protocol 160.4 runs in polynomial time** [PS10, Definition 155.1, efficiency]: for a
 protocol of its shape with a polynomial-time `H`, both parties are efficient strategies (the
 machines `ofPolyTimeUniform` of `senderRaw` and `receiverRaw`) and the honest messages are
-polynomially bounded (`exists_messages_le`). -/
+polynomially bounded (`exists_messages_le`): `IsOT T H π → otFunctionality.PolyTime π`. -/
 theorem polyTime_of_isOT {H : List Bool → List Bool} (hH : PolyTimeComputable H) {π : Protocol}
     (hπ : IsOT T H π) : otFunctionality.PolyTime π := by
   obtain ⟨hP, hV, hPc, hVc, -, -⟩ := (isOT_iff T H π).1 hπ

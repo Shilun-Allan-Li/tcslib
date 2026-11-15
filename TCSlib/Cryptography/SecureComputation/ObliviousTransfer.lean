@@ -240,7 +240,8 @@ theorem otProtocol_verifierFirst (H : List Bool → List Bool) :
 
 /-- **Protocol 160.4 has the shape `OT.IsOT`**: its next-message functions are `OT.senderNext`
 and `OT.receiverNext` (the field equations, with `otMask_eq`, `otKnown_eq` and `otRaw_eq`), Alice
-uses `Gen`'s coins and Bob two sampler blocks, and it has five messages, Alice first. -/
+uses `Gen`'s coins and Bob two sampler blocks, and it has five messages, Alice first:
+`OT.IsOT T H (otProtocol T H)`. -/
 theorem otProtocol_isOT (H : List Bool → List Bool) : OT.IsOT T H (otProtocol T H) := by
   refine (OT.isOT_iff T H _).2 ⟨?_, ?_, by rw [otProtocol_P, otSender_coins],
     by rw [otProtocol_V, otReceiver_coins], otProtocol_rounds T H, otProtocol_verifierFirst T H⟩
@@ -627,7 +628,7 @@ theorem runAt_otSimB {H : List Bool → List Bool} (hH : PolyTimeComputable H)
 
 /-- **`S_A` has the shape `OT.IsSimA`**: its coins are `coins_Gen + (coins_Sample + coins_Sample)`
 and it computes `OT.simAView` (`otSimA_coins`, `runAt_otSimA`, and the readers of `otSimAFun`,
-`coinSeg`, `simIdx`, `simSample`). -/
+`coinSeg`, `simIdx`, `simSample`): `OT.IsSimA T (otSimA T)`. -/
 theorem otSimA_isSimA : OT.IsSimA T (otSimA T) := by
   refine (OT.isSimA_iff T _).2 ⟨otSimA_coins T, fun n y r => ?_⟩
   rw [runAt_otSimA]
@@ -637,7 +638,7 @@ theorem otSimA_isSimA : OT.IsSimA T (otSimA T) := by
 /-- **`S_B` has the shape `OT.IsSimB`**: its coins are
 `coins_Gen + (coins_Sample + (coins_Sample + 1))` and it computes `OT.simBView` (`otSimB_coins`,
 `runAt_otSimB`, and the readers of `otSimBFun`, `otSimZ`, `otSimZb`, `coinSeg`, `simIdx`,
-`simSample`). -/
+`simSample`): `OT.IsSimB T H (otSimB T hH)`. -/
 theorem otSimB_isSimB {H : List Bool → List Bool} (hH : PolyTimeComputable H) :
     OT.IsSimB T H (otSimB T hH) := by
   refine (OT.isSimB_iff T H _).2 ⟨otSimB_coins T hH, fun n y r => ?_⟩

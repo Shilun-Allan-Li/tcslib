@@ -66,7 +66,8 @@ theorem bobView_eq (u : List Bool) (b a₀ a₁ : Bool) (i s w : List Bool) (β 
 
 /-- **Bob's view is polynomial-time** in its string arguments, for polynomial-time `H`
 (pairing, one XOR of bits `BinArith.polyTimeComputable_xor`, `polyTimeComputable_pairXor`, a
-branch on the fixed bit `b`). -/
+branch on the fixed bit `b`): `PolyTimeComputable (fun z =>
+bobView H (U z) b a₀ a₁ (I z) (S z) (W z) ((B z).headD false))`. -/
 theorem polyTimeComputable_bobView {H : List Bool → List Bool} (hH : PolyTimeComputable H)
     (b a₀ a₁ : Bool) {U I S W B : List Bool → List Bool} (hU : PolyTimeComputable U)
     (hI : PolyTimeComputable I) (hS : PolyTimeComputable S) (hW : PolyTimeComputable W)
@@ -110,7 +111,8 @@ theorem viewRaw_eq (b a₀ a₁ : Bool) (z : List Bool) :
         ((pairSndD (pairSndD (NUPPT.inArg z))).headD false) := rfl
 
 /-- The raw function of `D'`: `D` on the layout of `1^n`, the built view, the advice and the
-coins after the first `coins_Sample(n)`. -/
+coins after the first `coins_Sample(n)`: `viewDistRaw T H D b a₀ a₁ z = D.output (layout
+(inParam z) (viewRaw T H b a₀ a₁ z) (inAdvice z) ((inCoins z).drop coins_Sample(n)))`. -/
 def viewDistRaw (D : NUPPT) (b a₀ a₁ : Bool) (z : List Bool) : List Bool :=
   D.output (NUPPT.layout (NUPPT.inParam z) (viewRaw T H b a₀ a₁ z) (NUPPT.inAdvice z)
     ((NUPPT.inCoins z).drop (T.sample.coins.eval (NUPPT.inParam z).length)))
@@ -124,7 +126,7 @@ theorem viewDistRaw_eq (D : NUPPT) (b a₀ a₁ : Bool) (z : List Bool) :
 
 /-- **The raw function of `D'` is polynomial-time** (`polyTimeComputable_bobView`, the sampler's
 and `D`'s output functions, `polyTimeComputable_pairTakePoly`, `polyTimeComputable_pairDropPoly`,
-`PolyTimeComputable.append`).
+`PolyTimeComputable.append`): `PolyTimeComputable (viewDistRaw T H D b a₀ a₁)`.
 
 **Proof sketch.** Build the projections, the first coin block and the remaining coins, the sampled
 element on the first block, the tape `s₁ ++ s'` and the built view (`polyTimeComputable_bobView`),
@@ -150,18 +152,22 @@ theorem polyTimeComputable_viewDistRaw {H : List Bool → List Bool} (hH : PolyT
   simp only [viewDistRaw_eq, viewRaw_eq, pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- **The view-building distinguisher `D'`** for the fixed bits `(b, a₀, a₁)`: `D`'s advice and
-coins `coins_Sample + coins_D`. -/
+coins `coins_Sample + coins_D`: `viewDist T hH D b a₀ a₁ = NUPPT.ofPolyTime
+(polyTimeComputable_viewDistRaw T hH D b a₀ a₁) (.add T.sample.coins D.coins) D.adv D.advice
+D.advice_length`. -/
 noncomputable def viewDist {H : List Bool → List Bool} (hH : PolyTimeComputable H) (D : NUPPT)
     (b a₀ a₁ : Bool) : NUPPT :=
   NUPPT.ofPolyTime (polyTimeComputable_viewDistRaw T hH D b a₀ a₁) (.add T.sample.coins D.coins)
     D.adv D.advice D.advice_length
 
-/-- The coin polynomial of `D'` is `coins_Sample + coins_D`. -/
+/-- The coin polynomial of `D'` is `coins_Sample + coins_D`:
+`(viewDist T hH D b a₀ a₁).coins = .add T.sample.coins D.coins`. -/
 theorem viewDist_coins {H : List Bool → List Bool} (hH : PolyTimeComputable H) (D : NUPPT)
     (b a₀ a₁ : Bool) : (viewDist T hH D b a₀ a₁).coins = .add T.sample.coins D.coins :=
   NUPPT.coins_ofPolyTime _ _ _ _ _
 
-/-- **`D'`'s coins** as a sampler block and `D`'s coins. -/
+/-- **`D'`'s coins** as a sampler block and `D`'s coins:
+`(viewDist T hH D b a₀ a₁).Coins n ≃ T.sample.Coins n × D.Coins n` (`splitLen`). -/
 noncomputable def viewDistCoins {H : List Bool → List Bool} (hH : PolyTimeComputable H) (D : NUPPT)
     (b a₀ a₁ : Bool) (n : ℕ) : (viewDist T hH D b a₀ a₁).Coins n ≃ T.sample.Coins n × D.Coins n :=
   splitLen (by rw [NUPPT.coinLen_eq, viewDist_coins, PolyExpr.eval_add, NUPPT.coinLen_eq,

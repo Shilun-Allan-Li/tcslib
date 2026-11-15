@@ -138,7 +138,7 @@ theorem uprob_xor_shear {X : Type*} [Fintype X] (g : X → Bool) (a : Bool) (Q :
     cases a <;> rfl
 
 /-- **A finite sum of negligible functions is negligible** (`Negligible.add` by induction on the
-finite set). -/
+finite set): `(∀ i ∈ s, Negligible (f i)) → Negligible (fun n => ∑ i ∈ s, f i n)`. -/
 theorem negligible_finset_sum {ι : Type*} (s : Finset ι) {f : ι → ℕ → ℝ}
     (h : ∀ i ∈ s, Negligible (f i)) : Negligible fun n => ∑ i ∈ s, f i n := by
   classical
@@ -201,7 +201,8 @@ theorem mask_raw {h : ∀ i, T.D i → Bool}
 
 /-! ### Bob's real and ideal samplers -/
 
-/-- Alice's input string is the two-bit list `[a₀, a₁]`. -/
+/-- Alice's input string is the two-bit list `[a₀, a₁]`:
+`List.ofFn (inA2 a) = [inA2 a 0, inA2 a 1]`. -/
 theorem ofFn_inA2_eq {n : ℕ} (a : Fin (otFunctionality.inA.eval n) → Bool) :
     List.ofFn (inA2 a) = [inA2 a 0, inA2 a 1] := by
   rw [List.ofFn_succ, List.ofFn_succ, List.ofFn_zero]
@@ -333,7 +334,9 @@ theorem acceptProb_idealB {h : ∀ i, T.D i → Bool} {S : NUPPT} (hS : IsSimB T
 
 /-- **`D'`'s acceptance on `⟨i, ⟨s', [g s']⟩⟩` is `accB`**: over uniform `s'` and `D'`'s coins,
 `D'` accepts `⟨i, ⟨s', [g s']⟩⟩` with probability `accB T H D n b a₀ a₁ r g` (`viewDistCoins`,
-`distinguisherL_viewDist`, and the reordering `(s₂, (s₁, ρ)) ↦ ((s₁, s₂), ρ)`). -/
+`distinguisherL_viewDist`, and the reordering `(s₂, (s₁, ρ)) ↦ ((s₁, s₂), ρ)`):
+`acceptProb (fun x => (x, g x)) (fun yc ρ => D'.distinguisherL n ⟨i, ⟨ofFn yc.1, [yc.2]⟩⟩ ρ) =
+accB T H D n b a₀ a₁ r g` with `D' = viewDist T hH D b a₀ a₁` and `i = T.index n r`. -/
 theorem acceptProb_viewDist (hH : PolyTimeComputable H) (D : NUPPT) (n : ℕ) (b a₀ a₁ : Bool)
     (r : T.gen.Coins n) (g : T.sample.Coins n → Bool) :
     acceptProb (fun x : T.sample.Coins n => (x, g x))
@@ -357,7 +360,9 @@ theorem acceptProb_viewDist (hH : PolyTimeComputable H) (D : NUPPT) (n : ℕ) (b
 /-- **The unflipped predictor's prediction experiment** at the index of `r`: the machine
 `tdpPredictor D' false` predicts `hcBit T h n r s'` from `⟨i, s'⟩` with probability
 `1/2 + (accB … r B − accB … r ¬B) / 2` (`uprob_tdpPredictor`, `uprob_signedPredictor_false`,
-`acceptProb_viewDist`). -/
+`acceptProb_viewDist`): `uprob (fun z => P.distinguisherL n ⟨T.index n r, ofFn z.1⟩ z.2 = B z.1) =
+1 / 2 + (accB T H D n b a₀ a₁ r B - accB T H D n b a₀ a₁ r (fun s => !B s)) / 2` with
+`P = tdpPredictor (viewDist T hH D b a₀ a₁) false` and `B = hcBit T h n r`. -/
 theorem uprob_predictor_false (h : ∀ i, T.D i → Bool) (hH : PolyTimeComputable H) (D : NUPPT)
     (n : ℕ) (b a₀ a₁ : Bool) (r : T.gen.Coins n) :
     uprob (fun z : T.sample.Coins n × (tdpPredictor (viewDist T hH D b a₀ a₁) false).Coins n =>
@@ -376,7 +381,10 @@ theorem uprob_predictor_false (h : ∀ i, T.D i → Bool) (hH : PolyTimeComputab
   exact h₁.trans h₂
 
 /-- **The flipped predictor's prediction experiment**: `tdpPredictor D' true` predicts
-`hcBit T h n r s'` with probability `1/2 − (accB … r B − accB … r ¬B) / 2`. -/
+`hcBit T h n r s'` with probability `1/2 − (accB … r B − accB … r ¬B) / 2`:
+`uprob (fun z => P.distinguisherL n ⟨T.index n r, ofFn z.1⟩ z.2 = B z.1) =
+1 / 2 - (accB T H D n b a₀ a₁ r B - accB T H D n b a₀ a₁ r (fun s => !B s)) / 2` with
+`P = tdpPredictor (viewDist T hH D b a₀ a₁) true` and `B = hcBit T h n r`. -/
 theorem uprob_predictor_true (h : ∀ i, T.D i → Bool) (hH : PolyTimeComputable H) (D : NUPPT)
     (n : ℕ) (b a₀ a₁ : Bool) (r : T.gen.Coins n) :
     uprob (fun z : T.sample.Coins n × (tdpPredictor (viewDist T hH D b a₀ a₁) true).Coins n =>
@@ -399,7 +407,8 @@ theorem uprob_predictor_true (h : ∀ i, T.D i → Bool) (hH : PolyTimeComputabl
 /-- **Bob's side for fixed inputs**: if the two predictors `tdpPredictor D' false/true` for the
 bits `(b, a₀, a₁)` of the inputs predict the enhanced bit with probability at most `1/2 + ε_false`
 and `1/2 + ε_true` at `n`, then `D`'s advantage between Bob's real and ideal samplers is at most
-`|ε_false| + |ε_true|`.
+`|ε_false| + |ε_true|`:
+`distAdv (realB π n a b) (idealB S n a b) (D.distinguisherL n) ≤ |εf| + |εt|` under `hf`, `ht`.
 
 **Proof sketch.** With `U± = E_r accB … r (±B)`, the real acceptance is `U+`
 (`acceptProb_realB`) and the ideal one `(U+ + U−)/2` (`acceptProb_idealB`), so the advantage is
@@ -491,7 +500,9 @@ theorem exists_negligible_bob {h : ∀ i, T.D i → Bool} (hH : PolyTimeComputab
 Protocol 160.4 (with Bob's output `[a_b]` and Alice's `[]`) and every pair of machines of the
 shapes of `S_A` and `S_B`: for a collection of one-way trapdoor permutations with an enhanced
 hard-core predicate (`hEHC`, explicit) evaluated on encodings by `H`, each distinguisher has
-a negligible `ε` bounding both advantages for all `n` and all inputs.
+a negligible `ε` bounding both advantages for all `n` and all inputs:
+`∀ D, ∃ ε, Negligible ε ∧ ∀ n x y, distAdv (realA π n x y) (idealA SA n x y) (D.distinguisherL n)
+≤ ε n ∧ distAdv (realB π n x y) (idealB SB n x y) (D.distinguisherL n) ≤ ε n`.
 
 **Proof sketch.** `T.OneWay` gives a negligible `δ` with `SampleClose δ`. Alice's side is at
 most `2δ(n)` (`distAdv_realA_idealA_le`), Bob's at most a negligible `ε_B(n) ≥ 0`

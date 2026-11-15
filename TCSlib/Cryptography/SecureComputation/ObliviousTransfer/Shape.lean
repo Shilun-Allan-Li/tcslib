@@ -69,7 +69,10 @@ def senderNext (x y r : List Bool) (hist : List (List Bool)) : List Bool :=
         (pairSndD (T.gen.runAtL x.length [] r)) (pairSndD (hist.headD [])) (y.getD 1 false))
   else []
 
-/-- The defining equation of `senderNext`: `[]` ↦ `i`, `[m]` ↦ the two masks, else `[]`. -/
+/-- The defining equation of `senderNext`: `[]` ↦ `i`, `[m]` ↦ the two masks, else `[]`, i.e.
+`senderNext T H x y r hist = if |hist| = 0 then i else if |hist| = 1 then
+⟨mask (fst m) y₀, mask (snd m) y₁⟩ else []` with `i = fst Gen(1^{|x|}; r)` and
+`m = hist.headD []`. -/
 theorem senderNext_eq (x y r : List Bool) (hist : List (List Bool)) :
     senderNext T H x y r hist =
       if hist.length = 0 then pairFstD (T.gen.runAtL x.length [] r)
@@ -101,7 +104,9 @@ def receiverNext (x z r : List Bool) (hist : List (List Bool)) : List Bool :=
     (if z.headD false then pairSndD (hist.getD 1 []) else pairFstD (hist.getD 1 []))
 
 /-- The defining equation of `receiverNext`: `[i]` ↦ the ordered pair, two messages ↦ `[]`,
-else `H ⟨i, w⟩ ⊕ z_b`. -/
+else `H ⟨i, w⟩ ⊕ z_b`, i.e. `receiverNext T H x z r hist = if |hist| = 1 then P else
+if |hist| = 2 then [] else H ⟨i, w⟩ ⊕ z_b` with `P` the pair `⟨f_i(w), w'⟩` (or `⟨w', f_i(w)⟩`
+when `b`), `i = hist.headD []` and `z_b` read off `hist.getD 1 []`. -/
 theorem receiverNext_eq (x z r : List Bool) (hist : List (List Bool)) :
     receiverNext T H x z r hist =
       if hist.length = 1 then
@@ -127,7 +132,9 @@ def IsOT (π : Protocol) : Prop :=
     π.V.coins = .add T.sample.coins T.sample.coins ∧ π.rounds = .const 5 ∧
       π.verifierFirst = false
 
-/-- The defining property of `IsOT`: `IsOT T H π` iff the six field equations hold. -/
+/-- The defining property of `IsOT`: `IsOT T H π` iff the six field equations hold,
+`IsOT T H π ↔ P.next = senderNext T H ∧ V.next = receiverNext T H ∧ P.coins = coins_Gen ∧
+V.coins = coins_Sample + coins_Sample ∧ rounds = 5 ∧ verifierFirst = false`. -/
 theorem isOT_iff (π : Protocol) :
     IsOT T H π ↔
       π.P.next = senderNext T H ∧ π.V.next = receiverNext T H ∧ π.P.coins = T.gen.coins ∧
@@ -156,7 +163,10 @@ theorem senderNext_single (x y r m : List Bool) :
 theorem senderNext_pair (x y r m m' : List Bool) : senderNext T H x y r [m, m'] = [] := by
   rw [senderNext_eq, if_neg (by simp), if_neg (by simp)]
 
-/-- Bob's first message is the ordered pair `⟨f_i(w), w'⟩` (or `⟨w', f_i(w)⟩` when `b`). -/
+/-- Bob's first message is the ordered pair `⟨f_i(w), w'⟩` (or `⟨w', f_i(w)⟩` when `b`):
+`receiverNext T H x z r [i] = if b then ⟨w', eval ⟨i, w⟩⟩ else ⟨eval ⟨i, w⟩, w'⟩` with
+`w = Sample(1^{|x|}, i; r.take coins_Sample)`, `w' = Sample(1^{|x|}, i; r.drop coins_Sample)`
+and `b = z.headD false`. -/
 theorem receiverNext_single (x z r i : List Bool) :
     receiverNext T H x z r [i] =
       if z.headD false then

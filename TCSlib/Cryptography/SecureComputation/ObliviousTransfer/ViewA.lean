@@ -135,7 +135,7 @@ theorem idealA_simACoins {S : NUPPT} (hS : IsSimA T S) (n : ℕ)
 /-- **Alice's side of Proposition 161.5** [PS10]: for a protocol of the shape of Protocol 160.4
 (with Bob's output `[a_b]`, `hout`), a machine of `S_A`'s shape and a sampler within `δ` of
 uniform, every distinguisher's advantage between Alice's real and ideal samplers is at most
-`2δ(n)`.
+`2δ(n)`: `distAdv (realA π n a b) (idealA S n a b) (D.distinguisherL n) ≤ 2 * δ n`.
 
 **Proof sketch.** Relabel both coin spaces as `Coins_Gen × (Coins_Sample × Coins_Sample)`
 (`acceptProb_comp_equiv`). The samplers are then `W r (y_real)` and `W r (y_sim)` for one map
