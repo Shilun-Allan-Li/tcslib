@@ -50,8 +50,11 @@ No undisclosed restatement was found.
 
 **Rule 10**
 - Variant A (the canonical one) passes in every file, both strict and coe. Strict and coe agree.
-- Variant B fails only where the base already fails, on `PolyExpr.eval`. The attribution is in
-  `landing/seal-B-attribution.txt`.
+- ~~Variant B fails only where the base already fails, on `PolyExpr.eval`.~~ **Erratum (Gate 31 G31-01,
+  2026-11-15):** variant B has six more failing declarations than at the base, two of them in `ReductionMachine`,
+  whose base passes B. They are the two D1 declarations, `postFun_layout`, `exists_queryChain_nuppt`, the D4 total
+  and `prfScheme_multiMessageSecure`. All six come from permitted `PolyExpr.eval` reductions or their cascades.
+  The attribution is in `landing/seal-B-attribution.txt`.
 - Paired controls: 14 per variant, ALL_OK.
 - The explicit-unfold scan finds 0 foreign definitions.
 
@@ -85,4 +88,4 @@ needs an integration rebuild of `Functions/Defs`' downstream.
 | F-04 | info | Three new public declarations had no formula docstring. | **Fixed** by LE-doc. |
 | F-05 | info | A blank line was lost. | **Fixed** by LE-ws. |
 | F-06 | info | Undisclosed near-relatives, not restatements: GGM's `encodeHist_eq_histEnc`, `histEnc_append_single`, `length_histEnc`, and `UniformTableauEmitter.encodeList_eq_flatMap`. | Ledger note, DL-46. |
-| F-07 | info | Seal-B failures only on `PolyExpr.eval`, where the base also fails. | None. |
+| F-07 | info | Seal-B failures are all `PolyExpr.eval` reductions or their cascades. *Erratum (G31-01): six of them are new at the head, not only where the base fails; see Rule 10.* | None. |
