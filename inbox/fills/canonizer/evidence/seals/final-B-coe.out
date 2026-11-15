@@ -1,0 +1,1331 @@
+===== TCSlib/Cryptography/Asymptotic/Universal.lean [B-coe]
+DLC-SEAL Asymptotic_Universal: sealed=1245 (already irreducible 1) abbrev-excluded=1662 excluded=0 coe-excluded=1 [TCSlib.InformationTheory.FinDist.instCoeFunForallReal]
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:202:85: error: Type mismatch
+  hs
+has type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).state =
+    none
+but is expected to have type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).state =
+    none
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:203:85: error: Type mismatch
+  ho
+has type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).output =
+    out
+but is expected to have type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).output =
+    out
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:214:74: error: Application type mismatch: The argument
+  hs
+has type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).state =
+    none
+but is expected to have type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).state =
+    none
+in the application
+  And.intro hs
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:294:89: error: Type mismatch
+  rfl
+has type
+  ?m.36 = ?m.36
+but is expected to have type
+  univOutLen.eval n = 2 * n + 3 + (n + 1) ^ 3
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:330:2: error: Type mismatch
+  ofFn_padFin_eq_take p w
+has type
+  List.ofFn (padFin p w) = List.take p (w ++ List.replicate p false)
+but is expected to have type
+  (List.ofFn fun i => w.getD (↑i) false) = List.take p (w ++ List.replicate p false)
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:776:37: error: Application type mismatch: The argument
+  g
+has type
+  (m : ℕ) → (Fin m → Bool) → Fin (L.eval m) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (L.eval n) → Bool
+in the application
+  { inLen := PolyExpr.var, outLen := L, f := g }
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:790:47: error: Application type mismatch: The argument
+  e (w.1, w.2.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n (e (w.1, w.2.1))
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:791:49: error: Application type mismatch: The argument
+  e (w.1, w.2.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n (e (w.1, w.2.1))
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:796:58: error: Application type mismatch: The argument
+  e
+has type
+  (Fin (Nat.log 2 n) → Bool) × (Fin (n - Nat.log 2 n) → Bool) ≃ (Fin n → Bool)
+but is expected to have type
+  (Fin (Nat.log 2 n) → Bool) × (Fin (n - Nat.log 2 n) → Bool) ≃ (Fin ((fUniversal c).inLen.eval n) → Bool)
+in the application
+  e.prodCongr
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:798:38: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.342 ↔ ?m.342
+but is expected to have type
+  Invert w ↔
+    ∃ x',
+      A.runAt n (List.ofFn ((fUniversal c).f n (e' w).1)) (e' w).2 = List.ofFn x' ∧
+        (fUniversal c).f n x' = (fUniversal c).f n (e' w).1
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:961:40: error: Application type mismatch: The argument
+  g
+has type
+  (n : ℕ) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (L.eval n) → Bool
+but is expected to have type
+  (m : ℕ) → (Fin m → Bool) → Fin (PolyExpr.eval ?m.782 m) → Bool
+in the application
+  invProbAt_reduction_ge c g
+lean_proof/dlc/seal/fBcoe/Asymptotic_Universal.lean:870:74: error: unsolved goals
+c : EffectiveMachineCode
+hc : CanonizerExp c
+A : NUPPT
+L : PolyExpr
+Mg : CodeTM
+c₀ : ℕ
+g : (n : ℕ) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (L.eval n) → Bool
+hsow : { inLen := PolyExpr.var, outLen := L, f := g }.StrongOneWay
+hMg :
+  ∀ (n : ℕ) (x : Fin ({ inLen := PolyExpr.var, outLen := L, f := g }.inLen.eval n) → Bool),
+    Mg.toFinTM.ComputesInTime (List.ofFn x) (List.ofFn ({ inLen := PolyExpr.var, outLen := L, f := g }.f n x))
+      (c₀ * ({ inLen := PolyExpr.var, outLen := L, f := g }.inLen.eval n + 1) ^ 2)
+hcon : ∀ (n₀ : ℕ), ∃ n ≥ n₀, 1 - 1 / ↑n ^ 3 < (fUniversal c).invProbAt A n
+α₀ : List Bool := c.encode Mg
+hα₀ : α₀ = c.encode Mg
+K : ℕ
+hK : 2 ^ α₀.length = K
+N₀ : ℕ := K + c₀ + 4
+hN₀ : N₀ = K + c₀ + 4
+good : ℕ → Prop := fun n => N₀ ≤ n ∧ 1 - 1 / ↑n ^ 3 < (fUniversal c).invProbAt A n
+φ : ℕ → ℕ := fun m => if h : ∃ n, good n ∧ n - Nat.log 2 n = m then h.choose else 0
+hφ : ∀ (m : ℕ), φ m ≤ ((PolyExpr.const 2).mul PolyExpr.var).eval m
+hφ_spec : ∀ (m : ℕ), (∃ n, good n ∧ n - Nat.log 2 n = m) → good (φ m) ∧ φ m - Nat.log 2 (φ m) = m
+code : ℕ → List Bool := fun n => α₀ ++ List.replicate (Nat.log 2 n - α₀.length) true
+hcode_len : ∀ (n : ℕ), N₀ ≤ n → (code n).length = Nat.log 2 n
+hcode_dec : ∀ (n : ℕ), c.decode (code n) = Mg
+hcode_le : ∀ (n : ℕ), (code n).length ≤ α₀.length + n
+β : ℕ → List Bool := fun m => pairEncode (List.replicate (φ m) true) (code (φ m))
+hβ :
+  ∀ (m : ℕ),
+    (β m).length ≤
+      ((((PolyExpr.const 6).mul PolyExpr.var).add (PolyExpr.const 2)).add (PolyExpr.const α₀.length)).eval m
+hpre :
+  PolyTimeComputable fun w =>
+    padStr univOutLen (pairFstD (pairFstD w)) (pairEncode (pairSndD (pairFstD w)) (true :: pairSndD w))
+B : NUPPT
+hBc : B.coins = A.coins.subst ((PolyExpr.const 2).mul PolyExpr.var)
+hB :
+  ∀ (m : ℕ) (y r : List Bool),
+    B.runAtL m y r =
+      univArg
+        (A.runAtL (φ m)
+          (padStr univOutLen (pairFstD (pairFstD (pairEncode (β m) y)))
+            (pairEncode (pairSndD (pairFstD (pairEncode (β m) y))) (true :: pairSndD (pairEncode (β m) y))))
+          (List.take (A.coinLen (φ m)) r))
+hB' :
+  ∀ (m : ℕ) (y r : List Bool),
+    B.runAtL m y r =
+      univArg
+        (A.runAtL (φ m) (padStr univOutLen (List.replicate (φ m) true) (pairEncode (code (φ m)) (true :: y)))
+          (List.take (A.coinLen (φ m)) r))
+m₀ n : ℕ
+hn : n ≥ max (2 * m₀) N₀
+hgood : 1 - 1 / ↑n ^ 3 < (fUniversal c).invProbAt A n
+hNn : N₀ ≤ n
+hmn : 2 * m₀ ≤ n
+hgoodn : good n
+hgood' : good (φ (n - Nat.log 2 n))
+hφm : φ (n - Nat.log 2 n) - Nat.log 2 (φ (n - Nat.log 2 n)) = n - Nat.log 2 n
+hlog : 2 * Nat.log 2 n ≤ n
+hm₀ : m₀ ≤ n - Nat.log 2 n
+hn'N : N₀ ≤ φ (n - Nat.log 2 n)
+hcoins : A.coinLen (φ (n - Nat.log 2 n)) ≤ B.coinLen (φ (n - Nat.log 2 n) - Nat.log 2 (φ (n - Nat.log 2 n)))
+hrun :
+  ∀ (y r : List Bool),
+    B.runAtL (φ (n - Nat.log 2 n) - Nat.log 2 (φ (n - Nat.log 2 n))) y r =
+      univArg
+        (A.runAtL (φ (n - Nat.log 2 n))
+          (padStr univOutLen (List.replicate (φ (n - Nat.log 2 n)) true)
+            (pairEncode (code (φ (n - Nat.log 2 n))) (true :: y)))
+          (List.take (A.coinLen (φ (n - Nat.log 2 n))) r))
+⊢ 1 / ↑(n - Nat.log 2 n) ^ 1 ≤ |{ inLen := PolyExpr.var, outLen := L, f := g }.invProbAt B (n - Nat.log 2 n)|
+FAIL(lean_proof/dlc/seal/fBcoe/Asymptotic_Universal): lean exited with status 1
+FAIL(lean_proof/dlc/seal/fBcoe/Asymptotic_Universal): error diagnostics reported
+FAIL(lean_proof/dlc/seal/fBcoe/Asymptotic_Universal): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=30.21 s, maxrss=2809184 KiB, exit=1
+
+===== TCSlib/Cryptography/Asymptotic/Universal/Canonizer.lean [B-coe]
+DLC-SEAL Asymptotic_Universal_Canonizer: sealed=780 (already irreducible 0) abbrev-excluded=1086 excluded=0 coe-excluded=0 []
+time: elapsed=9.92 s, maxrss=1933356 KiB, exit=0
+
+===== TCSlib/Complexity/TuringMachine/CodeFormat.lean [B-coe]
+DLC-SEAL TCSlib_Complexity_TuringMachine_CodeFormat: sealed=142 (already irreducible 0) abbrev-excluded=186 excluded=0 coe-excluded=0 []
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:235:69: error: Tactic `rfl` failed: The left-hand side
+  (signBits SignType.zero).length
+is not definitionally equal to the right-hand side
+  2
+
+case zero
+k n : ℕ
+a : Action k Bool (Fin (n + 1))
+⊢ (signBits SignType.zero).length = 2
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:235:69: error: Tactic `rfl` failed: The left-hand side
+  (signBits SignType.neg).length
+is not definitionally equal to the right-hand side
+  2
+
+case neg
+k n : ℕ
+a : Action k Bool (Fin (n + 1))
+⊢ (signBits SignType.neg).length = 2
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:235:69: error: Tactic `rfl` failed: The left-hand side
+  (signBits SignType.pos).length
+is not definitionally equal to the right-hand side
+  2
+
+case pos
+k n : ℕ
+a : Action k Bool (Fin (n + 1))
+⊢ (signBits SignType.pos).length = 2
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:238:6: error: Tactic `rfl` failed: The left-hand side
+  (optBoolBits none).length
+is not definitionally equal to the right-hand side
+  2
+
+case none
+k n : ℕ
+a : Action k Bool (Fin (n + 1))
+hs : ∀ (s : SignType), (signBits s).length = 2
+⊢ (optBoolBits none).length = 2
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:239:18: error: Tactic `rfl` failed: The left-hand side
+  (optBoolBits (some false)).length
+is not definitionally equal to the right-hand side
+  2
+
+case some.false
+k n : ℕ
+a : Action k Bool (Fin (n + 1))
+hs : ∀ (s : SignType), (signBits s).length = 2
+⊢ (optBoolBits (some false)).length = 2
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:239:18: error: Tactic `rfl` failed: The left-hand side
+  (optBoolBits (some true)).length
+is not definitionally equal to the right-hand side
+  2
+
+case some.true
+k n : ℕ
+a : Action k Bool (Fin (n + 1))
+hs : ∀ (s : SignType), (signBits s).length = 2
+⊢ (optBoolBits (some true)).length = 2
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:242:6: error: Tactic `rfl` failed: The left-hand side
+  (optOptBoolBits none).length
+is not definitionally equal to the right-hand side
+  2
+
+case none
+k n : ℕ
+a : Action k Bool (Fin (n + 1))
+hs : ∀ (s : SignType), (signBits s).length = 2
+ho : ∀ (b : Option Bool), (optBoolBits b).length = 2
+⊢ (optOptBoolBits none).length = 2
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:243:6: error: Tactic `rfl` failed: The left-hand side
+  (optOptBoolBits (some none)).length
+is not definitionally equal to the right-hand side
+  2
+
+case some.none
+k n : ℕ
+a : Action k Bool (Fin (n + 1))
+hs : ∀ (s : SignType), (signBits s).length = 2
+ho : ∀ (b : Option Bool), (optBoolBits b).length = 2
+⊢ (optOptBoolBits (some none)).length = 2
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:244:18: error: Tactic `rfl` failed: The left-hand side
+  (optOptBoolBits (some (some false))).length
+is not definitionally equal to the right-hand side
+  2
+
+case some.some.false
+k n : ℕ
+a : Action k Bool (Fin (n + 1))
+hs : ∀ (s : SignType), (signBits s).length = 2
+ho : ∀ (b : Option Bool), (optBoolBits b).length = 2
+⊢ (optOptBoolBits (some (some false))).length = 2
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:244:18: error: Tactic `rfl` failed: The left-hand side
+  (optOptBoolBits (some (some true))).length
+is not definitionally equal to the right-hand side
+  2
+
+case some.some.true
+k n : ℕ
+a : Action k Bool (Fin (n + 1))
+hs : ∀ (s : SignType), (signBits s).length = 2
+ho : ∀ (b : Option Bool), (optBoolBits b).length = 2
+⊢ (optOptBoolBits (some (some true))).length = 2
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:597:37: error: Type mismatch
+  rfl
+has type
+  ?m.95 = ?m.95
+but is expected to have type
+  { numStates := x✝², tm := { q₀ := x✝¹, tr := fun s inp w => x✝ s inp (w 0) } }.serialize =
+    pairEncode x✝².bits
+      (unaryFin x✝¹ ++
+        List.flatMap
+          (fun q =>
+            List.flatMap (fun inp => List.flatMap (fun w => actionBits (x✝ q inp w)) [none, some false, some true])
+              [none, some false, some true])
+          (List.finRange (x✝² + 1)))
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:639:2: error: Type mismatch
+  oneTapeFormat.decode xs
+has type
+  oneTapeFormat.Code
+but is expected to have type
+  CodeTM
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:644:37: error: Application type mismatch: The argument
+  M
+has type
+  CodeTM
+but is expected to have type
+  oneTapeFormat.Code
+in the application
+  CodeFormat.decode_serialize_pad oneTapeFormat M
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:646:0: error: Not a definitional equality: the left-hand side
+  oneTapeFormat.serialize (oneTapeFormat.decode xs)
+is not definitionally equal to the right-hand side
+  (codeDecode xs).serialize
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:649:85: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  oneTapeFormat.serialize (oneTapeFormat.decode xs) = (codeDecode xs).serialize
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat.lean:661:2: error: Type mismatch
+  CodeFormat.canonical_eq oneTapeFormat xs
+has type
+  oneTapeFormat.canonical xs = oneTapeFormat.serialize (oneTapeFormat.decode xs)
+but is expected to have type
+  codeCanonical xs = (codeDecode xs).serialize
+FAIL(lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat): lean exited with status 1
+FAIL(lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat): error diagnostics reported
+FAIL(lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeFormat): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=11.20 s, maxrss=1832464 KiB, exit=1
+
+===== TCSlib/Complexity/TuringMachine/CodeSimulator.lean [B-coe]
+DLC-SEAL TCSlib_Complexity_TuringMachine_CodeSimulator: sealed=720 (already irreducible 0) abbrev-excluded=1026 excluded=0 coe-excluded=0 []
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:181:28: error: Tactic `rfl` failed: The left-hand side
+  Fin.cons w₀ (fun x => w₁) ((fun i => i) ⟨0, ⋯⟩)
+is not definitionally equal to the right-hand side
+  workPair w₀ w₁ ((fun i => i) ⟨0, ⋯⟩)
+
+case h.«0»
+w₀ w₁ : Option Bool
+⊢ Fin.cons w₀ (fun x => w₁) ((fun i => i) ⟨0, ⋯⟩) = workPair w₀ w₁ ((fun i => i) ⟨0, ⋯⟩)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:181:28: error: Tactic `rfl` failed: The left-hand side
+  Fin.cons w₀ (fun x => w₁) ((fun i => i) ⟨1, ⋯⟩)
+is not definitionally equal to the right-hand side
+  workPair w₀ w₁ ((fun i => i) ⟨1, ⋯⟩)
+
+case h.«1»
+w₀ w₁ : Option Bool
+⊢ Fin.cons w₀ (fun x => w₁) ((fun i => i) ⟨1, ⋯⟩) = workPair w₀ w₁ ((fun i => i) ⟨1, ⋯⟩)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:204:51: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  codeSkipTable2 n xs = codeSkipTableK 2 n xs
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:233:2: error: 'show' tactic failed, pattern
+  codeSkipRepeat (codeSkipRepeat (codeSkipRepeat (codeSkipAction n) 3) 3) (n + 1) xs = ?m.25
+is not definitionally equal to target
+  oneTapeFormat.skipTable n xs = codeSkipTableK 1 n xs
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:249:24: error: Invalid field notation: Type is not of the form `C ...` where C is a constant
+  M
+has type
+  __src✝.1
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:281:42: error: Application type mismatch: The argument
+  h
+has type
+  codeSkipRepeat r 0 xs = some ys
+but is expected to have type
+  some xs = some ys
+in the application
+  Option.some.inj h
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:284:54: error: Application type mismatch: The argument
+  h
+has type
+  codeSkipRepeat r (m + 1) xs = some ys
+but is expected to have type
+  Option.bind ?m.52 ?m.53 = some ?m.50
+in the application
+  Option.bind_eq_some_iff.mp h
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:507:12: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom (guardCfg b x (guardPhase b 0) j hj out) 0
+is not definitionally equal to the right-hand side
+  guardCfg b x (guardPhase b 0) (j + 0) hlen out
+
+case zero
+b : ℕ
+x : List Bool
+j : ℕ
+hj : j ≤ x.length
+out : List Bool
+hu : 0 ≤ b + 1
+hlen : j + 0 ≤ x.length
+⊢ MultiTapeTM.runFrom (guardCfg b x (guardPhase b 0) j hj out) 0 = guardCfg b x (guardPhase b 0) (j + 0) hlen out
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:590:12: error: Tactic `rfl` failed: The left-hand side
+  counterLoopOrbit (guardBlockTM b) (guardTime b) (guardCfg b x (guardPhase b 0) j hj out) 0
+is not definitionally equal to the right-hand side
+  guardCfg b x (guardPhase b 0) (j + (b + 1) * 0) hr out
+
+case zero
+b : ℕ
+x : List Bool
+j : ℕ
+hj : j ≤ x.length
+out : List Bool
+hr : j + (b + 1) * 0 ≤ x.length
+⊢ counterLoopOrbit (guardBlockTM b) (guardTime b) (guardCfg b x (guardPhase b 0) j hj out) 0 =
+    guardCfg b x (guardPhase b 0) (j + (b + 1) * 0) hr out
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:595:4: error: 'change' tactic failed, pattern
+  (fun c => MultiTapeTM.runFrom c (guardTime b c))^[r + 1] ?m.107 = ?m.109
+is not definitionally equal to target
+  counterLoopOrbit (guardBlockTM b) (guardTime b) (guardCfg b x (guardPhase b 0) j hj out) (r + 1) =
+    guardCfg b x (guardPhase b 0) (j + (b + 1) * (r + 1)) hr out
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:679:21: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.487 = ?m.487
+but is expected to have type
+  ↑(counterLoopCfg (some CounterLoopState.done) (guardCfg b x (guardPhase b 0) (j + (b + 1) * d) ⋯ out)
+          (fun q => if 0 ≤ q ∧ q < 0 + ↑w.length then some true else FinTM.bufferTape w q) 0).inputPos =
+    j + (b + 1) * Nat.ofDigits 2 (List.map Bool.toNat w) + 1
+in the application
+  And.intro rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:721:4: error: 'change' tactic failed, pattern
+  (fun z => MultiTapeTM.runFrom z (guardTime b z))^[r₀ + 1] c = ?m.398
+is not definitionally equal to target
+  counterLoopOrbit (guardBlockTM b) (guardTime b) c (r₀ + 1) = guardCfg b x none x.length ⋯ out
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:765:21: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.745 = ?m.745
+but is expected to have type
+  ↑(counterLoopCfg (some CounterLoopState.escape) (guardCfg b x none x.length ⋯ out)
+          (fun q =>
+            if 0 ≤ q ∧ q < 0 + ↑w.length then FinTM.bufferTape (counterWord w (r₀ + 1)) (q - 0)
+            else FinTM.bufferTape w q)
+          0).inputPos =
+    x.length + 1
+in the application
+  And.intro rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:816:18: error: Application type mismatch: The argument
+  Eq.symm decoded
+has type
+  tail = codeBitsNat []
+but is expected to have type
+  tail = 0
+in the application
+  nonzero (Eq.symm decoded)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:856:8: error: 'change' tactic failed, pattern
+  (Option.map (fun x => false :: x) (incFixed (w ++ [false]))).getD [] = ?m.91
+is not definitionally equal to target
+  canonCount (true :: w) = false :: canonCount w
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:885:12: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.77 = ?m.77
+but is expected to have type
+  d.state = some (ScanPhase.fwd true)
+in the application
+  scanTM_run_ofCfg i (scanFold fun x b => b) scanKeep true (w i) d rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:922:66: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.193 = ?m.193
+but is expected to have type
+  (Cfg.ofWords entry (stateWord C.k (canonHeader α))).state = some entry
+in the application
+  seamReleaseTM_firstReturn C.tm entry ?m.191 hpos hrun rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:933:6: error: 'change' tactic failed, pattern
+  some entry ≠ some exit
+is not definitionally equal to target
+  (MultiTapeTM.runFrom (Cfg.ofWords entry fun x => []) 0).state ≠ some exit
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:951:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+A : FinTM Bool
+a : ℕ
+hA : A.ComputesFunInTime (fun x => x ++ [false]) fun n => a * (n + 1)
+B : FinTM Bool
+b : ℕ
+hB : B.ComputesFunInTime (fun x => (incFixed x).getD []) fun n => b * (n + 1)
+M : FinTM Bool
+c : ℕ
+hM :
+  M.ComputesFunInTime ((fun x => (incFixed x).getD []) ∘ fun x => x ++ [false]) fun n =>
+    c * (a * (n + 1) + b * (a * (n + 1) + 1) + 1)
+⊢ M.ComputesFunInTime canonCount fun n => c * (a + b * (a + 1) + 1) * (n + 1)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1021:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+C : FinTM Bool
+entry exit : C.State
+a : ℕ
+hk : 0 < C.k
+hC :
+  ∀ (α : List Bool),
+    ∃ t ≤ a * (α.length + 1),
+      0 < t ∧
+        (∀ u < t, (MultiTapeTM.runFrom (Cfg.ofWords entry fun x => []) u).state ≠ some exit) ∧
+          MultiTapeTM.runFrom (Cfg.ofWords entry fun x => []) t = Cfg.ofWords exit (stateWord C.k (canonHeader α))
+i : Fin C.k := ⟨0, hk⟩
+V : MultiTapeTM C.k Bool (ScanPhase Bool) := canonVerdictTM C.k i
+L : MultiTapeTM C.k Bool (C.State ⊕ ScanPhase Bool) := seamCompTM C.tm exit V (ScanPhase.fwd true)
+M : FinTM Bool :=
+  { k := C.k, State := C.State ⊕ ScanPhase Bool, fintypeState := instFintypeSum C.State (ScanPhase Bool),
+    decEqState := fun a b => instDecidableEqSum a b, tm := { q₀ := Sum.inl entry, tr := L.tr } }
+⊢ M.ComputesFunInTime (fun α => [canonBitsOK (canonHeader α)]) fun n => (a + 4) * (n + 1)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1104:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+D : FinTM Bool
+a : ℕ
+hD : D.ComputesFunInTime (fun x => [(pairDecode x).isSome]) fun n => a * (n + 1)
+B : FinTM Bool
+b : ℕ
+hB : B.ComputesFunInTime (fun α => [canonBitsOK (canonHeader α)]) fun n => b * (n + 1)
+E : FinTM Bool
+e : ℕ
+hE : E.ComputesFunInTime (fun x => [false]) fun n => e * (n + 1)
+M : FinTM Bool
+c : ℕ
+hM :
+  M.ComputesFunInTime (fun x => if (pairDecode x).isSome = true then [canonBitsOK (canonHeader x)] else [false])
+    fun n => c * (a * (n + 1) + max (b * (n + 1)) (e * (n + 1)) + 1)
+⊢ M.ComputesFunInTime (fun α => [canonHeaderOK α]) fun n => c * (a + b + e + 1) * (n + 1)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1186:4: error: Type mismatch
+  (canonCount_spec bits).right.right
+has type
+  List.foldr Nat.bit 0 (canonCount bits) = List.foldr Nat.bit 0 bits + 1
+but is expected to have type
+  List.foldr Nat.bit 0 (canonCount bits) = codeBitsNat bits + 1
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1240:81: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.203 = ?m.203
+but is expected to have type
+  (Cfg.ofWords entry (stateWord C.k (f arg))).state = some entry
+in the application
+  seamReleaseTM_firstReturn C.tm entry ?m.201 pos run rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1250:49: error: Application type mismatch: The argument
+  h
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords entry (stateWord C.k arg)) 0).state = some exit
+but is expected to have type
+  some entry = some exit
+in the application
+  Option.some.inj h
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1269:19: error: Application type mismatch: The argument
+  hp
+has type
+  c.inputPos = d.inputPos
+but is expected to have type
+  (embedEmitCfg ι tapes heads [] c).inputPos = d.inputPos
+in the application
+  Cfg.ext ?m.80 hp
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1296:41: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.46 = ?m.46
+but is expected to have type
+  (Cfg.ofWords q v).output = (Cfg.ofWords q wanted).output
+in the application
+  canonEmbedEq M ι (Cfg.ofWords q v) (Cfg.ofWords q wanted) (fun j => FinTM.bufferTape (ambient j)) (fun x => 0) ?m.41
+    ?m.44 rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1366:4: error: Type mismatch
+  cut₁ u hu
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords enter (stateWord I.k arg)) u).state ≠ some leave
+but is expected to have type
+  (embedEmitCfg bank (fun j => FinTM.bufferTape (copied j)) (fun x => 0) []
+        (MultiTapeTM.runFrom (Cfg.ofWords enter (stateWord I.k arg)) u)).state ≠
+    some leave
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1369:34: error: Type mismatch
+  second
+has type
+  MultiTapeTM.runFrom (Cfg.ofWords enter copied) t₁ = Cfg.ofWords leave result
+but is expected to have type
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => enter) (Cfg.ofWords SweepPhase.done copied)) t₁ = Cfg.ofWords leave result
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1372:49: error: Type mismatch
+  secondCut u hu
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords enter copied) u).state ≠ some leave
+but is expected to have type
+  (MultiTapeTM.runFrom (Cfg.mapState (fun x => enter) (Cfg.ofWords SweepPhase.done copied)) u).state ≠ some leave
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1373:58: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.528 = ?m.528
+but is expected to have type
+  (Cfg.ofWords SweepPhase.done (Function.update w dst arg)).state = some SweepPhase.done
+in the application
+  seamCompTM_run_ofCfg P SweepPhase.done E enter run₀ rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1438:6: error: Tactic `rfl` failed: The left-hand side
+  w (lb i)
+is not definitionally equal to the right-hand side
+  stateWord L.k header i
+
+case selected
+L : FinTM Bool
+lentry lexit : L.State
+a : ℕ
+hl : 0 < L.k
+load :
+  ∀ (α : List Bool),
+    ∃ t ≤ a * (α.length + 1),
+      0 < t ∧
+        (∀ u < t, (MultiTapeTM.runFrom (Cfg.ofWords lentry fun x => []) u).state ≠ some lexit) ∧
+          MultiTapeTM.runFrom (Cfg.ofWords lentry fun x => []) t = Cfg.ofWords lexit (stateWord L.k (canonHeader α))
+N : FinTM Bool
+b : ℕ
+count : N.ComputesFunInTime canonCount fun n => b * (n + 1)
+P : FinTM Bool
+pdst : Fin P.k
+pentry pexit : P.State
+c : ℕ
+hdst : ↑pdst = 1
+install :
+  ∀ (x arg : List Bool),
+    ∃ t ≤ c * (b * (arg.length + 1) + arg.length + (canonCount arg).length + 1),
+      (∀ u < t, (MultiTapeTM.runFrom (Cfg.ofWords pentry (stateWord P.k arg)) u).state ≠ some pexit) ∧
+        MultiTapeTM.runFrom (Cfg.ofWords pentry (stateWord P.k arg)) t =
+          Cfg.ofWords pexit (Function.update (stateWord P.k arg) pdst (canonCount arg))
+K : ℕ := max L.k P.k
+lb : Fin L.k ↪ Fin K := Fin.castLEEmb ⋯
+pb : Fin P.k ↪ Fin K := Fin.castLEEmb ⋯
+A : MultiTapeTM K Bool L.State := embedEmitTM lb L.tm
+B : MultiTapeTM K Bool P.State := embedEmitTM pb P.tm
+C : FinTM Bool :=
+  { k := K, State := L.State ⊕ P.State, fintypeState := instFintypeSum L.State P.State,
+    decEqState := fun a b => instDecidableEqSum a b,
+    tm :=
+      let __src := seamCompTM A lexit B pentry;
+      { q₀ := Sum.inl lentry, tr := __src.tr } }
+α : List Bool
+header : List Bool := canonHeader α
+w : Fin K → List Bool := stateWord K header
+result : Fin K → List Bool := Function.update w (pb pdst) (canonCount header)
+t₀ : ℕ
+bound₀ : t₀ ≤ a * (α.length + 1)
+left✝ : 0 < t₀
+cut₀ : ∀ u < t₀, (MultiTapeTM.runFrom (Cfg.ofWords lentry fun x => []) u).state ≠ some lexit
+run₀ : MultiTapeTM.runFrom (Cfg.ofWords lentry fun x => []) t₀ = Cfg.ofWords lexit (stateWord L.k (canonHeader α))
+t₁ : ℕ
+bound₁ : t₁ ≤ c * (b * (header.length + 1) + header.length + (canonCount header).length + 1)
+cut₁ : ∀ u < t₁, (MultiTapeTM.runFrom (Cfg.ofWords pentry (stateWord P.k header)) u).state ≠ some pexit
+run₁ :
+  MultiTapeTM.runFrom (Cfg.ofWords pentry (stateWord P.k header)) t₁ =
+    Cfg.ofWords pexit (Function.update (stateWord P.k header) pdst (canonCount header))
+loadLift :
+  ∀ (u : ℕ),
+    MultiTapeTM.runFrom (Cfg.ofWords lentry fun x => []) u =
+      embedEmitCfg lb (fun x => FinTM.bufferTape []) (fun x => 0) []
+        (MultiTapeTM.runFrom (Cfg.ofWords lentry fun x => []) u)
+i : Fin L.k
+⊢ w (lb i) = stateWord L.k header i
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1448:4: error: Type mismatch
+  cut₀ u hu
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords lentry fun x => []) u).state ≠ some lexit
+but is expected to have type
+  (embedEmitCfg lb (fun x => FinTM.bufferTape []) (fun x => 0) []
+        (MultiTapeTM.runFrom (Cfg.ofWords lentry fun x => []) u)).state ≠
+    some lexit
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1453:16: error: Type mismatch
+  rfl
+has type
+  ?m.521 = ?m.521
+but is expected to have type
+  w (pb x✝) = stateWord P.k header x✝
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1461:6: error: Type mismatch
+  congrFun (Function.update_comp_eq_of_injective w (Function.Embedding.injective pb) pdst (canonCount header)) i
+has type
+  (Function.update w (pb pdst) (canonCount header) ∘ ⇑pb) i = Function.update (w ∘ ⇑pb) pdst (canonCount header) i
+but is expected to have type
+  result (pb i) = Function.update (stateWord P.k header) pdst (canonCount header) i
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1469:4: error: Type mismatch
+  cut₁ u hu
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords pentry (stateWord P.k header)) u).state ≠ some pexit
+but is expected to have type
+  (embedEmitCfg pb (fun j => FinTM.bufferTape (w j)) (fun x => 0) []
+        (MultiTapeTM.runFrom (Cfg.ofWords pentry (stateWord P.k header)) u)).state ≠
+    some pexit
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1472:34: error: Type mismatch
+  installed
+has type
+  MultiTapeTM.runFrom (Cfg.ofWords pentry w) t₁ = Cfg.ofWords pexit result
+but is expected to have type
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => pentry) (Cfg.ofWords lexit w)) t₁ = Cfg.ofWords pexit result
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1475:22: error: Type mismatch
+  first₁ u hu
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords pentry w) u).state ≠ some pexit
+but is expected to have type
+  (MultiTapeTM.runFrom (Cfg.mapState (fun x => pentry) (Cfg.ofWords lexit w)) u).state ≠ some pexit
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1476:59: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.666 = ?m.666
+but is expected to have type
+  (Cfg.ofWords lexit w).state = some lexit
+in the application
+  seamCompTM_run_ofCfg A lexit B pentry loaded rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1512:4: error: 'change' tactic failed, pattern
+  Nat.bit true (codeBitsNat w.length.bits + 1) = ?m.61
+is not definitionally equal to target
+  Nat.bit true (List.foldr Nat.bit 0 w.length.bits + 1) = 2 * w.length + 3
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1537:10: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+L : FinTM Bool
+a : ℕ
+length : L.ComputesFunInTime (fun x => x.length.bits) fun n => a * (n + 1)
+N : FinTM Bool
+b : ℕ
+count : N.ComputesFunInTime canonCount fun n => b * (n + 1)
+A : FinTM Bool
+c : ℕ
+comp : A.ComputesFunInTime (canonCount ∘ fun x => x.length.bits) fun n => c * (a * (n + 1) + b * (a * (n + 1) + 1) + 1)
+⊢ A.ComputesFunInTime (fun w => canonCount w.length.bits) fun n => c * (a + 1) * (b + 1) * (n + 1)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1550:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+L : FinTM Bool
+a : ℕ
+length : L.ComputesFunInTime (fun x => x.length.bits) fun n => a * (n + 1)
+N : FinTM Bool
+b : ℕ
+count : N.ComputesFunInTime canonCount fun n => b * (n + 1)
+A : FinTM Bool
+c : ℕ
+comp : A.ComputesFunInTime (canonCount ∘ fun x => x.length.bits) fun n => c * (a * (n + 1) + b * (a * (n + 1) + 1) + 1)
+first : A.ComputesFunInTime (fun w => canonCount w.length.bits) fun n => c * (a + 1) * (b + 1) * (n + 1)
+P : FinTM Bool
+e : ℕ
+prepend : P.ComputesFunInTime (fun x => [true] ++ x) fun n => e * (n + 1)
+M : FinTM Bool
+d : ℕ
+combined :
+  M.ComputesFunInTime ((fun x => [true] ++ x) ∘ fun w => canonCount w.length.bits) fun n =>
+    d * (c * (a + 1) * (b + 1) * (n + 1) + e * (c * (a + 1) * (b + 1) * (n + 1) + 1) + 1)
+z : ℕ := c * (a + 1) * (b + 1)
+⊢ M.ComputesFunInTime canonOffset fun n => d * (z + 1) * (e + 1) * (n + 1)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1622:4: error: `dsimp` made no progress
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1669:6: error: Type mismatch
+  Function.update_apply_of_injective (stateWord K head) (Function.Embedding.injective hb) hdst (canonCount head) i
+has type
+  Function.update (stateWord K head) (hb hdst) (canonCount head) (hb i) =
+    Function.update (fun i => stateWord K head (hb i)) hdst (canonCount head) i
+but is expected to have type
+  mid (hb i) = Function.update (stateWord H.k head) hdst (canonCount head) i
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1676:16: error: Type mismatch
+  cut₀ u hu
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) u).state ≠ some hexit
+but is expected to have type
+  (embedEmitCfg hb (fun x => FinTM.bufferTape []) (fun x => 0) []
+        (MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) u)).state ≠
+    some hexit
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1685:4: error: 'change' tactic failed, pattern
+  MultiTapeTM.runFrom (Cfg.ofWords pentry mid) t₁ = ?m.992
+is not definitionally equal to target
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => pentry) (Cfg.ofWords hexit mid)) t₁ = Cfg.ofWords pexit out
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1692:4: error: 'change' tactic failed, pattern
+  (MultiTapeTM.runFrom (Cfg.ofWords pentry mid) u).state ≠ ?m.1030
+is not definitionally equal to target
+  (MultiTapeTM.runFrom (Cfg.mapState (fun x => pentry) (Cfg.ofWords hexit mid)) u).state ≠ some pexit
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1694:60: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.1045 = ?m.1045
+but is expected to have type
+  (Cfg.ofWords hexit mid).state = some hexit
+in the application
+  seamCompTM_run_ofCfg A hexit B pentry first rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1754:4: error: Type mismatch
+  cut u hu
+has type
+  (MultiTapeTM.runFrom src u).state ≠ some exit
+but is expected to have type
+  (embedEmitCfg ι d.workTapes d.workTapePos [] (MultiTapeTM.runFrom src u)).state ≠ some exit
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1823:15: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.549 = ?m.549
+but is expected to have type
+  s₀.state = some enter
+in the application
+  seek p (canonOffset bits) (canonOffset_spec bits).left inRange s₀ rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:1824:49: warning: This simp argument is unused:
+  FinTM.bufferTape
+
+Hint: Omit it from the simp argument list.
+  simp [s₀, Cfg.ofWords, scratch,̵ ̵F̵i̵n̵T̵M̵.̵b̵u̵f̵f̵e̵r̵T̵a̵p̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2007:53: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.246 = ?m.246
+but is expected to have type
+  initial.inputPos = 1
+in the application
+  inputCopyTM_run_ofCfg i initial ?m.244 rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2153:16: error: Application type mismatch: The argument
+  Eq.symm control
+has type
+  some (CounterLoopState.dec FlagPhase.run) = d.state
+but is expected to have type
+  src.state = d.state
+in the application
+  canonEmbedEq (binaryGuardTM (F.canonGuardBlock - 1)) (canonCounterBank i) src d ?m.335 ?m.336 (Eq.symm control)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2174:4: error: Type mismatch
+  finish
+has type
+  (MultiTapeTM.runFrom (binaryGuardStart (F.canonGuardBlock - 1) x (2 * bits.length + 2) hpos [] (canonCount bits))
+        elapsed).state =
+    some
+      (if F.canonGuardBlock * (codeBitsNat bits + 1) ≤ rest.length then CounterLoopState.done
+      else CounterLoopState.escape)
+but is expected to have type
+  (embedEmitCfg (canonCounterBank i) d.workTapes d.workTapePos [] (MultiTapeTM.runFrom src elapsed)).state =
+    some
+      (if F.canonGuardBlock * (codeBitsNat bits + 1) ≤ rest.length then CounterLoopState.done
+      else CounterLoopState.escape)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2176:4: error: Type mismatch
+  output
+has type
+  (MultiTapeTM.runFrom (binaryGuardStart (F.canonGuardBlock - 1) x (2 * bits.length + 2) hpos [] (canonCount bits))
+        elapsed).output =
+    []
+but is expected to have type
+  (embedEmitCfg (canonCounterBank i) d.workTapes d.workTapePos [] (MultiTapeTM.runFrom src elapsed)).output = []
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2178:4: error: 'change' tactic failed, pattern
+  ↑(MultiTapeTM.runFrom src elapsed).inputPos = ?m.525
+is not definitionally equal to target
+  ↑(embedEmitCfg (canonCounterBank i) d.workTapes d.workTapePos [] (MultiTapeTM.runFrom src elapsed)).inputPos =
+    if F.canonGuardBlock * (codeBitsNat bits + 1) ≤ rest.length then
+      2 * bits.length + 3 + F.canonGuardBlock * (codeBitsNat bits + 1)
+    else x.length + 1
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2183:4: error: Type mismatch
+  cuts u hu
+has type
+  (MultiTapeTM.runFrom (binaryGuardStart (F.canonGuardBlock - 1) x (2 * bits.length + 2) hpos [] (canonCount bits))
+          u).state ≠
+      some CounterLoopState.done ∧
+    (MultiTapeTM.runFrom (binaryGuardStart (F.canonGuardBlock - 1) x (2 * bits.length + 2) hpos [] (canonCount bits))
+          u).state ≠
+      some CounterLoopState.escape
+but is expected to have type
+  (embedEmitCfg (canonCounterBank i) d.workTapes d.workTapePos [] (MultiTapeTM.runFrom src u)).state ≠
+      some CounterLoopState.done ∧
+    (embedEmitCfg (canonCounterBank i) d.workTapes d.workTapePos [] (MultiTapeTM.runFrom src u)).state ≠
+      some CounterLoopState.escape
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2253:22: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.663 = ?m.663
+but is expected to have type
+  beginning.state = some enter
+in the application
+  seek p (canonOffset bits) (canonOffset_spec bits).left range beginning rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2412:4: error: Application type mismatch: The argument
+  rfl
+has type
+  MultiTapeTM.runFrom (Cfg.ofWords enter (canonReadyWords P.k bits)) t =
+    MultiTapeTM.runFrom (Cfg.ofWords enter (canonReadyWords P.k bits)) t
+but is expected to have type
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => enter) (Cfg.ofWords pexit (canonReadyWords P.k bits))) ?m.436 = ?m.434
+in the application
+  seamCompTM_run_ofCfg P.tm pexit G enter ranS ?m.439 firstS rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2411:61: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.438 = ?m.438
+but is expected to have type
+  (Cfg.ofWords pexit (canonReadyWords P.k bits)).state = some pexit
+in the application
+  seamCompTM_run_ofCfg P.tm pexit G enter ranS rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2507:6: error: Type mismatch
+  cutH u hu d
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) u).state ≠ some (hexit d)
+but is expected to have type
+  (embedEmitCfg hb (fun x => FinTM.bufferTape []) (fun x => 0) []
+        (MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) u)).state ≠
+    some (hexit d)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2513:6: error: 'change' tactic failed, pattern
+  MultiTapeTM.runFrom (Cfg.ofWords (Sum.inl hentry) fun x => []) s = Cfg.ofWords (exit none) fun x => []
+is not definitionally equal to target
+  MultiTapeTM.runFrom (Cfg.mapState Sum.inl startH) s = Cfg.mapState Sum.inl (Cfg.ofWords (hexit false) fun x => [])
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2539:8: error: Type mismatch
+  stateG
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords gentry fun x => []) t).state =
+    some (gexit (decide (F.canonGuardBlock * (codeBitsNat bits + 1) ≤ rest.length)))
+but is expected to have type
+  (embedEmitCfg gb (fun x => FinTM.bufferTape []) (fun x => 0) []
+        (MultiTapeTM.runFrom (Cfg.ofWords gentry fun x => []) t)).state =
+    some (gexit result)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2543:8: error: Type mismatch
+  outputG
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords gentry fun x => []) t).output = []
+but is expected to have type
+  (embedEmitCfg gb (fun x => FinTM.bufferTape []) (fun x => 0) []
+        (MultiTapeTM.runFrom (Cfg.ofWords gentry fun x => []) t)).output =
+    []
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2547:8: error: Type mismatch
+  cutG u hu d
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords gentry fun x => []) u).state ≠ some (gexit d)
+but is expected to have type
+  (embedEmitCfg gb (fun x => FinTM.bufferTape []) (fun x => 0) []
+        (MultiTapeTM.runFrom (Cfg.ofWords gentry fun x => []) u)).state ≠
+    some (gexit d)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2550:42: error: Application type mismatch: The argument
+  rfl
+has type
+  MultiTapeTM.runFrom startG t = MultiTapeTM.runFrom startG t
+but is expected to have type
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => gentry) (Cfg.ofWords (hexit true) fun x => [])) ?m.876 = ?m.874
+in the application
+  seamCompTM_run_ofCfg A (hexit true) B gentry headerRun ?m.879 (fun u hu => headerCut u hu true) rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2549:75: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.878 = ?m.878
+but is expected to have type
+  (Cfg.ofWords (hexit true) fun x => []).state = some (hexit true)
+in the application
+  seamCompTM_run_ofCfg A (hexit true) B gentry headerRun rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2670:12: error: Application type mismatch: The argument
+  phase.right
+has type
+  MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk false) d) (t + 1) =
+    Cfg.mapState (fun x => leave (decide (v = some true))) (MultiTapeTM.runFrom d t)
+but is expected to have type
+  MultiTapeTM.runFrom (Cfg.ofWords base fun x => []) (t + 1) =
+    Cfg.mapState (fun x => leave (decide (v = some true))) (MultiTapeTM.runFrom d t)
+in the application
+  And.intro phase.right
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2672:4: error: 'change' tactic failed, pattern
+  (MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk false) d) u).state ≠ ?m.451
+is not definitionally equal to target
+  (MultiTapeTM.runFrom (Cfg.ofWords base fun x => []) u).state ≠ some (leave b)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2721:4: error: Type mismatch
+  silent
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) t).output = []
+but is expected to have type
+  (Cfg.mapState (fun x => leave (decide (v = some true)))
+        (MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) t)).output =
+    []
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2726:4: error: Type mismatch
+  ready (of_decide_eq_true yes)
+has type
+  ∃ bits rest,
+    pairDecode x = some (bits, rest) ∧
+      bits = (codeBitsNat bits).bits ∧
+        F.canonGuardBlock * (codeBitsNat bits + 1) ≤ rest.length ∧
+          ↑(MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) t).inputPos = 2 * bits.length + 3 ∧
+            ∀ (j : Fin H.k),
+              ↑j ≠ 1 →
+                (MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) t).workTapes j =
+                    FinTM.bufferTape (canonReadyWords H.k bits j) ∧
+                  (MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) t).workTapePos j = 0
+but is expected to have type
+  ∃ bits rest,
+    pairDecode x = some (bits, rest) ∧
+      bits = (codeBitsNat bits).bits ∧
+        F.canonGuardBlock * (codeBitsNat bits + 1) ≤ rest.length ∧
+          ↑(Cfg.mapState (fun x => leave (decide (v = some true)))
+                    (MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) t)).inputPos =
+              2 * bits.length + 3 ∧
+            ∀ (j : Fin C.k),
+              ↑j ≠ 1 →
+                (Cfg.mapState (fun x => leave (decide (v = some true)))
+                          (MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) t)).workTapes
+                      j =
+                    FinTM.bufferTape (canonReadyWords C.k bits j) ∧
+                  (Cfg.mapState (fun x => leave (decide (v = some true)))
+                          (MultiTapeTM.runFrom (Cfg.ofWords hentry fun x => []) t)).workTapePos
+                      j =
+                    0
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2814:25: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.67 = ?m.67
+but is expected to have type
+  optStateBits none = [] ++ [false]
+in the application
+  Exists.intro [] rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2839:46: error: Type mismatch
+  hu
+has type
+  List.flatMap
+      (fun q =>
+        List.flatMap (fun inp => List.flatMap (fun w => actionBitsK (M.tr q inp w)) (workReadsK k))
+          [none, some false, some true])
+      (List.finRange (n + 1)) =
+    u ++ [false]
+but is expected to have type
+  tableBitsK M.tr = u ++ [false]
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2990:35: error: unsolved goals
+k : ℕ
+i : Fin k
+x : List Bool
+words : Fin k → List Bool
+w : List Bool := words i
+m : ℕ := (canonStrip w).length
+small : (canonStrip w).length ≤ w.length
+pref : List.take (canonStrip w).length w = canonStrip w
+past : ∀ (r : ℕ) (hr : r < w.length), (canonStrip w).length ≤ r → w[r] = true
+boundary : ∀ (r : ℕ) (hr : r < w.length), (canonStrip w).length = r + 1 → w[r] = false
+base : Cfg k Bool (ScanPhase Bool) x := Cfg.ofWords (ScanPhase.fwd false) words
+fwd : ℕ → Cfg k Bool (ScanPhase Bool) x :=
+  fun r =>
+    { state := base.state, inputPos := base.inputPos, workTapes := base.workTapes,
+      workTapePos := Function.update base.workTapePos i ↑r, output := base.output }
+back : ℕ → Cfg k Bool (ScanPhase Bool) x :=
+  fun r =>
+    { state := some (ScanPhase.bwd (decide (m ≤ r))), inputPos := base.inputPos,
+      workTapes := Function.update base.workTapes i (FinTM.bufferTape (List.take (max r m) w)),
+      workTapePos := Function.update base.workTapePos i (↑r - 1), output := base.output }
+done : Cfg k Bool (ScanPhase Bool) x := Cfg.ofWords (ScanPhase.done false) (Function.update words i (canonStrip w))
+start : fwd 0 = base
+r : ℕ
+hr : r < w.length
+read : (fwd r).workTapeSymbols i = some w[r]
+⊢ tapeAction i 0
+      (match ?m.201, some w[r] with
+        | ScanPhase.fwd a, some val => (none, 1, ScanPhase.fwd false)
+        | ScanPhase.fwd a, none => (none, -1, ScanPhase.bwd true)
+        | ScanPhase.bwd clean, some b =>
+          (if clean = true ∧ b = true then some none else none, -1, ScanPhase.bwd (clean && b))
+        | ScanPhase.bwd a, none => (none, 1, ScanPhase.done false)
+        | ScanPhase.done a, x => (none, 0, ScanPhase.done false)).1
+      (match ?m.201, some w[r] with
+          | ScanPhase.fwd a, some val => (none, 1, ScanPhase.fwd false)
+          | ScanPhase.fwd a, none => (none, -1, ScanPhase.bwd true)
+          | ScanPhase.bwd clean, some b =>
+            (if clean = true ∧ b = true then some none else none, -1, ScanPhase.bwd (clean && b))
+          | ScanPhase.bwd a, none => (none, 1, ScanPhase.done false)
+          | ScanPhase.done a, x => (none, 0, ScanPhase.done false)).2.1
+      (match ?m.201, some w[r] with
+          | ScanPhase.fwd a, some val => (none, 1, ScanPhase.fwd false)
+          | ScanPhase.fwd a, none => (none, -1, ScanPhase.bwd true)
+          | ScanPhase.bwd clean, some b =>
+            (if clean = true ∧ b = true then some none else none, -1, ScanPhase.bwd (clean && b))
+          | ScanPhase.bwd a, none => (none, 1, ScanPhase.done false)
+          | ScanPhase.done a, x => (none, 0, ScanPhase.done false)).2.2 =
+    tapeAction i 0 none 1 (ScanPhase.fwd false)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2989:45: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.206 = ?m.206
+but is expected to have type
+  (fwd r).state = some ?m.201
+in the application
+  step_of_tapeAction_move (canonTrimTM k i) (fwd r) i 0 SignType.pos rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2998:34: error: unsolved goals
+k : ℕ
+i : Fin k
+x : List Bool
+words : Fin k → List Bool
+w : List Bool := words i
+m : ℕ := (canonStrip w).length
+small : (canonStrip w).length ≤ w.length
+pref : List.take (canonStrip w).length w = canonStrip w
+past : ∀ (r : ℕ) (hr : r < w.length), (canonStrip w).length ≤ r → w[r] = true
+boundary : ∀ (r : ℕ) (hr : r < w.length), (canonStrip w).length = r + 1 → w[r] = false
+base : Cfg k Bool (ScanPhase Bool) x := Cfg.ofWords (ScanPhase.fwd false) words
+fwd : ℕ → Cfg k Bool (ScanPhase Bool) x :=
+  fun r =>
+    { state := base.state, inputPos := base.inputPos, workTapes := base.workTapes,
+      workTapePos := Function.update base.workTapePos i ↑r, output := base.output }
+back : ℕ → Cfg k Bool (ScanPhase Bool) x :=
+  fun r =>
+    { state := some (ScanPhase.bwd (decide (m ≤ r))), inputPos := base.inputPos,
+      workTapes := Function.update base.workTapes i (FinTM.bufferTape (List.take (max r m) w)),
+      workTapePos := Function.update base.workTapePos i (↑r - 1), output := base.output }
+done : Cfg k Bool (ScanPhase Bool) x := Cfg.ofWords (ScanPhase.done false) (Function.update words i (canonStrip w))
+start : fwd 0 = base
+forward : ∀ r < w.length, MultiTapeTM.step (fwd r) = fwd (r + 1)
+read : (fwd w.length).workTapeSymbols i = none
+⊢ tapeAction i 0
+      (match ?m.236, none with
+        | ScanPhase.fwd a, some val => (none, 1, ScanPhase.fwd false)
+        | ScanPhase.fwd a, none => (none, -1, ScanPhase.bwd true)
+        | ScanPhase.bwd clean, some b =>
+          (if clean = true ∧ b = true then some none else none, -1, ScanPhase.bwd (clean && b))
+        | ScanPhase.bwd a, none => (none, 1, ScanPhase.done false)
+        | ScanPhase.done a, x => (none, 0, ScanPhase.done false)).1
+      (match ?m.236, none with
+          | ScanPhase.fwd a, some val => (none, 1, ScanPhase.fwd false)
+          | ScanPhase.fwd a, none => (none, -1, ScanPhase.bwd true)
+          | ScanPhase.bwd clean, some b =>
+            (if clean = true ∧ b = true then some none else none, -1, ScanPhase.bwd (clean && b))
+          | ScanPhase.bwd a, none => (none, 1, ScanPhase.done false)
+          | ScanPhase.done a, x => (none, 0, ScanPhase.done false)).2.1
+      (match ?m.236, none with
+          | ScanPhase.fwd a, some val => (none, 1, ScanPhase.fwd false)
+          | ScanPhase.fwd a, none => (none, -1, ScanPhase.bwd true)
+          | ScanPhase.bwd clean, some b =>
+            (if clean = true ∧ b = true then some none else none, -1, ScanPhase.bwd (clean && b))
+          | ScanPhase.bwd a, none => (none, 1, ScanPhase.done false)
+          | ScanPhase.done a, x => (none, 0, ScanPhase.done false)).2.2 =
+    tapeAction i 0 none (-1) (ScanPhase.bwd true)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:2997:45: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.241 = ?m.241
+but is expected to have type
+  (fwd w.length).state = some ?m.236
+in the application
+  step_of_tapeAction_move (canonTrimTM k i) (fwd w.length) i 0 SignType.neg rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3047:75: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.653 = ?m.653
+but is expected to have type
+  (canonTrimTM k i).tr ?m.643 done.inputSymbol done.workTapeSymbols = tapeAction i 0 none 0 (ScanPhase.done false)
+in the application
+  step_of_tapeAction_move (canonTrimTM k i) done i 0 0 ?m.651 rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3110:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+I : FinTM Bool
+a : ℕ
+identity : I.ComputesFunInTime id fun n => a * (n + 1)
+E : FinTM Bool
+entry exit : E.State
+c : ℕ
+positive : 0 < E.k
+emit :
+  ∀ (x arg : List Bool),
+    ∃ t ≤ c * (a * (arg.length + 1) + arg.length + (id arg).length + 1),
+      0 < t ∧
+        (∀ (t' : ℕ),
+            0 < t' → t' < t → (MultiTapeTM.runFrom (Cfg.ofWords entry (stateWord E.k arg)) t').state ≠ some exit) ∧
+          MultiTapeTM.runFrom (Cfg.ofWords entry (stateWord E.k arg)) t =
+            have __src := Cfg.ofWords exit (stateWord E.k arg);
+            { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes,
+              workTapePos := __src.workTapePos, output := id arg }
+i : Fin E.k := ⟨0, positive⟩
+trim : MultiTapeTM E.k Bool (ScanPhase Bool) := canonTrimTM E.k i
+prepare : MultiTapeTM E.k Bool (SweepPhase ⊕ ScanPhase Bool) :=
+  seamCompTM (inputCopyTM E.k i) SweepPhase.done trim (ScanPhase.fwd false)
+release : MultiTapeTM E.k Bool (Unit ⊕ E.State) := seamReleaseTM E.tm entry
+halt : MultiTapeTM E.k Bool Unit :=
+  { q₀ := (),
+    tr := fun x x_1 x_2 => { inputTape := 0, workTapes := fun x => (none, 0), output := none, state := none } }
+finish : MultiTapeTM E.k Bool ((Unit ⊕ E.State) ⊕ Unit) := seamCompTM release (Sum.inr exit) halt ()
+machine : FinTM Bool :=
+  { k := E.k, State := (SweepPhase ⊕ ScanPhase Bool) ⊕ (Unit ⊕ E.State) ⊕ Unit,
+    fintypeState := instFintypeSum (SweepPhase ⊕ ScanPhase Bool) ((Unit ⊕ E.State) ⊕ Unit),
+    decEqState := fun a b => instDecidableEqSum a b,
+    tm :=
+      let __src := seamCompTM prepare (Sum.inr (ScanPhase.done false)) finish (Sum.inl (Sum.inl ()));
+      { q₀ := Sum.inl (Sum.inl SweepPhase.sweep), tr := __src.tr } }
+d : ℕ := c * (a + 2) + 8
+⊢ machine.ComputesFunInTime canonStrip fun n => d * (n + 1) ^ d
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3213:60: error: Application type mismatch: The argument
+  h
+has type
+  codeSkipFin (n + 1) ys = some rest
+but is expected to have type
+  Option.bind ?m.30 ?m.31 = some ?m.28
+in the application
+  Option.bind_eq_some_iff.mp h
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3213:12: error: Tactic `rcases` failed: `w✝ : ?m.29` is not an inductive datatype
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3238:2: error: Missing cases:
+(List.cons _ []), _
+[], _
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3254:6: error: Dependent elimination failed: Failed to solve equation
+  some vs = codeSkipRepeat codeSkipWork 0 us
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3257:60: error: Application type mismatch: The argument
+  hw
+has type
+  codeSkipRepeat codeSkipWork (j + 1) us = some vs
+but is expected to have type
+  Option.bind ?m.78 ?m.79 = some ?m.76
+in the application
+  Option.bind_eq_some_iff.mp hw
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3259:20: error: Tactic `subst` failed: invalid equality proof, it is not of the form (x = t) or (t = x)
+  ?m.131 = a :: b :: zs
+
+case succ
+k : ℕ
+xs ys : List Bool
+h : canonSkipFields k xs = some ys
+vs : List Bool
+j : ℕ
+ih : ∀ (us : List Bool), codeSkipRepeat codeSkipWork j us = some vs → ∃ u, us = u ++ vs ∧ u.length = 4 * j
+us : List Bool
+hw : codeSkipRepeat codeSkipWork (j + 1) us = some vs
+ws : ?m.107
+hws : (codeSkipPair ?m.130 ?m.131).bind ?m.109 = some ws
+hrest : ?m.79 ws = some ?m.76
+zs : List Bool
+hz : codeSkipPair ?m.130 ?m.131 = some zs
+hz' : ?m.109 zs = some ws
+a b : Bool
+h✝ : ?m.131 = a :: b :: zs
+⊢ ∃ u, us = u ++ vs ∧ u.length = 4 * (j + 1)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3278:4: error: Tactic `rfl` failed: The left-hand side
+  codeSkipRepeat r n xs
+is not definitionally equal to the right-hand side
+  (codeSkipRepeat r 0 xs).bind (codeSkipRepeat r n)
+
+case zero
+r : List Bool → Option (List Bool)
+n : ℕ
+xs : List Bool
+⊢ codeSkipRepeat r n xs = (codeSkipRepeat r 0 xs).bind (codeSkipRepeat r n)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3281:4: error: 'show' tactic failed, pattern
+  (r xs).bind (codeSkipRepeat r (m + n)) = ((r xs).bind (codeSkipRepeat r m)).bind (codeSkipRepeat r n)
+is not definitionally equal to target
+  codeSkipRepeat r (m + n).succ xs = (codeSkipRepeat r (m + 1) xs).bind (codeSkipRepeat r n)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3293:12: error: Tactic `rfl` failed: The left-hand side
+  codeSkipRepeat (codeSkipRepeat r a) 0 xs
+is not definitionally equal to the right-hand side
+  codeSkipRepeat r (a * 0) xs
+
+case zero
+r : List Bool → Option (List Bool)
+a : ℕ
+xs : List Bool
+⊢ codeSkipRepeat (codeSkipRepeat r a) 0 xs = codeSkipRepeat r (a * 0) xs
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3297:4: error: 'show' tactic failed, pattern
+  (codeSkipRepeat r a xs).bind (codeSkipRepeat (codeSkipRepeat r a) b) = ?m.54
+is not definitionally equal to target
+  codeSkipRepeat (codeSkipRepeat r a) (b + 1) xs = (codeSkipRepeat r a xs).bind (codeSkipRepeat r (a * b))
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3312:6: error: 'show' tactic failed, pattern
+  r ys = (r ys).bind some
+is not definitionally equal to target
+  (fun f => codeSkipRepeat f 3)^[0] r ys = codeSkipRepeat r (3 ^ 0) ys
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3378:4: error: 'change' tactic failed, pattern
+  d = ?m.89
+is not definitionally equal to target
+  roundOrbit (canonCellTM k true) (fun x => 1) d 0 =
+    { state := some (some true), inputPos := ⟨p + 0 + 1, ⋯⟩, workTapes := d.workTapes, workTapePos := d.workTapePos,
+      output := d.output }
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3442:58: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.334 = ?m.334
+but is expected to have type
+  Nat.ofDigits 2 (List.map Bool.toNat w) = n
+in the application
+  counterLoopTM_run_done M (some true) (some (some false)) (fun x => 1) d w (FinTM.bufferTape w) 0
+    (fun z a a_1 =>
+      of_eq_true
+        (Eq.trans (congrArg (fun x => FinTM.bufferTape w x = FinTM.bufferTape w z) (zero_add z))
+          (eq_self (FinTM.bufferTape w z))))
+    n rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3481:71: error: Application type mismatch: The argument
+  before
+has type
+  r < n
+but is expected to have type
+  r < Nat.ofDigits 2 (List.map Bool.toNat w)
+in the application
+  counterLoopTM_run_escape M (some true) (some false) ?m.589 (fun x => 1) d w (FinTM.bufferTape w) 0 ?m.596 r before
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3488:82: error: Application type mismatch: The argument
+  before
+has type
+  r < n
+but is expected to have type
+  r < Nat.ofDigits 2 (List.map Bool.toNat w)
+in the application
+  Nat.succ_le_of_lt before
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3494:34: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.724 = ?m.724
+but is expected to have type
+  (counterLoopCfg (some CounterLoopState.escape)
+        { state := some (some false), inputPos := ⟨p + r + 1, ⋯⟩, workTapes := d.workTapes,
+          workTapePos := d.workTapePos, output := d.output }
+        (FinTM.bufferTape (counterWord w (r + 1))) 0).output =
+    (counterLoopCfg (some CounterLoopState.escape)
+        { state := d.state, inputPos := ⟨p + min (counterValue w) r + 1, ⋯⟩, workTapes := d.workTapes,
+          workTapePos := d.workTapePos, output := d.output }
+        (FinTM.bufferTape (counterWord w (r + 1))) 0).output
+in the application
+  Cfg.ext ?m.715 ?m.716 ?m.719 ?m.722 rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3601:4: error: Type mismatch
+  counterLoopCfg_body (some true) start
+has type
+  counterLoopCfg start.state (counterLoopBody (some true) start) (start.workTapes (Fin.last 1))
+      (start.workTapePos (Fin.last 1)) =
+    start
+but is expected to have type
+  counterLoopCfg start.state body (d.workTapes 1) (d.workTapePos 1) = start
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3603:32: error: Application type mismatch: The argument
+  pos
+has type
+  ↑d.inputPos = p + 1
+but is expected to have type
+  ↑body.inputPos = p + 1
+in the application
+  canonUnaryLoop body ?m.533 p r pos
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3603:24: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.532 = ?m.532
+but is expected to have type
+  body.state = some (some true)
+in the application
+  canonUnaryLoop body rfl
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3854:20: error: Application type mismatch: The argument
+  Eq.symm state
+has type
+  some (Sum.inl SweepPhase.sweep) = d.state
+but is expected to have type
+  (Cfg.mapState Sum.inl cp).state = d.state
+in the application
+  Cfg.ext (Eq.symm state)
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3863:6: error: 'change' tactic failed, pattern
+  e.workTapes 1 = ?m.625
+is not definitionally equal to target
+  next.workTapes 1 = FinTM.bufferTape w
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3877:52: error: 'change' tactic failed, pattern
+  e.inputPos = ?m.644
+is not definitionally equal to target
+  next.inputPos = d.inputPos
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3879:6: error: 'change' tactic failed, pattern
+  e.workTapePos = ?m.663
+is not definitionally equal to target
+  next.workTapePos = d.workTapePos
+lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator.lean:3881:51: error: maximum number of errors (100; from option `maxErrors`) reached, exiting
+FAIL(lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator): lean exited with status 1
+FAIL(lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator): error diagnostics reported
+FAIL(lean_proof/dlc/seal/fBcoe/TCSlib_Complexity_TuringMachine_CodeSimulator): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=31.18 s, maxrss=2633044 KiB, exit=1
+

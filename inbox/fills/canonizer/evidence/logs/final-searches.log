@@ -1,0 +1,44 @@
+# Searches for the helper's statements (git grep at the base over TCSlib; ripgrep over Mathlib), 2026-11-15T03:10:28Z
+
+## git grep -nE 'ComputesFunInTime \(fun α => \(codeDecode' BASE -- TCSlib (first 20)
+
+## git grep -nE 'canonizerTime k ≤|canonizerTime n ≤' BASE -- TCSlib (first 20)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:275:length: `canonizerTime k ≤ A · 2^{B k}`. For codes of length `⌊log₂ n⌋` the coefficient
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:283:  ∃ A B : ℕ, ∀ k, c.canonizerTime k ≤ A * 2 ^ (B * k)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:310:`canonizerTime k ≤ A · 2^{Bk} = A (2^k)^B ≤ A (n + 1)^B` (`Nat.pow_log_le_self`, `pow_mul`);
+
+## git grep -nE 'EffectiveMachineCode,' BASE -- TCSlib (first 20)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/Universal.lean:302:theorem exists_canonizerExp : ∃ c : EffectiveMachineCode, CanonizerExp c := by
+
+## git grep -nE 'toMachineCode := ⟨CodeTM.serialize' BASE -- TCSlib (first 20)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/Diagonalization/EXPCOM.lean:161:      toMachineCode := ⟨CodeTM.serialize, codeDecode, codeDecode_serialize_pad⟩
+
+## git grep -nE '\+ 1\) \^ .* ≤ 2 \^|\+ 1 ≤ 2 \^' BASE -- TCSlib (first 20)
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/CommunicationComplexity/DeterministicCC/FuncEquality.lean:272:`⌈ε⁻¹⌉ + 1 ≤ 2 ^ k` by the defining property of the ceiling logarithm. Step 3: combining,
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/CommunicationComplexity/DeterministicCC/FuncEquality.lean:286:  -- Step 2: `⌈ε⁻¹⌉ + 1 ≤ 2 ^ k`
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/CommunicationComplexity/DeterministicCC/FuncEquality.lean:287:  have hk_nat : ⌈ε⁻¹⌉₊ + 1 ≤ 2 ^ k := by
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/CircuitComplexity/Basic.lean:314:    c.size + 1 ≤ 2 ^ (c.depth + 1) := by
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/CircuitComplexity/Basic.lean:323:      have hchild : ∀ c ∈ cs, c.size + 1 ≤ 2 ^ (TreeCircuit.maxDepth cs + 1) := fun c hc =>
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/CircuitComplexity/Meyer.lean:108:  have ha : c₀ + 1 ≤ 2 ^ c₀ := Nat.lt_two_pow_self
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/CircuitComplexity/MeyerTab.lean:173:  have h1 : y.length + 1 ≤ 2 ^ y.length := Nat.lt_two_pow_self
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/EXP.lean:331:  · have hs : (n + 1) ^ k ≤ 2 ^ k := Nat.pow_le_pow_left (by omega) k
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/EXP.lean:332:    calc 2 ^ (K * (n + 1) ^ k) ≤ 2 ^ (K * 2 ^ k) :=
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:175:  have hlin : T + 1 ≤ 2 ^ (T + 1) := (Nat.lt_two_pow_self).le
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/ExpPoly.lean:69:  calc a * (n + 1) ^ d ≤ 2 ^ a * 2 ^ (d * (n + 1)) := by
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/ExpPoly.lean:117:  calc T (a * (n + 1) ^ d) ≤ 2 ^ (K * (a * (n + 1) ^ d + 1) ^ k) := hK _
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/ExpPoly.lean:131:  have hexp : ∀ n : ℕ, 2 ^ (K * (n + 1) ^ k) ≤ 2 ^ (K * 2 ^ k) * 2 ^ n ^ (K + 2 * k) := by
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/ExpPoly.lean:143:    · have hs : (n + 1) ^ k ≤ 2 ^ k := Nat.pow_le_pow_left (by omega) k
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/ExpPoly.lean:144:      calc 2 ^ (K * (n + 1) ^ k) ≤ 2 ^ (K * 2 ^ k) :=
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3425:  · have hs : (n + 1) ^ k ≤ 2 ^ k := Nat.pow_le_pow_left (by omega) k
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3426:    calc 2 ^ (K * (n + 1) ^ k) ≤ 2 ^ (K * 2 ^ k) :=
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3448:  have hnexp : n + 1 ≤ 2 ^ (n + 1) ^ (c + 1) :=
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassNP/Nondeterminism.lean:4176:  have hnexp : n + 1 ≤ 2 ^ p :=
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Complexity/ClassP/BinaryArith/Unary.lean:85:    have hpow : (m.bits.length + 1) ^ e ≤ 2 ^ (m.bits.length + 1) := by exact_mod_cast h
+
+## rg -n 'theorem .*succ_pow_le_two_pow|theorem .*add_one_pow_le_two_pow|theorem pow_le_pow_left' Mathlib + core (first 8)
+/root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Basic.lean:778:protected theorem pow_le_pow_left {n m : Nat} (h : n ≤ m) : ∀ (i : Nat), n^i ≤ m^i
+.lake/packages/mathlib/Mathlib/Algebra/Order/Monoid/Unbundled/Pow.lean:156:theorem pow_le_pow_left' {a b : M} (hab : a ≤ b) : ∀ i : ℕ, a ^ i ≤ b ^ i
+.lake/packages/mathlib/Mathlib/Algebra/Order/GroupWithZero/Unbundled/Basic.lean:451:theorem pow_le_pow_left₀ [PosMulMono M₀] [MulPosMono M₀]
+
+## rg -n 'protected theorem lt_two_pow_self' Mathlib + core (first 8)
+/root/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Lemmas.lean:1227:protected theorem lt_two_pow_self : n < 2 ^ n :=

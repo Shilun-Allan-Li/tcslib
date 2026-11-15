@@ -16,6 +16,8 @@ for f in sys.argv[3:]:
     diff = subprocess.run(['git', '-C', wt, 'diff', '-U0', base, '--', f], capture_output=True,
                           text=True).stdout
     added = [l[1:] for l in diff.split('\n') if l.startswith('+') and not l.startswith('+++')]
+    if old.returncode != 0:
+        added = L[:n]
     added_over = [len(l) for l in added if len(l) > 100]
     ok = not added_over and (n <= 1000 or n0 >= 1000)
     bad += not ok
