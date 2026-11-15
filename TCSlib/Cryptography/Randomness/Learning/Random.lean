@@ -141,7 +141,7 @@ proof, step 2]: for `n ≥ 1`, every learner `ℓ` and `m` examples,
 (`uprob_flip_half`) and in `[0, 1]` otherwise, so `|p − ½| ≤ [x ∈ s]`. Averaging (the
 coupling bound `MultiMsg.abs_uexp_sub_le_uprob` against the constant `½`),
 `|gameProb − ½| ≤ Pr[∃ j, s_j = x]`, which the union bound (`uprob_exists_le`) bounds by
-`Σ_j Pr[s_j = x] = m · 2^{-n}` (`uprob_prod`, `uprob_eq_point`). -/
+`Σ_j Pr[s_j = x] = m · 2^{-n}` (`uprob_prod`, `uprob_eq_point`, `OneWay.uexp_const`). -/
 theorem abs_gameProb_random_sub_half_le {ρ : Type*} [Fintype ρ] [Nonempty ρ] (m : ℕ)
     (ℓ : (Fin m → (Fin n → Bool) × Bool) → ρ → (Fin n → Bool) → Bool) :
     |gameProb m (fun R : (Fin n → Bool) → (Fin n → Bool) => R) ℓ - 1 / 2| ≤ m / 2 ^ n := by
@@ -173,10 +173,7 @@ theorem abs_gameProb_random_sub_half_le {ρ : Type*} [Fintype ρ] [Nonempty ρ] 
       t.1.1 j = t.2) = 1 / 2 ^ n := by
     intro j
     rw [uprob_prod]
-    simp only [uprob_eq_point, uexp_def, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-    have : (0 : ℝ) < Fintype.card ((Fin m → Fin n → Bool) × ρ) := by
-      exact_mod_cast Fintype.card_pos
-    field_simp
+    simp only [uprob_eq_point, OneWay.uexp_const]
   have hunion := uprob_exists_le (Finset.univ : Finset (Fin m))
     (fun j (t : ((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool)) => t.1.1 j = t.2)
   simp only [hj, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at hunion
