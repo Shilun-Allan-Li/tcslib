@@ -1,0 +1,110 @@
+$ rg -n polyTimeComputable.*(decWords|encWords)|encWords.*decWords|decWords.*getD TCSlib /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib
+TCSlib/Complexity/Randomized/BPLInP.lean:253:  rw [zipWithW_pairEncode, decWords_encWords, decWords_encWords, List.zipWith_map,
+TCSlib/Complexity/Randomized/BPLInP.lean:289:    rw [zipWithW_pairEncode, decWords_encWords, decWords_encWords, List.zipWith_map,
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:23:* `Complexity.BinArith.encWords`, `Complexity.BinArith.decWords` — encoding and reading.
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:116:@[simp] theorem decWords_encWords (L : List (List Bool)) : decWords (encWords L) = L := by
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:120:    rw [encWords_cons, decWords_of_ne (by simp [pairEncode]), pairFstD_pairEncode,
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:209:    mapW g (pairEncode q w) = encWords ((decWords w).map (fun x => g (pairEncode q x))) := by
+TCSlib/Cryptography/SecureComputation/Yao.lean:349:`BinArith.encWords` by list recursion. Apply `BinArith.decWords_encWords`. -/
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:50:  (List.range p).map fun i => ((BinArith.decWords raw).getD i []).take B
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:53:`normalizeMsgs p B raw = (List.range p).map (fun i => ((decWords raw).getD i []).take B)`. -/
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:56:      (List.range p).map (fun i => ((BinArith.decWords raw).getD i []).take B) := rfl
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:79:  rw [normalizeMsgs_eq, encodeMsgs_eq_encWords, BinArith.decWords_encWords]
+exit=0
+
+$ rg -n polyTimeComputable_flatMap_range|flatMap_range_ite|polyTimeComputable_getW|mapW_pairEncode TCSlib
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:190:private theorem flatMap_range_ite (m R : ℕ) :
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:229:    flatMap_range_ite, Nat.min_eq_right hR, quasiPolyBudget, bits_two_pow_eq_replicate]
+TCSlib/Complexity/Randomized/BPLInP.lean:236:  rw [dpInit, codesW_eq, mapW_pairEncode, decWords_encWords, List.map_map, vecW]
+TCSlib/Complexity/Randomized/BPLInP.lean:249:  rw [mapW_pairEncode, decWords_encWords, List.map_map, vecW]
+TCSlib/Complexity/FormulaKit/Emit.lean:28:* **One loop.** `polyTimeComputable_flatMap_range` is the public emitting loop
+TCSlib/Complexity/FormulaKit/Emit.lean:52:* `Complexity.FormulaKit.polyTimeComputable_flatMap_range` — ordered uniform emission.
+TCSlib/Complexity/FormulaKit/Emit.lean:127:theorem polyTimeComputable_flatMap_range (count : List Bool → ℕ)
+TCSlib/Complexity/FormulaKit/Emit.lean:136:polynomial time. (Proved from `polyTimeComputable_flatMap_range`, `fragment_flatMap` and the
+TCSlib/Complexity/FormulaKit/Emit.lean:143:  have h := (polyTimeComputable_flatMap_range count (fun x i => fragment (G x i))
+TCSlib/Complexity/FormulaKit/Emit.lean:224:**Proof sketch.** `polyTimeComputable_flatMap_range` with `f x` rounds, each emitting
+TCSlib/Complexity/FormulaKit/Emit.lean:255:**Proof sketch.** `polyTimeComputable_flatMap_range` over `f x` rounds, emitting one `1` at
+TCSlib/Complexity/Randomized/ZeroPRun.lean:156:  polyTimeComputable_getW.comp (hf.pairEncode polyTimeComputable_sL)
+TCSlib/Complexity/Randomized/ZeroPRun.lean:166:    polyTimeComputable_getW.comp ((polyTimeComputable_arg1W.comp w).pairEncode
+TCSlib/Complexity/Randomized/ZeroPRun.lean:484:  exact polyTimeComputable_getW.comp hp
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:44:* `Complexity.BinArith.getW_pairEncode`, `Complexity.BinArith.polyTimeComputable_getW`.
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:391:theorem polyTimeComputable_getW : PolyTimeComputable getW := by
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:30:* `Complexity.BinArith.polyTimeComputable_mapW`, `Complexity.BinArith.mapW_pairEncode`.
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:208:theorem mapW_pairEncode (g : List Bool → List Bool) (q w : List Bool) :
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:207:`encWords_append_singleton`, and the elimination uses `mapW_pairEncode` with `rowW_eq` and
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:238:          mapW_pairEncode, decWords_encMat, List.map_map]
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:341:  simp only [initW, encState, mapW_pairEncode, rowModW, countW_eq, initRows, List.length_map,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:208:spliced commitment message is the concatenation loop `ColMachines.polyTimeComputable_flatMap_range`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:235:  have hcom := ColMachines.polyTimeComputable_flatMap_range
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:160:theorem flatMap_range_ite (f : ℕ → List Bool) (L : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:165:    rw [List.range_succ, List.flatMap_append, flatMap_range_ite f L N, List.flatMap_singleton]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:179:first `L z` ones (`flatMap_range_ite`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:204:  rw [flatMap_range_ite, min_eq_right hN]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:33:  concatenating loops over a data-dependent range (`polyTimeComputable_flatMap_range`), and
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:60:  `ColMachines.polyTimeComputable_flatMap_range`, `ColMachines.iterSnd_poly` — loops.
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:141:`E i` over `i < min N L` (`EncodingMachines.flatMap_range_ite_eq` for arbitrary chunks). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:142:theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:147:    rw [List.range_succ, List.flatMap_append, flatMap_range_ite E L N, List.flatMap_singleton]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:158:(`flatMap_range_ite`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:159:theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:184:  rw [flatMap_range_ite, min_eq_right hN]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:177:/-- The prover's first message is polynomial-time (`polyTimeComputable_flatMap_range`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:179:  polyTimeComputable_flatMap_range (E := fun w i => pairEncode (comAt Com ℓ w i) [])
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:368:theorem flatMap_range_ite_eq (f : ℕ → Bool) (L : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:373:    rw [List.range_succ, List.flatMap_append, flatMap_range_ite_eq f L N, List.flatMap_singleton]
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:397:`(List.range |F z|).map (fun i => (F z).getD i false) = F z` (`flatMap_range_ite_eq`,
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:427:  rw [flatMap_range_ite_eq, min_eq_right hN, map_range_getD]
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:245:theorem flatMap_range_ite_eq_flatten_ofFn (E : ℕ → List Bool) {Q R : ℕ} (h : Q ≤ R) :
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:459:of the first `q(n)` emissions is the target by `flatMap_range_ite_eq_flatten_ofFn` and
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:496:  rw [flatMap_range_ite_eq_flatten_ofFn _ hQle]
+exit=0
+
+$ rg -n map_id|flatMap_map|map_flatMap|map_range /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Rotate.lean:450:theorem isRotated_iff_mem_map_range : l ~r l' ↔ l' ∈ (List.range (l.length + 1)).map l.rotate := by
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Rotate.lean:612:  decidable_of_iff' _ isRotated_iff_mem_map_range
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Sublists.lean:140:     map_id'' append_nil, append_nil]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Sublists.lean:153:  simp only [sublists_eq_sublists', map_map, map_id'' reverse_reverse, Function.comp_def]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Sublists.lean:219:  rw [sublistsLen, sublistsLenAux, sublistsLenAux_eq, sublistsLenAux_eq, map_id,
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Sublists.lean:394:    simp_rw [range_succ_eq_map, length, flatMap_cons, flatMap_map, sublistsLen_succ_cons,
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Sublists.lean:397:    simp_rw [← List.map_flatMap, ← cons_append]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Sublists.lean:402:      ← List.flatMap_map Nat.succ fun n => sublistsLen n tl,
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Lookmap.lean:81:theorem lookmap_id' (h : ∀ (a), ∀ b ∈ f a, a = b) (l : List α) : l.lookmap f = l := by
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Lookmap.lean:82:  rw [← map_id (l.lookmap f), lookmap_map_eq, map_id]; exact h
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/FinRange.lean:25:theorem finRange_eq_pmap_range (n : ℕ) : finRange n = (range n).pmap Fin.mk (by simp) := by
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/FinRange.lean:30:  rw [finRange_eq_pmap_range]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/FinRange.lean:37:  rw [finRange_eq_pmap_range]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/FinRange.lean:45:  rw [finRange_eq_pmap_range]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/FinRange.lean:49:  rw [finRange_eq_pmap_range]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Monad.lean:27:  (id_map := map_id)
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Sigma.lean:228:  grind [Option.map_id']
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Sigma.lean:357:  refine (lookmap_congr ?_).trans (lookmap_id' (Option.guard fun (s : Sigma β) => a = s.1) ?_ _)
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Permutation.lean:102:  rw [map_permutationsAux2' id, map_id, map_id]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Permutation.lean:224:    flatMap_map, IH1, append_assoc, permutationsAux_cons, flatMap_cons, ← IH2, map_flatMap]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Permutation.lean:234:  | cons t ts ih => simp [← ih, map_flatMap, ← map_map_permutations'Aux, flatMap_map]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Permutation.lean:240:  simp only [foldr_permutationsAux2, ih, map_flatMap, cons_append, permutationsAux_cons, map_append,
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Permutation.lean:326:    simp only [flatMap_map, permutations'Aux]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Permutation.lean:330:    rw [← map_eq_flatMap, ← map_flatMap]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Range.lean:154:theorem range'_eq_map_range {s n : Nat} : range' s n = map (s + ·) (range n) := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Range.lean:181:  rw [← range'_eq_map_range]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Attach.lean:150:  attach_map_val.trans (List.map_id _)
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Attach.lean:158:  (attachWith_map_val _).trans (List.map_id _)
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:278:    zip (l₁.map f) l₂ = (zip l₁ l₂).map (Prod.map f id) := by rw [← zip_map, map_id]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:281:    zip l₁ (l₂.map f) = (zip l₁ l₂).map (Prod.map id f) := by rw [← zip_map, map_id]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:25:* lemmas for special cases of the arguments (e.g. `List.map_id`)
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1069:@[simp] theorem map_id_fun : map (id : α → α) = id := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1073:/-- `map_id_fun'` differs from `map_id_fun` by representing the identity function as a lambda, rather than `id`. -/
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1074:@[simp] theorem map_id_fun' : map (fun (a : α) => a) = id := map_id_fun
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1076:-- This is not a `@[simp]` lemma because `map_id_fun` will apply.
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1078:theorem map_id (l : List α) : map (id : α → α) l = l := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1081:/-- `map_id'` differs from `map_id` by representing the identity function as a lambda, rather than `id`. -/
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1082:-- This is not a `@[simp]` lemma because `map_id_fun'` will apply.
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1084:theorem map_id' (l : List α) : map (fun (a : α) => a) l = l := map_id l
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1086:/-- Variant of `map_id`, with a side condition that the function is pointwise the identity. -/
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1088:theorem map_id'' {f : α → α} (h : ∀ x, f x = x) (l : List α) : map f l = l := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:2089:theorem map_flatMap {f : β → γ} {g : α → List β} :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:2092:  | a::l => by simp only [flatMap_cons, map_append, map_flatMap]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:2094:theorem flatMap_map (f : α → β) (g : β → List γ) (l : List α) :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:2100:  rw [← flatMap_singleton' l, map_flatMap, flatMap_singleton']
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/Range.lean:81:  rw [← map_add_range', map_map, (?_ : _∘_ = _), map_id]
+exit=0
+

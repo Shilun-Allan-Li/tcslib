@@ -1,0 +1,174 @@
+START 2026-11-15T09:19:19.955689+00:00
+MODULE TCSlib/Cryptography/Composability/SequentialZK
+TCSlib/Cryptography/Composability/SequentialZK.lean:420:4: error: unsolved goals
+case neg
+π : Protocol
+Q : PolyExpr
+P' : Strategy
+x y z rP rV : List Bool
+hQ : 1 ≤ Q.eval x.length
+t : ℕ
+ih :
+  t ≤ π.rounds.eval x.length →
+    exec P' (π.seqVerifier Q) π.verifierFirst x y z rP rV t =
+      exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t
+ht : t + 1 ≤ π.rounds.eval x.length
+htk : t < π.rounds.eval x.length
+hm : ¬moverIsV π.verifierFirst t = true
+⊢ (if false = true then
+      ((exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).1 ++
+          [(π.seqVerifier Q).next x z rV
+              (exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).2],
+        (exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).2)
+    else
+      ((exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).1,
+        (exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).2 ++
+          [P'.next x y rP (exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).1])) =
+    if false = true then
+      ((exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).1 ++
+          [π.V.next x z (coinBlock (π.V.coinLen x.length) 0 rV)
+              (exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).2],
+        (exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).2)
+    else
+      ((exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).1,
+        (exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).2 ++
+          [P'.next x y rP (exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t).1])
+TCSlib/Cryptography/Composability/SequentialZK.lean:420:21: warning: This simp argument is unused:
+  if_false
+
+Hint: Omit it from the simp argument list.
+  simp only [hm,̵ ̵i̵f̵_̵f̵a̵l̵s̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Composability/SequentialZK.lean:441:15: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    _a.next x z (List.ofFn r.2) ((π.seqRep Q).transcriptWith P' x y z r).2 =
+      π.seqVerdict (Q.eval x.length) x z (List.ofFn r.2) ((π.seqRep Q).transcriptWith P' x y z r).2
+Error: Application type mismatch: The argument
+  r
+has type
+  (π.seqRep Q).ExecCoins P' x
+but is expected to have type
+  P'.Coins x.length × _a.Coins x.length
+in the application
+  r.2
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+π : Protocol
+Q : PolyExpr
+P' : Strategy
+x y z : List Bool
+r : (π.seqRep Q).ExecCoins P' x
+hl : ((π.seqRep Q).transcriptWith P' x y z r).2.length = Q.eval x.length * π.rounds.eval x.length
+⊢ (π.seqRep Q).V.next x z (List.ofFn r.2) ((π.seqRep Q).transcriptWith P' x y z r).2 =
+    π.seqVerdict (Q.eval x.length) x z (List.ofFn r.2) ((π.seqRep Q).transcriptWith P' x y z r).2
+TCSlib/Cryptography/Composability/SequentialZK.lean:518:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  if True then ?t else ?e
+in the target expression
+  (if true = true then [true] else [false]) = [true]
+
+case h
+π : Protocol
+Q : PolyExpr
+x y z : List Bool
+hc : (uprob fun r => π.outV π.P x y z r = [true]) = 1
+r : (π.seqRep Q).ExecCoins (π.seqRep Q).P x
+hall :
+  ((List.range (Q.eval x.length)).all fun j =>
+      decide
+        (π.V.next x z (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2))
+            (List.take (proverMoves π.verifierFirst (π.rounds.eval x.length))
+              (List.drop (j * π.rounds.eval x.length) ((π.seqRep Q).transcriptWith (π.seqRep Q).P x y z r).2)) =
+          [true])) =
+    true
+⊢ (if true = true then [true] else [false]) = [true]
+TCSlib/Cryptography/Composability/SequentialZK.lean:555:69: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    decide
+        (π.V.next x z (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+            (List.take (proverMoves π.verifierFirst k)
+              (exec P' _a π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
+                  (2 * π.rounds.eval x.length * Q.eval x.length)).2) =
+          [true]) =
+      true
+Error: Application type mismatch: The argument
+  r
+has type
+  (π.seqRep Q).ExecCoins P' x
+but is expected to have type
+  P'.Coins x.length × _a.Coins x.length
+in the application
+  r.2
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+π : Protocol
+Q : PolyExpr
+P' : Strategy
+x y z : List Bool
+r : (π.seqRep Q).ExecCoins P' x
+hQ : 1 ≤ Q.eval x.length
+hr :
+  π.V.next x z (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+      (exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+          (π.rounds.eval x.length)).2 =
+    [false]
+k : ℕ := π.rounds.eval x.length
+hkQ : k ≤ Q.eval x.length * k
+hle : k ≤ 2 * k * Q.eval x.length
+hp :
+  List.take (proverMoves π.verifierFirst k)
+      (exec P' (π.seqVerifier Q) π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (2 * k * Q.eval x.length)).2 =
+    (exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+        (π.rounds.eval x.length)).2
+hl :
+  (exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2)) k).2.length =
+    proverMoves π.verifierFirst k
+hall :
+  ((List.range (Q.eval x.length)).all fun j =>
+      decide
+        (π.V.next x z (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2))
+            (List.take (proverMoves π.verifierFirst k) (List.drop (j * k) ((π.seqRep Q).transcriptWith P' x y z r).2)) =
+          [true])) =
+    true
+hz :
+  decide
+      (π.V.next x z (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+          (List.take (proverMoves π.verifierFirst k)
+            (exec P' (π.seqRep Q).V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
+                (2 * π.rounds.eval x.length * Q.eval x.length)).2) =
+        [true]) =
+    true
+⊢ False
+TCSlib/Cryptography/Composability/SequentialZK.lean:661:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Composability/SequentialZK.lean:678:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Composability/SequentialZK.lean:759:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Composability/SequentialZK.lean:771:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Composability/SequentialZK): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK): no fresh .olean produced
+       68.48 real        69.80 user         1.38 sys
+          3243425792  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              236288  page reclaims
+                5837  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 410  voluntary context switches
+               23930  involuntary context switches
+            32285399  instructions retired
+            15509278  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T09:20:33.504096+00:00
+EXIT 1

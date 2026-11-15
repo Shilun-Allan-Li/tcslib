@@ -1,0 +1,58 @@
+$ rg -n normalize.*([Vv]iew|[Pp]hase)|phaseView|View.encode.*decWords|pairSndD.*pairSndD.*raw|canonical.*[Vv]iew TCSlib /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib
+TCSlib/Cryptography/Encoding/BooleanVector.lean:180:  change pairSndD (pairSndD ((expandStep^[M.eval u.length]) (pairEncode c (pairEncode raw [])))) = _
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/UniformTransfer.lean:217:    exact tendsto_sum_noiseKernel_normalizedCubeBlocks_phase ⟨by linarith, hρ1⟩ _ _
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/BooleanCharacteristic.lean:110:/-- A linear phase of normalized block sums is a linear phase of the underlying
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/BooleanCharacteristic.lean:134:lemma sum_noiseKernel_normalizedCubeBlocks_phase {n m : ℕ} (ρ : ℝ) (a b : Fin n → ℝ) :
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/BooleanCharacteristic.lean:151:lemma tendsto_sum_noiseKernel_normalizedCubeBlocks_phase {n : ℕ} {ρ : ℝ}
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/BooleanCharacteristic.lean:175:  simpa only [sum_noiseKernel_normalizedCubeBlocks_phase,
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/Fourier.lean:55:/-- The coordinate pairing normalized so that the Fourier phase is
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/Fourier.lean:62:/-- The normalized coordinate pairing cancels the Fourier phase constant. -/
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/Fourier.lean:69:/-- The normalized Fourier integral is an average of complex exponential phases. -/
+TCSlib/Cryptography/Composability/ThreeColoring.lean:121:The composition sketch normalizes simulated phases to that prescribed shape and message
+TCSlib/Cryptography/Composability/ThreeColoring.lean:122:bound, with a canonical fallback for malformed phase views; it assumes no new simulator
+TCSlib/Cryptography/Composability/SequentialZK.lean:389:   wrapper tape as the view fields. A bad/noncanonical encoding or unexpected view fields
+TCSlib/Cryptography/Composability/SequentialZK.lean:390:   maps to that canonical phase view with `p` empty real messages. Append the `k - p`
+TCSlib/Cryptography/Composability/SequentialZK.lean:400:   Its final output is the canonical view with fields `(x, z, r)` and the accumulated prefix.
+exit=0
+
+$ rg -n polyTimeComputable_eqW|eqW_pairEncode|theorem polyTimeComputable_ite|def polyTimeComputable_ite|View.encode_mk|theorem replicate.*|mem_replicate TCSlib/Complexity TCSlib/Cryptography/ZeroKnowledge/Interaction.lean /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:302:theorem View.encode_mk (x z r : List Bool) (received : List (List Bool)) :
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Rotate.lean:119:    eq_of_mem_replicate <| mem_rotate.1 hb⟩
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:197:theorem replicate_add (m n) (a : α) : replicate (m + n) a = replicate m a ++ replicate n a := by
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:200:theorem replicate_subset_singleton (n) (a : α) : replicate n a ⊆ [a] := fun _ h =>
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:201:  mem_singleton.2 (eq_of_mem_replicate h)
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:206:theorem replicate_right_injective {n : ℕ} (hn : n ≠ 0) : Injective (@replicate α n) :=
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:207:  fun _ _ h => (eq_replicate_iff.1 h).2 _ <| mem_replicate.2 ⟨hn, rfl⟩
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:209:theorem replicate_right_inj {a b : α} {n : ℕ} (hn : n ≠ 0) :
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:213:theorem replicate_right_inj' {a b : α} : ∀ {n},
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:218:theorem replicate_left_injective (a : α) : Injective (replicate · a) :=
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:221:theorem replicate_left_inj {a : α} {n m : ℕ} : replicate n a = replicate m a ↔ n = m :=
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:703:    b₁ = b₂ := by rw [map_const] at h; exact eq_of_mem_replicate h
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Dedup.lean:166:theorem replicate_dedup {x : α} : ∀ {k}, k ≠ 0 → (replicate k x).dedup = [x]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Dedup.lean:170:    rw [replicate_succ, dedup_cons_of_mem (mem_replicate.2 ⟨n.succ_ne_zero, rfl⟩),
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:260:theorem polyTimeComputable_iterate_pairFstD (n : ℕ) : PolyTimeComputable (pairFstD^[n]) := by
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:290:theorem polyTimeComputable_ite {p : List Bool → Bool} {f g : List Bool → List Bool}
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7122:    exact Bool.noConfusion (List.eq_of_mem_replicate hmem)
+TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.lean:271:  simp only [tabPre, List.mem_append, List.mem_cons, List.mem_map, List.mem_replicate,
+TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.lean:339:      simp only [tabFixed, List.mem_append, List.mem_replicate, List.mem_map,
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableau.lean:314:    · rw [(List.mem_replicate.mp ha).2]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableau.lean:327:    · rw [(List.mem_replicate.mp ha).2]
+TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily.lean:146:    List.mem_nil_iff, or_false, List.mem_replicate, List.mem_map] at ha
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyProgram.lean:292:  · rw [(List.mem_replicate.mp ha').2]; omega
+TCSlib/Complexity/CircuitComplexity/UnaryLanguages.lean:66:    exact fun b hb => List.eq_of_mem_replicate hb
+TCSlib/Complexity/CircuitComplexity/UnaryLanguages.lean:84:  exact and_iff_right fun b hb => List.eq_of_mem_replicate hb
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit.lean:466:      · exact Or.inr (List.mem_replicate.mp h).2
+TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterInstr.lean:240:  · rw [(List.mem_replicate.mp hs).2]; trivial
+TCSlib/Complexity/CircuitComplexity/UHaltMachine.lean:157:theorem replicate_numOfString_mem_UHALT_iff (c : MachineCode) (s : List Bool) :
+TCSlib/Complexity/Randomized/Repetition.lean:190:theorem polyTimeComputable_iterateFind {g : List Bool → List Bool} (hg : PolyTimeComputable g)
+TCSlib/Complexity/Randomized/Repetition.lean:282:theorem polyTimeComputable_iterate {g : List Bool → List Bool} (hg : PolyTimeComputable g)
+TCSlib/Complexity/Randomized/Repetition.lean:351:theorem polyTimeComputable_iterateEmit {g emit : List Bool → List Bool}
+TCSlib/Complexity/Randomized/Matching.lean:59:open Complexity.BinArith (eqW eqW_pairEncode polyTimeComputable_eqW mulU length_mulU
+TCSlib/Complexity/Randomized/Matching.lean:327:    rw [eqW_pairEncode, length_mulU, hU, hW, pairFstD_pairEncode, Bool.eq_iff_iff]
+TCSlib/Complexity/Randomized/Matching.lean:415:    have h := polyTimeComputable_eqW.comp (polyTimeComputable_pairFstD.pairEncode
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:45:* `Complexity.BinArith.eqW_pairEncode`, `Complexity.BinArith.length_mulU`,
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:416:theorem eqW_pairEncode (a b : List Bool) : eqW (pairEncode a b) = decide (a = b) := by
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:426:theorem polyTimeComputable_eqW : PolyTimeComputable (fun z => [eqW z]) :=
+TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean:190:theorem polyTimeComputable_iterate {g init : List Bool → List Bool}
+exit=0
+

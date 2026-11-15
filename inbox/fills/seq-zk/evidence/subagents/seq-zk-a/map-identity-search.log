@@ -1,0 +1,8 @@
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1069:@[simp] theorem map_id_fun : map (id : α → α) = id := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1073:/-- `map_id_fun'` differs from `map_id_fun` by representing the identity function as a lambda, rather than `id`. -/
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1074:@[simp] theorem map_id_fun' : map (fun (a : α) => a) = id := map_id_fun
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1076:-- This is not a `@[simp]` lemma because `map_id_fun` will apply.
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1078:theorem map_id (l : List α) : map (id : α → α) l = l := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1082:-- This is not a `@[simp]` lemma because `map_id_fun'` will apply.
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1084:theorem map_id' (l : List α) : map (fun (a : α) => a) l = l := map_id l
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:1088:theorem map_id'' {f : α → α} (h : ∀ x, f x = x) (l : List α) : map f l = l := by

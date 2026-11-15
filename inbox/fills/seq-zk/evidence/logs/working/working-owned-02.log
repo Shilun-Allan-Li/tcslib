@@ -1,0 +1,107 @@
+START 2026-11-15T09:22:37.399897+00:00
+MODULE TCSlib/Cryptography/Composability/SequentialZK
+TCSlib/Cryptography/Composability/SequentialZK.lean:444:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (fun V => V.next x z (List.ofFn r.2) ((π.seqRep Q).transcriptWith P' x y z r).2) (π.seqRep Q).V
+in the target expression
+  (π.seqRep Q).V.next x z (List.ofFn r.2) ((π.seqRep Q).transcriptWith P' x y z r).2 =
+    π.seqVerdict (Q.eval x.length) x z (List.ofFn r.2) ((π.seqRep Q).transcriptWith P' x y z r).2
+
+π : Protocol
+Q : PolyExpr
+P' : Strategy
+x y z : List Bool
+r : (π.seqRep Q).ExecCoins P' x
+hl : ((π.seqRep Q).transcriptWith P' x y z r).2.length = Q.eval x.length * π.rounds.eval x.length
+hn :
+  (fun V => V.next x z (List.ofFn r.2) ((π.seqRep Q).transcriptWith P' x y z r).2) (π.seqRep Q).V =
+    (fun V => V.next x z (List.ofFn r.2) ((π.seqRep Q).transcriptWith P' x y z r).2) (π.seqVerifier Q)
+⊢ (π.seqRep Q).V.next x z (List.ofFn r.2) ((π.seqRep Q).transcriptWith P' x y z r).2 =
+    π.seqVerdict (Q.eval x.length) x z (List.ofFn r.2) ((π.seqRep Q).transcriptWith P' x y z r).2
+TCSlib/Cryptography/Composability/SequentialZK.lean:563:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (fun V =>
+      List.take (proverMoves π.verifierFirst k)
+        (exec P' V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (2 * k * Q.eval x.length)).2)
+    (π.seqRep Q).V
+in the target expression
+  decide
+      (π.V.next x z (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+          (List.take (proverMoves π.verifierFirst k)
+            (exec P' (π.seqRep Q).V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
+                (2 * π.rounds.eval x.length * Q.eval x.length)).2) =
+        [true]) =
+    true
+
+π : Protocol
+Q : PolyExpr
+P' : Strategy
+x y z : List Bool
+r : (π.seqRep Q).ExecCoins P' x
+hQ : 1 ≤ Q.eval x.length
+hr :
+  π.V.next x z (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+      (exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+          (π.rounds.eval x.length)).2 =
+    [false]
+k : ℕ := π.rounds.eval x.length
+hkQ : k ≤ Q.eval x.length * k
+hle : k ≤ 2 * k * Q.eval x.length
+hp :
+  List.take (proverMoves π.verifierFirst k)
+      (exec P' (π.seqVerifier Q) π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (2 * k * Q.eval x.length)).2 =
+    (exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+        (π.rounds.eval x.length)).2
+hl :
+  (exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2)) k).2.length =
+    proverMoves π.verifierFirst k
+hall :
+  ((List.range (Q.eval x.length)).all fun j =>
+      decide
+        (π.V.next x z (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2))
+            (List.take (proverMoves π.verifierFirst k) (List.drop (j * k) ((π.seqRep Q).transcriptWith P' x y z r).2)) =
+          [true])) =
+    true
+hz :
+  decide
+      (π.V.next x z (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
+          (List.take (proverMoves π.verifierFirst k)
+            (exec P' (π.seqRep Q).V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
+                (2 * π.rounds.eval x.length * Q.eval x.length)).2) =
+        [true]) =
+    true
+hpV :
+  (fun V =>
+        List.take (proverMoves π.verifierFirst k)
+          (exec P' V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (2 * k * Q.eval x.length)).2)
+      (π.seqRep Q).V =
+    (fun V =>
+        List.take (proverMoves π.verifierFirst k)
+          (exec P' V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (2 * k * Q.eval x.length)).2)
+      (π.seqVerifier Q)
+⊢ False
+TCSlib/Cryptography/Composability/SequentialZK.lean:668:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Composability/SequentialZK.lean:685:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Composability/SequentialZK.lean:766:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Composability/SequentialZK.lean:778:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Composability/SequentialZK): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK): no fresh .olean produced
+       70.20 real        71.43 user         1.37 sys
+          3242622976  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              236242  page reclaims
+                5815  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 445  voluntary context switches
+               25468  involuntary context switches
+            32222231  instructions retired
+            19261856  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T09:23:47.645613+00:00
+EXIT 1

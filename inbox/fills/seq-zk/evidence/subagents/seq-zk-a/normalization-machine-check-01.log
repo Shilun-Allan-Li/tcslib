@@ -1,0 +1,43 @@
+START 2026-11-15T09:11:38Z
+TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean:44:81: error: unsolved goals
+raw : List Bool → List Bool
+hraw : PolyTimeComputable raw
+hpre : PolyTimeComputable fun w => pairEncode [] (raw w)
+w : List Bool
+⊢ BinArith.encWords (List.map (fun x => x) (BinArith.decWords (raw w))) = BinArith.encWords (BinArith.decWords (raw w))
+TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean:49:81: warning: This simp argument is unused:
+  List.map_id
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.comp_apply, BinArith.mapW_pairEncode, pairSndD_pairEncode,̵ ̵L̵i̵s̵t̵.̵m̵a̵p̵_̵i̵d̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean:95:22: warning: This simp argument is unused:
+  Function.comp_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [normalizeMsgs_eq, encodeMsgs_eq_encWords, BinArith.encWords_def, L̵i̵s̵t̵.̵f̵l̵a̵t̵M̵a̵p̵_̵m̵a̵p̵,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵]̵L̲i̲s̲t̲.̲f̲l̲a̲t̲M̲a̲p̲_̲m̲a̲p̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine): no fresh .olean produced
+        2.38 real         1.27 user         1.05 sys
+          2206875648  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173096  page reclaims
+                2206  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 204  voluntary context switches
+                6633  involuntary context switches
+            32685173  instructions retired
+            15389824  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T09:11:41Z

@@ -1,0 +1,58 @@
+Searches repeated for raw evidence on 2026-11-15T08:55:47.117519+00:00
+$ rg -n exec.*(IsPrefix|take)|IsPrefix.*exec|take.*exec TCSlib
+TCSlib/Cryptography/Games/Bridges/Strategies.lean:161:- With `k + 1` moves, `exec_succ` and `turnParty_succ` send `nF MF` to `G`, which takes its turn
+TCSlib/Programs/WordRAM/Steps.lean:37:  `exec` takes one step at a time.
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:873:then takes its sole dispatch. The payload transition is never executed.
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:22:* `Composability.exec_fst_take`, `Composability.exec_snd_take`: taking the old history length
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:59:theorem exec_fst_take (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:61:    (exec P V vFirst x zP zV rP rV (g + t)).1.take
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:64:  (List.prefix_iff_eq_take.mp (exec_prefix P V vFirst x zP zV rP rV g t).1).symm
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:69:theorem exec_snd_take (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:71:    (exec P V vFirst x zP zV rP rV (g + t)).2.take
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:74:  (List.prefix_iff_eq_take.mp (exec_prefix P V vFirst x zP zV rP rV g t).2).symm
+exit=0
+
+$ git -C /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib grep -n -E exec.*(IsPrefix|take)|IsPrefix.*exec|take.*exec HEAD -- Mathlib/Data/List Mathlib/Computability
+HEAD:Mathlib/Computability/PostTuringMachine.lean:493:statements and so take 0 steps. (There is a uniform bound on how many statements can be executed
+exit=0
+
+$ git -C /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib grep -n -E prefix_iff_eq_take|IsPrefix.*take|prefix_append HEAD -- Mathlib/Data/List
+HEAD:Mathlib/Data/List/Infix.lean:41:@[gcongr] lemma IsPrefix.take (h : l₁ <+: l₂) (n : ℕ) : l₁.take n <+: l₂.take n := by
+HEAD:Mathlib/Data/List/Infix.lean:45:  rw [prefix_iff_eq_take.mp h, drop_take]; apply take_prefix
+HEAD:Mathlib/Data/List/Infix.lean:50:  ⟨fun h ↦ by rw [prefix_iff_eq_take] at *; nth_rw 1 [h, take_eq_left_iff]; tauto,
+HEAD:Mathlib/Data/List/Infix.lean:51:   fun h ↦ h.trans <| l₂.prefix_append l₃⟩
+HEAD:Mathlib/Data/List/Infix.lean:113:  nth_rw 1 [List.prefix_iff_eq_take.mp h]
+HEAD:Mathlib/Data/List/Infix.lean:117:theorem prefix_append_drop {l₁ l₂ : List α} (h : l₁ <+: l₂) :
+HEAD:Mathlib/Data/List/Perm/Subperm.lean:41:  exact ⟨l₁ ++ l', (h₂.trans (h₁.append_right _)).symm, (prefix_append _ _).sublist⟩
+exit=0
+
+$ rg -n uprob_and_le_mul|uprob_adaptive_escape TCSlib/Cryptography
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:623:event `t = ⌊e/s⌋ ∧ B₀ succeeds` (`OneWay.uprob_and_le_mul`-style product of the two
+TCSlib/Cryptography/Candidates/Rabin.lean:270:`OneWay.uprob_and_le_mul`). With `2^n ≤ 4nB` (`hD`), `10n < 2^n` (so `B ≥ 2`) and `P ≤ 2^n`,
+TCSlib/Cryptography/Candidates/Rabin.lean:296:          exact OneWay.uprob_and_le_mul (θ := 1 / P) (fun a : Primes n => (a.1 : ℕ) % 4 = 3)
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:224:          have hbad := uprob_and_le_mul S
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:29:* `uprob_and_le_mul`: conditioning on a set `S` on which every section has probability
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:89:theorem uprob_and_le_mul (S : α → Prop) (p : α × β → Prop) {θ : ℝ}
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:78:* `TCSlib.Cryptography.uprob_adaptive_escape` — adaptive sequential soundness with escape
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:305:times the probability of the `k`-round event (`OneWay.uprob_and_le_mul`), and the induction
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:307:theorem uprob_adaptive_escape (m k : ℕ) (hm : 0 < m) {W : Type*} [Fintype W]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:334:    have hbound := OneWay.uprob_and_le_mul
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:362:**Proof sketch.** Apply `uprob_adaptive_escape` with
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:390:  refine le_trans (uprob_mono ?_) (uprob_adaptive_escape (edgeCount G) k hm Bad hBad)
+exit=0
+
+$ rg -n theorem.*(prefix_iff_eq_take|prefix_append_of_prefix)|theorem IsPrefix.trans /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Sublist.lean
+691:theorem IsPrefix.trans : ∀ {l₁ l₂ l₃ : List α}, l₁ <+: l₂ → l₂ <+: l₃ → l₁ <+: l₃
+706:theorem prefix_append_of_prefix (h : l₁ <+: l₂) : l₁ <+: l₂ ++ l₃ :=
+1315:theorem prefix_iff_eq_take : l₁ <+: l₂ ↔ l₁ = take (length l₁) l₂ :=
+exit=0
+
+$ git -C /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib grep -n -E prob.*(prefix|adapt)|adaptive.*prob|prob.*pi HEAD -- Mathlib/Probability/ProbabilityMassFunction Mathlib/Probability/Kernel
+HEAD:Mathlib/Probability/Kernel/Disintegration/Density.lean:74:[O. Kallenberg, Foundations of modern probability][kallenberg2021], adapted to use a countably
+exit=0
+
+$ git -C /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib grep -n snocEquiv HEAD -- Mathlib/Data/Fin/Tuple/Basic.lean
+HEAD:Mathlib/Data/Fin/Tuple/Basic.lean:701:def snocEquiv (α : Fin (n + 1) → Type*) : α (last n) × (∀ i, α (castSucc i)) ≃ ∀ i, α i where
+HEAD:Mathlib/Data/Fin/Tuple/Basic.lean:1036:    insertNthEquiv (fun _ ↦ α) (last n) = snocEquiv (fun _ ↦ α) := by ext; simp
+exit=0
+

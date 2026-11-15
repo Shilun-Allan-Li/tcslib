@@ -1,0 +1,31 @@
+$ rg -n encodeMsgs.*(take|append)|take.*encodeMsgs TCSlib/Cryptography/ZeroKnowledge
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:233:theorem encodeMsgs_append (L M : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:253:(`ofFn_update_eq`, `encodeMsgs_append`). -/
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:259:  rw [ofFn_update_eq, encodeMsgs_append, Strategy.encodeMsgs_cons]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:916:  | cons m h ih => rw [Strategy.encodeMsgs_cons, List.flatMap_cons, ih, pairEncode_eq_append_nil]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:598:  rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinBlock_eq, headD_take hc, Fin.val_mk,
+exit=0
+
+$ rg -n phase.*(poly|efficient)|efficient.*phase|seqProver.*efficient|seqVerifier.*efficient TCSlib/Cryptography/ZeroKnowledge TCSlib/Cryptography/Composability/SequentialZK.lean
+exit=1
+
+$ rg -n theorem (iterSnd_poly|msgCount_poly|coinSlice_poly|efficient_of_polyTime|polyTimeComputable_firstIdx|firstIdx_eq_iff|truncate_poly) TCSlib/Cryptography/ZeroKnowledge
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:247:theorem msgCount_poly : PolyTimeComputable fun w => List.replicate (msgCount w) true :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:376:theorem coinSlice_poly (p : PolyExpr) {u i r : List Bool → List Bool} (hu : PolyTimeComputable u)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:594:theorem efficient_of_polyTime (S : Strategy) {F : List Bool → List Bool} (hF : PolyTimeComputable F)
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:277:theorem firstIdx_eq_iff : firstIdx q n = n ↔ ∀ i < n, q i = false := by
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:324:theorem polyTimeComputable_firstIdx {p : List Bool → ℕ → Bool}
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:459:theorem truncate_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:190:theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:236:theorem efficient_of_polyTime (S : Strategy) {F : List Bool → List Bool}
+exit=0
+
+$ rg -n take_append|take.*length.*sub|append.*take.*length /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/TakeDrop.lean
+46:  simp [take_append, Nat.sub_eq_zero_iff_le, Or.comm]
+52:@[simp] lemma drop_take_append_drop (x : List α) (m n : ℕ) :
+53:    (x.drop m).take n ++ x.drop (m + n) = x.drop m := by rw [← drop_drop, take_append_drop]
+55:/-- Compared to `drop_take_append_drop`, the order of summands is swapped. -/
+56:@[simp] lemma drop_take_append_drop' (x : List α) (m n : ℕ) :
+57:    (x.drop m).take n ++ x.drop (n + m) = x.drop m := by rw [Nat.add_comm, drop_take_append_drop]
+exit=0
+

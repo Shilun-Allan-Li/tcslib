@@ -1,0 +1,82 @@
+$ sysctl -n hw.ncpu hw.memsize
+sysctl: sysctl fmt -1 1024 1: Operation not permitted
+exit=1
+
+$ vm_stat
+Mach Virtual Memory Statistics: (page size of 16384 bytes)
+Pages free:                                     4163.
+Pages active:                                 293360.
+Pages inactive:                               267030.
+Pages speculative:                             31420.
+Pages throttled:                                   0.
+Pages wired down:                             207484.
+Pages purgeable:                                9214.
+"Translation faults":                    22056874939.
+Pages copy-on-write:                       569785764.
+Pages zero filled:                       15084629159.
+Pages reactivated:                        1174148800.
+Pages purged:                              122840834.
+File-backed pages:                            240953.
+Anonymous pages:                              350857.
+Pages stored in compressor:                  1163341.
+Pages occupied by compressor:                 320604.
+Decompressions:                            612749780.
+Compressions:                              838220147.
+Pageins:                                   737553244.
+Pageouts:                                    2966099.
+Swapins:                                      544756.
+Swapouts:                                    1266256.
+exit=0
+
+$ memory_pressure -Q
+The system has 19327352832 (1179648 pages with a page size of 16384).
+System-wide memory free percentage: 52%
+exit=0
+
+$ df -k . /private/tmp
+Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on
+/dev/disk3s5   971350180 712959776 229666520    76% 7098353 2296665200    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 712959776 229666520    76% 7098353 2296665200    0%   /System/Volumes/Data
+exit=0
+
+$ mount
+/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+devfs on /dev (devfs, local, nobrowse)
+/dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
+/dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
+/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)
+/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)
+/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)
+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
+exit=0
+
+headroom = (3781 + 267033 + 31500 + 9214) * 16384 = 5104074752 bytes = 4.754 GiB; floor=4 GiB
+
+Hardware query repeated outside sandbox: CPU=12; hw.memsize=19327352832 bytes (18 GiB).
+$ df -k /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange /private/tmp /var/folders/gc/93nsn68n4g9fgyjj6sjjmy180000gn/T/
+Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on
+/dev/disk3s5   971350180 723501000 219125296    77% 7251107 2191252960    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 723501000 219125296    77% 7251107 2191252960    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 723501000 219125296    77% 7251107 2191252960    0%   /System/Volumes/Data
+$ mount
+/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+devfs on /dev (devfs, local, nobrowse)
+/dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
+/dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
+/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)
+/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)
+/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)
+/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)
+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
+Stable wrapper: /private/tmp/seq-zk-lean-slot.sh; default ~/.lean-slots; cap 3 shared host-wide.
+
+Delivery/replay/subagent scratch filesystem coverage:
+Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on
+/dev/disk3s5   971350180 740407148 202220152    79% 7394925 2022201520    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 740407148 202220152    79% 7394925 2022201520    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 740407148 202220152    79% 7394925 2022201520    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 740407148 202220152    79% 7394925 2022201520    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 740407148 202220152    79% 7394925 2022201520    0%   /System/Volumes/Data

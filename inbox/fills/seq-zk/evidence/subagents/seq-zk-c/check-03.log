@@ -1,0 +1,36 @@
+START 2026-11-15T09:12:08Z
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:130:8: error: Type mismatch: After simplification, term
+  hi
+ has type
+  Good (↑i.castSucc) (fun j => Fin.snoc a.1 a.2 (Fin.castLE ⋯ j)) (a.1 i)
+but is expected to have type
+  Good (↑i) (fun j => a.1 (Fin.castLE ⋯ j)) (a.1 i)
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:140:8: error: Type mismatch: After simplification, term
+  hi
+ has type
+  Good (↑(Fin.last q)) (fun j => Fin.snoc a.1 a.2 (Fin.castLE ⋯ j)) a.2
+but is expected to have type
+  Good q a.1 a.2
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Soundness): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Soundness): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Soundness): no fresh .olean produced
+        2.36 real         1.35 user         1.07 sys
+          2143535104  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171393  page reclaims
+                  19  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  21  voluntary context switches
+                4017  involuntary context switches
+            32509578  instructions retired
+            17647202  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T09:12:10Z
+EXIT 1

@@ -1,0 +1,9 @@
+Search before ProverBounded.seqRep:
+rg -n 'seqRep.*[Bb]ound|seqProver.*[Bb]ound|ProverBounded.*rep|exec.*[Pp]refix|exec.*take' TCSlib
+No existing repetition-bound lemma. Nearest: Interaction.lean Protocol.ProverBounded.mono changes only B, not π.
+seqVerifier_exec_first: searched TCSlib exec prefix/take and seqRep bound shapes; nearest owned seqRep_exec_phase (honest repeated prover only), re-derived phase-zero specialization for arbitrary unchanged prover. Reuses mover-index readers.
+seqRep_outV_eq: searched seqRep output readers; none existing. Nearest seqVerdict_eq and Interaction.outV_eq; combines these with owned countP_not_moverIsV.
+seqRep_exec_phase_take: searched exec prefix/take; uses new generic exec_snd_take and existing owned seqRep_exec_phase, adds final-history restriction only. Mathlib/Core List.take_drop directly reused.
+seqRep_complete: searched seqRep completeness; nearest graph-protocol completeness uses same probability-one principle with protocol-specific executions. Reuses HardcoreBit.forall_of_uprob_eq_one / uprob_eq_one_of_forall, length_coinBlock, ofFn_padFin_of_length, existing/new owned readers.
+seqRep_reject_of_first: no existing seqRep rejection reader; phase-zero soundness in issued sketch plus owned readers and generic exec_snd_take. Original seqRep_exec_phase repeats honest P, so arbitrary-P first-phase bridge required.
+seqRep_sound_first: searched PushesUniform padFin/prefix and take_ofFn; reused public HardcoreBit.pushesUniform_restrict/prodMap and Asymptotic.ReductionSupport.take_ofFn_castLE:288; nearest GI.pushesUniform_castLE:813 specializes the same restriction lemma and is not copied.

@@ -1,0 +1,138 @@
+$ rg -n StatZK.*↔|StatZK.*iff|theorem .*StatZK|: StatZK|    StatZK TCSlib/Cryptography
+TCSlib/Cryptography/Composability/SequentialZK.lean:425:theorem StatZK.seqRep {B : PolyExpr} {δ : ℕ → ℝ} (h : StatZK π R δ)
+TCSlib/Cryptography/Composability/SequentialZK.lean:427:    StatZK (π.seqRep Q) R (fun n => Q.eval n * δ n) := by
+TCSlib/Cryptography/Composability/SequentialZK.lean:454:    StatZK (π.seqRep Q) R (fun n => Q.eval n * (1 / 2 : ℝ) ^ n) := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:563:theorem gi_statZK : ∃ δ : ℕ → ℝ, Negligible δ ∧ StatZK giProtocol Riso δ := by
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:231:theorem StatZK.zk {π : Protocol} {R : List Bool → List Bool → Prop} {δ : ℕ → ℝ}
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:232:    (hδ : Negligible δ) (h : StatZK π R δ) : ZK π R := by
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:241:theorem StatZK.hvzk {π : Protocol} {R : List Bool → List Bool → Prop} {δ : ℕ → ℝ}
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:242:    (hδ : Negligible δ) (hV : π.V.Efficient) (h : StatZK π R δ) : HVZK π R := by
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:261:theorem StatZK.mono {π : Protocol} {R : List Bool → List Bool → Prop} {δ δ' : ℕ → ℝ}
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:262:    (h : StatZK π R δ) (hle : ∀ n, δ n ≤ δ' n) : StatZK π R δ' := by
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:269:    StatZK π R (fun _ => 0) := h
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:594:    (h : PerfectZKAbort π R) : StatZK π R (fun n => (2 : ℝ)⁻¹ ^ n) := by
+exit=0
+
+$ rg -n encodeMsgs.*length|length_encodeMsgs|encodeMsgs.*inject|pairSndD_encodeMsgs|decodeMsgs TCSlib
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:74:`normalizeMsgs p B (Strategy.encodeMsgs h) = h` if `h.length = p` and
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:88:`(Strategy.encodeMsgs (normalizeMsgs p B raw)).length ≤ p * (2 * B + 2)`. -/
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:89:theorem length_encodeMsgs_normalizeMsgs_le (p B : ℕ) (raw : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:90:    (Strategy.encodeMsgs (normalizeMsgs p B raw)).length ≤ p * (2 * B + 2) := by
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:264:hard-wired strings of commitments (`CommitmentLemmas.length_encodeMsgs_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:287:`CommitmentLemmas.encodeMsgs_ofFn_update`; `a := v k`, `a' := v' k`. The length bound is
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:288:`CommitmentLemmas.length_encodeMsgs_le` with `|W i| ≤ C (2n + 3 + ℓ(n))^c`. -/
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:355:  · have h1 := length_encodeMsgs_le (List.ofFn fun i : Fin k => W (Fin.castLE k.2.le i))
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:357:    have h2 := length_encodeMsgs_le (List.ofFn fun i : Fin (t - k - 1) => W ⟨k + 1 + i, by omega⟩)
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:395:`length_encodeMsgs_le`), and `ε_D(n) ≤ q(n) · distAdv (Com ⟨v_n k_n, ·⟩) (Com ⟨v'_n k_n, ·⟩) (that reduction)`.
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:359:(`CommitmentLemmas.length_encodeMsgs_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:363:  refine CommitmentLemmas.length_encodeMsgs_le _ M fun w hw => ?_
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:371:**Proof sketch.** `CommitmentLemmas.length_encodeMsgs_le` on the fifteen fields of
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:381:  refine CommitmentLemmas.length_encodeMsgs_le _ M fun w hw => ?_
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1293:    Strategy.encodeMsgs_cons, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil, length_pairEncode,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:919:theorem iterate_pairSndD_encodeMsgs (hist : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:941:theorem length_le_length_encodeMsgs (hist : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:942:    hist.length ≤ (Strategy.encodeMsgs hist).length := by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:946:    rw [Strategy.encodeMsgs_cons, length_pairEncode, List.length_cons]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:953:  rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, List.headD_eq_head?_getD,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:967:    histLen (Strategy.encodeMsgs hist) = hist.length := by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:970:  · exact Nat.lt_succ_of_le (length_le_length_encodeMsgs hist)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:971:  · rw [iterate_pairSndD_encodeMsgs, List.drop_length]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:974:    rw [iterate_pairSndD_encodeMsgs, decide_eq_false_iff_not, encodeMsgs_eq_nil_iff,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:112:theorem msgAt_encodeMsgs (l : List (List Bool)) (i : ℕ) (hi : i < l.length) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:607:(`CommitmentLemmas.length_encodeMsgs_le`, `length_pairEncode`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:613:  refine (CommitmentLemmas.length_encodeMsgs_le _ (C * (2 * n + 3 + m) ^ c)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:93:theorem pairSndD_encodeMsgs (hist : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:101:theorem iterate_pairSndD_encodeMsgs : ∀ (k : ℕ) (hist : List (List Bool)),
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:105:    rw [Function.iterate_succ_apply, pairSndD_encodeMsgs, iterate_pairSndD_encodeMsgs k, List.drop_drop]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:238:theorem msgCount_encodeMsgs (hist : List (List Bool)) : msgCount (Strategy.encodeMsgs hist) = hist.length := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:241:    rw [iterate_pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:243:  · rw [iterate_pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:274:    rw [iterate_pairSndD_encodeMsgs, ih, List.drop_drop]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:280:    halfCount (Strategy.encodeMsgs hist) = hist.length / 2 := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:289:      not_false_eq_true, true_and, pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:292:    simp only [Bool.or_eq_true, decide_eq_true_eq, encodeMsgs_eq_nil_iff, pairSndD_encodeMsgs,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:300:      Strategy.encodeMsgs (hist.drop (2 * (hist.length / 2))) := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:323:    lastSteps (Strategy.encodeMsgs hist) = hist.length - 1 := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:326:    rw [iterate_pairSndD_encodeMsgs, pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:329:  · rw [iterate_pairSndD_encodeMsgs, pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:337:  rw [lastSteps_encodeMsgs, iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:598:  rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinBlock_eq, headD_take hc, Fin.val_mk,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:627:  simp only [argM_ilayout, msgCount_encodeMsgs, inParam_ilayout, List.length_replicate, inCoins_ilayout,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:122:  simp only [argM_ilayout, halfCount_encodeMsgs, halfRem_nil_iff, inParam_ilayout, List.length_replicate,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:303:  rw [Fin.val_mk, iterate_sndD_two_encodeMsgs, pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs,
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:241:theorem length_encodeMsgs_le (L : List (List Bool)) (M : ℕ) (hM : ∀ m ∈ L, m.length ≤ M) :
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:242:    (Strategy.encodeMsgs L).length ≤ L.length * (2 * M + 2) := by
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:248:    rw [Strategy.encodeMsgs_cons, length_pairEncode, List.length_cons, Nat.add_mul, Nat.one_mul]
+TCSlib/Cryptography/SecureComputation/Yao.lean:81:* `SecureComputation.decodeMsgs`: the inverse of `Strategy.encodeMsgs`.
+TCSlib/Cryptography/SecureComputation/Yao.lean:90:* `SecureComputation.encodeCircuit_injective`, `decodeMsgs_encodeMsgs` (proved): the encodings.
+TCSlib/Cryptography/SecureComputation/Yao.lean:134:private theorem encodeMsgs_inj : ∀ {l l' : List (List Bool)}, l.length = l'.length →
+TCSlib/Cryptography/SecureComputation/Yao.lean:332:def decodeMsgs (w : List Bool) : List (List Bool) := BinArith.decWords w
+TCSlib/Cryptography/SecureComputation/Yao.lean:339:theorem decodeMsgs_eq (w : List Bool) :
+TCSlib/Cryptography/SecureComputation/Yao.lean:340:    decodeMsgs w = if w = [] then [] else pairFstD w :: decodeMsgs (pairSndD w) :=
+TCSlib/Cryptography/SecureComputation/Yao.lean:342:    (congrArg decodeMsgs hw).trans (BinArith.decWords_nil.trans (if_pos hw).symm)
+TCSlib/Cryptography/SecureComputation/Yao.lean:346:/-- **Decoding inverts the message-list encoding**: `decodeMsgs (encodeMsgs l) = l`.
+TCSlib/Cryptography/SecureComputation/Yao.lean:350:theorem decodeMsgs_encodeMsgs (l : List (List Bool)) :
+TCSlib/Cryptography/SecureComputation/Yao.lean:351:    decodeMsgs (Strategy.encodeMsgs l) = l := by
+TCSlib/Cryptography/SecureComputation/Yao.lean:361:theorem decodeMsgs_nil : decodeMsgs [] = [] := BinArith.decWords_nil
+TCSlib/Cryptography/SecureComputation/Yao.lean:371:  Strategy.encodeMsgs (List.ofFn fun i : Fin (Y.circ n).gates.length =>
+TCSlib/Cryptography/SecureComputation/Yao.lean:376:    yaoTables Y E₁ E₂ n r = Strategy.encodeMsgs (List.ofFn fun i : Fin (Y.circ n).gates.length =>
+TCSlib/Cryptography/SecureComputation/Yao.lean:423:    decodeMsgs ((decodeMsgs (pairFstD msg)).getD (v - (Y.inA.eval n + Y.inB.eval n)) [])
+TCSlib/Cryptography/SecureComputation/Yao.lean:430:      decodeMsgs ((decodeMsgs (pairFstD msg)).getD (v - (Y.inA.eval n + Y.inB.eval n)) [])
+TCSlib/Cryptography/SecureComputation/Yao.lean:438:    if (v : ℕ) < Y.inA.eval n then padFin n ((decodeMsgs (pairFstD (pairSndD msg))).getD v [])
+TCSlib/Cryptography/SecureComputation/Yao.lean:445:      if (v : ℕ) < Y.inA.eval n then padFin n ((decodeMsgs (pairFstD (pairSndD msg))).getD v [])
+TCSlib/Cryptography/SecureComputation/Yao.lean:487:      ((decodeMsgs (pairSndD (pairSndD msg))).getD j [])
+TCSlib/Cryptography/SecureComputation/Yao.lean:493:        ((decodeMsgs (pairSndD (pairSndD msg))).getD j []) := rfl
+TCSlib/Cryptography/SecureComputation/Yao.lean:622:    decodeMsgs_encodeMsgs]
+TCSlib/Cryptography/SecureComputation/Yao.lean:627:        decodeMsgs_encodeMsgs]
+TCSlib/Cryptography/SecureComputation/Yao.lean:628:    · rw [dif_neg (fun h => h2 h.2), List.getD_eq_default _ _ (by simp; omega), decodeMsgs_nil]
+TCSlib/Cryptography/SecureComputation/Yao.lean:636:message decodes to her keys (`decodeMsgs_encodeMsgs`), and its `v`-th entry is `k_v^{x_v}`
+TCSlib/Cryptography/SecureComputation/Yao.lean:649:  rw [yaoMsg_eq, pairSndD_pairEncode, pairFstD_pairEncode, yaoKeysA_eq, decodeMsgs_encodeMsgs]
+TCSlib/Cryptography/SecureComputation/Yao.lean:700:    pairSndD_pairEncode, yaoPairs_eq, decodeMsgs_encodeMsgs, getD_ofFn', YaoCircuit.output_apply]
+TCSlib/Cryptography/SecureComputation/Yao.lean:833:2. *Bob.* Decode the three lists (`decodeMsgs`), recompute `C_n`, and run `runWith` with
+exit=0
+
+$ rg -n normalizeMsgs|normalize.*[Mm]sg|encWords.*encodeMsgs|encodeMsgs.*encWords TCSlib /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib
+TCSlib/Cryptography/SecureComputation/Yao.lean:352:  have henc : ∀ ms : List (List Bool), Strategy.encodeMsgs ms = BinArith.encWords ms :=
+TCSlib/Cryptography/SecureComputation/Yao.lean:354:      Strategy.encodeMsgs ms = BinArith.encWords ms)
+TCSlib/Cryptography/SecureComputation/Yao.lean:355:      (Strategy.encodeMsgs_nil.trans BinArith.encWords_nil.symm)
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:23:* `normalizeMsgs p B raw`: exactly `p` decoded message slots, each truncated to `B` bits.
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:27:* `encodeMsgs_eq_encWords`: the interaction and generic word-list encodings agree.
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:39:/-- The two message-list encodings agree: `Strategy.encodeMsgs h = BinArith.encWords h`. -/
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:40:theorem encodeMsgs_eq_encWords (h : List (List Bool)) :
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:41:    Strategy.encodeMsgs h = BinArith.encWords h := by
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:43:  | nil => rw [Strategy.encodeMsgs_nil, BinArith.encWords_nil]
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:44:  | cons m h ih => rw [Strategy.encodeMsgs_cons, BinArith.encWords_cons, ih]
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:46:/-- Bounded message slots: `normalizeMsgs p B raw` is the list of the first `p` words decoded
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:49:def normalizeMsgs (p B : ℕ) (raw : List Bool) : List (List Bool) :=
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:53:`normalizeMsgs p B raw = (List.range p).map (fun i => ((decWords raw).getD i []).take B)`. -/
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:54:theorem normalizeMsgs_eq (p B : ℕ) (raw : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:55:    normalizeMsgs p B raw =
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:59:`(normalizeMsgs p B raw).length = p`. -/
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:60:theorem length_normalizeMsgs (p B : ℕ) (raw : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:61:    (normalizeMsgs p B raw).length = p := by
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:62:  rw [normalizeMsgs_eq, List.length_map, List.length_range]
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:65:`m ∈ normalizeMsgs p B raw → m.length ≤ B`. -/
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:66:theorem length_le_of_mem_normalizeMsgs (p B : ℕ) (raw : List Bool) {m : List Bool}
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:67:    (hm : m ∈ normalizeMsgs p B raw) : m.length ≤ B := by
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:68:  rw [normalizeMsgs_eq] at hm
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:74:`normalizeMsgs p B (Strategy.encodeMsgs h) = h` if `h.length = p` and
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:76:theorem normalizeMsgs_encodeMsgs (p B : ℕ) (h : List (List Bool))
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:78:    normalizeMsgs p B (Strategy.encodeMsgs h) = h := by
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:79:  rw [normalizeMsgs_eq, encodeMsgs_eq_encWords, BinArith.decWords_encWords]
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:88:`(Strategy.encodeMsgs (normalizeMsgs p B raw)).length ≤ p * (2 * B + 2)`. -/
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:89:theorem length_encodeMsgs_normalizeMsgs_le (p B : ℕ) (raw : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:90:    (Strategy.encodeMsgs (normalizeMsgs p B raw)).length ≤ p * (2 * B + 2) := by
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:91:  rw [encodeMsgs_eq_encWords]
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:93:    (BinArith.encWords (normalizeMsgs p B raw)).length ≤
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:94:        (normalizeMsgs p B raw).length * (2 * B + 2) :=
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:95:      BinArith.length_encWords_le _ B fun m hm => length_le_of_mem_normalizeMsgs p B raw hm
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:96:    _ = p * (2 * B + 2) := by rw [length_normalizeMsgs]
+exit=0
+
+$ rg -n map_range.*get|range.*map.*get|map_getD|take_eq_self|length_take_le|length_take|mem_map /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Range.lean /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/TakeDrop.lean /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/GetD.lean
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/TakeDrop.lean:38:@[simp] lemma take_eq_self_iff (x : List α) {n : ℕ} : x.take n = x ↔ x.length ≤ n :=
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/TakeDrop.lean:42:  rw [Eq.comm, take_eq_self_iff]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Range.lean:77:      obtain ⟨s', _, rfl⟩ := mem_map.mp hs
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Range.lean:79:      rw [mem_map]
+exit=0
+

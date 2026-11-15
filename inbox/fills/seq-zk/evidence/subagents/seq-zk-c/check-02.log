@@ -1,0 +1,36 @@
+START 2026-11-15T09:11:39Z
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:125:12: error: Type mismatch
+  fun j => a.1 (Fin.castLE ⋯ j)
+has type
+  Fin ↑i → α
+but is expected to have type
+  (j : Fin ↑i) → ?m.184 j (Fin.castLE ⋯ j)
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:134:12: error: Type mismatch
+  a.1
+has type
+  Fin q → α
+but is expected to have type
+  (j : Fin q) → ?m.242 j (Fin.castLE ⋯ j)
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Soundness): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Soundness): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Soundness): no fresh .olean produced
+        2.32 real         1.35 user         1.04 sys
+          2143354880  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171391  page reclaims
+                  13  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  20  voluntary context switches
+                4024  involuntary context switches
+            33280771  instructions retired
+            16167426  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T09:11:47Z
+EXIT 1

@@ -1,0 +1,139 @@
+TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean:214:4: error: Type mismatch: After simplification, term
+  PolyTimeComputable.comp polyTimeComputable_pairEq
+    (PolyTimeComputable.pairEncode hact (polyTimeComputable_const [true]))
+ has type
+  PolyTimeComputable
+    ((fun z => [decide (pairFstD z = pairSndD z)]) ∘ fun x => pairEncode (act (pairSndD x) (pairFstD x).length) [true])
+but is expected to have type
+  PolyTimeComputable fun w => [decide (act (pairSndD w) (pairFstD w).length = [true])]
+TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean:256:6: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    (if _a then [true] else [false]) =
+      if
+          ∀ j < Q.eval x.length,
+            V.next x z (coinBlock (V.coinLen x.length) j r)
+                (List.take (if verifierFirst = true then k.eval x.length / 2 else (k.eval x.length + 1) / 2)
+                  (List.drop (j * k.eval x.length) hist)) =
+              [true] then
+        [true]
+      else [false]
+Error: Application type mismatch: The argument
+  instDecidableEqNat
+    (EncodingMachines.firstIdx (fun j => decide (act (GI.ilayout x z hist r) j ≠ [true])) (Q.eval x.length))
+    (Q.eval x.length)
+has type
+  Decidable
+    (EncodingMachines.firstIdx (fun j => decide (act (GI.ilayout x z hist r) j ≠ [true])) (Q.eval x.length) =
+      Q.eval x.length)
+but is expected to have type
+  Decidable _a
+in the application
+  @ite (List Bool) _a
+    (instDecidableEqNat
+      (EncodingMachines.firstIdx (fun j => decide (act (GI.ilayout x z hist r) j ≠ [true])) (Q.eval x.length))
+      (Q.eval x.length))
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+V : Strategy
+k Q : PolyExpr
+verifierFirst : Bool
+hV : V.Efficient
+A : NUPPT
+hA : A.Uniform
+left✝ : V.coins = A.coins
+hnext : ∀ (x z r : List Bool) (hist : List (List Bool)), V.next x z r hist = (Strategy.ofNUPPT A).next x z r hist
+K : List Bool → ℕ := fun w => k.eval (GI.argX w).length
+count : List Bool → ℕ := fun w => if verifierFirst = true then K w / 2 else (K w + 1) / 2
+act : List Bool → ℕ → List Bool :=
+  fun w j =>
+    let M := pairSndD^[j * K w] (GI.argM w);
+    A.output
+      (NUPPT.layout (List.replicate (GI.argX w).length true)
+        (pairEncode (pairEncode (GI.argX w) (GI.argZ w)) (List.take (M.length - (pairSndD^[count w] M).length) M)) []
+        (coinBlock (V.coins.eval (GI.argX w).length) j (NUPPT.inCoins w)))
+hK : PolyTimeComputable fun w => List.replicate (K w) true
+hcount : PolyTimeComputable fun w => List.replicate (count w) true
+hX : PolyTimeComputable (GI.argX ∘ pairSndD)
+hZ : PolyTimeComputable (GI.argZ ∘ pairSndD)
+hR : PolyTimeComputable (NUPPT.inCoins ∘ pairSndD)
+hJ : PolyTimeComputable fun x => List.replicate (pairFstD x).length true
+hdrop : PolyTimeComputable fun z => pairSndD^[(pairFstD z).length * K (pairSndD z)] ((GI.argM ∘ pairSndD) z)
+htake :
+  PolyTimeComputable fun w =>
+    List.take
+      ((pairSndD^[(pairFstD w).length * K (pairSndD w)] ((GI.argM ∘ pairSndD) w)).length -
+        (pairSndD^[count (pairSndD w)]
+            (pairSndD^[(pairFstD w).length * K (pairSndD w)] ((GI.argM ∘ pairSndD) w))).length)
+      (pairSndD^[(pairFstD w).length * K (pairSndD w)] ((GI.argM ∘ pairSndD) w))
+hcoins :
+  PolyTimeComputable fun w =>
+    coinBlock (V.coins.eval (GI.argX (pairSndD w)).length) (pairFstD w).length (NUPPT.inCoins (pairSndD w))
+hact : PolyTimeComputable fun w => act (pairSndD w) (pairFstD w).length
+heq : PolyTimeComputable fun w => [decide (act (pairSndD w) (pairFstD w).length = [true])]
+hbad : PolyTimeComputable fun w => [decide (act (pairSndD w) (pairFstD w).length ≠ [true])]
+hQ : PolyTimeComputable fun x => List.replicate (Q.eval (GI.argX x).length) true
+hfirst :
+  PolyTimeComputable fun z =>
+    List.replicate (EncodingMachines.firstIdx ((fun w j => decide (act w j ≠ [true])) z) (Q.eval (GI.argX z).length))
+      true
+F : List Bool → List Bool :=
+  fun w =>
+    if
+        EncodingMachines.firstIdx (fun j => decide (act w j ≠ [true])) (Q.eval (GI.argX w).length) =
+          Q.eval (GI.argX w).length then
+      [true]
+    else [false]
+hF : PolyTimeComputable F
+hact_eq :
+  ∀ (x z r : List Bool) (hist : List (List Bool)) (j : ℕ),
+    act (GI.ilayout x z hist r) j =
+      V.next x z (coinBlock (V.coinLen x.length) j r)
+        (List.take (if verifierFirst = true then k.eval x.length / 2 else (k.eval x.length + 1) / 2)
+          (List.drop (j * k.eval x.length) hist))
+x z r : List Bool
+hist : List (List Bool)
+he :
+  EncodingMachines.firstIdx (fun j => decide (act (GI.ilayout x z hist r) j ≠ [true])) (Q.eval x.length) =
+      Q.eval x.length ↔
+    ∀ j < Q.eval x.length,
+      V.next x z (coinBlock (V.coinLen x.length) j r)
+          (List.take (if verifierFirst = true then k.eval x.length / 2 else (k.eval x.length + 1) / 2)
+            (List.drop (j * k.eval x.length) hist)) =
+        [true]
+⊢ (if
+        EncodingMachines.firstIdx (fun j => decide (act (GI.ilayout x z hist r) j ≠ [true])) (Q.eval x.length) =
+          Q.eval x.length then
+      [true]
+    else [false]) =
+    if
+        ∀ j < Q.eval x.length,
+          V.next x z (coinBlock (V.coinLen x.length) j r)
+              (List.take (if verifierFirst = true then k.eval x.length / 2 else (k.eval x.length + 1) / 2)
+                (List.drop (j * k.eval x.length) hist)) =
+            [true] then
+      [true]
+    else [false]
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Efficiency): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Efficiency): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Efficiency): no fresh .olean produced
+        3.61 real         2.31 user         1.30 sys
+          2228715520  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172601  page reclaims
+                4187  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 284  voluntary context switches
+                6890  involuntary context switches
+            32457323  instructions retired
+            18602165  cycles elapsed
+             1622352  peak memory footprint
