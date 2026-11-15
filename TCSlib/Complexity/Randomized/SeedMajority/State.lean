@@ -93,8 +93,10 @@ theorem polyTimeComputable_seedFor {w : ℕ → ℕ}
   simp only [Function.comp_apply, seedFor_eq, PrefixByLength.take_def,
     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
 
-/-- One total counting round keeps the input, increments the binary rank,
-and adds the test bit to the binary count. [AB09, §7.1, p. 126] -/
+/-- One total counting round keeps the input and increments the binary counters:
+`advance V w (state x i a) = state x (i+1) (a + [⟨x,word (w |x|) i⟩ ∈ V])`.
+The step is total; the outer host retains its size guard after termination.
+[AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4] -/
 noncomputable def advance (V : Language Bool) (w : ℕ → ℕ) (z : List Bool) : List Bool :=
   pairEncode (pairFstD z)
     (pairEncode (BinArith.add (pairEncode (pairFstD (pairSndD z)) (Nat.bits 1)))
