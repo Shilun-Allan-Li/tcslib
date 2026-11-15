@@ -13,8 +13,9 @@ Seyoon alone merges source, dispatches and rules on design or debt. Records
 only go directly after fetch/rebase. The latest merge is #310 (Ladner fill 2, gate 137).
 Campaign Lean is `fe8a8520f65a9feaa4c960c11874b68ebf8798db`. Its replay output is the cloud snapshot `oleans-cfe8a`
 (876 objects); use it whole. See campaign/status/2026-11-15-merge-310/. Ladner has four admitted
-targets left. Fills 1 and 2 are merged (#304, #310). Fill 3 (target 1 part A) is prepared, not dispatched
-(campaign/fills/ladner-poly-candidate/); its base becomes `fe8a8520` and its pre-ship is to be rerun there. Earlier merges are in the table.
+targets left. Fills 1 and 2 are merged (#304, #310). Fill 3 (target 1 part A) is dispatched (2026-11-15;
+campaign/fills/ladner-poly-candidate/, base `fe8a8520`, pre-shipped there); delivery expected in
+`arora-barak-ch3-4/inbox/fill-ladner-poly-candidate/`. Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
