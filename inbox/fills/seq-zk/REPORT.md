@@ -1,182 +1,330 @@
-# seq-zk checkpoint 3
+# seq-zk final delivery
+
+All five frozen `seqRep` theorems of PS10 Theorem175.1 are proved. This final report's
+outcome, revision, inventory and verification sections supersede the historical checkpoint
+statuses preserved in the evidence and appendices. No target statement was weakened.
 
 Issue base: `107f1e8c218733eac12d6b9bee6fece441271317`.
 Issued exchange pack: `7d85785c2e98f0bfdec081a875a9343f06043a8a`.
-Local proof branch `fill/seq-zk` remains local. Complete four-commit series:
+Final local proof revision: `d842dc8f681f6b89499129f5b64a50d0e4587935`.
+Lean4.25.0; pinned Mathlib `029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e`.
+The `fill/seq-zk` proof branch remains local. The six unsigned proof commits, in order, are
+listed with full identities/dates/signing information in `patches/COMMITS.tsv`:
 `a758032d636fd410b0c4b8a1530a96d000cc467a`,
 `e978a28274fdeb545e622ae28747221088352512`,
 `04c253e48d9c0ebb73943f39412365cd4d8e02db`,
-`5a80d36a5a4da1c2906b747dab59251fdd03836a`.
+`5a80d36a5a4da1c2906b747dab59251fdd03836a`,
+`7cecd426dddac78789c9e7fc627a7cd013d67792`,
+`d842dc8f681f6b89499129f5b64a50d0e4587935`.
 
-This is checkpoint 3, not the final payload. Four whole frozen declarations are proved:
+## Targets and resulting behavior
 
-| Target | Status |
+| Frozen declaration | Final result |
 |---|---|
-| InteractiveProof.seqRep | Proved, checked, standard axioms |
-| InteractiveProofErr.seqRep | Proved, exact error s(n)^Q(n), standard axioms |
-| EfficientProverProofErr.seqRep | Proved, checked, standard axioms |
-| StatZK.seqRep | Proved, exact statistical error Q(n)*δ(n), standard axioms |
-| ZK.seqRep | Original statement and admission remain; computational assembly in progress |
+| `ZK.seqRep` | Proved; one uniform strict-PPT simulator, polynomial times negligible advantage |
+| `StatZK.seqRep` | Proved; exact statistical error `Q(n)*δ(n)` |
+| `InteractiveProof.seqRep` | Proved; perfect completeness and negligible soundness |
+| `InteractiveProofErr.seqRep` | Proved; exact soundness error `s(n)^Q(n)` |
+| `EfficientProverProofErr.seqRep` | Proved; efficient prover and exact soundness error `s(n)^Q(n)` |
 
-StatZK.seqRep and its proved consumers PerfectZK.seqRep and PerfectZKAbort.seqRep use only
-propext, Classical.choice and Quot.sound. The remaining ZK target and its ThreeColoring
-consumer retain sorryAx and are not claimed proved. All five statement headers are byte-for-byte
-identical to the issue base. The source census records all359stored constants; every new or
-changed declaration avoids sorryAx (56new/changed axiom-set rows versus checkpoint2).
+All five statement headers are byte-for-byte identical to the issue base. The new proofs
+handle either first mover, odd or zero rounds and zero phases where the frozen hypotheses
+allow them. The generic explicit-error engine also covers zero phases with error1; the
+original `hQ` hypothesis is retained in `InteractiveProofErr.seqRep`, with a benign native
+unused-variable warning disclosed here.
 
-## Proof and ownership
+The simulator validates raw phase views and normalizes them to exactly the real prover-slot
+count, each message bounded by the original prover-message polynomial. Malformed views use
+a canonical fallback. Empty honest-prover fillers pad phases; arbitrary cheating-verifier
+filler replies remain unrestricted. Normalization fixes real phase views. One global verifier
+tape and independent phase-simulator tapes yield the same uniform strict-PPT simulator before
+any auxiliary-input bound or distinguisher is supplied.
 
-The statistical proof supplies a uniform strict-PPT machine using one cheating-verifier
-tape and Q independent phase-simulator tapes. It validates every raw phase view, fixes the
-known input/auxiliary/empty wrapper-tape fields, normalizes exactly p real prover slots of
-at most B bits, and supplies empty honest-prover fillers. Malformed outputs use the canonical
-fallback. Real phase views are fixed points by their exact count and bounded messages.
-The arbitrary cheating verifier's filler replies remain unrestricted.
+For statistical ZK, randomized postprocessing, averaging and the conditional-prefix recursion
+sum exactly `Q*δ`. For computational ZK, a finite polynomial metadata domain selects a common
+negligible phase bound uniformly over arbitrary witnesses. Neither advice nor simulator stores
+or tests the witness. The conditional real-prefix/simulated-suffix hybrid sums `Q*|ε|`; the
+published polynomial-times-negligible lemma completes the result. Exact split/block and
+endpoint readers identify actual real and simulator views without further error. No efficient
+honest-prover or simulated-output-shape premise was introduced.
 
-For each fixed global verifier tape, the caller-supplied sampler-recursion theorem combines
-one-phase comparisons at arbitrary prefixes, using averaging, randomized postprocessing and
-triangle inequality. Pairing the prefixes with their common verifier tape and averaging
-preserves exactly Q*δ. Explicit finite split/block equivalences identify the real execution
-and the uniform SQ machine, with no extra error. Zero phases, zero rounds, odd rounds and
-either first mover are covered. Nonnegativity of δ is derived only at witnessed inputs,
-from the original comparison; no new global sign assumption is imposed.
+## Ownership, changed files and sketch edits
 
-The three earlier proof-system results still use perfect completeness on independent slices,
-the original negligible soundness for InteractiveProof, and the adaptive conditional product
-bound s^Q for explicit error. Efficient-prover repetition preserves efficiency, the bound,
-and completeness for every witness. The generic error engine covers q=0 with error1, so the
-frozen hQ remains unused in InteractiveProofErr.seqRep; this native warning is disclosed.
+Only the lead edited SequentialZK.lean, applied the approved frozen reader, committed the local
+proof branch, ran the merged final checks and prepared/pushed delivery. Helpers were split by
+module; no two agents edited one helper. Each agent had a separate managed worktree and olean
+tree, with packages linked read-only to the lead's pinned packages.
 
-Only the lead edited the owned module, committed fill/seq-zk, ran merged checks, and prepared
-delivery. The main status and exact Contents list now describe the four proved targets.
-StatZK's sketch names the endpoint contract/equivalences. No statement or global simp attribute
-was weakened, and no foreign private proof was copied.
-
-| Worker | Included proofs and source ownership |
+| Worker | Included source and proofs |
 |---|---|
-| Lead /root, seq-zk | Four target bodies; owned bridges/specification instances; PrefixFolds, PrefixLaws, ProofTransfers, StatisticalTransfer; approved StatZK_iff |
-| /root/zk_route, seq-zk-a | Normalization, NormalizationMachine, PhaseView, Statistical, ExecutionBounds, NormalizedStep, StatisticalRecursion, StatisticalPrefix |
-| /root/efficiency, seq-zk-b | Efficiency, WrappedVerifier, SimulatorMachine, RealPhases, PaddedProverSpec, SuffixMachine |
-| /root/soundness, seq-zk-c | Soundness, Phases, Congruence, VerifierPrefix, ErrSoundness, RepeatedVerifier, RepeatedSoundness, Advice, StatisticalPostprocess, EndpointSampling |
+| Lead `/root`, `seq-zk` | All five target bodies; main specification/phase bridges; PrefixFolds, PrefixLaws, ProofTransfers, StatisticalTransfer, ComputationalTransfer; approved StatZK_iff |
+| `/root/zk_route`, `seq-zk-a` | Normalization, NormalizationMachine, PhaseView, Statistical, ExecutionBounds, NormalizedStep, StatisticalRecursion, StatisticalPrefix, BoundedMetadata, RealPrefixBounds |
+| `/root/efficiency`, `seq-zk-b` | Efficiency, WrappedVerifier, SimulatorMachine, RealPhases, PaddedProverSpec, SuffixMachine, ComputationalReduction, ReductionAdvantage, ComputationalPhaseBound |
+| `/root/soundness`, `seq-zk-c` | Soundness, Phases, Congruence, VerifierPrefix, ErrSoundness, RepeatedVerifier, RepeatedSoundness, Advice, StatisticalPostprocess, EndpointSampling, HybridRecursion, SuffixLaws, ComputationalAdvice, ContinuationProbability, ComputationalHybrid |
 
-Thirty changed/new library files are delivered: the owned module,28helpers and the approved
-Defs reader. The complete stored-constant inventory is checkpoint3-stored-constants.tsv.
-Every public declaration's formula/docstring and reader is in src/. Canonical _eq readers
-were added for phaseVerifier, phasePrefix and the three endpoint equivalences; existing
-construction statements and bodies are preserved.
+There are41source files: main,39helpers and the approved Defs reader. They total7731lines;
+main is990lines; every file is≤1000lines and every line≤100characters (maximum99).
+`evidence/final-source-inventory.json` records every path/size/width/SHA.
+`evidence/final-stored-constants.tsv` lists all414stored constants, including generated/private
+ones. The complete declarations and their public equations/formulas are delivered in `src/`.
+The table below is the exact file inventory. New helpers are imported precisely and listed
+in the main Contents. The module title/status and all five target sketches describe the
+implemented proof. New public definitions/abbreviations have readers; proofs of at least15
+lines have English sketches, and long proofs have stage comments. Seven initially missing
+stage-comment blocks were fixed in commit4; the later HybridRecursion block was fixed before
+commit5. No new global simp attribute was added.
 
-Additional computational work is retained only as labeled future evidence snapshots outside
-this proof revision: BoundedMetadata, RealPrefixBounds, ComputationalReduction,
-ReductionAdvantage, HybridRecursion, SuffixLaws, ComputationalAdvice, ContinuationProbability,
-and ComputationalHybrid, with their author checks/attempts. Their source_status fields and
-snapshots make the boundary explicit. ComputationalPhaseBound postdates the frozen receipt and is excluded
-from this checkpoint. None of these future helpers is silently included in src/ or the four patches.
-The original uncompiled StatisticalTransfer draft remains historical evidence; the real
-clean checked source in src/ is authoritative.
+## New declarations
 
-## Host and environment
+The exact202source-written new declarations are listed, with paths and lines, in
+`evidence/subagents/seq-zk-b/final-review-15/new-source-declarations.tsv`.
+The414stored-constant inventory additionally includes generated/private constants and retained
+original declarations. The new public interfaces comprise bounded phase normalization and
+readers, padded prover/verifier contracts and phase/endpoint laws, uniform simulator and
+continuation machines, exact adaptive soundness, statistical postprocessing/recursion,
+finite metadata/advice selection, computational phase reduction/advantage, conditional hybrid
+bounds and the two ZK transfer theorems. Each full statement/docstring is in its source;
+no extra axiom, admitted helper or replacement target premise was introduced.
 
-Host-wide cap: at most3Lean processes across all jobs. Every lead/subagent lean/lake/check
-command uses the issued stable lean-slot.sh and default ~/.lean-slots, with seq-zk/a/b/c tags.
-Only the lead runs Lake, with three slots for every narrowed cache get. Each agent has its
-own worktree/olean tree and read-only package symlink to the lead; only completed lead TCSlib
-oleans are APFS-cloned. No package tree is copied or merged. The genuine base tree remains
-separate from the working tree. New runners also hold a per-olean-tree writer lock.
+## Verification
 
-Mac preflight:12CPUs,19,327,352,832physical-memory bytes; initial headroom5,104,074,752bytes
-(4.754GiB), APFS free229,666,520KiB (above12GiB). Later recorded headroom readings remain
-above4GiB, including root's latest6.192GiB. No shortage, E-RES or RAM-disk path occurred.
-Both issued packs and all237source hashes verified. The original76roots matched the pack.
-All present packages match the pinned manifest; the four documentation packages are ABSENT.
-No zero-size oleans; root-import cache probe passed. The host archive store initially held
-32,667files/1,595,387,830bytes (earlier origin unknown). Initial fetch downloaded none and
-unpacked2,107archives. Later Advice work adds exactly Mathlib.Data.Fintype.Lattice and
-Mathlib.Data.Real.Archimedean: pins reverified, narrowed -k3cache exited0, no downloads,
-901archives unpacked. No other new direct Mathlib root is included in this checkpoint.
+* Both issued packs passed native `shasum -a256 -c`; all237base source hashes matched.
+  Mac preflight, toolchain/package pins, narrow-root import probe and baseline237-module
+  bootstrap passed. The issued76roots were used; only Mathlib.Data.Fintype.Lattice and
+  Mathlib.Data.Real.Archimedean were later added as precise direct prerequisites. Lead-only
+  cache gets used the issued slot wrapper with `-k3`; no `lake build` or unfiltered cache get.
+* Final owned-module recheck passed. The full276-module sweep (original237in exactly their
+  supplied relative order, plus39helpers before consumers) passed with zero errors and all
+  exits0. The admitted-declaration census changed exactly23→18: only the five targets above
+  disappeared. All18inherited admissions are unchanged. See `logs/sweep-final-01/` and
+  `logs/final-sorry-census.json` under evidence.
+* Final native collector at revision d842 printed all414stored constants, all five targets,
+  PerfectZK.seqRep, PerfectZKAbort.seqRep and the ThreeColoring consumers. Every axiom set is
+  a subset of `{propext, Classical.choice, Quot.sound}`; no new `sorryAx`. See
+  `logs/final-repair-axioms/`, `logs/final-repair-axiom-summary.json` and the TSV inventory.
+* The six-commit format-patch series replayed in a clean scratch clone from the exact issue
+  base. The resulting full Git tree and all41delivered source bytes matched revision d842.
+  Raw commands/results: `logs/final-repair-replay.log`. Signing is explicitly recorded.
+* Style lint at base and final:92FAIL/101WARN. Line-set comparison found no new FAIL. The
+  sole changed WARN line improves Defs' missing-reader list from3definitions to2, removing
+  StatZK. `logs/final-static-audit.json` records frozen headers, size, width and exact line sets.
 
-Resource-only coordination with derand/sc-garble/Ladner followed Seyoon's explicit permission.
-Normal slot waits and boundary gaps are logged, not classified as E-RES. No other worker's
-working tree, process or slots were edited, removed or interrupted.
+### Rule10 whole-file seals and controls
 
-## Checks completed and final checks remaining
+All164final cells are accounted for:41owners × strict/coe × eval-excluded A/eval-included B.
+The canonical coe/A variant treats projection coercions and PolyExpr.eval as notation.
+Both strict and eval-included stress variants also pass every new/changed proof. Each native
+probe covers the full transitive TCSlib import closure, not a handpicked subset; exact native
+identity, install masks and EOF masks are verified for every request. Diagnostics count
+both `error:` and `error(…)` forms. Advice has a legitimately empty TCSlib closure and zero
+requests; its native zero-batch install/EOF records are checked explicitly.
 
-- Exact-base bootstrap:237modules,0errors/nonzero exits, exactly23admission warnings.
-- Every included helper checked by its author and by the lead in the merged working tree.
-- Owned module passes with0errors, one original ZK admission, and the disclosed unused hQ.
-- Full stored-constant/consumer axiom census:359rows; all new/changed declarations standard.
-  Four targets and both perfect/aborting consumers are standard. ThreeColoring's joint ZK
-  consumer correctly retains sorryAx from the still-admitted ZK target.
-- Five frozen statement headers exact; all30library files≤100columns/1,000lines (owned968).
-- Style lint remains92FAIL/101WARN. No new FAIL. The only WARN-line difference is the
-  approved StatZK reader improving Defs missing-reader count3→2. Full line-set diff retained.
-- Independent git-am replay reproduced EACH of all four exact commit hashes and all30source
-  files, using complete author/committer dates/identities and signing metadata.
-- Base strict/coe×eval-excluded/included seals completed for the two existing changed files.
-  Owned passes all4cells. Defs has10inherited diagnostics in6declarations, unchanged below.
-- Complete stable checkpoint1helper/Defs matrix:20cells; four helpers pass every variant,
-  Defs retains the inherited failures. Projection-only FinDist CoeFun exclusion changes no
-  failure; native classifier and exact exclusions are retained. A excludes eval; B includes it.
-- CP3owned canonical coe/eval-excluded seal passes0errors, all1,880native requests verified
-  at installation and EOF, including identity/home/component/instance-mask guards.
-- Paired controls:5unsealed probes pass; each of5sealed negatives fails exactly once at its
-  expected declaration, while each published-reader positive passes. All singleton native
-  guards verify. Targets:padFin/inArg in A/B and eval in B; unrelated archived controls
-  absent from these request sets are explicitly marked absent.
+160cells have zero errors. The four Defs cells each retain the same10errors in the same six
+inherited declarations as the four issue-base Defs cells. The new StatZK_iff reader is clean.
+The main's four issue-base cells are clean. The following inherited failures occur identically
+in coe/A, coe/B, strict/A and strict/B; none is a new fill failure:
 
-The final merged full sweep and admission census, complete final matrices for newer helpers
-and final owned source, and explicit-unfold scan remain final-delivery work. Prepared or
-historical draft sources are never claimed passing. Any reused stable seal must match source,
-import closure, pins and exact request sets byte-for-byte; otherwise it reruns. The issued
-route requests this whole-declaration checkpoint now. Sending it before final-only checks
-is the same disclosed timing judgment under Seyoon's best-judgment instruction as earlier
-checkpoints; this report does not claim final intake completion.
+| Defs declaration | Errors per variant at base and final |
+|---|---:|
+| perfectZK_zeroRounds | 2 |
+| AbortRetry.attempt_poly | 1 |
+| AbortRetry.exists_retrySimulator | 2 |
+| AbortRetry.statClose_retry | 1 |
+| PerfectZKAbort.statZK | 3 |
+| negligible_inv_pow_sqrt_div | 1 |
 
-Inherited Defs seal failures in each baseline/stable cell: perfectZK_zeroRounds;
-AbortRetry.attempt_poly; AbortRetry.exists_retrySimulator; AbortRetry.statClose_retry;
-PerfectZKAbort.statZK; negligible_inv_pow_sqrt_div. Their10raw diagnostics/source-line
-attributions and strict/coe/eval variants are retained rather than suppressed.
+The effective final164cells consist of20exact checkpoint1reuses,120unchanged revision5native
+cells and24revision6native reruns for the six owners whose import closures meet the repaired
+helpers. `rule10/final-repair/selected-matrix.{json,tsv}` links every final record to its
+selected native request record, raw log and guard result. The source and every TCSlib import
+closure file are byte-identical between each selected native revision and final d842; pins
+and exact request rows also match. Full hashes are in final-source-closure-provenance.json.
+Earlier superseded failures remain delivered, with source revision and attribution, rather
+than being counted as final results.
 
-## Exceptions and corrected compiler diagnoses
+Whole-file seals found two real implicit-reader violations in revision5: acceptProb_prod in
+ContinuationProbability (one error per variant), and distAdv_phaseReduction in
+ReductionAdvantage (two errors per variant). Commit6 replaces those implicit reductions with
+published acceptProb and Equiv/split-tape readers. Their statements are unchanged. All24cells
+in affected owner/import closures were rerun at d842 and pass. Strict/coe and eval A/B introduce
+no final new failing declaration or difference beyond the six inherited Defs declarations.
 
-Seyoon's exact best-judgment/resource-coordination instruction is retained in coordination.
-There have been10authorized own-child proof-debugging interruptions:8in seq-zk-a
-(StatisticalRecursion01 and NormalizedStep01–07),1in seq-zk-c (ErrSoundness01), and1by the
-lead (StatisticalTransfer01). Every exact child/command/parent was reverified before SIGINT;
-wrappers flushed and released normally. Complete sources, raw logs, process/resource readings,
-authorizations and samples/markers are preserved. They are diagnosed debugging exceptions,
-not elapsed-time timeout commands or E-RES. No other job was interrupted.
+The ten retained native paired controls comprise five clean unsealed probes and five sealed
+negative probes, each failing exactly once at the designated negative declaration while its
+public-reader positive succeeds. Their complete definition-home import closures and pins are
+unchanged at d842, and each sealed identity is present in final requests; reuse is certified
+in `rule10/final-repair/control-reuse-provenance.json`. Raw logs, sources, request rows and
+native masks are under checkpoint2 controls. padFin and inArg are exercised in A/B; eval is
+exercised in B and explicitly excluded in A. Archived CostBoundedBy/hash-sign-only targets
+absent from this closure are marked absent, not claimed exercised.
 
-The final diagnoses correct earlier tentative source-stage interpretations:
-- NormalizedStep was missing ZeroKnowledge.Defs, leaving NUPPT.simulate unresolved in its
-  signature. Root/c missed this import defect during source review. Reducible-only explicit
-  applications exposed the actual error promptly. Adding the precise import and correcting
-  the application layout yielded a clean successful proof (then a checked public fixed-point
-  reader). No library defect is inferred from the earlier stalls.
-- Root StatisticalTransfer01 similarly followed an invalid API argument: phaseVerifier_efficient
-  has implicit {V}; root supplied V positionally. The read-only review missed this binder
-  mismatch. Attempt02 exposed it; the correct named V argument and explicit typed applications
-  passed clean03 in2.18s. All temporary diagnostic IO/markers were removed before intake.
-- Earlier statistical-recursion/ErrSoundness diagnoses and successful typed/reader rewrites
-  remain in their exact ledgers. Tentative dot-reader/calc-stage claims are qualified there.
+The final explicit-unfold scan covers all41sources. The primary native kind probe classifies
+1245items:868theorem references,6owned definitions and371initially unresolved items, with
+zero foreign definition items. A complete supplemental source-local review and24-target native
+kind/home/projection/type-is-Prop probe resolve the remaining names, including proof-valued
+specification fields, exported class-field readers and inherited own AbortRetry definitions.
+`rule10/final-repair/explicit/` and `subagents/seq-zk-a/final-review-12/` preserve both initial
+and supplemental classifications and sources. The merged result is897public readers,8inherited same-file definition items and340local/inline
+proof items, with zero unexplained uses. No unresolved foreign-definition use is waived.
 
-Large raw samples are losslessly numbered ZIP parts with exact entry lists, raw SHA/length
-and byte-verified extraction; originals remain outside the payload. Root's smaller complete
-3,184,721-byte sample is delivered directly (SHA dd018e025215ac0fcd5fcefbc316af0f572ab518c3d16b94e53c7c8a73f7b158).
-No raw diagnostic bytes are omitted and no live log was moved. Closed-file manifests freeze
-and hash-verify each subagent snapshot. Raw failures and invalid dependent/missing-prerequisite
-checks are retained and explicitly separated from mathematical findings. CP2's evidence-copy
-schema corrections and CP3's stale future-source hash rejection are recorded; neither changed
-a checked proof result. No automatic approval-review rejection occurred.
+## Scope requests
 
-## Remaining computational obligation
+One frozen-file change was requested and approved: nine lines adding `StatZK_iff` beside the
+existing predicate in `TCSlib/Cryptography/ZeroKnowledge/Defs.lean`. It is an `Iff.rfl` reader
+analogous to ZK_iff and changes no definition or prior theorem statement. Exact diff and
+verbatim request/answer are in `evidence/scope-request/`.
 
-ZK.seqRep still needs the common witness-uniform negligible phase bound from bounded
-witness-free advice, followed by the checked conditional hybrid and exact endpoint transfer.
-The selector ranges over finite bounded metadata while witnesses remain arbitrary; the
-machine never decides relation/reachability validity. Uniform suffix/reduction and generic
-hybrid helpers are checked future work. The final error is Q times the absolute negligible
-bound, using the published polynomial-times-negligible theorem. No target has been weakened,
-and no target-falsity or missing-fact escalation is claimed.
+Request (verbatim):
+
+May I add the nine-line `StatZK_iff` reader in frozen `TCSlib/Cryptography/ZeroKnowledge/Defs.lean`? The exact proposed diff is at /Users/seyoonr/.codex/worktrees/seq-zk-a/tcslib-exchange/evidence/subagents/seq-zk-a/scope-StatZK-iff.patch. It exposes the existing simulator property using `Iff.rfl`, analogous to `ZK_iff`, without changing any definition or theorem statement. The issued seq-zk brief’s “Frozen files / Scope requests” rule requires Seyoon’s approval for this edit; Rule 10 prevents adding this reader in a helper. I’ll continue the independent interactive-proof work while this is pending.
+
+Seyoon's answer (verbatim): Approve this reader addition
+
+There were no further frozen-file edits. Frozen Games/Efficiency and all parent facades remain
+unchanged. Suggested promotions below are requests for maintainer consideration; they were
+implemented only within the authorized helper directory.
+
+## Overlap and reuse
+
+Raw lead searches and every agent's search logs are delivered. The detailed per-declaration
+records in the appendices below preserve exact nearest-relative paths/lines, reuse/generalization
+relationships and promotion requests, including historical alternatives and corrected attempts.
+Their historical status sentences refer only to their stated checkpoint/source cutoff; the
+final revision and verification above are authoritative. No foreign private lemma was copied.
+The full final ComputationalTransfer addition is described here before those appendices:
+
+* `zk_of_padded_spec` directly reuses the published ZK_iff, phaseVerifier_efficient,
+  exists_phaseSimulator, exists_negligible_phase_bound, realPrefix_bounds,
+  prefix_distAdv_joint_le, distAdv_view_endpoints and Negligible.polyExpr_mul. Nearest owned
+  relative is `Composability/SequentialZK/StatisticalTransfer.lean:49`
+  (`statZK_of_padded_spec`), whose statistical-distance contract
+  cannot establish computational indistinguishability. The new assembly uses the common
+  nonuniform metadata bound and computational hybrid; it copies neither selector, machine,
+  prefix induction nor probability host. Nearest existing specialized hybrids are
+  `ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:549` (`exists_hybRed_ge`) and GI ZK hybrids; these have protocol-specific
+  view/reduction contracts. `ZeroKnowledge/Defs.lean:602` (`PerfectZKAbort.statZK`) uses abort/retry amplification, which
+  does not give this conditional-prefix composition theorem. All are searched/disclosed;
+  shared public components are reused directly.
+  Polynomial closure directly reuses `Asymptotic/ReductionSupport.lean:267`
+  (`Negligible.polyExpr_mul`); no new negligible-times-polynomial proof is added.
+* `ZK.seqRep` instantiates that generic theorem with the already published owned
+  seqRep_proverSpec. The final proof adds no duplicate semantic or computational host.
+* Existing NUPPT.loopState' and Fin.foldl supply the strict-PPT simulator and semantic phase
+  recursion. No new repetition host was introduced. The indexed phase tables use canonical
+  FunFamily block equivalences and public readers; repeated specializations are disclosed
+  in each helper record rather than silently copied.
+
+Promotion/reader requests: normalize/encode glue and uniform phase machinery belong with
+future shared games support; the generic acceptance/postprocessing, conditional-family hybrid,
+reindexing, finite-selector and length-indexed negligible-bound results belong in shared
+probability/advice/reduction modules; padded proof-system contracts belong near InteractiveProofs.
+The exact statements and nearest relatives are in the appended agent records. The only reader
+needed in an existing defining file was the approved StatZK_iff. No other promotion or reader
+request is needed to make this payload compile or satisfy Rule10.
+
+## Host resources, exceptions and evidence completeness
+
+The issued wrapper/default three-slot pool governed every Lean/lake/check command, including
+all agent commands. Root tag seq-zk; agent tags seq-zk-a/b/c. Lead-only narrowed cache fetches
+reserved3slots. No process belonging to another job was touched. Mac preflight/headroom,
+package pins, narrowed roots, seeds and coordination records are delivered. Each olean tree
+had one writer; packages were linked, never copied. Final independent seal streams used
+separate APFS-cloned completed TCSlib trees under the same shared cap3. A one-second slot-free
+gap replaced the earlier six-second gap after derand/sc-garble reported their Lean/cache work
+complete. This is disclosed lead implementation judgment under Seyoon's best-judgment/resource
+coordination authorization; it changes no proof budget, request, guard, module granularity or
+resource cap. The final sweep itself is serial.
+
+Ten pathological own Lean children were gracefully interrupted during development: eight by
+a, one c ErrSoundness attempt and one root StatisticalTransfer attempt. Each had concrete
+source/process/resource evidence and individual lead authorization under Seyoon's best-judgment
+instruction; exact PID/parent/command was reverified before signaling the own child only. Raw
+logs, stack/process samples, wrapper flush/release records and corrected clean reruns remain
+included. These were not fixed timeouts or E-RES events. The a failure ultimately came from a
+missing Defs import leaving NUPPT.simulate invalid in a signature; root/c source review missed
+that cause. Root's StatisticalTransfer failure came from a positional argument to implicit V;
+root and read-only review missed it until the named argument/typed application exposed it.
+Earlier incorrect diagnostic hypotheses are retained and explicitly corrected.
+
+Other preparation/instrumentation corrections are fully retained: missing baseline artifacts
+were seeded with source/hash provenance; premature invalid dependency probes are labeled;
+one source integration hash mismatch correctly rejected changed author comments; a dispatcher
+missing-order-file attempt started no Lean; one JavaScript orchestration parse failure started
+no subprocess. An overly strict final-order preparation assertion was corrected while preserving
+original237relative order, using previously bootstrapped unchanged late dependencies with
+verified source hashes/nonempty artifacts. The final static audit's initial broad simp regex
+matched proof text, then was corrected to attribute declarations; no source or Lean change.
+
+The zero-request Advice native seal passed. Its postprocessor initially rejected an empty name
+set; the validator was corrected to require the explicit unique zero batch, two zero mask
+records and matching install/EOF counts. All nonempty checks and native instrumentation remain
+unchanged. Original tool version, trace and valid native log remain delivered. The stopped
+dispatcher resumed only remaining cells; no Lean child was interrupted by this harness correction.
+Progress-only aggregate attempts while checks were still running are labeled progress; the
+final aggregate requires and certifies all164cells. No automatic approval review rejected an
+action, no push was refused at the prior checkpoints, and no mathematical/scope exception beyond
+the approved reader is claimed.
+
+All evidence is under `evidence/`, including all raw success/failure logs, attempts, probe sources,
+request manifests/rows, guards, scripts/tool versions, agent records and immutable receipts.
+Append-only receipts resolve exact historical bytes to current files or preserved archives;
+no old receipt is silently replaced. Large diagnostic samples are delivered losslessly as
+numbered ZIP parts with entry lists, original lengths/hashes and verified extraction; no file
+is omitted for size. `evidence/SHA256SUMS` covers exactly evidence files except itself; top-level
+`SHA256SUMS` covers exactly every payload file except itself. Both path sets and every digest
+are checked before delivery. Checkpoint1,2and3were delivered from the lead's separate delivery
+worktree, only under inbox/fills/seq-zk; final delivery follows the same rule, unsigned commit,
+pull-with-rebase and ordinary push. No proof branch push or PR/merge is performed.
+
+## Exact final source inventory
+
+| Source | Lines | Max width |
+|---|---:|---:|
+| `TCSlib/Cryptography/Composability/SequentialZK.lean` | 990 | 98 |
+| `TCSlib/Cryptography/Composability/SequentialZK/Advice.lean` | 67 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean` | 135 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean` | 74 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean` | 197 | 97 |
+| `TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean` | 184 | 95 |
+| `TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean` | 271 | 99 |
+| `TCSlib/Cryptography/Composability/SequentialZK/ComputationalTransfer.lean` | 100 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/Congruence.lean` | 68 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean` | 354 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean` | 306 | 99 |
+| `TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean` | 269 | 95 |
+| `TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness.lean` | 85 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean` | 88 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean` | 93 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean` | 98 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean` | 97 | 95 |
+| `TCSlib/Cryptography/Composability/SequentialZK/NormalizedStep.lean` | 126 | 96 |
+| `TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean` | 142 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean` | 168 | 95 |
+| `TCSlib/Cryptography/Composability/SequentialZK/Phases.lean` | 142 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean` | 103 | 95 |
+| `TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean` | 118 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers.lean` | 75 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/RealPhases.lean` | 207 | 95 |
+| `TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean` | 101 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean` | 111 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean` | 218 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean` | 194 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean` | 351 | 97 |
+| `TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean` | 163 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/Statistical.lean` | 73 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/StatisticalPostprocess.lean` | 60 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/StatisticalPrefix.lean` | 154 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/StatisticalRecursion.lean` | 139 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/StatisticalTransfer.lean` | 115 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean` | 122 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean` | 323 | 99 |
+| `TCSlib/Cryptography/Composability/SequentialZK/VerifierPrefix.lean` | 89 | 94 |
+| `TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean` | 207 | 96 |
+| `TCSlib/Cryptography/ZeroKnowledge/Defs.lean` | 754 | 99 |
+
+## Historical per-declaration overlap and implementation appendices
+
+### Checkpoint3 overlap compendium (historical cutoff)
 
 ## Overlap and reuse
 
@@ -1142,3 +1290,738 @@ receipt stayed unchanged throughout. All commands/input hashes/stdout/provenance
 receipt-resolution.tsv resolves every historical row to exact current or archived bytes;
 no old metadata or raw diagnostic has been dropped. Primary SHA256SUMS manifests cover all
 versions and the resolution map.
+
+
+### Preserved implementation record: subagents/seq-zk-a/report.md
+
+# seq-zk-a final helper report
+
+Agent `/root/zk_route`, tag `seq-zk-a`, branch `fill/seq-zk-a`, issue base
+107f1e8c218733eac12d6b9bee6fece441271317. Worktree:
+`/Users/seyoonr/.codex/worktrees/seq-zk-a/tcslib-exchange`.
+Own olean tree: `.lake/seq-zk-a-oleans`, seeded by the lead from completed base modules.
+`.lake/packages` is a symlink to the lead's exact-pin packages and read-only to this agent.
+No commits, Lake commands, frozen edits, or SequentialZK.lean edits were made by this agent.
+
+## Checked source
+
+- Normalization.lean: 98 lines, maximum width 94; encoding bridge, bounded slot normalizer,
+  exact count, per-message length bound, canonical bounded-list fixed point, encoded-size bound.
+- NormalizationMachine.lean: 97 lines, maximum width 95; polynomial-time canonical reencoding,
+  total decoded lookup, and encoded bounded-slot normalization for arbitrary polynomial-time
+  raw input and unary-computable slot count and bit cap.
+- PhaseView.lean: 168 lines, maximum width 95; canonical view metadata/tape/encoding validator,
+  fixed-point and malformed-view fallback, bounded normalized messages and polynomial-time
+  validator/encoded-normalizer theorems.
+
+All three compile without final diagnostics or admissions, and add no simp attributes.
+Source hashes are recorded in final-width-and-hashes.log. The first two source files were
+held byte-stable after checking so seq-zk-b could reuse them with recorded provenance.
+
+## Overlap and reuse
+
+### Normalization.lean
+
+- encodeMsgs_eq_encWords exactly matches the local `have henc` inside
+  SecureComputation/Yao.lean:352. That provider is outside the supplied closure; this helper
+  derives the general statement from public nil/cons readers of both encodings. The same
+  representation occurs in ThreeColoring/Machines.lean:912 encodeMsgs_eq_flatMap.
+  Promotion request: a general Strategy/BinArith encoding bridge belongs beside
+  Strategy.encodeMsgs in ZeroKnowledge/Interaction.lean during a shared-file window.
+- normalizeMsgs and normalizeMsgs_eq publish a new bounded-slot operation. No existing
+  normalization with this shape was found in TCSlib or Mathlib searches.
+- length_normalizeMsgs specializes List.length_map and List.length_range, directly reused.
+- length_le_of_mem_normalizeMsgs uses List.length_take and Nat.min_le_left; this is the same
+  arithmetic as List.length_take_le, specialized to the new operation.
+- normalizeMsgs_encodeMsgs reuses BinArith.decWords_encWords (Words.lean:116) and
+  List.take_of_length_le. No decoder or list host is copied.
+- length_encodeMsgs_normalizeMsgs_le directly specializes public Words.lean:81
+  length_encWords_le to the new invariants. CommitmentLemmas.lean:241 length_encodeMsgs_le
+  offers the same generic encoded-size bound but introduces larger cryptographic imports.
+
+### NormalizationMachine.lean
+
+- polyTimeComputable_encWords_decWords specializes Words.lean:221 polyTimeComputable_mapW
+  to the identity payload and uses mapW_pairEncode at line 208. No host is copied.
+- polyTimeComputable_decWords_getD composes canonicalization with Loops.lean:391
+  polyTimeComputable_getW and its reader getW_pairEncode at line 375.
+- polyTimeComputable_encode_normalizeMsgs uses these lookups, EncodingMachines.lean:459
+  truncate_poly, and ThreeColoring/Machines.lean:159 polyTimeComputable_flatMap_range. The
+  published counted-emission argument is reused. Its import is within the supplied closure
+  and was confirmed with the lead. No extra size premise or new private host is introduced.
+- Promotion request: the generic canonicalization and total decoded-lookup lemmas belong
+  beside the BinaryArith word-list hosts at a future shared-file window.
+
+### PhaseView.lean
+
+- phaseViewPayload and its eq reader are a new canonical-view validator; no matching
+  validator was found. normalizePhaseMsgs and its eq reader compose it with normalizeMsgs.
+- phaseViewPayload_of_encode specializes Interaction.lean:302 View.encode_mk, public pair
+  projection equations, and Words.lean:116 decWords_encWords. All are directly reused.
+- phaseViewPayload_of_ne is the new validator's failed-branch equation, proved by if_neg.
+- normalizePhaseMsgs_of_encode directly reuses Normalization.lean:76
+  normalizeMsgs_encodeMsgs after the canonical payload reader.
+- length_normalizePhaseMsgs, length_le_of_mem_normalizePhaseMsgs, and
+  length_encodeMsgs_normalizePhaseMsgs_le directly reuse Normalization.lean:60,66,89 after
+  the new definition reader. They are its three phase-view specializations.
+- normalizePhaseMsgs_of_ne specializes the normalized-empty-payload formula; its list
+  calculation directly reuses core getD/getElem?/take/map-constant/range equations.
+- polyTimeComputable_phaseViewPayload composes the existing canonical reencoder with
+  Loops.lean:426 polyTimeComputable_eqW and PolyTimePairing.lean:290
+  polyTimeComputable_ite. It introduces no host or machine construction.
+- polyTimeComputable_encode_normalizePhaseMsgs directly reuses
+  NormalizationMachine.lean:72 after validation. No additional promotion is requested for
+  these phase-specific operations.
+
+Searches and closest relatives are recorded in searches.md, searches.log,
+normalization-machine-searches.log, map-identity-search.log, phase-view-searches.log and
+phase-view-ite-search.log. Searches consulted the lead's Mathlib source read-only.
+
+## Scope and mathematical assessment
+
+The agent discovered the missing StatZK reader and supplied scope-StatZK-iff.patch without
+applying it. The lead reports Seyoon approved the addition and the lead applied it. This
+agent changed no frozen file. route-assessment.md records the independent mathematical
+review of the ZK/StatZK route, auxiliary bounds and edge cases. No mathematical counterexample
+was found; that assessment itself is not a checked composition proof.
+
+## Checks and evidence
+
+Every check used LEAN_SLOT_TAG=seq-zk-a, the assigned TCSLIB_OLEANS, the issued host wrapper,
+/usr/bin/time -l, and scripts/lean_check_tree.sh for one module. All raw attempts are retained.
+
+- Normalization passed attempt 01: 0 errors, 0 warnings; RSS 1,564,000,256 bytes.
+- NormalizationMachine attempt 01 had one map-identity proof error and two unused simp
+  arguments. Core List.map_id' fixed the lambda identity; attempt 02 passed with 0 errors,
+  0 warnings; RSS 2,213,593,088 bytes.
+- PhaseView attempt 01 had one missing true-conditional simplification and one unused simp
+  argument. Public if_true completed the payload proof; attempt 02 passed with 0 errors,
+  0 warnings; RSS 2,224,095,232 bytes.
+
+check-summary.json counts both error: and error(...) diagnostic forms. slots.log records
+all this tag's acquisitions/releases and their timestamps; it supplies the module start/end
+for the first normalization raw log, which contains only the timing report. Later raw logs
+include START/END timestamps, including any normal slot wait. Axiom/seal/campaign-lint checks
+are the lead's final merged-branch responsibility. No probe/check logs have been omitted.
+
+## Statistical helper continuation
+
+Statistical.lean adds the sole missing sampler-level shared-prefix averaging lemma
+`statClose_average`. It directly reuses statClose_iff (Asymptotic/Sampling.lean:133),
+StatClose.abs_uprob_sub_le (Sampling.lean:138), abs_uexp_sub_le (Sampling.lean:210), and
+uprob_prod (Foundations/Probability.lean:153). This is a new packaging of those published
+interfaces, not a copied averaging proof. Promotion beside StatClose in Sampling.lean is
+requested at a future shared-file window.
+
+The lead approved an explicit nonnegative error premise to cover an empty shared seed space.
+statistical-api.md records the exact counterexample to the draft interface without that
+premise, and explains why it is not a frozen-target flaw. Actual phase coin spaces are
+nonempty and one-phase closeness also supplies nonnegativity for witnessed inputs.
+
+No randomized postprocessing wrapper was added: StatClose.abs_uprob_sub_le_prod already
+provides the exact test-set bound, and statistical-api.md gives its two-line consumer.
+The new file imports only Asymptotic.Sampling, within the supplied closure; no new host,
+cache root, frozen edit or simp attribute is introduced.
+
+Statistical.lean passed wrapped check 01 with no diagnostics; peak RSS 2,110,177,280 bytes,
+3.22 seconds compiler wall time, after a normal shared-slot wait. The raw log includes
+START/END timestamps. statistical-searches.log retains the searches before implementation.
+The final source width/hash ledger, check summary, and own-tag slot log are updated.
+
+## Finite-chain and actual-kernel outline continuation
+
+After fresh public TCSlib and Mathlib searches, Statistical.lean now also publishes
+statClose_chain for an arbitrary same-seed family f : Nat -> Omega -> O. The proof only
+uses public StatClose.refl (Sampling.lean:153) and StatClose.trans (Sampling.lean:167), with
+natural-cast arithmetic. It has no sign premise on delta, including q=0. Nearest relatives
+are Probability.lean:218 abs_sub_le_sum_hybrids (a scalar probability-gap theorem) and
+OneWayLemmas.lean:276 statClose_pi (independent products of a fixed sampler comparison).
+Neither is an arbitrary-family StatClose chain; neither argument is copied. Promotion of
+this generic chain lemma beside StatClose is requested at a shared-file window.
+
+Statistical check02 passes with no diagnostics; RSS 2,114,224,128 bytes and 3.67 seconds
+compiler wall time. All check summaries, own slot records, and final source hashes are
+updated. The earlier Statistical hash is superseded by final-width-and-hashes.log.
+
+hybrid-outline.md gives a precise semantic proof plan for the actual one-phase kernels,
+using b's approved phaseAux/phaseVerifier and phasePrefix simulator-fold readers. It includes
+normalization's real fixed point, common paired real/simulator coin tables, shared-prefix
+averaging, existing randomized suffix data processing, full chain, and endpoint coin-law
+transports. It explicitly records remaining execution-reader obligations rather than
+assuming them. The outline has been coordinated with seq-zk-b; it proposes no private host
+or frozen edit and weakens no target. Raw extra API searches are retained in
+statistical-chain-searches.log and hybrid-execution-searches.log.
+
+## ExecutionBounds continuation
+
+ExecutionBounds.lean is 88 lines, maximum width 94, with no admissions or simp attributes.
+It imports only stable Normalization.lean; the previous four source hashes were asserted
+unchanged when this report was finalized. Public searches found no existing generic message
+length bound for Cryptography.exec.
+
+New declarations and overlap:
+
+- exec_snd_bounded derives a bound on every verifier-received message from a fixed prover
+  tape's uniform next-message bound. It uses only Interaction.lean's exec_zero and exec_succ
+  readers (lines 262 and 266 in the base). Related
+  Games/Protocols.lean:316 execT_trace bounds concern a different oracle protocol and only message
+  counts; they do not provide this statement. No private argument was copied.
+- exec_snd_slice_bounded directly specializes exec_snd_bounded through the public core
+  List.mem_of_mem_take and List.mem_of_mem_drop readers. It adds no list-membership lemma.
+- length_encodeMsgs_exec_snd_le applies Words.lean:81 length_encWords_le through the checked
+  encodeMsgs_eq_encWords bridge and exec_snd_bounded. It is execution-specific. No duplicate
+  generic encoded-history bound was added; the nearest existing generic
+  CommitmentLemmas.lean:241 length_encodeMsgs_le is subsumed by the Words theorem reused.
+
+Promotion request: generic execution-message bounds belong beside the execution readers in
+Interaction.lean at a future shared-file window. No frozen-file edit was made or needed.
+
+ExecutionBounds check01 passed with one unused simp argument; the argument was removed in
+its single proof block. Check02 passes with no diagnostics, RSS 1,560,723,456 bytes and
+1.77 seconds compiler wall time. Both raw attempts, preimplementation searches, width/hash
+ledger, diagnostic summary and own-tag slots are retained. No Lake command ran. The hybrid
+outline now marks the execution-message-bound obligation resolved by this checked helper;
+the separate cheating-verifier padded-phase endpoint reader remains a lead obligation.
+
+## StatisticalRecursion checked continuation
+
+StatisticalRecursion.lean introduces no definition or host. Its sole public theorem
+statClose_recursion takes caller-supplied zero and snoc equations for arbitrary real/simulated
+sampler families and updates. Shared-prefix averaging replaces the final update at cost
+delta; the existing randomized test-set reader transports the induction hypothesis through
+the same simulated final update. Public transitivity and Fin.snocEquiv close the successor.
+No Nonempty assumption on either coin type is required, because empty coin tables have
+explicit inhabitants in the base case.
+
+Nearest relatives: OneWayLemmas.lean:276 statClose_pi handles independent copies of one fixed
+sampler comparison; Statistical.lean:59 statClose_chain handles a supplied full-sampler chain.
+Neither is a caller-supplied state-dependent snoc recursion theorem, and neither proof was
+copied. Directly reused readers are Statistical.lean:44 statClose_average,
+Sampling.lean:237 StatClose.abs_uprob_sub_le_prod, Sampling.lean:167 StatClose.trans,
+Sampling.lean:179,185 seed-equivalence transports, and Mathlib Fin.snocEquiv/snoc_init_self.
+Promotion beside generic StatClose support is requested at a shared-file window.
+
+The first source triggered stack-diagnosed pathological implicit sampler unification and
+was interrupted only by exact lead authorization, with the raw source, sample, resource
+reading, process chain and authorization preserved. The explicitly typed rewrite passed
+check02 with no diagnostics in2.45s, maxRSS2,121,269,248 bytes. It is139lines, maxwidth94,
+SHA256 fe7d94d26ba375222245902da6ce0e71c9789d9ee98a9e68e4a063d5ada9591e.
+Its precise rewrite patch and large lossless sample ZIP part001 are delivered.
+
+## NormalizedStep pending compiler diagnosis
+
+NormalizedStep is not yet claimed checked. Its stronger zero-verifier API was approved by
+the lead and independently reviewed as mathematically/type-consistent by seq-zk-c. The exact
+phase-wrapper reader-only instantiation recipe is normalized-step-instantiation.md.
+
+compiler-diagnosis-summary.md and the numbered authorization/process/source/marker records
+retain each targeted own-process proof-debugging interruption. All were authorized by the
+lead under Seyoon's best-judgment exception, never elapsed-time timeouts or E-RES, and no other
+job or slot was changed. Every created native stack sample is delivered losslessly in ZIP
+parts with raw SHA256, entry lists and verified extraction. Current work is localizing the
+scalar test comparison declaration with robust direct-file IO markers; no false proof claim
+or statement weakening is made. All diagnostic IO/trace must be removed before a final clean
+source check and intake.
+
+## Checkpoint 2 closed-evidence boundary
+
+compiler-diagnosis-summary.md is the authoritative corrected closed ledger through
+NormalizedStep attempt07. It supersedes earlier tentative source-stage descriptions in this
+historical report. Eight own exact-process interruptions are recorded: StatisticalRecursion01
+and NormalizedStep01–07, all separately lead-authorized proof debugging rather than timeouts
+or E-RES. No own Lean is active at this boundary. NormalizedStep remains unverified; the checked
+StatisticalPostprocess dependency and completed fixed-point/pointwise markers do not imply
+that its full concrete instantiation passed. The next opacity/instance correction awaits the
+lead's three-slot cache completion. Complete prerequisite sources and lossless native-sample
+ZIP parts are included so all closed raw evidence has its sources and verification tools.
+
+
+## Final normalization and statistical-prefix extension
+
+NormalizedStep is now clean-checked with no diagnostics. Its final source hash is
+07c9fed43664eeaa47b712f02b72f09addbe0ceb8dc134917cd0b33f6754e689
+(101lines,maxwidth96;nativecheck10=2.22s). The compiler ledger now explicitly records the
+missing ZeroKnowledge.Defs import exposed by attempt08 and corrected before09. Prior
+elaboration-stage diagnoses were incomplete because invalid simulate fields in the
+signature remained buffered. The corrected exact-source check is retained in full.
+
+StatisticalPrefix is clean-checked with no diagnostics. Its final source hash is
+5275167b11df6074d08df53ae24486e94ccb1149eaf5d6541e88ad9fe1727d64
+(151lines,maxwidth94;nativecheck02=2.31s). PaddedProverSpec.statClose_step specializes the
+zero-verifier comparison at every index and prefix using an explicit coin-length equality,
+coin equivalence and public ofFn reader. PaddedProverSpec.statClose_prefix instantiates the
+public sampler-recursion bound using the public zero/snoc fold readers. It assumes only
+a direct prover-message cap and raw phase closeness at every auxiliary input; S need not
+be uniform. Neither proof uses a target theorem or creates a host.
+
+Nearest overlap relatives: StatisticalRecursion's generic caller-supplied family bound,
+NormalizedStep's generic zero-verifier bound, PrefixLaws zero/snoc readers,
+PaddedProverSpec.original_count, public StatClose.comp_equiv_left/nonneg, and Mathlib
+List.ofFn_congr. StatisticalPrefix is their concrete composition, not a duplicate generic
+loop or statistical law. Exact searches are statistical-prefix-searches.log.
+
+The lead authorized APFS clones of completed helper oleans into this isolated olean tree.
+Eight completed immutable prerequisite source/olean pairs were copied with provenance in
+prefix-prerequisite-seed.json. Their sources are reused unchanged; no other owner file was
+edited. The lead will perform final source, axioms, seals and sweep checks.
+
+## BoundedMetadata overlap plan
+
+Nearest existing material is ColZKMachine's finite maximizing domain with a bounded
+sigma-word, plus the public padFin/ofFn_padFin_of_length codec. The new metadata type
+only assembles those standard finite representations into the five actual reduction
+fields. It defines no selector, maximizing principle, interpreter or machine. c's Advice
+selector will consume the resulting finite nonempty type. The exact packed-size formula
+is b's public reductionData_length; it is reused directly, not re-proved.
+
+
+## Complete checked helper handoff
+
+seq-zk-a proved ten helper modules: Normalization, NormalizationMachine, PhaseView,
+Statistical, ExecutionBounds, StatisticalRecursion, NormalizedStep, StatisticalPrefix,
+BoundedMetadata and RealPrefixBounds. All final source bytes are in source-snapshots with
+owner/status/hash rows. No target or frozen file was edited. The lead alone integrates,
+commits, seals, sweeps and delivers the target declarations.
+
+At lead request, NormalizedStep11 exposed normalizePhaseMsgs_viewV without any statistical
+premise. The existing comparison calls it; no second normalization proof was added. The
+new final source hash is76766e13e0eff35d107c98505f932dcec17cdf20f89c5f423f7e1d64217884b5
+(126lines;clean native11=2.50s). This supersedes the earlier101line clean10 source.
+
+BoundedMetadata final03 passed2.38s,0diagnostics. It defines finite nonempty five-field
+PhaseMetadata, exact raw data/length readers and exact coverage. An initially redundant
+direct Mathlib.Data.Fintype.Sigma import was removed before final03; the final source
+imports only ComputationalReduction and requires no new Mathlib root. Source hash
+f94e6c8ff89a1674aaed5047e479856ebe3e2a1623e2d2ccdeb46f4ae6f8959b.
+Its raw01failure and exact source are retained (product RHS parenthesization and a proof
+where simp had already changed reflexive equalities to True);02passed,03removed the
+redundant import and added the direct packed-data cover corollary.
+
+RealPrefixBounds final02 passed2.27s,0diagnostics. Its aggregate theorem gives exact j*k
+message count, the uniform B cap, and encoding length at most(j*k)*(2*B+2) for every
+real prefix j≤q. It reuses the public raw coin-table inverse/block reader and endpoint,
+the specification's boundary/reply readers, and ExecutionBounds. No generic word-length
+estimate is duplicated. Source hash
+1a50f8656f00e280506a67947a16a0583cdcc5fb9242efa3e15a3fc160f390d8.
+Its raw01failure is retained; split_ifs generated both first-mover cases as well as the
+active/filler cases, so02applied the same bounded/empty branch argument to all four.
+
+The retained FullOwnHelpersAxioms.lean probe checks42public declarations across all ten
+owned modules. It passed5.09s with0diagnostics and only propext,Classical.choice,Quot.sound.
+It also synthesizes Fintype and Nonempty of PhaseMetadata for arbitrary five natural
+bounds. The smaller MetadataAndStatisticsAxioms.lean is a prepared but unused predecessor
+probe retained for completeness; the full probe is the executed evidence.
+
+All copied dependencies preserve their owner's exact checked bytes: c StatisticalPostprocess
+and final EndpointSampling, b final ComputationalReduction, and lead-completed helper
+sources/oleans cloned only after completion authorization. Provenance JSON files record
+source hashes/check rows. seq-zk-a ran no lake command and touched no other worker process.
+There were no new compiler interruptions after the historical eight own authorized events.
+
+
+## Checkpoint3 closed-evidence boundary
+
+The lead reports CP3 proof revision04c253e48d9c0ebb73943f39412365cd4d8e02db. The first eight
+seq-zk-a helper sources are part of that proof revision. BoundedMetadata and RealPrefixBounds
+are fully checked future support sources OUTSIDE CP3, as is b's ComputationalReduction
+dependency; all three exact sources are retained under source-snapshots for replay of the
+new checks and the full axioms/Fintype probe. Their outside-CP3 status is explicit in the
+checkpoint3-closed-files.tsv source_status column. No own process is active at this boundary.
+After producing that receipt, every named byte is frozen until the lead confirms copying.
+
+
+### Preserved implementation record: subagents/seq-zk-c/computational-hybrid-record.md
+
+# Computational helper record (future work after checkpoint3)
+
+Author: seq-zk-c. The lead owns main, frozen files, final merge/checks/axioms/seals,
+commits and delivery. This record concerns only c-owned helper modules and isolated native
+checks. Checkpoint3 source is04c253e48d9c0ebb73943f39412365cd4d8e02db. The first10 c helpers
+match that source exactly; the five helpers below are future checked source outside it.
+checked-source-snapshots.json and its exact15 snapshots record this distinction.
+
+## Checked contributions and architecture
+
+HybridRecursion.lean:90lines, SHA5277132bb0013c9e290f17272947624e6fd33f17fb9029608d9821affe1e92da.
+The public hybrid_recursion_gap_le uses arbitrary state and continuation potential, only
+finite nonempty real coin type A, supplied initial/snoc family readers, and conditional
+potential drift<=epsilon at every actual prefix. It concludes end-to-end difference
+<=q*epsilon. It directly reuses the existing telescope, snoc equivalence, product averaging,
+and abs_uexp_sub_le. No finite state/witness bound, new iteration host or new telescope.
+
+SuffixLaws.lean:122lines, SHA4415c221a7d3273f02c22572a20f7033071a504364cb0b5dc855c35e281f3971.
+phaseStep_eq_simStep reads a supplied typed block; phaseSuffix_front separates the first
+update of b's existing suffix; phaseSuffix_congr_blocks depends only on its own range;
+phaseSuffix_update_before ignores an overwritten earlier table coordinate. There is no
+new suffix machine or duplicate execution-phase induction. This module owns no definitions.
+
+ComputationalAdvice.lean:74lines, SHAf7a61a8277300e179d2df45c2be4261c90429d8ad7142583ef75e967ad26cffc.
+exists_uniform_negligible_bound takes finite nonempty A(n), arbitrary witnesses W,
+gap<=1, a validity predicate, and one negligible bound for every selected metadata function.
+It chooses metadata before epsilon by the checked Advice selector and concludes one
+negligible epsilon uniformly bounds every valid gap by abs(epsilon(n)). Invalid gaps are
+zero only inside the proof. No machine decides validity or witness membership. No
+nonnegative-gap premise, witness encoding, witness maximum attainment, or bound on W.
+Old Advice source is unchanged.
+
+ContinuationProbability.lean:320lines, SHAa5922afe075adffb6349ba1801857125ac76ec158d4bca3faa8fc5289ee03d32.
+- acceptProb_prod, acceptProb_update_tuple, acceptProb_postprocess_fst expose exact opaque
+  product/update/unused-factor acceptance laws from published probability readers.
+- continuationProb(+_eq) is the existing suffix acceptance potential, sampling a full
+  typed table of independent S tapes and using only the suffix range.
+- continuationProb_bellman uses the published acceptProb_update to reseed the current
+  table entry, the front-step reader to consume it, and update_before to remove it from
+  all later phases. It is exactly a fresh current simulator coin and independent suffix.
+- continuationProb_real directly uses a's normalizePhaseMsgs_viewV fixed point with the
+  supplied padded-prover original message count and caller's uniform prover bound. It
+  removes the wrapper's zero verifier tape by opaque public averaging/projection laws.
+- continuationProb_sim is the matching raw S call identity from the Bellman law.
+- phaseGap(+_eq) is the SINGLE shared local raw original-view/S gap through b's
+  phaseContinuation, with coin product (Fin Q -> S.Coins) x Dcoins. b's
+  ComputationalPhaseBound consumes this public definition/reader; no duplicate gap.
+- phaseGap_eq_drift states its exact absolute potential drift under the real next phase.
+Final source has the required sim proof sketch and major-step comments. Only docs changed
+between passing03 and passing04; no statements, definitions or tactics changed.
+
+ComputationalHybrid.lean:197lines, SHA07e9f3beeaca0c2d2c4d5aa4e166cda4833412ad6b9bf5b5aba62aa888fa9bb1.
+prefix_distAdv_le assumes the shared phaseGap bound for each ACTUAL realPrefix before q,
+plus d, numeric p count, nonnegative epsilon and honest-message bound. It concludes the
+canonical real/simulated prefix view advantage<=Q(|x|)*epsilon at fixed verifier tape.
+The real/sim endpoint identities and generic potential theorem do all the work.
+prefix_distAdv_joint_le averages verifier tapes. distAdv_reindex directly uses public
+acceptProb_comp_equiv and supplied readers. distAdv_view_endpoints equates actual encoded
+repeated-view/SQ advantage with the joint typed prefix advantage, reusing stable Endpoint.
+No metadata validity, finite witnesses, weakened target or extra cryptographic assumption.
+The q=0 case is included by the generic telescope; no Fin0 index is fabricated.
+
+## Coordination and source provenance
+
+The lead approved every new helper/API before coding. c alone edited these files. a owns
+NormalizedStep and RealPrefixBounds; b owns SuffixMachine, ComputationalReduction,
+ReductionAdvantage and ComputationalPhaseBound; root owns main and transfers. No helper
+ownership overlap or foreign-tree edit/check occurred. In particular, a supplies ALL real
+normalization and prefix-size proofs, b supplies ALL machine/advice construction and
+NUPPT reduction-coin transport, and c does not duplicate them.
+
+Only stable checked source bytes were copied from b/a, then compiled in c's own tree.
+Hybrid prerequisite source manifests record exact hashes. A source-copy assertion caught
+b's comment-only update from0095... to32d8... before copying; c waited for b's successful
+final native check, then copied32d8... unchanged. This was provenance checking, not a proof
+failure. SuffixMachine, ComputationalReduction, ExecutionBounds and a's corrected
+NormalizedStep all passed native own-tree prerequisite checks. No sibling olean was used.
+
+## Search, overlap, reuse, and promotion
+
+Raw searches are in hybrid-searches.log; earlier advice/endpoint searches remain complete.
+
+Nearest generic hybrid: Foundations/Probability.abs_sub_le_sum_hybrids. HybridRecursion
+USES it directly; only conditional-prefix averaging and the snoc reader are new. Nearest
+specialized hybrid is ColSimLemmas.exists_hybRed_ge (ThreeColoring/SimulatorLemmas), whose
+protocol-specific coordinate/prefix proof does not supply the conditional state-potential
+contract. Promotion request: generic conditional-family hybrid in shared probability if
+accepted; frozen modules were not edited.
+
+Suffix front/block readers are consequences of b's published phaseSuffix_succ/zero and
+phaseStep_eq. None existed in the searched closure. The finite-table update proof uses
+canonical FunFamily.ofFn_blocks plus Equiv.apply_symm_apply, not an entrywise copy of
+GI.coinSlice_blocksEquiv. This same canonical specialization also appears as a local
+reader in RepeatedSoundness; it is disclosed and directly reuses the public window law.
+No independent block/window arithmetic is re-proved.
+
+ComputationalAdvice directly reuses Advice.exists_uniform_bound_selector. Nearest existing
+finite selector is ColZK.exists_hidingView_bound, which cannot cover an arbitrary witness
+domain. Its finite maximum proof was not copied. Promotion request: the length-indexed
+logical lifting belongs with a future shared advice/reduction helper.
+
+acceptProb_prod's nearest relative is the local hX product computation in ColZK.exists_fixSeed;
+no exact public sampler-factor averaging reader was found. It directly reuses acceptProb_def,
+uprob_comp_equiv and uprob_prod. acceptProb_update_tuple SPECIALIZES the existing public
+acceptProb_update (Indistinguishability.lean:103), dropping Unit via acceptProb_fst; it does
+not construct/re-prove a uniform update bijection. postprocess_fst uses acceptProb_bind,
+the product reader and HardcoreBit.uexp_fst. Promotion requests: these generic acceptance
+readers belong in shared Experiments/Indistinguishability, which are frozen here.
+
+continuationProb/phaseGap are topic-specific semantic leaves, with canonical_eq readers.
+Bellman uses published acceptProb_update and owned suffix readers; real identity uses a's
+published fixed point; sim identity uses b's phaseContinuation_eq. These helpers introduce
+no probability distribution host, simulator loop, or normalization proof.
+
+The actual q*epsilon theorem directly reuses HybridRecursion, PrefixLaws, phaseGap_eq_drift,
+and both suffix endpoints. Nearest specialized bounds are the ThreeColoring hybrid and
+coordinatewise pair-hybrid theorems in Commitment; they do not supply this adaptive real
+prefix/simulated suffix contract. No specialized proof was copied. distAdv_reindex is only
+acceptProb_comp_equiv plus supplied function equalities; promotion to shared sampling is
+requested. Endpoint transfer reuses stable EndpointSampling, not a second coin induction.
+
+## Native validation and corrections
+
+All attempts use LEAN_SLOT_TAG=seq-zk-c, the shared lean-slot.sh wrapper, /usr/bin/time -l,
+scripts/lean_check_tree.sh ONE module, and c's private seq-zk-c olean tree. All Python uses
+python3 -I. Every raw output, source-attempt snapshot and structured result is retained.
+No interruption, timeout, sampling, resource exception or Lake command in this task.
+
+- HybridRecursion01: rewrite could not infer a product integrand through projections.
+  Supplied it explicitly to the public expectation-equivalence reader. Attempt02 passed,
+  0diagnostics,2.23s,maxRSS2,116,681,728.
+- SuffixLaws01: omega saw an opaque Fin.mk.val term. Exposed its concrete value by change.
+  Attempt02 passed,0diagnostics,2.53s,maxRSS2,227,847,168.
+- ComputationalAdvice01 passed,0diagnostics,2.17s,maxRSS2,006,581,248.
+- ContinuationProbability01: implicit product/fst reader matches and update_self name;
+  fixed through explicit functions and the published correct reader. Attempt02: explicit
+  Fin value and bind postprocessor needed. Attempt03 passed the complete shared gap/drift
+  module. Attempt04, doc-final only, passed0diagnostics,2.35s,maxRSS2,243,788,800.
+- ComputationalHybrid01: after suffix_zero, an own local realView alias goal remained;
+  closed it by rfl. Attempt02 passed all four complete declarations,0diagnostics,2.33s,
+  maxRSS2,231,697,408. No target or premise change.
+
+Endpoint's separate record includes its final canonical-reader check02. The old read-only
+NormalizedStep diagnostic suggestions are corrected by normalized-step-diagnosis-correction.md:
+the actual cause was a missing direct Defs import, found by a/root with with_reducible.
+The initial closed evidence remains byte-identical, preserving the full chronological record.
+
+
+### Preserved implementation record: subagents/seq-zk-b/computational-reduction-overlap.md
+
+# Computational reduction search and overlap disclosure
+
+Worker: seq-zk-b. Source SHA256: 32d8ef575f769772b7e8b4b309ddf55d3e52c605c0f09c7fdc98cdbec11e6bb3.
+
+Searches are retained verbatim in computational-reduction-searches.log. No existing generic
+metadata-driven normalized one-phase/simulated-suffix reduction was found. The nearest
+concrete reductions are ThreeColoring/ColZKMachine.lean exists_colHidingRed (commitment
+hiding with advice) and SimulatorLemmas.lean exists_hybRed_ge (commitment-coordinate hybrid).
+They do not implement this sequential-protocol continuation; no proof body was copied.
+
+Direct reuse: Complexity/Randomized/Closure.lean exists_comp, exists_seq, exists_withAdvice;
+public NUPPT uniform constructor, input/layout and activation readers; WrappedVerifier
+phaseAux_eq/phaseAux_poly; PhaseView normalization PT reader; SuffixMachine phaseSuffix_poly;
+EncodingMachines unary arithmetic; public pair/encoded-message readers. No new host or
+hand-built control machine was introduced. Raw prefix advice decodes totally, including
+malformed words, without testing witness or reachability.
+
+phaseContinuation repeats the normalized-candidate append expression of phaseStep and the
+local phasePrefix_poly assembly. Its candidate is supplied externally, while phaseStep
+computes it by activating S, so phaseStep_poly cannot directly instantiate this function.
+The PT leaf is re-derived from the published normalization/pair/append readers, then the
+published arbitrary-start/prefix suffix theorem is applied. A later extraction could share
+that candidate-append PT leaf. This overlap and reuse were explicitly approved by the lead.
+
+The uniform continuation sampler is nearest exists_phaseSimulator, but it reads arbitrary
+advised metadata/current raw candidate rather than constructing a whole repetition from an
+empty prefix. Both use the same published uniform constructor, not duplicated hosts.
+All additions stay within the approved helper scope; no frozen source or Mathlib root changed.
+
+
+### Preserved implementation record: subagents/seq-zk-b/reduction-advantage-overlap.md
+
+# Typed reduction advantage overlap disclosure
+
+Worker: seq-zk-b. ReductionAdvantage.lean introduces no definitions or hosts. Searches are
+retained in reduction-advantage-searches.log. Nearest generic readers are
+EnsembleLemmas.acceptProb_coins_equiv and coinsEquiv/take_ofFn_coinsEquiv/
+drop_ofFn_coinsEquiv (Asymptotic/EnsemblesLemmas.lean:85,141,151,156). They are directly reused,
+not copied. This improves the initially proposed local splitCoins/cast equivalence by using
+the already published exact split/cast constructor and its two tape readers.
+
+CommitmentLemmas.acceptProb_distinguisherL_of_runAtL handles one deterministic preprocessor
+with an equal coin polynomial. ThreeColoring/ColZKMachine.distAdv_distinguisherL_reparam
+handles deterministic preprocessing with a changed security parameter. Neither handles the
+random continuation suffix and independent final-distinguisher tape required here. Their
+standard public-reader/reindexing pattern is reused, but no proof body was copied and no
+new general probability transport theorem is introduced. The new theorem applies the
+existing acceptance reindexer twice and the public distAdv_def.
+
+Canonical FunFamily.blocks.symm only regroups the simulator coin table; its implementation
+is not unfolded. The raw run equation is a hypothesis supplied by exists_phaseReduction,
+so the proof does not unfold any foreign reduction or machine. Only the local equivalence
+e is expanded. NUPPT.distinguisherL_eq/runAt_eq/coinLen_eq and PolyExpr evaluation readers
+supply all foreign computations. No validity, reachability, witness or nonemptiness premise
+was added. Parent approved this exact statement and source-only integration.
+
+
+### Preserved implementation record: subagents/seq-zk-b/computational-phase-bound-overlap.md
+
+# Common phase-bound overlap and reuse disclosure
+
+Worker: seq-zk-b. Parent approved this exact helper/API after receiving a concrete proposal.
+No existing theorem was found assembling the fixed original wrapped-ZK comparison into the
+common finite-metadata phase bound. Searches are in computational-phase-bound-searches.log.
+Nearest relatives are c's exists_uniform_negligible_bound/exists_uniform_bound_selector,
+a's PhaseMetadata bounds/cover, our advised phase reduction and typed advantage bridge,
+and c's shared phaseGap reader. They are all reused directly; no selector, cover, reduction,
+coin transport or probability host is copied. No public definitions or hosts are added.
+
+The bounded-gap leaf directly reuses ColZK.distAdv_le_one from the already cached pinned
+ThreeColoring/ColZKLemmas module; no duplicate generic probability lemma or new Mathlib root
+is added. Local syntactic polynomials set H=Q*k*(2B+2) and
+b=2*var+2*Lz+2*V.coins+2*Q+H+8. The selected metadata word has length at most b by the public
+PhaseMetadata.toData_length_le/toData_eq readers. On canonical raw-prefix validity,
+reductionData_encodeMsgs identifies this word with pairEncode x aux. The existing public
+length_pairSndD_le reader bounds aux; no pair arithmetic is reproved.
+
+Validity is a local proof-only predicate R x y plus canonical-prefix and j<Q facts.
+The arbitrary witness y is outside the finite metadata and is neither stored nor tested.
+The existing selector is applied before requesting the original negligible error. The
+machine remains the already checked total advised phase reduction. The final exact cover
+handles arbitrary typed bounded prefixes, without a reachability or prover-bound premise.
+
+The first two failures concerned only local argument/name/equality elaboration. Native01
+exposed implicit List.length_ofFn use, a missing Turing namespace, and dependent coin casts
+from rewriting a parameter inside the distinguisher. Native02 exposed a rewrite touching
+both sides of a canonical-prefix equation and the final analogous dependent distinguisher
+transport. Keeping local experiments at actual decoded x.length, transporting the whole
+real-valued phaseGap by congrArg, and applying the public packed-prefix reader resolves them.
+No theorem statement, hclose premise, or machine construction was weakened. Exact source
+snapshots and all raw failure logs are retained. Native03 passed; native04 seals a single
+line wrap only, with an exact inverse-transform hash check retaining attempt03.
+
+All foreign definitions are used through published equations/bounds. Only local aliases
+are unfolded. Sibling helper sources are copied unchanged with SHA256 provenance and checked
+independently in seq-zk-b's private olean tree. No sibling oleans, frozen files, main edits,
+new Mathlib roots, Lake calls or Git commits are involved.
+
+
+### Preserved implementation record: subagents/seq-zk-c/final-acceptprob-reader/README.md
+
+# Final explicit acceptance-reader correction
+
+Lead-owned canonical C_A found one foreign-definition access in
+ContinuationProbability.acceptProb_prod: its initial acceptProb_def rewrite affected the
+outer occurrence, while the RHS occurrence inside uexp was left for the final rfl to
+unfold. The full old seal failure is preserved by the lead at
+evidence/logs/final-seals-stream-2/final-coe-SealA_Cryptography_Composability_SequentialZK_ContinuationProbability.log,
+reported line155. This was a reader-discipline failure, not a false theorem.
+
+At the lead's request, c changed ONLY that short proof's last line. The final source uses
+`simp only [acceptProb_def, Equiv.prodAssoc_symm_apply]`, reading both the RHS acceptance
+formula and the product-association equation explicitly. No public statement, import,
+other proof byte, frozen file or scope changed. The withV seed-reader correction remains
+exactly as checked before. No seal/probe was run by c; lead reruns the affected20 cells.
+
+Old source SHA4b7b7ad15dcd6ead93532c83dfe9e2b1f9750e2d5933ae359949bd7b4475db9a.
+First reader-only trial SHA8d631348a0f8e346dcf6df132fa70df0572830978ee140ceb0e48f8a208f7e84
+exposed one remaining ordinary native goal: product-association evaluation. Its complete
+source/patch/roundtrip and raw native failure remain,2.69s actual runtime,
+maxRSS2,238,791,680bytes. No interruption, timeout or resource exception.
+
+Final source SHA91355ac3dff34e7b06e8684bf36b1c5fb363c7688a737f8f4efcf4f18246011d,
+354lines/max94columns. Adding the published product-association reader closes the same
+proof. Native retry02 passed0errors/0warnings,2.42s actual runtime,
+maxRSS2,246,049,792bytes. All output/source/result evidence is preserved; final patch and
+roundtrip-final.json verify exact forward/reverse git-apply bytes and that replacing only
+that final line by the old rfl restores every old source byte, including all statements.
+
+Both native attempts used seq-zk-c, the shared Lean slot wrapper, the private c olean tree,
+/usr/bin/time -l and scripts/lean_check_tree.sh for this module alone. No Lake, dependent
+sweep, seal, axiom probe, new definition, theorem or Mathlib root. All171 prior current
+receipt files were verified unchanged. Source and this new evidence are closed for exact
+copying into the lead's final revision6 matrix/payload.
+
+
+### Preserved implementation record: subagents/seq-zk-a/final-review-12/REPORT.md
+
+# Final explicit-reader scan: unresolved-name review
+
+Reviewer: seq-zk-a. Final proof revision d842dc8f681f6b89499129f5b64a50d0e4587935.
+Read-only review of scan1.py, scan2.py, review_explicit.py, and the final-repair/explicit
+inputs/results. All41scanned source files independently match the committed revision byte
+for byte (source-revision-verification.json). No Lean/lake command or source edit was made
+by this reviewer. Python scripts write only this final-review-12 evidence directory.
+
+## Completed outcome
+
+The raw scan contains1245items:868native-resolved theorem uses,6same-module definition
+uses,and371LOCAL_OR_UNRESOLVED items. Its zero-foreign count alone was incomplete evidence
+until those371items were reviewed. Every one is now classified source-locally and the
+nonlocal aliases are checked by the lead's completed secondary native probe:
+
+| Supplement category | Items |
+|---|---:|
+|Named local hypothesis, case, lambda, obtained value, or let|322|
+|Anonymous local have proof named this|2|
+|Inline typed show equality proof term|15|
+|Local equality combined by Eq.trans|1|
+|Public theorem/equality/iff/contract readers through aliases|29|
+|Additional same-module inherited AbortRetry definitions|2|
+|Still unexplained|0|
+
+Thus the merged interpretation is897public theorem/reader items,8same-module definition
+items,and340local/inline proof items. No foreign definition-body unfolding was found. All
+eight same-module definition occurrences are in declarations marked UNCHANGED by the
+base/final touched map. No newly added/changed declaration unfolds a foreign definition
+explicitly in this scan. The raw scan2 output is retained unchanged; this is a separately
+reported supplement, not a silent rewrite of its results.
+
+## Native alias confirmation
+
+The lead ran `.lake/seq-zk-rule10/final-repair/explicit/ExplicitAliases`; the retained log
+`evidence/logs/final-explicit/final-explicit-aliases.log` contains all24requested canonical
+names,EXPLICIT_ALIAS_DONE24,and EXIT0,with zero error: or error( diagnostics.22names have
+native kind theorem and type_is_Prop=true; the only two definitions are AbortRetry.attempt
+and AbortRetry.retry,with the same Defs module home as their explicit uses.
+
+The initial conservative warning that proof-valued class/spec fields might have definition
+kind was a probe-design precaution, not an observed issue. The pinned native result
+actually classifies every queried proof field as theorem-kind. native-supplement-validation
+records these exact results and probe/log hashes.
+
+## Why the scanner left valid names unresolved
+
+1. Export aliases are absent from the probe's raw env.constants string map. `mul_zero` and
+   `zero_mul` are exported from MulZeroClass at Mathlib/Algebra/GroupWithZero/Defs.lean:77
+   (field declarations35,37). Their canonical names MulZeroClass.mul_zero and zero_mul are
+   theorem-kind public equality readers in the native result. `not_not` is exported from
+   Classical at Mathlib/Logic/Basic.lean:188; Init/Classical.lean:141 declares the theorem.
+2. Receiver notation needs the local receiver type. hA.advice_eq/hS.advice_eq resolve to
+   Complexity.NUPPT.Uniform.advice_eq (Randomized/PPT.lean:300). The specification methods
+   h.realCoinsEquiv_fst_ofFn,d.phase_take,and d.outV_eq resolve to their published
+   PaddedProverSpec/PaddedVerifierSpec theorems. The13spec-field uses are public equality
+   proof projections (first,rounds_eval,next,boundary; rounds_eq,first_eq,next_eq,terminal_eq,
+   period,local_length), not attempts to unfold those projections' definitions. All are
+   native theorem-kind/type-is-Prop=true.
+3. List.mem_singleton.mp and List.prefix_iff_eq_append.mp apply the mp direction of public
+   iff theorems to local membership/prefix proofs. Canonical List lemmas and Iff.mp were
+   verified natively. hpV.trans hp combines two local equality proofs using Eq.trans;
+   hpV is explicitly bound by congrArg at SequentialZK.lean:669.
+4. `open AbortRetry in` appears at Defs.lean:588 before the following theorem's docstring.
+   scan1.py only searches tactic-local opens inside the owning declaration span, so it
+   misses this legal preceding local open. At636,648,the inherited simp arguments attempt
+   and retry are owned AbortRetry.attempt/retry (defined at328,346 in that same file). At642,
+   firstHit_map_getD_eq is the public AbortRetry theorem declared at460. These are not
+   private copies and are not foreign-definition uses.
+5. The inline keyword show is not a declaration name. The15full items are13arithmetic
+   equality terms proved by ring/omega and two local funext h equalities. No foreign body
+   is hidden in those terms. The two local this entries come from anonymous have:= at
+   Defs.lean:472 and494 before their rw uses at474 and496.
+
+## Source-local handling of ordinary local names
+
+For322entries the review retains the enclosing compiled declaration and direct binding
+evidence (have,let,set,by_cases,intro,obtained pattern,case/lambda binder,or typed premise)
+strictly before the scanned use. No blanket “starts with h” rule was used. All322had a
+direct binder match under a second stricter pass. The two anonymous-have cases were
+reviewed manually and explicitly overridden. The exact occurrence, full rewrite item,
+source context,and local binding lines are in native-validated-review.json. The original
+proposed/unlocated intermediate files remain for provenance; resolved-review and native-
+validated-review explicitly resolve both initial missing binder locations.
+
+## Tool review and requirements
+
+scan2.py correctly keeps LOCAL_OR_UNRESOLVED separate at32–33 and reports raw foreign
+items only among resolved names at37–46. It cannot itself certify zero foreign unfolding
+while unknown names remain. Its equation-target handling covers generated eq_N,eq_def,
+eq_unfold heads; the original explicit-items inventory remains authoritative for those
+lexer records. Any native-kind continuation must preserve both diagnostic forms error:
+and error( and must require successful completion/exit, as done in the root logs here.
+
+review_explicit.py is not generic for this fill: it hard-codes hash-sign SignatureScheme
+aliases,an unrelated local-head whitelist,and writes .lake/hash-sign-rule10 paths. It should
+not be executed unchanged or treated as resolving the371seq-zk unknowns. The present
+supplement performs the corresponding source-specific review and canonical native check,
+while leaving that archived tool untouched.
+
+This explicit scan is one part of Rule10 evidence; it does not replace strict/coe A/B
+irreducibility seals or their attribution. The lead's separate native sweeps/axioms/seals
+remain the authority for implicit elaboration. No source correction is requested by this
+review. All files produced here are indexed by receipt.tsv and lie outside the historical
+frozen CP3 and post-CP3 audit receipts.

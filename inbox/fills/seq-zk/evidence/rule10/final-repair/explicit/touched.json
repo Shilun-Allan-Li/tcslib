@@ -1,0 +1,2984 @@
+{
+ "base": "107f1e8c218733eac12d6b9bee6fece441271317",
+ "head": "d842dc8f681f6b89499129f5b64a50d0e4587935",
+ "files": {
+  "TCSlib/Cryptography/Composability/SequentialZK.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Composability.proverMoveIndex",
+     "kind": "def",
+     "private": false,
+     "start": 188,
+     "decl_line": 190,
+     "end": 191,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.proverMoveIndex_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 192,
+     "decl_line": 193,
+     "end": 195,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.verifierMoveIndex",
+     "kind": "def",
+     "private": false,
+     "start": 196,
+     "decl_line": 197,
+     "end": 198,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.verifierMoveIndex_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 199,
+     "decl_line": 200,
+     "end": 202,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.proverMoves",
+     "kind": "def",
+     "private": false,
+     "start": 203,
+     "decl_line": 204,
+     "end": 205,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.proverMoves_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 206,
+     "decl_line": 207,
+     "end": 209,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.moverIsV_two_mul_add",
+     "kind": "theorem",
+     "private": false,
+     "start": 210,
+     "decl_line": 211,
+     "end": 214,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.countP_moverIsV",
+     "kind": "theorem",
+     "private": false,
+     "start": 215,
+     "decl_line": 216,
+     "end": 224,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.countP_not_moverIsV",
+     "kind": "theorem",
+     "private": false,
+     "start": 225,
+     "decl_line": 226,
+     "end": 234,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.exec_fst_length",
+     "kind": "theorem",
+     "private": false,
+     "start": 235,
+     "decl_line": 236,
+     "end": 244,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.exec_snd_length",
+     "kind": "theorem",
+     "private": false,
+     "start": 245,
+     "decl_line": 246,
+     "end": 254,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.proverMoveIndex_exec",
+     "kind": "theorem",
+     "private": false,
+     "start": 255,
+     "decl_line": 257,
+     "end": 262,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.verifierMoveIndex_exec",
+     "kind": "theorem",
+     "private": false,
+     "start": 263,
+     "decl_line": 265,
+     "end": 270,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.exec_boundary_lengths",
+     "kind": "theorem",
+     "private": false,
+     "start": 271,
+     "decl_line": 274,
+     "end": 285,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqProver",
+     "kind": "def",
+     "private": false,
+     "start": 298,
+     "decl_line": 298,
+     "end": 309,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqVerdict",
+     "kind": "def",
+     "private": false,
+     "start": 310,
+     "decl_line": 312,
+     "end": 318,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqVerdict_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 319,
+     "decl_line": 320,
+     "end": 328,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqVerifier",
+     "kind": "def",
+     "private": false,
+     "start": 334,
+     "decl_line": 334,
+     "end": 347,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqRep",
+     "kind": "def",
+     "private": false,
+     "start": 352,
+     "decl_line": 352,
+     "end": 357,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqRep_rounds_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 358,
+     "decl_line": 359,
+     "end": 363,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.ProverBounded.seqRep",
+     "kind": "theorem",
+     "private": false,
+     "start": 364,
+     "decl_line": 367,
+     "end": 376,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqRep_exec_phase",
+     "kind": "theorem",
+     "private": false,
+     "start": 377,
+     "decl_line": 391,
+     "end": 475,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqVerifier_exec_first",
+     "kind": "theorem",
+     "private": false,
+     "start": 476,
+     "decl_line": 484,
+     "end": 518,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqRep_outV_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 519,
+     "decl_line": 526,
+     "end": 543,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqRep_exec_phase_take",
+     "kind": "theorem",
+     "private": false,
+     "start": 544,
+     "decl_line": 551,
+     "end": 576,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqRep_complete",
+     "kind": "theorem",
+     "private": false,
+     "start": 577,
+     "decl_line": 587,
+     "end": 627,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqRep_reject_of_first",
+     "kind": "theorem",
+     "private": false,
+     "start": 628,
+     "decl_line": 635,
+     "end": 676,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqRep_sound_first",
+     "kind": "theorem",
+     "private": false,
+     "start": 677,
+     "decl_line": 685,
+     "end": 713,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqProver_efficient",
+     "kind": "theorem",
+     "private": false,
+     "start": 714,
+     "decl_line": 716,
+     "end": 722,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqVerifier_efficient",
+     "kind": "theorem",
+     "private": false,
+     "start": 723,
+     "decl_line": 725,
+     "end": 734,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqRep_verifierSpec",
+     "kind": "theorem",
+     "private": false,
+     "start": 735,
+     "decl_line": 742,
+     "end": 777,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Protocol.seqRep_proverSpec",
+     "kind": "theorem",
+     "private": false,
+     "start": 778,
+     "decl_line": 786,
+     "end": 820,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.ZK.seqRep",
+     "kind": "theorem",
+     "private": false,
+     "start": 827,
+     "decl_line": 864,
+     "end": 867,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.StatZK.seqRep",
+     "kind": "theorem",
+     "private": false,
+     "start": 868,
+     "decl_line": 882,
+     "end": 886,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.PerfectZK.seqRep",
+     "kind": "theorem",
+     "private": false,
+     "start": 887,
+     "decl_line": 889,
+     "end": 893,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PerfectZKAbort.seqRep",
+     "kind": "theorem",
+     "private": false,
+     "start": 894,
+     "decl_line": 909,
+     "end": 913,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.InteractiveProof.seqRep",
+     "kind": "theorem",
+     "private": false,
+     "start": 914,
+     "decl_line": 928,
+     "end": 938,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.InteractiveProofErr.seqRep",
+     "kind": "theorem",
+     "private": false,
+     "start": 939,
+     "decl_line": 956,
+     "end": 966,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.EfficientProverProofErr.seqRep",
+     "kind": "theorem",
+     "private": false,
+     "start": 967,
+     "decl_line": 974,
+     "end": 989,
+     "status": "CHANGED",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 27,
+   "head_count": 39
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/Advice.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Composability.exists_uniform_bound_selector",
+     "kind": "theorem",
+     "private": false,
+     "start": 32,
+     "decl_line": 43,
+     "end": 66,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PhaseMetadata",
+     "kind": "abbrev",
+     "private": false,
+     "start": 41,
+     "decl_line": 45,
+     "end": 48,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PhaseMetadata_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 49,
+     "decl_line": 52,
+     "end": 55,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PhaseMetadata.<anonymous instance #1>",
+     "kind": "instance",
+     "private": false,
+     "start": 58,
+     "decl_line": 60,
+     "end": 63,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PhaseMetadata.toData",
+     "kind": "def",
+     "private": false,
+     "start": 64,
+     "decl_line": 67,
+     "end": 70,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PhaseMetadata.toData_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 71,
+     "decl_line": 74,
+     "end": 77,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PhaseMetadata.word_lengths",
+     "kind": "theorem",
+     "private": false,
+     "start": 78,
+     "decl_line": 81,
+     "end": 88,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PhaseMetadata.toData_length_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 89,
+     "decl_line": 92,
+     "end": 97,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PhaseMetadata.cover",
+     "kind": "theorem",
+     "private": false,
+     "start": 98,
+     "decl_line": 106,
+     "end": 121,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PhaseMetadata.cover_data",
+     "kind": "theorem",
+     "private": false,
+     "start": 122,
+     "decl_line": 125,
+     "end": 132,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 9
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.exists_uniform_negligible_bound",
+     "kind": "theorem",
+     "private": false,
+     "start": 32,
+     "decl_line": 45,
+     "end": 73,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.prefix_distAdv_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 36,
+     "decl_line": 48,
+     "end": 119,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.prefix_distAdv_joint_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 120,
+     "decl_line": 123,
+     "end": 149,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.distAdv_reindex",
+     "kind": "theorem",
+     "private": false,
+     "start": 150,
+     "decl_line": 152,
+     "end": 165,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.distAdv_view_endpoints",
+     "kind": "theorem",
+     "private": false,
+     "start": 166,
+     "decl_line": 169,
+     "end": 196,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 4
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.exists_negligible_phase_bound",
+     "kind": "theorem",
+     "private": false,
+     "start": 37,
+     "decl_line": 63,
+     "end": 183,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.reductionData",
+     "kind": "def",
+     "private": false,
+     "start": 43,
+     "decl_line": 46,
+     "end": 48,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.reductionData_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 49,
+     "decl_line": 51,
+     "end": 55,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.reductionData_fields",
+     "kind": "theorem",
+     "private": false,
+     "start": 56,
+     "decl_line": 58,
+     "end": 66,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.reductionData_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 67,
+     "decl_line": 69,
+     "end": 76,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.reductionData_length",
+     "kind": "theorem",
+     "private": false,
+     "start": 77,
+     "decl_line": 79,
+     "end": 85,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.reductionData_encodeMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 86,
+     "decl_line": 89,
+     "end": 92,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseContinuation",
+     "kind": "def",
+     "private": false,
+     "start": 93,
+     "decl_line": 98,
+     "end": 106,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseContinuation_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 107,
+     "decl_line": 111,
+     "end": 120,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseContinuation_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 121,
+     "decl_line": 132,
+     "end": 173,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.exists_continuationSampler",
+     "kind": "theorem",
+     "private": false,
+     "start": 174,
+     "decl_line": 185,
+     "end": 233,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.exists_phaseReduction",
+     "kind": "theorem",
+     "private": false,
+     "start": 234,
+     "decl_line": 246,
+     "end": 270,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 11
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/ComputationalTransfer.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.zk_of_padded_spec",
+     "kind": "theorem",
+     "private": false,
+     "start": 39,
+     "decl_line": 55,
+     "end": 99,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/Congruence.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Composability.exec_congr_reachable",
+     "kind": "theorem",
+     "private": false,
+     "start": 31,
+     "decl_line": 42,
+     "end": 67,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.acceptProb_prod",
+     "kind": "theorem",
+     "private": false,
+     "start": 39,
+     "decl_line": 40,
+     "end": 45,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.acceptProb_update_tuple",
+     "kind": "theorem",
+     "private": false,
+     "start": 46,
+     "decl_line": 48,
+     "end": 64,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.acceptProb_postprocess_fst",
+     "kind": "theorem",
+     "private": false,
+     "start": 65,
+     "decl_line": 67,
+     "end": 82,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.continuationProb",
+     "kind": "def",
+     "private": false,
+     "start": 83,
+     "decl_line": 87,
+     "end": 94,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.continuationProb_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 95,
+     "decl_line": 97,
+     "end": 105,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.continuationProb_bellman",
+     "kind": "theorem",
+     "private": false,
+     "start": 106,
+     "decl_line": 114,
+     "end": 157,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.continuationProb_real",
+     "kind": "theorem",
+     "private": false,
+     "start": 158,
+     "decl_line": 169,
+     "end": 264,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.continuationProb_sim",
+     "kind": "theorem",
+     "private": false,
+     "start": 265,
+     "decl_line": 272,
+     "end": 304,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseGap",
+     "kind": "def",
+     "private": false,
+     "start": 305,
+     "decl_line": 309,
+     "end": 319,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseGap_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 320,
+     "decl_line": 322,
+     "end": 334,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseGap_eq_drift",
+     "kind": "theorem",
+     "private": false,
+     "start": 335,
+     "decl_line": 337,
+     "end": 353,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 11
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Composability.SeqEfficiency.take_encodeMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 39,
+     "decl_line": 41,
+     "end": 49,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.SeqEfficiency.takeMsgs_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 50,
+     "decl_line": 53,
+     "end": 60,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.SeqEfficiency.phase_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 61,
+     "decl_line": 73,
+     "end": 133,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.SeqEfficiency.phase_efficient",
+     "kind": "theorem",
+     "private": false,
+     "start": 134,
+     "decl_line": 139,
+     "end": 153,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.SeqEfficiency.verdict_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 154,
+     "decl_line": 165,
+     "end": 258,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.SeqEfficiency.verifier_efficient",
+     "kind": "theorem",
+     "private": false,
+     "start": 259,
+     "decl_line": 269,
+     "end": 305,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 6
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.coinTableEquiv",
+     "kind": "def",
+     "private": false,
+     "start": 41,
+     "decl_line": 43,
+     "end": 46,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.coinTableEquiv_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 47,
+     "decl_line": 48,
+     "end": 51,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.coinTableEquiv_block",
+     "kind": "theorem",
+     "private": false,
+     "start": 52,
+     "decl_line": 53,
+     "end": 61,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.coinBlocksEquiv",
+     "kind": "def",
+     "private": false,
+     "start": 62,
+     "decl_line": 64,
+     "end": 69,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.coinBlocksEquiv_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 70,
+     "decl_line": 72,
+     "end": 77,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.coinBlocksEquiv_fst_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 78,
+     "decl_line": 80,
+     "end": 88,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.coinBlocksEquiv_block",
+     "kind": "theorem",
+     "private": false,
+     "start": 89,
+     "decl_line": 91,
+     "end": 100,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.statClose_reindex",
+     "kind": "theorem",
+     "private": false,
+     "start": 101,
+     "decl_line": 103,
+     "end": 114,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.realPrefix_eq_exec",
+     "kind": "theorem",
+     "private": false,
+     "start": 117,
+     "decl_line": 127,
+     "end": 144,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.realCoinsEquiv",
+     "kind": "def",
+     "private": false,
+     "start": 145,
+     "decl_line": 148,
+     "end": 155,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.realCoinsEquiv_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 156,
+     "decl_line": 158,
+     "end": 164,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.realCoinsEquiv_fst_ofFn",
+     "kind": "theorem",
+     "private": false,
+     "start": 165,
+     "decl_line": 166,
+     "end": 171,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.realCoinsEquiv_block",
+     "kind": "theorem",
+     "private": false,
+     "start": 172,
+     "decl_line": 173,
+     "end": 179,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.viewV_eq_realPrefix",
+     "kind": "theorem",
+     "private": false,
+     "start": 180,
+     "decl_line": 182,
+     "end": 193,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.simulate_eq_simPrefix",
+     "kind": "theorem",
+     "private": false,
+     "start": 196,
+     "decl_line": 200,
+     "end": 218,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.statClose_view_endpoints",
+     "kind": "theorem",
+     "private": false,
+     "start": 219,
+     "decl_line": 231,
+     "end": 268,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 16
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.InteractiveProofErr.uprob_accept_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 35,
+     "decl_line": 38,
+     "end": 47,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.InteractiveProofErr.sound_nonneg",
+     "kind": "theorem",
+     "private": false,
+     "start": 48,
+     "decl_line": 50,
+     "end": 53,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.prefixProver_accept_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 56,
+     "decl_line": 67,
+     "end": 82,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 3
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.exec_snd_bounded",
+     "kind": "theorem",
+     "private": false,
+     "start": 40,
+     "decl_line": 47,
+     "end": 66,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.exec_snd_slice_bounded",
+     "kind": "theorem",
+     "private": false,
+     "start": 67,
+     "decl_line": 70,
+     "end": 76,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_encodeMsgs_exec_snd_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 77,
+     "decl_line": 80,
+     "end": 87,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 3
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.hybrid_recursion_gap_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 33,
+     "decl_line": 46,
+     "end": 92,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.encodeMsgs_eq_encWords",
+     "kind": "theorem",
+     "private": false,
+     "start": 39,
+     "decl_line": 40,
+     "end": 45,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.normalizeMsgs",
+     "kind": "def",
+     "private": false,
+     "start": 46,
+     "decl_line": 49,
+     "end": 51,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.normalizeMsgs_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 52,
+     "decl_line": 54,
+     "end": 57,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_normalizeMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 58,
+     "decl_line": 60,
+     "end": 63,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_le_of_mem_normalizeMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 64,
+     "decl_line": 66,
+     "end": 72,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.normalizeMsgs_encodeMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 73,
+     "decl_line": 76,
+     "end": 86,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_encodeMsgs_normalizeMsgs_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 87,
+     "decl_line": 89,
+     "end": 97,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 7
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.polyTimeComputable_encWords_decWords",
+     "kind": "theorem",
+     "private": false,
+     "start": 40,
+     "decl_line": 42,
+     "end": 50,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.polyTimeComputable_decWords_getD",
+     "kind": "theorem",
+     "private": false,
+     "start": 51,
+     "decl_line": 53,
+     "end": 61,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.polyTimeComputable_encode_normalizeMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 62,
+     "decl_line": 72,
+     "end": 96,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 3
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/NormalizedStep.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.normalizePhaseMsgs_viewV",
+     "kind": "theorem",
+     "private": false,
+     "start": 42,
+     "decl_line": 53,
+     "end": 72,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.statClose_normalized_step",
+     "kind": "theorem",
+     "private": false,
+     "start": 73,
+     "decl_line": 86,
+     "end": 125,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 2
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec",
+     "kind": "structure",
+     "private": false,
+     "start": 40,
+     "decl_line": 45,
+     "end": 89,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.real_phase",
+     "kind": "theorem",
+     "private": false,
+     "start": 92,
+     "decl_line": 97,
+     "end": 115,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.padded_phase",
+     "kind": "theorem",
+     "private": false,
+     "start": 116,
+     "decl_line": 120,
+     "end": 139,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 3
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseViewPayload",
+     "kind": "def",
+     "private": false,
+     "start": 46,
+     "decl_line": 50,
+     "end": 54,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseViewPayload_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 55,
+     "decl_line": 57,
+     "end": 62,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.normalizePhaseMsgs",
+     "kind": "def",
+     "private": false,
+     "start": 63,
+     "decl_line": 66,
+     "end": 68,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.normalizePhaseMsgs_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 69,
+     "decl_line": 70,
+     "end": 72,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseViewPayload_of_encode",
+     "kind": "theorem",
+     "private": false,
+     "start": 73,
+     "decl_line": 75,
+     "end": 79,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseViewPayload_of_ne",
+     "kind": "theorem",
+     "private": false,
+     "start": 80,
+     "decl_line": 82,
+     "end": 86,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.normalizePhaseMsgs_of_encode",
+     "kind": "theorem",
+     "private": false,
+     "start": 87,
+     "decl_line": 90,
+     "end": 95,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_normalizePhaseMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 96,
+     "decl_line": 98,
+     "end": 102,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_le_of_mem_normalizePhaseMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 103,
+     "decl_line": 105,
+     "end": 109,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_encodeMsgs_normalizePhaseMsgs_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 110,
+     "decl_line": 112,
+     "end": 116,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.normalizePhaseMsgs_of_ne",
+     "kind": "theorem",
+     "private": false,
+     "start": 117,
+     "decl_line": 119,
+     "end": 126,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.polyTimeComputable_phaseViewPayload",
+     "kind": "theorem",
+     "private": false,
+     "start": 127,
+     "decl_line": 135,
+     "end": 151,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.polyTimeComputable_encode_normalizePhaseMsgs",
+     "kind": "theorem",
+     "private": false,
+     "start": 152,
+     "decl_line": 156,
+     "end": 167,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 13
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/Phases.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Composability.prefixProver",
+     "kind": "def",
+     "private": false,
+     "start": 40,
+     "decl_line": 40,
+     "end": 44,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.exec_phase_of_moves",
+     "kind": "theorem",
+     "private": false,
+     "start": 45,
+     "decl_line": 58,
+     "end": 104,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.exec_phase",
+     "kind": "theorem",
+     "private": false,
+     "start": 105,
+     "decl_line": 117,
+     "end": 141,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 3
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.realStep",
+     "kind": "def",
+     "private": false,
+     "start": 42,
+     "decl_line": 45,
+     "end": 50,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.realStep_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 51,
+     "decl_line": 54,
+     "end": 60,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.simStep",
+     "kind": "def",
+     "private": false,
+     "start": 61,
+     "decl_line": 64,
+     "end": 68,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.simStep_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 69,
+     "decl_line": 71,
+     "end": 76,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.realPrefix",
+     "kind": "def",
+     "private": false,
+     "start": 77,
+     "decl_line": 79,
+     "end": 82,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.realPrefix_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 83,
+     "decl_line": 85,
+     "end": 89,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.simPrefix",
+     "kind": "def",
+     "private": false,
+     "start": 90,
+     "decl_line": 92,
+     "end": 95,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.simPrefix_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 96,
+     "decl_line": 98,
+     "end": 102,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 8
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.realPrefix_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 39,
+     "decl_line": 40,
+     "end": 43,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.realPrefix_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 44,
+     "decl_line": 46,
+     "end": 53,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.realPrefix_snoc",
+     "kind": "theorem",
+     "private": false,
+     "start": 54,
+     "decl_line": 56,
+     "end": 62,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.simPrefix_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 63,
+     "decl_line": 64,
+     "end": 67,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.simPrefix_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 68,
+     "decl_line": 70,
+     "end": 77,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.simPrefix_snoc",
+     "kind": "theorem",
+     "private": false,
+     "start": 78,
+     "decl_line": 80,
+     "end": 86,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.simPrefix_eq_phasePrefix",
+     "kind": "theorem",
+     "private": false,
+     "start": 87,
+     "decl_line": 97,
+     "end": 117,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 7
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.next_length_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 35,
+     "decl_line": 38,
+     "end": 46,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.complete",
+     "kind": "theorem",
+     "private": false,
+     "start": 47,
+     "decl_line": 54,
+     "end": 74,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 2
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/RealPhases.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.exec_snd_empty",
+     "kind": "theorem",
+     "private": false,
+     "start": 42,
+     "decl_line": 51,
+     "end": 86,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.exec_real_phase",
+     "kind": "theorem",
+     "private": false,
+     "start": 87,
+     "decl_line": 101,
+     "end": 148,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.exec_padded_real_phase",
+     "kind": "theorem",
+     "private": false,
+     "start": 149,
+     "decl_line": 161,
+     "end": 206,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 3
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.realPrefix_bounds",
+     "kind": "theorem",
+     "private": false,
+     "start": 40,
+     "decl_line": 54,
+     "end": 100,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.distAdv_phaseReduction",
+     "kind": "theorem",
+     "private": false,
+     "start": 34,
+     "decl_line": 59,
+     "end": 110,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Composability.phaseTape",
+     "kind": "def",
+     "private": true,
+     "start": 33,
+     "decl_line": 34,
+     "end": 36,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.phaseTape_block",
+     "kind": "theorem",
+     "private": true,
+     "start": 37,
+     "decl_line": 38,
+     "end": 43,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.zeroTail",
+     "kind": "def",
+     "private": true,
+     "start": 44,
+     "decl_line": 45,
+     "end": 47,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.phaseGood",
+     "kind": "def",
+     "private": true,
+     "start": 48,
+     "decl_line": 51,
+     "end": 59,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.phaseGood_section",
+     "kind": "theorem",
+     "private": true,
+     "start": 60,
+     "decl_line": 61,
+     "end": 69,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.phaseGood_of_test",
+     "kind": "theorem",
+     "private": true,
+     "start": 70,
+     "decl_line": 76,
+     "end": 120,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.PaddedVerifierSpec.outV_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 121,
+     "decl_line": 125,
+     "end": 135,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.PaddedVerifierSpec.accept_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 136,
+     "decl_line": 148,
+     "end": 192,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.PaddedVerifierSpec.sound",
+     "kind": "theorem",
+     "private": false,
+     "start": 193,
+     "decl_line": 201,
+     "end": 217,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 9
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Composability.PaddedVerifierSpec",
+     "kind": "structure",
+     "private": false,
+     "start": 35,
+     "decl_line": 40,
+     "end": 94,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.PaddedVerifierSpec.phase_exec",
+     "kind": "theorem",
+     "private": false,
+     "start": 95,
+     "decl_line": 107,
+     "end": 159,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.PaddedVerifierSpec.phase_take",
+     "kind": "theorem",
+     "private": false,
+     "start": 160,
+     "decl_line": 170,
+     "end": 193,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 3
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phasePrefix",
+     "kind": "def",
+     "private": false,
+     "start": 46,
+     "decl_line": 54,
+     "end": 64,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phasePrefix_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 65,
+     "decl_line": 66,
+     "end": 68,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phasePrefix_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 69,
+     "decl_line": 72,
+     "end": 81,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phasePrefix_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 82,
+     "decl_line": 85,
+     "end": 100,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phasePrefix_succ_simulate",
+     "kind": "theorem",
+     "private": false,
+     "start": 101,
+     "decl_line": 103,
+     "end": 115,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_phasePrefix",
+     "kind": "theorem",
+     "private": false,
+     "start": 116,
+     "decl_line": 118,
+     "end": 132,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_le_of_mem_phasePrefix",
+     "kind": "theorem",
+     "private": false,
+     "start": 133,
+     "decl_line": 138,
+     "end": 155,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_encodeMsgs_phasePrefix_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 156,
+     "decl_line": 158,
+     "end": 166,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.encode_emptyMsgs_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 167,
+     "decl_line": 169,
+     "end": 180,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phasePrefix_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 181,
+     "decl_line": 194,
+     "end": 297,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.exists_phaseSimulator",
+     "kind": "theorem",
+     "private": false,
+     "start": 298,
+     "decl_line": 310,
+     "end": 350,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 11
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Composability.exec_prefix",
+     "kind": "theorem",
+     "private": false,
+     "start": 38,
+     "decl_line": 45,
+     "end": 60,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.exec_fst_take",
+     "kind": "theorem",
+     "private": false,
+     "start": 61,
+     "decl_line": 64,
+     "end": 70,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.exec_snd_take",
+     "kind": "theorem",
+     "private": false,
+     "start": 71,
+     "decl_line": 74,
+     "end": 80,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.Composability.uprob_adaptive_all_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 81,
+     "decl_line": 91,
+     "end": 162,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 4
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/Statistical.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.statClose_average",
+     "kind": "theorem",
+     "private": false,
+     "start": 37,
+     "decl_line": 44,
+     "end": 52,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.statClose_chain",
+     "kind": "theorem",
+     "private": false,
+     "start": 53,
+     "decl_line": 59,
+     "end": 72,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 2
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/StatisticalPostprocess.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Composability.statClose_map_fst",
+     "kind": "theorem",
+     "private": false,
+     "start": 31,
+     "decl_line": 40,
+     "end": 59,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/StatisticalPrefix.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.statClose_step",
+     "kind": "theorem",
+     "private": false,
+     "start": 43,
+     "decl_line": 56,
+     "end": 116,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.PaddedProverSpec.statClose_prefix",
+     "kind": "theorem",
+     "private": false,
+     "start": 117,
+     "decl_line": 129,
+     "end": 153,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 2
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/StatisticalRecursion.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.statClose_recursion",
+     "kind": "theorem",
+     "private": false,
+     "start": 37,
+     "decl_line": 49,
+     "end": 138,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/StatisticalTransfer.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.statZK_of_padded_spec",
+     "kind": "theorem",
+     "private": false,
+     "start": 35,
+     "decl_line": 49,
+     "end": 114,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseStep_eq_simStep",
+     "kind": "theorem",
+     "private": false,
+     "start": 36,
+     "decl_line": 38,
+     "end": 48,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseSuffix_front",
+     "kind": "theorem",
+     "private": false,
+     "start": 49,
+     "decl_line": 52,
+     "end": 63,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseSuffix_congr_blocks",
+     "kind": "theorem",
+     "private": false,
+     "start": 64,
+     "decl_line": 71,
+     "end": 85,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseSuffix_update_before",
+     "kind": "theorem",
+     "private": false,
+     "start": 86,
+     "decl_line": 94,
+     "end": 121,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 4
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseStep",
+     "kind": "def",
+     "private": false,
+     "start": 43,
+     "decl_line": 48,
+     "end": 55,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseStep_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 56,
+     "decl_line": 58,
+     "end": 66,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_encodeMsgs_phaseStep_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 67,
+     "decl_line": 74,
+     "end": 99,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseStep_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 100,
+     "decl_line": 112,
+     "end": 149,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseSuffix",
+     "kind": "def",
+     "private": false,
+     "start": 150,
+     "decl_line": 154,
+     "end": 159,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseSuffix_zero",
+     "kind": "theorem",
+     "private": false,
+     "start": 160,
+     "decl_line": 161,
+     "end": 164,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseSuffix_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 165,
+     "decl_line": 167,
+     "end": 172,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseSuffix_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 173,
+     "decl_line": 175,
+     "end": 185,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.length_encodeMsgs_phaseSuffix_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 186,
+     "decl_line": 189,
+     "end": 201,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseSuffix_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 202,
+     "decl_line": 214,
+     "end": 291,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseSuffix_raw_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 292,
+     "decl_line": 296,
+     "end": 310,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseSuffix_zero_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 311,
+     "decl_line": 314,
+     "end": 322,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 12
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/VerifierPrefix.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.Composability.exec_eq_of_verifier_blocks",
+     "kind": "theorem",
+     "private": false,
+     "start": 33,
+     "decl_line": 49,
+     "end": 88,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 1
+  },
+  "TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseAux",
+     "kind": "def",
+     "private": false,
+     "start": 45,
+     "decl_line": 48,
+     "end": 50,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseAux_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 51,
+     "decl_line": 53,
+     "end": 57,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseAux_fields",
+     "kind": "theorem",
+     "private": false,
+     "start": 58,
+     "decl_line": 60,
+     "end": 66,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseAux_z",
+     "kind": "theorem",
+     "private": false,
+     "start": 67,
+     "decl_line": 68,
+     "end": 70,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseAux_tape",
+     "kind": "theorem",
+     "private": false,
+     "start": 71,
+     "decl_line": 72,
+     "end": 74,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseAux_phase",
+     "kind": "theorem",
+     "private": false,
+     "start": 75,
+     "decl_line": 77,
+     "end": 80,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseAux_prefix",
+     "kind": "theorem",
+     "private": false,
+     "start": 81,
+     "decl_line": 83,
+     "end": 88,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseVerifier",
+     "kind": "def",
+     "private": false,
+     "start": 89,
+     "decl_line": 93,
+     "end": 98,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseVerifier_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 99,
+     "decl_line": 102,
+     "end": 108,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseVerifier_coins",
+     "kind": "theorem",
+     "private": false,
+     "start": 109,
+     "decl_line": 110,
+     "end": 111,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseVerifier_next",
+     "kind": "theorem",
+     "private": false,
+     "start": 112,
+     "decl_line": 114,
+     "end": 118,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseVerifier_coinLen",
+     "kind": "theorem",
+     "private": false,
+     "start": 119,
+     "decl_line": 120,
+     "end": 124,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseAux_length",
+     "kind": "theorem",
+     "private": false,
+     "start": 125,
+     "decl_line": 127,
+     "end": 133,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseVerifier_next_phaseAux",
+     "kind": "theorem",
+     "private": false,
+     "start": 134,
+     "decl_line": 138,
+     "end": 142,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseVerifier_efficient",
+     "kind": "theorem",
+     "private": false,
+     "start": 143,
+     "decl_line": 154,
+     "end": 183,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseAux_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 184,
+     "decl_line": 187,
+     "end": 195,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.SequentialZK.phaseAux_length_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 196,
+     "decl_line": 198,
+     "end": 206,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 17
+  },
+  "TCSlib/Cryptography/ZeroKnowledge/Defs.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "Complexity.NUPPT.simulate",
+     "kind": "def",
+     "private": false,
+     "start": 116,
+     "decl_line": 118,
+     "end": 121,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Complexity.NUPPT.simulate_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 122,
+     "decl_line": 123,
+     "end": 125,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.HVZK",
+     "kind": "def",
+     "private": false,
+     "start": 128,
+     "decl_line": 137,
+     "end": 142,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.ZK",
+     "kind": "def",
+     "private": false,
+     "start": 143,
+     "decl_line": 157,
+     "end": 163,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.ZK_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 164,
+     "decl_line": 168,
+     "end": 174,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatZK",
+     "kind": "def",
+     "private": false,
+     "start": 175,
+     "decl_line": 182,
+     "end": 185,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatZK_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 186,
+     "decl_line": 189,
+     "end": 194,
+     "status": "ADDED",
+     "touched": true
+    },
+    {
+     "name": "TCSlib.Cryptography.PerfectZK",
+     "kind": "def",
+     "private": false,
+     "start": 195,
+     "decl_line": 205,
+     "end": 207,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.perfectZK_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 208,
+     "decl_line": 209,
+     "end": 211,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PerfectZKAbort",
+     "kind": "def",
+     "private": false,
+     "start": 212,
+     "decl_line": 225,
+     "end": 233,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatZK.zk",
+     "kind": "theorem",
+     "private": false,
+     "start": 236,
+     "decl_line": 240,
+     "end": 246,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatZK.hvzk",
+     "kind": "theorem",
+     "private": false,
+     "start": 247,
+     "decl_line": 250,
+     "end": 257,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.ZK.hvzk",
+     "kind": "theorem",
+     "private": false,
+     "start": 258,
+     "decl_line": 260,
+     "end": 268,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.StatZK.mono",
+     "kind": "theorem",
+     "private": false,
+     "start": 269,
+     "decl_line": 270,
+     "end": 275,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PerfectZK.statZK",
+     "kind": "theorem",
+     "private": false,
+     "start": 276,
+     "decl_line": 277,
+     "end": 279,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PerfectZK.zk",
+     "kind": "theorem",
+     "private": false,
+     "start": 280,
+     "decl_line": 281,
+     "end": 284,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.perfectZK_zeroRounds",
+     "kind": "theorem",
+     "private": false,
+     "start": 285,
+     "decl_line": 292,
+     "end": 318,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.attempt",
+     "kind": "def",
+     "private": false,
+     "start": 325,
+     "decl_line": 328,
+     "end": 332,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.attempt_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 333,
+     "decl_line": 336,
+     "end": 341,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.retry",
+     "kind": "def",
+     "private": false,
+     "start": 342,
+     "decl_line": 346,
+     "end": 351,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.retry_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 352,
+     "decl_line": 355,
+     "end": 362,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.retry_eq_attempt",
+     "kind": "theorem",
+     "private": false,
+     "start": 363,
+     "decl_line": 368,
+     "end": 374,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.retry_eq_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 375,
+     "decl_line": 380,
+     "end": 386,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.attempt_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 387,
+     "decl_line": 393,
+     "end": 415,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.retry_poly",
+     "kind": "theorem",
+     "private": false,
+     "start": 416,
+     "decl_line": 421,
+     "end": 438,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.exists_retrySimulator",
+     "kind": "theorem",
+     "private": false,
+     "start": 439,
+     "decl_line": 442,
+     "end": 450,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.firstHit_map_getD_eq",
+     "kind": "theorem",
+     "private": false,
+     "start": 451,
+     "decl_line": 460,
+     "end": 499,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.statClose_retry",
+     "kind": "theorem",
+     "private": false,
+     "start": 500,
+     "decl_line": 514,
+     "end": 578,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.AbortRetry.uprob_not_ne_nil_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 579,
+     "decl_line": 582,
+     "end": 585,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PerfectZKAbort.statZK",
+     "kind": "theorem",
+     "private": false,
+     "start": 589,
+     "decl_line": 602,
+     "end": 659,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.PerfectZKAbort.zk",
+     "kind": "theorem",
+     "private": false,
+     "start": 660,
+     "decl_line": 663,
+     "end": 666,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.negligible_inv_pow_sqrt_div",
+     "kind": "theorem",
+     "private": false,
+     "start": 669,
+     "decl_line": 680,
+     "end": 725,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.negligible_two_pow_neg_sqrt_div",
+     "kind": "theorem",
+     "private": false,
+     "start": 726,
+     "decl_line": 727,
+     "end": 730,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.negligible_exp_neg_sqrt_div",
+     "kind": "theorem",
+     "private": false,
+     "start": 731,
+     "decl_line": 732,
+     "end": 738,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.negligible_of_le_inv_pow_sqrt_div",
+     "kind": "theorem",
+     "private": false,
+     "start": 739,
+     "decl_line": 742,
+     "end": 747,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "TCSlib.Cryptography.inv_pow_le_inv_pow_sqrt_div",
+     "kind": "theorem",
+     "private": false,
+     "start": 748,
+     "decl_line": 750,
+     "end": 753,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [],
+   "base_count": 35,
+   "head_count": 36
+  }
+ }
+}

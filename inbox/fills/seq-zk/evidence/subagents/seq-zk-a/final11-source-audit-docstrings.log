@@ -1,0 +1,366 @@
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean:45 exists_uniform_negligible_bound
+/-- Let `A n` be finite nonempty metadata types, `W` an arbitrary witness type, and
+`gap n a w ≤ 1`. Suppose every choice `choice : ∀ n, A n` has one negligible `ε` bounding
+`gap n (choice n) w` for all valid witnesses and all `n`. Then one negligible `ε` satisfies
+`gap n a w ≤ |ε n|` for every `n,a,w` with `valid n a w`.
+Neither the metadata choice nor its negligible bound encodes a witness.
+[PS10, Theorem 175.1, advice selection before the negligible bound].
+
+**Proof sketch.** Gate the gap by validity, assigning zero to invalid pairs. At every
+length apply the bounded-family selector to this gated family and choose its finite
+metadata value. Request the negligible bound for that single metadata function. Its
+absolute value bounds every gated value at the selected metadata, including invalid
+pairs. The selector then bounds every gated value at that length, hence every valid gap.
+The argument uses no witness-length bound and no attained witness maximum. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:46 reductionData
+/-- For `x,z,rV,j,preWord`, the reduction metadata is
+`⟨x,⟨z,⟨rV,⟨1^j,preWord⟩⟩⟩⟩`. Keeping the prefix as a raw word gives an exact advice-size
+bound even on malformed metadata. [PS10, Theorem 175.1, phase-reduction advice]. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:51 reductionData_eq
+/-- The metadata equation is `reductionData x z rV j preWord =
+pairEncode x (pairEncode z (pairEncode rV (pairEncode (List.replicate j true) preWord)))`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:58 reductionData_fields
+/-- The five projection fields of `reductionData x z rV j preWord`, in order, are
+`x,z,rV,List.replicate j true,preWord`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:69 reductionData_poly
+/-- For polynomial-time `X,Z,RV,PreWord` and unary polynomial-time `J`, the metadata map
+`w ↦ reductionData (X w) (Z w) (RV w) (J w) (PreWord w)` is polynomial-time. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:79 reductionData_length
+/-- The metadata length is
+`|reductionData x z rV j preWord| = 2|x|+2|z|+2|rV|+2j+|preWord|+8`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:89 reductionData_encodeMsgs
+/-- For a canonical prefix word, reduction metadata is the input paired with the phase
+auxiliary word: `reductionData x z rV j (encodeMsgs pre) = pairEncode x (phaseAux z rV j pre)`.
+-/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:98 phaseContinuation
+/-- For `S,k,B,Q,verifierFirst,x,z,rV,j,pre,raw,rS`, normalize the raw current-phase view
+using known auxiliary input `phaseAux z rV j pre`, append the empty prover fillers, simulate
+phases `j+1` through `Q(|x|)-1`, and return the canonical final view with fields `x,z,rV`.
+All decoders and counts are total, including on malformed candidates and `j≥Q(|x|)`.
+[PS10, Theorem 175.1; Gol01, §4.3.4, one-phase hybrid continuation]. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:111 phaseContinuation_eq
+/-- The complete `phaseContinuation` equation first forms
+`pre1 = pre ++ (normalizePhaseMsgs x (phaseAux z rV j pre) p (B(|x|)) raw ++ (k(|x|)-p) empties)`,
+then encodes `⟨x,z,rV,phaseSuffix … (j+1) pre1 (Q(|x|)-(j+1))⟩`, with
+`p = if verifierFirst then k(|x|)/2 else (k(|x|)+1)/2`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:132 phaseContinuation_poly
+/-- For uniform `S`, fixed `k,B,Q,verifierFirst`, polynomial-time words `X,Z,RV,Raw,RS`,
+unary polynomial-time phase `J`, and initial messages `H` with polynomial-time encoding,
+`w ↦ phaseContinuation S k B Q verifierFirst (X w) (Z w) (RV w) (J w) (H w) (Raw w) (RS w)`
+is polynomial-time. No validity, reachability, witness, or phase-range premise is required.
+[PS10, Theorem 175.1, the one-phase hybrid machine].
+
+**Proof sketch.** Build the expected phase auxiliary word and canonically normalize the
+current candidate. Append its real-message encoding and the existing empty-filler encoding
+to the earlier prefix. Unary arithmetic computes starting phase `J+1` and remaining count
+`Q(|X|)-(J+1)`. Apply the published arbitrary-prefix suffix machine, then assemble the
+canonical final view through its equation reader. All preprocessing is total. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:185 exists_continuationSampler
+/-- For uniform `S` and `k,B,Q,verifierFirst`, there is a uniform sampler `U` with coins
+`Q*S.coins` whose activation on `⟨raw,reductionData x z rV j preWord⟩` is exactly
+`phaseContinuation S k B Q verifierFirst x z rV j (decWords preWord) raw r`.
+This holds for every security parameter and every raw tape, without metadata validity tests.
+[PS10, Theorem 175.1, randomized one-phase hybrid continuation].
+
+**Proof sketch.** Decode the metadata through total pair projections, its phase through
+unary length, and its earlier prefix through the total word-list decoder. Apply
+`phaseContinuation_poly` with the sampler's full coin tape. The published uniform-machine
+constructor assigns the stated coin polynomial. Public activation/layout and metadata
+readers give the exact equation, including malformed prefix words. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:246 exists_phaseReduction
+/-- Given uniform `S`, distinguisher `D`, polynomials `k,B,Q`, orientation `verifierFirst`,
+metadata families `X,Z,RV,J,PreWord`, and a polynomial bound on their packed `reductionData`,
+there is a nonuniform reduction with coins `Q*S.coins + D.coins`. Its activation normalizes
+the current raw phase, simulates the suffix on the first `Q*S.coins` bits, and runs `D` on
+the final canonical view with the remaining coins. No witness is stored or tested.
+[PS10, Theorem 175.1; Gol01, §4.3.4, advised one-phase hybrid reduction].
+
+**Proof sketch.** Take the uniform continuation sampler. Precompose `D` with the second pair
+projection, then apply the published fresh-coin sequential composition so that `D` receives
+only the sampled final view. Apply the ordinary bounded-advice closure to the packed metadata
+family. The three published activation equations, the sampler's exact reader, and its coin
+polynomial identify the complete reduction without constructing a new machine or host. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean:46 hybrid_recursion_gap_le
+/-- Let `realFamily` start at `initial` and satisfy its displayed `Fin.snoc` equation for
+`realStep`. For a real-valued continuation potential `C`, suppose `0 ≤ ε` and each actual
+real prefix at `i<q` satisfies
+`|E_a[C (i+1) (realStep i (realFamily i r) a)] - C i (realFamily i r)| ≤ ε`.
+Then `|E_r[C q (realFamily q r)] - C 0 initial| ≤ q*ε`.
+The state type is arbitrary; no finite witness or state-space assumption is required.
+[PS10, Theorem 175.1, conditional hybrid argument].
+
+**Proof sketch.** For each phase count, average the continuation potential over the real
+prefix's independent coins. The snoc equivalence and uniform-product averaging identify
+the next average with the average of its conditional next-step expectations. Averaging
+the supplied local bounds therefore bounds each adjacent difference by `ε`. Apply the
+published telescoping hybrid inequality and bound its `q` summands by `ε`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean:54 realPrefix_bounds
+/-- For `d : PaddedProverSpec π ρ x q p`, verifier `V`, inputs `y,z`, tape `rV`, index
+`j≤q`, message cap `B`, uniform original-prover bound `hbound`, and independent phase coins
+`coins`, put `pre = realPrefix π V x y z rV p j coins` and `k = π.rounds.eval |x|`. Then
+`pre.length = j*k`, every `m ∈ pre` has `m.length ≤ B`, and
+`(Strategy.encodeMsgs pre).length ≤ (j*k)*(2*B+2)`.
+[PS10, Theorem 175.1; Gol01, §4.3.4, bounded real-prefix reduction advice].
+
+**Proof sketch.** The public coin-table equivalence supplies a raw tape with exactly the
+requested independent phase blocks. The real-prefix endpoint reader identifies the fold
+with the repeated execution on that tape. Its boundary reader gives exactly `j*k` received
+messages. Each repeated-prover reply is either an original bounded message or an empty
+filler, by the specification's public reply equation. The public execution-message bound
+therefore controls every received message. Finally reuse the execution encoding bound,
+which already invokes the generic public encoded-word length theorem. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:38 phaseStep_eq_simStep
+/-- If global block `j` of `rS` equals `List.ofFn coin`, the normalized raw-tape update
+`phaseStep` equals the typed update `simStep` on `coin`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:52 phaseSuffix_front
+/-- A suffix with `t+1` updates first applies phase `start` and then runs `t` updates from
+`start+1`: `phaseSuffix … start pre (t+1) = phaseSuffix … (start+1)
+(phaseStep … start pre) t`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:71 phaseSuffix_congr_blocks
+/-- If two raw simulator tapes have equal coin blocks on `start≤j<start+t`, their
+simulated suffixes from the same prefix are equal.
+
+**Proof sketch.** Induct on the number of updates and use the published last-step suffix
+reader. The induction hypothesis identifies the preceding prefixes. The last update reads
+only its own coin block through the published phase-step reader, so the supplied last-block
+equality identifies the final updates. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:94 phaseSuffix_update_before
+/-- Overwriting simulator coin-table entry `i` before `start` does not change a suffix
+whose indices lie within the table: for `i<start` and `start+t≤q`, `phaseSuffix` on
+`List.ofFn ((FunFamily.blocks q c).symm (Function.update coins i fresh))` equals its value
+on `List.ofFn ((FunFamily.blocks q c).symm coins)`, with `c=S.coinLen |x|`.
+
+**Proof sketch.** Apply the suffix block-congruence reader. Each relevant block is a
+canonical block-table projection. Its index is at least `start`, hence different from `i`,
+so the public function-update reader leaves that entry unchanged. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean:45 PhaseMetadata
+/-- `PhaseMetadata n a v q h` is a common input of exactly `n` bits, auxiliary word of at
+most `a` bits, verifier tape of exactly `v` bits, phase index at most `q`, and raw prefix word
+of at most `h` bits. Standard product, function and sigma instances make this type finite.
+[PS10, Theorem 175.1, bounded phase-reduction advice]. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean:52 PhaseMetadata_eq
+/-- The metadata type is
+`(Fin n → Bool) × (Σ l : Fin (a+1), Fin l → Bool) × (Fin v → Bool) ×
+ Fin (q+1) × (Σ l : Fin (h+1), Fin l → Bool)`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean:67 toData
+/-- For metadata `m`, its raw advice is
+`reductionData (ofFn m.1) (ofFn m.2.1.2) (ofFn m.2.2.1) m.2.2.2.1
+  (ofFn m.2.2.2.2.2)`. [PS10, Theorem 175.1, phase-reduction advice]. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean:74 toData_eq
+/-- The packed metadata equation is `m.toData =
+reductionData (ofFn m.1) (ofFn m.2.1.2) (ofFn m.2.2.1) m.2.2.2.1
+  (ofFn m.2.2.2.2.2)`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean:81 word_lengths
+/-- For metadata `m`, its common-input and verifier-tape word lengths are exactly `n,v`,
+its auxiliary and prefix word lengths are at most `a,h`, and its phase index is at most `q`.
+-/
+
+TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean:92 toData_length_le
+/-- For metadata `m : PhaseMetadata n a v q h`,
+`m.toData.length ≤ 2*n + 2*a + 2*v + 2*q + h + 8`.
+[PS10, Theorem 175.1, polynomial phase-reduction advice bound]. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean:106 cover
+/-- For `x,z,rV,j,preWord` with `|x|=n`, `|z|≤a`, `|rV|=v`, `j≤q`, `|preWord|≤h`,
+there is metadata `m : PhaseMetadata n a v q h` whose five represented components are
+exactly `x,z,rV,j,preWord`. [PS10, Theorem 175.1, exact finite advice coverage].
+
+**Proof sketch.** Use each bounded word's actual length as its sigma index and its padded
+Boolean vector as its value. Fixed-size words use the given exact length. The public
+`ofFn_padFin_of_length` equation recovers each original word without changing any bits;
+the phase field stores the supplied bounded index directly. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean:125 cover_data
+/-- For `x,z,rV,j,preWord` with `|x|=n`, `|z|≤a`, `|rV|=v`, `j≤q`, `|preWord|≤h`,
+there is `m : PhaseMetadata n a v q h` with
+`m.toData = reductionData x z rV j preWord`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:40 acceptProb_prod
+/-- Acceptance over sampler seeds `A×B` is the average over `a:A` of acceptance over `B`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:48 acceptProb_update_tuple
+/-- Replacing coordinate `i` of a uniform tuple by an independent uniform value leaves
+acceptance unchanged: `Pr[D(F(update table i fresh))] = Pr[D(F table)]`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:67 acceptProb_postprocess_fst
+/-- If `post (raw (a,z)) b = F a b` and `Z` is nonempty, post-processing `raw` with fresh
+`B` coins and applying `D` has acceptance `E_a[acceptProb (F a) D]`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:87 continuationProb
+/-- `continuationProb … D i pre` is acceptance by `D` after simulating phases
+`i,…,Q(|x|)-1` from `pre`, with an independent full table of `Q(|x|)` simulator tapes.
+Only the suffix's own blocks are used. [PS10, Theorem 175.1, hybrid continuation potential].
+-/
+
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:97 continuationProb_eq
+/-- The defining equation of `continuationProb` is the acceptance of the canonical view
+whose message list is the remaining `phaseSuffix`, sampled from the full typed coin table. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:114 continuationProb_bellman
+/-- For `i<Q(|x|)`, the continuation potential equals acceptance after one fresh typed
+simulator update at `i`, then the remaining suffix on an independent full simulator table.
+
+**Proof sketch.** Reseed table entry `i` independently using the published uniform-update
+law. The front-step suffix reader makes that entry the current normalized update. Every
+later suffix block has index greater than `i`, so overwriting entry `i` leaves the remaining
+suffix unchanged. The resulting sampler is the desired independent current coin and suffix.
+-/
+
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:169 continuationProb_real
+/-- For a bounded honest prover and padded-prover specification `d`, the raw original
+phase view, normalized and passed to `phaseContinuation`, has acceptance equal to the
+average next continuation potential of `realStep`. The wrapper's zero verifier coins
+are removed through the public uniform-product laws.
+
+**Proof sketch.** The published real-view fixed point identifies normalized messages with
+the original phase's verifier history. The specification supplies its exact message count;
+the caller supplies the uniform prover-message bound. The continuation then starts from
+exactly `realStep`. Its value is independent of the wrapper's zero-bit verifier tape, so
+averaging and projecting that factor leaves the expectation over the original prover coins.
+-/
+
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:272 continuationProb_sim
+/-- For `i<Q(|x|)`, the simulated raw phase passed to `phaseContinuation` has acceptance
+exactly `continuationProb … i pre`, with an independent full table of suffix coins.
+
+**Proof sketch.** Move the independent suffix coins into the simulated sampler. The
+published continuation equation is exactly one typed normalized simulator step followed
+by the remaining suffix. The Bellman reader identifies this sampler's acceptance with
+the original continuation potential. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:309 phaseGap
+/-- The local raw-view gap at `i,pre`: original `π.P` against the fixed-tape phase verifier
+versus `S.simulate`, tested by the normalized `phaseContinuation` with independent full
+simulator-table coins and `D` coins. The witness `y` appears only in the mathematical real
+sampler. [PS10, Theorem 175.1, one-phase hybrid gap]. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:322 phaseGap_eq
+/-- The defining equation of `phaseGap` is the displayed raw real-view/simulator
+`distAdv` after `phaseContinuation`, using a full independent typed simulator table. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:337 phaseGap_eq_drift
+/-- For a bounded real prover, the local raw-view gap `phaseGap` is exactly the absolute
+drift of `continuationProb` under the real next phase, for `i<Q(|x|)`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:59 distAdv_phaseReduction
+/-- For fixed machines `S,D,Red`, phase polynomials `k,B,Q`, orientation `verifierFirst`,
+parameter `n`, and metadata `x,z,rV,j,pre`, suppose `Red` has coins `Q*S.coins+D.coins` and
+its raw activation normalizes the candidate, simulates the suffix, and then invokes `D`.
+For any raw-output samplers `X,Y`, its distinguishing advantage equals that of the typed
+experiment with independent coins `(Fin (Q.eval n) → S.Coins n) × D.Coins n`, flattened by
+`FunFamily.blocks.symm` for the suffix. No metadata validity or witness premise is needed.
+[PS10, Theorem 175.1, one-phase computational hybrid reduction].
+
+**Proof sketch.**
+First read the reduction's exact coin polynomial at the fixed parameter.
+Its numerical coin length is the sum of the simulator-table and distinguisher lengths.
+The canonical block equivalence flattens the independent simulator table.
+The published `coinsEquiv` then concatenates it with the distinguisher coins.
+Their composition is a bijection from the typed independent coins to `Red.Coins n`.
+The published take reader identifies the entire simulator-table tape.
+The published drop reader identifies the independent final-distinguisher tape.
+These equations require no positivity of either coin length or the number of phases.
+Read both machine distinguishers through their published verdict equations.
+Read their typed activations through the public `runAt_eq` equation.
+Apply the assumed exact raw activation equation to every candidate word and tape.
+The two tape readers identify that verdict with the claimed typed local experiment.
+Reindex acceptance probabilities along the constructed bijection for sampler `X`.
+Do the same independently for sampler `Y`.
+Finally read the absolute acceptance gap through `distAdv_def` and substitute both
+probability equalities. The sample spaces may differ and need only be finite. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:48 prefix_distAdv_le
+/-- At fixed verifier tape `rV`, suppose every actual real prefix before phase `i<Q(|x|)`
+has `phaseGap … i pre ≤ ε`, where `0≤ε`. For a bounded honest prover and the padded-prover
+contract, the canonical real and simulated prefix views have distinguishing advantage at
+most `Q(|x|)*ε`. No metadata validity or finite witness assumption appears in this theorem.
+[PS10, Theorem 175.1, conditional computational hybrid argument].
+
+**Proof sketch.** Use suffix acceptance as the continuation potential. Its drift under
+one real step is exactly the raw-view gap by the published real/simulated continuation
+identities. The generic conditional hybrid bound gives `Q(|x|)*ε`. At the final phase the
+suffix is empty, so averaging the potential is acceptance of the real prefix. At phase
+zero the suffix starts from the empty history and is exactly the typed simulated prefix.
+-/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:123 prefix_distAdv_joint_le
+/-- If the fixed-verifier-tape local gaps satisfy the same bound for every verifier tape,
+the joint canonical real/simulated prefix views have advantage at most `Q(|x|)*ε`.
+[PS10, Theorem 175.1, averaging the verifier tape]. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:152 distAdv_reindex
+/-- Reindexing two samplers by equivalences and supplied pointwise endpoint readers
+preserves the distinguishing advantage of any fixed `D`. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:169 distAdv_view_endpoints
+/-- The actual encoded repeated view and `SQ.simulate` have exactly the advantage of the
+joint typed real/simulated prefix views, assuming their published padded-prover and raw
+simulator endpoint equations. [PS10, Theorem 175.1, computational endpoint transfer]. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean:63 exists_negligible_phase_bound
+/-- Let `π,R,V,S` have a uniform simulator satisfying the computational comparison for
+`π` against `phaseVerifier V`, for every auxiliary polynomial and nonuniform distinguisher.
+For fixed `Lz,D,Q,B`, one negligible `ε` bounds `phaseGap` by `|ε(|x|)|` for every witness,
+auxiliary word `|z|≤Lz(|x|)`, verifier tape of its exact prescribed length, phase `j<Q(|x|)`,
+and prefix with encoding length at most `Q(|x|)*π.rounds(|x|)*(2*B(|x|)+2)`.
+No prover bound, witness bound or reachability premise is required for this comparison.
+[PS10, Theorem 175.1, common negligible phase bound for sequential zero knowledge].
+
+**Proof sketch.**
+Use a syntactic polynomial for the complete encoded-prefix envelope.
+Pack the input, auxiliary word, verifier tape, phase and raw prefix into finite metadata.
+These metadata types remain nonempty at every parameter, including zero phases.
+The existing advantage bound by one bounds every metadata and witness gap.
+Validity is a proof-only relation: the witness is valid, the prefix is canonical, and the
+phase lies strictly below the repetition count. No machine tests this relation.
+Apply the published finite advice selector before requesting any negligible bound.
+For any selected metadata function, its public length reader gives a polynomial advice bound.
+The uniform continuation sampler and ordinary advice closure build one nonuniform reduction.
+Canonical-prefix validity identifies its packed advice with input paired with phase auxiliary.
+The public second-projection length bound therefore bounds that auxiliary word.
+Apply the given original simulator comparison to this reduction and auxiliary polynomial.
+The exact typed reduction advantage reader identifies the selected local phase gap.
+The finite selector propagates this negligible bound to every valid metadata tuple.
+Finally the public exact-cover reader represents each supplied typed prefix and bounded tuple.
+The decoder's public encoding equation recovers that prefix without changing any bits.
+Substitution yields the claimed common bound for all witnesses and all fixed verifier tapes. -/
+
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalTransfer.lean:55 zk_of_padded_spec
+/-- For protocols `π,ρ`, relation `R`, prover bound `B`, and phase polynomial `Q`, if
+`ZK π R`, `π.ProverBounded R B`, and `ρ` satisfies the padded-prover specification with
+`Q(|x|)` phases and the original mover-dependent real-message count at every `x`, then
+`ZK ρ R`. [PS10, Theorem 175.1; Gol01, §4.3.4].
+
+**Proof sketch.** Apply the original zero-knowledge hypothesis to the efficient fixed-tape
+phase verifier, and realize its uniform normalized repeated simulator with one global
+verifier tape. For each auxiliary-input polynomial and distinguisher, the public bounded
+metadata reduction supplies one negligible bound for all local phase gaps, uniformly over
+all witnesses. The actual real-prefix encoding bound places every reached prefix in that
+metadata domain. The conditional hybrid theorem and averaging over verifier tapes multiply
+the common bound by the phase count. Its absolute value is negligible, and multiplication
+by the syntactic polynomial remains negligible. Exact endpoint equivalences identify the
+actual real view and the uniform simulator without changing the advantage or its bound.
+The selector's zero-phase metadata remains nonempty, and all empty-history cases are covered
+by the same endpoint readers. No witness is encoded in advice or used by the simulator. -/

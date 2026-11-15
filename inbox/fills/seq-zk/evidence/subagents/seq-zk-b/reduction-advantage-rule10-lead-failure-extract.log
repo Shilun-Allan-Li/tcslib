@@ -1,0 +1,27 @@
+.lake/seq-zk-rule10/final/coe/SealA_Cryptography_Composability_SequentialZK_ReductionAdvantage.lean:194:4: error: Type mismatch: After simplification, term
+  EnsembleLemmas.take_ofFn_coinsEquiv hlen ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1, c.2)
+ has type
+  List.take (Q.eval n * S.coins.eval n)
+      (List.ofFn ((EnsembleLemmas.coinsEquiv hlen) ((FunFamily.blocks (Q.eval n) (S.coins.eval n)).symm c.1, c.2))) =
+    List.ofFn ((FunFamily.blocks (Q.eval n) (S.coins.eval n)).symm c.1)
+but is expected to have type
+  List.take (Q.eval n * S.coins.eval n)
+      (List.ofFn
+        ((((FunFamily.blocks (Q.eval n) (S.coins.eval n)).symm.prodCongr (Equiv.refl (D.Coins n))).trans
+            (EnsembleLemmas.coinsEquiv hlen))
+          c)) =
+    List.ofFn ((FunFamily.blocks (Q.eval n) (S.coins.eval n)).symm c.1)
+
+.lake/seq-zk-rule10/final/coe/SealA_Cryptography_Composability_SequentialZK_ReductionAdvantage.lean:200:4: error: Type mismatch: After simplification, term
+  EnsembleLemmas.drop_ofFn_coinsEquiv hlen ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1, c.2)
+ has type
+  List.drop (Q.eval n * S.coins.eval n)
+      (List.ofFn ((EnsembleLemmas.coinsEquiv hlen) ((FunFamily.blocks (Q.eval n) (S.coins.eval n)).symm c.1, c.2))) =
+    List.ofFn c.2
+but is expected to have type
+  List.drop (Q.eval n * S.coins.eval n)
+      (List.ofFn
+        ((((FunFamily.blocks (Q.eval n) (S.coins.eval n)).symm.prodCongr (Equiv.refl (D.Coins n))).trans
+            (EnsembleLemmas.coinsEquiv hlen))
+          c)) =
+    List.ofFn c.2

@@ -1,0 +1,1930 @@
+From 7cecd426dddac78789c9e7fc627a7cd013d67792 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 04:39:06 -0800
+Subject: [PATCH 5/6] Prove computational zero knowledge under sequential
+ repetition
+
+---
+ .../Composability/SequentialZK.lean           |  26 +-
+ .../SequentialZK/BoundedMetadata.lean         | 135 +++++++
+ .../SequentialZK/ComputationalAdvice.lean     |  74 ++++
+ .../SequentialZK/ComputationalHybrid.lean     | 197 ++++++++++
+ .../SequentialZK/ComputationalPhaseBound.lean | 184 +++++++++
+ .../SequentialZK/ComputationalReduction.lean  | 271 ++++++++++++++
+ .../SequentialZK/ComputationalTransfer.lean   | 100 +++++
+ .../SequentialZK/ContinuationProbability.lean | 354 ++++++++++++++++++
+ .../SequentialZK/HybridRecursion.lean         |  93 +++++
+ .../SequentialZK/RealPrefixBounds.lean        | 101 +++++
+ .../SequentialZK/ReductionAdvantage.lean      | 105 ++++++
+ .../SequentialZK/SuffixLaws.lean              | 122 ++++++
+ 12 files changed, 1760 insertions(+), 2 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/ComputationalTransfer.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean
+
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK.lean b/TCSlib/Cryptography/Composability/SequentialZK.lean
+index cd7e976af..6ebb78278 100644
+--- a/TCSlib/Cryptography/Composability/SequentialZK.lean
++++ b/TCSlib/Cryptography/Composability/SequentialZK.lean
+@@ -6,11 +6,19 @@ import TCSlib.Cryptography.Asymptotic.Adversary
+ import TCSlib.Cryptography.ZeroKnowledge.Defs
+ import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
+ import TCSlib.Cryptography.Composability.SequentialZK.Advice
++import TCSlib.Cryptography.Composability.SequentialZK.BoundedMetadata
++import TCSlib.Cryptography.Composability.SequentialZK.ComputationalAdvice
++import TCSlib.Cryptography.Composability.SequentialZK.ComputationalHybrid
++import TCSlib.Cryptography.Composability.SequentialZK.ComputationalPhaseBound
++import TCSlib.Cryptography.Composability.SequentialZK.ComputationalReduction
++import TCSlib.Cryptography.Composability.SequentialZK.ComputationalTransfer
+ import TCSlib.Cryptography.Composability.SequentialZK.Congruence
++import TCSlib.Cryptography.Composability.SequentialZK.ContinuationProbability
+ import TCSlib.Cryptography.Composability.SequentialZK.Efficiency
+ import TCSlib.Cryptography.Composability.SequentialZK.EndpointSampling
+ import TCSlib.Cryptography.Composability.SequentialZK.ErrSoundness
+ import TCSlib.Cryptography.Composability.SequentialZK.ExecutionBounds
++import TCSlib.Cryptography.Composability.SequentialZK.HybridRecursion
+ import TCSlib.Cryptography.Composability.SequentialZK.Normalization
+ import TCSlib.Cryptography.Composability.SequentialZK.NormalizationMachine
+ import TCSlib.Cryptography.Composability.SequentialZK.NormalizedStep
+@@ -21,6 +29,8 @@ import TCSlib.Cryptography.Composability.SequentialZK.PrefixFolds
+ import TCSlib.Cryptography.Composability.SequentialZK.PrefixLaws
+ import TCSlib.Cryptography.Composability.SequentialZK.ProofTransfers
+ import TCSlib.Cryptography.Composability.SequentialZK.RealPhases
++import TCSlib.Cryptography.Composability.SequentialZK.RealPrefixBounds
++import TCSlib.Cryptography.Composability.SequentialZK.ReductionAdvantage
+ import TCSlib.Cryptography.Composability.SequentialZK.RepeatedSoundness
+ import TCSlib.Cryptography.Composability.SequentialZK.RepeatedVerifier
+ import TCSlib.Cryptography.Composability.SequentialZK.SimulatorMachine
+@@ -30,6 +40,7 @@ import TCSlib.Cryptography.Composability.SequentialZK.StatisticalPostprocess
+ import TCSlib.Cryptography.Composability.SequentialZK.StatisticalPrefix
+ import TCSlib.Cryptography.Composability.SequentialZK.StatisticalRecursion
+ import TCSlib.Cryptography.Composability.SequentialZK.StatisticalTransfer
++import TCSlib.Cryptography.Composability.SequentialZK.SuffixLaws
+ import TCSlib.Cryptography.Composability.SequentialZK.SuffixMachine
+ import TCSlib.Cryptography.Composability.SequentialZK.VerifierPrefix
+ import TCSlib.Cryptography.Composability.SequentialZK.WrappedVerifier
+@@ -93,11 +104,19 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
+ ## Contents
+ 
+ * `SequentialZK.Advice`: uniform finite selectors.
++* `SequentialZK.BoundedMetadata`: finite bounded phase advice.
++* `SequentialZK.ComputationalAdvice`: uniform negligible selectors.
++* `SequentialZK.ComputationalHybrid`: conditional computational gaps and endpoints.
++* `SequentialZK.ComputationalPhaseBound`: a common negligible phase bound.
++* `SequentialZK.ComputationalReduction`: efficient advised continuation machines.
++* `SequentialZK.ComputationalTransfer`: computational zero-knowledge transfer.
+ * `SequentialZK.Congruence`: reached-history execution congruence.
++* `SequentialZK.ContinuationProbability`: continuation acceptance and drift.
+ * `SequentialZK.Efficiency`: phase and verdict machines.
+ * `SequentialZK.EndpointSampling`: coin and view endpoint equivalences.
+ * `SequentialZK.ErrSoundness`: acceptance bounds from soundness.
+ * `SequentialZK.ExecutionBounds`: bounded real messages.
++* `SequentialZK.HybridRecursion`: conditional finite hybrid bounds.
+ * `SequentialZK.Normalization`: bounded message slots.
+ * `SequentialZK.NormalizationMachine`: normalization machines.
+ * `SequentialZK.NormalizedStep`: one normalized phase comparison.
+@@ -108,6 +127,8 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
+ * `SequentialZK.PrefixLaws`: phase-fold recursion equations.
+ * `SequentialZK.ProofTransfers`: bounded completeness transfer.
+ * `SequentialZK.RealPhases`: real and filler phase endpoints.
++* `SequentialZK.RealPrefixBounds`: bounded actual real prefixes.
++* `SequentialZK.ReductionAdvantage`: typed reduction comparisons.
+ * `SequentialZK.RepeatedSoundness`: the exact power soundness bound.
+ * `SequentialZK.RepeatedVerifier`: the repeated-verifier contract.
+ * `SequentialZK.SimulatorMachine`: the uniform normalized simulator.
+@@ -117,6 +138,7 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
+ * `SequentialZK.StatisticalPrefix`: normalized prefix comparisons.
+ * `SequentialZK.StatisticalRecursion`: linear error accumulation.
+ * `SequentialZK.StatisticalTransfer`: statistical zero-knowledge transfer.
++* `SequentialZK.SuffixLaws`: normalized suffix equations.
+ * `SequentialZK.SuffixMachine`: strict-PPT normalized suffix simulation.
+ * `SequentialZK.VerifierPrefix`: prefix tape dependence.
+ * `SequentialZK.WrappedVerifier`: the deterministic phase verifier.
+@@ -135,7 +157,7 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
+   position.
+ * `Protocol.seqRep_exec_phase`: phase `j` of an honest execution of `π.seqRep Q` is an execution
+   of `π` with the coin slices `j`.
+-* `ZK.seqRep` (Thm 175.1, stated; `sorry` under the source's sketch).
++* `ZK.seqRep` (Thm 175.1, proved): computational zero knowledge composes sequentially.
+ * `StatZK.seqRep` (proved): statistical error composes as `Q · δ`;
+   `PerfectZK.seqRep` is proved from it at zero error.
+ * `PerfectZKAbort.seqRep`: the aborting case, derived from `PerfectZKAbort.statZK` and
+@@ -841,7 +863,7 @@ zero-knowledge protocol with a bounded prover is zero-knowledge.
+    output. By `ZK π R` at `Lz'`, summing the `Q(n)` gaps gives `Q(n) * ε(n)`, negligible. -/
+ theorem ZK.seqRep {B : PolyExpr} (h : ZK π R) (hB : π.ProverBounded R B) (Q : PolyExpr) :
+     ZK (π.seqRep Q) R := by
+-  sorry
++  exact SequentialZK.zk_of_padded_spec h hB Q (fun x => π.seqRep_proverSpec Q x)
+ 
+ /-- **Theorem 175.1, statistical case**: statistical error `δ` composes to `Q · δ`, under the
+ same prover bound.
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean b/TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean
+new file mode 100644
+index 000000000..08e9e8522
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean
+@@ -0,0 +1,135 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Composability.SequentialZK.ComputationalReduction
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Finite bounded phase-reduction metadata
++
++The phase reduction's common input, verifier auxiliary word, verifier tape, phase index,
++and raw encoded prefix range over an explicit finite nonempty product. Exact-length Boolean
++vectors represent the fixed-size fields, and dependent pairs retain the precise lengths of
++bounded fields. There is no witness or output test in this metadata. [PS10, Theorem 175.1].
++
++## Main definitions
++
++* `PhaseMetadata n a v q h`: finite metadata with the five prescribed length/index bounds.
++* `PhaseMetadata.toData`: the raw reduction-advice word represented by this metadata.
++
++## Main results
++
++* `PhaseMetadata.word_lengths`: all five component bounds.
++* `PhaseMetadata.toData_length_le`: packed advice has at most `2n+2a+2v+2q+h+8` bits.
++* `PhaseMetadata.cover`: every tuple satisfying the five bounds is represented exactly.
++* `PhaseMetadata.cover_data`: every bounded raw advice word equals some `m.toData`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §7.2.1, Theorem 175.1.
++* [Gol01] O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge
++  University Press, 2001, §4.3.4.
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++/-- `PhaseMetadata n a v q h` is a common input of exactly `n` bits, auxiliary word of at
++most `a` bits, verifier tape of exactly `v` bits, phase index at most `q`, and raw prefix word
++of at most `h` bits. Standard product, function and sigma instances make this type finite.
++[PS10, Theorem 175.1, bounded phase-reduction advice]. -/
++abbrev PhaseMetadata (n a v q h : ℕ) : Type :=
++  (Fin n → Bool) × (Σ l : Fin (a + 1), Fin l → Bool) × (Fin v → Bool) ×
++    Fin (q + 1) × (Σ l : Fin (h + 1), Fin l → Bool)
++
++/-- The metadata type is
++`(Fin n → Bool) × (Σ l : Fin (a+1), Fin l → Bool) × (Fin v → Bool) ×
++ Fin (q+1) × (Σ l : Fin (h+1), Fin l → Bool)`. -/
++theorem PhaseMetadata_eq (n a v q h : ℕ) : PhaseMetadata n a v q h =
++    ((Fin n → Bool) × (Σ l : Fin (a + 1), Fin l → Bool) × (Fin v → Bool) ×
++      Fin (q + 1) × (Σ l : Fin (h + 1), Fin l → Bool)) := rfl
++
++namespace PhaseMetadata
++
++/-- The all-false fixed-size words, empty bounded words and phase zero inhabit
++`PhaseMetadata n a v q h`, including when any or all bounds vanish. -/
++instance {n a v q h : ℕ} : Nonempty (PhaseMetadata n a v q h) :=
++  ⟨(fun _ => false, ⟨⟨0, Nat.zero_lt_succ a⟩, Fin.elim0⟩, fun _ => false,
++    ⟨0, Nat.zero_lt_succ q⟩, ⟨⟨0, Nat.zero_lt_succ h⟩, Fin.elim0⟩)⟩
++
++/-- For metadata `m`, its raw advice is
++`reductionData (ofFn m.1) (ofFn m.2.1.2) (ofFn m.2.2.1) m.2.2.2.1
++  (ofFn m.2.2.2.2.2)`. [PS10, Theorem 175.1, phase-reduction advice]. -/
++def toData {n a v q h : ℕ} (m : PhaseMetadata n a v q h) : List Bool :=
++  reductionData (List.ofFn m.1) (List.ofFn m.2.1.2) (List.ofFn m.2.2.1) m.2.2.2.1
++    (List.ofFn m.2.2.2.2.2)
++
++/-- The packed metadata equation is `m.toData =
++reductionData (ofFn m.1) (ofFn m.2.1.2) (ofFn m.2.2.1) m.2.2.2.1
++  (ofFn m.2.2.2.2.2)`. -/
++theorem toData_eq {n a v q h : ℕ} (m : PhaseMetadata n a v q h) :
++    m.toData = reductionData (List.ofFn m.1) (List.ofFn m.2.1.2) (List.ofFn m.2.2.1)
++      m.2.2.2.1 (List.ofFn m.2.2.2.2.2) := rfl
++
++/-- For metadata `m`, its common-input and verifier-tape word lengths are exactly `n,v`,
++its auxiliary and prefix word lengths are at most `a,h`, and its phase index is at most `q`.
++-/
++theorem word_lengths {n a v q h : ℕ} (m : PhaseMetadata n a v q h) :
++    (List.ofFn m.1).length = n ∧ (List.ofFn m.2.1.2).length ≤ a ∧
++    (List.ofFn m.2.2.1).length = v ∧ (m.2.2.2.1 : ℕ) ≤ q ∧
++    (List.ofFn m.2.2.2.2.2).length ≤ h := by
++  simp only [List.length_ofFn]
++  exact ⟨True.intro, Nat.le_of_lt_succ m.2.1.1.isLt, True.intro,
++    Nat.le_of_lt_succ m.2.2.2.1.isLt, Nat.le_of_lt_succ m.2.2.2.2.1.isLt⟩
++
++/-- For metadata `m : PhaseMetadata n a v q h`,
++`m.toData.length ≤ 2*n + 2*a + 2*v + 2*q + h + 8`.
++[PS10, Theorem 175.1, polynomial phase-reduction advice bound]. -/
++theorem toData_length_le {n a v q h : ℕ} (m : PhaseMetadata n a v q h) :
++    m.toData.length ≤ 2 * n + 2 * a + 2 * v + 2 * q + h + 8 := by
++  obtain ⟨hx, hz, hrV, hj, hpre⟩ := m.word_lengths
++  rw [toData_eq, reductionData_length]
++  omega
++
++/-- For `x,z,rV,j,preWord` with `|x|=n`, `|z|≤a`, `|rV|=v`, `j≤q`, `|preWord|≤h`,
++there is metadata `m : PhaseMetadata n a v q h` whose five represented components are
++exactly `x,z,rV,j,preWord`. [PS10, Theorem 175.1, exact finite advice coverage].
++
++**Proof sketch.** Use each bounded word's actual length as its sigma index and its padded
++Boolean vector as its value. Fixed-size words use the given exact length. The public
++`ofFn_padFin_of_length` equation recovers each original word without changing any bits;
++the phase field stores the supplied bounded index directly. -/
++theorem cover {n a v q h : ℕ} (x z rV : List Bool) (j : ℕ) (preWord : List Bool)
++    (hx : x.length = n) (hz : z.length ≤ a) (hrV : rV.length = v)
++    (hj : j ≤ q) (hpre : preWord.length ≤ h) :
++    ∃ m : PhaseMetadata n a v q h,
++      List.ofFn m.1 = x ∧ List.ofFn m.2.1.2 = z ∧ List.ofFn m.2.2.1 = rV ∧
++      (m.2.2.2.1 : ℕ) = j ∧ List.ofFn m.2.2.2.2.2 = preWord := by
++  let m : PhaseMetadata n a v q h :=
++    (padFin n x, ⟨⟨z.length, Nat.lt_succ_of_le hz⟩, padFin z.length z⟩,
++      padFin v rV, ⟨j, Nat.lt_succ_of_le hj⟩,
++      ⟨⟨preWord.length, Nat.lt_succ_of_le hpre⟩, padFin preWord.length preWord⟩)
++  refine ⟨m, ?_, ?_, ?_, rfl, ?_⟩
++  · exact ofFn_padFin_of_length hx
++  · exact ofFn_padFin_of_length rfl
++  · exact ofFn_padFin_of_length hrV
++  · exact ofFn_padFin_of_length rfl
++
++/-- For `x,z,rV,j,preWord` with `|x|=n`, `|z|≤a`, `|rV|=v`, `j≤q`, `|preWord|≤h`,
++there is `m : PhaseMetadata n a v q h` with
++`m.toData = reductionData x z rV j preWord`. -/
++theorem cover_data {n a v q h : ℕ} (x z rV : List Bool) (j : ℕ) (preWord : List Bool)
++    (hx : x.length = n) (hz : z.length ≤ a) (hrV : rV.length = v)
++    (hj : j ≤ q) (hpre : preWord.length ≤ h) :
++    ∃ m : PhaseMetadata n a v q h, m.toData = reductionData x z rV j preWord := by
++  obtain ⟨m, hx', hz', hrV', hj', hpre'⟩ := cover x z rV j preWord hx hz hrV hj hpre
++  refine ⟨m, ?_⟩
++  rw [toData_eq, hx', hz', hrV', hj', hpre']
++
++end PhaseMetadata
++
++end TCSlib.Cryptography.SequentialZK
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean b/TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean
+new file mode 100644
+index 000000000..b069dda50
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean
+@@ -0,0 +1,74 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Composability.SequentialZK.Advice
++import TCSlib.Cryptography.Foundations.Negligible
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# One negligible bound for all bounded advice and arbitrary witnesses
++
++## Main definitions
++
++This module introduces no definitions.
++
++## Main results
++
++* `exists_uniform_negligible_bound` selects finite advice pointwise before requesting its
++  negligible bound, then obtains a uniform bound for every valid advice and witness.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.1 (the nonuniform hybrid reduction for sequential zero knowledge).
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++/-- Let `A n` be finite nonempty metadata types, `W` an arbitrary witness type, and
++`gap n a w ≤ 1`. Suppose every choice `choice : ∀ n, A n` has one negligible `ε` bounding
++`gap n (choice n) w` for all valid witnesses and all `n`. Then one negligible `ε` satisfies
++`gap n a w ≤ |ε n|` for every `n,a,w` with `valid n a w`.
++Neither the metadata choice nor its negligible bound encodes a witness.
++[PS10, Theorem 175.1, advice selection before the negligible bound].
++
++**Proof sketch.** Gate the gap by validity, assigning zero to invalid pairs. At every
++length apply the bounded-family selector to this gated family and choose its finite
++metadata value. Request the negligible bound for that single metadata function. Its
++absolute value bounds every gated value at the selected metadata, including invalid
++pairs. The selector then bounds every gated value at that length, hence every valid gap.
++The argument uses no witness-length bound and no attained witness maximum. -/
++theorem exists_uniform_negligible_bound {A : ℕ → Type*} {W : Type*}
++    [∀ n, Finite (A n)] [∀ n, Nonempty (A n)]
++    (gap : (n : ℕ) → A n → W → ℝ) (valid : (n : ℕ) → A n → W → Prop)
++    (hgap : ∀ n a w, gap n a w ≤ 1)
++    (hchoice : ∀ choice : (n : ℕ) → A n, ∃ ε : ℕ → ℝ, Negligible ε ∧
++      ∀ n w, valid n (choice n) w → gap n (choice n) w ≤ ε n) :
++    ∃ ε : ℕ → ℝ, Negligible ε ∧
++      ∀ n a w, valid n a w → gap n a w ≤ |ε n| := by
++  classical
++  let g (n : ℕ) (a : A n) (w : W) : ℝ := if valid n a w then gap n a w else 0
++  have hbounded (n : ℕ) (a : A n) (w : W) : g n a w ≤ 1 := by
++    dsimp only [g]
++    split_ifs
++    · exact hgap n a w
++    · exact zero_le_one
++  have hselector (n : ℕ) :=
++    Composability.exists_uniform_bound_selector (g n) 1 zero_le_one (hbounded n)
++  choose choice hselect using hselector
++  obtain ⟨ε, hε, hselected⟩ := hchoice choice
++  refine ⟨ε, hε, ?_⟩
++  intro n a w hvalid
++  have hchosen (v : W) : g n (choice n) v ≤ |ε n| := by
++    by_cases hv : valid n (choice n) v
++    · exact (show g n (choice n) v = gap n (choice n) v from if_pos hv).le.trans
++        ((hselected n v hv).trans (le_abs_self _))
++    · exact (show g n (choice n) v = 0 from if_neg hv).le.trans (abs_nonneg _)
++  have hall := hselect n (|ε n|) (abs_nonneg _) hchosen a w
++  simpa only [g, if_pos hvalid] using hall
++
++end TCSlib.Cryptography.SequentialZK
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean b/TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean
+new file mode 100644
+index 000000000..c81c4b5c3
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean
+@@ -0,0 +1,197 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Composability.SequentialZK.ContinuationProbability
++import TCSlib.Cryptography.Composability.SequentialZK.HybridRecursion
++import TCSlib.Cryptography.Composability.SequentialZK.EndpointSampling
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Computational prefix hybrids and actual-view endpoint transfer
++
++## Main definitions
++
++This module introduces no definitions.
++
++## Main results
++
++* `prefix_distAdv_le` converts local raw-view continuation gaps into a `Q(|x|)*ε` bound.
++* `prefix_distAdv_joint_le` averages this bound over the verifier's independent tape.
++* `distAdv_view_endpoints` reindexes typed joint prefixes as actual real/simulator views.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.1 (sequential repetition of zero knowledge).
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++open Complexity
++
++/-- At fixed verifier tape `rV`, suppose every actual real prefix before phase `i<Q(|x|)`
++has `phaseGap … i pre ≤ ε`, where `0≤ε`. For a bounded honest prover and the padded-prover
++contract, the canonical real and simulated prefix views have distinguishing advantage at
++most `Q(|x|)*ε`. No metadata validity or finite witness assumption appears in this theorem.
++[PS10, Theorem 175.1, conditional computational hybrid argument].
++
++**Proof sketch.** Use suffix acceptance as the continuation potential. Its drift under
++one real step is exactly the raw-view gap by the published real/simulated continuation
++identities. The generic conditional hybrid bound gives `Q(|x|)*ε`. At the final phase the
++suffix is empty, so averaging the potential is acceptance of the real prefix. At phase
++zero the suffix starts from the empty history and is exactly the typed simulated prefix.
++-/
++theorem prefix_distAdv_le {C : Type*} [Fintype C] {π ρ : Protocol}
++    (S : NUPPT) (B Q : PolyExpr) {x : List Bool} {p : ℕ}
++    (d : PaddedProverSpec π ρ x (Q.eval x.length) p) (V : Strategy)
++    (y z rV : List Bool) (D : List Bool → C → Bool)
++    (hp : p = if π.verifierFirst then π.rounds.eval x.length / 2
++      else (π.rounds.eval x.length + 1) / 2)
++    (hbound : ∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length)
++    (ε : ℝ) (hε : 0 ≤ ε)
++    (hlocal : ∀ i < Q.eval x.length, ∀ coins : Fin i → π.P.Coins x.length,
++      phaseGap π V S B Q x y z rV D i
++        (realPrefix π V x y z rV p i coins) ≤ ε) :
++    distAdv
++      (fun coins : Fin (Q.eval x.length) → π.P.Coins x.length =>
++        View.encode ⟨x, z, rV, realPrefix π V x y z rV p (Q.eval x.length) coins⟩)
++      (fun coins : Fin (Q.eval x.length) → S.Coins x.length =>
++        View.encode ⟨x, z, rV, simPrefix S x z rV (π.rounds.eval x.length)
++          (B.eval x.length) p (Q.eval x.length) coins⟩) D ≤
++      (Q.eval x.length : ℝ) * ε := by
++  -- At the final phase the suffix is empty, so the potential is real-prefix acceptance.
++  let realView := fun coins : Fin (Q.eval x.length) → π.P.Coins x.length =>
++    View.encode ⟨x, z, rV, realPrefix π V x y z rV p (Q.eval x.length) coins⟩
++  have hfinal :
++      uexp (fun coins : Fin (Q.eval x.length) → π.P.Coins x.length =>
++        continuationProb S π.rounds B Q π.verifierFirst x z rV D (Q.eval x.length)
++          (realPrefix π V x y z rV p (Q.eval x.length) coins)) =
++        acceptProb realView D := by
++    have hinner (coins : Fin (Q.eval x.length) → π.P.Coins x.length) :
++        continuationProb S π.rounds B Q π.verifierFirst x z rV D (Q.eval x.length)
++            (realPrefix π V x y z rV p (Q.eval x.length) coins) =
++          acceptProb (fun _ : Fin (Q.eval x.length) → S.Coins x.length => realView coins) D := by
++      rw [continuationProb_eq, Nat.sub_self]
++      simp only [phaseSuffix_zero]
++      rfl
++    have hmean := congrArg (fun f : (Fin (Q.eval x.length) → π.P.Coins x.length) → ℝ =>
++      uexp f) (funext hinner)
++    have havg := acceptProb_prod
++      (fun r : (Fin (Q.eval x.length) → π.P.Coins x.length) ×
++        (Fin (Q.eval x.length) → S.Coins x.length) => realView r.1) D
++    rw [acceptProb_fst realView D] at havg
++    exact hmean.trans havg.symm
++  -- At phase zero the same suffix is the complete simulated prefix.
++  have hinitial : continuationProb S π.rounds B Q π.verifierFirst x z rV D 0 [] =
++      acceptProb
++        (fun coins : Fin (Q.eval x.length) → S.Coins x.length =>
++          View.encode ⟨x, z, rV, simPrefix S x z rV (π.rounds.eval x.length)
++            (B.eval x.length) p (Q.eval x.length) coins⟩) D := by
++    rw [continuationProb_eq, Nat.sub_zero]
++    congr 1
++    funext coins
++    rw [phaseSuffix_zero_nil, hp]
++    have hprefix := simPrefix_eq_phasePrefix S π.rounds B π.verifierFirst x z rV
++      (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm coins))
++      (Q.eval x.length) coins (fun i => by
++        have hb := FunFamily.ofFn_blocks (Q.eval x.length) (S.coinLen x.length)
++          ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm coins) i
++        rw [Equiv.apply_symm_apply] at hb
++        exact (coinBlock_eq _ _ _).trans hb.symm)
++    rw [hprefix]
++  -- Average the local raw-view gaps and apply the published conditional hybrid theorem.
++  have hgap := hybrid_recursion_gap_le
++    (fun i => realPrefix π V x y z rV p i) ([] : List (List Bool))
++    (realStep π V x y z rV p)
++    (fun r => realPrefix_zero π V x y z rV p r)
++    (fun i r a => realPrefix_snoc π V x y z rV p i r a)
++    (continuationProb S π.rounds B Q π.verifierFirst x z rV D)
++    (Q.eval x.length) ε hε (fun i hi coins => by
++      rw [← phaseGap_eq_drift S B Q d V y z rV D hp hbound i hi
++        (realPrefix π V x y z rV p i coins)]
++      exact hlocal i hi coins)
++  rw [hfinal, hinitial] at hgap
++  simpa only [distAdv_def] using hgap
++
++/-- If the fixed-verifier-tape local gaps satisfy the same bound for every verifier tape,
++the joint canonical real/simulated prefix views have advantage at most `Q(|x|)*ε`.
++[PS10, Theorem 175.1, averaging the verifier tape]. -/
++theorem prefix_distAdv_joint_le {C : Type*} [Fintype C] {π ρ : Protocol}
++    (S : NUPPT) (B Q : PolyExpr) {x : List Bool} {p : ℕ}
++    (d : PaddedProverSpec π ρ x (Q.eval x.length) p) (V : Strategy)
++    (y z : List Bool) (D : List Bool → C → Bool)
++    (hp : p = if π.verifierFirst then π.rounds.eval x.length / 2
++      else (π.rounds.eval x.length + 1) / 2)
++    (hbound : ∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length)
++    (ε : ℝ) (hε : 0 ≤ ε)
++    (hlocal : ∀ rV : V.Coins x.length, ∀ i < Q.eval x.length,
++      ∀ coins : Fin i → π.P.Coins x.length,
++      phaseGap π V S B Q x y z (List.ofFn rV) D i
++        (realPrefix π V x y z (List.ofFn rV) p i coins) ≤ ε) :
++    distAdv
++      (fun r : V.Coins x.length × (Fin (Q.eval x.length) → π.P.Coins x.length) =>
++        View.encode ⟨x, z, List.ofFn r.1,
++          realPrefix π V x y z (List.ofFn r.1) p (Q.eval x.length) r.2⟩)
++      (fun r : V.Coins x.length × (Fin (Q.eval x.length) → S.Coins x.length) =>
++        View.encode ⟨x, z, List.ofFn r.1,
++          simPrefix S x z (List.ofFn r.1) (π.rounds.eval x.length)
++            (B.eval x.length) p (Q.eval x.length) r.2⟩) D ≤
++      (Q.eval x.length : ℝ) * ε := by
++  rw [distAdv_def, acceptProb_prod, acceptProb_prod]
++  apply abs_uexp_sub_le (mul_nonneg (Nat.cast_nonneg _) hε)
++  intro rV
++  simpa only [distAdv_def] using
++    prefix_distAdv_le S B Q d V y z (List.ofFn rV) D hp hbound ε hε (hlocal rV)
++
++/-- Reindexing two samplers by equivalences and supplied pointwise endpoint readers
++preserves the distinguishing advantage of any fixed `D`. -/
++theorem distAdv_reindex {A B A' B' O C : Type*}
++    [Fintype A] [Fintype B] [Fintype A'] [Fintype B'] [Fintype C]
++    (F : A → O) (G : B → O) (F' : A' → O) (G' : B' → O) (D : O → C → Bool)
++    (eA : A' ≃ A) (eB : B' ≃ B)
++    (hF : ∀ a, F' a = F (eA a)) (hG : ∀ b, G' b = G (eB b)) :
++    distAdv F' G' D = distAdv F G D := by
++  have hleft : acceptProb F' D = acceptProb F D :=
++    (congrArg (fun sampler => acceptProb sampler D) (funext hF)).trans
++      (acceptProb_comp_equiv eA F D)
++  have hright : acceptProb G' D = acceptProb G D :=
++    (congrArg (fun sampler => acceptProb sampler D) (funext hG)).trans
++      (acceptProb_comp_equiv eB G D)
++  rw [distAdv_def, distAdv_def, hleft, hright]
++
++/-- The actual encoded repeated view and `SQ.simulate` have exactly the advantage of the
++joint typed real/simulated prefix views, assuming their published padded-prover and raw
++simulator endpoint equations. [PS10, Theorem 175.1, computational endpoint transfer]. -/
++theorem distAdv_view_endpoints {C : Type*} [Fintype C] {π ρ : Protocol}
++    {x : List Bool} {q p : ℕ} (d : PaddedProverSpec π ρ x q p) (V : Strategy)
++    (y z : List Bool) (S SQ : NUPPT) (B : PolyExpr)
++    (hp : p = if π.verifierFirst then π.rounds.eval x.length / 2
++      else (π.rounds.eval x.length + 1) / 2)
++    (hlen : SQ.coinLen x.length = V.coinLen x.length + q * S.coinLen x.length)
++    (hsim : ∀ r : SQ.Coins x.length, SQ.simulate x z r =
++      View.encode ⟨x, z, (List.ofFn r).take (V.coinLen x.length),
++        phasePrefix S π.rounds B π.verifierFirst x z
++          ((List.ofFn r).take (V.coinLen x.length))
++          ((List.ofFn r).drop (V.coinLen x.length)) q⟩) (D : List Bool → C → Bool) :
++    distAdv (fun r => ((ρ.withV V).viewV x y z r).encode) (SQ.simulate x z) D =
++      distAdv
++        (fun r : V.Coins x.length × (Fin q → π.P.Coins x.length) =>
++          View.encode ⟨x, z, List.ofFn r.1,
++            realPrefix π V x y z (List.ofFn r.1) p q r.2⟩)
++        (fun r : V.Coins x.length × (Fin q → S.Coins x.length) =>
++          View.encode ⟨x, z, List.ofFn r.1,
++            simPrefix S x z (List.ofFn r.1) (π.rounds.eval x.length)
++              (B.eval x.length) p q r.2⟩) D := by
++  apply distAdv_reindex _ _ _ _ D (d.realCoinsEquiv V)
++    (coinBlocksEquiv (V.coinLen x.length) q (S.coinLen x.length) hlen)
++  · exact fun r => d.viewV_eq_realPrefix V y z r
++  · intro r
++    simpa only [hp] using
++      simulate_eq_simPrefix S SQ π.rounds B π.verifierFirst x z q (V.coinLen x.length)
++        hlen hsim r
++
++end TCSlib.Cryptography.SequentialZK
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean b/TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean
+new file mode 100644
+index 000000000..1f453ff9f
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean
+@@ -0,0 +1,184 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Composability.SequentialZK.BoundedMetadata
++import TCSlib.Cryptography.Composability.SequentialZK.ComputationalAdvice
++import TCSlib.Cryptography.Composability.SequentialZK.ReductionAdvantage
++import TCSlib.Cryptography.Composability.SequentialZK.ContinuationProbability
++import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKLemmas
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# One negligible bound for all bounded phase continuations
++
++## Main definitions
++
++This module introduces no definitions or computational hosts.
++
++## Main results
++
++* `exists_negligible_phase_bound`: the wrapped original simulator gives one negligible
++  bound for every bounded phase metadata tuple, with no witness in the reduction advice.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.1.
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++open Complexity Turing
++
++/-- Let `π,R,V,S` have a uniform simulator satisfying the computational comparison for
++`π` against `phaseVerifier V`, for every auxiliary polynomial and nonuniform distinguisher.
++For fixed `Lz,D,Q,B`, one negligible `ε` bounds `phaseGap` by `|ε(|x|)|` for every witness,
++auxiliary word `|z|≤Lz(|x|)`, verifier tape of its exact prescribed length, phase `j<Q(|x|)`,
++and prefix with encoding length at most `Q(|x|)*π.rounds(|x|)*(2*B(|x|)+2)`.
++No prover bound, witness bound or reachability premise is required for this comparison.
++[PS10, Theorem 175.1, common negligible phase bound for sequential zero knowledge].
++
++**Proof sketch.**
++Use a syntactic polynomial for the complete encoded-prefix envelope.
++Pack the input, auxiliary word, verifier tape, phase and raw prefix into finite metadata.
++These metadata types remain nonempty at every parameter, including zero phases.
++The existing advantage bound by one bounds every metadata and witness gap.
++Validity is a proof-only relation: the witness is valid, the prefix is canonical, and the
++phase lies strictly below the repetition count. No machine tests this relation.
++Apply the published finite advice selector before requesting any negligible bound.
++For any selected metadata function, its public length reader gives a polynomial advice bound.
++The uniform continuation sampler and ordinary advice closure build one nonuniform reduction.
++Canonical-prefix validity identifies its packed advice with input paired with phase auxiliary.
++The public second-projection length bound therefore bounds that auxiliary word.
++Apply the given original simulator comparison to this reduction and auxiliary polynomial.
++The exact typed reduction advantage reader identifies the selected local phase gap.
++The finite selector propagates this negligible bound to every valid metadata tuple.
++Finally the public exact-cover reader represents each supplied typed prefix and bounded tuple.
++The decoder's public encoding equation recovers that prefix without changing any bits.
++Substitution yields the claimed common bound for all witnesses and all fixed verifier tapes. -/
++theorem exists_negligible_phase_bound (π : Protocol) (R : List Bool → List Bool → Prop)
++    (V : Strategy) (S : NUPPT) (hS : S.Uniform)
++    (hclose : ∀ (Lz' : PolyExpr) (Red : NUPPT), ∃ ε : ℕ → ℝ, Negligible ε ∧
++      ∀ x y aux, R x y → aux.length ≤ Lz'.eval x.length →
++        distAdv (fun r => ((π.withV (phaseVerifier V)).viewV x y aux r).encode)
++          (S.simulate x aux) (Red.distinguisherL x.length) ≤ ε x.length)
++    (Lz : PolyExpr) (D : NUPPT) (Q B : PolyExpr) :
++    ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ x y z rV j pre, R x y →
++      z.length ≤ Lz.eval x.length → rV.length = V.coinLen x.length → j < Q.eval x.length →
++      (Strategy.encodeMsgs pre).length ≤
++        Q.eval x.length * π.rounds.eval x.length * (2 * B.eval x.length + 2) →
++      phaseGap π V S B Q x y z rV (D.distinguisherL x.length) j pre ≤ |ε x.length| := by
++  classical
++  -- Fix finite metadata bounds and the common polynomial advice envelope.
++  let H : PolyExpr := .mul (.mul Q π.rounds) (.add (.mul (.const 2) B) (.const 2))
++  let b : PolyExpr := .add (.add (.add (.add (.add (.mul (.const 2) .var)
++    (.mul (.const 2) Lz)) (.mul (.const 2) V.coins)) (.mul (.const 2) Q)) H) (.const 8)
++  have hH (n : ℕ) : H.eval n = Q.eval n * π.rounds.eval n * (2 * B.eval n + 2) := by
++    simp only [H, PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const]
++  have hb (n : ℕ) : b.eval n =
++      2 * n + 2 * Lz.eval n + 2 * V.coinLen n + 2 * Q.eval n + H.eval n + 8 := by
++    simp only [b, PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const,
++      PolyExpr.eval_var, Strategy.coinLen_eq]
++  let A (n : ℕ) := PhaseMetadata n (Lz.eval n) (V.coinLen n) (Q.eval n) (H.eval n)
++  let gap (n : ℕ) (m : A n) (y : List Bool) : ℝ :=
++    phaseGap π V S B Q (List.ofFn m.1) y (List.ofFn m.2.1.2) (List.ofFn m.2.2.1)
++      (D.distinguisherL (List.ofFn m.1).length) m.2.2.2.1
++      (BinArith.decWords (List.ofFn m.2.2.2.2.2))
++  let valid (n : ℕ) (m : A n) (y : List Bool) : Prop :=
++    R (List.ofFn m.1) y ∧
++      Strategy.encodeMsgs (BinArith.decWords (List.ofFn m.2.2.2.2.2)) =
++        List.ofFn m.2.2.2.2.2 ∧ (m.2.2.2.1 : ℕ) < Q.eval n
++  have hgap (n : ℕ) (m : A n) (y : List Bool) : gap n m y ≤ 1 := by
++    dsimp only [gap]
++    rw [phaseGap_eq]
++    exact ColZK.distAdv_le_one _ _ _
++  -- The selector sees a bounded gap and a proof-only validity predicate.
++  have hchoice (choice : (n : ℕ) → A n) : ∃ ε : ℕ → ℝ, Negligible ε ∧
++      ∀ n y, valid n (choice n) y → gap n (choice n) y ≤ ε n := by
++    let X (n : ℕ) := List.ofFn (choice n).1
++    let Z (n : ℕ) := List.ofFn (choice n).2.1.2
++    let RV (n : ℕ) := List.ofFn (choice n).2.2.1
++    let J (n : ℕ) : ℕ := (choice n).2.2.2.1
++    let PW (n : ℕ) := List.ofFn (choice n).2.2.2.2.2
++    -- One metadata choice gives ordinary bounded advice, independent of the witness.
++    have hdata (n : ℕ) : (reductionData (X n) (Z n) (RV n) (J n) (PW n)).length ≤
++        b.eval n := by
++      rw [hb]
++      simpa only [PhaseMetadata.toData_eq, X, Z, RV, J, PW] using
++        (choice n).toData_length_le
++    obtain ⟨Red, hcoins, hrun⟩ := exists_phaseReduction S hS D π.rounds B Q
++      π.verifierFirst X Z RV J PW b hdata
++    obtain ⟨ε, hε, hbound⟩ := hclose b Red
++    refine ⟨ε, hε, ?_⟩
++    intro n y hy
++    have hx : (X n).length = n := List.length_ofFn
++    have hcanon : Strategy.encodeMsgs (BinArith.decWords (PW n)) = PW n := hy.2.1
++    have hpack : reductionData (X n) (Z n) (RV n) (J n) (PW n) =
++        pairEncode (X n) (phaseAux (Z n) (RV n) (J n) (BinArith.decWords (PW n))) := by
++      exact (congrArg (reductionData (X n) (Z n) (RV n) (J n)) hcanon.symm).trans
++        (reductionData_encodeMsgs (X n) (Z n) (RV n) (J n) (BinArith.decWords (PW n)))
++    -- Canonical raw advice is input paired with auxiliary; projection bounds its length.
++    have haux : (phaseAux (Z n) (RV n) (J n) (BinArith.decWords (PW n))).length ≤
++        b.eval (X n).length := by
++      rw [hx]
++      calc
++        _ = (pairSndD (reductionData (X n) (Z n) (RV n) (J n) (PW n))).length := by
++          rw [hpack, pairSndD_pairEncode]
++        _ ≤ (reductionData (X n) (Z n) (RV n) (J n) (PW n)).length :=
++          length_pairSndD_le _
++        _ ≤ b.eval n := hdata n
++    -- The selected advised reduction is exactly the typed local continuation experiment.
++    have hlocal := hbound (X n) y
++      (phaseAux (Z n) (RV n) (J n) (BinArith.decWords (PW n))) hy.1 haux
++    have hrunAt : ∀ raw r, Red.runAtL (X n).length raw r =
++        D.runAtL (X n).length
++          (phaseContinuation S π.rounds B Q π.verifierFirst (X n) (Z n) (RV n)
++            (J n) (BinArith.decWords (PW n)) raw
++            (r.take ((PolyExpr.mul Q S.coins).eval (X n).length)))
++          (r.drop ((PolyExpr.mul Q S.coins).eval (X n).length)) := by
++      simpa only [hx] using hrun n
++    have heq := distAdv_phaseReduction S D Red π.rounds B Q π.verifierFirst (X n).length
++      (X n) (Z n) (RV n) (J n) (BinArith.decWords (PW n)) hcoins hrunAt
++      (fun r => ((π.withV (phaseVerifier V)).viewV (X n) y
++        (phaseAux (Z n) (RV n) (J n) (BinArith.decWords (PW n))) r).encode)
++      (S.simulate (X n) (phaseAux (Z n) (RV n) (J n) (BinArith.decWords (PW n))))
++    have hgapEq : gap n (choice n) y =
++        distAdv (fun r => ((π.withV (phaseVerifier V)).viewV (X n) y
++          (phaseAux (Z n) (RV n) (J n) (BinArith.decWords (PW n))) r).encode)
++          (S.simulate (X n) (phaseAux (Z n) (RV n) (J n) (BinArith.decWords (PW n))))
++          (Red.distinguisherL (X n).length) := by
++      dsimp only [gap]
++      rw [phaseGap_eq]
++      simpa only [X, Z, RV, J, PW] using heq.symm
++    have hscalar : gap n (choice n) y ≤ ε (X n).length := by
++      rw [hgapEq]
++      exact hlocal
++    simpa only [hx] using hscalar
++  -- The public selector chooses metadata before epsilon and then bounds every valid tuple.
++  obtain ⟨ε, hε, hall⟩ := exists_uniform_negligible_bound gap valid hgap hchoice
++  refine ⟨ε, hε, ?_⟩
++  -- Exact finite coverage recovers every bounded caller-supplied prefix and metadata tuple.
++  intro x y z rV j pre hxy hz hrV hj hpre
++  obtain ⟨m, hx, hz', hrV', hj', hpre'⟩ := PhaseMetadata.cover (h := H.eval x.length) x z rV j
++    (Strategy.encodeMsgs pre) rfl hz hrV hj.le (by simpa only [hH] using hpre)
++  have hdecode : BinArith.decWords (List.ofFn m.2.2.2.2.2) = pre := by
++    rw [hpre', encodeMsgs_eq_encWords, BinArith.decWords_encWords]
++  have hvalid : valid x.length m y := by
++    refine ⟨?_, ?_, ?_⟩
++    · simpa only [hx] using hxy
++    · rw [hdecode, hpre']
++    · simpa only [hj'] using hj
++  have hcovered : gap x.length m y =
++      phaseGap π V S B Q x y z rV (D.distinguisherL x.length) j pre := by
++    dsimp only [gap]
++    rw [hz', hrV', hj', hdecode]
++    exact congrArg (fun u : List Bool =>
++      phaseGap π V S B Q u y z rV (D.distinguisherL u.length) j pre) hx
++  rw [← hcovered]
++  exact hall x.length m y hvalid
++
++end TCSlib.Cryptography.SequentialZK
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean b/TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean
+new file mode 100644
+index 000000000..f5feb9be9
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean
+@@ -0,0 +1,271 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Composability.SequentialZK.SuffixMachine
++import TCSlib.Cryptography.Asymptotic.Adversary
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The advised computational sequential-phase reduction
++
++A raw current-phase candidate is normalized using fixed metadata, followed by a randomized
++simulated suffix and the original distinguisher. The metadata contains no witness. Validity
++and reachability are properties of the later proof; every machine here uses total word
++projections and the canonical normalizer on arbitrary inputs.
++
++## Main definitions
++
++* `reductionData`: common input, verifier auxiliary input/tape, phase, and raw prefix word.
++* `phaseContinuation`: normalize the current candidate, simulate the suffix, and replay a view.
++
++## Main results
++
++* `phaseContinuation_poly`: the continuation is polynomial-time on total metadata functions.
++* `exists_continuationSampler`: a uniform fresh-coin sampler for the continuation.
++* `exists_phaseReduction`: compose the sampler with a distinguisher and bounded advice.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §7.2.1, Theorem 175.1.
++* [Gol01] O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge
++  University Press, 2001, §4.3.4.
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++open Complexity Turing
++
++/-- For `x,z,rV,j,preWord`, the reduction metadata is
++`⟨x,⟨z,⟨rV,⟨1^j,preWord⟩⟩⟩⟩`. Keeping the prefix as a raw word gives an exact advice-size
++bound even on malformed metadata. [PS10, Theorem 175.1, phase-reduction advice]. -/
++def reductionData (x z rV : List Bool) (j : ℕ) (preWord : List Bool) : List Bool :=
++  pairEncode x (pairEncode z (pairEncode rV (pairEncode (List.replicate j true) preWord)))
++
++/-- The metadata equation is `reductionData x z rV j preWord =
++pairEncode x (pairEncode z (pairEncode rV (pairEncode (List.replicate j true) preWord)))`. -/
++theorem reductionData_eq (x z rV : List Bool) (j : ℕ) (preWord : List Bool) :
++    reductionData x z rV j preWord =
++      pairEncode x (pairEncode z (pairEncode rV (pairEncode (List.replicate j true) preWord))) :=
++  rfl
++
++/-- The five projection fields of `reductionData x z rV j preWord`, in order, are
++`x,z,rV,List.replicate j true,preWord`. -/
++theorem reductionData_fields (x z rV : List Bool) (j : ℕ) (preWord : List Bool) :
++    pairFstD (reductionData x z rV j preWord) = x ∧
++    pairFstD (pairSndD (reductionData x z rV j preWord)) = z ∧
++    pairFstD (pairSndD (pairSndD (reductionData x z rV j preWord))) = rV ∧
++    pairFstD (pairSndD (pairSndD (pairSndD (reductionData x z rV j preWord)))) =
++      List.replicate j true ∧
++    pairSndD (pairSndD (pairSndD (pairSndD (reductionData x z rV j preWord)))) = preWord := by
++  simp only [reductionData_eq, pairFstD_pairEncode, pairSndD_pairEncode, and_self]
++
++/-- For polynomial-time `X,Z,RV,PreWord` and unary polynomial-time `J`, the metadata map
++`w ↦ reductionData (X w) (Z w) (RV w) (J w) (PreWord w)` is polynomial-time. -/
++theorem reductionData_poly {X Z RV PreWord : List Bool → List Bool} {J : List Bool → ℕ}
++    (hX : PolyTimeComputable X) (hZ : PolyTimeComputable Z) (hRV : PolyTimeComputable RV)
++    (hJ : PolyTimeComputable fun w => List.replicate (J w) true)
++    (hPre : PolyTimeComputable PreWord) :
++    PolyTimeComputable fun w => reductionData (X w) (Z w) (RV w) (J w) (PreWord w) :=
++  (hX.pairEncode (hZ.pairEncode (hRV.pairEncode (hJ.pairEncode hPre)))).congr
++    (fun _ => (reductionData_eq _ _ _ _ _).symm)
++
++/-- The metadata length is
++`|reductionData x z rV j preWord| = 2|x|+2|z|+2|rV|+2j+|preWord|+8`. -/
++theorem reductionData_length (x z rV : List Bool) (j : ℕ) (preWord : List Bool) :
++    (reductionData x z rV j preWord).length =
++      2 * x.length + 2 * z.length + 2 * rV.length + 2 * j + preWord.length + 8 := by
++  rw [reductionData_eq, length_pairEncode, length_pairEncode, length_pairEncode,
++    length_pairEncode, List.length_replicate]
++  omega
++
++/-- For a canonical prefix word, reduction metadata is the input paired with the phase
++auxiliary word: `reductionData x z rV j (encodeMsgs pre) = pairEncode x (phaseAux z rV j pre)`.
++-/
++theorem reductionData_encodeMsgs (x z rV : List Bool) (j : ℕ) (pre : List (List Bool)) :
++    reductionData x z rV j (Strategy.encodeMsgs pre) = pairEncode x (phaseAux z rV j pre) :=
++  (reductionData_eq _ _ _ _ _).trans (congrArg (pairEncode x) (phaseAux_eq z rV j pre).symm)
++
++/-- For `S,k,B,Q,verifierFirst,x,z,rV,j,pre,raw,rS`, normalize the raw current-phase view
++using known auxiliary input `phaseAux z rV j pre`, append the empty prover fillers, simulate
++phases `j+1` through `Q(|x|)-1`, and return the canonical final view with fields `x,z,rV`.
++All decoders and counts are total, including on malformed candidates and `j≥Q(|x|)`.
++[PS10, Theorem 175.1; Gol01, §4.3.4, one-phase hybrid continuation]. -/
++def phaseContinuation (S : NUPPT) (k B Q : PolyExpr) (verifierFirst : Bool)
++    (x z rV : List Bool) (j : ℕ) (pre : List (List Bool)) (raw rS : List Bool) : List Bool :=
++  let aux := phaseAux z rV j pre
++  let p := if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2
++  let pre1 := pre ++ (normalizePhaseMsgs x aux p (B.eval x.length) raw ++
++    List.replicate (k.eval x.length - p) [])
++  View.encode ⟨x, z, rV, phaseSuffix S k B verifierFirst x z rV rS (j + 1) pre1
++    (Q.eval x.length - (j + 1))⟩
++
++/-- The complete `phaseContinuation` equation first forms
++`pre1 = pre ++ (normalizePhaseMsgs x (phaseAux z rV j pre) p (B(|x|)) raw ++ (k(|x|)-p) empties)`,
++then encodes `⟨x,z,rV,phaseSuffix … (j+1) pre1 (Q(|x|)-(j+1))⟩`, with
++`p = if verifierFirst then k(|x|)/2 else (k(|x|)+1)/2`. -/
++theorem phaseContinuation_eq (S : NUPPT) (k B Q : PolyExpr) (verifierFirst : Bool)
++    (x z rV : List Bool) (j : ℕ) (pre : List (List Bool)) (raw rS : List Bool) :
++    phaseContinuation S k B Q verifierFirst x z rV j pre raw rS =
++      let aux := phaseAux z rV j pre
++      let p := if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2
++      let pre1 := pre ++ (normalizePhaseMsgs x aux p (B.eval x.length) raw ++
++        List.replicate (k.eval x.length - p) [])
++      View.encode ⟨x, z, rV, phaseSuffix S k B verifierFirst x z rV rS (j + 1) pre1
++        (Q.eval x.length - (j + 1))⟩ := rfl
++
++/-- For uniform `S`, fixed `k,B,Q,verifierFirst`, polynomial-time words `X,Z,RV,Raw,RS`,
++unary polynomial-time phase `J`, and initial messages `H` with polynomial-time encoding,
++`w ↦ phaseContinuation S k B Q verifierFirst (X w) (Z w) (RV w) (J w) (H w) (Raw w) (RS w)`
++is polynomial-time. No validity, reachability, witness, or phase-range premise is required.
++[PS10, Theorem 175.1, the one-phase hybrid machine].
++
++**Proof sketch.** Build the expected phase auxiliary word and canonically normalize the
++current candidate. Append its real-message encoding and the existing empty-filler encoding
++to the earlier prefix. Unary arithmetic computes starting phase `J+1` and remaining count
++`Q(|X|)-(J+1)`. Apply the published arbitrary-prefix suffix machine, then assemble the
++canonical final view through its equation reader. All preprocessing is total. -/
++theorem phaseContinuation_poly (S : NUPPT) (hS : S.Uniform) (k B Q : PolyExpr)
++    (verifierFirst : Bool) {X Z RV Raw RS : List Bool → List Bool} {J : List Bool → ℕ}
++    {H : List Bool → List (List Bool)}
++    (hX : PolyTimeComputable X) (hZ : PolyTimeComputable Z) (hRV : PolyTimeComputable RV)
++    (hRaw : PolyTimeComputable Raw) (hRS : PolyTimeComputable RS)
++    (hJ : PolyTimeComputable fun w => List.replicate (J w) true)
++    (hH : PolyTimeComputable fun w => Strategy.encodeMsgs (H w)) :
++    PolyTimeComputable fun w => phaseContinuation S k B Q verifierFirst
++      (X w) (Z w) (RV w) (J w) (H w) (Raw w) (RS w) := by
++  -- Canonical normalization supplies the candidate phase's bounded real slots.
++  have haux := phaseAux_poly hZ hRV hJ hH
++  have hK := EncodingMachines.unaryPolyOf_poly k (EncodingMachines.unaryLength_poly hX)
++  have hP : PolyTimeComputable fun w => List.replicate
++      (if verifierFirst then k.eval (X w).length / 2 else (k.eval (X w).length + 1) / 2) true := by
++    cases verifierFirst
++    · simpa only [EncodingMachines.divNum_eq] using EncodingMachines.divNum_poly
++        (EncodingMachines.unaryAdd_poly hK (EncodingMachines.unaryConst_poly 1))
++        (EncodingMachines.unaryConst_poly 2)
++    · simpa only [EncodingMachines.divNum_eq] using
++        EncodingMachines.divNum_poly hK (EncodingMachines.unaryConst_poly 2)
++  have hbits := EncodingMachines.unaryPolyOf_poly B (EncodingMachines.unaryLength_poly hX)
++  have hnorm := polyTimeComputable_encode_normalizePhaseMsgs hX haux hRaw hP hbits
++  have hfill := encode_emptyMsgs_poly (EncodingMachines.unarySub_poly hK hP)
++  let H1 : List Bool → List (List Bool) := fun w =>
++    H w ++ (normalizePhaseMsgs (X w) (phaseAux (Z w) (RV w) (J w) (H w))
++      (if verifierFirst then k.eval (X w).length / 2 else (k.eval (X w).length + 1) / 2)
++      (B.eval (X w).length) (Raw w) ++ List.replicate
++        (k.eval (X w).length -
++          (if verifierFirst then k.eval (X w).length / 2 else (k.eval (X w).length + 1) / 2)) [])
++  have hH1 : PolyTimeComputable fun w => Strategy.encodeMsgs (H1 w) := by
++    refine (hH.append (hnorm.append hfill)).congr fun w => ?_
++    dsimp only [H1]
++    rw [CommitmentLemmas.encodeMsgs_append, CommitmentLemmas.encodeMsgs_append]
++  -- Reuse the total suffix routine after this candidate phase, then replay the view.
++  have hStart := EncodingMachines.unaryAdd_poly hJ (EncodingMachines.unaryConst_poly 1)
++  have hCount := EncodingMachines.unarySub_poly
++    (EncodingMachines.unaryPolyOf_poly Q (EncodingMachines.unaryLength_poly hX)) hStart
++  have hsuffix := phaseSuffix_poly S hS k B verifierFirst
++    hX hZ hRV hRS hStart hCount hH1
++  refine ((hX.pairEncode hZ).pairEncode (hRV.pairEncode hsuffix)).congr fun w => ?_
++  rw [phaseContinuation_eq, View.encode_mk]
++
++/-- For uniform `S` and `k,B,Q,verifierFirst`, there is a uniform sampler `U` with coins
++`Q*S.coins` whose activation on `⟨raw,reductionData x z rV j preWord⟩` is exactly
++`phaseContinuation S k B Q verifierFirst x z rV j (decWords preWord) raw r`.
++This holds for every security parameter and every raw tape, without metadata validity tests.
++[PS10, Theorem 175.1, randomized one-phase hybrid continuation].
++
++**Proof sketch.** Decode the metadata through total pair projections, its phase through
++unary length, and its earlier prefix through the total word-list decoder. Apply
++`phaseContinuation_poly` with the sampler's full coin tape. The published uniform-machine
++constructor assigns the stated coin polynomial. Public activation/layout and metadata
++readers give the exact equation, including malformed prefix words. -/
++theorem exists_continuationSampler (S : NUPPT) (hS : S.Uniform) (k B Q : PolyExpr)
++    (verifierFirst : Bool) :
++    ∃ U : NUPPT, U.Uniform ∧ U.coins = .mul Q S.coins ∧
++      ∀ (n : ℕ) (raw x z rV : List Bool) (j : ℕ) (preWord r : List Bool),
++        U.runAtL n (pairEncode raw (reductionData x z rV j preWord)) r =
++          phaseContinuation S k B Q verifierFirst x z rV j (BinArith.decWords preWord)
++            raw r := by
++  -- Decode only total metadata projections and the raw prefix interpretation.
++  let M : List Bool → List Bool := fun w => pairSndD (NUPPT.inArg w)
++  let X : List Bool → List Bool := fun w => pairFstD (M w)
++  let Z : List Bool → List Bool := fun w => pairFstD (pairSndD (M w))
++  let RV : List Bool → List Bool := fun w => pairFstD (pairSndD (pairSndD (M w)))
++  let J : List Bool → ℕ := fun w =>
++    (pairFstD (pairSndD (pairSndD (pairSndD (M w))))).length
++  let PW : List Bool → List Bool := fun w =>
++    pairSndD (pairSndD (pairSndD (pairSndD (M w))))
++  let Raw : List Bool → List Bool := fun w => pairFstD (NUPPT.inArg w)
++  have hM : PolyTimeComputable M :=
++    polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg
++  have hX : PolyTimeComputable X := polyTimeComputable_pairFstD.comp hM
++  have hZ : PolyTimeComputable Z :=
++    polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp hM)
++  have hRV : PolyTimeComputable RV := polyTimeComputable_pairFstD.comp
++    (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp hM))
++  have hJ : PolyTimeComputable fun w => List.replicate (J w) true :=
++    EncodingMachines.unaryLength_poly (polyTimeComputable_pairFstD.comp
++      (polyTimeComputable_pairSndD.comp
++        (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp hM))))
++  have hPW : PolyTimeComputable PW := polyTimeComputable_pairSndD.comp
++    (polyTimeComputable_pairSndD.comp
++      (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp hM)))
++  have hH : PolyTimeComputable fun w => Strategy.encodeMsgs (BinArith.decWords (PW w)) :=
++    (polyTimeComputable_encWords_decWords hPW).congr
++      (fun _ => (encodeMsgs_eq_encWords _).symm)
++  have hRaw : PolyTimeComputable Raw :=
++    polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg
++  let F : List Bool → List Bool := fun w => phaseContinuation S k B Q verifierFirst
++    (X w) (Z w) (RV w) (J w) (BinArith.decWords (PW w)) (Raw w) (NUPPT.inCoins w)
++  have hF : PolyTimeComputable F := phaseContinuation_poly S hS k B Q verifierFirst
++    hX hZ hRV hRaw NUPPT.polyTimeComputable_inCoins hJ hH
++  -- The published uniform constructor and layout readers give the exact activation.
++  refine ⟨NUPPT.ofPolyTimeUniform hF (.mul Q S.coins),
++    NUPPT.ofPolyTimeUniform_uniform hF _, NUPPT.coins_ofPolyTimeUniform hF _, ?_⟩
++  intro n raw x z rV j preWord r
++  rw [NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq, ← NUPPT.layout_eq]
++  dsimp only [F, X, Z, RV, J, PW, Raw, M]
++  simp only [NUPPT.inArg_layout, NUPPT.inCoins_layout, reductionData_eq,
++    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
++
++/-- Given uniform `S`, distinguisher `D`, polynomials `k,B,Q`, orientation `verifierFirst`,
++metadata families `X,Z,RV,J,PreWord`, and a polynomial bound on their packed `reductionData`,
++there is a nonuniform reduction with coins `Q*S.coins + D.coins`. Its activation normalizes
++the current raw phase, simulates the suffix on the first `Q*S.coins` bits, and runs `D` on
++the final canonical view with the remaining coins. No witness is stored or tested.
++[PS10, Theorem 175.1; Gol01, §4.3.4, advised one-phase hybrid reduction].
++
++**Proof sketch.** Take the uniform continuation sampler. Precompose `D` with the second pair
++projection, then apply the published fresh-coin sequential composition so that `D` receives
++only the sampled final view. Apply the ordinary bounded-advice closure to the packed metadata
++family. The three published activation equations, the sampler's exact reader, and its coin
++polynomial identify the complete reduction without constructing a new machine or host. -/
++theorem exists_phaseReduction (S : NUPPT) (hS : S.Uniform) (D : NUPPT)
++    (k B Q : PolyExpr) (verifierFirst : Bool) (X Z RV : ℕ → List Bool)
++    (J : ℕ → ℕ) (PreWord : ℕ → List Bool) (b : PolyExpr)
++    (hdata : ∀ n, (reductionData (X n) (Z n) (RV n) (J n) (PreWord n)).length ≤ b.eval n) :
++    ∃ Red : NUPPT, Red.coins = .add (.mul Q S.coins) D.coins ∧
++      ∀ (n : ℕ) (raw r : List Bool), Red.runAtL n raw r =
++        D.runAtL n
++          (phaseContinuation S k B Q verifierFirst (X n) (Z n) (RV n) (J n)
++            (BinArith.decWords (PreWord n)) raw (r.take ((PolyExpr.mul Q S.coins).eval n)))
++          (r.drop ((PolyExpr.mul Q S.coins).eval n)) := by
++  obtain ⟨U, _, hUc, hU⟩ := exists_continuationSampler S hS k B Q verifierFirst
++  obtain ⟨D0, hD0c, _, _, hD0⟩ := NUPPT.exists_comp D
++    (pre := pairSndD) (post := fun w => w) polyTimeComputable_pairSndD polyTimeComputable_id
++  obtain ⟨C, hCc, _, hC⟩ := NUPPT.exists_seq U D0
++  let β : ℕ → List Bool := fun n => reductionData (X n) (Z n) (RV n) (J n) (PreWord n)
++  have hβ : ∀ n, (β n).length ≤ b.eval n := hdata
++  obtain ⟨Red, hRc, hR⟩ := NUPPT.exists_withAdvice C β b hβ
++  refine ⟨Red, ?_, ?_⟩
++  · rw [hRc, hCc, hUc, hD0c]
++  · intro n raw r
++    rw [hR, hC, hD0, pairSndD_pairEncode]
++    dsimp only [β]
++    rw [hU]
++    simp only [NUPPT.coinLen_eq, hUc]
++
++end TCSlib.Cryptography.SequentialZK
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/ComputationalTransfer.lean b/TCSlib/Cryptography/Composability/SequentialZK/ComputationalTransfer.lean
+new file mode 100644
+index 000000000..9a9b45e0b
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/ComputationalTransfer.lean
+@@ -0,0 +1,100 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Composability.SequentialZK.ComputationalPhaseBound
++import TCSlib.Cryptography.Composability.SequentialZK.ComputationalHybrid
++import TCSlib.Cryptography.Composability.SequentialZK.RealPrefixBounds
++import TCSlib.Cryptography.ZeroKnowledge.Defs
++import TCSlib.Cryptography.Asymptotic.ReductionSupport
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Computational zero knowledge from the padded-prover contract
++
++## Main definitions
++
++This module introduces no definitions or computational hosts.
++
++## Main results
++
++* `zk_of_padded_spec`: a protocol satisfying the padded-prover contract preserves
++  computational zero knowledge under the original prover-message bound.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.1.
++* [Gol01] O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge
++  University Press, 2001, §4.3.4.
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++open Complexity
++
++/-- For protocols `π,ρ`, relation `R`, prover bound `B`, and phase polynomial `Q`, if
++`ZK π R`, `π.ProverBounded R B`, and `ρ` satisfies the padded-prover specification with
++`Q(|x|)` phases and the original mover-dependent real-message count at every `x`, then
++`ZK ρ R`. [PS10, Theorem 175.1; Gol01, §4.3.4].
++
++**Proof sketch.** Apply the original zero-knowledge hypothesis to the efficient fixed-tape
++phase verifier, and realize its uniform normalized repeated simulator with one global
++verifier tape. For each auxiliary-input polynomial and distinguisher, the public bounded
++metadata reduction supplies one negligible bound for all local phase gaps, uniformly over
++all witnesses. The actual real-prefix encoding bound places every reached prefix in that
++metadata domain. The conditional hybrid theorem and averaging over verifier tapes multiply
++the common bound by the phase count. Its absolute value is negligible, and multiplication
++by the syntactic polynomial remains negligible. Exact endpoint equivalences identify the
++actual real view and the uniform simulator without changing the advantage or its bound.
++The selector's zero-phase metadata remains nonempty, and all empty-history cases are covered
++by the same endpoint readers. No witness is encoded in advice or used by the simulator. -/
++theorem zk_of_padded_spec {π ρ : Protocol} {R : List Bool → List Bool → Prop}
++    {B : PolyExpr} (h : ZK π R) (hB : π.ProverBounded R B) (Q : PolyExpr)
++    (hspec : ∀ x, PaddedProverSpec π ρ x (Q.eval x.length)
++      (if π.verifierFirst then π.rounds.eval x.length / 2
++        else (π.rounds.eval x.length + 1) / 2)) : ZK ρ R := by
++  apply (ZK_iff ρ R).2
++  intro V hV
++  -- Choose one simulator before the auxiliary bound and distinguisher are supplied.
++  obtain ⟨S, hS, hclose⟩ := (ZK_iff π R).1 h (phaseVerifier V)
++    (phaseVerifier_efficient (V := V) hV)
++  obtain ⟨SQ, hSQ, hcoins, hsim⟩ :=
++    exists_phaseSimulator S hS π.rounds B Q V.coins π.verifierFirst
++  refine ⟨SQ, hSQ, ?_⟩
++  intro Lz D
++  obtain ⟨ε, hε, hphase⟩ := exists_negligible_phase_bound π R V S hS hclose Lz D Q B
++  have habs : Negligible (fun n => |ε n|) := hε.mono ⟨0, fun n _ => by rw [abs_abs]⟩
++  refine ⟨(fun n => (Q.eval n : ℝ) * |ε n|), habs.polyExpr_mul Q, ?_⟩
++  intro x y z hxy hz
++  have hbound : ∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length :=
++    fun r hist => (Protocol.proverBounded_iff π R B).1 hB x y r hist hxy
++  -- Every actual real prefix lies in the polynomial encoded-prefix envelope.
++  have hlocal (rV : V.Coins x.length) (i : ℕ) (hi : i < Q.eval x.length)
++      (coins : Fin i → π.P.Coins x.length) :
++      phaseGap π V S B Q x y z (List.ofFn rV) (D.distinguisherL x.length) i
++        (realPrefix π V x y z (List.ofFn rV)
++          (if π.verifierFirst then π.rounds.eval x.length / 2
++            else (π.rounds.eval x.length + 1) / 2) i coins) ≤ |ε x.length| := by
++    apply hphase x y z (List.ofFn rV) i _ hxy hz
++    · rw [List.length_ofFn]
++    · exact hi
++    · have hb := (hspec x).realPrefix_bounds V y z (List.ofFn rV) i hi.le
++        (B.eval x.length) hbound coins
++      exact hb.2.2.trans (Nat.mul_le_mul_right (2 * B.eval x.length + 2)
++        (Nat.mul_le_mul_right (π.rounds.eval x.length) hi.le))
++  have hprefix := prefix_distAdv_joint_le S B Q (hspec x) V y z
++    (D.distinguisherL x.length) rfl hbound |ε x.length| (abs_nonneg _) hlocal
++  -- Reindex the actual real and simulator tapes using their published endpoint equations.
++  have hlen : SQ.coinLen x.length =
++      V.coinLen x.length + Q.eval x.length * S.coinLen x.length := by
++    rw [NUPPT.coinLen_eq, hcoins, PolyExpr.eval_add, PolyExpr.eval_mul,
++      Strategy.coinLen_eq, NUPPT.coinLen_eq]
++  with_reducible exact ((distAdv_view_endpoints (hspec x) V y z S SQ B rfl hlen
++    (fun r => by simpa only [Strategy.coinLen_eq] using hsim x z r)
++    (D.distinguisherL x.length)).trans_le hprefix)
++
++end TCSlib.Cryptography.SequentialZK
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean b/TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean
+new file mode 100644
+index 000000000..34d88e958
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean
+@@ -0,0 +1,354 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Composability.SequentialZK.SuffixLaws
++import TCSlib.Cryptography.Composability.SequentialZK.ComputationalReduction
++import TCSlib.Cryptography.Composability.SequentialZK.NormalizedStep
++import TCSlib.Cryptography.Composability.SequentialZK.PaddedProverSpec
++import TCSlib.Cryptography.Pseudorandom.Indistinguishability
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Acceptance potentials for simulated continuations
++
++## Main definitions
++
++* `continuationProb` is the acceptance probability after the remaining normalized phases.
++* `phaseGap` is the local raw real-view/simulator gap through the normalized continuation.
++
++## Main results
++
++* `acceptProb_prod` averages acceptance over the first sampler-seed coordinate.
++* `acceptProb_update_tuple` specializes the published uniform-coordinate replacement law.
++* `continuationProb_bellman` separates a fresh normalized simulator call from its suffix.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.1 (sequential repetition of zero knowledge).
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++open Complexity
++
++/-- Acceptance over sampler seeds `A×B` is the average over `a:A` of acceptance over `B`. -/
++theorem acceptProb_prod {A B O C : Type*} [Fintype A] [Fintype B] [Fintype C]
++    (F : A × B → O) (D : O → C → Bool) :
++    acceptProb F D = uexp (fun a => acceptProb (fun b => F (a, b)) D) := by
++  rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc A B C).symm, uprob_prod]
++  rfl
++
++/-- Replacing coordinate `i` of a uniform tuple by an independent uniform value leaves
++acceptance unchanged: `Pr[D(F(update table i fresh))] = Pr[D(F table)]`. -/
++theorem acceptProb_update_tuple {I A O C : Type*} [DecidableEq I] [Fintype I]
++    [Fintype A] [Nonempty A] [Fintype C] (i : I) (F : (I → A) → O)
++    (D : O → C → Bool) :
++    acceptProb (fun r : A × (I → A) => F (Function.update r.2 i r.1)) D =
++      acceptProb F D := by
++  have hupdate := acceptProb_update (τ := Unit) i (fun table _ => F table) D
++  have hleft :
++      acceptProb (fun r : (A × (I → A)) × Unit =>
++        F (Function.update r.1.2 i r.1.1)) D =
++      acceptProb (fun r : A × ((I → A) × Unit) =>
++        F (Function.update r.2.1 i r.1)) D :=
++    acceptProb_comp_equiv (Equiv.prodAssoc A (I → A) Unit)
++      (fun r : A × ((I → A) × Unit) => F (Function.update r.2.1 i r.1)) D
++  rw [acceptProb_fst (τ := Unit)
++    (fun r : A × (I → A) => F (Function.update r.2 i r.1)) D] at hleft
++  exact hleft.trans (hupdate.trans (acceptProb_fst F D))
++
++/-- If `post (raw (a,z)) b = F a b` and `Z` is nonempty, post-processing `raw` with fresh
++`B` coins and applying `D` has acceptance `E_a[acceptProb (F a) D]`. -/
++theorem acceptProb_postprocess_fst {A Z B Raw O C : Type*}
++    [Fintype A] [Fintype Z] [Nonempty Z] [Fintype B] [Fintype C]
++    (raw : A × Z → Raw) (post : Raw → B → O) (F : A → B → O)
++    (hpoint : ∀ a z b, post (raw (a, z)) b = F a b) (D : O → C → Bool) :
++    acceptProb raw (fun out (r : B × C) => D (post out r.1) r.2) =
++      uexp (fun a => acceptProb (F a) D) := by
++  rw [acceptProb_bind, acceptProb_prod]
++  have hfunctions : (fun r : A × Z => acceptProb (fun b => post (raw r) b) D) =
++      (fun r : A × Z => acceptProb (F r.1) D) := by
++    funext r
++    congr 1
++    funext b
++    exact hpoint r.1 r.2 b
++  rw [hfunctions]
++  exact HardcoreBit.uexp_fst (β := Z) (fun a : A => acceptProb (F a) D)
++
++/-- `continuationProb … D i pre` is acceptance by `D` after simulating phases
++`i,…,Q(|x|)-1` from `pre`, with an independent full table of `Q(|x|)` simulator tapes.
++Only the suffix's own blocks are used. [PS10, Theorem 175.1, hybrid continuation potential].
++-/
++noncomputable def continuationProb {C : Type*} [Fintype C]
++    (S : NUPPT) (k B Q : PolyExpr) (verifierFirst : Bool) (x z rV : List Bool)
++    (D : List Bool → C → Bool) (i : ℕ) (pre : List (List Bool)) : ℝ :=
++  acceptProb (fun coins : Fin (Q.eval x.length) → S.Coins x.length =>
++    View.encode ⟨x, z, rV, phaseSuffix S k B verifierFirst x z rV
++      (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm coins))
++      i pre (Q.eval x.length - i)⟩) D
++
++/-- The defining equation of `continuationProb` is the acceptance of the canonical view
++whose message list is the remaining `phaseSuffix`, sampled from the full typed coin table. -/
++theorem continuationProb_eq {C : Type*} [Fintype C]
++    (S : NUPPT) (k B Q : PolyExpr) (verifierFirst : Bool) (x z rV : List Bool)
++    (D : List Bool → C → Bool) (i : ℕ) (pre : List (List Bool)) :
++    continuationProb S k B Q verifierFirst x z rV D i pre =
++      acceptProb (fun coins : Fin (Q.eval x.length) → S.Coins x.length =>
++        View.encode ⟨x, z, rV, phaseSuffix S k B verifierFirst x z rV
++          (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm coins))
++          i pre (Q.eval x.length - i)⟩) D := rfl
++
++/-- For `i<Q(|x|)`, the continuation potential equals acceptance after one fresh typed
++simulator update at `i`, then the remaining suffix on an independent full simulator table.
++
++**Proof sketch.** Reseed table entry `i` independently using the published uniform-update
++law. The front-step suffix reader makes that entry the current normalized update. Every
++later suffix block has index greater than `i`, so overwriting entry `i` leaves the remaining
++suffix unchanged. The resulting sampler is the desired independent current coin and suffix.
++-/
++theorem continuationProb_bellman {C : Type*} [Fintype C]
++    (S : NUPPT) (k B Q : PolyExpr) (verifierFirst : Bool) (x z rV : List Bool)
++    (D : List Bool → C → Bool) (i : ℕ) (hi : i < Q.eval x.length)
++    (pre : List (List Bool)) :
++    continuationProb S k B Q verifierFirst x z rV D i pre =
++      acceptProb (fun r : S.Coins x.length × (Fin (Q.eval x.length) → S.Coins x.length) =>
++        View.encode ⟨x, z, rV, phaseSuffix S k B verifierFirst x z rV
++          (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm r.2))
++          (i + 1)
++          (simStep S x z rV (k.eval x.length) (B.eval x.length)
++            (if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2)
++            i pre r.1) (Q.eval x.length - (i + 1))⟩) D := by
++  let F : (Fin (Q.eval x.length) → S.Coins x.length) → List Bool := fun coins =>
++    View.encode ⟨x, z, rV, phaseSuffix S k B verifierFirst x z rV
++      (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm coins))
++      i pre (Q.eval x.length - i)⟩
++  -- Independently reseed the current table entry without changing its uniform law.
++  have hupdate := acceptProb_update_tuple (⟨i, hi⟩ : Fin (Q.eval x.length)) F D
++  -- Separate that entry as the current update; all future blocks ignore the overwrite.
++  have hpoint (r : S.Coins x.length × (Fin (Q.eval x.length) → S.Coins x.length)) :
++      F (Function.update r.2 ⟨i, hi⟩ r.1) =
++        View.encode ⟨x, z, rV, phaseSuffix S k B verifierFirst x z rV
++          (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm r.2))
++          (i + 1)
++          (simStep S x z rV (k.eval x.length) (B.eval x.length)
++            (if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2)
++            i pre r.1) (Q.eval x.length - (i + 1))⟩ := by
++    have hblock := FunFamily.ofFn_blocks (Q.eval x.length) (S.coinLen x.length)
++      ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm
++        (Function.update r.2 ⟨i, hi⟩ r.1)) ⟨i, hi⟩
++    rw [Equiv.apply_symm_apply, Function.update_self] at hblock
++    have hcoin : coinBlock (S.coinLen x.length) i
++        (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm
++          (Function.update r.2 ⟨i, hi⟩ r.1))) = List.ofFn r.1 :=
++      (coinBlock_eq _ _ _).trans hblock.symm
++    dsimp only [F]
++    rw [show Q.eval x.length - i = (Q.eval x.length - (i + 1)) + 1 by omega,
++      phaseSuffix_front, phaseStep_eq_simStep S k B verifierFirst x z rV _ i pre r.1 hcoin,
++      phaseSuffix_update_before S k B verifierFirst x z rV (Q.eval x.length) r.2
++        ⟨i, hi⟩ r.1 (i + 1) _ (Q.eval x.length - (i + 1))
++        (by change i < i + 1; omega) (by omega)]
++  rw [continuationProb_eq]
++  exact hupdate.symm.trans (congrArg (fun sampler => acceptProb sampler D) (funext hpoint))
++
++/-- For a bounded honest prover and padded-prover specification `d`, the raw original
++phase view, normalized and passed to `phaseContinuation`, has acceptance equal to the
++average next continuation potential of `realStep`. The wrapper's zero verifier coins
++are removed through the public uniform-product laws.
++
++**Proof sketch.** The published real-view fixed point identifies normalized messages with
++the original phase's verifier history. The specification supplies its exact message count;
++the caller supplies the uniform prover-message bound. The continuation then starts from
++exactly `realStep`. Its value is independent of the wrapper's zero-bit verifier tape, so
++averaging and projecting that factor leaves the expectation over the original prover coins.
++-/
++theorem continuationProb_real {C : Type*} [Fintype C] {π ρ : Protocol}
++    (S : NUPPT) (B Q : PolyExpr) {x : List Bool} {p : ℕ}
++    (d : PaddedProverSpec π ρ x (Q.eval x.length) p) (V : Strategy)
++    (y z rV : List Bool) (D : List Bool → C → Bool)
++    (hp : p = if π.verifierFirst then π.rounds.eval x.length / 2
++      else (π.rounds.eval x.length + 1) / 2)
++    (hbound : ∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length)
++    (i : ℕ) (pre : List (List Bool)) :
++    acceptProb
++      (fun r : (π.withV (phaseVerifier V)).ExecCoins (π.withV (phaseVerifier V)).P x =>
++        ((π.withV (phaseVerifier V)).viewV x y (phaseAux z rV i pre) r).encode)
++      (fun raw (r : (Fin (Q.eval x.length) → S.Coins x.length) × C) =>
++        D (phaseContinuation S π.rounds B Q π.verifierFirst x z rV i pre raw
++          (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm r.1)))
++          r.2) =
++      uexp (fun coin : π.P.Coins x.length =>
++        continuationProb S π.rounds B Q π.verifierFirst x z rV D (i + 1)
++          (realStep π V x y z rV p i pre coin)) := by
++  let aux := phaseAux z rV i pre
++  -- Build the seed conversion from public field readers, without reducing `withV`.
++  let eP : π.P.Coins x.length ≃ (π.withV (phaseVerifier V)).P.Coins x.length :=
++    Equiv.arrowCongr (finCongr (by rw [Protocol.withV_P])) (Equiv.refl Bool)
++  let eV := (π.withV_vCoinsEquiv (phaseVerifier V) x.length).symm
++  let e : π.P.Coins x.length × (phaseVerifier V).Coins x.length ≃
++      (π.withV (phaseVerifier V)).ExecCoins (π.withV (phaseVerifier V)).P x :=
++    eP.prodCongr eV
++  have heP (a : π.P.Coins x.length) (v : (phaseVerifier V).Coins x.length) :
++      List.ofFn (e (a, v)).1 = List.ofFn a := by
++    change List.ofFn (eP a) = List.ofFn a
++    exact (List.ofFn_congr (show π.P.coinLen x.length =
++      (π.withV (phaseVerifier V)).P.coinLen x.length by rw [Protocol.withV_P]) a).symm
++  have heV (a : π.P.Coins x.length) (v : (phaseVerifier V).Coins x.length) :
++      List.ofFn (e (a, v)).2 = List.ofFn v := by
++    change List.ofFn (eV v) = List.ofFn v
++    have hv := π.withV_vCoinsEquiv_ofFn (phaseVerifier V) x.length
++      ((π.withV_vCoinsEquiv (phaseVerifier V) x.length).symm v)
++    rw [Equiv.apply_symm_apply] at hv
++    exact hv.symm
++  let raw : π.P.Coins x.length × (phaseVerifier V).Coins x.length → List Bool :=
++    fun r => ((π.withV (phaseVerifier V)).viewV x y aux (e r)).encode
++  have hraw (a : π.P.Coins x.length) (v : (phaseVerifier V).Coins x.length) :
++      raw (a, v) =
++        View.encode ⟨x, aux, List.ofFn v,
++          (exec π.P (phaseVerifier V) π.verifierFirst x y aux (List.ofFn a)
++            (List.ofFn v) (π.rounds.eval x.length)).2⟩ := by
++    dsimp only [raw]
++    rw [Protocol.viewV_withV, heP a v, heV a v]
++  -- Normalize at the converted actual seed, then read both tapes through their equations.
++  have hfixed (a : π.P.Coins x.length) (v : (phaseVerifier V).Coins x.length) :
++      normalizePhaseMsgs x aux p (B.eval x.length)
++          (View.encode ⟨x, aux, List.ofFn v,
++            (exec π.P (phaseVerifier V) π.verifierFirst x y aux (List.ofFn a)
++              (List.ofFn v) (π.rounds.eval x.length)).2⟩) =
++        (exec π.P (phaseVerifier V) π.verifierFirst x y aux (List.ofFn a) []
++          (π.rounds.eval x.length)).2 := by
++    have hc : (π.withV (phaseVerifier V)).V.coinLen x.length = 0 := by
++      rw [Protocol.withV_V, phaseVerifier_coinLen]
++    have hb : ∀ r hist,
++        ((π.withV (phaseVerifier V)).P.next x y r hist).length ≤ B.eval x.length := by
++      simpa only [Protocol.withV_P] using hbound
++    have hn (rP : List Bool) :
++        (exec (π.withV (phaseVerifier V)).P (π.withV (phaseVerifier V)).V
++          (π.withV (phaseVerifier V)).verifierFirst x y aux rP []
++          ((π.withV (phaseVerifier V)).rounds.eval x.length)).2.length = p := by
++      simp only [Protocol.withV_P, Protocol.withV_V, Protocol.withV_verifierFirst,
++        Protocol.withV_rounds]
++      exact d.original_count (phaseVerifier V) y aux rP []
++    have hf := normalizePhaseMsgs_viewV (π.withV (phaseVerifier V)) x y aux p
++      (B.eval x.length) hc hb hn (e (a, v))
++    change normalizePhaseMsgs x aux p (B.eval x.length) (raw (a, v)) = _ at hf
++    rw [hraw a v, heP a v] at hf
++    simpa only [Protocol.withV_P, Protocol.withV_V, Protocol.withV_verifierFirst,
++      Protocol.withV_rounds] using hf
++  let post := fun out (coins : Fin (Q.eval x.length) → S.Coins x.length) =>
++    phaseContinuation S π.rounds B Q π.verifierFirst x z rV i pre out
++      (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm coins))
++  let F := fun (a : π.P.Coins x.length)
++      (coins : Fin (Q.eval x.length) → S.Coins x.length) =>
++    View.encode ⟨x, z, rV, phaseSuffix S π.rounds B π.verifierFirst x z rV
++      (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm coins))
++      (i + 1) (realStep π V x y z rV p i pre a) (Q.eval x.length - (i + 1))⟩
++  have hpoint (a : π.P.Coins x.length) (v : (phaseVerifier V).Coins x.length)
++      (coins : Fin (Q.eval x.length) → S.Coins x.length) : post (raw (a, v)) coins =
++      F a coins := by
++    dsimp only [post, F]
++    rw [phaseContinuation_eq, realStep_eq]
++    dsimp only
++    rw [← hp, hraw a v, hfixed a v]
++  -- Reindex the actual execution law before removing the unused wrapper-tape factor.
++  have hindex := acceptProb_comp_equiv e
++    (fun r : (π.withV (phaseVerifier V)).ExecCoins (π.withV (phaseVerifier V)).P x =>
++      ((π.withV (phaseVerifier V)).viewV x y aux r).encode)
++    (fun out (r : (Fin (Q.eval x.length) → S.Coins x.length) × C) => D (post out r.1) r.2)
++  have hreal := acceptProb_postprocess_fst raw post F hpoint D
++  simpa only [continuationProb_eq] using hindex.symm.trans hreal
++
++/-- For `i<Q(|x|)`, the simulated raw phase passed to `phaseContinuation` has acceptance
++exactly `continuationProb … i pre`, with an independent full table of suffix coins.
++
++**Proof sketch.** Move the independent suffix coins into the simulated sampler. The
++published continuation equation is exactly one typed normalized simulator step followed
++by the remaining suffix. The Bellman reader identifies this sampler's acceptance with
++the original continuation potential. -/
++theorem continuationProb_sim {C : Type*} [Fintype C]
++    (S : NUPPT) (k B Q : PolyExpr) (verifierFirst : Bool) (x z rV : List Bool)
++    (D : List Bool → C → Bool) (i : ℕ) (hi : i < Q.eval x.length)
++    (pre : List (List Bool)) :
++    acceptProb (S.simulate x (phaseAux z rV i pre))
++      (fun raw (r : (Fin (Q.eval x.length) → S.Coins x.length) × C) =>
++        D (phaseContinuation S k B Q verifierFirst x z rV i pre raw
++          (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm r.1)))
++          r.2) = continuationProb S k B Q verifierFirst x z rV D i pre := by
++  -- Expose the fresh simulator coin and the independent full suffix table.
++  rw [acceptProb_bind (S.simulate x (phaseAux z rV i pre))
++    (fun raw (coins : Fin (Q.eval x.length) → S.Coins x.length) =>
++      phaseContinuation S k B Q verifierFirst x z rV i pre raw
++        (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm coins))) D]
++  let F := fun r : S.Coins x.length × (Fin (Q.eval x.length) → S.Coins x.length) =>
++    View.encode ⟨x, z, rV, phaseSuffix S k B verifierFirst x z rV
++      (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm r.2))
++      (i + 1)
++      (simStep S x z rV (k.eval x.length) (B.eval x.length)
++        (if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2)
++        i pre r.1) (Q.eval x.length - (i + 1))⟩
++  have hpoint :
++      (fun r : S.Coins x.length × (Fin (Q.eval x.length) → S.Coins x.length) =>
++        phaseContinuation S k B Q verifierFirst x z rV i pre
++          (S.simulate x (phaseAux z rV i pre) r.1)
++          (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm r.2))) =
++        F := by
++    funext r
++    dsimp only [F]
++    rw [phaseContinuation_eq, simStep_eq]
++  rw [hpoint]
++  exact (continuationProb_bellman S k B Q verifierFirst x z rV D i hi pre).symm
++
++/-- The local raw-view gap at `i,pre`: original `π.P` against the fixed-tape phase verifier
++versus `S.simulate`, tested by the normalized `phaseContinuation` with independent full
++simulator-table coins and `D` coins. The witness `y` appears only in the mathematical real
++sampler. [PS10, Theorem 175.1, one-phase hybrid gap]. -/
++noncomputable def phaseGap {C : Type*} [Fintype C] (π : Protocol) (V : Strategy)
++    (S : NUPPT) (B Q : PolyExpr) (x y z rV : List Bool) (D : List Bool → C → Bool)
++    (i : ℕ) (pre : List (List Bool)) : ℝ :=
++  distAdv
++    (fun r : (π.withV (phaseVerifier V)).ExecCoins (π.withV (phaseVerifier V)).P x =>
++      ((π.withV (phaseVerifier V)).viewV x y (phaseAux z rV i pre) r).encode)
++    (S.simulate x (phaseAux z rV i pre))
++    (fun raw (r : (Fin (Q.eval x.length) → S.Coins x.length) × C) =>
++      D (phaseContinuation S π.rounds B Q π.verifierFirst x z rV i pre raw
++        (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm r.1))) r.2)
++
++/-- The defining equation of `phaseGap` is the displayed raw real-view/simulator
++`distAdv` after `phaseContinuation`, using a full independent typed simulator table. -/
++theorem phaseGap_eq {C : Type*} [Fintype C] (π : Protocol) (V : Strategy)
++    (S : NUPPT) (B Q : PolyExpr) (x y z rV : List Bool) (D : List Bool → C → Bool)
++    (i : ℕ) (pre : List (List Bool)) :
++    phaseGap π V S B Q x y z rV D i pre =
++      distAdv
++        (fun r : (π.withV (phaseVerifier V)).ExecCoins (π.withV (phaseVerifier V)).P x =>
++          ((π.withV (phaseVerifier V)).viewV x y (phaseAux z rV i pre) r).encode)
++        (S.simulate x (phaseAux z rV i pre))
++        (fun raw (r : (Fin (Q.eval x.length) → S.Coins x.length) × C) =>
++          D (phaseContinuation S π.rounds B Q π.verifierFirst x z rV i pre raw
++            (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm r.1)))
++            r.2) := rfl
++
++/-- For a bounded real prover, the local raw-view gap `phaseGap` is exactly the absolute
++drift of `continuationProb` under the real next phase, for `i<Q(|x|)`. -/
++theorem phaseGap_eq_drift {C : Type*} [Fintype C] {π ρ : Protocol}
++    (S : NUPPT) (B Q : PolyExpr) {x : List Bool} {p : ℕ}
++    (d : PaddedProverSpec π ρ x (Q.eval x.length) p) (V : Strategy)
++    (y z rV : List Bool) (D : List Bool → C → Bool)
++    (hp : p = if π.verifierFirst then π.rounds.eval x.length / 2
++      else (π.rounds.eval x.length + 1) / 2)
++    (hbound : ∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length)
++    (i : ℕ) (hi : i < Q.eval x.length) (pre : List (List Bool)) :
++    phaseGap π V S B Q x y z rV D i pre =
++      |uexp (fun coin : π.P.Coins x.length =>
++        continuationProb S π.rounds B Q π.verifierFirst x z rV D (i + 1)
++          (realStep π V x y z rV p i pre coin)) -
++        continuationProb S π.rounds B Q π.verifierFirst x z rV D i pre| := by
++  rw [phaseGap_eq, distAdv_def,
++    continuationProb_real S B Q d V y z rV D hp hbound i pre,
++    continuationProb_sim S π.rounds B Q π.verifierFirst x z rV D i hi pre]
++
++end TCSlib.Cryptography.SequentialZK
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean b/TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean
+new file mode 100644
+index 000000000..4973f46d1
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean
+@@ -0,0 +1,93 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Asymptotic.Sampling
++import Mathlib.Data.Fin.Tuple.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Hybrid bounds from conditional continuation gaps
++
++## Main definitions
++
++This module introduces no definitions.
++
++## Main results
++
++* `hybrid_recursion_gap_le` bounds the difference between the final real execution's
++  expected continuation potential and the initial potential by the number of phase updates
++  times their uniform conditional gap bound.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.1 (sequential repetition of zero knowledge).
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++/-- Let `realFamily` start at `initial` and satisfy its displayed `Fin.snoc` equation for
++`realStep`. For a real-valued continuation potential `C`, suppose `0 ≤ ε` and each actual
++real prefix at `i<q` satisfies
++`|E_a[C (i+1) (realStep i (realFamily i r) a)] - C i (realFamily i r)| ≤ ε`.
++Then `|E_r[C q (realFamily q r)] - C 0 initial| ≤ q*ε`.
++The state type is arbitrary; no finite witness or state-space assumption is required.
++[PS10, Theorem 175.1, conditional hybrid argument].
++
++**Proof sketch.** For each phase count, average the continuation potential over the real
++prefix's independent coins. The snoc equivalence and uniform-product averaging identify
++the next average with the average of its conditional next-step expectations. Averaging
++the supplied local bounds therefore bounds each adjacent difference by `ε`. Apply the
++published telescoping hybrid inequality and bound its `q` summands by `ε`. -/
++theorem hybrid_recursion_gap_le {A State : Type*} [Fintype A] [Nonempty A]
++    (realFamily : (i : ℕ) → (Fin i → A) → State) (initial : State)
++    (realStep : ℕ → State → A → State)
++    (real_zero : ∀ r, realFamily 0 r = initial)
++    (real_snoc : ∀ i r a, realFamily (i + 1) (Fin.snoc r a) =
++      realStep i (realFamily i r) a)
++    (C : ℕ → State → ℝ) (q : ℕ) (ε : ℝ) (hε : 0 ≤ ε)
++    (hlocal : ∀ i < q, ∀ r : Fin i → A,
++      |uexp (fun a => C (i + 1) (realStep i (realFamily i r) a)) -
++        C i (realFamily i r)| ≤ ε) :
++    |uexp (fun r : Fin q → A => C q (realFamily q r)) - C 0 initial| ≤
++      (q : ℝ) * ε := by
++  -- Average the continuation potential over each real prefix coin table.
++  let P : ℕ → ℝ := fun i => uexp (fun r : Fin i → A => C i (realFamily i r))
++  have hzero : P 0 = C 0 initial := by
++    simp only [P, real_zero, HardcoreBit.uexp_const]
++  -- Reindex the next table as a prefix and fresh coin, then average the local gap.
++  have hgap (i : ℕ) (hi : i < q) : |P i - P (i + 1)| ≤ ε := by
++    let e : (Fin (i + 1) → A) ≃ (Fin i → A) × A :=
++      (Fin.snocEquiv (fun _ : Fin (i + 1) => A)).symm.trans
++        (Equiv.prodComm A (Fin i → A))
++    have hfamily (r : Fin (i + 1) → A) :
++        realFamily (i + 1) r = realStep i (realFamily i (e r).1) (e r).2 := by
++      change realFamily (i + 1) r =
++        realStep i (realFamily i (Fin.init r)) (r (Fin.last i))
++      simpa only [Fin.snoc_init_self] using real_snoc i (Fin.init r) (r (Fin.last i))
++    have hnext : P (i + 1) = uexp (fun r : Fin i → A =>
++        uexp (fun a => C (i + 1) (realStep i (realFamily i r) a))) := by
++      have hpoint : (fun r : Fin (i + 1) → A => C (i + 1) (realFamily (i + 1) r)) =
++          (fun r => C (i + 1) (realStep i (realFamily i (e r).1) (e r).2)) :=
++        funext fun r => congrArg (C (i + 1)) (hfamily r)
++      change uexp (fun r : Fin (i + 1) → A => C (i + 1) (realFamily (i + 1) r)) = _
++      rw [hpoint, HardcoreBit.uexp_comp_equiv e
++        (fun z : (Fin i → A) × A => C (i + 1) (realStep i (realFamily i z.1) z.2)),
++        HardcoreBit.uexp_prod]
++    rw [hnext, abs_sub_comm]
++    exact abs_uexp_sub_le hε (fun r => hlocal i hi r)
++  -- Apply the published telescope and bound each adjacent gap by the same error.
++  have hsum : ∑ i ∈ Finset.range q, |P i - P (i + 1)| ≤ (q : ℝ) * ε := by
++    calc
++      _ ≤ ∑ _i ∈ Finset.range q, ε :=
++        Finset.sum_le_sum fun i hi => hgap i (Finset.mem_range.mp hi)
++      _ = (q : ℝ) * ε := by simp
++  have hbound := (abs_sub_le_sum_hybrids P q).trans hsum
++  rw [hzero, abs_sub_comm] at hbound
++  exact hbound
++
++end TCSlib.Cryptography.SequentialZK
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean b/TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean
+new file mode 100644
+index 000000000..9b732c32b
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean
+@@ -0,0 +1,101 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Composability.SequentialZK.EndpointSampling
++import TCSlib.Cryptography.Composability.SequentialZK.ExecutionBounds
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Bounds for actual real phase prefixes
++
++The endpoint reader identifies a typed real-prefix fold with an execution of the padded
++prover. The construction specification then gives its exact message count, while the
++original prover's uniform message bound also bounds every padded-prover reply. Existing
++execution and word-encoding bounds finish the advice-size estimate. [PS10, Theorem 175.1].
++
++## Main definitions
++
++There are no new definitions.
++
++## Main results
++
++* `PaddedProverSpec.realPrefix_bounds`: exact count, bounded messages, and encoded-size bound.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §7.2.1, Theorem 175.1.
++* [Gol01] O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge
++  University Press, 2001, §4.3.4.
++-/
++
++namespace TCSlib.Cryptography.SequentialZK.PaddedProverSpec
++
++open Complexity
++
++/-- For `d : PaddedProverSpec π ρ x q p`, verifier `V`, inputs `y,z`, tape `rV`, index
++`j≤q`, message cap `B`, uniform original-prover bound `hbound`, and independent phase coins
++`coins`, put `pre = realPrefix π V x y z rV p j coins` and `k = π.rounds.eval |x|`. Then
++`pre.length = j*k`, every `m ∈ pre` has `m.length ≤ B`, and
++`(Strategy.encodeMsgs pre).length ≤ (j*k)*(2*B+2)`.
++[PS10, Theorem 175.1; Gol01, §4.3.4, bounded real-prefix reduction advice].
++
++**Proof sketch.** The public coin-table equivalence supplies a raw tape with exactly the
++requested independent phase blocks. The real-prefix endpoint reader identifies the fold
++with the repeated execution on that tape. Its boundary reader gives exactly `j*k` received
++messages. Each repeated-prover reply is either an original bounded message or an empty
++filler, by the specification's public reply equation. The public execution-message bound
++therefore controls every received message. Finally reuse the execution encoding bound,
++which already invokes the generic public encoded-word length theorem. -/
++theorem realPrefix_bounds {π ρ : Protocol} {x : List Bool} {q p : ℕ}
++    (d : PaddedProverSpec π ρ x q p) (V : Strategy) (y z rV : List Bool)
++    (j : ℕ) (hj : j ≤ q) (B : ℕ)
++    (hbound : ∀ r hist, (π.P.next x y r hist).length ≤ B)
++    (coins : Fin j → π.P.Coins x.length) :
++    (realPrefix π V x y z rV p j coins).length = j * π.rounds.eval x.length ∧
++    (∀ m ∈ realPrefix π V x y z rV p j coins, m.length ≤ B) ∧
++    (Strategy.encodeMsgs (realPrefix π V x y z rV p j coins)).length ≤
++      (j * π.rounds.eval x.length) * (2 * B + 2) := by
++  -- Reconstruct one raw tape whose blocks are the supplied typed phase coins.
++  let e : (Fin (j * π.P.coinLen x.length) → Bool) ≃ (Fin j → π.P.Coins x.length) :=
++    coinTableEquiv rfl
++  let tape := List.ofFn (e.symm coins)
++  have hblocks (i : Fin j) :
++      coinBlock (π.P.coinLen x.length) i tape = List.ofFn (coins i) := by
++    have hblock := coinTableEquiv_block (m := j * π.P.coinLen x.length)
++      (q := j) (c := π.P.coinLen x.length) rfl (e.symm coins) i
++    have hinverse := congrArg (fun table : Fin j → π.P.Coins x.length =>
++      List.ofFn (table i)) (e.apply_symm_apply coins)
++    exact hblock.trans hinverse
++  have hend : realPrefix π V x y z rV p j coins =
++      (exec ρ.P V π.verifierFirst x y z tape rV
++        (2 * π.rounds.eval x.length * j)).2 :=
++    d.realPrefix_eq_exec V y z tape rV j hj coins hblocks
++  have hcount : (realPrefix π V x y z rV p j coins).length =
++      j * π.rounds.eval x.length := by
++    rw [hend]
++    exact (d.boundary V y z tape rV j).2
++  -- Empty fillers satisfy the same cap as the original real replies.
++  have hsource (hist : List (List Bool)) : (ρ.P.next x y tape hist).length ≤ B := by
++    rw [d.next y tape hist]
++    dsimp only
++    split_ifs <;> first | exact hbound _ _ | exact Nat.zero_le B
++  have hmessages : ∀ m ∈ realPrefix π V x y z rV p j coins, m.length ≤ B := by
++    rw [hend]
++    exact exec_snd_bounded ρ.P V π.verifierFirst x y z tape rV B
++      (2 * π.rounds.eval x.length * j) hsource
++  -- Reuse the existing execution-specific encoded-history estimate.
++  have hencoding : (Strategy.encodeMsgs (realPrefix π V x y z rV p j coins)).length ≤
++      (j * π.rounds.eval x.length) * (2 * B + 2) := by
++    rw [hend]
++    have hencoded := length_encodeMsgs_exec_snd_le ρ.P V π.verifierFirst x y z tape rV B
++      (2 * π.rounds.eval x.length * j) hsource
++    rw [(d.boundary V y z tape rV j).2] at hencoded
++    exact hencoded
++  exact ⟨hcount, hmessages, hencoding⟩
++
++end TCSlib.Cryptography.SequentialZK.PaddedProverSpec
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean b/TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean
+new file mode 100644
+index 000000000..569da4e4a
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean
+@@ -0,0 +1,105 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Composability.SequentialZK.ComputationalReduction
++import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Typed advantage of the one-phase reduction
++
++## Main definitions
++
++This module introduces no definitions or computational hosts.
++
++## Main results
++
++* `distAdv_phaseReduction`: the reduction's exact raw activation equation identifies its
++  advantage with the typed independent phase-table and final-distinguisher coin experiment.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.1.
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++open Complexity
++
++/-- For fixed machines `S,D,Red`, phase polynomials `k,B,Q`, orientation `verifierFirst`,
++parameter `n`, and metadata `x,z,rV,j,pre`, suppose `Red` has coins `Q*S.coins+D.coins` and
++its raw activation normalizes the candidate, simulates the suffix, and then invokes `D`.
++For any raw-output samplers `X,Y`, its distinguishing advantage equals that of the typed
++experiment with independent coins `(Fin (Q.eval n) → S.Coins n) × D.Coins n`, flattened by
++`FunFamily.blocks.symm` for the suffix. No metadata validity or witness premise is needed.
++[PS10, Theorem 175.1, one-phase computational hybrid reduction].
++
++**Proof sketch.**
++First read the reduction's exact coin polynomial at the fixed parameter.
++Its numerical coin length is the sum of the simulator-table and distinguisher lengths.
++The canonical block equivalence flattens the independent simulator table.
++The published `coinsEquiv` then concatenates it with the distinguisher coins.
++Their composition is a bijection from the typed independent coins to `Red.Coins n`.
++The published take reader identifies the entire simulator-table tape.
++The published drop reader identifies the independent final-distinguisher tape.
++These equations require no positivity of either coin length or the number of phases.
++Read both machine distinguishers through their published verdict equations.
++Read their typed activations through the public `runAt_eq` equation.
++Apply the assumed exact raw activation equation to every candidate word and tape.
++The two tape readers identify that verdict with the claimed typed local experiment.
++Reindex acceptance probabilities along the constructed bijection for sampler `X`.
++Do the same independently for sampler `Y`.
++Finally read the absolute acceptance gap through `distAdv_def` and substitute both
++probability equalities. The sample spaces may differ and need only be finite. -/
++theorem distAdv_phaseReduction {σ τ : Type*} [Fintype σ] [Fintype τ]
++    (S D Red : NUPPT) (k B Q : PolyExpr) (verifierFirst : Bool) (n : ℕ)
++    (x z rV : List Bool) (j : ℕ) (pre : List (List Bool))
++    (hcoins : Red.coins = .add (.mul Q S.coins) D.coins)
++    (hrun : ∀ raw r, Red.runAtL n raw r = D.runAtL n
++      (phaseContinuation S k B Q verifierFirst x z rV j pre raw
++        (r.take ((PolyExpr.mul Q S.coins).eval n)))
++      (r.drop ((PolyExpr.mul Q S.coins).eval n)))
++    (X : σ → List Bool) (Y : τ → List Bool) :
++    distAdv X Y (Red.distinguisherL n) =
++      distAdv X Y (fun raw (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) =>
++        D.distinguisherL n
++          (phaseContinuation S k B Q verifierFirst x z rV j pre raw
++            (List.ofFn ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1))) c.2) := by
++  -- The published coin readers identify the canonical independent product space.
++  have hlen : Red.coinLen n = Q.eval n * S.coinLen n + D.coinLen n := by
++    rw [NUPPT.coinLen_eq, hcoins, PolyExpr.eval_add, PolyExpr.eval_mul,
++      NUPPT.coinLen_eq, NUPPT.coinLen_eq]
++  let e : ((Fin (Q.eval n) → S.Coins n) × D.Coins n) ≃ Red.Coins n :=
++    ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm.prodCongr
++      (Equiv.refl (D.Coins n))).trans (EnsembleLemmas.coinsEquiv hlen)
++  have htake (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) :
++      (List.ofFn (e c)).take ((PolyExpr.mul Q S.coins).eval n) =
++        List.ofFn ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1) := by
++    simpa only [e, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply,
++      Equiv.refl_apply, PolyExpr.eval_mul, NUPPT.coinLen_eq] using
++      EnsembleLemmas.take_ofFn_coinsEquiv hlen
++        (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2)
++  have hdrop (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) :
++      (List.ofFn (e c)).drop ((PolyExpr.mul Q S.coins).eval n) = List.ofFn c.2 := by
++    simpa only [e, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply,
++      Equiv.refl_apply, PolyExpr.eval_mul, NUPPT.coinLen_eq] using
++      EnsembleLemmas.drop_ofFn_coinsEquiv hlen
++        (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2)
++  -- Compare the exact verdicts, then reindex each acceptance probability.
++  have key (raw : List Bool) (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) :
++      Red.distinguisherL n raw (e c) = D.distinguisherL n
++        (phaseContinuation S k B Q verifierFirst x z rV j pre raw
++          (List.ofFn ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1))) c.2 := by
++    rw [NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
++      NUPPT.runAt_eq, hrun, htake, hdrop]
++  have hX := EnsembleLemmas.acceptProb_coins_equiv e X (Red.distinguisherL n)
++  have hY := EnsembleLemmas.acceptProb_coins_equiv e Y (Red.distinguisherL n)
++  simp only [key] at hX hY
++  rw [distAdv_def, distAdv_def, ← hX, ← hY]
++
++end TCSlib.Cryptography.SequentialZK
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean b/TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean
+new file mode 100644
+index 000000000..b700d7119
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean
+@@ -0,0 +1,122 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Composability.SequentialZK.SuffixMachine
++import TCSlib.Cryptography.Composability.SequentialZK.PrefixLaws
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Front-step and tape-independence readers for simulated suffixes
++
++## Main definitions
++
++This module introduces no definitions.
++
++## Main results
++
++* `phaseStep_eq_simStep` reads a phase update from a supplied typed simulator coin block.
++* `phaseSuffix_front` separates the first update of a simulated suffix.
++* `phaseSuffix_congr_blocks` shows that a suffix depends only on its own phase coin blocks.
++* `phaseSuffix_update_before` ignores an overwritten table entry before its starting phase.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.1 (sequential repetition of zero knowledge).
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++open Complexity
++
++/-- If global block `j` of `rS` equals `List.ofFn coin`, the normalized raw-tape update
++`phaseStep` equals the typed update `simStep` on `coin`. -/
++theorem phaseStep_eq_simStep (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
++    (x z rV rS : List Bool) (j : ℕ) (pre : List (List Bool)) (coin : S.Coins x.length)
++    (hcoin : coinBlock (S.coinLen x.length) j rS = List.ofFn coin) :
++    phaseStep S k B verifierFirst x z rV rS j pre =
++      simStep S x z rV (k.eval x.length) (B.eval x.length)
++        (if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2)
++        j pre coin := by
++  rw [phaseStep_eq, simStep_eq]
++  dsimp only
++  rw [hcoin, ← NUPPT.runAt_eq, ← NUPPT.simulate_eq]
++
++/-- A suffix with `t+1` updates first applies phase `start` and then runs `t` updates from
++`start+1`: `phaseSuffix … start pre (t+1) = phaseSuffix … (start+1)
++(phaseStep … start pre) t`. -/
++theorem phaseSuffix_front (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
++    (x z rV rS : List Bool) (start : ℕ) (pre : List (List Bool)) (t : ℕ) :
++    phaseSuffix S k B verifierFirst x z rV rS start pre (t + 1) =
++      phaseSuffix S k B verifierFirst x z rV rS (start + 1)
++        (phaseStep S k B verifierFirst x z rV rS start pre) t := by
++  induction t with
++  | zero => rw [phaseSuffix_succ, phaseSuffix_zero, phaseSuffix_zero, Nat.add_zero]
++  | succ t ih =>
++    rw [phaseSuffix_succ, ih, phaseSuffix_succ]
++    congr 1
++    omega
++
++/-- If two raw simulator tapes have equal coin blocks on `start≤j<start+t`, their
++simulated suffixes from the same prefix are equal.
++
++**Proof sketch.** Induct on the number of updates and use the published last-step suffix
++reader. The induction hypothesis identifies the preceding prefixes. The last update reads
++only its own coin block through the published phase-step reader, so the supplied last-block
++equality identifies the final updates. -/
++theorem phaseSuffix_congr_blocks (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
++    (x z rV rS rS' : List Bool) (start : ℕ) (pre : List (List Bool)) (t : ℕ)
++    (hblocks : ∀ j, start ≤ j → j < start + t →
++      coinBlock (S.coinLen x.length) j rS = coinBlock (S.coinLen x.length) j rS') :
++    phaseSuffix S k B verifierFirst x z rV rS start pre t =
++      phaseSuffix S k B verifierFirst x z rV rS' start pre t := by
++  induction t with
++  | zero => rw [phaseSuffix_zero, phaseSuffix_zero]
++  | succ t ih =>
++    have hprevious := ih (fun j hlo hhi => hblocks j hlo (by omega))
++    have hlast := hblocks (start + t) (by omega) (by omega)
++    rw [phaseSuffix_succ, phaseSuffix_succ, hprevious, phaseStep_eq, phaseStep_eq]
++    dsimp only
++    rw [hlast]
++
++/-- Overwriting simulator coin-table entry `i` before `start` does not change a suffix
++whose indices lie within the table: for `i<start` and `start+t≤q`, `phaseSuffix` on
++`List.ofFn ((FunFamily.blocks q c).symm (Function.update coins i fresh))` equals its value
++on `List.ofFn ((FunFamily.blocks q c).symm coins)`, with `c=S.coinLen |x|`.
++
++**Proof sketch.** Apply the suffix block-congruence reader. Each relevant block is a
++canonical block-table projection. Its index is at least `start`, hence different from `i`,
++so the public function-update reader leaves that entry unchanged. -/
++theorem phaseSuffix_update_before (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
++    (x z rV : List Bool) (q : ℕ) (coins : Fin q → S.Coins x.length)
++    (i : Fin q) (fresh : S.Coins x.length) (start : ℕ) (pre : List (List Bool)) (t : ℕ)
++    (hi : (i : ℕ) < start) (hend : start + t ≤ q) :
++    phaseSuffix S k B verifierFirst x z rV
++        (List.ofFn ((FunFamily.blocks q (S.coinLen x.length)).symm
++          (Function.update coins i fresh))) start pre t =
++      phaseSuffix S k B verifierFirst x z rV
++        (List.ofFn ((FunFamily.blocks q (S.coinLen x.length)).symm coins)) start pre t := by
++  have hread (F : Fin q → S.Coins x.length) (j : Fin q) :
++      coinBlock (S.coinLen x.length) j
++          (List.ofFn ((FunFamily.blocks q (S.coinLen x.length)).symm F)) =
++        List.ofFn (F j) := by
++    have hb := FunFamily.ofFn_blocks q (S.coinLen x.length)
++      ((FunFamily.blocks q (S.coinLen x.length)).symm F) j
++    rw [Equiv.apply_symm_apply] at hb
++    exact (coinBlock_eq _ _ _).trans hb.symm
++  apply phaseSuffix_congr_blocks
++  intro j hlo hhi
++  have hj : j < q := lt_of_lt_of_le hhi hend
++  have hne : (⟨j, hj⟩ : Fin q) ≠ i := by
++    intro he
++    have hval := congrArg Fin.val he
++    change j = (i : ℕ) at hval
++    omega
++  rw [hread _ ⟨j, hj⟩, hread _ ⟨j, hj⟩]
++  exact congrArg List.ofFn (Function.update_of_ne hne fresh coins)
++
++end TCSlib.Cryptography.SequentialZK

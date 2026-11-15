@@ -7,7 +7,8 @@ index={}
 for p in ev.rglob('*'):
  if p.is_file():index.setdefault(sha(p.read_bytes()),[]).append(p)
 records=[];unresolved=[];archives=[]
-for receipt in sorted(ev.glob('subagents/*/*closed-files.tsv')):
+receipts=set(ev.glob('subagents/*/*closed-files.tsv')) | set(ev.glob('subagents/**/CLOSED.tsv')) | set(ev.glob('subagents/**/receipt.tsv')) | set(ev.glob('subagents/**/SHA256SUMS.tsv'))
+for receipt in sorted(receipts):
  for row in csv.DictReader(receipt.open(),delimiter='\t'):
   rel=row.get('relative_path',row.get('path'));h=row.get('sha256')
   if not rel or not h:continue

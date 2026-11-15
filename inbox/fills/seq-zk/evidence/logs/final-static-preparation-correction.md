@@ -1,0 +1,1 @@
+The first final-static audit stopped at an intentionally conservative but overly broad simp-attribute regex: it also matched ordinary simp proof text. No Lean command or source edit ran. The original audit tool is preserved in tools/history. The corrected pattern checks new attribute declarations specifically; all actual source additions remain in the final patch series.

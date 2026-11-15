@@ -1,0 +1,217 @@
+import Lean
+import TCSlib.Cryptography.Composability.ThreeColoring
+import TCSlib.Cryptography.Composability.SequentialZK
+import TCSlib.Cryptography.Composability.SequentialZK.Advice
+import TCSlib.Cryptography.Composability.SequentialZK.BoundedMetadata
+import TCSlib.Cryptography.Composability.SequentialZK.ComputationalAdvice
+import TCSlib.Cryptography.Composability.SequentialZK.ComputationalHybrid
+import TCSlib.Cryptography.Composability.SequentialZK.ComputationalPhaseBound
+import TCSlib.Cryptography.Composability.SequentialZK.ComputationalReduction
+import TCSlib.Cryptography.Composability.SequentialZK.ComputationalTransfer
+import TCSlib.Cryptography.Composability.SequentialZK.Congruence
+import TCSlib.Cryptography.Composability.SequentialZK.ContinuationProbability
+import TCSlib.Cryptography.Composability.SequentialZK.Efficiency
+import TCSlib.Cryptography.Composability.SequentialZK.EndpointSampling
+import TCSlib.Cryptography.Composability.SequentialZK.ErrSoundness
+import TCSlib.Cryptography.Composability.SequentialZK.ExecutionBounds
+import TCSlib.Cryptography.Composability.SequentialZK.HybridRecursion
+import TCSlib.Cryptography.Composability.SequentialZK.Normalization
+import TCSlib.Cryptography.Composability.SequentialZK.NormalizationMachine
+import TCSlib.Cryptography.Composability.SequentialZK.NormalizedStep
+import TCSlib.Cryptography.Composability.SequentialZK.PaddedProverSpec
+import TCSlib.Cryptography.Composability.SequentialZK.PhaseView
+import TCSlib.Cryptography.Composability.SequentialZK.Phases
+import TCSlib.Cryptography.Composability.SequentialZK.PrefixFolds
+import TCSlib.Cryptography.Composability.SequentialZK.PrefixLaws
+import TCSlib.Cryptography.Composability.SequentialZK.ProofTransfers
+import TCSlib.Cryptography.Composability.SequentialZK.RealPhases
+import TCSlib.Cryptography.Composability.SequentialZK.RealPrefixBounds
+import TCSlib.Cryptography.Composability.SequentialZK.ReductionAdvantage
+import TCSlib.Cryptography.Composability.SequentialZK.RepeatedSoundness
+import TCSlib.Cryptography.Composability.SequentialZK.RepeatedVerifier
+import TCSlib.Cryptography.Composability.SequentialZK.SimulatorMachine
+import TCSlib.Cryptography.Composability.SequentialZK.Soundness
+import TCSlib.Cryptography.Composability.SequentialZK.Statistical
+import TCSlib.Cryptography.Composability.SequentialZK.StatisticalPostprocess
+import TCSlib.Cryptography.Composability.SequentialZK.StatisticalPrefix
+import TCSlib.Cryptography.Composability.SequentialZK.StatisticalRecursion
+import TCSlib.Cryptography.Composability.SequentialZK.StatisticalTransfer
+import TCSlib.Cryptography.Composability.SequentialZK.SuffixLaws
+import TCSlib.Cryptography.Composability.SequentialZK.SuffixMachine
+import TCSlib.Cryptography.Composability.SequentialZK.VerifierPrefix
+import TCSlib.Cryptography.Composability.SequentialZK.WrappedVerifier
+import TCSlib.Cryptography.ZeroKnowledge.Defs
+
+/-! nm-cca2 review collector (PkCollect with the five owners):
+ROOT/CLOSURE for the five touched modules, CAT for every TCSlib definition in the environment. -/
+
+set_option maxHeartbeats 0
+set_option maxRecDepth 65536
+
+open Lean Elab Command
+
+def owners : List Name := [
+  `TCSlib.Cryptography.Composability.SequentialZK,
+  `TCSlib.Cryptography.Composability.SequentialZK.Advice,
+  `TCSlib.Cryptography.Composability.SequentialZK.BoundedMetadata,
+  `TCSlib.Cryptography.Composability.SequentialZK.ComputationalAdvice,
+  `TCSlib.Cryptography.Composability.SequentialZK.ComputationalHybrid,
+  `TCSlib.Cryptography.Composability.SequentialZK.ComputationalPhaseBound,
+  `TCSlib.Cryptography.Composability.SequentialZK.ComputationalReduction,
+  `TCSlib.Cryptography.Composability.SequentialZK.ComputationalTransfer,
+  `TCSlib.Cryptography.Composability.SequentialZK.Congruence,
+  `TCSlib.Cryptography.Composability.SequentialZK.ContinuationProbability,
+  `TCSlib.Cryptography.Composability.SequentialZK.Efficiency,
+  `TCSlib.Cryptography.Composability.SequentialZK.EndpointSampling,
+  `TCSlib.Cryptography.Composability.SequentialZK.ErrSoundness,
+  `TCSlib.Cryptography.Composability.SequentialZK.ExecutionBounds,
+  `TCSlib.Cryptography.Composability.SequentialZK.HybridRecursion,
+  `TCSlib.Cryptography.Composability.SequentialZK.Normalization,
+  `TCSlib.Cryptography.Composability.SequentialZK.NormalizationMachine,
+  `TCSlib.Cryptography.Composability.SequentialZK.NormalizedStep,
+  `TCSlib.Cryptography.Composability.SequentialZK.PaddedProverSpec,
+  `TCSlib.Cryptography.Composability.SequentialZK.PhaseView,
+  `TCSlib.Cryptography.Composability.SequentialZK.Phases,
+  `TCSlib.Cryptography.Composability.SequentialZK.PrefixFolds,
+  `TCSlib.Cryptography.Composability.SequentialZK.PrefixLaws,
+  `TCSlib.Cryptography.Composability.SequentialZK.ProofTransfers,
+  `TCSlib.Cryptography.Composability.SequentialZK.RealPhases,
+  `TCSlib.Cryptography.Composability.SequentialZK.RealPrefixBounds,
+  `TCSlib.Cryptography.Composability.SequentialZK.ReductionAdvantage,
+  `TCSlib.Cryptography.Composability.SequentialZK.RepeatedSoundness,
+  `TCSlib.Cryptography.Composability.SequentialZK.RepeatedVerifier,
+  `TCSlib.Cryptography.Composability.SequentialZK.SimulatorMachine,
+  `TCSlib.Cryptography.Composability.SequentialZK.Soundness,
+  `TCSlib.Cryptography.Composability.SequentialZK.Statistical,
+  `TCSlib.Cryptography.Composability.SequentialZK.StatisticalPostprocess,
+  `TCSlib.Cryptography.Composability.SequentialZK.StatisticalPrefix,
+  `TCSlib.Cryptography.Composability.SequentialZK.StatisticalRecursion,
+  `TCSlib.Cryptography.Composability.SequentialZK.StatisticalTransfer,
+  `TCSlib.Cryptography.Composability.SequentialZK.SuffixLaws,
+  `TCSlib.Cryptography.Composability.SequentialZK.SuffixMachine,
+  `TCSlib.Cryptography.Composability.SequentialZK.VerifierPrefix,
+  `TCSlib.Cryptography.Composability.SequentialZK.WrappedVerifier,
+  `TCSlib.Cryptography.ZeroKnowledge.Defs]
+
+def nameParts : Name → List (String × String)
+  | .anonymous => []
+  | .str p s => nameParts p ++ [("str", s)]
+  | .num p n => nameParts p ++ [("num", toString n)]
+
+def ident (n : Name) : Json := Json.mkObj [("display", toJson n.toString), ("components", toJson (nameParts n))]
+
+def kindOf : ConstantInfo → String
+  | .axiomInfo _ => "axiom" | .defnInfo _ => "def" | .thmInfo _ => "theorem" | .opaqueInfo _ => "opaque"
+  | .quotInfo _ => "quotient" | .inductInfo _ => "inductive" | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+
+-- Coercions whose computational field is exactly a structure projection are notation.
+partial def stripBinders : Expr → Expr
+  | .lam _ _ b _ => stripBinders b
+  | .forallE _ _ b _ => stripBinders b
+  | .mdata _ b => stripBinders b
+  | e => e
+
+def projectionBody (env : Environment) (e : Expr) : Bool :=
+  match stripBinders e with
+  | .proj .. => true
+  | e => match e.getAppFn.constName? with
+    | some n => (env.getProjectionFnInfo? n).isSome
+    | none => false
+
+def projectionCoercion (env : Environment) (c : ConstantInfo) : Bool := Id.run do
+  let head := (stripBinders c.type).getAppFn.constName?
+  unless head == some ``CoeFun || head == some ``Coe do return false
+  let some v := c.value? | return false
+  let body := stripBinders v
+  unless body.getAppFn.constName? == some ``CoeFun.mk ||
+      body.getAppFn.constName? == some ``Coe.mk do return false
+  let some field := body.getAppArgs.back? | return false
+  return projectionBody env field
+
+run_cmd do
+  let env ← getEnv
+  let names := env.header.moduleNames
+  let idx : Std.HashMap Name Nat := names.size.fold (fun i _ m => m.insert names[i]! i) {}
+  -- transitive TCSlib import closures
+  for o in owners do
+    let some i := idx[o]? | throwError "owner not loaded: {o}"
+    let mut seen : Std.HashSet Name := {}
+    let mut stack : Array Name := (env.header.moduleData[i]!.imports.map (·.module))
+    while !stack.isEmpty do
+      let m := stack.back!
+      stack := stack.pop
+      if seen.contains m then continue
+      seen := seen.insert m
+      if let some j := idx[m]? then
+        stack := stack ++ env.header.moduleData[j]!.imports.map (·.module)
+    let tcs := (seen.toArray.filter fun m => (`TCSlib).isPrefixOf m).qsort (·.toString < ·.toString)
+    IO.println ("CLOSURE " ++ (Json.mkObj [("module", toJson o.toString), ("closure", toJson (tcs.map (·.toString)))]).compress)
+  let mut catCount := 0
+  let mut rootCount : Std.HashMap Name Nat := {}
+  for (n, c) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    let home := names[mi.toNat]!
+    unless (`TCSlib).isPrefixOf home do continue
+    if c.isDefinition then
+      let abbrevFlag := match c with
+        | .defnInfo d => match d.hints with | .abbrev => true | _ => false
+        | _ => false
+      IO.println ("CAT " ++ (Json.mkObj [("name", ident n), ("home", ident home), ("kind", toJson (kindOf c)),
+        ("status", toJson (match Lean.getReducibilityStatusCore env n with
+            | .reducible => "reducible" | .semireducible => "semireducible" | .irreducible => "irreducible")),
+        ("instance", toJson (Lean.Meta.isInstanceCore env n)), ("matcher", toJson (Lean.Meta.isMatcherCore env n)),
+        ("abbrev", toJson abbrevFlag), ("projection_coercion", toJson (projectionCoercion env c))]).compress)
+      catCount := catCount + 1
+    if owners.contains home then
+      rootCount := rootCount.insert home ((rootCount[home]?.getD 0) + 1)
+      let refs (e : Expr) : Array Json := Id.run do
+        let mut out := #[]
+        for d in e.getUsedConstants do
+          let some dj := env.getModuleIdxFor? d | continue
+          let dh := names[dj.toNat]!
+          unless (`TCSlib).isPrefixOf dh && dh != home do continue
+          let some di := env.find? d | continue
+          unless di.isDefinition do continue
+          out := out.push (ident d)
+        return out
+      let valueRefs := match c.value? (allowOpaque := true) with | some v => refs v | none => #[]
+      IO.println ("ROOT " ++ (Json.mkObj [("module", toJson home.toString), ("name", ident n), ("kind", toJson (kindOf c)),
+        ("type_refs", toJson (refs c.type)), ("value_refs", toJson valueRefs)]).compress)
+  IO.println s!"CAT-COUNT {catCount}"
+  for o in owners do
+    IO.println s!"MODULE {o}: stored {rootCount[o]?.getD 0}"
+
+
+-- Hash-sign adapter: all stored constants, including private/generated ones.
+run_cmd do
+  let env ← getEnv
+  let names := env.header.moduleNames
+  let mut count := 0
+  for (c, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? c | continue
+    let home := names[mi.toNat]!
+    unless owners.contains home do continue
+    let axs ← liftCoreM (Lean.collectAxioms c)
+    let axs := (axs.map (·.toString)).qsort (· < ·)
+    IO.println s!"AXIOMS {home} | {c} | {axs.toList}"
+    count := count + 1
+  IO.println s!"AXIOMS-STORED-COUNT {count}"
+
+#print axioms TCSlib.Cryptography.ZK.seqRep
+#print axioms TCSlib.Cryptography.StatZK.seqRep
+#print axioms TCSlib.Cryptography.InteractiveProof.seqRep
+#print axioms TCSlib.Cryptography.InteractiveProofErr.seqRep
+#print axioms TCSlib.Cryptography.EfficientProverProofErr.seqRep
+#print axioms TCSlib.Cryptography.PerfectZK.seqRep
+#print axioms TCSlib.Cryptography.PerfectZKAbort.seqRep
+
+run_cmd do
+  let env ← getEnv
+  let names := env.header.moduleNames
+  for (c, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? c | continue
+    let home := names[mi.toNat]!
+    unless home == `TCSlib.Cryptography.Composability.ThreeColoring do continue
+    let axs ← liftCoreM (Lean.collectAxioms c)
+    IO.println s!"CONSUMER-AXIOMS {c} | {axs.toList}"
+#print axioms TCSlib.Cryptography.Composability.colSeq_efficientProverProof_zk

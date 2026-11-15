@@ -1,0 +1,62 @@
+From d842dc8f681f6b89499129f5b64a50d0e4587935 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 05:16:42 -0800
+Subject: [PATCH 6/6] Use published readers in phase probability and coin
+ transport
+
+---
+ .../SequentialZK/ContinuationProbability.lean |  2 +-
+ .../SequentialZK/ReductionAdvantage.lean      | 22 ++++++++++++-------
+ 2 files changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean b/TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean
+index 34d88e958..4d32cede9 100644
+--- a/TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean
++++ b/TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean
+@@ -41,7 +41,7 @@ theorem acceptProb_prod {A B O C : Type*} [Fintype A] [Fintype B] [Fintype C]
+     (F : A × B → O) (D : O → C → Bool) :
+     acceptProb F D = uexp (fun a => acceptProb (fun b => F (a, b)) D) := by
+   rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc A B C).symm, uprob_prod]
+-  rfl
++  simp only [acceptProb_def, Equiv.prodAssoc_symm_apply]
+ 
+ /-- Replacing coordinate `i` of a uniform tuple by an independent uniform value leaves
+ acceptance unchanged: `Pr[D(F(update table i fresh))] = Pr[D(F table)]`. -/
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean b/TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean
+index 569da4e4a..0c96e2d3e 100644
+--- a/TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean
++++ b/TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean
+@@ -77,19 +77,25 @@ theorem distAdv_phaseReduction {σ τ : Type*} [Fintype σ] [Fintype τ]
+   let e : ((Fin (Q.eval n) → S.Coins n) × D.Coins n) ≃ Red.Coins n :=
+     ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm.prodCongr
+       (Equiv.refl (D.Coins n))).trans (EnsembleLemmas.coinsEquiv hlen)
++  -- Expand the local equivalence before evaluating the scalar coin cut.
++  have he (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) :
++      e c = EnsembleLemmas.coinsEquiv hlen
++        (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2) := by
++    rcases c with ⟨cS, cD⟩
++    simp only [e, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.refl_apply]
++  have hcut : (PolyExpr.mul Q S.coins).eval n = Q.eval n * S.coinLen n := by
++    rw [PolyExpr.eval_mul, NUPPT.coinLen_eq]
+   have htake (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) :
+       (List.ofFn (e c)).take ((PolyExpr.mul Q S.coins).eval n) =
+         List.ofFn ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1) := by
+-    simpa only [e, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply,
+-      Equiv.refl_apply, PolyExpr.eval_mul, NUPPT.coinLen_eq] using
+-      EnsembleLemmas.take_ofFn_coinsEquiv hlen
+-        (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2)
++    rw [he, hcut]
++    exact EnsembleLemmas.take_ofFn_coinsEquiv hlen
++      (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2)
+   have hdrop (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) :
+       (List.ofFn (e c)).drop ((PolyExpr.mul Q S.coins).eval n) = List.ofFn c.2 := by
+-    simpa only [e, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply,
+-      Equiv.refl_apply, PolyExpr.eval_mul, NUPPT.coinLen_eq] using
+-      EnsembleLemmas.drop_ofFn_coinsEquiv hlen
+-        (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2)
++    rw [he, hcut]
++    exact EnsembleLemmas.drop_ofFn_coinsEquiv hlen
++      (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2)
+   -- Compare the exact verdicts, then reindex each acceptance probability.
+   have key (raw : List Bool) (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) :
+       Red.distinguisherL n raw (e c) = D.distinguisherL n

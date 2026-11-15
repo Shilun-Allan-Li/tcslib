@@ -1,0 +1,1078 @@
+From a758032d636fd410b0c4b8a1530a96d000cc467a Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 01:30:30 -0800
+Subject: [PATCH 1/5] Prove sequential repetition preserves interactive proofs
+
+---
+ .../Composability/SequentialZK.lean           | 300 ++++++++++++++++-
+ .../SequentialZK/Efficiency.lean              | 306 ++++++++++++++++++
+ .../SequentialZK/Normalization.lean           |  98 ++++++
+ .../SequentialZK/NormalizationMachine.lean    |  97 ++++++
+ .../Composability/SequentialZK/Soundness.lean | 163 ++++++++++
+ TCSlib/Cryptography/ZeroKnowledge/Defs.lean   |   9 +
+ 6 files changed, 969 insertions(+), 4 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean
+ create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean
+
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK.lean b/TCSlib/Cryptography/Composability/SequentialZK.lean
+index d966b6f11..fb0d67a1a 100644
+--- a/TCSlib/Cryptography/Composability/SequentialZK.lean
++++ b/TCSlib/Cryptography/Composability/SequentialZK.lean
+@@ -5,13 +5,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.Asymptotic.Adversary
+ import TCSlib.Cryptography.ZeroKnowledge.Defs
+ import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
++import TCSlib.Cryptography.Composability.SequentialZK.Efficiency
++import TCSlib.Cryptography.Composability.SequentialZK.Soundness
++import TCSlib.Cryptography.Composability.SequentialZK.Normalization
++import TCSlib.Cryptography.Composability.SequentialZK.NormalizationMachine
++import TCSlib.Cryptography.Asymptotic.ReductionSupport
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Sequential composition of zero-knowledge proofs (statement phase)
++# Sequential composition of zero-knowledge proofs
+ 
+ [PS10, Theorem 175.1]: if `(P, V)` is a perfect or computational zero-knowledge proof for `L`
+ and `Q` is a polynomial, the protocol `(P_Q, V_Q)` that runs `(P, V)` on the common input `x`
+@@ -61,6 +66,13 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
+ - **At least one phase** for soundness: with `Q(n) = 0`, `V_Q` accepts everything, so the
+   interactive-proof statement assumes `1 ≤ Q(n)`.
+ 
++## Contents
++
++* `SequentialZK.Efficiency`: polynomial-time phase messages and aggregate verdicts.
++* `SequentialZK.Soundness`: execution prefixes and the adaptive success bound.
++* `SequentialZK.Normalization`: bounded canonical message slots.
++* `SequentialZK.NormalizationMachine`: polynomial-time bounded-slot normalization.
++
+ ## Main definitions
+ 
+ * `Composability.proverMoveIndex`, `Composability.verifierMoveIndex`,
+@@ -79,8 +91,8 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
+   `PerfectZK.seqRep` (proved from `StatZK.seqRep`).
+ * `PerfectZKAbort.seqRep`: the aborting case, derived from `PerfectZKAbort.statZK` and
+   `StatZK.seqRep`, with error `Q(n) · 2^{-n}`.
+-* `InteractiveProof.seqRep` (stated; a `sorry` under its sketch): the repetition is an
+-  interactive proof.
++* `InteractiveProof.seqRep` (proved): sequential repetition with at least one phase preserves
++  interactive proofs, using the same negligible soundness bound.
+ * `InteractiveProofErr.seqRep`, `EfficientProverProofErr.seqRep` (stated; `sorry`s under their
+   sketches): sequential repetition multiplies the soundness error, `s ↦ s^Q` (ruling G3-7d, for
+   the text's form of Thm 124.1).
+@@ -263,6 +275,19 @@ theorem seqRep_rounds_eval (π : Protocol) (Q : PolyExpr) (n : ℕ) :
+   simp [seqRep, PolyExpr.eval_mul, PolyExpr.eval_const]
+   ring
+ 
++/-- The repeated prover keeps the message bound: `π.ProverBounded R B` implies
++`(π.seqRep Q).ProverBounded R B`, since every real reply is an original reply and every
++filler reply is empty. [PS10, Theorem 175.1]. -/
++theorem ProverBounded.seqRep {π : Protocol} {R : List Bool → List Bool → Prop}
++    {B : PolyExpr} (hB : π.ProverBounded R B) (Q : PolyExpr) :
++    (π.seqRep Q).ProverBounded R B := by
++  rw [proverBounded_iff] at hB ⊢
++  intro x y r hist hxy
++  rw [seqRep_P, seqProver_next]
++  split_ifs
++  · exact hB x y _ _ hxy
++  · exact Nat.zero_le _
++
+ /-- **Phase `j` of an honest execution of the repetition is an execution of `π`** with the coin
+ slices `j`: after the `j` earlier phases and the `k` real moves of phase `j`, the messages each
+ party received in phase `j` are those it receives in `π` with those coins.
+@@ -362,6 +387,259 @@ theorem seqRep_exec_phase (π : Protocol) (Q : PolyExpr) (x y z rP rV : List Boo
+       simp only [seqProver, ← hk, ← hvF]
+       rw [hidx, hmod, if_pos htk, hdiv, ih₁]
+ 
++/-- Up to `t ≤ π.rounds.eval |x|`, the repeated verifier against any prover `P'` has the
++same execution as the original verifier on coin block zero, provided `1 ≤ Q.eval |x|`.
++
++**Proof sketch.** Induct on the real move index. The received history has length at most
++that index, so it cannot trigger the repeated verdict. At a verifier move the recovered
++index is the move index, its phase is zero, and its residue is the index itself. Thus the
++same original verifier reply is appended. Prover moves agree because their histories agree.
++-/
++theorem seqVerifier_exec_first (π : Protocol) (Q : PolyExpr) (P' : Strategy)
++    (x y z rP rV : List Bool) (hQ : 1 ≤ Q.eval x.length) {t : ℕ}
++    (ht : t ≤ π.rounds.eval x.length) :
++    exec P' (π.seqVerifier Q) π.verifierFirst x y z rP rV t =
++      exec P' π.V π.verifierFirst x y z rP (coinBlock (π.V.coinLen x.length) 0 rV) t := by
++  induction t with
++  | zero => rw [exec_zero, exec_zero]
++  | succ t ih =>
++    have htk : t < π.rounds.eval x.length := by omega
++    rw [exec_succ, exec_succ, ih (by omega)]
++    by_cases hm : moverIsV π.verifierFirst t = true
++    · simp only [hm, if_true]
++      have hl := exec_length P' π.V π.verifierFirst x y z rP
++        (coinBlock (π.V.coinLen x.length) 0 rV) t
++      have hkQ : π.rounds.eval x.length ≤ Q.eval x.length * π.rounds.eval x.length := by
++        simpa only [one_mul] using Nat.mul_le_mul_right (π.rounds.eval x.length) hQ
++      have hne : (exec P' π.V π.verifierFirst x y z rP
++          (coinBlock (π.V.coinLen x.length) 0 rV) t).2.length ≠
++            Q.eval x.length * π.rounds.eval x.length := by omega
++      have hidx := verifierMoveIndex_exec P' π.V π.verifierFirst x y z rP
++        (coinBlock (π.V.coinLen x.length) 0 rV) t hm
++      have hn : (π.seqVerifier Q).next x z rV
++          (exec P' π.V π.verifierFirst x y z rP
++            (coinBlock (π.V.coinLen x.length) 0 rV) t).2 =
++          π.V.next x z (coinBlock (π.V.coinLen x.length) 0 rV)
++            (exec P' π.V π.verifierFirst x y z rP
++              (coinBlock (π.V.coinLen x.length) 0 rV) t).2 := by
++        rw [seqVerifier_next, if_neg hne, hidx,
++          Nat.mod_eq_of_lt (by omega), if_pos htk, Nat.div_eq_of_lt (by omega),
++          Nat.zero_mul, List.drop_zero]
++      rw [hn]
++    · simp only [hm, Bool.false_eq_true, if_false]
++
++/-- The repeated output is the aggregate verdict on the final received history:
++`(π.seqRep Q).outV P' x y z r = π.seqVerdict (Q.eval |x|) x z (List.ofFn r.2) hist`,
++where `hist` is the verifier component of the repeated transcript.
++
++**Proof sketch.** There are exactly `Q(|x|) · k` prover moves in the even-length repeated
++execution. This is the terminal-history test in the repeated verifier, so its terminal
++branch computes the aggregate verdict. -/
++theorem seqRep_outV_eq (π : Protocol) (Q : PolyExpr) (P' : Strategy)
++    (x y z : List Bool) (r : (π.seqRep Q).ExecCoins P' x) :
++    (π.seqRep Q).outV P' x y z r =
++      π.seqVerdict (Q.eval x.length) x z (List.ofFn r.2)
++        ((π.seqRep Q).transcriptWith P' x y z r).2 := by
++  have hl : ((π.seqRep Q).transcriptWith P' x y z r).2.length =
++      Q.eval x.length * π.rounds.eval x.length := by
++    rw [transcriptWith_eq, exec_snd_length, countP_not_moverIsV,
++      seqRep_rounds_eval, seqRep_verifierFirst]
++    rw [show 2 * π.rounds.eval x.length * Q.eval x.length =
++      2 * (Q.eval x.length * π.rounds.eval x.length) by ring]
++    cases π.verifierFirst <;> simp only [Bool.false_eq_true, if_false, if_true] <;> omega
++  rw [outV_eq]
++  have hn := congrArg (fun V : Strategy => V.next x z (List.ofFn r.2)
++    ((π.seqRep Q).transcriptWith P' x y z r).2) (seqRep_V π Q)
++  dsimp only at hn
++  rw [hn, seqVerifier_next, if_pos hl]
++
++/-- The final repeated history restricted to the real prover slots of phase `j < Q(|x|)`
++is the original verifier history on coin slices `j`. [PS10, Theorem 175.1].
++
++**Proof sketch.** The history just after the phase's real moves is a prefix of the final
++history. Its length is the `j · k` slots of preceding phases plus the number of real prover
++moves. Taking this prefix and dropping the preceding phases recovers the phase reader.
++-/
++theorem seqRep_exec_phase_take (π : Protocol) (Q : PolyExpr) (x y z rP rV : List Bool)
++    {j : ℕ} (hj : j < Q.eval x.length) :
++    ((exec (π.seqRep Q).P (π.seqRep Q).V π.verifierFirst x y z rP rV
++      (2 * π.rounds.eval x.length * Q.eval x.length)).2.drop
++        (j * π.rounds.eval x.length)).take
++          (proverMoves π.verifierFirst (π.rounds.eval x.length)) =
++      (exec π.P π.V π.verifierFirst x y z (coinBlock (π.P.coinLen x.length) j rP)
++        (coinBlock (π.V.coinLen x.length) j rV) (π.rounds.eval x.length)).2 := by
++  let k := π.rounds.eval x.length
++  have hjk := Nat.mul_le_mul_right k hj
++  have hle : 2 * k * j + k ≤ 2 * k * Q.eval x.length := by
++    have hscaled := Nat.mul_le_mul_left 2 hjk
++    rw [show 2 * ((j + 1) * k) = 2 * k * j + 2 * k by ring,
++      show 2 * (Q.eval x.length * k) = 2 * k * Q.eval x.length by ring] at hscaled
++    omega
++  have hl : (exec (π.seqRep Q).P (π.seqRep Q).V π.verifierFirst x y z rP rV
++      (2 * k * j + k)).2.length = j * k + proverMoves π.verifierFirst k := by
++    rw [exec_snd_length, countP_not_moverIsV, proverMoves_eq, countP_not_moverIsV]
++    rw [show 2 * k * j + k = 2 * (j * k) + k by ring]
++    cases π.verifierFirst <;> simp only [Bool.false_eq_true, if_false, if_true] <;> omega
++  have hp := exec_snd_take (π.seqRep Q).P (π.seqRep Q).V π.verifierFirst x y z rP rV
++    (2 * k * j + k) (2 * k * Q.eval x.length - (2 * k * j + k))
++  rw [Nat.add_sub_of_le hle, hl] at hp
++  rw [List.take_drop, hp]
++  exact (seqRep_exec_phase π Q x y z rP rV hj).2
++
++/-- Perfect completeness on `x, y, z` is preserved by every number of sequential phases:
++if `Pr[π.outV π.P x y z = [true]] = 1`, then
++`Pr[(π.seqRep Q).outV (π.seqRep Q).P x y z = [true]] = 1`.
++[PS10, Theorem 175.1].
++
++**Proof sketch.** Probability one on the finite coin space means every original coin pair
++accepts. For each repeated coin pair and phase, its coin slices have the original lengths.
++The phase-history reader therefore identifies its verdict with an accepting original run.
++All phase tests are true, so the aggregate output is true, including an empty phase list.
++-/
++theorem seqRep_complete (π : Protocol) (Q : PolyExpr) (x y z : List Bool)
++    (hc : uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1) :
++    uprob (fun r : (π.seqRep Q).ExecCoins (π.seqRep Q).P x =>
++      (π.seqRep Q).outV (π.seqRep Q).P x y z r = [true]) = 1 := by
++  apply HardcoreBit.uprob_eq_one_of_forall
++  intro r
++  rw [seqRep_outV_eq, seqVerdict_eq]
++  have hall : (List.range (Q.eval x.length)).all (fun j => decide
++      (π.V.next x z (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2))
++        ((((π.seqRep Q).transcriptWith (π.seqRep Q).P x y z r).2.drop
++          (j * π.rounds.eval x.length)).take
++            (proverMoves π.verifierFirst (π.rounds.eval x.length))) = [true])) = true := by
++    rw [List.all_eq_true]
++    intro j hj
++    have hjQ : j < Q.eval x.length := List.mem_range.mp hj
++    apply decide_eq_true
++    rw [transcriptWith_eq, seqRep_verifierFirst, seqRep_rounds_eval,
++      seqRep_exec_phase_take π Q x y z (List.ofFn r.1) (List.ofFn r.2) hjQ]
++    have hlP : (List.ofFn r.1).length = Q.eval x.length * π.P.coinLen x.length := by
++      rw [List.length_ofFn, Strategy.coinLen_eq, seqRep_P, seqProver_coins,
++        PolyExpr.eval_mul, Strategy.coinLen_eq]
++    have hlV : (List.ofFn r.2).length = Q.eval x.length * π.V.coinLen x.length := by
++      rw [List.length_ofFn, Strategy.coinLen_eq, seqRep_V, seqVerifier_coins,
++        PolyExpr.eval_mul, Strategy.coinLen_eq]
++    have hbP : (coinBlock (π.P.coinLen x.length) j (List.ofFn r.1)).length =
++        π.P.coinLen x.length := length_coinBlock (by
++      rw [hlP]; exact Nat.mul_le_mul_right _ hjQ)
++    have hbV : (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2)).length =
++        π.V.coinLen x.length := length_coinBlock (by
++      rw [hlV]; exact Nat.mul_le_mul_right _ hjQ)
++    have hrun := HardcoreBit.forall_of_uprob_eq_one hc
++      (padFin (π.P.coinLen x.length) (coinBlock (π.P.coinLen x.length) j (List.ofFn r.1)),
++       padFin (π.V.coinLen x.length) (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2)))
++    rw [outV_eq, transcriptWith_eq, ofFn_padFin_of_length hbP,
++      ofFn_padFin_of_length hbV] at hrun
++    exact hrun
++  rw [hall]
++  rfl
++
++/-- If the original verifier rejects phase zero against `P'`, then the repeated verifier
++rejects the same repeated tape, when `1 ≤ Q.eval |x|`. [PS10, Theorem 175.1].
++
++**Proof sketch.** The first real phase agrees with the original verifier on coin block zero.
++Its prover-message history is the initial segment of the final history. Rejection therefore
++makes the phase-zero test in the aggregate conjunction false, forcing the repeated output
++to be `[false]`. -/
++theorem seqRep_reject_of_first (π : Protocol) (Q : PolyExpr) (P' : Strategy)
++    (x y z : List Bool) (r : (π.seqRep Q).ExecCoins P' x) (hQ : 1 ≤ Q.eval x.length)
++    (hr : π.V.next x z (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
++      (exec P' π.V π.verifierFirst x y z (List.ofFn r.1)
++        (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2))
++        (π.rounds.eval x.length)).2 = [false]) :
++    (π.seqRep Q).outV P' x y z r = [false] := by
++  let k := π.rounds.eval x.length
++  have hkQ : k ≤ Q.eval x.length * k := by
++    simpa only [one_mul] using Nat.mul_le_mul_right k hQ
++  have hle : k ≤ 2 * k * Q.eval x.length := by
++    have hscaled := Nat.mul_le_mul_left 2 hkQ
++    rw [show 2 * (Q.eval x.length * k) = 2 * k * Q.eval x.length by ring] at hscaled
++    omega
++  have hp := exec_snd_take P' (π.seqVerifier Q) π.verifierFirst x y z
++    (List.ofFn r.1) (List.ofFn r.2) k (2 * k * Q.eval x.length - k)
++  rw [Nat.add_sub_of_le hle,
++    seqVerifier_exec_first π Q P' x y z (List.ofFn r.1) (List.ofFn r.2) hQ le_rfl] at hp
++  have hl : (exec P' π.V π.verifierFirst x y z (List.ofFn r.1)
++      (coinBlock (π.V.coinLen x.length) 0 (List.ofFn r.2)) k).2.length =
++        proverMoves π.verifierFirst k := by
++    rw [exec_snd_length, proverMoves_eq]
++  rw [hl] at hp
++  rw [seqRep_outV_eq, seqVerdict_eq]
++  have hnot : (List.range (Q.eval x.length)).all (fun j => decide
++      (π.V.next x z (coinBlock (π.V.coinLen x.length) j (List.ofFn r.2))
++        ((((π.seqRep Q).transcriptWith P' x y z r).2.drop (j * k)).take
++          (proverMoves π.verifierFirst k)) = [true])) ≠ true := by
++    intro hall
++    have hz := List.all_eq_true.mp hall 0 (List.mem_range.mpr hQ)
++    simp only [Nat.zero_mul, List.drop_zero] at hz
++    rw [transcriptWith_eq, seqRep_verifierFirst, seqRep_rounds_eval] at hz
++    have hpV := congrArg (fun V : Strategy =>
++      (exec P' V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
++        (2 * k * Q.eval x.length)).2.take (proverMoves π.verifierFirst k)) (seqRep_V π Q)
++    dsimp only at hpV
++    rw [hpV.trans hp, hr] at hz
++    contradiction
++  rw [if_neg hnot]
++
++/-- The repeated rejection probability dominates the original rejection probability on
++phase zero, against the same prover `P'`, when `1 ≤ Q.eval |x|`.
++[PS10, Theorem 175.1].
++
++**Proof sketch.** Restrict the repeated verifier's uniform tape to its initial original-length
++prefix; this map preserves uniformity and leaves the prover's tape unchanged. Original
++rejection on this projection implies repeated rejection by the first-phase reader, so
++monotonicity of probability gives the bound. -/
++theorem seqRep_sound_first (π : Protocol) (Q : PolyExpr) (P' : Strategy)
++    (x y z : List Bool) (hQ : 1 ≤ Q.eval x.length) :
++    uprob (fun r : π.ExecCoins P' x => π.outV P' x y z r = [false]) ≤
++      uprob (fun r : (π.seqRep Q).ExecCoins P' x =>
++        (π.seqRep Q).outV P' x y z r = [false]) := by
++  have hlen : (π.seqRep Q).V.coinLen x.length =
++      Q.eval x.length * π.V.coinLen x.length := by
++    rw [Strategy.coinLen_eq, seqRep_V, seqVerifier_coins, PolyExpr.eval_mul,
++      Strategy.coinLen_eq]
++  have hcle : π.V.coinLen x.length ≤ (π.seqRep Q).V.coinLen x.length := by
++    rw [hlen]
++    simpa only [one_mul] using Nat.mul_le_mul_right (π.V.coinLen x.length) hQ
++  let f : (π.seqRep Q).ExecCoins P' x → π.ExecCoins P' x :=
++    fun r => (r.1, fun i => r.2 (Fin.castLE hcle i))
++  have hf : HardcoreBit.PushesUniform f := HardcoreBit.pushesUniform_id.prodMap
++    (HardcoreBit.pushesUniform_restrict (Fin.castLE_injective hcle))
++  calc
++    _ = uprob (fun r : (π.seqRep Q).ExecCoins P' x =>
++        π.outV P' x y z (f r) = [false]) := (hf.uprob_eq _).symm
++    _ ≤ _ := uprob_mono fun r hr => by
++      apply seqRep_reject_of_first π Q P' x y z r hQ
++      rw [outV_eq, transcriptWith_eq] at hr
++      change π.V.next x z (List.ofFn (fun i => r.2 (Fin.castLE hcle i)))
++        (exec P' π.V π.verifierFirst x y z (List.ofFn r.1)
++          (List.ofFn (fun i => r.2 (Fin.castLE hcle i)))
++          (π.rounds.eval x.length)).2 = [false] at hr
++      rw [← take_ofFn_castLE hcle r.2] at hr
++      simpa only [coinBlock_eq, Nat.zero_mul, List.drop_zero] using hr
++
++/-- An efficient original prover gives an efficient sequential prover:
++`π.P.Efficient → (π.seqProver Q).Efficient`. [PS10, Theorem 175.1]. -/
++theorem seqProver_efficient (π : Protocol) (Q : PolyExpr) (hP : π.P.Efficient) :
++    (π.seqProver Q).Efficient := by
++  apply SeqEfficiency.phase_efficient (π.seqProver Q) π.P π.rounds π.verifierFirst hP
++  intro x z r hist
++  dsimp only
++  rw [seqProver_next, proverMoveIndex_eq]
++
++/-- An efficient original verifier gives an efficient sequential verifier:
++`π.V.Efficient → (π.seqVerifier Q).Efficient`. [PS10, Theorem 175.1]. -/
++theorem seqVerifier_efficient (π : Protocol) (Q : PolyExpr) (hV : π.V.Efficient) :
++    (π.seqVerifier Q).Efficient := by
++  classical
++  apply SeqEfficiency.verifier_efficient (π.seqVerifier Q) π.V π.rounds Q π.verifierFirst hV
++  intro x z r hist
++  dsimp only
++  rw [seqVerifier_next, verifierMoveIndex_eq, seqVerdict_eq, proverMoves_eq,
++    countP_not_moverIsV]
++  simp only [List.all_eq_true, List.mem_range, decide_eq_true_eq]
++
+ end Protocol
+ 
+ /-! ### Theorem 175.1 -/
+@@ -470,7 +748,21 @@ theorem PerfectZKAbort.seqRep {B : PolyExpr} (h : PerfectZKAbort π R)
+    exists since `1 ≤ Q(|x|)`. -/
+ theorem InteractiveProof.seqRep {L : Language Bool} (h : InteractiveProof π L) (Q : PolyExpr)
+     (hQ : ∀ n, 1 ≤ Q.eval n) : InteractiveProof (π.seqRep Q) L := by
+-  sorry
++  constructor
++  · rw [Protocol.seqRep_V]
++    exact π.seqVerifier_efficient Q h.efficientV
++  · obtain ⟨B, hcomplete⟩ := h.complete
++    refine ⟨B, fun x hx => ?_⟩
++    obtain ⟨y, hbound, hc⟩ := hcomplete x hx
++    refine ⟨y, ?_, fun z => π.seqRep_complete Q x y z (hc z)⟩
++    intro r hist
++    rw [Protocol.seqRep_P, Protocol.seqProver_next]
++    split_ifs
++    · exact hbound _ _
++    · exact Nat.zero_le _
++  · obtain ⟨ε, hε, hs⟩ := h.sound
++    refine ⟨ε, hε, fun x hx P' z => ?_⟩
++    exact (hs x hx P' z).trans_le (π.seqRep_sound_first Q P' x [] z (hQ x.length))
+ 
+ /-- **Sequential repetition multiplies the soundness error** [PS10, p. 120: the protocol "can be
+ repeated many times … to drive the probability of error as low as desired"; and p. 127, the
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean b/TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean
+new file mode 100644
+index 000000000..6eb088485
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean
+@@ -0,0 +1,306 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRep
++import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Polynomial-time operations for sequential repetition
++
++The next-message machines for the sequential repetition construction use unary arithmetic,
++encoded-history slices, and one activation of an efficient strategy. The registered iteration
++hosts and the existing graph-protocol machines provide these operations.
++
++## Main definitions
++
++## Main results
++
++* `SeqEfficiency.take_encodeMsgs`: recover a prefix of an encoded message history by a bit cut.
++* `SeqEfficiency.takeMsgs_poly`: the encoded-history prefix cut is polynomial-time.
++* `SeqEfficiency.phase_poly`, `phase_efficient`: an efficient strategy gives efficient phase moves.
++* `SeqEfficiency.verdict_poly`, `verifier_efficient`: all-phase verdicts and repeated verification
++  are efficient.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 175.1, efficiency of sequential repetition.
++-/
++
++namespace TCSlib.Cryptography.Composability.SeqEfficiency
++
++open Complexity Turing
++
++/-- For a history `hist` and count `c`, cutting its encoding immediately before the encoding
++of `hist.drop c` gives `Strategy.encodeMsgs (hist.take c)`. -/
++theorem take_encodeMsgs (hist : List (List Bool)) (c : ℕ) :
++    (Strategy.encodeMsgs hist).take ((Strategy.encodeMsgs hist).length -
++      (pairSndD^[c] (Strategy.encodeMsgs hist)).length) = Strategy.encodeMsgs (hist.take c) := by
++  rw [GI.iterate_pairSndD_encodeMsgs]
++  have h := congrArg Strategy.encodeMsgs (List.take_append_drop c hist)
++  rw [CommitmentLemmas.encodeMsgs_append] at h
++  rw [← h]
++  simp only [List.length_append, Nat.add_sub_cancel_right, List.take_left]
++
++/-- For polynomial-time `M` and a unary polynomial-time count `c`, the word
++`(M w).take ((M w).length - (pairSndD^[c w] (M w)).length)` is polynomial-time. On an
++encoded history it is the encoding of the first `c w` messages (`take_encodeMsgs`). -/
++theorem takeMsgs_poly {M : List Bool → List Bool} (hM : PolyTimeComputable M)
++    {c : List Bool → ℕ} (hc : PolyTimeComputable fun w => List.replicate (c w) true) :
++    PolyTimeComputable fun w =>
++      (M w).take ((M w).length - (pairSndD^[c w] (M w)).length) :=
++  EncodingMachines.truncate_poly hM
++    (EncodingMachines.unarySub_poly (EncodingMachines.unaryLength_poly hM)
++      (EncodingMachines.unaryLength_poly (ColMachines.iterSnd_poly hM hc)))
++
++/-- If `P` is efficient, a polynomial-time word function computes the padded phase message
++on every interactive layout. For `g = if previousFirst then 2|hist|-1 else 2|hist|` and
++`j = g / (2k(|x|))`, the message is `P.next x z (coinBlock (P.coinLen |x|) j r)
++(hist.drop (j*k(|x|)))` when `g % (2k(|x|)) < k(|x|)`, and `[]` otherwise.
++[PS10, Theorem 175.1, efficiency of a repeated party].
++
++**Proof sketch.** Recover the history length in unary, compute its move index, phase and
++position using the existing unary arithmetic machines, and drop the earlier encoded messages.
++Slice the random tape with the existing coin-block machine. Assemble the original strategy's
++machine layout and run its polynomial-time output function; a conditional emits `[]` in a
++filler position. All malformed word inputs are handled by the existing total projections.
++The equation on actual layouts follows from the published message-count and suffix readers. -/
++theorem phase_poly (P : Strategy) (k : PolyExpr) (previousFirst : Bool) (hP : P.Efficient) :
++    ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
++      ∀ (x z r : List Bool) (hist : List (List Bool)),
++      let g := if previousFirst then 2 * hist.length - 1 else 2 * hist.length
++      let j := g / (2 * k.eval x.length)
++      F (GI.ilayout x z hist r) =
++        if g % (2 * k.eval x.length) < k.eval x.length then
++          P.next x z (coinBlock (P.coinLen x.length) j r)
++            (hist.drop (j * k.eval x.length))
++        else [] := by
++  obtain ⟨A, hA, _, hnext⟩ := (Strategy.efficient_iff P).1 hP
++  let K : List Bool → ℕ := fun w => k.eval (GI.argX w).length
++  let index : List Bool → ℕ := fun w =>
++    if previousFirst then 2 * GI.msgCount (GI.argM w) - 1
++    else 2 * GI.msgCount (GI.argM w)
++  let phase : List Bool → ℕ := fun w => index w / (2 * K w)
++  -- The index and phase are computed entirely by the unary arithmetic toolkit.
++  have hK : PolyTimeComputable fun w => List.replicate (K w) true :=
++    EncodingMachines.unaryPolyOf_poly k (EncodingMachines.unaryLength_poly GI.argX_poly)
++  have hdouble := EncodingMachines.unaryMul_poly (EncodingMachines.unaryConst_poly 2)
++    GI.cnt_poly
++  have hindex : PolyTimeComputable fun w => List.replicate (index w) true := by
++    cases previousFirst
++    · exact hdouble
++    · exact EncodingMachines.unarySub_poly hdouble (EncodingMachines.unaryConst_poly 1)
++  have hden := EncodingMachines.unaryMul_poly (EncodingMachines.unaryConst_poly 2) hK
++  have hphase : PolyTimeComputable fun w => List.replicate (phase w) true := by
++    simpa only [EncodingMachines.divNum_eq] using EncodingMachines.divNum_poly hindex hden
++  have hmod : PolyTimeComputable fun w => List.replicate (index w % (2 * K w)) true := by
++    simpa only [EncodingMachines.modNum_eq] using EncodingMachines.modNum_poly hindex hden
++  have htest := EncodingMachines.ltTest_poly hmod hK
++  -- Reuse the encoded-list iteration and the coin slicing machines.
++  have hdrop := ColMachines.iterSnd_poly GI.argM_poly
++    (EncodingMachines.unaryMul_poly hphase hK)
++  have hcoins : PolyTimeComputable fun w =>
++      coinBlock (P.coins.eval (GI.argX w).length) (phase w) (NUPPT.inCoins w) := by
++    simpa only [List.length_replicate] using
++      GI.coinSlice_poly P.coins GI.argX_poly hphase NUPPT.polyTimeComputable_inCoins
++  have hlay := NUPPT.polyTimeComputable_layout
++    (EncodingMachines.unaryLength_poly GI.argX_poly)
++    ((GI.argX_poly.pairEncode GI.argZ_poly).pairEncode hdrop)
++    (polyTimeComputable_const []) hcoins
++  let F : List Bool → List Bool := fun w =>
++    if index w % (2 * K w) < K w then
++      A.output (NUPPT.layout (List.replicate (GI.argX w).length true)
++        (pairEncode (pairEncode (GI.argX w) (GI.argZ w))
++          (pairSndD^[phase w * K w] (GI.argM w))) []
++        (coinBlock (P.coins.eval (GI.argX w).length) (phase w) (NUPPT.inCoins w)))
++    else []
++  have hF : PolyTimeComputable F := by
++    simpa only [decide_eq_true_eq] using
++      polyTimeComputable_ite htest (A.polyTimeComputable_output.comp hlay)
++        (polyTimeComputable_const [])
++  refine ⟨F, hF, ?_⟩
++  intro x z r hist
++  dsimp only [F, phase, index, K]
++  simp only [GI.argX_ilayout, GI.argZ_ilayout, GI.argM_ilayout, GI.inCoins_ilayout,
++    GI.msgCount_encodeMsgs, GI.iterate_pairSndD_encodeMsgs]
++  rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hA.advice_eq,
++    Strategy.coinLen_eq]
++
++/-- For strategies `S, P`, a round polynomial `k` and orientation `previousFirst`, if `P`
++is efficient and every message of `S` is the padded phase message of `P`, then `S.Efficient`.
++The equation hypothesis uses `g = if previousFirst then 2|hist|-1 else 2|hist|` and
++`j = g / (2k(|x|))`; no hypothesis on the random-tape polynomial of `S` is required.
++[PS10, Theorem 175.1, efficiency of a repeated party]. -/
++theorem phase_efficient (S P : Strategy) (k : PolyExpr) (previousFirst : Bool)
++    (hP : P.Efficient)
++    (hnext : ∀ (x z r : List Bool) (hist : List (List Bool)),
++      let g := if previousFirst then 2 * hist.length - 1 else 2 * hist.length
++      let j := g / (2 * k.eval x.length)
++      S.next x z r hist =
++        if g % (2 * k.eval x.length) < k.eval x.length then
++          P.next x z (coinBlock (P.coinLen x.length) j r)
++            (hist.drop (j * k.eval x.length))
++        else []) : S.Efficient := by
++  obtain ⟨F, hF, heq⟩ := phase_poly P k previousFirst hP
++  apply GI.efficient_of_polyTime S hF
++  intro x z r hist
++  exact (hnext x z r hist).trans (heq x z r hist).symm
++
++/-- If `V` is efficient, a polynomial-time word function computes `[true]` exactly when
++all `Q(|x|)` phase verdicts are `[true]`. Phase `j` uses coin block `j` and the first
++`p = if verifierFirst then k(|x|)/2 else (k(|x|)+1)/2` messages after the first `j*k(|x|)`
++messages. [PS10, Theorem 175.1, efficiency of the repeated verifier].
++
++**Proof sketch.** For a unary phase index, drop the earlier encoded messages and cut out the
++real messages using `takeMsgs_poly`. Run the original verifier's uniform machine on that
++history and the selected coin block. The published bounded first-index search finds the first
++verdict different from `[true]`; its search bound is the unary polynomial `Q(|x|)`. The
++output is `[true]` exactly when the search is exhausted. The empty search is exhausted too,
++so the construction covers `Q(|x|) = 0` and `k(|x|) = 0`. -/
++theorem verdict_poly (V : Strategy) (k Q : PolyExpr) (verifierFirst : Bool)
++    (hV : V.Efficient) :
++    ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
++      ∀ (x z r : List Bool) (hist : List (List Bool)),
++      F (GI.ilayout x z hist r) =
++        if ∀ j < Q.eval x.length,
++          V.next x z (coinBlock (V.coinLen x.length) j r)
++            ((hist.drop (j * k.eval x.length)).take
++              (if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2)) =
++                [true]
++        then [true] else [false] := by
++  classical
++  obtain ⟨A, hA, _, hnext⟩ := (Strategy.efficient_iff V).1 hV
++  let K : List Bool → ℕ := fun w => k.eval (GI.argX w).length
++  let count : List Bool → ℕ := fun w =>
++    if verifierFirst then K w / 2 else (K w + 1) / 2
++  let act : List Bool → ℕ → List Bool := fun w j =>
++    let M := pairSndD^[j * K w] (GI.argM w)
++    A.output (NUPPT.layout (List.replicate (GI.argX w).length true)
++      (pairEncode (pairEncode (GI.argX w) (GI.argZ w))
++        (M.take (M.length - (pairSndD^[count w] M).length))) []
++      (coinBlock (V.coins.eval (GI.argX w).length) j (NUPPT.inCoins w)))
++  have hK : PolyTimeComputable fun w => List.replicate (K w) true :=
++    EncodingMachines.unaryPolyOf_poly k (EncodingMachines.unaryLength_poly GI.argX_poly)
++  have hcount : PolyTimeComputable fun w => List.replicate (count w) true := by
++    cases verifierFirst
++    · simpa only [EncodingMachines.divNum_eq] using EncodingMachines.divNum_poly
++        (EncodingMachines.unaryAdd_poly hK (EncodingMachines.unaryConst_poly 1))
++        (EncodingMachines.unaryConst_poly 2)
++    · simpa only [EncodingMachines.divNum_eq] using
++        EncodingMachines.divNum_poly hK (EncodingMachines.unaryConst_poly 2)
++  -- The search test is one original verifier activation on a phase slice.
++  have hX := GI.argX_poly.comp polyTimeComputable_pairSndD
++  have hZ := GI.argZ_poly.comp polyTimeComputable_pairSndD
++  have hR := NUPPT.polyTimeComputable_inCoins.comp polyTimeComputable_pairSndD
++  have hJ := EncodingMachines.unaryLength_poly polyTimeComputable_pairFstD
++  have hdrop := ColMachines.iterSnd_poly (GI.argM_poly.comp polyTimeComputable_pairSndD)
++    (EncodingMachines.unaryMul_poly hJ (hK.comp polyTimeComputable_pairSndD))
++  have htake := takeMsgs_poly hdrop (hcount.comp polyTimeComputable_pairSndD)
++  have hcoins : PolyTimeComputable fun w =>
++      coinBlock (V.coins.eval (GI.argX (pairSndD w)).length) (pairFstD w).length
++        (NUPPT.inCoins (pairSndD w)) :=
++    GI.coinSlice_poly V.coins hX polyTimeComputable_pairFstD hR
++  have hact : PolyTimeComputable fun w => act (pairSndD w) (pairFstD w).length :=
++    A.polyTimeComputable_output.comp (NUPPT.polyTimeComputable_layout
++      (EncodingMachines.unaryLength_poly hX)
++      ((hX.pairEncode hZ).pairEncode htake) (polyTimeComputable_const []) hcoins)
++  have heq : PolyTimeComputable fun w =>
++      [decide (act (pairSndD w) (pairFstD w).length = [true])] := by
++    refine (polyTimeComputable_pairEq.comp
++      (hact.pairEncode (polyTimeComputable_const [true]))).congr fun w => ?_
++    rw [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++  have hbad : PolyTimeComputable fun w =>
++      [decide (act (pairSndD w) (pairFstD w).length ≠ [true])] := by
++    simpa only [decide_not] using polyTimeComputable_not heq
++  have hQ := EncodingMachines.unaryPolyOf_poly Q
++    (EncodingMachines.unaryLength_poly GI.argX_poly)
++  have hfirst := EncodingMachines.polyTimeComputable_firstIdx
++    (p := fun w j => decide (act w j ≠ [true])) hbad hQ
++  let F : List Bool → List Bool := fun w =>
++    if EncodingMachines.firstIdx (fun j => decide (act w j ≠ [true]))
++        (Q.eval (GI.argX w).length) = Q.eval (GI.argX w).length
++    then [true] else [false]
++  have hF : PolyTimeComputable F := by
++    simpa only [decide_eq_true_eq] using polyTimeComputable_ite
++      (EncodingMachines.eqTest_poly hfirst hQ)
++      (polyTimeComputable_const [true]) (polyTimeComputable_const [false])
++  -- On an actual layout, all operations are read through published equations.
++  have hact_eq : ∀ x z r hist j, act (GI.ilayout x z hist r) j =
++      V.next x z (coinBlock (V.coinLen x.length) j r)
++        ((hist.drop (j * k.eval x.length)).take
++          (if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2)) := by
++    intro x z r hist j
++    dsimp only [act, K, count]
++    simp only [GI.argX_ilayout, GI.argZ_ilayout, GI.argM_ilayout, GI.inCoins_ilayout]
++    rw [GI.iterate_pairSndD_encodeMsgs (j * k.eval x.length) hist, take_encodeMsgs]
++    rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hA.advice_eq,
++      Strategy.coinLen_eq]
++  refine ⟨F, hF, ?_⟩
++  intro x z r hist
++  dsimp only [F]
++  rw [GI.argX_ilayout]
++  have he : (EncodingMachines.firstIdx
++      (fun j => decide (act (GI.ilayout x z hist r) j ≠ [true])) (Q.eval x.length) =
++        Q.eval x.length) ↔
++      ∀ j < Q.eval x.length,
++        V.next x z (coinBlock (V.coinLen x.length) j r)
++          ((hist.drop (j * k.eval x.length)).take
++            (if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2)) =
++              [true] := by
++    rw [EncodingMachines.firstIdx_eq_iff]
++    simp only [decide_eq_false_iff_not, not_not, hact_eq]
++  simp only [he]
++
++/-- For strategies `S, V`, round/count polynomials `k, Q` and an orientation `verifierFirst`,
++if `V` is efficient and `S` computes the repeated terminal verdict when `|hist| = Q(|x|)k(|x|)`
++and the padded phase message otherwise, then `S.Efficient`.
++The terminal verdict is `[true]` iff every phase's original verdict is `[true]`.
++[PS10, Theorem 175.1, efficiency of the repeated verifier].
++
++**Proof sketch.** Use `phase_poly` for the nonterminal branch and `verdict_poly` for the
++terminal branch. The branch test compares the encoded history's unary message count with
++the unary product `Q(|x|)k(|x|)`. The polynomial-time conditional computes `S` on every actual
++interactive layout, so `GI.efficient_of_polyTime` supplies its uniform machine. -/
++theorem verifier_efficient (S V : Strategy) (k Q : PolyExpr) (verifierFirst : Bool)
++    (hV : V.Efficient)
++    (hnext : ∀ (x z r : List Bool) (hist : List (List Bool)),
++      let g := if verifierFirst then 2 * hist.length else 2 * hist.length - 1
++      let j := g / (2 * k.eval x.length)
++      S.next x z r hist =
++        if hist.length = Q.eval x.length * k.eval x.length then
++          if ∀ i < Q.eval x.length,
++            V.next x z (coinBlock (V.coinLen x.length) i r)
++              ((hist.drop (i * k.eval x.length)).take
++                (if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2)) =
++                  [true]
++          then [true] else [false]
++        else if g % (2 * k.eval x.length) < k.eval x.length then
++          V.next x z (coinBlock (V.coinLen x.length) j r)
++            (hist.drop (j * k.eval x.length))
++        else []) : S.Efficient := by
++  classical
++  obtain ⟨Fp, hFp, hep⟩ := phase_poly V k (!verifierFirst) hV
++  obtain ⟨Fv, hFv, hev⟩ := verdict_poly V k Q verifierFirst hV
++  have hQ := EncodingMachines.unaryPolyOf_poly Q
++    (EncodingMachines.unaryLength_poly GI.argX_poly)
++  have hk := EncodingMachines.unaryPolyOf_poly k
++    (EncodingMachines.unaryLength_poly GI.argX_poly)
++  let F : List Bool → List Bool := fun w =>
++    if GI.msgCount (GI.argM w) = Q.eval (GI.argX w).length * k.eval (GI.argX w).length
++    then Fv w else Fp w
++  have hF : PolyTimeComputable F := by
++    simpa only [decide_eq_true_eq] using polyTimeComputable_ite
++      (EncodingMachines.eqTest_poly GI.cnt_poly (EncodingMachines.unaryMul_poly hQ hk))
++      hFv hFp
++  apply GI.efficient_of_polyTime S hF
++  intro x z r hist
++  dsimp only [F]
++  rw [GI.argM_ilayout, GI.msgCount_encodeMsgs, GI.argX_ilayout, hep, hev, hnext]
++  cases verifierFirst <;> rfl
++
++end TCSlib.Cryptography.Composability.SeqEfficiency
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean b/TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean
+new file mode 100644
+index 000000000..33e53a847
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean
+@@ -0,0 +1,98 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.ZeroKnowledge.Interaction
++import TCSlib.Complexity.ClassP.BinaryArith.Words
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Bounded message slots for sequential zero-knowledge simulation
++
++A phase simulator can output an arbitrary word. The message-slot normalization reads that word
++as an encoded list, retains exactly the requested number of slots, truncates every message to
++the requested bit bound, and supplies empty messages for missing entries. This is the bounded
++message-list part of the normalization in [PS10, Theorem 175.1]. Validation of view metadata
++and the choice of a fallback view are separate operations.
++
++## Main definitions
++
++* `normalizeMsgs p B raw`: exactly `p` decoded message slots, each truncated to `B` bits.
++
++## Main results
++
++* `encodeMsgs_eq_encWords`: the interaction and generic word-list encodings agree.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §7.2.1, Theorem 175.1.
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++open Complexity Turing
++
++/-- The two message-list encodings agree: `Strategy.encodeMsgs h = BinArith.encWords h`. -/
++theorem encodeMsgs_eq_encWords (h : List (List Bool)) :
++    Strategy.encodeMsgs h = BinArith.encWords h := by
++  induction h with
++  | nil => rw [Strategy.encodeMsgs_nil, BinArith.encWords_nil]
++  | cons m h ih => rw [Strategy.encodeMsgs_cons, BinArith.encWords_cons, ih]
++
++/-- Bounded message slots: `normalizeMsgs p B raw` is the list of the first `p` words decoded
++from `raw`, with missing words replaced by `[]` and every word truncated to `B` bits.
++[PS10, Theorem 175.1, bounded phase-shape normalization]. -/
++def normalizeMsgs (p B : ℕ) (raw : List Bool) : List (List Bool) :=
++  (List.range p).map fun i => ((BinArith.decWords raw).getD i []).take B
++
++/-- The slot formula is
++`normalizeMsgs p B raw = (List.range p).map (fun i => ((decWords raw).getD i []).take B)`. -/
++theorem normalizeMsgs_eq (p B : ℕ) (raw : List Bool) :
++    normalizeMsgs p B raw =
++      (List.range p).map (fun i => ((BinArith.decWords raw).getD i []).take B) := rfl
++
++/-- Normalization always supplies exactly the requested number of slots:
++`(normalizeMsgs p B raw).length = p`. -/
++theorem length_normalizeMsgs (p B : ℕ) (raw : List Bool) :
++    (normalizeMsgs p B raw).length = p := by
++  rw [normalizeMsgs_eq, List.length_map, List.length_range]
++
++/-- Every normalized slot has at most `B` bits:
++`m ∈ normalizeMsgs p B raw → m.length ≤ B`. -/
++theorem length_le_of_mem_normalizeMsgs (p B : ℕ) (raw : List Bool) {m : List Bool}
++    (hm : m ∈ normalizeMsgs p B raw) : m.length ≤ B := by
++  rw [normalizeMsgs_eq] at hm
++  obtain ⟨i, _, rfl⟩ := List.mem_map.mp hm
++  rw [List.length_take]
++  exact Nat.min_le_left _ _
++
++/-- Normalization fixes an encoded list with `p` slots and messages of at most `B` bits:
++`normalizeMsgs p B (Strategy.encodeMsgs h) = h` if `h.length = p` and
++`∀ m ∈ h, m.length ≤ B`. -/
++theorem normalizeMsgs_encodeMsgs (p B : ℕ) (h : List (List Bool))
++    (hp : h.length = p) (hB : ∀ m ∈ h, m.length ≤ B) :
++    normalizeMsgs p B (Strategy.encodeMsgs h) = h := by
++  rw [normalizeMsgs_eq, encodeMsgs_eq_encWords, BinArith.decWords_encWords]
++  apply List.ext_getElem
++  · rw [List.length_map, List.length_range, hp]
++  · intro i hi hi'
++    rw [List.getElem_map, List.getElem_range, List.getD_eq_getElem?_getD,
++      List.getElem?_eq_getElem hi', Option.getD_some]
++    exact List.take_of_length_le (hB _ (List.getElem_mem hi'))
++
++/-- The encoding of the normalized slots has the bound
++`(Strategy.encodeMsgs (normalizeMsgs p B raw)).length ≤ p * (2 * B + 2)`. -/
++theorem length_encodeMsgs_normalizeMsgs_le (p B : ℕ) (raw : List Bool) :
++    (Strategy.encodeMsgs (normalizeMsgs p B raw)).length ≤ p * (2 * B + 2) := by
++  rw [encodeMsgs_eq_encWords]
++  calc
++    (BinArith.encWords (normalizeMsgs p B raw)).length ≤
++        (normalizeMsgs p B raw).length * (2 * B + 2) :=
++      BinArith.length_encWords_le _ B fun m hm => length_le_of_mem_normalizeMsgs p B raw hm
++    _ = p * (2 * B + 2) := by rw [length_normalizeMsgs]
++
++end TCSlib.Cryptography.SequentialZK
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean b/TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean
+new file mode 100644
+index 000000000..b624ca611
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean
+@@ -0,0 +1,97 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Composability.SequentialZK.Normalization
++import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Polynomial-time bounded message-slot normalization
++
++The message-slot normalization of [PS10, Theorem 175.1] is computed through the public generic
++word-list map and lookup hosts, truncation, and the published counted emitter. No simulator
++output-shape premise is used: malformed words are read by the total word-list decoder.
++
++## Main definitions
++
++There are no new definitions. The input count and bit bound are arbitrary unary computable
++functions; the source word is an arbitrary polynomial-time function of the machine input.
++
++## Main results
++
++* `polyTimeComputable_encWords_decWords`: canonical reencoding is polynomial-time.
++* `polyTimeComputable_decWords_getD`: total decoded-word lookup is polynomial-time.
++* `polyTimeComputable_encode_normalizeMsgs`: bounded-slot normalization is polynomial-time.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §7.2.1, Theorem 175.1.
++-/
++
++namespace TCSlib.Cryptography.SequentialZK
++
++open Complexity Turing
++
++/-- Canonical reencoding is polynomial-time: if `raw` is polynomial-time, so is
++`w ↦ BinArith.encWords (BinArith.decWords (raw w))`. -/
++theorem polyTimeComputable_encWords_decWords {raw : List Bool → List Bool}
++    (hraw : PolyTimeComputable raw) :
++    PolyTimeComputable fun w => BinArith.encWords (BinArith.decWords (raw w)) := by
++  have hpre : PolyTimeComputable fun w => pairEncode [] (raw w) :=
++    (polyTimeComputable_const []).pairEncode hraw
++  refine ((BinArith.polyTimeComputable_mapW polyTimeComputable_pairSndD).comp hpre).congr ?_
++  intro w
++  simp only [Function.comp_apply, BinArith.mapW_pairEncode, pairSndD_pairEncode, List.map_id']
++
++/-- Total decoded-word lookup is polynomial-time: if `raw` and the unary index `i` are
++polynomial-time, so is `w ↦ (BinArith.decWords (raw w)).getD (i w) []`. -/
++theorem polyTimeComputable_decWords_getD {raw : List Bool → List Bool}
++    (hraw : PolyTimeComputable raw) {i : List Bool → ℕ}
++    (hi : PolyTimeComputable fun w => List.replicate (i w) true) :
++    PolyTimeComputable fun w => (BinArith.decWords (raw w)).getD (i w) [] := by
++  have hcanon := polyTimeComputable_encWords_decWords hraw
++  refine (BinArith.polyTimeComputable_getW.comp (hi.pairEncode hcanon)).congr ?_
++  intro w
++  simp only [Function.comp_apply, BinArith.getW_pairEncode, List.length_replicate]
++
++/-- Bounded-slot normalization is polynomial-time: if `p` and `B` are computable in unary
++and `raw` is polynomial-time, then so is
++`w ↦ Strategy.encodeMsgs (normalizeMsgs (p w) (B w) (raw w))`.
++[PS10, Theorem 175.1, bounded phase-shape normalization].
++
++**Proof sketch.** Canonically reencode the total decoder's result through the generic word
++map. The generic lookup host reads each requested slot, including empty defaults beyond the
++end. Truncate that slot to the unary bit bound and emit its self-delimiting pair. The published
++counted-emission host concatenates these chunks over the unary number of requested slots;
++the resulting word is precisely the normalized list's encoding. -/
++theorem polyTimeComputable_encode_normalizeMsgs {p B : List Bool → ℕ}
++    {raw : List Bool → List Bool}
++    (hp : PolyTimeComputable fun w => List.replicate (p w) true)
++    (hB : PolyTimeComputable fun w => List.replicate (B w) true)
++    (hraw : PolyTimeComputable raw) :
++    PolyTimeComputable fun w => Strategy.encodeMsgs (normalizeMsgs (p w) (B w) (raw w)) := by
++  -- Look up a total decoded slot at the emitter's unary counter.
++  have hidx : PolyTimeComputable fun w => List.replicate (pairFstD w).length true :=
++    EncodingMachines.unaryLength_poly polyTimeComputable_pairFstD
++  have hlookup := polyTimeComputable_decWords_getD
++    (hraw.comp polyTimeComputable_pairSndD) hidx
++  -- Cap the payload and emit its self-delimiting message encoding.
++  have hcap := EncodingMachines.truncate_poly hlookup (hB.comp polyTimeComputable_pairSndD)
++  have hchunk : PolyTimeComputable fun w => pairEncode
++      (((BinArith.decWords (raw (pairSndD w))).getD (pairFstD w).length []).take
++        (B (pairSndD w))) [] :=
++    hcap.pairEncode (polyTimeComputable_const [])
++  -- The published counted emitter supplies exactly p slots.
++  refine (ColMachines.polyTimeComputable_flatMap_range
++    (E := fun w i => pairEncode (((BinArith.decWords (raw w)).getD i []).take (B w)) [])
++    hchunk hp).congr ?_
++  intro w
++  simp only [normalizeMsgs_eq, encodeMsgs_eq_encWords, BinArith.encWords_def,
++    List.flatMap_map]
++
++end TCSlib.Cryptography.SequentialZK
+diff --git a/TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean b/TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean
+new file mode 100644
+index 000000000..2ee7c5894
+--- /dev/null
++++ b/TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean
+@@ -0,0 +1,163 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.ZeroKnowledge.Interaction
++import TCSlib.Cryptography.OneWayFunctions.Basic
++import Mathlib.Data.Fin.Tuple.Basic
++import Mathlib.Tactic.Ring
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Execution prefixes for sequential soundness
++
++## Main definitions
++
++This module introduces no definitions.
++
++## Main results
++
++* `Composability.exec_prefix`: each received history after `g` moves is a prefix of its
++  history after `g + t` moves.
++* `Composability.exec_fst_take`, `Composability.exec_snd_take`: taking the old history length
++  from the later history recovers the old history.
++* `Composability.uprob_adaptive_all_le`: phase success at most `s` after each prefix gives
++  total success at most `s ^ q`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §4.4 (interactive executions) and Theorem 175.1 (sequential composition).
++-/
++
++namespace TCSlib.Cryptography.Composability
++
++/-- For strategies `P`, `V`, first-mover flag `vFirst`, common input `x`, auxiliary inputs
++`zP`, `zV`, tapes `rP`, `rV`, and move counts `g`, `t`, both components of
++`exec P V vFirst x zP zV rP rV g` are prefixes of the corresponding components after `g + t`
++moves. [PS10, §4.4].
++
++**Proof sketch.** Induct on the additional moves. Each move appends one message to exactly
++one received history, so prefix transitivity preserves both earlier histories. -/
++theorem exec_prefix (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
++    (g t : ℕ) :
++    (exec P V vFirst x zP zV rP rV g).1 <+:
++        (exec P V vFirst x zP zV rP rV (g + t)).1 ∧
++      (exec P V vFirst x zP zV rP rV g).2 <+:
++        (exec P V vFirst x zP zV rP rV (g + t)).2 := by
++  induction t with
++  | zero => simp only [Nat.add_zero, List.prefix_rfl, and_self]
++  | succ t ih =>
++    rw [Nat.add_succ, exec_succ]
++    by_cases hm : moverIsV vFirst (g + t) = true
++    · simp only [hm, if_true]
++      exact ⟨List.prefix_append_of_prefix ih.1, ih.2⟩
++    · simp only [hm]
++      exact ⟨ih.1, List.prefix_append_of_prefix ih.2⟩
++
++/-- For `P`, `V`, `vFirst`, `x`, `zP`, `zV`, `rP`, `rV`, `g`, `t`, taking the length of
++`(exec P V vFirst x zP zV rP rV g).1` from the first component after `g + t` moves gives
++`(exec P V vFirst x zP zV rP rV g).1`. -/
++theorem exec_fst_take (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
++    (g t : ℕ) :
++    (exec P V vFirst x zP zV rP rV (g + t)).1.take
++        (exec P V vFirst x zP zV rP rV g).1.length =
++      (exec P V vFirst x zP zV rP rV g).1 :=
++  (List.prefix_iff_eq_take.mp (exec_prefix P V vFirst x zP zV rP rV g t).1).symm
++
++/-- For `P`, `V`, `vFirst`, `x`, `zP`, `zV`, `rP`, `rV`, `g`, `t`, taking the length of
++`(exec P V vFirst x zP zV rP rV g).2` from the second component after `g + t` moves gives
++`(exec P V vFirst x zP zV rP rV g).2`. -/
++theorem exec_snd_take (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
++    (g t : ℕ) :
++    (exec P V vFirst x zP zV rP rV (g + t)).2.take
++        (exec P V vFirst x zP zV rP rV g).2.length =
++      (exec P V vFirst x zP zV rP rV g).2 :=
++  (List.prefix_iff_eq_take.mp (exec_prefix P V vFirst x zP zV rP rV g t).2).symm
++
++/-- For `q` phases, a nonnegative bound `s`, and tests `Good i prefix fresh`, if
++`Pr[fresh, Good i prefix fresh] ≤ s` for every `i < q` and every earlier prefix, then
++`Pr[coins : Fin q → α, ∀ i, Good i (coins restricted below i) (coins i)] ≤ s ^ q`.
++[PS10, Theorem 175.1, sequential soundness].
++
++**Proof sketch.** Induct on the phase count, splitting the uniform tuple into its strict
++prefix and last coordinate with `Fin.snocEquiv`. The event for all phases implies success
++of the prefix together with the last phase. Conditional on a fixed prefix, the last phase
++succeeds with probability at most `s`. The published product bound therefore multiplies
++the prefix probability by `s`, and the induction hypothesis supplies the remaining power. -/
++theorem uprob_adaptive_all_le {α : Type*} [Fintype α] (q : ℕ) (s : ℝ) (hs : 0 ≤ s)
++    (Good : (i : ℕ) → (Fin i → α) → α → Prop)
++    (hGood : ∀ i < q, ∀ pre, uprob (Good i pre) ≤ s) :
++    uprob (fun coins : Fin q → α => ∀ i : Fin q,
++      Good i (fun j => coins (Fin.castLE i.isLt.le j)) (coins i)) ≤ s ^ q := by
++  revert hGood
++  induction q with
++  | zero =>
++    intro _
++    simpa only [pow_zero] using (uprob_le_one
++      (fun coins : Fin 0 → α => ∀ i : Fin 0,
++        Good i (fun j => coins (Fin.castLE i.isLt.le j)) (coins i)))
++  | succ q ih =>
++    intro hGood
++    -- Split the final fresh coordinate from the earlier uniform tuple.
++    let e : (Fin q → α) × α ≃ (Fin (q + 1) → α) :=
++      (Equiv.prodComm _ _).trans (Fin.snocEquiv (fun _ => α))
++    have he (a : (Fin q → α) × α) : e a = Fin.snoc a.1 a.2 := rfl
++    rw [← uprob_comp_equiv e]
++    have hmono :
++        uprob (fun a : (Fin q → α) × α => ∀ i : Fin (q + 1),
++          Good i (fun j => (e a) (Fin.castLE i.isLt.le j)) ((e a) i)) ≤
++        uprob (fun a : (Fin q → α) × α =>
++          (∀ i : Fin q, Good i (fun j => a.1 (Fin.castLE i.isLt.le j)) (a.1 i)) ∧
++            Good q a.1 a.2) := by
++      apply uprob_mono
++      intro a ha
++      rw [he] at ha
++      constructor
++      · intro i
++        have hi := ha (Fin.castSucc i)
++        have hpre :
++            (fun j : Fin i => (Fin.snoc a.1 a.2 : Fin (q + 1) → α)
++              (Fin.castLE (Fin.castSucc i).isLt.le j)) =
++            (fun j => a.1 (Fin.castLE i.isLt.le j)) := by
++          funext j
++          have hj : (Fin.castLE (Fin.castSucc i).isLt.le j : Fin (q + 1)) =
++              Fin.castSucc (Fin.castLE i.isLt.le j) := Fin.ext rfl
++          rw [hj, Fin.snoc_castSucc]
++        have hi' : Good i
++            (fun j : Fin i => (Fin.snoc a.1 a.2 : Fin (q + 1) → α)
++              (Fin.castLE (Fin.castSucc i).isLt.le j))
++            ((Fin.snoc a.1 a.2 : Fin (q + 1) → α) (Fin.castSucc i)) := hi
++        rw [hpre, Fin.snoc_castSucc] at hi'
++        exact hi'
++      · have hi := ha (Fin.last q)
++        have hpre :
++            (fun j : Fin q => (Fin.snoc a.1 a.2 : Fin (q + 1) → α)
++              (Fin.castLE (Fin.last q).isLt.le j)) =
++            a.1 := by
++          funext j
++          have hj : (Fin.castLE (Fin.last q).isLt.le j : Fin (q + 1)) =
++              Fin.castSucc j := Fin.ext rfl
++          rw [hj, Fin.snoc_castSucc]
++        have hi' : Good q
++            (fun j : Fin q => (Fin.snoc a.1 a.2 : Fin (q + 1) → α)
++              (Fin.castLE (Fin.last q).isLt.le j))
++            ((Fin.snoc a.1 a.2 : Fin (q + 1) → α) (Fin.last q)) := hi
++        rw [hpre, Fin.snoc_last] at hi'
++        exact hi'
++    -- Bound the last conditional success, then apply the prefix induction hypothesis.
++    have hbound := OneWay.uprob_and_le_mul
++      (fun pre : Fin q → α => ∀ i : Fin q,
++        Good i (fun j => pre (Fin.castLE i.isLt.le j)) (pre i))
++      (fun a : (Fin q → α) × α => Good q a.1 a.2)
++      (fun pre _ => hGood q (Nat.lt_succ_self q) pre)
++    have hih := ih (fun i hi pre => hGood i (by omega) pre)
++    calc _ ≤ _ := hmono
++         _ ≤ _ := hbound
++         _ ≤ s * s ^ q := mul_le_mul_of_nonneg_left hih hs
++         _ = s ^ (q + 1) := by rw [pow_succ]; ring
++
++end TCSlib.Cryptography.Composability
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Defs.lean b/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+index cb6a212b6..c0dc077b4 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+@@ -183,6 +183,15 @@ def StatZK (π : Protocol) (R : List Bool → List Bool → Prop) (δ : ℕ →
+   ∀ V' : Strategy, V'.Efficient → ∃ S : NUPPT, S.Uniform ∧ ∀ x y z, R x y →
+     StatClose (fun r => ((π.withV V').viewV x y z r).encode) (S.simulate x z) (δ x.length)
+ 
++/-- Statistical zero-knowledge is equivalent to the simulator property: for every efficient
++verifier `V'` there is a uniform simulator `S` with statistical error at most `δ(|x|)` on
++`(x, z)` for every witness `y` satisfying `R x y`. [PS10, §4.6]. -/
++theorem StatZK_iff (π : Protocol) (R : List Bool → List Bool → Prop) (δ : ℕ → ℝ) :
++    StatZK π R δ ↔ ∀ V' : Strategy, V'.Efficient →
++      ∃ S : NUPPT, S.Uniform ∧ ∀ x y z, R x y →
++        StatClose (fun r => ((π.withV V').viewV x y z r).encode)
++          (S.simulate x z) (δ x.length) := Iff.rfl
++
+ /-- Perfect zero-knowledge [PS10, §4.6, "perfect zero-knowledge"] (Def-122.a): statistical
+ zero-knowledge with error `0`, i.e. the simulator's output has exactly the law of the view.
+ 

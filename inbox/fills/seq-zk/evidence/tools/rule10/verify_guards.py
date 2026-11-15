@@ -85,6 +85,17 @@ if any(set(c) != set(rows) for c in components.values()) or set(installed) != se
 for name in rows:
     if len({components['install'][name], components['eof'][name], installed[name]}) != 1:
         raise RuntimeError('batch identity changed between installation and EOF')
+# An empty foreign closure still has one real native zero-request install/EOF batch.
+# No component row can populate names in that case; verify the explicit native batch.
+if not rows:
+    if len(starts) != 1 or starts != ends or set(starts.values()) != {0}:
+        raise RuntimeError('empty closure lacks its exact native zero-request batch')
+    zero_label = next(iter(starts))
+    if set(masks) != {(zero_label, 'install'), (zero_label, 'eof')}:
+        raise RuntimeError('empty closure lacks exact install/EOF mask coverage')
+    if any(masks[(zero_label, phase)] != 0 for phase in ['install', 'eof']):
+        raise RuntimeError('empty closure has a nonzero mask count')
+    names[zero_label] = set()
 if set(names) != set(starts) or starts != ends:
     raise RuntimeError('installation/EOF batch sets differ')
 for label, group in names.items():

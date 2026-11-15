@@ -6,11 +6,19 @@ import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.ZeroKnowledge.Defs
 import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
 import TCSlib.Cryptography.Composability.SequentialZK.Advice
+import TCSlib.Cryptography.Composability.SequentialZK.BoundedMetadata
+import TCSlib.Cryptography.Composability.SequentialZK.ComputationalAdvice
+import TCSlib.Cryptography.Composability.SequentialZK.ComputationalHybrid
+import TCSlib.Cryptography.Composability.SequentialZK.ComputationalPhaseBound
+import TCSlib.Cryptography.Composability.SequentialZK.ComputationalReduction
+import TCSlib.Cryptography.Composability.SequentialZK.ComputationalTransfer
 import TCSlib.Cryptography.Composability.SequentialZK.Congruence
+import TCSlib.Cryptography.Composability.SequentialZK.ContinuationProbability
 import TCSlib.Cryptography.Composability.SequentialZK.Efficiency
 import TCSlib.Cryptography.Composability.SequentialZK.EndpointSampling
 import TCSlib.Cryptography.Composability.SequentialZK.ErrSoundness
 import TCSlib.Cryptography.Composability.SequentialZK.ExecutionBounds
+import TCSlib.Cryptography.Composability.SequentialZK.HybridRecursion
 import TCSlib.Cryptography.Composability.SequentialZK.Normalization
 import TCSlib.Cryptography.Composability.SequentialZK.NormalizationMachine
 import TCSlib.Cryptography.Composability.SequentialZK.NormalizedStep
@@ -21,6 +29,8 @@ import TCSlib.Cryptography.Composability.SequentialZK.PrefixFolds
 import TCSlib.Cryptography.Composability.SequentialZK.PrefixLaws
 import TCSlib.Cryptography.Composability.SequentialZK.ProofTransfers
 import TCSlib.Cryptography.Composability.SequentialZK.RealPhases
+import TCSlib.Cryptography.Composability.SequentialZK.RealPrefixBounds
+import TCSlib.Cryptography.Composability.SequentialZK.ReductionAdvantage
 import TCSlib.Cryptography.Composability.SequentialZK.RepeatedSoundness
 import TCSlib.Cryptography.Composability.SequentialZK.RepeatedVerifier
 import TCSlib.Cryptography.Composability.SequentialZK.SimulatorMachine
@@ -30,6 +40,7 @@ import TCSlib.Cryptography.Composability.SequentialZK.StatisticalPostprocess
 import TCSlib.Cryptography.Composability.SequentialZK.StatisticalPrefix
 import TCSlib.Cryptography.Composability.SequentialZK.StatisticalRecursion
 import TCSlib.Cryptography.Composability.SequentialZK.StatisticalTransfer
+import TCSlib.Cryptography.Composability.SequentialZK.SuffixLaws
 import TCSlib.Cryptography.Composability.SequentialZK.SuffixMachine
 import TCSlib.Cryptography.Composability.SequentialZK.VerifierPrefix
 import TCSlib.Cryptography.Composability.SequentialZK.WrappedVerifier
@@ -93,11 +104,19 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
 ## Contents
 
 * `SequentialZK.Advice`: uniform finite selectors.
+* `SequentialZK.BoundedMetadata`: finite bounded phase advice.
+* `SequentialZK.ComputationalAdvice`: uniform negligible selectors.
+* `SequentialZK.ComputationalHybrid`: conditional computational gaps and endpoints.
+* `SequentialZK.ComputationalPhaseBound`: a common negligible phase bound.
+* `SequentialZK.ComputationalReduction`: efficient advised continuation machines.
+* `SequentialZK.ComputationalTransfer`: computational zero-knowledge transfer.
 * `SequentialZK.Congruence`: reached-history execution congruence.
+* `SequentialZK.ContinuationProbability`: continuation acceptance and drift.
 * `SequentialZK.Efficiency`: phase and verdict machines.
 * `SequentialZK.EndpointSampling`: coin and view endpoint equivalences.
 * `SequentialZK.ErrSoundness`: acceptance bounds from soundness.
 * `SequentialZK.ExecutionBounds`: bounded real messages.
+* `SequentialZK.HybridRecursion`: conditional finite hybrid bounds.
 * `SequentialZK.Normalization`: bounded message slots.
 * `SequentialZK.NormalizationMachine`: normalization machines.
 * `SequentialZK.NormalizedStep`: one normalized phase comparison.
@@ -108,6 +127,8 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
 * `SequentialZK.PrefixLaws`: phase-fold recursion equations.
 * `SequentialZK.ProofTransfers`: bounded completeness transfer.
 * `SequentialZK.RealPhases`: real and filler phase endpoints.
+* `SequentialZK.RealPrefixBounds`: bounded actual real prefixes.
+* `SequentialZK.ReductionAdvantage`: typed reduction comparisons.
 * `SequentialZK.RepeatedSoundness`: the exact power soundness bound.
 * `SequentialZK.RepeatedVerifier`: the repeated-verifier contract.
 * `SequentialZK.SimulatorMachine`: the uniform normalized simulator.
@@ -117,6 +138,7 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
 * `SequentialZK.StatisticalPrefix`: normalized prefix comparisons.
 * `SequentialZK.StatisticalRecursion`: linear error accumulation.
 * `SequentialZK.StatisticalTransfer`: statistical zero-knowledge transfer.
+* `SequentialZK.SuffixLaws`: normalized suffix equations.
 * `SequentialZK.SuffixMachine`: strict-PPT normalized suffix simulation.
 * `SequentialZK.VerifierPrefix`: prefix tape dependence.
 * `SequentialZK.WrappedVerifier`: the deterministic phase verifier.
@@ -135,7 +157,7 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
   position.
 * `Protocol.seqRep_exec_phase`: phase `j` of an honest execution of `π.seqRep Q` is an execution
   of `π` with the coin slices `j`.
-* `ZK.seqRep` (Thm 175.1, stated; `sorry` under the source's sketch).
+* `ZK.seqRep` (Thm 175.1, proved): computational zero knowledge composes sequentially.
 * `StatZK.seqRep` (proved): statistical error composes as `Q · δ`;
   `PerfectZK.seqRep` is proved from it at zero error.
 * `PerfectZKAbort.seqRep`: the aborting case, derived from `PerfectZKAbort.statZK` and
@@ -841,7 +863,7 @@ zero-knowledge protocol with a bounded prover is zero-knowledge.
    output. By `ZK π R` at `Lz'`, summing the `Q(n)` gaps gives `Q(n) * ε(n)`, negligible. -/
 theorem ZK.seqRep {B : PolyExpr} (h : ZK π R) (hB : π.ProverBounded R B) (Q : PolyExpr) :
     ZK (π.seqRep Q) R := by
-  sorry
+  exact SequentialZK.zk_of_padded_spec h hB Q (fun x => π.seqRep_proverSpec Q x)
 
 /-- **Theorem 175.1, statistical case**: statistical error `δ` composes to `Q · δ`, under the
 same prover bound.

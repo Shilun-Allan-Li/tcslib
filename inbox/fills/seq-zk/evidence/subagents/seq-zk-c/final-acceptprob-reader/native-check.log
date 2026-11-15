@@ -1,0 +1,37 @@
+START 2026-11-15T13:00:06.338415+00:00
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:42:73: error: unsolved goals
+A : Type u_1
+B : Type u_2
+O : Type u_3
+C : Type u_4
+inst✝² : Fintype A
+inst✝¹ : Fintype B
+inst✝ : Fintype C
+F : A × B → O
+D : O → C → Bool
+⊢ (uexp fun a =>
+      uprob fun b => D (F ((Equiv.prodAssoc A B C).symm (a, b)).1) ((Equiv.prodAssoc A B C).symm (a, b)).2 = true) =
+    uexp fun a => uprob fun z => D (F (a, z.1)) z.2 = true
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability): no fresh .olean produced
+        2.69 real         1.71 user         1.08 sys
+          2238791680  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173108  page reclaims
+                4319  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 347  voluntary context switches
+                7366  involuntary context switches
+            32677112  instructions retired
+            15542421  cycles elapsed
+             1622352  peak memory footprint
+EXIT 1
+END 2026-11-15T13:00:14.091188+00:00

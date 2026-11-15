@@ -1,0 +1,22 @@
+--- a/TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean
++++ b/TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean
+@@ -55,9 +55,11 @@
+         C i (realFamily i r)| ≤ ε) :
+     |uexp (fun r : Fin q → A => C q (realFamily q r)) - C 0 initial| ≤
+       (q : ℝ) * ε := by
++  -- Average the continuation potential over each real prefix coin table.
+   let P : ℕ → ℝ := fun i => uexp (fun r : Fin i → A => C i (realFamily i r))
+   have hzero : P 0 = C 0 initial := by
+     simp only [P, real_zero, HardcoreBit.uexp_const]
++  -- Reindex the next table as a prefix and fresh coin, then average the local gap.
+   have hgap (i : ℕ) (hi : i < q) : |P i - P (i + 1)| ≤ ε := by
+     let e : (Fin (i + 1) → A) ≃ (Fin i → A) × A :=
+       (Fin.snocEquiv (fun _ : Fin (i + 1) => A)).symm.trans
+@@ -78,6 +80,7 @@
+         HardcoreBit.uexp_prod]
+     rw [hnext, abs_sub_comm]
+     exact abs_uexp_sub_le hε (fun r => hlocal i hi r)
++  -- Apply the published telescope and bound each adjacent gap by the same error.
+   have hsum : ∑ i ∈ Finset.range q, |P i - P (i + 1)| ≤ (q : ℝ) * ε := by
+     calc
+       _ ≤ ∑ _i ∈ Finset.range q, ε :=

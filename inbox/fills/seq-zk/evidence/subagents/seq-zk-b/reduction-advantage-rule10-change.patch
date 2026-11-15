@@ -1,0 +1,36 @@
+--- a/TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean
++++ b/TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean
+@@ -77,19 +77,25 @@
+   let e : ((Fin (Q.eval n) → S.Coins n) × D.Coins n) ≃ Red.Coins n :=
+     ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm.prodCongr
+       (Equiv.refl (D.Coins n))).trans (EnsembleLemmas.coinsEquiv hlen)
++  -- Expand the local equivalence before evaluating the scalar coin cut.
++  have he (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) :
++      e c = EnsembleLemmas.coinsEquiv hlen
++        (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2) := by
++    rcases c with ⟨cS, cD⟩
++    simp only [e, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.refl_apply]
++  have hcut : (PolyExpr.mul Q S.coins).eval n = Q.eval n * S.coinLen n := by
++    rw [PolyExpr.eval_mul, NUPPT.coinLen_eq]
+   have htake (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) :
+       (List.ofFn (e c)).take ((PolyExpr.mul Q S.coins).eval n) =
+         List.ofFn ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1) := by
+-    simpa only [e, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply,
+-      Equiv.refl_apply, PolyExpr.eval_mul, NUPPT.coinLen_eq] using
+-      EnsembleLemmas.take_ofFn_coinsEquiv hlen
+-        (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2)
++    rw [he, hcut]
++    exact EnsembleLemmas.take_ofFn_coinsEquiv hlen
++      (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2)
+   have hdrop (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) :
+       (List.ofFn (e c)).drop ((PolyExpr.mul Q S.coins).eval n) = List.ofFn c.2 := by
+-    simpa only [e, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply,
+-      Equiv.refl_apply, PolyExpr.eval_mul, NUPPT.coinLen_eq] using
+-      EnsembleLemmas.drop_ofFn_coinsEquiv hlen
+-        (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2)
++    rw [he, hcut]
++    exact EnsembleLemmas.drop_ofFn_coinsEquiv hlen
++      (((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1), c.2)
+   -- Compare the exact verdicts, then reindex each acceptance probability.
+   have key (raw : List Bool) (c : (Fin (Q.eval n) → S.Coins n) × D.Coins n) :
+       Red.distinguisherL n raw (e c) = D.distinguisherL n

@@ -22,4 +22,4 @@ for i,m in enumerate(mods,1):
  print(f'{stage} {i}/{len(mods)} END exit={p.returncode} errors={errors}',flush=True)
  if p.returncode or errors:
   print(raw[-6000:],flush=True);sys.exit(1)
- time.sleep(6)
+ time.sleep(float(os.environ.get('SEQ_ZK_FAIR_GAP', '6')))

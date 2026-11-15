@@ -1,6 +1,6 @@
 """Serial seal checks, complete raw logs, diagnostic mapping, and slot-free fairness gaps."""
 from pathlib import Path
-import subprocess,sys,json,time,re
+import subprocess,sys,json,time,re,os
 plan=Path(sys.argv[1]);out=Path(sys.argv[2]);out.mkdir(parents=True,exist_ok=True)
 for r in json.loads(plan.read_text()):
  print('SEAL START',r['label'],flush=True)
@@ -25,4 +25,4 @@ for r in json.loads(plan.read_text()):
  subprocess.run([sys.executable,'-I','evidence/tools/rule10/verify_guards.py','--record',r['record'],'--log',str(log),'--out',str(out/(r['label']+'.guards.json'))],check=True)
  print('SEAL END',r['label'],'errors',len(errors),flush=True)
  if any(e['declaration']=='HARNESS' for e in errors):raise SystemExit('Harness diagnostic: stop and inspect')
- time.sleep(6)
+ time.sleep(float(os.environ.get('SEQ_ZK_FAIR_GAP', '6')))

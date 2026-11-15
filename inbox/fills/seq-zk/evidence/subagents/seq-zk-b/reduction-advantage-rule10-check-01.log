@@ -1,0 +1,63 @@
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:83:73: error: unsolved goals
+σ : Type u_1
+τ : Type u_2
+inst✝¹ : Fintype σ
+inst✝ : Fintype τ
+S D Red : NUPPT
+k B Q : PolyExpr
+verifierFirst : Bool
+n : ℕ
+x z rV : List Bool
+j : ℕ
+pre : List (List Bool)
+hcoins : Red.coins = (Q.mul S.coins).add D.coins
+hrun :
+  ∀ (raw r : List Bool),
+    Red.runAtL n raw r =
+      D.runAtL n (phaseContinuation S k B Q verifierFirst x z rV j pre raw (List.take ((Q.mul S.coins).eval n) r))
+        (List.drop ((Q.mul S.coins).eval n) r)
+X : σ → List Bool
+Y : τ → List Bool
+hlen : Red.coinLen n = Q.eval n * S.coinLen n + D.coinLen n
+e : (Fin (Q.eval n) → S.Coins n) × D.Coins n ≃ Red.Coins n :=
+  ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm.prodCongr (Equiv.refl (D.Coins n))).trans
+    (EnsembleLemmas.coinsEquiv hlen)
+c : (Fin (Q.eval n) → S.Coins n) × D.Coins n
+⊢ (EnsembleLemmas.coinsEquiv hlen)
+      (Prod.map (⇑(FunFamily.blocks (Q.eval n) (S.coinLen n)).symm) (⇑(Equiv.refl (D.Coins n))) c) =
+    (EnsembleLemmas.coinsEquiv hlen) ((FunFamily.blocks (Q.eval n) (S.coinLen n)).symm c.1, c.2)
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:84:60: warning: This simp argument is unused:
+  Prod.map_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [e, Equiv.trans_apply, Equiv.prodCongr_apply, P̵r̵o̵d̵.̵m̵a̵p̵_̵a̵p̵p̵l̵y̵,̵ ̵Equiv.refl_apply]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:84:76: warning: This simp argument is unused:
+  Equiv.refl_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [e, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply,̵ ̵E̵q̵u̵i̵v̵.̵r̵e̵f̵l̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage): no fresh .olean produced
+        2.53 real         1.26 user         1.06 sys
+          2213396480  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171453  page reclaims
+                4256  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 324  voluntary context switches
+                6346  involuntary context switches
+            32579137  instructions retired
+            15791213  cycles elapsed
+             1622352  peak memory footprint
