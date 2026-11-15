@@ -292,6 +292,18 @@ def InBPP (L : Language Bool) : Prop :=
       (x ∈ L → 2/3 ≤ randProb (polyLen a k x.length) fun r => M x r = true) ∧
       (x ∉ L → 2/3 ≤ randProb (polyLen a k x.length) fun r => M x r = false)
 
+/-- A language `L` is in `BPP` for the verifier model `E` exactly when there are
+a Boolean verifier `M` and constants `a, k` such that `E.Eff (boolVerifier M)` and,
+for every input `x`, members are accepted and nonmembers rejected with probability
+at least `2/3` using `polyLen a k |x|` coins. [AB09, Definition 7.3] -/
+theorem inBPP_iff (L : Language Bool) :
+    InBPP E L ↔ ∃ (M : List Bool → List Bool → Bool) (a k : ℕ),
+      E.Eff (boolVerifier M) ∧
+      ∀ x : List Bool,
+        (x ∈ L → 2/3 ≤ randProb (polyLen a k x.length) fun r => M x r = true) ∧
+        (x ∉ L → 2/3 ≤ randProb (polyLen a k x.length) fun r => M x r = false) :=
+  Iff.rfl
+
 /-- `L ∈ RP`: one-sided error — inputs in `L` are accepted with probability
 at least `2/3`, inputs outside `L` are *never* accepted.  [AB09, Def 7.6] -/
 def InRP (L : Language Bool) : Prop :=

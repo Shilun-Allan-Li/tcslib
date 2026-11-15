@@ -62,8 +62,8 @@ Theorem 180.1 (`TCSlib.Cryptography.Randomness.bpp_subset_dtime_subexp`).
   head envelope of one machine (stated; a `sorry` under the route below, for the `derand` fill).
   [AB09, §7.1, p. 126]; [PS10, Theorem 180.1, step 4 of the proof]
 * `Complexity.seedMajority_mem_DTIME` — the decision-class corollary
-  `∃ e, {x | 2^{w(|x|)} < 2 · count} ∈ DTIME (n ↦ 2^{w(n)} · (n+1)^e)` (stated; a `sorry`
-  until the `derand` fill adds `mem_DTIME_iff`, then read off the contract).
+  `∃ e, {x | 2^{w(|x|)} < 2 · count} ∈ DTIME (n ↦ 2^{w(n)} · (n+1)^e)`, proved from
+  the host contract through `mem_DTIME_iff`.
 * `Randomized.half_lt_randProb_iff` — majority as a probability:
   `1/2 < randProb m A ↔ 2^m < 2 · #{r | A r}` (proved).
 
@@ -211,11 +211,9 @@ puts the strict-majority language in `DTIME (n ↦ 2^{w(n)} · (n+1)^e)`:
 ∈ DTIME (fun n => 2^{w(n)} · (n+1)^e)`. Ties (`2 · count = 2^w`) reject. It is the corollary
 of the machine contract `exists_seedMajorityTM` that the consumers of the class read.
 
-**Status.** Admitted (a `sorry`). It follows from `exists_seedMajorityTM` through the reader
-`Complexity.mem_DTIME_iff`, which the `derand` fill adds beside `DTIME` (`ClassP/DTIME.lean`)
-under its pre-approval (Seyoon, 2026-11-15). The `derand` fill proves both the contract and
-this corollary. Until the reader exists, a proof would read `Turing.FinTM.DecidesInTime`,
-`Turing.FinTM.DecidesInTimeVia` and `DTIME` by their definitions, which Rule 10 forbids.
+**Status.** Proved modulo `exists_seedMajorityTM`. The proof reads the machine contract
+through `Complexity.mem_DTIME_iff`, added beside `DTIME` under the pre-approval of
+2026-11-15. It uses no definitional reading of either `DTIME` or `DecidesInTime`.
 
 **Proof sketch.** Take the machine `M` and constants `c, e` of `exists_seedMajorityTM` (the
 envelope is not needed here). `M` decides the language within
@@ -229,6 +227,7 @@ theorem seedMajority_mem_DTIME {V : Language Bool} (hV : V ∈ P) (w : ℕ → �
           2 * (Finset.univ.filter fun u : Fin (w x.length) → Bool =>
             pairEncode x (List.ofFn u) ∈ V).card} ∈
         DTIME fun n => 2 ^ w n * (n + 1) ^ e := by
-  sorry
+  obtain ⟨M, c, e, hM, _⟩ := exists_seedMajorityTM hV w hw
+  exact ⟨e, mem_DTIME_iff.mpr ⟨c, M, hM⟩⟩
 
 end Complexity
