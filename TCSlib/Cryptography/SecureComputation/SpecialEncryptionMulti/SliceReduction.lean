@@ -74,11 +74,13 @@ theorem length_encodeList_le (l : List (List Bool)) (B : ℕ)
     (h : ∀ c ∈ l, c.length ≤ B) :
     (PrivateKeyScheme.encodeList l).length ≤ l.length * (2 * B + 2) := by
   induction l with
-  | nil => simp only [PrivateKeyScheme.encodeList_nil, List.length_nil, Nat.zero_mul, le_refl]
+  | nil =>
+    simp only [PrivateKeyScheme.encodeList_nil, List.length_nil, Nat.zero_mul, le_refl]
   | cons c l ih =>
     have hc := h c (List.mem_cons_self)
     have ht := ih (fun a ha => h a (List.mem_cons_of_mem _ ha))
-    rw [PrivateKeyScheme.encodeList_cons, length_pairEncode, List.length_cons, Nat.add_mul, Nat.one_mul]
+    rw [PrivateKeyScheme.encodeList_cons, length_pairEncode, List.length_cons,
+      Nat.add_mul, Nat.one_mul]
     omega
 
 /-- Fitting slice advice has polynomial length:
