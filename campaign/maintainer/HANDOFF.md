@@ -14,11 +14,11 @@ only go directly after fetch/rebase. The latest merge is #320 (Ladner fill 3, ga
 Campaign Lean is `1320a5c8ce93f4644c2c92ed32e2768ed07ea9bb`. Its replay output is the cloud snapshot `oleans-c1320`
 (876 objects); use it whole. See campaign/status/2026-11-15-merge-320/. Ladner has four admitted
 targets left on the campaign (three once #321 merges). Fills 1–3 are merged (#304, #310, #320). Fill 4 proves target 1
-(`ladnerH_polyTime`, with the approved file reorder) and is in gate 139 (draft PR #321, staged). Earlier merges are in the table.
+(`ladnerH_polyTime`, with the approved file reorder) and is in gate 139 (PR #321, clear to merge). Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
-| #321 / 139 | **Draft, staged** at `80c18b7ec5bb9e30d838be8dc6fec9c79a0384f3`. Ladner fill 4: the approved reorder plus target 1 `ladnerH_polyTime`. Replay 2/2; seals 16/16. campaign/gates/139-ladner-poly-memo/. |
+| #321 / 139 | **Clear to merge** at `80c18b7ec5bb9e30d838be8dc6fec9c79a0384f3` (round 1 CLEAR, 2026-11-15; one records minor fixed). Ladner fill 4: the approved reorder plus target 1 `ladnerH_polyTime`. Replay 2/2 (`oleans-cl139-c1320`, prospective tree `ce2850d8`); seals 16/16. campaign/gates/139-ladner-poly-memo/. |
 | #320 / 138 | **Merged** at `1320a5c8ce93f4644c2c92ed32e2768ed07ea9bb` (2026-11-15). Gate closed (CLEAR). Ladner fill 3: target 1 part A through `ladner_candidate_FP`, with private dedup helpers. Its replay output is the campaign snapshot `oleans-c1320` (876 objects; campaign/status/2026-11-15-merge-320/). |
 | #310 / 137 | **Merged** at `fe8a8520f65a9feaa4c960c11874b68ebf8798db` (2026-11-15). Gate closed (round 2 CLEAR). Ladner fill 2: `powCap`, padding parser, shared `sqStep` (ModPow's `powStep` re-pointed), readers `mod_eq` and `encodeNat_eq`. Its replay output is the campaign snapshot `oleans-cfe8a` (876 objects; campaign/status/2026-11-15-merge-310/). |
 | #304 / 136 | **Merged** at `a052f8891d3c4520407bf9d976421148fc0f7a02` (2026-11-14). Gate closed (CLEAR). Ladner fill 1: `ladnerH_bounded_of_mem_P`, `ladnerH_unbounded_of_not_mem_P`. Its replay output is the campaign snapshot `oleans-ca052` (876 objects; campaign/status/2026-11-14-merge-304/). |

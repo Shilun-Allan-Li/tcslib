@@ -56,13 +56,13 @@ No maintainer repair follows the delivery. The delivery (final zip and checkpoin
 3. **Rule 10.** Check that each proof reads other files' TCSlib definitions only through
    published equations (the delivery's reader table lists them). Two checks:
    - **Seals** (`seals/`): all 16 new or changed proofs (the 15 new theorems and
-     `ladnerH_polyTime`) pass with every other-file definition they reach irreducible: 24
-     definitions, 23 by a local attribute. The 24th, `BinArith.decWords`, is defined by
+     `ladnerH_polyTime`) pass with every other-file definition they reach irreducible: 25
+     definitions, 24 by a local attribute. The 25th, `BinArith.decWords`, is defined by
      well-founded recursion, so Lean already makes it irreducible
      (`checks/reducibility.log`); the harness lists it under `inherently_irreducible`, as in
      gate 138.
-   - **Controls** (`controls-part0/`): the 48 paired controls each close natively and fail
-     sealed.
+   - **Controls** (`controls-part0/`): the 48 paired controls (two for each of the 24
+     attribute-sealed definitions) each close natively and fail sealed.
 
    Also check the `rw`/`simp`/`unfold` arguments; the delivery's `rewrite-arguments.log`
    lists them.
