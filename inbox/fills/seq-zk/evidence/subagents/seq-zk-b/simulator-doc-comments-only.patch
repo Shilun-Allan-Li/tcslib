@@ -1,0 +1,26 @@
+--- a/TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean
++++ b/TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean
+@@ -314,6 +314,7 @@
+         let rV := (List.ofFn r).take (CV.eval x.length)
+         let rS := (List.ofFn r).drop (CV.eval x.length)
+         View.encode ⟨x, z, rV, phasePrefix S k B verifierFirst x z rV rS (Q.eval x.length)⟩ := by
++  -- Decode both inputs and split the verifier and phase tapes through public PT readers.
+   let X : List Bool → List Bool := fun w => pairFstD (NUPPT.inArg w)
+   let Z : List Bool → List Bool := fun w => pairSndD (NUPPT.inArg w)
+   let RV : List Bool → List Bool := fun w => (NUPPT.inCoins w).take (CV.eval (X w).length)
+@@ -329,6 +330,7 @@
+   have hRS : PolyTimeComputable RS := by
+     refine ((polyTimeComputable_pairDropPoly CV).comp hcut).congr fun w => ?_
+     rw [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++  -- Assemble the normalized repeated prefix and encode the complete canonical view.
+   have hpre := phasePrefix_poly S hS k B Q verifierFirst hX hZ hRV hRS
+   let F : List Bool → List Bool := fun w =>
+     View.encode ⟨X w, Z w, RV w,
+@@ -337,6 +339,7 @@
+     refine ((hX.pairEncode hZ).pairEncode (hRV.pairEncode hpre)).congr fun w => ?_
+     dsimp only [F]
+     rw [View.encode_mk]
++  -- The uniform constructor and activation/layout readers identify every output field.
+   refine ⟨NUPPT.ofPolyTimeUniform hF (.add CV (.mul Q S.coins)),
+     NUPPT.ofPolyTimeUniform_uniform hF _, NUPPT.coins_ofPolyTimeUniform hF _, ?_⟩
+   intro x z r

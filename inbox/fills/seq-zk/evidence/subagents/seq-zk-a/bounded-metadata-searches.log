@@ -1,0 +1,19 @@
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:79:theorem reductionData_length (x z rV : List Bool) (j : ℕ) (preWord : List Bool) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:49:  length; `TCSlib.Cryptography.padFin` — pad/truncate (for samplers).
+TCSlib/Cryptography/Asymptotic/Adversary.lean:66:* `TCSlib.Cryptography.decodeFin_ofFn`, `TCSlib.Cryptography.padFin_ofFn` — decoding and
+TCSlib/Cryptography/Asymptotic/Adversary.lean:68:  exactly on the encoding; `TCSlib.Cryptography.ofFn_padFin_of_length` — padding a string of the
+TCSlib/Cryptography/Asymptotic/Adversary.lean:169:def padFin (ℓ : ℕ) (w : List Bool) : Fin ℓ → Bool := fun i => w.getD i false
+TCSlib/Cryptography/Asymptotic/Adversary.lean:171:/-- The defining equation of `padFin`: `padFin ℓ w = fun i => w.getD i false`. -/
+TCSlib/Cryptography/Asymptotic/Adversary.lean:172:theorem padFin_def (ℓ : ℕ) (w : List Bool) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:173:    padFin ℓ w =
+TCSlib/Cryptography/Asymptotic/Adversary.lean:177:/-- Bit `i` of `padFin ℓ w` is bit `i` of `w`, default `false`. -/
+TCSlib/Cryptography/Asymptotic/Adversary.lean:178:theorem padFin_apply (ℓ : ℕ) (w : List Bool) (i : Fin ℓ) : padFin ℓ w i = w.getD i false :=
+TCSlib/Cryptography/Asymptotic/Adversary.lean:211:theorem padFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : padFin ℓ (List.ofFn x) = x := by
+TCSlib/Cryptography/Asymptotic/Adversary.lean:213:  simp [padFin]
+TCSlib/Cryptography/Asymptotic/Adversary.lean:215:/-- The encoding of `padFin L w` is `w` when `|w| = L`: `List.ofFn (padFin L w) = w`. -/
+TCSlib/Cryptography/Asymptotic/Adversary.lean:216:theorem ofFn_padFin_of_length {L : ℕ} {w : List Bool} (hw : w.length = L) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:217:    List.ofFn (padFin L w) = w := by
+TCSlib/Cryptography/Asymptotic/Adversary.lean:219:  simp [padFin_def, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj₂]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:318:(`Finite.exists_max`) and hard-wire its advice as `α n`. The machine `B` of
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:332:      (Σ k : Fin (b.eval n + 1), Fin k → Bool) → ℝ := fun n p =>
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:336:  have hmax : ∀ n, ∃ p, ∀ q, g n q ≤ g n p := fun n => Finite.exists_max (g n)

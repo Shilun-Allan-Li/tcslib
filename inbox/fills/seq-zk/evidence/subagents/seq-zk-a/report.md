@@ -238,3 +238,97 @@ StatisticalPostprocess dependency and completed fixed-point/pointwise markers do
 that its full concrete instantiation passed. The next opacity/instance correction awaits the
 lead's three-slot cache completion. Complete prerequisite sources and lossless native-sample
 ZIP parts are included so all closed raw evidence has its sources and verification tools.
+
+
+## Final normalization and statistical-prefix extension
+
+NormalizedStep is now clean-checked with no diagnostics. Its final source hash is
+07c9fed43664eeaa47b712f02b72f09addbe0ceb8dc134917cd0b33f6754e689
+(101lines,maxwidth96;nativecheck10=2.22s). The compiler ledger now explicitly records the
+missing ZeroKnowledge.Defs import exposed by attempt08 and corrected before09. Prior
+elaboration-stage diagnoses were incomplete because invalid simulate fields in the
+signature remained buffered. The corrected exact-source check is retained in full.
+
+StatisticalPrefix is clean-checked with no diagnostics. Its final source hash is
+5275167b11df6074d08df53ae24486e94ccb1149eaf5d6541e88ad9fe1727d64
+(151lines,maxwidth94;nativecheck02=2.31s). PaddedProverSpec.statClose_step specializes the
+zero-verifier comparison at every index and prefix using an explicit coin-length equality,
+coin equivalence and public ofFn reader. PaddedProverSpec.statClose_prefix instantiates the
+public sampler-recursion bound using the public zero/snoc fold readers. It assumes only
+a direct prover-message cap and raw phase closeness at every auxiliary input; S need not
+be uniform. Neither proof uses a target theorem or creates a host.
+
+Nearest overlap relatives: StatisticalRecursion's generic caller-supplied family bound,
+NormalizedStep's generic zero-verifier bound, PrefixLaws zero/snoc readers,
+PaddedProverSpec.original_count, public StatClose.comp_equiv_left/nonneg, and Mathlib
+List.ofFn_congr. StatisticalPrefix is their concrete composition, not a duplicate generic
+loop or statistical law. Exact searches are statistical-prefix-searches.log.
+
+The lead authorized APFS clones of completed helper oleans into this isolated olean tree.
+Eight completed immutable prerequisite source/olean pairs were copied with provenance in
+prefix-prerequisite-seed.json. Their sources are reused unchanged; no other owner file was
+edited. The lead will perform final source, axioms, seals and sweep checks.
+
+## BoundedMetadata overlap plan
+
+Nearest existing material is ColZKMachine's finite maximizing domain with a bounded
+sigma-word, plus the public padFin/ofFn_padFin_of_length codec. The new metadata type
+only assembles those standard finite representations into the five actual reduction
+fields. It defines no selector, maximizing principle, interpreter or machine. c's Advice
+selector will consume the resulting finite nonempty type. The exact packed-size formula
+is b's public reductionData_length; it is reused directly, not re-proved.
+
+
+## Complete checked helper handoff
+
+seq-zk-a proved ten helper modules: Normalization, NormalizationMachine, PhaseView,
+Statistical, ExecutionBounds, StatisticalRecursion, NormalizedStep, StatisticalPrefix,
+BoundedMetadata and RealPrefixBounds. All final source bytes are in source-snapshots with
+owner/status/hash rows. No target or frozen file was edited. The lead alone integrates,
+commits, seals, sweeps and delivers the target declarations.
+
+At lead request, NormalizedStep11 exposed normalizePhaseMsgs_viewV without any statistical
+premise. The existing comparison calls it; no second normalization proof was added. The
+new final source hash is76766e13e0eff35d107c98505f932dcec17cdf20f89c5f423f7e1d64217884b5
+(126lines;clean native11=2.50s). This supersedes the earlier101line clean10 source.
+
+BoundedMetadata final03 passed2.38s,0diagnostics. It defines finite nonempty five-field
+PhaseMetadata, exact raw data/length readers and exact coverage. An initially redundant
+direct Mathlib.Data.Fintype.Sigma import was removed before final03; the final source
+imports only ComputationalReduction and requires no new Mathlib root. Source hash
+f94e6c8ff89a1674aaed5047e479856ebe3e2a1623e2d2ccdeb46f4ae6f8959b.
+Its raw01failure and exact source are retained (product RHS parenthesization and a proof
+where simp had already changed reflexive equalities to True);02passed,03removed the
+redundant import and added the direct packed-data cover corollary.
+
+RealPrefixBounds final02 passed2.27s,0diagnostics. Its aggregate theorem gives exact j*k
+message count, the uniform B cap, and encoding length at most(j*k)*(2*B+2) for every
+real prefix j≤q. It reuses the public raw coin-table inverse/block reader and endpoint,
+the specification's boundary/reply readers, and ExecutionBounds. No generic word-length
+estimate is duplicated. Source hash
+1a50f8656f00e280506a67947a16a0583cdcc5fb9242efa3e15a3fc160f390d8.
+Its raw01failure is retained; split_ifs generated both first-mover cases as well as the
+active/filler cases, so02applied the same bounded/empty branch argument to all four.
+
+The retained FullOwnHelpersAxioms.lean probe checks42public declarations across all ten
+owned modules. It passed5.09s with0diagnostics and only propext,Classical.choice,Quot.sound.
+It also synthesizes Fintype and Nonempty of PhaseMetadata for arbitrary five natural
+bounds. The smaller MetadataAndStatisticsAxioms.lean is a prepared but unused predecessor
+probe retained for completeness; the full probe is the executed evidence.
+
+All copied dependencies preserve their owner's exact checked bytes: c StatisticalPostprocess
+and final EndpointSampling, b final ComputationalReduction, and lead-completed helper
+sources/oleans cloned only after completion authorization. Provenance JSON files record
+source hashes/check rows. seq-zk-a ran no lake command and touched no other worker process.
+There were no new compiler interruptions after the historical eight own authorized events.
+
+
+## Checkpoint3 closed-evidence boundary
+
+The lead reports CP3 proof revision04c253e48d9c0ebb73943f39412365cd4d8e02db. The first eight
+seq-zk-a helper sources are part of that proof revision. BoundedMetadata and RealPrefixBounds
+are fully checked future support sources OUTSIDE CP3, as is b's ComputationalReduction
+dependency; all three exact sources are retained under source-snapshots for replay of the
+new checks and the full axioms/Fintype probe. Their outside-CP3 status is explicit in the
+checkpoint3-closed-files.tsv source_status column. No own process is active at this boundary.
+After producing that receipt, every named byte is frozen until the lead confirms copying.

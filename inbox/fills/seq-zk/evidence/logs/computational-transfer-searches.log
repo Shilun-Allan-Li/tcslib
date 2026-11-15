@@ -1,0 +1,30 @@
+TCSlib/Cryptography/Composability/ThreeColoring.lean:128:      ZK ((colProtocol Com ℓ).seqRep (.normal 2 2)) R3COL := by
+TCSlib/Cryptography/Composability/ThreeColoring.lean:137:    ZK.seqRep (col_zk hC) hB (.normal 2 2)⟩
+TCSlib/Cryptography/Composability/SequentialZK.lean:138:* `ZK.seqRep` (Thm 175.1, stated; `sorry` under the source's sketch).
+TCSlib/Cryptography/Composability/SequentialZK.lean:139:* `StatZK.seqRep` (proved): statistical error composes as `Q · δ`;
+TCSlib/Cryptography/Composability/SequentialZK.lean:140:  `PerfectZK.seqRep` is proved from it at zero error.
+TCSlib/Cryptography/Composability/SequentialZK.lean:141:* `PerfectZKAbort.seqRep`: the aborting case, derived from `PerfectZKAbort.statZK` and
+TCSlib/Cryptography/Composability/SequentialZK.lean:142:  `StatZK.seqRep`, with error `Q(n) · 2^{-n}`.
+TCSlib/Cryptography/Composability/SequentialZK.lean:765:    SequentialZK.PaddedProverSpec π (π.seqRep Q) x (Q.eval x.length)
+TCSlib/Cryptography/Composability/SequentialZK.lean:842:theorem ZK.seqRep {B : PolyExpr} (h : ZK π R) (hB : π.ProverBounded R B) (Q : PolyExpr) :
+TCSlib/Cryptography/Composability/SequentialZK.lean:843:    ZK (π.seqRep Q) R := by
+TCSlib/Cryptography/Composability/SequentialZK.lean:849:**Proof sketch.** Use the same phase-shape normalization as `ZK.seqRep`: exactly
+TCSlib/Cryptography/Composability/SequentialZK.lean:860:theorem StatZK.seqRep {B : PolyExpr} {δ : ℕ → ℝ} (h : StatZK π R δ)
+TCSlib/Cryptography/Composability/SequentialZK.lean:862:    StatZK (π.seqRep Q) R (fun n => Q.eval n * δ n) := by
+TCSlib/Cryptography/Composability/SequentialZK.lean:863:  exact SequentialZK.statZK_of_padded_spec h hB Q (fun x => π.seqRep_proverSpec Q x)
+TCSlib/Cryptography/Composability/SequentialZK.lean:866:protocol with a bounded prover is perfect zero-knowledge (`StatZK.seqRep` at `δ = 0`). -/
+TCSlib/Cryptography/Composability/SequentialZK.lean:867:theorem PerfectZK.seqRep {B : PolyExpr} (h : PerfectZK π R) (hB : π.ProverBounded R B)
+TCSlib/Cryptography/Composability/SequentialZK.lean:868:    (Q : PolyExpr) : PerfectZK (π.seqRep Q) R := by
+TCSlib/Cryptography/Composability/SequentialZK.lean:870:  simpa only [mul_zero] using StatZK.seqRep h.statZK hB Q
+TCSlib/Cryptography/Composability/SequentialZK.lean:881:error `2^{-n}`. Then `StatZK.seqRep` [Gol01, §4.3.4] bounds the distance of the `Q(n)` phases by
+TCSlib/Cryptography/Composability/SequentialZK.lean:887:theorem PerfectZKAbort.seqRep {B : PolyExpr} (h : PerfectZKAbort π R)
+TCSlib/Cryptography/Composability/SequentialZK.lean:889:    StatZK (π.seqRep Q) R (fun n => Q.eval n * (1 / 2 : ℝ) ^ n) := by
+TCSlib/Cryptography/Composability/SequentialZK.lean:890:  simpa only [one_div] using StatZK.seqRep h.statZK hB Q
+TCSlib/Cryptography/Composability/SequentialZK.lean:911:  · exact SequentialZK.PaddedProverSpec.complete (fun x => π.seqRep_proverSpec Q x)
+TCSlib/Cryptography/Composability/SequentialZK.lean:940:  · exact SequentialZK.PaddedProverSpec.complete (fun x => π.seqRep_proverSpec Q x)
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:34:* `TCSlib.Cryptography.Negligible.polyExpr_mul` bounds multiplication by a
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:267:theorem Negligible.polyExpr_mul {μ : ℕ → ℝ} (hμ : Negligible μ) (p : PolyExpr) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:60:* `TCSlib.Cryptography.EnsembleLemmas.negligible_polyExpr_mul` — a syntactic polynomial
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:377:theorem negligible_polyExpr_mul (p : PolyExpr) {μ : ℕ → ℝ} (hμ : Negligible μ) :
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:502:(`EnsembleLemmas.negligible_polyExpr_mul`, from `Negligible.mul_pow` and
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:592:  refine (EnsembleLemmas.negligible_polyExpr_mul t (h B)).mono ⟨0, fun n _ => ?_⟩

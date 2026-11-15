@@ -1,0 +1,39 @@
+.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:47:theorem ofFn_congr {m n : ℕ} (h : m = n) (f : Fin m → α) :
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:20:* `realPrefix`, `simPrefix`: semantic folds on independent typed phase coins.
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:77:/-- `realPrefix π V x y z rV p q r` folds the `q` real phase steps, starting with `[]` and
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:79:def realPrefix (π : Protocol) (V : Strategy) (x y z rV : List Bool) (p q : ℕ)
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:83:/-- `realPrefix π V x y z rV p q r = Fin.foldl q (fun pre i => realStep … i pre (r i)) []`.
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:85:theorem realPrefix_eq (π : Protocol) (V : Strategy) (x y z rV : List Bool) (p q : ℕ)
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:87:    realPrefix π V x y z rV p q r =
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:21:* `realPrefix_zero`, `simPrefix_zero`: no phases give the empty history.
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:22:* `realPrefix_succ`, `simPrefix_succ`: the last coin extends the earlier prefix by one step.
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:23:* `realPrefix_snoc`, `simPrefix_snoc`: the corresponding independent-table snoc equations.
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:39:/-- For `π,V,x,y,z,rV,p,r`, `realPrefix π V x y z rV p 0 r = []`. -/
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:40:theorem realPrefix_zero (π : Protocol) (V : Strategy) (x y z rV : List Bool) (p : ℕ)
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:41:    (r : Fin 0 → π.P.Coins x.length) : realPrefix π V x y z rV p 0 r = [] := by
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:42:  rw [realPrefix_eq, Fin.foldl_zero]
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:46:theorem realPrefix_succ (π : Protocol) (V : Strategy) (x y z rV : List Bool) (p q : ℕ)
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:48:    realPrefix π V x y z rV p (q + 1) r =
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:50:        (realPrefix π V x y z rV p q (fun i => r i.castSucc)) (r (Fin.last q)) := by
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:51:  rw [realPrefix_eq, Fin.foldl_succ_last, realPrefix_eq]
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:56:theorem realPrefix_snoc (π : Protocol) (V : Strategy) (x y z rV : List Bool) (p q : ℕ)
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:58:    realPrefix π V x y z rV p (q + 1) (Fin.snoc r coin) =
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:59:      realStep π V x y z rV p q (realPrefix π V x y z rV p q r) coin := by
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:60:  rw [realPrefix_succ]
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalRecursion.lean:26:* `statClose_recursion`: caller-supplied real and simulated samplers, with a common initial
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalRecursion.lean:49:theorem statClose_recursion {α β State : Type*} [Fintype α] [Fintype β]
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:120:theorem phaseVerifier_coinLen (V : Strategy) (n : ℕ) : (phaseVerifier V).coinLen n = 0 :=
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:395:@[simp] theorem withV_P (π : Protocol) (V' : Strategy) : (π.withV V').P = π.P := rfl
+TCSlib/Cryptography/Asymptotic/Sampling.lean:148:/-- A closeness bound is nonnegative. -/
+TCSlib/Cryptography/Asymptotic/Sampling.lean:149:theorem StatClose.nonneg {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ) : 0 ≤ δ :=
+TCSlib/Cryptography/Asymptotic/Sampling.lean:150:  (abs_nonneg _).trans (h fun _ => True)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:223:test lie in `[0, 1]` (`statClose_iff`, `uprob_nonneg`, `uprob_le_one`). -/
+TCSlib/Cryptography/Asymptotic/Sampling.lean:227:    constructor <;> linarith [uprob_nonneg (fun s => T (X s)), uprob_le_one (fun s => T (X s)),
+TCSlib/Cryptography/Asymptotic/Sampling.lean:228:      uprob_nonneg (fun t => T (Y t)), uprob_le_one (fun t => T (Y t))]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:243:  exact abs_uexp_sub_le h.nonneg fun r => h fun g => P g r
+TCSlib/Cryptography/Asymptotic/Sampling.lean:672:  have hf0 : (0 : ℝ) ≤ (1 - uprob E) ^ T := pow_nonneg (by linarith [uprob_le_one E]) T
+TCSlib/Cryptography/Asymptotic/Sampling.lean:679:    div_nonneg (Nat.cast_nonneg _) hN.le
+TCSlib/Cryptography/Asymptotic/Sampling.lean:787:  · rw [sub_nonneg, div_le_one h2k]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:915:  have hp0 : 0 ≤ uprob (fun ω => S ω = none) := uprob_nonneg _
+TCSlib/Cryptography/Asymptotic/Sampling.lean:926:    div_nonneg (Nat.cast_nonneg _) hG.le
+.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:47:theorem ofFn_congr {m n : ℕ} (h : m = n) (f : Fin m → α) :

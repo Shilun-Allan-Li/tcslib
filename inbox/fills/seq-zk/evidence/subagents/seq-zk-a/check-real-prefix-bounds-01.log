@@ -1,0 +1,67 @@
+TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds.lean:83:82: error: unsolved goals
+case pos
+π ρ : Protocol
+x : List Bool
+q p : ℕ
+d : PaddedProverSpec π ρ x q p
+V : Strategy
+y z rV : List Bool
+j : ℕ
+hj : j ≤ q
+B : ℕ
+hbound : ∀ (r : List Bool) (hist : List (List Bool)), (π.P.next x y r hist).length ≤ B
+coins : Fin j → π.P.Coins x.length
+e : (Fin (j * π.P.coinLen x.length) → Bool) ≃ (Fin j → π.P.Coins x.length) := coinTableEquiv ⋯
+tape : List Bool := List.ofFn (e.symm coins)
+hblocks : ∀ (i : Fin j), coinBlock (π.P.coinLen x.length) (↑i) tape = List.ofFn (coins i)
+hend : realPrefix π V x y z rV p j coins = (exec ρ.P V π.verifierFirst x y z tape rV (2 * π.rounds.eval x.length * j)).2
+hcount : (realPrefix π V x y z rV p j coins).length = j * π.rounds.eval x.length
+hist : List (List Bool)
+h✝¹ : ¬π.verifierFirst = true
+h✝ : 2 * hist.length % (2 * π.rounds.eval x.length) < π.rounds.eval x.length
+⊢ (π.P.next x y (coinBlock (π.P.coinLen x.length) (2 * hist.length / (2 * π.rounds.eval x.length)) tape)
+        (List.drop (2 * hist.length / (2 * π.rounds.eval x.length) * π.rounds.eval x.length) hist)).length ≤
+    B
+
+case neg
+π ρ : Protocol
+x : List Bool
+q p : ℕ
+d : PaddedProverSpec π ρ x q p
+V : Strategy
+y z rV : List Bool
+j : ℕ
+hj : j ≤ q
+B : ℕ
+hbound : ∀ (r : List Bool) (hist : List (List Bool)), (π.P.next x y r hist).length ≤ B
+coins : Fin j → π.P.Coins x.length
+e : (Fin (j * π.P.coinLen x.length) → Bool) ≃ (Fin j → π.P.Coins x.length) := coinTableEquiv ⋯
+tape : List Bool := List.ofFn (e.symm coins)
+hblocks : ∀ (i : Fin j), coinBlock (π.P.coinLen x.length) (↑i) tape = List.ofFn (coins i)
+hend : realPrefix π V x y z rV p j coins = (exec ρ.P V π.verifierFirst x y z tape rV (2 * π.rounds.eval x.length * j)).2
+hcount : (realPrefix π V x y z rV p j coins).length = j * π.rounds.eval x.length
+hist : List (List Bool)
+h✝¹ : ¬π.verifierFirst = true
+h✝ : ¬2 * hist.length % (2 * π.rounds.eval x.length) < π.rounds.eval x.length
+⊢ [].length ≤ B
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/RealPrefixBounds): no fresh .olean produced
+        2.45 real         1.33 user         1.16 sys
+          2215591936  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175968  page reclaims
+                  16  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  35  voluntary context switches
+                3902  involuntary context switches
+            32440902  instructions retired
+            16410576  cycles elapsed
+             1638736  peak memory footprint

@@ -25,7 +25,7 @@ that sequence. Its machine implementation instantiates the published counted-loo
 
 ## Main results
 
-* `phasePrefix_zero`, `phasePrefix_succ`, `phasePrefix_succ_simulate`: exact semantic readers.
+* `phasePrefix_eq`, `phasePrefix_zero`, `phasePrefix_succ`: exact semantic readers.
 * `length_phasePrefix`, `length_le_of_mem_phasePrefix`, `length_encodeMsgs_phasePrefix_le`:
   exact slot count and uniform message/encoding bounds.
 * `phasePrefix_poly`: polynomial-time assembly of the entire normalized prefix.
@@ -78,6 +78,25 @@ theorem phasePrefix_succ (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
       pre ++ (normalizePhaseMsgs x aux p (B.eval x.length)
         (S.runAtL x.length (pairEncode x aux) (coinBlock (S.coinLen x.length) i rS)) ++
           List.replicate (k.eval x.length - p) []) := rfl
+
+/-- The exhaustive equation for `phasePrefix … i` is `[]` at zero; at `j+1`, with
+`pre = phasePrefix … j`, it appends the canonical normalized `S.runAtL` output at
+`phaseAux z rV j pre` on coin block `j`, followed by the `k(|x|)-p` empty fillers. -/
+theorem phasePrefix_eq (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+    (x z rV rS : List Bool) (i : ℕ) :
+    phasePrefix S k B verifierFirst x z rV rS i =
+      match i with
+      | 0 => []
+      | j + 1 =>
+        let pre := phasePrefix S k B verifierFirst x z rV rS j
+        let aux := phaseAux z rV j pre
+        let p := if verifierFirst then k.eval x.length / 2 else (k.eval x.length + 1) / 2
+        pre ++ (normalizePhaseMsgs x aux p (B.eval x.length)
+          (S.runAtL x.length (pairEncode x aux) (coinBlock (S.coinLen x.length) j rS)) ++
+            List.replicate (k.eval x.length - p) []) :=
+  match i with
+  | 0 => phasePrefix_zero S k B verifierFirst x z rV rS
+  | j + 1 => phasePrefix_succ S k B verifierFirst x z rV rS j
 
 /-- If phase coin block `i` equals `List.ofFn r`, phase `i+1` calls precisely
 `S.simulate x (phaseAux z rV i pre) r`, with `pre` the earlier phase prefix. -/
@@ -295,6 +314,7 @@ theorem exists_phaseSimulator (S : NUPPT) (hS : S.Uniform) (k B Q CV : PolyExpr)
         let rV := (List.ofFn r).take (CV.eval x.length)
         let rS := (List.ofFn r).drop (CV.eval x.length)
         View.encode ⟨x, z, rV, phasePrefix S k B verifierFirst x z rV rS (Q.eval x.length)⟩ := by
+  -- Decode both inputs and split the verifier and phase tapes through public PT readers.
   let X : List Bool → List Bool := fun w => pairFstD (NUPPT.inArg w)
   let Z : List Bool → List Bool := fun w => pairSndD (NUPPT.inArg w)
   let RV : List Bool → List Bool := fun w => (NUPPT.inCoins w).take (CV.eval (X w).length)
@@ -310,6 +330,7 @@ theorem exists_phaseSimulator (S : NUPPT) (hS : S.Uniform) (k B Q CV : PolyExpr)
   have hRS : PolyTimeComputable RS := by
     refine ((polyTimeComputable_pairDropPoly CV).comp hcut).congr fun w => ?_
     rw [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+  -- Assemble the normalized repeated prefix and encode the complete canonical view.
   have hpre := phasePrefix_poly S hS k B Q verifierFirst hX hZ hRV hRS
   let F : List Bool → List Bool := fun w =>
     View.encode ⟨X w, Z w, RV w,
@@ -318,6 +339,7 @@ theorem exists_phaseSimulator (S : NUPPT) (hS : S.Uniform) (k B Q CV : PolyExpr)
     refine ((hX.pairEncode hZ).pairEncode (hRV.pairEncode hpre)).congr fun w => ?_
     dsimp only [F]
     rw [View.encode_mk]
+  -- The uniform constructor and activation/layout readers identify every output field.
   refine ⟨NUPPT.ofPolyTimeUniform hF (.add CV (.mul Q S.coins)),
     NUPPT.ofPolyTimeUniform_uniform hF _, NUPPT.coins_ofPolyTimeUniform hF _, ?_⟩
   intro x z r

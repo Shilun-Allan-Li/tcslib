@@ -1,0 +1,14 @@
+TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean:28:* `length_encodeMsgs_exec_snd_le`: the public word-list bound applied to the execution.
+TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean:80:theorem length_encodeMsgs_exec_snd_le (P V : Strategy) (vFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean:86:  exact BinArith.length_encWords_le _ B (exec_snd_bounded P V vFirst x y z rP rV B g hP)
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:26:* `PaddedProverSpec.realPrefix_eq_exec` identifies the real fold with the padded execution.
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:53:theorem coinTableEquiv_block {m q c : ℕ} (hlen : m = q * c) (r : Fin m → Bool)
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:127:theorem realPrefix_eq_exec {π ρ : Protocol} {x : List Bool} {q p : ℕ}
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:178:  coinTableEquiv_block (by rw [Protocol.withV_P]; exact h.prover_coinLen) r.1 i
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:190:  have hprefix := h.realPrefix_eq_exec V y z (List.ofFn r.1) (List.ofFn r.2) q le_rfl
+TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean:73:  boundary (V : Strategy) (y z rP rV : List Bool) (j : ℕ) :
+TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean:80:  original_count (V : Strategy) (y z rP rV : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean:114:    (h.boundary V y z rP rV j).1 (fun u _ => h.period j u) ht
+TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean:132:    (h.boundary V y z rP rV j).1 (h.boundary V y z rP rV j).2
+TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean:133:    (h.boundary V y z rP rV (j + 1)).2
+TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean:134:    (h.original_count (phaseVerifier V) y

@@ -1,0 +1,62 @@
+START 2026-11-15T11:39:51.096625+00:00
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:150:62: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  c ≥ 0
+  b ≥ 0
+  b - c ≤ -1
+  a ≥ 0
+  a - b ≥ 1
+  a - c ≥ 1
+where
+ a := ↑(Q.eval x.length)
+ b := ↑i
+ c := ↑↑⟨i, hi⟩
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:236:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  acceptProb ?X fun z c => ?D (?P z c.1) c.2
+in the target expression
+  (acceptProb (S.simulate x (phaseAux z rV i pre)) fun raw r =>
+      D
+        (phaseContinuation S k B Q verifierFirst x z rV i pre raw
+          (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm r.1)))
+        r.2) =
+    continuationProb S k B Q verifierFirst x z rV D i pre
+
+C : Type u_1
+inst✝ : Fintype C
+S : NUPPT
+k B Q : PolyExpr
+verifierFirst : Bool
+x z rV : List Bool
+D : List Bool → C → Bool
+i : ℕ
+hi : i < Q.eval x.length
+pre : List (List Bool)
+⊢ (acceptProb (S.simulate x (phaseAux z rV i pre)) fun raw r =>
+      D
+        (phaseContinuation S k B Q verifierFirst x z rV i pre raw
+          (List.ofFn ((FunFamily.blocks (Q.eval x.length) (S.coinLen x.length)).symm r.1)))
+        r.2) =
+    continuationProb S k B Q verifierFirst x z rV D i pre
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability): no fresh .olean produced
+        2.38 real         1.54 user         1.02 sys
+          2232205312  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              176932  page reclaims
+                  45  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                 250  voluntary context switches
+                4375  involuntary context switches
+            32281790  instructions retired
+            15017783  cycles elapsed
+             1622352  peak memory footprint
+EXIT 1
+END 2026-11-15T11:39:53.519058+00:00

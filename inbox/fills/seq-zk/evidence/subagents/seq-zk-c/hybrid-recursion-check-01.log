@@ -1,0 +1,54 @@
+START 2026-11-15T11:24:10.893115+00:00
+TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean:76:18: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uexp fun ω => ?F (e ω)
+in the target expression
+  (uexp fun r => C (i + 1) (realStep i (realFamily i (e r).1) (e r).2)) =
+    uexp fun r => uexp fun a => C (i + 1) (realStep i (realFamily i r) a)
+
+A : Type u_1
+State : Type u_2
+inst✝¹ : Fintype A
+inst✝ : Nonempty A
+realFamily : (i : ℕ) → (Fin i → A) → State
+initial : State
+realStep : ℕ → State → A → State
+real_zero : ∀ (r : Fin 0 → A), realFamily 0 r = initial
+real_snoc : ∀ (i : ℕ) (r : Fin i → A) (a : A), realFamily (i + 1) (Fin.snoc r a) = realStep i (realFamily i r) a
+C : ℕ → State → ℝ
+q : ℕ
+ε : ℝ
+hε : 0 ≤ ε
+hlocal :
+  ∀ i < q, ∀ (r : Fin i → A), |(uexp fun a => C (i + 1) (realStep i (realFamily i r) a)) - C i (realFamily i r)| ≤ ε
+P : ℕ → ℝ := fun i => uexp fun r => C i (realFamily i r)
+hzero : P 0 = C 0 initial
+i : ℕ
+hi : i < q
+e : (Fin (i + 1) → A) ≃ (Fin i → A) × A := (Fin.snocEquiv fun x => A).symm.trans (Equiv.prodComm A (Fin i → A))
+hfamily : ∀ (r : Fin (i + 1) → A), realFamily (i + 1) r = realStep i (realFamily i (e r).1) (e r).2
+hpoint : (fun r => C (i + 1) (realFamily (i + 1) r)) = fun r => C (i + 1) (realStep i (realFamily i (e r).1) (e r).2)
+⊢ (uexp fun r => C (i + 1) (realStep i (realFamily i (e r).1) (e r).2)) =
+    uexp fun r => uexp fun a => C (i + 1) (realStep i (realFamily i r) a)
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion): no fresh .olean produced
+        2.23 real         1.24 user         1.00 sys
+          2107785216  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              168837  page reclaims
+                  33  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  15  voluntary context switches
+                2680  involuntary context switches
+            32319451  instructions retired
+            15327533  cycles elapsed
+             1638736  peak memory footprint
+EXIT 1
+END 2026-11-15T11:24:13.154929+00:00

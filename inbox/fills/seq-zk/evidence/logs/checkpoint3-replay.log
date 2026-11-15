@@ -1,0 +1,49 @@
++ git format-patch --no-signature --output-directory /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/evidence/checkpoint3-patches 107f1e8c218733eac12d6b9bee6fece441271317..04c253e48d9c0ebb73943f39412365cd4d8e02db
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/evidence/checkpoint3-patches/0001-Prove-sequential-repetition-preserves-interactive-pr.patch
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/evidence/checkpoint3-patches/0002-Prove-sequential-soundness-amplification-and-efficie.patch
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/evidence/checkpoint3-patches/0003-Prove-statistical-zero-knowledge-under-sequential-re.patch
++ git clone --shared --no-checkout /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange /private/tmp/seq-zk-replay-cp3
+Cloning into '/private/tmp/seq-zk-replay-cp3'...
+done.
++ git checkout --detach 107f1e8c218733eac12d6b9bee6fece441271317
+HEAD is now at 107f1e8c2 Gate 24 closed (round 2 CLEAR); #307 ready; secure-computation plan and rulings
++ git -c commit.gpgsign=false am /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/evidence/checkpoint3-patches/0001-Prove-sequential-repetition-preserves-interactive-pr.patch
+Applying: Prove sequential repetition preserves interactive proofs
+EXACT COMMIT a758032d636fd410b0c4b8a1530a96d000cc467a
++ git -c commit.gpgsign=false am /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/evidence/checkpoint3-patches/0002-Prove-sequential-soundness-amplification-and-efficie.patch
+Applying: Prove sequential soundness amplification and efficient-prover repetition
+EXACT COMMIT e978a28274fdeb545e622ae28747221088352512
++ git -c commit.gpgsign=false am /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/evidence/checkpoint3-patches/0003-Prove-statistical-zero-knowledge-under-sequential-re.patch
+Applying: Prove statistical zero knowledge under sequential repetition
+EXACT COMMIT 04c253e48d9c0ebb73943f39412365cd4d8e02db
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/Advice.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/Congruence.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/NormalizedStep.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/Phases.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/RealPhases.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/Statistical.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/StatisticalPostprocess.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/StatisticalPrefix.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/StatisticalRecursion.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/StatisticalTransfer.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/VerifierPrefix.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean
+SOURCE-BYTES EXACT TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+REPLAY PASS: 3 commits; 30 source files; 04c253e48d9c0ebb73943f39412365cd4d8e02db

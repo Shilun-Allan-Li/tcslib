@@ -96,6 +96,16 @@ def phaseVerifier (V : Strategy) : Strategy where
       (BinArith.decWords (pairSndD (pairSndD (pairSndD aux))) ++ hist)
   coins := .const 0
 
+/-- The complete strategy equation is `phaseVerifier V = ⟨next, PolyExpr.const 0⟩`, where
+`next x aux r hist = V.next x (pairFstD aux) (pairFstD (pairSndD aux))
+(decWords (pairSndD (pairSndD (pairSndD aux))) ++ hist)`. -/
+theorem phaseVerifier_eq (V : Strategy) :
+    phaseVerifier V =
+      { next := fun x aux _ hist =>
+          V.next x (pairFstD aux) (pairFstD (pairSndD aux))
+            (BinArith.decWords (pairSndD (pairSndD (pairSndD aux))) ++ hist)
+        coins := .const 0 } := rfl
+
 /-- The coin polynomial of `phaseVerifier V` is `PolyExpr.const 0`. -/
 theorem phaseVerifier_coins (V : Strategy) : (phaseVerifier V).coins = .const 0 := rfl
 

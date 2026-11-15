@@ -1,0 +1,50 @@
+START 2026-11-15T11:45:36.168797+00:00
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:76:95: error: unsolved goals
+C : Type u_1
+inst✝ : Fintype C
+π ρ : Protocol
+S : NUPPT
+B Q : PolyExpr
+x : List Bool
+p : ℕ
+d : PaddedProverSpec π ρ x (Q.eval x.length) p
+V : Strategy
+y z rV : List Bool
+D : List Bool → C → Bool
+hp : p = if π.verifierFirst = true then π.rounds.eval x.length / 2 else (π.rounds.eval x.length + 1) / 2
+hbound : ∀ (r : List Bool) (hist : List (List Bool)), (π.P.next x y r hist).length ≤ B.eval x.length
+ε : ℝ
+hε : 0 ≤ ε
+hlocal :
+  ∀ i < Q.eval x.length,
+    ∀ (coins : Fin i → π.P.Coins x.length), phaseGap π V S B Q x y z rV D i (realPrefix π V x y z rV p i coins) ≤ ε
+realView : (Fin (Q.eval x.length) → π.P.Coins x.length) → List Bool :=
+  fun coins => { x := x, z := z, r := rV, received := realPrefix π V x y z rV p (Q.eval x.length) coins }.encode
+coins : Fin (Q.eval x.length) → π.P.Coins x.length
+⊢ acceptProb
+      (fun coins_1 => { x := x, z := z, r := rV, received := realPrefix π V x y z rV p (Q.eval x.length) coins }.encode)
+      D =
+    acceptProb (fun x => realView coins) D
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid): no fresh .olean produced
+        2.29 real         1.41 user         1.04 sys
+          2223390720  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              176399  page reclaims
+                  45  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  23  voluntary context switches
+                4102  involuntary context switches
+            32622566  instructions retired
+            14997261  cycles elapsed
+             1622352  peak memory footprint
+EXIT 1
+END 2026-11-15T11:45:58.617201+00:00

@@ -1,0 +1,153 @@
+COMMAND ["rg", "-n", "hybrid_recursion_gap_le|continuationProb|phaseGap|phaseSuffix_front|phaseSuffix_congr_blocks|phaseSuffix_update_before|exists_uniform_negligible_bound", "TCSlib/Cryptography/Composability/SequentialZK"]
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:20:* `continuationProb` is the acceptance probability after the remaining normalized phases.
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:21:* `phaseGap` is the local raw real-view/simulator gap through the normalized continuation.
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:27:* `continuationProb_bellman` separates a fresh normalized simulator call from its suffix.
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:83:/-- `continuationProb … D i pre` is acceptance by `D` after simulating phases
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:87:noncomputable def continuationProb {C : Type*} [Fintype C]
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:95:/-- The defining equation of `continuationProb` is the acceptance of the canonical view
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:97:theorem continuationProb_eq {C : Type*} [Fintype C]
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:100:    continuationProb S k B Q verifierFirst x z rV D i pre =
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:114:theorem continuationProb_bellman {C : Type*} [Fintype C]
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:118:    continuationProb S k B Q verifierFirst x z rV D i pre =
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:151:      phaseSuffix_front, phaseStep_eq_simStep S k B verifierFirst x z rV _ i pre r.1 hcoin,
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:152:      phaseSuffix_update_before S k B verifierFirst x z rV (Q.eval x.length) r.2
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:155:  rw [continuationProb_eq]
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:169:theorem continuationProb_real {C : Type*} [Fintype C] {π ρ : Protocol}
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:185:        continuationProb S π.rounds B Q π.verifierFirst x z rV D (i + 1)
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:229:  simpa only [continuationProb_eq] using hreal
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:232:exactly `continuationProb … i pre`, with an independent full table of suffix coins.
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:238:theorem continuationProb_sim {C : Type*} [Fintype C]
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:246:          r.2) = continuationProb S k B Q verifierFirst x z rV D i pre := by
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:269:  exact (continuationProb_bellman S k B Q verifierFirst x z rV D i hi pre).symm
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:275:noncomputable def phaseGap {C : Type*} [Fintype C] (π : Protocol) (V : Strategy)
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:286:/-- The defining equation of `phaseGap` is the displayed raw real-view/simulator
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:288:theorem phaseGap_eq {C : Type*} [Fintype C] (π : Protocol) (V : Strategy)
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:291:    phaseGap π V S B Q x y z rV D i pre =
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:301:/-- For a bounded real prover, the local raw-view gap `phaseGap` is exactly the absolute
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:302:drift of `continuationProb` under the real next phase, for `i<Q(|x|)`. -/
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:303:theorem phaseGap_eq_drift {C : Type*} [Fintype C] {π ρ : Protocol}
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:311:    phaseGap π V S B Q x y z rV D i pre =
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:313:        continuationProb S π.rounds B Q π.verifierFirst x z rV D (i + 1)
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:315:        continuationProb S π.rounds B Q π.verifierFirst x z rV D i pre| := by
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:316:  rw [phaseGap_eq, distAdv_def,
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:317:    continuationProb_real S B Q d V y z rV D hp hbound i pre,
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:318:    continuationProb_sim S π.rounds B Q π.verifierFirst x z rV D i hi pre]
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:37:has `phaseGap … i pre ≤ ε`, where `0≤ε`. For a bounded honest prover and the padded-prover
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:57:      phaseGap π V S B Q x y z rV D i
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:71:        continuationProb S π.rounds B Q π.verifierFirst x z rV D (Q.eval x.length)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:75:        continuationProb S π.rounds B Q π.verifierFirst x z rV D (Q.eval x.length)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:78:      rw [continuationProb_eq, Nat.sub_self]
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:89:  have hinitial : continuationProb S π.rounds B Q π.verifierFirst x z rV D 0 [] =
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:94:    rw [continuationProb_eq, Nat.sub_zero]
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:107:  have hgap := hybrid_recursion_gap_le
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:112:    (continuationProb S π.rounds B Q π.verifierFirst x z rV D)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:114:      rw [← phaseGap_eq_drift S B Q d V y z rV D hp hbound i hi
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalHybrid.lean:133:      phaseGap π V S B Q x y z (List.ofFn rV) D i
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:22:* `phaseSuffix_front` separates the first update of a simulated suffix.
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:23:* `phaseSuffix_congr_blocks` shows that a suffix depends only on its own phase coin blocks.
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:24:* `phaseSuffix_update_before` ignores an overwritten table entry before its starting phase.
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:52:theorem phaseSuffix_front (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:71:theorem phaseSuffix_congr_blocks (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:94:theorem phaseSuffix_update_before (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:111:  apply phaseSuffix_congr_blocks
+TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean:21:* `hybrid_recursion_gap_le` bounds the difference between the final real execution's
+TCSlib/Cryptography/Composability/SequentialZK/HybridRecursion.lean:46:theorem hybrid_recursion_gap_le {A State : Type*} [Fintype A] [Nonempty A]
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean:21:* `exists_uniform_negligible_bound` selects finite advice pointwise before requesting its
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean:45:theorem exists_uniform_negligible_bound {A : ℕ → Type*} {W : Type*}
+EXIT 0
+COMMAND ["rg", "-n", "abs_sub_le_sum_hybrids|exists_hybrid_gap|theorem uprob_prod", "TCSlib/Cryptography/Foundations/Probability.lean"]
+42:* `abs_sub_le_sum_hybrids`, `exists_hybrid_gap`: the hybrid argument for a chain of
+153:theorem uprob_prod (p : α × β → Prop) :
+218:theorem abs_sub_le_sum_hybrids (P : ℕ → ℝ) (t : ℕ) :
+230:theorem exists_hybrid_gap (P : ℕ → ℝ) {t : ℕ} (ht : 0 < t) :
+238:  linarith [abs_sub_le_sum_hybrids P t]
+EXIT 0
+COMMAND ["rg", "-n", "abs_uexp_sub_le|StatClose.map|StatClose.comp_equiv", "TCSlib/Cryptography/Asymptotic/Sampling.lean"]
+29:  such as `List Bool`). It is closed under post-processing (`StatClose.map`), products
+75:* `TCSlib.Cryptography.StatClose.map`, `TCSlib.Cryptography.StatClose.prod`,
+88:* `TCSlib.Cryptography.statClose_one`, `TCSlib.Cryptography.abs_uexp_sub_le`,
+174:theorem StatClose.map {σ τ γ γ' : Type*} [Fintype σ] [Fintype τ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+179:theorem StatClose.comp_equiv_left {σ' : Type*} [Fintype σ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+185:theorem StatClose.comp_equiv_right {τ' : Type*} [Fintype τ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+210:theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c : ℝ} (hc : 0 ≤ c)
+243:  exact abs_uexp_sub_le h.nonneg fun r => h fun g => P g r
+831:along the bijection `{x : Fin (2^k) // x < m} ≃ Fin m` (`StatClose.comp_equiv_right`,
+832:`StatClose.map`). -/
+EXIT 0
+COMMAND ["rg", "-n", "theorem uexp_comp_equiv|theorem uexp_prod|theorem uexp_fst", "TCSlib/Cryptography/HardcoreBit/Basic.lean"]
+88:theorem uexp_comp_equiv (e : Ω ≃ α) (F : α → ℝ) : uexp (fun ω => F (e ω)) = uexp F := by
+94:theorem uexp_prod (F : α × β → ℝ) : uexp F = uexp (fun a => uexp (fun b => F (a, b))) := by
+99:theorem uexp_fst [Nonempty β] (F : α → ℝ) : uexp (fun z : α × β => F z.1) = uexp F := by
+EXIT 0
+COMMAND ["rg", "-n", "acceptProb_update|acceptProb_bind|acceptProb_fst|acceptProb_snd", "TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean"]
+41:* `uprob_eq_of_equiv`, `acceptProb_fst`, `acceptProb_snd`,
+42:  `acceptProb_bind`, `acceptProb_update`: reseeding.
+73:theorem acceptProb_fst [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
+82:/-- As `acceptProb_fst`, for an ignored first seed coordinate. -/
+83:theorem acceptProb_snd [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
+86:    (acceptProb_fst X D)
+91:theorem acceptProb_bind (X : σ → γ) (P : γ → κ → δ) (D : δ → ρ → Bool) :
+103:theorem acceptProb_update [DecidableEq ι] [Fintype ι] [Nonempty σ] (k : ι)
+112:  rw [← acceptProb_fst (τ := σ) (fun v : (ι → σ) × τ => Z v.1 v.2) D]
+136:  rw [acceptProb_bind, acceptProb_bind]
+231:  rw [h, acceptProb_fst]
+240:  rw [h, acceptProb_snd]
+250:  refine (acceptProb_bind X (fun z (s : (Fin t → σ) × (Fin t → τ)) (i : Fin t) =>
+252:  refine Eq.trans ?_ (acceptProb_update (ρ := ρ) (⟨k, hk⟩ : Fin t)
+271:  refine (acceptProb_bind Y (fun z (s : (Fin t → σ) × (Fin t → τ)) (i : Fin t) =>
+274:    ((acceptProb_update (ρ := ρ) (⟨k, hk⟩ : Fin t)
+EXIT 0
+COMMAND ["rg", "-n", "acceptProb_pairRed_left|acceptProb_pairRed_right|exists_pairRed_ge", "TCSlib/Cryptography/ZeroKnowledge/Commitment.lean"]
+38:coordinatewise hybrid lemma `exists_pairRed_ge` (new, concrete) generalises
+67:* `TCSlib.Cryptography.exists_pairRed_ge` — the coordinatewise hybrid lemma (concrete);
+181:theorem acceptProb_pairRed_left [Nonempty σ] (X : Fin t → σ → γ) (Y : Fin t → τ → γ)
+200:**Proof sketch.** As `acceptProb_pairRed_left`: position `k` holds a sample of `Y k` in the
+202:theorem acceptProb_pairRed_right [Nonempty τ] (X : Fin t → σ → γ) (Y : Fin t → τ → γ)
+232:with the acceptance probabilities of `H_k`, `H_{k+1}` (`acceptProb_pairRed_left/right`). -/
+233:theorem exists_pairRed_ge [Nonempty σ] [Nonempty τ] (X : Fin t → σ → γ) (Y : Fin t → τ → γ)
+240:  rw [acceptProb_pairRed_left, acceptProb_pairRed_right, ← acceptProb_pairHybrid_zero X Y D,
+282:`X i := r ↦ Com ⟨v i, r⟩`, `Y i := r ↦ Com ⟨v' i, r⟩`, so `exists_pairRed_ge` against
+320:  obtain ⟨k, hk⟩ := exists_pairRed_ge (cm v) (cm v') htpos D'
+390:`exists_pairRed_ge` applied to `X i := r ↦ Com ⟨v_n i, r⟩`, `Y i := r ↦ Com ⟨v'_n i, r⟩`
+486:bits of `v` (the form `exists_pairRed_ge` applies to). -/
+683:(`Finset.exists_max_image`), a bit position `k` from `exists_pairRed_ge`, and by averaging over
+724:  obtain ⟨k, hk⟩ := exists_pairRed_ge (bc v) (bc v') hn D'
+783:`exists_pairRed_ge` (after `owpComStr_ofFn`, `distAdv_comp` and the seed reindexing
+EXIT 0
+COMMAND ["rg", "-n", "exists_fixSeed|distAdv_seed_to_coins|distAdv_le_one", "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean"]
+30:* `TCSlib.Cryptography.ColZK.exists_fixSeed`, `distAdv_seed_to_coins`,
+157:theorem exists_fixSeed {κ σ τ γ ρ : Type*} [Fintype κ] [Nonempty κ] [Fintype σ] [Fintype τ]
+174:theorem distAdv_seed_to_coins {σ τ κ γ γ' ρ : Type*} [Fintype σ] [Fintype τ] [Fintype κ]
+181:theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ)
+EXIT 0
+COMMAND ["rg", "-n", "theorem exists_hybRed_ge|hPk|hPk1", "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean"]
+549:theorem exists_hybRed_ge (hm : 0 < m) {N : ℕ} (hN : 0 < N)
+563:  have hPk : acceptProb (hybStd H Wa N k) D = uexp (hybAcc H Wa kf Wa D) := by
+569:  have hPk1 : acceptProb (hybStd H Wa N (k + 1)) D = uexp (hybAcc H Wa kf H D) := by
+582:        rw [hPk, hPk1, HardcoreBit.uexp_sub]
+EXIT 0
+COMMAND ["rg", "-n", "phaseSuffix_succ|phaseSuffix_zero_nil|phaseStep_eq", "TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean"]
+58:theorem phaseStep_eq (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+96:  simp only [phaseStep_eq, CommitmentLemmas.encodeMsgs_append, List.length_append]
+148:  rw [phaseStep_eq, CommitmentLemmas.encodeMsgs_append, CommitmentLemmas.encodeMsgs_append]
+167:theorem phaseSuffix_succ (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+184:  | i + 1 => phaseSuffix_succ S k B verifierFirst x z rV rS start pre0 i
+196:    rw [phaseSuffix_succ]
+262:      rw [hdec, phaseSuffix_succ]
+314:theorem phaseSuffix_zero_nil (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+321:    rw [phaseSuffix_succ, ih, Nat.zero_add, phaseStep_eq, phasePrefix_succ]
+EXIT 0
+COMMAND ["rg", "-n", "normalizePhaseMsgs_viewV", "TCSlib/Cryptography/Composability/SequentialZK/NormalizedStep.lean"]
+28:* `normalizePhaseMsgs_viewV`: normalization fixes each bounded real zero-verifier view.
+53:theorem normalizePhaseMsgs_viewV (ρ : Protocol) (x y aux : List Bool) (p B : ℕ)
+105:    normalizePhaseMsgs_viewV ρ x y aux p B hcoins hP hcount r
+EXIT 0
+COMMAND ["rg", "-n", "Finite.exists_max|exists_hidingView_bound", "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean"]
+43:* `TCSlib.Cryptography.ColZK.exists_hidingView_bound` — the hiding bound for all the fixed
+318:(`Finite.exists_max`) and hard-wire its advice as `α n`. The machine `B` of
+323:theorem exists_hidingView_bound {Com : List Bool → List Bool} {ℓ : PolyExpr}
+336:  have hmax : ∀ n, ∃ p, ∀ q, g n q ≤ g n p := fun n => Finite.exists_max (g n)
+EXIT 0
+COMMAND ["rg", "-n", "theorem exists_uniform_bound_selector", "TCSlib/Cryptography/Composability/SequentialZK/Advice.lean"]
+43:theorem exists_uniform_bound_selector {A W : Type*} [Finite A] [Nonempty A]
+EXIT 0

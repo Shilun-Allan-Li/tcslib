@@ -1,0 +1,43 @@
+START 2026-11-15T11:29:35.344335+00:00
+TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws.lean:117:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  e ≥ 0
+  d ≥ 0
+  c ≥ 0
+  b ≥ 0
+  b - d ≥ 1
+  b - e ≥ 1
+  a ≥ 0
+  a - b + c ≤ 0
+  a - d ≤ 0
+  a - e ≥ 1
+  a + c - d ≥ 1
+where
+ a := ↑start
+ b := ↑q
+ c := ↑t
+ d := ↑j
+ e := ↑↑⟨j, hj⟩
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/SuffixLaws): no fresh .olean produced
+        2.28 real         1.38 user         1.00 sys
+          2217443328  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175900  page reclaims
+                  37  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  33  voluntary context switches
+                3202  involuntary context switches
+            32237815  instructions retired
+            15521686  cycles elapsed
+             1638736  peak memory footprint
+EXIT 1
+END 2026-11-15T11:29:37.664093+00:00

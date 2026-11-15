@@ -1,0 +1,1049 @@
+TCSlib/Cryptography/Composability/SequentialZK.lean:252 theorem exec_boundary_lengths proof=8 sketch=False comments=0
+For `P,V,vFirst,x,zP,zV,rP,rV,k,j`, each party has received exactly `j*k` messages
+at move `2*k*j`: both components of `exec P V vFirst x zP zV rP rV (2*k*j)` have length
+`j*k`. [PS10, Theorem 175.1, padded-phase boundaries].
+
+TCSlib/Cryptography/Composability/SequentialZK.lean:345 theorem ProverBounded.seqRep proof=7 sketch=False comments=0
+The repeated prover keeps the message bound: `π.ProverBounded R B` implies
+`(π.seqRep Q).ProverBounded R B`, since every real reply is an original reply and every
+filler reply is empty. [PS10, Theorem 175.1].
+
+TCSlib/Cryptography/Composability/SequentialZK.lean:462 theorem seqVerifier_exec_first proof=28 sketch=True comments=0
+Up to `t ≤ π.rounds.eval |x|`, the repeated verifier against any prover `P'` has the
+same execution as the original verifier on coin block zero, provided `1 ≤ Q.eval |x|`.
+
+**Proof sketch.** Induct on the real move index. The received history has length at most
+that index, so it cannot trigger the repeated verdict. At a verifier move the recovered
+index is the move index, its phase is zero, and its residue is the index itself. Thus the
+same original verifier reply is appended. Prover moves agree because their histories agree.
+
+TCSlib/Cryptography/Composability/SequentialZK.lean:502 theorem seqRep_outV_eq proof=13 sketch=True comments=0
+The repeated output is the aggregate verdict on the final received history:
+`(π.seqRep Q).outV P' x y z r = π.seqVerdict (Q.eval |x|) x z (List.ofFn r.2) hist`,
+where `hist` is the verifier component of the repeated transcript.
+
+**Proof sketch.** There are exactly `Q(|x|) · k` prover moves in the even-length repeated
+execution. This is the terminal-history test in the repeated verifier, so its terminal
+branch computes the aggregate verdict.
+
+TCSlib/Cryptography/Composability/SequentialZK.lean:527 theorem seqRep_exec_phase_take proof=18 sketch=True comments=0
+The final repeated history restricted to the real prover slots of phase `j < Q(|x|)`
+is the original verifier history on coin slices `j`. [PS10, Theorem 175.1].
+
+**Proof sketch.** The history just after the phase's real moves is a prefix of the final
+history. Its length is the `j · k` slots of preceding phases plus the number of real prover
+moves. Taking this prefix and dropping the preceding phases recovers the phase reader.
+
+TCSlib/Cryptography/Composability/SequentialZK.lean:563 theorem seqRep_complete proof=35 sketch=True comments=0
+Perfect completeness on `x, y, z` is preserved by every number of sequential phases:
+if `Pr[π.outV π.P x y z = [true]] = 1`, then
+`Pr[(π.seqRep Q).outV (π.seqRep Q).P x y z = [true]] = 1`.
+[PS10, Theorem 175.1].
+
+**Proof sketch.** Probability one on the finite coin space means every original coin pair
+accepts. For each repeated coin pair and phase, its coin slices have the original lengths.
+The phase-history reader therefore identifies its verdict with an accepting original run.
+All phase tests are true, so the aggregate output is true, including an empty phase list.
+
+TCSlib/Cryptography/Composability/SequentialZK.lean:609 theorem seqRep_reject_of_first proof=33 sketch=True comments=0
+If the original verifier rejects phase zero against `P'`, then the repeated verifier
+rejects the same repeated tape, when `1 ≤ Q.eval |x|`. [PS10, Theorem 175.1].
+
+**Proof sketch.** The first real phase agrees with the original verifier on coin block zero.
+Its prover-message history is the initial segment of the final history. Rejection therefore
+makes the phase-zero test in the aggregate conjunction false, forcing the repeated output
+to be `[false]`.
+
+TCSlib/Cryptography/Composability/SequentialZK.lean:657 theorem seqRep_sound_first proof=24 sketch=True comments=0
+The repeated rejection probability dominates the original rejection probability on
+phase zero, against the same prover `P'`, when `1 ≤ Q.eval |x|`.
+[PS10, Theorem 175.1].
+
+**Proof sketch.** Restrict the repeated verifier's uniform tape to its initial original-length
+prefix; this map preserves uniformity and leaves the prover's tape unchanged. Original
+rejection on this projection implies repeated rejection by the first-phase reader, so
+monotonicity of probability gives the bound.
+
+TCSlib/Cryptography/Composability/SequentialZK.lean:688 theorem seqProver_efficient proof=5 sketch=False comments=0
+An efficient original prover gives an efficient sequential prover:
+`π.P.Efficient → (π.seqProver Q).Efficient`. [PS10, Theorem 175.1].
+
+TCSlib/Cryptography/Composability/SequentialZK.lean:697 theorem seqVerifier_efficient proof=8 sketch=False comments=0
+An efficient original verifier gives an efficient sequential verifier:
+`π.V.Efficient → (π.seqVerifier Q).Efficient`. [PS10, Theorem 175.1].
+
+TCSlib/Cryptography/Composability/SequentialZK.lean:714 theorem seqRep_verifierSpec proof=30 sketch=True comments=0
+The repeated verifier satisfies the padded-verifier equations on `x`, with
+`q=Q.eval |x|` and `p=proverMoves π.verifierFirst (π.rounds.eval |x|)`.
+[PS10, Theorem 175.1].
+
+**Proof sketch.** Read the coin, round, mover and next-message fields of the construction.
+The existing move-index and message-count readers give each remaining contract field.
+The aggregate verdict is its published conjunction of phase tests.
+
+TCSlib/Cryptography/Composability/SequentialZK.lean:756 theorem seqRep_proverSpec proof=29 sketch=True comments=0
+The repeated prover satisfies the padded-prover equations on `x`, with
+`q=Q.eval |x|` and `p=if π.verifierFirst then k/2 else (k+1)/2`, for
+`k=π.rounds.eval |x|`. [PS10, Theorem 175.1].
+
+**Proof sketch.** Read the prover's coin and reply equations. Recover actual move indices
+using the existing prover index reader and obtain phase-boundary and local counts from
+the published execution-length readers. The even phase length preserves the mover pattern.
+
+TCSlib/Cryptography/Composability/SequentialZK/Advice.lean:43 theorem exists_uniform_bound_selector proof=20 sketch=True comments=0
+Let `A` be finite and nonempty, let `W` be arbitrary, and suppose
+`g a w ≤ M` for every `a : A` and `w : W`, where `0 ≤ M`. There exists `a : A` such that,
+for every `ε ≥ 0`, `(∀ w, g a w ≤ ε) → ∀ b w, g b w ≤ ε`.
+The selector depends only on `g`, before `ε` is chosen, and need not encode any witness.
+[PS10, Theorem 175.1, finite advice selection for the hybrid reduction].
+
+**Proof sketch.** For each metadata value, take the supremum of zero together with all
+its witness-indexed values. The sets are nonempty and bounded above by `M`. Select a
+metadata value maximizing these finitely many real suprema. A uniform bound at that
+selected value bounds its supremum, while each other value is at most its own supremum.
+This uses no attainment assumption for the witness-indexed suprema.
+
+TCSlib/Cryptography/Composability/SequentialZK/Congruence.lean:42 theorem exec_congr_reachable proof=17 sketch=True comments=1
+For source strategies `P`, `V`, target strategies `P2`, `V2`, mover flag `vFirst`,
+common input `x`, auxiliary inputs `zP`, `zV`, source tapes `rP`, `rV`, target tapes `rP2`,
+`rV2`, and move bound `g`, suppose the active source and target strategies give the same
+reply on the source run's received history at every `t < g`. Then
+`exec P V vFirst x zP zV rP rV g = exec P2 V2 vFirst x zP zV rP2 rV2 g`.
+[PS10, §4.4].
+
+**Proof sketch.** Induct on the move bound. The histories are empty at zero. At the next
+move, the induction hypothesis identifies the two earlier transcripts, so both active
+strategies read the same source history. The appropriate reply hypothesis makes the
+appended messages agree, preserving equality of the transcripts.
+
+TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean:41 theorem take_encodeMsgs proof=6 sketch=False comments=0
+For a history `hist` and count `c`, cutting its encoding immediately before the encoding
+of `hist.drop c` gives `Strategy.encodeMsgs (hist.take c)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean:53 theorem takeMsgs_poly proof=0 sketch=False comments=0
+For polynomial-time `M` and a unary polynomial-time count `c`, the word
+`(M w).take ((M w).length - (pairSndD^[c w] (M w)).length)` is polynomial-time. On an
+encoded history it is the encoding of the first `c w` messages (`take_encodeMsgs`).
+
+TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean:73 theorem phase_poly proof=51 sketch=True comments=2
+If `P` is efficient, a polynomial-time word function computes the padded phase message
+on every interactive layout. For `g = if previousFirst then 2|hist|-1 else 2|hist|` and
+`j = g / (2k(|x|))`, the message is `P.next x z (coinBlock (P.coinLen |x|) j r)
+(hist.drop (j*k(|x|)))` when `g % (2k(|x|)) < k(|x|)`, and `[]` otherwise.
+[PS10, Theorem 175.1, efficiency of a repeated party].
+
+**Proof sketch.** Recover the history length in unary, compute its move index, phase and
+position using the existing unary arithmetic machines, and drop the earlier encoded messages.
+Slice the random tape with the existing coin-block machine. Assemble the original strategy's
+machine layout and run its polynomial-time output function; a conditional emits `[]` in a
+filler position. All malformed word inputs are handled by the existing total projections.
+The equation on actual layouts follows from the published message-count and suffix readers.
+
+TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean:139 theorem phase_efficient proof=5 sketch=False comments=0
+For strategies `S, P`, a round polynomial `k` and orientation `previousFirst`, if `P`
+is efficient and every message of `S` is the padded phase message of `P`, then `S.Efficient`.
+The equation hypothesis uses `g = if previousFirst then 2|hist|-1 else 2|hist|` and
+`j = g / (2k(|x|))`; no hypothesis on the random-tape polynomial of `S` is required.
+[PS10, Theorem 175.1, efficiency of a repeated party].
+
+TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean:165 theorem verdict_poly proof=83 sketch=True comments=2
+If `V` is efficient, a polynomial-time word function computes `[true]` exactly when
+all `Q(|x|)` phase verdicts are `[true]`. Phase `j` uses coin block `j` and the first
+`p = if verifierFirst then k(|x|)/2 else (k(|x|)+1)/2` messages after the first `j*k(|x|)`
+messages. [PS10, Theorem 175.1, efficiency of the repeated verifier].
+
+**Proof sketch.** For a unary phase index, drop the earlier encoded messages and cut out the
+real messages using `takeMsgs_poly`. Run the original verifier's uniform machine on that
+history and the selected coin block. The published bounded first-index search finds the first
+verdict different from `[true]`; its search bound is the unary polynomial `Q(|x|)`. The
+output is `[true]` exactly when the search is exhausted. The empty search is exhausted too,
+so the construction covers `Q(|x|) = 0` and `k(|x|) = 0`.
+
+TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean:269 theorem verifier_efficient proof=20 sketch=True comments=0
+For strategies `S, V`, round/count polynomials `k, Q` and an orientation `verifierFirst`,
+if `V` is efficient and `S` computes the repeated terminal verdict when `|hist| = Q(|x|)k(|x|)`
+and the padded phase message otherwise, then `S.Efficient`.
+The terminal verdict is `[true]` iff every phase's original verdict is `[true]`.
+[PS10, Theorem 175.1, efficiency of the repeated verifier].
+
+**Proof sketch.** Use `phase_poly` for the nonterminal branch and `verdict_poly` for the
+terminal branch. The branch test compares the encoded history's unary message count with
+the unary product `Q(|x|)k(|x|)`. The polynomial-time conditional computes `S` on every actual
+interactive layout, so `GI.efficient_of_polyTime` supplies its uniform machine.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:43 def coinTableEquiv proof=0 sketch=False comments=0
+For `hlen : m = q*c`, `coinTableEquiv hlen` reindexes `m` bits as `q` blocks of `c` bits,
+using the canonical finite-index cast and `FunFamily.blocks`.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:48 theorem coinTableEquiv_eq proof=0 sketch=False comments=0
+`coinTableEquiv hlen` is the finite-length cast followed by `FunFamily.blocks q c`.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:53 theorem coinTableEquiv_block proof=6 sketch=False comments=0
+Block `i` of `r` is the encoding of block `i` of `coinTableEquiv hlen r`.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:64 def coinBlocksEquiv proof=0 sketch=False comments=0
+For `hlen : m = v+q*c`, `coinBlocksEquiv v q c hlen` reads the first `v` bits as a
+verifier tape and the remaining `q*c` bits as the canonical table of `q` phase tapes.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:72 theorem coinBlocksEquiv_eq proof=0 sketch=False comments=0
+`coinBlocksEquiv v q c hlen` is the finite-length cast, then `splitCoins v (q*c)`,
+then the product of the identity on verifier coins and `FunFamily.blocks q c`.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:80 theorem coinBlocksEquiv_fst_ofFn proof=6 sketch=False comments=0
+The verifier component of `coinBlocksEquiv v q c hlen r` encodes `(List.ofFn r).take v`.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:91 theorem coinBlocksEquiv_block proof=6 sketch=False comments=0
+Block `i` of the phase component of `coinBlocksEquiv v q c hlen r` encodes
+`coinBlock c i ((List.ofFn r).drop v)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:103 theorem statClose_reindex proof=6 sketch=False comments=0
+If `F,G` are `ε`-close, `eA : A' ≃ A` and `eB : B' ≃ B`, and the endpoint readers
+are `F' a = F (eA a)` and `G' b = G (eB b)`, then `F',G'` are `ε`-close.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:127 theorem realPrefix_eq_exec proof=11 sketch=True comments=0
+For `h : PaddedProverSpec π ρ x q p`, `j≤q`, and raw prover tape `rP` whose first `j`
+blocks are the typed coins `coins`, the real prefix is exactly the repeated verifier's
+received history after `2*k*j` moves, where `k=π.rounds.eval |x|`.
+[PS10, Theorem 175.1, real endpoint].
+
+**Proof sketch.** Induct on `j`. The empty fold and zero-move execution both have empty
+histories. At a successor, the real-fold reader appends one original phase and empty
+fillers. The published padded-phase reader appends the same messages to the preceding
+execution history. The induction hypothesis identifies the earlier prefixes, and the
+supplied block equation identifies the last prover tape.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:148 def realCoinsEquiv proof=0 sketch=False comments=0
+Reindex an actual `ρ.withV V` execution's coins as the verifier tape and the `q`
+original prover tapes. The prover split uses only `h.prover_coinLen`; the verifier part
+uses the published `withV_vCoinsEquiv`.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:158 theorem realCoinsEquiv_eq proof=0 sketch=False comments=0
+`h.realCoinsEquiv V` applies `coinTableEquiv` to the prover coins and
+`withV_vCoinsEquiv` to the verifier coins, then swaps the product coordinates.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:166 theorem realCoinsEquiv_fst_ofFn proof=0 sketch=False comments=0
+The verifier component of `h.realCoinsEquiv V r` encodes the original verifier tape.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:173 theorem realCoinsEquiv_block proof=0 sketch=False comments=0
+Block `i` of the repeated prover tape is block `i` of `h.realCoinsEquiv V r`.
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:182 theorem viewV_eq_realPrefix proof=5 sketch=False comments=0
+The actual encoded verifier view in `ρ.withV V` is the canonical view of the jointly
+reindexed verifier tape and real prefix. [PS10, Theorem 175.1, real-view endpoint].
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:200 theorem simulate_eq_simPrefix proof=6 sketch=False comments=0
+Suppose `SQ`'s raw tape is split after `v` bits, and its published endpoint reader
+outputs the canonical view of `phasePrefix` on the remaining phase tape. Reindexing those
+coins by `coinBlocksEquiv` identifies that output with the canonical typed `simPrefix`.
+[PS10, Theorem 175.1, simulator endpoint].
+
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:231 theorem statClose_view_endpoints proof=19 sketch=True comments=0
+Given the padded-prover contract and the raw split-tape reader for `SQ`, an
+`ε`-closeness bound between joint `(verifier tape, real/simulated prefix)` samplers yields
+`StatClose (fun r => ((ρ.withV V).viewV x y z r).encode) (SQ.simulate x z) ε`.
+The supplied `hp` identifies the numeric real-message count with the simulator's count.
+[PS10, Theorem 175.1, statistical endpoint transfer].
+
+**Proof sketch.** Post-process the joint prefix samplers by canonical view encoding.
+The padded-prover coin equivalence reindexes the real execution as its verifier tape and
+phase prover coins; its published view reader identifies the real endpoint. The canonical
+split/block equivalence reindexes `SQ`'s tape as its verifier and simulator phase coins;
+the typed simulator endpoint reader identifies the other endpoint. Uniform probability
+is invariant under both equivalences, so the original error is preserved exactly.
+
+TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness.lean:38 theorem InteractiveProofErr.uprob_accept_le proof=6 sketch=False comments=0
+For `h : InteractiveProofErr π L s`, a no-instance `x ∉ L`, a prover `P'`, and verifier
+auxiliary input `z`, `Pr[π.outV P' x [] z = [true]] ≤ s |x|`.
+[PS10, §4.5, acceptance form of soundness].
+
+TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness.lean:50 theorem InteractiveProofErr.sound_nonneg proof=0 sketch=False comments=0
+For `h : InteractiveProofErr π L s` and a no-instance `x ∉ L`, `0 ≤ s |x|`.
+[PS10, §4.5, a probability bound has nonnegative error].
+
+TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness.lean:67 theorem prefixProver_accept_le proof=9 sketch=True comments=0
+For `h : InteractiveProofErr π L s`, a no-instance `x ∉ L`, a strategy `P`, its fixed
+auxiliary input `y`, tape `rP`, earlier received history `prior`, and verifier auxiliary
+input `z`, the probability over `rV : π.V.Coins |x|` that `π.V.next` accepts the execution
+of `prefixProver P y rP prior` on prover tape `[]` and verifier tape `List.ofFn rV` is at
+most `s |x|`. [PS10, Theorem 175.1, soundness with an earlier transcript fixed].
+
+**Proof sketch.** Apply the explicit-error acceptance bound to the prefix-hardwired prover.
+Its coin polynomial is zero, so every one of its coin strings is empty. Read the verifier
+output and transcript through their published equations and replace this prover coin
+string by `[]`. The acceptance event then depends only on the verifier's tape; the public
+uniform-product and constant-average laws remove the unused prover coins.
+
+TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean:47 theorem exec_snd_bounded proof=17 sketch=True comments=0
+For `P,V,vFirst,x,y,z,rP,rV,B,g`, if every message `P.next x y rP hist` has length at most
+`B`, then every `m ∈ (exec P V vFirst x y z rP rV g).2` has length at most `B`.
+
+**Proof sketch.** Induct on the move count through the published execution equations. A
+verifier move leaves its received list unchanged. A prover move appends exactly one message,
+which satisfies the uniform next-message bound; all earlier messages satisfy the induction
+hypothesis.
+
+TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean:70 theorem exec_snd_slice_bounded proof=4 sketch=False comments=0
+The same next-message bound controls a received-history slice: every
+`m ∈ ((exec P V vFirst x y z rP rV g).2.drop d).take t` has `m.length ≤ B` when
+`∀ hist, (P.next x y rP hist).length ≤ B`.
+
+TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean:80 theorem length_encodeMsgs_exec_snd_le proof=3 sketch=False comments=0
+If every prover message has at most `B` bits, its received-history encoding satisfies
+`(Strategy.encodeMsgs (exec P V vFirst x y z rP rV g).2).length ≤
+(exec P V vFirst x y z rP rV g).2.length * (2 * B + 2)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:40 theorem encodeMsgs_eq_encWords proof=4 sketch=False comments=0
+The two message-list encodings agree: `Strategy.encodeMsgs h = BinArith.encWords h`.
+
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:49 def normalizeMsgs proof=0 sketch=False comments=0
+Bounded message slots: `normalizeMsgs p B raw` is the list of the first `p` words decoded
+from `raw`, with missing words replaced by `[]` and every word truncated to `B` bits.
+[PS10, Theorem 175.1, bounded phase-shape normalization].
+
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:54 theorem normalizeMsgs_eq proof=0 sketch=False comments=0
+The slot formula is
+`normalizeMsgs p B raw = (List.range p).map (fun i => ((decWords raw).getD i []).take B)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:60 theorem length_normalizeMsgs proof=2 sketch=False comments=0
+Normalization always supplies exactly the requested number of slots:
+`(normalizeMsgs p B raw).length = p`.
+
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:66 theorem length_le_of_mem_normalizeMsgs proof=5 sketch=False comments=0
+Every normalized slot has at most `B` bits:
+`m ∈ normalizeMsgs p B raw → m.length ≤ B`.
+
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:76 theorem normalizeMsgs_encodeMsgs proof=8 sketch=False comments=0
+Normalization fixes an encoded list with `p` slots and messages of at most `B` bits:
+`normalizeMsgs p B (Strategy.encodeMsgs h) = h` if `h.length = p` and
+`∀ m ∈ h, m.length ≤ B`.
+
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:89 theorem length_encodeMsgs_normalizeMsgs_le proof=7 sketch=False comments=0
+The encoding of the normalized slots has the bound
+`(Strategy.encodeMsgs (normalizeMsgs p B raw)).length ≤ p * (2 * B + 2)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean:42 theorem polyTimeComputable_encWords_decWords proof=6 sketch=False comments=0
+Canonical reencoding is polynomial-time: if `raw` is polynomial-time, so is
+`w ↦ BinArith.encWords (BinArith.decWords (raw w))`.
+
+TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean:53 theorem polyTimeComputable_decWords_getD proof=5 sketch=False comments=0
+Total decoded-word lookup is polynomial-time: if `raw` and the unary index `i` are
+polynomial-time, so is `w ↦ (BinArith.decWords (raw w)).getD (i w) []`.
+
+TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean:72 theorem polyTimeComputable_encode_normalizeMsgs proof=19 sketch=True comments=3
+Bounded-slot normalization is polynomial-time: if `p` and `B` are computable in unary
+and `raw` is polynomial-time, then so is
+`w ↦ Strategy.encodeMsgs (normalizeMsgs (p w) (B w) (raw w))`.
+[PS10, Theorem 175.1, bounded phase-shape normalization].
+
+**Proof sketch.** Canonically reencode the total decoder's result through the generic word
+map. The generic lookup host reads each requested slot, including empty defaults beyond the
+end. Truncate that slot to the unary bit bound and emit its self-delimiting pair. The published
+counted-emission host concatenates these chunks over the unary number of requested slots;
+the resulting word is precisely the normalized list's encoding.
+
+TCSlib/Cryptography/Composability/SequentialZK/NormalizedStep.lean:53 theorem normalizePhaseMsgs_viewV proof=11 sketch=True comments=2
+For protocol `ρ`, inputs `x,y,aux`, count `p`, cap `B`, zero verifier coin length,
+a uniform `B` bound on prover messages, real received count `p`, and seed `r`, normalization
+fixes the real received history:
+`normalizePhaseMsgs x aux p B (ρ.viewV x y aux r).encode =
+  (exec ρ.P ρ.V ρ.verifierFirst x y aux (List.ofFn r.1) [] (ρ.rounds.eval |x|)).2`.
+[PS10, Theorem 175.1, normalization of a real wrapped phase].
+
+**Proof sketch.** The verifier seed encodes an empty tape because its coin length is zero.
+Read the real view and transcript through their published equations. The supplied count
+and the public execution-message bound make this canonical real view a fixed point of the
+bounded-slot normalizer. No simulator or statistical comparison is needed.
+
+TCSlib/Cryptography/Composability/SequentialZK/NormalizedStep.lean:86 theorem statClose_normalized_step proof=26 sketch=True comments=2
+For protocol `ρ`, simulator `S`, inputs `x,y,aux`, prefix `pre`, count `p`, bit cap `B`, and
+error `δ`, suppose the verifier has zero coins, every prover message has at most `B` bits,
+and every real received history has length `p`. A raw `δ`-close real-view/simulator pair then
+gives `δ`-close prefix updates: the real update appends its received history and `k-p` empty
+messages, while the simulated update appends `normalizePhaseMsgs x aux p B` of the output and
+the same empty messages, where `k = ρ.rounds.eval |x|`. [PS10, Theorem 175.1].
+
+**Proof sketch.** The zero-coin verifier tape is empty on every real seed. The execution bound
+and supplied message count make each real view a fixed point of canonical normalization.
+Apply the generic published postprocessing law with the normalized padded-prefix update
+and this real fixed point. Its uniform first-projection reader removes the unused verifier
+coin factor without changing the statistical bound. No simulator efficiency or output-shape
+assumption is used.
+
+TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean:45 structure PaddedProverSpec proof=0 sketch=False comments=0
+For original protocol `π`, repeated protocol `ρ`, common input `x`, phase count `q` and
+real prover-message count `p`, `PaddedProverSpec π ρ x q p` asserts the displayed prover coin,
+round, mover, reply, index and history-count equations, with `k = π.rounds.eval |x|`.
+The contract is independent of any witness relation or message bound.
+[PS10, Theorem 175.1, the padded repeated-prover construction].
+
+TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean:97 theorem real_phase proof=0 sketch=False comments=0
+For a construction specification `h`, verifier `V`, inputs `y,z`, tapes `rP,rV`, phase
+`j<q` and `t≤k`, the two source histories after `2*k*j+t` equal their phase-start histories
+followed by the original `π.P` execution on coin block `j` against `phaseVerifier V`.
+The wrapped auxiliary word is `phaseAux z rV j` of the earlier verifier history.
+[PS10, Theorem 175.1; Gol01, §4.3.4, real-phase endpoint].
+
+TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean:120 theorem padded_phase proof=0 sketch=False comments=0
+For a construction specification `h`, verifier `V`, inputs `y,z`, tapes `rP,rV` and
+phase `j<q`, the source verifier history after the complete padded phase is its earlier
+history followed by the wrapped original real-phase messages and `k-p` empty fillers.
+The verifier's filler replies are unrestricted. [PS10, Theorem 175.1; Gol01, §4.3.4].
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:50 def phaseViewPayload proof=0 sketch=False comments=0
+The validated message payload is `pairSndD (pairSndD raw)` when `raw` is exactly the
+encoding of `⟨x,z,[],decWords (pairSndD (pairSndD raw))⟩`, and is `[]` otherwise. This checks
+the known common input, auxiliary input, empty wrapper tape, and canonical message encoding.
+[PS10, Theorem 175.1, canonical phase-view fallback].
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:57 theorem phaseViewPayload_eq proof=0 sketch=False comments=0
+The payload formula is `phaseViewPayload x z raw = if raw = View.encode
+⟨x,z,[],decWords (pairSndD (pairSndD raw))⟩ then pairSndD (pairSndD raw) else []`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:66 def normalizePhaseMsgs proof=0 sketch=False comments=0
+Canonical phase-view normalization validates `raw` for the known fields `x,z,[]`, then
+supplies exactly `p` slots, each truncated to `B` bits, with empty defaults. A malformed view
+therefore supplies `p` empty messages. [PS10, Theorem 175.1, phase-shape normalization].
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:70 theorem normalizePhaseMsgs_eq proof=0 sketch=False comments=0
+`normalizePhaseMsgs x z p B raw = normalizeMsgs p B (phaseViewPayload x z raw)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:75 theorem phaseViewPayload_of_encode proof=3 sketch=False comments=0
+Validation fixes every canonical view with the prescribed fields:
+`phaseViewPayload x z (View.encode ⟨x,z,[],h⟩) = Strategy.encodeMsgs h`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:82 theorem phaseViewPayload_of_ne proof=2 sketch=False comments=0
+Failed validation produces an empty payload: if `raw` differs from the canonical view
+`⟨x,z,[],decWords (pairSndD (pairSndD raw))⟩`, then `phaseViewPayload x z raw = []`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:90 theorem normalizePhaseMsgs_of_encode proof=3 sketch=False comments=0
+Phase-view normalization fixes a canonical bounded real view:
+`normalizePhaseMsgs x z p B (View.encode ⟨x,z,[],h⟩) = h` if `h.length = p` and
+`∀ m ∈ h, m.length ≤ B`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:98 theorem length_normalizePhaseMsgs proof=3 sketch=False comments=0
+Every phase-view normalization has exactly `p` slots:
+`(normalizePhaseMsgs x z p B raw).length = p`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:105 theorem length_le_of_mem_normalizePhaseMsgs proof=3 sketch=False comments=0
+Each normalized phase message has at most `B` bits:
+`m ∈ normalizePhaseMsgs x z p B raw → m.length ≤ B`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:112 theorem length_encodeMsgs_normalizePhaseMsgs_le proof=3 sketch=False comments=0
+The normalized phase message encoding is bounded by
+`(Strategy.encodeMsgs (normalizePhaseMsgs x z p B raw)).length ≤ p * (2 * B + 2)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:119 theorem normalizePhaseMsgs_of_ne proof=5 sketch=False comments=0
+A malformed phase view yields exactly `p` empty messages:
+`normalizePhaseMsgs x z p B raw = List.replicate p []` when validation fails.
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:135 theorem polyTimeComputable_phaseViewPayload proof=14 sketch=True comments=2
+Canonical phase-view validation is polynomial-time: polynomial-time `x`, `z` and `raw`
+give a polynomial-time map `w ↦ phaseViewPayload (x w) (z w) (raw w)`.
+
+**Proof sketch.** Extract the candidate message word through two pair projections, and
+canonically reencode its total decoding through the word-map host. Pair this encoding with
+the known common input, auxiliary input, and empty wrapper tape. The public word-equality
+machine checks whether that reconstructed view equals the original word; a conditional
+machine returns the extracted payload on success and the empty word on failure.
+
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:156 theorem polyTimeComputable_encode_normalizePhaseMsgs proof=5 sketch=False comments=0
+Canonical bounded phase-view normalization is polynomial-time: polynomial-time `x`, `z`
+and `raw`, and unary-computable `p` and `B`, give a polynomial-time map
+`w ↦ Strategy.encodeMsgs (normalizePhaseMsgs (x w) (z w) (p w) (B w) (raw w))`.
+[PS10, Theorem 175.1, bounded canonical phase-view normalization].
+
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:40 def prefixProver proof=0 sketch=False comments=0
+For a strategy `P`, auxiliary input `y`, fixed tape `rP`, and earlier received messages
+`prior`, `prefixProver P y rP prior` has zero coins and sends
+`P.next x y rP (prior ++ hist)` on `x`, any auxiliary input, any tape, and history `hist`.
+[PS10, Theorem 175.1, the prover induced by a fixed earlier transcript].
+
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:58 theorem exec_phase_of_moves proof=27 sketch=True comments=1
+For source strategies `P`, `V`, local strategies `P0`, `V0`, mover flag `vFirst`,
+common input `x`, source auxiliary inputs `y`, `z` and tapes `rP`, `rV`, local auxiliary
+inputs `y0`, `z0` and tapes `rP0`, `rV0`, offset `g`, and budget `k`, suppose the mover
+patterns agree and each active source reply before `k` equals the local party's reply on
+the source history with its pre-`g` prefix dropped. For `t ≤ k`, both source histories at
+`g+t` equal their pre-`g` histories followed by the corresponding components of
+`exec P0 V0 vFirst x y0 z0 rP0 rV0 t`. [PS10, Theorem 175.1, phase coupling].
+
+**Proof sketch.** Induct on `t`. Both local histories are empty at zero. At a later move,
+the induction equalities identify each full source history with its fixed earlier prefix
+followed by the local history. Dropping this prefix gives the local party's received
+history. The supplied active-move equation therefore gives a common next message, and
+append associativity preserves both transcript decompositions.
+
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:117 theorem exec_phase proof=8 sketch=True comments=0
+For strategies `P`, `V`, `W`, mover flag `vFirst`, input `x`, auxiliary inputs `y`, `z`,
+tapes `rP`, `rV`, `rW`, offset `g`, and budget `k`, suppose the mover at `g+t` equals the
+mover at `t`, and at every verifier move before `k`, `V` on the full history equals `W` on
+that history with the messages preceding `g` dropped. For `t ≤ k`, each received history
+after `g+t` moves equals its history after `g` followed by the corresponding history of
+`prefixProver P y rP (exec P V vFirst x y z rP rV g).1` against `W` for `t` moves.
+[PS10, Theorem 175.1, a phase with the earlier transcript fixed].
+
+**Proof sketch.** Apply the generic phase-coupling theorem. The supplied verifier equation
+is its verifier-move premise. For the prover premise, the earlier received history is a
+prefix of the current one, so prepending it to the dropped suffix recovers the full
+history. The hardwired prover's published message equation gives the required reply.
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:45 def realStep proof=0 sketch=False comments=0
+For `π,V,x,y,z,rV,p,i,pre,rP`, append to `pre` the real verifier-received messages of
+`π.P` against `phaseVerifier V` at `phaseAux z rV i pre` on tapes `List.ofFn rP, []`, then
+`π.rounds.eval |x| - p` empty prover fillers. [PS10, Theorem 175.1].
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:54 theorem realStep_eq proof=0 sketch=False comments=0
+`realStep π V x y z rV p i pre rP` is `pre` followed by the original real phase's
+received messages on `(List.ofFn rP, [])`, then `k-p` empty fillers, for `k=π.rounds.eval |x|`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:64 def simStep proof=0 sketch=False comments=0
+For `S,x,z,rV,k,B,p,i,pre,rS`, append the `p` normalized `B`-bounded messages decoded
+from `S.simulate x (phaseAux z rV i pre) rS`, followed by `k-p` empty fillers.
+[PS10, Theorem 175.1; Gol01, §4.3.4].
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:71 theorem simStep_eq proof=0 sketch=False comments=0
+`simStep S x z rV k B p i pre rS` appends the normalized phase result and `k-p` empty
+fillers to `pre`, using auxiliary word `phaseAux z rV i pre`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:79 def realPrefix proof=0 sketch=False comments=0
+`realPrefix π V x y z rV p q r` folds the `q` real phase steps, starting with `[]` and
+using `r i` in phase `i`. [PS10, Theorem 175.1].
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:85 theorem realPrefix_eq proof=0 sketch=False comments=0
+`realPrefix π V x y z rV p q r = Fin.foldl q (fun pre i => realStep … i pre (r i)) []`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:92 def simPrefix proof=0 sketch=False comments=0
+`simPrefix S x z rV k B p q r` folds the `q` normalized phase steps from `[]`, using
+`r i` in phase `i`. [PS10, Theorem 175.1; Gol01, §4.3.4].
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean:98 theorem simPrefix_eq proof=0 sketch=False comments=0
+`simPrefix S x z rV k B p q r = Fin.foldl q (fun pre i => simStep … i pre (r i)) []`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:40 theorem realPrefix_zero proof=2 sketch=False comments=0
+For `π,V,x,y,z,rV,p,r`, `realPrefix π V x y z rV p 0 r = []`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:46 theorem realPrefix_succ proof=3 sketch=False comments=0
+For `π,V,x,y,z,rV,p,q,r`, the prefix on `q+1` coins equals `realStep` at index `q`
+applied to the prefix on the first `q` coins and to the last coin `r (Fin.last q)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:56 theorem realPrefix_snoc proof=3 sketch=False comments=0
+For `π,V,x,y,z,rV,p,q,r,coin`, appending `coin` to `r` extends its real prefix by
+`realStep π V x y z rV p q` on that coin.
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:64 theorem simPrefix_zero proof=2 sketch=False comments=0
+For `S,x,z,rV,k,B,p,r`, `simPrefix S x z rV k B p 0 r = []`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:70 theorem simPrefix_succ proof=3 sketch=False comments=0
+For `S,x,z,rV,k,B,p,q,r`, the prefix on `q+1` coins equals `simStep` at index `q`
+applied to the prefix on the first `q` coins and to the last coin `r (Fin.last q)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:80 theorem simPrefix_snoc proof=3 sketch=False comments=0
+For `S,x,z,rV,k,B,p,q,r,coin`, appending `coin` to `r` extends its normalized prefix by
+`simStep S x z rV k B p q` on that coin.
+
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:97 theorem simPrefix_eq_phasePrefix proof=15 sketch=True comments=2
+For `S,k,B,verifierFirst,x,z,rV,rS,q,coins`, if every block `i<q` of `rS` is
+`List.ofFn (coins i)`, the typed normalized fold equals the simulator prefix:
+`simPrefix … q coins = phasePrefix S k B verifierFirst x z rV rS q`, using the numeric real
+message count `if verifierFirst then k(|x|)/2 else (k(|x|)+1)/2`.
+[PS10, Theorem 175.1; Gol01, §4.3.4].
+
+**Proof sketch.** Induct on the phase count. Remove the last typed coin from the fold and
+use the simulator's published phase reader on the corresponding raw coin block. The
+induction hypothesis identifies the earlier prefixes; both final steps then normalize the
+same simulator call and append the same empty fillers.
+
+TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers.lean:38 theorem next_length_le proof=5 sketch=False comments=0
+For `d : PaddedProverSpec π ρ x q p`, auxiliary input `y`, bound `B`, and an original
+reply bound `∀ r hist, |π.P.next x y r hist| ≤ B`, every repeated reply has length at most
+`B`: `∀ r hist, |ρ.P.next x y r hist| ≤ B`. [PS10, Theorem 175.1].
+
+TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers.lean:54 theorem complete proof=10 sketch=True comments=0
+For pointwise construction contracts `d`, if acceptance on every `x,y,z` transfers
+from `π` to `ρ`, then a bounded completeness witness for each `x ∈ L` in `π` is also one
+in `ρ`, with the same polynomial bound. [PS10, Theorem 175.1].
+
+**Proof sketch.** Use the original reply bound and perfect acceptance together as a witness
+relation. The padded next-message reader preserves that bound. The published bounded-witness
+completeness constructor then uses the transferred acceptance on every such witness.
+
+TCSlib/Cryptography/Composability/SequentialZK/RealPhases.lean:51 theorem exec_snd_empty proof=29 sketch=True comments=2
+For strategies `P,V`, orientation `vFirst`, fixed inputs/tapes `x,y,z,rP,rV`, and an
+interval of `t` moves after `g`, if every active prover reply is empty, the verifier's
+received history appends exactly as many empty messages as its length increases.
+[PS10, Theorem 175.1, honest-prover fillers].
+
+**Proof sketch.** Induct on the interval length to express the new received history as the
+old history followed by some number of empty messages. Verifier moves keep it fixed and
+prover moves append one empty message. Taking lengths determines that number exactly.
+The verifier's own replies are unrestricted throughout.
+
+TCSlib/Cryptography/Composability/SequentialZK/RealPhases.lean:101 theorem exec_real_phase proof=24 sketch=True comments=0
+For a repeated prover `Pseq`, original prover `P`, arbitrary verifier `V`, fixed
+inputs/tapes, and phase `j<q`, assume the padded next-message equation, recovery of the
+global prover-move index, the phase-start prover-history length `j*k`, and the supplied
+mover-period equation. For `t≤k`, the source histories at `2*k*j+t` are their phase-start
+histories followed by the original execution of `P` on coin block `j` against
+`phaseVerifier V` with `phaseAux z rV j` of the earlier verifier history.
+[PS10, Theorem 175.1; Gol01, §4.3.4, real-phase coupling].
+
+**Proof sketch.** Apply the published coupling theorem for active moves. Index recovery
+gives phase `j` and position `t<k`, so the repeated prover uses exactly the original prover's
+coin block and dropped phase history. The wrapped verifier prepends the earlier verifier
+history; that history is a prefix of the reached source history by `exec_snd_take`. Its
+reply is therefore exactly the source verifier's reply. The existing coupling theorem supplies
+both transcript decompositions, without another induction over the real phase.
+
+TCSlib/Cryptography/Composability/SequentialZK/RealPhases.lean:161 theorem exec_padded_real_phase proof=23 sketch=True comments=2
+Under the repeated-prover shape/index/period hypotheses, suppose phase `j<q` starts
+with both received histories of length `j*k`, ends with verifier history length `(j+1)*k`,
+and the original wrapped real phase has `p` prover messages. Then its entire padded phase
+appends those real messages followed by exactly `k-p` empty messages to the verifier's
+earlier history. No condition is placed on the arbitrary verifier's filler replies.
+[PS10, Theorem 175.1; Gol01, §4.3.4, the real padded-phase endpoint].
+
+**Proof sketch.** The real phase is the original wrapped execution by `exec_real_phase`.
+During each remaining move, index recovery puts every prover reply in the filler interval,
+so the padded next-message reader returns `[]`. Apply `exec_snd_empty` to that suffix.
+The supplied start, real-phase and end lengths show that exactly `k-p` further messages
+were received. Combining the two prefix equalities gives the complete padded endpoint.
+
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:125 theorem PaddedVerifierSpec.outV_eq proof=4 sketch=False comments=0
+For specification `d`, prover `P`, auxiliary inputs `y`, `z`, and joint coins `r`,
+`ρ.outV P x y z r` equals `terminal z (List.ofFn r.2) hist`, where `hist` is the verifier
+component of `exec P ρ.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (2*k*q)`
+and `k=π.rounds.eval |x|`. [PS10, Theorem 175.1, the aggregate verdict].
+
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:148 theorem PaddedVerifierSpec.accept_le proof=40 sketch=True comments=2
+For specification `d : PaddedVerifierSpec π ρ x q p terminal`, original soundness
+`h : InteractiveProofErr π L s`, a no-instance `x ∉ L`, prover `P`, and verifier auxiliary
+input `z`, `Pr[ρ.outV P x [] z = [true]] ≤ s |x| ^ q`.
+[PS10, Theorem 175.1, multiplication of sequential soundness error].
+
+**Proof sketch.** Zero phases give the bound one. Otherwise fix prover coins maximizing
+acceptance and read the verifier tape as independent original coin blocks. Define the
+phase test by fixing the earlier coin blocks and replacing future blocks by zeros. Earlier
+transcripts are unaffected by that replacement, so every aggregate phase test is this
+conditional test on the current fresh block. Each section accepts with probability at
+most the original error. The adaptive product theorem bounds all phase tests by its
+`q`-th power; averaging over the fixed prover coins only decreases acceptance.
+
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:201 theorem PaddedVerifierSpec.sound proof=11 sketch=True comments=0
+For specification `d : PaddedVerifierSpec π ρ x q p terminal`, original soundness
+`h : InteractiveProofErr π L s`, a no-instance `x ∉ L`, prover `P`, and verifier auxiliary
+input `z`, `1-s |x| ^ q ≤ Pr[ρ.outV P x [] z = [false]]`.
+[PS10, Theorem 175.1, sequential soundness error `s^q`].
+
+**Proof sketch.** Zero phases require only nonnegativity of a probability. Otherwise the
+aggregate verdict is binary, so rejection is exactly the complement of acceptance.
+Subtract the acceptance upper bound from one.
+
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:40 structure PaddedVerifierSpec proof=0 sketch=False comments=0
+For original protocol `π`, abstract repeated protocol `ρ`, common input `x`, phase count
+`q`, real prover-message count `p`, and terminal reply function `terminal z r hist`,
+`PaddedVerifierSpec π ρ x q p terminal` collects the coin, move, reply, verdict, and history
+length equations displayed below. Here a real phase has `π.rounds.eval |x|` moves and is
+padded to twice that length. [PS10, Theorem 175.1].
+
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:107 theorem PaddedVerifierSpec.phase_exec proof=34 sketch=True comments=2
+For a padded-verifier specification `d`, prover `P`, inputs `y`, `z`, tapes `rP`, `rV`,
+phase `j<q`, and local move count `t≤k`, both source histories after `2*k*j+t` equal their
+histories after `2*k*j` followed by the corresponding original-verifier histories against
+`prefixProver P y rP priorP` on verifier block `j`. Here `k=π.rounds.eval |x|` and `priorP`
+is the source prover-received history after `2*k*j`. [PS10, Theorem 175.1].
+
+**Proof sketch.** Apply the generic fixed-prefix phase theorem. At a verifier move of the
+real phase, its recovered index is `2*k*j+t`; this excludes the terminal-history branch.
+Its quotient and residue modulo `2*k` are `j` and `t`, so the padded reply is the original
+verifier's reply on coin block `j`. The boundary reader identifies the dropped prefix
+length as `j*k`. The generic theorem supplies both transcript decompositions, including
+zero-round phases through its empty local execution.
+
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:170 theorem PaddedVerifierSpec.phase_take proof=15 sketch=True comments=0
+For specification `d`, prover `P`, inputs `y`, `z`, tapes `rP`, `rV`, and `j<q`,
+the final verifier history restricted to `(drop (j*k)).take p` is the original verifier's
+history against the prefix-hardwired prover on block `j`, where `k=π.rounds.eval |x|`.
+[PS10, Theorem 175.1, the phase test in the aggregate verdict].
+
+**Proof sketch.** A zero-round phase has empty histories on both sides. Otherwise the
+real-phase coupling identifies its ending history with the old `j*k` messages followed
+by the original verifier's `p` received messages. This ending history is a prefix of the
+final transcript. Take that prefix, then drop its old messages, to recover the original
+verifier history used by the aggregate phase test.
+
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:54 def phasePrefix proof=0 sketch=False comments=0
+The normalized prefix after `i` phases uses simulator `S`, round/bit bounds `k,B`,
+orientation `verifierFirst`, input/auxiliary words `x,z`, one verifier tape `rV`, and phase-tape
+source `rS`. Each phase calls `S` on `phaseAux z rV i pre`, retains exactly
+`p = if verifierFirst then k(|x|)/2 else (k(|x|)+1)/2` bounded real messages, and appends
+`k(|x|)-p` empty fillers. [PS10, Theorem 175.1, the sequential simulator].
+
+This recursion is the public mathematical specification; its polynomial-time realization
+below is an instance of the existing counted-loop host, rather than a new control host.
+
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:66 theorem phasePrefix_zero proof=0 sketch=False comments=0
+Before any phase, `phasePrefix S k B verifierFirst x z rV rS 0 = []`.
+
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:72 theorem phasePrefix_succ proof=0 sketch=False comments=0
+Phase `i+1` extends `pre = phasePrefix S k B verifierFirst x z rV rS i` with the normalized
+output of `S.runAtL |x| (pairEncode x (phaseAux z rV i pre))` on coin block `i`, then the
+`k(|x|)-p` empty fillers, for `p = if verifierFirst then k(|x|)/2 else (k(|x|)+1)/2`.
+
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:85 theorem phasePrefix_eq proof=0 sketch=False comments=0
+The exhaustive equation for `phasePrefix … i` is `[]` at zero; at `j+1`, with
+`pre = phasePrefix … j`, it appends the canonical normalized `S.runAtL` output at
+`phaseAux z rV j pre` on coin block `j`, followed by the `k(|x|)-p` empty fillers.
+
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:103 theorem phasePrefix_succ_simulate proof=4 sketch=False comments=0
+If phase coin block `i` equals `List.ofFn r`, phase `i+1` calls precisely
+`S.simulate x (phaseAux z rV i pre) r`, with `pre` the earlier phase prefix.
+
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:118 theorem length_phasePrefix proof=12 sketch=False comments=0
+After `i` phases the normalized prefix has exactly `i * k(|x|)` messages:
+`(phasePrefix S k B verifierFirst x z rV rS i).length = i * k.eval x.length`.
+
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:138 theorem length_le_of_mem_phasePrefix proof=15 sketch=True comments=0
+Every message in `phasePrefix S k B verifierFirst x z rV rS i` has at most `B(|x|)` bits.
+
+**Proof sketch.** Induct on the number of phases. Earlier messages satisfy the induction
+hypothesis, normalized real messages satisfy the published bit bound, and every filler is
+empty. These are exactly the three portions of the next prefix.
+
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:158 theorem length_encodeMsgs_phasePrefix_le proof=5 sketch=False comments=0
+The encoded prefix after `i` phases has length at most
+`i * k(|x|) * (2 * B(|x|) + 2)`, uniformly over every simulator output and tape.
+
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:169 theorem encode_emptyMsgs_poly proof=9 sketch=False comments=0
+If `N` is polynomial-time in unary, the encoding of `N w` empty messages is
+polynomial-time: `w ↦ Strategy.encodeMsgs (List.replicate (N w) [])`.
+
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:194 theorem phasePrefix_poly proof=98 sketch=True comments=3
+For a uniform `S`, fixed polynomials `k,B,Q`, orientation `verifierFirst`, and
+polynomial-time words `X,Z,RV,RS`, the entire encoded prefix is polynomial-time:
+`w ↦ encodeMsgs (phasePrefix S k B verifierFirst (X w) (Z w) (RV w) (RS w)
+(Q.eval (X w).length))`. [PS10, Theorem 175.1, strict-PPT sequential simulation].
+
+**Proof sketch.** Instantiate the published counted-loop host with the encoded prefix as
+state and its existing unary counter as phase index. The step decodes the prior state,
+assembles the phase auxiliary input, runs `S` on the selected fresh coin block, canonically
+normalizes its output, and appends that phase's real-message encoding and empty fillers.
+The state is exactly the encoding of the semantic prefix, by induction using the published
+loop equations. Its encoding bound, together with a polynomial bound on `|X w|`, bounds every
+genuine orbit state. The existing orbit-bounded counted-loop theorem then gives strict
+polynomial time, with no newly constructed host.
+
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:310 theorem exists_phaseSimulator proof=31 sketch=True comments=0
+For uniform phase simulator `S`, polynomials `k,B,Q,CV`, and orientation `verifierFirst`,
+there is a uniform simulator `SQ` with coin polynomial `CV + Q*S.coins`. On `(x,z)` it samples
+one verifier tape from the first `CV(|x|)` coins, uses the remaining coins for the `Q(|x|)`
+phase calls, and outputs the canonical view with their normalized prefix.
+[PS10, Theorem 175.1; Gol01, §4.3.4, strict-PPT sequential simulation].
+
+**Proof sketch.** Apply `phasePrefix_poly` to the common-input and auxiliary-input projections
+of the simulator layout, the first verifier-tape coin slice and the remaining phase tape.
+Pair these fields with the encoded prefix to produce the canonical view. The published
+`NUPPT.ofPolyTimeUniform` construction uses exactly the stated coin polynomial. Its activation
+and simulator readers, followed by the layout projection equations, give the exact formula.
+This includes empty prefixes when the phase count or round count is zero.
+
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:45 theorem exec_prefix proof=10 sketch=True comments=0
+For strategies `P`, `V`, first-mover flag `vFirst`, common input `x`, auxiliary inputs
+`zP`, `zV`, tapes `rP`, `rV`, and move counts `g`, `t`, both components of
+`exec P V vFirst x zP zV rP rV g` are prefixes of the corresponding components after `g + t`
+moves. [PS10, §4.4].
+
+**Proof sketch.** Induct on the additional moves. Each move appends one message to exactly
+one received history, so prefix transitivity preserves both earlier histories.
+
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:64 theorem exec_fst_take proof=0 sketch=False comments=0
+For `P`, `V`, `vFirst`, `x`, `zP`, `zV`, `rP`, `rV`, `g`, `t`, taking the length of
+`(exec P V vFirst x zP zV rP rV g).1` from the first component after `g + t` moves gives
+`(exec P V vFirst x zP zV rP rV g).1`.
+
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:74 theorem exec_snd_take proof=0 sketch=False comments=0
+For `P`, `V`, `vFirst`, `x`, `zP`, `zV`, `rP`, `rV`, `g`, `t`, taking the length of
+`(exec P V vFirst x zP zV rP rV g).2` from the second component after `g + t` moves gives
+`(exec P V vFirst x zP zV rP rV g).2`.
+
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:91 theorem uprob_adaptive_all_le proof=67 sketch=True comments=2
+For `q` phases, a nonnegative bound `s`, and tests `Good i prefix fresh`, if
+`Pr[fresh, Good i prefix fresh] ≤ s` for every `i < q` and every earlier prefix, then
+`Pr[coins : Fin q → α, ∀ i, Good i (coins restricted below i) (coins i)] ≤ s ^ q`.
+[PS10, Theorem 175.1, sequential soundness].
+
+**Proof sketch.** Induct on the phase count, splitting the uniform tuple into its strict
+prefix and last coordinate with `Fin.snocEquiv`. The event for all phases implies success
+of the prefix together with the last phase. Conditional on a fixed prefix, the last phase
+succeeds with probability at most `s`. The published product bound therefore multiplies
+the prefix probability by `s`, and the induction hypothesis supplies the remaining power.
+
+TCSlib/Cryptography/Composability/SequentialZK/Statistical.lean:44 theorem statClose_average proof=5 sketch=True comments=0
+Averaging over a shared seed preserves a nonnegative statistical bound: for `0 ≤ δ` and
+`∀ a, StatClose (F a) (G a) δ`, the samplers `(a,b) ↦ F a b` and `(a,c) ↦ G a c` are
+`δ`-close. No seed type is required to be nonempty.
+
+**Proof sketch.** Express each test probability as an average over the shared seed. Each
+conditional difference is bounded by `δ`, so the public bound on differences of averages
+applies.
+
+TCSlib/Cryptography/Composability/SequentialZK/Statistical.lean:59 theorem statClose_chain proof=11 sketch=True comments=0
+A chain of `q` statistical comparisons adds the errors: if
+`∀ i < q, StatClose (f i) (f (i + 1)) δ`, then
+`StatClose (f 0) (f q) ((q : ℝ) * δ)`. The case `q = 0` needs no sign premise on `δ`.
+
+**Proof sketch.** Induct on the chain length. The empty chain is reflexive with error zero;
+append the last comparison using the public triangle inequality.
+
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalPostprocess.lean:40 theorem statClose_map_fst proof=16 sketch=True comments=0
+Suppose `X : α × β → γ` and `Y : τ → γ` are `ε`-close, and
+`f (X r) = H r.1` for every `r : α × β`. If `β` is nonempty, then
+`H` and `fun t => f (Y t)` are `ε`-close.
+[PS10, Theorem 175.1, statistical post-processing of one phase].
+
+**Proof sketch.** Apply the published statistical post-processing theorem to `f`.
+For each output test, pointwise equality changes the first processed event to an event
+of the first coordinate alone. The uniform-product projection law removes the unused
+second coordinate, giving exactly the desired test bound.
+
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalPrefix.lean:56 theorem statClose_step proof=47 sketch=True comments=0
+For `d : PaddedProverSpec π ρ x q p`, verifier `V`, simulator `S`, inputs `y,z`, tape
+`rV`, cap `B`, and error `δ`, a uniform `B` bound on `π.P.next` and raw `δ`-close phase views
+at every auxiliary input imply `δ`-close `realStep` and `simStep` at every index `i` and
+prefix `pre`. No shape assumption on `pre` and no efficiency assumption on `S` is required.
+[PS10, Theorem 175.1; Gol01, §4.3.4].
+
+**Proof sketch.** Instantiate the zero-verifier normalization comparison with the original
+protocol whose verifier is the phase wrapper. The published wrapper reader supplies its
+zero coin length, and the specification supplies its exact received-message count. The
+published `withV` field readers preserve the original prover, move count and first mover.
+Transport the prover seed by the equality of its coin lengths; the public `ofFn` reader
+shows that this transport preserves its raw tape. The two update readers then identify
+exactly the real and normalized steps, with the same empty padding and error.
+
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalPrefix.lean:126 theorem statClose_prefix proof=15 sketch=True comments=0
+For `d : PaddedProverSpec π ρ x q p`, verifier `V`, simulator `S`, inputs `y,z`, tape
+`rV`, cap `B`, and error `δ`, suppose `∀ r hist, |π.P.next x y r hist| ≤ B` and every raw
+phase-view sampler is `δ`-close to `S.simulate x aux`. Then
+`StatClose (realPrefix π V x y z rV p q)
+  (simPrefix S x z rV (π.rounds.eval |x|) B p q) ((q : ℝ) * δ)`.
+No uniformity or efficiency premise on `S` is needed. [PS10, Theorem 175.1; Gol01, §4.3.4].
+
+**Proof sketch.** The raw comparison at any auxiliary input gives `0 ≤ δ`. The preceding
+step comparison applies at every possible prefix, including malformed simulated prefixes.
+Instantiate the generic sampler-recursion theorem with the real and simulated prefix folds,
+their published empty-table and snoc equations, and that uniform step comparison. Its
+linear accumulation gives exactly the stated `q * δ` error, also when `q = 0`.
+
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalRecursion.lean:49 theorem statClose_recursion proof=77 sketch=True comments=3
+For families `realFamily q` and `simFamily q` with common initial state `initial` and
+supplied zero/snoc equations for `realStep` and `simStep`, if `0 ≤ δ` and
+`∀ i < q, ∀ state, StatClose (realStep i state) (simStep i state) δ`, then
+`StatClose (realFamily q) (simFamily q) ((q : ℝ) * δ)`. The state type is arbitrary and the
+finite coin types need not be nonempty.
+
+**Proof sketch.** Induct on the number of updates. The zero equations give the same constant
+sampler on the unique empty coin table. At the successor step, first replace only the last
+real update by its simulated update, averaging its `δ` bound over the common real prefix.
+Then apply the induction hypothesis to the prefixes and the public randomized postprocessing
+reader to their common simulated last update. The triangle inequality adds `δ + qδ`.
+The snoc equivalences identify a prefix and a last coin with the full coin table.
+
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalTransfer.lean:49 theorem statZK_of_padded_spec proof=59 sketch=True comments=3
+For protocols `π,ρ`, relation `R`, error `δ`, bound `B`, and phase polynomial `Q`, if
+`π` is statistically zero knowledge with error `δ`, has prover bound `B`, and `ρ` satisfies
+`PaddedProverSpec π ρ x (Q.eval |x|) p` at every `x`, with the original mover-dependent
+real-message count `p`, then `ρ` is statistically zero knowledge with error `Q(n)*δ(n)`.
+[PS10, Theorem 175.1; Gol01, §4.3.4].
+
+**Proof sketch.** Apply the original statistical hypothesis to the efficient fixed-tape
+phase verifier. The existing uniform prefix machine supplies one strict-PPT simulator using
+one global verifier tape and independent phase simulator coins. At each witnessed input the
+original comparison makes its error nonnegative. The normalized phase-recursion theorem
+bounds each fixed-tape prefix comparison by the sum of the phase errors. Pair the prefixes
+with the common verifier tape and average. The canonical endpoint readers reindex both
+finite coin spaces and identify the real view and the constructed simulator exactly.
+Zero phases and zero rounds require no separate positivity premise.
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:48 def phaseStep proof=0 sketch=False comments=0
+For simulator `S`, bounds `k,B`, orientation `verifierFirst`, input/auxiliary words `x,z`,
+fixed verifier tape `rV`, phase-tape source `rS`, phase `j`, and earlier prefix `pre`,
+`phaseStep` appends the normalized `S` output at `phaseAux z rV j pre` and `k(|x|)-p` empty
+fillers, with `p = if verifierFirst then k(|x|)/2 else (k(|x|)+1)/2`.
+The simulator uses global coin block `j`. [PS10, Theorem 175.1, simulated suffix update].
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:58 theorem phaseStep_eq proof=0 sketch=False comments=0
+The equation for `phaseStep S k B verifierFirst x z rV rS j pre` is the earlier prefix
+followed by normalized real messages from simulator coin block `j` and then empty fillers.
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:74 theorem length_encodeMsgs_phaseStep_le proof=22 sketch=True comments=0
+One normalized step increases the encoded prefix length by at most
+`k(|x|) * (2*B(|x|)+2)`, regardless of the earlier messages or simulator output.
+
+**Proof sketch.** The normalized real portion has `p` messages of at most `B` bits and the
+remaining `k-p` messages are empty. Their encoding lengths are bounded by `p(2B+2)` and
+`(k-p)(2B+2)`, whose sum is `k(2B+2)` because `p≤k`. The public encoding-append equation
+adds this bound to the unchanged initial encoding length.
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:112 theorem phaseStep_poly proof=29 sketch=True comments=2
+For uniform `S`, fixed `k,B,verifierFirst`, polynomial-time words `X,Z,RV,RS`, a unary
+polynomial-time phase `J`, and a message family `H` with polynomial-time encoding, the
+normalized update is polynomial-time: `w ↦ encodeMsgs (phaseStep S k B verifierFirst
+(X w) (Z w) (RV w) (RS w) (J w) (H w))`. No message bound on `H` is required.
+[PS10, Theorem 175.1, simulated-suffix step].
+
+**Proof sketch.** Assemble the phase auxiliary word from the input functions and encoded
+prefix, cut out global simulator coin block `J`, and run the original uniform simulator's
+polynomial-time output. Apply the published canonical phase normalizer. Unary arithmetic
+computes the real/filler slot counts; the existing counted emitter encodes the empty fillers.
+Concatenate the unchanged input encoding and both new encodings using the public append
+reader. This is a polynomial-time leaf, with no iteration host construction.
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:154 def phaseSuffix proof=0 sketch=False comments=0
+Starting from `pre0` at phase `start`, `phaseSuffix S k B verifierFirst x z rV rS start
+pre0 t` applies the normalized append update at phases `start, …, start+t-1`, reading those
+global coin blocks from `rS`. It is a mathematical sequence realized below by the existing
+published counted-loop host. [PS10, Theorem 175.1, normalized simulated suffix].
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:161 theorem phaseSuffix_zero proof=0 sketch=False comments=0
+At zero suffix phases, `phaseSuffix S k B verifierFirst x z rV rS start pre0 0 = pre0`.
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:167 theorem phaseSuffix_succ proof=0 sketch=False comments=0
+Suffix phase `i+1` applies `phaseStep` at global index `start+i` to the prefix after `i`
+steps: `phaseSuffix … (i+1) = phaseStep … (start+i) (phaseSuffix … i)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:175 theorem phaseSuffix_eq proof=0 sketch=False comments=0
+The exhaustive suffix equation returns `pre0` at zero and, at `i+1`, applies
+`phaseStep` at global index `start+i` to `phaseSuffix … i`.
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:189 theorem length_encodeMsgs_phaseSuffix_le proof=9 sketch=False comments=0
+For any initial prefix `pre0`, the suffix encoding grows by at most
+`t * k(|x|) * (2*B(|x|)+2)` beyond its initial encoded length. No bound is required on
+individual initial messages or on the starting phase index.
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:214 theorem phaseSuffix_poly proof=68 sketch=True comments=3
+For uniform `S`, fixed `k,B,verifierFirst`, polynomial-time words `X,Z,RV,RS`, unary
+polynomial-time starting phase/count `Start,Count`, and initial message family `H` with
+polynomial-time encoding, the entire suffix encoding is polynomial-time. There is no range
+premise on `Start,Count` and no bound on individual messages of `H`.
+[PS10, Theorem 175.1; Gol01, §4.3.4, efficient simulated suffix].
+
+**Proof sketch.** Use the published counted-loop host with encoded-prefix state and its
+existing unary counter `i`. The update is the polynomial-time leaf `phaseStep_poly`, at index
+`Start+i`, after canonically decoding the reached state. Induction identifies the state with
+the semantic suffix. Its additive encoding bound, together with polynomial output-length
+bounds for the initial encoding, unary count and common input, gives the existing host's
+polynomial orbit envelope. No new host or control machine is constructed.
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:296 theorem phaseSuffix_raw_poly proof=0 sketch=False comments=0
+For uniform `S`, fixed `k,B,verifierFirst`, polynomial-time words `X,Z,RV,RS,Raw`, and
+unary polynomial-time `Start,Count`, decode the arbitrary word `Raw w` as the initial prefix.
+The resulting suffix encoding is polynomial-time on every input, including malformed words
+and phase indices beyond the available tape.
+
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:314 theorem phaseSuffix_zero_nil proof=5 sketch=False comments=0
+Starting at phase zero with empty prefix gives the whole-prefix semantics:
+`phaseSuffix S k B verifierFirst x z rV rS 0 [] t =
+phasePrefix S k B verifierFirst x z rV rS t`.
+
+TCSlib/Cryptography/Composability/SequentialZK/VerifierPrefix.lean:49 theorem exec_eq_of_verifier_blocks proof=22 sketch=True comments=2
+For prover `P`, padded verifier `S`, original verifier `V`, first-mover flag `vFirst`,
+inputs `x`, `y`, `z`, prover tape `rP`, verifier tapes `rV`, `rV2`, phase length `k`, phase
+count `q`, coin-block length `c`, cutoff `j < q`, and arbitrary terminal function `terminal`,
+suppose `S` follows the displayed padded-verifier equation and recovers the actual move
+index from its received-history length. If `coinBlock c i rV = coinBlock c i rV2` for all
+`i < j`, then
+`exec P S vFirst x y z rP rV (2*k*j) = exec P S vFirst x y z rP rV2 (2*k*j)`.
+[PS10, Theorem 175.1, earlier phases depend only on earlier coin blocks].
+
+**Proof sketch.** With zero real moves both executions are empty. Otherwise compare the
+replies on the source run's reached histories. At a verifier move `t < 2*k*j`, the recovered
+index implies twice the received-history length is at most `t+1`. Since `j < q`, this
+excludes the terminal history of length `q*k`. The phase index is `t/(2*k) < j`, so both
+tapes provide the same coin block. The padded-verifier equation therefore gives the same
+reply; prover replies agree because the prover tape is fixed. Reached-history execution
+congruence finishes the comparison.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:48 def phaseAux proof=0 sketch=False comments=0
+For original auxiliary input `z`, verifier tape `r`, phase `j` and received prefix
+`pre`, the phase auxiliary word is `⟨z, ⟨r, ⟨1^j, encodeMsgs pre⟩⟩⟩`.
+[PS10, Theorem 175.1, phase-verifier auxiliary data].
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:53 theorem phaseAux_eq proof=0 sketch=False comments=0
+The equation for `phaseAux z r j pre` is the nested pair
+`pairEncode z (pairEncode r (pairEncode (List.replicate j true) (encodeMsgs pre)))`.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:60 theorem phaseAux_fields proof=2 sketch=False comments=0
+The four projection fields of `phaseAux z r j pre` are, in order,
+`z`, `r`, `List.replicate j true`, and `Strategy.encodeMsgs pre`.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:68 theorem phaseAux_z proof=0 sketch=False comments=0
+The original auxiliary-input field is `pairFstD (phaseAux z r j pre) = z`.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:72 theorem phaseAux_tape proof=0 sketch=False comments=0
+The fixed verifier tape is `pairFstD (pairSndD (phaseAux z r j pre)) = r`.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:77 theorem phaseAux_phase proof=0 sketch=False comments=0
+The unary phase field has length `j`:
+`(pairFstD (pairSndD (pairSndD (phaseAux z r j pre)))).length = j`.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:83 theorem phaseAux_prefix proof=0 sketch=False comments=0
+Decoding the prefix field recovers `pre`:
+`decWords (pairSndD (pairSndD (pairSndD (phaseAux z r j pre)))) = pre`.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:93 def phaseVerifier proof=0 sketch=False comments=0
+The phase wrapper of `V` runs on original input `x`, the first auxiliary field as `z`,
+the second as fixed tape, and the decoded prefix followed by its current received history.
+Its own random-tape polynomial is `PolyExpr.const 0`.
+[PS10, Theorem 175.1; Gol01, §4.3.4, the fixed-prefix phase verifier].
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:102 theorem phaseVerifier_eq proof=0 sketch=False comments=0
+The complete strategy equation is `phaseVerifier V = ⟨next, PolyExpr.const 0⟩`, where
+`next x aux r hist = V.next x (pairFstD aux) (pairFstD (pairSndD aux))
+(decWords (pairSndD (pairSndD (pairSndD aux))) ++ hist)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:110 theorem phaseVerifier_coins proof=0 sketch=False comments=0
+The coin polynomial of `phaseVerifier V` is `PolyExpr.const 0`.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:114 theorem phaseVerifier_next proof=0 sketch=False comments=0
+For `V, x, aux, r, hist`, the next message of the phase wrapper is
+`V.next x (pairFstD aux) (pairFstD (pairSndD aux)) (decWords (snd (snd (snd aux))) ++ hist)`.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:120 theorem phaseVerifier_coinLen proof=0 sketch=False comments=0
+At every input length `n`, `(phaseVerifier V).coinLen n = 0`.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:127 theorem phaseAux_length proof=4 sketch=False comments=0
+For `z, r, j, pre`, the exact auxiliary-word length is
+`(phaseAux z r j pre).length = 2|z| + 2|r| + 2j + |encodeMsgs pre| + 6`.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:138 theorem phaseVerifier_next_phaseAux proof=2 sketch=False comments=0
+For verifier `V`, input `x`, original auxiliary input `z`, fixed tape `r`, phase `j`,
+earlier prefix `pre`, wrapper tape `s` and current history `hist`,
+`(phaseVerifier V).next x (phaseAux z r j pre) s hist = V.next x z r (pre ++ hist)`.
+[PS10, Theorem 175.1; Gol01, §4.3.4, the fixed-prefix phase verifier].
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:154 theorem phaseVerifier_efficient proof=28 sketch=True comments=2
+If `V` is efficient, its fixed-tape phase wrapper is efficient:
+`V.Efficient → (phaseVerifier V).Efficient`.
+[PS10, Theorem 175.1; Gol01, §4.3.4, efficiency of the phase verifier].
+
+**Proof sketch.** Take the uniform machine computing `V`. The new machine reads the original
+auxiliary input and fixed random tape from projection fields. It canonically reencodes the
+total decoded prefix with the published word-list map, appends the encoding of the current
+history, assembles the original machine's layout, and runs its polynomial-time output.
+The encoding of a concatenated history is the concatenation of its encodings, so the exact
+next-message equation holds on every auxiliary word, including malformed encodings.
+The machine uses the wrapper's zero coin polynomial.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:187 theorem phaseAux_poly proof=3 sketch=False comments=0
+For polynomial-time words `Z, R`, a unary polynomial-time phase `J`, and a history
+family `H` whose encoding is polynomial-time, `w ↦ phaseAux (Z w) (R w) (J w) (H w)` is
+polynomial-time.
+
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:198 theorem phaseAux_length_le proof=5 sketch=False comments=0
+For `z, r, j, pre, slots, B`, if `pre` has at most `slots` messages of at most `B` bits,
+then `(phaseAux z r j pre).length ≤ 2|z| + 2|r| + 2j + slots*(2B+2) + 6`.
+
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:189 theorem StatZK_iff proof=0 sketch=False comments=0
+Statistical zero-knowledge is equivalent to the simulator property: for every efficient
+verifier `V'` there is a uniform simulator `S` with statistical error at most `δ(|x|)` on
+`(x, z)` for every witness `y` satisfying `R x y`. [PS10, §4.6].

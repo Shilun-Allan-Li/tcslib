@@ -1,0 +1,69 @@
+START 2026-11-15T11:37:01.125200+00:00
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:58:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  acceptProb (fun z => ?X z.1) ?D
+in the target expression
+  acceptProb (fun r => F (Function.update r.1.2 i r.1.1)) D = acceptProb (fun r => F (Function.update r.2.1 i r.1)) D
+
+I : Type u_1
+A : Type u_2
+O : Type u_3
+C : Type u_4
+inst✝⁴ : DecidableEq I
+inst✝³ : Fintype I
+inst✝² : Fintype A
+inst✝¹ : Nonempty A
+inst✝ : Fintype C
+i : I
+F : (I → A) → O
+D : O → C → Bool
+hupdate : acceptProb (fun w => F (Function.update w.2.1 i w.1)) D = acceptProb (fun v => F v.1) D
+hleft :
+  acceptProb (fun r => F (Function.update r.1.2 i r.1.1)) D = acceptProb (fun r => F (Function.update r.2.1 i r.1)) D
+⊢ acceptProb (fun r => F (Function.update r.2 i r.1)) D = acceptProb F D
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:76:18: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uexp fun z => ?F z.1
+in the target expression
+  (uexp fun r => acceptProb (F r.1) D) = uexp fun a => acceptProb (F a) D
+
+A : Type u_1
+Z : Type u_2
+B : Type u_3
+Raw : Type u_4
+O : Type u_5
+C : Type u_6
+inst✝⁴ : Fintype A
+inst✝³ : Fintype Z
+inst✝² : Nonempty Z
+inst✝¹ : Fintype B
+inst✝ : Fintype C
+raw : A × Z → Raw
+post : Raw → B → O
+F : A → B → O
+hpoint : ∀ (a : A) (z : Z) (b : B), post (raw (a, z)) b = F a b
+D : O → C → Bool
+hfunctions : (fun r => acceptProb (fun b => post (raw r) b) D) = fun r => acceptProb (F r.1) D
+⊢ (uexp fun r => acceptProb (F r.1) D) = uexp fun a => acceptProb (F a) D
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:137:32: error(lean.unknownIdentifier): Unknown identifier `Function.update_same`
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability): no fresh .olean produced
+        2.40 real         1.37 user         1.13 sys
+          2215411712  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175888  page reclaims
+                  14  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  17  voluntary context switches
+                3856  involuntary context switches
+            32821734  instructions retired
+            15402110  cycles elapsed
+             1622352  peak memory footprint
+EXIT 1
+END 2026-11-15T11:37:03.564422+00:00

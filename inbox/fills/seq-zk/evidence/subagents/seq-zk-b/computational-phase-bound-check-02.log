@@ -1,0 +1,97 @@
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean:120:85: error: unsolved goals
+π : Protocol
+R : List Bool → List Bool → Prop
+V : Strategy
+S : NUPPT
+hS : S.Uniform
+hclose :
+  ∀ (Lz' : PolyExpr) (Red : NUPPT),
+    ∃ ε,
+      Negligible ε ∧
+        ∀ (x y aux : List Bool),
+          R x y →
+            aux.length ≤ Lz'.eval x.length →
+              distAdv (fun r => ((π.withV (phaseVerifier V)).viewV x y aux r).encode) (S.simulate x aux)
+                  (Red.distinguisherL x.length) ≤
+                ε x.length
+Lz : PolyExpr
+D : NUPPT
+Q B : PolyExpr
+H : PolyExpr := (Q.mul π.rounds).mul (((PolyExpr.const 2).mul B).add (PolyExpr.const 2))
+b : PolyExpr :=
+  ((((((PolyExpr.const 2).mul PolyExpr.var).add ((PolyExpr.const 2).mul Lz)).add ((PolyExpr.const 2).mul V.coins)).add
+            ((PolyExpr.const 2).mul Q)).add
+        H).add
+    (PolyExpr.const 8)
+hH : ∀ (n : ℕ), H.eval n = Q.eval n * π.rounds.eval n * (2 * B.eval n + 2)
+hb : ∀ (n : ℕ), b.eval n = 2 * n + 2 * Lz.eval n + 2 * V.coinLen n + 2 * Q.eval n + H.eval n + 8
+A : ℕ → Type := fun n => PhaseMetadata n (Lz.eval n) (V.coinLen n) (Q.eval n) (H.eval n)
+gap : (n : ℕ) → A n → List Bool → ℝ :=
+  fun n m y =>
+    phaseGap π V S B Q (List.ofFn m.1) y (List.ofFn m.2.1.snd) (List.ofFn m.2.2.1)
+      (D.distinguisherL (List.ofFn m.1).length) (↑m.2.2.2.1) (BinArith.decWords (List.ofFn m.2.2.2.2.snd))
+valid : (n : ℕ) → A n → List Bool → Prop :=
+  fun n m y =>
+    R (List.ofFn m.1) y ∧
+      Strategy.encodeMsgs (BinArith.decWords (List.ofFn m.2.2.2.2.snd)) = List.ofFn m.2.2.2.2.snd ∧
+        ↑m.2.2.2.1 < Q.eval n
+hgap : ∀ (n : ℕ) (m : A n) (y : List Bool), gap n m y ≤ 1
+choice : (n : ℕ) → A n
+X : ℕ → List Bool := fun n => List.ofFn (choice n).1
+Z : ℕ → List Bool := fun n => List.ofFn (choice n).2.1.snd
+RV : ℕ → List Bool := fun n => List.ofFn (choice n).2.2.1
+J : ℕ → ℕ := fun n => ↑(choice n).2.2.2.1
+PW : ℕ → List Bool := fun n => List.ofFn (choice n).2.2.2.2.snd
+hdata : ∀ (n : ℕ), (reductionData (X n) (Z n) (RV n) (J n) (PW n)).length ≤ b.eval n
+Red : NUPPT
+hcoins : Red.coins = (Q.mul S.coins).add D.coins
+hrun :
+  ∀ (n : ℕ) (raw r : List Bool),
+    Red.runAtL n raw r =
+      D.runAtL n
+        (phaseContinuation S π.rounds B Q π.verifierFirst (X n) (Z n) (RV n) (J n) (BinArith.decWords (PW n)) raw
+          (List.take ((Q.mul S.coins).eval n) r))
+        (List.drop ((Q.mul S.coins).eval n) r)
+ε : ℕ → ℝ
+hε : Negligible ε
+hbound :
+  ∀ (x y aux : List Bool),
+    R x y →
+      aux.length ≤ b.eval x.length →
+        distAdv (fun r => ((π.withV (phaseVerifier V)).viewV x y aux r).encode) (S.simulate x aux)
+            (Red.distinguisherL x.length) ≤
+          ε x.length
+n : ℕ
+y : List Bool
+hy : valid n (choice n) y
+hx : (X n).length = n
+hcanon : Strategy.encodeMsgs (BinArith.decWords (PW n)) = PW n
+⊢ pairEncode (X n) (phaseAux (Z n) (RV n) (J n) (BinArith.decWords (PW n))) =
+    pairEncode (X n) (phaseAux (Z n) (RV n) (J n) (BinArith.decWords (Strategy.encodeMsgs (BinArith.decWords (PW n)))))
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean:173:2: error: Type mismatch: After simplification, term
+  hall x.length m y hvalid
+ has type
+  phaseGap π V S B Q x y z rV (D.distinguisherL (List.ofFn m.1).length) j pre ≤ |ε x.length|
+but is expected to have type
+  phaseGap π V S B Q x y z rV (D.distinguisherL x.length) j pre ≤ |ε x.length|
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound): no fresh .olean produced
+        2.61 real         1.39 user         1.02 sys
+          2231697408  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172213  page reclaims
+                4765  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 356  voluntary context switches
+                5479  involuntary context switches
+            32593880  instructions retired
+            14070181  cycles elapsed
+             1622352  peak memory footprint

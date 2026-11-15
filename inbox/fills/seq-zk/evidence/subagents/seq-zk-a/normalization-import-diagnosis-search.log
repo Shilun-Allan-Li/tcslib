@@ -1,0 +1,40 @@
+evidence/subagents/seq-zk-a/NormalizedStep-attempt07.lean:5:import TCSlib.Cryptography.Composability.SequentialZK.ExecutionBounds
+evidence/subagents/seq-zk-a/NormalizedStep-attempt07.lean:6:import TCSlib.Cryptography.Composability.SequentialZK.PhaseView
+evidence/subagents/seq-zk-a/NormalizedStep-attempt07.lean:7:import TCSlib.Cryptography.Composability.SequentialZK.StatisticalPostprocess
+evidence/subagents/seq-zk-a/NormalizedStep-attempt07.lean:50:messages, while the simulated update appends `normalizePhaseMsgs x aux p B` of the output and
+evidence/subagents/seq-zk-a/NormalizedStep-attempt07.lean:64:      (S.simulate x aux) δ) :
+evidence/subagents/seq-zk-a/NormalizedStep-attempt07.lean:70:        (normalizePhaseMsgs x aux p B (S.simulate x aux rS) ++
+evidence/subagents/seq-zk-a/NormalizedStep-attempt07.lean:118:    (S.simulate x aux : S.Coins x.length → List Bool)
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:6:import TCSlib.Cryptography.ZeroKnowledge.Interaction
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:7:import TCSlib.Cryptography.Asymptotic.Adversary
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:8:import TCSlib.Cryptography.Asymptotic.Sampling
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:9:import TCSlib.Cryptography.Foundations.Negligible
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:10:import TCSlib.Cryptography.ZeroKnowledge.EncodingMachines
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:11:import TCSlib.Complexity.Randomized.Closure
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:30:(`Complexity.NUPPT.simulate`); its output is a word read as an encoded view
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:65:* `Complexity.NUPPT.simulate` — the simulator's output on `(x, z)`.
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:118:def _root_.Complexity.NUPPT.simulate (S : NUPPT) (x z : List Bool) (r : S.Coins x.length) :
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:122:/-- `simulate` unfolds to the typed activation at parameter `|x|`. -/
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:123:theorem _root_.Complexity.NUPPT.simulate_eq (S : NUPPT) (x z : List Bool)
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:124:    (r : S.Coins x.length) : S.simulate x z r = S.runAt x.length (pairEncode x z) r := rfl
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:140:      distAdv (fun r => (π.viewV x y z r).encode) (S.simulate x z) (D.distinguisherL x.length) ≤
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:161:        distAdv (fun r => ((π.withV V').viewV x y z r).encode) (S.simulate x z)
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:172:          distAdv (fun r => ((π.withV V').viewV x y z r).encode) (S.simulate x z)
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:184:    StatClose (fun r => ((π.withV V').viewV x y z r).encode) (S.simulate x z) (δ x.length)
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:218:    uprob (fun r : S.Coins x.length => S.simulate x z r = []) ≤ 1 / 2 ∧
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:222:          uprob (fun r : S.Coins x.length => S.simulate x z r ≠ []) =
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:223:        uprob (fun r : S.Coins x.length => S.simulate x z r ≠ [] ∧ T (S.simulate x z r))
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:300:      T ((NUPPT.ofPolyTimeUniform hF V'.coins).simulate x z ρ)) =
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:304:    rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:435:      ∀ x z (r : S'.Coins x.length), S'.simulate x z r =
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:439:      rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:625:        S.simulate x z (e r ⟨t, ht⟩) := by
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:629:    rw [hblock r t ht, NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, hSu]
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:630:  have heq : ∀ r : S'.Coins x.length, S'.simulate x z r =
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:631:      ((firstHit (fun ω => S.simulate x z ω ≠ []) (e r)).map (S.simulate x z)).getD [] := by
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:633:    rw [hS' x z r, firstHit_map_getD_eq (fun ω => S.simulate x z ω ≠ []) (e r)
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:634:      (S.simulate x z) []
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:640:  have key := (statClose_retry (fun ω => S.simulate x z ω ≠ []) (S.simulate x z)
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:644:  have hu : uprob (fun t : S'.Coins x.length => T (S'.simulate x z t)) =
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:645:      uprob (fun t : S'.Coins x.length => T (((firstHit (fun ω => S.simulate x z ω ≠ []) (e t)).map
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:646:        (S.simulate x z)).getD [])) :=

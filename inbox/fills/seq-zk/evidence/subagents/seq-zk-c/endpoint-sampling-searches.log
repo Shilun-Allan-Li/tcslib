@@ -1,0 +1,118 @@
+COMMAND ["rg", "-n", "coinTableEquiv|coinBlocksEquiv|statClose_reindex|realPrefix_eq_exec|viewV_eq_realPrefix|simulate_eq_simPrefix|statClose_view_endpoints", "TCSlib"]
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:19:* `coinTableEquiv` reads a tape of known length as a table of equal-size coin blocks.
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:20:* `coinBlocksEquiv` separates one verifier tape and a table of phase tapes.
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:25:* `statClose_reindex` transfers closeness along supplied endpoint equivalences and readers.
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:26:* `PaddedProverSpec.realPrefix_eq_exec` identifies the real fold with the padded execution.
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:27:* `PaddedProverSpec.viewV_eq_realPrefix` gives the actual encoded real-view endpoint.
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:28:* `simulate_eq_simPrefix` identifies a simulator's tape-split endpoint with its typed fold.
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:29:* `statClose_view_endpoints` transfers a joint prefix comparison to the actual encoded views.
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:41:/-- For `hlen : m = q*c`, `coinTableEquiv hlen` reindexes `m` bits as `q` blocks of `c` bits,
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:43:def coinTableEquiv {m q c : ℕ} (hlen : m = q * c) :
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:47:/-- Block `i` of `r` is the encoding of block `i` of `coinTableEquiv hlen r`. -/
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:48:theorem coinTableEquiv_block {m q c : ℕ} (hlen : m = q * c) (r : Fin m → Bool)
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:50:    coinBlock c i (List.ofFn r) = List.ofFn (coinTableEquiv hlen r i) := by
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:57:/-- For `hlen : m = v+q*c`, `coinBlocksEquiv v q c hlen` reads the first `v` bits as a
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:59:def coinBlocksEquiv {m : ℕ} (v q c : ℕ) (hlen : m = v + q * c) :
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:65:/-- The verifier component of `coinBlocksEquiv v q c hlen r` encodes `(List.ofFn r).take v`.
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:67:theorem coinBlocksEquiv_fst_ofFn {m : ℕ} (v q c : ℕ) (hlen : m = v + q * c)
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:69:    List.ofFn (coinBlocksEquiv v q c hlen r).1 = (List.ofFn r).take v := by
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:76:/-- Block `i` of the phase component of `coinBlocksEquiv v q c hlen r` encodes
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:78:theorem coinBlocksEquiv_block {m : ℕ} (v q c : ℕ) (hlen : m = v + q * c)
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:81:      List.ofFn ((coinBlocksEquiv v q c hlen r).2 i) := by
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:90:theorem statClose_reindex {A B A' B' O : Type*}
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:114:theorem realPrefix_eq_exec {π ρ : Protocol} {x : List Bool} {q p : ℕ}
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:140:    (coinTableEquiv (by rw [Protocol.withV_P]; exact h.prover_coinLen))
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:156:  coinTableEquiv_block (by rw [Protocol.withV_P]; exact h.prover_coinLen) r.1 i
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:160:theorem viewV_eq_realPrefix {π ρ : Protocol} {x : List Bool} {q p : ℕ}
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:168:  have hprefix := h.realPrefix_eq_exec V y z (List.ofFn r.1) (List.ofFn r.2) q le_rfl
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:176:coins by `coinBlocksEquiv` identifies that output with the canonical typed `simPrefix`.
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:178:theorem simulate_eq_simPrefix (S SQ : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:186:      View.encode ⟨x, z, List.ofFn (coinBlocksEquiv v q (S.coinLen x.length) hlen r).1,
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:187:        simPrefix S x z (List.ofFn (coinBlocksEquiv v q (S.coinLen x.length) hlen r).1)
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:190:          (coinBlocksEquiv v q (S.coinLen x.length) hlen r).2⟩ := by
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:193:    (coinBlocksEquiv v q (S.coinLen x.length) hlen r).2
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:194:    (fun i => coinBlocksEquiv_block v q (S.coinLen x.length) hlen r i)
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:195:  rw [hsim r, coinBlocksEquiv_fst_ofFn, hprefix]
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:209:theorem statClose_view_endpoints {π ρ : Protocol} {x : List Bool} {q p : ℕ}
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:239:  apply statClose_reindex _ _ _ _ (h.realCoinsEquiv V)
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:240:    (coinBlocksEquiv (V.coinLen x.length) q (S.coinLen x.length) hlen) ε hencoded
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:241:  · exact fun r => h.viewV_eq_realPrefix V y z r
+TCSlib/Cryptography/Composability/SequentialZK/EndpointSampling.lean:244:      simulate_eq_simPrefix S SQ π.rounds B π.verifierFirst x z q (V.coinLen x.length)
+EXIT 0
+COMMAND ["rg", "-n", "def splitCoins|theorem ofFn_splitCoins", "TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean"]
+145:def splitCoins (a b : ℕ) : (Fin (a + b) → Bool) ≃ (Fin a → Bool) × (Fin b → Bool) :=
+149:theorem ofFn_splitCoins_fst (a b : ℕ) (r : Fin (a + b) → Bool) :
+160:theorem ofFn_splitCoins_snd (a b : ℕ) (r : Fin (a + b) → Bool) :
+172:theorem ofFn_splitCoins_symm (a b : ℕ) (r₁ : Fin a → Bool) (r₂ : Fin b → Bool) :
+EXIT 0
+COMMAND ["rg", "-n", "def FunFamily.blocks|theorem FunFamily.ofFn_blocks|blocksEquivX", "TCSlib/Cryptography/Asymptotic/Adversary.lean"]
+50:* `TCSlib.Cryptography.blocksEquivX`, `TCSlib.Cryptography.FunFamily.blocks` — the canonical
+52:  `blocksEquivX_apply`, `blocksEquivX_symm_apply`, `FunFamily.blocks_apply`,
+242:def blocksEquivX (q ℓ : ℕ) (X : Type*) : (Fin (q * ℓ) → X) ≃ (Fin q → Fin ℓ → X) :=
+245:/-- The forward reader of `blocksEquivX`: block `i`, position `j` of `x` is entry
+247:theorem blocksEquivX_apply (q ℓ : ℕ) {X : Type*} (x : Fin (q * ℓ) → X) (i : Fin q) (j : Fin ℓ) :
+248:    blocksEquivX q ℓ X x i j = x (finProdFinEquiv (i, j)) := rfl
+250:/-- The inverse of `blocksEquivX` reads block `p.divNat`, position `p.modNat`. -/
+251:theorem blocksEquivX_symm_apply (q ℓ : ℕ) {X : Type*} (t : Fin q → Fin ℓ → X) (p : Fin (q * ℓ)) :
+252:    (blocksEquivX q ℓ X).symm t p = t p.divNat p.modNat := rfl
+257:`blocksEquivX`. -/
+258:def FunFamily.blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+259:  blocksEquivX q ℓ Bool
+264:  blocksEquivX_apply q ℓ x i j
+269:  blocksEquivX_symm_apply q ℓ t k
+277:theorem FunFamily.ofFn_blocks (q ℓ : ℕ) (ω : Fin (q * ℓ) → Bool) (j : Fin q) :
+EXIT 0
+COMMAND ["rg", "-n", "coinSlice_blocksEquiv|gniTapes", "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean"]
+25:`(b_i, sampler coins_i)` (`gniTapes`), the acceptance event is the adaptive guessing event of
+33:* `TCSlib.Cryptography.GI.blocksEquiv`, `GI.gniTapes` — a tape of `m · c` bits as `m` blocks,
+224:theorem coinSlice_blocksEquiv (m c : ℕ) (F : Fin m → Fin c → Bool) {j : ℕ} (hj : j < m) :
+249:noncomputable def gniTapes (N : ℕ) :
+256:/-- The tape of `gniTapes` is the tape of blocks of the split blocks. -/
+257:theorem gniTapes_apply (N : ℕ) (b : Fin N → Bool) (ts : Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) :
+258:    List.ofFn (gniTapes N (b, ts)) =
+260:  unfold gniTapes
+264:/-- Coin block `j < N` of the tape `gniTapes N (b, ts)` is `b_j` followed by the sampler tape
+266:theorem coinSlice_gniTapes (N : ℕ) (b : Fin N → Bool) (ts : Fin N → (Fin (1 * (N + 1) ^ 2) → Bool))
+268:    coinBlock (1 + (N + 1) ^ 2) j (List.ofFn (gniTapes N (b, ts))) = b ⟨j, hj⟩ :: List.ofFn (ts ⟨j, hj⟩) := by
+269:  rw [gniTapes_apply, show 1 + (N + 1) ^ 2 = 1 + 1 * (N + 1) ^ 2 by ring, coinSlice_blocksEquiv _ _ _ hj,
+339:the `|x|` pairs (bit, sampler coins) (`gniTapes`, `coinSlice_gniTapes`): the acceptance event is
+354:      gniProtocolRep.outV P' (encInstance G₀ G₁) y z (r₁, gniTapes (encInstance G₀ G₁).length p) = [true] ↔
+361:    rw [coinSlice_gniTapes _ b ts i.isLt, List.headD_cons, gGuess,
+363:        (samplePerm n (List.ofFn (ts j)))) i k)) (gniGraphs G₀ G₁ (List.ofFn (gniTapes _ (b, ts))))
+365:          rw [gniGraphs, coinSlice_gniTapes _ b ts (by omega : (t : ℕ) < (encInstance G₀ G₁).length),
+368:  rw [← uprob_comp_equiv (gniTapes (encInstance G₀ G₁).length), OneWay.uprob_congr hev,
+EXIT 0
+COMMAND ["rg", "-n", "StatClose.comp_equiv_left|StatClose.comp_equiv_right|StatClose.map", "TCSlib/Cryptography/Asymptotic/Sampling.lean"]
+29:  such as `List Bool`). It is closed under post-processing (`StatClose.map`), products
+75:* `TCSlib.Cryptography.StatClose.map`, `TCSlib.Cryptography.StatClose.prod`,
+174:theorem StatClose.map {σ τ γ γ' : Type*} [Fintype σ] [Fintype τ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+179:theorem StatClose.comp_equiv_left {σ' : Type*} [Fintype σ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+185:theorem StatClose.comp_equiv_right {τ' : Type*} [Fintype τ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+831:along the bijection `{x : Fin (2^k) // x < m} ≃ Fin m` (`StatClose.comp_equiv_right`,
+832:`StatClose.map`). -/
+EXIT 0
+COMMAND ["rg", "-n", "withV_vCoinsEquiv|viewV_withV|withV_P", "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean"]
+386:def withV_vCoinsEquiv (π : Protocol) (V' : Strategy) (n : ℕ) : (π.withV V').V.Coins n ≃ V'.Coins n :=
+390:`List.ofFn (π.withV_vCoinsEquiv V' n r) = List.ofFn r`. -/
+391:theorem withV_vCoinsEquiv_ofFn (π : Protocol) (V' : Strategy) (n : ℕ) (r : (π.withV V').V.Coins n) :
+392:    List.ofFn (π.withV_vCoinsEquiv V' n r) = List.ofFn r := rfl
+395:@[simp] theorem withV_P (π : Protocol) (V' : Strategy) : (π.withV V').P = π.P := rfl
+476:theorem viewV_withV (π : Protocol) (V' : Strategy) (x y z : List Bool)
+EXIT 0
+COMMAND ["rg", "-n", "theorem padded_phase|prover_coinLen", "TCSlib/Cryptography/Composability/SequentialZK/PaddedProverSpec.lean"]
+47:  prover_coinLen : ρ.P.coinLen x.length = q * π.P.coinLen x.length
+120:theorem padded_phase {π ρ : Protocol} {x : List Bool} {q p : ℕ}
+EXIT 0
+COMMAND ["rg", "-n", "realPrefix_succ|simPrefix_eq_phasePrefix", "TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean"]
+22:* `realPrefix_succ`, `simPrefix_succ`: the last coin extends the earlier prefix by one step.
+46:theorem realPrefix_succ (π : Protocol) (V : Strategy) (x y z rV : List Bool) (p q : ℕ)
+60:  rw [realPrefix_succ]
+97:theorem simPrefix_eq_phasePrefix (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+EXIT 0
+COMMAND ["rg", "-n", "exists_phaseSimulator|phasePrefix_succ_simulate", "TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean"]
+32:* `exists_phaseSimulator`: a uniform simulator with one verifier tape and fresh phase tapes.
+103:theorem phasePrefix_succ_simulate (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+310:theorem exists_phaseSimulator (S : NUPPT) (hS : S.Uniform) (k B Q CV : PolyExpr)
+EXIT 0
+COMMAND ["rg", "-n", "coinBlocksEquiv|coinTableEquiv|statClose_reindex", "TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean"]
+EXIT 1

@@ -1,0 +1,112 @@
+$ rg -n reductionData|phaseContinuation|exists_.*Red|def .*Red TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean TCSlib/Cryptography/Composability/SequentialZK
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:549:theorem exists_hybRed_ge (hm : 0 < m) {N : ℕ} (hN : 0 < N)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:23:at parameter `n` calling `D` at parameter `n²` (`exists_colHidingRed`), and transports its
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:40:* `TCSlib.Cryptography.ColZK.exists_colHidingRed` — the fixed hiding reduction is an `NUPPT`.
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:266:theorem exists_colHidingRed {V' : Strategy} (hV' : V'.Efficient) (D : NUPPT) (α : ℕ → List Bool)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:319:`exists_colHidingRed` has, at parameter `n`, exactly that advantage on its own vectors
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:341:  obtain ⟨B, hBc, hB⟩ := exists_colHidingRed hV' D (fun n => List.ofFn (p n).2.2.2) b hα
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:64:      (phaseContinuation S k B Q verifierFirst x z rV j pre raw
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:71:          (phaseContinuation S k B Q verifierFirst x z rV j pre raw
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:96:        (phaseContinuation S k B Q verifierFirst x z rV j pre raw
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:22:* `reductionData`: common input, verifier auxiliary input/tape, phase, and raw prefix word.
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:23:* `phaseContinuation`: normalize the current candidate, simulate the suffix, and replay a view.
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:27:* `phaseContinuation_poly`: the continuation is polynomial-time on total metadata functions.
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:29:* `exists_phaseReduction`: compose the sampler with a distinguisher and bounded advice.
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:46:def reductionData (x z rV : List Bool) (j : ℕ) (preWord : List Bool) : List Bool :=
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:49:/-- The metadata equation is `reductionData x z rV j preWord =
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:51:theorem reductionData_eq (x z rV : List Bool) (j : ℕ) (preWord : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:52:    reductionData x z rV j preWord =
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:56:/-- The five projection fields of `reductionData x z rV j preWord`, in order, are
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:58:theorem reductionData_fields (x z rV : List Bool) (j : ℕ) (preWord : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:59:    pairFstD (reductionData x z rV j preWord) = x ∧
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:60:    pairFstD (pairSndD (reductionData x z rV j preWord)) = z ∧
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:61:    pairFstD (pairSndD (pairSndD (reductionData x z rV j preWord))) = rV ∧
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:62:    pairFstD (pairSndD (pairSndD (pairSndD (reductionData x z rV j preWord)))) =
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:64:    pairSndD (pairSndD (pairSndD (pairSndD (reductionData x z rV j preWord)))) = preWord := by
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:65:  simp only [reductionData_eq, pairFstD_pairEncode, pairSndD_pairEncode, and_self]
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:68:`w ↦ reductionData (X w) (Z w) (RV w) (J w) (PreWord w)` is polynomial-time. -/
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:69:theorem reductionData_poly {X Z RV PreWord : List Bool → List Bool} {J : List Bool → ℕ}
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:73:    PolyTimeComputable fun w => reductionData (X w) (Z w) (RV w) (J w) (PreWord w) :=
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:75:    (fun _ => (reductionData_eq _ _ _ _ _).symm)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:78:`|reductionData x z rV j preWord| = 2|x|+2|z|+2|rV|+2j+|preWord|+8`. -/
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:79:theorem reductionData_length (x z rV : List Bool) (j : ℕ) (preWord : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:80:    (reductionData x z rV j preWord).length =
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:82:  rw [reductionData_eq, length_pairEncode, length_pairEncode, length_pairEncode,
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:87:auxiliary word: `reductionData x z rV j (encodeMsgs pre) = pairEncode x (phaseAux z rV j pre)`.
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:89:theorem reductionData_encodeMsgs (x z rV : List Bool) (j : ℕ) (pre : List (List Bool)) :
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:90:    reductionData x z rV j (Strategy.encodeMsgs pre) = pairEncode x (phaseAux z rV j pre) :=
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:91:  (reductionData_eq _ _ _ _ _).trans (congrArg (pairEncode x) (phaseAux_eq z rV j pre).symm)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:98:def phaseContinuation (S : NUPPT) (k B Q : PolyExpr) (verifierFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:107:/-- The complete `phaseContinuation` equation first forms
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:111:theorem phaseContinuation_eq (S : NUPPT) (k B Q : PolyExpr) (verifierFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:113:    phaseContinuation S k B Q verifierFirst x z rV j pre raw rS =
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:123:`w ↦ phaseContinuation S k B Q verifierFirst (X w) (Z w) (RV w) (J w) (H w) (Raw w) (RS w)`
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:132:theorem phaseContinuation_poly (S : NUPPT) (hS : S.Uniform) (k B Q : PolyExpr)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:139:    PolyTimeComputable fun w => phaseContinuation S k B Q verifierFirst
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:172:  rw [phaseContinuation_eq, View.encode_mk]
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:175:`Q*S.coins` whose activation on `⟨raw,reductionData x z rV j preWord⟩` is exactly
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:176:`phaseContinuation S k B Q verifierFirst x z rV j (decWords preWord) raw r`.
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:182:`phaseContinuation_poly` with the sampler's full coin tape. The published uniform-machine
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:189:        U.runAtL n (pairEncode raw (reductionData x z rV j preWord)) r =
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:190:          phaseContinuation S k B Q verifierFirst x z rV j (BinArith.decWords preWord)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:221:  let F : List Bool → List Bool := fun w => phaseContinuation S k B Q verifierFirst
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:223:  have hF : PolyTimeComputable F := phaseContinuation_poly S hS k B Q verifierFirst
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:231:  simp only [NUPPT.inArg_layout, NUPPT.inCoins_layout, reductionData_eq,
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:235:metadata families `X,Z,RV,J,PreWord`, and a polynomial bound on their packed `reductionData`,
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:246:theorem exists_phaseReduction (S : NUPPT) (hS : S.Uniform) (D : NUPPT)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:249:    (hdata : ∀ n, (reductionData (X n) (Z n) (RV n) (J n) (PreWord n)).length ≤ b.eval n) :
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:253:          (phaseContinuation S k B Q verifierFirst (X n) (Z n) (RV n) (J n)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean:260:  let β : ℕ → List Bool := fun n => reductionData (X n) (Z n) (RV n) (J n) (PreWord n)
+exit=0
+$ rg -n exists_withAdvice|exists_seq|exists_comp TCSlib/Complexity/Randomized/Closure.lean
+34:| `exists_compParam` | `pre ⟨1^n, y⟩`, then `A.output`, then `post ⟨1^n, ·⟩` | projections, `comp` |
+35:| `exists_comp` | `exists_compParam` with `pre`, `post` ignoring `1^n` | `exists_compParam` |
+38:| `exists_withAdvice` | advice `⟨A.advice n, β n⟩`; re-pair `y` with `β n` | pairing calculus |
+40:| `exists_seq` | cut at `A.coins n`; run `A`, then `B` on `⟨y, a⟩`; advice `⟨α_A, α_B⟩` | both outputs, cuts, pairing |
+44:`exists_comp`), branching (`Complexity.polyTimeComputable_ite`), length tests
+57:* `Complexity.NUPPT.exists_compParam` — closure under polynomial-time pre- and post-processing
+59:* `Complexity.NUPPT.exists_comp` — its case that does not read the parameter (`pre` sees only
+64:* `Complexity.NUPPT.exists_withAdvice` — hard-wiring an extra polynomial-length advice.
+66:* `Complexity.NUPPT.exists_seq` — sequential composition with input pass-through and fresh
+231:`A`'s output. `exists_comp` is the case where `pre` and `post` ignore `1^n`.
+241:theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
+264:parameter-aware form `exists_compParam`, where `pre` sees `⟨1^n, y⟩` and `post` sees `1^n`
+269:**Proof sketch.** `exists_compParam` with `pre ∘ snd` and `post ∘ snd`: the second component of
+272:theorem exists_comp (A : NUPPT) {pre post : List Bool → List Bool}
+276:  obtain ⟨B, hc, ha, hα, hB⟩ := exists_compParam A (PolyTimeComputable.comp' hpre polyTimeComputable_pairSndD)
+358:theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
+421:theorem exists_seq (A B : NUPPT) :
+exit=0
+$ rg -n phaseStep|phaseSuffix_poly|phaseAux_poly TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:29:* `phaseAux_poly`: polynomial-time assembly of the auxiliary data.
+TCSlib/Cryptography/Composability/SequentialZK/WrappedVerifier.lean:187:theorem phaseAux_poly {Z R : List Bool → List Bool} {J : List Bool → ℕ}
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:22:* `phaseStep`: one normalized phase appended to an arbitrary prefix.
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:27:* `length_encodeMsgs_phaseStep_le`, `length_encodeMsgs_phaseSuffix_le`: additive growth bounds.
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:28:* `phaseStep_poly`, `phaseSuffix_poly`: polynomial-time normalized step and suffix.
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:45:`phaseStep` appends the normalized `S` output at `phaseAux z rV j pre` and `k(|x|)-p` empty
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:48:def phaseStep (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:56:/-- The equation for `phaseStep S k B verifierFirst x z rV rS j pre` is the earlier prefix
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:58:theorem phaseStep_eq (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:60:    phaseStep S k B verifierFirst x z rV rS j pre =
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:74:theorem length_encodeMsgs_phaseStep_le (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:76:    (Strategy.encodeMsgs (phaseStep S k B verifierFirst x z rV rS j pre)).length ≤
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:96:  simp only [phaseStep_eq, CommitmentLemmas.encodeMsgs_append, List.length_append]
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:102:normalized update is polynomial-time: `w ↦ encodeMsgs (phaseStep S k B verifierFirst
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:112:theorem phaseStep_poly (S : NUPPT) (hS : S.Uniform) (k B : PolyExpr)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:120:      (phaseStep S k B verifierFirst (X w) (Z w) (RV w) (RS w) (J w) (H w)) := by
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:122:  have haux := phaseAux_poly hZ hRV hJ hH
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:148:  rw [phaseStep_eq, CommitmentLemmas.encodeMsgs_append, CommitmentLemmas.encodeMsgs_append]
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:157:  | i + 1 => phaseStep S k B verifierFirst x z rV rS (start + i)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:165:/-- Suffix phase `i+1` applies `phaseStep` at global index `start+i` to the prefix after `i`
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:166:steps: `phaseSuffix … (i+1) = phaseStep … (start+i) (phaseSuffix … i)`. -/
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:170:      phaseStep S k B verifierFirst x z rV rS (start + i)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:174:`phaseStep` at global index `start+i` to `phaseSuffix … i`. -/
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:180:      | i + 1 => phaseStep S k B verifierFirst x z rV rS (start + i)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:197:    have hstep := length_encodeMsgs_phaseStep_le S k B verifierFirst x z rV rS (start + t)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:209:existing unary counter `i`. The update is the polynomial-time leaf `phaseStep_poly`, at index
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:214:theorem phaseSuffix_poly (S : NUPPT) (hS : S.Uniform) (k B : PolyExpr)
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:225:    (phaseStep S k B verifierFirst (X (pairFstD w)) (Z (pairFstD w))
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:243:    phaseStep_poly S hS k B verifierFirst hXt hZt hRVt hRSt hJ hpre
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:307:  phaseSuffix_poly S hS k B verifierFirst hX hZ hRV hRS hStart hCount
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:321:    rw [phaseSuffix_succ, ih, Nat.zero_add, phaseStep_eq, phasePrefix_succ]
+exit=0

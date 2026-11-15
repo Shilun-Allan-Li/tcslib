@@ -1,0 +1,39 @@
+$ rg -n exists_negligible_phase_bound|exists_uniform_negligible_bound|exists_uniform_bound_selector|exists_.*negligible.*bound TCSlib/Cryptography/Composability/SequentialZK
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean:24:* `exists_negligible_phase_bound`: the wrapped original simulator gives one negligible
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean:63:theorem exists_negligible_phase_bound (π : Protocol) (R : List Bool → List Bool → Prop)
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalPhaseBound.lean:151:  obtain ⟨ε, hε, hall⟩ := exists_uniform_negligible_bound gap valid hgap hchoice
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean:21:* `exists_uniform_negligible_bound` selects finite advice pointwise before requesting its
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean:45:theorem exists_uniform_negligible_bound {A : ℕ → Type*} {W : Type*}
+TCSlib/Cryptography/Composability/SequentialZK/ComputationalAdvice.lean:61:    Composability.exists_uniform_bound_selector (g n) 1 zero_le_one (hbounded n)
+TCSlib/Cryptography/Composability/SequentialZK/Advice.lean:21:* `exists_uniform_bound_selector` chooses one finite metadata value whose bounds, uniform
+TCSlib/Cryptography/Composability/SequentialZK/Advice.lean:43:theorem exists_uniform_bound_selector {A W : Type*} [Finite A] [Nonempty A]
+exit=0
+$ rg -n distAdv_le_one TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+181:theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ)
+exit=0
+$ rg -n toData_length_le|theorem cover|theorem word_lengths|toData_eq TCSlib/Cryptography/Composability/SequentialZK/BoundedMetadata.lean
+27:* `PhaseMetadata.toData_length_le`: packed advice has at most `2n+2a+2v+2q+h+8` bits.
+74:theorem toData_eq {n a v q h : ℕ} (m : PhaseMetadata n a v q h) :
+81:theorem word_lengths {n a v q h : ℕ} (m : PhaseMetadata n a v q h) :
+92:theorem toData_length_le {n a v q h : ℕ} (m : PhaseMetadata n a v q h) :
+95:  rw [toData_eq, reductionData_length]
+106:theorem cover {n a v q h : ℕ} (x z rV : List Bool) (j : ℕ) (preWord : List Bool)
+125:theorem cover_data {n a v q h : ℕ} (x z rV : List Bool) (j : ℕ) (preWord : List Bool)
+131:  rw [toData_eq, hx', hz', hrV', hj', hpre']
+exit=0
+$ rg -n reductionData_encodeMsgs|exists_phaseReduction TCSlib/Cryptography/Composability/SequentialZK/ComputationalReduction.lean
+29:* `exists_phaseReduction`: compose the sampler with a distinguisher and bounded advice.
+89:theorem reductionData_encodeMsgs (x z rV : List Bool) (j : ℕ) (pre : List (List Bool)) :
+246:theorem exists_phaseReduction (S : NUPPT) (hS : S.Uniform) (D : NUPPT)
+exit=0
+$ rg -n distAdv_phaseReduction|phaseGap_eq TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:278:theorem phaseGap_eq {C : Type*} [Fintype C] (π : Protocol) (V : Strategy)
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:293:theorem phaseGap_eq_drift {C : Type*} [Fintype C] {π ρ : Protocol}
+TCSlib/Cryptography/Composability/SequentialZK/ContinuationProbability.lean:306:  rw [phaseGap_eq, distAdv_def,
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:21:* `distAdv_phaseReduction`: the reduction's exact raw activation equation identifies its
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:59:theorem distAdv_phaseReduction {σ τ : Type*} [Fintype σ] [Fintype τ]
+exit=0
+$ rg -n length_pairSndD_le TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean
+187:theorem length_pairSndD_le (z : List Bool) : (pairSndD z).length ≤ z.length := by
+509:    le_trans (length_pairFstD_le _) (length_pairSndD_le w)
+exit=0

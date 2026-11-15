@@ -1,0 +1,82 @@
+$ rg -n acceptProb_coins_equiv|distAdv_distinguisherL|ofFn_coinsEquiv|coinsEquiv TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:138:  rw [← EnsembleLemmas.acceptProb_coins_equiv e]
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:151:  rw [← EnsembleLemmas.acceptProb_coins_equiv e]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:24:coins (`distAdv_distinguisherL_reparam`).
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:41:* `TCSlib.Cryptography.ColZK.distAdv_distinguisherL_reparam` — the two-parameter coin
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:285:(`EnsembleLemmas.acceptProb_coins_equiv`) and compare pointwise (`NUPPT.distinguisherL_eq`,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:287:theorem distAdv_distinguisherL_reparam {σ τ : Type*} [Fintype σ] [Fintype τ] {B D : NUPPT}
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:302:  have hX := EnsembleLemmas.acceptProb_coins_equiv
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:304:  have hY := EnsembleLemmas.acceptProb_coins_equiv
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:320:(`distAdv_distinguisherL_reparam`), which `Commitment.multiHiding` with `q := var` bounds by a
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:347:  have hB' := distAdv_distinguisherL_reparam hBc
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:406:theorem distAdv_distinguisherL_congr {σ τ : Type*} [Fintype σ] [Fintype τ] (D : NUPPT)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:33:* `TCSlib.Cryptography.EnsembleLemmas.coinsEquiv` — the coin-splitting bijection
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:48:* `TCSlib.Cryptography.EnsembleLemmas.acceptProb_coins_equiv`, `acceptProb_coins_fst`,
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:85:theorem acceptProb_coins_equiv (e : κ ≃ ρ) (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:141:def coinsEquiv {m a b : ℕ} (h : m = a + b) : (Fin a → Bool) × (Fin b → Bool) ≃ (Fin m → Bool) :=
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:145:theorem ofFn_coinsEquiv {m a b : ℕ} (h : m = a + b) (c : (Fin a → Bool) × (Fin b → Bool)) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:146:    List.ofFn (coinsEquiv h c) = List.ofFn c.1 ++ List.ofFn c.2 := by
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:151:theorem take_ofFn_coinsEquiv {m a b : ℕ} (h : m = a + b) (c : (Fin a → Bool) × (Fin b → Bool)) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:152:    (List.ofFn (coinsEquiv h c)).take a = List.ofFn c.1 := by
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:153:  rw [ofFn_coinsEquiv, List.take_left' List.length_ofFn]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:156:theorem drop_ofFn_coinsEquiv {m a b : ℕ} (h : m = a + b) (c : (Fin a → Bool) × (Fin b → Bool)) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:157:    (List.ofFn (coinsEquiv h c)).drop a = List.ofFn c.2 := by
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:158:  rw [ofFn_coinsEquiv, List.drop_left' List.length_ofFn]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:164:  ((NUPPT.coinsEquivPoly rfl n).prodCongr (NUPPT.coinsEquivPoly rfl n)).trans
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:165:    (coinsEquiv (by rw [h, PolyExpr.eval_add]))
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:171:  rw [seedEquiv, Equiv.trans_apply, ofFn_coinsEquiv, Equiv.prodCongr_apply,
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:172:    Prod.map_fst, Prod.map_snd, NUPPT.coinsEquivPoly_ofFn, NUPPT.coinsEquivPoly_ofFn]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:178:  ((NUPPT.coinsEquivPoly rfl n).prodCongr (Equiv.refl _)).trans
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:179:    (coinsEquiv (by rw [h, PolyExpr.eval_add]))
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:185:  rw [seedEquivPoly, Equiv.trans_apply, ofFn_coinsEquiv, Equiv.prodCongr_apply,
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:186:    Prod.map_fst, Prod.map_snd, NUPPT.coinsEquivPoly_ofFn, Equiv.refl_apply]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:264:  rw [← acceptProb_coins_equiv e, ← acceptProb_not]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:282:  rw [← acceptProb_coins_equiv e]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:290:(`acceptProb_coins_fst`) after the split `coinsEquiv`. -/
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:300:  rw [← acceptProb_coins_equiv (coinsEquiv hlen)]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:306:      take_ofFn_coinsEquiv]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:353:(`acceptProb_bind` after the coin split `coinsEquiv`). -/
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:363:  rw [← acceptProb_coins_equiv (coinsEquiv hlen),
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:369:      take_ofFn_coinsEquiv, drop_ofFn_coinsEquiv,
+exit=0
+$ rg -n splitCoins|ofFn_splitCoins TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean
+30:* `TCSlib.Cryptography.splitCoins` — `{0,1}^{a+b} ≃ {0,1}^a × {0,1}^b`, the coins `(r₁, r₂)`
+38:* `TCSlib.Cryptography.ofFn_splitCoins_fst`, `ofFn_splitCoins_snd`, `ofFn_splitCoins_symm` —
+145:def splitCoins (a b : ℕ) : (Fin (a + b) → Bool) ≃ (Fin a → Bool) × (Fin b → Bool) :=
+148:/-- The first half of `splitCoins a b r` is the first `a` bits of the encoding of `r`. -/
+149:theorem ofFn_splitCoins_fst (a b : ℕ) (r : Fin (a + b) → Bool) :
+150:    List.ofFn (splitCoins a b r).1 = (List.ofFn r).take a := by
+156:    simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst,
+159:/-- The second half of `splitCoins a b r` is the encoding of `r` after its first `a` bits. -/
+160:theorem ofFn_splitCoins_snd (a b : ℕ) (r : Fin (a + b) → Bool) :
+161:    List.ofFn (splitCoins a b r).2 = (List.ofFn r).drop a := by
+167:    simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst,
+172:theorem ofFn_splitCoins_symm (a b : ℕ) (r₁ : Fin a → Bool) (r₂ : Fin b → Bool) :
+173:    List.ofFn ((splitCoins a b).symm (r₁, r₂)) = List.ofFn r₁ ++ List.ofFn r₂ := by
+174:  set r := (splitCoins a b).symm (r₁, r₂) with hr
+175:  have h1 : (splitCoins a b r).1 = r₁ := by rw [hr, Equiv.apply_symm_apply]
+176:  have h2 : (splitCoins a b r).2 = r₂ := by rw [hr, Equiv.apply_symm_apply]
+177:  rw [← h1, ← h2, ofFn_splitCoins_fst, ofFn_splitCoins_snd, List.take_append_drop]
+exit=0
+$ rg -n FunFamily.blocks|distinguisherL_eq TCSlib/Cryptography/Asymptotic/Adversary.lean
+50:* `TCSlib.Cryptography.blocksEquivX`, `TCSlib.Cryptography.FunFamily.blocks` — the canonical
+52:  `blocksEquivX_apply`, `blocksEquivX_symm_apply`, `FunFamily.blocks_apply`,
+53:  `FunFamily.blocks_symm_apply`.
+258:def FunFamily.blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+262:theorem FunFamily.blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
+263:    FunFamily.blocks q ℓ x i j = x (finProdFinEquiv (i, j)) :=
+267:theorem FunFamily.blocks_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) (k : Fin (q * ℓ)) :
+268:    (FunFamily.blocks q ℓ).symm t k = t k.divNat k.modNat :=
+272:`⟦FunFamily.blocks q ℓ ω j⟧ = (⟦ω⟧.drop (j·ℓ)).take ℓ`.
+276:(`FunFamily.blocks_apply`), which is position `k` of the window. -/
+278:    List.ofFn (FunFamily.blocks q ℓ ω j) = ((List.ofFn ω).drop (j * ℓ)).take ℓ := by
+287:    refine (FunFamily.blocks_apply q ℓ ω j ⟨k, _⟩).trans ?_
+298:**Proof sketch.** The block is block `i` of the first `r·k` bits (`FunFamily.blocks_apply`),
+309:      FunFamily.blocks r k (fun p => w (Fin.castAdd sl p)) i :=
+310:    funext fun j => (FunFamily.blocks_apply r k (fun p => w (Fin.castAdd sl p)) i j).symm
+356:theorem _root_.Complexity.NUPPT.distinguisherL_eq (A : NUPPT) (n : ℕ) (w : List Bool)
+exit=0
+$ rg -n distAdv_phaseReduction|distAdv.*Reduction|acceptProb.*phase TCSlib/Cryptography/Composability/SequentialZK
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:21:* `distAdv_phaseReduction`: the reduction's exact raw activation equation identifies its
+TCSlib/Cryptography/Composability/SequentialZK/ReductionAdvantage.lean:59:theorem distAdv_phaseReduction {σ τ : Type*} [Fintype σ] [Fintype τ]
+exit=0
