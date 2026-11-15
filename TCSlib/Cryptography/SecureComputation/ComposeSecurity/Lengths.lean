@@ -203,9 +203,12 @@ end HybridProtocol
 namespace ComposeBound
 
 /-- **Alice's encoded `ρ`-views are polynomially long**: for some polynomial `V`, on common input
-`1^n` and inputs of `G`'s lengths, `|encode (viewP)| ≤ V(n)` (`View.encode_mk`; her tape has
-`ρ.P.coins(n)` bits and she receives at most `rounds(n)` messages of at most `B(n)` bits, `B` the
-bound of `G.PolyTime ρ`). -/
+`1^n` and inputs of `G`'s lengths, `|encode (viewP)| ≤ V(n)`.
+
+**Proof sketch.** The encoded view is `⟨⟨1^n, x⟩, ⟨tape, encodeMsgs received⟩⟩` (`View.encode_mk`,
+`length_pairEncode`): her tape has `ρ.P.coins(n)` bits, and she receives at most `rounds(n)`
+messages (`length_transcriptWith_fst_le`) of at most `B(n)` bits each, `B` the bound of
+`G.PolyTime ρ` (`length_encodeMsgs_le`); the sum is linear in these. -/
 theorem exists_viewP_le {G : Functionality} {ρ : Protocol} (hρ : G.PolyTime ρ) :
     ∃ V : PolyExpr, ∀ n (x : Fin (G.inA.eval n) → Bool) (y : Fin (G.inB.eval n) → Bool)
       (t : ρ.ExecCoins ρ.P (List.replicate n true)),
@@ -233,8 +236,11 @@ theorem exists_viewP_le {G : Functionality} {ρ : Protocol} (hρ : G.PolyTime ρ
   simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   omega
 
-/-- **Bob's encoded `ρ`-views are polynomially long** (as `exists_viewP_le`, with `ρ.V`'s tape
-and the messages he receives). -/
+/-- **Bob's encoded `ρ`-views are polynomially long**: for some polynomial `V`, on common input
+`1^n` and inputs of `G`'s lengths, `|encode (viewV)| ≤ V(n)`.
+
+**Proof sketch.** As `exists_viewP_le`, with `ρ.V`'s tape and the messages he receives
+(`length_transcriptWith_snd_le`). -/
 theorem exists_viewV_le {G : Functionality} {ρ : Protocol} (hρ : G.PolyTime ρ) :
     ∃ V : PolyExpr, ∀ n (x : Fin (G.inA.eval n) → Bool) (y : Fin (G.inB.eval n) → Bool)
       (t : ρ.ExecCoins ρ.P (List.replicate n true)),
