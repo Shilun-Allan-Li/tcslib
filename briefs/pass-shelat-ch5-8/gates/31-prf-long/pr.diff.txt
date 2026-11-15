@@ -1,0 +1,1665 @@
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey.lean b/TCSlib/Cryptography/Encryption/PrivateKey.lean
+index 43eb90297..7119b6f89 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey.lean
+@@ -10,6 +10,7 @@ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF
+ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.Hybrid
+ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
+ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
++import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.MultiMsgOut
+ import TCSlib.Cryptography.Encryption.PrivateKey.OracleSecurity
+ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF
+ import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag
+@@ -59,6 +60,7 @@ the PRF scheme [PS10, Theorems 97.3 and 99.2].
+ * `Encryption.PrivateKey.FromPRF.Hybrid` proves the finite six-hybrid bound.
+ * `Encryption.PrivateKey.FromPRF.HybridLemmas` gives its probability and coin lemmas.
+ * `Encryption.PrivateKey.FromPRF.ReductionMachine` implements the next-query reduction.
++* `Encryption.PrivateKey.FromPRF.MultiMsgOut` gives the multi-message bound at `ℓ`-bit outputs.
+ * `Encryption.PrivateKey.OracleSecurity` gives the fixed-length interface and adaptive oracle games.
+ * `Encryption.PrivateKey.OracleFromPRF` gives the fixed-length PRF scheme and its oracle claims.
+   The CPA and CCA1 proofs `prfFixedScheme_cpa` and `prfFixedScheme_cca1` are pending
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean
+index 7432497aa..ec6573e3f 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean
+@@ -8,6 +8,7 @@ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
+ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.Hybrid
+ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
+ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
++import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.MultiMsgOut
+ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
+ 
+ set_option maxHeartbeats 0
+@@ -30,7 +31,8 @@ Decryption recomputes the mask and checks the ciphertext format [PS10, Algorithm
+ 
+ * `prfScheme_multiEncDist` identifies the ciphertext sampler with the encoded real hybrid.
+ * `prfScheme_multiMessageSecure` lifts the six-hybrid bound to a negligible advantage against
+-  non-uniform polynomial-time distinguishers [PS10, Theorem 99.2].
++  non-uniform polynomial-time distinguishers [PS10, Theorem 99.2]; it is the case `ℓ = var` of
++  `MultiMsg.exists_negligible_distAdv_prfEncRealOut` (`FromPRF.MultiMsgOut`).
+ * `exists_multiMessageSecure_of_prf` and `exists_multiMessageSecure_of_exists_prg` give the
+   existence results from a PRF and, via GGM, from a PRG.
+ 
+@@ -38,7 +40,9 @@ Decryption recomputes the mask and checks the ciphertext format [PS10, Algorithm
+ 
+ * `FromPRF.Hybrid` proves the concrete six-hybrid bound.
+ * `FromPRF.HybridLemmas` supplies the collision and coin-relabelling estimates.
+-* `FromPRF.ReductionMachine` implements the next-query reduction and proves its run agreement.
++* `FromPRF.ReductionMachine` implements the next-query reduction and proves its run agreement,
++  at `ℓ(n)`-bit answers as well.
++* `FromPRF.MultiMsgOut` proves the multi-message bound for a family with `ℓ(n)`-bit outputs.
+ 
+ ## References
+ 
+@@ -237,6 +241,12 @@ distinguisher: `encodeList` of the pairs `⟨r_j, c_j⟩`. -/
+ def encodeTuple {n q : ℕ} (v : Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) : List Bool :=
+   PrivateKeyScheme.encodeList (List.ofFn fun j => pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2))
+ 
++/-- The encoded tuple is the case `l = n` of `encodeTupleOut`:
++`encodeTuple v = encodeTupleOut v` (both are `encodeList` of the pairs `⟨⟦r_j⟧, ⟦c_j⟧⟩`). -/
++theorem encodeTuple_eq_encodeTupleOut {n q : ℕ}
++    (v : Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) : encodeTuple v = encodeTupleOut v := by
++  rw [encodeTuple, encodeTupleOut_eq]
++
+ /-- `encodeList l` is the concatenation of the self-delimited chunks `⟨c, []⟩`, `c ∈ l`. -/
+ private theorem encodeList_eq_flatMap : ∀ l : List (List Bool),
+     PrivateKeyScheme.encodeList l = l.flatMap fun c => pairEncode c []
+@@ -251,7 +261,8 @@ theorem encodeTuple_eq_flatten {n q : ℕ} (v : Fin (q + 1) → (Fin n → Bool)
+     encodeTuple v =
+       (List.ofFn fun j =>
+         pairEncode (pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2)) []).flatten := by
+-  rw [encodeTuple, encodeList_eq_flatMap, MultiMsg.flatMap_ofFn]
++  rw [encodeTuple_eq_encodeTupleOut]
++  exact encodeTupleOut_eq_flatten v
+ 
+ /-- **The coins of the multi-message experiment of Algorithm 99.1 are bit strings**: the key
+ coins of `Gen` and the `q + 1` coin strings of `Enc` are `n`-bit strings,
+@@ -316,96 +327,33 @@ a pseudorandom function family.
+ **Deviation:** the collision bound is `C(q(n)+1, 2) · 2^{−n}` for the `q(n) + 1` values
+ `r₀, …, r_{q(n)}` (the text writes `C(q(n), 2) · 2^{−n}`; source error 35 of the plan).
+ 
+-**Proof sketch.** Fix a non-uniform PPT `D` and a budget polynomial `q`. At each `n` choose a
+-pair of message vectors `(mⁿ, m'ⁿ)` maximizing
+-`distAdv (multiEncDist n (q n) m) (multiEncDist n (q n) m') (D.distinguisherL n)` over the finite
+-type of pairs (`Finset.exists_max_image`; the text: "there exists messages `m̄`, `m̄'` … for
+-infinitely many `n`", hard-wired as advice). *Concrete step:* by `prfScheme_multiEncDist` both
+-samplers are `encodeTuple ∘ prfEncReal (F n) mⁿ` resp. `m'ⁿ` on the seed space
+-`K × (Fin (q n + 1) → {0,1}^n)` (the gen coins are the `n`-bit key and the enc coins the points,
+-definitionally), so with `Dⁿ v c := D.distinguisherL n (encodeTuple v) c` the sunglass identity
+-`distAdv_comp` and `distAdv_prfEncReal_le` bound the advantage at `n` by
+-`prfAdv (F n) (multiMsgAdv mⁿ Dⁿ) + prfAdv (F n) (multiMsgAdv m'ⁿ Dⁿ) + 2 · C(q n + 1, 2) / 2^n`
+-— the six hybrids `H¹, …, H⁶` of the text. *Machine step* (Thm-99.2.1 as an `NUPPT`): for
+-`v ∈ {m, m'}` the next-query machine `B_v` has advice `⟨encodeList (ofFn (ofFn ∘ vⁿ)), D.advice n⟩`
+-(`NUPPT.exists_withAdvice`, bound `.add (.mul (.add q (.const 1)) (.add (.mul (.const 2) .var) (.const 2))) D.adv`-style),
+-coins `(q + 1) · var + D.coins` (`NUPPT.exists_split` with `p := .mul (.add q (.const 1)) .var`: the
+-first `(q n + 1) n` coins are the points `r₀ … r_{q n}`, read as blocks by
+-`Complexity.polyTimeComputable_blockMap .var`), and on the encoded history `hist` outputs: if
+-`|hist| ≤ q n` the query `⟨[false], r_{|hist|}⟩` (history length by `polyTimeComputable_blockMap`
+-counting, `pairDecode`/`decodeFin` are FP), else the verdict `[true, b]` where `b` is `D`'s
+-verdict on `encodeTuple (r_j, v_j ⊕ ans_j)_j` (`polyTimeComputable_pairXor` blockwise,
+-`NUPPT.exists_comp`). By induction on the history, `buildTree` with budget `q n + 1` from `[]`
+-is the chain `chainTree (q n + 1) r (…)`, i.e.
+-`B_v.toOracleAdversary n n n (q n + 1) = multiMsgAdv vⁿ Dⁿ` up to the coin bijection
+-`B_v.Coins n ≃ (Fin (q n + 1) → {0,1}^n) × D.Coins n` (`FunFamily.blocks`, `Fin.appendEquiv`),
+-so `acceptProb_comp_equiv` gives `prfAdv (F n) (B_v^{(q n + 1)}) = prfAdv (F n) (multiMsgAdv vⁿ Dⁿ)`.
+-*Asymptotic step:* `hF.negligible_prfAdv B_v (.add q (.const 1))` makes both PRF terms
+-negligible; the collision term is negligible by `negligible_two_pow_neg` and
+-`Negligible.mul_pow`/`Negligible.const_mul` with `C(q n + 1, 2) ≤ (q n + 1)^2 ≤ C'(n + 1)^{2d}`
+-from `PolyExpr.eval_le` (`Nat.choose_le_pow`); `Negligible.add` twice, and by maximality
+-`ε n := ` this sum bounds the advantage for every `n, m, m'`. -/
++**Proof sketch.** The case `ℓ = var` of `MultiMsg.exists_negligible_distAdv_prfEncRealOut`
++(applied to `hF.pseudorandom`), which maximizes over the message pairs, builds the next-query
++machines of Thm-99.2.1 (`MultiMsg.exists_queryChainOut_nuppt`) and bounds the advantage by the
++six hybrids (`distAdv_prfEncRealOut_le`), two PRF advantages and the collision term. The
++ciphertext tuples of Algorithm 99.1 are `encodeTuple ∘ prfEncReal (F n) m` on the seeds
++`prfScheme_coinsEquiv` (`prfScheme_multiEncDist`), i.e. `encodeTupleOut ∘ prfEncRealOut (F n) m`
++(`encodeTuple_eq_encodeTupleOut`, `prfEncReal_eq_prfEncRealOut`); relabel the seeds
++(`acceptProb_comp_equiv`). -/
+ theorem prfScheme_multiMessageSecure (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
+     (hF : PRF F) (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+     (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)) :
+     (prfScheme F E hE hFE).MultiMessageSecure := by
+   refine (PrivateKeyScheme.multiMessageSecure_iff _).2 fun D q => ?_
+-  -- the worst message pair at each parameter (hard-wired into the reductions)
+-  have hmax : ∀ n, ∃ p : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool),
+-      ∀ w : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool),
+-        distAdv ((prfScheme F E hE hFE).multiEncDist n (q.eval n) w.1)
+-            ((prfScheme F E hE hFE).multiEncDist n (q.eval n) w.2) (D.distinguisherL n) ≤
+-          distAdv ((prfScheme F E hE hFE).multiEncDist n (q.eval n) p.1)
+-            ((prfScheme F E hE hFE).multiEncDist n (q.eval n) p.2) (D.distinguisherL n) := by
+-    intro n
+-    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+-      (fun w : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool) =>
+-        distAdv ((prfScheme F E hE hFE).multiEncDist n (q.eval n) w.1)
+-          ((prfScheme F E hE hFE).multiEncDist n (q.eval n) w.2) (D.distinguisherL n))
+-      Finset.univ_nonempty
+-    exact ⟨p, fun w => hp w (Finset.mem_univ w)⟩
+-  choose μ hμ using hmax
+-  -- the next-query machines of Thm-99.2.1 for the two hard-wired message vectors
+-  obtain ⟨B₀, hB₀⟩ := MultiMsg.exists_queryChain_nuppt D q fun n => (μ n).1
+-  obtain ⟨B₁, hB₁⟩ := MultiMsg.exists_queryChain_nuppt D q fun n => (μ n).2
+-  refine ⟨fun n => prfAdv (F n) (B₀.toOracleAdversary n n n (q.eval n + 1)) +
+-      prfAdv (F n) (B₁.toOracleAdversary n n n (q.eval n + 1)) +
+-      2 * ((Nat.choose (q.eval n + 1) 2 : ℝ) / 2 ^ n), ?_, fun n m m' => ?_⟩
+-  · -- the asymptotic step: two PRF advantages and the collision term
+-    simpa only [PolyExpr.eval_add, PolyExpr.eval_const] using
+-      ((hF.negligible_prfAdv B₀ (.add q (.const 1))).add
+-        (hF.negligible_prfAdv B₁ (.add q (.const 1)))).add
+-        ((MultiMsg.negligible_choose_div_two_pow q).const_mul 2)
+-  · refine (hμ n (m, m')).trans ?_
+-    -- the concrete step: the ciphertext tuples are `encodeTuple ∘ prfEncReal`
+-    have key : ∀ m₀ : Fin (q.eval n + 1) → Fin n → Bool,
+-        (prfScheme F E hE hFE).multiEncDist n (q.eval n) m₀ =
+-          fun r => encodeTuple (prfEncReal (F n) m₀ (prfScheme_coinsEquiv F E hE hFE n (q.eval n) r)) :=
+-      fun m₀ => funext fun r => prfScheme_multiEncDist F E hE hFE n (q.eval n) m₀ r
+-    -- the machine step: the oracle adversaries of `B₀`, `B₁` are the `multiMsgAdv`
+-    have hadv : ∀ (B : NUPPT) (v : Fin (q.eval n + 1) → Fin n → Bool)
+-        (φ : (Fin (q.eval n + 1) → Fin n → Bool) × D.Coins n ≃ B.Coins n),
+-        (∀ (g : (Fin n → Bool) → (Fin n → Bool)) ρ c,
+-          (B.toOracleAdversary n n n (q.eval n + 1) (φ (ρ, c))).eval g =
+-            decide (D.runAt n (List.ofFn fun j =>
+-              pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (v j + g (ρ j)))) []).flatten c =
+-                [true])) →
+-        prfAdv (F n) (B.toOracleAdversary n n n (q.eval n + 1)) =
+-          prfAdv (F n) (multiMsgAdv v fun w c => D.distinguisherL n (encodeTuple w) c) := by
+-      intro B v φ hφ
+-      refine MultiMsg.prfAdv_congr_equiv (F n) _ _ φ fun g w => ?_
+-      rw [hφ g w.1 w.2, eval_multiMsgAdv, NUPPT.distinguisherL_eq, encodeTuple_eq_flatten]
+-    obtain ⟨φ₀, hφ₀⟩ := hB₀ n
+-    obtain ⟨φ₁, hφ₁⟩ := hB₁ n
+-    dsimp only
+-    rw [hadv B₀ (μ n).1 φ₀ hφ₀, hadv B₁ (μ n).2 φ₁ hφ₁, key, key, distAdv_def,
+-      acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+-        (fun s => encodeTuple (prfEncReal (F n) (μ n).1 s)),
+-      acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+-        (fun s => encodeTuple (prfEncReal (F n) (μ n).2 s)), ← distAdv_def]
+-    exact (distAdv_comp encodeTuple (prfEncReal (F n) (μ n).1) (prfEncReal (F n) (μ n).2)
+-      (D.distinguisherL n)).symm.trans_le (distAdv_prfEncReal_le (F n) (μ n).1 (μ n).2
+-        (fun w c => D.distinguisherL n (encodeTuple w) c))
++  obtain ⟨ε, hε, hb⟩ := MultiMsg.exists_negligible_distAdv_prfEncRealOut hF.pseudorandom D q
++  refine ⟨ε, hε, fun n m m' => ?_⟩
++  -- the ciphertext tuples are `encodeTupleOut ∘ prfEncRealOut` on relabelled seeds
++  have key : ∀ m₀ : Fin (q.eval n + 1) → Fin n → Bool,
++      (prfScheme F E hE hFE).multiEncDist n (q.eval n) m₀ = fun r =>
++        encodeTupleOut (prfEncRealOut (F n) m₀ (prfScheme_coinsEquiv F E hE hFE n (q.eval n) r)) :=
++    fun m₀ => funext fun r => by
++      rw [prfScheme_multiEncDist, encodeTuple_eq_encodeTupleOut, prfEncReal_eq_prfEncRealOut]
++  rw [key, key, distAdv_def,
++    acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
++      (fun s => encodeTupleOut (prfEncRealOut (F n) m s)),
++    acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
++      (fun s => encodeTupleOut (prfEncRealOut (F n) m' s)), ← distAdv_def]
++  exact hb n m m'
+ 
+ /-- **Multi-message secure private-key encryption exists if a PRF exists** ([PS10, §3.9]):
+ the scheme of Algorithm 99.1 with the evaluator of `PRF.easy`. -/
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean
+index fe5cda791..07ef519a5 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean
+@@ -23,6 +23,8 @@ of repeated points. The two independent-pad experiments agree by perfect secrecy
+ * `chainTree` asks a fixed tuple of oracle queries.
+ * `prfEncReal` and `otpEnc` sample the ciphertext tuples in the real and independent-pad experiments.
+ * `multiMsgAdv` runs a tuple distinguisher after querying the oracle at the sampled points.
++* `prfEncRealOut`, `otpEncOut` and `multiMsgAdvOut` are the same at output width `l` (ruling B3);
++  the `n`-bit ones are their cases `l = n` (`prfEncReal_eq_prfEncRealOut`, …).
+ 
+ ## Main results
+ 
+@@ -30,6 +32,9 @@ of repeated points. The two independent-pad experiments agree by perfect secrecy
+ * `distAdv_prfEncReal_random_otp_le` bounds the inner switch by the collision probability.
+ * `acceptProb_otpEnc` equates the two independent-pad experiments.
+ * `distAdv_prfEncReal_le` combines the switches [PS10, Theorem 99.2, proof].
++* `prfAdv_multiMsgAdvOut`, `distAdv_prfEncRealOut_random_otp_le`, `acceptProb_otpEncOut` and
++  `distAdv_prfEncRealOut_le` are the same at output width `l`; the four results above are their
++  cases `l = n`.
+ 
+ **Deviation.** The vector has `q + 1` points, giving collision term `C(q + 1, 2) / 2^n`.
+ 
+@@ -88,6 +93,96 @@ section Concrete
+ 
+ variable {n q : ℕ} {K ρ : Type*} [Fintype K] [Fintype ρ]
+ 
++variable {l : ℕ}
++
++/-! #### The hybrids at output width `l`
++
++The concrete hybrids for a keyed family `F : K → {0,1}^n → {0,1}^l` with `l`-bit outputs (ruling
++B3): the points stay `n`-bit strings, only the answers, messages and pads have `l` bits. The
++`n`-bit hybrids below are their cases `l = n` (`prfEncReal_eq_prfEncRealOut`, …). -/
++
++/-- **The real hybrid at output width `l`** ([PS10, Theorem 99.2, proof, `H¹` and `H²`, with
++`ℓ`-bit outputs]): the ciphertext tuple `(r_j, m_j ⊕ F(r_j))_{j ≤ q}` for a key `z.1 : K` and the
++points `z.2 : Fin (q+1) → {0,1}^n`, with `F : K → {0,1}^n → {0,1}^l` and messages
++`m : Fin (q+1) → {0,1}^l`: `prfEncRealOut F m z j = (z.2 j, m j + F z.1 (z.2 j))`. -/
++def prfEncRealOut (F : K → (Fin n → Bool) → (Fin l → Bool)) (m : Fin (q + 1) → Fin l → Bool) :
++    K × (Fin (q + 1) → Fin n → Bool) → (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) :=
++  fun z j => (z.2 j, m j + F z.1 (z.2 j))
++
++omit [Fintype K] in
++/-- The real hybrid at width `l`, entrywise:
++`prfEncRealOut F m z j = (z.2 j, m j + F z.1 (z.2 j))`. -/
++theorem prfEncRealOut_apply (F : K → (Fin n → Bool) → (Fin l → Bool))
++    (m : Fin (q + 1) → Fin l → Bool) (z : K × (Fin (q + 1) → Fin n → Bool)) (j : Fin (q + 1)) :
++    prfEncRealOut F m z j = (z.2 j, m j + F z.1 (z.2 j)) := rfl
++
++/-- **The one-time-pad hybrid at output width `l`** ([PS10, Theorem 99.2, proof, `H³`, with
++`ℓ`-bit outputs]): the tuple `(r_j, m_j ⊕ p_j)_{j ≤ q}` with `n`-bit points `r_j` and independent
++uniform `l`-bit pads `p_j`, on the seeds `z = (r, p)`: `otpEncOut m z j = (z.1 j, m j + z.2 j)`. -/
++def otpEncOut (m : Fin (q + 1) → Fin l → Bool) :
++    (Fin (q + 1) → Fin n → Bool) × (Fin (q + 1) → Fin l → Bool) →
++      (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) :=
++  fun z j => (z.1 j, m j + z.2 j)
++
++/-- The one-time-pad hybrid at width `l`, entrywise: `otpEncOut m z j = (z.1 j, m j + z.2 j)`. -/
++theorem otpEncOut_apply (m : Fin (q + 1) → Fin l → Bool)
++    (z : (Fin (q + 1) → Fin n → Bool) × (Fin (q + 1) → Fin l → Bool)) (j : Fin (q + 1)) :
++    otpEncOut m z j = (z.1 j, m j + z.2 j) := rfl
++
++/-- **The oracle adversary of Thm-99.2.1 at output width `l`** ([PS10, Theorem 99.2, proof, with
++`ℓ`-bit outputs]): on coins `c = (r, c')` it queries its `l`-bit-output oracle at `r₀, …, r_q`
++(`chainTree`), forms `(r_j, m_j ⊕ ans_j)_j` and runs `D` on it with coins `c'`:
++`multiMsgAdvOut m D c = chainTree (q + 1) c.1 fun ans => D (fun j => (c.1 j, m j + ans j)) c.2`. -/
++def multiMsgAdvOut (m : Fin (q + 1) → Fin l → Bool)
++    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
++    OracleAdversary ((Fin (q + 1) → Fin n → Bool) × ρ) (Fin n → Bool) (Fin l → Bool) :=
++  fun c => chainTree (q + 1) c.1 fun ans => D (fun j => (c.1 j, m j + ans j)) c.2
++
++omit [Fintype ρ] in
++/-- Evaluating the hybrid adversary at width `l` against the oracle `g` runs `D` on the masked
++tuple: `(multiMsgAdvOut m D c).eval g = D (fun j => (c.1 j, m j + g (c.1 j))) c.2`
++[PS10, Theorem 99.2, proof]. -/
++theorem eval_multiMsgAdvOut (m : Fin (q + 1) → Fin l → Bool)
++    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool)
++    (g : (Fin n → Bool) → Fin l → Bool) (c : (Fin (q + 1) → Fin n → Bool) × ρ) :
++    (multiMsgAdvOut m D c).eval g = D (fun j => (c.1 j, m j + g (c.1 j))) c.2 := by
++  rw [multiMsgAdvOut, eval_chainTree]
++
++omit [Fintype ρ] in
++/-- `multiMsgAdvOut m D` makes at most `q + 1` queries: `(multiMsgAdvOut m D).BoundedBy (q + 1)`. -/
++theorem multiMsgAdvOut_boundedBy (m : Fin (q + 1) → Fin l → Bool)
++    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
++    (multiMsgAdvOut m D).BoundedBy (q + 1) :=
++  (OracleAdversary.boundedBy_iff _ _).2 fun c => boundedBy_chainTree (q + 1) c.1 _
++
++/-- Running `multiMsgAdvOut m D` with the oracle `F k` for a uniform key accepts with the
++probability that `D` accepts the hybrid at width `l`:
++`acceptProb F (oracleDist (multiMsgAdvOut m D)) = acceptProb (prfEncRealOut F m) D`
++(reassociation of the seed space `K × (points × coins)`). -/
++theorem acceptProb_oracleDist_multiMsgAdvOut (F : K → (Fin n → Bool) → (Fin l → Bool))
++    (m : Fin (q + 1) → Fin l → Bool)
++    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
++    acceptProb F (oracleDist (multiMsgAdvOut m D)) = acceptProb (prfEncRealOut F m) D := by
++  rw [acceptProb_def, acceptProb_def]
++  rw [← uprob_comp_equiv (Equiv.prodAssoc K (Fin (q + 1) → Fin n → Bool) ρ)]
++  congr 1
++  funext z
++  simp only [oracleDist_apply, multiMsgAdvOut, eval_chainTree, Equiv.prodAssoc_apply]
++  rfl
++
++/-- **Thm-99.2.1 at output width `l`: the gap `H¹ → H²` is a PRF advantage** ([PS10,
++Theorem 99.2, proof, with `ℓ`-bit outputs]):
++`prfAdv F (multiMsgAdvOut m D) = distAdv (prfEncRealOut F m) (prfEncRealOut R m) D` with
++`R = randomFunction {0,1}^n {0,1}^l` (unfolding of `prfAdv`, `oracleDist` and `acceptProb`). -/
++theorem prfAdv_multiMsgAdvOut (F : K → (Fin n → Bool) → (Fin l → Bool))
++    (m : Fin (q + 1) → Fin l → Bool)
++    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
++    prfAdv F (multiMsgAdvOut m D) =
++      distAdv (prfEncRealOut F m)
++        (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) D := by
++  rw [prfAdv_def, distAdv_def, distAdv_def, acceptProb_oracleDist_multiMsgAdvOut,
++    acceptProb_oracleDist_multiMsgAdvOut]
++
+ /-- The ciphertext tuple `(r_j, m_j ⊕ F(r_j))_{j ≤ q}` for a key `z.1 : K` and the points
+ `z.2 : Fin (q+1) → {0,1}^n`, with `F : K → {0,1}^n → {0,1}^n`. With `F` the PRF this is the
+ hybrid `H¹` ("real encryptions"); with `F = randomFunction` (keys are function tables) it is
+@@ -96,12 +191,20 @@ def prfEncReal (F : K → (Fin n → Bool) → (Fin n → Bool)) (m : Fin (q + 1
+     K × (Fin (q + 1) → Fin n → Bool) → (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) :=
+   fun z j => (z.2 j, m j + F z.1 (z.2 j))
+ 
++omit [Fintype K] in
++/-- The real hybrid is the case `l = n` of the hybrid at width `l`:
++`prfEncReal F m = prfEncRealOut F m` (`rfl`). -/
++theorem prfEncReal_eq_prfEncRealOut (F : K → (Fin n → Bool) → (Fin n → Bool))
++    (m : Fin (q + 1) → Fin n → Bool) : prfEncReal F m = prfEncRealOut F m := rfl
++
+ omit [Fintype K] in
+ /-- The hybrid ciphertext at position `j` contains the point `z.2 j` and the message
+ masked with the oracle's value at that point [PS10, Theorem 99.2, proof]. -/
+ theorem prfEncReal_apply (F : K → (Fin n → Bool) → (Fin n → Bool)) (m : Fin (q + 1) → Fin n → Bool)
+     (z : K × (Fin (q + 1) → Fin n → Bool)) (j : Fin (q + 1)) :
+-    prfEncReal F m z j = (z.2 j, m j + F z.1 (z.2 j)) := rfl
++    prfEncReal F m z j = (z.2 j, m j + F z.1 (z.2 j)) := by
++  rw [prfEncReal_eq_prfEncRealOut]
++  exact prfEncRealOut_apply F m z j
+ 
+ /-- The ciphertext tuple `(r_j, m_j ⊕ p_j)_{j ≤ q}` with independent uniform pads `p_j`: the
+ hybrid `H³` ("using OTP") of [PS10, Theorem 99.2, proof]; seeds `(r, p)`. -/
+@@ -110,6 +213,11 @@ def otpEnc (m : Fin (q + 1) → Fin n → Bool) :
+       (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) :=
+   fun z j => (z.1 j, m j + z.2 j)
+ 
++/-- The one-time-pad hybrid is the case `l = n` of the hybrid at width `l`:
++`otpEnc m = otpEncOut m` (`rfl`). -/
++theorem otpEnc_eq_otpEncOut (m : Fin (q + 1) → Fin n → Bool) :
++    otpEnc (n := n) m = otpEncOut m := rfl
++
+ /-- **The oracle adversary of Thm-99.2.1** ([PS10, Theorem 99.2, proof, "`H¹` and `H²` …
+ otherwise (by closure under efficient operations) we contradict the pseudorandomness property"]):
+ on coins `(r, c)` it queries its oracle at `r₀, …, r_q` (a chain of `q + 1` queries), forms the
+@@ -120,6 +228,13 @@ def multiMsgAdv (m : Fin (q + 1) → Fin n → Bool)
+     OracleAdversary ((Fin (q + 1) → Fin n → Bool) × ρ) (Fin n → Bool) (Fin n → Bool) :=
+   fun c => chainTree (q + 1) c.1 fun ans => D (fun j => (c.1 j, m j + ans j)) c.2
+ 
++omit [Fintype ρ] in
++/-- The hybrid adversary is the case `l = n` of the adversary at width `l`:
++`multiMsgAdv m D = multiMsgAdvOut m D` (`rfl`). -/
++theorem multiMsgAdv_eq_multiMsgAdvOut (m : Fin (q + 1) → Fin n → Bool)
++    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
++    multiMsgAdv m D = multiMsgAdvOut m D := rfl
++
+ omit [Fintype ρ] in
+ /-- Evaluating the hybrid adversary on an oracle runs the tuple distinguisher on the sampled
+ points and the messages masked by the oracle values [PS10, Theorem 99.2, proof]. -/
+@@ -127,14 +242,16 @@ theorem eval_multiMsgAdv (m : Fin (q + 1) → Fin n → Bool)
+     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool)
+     (g : (Fin n → Bool) → Fin n → Bool) (c : (Fin (q + 1) → Fin n → Bool) × ρ) :
+     (multiMsgAdv m D c).eval g = D (fun j => (c.1 j, m j + g (c.1 j))) c.2 := by
+-  rw [multiMsgAdv, eval_chainTree]
++  rw [multiMsgAdv_eq_multiMsgAdvOut]
++  exact eval_multiMsgAdvOut m D g c
+ 
+ omit [Fintype ρ] in
+ /-- `multiMsgAdv m D` makes at most `q + 1` queries. -/
+ theorem multiMsgAdv_boundedBy (m : Fin (q + 1) → Fin n → Bool)
+     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
+-    (multiMsgAdv m D).BoundedBy (q + 1) :=
+-  (OracleAdversary.boundedBy_iff _ _).2 fun c => boundedBy_chainTree (q + 1) c.1 _
++    (multiMsgAdv m D).BoundedBy (q + 1) := by
++  rw [multiMsgAdv_eq_multiMsgAdvOut]
++  exact multiMsgAdvOut_boundedBy m D
+ 
+ /-- Running `multiMsgAdv m D` with the oracle `F k` (for a uniform key `k`) accepts with the
+ probability that `D` accepts the hybrid sampler `prfEncReal F m` (reassociation of the seed
+@@ -143,12 +260,8 @@ theorem acceptProb_oracleDist_multiMsgAdv (F : K → (Fin n → Bool) → (Fin n
+     (m : Fin (q + 1) → Fin n → Bool)
+     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
+     acceptProb F (oracleDist (multiMsgAdv m D)) = acceptProb (prfEncReal F m) D := by
+-  rw [acceptProb_def, acceptProb_def]
+-  rw [← uprob_comp_equiv (Equiv.prodAssoc K (Fin (q + 1) → Fin n → Bool) ρ)]
+-  congr 1
+-  funext z
+-  simp only [oracleDist_apply, multiMsgAdv, eval_chainTree, Equiv.prodAssoc_apply]
+-  rfl
++  rw [multiMsgAdv_eq_multiMsgAdvOut, prfEncReal_eq_prfEncRealOut]
++  exact acceptProb_oracleDist_multiMsgAdvOut F m D
+ 
+ /-- **Thm-99.2.1: the gap `H¹ → H²` is a PRF advantage.** The advantage of `D` between the real
+ encryptions `(r_j, m_j ⊕ F_k(r_j))_j` and the random-function encryptions
+@@ -159,8 +272,8 @@ theorem prfAdv_multiMsgAdv (F : K → (Fin n → Bool) → (Fin n → Bool))
+     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
+     prfAdv F (multiMsgAdv m D) =
+       distAdv (prfEncReal F m) (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D := by
+-  rw [prfAdv_def, distAdv_def, distAdv_def, acceptProb_oracleDist_multiMsgAdv,
+-    acceptProb_oracleDist_multiMsgAdv]
++  simp only [multiMsgAdv_eq_multiMsgAdvOut, prfEncReal_eq_prfEncRealOut]
++  exact prfAdv_multiMsgAdvOut F m D
+ 
+ /-- **The collision bound** ([PS10, Theorem 99.2, proof, "`∃ i, j` such that `r_i = r_j`, but this
+ happens only with probability `C(q,2) · 2^{−n}`"]): `q + 1` uniform `n`-bit points fail to be
+@@ -224,85 +337,155 @@ theorem pushesUniform_comp_injective {I O : Type*} [Fintype I] [DecidableEq I] [
+     simp only [uexp_def, univ_eq_empty, sum_empty, zero_div]
+   · exact HardcoreBit.pushesUniform_restrict hr
+ 
+-/-- **Thm-99.2.2: the gap `H² → H³` is at most the collision probability**
++/-- **Thm-99.2.2 at output width `l`: the gap `H² → H³` is at most the collision probability**
+ ([PS10, Theorem 99.2, proof, "`H²` and `H³` are 'almost' identical except for the case when
+-`∃ i, j` such that `r_i = r_j`"]): the advantage of `D` between the random-function encryptions
+-`(r_j, m_j ⊕ R(r_j))_j` and the one-time-pad encryptions `(r_j, m_j ⊕ p_j)_j` is at most
+-`C(q+1, 2) / 2^n`.
++`∃ i, j` such that `r_i = r_j`", with `ℓ`-bit outputs]): with `R = randomFunction {0,1}^n {0,1}^l`,
++`distAdv (prfEncRealOut R m) (otpEncOut m) D ≤ C(q+1, 2) / 2^n`. The bound concerns the `n`-bit
++points only; it does not depend on `l`.
+ 
+ **Deviation:** the collision bound is `C(q(n)+1, 2) · 2^{−n}` for the `q(n) + 1` values
+ `r₀, …, r_{q(n)}` (the text writes `C(q(n), 2) · 2^{−n}`; source error 35 of the plan).
+ 
+ **Proof sketch.** Write both acceptance probabilities as averages over the points `r`
+-(`uprob_prod` after `uprob_prod_comm`): `a(r) := Pr_R[D((r_j, m_j ⊕ R(r_j))_j) = 1]` and
+-`b(r) := Pr_p[D((r_j, m_j ⊕ p_j)_j) = 1]`. When `r` is injective, `(R(r_j))_j` is uniform
+-(`pushesUniform_comp_injective`, `PushesUniform.uprob_eq`), so `a(r) = b(r)`; otherwise
+-`|a(r) − b(r)| ≤ 1` (`uprob_nonneg`, `uprob_le_one`). Hence
+-`|E_r a − E_r b| ≤ E_r |a − b| ≤ E_r [¬ Injective r] = uprob (¬ Injective)` (`uexp` is monotone
+-and `|∑| ≤ ∑ |·|`, `uprob_eq_uexp_ite`), and `uprob_not_injective_le` bounds the last term. -/
+-theorem distAdv_prfEncReal_random_otp_le (m : Fin (q + 1) → Fin n → Bool)
+-    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
+-    distAdv (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) (otpEnc m) D ≤
++(`uprob_prod` after reassociating the seeds): `a(r) := Pr_R[D((r_j, m_j ⊕ R(r_j))_j) = 1]` and
++`b(r) := Pr_p[D((r_j, m_j ⊕ p_j)_j) = 1]`. When `r` is injective, `(R(r_j))_j` is uniform on
++`({0,1}^l)^{q+1}` (`pushesUniform_comp_injective`, `PushesUniform.uprob_eq`), so `a(r) = b(r)`;
++otherwise `|a(r) − b(r)| ≤ 1`. Hence `|E_r a − E_r b| ≤ uprob (¬ Injective)`
++(`MultiMsg.abs_uexp_sub_le_uprob`), and `uprob_not_injective_le` bounds it. -/
++theorem distAdv_prfEncRealOut_random_otp_le (m : Fin (q + 1) → Fin l → Bool)
++    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
++    distAdv (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) (otpEncOut m) D ≤
+       (Nat.choose (q + 1) 2 : ℝ) / 2 ^ n := by
+   classical
+   -- the acceptance probabilities conditioned on the points `r`
+   let a : (Fin (q + 1) → Fin n → Bool) → ℝ := fun r =>
+-    uprob fun w : ((Fin n → Bool) → (Fin n → Bool)) × ρ =>
++    uprob fun w : ((Fin n → Bool) → (Fin l → Bool)) × ρ =>
+       D (fun j => (r j, m j + w.1 (r j))) w.2 = true
+   let b : (Fin (q + 1) → Fin n → Bool) → ℝ := fun r =>
+-    uprob fun w : (Fin (q + 1) → Fin n → Bool) × ρ => D (fun j => (r j, m j + w.1 j)) w.2 = true
+-  have ha : acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D =
++    uprob fun w : (Fin (q + 1) → Fin l → Bool) × ρ => D (fun j => (r j, m j + w.1 j)) w.2 = true
++  have ha : acceptProb (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) D =
+       uexp a := by
+-    rw [acceptProb_def, show randomFunction (Fin n → Bool) (Fin n → Bool) = id from
++    rw [acceptProb_def, show randomFunction (Fin n → Bool) (Fin l → Bool) = id from
+       funext fun f => randomFunction_apply _ _ f]
+     exact (uprob_comp_equiv ((Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+-      ((Fin n → Bool) → (Fin n → Bool)) ρ).symm.trans
++      ((Fin n → Bool) → (Fin l → Bool)) ρ).symm.trans
+         ((Equiv.prodComm _ _).prodCongr (Equiv.refl ρ))) _).symm.trans
+       (by rw [uprob_prod]; rfl)
+-  have hb : acceptProb (otpEnc m) D = uexp b := by
++  have hb : acceptProb (otpEncOut m) D = uexp b := by
+     rw [acceptProb_def]
+     exact (uprob_comp_equiv (Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+-      (Fin (q + 1) → Fin n → Bool) ρ).symm _).symm.trans (by rw [uprob_prod]; rfl)
++      (Fin (q + 1) → Fin l → Bool) ρ).symm _).symm.trans (by rw [uprob_prod]; rfl)
+   -- at injective points the table values are fresh uniform pads
+   have hab : ∀ r : Fin (q + 1) → Fin n → Bool, Function.Injective r → a r = b r := by
+     intro r hr
+-    exact ((pushesUniform_comp_injective (O := Fin n → Bool) hr).prodMap
++    exact ((pushesUniform_comp_injective (O := Fin l → Bool) hr).prodMap
+       (HardcoreBit.pushesUniform_id (Ω := ρ))).uprob_eq
+-      (fun v : (Fin (q + 1) → Fin n → Bool) × ρ => D (fun j => (r j, m j + v.1 j)) v.2 = true)
++      (fun v : (Fin (q + 1) → Fin l → Bool) × ρ => D (fun j => (r j, m j + v.1 j)) v.2 = true)
+   rw [distAdv_def, ha, hb]
+   exact (MultiMsg.abs_uexp_sub_le_uprob a b (fun r => ¬ Function.Injective r)
+     (fun r => ⟨uprob_nonneg _, uprob_le_one _⟩) (fun r => ⟨uprob_nonneg _, uprob_le_one _⟩)
+     (fun r hr => hab r (not_not.mp hr))).trans uprob_not_injective_le
+ 
+-/-- **Thm-99.2.3: `H³ = H⁴` by the perfect secrecy of the one-time pad** ([PS10, Theorem 99.2,
+-proof, "`H³` and `H⁴` are identical by the perfect secrecy of the OTP"], the vector version of
+-Claim-92.a): for independent uniform pads `p_j`, the tuples `(r_j, m_j ⊕ p_j)_j` and
+-`(r_j, m'_j ⊕ p_j)_j` are identically distributed, so every distinguisher accepts them with the
+-same probability.
++/-- **Thm-99.2.3 at output width `l`: `H³ = H⁴` by the perfect secrecy of the one-time pad**
++([PS10, Theorem 99.2, proof, with `ℓ`-bit outputs]): for independent uniform `l`-bit pads,
++`acceptProb (otpEncOut m) D = acceptProb (otpEncOut m') D` for all messages `m`, `m'`.
+ 
+ **Proof sketch.** The map `(r, p) ↦ (r, p ⊕ (m ⊕ m'))` is a bijection of the seed space
+ (`Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))`) carrying the sampler for `m'` to the
+ sampler for `m` (in the Boolean group `x + x = 0`); relabel by it (`acceptProb_comp_equiv`). -/
+-theorem acceptProb_otpEnc (m m' : Fin (q + 1) → Fin n → Bool)
+-    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
+-    acceptProb (otpEnc m) D = acceptProb (otpEnc m') D := by
+-  have key : ∀ z : (Fin (q + 1) → Fin n → Bool) × (Fin (q + 1) → Fin n → Bool),
+-      otpEnc m' ((Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))) z) = otpEnc m z := by
++theorem acceptProb_otpEncOut (m m' : Fin (q + 1) → Fin l → Bool)
++    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
++    acceptProb (otpEncOut (n := n) m) D = acceptProb (otpEncOut m') D := by
++  have key : ∀ z : (Fin (q + 1) → Fin n → Bool) × (Fin (q + 1) → Fin l → Bool),
++      otpEncOut m' ((Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))) z) =
++        otpEncOut m z := by
+     intro z
+     funext j
+-    simp only [otpEnc, Equiv.prodCongr_apply, Equiv.coe_refl, Equiv.coe_addRight, Prod.map_fst,
+-      Prod.map_snd, id_eq, Pi.add_apply]
++    simp only [otpEncOut, Equiv.prodCongr_apply, Equiv.coe_refl, Equiv.coe_addRight,
++      Prod.map_fst, Prod.map_snd, id_eq, Pi.add_apply]
+     refine Prod.ext rfl ?_
+     funext i
+     simp only [Pi.add_apply]
+     cases m j i <;> cases m' j i <;> cases z.2 j i <;> rfl
+-  calc acceptProb (otpEnc m) D
+-      = acceptProb (fun z => otpEnc m'
++  calc acceptProb (otpEncOut m) D
++      = acceptProb (fun z => otpEncOut m'
+           ((Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))) z)) D := by
+         congr 1
+         funext z
+         exact (key z).symm
+-    _ = acceptProb (otpEnc m') D := acceptProb_comp_equiv _ (otpEnc m') D
++    _ = acceptProb (otpEncOut m') D := acceptProb_comp_equiv _ (otpEncOut m') D
++
++/-- **[PS10, Theorem 99.2], concrete form, at output width `l`: the six-hybrid bound** (with
++`ℓ`-bit outputs). For a keyed family `F : K → {0,1}^n → {0,1}^l`, message vectors
++`m, m' ∈ ({0,1}^l)^{q+1}` and any distinguisher `D` of ciphertext tuples,
++`distAdv (prfEncRealOut F m) (prfEncRealOut F m') D ≤ prfAdv F (multiMsgAdvOut m D) +
++prfAdv F (multiMsgAdvOut m' D) + 2 · C(q+1, 2) / 2^n`.
++
++**Deviation:** the collision bound is `C(q(n)+1, 2) · 2^{−n}` for the `q(n) + 1` values
++`r₀, …, r_{q(n)}` (the text writes `C(q(n), 2) · 2^{−n}`; source error 35 of the plan).
++
++**Proof sketch.** Hybrids `H¹ = prfEncRealOut F m`, `H² = prfEncRealOut R m`, `H³ = otpEncOut m`,
++`H⁴ = otpEncOut m'`, `H⁵ = prfEncRealOut R m'`, `H⁶ = prfEncRealOut F m'`: `|H¹ − H²|` and
++`|H⁵ − H⁶|` are the two PRF advantages (`prfAdv_multiMsgAdvOut`), `|H² − H³|` and `|H⁴ − H⁵|`
++are at most the collision bound (`distAdv_prfEncRealOut_random_otp_le`), `H³ = H⁴`
++(`acceptProb_otpEncOut`); the triangle inequality (`abs_sub_le`, three times) finishes. -/
++theorem distAdv_prfEncRealOut_le (F : K → (Fin n → Bool) → (Fin l → Bool))
++    (m m' : Fin (q + 1) → Fin l → Bool)
++    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
++    distAdv (prfEncRealOut F m) (prfEncRealOut F m') D ≤
++      prfAdv F (multiMsgAdvOut m D) + prfAdv F (multiMsgAdvOut m' D) +
++        2 * ((Nat.choose (q + 1) 2 : ℝ) / 2 ^ n) := by
++  have h12 := prfAdv_multiMsgAdvOut F m D
++  have h56 := prfAdv_multiMsgAdvOut F m' D
++  have h23 := distAdv_prfEncRealOut_random_otp_le m D
++  have h45 := distAdv_prfEncRealOut_random_otp_le m' D
++  have h34 := acceptProb_otpEncOut m m' D
++  simp only [distAdv_def] at h12 h56 h23 h45 ⊢
++  rw [h12, h56, abs_sub_comm (acceptProb (prfEncRealOut F m') D)]
++  rw [abs_sub_comm (acceptProb (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m')
++    D)] at h45
++  have t1 := abs_sub_le (acceptProb (prfEncRealOut F m) D)
++    (acceptProb (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) D)
++    (acceptProb (prfEncRealOut F m') D)
++  have t2 := abs_sub_le
++    (acceptProb (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) D)
++    (acceptProb (otpEncOut m) D) (acceptProb (prfEncRealOut F m') D)
++  have t3 := abs_sub_le (acceptProb (otpEncOut m') D)
++    (acceptProb (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m') D)
++    (acceptProb (prfEncRealOut F m') D)
++  rw [← h34] at t3 h45
++  linarith
++
++/-- **Thm-99.2.2: the gap `H² → H³` is at most the collision probability**
++([PS10, Theorem 99.2, proof, "`H²` and `H³` are 'almost' identical except for the case when
++`∃ i, j` such that `r_i = r_j`"]): the advantage of `D` between the random-function encryptions
++`(r_j, m_j ⊕ R(r_j))_j` and the one-time-pad encryptions `(r_j, m_j ⊕ p_j)_j` is at most
++`C(q+1, 2) / 2^n`.
++
++**Deviation:** the collision bound is `C(q(n)+1, 2) · 2^{−n}` for the `q(n) + 1` values
++`r₀, …, r_{q(n)}` (the text writes `C(q(n), 2) · 2^{−n}`; source error 35 of the plan).
++
++**Proof sketch.** The case `l = n` of `distAdv_prfEncRealOut_random_otp_le`
++(`prfEncReal_eq_prfEncRealOut`, `otpEnc_eq_otpEncOut`). -/
++theorem distAdv_prfEncReal_random_otp_le (m : Fin (q + 1) → Fin n → Bool)
++    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
++    distAdv (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) (otpEnc m) D ≤
++      (Nat.choose (q + 1) 2 : ℝ) / 2 ^ n := by
++  rw [prfEncReal_eq_prfEncRealOut, otpEnc_eq_otpEncOut]
++  exact distAdv_prfEncRealOut_random_otp_le m D
++
++/-- **Thm-99.2.3: `H³ = H⁴` by the perfect secrecy of the one-time pad** ([PS10, Theorem 99.2,
++proof, "`H³` and `H⁴` are identical by the perfect secrecy of the OTP"], the vector version of
++Claim-92.a): for independent uniform pads `p_j`, the tuples `(r_j, m_j ⊕ p_j)_j` and
++`(r_j, m'_j ⊕ p_j)_j` are identically distributed, so every distinguisher accepts them with the
++same probability.
++
++**Proof sketch.** The case `l = n` of `acceptProb_otpEncOut` (`otpEnc_eq_otpEncOut`). -/
++theorem acceptProb_otpEnc (m m' : Fin (q + 1) → Fin n → Bool)
++    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
++    acceptProb (otpEnc m) D = acceptProb (otpEnc m') D := by
++  rw [otpEnc_eq_otpEncOut, otpEnc_eq_otpEncOut]
++  exact acceptProb_otpEncOut m m' D
+ 
+ /-- **[PS10, Theorem 99.2], concrete form: the six-hybrid bound.** For a keyed family
+ `F : K → {0,1}^n → {0,1}^n`, message vectors `m, m' ∈ ({0,1}^n)^{q+1}` and any distinguisher
+@@ -313,36 +496,16 @@ is at most `prfAdv F (A_m D) + prfAdv F (A_{m'} D) + 2 · C(q+1, 2) / 2^n`, wher
+ **Deviation:** the collision bound is `C(q(n)+1, 2) · 2^{−n}` for the `q(n) + 1` values
+ `r₀, …, r_{q(n)}` (the text writes `C(q(n), 2) · 2^{−n}`; source error 35 of the plan).
+ 
+-**Proof sketch.** Hybrids `H¹ = prfEncReal F m`, `H² = prfEncReal R m`, `H³ = otpEnc m`,
+-`H⁴ = otpEnc m'`, `H⁵ = prfEncReal R m'`, `H⁶ = prfEncReal F m'`: `|H¹ − H²|` and `|H⁵ − H⁶|` are
+-the two PRF advantages (`prfAdv_multiMsgAdv`), `|H² − H³|` and `|H⁴ − H⁵|` are at most the
+-collision bound (`distAdv_prfEncReal_random_otp_le`), `H³ = H⁴` (`acceptProb_otpEnc`); the
+-triangle inequality (`abs_sub_le`, five times) finishes. -/
++**Proof sketch.** The case `l = n` of `distAdv_prfEncRealOut_le` (`prfEncReal_eq_prfEncRealOut`,
++`multiMsgAdv_eq_multiMsgAdvOut`). -/
+ theorem distAdv_prfEncReal_le (F : K → (Fin n → Bool) → (Fin n → Bool))
+     (m m' : Fin (q + 1) → Fin n → Bool)
+     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
+     distAdv (prfEncReal F m) (prfEncReal F m') D ≤
+       prfAdv F (multiMsgAdv m D) + prfAdv F (multiMsgAdv m' D) +
+         2 * ((Nat.choose (q + 1) 2 : ℝ) / 2 ^ n) := by
+-  have h12 := prfAdv_multiMsgAdv F m D
+-  have h56 := prfAdv_multiMsgAdv F m' D
+-  have h23 := distAdv_prfEncReal_random_otp_le m D
+-  have h45 := distAdv_prfEncReal_random_otp_le m' D
+-  have h34 := acceptProb_otpEnc m m' D
+-  simp only [distAdv_def] at h12 h56 h23 h45 ⊢
+-  rw [h12, h56, abs_sub_comm (acceptProb (prfEncReal F m') D)]
+-  rw [abs_sub_comm (acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m') D)]
+-    at h45
+-  have t1 := abs_sub_le (acceptProb (prfEncReal F m) D)
+-    (acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D)
+-    (acceptProb (prfEncReal F m') D)
+-  have t2 := abs_sub_le (acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D)
+-    (acceptProb (otpEnc m) D) (acceptProb (prfEncReal F m') D)
+-  have t3 := abs_sub_le (acceptProb (otpEnc m') D)
+-    (acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m') D)
+-    (acceptProb (prfEncReal F m') D)
+-  rw [← h34] at t3 h45
+-  linarith
++  simp only [prfEncReal_eq_prfEncRealOut, multiMsgAdv_eq_multiMsgAdvOut]
++  exact distAdv_prfEncRealOut_le F m m' D
+ 
+ end Concrete
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean
+new file mode 100644
+index 000000000..13f04d8db
+--- /dev/null
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean
+@@ -0,0 +1,163 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.Hybrid
++import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
++import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
++import TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity
++import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
++import TCSlib.Cryptography.Pseudorandom.Indistinguishability
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The multi-message bound at `ℓ(n)`-bit outputs
++
++The total of [PS10, Theorem 99.2] for a keyed family with `ℓ(n)`-bit outputs (ruling B3), without
++the scheme: for a family `F` whose keyed ensemble is oracle-indistinguishable from the random
++functions with `ℓ(n)`-bit outputs, every non-uniform PPT `D` distinguishes the encoded real
++hybrids of any two mask vectors with negligible advantage, uniformly in the masks
++(`MultiMsg.exists_negligible_distAdv_prfEncRealOut`). The `n`-bit scheme's
++`prfScheme_multiMessageSecure` is its case `ℓ = var`.
++
++## Main definitions
++
++* `encodeTupleOut`: the encoded tuple of ciphertext pairs with `n`-bit points and `l`-bit pads.
++
++## Main results
++
++* `MultiMsg.encodeList_eq_flatMap`: `encodeList` as a concatenation of chunks (the general form of
++  a private lemma of `FromPRF.lean`).
++* `encodeTupleOut_eq_flatten`: the encoded tuple as the machine produces it.
++* `MultiMsg.exists_negligible_distAdv_prfEncRealOut`: the total.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
++  (§3.8, Definition 96.2, and §3.9, Theorem 99.2, with `ℓ`-bit outputs.)
++-/
++
++namespace TCSlib.Cryptography
++
++open Complexity Turing Finset
++
++/-- **The encoded ciphertext tuple at output width `l`**: `encodeList` of the pairs
++`⟨r_j, c_j⟩` of an `n`-bit point and an `l`-bit string,
++`encodeTupleOut v = encodeList (List.ofFn fun j => ⟨⟦(v j).1⟧, ⟦(v j).2⟧⟩)`. -/
++def encodeTupleOut {n l q : ℕ} (v : Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) :
++    List Bool :=
++  PrivateKeyScheme.encodeList
++    (List.ofFn fun j => pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2))
++
++/-- The defining equation:
++`encodeTupleOut v = encodeList (List.ofFn fun j => ⟨⟦(v j).1⟧, ⟦(v j).2⟧⟩)`. -/
++theorem encodeTupleOut_eq {n l q : ℕ} (v : Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) :
++    encodeTupleOut v = PrivateKeyScheme.encodeList
++      (List.ofFn fun j => pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2)) :=
++  rfl
++
++/-- **`encodeList` is a concatenation of chunks**: `encodeList l` is the concatenation of the
++self-delimited chunks `⟨c, []⟩`, `encodeList l = l.flatMap fun c => ⟨c, []⟩`. -/
++theorem MultiMsg.encodeList_eq_flatMap : ∀ l : List (List Bool),
++    PrivateKeyScheme.encodeList l = l.flatMap fun c => pairEncode c []
++  | [] => by rw [PrivateKeyScheme.encodeList_nil, List.flatMap_nil]
++  | c :: l => by
++    rw [PrivateKeyScheme.encodeList_cons, List.flatMap_cons, MultiMsg.encodeList_eq_flatMap l]
++    simp [pairEncode_eq]
++
++/-- The encoded tuple at width `l` is the concatenation of the chunks `⟨⟨r_j, c_j⟩, []⟩` (the
++form in which `MultiMsg.exists_queryChainOut_nuppt` produces it):
++`encodeTupleOut v = (List.ofFn fun j => ⟨⟨⟦(v j).1⟧, ⟦(v j).2⟧⟩, []⟩).flatten`. -/
++theorem encodeTupleOut_eq_flatten {n l q : ℕ}
++    (v : Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) :
++    encodeTupleOut v =
++      (List.ofFn fun j =>
++        pairEncode (pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2)) []).flatten := by
++  rw [encodeTupleOut_eq, MultiMsg.encodeList_eq_flatMap, MultiMsg.flatMap_ofFn]
++
++/-- **[PS10, Theorem 99.2] at `ℓ(n)`-bit outputs, the total** (with `ℓ`-bit outputs; ruling B3):
++if the keyed ensemble of `F n : {0,1}^n → {0,1}^n → {0,1}^{ℓ(n)}` is oracle-indistinguishable
++from the random functions with `ℓ(n)`-bit outputs, then for every non-uniform PPT `D` and
++polynomial `q` there is a negligible `ε` with, for every `n` and all masks
++`w, w' ∈ ({0,1}^{ℓ(n)})^{q(n)+1}`,
++`distAdv (encodeTupleOut ∘ prfEncRealOut (F n) w) (encodeTupleOut ∘ prfEncRealOut (F n) w')
++(D.distinguisherL n) ≤ ε n`, the seeds being a uniform key and `q(n) + 1` uniform points.
++
++**Deviation:** the collision bound is `C(q(n)+1, 2) · 2^{−n}` for the `q(n) + 1` values
++`r₀, …, r_{q(n)}` (the text writes `C(q(n), 2) · 2^{−n}`; source error 35 of the plan).
++
++**Proof sketch.** As `prfScheme_multiMessageSecure`, without the scheme.
++1. At each `n` choose the pair of masks maximizing the advantage (`Finset.exists_max_image`).
++2. For the two maximizing mask vectors, build the next-query machines `B₀`, `B₁`
++   (`MultiMsg.exists_queryChainOut_nuppt`, budget `q + 1`); with `MultiMsg.prfAdv_congr_equiv`,
++   `eval_multiMsgAdvOut` and `encodeTupleOut_eq_flatten` their PRF advantages are those of
++   `multiMsgAdvOut w (D ∘ encodeTupleOut)`.
++3. `distAdv_comp` and `distAdv_prfEncRealOut_le` bound the advantage by
++   `prfAdv (F n) B₀ + prfAdv (F n) B₁ + 2 · C(q(n)+1, 2) / 2^n`.
++4. This is negligible: `OracleEnsemble.Indist.negligible_prfAdv` at the budget `q + 1` and
++   `MultiMsg.negligible_choose_div_two_pow`, with `Negligible.add` and `Negligible.const_mul`. -/
++theorem MultiMsg.exists_negligible_distAdv_prfEncRealOut {ℓ : PolyExpr}
++    {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (ℓ.eval n) → Bool)}
++    (hF : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := ℓ) F).Indist (OracleEnsemble.random .var ℓ))
++    (D : NUPPT) (q : PolyExpr) :
++    ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n (w w' : Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool),
++      distAdv (fun z => encodeTupleOut (prfEncRealOut (F n) w z))
++        (fun z => encodeTupleOut (prfEncRealOut (F n) w' z)) (D.distinguisherL n) ≤ ε n := by
++  -- the worst mask pair at each parameter (hard-wired into the reductions)
++  have hmax : ∀ n, ∃ p : (Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool) ×
++      (Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool),
++      ∀ w : (Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool) ×
++          (Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool),
++        distAdv (fun z => encodeTupleOut (prfEncRealOut (F n) w.1 z))
++            (fun z => encodeTupleOut (prfEncRealOut (F n) w.2 z)) (D.distinguisherL n) ≤
++          distAdv (fun z => encodeTupleOut (prfEncRealOut (F n) p.1 z))
++            (fun z => encodeTupleOut (prfEncRealOut (F n) p.2 z)) (D.distinguisherL n) := by
++    intro n
++    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
++      (fun w : (Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool) ×
++          (Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool) =>
++        distAdv (fun z => encodeTupleOut (prfEncRealOut (F n) w.1 z))
++          (fun z => encodeTupleOut (prfEncRealOut (F n) w.2 z)) (D.distinguisherL n))
++      Finset.univ_nonempty
++    exact ⟨p, fun w => hp w (Finset.mem_univ w)⟩
++  choose μ hμ using hmax
++  -- the next-query machines for the two hard-wired mask vectors
++  obtain ⟨B₀, hB₀⟩ := MultiMsg.exists_queryChainOut_nuppt D q ℓ fun n => (μ n).1
++  obtain ⟨B₁, hB₁⟩ := MultiMsg.exists_queryChainOut_nuppt D q ℓ fun n => (μ n).2
++  refine ⟨fun n => prfAdv (F n) (B₀.toOracleAdversary n n (ℓ.eval n) (q.eval n + 1)) +
++      prfAdv (F n) (B₁.toOracleAdversary n n (ℓ.eval n) (q.eval n + 1)) +
++      2 * ((Nat.choose (q.eval n + 1) 2 : ℝ) / 2 ^ n), ?_, fun n w w' => ?_⟩
++  · -- the asymptotic step: two PRF advantages and the collision term
++    simpa only [PolyExpr.eval_add, PolyExpr.eval_const] using
++      ((hF.negligible_prfAdv B₀ (.add q (.const 1))).add
++        (hF.negligible_prfAdv B₁ (.add q (.const 1)))).add
++        ((MultiMsg.negligible_choose_div_two_pow q).const_mul 2)
++  · refine (hμ n (w, w')).trans ?_
++    -- the machine step: the oracle adversaries of `B₀`, `B₁` are the `multiMsgAdvOut`
++    have hadv : ∀ (B : NUPPT) (v : Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool)
++        (φ : (Fin (q.eval n + 1) → Fin n → Bool) × D.Coins n ≃ B.Coins n),
++        (∀ (g : (Fin n → Bool) → (Fin (ℓ.eval n) → Bool)) ρ c,
++          (B.toOracleAdversary n n (ℓ.eval n) (q.eval n + 1) (φ (ρ, c))).eval g =
++            decide (D.runAt n (List.ofFn fun j =>
++              pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (v j + g (ρ j)))) []).flatten c =
++                [true])) →
++        prfAdv (F n) (B.toOracleAdversary n n (ℓ.eval n) (q.eval n + 1)) =
++          prfAdv (F n) (multiMsgAdvOut v fun x c => D.distinguisherL n (encodeTupleOut x) c) := by
++      intro B v φ hφ
++      refine MultiMsg.prfAdv_congr_equiv (F n) _ _ φ fun g x => ?_
++      rw [hφ g x.1 x.2, eval_multiMsgAdvOut, NUPPT.distinguisherL_eq, encodeTupleOut_eq_flatten]
++    obtain ⟨φ₀, hφ₀⟩ := hB₀ n
++    obtain ⟨φ₁, hφ₁⟩ := hB₁ n
++    dsimp only
++    rw [hadv B₀ (μ n).1 φ₀ hφ₀, hadv B₁ (μ n).2 φ₁ hφ₁]
++    -- the concrete step: the six hybrids at width `ℓ(n)`
++    exact (distAdv_comp encodeTupleOut (prfEncRealOut (F n) (μ n).1)
++      (prfEncRealOut (F n) (μ n).2) (D.distinguisherL n)).symm.trans_le
++        (distAdv_prfEncRealOut_le (F n) (μ n).1 (μ n).2
++          (fun x c => D.distinguisherL n (encodeTupleOut x) c))
++
++end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean
+index 11f31f81a..1875deaae 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean
+@@ -22,6 +22,10 @@ distinguisher to the encoded vector of masked messages [PS10, Theorem 99.2, proo
+ 
+ * `MultiMsg.histBlock` and `MultiMsg.maskBlock` give the encodings of a history entry and a mask.
+ * `MultiMsg.preFun` and `MultiMsg.postFun` give the input and output processing for each move.
++* `MultiMsg.histBlockOut`, `maskBlockOut`, `maskOfOut`, `histBlockLenOut`, `postCountOut`,
++  `postOffsetOut`, `postQueryOut`, `postFunOut` and `adviceBoundOut`: the string layer at answer
++  width `ℓ(n)` (ruling B3); the `n`-bit versions are their cases `ℓ = var`
++  (`histBlock_eq_histBlockOut`, …).
+ 
+ ## Main results
+ 
+@@ -30,6 +34,9 @@ distinguisher to the encoded vector of masked messages [PS10, Theorem 99.2, proo
+   processing by polynomial time.
+ * `MultiMsg.exists_queryChain_nuppt` packages the reduction and proves its agreement with
+   the tuple experiment after relabelling its coins.
++* `MultiMsg.exists_queryChainOut_nuppt` does so at `ℓ(n)`-bit answers and masks, and
++  `MultiMsg.exists_oneQuery_nuppt` is its one-query case; `exists_queryChain_nuppt` is the case
++  `ℓ = var`.
+ 
+ ## References
+ 
+@@ -45,24 +52,51 @@ open Complexity Turing Finset
+ 
+ /-! ### Strings: chunked encodings, history blocks, mask blocks -/
+ 
++/-- **The history block at answer width `l`** (ruling B3): the self-delimited chunk
++`histBlockOut p = ⟨⟨⟦p.1⟧, ⟦p.2⟧⟩, []⟩` of one pair of an `n`-bit query and an `l`-bit answer. -/
++def histBlockOut {n l : ℕ} (p : (Fin n → Bool) × (Fin l → Bool)) : List Bool :=
++  pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) []
++
++/-- `histBlockOut p = ⟨⟨⟦p.1⟧, ⟦p.2⟧⟩, []⟩`. -/
++theorem histBlockOut_eq {n l : ℕ} (p : (Fin n → Bool) × (Fin l → Bool)) :
++    histBlockOut p = pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) [] := rfl
++
++/-- A history block of an `n`-bit query and an `l`-bit answer has `4n + 2l + 6` bits:
++`|histBlockOut p| = 4n + 2l + 6`. -/
++theorem length_histBlockOut {n l : ℕ} (p : (Fin n → Bool) × (Fin l → Bool)) :
++    (histBlockOut p).length = 4 * n + 2 * l + 6 := by
++  simp only [histBlockOut, length_pairEncode, List.length_ofFn, List.length_nil]
++  omega
++
++/-- The encoded history is the concatenation of its blocks, at any widths:
++`encodeHist h = h.flatMap histBlockOut`. -/
++theorem encodeHist_eq_flatMapOut {ℓ₁ ℓ₂ : ℕ} : ∀ h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)),
++    encodeHist h = h.flatMap histBlockOut
++  | [] => by rw [encodeHist_nil, List.flatMap_nil]
++  | p :: h => by
++    rw [encodeHist_cons, encodeHist_eq_flatMapOut h, List.flatMap_cons]
++    simp [histBlockOut, pairEncode_eq]
++
+ /-- The block contributed to an encoded history by one (query, answer) pair of `n`-bit
+ strings: the self-delimited chunk `⟨⟨x, y⟩, []⟩`. -/
+ def histBlock {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) : List Bool :=
+   pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) []
+ 
++/-- The `n`-bit history block is the case `l = n` of `histBlockOut`:
++`histBlock p = histBlockOut p` (`rfl`). -/
++theorem histBlock_eq_histBlockOut {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
++    histBlock p = histBlockOut p := rfl
++
+ /-- A history block of `n`-bit strings has length `6n + 6`. -/
+ theorem length_histBlock {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
+     (histBlock p).length = 6 * n + 6 := by
+-  simp only [histBlock, length_pairEncode, List.length_ofFn, List.length_nil]
++  rw [histBlock_eq_histBlockOut, length_histBlockOut]
+   omega
+ 
+ /-- The encoded history is the concatenation of its blocks. -/
+ theorem encodeHist_eq_flatMap {n : ℕ} : ∀ h : List ((Fin n → Bool) × (Fin n → Bool)),
+     encodeHist h = h.flatMap histBlock
+-  | [] => by rw [encodeHist_nil, List.flatMap_nil]
+-  | p :: h => by
+-    rw [encodeHist_cons, encodeHist_eq_flatMap h, List.flatMap_cons]
+-    simp [histBlock, pairEncode_eq]
++  | h => encodeHist_eq_flatMapOut h
+ 
+ /-- The syntactic block length `6n + 6` of a history block. -/
+ def histBlockLen : PolyExpr := .add (.mul (.const 6) .var) (.const 6)
+@@ -72,6 +106,22 @@ theorem eval_histBlockLen (n : ℕ) : histBlockLen.eval n = 6 * n + 6 := by
+   simp only [histBlockLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
+     PolyExpr.eval_var]
+ 
++/-- The syntactic block length at answer width `ℓ`:
++`histBlockLenOut ℓ = 4 · var + 2 · ℓ + 6`. -/
++def histBlockLenOut (ℓ : PolyExpr) : PolyExpr :=
++  .add (.add (.mul (.const 4) .var) (.mul (.const 2) ℓ)) (.const 6)
++
++/-- `histBlockLenOut ℓ = 4 · var + 2 · ℓ + 6` (the defining equation). -/
++theorem histBlockLenOut_eq (ℓ : PolyExpr) :
++    histBlockLenOut ℓ = .add (.add (.mul (.const 4) .var) (.mul (.const 2) ℓ)) (.const 6) :=
++  rfl
++
++/-- `(histBlockLenOut ℓ).eval n = 4n + 2ℓ(n) + 6`. -/
++theorem eval_histBlockLenOut (ℓ : PolyExpr) (n : ℕ) :
++    (histBlockLenOut ℓ).eval n = 4 * n + 2 * ℓ.eval n + 6 := by
++  simp only [histBlockLenOut, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
++    PolyExpr.eval_var]
++
+ /-- The length of a concatenation of chunks of a common length `b`. -/
+ theorem length_flatMap_of_length {α : Type*} (f : α → List Bool) (b : ℕ) :
+     ∀ L : List α, (∀ x ∈ L, (f x).length = b) → (L.flatMap f).length = L.length * b
+@@ -134,11 +184,36 @@ theorem flatMap_const_replicate {α : Type*} (n : ℕ) : ∀ L : List α,
+     rw [List.flatMap_cons, flatMap_const_replicate n L, List.length_cons, Nat.succ_mul, add_comm,
+       List.replicate_add]
+ 
++/-- The query component of a history block at answer width `l`:
++`pairFstD (pairFstD (histBlockOut p)) = ⟦p.1⟧`. -/
++theorem pairFstD_pairFstD_histBlockOut {n l : ℕ} (p : (Fin n → Bool) × (Fin l → Bool)) :
++    pairFstD (pairFstD (histBlockOut p)) = List.ofFn p.1 := by
++  simp [histBlockOut]
++
+ /-- The query component of a history block: `pairFstD (pairFstD (histBlock p))` is the query
+ `p.1`. -/
+ theorem pairFstD_pairFstD_histBlock {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
+     pairFstD (pairFstD (histBlock p)) = List.ofFn p.1 := by
+-  simp [histBlock]
++  rw [histBlock_eq_histBlockOut, pairFstD_pairFstD_histBlockOut]
++
++/-- **The mask block at answer width `l`** for `n`-bit queries: zeros under the (doubled) query
++and the separators, `w` doubled under the (doubled) answer:
++`maskBlockOut n w = 0^{4n+4} ++ dbl ⟦w⟧ ++ [0, 0]`. -/
++def maskBlockOut {l : ℕ} (n : ℕ) (w : Fin l → Bool) : List Bool :=
++  List.replicate (4 * n + 4) false ++ dbl (List.ofFn w) ++ [false, false]
++
++/-- `maskBlockOut n w = 0^{4n+4} ++ dbl ⟦w⟧ ++ [0, 0]`. -/
++theorem maskBlockOut_eq {l : ℕ} (n : ℕ) (w : Fin l → Bool) :
++    maskBlockOut n w = List.replicate (4 * n + 4) false ++ dbl (List.ofFn w) ++ [false, false] :=
++  rfl
++
++/-- A mask block at answer width `l` has the length of a history block:
++`|maskBlockOut n w| = 4n + 2l + 6`. -/
++theorem length_maskBlockOut {l : ℕ} (n : ℕ) (w : Fin l → Bool) :
++    (maskBlockOut n w).length = 4 * n + 2 * l + 6 := by
++  simp only [maskBlockOut, List.length_append, List.length_replicate, length_dbl, List.length_ofFn,
++    List.length_cons, List.length_nil]
++  omega
+ 
+ /-- The mask block of the message `w`: zeros under the (doubled) query and the separators,
+ `w` doubled under the (doubled) answer, so that `histBlock (x, y) ⊕ maskBlock w` is the
+@@ -146,10 +221,14 @@ history block of `(x, w ⊕ y)`. -/
+ def maskBlock {n : ℕ} (w : Fin n → Bool) : List Bool :=
+   List.replicate (4 * n + 4) false ++ dbl (List.ofFn w) ++ [false, false]
+ 
++/-- The `n`-bit mask block is the case `l = n` of `maskBlockOut`:
++`maskBlock w = maskBlockOut n w` (`rfl`). -/
++theorem maskBlock_eq_maskBlockOut {n : ℕ} (w : Fin n → Bool) : maskBlock w = maskBlockOut n w :=
++  rfl
++
+ /-- A mask block has the length `6n + 6` of a history block. -/
+ theorem length_maskBlock {n : ℕ} (w : Fin n → Bool) : (maskBlock w).length = 6 * n + 6 := by
+-  simp only [maskBlock, List.length_append, List.length_replicate, length_dbl, List.length_ofFn,
+-    List.length_cons, List.length_nil]
++  rw [maskBlock_eq_maskBlockOut, length_maskBlockOut]
+   omega
+ 
+ /-- Doubling distributes over concatenation. -/
+@@ -174,36 +253,47 @@ theorem zipWith_xor_dbl : ∀ a b : List Bool,
+   | x :: a, y :: b => by
+     simp only [dbl_cons, List.zipWith_cons_cons, zipWith_xor_dbl a b]
+ 
+-/-- **Masking a history block**: the exclusive-or of the history block of `(x, y)` with the
+-mask block of `w` is the history block of `(x, w ⊕ y)` (strings `x, y, w` of the same length).
++/-- **Masking a history block at answer width `l`**: for an `n`-bit query `x` and `l`-bit
++strings `y`, `w`, `histBlockOut (x, y) ⊕ maskBlockOut n w = ⟨⟨⟦x⟧, ⟦w + y⟧⟩, []⟩`.
+ 
+ **Proof sketch.** `⟨⟨x, y⟩, []⟩ = dbl (dbl x) ++ 0011 ++ dbl y ++ 01`; the mask is
+-`0^{4n+4} ++ dbl w ++ 00`; `List.zipWith_append` splits the exclusive-or along these
+-segments, zeros are neutral (`zipWith_xor_replicate_false`) and `dbl y ⊕ dbl w = dbl (y ⊕ w)`
++`0^{4n+4} ++ dbl w ++ 00`; `List.zipWith_append` splits the exclusive-or along these segments,
++zeros are neutral (`zipWith_xor_replicate_false`) and `dbl y ⊕ dbl w = dbl (y ⊕ w)`
+ (`zipWith_xor_dbl`). -/
+-theorem zipWith_xor_histBlock_maskBlock {n : ℕ} (x y w : Fin n → Bool) :
+-    List.zipWith xor (histBlock (x, y)) (maskBlock w) =
++theorem zipWith_xor_histBlockOut_maskBlockOut {n l : ℕ} (x : Fin n → Bool) (y w : Fin l → Bool) :
++    List.zipWith xor (histBlockOut (x, y)) (maskBlockOut n w) =
+       pairEncode (pairEncode (List.ofFn x) (List.ofFn (w + y))) [] := by
+   have hyw : List.zipWith xor (List.ofFn y) (List.ofFn w) = List.ofFn (w + y) := by
+     rw [zipWith_xor_ofFn_add, add_comm]
+-  have h1 : histBlock (x, y) =
++  have h1 : histBlockOut (x, y) =
+       (dbl (dbl (List.ofFn x)) ++ [false, false, true, true]) ++
+         (dbl (List.ofFn y) ++ [false, true]) := by
+-    simp only [histBlock, pairEncode_eq_dbl, dbl_append, List.append_nil, List.append_assoc,
++    simp only [histBlockOut, pairEncode_eq_dbl, dbl_append, List.append_nil, List.append_assoc,
+       dbl_cons, List.cons_append, List.nil_append]
+-  have h2 : maskBlock w =
++  have h2 : maskBlockOut n w =
+       List.replicate (dbl (dbl (List.ofFn x)) ++ [false, false, true, true]).length false ++
+         (dbl (List.ofFn w) ++ [false, false]) := by
+-    simp only [maskBlock, List.length_append, length_dbl, List.length_ofFn, List.length_cons,
++    simp only [maskBlockOut, List.length_append, length_dbl, List.length_ofFn, List.length_cons,
+       List.length_nil, List.append_assoc]
+     congr 2
+     omega
+   rw [h1, h2, List.zipWith_append (List.length_replicate ..).symm, zipWith_xor_replicate_false,
+     List.zipWith_append (by simp only [length_dbl, List.length_ofFn]), zipWith_xor_dbl, hyw]
+-  simp only [pairEncode_eq_dbl, dbl_append, List.append_nil, List.append_assoc, dbl_cons, dbl_nil,
++  simp only [pairEncode_eq_dbl, dbl_append, List.append_nil, List.append_assoc, dbl_cons,
+     List.cons_append, List.nil_append]
+   rfl
+ 
++/-- **Masking a history block**: the exclusive-or of the history block of `(x, y)` with the
++mask block of `w` is the history block of `(x, w ⊕ y)` (strings `x, y, w` of the same length).
++
++**Proof sketch.** The case `l = n` of `zipWith_xor_histBlockOut_maskBlockOut`
++(`histBlock_eq_histBlockOut`, `maskBlock_eq_maskBlockOut`). -/
++theorem zipWith_xor_histBlock_maskBlock {n : ℕ} (x y w : Fin n → Bool) :
++    List.zipWith xor (histBlock (x, y)) (maskBlock w) =
++      pairEncode (pairEncode (List.ofFn x) (List.ofFn (w + y))) [] := by
++  rw [histBlock_eq_histBlockOut, maskBlock_eq_maskBlockOut]
++  exact zipWith_xor_histBlockOut_maskBlockOut x y w
++
+ /-- The exclusive-or of two concatenations of `k` chunks of pairwise equal lengths is the
+ concatenation of the chunkwise exclusive-ors. -/
+ theorem zipWith_xor_flatten_ofFn : ∀ {k : ℕ} (F G : Fin k → List Bool),
+@@ -289,23 +379,73 @@ def postQuery (z : List Bool) : List Bool :=
+ def postVerdict (z : List Bool) : List Bool :=
+   [true] ++ [decide (pairFstD (pairEncode (postAns z) [true]) = pairSndD (pairEncode (postAns z) [true]))]
+ 
+-/-- **The post-processing of the next-query machine** on the raw layout
+-`⟨⟨⟨1^n, ⟨⟨⟨H, ρ⟩, ⟨M, u⟩⟩, a⟩⟩, []⟩, r⟩`: if the history already has `|u|` blocks, the
+-verdict `[true, [a = [true]]]`; otherwise the query `⟨[false], ρ_k⟩` at the `k`-th point,
+-`k` the number of history blocks. -/
+-def postFun (z : List Bool) : List Bool :=
+-  if decide ((postBudget z).length ≤ (postCount z).length) = true then postVerdict z
+-  else postQuery z
++/-- The unary count `1^k` of the history blocks at answer width `ℓ(n)` (block length
++`histBlockLenOut ℓ`): `postCountOut ℓ z = blockMapFun (histBlockLenOut ℓ) (fun _ => [true])
++⟨inParam z, postHist z⟩`. -/
++def postCountOut (ℓ : PolyExpr) (z : List Bool) : List Bool :=
++  blockMapFun (histBlockLenOut ℓ) (fun _ => [true]) (pairEncode (NUPPT.inParam z) (postHist z))
+ 
+-/-- `postFun` is polynomial-time.
++/-- `postCountOut ℓ z = blockMapFun (histBlockLenOut ℓ) (fun _ => [true]) ⟨inParam z, postHist z⟩`.
++-/
++theorem postCountOut_eq (ℓ : PolyExpr) (z : List Bool) :
++    postCountOut ℓ z = blockMapFun (histBlockLenOut ℓ) (fun _ => [true])
++      (pairEncode (NUPPT.inParam z) (postHist z)) :=
++  rfl
++
++/-- The unary offset `1^{k·n}` of the next point at answer width `ℓ(n)`: the block map emitting
++`1^{|x|}` for the query `x` of each block of length `histBlockLenOut ℓ`,
++`postOffsetOut ℓ z = blockMapFun (histBlockLenOut ℓ) (fun blk => 1^{|fst (fst blk)|})
++⟨inParam z, postHist z⟩`. -/
++def postOffsetOut (ℓ : PolyExpr) (z : List Bool) : List Bool :=
++  blockMapFun (histBlockLenOut ℓ) (fun blk => List.replicate (pairFstD (pairFstD blk)).length true)
++    (pairEncode (NUPPT.inParam z) (postHist z))
++
++/-- `postOffsetOut ℓ z = blockMapFun (histBlockLenOut ℓ) (fun blk => 1^{|fst (fst blk)|})
++⟨inParam z, postHist z⟩`. -/
++theorem postOffsetOut_eq (ℓ : PolyExpr) (z : List Bool) :
++    postOffsetOut ℓ z = blockMapFun (histBlockLenOut ℓ)
++      (fun blk => List.replicate (pairFstD (pairFstD blk)).length true)
++      (pairEncode (NUPPT.inParam z) (postHist z)) :=
++  rfl
+ 
+-**Proof sketch.** Projections of the layout (`NUPPT.polyTimeComputable_inArg`,
+-`polyTimeComputable_pairFstD`/`pairSndD`), two block maps
+-(`Complexity.polyTimeComputable_blockMap`), the typed cuts
+-(`polyTimeComputable_pairTakePoly`/`pairDropPoly`), a length test
+-(`Complexity.StateLoop.lenLe_comp`), an equality test (`Complexity.polyTimeComputable_pairEq`)
+-and one branch (`Complexity.polyTimeComputable_ite`). -/
+-theorem polyTimeComputable_postFun : PolyTimeComputable postFun := by
++/-- The query move `⟨[false], ρ_k⟩` at answer width `ℓ(n)`: the `n`-bit block of the points
++after the first `k·n` (`postOffsetOut ℓ`), `postQueryOut ℓ z = ⟨[false], takePolyFun var
++⟨inParam z, dropPolyFun var ⟨postOffsetOut ℓ z, postPoints z⟩⟩⟩`. -/
++def postQueryOut (ℓ : PolyExpr) (z : List Bool) : List Bool :=
++  pairEncode [false] (takePolyFun .var
++    (pairEncode (NUPPT.inParam z)
++      (dropPolyFun .var (pairEncode (postOffsetOut ℓ z) (postPoints z)))))
++
++/-- `postQueryOut ℓ z = ⟨[false], takePolyFun var ⟨inParam z, dropPolyFun var ⟨postOffsetOut ℓ z,
++postPoints z⟩⟩⟩`. -/
++theorem postQueryOut_eq (ℓ : PolyExpr) (z : List Bool) :
++    postQueryOut ℓ z = pairEncode [false] (takePolyFun .var
++      (pairEncode (NUPPT.inParam z)
++        (dropPolyFun .var (pairEncode (postOffsetOut ℓ z) (postPoints z))))) :=
++  rfl
++
++/-- **The post-processing of the next-query machine at answer width `ℓ(n)`**: the verdict
++`[true, [a = [true]]]` once the history has `|u|` blocks (of length `histBlockLenOut ℓ`), the
++query `⟨[false], ρ_k⟩` before: `postFunOut ℓ z = if |postBudget z| ≤ |postCountOut ℓ z| then
++postVerdict z else postQueryOut ℓ z`. -/
++def postFunOut (ℓ : PolyExpr) (z : List Bool) : List Bool :=
++  if decide ((postBudget z).length ≤ (postCountOut ℓ z).length) = true then postVerdict z
++  else postQueryOut ℓ z
++
++/-- `postFunOut ℓ z = if |postBudget z| ≤ |postCountOut ℓ z| then postVerdict z
++else postQueryOut ℓ z`. -/
++theorem postFunOut_eq (ℓ : PolyExpr) (z : List Bool) :
++    postFunOut ℓ z =
++      if decide ((postBudget z).length ≤ (postCountOut ℓ z).length) = true then postVerdict z
++      else postQueryOut ℓ z :=
++  rfl
++
++/-- `postFunOut ℓ` is polynomial-time: `PolyTimeComputable (postFunOut ℓ)`.
++
++**Proof sketch.** As `polyTimeComputable_postFun`, with the block length `histBlockLenOut ℓ`:
++projections of the layout, two block maps (`polyTimeComputable_blockMapFun`), the typed cuts, a
++length test (`StateLoop.lenLe_comp`), an equality test and one branch. -/
++theorem polyTimeComputable_postFunOut (ℓ : PolyExpr) : PolyTimeComputable (postFunOut ℓ) := by
+   have hArg := NUPPT.polyTimeComputable_inArg
+   have hParam := NUPPT.polyTimeComputable_inParam
+   have hHist : PolyTimeComputable postHist :=
+@@ -318,15 +458,15 @@ theorem polyTimeComputable_postFun : PolyTimeComputable postFun := by
+     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp
+       (polyTimeComputable_pairFstD.comp hArg))
+   have hAns : PolyTimeComputable postAns := polyTimeComputable_pairSndD.comp hArg
+-  have hCount : PolyTimeComputable postCount :=
+-    (polyTimeComputable_blockMapFun histBlockLen (polyTimeComputable_const [true])).comp
++  have hCount : PolyTimeComputable (postCountOut ℓ) :=
++    (polyTimeComputable_blockMapFun (histBlockLenOut ℓ) (polyTimeComputable_const [true])).comp
+       (hParam.pairEncode hHist)
+-  have hOffset : PolyTimeComputable postOffset :=
+-    (polyTimeComputable_blockMapFun histBlockLen
++  have hOffset : PolyTimeComputable (postOffsetOut ℓ) :=
++    (polyTimeComputable_blockMapFun (histBlockLenOut ℓ)
+       (polyTimeComputable_unary.comp
+         (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD))).comp
+       (hParam.pairEncode hHist)
+-  have hQuery : PolyTimeComputable postQuery :=
++  have hQuery : PolyTimeComputable (postQueryOut ℓ) :=
+     (polyTimeComputable_const [false]).pairEncode ((polyTimeComputable_pairTakePoly .var).comp
+       (hParam.pairEncode ((polyTimeComputable_pairDropPoly .var).comp
+         (hOffset.pairEncode hPoints))))
+@@ -335,10 +475,62 @@ theorem polyTimeComputable_postFun : PolyTimeComputable postFun := by
+       (polyTimeComputable_pairEq.comp (hAns.pairEncode (polyTimeComputable_const [true])))
+   exact polyTimeComputable_ite (StateLoop.lenLe_comp hCount hBudget) hVerdict hQuery
+ 
++/-- **The post-processing of the next-query machine** on the raw layout
++`⟨⟨⟨1^n, ⟨⟨⟨H, ρ⟩, ⟨M, u⟩⟩, a⟩⟩, []⟩, r⟩`: if the history already has `|u|` blocks, the
++verdict `[true, [a = [true]]]`; otherwise the query `⟨[false], ρ_k⟩` at the `k`-th point,
++`k` the number of history blocks. -/
++def postFun (z : List Bool) : List Bool :=
++  if decide ((postBudget z).length ≤ (postCount z).length) = true then postVerdict z
++  else postQuery z
++
++/-- The `n`-bit block count is the case `ℓ = var` of `postCountOut`:
++`postCount z = postCountOut var z` (equal block lengths `6n + 6 = 4n + 2n + 6`). -/
++theorem postCount_eq_postCountOut (z : List Bool) : postCount z = postCountOut .var z := by
++  simp only [postCount, postCountOut, blockMapFun, eval_histBlockLen, eval_histBlockLenOut,
++    PolyExpr.eval_var, show ∀ m : ℕ, 4 * m + 2 * m + 6 = 6 * m + 6 from fun m => by omega]
++
++/-- The `n`-bit offset is the case `ℓ = var` of `postOffsetOut`:
++`postOffset z = postOffsetOut var z`. -/
++theorem postOffset_eq_postOffsetOut (z : List Bool) : postOffset z = postOffsetOut .var z := by
++  simp only [postOffset, postOffsetOut, blockMapFun, eval_histBlockLen, eval_histBlockLenOut,
++    PolyExpr.eval_var, show ∀ m : ℕ, 4 * m + 2 * m + 6 = 6 * m + 6 from fun m => by omega]
++
++/-- The `n`-bit query move is the case `ℓ = var` of `postQueryOut`:
++`postQuery z = postQueryOut var z`. -/
++theorem postQuery_eq_postQueryOut (z : List Bool) : postQuery z = postQueryOut .var z := by
++  rw [postQuery, postQueryOut, postOffset_eq_postOffsetOut]
++
++/-- The `n`-bit post-processor is the case `ℓ = var` of `postFunOut`:
++`postFun z = postFunOut var z`. -/
++theorem postFun_eq_postFunOut (z : List Bool) : postFun z = postFunOut .var z := by
++  rw [postFun, postFunOut, postCount_eq_postCountOut, postQuery_eq_postQueryOut]
++
++/-- `postFun` is polynomial-time.
++
++**Proof sketch.** The case `ℓ = var` of `polyTimeComputable_postFunOut`
++(`postFun_eq_postFunOut`). -/
++theorem polyTimeComputable_postFun : PolyTimeComputable postFun :=
++  (polyTimeComputable_postFunOut .var).congr fun z => (postFun_eq_postFunOut z).symm
++
++/-- **The mask of a message vector at answer width `l`** (for `n`-bit queries): the concatenation
++of the mask blocks of its entries,
++`maskOfOut n v = (List.ofFn fun j => maskBlockOut n (v j)).flatten`. -/
++def maskOfOut {l k : ℕ} (n : ℕ) (v : Fin k → Fin l → Bool) : List Bool :=
++  (List.ofFn fun j => maskBlockOut n (v j)).flatten
++
++/-- `maskOfOut n v = (List.ofFn fun j => maskBlockOut n (v j)).flatten`. -/
++theorem maskOfOut_eq {l k : ℕ} (n : ℕ) (v : Fin k → Fin l → Bool) :
++    maskOfOut n v = (List.ofFn fun j => maskBlockOut n (v j)).flatten :=
++  rfl
++
+ /-- The mask of a message vector: the concatenation of the mask blocks of its entries. -/
+ def maskOf {n k : ℕ} (v : Fin k → Fin n → Bool) : List Bool :=
+   (List.ofFn fun j => maskBlock (v j)).flatten
+ 
++/-- The `n`-bit mask is the case `l = n` of `maskOfOut`: `maskOf v = maskOfOut n v` (`rfl`). -/
++theorem maskOf_eq_maskOfOut {n k : ℕ} (v : Fin k → Fin n → Bool) : maskOf v = maskOfOut n v :=
++  rfl
++
+ /-- The length of a concatenation of strings of a common length `b`. -/
+ theorem length_flatten_of_length (b : ℕ) : ∀ L : List (List Bool),
+     (∀ x ∈ L, x.length = b) → L.flatten.length = L.length * b
+@@ -349,19 +541,48 @@ theorem length_flatten_of_length (b : ℕ) : ∀ L : List (List Bool),
+       List.length_cons]
+     ring
+ 
++/-- The mask of `k` messages of `l` bits for `n`-bit queries has `k (4n + 2l + 6)` bits:
++`|maskOfOut n v| = k · (4n + 2l + 6)`. -/
++theorem length_maskOfOut {l k : ℕ} (n : ℕ) (v : Fin k → Fin l → Bool) :
++    (maskOfOut n v).length = k * (4 * n + 2 * l + 6) := by
++  unfold maskOfOut
++  rw [length_flatten_of_length (4 * n + 2 * l + 6), List.length_ofFn]
++  intro x hx
++  obtain ⟨j, -, rfl⟩ := List.mem_ofFn.1 hx
++  exact length_maskBlockOut _ _
++
+ /-- The length of the mask of `k` messages of `n` bits is `k (6n + 6)`. -/
+ theorem length_maskOf {n k : ℕ} (v : Fin k → Fin n → Bool) :
+     (maskOf v).length = k * (6 * n + 6) := by
+-  unfold maskOf
+-  rw [length_flatten_of_length (6 * n + 6), List.length_ofFn]
+-  intro x hx
+-  obtain ⟨j, -, rfl⟩ := List.mem_ofFn.1 hx
+-  exact length_maskBlock _
++  rw [maskOf_eq_maskOfOut, length_maskOfOut]
++  congr 1
++  omega
+ 
+ /-- The advice bound of the next-query machine: `|⟨mask, 1^{q+1}⟩|`. -/
+ def adviceBound (q : PolyExpr) : PolyExpr :=
+   .add (.add (.mul (.const 2) (.mul (.add q (.const 1)) histBlockLen)) (.const 2)) (.add q (.const 1))
+ 
++/-- The advice bound of the next-query machine at answer width `ℓ`: `|⟨mask, 1^{q+1}⟩|`,
++`adviceBoundOut q ℓ = 2 · ((q + 1) · histBlockLenOut ℓ) + 2 + (q + 1)`. -/
++def adviceBoundOut (q ℓ : PolyExpr) : PolyExpr :=
++  .add (.add (.mul (.const 2) (.mul (.add q (.const 1)) (histBlockLenOut ℓ))) (.const 2))
++    (.add q (.const 1))
++
++/-- `adviceBoundOut q ℓ = 2 · ((q + 1) · histBlockLenOut ℓ) + 2 + (q + 1)` (the defining
++equation). -/
++theorem adviceBoundOut_eq (q ℓ : PolyExpr) :
++    adviceBoundOut q ℓ =
++      .add (.add (.mul (.const 2) (.mul (.add q (.const 1)) (histBlockLenOut ℓ))) (.const 2))
++        (.add q (.const 1)) :=
++  rfl
++
++/-- `(adviceBoundOut q ℓ).eval n = 2 ((q(n) + 1)(4n + 2ℓ(n) + 6)) + 2 + (q(n) + 1)`. -/
++theorem eval_adviceBoundOut (q ℓ : PolyExpr) (n : ℕ) :
++    (adviceBoundOut q ℓ).eval n =
++      2 * ((q.eval n + 1) * (4 * n + 2 * ℓ.eval n + 6)) + 2 + (q.eval n + 1) := by
++  simp only [adviceBoundOut, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
++    eval_histBlockLenOut]
++
+ /-- Decoding the well-formed query move `⟨[false], x⟩`. -/
+ theorem decodeOracleMove_query (ℓ : ℕ) (x : Fin ℓ → Bool) :
+     decodeOracleMove ℓ (pairEncode [false] (List.ofFn x)) = .query x := by
+@@ -371,40 +592,44 @@ theorem decodeOracleMove_query (ℓ : ℕ) (x : Fin ℓ → Bool) :
+ theorem decodeOracleMove_ret (ℓ : ℕ) (b : Bool) : decodeOracleMove ℓ [true, b] = .ret b :=
+   decodeOracleMove_true_two ℓ b
+ 
+-/-- **The post-processor on the layout of the composite machine**: for a history of `k` pairs
+-of `n`-bit strings, the points string `P`, a mask `M`, the budget string `u` and the
+-distinguisher's output `a`, the move is the verdict `[true, [a = [true]]]` when `|u| ≤ k` and
+-the query `⟨[false], P[k n, (k+1) n)⟩` otherwise.
++/-- **The post-processor at answer width `ℓ(n)` on the layout of the composite machine**: for a
++history of `k` pairs of an `n`-bit query and an `ℓ(n)`-bit answer, the points string `P`, a mask
++`M`, the budget string `u` and the distinguisher's output `a`, the move is the verdict
++`[true, [a = [true]]]` when `|u| ≤ k` and the query `⟨[false], P[k n, (k+1) n)⟩` otherwise.
+ 
+ **Proof sketch.** The projections of the layout read the slots; the two block maps on
+-`⟨1^n, encodeHist hist⟩` output `1^k` and `1^{k n}` (`encodeHist_eq_flatMap`,
+-`flatMap_range_blocks` with blocks of length `6n + 6`, `flatMap_const_singleton`,
++`⟨1^n, encodeHist hist⟩` output `1^k` and `1^{k n}` (`encodeHist_eq_flatMapOut`,
++`flatMap_range_blocks` with blocks of length `4n + 2ℓ(n) + 6 > 0`, `flatMap_const_singleton`,
+ `flatMap_const_replicate`); the typed cuts then select the block. -/
+-theorem postFun_layout {n : ℕ} (hist : List ((Fin n → Bool) × (Fin n → Bool)))
+-    (P M u a : List Bool) :
+-    postFun (NUPPT.layout (List.replicate n true)
++theorem postFunOut_layout {n : ℕ} (ℓ : PolyExpr)
++    (hist : List ((Fin n → Bool) × (Fin (ℓ.eval n) → Bool))) (P M u a : List Bool) :
++    postFunOut ℓ (NUPPT.layout (List.replicate n true)
+         (pairEncode (pairEncode (pairEncode (encodeHist hist) P) (pairEncode M u)) a) [] []) =
+       if u.length ≤ hist.length then [true, decide (a = [true])]
+       else pairEncode [false] ((P.drop (hist.length * n)).take n) := by
+   set z := NUPPT.layout (List.replicate n true)
+     (pairEncode (pairEncode (pairEncode (encodeHist hist) P) (pairEncode M u)) a) [] [] with hz
+-  have harg : NUPPT.inArg z = pairEncode (pairEncode (pairEncode (encodeHist hist) P) (pairEncode M u)) a :=
++  have harg : NUPPT.inArg z =
++      pairEncode (pairEncode (pairEncode (encodeHist hist) P) (pairEncode M u)) a :=
+     NUPPT.inArg_layout _ _ _ _
+   have hpar : NUPPT.inParam z = List.replicate n true := NUPPT.inParam_layout _ _ _ _
+-  have hblocks : ∀ x ∈ hist, (histBlock x).length = 6 * n + 6 := fun x _ => length_histBlock x
+-  have hpos : 0 < 6 * n + 6 := by omega
+-  have hcount : postCount z = List.replicate hist.length true := by
+-    simp only [postCount, postHist, harg, hpar, pairFstD_pairEncode, pairSndD_pairEncode,
+-      blockMapFun, List.length_replicate, eval_histBlockLen, encodeHist_eq_flatMap]
+-    exact (flatMap_range_blocks histBlock (fun _ => [true]) hpos hist hblocks).trans
++  have hblocks : ∀ x ∈ hist, (histBlockOut x).length = 4 * n + 2 * ℓ.eval n + 6 :=
++    fun x _ => length_histBlockOut x
++  have hpos : 0 < 4 * n + 2 * ℓ.eval n + 6 := by omega
++  have hcount : postCountOut ℓ z = List.replicate hist.length true := by
++    simp only [postCountOut, postHist, harg, hpar, pairFstD_pairEncode, pairSndD_pairEncode,
++      blockMapFun, List.length_replicate, eval_histBlockLenOut, encodeHist_eq_flatMapOut]
++    exact (flatMap_range_blocks histBlockOut (fun _ => [true]) hpos hist hblocks).trans
+       (flatMap_const_singleton hist)
+-  have hoffset : postOffset z = List.replicate (hist.length * n) true := by
+-    simp only [postOffset, postHist, harg, hpar, pairFstD_pairEncode, pairSndD_pairEncode,
+-      blockMapFun, List.length_replicate, eval_histBlockLen, encodeHist_eq_flatMap]
+-    refine (flatMap_range_blocks histBlock
+-      (fun blk => List.replicate (pairFstD (pairFstD blk)).length true) hpos hist hblocks).trans ?_
+-    show hist.flatMap (fun x => List.replicate (pairFstD (pairFstD (histBlock x))).length true) = _
+-    simp only [pairFstD_pairFstD_histBlock, List.length_ofFn]
++  have hoffset : postOffsetOut ℓ z = List.replicate (hist.length * n) true := by
++    simp only [postOffsetOut, postHist, harg, hpar, pairFstD_pairEncode, pairSndD_pairEncode,
++      blockMapFun, List.length_replicate, eval_histBlockLenOut, encodeHist_eq_flatMapOut]
++    refine (flatMap_range_blocks histBlockOut
++      (fun blk => List.replicate (pairFstD (pairFstD blk)).length true) hpos hist
++        hblocks).trans ?_
++    show hist.flatMap
++      (fun x => List.replicate (pairFstD (pairFstD (histBlockOut x))).length true) = _
++    simp only [pairFstD_pairFstD_histBlockOut, List.length_ofFn]
+     exact flatMap_const_replicate n hist
+   have hbudget : postBudget z = u := by
+     simp only [postBudget, harg, pairFstD_pairEncode, pairSndD_pairEncode]
+@@ -412,14 +637,29 @@ theorem postFun_layout {n : ℕ} (hist : List ((Fin n → Bool) × (Fin n → Bo
+     simp only [postAns, harg, pairSndD_pairEncode]
+   have hpoints : postPoints z = P := by
+     simp only [postPoints, harg, pairFstD_pairEncode, pairSndD_pairEncode]
+-  simp only [postFun, hbudget, hcount, List.length_replicate]
++  simp only [postFunOut, hbudget, hcount, List.length_replicate]
+   by_cases h : u.length ≤ hist.length
+   · rw [if_pos (by simpa using h), if_pos h]
+     simp only [postVerdict, hans, pairFstD_pairEncode, pairSndD_pairEncode]
+     rfl
+   · rw [if_neg (by simpa using h), if_neg h]
+-    simp only [postQuery, takePolyFun, dropPolyFun, hoffset, hpoints, hpar, pairFstD_pairEncode,
+-      pairSndD_pairEncode, List.length_replicate, PolyExpr.eval_var]
++    simp only [postQueryOut, takePolyFun, dropPolyFun, hoffset, hpoints, hpar,
++      pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, PolyExpr.eval_var]
++
++/-- **The post-processor on the layout of the composite machine**: for a history of `k` pairs
++of `n`-bit strings, the points string `P`, a mask `M`, the budget string `u` and the
++distinguisher's output `a`, the move is the verdict `[true, [a = [true]]]` when `|u| ≤ k` and
++the query `⟨[false], P[k n, (k+1) n)⟩` otherwise.
++
++**Proof sketch.** The case `ℓ = var` of `postFunOut_layout` (`postFun_eq_postFunOut`). -/
++theorem postFun_layout {n : ℕ} (hist : List ((Fin n → Bool) × (Fin n → Bool)))
++    (P M u a : List Bool) :
++    postFun (NUPPT.layout (List.replicate n true)
++        (pairEncode (pairEncode (pairEncode (encodeHist hist) P) (pairEncode M u)) a) [] []) =
++      if u.length ≤ hist.length then [true, decide (a = [true])]
++      else pairEncode [false] ((P.drop (hist.length * n)).take n) := by
++  rw [postFun_eq_postFunOut]
++  exact postFunOut_layout .var hist P M u a
+ 
+ /-- Concatenating the chunks `f (F i)` of a tuple: `flatMap` over `ofFn`. -/
+ theorem flatMap_ofFn {α : Type*} {k : ℕ} (F : Fin k → α) (f : α → List Bool) :
+@@ -427,6 +667,23 @@ theorem flatMap_ofFn {α : Type*} {k : ℕ} (F : Fin k → α) (f : α → List
+   rw [List.flatMap_def, List.map_ofFn]
+   rfl
+ 
++/-- **Masking the canonical history at answer width `l`**: the pre-processor on the encoded
++history `((ρ_j, g ρ_j))_j` with the mask `maskOfOut n v` outputs the encoded tuple
++`(ρ_j, v_j ⊕ g(ρ_j))_j`: `preFun ⟨⟨encodeHist …, P⟩, ⟨maskOfOut n v, u⟩⟩ =
++(List.ofFn fun j => ⟨⟨⟦ρ j⟧, ⟦v j + g (ρ j)⟧⟩, []⟩).flatten` (`zipWith_xor_flatten_ofFn`,
++`zipWith_xor_histBlockOut_maskBlockOut`). -/
++theorem preFun_encodeHistOut {n l k : ℕ} (ρ : Fin k → Fin n → Bool) (v : Fin k → Fin l → Bool)
++    (g : (Fin n → Bool) → (Fin l → Bool)) (P u : List Bool) :
++    preFun (pairEncode (pairEncode (encodeHist (List.ofFn fun i => (ρ i, g (ρ i)))) P)
++        (pairEncode (maskOfOut n v) u)) =
++      (List.ofFn fun j =>
++        pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (v j + g (ρ j)))) []).flatten := by
++  simp only [preFun, pairFstD_pairEncode, pairSndD_pairEncode, encodeHist_eq_flatMapOut,
++    maskOfOut, flatMap_ofFn]
++  rw [zipWith_xor_flatten_ofFn _ _ fun j => by rw [length_histBlockOut, length_maskBlockOut]]
++  exact congrArg List.flatten (congrArg List.ofFn (funext fun j =>
++    zipWith_xor_histBlockOut_maskBlockOut (ρ j) (g (ρ j)) (v j)))
++
+ /-- **Masking the canonical history**: the pre-processor on the encoded history
+ `((ρ_j, g ρ_j))_j` with the mask of `v` outputs the encoded ciphertext tuple
+ `(ρ_j, v_j ⊕ g(ρ_j))_j` (`zipWith_xor_flatten_ofFn`, `zipWith_xor_histBlock_maskBlock`). -/
+@@ -436,48 +693,45 @@ theorem preFun_encodeHist {n k : ℕ} (ρ v : Fin k → Fin n → Bool)
+         (pairEncode (maskOf v) u)) =
+       (List.ofFn fun j =>
+         pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (v j + g (ρ j)))) []).flatten := by
+-  simp only [preFun, pairFstD_pairEncode, pairSndD_pairEncode, encodeHist_eq_flatMap, maskOf,
+-    flatMap_ofFn]
+-  rw [zipWith_xor_flatten_ofFn _ _ fun j => by rw [length_histBlock, length_maskBlock]]
+-  exact congrArg List.flatten (congrArg List.ofFn (funext fun j =>
+-    zipWith_xor_histBlock_maskBlock (ρ j) (g (ρ j)) (v j)))
+-
+-/-- **The next-query machine of Thm-99.2.1** ([PS10, Theorem 99.2, proof, "`H¹` and `H²` …
+-by closure under efficient operations we contradict the pseudorandomness property"]): for a
+-non-uniform PPT `D` (a distinguisher of encoded ciphertext tuples), a budget polynomial `q` and
+-message vectors `v n ∈ ({0,1}^n)^{q(n)+1}`, there is a non-uniform PPT `B` whose coins at `n`
+-are, up to a bijection `φ`, the `q(n) + 1` points `ρ` and the coins `c` of `D`, and whose
+-query tree with budget `q(n) + 1`, evaluated against any oracle `g`, gives `D`'s verdict on the
+-encoded tuple `(ρ_j, v_j ⊕ g(ρ_j))_j` with coins `c` (an equality of outputs; the sequence of
+-queries is not part of the statement).
+-
+-**Proof sketch.** `B` is `exists_split` (the first `(q(n)+1) n` coins are the points) of
+-`exists_withAdvice` (advice `⟨maskOf (v n), 1^{q(n)+1}⟩`) of `exists_seq` of `D ∘ preFun`
+-(`exists_comp`) and the uniform machine of `postFun`. On the encoded history `H` of `k`
+-blocks the post-processor asks `ρ_k` while `k ≤ q(n)` and otherwise outputs `[true, b]` with
+-`b` the verdict of `D` on `H ⊕ maskOf (v n)` (`postFun_layout`, `take_drop_ofFn_blocks`,
+-`preFun_encodeHist`). The tree `buildTree` from the empty history is evaluated by induction on
+-the remaining budget `j` along the canonical history `((ρ_i, g ρ_i))_{i < q(n)+1-j}`. -/
+-theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
+-    (v : ∀ n, Fin (q.eval n + 1) → Fin n → Bool) :
++  rw [maskOf_eq_maskOfOut]
++  exact preFun_encodeHistOut ρ v g P u
++
++/-- **The next-query machine of Thm-99.2.1 at answer width `ℓ(n)`** ([PS10, Theorem 99.2, proof,
++with `ℓ`-bit outputs]): for a non-uniform PPT `D`, a budget polynomial `q` and masks
++`v n ∈ ({0,1}^{ℓ(n)})^{q(n)+1}`, there is a non-uniform PPT `B` whose coins at `n` are, up to a
++bijection `φ`, the `q(n) + 1` points `ρ` and the coins `c` of `D`, such that for every oracle
++`g : {0,1}^n → {0,1}^{ℓ(n)}`,
++`(B.toOracleAdversary n n ℓ(n) (q(n) + 1) (φ (ρ, c))).eval g =
++decide (D.runAt n ⟦(⟨⟨ρ_j, v_j ⊕ g(ρ_j)⟩, []⟩)_j⟧ c = [true])`.
++
++**Proof sketch.** As `exists_queryChain_nuppt`, with the string layer at answer width `ℓ(n)`:
++`B` is `exists_split` (the first `(q(n)+1) n` coins are the points) of `exists_withAdvice` (advice
++`⟨maskOfOut n (v n), 1^{q(n)+1}⟩`, bound `adviceBoundOut q ℓ`) of `exists_seq` of `D ∘ preFun`
++and the uniform machine of `postFunOut ℓ`. On the encoded history of `k` blocks of
++`4n + 2ℓ(n) + 6` bits the post-processor asks `ρ_k` while `k ≤ q(n)`, and then outputs `D`'s
++verdict on the masked history (`postFunOut_layout`, `take_drop_ofFn_blocks`,
++`preFun_encodeHistOut`); `buildTree` is evaluated by induction on the remaining budget along the
++canonical history `((ρ_i, g ρ_i))_i`. -/
++theorem exists_queryChainOut_nuppt (D : NUPPT) (q ℓ : PolyExpr)
++    (v : ∀ n, Fin (q.eval n + 1) → Fin (ℓ.eval n) → Bool) :
+     ∃ B : NUPPT, ∀ n, ∃ φ : (Fin (q.eval n + 1) → Fin n → Bool) × D.Coins n ≃ B.Coins n,
+-      ∀ (g : (Fin n → Bool) → (Fin n → Bool)) (ρ : Fin (q.eval n + 1) → Fin n → Bool)
+-        (c : D.Coins n),
+-        (B.toOracleAdversary n n n (q.eval n + 1) (φ (ρ, c))).eval g =
++      ∀ (g : (Fin n → Bool) → (Fin (ℓ.eval n) → Bool))
++        (ρ : Fin (q.eval n + 1) → Fin n → Bool) (c : D.Coins n),
++        (B.toOracleAdversary n n (ℓ.eval n) (q.eval n + 1) (φ (ρ, c))).eval g =
+           decide (D.runAt n (List.ofFn fun j =>
+             pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (v n j + g (ρ j)))) []).flatten c =
+               [true]) := by
+   classical
+-  have hβ : ∀ n, (pairEncode (maskOf (v n)) (List.replicate (q.eval n + 1) true)).length ≤
+-      (adviceBound q).eval n := by
++  have hβ : ∀ n, (pairEncode (maskOfOut n (v n)) (List.replicate (q.eval n + 1) true)).length ≤
++      (adviceBoundOut q ℓ).eval n := by
+     intro n
+-    simp only [length_pairEncode, length_maskOf, List.length_replicate, adviceBound,
+-      PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, eval_histBlockLen, le_refl]
++    rw [length_pairEncode, length_maskOfOut, List.length_replicate, eval_adviceBoundOut]
+   obtain ⟨D₁, hD₁c, -, -, hD₁⟩ := D.exists_comp polyTimeComputable_preFun polyTimeComputable_id
+   obtain ⟨C, hCc, -, hC⟩ :=
+-    D₁.exists_seq (NUPPT.ofPolyTimeUniform polyTimeComputable_postFun (.const 0))
++    D₁.exists_seq (NUPPT.ofPolyTimeUniform (polyTimeComputable_postFunOut ℓ) (.const 0))
+   obtain ⟨C₂, hC₂c, hC₂⟩ := C.exists_withAdvice
+-    (fun n => pairEncode (maskOf (v n)) (List.replicate (q.eval n + 1) true)) (adviceBound q) hβ
++    (fun n => pairEncode (maskOfOut n (v n)) (List.replicate (q.eval n + 1) true))
++    (adviceBoundOut q ℓ) hβ
+   obtain ⟨B, hBc, -, hB⟩ := C₂.exists_split (.mul (.add q (.const 1)) .var)
+   refine ⟨B, fun n => ?_⟩
+   have hlen : B.coinLen n = (q.eval n + 1) * n + D.coinLen n := by
+@@ -497,13 +751,14 @@ theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
+     exact (List.ofFn_congr hlen.symm _).symm
+   -- the activation of `B` on an encoded history
+   have hD₁len : D₁.coinLen n = D.coinLen n := by simp only [NUPPT.coinLen_eq, hD₁c]
+-  have hrun : ∀ hist : List ((Fin n → Bool) × (Fin n → Bool)),
++  have hrun : ∀ hist : List ((Fin n → Bool) × (Fin (ℓ.eval n) → Bool)),
+       B.runAt n (encodeHist hist) (φ (ρ, c)) =
+-        postFun (NUPPT.layout (List.replicate n true)
++        postFunOut ℓ (NUPPT.layout (List.replicate n true)
+           (pairEncode (pairEncode (pairEncode (encodeHist hist) Pstr)
+-              (pairEncode (maskOf (v n)) (List.replicate (q.eval n + 1) true)))
++              (pairEncode (maskOfOut n (v n)) (List.replicate (q.eval n + 1) true)))
+             (D.runAt n (preFun (pairEncode (pairEncode (encodeHist hist) Pstr)
+-              (pairEncode (maskOf (v n)) (List.replicate (q.eval n + 1) true)))) c)) [] []) := by
++              (pairEncode (maskOfOut n (v n)) (List.replicate (q.eval n + 1) true)))) c))
++          [] []) := by
+     intro hist
+     have hp : (PolyExpr.mul (.add q (.const 1)) .var).eval n = (q.eval n + 1) * n := by
+       simp only [PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const, PolyExpr.eval_var]
+@@ -517,7 +772,7 @@ theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
+     simp only [NUPPT.layout_eq, NUPPT.advInput_eq, NUPPT.runAt_eq, id_eq]
+   -- the canonical history along the points `ρ` against the oracle `g`
+   let ρ' : ℕ → Fin n → Bool := fun i => if h : i < q.eval n + 1 then ρ ⟨i, h⟩ else fun _ => false
+-  let hist : ℕ → List ((Fin n → Bool) × (Fin n → Bool)) :=
++  let hist : ℕ → List ((Fin n → Bool) × (Fin (ℓ.eval n) → Bool)) :=
+     fun k => List.ofFn fun i : Fin k => (ρ' i, g (ρ' i))
+   have hρ' : ∀ (i : ℕ) (hi : i < q.eval n + 1), ρ' i = ρ ⟨i, hi⟩ := fun i hi => dif_pos hi
+   have hist_len : ∀ k, (hist k).length = k := fun k => List.length_ofFn
+@@ -526,25 +781,26 @@ theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
+     simp only [hist]
+     rw [List.ofFn_succ', List.concat_eq_append]
+     simp only [Fin.coe_castSucc, Fin.val_last]
+-  have hist_top : hist (q.eval n + 1) = List.ofFn fun i : Fin (q.eval n + 1) => (ρ i, g (ρ i)) := by
++  have hist_top :
++      hist (q.eval n + 1) = List.ofFn fun i : Fin (q.eval n + 1) => (ρ i, g (ρ i)) := by
+     simp only [hist]
+     congr 1
+     funext i
+     rw [hρ' i i.isLt]
+   -- the next-query function of `B`
+-  set next : List ((Fin n → Bool) × (Fin n → Bool)) → OracleMove n :=
++  set next : List ((Fin n → Bool) × (Fin (ℓ.eval n) → Bool)) → OracleMove n :=
+     fun h => decodeOracleMove n (B.runAt n (encodeHist h) (φ (ρ, c))) with hnext
+   have hquery : ∀ k (hk : k < q.eval n + 1), next (hist k) = .query (ρ ⟨k, hk⟩) := by
+     intro k hk
+     simp only [hnext]
+-    rw [hrun, postFun_layout, hist_len, if_neg (by simp; omega), hPstr,
++    rw [hrun, postFunOut_layout, hist_len, if_neg (by simp; omega), hPstr,
+       take_drop_ofFn_blocks _ k hk, Equiv.apply_symm_apply, decodeOracleMove_query]
+   have hret : next (hist (q.eval n + 1)) =
+       .ret (decide (D.runAt n (List.ofFn fun j =>
+         pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (v n j + g (ρ j)))) []).flatten c =
+           [true])) := by
+     simp only [hnext]
+-    rw [hrun, postFun_layout, hist_len, if_pos (by simp), hist_top, preFun_encodeHist,
++    rw [hrun, postFunOut_layout, hist_len, if_pos (by simp), hist_top, preFun_encodeHistOut,
+       decodeOracleMove_ret]
+   -- evaluation of the tree by induction on the remaining budget
+   have main : ∀ j, j ≤ q.eval n + 1 →
+@@ -569,4 +825,68 @@ theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
+   rw [NUPPT.toOracleAdversary_eq]
+   exact this
+ 
++/-- **The one-query next-query machine at answer width `ℓ(n)`** ([PS10, Definition 96.2,
++clause (2), with `ℓ`-bit outputs]): for a non-uniform PPT `D` there is a non-uniform PPT `B`
++whose coins at `n` are, up to a bijection `φ`, a point `r ∈ {0,1}^n` and the coins `c` of `D`,
++such that for every oracle `g : {0,1}^n → {0,1}^{ℓ(n)}`, with the budget `1`,
++`(B.toOracleAdversary n n ℓ(n) 1 (φ (r, c))).eval g = decide (D.runAt n ⟨⟦r⟧, ⟦g r⟧⟩ c = [true])`.
++
++**Proof sketch.** `exists_queryChainOut_nuppt` with `q = 0`, the zero mask, and `D` precomposed
++with `pairFstD` (`NUPPT.exists_comp`): the encoded one-entry tuple is `⟨⟨⟦r⟧, ⟦g r⟧⟩, []⟩`, whose
++first component is `⟨⟦r⟧, ⟦g r⟧⟩`. The coins are `r` read as the one-point tuple
++(`Equiv.funUnique`, `finCongr`) and `D`'s coins carried to the composite (`NUPPT.coinsCongr`);
++the budget `(const 0)(n) + 1` is `1` (`PolyExpr.eval_const`). -/
++theorem exists_oneQuery_nuppt (D : NUPPT) (ℓ : PolyExpr) :
++    ∃ B : NUPPT, ∀ n, ∃ φ : (Fin n → Bool) × D.Coins n ≃ B.Coins n,
++      ∀ (g : (Fin n → Bool) → (Fin (ℓ.eval n) → Bool)) (r : Fin n → Bool) (c : D.Coins n),
++        (B.toOracleAdversary n n (ℓ.eval n) 1 (φ (r, c))).eval g =
++          decide (D.runAt n (pairEncode (List.ofFn r) (List.ofFn (g r))) c = [true]) := by
++  obtain ⟨D₁, hD₁c, -, -, hD₁⟩ :=
++    D.exists_comp polyTimeComputable_pairFstD polyTimeComputable_id
++  obtain ⟨B, hB⟩ := exists_queryChainOut_nuppt D₁ (.const 0) ℓ fun _ _ => 0
++  refine ⟨B, fun n => ?_⟩
++  obtain ⟨φ, hφ⟩ := hB n
++  have h1 : 1 = (PolyExpr.const 0).eval n + 1 := by rw [PolyExpr.eval_const]
++  let e : (Fin n → Bool) ≃ (Fin ((PolyExpr.const 0).eval n + 1) → Fin n → Bool) :=
++    (Equiv.funUnique (Fin 1) (Fin n → Bool)).symm.trans
++      (Equiv.arrowCongr (finCongr h1) (Equiv.refl _))
++  have he : ∀ (r : Fin n → Bool) j, e r j = r := fun r j => rfl
++  refine ⟨(e.prodCongr (NUPPT.coinsCongr hD₁c.symm n)).trans φ, fun g r c => ?_⟩
++  -- the budget `1` is `(const 0)(n) + 1`
++  have hbud : ∀ (m : ℕ), m = (PolyExpr.const 0).eval n + 1 → ∀ x : B.Coins n,
++      (B.toOracleAdversary n n (ℓ.eval n) m x).eval g =
++        (B.toOracleAdversary n n (ℓ.eval n) ((PolyExpr.const 0).eval n + 1) x).eval g := by
++    rintro m rfl x
++    rfl
++  rw [hbud 1 h1, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, hφ]
++  congr 2
++  -- the one-entry tuple, read by `pairFstD`
++  rw [NUPPT.runAt_coinsCongr, hD₁, id_eq, ← NUPPT.runAt_eq]
++  congr 1
++  have hnil : ∀ (f : Fin ((PolyExpr.const 0).eval n) → List Bool), List.ofFn f = [] :=
++    fun f => List.eq_nil_of_length_eq_zero (by rw [List.length_ofFn, PolyExpr.eval_const])
++  rw [List.ofFn_succ, hnil, List.flatten_cons, List.flatten_nil, List.append_nil,
++    pairFstD_pairEncode, he, zero_add]
++
++/-- **The next-query machine of Thm-99.2.1** ([PS10, Theorem 99.2, proof, "`H¹` and `H²` …
++by closure under efficient operations we contradict the pseudorandomness property"]): for a
++non-uniform PPT `D` (a distinguisher of encoded ciphertext tuples), a budget polynomial `q` and
++message vectors `v n ∈ ({0,1}^n)^{q(n)+1}`, there is a non-uniform PPT `B` whose coins at `n`
++are, up to a bijection `φ`, the `q(n) + 1` points `ρ` and the coins `c` of `D`, and whose
++query tree with budget `q(n) + 1`, evaluated against any oracle `g`, gives `D`'s verdict on the
++encoded tuple `(ρ_j, v_j ⊕ g(ρ_j))_j` with coins `c` (an equality of outputs; the sequence of
++queries is not part of the statement).
++
++**Proof sketch.** The case `ℓ = var` of `exists_queryChainOut_nuppt`. -/
++theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
++    (v : ∀ n, Fin (q.eval n + 1) → Fin n → Bool) :
++    ∃ B : NUPPT, ∀ n, ∃ φ : (Fin (q.eval n + 1) → Fin n → Bool) × D.Coins n ≃ B.Coins n,
++      ∀ (g : (Fin n → Bool) → (Fin n → Bool)) (ρ : Fin (q.eval n + 1) → Fin n → Bool)
++        (c : D.Coins n),
++        (B.toOracleAdversary n n n (q.eval n + 1) (φ (ρ, c))).eval g =
++          decide (D.runAt n (List.ofFn fun j =>
++            pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (v n j + g (ρ j)))) []).flatten c =
++              [true]) :=
++  exists_queryChainOut_nuppt D q .var v
++
+ end TCSlib.Cryptography.MultiMsg
+diff --git a/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean b/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean
+index 119db84b3..5a6bd3120 100644
+--- a/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean
++++ b/TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean
+@@ -45,6 +45,9 @@ also gives verdict `false` (foundation decision D7 of `PassShelatChapter2-4Plan.
+   finite hybrid bound for oracle ensembles.
+ * `TCSlib.Cryptography.prfAdv_toOracleAdversary` and `PRF.negligible_prfAdv`
+   connect the PRF contract to the concrete advantage.
++* `TCSlib.Cryptography.prfAdv_toOracleAdversary_out` and
++  `OracleEnsemble.Indist.negligible_prfAdv` do so at `ℓ₂(n)`-bit outputs (ruling B3); the two
++  `n`-bit results are their cases `ℓ₂ = var`.
+ 
+ ## References
+ 
+@@ -424,6 +427,38 @@ structure PRF (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → B
+   /-- Clause (2): `{s ← U_n : f_s} ≈ {F ← RF_n : F}` as oracle ensembles. -/
+   pseudorandom : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := .var) F).Indist (OracleEnsemble.random .var .var)
+ 
++/-- **The PRF advantage at `ℓ₂(n)`-bit outputs** (the advantage of [PS10, Definition 96.2],
++clause (2), "with `ℓ`-bit outputs"): for a keyed family `F n : {0,1}^n → {0,1}^n → {0,1}^{ℓ₂(n)}`,
++the advantage of the next-query machine `D` with budget `q` between the keyed ensemble and the
++random functions with `ℓ₂(n)`-bit outputs is the concrete PRF advantage of [Gar26, Definition 3.9]:
++`distAdv ((keyed F).O n) ((random var ℓ₂).O n) (oracleDist D^{n,ℓ₂(n),q}) =
++prfAdv (F n) D^{n,ℓ₂(n),q}` (definitional: `prfAdv F A = distAdv F (randomFunction I O)
++(oracleDist A)`). -/
++theorem prfAdv_toOracleAdversary_out {ℓ₂ : PolyExpr}
++    (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (ℓ₂.eval n) → Bool)) (D : NUPPT) (n q : ℕ) :
++    distAdv ((OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := ℓ₂) F).O n)
++        ((OracleEnsemble.random .var ℓ₂).O n)
++        (oracleDist (D.toOracleAdversary n n (ℓ₂.eval n) q)) =
++      prfAdv (F n) (D.toOracleAdversary n n (ℓ₂.eval n) q) := by
++  rw [prfAdv_def]
++  rfl
++
++/-- **Pseudorandomness at `ℓ₂(n)`-bit outputs, unfolded** ([PS10, Definition 96.2], clause (2),
++"with `ℓ`-bit outputs"): if the keyed ensemble of `F n : {0,1}^n → {0,1}^n → {0,1}^{ℓ₂(n)}` is
++oracle-indistinguishable from the random functions with `ℓ₂(n)`-bit outputs, then every
++next-query machine `D` with every polynomial budget `q` has negligible concrete PRF advantage:
++`Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n ℓ₂(n) q(n))`. This is the form in
++which a consumer of an `ℓ`-output PRF (such as `SecureComputation.PRFOut`, whose clause (2) is
++the hypothesis) reads it. -/
++theorem OracleEnsemble.Indist.negligible_prfAdv {ℓ₂ : PolyExpr}
++    {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (ℓ₂.eval n) → Bool)}
++    (hF : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := ℓ₂) F).Indist
++      (OracleEnsemble.random .var ℓ₂))
++    (D : NUPPT) (q : PolyExpr) :
++    Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n (ℓ₂.eval n) (q.eval n)) :=
++  (congrArg Negligible (funext fun n => prfAdv_toOracleAdversary_out F D n (q.eval n))).mp
++    (hF D q)
++
+ /-- The advantage of the next-query machine `D` with budget `q` between the keyed family `F`
+ and the random functions is the concrete PRF advantage `prfAdv` of [Gar26, Definition 3.9]
+ (definitional: `prfAdv F A = distAdv F (randomFunction I O) (oracleDist A)`). -/
+@@ -431,17 +466,15 @@ theorem prfAdv_toOracleAdversary (F : ∀ n, (Fin n → Bool) → (Fin n → Boo
+     (D : NUPPT) (n q : ℕ) :
+     distAdv ((OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := .var) F).O n) ((OracleEnsemble.random .var .var).O n)
+         (oracleDist (D.toOracleAdversary n n n q)) =
+-      prfAdv (F n) (D.toOracleAdversary n n n q) := by
+-  rw [prfAdv_def]
+-  rfl
++      prfAdv (F n) (D.toOracleAdversary n n n q) :=
++  prfAdv_toOracleAdversary_out (ℓ₂ := .var) F D n q
+ 
+ /-- **Pseudorandomness unfolded**: for a PRF `F`, every next-query machine `D` with every
+ polynomial budget `q` has negligible concrete PRF advantage `prfAdv (F n) (D^{(q n)})` — the
+ form in which the Garg-layer reductions consume [PS10, Definition 96.2]. -/
+ theorem PRF.negligible_prfAdv {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool)}
+     (hF : PRF F) (D : NUPPT) (q : PolyExpr) :
+-    Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n n (q.eval n)) := by
+-  exact (congrArg Negligible (funext fun n => prfAdv_toOracleAdversary F D n (q.eval n))).mp
+-    (hF.pseudorandom D q)
++    Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n n (q.eval n)) :=
++  hF.pseudorandom.negligible_prfAdv D q
+ 
+ end TCSlib.Cryptography
