@@ -215,6 +215,19 @@ private theorem ladner_pad_nil (h : ℕ → ℕ) : ([] : List Bool) ∉ padSAT h
     List.length_replicate] at hlen
   omega
 
+/-- Prepending a word to the binary word of a positive number gives the binary word of a
+number at least as large. [AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_bits_prepend (u : List Bool) (j : ℕ) (hj : 0 < j) :
+    ∃ i, j ≤ i ∧ i.bits = u ++ j.bits := by
+  induction u with
+  | nil => exact ⟨j, le_rfl, rfl⟩
+  | cons b u ih =>
+    obtain ⟨i, hi, hbits⟩ := ih
+    refine ⟨Nat.bit b i, ?_, ?_⟩
+    · rw [Nat.bit_val]
+      omega
+    · rw [Nat.bits_append_bit i b (fun hz => by omega), hbits, List.cons_append]
+
 /-- Every coded machine occurs at arbitrarily large canonical binary indices.
 [AB09, Theorem 3.3 and its proof]
 
@@ -235,18 +248,8 @@ private theorem ladner_padded_index (M : CodeTM) (B : ℕ) :
         omega
       · rw [Nat.bits_append_bit j true (fun _ => rfl), hbits,
           List.replicate_succ (n := b + 1)]
-  have prepend (u : List Bool) (j : ℕ) (hj : 0 < j) :
-      ∃ i, j ≤ i ∧ i.bits = u ++ j.bits := by
-    induction u with
-    | nil => exact ⟨j, le_rfl, rfl⟩
-    | cons b u ih =>
-      obtain ⟨i, hi, hbits⟩ := ih
-      refine ⟨Nat.bit b i, ?_, ?_⟩
-      · rw [Nat.bit_val]
-        omega
-      · rw [Nat.bits_append_bit i b (fun hz => by omega), hbits, List.cons_append]
   obtain ⟨j, hj, hbits⟩ := ones B
-  obtain ⟨i, hi, hi_bits⟩ := prepend (expCode.encode M) j (by omega)
+  obtain ⟨i, hi, hi_bits⟩ := ladner_bits_prepend (expCode.encode M) j (by omega)
   refine ⟨i, by omega, ?_⟩
   rw [ladnerMachine_eq, hi_bits, hbits, expCode.toMachineCode.decode_encode_pad]
 
@@ -695,27 +698,32 @@ private theorem ladner_parse_FP : PolyTimeComputable ladner_parseWord := by
     simp only [ladner_parseWord, hp, Function.comp_apply, hf, if_true, hpre',
       BinArith.sub_pairEncode, ht']
 
-/-- The padding syntax test is polynomial-time when its exponent function is.
+/-- The padding syntax test, for an exponent function that may depend on the input word, is
+polynomial-time when the exponent at the parsed prefix length is.
 
 **Proof sketch.** Parse the word and compute the prefix length and exponent in binary.
 Use the saturated power with cap parameter equal to the suffix length. Its result equals
 the suffix length exactly when the full power does; this avoids allocating an enormous
 power. [AB09, Theorem 3.3 and its proof] -/
-private theorem ladner_syntax_FP {h : ℕ → ℕ}
-    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length))) :
-    PolyTimeComputable (fun y => [ladner_padSyntax h y]) := by
+private theorem ladner_padSyntax_FP {g : List Bool → List Bool} {h : List Bool → ℕ → ℕ}
+    (hg : PolyTimeComputable g)
+    (hh : PolyTimeComputable (fun z : List Bool =>
+      Nat.bits (h (pairSndD z) (pairFstD z).length))) :
+    PolyTimeComputable (fun S => [ladner_padSyntax (h S) (g S)]) := by
   have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
     polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
-  have hpre := BinArith.polyTimeComputable_slot2.comp ladner_parse_FP
-  have ht := BinArith.polyTimeComputable_slot3.comp ladner_parse_FP
+  have hp := ladner_parse_FP.comp hg
+  have hpre := BinArith.polyTimeComputable_slot2.comp hp
+  have ht := BinArith.polyTimeComputable_slot3.comp hp
+  have he := hh.comp (hpre.pairEncode polyTimeComputable_id)
   have hpow := BinArith.polyTimeComputable_powCap.comp
-    ((hl.comp hpre).pairEncode ((hp.comp hpre).pairEncode ht))
+    ((hl.comp hpre).pairEncode (he.pairEncode ht))
   have heq := BinArith.polyTimeComputable_beq.comp (ht.pairEncode hpow)
-  have hout := polyTimeComputable_ite (polyTimeComputable_isNil.comp ladner_parse_FP)
+  have hout := polyTimeComputable_ite (polyTimeComputable_isNil.comp hp)
     (polyTimeComputable_const [false]) heq
   convert hout using 1
-  funext y
-  cases hy : ladner_parse y with
+  funext S
+  cases hy : ladner_parse (g S) with
   | none => simp only [ladner_padSyntax, ladner_parseWord, hy, Function.comp_apply,
       decide_true, if_true]
   | some pt =>
@@ -726,12 +734,21 @@ private theorem ladner_syntax_FP {h : ℕ → ℕ}
       rw [length_pairEncode] at he'
       simp only [List.length_cons, List.length_nil] at he'
       omega
-    simp only [ladner_padSyntax, ladner_parseWord, hy, Function.comp_apply,
+    simp only [ladner_padSyntax, ladner_parseWord, hy, Function.comp_apply, id_eq,
       hne, decide_false, Bool.false_eq_true, if_false, pairFstD_pairEncode,
       pairSndD_pairEncode, BinArith.powCap_pairEncode, BinArith.beq_pairEncode]
-    have heq' : (t = min (p.length ^ h p.length) (t + 1)) ↔
-        t = p.length ^ h p.length := by omega
+    have heq' : (t = min (p.length ^ h S p.length) (t + 1)) ↔
+        t = p.length ^ h S p.length := by omega
     simp only [heq']
+
+/-- The padding syntax test is polynomial-time when its exponent function is: the
+instance of `ladner_padSyntax_FP` with a fixed exponent function.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_syntax_FP {h : ℕ → ℕ}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length))) :
+    PolyTimeComputable (fun y => [ladner_padSyntax h y]) :=
+  ladner_padSyntax_FP (h := fun _ => h) polyTimeComputable_id
+    (hp.comp polyTimeComputable_pairFstD)
 
 /-- Padding membership is successful parsing, the prescribed suffix length, and SAT
 membership of the prefix. [AB09, Theorem 3.3 and its proof] -/
@@ -902,17 +919,8 @@ private theorem ladner_shortWords_complete (a : ℕ) (x : List Bool) :
     rw [List.length_dropLast]
     omega
   · intro hx
-    have sentinel : ∀ w : List Bool, ∃ n : ℕ, 0 < n ∧ Nat.bits n = w ++ [true] := by
-      intro w
-      induction w with
-      | nil => exact ⟨1, by decide, Nat.one_bits⟩
-      | cons b w ih =>
-        obtain ⟨n, hn, he⟩ := ih
-        refine ⟨Nat.bit b n, ?_, ?_⟩
-        · rw [Nat.bit_val]
-          omega
-        · rw [Nat.bits_append_bit n b (fun hz => by omega), he, List.cons_append]
-    obtain ⟨n, hn, he⟩ := sentinel x
+    obtain ⟨n, hn, he⟩ := ladner_bits_prepend x 1 Nat.one_pos
+    rw [Nat.one_bits] at he
     have hlt := LogProg.lt_two_pow_bits n
     rw [he, List.length_append, List.length_cons, List.length_nil] at hlt
     have hna : n < 2 ^ (a + 1) := hlt.trans_le
@@ -1160,23 +1168,34 @@ private theorem ladner_short_SAT_on_image (f : List Bool → List Bool)
   exact ((FinTM.computesFunInTime_iff _ _ _).mp hN z).mono
     (ladner_composition_clock C q _ (d + 3) z.length)
 
+/-- A canonical index below the double logarithm of a word's length is an FP test.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_index_lt_loglog_FP {f g : List Bool → List Bool}
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun S => [decide
+      (LogProg.bitsVal (f S) < Nat.log 2 (Nat.log 2 (g S).length))]) := by
+  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
+    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hi := BinArith.polyTimeComputable_normBits.comp hf
+  have hcap := ladner_binary_log_FP.comp (ladner_binary_log_FP.comp (hl.comp hg))
+  convert BinArith.polyTimeComputable_lt.comp (hi.pairEncode hcap) using 1
+  funext S
+  simp only [Function.comp_apply, LogProg.bitsVal_bits, BinArith.lt_pairEncode]
+
 /-- The query guard is an FP test of canonical binary lengths and indices.
 [AB09, Theorem 3.3 and its proof] -/
 private theorem ladner_validQuery_FP :
     PolyTimeComputable (fun S => [decide (ladner_validQuery S)]) := by
   have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
     polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
-  have hn := hl.comp polyTimeComputable_pairFstD
-  have hi := BinArith.polyTimeComputable_normBits.comp BinArith.polyTimeComputable_slot2
   have hx := hl.comp BinArith.polyTimeComputable_slot3
-  have hlog := ladner_binary_log_FP.comp hn
-  have hloglog := ladner_binary_log_FP.comp hlog
+  have hlog := ladner_binary_log_FP.comp (hl.comp polyTimeComputable_pairFstD)
   convert polyTimeComputable_and
-    (BinArith.polyTimeComputable_lt.comp (hi.pairEncode hloglog))
+    (ladner_index_lt_loglog_FP BinArith.polyTimeComputable_slot2 polyTimeComputable_pairFstD)
     (BinArith.polyTimeComputable_le.comp (hx.pairEncode hlog)) using 1
   funext S
-  simp only [Function.comp_apply, LogProg.bitsVal_bits, BinArith.lt_pairEncode,
-    BinArith.le_pairEncode, Bool.decide_and, ladner_validQuery]
+  simp only [Function.comp_apply, LogProg.bitsVal_bits, BinArith.le_pairEncode,
+    Bool.decide_and, ladner_validQuery]
 
 /-- The guarded simulator query has a polynomial preparation machine and clock.
 [AB09, Theorem 3.3 and its proof]
@@ -1305,43 +1324,18 @@ private def ladner_tableSyntax (S : List Bool) : Bool :=
   | none => false
   | some (p, t) => decide (t = p.length ^ (ladner_values (pairSndD S)).getD p.length 0)
 
-/-- Table-dependent padding syntax is FP, even for enormous malformed exponents.
-[AB09, Theorem 3.3 and its proof]
-
-**Proof sketch.** Parse the first component, look up the prefix-length table entry in
-canonical form, and compare the suffix length with the saturated power at that length.
-Mask unsuccessful parses. `BinArith.powCap` bounds every intermediate power. -/
+/-- Table-dependent padding syntax is FP, even for enormous malformed exponents: the
+instance of `ladner_padSyntax_FP` whose exponent is read from the supplied table.
+[AB09, Theorem 3.3 and its proof] -/
 private theorem ladner_tableSyntax_FP : PolyTimeComputable (fun S => [ladner_tableSyntax S]) := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
-  have hp := ladner_parse_FP.comp polyTimeComputable_pairFstD
-  have hpre := BinArith.polyTimeComputable_slot2.comp hp
-  have ht := BinArith.polyTimeComputable_slot3.comp hp
-  have he := ladner_get_value_FP.comp (hpre.pairEncode polyTimeComputable_pairSndD)
-  have hpow := BinArith.polyTimeComputable_powCap.comp
-    ((hl.comp hpre).pairEncode (he.pairEncode ht))
-  have heq := BinArith.polyTimeComputable_beq.comp (ht.pairEncode hpow)
-  have hout := polyTimeComputable_ite (polyTimeComputable_isNil.comp hp)
-    (polyTimeComputable_const [false]) heq
-  convert hout using 1
-  funext S
-  cases hy : ladner_parse (pairFstD S) with
-  | none => simp only [ladner_tableSyntax, ladner_parseWord, hy, Function.comp_apply,
-      decide_true, if_true]
-  | some pt =>
-    obtain ⟨p, t⟩ := pt
-    have hne : pairEncode [true] (pairEncode p (Nat.bits t)) ≠ [] := by
-      intro he
-      have he' := congrArg List.length he
-      rw [length_pairEncode] at he'
-      simp only [List.length_cons, List.length_nil] at he'
-      omega
-    simp only [ladner_tableSyntax, ladner_parseWord, hy, Function.comp_apply,
-      hne, decide_false, Bool.false_eq_true, if_false, pairFstD_pairEncode,
-      pairSndD_pairEncode, BinArith.powCap_pairEncode, BinArith.beq_pairEncode]
-    have heq' : (t = min (p.length ^ (ladner_values (pairSndD S)).getD p.length 0) (t + 1)) ↔
-        t = p.length ^ (ladner_values (pairSndD S)).getD p.length 0 := by omega
-    simp only [heq']
+  have hh : PolyTimeComputable (fun z : List Bool => Nat.bits
+      ((ladner_values (pairSndD (pairSndD z))).getD (pairFstD z).length 0)) := by
+    convert ladner_get_value_FP.comp
+      (polyTimeComputable_pairFstD.pairEncode BinArith.polyTimeComputable_slot3) using 1
+    funext z
+    simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+  exact ladner_padSyntax_FP (h := fun S m => (ladner_values (pairSndD S)).getD m 0)
+    polyTimeComputable_pairFstD hh
 
 /-- The short-word guard relative to the memo entry count is an FP predicate.
 [AB09, Theorem 3.3 and its proof] -/
@@ -1429,16 +1423,12 @@ private theorem ladner_short_pad_FP
 private theorem ladner_ctxGuard_FP : PolyTimeComputable (fun C => [decide (ladner_ctxGuard C)]) := by
   have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
     polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
-  have hn := hl.comp polyTimeComputable_pairFstD
-  have hi := BinArith.polyTimeComputable_normBits.comp BinArith.polyTimeComputable_slot2
   have hcount := ladner_values_length_FP.comp BinArith.polyTimeComputable_slot3
-  have hcap := ladner_binary_log_FP.comp (ladner_binary_log_FP.comp hn)
   convert polyTimeComputable_and
-    (BinArith.polyTimeComputable_beq.comp (hn.pairEncode hcount))
-    (BinArith.polyTimeComputable_lt.comp (hi.pairEncode hcap)) using 1
+    (BinArith.polyTimeComputable_beq.comp ((hl.comp polyTimeComputable_pairFstD).pairEncode hcount))
+    (ladner_index_lt_loglog_FP BinArith.polyTimeComputable_slot2 polyTimeComputable_pairFstD) using 1
   funext C
-  simp only [Function.comp_apply, LogProg.bitsVal_bits, BinArith.beq_pairEncode,
-    BinArith.lt_pairEncode, ladner_ctxGuard, Bool.decide_and]
+  simp only [Function.comp_apply, BinArith.beq_pairEncode, ladner_ctxGuard, Bool.decide_and]
 
 /-- Deleting the high sentinel bit is FP through reversal and the public tail routine.
 [AB09, Theorem 3.3 and its proof] -/
