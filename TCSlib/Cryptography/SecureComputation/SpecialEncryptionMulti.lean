@@ -242,49 +242,6 @@ variable (G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → 
   (hGE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) =
     List.ofFn (G n s x))
 
-/-- The key generator of `specialScheme` outputs its coins: `Gen(1^n; rg) = ⟦rg⟧`. -/
-private theorem specialScheme_gen_runAt (n : ℕ) :
-    ∀ rg : (specialScheme G E hE hGE).gen.Coins n,
-      (specialScheme G E hE hGE).gen.runAt n [] rg = List.ofFn rg := by
-  rw [specialScheme_gen]
-  intro rg
-  exact runAt_coinKey .var n rg
-
-/-- The encryption machine of `specialScheme` is `spEncStr` with its coins as the nonce. -/
-private theorem specialScheme_enc_runAt (n : ℕ) :
-    ∀ (k m : List Bool) (re : (specialScheme G E hE hGE).enc.Coins n),
-      (specialScheme G E hE hGE).enc.runAt n (pairEncode k m) re =
-        spEncStr E k m (List.ofFn re) := by
-  rw [specialScheme_enc]
-  intro k m re
-  exact runAt_spEnc hE .var n k m re
-
-/-- The key coins of `specialScheme` as an `n`-bit key, keeping the string. -/
-private noncomputable def specialKeyEq (n : ℕ) :
-    (specialScheme G E hE hGE).gen.Coins n ≃ (Fin n → Bool) :=
-  (NUPPT.coinsCongr (by rw [specialScheme_gen]) n).trans
-    ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n).trans
-      (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool)))
-
-/-- `⟦specialKeyEq n rg⟧ = ⟦rg⟧`. -/
-private theorem ofFn_specialKeyEq (n : ℕ) (rg : (specialScheme G E hE hGE).gen.Coins n) :
-    List.ofFn (specialKeyEq G E hE hGE n rg) = List.ofFn rg := by
-  rw [specialKeyEq, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
-    NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, NUPPT.coinsCongr_ofFn]
-
-/-- The encryption coins of `specialScheme` as an `n`-bit nonce, keeping the string. -/
-private noncomputable def specialNonceEq (n : ℕ) :
-    (specialScheme G E hE hGE).enc.Coins n ≃ (Fin n → Bool) :=
-  (NUPPT.coinsCongr (by rw [specialScheme_enc]) n).trans
-    ((NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_spEncFun hE) .var n).trans
-      (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool)))
-
-/-- `⟦specialNonceEq n re⟧ = ⟦re⟧`. -/
-private theorem ofFn_specialNonceEq (n : ℕ) (re : (specialScheme G E hE hGE).enc.Coins n) :
-    List.ofFn (specialNonceEq G E hE hGE n re) = List.ofFn re := by
-  rw [specialNonceEq, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
-    NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, NUPPT.coinsCongr_ofFn]
-
 /-- **The frozen Claim 157.a (i) from the joint lemma** [PS10, §6.2.2, Definition 93.1]: if the
 length-doubling family `G` is slice multi-message secure, then `specialScheme G E hE hGE` is
 multi-message secure. With `sliceMultiMessageSecure_of_prfOut` this gives
@@ -305,8 +262,8 @@ theorem specialScheme_multiMessageSecure_of_joint (h : SliceMultiMessageSecure G
   let e : (specialScheme G E hE hGE).gen.Coins n ×
       (Fin (q.eval n + 1) → (specialScheme G E hE hGE).enc.Coins n) ≃
       (Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool) :=
-    (specialKeyEq G E hE hGE n).prodCongr
-      (Equiv.piCongrRight fun _ => specialNonceEq G E hE hGE n)
+    (specialScheme_keyCoinsEquiv G E hE hGE n).prodCongr
+      (Equiv.piCongrRight fun _ => specialScheme_nonceCoinsEquiv G E hE hGE n)
   have hX : ∀ v : Fin (q.eval n + 1) → Fin n → Bool,
       (specialScheme G E hE hGE).multiEncDist n (q.eval n) v =
         fun t => sliceMultiEncDist G n (q.eval n) (fun _ => 0) (fun _ => n) v (e t) := by
@@ -316,7 +273,8 @@ theorem specialScheme_multiMessageSecure_of_joint (h : SliceMultiMessageSecure G
     refine congrArg PrivateKeyScheme.encodeList (congrArg List.ofFn (funext fun i => ?_))
     rw [specialScheme_gen_runAt, specialScheme_enc_runAt, sliceEnc_eq_spEncStr hGE]
     simp only [e, Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.piCongrRight_apply,
-      Pi.map_apply, List.drop_zero, ofFn_specialKeyEq, ofFn_specialNonceEq]
+      Pi.map_apply, List.drop_zero, specialScheme_keyCoinsEquiv_ofFn,
+      specialScheme_nonceCoinsEquiv_ofFn]
   rw [distAdv_def, hX m, hX m', acceptProb_comp_equiv, acceptProb_comp_equiv, ← distAdv_def]
   exact hb n (fun _ => 0) (fun _ => n) (fun _ => by show 0 + n + n ≤ n + n; omega) m m'
 
