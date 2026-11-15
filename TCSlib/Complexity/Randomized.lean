@@ -197,7 +197,8 @@ closure calculus, and the repetition lemma.
 - `Randomized.Repetition`: the repetition lemma `polyTimeComputable_iterateFind` and its
   iteration variants.
 - `Randomized.SeedMajority`: the counting enumeration host, deterministic majority over all
-  seeds of a polynomial-time test in `DTIME(2^{w(n)} · poly)` ([AB09, §7.1, p. 126];
+  seeds of a polynomial-time test: one machine with its correctness, its time `2^{w(n)} · poly`
+  and a head envelope, and the `DTIME` corollary ([AB09, §7.1, p. 126];
   [PS10, Theorem 180.1]; statement phase).
 
 All entries, and the files they describe, cite the printed book's (2009) numbering.
