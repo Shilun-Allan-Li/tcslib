@@ -1,4 +1,3 @@
-**Staged, not dispatched.** Ladner fill 4 (Codex): target 1 part B and the proof of `ladnerH_polyTime`. Base `1320a5c8`
-(after #320); step 1 applies the approved reorder patch. Pre-shipped at the moved base (preship/: 0 errors).
-Bundle `outbox/fills/fill-ladner-poly-memo/` (SHA-256 `cadf4790`, 15 sections, exchange `6e846acb`); prompt.md.
-Delivery expected under `arora-barak-ch3-4/inbox/fill-ladner-poly-memo/` and attached in chat.
+**Delivered (2026-11-15); in gate 139** (draft PR #321). Codex's final zip `fill-ladner-poly-memo.zip` (SHA-256 `139b49ff`,
+with checkpoint 1) is in `arora-barak-ch3-4/inbox/fill-ladner-poly-memo/`. Target 1 proved, no escalation: the approved reorder
+plus 21 private declarations, and `ladnerH_polyTime`'s body. Landed verbatim as `9e3df79e` and `80c18b7e`. See campaign/gates/139-ladner-poly-memo/.
