@@ -1,0 +1,8 @@
+'TCSlib.Cryptography.headD_drop_ofFn' depends on axioms: [propext]
+'TCSlib.Cryptography.Authentication.LamportFill.headD_drop_ofFn' depends on axioms: [propext]
+'TCSlib.Cryptography.Authentication.LamportFill.run_input' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Authentication.lamport_oneTimeSecure' depends on axioms: [propext, Classical.choice, Quot.sound]
+@TCSlib.Cryptography.headD_drop_ofFn : ∀ {α : Type u_1} {n : ℕ} (f : Fin n → α) (i : Fin n) (d : α),
+  (List.drop (↑i) (List.ofFn f)).headD d = f i
+@TCSlib.Cryptography.Authentication.LamportFill.headD_drop_ofFn : ∀ {n : ℕ} (m : Fin n → Bool) (i : Fin n),
+  (List.drop (↑i) (List.ofFn m)).headD false = m i
