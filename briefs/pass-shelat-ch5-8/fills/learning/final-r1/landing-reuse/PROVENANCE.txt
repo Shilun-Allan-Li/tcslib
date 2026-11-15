@@ -1,0 +1,114 @@
+learning landing edit LE-reuse (proof only), maintainer, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0 (cdd38ac5115b), PATH=$HOME/.elan/bin:$PATH; one Lean process at a time, only
+  scripts/lean_check_tree.sh (worktree copy byte-equal to /home/user/tcslib/scripts/) through tools-used/review/runner.py
+  (= learning-r1 tools/runner.py, the G26-N1-fixed runner) with TCSLIB_OLEANS=$SP/dl-oleans-2 (dl-oleans not touched); no lake
+  command; nothing pushed; /home/user/tcslib working tree not edited.
+Method and tools: the learning-r1 review ($SP/dl-review/learning-r1/, PROVENANCE.txt there) and the dl-crh LE-reuse job
+  (dl-review/dl-crh-r1-reuse-evidence.zip: impcheck.py, docheader.py; read from an extraction, not modified).
+
+landing: branch land/pass-shelat-learning (local, no upstream), worktree $SP/wt-land-learning (sparse, briefs/ excluded;
+  .lake/packages -> /home/user/tcslib/.lake/packages, present from the review).
+  parent LE-doc    7f5bdd510c15357ca8e4bc28ca74ec6bcdf211c1 (tree 240da5030a2f55d2649f435abaff1b161345272b)
+  head   LE-reuse  8befc58966fd39f974a54250849736df194584b9 (tree 5ad10b2805cd43d65c290e31b4140ca233ef1b9a)
+  author = committer = Claude <noreply@anthropic.com>, SSH-signed by the environment default (commit.gpgsign=true), as the
+  parent; message logs/commit-msg.txt ending with the two trailer lines (checks/commit.txt). Patch 0001-LE-reuse.patch.
+  checks/changed-paths.txt: one path, M TCSlib/Cryptography/Randomness/Learning/Random.lean (203 -> 189 lines, max width 98
+  characters at both revisions, checks/widths.txt). Worktree clean at the head (checks/worktree-status.txt).
+  The edit was applied by tools-used/lereuse_edit.py (4 exact replacements); diff checks/le-reuse.diff.
+
+edit (Random.lean):
+  (1) Finding 1. LearnPRF.uprob_eq_point is now proved from the public OneWay.uprob_eq_one_div_card (OneWayFunctions/Basic.lean),
+      already in Random's closure (checks/imports.txt, chain through Asymptotic.ReductionSupport):
+        rw [show (fun x : Fin n → Bool => y = x) = (fun x => x = y) from
+            funext fun _ => propext eq_comm, OneWay.uprob_eq_one_div_card, Fintype.card_fun,
+          Fintype.card_bool, Fintype.card_fin, Nat.cast_pow, Nat.cast_two]
+      Docstring: the original text is kept byte-for-byte; one paragraph is appended before `-/`:
+        "**Proof sketch.** This is `OneWay.uprob_eq_one_div_card` with the equation reversed and `|{0,1}^n| = 2^n`."
+      (it had no sketch paragraph; checks/docstring-delta.txt: pure insertion, 115-character common prefix).
+  (2) Finding 2. In abs_gameProb_random_sub_half_le, `hpt` (pointwise |p t − ½| ≤ [bad t]), `hcard` and the averaging proof of
+      `hdev` (14 + 2 + 9 lines) are replaced by the public coupling bound MultiMsg.abs_uexp_sub_le_uprob
+      (Encryption/PrivateKey/FromPRF/HybridLemmas.lean:61) with a = p, b = fun _ => 1/2, E = bad, plus OneWay.uexp_const:
+        have hdev : |uexp p - 1 / 2| ≤ uprob bad := by
+          have h := MultiMsg.abs_uexp_sub_le_uprob p (fun _ => 1 / 2) bad
+            (fun _ => ⟨uprob_nonneg _, uprob_le_one _⟩) (fun _ => ⟨by norm_num, by norm_num⟩)
+            (fun t hb => uprob_flip_half hn ℓ t.1.1 t.1.2 t.2 fun j hj => hb ⟨j, Finset.mem_univ j, hj⟩)
+          rwa [OneWay.uexp_const] at h
+      The adaptation is modest (the three hypotheses are the old by_cases branches; the constant average is uexp_const), so the
+      finding was not stopped. The rest of the proof (hgame, the union bound, the final calc) is unchanged. Docstring: the sketch's
+      "Averaging," gains the parenthesis "(the coupling bound `MultiMsg.abs_uexp_sub_le_uprob` against the constant `½`)"
+      (pure insertion, checks/docstring-delta.txt).
+  (3) import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas after the existing import.
+  Statements unchanged (below). The new proofs compile first time, with no warning.
+
+imports (checks/imports.txt; tools-used/impcheck.py, impdelta2.py; source-level graph; parent from a git-archive export):
+  HybridLemmas was NOT in Random's closure at 7f5bdd51 (123 project modules). The import adds exactly one module,
+  Encryption.PrivateKey.FromPRF.HybridLemmas itself, to the closures of Random (-> 124), Randomness.Learning and Randomness;
+  0 to root TCSlib. Its own closure (30 modules) was already inside Random's. No cycle: HybridLemmas' closure contains none of
+  the 5 unit modules. The seal request sets are unchanged (HybridLemmas adds no definition, rule10 below).
+
+statements (statements/; tools-used/review/ = learning-r1 tools, unmodified: diff -r empty):
+  decls2-vs-7f5bdd51.tsv and .err (decls2.py over the 5 unit files, unit-paths.txt): both empty.
+  touched-7f5bdd51-vs-head.tsv: 2 CHANGED (uprob_eq_point, abs_gameProb_random_sub_half_le), 59 UNCHANGED.
+  header-bytes-vs-7f5bdd51.txt (headerbytes.py; touched-before.json = eff2dcd0 vs 7f5bdd51, touched-after.json = eff2dcd0 vs head;
+    endpoints predictAdv_prfConcept_negligible, not_weakLearnsUnder_prfConcept): 63 compared, 0 different or missing.
+    (A first run passed the head declaration map for both revisions and reported the 11 Random.lean declarations below the new
+    import line as DIFFERENT, an off-by-one in the line map, not in the source; rerun as above.)
+  checks/docstring-header.txt (docheader.py): both theorems' keyword-to-`:=` headers identical; the docstrings differ by the
+    insertions above only (RESULT FAIL there is the docstring comparison, by design).
+
+build (build/, order/head-build-queue.txt = learning-r1 order/head-build-queue.txt; logs build/runner.out): the tree starts at base,
+  so the full 66-module set of the review's head build was rebuilt: the #303/#306/#307/#308/#309 base delta and its downstream,
+  the 5 unit modules (Sample, Distinguisher, Law, Random, Learning), Randomness, root TCSlib and audits/pass-shelat/Checks.
+  66/66 rc 0, 0 errors (errors and errors_diag), 0 sorry; warnings DDH 3, Lamport Blocks 2, InversionProbability 2, MachineSpec 2,
+  Realization 1, Rejection 10, Extraction 2 (all inherited, as in the review); Random 0 warnings (build/summary.txt).
+  Against the review's records (learning-r1 build/ + edit-build/ at 7f5bdd51, tools-used/buildsum.py): every module has the same
+  source and object SHA-256 except Random (source and olean changed); Learning, Randomness, TCSlib and Checks oleans byte-identical.
+  HybridLemmas is unchanged since eff2dcd0 and outside the delta's downstream, so its base olean is the head olean (not rebuilt).
+
+axioms (axioms/; probe AxiomsHead.lean.txt run as RuProbe/AxiomsHead at 8befc589, rc 0):
+  predictAdv_prfConcept_negligible, not_weakLearnsUnder_prfConcept, LearnPRF.uprob_eq_point and
+  LearnPRF.abs_gameProb_random_sub_half_le: each [propext, Classical.choice, Quot.sound].
+
+Rule 10 (rule10/), Random.lean at 8befc589:
+  collector rule10/probe-sources/CollectHead.lean.txt = mkcollect.py(NmCollect.template.lean, rule10/order/head-owners.txt = Random)
+    run as RuProbe/CollectHead (probe-runs/, rc 0): CAT 2367, MODULE Random stored 12 (review: 12).
+  seals: mkseals_ab.py strict -> seals/{A,B}; mkseals_coe.py coe -> seals-coe/{A,B}; B with SEAL_EVAL=1; mkseals-*.log.
+    Requests strict A 1732, B 1733, coe A 1731, coe B 1732 = the review's. seal-rows-vs-review.txt (tools-used/sealrows.py vs
+    learning-r1 seals*/): per variant 0 rows gone, 0 new, 0 changed; term readers (firstBit, gameProb, uexp, uprob, PAC.label) and
+    excluded terms identical.
+    Runs seal-runs/ (order/seal-control-queue.txt, NOSTOP=1, seal-runner.out); sealsum.py with statements/touched-after.json:
+    seals-A.tsv, seals-B.tsv, seals-coe-A.tsv, seals-coe-B.tsv: strict A pass, strict B pass, coe A pass, coe B pass (rc 0,
+    0 errors, install and EOF records present). As in the review (Random pass in A and B, strict and coe).
+  paired controls (tools-used/mkctl_reuse.py = mkctl_learning.py with rows uprob, uexp (new: rfl vs uexp_def), PAC.label and
+    PolyExpr.eval; the FinDist rows dropped, they hit the strict-harness projection artifact recorded in learning-r1), run on the
+    strict records (seals-flat/ -> controls-strict/, RuProbe/KS) and on the coe records (seals-coe-flat/ -> controls-coe/,
+    RuProbe/K): 4 probes each (ControlS/ControlU x A/B), 7 sealed negatives each (A: uprob, uexp, label; B: those and
+    PolyExpr.eval). ctlcheck-coe.log and ctlcheck-strict.log (ctlcheck2.py): each negative fails exactly once when sealed, all
+    readers and all unsealed probes pass, no stray error: ALL_OK True in both.
+  probe-copies-check.txt: the 14 probe sources in the worktree were byte-equal to the copies here before RuProbe/ was removed.
+
+lint (lint/): python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography --check8b in the worktree with the edit
+  (lint-edit.log): 92 FAIL, 101 WARN over 347 files. Parent 7f5bdd51: learning-r1 lint/lint-landinghead-le.log (copied as
+  lint-parent-7f5bdd51-from-learning-r1.log), 92 / 101. FAIL and WARN lines identical (whitespace-normalised); the full diff is
+  Random.lean's INFO line (203 -> 189 lines).
+
+olean tree $SP/dl-oleans-2:
+  pre: tree/snapshot-pre.txt (1230 files, tools-used/snap.py, treecheck.py format) SHA-256
+    457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the base value (learning-r1 tree/snapshot-post.txt).
+  restore (restore/; tools-used/restoreplan.py against tree/snapshot-pre.txt): 56 files absent from the base snapshot
+    (restore/extra.txt with hashes: 46 oleans of modules new since eff2dcd0 in EncryptThenTag/ 10, Lamport/ 16, FromDiscreteLog/ 6,
+    HashAndSign/ 8, Extraction/ 2, Learning/ 4, and 10 RuProbe/ probe oleans; the 4 sealed controls fail by design and leave none)
+    deleted, with the 11 emptied directories (deleted-dirs.txt). 10 oleans differed from base (changed.txt; rebuild-order.txt);
+    the learning-r1 restore list restore-base.txt (20 modules, a superset) was rebuilt from a git-archive export of eff2dcd0
+    (base-export.txt; TCSlib, TCSlib.lean, audits, scripts, lean-toolchain; .lake/packages symlinked; removed afterwards):
+    restore/build/, 20/20 rc 0, 0 errors, the base sorries only (6); every source and object hash equals the base records
+    (learning-r1 tree/base-records.jsonl; buildsum.py reports no difference).
+  post: restore/tree-check-post.txt (treecheck.py, 1199 modules of learning-r1 order/base-tree-modules.txt at eff2dcd0 source and
+    record object hashes, no stray olean, no empty dir, snapshot equals snapshot-pre): RESULT OK. tree/snapshot-post.txt is
+    byte-identical to tree/snapshot-pre.txt, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f.
+
+tools-used/: review/ = learning-r1 tools/ unmodified (diff -r empty). New: snap.py, impdelta2.py (impdelta.py with generic labels),
+  docdelta.py, lereuse_edit.py, mkctl_reuse.py, sealrows.py, buildsum.py, restoreplan.py, downstat.py; impcheck.py and docheader.py
+  from dl-crh-r1-reuse unmodified.
+SHA256SUMS: every file here except itself (paths without "./"); ../learning-r1-reuse-evidence.zip holds exactly these paths.

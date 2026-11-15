@@ -1,0 +1,111 @@
+promotion PR for prfAdv_eq_expect (DL-44 F-01; ruling Seyoon 2026-11-15), maintainer, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0 (cdd38ac5115b), PATH=$HOME/.elan/bin:$PATH; one Lean process at a time, only
+  scripts/lean_check_tree.sh (worktree copy byte-equal to /home/user/tcslib/scripts/) through tools-used/review/runner.py
+  with TCSLIB_OLEANS=$SP/dl-oleans-2 (dl-oleans not touched); no lake command; nothing pushed; /home/user/tcslib working tree
+  not edited (status clean; only `git fetch` and `git worktree add` were run there).
+Method: as learning-r1-reuse (same tools; tools-used/review/ = learning-r1 tools/, unmodified, diff -r empty).
+
+branch promote/pass-shelat-prfadv-expect (local, upstream unset), worktree $SP/wt-promote-prfadv (sparse, briefs/ excluded;
+  .lake/packages -> /home/user/tcslib/.lake/packages, created for this worktree).
+  Created at 03:50 UTC from origin/cryptography/pass-shelat-ch2-4 = 99a38e3a525be6940804c39145bdbcc2c510a7b7 right after
+  `git fetch`. First commit 384229b08d2f6d6500e92d3f40222551abd5ecbb (tree 7dc2e4a0f85d01b08be5f1a80ee5dfe13d87a11c), fully
+  verified (pre-rebase-384229b0/). The remote then advanced to 8aefdab4cdb372d0787a9be83bc65f1567ceb8b4 (#311 merged at 03:59:
+  SecureComputation/SpecialEncryptionMulti.lean, downstream of Defs; checks/base-advance-99a38e3a-to-8aefdab4.txt), so the commit
+  was rebased onto it: git range-diff `=` (checks/rebase-range-diff.txt), the two blobs identical.
+  head 5757bc0604527602d790a1a57e9703374ce02c7b, tree 6e784db3a2644929e03e47727c075eaf1e5908d1, parent 8aefdab4.
+  author = committer = Claude <noreply@anthropic.com>, SSH-signed by the environment default; message logs/commit-msg.txt with
+  the two trailer lines (checks/commit.txt). Patch 0001-promote-prfAdv_eq_expect.patch; diff checks/promote.diff (applied by
+  tools-used/promote_edit.py, 5 exact replacements). Worktree clean (checks/worktree-status.txt).
+  Later base advance: at the end the remote is at 711a9f4afa0270e5242f0773614226a9580ea51a (#312 derand host:
+  Complexity/Randomized/SeedMajority.lean, Randomized facade). Not rebased again: checks/base-advance-8aefdab4-to-711a9f4a.txt
+  shows #312 is in neither changed file's closure, Defs is not in #312's closure, the only shared downstream modules are root
+  TCSlib and audits/pass-shelat/Checks (import aggregators), no name clash, and git merge-tree is clean.
+
+changes (checks/changed-paths.txt: M Defs.lean, M Reduction.lean; widths checks/widths.txt: Defs max 97, Reduction max 99):
+  Pseudorandom/Functions/Defs.lean (106 -> 142 lines):
+    + import TCSlib.Cryptography.Games.Bridges.Experiments
+    + Main-results bullet for prfAdv_eq_expect
+    + section Expect (open Games ProbComp) after prfAdv_nonneg, with the new theorem TCSlib.Cryptography.prfAdv_eq_expect
+      (namespace TCSlib.Cryptography = prfAdv's; there is no PRF namespace in the PRF layer). Formula docstring, proof sketch,
+      no attribute. Statement:
+        theorem prfAdv_eq_expect {K ρ : Type} [Fintype K] [Nonempty K] [Fintype I] [DecidableEq I]
+            [Fintype O] [Nonempty O] [Fintype ρ] [Nonempty ρ] (F : K → I → O)
+            (A : OracleAdversary ρ I O) :
+            prfAdv F A =
+              |expect (sample K)
+                  (fun k => expect (sample ρ) fun c => if (A c).eval (F k) = true then (1 : ℝ) else 0) -
+                expect (sample (I → O))
+                  (fun R => expect (sample ρ) fun c => if (A c).eval R = true then (1 : ℝ) else 0)|
+      (I O : Type from the file's `variable`; elaborated form in axioms/AxiomsHead.log, #check). The proof is the ETT proof
+      verbatim. Placement: Defs.lean can import the Games bridge without a cycle (checks/imports.txt), so no new module was
+      created and the prf-long-owned facade Pseudorandom/Functions.lean is NOT edited (no conflict with prf-long).
+  Encryption/PrivateKey/EncryptThenTag/Reduction.lean (395 -> 391 lines): ETTGame.prfAdv_eq_expect's body is now the term
+    `TCSlib.Cryptography.prfAdv_eq_expect Fm A'`; name and statement unchanged; docstring: one inserted paragraph
+    "This is the published `TCSlib.Cryptography.prfAdv_eq_expect` at `K = I = O = {0,1}^m`." (statements/docstring-delta-ETT.txt:
+    pure insertion). Its uses (EncryptThenTag.lean:730/732 in ccaScheme_cca2; exists_tagStep) unchanged and built.
+
+imports (checks/imports.txt, parent 8aefdab4 from a git-archive export): Games.Bridges.Experiments' closure (7 modules) does not
+  contain Defs: no cycle. The import adds Games.Probability, Games.Advantage, Games.Bridges.Experiments to the closures of Defs
+  (6 -> 9) and of the facade Pseudorandom.Functions; 0 to EncryptThenTag/Reduction (163) and root TCSlib. 42 of the 95 modules
+  downstream of Defs gain these modules. Effect on the build: none outside Defs (build below: byte-identical oleans).
+
+statements (statements/, vs 8aefdab4): decls2-vs-8aefdab4.tsv: 1 ADDED (TCSlib.Cryptography.prfAdv_eq_expect), 0 CHANGED,
+  0 REMOVED (decls2.err empty). touched-parent-vs-head.tsv: 1 ADDED, 1 CHANGED (ETTGame.prfAdv_eq_expect), 20 UNCHANGED.
+  header-bytes-vs-8aefdab4.txt (touched-before.json = eff2dcd0 vs 8aefdab4, touched-after.json = eff2dcd0 vs head): 20 of 20
+  pre-existing declarations IDENTICAL; the one MISSING row is the new theorem (absent at the parent, by design).
+  docstring-header-ETT.txt: header (keyword .. :=) identical; docstring differs by the inserted sentence only.
+
+build (build/, order/j2-build-queue.txt; downorder.py: head vs eff2dcd0 = order/head-vs-eff2dcd0, head vs parent, parent vs
+  eff2dcd0): the tree starts at base, so the queue is down(head vs eff2dcd0) in imports-first order, 129 modules = the 96 of
+  head-vs-parent/down.txt (Defs, Reduction and everything importing them) united with the 63 of parent-vs-eff2dcd0/down.txt
+  (#303/#306/#307/#308/#309 and #311 base delta and downstream), through root TCSlib, audits/garg-ch1-3/Checks and
+  audits/pass-shelat/Checks.
+  129/129 rc 0, 0 errors (errors and errors_diag), 10 sorry, all pre-existing: MAC/FromPRF 1, SpecialEncryptionSecurity 3,
+  SpecialEncryptionMulti 1 (#311's stated sorry, line 231), GarblingSecurity 1, Yao 3, Randomness/Learning 1 (ch2-4 facade
+  without the unlanded learning unit). Warnings: inherited counts; Defs 0, Reduction 0.
+  build/refcmp.txt (tools-used/refcmp.py vs learning-r1 base records, build, edit-build, all-results-head and the pre-rebase
+  build): 127 modules have a same-source reference; sorry and warning counts equal it; every one of the 127 oleans is
+  byte-identical to a same-source reference (Defs and Reduction to the pre-rebase build; the other 125 to builds without this
+  change, so adding the import changed no downstream olean). No reference: the two #311 modules (SpecialEncryptionMulti, the
+  SecureComputation facade).
+  pre-rebase-384229b0/build: 128/128 rc 0 at 99a38e3a + change, refcmp 126/126 byte-identical.
+
+axioms (axioms/, probe AxiomsHead.lean.txt run as PpProbe/AxiomsHead at 5757bc06, rc 0; log identical to the pre-rebase run):
+  TCSlib.Cryptography.prfAdv_eq_expect, ETTGame.prfAdv_eq_expect, ETTGame.exists_tagStep, Composability.ccaScheme_cca2:
+  each [propext, Classical.choice, Quot.sound].
+
+Rule 10 (rule10/), Defs.lean and Reduction.lean at 5757bc06:
+  collector probe-sources/CollectHead.lean.txt (owners order/head-owners.txt = the 2 changed modules), PpProbe/CollectHead rc 0,
+  CAT 3040; stored Defs 8, Reduction 20.
+  seals mkseals_ab.py (strict) seals/{A,B}, mkseals_coe.py (coe) seals-coe/{A,B} (B: SEAL_EVAL=1). Requests: Defs strict 72/72,
+  coe 71/71; Reduction strict 2271/2272, coe 2270/2271. Runs seal-runs/ (NOSTOP=1); sealsum: seals-A.tsv, seals-B.tsv,
+  seals-coe-A.tsv, seals-coe-B.tsv: both files pass strict A, strict B, coe A, coe B (rc 0, 0 errors, install and EOF records).
+  paired controls: tools-used/mkctl_promote.py (rows prfAdv (new: rfl vs prfAdv_def), ProbComp.expect (lamport review row, reader
+  expect_pure), uprob, PolyExpr.eval (B)), on strict records (controls-strict/, PpProbe/KS) and coe records (controls-coe/,
+  PpProbe/K): 8 probes each, 11 sealed negatives each (Reduction: prfAdv, expect, uprob, + eval in B; Defs: expect, uprob; prfAdv
+  is Defs' own definition, not in its request set). ctlcheck-coe.log, ctlcheck-strict.log: ALL_OK True (each sealed negative fails
+  exactly once, readers and unsealed probes pass, no stray error).
+  The 24 probe sources are byte-identical to the pre-rebase ones, and every seal summary equals the pre-rebase one; the pre-rebase
+  run (pre-rebase-384229b0/rule10/) is ALL_OK as well. probe-copies-check.txt: 26 worktree probe sources = the copies here
+  (PpProbe/ then removed).
+
+lint (lint/): campaign_style_lint.py TCSlib/Cryptography --check8b: parent 8aefdab4 (git-archive export) 92 FAIL / 101 WARN over
+  344 files; head 92 / 101. FAIL and WARN lines identical (lint-parent-vs-head.diff empty); the full diff is the two INFO lines.
+
+olean tree $SP/dl-oleans-2 (each run started from and was restored to the base snapshot):
+  pre: tree/snapshot-pre.txt (1230 files) SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f (verified before
+  the pre-rebase run, after its restore, and before the rebased run).
+  restore after the rebased run (restore/, restoreplan.py vs snapshot-pre): 61 extra files deleted (extra.txt with hashes: 43 oleans
+  of modules new since eff2dcd0: EncryptThenTag/ 10, Lamport/ 16, HashAndSign/ 8, FromDiscreteLog/ 6, Extraction/ 2 and
+  SecureComputation/SpecialEncryptionMulti; and 18 PpProbe oleans; the 8 sealed controls fail by design and leave none) with
+  10 emptied directories; 11 oleans differed (changed.txt: Defs, the 9 base-delta modules, the SecureComputation facade). Rebuilt
+  restore-list.txt (learning-r1 restore-base.txt plus Defs and SecureComputation, 22 modules, base order) from a git-archive export
+  of eff2dcd0 (base-export.txt; removed afterwards): 22/22 rc 0, hashes = base records. tree-check-post.txt: 1199 modules, RESULT OK;
+  tree/snapshot-post.txt byte-identical to snapshot-pre.txt, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f.
+  The pre-rebase run's restore (pre-rebase-384229b0/restore/, 21 modules) also ended RESULT OK at the same snapshot.
+
+pr-body.md: draft PR description (not opened; nothing pushed). pre-rebase-384229b0/pr-body-draft-pre-rebase.md: the earlier draft.
+tools-used/: review/ (unmodified learning-r1 tools) and the new snap.py, impcheck.py, impdelta2.py, downstat.py, docheader.py,
+  docdelta.py, promote_edit.py, mkctl_reuse.py, mkctl_promote.py, buildsum.py, refcmp.py, restoreplan.py.
+SHA256SUMS: every file here except itself (paths without "./"); ../promote-prfadv-evidence.zip holds exactly these paths.
