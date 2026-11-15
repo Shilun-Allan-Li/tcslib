@@ -1,0 +1,48 @@
+From a24a6313e20a0c3120d457fa4fb0960c72c06312 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 06:53:15 +0000
+Subject: [PATCH] prfAdv promotion resolution edit LE-gate30: ETT docstring
+ tracks the new proof (G30-01)
+
+Gate 30 finding G30-01 (minor, documentation): the docstring of ETTGame.prfAdv_eq_expect
+(EncryptThenTag/Reduction.lean) still said the identity was "re-derived here in general form
+from the published readers" and kept the old rewrite-chain sketch, although the proof is now the
+promoted TCSlib.Cryptography.prfAdv_eq_expect. The PRFGame overlap note (prfAdv_prfReduction)
+is kept as provenance without the claim of a local derivation, and the sketch now says the lemma
+is a direct specialization of TCSlib.Cryptography.prfAdv_eq_expect to Fm and A'.
+
+Docstring only: no code, statement or header change.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Encryption/PrivateKey/EncryptThenTag/Reduction.lean  | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean
+index ae1366edd..f58a431c7 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean
+@@ -337,15 +337,14 @@ theorem exists_tagReduction (A : NUPPT) (q : PolyExpr) (b : Bool) :
+     hφ₀, hA₁ n _ _ _ _ _ hle]
+   exact expect_ettImpl_outLen (PolyExpr.eval_const 1 n) _ _ _ _ A _ r
+ 
+-/-- **The PRF advantage as expectations** (PRFGame overlap: `prfAdv_prfReduction`, re-derived here
+-in general form from the published readers): for an oracle adversary `A'` on `m`-bit strings,
++/-- **The PRF advantage as expectations** (PRFGame overlap: `prfAdv_prfReduction`): for an oracle
++adversary `A'` on `m`-bit strings,
+ `prfAdv F A' = |𝔼_k 𝔼_c [A'(c)^{F k} = 1] − 𝔼_R 𝔼_c [A'(c)^R = 1]|`.
+ 
+ This is the published `TCSlib.Cryptography.prfAdv_eq_expect` at `K = I = O = {0,1}^m`.
+ 
+-**Proof sketch.** `prfAdv_def`, `distAdv_def`; each acceptance probability is an average over the
+-key (resp. the function table) and the coins (`Bridge.acceptProb_eq`, `accept_eq`,
+-`Bridge.acceptGame_eq`, `prob_bind`, `oracleDist_apply`, `randomFunction_apply`). -/
++**Proof sketch.** A direct specialization of `TCSlib.Cryptography.prfAdv_eq_expect` to the family
++`Fm` and the adversary `A'`. -/
+ theorem prfAdv_eq_expect {m : ℕ} (Fm : (Fin m → Bool) → (Fin m → Bool) → (Fin m → Bool))
+     {ρ : Type} [Fintype ρ] [Nonempty ρ] (A' : OracleAdversary ρ (Fin m → Bool) (Fin m → Bool)) :
+     prfAdv Fm A' =
+-- 
+2.43.0
+

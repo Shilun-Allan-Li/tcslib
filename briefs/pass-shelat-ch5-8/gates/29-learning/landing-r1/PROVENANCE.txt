@@ -1,0 +1,91 @@
+#313 resolution edit LE-gate29a (Gate 29 G29-01, proof only), maintainer, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0, PATH=$HOME/.elan/bin:$PATH; one Lean process at a time (of this job), only
+  scripts/lean_check_tree.sh through tools-used/review/runner.py (the G26-N1-fixed runner) with TCSLIB_OLEANS=$SP/dl-oleans-2
+  (dl-oleans not touched); no lake command; nothing pushed; /home/user/tcslib working tree not edited (only `git fetch` there).
+  Run after Job B (gate30-le), whose restore left the tree at the base snapshot.
+Method and tools: as learning-r1-reuse (its zip from briefs/pass-shelat-ch5-8/fills/learning/final-r1/landing-reuse/, SHA-256
+  5df65c56dce59c51558df1399e634f59708f4caaee6cd63027be270a8454fc52 = evidence-SHA256SUMS, extracted to a fresh directory and
+  verified); tools-used/review/ and mkctl_reuse.py, sealrows.py = its copies, unmodified (review/ also equal to promote-prfadv's).
+Finding: Gate 29 G29-01 (major): the local `hj` in abs_gameProb_random_sub_half_le (Random.lean:172-179 at 8befc589) re-proves
+  the public OneWay.uexp_const (OneWayFunctions/Basic.lean) after uprob_prod / uprob_eq_point. G29-02 is not part of this job
+  (it waits for the headD_drop_ofFn promotion, dl-review/promote-headd).
+
+landing: branch land/pass-shelat-learning, worktree $SP/wt-land-learning (sparse, briefs/ excluded; .lake/packages link; from
+  the review, clean at 8befc589 = origin/land/pass-shelat-learning after `git fetch`; removed at the end of this job, branch kept).
+  parent LE-reuse     8befc58966fd39f974a54250849736df194584b9 (origin head, #313)
+  head   LE-gate29a   94b31964ee94b97bf3ed3b4b4338cacae8183194, tree b283709ed6519a72ca5a3c0f72266481c754a728
+  author = committer = Claude <noreply@anthropic.com>, SSH-signed by the environment default; message logs/commit-msg.txt
+  ending with the two trailer lines (checks/commit.txt). Patch 0001-LE-gate29a.patch; diff checks/le-gate29a.diff (applied by
+  tools-used/legate29a_edit.py, 2 exact replacements). checks/changed-paths.txt: one path, M .../Learning/Random.lean
+  (189 -> 186 lines; max width 98 at both revisions, checks/widths.txt). Worktree clean at the head (checks/worktree-status.txt).
+
+edit (Random.lean, abs_gameProb_random_sub_half_le):
+  proof: in `hj`, after `intro j` and `rw [uprob_prod]`, the four lines
+      simp only [uprob_eq_point, uexp_def, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+      have : (0 : ℝ) < Fintype.card ((Fin m → Fin n → Bool) × ρ) := by
+        exact_mod_cast Fintype.card_pos
+      field_simp
+    are replaced by the finding's shape
+      simp only [uprob_eq_point, OneWay.uexp_const]
+    (OneWay.uexp_const is already used in hdev; no new import; the averaging type is nonempty by the theorem's [Nonempty ρ]).
+  docstring: the sketch names the lemmas of the calculation Σ_j Pr[s_j = x] = m · 2^{-n}; its parenthesis
+    "(`uprob_prod`, `uprob_eq_point`)" gains ", `OneWay.uexp_const`" (statements/docstring-delta.txt: pure insertion).
+  Header and statement unchanged. The new proof compiled first time, with no warning.
+
+statements (statements/; tools-used/review/ tools; unit-paths.txt = the 5 unit files):
+  decls2-vs-parent.tsv and decls2.err (decls2.py over the 5 unit files): both empty.
+  touched-parent-vs-head.tsv: 1 CHANGED (abs_gameProb_random_sub_half_le), 60 UNCHANGED.
+  header-bytes-vs-parent.txt (headerbytes.py; touched-before.json = eff2dcd0 vs parent, touched-after.json = eff2dcd0 vs head;
+    endpoints predictAdv_prfConcept_negligible (b), not_weakLearnsUnder_prfConcept (c)): 63 compared, 0 different or missing.
+  docstring-header.txt (docheader.py): the theorem's keyword-to-`:=` header identical; the docstring differs by the insertion only
+    (RESULT FAIL there is the docstring comparison, by design).
+
+build (build/, order/C-build-queue.txt = learning-r1-reuse order/head-build-queue.txt, the same 66 modules in the same order;
+  downorder.py head vs eff2dcd0; head-vs-parent/down.txt = Random, Learning, Randomness, root TCSlib): the tree starts at base, so
+  the 66 modules are the #303/#306/#307/#308/#309 base delta and its downstream, the 5 unit modules (Sample, Distinguisher, Law,
+  Random, Learning), Randomness, root TCSlib and audits/pass-shelat/Checks.
+  66/66 rc 0, 0 errors (errors and errors_diag), 0 sorry; warnings all inherited (DDH 3, Lamport Blocks 2, InversionProbability 2,
+  MachineSpec 2, Realization 1, Rejection 10, Extraction 2); Random 0 warnings (build/summary.txt).
+  build/vs-reuse.txt (buildsum.py vs the learning-r1-reuse build): only Random differs (source and olean).
+  build/refcmp.txt: 65 modules have a same-source reference with equal counts and byte-identical oleans (Learning, Randomness,
+  TCSlib and Checks included); Random has none (edited).
+
+axioms (axioms/; probe AxiomsHead.lean.txt run as LaProbe/AxiomsHead at 94b31964, rc 0):
+  predictAdv_prfConcept_negligible (part (b)), not_weakLearnsUnder_prfConcept (part (c)), LearnPRF.abs_gameProb_random_sub_half_le
+  (the target) and LearnPRF.uprob_eq_point: each [propext, Classical.choice, Quot.sound]. No sorryAx.
+
+Rule 10 (rule10/), Random.lean at 94b31964 (tools-used/rule10.sh drives the review tools):
+  collector probe-sources/CollectHead.lean.txt (mkcollect.py, owners rule10/order/head-owners.txt = Random), LaProbe/CollectHead
+  rc 0, 2368 CAT lines (the reuse collector log has the same count), MODULE Random stored 12 (reuse: 12).
+  seals: mkseals_ab.py strict -> seals/{A,B}; mkseals_coe.py coe -> seals-coe/{A,B}; B with SEAL_EVAL=1; mkseals-*.log.
+    Requests strict A 1732, B 1733, coe A 1731, coe B 1732 = LE-reuse's. seal-rows-vs-reuse.txt (sealrows.py vs the reuse
+    records): per variant 0 rows gone, 0 new, 0 changed; term readers and excluded terms equal.
+    Runs seal-runs/ (order/seal-control-queue.txt, NOSTOP=1); sealsum.py with statements/touched-after.json: seals-A.tsv,
+    seals-B.tsv, seals-coe-A.tsv, seals-coe-B.tsv: strict A pass, strict B pass, coe A pass, coe B pass (rc 0, 0 errors,
+    install and EOF records present).
+  paired controls (mkctl_reuse.py unmodified: rows uprob, uexp (rfl vs uexp_def), PAC.label, PolyExpr.eval (B)), on the strict
+    records (seals-flat/ -> controls-strict/, LaProbe/KS) and the coe records (seals-coe-flat/ -> controls-coe/, LaProbe/K):
+    4 probes each, 7 sealed negatives each (A: uprob, uexp, label; B: those and PolyExpr.eval). ctlcheck-strict.log,
+    ctlcheck-coe.log (ctlcheck2.py): ALL_OK True (each sealed negative fails exactly once, readers and unsealed probes pass,
+    no stray error).
+  probe-copies-check.txt: the 14 worktree probe sources equal the copies here (LaProbe/ then removed).
+
+lint (lint/): campaign_style_lint.py TCSlib/Cryptography --check8b: parent 8befc589 (git-archive export, removed) 92 FAIL /
+  101 WARN over 347 files (byte-identical to learning-r1-reuse lint/lint-edit.log); head 92 / 101; FAIL and WARN lines identical
+  (lint-parent-vs-head.diff empty); the full diff is Random.lean's INFO line (189 -> 186 lines). Lint unchanged.
+
+olean tree $SP/dl-oleans-2:
+  pre: tree/snapshot-pre.txt (1230 files) SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f (base).
+  restore (restore/; restoreplan.py --delete vs snapshot-pre with order/base-topo-order.txt, the imports-first eff2dcd0 order):
+    56 extra files deleted (46 oleans of modules new since eff2dcd0, 10 LaProbe oleans; the 4 sealed controls fail by design and
+    leave none) with 11 emptied directories; 10 oleans differed; restore-list.txt = rebuild-order.txt (10 modules) rebuilt from
+    the eff2dcd0 git-archive export (restore/base-export.txt; removed afterwards): 10/10 rc 0, every object hash equals the
+    learning-r1 base record (buildsum.py: no difference).
+  post: restore/tree-check-post.txt (treecheck.py, 1199 base modules, no stray olean, no empty dir, snapshot equals
+    snapshot-pre): RESULT OK; tree/snapshot-post.txt byte-identical to snapshot-pre.txt, SHA-256
+    457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f.
+
+tools-used/: review/, mkctl_reuse.py, sealrows.py (learning-r1-reuse, unmodified); snap.py, restoreplan.py, docheader.py,
+  docdelta.py, buildsum.py, refcmp.py (promote-prfadv, unmodified); new: legate29a_edit.py, widths.py, rule10.sh, probecopies.py.
+SHA256SUMS: every file here except itself (paths without "./"); ../gate29-le-a-evidence.zip holds exactly these paths.

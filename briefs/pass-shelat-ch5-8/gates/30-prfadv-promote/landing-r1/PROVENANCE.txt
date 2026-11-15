@@ -1,0 +1,69 @@
+#314 resolution edit LE-gate30 (Gate 30 G30-01, docstring only), maintainer, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0, PATH=$HOME/.elan/bin:$PATH; one Lean process at a time (of this job), only
+  scripts/lean_check_tree.sh (worktree copy byte-equal to /home/user/tcslib/scripts/) through tools-used/review/runner.py
+  with TCSLIB_OLEANS=$SP/dl-oleans-2 (dl-oleans not touched); no lake command; nothing pushed; /home/user/tcslib working tree
+  not edited (only `git fetch` there). Run after Job A (promote-headd), whose restore left the tree at the base snapshot.
+Method and tools: as promote-prfadv (its zip from briefs/pass-shelat-ch5-8/maintainer/promote-prfadv-2026-11-15/, SHA-256
+  3c9a9f32fd7e67633eec968a6fc6d0aeca208138095c8eb02885cfa7c0386b74, extracted to a fresh directory and verified);
+  tools-used/review/ = its tools-used/review/ unmodified.
+Finding: Gate 30 G30-01 (minor): ETTGame.prfAdv_eq_expect's docstring still says "re-derived here" and keeps the old
+  rewrite-chain sketch, although line 356 applies TCSlib.Cryptography.prfAdv_eq_expect.
+
+branch promote/pass-shelat-prfadv-expect, worktree $SP/wt-promote-prfadv (sparse, briefs/ excluded; .lake/packages link;
+  from the promotion job, clean at 5757bc06 = origin/promote/pass-shelat-prfadv-expect after `git fetch`; removed at the end of
+  this job, branch kept).
+  parent 5757bc0604527602d790a1a57e9703374ce02c7b (origin head, #314)
+  head   a24a6313e20a0c3120d457fa4fb0960c72c06312, tree 6700d281120f22f78800fe547b6a1b73b4fad7d5
+  author = committer = Claude <noreply@anthropic.com>, SSH-signed by the environment default; message logs/commit-msg.txt
+  ending with the two trailer lines (checks/commit.txt). Patch 0001-LE-gate30.patch; diff checks/le-gate30.diff (applied by
+  tools-used/legate30_edit.py, 1 exact replacement). checks/changed-paths.txt: one path, M .../EncryptThenTag/Reduction.lean
+  (391 -> 390 lines; max width 99 at both revisions, checks/widths.txt). Worktree clean at the head (checks/worktree-status.txt).
+
+edit (Reduction.lean, docstring of ETTGame.prfAdv_eq_expect, lines 340-348 at the parent):
+  - title parenthesis "(PRFGame overlap: `prfAdv_prfReduction`, re-derived here in general form from the published readers)"
+    -> "(PRFGame overlap: `prfAdv_prfReduction`)": the overlap note is kept as provenance; the claim of a local derivation
+    is removed (the general form is named in the next paragraph). Text reflowed over the first two lines.
+  - the formula line and the paragraph "This is the published `TCSlib.Cryptography.prfAdv_eq_expect` at `K = I = O = {0,1}^m`."
+    are unchanged.
+  - sketch: "`prfAdv_def`, `distAdv_def`; each acceptance probability is an average ... `randomFunction_apply`)."
+    -> "A direct specialization of `TCSlib.Cryptography.prfAdv_eq_expect` to the family `Fm` and the adversary `A'`."
+  statements/docstring-delta-ETT.txt (docdelta.py) shows the removed and inserted middle.
+
+checks (statements/, vs parent 5757bc06):
+  doconly-vs-parent.txt (review/doconly.py: both files with every `/-- ... -/` doc comment deleted): DOC-ONLY, 14 -> 14
+    doc comments, 1 changed, RESULT OK: code, statements and headers are identical with doc comments blanked.
+  decls2-vs-parent.tsv and decls2.err: both empty (no ADDED / CHANGED / REMOVED statement).
+  touched-parent-vs-head.tsv: 1 CHANGED (ETTGame.prfAdv_eq_expect, its docstring), 13 UNCHANGED.
+  header-bytes-vs-parent.txt (headerbytes.py; touched-before.json = eff2dcd0 vs parent, touched-after.json = eff2dcd0 vs head):
+    14 of 14 declarations IDENTICAL (private gOuter_pair included).
+  docstring-header-ETT.txt (docheader.py): header (keyword .. :=) identical, body identical (`TCSlib.Cryptography.prfAdv_eq_expect
+    Fm A'`); RESULT FAIL there is the docstring comparison, by design.
+
+build (build/, order/B-build-queue.txt; downorder.py head vs eff2dcd0, head vs parent, parent vs eff2dcd0): the tree starts at
+  base, so the queue is down(head vs eff2dcd0) in imports-first order, 129 modules, the same list as promote-prfadv's
+  j2-build-queue.txt. It contains Reduction and its downstream (order/head-vs-parent/down.txt: Reduction, CPAReduction,
+  EncryptThenTag, PrivateKey, Encryption, Composability, root TCSlib) and the base delta that Reduction needs at eff2dcd0.
+  129/129 rc 0, 0 errors (errors and errors_diag), 10 sorry, all pre-existing (MAC/FromPRF 1, SpecialEncryptionSecurity 3,
+  SpecialEncryptionMulti 1, GarblingSecurity 1, Yao 3, Randomness/Learning 1); Reduction 0 warnings (build/summary.txt).
+  build/refcmp.txt (vs learning-r1 base/build/edit-build, learning-r1-reuse, promote-prfadv and promote-headd builds): 128 modules
+  have a same-source reference with equal sorry/warning counts and a byte-identical olean, including Reduction's 6 downstream
+  modules and root TCSlib; the only module without one is Reduction itself (its olean changes because it stores docstrings).
+
+lint (lint/): campaign_style_lint.py TCSlib/Cryptography --check8b: parent 5757bc06 (git-archive export, removed) 92 FAIL /
+  101 WARN over 344 files (byte-identical to promote-prfadv lint/lint-head.log); head 92 / 101; FAIL and WARN lines identical
+  (lint-parent-vs-head.diff empty); the full diff is Reduction's INFO line (391 -> 390 lines). Lint unchanged.
+
+olean tree $SP/dl-oleans-2:
+  pre: tree/snapshot-pre.txt (1230 files) SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f (base).
+  restore (restore/; restoreplan.py --delete vs snapshot-pre with order/base-topo-order.txt, the imports-first eff2dcd0 order of
+    promote-headd): 43 extra oleans (modules new since eff2dcd0) deleted with 5 emptied directories; 11 oleans differed;
+    restore-list.txt = rebuild-order.txt (11 modules) rebuilt from the eff2dcd0 git-archive export (restore/base-export.txt):
+    11/11 rc 0, every object hash equals the learning-r1 base record (buildsum.py: no difference).
+  post: restore/tree-check-post.txt (treecheck.py, 1199 base modules, no stray olean, no empty dir, snapshot equals
+    snapshot-pre): RESULT OK; tree/snapshot-post.txt byte-identical to snapshot-pre.txt, SHA-256
+    457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f.
+
+tools-used/: review/ (unmodified) and snap.py, restoreplan.py, docheader.py, docdelta.py, buildsum.py, refcmp.py (from
+  promote-prfadv, unmodified); new: legate30_edit.py, widths.py.
+SHA256SUMS: every file here except itself (paths without "./"); ../gate30-le-evidence.zip holds exactly these paths.

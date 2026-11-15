@@ -1,0 +1,53 @@
+From 94b31964ee94b97bf3ed3b4b4338cacae8183194 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 07:09:59 +0000
+Subject: [PATCH] learning resolution edit LE-gate29a: hj from
+ OneWay.uexp_const (G29-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Gate 29 finding G29-01 (major): in abs_gameProb_random_sub_half_le (Randomness/Learning/
+Random.lean), the local union-bound step hj re-proved the public constant-average lemma
+OneWay.uexp_const inline (uexp_def, the sum of a constant, positive cardinality, field_simp).
+After uprob_prod, hj now reads the point-mass probability with uprob_eq_point and averages the
+constant 1/2^n with OneWay.uexp_const, already called in hdev; no new import.
+
+Proof only: the theorem header and statement are unchanged. The proof sketch's lemma list for
+Σ_j Pr[s_j = x] = m · 2^{-n} gains OneWay.uexp_const. G29-02 (firstBit_of_pos) waits for the
+headD_drop_ofFn promotion and is not part of this edit.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Randomness/Learning/Random.lean | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Randomness/Learning/Random.lean b/TCSlib/Cryptography/Randomness/Learning/Random.lean
+index c2e90978d..910b1ef92 100644
+--- a/TCSlib/Cryptography/Randomness/Learning/Random.lean
++++ b/TCSlib/Cryptography/Randomness/Learning/Random.lean
+@@ -141,7 +141,7 @@ proof, step 2]: for `n ≥ 1`, every learner `ℓ` and `m` examples,
+ (`uprob_flip_half`) and in `[0, 1]` otherwise, so `|p − ½| ≤ [x ∈ s]`. Averaging (the
+ coupling bound `MultiMsg.abs_uexp_sub_le_uprob` against the constant `½`),
+ `|gameProb − ½| ≤ Pr[∃ j, s_j = x]`, which the union bound (`uprob_exists_le`) bounds by
+-`Σ_j Pr[s_j = x] = m · 2^{-n}` (`uprob_prod`, `uprob_eq_point`). -/
++`Σ_j Pr[s_j = x] = m · 2^{-n}` (`uprob_prod`, `uprob_eq_point`, `OneWay.uexp_const`). -/
+ theorem abs_gameProb_random_sub_half_le {ρ : Type*} [Fintype ρ] [Nonempty ρ] (m : ℕ)
+     (ℓ : (Fin m → (Fin n → Bool) × Bool) → ρ → (Fin n → Bool) → Bool) :
+     |gameProb m (fun R : (Fin n → Bool) → (Fin n → Bool) => R) ℓ - 1 / 2| ≤ m / 2 ^ n := by
+@@ -173,10 +173,7 @@ theorem abs_gameProb_random_sub_half_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+       t.1.1 j = t.2) = 1 / 2 ^ n := by
+     intro j
+     rw [uprob_prod]
+-    simp only [uprob_eq_point, uexp_def, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+-    have : (0 : ℝ) < Fintype.card ((Fin m → Fin n → Bool) × ρ) := by
+-      exact_mod_cast Fintype.card_pos
+-    field_simp
++    simp only [uprob_eq_point, OneWay.uexp_const]
+   have hunion := uprob_exists_le (Finset.univ : Finset (Fin m))
+     (fun j (t : ((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool)) => t.1.1 j = t.2)
+   simp only [hj, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at hunion
+-- 
+2.43.0
+

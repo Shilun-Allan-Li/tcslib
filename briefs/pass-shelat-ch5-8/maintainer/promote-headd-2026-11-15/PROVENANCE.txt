@@ -1,0 +1,111 @@
+promotion PR for headD_drop_ofFn (Gate 29 G29-02; ruling Seyoon 2026-11-15 "promote it now"), maintainer, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0, PATH=$HOME/.elan/bin:$PATH; one Lean process at a time (of this job), only
+  scripts/lean_check_tree.sh (worktree copy byte-equal to /home/user/tcslib/scripts/) through tools-used/review/runner.py
+  (the G26-N1-fixed runner) with TCSLIB_OLEANS=$SP/dl-oleans-2 (dl-oleans, used by the running prf-long review, not touched);
+  no lake command; nothing pushed; /home/user/tcslib working tree not edited (only `git fetch` and `git worktree add` there).
+Method and tools: as promote-prfadv (briefs/pass-shelat-ch5-8/maintainer/promote-prfadv-2026-11-15/promote-prfadv-evidence.zip,
+  SHA-256 3c9a9f32fd7e67633eec968a6fc6d0aeca208138095c8eb02885cfa7c0386b74 = evidence-SHA256SUMS; extracted, without
+  pre-rebase-384229b0/, into a fresh directory and verified against its SHA256SUMS). tools-used/review/ = its tools-used/review/
+  (= learning-r1 tools/, unmodified; diff -r empty, also against the learning-r1-reuse zip's copy).
+Findings: Gate 29 G29-02 (Random.lean firstBit_of_pos re-proves the index-0 case of LamportFill.headD_drop_ofFn).
+
+branch promote/pass-shelat-headd-ofFn (local, upstream unset), worktree $SP/wt-promote-headd (sparse: '/*' '!/briefs/';
+  .lake/packages -> /home/user/tcslib/.lake/packages, created for this job; removed at the end, branch kept).
+  cut at 06:15 UTC from origin/cryptography/pass-shelat-ch2-4 = dd98360d4886ac68fab34899b8bd0d12ae9a0aef right after `git fetch`
+  (records commits only after 711a9f4a: git diff 711a9f4a..dd98360d over TCSlib, audits, scripts, toolchain and lake files empty).
+  head c18afbe66101381eed1617801d942dcf691506ea, tree 68caf9d0f20e2ef9c51d2794dd5c248766337e50, parent dd98360d.
+  author = committer = Claude <noreply@anthropic.com>, SSH-signed by the environment default; message logs/commit-msg.txt
+  ending with the two trailer lines (checks/commit.txt). Patch 0001-promote-headD_drop_ofFn.patch; diff checks/promote.diff
+  (applied by tools-used/headd_edit.py, 3 exact replacements). Worktree clean after the probes were removed
+  (checks/worktree-status.txt: only the ignored .lake/).
+
+home (checks/imports.txt): Foundations/BitLists.lean, the generic list / bit-vector file ("heads of suffixes"; Mathlib-only
+  imports; holds headD_drop, which the proof uses, and headD_ofFn_one). It is in both consumers' closures already:
+  Lamport/MachineSpec imports it directly; Randomness/Learning/Random (#313 head 8befc589, read from $SP/wt-land-learning)
+  reaches it via Asymptotic.Adversary. BitLists imports no project module, so no cycle; no import is added anywhere.
+  Not touched by #313, #314 (GitHub REST: the only open PRs), prf-long (land/pass-shelat-prf-long) or prf-mac.
+  Alternative Asymptotic/ReductionSupport.lean (take_ofFn_castLE, ofFn_eq_init_append) is also in both closures but imports
+  5 project modules and is not a bit-list file. Downstream of BitLists: 245 modules (ReductionSupport 126).
+
+changes (statements/changed-paths.txt: M MachineSpec.lean, M BitLists.lean; widths checks/widths.txt: both files max 100 at
+  parent and head, no line > 100):
+  Foundations/BitLists.lean (179 -> 192 lines):
+    + Main-results bullet for headD_drop_ofFn
+    + after headD_drop, in namespace TCSlib.Cryptography (no clash: the Lamport lemma lives in ...Authentication.LamportFill):
+        theorem headD_drop_ofFn {α : Type*} {n : ℕ} (f : Fin n → α) (i : Fin n) (d : α) :
+            ((List.ofFn f).drop i.val).headD d = f i
+      formula docstring, proof sketch, no attribute; proof = the Lamport proof (simp only [headD_drop,
+      List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos i.isLt, Option.getD_some]). Generalised from Bool/false to
+      any α and default d; the headD-false form is `headD_drop_ofFn f i false`. Elaborated form: axioms/AxiomsHead.log (#check).
+  Authentication/Signatures/Lamport/MachineSpec.lean (268 -> 269 lines): LamportFill.headD_drop_ofFn's body is now the term
+    `TCSlib.Cryptography.headD_drop_ofFn m i false`; name and statement unchanged; docstring: one inserted paragraph "This is
+    the published `TCSlib.Cryptography.headD_drop_ofFn` at `α = Bool` and `d = false`." (statements/docstring-delta-Lamport.txt:
+    pure insertion). Its use (run_input, `rw [..., headD_drop_ofFn]`) unchanged and built.
+
+statements (statements/, vs parent dd98360d): decls2-vs-parent.tsv: 1 ADDED (TCSlib.Cryptography.headD_drop_ofFn), 0 CHANGED,
+  0 REMOVED (decls2.err empty). touched-parent-vs-head.tsv: 1 ADDED, 1 CHANGED (LamportFill.headD_drop_ofFn), 22 UNCHANGED.
+  header-bytes-vs-parent.txt (touched-before.json = eff2dcd0 vs parent, touched-after.json = eff2dcd0 vs head): 23 of 23
+  pre-existing declarations IDENTICAL (14 BitLists, 9 MachineSpec); the one MISSING row is the new theorem (absent at the parent).
+  docstring-header-Lamport.txt: header (keyword .. :=) identical; docstring differs by the inserted sentence only (RESULT FAIL
+  there is the docstring comparison, by design).
+
+trial (trial-precommit/): before committing, BitLists alone was checked once (rc 0, 0 warnings); its olean is superseded by
+  the build below and was restored with the rest.
+
+build (build/, order/A-build-queue.txt; downorder.py: head vs eff2dcd0 = order/head-vs-eff2dcd0, head vs parent, parent vs
+  eff2dcd0): the tree starts at base, so the queue is down(head vs eff2dcd0) in imports-first order, 253 modules = the 245 of
+  head-vs-parent/down.txt (BitLists, MachineSpec and everything importing them) united with the 65 of parent-vs-eff2dcd0/down.txt
+  (the #303/#306/#307/#308/#309/#311/#312 base delta and downstream), through root TCSlib, audits/garg-ch1-3/Checks and
+  audits/pass-shelat/Checks. 253/253 rc 0, 0 errors (errors and errors_diag), 24 sorry, all pre-existing (build/summary.txt).
+  build/refcmp.txt (refcmp.py vs learning-r1 base records, build, edit-build, learning-r1-reuse build, promote-prfadv build):
+  249 modules have a same-source reference; sorry and warning counts equal it; all 249 oleans byte-identical to it. No
+  reference: BitLists and MachineSpec (edited; BitLists 0 warnings, MachineSpec its 2 inherited warnings, same messages as the
+  reuse build, line shifted by one) and the two #312 modules (SeedMajority: its 2 stated sorries; the Randomized facade).
+
+axioms (axioms/; probe AxiomsHead.lean.txt run as HdProbe/AxiomsHead at c18afbe6, rc 0):
+  TCSlib.Cryptography.headD_drop_ofFn, LamportFill.headD_drop_ofFn: [propext]; LamportFill.run_input,
+  Authentication.lamport_oneTimeSecure: [propext, Classical.choice, Quot.sound]. No sorryAx.
+
+Rule 10 (rule10/), BitLists.lean and MachineSpec.lean at c18afbe6 (tools-used/rule10.sh drives the review tools):
+  collector probe-sources/CollectHead.lean.txt (mkcollect.py, owners rule10/order/head-owners.txt), HdProbe/CollectHead rc 0,
+  CAT 2801; stored BitLists 21, MachineSpec 13.
+  seals mkseals_ab.py (strict) seals/{A,B}, mkseals_coe.py (coe) seals-coe/{A,B} (B: SEAL_EVAL=1). Requests: MachineSpec strict
+  2088/2089, coe 2087/2088; BitLists 0 in every variant (its closure has no TCSlib module, so the request set is empty and its
+  seals are vacuous; its proofs read only Mathlib/core lemmas and its own headD_drop). Runs seal-runs/ (NOSTOP=1); sealsum:
+  seals-A.tsv, seals-B.tsv, seals-coe-A.tsv, seals-coe-B.tsv: both files pass strict A, strict B, coe A, coe B (rc 0, 0 errors,
+  install and EOF records).
+  paired controls: tools-used/review/mkctl_lamport.py unmodified (the Lamport review rows padFin, PolyExpr.eval (B),
+  ProbComp.expect, ProbComp.sample, OracleComp.bind, LamportFill.secretWord, LamportFill.signatureBlock, LamportMachine.u),
+  covering-subset selection: MachineSpec's records (BitLists' empty request set contains no row). Strict records
+  (controls-strict/, HdProbe/KS) and coe records (controls-coe/, HdProbe/K): 4 probes each, 15 sealed negatives each (A 7, B 8).
+  ctlcheck-strict.log, ctlcheck-coe.log: ALL_OK True (each sealed negative fails exactly once, readers and unsealed probes
+  pass, no stray error). rule10.sh's final display line was corrected after the run (`tail -1` of two files); its outputs
+  are unaffected.
+  probe-copies-check.txt: 18 worktree probe sources = the copies here (HdProbe/ then removed).
+
+lint (lint/): campaign_style_lint.py TCSlib/Cryptography --check8b: parent dd98360d (git-archive export, removed) 92 FAIL /
+  101 WARN over 344 files; head 92 / 101. FAIL and WARN lines identical (lint-parent-vs-head.diff empty); the full diff is the
+  two INFO lines (line and declaration counts).
+
+olean tree $SP/dl-oleans-2:
+  pre: tree/snapshot-pre.txt (1230 files, snap.py) SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f
+    = the base value (promote-prfadv tree/snapshot-post.txt, byte-equal).
+  restore (restore/; restoreplan.py vs tree/snapshot-pre.txt, --delete): 58 extra files deleted (extra.txt with hashes:
+    44 oleans of modules new since eff2dcd0 and 14 HdProbe oleans; the 4 sealed controls fail by design and leave none),
+    10 emptied directories; 12 oleans differed (changed.txt).
+    First rebuild attempt (restore/build-attempt1-alpha-order/): restoreplan's rebuild order follows its <base-order> file, and
+    the learning-r1 base-tree-modules.txt passed first is alphabetical, not imports-first: Complexity/Randomized rebuilt
+    (= base record), then Authentication failed (Lamport/Planted.olean, of the head layout, deleted with the extras) and its
+    olean was removed by the checker. Replanned (restore/plan2/) with order/base-topo-order.txt (ordergen.py at eff2dcd0 from
+    TCSlib and both audits Checks: the same 1199 modules, imports first): 10 changed + 1 missing (Authentication).
+    restore-list.txt (11 modules) rebuilt from a git-archive export of eff2dcd0 (restore/base-export.txt): 11/11 rc 0, 0 errors,
+    the base sorries only; every object hash equals the learning-r1 base record (buildsum.py: no difference).
+  post: restore/tree-check-post.txt (treecheck.py: 1199 modules at eff2dcd0 source and record object hashes, no stray olean,
+    no empty dir, snapshot equals snapshot-pre): RESULT OK. tree/snapshot-post.txt is byte-identical to tree/snapshot-pre.txt,
+    SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f.
+
+pr-body.md: draft PR description (not opened; nothing pushed).
+tools-used/: review/ (unmodified) and snap.py, restoreplan.py, impcheck.py, docheader.py, docdelta.py, buildsum.py, refcmp.py
+  (from promote-prfadv, unmodified); new: headd_edit.py, downcount.py, widths.py, rule10.sh, probecopies.py.
+SHA256SUMS: every file here except itself (paths without "./"); ../promote-headd-evidence.zip holds exactly these paths.
