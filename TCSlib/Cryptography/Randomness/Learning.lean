@@ -6,6 +6,9 @@ import TCSlib.LearningTheory.PAC
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
+import TCSlib.Cryptography.Randomness.Learning.Sample
+import TCSlib.Cryptography.Randomness.Learning.Distinguisher
+import TCSlib.Cryptography.Randomness.Learning.Law
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
