@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary
+import TCSlib.Cryptography.Games.Bridges.Experiments
 import Mathlib.Data.Fintype.Pi
 
 set_option maxHeartbeats 0
@@ -41,6 +42,8 @@ belong to the asymptotic layer; here the only resource tracked is the query boun
 
 * `prfAdv_eq`: the advantage written out as a difference of two probabilities.
 * `prfAdv_nonneg`.
+* `prfAdv_eq_expect`: the advantage as the gap between two nested expectations of the
+  game-hopping layer (`Games.ProbComp.expect`), keys or function table outside, coins inside.
 
 ## References
 
@@ -96,6 +99,39 @@ theorem prfAdv_nonneg [Fintype K] [Fintype I] [DecidableEq I] [Fintype O] [Finty
     (F : K → I → O) (A : OracleAdversary ρ I O) : 0 ≤ prfAdv F A := by
   rw [prfAdv_def, distAdv_def]
   exact abs_nonneg _
+
+section Expect
+
+open Games ProbComp
+
+/-- **The PRF advantage as expectations**: for a keyed family `F : K → I → O` and an oracle
+adversary `A` with coins in `ρ`, all finite and nonempty,
+`prfAdv F A = |𝔼_k 𝔼_c [A(c)^{F k} = 1] − 𝔼_R 𝔼_c [A(c)^R = 1]|`, where `k` is a uniform key,
+`R` a uniform random function `I → O` and `c` uniform coins ([Gar26, Definition 3.9] in the
+expectation form of the game-hopping layer).
+
+**Proof sketch.** Unfold to the distinguishing advantage of `oracleDist A` (`prfAdv_def`,
+`distAdv_def`). Each acceptance probability is the acceptance of the game that samples the seed
+(the key, resp. the function table) and then the coins (`Bridge.acceptProb_eq`, `accept_eq`,
+`Bridge.acceptGame_eq`); `prob_bind` and `prob_pure` turn the game into the nested expectation,
+and `oracleDist_apply`, `randomFunction_apply` read off the verdict. -/
+theorem prfAdv_eq_expect {K ρ : Type} [Fintype K] [Nonempty K] [Fintype I] [DecidableEq I]
+    [Fintype O] [Nonempty O] [Fintype ρ] [Nonempty ρ] (F : K → I → O)
+    (A : OracleAdversary ρ I O) :
+    prfAdv F A =
+      |expect (sample K)
+          (fun k => expect (sample ρ) fun c => if (A c).eval (F k) = true then (1 : ℝ) else 0) -
+        expect (sample (I → O))
+          (fun R => expect (sample ρ) fun c => if (A c).eval R = true then (1 : ℝ) else 0)| := by
+  rw [prfAdv_def, distAdv_def, Bridge.acceptProb_eq, Bridge.acceptProb_eq, accept_eq, accept_eq,
+    Bridge.acceptGame_eq, Bridge.acceptGame_eq, prob_bind, prob_bind]
+  congr 2
+  · refine congrArg _ (funext fun k => ?_)
+    simp only [prob_bind, prob_pure, oracleDist_apply]
+  · refine congrArg _ (funext fun R => ?_)
+    simp only [prob_bind, prob_pure, oracleDist_apply, randomFunction_apply]
+
+end Expect
 
 /-- Two samplers producing the same sample from every seed have the same acceptance
 probability. -/
