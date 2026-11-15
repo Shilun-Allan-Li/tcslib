@@ -26,6 +26,8 @@ an association list. They depend on Mathlib only.
 ## Main results
 
 * `TCSlib.Cryptography.headD_drop`: the head of a suffix is an entry.
+* `TCSlib.Cryptography.headD_drop_ofFn`: the head of a suffix of a tuple's list is the tuple's
+  entry at that index.
 * `TCSlib.Cryptography.flatten_ofFn_one`, `flatten_ofFn_singleton`: flattening one-element blocks.
 * `TCSlib.Cryptography.headD_ofFn_one`: the bit of a one-bit vector is the head of its string.
 * `TCSlib.Cryptography.zipWith_xor_cancel_left`: `(a ⊕ c) ⊕ a = c`.
@@ -49,6 +51,17 @@ namespace TCSlib.Cryptography
 `(l.drop i).headD d = l.getD i d`. -/
 theorem headD_drop {α : Type*} (l : List α) (i : ℕ) (d : α) : (l.drop i).headD d = l.getD i d := by
   rw [List.headD_eq_head?, List.head?_drop, List.getD_eq_getElem?_getD]
+
+/-- The head of the suffix of a tuple's list at an index is the tuple's entry there: for
+`f : Fin n → α`, `i : Fin n` and any default `d`, `((List.ofFn f).drop i.val).headD d = f i`
+(for bit vectors, `d = false` reads the `i`-th bit of the string `List.ofFn f`).
+
+**Proof sketch.** By `headD_drop` the left side is the entry `(List.ofFn f).getD i d`; since
+`i < n` it is the in-range entry `f i` (`List.getElem?_ofFn`). -/
+theorem headD_drop_ofFn {α : Type*} {n : ℕ} (f : Fin n → α) (i : Fin n) (d : α) :
+    ((List.ofFn f).drop i.val).headD d = f i := by
+  simp only [headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos i.isLt,
+    Option.getD_some]
 
 /-- **Flattening one-element blocks:** concatenating the one-bit blocks `g j` gives their bits,
 `(List.ofFn fun j => List.ofFn (g j)).flatten = List.ofFn fun j => g j 0` when the blocks have
