@@ -191,11 +191,12 @@ theorem advIn_context {n ℓ : ℕ} (W : PolyExpr)
 end KeyWindows
 
 /-- The selected bit of a serialized message is its typed bit at that position: `((List.ofFn m).drop
-i.val).headD false = m i`. -/
+i.val).headD false = m i`.
+
+This is the published `TCSlib.Cryptography.headD_drop_ofFn` at `α = Bool` and `d = false`. -/
 theorem headD_drop_ofFn {n : ℕ} (m : Fin n → Bool) (i : Fin n) :
-    ((List.ofFn m).drop i.val).headD false = m i := by
-  simp only [headD_drop, List.getD_eq_getElem?_getD, List.getElem?_ofFn,
-    dif_pos i.isLt, Option.getD_some]
+    ((List.ofFn m).drop i.val).headD false = m i :=
+  TCSlib.Cryptography.headD_drop_ofFn m i false
 
 /-- On canonical input, the machine returns the typed signature and records the old abort
 bit or equality `m_i=c`. This statement covers both safe and aborting calls. -/
