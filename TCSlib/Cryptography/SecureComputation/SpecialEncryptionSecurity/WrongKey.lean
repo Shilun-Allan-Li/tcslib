@@ -20,6 +20,10 @@ set_option autoImplicit false
 ## Main results
 
 * `SecureComputation.SpecialWrongKey.polyTimeComputable_prefixTest`: efficiency of the test.
+* `SecureComputation.SpecialWrongKey.exists_negligible_prefix_collision`: two independent keys
+  give equal `n`-bit pad prefixes on a common nonce with negligible probability.
+* `SecureComputation.SpecialWrongKey.spDecStr_none_iff_prefix_ne`: an honest ciphertext
+  decrypts to `⊥` under a second key exactly when the two pad prefixes differ.
 
 ## References
 

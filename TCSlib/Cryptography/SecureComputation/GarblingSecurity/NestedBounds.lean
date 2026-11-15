@@ -20,6 +20,11 @@ This module adds no definitions.
 ## Main results
 
 * `SecureComputation.GarblingCoins.length_nestedInner`: the inner ciphertext has `4n+2` bits.
+* `SecureComputation.GarblingCoins.nestedSpecial_wrongKeyBot_of_string_bounds`: inner and outer
+  string success bounds `ε₁, ε₂` give `(nestedSpecial E₁ E₂ n).WrongKeyBot (ε₁ + ε₂)`.
+* `SecureComputation.uprob_not_good_distinct_le_of_uniform_data`: with uniform keys and row
+  coins, goodness with distinct output keys fails with probability at most
+  `12 · |gates| · δ + m / |K|`.
 
 ## References
 

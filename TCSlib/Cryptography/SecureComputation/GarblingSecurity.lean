@@ -69,7 +69,11 @@ nested special encryption has `WrongKeyBot` with a negligible error `δ(n)`.
   which is decrypted under an independent key: error `ε₁(n)`.
 
 So `δ = ε₁ + ε₂`, negligible (`Negligible.add`); `ε₁` and `ε₂` are averaged over the plaintext
-and the other layer's key and coins. -/
+and the other layer's key and coins. In the proof, `spDecStr_wrongKey` at `ℓ = n` (with `G₁`)
+and at `ℓ = innerLen` (with `G₂`) gives the two string success bounds
+(`GarblingCoins.uprob_isSome_lt_of_none`), and
+`GarblingCoins.nestedSpecial_wrongKeyBot_of_string_bounds` carries out the case analysis,
+including the zero-position case, which has no distinct choices. -/
 theorem nestedSpecial_wrongKeyBot (hG₁ : PRFOut (.add .var .var) G₁)
     (hG₂ : PRFOut (.add .var innerLen) G₂) :
     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ n, (nestedSpecial E₁ E₂ n).WrongKeyBot (δ n) := by
