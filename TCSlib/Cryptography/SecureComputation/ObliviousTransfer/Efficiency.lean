@@ -54,9 +54,9 @@ theorem headD_eq_pairFstD (hist : List (List Bool)) :
   (Strategy.pairFstD_encodeMsgs hist).symm
 
 /-- The second projection of the empty word is empty, `pairSndD [] = []`
-(`length_pairSndD_le`). -/
+(`BinArith.iterate_pairSndD_nil` at `1`). -/
 theorem pairSndD_nil' : pairSndD ([] : List Bool) = [] :=
-  List.eq_nil_of_length_eq_zero (Nat.le_zero.1 (length_pairSndD_le []))
+  BinArith.iterate_pairSndD_nil 1
 
 /-- The second message of a history is read off its encoding:
 `hist.getD 1 [] = fst (snd (encodeMsgs hist))`. -/
