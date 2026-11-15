@@ -1,0 +1,100 @@
+From 93afd4f35306371e201ea11ac8dd376efc3312ec Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 08:10:48 +0000
+Subject: [PATCH 10/12] sc-compose final: read Protocol.transcript, acceptProb
+ and distAdv through their published readers (Rule-10 seals)
+
+The seals found four proofs that unfolded foreign definitions by defeq: transcript as
+transcriptWith (Lengths.lean: exists_main_msgs_le, exists_viewP_le, exists_viewV_le; now
+Protocol.transcript_eq_transcriptWith), acceptProb in acceptProb_eq_uexp_sections (now
+acceptProb_def), and distAdv in exists_simA/exists_simB (now distAdv_def).
+---
+ .../SecureComputation/ComposeSecurity/Lengths.lean  | 13 ++++++++-----
+ .../ComposeSecurity/Probability.lean                |  1 +
+ .../SecureComputation/ComposeSecurity/SideA.lean    |  3 ++-
+ .../SecureComputation/ComposeSecurity/SideB.lean    |  3 ++-
+ 4 files changed, 13 insertions(+), 7 deletions(-)
+
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean
+index 97f3b0480..4621fe026 100644
+--- a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean
+@@ -89,7 +89,8 @@ theorem exists_main_msgs_le {F : Functionality} (hH : H.PolyTime F) :
+     (l := H.answersB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
+     (H.length_answersB n _ _ _ _)
+   have hmsg := hB n x y aA aB m
+-  rw [haA, haB, ← privA_eq, ← privB_eq] at hmsg
++  rw [haA, haB, ← privA_eq, ← privB_eq, Protocol.transcript_eq_transcriptWith] at hmsg
++  rw [Protocol.transcript_eq_transcriptWith]
+   have h₁ := length_transcriptWith_fst_le H.main H.main.P (List.replicate n true)
+     (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
+     (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m
+@@ -216,9 +217,10 @@ theorem exists_viewP_le {G : Functionality} {ρ : Protocol} (hρ : G.PolyTime ρ
+         (.mul ρ.rounds (.add (.mul (.const 2) B) (.const 2)))), fun n x y t => ?_⟩
+   have h₁ := length_transcriptWith_fst_le ρ ρ.P (List.replicate n true) (List.ofFn x)
+     (List.ofFn y) t
++  have hb := hB n x y t
++  rw [Protocol.transcript_eq_transcriptWith] at hb
+   have h₂ := (length_encodeMsgs_le _ (B.eval n) fun w hw =>
+-    hB n x y t w (List.mem_append_left _ hw)).trans (Nat.mul_le_mul_right _ h₁)
+-  rw [Protocol.transcript_eq_transcriptWith] at h₂
++    hb w (List.mem_append_left _ hw)).trans (Nat.mul_le_mul_right _ h₁)
+   rw [Protocol.viewP_eq, View.encode_mk]
+   simp only [length_pairEncode, List.length_ofFn, Strategy.coinLen_eq, List.length_replicate]
+     at h₂ ⊢
+@@ -238,9 +240,10 @@ theorem exists_viewV_le {G : Functionality} {ρ : Protocol} (hρ : G.PolyTime ρ
+         (.mul ρ.rounds (.add (.mul (.const 2) B) (.const 2)))), fun n x y t => ?_⟩
+   have h₁ := length_transcriptWith_snd_le ρ ρ.P (List.replicate n true) (List.ofFn x)
+     (List.ofFn y) t
++  have hb := hB n x y t
++  rw [Protocol.transcript_eq_transcriptWith] at hb
+   have h₂ := (length_encodeMsgs_le _ (B.eval n) fun w hw =>
+-    hB n x y t w (List.mem_append_right _ hw)).trans (Nat.mul_le_mul_right _ h₁)
+-  rw [Protocol.transcript_eq_transcriptWith] at h₂
++    hb w (List.mem_append_right _ hw)).trans (Nat.mul_le_mul_right _ h₁)
+   rw [Protocol.viewV_eq, View.encode_mk]
+   simp only [length_pairEncode, List.length_ofFn, Strategy.coinLen_eq, List.length_replicate]
+     at h₂ ⊢
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean
+index 15adcb5a4..5c71f1fc0 100644
+--- a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean
+@@ -74,6 +74,7 @@ the acceptance probability of the section `t ↦ X (a, t)` (`uprob_prod` after r
+ theorem acceptProb_eq_uexp_sections (X : σ × τ → γ) (D : γ → ρ → Bool) :
+     acceptProb X D = uexp fun a => acceptProb (fun t => X (a, t)) D := by
+   rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc σ τ ρ).symm, uprob_prod]
++  simp only [acceptProb_def]
+   rfl
+ 
+ /-- The average of a difference is at most the largest difference: some `a` has
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean
+index 6a77b2a16..ef78282bd 100644
+--- a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean
+@@ -420,7 +420,8 @@ theorem exists_simA {F : Functionality} (hM : ∀ n, 0 < H.main.rounds.eval n)
+             ⟨j, h⟩ (z.2 ⟨j, h⟩) else []) (D.distinguisherL n) -
+       acceptProb (F.idealA SA n x y) (D.distinguisherL n)| ≤ ε₃ n := by
+     rw [← H.acceptProb_realA_dPhi ρ SρA D DΦ hcallA hDΦc hDΦ n x y, e3]
+-    exact (h₃ n x y).1
++    have h := (h₃ n x y).1
++    rwa [distAdv_def] at h
+   rw [distAdv_def]
+   calc |acceptProb (F.realA (H.compose ρ) n x y) (D.distinguisherL n) -
+         acceptProb (F.idealA SA n x y) (D.distinguisherL n)|
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean
+index eb27529a0..38d195d0f 100644
+--- a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean
+@@ -405,7 +405,8 @@ theorem exists_simB {F : Functionality} (hM : ∀ n, 0 < H.main.rounds.eval n)
+             ⟨j, h⟩ (z.2 ⟨j, h⟩) else []) (D.distinguisherL n) -
+       acceptProb (F.idealB SB n x y) (D.distinguisherL n)| ≤ ε₃ n := by
+     rw [← H.acceptProb_realB_dPhi ρ SρB D DΦ hcallB hDΦc hDΦ n x y, e3]
+-    exact (h₃ n x y).2
++    have h := (h₃ n x y).2
++    rwa [distAdv_def] at h
+   rw [distAdv_def]
+   calc |acceptProb (F.realB (H.compose ρ) n x y) (D.distinguisherL n) -
+         acceptProb (F.idealB SB n x y) (D.distinguisherL n)|
+-- 
+2.43.0
+

@@ -22,7 +22,7 @@ if not os.path.exists(census) or 'TOTAL' not in open(census).read():
     CEN = open('/workspace/sctools/seals.py').read().split("CENSUS = '''", 1)[1].split("'''", 1)[0]
     CEN = CEN.replace('\\\\', '\\')
     p = f'{R}/scratch/controls/Census_controls.lean'
-    open(p, 'w').write('import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF\n' + CEN % ('controls', 'Controls'))
+    open(p, 'w').write('import TCSlib.Cryptography.SecureComputation.ComposeSecurity\n' + CEN % ('controls', 'Controls'))
     r = subprocess.run(['lean', p], cwd=R, env=ENV, capture_output=True, text=True)
     open(census, 'w').write(r.stdout + r.stderr)
 cat = [l.rstrip('\n').split('\t') for l in open(census) if l.startswith('CAT\t')]

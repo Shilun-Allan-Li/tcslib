@@ -1,0 +1,54 @@
+SEAL-INSTALL final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 1: 400
+SEAL-INSTALL final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 2: 400
+SEAL-INSTALL final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 3: 375
+/workspace/scc/scratch/seal/final/Seal_Cryptography_SecureComputation_ComposeSecurity_Lengths_coeA.lean:292:2: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  h ≥ 0
+  g ≥ 0
+  f ≥ 0
+  e ≥ 0
+  2*e + f ≥ -2
+  d ≥ 0
+  c ≥ 0
+  c - d ≥ 0
+  c - d - 2*g + 2*h ≤ -1
+  b ≥ 0
+  a ≥ 0
+  a - b ≥ 0
+where
+ a := ↑(ρ.rounds.eval (List.replicate n true).length)
+ b := ↑(ρ.transcriptWith ρ.P (List.replicate n true) (List.ofFn x) (List.ofFn y) t).1.length
+ c := ↑(ρ.rounds.eval n) * ↑(2 * B.eval n + 2)
+ d := ↑(Strategy.encodeMsgs (ρ.transcriptWith ρ.P (List.replicate n true) (List.ofFn x) (List.ofFn y) t).1).length
+ e := ↑n
+ f := ↑(G.inA.eval n)
+ g := ↑(List.ofFn t.1).length
+ h := ↑(ρ.P.coins.eval n)
+/workspace/scc/scratch/seal/final/Seal_Cryptography_SecureComputation_ComposeSecurity_Lengths_coeA.lean:315:2: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  h ≥ 0
+  g ≥ 0
+  f ≥ 0
+  e ≥ 0
+  2*e + f ≥ -2
+  d ≥ 0
+  c ≥ 0
+  c - d ≥ 0
+  c - d - 2*g + 2*h ≤ -1
+  b ≥ 0
+  a ≥ 0
+  a - b ≥ 0
+where
+ a := ↑(ρ.rounds.eval (List.replicate n true).length)
+ b := ↑(ρ.transcriptWith ρ.P (List.replicate n true) (List.ofFn x) (List.ofFn y) t).2.length
+ c := ↑(ρ.rounds.eval n) * ↑(2 * B.eval n + 2)
+ d := ↑(Strategy.encodeMsgs (ρ.transcriptWith ρ.P (List.replicate n true) (List.ofFn x) (List.ofFn y) t).2).length
+ e := ↑n
+ f := ↑(G.inB.eval n)
+ g := ↑(List.ofFn t.2).length
+ h := ↑(ρ.V.coins.eval n)
+SEAL-VERIFY final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 1: 400
+SEAL-VERIFY final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 2: 400
+SEAL-VERIFY final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 3: 375
+
+EXIT 1

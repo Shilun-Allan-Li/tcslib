@@ -1,0 +1,24 @@
+SEAL-INSTALL final/Cryptography_SecureComputation_ComposeSecurity_Probability/strict-B part 1: 400
+SEAL-INSTALL final/Cryptography_SecureComputation_ComposeSecurity_Probability/strict-B part 2: 163
+/workspace/scc/scratch/seal/final/Seal_Cryptography_SecureComputation_ComposeSecurity_Probability_strictB.lean:120:2: error: Tactic `rfl` failed: The left-hand side
+  uexp fun a =>
+    uprob fun b => D (X ((Equiv.prodAssoc σ τ ρ).symm (a, b)).1) ((Equiv.prodAssoc σ τ ρ).symm (a, b)).2 = true
+is not definitionally equal to the right-hand side
+  uexp fun a => acceptProb (fun t => X (a, t)) D
+
+σ : Type u_1
+τ : Type u_2
+γ : Type u_4
+ρ : Type u_5
+inst✝² : Fintype σ
+inst✝¹ : Fintype τ
+inst✝ : Fintype ρ
+X : σ × τ → γ
+D : γ → ρ → Bool
+⊢ (uexp fun a =>
+      uprob fun b => D (X ((Equiv.prodAssoc σ τ ρ).symm (a, b)).1) ((Equiv.prodAssoc σ τ ρ).symm (a, b)).2 = true) =
+    uexp fun a => acceptProb (fun t => X (a, t)) D
+SEAL-VERIFY final/Cryptography_SecureComputation_ComposeSecurity_Probability/strict-B part 1: 400
+SEAL-VERIFY final/Cryptography_SecureComputation_ComposeSecurity_Probability/strict-B part 2: 163
+
+EXIT 1

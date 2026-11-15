@@ -1,0 +1,676 @@
+=== rg -n 'theorem polyTimeComputable_flatMap_range|theorem flatMap_range_ite\b|flatMap_range_ite_eq' TCSlib
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:190:private theorem flatMap_range_ite (m R : ℕ) :
+TCSlib/Complexity/FormulaKit/Emit.lean:127:theorem polyTimeComputable_flatMap_range (count : List Bool → ℕ)
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:368:theorem flatMap_range_ite_eq (f : ℕ → Bool) (L : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:373:    rw [List.range_succ, List.flatMap_append, flatMap_range_ite_eq f L N, List.flatMap_singleton]
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:397:`(List.range |F z|).map (fun i => (F z).getD i false) = F z` (`flatMap_range_ite_eq`,
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:427:  rw [flatMap_range_ite_eq, min_eq_right hN, map_range_getD]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:160:theorem flatMap_range_ite (f : ℕ → List Bool) (L : ℕ) :
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:245:theorem flatMap_range_ite_eq_flatten_ofFn (E : ℕ → List Bool) {Q R : ℕ} (h : Q ≤ R) :
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:459:of the first `q(n)` emissions is the target by `flatMap_range_ite_eq_flatten_ofFn` and
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:496:  rw [flatMap_range_ite_eq_flatten_ofFn _ hQle]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:141:`E i` over `i < min N L` (`EncodingMachines.flatMap_range_ite_eq` for arbitrary chunks). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:142:theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:159:theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:60:theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:79:theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
+
+=== rg -n 'theorem iterSnd_poly|iterUnary_poly|pairSndD\^\[' TCSlib
+TCSlib/Complexity/Randomized/BPLInPWords.lean:62:      (Nat.bits (a + ∑ j ∈ Finset.range i, bitsVal (pairFstD (pairSndD^[j] w))))
+TCSlib/Complexity/Randomized/BPLInPWords.lean:63:      (pairSndD^[i] w) := by
+TCSlib/Complexity/Randomized/BPLInPWords.lean:120:  have hsum : 0 + ∑ j ∈ Finset.range i, bitsVal (pairFstD (pairSndD^[j] w)) <
+TCSlib/Complexity/Randomized/BPLInPWords.lean:122:    have hterm : ∀ j ∈ Finset.range i, bitsVal (pairFstD (pairSndD^[j] w)) ≤ 2 ^ w.length := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:22:(`iterUnary_poly` on `giStep`).
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:99:    [(pairFstD (pairSndD^[lastSteps (argM w)] (argM w))).headD false] :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:272:one-bit word `[decide (∀ j < |x|, γ_j(G_{b_j}) = H_j)]` (`iterUnary_poly` on `giStep` from
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:285:    ((iterUnary_poly giStep_poly _ (fun x₀ k _ => giIter_bound x₀ k)).comp hx₀)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:27:and one **unary-count loop** (`iterUnary_poly`: iterate a step `|u|` times for a unary count
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:38:* `TCSlib.Cryptography.GI.peelLoop_poly`, `GI.iterUnary_poly` — the two loop schemes.
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:88:theorem iterate_pairSndD_nil : ∀ k : ℕ, pairSndD^[k] [] = []
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:102:    pairSndD^[k] (Strategy.encodeMsgs hist) = Strategy.encodeMsgs (hist.drop k)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:273:    show (fun v => pairSndD (pairSndD v))^[k] (pairSndD^[2] (Strategy.encodeMsgs hist)) = _
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:335:    pairFstD (pairSndD^[lastSteps (Strategy.encodeMsgs hist)] (Strategy.encodeMsgs hist)) =
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:341:theorem lastMsg_poly : PolyTimeComputable fun w => pairFstD (pairSndD^[lastSteps w] w) :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:393:theorem iterUnary_poly {step : List Bool → List Bool} (hstep : PolyTimeComputable step) (B : PolyExpr)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:512:      pairEncode (pairSndD^[k] M) (pairEncode (R.drop (k * gniBlock.eval u.length))
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:513:        [b && decide (∀ j < k, (pairFstD (pairSndD^[j] M)).headD false =
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:526:      pairEncode (pairSndD^[k] (pairFstD (pairSndD x₀)))
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:537:      refine ⟨b && decide ((pairFstD (pairSndD^[k] (pairFstD (pairSndD x₀)))).headD false =
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:566:(`iterUnary_poly` on `gniStep` from `⟨1^{|x|}, ⟨msgs, ⟨r, [true]⟩⟩⟩`, closed form `gniIter_eq`). -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:568:    [decide (∀ j < (NUPPT.inParam w).length, (pairFstD (pairSndD^[j] (argM w))).headD false =
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:575:    ((iterUnary_poly gniStep_poly _ (fun x₀ k _ => gniIter_bound x₀ k)).comp hx₀)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:590:scan: message `j` is `pairFstD (pairSndD^[j] msgs)` and the first bit of coin block `j` is the
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:594:      ∀ j < N, (pairFstD (pairSndD^[j] (Strategy.encodeMsgs hist))).headD false =
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:106:def msgAt (w : List Bool) (i : ℕ) : List Bool := pairFstD (pairSndD^[i] w)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:108:/-- The defining equation of `msgAt`: `msgAt w i = pairFstD (pairSndD^[i] w)`. -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:109:theorem msgAt_eq (w : List Bool) (i : ℕ) : msgAt w i = pairFstD (pairSndD^[i] w) := rfl
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:62:`pairFstD (pairSndD^[i] adv)`) and the challenge `cv`. Fields `0, 1, 2` are `x`, `z` and the
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:71:  if pairFstD (pairSndD^[3] adv) = [] then
+
+=== rg -n 'getD_eq_pairFstD_iterate|theorem msgAt|pairFstD_encodeMsgs|iterate_pairSndD_encodeMsgs' TCSlib
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:433:function on every history (`NUPPT.runAtL_ofPolyTimeUniform`, `Strategy.pairFstD_encodeMsgs`). -/
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:456:    Strategy.pairFstD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:303:  rw [Fin.val_mk, iterate_sndD_two_encodeMsgs, pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:304:    Strategy.pairFstD_encodeMsgs, List.drop_drop, relabelAt_replicate, headD_drop,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:101:theorem iterate_pairSndD_encodeMsgs : ∀ (k : ℕ) (hist : List (List Bool)),
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:105:    rw [Function.iterate_succ_apply, pairSndD_encodeMsgs, iterate_pairSndD_encodeMsgs k, List.drop_drop]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:241:    rw [iterate_pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:243:  · rw [iterate_pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:274:    rw [iterate_pairSndD_encodeMsgs, ih, List.drop_drop]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:326:    rw [iterate_pairSndD_encodeMsgs, pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:329:  · rw [iterate_pairSndD_encodeMsgs, pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:337:  rw [lastSteps_encodeMsgs, iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:598:  rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinBlock_eq, headD_take hc, Fin.val_mk,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:109:theorem msgAt_eq (w : List Bool) (i : ℕ) : msgAt w i = pairFstD (pairSndD^[i] w) := rfl
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:112:theorem msgAt_encodeMsgs (l : List (List Bool)) (i : ℕ) (hi : i < l.length) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:568:`NUPPT.runAtL_ofPolyTimeUniform` and `Strategy.pairFstD_encodeMsgs`. -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:141:/-- Field `i` of an encoded list is its entry `i` (`ColMachines.getD_eq_pairFstD_iterate`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:144:  (ColMachines.getD_eq_pairFstD_iterate l i).symm
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:275:`getD_eq_pairFstD_iterate`. -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:281:    rw [getLastD_eq_getD, getD_eq_pairFstD_iterate]
+
+=== rg -n 'theorem encodeMsgs_eq_flatMap|theorem encodeMsgs_append|encodeMsgs \(.* \+\+' TCSlib
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:233:theorem encodeMsgs_append (L M : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:234:    Strategy.encodeMsgs (L ++ M) = Strategy.encodeMsgs L ++ Strategy.encodeMsgs M := by
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:256:      Strategy.encodeMsgs (List.ofFn fun i : Fin k => W (Fin.castLE k.2.le i)) ++
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:286:`D(1^n, encodeMsgs (W|_{<k}) ++ ⟨z, encodeMsgs (W|_{>k})⟩)` by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:503:theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:912:theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:79:⟨asmW ⟨hdr, encodeMsgs (pre ++ pairFstD w :: suf)⟩, out⟩` (`encodeMsgs_append`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:85:        (pairEncode hdr (Strategy.encodeMsgs (pre ++ pairFstD w :: suf)))) out := by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:112:`K θ v = ⟨asmW ⟨hdr θ, encodeMsgs (pre θ ++ v :: suf θ)⟩, out θ⟩` (the template filled with `v`).
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:134:            (Strategy.encodeMsgs (pre n θ ++ pairFstD (rs n (xA n θ) (yB n θ) t) :: suf n θ))))
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:137:            (Strategy.encodeMsgs (pre n θ ++ pairFstD (is n (xA n θ) (yB n θ) s) :: suf n θ))))
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:143:      (Strategy.encodeMsgs (pre n θ ++ v :: suf n θ)))) (out n θ)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:140:`encodeMsgs (a ++ b) = encodeMsgs a ++ encodeMsgs b` (`pairEncode_nil_append`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:141:theorem encodeMsgs_append (a b : List (List Bool)) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:142:    Strategy.encodeMsgs (a ++ b) = Strategy.encodeMsgs a ++ Strategy.encodeMsgs b := by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:151:theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean:155:        Strategy.encodeMsgs (List.replicate lead []) ++ me))
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean:166:            Strategy.encodeMsgs (List.replicate lead []) ++ me)) := rfl
+
+=== rg -n 'slotMsgs' TCSlib/Cryptography
+TCSlib/Cryptography/SecureComputation/Compose.lean:61:* `Compose.moveMsg`, `Compose.slotMsgs`, `Compose.runTape`: the message of a move, the messages
+TCSlib/Cryptography/SecureComputation/Compose.lean:155:def slotMsgs (sel : ℕ → Bool) (off p : ℕ) (hist : List (List Bool)) : List (List Bool) :=
+TCSlib/Cryptography/SecureComputation/Compose.lean:158:/-- `slotMsgs sel off p hist` lists `hist[off + p']` over the `p' < p` with `sel p'`. -/
+TCSlib/Cryptography/SecureComputation/Compose.lean:159:theorem slotMsgs_eq (sel : ℕ → Bool) (off p : ℕ) (hist : List (List Bool)) :
+TCSlib/Cryptography/SecureComputation/Compose.lean:160:    slotMsgs sel off p hist = ((List.range p).filter sel).map fun p' => hist.getD (off + p') [] :=
+TCSlib/Cryptography/SecureComputation/Compose.lean:164:theorem slotMsgs_eq_map {sel : ℕ → Bool} {off p : ℕ} {hist : List (List Bool)}
+TCSlib/Cryptography/SecureComputation/Compose.lean:166:    slotMsgs sel off p hist = ((List.range p).filter sel).map f := by
+TCSlib/Cryptography/SecureComputation/Compose.lean:280:    (slotMsgs (moverIsV ρ.verifierFirst) (ρ.rounds.eval x.length * j) p hist)
+TCSlib/Cryptography/SecureComputation/Compose.lean:287:        (slotMsgs (moverIsV ρ.verifierFirst) (ρ.rounds.eval x.length * j) p hist) := rfl
+TCSlib/Cryptography/SecureComputation/Compose.lean:296:    (slotMsgs (fun p' => !moverIsV ρ.verifierFirst p') (ρ.rounds.eval x.length * j) p hist)
+TCSlib/Cryptography/SecureComputation/Compose.lean:303:        (slotMsgs (fun p' => !moverIsV ρ.verifierFirst p') (ρ.rounds.eval x.length * j) p
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:205:theorem slotMsgs_runFst {j p : ℕ} (hp : p ≤ ρ.rounds.eval x.length) {hist : List (List Bool)}
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:207:    slotMsgs (moverIsV ρ.verifierFirst) (ρ.rounds.eval x.length * j) p hist =
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:209:  rw [slotMsgs_eq_map (f := H.runMsg ρ x zA zB rA rB j), runExec_eq, exec_eq_map]
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:217:theorem slotMsgs_runSnd {j p : ℕ} (hp : p ≤ ρ.rounds.eval x.length) {hist : List (List Bool)}
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:219:    slotMsgs (fun p' => !moverIsV ρ.verifierFirst p') (ρ.rounds.eval x.length * j) p hist =
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:221:  rw [slotMsgs_eq_map (f := H.runMsg ρ x zA zB rA rB j), runExec_eq, exec_eq_map]
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:236:   the pairs is the honest run's after `p` moves (`slotMsgs_runFst`, by the induction
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:239:   symmetrically sends `ρ`'s move `p` or `[]` (`slotMsgs_runSnd`). -/
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:264:          slotMsgs_runFst H ρ x zA zB rA rB hpR.le, runExec_eq]
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:278:          slotMsgs_runSnd H ρ x zA zB rA rB hpR.le, runExec_eq]
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:296:messages; the pairs of run `j` come before `L·R`, so `slotMsgs_runFst` and `slotMsgs_runSnd`
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:299:    slotMsgs (moverIsV ρ.verifierFirst) (ρ.rounds.eval x.length * j) (ρ.rounds.eval x.length)
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:303:    slotMsgs (fun p => !moverIsV ρ.verifierFirst p) (ρ.rounds.eval x.length * j)
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:312:  refine ⟨slotMsgs_runFst H ρ x zA zB rA rB le_rfl fun i hi => ?_,
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:313:    slotMsgs_runSnd H ρ x zA zB rA rB le_rfl fun i hi => ?_⟩
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:327:  rw [runNextA_eq, slotMsgs_runFst H ρ x zA zB rA rB le_rfl]
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:340:  rw [runNextB_eq, slotMsgs_runSnd H ρ x zA zB rA rB le_rfl]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Efficiency.lean:136:Fρ (GI.ilayout x (fcall ⟨1^{|x|}, ⟨z, ⟨r_{<c₀}, 1^j⟩⟩⟩) (slotMsgs sel (R·j) p hist)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Efficiency.lean:137:(runTape c₀ c j r))` with `sel q = (moverIsV vF q == b)` (`encodeMsgs_slotMsgs`). -/
+
+=== rg -n 'def ilayout|theorem efficient_of_polyTime|Efficient.exists|exists_polyTime' TCSlib
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:579:def ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) : List Bool :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:594:theorem efficient_of_polyTime (S : Strategy) {F : List Bool → List Bool} (hF : PolyTimeComputable F)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:222:def ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) : List Bool :=
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:236:theorem efficient_of_polyTime (S : Strategy) {F : List Bool → List Bool}
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:192:theorem Efficient.exists_uniform {S : Strategy} (h : S.Efficient) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean:79:(`ComposeMachines.Efficient.exists_polyTime`, `PolyTimeComputable.output_length_le`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean:83:  obtain ⟨F, hF, hnext⟩ := ComposeMachines.Efficient.exists_polyTime h
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:38:* `ComposeMachines.Efficient.exists_polyTime`: an efficient strategy's next-message function is
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:212:theorem Efficient.exists_polyTime {S : Strategy} (h : S.Efficient) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:324:strategies `ρ.P` and `main.P` (`ComposeMachines.Efficient.exists_polyTime`) and Alice's
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:342:  obtain ⟨Fρ, hFρ, hρeq⟩ := ComposeMachines.Efficient.exists_polyTime hρP
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:343:  obtain ⟨Fm, hFm, hmeq⟩ := ComposeMachines.Efficient.exists_polyTime hmain
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:359:  obtain ⟨Fρ, hFρ, hρeq⟩ := ComposeMachines.Efficient.exists_polyTime hρV
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:360:  obtain ⟨Fm, hFm, hmeq⟩ := ComposeMachines.Efficient.exists_polyTime hmain
+
+=== rg -n 'def padTo|def padL|theorem ofFn_padFin|padTo_poly|polyTimeComputable_padL|zeros_poly|polyTimeComputable_zeros' TCSlib
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:468:`EnsembleLemmas.polyTimeComputable_padL`). -/
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:471:    polyTimeComputable_pairFstD (EnsembleLemmas.polyTimeComputable_padL (.mul .var .var)
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:865:(`EnsembleLemmas.polyTimeComputable_padL`) — the initial state `ComLoop.init w` of the bitwise
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:208:theorem zeros_poly : PolyTimeComputable fun w => List.replicate w.length false :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:218:  have hz := zeros_poly.comp hsq
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:376:(`EnsembleLemmas.polyTimeComputable_padL` after the unary offset). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:388:  refine ptc_congr (EnsembleLemmas.polyTimeComputable_padL ℓ (nV_poly hX) hdrop) fun w => ?_
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:400:    refine ptc_congr (EnsembleLemmas.polyTimeComputable_padL .var (nV_poly hX) hc) fun w => ?_
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:292:theorem zeros_poly {L : List Bool → ℕ} (hL : PolyTimeComputable fun x => List.replicate (L x) true) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:303:def padTo (L : ℕ) (w : List Bool) : List Bool := (w ++ List.replicate L false).take L
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:306:theorem padTo_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:309:  truncate_poly (hs.append (zeros_poly hL)) hL
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:327:theorem ofFn_padFin (L : ℕ) (w : List Bool) : List.ofFn (padFin L w) = padTo L w := by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:169:  exact padTo_poly hdrop ((LOf_poly ℓ).comp polyTimeComputable_pairSndD)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:174:  hCom.comp ((padTo_poly colBits_poly (nOf_poly.comp polyTimeComputable_pairSndD)).pairEncode
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:253:selected commitments (`padTo_poly`, `iterSnd_poly`), and `polyTimeComputable_not` of `eqTest_poly`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:281:    ((hCom.comp ((padTo_poly (encColorOfVal_poly ha) hn).pairEncode hri)).pairEncode
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:284:    ((hCom.comp ((padTo_poly (encColorOfVal_poly hb) hn).pairEncode hrj)).pairEncode
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:153:theorem zeros_poly : PolyTimeComputable fun w => List.replicate w.length false :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:189:  have hz := zeros_poly.comp hsq
+TCSlib/Complexity/CircuitComplexity/Hierarchy.lean:245:def padLanguage {ℓ : ℕ → ℕ} (hle : ∀ n, ℓ n ≤ n)
+TCSlib/Cryptography/Hashing/SIS/CollisionOutput.lean:291:  have hc := EnsembleLemmas.polyTimeComputable_zeros B hu
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Efficiency.lean:222:`L(n)`, with the chunk `padTo_poly` of `polyTimeComputable_runW`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Efficiency.lean:233:    padTo_poly ((polyTimeComputable_runW hFρ hcall c₀ c R vF b).comp
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:41:* `ComposeMachines.ofFn_padFin`, `padTo_poly`: `padFin` as a polynomial-time string map.
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:224:def padTo (L : ℕ) (w : List Bool) : List Bool := (w ++ List.replicate L false).take L
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:231:`GI.zeros_poly` of the unary string). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:232:theorem padTo_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:235:  truncate_poly (hs.append ((GI.zeros_poly.comp' hL).congr fun x => by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Machines.lean:244:theorem ofFn_padFin (L : ℕ) (w : List Bool) : List.ofFn (padFin L w) = padTo L w := by
+
+=== rg -n 'def argX|def argZ|def argM' TCSlib
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:290:def argX (w : List Bool) : List Bool := pairFstD (pairFstD (NUPPT.inArg w))
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:293:def argZ (w : List Bool) : List Bool := pairSndD (pairFstD (NUPPT.inArg w))
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:296:def argM (w : List Bool) : List Bool := pairSndD (NUPPT.inArg w)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:246:def argX (w : List Bool) : List Bool := pairFstD (pairFstD (NUPPT.inArg w))
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:252:def argZ (w : List Bool) : List Bool := pairSndD (pairFstD (NUPPT.inArg w))
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:255:def argM (w : List Bool) : List Bool := pairSndD (NUPPT.inArg w)
+
+=== rg -n 'moverIsV.*% 2|theorem moverIsV' TCSlib
+TCSlib/Cryptography/Composability/SequentialZK.lean:128:theorem moverIsV_two_mul_add (vFirst : Bool) (m t : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:70:(`moverIsV false k = decide (k % 2 = 1)`: the prover moves at `4i` and `4i + 2`, the verifier
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:237:/-- The defining equation of `moverIsV`: `moverIsV vFirst k = if vFirst then decide (k % 2 = 0) else
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:239:theorem moverIsV_def (vFirst : Bool) (k : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:244:@[simp] theorem moverIsV_true (k : ℕ) : moverIsV true k = decide (k % 2 = 0) := rfl
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:247:@[simp] theorem moverIsV_false (k : ℕ) : moverIsV false k = decide (k % 2 = 1) := rfl
+TCSlib/Cryptography/SecureComputation/Compose.lean:198:theorem moverIsV_false_two_mul (q : ℕ) : moverIsV false (2 * q) = false := by
+TCSlib/Cryptography/SecureComputation/Compose.lean:203:theorem moverIsV_false_two_mul_add_one (q : ℕ) : moverIsV false (2 * q + 1) = true := by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean:46:/-- **The mover test is a parity**: `moverIsV vF q == b` iff `q % 2 = (if vF == b then 0 else 1)`
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean:48:theorem moverIsV_beq_iff (vF b : Bool) (q : ℕ) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean:49:    (moverIsV vF q == b) = true ↔ q % 2 = (if vF == b then 0 else 1) := by
+
+=== rg -n 'flatten_ofFn|ofFn_eq_map.*flatten|map_coe_finRange' TCSlib
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:211:theorem length_flatten_ofFn {j L : ℕ} (f : Fin j → Fin L → Bool) :
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:384:  rw [List.ofFn_eq_map, ← List.map_coe_finRange, List.map_map]
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:687:(`CommitmentLemmas.ofFn_blocks_symm_update`, lengths by `length_flatten_ofFn`). If
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:753:    rw [length_flatten_ofFn, length_flatten_ofFn]
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:595:  rw [← List.map_coe_finRange, List.findSome?_map]
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:685:  rw [← List.map_coe_finRange]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:220:  rw [← List.map_coe_finRange, List.findSome?_map]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:204:over `List.range T` (`List.map_coe_finRange`, `List.findSome?_map`); each trial is `some` of
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:215:    rw [← List.map_coe_finRange, List.findSome?_map]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:364:  rw [← List.map_coe_finRange, List.filter_map]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:516:  rw [encodeMsgs_eq_flatMap, List.ofFn_eq_map, ← List.map_coe_finRange, List.flatMap_map,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:537:  conv_rhs => rw [← List.map_coe_finRange n, List.flatMap_map]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:355:(`List.map_coe_finRange`, `List.findSome?_map`, `List.map_findSome?`). At attempt `t`, read the
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:368:  rw [instanceVertexCount_encInstance, ← List.map_coe_finRange, List.findSome?_map, simTrunc,
+TCSlib/Cryptography/Candidates/Concrete.lean:870:(`List.map_coe_finRange`, `List.findSome?_map`, `bitsToNat_eq_listToNat`, `bitsEquiv_val`) and
+TCSlib/Cryptography/Candidates/Concrete.lean:900:      rw [rejectBlocksL_eq, firstHit_eq, List.map_findSome?, ← List.map_coe_finRange,
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:91:theorem flatten_ofFn_two (g : Fin 2 → List Bool) : (List.ofFn g).flatten = g 0 ++ g 1 := by
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:232:    rw [Nat.add_zero, ← List.map_coe_finRange, List.find?_map]
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:245:theorem flatMap_range_ite_eq_flatten_ofFn (E : ℕ → List Bool) {Q R : ℕ} (h : Q ≤ R) :
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:250:    rw [List.ofFn_eq_map, List.flatMap_def, ← List.map_coe_finRange, List.map_map]
+
+=== rg -n 'theorem distAdv_triangle|distAdv_le_add|abs_sub_le .*acceptProb' TCSlib
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1154:  have htri := abs_sub_le (acceptProb (fun r => (((colProtocol Com ℓ).withV V').viewV (encGraph G)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1462:  calc _ ≤ _ := abs_sub_le _ (acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) ×
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1464:    _ ≤ _ := add_le_add h2 (abs_sub_le _ (acceptProb (colSimTruncH Com (ℓ.eval n) G c V K) D') _)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1466:        (abs_sub_le _ (acceptProb (colSimTruncW Com (ℓ.eval n) G c V K) D') _))
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1468:        (abs_sub_le _ (acceptProb (fun w => (colSimTrunc Com (ℓ.eval n) G V K w).elim [] enc)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:336:  have t1 := abs_sub_le (acceptProb (prfEncReal F m) D)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:339:  have t2 := abs_sub_le (acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:341:  have t3 := abs_sub_le (acceptProb (otpEnc m') D)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:318:  have htriangle₀ := abs_sub_le (acceptProb (realView P χ μ₀) D)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:320:  have htriangle₁ := abs_sub_le (acceptProb (uniformKeyView P μ₀) D)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:322:  have htriangle₂ := abs_sub_le (acceptProb ideal D)
+
+=== rg -n 'abs_uexp_sub_le_uprob|abs_uprob_sub_le|distAdv_le_uprob|agree' TCSlib/Cryptography
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:253:(x, y) ∈ R_L`); the two agree on languages (intersect `R_L` with the bound), and the bounded
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:431:`finProdFinEquiv (i, j) = j + n i` and `i n + j` agree by `idx_comm`. -/
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:498:**Proof sketch.** Unfold `decPerm`; the two branches agree with those of `permInvNum` by
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:302:/-- Two tests agreeing on the range have the same search index. -/
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:24:* **Executions.** `exec_congr`: two executions whose next-message functions agree on every
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:84:/-- Two executions whose next-message functions agree on every history — with possibly
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:173:/-- Acceptance probabilities agree when the primed experiment is the unprimed one composed
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:186:/-- Distinguishing advantages agree when both samplers and the distinguisher of the primed
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:548:commitment vectors agree; `owpCom_inj` gives equal padded values; strings of length `n` with
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:342:(`statClose_samplePerm_long`, `statClose_pi`, `StatClose.abs_uprob_sub_le_prod`), and for uniform
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:372:    (encInstance G₀ G₁).length).abs_uprob_sub_le_prod
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:129:`permFailBound n` (`statClose_samplePerm_long`, `StatClose.abs_uprob_sub_le_prod` with `b` as
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:157:  have hclose := (statClose_samplePerm_long (permCoinLen_le_tape G₀ G₁)).abs_uprob_sub_le_prod
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:101:**Proof sketch.** If the images agree then `b_i = b'_i` for every `i`, by induction on a bound
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:102:`k > i`: the prefixes `b_{<i}`, `b'_{<i}` agree by the induction hypothesis, so the guesses
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:103:`g_i(b_{<i}, w)`, `g_i(b'_{<i}, w)` agree and `xor` cancels (`Bool.xor_left_inj`). -/
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:46:  sampler agrees with `permFromCoins` (with the identity on failure) on every vertex.
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:693:/-- **The numeric model agrees with the typed sampler:** on a coin table whose block `(i, t)`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:917:`decGraph_encGraph` and `decColoring_encColoring`. It is polynomial-time because it agrees with a
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:956:`StatClose.abs_uprob_sub_le_prod`, cost `(1/2)^{|x|}`), and apply `uprob_col_cheat_le` with
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1134:`StatClose.abs_uprob_sub_le_prod`), and under uniform edges `T` has probability at most
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1234:        have := (abs_le.1 (hclose.abs_uprob_sub_le_prod T)).2
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1324:`ColRep.statClose_edgeBlocks`; `StatClose.abs_uprob_sub_le_prod`, union cost
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean:24:because it agrees with a **scan form** of three unary tests (`n = √|x|`):
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean:233:/-- The scan form agrees with the decider (`wf_iff`, `enc_iff`, `proper_iff` with
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:283:**Proof sketch.** The coin lengths agree, `B.coinLen n = D.coinLen (n²)` (`NUPPT.coinLen_eq`,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:272:the coin count `proverCoinsOf` make the iteration test and the coin block agree. Inside the
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:27:(`ThreeColorable` agrees with Mathlib's `SimpleGraph.Colorable 3` on simple graphs,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:114:/-- Sanity: for a simple graph the notion agrees with Mathlib's `SimpleGraph.Colorable 3`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:47:  `edgeOf_val_eq` — the numeric models agree with the typed definitions.
+
+=== rg -n 'acceptProb_coins_fst|acceptProb_seed|uprob_fst' TCSlib
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:140:(`uprob_comp_equiv` along the bijection, then `uprob_fst`). -/
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:148:  exact (uprob_comp_equiv e (fun z : Ω' × K => q z.1)).trans (uprob_fst q)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:156:`uprob_comp_equiv` with the coin bijection `adaptiveEquiv`, `uprob_fst` (here `W ≠ ∅` is
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:171:    uprob_fst (β := W) (fun b : Fin m → Bool => b = fun _ => false),
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:238:tuple (`swapEP` is a bijection, `uprob_comp_equiv`, `uprob_fst`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:251:  exact uprob_fst P
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:284:first coordinate, which `uprob_fst` removes. -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:310:  exact uprob_fst (fun z : (Fin N → AttemptCoins m (Fin n → Fin ℓ → Bool) τ) × ρ' =>
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:335:(`findSome?_finRange_cons_of_some`), an event of the first coordinate alone (`uprob_fst`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:361:      ← uprob_fst (β := Fin N → W) (fun a : W => ∃ v, att a = some v ∧ T (some v))]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:682:`uprob_comp_equiv` with the coin bijection `adaptiveEquiv`, `uprob_fst` (here `W ≠ ∅` is
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:697:    uprob_fst (β := W) (fun b : Fin m → Bool => b = fun _ => false),
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:377:(`giSimTrunc_cons_of_some`), an event of the first coordinate alone (`uprob_fst`) of
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:406:      ← uprob_fst (β := Fin N → (Equiv.Perm (Fin n) × Bool) × ρ)
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:282:not enter the view (`uprob_fst` after `Equiv.prodComm`), so the two laws coincide. -/
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:297:    exact uprob_fst (fun ρ : V'.Coins x.length =>
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:66:(`abs_uprob_sub_le`), whose probability is `Pr[bad]` (`uprob_fst`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:69:  rw [distAdv_def, acceptProb_def, acceptProb_def, ← uprob_fst (β := ρ) bad]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:167:`acceptProb X (B.distinguisherL n) = uprob (fun s => P (X s) = true)` (`uprob_fst`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:177:  exact uprob_fst fun s => P (X s) = true
+
+=== rg -n 'exists_abs_sub_le|exists_abs_uexp|sections' TCSlib/Cryptography
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:79:theorem exists_abs_uexp_le {κ : Type*} [Fintype κ] [Nonempty κ] (f : κ → ℝ) :
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:109:`|a(c₀) − b(c₀)|` at least the average (`exists_abs_uexp_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:113:  obtain ⟨c₀, hc₀⟩ := exists_abs_uexp_le fun c₀ : κ =>
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:156:(`HardcoreBit.uexp_sub`, `CommitmentLemmas.exists_abs_uexp_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:164:  obtain ⟨k₀, hk₀⟩ := CommitmentLemmas.exists_abs_uexp_le fun k =>
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:547:(`CommitmentLemmas.exists_abs_uexp_le`), which is the reduction's advantage
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:575:  obtain ⟨ep₀, hep₀⟩ := CommitmentLemmas.exists_abs_uexp_le
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:21:  their sections at the worst `a : σ` (the advice of a non-uniform reduction);
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:30:  `ComposeProb.exists_abs_sub_le_sections`, `ComposeProb.negligible_polyExpr_mul`.
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:72:/-- **Acceptance as an average of sections**: `acceptProb X D` is the average over `a : σ` of
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:74:theorem acceptProb_eq_uexp_sections (X : σ × τ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:82:theorem exists_abs_uexp_sub_le [Nonempty σ] (f g : σ → ℝ) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:95:|acceptProb (X (a, ·)) D − acceptProb (Y (a, ·)) D|` (`acceptProb_eq_uexp_sections`,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:96:`exists_abs_uexp_sub_le`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:97:theorem exists_abs_sub_le_sections [Nonempty σ] (X Y : σ × τ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:100:  rw [acceptProb_eq_uexp_sections X, acceptProb_eq_uexp_sections Y]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:101:  exact exists_abs_uexp_sub_le _ _
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Chain.lean:130:`(u, m)` at the worst value (`exists_abs_sub_le_sections`) and drop the unused half of `y`
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Chain.lean:150:  obtain ⟨a, ha⟩ := exists_abs_sub_le_sections
+TCSlib/Cryptography/HardcoreBit/Basic.lean:93:coordinate of the averages of the sections. -/
+
+=== rg -n 'funSplitAt|piSplitAt|uprob_coord' TCSlib
+TCSlib/Cryptography/Hashing/SIS/Universality.lean:73:      ((Equiv.funSplitAt j Column).trans (Equiv.prodComm Column Other))
+TCSlib/Cryptography/Asymptotic/Sampling.lean:281:`ω ∈ Π_c Aux c` at the coordinate `c` (`Equiv.piSplitAt`, `uprob_fst`), so both averages are
+TCSlib/Cryptography/Asymptotic/Sampling.lean:293:    have h := uprob_comp_equiv (Equiv.piSplitAt c Aux) (fun w => Q c w.1)
+TCSlib/Cryptography/HardcoreBit/Basic.lean:257:  · have h := (pushesUniform_equiv (Equiv.funSplitAt i γ)).comp
+TCSlib/Cryptography/HardcoreBit/Basic.lean:267:  exact (pushesUniform_equiv (Equiv.funSplitAt i γ)).comp h₂
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:395:`Fin.appendEquiv`/`Equiv.funSplitAt`), and `PRG.secure_iff` applied to `hP` gives the
+
+=== rg -n 'polyExpr_mul|negligible_polyExpr' TCSlib
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:400:`EnsembleLemmas.negligible_polyExpr_mul`; take `ε := q · ε_B`. -/
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:412:  refine ⟨fun n => q.eval n * ε n, EnsembleLemmas.negligible_polyExpr_mul q hε, fun n v v' => ?_⟩
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:795:`EnsembleLemmas.negligible_polyExpr_mul` closes with `ε := n · ε_B`. No evaluator of `f` or `h`
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:811:  refine ⟨fun n => n * ε n, by simpa using EnsembleLemmas.negligible_polyExpr_mul .var hε,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:30:  `ComposeProb.exists_abs_sub_le_sections`, `ComposeProb.negligible_polyExpr_mul`.
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:108:theorem negligible_polyExpr_mul {μ : ℕ → ℝ} (hμ : Negligible μ) (p : PolyExpr) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:368:    ((negligible_polyExpr_mul hεc H.calls).add (negligible_polyExpr_mul hε₂ H.calls)).add hε₃,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean:363:The total `L(n)(ε_c(n) + ε₂(n)) + ε₃(n)` is negligible (`negligible_polyExpr_mul`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean:383:    ((negligible_polyExpr_mul hεc H.calls).add (negligible_polyExpr_mul hε₂ H.calls)).add hε₃,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:428:   (`ComposeProb.negligible_polyExpr_mul`). -/
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:234:    refine (hneg.polyExpr_mul ℓ).mono ⟨0, fun n _ => ?_⟩
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM.lean:344:  obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 ((hG.negligible_prgAdv B).polyExpr_mul (.mul .var q)) c
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:480:   the product is negligible by `Negligible.polyExpr_mul` with `PolyExpr.var`. -/
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:508:    ((BitPublicKeyScheme.singleBitSecure_iff S).1 h D).polyExpr_mul .var, fun n => ?_⟩
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean:84:   by `Negligible.polyExpr_mul` (`Asymptotic/ReductionSupport`) with the polynomial `cap`. -/
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean:115:  refine ⟨fun n => (cap.eval n : ℝ) * ε n, hε.polyExpr_mul cap, fun n => ?_⟩
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:414:  refine ⟨fun n => (n : ℝ) * ε n, EnsembleLemmas.negligible_polyExpr_mul .var hε, fun n m₀ m₁ => ?_⟩
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:477:    EnsembleLemmas.negligible_polyExpr_mul _ hε, fun n m m' => ?_⟩
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:60:* `TCSlib.Cryptography.EnsembleLemmas.negligible_polyExpr_mul` — a syntactic polynomial
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:377:theorem negligible_polyExpr_mul (p : PolyExpr) {μ : ℕ → ℝ} (hμ : Negligible μ) :
+
+=== rg -n 'theorem exists_withAdvice|theorem exists_split|theorem exists_seq|theorem exists_comp|def wrap|def preComp' TCSlib
+TCSlib/Complexity/Randomized/Closure.lean:241:theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
+TCSlib/Complexity/Randomized/Closure.lean:272:theorem exists_comp (A : NUPPT) {pre post : List Bool → List Bool}
+TCSlib/Complexity/Randomized/Closure.lean:358:theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
+TCSlib/Complexity/Randomized/Closure.lean:390:theorem exists_split (A : NUPPT) (p : PolyExpr) :
+TCSlib/Complexity/Randomized/Closure.lean:421:theorem exists_seq (A B : NUPPT) :
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:50:theorem exists_split_block {w : List Bool} {r : ℕ} (hw : w.length = m + 1 + r) :
+TCSlib/Complexity/TuringMachine/Composition.lean:503:theorem exists_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
+TCSlib/Complexity/TuringMachine/Composition.lean:606:theorem exists_comp_partial (M₁ M₂ : FinTM Bool) :
+TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP.lean:88:theorem exists_compl_decider {L : Language Bool} {M : FinTM Bool} {T : ℕ → ℕ}
+TCSlib/Cryptography/Games/Efficiency/Strings.lean:548:theorem exists_splitMachine (A : NUPPT) {F : List Bool → List Bool} (hF : PolyTimeComputable F)
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:112:def wrapFun (A : NUPPT) (pre post : List Bool → List Bool) (p : PolyExpr) (z : List Bool) :
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:148:noncomputable def wrap (A : NUPPT) {pre post : List Bool → List Bool}
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:169:noncomputable def wrapCoinsEquiv (A : NUPPT) {pre post : List Bool → List Bool}
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:318:noncomputable def preComp (A : NUPPT) {pre : List Bool → List Bool}
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:330:noncomputable def preComp_coinsEquiv (A : NUPPT) {pre : List Bool → List Bool}
+
+=== rg -n 'ofFn_blocks_symm|blocks_symm_apply|ofFn_splitCoins|appendEquiv' TCSlib
+TCSlib/Complexity/Randomized/Classes.lean:202:`Fin.appendEquiv`, and surjectivity splits an arbitrary `r` by
+TCSlib/Complexity/Randomized/Classes.lean:222:    exact (Fin.appendEquiv m₁ m₂).injective (by exact h)
+TCSlib/Complexity/Randomized/RandomBits.lean:144:  rw [Finset.natCast_card_filter, ← (Fin.appendEquiv b m).sum_comp, Fintype.sum_prod_type,
+TCSlib/Complexity/Randomized/RandomBits.lean:347:    rw [← Finset.card_equiv (Fin.appendEquiv m₁ m₂)
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:33:* **splitting a tuple at a position** (`ofFn_update_eq`, `ofFn_blocks_symm_update`,
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:55:* `TCSlib.Cryptography.CommitmentLemmas.ofFn_blocks_symm_update`,
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:216:`z`, then the blocks after `k` (`FunFamily.ofFn_blocks_symm`, `ofFn_update_eq`). -/
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:217:theorem ofFn_blocks_symm_update {q ℓ : ℕ} (W : Fin q → Fin ℓ → Bool) (k : Fin q)
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:222:  rw [FunFamily.ofFn_blocks_symm]
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:198:split `Fin.appendEquiv` followed by the coin equivalence of `ofPolyTimeUniform`. -/
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:201:  (Fin.appendEquiv (S.gen.coinLen n) (S.enc.coinLen n)).trans
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:220:    ((Fin.appendEquiv (S.gen.coinLen n) (S.enc.coinLen n)) (r₁, r₂))).symm.trans ?_)
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:244:(the coin split `Fin.appendEquiv` is a bijection of the seed spaces, `acceptProb_comp_equiv`,
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:276:`Fin.appendEquiv` (`List.ofFn_fin_append`, `List.take_left'`, `List.drop_left'`), hence
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:687:(`CommitmentLemmas.ofFn_blocks_symm_update`, lengths by `length_flatten_ofFn`). If
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:750:    rw [hTz, ofFn_blocks_symm_update]
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:788:for two block strings of total length `≤ 3n(n+1)` (`CommitmentLemmas.ofFn_blocks_symm_update`)
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:831:`List.ofFn ((blocks n (n+1)).symm (owpCom …))` (`EnsembleLemmas.ofFn_blocks_symm`), i.e.
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:853:  rw [hb, EnsembleLemmas.ofFn_blocks_symm T E hEi]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:217:  FunFamily.blocks_symm_apply m c F k
+
+=== rg -n 'theorem ofFn_mul|theorem ofFn_fin_append' .lake/packages/mathlib/Mathlib/Data/List
+.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:61:theorem ofFn_fin_append {m n} (a : Fin m → α) (b : Fin n → α) :
+.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:67:theorem ofFn_mul {m n} (f : Fin (m * n) → α) :
+.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:81:theorem ofFn_mul' {m n} (f : Fin (m * n) → α) :
+
+=== rg -n 'def segW|asmView|def asmW|filter.*moverIsV' TCSlib
+TCSlib/Cryptography/SecureComputation/Compose.lean:114:      (((List.range k).filter (moverIsV vF)).map (moveMsg P V vF x zP zV rP rV),
+TCSlib/Cryptography/SecureComputation/Compose.lean:115:        ((List.range k).filter fun i => !moverIsV vF i).map (moveMsg P V vF x zP zV rP rV)) := by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:86:/-- **Bob's sample from run words**: the assembled view (`asmView` with `ρ.V`'s coins, Alice's
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:90:  pairEncode (asmView H.calls ρ.rounds ρ.V.coins ρ.verifierFirst false H.lead
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:100:      pairEncode (asmView H.calls ρ.rounds ρ.V.coins ρ.verifierFirst false H.lead
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:282:    refine congrArg (fun w => pairEncode w _) (asmView_congr _ _ _ _ _ _ _ _ _ _ fun j hj => ?_)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:331:  refine congrArg (fun w => pairEncode w _) (asmView_congr _ _ _ _ _ _ _ _ _ _ fun j hj => ?_)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean:20:assembles the view of `H.compose ρ` (`ComposeSim.asmView`). The same post-processing applied to
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean:114:`asmView … 1^n xin mt me V` with `V j = S^ρ`'s output on the call input and the answer block
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean:115:`j`, with the coin block `j` (`asmW_pairEncode`, `asmView_congr`, `msgAt_encodeMsgs`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean:121:      asmView calls rounds cρ vF b lead (List.replicate n true) xin mt me fun j =>
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean:129:  refine asmView_congr _ _ _ _ _ _ _ _ _ _ fun j hj => ?_
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean:18:(`GoodRuns`), the real sample of either side is the assembled view (`ComposeSim.asmView`) of the
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean:455:`F.realA (H.compose ρ) n x y c` is the assembled view (`ComposeSim.asmView` with `ρ.P`'s coins,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean:471:      pairEncode (asmView H.calls ρ.rounds ρ.P.coins ρ.verifierFirst true 0
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean:523:    asmView_eq, encodeMsgs_append, hmsgs, hmain, H.answersRealB_eq_answersB ρ n _ _ m t hg, htape,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean:530:`F.realB (H.compose ρ) n x y c` is the assembled view (`ComposeSim.asmView` with `ρ.V`'s coins,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean:541:      pairEncode (asmView H.calls ρ.rounds ρ.V.coins ρ.verifierFirst false H.lead
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean:594:    asmView_eq, encodeMsgs_append, encodeMsgs_append, hmsgs, hmain,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean:88:/-- **Alice's sample from run words**: the assembled view (`asmView` with `ρ.P`'s coins, Bob's
+
+=== rg -n 'length_filter.*% 2|filter.*% 2 ==' TCSlib
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean:55:    ∀ p, ((List.range p).filter fun q => q % 2 == d).length = (p + 1 - d) / 2
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean:76:      (List.range p).filter fun q => q % 2 == (if vF == b then 0 else 1) := by
+
+=== rg -n 'length_encodeMsgs|length_encWords_le|theorem length_layout|output_length_le|length_runAt' TCSlib
+TCSlib/Complexity/CookLevin/Hardness.lean:5054:    exact (clQueryFlagsTM pos neg).tm.output_length_le _ _
+TCSlib/Complexity/CookLevin/Hardness.lean:5216:    simpa only [ho] using A.tm.output_length_le x (a * (x.length + 1) ^ d)
+TCSlib/Complexity/CookLevin/Hardness.lean:5620:    simpa only [ho] using E.tm.output_length_le arg (b * (arg.length + 1) ^ e)
+TCSlib/Complexity/CookLevin/Hardness.lean:6154:  simpa only [ho] using H.tm.output_length_le x (a * (x.length + 1) ^ r)
+TCSlib/Complexity/CookLevin/Hardness.lean:6486:    simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
+TCSlib/Complexity/CookLevin/Hardness.lean:6505:    simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
+TCSlib/Complexity/CookLevin/Hardness.lean:7128:    have hb := F.tm.output_length_le (List.replicate n false) (a * (n + 1) ^ r)
+TCSlib/Complexity/Randomized/BPLInP.lean:312:  have := length_encWords_le ((List.range V).map fun a => Nat.bits (dpVal N x s V t a))
+TCSlib/Complexity/Randomized/PPT.lean:203:`Turing.MultiTapeTM.output_length_le`). -/
+TCSlib/Complexity/Randomized/PPT.lean:204:theorem output_length_le (z : List Bool) : (A.output z).length ≤ A.timeBound z.length :=
+TCSlib/Complexity/Randomized/PPT.lean:205:  A.M.tm.output_length_le z (A.timeBound z.length)
+TCSlib/Complexity/Randomized/Reductions.lean:195:  obtain ⟨Cg, cg, hCg⟩ := hg.output_length_le
+TCSlib/Complexity/Randomized/Reductions.lean:293:  obtain ⟨Cf, cf, hCf⟩ := hf.output_length_le
+TCSlib/Complexity/Randomized/Repetition.lean:348:accumulator is bounded by `R|x| · C (P|x| + 1)^c` with `C, c` from `hemit.output_length_le`
+TCSlib/Complexity/Randomized/Repetition.lean:357:  obtain ⟨Ce, ce, hCe⟩ := hemit.output_length_le
+TCSlib/Complexity/Randomized/Repetition.lean:489:`2|z| + 2 + |z| · C (b(|z|) + 1)^c` with `C, c` from `hg.output_length_le`. -/
+TCSlib/Complexity/Randomized/Repetition.lean:495:  obtain ⟨C, c, hC⟩ := hg.output_length_le
+TCSlib/Complexity/Randomized/Inclusions.lean:225:(`PolyTimeComputable.output_length_le`), which bounds the schedule. -/
+TCSlib/Complexity/Randomized/Inclusions.lean:232:  obtain ⟨C, c, hC⟩ := hf.output_length_le
+TCSlib/Complexity/Randomized/BPLInPWords.lean:169:  have := length_encWords_le ((List.range V).map Nat.bits) V (by
+
+=== rg -n 'length_transcript|transcript.*\.length ≤|length_exec' TCSlib
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean:22:* `ComposeBound.length_encodeMsgs_le`, `length_transcriptWith_fst_le`, `_snd_le`.
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean:40:theorem length_transcriptWith_fst_le (π : Protocol) (P' : Strategy) (x y z : List Bool)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean:41:    (r : π.ExecCoins P' x) : (π.transcriptWith P' x y z r).1.length ≤ π.rounds.eval x.length := by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean:46:theorem length_transcriptWith_snd_le (π : Protocol) (P' : Strategy) (x y z : List Bool)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean:47:    (r : π.ExecCoins P' x) : (π.transcriptWith P' x y z r).2.length ≤ π.rounds.eval x.length := by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean:70:has at most `rounds(n)` messages (`length_transcriptWith_fst_le`), so its encoding has at most
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean:94:  have h₁ := length_transcriptWith_fst_le H.main H.main.P (List.replicate n true)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean:97:  have h₂ := length_transcriptWith_snd_le H.main H.main.P (List.replicate n true)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean:218:  have h₁ := length_transcriptWith_fst_le ρ ρ.P (List.replicate n true) (List.ofFn x)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean:247:  have h₁ := length_transcriptWith_snd_le ρ ρ.P (List.replicate n true) (List.ofFn x)
+
+=== rg -n 'theorem length_answers|answersA.*length' TCSlib
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean:51:theorem length_answersA (n : ℕ) (x y rA rB : List Bool) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean:52:    (H.answersA n x y rA rB).length = H.calls.eval n * G.outA.eval n := by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean:53:  rw [answersA_eq, List.length_flatten, List.map_ofFn]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean:58:theorem length_answersB (n : ℕ) (x y rA rB : List Bool) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean:189:      rw [privA_eq, length_pairEncode, H.length_answersA, List.length_ofFn]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:128:theorem length_answersRealA (x zA zB rA rB : List Bool) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:135:theorem length_answersRealB (x zA zB rA rB : List Bool) :
+
+=== rg -n 'theorem uexp_le|uexp_le_of|sum_le_card_nsmul.*uexp' TCSlib
+TCSlib/Cryptography/Asymptotic/Sampling.lean:284:theorem uexp_le_of_statClose {σ τ γ : Type*}
+TCSlib/Cryptography/Candidates/Rabin.lean:2177:depending on the index, so its average moves by at most that distance (`uexp_le_of_statClose`, the
+TCSlib/Cryptography/Candidates/Rabin.lean:2217:        uexp_le_of_statClose hlaw (fun c => (rabinCollection H).D (rabin_idx c) × A.Coins n)
+TCSlib/Cryptography/Candidates/Rabin.lean:3176:`rabin_card_blum`) and `uexp_le_of_statClose` applied to it and to its symmetric give both
+TCSlib/Cryptography/Candidates/Rabin.lean:3211:  have h1 := uexp_le_of_statClose hlaw (fun c => Aux (rabin_idx c)) (fun c => Q (rabin_idx c))
+TCSlib/Cryptography/Candidates/Rabin.lean:3212:  have h2 := uexp_le_of_statClose hlaw.symm (fun c => Aux (rabin_idx c)) (fun c => Q (rabin_idx c))
+TCSlib/Cryptography/Candidates/RSA.lean:1936:`uexp_le_of_statClose` applies. -/
+TCSlib/Cryptography/Candidates/RSA.lean:1951:  exact uexp_le_of_statClose hX' (rsa_Aux A n) fun z a =>
+
+=== rg -n 'acceptProb_pre|acceptProb_post|coinsSplit|appendCoins|blocksCoins|coinBlock_flatten' TCSlib
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:117:`K θ* (pairFstD w)` (`acceptProb_pre`, `hybW_tmplW`, `acceptProb_fst`), so its advantage
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:172:    rw [acceptProb_pre X Dh D (.const 0) n (fun w e => hybW calls rounds cρ vF b lead
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:320:  rw [acceptProb_pre (H.realB F n x y) DΦ D (.mul H.calls S.coins) n
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:323:  refine (acceptProb_comp_equiv ((Equiv.refl (H.Coins n)).prodCongr (blocksCoins hlen)) _
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:328:        (pairEncode (H.realB F n x y z.1) (List.ofFn (blocksCoins hlen z.2)))) = _
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:335:    coinBlock_blocksCoins hlen z.2 ⟨j, hj⟩, answersB_eq,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:336:    coinBlock_flatten _ (fun c hc' => by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:348:`acceptProb_post_pre`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:395:    exact acceptProb_post_pre SB SH DΦ D (.mul H.calls SρB.coins) n
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:17:* coins as two strings (`appendCoins`) or as blocks (`blocksCoins`), read back by `take`, `drop`
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:21:  extended by those coins (`acceptProb_pre`);
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:24:  (`acceptProb_post_pre`);
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:31:* `ComposeProb.appendCoins`, `ComposeProb.blocksCoins`.
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:35:* `ComposeProb.acceptProb_pre`, `ComposeProb.acceptProb_post_pre`, `ComposeProb.acceptProb_test`,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:52:def appendCoins {a b c : ℕ} (h : c = a + b) : (Fin a → Bool) × (Fin b → Bool) ≃ (Fin c → Bool) :=
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:55:/-- The defining equation of `appendCoins` (see `appendCoins`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:56:theorem appendCoins_eq {a b c : ℕ} (h : c = a + b) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:57:    appendCoins h =
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:60:/-- `⟦appendCoins h (u, v)⟧ = ⟦u⟧ ++ ⟦v⟧`. -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:61:theorem ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool) (v : Fin b → Bool) :
+
+=== rg -n 'runAtL .*take|r\.take .*coinLen|drop .*coinLen' TCSlib/Cryptography
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:270:    V'.next (pairFstD z') (pairSndD z') (r.take (V'.coinLen (pairFstD z').length)) hist
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:276:      V'.next x z (r.take (V'.coinLen x.length)) hist := by
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:385:`D'(1^n, v; r) = D(1^{φ n}, postView c v; r.take (D.coinLen (φ n)))`
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:390:      ∀ n y r, D'.runAtL n y r = D.runAtL (φ n) (postView c y) (r.take (D.coinLen (φ n))) := by
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:401:    (hD' : ∀ n y r, D'.runAtL n y r = D.runAtL (φ n) (postView c y) (r.take (D.coinLen (φ n))))
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:457:(pairFstD z') (pairSndD z') (r.take (V*.coinLen |pairFstD z'|)) hist` with coins `V*.coins`
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:328:      Dm.runAtL n y r = [decide ([decide (A.runAtL n (y.take (k n)) r = [true])] =
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1117:      rw [ColZK.ofFn_take_drop r _ (V'.coinLen N) _ (by omega) hBL]
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:321:    (((NUPPT.inCoins w).drop (t * S.coinLen (NUPPT.inParam w).length)).take
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:326:`((inCoins w).drop (t · c)).take c`, where `c = S.coinLen |inParam w|`. -/
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:329:      (((NUPPT.inCoins w).drop (t * S.coinLen (NUPPT.inParam w).length)).take
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:380:**Proof sketch.** The block `(r.drop (t · c)).take c` with `c = S.coinLen n` in unary
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:607:      ((List.ofFn r).drop (t * S.coinLen x.length)).take (S.coinLen x.length) =
+TCSlib/Cryptography/Candidates/Factoring.lean:376:    (oneCallFactorer A).runAtL n y r = (A.runAtL n y r).take n := by
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:143:  T.sample.runAtL n i (r.take (T.sample.coins.eval n))
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:147:    otKnown T n i r = T.sample.runAtL n i (r.take (T.sample.coins.eval n)) := rfl
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Reductions.lean:84:        (pairEncode (A.runAtL n y (r.take (A.coinLen n))) (r.drop (A.coinLen n)))) := by
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:586:        (egGenParts n (pairFstD (G.gen.runAtL n [] ((List.ofFn r).take (G.gen.coinLen n))))
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:587:          (pairFstD (pairSndD (G.gen.runAtL n [] ((List.ofFn r).take (G.gen.coinLen n)))))
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:588:          (((List.ofFn r).drop (G.gen.coinLen n)).take (n * n))
+
+=== rg -n 'eqW|polyTimeComputable_eqW|eqTest_poly' TCSlib/Cryptography
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:625:    (eqTest_poly hi (modNum_poly hm hN')) (polyTimeComputable_const [false])
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:699:    (eqTest_poly hval (modNum_poly hm hN')) (polyTimeComputable_const [false])
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:54:  `unaryPolyOf_poly`, `leTest_poly`, `ltTest_poly`, `eqTest_poly`, `unaryMin_poly`,
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:150:theorem eqTest_poly {f g : List Bool → ℕ}
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:668:  convert polyTimeComputable_ite (eqTest_poly hg (unaryConst_poly 0)) (unaryConst_poly 0) hsearch
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:140:  convert polyTimeComputable_ite (eqTest_poly (rowFirst_poly hN hB hI) hN) hI
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:157:    eqTest_poly (rowMap_poly hN' (hB.comp polyTimeComputable_pairSndD)
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:170:    eqTest_poly (rowInv_poly hN' (hB.comp polyTimeComputable_pairSndD)
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:172:  exact eqTest_poly
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:442:    eqTest_poly (trialIdx_poly (unaryComp_poly hN polyTimeComputable_pairSndD)
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:471:  convert polyTimeComputable_ite (eqTest_poly hY hA) hB
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean:472:    (polyTimeComputable_ite (eqTest_poly hY hB) hA hY) using 1
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean:249:(`getBit_poly`, `colorVal_poly`, `divNum_poly`, `modNum_poly`, `eqTest_poly`,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean:260:  have hd0 := eqTest_poly (divNum_poly hcv (unaryConst_poly 2)) (unaryConst_poly 1)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean:261:  have hd1 := eqTest_poly (modNum_poly hcv (unaryConst_poly 2)) (unaryConst_poly 1)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean:268:`eqTest_poly`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean:279:  have heq := eqTest_poly (colorVal_poly hY (divNum_poly hI hn)) (colorVal_poly hY (modNum_poly hI hn))
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean:284:`badVertex_poly` and `badEntry_poly`, `eqTest_poly`, `polyTimeComputable_and`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean:291:  have t1 := eqTest_poly hX hnn
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean:292:  have t2 := eqTest_poly hY (unaryMul_poly hn (unaryConst_poly 2))
+
+=== rg -n 'acceptProb_test|distinguisherL.*= \[true\]|decide \(.*runAt.*\[true\]' TCSlib
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:53:with `Pr_t[outP = ⟦f_A(w_n)⟧]` (`acceptProb_test`). So `Pr_t[outP ≠ ⟦f_A⟧] ≤
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:92:      rw [acceptProb_test _ BA n _ (hBA n)]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:96:      rw [acceptProb_test _ BA n _ (hBA n)]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:111:      rw [acceptProb_test _ BB n _ (hBB n)]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:115:      rw [acceptProb_test _ BB n _ (hBB n)]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:25:* a test machine with output `[P w]` accepts with the probability of `P` (`acceptProb_test`);
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:35:* `ComposeProb.acceptProb_pre`, `ComposeProb.acceptProb_post_pre`, `ComposeProb.acceptProb_test`,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean:168:theorem acceptProb_test {σ : Type*} [Fintype σ] (X : σ → List Bool) (B : NUPPT) (n : ℕ)
+TCSlib/Cryptography/Randomness/Learning.lean:82:  fun S r x => decide (A.runAt n (pairEncode (encodeSample S) (List.ofFn x)) r = [true])
+TCSlib/Cryptography/Randomness/Learning.lean:89:      decide (A.runAt n (pairEncode (encodeSample S) (List.ofFn x)) r = [true]) := rfl
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:328:      Dm.runAtL n y r = [decide ([decide (A.runAtL n (y.take (k n)) r = [true])] =
+TCSlib/Cryptography/Asymptotic/Adversary.lean:348:  fun t r => decide (A.runAt n (List.ofFn t) r = [true])
+TCSlib/Cryptography/Asymptotic/Adversary.lean:352:  fun w r => decide (A.runAt n w r = [true])
+TCSlib/Cryptography/Asymptotic/Adversary.lean:355:`A.distinguisherL n w r = decide (A.runAt n w r = [true])`. -/
+TCSlib/Cryptography/Asymptotic/Adversary.lean:357:    (r : A.Coins n) : A.distinguisherL n w r = decide (A.runAt n w r = [true]) := rfl
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:851:  fun p c => decide (A₁.runAtL n (pairEncode (enc p.1) (List.ofFn p.2)) (List.ofFn c) = [true])
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:856:      decide (A₁.runAtL n (pairEncode (enc p.1) (List.ofFn p.2)) (List.ofFn c) = [true]) := rfl
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:114:      [xor (xor c (!decide (D.runAtL n (pairEncode i (pairEncode y [c])) ρ = [true]))) flip] := by
+
+=== rg -n 'outP.*≠|outV.*≠|correct.*HBCSecure|exists_correct' TCSlib/Cryptography
+TCSlib/Cryptography/OneWayFunctions/Robustness.lean:147:theorem exists_correction :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:19:output with negligible probability, uniformly over the inputs (`ComposeProb.exists_correct`).
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:25:* `ComposeProb.exists_correct`: a secure protocol computes its functionality except with
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:47:lengths, `Pr_t[ρ.outP ≠ ⟦f_A(x, y)⟧ ∨ ρ.outV ≠ ⟦f_B(x, y)⟧] ≤ ε_c(n)` on common input `1^n`.
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:50:`Pr_t[outP ≠ ⟦f_A⟧]` at each `n`, and the test machine accepting when the second component of
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:53:with `Pr_t[outP = ⟦f_A(w_n)⟧]` (`acceptProb_test`). So `Pr_t[outP ≠ ⟦f_A⟧] ≤
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:54:Pr_t[outP(w_n) ≠ ⟦f_A(w_n)⟧] = 1 − Pr_t[outP(w_n) = ⟦f_A(w_n)⟧] ≤ ε_A(n)` (`uprob_not`).
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:56:theorem exists_correct {G : Functionality} {ρ : Protocol} (SA SB : NUPPT)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:64:          ρ.outP (List.replicate n true) (List.ofFn x) (List.ofFn y) t ≠
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:66:            ρ.outV ρ.P (List.replicate n true) (List.ofFn x) (List.ofFn y) t ≠
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:74:    (List.replicate n true) => ρ.outP (List.replicate n true) (List.ofFn w.1) (List.ofFn w.2) t ≠
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:156:        ρ.outP (List.replicate n true) (List.ofFn xA) (List.ofFn yB) t ≠
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:158:          ρ.outV ρ.P (List.replicate n true) (List.ofFn xA) (List.ofFn yB) t ≠
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideB.lean:360:  obtain ⟨εc, hεc, hc⟩ := exists_correct SρA SρB hρs
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean:23:   bad event has probability at most `L(n) ε_c(n)` (`uprob_not_goodRuns_le`, `exists_correct`);
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean:358:   `L(n) ε_c(n)` (`uprob_not_goodRuns_le`, `exists_correct`);
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean:375:  obtain ⟨εc, hεc, hc⟩ := exists_correct SρA SρB hρs
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:408:2. *Correct answers* (`ComposeProb.exists_correct`). The output clause of `HBCSecure ρ G`,
+
+=== rg -n 'hybV|plugV|Function.update .* i|resample' TCSlib/Cryptography
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:189:    List.ofFn (Function.update W k z) = (List.ofFn fun i : Fin k => W (Fin.castLE k.2.le i)) ++
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:192:  have h₁ : ∀ i : Fin k, Function.update W k z (Fin.castLE k.2.le i) = W (Fin.castLE k.2.le i) := by
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:201:      Function.update W k z ⟨k + 1 + i, by omega⟩ = W ⟨k + 1 + i, by omega⟩ := by
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:223:  have h2 : (fun i => List.ofFn (Function.update W k z i)) =
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:224:      Function.update (fun i => List.ofFn (W i)) k (List.ofFn z) := by
+TCSlib/Cryptography/Games/Probability.lean:379:**Proof sketch.** Exchange the samples on the right (`expect_sample_comm`) and resample the
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:256:/-- **A new point is a resampled value:** if `x` has no value, adding `(x, y)` gives the recorded
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:257:values of `st` with `R` resampled to `y` at `x`:
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:301:`ovr` of the new state is `ovr` of the old one with `R` resampled at `r` (if `r` had no value). -/
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:347:resample `R` at `x` (`ProbComp.expect_sample_update`): `R(x)` becomes the lazy sample `y`, and
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:348:`R` resampled is the override of the new state (`ovr_addPt_of_none`, `ovr_record_of_none`);
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:28:`κ` queries (`expect_eImpl`); the proof resamples one tape at a time
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean:253:    -- a fresh nonce at counter `j`: resample the tape `j`
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:183:          else if (i : ℕ) = j then β else l.getD i false]) (Function.update v ⟨j, hj⟩ re i)) := by
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:195:/-- **Hybrids `j` and `j + 1` with coin block `j` resampled** plant `Enc(l_j; re)`
+TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean:208:  refine congrArg (fun b => S.enc.runAt n (pairEncode pk [b]) (Function.update v ⟨j, hj⟩ re i)) ?_
+TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean:26:  distribution of `hybImpl` (`expect_tapeImpl`); the proof resamples one coordinate at a time
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:190:        (B (Function.update (prodFun f q c.1) i y) c.2).map fun xs => xs i := by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean:148:        ((List.range i).map (hybV (H.viewRunA ρ n (List.ofFn x) (List.ofFn y))
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/SideA.lean:151:          hybV (H.viewRunA ρ n (List.ofFn x) (List.ofFn y))
+
+=== rg -n 'abs_sub_le_sum_hybrids|exists_hybrid_gap' TCSlib
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:230:**Proof sketch.** `exists_hybrid_gap` on `k ↦ Pr[D(H_k) = 1]`; the ends are the two
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:237:  obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun i => acceptProb (pairHybrid X Y i) D) ht
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:544:**Proof sketch.** `exists_hybrid_gap` on `k ↦ acceptProb (hybStd H Wa N k) D` gives `k` with
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:561:  obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun i => acceptProb (hybStd H Wa N i) D) hN
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:543:**Proof sketch.** `exists_hybrid_gap` on `k ↦ acceptProb (colSimHyb … N k) D`
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Chain.lean:22:run `i` replaced by a given word). Summing (`abs_sub_le_sum_hybrids`) gives `abs_chain_le`.
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Chain.lean:214:`acceptProb_hyb_last`); telescope (`abs_sub_le_sum_hybrids`) and bound each of the `L` steps by
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Chain.lean:228:  have htel := abs_sub_le_sum_hybrids
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:280:    _ ≤ ∑ i ∈ Finset.range w, |score i - score (i + 1)| := abs_sub_le_sum_hybrids score w
+TCSlib/Cryptography/Games/Advantage.lean:109:[PS10, Lemma 71.6]. It is the concrete layer's `abs_sub_le_sum_hybrids` for the acceptance
+TCSlib/Cryptography/Games/Advantage.lean:113:  abs_sub_le_sum_hybrids (fun i => accept (G i)) n
+TCSlib/Cryptography/Games/Advantage.lean:121:layer's `exists_hybrid_gap` for the acceptance probabilities. -/
+TCSlib/Cryptography/Games/Advantage.lean:124:  exists_hybrid_gap (fun i => accept (G i)) hn
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:299:    exists_hybrid_gap (fun i => acceptProb (multicopyHybrid X Y t i) D) ht
+TCSlib/Cryptography/Pseudorandom/Generators.lean:237:  obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun i => acceptProb (prgHybrid G l i) D) hl
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:380:`hybrid_lemma` (`exists_hybrid_gap`) over `i ↦ acceptProb (nextBitHybrid X i) D` gives
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:393:  obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun j => acceptProb (nextBitHybrid X j) D) hℓ
+TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean:255:  refine (abs_sub_le_sum_hybrids (fun i => hybridProb G A i) n).trans ?_
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:281:  have key := abs_sub_le_sum_hybrids (fun j => subHybridProb G A q j) q
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:402:finite hybrid bound `exists_hybrid_gap` to the acceptance probabilities for `oracleDist A`. -/
+
+=== rg -n 'getD_append|getElem\?_append_right.*getD|getD_plug' TCSlib
+TCSlib/Complexity/Randomized/AlgCircuitExample.lean:141:private theorem getD_append_singleton_length {R : Type*} [Zero R] (vs : List R) (v : R) :
+TCSlib/Complexity/Randomized/AlgCircuitExample.lean:170:    have e10 : v1.getD 0 0 = 1 := by rw [List.getD_append _ _ _ _ (by omega), h0]
+TCSlib/Complexity/Randomized/AlgCircuitExample.lean:171:    have e1k : v1.getD (3 * k) 0 = vs.getD (3 * k) 0 := List.getD_append _ _ _ _ (by omega)
+TCSlib/Complexity/Randomized/AlgCircuitExample.lean:173:      rw [← hlen, getD_append_singleton_length, hx]
+TCSlib/Complexity/Randomized/AlgCircuitExample.lean:174:    have e20 : v2.getD 0 0 = 1 := by rw [List.getD_append _ _ _ _ (by omega), e10]
+TCSlib/Complexity/Randomized/AlgCircuitExample.lean:176:      rw [List.getD_append _ _ _ _ (by omega), e1k]
+TCSlib/Complexity/Randomized/AlgCircuitExample.lean:178:      rw [← h1len, getD_append_singleton_length]
+TCSlib/Complexity/Randomized/AlgCircuitExample.lean:180:    refine ⟨by rw [List.getD_append _ _ _ _ (by omega), e20], ?_⟩
+TCSlib/Complexity/Randomized/AlgCircuitExample.lean:181:    rw [show 3 * (k + 1) = v2.length by omega, getD_append_singleton_length]
+TCSlib/Complexity/Randomized/AlgCircuit.lean:133:    rw [List.getD_append_right _ _ _ _ (by omega), Nat.add_sub_cancel]
+TCSlib/Complexity/Randomized/AlgCircuit.lean:180:theorem getD_append_singleton (vs : List R) (v : R) (j : ℕ) :
+TCSlib/Complexity/Randomized/AlgCircuit.lean:184:    rw [List.getD_append _ _ _ _ h]
+TCSlib/Complexity/Randomized/AlgCircuit.lean:240:    rcases getD_append_singleton (run (X : Fin n → MvPolynomial (Fin n) ℤ) gs) _ j with
+TCSlib/Complexity/Randomized/AlgCircuit.lean:283:    rcases getD_append_singleton (run x gs) _ j with h | h <;> rw [h]
+TCSlib/Complexity/Randomized/AlgCircuit.lean:361:  rw [hidx, List.getD_append_right _ _ _ _ le_rfl, Nat.sub_self, List.getD_cons_zero]
+TCSlib/Complexity/Randomized/AlgCircuit.lean:363:  rw [List.getD_append _ _ _ _ (by omega), List.getD_append_right _ _ _ _ (by omega), hl1]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyGadget.lean:196:  rw [List.getD_append_right _ _ _ _ (by omega), hl, Nat.sub_self, List.getD_cons_zero]
+TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:303:    List.getD_append _ _ _ _ (by omega)
+TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:372:  rw [List.getD_append_right _ _ _ _ (by simp)]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit.lean:87:      List.getD_append _ _ _ _ (by simpa using hj)]
+
+=== rg -n 'tmplW|template' TCSlib/Cryptography
+TCSlib/Cryptography/Hashing/SIS/CollisionOutput.lean:284:contract to the retained-context step. Generate the fixed polynomial templates,
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:17:becomes a distinguisher for one sample of `ρ`: the reduction holds as advice a **template**
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:18:(`tmplW`): the header `⟨⟨x₁, xin⟩, ⟨mt, me⟩⟩` of the assembled view, the encoded words of the
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:21:output (`hybW`). The template is chosen at each `n` for the worst-case instance, so one
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:26:* `ComposeSim.tmplW`: the template; `ComposeSim.hybW`: the reduction's pre-processing.
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:30:* `ComposeSim.hybW_tmplW`: the pre-processing on a template.
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:45:/-- **The template of a hybrid step**: `⟨⟨hdr, encodeMsgs pre⟩, ⟨encodeMsgs suf, out⟩⟩` for the
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:48:def tmplW (hdr : List Bool) (pre suf : List (List Bool)) (out : List Bool) : List Bool :=
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:52:/-- The defining equation of `tmplW` (see `tmplW`). -/
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:53:theorem tmplW_eq (hdr : List Bool) (pre suf : List (List Bool)) (out : List Bool) :
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:54:    tmplW hdr pre suf out =
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:78:/-- **The pre-processing on a template**: `hybW ⟨⟨u, tmplW hdr pre suf out⟩, ⟨w, r⟩⟩ =
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:80:theorem hybW_tmplW (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:82:    hybW calls rounds cρ vF b lead (pairEncode (pairEncode u (tmplW hdr pre suf out))
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:86:  rw [hybW_eq, tmplW_eq, encodeMsgs_append, Strategy.encodeMsgs_cons]
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:109:`xA θ`, `yB θ` of `ρ` and a template whose length is at most `q(n)`. Then for every non-uniform
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:112:`K θ v = ⟨asmW ⟨hdr θ, encodeMsgs (pre θ ++ v :: suf θ)⟩, out θ⟩` (the template filled with `v`).
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:115:(`Finset.exists_max_image`) and give its template as advice (length at most `q(n)`). The
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:117:`K θ* (pairFstD w)` (`acceptProb_pre`, `hybW_tmplW`, `acceptProb_fst`), so its advantage
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:130:    (hq : ∀ n θ, (tmplW (hdr n θ) (pre n θ) (suf n θ) (out n θ)).length ≤ q.eval n)
+
+=== rg -n 'exists_max_image' TCSlib/Cryptography
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:281:`(v, v')` (`Finset.exists_max_image`); `multiCom` is `encodeMsgs ∘ List.ofFn ∘ pairTuple` of
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:317:  obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:389:(`Finset.exists_max_image`), a coordinate `k_n` from the coordinatewise hybrid lemma
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:683:(`Finset.exists_max_image`), a bit position `k` from `exists_pairRed_ge`, and by averaging over
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:721:  obtain ⟨⟨v, v'⟩, -, hmax⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:782:(`Finset.exists_max_image`), a bit position `k_n` from the coordinatewise hybrid lemma
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:115:(`Finset.exists_max_image`) and give its template as advice (length at most `q(n)`). The
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Template.lean:148:    obtain ⟨θs, -, h⟩ := exists_max_image univ (gap n) univ_nonempty
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean:84:  obtain ⟨a, -, ha⟩ := Finset.exists_max_image Finset.univ (fun a => |f a - g a|)
+TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean:71:    obtain ⟨w, -, hw⟩ := exists_max_image univ q univ_nonempty
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:277:message space (`Finset.exists_max_image`; the text's footnote: "`Mᵢ` is non-uniform as it has
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:307:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:322:type of pairs (`Finset.exists_max_image`; the text: "there exists messages `m̄`, `m̄'` … for
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:361:    obtain ⟨p, -, hp⟩ := Finset.exists_max_image Finset.univ
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:388:attained at some `i_n` (`Finset.exists_max_image`); then `nextBitProb ≤ 1/2 + ε n` for all
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:411:    · obtain ⟨j₀, -, hj₀⟩ := Finset.exists_max_image (Finset.univ : Finset (Fin (ℓ.eval n)))
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:270:of the planting distinguisher `hybridAdv … (j n)` (`Finset.exists_max_image`); the machine `B`
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:295:      obtain ⟨jf, -, hjf⟩ := Finset.exists_max_image Finset.univ (term n) Finset.univ_nonempty
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:378:(`Finset.exists_max_image`). By `bitwise_enc_runAtL` and the coin split
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:392:(`Finset.exists_max_image` over `j`), the total is `≤ n · ε(n)`, negligible by
+
+=== rg -n 'Negligible.*max|negligible_max|Negligible.add' TCSlib/Cryptography/Foundations
+TCSlib/Cryptography/Foundations/Negligible.lean:34:* `Negligible.add`, `Negligible.mul`, `Negligible.const_mul`, `Negligible.mono`: closure.
+TCSlib/Cryptography/Foundations/Negligible.lean:86:theorem Negligible.add (hμ : Negligible μ) (hν : Negligible ν) :
+

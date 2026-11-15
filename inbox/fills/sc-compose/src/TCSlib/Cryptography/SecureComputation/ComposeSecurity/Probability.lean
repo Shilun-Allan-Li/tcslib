@@ -74,6 +74,7 @@ the acceptance probability of the section `t ↦ X (a, t)` (`uprob_prod` after r
 theorem acceptProb_eq_uexp_sections (X : σ × τ → γ) (D : γ → ρ → Bool) :
     acceptProb X D = uexp fun a => acceptProb (fun t => X (a, t)) D := by
   rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc σ τ ρ).symm, uprob_prod]
+  simp only [acceptProb_def]
   rfl
 
 /-- The average of a difference is at most the largest difference: some `a` has

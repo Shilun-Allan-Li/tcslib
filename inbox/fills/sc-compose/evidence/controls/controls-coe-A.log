@@ -1,0 +1,49 @@
+SEAL-INSTALL coe-A part 1: 400
+SEAL-INSTALL coe-A part 2: 400
+SEAL-INSTALL coe-A part 3: 391
+/workspace/scc/scratch/controls/Controls_coeA.lean:142:90: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  ComposeSim.segW vF b R e =
+    List.flatMap (fun p => pairEncode (if (moverIsV vF p == b) = true then pairFstD (pairSndD^[p / 2] e) else []) [])
+      (List.range R)
+/workspace/scc/scratch/controls/Controls_coeA.lean:152:52: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  ComposeSim.tmplW hdr pre suf out =
+    pairEncode (pairEncode hdr (Strategy.encodeMsgs pre)) (pairEncode (Strategy.encodeMsgs suf) out)
+/workspace/scc/scratch/controls/Controls_coeA.lean:162:83: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  H.inA n zA rA j = if h : j < H.calls.eval n then List.ofFn (H.callA n zA rA ⟨j, h⟩) else []
+/workspace/scc/scratch/controls/Controls_coeA.lean:175:17: error: Type mismatch
+  rfl
+has type
+  ?m.37 = ?m.37
+but is expected to have type
+  ComposeProb.hybV real sim i ω j =
+    if h : j < L then if j < i then sim ω.1 ⟨j, h⟩ (ω.2 ⟨j, h⟩).2 else real ω.1 ⟨j, h⟩ (ω.2 ⟨j, h⟩).1 else []
+/workspace/scc/scratch/controls/Controls_coeA.lean:189:50: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  H.viewRunA ρ n xs ys m j t =
+    (ρ.viewP (List.replicate n true) (H.inA n xs (List.ofFn m.1) ↑j) (H.inB n ys (List.ofFn m.2) ↑j) t).encode
+/workspace/scc/scratch/controls/Controls_coeA.lean:200:76: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  H.answersA n x y rA rB = (List.ofFn fun j => List.ofFn (G.f n (H.callA n x rA j) (H.callB n y rB j)).1).flatten
+SEAL-VERIFY coe-A part 1: 400
+SEAL-VERIFY coe-A part 2: 400
+SEAL-VERIFY coe-A part 3: 391
+
+EXIT 1

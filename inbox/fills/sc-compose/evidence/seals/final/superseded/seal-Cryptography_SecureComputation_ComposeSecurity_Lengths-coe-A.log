@@ -1,0 +1,52 @@
+SEAL-INSTALL final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 1: 400
+SEAL-INSTALL final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 2: 400
+SEAL-INSTALL final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 3: 375
+/workspace/scc/scratch/seal/final/Seal_Cryptography_SecureComputation_ComposeSecurity_Lengths_coeA.lean:167:30: error: Application type mismatch: The argument
+  LE.le.trans h₁ (Eq.le hR)
+has type
+  (H.main.transcriptWith H.main.P (List.replicate n true)
+          (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
+          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m).1.length ≤
+    H.main.rounds.eval n
+but is expected to have type
+  (H.main.transcript (List.replicate n true) (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
+          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m).1.length ≤
+    H.main.rounds.eval n
+in the application
+  Nat.mul_le_mul_right (2 * B.eval n + 2) (LE.le.trans h₁ (Eq.le hR))
+/workspace/scc/scratch/seal/final/Seal_Cryptography_SecureComputation_ComposeSecurity_Lengths_coeA.lean:169:30: error: Application type mismatch: The argument
+  LE.le.trans h₂ (Eq.le hR)
+has type
+  (H.main.transcriptWith H.main.P (List.replicate n true)
+          (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
+          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m).2.length ≤
+    H.main.rounds.eval n
+but is expected to have type
+  (H.main.transcript (List.replicate n true) (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
+          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m).2.length ≤
+    H.main.rounds.eval n
+in the application
+  Nat.mul_le_mul_right (2 * B.eval n + 2) (LE.le.trans h₂ (Eq.le hR))
+/workspace/scc/scratch/seal/final/Seal_Cryptography_SecureComputation_ComposeSecurity_Lengths_coeA.lean:284:76: error: Application type mismatch: The argument
+  h₁
+has type
+  (ρ.transcriptWith ρ.P (List.replicate n true) (List.ofFn x) (List.ofFn y) t).1.length ≤
+    ρ.rounds.eval (List.replicate n true).length
+but is expected to have type
+  (ρ.transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) t).1.length ≤ ?m.87
+in the application
+  Nat.mul_le_mul_right (2 * B.eval n + 2) h₁
+/workspace/scc/scratch/seal/final/Seal_Cryptography_SecureComputation_ComposeSecurity_Lengths_coeA.lean:306:77: error: Application type mismatch: The argument
+  h₁
+has type
+  (ρ.transcriptWith ρ.P (List.replicate n true) (List.ofFn x) (List.ofFn y) t).2.length ≤
+    ρ.rounds.eval (List.replicate n true).length
+but is expected to have type
+  (ρ.transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) t).2.length ≤ ?m.87
+in the application
+  Nat.mul_le_mul_right (2 * B.eval n + 2) h₁
+SEAL-VERIFY final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 1: 400
+SEAL-VERIFY final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 2: 400
+SEAL-VERIFY final/Cryptography_SecureComputation_ComposeSecurity_Lengths/coe-A part 3: 375
+
+EXIT 1
