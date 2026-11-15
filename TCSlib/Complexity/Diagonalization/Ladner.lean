@@ -2092,6 +2092,114 @@ private theorem ladner_memo_readout (z : List Bool) :
     List.getElem_map, List.getElem_range]
 
 
+/-! ### NP membership of the padded language -/
+
+/-- The padded-language verifier checks the final separator, prescribed suffix and
+an exact-length SAT certificate for the parsed prefix.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_verifier (h : ℕ → ℕ) (V : Language Bool) : Language Bool :=
+  {S | match ladner_parse (pairFstD S) with
+    | none => False
+    | some (p, t) => t = p.length ^ h p.length ∧
+      (pairSndD S).length = p.length + 1 ∧ p ++ pairSndD S ∈ V}
+
+/-- The padded verifier is in P when the exponent function is polynomial-time and
+the prefix verifier is in P. [AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Use the existing parser serialization to recover the prefix.
+Intersect the capped padding-syntax test, a certificate-length comparison and the
+polynomial preimage of `V` under prefix/certificate concatenation. The syntax test
+rejects a missing separator before any default prefix can cause acceptance. -/
+private theorem ladner_verifier_P {h : ℕ → ℕ} {V : Language Bool}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)))
+    (hV : V ∈ P) : ladner_verifier h V ∈ P := by
+  let pre (S : List Bool) : List Bool :=
+    pairFstD (pairSndD (ladner_parseWord (pairFstD S)))
+  have hprefix : PolyTimeComputable pre :=
+    BinArith.polyTimeComputable_slot2.comp (ladner_parse_FP.comp polyTimeComputable_pairFstD)
+  have hsyntax := mem_P_of_test ((ladner_syntax_FP hp).comp polyTimeComputable_pairFstD)
+  have hlength := lenEq_preimage_mem_P polyTimeComputable_pairSndD
+    (hprefix.append (polyTimeComputable_const [true]))
+  have hverify := preimage_mem_P hV (hprefix.append polyTimeComputable_pairSndD)
+  let W : Language Bool := {S | ladner_padSyntax h (pairFstD S) = true ∧
+    (pairSndD S).length = (pre S ++ [true]).length ∧ pre S ++ pairSndD S ∈ V}
+  have hW : W ∈ P :=
+    show W ∈ P from inter_mem_P hsyntax (inter_mem_P hlength hverify)
+  have heq : ladner_verifier h V = W := by
+    funext S
+    apply propext
+    show (match ladner_parse (pairFstD S) with
+      | none => False
+      | some (p, t) => t = p.length ^ h p.length ∧
+        (pairSndD S).length = p.length + 1 ∧ p ++ pairSndD S ∈ V) ↔
+      ladner_padSyntax h (pairFstD S) = true ∧
+        (pairSndD S).length = (pre S ++ [true]).length ∧ pre S ++ pairSndD S ∈ V
+    cases hs : ladner_parse (pairFstD S) with
+    | none => simp only [ladner_padSyntax, hs, Bool.false_eq_true, false_and]
+    | some pt =>
+      obtain ⟨p, t⟩ := pt
+      simp only [pre, ladner_padSyntax, ladner_parseWord, hs, decide_eq_true_eq,
+        pairSndD_pairEncode, pairFstD_pairEncode, List.length_append,
+        List.length_cons, List.length_nil, Nat.zero_add]
+  rw [heq]
+  exact hW
+
+/-- Padding membership is equivalent to a paired verifier certificate of length
+at most the padded input's length plus one. [AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Successful padding supplies the parser's unique prefix and a
+linear SAT certificate, whose length is bounded by the strict parsed-prefix bound.
+Conversely the verifier supplies the suffix equation and a SAT certificate for
+that prefix; `ladner_pad_membership` reconstructs membership without guessing a split. -/
+private theorem ladner_verifier_equiv {h : ℕ → ℕ} {V : Language Bool}
+    (hcert : ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) (y : List Bool) :
+    y ∈ padSAT h ↔ ∃ u : List Bool,
+      u.length ≤ y.length + 1 ∧ pairEncode y u ∈ ladner_verifier h V := by
+  have hread (u : List Bool) : pairEncode y u ∈ ladner_verifier h V ↔
+      match ladner_parse y with
+      | none => False
+      | some (p, t) => t = p.length ^ h p.length ∧
+        u.length = p.length + 1 ∧ p ++ u ∈ V := by
+    show (match ladner_parse (pairFstD (pairEncode y u)) with
+      | none => False
+      | some (p, t) => t = p.length ^ h p.length ∧
+        (pairSndD (pairEncode y u)).length = p.length + 1 ∧
+          p ++ pairSndD (pairEncode y u) ∈ V) ↔ _
+    simp only [pairFstD_pairEncode, pairSndD_pairEncode]
+  rw [ladner_pad_membership]
+  constructor
+  · rintro ⟨p, t, hparse, hpower, hp⟩
+    obtain ⟨u, hlen, hVu⟩ := (hcert p).mp hp
+    refine ⟨u, ?_, (hread u).mpr ?_⟩
+    · have hshort := (ladner_parsed_length hparse).2
+      omega
+    · rw [hparse]
+      exact ⟨hpower, hlen, hVu⟩
+  · rintro ⟨u, _, hu⟩
+    have hv := (hread u).mp hu
+    cases hparse : ladner_parse y with
+    | none =>
+      rw [hparse] at hv
+      exact hv.elim
+    | some pt =>
+      obtain ⟨p, t⟩ := pt
+      rw [hparse] at hv
+      exact ⟨p, t, rfl, hv.1, (hcert p).mpr ⟨u, hv.2.1, hv.2.2⟩⟩
+
+/-- Polynomial-time padding exponents preserve SAT's NP membership through its
+linear verifier. [AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_padded_NP {h : ℕ → ℕ}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)))
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    padSAT h ∈ NP := by
+  obtain ⟨V, hV, hcert⟩ := linear
+  refine mem_NP_iff_exists_length_le.mpr ⟨1, 1, ladner_verifier h V, ladner_verifier_P hp hV,
+    fun y => ?_⟩
+  simpa only [one_mul, pow_one] using ladner_verifier_equiv (h := h) hcert y
+
+
 /-! ### The theorem and its remaining targets -/
 
 /-- The binary digits of the delayed index at an input's length are polynomial-time
@@ -2112,10 +2220,11 @@ theorem ladnerH_polyTime :
 
 /-- The padded SAT witness is in NP. [AB09, Theorem 3.3 and its proof]
 
-**Proof sketch.** Guess the satisfiable prefix and its SAT certificate. Compute the
-index at that prefix length and check the separator and exactly prescribed unary suffix. -/
-theorem SAT_H_mem_NP : SAT_H ∈ NP :=
-  sorry
+**Proof sketch.** Parse the final false separator to recover the prefix and guess its
+SAT certificate. Compute the index at the prefix length and check the prescribed unary suffix. -/
+theorem SAT_H_mem_NP : SAT_H ∈ NP := by
+  rw [SAT_H_eq]
+  exact ladner_padded_NP ladnerH_polyTime SAT_exists_linear_verifier
 
 /-- Polynomial-time computable, diverging padding cannot be NP-hard unless SAT belongs
 to P. The hypothesis uses NP-hardness, rather than NP-completeness.
