@@ -93,9 +93,10 @@ coins (`yaoSeed`): the keys, `2n` coins per row, and a shift `λ_i` per gate.
 * `SecureComputation.yaoHybrid_answersB_getD` (proved): Bob's OT answers are his keys.
 * `SecureComputation.yaoHybrid_correct` (proved): both parties output `f(x, y)` in the hybrid
   execution when the garbling is good with distinct output keys.
-* `SecureComputation.yaoSeed_good_whp`, `yaoHybrid_polyTime`, `yaoHybrid_simulators` (stated;
-  `sorry`s under sketches): the garbling is good w.h.p., the protocol is efficient, and the
-  simulators of Theorem 163.7.
+* `SecureComputation.yaoSeed_good_whp` (proved): the garbling is good with distinct output keys
+  except with negligible probability.
+* `SecureComputation.yaoHybrid_polyTime`, `yaoHybrid_simulators` (stated; `sorry`s under sketches):
+  the protocol is efficient, and the simulators of Theorem 163.7.
 * `SecureComputation.yaoHybrid_hbcSecure` (Theorem 163.7 in the OT-hybrid model, proved from the
   two previous results).
 
@@ -795,29 +796,56 @@ PRFs `G₁`, `G₂` evaluated by `E₁`, `E₂`, there is a negligible `δ` such
 uniform coins for Alice, the garbling `yaoSeed` fails to be good, or gives some output vertex two
 equal keys, with probability at most `δ(n)`.
 
-**Proof sketch.** Write `S = sizeBound(n)`.
-1. *The coin blocks are disjoint.* Vertices are below `size(C_n) ≤ S`, gates below `S`, and a
-   fan-in-two gate has at most four assignments, with indices below `4` (`assignIdx`). So the
-   keys, the row coins and the shifts of `yaoSeed` read disjoint blocks of Alice's coins: the keys
-   and row coins are independent and uniform, and independent of the shifts.
-2. *Goodness.* The argument of `uprob_not_good_le` applies to this distribution. At gate `i` and
-   assignment `a`, the row of `a` decrypts under `a`'s keys to the right key
-   (`nestedSpecial_decCorrect`), so `Good` fails there only if the row of some `a'' ≠ a`
-   decrypts under `a`'s keys. The arguments are distinct vertices below the gate's own, so that
-   row's keys, plaintext and coins are independent and uniform. By `nestedSpecial_wrongKeyBot`
-   the event has probability at most `δ₀(n)`, whatever the row order. At most `12` such events
-   per gate and `S` gates give `12 · S · δ₀(n)`.
-3. *Distinct output keys.* The two keys of an output vertex are independent uniform `n`-bit
-   strings, equal with probability `2^{-n}`: at most `outLen(n) · 2^{-n}` in all.
-4. `δ(n) = 12 · S(n) · δ₀(n) + outLen(n) · 2^{-n}` is negligible (a polynomial times a negligible
-   function, `Negligible.add`). -/
+**Proof sketch.** Write `S = sizeBound(n)`. Distinct blocks contain all vertex keys and
+row coins: vertices and gates are below `S`, and binary assignment indices are injective
+below four for fan-in at most two. The generic block restriction theorem gives their joint
+uniform law, including zero-length blocks. Apply the strengthened B2 uniform-data bound
+with `nestedSpecial_wrongKeyBot` and correctness; this bound permits arbitrary seed-dependent
+row permutations, including the XOR shifts. Each output's two keys coincide with probability
+`2^{-n}`. The output union bound allows repeated vertices. Thus failure is at most
+`12*S(n)*δ₀(n) + outLen(n)*2^{-n}`, a sum of polynomial multiples of negligible functions. -/
 theorem yaoSeed_good_whp (hG₁ : PRFOut (.add .var .var) G₁)
     (hG₂ : PRFOut (.add .var innerLen) G₂) :
     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ n, uprob (fun r : Fin ((yaoCoins Y).eval n) → Bool =>
       ¬ (Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) ∧
         ∀ j, keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) false ≠
           keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) true)) ≤ δ n := by
-  sorry
+  classical
+  obtain ⟨δ₀, hδ₀, hbot⟩ :=
+    nestedSpecial_wrongKeyBot G₁ G₂ E₁ E₂ hGE₁ hGE₂ hG₁ hG₂
+  refine ⟨fun n => 12 * (Y.sizeBound.eval n : ℝ) * δ₀ n +
+    (Y.outLen.eval n : ℝ) * (2 : ℝ)⁻¹ ^ n, ?_, fun n => ?_⟩
+  · simpa only [PolyExpr.eval_mul, PolyExpr.eval_const, Nat.cast_mul, Nat.cast_ofNat] using
+      (EnsembleLemmas.negligible_polyExpr_mul (.mul (.const 12) Y.sizeBound) hδ₀).add
+        (EnsembleLemmas.negligible_polyExpr_mul Y.outLen negligible_two_pow_neg)
+  · have hg : (Y.circ n).gates.length ≤ Y.sizeBound.eval n := by
+      have hs := Y.size_le n
+      rw [DAGCircuit.size_eq] at hs
+      omega
+    have hsmall (i : Fin (Y.circ n).gates.length) :=
+      GarblingProbability.assignmentFold_small ((Y.circ n).gates[i]).args.length
+        (((DAGCircuit.isFaninTwo_iff (Y.circ n)).mp (Y.fanin n)).2 _
+          (List.getElem_mem i.isLt))
+    have hlaw : HardcoreBit.PushesUniform
+        (fun r : Fin ((yaoCoins Y).eval n) → Bool =>
+          ((yaoSeed Y n (List.ofFn r)).1, (yaoSeed Y n (List.ofFn r)).2.1)) := by
+      simp only [yaoCoins_eval]
+      convert GarblingProbability.pushesUniform_key_row_blocks (n := n)
+        (A := fun i : Fin (Y.circ n).gates.length => Fin ((Y.circ n).gates[i]).args.length → Bool)
+        (Y.size_le n) hg
+        (fun i a => assignIdx a)
+        (fun i a => by change assignIdx a < 4; rw [assignIdx_eq]; exact (hsmall i).1 a)
+        (fun i => by simpa only [assignIdx_eq] using (hsmall i).2) using 1
+    have hb := uprob_not_good_distinct_le_of_uniform_data
+      (nestedSpecial E₁ E₂ n) (Y.circ n)
+      (nestedSpecial_decCorrect G₁ G₂ E₁ E₂ hGE₁ hGE₂ n) (hbot n) (Y.fanin n)
+      (fun r => yaoSeed Y n (List.ofFn r)) hlaw (Y.outs n) (Y.outs_lt n)
+    simp only [Fintype.card_fun, Fintype.card_fin, Fintype.card_bool, Nat.cast_pow,
+      Nat.cast_ofNat, one_div, ← inv_pow] at hb
+    refine hb.trans (add_le_add_right ?_ _)
+    exact mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_left (by exact_mod_cast hg) (by norm_num))
+      (wrongKeyBot_nonneg (nestedSpecial E₁ E₂ n) (hbot n))
 
 /-- **Protocol 162.6 in the OT-hybrid model runs in polynomial time** (the efficiency clause of
 [PS10, Definition 155.1], `HybridProtocol.PolyTime`, ruling of 2026-11-05) when `E₁` and `E₂`
