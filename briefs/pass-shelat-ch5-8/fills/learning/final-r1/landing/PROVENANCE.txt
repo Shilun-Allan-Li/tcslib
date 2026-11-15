@@ -1,0 +1,113 @@
+learning (Theorem 179.1 (b), Randomness.predictAdv_prfConcept_negligible) maintainer delivery review r1, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: the cca2-ett and lamport reviews (fills/{cca2-ett,lamport}/final-r1/landing/PROVENANCE.txt); tools from $SP/review-tools-template/
+  plus lamport-r1 (mancheck, treecheck, lewidth, mkctl_lamport) and cca2-ett-r1 (sketchaudit, wscheck); changes under "tools".
+
+brief: briefs/pass-shelat-ch5-8/fills/learning/issued-r1/brief.md, SHA-256 6f6c2648e4dcd71ec42d2c781c6ad5a17f67786fa01ce89b11fd31f8eba26f6e
+  (logs/brief.md). Issue package SHA256SUMS 7/7 OK (logs/issue-package-check.txt); SOURCE-SHA256SUMS 246/246 OK at the issue base
+  107f1e8c218733eac12d6b9bee6fece441271317 (logs/source-sums-check.txt). Base sorries logs/base-sorries-issued.txt (20 in 10 modules).
+  Owned file Randomness/Learning.lean; helpers under Randomness/Learning/ (Sample, Distinguisher, Law, Random).
+delivery: exchange/pass-shelat-ch5-8 365d6639c0a3fbd2550e6ce792c2aee9b927010a ("fill learning: final"; checkpoints 8318ce34f, 6ebe473c0).
+  The three learning commits touch only inbox/fills/learning/; no later commit on the exchange. git archive into a fresh directory
+  (removed after use). Inventory logs/payload-inventory.sha256 (154 files). Cited extracts in logs/delivery-extracts/ (patches/,
+  COMMITS.tsv, both manifests, seals-compare.log, coe-probe.log); hashes equal the payload (logs/delivery-extract-hashes*.txt).
+  Worker REPORT: logs/worker-REPORT.md.
+integrity (logs/payload-check.txt, tools/mancheck.py):
+  - Both manifests list paths with a leading "./" (153/153 and 142/142 lines); mancheck now strips it (tools change below).
+  - Top SHA256SUMS: 153/153 OK, delivered set = manifest set. evidence/SHA256SUMS: 142/142 OK, sets equal.
+  - git am of the 3 patches at 107f1e8c with committer name/email/date from patches/COMMITS.tsv: every hash reproduces
+    (c323e604…, d80d3e5e…, f30d80f02aa3a79c8dd1bb6c674e1ba071b0f568 = worker head), tree 4545c50b4725ce22fa5417dd6d7353bee87e76ba
+    (logs/git-am-integrity.log). The 5 changed paths (M Learning.lean, A 4 helpers) are byte-identical to src/, src/ holds only these.
+olean tree: $SP/dl-oleans-2 only (dl-oleans, used by the prf-mac review, untouched).
+  - tree/snapshot-pre.txt (1230 files) SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f (= the value in the
+    brief; byte-equal to lamport-r1 tree/snapshot-post.txt). tree/tree-check-pre.txt: 1199 modules at the eff2dcd0 source and the
+    recorded object hashes (records tree/base-records.jsonl = lamport-r1 logs/all-results-restored.jsonl): RESULT OK.
+landing: branch land/pass-shelat-learning (local, no upstream), worktree $SP/wt-land-learning (sparse, briefs/ excluded; .lake/packages
+  symlinked to the records checkout's packages).
+  - git am at 107f1e8c with COMMITS.tsv committer data (worker hashes reproduced), then rebased onto origin/cryptography/pass-shelat-ch2-4
+    4561c3407f9f015da55255a6a4cbcfc5840fd1f3 (committer Claude): rc 0, no conflict; the 5 paths equal the worker head
+    (landing/landing.log, landing/changed-paths-vs-origin.txt). Origin delta since the issue base: landing/origin-delta-since-issue-base.txt,
+    landing/origin-commits.txt (#307 dl-crh merge 25fe1c05 plus records).
+  - Commits (landing/commits.txt, series landing/series/0001-0004):
+      876145de248c691b5724a2d594ad3ab6b2744a17  learning: checkpoint 1 — the distinguisher and the real game
+      331c15f4d66e99537c59403b6bc77eb952a52e47  learning: checkpoint 2 — the random function
+      b4caa53bb4a8f51e30789f282080ed0eb8d2827a  learning: Theorem 179.1 (b) proved
+      7f5bdd510c15357ca8e4bc28ca74ec6bcdf211c1  learning landing edit LE-doc (Claude <noreply@anthropic.com>)
+    head 7f5bdd510c15357ca8e4bc28ca74ec6bcdf211c1, tree 240da5030a2f55d2649f435abaff1b161345272b. Authors Claude <noreply@anthropic.com>.
+LE-doc (tools/ledoc_edit.py, 17 exact replacements): formulas for the 17 new public declarations that statements/docaudit.tsv flagged
+  NO-FORMULA (14 Sample, 1 Distinguisher, 1 Law, 1 Random). landing/le-doc-doconly.txt (tools/doconly.py): every file equal to the
+  pre-edit head after deleting all /-- -/ doc comments, same docstring count; 17 docstrings changed; RESULT OK. landing/le-doc.diff.
+  A first application left one 102-character line; reverted with git checkout, the replacement re-wrapped, re-applied
+  (landing/le-doc-sizes-widths.txt: max width 100). statements/docaudit-le.tsv: 47 OK, 1 NO-FORMULA = the frozen target's base prose.
+  No LE-width needed: all lines <= 100 at the worker head (logs/sizes-widths.txt).
+build:
+  - build/ (pre-LE head b4caa53b, order/head-build-queue.txt): 66 modules = the 56 changed since eff2dcd0 (51 base-delta modules of #303,
+    #306, #307, #308, #309: order/base-delta-modules.txt; plus the 5 unit files) and their downstream (Candidates, DDH, DiscreteLogHardcore,
+    ElGamal, Encryption facades, Composability, Randomness, root TCSlib, audits/pass-shelat/Checks). 66/66 rc 0, 0 errors (G26-N1 count),
+    0 sorry. Warnings only in DDH 3, Lamport/{Blocks 2, InversionProbability 2, MachineSpec 2, Realization 1}, Rejection 10, Extraction 2
+    (as in earlier reviews); the 5 unit files 0 warnings (build/summary.txt).
+    superseded/build-attempt1/: first run failed in Candidates/DiscreteLog (no .lake/packages in the new worktree; its base olean was
+    removed by the script's rm before lean), DISPOSITION.txt.
+  - edit-build/ (LE head 7f5bdd51, order/le-build-queue.txt): Sample, Distinguisher, Law, Random, Learning, Randomness, TCSlib 7/7 rc 0.
+  - tree/tree-check-head.txt: 1245 modules (order/headfull-order.txt, roots TCSlib + audits/{pass-shelat,garg-ch1-3}/Checks) + 31 PFR,
+    every module's last record rc 0 at the 7f5bdd51 source and olean hash, no stray olean (probe oleans deleted first,
+    logs/probe-oleans-deleted-head.txt): RESULT OK.
+  - #307: none of its 9 modules (order/pr307-modules.txt) is in the unit's closure (order/unit-closure.txt, 137 modules), the issued order
+    (246) or the unit's downstream other than via root TCSlib (order/unit-vs-origin/down.txt). It is built here as base delta.
+statements (vs the issue base 107f1e8c; Learning.lean is identical at eff2dcd0 and 107f1e8c):
+  - statements/decls2.tsv (pre-LE) and head-le/decls2-vs-base.tsv: 47 ADDED, 0 CHANGED, 0 REMOVED; head-le/decls2-vs-worker.tsv empty.
+  - touched-le.tsv: target CHANGED (sketch and body), 8 UNCHANGED (incl. not_weakLearnsUnder_prfConcept), 52 in new files.
+  - head-le/header-bytes.txt: all 9 pre-existing declarations of Learning.lean, target included, IDENTICAL header bytes.
+  - Owned-file diff: 4 imports, title, Main-results line, new ## Contents, the target's sketch and body; owned file at the landing head
+    identical to the worker head.
+  - sketchaudit-le.tsv: 4 theorems with >= 15 proof lines, all with a Proof sketch.
+axioms: probe-runs/ (probe-sources/head/CensusHead.lean, tools/mkcensus_learning.py): predictAdv_prfConcept_negligible and
+  not_weakLearnsUnder_prfConcept [propext, Classical.choice, Quot.sound]; prfConcept_decidable the same. 71 stored constants of the
+  5 files (12 internal/aux, 7 private), axiom union {propext, Classical.choice, Quot.sound}, no sorryAx, no simp, no instance, no abbrev
+  (statements/census-head.tsv, logs/census-summary.txt). Base (base-probe-runs/, CensusBase): 11 constants; target and part (c) with
+  sorryAx. logs/census-base-vs-head.txt: 0 removed / type-changed / attr-changed / moved, 60 added, axioms-changed 2 (target and
+  part (c): sorryAx dropped). The REPORT's part (c) claim holds.
+admissions: logs/sorry-census.txt: issued 20 -> 19 in the issued modules, only Randomness/Learning differs (1 -> 0); modules outside the
+  issued order are unchanged in source since the issue base (records: base records + build + edit-build, logs/all-results-head.jsonl).
+Rule 10 (all at the LE head 7f5bdd51):
+  - Collector probe-sources/head/CollectHead.lean (tools/mkcollect.py) -> probe-runs/ (CAT 2528). Seals: tools/mkseals_ab.py (strict)
+    -> seals/{A,B}; tools/mkseals_coe.py (FinDist.instCoeFunForallReal as notation, canonical) -> seals-coe/{A,B}; logs/mkseals-*.log.
+    1690-1877 requests per file; the owned file's request set includes the 4 helpers' definitions. 20 probes in seal-runs/.
+  - Base (owned file at eff2dcd0, run on the restored tree): CollectBase -> base-probe-runs/, base-seals{,-coe}/{A,B} -> base-seal-runs/.
+  - logs/seal-table.txt (tools/sealsum.py, sealtable.py): all 5 files pass A and B, strict and coe; base passes all 4; 0 failing
+    declarations; strict = coe.
+  - Paired controls (tools/mkctl_learning.py; rows PolyExpr.eval, FinDist.uniform, FinDist CoeFun instance, PAC.label, uprob, acceptProb,
+    LearnPRF.firstBit, LearnPRF.tupleWord, LearnPRF.learnerFn): coe controls/ (16 probes, 46 sealed negatives), logs/ctlcheck.log +
+    ctlcheck.json: ALL_OK True (each sealed negative fails exactly once, readers pass, unsealed rc 0).
+    Strict controls-strict/ (16 probes, 54 negatives), logs/ctlcheck-strict.log: every negative (ctlCoe included) fails exactly once,
+    but the positives ctlUniformReader and ctlCoeReader also fail in the 8 sealed probes: with the CoeFun instance sealed, the control's
+    own statement elaborates to `CoeFun.coe p a` instead of `p.prob a`, so a reader stated in the `.prob` form no longer matches
+    (seal-runs/mods/LnProbe_KS_ControlS_*.log, "Type mismatch"). Attributed to the strict harness on a projection coercion; the
+    canonical coe controls are ALL_OK.
+  - Scan (tools/scan1.py, scan2.py): scan/items-head.json, explicit-head.json, logs/scan2-head.log: 242 items, 206 theorems, 30 local,
+    6 owned-definition (same file: prfConcept in prfConcept_decidable (base code), blk x4, sampleLen; logs/scan-owned-items.txt),
+    0 foreign. Base: scan/explicit-base.json, logs/scan2-base.log: 6 items, 0 foreign.
+lint (scripts/campaign_style_lint.py TCSlib/Cryptography --check8b, #305 version):
+  - records tip 4561c340: 92 FAIL / 101 WARN (lint/lint-recordstip-4561c340.log); landing head pre-LE b4caa53b 92 / 101 and LE head
+    7f5bdd51 92 / 101. Non-INFO line sets identical (lint/lint-diff-tip-vs-landing-le.txt: only the summary file count 343 -> 347).
+  - Old script (eff2dcd0 version, tools/campaign_style_lint_old_rooted.py): records tip 235 / 101, landing 239 / 101; the +4 are the
+    "facade does not import child module" FAILs for the 4 helpers in Randomness.lean (lint/lint-old-diff.txt), the class #305 fixed.
+duplication: logs/duplication-grep.txt (searches and closure membership). Findings in the report; checked items: exists_queryChain_nuppt
+  (called, not copied), Rejection uniform_prod/uniform_probTrue (reused), no Randomness/PAC* file on any ref, ProbComp and
+  uprob_comp_eq_probTrue_map unused.
+restore: tree restored to the original base snapshot.
+  - Deleted (restore/deleted.txt, hashes recorded): the 46 oleans of modules new since eff2dcd0 (EncryptThenTag/ 10, Lamport/ 16,
+    FromDiscreteLog/ 6, HashAndSign/ 8, Extraction/ 2, Learning/ 4; each directory held only these and was absent from snapshot-pre),
+    and all LnProbe/ (39) and LnBase/ (7) probe oleans (logs/probe-oleans-deleted-head.txt, restore/probe-oleans-deleted-base.txt).
+  - restore-build/ (base worktree at eff2dcd0, removed after use; order/restore-base.txt): the 20 modified modules rebuilt, 20/20 rc 0.
+  - tree/tree-check-post.txt: 1199 modules at the eff2dcd0 source and object hashes, RESULT OK; tree/snapshot-post.txt byte-identical
+    to snapshot-pre.txt, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f.
+tools/: copied from review-tools-template. Changes:
+  - runner.py: G26-N1 fix, `errors` counts both `error:` and `error(` (regex error[:(]); new field `errors_diag` counts
+    ^<file>.lean:<l>:<c>: error[:(] lines (logs/runner-G26-N1-fix.diff).
+  - mancheck.py (from lamport-r1): strips a leading "./" from manifest paths and reports a bad separator.
+  - New: mkcensus_learning.py (endpoints: the three Theorem 179.1 results), mkctl_learning.py (rows above), ledoc_edit.py, doconly.py,
+    sizewidth.py, campaign_style_lint_old_{eff2dcd0,rooted}.py (the pre-#305 lint, rooted by LINT_ROOT).
+  - From lamport-r1 / cca2-ett-r1 unchanged: treecheck.py, lewidth.py, mkctl_lamport.py, mkctl_dlcrh.py, sketchaudit.py, wscheck.py.
+cleanup: the integrity and base worktrees were removed (git worktree remove --force); the payload extraction and the reference extracts
+  were removed; LnProbe/ removed from the landing worktree, which is clean at 7f5bdd51 (only the ignored .lake/packages symlink).

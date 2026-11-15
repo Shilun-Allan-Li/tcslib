@@ -1,0 +1,156 @@
+## searches at landing head 7f5bdd510c15357ca8e4bc28ca74ec6bcdf211c1 (TCSlib/, excluding TCSlib/Cryptography/Randomness/Learning*)
+### theorem uprob_eq_one_div_card
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:144:theorem uprob_eq_one_div_card (a : α) : uprob (fun x : α => x = a) = 1 / Fintype.card α := by
+### theorem abs_uexp_sub_le_uprob
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:61:theorem abs_uexp_sub_le_uprob {Ω : Type*} [Fintype Ω] (a b : Ω → ℝ) (E : Ω → Prop)
+### theorem length_histBlock
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:54:theorem length_histBlock {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
+### theorem pairFstD_pairFstD_histBlock
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:139:theorem pairFstD_pairFstD_histBlock {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
+### def histBlock
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:50:def histBlock {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) : List Bool :=
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:68:def histBlockLen : PolyExpr := .add (.mul (.const 6) .var) (.const 6)
+### def blockMapFun
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:229:def blockMapFun (b : PolyExpr) (g : List Bool → List Bool) (z : List Bool) : List Bool :=
+### def flipBit
+grep: --include=*.lean: No such file or directory
+TCSlib/BooleanAnalysis/Basic.lean:498:def flipBit (x : BoolCube n) (i : Fin n) : BoolCube n :=
+### lemma flipBit_flipBit
+grep: --include=*.lean: No such file or directory
+TCSlib/BooleanAnalysis/Basic.lean:502:lemma flipBit_flipBit (x : BoolCube n) (i : Fin n) : flipBit (flipBit x i) i = x := by
+### def flipAt
+grep: --include=*.lean: No such file or directory
+TCSlib/CommunicationComplexity/DeterministicCC/Helper.lean:96:def flipAt {n : ℕ} (i : Fin n) (x : BoolInput n) : BoolInput n :=
+### lemma flipAt_flipAt
+grep: --include=*.lean: No such file or directory
+TCSlib/CommunicationComplexity/DeterministicCC/Helper.lean:110:@[simp] lemma flipAt_flipAt {n : ℕ} (i : Fin n) (x : BoolInput n) :
+### foldr pairEncode \[\]
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:133:def encodeMsgs (h : List (List Bool)) : List Bool := h.foldr pairEncode []
+### def relabel
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:138:def relabelEmit (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:147:def relabelN (m : ℕ) (w : List Bool) : List Bool :=
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:162:def relabel (x : List Bool) : List Bool := relabelN (x.length + 1) x
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:230:noncomputable def relabelAt (u w p : List Bool) : List Bool :=
+TCSlib/Complexity/TuringMachine/Nondeterministic.lean:474:def relabelState (tm : NDTM k Γ S) (e : S ≃ S') : NDTM k Γ S' where
+### theorem relabel_eq
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:165:theorem relabel_eq (x : List Bool) : relabel x = relabelN (x.length + 1) x := rfl
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:169:theorem relabel_eq_iterEmit (x : List Bool) :
+### Involutive.toPerm
+grep: --include=*.lean: No such file or directory
+TCSlib/BooleanAnalysis/ThresholdFunctions/DegreeOne.lean:501:      Equiv.sum_comp (Function.Involutive.toPerm (fun x => flipBit x i)
+TCSlib/BooleanAnalysis/ThresholdFunctions/BitFlipSets.lean:78:    (Function.Involutive.toPerm (fun x ↦ flipSet x S) (fun x ↦ flipSet_flipSet x S)) F
+TCSlib/BooleanAnalysis/ThresholdFunctions/BitFlipSets.lean:84:    (Function.Involutive.toPerm (fun z ↦ xorVec z c) (fun z ↦ xorVec_xorVec z c)) F
+TCSlib/BooleanAnalysis/ThresholdFunctions/LinearThresholdInfluence.lean:78:      (Function.Involutive.toPerm (fun x ↦ flipBit x i) (fun x ↦ flipBit_flipBit x i)) g
+TCSlib/Cryptography/Foundations/BitLists.lean:93:  Function.Involutive.toPerm (fun y i => xor (y i) (v i)) fun y => funext fun i => by
+TCSlib/Cryptography/LWE/BitNoise.lean:125:    Function.Involutive.toPerm (fun r : Fin (t + t) → Bool => fun i => !(r i))
+TCSlib/Cryptography/SecureComputation/Yao.lean:255:  Function.Involutive.toPerm (fun a p => xor (a p) (l p)) fun a => funext fun p => by
+### headD false
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:81:/-- The planted half is the first seed bit, defaulting to false: `bit v = (seed v).headD false`. -/
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:82:def bit (v : List Bool) : Bool := (seed v).headD false
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:83:/-- `bit v = (seed v).headD false`. -/
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:84:theorem bit_eq (v : List Bool) : bit v = (seed v).headD false := rfl
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:301:decide (((message w).drop (pos (context w)).length).headD false = bit (context w))`. -/
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:303:  decide (((message w).drop (pos (context w)).length).headD false = bit (context w))
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:305:w = decide (((message w).drop (pos (context w)).length).headD false = bit (context w))`. -/
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:307:    decide (((message w).drop (pos (context w)).length).headD false = bit (context w)) := rfl
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:321:(pairEncode (tape (context w)) (message w)) [] [])) [(state w).headD false || blocked w]`.
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:327:    [(state w).headD false || blocked w]
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:330:[(state w).headD false || blocked w]`. -/
+TCSlib/Cryptography/Authentication/Signatures/Lamport/Machine.lean:334:      [(state w).headD false || blocked w] := rfl
+### theorem exists_queryChain_nuppt
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:461:theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
+### theorem uprob_comp_eq_probTrue_map
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean:50:theorem uprob_comp_eq_probTrue_map (X : σ → γ) (D : γ → Bool) :
+### theorem uniform_prod
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:134:theorem uniform_prod [Nonempty α] [Nonempty β] :
+### theorem uniform_probTrue
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:343:theorem uniform_probTrue [Nonempty α] (D : α → Bool) :
+### def tupleEquiv
+grep: --include=*.lean: No such file or directory
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:144:def tupleEquiv (t : ℕ) : (Fin (t + 1 + 1) → α) ≃ α × (Fin (t + 1) → α) where
+### iid
+TCSlib/LearningTheory/JohnsonLindenstrauss.lean:27:- `JohnsonLindenstrauss.RowDistribution`: bad event `BadSingle`; rows of `Ax` are iid Gaussian
+TCSlib/LearningTheory/JohnsonLindenstrauss.lean:34:- `JohnsonLindenstrauss.Main`: iid Gaussian sample space; headline theorems and corollaries
+TCSlib/LearningTheory/JohnsonLindenstrauss/ChiSquaredMGF.lean:59:`Y ~ N(0, 1/k)` random variable, and derive the iid-sum tail bound from
+TCSlib/LearningTheory/JohnsonLindenstrauss/UnionBound.lean:30:- `jl_concentration_single`: Single-vector concentration bound for iid Gaussian matrices.
+TCSlib/LearningTheory/JohnsonLindenstrauss/UnionBound.lean:106:and entries iid within each row), then for any fixed `x : ℝ^d` and any
+TCSlib/LearningTheory/JohnsonLindenstrauss/UnionBound.lean:250:   (giving both within-row iid and rows iid for free) is fully proved
+TCSlib/LearningTheory/JohnsonLindenstrauss/UnionBound.lean:251:   in `JohnsonLindenstrauss.Main` (`exists_iid_gaussian_matrix`). -/
+TCSlib/LearningTheory/JohnsonLindenstrauss/UnionBound.lean:308:Given a random matrix with iid `N(0, 1/k)` entries on a probability space (rows
+TCSlib/LearningTheory/JohnsonLindenstrauss/SubGaussian.lean:67:iid), Hoeffding's lemma gives `Z` sub-Gaussian with parameter `‖x‖²/k`,
+TCSlib/LearningTheory/JohnsonLindenstrauss/RowDistribution.lean:22:- `sum_scaled_iid_gaussian_map`: sum of scaled i.i.d. Gaussians is Gaussian with scaled
+TCSlib/LearningTheory/JohnsonLindenstrauss/RowDistribution.lean:114:`μ`. This is the observation of [DG03, §2] that the projection of iid Gaussians is Gaussian with
+TCSlib/LearningTheory/JohnsonLindenstrauss/RowDistribution.lean:115:variance `‖x‖²/k` (DG03 work with a random orthogonal projection; the iid-Gaussian-matrix
+### theorem predictSuccess
+grep: --include=*.lean: No such file or directory
+TCSlib/LearningTheory/PAC/Prediction.lean:105:theorem predictSuccess_eq (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool) :
+TCSlib/LearningTheory/PAC/Prediction.lean:140:theorem predictSuccess_eq_one_sub_expectedErr (C : I → X → Bool) (m : ℕ)
+TCSlib/LearningTheory/PAC/Prediction.lean:237:theorem predictSuccess_coin (C : I → X → Bool) (m : ℕ) :
+### def trialDist
+grep: --include=*.lean: No such file or directory
+TCSlib/LearningTheory/PAC/Prediction.lean:85:noncomputable def trialDist (m : ℕ) : FinDist (I × ((Fin m → X) × ρ)) :=
+### ProbComp
+TCSlib/Cryptography/Authentication/MAC/Defs.lean:102:  QueryImpl.ofComp fun _ m => (ProbComp.sample (M.tag.Coins n)).bind fun rt =>
+TCSlib/Cryptography/Authentication/MAC/Defs.lean:109:      QueryImpl.ofComp (fun _ m => (ProbComp.sample (M.tag.Coins n)).bind fun rt =>
+TCSlib/Cryptography/Authentication/MAC/Defs.lean:144:noncomputable def forgeGame (A : NUPPT) (b n : ℕ) : ProbComp Bool :=
+TCSlib/Cryptography/Authentication/MAC/Defs.lean:145:  (ProbComp.sample (M.gen.Coins n)).bind fun rg =>
+TCSlib/Cryptography/Authentication/MAC/Defs.lean:146:  (ProbComp.sample (A.Coins n)).bind fun r =>
+TCSlib/Cryptography/Authentication/MAC/Defs.lean:156:      (ProbComp.sample (M.gen.Coins n)).bind (fun rg =>
+TCSlib/Cryptography/Authentication/MAC/Defs.lean:157:      (ProbComp.sample (A.Coins n)).bind fun r =>
+TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean:38:at least `1 / (2 |I|)`: if `q ≠ some m'`, then `1 / (2 * (Fintype.card ι : ℝ)) ≤ ProbComp.expect
+TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean:39:(ProbComp.sample (ι × Bool)) (fun p => if (∀ m, q = some m → m p.1 ≠ p.2) ∧ m' p.1 = p.2 then (1 :
+TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean:48:      ProbComp.expect (ProbComp.sample (ι × Bool))
+TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean:67:fair bit: `∃ i, ProbComp.expect (ProbComp.sample (ι × Bool)) (fun p => v p.1 p.2) ≤ ProbComp.expect
+TCSlib/Cryptography/Authentication/Signatures/Lamport/AveragingExtra.lean:68:(ProbComp.sample Bool) (v i)`. [PS10, proof of Theorem 137.2].
+### ProbComp/uprob_comp_eq_probTrue_map uses in the unit
+TCSlib/Cryptography/Randomness/Learning.lean:125:   its oracle at them (the non-adaptive query chain `MultiMsg.exists_queryChain_nuppt`), labels
+TCSlib/Cryptography/Randomness/Learning/Distinguisher.lean:20:`B` is the query chain of `MultiMsg.exists_queryChain_nuppt` (non-adaptive queries at points
+TCSlib/Cryptography/Randomness/Learning/Distinguisher.lean:91:compares its output with the last label; `B := MultiMsg.exists_queryChain_nuppt C m 0`. Against
+TCSlib/Cryptography/Randomness/Learning/Distinguisher.lean:110:  obtain ⟨B, hB⟩ := MultiMsg.exists_queryChain_nuppt C m (fun _ _ _ => false)
+TCSlib/Cryptography/Randomness/Learning/Law.lean:22:  uniform law on the product (`iid_uniform`, `Rejection.uniform_prod`), so its success
+TCSlib/Cryptography/Randomness/Learning/Law.lean:23:  probability is the uniform probability of the event (`Rejection.uniform_probTrue`).
+TCSlib/Cryptography/Randomness/Learning/Law.lean:73:product (`iid_uniform`, `Rejection.uniform_prod`); acceptance under a uniform law counts the
+TCSlib/Cryptography/Randomness/Learning/Law.lean:74:accepted points (`Rejection.uniform_probTrue`, `uprob_eq_card_filter`). -/
+TCSlib/Cryptography/Randomness/Learning/Law.lean:81:  rw [predictSuccess_eq, trialDist_eq, iid_uniform, Rejection.uniform_prod,
+TCSlib/Cryptography/Randomness/Learning/Law.lean:82:    Rejection.uniform_prod, Rejection.uniform_prod, Rejection.uniform_probTrue,
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:18:`MultiMsg.exists_queryChain_nuppt`). It runs the learner on the labelled sample of the first
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:28:so it is a block map of the first `m(n)` blocks of the tuple (`MultiMsg.flatMap_range_blocks`).
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:75:`⟨⟨ρ_j, g(ρ_j)⟩, []⟩` (as in `MultiMsg.exists_queryChain_nuppt`):
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:93:    (blk p).length = MultiMsg.histBlockLen.eval n := by
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:95:    List.length_nil, MultiMsg.eval_histBlockLen]
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:127:def sampleLen (m : PolyExpr) : PolyExpr := .mul m MultiMsg.histBlockLen
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:131:  rw [sampleLen, PolyExpr.eval_mul, MultiMsg.eval_histBlockLen]
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:139:      MultiMsg.histBlockLen.eval (pairFstD z).length)).flatMap fun i =>
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:141:      (i * MultiMsg.histBlockLen.eval (pairFstD z).length)).take
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:142:        (MultiMsg.histBlockLen.eval (pairFstD z).length))
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:150:          MultiMsg.histBlockLen.eval (pairFstD z).length)).flatMap fun i =>
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:152:          (i * MultiMsg.histBlockLen.eval (pairFstD z).length)).take
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:153:            (MultiMsg.histBlockLen.eval (pairFstD z).length)) := rfl
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:197:    ((polyTimeComputable_blockMap MultiMsg.histBlockLen polyTimeComputable_relabel).comp
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:229:  · rw [MultiMsg.length_flatten_of_length (MultiMsg.histBlockLen.eval n) _ (fun x hx => by
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:231:        exact length_blk _), List.length_ofFn, sampleLen_eval, MultiMsg.eval_histBlockLen]
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:242:(`MultiMsg.flatMap_range_blocks`, `MultiMsg.flatMap_ofFn`, `relabel_blk`), and the fold of the
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:250:  have hb : 0 < MultiMsg.histBlockLen.eval n := by rw [MultiMsg.eval_histBlockLen]; omega
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:252:      (blk x).length = MultiMsg.histBlockLen.eval n := fun x _ => length_blk x
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:255:    (MultiMsg.flatMap_ofFn _ blk).symm
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:259:    MultiMsg.flatMap_range_blocks blk relabel hb _ hblocks, foldr_pairEncode_nil,
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:260:    MultiMsg.flatMap_ofFn, MultiMsg.flatMap_ofFn]
+### Randomness/PAC* files on any ref
+### closure membership (order/closure-Random.txt)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/dl-review/learning-r1/order/closure-Random.txt:51:TCSlib/Cryptography/OneWayFunctions/Basic
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/dl-review/learning-r1/order/closure-Random.txt:110:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/dl-review/learning-r1/order/unit-closure.txt:69:TCSlib/Cryptography/OneWayFunctions/Basic
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/dl-review/learning-r1/order/unit-closure.txt:130:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine
