@@ -3,6 +3,8 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SecureComputation.ComposePhases
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Machines
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Efficiency
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -25,8 +27,10 @@ follows from this theorem with Protocol 160.4 for `ρ`.
 **Polynomial time** (ruling of 2026-11-05: security includes polynomial-time parties). The
 messages of `H.compose ρ` are bounded by the sum of `main`'s and `ρ`'s bounds
 (`compose_msg_bound`, proved). This uses that `H.PolyTime` bounds `main`'s messages for **any**
-answers of the right lengths, since in `H.compose ρ` `main` runs on `ρ`'s outputs. That the
-composed strategies are PPT is stated, with `sorry`s under their sketches.
+answers of the right lengths, since in `H.compose ρ` `main` runs on `ρ`'s outputs. The composed
+strategies are PPT (`composeP_efficient`, `composeV_efficient`): each is a polynomial-time
+function of the machine layout built from `main`'s and `ρ`'s machines and the call-input
+functions (`ComposeSecurity/Efficiency.lean`).
 
 **Deviations from [Gol04, Theorem 7.3.3].**
 - **Calls first only**, and the layout with fillers (`Compose.lean`).
@@ -46,13 +50,20 @@ composed strategies are PPT is stated, with `sorry`s under their sketches.
 * None: the composed protocol is defined in `Compose.lean` and its phases in
   `ComposePhases.lean`.
 
+## Contents
+
+* `ComposeSecurity/Machines.lean`: polynomial-time machines on encoded histories (loops over a
+  data-dependent range, the interleaved-slot map, strategies as functions of the layout).
+* `ComposeSecurity/Efficiency.lean`: the composed parties as polynomial-time functions of the
+  machine layout.
+
 ## Main results
 
 * `HybridProtocol.exists_runExec_eq_transcript`, `exists_mainExec_eq_transcript`: the runs and
   the main phase are transcripts of `ρ` and `main` on inputs and coins of the right types.
 * `HybridProtocol.compose_msg_bound`: the messages of `H.compose ρ` are polynomially bounded.
-* `HybridProtocol.composeP_efficient`, `composeV_efficient` (stated; `sorry`s under their
-  sketches), and `polyTime_compose` (proved from the three).
+* `HybridProtocol.composeP_efficient`, `composeV_efficient`: the composed strategies are PPT;
+  `polyTime_compose` (proved from the three).
 * `HybridProtocol.hbcSecure_compose` ([Gol04, Theorem 7.3.3], stated; a `sorry` under its
   sketch).
 
@@ -280,29 +291,46 @@ theorem compose_msg_bound {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyT
 /-- **Alice's strategy in `H.compose ρ` is PPT** (`Strategy.Efficient`), when `main`'s and `ρ`'s
 are and the call inputs are polynomial-time.
 
-**Proof sketch.** A uniform machine with the coin polynomial `main.P.coins + calls · ρ.P.coins`
-computes `composeP.next` on `⟨⟨x, z⟩, hist⟩` and the tape `r`:
-1. it computes `n = |x|`, `L`, `R`, `|hist|` and the pair, run and position indices;
-2. it recomputes the run inputs with the polynomial-time function of `H.PolyTime` on
-   `⟨1^n, ⟨z, ⟨r_main, 1^j⟩⟩⟩`, cuts the run tapes out of `r`, and reads the run histories from
-   `hist` (`slotMsgs`);
-3. it runs the uniform machine of `ρ.P` once (a run move) or `L(n)` times (the answers), and that
-   of `main.P` once, each on an input of length polynomial in its own.
-
-Each piece is polynomial-time on the raw layout, and `L` is a polynomial, so the composition is
-(`NUPPT.ofPolyTimeUniform`). -/
+**Proof sketch.** Take polynomial-time functions of the machine layout for the efficient
+strategies `ρ.P` and `main.P` (`ComposeMachines.Efficient.exists_polyTime`) and Alice's
+call-input function from `H.PolyTime`. Alice's next message is `composePW` on the layout
+`⟨⟨⟨1^n, ⟨⟨x, z⟩, hist⟩⟩, []⟩, r⟩` (`composeP_next_eq_composePW`):
+1. the number `k = |hist|` of messages received, `L`, `R`, `k / R`, `k % R` and the mover test
+   are unary computations (`GI.msgCount_poly`, `divNum_poly`, `modNum_poly`);
+2. a run move is one activation of `ρ.P`'s machine on the call input (recomputed from the
+   `main`-tape), the run tape cut from `r` and the run's messages read at the interleaved
+   pairs (`ComposeMachines.runW`, `ComposeMachines.polyTimeComputable_slots`);
+3. the main move is one activation of `main.P`'s machine on `⟨z, answers⟩` and the messages
+   after the runs, the answers being `L(n)` such activations of `ρ.P`'s machine, padded and
+   concatenated (`ComposeMachines.ansW`, `ComposeMachines.polyTimeComputable_flatMap_range`).
+So `composePW` is polynomial-time (`polyTimeComputable_composePW`), and its uniform machine with
+the coin polynomial `main.P.coins + calls · ρ.P.coins` computes `composeP`
+(`ComposeMachines.efficient_of_polyTime`). -/
 theorem composeP_efficient {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyTime ρ) :
     (H.composeP ρ).Efficient := by
-  sorry
+  obtain ⟨hmain, -, ⟨fA, hfA, hcallA⟩, -, -⟩ := (HybridProtocol.polyTime_iff H F).mp hH
+  obtain ⟨hρP, -, -⟩ := (Functionality.polyTime_iff G ρ).mp hρ
+  obtain ⟨Fρ, hFρ, hρeq⟩ := ComposeMachines.Efficient.exists_polyTime hρP
+  obtain ⟨Fm, hFm, hmeq⟩ := ComposeMachines.Efficient.exists_polyTime hmain
+  exact ComposeMachines.efficient_of_polyTime _ (H.polyTimeComputable_composePW ρ hFρ hFm hfA)
+    (H.composeP_next_eq_composePW ρ hρeq hmeq hcallA)
 
 /-- **Bob's strategy in `H.compose ρ` is PPT** (`Strategy.Efficient`), when `main`'s and `ρ`'s
 are and the call inputs are polynomial-time.
 
-**Proof sketch.** As for Alice (`composeP_efficient`), with `ρ.V`, `main.V`, the call-input
-function for Bob, and the coin polynomial `main.V.coins + calls · ρ.V.coins`. -/
+**Proof sketch.** As for Alice (`composeP_efficient`): Bob's next message is `composeVW` on the
+layout (`composeV_next_eq_composeVW`), with `ρ.V`'s and `main.V`'s machines, Bob's call-input
+function, the count `k = |hist| − 1`, the selector of Alice's moves, the drop count
+`L·R + lead` before the main phase, and the coin polynomial `main.V.coins + calls · ρ.V.coins`;
+`composeVW` is polynomial-time (`polyTimeComputable_composeVW`). -/
 theorem composeV_efficient {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyTime ρ) :
     (H.composeV ρ).Efficient := by
-  sorry
+  obtain ⟨-, hmain, -, ⟨fB, hfB, hcallB⟩, -⟩ := (HybridProtocol.polyTime_iff H F).mp hH
+  obtain ⟨-, hρV, -⟩ := (Functionality.polyTime_iff G ρ).mp hρ
+  obtain ⟨Fρ, hFρ, hρeq⟩ := ComposeMachines.Efficient.exists_polyTime hρV
+  obtain ⟨Fm, hFm, hmeq⟩ := ComposeMachines.Efficient.exists_polyTime hmain
+  exact ComposeMachines.efficient_of_polyTime _ (H.polyTimeComputable_composeVW ρ hFρ hFm hfB)
+    (H.composeV_next_eq_composeVW ρ hρeq hmeq hcallB)
 
 /-- **The composed parties run in polynomial time** [Gol04, §7.3.1, the efficiency of the
 protocol of Theorem 7.3.3]: if `H` runs in polynomial time on `F`'s inputs (`H.PolyTime F`) and
