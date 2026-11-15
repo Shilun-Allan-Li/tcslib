@@ -1,0 +1,100 @@
+# Searches run for the checkpoint-1 helpers, over TCSlib at the issue base (an archive of 107f1e8c in /tmp/lintbase) and over Mathlib/Batteries of the clone's .lake/packages
+## rg -n "exec_five|exec .* 5 =" TCSlib --glob '*.lean' | head -8
+## rg -n "transcriptWith .*= *$|transcript_eq" TCSlib --glob '*.lean' | head -8
+TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/RectangleSwitching.lean:230:    Deterministic.Protocol.transcript_eq_of_mem z.transcript hleaf
+TCSlib/CommunicationComplexity/DeterministicCC/Transcript.lean:38:- `Deterministic.Protocol.mem_transcript`, `Deterministic.Protocol.transcript_eq_of_mem`: the
+TCSlib/CommunicationComplexity/DeterministicCC/Transcript.lean:177:theorem transcript_eq_of_mem : {p : Protocol X Y α} → (t : Transcript p) → {xy : X × Y} →
+TCSlib/CommunicationComplexity/DeterministicCC/Transcript.lean:189:        exact congrArg (Sigma.mk false) (transcript_eq_of_mem t ht)
+TCSlib/CommunicationComplexity/DeterministicCC/Transcript.lean:193:        exact congrArg (Sigma.mk true) (transcript_eq_of_mem t ht)
+TCSlib/CommunicationComplexity/DeterministicCC/Transcript.lean:202:        exact congrArg (Sigma.mk false) (transcript_eq_of_mem t ht)
+TCSlib/CommunicationComplexity/DeterministicCC/Transcript.lean:206:        exact congrArg (Sigma.mk true) (transcript_eq_of_mem t ht)
+TCSlib/CommunicationComplexity/DeterministicCC/Transcript.lean:219:theorem run_eq_of_transcript_eq
+## rg -n "theorem .*length_runAtL|runAtL.*length.*≤" TCSlib --glob '*.lean' | head -8
+## rg -n "length_runAt_le_runLenPoly" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/Asymptotic/Collections.lean:739:    (length_pairFstD_le _).trans (G.gen.length_runAt_le_runLenPoly n (by simp) r₁)
+TCSlib/Cryptography/Asymptotic/Collections.lean:741:    G.sample.length_runAt_le_runLenPoly n hi r₂
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:36:  `Complexity.NUPPT.length_runAt_le_runLenPoly` — the activation of `withIndexParam` and the
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:132:theorem _root_.Complexity.NUPPT.length_runAt_le_runLenPoly (A : NUPPT) {Y : PolyExpr} (n : ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:435:`Gen` and `Enc` (`NUPPT.length_runAt_le_runLenPoly`): `|pk| ≤ Q₁(n)`, the input `⟨pk, m⟩` has at
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:454:    have h₁ := S.gen.length_runAt_le_runLenPoly (Y := .const 0) n (y := []) (by simp) rg
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:461:  · have h₂ := S.enc.length_runAt_le_runLenPoly n (hY n rg m) re
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:485:    have h₁ := S.gen.length_runAt_le_runLenPoly (Y := .const 0) n (y := []) (by simp) rg
+## rg -n "pairSndD_encodeMsgs|encodeMsgs_eq_nil_iff|getD 1 \[\]" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:80:  rw [iterate_sndD_two_encodeMsgs, encodeMsgs_eq_nil_iff, List.drop_eq_nil_iff]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:303:  rw [Fin.val_mk, iterate_sndD_two_encodeMsgs, pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:93:theorem pairSndD_encodeMsgs (hist : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:101:theorem iterate_pairSndD_encodeMsgs : ∀ (k : ℕ) (hist : List (List Bool)),
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:105:    rw [Function.iterate_succ_apply, pairSndD_encodeMsgs, iterate_pairSndD_encodeMsgs k, List.drop_drop]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:110:theorem encodeMsgs_eq_nil_iff (hist : List (List Bool)) : Strategy.encodeMsgs hist = [] ↔ hist = [] := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:241:    rw [iterate_pairSndD_encodeMsgs]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:242:    simp [encodeMsgs_eq_nil_iff, List.drop_eq_nil_iff, hj]
+## rg -n "msgCount|peelSteps" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:134:    [decide (msgCount (argM w) < (PolyExpr.mul (.const 2) .var).eval (NUPPT.inParam w).length)] := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:313:`giVerifierRep.next` is `halfRem_ne_nil_iff`, `halfCount_encodeMsgs`, `msgCount_encodeMsgs` and
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:323:  simp only [argM_ilayout, halfCount_encodeMsgs, halfRem_ne_nil_iff, msgCount_encodeMsgs, inParam_ilayout,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:32:* `TCSlib.Cryptography.GI.peelSteps` — the rounds of a peeling loop (with fuel).
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:33:* `TCSlib.Cryptography.GI.msgCount`, `GI.halfCount`, `GI.lastSteps` — the number of messages,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:39:* `TCSlib.Cryptography.GI.msgCount_poly`, `GI.halfLoop_poly`, `GI.lastMsg_poly` — the
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:117:def peelStepsAux (f : List Bool → List Bool) (stop : List Bool → Bool) : ℕ → List Bool → ℕ
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:119:  | n + 1, w => if stop w then 0 else peelStepsAux f stop n (f w) + 1
+## rg -n "pairSndD_nil|pairSndD \(\[\] : List Bool\)" TCSlib --glob '*.lean' | head -8
+TCSlib/Complexity/Randomized/BPLInPWords.lean:99:    simp [sumStep, add, bitsVal_bits, pairFstD_nil, show pairSndD ([] : List Bool) = [] from rfl,
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:371:      exact iterate_pairSndD_nil j
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:158:theorem iterate_pairSndD_nil (i : ℕ) : pairSndD^[i] ([] : List Bool) = [] :=
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:298:    · subst h1; simp [show pairSndD ([] : List Bool) = [] from rfl]
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:300:    · subst h2; simp [show pairSndD ([] : List Bool) = [] from rfl]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:88:theorem iterate_pairSndD_nil : ∀ k : ℕ, pairSndD^[k] [] = []
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:90:  | k + 1 => by rw [Function.iterate_succ_apply]; exact iterate_pairSndD_nil k
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:316:  exact (by simpa using hw : ¬ pairSndD ([] : List Bool) = []) rfl
+## rg -n "getD 0 false|getD 1 false" TCSlib --glob '*.lean' | head -8
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep.lean:337:    (h0 : l.getD 0 false = true) (h1 : l.getD 1 false = decide (z = 0))
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep.lean:352:    (h0 : l.getD 0 false = false)
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep.lean:376:    (h0 : l.getD 0 false = true) (h1 : l.getD 1 false = decide (p = 1))
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep.lean:396:    (h0 : l.getD 0 false = false)
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep.lean:427:    (h0 : l.getD 0 false = decide (t = 0))
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep.lean:428:    (hacc : t ≠ 0 → l.getD 1 false = tableauAccepted M w (t - 1))
+TCSlib/Complexity/CircuitComplexity/StrictCircuit.lean:286:  have h0 : V.getD (n + 0) false = !V.getD 0 false := by
+TCSlib/Complexity/CircuitComplexity/StrictCircuit.lean:292:    cases V.getD 0 false <;> rfl
+## rg -n "runAtL_eq_output_layout|runAtL_eq_layout" TCSlib --glob '*.lean' | head -8
+TCSlib/Complexity/Randomized/Closure.lean:159:theorem runAtL_eq_output_layout (A : NUPPT) (n : ℕ) (y r : List Bool) :
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:293:`liftVerifier V'` (`NUPPT.runAtL_ofPolyTimeUniform`, `NUPPT.runAtL_eq_output_layout`, the
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:322:  rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hA]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:447:`NUPPT.runAtL_eq_output_layout`, `Strategy.encodeMsgs_cons`/`_nil`), which is polynomial-time by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:459:  rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hA.advice_eq,
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:629:    rw [hblock r t ht, NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, hSu]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:259:`NUPPT.runAtL_eq_output_layout`), polynomial-time by `A.polyTimeComputable_output` and
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:378:    rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hadv]
+## rg -n "efficient_iff|ofNUPPT_efficient" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:253:  obtain ⟨A, hA, hc, hnext⟩ := (Strategy.efficient_iff S).1 hS
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:596:  (Strategy.efficient_iff S).2 ⟨NUPPT.ofPolyTimeUniform hF S.coins,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:444:**Proof sketch.** `Strategy.efficient_iff` gives a uniform machine `A` with
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:454:  obtain ⟨A, hA, -, hnext⟩ := (Strategy.efficient_iff V').1 hV'
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:239:  (Strategy.efficient_iff S).2 ⟨NUPPT.ofPolyTimeUniform hF S.coins, NUPPT.ofPolyTimeUniform_uniform hF _,
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:80:* `TCSlib.Cryptography.Strategy.ofNUPPT_efficient` — every uniform machine is an efficient
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:183:theorem efficient_iff (S : Strategy) :
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:188:theorem ofNUPPT_efficient (A : NUPPT) (hA : A.Uniform) : (ofNUPPT A).Efficient :=
+## rg -n "polyTimeComputable_isNil" TCSlib --glob '*.lean' | head -8
+TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:156:theorem polyTimeComputable_isNil :
+TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:390:  polyTimeComputable_isNil.comp polyTimeComputable_pairFstD
+TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:692:    polyTimeComputable_or (polyTimeComputable_isNil.comp polyTimeComputable_pairFstD)
+TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:693:      (polyTimeComputable_isNil.comp polyTimeComputable_pairSndD)
+TCSlib/Complexity/Randomized/UniformSample.lean:287:    polyTimeComputable_and (polyTimeComputable_isNil.comp BinArith.polyTimeComputable_slot3)
+TCSlib/Complexity/Randomized/BPPEqP.lean:75:  convert polyTimeComputable_isNil using 1
+TCSlib/Complexity/Randomized/Build/StringLoops.lean:145:  polyTimeComputable_isNil.comp rest_poly
+TCSlib/Complexity/Randomized/Build/StringLoops.lean:300:    polyTimeComputable_isNil.comp fstRest_poly
+## rg -n "PolyTime \(|polyTime_iff" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:908:  let A : NUPPT := NUPPT.ofPolyTime (YaoMachine.yaoRaw'_poly (D := D) hFe hF' hPm T)
+TCSlib/Cryptography/Asymptotic/Collections.lean:885:  NUPPT.ofPolyTime (G.collInvRaw_poly L A') A'.coins A'.adv A'.advice A'.advice_length
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:61:  NUPPT.ofPolyTime (f := fun z => A.output (NUPPT.layout (NUPPT.inParam z)
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:450:  ofPolyTime (A.polyTimeComputable_output.comp
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:151:  ofPolyTime (A.wrapFun_poly hpre hpost p) (.add p A.coins)
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:320:  ofPolyTime (A.preFun_poly hpre) A.coins A.adv A.advice A.advice_length
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:509:  ofPolyTime (A.polyTimeComputable_output.comp
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:683:  NUPPT.ofPolyTime (glRawFun_poly A mP) (glCoins mP K A) (glAdvPoly mP K A)
+## rg -n "zipWith xor .* \[[a-z]" TCSlib --glob '*.lean' | head -8
+## rg -n "theorem getD_zero|theorem getD_cons_zero" Mathlib Batteries (clone .lake/packages) | head -5
+## rg -n "theorem headD_eq|getD_eq_headD" Mathlib Batteries (clone .lake/packages) | head -5
+/workspace/scot/.lake/packages/batteries/Batteries/Data/List/Basic.lean:153:theorem headD_eq_head? (l) (a : α) : headD l a = (head? l).getD a := by cases l <;> rfl
+## grep -rn 'theorem getD_cons_zero|theorem getD_zero|theorem headD_eq|theorem getD_eq_headD' (Lean core Init, toolchain 4.25.0)
+Init/Data/List/Lemmas.lean:330:theorem getD_cons_zero : getD (x :: xs) 0 d = x := by simp
+Init/Data/List/Lemmas.lean:972:@[simp, grind =] theorem headD_eq_head?_getD {l : List α} : headD l a = (head? l).getD a := by

@@ -1,0 +1,123 @@
+# Preflight (addendum v1, Part 1 item 1), 2026-11-15T04:01:58Z
+## host
+Linux vm 6.18.44-fc-v470 #1 SMP PREEMPT_DYNAMIC @0 x86_64 x86_64 x86_64 GNU/Linux
+ 04:01:58 up 1 min,  0 user,  load average: 0.43, 0.12, 0.04
+nproc: 4
+## cgroup
+### /sys/fs/cgroup/memory/memory.limit_in_bytes
+9223372036854771712
+### /sys/fs/cgroup/memory/memory.usage_in_bytes
+2837037056
+### /sys/fs/cgroup/memory/memory.stat
+cache 44941312
+rss 11104256
+rss_huge 0
+shmem 17035264
+mapped_file 31215616
+dirty 40960
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 17072
+pgpgout 3433
+pgfault 6163
+pgmajfault 35
+inactive_anon 13676544
+active_anon 4096
+inactive_file 22540288
+active_file 5369856
+unevictable 14454784
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 2819616768
+total_rss 17641472
+total_rss_huge 0
+total_shmem 17035264
+total_mapped_file 34758656
+total_dirty 174567424
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 408461
+total_pgpgout 220803
+total_pgfault 261108
+total_pgmajfault 923
+total_inactive_anon 19398656
+total_active_anon 24576
+total_inactive_file 2696577024
+total_active_file 106008576
+total_unevictable 15122432
+## /proc/meminfo
+MemTotal:       16473776 kB
+MemFree:        13548656 kB
+MemAvailable:   16117168 kB
+Buffers:           72348 kB
+Cached:          2681068 kB
+SwapCached:            0 kB
+Active:           103516 kB
+Inactive:        2652232 kB
+Active(anon):         16 kB
+Inactive(anon):    18948 kB
+Active(file):     103500 kB
+Inactive(file):  2633284 kB
+Unevictable:       14712 kB
+Mlocked:           10768 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Zswap:                 0 kB
+Zswapped:              0 kB
+Dirty:            170452 kB
+Writeback:             0 kB
+AnonPages:         17128 kB
+Mapped:            34060 kB
+Shmem:             16636 kB
+KReclaimable:      90192 kB
+Slab:             116824 kB
+SReclaimable:      90192 kB
+SUnreclaim:        26632 kB
+KernelStack:        1768 kB
+PageTables:         1740 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     8236888 kB
+Committed_AS:     297760 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:        5368 kB
+VmallocChunk:          0 kB
+Percpu:             1040 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Balloon:               0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:       20480 kB
+DirectMap2M:     2076672 kB
+DirectMap1G:    16777216 kB
+## disk
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 27375431680 16496836608  63% /
+/dev/vda       270553174016 27375431680 16496836608  63% /
+/dev/vda       270553174016 27375431680 16496836608  63% /
+/dev/vda       270553174016 27375431680 16496836608  63% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 26733820  16110192  63% /
+/dev/vda       ext4 264212084 26733820  16110192  63% /
+## space made before the preflight
+Removed: git worktree /workspace/canon (fill/canonizer, delivered at exchange 27ae588db; branch kept). No dependency tree was copied or moved.
+## computation
+disk free 16496836608 B = 15.36 GiB (floor 12 GiB)
+cgroup v1 limit unlimited -> headroom = MemAvailable = 16503980032 B = 15.37 GiB (floor 4 GiB)
+PREFLIGHT PASS
