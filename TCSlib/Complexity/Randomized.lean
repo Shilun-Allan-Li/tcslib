@@ -75,6 +75,7 @@ import TCSlib.Complexity.Randomized.Primitives
 import TCSlib.Complexity.Randomized.UnaryPolynomial
 import TCSlib.Complexity.Randomized.Closure
 import TCSlib.Complexity.Randomized.Repetition
+import TCSlib.Complexity.Randomized.SeedMajority
 
 /-!
 # Randomized Computation
@@ -195,6 +196,10 @@ closure calculus, and the repetition lemma.
 - `Randomized.Closure`: the closure calculus of non-uniform PPTs.
 - `Randomized.Repetition`: the repetition lemma `polyTimeComputable_iterateFind` and its
   iteration variants.
+- `Randomized.SeedMajority`: the counting enumeration host, deterministic majority over all
+  seeds of a polynomial-time test: one machine with its correctness, its time `2^{w(n)} · poly`
+  and a head envelope, and the `DTIME` corollary ([AB09, §7.1, p. 126];
+  [PS10, Theorem 180.1]; statement phase).
 
 All entries, and the files they describe, cite the printed book's (2009) numbering.
 
