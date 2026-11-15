@@ -580,6 +580,11 @@ lemma codeDecode_serialize_pad (M : CodeTM) (m : ℕ) :
     codeDecode (M.serialize ++ List.replicate m true) = M :=
   oneTapeFormat.decode_serialize_pad M m
 
+/-- The one-tape format's canonical serialization is that of the decoded machine:
+`oneTapeFormat.serialize (oneTapeFormat.decode xs) = (codeDecode xs).serialize`. -/
+theorem oneTapeFormat_serialize_decode (xs : List Bool) :
+    oneTapeFormat.serialize (oneTapeFormat.decode xs) = (codeDecode xs).serialize := rfl
+
 /-- The erased parser: accept exactly the strings the parser accepts, returning only the unconsumed all-true suffix. -/
 def codeScan (xs : List Bool) : Option (List Bool) :=
   oneTapeFormat.scan xs
