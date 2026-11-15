@@ -3,6 +3,8 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Authentication.MAC.Defs
+import TCSlib.Cryptography.Authentication.MAC.FromPRF.Handler
+import TCSlib.Cryptography.Authentication.MAC.FromPRF.Reduction
 import TCSlib.Cryptography.Authentication.Encoding
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
 import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
@@ -34,6 +36,12 @@ the ch. 2–4 layer's `PRF`). `Gen` is the ch. 2–4 layer's coin-key machine (i
 
 * `Authentication.prfMAC_secure` (Thm 135.4, stated; a `sorry` under its sketch): a PRF gives a
   secure MAC.
+
+## Contents
+
+* `MAC/FromPRF/Handler`: the reduction's handler (forwarded and stored queries, the final query).
+* `MAC/FromPRF/Reduction`: the distinguisher, accepting against `f` iff the forger forges against
+  the tagging oracle `f`.
 
 ## References
 
