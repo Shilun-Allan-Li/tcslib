@@ -1,18 +1,28 @@
-# Fill `prf-mac` · checkpoint 1 · the distinguisher
+# Fill `prf-mac` · checkpoint 2 · the random function
 
 **Worker** Claude. **Unit** `prf-mac` (`Authentication.prfMAC_secure`, [PS10, Theorem 135.4]).
 **Issue base** `107f1e8c218733eac12d6b9bee6fece441271317` (`cryptography/pass-shelat-ch2-4`), read from
 the exchange at `2b9270ad095e993b020cb5e447d5a0043496802a` (inputs checked: `evidence/logs/inputs-check.log`,
 7/7 input files and 208/208 source files OK). **Proof branch** `fill/prf-mac` (local), one commit
-over the base at this checkpoint.
+over the base at this checkpoint (one per checkpoint).
 
 ## Status
 
-| Target | Status at checkpoint 1 |
+| Target | Status at checkpoint 2 |
 |---|---|
-| `prfMAC_secure` | still admitted (`sorry`); its route is complete except steps 4–5 (checkpoints 2 and final) |
+| `prfMAC_secure` | still admitted (`sorry`); steps 2–4 delivered, step 5 (the bound) at the final |
 
-Checkpoint 1 (brief: sketch steps 2, 3 and 6) is delivered: the distinguisher is built with T2 and T4,
+**Checkpoint 2** (brief: sketch step 4) is delivered: against a uniform random function, every forger
+computation with `a`-bit messages and `b`-bit tags forges with probability at most `2^{-b}`, whatever
+its number of queries (`PRFMAC.expect_fnForge_random_le`, no `sorry`, standard axioms):
+`𝔼_R Pr[FnForge R | simulate (fnImpl R).withLog c ((), [])] ≤ 2^{-b}`. The function is sampled lazily
+along the run with the published table override of the encrypt-then-tag proof (`ETTGame.ovr`,
+`ETTGame.expect_sample_ovr`): a new query moves `R x` into the table as a uniform value, a repeated
+query reads the table, every key is a queried message, so a fresh output message is no key and its
+value `R m` is uniform (`expect_sample_coord`, `expect_sample_mem_le`); a queried output message is no
+forgery. Edge cases: `b = 0` gives the bound `1`; `n = 0` is covered at the final through `2^{-0} = 1`.
+
+Checkpoint 1 (brief: sketch steps 2, 3 and 6) was delivered in `f93d8a02f`: the distinguisher is built with T2 and T4,
 and its acceptance probability against **any** function `f` is the forger's forgery probability against
 the tagging oracle `f` (`PRFMAC.exists_macReduction`, no `sorry`, axioms `propext`, `Classical.choice`,
 `Quot.sound`). Applied to `f = f_k` it gives step 3; the game-side reading of the PRF MAC (the
@@ -23,13 +33,14 @@ already proved locally and lands at the final with the bound (see *Plan*).
 
 | File | Lines | Change |
 |---|---|---|
-| `TCSlib/Cryptography/Authentication/MAC/FromPRF.lean` (owned) | 147 → 155 | imports the two helpers; `## Contents` (2 entries). Proof, title and sketch unchanged at this checkpoint. |
+| `TCSlib/Cryptography/Authentication/MAC/FromPRF.lean` (owned) | 147 → 157 | imports the three helpers; `## Contents` (3 entries). Proof, title and sketch unchanged at this checkpoint. |
 | `TCSlib/Cryptography/Authentication/MAC/FromPRF/Handler.lean` (new) | 444 | the handler |
 | `TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean` (new) | 325 | the distinguisher |
+| `TCSlib/Cryptography/Authentication/MAC/FromPRF/Random.lean` (new) | 155 | the random function |
 
 No other file is edited. Every line ≤ 100 characters, every file ≤ 1000 lines
-(`evidence/checks/widths-cp1.txt`). Every new proof of 15 lines or more has a `**Proof sketch.**`
-(`evidence/checks/sketches-cp1.txt`; its one `MISSING` line is the base declaration `prfMAC`, untouched).
+(`evidence/checks/widths-cp2.txt`). Every new proof of 15 lines or more has a `**Proof sketch.**`
+(`evidence/checks/sketches-cp2.txt`; its one `MISSING` line is the base declaration `prfMAC`, untouched).
 
 ## The construction
 
@@ -78,6 +89,9 @@ instance), `queried` (+`queried_eq`, `queried_nil`, `queried_append`, `length_qu
 `decide_fnForge`, `allOutputs_simulate_withLog_length`, `macBudget` (+`macBudget_eval`),
 `exists_macReduction`.
 
+*Random.lean* — public: `expect_fnForge_random_le`; private: `expect_forge_pure_le` (the end of a run),
+`expect_forge_ovr_le` (the induction along the run, from any table whose keys are queried).
+
 No `@[simp]`. Each public declaration's docstring states its formula; `[PS10, …]` where it comes from the
 source.
 
@@ -94,18 +108,23 @@ source.
 | `decide_fnForge` | `HashAndSign/CodecReaders.lean:95,106` `splitBits_append`, `splitBits_pad_concat`; `Complexity/Randomized/Classes.lean:217` | uses the same `List.ofFn_fin_append`/`Fin.append_castAdd_natAdd` step in the other direction (list reading of a split vector). |
 | `allOutputs_simulate_withLog_length` | `Games/Simulate.lean:241` `simulate_withLog`, `OracleFromPRF/Collision.lean:249` (a length bound for `lazyImpl`'s state), `Games/Hopping.lean:179` `simulate_allOutputs_bad` | no published bound on a logged simulation's log length; generic statement. |
 | `macBudget` | `OracleFromPRF/Reduction.lean:96` `PRFGame.qRed` | same pattern with finCall `1` instead of `0`. |
+| `expect_forge_pure_le` (private) | `EncryptThenTag/Forgery.lean:294` `ETTGame.expect_hitW_le` (**private**) | re-derives, from the published `ovr` readers and `expect_sample_coord`/`expect_sample_mem_le`, the fresh-point case of that private lemma (a value of `R` off the table hits a fixed tag with probability `2^{-b}`); stated for this fill's `FnForge`. Disclosed as a re-derivation of a private lemma. |
+| `expect_forge_ovr_le` (private), `expect_fnForge_random_le` | `EncryptThenTag/Forgery.lean:388` `ETTGame.expect_prob_bad_le`; `OracleFromPRF/Lazy.lean`, `EncryptThenTag/Lazy.lean` (lazy random functions); `Pseudorandom/Functions/Asymptotic/Defs.lean` `acceptProb_random_eq_lazy` | same lazy-sampling induction (`expect_sample_ovr` at a new query) for a different game (one final guess instead of a per-query bad event, no budget); `acceptProb_random_eq_lazy` works on query trees, while here the run is the forger's computation against `fnImpl`, so the table-override induction is used directly. |
 | `exists_macReduction` | `OracleFromPRF/Reduction.lean:258` `PRFGame.exists_prfReduction` | same proof template (T2, T4, companion, abstraction); different handler and game. Reuses `PRFGame.ofFn_evalFn_toCompOn` and `ChallengeSim.expect_sample_prod` by import. |
 
-Imported and reused: T2/T4/companion, `fwd`-style call lemmas `impl_of_query_padFin`, `NMSim.chunkMap*`,
+Imported and reused: `ETTGame.ovr`, `ovr_nil`, `ovr_of_mem`, `ovr_of_not_mem`, `expect_sample_ovr`
+(`EncryptThenTag/Tools.lean`), `expect_sample_coord`, `expect_sample_mem_le`, T2/T4/companion, `fwd`-style call lemmas `impl_of_query_padFin`, `NMSim.chunkMap*`,
 `Collection.ofFn_padFin_of_le`, `PRFGame.ofFn_evalFn_toCompOn`, `ChallengeSim.expect_sample_prod`,
 `simulate_eq_of_abs_bounded`, `expect_congr_of_allOutputs`, `expect_toCompOn_outLen`,
 `simulate_ofComp_pure`. Searches: `evidence/overlap/dupsearch-base.log` (script
 `evidence/tools/dupsearch.sh`, run on the issue base).
 
 **Imports outside the supplied closure.** `Handler.lean` imports
-`Encryption/PublicKey/NonMalleability/Simulation/Generic` (for `NMSim.chunkMap`), whose own imports
-(`Games.Efficiency`, `Games.Hopping`) are in `order.txt`; it is checked before the helpers
-(`evidence/logs/dev/…Generic.log`) and will be inserted in the final sweep order.
+`Encryption/PublicKey/NonMalleability/Simulation/Generic` (for `NMSim.chunkMap`; its imports
+`Games.Efficiency`, `Games.Hopping` are in `order.txt`), and `Random.lean` imports
+`Encryption/PrivateKey/EncryptThenTag/Tools` (for `ETTGame.ovr`; its imports `Games.Hopping`,
+`Encryption/PublicKey/AdaptiveCPA/Hybrid` are in `order.txt`). Both are checked before the helpers
+(`evidence/logs/dev/…Generic.log`, `…Tools.log`) and will be inserted in the final sweep order.
 
 ## Scope requests
 
@@ -115,11 +134,8 @@ None.
 
 * `PRFMAC.finish_of_query_padFin` → `Games/Forwarding.lean` (beside `finish_of_ret_padFin`).
 
-## Plan (checkpoint 2 and final)
+## Plan (final)
 
-* Checkpoint 2: `expect_fnForge_random_le` — against a uniform random function every forger forges
-  with probability `≤ 2^{-t}` (lazy sampling by the published table override `ETTGame.ovr`,
-  `expect_sample_ovr`).
 * Final: the game side (`accept_forgeGame_eq`: deterministic tag), the generic bound
   `Pr[forge] ≤ prfAdv (F n) (D^{q·1+1}) + 2^{-n}` and `prfMAC_secure`; full sweep, sorry census,
   axioms of every constant, seals A/B (strict and coe, `PolyExpr.eval` excluded and sealed), paired
@@ -133,20 +149,21 @@ None.
 * Preflight: 4 CPUs, ~15 GiB available; the initial 9.7 GiB free disk was below the 12 GiB floor, so
   my own finished scratch (earlier fills' worktrees and olean tree) was removed, leaving 12.9 GiB
   (`evidence/logs/preflight.log`).
-* Checkpoint modules (`evidence/logs/cp1/`): `Handler`, `Reduction`, owned file — exit 0, no
+* Checkpoint modules (`evidence/logs/cp1/`, `evidence/logs/cp2/`): `Handler`, `Reduction`, `Random`,
+  owned file — exit 0, no
   `error:`/`error(` line (regex `^\S+\.lean:\d+:\d+: error[:(]`); the owned file keeps its one `sorry`
   warning and the base's unused-simp-argument linter warning in `prfMAC.correct`.
-* Axioms of every constant of the three modules (`evidence/axioms/axioms-cp1.log`): all within
+* Axioms of every constant of the four modules (`evidence/axioms/axioms-cp2.log`): all within
   `propext, Classical.choice, Quot.sound`, except `prfMAC_secure` (`sorryAx`, still admitted).
-* Lint `campaign_style_lint.py TCSlib/Cryptography --check8b`: base 92 FAIL / 101 WARN, checkpoint
-  92 / 101, line-set diff: no new and no removed line (`evidence/lint/`).
+* Lint `campaign_style_lint.py TCSlib/Cryptography --check8b`: base 92 FAIL / 101 WARN, checkpoints 1
+  and 2: 92 / 101, line-set diffs: no new and no removed line (`evidence/lint/`).
 
 ## Patches and reproduction
 
-`patches/0001-…patch` (`git format-patch` from the issue base) and `patches/COMMITS.tsv` (hash, author
+`patches/0001-…patch`, `patches/0002-…patch` (`git format-patch` from the issue base) and `patches/COMMITS.tsv` (hash, author
 and committer name/email/date). Checked before pushing: a scratch clone at the issue base applies the
 series with `git am`, committer set from `COMMITS.tsv`, and reproduces every hash and the final tree
-(`evidence/amcheck/amcheck-cp1.log`).
+(`evidence/amcheck/amcheck-cp2.log`).
 
 ## Evidence
 
