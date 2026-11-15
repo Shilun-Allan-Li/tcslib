@@ -25,3 +25,18 @@ s 'ofFn_blocks_symm|blocks_symm_apply|ofFn_splitCoins|appendEquiv' TCSlib 20
 s 'theorem ofFn_mul|theorem ofFn_fin_append' .lake/packages/mathlib/Mathlib/Data/List 10
 s 'def segW|asmView|def asmW|filter.*moverIsV' TCSlib 20
 s 'length_filter.*% 2|filter.*% 2 ==' TCSlib 20
+s 'length_encodeMsgs|length_encWords_le|theorem length_layout|output_length_le|length_runAt' TCSlib 20
+s 'length_transcript|transcript.*\.length ≤|length_exec' TCSlib 20
+s 'theorem length_answers|answersA.*length' TCSlib 20
+s 'theorem uexp_le|uexp_le_of|sum_le_card_nsmul.*uexp' TCSlib 20
+s 'acceptProb_pre|acceptProb_post|coinsSplit|appendCoins|blocksCoins|coinBlock_flatten' TCSlib 20
+s 'runAtL .*take|r\.take .*coinLen|drop .*coinLen' TCSlib/Cryptography 20
+s 'eqW|polyTimeComputable_eqW|eqTest_poly' TCSlib/Cryptography 20
+s 'acceptProb_test|distinguisherL.*= \[true\]|decide \(.*runAt.*\[true\]' TCSlib 20
+s 'outP.*≠|outV.*≠|correct.*HBCSecure|exists_correct' TCSlib/Cryptography 20
+s 'hybV|plugV|Function.update .* i|resample' TCSlib/Cryptography 20
+s 'abs_sub_le_sum_hybrids|exists_hybrid_gap' TCSlib 20
+s 'getD_append|getElem\?_append_right.*getD|getD_plug' TCSlib 20
+s 'tmplW|template' TCSlib/Cryptography 20
+s 'exists_max_image' TCSlib/Cryptography 20
+s 'Negligible.*max|negligible_max|Negligible.add' TCSlib/Cryptography/Foundations 20

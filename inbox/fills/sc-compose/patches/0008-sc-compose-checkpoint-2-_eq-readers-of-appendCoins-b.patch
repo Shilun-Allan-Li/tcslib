@@ -1,0 +1,79 @@
+From 392a95ecb62936dc09a91e11037a20840e64ef5a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 07:36:44 +0000
+Subject: [PATCH 8/8] sc-compose checkpoint 2: _eq readers of appendCoins,
+ blocksCoins and splitCoins (lint check 8)
+
+---
+ .../SecureComputation/ComposeSecurity/Accept.lean | 15 +++++++++++++--
+ .../SecureComputation/ComposeSecurity/Runs.lean   |  8 +++++++-
+ 2 files changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean
+index 5b25644f1..7892227e7 100644
+--- a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean
+@@ -52,10 +52,15 @@ followed by the second (`Fin.appendEquiv`). -/
+ def appendCoins {a b c : ℕ} (h : c = a + b) : (Fin a → Bool) × (Fin b → Bool) ≃ (Fin c → Bool) :=
+   (Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool))
+ 
++/-- The defining equation of `appendCoins` (see `appendCoins`). -/
++theorem appendCoins_eq {a b c : ℕ} (h : c = a + b) :
++    appendCoins h =
++      (Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool)) := rfl
++
+ /-- `⟦appendCoins h (u, v)⟧ = ⟦u⟧ ++ ⟦v⟧`. -/
+ theorem ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool) (v : Fin b → Bool) :
+     List.ofFn (appendCoins h (u, v)) = List.ofFn u ++ List.ofFn v := by
+-  rw [appendCoins, Equiv.trans_apply, ofFn_arrowCongr_finCongr]
++  rw [appendCoins_eq, Equiv.trans_apply, ofFn_arrowCongr_finCongr]
+   exact List.ofFn_fin_append u v
+ 
+ /-- The first `a` bits of `appendCoins h (u, v)` are `u`. -/
+@@ -73,10 +78,16 @@ theorem drop_ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool)
+ def blocksCoins {m q b : ℕ} (h : m = q * b) : (Fin q → Fin b → Bool) ≃ (Fin m → Bool) :=
+   (FunFamily.blocks q b).symm.trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool))
+ 
++/-- The defining equation of `blocksCoins` (see `blocksCoins`). -/
++theorem blocksCoins_eq {m q b : ℕ} (h : m = q * b) :
++    blocksCoins h =
++      (FunFamily.blocks q b).symm.trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool)) :=
++  rfl
++
+ /-- `⟦blocksCoins h t⟧ = ⟦t 0⟧ ++ ⋯ ++ ⟦t (q − 1)⟧` (`ComposeSim.ofFn_blocks_symm`). -/
+ theorem ofFn_blocksCoins {m q b : ℕ} (h : m = q * b) (t : Fin q → Fin b → Bool) :
+     List.ofFn (blocksCoins h t) = (List.ofFn fun j => List.ofFn (t j)).flatten := by
+-  rw [blocksCoins, Equiv.trans_apply, ofFn_arrowCongr_finCongr, ComposeSim.ofFn_blocks_symm]
++  rw [blocksCoins_eq, Equiv.trans_apply, ofFn_arrowCongr_finCongr, ComposeSim.ofFn_blocks_symm]
+ 
+ /-- Block `j` of `blocksCoins h t` is `t j`: `coinBlock b j ⟦blocksCoins h t⟧ = ⟦t j⟧`
+ (`coinBlock_flatten`). -/
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean
+index 06d5650aa..2f3876efa 100644
+--- a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean
+@@ -54,6 +54,12 @@ def splitCoins {m a q b : ℕ} (h : m = a + q * b) :
+   ((Equiv.refl (Fin a → Bool)).prodCongr (FunFamily.blocks q b).symm).trans
+     ((Fin.appendEquiv a (q * b)).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool)))
+ 
++/-- The defining equation of `splitCoins` (see `splitCoins`). -/
++theorem splitCoins_eq {m a q b : ℕ} (h : m = a + q * b) :
++    splitCoins h = ((Equiv.refl (Fin a → Bool)).prodCongr (FunFamily.blocks q b).symm).trans
++      ((Fin.appendEquiv a (q * b)).trans
++        (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool))) := rfl
++
+ /-- The blocks as one string: `⟦(blocks q b).symm t⟧ = ⟦t 0⟧ ++ ⋯ ++ ⟦t (q − 1)⟧`.
+ 
+ **Proof sketch.** `List.ofFn_mul` writes `⟦v⟧` for `v : Fin (q·b) → Bool` as the concatenation
+@@ -83,7 +89,7 @@ theorem ofFn_splitCoins {m a q b : ℕ} (h : m = a + q * b) (u : Fin a → Bool)
+     (t : Fin q → Fin b → Bool) :
+     List.ofFn (splitCoins h (u, t)) =
+       List.ofFn u ++ (List.ofFn fun j => List.ofFn (t j)).flatten := by
+-  rw [splitCoins, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr]
++  rw [splitCoins_eq, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr]
+   show List.ofFn (Fin.append u ((FunFamily.blocks q b).symm t)) = _
+   rw [List.ofFn_fin_append, ofFn_blocks_symm]
+ 
+-- 
+2.43.0
+

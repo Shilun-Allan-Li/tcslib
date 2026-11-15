@@ -1,0 +1,2017 @@
+From 2d99291eb5a7ccec799c7fe41e00ca03fcef159e Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 07:23:03 +0000
+Subject: [PATCH 5/8] sc-compose checkpoint 2: the simulators, the output
+ clause and the statistical switch (hbcSecure_compose steps 1-2)
+
+The simulator S_A (S_B) post-processes the hybrid simulator by Phi: L(n) runs of rho's
+simulator on the recomputed call inputs, the answer blocks and coin blocks, assembled into a view
+of the composed protocol (Sim.lean: exists_simulator; Assembly.lean: asmView). The output clause
+of HBCSecure rho G with the worst-case inputs as advice makes each run correct except with
+negligible probability (Correct.lean: exists_correct, uprob_not_goodRuns_le). Under GoodRuns the
+real samples are the assembled views of the real run views with the hybrid main phase
+(Runs.lean: realA_compose_eq, realB_compose_eq), and the statistical switch bounds the rest
+(Probability.lean: distAdv_le_uprob_of_eq). hbcSecure_compose keeps its sorry.
+---
+ .../SecureComputation/ComposeSecurity.lean    |  19 +
+ .../ComposeSecurity/Accept.lean               | 191 ++++++
+ .../ComposeSecurity/Assembly.lean             | 284 +++++++++
+ .../ComposeSecurity/Bounds.lean               |  96 +++
+ .../ComposeSecurity/Correct.lean              | 202 ++++++
+ .../ComposeSecurity/Probability.lean          | 169 +++++
+ .../ComposeSecurity/Reductions.lean           | 106 ++++
+ .../ComposeSecurity/Runs.lean                 | 598 ++++++++++++++++++
+ .../ComposeSecurity/Sim.lean                  | 249 ++++++++
+ 9 files changed, 1914 insertions(+)
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ComposeSecurity/Reductions.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean
+
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
+index a92990807..abd9c6b6f 100644
+--- a/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
+@@ -5,6 +5,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.SecureComputation.ComposePhases
+ import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Machines
+ import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Efficiency
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Probability
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Reductions
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Assembly
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Runs
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Bounds
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Sim
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Accept
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Correct
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -56,6 +64,17 @@ functions (`ComposeSecurity/Efficiency.lean`).
+   data-dependent range, the interleaved-slot map, strategies as functions of the layout).
+ * `ComposeSecurity/Efficiency.lean`: the composed parties as polynomial-time functions of the
+   machine layout.
++* `ComposeSecurity/Probability.lean`: distinguishing-advantage tools (triangle inequality, the
++  statistical switch, unused seeds, fixing coordinates, events of one coordinate).
++* `ComposeSecurity/Reductions.lean`: machines with advice-dependent pre- and post-processing.
++* `ComposeSecurity/Assembly.lean`: a view of the composed protocol assembled from run views.
++* `ComposeSecurity/Runs.lean`: the coins of the composed protocol run by run, and the real
++  samples when every run gives the ideal answers.
++* `ComposeSecurity/Bounds.lean`: lengths of encodings, transcripts and machine outputs.
++* `ComposeSecurity/Sim.lean`: the post-processing `Φ`, the simulators and the reduction to the
++  hybrid model.
++* `ComposeSecurity/Accept.lean`: acceptance of machines with split coins; test machines.
++* `ComposeSecurity/Correct.lean`: a secure protocol is correct; the union bound over the runs.
+ 
+ ## Main results
+ 
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean
+new file mode 100644
+index 000000000..601e2ca2e
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Accept.lean
+@@ -0,0 +1,191 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Runs
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Probability
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Acceptance of machines with split coins
++
++The bookkeeping between the distinguishers and simulators of the composition theorem
++[Gol04, §7.3.1, proof of Theorem 7.3.3] and the samplers they act on:
++* coins as two strings (`appendCoins`) or as blocks (`blocksCoins`), read back by `take`, `drop`
++  and `coinBlock`;
++* a distinguisher `B` that pre-processes its sample with `p(n)` of its coins and hands the rest
++  to `D` accepts a sampler `X` as often as `D` accepts the pre-processed sampler on the seed
++  extended by those coins (`acceptProb_pre`);
++* a simulator that post-processes another machine's output, against a distinguisher that
++  pre-processes with the same map, is accepted as the other machine against the distinguisher
++  (`acceptProb_post_pre`);
++* a test machine with output `[P w]` accepts with the probability of `P` (`acceptProb_test`);
++  the comparison of the second component of a sample with an advice string is such a machine
++  (`exists_test`).
++
++## Main definitions
++
++* `ComposeProb.appendCoins`, `ComposeProb.blocksCoins`.
++
++## Main results
++
++* `ComposeProb.acceptProb_pre`, `ComposeProb.acceptProb_post_pre`, `ComposeProb.acceptProb_test`,
++  `ComposeProb.exists_test`.
++* `ComposeProb.uexp_le_of_le`: an average below a bound.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §2.1 (non-uniform PPT machines, Definition 26.8) and §6.2 (Definition 155.1).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.ComposeProb
++
++open Complexity Turing TCSlib.Cryptography
++
++/-! ### Coins as strings -/
++
++/-- **Two coin strings as one**: `{0,1}^a × {0,1}^b ≃ {0,1}^c` for `c = a + b`, the first string
++followed by the second (`Fin.appendEquiv`). -/
++def appendCoins {a b c : ℕ} (h : c = a + b) : (Fin a → Bool) × (Fin b → Bool) ≃ (Fin c → Bool) :=
++  (Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool))
++
++/-- `⟦appendCoins h (u, v)⟧ = ⟦u⟧ ++ ⟦v⟧`. -/
++theorem ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool) (v : Fin b → Bool) :
++    List.ofFn (appendCoins h (u, v)) = List.ofFn u ++ List.ofFn v := by
++  rw [appendCoins, Equiv.trans_apply, ofFn_arrowCongr_finCongr]
++  exact List.ofFn_fin_append u v
++
++/-- The first `a` bits of `appendCoins h (u, v)` are `u`. -/
++theorem take_ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool) (v : Fin b → Bool) :
++    (List.ofFn (appendCoins h (u, v))).take a = List.ofFn u := by
++  rw [ofFn_appendCoins, List.take_left' List.length_ofFn]
++
++/-- The bits of `appendCoins h (u, v)` after the first `a` are `v`. -/
++theorem drop_ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool) (v : Fin b → Bool) :
++    (List.ofFn (appendCoins h (u, v))).drop a = List.ofFn v := by
++  rw [ofFn_appendCoins, List.drop_left' List.length_ofFn]
++
++/-- **Blocks of coins as one string**: `({0,1}^b)^q ≃ {0,1}^m` for `m = q·b`, the blocks in order
++(`FunFamily.blocks`). -/
++def blocksCoins {m q b : ℕ} (h : m = q * b) : (Fin q → Fin b → Bool) ≃ (Fin m → Bool) :=
++  (FunFamily.blocks q b).symm.trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool))
++
++/-- `⟦blocksCoins h t⟧ = ⟦t 0⟧ ++ ⋯ ++ ⟦t (q − 1)⟧` (`ComposeSim.ofFn_blocks_symm`). -/
++theorem ofFn_blocksCoins {m q b : ℕ} (h : m = q * b) (t : Fin q → Fin b → Bool) :
++    List.ofFn (blocksCoins h t) = (List.ofFn fun j => List.ofFn (t j)).flatten := by
++  rw [blocksCoins, Equiv.trans_apply, ofFn_arrowCongr_finCongr, ComposeSim.ofFn_blocks_symm]
++
++/-- Block `j` of `blocksCoins h t` is `t j`: `coinBlock b j ⟦blocksCoins h t⟧ = ⟦t j⟧`
++(`coinBlock_flatten`). -/
++theorem coinBlock_blocksCoins {m q b : ℕ} (h : m = q * b) (t : Fin q → Fin b → Bool) (j : Fin q) :
++    coinBlock b j (List.ofFn (blocksCoins h t)) = List.ofFn (t j) := by
++  rw [ofFn_blocksCoins, coinBlock_flatten (List.ofFn fun j => List.ofFn (t j))
++    (fun c hc => by
++      obtain ⟨i, -, rfl⟩ := List.mem_ofFn.1 hc
++      exact List.length_ofFn) j (by rw [List.length_ofFn]; exact j.2), List.getElem_ofFn]
++
++/-! ### Acceptance -/
++
++/-- **An average below a bound**: `(∀ a, f a ≤ c) → uexp f ≤ c` (for nonempty `α`). -/
++theorem uexp_le_of_le {α : Type*} [Fintype α] [Nonempty α] {f : α → ℝ} {c : ℝ}
++    (h : ∀ a, f a ≤ c) : uexp f ≤ c := by
++  have hc : (0 : ℝ) < Fintype.card α := Nat.cast_pos.2 Fintype.card_pos
++  rw [uexp_def, div_le_iff₀ hc]
++  calc ∑ a, f a ≤ ∑ _a : α, c := Finset.sum_le_sum fun a _ => h a
++    _ = c * Fintype.card α := by
++      rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_comm]
++
++/-- **A distinguisher with pre-processing and extra coins**: if `B` has coins `p + D.coins` and
++`B(1^n, w; r) = D(1^n, Ψ w r_{<p(n)}; r_{≥p(n)})`, then
++`acceptProb X (B.distinguisherL n) = acceptProb (fun (s, e) => Ψ (X s) ⟦e⟧) (D.distinguisherL n)`
++over `e ∈ {0,1}^{p(n)}`.
++
++**Proof sketch.** Split `B`'s coins as `{0,1}^{p(n)} × D.Coins n` (`appendCoins`,
++`uprob_comp_equiv`); the cut coins are the two halves (`take_ofFn_appendCoins`,
++`drop_ofFn_appendCoins`); reassociate the seed (`Equiv.prodAssoc`). -/
++theorem acceptProb_pre {σ : Type*} [Fintype σ] (X : σ → List Bool) (B D : NUPPT) (p : PolyExpr)
++    (n : ℕ) (Ψ : List Bool → List Bool → List Bool) (hc : B.coins = .add p D.coins)
++    (hB : ∀ w r, B.runAtL n w r = D.runAtL n (Ψ w (r.take (p.eval n))) (r.drop (p.eval n))) :
++    acceptProb X (B.distinguisherL n) =
++      acceptProb (fun z : σ × (Fin (p.eval n) → Bool) => Ψ (X z.1) (List.ofFn z.2))
++        (D.distinguisherL n) := by
++  have hlen : B.coinLen n = p.eval n + D.coinLen n := by
++    rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq, hc, PolyExpr.eval_add]
++  let e : (Fin (p.eval n) → Bool) × D.Coins n ≃ B.Coins n := appendCoins hlen
++  rw [acceptProb_def, acceptProb_def]
++  calc uprob (fun z : σ × B.Coins n => B.distinguisherL n (X z.1) z.2 = true)
++      = uprob (fun z : σ × ((Fin (p.eval n) → Bool) × D.Coins n) =>
++          B.distinguisherL n (X z.1) (e z.2) = true) :=
++        (uprob_comp_equiv ((Equiv.refl σ).prodCongr e)
++          (fun z : σ × B.Coins n => B.distinguisherL n (X z.1) z.2 = true)).symm
++    _ = uprob (fun z : σ × ((Fin (p.eval n) → Bool) × D.Coins n) =>
++          D.distinguisherL n (Ψ (X z.1) (List.ofFn z.2.1)) z.2.2 = true) := by
++        congr 1
++        funext z
++        rw [NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.runAt_eq, hB,
++          take_ofFn_appendCoins, drop_ofFn_appendCoins]
++    _ = uprob (fun z : (σ × (Fin (p.eval n) → Bool)) × D.Coins n =>
++          D.distinguisherL n (Ψ (X z.1.1) (List.ofFn z.1.2)) z.2 = true) :=
++        (uprob_comp_equiv (Equiv.prodAssoc σ (Fin (p.eval n) → Bool) (D.Coins n))
++          (fun z : σ × ((Fin (p.eval n) → Bool) × D.Coins n) =>
++            D.distinguisherL n (Ψ (X z.1) (List.ofFn z.2.1)) z.2.2 = true)).symm
++
++/-- **A simulator with post-processing against a distinguisher with pre-processing**: let
++`S(1^n, w; r) = Ψ (S'(1^n, w; r_{<S'.coins(n)})) r_{≥S'.coins(n)}` with coins `S'.coins + p`, and
++`B(1^n, v; r) = D(1^n, Ψd v r_{<p(n)}; r_{≥p(n)})` with coins `p + D.coins`, where
++`Ψd ⟨hv, o⟩ e = ⟨Ψ hv e, o⟩`. Then `D` accepts `⟨S(1^n, w), o⟩` as often as `B` accepts
++`⟨S'(1^n, w), o⟩`.
++
++**Proof sketch.** Split `S`'s coins as `S'.Coins n × {0,1}^{p(n)}` (`appendCoins`,
++`acceptProb_comp_equiv`; `take_ofFn_appendCoins`, `drop_ofFn_appendCoins`), and unfold `B` by
++`acceptProb_pre`; the two samplers on `S'.Coins n × {0,1}^{p(n)}` agree by `hΨ`. -/
++theorem acceptProb_post_pre (S S' B D : NUPPT) (p : PolyExpr) (n : ℕ)
++    (Ψ Ψd : List Bool → List Bool → List Bool) (w o : List Bool)
++    (hSc : S.coins = .add S'.coins p)
++    (hS : ∀ r, S.runAtL n w r =
++      Ψ (S'.runAtL n w (r.take (S'.coinLen n))) (r.drop (S'.coinLen n)))
++    (hBc : B.coins = .add p D.coins)
++    (hB : ∀ v r, B.runAtL n v r = D.runAtL n (Ψd v (r.take (p.eval n))) (r.drop (p.eval n)))
++    (hΨ : ∀ hv e, Ψd (pairEncode hv o) e = pairEncode (Ψ hv e) o) :
++    acceptProb (fun s : S.Coins n => pairEncode (S.runAt n w s) o) (D.distinguisherL n) =
++      acceptProb (fun s : S'.Coins n => pairEncode (S'.runAt n w s) o) (B.distinguisherL n) := by
++  have hlen : S.coinLen n = S'.coinLen n + p.eval n := by
++    rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq, hSc, PolyExpr.eval_add]
++  rw [acceptProb_pre _ B D p n Ψd hBc hB]
++  refine (acceptProb_comp_equiv (appendCoins hlen)
++    (fun s : S.Coins n => pairEncode (S.runAt n w s) o) (D.distinguisherL n)).symm.trans ?_
++  refine congrArg (fun f => acceptProb f (D.distinguisherL n)) (funext fun z => ?_)
++  rw [hΨ, NUPPT.runAt_eq, NUPPT.runAt_eq, hS, take_ofFn_appendCoins, drop_ofFn_appendCoins]
++
++/-- **A test machine**: if `B(1^n, w; r) = [P w]` for all `w`, `r`, then `B` accepts the sampler
++`X` with probability `Pr_s[P (X s)]`:
++`acceptProb X (B.distinguisherL n) = uprob (fun s => P (X s) = true)` (`uprob_fst`). -/
++theorem acceptProb_test {σ : Type*} [Fintype σ] (X : σ → List Bool) (B : NUPPT) (n : ℕ)
++    (P : List Bool → Bool) (hB : ∀ w r, B.runAtL n w r = [P w]) :
++    acceptProb X (B.distinguisherL n) = uprob fun s => P (X s) = true := by
++  have h : (fun z : σ × B.Coins n => B.distinguisherL n (X z.1) z.2 = true) =
++      fun z => P (X z.1) = true := by
++    funext z
++    rw [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hB]
++    simp
++  rw [acceptProb_def, h]
++  exact uprob_fst fun s => P (X s) = true
++
++/-- **The comparison with an advice string**: for a polynomially bounded advice family `α` there
++is an `NUPPT` `B` with `B(1^n, w; r) = [eqW ⟨pairSndD w, α n⟩]`, which accepts exactly when the
++second component of the sample is `α n` (`BinArith.eqW_pairEncode`). -/
++theorem exists_test (α : ℕ → List Bool) (a : PolyExpr) (hα : ∀ n, (α n).length ≤ a.eval n) :
++    ∃ B : NUPPT, ∀ n w r, B.runAtL n w r = [BinArith.eqW (pairEncode (pairSndD w) (α n))] := by
++  have hf : PolyTimeComputable fun z =>
++      [BinArith.eqW (pairEncode (pairSndD (NUPPT.inArg z)) (NUPPT.inAdvice z))] :=
++    BinArith.polyTimeComputable_eqW.comp' ((polyTimeComputable_pairSndD.comp'
++      NUPPT.polyTimeComputable_inArg).pairEncode NUPPT.polyTimeComputable_inAdvice)
++  refine ⟨NUPPT.ofPolyTime hf (.const 0) a α hα, fun n w r => ?_⟩
++  rw [NUPPT.runAtL_ofPolyTime]
++  simp only [NUPPT.advInput_eq, ← NUPPT.layout_eq, NUPPT.inArg_layout, NUPPT.inAdvice_layout]
++
++end TCSlib.Cryptography.SecureComputation.ComposeProb
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean
+new file mode 100644
+index 000000000..7d0b0c1b2
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Assembly.lean
+@@ -0,0 +1,284 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Efficiency
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Assembling a view of the composed protocol from views of the runs
++
++The post-processing of the simulators and reductions of the composition theorem
++[Gol04, §7.3.1, proof of Theorem 7.3.3]: a party's view of `H.compose ρ` is its common input, its
++input, its tape (the `main`-tape followed by one `ρ`-tape per run) and its received messages
++(the other party's run messages at the pairs, with fillers, the leading fillers and the main
++phase). Given a word `V j` per run that reads as an encoded view of `ρ`
++(`⟨⟨x, z⟩, ⟨r, encodeMsgs received⟩⟩`, `View.encode`), `asmView` assembles such a view: the run
++tapes are cut or padded to `ρ`'s coin length, and the received run messages are placed at the
++pairs where the other party moves (the `k`-th message received at the `k`-th such pair, `p / 2`).
++
++## Main definitions
++
++* `ComposeSim.segW`: the pair chunks of one run, from the run's encoded received messages.
++* `ComposeSim.asmView`: the assembled encoded view; `ComposeSim.asmW` its word form.
++
++## Main results
++
++* `ComposeSim.moverIsV_beq_iff`, `length_filter_mover`, `getD_filter_map_mover`: the parity of
++  the pairs at which a party moves, and the position of a run message among them.
++* `ComposeSim.polyTimeComputable_asmW`: the assembly is polynomial-time.
++
++## References
++
++* [Gol04] O. Goldreich, *Foundations of Cryptography, Volume 2: Basic Applications*, Cambridge
++  University Press, 2004, §7.3.1 (the proof of Theorem 7.3.3).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.ComposeSim
++
++open Complexity Turing Complexity.StateLoop TCSlib.Cryptography.EncodingMachines ComposeMachines
++
++/-! ### The pairs at which a party moves -/
++
++/-- **The mover test is a parity**: `moverIsV vF q == b` iff `q % 2 = (if vF == b then 0 else 1)`
++(`moverIsV_def`). -/
++theorem moverIsV_beq_iff (vF b : Bool) (q : ℕ) :
++    (moverIsV vF q == b) = true ↔ q % 2 = (if vF == b then 0 else 1) := by
++  rw [moverIsV_def]
++  rcases Nat.mod_two_eq_zero_or_one q with h | h <;> cases vF <;> cases b <;> simp [h]
++
++/-- The number of `q < p` with `q % 2 = d` (for `d ≤ 1`) is `(p + 1 − d) / 2`. -/
++theorem length_filter_mod_two {d : ℕ} (hd : d ≤ 1) :
++    ∀ p, ((List.range p).filter fun q => q % 2 == d).length = (p + 1 - d) / 2
++  | 0 => by
++    rw [List.range_zero, List.filter_nil, List.length_nil]
++    omega
++  | p + 1 => by
++    rw [List.range_succ, List.filter_append, List.length_append, length_filter_mod_two hd p,
++      List.filter_singleton]
++    by_cases h : p % 2 = d
++    · rw [show (p % 2 == d) = true from beq_iff_eq.2 h, cond_true, List.length_singleton]
++      omega
++    · rw [show (p % 2 == d) = false from beq_eq_false_iff_ne.2 h, cond_false, List.length_nil]
++      omega
++
++/-- **The number of moves of a party before its move `p`** is `p / 2`: if
++`moverIsV vF p == b`, then `|{q < p : moverIsV vF q == b}| = p / 2` (`moverIsV_beq_iff`,
++`length_filter_mod_two`). -/
++theorem length_filter_mover (vF b : Bool) {p : ℕ} (hp : (moverIsV vF p == b) = true) :
++    ((List.range p).filter fun q => moverIsV vF q == b).length = p / 2 := by
++  have hd : (if vF == b then 0 else 1) ≤ 1 := by split_ifs <;> omega
++  have hpar := (moverIsV_beq_iff vF b p).1 hp
++  have hfilt : ((List.range p).filter fun q => moverIsV vF q == b) =
++      (List.range p).filter fun q => q % 2 == (if vF == b then 0 else 1) := by
++    refine List.filter_congr fun q _ => ?_
++    rw [Bool.eq_iff_iff, moverIsV_beq_iff]
++    exact beq_iff_eq.symm
++  rw [hfilt, length_filter_mod_two hd]
++  split_ifs at hpar ⊢ <;> omega
++
++/-- **A run message at its position**: for `p < R` with `moverIsV vF p == b`, entry `p / 2` of
++the messages `f q` at the `q < R` with `moverIsV vF q == b` is `f p`
++(`length_filter_mover`). -/
++theorem getD_filter_map_mover (vF b : Bool) (f : ℕ → List Bool) {R p : ℕ} (hpR : p < R)
++    (hp : (moverIsV vF p == b) = true) :
++    (((List.range R).filter fun q => moverIsV vF q == b).map f).getD (p / 2) [] = f p := by
++  obtain ⟨d, rfl⟩ : ∃ d, R = p + 1 + d := ⟨R - (p + 1), by omega⟩
++  rw [List.range_add, List.range_succ, List.filter_append, List.filter_append,
++    List.filter_singleton, hp, cond_true, List.map_append, List.map_append, List.map_singleton,
++    List.append_assoc, List.getD_eq_getElem?_getD, List.getElem?_append_right (by
++      rw [List.length_map, length_filter_mover vF b hp]), List.length_map,
++    length_filter_mover vF b hp, Nat.sub_self, List.singleton_append, List.getElem?_cons_zero,
++    Option.getD_some]
++
++/-- Padding a word of the right length is the identity: `|w| = L → padTo L w = w`. -/
++theorem padTo_of_length {L : ℕ} {w : List Bool} (h : w.length = L) : padTo L w = w := by
++  rw [padTo_eq, List.take_append_of_le_length (by omega), List.take_of_length_le (by omega)]
++
++/-- A concatenation over `range a` is one over `range b` when `a = b` (no rewriting inside the
++chunks): `a = b → (range a).flatMap f = (range b).flatMap f`. -/
++theorem flatMap_range_congr {a b : ℕ} (h : a = b) (f : ℕ → List Bool) :
++    (List.range a).flatMap f = (List.range b).flatMap f := by
++  subst h
++  rfl
++
++/-! ### One run's chunks -/
++
++/-- **The pair chunks of one run**, from the encoded received messages `e` of the run's view:
++for `p < R`, the chunk `⟨m_p, []⟩` with `m_p` the message received at the `p / 2`-th of the pairs
++where the other party moves (`moverIsV vF p == b`) and `[]` (a filler) at the others:
++`segW vF b R e = (range R).flatMap fun p =>
++⟨if moverIsV vF p == b then pairFstD (pairSndD^[p / 2] e) else [], []⟩`. -/
++def segW (vF b : Bool) (R : ℕ) (e : List Bool) : List Bool :=
++  (List.range R).flatMap fun p =>
++    pairEncode (if moverIsV vF p == b then pairFstD (pairSndD^[p / 2] e) else []) []
++
++/-- The defining equation of `segW` (see `segW`). -/
++theorem segW_eq (vF b : Bool) (R : ℕ) (e : List Bool) :
++    segW vF b R e = (List.range R).flatMap fun p =>
++      pairEncode (if moverIsV vF p == b then pairFstD (pairSndD^[p / 2] e) else []) [] := rfl
++
++/-- **`segW` on a real run**: if the run's received messages are the messages `f q` at the
++`q < R` with `moverIsV vF q == b`, the chunks are `⟨f p, []⟩` at those pairs and `⟨[], []⟩` at
++the others:
++`segW vF b R (encodeMsgs (filter … (range R)).map f) =
++(range R).flatMap fun p => ⟨if moverIsV vF p == b then f p else [], []⟩`
++(`msgAt_encodeMsgs`, `getD_filter_map_mover`). -/
++theorem segW_encodeMsgs (vF b : Bool) (R : ℕ) (f : ℕ → List Bool) :
++    segW vF b R (Strategy.encodeMsgs (((List.range R).filter fun q => moverIsV vF q == b).map f)) =
++      (List.range R).flatMap fun p =>
++        pairEncode (if moverIsV vF p == b then f p else []) [] := by
++  rw [segW_eq]
++  refine List.flatMap_congr fun p hp => ?_
++  by_cases h : (moverIsV vF p == b) = true
++  · rw [if_pos h, if_pos h, msgAt_encodeMsgs, getD_filter_map_mover vF b f (List.mem_range.1 hp) h]
++  · rw [if_neg h, if_neg h]
++
++/-! ### The assembled view -/
++
++/-- **The assembled encoded view** of a party of `H.compose ρ` (`n = |x₁|`, `L = calls(n)`,
++`R = rounds(n)`, `c = cρ(n)`), from its common input `x₁`, input `xin`, `main`-tape `mt`, encoded
++main-phase messages `me`, the number `lead` of leading fillers it receives, and one word `V j`
++per run read as an encoded `ρ`-view: the view `⟨⟨x₁, xin⟩, ⟨mt ++ τ, E⟩⟩` with the tape
++`τ = (range L).flatMap fun j => padTo c (tape of V j)` and the messages
++`E = (range L).flatMap (fun j => segW vF b R (messages of V j)) ++ encodeMsgs [[]]^lead ++ me`. -/
++def asmView (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) (x₁ xin mt me : List Bool)
++    (V : ℕ → List Bool) : List Bool :=
++  pairEncode (pairEncode x₁ xin)
++    (pairEncode (mt ++ (List.range (calls.eval x₁.length)).flatMap fun j =>
++        padTo (cρ.eval x₁.length) (pairFstD (pairSndD (V j))))
++      ((List.range (calls.eval x₁.length)).flatMap (fun j =>
++          segW vF b (rounds.eval x₁.length) (pairSndD (pairSndD (V j)))) ++
++        Strategy.encodeMsgs (List.replicate lead []) ++ me))
++
++/-- The defining equation of `asmView` (see `asmView`). -/
++theorem asmView_eq (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ)
++    (x₁ xin mt me : List Bool) (V : ℕ → List Bool) :
++    asmView calls rounds cρ vF b lead x₁ xin mt me V =
++      pairEncode (pairEncode x₁ xin)
++        (pairEncode (mt ++ (List.range (calls.eval x₁.length)).flatMap fun j =>
++            padTo (cρ.eval x₁.length) (pairFstD (pairSndD (V j))))
++          ((List.range (calls.eval x₁.length)).flatMap (fun j =>
++              segW vF b (rounds.eval x₁.length) (pairSndD (pairSndD (V j)))) ++
++            Strategy.encodeMsgs (List.replicate lead []) ++ me)) := rfl
++
++/-- `asmView` depends on the run words only below `L`: if `V j = V' j` for `j < calls(|x₁|)`, the
++assembled views agree. -/
++theorem asmView_congr (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ)
++    (x₁ xin mt me : List Bool) {V V' : ℕ → List Bool}
++    (h : ∀ j < calls.eval x₁.length, V j = V' j) :
++    asmView calls rounds cρ vF b lead x₁ xin mt me V =
++      asmView calls rounds cρ vF b lead x₁ xin mt me V' := by
++  have h₁ : ((List.range (calls.eval x₁.length)).flatMap fun j =>
++      padTo (cρ.eval x₁.length) (pairFstD (pairSndD (V j)))) =
++      (List.range (calls.eval x₁.length)).flatMap fun j =>
++        padTo (cρ.eval x₁.length) (pairFstD (pairSndD (V' j))) :=
++    List.flatMap_congr fun j hj => by rw [h j (List.mem_range.1 hj)]
++  have h₂ : ((List.range (calls.eval x₁.length)).flatMap fun j =>
++      segW vF b (rounds.eval x₁.length) (pairSndD (pairSndD (V j)))) =
++      (List.range (calls.eval x₁.length)).flatMap fun j =>
++        segW vF b (rounds.eval x₁.length) (pairSndD (pairSndD (V' j))) :=
++    List.flatMap_congr fun j hj => by rw [h j (List.mem_range.1 hj)]
++  rw [asmView_eq, asmView_eq, h₁, h₂]
++
++/-- **The assembly in word form**: on `w = ⟨⟨⟨x₁, xin⟩, ⟨mt, me⟩⟩, VL⟩`, `asmView` with the run
++words `V j = pairFstD (pairSndD^[j] VL)` (the entries of an encoded list,
++`msgAt_encodeMsgs`). -/
++def asmW (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) (w : List Bool) : List Bool :=
++  asmView calls rounds cρ vF b lead (pairFstD (pairFstD (pairFstD w)))
++    (pairSndD (pairFstD (pairFstD w))) (pairFstD (pairSndD (pairFstD w)))
++    (pairSndD (pairSndD (pairFstD w))) fun j => pairFstD (pairSndD^[j] (pairSndD w))
++
++/-- The defining equation of `asmW` (see `asmW`). -/
++theorem asmW_eq (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) (w : List Bool) :
++    asmW calls rounds cρ vF b lead w =
++      asmView calls rounds cρ vF b lead (pairFstD (pairFstD (pairFstD w)))
++        (pairSndD (pairFstD (pairFstD w))) (pairFstD (pairSndD (pairFstD w)))
++        (pairSndD (pairSndD (pairFstD w))) fun j => pairFstD (pairSndD^[j] (pairSndD w)) := rfl
++
++/-- `asmW` on its word: `asmW … ⟨⟨⟨x₁, xin⟩, ⟨mt, me⟩⟩, VL⟩ =
++asmView … x₁ xin mt me (fun j => pairFstD (pairSndD^[j] VL))`. -/
++theorem asmW_pairEncode (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ)
++    (x₁ xin mt me VL : List Bool) :
++    asmW calls rounds cρ vF b lead
++        (pairEncode (pairEncode (pairEncode x₁ xin) (pairEncode mt me)) VL) =
++      asmView calls rounds cρ vF b lead x₁ xin mt me fun j => pairFstD (pairSndD^[j] VL) := by
++  rw [asmW_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- **`segW` is polynomial-time** on `⟨1^R, e⟩` words given by polynomial-time maps
++(`polyTimeComputable_flatMap_range` over `p < R`, the mover test `polyTimeComputable_moverW`,
++`p / 2` by `divNum_poly`, the message by `iterSnd_poly`). -/
++theorem polyTimeComputable_segW (vF b : Bool) {R : List Bool → ℕ} {e : List Bool → List Bool}
++    (hR : PolyTimeComputable fun z => List.replicate (R z) true) (he : PolyTimeComputable e) :
++    PolyTimeComputable fun z => segW vF b (R z) (e z) := by
++  have hhalf : PolyTimeComputable fun v => List.replicate ((pairFstD v).length / 2) true :=
++    (divNum_poly (unaryLength_poly polyTimeComputable_pairFstD) (unaryConst_poly 2)).congr
++      fun v => by rw [divNum_eq]
++  have hmsg := polyTimeComputable_pairFstD.comp'
++    (iterSnd_poly (he.comp' polyTimeComputable_pairSndD) hhalf)
++  have hchunk : PolyTimeComputable fun v =>
++      pairEncode (if moverIsV vF (pairFstD v).length == b then
++        pairFstD (pairSndD^[(pairFstD v).length / 2] (e (pairSndD v))) else []) [] :=
++    (polyTimeComputable_ite ((polyTimeComputable_moverW vF b).congr fun v => moverW_eq vF b v)
++      hmsg (polyTimeComputable_const [])).pairEncode (polyTimeComputable_const [])
++  exact (polyTimeComputable_flatMap_range hchunk hR).congr fun z => (segW_eq vF b (R z) (e z)).symm
++
++/-- **The assembly is polynomial-time**: `PolyTimeComputable (asmW calls rounds cρ vF b lead)`.
++
++**Proof sketch.** The components `x₁`, `xin`, `mt`, `me` are projections. The tape part and the
++message part are concatenations over the unary count `calls(|x₁|)`
++(`polyTimeComputable_flatMap_range`) of a padded tape (`padTo_poly`) and of `segW`
++(`polyTimeComputable_segW`) of the run word `pairFstD (pairSndD^[j] VL)` (`iterSnd_poly`),
++followed by constant fillers and `me`; the word is `asmView` of these (`asmW_eq`,
++`asmView_eq`). -/
++theorem polyTimeComputable_asmW (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) :
++    PolyTimeComputable (asmW calls rounds cρ vF b lead) := by
++  have hx₁ : PolyTimeComputable fun w => pairFstD (pairFstD (pairFstD w)) :=
++    polyTimeComputable_pairFstD.comp'
++      (polyTimeComputable_pairFstD.comp' polyTimeComputable_pairFstD)
++  have hxin : PolyTimeComputable fun w => pairSndD (pairFstD (pairFstD w)) :=
++    polyTimeComputable_pairSndD.comp'
++      (polyTimeComputable_pairFstD.comp' polyTimeComputable_pairFstD)
++  have hmt : PolyTimeComputable fun w => pairFstD (pairSndD (pairFstD w)) :=
++    polyTimeComputable_pairFstD.comp'
++      (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairFstD)
++  have hme : PolyTimeComputable fun w => pairSndD (pairSndD (pairFstD w)) :=
++    polyTimeComputable_pairSndD.comp'
++      (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairFstD)
++  -- the run word `V j` from `v = ⟨1^j, w⟩`
++  have hV : PolyTimeComputable fun v =>
++      pairFstD (pairSndD^[(pairFstD v).length] (pairSndD (pairSndD v))) :=
++    polyTimeComputable_pairFstD.comp' (iterSnd_poly
++      (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD)
++      (unaryLength_poly polyTimeComputable_pairFstD))
++  have hn : PolyTimeComputable fun v =>
++      List.replicate (pairFstD (pairFstD (pairFstD (pairSndD v)))).length true :=
++    unaryLength_poly (hx₁.comp' polyTimeComputable_pairSndD)
++  have htape : PolyTimeComputable fun v =>
++      padTo (cρ.eval (pairFstD (pairFstD (pairFstD (pairSndD v)))).length)
++        (pairFstD (pairSndD (pairFstD (pairSndD^[(pairFstD v).length]
++          (pairSndD (pairSndD v)))))) :=
++    padTo_poly ((polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD).comp' hV)
++      (unaryPolyOf_poly cρ hn)
++  have hseg : PolyTimeComputable fun v =>
++      segW vF b (rounds.eval (pairFstD (pairFstD (pairFstD (pairSndD v)))).length)
++        (pairSndD (pairSndD (pairFstD (pairSndD^[(pairFstD v).length]
++          (pairSndD (pairSndD v)))))) :=
++    polyTimeComputable_segW vF b (unaryPolyOf_poly rounds hn)
++      ((polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD).comp' hV)
++  have hL := unaryPolyOf_poly calls (unaryLength_poly hx₁)
++  have hT := polyTimeComputable_flatMap_range (E := fun w j =>
++    padTo (cρ.eval (pairFstD (pairFstD (pairFstD w))).length)
++      (pairFstD (pairSndD (pairFstD (pairSndD^[j] (pairSndD w)))))) htape hL
++  have hS := polyTimeComputable_flatMap_range (E := fun w j =>
++    segW vF b (rounds.eval (pairFstD (pairFstD (pairFstD w))).length)
++      (pairSndD (pairSndD (pairFstD (pairSndD^[j] (pairSndD w)))))) hseg hL
++  exact (((hx₁.pairEncode hxin).pairEncode ((hmt.append hT).pairEncode
++    ((hS.append (polyTimeComputable_const _)).append hme)))).congr fun w => by
++      rw [asmW_eq, asmView_eq]
++
++end TCSlib.Cryptography.SecureComputation.ComposeSim
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean
+new file mode 100644
+index 000000000..2456794be
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Bounds.lean
+@@ -0,0 +1,96 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Machines
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Polynomial length bounds
++
++The advice of a non-uniform reduction has polynomially bounded length (`NUPPT.advice_length`). The
++reductions of the composition theorem [Gol04, §7.3.1, proof of Theorem 7.3.3] hard-wire views and
++outputs of executions, so their lengths must be bounded by a polynomial in `n`. This file collects
++the lengths of the encodings (`encodeMsgs`, the machine layouts), of the transcripts, and of the
++outputs of machines and efficient strategies.
++
++## Main results
++
++* `ComposeBound.length_encodeMsgs_le`, `length_transcriptWith_fst_le`, `_snd_le`.
++* `ComposeBound.length_runAt_le`, `Efficient.length_next_le`, `length_ilayout`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §2.1 (non-uniform PPT machines, Definition 26.8) and §4.4 (time complexity of interactive
++  machines).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.ComposeBound
++
++open Complexity Turing
++
++/-! ### Lengths of encodings and outputs -/
++
++/-- **A transcript has at most `rounds` messages per party**:
++`|(π.transcriptWith P' x y z r).1| ≤ π.rounds(|x|)` (`Compose.exec_eq_map`). -/
++theorem length_transcriptWith_fst_le (π : Protocol) (P' : Strategy) (x y z : List Bool)
++    (r : π.ExecCoins P' x) : (π.transcriptWith P' x y z r).1.length ≤ π.rounds.eval x.length := by
++  rw [Protocol.transcriptWith_eq, Compose.exec_eq_map, List.length_map]
++  exact (List.length_filter_le _ _).trans (List.length_range).le
++
++/-- The verifier's half: `|(π.transcriptWith P' x y z r).2| ≤ π.rounds(|x|)`. -/
++theorem length_transcriptWith_snd_le (π : Protocol) (P' : Strategy) (x y z : List Bool)
++    (r : π.ExecCoins P' x) : (π.transcriptWith P' x y z r).2.length ≤ π.rounds.eval x.length := by
++  rw [Protocol.transcriptWith_eq, Compose.exec_eq_map, List.length_map]
++  exact (List.length_filter_le _ _).trans (List.length_range).le
++
++/-- **The length of an encoded history**: if every message has at most `c` bits,
++`|encodeMsgs l| ≤ |l| (2c + 2)` (`encodeMsgs_eq_flatMap`, `BinArith.length_encWords_le`). -/
++theorem length_encodeMsgs_le (l : List (List Bool)) (c : ℕ) (h : ∀ w ∈ l, w.length ≤ c) :
++    (Strategy.encodeMsgs l).length ≤ l.length * (2 * c + 2) := by
++  rw [ComposeMachines.encodeMsgs_eq_flatMap, ← BinArith.encWords_def]
++  exact BinArith.length_encWords_le l c h
++
++/-- **The length of a machine layout**:
++`|layout u y α r| = 2(2(2|u| + 2 + |y|) + 2 + |α|) + 2 + |r|`
++(`NUPPT.layout_eq`, `length_pairEncode`). -/
++theorem length_layout (u y α r : List Bool) :
++    (NUPPT.layout u y α r).length = 2 * (2 * (2 * u.length + 2 + y.length) + 2 + α.length) + 2 +
++      r.length := by
++  rw [NUPPT.layout_eq, length_pairEncode, length_pairEncode, length_pairEncode]
++
++/-- **The output of a machine is polynomially long**:
++`|A.runAt n y r| ≤ A.Ct (|layout 1^n y (A.advice n) ⟦r⟧| + 1)^A.ct`
++(`NUPPT.output_length_le`, `NUPPT.runAtL_eq_output_layout`). -/
++theorem length_runAt_le (A : NUPPT) (n : ℕ) (y : List Bool) (r : A.Coins n) :
++    (A.runAt n y r).length ≤ A.Ct * (2 * (2 * (2 * n + 2 + y.length) + 2 +
++      (A.advice n).length) + 2 + A.coinLen n + 1) ^ A.ct := by
++  have h := A.output_length_le (NUPPT.layout (List.replicate n true) y (A.advice n) (List.ofFn r))
++  rw [NUPPT.timeBound_def, length_layout, List.length_replicate, List.length_ofFn] at h
++  rw [NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout]
++  exact h
++
++/-- **The next message of an efficient strategy is polynomially long** in the length of its
++activation's layout: for some `C, c`, `|S.next x z r hist| ≤ C (|GI.ilayout x z hist r| + 1)^c`
++(`ComposeMachines.Efficient.exists_polyTime`, `PolyTimeComputable.output_length_le`). -/
++theorem Efficient.length_next_le {S : Strategy} (h : S.Efficient) :
++    ∃ C c : ℕ, ∀ x z r hist, (S.next x z r hist).length ≤
++      C * ((GI.ilayout x z hist r).length + 1) ^ c := by
++  obtain ⟨F, hF, hnext⟩ := ComposeMachines.Efficient.exists_polyTime h
++  obtain ⟨C, c, hC⟩ := hF.output_length_le
++  exact ⟨C, c, fun x z r hist => by rw [hnext]; exact hC _⟩
++
++/-- **The length of a strategy layout**: `|GI.ilayout x z hist r| =
++2(2(2|x| + 2 + (2(2|x| + 2 + |z|) + 2 + |encodeMsgs hist|)) + 2) + 2 + |r|`. -/
++theorem length_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
++    (GI.ilayout x z hist r).length =
++      2 * (2 * (2 * x.length + 2 + (2 * (2 * x.length + 2 + z.length) + 2 +
++        (Strategy.encodeMsgs hist).length)) + 2) + 2 + r.length := by
++  rw [GI.ilayout_def, length_layout, List.length_replicate, length_pairEncode, length_pairEncode,
++    List.length_nil, Nat.add_zero]
++
++end TCSlib.Cryptography.SecureComputation.ComposeBound
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean
+new file mode 100644
+index 000000000..b3f2e89a2
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Correct.lean
+@@ -0,0 +1,202 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Accept
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Correct answers of the runs
++
++Step 2 of the proof of the composition theorem [Gol04, §7.3.1, proof of Theorem 7.3.3]. The
++output clause of honest-but-curious security makes a secure protocol correct: a distinguisher
++that compares the other party's output in the sample with the ideal output on the worst-case
++inputs of length `n`, given as advice, shows that each party's output differs from its ideal
++output with negligible probability, uniformly over the inputs (`ComposeProb.exists_correct`).
++By the union bound over the calls, every run of the composed protocol gives the ideal answers
++except with probability `L(n)` times that bound (`HybridProtocol.uprob_not_goodRuns_le`).
++
++## Main results
++
++* `ComposeProb.exists_correct`: a secure protocol computes its functionality except with
++  negligible probability.
++* `HybridProtocol.inA_val`, `inB_val`: the call inputs at a call index.
++* `HybridProtocol.uprob_not_goodRuns_le`: the bad event of the statistical switch.
++
++## References
++
++* [Gol04] O. Goldreich, *Foundations of Cryptography, Volume 2: Basic Applications*, Cambridge
++  University Press, 2004, §7.3.1 (the proof of Theorem 7.3.3).
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.2, Definition 155.1.
++-/
++
++namespace TCSlib.Cryptography.SecureComputation
++
++open Finset Complexity Turing TCSlib.Cryptography
++
++namespace ComposeProb
++
++/-- **A secure protocol computes its functionality** (the output clause of [PS10,
++Definition 155.1]): if `ρ` has simulators `S_A`, `S_B` against every non-uniform PPT
++distinguisher, there is a negligible `ε_c` with, for all `n` and all inputs `x`, `y` of `G`'s
++lengths, `Pr_t[ρ.outP ≠ ⟦f_A(x, y)⟧ ∨ ρ.outV ≠ ⟦f_B(x, y)⟧] ≤ ε_c(n)` on common input `1^n`.
++
++**Proof sketch.** For Alice's output take the inputs `w_n` maximizing
++`Pr_t[outP ≠ ⟦f_A⟧]` at each `n`, and the test machine accepting when the second component of
++its sample is `⟦f_A(w_n)⟧` (`exists_test`; advice of `G.outA(n)` bits). On Bob's ideal sample
++at `w_n` it accepts with probability `1` (the second component is `⟦f_A(w_n)⟧`); on the real one
++with `Pr_t[outP = ⟦f_A(w_n)⟧]` (`acceptProb_test`). So `Pr_t[outP ≠ ⟦f_A⟧] ≤
++Pr_t[outP(w_n) ≠ ⟦f_A(w_n)⟧] = 1 − Pr_t[outP(w_n) = ⟦f_A(w_n)⟧] ≤ ε_A(n)` (`uprob_not`).
++Likewise for Bob's output on Alice's side; take `ε_c = ε_A + ε_B` (`uprob_or_le`). -/
++theorem exists_correct {G : Functionality} {ρ : Protocol} (SA SB : NUPPT)
++    (hS : ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
++      ∀ n (x : Fin (G.inA.eval n) → Bool) (y : Fin (G.inB.eval n) → Bool),
++        distAdv (G.realA ρ n x y) (G.idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
++          distAdv (G.realB ρ n x y) (G.idealB SB n x y) (D.distinguisherL n) ≤ ε n) :
++    ∃ εc : ℕ → ℝ, Negligible εc ∧
++      ∀ n (x : Fin (G.inA.eval n) → Bool) (y : Fin (G.inB.eval n) → Bool),
++        uprob (fun t : ρ.ExecCoins ρ.P (List.replicate n true) =>
++          ρ.outP (List.replicate n true) (List.ofFn x) (List.ofFn y) t ≠
++              List.ofFn (G.f n x y).1 ∨
++            ρ.outV ρ.P (List.replicate n true) (List.ofFn x) (List.ofFn y) t ≠
++              List.ofFn (G.f n x y).2) ≤ εc n := by
++  -- the worst-case inputs for each output
++  have hmax : ∀ (n : ℕ) (q : (Fin (G.inA.eval n) → Bool) × (Fin (G.inB.eval n) → Bool) → ℝ),
++      ∃ w, ∀ w', q w' ≤ q w := fun n q => by
++    obtain ⟨w, -, hw⟩ := exists_max_image univ q univ_nonempty
++    exact ⟨w, fun w' => hw w' (mem_univ w')⟩
++  choose wA hwA using fun n => hmax n fun w => uprob fun t : ρ.ExecCoins ρ.P
++    (List.replicate n true) => ρ.outP (List.replicate n true) (List.ofFn w.1) (List.ofFn w.2) t ≠
++      List.ofFn (G.f n w.1 w.2).1
++  choose wB hwB using fun n => hmax n fun w => uprob fun t : ρ.ExecCoins ρ.P
++    (List.replicate n true) => ρ.outV ρ.P (List.replicate n true) (List.ofFn w.1)
++      (List.ofFn w.2) t ≠ List.ofFn (G.f n w.1 w.2).2
++  obtain ⟨BA, hBA⟩ := exists_test (fun n => List.ofFn (G.f n (wA n).1 (wA n).2).1) G.outA
++    fun n => by rw [List.length_ofFn]
++  obtain ⟨BB, hBB⟩ := exists_test (fun n => List.ofFn (G.f n (wB n).1 (wB n).2).2) G.outB
++    fun n => by rw [List.length_ofFn]
++  obtain ⟨εA, hεA, hA⟩ := hS BA
++  obtain ⟨εB, hεB, hB⟩ := hS BB
++  refine ⟨fun n => εA n + εB n, hεA.add hεB, fun n x y => (uprob_or_le _ _).trans
++    (add_le_add ((hwA n (x, y)).trans ?_) ((hwB n (x, y)).trans ?_))⟩
++  · -- Alice's output, through Bob's samples
++    have h1 : acceptProb (G.realB ρ n (wA n).1 (wA n).2) (BA.distinguisherL n) =
++        uprob fun t : ρ.ExecCoins ρ.P (List.replicate n true) =>
++          ρ.outP (List.replicate n true) (List.ofFn (wA n).1) (List.ofFn (wA n).2) t =
++            List.ofFn (G.f n (wA n).1 (wA n).2).1 := by
++      rw [acceptProb_test _ BA n _ (hBA n)]
++      simp only [Functionality.realB_eq, pairSndD_pairEncode, BinArith.eqW_pairEncode,
++        decide_eq_true_iff]
++    have h2 : acceptProb (G.idealB SB n (wA n).1 (wA n).2) (BA.distinguisherL n) = 1 := by
++      rw [acceptProb_test _ BA n _ (hBA n)]
++      simp only [Functionality.idealB_eq, pairSndD_pairEncode, BinArith.eqW_pairEncode,
++        decide_true]
++      exact uprob_true
++    have h3 := (hA n (wA n).1 (wA n).2).2
++    rw [distAdv_def, h1, h2, abs_le] at h3
++    have h4 := uprob_not fun t : ρ.ExecCoins ρ.P (List.replicate n true) =>
++      ρ.outP (List.replicate n true) (List.ofFn (wA n).1) (List.ofFn (wA n).2) t =
++        List.ofFn (G.f n (wA n).1 (wA n).2).1
++    exact (le_of_eq h4).trans (by linarith [h3.1])
++  · -- Bob's output, through Alice's samples
++    have h1 : acceptProb (G.realA ρ n (wB n).1 (wB n).2) (BB.distinguisherL n) =
++        uprob fun t : ρ.ExecCoins ρ.P (List.replicate n true) =>
++          ρ.outV ρ.P (List.replicate n true) (List.ofFn (wB n).1) (List.ofFn (wB n).2) t =
++            List.ofFn (G.f n (wB n).1 (wB n).2).2 := by
++      rw [acceptProb_test _ BB n _ (hBB n)]
++      simp only [Functionality.realA_eq, pairSndD_pairEncode, BinArith.eqW_pairEncode,
++        decide_eq_true_iff]
++    have h2 : acceptProb (G.idealA SA n (wB n).1 (wB n).2) (BB.distinguisherL n) = 1 := by
++      rw [acceptProb_test _ BB n _ (hBB n)]
++      simp only [Functionality.idealA_eq, pairSndD_pairEncode, BinArith.eqW_pairEncode,
++        decide_true]
++      exact uprob_true
++    have h3 := (hB n (wB n).1 (wB n).2).1
++    rw [distAdv_def, h1, h2, abs_le] at h3
++    have h4 := uprob_not fun t : ρ.ExecCoins ρ.P (List.replicate n true) =>
++      ρ.outV ρ.P (List.replicate n true) (List.ofFn (wB n).1) (List.ofFn (wB n).2) t =
++        List.ofFn (G.f n (wB n).1 (wB n).2).2
++    exact (le_of_eq h4).trans (by linarith [h3.1])
++
++end ComposeProb
++
++namespace HybridProtocol
++
++variable {G : Functionality} (H : HybridProtocol G) (ρ : Protocol)
++
++/-- Alice's input to a call `j : Fin calls(n)` is `⟦callA(n, zA, rA, j)⟧` (`inA_eq`). -/
++theorem inA_val (n : ℕ) (zA rA : List Bool) (j : Fin (H.calls.eval n)) :
++    H.inA n zA rA j = List.ofFn (H.callA n zA rA j) := by
++  rw [inA_eq, dif_pos j.2]
++
++/-- Bob's input to a call `j : Fin calls(n)` is `⟦callB(n, zB, rB, j)⟧` (`inB_eq`). -/
++theorem inB_val (n : ℕ) (zB rB : List Bool) (j : Fin (H.calls.eval n)) :
++    H.inB n zB rB j = List.ofFn (H.callB n zB rB j) := by
++  rw [inB_eq, dif_pos j.2]
++
++/-- **The bad event of the statistical switch**: if on common input `1^n` every pair of inputs of
++`G`'s lengths makes a party's `ρ`-output wrong with probability at most `ε_c`, then over the
++`main`-tapes and the run tapes some run gives a wrong answer with probability at most
++`calls(n) · ε_c`.
++
++**Proof sketch.** `¬ GoodRuns` is the union over the calls `j` of the event that run `j`'s
++outputs are wrong (`goodRuns_iff`; `uprob_exists_le`). For fixed `main`-tapes `m` that event
++concerns the run tapes `t j` only, on the call inputs of `m`, which have `G`'s lengths
++(`inA_val`, `inB_val`): its probability is at most `ε_c` (`uprob_coord`), hence so is its
++average over `m` (`uprob_prod`, `uexp_le_of_le`). -/
++theorem uprob_not_goodRuns_le (n : ℕ) (zA zB : List Bool) (εc : ℝ)
++    (hc : ∀ (xA : Fin (G.inA.eval n) → Bool) (yB : Fin (G.inB.eval n) → Bool),
++      uprob (fun t : ρ.ExecCoins ρ.P (List.replicate n true) =>
++        ρ.outP (List.replicate n true) (List.ofFn xA) (List.ofFn yB) t ≠
++            List.ofFn (G.f n xA yB).1 ∨
++          ρ.outV ρ.P (List.replicate n true) (List.ofFn xA) (List.ofFn yB) t ≠
++            List.ofFn (G.f n xA yB).2) ≤ εc) :
++    uprob (fun z : H.Coins n × (Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) =>
++      ¬ H.GoodRuns ρ n zA zB z.1 z.2) ≤ H.calls.eval n * εc := by
++  -- the event that run `j` is wrong, on the run tape `t'`
++  let bad : H.Coins n → Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true) → Prop :=
++    fun m j t' =>
++      ρ.outP (List.replicate n true) (List.ofFn (H.callA n zA (List.ofFn m.1) j))
++          (List.ofFn (H.callB n zB (List.ofFn m.2) j)) t' ≠
++        List.ofFn (G.f n (H.callA n zA (List.ofFn m.1) j) (H.callB n zB (List.ofFn m.2) j)).1 ∨
++      ρ.outV ρ.P (List.replicate n true) (List.ofFn (H.callA n zA (List.ofFn m.1) j))
++          (List.ofFn (H.callB n zB (List.ofFn m.2) j)) t' ≠
++        List.ofFn (G.f n (H.callA n zA (List.ofFn m.1) j) (H.callB n zB (List.ofFn m.2) j)).2
++  have hsub : ∀ z : H.Coins n × (Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)),
++      ¬ H.GoodRuns ρ n zA zB z.1 z.2 → ∃ j ∈ (univ : Finset (Fin (H.calls.eval n))),
++        bad z.1 j (z.2 j) := by
++    intro z hz
++    rw [goodRuns_iff] at hz
++    push_neg at hz
++    obtain ⟨j, hj⟩ := hz
++    refine ⟨j, mem_univ j, ?_⟩
++    show _ ∨ _
++    rw [← H.inA_val n zA (List.ofFn z.1.1) j, ← H.inB_val n zB (List.ofFn z.1.2) j]
++    by_cases h : ρ.outP (List.replicate n true) (H.inA n zA (List.ofFn z.1.1) j)
++        (H.inB n zB (List.ofFn z.1.2) j) (z.2 j) =
++      List.ofFn (G.f n (H.callA n zA (List.ofFn z.1.1) j) (H.callB n zB (List.ofFn z.1.2) j)).1
++    · exact Or.inr (hj h)
++    · exact Or.inl h
++  calc uprob (fun z : H.Coins n × (Fin (H.calls.eval n) →
++        ρ.ExecCoins ρ.P (List.replicate n true)) => ¬ H.GoodRuns ρ n zA zB z.1 z.2)
++      ≤ uprob (fun z : H.Coins n × (Fin (H.calls.eval n) →
++          ρ.ExecCoins ρ.P (List.replicate n true)) => ∃ j ∈ univ, bad z.1 j (z.2 j)) :=
++        uprob_mono hsub
++    _ ≤ ∑ j ∈ (univ : Finset (Fin (H.calls.eval n))),
++          uprob (fun z : H.Coins n × (Fin (H.calls.eval n) →
++            ρ.ExecCoins ρ.P (List.replicate n true)) => bad z.1 j (z.2 j)) :=
++        uprob_exists_le _ _
++    _ ≤ ∑ _j ∈ (univ : Finset (Fin (H.calls.eval n))), εc := sum_le_sum fun j _ => by
++        rw [uprob_prod]
++        refine ComposeProb.uexp_le_of_le fun m => ?_
++        rw [ComposeProb.uprob_coord j (bad m j)]
++        exact hc _ _
++    _ = H.calls.eval n * εc := by rw [sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul]
++
++end HybridProtocol
++
++end TCSlib.Cryptography.SecureComputation
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean
+new file mode 100644
+index 000000000..eef6cf964
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Probability.lean
+@@ -0,0 +1,169 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Foundations.Experiments
++import TCSlib.Cryptography.Foundations.Negligible
++import TCSlib.Complexity.Randomized.PolyExpr
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Probability tools for the composition theorem
++
++The distinguishing-advantage manipulations of the proof of [Gol04, §7.3.1, Theorem 7.3.3]
++(`HybridProtocol.hbcSecure_compose`), on uniform seeds and coins (`acceptProb`, `distAdv`):
++* the triangle inequality for `distAdv`;
++* the statistical switch: two samplers on one seed space that agree off a bad event are within
++  the bad event's probability;
++* unused seeds: adding a seed coordinate the sampler ignores does not change acceptance;
++* fixing coordinates: the advantage between two samplers on `σ × τ` is at most the advantage of
++  their sections at the worst `a : σ` (the advice of a non-uniform reduction);
++* a probability over `Fin L → Y` of an event of one coordinate is that event's probability;
++* a negligible function times a polynomial is negligible.
++
++## Main results
++
++* `ComposeProb.distAdv_triangle`, `ComposeProb.distAdv_le_uprob_of_eq`,
++  `ComposeProb.acceptProb_seed_fst`, `ComposeProb.exists_abs_sub_le_sections`,
++  `ComposeProb.uprob_coord`, `ComposeProb.negligible_polyExpr_mul`.
++
++## References
++
++* [Gol04] O. Goldreich, *Foundations of Cryptography, Volume 2: Basic Applications*, Cambridge
++  University Press, 2004, §7.3.1 (the proof of Theorem 7.3.3).
++* [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley, draft of
++  22 January 2026, §1.2 (negligible functions) and §3.2 (hybrid arguments).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.ComposeProb
++
++open Finset Complexity
++
++variable {σ τ υ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype υ] [Fintype ρ]
++
++/-- **Triangle inequality** for the distinguishing advantage:
++`distAdv X Z D ≤ distAdv X Y D + distAdv Y Z D`. -/
++theorem distAdv_triangle (X : σ → γ) (Y : τ → γ) (Z : υ → γ) (D : γ → ρ → Bool) :
++    distAdv X Z D ≤ distAdv X Y D + distAdv Y Z D := by
++  rw [distAdv_def, distAdv_def, distAdv_def]
++  exact abs_sub_le _ _ _
++
++/-- Two events that agree off a third: `|Pr[A] − Pr[B]| ≤ Pr[C]` when `A ↔ B` outside `C`. -/
++theorem abs_uprob_sub_le {A B C : υ → Prop} (h : ∀ u, ¬ C u → (A u ↔ B u)) :
++    |uprob A - uprob B| ≤ uprob C := by
++  have h1 : uprob A ≤ uprob B + uprob C :=
++    (uprob_mono fun u ha => by
++      by_cases hc : C u
++      · exact Or.inr hc
++      · exact Or.inl ((h u hc).1 ha)).trans (uprob_or_le B C)
++  have h2 : uprob B ≤ uprob A + uprob C :=
++    (uprob_mono fun u hb => by
++      by_cases hc : C u
++      · exact Or.inr hc
++      · exact Or.inl ((h u hc).2 hb)).trans (uprob_or_le A C)
++  rw [abs_le]
++  constructor <;> linarith
++
++/-- An event of the first coordinate has the same probability on the product with the coins:
++`uprob (fun z : σ × ρ => p z.1) = uprob p` (`uprob_fst`). -/
++theorem uprob_fst_eq [Nonempty ρ] (p : σ → Prop) : uprob (fun z : σ × ρ => p z.1) = uprob p :=
++  uprob_fst p
++
++/-- **The statistical switch** ("agree off a bad event"): if the samplers `X`, `Y` on one seed
++space agree at every seed outside `bad`, then `distAdv X Y D ≤ Pr_s[bad s]`.
++
++**Proof sketch.** The acceptance events on `σ × ρ` agree outside `bad ∘ fst`
++(`abs_uprob_sub_le`), whose probability is `Pr[bad]` (`uprob_fst`). -/
++theorem distAdv_le_uprob_of_eq [Nonempty ρ] (X Y : σ → γ) (D : γ → ρ → Bool) (bad : σ → Prop)
++    (h : ∀ s, ¬ bad s → X s = Y s) : distAdv X Y D ≤ uprob bad := by
++  rw [distAdv_def, acceptProb_def, acceptProb_def, ← uprob_fst_eq (ρ := ρ) bad]
++  exact abs_uprob_sub_le fun z hz => by rw [h z.1 hz]
++
++/-- **Unused seeds**: a sampler that ignores the second seed coordinate has the acceptance
++probability of its first-coordinate sampler:
++`acceptProb (fun z : σ × τ => X z.1) D = acceptProb X D` (`uprob_comp_equiv`, `uprob_fst`). -/
++theorem acceptProb_seed_fst [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
++    acceptProb (fun z : σ × τ => X z.1) D = acceptProb X D := by
++  rw [acceptProb_def, acceptProb_def]
++  let f : (σ × ρ) × τ ≃ (σ × τ) × ρ :=
++    { toFun := fun v => ((v.1.1, v.2), v.1.2)
++      invFun := fun w => ((w.1.1, w.2), w.1.2)
++      left_inv := fun _ => rfl
++      right_inv := fun _ => rfl }
++  calc uprob (fun w : (σ × τ) × ρ => D (X w.1.1) w.2 = true)
++      = uprob (fun v : (σ × ρ) × τ => D (X (f v).1.1) (f v).2 = true) :=
++        (uprob_comp_equiv f (fun w : (σ × τ) × ρ => D (X w.1.1) w.2 = true)).symm
++    _ = uprob (fun v : (σ × ρ) × τ => D (X v.1.1) v.1.2 = true) := rfl
++    _ = uprob (fun v : σ × ρ => D (X v.1) v.2 = true) :=
++        uprob_fst (fun v : σ × ρ => D (X v.1) v.2 = true)
++
++/-- **Acceptance as an average of sections**: `acceptProb X D` is the average over `a : σ` of
++the acceptance probability of the section `t ↦ X (a, t)` (`uprob_prod` after reassociating). -/
++theorem acceptProb_eq_uexp_sections (X : σ × τ → γ) (D : γ → ρ → Bool) :
++    acceptProb X D = uexp fun a => acceptProb (fun t => X (a, t)) D := by
++  rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc σ τ ρ).symm, uprob_prod]
++  rfl
++
++/-- The average of a difference is at most the largest difference: some `a` has
++`|uexp f − uexp g| ≤ |f a − g a|` (for nonempty `σ`). -/
++theorem exists_abs_uexp_sub_le [Nonempty σ] (f g : σ → ℝ) :
++    ∃ a, |uexp f - uexp g| ≤ |f a - g a| := by
++  obtain ⟨a, -, ha⟩ := Finset.exists_max_image Finset.univ (fun a => |f a - g a|)
++    Finset.univ_nonempty
++  refine ⟨a, ?_⟩
++  have hc : (0 : ℝ) < Fintype.card σ := Nat.cast_pos.2 Fintype.card_pos
++  rw [uexp_def, uexp_def, ← sub_div, abs_div, abs_of_pos hc, div_le_iff₀ hc, ← sum_sub_distrib]
++  calc |∑ i, (f i - g i)| ≤ ∑ i, |f i - g i| := abs_sum_le_sum_abs _ _
++    _ ≤ ∑ _i : σ, |f a - g a| := sum_le_sum fun i _ => ha i (mem_univ i)
++    _ = |f a - g a| * Fintype.card σ := by rw [sum_const, card_univ, nsmul_eq_mul, mul_comm]
++
++/-- **Fixing coordinates** (the advice of a non-uniform reduction): for samplers `X`, `Y` on
++`σ × τ` there is `a : σ` with `|acceptProb X D − acceptProb Y D| ≤
++|acceptProb (X (a, ·)) D − acceptProb (Y (a, ·)) D|` (`acceptProb_eq_uexp_sections`,
++`exists_abs_uexp_sub_le`). -/
++theorem exists_abs_sub_le_sections [Nonempty σ] (X Y : σ × τ → γ) (D : γ → ρ → Bool) :
++    ∃ a, |acceptProb X D - acceptProb Y D| ≤
++      |acceptProb (fun t => X (a, t)) D - acceptProb (fun t => Y (a, t)) D| := by
++  rw [acceptProb_eq_uexp_sections X, acceptProb_eq_uexp_sections Y]
++  exact exists_abs_uexp_sub_le _ _
++
++/-- **An event of one coordinate**: over `t : Fin L → Y`, the probability of an event of `t j`
++is the probability of the event (`Equiv.piSplitAt`, `uprob_fst`). -/
++theorem uprob_coord {Y : Type*} [Fintype Y] {L : ℕ} (j : Fin L) (p : Y → Prop) :
++    uprob (fun t : Fin L → Y => p (t j)) = uprob p := by
++  rcases isEmpty_or_nonempty Y with hY | hY
++  · have h1 : Fintype.card (Fin L → Y) = 0 :=
++      Fintype.card_eq_zero_iff.2 ⟨fun t => hY.false (t j)⟩
++    rw [uprob_def, uprob_def, h1, Fintype.card_eq_zero, Nat.cast_zero, div_zero, div_zero]
++  · calc uprob (fun t : Fin L → Y => p (t j))
++        = uprob (fun t => (fun z : Y × ({k // k ≠ j} → Y) => p z.1)
++            (Equiv.funSplitAt j Y t)) := rfl
++      _ = uprob (fun z : Y × ({k // k ≠ j} → Y) => p z.1) :=
++        uprob_comp_equiv (Equiv.funSplitAt j Y) (fun z : Y × ({k // k ≠ j} → Y) => p z.1)
++      _ = uprob p := uprob_fst p
++
++/-- **A negligible function times a polynomial is negligible**: for `p : PolyExpr`,
++`n ↦ p(n) · μ(n)` is negligible.
++
++**Proof sketch.** `p(n) ≤ C (n + 1)^c ≤ C 2^c n^c` for `n ≥ 1` (`PolyExpr.eval_le`), and
++`n ↦ (C 2^c) (n^c μ(n))` is negligible (`Negligible.mul_pow`, `Negligible.const_mul`). -/
++theorem negligible_polyExpr_mul {μ : ℕ → ℝ} (hμ : Negligible μ) (p : PolyExpr) :
++    Negligible fun n => (p.eval n : ℝ) * μ n := by
++  obtain ⟨C, c, hC⟩ := p.eval_le
++  refine ((hμ.mul_pow c).const_mul ((C : ℝ) * 2 ^ c)).mono ⟨1, fun n hn => ?_⟩
++  have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
++  have hp : (p.eval n : ℝ) ≤ C * 2 ^ c * (n : ℝ) ^ c := by
++    have h1 : (p.eval n : ℝ) ≤ C * ((n : ℝ) + 1) ^ c := by exact_mod_cast hC n
++    have h2 : ((n : ℝ) + 1) ^ c ≤ (2 * (n : ℝ)) ^ c :=
++      pow_le_pow_left₀ (by positivity) (by linarith) c
++    rw [mul_pow] at h2
++    nlinarith [show (0 : ℝ) ≤ C from Nat.cast_nonneg C]
++  rw [abs_mul, abs_mul, abs_of_nonneg (Nat.cast_nonneg (p.eval n)),
++    abs_of_nonneg (by positivity : (0 : ℝ) ≤ C * 2 ^ c), abs_mul,
++    abs_of_nonneg (by positivity : (0 : ℝ) ≤ (n : ℝ) ^ c), ← mul_assoc]
++  exact mul_le_mul_of_nonneg_right hp (abs_nonneg _)
++
++end TCSlib.Cryptography.SecureComputation.ComposeProb
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Reductions.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Reductions.lean
+new file mode 100644
+index 000000000..8f1ba3491
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Reductions.lean
+@@ -0,0 +1,106 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Complexity.Randomized.Closure
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Machines with advice-dependent pre- and post-processing and extra coins
++
++Two closure properties of non-uniform PPT machines used by the simulators and reductions of the
++composition theorem [Gol04, §7.3.1, proof of Theorem 7.3.3]: a machine may hand its argument,
++together with an advice string and a block of extra coins, to a polynomial-time pre-processor
++before running another machine (`ComposeSim.exists_pre`: a reduction `D ∘ Ψ`), or post-process
++another machine's output with an advice string and extra coins (`ComposeSim.exists_post`: a
++simulator that runs a simulator and then completes its output). Both combine the closure
++catalogue of `Complexity/Randomized/Closure.lean` (`exists_split`, `exists_withAdvice`,
++`exists_seq`) in one raw function of the layout (`NUPPT.ofPolyTime`).
++
++## Main results
++
++* `ComposeSim.exists_pre`, `ComposeSim.exists_post`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §2.1 (closure of non-uniform PPT machines under composition, Definition 26.8).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.ComposeSim
++
++open Complexity Turing Complexity.NUPPT
++
++/-- **Pre-processing with advice and extra coins**: for an `NUPPT` `D`, a polynomial-time `Ψ`, a
++polynomially bounded advice family `α` and a coin polynomial `p`, there is an `NUPPT` `B` with
++coins `p + D.coins` such that `B(1^n, y; r) = D(1^n, Ψ ⟨⟨1^n, α n⟩, ⟨y, r_{<p(n)}⟩⟩; r_{≥p(n)})`.
++
++**Proof sketch.** Advice `⟨D.advice n, α n⟩`; the raw function reads `1^n`, the argument, the two
++advice halves and the coins from the layout (`inParam`, `inArg`, `inAdvice`, `inCoins`), cuts the
++coins at `p(n)` (`polyTimeComputable_pairTakePoly`, `polyTimeComputable_pairDropPoly`), applies
++`Ψ` and runs `D.output` (`NUPPT.polyTimeComputable_output`); the equation is `runAtL_ofPolyTime`
++with the projection identities. -/
++theorem exists_pre (D : NUPPT) {Ψ : List Bool → List Bool} (hΨ : PolyTimeComputable Ψ)
++    (α : ℕ → List Bool) (a : PolyExpr) (hα : ∀ n, (α n).length ≤ a.eval n) (p : PolyExpr) :
++    ∃ B : NUPPT, B.coins = .add p D.coins ∧ ∀ n y r, B.runAtL n y r =
++      D.runAtL n (Ψ (pairEncode (pairEncode (List.replicate n true) (α n))
++        (pairEncode y (r.take (p.eval n))))) (r.drop (p.eval n)) := by
++  have hcut := polyTimeComputable_inParam.pairEncode polyTimeComputable_inCoins
++  have hpre := hΨ.comp' ((polyTimeComputable_inParam.pairEncode
++      (polyTimeComputable_pairSndD.comp' polyTimeComputable_inAdvice)).pairEncode
++    (polyTimeComputable_inArg.pairEncode ((polyTimeComputable_pairTakePoly p).comp' hcut)))
++  have hF := D.polyTimeComputable_output.comp' (polyTimeComputable_layout polyTimeComputable_inParam
++    hpre (polyTimeComputable_pairFstD.comp' polyTimeComputable_inAdvice)
++    ((polyTimeComputable_pairDropPoly p).comp' hcut))
++  have hadv : ∀ n, (pairEncode (D.advice n) (α n)).length ≤
++      (PolyExpr.add (.add (.mul (.const 2) D.adv) (.const 2)) a).eval n := fun n => by
++    rw [length_pairEncode]
++    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++    have h₁ := D.advice_length n
++    have h₂ := hα n
++    omega
++  refine ⟨ofPolyTime hF (.add p D.coins) _ (fun n => pairEncode (D.advice n) (α n)) hadv,
++    coins_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
++  rw [runAtL_ofPolyTime, runAtL_eq_output_layout]
++  simp only [advInput_eq, ← layout_eq, inParam_layout, inArg_layout, inAdvice_layout,
++    inCoins_layout, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
++
++/-- **Post-processing with advice and extra coins**: for an `NUPPT` `A`, a polynomial-time `Ψ`,
++a polynomially bounded advice family `α` and a coin polynomial `p`, there is an `NUPPT` `B` with
++coins `A.coins + p` such that
++`B(1^n, y; r) = Ψ ⟨⟨1^n, α n⟩, ⟨A(1^n, y; r_{<A.coins(n)}), r_{≥A.coins(n)}⟩⟩`.
++
++**Proof sketch.** Advice `⟨A.advice n, α n⟩`; the raw function cuts the coins at `A.coins(n)`,
++runs `A.output` on the layout with the first advice half and the head of the coins, and applies
++`Ψ` to the parameter, the second advice half, `A`'s output and the tail of the coins
++(`runAtL_ofPolyTime` with the projection identities). -/
++theorem exists_post (A : NUPPT) {Ψ : List Bool → List Bool} (hΨ : PolyTimeComputable Ψ)
++    (α : ℕ → List Bool) (a : PolyExpr) (hα : ∀ n, (α n).length ≤ a.eval n) (p : PolyExpr) :
++    ∃ B : NUPPT, B.coins = .add A.coins p ∧ ∀ n y r, B.runAtL n y r =
++      Ψ (pairEncode (pairEncode (List.replicate n true) (α n))
++        (pairEncode (A.runAtL n y (r.take (A.coinLen n))) (r.drop (A.coinLen n)))) := by
++  have hcut := polyTimeComputable_inParam.pairEncode polyTimeComputable_inCoins
++  have hout := A.polyTimeComputable_output.comp' (polyTimeComputable_layout
++    polyTimeComputable_inParam polyTimeComputable_inArg
++    (polyTimeComputable_pairFstD.comp' polyTimeComputable_inAdvice)
++    ((polyTimeComputable_pairTakePoly A.coins).comp' hcut))
++  have hF := hΨ.comp' ((polyTimeComputable_inParam.pairEncode
++      (polyTimeComputable_pairSndD.comp' polyTimeComputable_inAdvice)).pairEncode
++    (hout.pairEncode ((polyTimeComputable_pairDropPoly A.coins).comp' hcut)))
++  have hadv : ∀ n, (pairEncode (A.advice n) (α n)).length ≤
++      (PolyExpr.add (.add (.mul (.const 2) A.adv) (.const 2)) a).eval n := fun n => by
++    rw [length_pairEncode]
++    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++    have h₁ := A.advice_length n
++    have h₂ := hα n
++    omega
++  refine ⟨ofPolyTime hF (.add A.coins p) _ (fun n => pairEncode (A.advice n) (α n)) hadv,
++    coins_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
++  rw [runAtL_ofPolyTime, runAtL_eq_output_layout, coinLen_eq]
++  simp only [advInput_eq, ← layout_eq, inParam_layout, inArg_layout, inAdvice_layout,
++    inCoins_layout, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
++
++end TCSlib.Cryptography.SecureComputation.ComposeSim
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean
+new file mode 100644
+index 000000000..06d5650aa
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean
+@@ -0,0 +1,598 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.ComposePhases
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Assembly
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The real samples of the composed protocol, run by run
++
++Step 2 of the proof of the composition theorem [Gol04, §7.3.1, proof of Theorem 7.3.3]: the coins
++of an honest execution of `H.compose ρ` on `1^n` are the `main`-tapes `m` and one pair of
++`ρ`-tapes `t j` per call (`composeCoins`), and when every run's outputs are the ideal answers
++(`GoodRuns`), the real sample of either side is the assembled view (`ComposeSim.asmView`) of the
++real views of the runs (`realViewA`, `realViewB`), with the main phase and the other party's output
++those of the hybrid execution on the `main`-tapes (`realA_compose_eq`, `realB_compose_eq`, using
++`hM`).
++
++## Main definitions
++
++* `ComposeSim.splitCoins`: `{0,1}^a × ({0,1}^b)^q ≃ {0,1}^m` for `m = a + q·b`.
++* `HybridProtocol.composeCoins`: the coins of `H.compose ρ` as `main`-tapes and run tapes.
++* `HybridProtocol.inA`, `inB`: the call inputs as strings.
++* `HybridProtocol.realViewA`, `realViewB`: the encoded views of a party in the honest runs.
++* `HybridProtocol.GoodRuns`: every run's outputs are the ideal answers.
++
++## Main results
++
++* `ComposeSim.ofFn_splitCoins`, `HybridProtocol.ofFn_composeCoins_fst`, `_snd`.
++* `HybridProtocol.answersRealA_eq_answersA`, `answersRealB_eq_answersB`: under `GoodRuns` the honest
++  answers are the ideal ones.
++* `HybridProtocol.realA_compose_eq`, `realB_compose_eq`: the real samples under `GoodRuns`.
++
++## References
++
++* [Gol04] O. Goldreich, *Foundations of Cryptography, Volume 2: Basic Applications*, Cambridge
++  University Press, 2004, §7.3.1 (the proof of Theorem 7.3.3).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation
++
++open Complexity Turing TCSlib.Cryptography ComposeMachines ComposeSim Compose
++
++namespace ComposeSim
++
++/-- **A tape and `q` blocks as one string**: `{0,1}^a × ({0,1}^b)^q ≃ {0,1}^m` for
++`m = a + q·b`, the tape followed by the blocks in order (`Fin.appendEquiv`, `FunFamily.blocks`). -/
++def splitCoins {m a q b : ℕ} (h : m = a + q * b) :
++    (Fin a → Bool) × (Fin q → Fin b → Bool) ≃ (Fin m → Bool) :=
++  ((Equiv.refl (Fin a → Bool)).prodCongr (FunFamily.blocks q b).symm).trans
++    ((Fin.appendEquiv a (q * b)).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool)))
++
++/-- The blocks as one string: `⟦(blocks q b).symm t⟧ = ⟦t 0⟧ ++ ⋯ ++ ⟦t (q − 1)⟧`.
++
++**Proof sketch.** `List.ofFn_mul` writes `⟦v⟧` for `v : Fin (q·b) → Bool` as the concatenation
++of `q` blocks of `b` bits, entry `j` of block `i` being `v (i·b + j)`; by
++`FunFamily.blocks_symm_apply` that is `t i j`, since `(i·b + j) / b = i` and
++`(i·b + j) % b = j` for `j < b`. -/
++theorem ofFn_blocks_symm (q b : ℕ) (t : Fin q → Fin b → Bool) :
++    List.ofFn ((FunFamily.blocks q b).symm t) = (List.ofFn fun j => List.ofFn (t j)).flatten := by
++  rw [List.ofFn_mul]
++  congr 1
++  refine List.ofFn_inj.2 (funext fun i => List.ofFn_inj.2 (funext fun j => ?_))
++  rw [FunFamily.blocks_symm_apply]
++  have hj := j.2
++  have hb : 0 < b := by omega
++  congr 1
++  · refine Fin.ext ?_
++    rw [Fin.coe_divNat]
++    show ((i : ℕ) * b + j) / b = i
++    rw [Nat.add_comm, Nat.add_mul_div_right _ _ hb, Nat.div_eq_of_lt hj, Nat.zero_add]
++  · refine Fin.ext ?_
++    rw [Fin.coe_modNat]
++    show ((i : ℕ) * b + j) % b = j
++    rw [Nat.add_comm, Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt hj]
++
++/-- **The split coins as a string**: `⟦splitCoins h (u, t)⟧ = ⟦u⟧ ++ ⟦t 0⟧ ++ ⋯ ++ ⟦t (q − 1)⟧`. -/
++theorem ofFn_splitCoins {m a q b : ℕ} (h : m = a + q * b) (u : Fin a → Bool)
++    (t : Fin q → Fin b → Bool) :
++    List.ofFn (splitCoins h (u, t)) =
++      List.ofFn u ++ (List.ofFn fun j => List.ofFn (t j)).flatten := by
++  rw [splitCoins, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr]
++  show List.ofFn (Fin.append u ((FunFamily.blocks q b).symm t)) = _
++  rw [List.ofFn_fin_append, ofFn_blocks_symm]
++
++/-- The first `a` bits of `splitCoins h (u, t)` are `u`. -/
++theorem take_ofFn_splitCoins {m a q b : ℕ} (h : m = a + q * b) (u : Fin a → Bool)
++    (t : Fin q → Fin b → Bool) : (List.ofFn (splitCoins h (u, t))).take a = List.ofFn u := by
++  rw [ofFn_splitCoins, List.take_left' List.length_ofFn]
++
++/-- Block `j < q` of `splitCoins h (u, t)` is `t j`:
++`runTape a b j ⟦splitCoins h (u, t)⟧ = ⟦t j⟧` (`Compose.runTape_eq`). -/
++theorem runTape_ofFn_splitCoins {m a q b : ℕ} (h : m = a + q * b) (u : Fin a → Bool)
++    (t : Fin q → Fin b → Bool) (j : Fin q) :
++    runTape a b j (List.ofFn (splitCoins h (u, t))) = List.ofFn (t j) := by
++  rw [runTape_eq, ofFn_splitCoins, ← List.drop_drop, List.drop_left' List.length_ofFn]
++  have hblk := coinBlock_flatten (B := b) (List.ofFn fun j => List.ofFn (t j))
++    (fun c hc => by
++      obtain ⟨i, -, rfl⟩ := List.mem_ofFn.1 hc
++      exact List.length_ofFn) j (by rw [List.length_ofFn]; exact j.2)
++  rw [coinBlock_eq] at hblk
++  rw [hblk, List.getElem_ofFn]
++
++/-- **A concatenation over `L·R` indices in `L` blocks of `R`**:
++`(range (L·R)).flatMap f = (range L).flatMap fun j => (range R).flatMap fun p => f (R·j + p)`. -/
++theorem flatMap_range_mul (f : ℕ → List Bool) (R : ℕ) : ∀ L,
++    (List.range (L * R)).flatMap f =
++      (List.range L).flatMap fun j => (List.range R).flatMap fun p => f (R * j + p)
++  | 0 => by rw [Nat.zero_mul, List.range_zero, List.flatMap_nil, List.flatMap_nil]
++  | L + 1 => by
++    rw [Nat.succ_mul, List.range_add, List.flatMap_append, flatMap_range_mul f R L,
++      List.range_succ, List.flatMap_append, List.flatMap_singleton, List.flatMap_map,
++      Nat.mul_comm L R]
++
++end ComposeSim
++
++namespace HybridProtocol
++
++/-! ### Coins of the composed protocol -/
++
++section Coins
++
++variable {G : Functionality} (H : HybridProtocol G) (ρ : Protocol)
++
++/-- Alice's composed coin length at `1^n` is `main.P.coins + calls(n)·ρ.P.coins`. -/
++theorem composeP_coinLen_eq (n : ℕ) :
++    (H.compose ρ).P.coinLen (List.replicate n true).length =
++      H.main.P.coinLen (List.replicate n true).length +
++        H.calls.eval n * ρ.P.coinLen (List.replicate n true).length := by
++  rw [compose_P_coinLen, List.length_replicate]
++
++/-- Bob's composed coin length at `1^n` is `main.V.coins + calls(n)·ρ.V.coins`. -/
++theorem composeV_coinLen_eq (n : ℕ) :
++    (H.compose ρ).V.coinLen (List.replicate n true).length =
++      H.main.V.coinLen (List.replicate n true).length +
++        H.calls.eval n * ρ.V.coinLen (List.replicate n true).length := by
++  rw [compose_V_coinLen, List.length_replicate]
++
++/-- **The coins of `H.compose ρ` at `1^n`** as the `main`-tapes and one pair of `ρ`-tapes per
++call: Alice's tape is her `main`-tape followed by her `ρ`-tapes, Bob's likewise. -/
++def composeCoins (n : ℕ) :
++    H.Coins n × (Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) ≃
++      (H.compose ρ).ExecCoins (H.compose ρ).P (List.replicate n true) :=
++  ((Equiv.refl (H.Coins n)).prodCongr (Equiv.arrowProdEquivProdArrow _ _ _)).trans
++    ((Equiv.prodProdProdComm _ _ _ _).trans
++      ((splitCoins (H.composeP_coinLen_eq ρ n)).prodCongr
++        (splitCoins (H.composeV_coinLen_eq ρ n))))
++
++/-- Alice's composed tape is `splitCoins` of her `main`-tape and her run tapes. -/
++theorem composeCoins_fst (n : ℕ) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) :
++    (H.composeCoins ρ n (m, t)).1 =
++      splitCoins (H.composeP_coinLen_eq ρ n) (m.1, fun j => (t j).1) :=
++  rfl
++
++/-- Bob's composed tape is `splitCoins` of his `main`-tape and his run tapes. -/
++theorem composeCoins_snd (n : ℕ) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) :
++    (H.composeCoins ρ n (m, t)).2 =
++      splitCoins (H.composeV_coinLen_eq ρ n) (m.2, fun j => (t j).2) :=
++  rfl
++
++/-- Alice's composed tape: `⟦(composeCoins (m, t)).1⟧ = ⟦m.1⟧ ++ ⟦(t 0).1⟧ ++ ⋯`. -/
++theorem ofFn_composeCoins_fst (n : ℕ) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) :
++    List.ofFn (H.composeCoins ρ n (m, t)).1 =
++      List.ofFn m.1 ++ (List.ofFn fun j => List.ofFn (t j).1).flatten :=
++  ofFn_splitCoins (H.composeP_coinLen_eq ρ n) m.1 fun j => (t j).1
++
++/-- Bob's composed tape: `⟦(composeCoins (m, t)).2⟧ = ⟦m.2⟧ ++ ⟦(t 0).2⟧ ++ ⋯`. -/
++theorem ofFn_composeCoins_snd (n : ℕ) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) :
++    List.ofFn (H.composeCoins ρ n (m, t)).2 =
++      List.ofFn m.2 ++ (List.ofFn fun j => List.ofFn (t j).2).flatten :=
++  ofFn_splitCoins (H.composeV_coinLen_eq ρ n) m.2 fun j => (t j).2
++
++end Coins
++
++/-! ### The runs of an honest execution -/
++
++section Runs
++
++variable {G : Functionality} (H : HybridProtocol G) (ρ : Protocol)
++
++/-- **Alice's input to call `j`** as a string: `⟦callA(n, zA, rA, j)⟧` for `j < calls(n)`, `[]`
++otherwise. -/
++def inA (n : ℕ) (zA rA : List Bool) (j : ℕ) : List Bool :=
++  if h : j < H.calls.eval n then List.ofFn (H.callA n zA rA ⟨j, h⟩) else []
++
++/-- The defining equation of `inA`: `inA n zA rA j = ⟦callA(n, zA, rA, j)⟧` for `j < calls(n)`,
++`[]` otherwise. -/
++theorem inA_eq (n : ℕ) (zA rA : List Bool) (j : ℕ) :
++    H.inA n zA rA j =
++      if h : j < H.calls.eval n then List.ofFn (H.callA n zA rA ⟨j, h⟩) else [] := rfl
++
++/-- **Bob's input to call `j`** as a string: `⟦callB(n, zB, rB, j)⟧` for `j < calls(n)`, `[]`
++otherwise. -/
++def inB (n : ℕ) (zB rB : List Bool) (j : ℕ) : List Bool :=
++  if h : j < H.calls.eval n then List.ofFn (H.callB n zB rB ⟨j, h⟩) else []
++
++/-- The defining equation of `inB`: `inB n zB rB j = ⟦callB(n, zB, rB, j)⟧` for `j < calls(n)`,
++`[]` otherwise. -/
++theorem inB_eq (n : ℕ) (zB rB : List Bool) (j : ℕ) :
++    H.inB n zB rB j =
++      if h : j < H.calls.eval n then List.ofFn (H.callB n zB rB ⟨j, h⟩) else [] := rfl
++
++/-- The call inputs do not depend on how the parameter is written:
++`N = n → ⟦callA(N, zA, rA, j)⟧ = ⟦callA(n, zA, rA, j)⟧`. -/
++theorem ofFn_callA_congr {N n : ℕ} (hN : N = n) (zA rA : List Bool) (j : ℕ)
++    (h₁ : j < H.calls.eval N) (h₂ : j < H.calls.eval n) :
++    List.ofFn (H.callA N zA rA ⟨j, h₁⟩) = List.ofFn (H.callA n zA rA ⟨j, h₂⟩) := by
++  subst hN
++  rfl
++
++/-- The call inputs do not depend on how the parameter is written:
++`N = n → ⟦callB(N, zB, rB, j)⟧ = ⟦callB(n, zB, rB, j)⟧`. -/
++theorem ofFn_callB_congr {N n : ℕ} (hN : N = n) (zB rB : List Bool) (j : ℕ)
++    (h₁ : j < H.calls.eval N) (h₂ : j < H.calls.eval n) :
++    List.ofFn (H.callB N zB rB ⟨j, h₁⟩) = List.ofFn (H.callB n zB rB ⟨j, h₂⟩) := by
++  subst hN
++  rfl
++
++/-- **The run inputs of `H.compose ρ` at `1^n` are the call inputs**: for `j < calls(n)`,
++`runInputA 1^n zA ⟦(composeCoins (m, t)).1⟧ j = inA n zA ⟦m.1⟧ j`
++(`runInputA_of_lt`, `take_ofFn_splitCoins`). -/
++theorem runInputA_composeCoins (n : ℕ) (zA : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : ℕ) :
++    H.runInputA (List.replicate n true) zA (List.ofFn (H.composeCoins ρ n (m, t)).1) j =
++      H.inA n zA (List.ofFn m.1) j := by
++  have hN : (List.replicate n true).length = n := List.length_replicate
++  rw [inA_eq]
++  by_cases hj : j < H.calls.eval n
++  · have hj' : j < H.calls.eval (List.replicate n true).length := by rw [hN]; exact hj
++    rw [dif_pos hj, H.runInputA_of_lt _ _ _ hj', ← Strategy.coinLen_eq,
++      composeCoins_fst, take_ofFn_splitCoins (H.composeP_coinLen_eq ρ n)]
++    exact H.ofFn_callA_congr hN _ _ j hj' hj
++  · rw [dif_neg hj, H.runInputA_of_ge _ _ _ (by rw [hN]; omega)]
++
++/-- Bob's run inputs at `1^n` are his call inputs (as `runInputA_composeCoins`). -/
++theorem runInputB_composeCoins (n : ℕ) (zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : ℕ) :
++    H.runInputB (List.replicate n true) zB (List.ofFn (H.composeCoins ρ n (m, t)).2) j =
++      H.inB n zB (List.ofFn m.2) j := by
++  have hN : (List.replicate n true).length = n := List.length_replicate
++  rw [inB_eq]
++  by_cases hj : j < H.calls.eval n
++  · have hj' : j < H.calls.eval (List.replicate n true).length := by rw [hN]; exact hj
++    rw [dif_pos hj, H.runInputB_of_lt _ _ _ hj', ← Strategy.coinLen_eq,
++      composeCoins_snd, take_ofFn_splitCoins (H.composeV_coinLen_eq ρ n)]
++    exact H.ofFn_callB_congr hN _ _ j hj' hj
++  · rw [dif_neg hj, H.runInputB_of_ge _ _ _ (by rw [hN]; omega)]
++
++/-- **The honest run `j` at `1^n` is `ρ`'s execution on the call inputs and the run tapes**:
++`runExec 1^n zA zB ⟦c.1⟧ ⟦c.2⟧ j k = exec ρ.P ρ.V vF 1^n (inA j) (inB j) ⟦(t j).1⟧ ⟦(t j).2⟧ k`
++for `c = composeCoins (m, t)` (`runExec_eq`, `runTape_ofFn_splitCoins`). -/
++theorem runExec_composeCoins (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : Fin (H.calls.eval n))
++    (k : ℕ) :
++    H.runExec ρ (List.replicate n true) zA zB (List.ofFn (H.composeCoins ρ n (m, t)).1)
++        (List.ofFn (H.composeCoins ρ n (m, t)).2) j k =
++      exec ρ.P ρ.V ρ.verifierFirst (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
++        (H.inB n zB (List.ofFn m.2) j) (List.ofFn (t j).1) (List.ofFn (t j).2) k := by
++  rw [runExec_eq, runInputA_composeCoins, runInputB_composeCoins, ← Strategy.coinLen_eq,
++    ← Strategy.coinLen_eq, ← Strategy.coinLen_eq, ← Strategy.coinLen_eq, composeCoins_fst,
++    composeCoins_snd,
++    runTape_ofFn_splitCoins (H.composeP_coinLen_eq ρ n) m.1 (fun j => (t j).1) j,
++    runTape_ofFn_splitCoins (H.composeV_coinLen_eq ρ n) m.2 (fun j => (t j).2) j]
++
++/-- The message of `ρ`'s move `p` in the honest run `j` at `1^n` is the move of `ρ`'s execution on
++the call inputs and the run tapes (`runMsg_eq`, as `runExec_composeCoins`). -/
++theorem runMsg_composeCoins (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : Fin (H.calls.eval n))
++    (p : ℕ) :
++    H.runMsg ρ (List.replicate n true) zA zB (List.ofFn (H.composeCoins ρ n (m, t)).1)
++        (List.ofFn (H.composeCoins ρ n (m, t)).2) j p =
++      moveMsg ρ.P ρ.V ρ.verifierFirst (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
++        (H.inB n zB (List.ofFn m.2) j) (List.ofFn (t j).1) (List.ofFn (t j).2) p := by
++  rw [runMsg_eq, runInputA_composeCoins, runInputB_composeCoins, ← Strategy.coinLen_eq,
++    ← Strategy.coinLen_eq, ← Strategy.coinLen_eq, ← Strategy.coinLen_eq, composeCoins_fst,
++    composeCoins_snd,
++    runTape_ofFn_splitCoins (H.composeP_coinLen_eq ρ n) m.1 (fun j => (t j).1) j,
++    runTape_ofFn_splitCoins (H.composeV_coinLen_eq ρ n) m.2 (fun j => (t j).2) j]
++
++/-- **Every run gives the ideal answers**: for every call `j`, Alice's and Bob's `ρ`-outputs in
++the run on the call inputs and the tapes `t j` are `⟦f_A(callA_j, callB_j)⟧` and
++`⟦f_B(callA_j, callB_j)⟧`. -/
++def GoodRuns (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) : Prop :=
++  ∀ j : Fin (H.calls.eval n),
++    ρ.outP (List.replicate n true) (H.inA n zA (List.ofFn m.1) j) (H.inB n zB (List.ofFn m.2) j)
++        (t j) =
++      List.ofFn (G.f n (H.callA n zA (List.ofFn m.1) j) (H.callB n zB (List.ofFn m.2) j)).1 ∧
++    ρ.outV ρ.P (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
++        (H.inB n zB (List.ofFn m.2) j) (t j) =
++      List.ofFn (G.f n (H.callA n zA (List.ofFn m.1) j) (H.callB n zB (List.ofFn m.2) j)).2
++
++/-- The defining property of `GoodRuns` (see `GoodRuns`). -/
++theorem goodRuns_iff (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) :
++    H.GoodRuns ρ n zA zB m t ↔ ∀ j : Fin (H.calls.eval n),
++      ρ.outP (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
++          (H.inB n zB (List.ofFn m.2) j) (t j) =
++        List.ofFn (G.f n (H.callA n zA (List.ofFn m.1) j) (H.callB n zB (List.ofFn m.2) j)).1 ∧
++      ρ.outV ρ.P (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
++          (H.inB n zB (List.ofFn m.2) j) (t j) =
++        List.ofFn (G.f n (H.callA n zA (List.ofFn m.1) j) (H.callB n zB (List.ofFn m.2) j)).2 :=
++  Iff.rfl
++
++/-- **Under `GoodRuns`, Alice's honest answers are the ideal ones**:
++`answersRealA 1^n zA zB ⟦c.1⟧ ⟦c.2⟧ = answersA n zA zB ⟦m.1⟧ ⟦m.2⟧` for `c = composeCoins (m, t)`.
++
++**Proof sketch.** Both are concatenations over the calls `j < L` (`flatten_ofFn_eq_flatMap_range`;
++`1^n` has length `n`). Block `j` of the honest answers is `padFin` of Alice's output of the run
++on the call inputs and the run tapes (`runInputA_composeCoins`, `runExec_composeCoins`), which is
++`ρ.outP` of that run (`Protocol.outP_eq`, `Protocol.transcriptWith_eq`), i.e. `⟦f_A(…)⟧` by
++`GoodRuns`; padding a word of the right length is the identity (`ofFn_padFin`,
++`padTo_of_length`). -/
++theorem answersRealA_eq_answersA (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true))
++    (hg : H.GoodRuns ρ n zA zB m t) :
++    H.answersRealA ρ (List.replicate n true) zA zB (List.ofFn (H.composeCoins ρ n (m, t)).1)
++        (List.ofFn (H.composeCoins ρ n (m, t)).2) =
++      H.answersA n zA zB (List.ofFn m.1) (List.ofFn m.2) := by
++  have hN : (List.replicate n true).length = n := List.length_replicate
++  rw [answersRealA_eq, answersA_eq, flatten_ofFn_eq_flatMap_range (fun j =>
++      List.ofFn (padFin (G.outA.eval (List.replicate n true).length)
++        (ρ.P.next (List.replicate n true)
++          (H.runInputA (List.replicate n true) zA (List.ofFn (H.composeCoins ρ n (m, t)).1) j)
++          (runTape (H.main.P.coins.eval (List.replicate n true).length)
++            (ρ.P.coins.eval (List.replicate n true).length) j
++            (List.ofFn (H.composeCoins ρ n (m, t)).1))
++          (H.runExec ρ (List.replicate n true) zA zB (List.ofFn (H.composeCoins ρ n (m, t)).1)
++            (List.ofFn (H.composeCoins ρ n (m, t)).2) j
++            (ρ.rounds.eval (List.replicate n true).length)).1))),
++    show (List.ofFn fun j : Fin (H.calls.eval n) =>
++        List.ofFn (G.f n (H.callA n zA (List.ofFn m.1) j) (H.callB n zB (List.ofFn m.2) j)).1
++        ).flatten = (List.range (H.calls.eval n)).flatMap fun i => if h : i < H.calls.eval n then
++          List.ofFn (G.f n (H.callA n zA (List.ofFn m.1) ⟨i, h⟩)
++            (H.callB n zB (List.ofFn m.2) ⟨i, h⟩)).1 else [] by
++      rw [← flatten_ofFn_eq_flatMap_range]
++      exact congrArg List.flatten (List.ofFn_inj.2 (funext fun j => by rw [dif_pos j.2])),
++    flatMap_range_congr (by rw [hN])]
++  refine List.flatMap_congr fun j hj => ?_
++  have hjn : j < H.calls.eval n := List.mem_range.1 hj
++  rw [dif_pos hjn, runInputA_composeCoins, ← Strategy.coinLen_eq, ← Strategy.coinLen_eq,
++    composeCoins_fst, runTape_ofFn_splitCoins (H.composeP_coinLen_eq ρ n) m.1 (fun j => (t j).1)
++      ⟨j, hjn⟩, ← composeCoins_fst, runExec_composeCoins H ρ n zA zB m t ⟨j, hjn⟩,
++    ← Protocol.transcriptWith_eq, ← Protocol.outP_eq, (hg ⟨j, hjn⟩).1, ofFn_padFin,
++    padTo_of_length (by rw [List.length_ofFn, hN])]
++
++/-- **Under `GoodRuns`, Bob's honest answers are the ideal ones**:
++`answersRealB 1^n zA zB ⟦c.1⟧ ⟦c.2⟧ = answersB n zA zB ⟦m.1⟧ ⟦m.2⟧` for `c = composeCoins (m, t)`.
++
++**Proof sketch.** As `answersRealA_eq_answersA`: block `j` of Bob's honest answers is `padFin` of
++his output in run `j` on the call inputs and the run tapes (`runInputB_composeCoins`,
++`runExec_composeCoins`), which is `ρ.outV` of that run (`Protocol.outV_eq`), i.e. `⟦f_B(…)⟧` by
++`GoodRuns`; padding a word of the right length is the identity (`ofFn_padFin`,
++`padTo_of_length`). -/
++theorem answersRealB_eq_answersB (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true))
++    (hg : H.GoodRuns ρ n zA zB m t) :
++    H.answersRealB ρ (List.replicate n true) zA zB (List.ofFn (H.composeCoins ρ n (m, t)).1)
++        (List.ofFn (H.composeCoins ρ n (m, t)).2) =
++      H.answersB n zA zB (List.ofFn m.1) (List.ofFn m.2) := by
++  have hN : (List.replicate n true).length = n := List.length_replicate
++  rw [answersRealB_eq, answersB_eq, flatten_ofFn_eq_flatMap_range (fun j =>
++      List.ofFn (padFin (G.outB.eval (List.replicate n true).length)
++        (ρ.V.next (List.replicate n true)
++          (H.runInputB (List.replicate n true) zB (List.ofFn (H.composeCoins ρ n (m, t)).2) j)
++          (runTape (H.main.V.coins.eval (List.replicate n true).length)
++            (ρ.V.coins.eval (List.replicate n true).length) j
++            (List.ofFn (H.composeCoins ρ n (m, t)).2))
++          (H.runExec ρ (List.replicate n true) zA zB (List.ofFn (H.composeCoins ρ n (m, t)).1)
++            (List.ofFn (H.composeCoins ρ n (m, t)).2) j
++            (ρ.rounds.eval (List.replicate n true).length)).2))),
++    show (List.ofFn fun j : Fin (H.calls.eval n) =>
++        List.ofFn (G.f n (H.callA n zA (List.ofFn m.1) j) (H.callB n zB (List.ofFn m.2) j)).2
++        ).flatten = (List.range (H.calls.eval n)).flatMap fun i => if h : i < H.calls.eval n then
++          List.ofFn (G.f n (H.callA n zA (List.ofFn m.1) ⟨i, h⟩)
++            (H.callB n zB (List.ofFn m.2) ⟨i, h⟩)).2 else [] by
++      rw [← flatten_ofFn_eq_flatMap_range]
++      exact congrArg List.flatten (List.ofFn_inj.2 (funext fun j => by rw [dif_pos j.2])),
++    flatMap_range_congr (by rw [hN])]
++  refine List.flatMap_congr fun j hj => ?_
++  have hjn : j < H.calls.eval n := List.mem_range.1 hj
++  rw [dif_pos hjn, runInputB_composeCoins, ← Strategy.coinLen_eq, ← Strategy.coinLen_eq,
++    composeCoins_snd, runTape_ofFn_splitCoins (H.composeV_coinLen_eq ρ n) m.2 (fun j => (t j).2)
++      ⟨j, hjn⟩, ← composeCoins_snd, runExec_composeCoins H ρ n zA zB m t ⟨j, hjn⟩,
++    ← Protocol.transcriptWith_eq (π := ρ) (P' := ρ.P), ← Protocol.outV_eq, (hg ⟨j, hjn⟩).2,
++    ofFn_padFin, padTo_of_length (by rw [List.length_ofFn, hN])]
++
++/-- **Under `GoodRuns`, the main phase is the hybrid execution on the `main`-tapes**:
++`mainExec 1^n zA zB ⟦c.1⟧ ⟦c.2⟧ k = exec main.P main.V vF 1^n (privA n zA zB ⟦m.1⟧ ⟦m.2⟧)
++(privB …) ⟦m.1⟧ ⟦m.2⟧ k` (`mainExec_eq`, the answers, `take_ofFn_splitCoins`). -/
++theorem mainExec_composeCoins (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true))
++    (hg : H.GoodRuns ρ n zA zB m t) (k : ℕ) :
++    H.mainExec ρ (List.replicate n true) zA zB (List.ofFn (H.composeCoins ρ n (m, t)).1)
++        (List.ofFn (H.composeCoins ρ n (m, t)).2) k =
++      exec H.main.P H.main.V H.main.verifierFirst (List.replicate n true)
++        (H.privA n zA zB (List.ofFn m.1) (List.ofFn m.2))
++        (H.privB n zA zB (List.ofFn m.1) (List.ofFn m.2)) (List.ofFn m.1) (List.ofFn m.2) k := by
++  rw [mainExec_eq, H.answersRealA_eq_answersA ρ n zA zB m t hg,
++    H.answersRealB_eq_answersB ρ n zA zB m t hg, privA_eq, privB_eq, ← Strategy.coinLen_eq,
++    ← Strategy.coinLen_eq, composeCoins_fst, composeCoins_snd,
++    take_ofFn_splitCoins (H.composeP_coinLen_eq ρ n),
++    take_ofFn_splitCoins (H.composeV_coinLen_eq ρ n)]
++
++/-- **Alice's encoded views of the honest runs**: for `j < calls(n)`, her view of `ρ` on the call
++inputs `inA j`, `inB j` and the tapes `t j`; `[]` otherwise. -/
++def realViewA (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : ℕ) : List Bool :=
++  if h : j < H.calls.eval n then
++    (ρ.viewP (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
++      (H.inB n zB (List.ofFn m.2) j) (t ⟨j, h⟩)).encode
++  else []
++
++/-- The defining equation of `realViewA` (see `realViewA`). -/
++theorem realViewA_eq (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : ℕ) :
++    H.realViewA ρ n zA zB m t j =
++      if h : j < H.calls.eval n then
++        (ρ.viewP (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
++          (H.inB n zB (List.ofFn m.2) j) (t ⟨j, h⟩)).encode
++      else [] := rfl
++
++/-- **Bob's encoded views of the honest runs** (as `realViewA`, with `ρ.viewV`). -/
++def realViewB (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : ℕ) : List Bool :=
++  if h : j < H.calls.eval n then
++    (ρ.viewV (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
++      (H.inB n zB (List.ofFn m.2) j) (t ⟨j, h⟩)).encode
++  else []
++
++/-- The defining equation of `realViewB` (see `realViewB`). -/
++theorem realViewB_eq (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true)) (j : ℕ) :
++    H.realViewB ρ n zA zB m t j =
++      if h : j < H.calls.eval n then
++        (ρ.viewV (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
++          (H.inB n zB (List.ofFn m.2) j) (t ⟨j, h⟩)).encode
++      else [] := rfl
++
++/-- **The real sample of Alice's side under `GoodRuns`**: with `c = composeCoins (m, t)`,
++`F.realA (H.compose ρ) n x y c` is the assembled view (`ComposeSim.asmView` with `ρ.P`'s coins,
++Bob's moves read, no leading filler) of Alice's real run views, her input, her `main`-tape and
++the hybrid main phase, paired with Bob's output in the hybrid execution on the `main`-tapes.
++
++**Proof sketch.** `compose_viewP` and `compose_outV` (with `hM`) give the view and Bob's output.
++Her tape is her `main`-tape followed by the run tapes (`ofFn_composeCoins_fst`), which are the
++tapes of the run views, of exact length (`padTo_of_length`). Her messages are Bob's run messages
++at the pairs, `L` blocks of `R` (`encodeMsgs_eq_flatMap`, `flatMap_range_mul`, `slotFromB_mul_add`),
++which are the chunks `segW` of the received messages of the run views (`runExec_composeCoins`,
++`exec_eq_map`, `segW_encodeMsgs`), followed by the main phase, the hybrid one under `GoodRuns`
++(`mainExec_composeCoins`). -/
++theorem realA_compose_eq {F : Functionality} (hM : ∀ n, 0 < H.main.rounds.eval n) (n : ℕ)
++    (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true))
++    (hg : H.GoodRuns ρ n (List.ofFn x) (List.ofFn y) m t) :
++    F.realA (H.compose ρ) n x y (H.composeCoins ρ n (m, t)) =
++      pairEncode (asmView H.calls ρ.rounds ρ.P.coins ρ.verifierFirst true 0
++          (List.replicate n true) (List.ofFn x) (List.ofFn m.1)
++          (Strategy.encodeMsgs (H.main.transcript (List.replicate n true)
++            (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
++            (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m).1)
++          (H.realViewA ρ n (List.ofFn x) (List.ofFn y) m t))
++        (H.main.outV H.main.P (List.replicate n true)
++          (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
++          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m) := by
++  have hN : (List.replicate n true).length = n := List.length_replicate
++  have hL : H.calls.eval (List.replicate n true).length = H.calls.eval n := by rw [hN]
++  -- the tape: the `main`-tape followed by the run tapes
++  have htape : List.ofFn (H.composeCoins ρ n (m, t)).1 = List.ofFn m.1 ++
++      (List.range (H.calls.eval (List.replicate n true).length)).flatMap fun j =>
++        padTo (ρ.P.coins.eval (List.replicate n true).length)
++          (pairFstD (pairSndD (H.realViewA ρ n (List.ofFn x) (List.ofFn y) m t j))) := by
++    have hT0 : (List.ofFn fun j => List.ofFn (t j).1).flatten =
++        (List.range (H.calls.eval n)).flatMap fun j =>
++          if h : j < H.calls.eval n then List.ofFn (t ⟨j, h⟩).1 else [] := by
++      rw [← flatten_ofFn_eq_flatMap_range]
++      exact congrArg List.flatten (List.ofFn_inj.2 (funext fun j => by rw [dif_pos j.2]))
++    rw [ofFn_composeCoins_fst, hT0, flatMap_range_congr hL.symm]
++    congr 1
++    refine List.flatMap_congr fun j hj => ?_
++    have hjn : j < H.calls.eval n := by rw [← hL]; exact List.mem_range.1 hj
++    rw [dif_pos hjn, realViewA_eq, dif_pos hjn, Protocol.viewP_eq, View.encode_mk,
++      pairSndD_pairEncode, pairFstD_pairEncode, padTo_of_length (by
++        rw [List.length_ofFn, Strategy.coinLen_eq])]
++  -- Bob's run messages at the pairs: the chunks of the received messages of Alice's run views
++  have hmsgs : Strategy.encodeMsgs ((List.range (H.calls.eval (List.replicate n true).length *
++      ρ.rounds.eval (List.replicate n true).length)).map
++        (H.slotFromB ρ (List.replicate n true) (List.ofFn x) (List.ofFn y)
++          (List.ofFn (H.composeCoins ρ n (m, t)).1) (List.ofFn (H.composeCoins ρ n (m, t)).2))) =
++      (List.range (H.calls.eval (List.replicate n true).length)).flatMap fun j =>
++        segW ρ.verifierFirst true (ρ.rounds.eval (List.replicate n true).length)
++          (pairSndD (pairSndD (H.realViewA ρ n (List.ofFn x) (List.ofFn y) m t j))) := by
++    rw [encodeMsgs_eq_flatMap, List.flatMap_map, flatMap_range_mul]
++    refine List.flatMap_congr fun j hj => ?_
++    have hjn : j < H.calls.eval n := by rw [← hL]; exact List.mem_range.1 hj
++    rw [realViewA_eq, dif_pos hjn, Protocol.viewP_eq, View.encode_mk, pairSndD_pairEncode,
++      pairSndD_pairEncode, Protocol.transcriptWith_eq, exec_eq_map,
++      show (List.range (ρ.rounds.eval (List.replicate n true).length)).filter
++          (moverIsV ρ.verifierFirst) =
++        (List.range (ρ.rounds.eval (List.replicate n true).length)).filter
++          (fun q => moverIsV ρ.verifierFirst q == true) from
++        List.filter_congr fun q _ => (beq_true _).symm, segW_encodeMsgs]
++    refine List.flatMap_congr fun p hp => ?_
++    rw [slotFromB_mul_add H ρ _ _ _ _ _ (List.mem_range.1 hp), beq_true,
++      runMsg_composeCoins H ρ n _ _ m t ⟨j, hjn⟩ p]
++  have hmain := H.mainExec_composeCoins ρ n (List.ofFn x) (List.ofFn y) m t hg
++    (H.main.rounds.eval (List.replicate n true).length)
++  rw [Functionality.realA_eq, compose_viewP, compose_outV H ρ _ _ _ _ (hM _), View.encode_mk,
++    asmView_eq, encodeMsgs_append, hmsgs, hmain, H.answersRealB_eq_answersB ρ n _ _ m t hg, htape,
++    List.replicate_zero, Strategy.encodeMsgs_nil, List.append_nil,
++    Protocol.transcript_eq_transcriptWith, Protocol.transcriptWith_eq, Protocol.outV_eq,
++    Protocol.transcriptWith_eq, privB_eq, ← Strategy.coinLen_eq H.main.V, composeCoins_snd,
++    take_ofFn_splitCoins (H.composeV_coinLen_eq ρ n), ← privB_eq]
++
++/-- **The real sample of Bob's side under `GoodRuns`**: with `c = composeCoins (m, t)`,
++`F.realB (H.compose ρ) n x y c` is the assembled view (`ComposeSim.asmView` with `ρ.V`'s coins,
++Alice's moves read, `lead` leading fillers) of Bob's real run views, his input, his `main`-tape
++and the hybrid main phase, paired with Alice's output in the hybrid execution.
++
++**Proof sketch.** As `realA_compose_eq`, with `compose_viewV`, `compose_outP`, the second
++components, `slotFromA_mul_add` and the leading fillers between the runs and the main phase. -/
++theorem realB_compose_eq {F : Functionality} (hM : ∀ n, 0 < H.main.rounds.eval n) (n : ℕ)
++    (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (m : H.Coins n)
++    (t : Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true))
++    (hg : H.GoodRuns ρ n (List.ofFn x) (List.ofFn y) m t) :
++    F.realB (H.compose ρ) n x y (H.composeCoins ρ n (m, t)) =
++      pairEncode (asmView H.calls ρ.rounds ρ.V.coins ρ.verifierFirst false H.lead
++          (List.replicate n true) (List.ofFn y) (List.ofFn m.2)
++          (Strategy.encodeMsgs (H.main.transcript (List.replicate n true)
++            (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
++            (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m).2)
++          (H.realViewB ρ n (List.ofFn x) (List.ofFn y) m t))
++        (H.main.outP (List.replicate n true)
++          (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
++          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m) := by
++  have hN : (List.replicate n true).length = n := List.length_replicate
++  have hL : H.calls.eval (List.replicate n true).length = H.calls.eval n := by rw [hN]
++  -- the tape: the `main`-tape followed by the run tapes
++  have htape : List.ofFn (H.composeCoins ρ n (m, t)).2 = List.ofFn m.2 ++
++      (List.range (H.calls.eval (List.replicate n true).length)).flatMap fun j =>
++        padTo (ρ.V.coins.eval (List.replicate n true).length)
++          (pairFstD (pairSndD (H.realViewB ρ n (List.ofFn x) (List.ofFn y) m t j))) := by
++    have hT0 : (List.ofFn fun j => List.ofFn (t j).2).flatten =
++        (List.range (H.calls.eval n)).flatMap fun j =>
++          if h : j < H.calls.eval n then List.ofFn (t ⟨j, h⟩).2 else [] := by
++      rw [← flatten_ofFn_eq_flatMap_range]
++      exact congrArg List.flatten (List.ofFn_inj.2 (funext fun j => by rw [dif_pos j.2]))
++    rw [ofFn_composeCoins_snd, hT0, flatMap_range_congr hL.symm]
++    congr 1
++    refine List.flatMap_congr fun j hj => ?_
++    have hjn : j < H.calls.eval n := by rw [← hL]; exact List.mem_range.1 hj
++    rw [dif_pos hjn, realViewB_eq, dif_pos hjn, Protocol.viewV_eq, View.encode_mk,
++      pairSndD_pairEncode, pairFstD_pairEncode, padTo_of_length (by
++        rw [List.length_ofFn, Strategy.coinLen_eq])]
++  -- Alice's run messages at the pairs: the chunks of the received messages of Bob's run views
++  have hmsgs : Strategy.encodeMsgs ((List.range (H.calls.eval (List.replicate n true).length *
++      ρ.rounds.eval (List.replicate n true).length)).map
++        (H.slotFromA ρ (List.replicate n true) (List.ofFn x) (List.ofFn y)
++          (List.ofFn (H.composeCoins ρ n (m, t)).1) (List.ofFn (H.composeCoins ρ n (m, t)).2))) =
++      (List.range (H.calls.eval (List.replicate n true).length)).flatMap fun j =>
++        segW ρ.verifierFirst false (ρ.rounds.eval (List.replicate n true).length)
++          (pairSndD (pairSndD (H.realViewB ρ n (List.ofFn x) (List.ofFn y) m t j))) := by
++    rw [encodeMsgs_eq_flatMap, List.flatMap_map, flatMap_range_mul]
++    refine List.flatMap_congr fun j hj => ?_
++    have hjn : j < H.calls.eval n := by rw [← hL]; exact List.mem_range.1 hj
++    rw [realViewB_eq, dif_pos hjn, Protocol.viewV_eq, View.encode_mk, pairSndD_pairEncode,
++      pairSndD_pairEncode, Protocol.transcriptWith_eq, exec_eq_map,
++      show (List.range (ρ.rounds.eval (List.replicate n true).length)).filter
++          (fun i => !moverIsV ρ.verifierFirst i) =
++        (List.range (ρ.rounds.eval (List.replicate n true).length)).filter
++          (fun q => moverIsV ρ.verifierFirst q == false) from
++        List.filter_congr fun q _ => (beq_false _).symm, segW_encodeMsgs]
++    refine List.flatMap_congr fun p hp => ?_
++    rw [slotFromA_mul_add H ρ _ _ _ _ _ (List.mem_range.1 hp),
++      runMsg_composeCoins H ρ n _ _ m t ⟨j, hjn⟩ p]
++    cases moverIsV ρ.verifierFirst p <;> rfl
++  have hmain := H.mainExec_composeCoins ρ n (List.ofFn x) (List.ofFn y) m t hg
++    (H.main.rounds.eval (List.replicate n true).length)
++  rw [Functionality.realB_eq, compose_viewV, compose_outP H ρ _ _ _ _ (hM _), View.encode_mk,
++    asmView_eq, encodeMsgs_append, encodeMsgs_append, hmsgs, hmain,
++    H.answersRealA_eq_answersA ρ n _ _ m t hg, htape, Protocol.transcript_eq_transcriptWith,
++    Protocol.transcriptWith_eq, Protocol.outP_eq, Protocol.transcriptWith_eq, privA_eq,
++    ← Strategy.coinLen_eq H.main.P, composeCoins_fst,
++    take_ofFn_splitCoins (H.composeP_coinLen_eq ρ n), ← privA_eq]
++
++end Runs
++
++end HybridProtocol
++
++end TCSlib.Cryptography.SecureComputation
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean
+new file mode 100644
+index 000000000..9664982a9
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean
+@@ -0,0 +1,249 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Assembly
++import TCSlib.Cryptography.SecureComputation.ComposeSecurity.Reductions
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The post-processing `Φ` and the simulators of the composed protocol
++
++Steps 1 and 4 of the proof of the composition theorem [Gol04, §7.3.1, proof of Theorem 7.3.3]. A
++party's simulator for `H.compose ρ` runs the hybrid simulator `S^H` and post-processes its output
++`hv`, read as a view of `main` with private input `⟨x, a⟩`, `main`-tape `mt` and messages `me`:
++for each call `j < L(n)` it recomputes the call input `fcall ⟨1^n, ⟨x, ⟨mt, 1^j⟩⟩⟩`, runs `ρ`'s
++simulator `S^ρ` on it and on the `j`-th block of `a`, with the `j`-th block of fresh coins, and
++assembles the view of `H.compose ρ` (`ComposeSim.asmView`). The same post-processing applied to
++the hybrid real sample gives the last hybrid of the proof, and applied before a distinguisher it
++gives the reduction to the hybrid model's security (`exists_dPhi`).
++
++## Main definitions
++
++* `ComposeSim.simV`: one simulated run, `ComposeSim.vlW`: their encoded list.
++* `ComposeSim.phiV`: the post-processing of a view; `ComposeSim.phiD`: of a sample `⟨view, out⟩`.
++
++## Main results
++
++* `ComposeSim.phiV_view`: `phiV` on an encoded view of `main` with input `1^n` is the assembled
++  view of the simulated runs.
++* `ComposeSim.polyTimeComputable_phiV`, `polyTimeComputable_phiD`.
++* `ComposeSim.exists_simulator`, `ComposeSim.exists_dPhi`: the simulator and the reduction as
++  non-uniform PPT machines.
++
++## References
++
++* [Gol04] O. Goldreich, *Foundations of Cryptography, Volume 2: Basic Applications*, Cambridge
++  University Press, 2004, §7.3.1 (the proof of Theorem 7.3.3).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.ComposeSim
++
++open Complexity Turing Complexity.StateLoop TCSlib.Cryptography.EncodingMachines ComposeMachines
++
++variable (Sρ : NUPPT) (fcall : List Bool → List Bool) (calls rounds cρ out : PolyExpr)
++  (vF b : Bool) (lead : ℕ)
++
++/-- **One simulated run**: on `v = ⟨1^j, ⟨⟨u, α⟩, ⟨hv, s⟩⟩⟩` (`u = 1^n`, `α` the advice of
++`S^ρ`, `hv = ⟨⟨x₁, ⟨xin, a⟩⟩, ⟨mt, me⟩⟩` a view, `s` the fresh coins), `S^ρ`'s output on the
++call input `fcall ⟨u, ⟨xin, ⟨mt, 1^j⟩⟩⟩` and the answer block `coinBlock out(n) j a`, with
++advice `α` and coins `coinBlock Sρ.coins(n) j s`. -/
++def simV (v : List Bool) : List Bool :=
++  Sρ.output (NUPPT.layout (pairFstD (pairFstD (pairSndD v)))
++    (pairEncode
++      (fcall (pairEncode (pairFstD (pairFstD (pairSndD v)))
++        (pairEncode (pairFstD (pairSndD (pairFstD (pairFstD (pairSndD (pairSndD v))))))
++          (pairEncode (pairFstD (pairSndD (pairFstD (pairSndD (pairSndD v))))) (pairFstD v)))))
++      (coinBlock (out.eval (pairFstD (pairFstD (pairSndD v))).length) (pairFstD v).length
++        (pairSndD (pairSndD (pairFstD (pairFstD (pairSndD (pairSndD v))))))))
++    (pairSndD (pairFstD (pairSndD v)))
++    (coinBlock (Sρ.coins.eval (pairFstD (pairFstD (pairSndD v))).length) (pairFstD v).length
++      (pairSndD (pairSndD (pairSndD v)))))
++
++/-- `simV` on its word: with `w = ⟨⟨1^n, α⟩, ⟨⟨⟨x₁, ⟨xin, a⟩⟩, ⟨mt, me⟩⟩, s⟩⟩`,
++`simV ⟨1^j, w⟩ = Sρ.output (layout 1^n ⟨fcall ⟨1^n, ⟨xin, ⟨mt, 1^j⟩⟩⟩, coinBlock out(n) j a⟩ α
++(coinBlock Sρ.coins(n) j s))`. -/
++theorem simV_pairEncode (n j : ℕ) (α x₁ xin a mt me s : List Bool) :
++    simV Sρ fcall out (pairEncode (List.replicate j true)
++        (pairEncode (pairEncode (List.replicate n true) α)
++          (pairEncode (pairEncode (pairEncode x₁ (pairEncode xin a)) (pairEncode mt me)) s))) =
++      Sρ.output (NUPPT.layout (List.replicate n true)
++        (pairEncode (fcall (pairEncode (List.replicate n true)
++            (pairEncode xin (pairEncode mt (List.replicate j true)))))
++          (coinBlock (out.eval n) j a)) α (coinBlock (Sρ.coins.eval n) j s)) := by
++  simp only [simV, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
++
++/-- **The encoded list of the simulated runs** on `w = ⟨⟨1^n, α⟩, ⟨hv, s⟩⟩`:
++`vlW w = (range calls(n)).flatMap fun j => ⟨simV ⟨1^j, w⟩, []⟩`. -/
++def vlW (w : List Bool) : List Bool :=
++  (List.range (calls.eval (pairFstD (pairFstD w)).length)).flatMap fun j =>
++    pairEncode (simV Sρ fcall out (pairEncode (List.replicate j true) w)) []
++
++/-- The defining equation of `vlW` (see `vlW`). -/
++theorem vlW_eq (w : List Bool) :
++    vlW Sρ fcall calls out w =
++      (List.range (calls.eval (pairFstD (pairFstD w)).length)).flatMap fun j =>
++        pairEncode (simV Sρ fcall out (pairEncode (List.replicate j true) w)) [] := rfl
++
++/-- **The post-processing of a view** (`Φ` on views): on `w = ⟨⟨1^n, α⟩, ⟨hv, s⟩⟩` with
++`hv = ⟨⟨x₁, ⟨xin, a⟩⟩, ⟨mt, me⟩⟩`, the assembled view (`asmW`) of `x₁`, `xin`, `mt`, `me` and the
++simulated runs (`vlW`). -/
++def phiV (w : List Bool) : List Bool :=
++  asmW calls rounds cρ vF b lead
++    (pairEncode (pairEncode (pairEncode (pairFstD (pairFstD (pairFstD (pairSndD w))))
++        (pairFstD (pairSndD (pairFstD (pairFstD (pairSndD w))))))
++      (pairEncode (pairFstD (pairSndD (pairFstD (pairSndD w))))
++        (pairSndD (pairSndD (pairFstD (pairSndD w))))))
++      (vlW Sρ fcall calls out w))
++
++/-- The defining equation of `phiV` (see `phiV`). -/
++theorem phiV_eq (w : List Bool) :
++    phiV Sρ fcall calls rounds cρ out vF b lead w =
++      asmW calls rounds cρ vF b lead
++        (pairEncode (pairEncode (pairEncode (pairFstD (pairFstD (pairFstD (pairSndD w))))
++            (pairFstD (pairSndD (pairFstD (pairFstD (pairSndD w))))))
++          (pairEncode (pairFstD (pairSndD (pairFstD (pairSndD w))))
++            (pairSndD (pairSndD (pairFstD (pairSndD w))))))
++          (vlW Sρ fcall calls out w)) := rfl
++
++/-- **`phiV` on a view of `main` with common input `1^n`**: on
++`⟨⟨1^n, α⟩, ⟨⟨⟨1^n, ⟨xin, a⟩⟩, ⟨mt, me⟩⟩, s⟩⟩` it is
++`asmView … 1^n xin mt me V` with `V j = S^ρ`'s output on the call input and the answer block
++`j`, with the coin block `j` (`asmW_pairEncode`, `asmView_congr`, `msgAt_encodeMsgs`). -/
++theorem phiV_view (n : ℕ) (α xin a mt me s : List Bool) :
++    phiV Sρ fcall calls rounds cρ out vF b lead
++        (pairEncode (pairEncode (List.replicate n true) α)
++          (pairEncode (pairEncode (pairEncode (List.replicate n true) (pairEncode xin a))
++            (pairEncode mt me)) s)) =
++      asmView calls rounds cρ vF b lead (List.replicate n true) xin mt me fun j =>
++        Sρ.output (NUPPT.layout (List.replicate n true)
++          (pairEncode (fcall (pairEncode (List.replicate n true)
++              (pairEncode xin (pairEncode mt (List.replicate j true)))))
++            (coinBlock (out.eval n) j a)) α (coinBlock (Sρ.coins.eval n) j s)) := by
++  rw [phiV_eq, vlW_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode]
++  rw [asmW_pairEncode]
++  refine asmView_congr _ _ _ _ _ _ _ _ _ _ fun j hj => ?_
++  rw [List.length_replicate] at hj ⊢
++  rw [← List.flatMap_map (fun j => simV Sρ fcall out (pairEncode (List.replicate j true)
++      (pairEncode (pairEncode (List.replicate n true) α)
++        (pairEncode (pairEncode (pairEncode (List.replicate n true) (pairEncode xin a))
++          (pairEncode mt me)) s)))) (fun m => pairEncode m []),
++    ← encodeMsgs_eq_flatMap, msgAt_encodeMsgs, Compose.getD_map_range hj, simV_pairEncode]
++
++/-- **The post-processing of a sample** (`Φ` on samples `⟨view, out⟩`): on
++`w = ⟨⟨u, α⟩, ⟨⟨hv, o⟩, s⟩⟩`, `phiD w = ⟨phiV ⟨⟨u, α⟩, ⟨hv, s⟩⟩, o⟩`. -/
++def phiD (w : List Bool) : List Bool :=
++  pairEncode (phiV Sρ fcall calls rounds cρ out vF b lead
++      (pairEncode (pairFstD w) (pairEncode (pairFstD (pairFstD (pairSndD w)))
++        (pairSndD (pairSndD w)))))
++    (pairSndD (pairFstD (pairSndD w)))
++
++/-- `phiD` on its word: `phiD ⟨⟨u, α⟩, ⟨⟨hv, o⟩, s⟩⟩ = ⟨phiV ⟨⟨u, α⟩, ⟨hv, s⟩⟩, o⟩`. -/
++theorem phiD_pairEncode (u α hv o s : List Bool) :
++    phiD Sρ fcall calls rounds cρ out vF b lead
++        (pairEncode (pairEncode u α) (pairEncode (pairEncode hv o) s)) =
++      pairEncode (phiV Sρ fcall calls rounds cρ out vF b lead
++        (pairEncode (pairEncode u α) (pairEncode hv s))) o := by
++  simp only [phiD, pairFstD_pairEncode, pairSndD_pairEncode]
++
++variable {fcall}
++
++/-- **`simV` is polynomial-time** when `fcall` is: `PolyTimeComputable (simV Sρ fcall out)`.
++
++**Proof sketch.** The components `1^n`, `α`, `xin`, `a`, `mt`, `s` of the word are projections;
++the call input is `fcall` on a pairing of them; the answer block and the coin block are
++`coinSlice`s (`GI.coinSlice_poly`); and `S^ρ`'s output on the assembled layout is polynomial-time
++(`NUPPT.polyTimeComputable_output`, `NUPPT.polyTimeComputable_layout`). -/
++theorem polyTimeComputable_simV (hcall : PolyTimeComputable fcall) :
++    PolyTimeComputable (simV Sρ fcall out) := by
++  have hw := polyTimeComputable_pairSndD
++  have hu : PolyTimeComputable fun v => pairFstD (pairFstD (pairSndD v)) :=
++    polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairFstD.comp' hw)
++  have hhv : PolyTimeComputable fun v => pairFstD (pairSndD (pairSndD v)) :=
++    polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp' hw)
++  have hz : PolyTimeComputable fun v => pairSndD (pairFstD (pairFstD (pairSndD (pairSndD v)))) :=
++    polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairFstD.comp'
++      (polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp' hw)))
++  have hxin := polyTimeComputable_pairFstD.comp' hz
++  have ha := polyTimeComputable_pairSndD.comp' hz
++  have hmt : PolyTimeComputable fun v => pairFstD (pairSndD (pairFstD (pairSndD (pairSndD v)))) :=
++    polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp' hhv)
++  have hs : PolyTimeComputable fun v => pairSndD (pairSndD (pairSndD v)) :=
++    polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairSndD.comp' hw)
++  have hα : PolyTimeComputable fun v => pairSndD (pairFstD (pairSndD v)) :=
++    polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairFstD.comp' hw)
++  have hin := hcall.comp' (hu.pairEncode (hxin.pairEncode (hmt.pairEncode
++    polyTimeComputable_pairFstD)))
++  exact (Sρ.polyTimeComputable_output.comp' (NUPPT.polyTimeComputable_layout hu
++    (hin.pairEncode (GI.coinSlice_poly out hu polyTimeComputable_pairFstD ha)) hα
++    (GI.coinSlice_poly Sρ.coins hu polyTimeComputable_pairFstD hs))).congr fun v => rfl
++
++/-- **`vlW` is polynomial-time** (`ComposeMachines.polyTimeComputable_flatMap_range` of
++`polyTimeComputable_simV` over the unary count `calls(n)`). -/
++theorem polyTimeComputable_vlW (hcall : PolyTimeComputable fcall) :
++    PolyTimeComputable (vlW Sρ fcall calls out) := by
++  have hchunk : PolyTimeComputable fun v =>
++      pairEncode (simV Sρ fcall out (pairEncode (List.replicate (pairFstD v).length true)
++        (pairSndD v))) [] :=
++    ((polyTimeComputable_simV Sρ out hcall).comp' ((unaryLength_poly
++      polyTimeComputable_pairFstD).pairEncode polyTimeComputable_pairSndD)).pairEncode
++      (polyTimeComputable_const [])
++  exact (polyTimeComputable_flatMap_range (E := fun w j =>
++      pairEncode (simV Sρ fcall out (pairEncode (List.replicate j true) w)) []) hchunk
++    (unaryPolyOf_poly calls (unaryLength_poly (polyTimeComputable_pairFstD.comp'
++      polyTimeComputable_pairFstD)))).congr fun w => (vlW_eq Sρ fcall calls out w).symm
++
++/-- **`phiV` is polynomial-time** (`polyTimeComputable_asmW` after projections and `vlW`). -/
++theorem polyTimeComputable_phiV (hcall : PolyTimeComputable fcall) :
++    PolyTimeComputable (phiV Sρ fcall calls rounds cρ out vF b lead) := by
++  have hhv : PolyTimeComputable fun w => pairFstD (pairSndD w) :=
++    polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD
++  have hv1 := polyTimeComputable_pairFstD.comp' hhv
++  have hv2 := polyTimeComputable_pairSndD.comp' hhv
++  exact ((polyTimeComputable_asmW calls rounds cρ vF b lead).comp'
++    ((((polyTimeComputable_pairFstD.comp' hv1).pairEncode (polyTimeComputable_pairFstD.comp'
++      (polyTimeComputable_pairSndD.comp' hv1))).pairEncode
++      ((polyTimeComputable_pairFstD.comp' hv2).pairEncode
++        (polyTimeComputable_pairSndD.comp' hv2))).pairEncode
++      (polyTimeComputable_vlW Sρ calls out hcall))).congr fun w => rfl
++
++/-- **`phiD` is polynomial-time** (`polyTimeComputable_phiV` after re-pairing). -/
++theorem polyTimeComputable_phiD (hcall : PolyTimeComputable fcall) :
++    PolyTimeComputable (phiD Sρ fcall calls rounds cρ out vF b lead) := by
++  have hsmp : PolyTimeComputable fun w => pairFstD (pairSndD w) :=
++    polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD
++  exact (((polyTimeComputable_phiV Sρ calls rounds cρ out vF b lead hcall).comp'
++    (polyTimeComputable_pairFstD.pairEncode ((polyTimeComputable_pairFstD.comp' hsmp).pairEncode
++      (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD)))).pairEncode
++    (polyTimeComputable_pairSndD.comp' hsmp)).congr fun w => rfl
++
++/-- **The simulator of the composed protocol** (step 1): for a hybrid simulator `SH`, there is a
++non-uniform PPT `S` with coins `SH.coins + calls · Sρ.coins` such that
++`S(1^n, y; r) = phiV ⟨⟨1^n, Sρ.advice n⟩, ⟨SH(1^n, y; r_{<SH.coins(n)}), r_{≥SH.coins(n)}⟩⟩`
++(`exists_post`). -/
++theorem exists_simulator (SH : NUPPT) (hcall : PolyTimeComputable fcall) :
++    ∃ S : NUPPT, S.coins = .add SH.coins (.mul calls Sρ.coins) ∧ ∀ n y r, S.runAtL n y r =
++      phiV Sρ fcall calls rounds cρ out vF b lead
++        (pairEncode (pairEncode (List.replicate n true) (Sρ.advice n))
++          (pairEncode (SH.runAtL n y (r.take (SH.coinLen n))) (r.drop (SH.coinLen n)))) :=
++  exists_post SH (polyTimeComputable_phiV Sρ calls rounds cρ out vF b lead hcall) Sρ.advice Sρ.adv
++    Sρ.advice_length (.mul calls Sρ.coins)
++
++/-- **The reduction to the hybrid model** (step 4): for a distinguisher `D`, there is a non-uniform
++PPT `DΦ` with coins `calls · Sρ.coins + D.coins` such that
++`DΦ(1^n, w; r) = D(1^n, phiD ⟨⟨1^n, Sρ.advice n⟩, ⟨w, r_{<p(n)}⟩⟩; r_{≥p(n)})`,
++`p = calls · Sρ.coins` (`exists_pre`). -/
++theorem exists_dPhi (D : NUPPT) (hcall : PolyTimeComputable fcall) :
++    ∃ DΦ : NUPPT, DΦ.coins = .add (.mul calls Sρ.coins) D.coins ∧ ∀ n y r, DΦ.runAtL n y r =
++      D.runAtL n (phiD Sρ fcall calls rounds cρ out vF b lead
++        (pairEncode (pairEncode (List.replicate n true) (Sρ.advice n))
++          (pairEncode y (r.take ((PolyExpr.mul calls Sρ.coins).eval n)))))
++        (r.drop ((PolyExpr.mul calls Sρ.coins).eval n)) :=
++  exists_pre D (polyTimeComputable_phiD Sρ calls rounds cρ out vF b lead hcall) Sρ.advice Sρ.adv
++    Sρ.advice_length (.mul calls Sρ.coins)
++
++end TCSlib.Cryptography.SecureComputation.ComposeSim
+-- 
+2.43.0
+

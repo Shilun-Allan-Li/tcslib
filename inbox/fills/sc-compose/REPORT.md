@@ -1,182 +1,194 @@
-# Fill `sc-compose` · checkpoint 1 · `composeP_efficient`, `composeV_efficient`
+# Fill `sc-compose` · checkpoint 2 · `hbcSecure_compose`, sketch steps 1–2
 
 **Worker** Claude. **Unit** `sc-compose` ([Gol04, §7.3.1, Theorem 7.3.3], the semi-honest composition
 theorem). **Issue base** `107f1e8c218733eac12d6b9bee6fece441271317` (`cryptography/pass-shelat-ch2-4`), read from the
-exchange at `2b9270ad095e993b020cb5e447d5a0043496802a` (`outbox/fills/sc-compose/`; pack 7/7 and SOURCE 152/152 verified:
-`evidence/logs/inputs-check.log`). **Proof branch** `fill/sc-compose` (local), four commits over the base at this
-checkpoint:
+exchange at `2b9270ad095e993b020cb5e447d5a0043496802a` (pack 7/7 and SOURCE 152/152 verified:
+`evidence/logs/inputs-check.log`). **Proof branch** `fill/sc-compose` (local), eight commits over the base:
 
 | commit | content |
 |---|---|
-| `a3cb219da2a068f36661608e5019086c313bc021` | the two helper modules and the two proofs |
-| `2809a11828ec6eba37f8827c479231974a838676` | proof-sketch paragraphs for three polynomial-time lemmas (docstrings only) |
-| `ed810c8415aba34e7dbb996be0da1e6786adfddf` | replace my duplicates of the layout helpers by the published `GI.ilayout`, `GI.efficient_of_polyTime`, `GI.argX/argZ/argM` (found by the overlap search), wrap lines |
-| `32f837d9edcd5ae1991f6bef39a5ad69e1af77f5` | `padTo_poly` through the published `GI.zeros_poly` (drop my duplicate) |
+| `a3cb219da2a068f36661608e5019086c313bc021` … `32f837d9edcd5ae1991f6bef39a5ad69e1af77f5` | checkpoint 1 (four commits, delivered at exchange `419c4ceb9`) |
+| `2d99291eb5a7ccec799c7fe41e00ca03fcef159e` | eight helper modules: the simulators, the output clause, the statistical switch |
+| `5b90f0dac8283702801915460ff1eae51bd036df` | reuse the published `acceptProb_fst`, `uprob_fst`, `uexp_mono`, `uexp_const`, `pushesUniform_eval` (my restatements removed; found by the overlap search) |
+| `687f64a9166c4659e5fd49e128f4fbd2780e3be7` | the `## Contents` line of `Probability.lean` |
+| `392a95ecb62936dc09a91e11037a20840e64ef5a` | `_eq` readers of `appendCoins`, `blocksCoins`, `splitCoins` (lint check 8) |
 
 ## Status of the targets
 
 | target | status |
 |---|---|
-| `composeP_efficient` | **proved** (axioms `propext`, `Classical.choice`, `Quot.sound`) |
-| `composeV_efficient` | **proved** (same axioms) |
-| `hbcSecure_compose` | open at this checkpoint (`sorry`, statement unchanged); checkpoint 2 and final |
+| `composeP_efficient` | **proved** (checkpoint 1; `propext`, `Classical.choice`, `Quot.sound`) |
+| `composeV_efficient` | **proved** (checkpoint 1; same axioms) |
+| `hbcSecure_compose` | open at this checkpoint (`sorry`, statement unchanged): steps 1–2 delivered here as helper lemmas; steps 3–5 and the assembly come with the final delivery |
 
-`polyTime_compose` (proved at the base from the three) now depends only on the standard axioms. No statement
-was changed; no ℓ-output PRF is built or needed.
+No statement was changed; no ℓ-output PRF is built or needed.
 
 ## Changed files
 
 | file | base | now | change |
 |---|---|---|---|
-| `SecureComputation/ComposeSecurity.lean` (owned) | 382 | 410 | imports the two helpers; proofs of the two targets; their `**Proof sketch.**` paragraphs rewritten to describe the delivered proofs (statement prose unchanged); module docstring: polynomial-time paragraph, new `## Contents`, `## Main results` status |
-| `SecureComputation/ComposeSecurity/Machines.lean` (new) | — | 257 | polynomial-time machines on encoded histories |
-| `SecureComputation/ComposeSecurity/Efficiency.lean` (new) | — | 575 | the composed parties as polynomial-time functions of the machine layout |
+| `SecureComputation/ComposeSecurity.lean` (owned) | 382 | 429 | imports the eight new helpers; `## Contents` lists them. Title, sketches and statement prose unchanged at this checkpoint (the title keeps "(statement phase)" until `hbcSecure_compose` is proved) |
+| `ComposeSecurity/Probability.lean` (new) | — | 123 | the statistical switch, fixing coordinates, negligible times polynomial |
+| `ComposeSecurity/Reductions.lean` (new) | — | 106 | machines with advice-dependent pre-/post-processing and extra coins |
+| `ComposeSecurity/Assembly.lean` (new) | — | 284 | the assembled view of the composed protocol from run views (`asmView`, word form `asmW`) |
+| `ComposeSecurity/Runs.lean` (new) | — | 604 | the coins run by run (`composeCoins`), `GoodRuns`, the real samples under `GoodRuns` |
+| `ComposeSecurity/Bounds.lean` (new) | — | 96 | lengths of encodings, transcripts, machine outputs |
+| `ComposeSecurity/Sim.lean` (new) | — | 249 | the post-processing `Φ` (`phiV`, `phiD`), the simulator and the reduction to the hybrid model |
+| `ComposeSecurity/Accept.lean` (new) | — | 192 | coin splittings, acceptance with pre-/post-processing, test machines |
+| `ComposeSecurity/Correct.lean` (new) | — | 204 | the output clause: correctness of a secure protocol, the union bound over the runs |
 
-The module title keeps "(statement phase)" until `hbcSecure_compose` is proved (final). The docstring of
-`polyTime_compose` still says "`sorry`s under their sketches" about the two efficiency theorems; it is another
-declaration's statement prose, which the brief freezes, so I left it and flag it for the landing edit.
+## Steps 1–2 of the proof
 
-## The proof
+1. **The simulator** (`ComposeSim.exists_simulator`, `Sim.lean`). `phiV` reads the hybrid simulator's output as a
+   view `⟨⟨1^n, ⟨x, a⟩⟩, ⟨r_main, me⟩⟩` of `main`, recomputes the call inputs `fcall ⟨1^n, ⟨x, ⟨r_main, 1^j⟩⟩⟩` for
+   `j < calls(n)` (the `callA`/`callB` clause of `H.PolyTime`), runs `S^ρ` on each with the `j`-th
+   `G.outA(n)`-bit block of `a` and the `j`-th coin block (`simV`, `vlW`), and assembles the view of `H.compose ρ`
+   (`asmView`: the `main`-tape followed by the run tapes cut or padded to `ρ`'s coin length, the run messages at
+   the pairs where the other party moves with fillers, the leading fillers, the main phase). `phiV` is
+   polynomial-time (`polyTimeComputable_phiV`), and `exists_post` (`Reductions.lean`) packages
+   `S^H` followed by `phiV` as a non-uniform PPT with coins `S^H.coins + calls · S^ρ.coins` and advice
+   `⟨S^H.advice, S^ρ.advice⟩`. `phiV_view` evaluates `phiV` on a view of `main` with common input `1^n`.
+   The same `phiD` before a distinguisher is the reduction to the hybrid model (`exists_dPhi`, used at step 4).
+2. **The output clause with worst-case advice** (`ComposeProb.exists_correct`, `Correct.lean`). For each `n` the
+   inputs `w_n` maximizing `Pr_t[ρ.outP ≠ ⟦f_A⟧]` are chosen, and the test machine `exists_test` with advice
+   `⟦f_A(w_n)⟧` (`G.outA(n)` bits) accepts a sample exactly when its second component is the advice
+   (`BinArith.eqW`). On Bob's ideal sample at `w_n` it accepts with probability 1; on the real one with
+   `Pr[outP = ⟦f_A(w_n)⟧]` (`acceptProb_test`). So `Pr_t[outP ≠ ⟦f_A⟧] ≤ 1 − Pr[outP(w_n) = ⟦f_A(w_n)⟧] ≤ ε_A(n)`
+   for all inputs (uniformity: one machine, `ε` before the inputs). Likewise for `outV` through Alice's
+   samples; `ε_c = ε_A + ε_B`.
+3. **The statistical switch** (`ComposeProb.distAdv_le_uprob_of_eq`, `HybridProtocol.uprob_not_goodRuns_le`,
+   `realA_compose_eq`, `realB_compose_eq`). The composed coins are the `main`-tapes and one pair of `ρ`-tapes per
+   call (`composeCoins`, an equivalence). `GoodRuns m t` says every run's outputs on the call inputs and the
+   tapes `t j` are the ideal answers. Under it, the honest answers are the ideal ones (`answersRealA_eq_answersA`,
+   `padFin` read back by `ofFn_padFin`, `padTo_of_length`), the main phase is the hybrid execution on the
+   `main`-tapes (`mainExec_composeCoins`), and Alice's real sample is
+   `⟨asmView … (real run views) …, Bob's output in main⟩` (`realA_compose_eq`, with `compose_viewP`,
+   `compose_outV` and `hM`); Bob's likewise with the leading fillers (`realB_compose_eq`). The tape cut is exact
+   on real views, so `asmView` reproduces the real tape. `¬ GoodRuns` has probability at most
+   `calls(n) · ε_c(n)` (union bound over the calls; each run's event concerns `t j` only:
+   `HardcoreBit.pushesUniform_eval`, `uprob_prod`, `uexp_mono`, `uexp_const`): this is the brief's
+   `2L(n)ε₁(n)` with `ε_c = ε_A + ε_B`.
 
-`Strategy.Efficient S` asks for a uniform machine with `S`'s coins computing `S.next x z r hist` from the layout
-`GI.ilayout x z hist r = ⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, encodeMsgs hist⟩⟩, []⟩, r⟩`. So it suffices to exhibit
-`(H.composeP ρ).next` as a polynomial-time function `composePW` of that layout (`GI.efficient_of_polyTime`).
+Edge cases: `L(n) = 0` (empty concatenations; the union bound is `0`); `ρ.rounds(n) = 0` (empty run chunks:
+`segW` over `range 0`); the fillers (`segW` puts `⟨[], []⟩` at the pairs of the receiving party, `asmView`
+inserts `encodeMsgs [[]]^lead`); the tape cut lengths (exact on real views, `padTo_of_length`); `hM` (used in
+`realA_compose_eq`/`realB_compose_eq` through `compose_outV`/`compose_outP`).
 
-1. **Extraction** (`ComposeMachines.Efficient.exists_polyTime`, new): an efficient strategy's next-message function
-   is a polynomial-time function of the layout (the output function of its uniform machine). Applied to `ρ.P`,
-   `main.P` (from `G.PolyTime ρ`, `H.PolyTime F`); Alice's call-input function is the `callA` clause of
-   `H.PolyTime F`.
-2. **The shared pieces** (`Efficiency.lean`, generic in the strategies, used by both parties):
-   - `runW`: one activation of `ρ`'s party machine in run `j` after `p` pairs, on the call input recomputed from
-     the `main`-tape, the run tape `r[c₀ + j·c, c₀ + (j+1)·c)` and the run's messages read at the interleaved
-     pairs `R·j + q`;
-   - `ansW`: the `L(n)` run outputs, each padded to the answer length, concatenated;
-   - `mainW`: one activation of the `main`-party machine on `⟨z, answers⟩`, the `main`-tape and the messages after
-     the first `d` (`L·R` for Alice, `L·R + lead` for Bob);
-   - `runW_ilayout`, `ansW_ilayout`, `mainW_ilayout`: on a layout they are the strategy activations; and each is
-     polynomial-time (`polyTimeComputable_runW`, `_ansW`, `_mainW`).
-3. **The parties** `composePW`, `composeVW`: the case distinctions of `composeP`/`composeV` on unary tests of the
-   message count (`GI.msgCount`), `L·R`, `k / R`, `k % R` and the mover parity; `composeP_next_eq_composePW`,
-   `composeV_next_eq_composeVW` identify them with the strategies (through `composeP_next`, `runNextA_eq`,
-   `runInputA_of_lt`, `answersFromA_eq`, …), and `polyTimeComputable_composePW`/`VW` give polynomial time.
-4. **The machine toolkit** (`Machines.lean`): concatenation over a data-dependent range
-   (`polyTimeComputable_flatMap_range`), the iterated second projection (`iterSnd_poly`, an instance of the published
-   `GI.iterUnary_poly`), the `i`-th message of an encoded history (`msgAt_encodeMsgs`), the history encoding as a
-   concatenation (`encodeMsgs_append`, `encodeMsgs_eq_flatMap`), and **the interleaved-slot map**
-   `polyTimeComputable_slots` with its equation `encodeMsgs_slotMsgs` (the expected new API of the brief: the
-   encoded `Compose.slotMsgs sel off p hist` is polynomial-time in the encoded history for a polynomial-time
-   selector and unary offset and count), zero padding `padTo` with `ofFn_padFin`.
+## New declarations (checkpoint 2)
 
-Edge cases: `L(n) = 0` and `ρ.rounds(n) = 0` (the run branch needs `k < L·R`, so `R > 0` there and `k / R < L`),
-the leading filler (Alice's `main.vF ∧ k = L·R` branch), Bob's `k − 1` at `k = 0` (then `0 − 1 = 0` as in
-`composeV`), and `padFin` readback (`ofFn_padFin`) are all covered by the case analysis of the equation lemmas,
-which hold for every `x, z, r, hist`.
+- `Probability.lean` (`ComposeProb`): `abs_uprob_sub_le`, `distAdv_le_uprob_of_eq`, `acceptProb_eq_uexp_sections`,
+  `exists_abs_uexp_sub_le`, `exists_abs_sub_le_sections`, `negligible_polyExpr_mul`.
+- `Reductions.lean` (`ComposeSim`): `exists_pre`, `exists_post`.
+- `Assembly.lean` (`ComposeSim`): `moverIsV_beq_iff`, `length_filter_mod_two`, `length_filter_mover`,
+  `getD_filter_map_mover`, `padTo_of_length`, `flatMap_range_congr`, `segW` (+`segW_eq`), `segW_encodeMsgs`,
+  `asmView` (+`asmView_eq`), `asmView_congr`, `asmW` (+`asmW_eq`), `asmW_pairEncode`, `polyTimeComputable_segW`,
+  `polyTimeComputable_asmW`.
+- `Runs.lean`: `ComposeSim.splitCoins` (+`splitCoins_eq`), `ofFn_blocks_symm`, `ofFn_splitCoins`,
+  `take_ofFn_splitCoins`, `runTape_ofFn_splitCoins`, `flatMap_range_mul`; `HybridProtocol.composeP_coinLen_eq`,
+  `composeV_coinLen_eq`, `composeCoins`, `composeCoins_fst`, `_snd`, `ofFn_composeCoins_fst`, `_snd`, `inA`
+  (+`inA_eq`), `inB` (+`inB_eq`), `ofFn_callA_congr`, `ofFn_callB_congr`, `runInputA_composeCoins`,
+  `runInputB_composeCoins`, `runExec_composeCoins`, `runMsg_composeCoins`, `GoodRuns` (+`goodRuns_iff`),
+  `answersRealA_eq_answersA`, `answersRealB_eq_answersB`, `mainExec_composeCoins`, `realViewA` (+`_eq`),
+  `realViewB` (+`_eq`), `realA_compose_eq`, `realB_compose_eq`.
+- `Bounds.lean` (`ComposeBound`): `length_transcriptWith_fst_le`, `_snd_le`, `length_encodeMsgs_le`,
+  `length_layout`, `length_runAt_le`, `Efficient.length_next_le`, `length_ilayout`.
+- `Sim.lean` (`ComposeSim`): `simV` (+`simV_pairEncode`), `vlW` (+`vlW_eq`), `phiV` (+`phiV_eq`), `phiV_view`,
+  `phiD` (+`phiD_pairEncode`), `polyTimeComputable_simV`, `_vlW`, `_phiV`, `_phiD`, `exists_simulator`, `exists_dPhi`.
+- `Accept.lean` (`ComposeProb`): `appendCoins` (+`appendCoins_eq`), `ofFn_appendCoins`, `take_ofFn_appendCoins`,
+  `drop_ofFn_appendCoins`, `blocksCoins` (+`blocksCoins_eq`), `ofFn_blocksCoins`, `coinBlock_blocksCoins`,
+  `acceptProb_pre`, `acceptProb_post_pre`, `acceptProb_test`, `exists_test`.
+- `Correct.lean`: `ComposeProb.exists_correct`; `HybridProtocol.inA_val`, `inB_val`, `uprob_not_goodRuns_le`.
 
-## New declarations (checkpoint 1)
-
-`Machines.lean` (namespace `TCSlib.Cryptography.SecureComputation.ComposeMachines`): `flatMap_range_ite`,
-`polyTimeComputable_flatMap_range`, `iterSnd_poly`, `msgAt_encodeMsgs`, `encodeMsgs_append`, `encodeMsgs_eq_flatMap`,
-`encodeMsgs_slotMsgs`, `polyTimeComputable_slots`, `Efficient.exists_polyTime`, `padTo` (+`padTo_eq`), `padTo_poly`,
-`length_padTo`, `ofFn_padFin`.
-
-`Efficiency.lean`: `ComposeMachines.moverW` (+`moverW_eq`), `polyTimeComputable_moverW`, `runW` (+`runW_eq`),
-`runW_ilayout`, `polyTimeComputable_runW`, `ansW` (+`ansW_eq`), `ansW_ilayout`, `polyTimeComputable_ansW`, `mainW`
-(+`mainW_eq`), `mainW_ilayout`, `polyTimeComputable_mainW`, `flatten_ofFn_eq_flatMap_range`;
-`HybridProtocol.composePW` (+`composePW_eq`), `composeVW` (+`composeVW_eq`), `composeP_next_eq_composePW`,
-`composeV_next_eq_composeVW`, `polyTimeComputable_composePW`, `polyTimeComputable_composeVW`.
-
-Every new public `def` has its `_eq` reader beside it; every new declaration has a docstring with its formula;
-no `@[simp]`.
+Every new public `def` has its `_eq` reader (the defining equation, or the evaluation lemma `simV_pairEncode`,
+`phiD_pairEncode` for the word functions); every new declaration has a docstring with its formula; no `@[simp]`.
 
 ## Overlap and reuse
 
-Searches: `evidence/overlap/dupsearch-base.log` (tool `evidence/tools/dupsearch.sh`, run on a checkout of the
-issue base). Reused rather than restated: `GI.ilayout`/`ilayout_def`, `GI.efficient_of_polyTime`,
-`GI.argX/argZ/argM` with `GI.argX_ilayout`, …, `GI.inCoins_ilayout` (`GraphIsomorphism/Proofs.lean:579,594`,
-`GraphIsomorphism/Efficiency.lean:290–340`), `GI.msgCount`/`msgCount_poly`/`msgCount_encodeMsgs`,
-`GI.iterUnary_poly`, `GI.iterate_pairSndD_encodeMsgs`, `GI.zeros_poly`, `EncodingMachines` unary toolkit
-(`unaryAdd/Mul/Sub_poly`, `divNum_poly`, `modNum_poly`, `ltTest/eqTest_poly`, `truncate_poly`), `Words.pairEncode_nil_append`.
+Searches: `evidence/overlap/dupsearch-base-cp2.log` (tool `evidence/tools/dupsearch.sh`, patterns for every new
+name and statement shape, run on a checkout of the issue base), plus a scan of the published lemma lists of the
+modules in the permitted import closure (`Foundations/Probability`, `Experiments`, `Asymptotic/Sampling`,
+`Adversary`, `HardcoreBit/Basic`, `OneWayFunctions/Basic`, `Pseudorandom/Indistinguishability`). That scan found
+four published equivalents of lemmas I had written; commit `5b90f0dac` removed mine and uses the published ones:
+`acceptProb_fst` (`Pseudorandom/Indistinguishability.lean:73`, was my `acceptProb_seed_fst`), `uprob_fst`
+(`Foundations/Probability.lean:175`, was my alias `uprob_fst_eq`), `HardcoreBit.uexp_mono`/`uexp_const`
+(`HardcoreBit/Basic.lean:83,71`, was my `uexp_le_of_le`), `HardcoreBit.pushesUniform_eval` with
+`PushesUniform.uprob_eq` (`HardcoreBit/Basic.lean:250,184`, was my `uprob_coord`).
+
+Reused rather than restated (besides those): `coinBlock`, `coinBlock_flatten`, `FunFamily.blocks`,
+`FunFamily.blocks_symm_apply`, `ofFn_arrowCongr_finCongr`, `padFin`/`ofFn_padFin` (`Asymptotic/Adversary.lean`),
+`acceptProb_comp_equiv`, `uprob_prod`, `uprob_exists_le`, `uprob_or_le`, `uprob_not`, `BinArith.eqW`,
+`BinArith.length_encWords_le`, `NUPPT.ofPolyTime` and the layout projections (`Closure.lean`),
+`GI.coinSlice_poly`, `GI.ilayout`, `Negligible.mul_pow`/`const_mul`/`add`, `PolyExpr.eval_le`.
 
 | new declaration | nearest relative | relation, and why not reused |
 |---|---|---|
-| `polyTimeComputable_flatMap_range`, `flatMap_range_ite` | `ZeroKnowledge/ThreeColoring/Machines.lean:142,159` (same statements); `Complexity/FormulaKit/Emit.lean:127` (`sorry`); `EncodingMachines.flatMap_range_ite_eq:368` (Bool chunks) | **restated** (same proof). `ThreeColoring/Machines` is outside the imports the brief permits (it brings six modules and the Mathlib root `SimpleGraph.Coloring` outside the issued `order.txt`/`roots.txt`); the FormulaKit one is admitted. Promotion request below. |
-| `iterSnd_poly` | `ThreeColoring/Machines.lean:190` (same statement) | restated, but proved as an instance of the published `GI.iterUnary_poly` (not a copy). |
-| `msgAt_encodeMsgs` | `ThreeColoring/Machines.lean:951` `getD_eq_pairFstD_iterate` | restated (not importable, as above); two-line proof from `GI.iterate_pairSndD_encodeMsgs`. |
-| `encodeMsgs_eq_flatMap`, `encodeMsgs_append` | `ThreeColoring/Machines.lean:912` `encodeMsgs_eq_flatMap` | restated / new (append form); not importable. |
-| `encodeMsgs_slotMsgs`, `polyTimeComputable_slots` | none found (`slotMsgs` is only read by `Compose`/`ComposePhases`, `slotMsgs_runFst/Snd`) | **new API** asked for by the brief. |
-| `Efficient.exists_polyTime` | `Interaction.lean:192` `Efficient.exists_uniform` (coins only); `GI.efficient_of_polyTime` (the converse) | new: the extraction direction (plan §2.11 "missing"). |
-| `padTo`, `padTo_poly`, `length_padTo`, `ofFn_padFin` | `ThreeColoring/Machines.lean:303–327` (same); `Asymptotic/EnsemblesLemmas.lean:192–223` `padL`, `polyTimeComputable_padL`; `GI.padSq` (`n²`) | restated; neither import is permitted by the brief (EnsemblesLemmas is built in `order.txt` but is in the closure of neither the owned file nor the two permitted helper imports). |
-| `moverW`, `polyTimeComputable_moverW` | `moverIsV_def` | new (the parity test as a machine). |
-| `runW`, `ansW`, `mainW`, `composePW`, `composeVW` and their lemmas | `Compose.runNextA/B`, `answersFromA/B`, `composeP/V` (the strategies) | new: their machine forms on the layout. |
-| `flatten_ofFn_eq_flatMap_range` | `Asymptotic/OneWayLemmas.lean:245` `flatMap_range_ite_eq_flatten_ofFn` (with an `if`) | specialization without the `if`; OneWayLemmas is not importable (as EnsemblesLemmas). |
+| `abs_uprob_sub_le`, `distAdv_le_uprob_of_eq` | `FromPRF/HybridLemmas.lean:61` `abs_uexp_sub_le_uprob`; `Asymptotic/Sampling.lean:138,249` `StatClose.abs_uprob_sub_le`, `distAdv_le_of_statClose` | same idea ("agree off `E`") for averages of `[0,1]`-valued functions; `FromPRF*` is named frozen and outside the permitted imports. `StatClose` needs a distance bound for every test; here the bound is the bad event of one seed space. New. |
+| `acceptProb_eq_uexp_sections`, `exists_abs_sub_le_sections`, `exists_abs_uexp_sub_le` | `ZeroKnowledge/CommitmentLemmas.lean:79,92` `exists_abs_uexp_le`, `acceptProb_eq_uexp_fst`; `Pseudorandom/Indistinguishability.lean:91` `acceptProb_bind` | the averaging over a fixed seed factor (Commitment: over a coin factor; mine: over the first seed factor; `exists_abs_uexp_le` is the one-function form). `CommitmentLemmas` is outside the permitted imports. Restated. |
+| `negligible_polyExpr_mul` | `Asymptotic/ReductionSupport.lean:267` `Negligible.polyExpr_mul`; `Asymptotic/EnsemblesLemmas.lean:377` `negligible_polyExpr_mul` | same statement; neither module is in the permitted closure. Restated (promotion request below). |
+| `exists_pre`, `exists_post` | `Complexity/Randomized/Closure.lean:272,358,390,421` `exists_comp`, `exists_withAdvice`, `exists_split`, `exists_seq`; `Asymptotic/ReductionSupport.lean:148,318` `wrap`, `preComp` | the closure catalogue gives the pieces; these combine advice-dependent pre/post-processing with extra coins in one `ofPolyTime` of the layout, as `ReductionSupport.wrap` does (not importable). New. |
+| `splitCoins`, `appendCoins` (+ readers) | `Asymptotic/EnsemblesLemmas.lean:141` `coinsEquiv` (= `appendCoins`); `ZeroKnowledge/Encryption.lean:201` (the same split inline) | not importable; restated. `splitCoins` is `appendCoins` after `blocks` on the second factor (two of my declarations, in two files because `Accept.lean` imports `Runs.lean`). |
+| `ofFn_blocks_symm`, `blocksCoins`, `ofFn_blocksCoins`, `coinBlock_blocksCoins` | `Asymptotic/OneWay.lean:380` `FunFamily.ofFn_blocks_symm` (same statement); `EnsemblesLemmas.lean:433`; `Adversary.lean:277` `FunFamily.ofFn_blocks` (the forward direction, importable); `Authentication/Signatures/Lamport.lean:132` `coinBlock_flatten_ofFn` | `OneWay`, `EnsemblesLemmas`, `Lamport` are outside the permitted closure; the importable `FunFamily.ofFn_blocks` is the other direction. Restated (promotion request). |
+| `flatMap_range_mul` | `ZeroKnowledge/ThreeColoring/Machines.lean:516` (`range (n·3)`) | specialization there; not importable. New general form. |
+| `acceptProb_pre`, `acceptProb_post_pre` | `Pseudorandom/Indistinguishability.lean:91` `acceptProb_bind`; `Encryption/PublicKey/HybridMachine.lean:397` `acceptProb_distinguisherL_coins`; `ReductionSupport.lean:221`, `EnsemblesLemmas.lean:85` `acceptProb_coins_equiv` | the coin relabelling plus `acceptProb_bind`'s reassociation for a machine whose coins split as `p(n) + D.coins`; the relatives are not importable except `acceptProb_bind` (whose distinguisher coins are already a product). New. |
+| `acceptProb_test`, `exists_test` | `Adversary.lean:440` `computes_iff_uprob` | different statement (deterministic output with probability 1). New. |
+| `exists_correct`, `uprob_not_goodRuns_le` | none found (`rg 'outP.*≠|outV.*≠|correct'`) | new. |
+| `length_encodeMsgs_le` | `BinArith.length_encWords_le` (`ClassP/BinaryArith/Words.lean:81`) | proved from it through `encodeMsgs_eq_flatMap` (the history encoding is `encWords`). |
+| `length_runAt_le`, `Efficient.length_next_le` | `NUPPT.output_length_le`, `PolyTimeComputable.output_length_le` | instances on the activation layouts. |
+| `length_transcriptWith_fst_le`, `_snd_le`, `length_layout`, `length_ilayout` | `PPT.lean:217` `length_advInput` | none for these; new. |
+| `padTo_of_length` | `Adversary.lean:216` `ofFn_padFin_of_length` | the same fact for my `padTo` (checkpoint 1). |
+| `moverIsV_beq_iff`, `length_filter_*`, `getD_filter_map_mover`, `segW`, `asmView`, `asmW`, `simV`, `vlW`, `phiV`, `phiD`, `composeCoins`, `GoodRuns`, `realView*`, `inA`, `inB` and their lemmas | `Compose.exec_eq_map`, `compose_viewP`, `compose_outV` (read through) | new (the composition-specific layer). |
 
 ## Scope requests
 
 None.
 
-## Promotion requests
+## Promotion requests (in addition to checkpoint 1's)
 
-- `polyTimeComputable_flatMap_range`, `flatMap_range_ite`, `iterSnd_poly`, `msgAt_encodeMsgs`,
-  `encodeMsgs_eq_flatMap`, `encodeMsgs_append`, `padTo`/`padTo_poly`/`ofFn_padFin`: generic FP and history-encoding
-  facts that now exist in two places (`ThreeColoring/Machines.lean` and here); promote one copy to
-  `ZeroKnowledge/EncodingMachines.lean` (the FP toolkit) and the `encodeMsgs` facts to `ZeroKnowledge/Interaction.lean`
-  beside `encodeMsgs_cons`, then let both consumers import them.
-- `Efficient.exists_polyTime`: to `Interaction.lean` beside `Strategy.efficient_iff`.
-- `polyTimeComputable_slots`, `encodeMsgs_slotMsgs`: to `SecureComputation/Compose.lean` beside `slotMsgs_eq`, or
-  to the history toolkit above.
+- `negligible_polyExpr_mul`: one copy for the library (three now: `ReductionSupport`, `EnsemblesLemmas`, here), in
+  `Foundations/Negligible.lean`.
+- `appendCoins`/`blocksCoins`/`ofFn_blocks_symm`/`coinBlock_blocksCoins`: beside `FunFamily.blocks` in
+  `Asymptotic/Adversary.lean` (and let `EnsemblesLemmas.coinsEquiv` and `OneWay`'s `FunFamily.ofFn_blocks_symm` use
+  them).
+- `distAdv_le_uprob_of_eq`, `exists_abs_sub_le_sections`, `acceptProb_pre`, `acceptProb_test`: to
+  `Foundations/Experiments.lean` / `Asymptotic/Adversary.lean` beside `acceptProb_comp_equiv` and `distinguisherL`.
 
 ## Checks
 
-- **Preflight** (`evidence/logs/preflight.log`): 4 CPUs; no cgroup memory limit, headroom = MemAvailable
-  15.30 GiB; disk 14.20 GiB free on the clone's filesystem (ext4; scratch on the same filesystem). Before it I
-  removed only my own finished, delivered worktrees (`/workspace/prfmac`, `/workspace/plong`; their branches keep
-  their commits).
-- **Packages and cache.** `.lake/packages` is a symlink to this host's populated tree at exactly the manifest's
-  pins (the addendum's alternative; the manifest at `107f1e8c` is byte-identical to that tree's).
-  `evidence/logs/packages-check.log`: "packages: 11 match, 0 mismatch, 4 absent". The 74 Mathlib roots computed
-  from `order.txt` equal `roots.txt`; cache store before the fetch: 2,402 archives (`cache-store.log`, left by my
-  earlier jobs on this host); the narrowed `lake exe cache get` (74 roots) exited 0, "No files to download",
-  2,082 decompressed (`cache-get.log`; disclosed: I ran it under a `timeout 280` wrapper, which did not fire); no
-  zero-size olean (`zero-oleans.log`); probe `import Mathlib.Algebra.BigOperators.Field` passed (`cache-probe.log`).
-- **Bootstrap** (`evidence/logs/bootstrap.tsv`, logs `evidence/logs/bootstrap/`): 152/152 exit 0, 0 error
-  diagnostics (`^\S+\.lean:\d+:\d+: error[:(]`; `evidence/base/bootstrap-errors.txt`); base sorry census 31 in 14
-  modules (`evidence/base/sorry-census-base.txt`, the census of `base-sorries.txt`).
-- **Order.** `evidence/cp1/order-cp1.txt` = `order.txt` with the two helpers inserted before `ComposeSecurity`
-  (`reorder.log`: the helpers' imports `EncodingMachines`, `EfficiencyRep` and their closure move before them).
-- **Sweep** (`evidence/cp1/`): all 154 modules, **154/154 exit 0, 0 error diagnostics** (`sweep-errors.txt`,
-  `sweep.tsv`, logs `sweep/`). History, disclosed in `sweep-run.log`: the host restarted twice during the sweep
-  (uptime reset; the module in progress has `START` without `END` in its first log, and was re-checked on
-  resumption); I stopped it twice myself, at rows 136 and 148 (all before the helpers), to commit the two
-  de-duplication commits; every module after row 148 (the helpers, `ComposeSecurity`, `YaoReal`, the facade) is
-  checked at `32f837d9e`, the others are untouched by every commit.
-- **Sorry census** (`evidence/cp1/sorry-census-cp1.txt`): 29 declarations in 14 modules; the only change from the
-  base census is the removal of `composeP_efficient` and `composeV_efficient`.
-- **Axioms** (`evidence/axioms/axioms-cp1.log`): all 66 stored constants of the owned file and the two helpers use
-  only `propext`, `Classical.choice`, `Quot.sound`, except `hbcSecure_compose` (`sorryAx`, still open).
+- **Order** (`evidence/cp2/order-cp2.txt`, `reorder.log`): `order.txt` with the ten helpers inserted before their
+  consumers (162 modules).
+- **Sweep** (`evidence/cp2/`): **162/162 exit 0, 0 error diagnostics** (`sweep-errors.txt`, counted with
+  `^\S+\.lean:\d+:\d+: error[:(]`; `sweep.tsv`, logs `sweep/`). History in `sweep-run.log`: started at
+  `2d99291eb`; I stopped it after 34 rows (modules no commit touches) for the reuse commits and resumed at
+  `687f64a91`; after it finished, the lint's check 8 asked for the `_eq` readers of `392a95ecb`, so the rows of
+  `Runs` and of the six modules after it were moved to `sweep-superseded.tsv` (their logs to
+  `sweep-superseded/`) and re-checked at `392a95ecb`. Every row's module is identical at `392a95ecb`.
+- **Sorry census** (`evidence/cp2/sorry-census-cp2.txt`): 29 declarations in 14 modules; the only change from the
+  base census is the removal of `composeP_efficient` and `composeV_efficient` (unchanged since checkpoint 1).
+- **Axioms** (`evidence/axioms/axioms-cp2.log`): all 191 stored constants of the owned file and the ten helpers use
+  only `propext`, `Classical.choice`, `Quot.sound`, except `hbcSecure_compose` (`sorryAx`, open);
   `composeP_efficient`, `composeV_efficient`, `polyTime_compose`: `[Classical.choice, Quot.sound, propext]`.
-- **Statement check** (`evidence/headers/headers-cp1.txt`, tool `headers.py`): every base declaration of the owned
-  file is present in order with its header, `omit … in` lines and statement prose byte-identical (11 → 11):
-  **0 differences**; control (`control-cp1.txt`): one character changed in the header of `composeP_efficient` is
-  reported as exactly one difference.
-- **Width and size** (`evidence/checks/widths-cp1.txt`): no line over 100 characters; files ≤ 1000 lines.
-- **Sketches** (`evidence/checks/sketches-cp1.txt`): every proof of 15 lines or more has a `**Proof sketch.**`
-  paragraph; the one flag is the definition `runW` (a 17-line body, not a proof).
-- **Lint** (`evidence/lint/`): base 92 FAIL / 101 WARN (`lint-base.txt`, run on a checkout of the base), checkpoint
-  92 / 101; line-set diff (`lintdiff-cp1.txt`): **no new FAIL, no new WARN, none gone**.
+- **Statement check** (`evidence/headers/headers-cp2.txt`): 11 → 11 base declarations, headers, `omit … in` lines
+  and statement prose byte-identical: **0 differences**; control (`control-cp2.txt`): one altered character →
+  exactly one difference.
+- **Width and size** (`evidence/checks/widths-cp2.txt`): no line over 100 characters; files ≤ 1000 lines.
+- **Sketches** (`evidence/checks/sketches-cp2.txt`): every proof of 15 lines or more has a `**Proof sketch.**`
+  paragraph; the one flag is the definition `runW` (a body, as at checkpoint 1).
+- **Lint** (`evidence/lint/lint-cp2.txt`, `lintdiff-cp2.txt`): 92 FAIL / 101 WARN, line sets equal to the base's:
+  **no new FAIL, no new WARN, none gone**.
 - Seals, controls and the unfold scan come with the final delivery (base and final).
 
 ## Next
 
-Checkpoint 2: the simulators `S_A`, `S_B` (`S^H` followed by `L(n)` runs of `S^ρ` on coin blocks, assembled into a
-view of `H.compose ρ`), the output clause with worst-case inputs as advice, and the statistical switch
-(`2L(n)ε₁(n)`). Already written and compiling locally as working material: the probability tools, the view
-assembly (`asmView` and its polynomial-time word form) and the advice-and-coins closure lemmas.
+Final: steps 3–5 (the hybrid argument over the runs with the worst-case template as advice, the reduction to
+`H.HBCSecure F` through `Φ`, the total `L(n)(ε_c(n) + ε₂(n)) + ε₃(n)`). They are written and compile locally
+(five more helpers), with `hbcSecure_compose` proved from Alice's and Bob's sides on the standard axioms; the
+final delivery brings them with the full evidence.
 
 ## Patches and reproduction
 
-`patches/0001…0004-*.patch` and `patches/COMMITS.tsv`; a scratch clone at the issue base applies the series with
-`git am`, the committer set from `COMMITS.tsv`, and reproduces every hash and the tree
-(`evidence/amcheck/amcheck-cp1.log`).
+`patches/0001…0008-*.patch` and `patches/COMMITS.tsv`; a scratch clone at the issue base applies the series with
+`git am`, the committer of each row set from `COMMITS.tsv`, and reproduces every hash and the tree
+(`evidence/amcheck/amcheck-cp2.log`).
 
 ## Evidence
 

@@ -1,0 +1,7 @@
+2026-11-15T07:23:13Z cp2 sweep: order-cp2.txt (order.txt with the 10 helpers inserted before their consumers), all 162 modules, at commit 2d99291eb (working tree = commit for every swept module; the untracked final-only helpers are not in this order)
+2026-11-15T07:25:25Z stopped by me after 34 rows (all before the helpers): the overlap search found published, importable equivalents of four cp2 lemmas (acceptProb_fst, uexp_mono/uexp_const, pushesUniform_eval, uprob_fst); they are replaced in the next commit, and the sweep resumes there (the module in progress, TuringMachine/Build/ModuleHost, has START without END in its log and no row; it is re-checked on resumption)
+2026-11-15T07:27:28Z resumed at commit 687f64a91 (after 5b90f0dac: the reuse commit, and 687f64a91: the Contents line); rows 1-34 are modules none of the commits touch; every module from row 35 on is checked at 687f64a91
+2026-11-15T07:32:06Z PAUSE 127 / 162
+2026-11-15T07:34:04Z DONE 162 / 162
+2026-11-15T07:36:55Z after DONE: the cp2 lint flagged check 8 (no lemma beside appendCoins, blocksCoins, splitCoins); commit 392a95ecb adds their _eq readers to Accept.lean and Runs.lean. The rows of Runs and of every module after it in the order (7 rows) are moved to sweep-superseded.tsv (logs: sweep-superseded/), and those modules are re-checked at 392a95ecb; the other rows are modules the commit does not touch
+2026-11-15T07:37:12Z DONE 162 / 162
