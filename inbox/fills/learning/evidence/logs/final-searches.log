@@ -1,0 +1,231 @@
+# Searches before writing the helpers' lemmas (ripgrep; TCSlib excluding Randomness/Learning/, and Mathlib), 2026-11-15T01:31:42Z
+
+## rg -n 'foldr pairEncode' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:133:def encodeMsgs (h : List (List Bool)) : List Bool := h.foldr pairEncode []
+TCSlib/Cryptography/Randomness/Learning.lean:86:  (List.ofFn fun j => pairEncode (List.ofFn (S j).1) [(S j).2]).foldr pairEncode []
+TCSlib/Cryptography/Randomness/Learning.lean:92:      (List.ofFn fun j => pairEncode (List.ofFn (S j).1) [(S j).2]).foldr pairEncode [] := rfl
+TCSlib/Cryptography/Randomness/Learning/Law.lean:117:    pairEncode (List.ofFn (S j).1) [(S j).2]).foldr pairEncode []) (List.ofFn x)) r = [true])
+TCSlib/Cryptography/Randomness/Learning/Law.lean:120:decide (A.runAt n ⟨(ofFn j ↦ ⟨⟦(S j).1⟧, [(S j).2]⟩).foldr pairEncode [], ⟦x⟧⟩ r = [true])`. -/
+TCSlib/Cryptography/Randomness/Learning/Law.lean:124:      pairEncode (List.ofFn (S j).1) [(S j).2]).foldr pairEncode []) (List.ofFn x)) r = [true]) :=
+TCSlib/Cryptography/Randomness/Learning/Distinguisher.lean:132:      pairEncode (List.ofFn (ρ j.castSucc)) [firstBit (g (ρ j.castSucc))]).foldr pairEncode [])
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:54:`L.foldr pairEncode [] = L.flatMap (fun a => pairEncode a [])`.
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:59:    L.foldr pairEncode [] = L.flatMap fun a => pairEncode a [] := by
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:231:          [firstBit (g (ρ j.castSucc))]).foldr pairEncode [])
+
+## rg -n 'flatMap.*pairEncode' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:49:def encWords (L : List (List Bool)) : List Bool := L.flatMap (fun w => pairEncode w [])
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:51:/-- The defining equation of `encWords`: `encWords L = L.flatMap (fun w => pairEncode w [])`. -/
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:54:      (L.flatMap (fun w => pairEncode w [])) := rfl
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:212:  rw [flatMap_listLoop (fun x => pairEncode (g (pairEncode q x)) []) _ w
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:312:  rw [flatMap_zipLoop (fun x y => pairEncode (g (pairEncode q (pairEncode x y))) []) _ l₁ l₂
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:504:    Strategy.encodeMsgs l = l.flatMap fun m => pairEncode m [] := by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:515:    Strategy.encodeMsgs (List.ofFn F) = (List.range n).flatMap fun i => pairEncode (F' i) [] := by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:913:    Strategy.encodeMsgs l = l.flatMap (fun m => pairEncode m []) := by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:916:  | cons m h ih => rw [Strategy.encodeMsgs_cons, List.flatMap_cons, ih, pairEncode_eq_append_nil]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:989:    Strategy.encodeMsgs (List.ofFn f) = (List.range n).flatMap (fun i => pairEncode (F i) []) := by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:111:  (List.range (nOf w)).flatMap fun i => pairEncode (comAt Com ℓ w i) []
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:179:  polyTimeComputable_flatMap_range (E := fun w i => pairEncode (comAt Com ℓ w i) [])
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:54:`L.foldr pairEncode [] = L.flatMap (fun a => pairEncode a [])`.
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:59:    L.foldr pairEncode [] = L.flatMap fun a => pairEncode a [] := by
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:63:    rw [List.foldr_cons, ih, List.flatMap_cons, ← GGMRed.pairEncode_append_right,
+
+## rg -n 'iid' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Complexity/Randomized/BiasedCoin.lean:20:measure `Randomized.iidBernoulli`, so that Hoeffding's bound applies to `ρ`-coins, defines
+TCSlib/Complexity/Randomized/BiasedCoin.lean:31:* `Randomized.biasedProb_eq_toReal_iidBernoulli` — `biasedProb` is the product measure.
+TCSlib/Complexity/Randomized/BiasedCoin.lean:149:`ρ`-coins is the `iidBernoulli m ρ` measure of the words in `A`. [AB09, §7.4.3]
+TCSlib/Complexity/Randomized/BiasedCoin.lean:153:theorem biasedProb_eq_toReal_iidBernoulli {p : ℝ≥0} (hp : p ≤ 1) (m : ℕ)
+TCSlib/Complexity/Randomized/BiasedCoin.lean:155:    biasedProb (p : ℝ) m A = (iidBernoulli m p hp {ω | A (List.ofFn ω)}).toReal := by
+TCSlib/Complexity/Randomized/BiasedCoin.lean:159:  have hsing : ∀ ω : Fin m → Bool, iidBernoulli m p hp {ω} =
+TCSlib/Complexity/Randomized/BiasedCoin.lean:161:    rw [← Set.univ_pi_singleton, iidBernoulli, Measure.pi_pi]
+TCSlib/Complexity/Randomized/BiasedCoin.lean:194:  rw [biasedProb_eq_toReal_iidBernoulli hp]
+TCSlib/Complexity/Randomized/BiasedCoin.lean:195:  have h := iid_bernoulli_avg_concentration hp hk hδ
+TCSlib/Complexity/Randomized/ErrorReduction.lean:36:* `Randomized.iidBernoulli` — the joint distribution of `k` independent
+TCSlib/Complexity/Randomized/ErrorReduction.lean:45:* `Randomized.iid_bernoulli_avg_concentration` — [AB09, Thm 7.10 and Cor A.15], in
+TCSlib/Complexity/Randomized/ErrorReduction.lean:48:* `Randomized.iid_bernoulli_avg_concentration_of_le`, `Randomized.exists_sample_count` —
+TCSlib/Complexity/Randomized/ErrorReduction.lean:50:* `Randomized.iidBernoulli_tail_le` — the shared one-sided Hoeffding bound,
+TCSlib/Complexity/Randomized/ErrorReduction.lean:86:noncomputable def iidBernoulli (k : ℕ) (p : ℝ≥0) (hp : p ≤ 1) :
+TCSlib/Complexity/Randomized/ErrorReduction.lean:94:instance isProbabilityMeasure_iidBernoulli (k : ℕ) (p : ℝ≥0) (hp : p ≤ 1) :
+
+## rg -n 'uniform_prod|prod_uniform' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Cryptography/Randomness/Learning/Law.lean:22:  uniform law on the product (`iid_uniform`, `Rejection.uniform_prod`), so its success
+TCSlib/Cryptography/Randomness/Learning/Law.lean:73:product (`iid_uniform`, `Rejection.uniform_prod`); acceptance under a uniform law counts the
+TCSlib/Cryptography/Randomness/Learning/Law.lean:81:  rw [predictSuccess_eq, trialDist_eq, iid_uniform, Rejection.uniform_prod,
+TCSlib/Cryptography/Randomness/Learning/Law.lean:82:    Rejection.uniform_prod, Rejection.uniform_prod, Rejection.uniform_probTrue,
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:134:theorem uniform_prod [Nonempty α] [Nonempty β] :
+TCSlib/Cryptography/Randomness/Extraction/Rejection.lean:242:    rw [hu, map_map, ← uniform_prod, map_prod_snd]
+TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/CoordinateVectorModel.lean:59:* `identDistrib_specialCoordinate_disjointCoordinateVector_uniform_prod`,
+TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/CoordinateVectorModel.lean:451:theorem identDistrib_specialCoordinate_disjointCoordinateVector_uniform_prod :
+TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/CoordinateVectorModel.lean:518:      (identDistrib_specialCoordinate_disjointCoordinateVector_uniform_prod n).comp
+TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/CoordinateVectorModel.lean:657:      (identDistrib_specialCoordinate_disjointCoordinateVector_uniform_prod n).comp
+TCSlib/GraphTheory/KargerMinCutTrace.lean:997:lemma survivingTrace_uniform_product_eq_survival_product
+TCSlib/GraphTheory/KargerMinCutTrace.lean:1009:lemma survivingTrace_uniform_product_eq_initial_cut_survival_product
+TCSlib/GraphTheory/KargerMinCutTrace.lean:1015:  rw [survivingTrace_uniform_product_eq_survival_product T]
+TCSlib/GraphTheory/KargerMinCutTrace.lean:1036:  rw [survivingTrace_uniform_product_eq_initial_cut_survival_product T]
+TCSlib/GraphTheory/KargerMinCutTrace.lean:1045:lemma survivingTrace_edgeChoice_product_eq_uniform_product
+
+## rg -n 'theorem .*blockMap' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Complexity/Randomized/Repetition.lean:490:theorem polyTimeComputable_blockMap (b : PolyExpr) {g : List Bool → List Bool}
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:234:theorem polyTimeComputable_blockMapFun (b : PolyExpr) {g : List Bool → List Bool}
+
+## rg -n 'exists_queryChain' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:249:form in which the next-query machine of `MultiMsg.exists_queryChain_nuppt` produces it). -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:369:  obtain ⟨B₀, hB₀⟩ := MultiMsg.exists_queryChain_nuppt D q fun n => (μ n).1
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:370:  obtain ⟨B₁, hB₁⟩ := MultiMsg.exists_queryChain_nuppt D q fun n => (μ n).2
+TCSlib/Cryptography/Randomness/Learning.lean:125:   its oracle at them (the non-adaptive query chain `MultiMsg.exists_queryChain_nuppt`), labels
+TCSlib/Cryptography/Randomness/Learning/Distinguisher.lean:20:`B` is the query chain of `MultiMsg.exists_queryChain_nuppt` (non-adaptive queries at points
+TCSlib/Cryptography/Randomness/Learning/Distinguisher.lean:90:compares its output with the last label; `B := MultiMsg.exists_queryChain_nuppt C m 0`. Against
+TCSlib/Cryptography/Randomness/Learning/Distinguisher.lean:109:  obtain ⟨B, hB⟩ := MultiMsg.exists_queryChain_nuppt C m (fun _ _ _ => false)
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:18:`MultiMsg.exists_queryChain_nuppt`). It runs the learner on the labelled sample of the first
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:75:`⟨⟨ρ_j, g(ρ_j)⟩, []⟩` (as in `MultiMsg.exists_queryChain_nuppt`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:31:* `MultiMsg.exists_queryChain_nuppt` packages the reduction and proves its agreement with
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:461:theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
+
+## rg -n 'histBlock' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:90:/-- A block has `6n + 6 = histBlockLen(n)` bits. -/
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:92:    (blk p).length = MultiMsg.histBlockLen.eval n := by
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:94:    List.length_nil, MultiMsg.eval_histBlockLen]
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:123:def sampleLen (m : PolyExpr) : PolyExpr := .mul m MultiMsg.histBlockLen
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:127:  rw [sampleLen, PolyExpr.eval_mul, MultiMsg.eval_histBlockLen]
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:133:      MultiMsg.histBlockLen.eval (pairFstD z).length)).flatMap fun i =>
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:135:      (i * MultiMsg.histBlockLen.eval (pairFstD z).length)).take
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:136:        (MultiMsg.histBlockLen.eval (pairFstD z).length))
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:142:          MultiMsg.histBlockLen.eval (pairFstD z).length)).flatMap fun i =>
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:144:          (i * MultiMsg.histBlockLen.eval (pairFstD z).length)).take
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:145:            (MultiMsg.histBlockLen.eval (pairFstD z).length)) := rfl
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:184:    ((polyTimeComputable_blockMap MultiMsg.histBlockLen polyTimeComputable_relabel).comp
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:215:  · rw [MultiMsg.length_flatten_of_length (MultiMsg.histBlockLen.eval n) _ (fun x hx => by
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:217:        exact length_blk _), List.length_ofFn, sampleLen_eval, MultiMsg.eval_histBlockLen]
+TCSlib/Cryptography/Randomness/Learning/Sample.lean:234:  have hb : 0 < MultiMsg.histBlockLen.eval n := by rw [MultiMsg.eval_histBlockLen]; omega
+
+## rg -n 'snocEquiv|initLast' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Complexity/Expanders/Walks.lean:547:prefix) pairs via `Fin.snocEquiv`, split off the last step with
+TCSlib/Complexity/Expanders/Walks.lean:609:        ← Fintype.sum_equiv (Fin.snocEquiv fun _ => Fin n)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:263:private def snocEquivW (k m : ℕ) (W : Type*) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:301:`(Fin (k+1) → Fin m) ≃ (Fin k → Fin m) × Fin m`, `Fin.snocEquiv`; `uprob_comp_equiv`); by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:320:    rw [← uprob_comp_equiv (snocEquivW k m W)]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:322:          ((snocEquivW k m W) y).1 i ∉
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:323:            Bad i (challengesBefore ((snocEquivW k m W) y).1 i) ((snocEquivW k m W) y).2) ≤
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:331:        simpa [snocEquivW, Fin.snoc_castSucc, challengesBefore_snoc_castSucc] using this
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:333:        simpa [snocEquivW, Fin.snoc_last, challengesBefore_snoc_last] using this
+TCSlib/Cryptography/Randomness/Learning/Law.lean:26:  followed by the fresh point (`Fin.snoc`, `snocEquiv`), so for every family `G`,
+TCSlib/Cryptography/Randomness/Learning/Law.lean:34:* `LearnPRF.snocEquiv`: examples and a fresh point as one tuple.
+TCSlib/Cryptography/Randomness/Learning/Law.lean:128:def snocEquiv (K X ρ : Type*) (m : ℕ) :
+TCSlib/Cryptography/Randomness/Learning/Law.lean:139:/-- `snocEquiv K X ρ m ((k, (s, r)), x) = (k, (Fin.snoc s x, r))`. -/
+TCSlib/Cryptography/Randomness/Learning/Law.lean:140:theorem snocEquiv_apply (K X ρ : Type*) (m : ℕ) (w : (K × ((Fin m → X) × ρ)) × X) :
+TCSlib/Cryptography/Randomness/Learning/Law.lean:141:    snocEquiv K X ρ m w = (w.1.1, (Fin.snoc w.1.2.1 w.2, w.1.2.2)) := rfl
+
+## rg -n 'Function\.update.*uprob|uprob.*Function\.update' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:242:      P (Function.update y.2.1 k (plantEP y.1 (y.2.1 k)), y.2.2)) = uprob P := by
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:151:`Bool × ((σ × {0,1}^ℓ) × ρ)` (`uprob_comp_equiv`; `ψ ∘ ψ = id` by `Function.update_idem`,
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:152:`Function.update_self`, `Function.update_eq_self`) and split on `b` with `uprob_bool_prod`:
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:133:    uprob (fun z : α × ((ι → α) × ρ) => P (Function.update z.2.1 i z.1) z.2.2) =
+
+## rg -n 'Involutive.*uprob|uprob_comp_equiv' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:96:  refine ((uprob_comp_equiv (EnsembleLemmas.swapAux κ σ ρ)
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:140:(`uprob_comp_equiv` along the bijection, then `uprob_fst`). -/
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:148:  exact (uprob_comp_equiv e (fun z : Ω' × K => q z.1)).trans (uprob_fst q)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:368:  rw [← uprob_comp_equiv (gniTapes (encInstance G₀ G₁).length), OneWay.uprob_congr hev,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:369:    ← uprob_comp_equiv (Equiv.prodComm (Fin (encInstance G₀ G₁).length →
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:381:    rw [← uprob_comp_equiv ((Equiv.prodPUnit ((Fin (encInstance G₀ G₁).length → Bool) ×
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:420:  rw [← uprob_comp_equiv (giRepCoins P' (encInstance G₀ G₁))]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:147:  rw [OneWay.uprob_congr hev, ← uprob_comp_equiv (vTapeSplit (encInstance G₀ G₁).length)]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:156:    ← uprob_comp_equiv (Equiv.prodComm (Fin (1 * ((encInstance G₀ G₁).length + 1) ^ 2) → Bool) Bool)]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:161:    rw [← uprob_comp_equiv (Equiv.prodComm Bool (Equiv.Perm (Fin n)))]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:291:  rw [← uprob_comp_equiv (giCoinEquiv P' (encInstance G₀ G₁))]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:156:`uprob_comp_equiv` with the coin bijection `adaptiveEquiv`, `uprob_fst` (here `W ≠ ∅` is
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:170:    uprob_comp_equiv (adaptiveEquiv g) (fun z : (Fin m → Bool) × W => z.1 = fun _ => false),
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:266:coins fixing `b` and `w` (`gniShear`, with `uprob_comp_equiv`); then every `H_i = σ'_i(G₀)`
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:277:  have h1 := uprob_comp_equiv (gniShear (m := m) ρ σ₀)
+
+## rg -n 'headD.*ofFn|ofFn.*headD' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:850:    rw [ComLoop.emit_init_of_lt F H hi, hFx, hHx, List.headD_cons, ← ofFn_snoc_eq]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:174:          (List.map (gniGraphs G₀ G₁ (List.ofFn r.2)) (List.range (j + 1)))).headD false =
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:175:        (coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) j (List.ofFn r.2)).headD false)] := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:195:        (List.map (gniGraphs G₀ G₁ (List.ofFn r.2)) (List.range (j + 1)))).headD false =
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:196:      (coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) j (List.ofFn r.2)).headD false := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:331:  (P'.next x y (List.ofFn r₁) (List.ofFn fun k => encGraph (Ks k))).headD false
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:83:        [encGraph (permGraph (cond ((List.ofFn r.2).headD false) G₁ G₀)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:84:          (samplePerm n ((List.ofFn r.2).drop 1)))]).headD false = (List.ofFn r.2).headD false)] := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:139:    (P'.next (encInstance G₀ G₁) y (List.ofFn r₁) [encGraph K]).headD false with hg
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:142:        g (permGraph (cond ((List.ofFn r₂).headD false) G₁ G₀)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:143:          (samplePerm n ((List.ofFn r₂).drop 1))) = (List.ofFn r₂).headD false := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:149:      g (permGraph (cond ((List.ofFn (vTapeSplit _ p)).headD false) G₁ G₀)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:151:            (List.ofFn (vTapeSplit _ p)).headD false ↔
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:154:    rw [ofFn_vTapeSplit, List.headD_cons, List.drop_one, List.tail_cons]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:218:      [decide (encGraph (permGraph (cond ((List.ofFn r.2).headD false) G₁ G₀)
+
+## rg -n 'label_apply' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Cryptography/Randomness/Learning/Random.lean:115:      rw [label_apply, label_apply, hσ, Function.Involutive.coe_toPerm, flipAt_eq,
+TCSlib/Cryptography/Randomness/Learning/Law.lean:153:(`exists_learnDist`, `Fin.snoc_castSucc`, `Fin.snoc_last`, `label_apply`). -/
+TCSlib/Cryptography/Randomness/Learning/Law.lean:166:      label c s = fun j => (s j, c (s j)) := fun c s => funext (label_apply c s)
+TCSlib/LearningTheory/PAC/Defs.lean:135:theorem label_apply (c : X → Bool) {m : ℕ} (s : Fin m → X) (j : Fin m) :
+
+## rg -n 'card_filter.*= 1|filter_eq' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Complexity/Expanders/Walks.lean:584:        rw [Finset.filter_eq_empty_iff]
+TCSlib/Complexity/Expanders/Walks.lean:667:        rw [Finset.filter_eq_empty_iff]
+TCSlib/Cryptography/HardcoreBit/NoFixedBit.lean:72:  rw [uprob_eq_card_filter, filter_eq' univ b]
+TCSlib/Cryptography/HardcoreBit/NoFixedBit.lean:79:  rw [uprob_eq_card_filter, filter_eq' univ i]
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:215:  rw [uprob_eq_card_filter, filter_eq' univ b₀]
+TCSlib/Cryptography/Randomness/Learning/Random.lean:127:  rw [uprob_eq_card_filter, Finset.filter_eq, if_pos (Finset.mem_univ y), Finset.card_singleton,
+TCSlib/BooleanAnalysis/Switching.lean:2001:  have hfilter_eq : (Finset.univ.filter fun ρ : Restriction n =>
+TCSlib/BooleanAnalysis/Switching.lean:2006:  rw [hfilter_eq]
+TCSlib/GraphTheory/KargerMinCut.lean:705:            rw [Multiset.toEnumFinset_filter_eq, Finset.card_product, Finset.card_singleton, one_mul,
+TCSlib/ErrorCorrectingCodes/GilbertVarshamov.lean:104:    have h_filter_eq : ↑(filter (fun x_1 => Matrix.mulVec x_1 x = v) Finset.univ) = (toFinset {G | Matrix.mulVec G x = v}) := by
+TCSlib/ErrorCorrectingCodes/GilbertVarshamov.lean:115:    rw[←h_filter_eq]
+TCSlib/ErrorCorrectingCodes/SingletonBound.lean:110:    have h_filter_eq_S₁ : filter (fun i => c₁ i = c₂ i) S₁ = S₁ := by
+TCSlib/ErrorCorrectingCodes/SingletonBound.lean:132:    rw[h_filter_eq_S₁]
+TCSlib/CommunicationComplexity/DeterministicCC/Hamming.lean:269:    simp only [supportFiber, support, ne_eq, Finset.filter_eq_empty_iff, Finset.mem_univ,
+TCSlib/BooleanAnalysis/Switching/BernoulliRestriction.lean:69:  · norm_num [ Finset.sum_ite, Finset.filter_eq', Finset.filter_ne' ];
+
+## rg -n 'predictSuccess' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Cryptography/Randomness/Learning.lean:59:  probability (`predictSuccess_eq_uprob`, `gameProb`, `exists_learnDist_acceptProb`);
+TCSlib/Cryptography/Randomness/Learning.lean:130:   the prediction game (`LearnPRF.predictSuccess_eq_uprob`), so
+TCSlib/Cryptography/Randomness/Learning.lean:131:   `predictSuccess = acceptProb (F n) D`. The fresh point may equal an example, in both.
+TCSlib/Cryptography/Randomness/Learning.lean:151:  have hreal : ∀ n, predictSuccess (prfConcept F n) (m.eval n) (learnerOf A n (m.eval n)) =
+TCSlib/Cryptography/Randomness/Learning.lean:154:    rw [hB, LearnPRF.predictSuccess_eq_uprob, LearnPRF.gameProb_eq, hL]
+TCSlib/Cryptography/Randomness/Learning/Law.lean:21:* **The prediction game** (`predictSuccess_eq_uprob`): its law is a product of uniform laws, the
+TCSlib/Cryptography/Randomness/Learning/Law.lean:39:* `LearnPRF.predictSuccess_eq_uprob`: the prediction game as a uniform probability.
+TCSlib/Cryptography/Randomness/Learning/Law.lean:69:/-- **The prediction game as a uniform probability:** `predictSuccess C m L` is the uniform
+TCSlib/Cryptography/Randomness/Learning/Law.lean:75:theorem predictSuccess_eq_uprob {X I ρ : Type*} [Fintype X] [Nonempty X] [Fintype I] [Nonempty I]
+TCSlib/Cryptography/Randomness/Learning/Law.lean:77:    predictSuccess C m L =
+TCSlib/Cryptography/Randomness/Learning/Law.lean:81:  rw [predictSuccess_eq, trialDist_eq, iid_uniform, Rejection.uniform_prod,
+TCSlib/LearningTheory/PAC/Prediction.lean:23:(`predictSuccess_eq_one_sub_expectedErr`), with no collision issue between the fresh point and
+TCSlib/LearningTheory/PAC/Prediction.lean:47:* `PAC.predictSuccess C m L`, `PAC.predictAdv C m L`: the success probability of the prediction
+TCSlib/LearningTheory/PAC/Prediction.lean:53:* `PAC.predictSuccess_eq_one_sub_expectedErr`: **the bridge**, success `= 1 − E[err]`.
+TCSlib/LearningTheory/PAC/Prediction.lean:54:* `PAC.expectedErr_le_of_pacLearnsUnder`, `PAC.one_sub_sub_le_predictSuccess`: PAC learning
+
+## rg -n 'acceptProb_random' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM.lean:111:    rw [OracleEnsemble.acceptProb_random_eq]
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:40:* `TCSlib.Cryptography.acceptProb_random_eq_lazy` equates the two descriptions of a
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:111:theorem OracleEnsemble.acceptProb_random_eq {ρ : Type*} [Fintype ρ] (ℓ₁ ℓ₂ : PolyExpr) (n : ℕ)
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:128:theorem acceptProb_random_eq_lazy {ρ : Type*} [Fintype ρ] (ℓ₁ ℓ₂ : PolyExpr) (n : ℕ)
+
+## rg -n 'learnerOf|prfConcept' TCSlib --glob '!**/Randomness/Learning/**' (first 15)
+TCSlib/Cryptography/Randomness/Learning.lean:27:(`prfConcept`).
+TCSlib/Cryptography/Randomness/Learning.lean:30:`⟨labelled sample, x⟩`. Its hypothesis on `x` is whether it outputs `[true]` (`learnerOf`). The
+TCSlib/Cryptography/Randomness/Learning.lean:37:* `Randomness.prfConcept`, `Randomness.encodeSample`, `Randomness.learnerOf`.
+TCSlib/Cryptography/Randomness/Learning.lean:41:* `Randomness.prfConcept_decidable` (Thm 179.1, part (a), proved): membership is
+TCSlib/Cryptography/Randomness/Learning.lean:43:* `Randomness.predictAdv_prfConcept_negligible` (Thm 179.1, part (b), proved): every efficient
+TCSlib/Cryptography/Randomness/Learning.lean:45:* `Randomness.not_weakLearnsUnder_prfConcept` (Thm 179.1, part (c), proved from (b) and the PAC
+TCSlib/Cryptography/Randomness/Learning.lean:77:def prfConcept (n : ℕ) (k x : Fin n → Bool) : Bool := (List.ofFn (F n k x)).headD false
+TCSlib/Cryptography/Randomness/Learning.lean:80:empty output: `prfConcept F n k x = (List.ofFn (F n k x)).headD false`. -/
+TCSlib/Cryptography/Randomness/Learning.lean:81:theorem prfConcept_eq (n : ℕ) (k x : Fin n → Bool) :
+TCSlib/Cryptography/Randomness/Learning.lean:82:    prfConcept F n k x = (List.ofFn (F n k x)).headD false := rfl
+TCSlib/Cryptography/Randomness/Learning.lean:96:def learnerOf (A : NUPPT) (n m : ℕ) :
+TCSlib/Cryptography/Randomness/Learning.lean:102:theorem learnerOf_eq (A : NUPPT) (n m : ℕ) (S : Fin m → (Fin n → Bool) × Bool)
+TCSlib/Cryptography/Randomness/Learning.lean:104:    learnerOf A n m S r x =
+TCSlib/Cryptography/Randomness/Learning.lean:109:theorem prfConcept_decidable (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+TCSlib/Cryptography/Randomness/Learning.lean:113:      ∀ n (k x : Fin n → Bool), f (pairEncode (List.ofFn k) (List.ofFn x)) = [prfConcept F n k x] :=
+
+## rg -n 'theorem snocEquiv|def snocEquiv' Mathlib (first 5)
+.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean:701:def snocEquiv (α : Fin (n + 1) → Type*) : α (last n) × (∀ i, α (castSucc i)) ≃ ∀ i, α i where
+
+## rg -n 'theorem ofFn_succ'' Mathlib (first 5)
+.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:52:theorem ofFn_succ' {n} (f : Fin (succ n) → α) :
+
+## rg -n 'theorem prod_const' Mathlib (first 5)
+.lake/packages/mathlib/Mathlib/SetTheory/Cardinal/Defs.lean:430:theorem prod_const (ι : Type u) (a : Cardinal.{v}) :
+.lake/packages/mathlib/Mathlib/SetTheory/Cardinal/Defs.lean:435:theorem prod_const' (ι : Type u) (a : Cardinal.{u}) : (prod fun _ : ι => a) = a ^ #ι :=
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Fin.lean:146:theorem prod_const (n : ℕ) (x : M) : ∏ _i : Fin n, x = x ^ n := by simp
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Basic.lean:627:theorem prod_const (b : M) : ∏ _x ∈ s, b = b ^ #s :=
+.lake/packages/mathlib/Mathlib/Algebra/BigOperators/Group/Finset/Defs.lean:368:theorem prod_const_one : (∏ _x ∈ s, (1 : M)) = 1 := by
