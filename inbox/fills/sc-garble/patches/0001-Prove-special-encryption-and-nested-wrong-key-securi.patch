@@ -1,0 +1,936 @@
+From 13f745ed00e49924631c89c00dae2bb110eca6e2 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 02:02:11 -0800
+Subject: [PATCH] Prove special encryption and nested wrong-key security
+
+---
+ .../SecureComputation/GarblingSecurity.lean   |  32 ++-
+ .../GarblingSecurity/CoinMarginals.lean       |  58 +++++
+ .../GarblingSecurity/NestedBounds.lean        | 140 +++++++++++
+ .../SpecialEncryptionMulti.lean               |  50 +---
+ .../SpecialEncryptionSecurity.lean            | 209 +++++++++++++++--
+ .../SpecialEncryptionSecurity/Pad.lean        |  56 +++++
+ .../SpecialEncryptionSecurity/WrongKey.lean   | 222 ++++++++++++++++++
+ 7 files changed, 700 insertions(+), 67 deletions(-)
+ create mode 100644 TCSlib/Cryptography/SecureComputation/GarblingSecurity/CoinMarginals.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
+
+diff --git a/TCSlib/Cryptography/SecureComputation/GarblingSecurity.lean b/TCSlib/Cryptography/SecureComputation/GarblingSecurity.lean
+index c7d45299fa6776e60ecdb97e1c5890657a79cf73..6085baf7c5ad6dd7080ea937a23d3d9807609b47 100644
+--- a/TCSlib/Cryptography/SecureComputation/GarblingSecurity.lean
++++ b/TCSlib/Cryptography/SecureComputation/GarblingSecurity.lean
+@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.SecureComputation.GarblingSpecial
+ import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity
++import TCSlib.Cryptography.SecureComputation.GarblingSecurity.CoinMarginals
++import TCSlib.Cryptography.SecureComputation.GarblingSecurity.NestedBounds
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Garbled circuits from PRFs: Claim 159.a (statement phase)
++# Garbled circuits from PRFs: Claim 159.a
+ 
+ [PS10, §6.2.2–6.2.3]: with the nested special encryption of `GarblingSpecial.lean`, built from two
+ pseudorandom function families (`PRFOut`), a random garbling is good with high probability. This
+@@ -24,12 +26,17 @@ wrong-key contracts `MultiEnc.DecCorrect` and `MultiEnc.WrongKeyBot` from `Garbl
+ 
+ ## Main results
+ 
+-* `SecureComputation.nestedSpecial_wrongKeyBot` (Claim 157.a (ii) for the nesting, stated; a
+-  `sorry` under its sketch).
++* `SecureComputation.nestedSpecial_wrongKeyBot` (Claim 157.a (ii) for the nesting): the
++  wrong-key error is negligible.
+ * `SecureComputation.garbling_good_whp` (Claim 159.a, proved from the previous results): a random
+   garbling of a fan-in-two circuit is good except with probability `12 · |gates| · δ(n)`, `δ`
+   negligible.
+ 
++## Contents
++
++* `GarblingSecurity.CoinMarginals`: independent key/nonce marginals and option probabilities.
++* `GarblingSecurity.NestedBounds`: the three concrete nesting cases.
++
+ ## References
+ 
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+@@ -66,7 +73,24 @@ and the other layer's key and coins. -/
+ theorem nestedSpecial_wrongKeyBot (hG₁ : PRFOut (.add .var .var) G₁)
+     (hG₂ : PRFOut (.add .var innerLen) G₂) :
+     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ n, (nestedSpecial E₁ E₂ n).WrongKeyBot (δ n) := by
+-  sorry
++  obtain ⟨ε₁, hε₁, hb₁⟩ := spDecStr_wrongKey .var G₁ E₁ hGE₁ hG₁
++  simp only [PolyExpr.eval_var] at hb₁
++  obtain ⟨ε₂, hε₂, hb₂⟩ := spDecStr_wrongKey innerLen G₂ E₂ hGE₂ hG₂
++  refine ⟨fun n => ε₁ n + ε₂ n, hε₁.add hε₂, fun n => ?_⟩
++  have hs₁ : ∀ m : Fin n → Bool,
++      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++        (spDecStr E₁ n n (List.ofFn t.2.1)
++          (spEncStr E₁ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₁ n :=
++    fun m => (GarblingCoins.uprob_isSome_lt_of_none _ (hb₁ n m)).le
++  have hs₂ : ∀ m : Fin (innerLen.eval n) → Bool,
++      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++        (spDecStr E₂ n (innerLen.eval n) (List.ofFn t.2.1)
++          (spEncStr E₂ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₂ n :=
++    fun m => (GarblingCoins.uprob_isSome_lt_of_none _ (hb₂ n m)).le
++  have hε₁n : 0 ≤ ε₁ n := (uprob_nonneg _).trans (hs₁ (fun _ => false))
++  have hε₂n : 0 ≤ ε₂ n := (uprob_nonneg _).trans (hs₂ (fun _ => false))
++  exact GarblingCoins.nestedSpecial_wrongKeyBot_of_string_bounds G₁ G₂ E₁ E₂
++    hGE₁ hGE₂ n hε₁n hε₂n hs₁ hs₂
+ 
+ include hGE₁ hGE₂ in
+ /-- **Claim 159.a: a random garbling is good with high probability** [PS10, §6.2.3, "all but one
+diff --git a/TCSlib/Cryptography/SecureComputation/GarblingSecurity/CoinMarginals.lean b/TCSlib/Cryptography/SecureComputation/GarblingSecurity/CoinMarginals.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..5a2d114390d8e0c85841cca55a785123a7f38b5f
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/GarblingSecurity/CoinMarginals.lean
+@@ -0,0 +1,58 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.HardcoreBit.Basic
++import TCSlib.Cryptography.OneWayFunctions.Basic
++import Mathlib.Data.Fin.Tuple.Basic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Marginals of the keys and coins of nested encryption
++
++## Main definitions
++
++This module adds no definitions.
++
++## Main results
++
++* `SecureComputation.GarblingCoins.pushesUniform_position_keys_coin`: two distinct key
++  choices at one position and either nonce are an independent uniform triple.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.2.2, Claim 157.a (ii).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.GarblingCoins
++
++open TCSlib.Cryptography
++
++/-- Two distinct choices at one position and either coin form a uniform triple:
++`(ks,(r₀,r₁)) ↦ (ks j b,ks j b',if c then r₁ else r₀)` pushes uniform to uniform,
++for `b ≠ b'`. -/
++theorem pushesUniform_position_keys_coin {K : Type} [Fintype K] [Nonempty K]
++    {len : ℕ} (j : Fin len) {b b' : Bool} (hb : b ≠ b') (c : Bool) :
++    HardcoreBit.PushesUniform (fun t : (Fin len → Bool → K) × (K × K) =>
++      (t.1 j b, t.1 j b', if c then t.2.2 else t.2.1)) := by
++  have hk := (HardcoreBit.pushesUniform_eval j).comp
++    (HardcoreBit.pushesUniform_eval_pair (γ := K) hb)
++  cases c
++  · exact (hk.prodMap HardcoreBit.pushesUniform_fst).comp
++      (HardcoreBit.pushesUniform_equiv (Equiv.prodAssoc K K K))
++  · exact (hk.prodMap HardcoreBit.pushesUniform_snd).comp
++      (HardcoreBit.pushesUniform_equiv (Equiv.prodAssoc K K K))
++
++/-- A failure probability greater than `1-ε` bounds success strictly by `ε`:
++`1-ε < Pr[X = none] → Pr[X.isSome = true] < ε`. -/
++theorem uprob_isSome_lt_of_none {Ω α : Type} [Fintype Ω] [Nonempty Ω]
++    (X : Ω → Option α) {ε : ℝ} (h : 1 - ε < uprob (fun t => X t = none)) :
++    uprob (fun t => (X t).isSome = true) < ε := by
++  rw [OneWay.uprob_congr (fun t : Ω => Option.isSome_iff_ne_none), uprob_not]
++  linarith
++
++end TCSlib.Cryptography.SecureComputation.GarblingCoins
+diff --git a/TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean b/TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..b74ecf102a7dd6323f178e2e6276e4b0a1cb59ae
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean
+@@ -0,0 +1,140 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.GarblingSpecial
++import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity
++import TCSlib.Cryptography.SecureComputation.GarblingSecurity.CoinMarginals
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Concrete wrong-key bounds for nested special encryption
++
++## Main definitions
++
++This module adds no definitions.
++
++## Main results
++
++* `SecureComputation.GarblingCoins.length_nestedInner`: the inner ciphertext has `4n+2` bits.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.2.2, Claim 157.a (ii).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.GarblingCoins
++
++open Complexity Turing TCSlib.Cryptography
++
++/-- A special ciphertext with an `n`-bit nonce, an `n`-bit message, and a `2n`-bit pad has
++`innerLen(n) = 4n+2` bits:
++`|spEncStr E ⟦k⟧ ⟦m⟧ ⟦r⟧| = innerLen.eval n`. -/
++theorem length_nestedInner
++    {G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool)}
++    {E : List Bool → List Bool}
++    (hGE : ∀ n (k r : Fin n → Bool), E (pairEncode (List.ofFn k) (List.ofFn r)) =
++      List.ofFn (G n k r)) (n : ℕ) (k m r : Fin n → Bool) :
++    (spEncStr E (List.ofFn k) (List.ofFn m) (List.ofFn r)).length = innerLen.eval n := by
++  rw [length_spEncStr E (by rw [hGE]; simp), List.length_ofFn, List.length_ofFn,
++    innerLen_eq, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
++    PolyExpr.eval_var, PolyExpr.eval_const]
++  omega
++
++/-- Inner and outer string success bounds `ε₁, ε₂` give
++`(nestedSpecial E₁ E₂ n).WrongKeyBot (ε₁+ε₂)`, provided both errors are nonnegative and
++the evaluators have the specified `2n` and `n+innerLen(n)` output lengths.
++[PS10, §6.2.2, Claim 157.a (ii)]
++
++**Proof sketch.** There are at most two key positions. With one position use the inner
++string bound and its uniform key/nonce marginal. With two positions, if the first key
++differs, condition on the second position's keys and inner nonce, and apply the outer
++bound to the resulting fixed inner ciphertext. If the first key agrees, correctness
++opens the outer layer and the inner key/nonce marginal gives the inner bound. Add the
++nonnegative unused error in each case. The zero-position case has no distinct choices. -/
++theorem nestedSpecial_wrongKeyBot_of_string_bounds
++    (G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool))
++    (G₂ : ∀ n, (Fin n → Bool) → (Fin n → Bool) →
++      (Fin ((PolyExpr.add .var innerLen).eval n) → Bool))
++    (E₁ E₂ : List Bool → List Bool)
++    (hGE₁ : ∀ n (k r : Fin n → Bool), E₁ (pairEncode (List.ofFn k) (List.ofFn r)) =
++      List.ofFn (G₁ n k r))
++    (hGE₂ : ∀ n (k r : Fin n → Bool), E₂ (pairEncode (List.ofFn k) (List.ofFn r)) =
++      List.ofFn (G₂ n k r)) (n : ℕ) {ε₁ ε₂ : ℝ} (hε₁ : 0 ≤ ε₁) (hε₂ : 0 ≤ ε₂)
++    (h₁ : ∀ m : Fin n → Bool,
++      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++        (spDecStr E₁ n n (List.ofFn t.2.1)
++          (spEncStr E₁ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₁)
++    (h₂ : ∀ m : Fin (innerLen.eval n) → Bool,
++      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++        (spDecStr E₂ n (innerLen.eval n) (List.ofFn t.2.1)
++          (spEncStr E₂ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₂) :
++    (nestedSpecial E₁ E₂ n).WrongKeyBot (ε₁ + ε₂) := by
++  rw [MultiEnc.wrongKeyBot_iff]
++  intro len hlen a a' hne o
++  have hcases : len = 0 ∨ len = 1 ∨ len = 2 := by omega
++  rcases hcases with rfl | rfl | rfl
++  · exact (hne (Subsingleton.elim a a')).elim
++  · have hab : a 0 ≠ a' 0 := fun h => hne (funext (Fin.forall_fin_one.mpr h))
++    have hu := (pushesUniform_position_keys_coin (K := Fin n → Bool) (0 : Fin 1)
++      hab false).uprob_eq (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++        (spDecStr E₁ n n (List.ofFn t.2.1)
++          (spEncStr E₁ (List.ofFn t.1) (List.ofFn o) (List.ofFn t.2.2))).isSome = true)
++    refine (uprob_mono (fun t ht => ?_)).trans
++      ((hu.trans_le (h₁ o)).trans (le_add_of_nonneg_right hε₂))
++    simp only [List.ofFn_succ, List.ofFn_zero, Fin.succ_zero_eq_one,
++      nestedSpecial_enc, nestedSpecial_dec] at ht
++    exact Option.isSome_of_isSome_bind ht
++  · by_cases hfirst : a 0 = a' 0
++    · have hsecond : a 1 ≠ a' 1 := fun h =>
++        hne (funext (Fin.forall_fin_two.mpr ⟨hfirst, h⟩))
++      have hu := (pushesUniform_position_keys_coin (K := Fin n → Bool) (1 : Fin 2)
++        hsecond true).uprob_eq (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++          (spDecStr E₁ n n (List.ofFn t.2.1)
++            (spEncStr E₁ (List.ofFn t.1) (List.ofFn o) (List.ofFn t.2.2))).isSome = true)
++      refine (uprob_mono (fun t ht => ?_)).trans
++        ((hu.trans_le (h₁ o)).trans (le_add_of_nonneg_right hε₂))
++      simp only [List.ofFn_succ, List.ofFn_zero, Fin.succ_zero_eq_one,
++      nestedSpecial_enc, nestedSpecial_dec] at ht
++      have hc := length_nestedInner hGE₁ n (t.1 1 (a 1)) o t.2.2
++      have hp : (E₂ (pairEncode (List.ofFn (t.1 0 (a 0))) (List.ofFn t.2.1))).length =
++          n + innerLen.eval n := by
++        rw [hGE₂, List.length_ofFn]
++        rfl
++      rw [← hfirst, spDecStr_spEncStr E₂ List.length_ofFn hc List.length_ofFn hp,
++        Option.bind_some] at ht
++      exact Option.isSome_of_isSome_bind ht
++    · let K := Fin n → Bool
++      let e : ((Fin 2 → Bool → K) × (K × K)) ≃
++          ((Bool → K) × K) × ((Bool → K) × K) :=
++        ((piFinTwoEquiv fun _ : Fin 2 => Bool → K).prodCongr (Equiv.refl (K × K))).trans
++          ((Equiv.prodProdProdComm (Bool → K) (Bool → K) K K).trans
++            (Equiv.prodComm ((Bool → K) × K) ((Bool → K) × K)))
++      rw [← uprob_comp_equiv e.symm, uprob_prod]
++      refine (OneWay.uexp_mono (g := fun _ => ε₂) (fun s => ?_)).trans ?_
++      · let c := spEncStr E₁ (List.ofFn (s.1 (a 1))) (List.ofFn o) (List.ofFn s.2)
++        have hc : c.length = innerLen.eval n := length_nestedInner hGE₁ n _ o _
++        let m := padFin (innerLen.eval n) c
++        have hm : List.ofFn m = c := ofFn_padFin_of_length hc
++        have hlaw : HardcoreBit.PushesUniform
++            (fun t : (Bool → K) × K => (t.1 (a 0), t.1 (a' 0), t.2)) :=
++          ((HardcoreBit.pushesUniform_eval_pair (γ := K) hfirst).prodMap
++            HardcoreBit.pushesUniform_id).comp
++              (HardcoreBit.pushesUniform_equiv (Equiv.prodAssoc K K K))
++        have hu := hlaw.uprob_eq (fun t : K × K × K =>
++          (spDecStr E₂ n (innerLen.eval n) (List.ofFn t.2.1)
++            (spEncStr E₂ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true)
++        have hb := hu.trans_le (h₂ m)
++        rw [hm] at hb
++        refine (uprob_mono (fun t ht => ?_)).trans hb
++        simp only [List.ofFn_succ, List.ofFn_zero, Fin.succ_zero_eq_one,
++      nestedSpecial_enc, nestedSpecial_dec] at ht
++        exact Option.isSome_of_isSome_bind ht
++      · simpa only [OneWay.uexp_const] using
++          (le_add_of_nonneg_left hε₁ : ε₂ ≤ ε₁ + ε₂)
++
++end TCSlib.Cryptography.SecureComputation.GarblingCoins
+diff --git a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean
+index 0573d53330b6c9c3060bbfea36aa354eb0c0d31e..2c607a37c93a87a24960c7c6b1ae4c4c6199fd52 100644
+--- a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean
++++ b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean
+@@ -242,49 +242,6 @@ variable (G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) →
+   (hGE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) =
+     List.ofFn (G n s x))
+ 
+-/-- The key generator of `specialScheme` outputs its coins: `Gen(1^n; rg) = ⟦rg⟧`. -/
+-private theorem specialScheme_gen_runAt (n : ℕ) :
+-    ∀ rg : (specialScheme G E hE hGE).gen.Coins n,
+-      (specialScheme G E hE hGE).gen.runAt n [] rg = List.ofFn rg := by
+-  rw [specialScheme_gen]
+-  intro rg
+-  exact runAt_coinKey .var n rg
+-
+-/-- The encryption machine of `specialScheme` is `spEncStr` with its coins as the nonce. -/
+-private theorem specialScheme_enc_runAt (n : ℕ) :
+-    ∀ (k m : List Bool) (re : (specialScheme G E hE hGE).enc.Coins n),
+-      (specialScheme G E hE hGE).enc.runAt n (pairEncode k m) re =
+-        spEncStr E k m (List.ofFn re) := by
+-  rw [specialScheme_enc]
+-  intro k m re
+-  exact runAt_spEnc hE .var n k m re
+-
+-/-- The key coins of `specialScheme` as an `n`-bit key, keeping the string. -/
+-private noncomputable def specialKeyEq (n : ℕ) :
+-    (specialScheme G E hE hGE).gen.Coins n ≃ (Fin n → Bool) :=
+-  (NUPPT.coinsCongr (by rw [specialScheme_gen]) n).trans
+-    ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n).trans
+-      (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool)))
+-
+-/-- `⟦specialKeyEq n rg⟧ = ⟦rg⟧`. -/
+-private theorem ofFn_specialKeyEq (n : ℕ) (rg : (specialScheme G E hE hGE).gen.Coins n) :
+-    List.ofFn (specialKeyEq G E hE hGE n rg) = List.ofFn rg := by
+-  rw [specialKeyEq, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
+-    NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, NUPPT.coinsCongr_ofFn]
+-
+-/-- The encryption coins of `specialScheme` as an `n`-bit nonce, keeping the string. -/
+-private noncomputable def specialNonceEq (n : ℕ) :
+-    (specialScheme G E hE hGE).enc.Coins n ≃ (Fin n → Bool) :=
+-  (NUPPT.coinsCongr (by rw [specialScheme_enc]) n).trans
+-    ((NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_spEncFun hE) .var n).trans
+-      (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool)))
+-
+-/-- `⟦specialNonceEq n re⟧ = ⟦re⟧`. -/
+-private theorem ofFn_specialNonceEq (n : ℕ) (re : (specialScheme G E hE hGE).enc.Coins n) :
+-    List.ofFn (specialNonceEq G E hE hGE n re) = List.ofFn re := by
+-  rw [specialNonceEq, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
+-    NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, NUPPT.coinsCongr_ofFn]
+-
+ /-- **The frozen Claim 157.a (i) from the joint lemma** [PS10, §6.2.2, Definition 93.1]: if the
+ length-doubling family `G` is slice multi-message secure, then `specialScheme G E hE hGE` is
+ multi-message secure. With `sliceMultiMessageSecure_of_prfOut` this gives
+@@ -305,8 +262,8 @@ theorem specialScheme_multiMessageSecure_of_joint (h : SliceMultiMessageSecure G
+   let e : (specialScheme G E hE hGE).gen.Coins n ×
+       (Fin (q.eval n + 1) → (specialScheme G E hE hGE).enc.Coins n) ≃
+       (Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool) :=
+-    (specialKeyEq G E hE hGE n).prodCongr
+-      (Equiv.piCongrRight fun _ => specialNonceEq G E hE hGE n)
++    (specialScheme_keyCoinsEquiv G E hE hGE n).prodCongr
++      (Equiv.piCongrRight fun _ => specialScheme_nonceCoinsEquiv G E hE hGE n)
+   have hX : ∀ v : Fin (q.eval n + 1) → Fin n → Bool,
+       (specialScheme G E hE hGE).multiEncDist n (q.eval n) v =
+         fun t => sliceMultiEncDist G n (q.eval n) (fun _ => 0) (fun _ => n) v (e t) := by
+@@ -316,7 +273,8 @@ theorem specialScheme_multiMessageSecure_of_joint (h : SliceMultiMessageSecure G
+     refine congrArg PrivateKeyScheme.encodeList (congrArg List.ofFn (funext fun i => ?_))
+     rw [specialScheme_gen_runAt, specialScheme_enc_runAt, sliceEnc_eq_spEncStr hGE]
+     simp only [e, Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.piCongrRight_apply,
+-      Pi.map_apply, List.drop_zero, ofFn_specialKeyEq, ofFn_specialNonceEq]
++      Pi.map_apply, List.drop_zero, specialScheme_keyCoinsEquiv_ofFn,
++      specialScheme_nonceCoinsEquiv_ofFn]
+   rw [distAdv_def, hX m, hX m', acceptProb_comp_equiv, acceptProb_comp_equiv, ← distAdv_def]
+   exact hb n (fun _ => 0) (fun _ => n) (fun _ => by show 0 + n + n ≤ n + n; omega) m m'
+ 
+diff --git a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+index f425de1fec6644a6655f8eb94dad4ae5d5925eb4..025bf9c5dc449c5ce76638b27abc7b06f0aeb74f 100644
+--- a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
++++ b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+@@ -3,6 +3,9 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.SecureComputation.SpecialEncryption
++import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity.Pad
++import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity.WrongKey
++import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.MultiMsgOut
+ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
+ import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
+ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
+@@ -13,7 +16,7 @@ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# The special encryption scheme of Yao's protocol: security (statement phase)
++# The special encryption scheme of Yao's protocol: security
+ 
+ [PS10, Algorithm 157.2] as a `PrivateKeyScheme`, and Claim 157.a (inventory): the scheme is
+ multi-message secure, and a ciphertext decrypted under an independent key gives `⊥` except with
+@@ -34,7 +37,13 @@ parameter; `OracleEnsemble.keyed` already allows any output length.
+ ## Main results
+ 
+ * `SecureComputation.specialScheme_multiMessageSecure`, `spDecStr_wrongKey`,
+-  `specialScheme_wrongKey` (Claim 157.a, stated; `sorry`s under sketches).
++  `specialScheme_wrongKey` (Claim 157.a): multi-message security and the negligible
++  probability of successful decryption under an independent key.
++
++## Contents
++
++* `SpecialEncryptionSecurity.Pad`: the shared zero-prefix mask identity.
++* `SpecialEncryptionSecurity.WrongKey`: the efficient one-query test and prefix bound.
+ 
+ ## References
+ 
+@@ -100,30 +109,140 @@ noncomputable def specialScheme : PrivateKeyScheme where
+     rw [spDecStr_spEncStr E hk (by simp) hr hp, Option.getD_some]
+     exact decodeFin_ofFn m
+ 
++/-- The key generator of `specialScheme` outputs its coins: `Gen(1^n; rg) = ⟦rg⟧`. -/
++theorem specialScheme_gen_runAt (n : ℕ) :
++    ∀ rg : (specialScheme G E hE hGE).gen.Coins n,
++      (specialScheme G E hE hGE).gen.runAt n [] rg = List.ofFn rg := by
++  rw [specialScheme_gen]
++  intro rg
++  exact runAt_coinKey .var n rg
++
++/-- The encryption machine uses its coins as the nonce:
++`(specialScheme G E hE hGE).enc.runAt n ⟨k,m⟩ re = spEncStr E k m ⟦re⟧`. -/
++theorem specialScheme_enc_runAt (n : ℕ) :
++    ∀ (k m : List Bool) (re : (specialScheme G E hE hGE).enc.Coins n),
++      (specialScheme G E hE hGE).enc.runAt n (pairEncode k m) re =
++        spEncStr E k m (List.ofFn re) := by
++  rw [specialScheme_enc]
++  intro k m re
++  exact runAt_spEnc hE .var n k m re
++
++/-- Decryption of the special scheme is string decryption, with the overlong failure word:
++`(specialScheme G E hE hGE).dec.runAt n ⟨k,c⟩ rd =
++  (spDecStr E n n k c).getD (true :: 1^n)`. -/
++theorem specialScheme_dec_runAt (n : ℕ) :
++    ∀ (k c : List Bool) (rd : (specialScheme G E hE hGE).dec.Coins n),
++      (specialScheme G E hE hGE).dec.runAt n (pairEncode k c) rd =
++        (spDecStr E n n k c).getD (true :: List.replicate n true) := by
++  rw [specialScheme_dec]
++  intro k c rd
++  exact runAt_spDec hE (.const 0) n k c rd
++
++/-- The key-coin relabelling is an equivalence
++`specialScheme_keyCoinsEquiv G E hE hGE n : (specialScheme G E hE hGE).gen.Coins n ≃
++  (Fin n → Bool)`, preserving the coin string. -/
++noncomputable def specialScheme_keyCoinsEquiv (n : ℕ) :
++    (specialScheme G E hE hGE).gen.Coins n ≃ (Fin n → Bool) :=
++  (NUPPT.coinsCongr (by rw [specialScheme_gen]) n).trans
++    ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n).trans
++      (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool)))
++
++/-- The key-coin relabelling is its published composite:
++`specialScheme_keyCoinsEquiv G E hE hGE n = coinsCongr ... ≪≫
++  coinsEquiv_ofPolyTimeUniform ... ≪≫ arrowCongr (finCongr ...) (refl Bool)`. -/
++theorem specialScheme_keyCoinsEquiv_eq (n : ℕ) :
++    specialScheme_keyCoinsEquiv G E hE hGE n =
++      (NUPPT.coinsCongr (by rw [specialScheme_gen]) n).trans
++        ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n).trans
++          (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool))) := rfl
++
++/-- `⟦specialScheme_keyCoinsEquiv n rg⟧ = ⟦rg⟧`. -/
++theorem specialScheme_keyCoinsEquiv_ofFn (n : ℕ) (rg : (specialScheme G E hE hGE).gen.Coins n) :
++    List.ofFn (specialScheme_keyCoinsEquiv G E hE hGE n rg) = List.ofFn rg := by
++  rw [specialScheme_keyCoinsEquiv, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
++    NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, NUPPT.coinsCongr_ofFn]
++
++/-- The nonce-coin relabelling is an equivalence
++`specialScheme_nonceCoinsEquiv G E hE hGE n : (specialScheme G E hE hGE).enc.Coins n ≃
++  (Fin n → Bool)`, preserving the coin string. -/
++noncomputable def specialScheme_nonceCoinsEquiv (n : ℕ) :
++    (specialScheme G E hE hGE).enc.Coins n ≃ (Fin n → Bool) :=
++  (NUPPT.coinsCongr (by rw [specialScheme_enc]) n).trans
++    ((NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_spEncFun hE) .var n).trans
++      (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool)))
++
++/-- The nonce-coin relabelling is its published composite:
++`specialScheme_nonceCoinsEquiv G E hE hGE n = coinsCongr ... ≪≫
++  coinsEquiv_ofPolyTimeUniform ... ≪≫ arrowCongr (finCongr ...) (refl Bool)`. -/
++theorem specialScheme_nonceCoinsEquiv_eq (n : ℕ) :
++    specialScheme_nonceCoinsEquiv G E hE hGE n =
++      (NUPPT.coinsCongr (by rw [specialScheme_enc]) n).trans
++        ((NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_spEncFun hE) .var n).trans
++          (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool))) := rfl
++
++/-- `⟦specialScheme_nonceCoinsEquiv n re⟧ = ⟦re⟧`. -/
++theorem specialScheme_nonceCoinsEquiv_ofFn (n : ℕ) (re : (specialScheme G E hE hGE).enc.Coins n) :
++    List.ofFn (specialScheme_nonceCoinsEquiv G E hE hGE n re) = List.ofFn re := by
++  rw [specialScheme_nonceCoinsEquiv, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
++    NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, NUPPT.coinsCongr_ofFn]
++
+ /-! ### Claim 157.a -/
+ 
+ /-- **Claim 157.a (i): the special scheme is multi-message secure** [PS10, §6.2.2, "it is easy to
+ modify construction 99.1"] when `G` is a length-doubling PRF.
+ 
+-**Proof sketch.** As [PS10, Theorem 99.2] for Algorithm 99.1 (`prfScheme_multiMessageSecure`):
+-replace `f_k` by a random function with `2n`-bit outputs (PRF security, one oracle query per
+-ciphertext); then the pads of distinct `r`'s are independent uniform `2n`-bit strings, so the
+-ciphertexts are independent of the messages unless two `r`'s collide, with probability at most
+-`C(q(n)+1, 2) · 2^{-n}`. The zero prefix `0^n` is masked like the message. -/
++**Proof sketch.** Use the output-length-generic total of [PS10, Theorem 99.2]
++with the masks `0^n ++ m_i`. The full pad is used, so there is no slice post-processor.
++Relabel the scheme's key and nonce coins as uniform `n`-bit words, preserving their strings.
++The shared zero-prefix identity identifies each ciphertext with the corresponding masked
++PRF tuple entry. Relabelling preserves both acceptance probabilities, and the D4 bound
++applies to every pair of mask vectors. This uses D4 directly in this upstream module. -/
+ theorem specialScheme_multiMessageSecure (hG : PRFOut (.add .var .var) G) :
+     (specialScheme G E hE hGE).MultiMessageSecure := by
+-  sorry
++  rw [PrivateKeyScheme.multiMessageSecure_iff]
++  intro D q
++  obtain ⟨ε, hε, hb⟩ := MultiMsg.exists_negligible_distAdv_prfEncRealOut
++    hG.pseudorandom D q
++  refine ⟨ε, hε, fun n m m' => ?_⟩
++  let e : (specialScheme G E hE hGE).gen.Coins n ×
++      (Fin (q.eval n + 1) → (specialScheme G E hE hGE).enc.Coins n) ≃
++      (Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool) :=
++    (specialScheme_keyCoinsEquiv G E hE hGE n).prodCongr
++      (Equiv.piCongrRight fun _ => specialScheme_nonceCoinsEquiv G E hE hGE n)
++  have hX : ∀ v : Fin (q.eval n + 1) → Fin n → Bool,
++      (specialScheme G E hE hGE).multiEncDist n (q.eval n) v =
++        fun t => encodeTupleOut (prfEncRealOut (G n)
++          (fun i => Fin.append (fun _ : Fin n => false) (v i)) (e t)) := by
++    intro v
++    funext t
++    rw [PrivateKeyScheme.multiEncDist_apply, encodeTupleOut_eq]
++    refine congrArg PrivateKeyScheme.encodeList (congrArg List.ofFn (funext fun i => ?_))
++    rw [specialScheme_gen_runAt, specialScheme_enc_runAt, prfEncRealOut_apply]
++    simp only [e, Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd,
++      Equiv.piCongrRight_apply, Pi.map_apply]
++    rw [← specialScheme_keyCoinsEquiv_ofFn G E hE hGE n t.1,
++      ← specialScheme_nonceCoinsEquiv_ofFn G E hE hGE n (t.2 i)]
++    rw [spEncStr_eq_zeroPrefixMask E _ _ _ (by rw [hGE]; simp), hGE,
++      ← zipWith_xor_ofFn_add, List.ofFn_fin_append, List.ofFn_const, List.length_ofFn]
++  rw [distAdv_def, hX m, hX m',
++    acceptProb_comp_equiv e (fun z => encodeTupleOut (prfEncRealOut (G n)
++      (fun i => Fin.append (fun _ : Fin n => false) (m i)) z)),
++    acceptProb_comp_equiv e (fun z => encodeTupleOut (prfEncRealOut (G n)
++      (fun i => Fin.append (fun _ : Fin n => false) (m' i)) z)), ← distAdv_def]
++  exact hb n _ _
+ 
+ /-- **Claim 157.a (ii), on strings: a wrong key gives `⊥`** [PS10, §6.2.2, "the extra property"]
+ for any polynomial message length `ℓ`: for `G` a PRF with `n + ℓ(n)`-bit outputs and every
+ `ℓ(n)`-bit message, encrypting under `k` and decrypting under an independent `k'` gives `⊥`
+ except with negligible probability.
+ 
+-**Proof sketch.** Decryption under `k'` succeeds only if `f_k(r)_{<n} = f_{k'}(r)_{<n}`. The
+-distinguisher with oracle `O` samples `k'` and `r`, queries `O(r)`, and accepts iff the first `n`
+-bits agree with `f_{k'}(r)`. Against a random function this has probability `2^{-n}`, so against
+-`f_k` it has probability at most `2^{-n}` plus the PRF advantage: negligible. The guard does not
+-fire on honest ciphertexts. -/
++**Proof sketch.** The polynomial-time evaluator supplied by PRF clause (1) agrees
++with `E'` on every canonical key/nonce pair. Its prefix test is run through the published
++one-query machine. Real acceptance is the equal-prefix event; random acceptance is `2^{-n}`
++by the uniform evaluation and restriction laws and point probability. The budget-one PRF
++advantage plus `2^{-n}` bounds prefix collision. Honest ciphertexts pass the length guard,
++and decryption fails exactly off that collision. Add one further positive `2^{-n}` to
++obtain the required strict inequality, including at `n = 0`. -/
+ theorem spDecStr_wrongKey (ℓ : PolyExpr)
+     (G' : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin ((PolyExpr.add .var ℓ).eval n) → Bool))
+     (E' : List Bool → List Bool)
+@@ -134,14 +253,36 @@ theorem spDecStr_wrongKey (ℓ : PolyExpr)
+       1 - ε n < uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+         spDecStr E' n (ℓ.eval n) (List.ofFn t.2.1)
+           (spEncStr E' (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) = none) := by
+-  sorry
++  obtain ⟨E₀, hE₀, hGE₀⟩ := hG'.easy
++  obtain ⟨ε, hε, hb⟩ := SpecialWrongKey.exists_negligible_prefix_collision
++    ℓ G' E₀ hE₀ hGE₀ hG'.pseudorandom
++  refine ⟨fun n => ε n + (2 : ℝ)⁻¹ ^ n, hε.add negligible_two_pow_neg, fun n m => ?_⟩
++  have hevent :
++      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++        spDecStr E' n (ℓ.eval n) (List.ofFn t.2.1)
++          (spEncStr E' (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) = none) =
++        1 - uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++          (List.ofFn (G' n t.1 t.2.2)).take n =
++            (List.ofFn (G' n t.2.1 t.2.2)).take n) := by
++    rw [OneWay.uprob_congr (fun t :
++        (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++      SpecialWrongKey.spDecStr_none_iff_prefix_ne
++      (G' n) E' (hGE' n) t.1 t.2.1 t.2.2 m), uprob_not]
++  rw [hevent]
++  have hpos : 0 < (2 : ℝ)⁻¹ ^ n := pow_pos (by norm_num) n
++  have hbound := hb n
++  dsimp only
++  linarith
+ 
+ /-- **Claim 157.a (ii) for the scheme**: under an independent key, `Dec` returns `⊥` (an output
+ that decodes to no `n`-bit message) except with negligible probability, the source's
+ `Pr[k, k' ← Gen(1^n), c ← Enc_k(m) : Dec_{k'}(c) = ⊥] > 1 − ε(n)`.
+ 
+-**Proof sketch.** `runAt_spEnc` and `runAt_spDec` reduce it to `spDecStr_wrongKey` at `ℓ = n`;
+-the `⊥` string `1^{n+1}` decodes to no `n`-bit message, and a `some` output has `n` bits. -/
++**Proof sketch.** Apply the string bound at message length `n`. Relabel the two
++key coin strings and the nonce as independent uniform `n`-bit words. Average over the
++unused decryption coins. The public activation readers identify string encryption and
++decryption. String failure produces the overlong word `1^{n+1}`, which decodes to `none`;
++monotonicity therefore transfers the string lower bound to the scheme's failure event. -/
+ theorem specialScheme_wrongKey (hG : PRFOut (.add .var .var) G) :
+     ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n (m : Fin n → Bool),
+       1 - ε n < uprob (fun t : (specialScheme G E hE hGE).gen.Coins n ×
+@@ -152,6 +293,40 @@ theorem specialScheme_wrongKey (hG : PRFOut (.add .var .var) G) :
+             ((specialScheme G E hE hGE).enc.runAt n
+               (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] t.1) (List.ofFn m)) t.2.2.1))
+           t.2.2.2) = none) := by
+-  sorry
++  obtain ⟨ε, hε, hb⟩ := spDecStr_wrongKey .var G E hGE hG
++  simp only [PolyExpr.eval_var] at hb
++  refine ⟨ε, hε, fun n m => ?_⟩
++  let K := Fin n → Bool
++  let ek := specialScheme_keyCoinsEquiv G E hE hGE n
++  let er := specialScheme_nonceCoinsEquiv G E hE hGE n
++  let e : (specialScheme G E hE hGE).gen.Coins n ×
++      (specialScheme G E hE hGE).gen.Coins n ×
++      (specialScheme G E hE hGE).enc.Coins n × (specialScheme G E hE hGE).dec.Coins n ≃
++      (K × K × K) × (specialScheme G E hE hGE).dec.Coins n :=
++    { toFun := fun t => ((ek t.1, ek t.2.1, er t.2.2.1), t.2.2.2)
++      invFun := fun t => (ek.symm t.1.1, ek.symm t.1.2.1, er.symm t.1.2.2, t.2)
++      left_inv := by intro t; simp
++      right_inv := by intro t; simp }
++  have hk : ∀ k : K, List.ofFn (ek.symm k) = List.ofFn k := by
++    intro k
++    simpa only [Equiv.apply_symm_apply] using
++      (specialScheme_keyCoinsEquiv_ofFn G E hE hGE n (ek.symm k)).symm
++  have hr : ∀ r : K, List.ofFn (er.symm r) = List.ofFn r := by
++    intro r
++    simpa only [Equiv.apply_symm_apply] using
++      (specialScheme_nonceCoinsEquiv_ofFn G E hE hGE n (er.symm r)).symm
++  refine (hb n m).trans_le ?_
++  rw [← uprob_comp_equiv e.symm]
++  rw [← uprob_fst (β := (specialScheme G E hE hGE).dec.Coins n)
++    (fun t : K × K × K => spDecStr E n n (List.ofFn t.2.1)
++      (spEncStr E (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) = none)]
++  apply uprob_mono
++  intro t ht
++  rw [specialScheme_gen_runAt, specialScheme_gen_runAt, specialScheme_enc_runAt,
++    specialScheme_dec_runAt]
++  change decodeFin n ((spDecStr E n n (List.ofFn (ek.symm t.1.2.1))
++    (spEncStr E (List.ofFn (ek.symm t.1.1)) (List.ofFn m)
++      (List.ofFn (er.symm t.1.2.2)))).getD (true :: List.replicate n true)) = none
++  rw [hk, hk, hr, ht, Option.getD_none, decodeFin_eq, dif_neg (by simp)]
+ 
+ end TCSlib.Cryptography.SecureComputation
+diff --git a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..77ed0633ae4940995efc8b566e56a6c1d7e812b1
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean
+@@ -0,0 +1,56 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.SpecialEncryption
++import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The zero-prefix mask of special encryption
++
++## Main definitions
++
++This module adds no definitions.
++
++## Main results
++
++* `SecureComputation.spEncStr_eq_zeroPrefixMask`: the full ciphertext body is the XOR of
++  a zero-prefix message with the pad.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.2.2, Algorithm 157.2.
++-/
++
++namespace TCSlib.Cryptography.SecureComputation
++
++open Complexity Turing TCSlib.Cryptography
++
++/-- Special encryption masks the zero-prefix message:
++`spEncStr E k m r = ⟨r, (0^{|r|} ++ m) ⊕ E(⟨k,r⟩)⟩`, whenever the pad has at least
++`|r| + |m|` bits. [PS10, §6.2.2, Algorithm 157.2]
++
++**Proof sketch.** Split the pad after the nonce length. Split XOR at the same boundary;
++its prefix is unchanged by the zero mask, and its suffix is the encrypted message.
++The pad-length hypothesis makes the prefix exactly as long as the nonce. -/
++theorem spEncStr_eq_zeroPrefixMask (E : List Bool → List Bool) (k m r : List Bool)
++    (hp : r.length + m.length ≤ (E (pairEncode k r)).length) :
++    spEncStr E k m r = pairEncode r
++      (List.zipWith xor (List.replicate r.length false ++ m) (E (pairEncode k r))) := by
++  rw [spEncStr_eq]
++  congr 1
++  have hlen : ((E (pairEncode k r)).take r.length).length = r.length := by
++    rw [List.length_take, Nat.min_eq_left (by omega)]
++  conv_rhs => rw [← List.take_append_drop r.length (E (pairEncode k r))]
++  rw [List.zipWith_append (by rw [List.length_replicate, hlen])]
++  congr 1
++  rw [List.zipWith_comm_of_comm Bool.xor_comm]
++  simpa only [hlen] using
++    (MultiMsg.zipWith_xor_replicate_false ((E (pairEncode k r)).take r.length)).symm
++
++end TCSlib.Cryptography.SecureComputation
+diff --git a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
+new file mode 100644
+index 0000000000000000000000000000000000000000..ba48024c5e15ba7bd5b35f0912a111b677a91825
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
+@@ -0,0 +1,222 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity.Pad
++import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The one-query test for a wrong encryption key
++
++## Main definitions
++
++* `SecureComputation.SpecialWrongKey.prefixTest`: compare an oracle answer's prefix with
++  the evaluator's prefix under an independent key.
++
++## Main results
++
++* `SecureComputation.SpecialWrongKey.polyTimeComputable_prefixTest`: efficiency of the test.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.2.2, Claim 157.a (ii).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.SpecialWrongKey
++
++open Complexity Turing TCSlib.Cryptography
++
++/-- On layout `⟨⟨⟨1^n,⟨r,u⟩⟩,α⟩,k'⟩`, return
++`[decide (u.take n = (E ⟨k',r⟩).take n)]`. [PS10, §6.2.2, Claim 157.a (ii)] -/
++def prefixTest (E : List Bool → List Bool) (z : List Bool) : List Bool :=
++  [decide ((pairSndD (NUPPT.inArg z)).take (NUPPT.inParam z).length =
++    (E (pairEncode (NUPPT.inCoins z) (pairFstD (NUPPT.inArg z)))).take
++      (NUPPT.inParam z).length)]
++
++/-- The test is the singleton comparison word:
++`prefixTest E z = [decide ((snd (inArg z)).take |inParam z| =
++  (E ⟨inCoins z,fst (inArg z)⟩).take |inParam z|)]`. -/
++theorem prefixTest_eq (E : List Bool → List Bool) (z : List Bool) :
++    prefixTest E z =
++      [decide ((pairSndD (NUPPT.inArg z)).take (NUPPT.inParam z).length =
++        (E (pairEncode (NUPPT.inCoins z) (pairFstD (NUPPT.inArg z)))).take
++          (NUPPT.inParam z).length)] := rfl
++
++/-- A polynomial-time evaluator gives a polynomial-time prefix test:
++`PolyTimeComputable E → PolyTimeComputable (prefixTest E)`.
++
++**Proof sketch.** Read the unary parameter, argument components, and independent key.
++Evaluate the family, take both prefixes, and compare them with the polynomial-time
++string equality test. All operations are compositions of published polynomial-time maps. -/
++theorem polyTimeComputable_prefixTest {E : List Bool → List Bool}
++    (hE : PolyTimeComputable E) : PolyTimeComputable (prefixTest E) := by
++  have hp := NUPPT.polyTimeComputable_inParam
++  have hr := polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg
++  have hu := polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg
++  have hv := hE.comp (NUPPT.polyTimeComputable_inCoins.pairEncode hr)
++  have hleft := (polyTimeComputable_pairTakePoly .var).comp (hp.pairEncode hu)
++  have hright := (polyTimeComputable_pairTakePoly .var).comp (hp.pairEncode hv)
++  have h := polyTimeComputable_pairEq.comp (hleft.pairEncode hright)
++  refine (congrArg PolyTimeComputable (?_ : prefixTest E = _)).mpr h
++  funext z
++  simp only [prefixTest_eq, Function.comp_apply, pairFstD_pairEncode,
++    pairSndD_pairEncode, PolyExpr.eval_var]
++
++/-- Reading `n` fixed coordinates of one random-function answer hits any fixed `n`-bit
++word with probability `2^{-n}`:
++`Pr_R[(⟦R r⟧).take n = ⟦v⟧] = (2⁻¹)^n`, for `n ≤ L`. -/
++theorem uprob_random_prefix {n L : ℕ} (h : n ≤ L) (r v : Fin n → Bool) :
++    uprob (fun R : (Fin n → Bool) → (Fin L → Bool) =>
++      (List.ofFn (R r)).take n = List.ofFn v) = (2 : ℝ)⁻¹ ^ n := by
++  rw [(HardcoreBit.pushesUniform_eval r).uprob_eq
++    (fun u : Fin L → Bool => (List.ofFn u).take n = List.ofFn v)]
++  have hcast := Fin.castLE_injective h
++  have hprob := (HardcoreBit.pushesUniform_restrict (O := Bool) hcast).uprob_eq
++    (fun u : Fin n → Bool => u = v)
++  rw [OneWay.uprob_congr (fun u => by rw [take_ofFn_castLE h, List.ofFn_inj])]
++  rw [hprob, OneWay.uprob_eq_one_div_card]
++  simp only [Fintype.card_fun, Fintype.card_bool, Fintype.card_fin,
++    Nat.cast_pow, Nat.cast_ofNat, one_div, inv_pow]
++
++/-- For a pseudorandom family with `n + ℓ(n)` output bits and a polynomial-time evaluator,
++independent keys have equal `n`-bit output prefixes at one uniform point with negligible
++probability: `∃ ε, Negligible ε ∧ ∀ n, Pr_{k,k',r}[F_k(r)_{<n} = F_{k'}(r)_{<n}] ≤ ε(n)`.
++[PS10, §6.2.2, Claim 157.a (ii)]
++
++**Proof sketch.** Use the published one-query machine with the efficient prefix test and
++one query. Relabel its coins as the query point and an independent key. Its real acceptance
++probability is the prefix collision probability; its random acceptance probability is
++`2^{-n}` by uniform evaluation, restriction, and point probability. The difference is at
++most its PRF advantage. The budget-one advantage and `2^{-n}` are negligible. -/
++theorem exists_negligible_prefix_collision (ℓ : PolyExpr)
++    (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) →
++      (Fin ((PolyExpr.add .var ℓ).eval n) → Bool))
++    (E : List Bool → List Bool) (hE : PolyTimeComputable E)
++    (hFE : ∀ n (k r : Fin n → Bool), E (pairEncode (List.ofFn k) (List.ofFn r)) =
++      List.ofFn (F n k r))
++    (hF : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := .add .var ℓ) F).Indist
++      (OracleEnsemble.random .var (.add .var ℓ))) :
++    ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
++      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++        (List.ofFn (F n t.1 t.2.2)).take n =
++          (List.ofFn (F n t.2.1 t.2.2)).take n) ≤ ε n := by
++  let htest := polyTimeComputable_prefixTest hE
++  let D := NUPPT.ofPolyTimeUniform htest .var
++  obtain ⟨B, hB⟩ := MultiMsg.exists_oneQuery_nuppt D (.add .var ℓ)
++  refine ⟨fun n => prfAdv (F n) (B.toOracleAdversary n n ((PolyExpr.add .var ℓ).eval n) 1) +
++      (2 : ℝ)⁻¹ ^ n, ?_, fun n => ?_⟩
++  · simpa only [PolyExpr.eval_const] using
++      (hF.negligible_prfAdv B (.const 1)).add negligible_two_pow_neg
++  · obtain ⟨φ, hφ⟩ := hB n
++    let eD := NUPPT.coinsEquiv_ofPolyTimeUniform htest .var n
++    let χ : ((Fin n → Bool) × (Fin n → Bool)) ≃ B.Coins n :=
++      ((Equiv.refl (Fin n → Bool)).prodCongr eD.symm).trans φ
++    have hχ : ∀ (g : (Fin n → Bool) →
++        (Fin ((PolyExpr.add .var ℓ).eval n) → Bool)) (r k : Fin n → Bool),
++        (B.toOracleAdversary n n ((PolyExpr.add .var ℓ).eval n) 1 (χ (r, k))).eval g =
++          decide ((List.ofFn (g r)).take n = (List.ofFn (F n k r)).take n) := by
++      intro g r k
++      have hcoins : List.ofFn (eD.symm k) = List.ofFn k := by
++        simpa only [Equiv.apply_symm_apply] using
++          (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn htest .var n (eD.symm k)).symm
++      rw [show χ (r, k) = φ (r, eD.symm k) from rfl, hφ]
++      have hrun : D.runAt n (pairEncode (List.ofFn r) (List.ofFn (g r))) (eD.symm k) =
++          [decide ((List.ofFn (g r)).take n = (List.ofFn (F n k r)).take n)] := by
++        rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
++        simp only [prefixTest_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
++          NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode,
++          List.length_replicate, hcoins, hFE]
++      rw [hrun]
++      simp only [List.cons.injEq, and_true, decide_eq_true_eq]
++    have hreal :
++        uprob (fun z : (Fin n → Bool) × B.Coins n =>
++          (B.toOracleAdversary n n ((PolyExpr.add .var ℓ).eval n) 1 z.2).eval (F n z.1) = true) =
++        uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++          (List.ofFn (F n t.1 t.2.2)).take n =
++            (List.ofFn (F n t.2.1 t.2.2)).take n) := by
++      let e : ((Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool)) ≃
++          ((Fin n → Bool) × B.Coins n) :=
++        (Equiv.refl (Fin n → Bool)).prodCongr
++          ((Equiv.prodComm (Fin n → Bool) (Fin n → Bool)).trans χ)
++      rw [← uprob_comp_equiv e]
++      apply OneWay.uprob_congr
++      intro t
++      change (B.toOracleAdversary n n ((PolyExpr.add .var ℓ).eval n) 1
++        (χ (t.2.2, t.2.1))).eval (F n t.1) = true ↔ _
++      rw [hχ, decide_eq_true_eq]
++    have hrandom :
++        uprob (fun z : ((Fin n → Bool) →
++            (Fin ((PolyExpr.add .var ℓ).eval n) → Bool)) × B.Coins n =>
++          (B.toOracleAdversary n n ((PolyExpr.add .var ℓ).eval n) 1 z.2).eval z.1 = true) =
++            (2 : ℝ)⁻¹ ^ n := by
++      let e := (Equiv.refl ((Fin n → Bool) →
++        (Fin ((PolyExpr.add .var ℓ).eval n) → Bool))).prodCongr χ
++      rw [← uprob_comp_equiv e]
++      have he : ∀ z : ((Fin n → Bool) →
++          (Fin ((PolyExpr.add .var ℓ).eval n) → Bool)) ×
++            ((Fin n → Bool) × (Fin n → Bool)),
++          (B.toOracleAdversary n n ((PolyExpr.add .var ℓ).eval n) 1 (e z).2).eval (e z).1 = true ↔
++            (List.ofFn (z.1 z.2.1)).take n =
++              (List.ofFn (F n z.2.2 z.2.1)).take n := by
++        intro z
++        change (B.toOracleAdversary n n ((PolyExpr.add .var ℓ).eval n) 1
++          (χ (z.2.1, z.2.2))).eval z.1 = true ↔ _
++        rw [hχ, decide_eq_true_eq]
++      rw [OneWay.uprob_congr he,
++        ← uprob_comp_equiv (Equiv.prodComm
++          ((Fin n → Bool) × (Fin n → Bool))
++          ((Fin n → Bool) → (Fin ((PolyExpr.add .var ℓ).eval n) → Bool))), uprob_prod]
++      have hn : n ≤ (PolyExpr.add .var ℓ).eval n := by
++        simp only [PolyExpr.eval_add, PolyExpr.eval_var]
++        omega
++      have hp : ∀ t : (Fin n → Bool) × (Fin n → Bool),
++          uprob (fun R : (Fin n → Bool) →
++              (Fin ((PolyExpr.add .var ℓ).eval n) → Bool) =>
++            (List.ofFn (R t.1)).take n =
++              (List.ofFn (F n t.2 t.1)).take n) = (2 : ℝ)⁻¹ ^ n := by
++        intro t
++        rw [take_ofFn_castLE hn]
++        exact uprob_random_prefix hn t.1 _
++      exact (congrArg uexp (funext hp)).trans (OneWay.uexp_const _)
++    have ha := le_abs_self
++      (uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
++        (List.ofFn (F n t.1 t.2.2)).take n =
++          (List.ofFn (F n t.2.1 t.2.2)).take n) - (2 : ℝ)⁻¹ ^ n)
++    dsimp only
++    rw [prfAdv_eq, hreal, hrandom]
++    linarith
++
++/-- Honest string ciphertexts fail under a second key exactly when the pad prefixes
++differ:
++`spDecStr E n l ⟦k'⟧ (spEncStr E ⟦k⟧ ⟦m⟧ ⟦r⟧) = none ↔
++  (⟦F k r⟧).take n ≠ (⟦F k' r⟧).take n`, when `E` evaluates `F` with `n+l` output bits.
++[PS10, §6.2.2, Claim 157.a (ii)]
++
++**Proof sketch.** The honest nonce and key lengths pass the length guard. The pad prefix
++has `n` bits and the masked suffix has `l` bits, so the ciphertext length also passes.
++Its first `n` bits are the first pad's prefix; decryption tests exactly its equality
++with the second pad's prefix. -/
++theorem spDecStr_none_iff_prefix_ne {n l : ℕ}
++    (F : (Fin n → Bool) → (Fin n → Bool) → (Fin (n + l) → Bool))
++    (E : List Bool → List Bool)
++    (hFE : ∀ k r, E (pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (F k r))
++    (k k' r : Fin n → Bool) (m : Fin l → Bool) :
++    spDecStr E n l (List.ofFn k')
++      (spEncStr E (List.ofFn k) (List.ofFn m) (List.ofFn r)) = none ↔
++        (List.ofFn (F k r)).take n ≠ (List.ofFn (F k' r)).take n := by
++  have ht : ((List.ofFn (F k r)).take n).length = n := by
++    rw [List.length_take, List.length_ofFn, Nat.min_eq_left (by omega)]
++  have hz : (List.zipWith xor (List.ofFn m) ((List.ofFn (F k r)).drop n)).length = l := by
++    rw [List.length_zipWith, List.length_ofFn, List.length_drop, List.length_ofFn]
++    omega
++  simp only [spDecStr_eq, spEncStr_eq, pairFstD_pairEncode, pairSndD_pairEncode,
++    List.length_ofFn, hFE]
++  rw [if_pos ⟨trivial, trivial, by rw [List.length_append, ht, hz]⟩, List.take_left' ht]
++  by_cases h : (List.ofFn (F k r)).take n = (List.ofFn (F k' r)).take n <;> simp [h]
++
++end TCSlib.Cryptography.SecureComputation.SpecialWrongKey
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,0 +1,60 @@
+START 2026-11-15T09:12:35.168572+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:160:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:195:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uprob fun t =>
+    spDecStr E' n (ℓ.eval n) (List.ofFn ?m.180) (spEncStr E' (List.ofFn ?m.179) (List.ofFn m) (List.ofFn ?m.181)) = none
+in the target expression
+  (uprob fun t =>
+      spDecStr E' n (ℓ.eval n) (List.ofFn t.2.1) (spEncStr E' (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) = none) =
+    1 - uprob fun t => List.take n (List.ofFn (G' n t.1 t.2.2)) = List.take n (List.ofFn (G' n t.2.1 t.2.2))
+
+ℓ : PolyExpr
+G' : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add ℓ).eval n) → Bool
+E' : List Bool → List Bool
+hGE' : ∀ (n : ℕ) (s x : Fin n → Bool), E' (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G' n s x)
+hG' : PRFOut (PolyExpr.var.add ℓ) G'
+E₀ : List Bool → List Bool
+hE₀ : PolyTimeComputable E₀
+hGE₀ : ∀ (n : ℕ) (s x : Fin n → Bool), E₀ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G' n s x)
+ε : ℕ → ℝ
+hε : Negligible ε
+hb :
+  ∀ (n : ℕ),
+    (uprob fun t => List.take n (List.ofFn (G' n t.1 t.2.2)) = List.take n (List.ofFn (G' n t.2.1 t.2.2))) ≤ ε n
+n : ℕ
+m : Fin (ℓ.eval n) → Bool
+⊢ (uprob fun t =>
+      spDecStr E' n (ℓ.eval n) (List.ofFn t.2.1) (spEncStr E' (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) = none) =
+    1 - uprob fun t => List.take n (List.ofFn (G' n t.1 t.2.2)) = List.take n (List.ofFn (G' n t.2.1 t.2.2))
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:196:25: error: Invalid projection: Type of
+  t
+is not known; cannot resolve projection `1`
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:196:29: error: Invalid projection: Type of
+  t
+is not known; cannot resolve projection `2`
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:196:35: error: Invalid projection: Type of
+  t
+is not known; cannot resolve projection `2`
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:209:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): no fresh .olean produced
+        2.48 real         1.62 user         1.01 sys
+          2222161920  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              178760  page reclaims
+                 608  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  63  voluntary context switches
+                7068  involuntary context switches
+            31941966  instructions retired
+            17121778  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T09:12:37.683182+00:00 EXIT 1

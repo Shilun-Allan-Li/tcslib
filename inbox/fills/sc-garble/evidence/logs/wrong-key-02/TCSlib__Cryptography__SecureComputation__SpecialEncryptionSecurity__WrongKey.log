@@ -1,0 +1,68 @@
+START 2026-11-15T09:06:53.920486+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean:190:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  prfAdv ?F ?A
+in the target expression
+  (uprob fun t => List.take n (List.ofFn (F n t.1 t.2.2)) = List.take n (List.ofFn (F n t.2.1 t.2.2))) ≤
+    (fun n => prfAdv (F n) (B.toOracleAdversary n n ((PolyExpr.var.add ℓ).eval n) 1) + 2⁻¹ ^ n) n
+
+case refine_2
+ℓ : PolyExpr
+F : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add ℓ).eval n) → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hFE : ∀ (n : ℕ) (k r : Fin n → Bool), E (pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (F n k r)
+hF : (OracleEnsemble.keyed F).Indist (OracleEnsemble.random PolyExpr.var (PolyExpr.var.add ℓ))
+htest : PolyTimeComputable (prefixTest E) := polyTimeComputable_prefixTest hE
+D : NUPPT := NUPPT.ofPolyTimeUniform htest PolyExpr.var
+B : NUPPT
+hB :
+  ∀ (n : ℕ),
+    ∃ φ,
+      ∀ (g : (Fin n → Bool) → Fin ((PolyExpr.var.add ℓ).eval n) → Bool) (r : Fin n → Bool) (c : D.Coins n),
+        QueryTree.eval g (B.toOracleAdversary n n ((PolyExpr.var.add ℓ).eval n) 1 (φ (r, c))) =
+          decide (D.runAt n (pairEncode (List.ofFn r) (List.ofFn (g r))) c = [true])
+n : ℕ
+φ : (Fin n → Bool) × D.Coins n ≃ B.Coins n
+hφ :
+  ∀ (g : (Fin n → Bool) → Fin ((PolyExpr.var.add ℓ).eval n) → Bool) (r : Fin n → Bool) (c : D.Coins n),
+    QueryTree.eval g (B.toOracleAdversary n n ((PolyExpr.var.add ℓ).eval n) 1 (φ (r, c))) =
+      decide (D.runAt n (pairEncode (List.ofFn r) (List.ofFn (g r))) c = [true])
+eD : (NUPPT.ofPolyTimeUniform htest PolyExpr.var).Coins n ≃ (Fin (PolyExpr.var.eval n) → Bool) :=
+  NUPPT.coinsEquiv_ofPolyTimeUniform htest PolyExpr.var n
+χ : (Fin n → Bool) × (Fin n → Bool) ≃ B.Coins n := ((Equiv.refl (Fin n → Bool)).prodCongr eD.symm).trans φ
+hχ :
+  ∀ (g : (Fin n → Bool) → Fin ((PolyExpr.var.add ℓ).eval n) → Bool) (r k : Fin n → Bool),
+    QueryTree.eval g (B.toOracleAdversary n n ((PolyExpr.var.add ℓ).eval n) 1 (χ (r, k))) =
+      decide (List.take n (List.ofFn (g r)) = List.take n (List.ofFn (F n k r)))
+hreal :
+  (uprob fun z => QueryTree.eval (F n z.1) (B.toOracleAdversary n n ((PolyExpr.var.add ℓ).eval n) 1 z.2) = true) =
+    uprob fun t => List.take n (List.ofFn (F n t.1 t.2.2)) = List.take n (List.ofFn (F n t.2.1 t.2.2))
+hrandom :
+  (uprob fun z => QueryTree.eval z.1 (B.toOracleAdversary n n ((PolyExpr.var.add ℓ).eval n) 1 z.2) = true) = 2⁻¹ ^ n
+ha :
+  (uprob fun t => List.take n (List.ofFn (F n t.1 t.2.2)) = List.take n (List.ofFn (F n t.2.1 t.2.2))) - 2⁻¹ ^ n ≤
+    |(uprob fun t => List.take n (List.ofFn (F n t.1 t.2.2)) = List.take n (List.ofFn (F n t.2.1 t.2.2))) - 2⁻¹ ^ n|
+⊢ (uprob fun t => List.take n (List.ofFn (F n t.1 t.2.2)) = List.take n (List.ofFn (F n t.2.1 t.2.2))) ≤
+    (fun n => prfAdv (F n) (B.toOracleAdversary n n ((PolyExpr.var.add ℓ).eval n) 1) + 2⁻¹ ^ n) n
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey): no fresh .olean produced
+        6.63 real         1.64 user         1.51 sys
+          2182774784  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              116318  page reclaims
+               58193  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                5590  voluntary context switches
+               41643  involuntary context switches
+            32919778  instructions retired
+            14735868  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T09:07:00.586278+00:00 EXIT 1

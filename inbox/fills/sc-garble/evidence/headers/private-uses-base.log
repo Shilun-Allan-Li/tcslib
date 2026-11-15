@@ -1,0 +1,16 @@
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:246:private theorem specialScheme_gen_runAt (n : ℕ) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:254:private theorem specialScheme_enc_runAt (n : ℕ) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:263:private noncomputable def specialKeyEq (n : ℕ) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:269:/-- `⟦specialKeyEq n rg⟧ = ⟦rg⟧`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:270:private theorem ofFn_specialKeyEq (n : ℕ) (rg : (specialScheme G E hE hGE).gen.Coins n) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:271:    List.ofFn (specialKeyEq G E hE hGE n rg) = List.ofFn rg := by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:272:  rw [specialKeyEq, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:276:private noncomputable def specialNonceEq (n : ℕ) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:282:/-- `⟦specialNonceEq n re⟧ = ⟦re⟧`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:283:private theorem ofFn_specialNonceEq (n : ℕ) (re : (specialScheme G E hE hGE).enc.Coins n) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:284:    List.ofFn (specialNonceEq G E hE hGE n re) = List.ofFn re := by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:285:  rw [specialNonceEq, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:308:    (specialKeyEq G E hE hGE n).prodCongr
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:309:      (Equiv.piCongrRight fun _ => specialNonceEq G E hE hGE n)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:317:    rw [specialScheme_gen_runAt, specialScheme_enc_runAt, sliceEnc_eq_spEncStr hGE]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:319:      Pi.map_apply, List.drop_zero, ofFn_specialKeyEq, ofFn_specialNonceEq]

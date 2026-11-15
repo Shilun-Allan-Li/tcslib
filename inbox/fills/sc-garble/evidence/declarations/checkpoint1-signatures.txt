@@ -1,0 +1,134 @@
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+theorem specialScheme_gen_runAt (n : ℕ) :
+    ∀ rg : (specialScheme G E hE hGE).gen.Coins n,
+      (specialScheme G E hE hGE).gen.runAt n [] rg = List.ofFn rg
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+theorem specialScheme_enc_runAt (n : ℕ) :
+    ∀ (k m : List Bool) (re : (specialScheme G E hE hGE).enc.Coins n),
+      (specialScheme G E hE hGE).enc.runAt n (pairEncode k m) re =
+        spEncStr E k m (List.ofFn re)
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+theorem specialScheme_dec_runAt (n : ℕ) :
+    ∀ (k c : List Bool) (rd : (specialScheme G E hE hGE).dec.Coins n),
+      (specialScheme G E hE hGE).dec.runAt n (pairEncode k c) rd =
+        (spDecStr E n n k c).getD (true :: List.replicate n true)
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+noncomputable def specialScheme_keyCoinsEquiv (n : ℕ) :
+    (specialScheme G E hE hGE).gen.Coins n ≃ (Fin n → Bool)
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+theorem specialScheme_keyCoinsEquiv_eq (n : ℕ) :
+    specialScheme_keyCoinsEquiv G E hE hGE n =
+      (NUPPT.coinsCongr (by rw [specialScheme_gen]) n).trans
+        ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n).trans
+          (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool)))
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+theorem specialScheme_keyCoinsEquiv_ofFn (n : ℕ) (rg : (specialScheme G E hE hGE).gen.Coins n) :
+    List.ofFn (specialScheme_keyCoinsEquiv G E hE hGE n rg) = List.ofFn rg
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+noncomputable def specialScheme_nonceCoinsEquiv (n : ℕ) :
+    (specialScheme G E hE hGE).enc.Coins n ≃ (Fin n → Bool)
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+theorem specialScheme_nonceCoinsEquiv_eq (n : ℕ) :
+    specialScheme_nonceCoinsEquiv G E hE hGE n =
+      (NUPPT.coinsCongr (by rw [specialScheme_enc]) n).trans
+        ((NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_spEncFun hE) .var n).trans
+          (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool)))
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+theorem specialScheme_nonceCoinsEquiv_ofFn (n : ℕ) (re : (specialScheme G E hE hGE).enc.Coins n) :
+    List.ofFn (specialScheme_nonceCoinsEquiv G E hE hGE n re) = List.ofFn re
+
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/CoinMarginals.lean
+theorem pushesUniform_position_keys_coin {K : Type} [Fintype K] [Nonempty K]
+    {len : ℕ} (j : Fin len) {b b' : Bool} (hb : b ≠ b') (c : Bool) :
+    HardcoreBit.PushesUniform (fun t : (Fin len → Bool → K) × (K × K) =>
+      (t.1 j b, t.1 j b', if c then t.2.2 else t.2.1))
+
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/CoinMarginals.lean
+theorem uprob_isSome_lt_of_none {Ω α : Type} [Fintype Ω] [Nonempty Ω]
+    (X : Ω → Option α) {ε : ℝ} (h : 1 - ε < uprob (fun t => X t = none)) :
+    uprob (fun t => (X t).isSome = true) < ε
+
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean
+theorem length_nestedInner
+    {G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool)}
+    {E : List Bool → List Bool}
+    (hGE : ∀ n (k r : Fin n → Bool), E (pairEncode (List.ofFn k) (List.ofFn r)) =
+      List.ofFn (G n k r)) (n : ℕ) (k m r : Fin n → Bool) :
+    (spEncStr E (List.ofFn k) (List.ofFn m) (List.ofFn r)).length = innerLen.eval n
+
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean
+theorem nestedSpecial_wrongKeyBot_of_string_bounds
+    (G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool))
+    (G₂ : ∀ n, (Fin n → Bool) → (Fin n → Bool) →
+      (Fin ((PolyExpr.add .var innerLen).eval n) → Bool))
+    (E₁ E₂ : List Bool → List Bool)
+    (hGE₁ : ∀ n (k r : Fin n → Bool), E₁ (pairEncode (List.ofFn k) (List.ofFn r)) =
+      List.ofFn (G₁ n k r))
+    (hGE₂ : ∀ n (k r : Fin n → Bool), E₂ (pairEncode (List.ofFn k) (List.ofFn r)) =
+      List.ofFn (G₂ n k r)) (n : ℕ) {ε₁ ε₂ : ℝ} (hε₁ : 0 ≤ ε₁) (hε₂ : 0 ≤ ε₂)
+    (h₁ : ∀ m : Fin n → Bool,
+      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+        (spDecStr E₁ n n (List.ofFn t.2.1)
+          (spEncStr E₁ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₁)
+    (h₂ : ∀ m : Fin (innerLen.eval n) → Bool,
+      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+        (spDecStr E₂ n (innerLen.eval n) (List.ofFn t.2.1)
+          (spEncStr E₂ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₂) :
+    (nestedSpecial E₁ E₂ n).WrongKeyBot (ε₁ + ε₂)
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean
+theorem spEncStr_eq_zeroPrefixMask (E : List Bool → List Bool) (k m r : List Bool)
+    (hp : r.length + m.length ≤ (E (pairEncode k r)).length) :
+    spEncStr E k m r = pairEncode r
+      (List.zipWith xor (List.replicate r.length false ++ m) (E (pairEncode k r)))
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
+def prefixTest (E : List Bool → List Bool) (z : List Bool) : List Bool
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
+theorem prefixTest_eq (E : List Bool → List Bool) (z : List Bool) :
+    prefixTest E z =
+      [decide ((pairSndD (NUPPT.inArg z)).take (NUPPT.inParam z).length =
+        (E (pairEncode (NUPPT.inCoins z) (pairFstD (NUPPT.inArg z)))).take
+          (NUPPT.inParam z).length)]
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
+theorem polyTimeComputable_prefixTest {E : List Bool → List Bool}
+    (hE : PolyTimeComputable E) : PolyTimeComputable (prefixTest E)
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
+theorem uprob_random_prefix {n L : ℕ} (h : n ≤ L) (r v : Fin n → Bool) :
+    uprob (fun R : (Fin n → Bool) → (Fin L → Bool) =>
+      (List.ofFn (R r)).take n = List.ofFn v) = (2 : ℝ)⁻¹ ^ n
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
+theorem exists_negligible_prefix_collision (ℓ : PolyExpr)
+    (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) →
+      (Fin ((PolyExpr.add .var ℓ).eval n) → Bool))
+    (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+    (hFE : ∀ n (k r : Fin n → Bool), E (pairEncode (List.ofFn k) (List.ofFn r)) =
+      List.ofFn (F n k r))
+    (hF : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := .add .var ℓ) F).Indist
+      (OracleEnsemble.random .var (.add .var ℓ))) :
+    ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
+      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+        (List.ofFn (F n t.1 t.2.2)).take n =
+          (List.ofFn (F n t.2.1 t.2.2)).take n) ≤ ε n
+
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/WrongKey.lean
+theorem spDecStr_none_iff_prefix_ne {n l : ℕ}
+    (F : (Fin n → Bool) → (Fin n → Bool) → (Fin (n + l) → Bool))
+    (E : List Bool → List Bool)
+    (hFE : ∀ k r, E (pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (F k r))
+    (k k' r : Fin n → Bool) (m : Fin l → Bool) :
+    spDecStr E n l (List.ofFn k')
+      (spEncStr E (List.ofFn k) (List.ofFn m) (List.ofFn r)) = none ↔
+        (List.ofFn (F k r)).take n ≠ (List.ofFn (F k' r)).take n

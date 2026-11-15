@@ -1,0 +1,87 @@
+START 2026-11-15T09:17:33.783988+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:273:6: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    (uprob fun t =>
+        spDecStr E n _a (List.ofFn t.2.1) (spEncStr E (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) = none) ≤
+      uprob fun t =>
+        decodeFin n
+            ((specialScheme G E hE hGE).dec.runAt n
+              (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] t.2.1)
+                ((specialScheme G E hE hGE).enc.runAt n
+                  (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] t.1) (List.ofFn m)) t.2.2.1))
+              t.2.2.2) =
+          none
+Error: Application type mismatch: The argument
+  m
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin _a → Bool
+in the application
+  List.ofFn m
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x)
+hG : PRFOut (PolyExpr.var.add PolyExpr.var) G
+ε : ℕ → ℝ
+hε : Negligible ε
+hb :
+  ∀ (n : ℕ) (m : Fin (PolyExpr.var.eval n) → Bool),
+    1 - ε n <
+      uprob fun t =>
+        spDecStr E n (PolyExpr.var.eval n) (List.ofFn t.2.1)
+            (spEncStr E (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) =
+          none
+n : ℕ
+m : Fin n → Bool
+K : Type := Fin n → Bool
+ek : (specialScheme G E hE hGE).gen.Coins n ≃ (Fin n → Bool) := specialScheme_keyCoinsEquiv G E hE hGE n
+er : (specialScheme G E hE hGE).enc.Coins n ≃ (Fin n → Bool) := specialScheme_nonceCoinsEquiv G E hE hGE n
+e : (specialScheme G E hE hGE).gen.Coins n ×
+    (specialScheme G E hE hGE).gen.Coins n ×
+      (specialScheme G E hE hGE).enc.Coins n × (specialScheme G E hE hGE).dec.Coins n ≃
+  (K × K × K) × (specialScheme G E hE hGE).dec.Coins n :=
+  { toFun := fun t => ((ek t.1, ek t.2.1, er t.2.2.1), t.2.2.2),
+    invFun := fun t => (ek.symm t.1.1, ek.symm t.1.2.1, er.symm t.1.2.2, t.2), left_inv := ⋯, right_inv := ⋯ }
+hk : ∀ (k : K), List.ofFn (ek.symm k) = List.ofFn k
+hr : ∀ (r : K), List.ofFn (er.symm r) = List.ofFn r
+⊢ (uprob fun t =>
+      spDecStr E n (PolyExpr.var.eval n) (List.ofFn t.2.1)
+          (spEncStr E (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) =
+        none) ≤
+    uprob fun t =>
+      decodeFin n
+          ((specialScheme G E hE hGE).dec.runAt n
+            (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] t.2.1)
+              ((specialScheme G E hE hGE).enc.runAt n
+                (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] t.1) (List.ofFn m)) t.2.2.1))
+            t.2.2.2) =
+        none
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): no fresh .olean produced
+        6.01 real         1.71 user         1.28 sys
+          2229633024  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              120680  page reclaims
+               59284  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                5630  voluntary context switches
+               38679  involuntary context switches
+            32091547  instructions retired
+            14264177  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T09:17:44.857359+00:00 EXIT 1

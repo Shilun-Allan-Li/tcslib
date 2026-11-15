@@ -1,0 +1,24 @@
+theorem specialScheme_multiMessageSecure_of_joint (h : SliceMultiMessageSecure G) :
+    (specialScheme G E hE hGE).MultiMessageSecure := by
+  rw [PrivateKeyScheme.multiMessageSecure_iff]
+  intro D q
+  obtain ⟨ε, hε, hb⟩ := (sliceMultiMessageSecure_iff G).mp h D q
+  refine ⟨ε, hε, fun n m m' => ?_⟩
+  let e : (specialScheme G E hE hGE).gen.Coins n ×
+      (Fin (q.eval n + 1) → (specialScheme G E hE hGE).enc.Coins n) ≃
+      (Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool) :=
+    (specialScheme_keyCoinsEquiv G E hE hGE n).prodCongr
+      (Equiv.piCongrRight fun _ => specialScheme_nonceCoinsEquiv G E hE hGE n)
+  have hX : ∀ v : Fin (q.eval n + 1) → Fin n → Bool,
+      (specialScheme G E hE hGE).multiEncDist n (q.eval n) v =
+        fun t => sliceMultiEncDist G n (q.eval n) (fun _ => 0) (fun _ => n) v (e t) := by
+    intro v
+    funext t
+    rw [PrivateKeyScheme.multiEncDist_apply, sliceMultiEncDist_apply]
+    refine congrArg PrivateKeyScheme.encodeList (congrArg List.ofFn (funext fun i => ?_))
+    rw [specialScheme_gen_runAt, specialScheme_enc_runAt, sliceEnc_eq_spEncStr hGE]
+    simp only [e, Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.piCongrRight_apply,
+      Pi.map_apply, List.drop_zero, specialScheme_keyCoinsEquiv_ofFn,
+      specialScheme_nonceCoinsEquiv_ofFn]
+  rw [distAdv_def, hX m, hX m', acceptProb_comp_equiv, acceptProb_comp_equiv, ← distAdv_def]
+  exact hb n (fun _ => 0) (fun _ => n) (fun _ => by show 0 + n + n ≤ n + n; omega) m m'

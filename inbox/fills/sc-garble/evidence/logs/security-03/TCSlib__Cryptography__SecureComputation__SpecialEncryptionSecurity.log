@@ -1,0 +1,61 @@
+START 2026-11-15T09:15:39.193363+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:175:73: error: unsolved goals
+case h
+G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x)
+hG : PRFOut (PolyExpr.var.add PolyExpr.var) G
+D : NUPPT
+q : PolyExpr
+ε : ℕ → ℝ
+hε : Negligible ε
+hb :
+  ∀ (n : ℕ) (w w' : Fin (q.eval n + 1) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool),
+    distAdv (fun z => encodeTupleOut (prfEncRealOut (G n) w z)) (fun z => encodeTupleOut (prfEncRealOut (G n) w' z))
+        (D.distinguisherL n) ≤
+      ε n
+n : ℕ
+m m' : Fin (q.eval n + 1) → Fin n → Bool
+e : (specialScheme G E hE hGE).gen.Coins n × (Fin (q.eval n + 1) → (specialScheme G E hE hGE).enc.Coins n) ≃
+  (Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool) :=
+  (specialScheme_keyCoinsEquiv G E hE hGE n).prodCongr
+    (Equiv.piCongrRight fun x => specialScheme_nonceCoinsEquiv G E hE hGE n)
+v : Fin (q.eval n + 1) → Fin n → Bool
+t : (specialScheme G E hE hGE).gen.Coins n × (Fin (q.eval n + 1) → (specialScheme G E hE hGE).enc.Coins n)
+i : Fin (q.eval n + 1)
+⊢ pairEncode (List.ofFn ((specialScheme_nonceCoinsEquiv G E hE hGE n) (t.2 i)))
+      (List.zipWith xor
+        (List.replicate (List.ofFn ((specialScheme_nonceCoinsEquiv G E hE hGE n) (t.2 i))).length false ++
+          List.ofFn (v i))
+        (List.ofFn
+          (G n ((specialScheme_keyCoinsEquiv G E hE hGE n) t.1)
+            ((specialScheme_nonceCoinsEquiv G E hE hGE n) (t.2 i))))) =
+    pairEncode (List.ofFn ((specialScheme_nonceCoinsEquiv G E hE hGE n) (t.2 i)))
+      (List.zipWith xor (List.replicate n false ++ List.ofFn (v i))
+        (List.ofFn
+          (G n ((specialScheme_keyCoinsEquiv G E hE hGE n) t.1)
+            ((specialScheme_nonceCoinsEquiv G E hE hGE n) (t.2 i)))))
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:241:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): no fresh .olean produced
+        2.35 real         1.65 user         0.96 sys
+          2226487296  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179610  page reclaims
+                  40  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  22  voluntary context switches
+                6795  involuntary context switches
+            31827835  instructions retired
+            14404153  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T09:15:41.581986+00:00 EXIT 1

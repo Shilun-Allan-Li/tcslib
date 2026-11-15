@@ -1,0 +1,78 @@
+START 2026-11-15T09:16:45.525389+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:274:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uprob fun t => spDecStr E n n (List.ofFn t.2.1) (spEncStr E (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) = none
+in the target expression
+  (uprob fun t =>
+      spDecStr E n (PolyExpr.var.eval n) (List.ofFn t.2.1)
+          (spEncStr E (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) =
+        none) ≤
+    uprob fun a =>
+      decodeFin n
+          ((specialScheme G E hE hGE).dec.runAt n
+            (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] (e.symm a).2.1)
+              ((specialScheme G E hE hGE).enc.runAt n
+                (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] (e.symm a).1) (List.ofFn m)) (e.symm a).2.2.1))
+            (e.symm a).2.2.2) =
+        none
+
+G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x)
+hG : PRFOut (PolyExpr.var.add PolyExpr.var) G
+ε : ℕ → ℝ
+hε : Negligible ε
+hb :
+  ∀ (n : ℕ) (m : Fin (PolyExpr.var.eval n) → Bool),
+    1 - ε n <
+      uprob fun t =>
+        spDecStr E n (PolyExpr.var.eval n) (List.ofFn t.2.1)
+            (spEncStr E (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) =
+          none
+n : ℕ
+m : Fin n → Bool
+K : Type := Fin n → Bool
+ek : (specialScheme G E hE hGE).gen.Coins n ≃ (Fin n → Bool) := specialScheme_keyCoinsEquiv G E hE hGE n
+er : (specialScheme G E hE hGE).enc.Coins n ≃ (Fin n → Bool) := specialScheme_nonceCoinsEquiv G E hE hGE n
+e : (specialScheme G E hE hGE).gen.Coins n ×
+    (specialScheme G E hE hGE).gen.Coins n ×
+      (specialScheme G E hE hGE).enc.Coins n × (specialScheme G E hE hGE).dec.Coins n ≃
+  (K × K × K) × (specialScheme G E hE hGE).dec.Coins n :=
+  { toFun := fun t => ((ek t.1, ek t.2.1, er t.2.2.1), t.2.2.2),
+    invFun := fun t => (ek.symm t.1.1, ek.symm t.1.2.1, er.symm t.1.2.2, t.2), left_inv := ⋯, right_inv := ⋯ }
+hk : ∀ (k : K), List.ofFn (ek.symm k) = List.ofFn k
+hr : ∀ (r : K), List.ofFn (er.symm r) = List.ofFn r
+⊢ (uprob fun t =>
+      spDecStr E n (PolyExpr.var.eval n) (List.ofFn t.2.1)
+          (spEncStr E (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2)) =
+        none) ≤
+    uprob fun a =>
+      decodeFin n
+          ((specialScheme G E hE hGE).dec.runAt n
+            (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] (e.symm a).2.1)
+              ((specialScheme G E hE hGE).enc.runAt n
+                (pairEncode ((specialScheme G E hE hGE).gen.runAt n [] (e.symm a).1) (List.ofFn m)) (e.symm a).2.2.1))
+            (e.symm a).2.2.2) =
+        none
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): no fresh .olean produced
+        6.71 real         1.76 user         1.46 sys
+          2229944320  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              120590  page reclaims
+               59419  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                5688  voluntary context switches
+               46946  involuntary context switches
+            32040793  instructions retired
+            15115417  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T09:16:52.273458+00:00 EXIT 1

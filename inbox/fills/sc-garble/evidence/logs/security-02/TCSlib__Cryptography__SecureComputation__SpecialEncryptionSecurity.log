@@ -1,0 +1,63 @@
+START 2026-11-15T09:13:38.603027+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:186:8: error(lean.unknownIdentifier): Unknown identifier `HardcoreBit.zipWith_xor_ofFn_add`
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:187:32: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  acceptProb (fun s => ?X (?e s)) ?D
+in the target expression
+  |acceptProb (fun t => encodeTupleOut (prfEncRealOut (G n) (fun i => Fin.append (fun x => false) (m i)) (e t)))
+          (D.distinguisherL n) -
+        acceptProb (fun t => encodeTupleOut (prfEncRealOut (G n) (fun i => Fin.append (fun x => false) (m' i)) (e t)))
+          (D.distinguisherL n)| ≤
+    ε n
+
+G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hGE : ∀ (n : ℕ) (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G n s x)
+hG : PRFOut (PolyExpr.var.add PolyExpr.var) G
+D : NUPPT
+q : PolyExpr
+ε : ℕ → ℝ
+hε : Negligible ε
+hb :
+  ∀ (n : ℕ) (w w' : Fin (q.eval n + 1) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool),
+    distAdv (fun z => encodeTupleOut (prfEncRealOut (G n) w z)) (fun z => encodeTupleOut (prfEncRealOut (G n) w' z))
+        (D.distinguisherL n) ≤
+      ε n
+n : ℕ
+m m' : Fin (q.eval n + 1) → Fin n → Bool
+e : (specialScheme G E hE hGE).gen.Coins n × (Fin (q.eval n + 1) → (specialScheme G E hE hGE).enc.Coins n) ≃
+  (Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool) :=
+  (specialScheme_keyCoinsEquiv G E hE hGE n).prodCongr
+    (Equiv.piCongrRight fun x => specialScheme_nonceCoinsEquiv G E hE hGE n)
+hX :
+  ∀ (v : Fin (q.eval n + 1) → Fin n → Bool),
+    (specialScheme G E hE hGE).multiEncDist n (q.eval n) v = fun t =>
+      encodeTupleOut (prfEncRealOut (G n) (fun i => Fin.append (fun x => false) (v i)) (e t))
+⊢ |acceptProb (fun t => encodeTupleOut (prfEncRealOut (G n) (fun i => Fin.append (fun x => false) (m i)) (e t)))
+          (D.distinguisherL n) -
+        acceptProb (fun t => encodeTupleOut (prfEncRealOut (G n) (fun i => Fin.append (fun x => false) (m' i)) (e t)))
+          (D.distinguisherL n)| ≤
+    ε n
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:238:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity): no fresh .olean produced
+        2.38 real         1.64 user         0.97 sys
+          2222931968  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179404  page reclaims
+                  15  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  17  voluntary context switches
+                6872  involuntary context switches
+            31772934  instructions retired
+            15434679  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T09:13:41.011645+00:00 EXIT 1

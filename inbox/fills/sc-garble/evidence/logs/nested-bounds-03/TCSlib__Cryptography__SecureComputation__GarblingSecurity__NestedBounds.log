@@ -1,0 +1,86 @@
+START 2026-11-15T09:28:02.101625+00:00 TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds
+TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean:106:20: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  spDecStr E₂ n (innerLen.eval n) (List.ofFn (t.1 0 (a 0)))
+    (spEncStr E₂ (List.ofFn (t.1 0 (a 0))) (spEncStr E₁ (List.ofFn (t.1 1 (a 1))) (List.ofFn o) (List.ofFn t.2.2))
+      (List.ofFn t.2.1))
+in the target expression
+  ((spDecStr E₂ n (innerLen.eval n) (List.ofFn (t.1 0 (a 0)))
+            (spEncStr E₂ (List.ofFn (t.1 0 (a 0)))
+              (spEncStr E₁ (List.ofFn (t.1 (Fin.succ 0) (a (Fin.succ 0)))) (List.ofFn o) (List.ofFn t.2.2))
+              (List.ofFn t.2.1))).bind
+        fun c' => (spDecStr E₁ n n (List.ofFn (t.1 (Fin.succ 0) (a' (Fin.succ 0)))) c').bind (decodeFin n)).isSome =
+    true
+
+case pos
+G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool
+E₁ E₂ : List Bool → List Bool
+hGE₁ : ∀ (n : ℕ) (k r : Fin n → Bool), E₁ (pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (G₁ n k r)
+hGE₂ : ∀ (n : ℕ) (k r : Fin n → Bool), E₂ (pairEncode (List.ofFn k) (List.ofFn r)) = List.ofFn (G₂ n k r)
+n : ℕ
+ε₁ ε₂ : ℝ
+hε₁ : 0 ≤ ε₁
+hε₂ : 0 ≤ ε₂
+h₁ :
+  ∀ (m : Fin n → Bool),
+    (uprob fun t =>
+        (spDecStr E₁ n n (List.ofFn t.2.1) (spEncStr E₁ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome =
+          true) ≤
+      ε₁
+h₂ :
+  ∀ (m : Fin (innerLen.eval n) → Bool),
+    (uprob fun t =>
+        (spDecStr E₂ n (innerLen.eval n) (List.ofFn t.2.1)
+              (spEncStr E₂ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome =
+          true) ≤
+      ε₂
+o : Fin n → Bool
+hlen : 2 ≤ 2
+a a' : Fin 2 → Bool
+hne : a ≠ a'
+hfirst : a 0 = a' 0
+hsecond : a 1 ≠ a' 1
+hu :
+  (uprob fun ω =>
+      (spDecStr E₁ n n (List.ofFn (ω.1 1 (a 1), ω.1 1 (a' 1), if true = true then ω.2.2 else ω.2.1).2.1)
+            (spEncStr E₁ (List.ofFn (ω.1 1 (a 1), ω.1 1 (a' 1), if true = true then ω.2.2 else ω.2.1).1) (List.ofFn o)
+              (List.ofFn (ω.1 1 (a 1), ω.1 1 (a' 1), if true = true then ω.2.2 else ω.2.1).2.2))).isSome =
+        true) =
+    uprob fun t =>
+      (spDecStr E₁ n n (List.ofFn t.2.1) (spEncStr E₁ (List.ofFn t.1) (List.ofFn o) (List.ofFn t.2.2))).isSome = true
+t : (Fin 2 → Bool → Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool)
+ht :
+  ((spDecStr E₂ n (innerLen.eval n) (List.ofFn (t.1 0 (a 0)))
+            (spEncStr E₂ (List.ofFn (t.1 0 (a 0)))
+              (spEncStr E₁ (List.ofFn (t.1 (Fin.succ 0) (a (Fin.succ 0)))) (List.ofFn o) (List.ofFn t.2.2))
+              (List.ofFn t.2.1))).bind
+        fun c' => (spDecStr E₁ n n (List.ofFn (t.1 (Fin.succ 0) (a' (Fin.succ 0)))) c').bind (decodeFin n)).isSome =
+    true
+hc : (spEncStr E₁ (List.ofFn (t.1 1 (a 1))) (List.ofFn o) (List.ofFn t.2.2)).length = innerLen.eval n
+hp : (E₂ (pairEncode (List.ofFn (t.1 0 (a 0))) (List.ofFn t.2.1))).length = n + innerLen.eval n
+⊢ (spDecStr E₁ n n (List.ofFn (t.1 1 (a 1), t.1 1 (a' 1), if true = true then t.2.2 else t.2.1).2.1)
+        (spEncStr E₁ (List.ofFn (t.1 1 (a 1), t.1 1 (a' 1), if true = true then t.2.2 else t.2.1).1) (List.ofFn o)
+          (List.ofFn (t.1 1 (a 1), t.1 1 (a' 1), if true = true then t.2.2 else t.2.1).2.2))).isSome =
+    true
+FAIL(TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds): no fresh .olean produced
+        2.25 real         1.38 user         0.94 sys
+          2192162816  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174075  page reclaims
+                  28  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  30  voluntary context switches
+                3750  involuntary context switches
+            32105704  instructions retired
+            16158577  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T09:28:04.389641+00:00 EXIT 1

@@ -1,0 +1,38 @@
+START 2026-11-15T09:04:31.394331+00:00 TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad.lean:53:4: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.zipWith xor ?l (List.replicate (List.length ?l) false)
+in the target expression
+  List.take (List.take r.length (E (pairEncode k r))).length (E (pairEncode k r)) =
+    List.zipWith xor (List.take (List.take r.length (E (pairEncode k r))).length (E (pairEncode k r)))
+      (List.replicate (List.take r.length (E (pairEncode k r))).length false)
+
+case e_α.e_a
+E : List Bool → List Bool
+k m r : List Bool
+hp : r.length + m.length ≤ (E (pairEncode k r)).length
+hlen : (List.take r.length (E (pairEncode k r))).length = r.length
+⊢ List.take (List.take r.length (E (pairEncode k r))).length (E (pairEncode k r)) =
+    List.zipWith xor (List.take (List.take r.length (E (pairEncode k r))).length (E (pairEncode k r)))
+      (List.replicate (List.take r.length (E (pairEncode k r))).length false)
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity/Pad): no fresh .olean produced
+        3.43 real         1.52 user         1.27 sys
+          2136195072  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171120  page reclaims
+                3901  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                 220  voluntary context switches
+               16152  involuntary context switches
+            33727698  instructions retired
+            23678745  cycles elapsed
+             1671504  peak memory footprint
+END 2026-11-15T09:04:34.892515+00:00 EXIT 1

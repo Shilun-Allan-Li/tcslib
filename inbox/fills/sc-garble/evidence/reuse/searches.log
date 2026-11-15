@@ -1,0 +1,905 @@
+Re-capture of the statement-shape/key-name searches first run before implementation.
+["git", "grep", "-n", "-E", "uprob_(comp_equiv|prod|fst|exists_le|const|eq_one_div_card)|uexp_const|abs_uexp_sub_le_uprob|prfAdv_eq|prfAdv_congr_equiv|acceptProb_random_eq|distAdv_comp|pushesUniform_|uprob_not_injective_le", "fbd37f447596d4207c8d08b7ef7602f57fe95198", "--", "TCSlib/Cryptography"]
+EXIT 0
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/CollectionShift.lean:250:  rw [uprob_prod, uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/CollectionShift.lean:253:  rw [← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/CollectionShift.lean:255:  exact (uprob_fst _).symm
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Collections.lean:286:  exact (OneWay.uexp_mono fun r => uprob_le_one _).trans (OneWay.uexp_const 1).le
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Collections.lean:582:  rw [← OneWay.uexp_const (α := (𝓕.toCollection F hF hspec).gen.Coins n)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Collections.lean:591:  refine Eq.trans ?_ (uprob_comp_equiv ((𝓕.toCollection_domEquiv F hF hspec i).prodCongr
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Collections.lean:1029:    refine Eq.trans ?_ (uprob_comp_equiv ((Equiv.refl (G.D (G.index n r₁))).prodCongr
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Collections.lean:1041:reassociate (`uprob_comp_equiv`); average over `r₁` (`uprob_prod`); on each fibre apply
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Collections.lean:1042:`fiber_le`; the right-hand side is `uexp (fun r₁ => ⋯ + δ n)` by `uexp_add`, `uexp_const`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Collections.lean:1053:  rw [← uprob_comp_equiv e, uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Collections.lean:1055:  rw [← OneWay.uexp_const (α := G.gen.Coins n) (δ n), ← OneWay.uexp_add]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Collections.lean:1092:uniform `x ∈ D_i` at the cost `δ(n)`; averaging over `r₁` (`uprob_comp_equiv` on `splitCoins`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Collections.lean:1093:`uprob_prod`, `OneWay.uexp_add`, `OneWay.uexp_const`) gives
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Ensembles.lean:629:  rw [← uprob_comp_equiv (Equiv.prodAssoc Bool (σ₀ × σ₁) ρ).symm, uprob_bool_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Ensembles.lean:660:experiment of the statement and `predict_eq` is `uprob_comp_equiv`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:96:    (uprob_fst fun w : σ × ρ => D (X w.1) w.2 = true)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:108:theorem uprob_const {α : Type*} [Fintype α] [Nonempty α] (p : Prop) [Decidable p] :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:127:  simp only [hX, hY, uprob_const, sub_self, abs_zero, le_refl]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:79:(`uprob_comp_equiv` with `Equiv.prodAssoc`, `uprob_prod`) the hypothesis says
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:88:(`uprob_prod`, `uprob_mul_le_uexp`) gives `(ε/2)(2^{-k}/2) = ε/(4·2^k)`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:100:    rw [← uprob_comp_equiv (Equiv.prodAssoc α (Fin m → Bool) ρ).symm, uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:137:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:152:independent unused component (`uprob_fst`, `uprob_comp_equiv`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:169:        (uprob_fst (fun z : α × GuessCoins m k ρ => guessRecover A k (f z.1) z.2 = enc z.1)).symm
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean:170:    _ = _ := uprob_comp_equiv e fun z : (α × (Fin m → Bool)) × GuessCoins m k ρ =>
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean:355:`uprob_comp_equiv` on the coin split `splitCoins`, `uprob_mono` (if `A`'s decoded answer
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:297:split, `uprob_comp_equiv`); `henc` gives `(encD i default).length = m n`, so the second
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:305:against `D_i × B.Coins n` by `uprob_comp_equiv` on `splitCoins`, and `uprob_mono`: a decoded
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:218:`glCoinsEquiv` (the unread coins dropped by `uprob_fst`); pointwise, `glCollMachine_runAt`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:246:  rw [← uprob_comp_equiv ((Equiv.refl (F.D i × (Fin (mP.eval n) → Bool))).prodCongr
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:256:  refine le_of_eq_of_le (uprob_fst (β := Fin ((glCoins mP K (A.precomp collPre_poly)).eval n - glNeed (A.precomp collPre_poly) mP k n) → Bool)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:258:  refine le_of_le_of_eq ?_ (uprob_comp_equiv ((Equiv.prodAssoc (F.D i × (Fin (mP.eval n) → Bool))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:355:      refine (OneWay.uprob_congr fun z => ?_).trans (uprob_comp_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:183:coins are dropped by `uprob_fst`); on `(x, r)` with coins `(s, b, c)` the family inverter
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:210:  rw [invProbOpt_def, invProb_def, ← uprob_comp_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:232:  rw [← uprob_comp_equiv ((Equiv.prodAssoc ((Fin (𝓕.inLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:236:  refine (OneWay.uprob_congr fun w => ?_).trans (uprob_fst fun v : ((Fin (𝓕.inLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)) ×
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:245:  refine le_of_eq_of_le (uprob_comp_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:247:  refine le_of_le_of_eq ?_ ((uprob_comp_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:249:    (uprob_comp_equiv ((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:416:  refine le_of_eq_of_le (uprob_comp_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:419:  refine le_of_le_of_eq ?_ ((uprob_comp_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:421:    (uprob_comp_equiv ((Equiv.refl (F.D (F.index n r))).prodCongr
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:429:`PermFamily.glPad_inEquiv` on the `glPad` side; `uprob_comp_equiv`) and compare pointwise
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:440:  rw [invProb_def, invProb_def, ← uprob_comp_equiv (snocCoins m ρ)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:442:    (uprob_comp_equiv ((P.glPad_inEquiv m).symm.prodCongr (Equiv.refl (Bool × ρ))) _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:647:coins through `reparamCoins` (`uprob_comp_equiv`). The encodings of the two values agree
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:667:  refine (OneWay.uprob_congr fun z => ?_).trans (uprob_comp_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:684:`glPad_inEquiv` and `oddCoins` (`uprob_comp_equiv`); then compare pointwise (`uprob_mono`). A
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:699:    ← uprob_comp_equiv (d.symm.prodCongr (Equiv.refl (A.Coins (m + m + 1))))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:700:  refine le_of_eq_of_le (uprob_comp_equiv (snocCoins m (A.Coins (m + m + 1))) _).symm ?_
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:701:  refine le_of_le_of_eq ?_ (uprob_comp_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:774:`finCongr`); by `invProbAt_eq_uprob`, `uprob_comp_equiv` and `invProb_glHalf_even`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:798:(`uprob_comp_equiv` on the coin split `A''.Coins m ≃ Bool × A.Coins (m + m + 1)`). The single
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWay.lean:279:`B.Coins n ≃ A.Coins (outLen n)` (`PolyExpr.eval_subst`, `finCongr`); `uprob_comp_equiv`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWay.lean:291:  rw [← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWay.lean:311:(`uprob_comp_equiv`, `uprob_fst`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWay.lean:344:  rw [← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWay.lean:357:  exact (uprob_fst fun r : B.Coins n => ∃ x',
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWay.lean:416:(`uprob_comp_equiv` on the first coordinate); `f'` is `blocks⁻¹ ∘ prodFun ∘ blocks` by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWay.lean:425:  rw [← uprob_comp_equiv (Equiv.prodCongr (blocks (q.eval n) (𝓕.inLen.eval n)) (Equiv.refl _))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWay.lean:746:`Fin.appendEquiv`, `uprob_comp_equiv`, `ofFn_blocks_symm`). Probability: `invProbAt_prod_eq`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWay.lean:815:  rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl _) e)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWayYao.lean:514:`finCongr`), which pushes uniform to uniform (`HardcoreBit.pushesUniform_fst`); the block
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWayYao.lean:516:theorem pushesUniform_pbOf {n M kk : ℕ} (h : n * kk ≤ n * M) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWayYao.lean:522:    (HardcoreBit.pushesUniform_equiv e₁).comp HardcoreBit.pushesUniform_fst
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWayYao.lean:523:  have h₂ := h₁.comp (HardcoreBit.pushesUniform_equiv (blocksE n kk))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWayYao.lean:545:    (statClose_rejectionSample M kk n hM hMk ⟨0, hM⟩).comp_pushesUniform (pushesUniform_pbOf h)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWayYao.lean:548:    statClose_of_pushesUniform (HardcoreBit.pushesUniform_equiv _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWayYao.lean:953:    rw [← uprob_comp_equiv (Equiv.prodComm (A.Coins n) (Fin (inLen.eval n) → Bool))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/OneWayYao.lean:966:    rw [← uprob_comp_equiv (Equiv.prodComm _ _)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Permutations.lean:376:**Proof sketch.** `permFromCoins_eq_none_iff`, the union bound `uprob_exists_le`, projection
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Permutations.lean:377:of the uniform coin table to position `i` (`HardcoreBit.pushesUniform_eval`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Permutations.lean:388:  refine (uprob_exists_le univ fun (i : Fin n) (b : Fin n → Fin T → Fin k → Bool) =>
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Permutations.lean:395:    rw [(HardcoreBit.pushesUniform_eval i).uprob_eq
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:225:  rw [← uprob_comp_equiv ((Equiv.refl σ).prodCongr e)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:241:  rw [← uprob_comp_equiv ((Equiv.refl α).prodCongr e)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:35:* `HardcoreBit.PushesUniform` from equal fibres (`pushesUniform_of_card_fiber`, lemma C5): a map
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:78:* `TCSlib.Cryptography.pushesUniform_of_card_fiber` — equal fibres push uniform to uniform (C5).
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:181:  rw [uprob_comp_equiv e (fun s => T (X s))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:187:  rw [uprob_comp_equiv e (fun t => T (Y t))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:198:reading a party's random tape as a coin table, `pushesUniform_coinTable`) preserves
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:234:**Proof sketch.** Average over the coins `r` (`uprob_prod` after swapping the coordinates):
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:240:  have e1 := uprob_comp_equiv (Equiv.prodComm ρ σ) (fun z : σ × ρ => P (X z.1) z.2)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:241:  have e2 := uprob_comp_equiv (Equiv.prodComm ρ τ) (fun z : τ × ρ => P (Y z.1) z.2)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:242:  rw [← e1, ← e2, uprob_prod, uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:269:  rw [← uprob_comp_equiv (Equiv.prodComm τ σ') (fun z : σ' × τ => T (X' z.2, Y z.1)),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:270:    ← uprob_comp_equiv (Equiv.prodComm τ τ') (fun z : τ' × τ => T (X' z.2, Y' z.1))] at h2
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:281:`ω ∈ Π_c Aux c` at the coordinate `c` (`Equiv.piSplitAt`, `uprob_fst`), so both averages are
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:282:probabilities over `(·, ω)` (`uprob_prod`), and `StatClose.abs_uprob_sub_le_prod` applies with
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:293:    have h := uprob_comp_equiv (Equiv.piSplitAt c Aux) (fun w => Q c w.1)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:294:    rw [uprob_fst] at h
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:299:    rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:305:    rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:321:theorem pushesUniform_of_card_fiber {Ω γ : Type*} [Fintype Ω] [Fintype γ] [DecidableEq γ]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:324:  refine (HardcoreBit.pushesUniform_iff π).2 fun F => ?_
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:356:theorem pushesUniform_of_card_fiber_le {Ω γ : Type*} [Fintype Ω] [Fintype γ] [DecidableEq γ]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:359:  pushesUniform_of_card_fiber π hc (card_fiber_eq_of_le π hle hcard)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:443:    uprob_comp_equiv (bitsEquiv k) (fun x : Fin (2 ^ k) => x.val < m), uprob_def, Fintype.card_fin,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:488:  have key := uprob_comp_equiv (bitsEquiv k)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:490:  rw [OneWay.uprob_eq_one_div_card, Fintype.card_fin] at key
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:575:(`uprob_comp_equiv`), and it maps the event `{first hit = a}` onto `{first hit = a'}`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:600:  rw [← uprob_comp_equiv (Equiv.piCongrRight fun _ : Fin T => Equiv.swap a a')
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:761:    uprob_comp_equiv (Equiv.piCongrRight fun _ : Fin T => bitsEquiv k)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Sampling.lean:845:    rw [← uprob_bitsToNat_lt hk, ← uprob_comp_equiv (bitsEquiv k) (fun x : Fin (2 ^ k) => x.val < m)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:508:**Proof sketch.** Split `y` as `(prefix, rest)` by `Fin.appendEquiv` (`uprob_comp_equiv`); the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:509:event is a point event on the first component (`uprob_fst`, `OneWay.uprob_eq_one_div_card`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:519:  rw [← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:527:  rw [hP, uprob_fst (fun a : Fin (Nat.log 2 n) → Bool => a = code), OneWay.uprob_eq_one_div_card]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:555:(Fubini, `uprob_prod`, one term of the average). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:559:  rw [uprob_prod, uexp_def]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:691:(`invProbAt_eq_uprob`, `uprob_comp_equiv`), so `claim_65_2_cond` with
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:694:are `A`'s followed by unread coins (`uprob_comp_equiv`, `uprob_fst`), and `A`'s success gives
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:727:    rw [← uprob_comp_equiv e']
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:739:  rw [← uprob_comp_equiv e₂]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:741:  rw [← uprob_fst (β := Fin (B.coinLen (n - Nat.log 2 n) - A.coinLen n) → Bool)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:778:(`Fin.appendEquiv`, `uprob_comp_equiv`, as in `claim_65_1`); `claim_65_2_cond` with
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/Universal.lean:791:(`List.take`, `uprob_fst` on `Fin.appendEquiv`). *Functional identity:*
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:269:(`uprob_fst`). On `((b, a), ρ)`, `A`'s challenge to `A'` is `g'_m(b ++ a)` (`padStr_eq_gStr`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:318:    ← uprob_comp_equiv (Equiv.prodCongr e (Equiv.refl (A'.Coins m))),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:319:    ← uprob_comp_equiv (eArr.trans (Equiv.prodCongr (Equiv.refl _) eC))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:320:  rw [← uprob_fst (β := (Fin (p.eval n - (m - 𝓕.inLen.eval n)) → Bool) ×
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:180:  uprob_comp_equiv (Equiv.prodSubtypeFstEquivSubtypeProd (p := E)).symm fun z => S z.1
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:186:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:187:  simp only [uprob_eq_one_div_card]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:188:  exact uexp_const _
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:214:(`uprob_mono`, `uprob_or_le`, `uprob_exists_le`). The first event has probability
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:215:`(1 - Pr[G])^m` (`uprob_fst`, `OneWay.uprob_pi_forall`, `uprob_not`). For fixed `i`, planting
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:244:        (uprob_or_le _ _).trans (add_le_add_left (uprob_exists_le _ _) _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:247:        · rw [uprob_fst (fun xs : Fin m → α => ∀ i, ¬ G (xs i)),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:266:          rw [← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:328:  rw [← uprob_comp_equiv (Equiv.prodCongr (bitsEquiv n) (bitsEquiv n))] at h
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:874:`(Fin (T·B) → Bool) ≃ (Fin T → Fin k → Bool) × (Fin T → Fin (B − k) → Bool)` (`uprob_comp_equiv`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:875:`uprob_fst`; alternatively `pushesUniform_of_card_fiber`) — as does
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:888:      HardcoreBit.pushesUniform_restrict (O := Bool) (dla_blockPos_injective (T := T) hkB)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:889:    have h2 := HardcoreBit.pushesUniform_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DDH.lean:121:theorem pushesUniform_sqTo_safe (hpq : p = 2 * q + 1) : HardcoreBit.PushesUniform (sqTo p) := by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DDH.lean:122:  refine pushesUniform_of_card_fiber (sqTo p) (c := 2) (by norm_num) fun y => ?_
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DDH.lean:239:(Claim-107.a, missing in the text): the uniform element of `G_q` (`pushesUniform_sqTo_safe`)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DDH.lean:246:along `pushesUniform_sqTo_safe` (`PushesUniform.uprob_eq`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DDH.lean:251:  rw [(pushesUniform_sqTo_safe hpq).uprob_eq T]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:423:  exact (OneWay.uexp_mono fun r => uprob_le_one _).trans (OneWay.uexp_const 1).le
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:548:(`uprob_comp_equiv`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:552:  uprob_comp_equiv _ P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:637:    rw [← uprob_comp_equiv (bitsEquiv (Nat.size m)) (fun v : Fin (2 ^ Nat.size m) => (v : ℕ) < m)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:819:uniform statements over `D i` transport along it (`uprob_comp_equiv`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:827:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = expCollection_domEquiv H G hV i` (`uprob_comp_equiv`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:833:  uprob_comp_equiv _ P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:883:  uprob_comp_equiv _ P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:979:coins (`uprob_comp_equiv` on the block decomposition `NumberTheory.chunk`), accepted iff the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:1059:  rw [← uprob_comp_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:1137:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = dlCollection_domEquiv H G i` (`uprob_comp_equiv`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLog.lean:1142:  uprob_comp_equiv _ P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:462:bijection (`HardcoreBit.pushesUniform_add_right`), so `Pr_{r, c}[A(z, c) = half(e + r)] =
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:463:predProb (expo g) half A ≥ 1/2 + ε` (`uprob_comp_equiv`). For `e < s`, `half(e + r) ≠ half(r)`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:511:    exact uprob_comp_equiv ((Equiv.addLeft (e : ZMod m)).prodCongr (Equiv.refl ρ))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:515:    rw [uprob_fst (fun r => ¬ good r)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:561:(`uprob_trial_ge` transported by `pushesUniform_eval`); if the majority is wrong then at most
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:580:    rw [(HardcoreBit.pushesUniform_eval i).uprob_eq (fun z => H z = true)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:620:(`pushesUniform_fst`, `uprob_eq_one_div_card`); then `y · g^{−ts} = g^{e − ts}` with
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:622:(`Nat.cast_sub`, `Nat.div_add_mod`). `uprob_prod` over `(e, t)` and `uprob_mono` with the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:643:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:652:      rw [← HardcoreBit.uprob_prod_and]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:655:    rw [h1, OneWay.uprob_eq_one_div_card, Fintype.card_fin, div_eq_mul_inv, one_div, mul_comm]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:658:  calc (1 - δ) / T = uexp (fun _ : ZMod (p - 1) => (1 - δ) / (T : ℝ)) := (HardcoreBit.uexp_const _).symm
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:723:its query (`uprob_exists_le` over the `k` rounds, `Fin.cons` bookkeeping). Along the correct
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:727:(`pushesUniform_eval`), so each round fails with probability `≤ 1/(ε² ℓ)`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:767:    rw [(HardcoreBit.pushesUniform_eval j).uprob_eq
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:771:  have hunion := (uprob_mono hfail).trans ((uprob_exists_le univ _).trans
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:842:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = fullDLCollection_domEquiv H G i` (`uprob_comp_equiv`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:847:  uprob_comp_equiv _ P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:889:  uprob_comp_equiv _ P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2437:(`HardcoreBit.pushesUniform_restrict`), and it is read by `bitsEquiv`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2455:  exact (HardcoreBit.pushesUniform_restrict (Fin.castLE_injective hκ)).comp
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2456:    (HardcoreBit.pushesUniform_equiv (bitsEquiv κ))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2497:  rw [predProb_def, ← uprob_comp_equiv (((fullDLCollection_domEquiv H G i).trans ψ.toEquiv).prodCongr
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2609:    rw [← uprob_comp_equiv eR]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2642:    have h1 := (HardcoreBit.pushesUniform_equiv ec).prodMap
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2643:      ((HardcoreBit.pushesUniform_equiv ψ.toEquiv).prodMap (dlb_guess_pushesUniform hκ))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2648:    exact h1.comp (HardcoreBit.pushesUniform_equiv er)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:411:  rw [← uprob_comp_equiv (fac_halvesEquiv n)] at h
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:503:    rw [uprob_fst (fac_PrimeBlocks n)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:555:      (uprob_comp_equiv (Equiv.prodCongr (fac_goodEquiv n) (Equiv.refl (A.Coins n))) _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:563:    refine (OneWay.uprob_congr ?_).trans (uprob_comp_equiv (Equiv.prodCongr
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:599:Transport the subtype to `Π_n × Π_n` by `primesPairEquiv` (`uprob_comp_equiv`), drop the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:750:coins: the pair of primes) with `uprob_comp_equiv` for the coin and coordinate bijections gives
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:812:    rw [factorProb_eq, ← uprob_comp_equiv ((Equiv.prodComm _ _).trans
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:837:    rw [← uprob_comp_equiv (Equiv.prodComm (DistinctPrimes n) _)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:978:      (uprob_comp_equiv (Equiv.prodCongr (fac_goodEquiv n) (Equiv.refl _)) _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:1027:`primesPairEquiv`, `uprob_comp_equiv`); on it `fmult_inv_factor` turns a preimage into a
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:1221:`(Fin (2L) → Bool) ≃ (Fin L → Bool) × (Fin L → Bool)` (`uprob_comp_equiv`), which pushes the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:1506:(`uprob_comp_equiv`, `StatClose.comp_equiv_right`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:1513:`φ = factoringCollection_domEquiv H i` (`uprob_comp_equiv`), the form in which uniform
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:1519:  uprob_comp_equiv _ P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:1738:  refine le_trans (uprob_mono ?_) (le_of_eq (uprob_comp_equiv (Equiv.prodCongr
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:1755:probability at the index `1^n` (`OneWay.uexp_const`, `factoringCollection_index`), whose
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:1765:`uprob_comp_equiv`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:1770:  refine (OneWay.uexp_mono fun r => ?_).trans (OneWay.uexp_const _).le
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Factoring.lean:1777:  refine (OneWay.uprob_congr ?_).trans (uprob_comp_equiv (Equiv.prodCongr
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:67:* `TCSlib.Cryptography.Candidates.rsaPerm_symm_apply`, `pushesUniform_rsaPerm`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:144:    exact (OneWay.uexp_mono fun z => uprob_le_one _).trans (OneWay.uexp_const 1).le
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:176:theorem pushesUniform_rsaPerm (N e : ℕ) [NeZero N] (he : Nat.Coprime e (Nat.totient N)) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:178:  HardcoreBit.pushesUniform_equiv (rsaPerm N e he)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1332:uniform statements over `D i` transport along it (`uprob_comp_equiv`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1339:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rsaTrapdoor_domEquiv H i` (`uprob_comp_equiv`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1344:  uprob_comp_equiv _ P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1426:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rsaCollection_domEquiv H i` (`uprob_comp_equiv`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1431:  uprob_comp_equiv _ P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1709:**Proof sketch.** Read the domain through `rsaCollection_domEquiv` (`uprob_comp_equiv`); by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1726:  refine le_of_le_of_eq ?_ (uprob_comp_equiv (Equiv.prodCongr (rsaPermAt (rsaIndexOf _ P))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1728:  rw [← uprob_comp_equiv (Equiv.prodCongr φ.symm (Equiv.refl (A.Coins n)))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1886:/-- The RSA probability is the average of `rsa_F` over the pair `z` (`uprob_prod`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1891:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1900:are averages of `rsa_g` (`uprob_prod`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1912:    rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1916:    rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1948:    rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1965:`uprob_comp_equiv`, `uprob_mono`), the inner probability is at most the RSA inner probability
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:1970:`HardcoreBit.uexp_prod`, `uprob_prod`, `HardcoreBit.uexp_comp_equiv`). (i) For each fixed prime
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:2010:        rw [HardcoreBit.uexp_add, OneWay.uexp_const]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:2383:`uprob_fst`-style marginalization with the coordinates reordered by `uprob_comp_equiv`);
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:2384:and `factorProb A n = uexp_z Pr_r[A factors | z]` (`uprob_prod`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:2387:  rw [factorProb_eq, uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:2397:  refine le_of_le_of_eq ?_ (uprob_comp_equiv E _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/RSA.lean:2398:  rw [← uprob_fst (β := (ZMod (Nat.totient (z.p * z.q)))ˣ × (ZMod (z.p * z.q))ˣ)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:132:(`uprob_subtype_prod_eq`, `uprob_and_eq_mul_subtype`, `uprob_fst`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:139:  have h3 : uprob (fun w : α × ρ => E w.1) = uprob E := uprob_fst E
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:153:(`OneWay.uprob_eq_one_div_card`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:158:    rw [← OneWay.uprob_eq_one_div_card a0]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:183:  · rw [← uprob_comp_equiv (Equiv.prodComm (Primes n) (Primes n))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:184:    exact (uprob_fst (fun a : Primes n => (a.1 : ℕ) = c)).le.trans (rabin_uprob_val_eq_le c)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:223:(`uprob_diag`, `OneWay.uprob_eq_one_div_card` on each coordinate, `uprob_fst`), and
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:245:          rw [uprob_fst (fun a : Primes n => (a.1 : ℕ) = 2)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:269:with `P = |Π_n|` and `B = #BlumPrimes n` (`HardcoreBit.uprob_prod_and`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:286:    rw [HardcoreBit.uprob_prod_and (fun a : Primes n => (a.1 : ℕ) % 4 = 3) (fun a : Primes n => (a.1 : ℕ) % 4 = 3),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:413:`Pr[B] = Pr[B ∘ (σ × id)] ≤ Pr[G]` (`uprob_comp_equiv (Equiv.prodCongr σ (Equiv.refl ρ))`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:432:    rw [← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:1180:uniform statements over `D i` transport along it (`uprob_comp_equiv`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:1187:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rabinCollection_domEquiv H i` (`uprob_comp_equiv`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:1192:  uprob_comp_equiv _ P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:1738:    rw [rabin_F, ← uprob_comp_equiv (rabin_fCoinsEquiv H A n)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:1798:conditioned on `D` is the uniform distinct class pair (`rabin_diagEquiv`, `uprob_comp_equiv`).
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:1819:    rw [← uprob_comp_equiv (rabin_diagEquiv P n)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2074:`rabin_unitsCongr`, `uprob_comp_equiv`); the challenge `f_N(x)` is the numeral of `x²`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2088:  rw [← uprob_comp_equiv (Equiv.prodCongr (e.toEquiv.symm.trans (rabinCollection_domEquiv H (rabin_idx z)).symm)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2152:(`uprob_prod`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2156:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2186:through the factor `2` (`rabin_core`). (iii) Averaging over the pair, `uprob_prod` gives
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2227:        rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const_mul, OneWay.uexp_const, rabin_oddFactorProb_eq,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2400:to uniform (`NumberTheory.pushesUniform_sqTo`, C5). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2861:(`uprob_comp_equiv`, `StatClose.comp_equiv_right`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2867:`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rabinBlumTrapdoor_domEquiv H i` (`uprob_comp_equiv`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2872:  uprob_comp_equiv _ P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2958:(`pushesUniform_sqTo`, stated for `M` equal to `pq` so that it applies at `blumMod i`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2959:private theorem rabin_pushesUniform_sqTo {p q : ℕ} [Fact p.Prime] [Fact q.Prime] (hpq : p ≠ q)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2963:  exact pushesUniform_sqTo hpq hp2 hq2
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:2970:uniform units to uniform residues (`pushesUniform_sqTo`, `statClose_of_pushesUniform`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3006:  have hT := (statClose_of_pushesUniform (rabin_pushesUniform_sqTo R.z.p_ne_q hp2 hq2 _ hM)).map
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3012:of a uniform residue (`NumberTheory.pushesUniform_sqTo`, `statClose_of_pushesUniform`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3021:`0`-close to the uniform residue (`pushesUniform_sqTo` for the odd primes `p ≠ q`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3043:with independent coins: the library's `PushesUniform.prodMap` with `pushesUniform_id`, then
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3045:private theorem rabin_pushesUniform_prod {Ω γ ρ : Type*} [Fintype Ω] [Fintype γ] [Fintype ρ]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3048:  (h.prodMap HardcoreBit.pushesUniform_id).uprob_eq fun w => P w.1 w.2
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3066:(`pushesUniform_sqTo`, `rabin_pushesUniform_prod`), so the event is "`A(r²)` decodes to a root
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3088:  rw [← uprob_comp_equiv (Equiv.prodCongr ((blumPermAt i).symm.trans (rabinBlumTrapdoor_domEquiv H i).symm) (Equiv.refl (A.Coins n)))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3109:  have h2 := (rabin_pushesUniform_prod (rabin_pushesUniform_sqTo z.p_ne_q hp2 hq2 _ hM)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3115:  rw [← uprob_comp_equiv (Equiv.prodCongr e.toEquiv.symm (Equiv.refl (A.Coins n)))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3155:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3228:unit (`pushesUniform_sqTo`), and `rabin_core` (`rabin_symmetry`, `gcd_sub_eq_prime_of_sq_eq_sq`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3230:`uprob_prod` and the total error `rabinErr n`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3247:  rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const_mul, OneWay.uexp_const, ← rabin_blumFactorProb_eq]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3432:only on the coins of `A` (`uprob_fst`, `rabinBlumInverter_coinsEquiv`, `uprob_comp_equiv`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3457:            (bitsToNat x = z.p ∨ bitsToNat x = z.q)) := (uprob_comp_equiv _ _).symm
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3461:            (bitsToNat x = z.p ∨ bitsToNat x = z.q)) := (uprob_fst _).symm
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3462:      _ = _ := (uprob_comp_equiv (Equiv.prodComm _ _) (fun a : (rabinBlumInverter H A).Coins n ×
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3508:`rabinBlumInverter_coinsEquiv`, `uprob_fst`, `uprob_mono`; `rabin_inner_inv`), and averaging
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Rabin.lean:3509:over the uniform distinct Blum pair gives `blumFactorProb A n` (`uprob_prod`). The ideal uniform
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:656:   (`ETTGame.prfAdv_eq_expect`), and with a random function the two bits are `Q²/2^n` apart,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:730:      have p₀ := ETTGame.prfAdv_eq_expect (F n)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:732:      have p₁ := ETTGame.prfAdv_eq_expect (F n)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:40:* `ETTGame.prfAdv_eq_expect`: the PRF advantage as expectations.
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:347:theorem prfAdv_eq_expect {m : ℕ} (Fm : (Fin m → Bool) → (Fin m → Bool) → (Fin m → Bool))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:374:`prfAdv_eq_expect` writes the advantage as the gap between the averages over `k₂` and over the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Reduction.lean:388:  rw [prfAdv_eq_expect]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:55:by `uprob_comp_equiv`. This is the bridge by which a machine obtained from the closure
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:67:  have := uprob_comp_equiv ((Equiv.refl σ).prodCongr e)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:167:  rw [← uprob_comp_equiv (Equiv.prodAssoc K (Fin (q + 1) → Fin n → Bool) ρ)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:286:`uprob_exists_le` over the `C(q+1, 2)` pairs `i < j` (`Finset.card_filter` of `univ.filter (i < j)`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:288:`i ≠ j` the pair `(r i, r j)` is uniform on `({0,1}^n)²` (`HardcoreBit.pushesUniform_eval_pair`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:291:theorem uprob_not_injective_le :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:311:      (HardcoreBit.pushesUniform_eval_pair (γ := Fin n → Bool) (ne_of_lt hlt)).uprob_eq
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:316:  have h2 := uprob_exists_le S (fun p (r : Fin (q + 1) → Fin n → Bool) => r p.1 = r p.2)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:324:`HardcoreBit.pushesUniform_eval_pair` from two points to `q + 1` points).
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:327:restriction along the injective `r` (`HardcoreBit.pushesUniform_restrict`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:328:theorem pushesUniform_comp_injective {I O : Type*} [Fintype I] [DecidableEq I] [Fintype O]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:334:    refine (HardcoreBit.pushesUniform_iff _).2 fun F => ?_
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:338:  · exact HardcoreBit.pushesUniform_restrict hr
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:350:(`uprob_prod` after reassociating the seeds): `a(r) := Pr_R[D((r_j, m_j ⊕ R(r_j))_j) = 1]` and
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:352:`({0,1}^l)^{q+1}` (`pushesUniform_comp_injective`, `PushesUniform.uprob_eq`), so `a(r) = b(r)`;
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:354:(`MultiMsg.abs_uexp_sub_le_uprob`), and `uprob_not_injective_le` bounds it. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:370:    exact (uprob_comp_equiv ((Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:373:      (by rw [uprob_prod]; rfl)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:376:    exact (uprob_comp_equiv (Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:377:      (Fin (q + 1) → Fin l → Bool) ρ).symm _).symm.trans (by rw [uprob_prod]; rfl)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:381:    exact ((pushesUniform_comp_injective (O := Fin l → Bool) hr).prodMap
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:382:      (HardcoreBit.pushesUniform_id (Ω := ρ))).uprob_eq
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:385:  exact (MultiMsg.abs_uexp_sub_le_uprob a b (fun r => ¬ Function.Injective r)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:387:    (fun r hr => hab r (not_not.mp hr))).trans uprob_not_injective_le
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:27:* `MultiMsg.abs_uexp_sub_le_uprob` bounds the difference of two expectations by the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:31:* `MultiMsg.prfAdv_congr_equiv` transports the PRF advantage along a bijection of coins
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:61:theorem abs_uexp_sub_le_uprob {Ω : Type*} [Fintype Ω] (a b : Ω → ℝ) (E : Ω → Prop)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:110:`1 / |α|` (Fubini and `OneWay.uprob_eq_one_div_card`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:113:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:116:    rw [← OneWay.uprob_eq_one_div_card a]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:119:  exact HardcoreBit.uexp_const _
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:165:  rw [← uprob_comp_equiv ((Equiv.refl σ).prodCongr φ)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:172:theorem prfAdv_congr_equiv {K : Type*} {I O : Type} {ρ ρ' : Type*} [Fintype K] [Fintype I] [DecidableEq I]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:180:  rw [prfAdv_eq, prfAdv_eq, hF, hR]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:96:   (`MultiMsg.exists_queryChainOut_nuppt`, budget `q + 1`); with `MultiMsg.prfAdv_congr_equiv`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:99:3. `distAdv_comp` and `distAdv_prfEncRealOut_le` bound the advantage by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:151:      refine MultiMsg.prfAdv_congr_equiv (F n) _ _ φ fun g x => ?_
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:158:    exact (distAdv_comp encodeTupleOut (prfEncRealOut (F n) (μ n).1)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:99:are the definitions of `prgAdv` and `distAdv` (the sunglass identity `distAdv_comp`, here
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:243:  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1230:**Proof sketch.** Average over `G`'s coins (`uprob_prod`). For each coin string `r` (valid and well
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1235:`HardcoreBit.uexp_const`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1242:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1264:  rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const, ← uprob_eq_uexp]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1312:  rw [← uprob_comp_equiv (Equiv.addRight ((k : ℕ) : ZMod q))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1525:(u₃, (r_M, r_D))))` (`acceptProb_def`, `uprob_comp_equiv` with `E₁`, built from `dlc_genEquiv` and
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1529:(`dlc_abs_uprob_sub_le_of_iff`), which depends on `(r, u₁)` only (`uprob_fst`) and is at most `δ n +
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1557:  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv E₁, ← uprob_comp_equiv E₂]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1567:  · exact (uprob_fst (fun z : G.gen.Coins n × (Fin (n * n) → Bool) =>
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1694:(`acceptProb_def`, `uprob_comp_equiv` with `E e_b` using `ddhRandom_σ`), split them off
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1695:(`uprob_prod`), and bound the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1719:  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv (E e₀), ← uprob_comp_equiv (E e₁),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1720:    uprob_prod, uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1752:`a` and `b'`, and the coins of `M` and `D` (`uprob_comp_equiv`; `egGen_runAt`, `egEnc_runAt`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1766:`uprob_comp_equiv`) shows that `h^z · m'_b` has the law of `h^z`; averaging (`uprob_prod`) gives
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:132:(`uprob_comp_equiv`) gives `Pr[D(H_j)]`, and likewise `m'_j` gives `Pr[D(H_{j+1})]`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:357:`multiDist` with one-bit blocks (the coin bijection `coinBlocks`, `uprob_comp_equiv`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:363:  rw [← uprob_comp_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:383:(`distAdv_comp`). Hence the advantage is at most `∑_{j<n}` of the advantages of
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:442:(`distAdv_comp`), so the advantage is at most `∑_{j ≤ q n}` of the advantages of
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:50:`(Fin (q+1) → ρ) × (κ × ρ')` (`uprob_comp_equiv`); the event on the left is then
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:70:  rw [← uprob_comp_equiv e₁, ← uprob_comp_equiv e₂]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:198:(the encoding moved into `Dst`, `distAdv_comp`) bounds the advantage by the sum of the `q + 1`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:396:and `A` on `X` agree (`uprob_comp_equiv` on the coin factor). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:402:  rw [← uprob_comp_equiv ((Equiv.refl σ).prodCongr e)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:142:    exact uprob_comp_equiv (Equiv.prodAssoc RealSeed SubsetSeed ρ)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:147:    exact uprob_comp_equiv (Equiv.prodAssoc PublicKey SubsetSeed ρ)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:398:`D_i (y, c) ρ := D.distinguisherL n ⟨i, ⟨encD i y, [c]⟩⟩ ρ` (`f_perm`, `uprob_comp_equiv` on the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:401:Averaging over `r` (`OneWay.uexp_add`, `uexp_const`) gives
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:436:      rw [acceptProb_def, ← uprob_comp_equiv ((Equiv.prodAssoc (T.gen.Coins n) (T.sample.Coins n)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:438:          (T.tdpEnc_coinsEquiv E n).symm).prodCongr (Equiv.refl _))), uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:150:(`uprob_comp_equiv` along `predCoins`, `tdpPredictor_runAtL`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:158:  rw [← uprob_comp_equiv ((Equiv.refl α).prodCongr (predCoins D flip n))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:168:`OneWay.uexp_const_mul`, `HardcoreBit.uexp_sub`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:173:  rw [e, OneWay.uexp_add, OneWay.uexp_const, OneWay.uexp_const_mul, HardcoreBit.uexp_sub]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Experiments.lean:109:  uprob_comp_equiv (e.prodCongr (Equiv.refl ρ)) (fun z : τ × ρ => D (X z.1) z.2 = true)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Experiments.lean:135:(`uprob_prod`) to average over the coins first, and rewrite each section with
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Experiments.lean:141:  rw [acceptProb, ← uprob_comp_equiv (Equiv.prodComm ρ σ), uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Probability.lean:35:  `uprob_exists_le`: basic laws and the union bound.
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Probability.lean:36:* `uprob_prod`: probability over a product is the average of the probabilities of
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Probability.lean:38:* `uprob_comp_equiv`: probability is invariant under relabelling by a bijection.
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Probability.lean:137:theorem uprob_exists_le {ι : Type*} (s : Finset ι) (p : ι → α → Prop) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Probability.lean:153:theorem uprob_prod (p : α × β → Prop) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Probability.lean:165:theorem uprob_comp_equiv (e : α ≃ β) (p : β → Prop) : uprob (fun a => p (e a)) = uprob p := by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Probability.lean:172:**Proof sketch.** By `uprob_prod`, the section at `a` is the certain or the impossible
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Probability.lean:175:theorem uprob_fst [Nonempty β] (p : α → Prop) : uprob (fun z : α × β => p z.1) = uprob p := by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Probability.lean:177:  rw [uprob_prod, uprob_eq_uexp]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Probability.lean:189:(`uprob_prod`) gives `ε ≤ uprob p ≤ Pr[good] + ε / 2`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/Probability.lean:200:  rw [uprob_prod, uexp] at h
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:31:* `uexp_add`, `uexp_const_mul`, `uexp_sum`, `uexp_mono`, `uexp_prod`: linearity,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:33:* `uprob_prod_and`: independent events on a product multiply.
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:37:* `pushesUniform_eval`, `pushesUniform_eval_pair`, `PushesUniform.prodMap`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:38:  `pushesUniform_of_surjective`: coordinates and pairs of coordinates of a uniform
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:40:* `pushesUniform_restrict`: restricting a uniform table along an injection gives a uniform
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:67:theorem uexp_const_mul (c : ℝ) (f : Ω → ℝ) : uexp (fun ω => c * f ω) = c * uexp f := by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:71:theorem uexp_const [Nonempty Ω] (c : ℝ) : uexp (fun _ : Ω => c) = c := by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:101:  simp only [uexp_const]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:129:theorem uprob_prod_and (p : α → Prop) (q : β → Prop) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:132:  rw [uprob_prod, uprob_eq_uexp_ite p, mul_comm, ← uexp_const_mul]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:145:  rw [uprob_eq_uexp_ite G, mul_comm, ← uexp_const_mul]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:168:  rw [uexp_add, uexp_const, ← uprob_eq_uexp_ite] at h1
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:180:theorem pushesUniform_iff (π : Ω → γ) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:196:theorem pushesUniform_equiv (e : Ω ≃ γ) : PushesUniform e := uexp_comp_equiv e
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:199:theorem pushesUniform_id : PushesUniform (fun ω : Ω => ω) := fun _ => rfl
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:202:theorem pushesUniform_add_right {G : Type*} [AddGroup G] [Fintype G] (e : G) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:204:  pushesUniform_equiv (Equiv.addRight e)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:207:theorem pushesUniform_fst [Nonempty β] : PushesUniform (Prod.fst : α × β → α) := uexp_fst
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:210:theorem pushesUniform_snd [Nonempty α] : PushesUniform (Prod.snd : α × β → β) :=
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:211:  (pushesUniform_equiv (Equiv.prodComm α β)).comp pushesUniform_fst
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:219:and `R ∘ r` is the first one (`pushesUniform_equiv`, `pushesUniform_fst`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:220:theorem pushesUniform_restrict {I J O : Type*} [Fintype I] [DecidableEq I] [Fintype J]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:235:  exact (pushesUniform_equiv e).comp pushesUniform_fst
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:250:theorem pushesUniform_eval {ι : Type*} [Fintype ι] [DecidableEq ι] (i : ι) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:257:  · have h := (pushesUniform_equiv (Equiv.funSplitAt i γ)).comp
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:258:      (pushesUniform_fst (α := γ) (β := {j // j ≠ i} → γ))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:263:theorem pushesUniform_eval_pair {ι : Type*} [Fintype ι] [DecidableEq ι] {i j : ι}
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:266:    (pushesUniform_equiv (Equiv.refl γ)).prodMap (pushesUniform_eval _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:267:  exact (pushesUniform_equiv (Equiv.funSplitAt i γ)).comp h₂
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/Basic.lean:274:theorem pushesUniform_of_surjective {G H : Type*} [AddGroup G] [AddGroup H] [Fintype G]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:160:  exact ((pushesUniform_xor (Pi.single i true)).prodMap
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:161:    (pushesUniform_id (Ω := ρ))).uprob_eq
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:181:      ((pairwiseUniform_eval (ι := NESubset k) (γ := ρ)).comp_right (pushesUniform_eval i))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:241:  rw [uprob_prod (fun c : GuessCoins n k ρ =>
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:243:    uprob_prod (fun ω : (Fin k → Fin n → Bool) × (Fin n → NESubset k → ρ) =>
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:244:      idealRecover f A x ω.1 ω.2 = x), ← uexp_const_mul]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:247:  have h := uprob_prod_and (fun b : Fin k → Bool => b = fun ℓ => ip x (s ℓ))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:41:  `⟨x, eᵢ⟩ = xᵢ`; `pushesUniform_xor`: `a ⊕ e` is uniform for uniform `a`.
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:93:theorem pushesUniform_xor (e : Fin n → Bool) : PushesUniform (fun a : Fin n → Bool => a + e) :=
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:94:  pushesUniform_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:147:  have h := uprob_prod
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:151:  exact uprob_comp_equiv (Equiv.prodAssoc _ _ _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:174:  have h := uprob_comp_equiv e
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:176:  rw [uprob_fst (fun z : (Fin n → Bool) × γ => R (f z.1) z.2 = z.1)] at h
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:196:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:205:    refine (uprob_mono fun c hc => ?_).trans (uprob_exists_le univ fun i c => R c i ≠ x i)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/NoFixedBit.lean:95:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/NoFixedBit.lean:109:  rw [uexp_add, uexp_const, uexp_const_mul, uexp_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/NoFixedBit.lean:113:      uexp fun b : Fin (n + 1) => if b = i then (1 : ℝ) else 0 := uexp_const _
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:92:  rw [h1, h2, h3, uprob_prod_and (fun a => H i a = v) (fun b => H j b = w)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:109:      (pushesUniform_equiv (Equiv.prodProdProdComm γ γ δ δ))⟩
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:114:  ⟨fun i => pushesUniform_eval i, fun _ _ hij => pushesUniform_eval_pair hij⟩
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:153:  rw [h, uexp_add, uexp_sub, uexp_sub, uexp_const_mul, uexp_const_mul, uexp_const,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:332:  · refine pushesUniform_of_surjective (subsetSumHom (G := G) L.1) fun u => ?_
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:336:    refine pushesUniform_of_surjective ((subsetSumHom (G := G) L.1).prod (subsetSumHom (G := G) L'.1))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:92:    (((pushesUniform_id (Ω := Fin n → Bool)).prodMap
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:93:      (pushesUniform_fst (α := ρ) (β := ρ))).uprob_eq
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:98:    (((pushesUniform_xor (Pi.single i true)).prodMap
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:99:      (pushesUniform_snd (α := ρ) (β := ρ))).uprob_eq
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:136:    pairwiseUniform_eval.comp_right (pushesUniform_eval i)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:610:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:695:  rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl (ZMod (expOrd i)))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Hashing/FromDiscreteLog.lean:745:      rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean:96:    rw [← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Hashing/SIS/Universality.lean:96:    (uprob_comp_equiv (move a) (· = z)).trans huniform
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Hashing/SIS/Universality.lean:98:  rw [← uprob_comp_equiv split.symm (fun A => hash P A x - hash P A y = z), uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/LWE/BitNoise.lean:137:    (uprob_comp_equiv e (fun r : Fin (t + t) → Bool => centeredValue t r = -z))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/NumberTheory/Chebyshev.lean:280:  uprob_comp_equiv (bitsEquiv n) (fun x : Fin (2 ^ n) => (x : ℕ).Prime)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/NumberTheory/Chebyshev.lean:296:  exact (HardcoreBit.uprob_prod_and (fun x : Fin (2 ^ n) => (x : ℕ).Prime)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/NumberTheory/QuadraticResidues.lean:65:  `TCSlib.Cryptography.NumberTheory.pushesUniform_sqTo` — [PS10, Corollary 60.6] and C5.
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/NumberTheory/QuadraticResidues.lean:324:**Proof sketch.** `pushesUniform_of_card_fiber` with every fibre of `sqTo N` of size `4`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/NumberTheory/QuadraticResidues.lean:326:theorem pushesUniform_sqTo (hpq : p ≠ q) (hp2 : p ≠ 2) (hq2 : q ≠ 2) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/NumberTheory/QuadraticResidues.lean:330:  refine pushesUniform_of_card_fiber (sqTo (p * q)) (c := 4) (by norm_num) fun y => ?_
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Amplification.lean:198:        (uprob_or_le _ _).trans (add_le_add_left (uprob_exists_le _ _) _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Amplification.lean:202:          rw [uprob_fst (fun xs : Fin q → α => ∀ i, ¬ S (xs i)),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Amplification.lean:223:          rw [← uprob_comp_equiv e, mul_assoc]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Amplification.lean:254:        rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Amplification.lean:279:          uexp_indicator, uexp_const, one_mul]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Basic.lean:28:* `uexp_mono`, `uexp_add`, `uexp_const`, `uexp_indicator`: laws of the uniform average.
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Basic.lean:34:* `uprob_eq_one_div_card`: a uniform element hits a fixed point with probability
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Basic.lean:64:theorem uexp_const_mul (c : ℝ) (f : α → ℝ) : uexp (fun a => c * f a) = c * uexp f := by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Basic.lean:69:theorem uexp_const [Nonempty α] (c : ℝ) : uexp (fun _ : α => c) = c := by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Basic.lean:78:  rw [uprob_eq_uexp, ← uexp_const_mul]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Basic.lean:93:  rw [uprob_prod, ← uexp_indicator]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Basic.lean:107:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Basic.lean:140:  rw [← uprob_fst (β := α) (fun w : (ι → α) × ρ => P w.1 w.2), ← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Basic.lean:144:theorem uprob_eq_one_div_card (a : α) : uprob (fun x : α => x = a) = 1 / Fintype.card α := by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:109:  rw [← uprob_fst (β := Fin n → Bool), ← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:198:    rw [← uprob_comp_equiv (Equiv.prodAssoc (Fin (m + 1) → Bool) (Fin (m + 1) → Bool) ρ).symm,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:199:      uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:209:    rw [← uprob_comp_equiv e, uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:222:              rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:227:                rw [uprob_fst (fun y' : Fin (m + 1) → Bool => y' = y), uprob_eq_one_div_card,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:229:              simp only [this, uexp_const]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:248:        rw [← uprob_fst (β := Fin (m + 1) → Bool), ← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:263:    rw [uprob_eq_one_div_card, hcard]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Brittleness.lean:265:  rw [uexp_add, uexp_const_mul, uexp_indicator, hzero] at havg
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/OutputLength.lean:77:  rw [← uprob_comp_equiv (Equiv.prodAssoc α γ ρ)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Robustness.lean:110:        · rw [uprob_fst S]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Robustness.lean:111:        · rw [uprob_fst (fun x => ∃ x', S x' ∧ k x' = f x)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Robustness.lean:141:    _ ≤ _ := (uprob_or_le _ _).trans (by rw [uprob_fst S])
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Robustness.lean:172:  rw [hg, ← uprob_eq_one_div_card x₀]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/OneWayFunctions/Robustness.lean:204:    rw [uprob_fst (fun x₁ : Fin m → Bool => x₁ = fun _ => false), uprob_eq_one_div_card]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:40:* `TCSlib.Cryptography.acceptProb_random_eq_lazy` equates the two descriptions of a
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:114:theorem OracleEnsemble.acceptProb_random_eq {ρ : Type*} [Fintype ρ] (ℓ₁ ℓ₂ : PolyExpr) (n : ℕ)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:128:`uprob_prod` after swapping the factors with `uprob_prod_comm`); for each fixed `r` the two
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:131:theorem acceptProb_random_eq_lazy {ρ : Type*} [Fintype ρ] (ℓ₁ ℓ₂ : PolyExpr) (n : ℕ)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:137:    uprob_prod_comm (fun R (r : ρ) => oracleDist A ((OracleEnsemble.random ℓ₁ ℓ₂).O n R) r = true),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:138:    uprob_prod_comm (fun W (r : ρ) => lazyDist A (extendStream W) r = true),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:139:    uprob_prod, uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM.lean:111:    rw [OracleEnsemble.acceptProb_random_eq]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM.lean:301:  rw [prfAdv_eq, key (F n), key (fun R => R), sub_self, abs_zero]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean:42:* `prfAdv_eq`: the advantage written out as a difference of two probabilities.
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean:87:theorem prfAdv_eq [Fintype K] [Fintype I] [DecidableEq I] [Fintype O] [Fintype ρ]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:42:* Probability helpers: `uprob_congr`, `uprob_prod_comm`, `uprob_snd`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:64:theorem uprob_prod_comm (p : α → β → Prop) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:66:  (uprob_comp_equiv (Equiv.prodComm β α) (fun z : α × β => p z.1 z.2)).symm
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:72:  rw [uprob_prod_comm (fun _ b => p b)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:73:  exact uprob_fst p
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:80:  rw [uprob_prod, uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:95:  exact (uprob_comp_equiv e (fun w => f w.1.1 w.1.2)).trans
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:96:    (uprob_fst (fun w : (α → β) × γ => f w.1 w.2))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:107:  exact (uprob_comp_equiv e (fun w => f w.1)).trans (uprob_fst f)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:115:  rw [← uprob_prod (fun z : β × (α → β) => g z.1 z.2),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:211:private theorem uprob_const_eq {β γ : Type*} [Fintype β] [Fintype γ] [Nonempty β]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:332:    exact uprob_const_eq (β := Fin q → O) (γ := I → O) (φ y)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:141:    rw [acceptProb_def, ← uprob_comp_equiv e
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:146:    rw [subHybridProb, acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc _ _ _).symm
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:189:    rw [acceptProb_def, ← uprob_comp_equiv e
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:195:    rw [subHybridProb, acceptProb_def, ← uprob_comp_equiv e'
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:216:    refine (uprob_prod_comm (fun W r => lazyDist A (subHybridStream G 0 W) r = true)).trans
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:224:    refine (uprob_prod_comm (fun R r => oracleDist A (G ∘ R) r = true)).trans
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:232:  exact (uprob_fst (fun W : Fin q → S =>
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:250:    refine (uprob_prod_comm (fun W r => lazyDist A (subHybridStream G q W) r = true)).trans
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:260:    exact uprob_prod_comm (fun T r => (A r).eval T = true)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:61:  rw [uprob_prod, uexp_def, Fintype.sum_bool, Fintype.card_bool]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean:50:is an instance of `uprob_comp_equiv`. For Claim-78.b, the concrete example
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean:186:(`uprob_comp_equiv`). Then `hh.hard A` gives a negligible `ε` with the left side `≤ 1/2 + ε n`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:206:(`uprob_comp_equiv`). By `h.2 M` the left side is negligible; `ℓ(n) ≤ C (n+1)^c`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:291:sunglass identity `distAdv_comp` its advantage against `G n` is the advantage of `D` between
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:312:    distAdv_comp (fun t : Fin (P.stretch.eval n) → Bool => fun i : Fin (m.eval n) =>
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:393:the sunglass identity `distAdv_comp` with the projection `t ↦ t ∘ castLE` (a uniform
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:394:`ℓ(n)`-bit string projects to a uniform `(n+1)`-bit string, `uprob_comp_equiv` on
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:416:distinguisher `D ∘ take (2n)` of the expansion (`NUPPT.exists_comp`), `distAdv_comp` with the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:417:projection `Fin (2n + 1) → Fin (2n)` and `uprob_comp_equiv` identify the advantages, and the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:66:  rw [← uprob_comp_equiv e q]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:80:    fun _ => Iff.rfl).trans (uprob_fst (fun y : σ × ρ => D (X y.1) y.2 = true))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:141:theorem distAdv_comp (P : γ → δ) (X : σ → γ) (Y : τ → γ) (D : δ → ρ → Bool) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:163:    fun _ => Iff.rfl).trans (uprob_prod _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit.lean:85:probability (`uprob_comp_equiv` on the coin factor of the sample space). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit.lean:90:  rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl σ) e)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit.lean:225:(`uprob_comp_equiv`). Now `h A` gives a negligible `ε` with `nextBitProb … ≤ 1/2 + ε n` for
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit.lean:254:    rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl (X.σ n)) (e n))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit.lean:305:    rw [← uprob_comp_equiv ((Equiv.cast (Ensemble.uniform_σ ℓ n)).prodCongr (Equiv.refl _))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:149:**Proof sketch.** Adjoin an ignored uniform bit `b` (`uprob_fst` after `Equiv.prodComm`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:151:`Bool × ((σ × {0,1}^ℓ) × ρ)` (`uprob_comp_equiv`; `ψ ∘ ψ = id` by `Function.update_idem`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:161:    rw [← uprob_comp_equiv (Equiv.prodComm ((σ × (Fin ℓ → Bool)) × ρ) Bool)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:163:    exact uprob_fst p
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:175:  rw [← h1, ← uprob_comp_equiv ψ, uprob_bool_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:297:  rw [nextBitProb_eq, ← uprob_comp_equiv (Equiv.prodAssoc σ (Fin ℓ → Bool) ρ)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:451:so `Pr[success] = Pr[failure] = 1 − Pr[success]` (`uprob_comp_equiv`, `uprob_not`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:484:    rw [← uprob_comp_equiv e]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:183:    exact uprob_comp_equiv hybridGroup (fun z : Hybrid => event t z.2.1 z.1 z.2.2.1 z.2.2.2)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:187:    rw [acceptProb_def, ← uprob_comp_equiv realGroup]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:205:    rw [acceptProb_def, ← uprob_comp_equiv idealGroup]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:224:  rw [← uprob_comp_equiv swap (fun z : Ideal => event k.val z.2.1 z.2.2.1 z.1 z.2.2.2)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:254:    rw [acceptProb_def, acceptProb_def, ← uprob_fst (β := Secrets × Errors) test,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:255:      ← uprob_comp_equiv group (fun z => test z.1)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:266:    rw [acceptProb_def, acceptProb_def, ← uprob_fst (β := Uniform) test,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:267:      ← uprob_comp_equiv group (fun z => test z.1)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:338:      exact (uprob_comp_equiv (move.prodCongr (Equiv.refl ρ))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:783:`exists_pairRed_ge` (after `owpComStr_ofFn`, `distAdv_comp` and the seed reindexing
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:90:first coin factor of the acceptance probabilities with that factor fixed (`uprob_prod` after
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:96:  refine ((uprob_comp_equiv (EnsembleLemmas.swapAux κ σ ρ)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:98:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Defs.lean:282:not enter the view (`uprob_fst` after `Equiv.prodComm`), so the two laws coincide. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Defs.lean:296:    rw [← uprob_comp_equiv (Equiv.prodComm _ _)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Defs.lean:297:    exact uprob_fst (fun ρ : V'.Coins x.length =>
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:61:* `TCSlib.Cryptography.pushesUniform_coinTable` — a uniform tape of `n T k` bits gives a
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:371:and `HardcoreBit.pushesUniform_equiv` applies (`List.getD_eq_getElem?_getD`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:373:theorem pushesUniform_coinTable (n T k : ℕ) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:389:  exact HardcoreBit.pushesUniform_equiv (Equiv.ofBijective _ hbij)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:397:(D10): `pushesUniform_coinTable` identifies the tape with a uniform coin table
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:407:    (pushesUniform_coinTable n (permTrials n) (permBits n))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:593:  rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.mulRight σ₀) (Equiv.refl ρ))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:604:  rw [← uprob_comp_equiv (Equiv.mulRight σ₀) (fun σ : Equiv.Perm (Fin n) => p (permGraph G₀ σ))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:682:`uprob_comp_equiv` with the coin bijection `adaptiveEquiv`, `uprob_fst` (here `W ≠ ∅` is
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:683:used) and `OneWay.uprob_eq_one_div_card` give `1 / 2^m` (`Fintype.card_fun`). Equivalently,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:696:    uprob_comp_equiv (adaptiveEquiv g) (fun z : (Fin m → Bool) × W => z.1 = fun _ => false),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:697:    uprob_fst (β := W) (fun b : Fin m → Bool => b = fun _ => false),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:698:    OneWay.uprob_eq_one_div_card (fun _ : Fin m => false), Fintype.card_fun, Fintype.card_bool,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:820:coins fixing `b` and `w` (`gniShear`, with `uprob_comp_equiv`); then every `H_i = σ'_i(G₀)`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:831:  have h1 := uprob_comp_equiv (gniShear (m := m) ρ σ₀)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:914:bits (`uprob_prod` through the bijection `Fin (1 + c) → Bool ≃ Bool × (Fin c → Bool)`), and
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:934:prover's coins, condition on all `|x|` samplers succeeding (union bound `uprob_exists_le`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:935:over the iterations, `statClose_samplePerm` per block via `pushesUniform_coinTable`), and
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:156:`uprob_comp_equiv` with the coin bijection `adaptiveEquiv`, `uprob_fst` (here `W ≠ ∅` is
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:157:used) and `OneWay.uprob_eq_one_div_card` give `1 / 2^m` (`Fintype.card_fun`). Equivalently,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:170:    uprob_comp_equiv (adaptiveEquiv g) (fun z : (Fin m → Bool) × W => z.1 = fun _ => false),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:171:    uprob_fst (β := W) (fun b : Fin m → Bool => b = fun _ => false),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:172:    OneWay.uprob_eq_one_div_card (fun _ : Fin m => false), Fintype.card_fun, Fintype.card_bool,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:266:coins fixing `b` and `w` (`gniShear`, with `uprob_comp_equiv`); then every `H_i = σ'_i(G₀)`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:277:  have h1 := uprob_comp_equiv (gniShear (m := m) ρ σ₀)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:63:* `TCSlib.Cryptography.GI.pushesUniform_castLE`, `GI.statClose_samplePerm_long` — a prefix of a
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:811:tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:813:theorem pushesUniform_castLE {m c : ℕ} (h : m ≤ c) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:815:  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:859:    (pushesUniform_coinTable n (permTrials n) (permBits n))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:862:uniform permutation (`samplePerm_ofFn_castLE`, `pushesUniform_castLE`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:866:  have := (statClose_samplePerm n).comp_pushesUniform (pushesUniform_castLE h)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:896:  rw [← uprob_comp_equiv (Equiv.mulRight σ₀) (fun σ : Equiv.Perm (Fin n) => p (permGraph G₀ σ))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:147:  rw [OneWay.uprob_congr hev, ← uprob_comp_equiv (vTapeSplit (encInstance G₀ G₁).length)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:156:    ← uprob_comp_equiv (Equiv.prodComm (Fin (1 * ((encInstance G₀ G₁).length + 1) ^ 2) → Bool) Bool)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:161:    rw [← uprob_comp_equiv (Equiv.prodComm Bool (Equiv.Perm (Fin n)))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:291:  rw [← uprob_comp_equiv (giCoinEquiv P' (encInstance G₀ G₁))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:368:  rw [← uprob_comp_equiv (gniTapes (encInstance G₀ G₁).length), OneWay.uprob_congr hev,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:369:    ← uprob_comp_equiv (Equiv.prodComm (Fin (encInstance G₀ G₁).length →
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:381:    rw [← uprob_comp_equiv ((Equiv.prodPUnit ((Fin (encInstance G₀ G₁).length → Bool) ×
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:420:  rw [← uprob_comp_equiv (giRepCoins P' (encInstance G₀ G₁))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:130:composed with the bijection `giReindex σ` (`uprob_comp_equiv`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:135:  rw [← uprob_comp_equiv (giReindex σ) (fun w => T (giHVSim G₀ G₁ w))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:164:  rw [← uprob_comp_equiv (Equiv.prodComm Bool (Equiv.Perm (Fin n))), uprob_bool_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:183:  rw [← uprob_comp_equiv (coinAssoc Bool (Equiv.Perm (Fin n)) ρ), uprob_bool_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:267:  rw [← uprob_comp_equiv (simReindex ρ σ)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:274:  rw [OneWay.uprob_congr key, ← uprob_comp_equiv (coinAssoc Bool (Equiv.Perm (Fin n)) ρ),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:358:(`uprob_prod`, `OneWay.uexp_indicator`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:359:private theorem uprob_prod_and {α β : Type*} [Fintype α] [Fintype β] (A : α → Prop) (B : β → Prop) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:362:  rw [uprob_prod, mul_comm, ← OneWay.uexp_indicator]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:373:attempts) by `Fin.consEquiv` (`uprob_comp_equiv`) and the event along "the first attempt
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:376:(`uprob_prod_and`, `uprob_giSimAttempt_none`); when it succeeds the output is its view
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:377:(`giSimTrunc_cons_of_some`), an event of the first coordinate alone (`uprob_fst`) of
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:386:  rw [← uprob_comp_equiv (Fin.consEquiv fun _ => (Equiv.Perm (Fin n) × Bool) × ρ)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:396:      ← uprob_prod_and (fun a : (Equiv.Perm (Fin n) × Bool) × ρ => giSimAttempt G₀ G₁ V a = none)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:406:      ← uprob_fst (β := Fin N → (Equiv.Perm (Fin n) × Bool) × ρ)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:463:coins, so by `uprob_prod` / `OneWay.uprob_update` the `t`-th term is
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:48:* `TCSlib.Cryptography.GIZK.pushesUniform_readBlocks` — the block reading of a uniform tape
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:103:tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:105:theorem pushesUniform_castLE {B : Type*} [Fintype B] [Nonempty B] {m c : ℕ} (h : m ≤ c) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:107:  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:147:uniform permutation (`statClose_samplePerm`, `samplePerm_ofFn_castLE`, `pushesUniform_castLE`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:151:  have := (statClose_samplePerm n).comp_pushesUniform (pushesUniform_castLE h)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:310:bijection (`tapeBlock_bijective`), a restriction (`pushesUniform_castLE`) and a blockwise
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:312:theorem pushesUniform_readBlocks (P Q M n : ℕ) (hn : n ≤ M) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:314:  have h1 := HardcoreBit.pushesUniform_equiv (Equiv.ofBijective _ (tapeBlock_bijective M (1 + P + Q)))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:315:  have h2 := pushesUniform_castLE (B := Fin (1 + P + Q) → Bool) hn
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:316:  have h3 := HardcoreBit.pushesUniform_equiv
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:474:is uniform (`pushesUniform_readBlocks`, `StatClose.comp_pushesUniform`); map both sides by the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:494:  have hΨ := pushesUniform_readBlocks (((encInstance G₀ G₁).length + 1) ^ 2)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:536:prover's coins of its conditional probability over the verifier's coins (`uprob_prod`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:542:  uprob_prod _
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:140:(`uprob_comp_equiv` along the bijection, then `uprob_fst`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:148:  exact (uprob_comp_equiv e (fun z : Ω' × K => q z.1)).trans (uprob_fst q)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:29:  (`pushesUniform_blockRead`); the list form of a block is the list slice
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:45:* `TCSlib.Cryptography.ColRep.pushesUniform_blockRead`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:178:to the first `K b` bits (`GIZK.pushesUniform_castLE`) followed by the blockwise bijection
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:181:theorem pushesUniform_blockRead (b K C : ℕ) (h : K * b ≤ C) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:183:  have hc := (GIZK.pushesUniform_castLE (B := Bool) h).comp
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:184:    (HardcoreBit.pushesUniform_equiv (EnsembleLemmas.blocks K b))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:212:block (`GIZK.pushesUniform_castLE`, `ColProofs.sampleEdgeIdx_ofFn_castLE`); `K` blocks:
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:213:`OneWay.statClose_pi`; the tape: `pushesUniform_blockRead` (`StatClose.comp_pushesUniform`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:223:      (GIZK.pushesUniform_castLE (B := Bool) hb)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:226:  exact (OneWay.statClose_pi h1 K).comp_pushesUniform (pushesUniform_blockRead b K C h)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:19:fields (`pushesUniform_offsetTable`, through `HardcoreBit.pushesUniform_restrict` of
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:28:* `TCSlib.Cryptography.ColZK.pushesUniform_offsetTable`, `pushesUniform_blockFields` — disjoint
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:73:so `HardcoreBit.pushesUniform_restrict` applies; the pair of fields is that restriction followed
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:75:theorem pushesUniform_offsetTable {L a n k : ℕ} (h : a + n * k ≤ L) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:96:  exact (HardcoreBit.pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:106:`HardcoreBit.pushesUniform_restrict` applies, followed by the bijection
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:108:theorem pushesUniform_blockFields {L a₁ o₂ a₂ o₃ n k o₄ a₄ : ℕ} (h₁ : a₁ ≤ o₂)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:138:  exact (HardcoreBit.pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:148:  exact (hπ.prodMap HardcoreBit.pushesUniform_id).uprob_eq fun z : σ × ρ => D (X z.1) z.2 = true
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:154:(`acceptProb_def`, `Equiv.prodAssoc`, `uprob_prod`) and `Pr[D(Y) = 1]` the average of a constant
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:155:(`HardcoreBit.uexp_const`); some `k₀` has the absolute difference at least the average's
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:161:    rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc κ σ ρ).symm, uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:167:  rw [distAdv_def, hX, ← HardcoreBit.uexp_const (Ω := κ) (acceptProb Y D), ← HardcoreBit.uexp_sub,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:168:    HardcoreBit.uexp_const]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:301:`(Fin (k+1) → Fin m) ≃ (Fin k → Fin m) × Fin m`, `Fin.snocEquiv`; `uprob_comp_equiv`); by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:302:`uprob_prod` the probability is the average over `(e', w)` of the probability over `e_last`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:320:    rw [← uprob_comp_equiv (snocEquivW k m W)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:790:  rw [← uprob_comp_equiv (ColProofs.finOneEquiv (edgeCount G))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:863:        (ColProofs.pushesUniform_castLE hle)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1231:        (HardcoreBit.pushesUniform_fst.uprob_eq fun rV => T (Φ rV) ()).symm
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:45:* `TCSlib.Cryptography.ColProofs.pushesUniform_castLE`, `ColProofs.sampleEdgeIdx_ofFn_castLE`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:384:tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:386:theorem pushesUniform_castLE {m c : ℕ} (h : m ≤ c) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:388:  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:195:bijection `simCoinsEquiv` (`uprob_comp_equiv`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:200:  rw [← uprob_comp_equiv (simCoinsEquiv ℓn G (ρ := ρ) hc)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:242:  rw [← uprob_comp_equiv (Equiv.piCongrRight fun _ : Fin N => simCoinsEquiv ℓn G (ρ := ρ) hc)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:250:`uprob_comp_equiv`) and conditioning on the second component (`uprob_prod`), the failure event
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:252:(`OneWay.uprob_eq_one_div_card`, `uprob_not`, `edgeIdxOfMsg_lt`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:256:  rw [← uprob_comp_equiv (attemptCoinsEquiv (edgeCount G) (Fin n → Fin ℓn → Bool) ρ).symm]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:286:`1/|E|` if `T (colRealView …)` holds and `0` otherwise (`OneWay.uprob_eq_one_div_card`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:287:`uprob_false`); `uprob_prod` and `uexp` linearity give the product. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:294:  rw [← uprob_comp_equiv (attemptCoinsEquiv (edgeCount G) (Fin n → Fin ℓn → Bool) ρ).symm]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:342:`uprob_prod`/`OneWay.uprob_update` the `t`-th term is `(1 - 1/|E|)^t · Pr[∃ v, attempt = some v ∧
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:545:`k` is the average over attempt `k`'s `(e', π)` (`uprob_prod` on the `k`-th block,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:807:(`ColZK.pushesUniform_offsetTable`, `StatClose.comp_pushesUniform`), the permutation sampler is
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:835:  have hF := ColZK.pushesUniform_offsetTable hsz
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:840:    statClose_of_pushesUniform (HardcoreBit.pushesUniform_equiv _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:881:(`ColZK.pushesUniform_offsetTable`). In a block (`colSimBlock`) the edge sampler reads its first
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:885:(`ColZK.pushesUniform_blockFields`). The samplers are `(1/2)^{|x|}`- and `(1/4)^{|x|}`-close to
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:919:  have hF := ColZK.pushesUniform_blockFields (L := (colSimBlock ℓ V').eval N)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:931:  have hT := (ColZK.pushesUniform_offsetTable hKB).comp HardcoreBit.pushesUniform_snd
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1033:(`ColZK.pushesUniform_blockFields`): it outputs the view of the commitment vector to `0`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1089:  have hfld := (ColZK.pushesUniform_blockFields (L := (colSimCoins ℓ V').eval N) (a₁ := 0)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1092:    (by omega)).comp (HardcoreBit.pushesUniform_snd.prodMap HardcoreBit.pushesUniform_id)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:38:* `TCSlib.Cryptography.ColSimLemmas.uprob_and_add_uprob_not_and`, `uprob_prod_and` —
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:60:for every value of the independent coordinate `a` (`uprob_prod`, `uprob_not`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:61:`OneWay.uprob_eq_one_div_card`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:66:  rw [uprob_prod]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:73:    rw [this, OneWay.uprob_eq_one_div_card, Fintype.card_fin]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:75:    from funext h, OneWay.uexp_const]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:78:`a` lies in `T` with probability `(1/m) · Pr[T]` (`uprob_prod`, `OneWay.uexp_indicator`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:84:  rw [uprob_prod, ← OneWay.uexp_indicator]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:92:    rw [this, OneWay.uprob_eq_one_div_card, Fintype.card_fin]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:146:(`uprob_prod`, `OneWay.uexp_indicator`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:147:theorem uprob_prod_and {α β : Type*} [Fintype α] [Fintype β] (A : α → Prop) (B : β → Prop) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:150:  rw [uprob_prod, mul_comm, ← OneWay.uexp_indicator]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:238:tuple (`swapEP` is a bijection, `uprob_comp_equiv`, `uprob_fst`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:244:  have h := uprob_comp_equiv (swapEP (m := m) (R := R) (τ := τ) k ρ')
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:249:  rw [h, ← uprob_comp_equiv (Equiv.prodComm _ _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:251:  exact uprob_fst P
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:281:**Proof sketch.** Reindex the coins by the involution `swapR` (`uprob_comp_equiv`), which
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:284:first coordinate, which `uprob_fst` removes. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:293:  have h := uprob_comp_equiv (swapR (m := m) (τ := τ) k p ρ')
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:307:  rw [h, ← uprob_comp_equiv (Equiv.prodComm _ _)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:310:  exact uprob_fst (fun z : (Fin N → AttemptCoins m (Fin n → Fin ℓ → Bool) τ) × ρ' =>
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:331:attempts) by `Fin.consEquiv` (`uprob_comp_equiv`) and the event along "the first attempt
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:334:(`uprob_prod_and`); when it succeeds the output is its value
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:335:(`findSome?_finRange_cons_of_some`), an event of the first coordinate alone (`uprob_fst`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:344:  rw [← uprob_comp_equiv (Fin.consEquiv fun _ : Fin (N + 1) => W)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:351:    rw [← hnone, ← uprob_prod_and (fun a : W => att a = none)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:361:      ← uprob_fst (β := Fin N → W) (fun a : W => ∃ v, att a = some v ∧ T (some v))]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:505:`(e', π)` of the fixed-`(e', π)` acceptance probabilities (`uprob_plantEP`, `uprob_prod`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:514:      hybGen H Wa k A D z = true), uprob_prod]
+
+["git", "grep", "-n", "-E", "ofFn_drop_take|take_ofFn_castLE|take_drop_ofFn_blocks|headD_drop_ofFn|zipWith_xor_|encodeList_eq_flatMap", "fbd37f447596d4207c8d08b7ef7602f57fe95198", "--", "TCSlib/Cryptography"]
+EXIT 0
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:41:* `TCSlib.Cryptography.encodeList_eq_flatMap`, `pairEncode_nil_append`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:60:theorem encodeList_eq_flatMap (l : List (List Bool)) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:42:* `TCSlib.Cryptography.ofFn_drop_take` — a window of a tape is the tape of the window (the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:43:  relocated contract of `ColZK.ofFn_drop_take`, shared by the block/window users below it).
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:209:(the contract of `ColZK.ofFn_drop_take`, relocated here for the lower block/window users). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:210:theorem ofFn_drop_take {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k ≤ L) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean:54:theorem zipWith_xor_replicate_true (m : ℕ) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:427:theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:811:`i`-th block of the coins (`take_drop_ofFn_blocks`) and the concatenation of the blocks is the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:883:  · simp only [padL, take_drop_ofFn_blocks _ i hi, Equiv.apply_symm_apply]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:885:  · simp only [padL, take_drop_ofFn_blocks _ i hi, Equiv.apply_symm_apply]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:330:**Proof sketch.** Induction on `t`. The table is not exhausted before round `m(2^k − 1)` (`List.drop_eq_nil_iff`, `length_blocksStr`), so the step consumes the entry `t` (`take_drop_blocksStr`, `ofFn_glEntryFn`), whose components are `e_i` and `β_j`; the vote is `wfVote` by `ipFun_ofFn`, `selXorFun_input`, `zipWith_xor_ofFn_add`, `take_drop_coins` and `NUPPT.runAtL_eq_output_layout`; the table and coin components advance by `List.drop_drop` (`drop_drop_coins`) and the votes by `List.ofFn_succ'`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:371:      rw [hin, selXorFun_input, zipWith_xor_ofFn_add, ← NUPPT.runAtL_eq_output_layout]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:131:theorem zipWith_xor_ofFn_add {m : ℕ} (a b : Fin m → Bool) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:259:**Proof sketch.** Induction on `i`: the initial accumulator `1^m ⊕ 1^m` is `0^m` (`List.zipWith_replicate`, `List.ofFn_const`); at round `i < k` the head of `β.drop i` is `β_i` (`List.drop_eq_getElem_cons`), the block is `take_drop_blocksStr`, and the accumulator update is `zipWith_xor_ofFn_add` against the recursion of `partialSum`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean:285:      · rw [if_pos hb, if_pos hb, zipWith_xor_ofFn_add]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:525:(`take_ofFn_castLE`), where `F` computes `f (⌊n/2⌋)`, and `ofFn_glHalf_f` is the same
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:548:  rw [take_ofFn_castLE (Nat.div_le_self n 2), hFx']
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:564:  rw [take_ofFn_castLE (Nat.div_le_self n 2), take_drop_ofFn (by omega), ipFun_ofFn]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:288:theorem take_ofFn_castLE {ℓ m : ℕ} (h : m ≤ ℓ) (f : Fin ℓ → Bool) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Authentication/Signatures/Lamport.lean:582:    rw [encodeList_eq_flatMap]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:45:`encodeList_eq_flatMap`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:49:  rw [publicWord_eq, encodeList_eq_flatMap, List.flatMap_def, List.map_ofFn]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:195:theorem headD_drop_ofFn {n : ℕ} (m : Fin n → Bool) (i : Fin n) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Authentication/Signatures/Lamport/MachineSpec.lean:217:      headD_drop_ofFn]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Candidates/Concrete.lean:854:  rw [ofFn_drop_take r _ k hlen]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:338:private theorem zipWith_xor_xor_self' : ∀ (m p : List Bool), m.length ≤ p.length →
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:344:    exact ⟨by cases a <;> cases b <;> rfl, zipWith_xor_xor_self' m p (by simpa using h)⟩
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag.lean:369:      zipWith_xor_xor_self' _ _ (by simp [hp]), decodeFin_ofFn]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/CPAHandler.lean:534:  exact EnsembleLemmas.take_drop_ofFn_blocks W j hj
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean:499:`n` bits after the offset `n + j · n`, which is block `j` of `W` (`take_drop_ofFn_blocks`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Handler.lean:528:    exact EnsembleLemmas.take_drop_ofFn_blocks W j hj
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:295:theorem zipWith_xor_cancel : ∀ (m p : List Bool), m.length ≤ p.length →
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:301:    exact ⟨by cases a <;> cases c <;> rfl, zipWith_xor_cancel m p (by simpa using h)⟩
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:329:`r` and `m ⊕ f(r)` (`eq_of_pairV_eq`), so `decL f w = ⟨1, m⟩` (`zipWith_xor_cancel`). A fresh pair
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/EncryptThenTag/Lazy.lean:358:          rw [h₁, h₂, padFin_ofFn, maskL_eq, zipWith_xor_cancel _ _ (by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:174:private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:180:    exact ⟨by cases a <;> cases b <;> rfl, zipWith_xor_xor_self m p (by simpa using h)⟩
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:211:      zipWith_xor_xor_self _ _ (by simp), decodeFin_ofFn]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:251:private theorem encodeList_eq_flatMap : ∀ l : List (List Bool),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:255:    rw [PrivateKeyScheme.encodeList_cons, List.flatMap_cons, encodeList_eq_flatMap l]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:302:`F n k r_j` and `zipWith_xor_ofFn_add` gives the `j`-th pair of `prfEncReal`. -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:322:  rw [h1, h2, hFE, zipWith_xor_ofFn_add, prfEncReal_apply]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:33:* `MultiMsg.encodeList_eq_flatMap`: `encodeList` as a concatenation of chunks (the general form of
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:65:theorem MultiMsg.encodeList_eq_flatMap : ∀ l : List (List Bool),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:69:    rw [PrivateKeyScheme.encodeList_cons, List.flatMap_cons, MultiMsg.encodeList_eq_flatMap l]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:80:  rw [encodeTupleOut_eq, MultiMsg.encodeList_eq_flatMap, MultiMsg.flatMap_ofFn]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:32:* `MultiMsg.zipWith_xor_histBlock_maskBlock` relates a masked history block to a ciphertext.
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:241:theorem zipWith_xor_replicate_false : ∀ l : List Bool,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:245:    rw [List.length_cons, List.replicate_succ, List.zipWith_cons_cons, zipWith_xor_replicate_false l,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:249:theorem zipWith_xor_dbl : ∀ a b : List Bool,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:254:    simp only [dbl_cons, List.zipWith_cons_cons, zipWith_xor_dbl a b]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:261:zeros are neutral (`zipWith_xor_replicate_false`) and `dbl y ⊕ dbl w = dbl (y ⊕ w)`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:262:(`zipWith_xor_dbl`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:263:theorem zipWith_xor_histBlockOut_maskBlockOut {n l : ℕ} (x : Fin n → Bool) (y w : Fin l → Bool) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:267:    rw [zipWith_xor_ofFn_add, add_comm]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:280:  rw [h1, h2, List.zipWith_append (List.length_replicate ..).symm, zipWith_xor_replicate_false,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:281:    List.zipWith_append (by simp only [length_dbl, List.length_ofFn]), zipWith_xor_dbl, hyw]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:289:**Proof sketch.** The case `l = n` of `zipWith_xor_histBlockOut_maskBlockOut`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:291:theorem zipWith_xor_histBlock_maskBlock {n : ℕ} (x y w : Fin n → Bool) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:295:  exact zipWith_xor_histBlockOut_maskBlockOut x y w
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:299:theorem zipWith_xor_flatten_ofFn : ∀ {k : ℕ} (F G : Fin k → List Bool),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:307:      zipWith_xor_flatten_ofFn (fun j => F j.succ) (fun j => G j.succ) fun j => h j.succ]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:311:theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:338:answers `ans_j` into `m_j ⊕ ans_j`, `zipWith_xor_histBlock_maskBlock`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:673:(List.ofFn fun j => ⟨⟨⟦ρ j⟧, ⟦v j + g (ρ j)⟧⟩, []⟩).flatten` (`zipWith_xor_flatten_ofFn`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:674:`zipWith_xor_histBlockOut_maskBlockOut`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:683:  rw [zipWith_xor_flatten_ofFn _ _ fun j => by rw [length_histBlockOut, length_maskBlockOut]]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:685:    zipWith_xor_histBlockOut_maskBlockOut (ρ j) (g (ρ j)) (v j)))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:689:`(ρ_j, v_j ⊕ g(ρ_j))_j` (`zipWith_xor_flatten_ofFn`, `zipWith_xor_histBlock_maskBlock`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:712:verdict on the masked history (`postFunOut_layout`, `take_drop_ofFn_blocks`,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine.lean:797:      take_drop_ofFn_blocks _ k hk, Equiv.apply_symm_apply, decodeOracleMove_query]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:56:theorem zipWith_xor_ofFn {n L : ℕ} (h : n ≤ L) (m : Fin n → Bool) (p : Fin L → Bool) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:147:private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:153:    exact ⟨by cases a <;> cases b <;> rfl, zipWith_xor_xor_self m p (by simpa using h)⟩
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:176:    rw [runAt_coinKey, runAt_prgPad hF, runAt_prgPad hF, hG, zipWith_xor_xor_self, decodeFin_ofFn]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:221:  exact zipWith_xor_ofFn (P.expands n).le m (P.G n (prgScheme_genCoinsEquiv P F hF hG n r.1))
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:287:`ofFn (padXor mᵢⁿ t)` by `zipWith_xor_ofFn`) and runs `D` on it (`NUPPT.exists_comp`), so
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:328:    rw [hB, hD', pairSndD_pairEncode, pairFstD_pairEncode, zipWith_xor_ofFn]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:610:  rw [ofFn_prf_encryptAt, PRFGame.ctOf_eq, zipWith_xor_ofFn_add]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:702:  rw [runAt_prfDec hE _ n _ _ _ List.length_ofFn List.length_ofFn, hFE, zipWith_xor_ofFn_add,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean:239:    pairSndD_pairEncode, zipWith_xor_cancel_left (by rw [hm, List.length_ofFn]), padFin_ofFn]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:389:`encodeList l₁ ++ ⟨c, []⟩ ++ encodeList l₂` (`encodeList_eq_flatMap`, `pairEncode_nil_append`),
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:448:(`encodeList_eq_flatMap`, `pairEncode_nil_append`) and runs `D` (`NUPPT.exists_comp`); by `h`
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:210:(`encodeList_eq_flatMap`, `pairEncode_nil_append`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:216:  rw [ofFn_eq_append_cons F j, encodeList_eq_flatMap, List.flatMap_append, List.flatMap_cons,
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:217:    pairEncode_nil_append, ← encodeList_eq_flatMap, ← encodeList_eq_flatMap]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/BitLists.lean:31:* `TCSlib.Cryptography.zipWith_xor_cancel_left`: `(a ⊕ c) ⊕ a = c`.
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Foundations/BitLists.lean:79:theorem zipWith_xor_cancel_left {a c : List Bool} (h : a.length = c.length) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean:50:  have hwindow := ofFn_drop_take w 0 a (by omega)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean:60:  have hwindow := ofFn_drop_take w a b (by omega)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Hashing/FromDiscreteLog/Encoding.lean:76:  (take_ofFn_castLE (Nat.le_succ n) x).trans
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/NumberTheory/Primality.lean:784:  exact (ofFn_drop_take r _ n ht).symm
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator.lean:63:  rw [take_ofFn_castLE hi]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator.lean:74:  refine (take_ofFn_castLE (by omega) z).trans ?_
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:282:    rw [hEs, take_ofFn_castLE (hm n)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:290:`take_ofFn_castLE`), so `D'.distinguisher n ℓ(n) = D.distinguisher n m(n) ∘ castLE`. By the
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:310:    rw [take_ofFn_castLE (hm n)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:101:private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:107:    exact ⟨by cases a <;> cases b <;> rfl, zipWith_xor_xor_self m p (by simpa using h)⟩
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:125:    List.drop_left' h1, zipWith_xor_xor_self _ _ (by rw [hm, h2])]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:96:private theorem zipWith_xor_append_of_le : ∀ (m p b : List Bool), m.length ≤ p.length →
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:102:    exact zipWith_xor_append_of_le m p b (by simpa using h)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:120:    zipWith_xor_append_of_le _ _ _ (by rw [List.length_drop]; omega)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:485:`r_i = blocks n n (padFin (n²) r) i`, `n = |v|` (`EnsembleLemmas.take_drop_ofFn_blocks`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:497:    EnsembleLemmas.take_drop_ofFn_blocks (padFin (v.length * v.length) r) i hi
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:133:private theorem zipWith_xor_self (u : List Bool) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:226:`List.take_left'`/`List.drop_left'`, `gen_uniform`, `enc_uniform`, `zipWith_xor_self`). -/
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:240:    List.length_replicate, ht, hd, zipWith_xor_self, List.ofFn_const]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:271:(`Complexity.polyTimeComputable_pairXor` on `⟨u, u⟩`, `zipWith_xor_self`) — the machine
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:147:theorem zipWith_xor_self (l : List Bool) : List.zipWith xor l l = List.replicate l.length false := by
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:201:  rw [TCSlib.Cryptography.ofFn_drop_take r _ b hle]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:190:theorem ofFn_drop_take {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k ≤ L) :
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:192:  _root_.TCSlib.Cryptography.ofFn_drop_take b a k h
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:199:  rw [← _root_.TCSlib.Cryptography.ofFn_drop_take b a k h.le, List.take_of_length_le hk]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:207:  exact _root_.TCSlib.Cryptography.ofFn_drop_take b a k (by omega)
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:957:      rw [colZK_sampleColorPair_take, ColZK.ofFn_drop_take blk _ _ (by omega)]
+fbd37f447596d4207c8d08b7ef7602f57fe95198:TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1015:    rw [colCoinSlice_eq, ColZK.ofFn_drop_take r _ _ hlt, key]
+
+["rg", "-n", "findSome\\?_eq_some|findSome\\?_eq_none|exists_of_findSome|take_zipWith|drop_zipWith|zipWith_append|zipWith_comm_of_comm", "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List"]
+EXIT 0
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:40:theorem exists_of_findSome?_eq_some {l : List α} {f : α → Option β} (w : l.findSome? f = some b) :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:48:@[simp, grind =] theorem findSome?_eq_none_iff : findSome? p l = none ↔ ∀ x ∈ l, p x = none := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:59:theorem findSome?_eq_some_iff {f : α → Option β} {l : List α} {b : β} :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:184:theorem Sublist.findSome?_eq_none {l₁ l₂ : List α} (h : l₁ <+ l₂) :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:186:  simp only [List.findSome?_eq_none_iff]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:189:theorem IsPrefix.findSome?_eq_some {l₁ l₂ : List α} {f : α → Option β} (h : l₁ <+: l₂) :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:195:grind_pattern IsPrefix.findSome?_eq_some => l₁ <+: l₂, l₁.findSome? f, some b
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:196:grind_pattern IsPrefix.findSome?_eq_some => l₁ <+: l₂, l₂.findSome? f, some b
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:198:theorem IsPrefix.findSome?_eq_none {l₁ l₂ : List α} {f : α → Option β} (h : l₁ <+: l₂) :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:200:  h.sublist.findSome?_eq_none
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:202:grind_pattern IsPrefix.findSome?_eq_none => l₁ <+: l₂, l₂.findSome? f
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:203:grind_pattern IsPrefix.findSome?_eq_none => l₁ <+: l₂, l₁.findSome? f
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:205:theorem IsSuffix.findSome?_eq_none {l₁ l₂ : List α} {f : α → Option β} (h : l₁ <:+ l₂) :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:207:  h.sublist.findSome?_eq_none
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:209:grind_pattern IsSuffix.findSome?_eq_none => l₁ <+: l₂, l₂.findSome? f
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:210:grind_pattern IsSuffix.findSome?_eq_none => l₁ <+: l₂, l₁.findSome? f
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:212:theorem IsInfix.findSome?_eq_none {l₁ l₂ : List α} {f : α → Option β} (h : l₁ <:+: l₂) :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:214:  h.sublist.findSome?_eq_none
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:216:grind_pattern IsInfix.findSome?_eq_none => l₁ <+: l₂, l₂.findSome? f
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:217:grind_pattern IsInfix.findSome?_eq_none => l₁ <+: l₂, l₁.findSome? f
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:1253:  simp only [lookup_eq_findSome?, findSome?_eq_some_iff]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:1301:  exact h.findSome?_eq_none
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Find.lean:1309:  exact h.findSome?_eq_some
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/Find.lean:56:  rw [findSome?_eq_some_iff] at h
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:35:theorem zipWith_comm_of_comm {f : α → α → β} (comm : ∀ x y : α, f x y = f y x) {l l' : List α} :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:141:theorem take_zipWith : (zipWith f l l').take i = zipWith f (l.take i) (l'.take i) := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:152:theorem drop_zipWith : (zipWith f l l').drop i = zipWith f (l.drop i) (l'.drop i) := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:164:  rw [← drop_one]; simp [drop_zipWith]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:167:theorem zipWith_append {f : α → β → γ} {l₁ l₁' : List α} {l₂ l₂' : List β}
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:238:          · simp_all [zipWith_append, Nat.succ_inj]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/TakeDrop.lean:587:      simp [hl h, zipWith_append this]
+
+["rg", "-n", "ofFn_fin_append|ofFn_inj", ".lake/packages/mathlib/Mathlib/Data/List/OfFn.lean"]
+EXIT 0
+61:theorem ofFn_fin_append {m n} (a : Fin m → α) (b : Fin n → α) :
+187:theorem ofFn_inj' {m n : ℕ} {f : Fin m → α} {g : Fin n → α} :
+192:theorem ofFn_injective {n : ℕ} : Function.Injective (ofFn : (Fin n → α) → List α) := fun f g h =>
+193:  eq_of_heq <| by rw [ofFn_inj'] at h; cases h; rfl
+195:/-- A special case of `List.ofFn_inj` for when the two functions are indexed by defeq `n`. -/
+197:theorem ofFn_inj {n : ℕ} {f g : Fin n → α} : ofFn f = ofFn g ↔ f = g :=
+198:  ofFn_injective.eq_iff
+
+["rg", "-n", "prfScheme_coinsEquiv|runAt_spDec|length_nestedInner|polyTimeComputable_spDecFun", "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean", "TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean", "TCSlib/Cryptography/SecureComputation/GarblingSpecial.lean"]
+EXIT 0
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:51:* `SecureComputation.polyTimeComputable_spEncFun`, `polyTimeComputable_spDecFun`, `runAt_spEnc`,
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:52:  `runAt_spDec`: the machines.
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:214:theorem polyTimeComputable_spDecFun {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:248:theorem runAt_spDec {E : List Bool → List Bool} (hE : PolyTimeComputable E) (coins : PolyExpr)
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:250:    (r' : (NUPPT.ofPolyTimeUniform (polyTimeComputable_spDecFun hE) coins).Coins n) :
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:251:    (NUPPT.ofPolyTimeUniform (polyTimeComputable_spDecFun hE) coins).runAt n (pairEncode k c) r' =
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:271:noncomputable def prfScheme_coinsEquiv (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:282:`List.ofFn (prfScheme_coinsEquiv … r).1 = List.ofFn r.1`, and each point,
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:283:`List.ofFn ((prfScheme_coinsEquiv … r).2 j) = List.ofFn (r.2 j)`. -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:284:theorem prfScheme_coinsEquiv_ofFn (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:289:    List.ofFn (prfScheme_coinsEquiv F E hE hFE n q r).1 = List.ofFn r.1 ∧
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:290:      ∀ j, List.ofFn ((prfScheme_coinsEquiv F E hE hFE n q r).2 j) = List.ofFn (r.2 j) :=
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:295:`k` and the points `r_j` read off the coins `r` (`prfScheme_coinsEquiv`),
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:296:`multiEncDist n q m r = encodeTuple (prfEncReal (F n) m (prfScheme_coinsEquiv … r))`.
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:301:`prfScheme_coinsEquiv … r` (`prfScheme_coinsEquiv_ofFn`), so `hFE` turns `E(⟨k, r_j⟩)` into
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:309:      encodeTuple (prfEncReal (F n) m (prfScheme_coinsEquiv F E hE hFE n q r)) := by
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:318:  have h1 : List.ofFn r.1 = List.ofFn (prfScheme_coinsEquiv F E hE hFE n q r).1 :=
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:319:    (prfScheme_coinsEquiv_ofFn F E hE hFE n q r).1.symm
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:320:  have h2 : List.ofFn (r.2 j) = List.ofFn ((prfScheme_coinsEquiv F E hE hFE n q r).2 j) :=
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:321:    ((prfScheme_coinsEquiv_ofFn F E hE hFE n q r).2 j).symm
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:335:`prfScheme_coinsEquiv` (`prfScheme_multiEncDist`), i.e. `encodeTupleOut ∘ prfEncRealOut (F n) m`
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:348:        encodeTupleOut (prfEncRealOut (F n) m₀ (prfScheme_coinsEquiv F E hE hFE n (q.eval n) r)) :=
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:352:    acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:354:    acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+
