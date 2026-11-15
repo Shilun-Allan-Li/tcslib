@@ -1,0 +1,30 @@
+$ rg -n exec.*append|exec.*drop|exec.*take|exec.*empty|empty.*exec TCSlib/Cryptography/ZeroKnowledge TCSlib/Cryptography/Composability/SequentialZK.lean
+TCSlib/Cryptography/Composability/SequentialZK.lean:159:    rw [exec_succ, List.range_succ, List.countP_append]
+TCSlib/Cryptography/Composability/SequentialZK.lean:169:    rw [exec_succ, List.range_succ, List.countP_append]
+TCSlib/Cryptography/Composability/SequentialZK.lean:300:      (exec (π.seqRep Q).P (π.seqRep Q).V vF x y z rP rV (2 * k * j + t)).1.drop (j * k) =
+TCSlib/Cryptography/Composability/SequentialZK.lean:302:      (exec (π.seqRep Q).P (π.seqRep Q).V vF x y z rP rV (2 * k * j + t)).2.drop (j * k) =
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1319:`ColRep.exec_four_mul`; the empty messages beyond `n|E|` iterations are ignored). Soundness with
+exit=0
+
+$ rg -n exec_phase|exec_prefix|exec_snd_take TCSlib/Cryptography/Composability/SequentialZK/Phases.lean TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:21:* `Composability.exec_phase_of_moves`: source replies matching arbitrary local strategies
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:23:* `Composability.exec_phase`: an execution after a fixed move offset is its earlier
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:58:theorem exec_phase_of_moves (P V P0 V0 : Strategy) (vFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:117:theorem exec_phase (P V W : Strategy) (vFirst : Bool)
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:134:  apply exec_phase_of_moves P V
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:139:  have hp := (exec_prefix P V vFirst x y z rP rV g t).1
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:23:* `Composability.exec_prefix`: each received history after `g` moves is a prefix of its
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:25:* `Composability.exec_fst_take`, `Composability.exec_snd_take`: taking the old history length
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:45:theorem exec_prefix (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:69:  (List.prefix_iff_eq_take.mp (exec_prefix P V vFirst x zP zV rP rV g t).1).symm
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:74:theorem exec_snd_take (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:79:  (List.prefix_iff_eq_take.mp (exec_prefix P V vFirst x zP zV rP rV g t).2).symm
+exit=0
+
+$ rg -n replicate.*append|append.*replicate /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Basic.lean
+198:  rw [replicate_append_replicate]
+exit=0
+
+$ rg -n interactive.*exec.*empty|exec.*empty.*prover|phase.*verifier /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability
+exit=1
+

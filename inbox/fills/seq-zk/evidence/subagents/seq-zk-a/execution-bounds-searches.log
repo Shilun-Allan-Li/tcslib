@@ -1,0 +1,99 @@
+$ rg -n exec.*(bound|[Mm]em|[Aa]ll)|mem.*exec|bounded.*transcript|transcript.*bounded|received.*length.*≤ TCSlib
+TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/HardSample.lean:478:transcript is bounded in [RY20, Ch. 6, eq. (6.3)]. -/
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:831:fresh entry executes the call before any return can be dispatched. The
+TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean:365:   honest execution of `ρ` on the call inputs and the run tapes, independent of the other
+TCSlib/Cryptography/SecureComputation/Defs.lean:42:  the messages of honest executions are polynomially bounded. Under D8, `Strategy.Efficient`
+TCSlib/Cryptography/SecureComputation/Hybrid.lean:38:- the messages of hybrid executions are polynomially bounded.
+TCSlib/Cryptography/Games/Protocols.lean:318:    (execT fuel A B).AllOutputs fun r =>
+TCSlib/Cryptography/Games/Protocols.lean:319:      r.2.1.received.length + r.2.2.received.length ≤ fuel ∧
+TCSlib/Cryptography/Games/Protocols.lean:381:then matches `exec`'s, with `endWithT` projecting to `endWith` and the recursive call to the
+TCSlib/Cryptography/SecureComputation/Compose.lean:29:  Run `j` is an honest execution of `ρ` on the inputs of call `j` (`callA`, `callB`, computed
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:85:  adapter** (round-1 repair R3): the entry action executes unconditionally
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:19:  carries the message of `ρ`'s move `p` in the honest execution of `ρ` on the inputs of call
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:75:/-- The honest run `j` is `ρ`'s execution on the call inputs and the run tapes. -/
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:240:theorem compose_exec_run {q : ℕ} (hq : q ≤ H.calls.eval x.length * ρ.rounds.eval x.length) :
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:292:the transcript of the honest execution of `ρ` on the inputs of call `j` and the `j`-th tapes
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:298:theorem compose_exec_runs {j : ℕ} (hj : j < H.calls.eval x.length) :
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:85:requests are executed: `timed_input_bound` is now the public
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:22:  execution whose verifier answers every odd history of `2i + 1` messages with the challenge
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:43:* `TCSlib.Cryptography.ColRep.exec_four_mul` — the views of `4i` moves against a challenge
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:395:/-- The shadow transform executes all source effects and only mirrors the
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:326:/-- The silent host reads the source action and executes all its effects
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:419:project `recordTM_execute`. Use the public one-action work-head bound. The
+TCSlib/Complexity/CookLevin/Hardness.lean:5793:**Proof sketch.** Read and advance the occupied unary clock cell, execute the entire positive clean call, and perform one return dispatch. Both surrounding configurations are exact. -/
+TCSlib/Complexity/CookLevin/Hardness.lean:7111:round index, so the forwarding loop executes exactly one more family member. -/
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:2074:choice prefix, and execute one verdict transition. All remaining choices
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:727:/-- **Proof sketch.** Induct on finite reachability of the compiled stack machine. Its support theorem preserves membership in the finite label set. For each source step, the statement simulation supplies a finite native execution, and transitivity concatenates these executions. -/
+TCSlib/Programs/WordRAM/Steps.lean:161:theorem exec_zero (c : Cfg W) : exec P 0 c.pc c.mem = none := by rw [exec]
+TCSlib/Programs/WordRAM/Steps.lean:163:private theorem exec_succ (t : ℕ) (c : Cfg W) : exec P (t + 1) c.pc c.mem =
+TCSlib/Programs/WordRAM/Steps.lean:166:    | .inl next => exec P t next.pc next.mem := by
+TCSlib/Programs/WordRAM/Steps.lean:172:    exec P (t + 1) c.pc c.mem = some (v, c.mem) := by rw [exec_succ, h]
+TCSlib/Programs/WordRAM/Steps.lean:176:    exec P (t + 1) c.pc c.mem = exec P t c'.pc c'.mem := by rw [exec_succ, h]
+TCSlib/Programs/WordRAM/Steps.lean:180:    (hv : step P c' = .inr v) : exec P (n + 1) c.pc c.mem = some (v, c'.mem) := by
+TCSlib/Programs/WordRAM/Steps.lean:192:    (h : exec P t c.pc c.mem = some r) (ht : t ≤ t') : exec P t' c.pc c.mem = some r := by
+TCSlib/Programs/WordRAM/Basic.lean:27:`exec`, a run of a program within a step budget; and `loadWords`, the initial memory. Imports
+TCSlib/Programs/Light/Compiler/WholeProgram.lean:269:  refine ⟨cfg.mem, exec_mono (c := ⟨0, m⟩) (exec_of_steps run tail.verdict) ?_,
+exit=0
+
+$ rg -n length_encodeMsgs_le|length_encWords_le|mem_drop|mem_take|mem_of_mem_drop|mem_of_mem_take TCSlib /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Sublist.lean:1156:theorem mem_of_mem_take {l : List α} (h : a ∈ l.take i) : a ∈ l :=
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Sublist.lean:1159:theorem mem_of_mem_drop {i} {l : List α} (h : a ∈ l.drop i) : a ∈ l :=
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/Find.lean:48:      rw [mem_take_iff_getElem] at m
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/ToArray.lean:115:      forIn' (l.drop (l.length - i)) b (fun a m b => f a (by simpa using mem_of_mem_drop m) b) := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/ToArray.lean:690:          · simp only [mem_take_iff_getElem, not_exists]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/ToArray.lean:699:            · simp only [mem_take_iff_getElem]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/TakeDrop.lean:251:theorem mem_take_iff_getElem {l : List α} {a : α} :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/TakeDrop.lean:261:theorem mem_drop_iff_getElem {l : List α} {a : α} :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/TakeDrop.lean:461:theorem false_of_mem_take_findIdx {xs : List α} {p : α → Bool} (h : x ∈ xs.take (xs.findIdx p)) :
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Nat/TakeDrop.lean:463:  simp only [mem_take_iff_getElem] at h
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Sort/Lemmas.lean:92:  exact h.rel_of_mem_take_of_mem_drop ma mb
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Sort/Lemmas.lean:485:    rw [map_merge (fun a am b bm => hl a (mem_of_mem_take (by simpa using am))
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Sort/Lemmas.lean:486:      b (mem_of_mem_drop (by simpa using bm)))]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Sort/Lemmas.lean:487:    rw [map_mergeSort (s := s) (fun a am b bm => hl a (mem_of_mem_take (by simpa using am))
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Sort/Lemmas.lean:488:      b (mem_of_mem_take (by simpa using bm)))]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Sort/Lemmas.lean:489:    rw [map_mergeSort (s := s) (fun a am b bm => hl a (mem_of_mem_drop (by simpa using am))
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Sort/Lemmas.lean:490:      b (mem_of_mem_drop (by simpa using bm)))]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Pairwise.lean:238:theorem Pairwise.rel_of_mem_take_of_mem_drop
+TCSlib/Programs/Light/Lib/ArrayAt.lean:120:    bound := fun x hx => h.bound x (List.mem_of_mem_drop (List.mem_of_mem_take hx)) }
+TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean:123:      | cons e t => rw [List.tail_cons, hstep e (List.mem_of_mem_drop (hd ▸ List.mem_cons_self))]
+TCSlib/Programs/Util/List.lean:407:theorem mem_dropWhile_lt {a c : α} {l : List α} (h : l.Pairwise (· < ·)) :
+TCSlib/Programs/Util/List.lean:417:theorem mem_takeWhile_lt {b c : α} {l : List α} (h : l.Pairwise (· < ·)) :
+TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean:95:      BinArith.length_encWords_le _ B fun m hm => length_le_of_mem_normalizeMsgs p B raw hm
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:264:hard-wired strings of commitments (`CommitmentLemmas.length_encodeMsgs_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:288:`CommitmentLemmas.length_encodeMsgs_le` with `|W i| ≤ C (2n + 3 + ℓ(n))^c`. -/
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:355:  · have h1 := length_encodeMsgs_le (List.ofFn fun i : Fin k => W (Fin.castLE k.2.le i))
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:357:    have h2 := length_encodeMsgs_le (List.ofFn fun i : Fin (t - k - 1) => W ⟨k + 1 + i, by omega⟩)
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:395:`length_encodeMsgs_le`), and `ε_D(n) ≤ q(n) · distAdv (Com ⟨v_n k_n, ·⟩) (Com ⟨v'_n k_n, ·⟩) (that reduction)`.
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:359:(`CommitmentLemmas.length_encodeMsgs_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:363:  refine CommitmentLemmas.length_encodeMsgs_le _ M fun w hw => ?_
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:371:**Proof sketch.** `CommitmentLemmas.length_encodeMsgs_le` on the fifteen fields of
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:381:  refine CommitmentLemmas.length_encodeMsgs_le _ M fun w hw => ?_
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:478:        obtain ⟨k, hk, rfl⟩ := List.mem_take_iff_getElem.1 hj
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:701:      obtain ⟨i, hi, rfl⟩ := List.mem_take_iff_getElem.1 ha
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:607:(`CommitmentLemmas.length_encodeMsgs_le`, `length_pairEncode`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:613:  refine (CommitmentLemmas.length_encodeMsgs_le _ (C * (2 * n + 3 + m) ^ c)
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:241:theorem length_encodeMsgs_le (L : List (List Bool)) (M : ℕ) (hM : ∀ m ∈ L, m.length ≤ M) :
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:81:theorem length_encWords_le (L : List (List Bool)) (c : ℕ) (h : ∀ w ∈ L, w.length ≤ c) :
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:443:`|z|` entries and matrices at most `|z|` rows, so `length_encWords_le` bounds a row by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:458:    have := length_encWords_le (r.map Nat.bits) (K + 2) (fun w hw => by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:466:    have := length_encWords_le (R.map encRow) (K * (2 * K + 6)) (fun w hw => by
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean:165:    have h1 := emitTree_spec k hk (vs.take m) gs hgs fun v hv => hvs v (List.mem_of_mem_take hv)
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean:169:      lt_of_lt_of_le (hvs v (List.mem_of_mem_drop hv)) (by rw [he1]; simp)
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean:201:        exact vertexValue_append gs e1 x (hvs c (List.mem_of_mem_drop hc))
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean:220:          (List.mem_of_mem_take hc)
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean:223:          rw [he1, vertexDepth_append _ _ (hvs c (List.mem_of_mem_drop hc))]
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean:224:          exact le_foldr_max₂ (f := vertexDepth n gs) (List.mem_of_mem_drop hc)
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:370:      fieldOffset_length en (hes en (List.mem_of_mem_take hen)))
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:623:  have hpre : ∀ v ∈ pre, v ≠ [] := fun v hv => hws v (List.mem_of_mem_take hv)
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyProgram.lean:288:  have ha' := List.mem_of_mem_take ha
+TCSlib/Complexity/Randomized/BPLInP.lean:312:  have := length_encWords_le ((List.range V).map fun a => Nat.bits (dpVal N x s V t a))
+TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean:296:          have := List.mem_takeWhile_imp (List.getElem_mem hval)
+TCSlib/Complexity/Randomized/BPLInPWords.lean:169:  have := length_encWords_le ((List.range V).map Nat.bits) V (by
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/DropRight.lean:178:  exact mem_takeWhile_imp hx
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/TakeWhile.lean:75:theorem mem_takeWhile_imp {x : α} (hx : x ∈ takeWhile p l) : p x := by
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Sort.lean:181:theorem Sorted.rel_of_mem_take_of_mem_drop {l : List α} (h : List.Sorted r l) {k : ℕ} {x y : α}
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Sort.lean:512:  replace h := mem_takeWhile_imp h
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Infix.lean:98:lemma mem_of_mem_dropSlice {n m : ℕ} {l : List α} {a : α} (h : a ∈ l.dropSlice n m) : a ∈ l :=
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Infix.lean:104:theorem mem_of_mem_dropLast (h : a ∈ l.dropLast) : a ∈ l :=
+exit=0
+

@@ -1,6 +1,6 @@
 """Check one module through the shared host slots; retain every raw diagnostic."""
 from pathlib import Path
-import os,sys,subprocess,json,datetime,re,hashlib
+import os,sys,subprocess,json,datetime,re,hashlib,fcntl
 repo=Path.cwd();module,label=sys.argv[1:3];out=Path(sys.argv[3])
 out.mkdir(parents=True,exist_ok=True);log=out/(label+'.log');assert not log.exists(),log
 env=dict(os.environ,LEAN_SLOT_TAG='seq-zk',TCSLIB_OLEANS=os.environ.get('TCSLIB_OLEANS',str(repo/'.lake/tcslib-check-oleans')))
@@ -8,7 +8,10 @@ env['PATH']='/Users/seyoonr/.elan/bin:'+env['PATH']
 start=datetime.datetime.now(datetime.timezone.utc).isoformat()
 with log.open('w') as f:
  f.write(f'START {start}\nMODULE {module}\n');f.flush()
- p=subprocess.run(['/private/tmp/seq-zk-lean-slot.sh','/usr/bin/time','-l','bash','scripts/lean_check_tree.sh',module],env=env,stdout=f,stderr=subprocess.STDOUT)
+ tree=Path(env['TCSLIB_OLEANS']);tree.mkdir(parents=True,exist_ok=True)
+ with (tree/'.seq-zk-writer.lock').open('a') as lock:
+  fcntl.flock(lock,fcntl.LOCK_EX)
+  p=subprocess.run(['/private/tmp/seq-zk-lean-slot.sh','/usr/bin/time','-l','bash','scripts/lean_check_tree.sh',module],env=env,stdout=f,stderr=subprocess.STDOUT)
  f.write(f'END {datetime.datetime.now(datetime.timezone.utc).isoformat()}\nEXIT {p.returncode}\n')
 raw=log.read_text();errs=[]
 for m in re.finditer(r'^(\S+\.lean):(\d+):(\d+): error(?:\([^\n)]*\))?:([^\n]*)',raw,re.M):

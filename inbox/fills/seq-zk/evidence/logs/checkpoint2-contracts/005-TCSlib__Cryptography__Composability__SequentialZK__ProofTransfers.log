@@ -1,0 +1,55 @@
+START 2026-11-15T10:26:15.216926+00:00
+MODULE TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers
+TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers.lean:41:50: error: unsolved goals
+case pos
+π ρ : Protocol
+x : List Bool
+q p : ℕ
+d : PaddedProverSpec π ρ x q p
+y : List Bool
+B : ℕ
+hB : ∀ (r : List Bool) (hist : List (List Bool)), (π.P.next x y r hist).length ≤ B
+r : List Bool
+hist : List (List Bool)
+h✝¹ : ¬π.verifierFirst = true
+h✝ : 2 * hist.length % (2 * π.rounds.eval x.length) < π.rounds.eval x.length
+⊢ (π.P.next x y (coinBlock (π.P.coinLen x.length) (2 * hist.length / (2 * π.rounds.eval x.length)) r)
+        (List.drop (2 * hist.length / (2 * π.rounds.eval x.length) * π.rounds.eval x.length) hist)).length ≤
+    B
+
+case neg
+π ρ : Protocol
+x : List Bool
+q p : ℕ
+d : PaddedProverSpec π ρ x q p
+y : List Bool
+B : ℕ
+hB : ∀ (r : List Bool) (hist : List (List Bool)), (π.P.next x y r hist).length ≤ B
+r : List Bool
+hist : List (List Bool)
+h✝¹ : ¬π.verifierFirst = true
+h✝ : ¬2 * hist.length % (2 * π.rounds.eval x.length) < π.rounds.eval x.length
+⊢ [].length ≤ B
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/ProofTransfers): no fresh .olean produced
+        2.12 real         1.31 user         0.88 sys
+          2213462016  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175875  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                  17  voluntary context switches
+                4671  involuntary context switches
+            33109135  instructions retired
+            18086366  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T10:26:17.380153+00:00
+EXIT 1

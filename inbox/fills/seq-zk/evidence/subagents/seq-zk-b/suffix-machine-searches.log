@@ -1,0 +1,57 @@
+$ rg -n phaseStep|phaseSuffix|suffix.*poly|poly.*suffix|loopState.*init TCSlib/Cryptography/ZeroKnowledge TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:489:def loopState (upd init : List Bool → List Bool) (x : List Bool) : ℕ → List Bool
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:491:  | i + 1 => upd (pairEncode x (pairEncode (List.replicate i true) (loopState upd init x i)))
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:494:@[simp] theorem loopState_zero (upd init : List Bool → List Bool) (x : List Bool) :
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:495:    loopState upd init x 0 = init x := rfl
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:498:@[simp] theorem loopState_succ (upd init : List Bool → List Bool) (x : List Bool) (i : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:499:    loopState upd init x (i + 1) =
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:500:      upd (pairEncode x (pairEncode (List.replicate i true) (loopState upd init x i))) := rfl
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:552:/-- The closed form of the orbit: `⟨1^i, loopState upd init x i⟩`. -/
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:555:      pairEncode (List.replicate i true) (loopState upd init x i) := by
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:566:update of a state word `⟨x, s⟩` have length at most `B|x|`, then `x ↦ loopState upd init x (N x)`
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:570:state word `⟨x, ⟨1^i, S_i⟩⟩` with `S_i = loopState upd init x i` (`CountLoop.orbit_eq`): the step
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:576:theorem polyTimeComputable_loopState {upd init : List Bool → List Bool}
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:581:    PolyTimeComputable fun x => loopState upd init x (N x) := by
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:586:  have hstate : ∀ x i, (loopState upd init x i).length ≤ B.eval x.length := by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:97:with the length bound required only of the states `loopState upd init x i`, `i ≤ N x`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:100:states `⟨1^i, loopState upd init x i⟩` (`CountLoop.orbit_eq`) are bounded by `hstate`. -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:101:theorem polyTimeComputable_loopState' {upd init : List Bool → List Bool}
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:105:    (hstate : ∀ x i, i ≤ N x → (loopState upd init x i).length ≤ B.eval x.length) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:106:    PolyTimeComputable fun x => loopState upd init x (N x) := by
+exit=0
+
+$ rg -n phasePrefix_succ|phasePrefix_poly|haux|hcoins|hnorm|hfill|loopState TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean
+20:`ColMachines.polyTimeComputable_loopState'`; it introduces no new control host or machine.
+28:* `phasePrefix_zero`, `phasePrefix_succ`, `phasePrefix_succ_simulate`: exact semantic readers.
+31:* `phasePrefix_poly`: polynomial-time assembly of the entire normalized prefix.
+72:theorem phasePrefix_succ (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+84:theorem phasePrefix_succ_simulate (S : NUPPT) (k B : PolyExpr) (verifierFirst : Bool)
+86:    (hcoins : coinBlock (S.coinLen x.length) i rS = List.ofFn r) :
+93:  rw [phasePrefix_succ]
+95:  rw [hcoins, ← NUPPT.runAt_eq, ← NUPPT.simulate_eq]
+105:    rw [phasePrefix_succ]
+127:    rw [phasePrefix_succ] at hm
+175:theorem phasePrefix_poly (S : NUPPT) (hS : S.Uniform) (k B Q : PolyExpr)
+204:  have haux := phaseAux_poly hZt hRVt hI hpre
+205:  have hcoins : PolyTimeComputable fun w =>
+210:    (hXt.pairEncode haux) (polyTimeComputable_const []) hcoins
+231:  have hnorm := polyTimeComputable_encode_normalizePhaseMsgs hXt haux hsim hP hbits
+232:  have hfill := encode_emptyMsgs_poly (EncodingMachines.unarySub_poly hK hP)
+233:  have hupd : PolyTimeComputable upd := hstate.append (hnorm.append hfill)
+235:  have hclosed : ∀ w i, EncodingMachines.loopState upd (fun _ => []) w i =
+239:    | zero => rw [EncodingMachines.loopState_zero, phasePrefix_zero, Strategy.encodeMsgs_nil]
+241:      rw [EncodingMachines.loopState_succ]
+250:      rw [hdec, phasePrefix_succ, CommitmentLemmas.encodeMsgs_append,
+258:  have hloop := ColMachines.polyTimeComputable_loopState' hupd (polyTimeComputable_const [])
+285:**Proof sketch.** Apply `phasePrefix_poly` to the common-input and auxiliary-input projections
+313:  have hpre := phasePrefix_poly S hS k B Q verifierFirst hX hZ hRV hRS
+exit=0
+
+$ rg -n def simStep|theorem simStep_eq /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/TCSlib/Cryptography/Composability/SequentialZK/PrefixFolds.lean
+64:def simStep (S : NUPPT) (x z rV : List Bool) (k B p i : ℕ)
+71:theorem simStep_eq (S : NUPPT) (x z rV : List Bool) (k B p i : ℕ)
+exit=0
+
+$ rg -n suffix.*(polynomial|Polynomial)|polynomial.*suffix|bounded.*fold /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability
+exit=1
+

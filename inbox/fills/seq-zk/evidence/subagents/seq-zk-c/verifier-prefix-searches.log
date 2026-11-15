@@ -1,0 +1,67 @@
+$ rg -n coinBlock.*(exec|prefix)|exec.*coinBlock|verifier.*(prefix|tape) TCSlib/Cryptography/Composability TCSlib/Cryptography/ZeroKnowledge
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean:41:  views of four-move iterations against a challenge verifier, the blocks of a uniform tape,
+TCSlib/Cryptography/Composability/SequentialZK.lean:285:      (exec π.P π.V π.verifierFirst x y z (coinBlock (π.P.coinLen x.length) j rP)
+TCSlib/Cryptography/Composability/SequentialZK.lean:290:      (exec π.P π.V π.verifierFirst x y z (coinBlock (π.P.coinLen x.length) j rP)
+TCSlib/Cryptography/Composability/SequentialZK.lean:377:   verifier's received history. If `k = 0` or `Q(n) = 0`, sample the cheating verifier's tape
+TCSlib/Cryptography/Composability/SequentialZK.lean:380:   run of `π`. Its auxiliary input contains the original `z`, the global verifier tape `r`,
+TCSlib/Cryptography/Composability/SequentialZK.lean:397:   Including the original auxiliary input, verifier tape, phase index and fixed pairing
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:152:cheating verifier `V'` is only `Efficient`, with no message-prefix cap (question Q-1 of
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:63:verifier's tape `ρ`. If field `3` is empty (the edgeless case) the view is `⟨x, z, ρ, [cv, []]⟩`.
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:67:entries are those of `cv`, the verifier is called once on it with tape `ρ`, and the view is
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:115:/-- The advice of the edgeless case: `x`, `z`, the verifier's tape `ρ` and the empty mode
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:123:/-- The advice of the planted case: `x`, `z`, the planted attempt's verifier tape `ρ`, the
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:343:prover's and the verifier's random tapes at parameter `|x|` [PS10, §4.4, random executions]
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:383:/-- **The verifier's tape in `π.withV V'` is a tape of `V'`**: the published equivalence
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:389:/-- The verifier-coin equivalence of `π.withV V'` keeps the tape:
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:417:prover's input `y`, the verifier's auxiliary input `z`, the prover's tape `List.ofFn r.1` and the
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:418:verifier's tape `List.ofFn r.2`, for `π.rounds.eval |x|` moves:
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:467:/-- The honest verifier's view consists of `x`, its auxiliary input `z`, its tape and the
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:474:/-- The view of the verifier `V'` in `π.withV V'`: the common input, `z`, `V'`'s tape and the
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:53:same local history. A verifier move agrees by the reply hypothesis after the fixed prefix
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:309:  -- the verifier's tape
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:256:`1, …, P`), the guessed bit (position `0`) and the verifier's tape (positions `1 + P, …`). -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:294:/-- The verifier's tape of the list of a block. -/
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:89:  verifier reads a polynomial prefix, hence `NP ⊆ IP` (Claim-117.c).
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:147:`B(|x|)` bits; verifier time in the total input length — the message-prefix cap is added in
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:99:/-- The verifier's tape of the graph non-isomorphism iteration as its first bit and the
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:107:/-- The list of a split verifier tape. -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:114:/-- The sampler's coins fit in the verifier's tape: `permCoinLen n ≤ (|x| + 1)²` for an
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:126:is then a function `g` of the graph it receives. Split the verifier's tape into the bit `b`
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:236:/-- The single coin of the graph isomorphism verifier as a tape (`Equiv.funUnique`). -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:241:/-- The list of the verifier's single-coin tape. -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:259:/-- The verifier's tape of a transported pair. -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:24:fixing the prover's coins and reading the verifier's tape as the `|x|` blocks
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:34:  and the verifier's tape as (bits, sampler coins).
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:167:first bit equals the corresponding bit of the verifier's tape, the `j`-th reply being `P'`'s
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:247:/-- The verifier's tape of the `|x|`-fold graph non-isomorphism protocol as the `|x|` bits and
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:322:/-- The sampler's coins fit in a block of the `|x|`-fold verifier's tape. -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:338:is then a function `g_i` of the graphs `H_0, …, H_i` (`gGuess`). Read the verifier's tape as
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:351:  -- the event on the verifier's tape, through the blocks
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:205:/-- The verifier's challenge: the rejection-sampled edge index on its tape. -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:549:/-- The verifier's challenge read off a layout is the edge sampler on its tape. -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:34:the bit/tape bijections used to read a verifier's random tape as (challenge bit, sampler
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:773:/-- The verifier's tape length of one graph non-isomorphism iteration: `1 + (N + 1)²`. -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:779:/-- The verifier's tape length of the `N`-fold graph non-isomorphism protocol:
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:788:/-- The verifier's tape length of one graph isomorphism iteration: one bit. -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:794:/-- The verifier's tape length of the `N`-fold graph isomorphism protocol: `N` bits. -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:851:      -- the sampled edge is close to uniform on the verifier's tape
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:999:/-- The challenge of iteration `t` of the `n|E|`-fold verifier with tape `rV`: the edge sampled
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1163:  -- the sampled edges as a function of the verifier's tape
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1025:there are a permutation `π₀` and a verifier tape `r_V` such that `D`'s advantage between the real
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1032:`0`, whose commitment randomness and verifier tape are independent uniform fields of the tape
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1058:  -- the encoded view with commitment vector `cv` and verifier tape `ρ`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1076:  -- the verifier's tape, two independent uniform fields
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1147:  -- (4) fix the verifier's tape
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:913:coins (`Protocol.exists_proverCoins_le`), split the verifier's tape into `b` and the sampler
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:974:or `x = encInstance G₀ G₁` with `G₀ ≇ G₁` (`encInstance_mem_Liso_iff`); the verifier's tape is
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:991:the prover's coins; the verifier's tape is the challenge tuple `Fin |x| → Bool` (`List.ofFn`),
+exit=0
+
+$ rg -n coinBlock|verifier.*(prefix|tape) /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability
+exit=1
+
+$ rg -n theorem div_lt_iff_lt_mul|theorem div_lt_of_lt_mul /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Mod.lean:47:protected theorem div_lt_of_lt_mul {m n k : Nat} (h : m < n * k) : m / n < k :=
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/Nat/Div/Basic.lean:304:theorem div_lt_iff_lt_mul (Hk : 0 < k) : x / k < y ↔ x < y * k := by
+exit=0
+

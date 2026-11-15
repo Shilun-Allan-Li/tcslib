@@ -1,0 +1,38 @@
+START 2026-11-15T11:15:50.248696+00:00
+MODULE .lake/seq-zk-rule10/checkpoint2/controls/ControlMinimalBS_eval
+G06-COMPONENT label=ControlMinimalBS_eval_part1 phase=install spelling=Complexity.PolyExpr.eval key=[["str","Complexity"],["str","PolyExpr"],["str","eval"]] home_key=[["str","TCSlib"],["str","Complexity"],["str","Randomized"],["str","PolyExpr"]] instance=false
+G06-NAME label=ControlMinimalBS_eval_part1 spelling=Complexity.PolyExpr.eval actual=Complexity.PolyExpr.eval home=TCSlib.Complexity.Randomized.PolyExpr before=Lean.ReducibilityStatus.semireducible installed=Lean.ReducibilityStatus.irreducible
+G06-MASK label=ControlMinimalBS_eval_part1 phase=install requested=1 verified=1 removed=0 scope_depth=1 scoped_names=48 tc_state=preserved
+G06-SEAL label=ControlMinimalBS_eval_part1 requested=1 active=1 already_irreducible=0 verified=1
+.lake/seq-zk-rule10/checkpoint2/controls/ControlMinimalBS_eval.lean:120:71: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (Complexity.PolyExpr.const 2).eval n = 2
+G06-COMPONENT label=ControlMinimalBS_eval_part1 phase=eof spelling=Complexity.PolyExpr.eval key=[["str","Complexity"],["str","PolyExpr"],["str","eval"]] home_key=[["str","TCSlib"],["str","Complexity"],["str","Randomized"],["str","PolyExpr"]] instance=false
+G06-MASK label=ControlMinimalBS_eval_part1 phase=eof requested=1 verified=1
+G06-SEAL-END label=ControlMinimalBS_eval_part1 requested=1 verified=1
+FAIL(.lake/seq-zk-rule10/checkpoint2/controls/ControlMinimalBS_eval): lean exited with status 1
+FAIL(.lake/seq-zk-rule10/checkpoint2/controls/ControlMinimalBS_eval): error diagnostics reported
+FAIL(.lake/seq-zk-rule10/checkpoint2/controls/ControlMinimalBS_eval): no fresh .olean produced
+       20.53 real        19.67 user         0.88 sys
+          1546518528  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              125583  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                  18  voluntary context switches
+                4181  involuntary context switches
+            33476621  instructions retired
+            33018257  cycles elapsed
+             1704272  peak memory footprint
+END 2026-11-15T11:16:10.827635+00:00
+EXIT 1

@@ -1,0 +1,47 @@
+$ rg -n decodeMsgs|parseMsgs|encodeMsgs_append|wrapper.*Strategy|def .*wrap|received.*prefix|prefix.*received TCSlib/Cryptography/ZeroKnowledge TCSlib/Cryptography/Composability/SequentialZK.lean
+TCSlib/Cryptography/Composability/SequentialZK.lean:381:   the phase index and the bounded received-prover prefix of earlier padded phases. It runs
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:233:theorem encodeMsgs_append (L M : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:253:(`ofFn_update_eq`, `encodeMsgs_append`). -/
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:259:  rw [ofFn_update_eq, encodeMsgs_append, Strategy.encodeMsgs_cons]
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:197:/-- A strategy reads at most an `m(|x|)`-bit prefix of each received message [PS10, §4.4, time
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:164:polynomial prefix `m(|x|)` of each received message (`Strategy.ReadsPrefix`), as a verifier of
+exit=0
+
+$ rg -n encWords.*decWords|decWords.*encodeMsgs|encodeMsgs.*encWords|liftVerifier TCSlib/Cryptography/ZeroKnowledge TCSlib/Complexity/ClassP/BinaryArith
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:47:verifier `liftVerifier V'` and the view re-encoder `postView` of the zero-knowledge transfer,
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:456:verifier `V*' := LevinTransfer.liftVerifier V*` for `π`, `V*'.next x' z' r hist := V*.next
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:460:(`LevinTransfer.liftVerifier_efficient`, from `V*`'s machine with
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:475:(`LevinTransfer.exec_congr`, `liftVerifier_next`, `postView_encode`), and `D'`'s verdict is
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:485:  obtain ⟨S', hS'u, hS'⟩ := hzk (liftVerifier V') (liftVerifier_efficient hV')
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:513:  have hVle : V'.coinLen x.length ≤ (liftVerifier V').coinLen (f x).length := by
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:514:    rw [liftVerifier_coinLen]
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:522:      = distAdv (fun r => ((π.withV (liftVerifier V')).viewV (f x) (w x y) (pairEncode x z) r).encode)
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:541:            exact liftVerifier_next V' _ x z _ _
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:37:* **The machines of the reduction.** `liftVerifier V'` is the verifier `V*'` for `π` obtained
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:40:  coins; `liftVerifier_efficient`); `postView c` re-encodes a view `⟨⟨x', ⟨x, z⟩⟩, ⟨r', msgs⟩⟩`
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:53:* `TCSlib.Cryptography.LevinTransfer.liftVerifier`,
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:66:* `TCSlib.Cryptography.LevinTransfer.liftVerifier_efficient`,
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:268:def liftVerifier (V' : Strategy) : Strategy where
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:273:/-- The next-message function of `liftVerifier V'` on the auxiliary input `⟨x, z⟩`. -/
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:274:theorem liftVerifier_next (V' : Strategy) (x' x z r : List Bool) (hist : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:275:    (liftVerifier V').next x' (pairEncode x z) r hist =
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:277:  simp [liftVerifier]
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:279:/-- The coin length of `liftVerifier V'` is that of `V'`. -/
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:280:theorem liftVerifier_coinLen (V' : Strategy) (n : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:281:    (liftVerifier V').coinLen n = V'.coinLen n := rfl
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:283:/-- `liftVerifier V'` is efficient when `V'` is.
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:293:`liftVerifier V'` (`NUPPT.runAtL_ofPolyTimeUniform`, `NUPPT.runAtL_eq_output_layout`, the
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:295:theorem liftVerifier_efficient {V' : Strategy} (hV' : V'.Efficient) :
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:296:    (liftVerifier V').Efficient := by
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:329:`V*' = liftVerifier V'` in `π` becomes the view `⟨⟨x, z⟩, ⟨r'.take (c |x|), msgs⟩⟩` of `V'` in
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:364:(the simulator for `liftVerifier V'` in `π`), a polynomial-time `f` and polynomials `c`, `p`,
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:23:* `Complexity.BinArith.encWords`, `Complexity.BinArith.decWords` — encoding and reading.
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:116:@[simp] theorem decWords_encWords (L : List (List Bool)) : decWords (encWords L) = L := by
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:120:    rw [encWords_cons, decWords_of_ne (by simp [pairEncode]), pairFstD_pairEncode,
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:209:    mapW g (pairEncode q w) = encWords ((decWords w).map (fun x => g (pairEncode q x))) := by
+exit=0
+
+$ rg -n prefix.*strateg|strateg.*prefix|fixed.*tape /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability/PostTuringMachine.lean:828:fixed constant. Each tape element is represented as a block of `n` `Bool`s. Whenever the machine
+exit=0
+

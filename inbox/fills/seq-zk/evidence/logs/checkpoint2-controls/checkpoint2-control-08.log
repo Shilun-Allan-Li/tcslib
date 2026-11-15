@@ -1,0 +1,38 @@
+START 2026-11-15T11:16:25.124763+00:00
+MODULE .lake/seq-zk-rule10/checkpoint2/controls/ControlMinimalBS_padFin
+G06-COMPONENT label=ControlMinimalBS_padFin_part1 phase=install spelling=TCSlib.Cryptography.padFin key=[["str","TCSlib"],["str","Cryptography"],["str","padFin"]] home_key=[["str","TCSlib"],["str","Cryptography"],["str","Asymptotic"],["str","Adversary"]] instance=false
+G06-NAME label=ControlMinimalBS_padFin_part1 spelling=TCSlib.Cryptography.padFin actual=TCSlib.Cryptography.padFin home=TCSlib.Cryptography.Asymptotic.Adversary before=Lean.ReducibilityStatus.semireducible installed=Lean.ReducibilityStatus.irreducible
+G06-MASK label=ControlMinimalBS_padFin_part1 phase=install requested=1 verified=1 removed=0 scope_depth=1 scoped_names=217 tc_state=preserved
+G06-SEAL label=ControlMinimalBS_padFin_part1 requested=1 active=1 already_irreducible=0 verified=1
+.lake/seq-zk-rule10/checkpoint2/controls/ControlMinimalBS_padFin.lean:120:108: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  TCSlib.Cryptography.padFin l w i = w.getD (↑i) false
+G06-COMPONENT label=ControlMinimalBS_padFin_part1 phase=eof spelling=TCSlib.Cryptography.padFin key=[["str","TCSlib"],["str","Cryptography"],["str","padFin"]] home_key=[["str","TCSlib"],["str","Cryptography"],["str","Asymptotic"],["str","Adversary"]] instance=false
+G06-MASK label=ControlMinimalBS_padFin_part1 phase=eof requested=1 verified=1
+G06-SEAL-END label=ControlMinimalBS_padFin_part1 requested=1 verified=1
+FAIL(.lake/seq-zk-rule10/checkpoint2/controls/ControlMinimalBS_padFin): lean exited with status 1
+FAIL(.lake/seq-zk-rule10/checkpoint2/controls/ControlMinimalBS_padFin): error diagnostics reported
+FAIL(.lake/seq-zk-rule10/checkpoint2/controls/ControlMinimalBS_padFin): no fresh .olean produced
+       43.67 real        42.76 user         0.99 sys
+          2219851776  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175869  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  18  voluntary context switches
+                2009  involuntary context switches
+            31792557  instructions retired
+            18913135  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T11:17:08.832714+00:00
+EXIT 1

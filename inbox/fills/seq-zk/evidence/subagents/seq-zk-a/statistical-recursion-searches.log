@@ -1,0 +1,80 @@
+$ rg -n [Ss]tat[Cc]lose.*(recurs|snoc|fold|step)|statClose_(pi|chain|average)|snocEquiv TCSlib /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fin /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Equiv
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean:701:def snocEquiv (α : Fin (n + 1) → Type*) : α (last n) × (∀ i, α (castSucc i)) ≃ ∀ i, α i where
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Basic.lean:1036:    insertNthEquiv (fun _ ↦ α) (last n) = snocEquiv (fun _ ↦ α) := by ext; simp
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Finset.lean:58:lemma map_snocEquiv_filter_piFinset (P : (∀ i, α (castSucc i)) → Prop) [DecidablePred P] :
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Finset.lean:59:    {r ∈ piFinset S | P (init r)}.map (snocEquiv α).symm.toEmbedding =
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Finset.lean:73:lemma filter_piFinset_eq_map_snocEquiv (P : (∀ i, α (castSucc i)) → Prop) [DecidablePred P] :
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Finset.lean:75:      (S (last _) ×ˢ {r ∈ piFinset (init S) | P r}).map (snocEquiv α).toEmbedding := by
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Finset.lean:76:  simp [← map_snocEquiv_filter_piFinset, map_map]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Finset.lean:88:lemma card_snocEquiv_filter_piFinset (P : (∀ i, α (castSucc i)) → Prop) [DecidablePred P] :
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fin/Tuple/Finset.lean:91:  rw [← card_product, ← map_snocEquiv_filter_piFinset, card_map]
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:26:positions (`statClose_pi`, `statClose_rejectionSample`).
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:760:(`statClose_roundSample`, `statClose_pi`, the block bijection on the coin string). -/
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:764:  (statClose_pi (statClose_roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n)
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:37:* **Statistical closeness of products** over `Fin N` (`statClose_pi`): the `T + 1` rounds of
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:53:* `TCSlib.Cryptography.OneWay.statClose_pi` — closeness of `Fin N`-indexed products.
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:276:theorem statClose_pi {σ τ γ : Type*} [Fintype σ] [Fintype τ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:809:`withV_vCoinsEquiv` (`StatClose.prod`, `StatClose.map`). The three moves unfold by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:887:add up (`OneWay.statClose_pi`), and on each block the string attempt is the typed attempt
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:932:  have h := ((OneWay.statClose_pi hA (n * m)).comp_pushesUniform hT).map fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:555:from the `t`-th block (`giSimCoins_eval`, `coinBlock`). Chain of `StatClose` steps:
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:263:private def snocEquivW (k m : ℕ) (W : Type*) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:301:`(Fin (k+1) → Fin m) ≃ (Fin k → Fin m) × Fin m`, `Fin.snocEquiv`; `uprob_comp_equiv`); by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:320:    rw [← uprob_comp_equiv (snocEquivW k m W)]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:322:          ((snocEquivW k m W) y).1 i ∉
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:323:            Bad i (challengesBefore ((snocEquivW k m W) y).1 i) ((snocEquivW k m W) y).2) ≤
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:331:        simpa [snocEquivW, Fin.snoc_castSucc, challengesBefore_snoc_castSucc] using this
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:333:        simpa [snocEquivW, Fin.snoc_last, challengesBefore_snoc_last] using this
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1323:(`statClose_sampleEdgeIdx` per block, `OneWay.statClose_pi` over the coin blocks:
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:33:  (`statClose_sampleEdgeIdx` per block, `OneWay.statClose_pi`).
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:213:`OneWay.statClose_pi`; the tape: `pushesUniform_blockRead` (`StatClose.comp_pushesUniform`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:226:  exact (OneWay.statClose_pi h1 K).comp_pushesUniform (pushesUniform_blockRead b K C h)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:27:ones, which costs `|x| · permFailBound n` (`statClose_pi` of `statClose_samplePerm_long`); so
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:40:* `TCSlib.Cryptography.GI.statClose_pi` — `StatClose` for `m` independent copies.
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:279:theorem statClose_pi {σ γ : Type*} [Fintype σ] [Fintype γ] {X : σ → γ} {δ : ℝ}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:300:    have ih := statClose_pi h m
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:342:(`statClose_samplePerm_long`, `statClose_pi`, `StatClose.abs_uprob_sub_le_prod`), and for uniform
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:371:  have hclose := (statClose_pi (statClose_samplePerm_long (permCoinLen_le_block G₀ G₁))
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:80:`n` bits (`(Fin.snocEquiv _).symm (G s)`); this is the `S → Bool × S` form of
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:161:`(Fin.snocEquiv _).symm : {0,1}^{n+1} ≃ Bool × {0,1}^n` re-encodes the reduction's input. -/
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:171:  exact prgAdv_comp_equiv (Fin.snocEquiv fun _ => Bool).symm G
+TCSlib/Cryptography/Composability/SequentialZK/Statistical.lean:25:* `statClose_average`: a common nonnegative pointwise bound remains valid after averaging
+TCSlib/Cryptography/Composability/SequentialZK/Statistical.lean:27:* `statClose_chain`: `q` consecutive comparisons of error `δ` give error `q * δ`.
+TCSlib/Cryptography/Composability/SequentialZK/Statistical.lean:44:theorem statClose_average {α β γ O : Type*} [Fintype α] [Fintype β] [Fintype γ]
+TCSlib/Cryptography/Composability/SequentialZK/Statistical.lean:59:theorem statClose_chain {Ω O : Type*} [Fintype Ω] (f : ℕ → Ω → O) (q : ℕ) (δ : ℝ)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:30:   rejection-sampled `π'_t` by uniform ones costs `n · permFailBound n` (`statClose_pi`).
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:46:* `TCSlib.Cryptography.GIZK.statClose_pi` — closeness is preserved by `N`-fold independent
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:165:theorem statClose_pi {σ τ γ : Type*} [Fintype σ] [Fintype τ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:473:`n`-fold product is within `n · permFailBound n` (`statClose_pi`); the tape read as `n` blocks
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:493:  have hpi := statClose_pi hs n
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:509:**Proof sketch.** Three `StatClose` steps joined by `StatClose.trans`: (1) the real view with
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:262:    (Equiv.prodComm _ _).trans (Fin.snocEquiv (fun _ => ZMod P.modulus))
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2522:uniform domain elements (`StatClose.prod`, `OneWay.statClose_pi` twice,
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2631:  have hXn := OneWay.statClose_pi (OneWay.statClose_pi hX1 ℓ) n
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2987:(`OneWay.statClose_pi`, `StatClose.prod`, `StatClose.abs_uprob_sub_le_prod`), and the guess and
+TCSlib/Complexity/Expanders/Walks.lean:547:prefix) pairs via `Fin.snocEquiv`, split off the last step with
+TCSlib/Complexity/Expanders/Walks.lean:609:        ← Fintype.sum_equiv (Fin.snocEquiv fun _ => Fin n)
+exit=0
+
+$ rg -n prodComm|prodAssoc|comp_equiv_left|abs_uprob_sub_le_prod|statClose_iff TCSlib/Cryptography/Asymptotic/Sampling.lean
+33:  experiment with auxiliary coins (`StatClose.abs_uprob_sub_le_prod`) — the statistical-switch
+73:* `TCSlib.Cryptography.StatClose.abs_uprob_sub_le_prod`,
+115:(`statClose_iff_epsClose_map`, `Asymptotic/SamplingFinDist.lean`). The device of foundation
+133:theorem statClose_iff (X : σ → γ) (Y : τ → γ) (δ : ℝ) :
+179:theorem StatClose.comp_equiv_left {σ' : Type*} [Fintype σ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+223:test lie in `[0, 1]` (`statClose_iff`, `uprob_nonneg`, `uprob_le_one`). -/
+225:  (statClose_iff X Y 1).2 fun T => by
+237:theorem StatClose.abs_uprob_sub_le_prod {ρ : Type*} [Fintype ρ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+240:  have e1 := uprob_comp_equiv (Equiv.prodComm ρ σ) (fun z : σ × ρ => P (X z.1) z.2)
+241:  have e2 := uprob_comp_equiv (Equiv.prodComm ρ τ) (fun z : τ × ρ => P (Y z.1) z.2)
+253:  exact h.abs_uprob_sub_le_prod fun g r => D g r = true
+259:`StatClose.abs_uprob_sub_le_prod` for `X, X'` with the second coordinate as auxiliary coins;
+267:  have h1 := h.abs_uprob_sub_le_prod fun g s' => T (g, Y s')
+268:  have h2 := h'.abs_uprob_sub_le_prod fun g t => T (X' t, g)
+269:  rw [← uprob_comp_equiv (Equiv.prodComm τ σ') (fun z : σ' × τ => T (X' z.2, Y z.1)),
+270:    ← uprob_comp_equiv (Equiv.prodComm τ τ') (fun z : τ' × τ => T (X' z.2, Y' z.1))] at h2
+282:probabilities over `(·, ω)` (`uprob_prod`), and `StatClose.abs_uprob_sub_le_prod` applies with
+296:  have hh := h.abs_uprob_sub_le_prod (fun c (ω : ∀ c', Aux c') => Q c (ω c))
+847:  have h := (((statClose_firstHit (fun x : Fin (2 ^ k) => x.val < m) T (d := toBig d) d.2).comp_equiv_left
+exit=0
+

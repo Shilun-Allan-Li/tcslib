@@ -1,103 +1,240 @@
-# seq-zk-a status
+# seq-zk-a final helper report
 
-Agent: `/root/zk_route`, host slot tag `seq-zk-a`, local branch `fill/seq-zk-a`.
-Worktree: `/Users/seyoonr/.codex/worktrees/seq-zk-a/tcslib-exchange`.
-Own olean tree: `.lake/seq-zk-a-oleans` (empty; no Lean command has run).
-Packages: `.lake/packages` is a symlink to the lead's exact-pin packages, read-only for this agent.
+Agent `/root/zk_route`, tag `seq-zk-a`, branch `fill/seq-zk-a`, issue base
+107f1e8c218733eac12d6b9bee6fece441271317. Worktree:
+`/Users/seyoonr/.codex/worktrees/seq-zk-a/tcslib-exchange`.
+Own olean tree: `.lake/seq-zk-a-oleans`, seeded by the lead from completed base modules.
+`.lake/packages` is a symlink to the lead's exact-pin packages and read-only to this agent.
+No commits, Lake commands, frozen edits, or SequentialZK.lean edits were made by this agent.
 
-## Source
+## Checked source
 
-`TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean` is 98 lines, at most 94
-characters per line. It contains no admissions and no new simp attributes. Its proofs remain
-unchecked while the lead bootstraps the import closure. Only the lead may commit or deliver.
+- Normalization.lean: 98 lines, maximum width 94; encoding bridge, bounded slot normalizer,
+  exact count, per-message length bound, canonical bounded-list fixed point, encoded-size bound.
+- NormalizationMachine.lean: 97 lines, maximum width 95; polynomial-time canonical reencoding,
+  total decoded lookup, and encoded bounded-slot normalization for arbitrary polynomial-time
+  raw input and unary-computable slot count and bit cap.
+- PhaseView.lean: 168 lines, maximum width 95; canonical view metadata/tape/encoding validator,
+  fixed-point and malformed-view fallback, bounded normalized messages and polynomial-time
+  validator/encoded-normalizer theorems.
 
-The new declarations are:
-
-- `encodeMsgs_eq_encWords`: general bridge, re-derived from published nil/cons readers.
-- `normalizeMsgs`, with `normalizeMsgs_eq`: exactly p slots decoded with empty defaults and
-  truncated to B bits.
-- `length_normalizeMsgs`: exactly p output slots.
-- `length_le_of_mem_normalizeMsgs`: each output message has at most B bits.
-- `normalizeMsgs_encodeMsgs`: fixed point for canonical bounded p-slot inputs.
-- `length_encodeMsgs_normalizeMsgs_le`: encoding size at most p*(2*B+2).
+All three compile without final diagnostics or admissions, and add no simp attributes.
+Source hashes are recorded in final-width-and-hashes.log. The first two source files were
+held byte-stable after checking so seq-zk-b could reuse them with recorded provenance.
 
 ## Overlap and reuse
 
-The encoding bridge exactly matches the local `have henc` inside
-`SecureComputation/Yao.lean:352`. That provider is outside the allowed supplied closure;
-this helper derives the general statement from the public equations of both encodings.
-The same representation occurs as `ThreeColoring/Machines.lean:911`'s
-`encodeMsgs_eq_flatMap`; using the generic Words module avoids graph-specific imports.
-Requested eventual promotion: place a general Strategy/BinArith encoding bridge beside
-Strategy.encodeMsgs in ZeroKnowledge/Interaction.lean during a shared-file window.
+### Normalization.lean
 
-The size bound specializes public `BinaryArith/Words.lean:81 length_encWords_le`, which the
-proof directly reuses. Its count and per-message prerequisites are the new normalization
-invariants. The pre-existing `CommitmentLemmas.lean:241 length_encodeMsgs_le` gives the
-same generic bound for Strategy.encodeMsgs but introduces a larger cryptographic dependency.
-The per-message bound uses List.length_take and Nat.min_le_left (the same arithmetic as
-List.length_take_le). This is the normalization-specific consequence, not a replacement
-for a generic take lemma. The fixed-point theorem reuses decWords_encWords and
-List.take_of_length_le; no decoder or list host is copied.
+- encodeMsgs_eq_encWords exactly matches the local `have henc` inside
+  SecureComputation/Yao.lean:352. That provider is outside the supplied closure; this helper
+  derives the general statement from public nil/cons readers of both encodings. The same
+  representation occurs in ThreeColoring/Machines.lean:912 encodeMsgs_eq_flatMap.
+  Promotion request: a general Strategy/BinArith encoding bridge belongs beside
+  Strategy.encodeMsgs in ZeroKnowledge/Interaction.lean during a shared-file window.
+- normalizeMsgs and normalizeMsgs_eq publish a new bounded-slot operation. No existing
+  normalization with this shape was found in TCSlib or Mathlib searches.
+- length_normalizeMsgs specializes List.length_map and List.length_range, directly reused.
+- length_le_of_mem_normalizeMsgs uses List.length_take and Nat.min_le_left; this is the same
+  arithmetic as List.length_take_le, specialized to the new operation.
+- normalizeMsgs_encodeMsgs reuses BinArith.decWords_encWords (Words.lean:116) and
+  List.take_of_length_le. No decoder or list host is copied.
+- length_encodeMsgs_normalizeMsgs_le directly specializes public Words.lean:81
+  length_encWords_le to the new invariants. CommitmentLemmas.lean:241 length_encodeMsgs_le
+  offers the same generic encoded-size bound but introduces larger cryptographic imports.
 
-## Scope
+### NormalizationMachine.lean
 
-The un-applied `scope-StatZK-iff.patch` was requested by the lead after independent discovery
-of a missing StatZK reader. The lead reports Seyoon has approved and the lead has applied
-that reader. This agent edited no frozen file.
+- polyTimeComputable_encWords_decWords specializes Words.lean:221 polyTimeComputable_mapW
+  to the identity payload and uses mapW_pairEncode at line 208. No host is copied.
+- polyTimeComputable_decWords_getD composes canonicalization with Loops.lean:391
+  polyTimeComputable_getW and its reader getW_pairEncode at line 375.
+- polyTimeComputable_encode_normalizeMsgs uses these lookups, EncodingMachines.lean:459
+  truncate_poly, and ThreeColoring/Machines.lean:159 polyTimeComputable_flatMap_range. The
+  published counted-emission argument is reused. Its import is within the supplied closure
+  and was confirmed with the lead. No extra size premise or new private host is introduced.
+- Promotion request: the generic canonicalization and total decoded-lookup lemmas belong
+  beside the BinaryArith word-list hosts at a future shared-file window.
 
-## Assessment
+### PhaseView.lean
 
-No mathematical counterexample was found in static review. `route-assessment.md` records
-phase reconstruction, normalization, an explicit phase-auxiliary polynomial bound, advice,
-and edge cases. It is an assessment, not a checked proof.
+- phaseViewPayload and its eq reader are a new canonical-view validator; no matching
+  validator was found. normalizePhaseMsgs and its eq reader compose it with normalizeMsgs.
+- phaseViewPayload_of_encode specializes Interaction.lean:302 View.encode_mk, public pair
+  projection equations, and Words.lean:116 decWords_encWords. All are directly reused.
+- phaseViewPayload_of_ne is the new validator's failed-branch equation, proved by if_neg.
+- normalizePhaseMsgs_of_encode directly reuses Normalization.lean:76
+  normalizeMsgs_encodeMsgs after the canonical payload reader.
+- length_normalizePhaseMsgs, length_le_of_mem_normalizePhaseMsgs, and
+  length_encodeMsgs_normalizePhaseMsgs_le directly reuse Normalization.lean:60,66,89 after
+  the new definition reader. They are its three phase-view specializations.
+- normalizePhaseMsgs_of_ne specializes the normalized-empty-payload formula; its list
+  calculation directly reuses core getD/getElem?/take/map-constant/range equations.
+- polyTimeComputable_phaseViewPayload composes the existing canonical reencoder with
+  Loops.lean:426 polyTimeComputable_eqW and PolyTimePairing.lean:290
+  polyTimeComputable_ite. It introduces no host or machine construction.
+- polyTimeComputable_encode_normalizePhaseMsgs directly reuses
+  NormalizationMachine.lean:72 after validation. No additional promotion is requested for
+  these phase-specific operations.
 
-## Evidence
+Searches and closest relatives are recorded in searches.md, searches.log,
+normalization-machine-searches.log, map-identity-search.log, phase-view-searches.log and
+phase-view-ite-search.log. Searches consulted the lead's Mathlib source read-only.
 
-`searches.log` records repeated key source searches, including Mathlib source read-only.
-`searches.md` records the API review. `width.log` records the helper's size and width.
-No Lean/Lake/probe/check/seal logs exist because none has run yet.
+## Scope and mathematical assessment
 
-## NormalizationMachine continuation
+The agent discovered the missing StatZK reader and supplied scope-StatZK-iff.patch without
+applying it. The lead reports Seyoon approved the addition and the lead applied it. This
+agent changed no frozen file. route-assessment.md records the independent mathematical
+review of the ZK/StatZK route, auxiliary bounds and edge cases. No mathematical counterexample
+was found; that assessment itself is not a checked composition proof.
 
-The lead approved `NormalizationMachine.lean` and its precise import of the public
-`ColMachines.polyTimeComputable_flatMap_range` from ThreeColoring/Machines.lean:159.
-The helper now has three untested theorem blocks and no admissions:
-
-- `polyTimeComputable_encWords_decWords` directly specializes BinArith's mapW host to the
-  identity payload. Nearest published relative: BinaryArith/Words.lean:221
-  polyTimeComputable_mapW, with its arbitrary-raw-word reader at line 208. No host is copied.
-- `polyTimeComputable_decWords_getD` directly composes that canonicalization with
-  BinaryArith/Loops.lean:391 polyTimeComputable_getW and line 375 getW_pairEncode.
-- `polyTimeComputable_encode_normalizeMsgs` uses these lookup operations, the public
-  EncodingMachines.lean:459 truncate_poly, and ThreeColoring/Machines.lean:159's counted
-  emitter. Its loop proof is reused, not duplicated. The only hypotheses are polynomial-time
-  raw data and unary-computable slot count and bit cap. No extra size premise is needed.
-
-Potential promotion request: the generic canonicalization and decoded-lookup statements
-belong beside the BinaryArith word-list hosts at a future shared-file window. The generic
-counted emitter already has a public provider, so no reimplementation is requested.
-
-`normalization-machine-searches.log` records searches across TCSlib and Mathlib before
-implementation. `normalization-machine-width.log` records its width/size check. Still no
-Lean command has run; lead bootstrap readiness is pending.
-
-## Checked results
-
-After the lead seeded the prerequisite oleans into this agent's private olean tree:
-
-- Normalization.lean passed its first check, with no diagnostics; maximum RSS 1,564,000,256
-  bytes and 1.80 seconds wall time for compilation. A normal shared-slot wait preceded it.
-- NormalizationMachine.lean's first check found one proof error: the lambda identity map
-  requires the published core lemma List.map_id' instead of List.map_id. It also reported
-  two unused simp arguments. Both source blocks were corrected individually.
-- NormalizationMachine.lean passed check 02 with no diagnostics; maximum RSS 2,213,593,088
-  bytes and 2.31 seconds compilation wall time.
+## Checks and evidence
 
 Every check used LEAN_SLOT_TAG=seq-zk-a, the assigned TCSLIB_OLEANS, the issued host wrapper,
-/usr/bin/time -l and scripts/lean_check_tree.sh for exactly one module. No lake command ran.
-The raw failed attempt is retained. check-summary.json counts both error: and error(...) forms;
-slots.log records this tag's acquisitions and releases, including timestamps for the first
-normalization check whose raw log contains only the time report. Source widths and SHA-256
-are in final-width-and-hashes.log. Axiom, seal and campaign-lint checks remain the lead's
-final merged-branch responsibility.
+/usr/bin/time -l, and scripts/lean_check_tree.sh for one module. All raw attempts are retained.
+
+- Normalization passed attempt 01: 0 errors, 0 warnings; RSS 1,564,000,256 bytes.
+- NormalizationMachine attempt 01 had one map-identity proof error and two unused simp
+  arguments. Core List.map_id' fixed the lambda identity; attempt 02 passed with 0 errors,
+  0 warnings; RSS 2,213,593,088 bytes.
+- PhaseView attempt 01 had one missing true-conditional simplification and one unused simp
+  argument. Public if_true completed the payload proof; attempt 02 passed with 0 errors,
+  0 warnings; RSS 2,224,095,232 bytes.
+
+check-summary.json counts both error: and error(...) diagnostic forms. slots.log records
+all this tag's acquisitions/releases and their timestamps; it supplies the module start/end
+for the first normalization raw log, which contains only the timing report. Later raw logs
+include START/END timestamps, including any normal slot wait. Axiom/seal/campaign-lint checks
+are the lead's final merged-branch responsibility. No probe/check logs have been omitted.
+
+## Statistical helper continuation
+
+Statistical.lean adds the sole missing sampler-level shared-prefix averaging lemma
+`statClose_average`. It directly reuses statClose_iff (Asymptotic/Sampling.lean:133),
+StatClose.abs_uprob_sub_le (Sampling.lean:138), abs_uexp_sub_le (Sampling.lean:210), and
+uprob_prod (Foundations/Probability.lean:153). This is a new packaging of those published
+interfaces, not a copied averaging proof. Promotion beside StatClose in Sampling.lean is
+requested at a future shared-file window.
+
+The lead approved an explicit nonnegative error premise to cover an empty shared seed space.
+statistical-api.md records the exact counterexample to the draft interface without that
+premise, and explains why it is not a frozen-target flaw. Actual phase coin spaces are
+nonempty and one-phase closeness also supplies nonnegativity for witnessed inputs.
+
+No randomized postprocessing wrapper was added: StatClose.abs_uprob_sub_le_prod already
+provides the exact test-set bound, and statistical-api.md gives its two-line consumer.
+The new file imports only Asymptotic.Sampling, within the supplied closure; no new host,
+cache root, frozen edit or simp attribute is introduced.
+
+Statistical.lean passed wrapped check 01 with no diagnostics; peak RSS 2,110,177,280 bytes,
+3.22 seconds compiler wall time, after a normal shared-slot wait. The raw log includes
+START/END timestamps. statistical-searches.log retains the searches before implementation.
+The final source width/hash ledger, check summary, and own-tag slot log are updated.
+
+## Finite-chain and actual-kernel outline continuation
+
+After fresh public TCSlib and Mathlib searches, Statistical.lean now also publishes
+statClose_chain for an arbitrary same-seed family f : Nat -> Omega -> O. The proof only
+uses public StatClose.refl (Sampling.lean:153) and StatClose.trans (Sampling.lean:167), with
+natural-cast arithmetic. It has no sign premise on delta, including q=0. Nearest relatives
+are Probability.lean:218 abs_sub_le_sum_hybrids (a scalar probability-gap theorem) and
+OneWayLemmas.lean:276 statClose_pi (independent products of a fixed sampler comparison).
+Neither is an arbitrary-family StatClose chain; neither argument is copied. Promotion of
+this generic chain lemma beside StatClose is requested at a shared-file window.
+
+Statistical check02 passes with no diagnostics; RSS 2,114,224,128 bytes and 3.67 seconds
+compiler wall time. All check summaries, own slot records, and final source hashes are
+updated. The earlier Statistical hash is superseded by final-width-and-hashes.log.
+
+hybrid-outline.md gives a precise semantic proof plan for the actual one-phase kernels,
+using b's approved phaseAux/phaseVerifier and phasePrefix simulator-fold readers. It includes
+normalization's real fixed point, common paired real/simulator coin tables, shared-prefix
+averaging, existing randomized suffix data processing, full chain, and endpoint coin-law
+transports. It explicitly records remaining execution-reader obligations rather than
+assuming them. The outline has been coordinated with seq-zk-b; it proposes no private host
+or frozen edit and weakens no target. Raw extra API searches are retained in
+statistical-chain-searches.log and hybrid-execution-searches.log.
+
+## ExecutionBounds continuation
+
+ExecutionBounds.lean is 88 lines, maximum width 94, with no admissions or simp attributes.
+It imports only stable Normalization.lean; the previous four source hashes were asserted
+unchanged when this report was finalized. Public searches found no existing generic message
+length bound for Cryptography.exec.
+
+New declarations and overlap:
+
+- exec_snd_bounded derives a bound on every verifier-received message from a fixed prover
+  tape's uniform next-message bound. It uses only Interaction.lean's exec_zero and exec_succ
+  readers (lines 262 and 266 in the base). Related
+  Games/Protocols.lean:316 execT_trace bounds concern a different oracle protocol and only message
+  counts; they do not provide this statement. No private argument was copied.
+- exec_snd_slice_bounded directly specializes exec_snd_bounded through the public core
+  List.mem_of_mem_take and List.mem_of_mem_drop readers. It adds no list-membership lemma.
+- length_encodeMsgs_exec_snd_le applies Words.lean:81 length_encWords_le through the checked
+  encodeMsgs_eq_encWords bridge and exec_snd_bounded. It is execution-specific. No duplicate
+  generic encoded-history bound was added; the nearest existing generic
+  CommitmentLemmas.lean:241 length_encodeMsgs_le is subsumed by the Words theorem reused.
+
+Promotion request: generic execution-message bounds belong beside the execution readers in
+Interaction.lean at a future shared-file window. No frozen-file edit was made or needed.
+
+ExecutionBounds check01 passed with one unused simp argument; the argument was removed in
+its single proof block. Check02 passes with no diagnostics, RSS 1,560,723,456 bytes and
+1.77 seconds compiler wall time. Both raw attempts, preimplementation searches, width/hash
+ledger, diagnostic summary and own-tag slots are retained. No Lake command ran. The hybrid
+outline now marks the execution-message-bound obligation resolved by this checked helper;
+the separate cheating-verifier padded-phase endpoint reader remains a lead obligation.
+
+## StatisticalRecursion checked continuation
+
+StatisticalRecursion.lean introduces no definition or host. Its sole public theorem
+statClose_recursion takes caller-supplied zero and snoc equations for arbitrary real/simulated
+sampler families and updates. Shared-prefix averaging replaces the final update at cost
+delta; the existing randomized test-set reader transports the induction hypothesis through
+the same simulated final update. Public transitivity and Fin.snocEquiv close the successor.
+No Nonempty assumption on either coin type is required, because empty coin tables have
+explicit inhabitants in the base case.
+
+Nearest relatives: OneWayLemmas.lean:276 statClose_pi handles independent copies of one fixed
+sampler comparison; Statistical.lean:59 statClose_chain handles a supplied full-sampler chain.
+Neither is a caller-supplied state-dependent snoc recursion theorem, and neither proof was
+copied. Directly reused readers are Statistical.lean:44 statClose_average,
+Sampling.lean:237 StatClose.abs_uprob_sub_le_prod, Sampling.lean:167 StatClose.trans,
+Sampling.lean:179,185 seed-equivalence transports, and Mathlib Fin.snocEquiv/snoc_init_self.
+Promotion beside generic StatClose support is requested at a shared-file window.
+
+The first source triggered stack-diagnosed pathological implicit sampler unification and
+was interrupted only by exact lead authorization, with the raw source, sample, resource
+reading, process chain and authorization preserved. The explicitly typed rewrite passed
+check02 with no diagnostics in2.45s, maxRSS2,121,269,248 bytes. It is139lines, maxwidth94,
+SHA256 fe7d94d26ba375222245902da6ce0e71c9789d9ee98a9e68e4a063d5ada9591e.
+Its precise rewrite patch and large lossless sample ZIP part001 are delivered.
+
+## NormalizedStep pending compiler diagnosis
+
+NormalizedStep is not yet claimed checked. Its stronger zero-verifier API was approved by
+the lead and independently reviewed as mathematically/type-consistent by seq-zk-c. The exact
+phase-wrapper reader-only instantiation recipe is normalized-step-instantiation.md.
+
+compiler-diagnosis-summary.md and the numbered authorization/process/source/marker records
+retain each targeted own-process proof-debugging interruption. All were authorized by the
+lead under Seyoon's best-judgment exception, never elapsed-time timeouts or E-RES, and no other
+job or slot was changed. Every created native stack sample is delivered losslessly in ZIP
+parts with raw SHA256, entry lists and verified extraction. Current work is localizing the
+scalar test comparison declaration with robust direct-file IO markers; no false proof claim
+or statement weakening is made. All diagnostic IO/trace must be removed before a final clean
+source check and intake.
+
+## Checkpoint 2 closed-evidence boundary
+
+compiler-diagnosis-summary.md is the authoritative corrected closed ledger through
+NormalizedStep attempt07. It supersedes earlier tentative source-stage descriptions in this
+historical report. Eight own exact-process interruptions are recorded: StatisticalRecursion01
+and NormalizedStep01–07, all separately lead-authorized proof debugging rather than timeouts
+or E-RES. No own Lean is active at this boundary. NormalizedStep remains unverified; the checked
+StatisticalPostprocess dependency and completed fixed-point/pointwise markers do not imply
+that its full concrete instantiation passed. The next opacity/instance correction awaits the
+lead's three-slot cache completion. Complete prerequisite sources and lossless native-sample
+ZIP parts are included so all closed raw evidence has its sources and verification tools.

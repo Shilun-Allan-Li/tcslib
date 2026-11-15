@@ -1,0 +1,54 @@
+COMMAND ["rg", "-n", "exists_uniform_bound_selector|StatClose.*fst|statClose.*fst", "TCSlib"]
+TCSlib/Cryptography/Composability/SequentialZK/Advice.lean:21:* `exists_uniform_bound_selector` chooses one finite metadata value whose bounds, uniform
+TCSlib/Cryptography/Composability/SequentialZK/Advice.lean:43:theorem exists_uniform_bound_selector {A W : Type*} [Finite A] [Nonempty A]
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalPostprocess.lean:20:* `statClose_map_fst` post-processes close samplers and removes a product coordinate
+TCSlib/Cryptography/Composability/SequentialZK/StatisticalPostprocess.lean:40:theorem statClose_map_fst {α β τ γ δ : Type*} [Fintype α] [Fintype β] [Fintype τ]
+EXIT 0
+COMMAND ["rg", "-n", "exists_hidingView_bound|Finite.exists_max", "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean"]
+43:* `TCSlib.Cryptography.ColZK.exists_hidingView_bound` — the hiding bound for all the fixed
+318:(`Finite.exists_max`) and hard-wire its advice as `α n`. The machine `B` of
+323:theorem exists_hidingView_bound {Com : List Bool → List Bool} {ℓ : PolyExpr}
+336:  have hmax : ∀ n, ∃ p, ∀ q, g n q ≤ g n p := fun n => Finite.exists_max (g n)
+EXIT 0
+COMMAND ["rg", "-n", "theorem Finite.exists_max", ".lake/packages/mathlib/Mathlib/Data/Fintype/Lattice.lean"]
+52:theorem Finite.exists_max [Finite α] [Nonempty α] [LinearOrder β] (f : α → β) :
+EXIT 0
+COMMAND ["rg", "-n", "theorem le_csSup |theorem csSup_le ", ".lake/packages/mathlib/Mathlib/Order/ConditionallyCompleteLattice/Basic.lean"]
+176:theorem le_csSup (h₁ : BddAbove s) (h₂ : a ∈ s) : a ≤ sSup s :=
+179:theorem csSup_le (h₁ : s.Nonempty) (h₂ : ∀ b ∈ s, b ≤ a) : sSup s ≤ a :=
+EXIT 0
+COMMAND ["rg", "-n", "ConditionallyCompleteLinearOrder \u211d", ".lake/packages/mathlib/Mathlib/Data/Real/Archimedean.lean"]
+135:noncomputable instance : ConditionallyCompleteLinearOrder ℝ where
+EXIT 0
+COMMAND ["rg", "-n", "theorem exists_withAdvice |theorem exists_comp |theorem exists_compParam |theorem exists_seq ", "TCSlib/Complexity/Randomized/Closure.lean"]
+241:theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
+272:theorem exists_comp (A : NUPPT) {pre post : List Bool → List Bool}
+358:theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
+421:theorem exists_seq (A B : NUPPT) :
+EXIT 0
+COMMAND ["rg", "-n", "exists_withAdviceOn", "TCSlib/Cryptography/Games/Forwarding.lean"]
+26:* **Hard-wiring a second input component** (`NUPPT.exists_withAdviceOn`): a reduction that
+38:* `Complexity.NUPPT.exists_withAdviceOn`: hard-wiring a second input component.
+192:theorem _root_.Complexity.NUPPT.exists_withAdviceOn (B : NUPPT) (β : ℕ → List Bool)
+EXIT 0
+COMMAND ["rg", "-n", "distAdv_le_one", "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean"]
+181:theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ)
+EXIT 0
+COMMAND ["rg", "-n", "polyExpr_mul", "TCSlib/Cryptography/Asymptotic/ReductionSupport.lean"]
+34:* `TCSlib.Cryptography.Negligible.polyExpr_mul` bounds multiplication by a
+267:theorem Negligible.polyExpr_mul {μ : ℕ → ℝ} (hμ : Negligible μ) (p : PolyExpr) :
+EXIT 0
+COMMAND ["rg", "-n", "abs_sub_le_sum_hybrids|exists_hybrid_gap|theorem uprob_fst", "TCSlib/Cryptography/Foundations/Probability.lean"]
+42:* `abs_sub_le_sum_hybrids`, `exists_hybrid_gap`: the hybrid argument for a chain of
+175:theorem uprob_fst [Nonempty β] (p : α → Prop) : uprob (fun z : α × β => p z.1) = uprob p := by
+218:theorem abs_sub_le_sum_hybrids (P : ℕ → ℝ) (t : ℕ) :
+230:theorem exists_hybrid_gap (P : ℕ → ℝ) {t : ℕ} (ht : 0 < t) :
+238:  linarith [abs_sub_le_sum_hybrids P t]
+EXIT 0
+COMMAND ["rg", "-n", "theorem StatClose.map |theorem statClose_iff", "TCSlib/Cryptography/Asymptotic/Sampling.lean"]
+133:theorem statClose_iff (X : σ → γ) (Y : τ → γ) (δ : ℝ) :
+174:theorem StatClose.map {σ τ γ γ' : Type*} [Fintype σ] [Fintype τ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+EXIT 0
+COMMAND ["rg", "-n", "theorem uprob_congr", "TCSlib/Cryptography/OneWayFunctions/Basic.lean"]
+50:theorem uprob_congr {p q : α → Prop} (h : ∀ a, p a ↔ q a) : uprob p = uprob q := by
+EXIT 0

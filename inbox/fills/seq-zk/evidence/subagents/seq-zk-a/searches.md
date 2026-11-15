@@ -14,7 +14,7 @@ No public constructor/eliminator for StatZK was found. Its Defs.lean lemmas `mon
 - BinaryArith/Words.lean:49 `BinArith.encWords`: same nested pairing encoding as Strategy.encodeMsgs, represented as flatMap.
 - BinaryArith/Words.lean:116 `BinArith.decWords_encWords`: generic decoder inversion.
 - BinaryArith/Words.lean:81 `BinArith.length_encWords_le`: generic encoded length bound.
-- ZeroKnowledge/ThreeColoring/Machines.lean:911 `encodeMsgs_eq_flatMap`: exact bridge to the flatMap representation; public but graph-dependent import.
+- ZeroKnowledge/ThreeColoring/Machines.lean:912 `encodeMsgs_eq_flatMap`: exact bridge to the flatMap representation; public but graph-dependent import.
 - ZeroKnowledge/CommitmentLemmas.lean:241 `length_encodeMsgs_le`: existing public encoded length bound for Strategy.encodeMsgs.
 - SecureComputation/Yao.lean:350 `decodeMsgs_encodeMsgs`: decoder inversion for Strategy.encodeMsgs; its provider is outside the supplied closure.
 - ZeroKnowledge/Defs.lean:168 `ZK_iff`: the proposed StatZK_iff is its statistical analogue and a new reader beside its definition.

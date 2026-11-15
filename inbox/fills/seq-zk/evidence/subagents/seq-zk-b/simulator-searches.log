@@ -1,0 +1,46 @@
+$ rg -n retry.*(poly|machine)|simulate_eq|polyTimeComputable_loopState|loopState_succ|iterate.*S.coins TCSlib/Cryptography/ZeroKnowledge/Defs.lean TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:60:* `TCSlib.Cryptography.EncodingMachines.polyTimeComputable_loopState` — counted loops with
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:498:@[simp] theorem loopState_succ (upd init : List Bool → List Bool) (x : List Bool) (i : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:576:theorem polyTimeComputable_loopState {upd init : List Bool → List Bool}
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:123:theorem _root_.Complexity.NUPPT.simulate_eq (S : NUPPT) (x z : List Bool)
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:304:    rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:316:/-- One attempt of the retrying simulator on its machine layout
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:333:/-- The retrying simulator on its machine layout `w = ⟨⟨⟨1^n, y⟩, α⟩, r⟩`
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:407:/-- **The retrying simulator is polynomial-time** as a function of its layout: the first
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:412:theorem retry_poly (S : NUPPT) : PolyTimeComputable (retry S) := by
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:430:/-- **The retrying simulator is a uniform PPT**: `NUPPT.ofPolyTimeUniform` of `retry_poly`
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:437:  ⟨NUPPT.ofPolyTimeUniform (retry_poly S) (.mul .var S.coins),
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:439:      rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:629:    rw [hblock r t ht, NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, hSu]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:32:* counted loops bounded along the genuine orbit only (`polyTimeComputable_loopState'`),
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:59:* `TCSlib.Cryptography.ColMachines.polyTimeComputable_loopState'`,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:96:/-- **Counted loops bounded along the genuine orbit:** `EncodingMachines.polyTimeComputable_loopState`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:101:theorem polyTimeComputable_loopState' {upd init : List Bool → List Bool}
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:188:(`polyTimeComputable_loopState'`) whose `j`-th state is `pairSndD^[j] (s z)`, never longer than
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:201:      rw [loopState_succ, ih, pairSndD_pairEncode, pairSndD_pairEncode,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:211:  have h := polyTimeComputable_loopState' hupd hs hi (PolyExpr.normal C c) fun z j _ => by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:380:(`polyTimeComputable_loopState'`; state `i` is `1^{countTrue (s z) i}`, of length `≤ i ≤ N`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:399:      rw [loopState_succ, ih]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:404:  have h := polyTimeComputable_loopState' hupd (polyTimeComputable_const []) hN
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:649:(`polyTimeComputable_loopState'`, states `1^{natOfBits} < 1^{2^k}`, `natOfBits_lt`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:673:      rw [loopState_succ, ih]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:676:  have h := polyTimeComputable_loopState' hupd (polyTimeComputable_const []) hk Bd
+exit=0
+
+$ rg -n encodeMsgs.*replicate|replicate.*encodeMsgs|encWords.*replicate|replicate.*encWords TCSlib/Cryptography/ZeroKnowledge TCSlib/Complexity/ClassP/BinaryArith
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:227:(List.replicate x.length true) (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r`. -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:584:(List.replicate x.length true) (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r`. -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:122:  simp only [argM_ilayout, halfCount_encodeMsgs, halfRem_nil_iff, inParam_ilayout, List.length_replicate,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:304:    Strategy.pairFstD_encodeMsgs, List.drop_drop, relabelAt_replicate, headD_drop,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:627:  simp only [argM_ilayout, msgCount_encodeMsgs, inParam_ilayout, List.length_replicate, inCoins_ilayout,
+exit=0
+
+$ rg -n flatMap_replicate|map_const'|flatMap_map /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean
+2094:theorem flatMap_map (f : α → β) (g : β → List γ) (l : List α) :
+2215:theorem map_const' {l : List α} {b : β} : map (fun _ => b) l = replicate l.length b :=
+2301:theorem flatMap_replicate {β} {f : α → List β} : (replicate n a).flatMap f = (replicate n (f a)).flatten := by
+exit=0
+
+$ rg -n phasePrefix|phaseSimulator|normalized.*simulator|simulator.*fold /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability
+exit=1
+

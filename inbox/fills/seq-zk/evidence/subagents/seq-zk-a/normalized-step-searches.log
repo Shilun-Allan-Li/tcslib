@@ -1,0 +1,86 @@
+$ rg -n [Ss]tat[Cc]lose.*(normali|phase|[Vv]iew)|normalizePhaseMsgs|exec_snd_bounded TCSlib /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:358:  exact statClose_truncAttempts (colSimAttemptH Com ℓn G c V) (colRealView Com ℓn G c V) hθ
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:813:theorem statClose_colRealView (V' : Strategy) {n : ℕ} (G : Graph n) (c : Fin n → Fin 3)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:815:    StatClose (fun r => (((colProtocol Com ℓ).withV V').viewV (encGraph G) (encColoring c) z r).encode)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1030:(`statClose_colRealView`, `distAdv_le_of_statClose`), which here has the empty opening
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1062:  have hR := distAdv_le_of_statClose _ _ (statClose_colRealView (Com := Com) (ℓ := ℓ) V' G c hc z)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1320:`statClose_colRealView` (`(1/4)^{|x|}`), `statClose_colSimTruncH` with
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1363:  have h2 := distAdv_le_of_statClose _ _ (statClose_colRealView (Com := Com) (ℓ := ℓ) V' G c hc z)
+TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean:25:* `exec_snd_bounded`: a uniform bound on the prover's next message bounds every message the
+TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean:47:theorem exec_snd_bounded (P V : Strategy) (vFirst : Bool) (x y z rP rV : List Bool)
+TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean:74:  exact exec_snd_bounded P V vFirst x y z rP rV B g hP m
+TCSlib/Cryptography/Composability/SequentialZK/ExecutionBounds.lean:86:  exact BinArith.length_encWords_le _ B (exec_snd_bounded P V vFirst x y z rP rV B g hP)
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:24:* `normalizePhaseMsgs x z p B raw`: the validated payload normalized to `p` slots of `B` bits.
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:29:* `normalizePhaseMsgs_of_encode`: normalization fixes canonical bounded real views.
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:30:* `normalizePhaseMsgs_of_ne`: malformed phase views yield exactly the requested empty slots.
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:31:* `length_normalizePhaseMsgs`, `length_le_of_mem_normalizePhaseMsgs`,
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:32:  `length_encodeMsgs_normalizePhaseMsgs_le`: count, message-length and encoded-size bounds.
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:33:* `polyTimeComputable_phaseViewPayload`, `polyTimeComputable_encode_normalizePhaseMsgs`:
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:66:def normalizePhaseMsgs (x z : List Bool) (p B : ℕ) (raw : List Bool) : List (List Bool) :=
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:69:/-- `normalizePhaseMsgs x z p B raw = normalizeMsgs p B (phaseViewPayload x z raw)`. -/
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:70:theorem normalizePhaseMsgs_eq (x z : List Bool) (p B : ℕ) (raw : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:71:    normalizePhaseMsgs x z p B raw = normalizeMsgs p B (phaseViewPayload x z raw) := rfl
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:88:`normalizePhaseMsgs x z p B (View.encode ⟨x,z,[],h⟩) = h` if `h.length = p` and
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:90:theorem normalizePhaseMsgs_of_encode (x z : List Bool) (p B : ℕ) (h : List (List Bool))
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:92:    normalizePhaseMsgs x z p B (View.encode ⟨x, z, [], h⟩) = h := by
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:93:  rw [normalizePhaseMsgs_eq, phaseViewPayload_of_encode]
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:97:`(normalizePhaseMsgs x z p B raw).length = p`. -/
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:98:theorem length_normalizePhaseMsgs (x z : List Bool) (p B : ℕ) (raw : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:99:    (normalizePhaseMsgs x z p B raw).length = p := by
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:100:  rw [normalizePhaseMsgs_eq]
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:104:`m ∈ normalizePhaseMsgs x z p B raw → m.length ≤ B`. -/
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:105:theorem length_le_of_mem_normalizePhaseMsgs (x z : List Bool) (p B : ℕ) (raw : List Bool)
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:106:    {m : List Bool} (hm : m ∈ normalizePhaseMsgs x z p B raw) : m.length ≤ B := by
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:107:  rw [normalizePhaseMsgs_eq] at hm
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:111:`(Strategy.encodeMsgs (normalizePhaseMsgs x z p B raw)).length ≤ p * (2 * B + 2)`. -/
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:112:theorem length_encodeMsgs_normalizePhaseMsgs_le (x z : List Bool) (p B : ℕ) (raw : List Bool) :
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:113:    (Strategy.encodeMsgs (normalizePhaseMsgs x z p B raw)).length ≤ p * (2 * B + 2) := by
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:114:  rw [normalizePhaseMsgs_eq]
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:118:`normalizePhaseMsgs x z p B raw = List.replicate p []` when validation fails. -/
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:119:theorem normalizePhaseMsgs_of_ne (x z : List Bool) (p B : ℕ) (raw : List Bool)
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:121:    normalizePhaseMsgs x z p B raw = List.replicate p [] := by
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:122:  rw [normalizePhaseMsgs_eq, phaseViewPayload_of_ne x z raw hraw, normalizeMsgs_eq,
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:154:`w ↦ Strategy.encodeMsgs (normalizePhaseMsgs (x w) (z w) (p w) (B w) (raw w))`.
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:156:theorem polyTimeComputable_encode_normalizePhaseMsgs {x z raw : List Bool → List Bool}
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:162:      Strategy.encodeMsgs (normalizePhaseMsgs (x w) (z w) (p w) (B w) (raw w)) := by
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:166:  rw [normalizePhaseMsgs_eq]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:412:theorem statClose_truncAttempts [Nonempty W] (att : W → Option α) (view : U → α) {θ : ℝ}
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:417:    StatClose (truncAttempts att N) (fun u => some (view u)) (θ ^ N) :=
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:418:  (statClose_iff _ _ _).2 fun T => abs_uprob_truncAttempts_sub_le att view hθ hnone hsome N T
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:69:* `TCSlib.Cryptography.statClose_giHonestView` — honest-verifier perfect zero-knowledge of one
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:142:theorem statClose_giHonestView {n : ℕ} {G₀ G₁ : Graph n} {σ : Equiv.Perm (Fin n)}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:143:    (hσ : permGraph G₀ σ = G₁) : StatClose (giHonestView G₀ σ) (giHVSim G₀ G₁) 0 := fun T => by
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:184:    StatClose (fun r => ((π.withV V').viewV x y z r).encode) (S.simulate x z) (δ x.length)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:509:**Proof sketch.** Three `StatClose` steps joined by `StatClose.trans`: (1) the real view with
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:599:**Proof sketch.** A corollary of `statClose_rejectBlocksL` (gate 03f1 review, M2; that lemma is
+exit=0
+
+$ rg -n ^theorem (viewV_eq|transcriptWith_eq|uprob_fst)|^abbrev ExecCoins|coinLen.*= 0|eq_nil_of_length_eq_zero|length_ofFn TCSlib/Cryptography/ZeroKnowledge/Interaction.lean TCSlib/Cryptography/Foundations/Probability.lean /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List
+TCSlib/Cryptography/Foundations/Probability.lean:175:theorem uprob_fst [Nonempty β] (p : α → Prop) : uprob (fun z : α × β => p z.1) = uprob p := by
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:147:    exact List.eq_nil_of_length_eq_zero (Nat.le_zero.1 (length_pairFstD_le []))
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:345:abbrev ExecCoins (π : Protocol) (P' : Strategy) (x : List Bool) : Type :=
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:421:theorem transcriptWith_eq (π : Protocol) (P' : Strategy) (x y z : List Bool)
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:470:theorem viewV_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Rotate.lean:128:  · simp [eq_nil_of_length_eq_zero hl.symm]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Rotate.lean:283:  · rw [eq_nil_of_length_eq_zero hl.symm, rotate_nil]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:130:  simp only [pairwise_iff_getElem, length_ofFn, List.getElem_ofFn,
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:146:      ⟨hpb, ⟨⟨i, length_ofFn (f := f) ▸ hi⟩, by simpa using hfb, fun j hj ↦ by simpa using h j hj⟩⟩,
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:148:      ⟨hpb, ⟨i, (length_ofFn (f := f)).symm ▸ i.isLt, by simpa using hfb,
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:163:    Fin.sigma_eq_of_eq_comp_cast length_ofFn <| funext fun i => get_ofFn f i
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/OfFn.lean:40:theorem length_ofFn {f : Fin n → α} : (ofFn f).length = n := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/OfFn.lean:66:    · simp only [length_ofFn] at h; simp [h]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/OfFn.lean:114:  rw [← getElem_zero (length_ofFn ▸ Nat.pos_of_ne_zero (mt ofFn_eq_nil_iff.2 h)),
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/OfFn.lean:119:  simp [getLast_eq_getElem, length_ofFn, List.getElem_ofFn]
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/ChainOfFn.lean:21:  simp_rw [isChain_iff_get, get_ofFn, length_ofFn]
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/FinRange.lean:45:    simp only [List.finRange, List.getElem_ofFn, getElem_append, length_map, length_ofFn,
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Perm.lean:152:theorem Perm.eq_nil {l : List α} (p : l ~ []) : l = [] := eq_nil_of_length_eq_zero p.length_eq
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Perm/Lattice.lean:81:      apply eq_nil_of_length_eq_zero
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:172:    have : l₂ = [] := eq_nil_of_length_eq_zero (by simpa using h.symm)
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:291:  | [], _, _, _, h => by simp only [eq_nil_of_length_eq_zero h.symm]; rfl
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:292:  | _, _, [], _, h => by simp only [eq_nil_of_length_eq_zero h]; rfl
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Zip.lean:452:  | _, [], h => by rw [eq_nil_of_length_eq_zero (Nat.eq_zero_of_le_zero h)]; rfl
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:99:theorem eq_nil_of_length_eq_zero (_ : length l = 0) : l = [] := match l with | [] => rfl
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean:106:  ⟨eq_nil_of_length_eq_zero, fun h => h ▸ rfl⟩
+exit=0
+
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:50:theorem uprob_congr {p q : α → Prop} (h : ∀ a, p a ↔ q a) : uprob p = uprob q := by

@@ -2,10 +2,11 @@
 from pathlib import Path
 import subprocess,shutil,hashlib,sys
 lead=Path.cwd();dest=Path(sys.argv[1]);rev=sys.argv[2];base='107f1e8c218733eac12d6b9bee6fece441271317'
+number=sys.argv[3] if len(sys.argv)>3 else '1'
 assert not dest.exists(),dest
 dest.mkdir(parents=True)
-shutil.copy2(lead/'evidence/CHECKPOINT1-REPORT.md',dest/'REPORT.md')
-shutil.copytree(lead/'evidence/checkpoint1-patches',dest/'patches')
+shutil.copy2(lead/('evidence/CHECKPOINT'+number+'-REPORT.md'),dest/'REPORT.md')
+shutil.copytree(lead/('evidence/checkpoint'+number+'-patches'),dest/'patches')
 paths=subprocess.check_output(['git','diff','--name-only',base,rev],text=True).splitlines()
 for path in paths:
  p=dest/'src'/path;p.parent.mkdir(parents=True,exist_ok=True)

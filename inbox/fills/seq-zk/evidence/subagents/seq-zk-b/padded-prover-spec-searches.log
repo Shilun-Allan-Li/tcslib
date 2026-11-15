@@ -1,0 +1,42 @@
+$ rg -n structure.*Padded|PaddedProverSpec|PaddedVerifierSpec TCSlib/Cryptography/ZeroKnowledge /Users/seyoonr/.codex/worktrees/seq-zk-c/tcslib-exchange/TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean
+/Users/seyoonr/.codex/worktrees/seq-zk-c/tcslib-exchange/TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:17:* `Composability.PaddedVerifierSpec`: the published equations and position readers needed
+/Users/seyoonr/.codex/worktrees/seq-zk-c/tcslib-exchange/TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:22:* `Composability.PaddedVerifierSpec.phase_exec`: each real phase against any prover is
+/Users/seyoonr/.codex/worktrees/seq-zk-c/tcslib-exchange/TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:24:* `Composability.PaddedVerifierSpec.phase_take`: each final aggregate phase history is
+/Users/seyoonr/.codex/worktrees/seq-zk-c/tcslib-exchange/TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:37:`PaddedVerifierSpec π ρ x q p terminal` collects the coin, move, reply, verdict, and history
+/Users/seyoonr/.codex/worktrees/seq-zk-c/tcslib-exchange/TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:40:structure PaddedVerifierSpec (π ρ : Protocol) (x : List Bool) (q p : ℕ)
+/Users/seyoonr/.codex/worktrees/seq-zk-c/tcslib-exchange/TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:107:theorem PaddedVerifierSpec.phase_exec {π ρ : Protocol} {x : List Bool} {q p : ℕ}
+/Users/seyoonr/.codex/worktrees/seq-zk-c/tcslib-exchange/TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:109:    (d : PaddedVerifierSpec π ρ x q p terminal) (P : Strategy)
+/Users/seyoonr/.codex/worktrees/seq-zk-c/tcslib-exchange/TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:170:theorem PaddedVerifierSpec.phase_take {π ρ : Protocol} {x : List Bool} {q p : ℕ}
+/Users/seyoonr/.codex/worktrees/seq-zk-c/tcslib-exchange/TCSlib/Cryptography/Composability/SequentialZK/RepeatedVerifier.lean:172:    (d : PaddedVerifierSpec π ρ x q p terminal) (P : Strategy)
+exit=0
+
+$ rg -n seqRep_rounds_eval|seqProver|proverMoveIndex_exec|exec_fst_length|exec_snd_length|countP_not_moverIsV|proverMoves_eq TCSlib/Cryptography/Composability/SequentialZK.lean
+29:  (`proverMoveIndex_exec`, `verifierMoveIndex_exec`), hence its phase `j` and position `t`.
+68:* `TCSlib.Cryptography.Protocol.seqProver`, `seqVerifier`, `seqRep`: the `Q`-fold sequential
+73:* `moverIsV_two_mul_add`, `countP_moverIsV`, `countP_not_moverIsV`, `exec_fst_length`,
+74:  `exec_snd_length`, `proverMoveIndex_exec`, `verifierMoveIndex_exec`: the parties know their
+124:theorem proverMoves_eq (vFirst : Bool) (k : ℕ) :
+143:theorem countP_not_moverIsV (vFirst : Bool) (g : ℕ) :
+153:theorem exec_fst_length (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool) (g : ℕ) :
+163:theorem exec_snd_length (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool) (g : ℕ) :
+174:theorem proverMoveIndex_exec (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
+177:  rw [exec_fst_length, countP_moverIsV]
+185:  rw [exec_snd_length, countP_not_moverIsV]
+200:def seqProver (π : Protocol) (Q : PolyExpr) : Strategy where
+255:  P := π.seqProver Q
+261:theorem seqRep_rounds_eval (π : Protocol) (Q : PolyExpr) (n : ℕ) :
+271:1. At `t = 0` each party has received exactly `jk` messages (`exec_fst_length`,
+274:   The mover recovers `2kj + t` from its message count (`proverMoveIndex_exec`,
+311:      · rw [exec_fst_length, countP_moverIsV]
+315:      · rw [exec_snd_length, countP_not_moverIsV]
+323:      rw [exec_fst_length, exec_fst_length, countP_moverIsV, countP_moverIsV]
+327:      rw [exec_snd_length, exec_snd_length, countP_not_moverIsV, countP_not_moverIsV]
+330:      rw [exec_snd_length]
+359:      have hidx := proverMoveIndex_exec (π.seqRep Q).P (π.seqRep Q).V vF x y z rP rV
+361:      show (π.seqProver Q).next x y rP _ = _
+362:      simp only [seqProver, ← hk, ← hvF]
+exit=0
+
+$ rg -n padded.*protocol|protocol.*padded|repeated.*prover /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability
+exit=1
+

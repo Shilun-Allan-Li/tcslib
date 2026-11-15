@@ -1,0 +1,172 @@
+$ rg -n (theorem|lemma).*StatClose|StatClose.*(prod|mix|bind|average|random|comp)|abs_uprob_sub_le_prod|abs.*uexp|uexp.*abs TCSlib /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:619:(`sampleIdx_ofFn_eq_rejectionSample`, `StatClose.comp_equiv_left`), and `pair6Equiv` is a
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:621:(`StatClose.map`, `StatClose.comp_equiv_right`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:807:(`ColZK.pushesUniform_offsetTable`, `StatClose.comp_pushesUniform`), the permutation sampler is
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:809:`withV_vCoinsEquiv` (`StatClose.prod`, `StatClose.map`). The three moves unfold by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:837:    (StatClose.refl (fun r : Fin n → Fin (ℓ.eval n) → Bool => r))).comp_pushesUniform hF
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:886:uniform (`statClose_sampleEdgeIdx`, `statClose_sampleColorPair`, `StatClose.prod`), the blocks
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:924:    (StatClose.refl (fun r : Fin n → Fin (ℓ.eval n) → Bool => r))).prod
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:925:      (StatClose.refl (fun ρ : V'.Coins N => ρ))).comp_pushesUniform hF
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1595:uniform `π`: `statClose_samplePerm3`, `StatClose.prod`/`StatClose.refl` for the prover's
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1604:`StatClose.prod` over the blocks).
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:452:`finProdFinEquiv` curried (`StatClose.comp_equiv_left`), and `perm3Equiv` is a bijection
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:453:with `perm3Equiv d = 1` for the right default `d` (`StatClose.map`, `StatClose.comp_equiv_right`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:474:the tape-to-trials map is the curried `finProdFinEquiv` (`StatClose.comp_equiv_left`), and
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:155:(`HardcoreBit.uexp_const`); some `k₀` has the absolute difference at least the average's
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:156:(`HardcoreBit.uexp_sub`, `CommitmentLemmas.exists_abs_uexp_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:164:  obtain ⟨k₀, hk₀⟩ := CommitmentLemmas.exists_abs_uexp_le fun k =>
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:956:`StatClose.abs_uprob_sub_le_prod`, cost `(1/2)^{|x|}`), and apply `uprob_col_cheat_le` with
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1134:`StatClose.abs_uprob_sub_le_prod`), and under uniform edges `T` has probability at most
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1234:        have := (abs_le.1 (hclose.abs_uprob_sub_le_prod T)).2
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1324:`ColRep.statClose_edgeBlocks`; `StatClose.abs_uprob_sub_le_prod`, union cost
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:547:(`CommitmentLemmas.exists_abs_uexp_le`), which is the reduction's advantage
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:575:  obtain ⟨ep₀, hep₀⟩ := CommitmentLemmas.exists_abs_uexp_le
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:213:`OneWay.statClose_pi`; the tape: `pushesUniform_blockRead` (`StatClose.comp_pushesUniform`). -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:398:(`StatClose.comp_pushesUniform`) and `statClose_permFromCoins_two_pow` is the closeness of
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:916:uniform (`statClose_samplePerm`, `StatClose.abs_uprob_sub_le_prod`) and
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:557:(`statClose_samplePerm`, `StatClose.prod` with `StatClose.refl` for `r₂`, `StatClose.map`);
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:560:`n · permFailBound n` (`StatClose.prod` iterated over the `n` blocks, `StatClose.map`);
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:589:`StatClose.comp_equiv_right`): the `t`-th slice of the tape is `List.ofFn` of block `t`, so
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:277:and `m` copies (`StatClose.prod`), reassembled by `Fin.cons` (`StatClose.map`); the case `m = 0`
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:342:(`statClose_samplePerm_long`, `statClose_pi`, `StatClose.abs_uprob_sub_le_prod`), and for uniform
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:372:    (encInstance G₀ G₁).length).abs_uprob_sub_le_prod
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:129:`permFailBound n` (`statClose_samplePerm_long`, `StatClose.abs_uprob_sub_le_prod` with `b` as
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:157:  have hclose := (statClose_samplePerm_long (permCoinLen_le_tape G₀ G₁)).abs_uprob_sub_le_prod
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:26:   with a uniform `π` (`statClose_samplePerm_long`, `StatClose.prod`, `StatClose.map`);
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:162:`Fin.consEquiv` (`StatClose.comp_equiv_left`/`right`): the pair sampler is `StatClose.prod` of
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:446:`statClose_samplePerm_long`, `StatClose.prod`, `StatClose.map`). -/
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:460:    ((StatClose.refl (fun r : V'.Coins (encInstance G₀ G₁).length => r)).comp_equiv_left
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:472:`permFailBound n` of the identity (`statClose_samplePerm_long`, `StatClose.prod`), so its
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:474:is uniform (`pushesUniform_readBlocks`, `StatClose.comp_pushesUniform`); map both sides by the
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:490:  -- unification against `StatClose.prod` diverge)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:491:  have hs := ((statClose_samplePerm_long hP').prod (StatClose.refl (fun b : Bool => b))).prod
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:79:theorem exists_abs_uexp_le {κ : Type*} [Fintype κ] [Nonempty κ] (f : κ → ℝ) :
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:83:    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, uexp_def, abs_div, abs_of_pos hcard,
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:109:`|a(c₀) − b(c₀)|` at least the average (`exists_abs_uexp_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:113:  obtain ⟨c₀, hc₀⟩ := exists_abs_uexp_le fun c₀ : κ =>
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:298:component decodes exactly (`decodeFin_ofFn`) and `StatClose.prod (hS n r) (StatClose.refl _)`
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:272:split off the first coordinate with `Fin.consEquiv`: the pair sampler is `StatClose.prod` of
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:274:re-indexed by the bijection on both sides (`StatClose.comp_equiv_left/right`);
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:475:`StatClose.prod` of the hypothesis with the induction hypothesis gives the pair sampler
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:512:auxiliary coins (`StatClose.abs_uprob_sub_le_prod` at `δ = 0` after `statClose_copies` and
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:513:`StatClose.prod`). -/
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:521:  have key := hG.abs_uprob_sub_le_prod fun (uv : (Fin t → γ) × (Fin t → γ)) (w : ζ × ρ) =>
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:496:of the sampled copies equal the ideal `X.X n`, `Y.X n` (`StatClose … 0`, lifted to the product
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:497:by `EnsembleLemmas.statClose_copies` and `StatClose.prod`), so the acceptance probabilities
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:27:* `MultiMsg.abs_uexp_sub_le_uprob` bounds the difference of two expectations by the
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:49:theorem abs_uexp_le_uexp_abs {Ω : Type*} [Fintype Ω] (f : Ω → ℝ) :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:59:**Proof sketch.** `|E a − E b| = |E (a − b)| ≤ E |a − b|` (`abs_uexp_le_uexp_abs`), and
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:61:theorem abs_uexp_sub_le_uprob {Ω : Type*} [Fintype Ω] (a b : Ω → ℝ) (E : Ω → Prop)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:66:  refine (abs_uexp_le_uexp_abs _).trans (HardcoreBit.uexp_mono fun ω => ?_)
+TCSlib/Cryptography/Asymptotic/OneWay.lean:658:`StatClose.abs_uprob_sub_le_prod` give, for `n ≥ 1`,
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:273:  exact (MultiMsg.abs_uexp_sub_le_uprob a b (fun r => ¬ Function.Injective r)
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:324:**Proof sketch.** `StatClose.prod` of the closeness of `Sample` with the exact uniformity of the
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:326:split `appendEquiv` (`StatClose.comp_equiv_left`); the decoder on `⟨a, ofFn s⟩` is
+TCSlib/Cryptography/Asymptotic/Collections.lean:984:on `⟨i, f_i(x)⟩` (`uprob_mono`); `StatClose.abs_uprob_sub_le_prod` with `h.sampleClose`
+TCSlib/Cryptography/Asymptotic/Collections.lean:1007:  have hclose := (abs_le.1 ((hδ n r₁).abs_uprob_sub_le_prod Pev)).2
+TCSlib/Cryptography/Asymptotic/Collections.lean:1091:`StatClose.abs_uprob_sub_le_prod` with `h.sampleClose` moves the sampled `x` to the ideal
+TCSlib/Cryptography/Asymptotic/Sampling.lean:29:  such as `List Bool`). It is closed under post-processing (`StatClose.map`), products
+TCSlib/Cryptography/Asymptotic/Sampling.lean:30:  (`StatClose.prod`), composition (`StatClose.trans`) and reparametrisation of the seed by a
+TCSlib/Cryptography/Asymptotic/Sampling.lean:31:  uniform-preserving map (`StatClose.comp_pushesUniform`), and bounds every distinguishing
+TCSlib/Cryptography/Asymptotic/Sampling.lean:33:  experiment with auxiliary coins (`StatClose.abs_uprob_sub_le_prod`) — the statistical-switch
+TCSlib/Cryptography/Asymptotic/Sampling.lean:59:the seed reparametrisation `StatClose.comp_pushesUniform` and `one_sub_inv_pow_le_half` were
+TCSlib/Cryptography/Asymptotic/Sampling.lean:73:* `TCSlib.Cryptography.StatClose.abs_uprob_sub_le_prod`,
+TCSlib/Cryptography/Asymptotic/Sampling.lean:75:* `TCSlib.Cryptography.StatClose.map`, `TCSlib.Cryptography.StatClose.prod`,
+TCSlib/Cryptography/Asymptotic/Sampling.lean:76:  `TCSlib.Cryptography.StatClose.trans`, `TCSlib.Cryptography.StatClose.comp_pushesUniform`
+TCSlib/Cryptography/Asymptotic/Sampling.lean:88:* `TCSlib.Cryptography.statClose_one`, `TCSlib.Cryptography.abs_uexp_sub_le`,
+TCSlib/Cryptography/Asymptotic/Sampling.lean:138:theorem StatClose.abs_uprob_sub_le {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:144:theorem StatClose.uprob_le_add {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:149:theorem StatClose.nonneg {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ) : 0 ≤ δ :=
+TCSlib/Cryptography/Asymptotic/Sampling.lean:153:theorem StatClose.refl (X : σ → γ) : StatClose X X 0 := fun _ => by
+TCSlib/Cryptography/Asymptotic/Sampling.lean:157:theorem StatClose.symm {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:163:theorem StatClose.mono {X : σ → γ} {Y : τ → γ} {δ δ' : ℝ} (h : StatClose X Y δ) (hδ : δ ≤ δ') :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:167:theorem StatClose.trans {X : σ → γ} {Y : τ → γ} {Z : υ → γ} {δ δ' : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:174:theorem StatClose.map {σ τ γ γ' : Type*} [Fintype σ] [Fintype τ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:179:theorem StatClose.comp_equiv_left {σ' : Type*} [Fintype σ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:185:theorem StatClose.comp_equiv_right {τ' : Type*} [Fintype τ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:202:theorem StatClose.comp_pushesUniform {Ω : Type*} [Fintype Ω] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:210:theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c : ℝ} (hc : 0 ≤ c)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:224:theorem statClose_one (X : σ → γ) (Y : τ → γ) : StatClose X Y 1 :=
+TCSlib/Cryptography/Asymptotic/Sampling.lean:237:theorem StatClose.abs_uprob_sub_le_prod {ρ : Type*} [Fintype ρ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:243:  exact abs_uexp_sub_le h.nonneg fun r => h fun g => P g r
+TCSlib/Cryptography/Asymptotic/Sampling.lean:253:  exact h.abs_uprob_sub_le_prod fun g r => D g r = true
+TCSlib/Cryptography/Asymptotic/Sampling.lean:259:`StatClose.abs_uprob_sub_le_prod` for `X, X'` with the second coordinate as auxiliary coins;
+TCSlib/Cryptography/Asymptotic/Sampling.lean:262:theorem StatClose.prod {σ σ' τ τ' γ γ' : Type*} [Fintype σ] [Fintype σ'] [Fintype τ] [Fintype τ']
+TCSlib/Cryptography/Asymptotic/Sampling.lean:267:  have h1 := h.abs_uprob_sub_le_prod fun g s' => T (g, Y s')
+TCSlib/Cryptography/Asymptotic/Sampling.lean:268:  have h2 := h'.abs_uprob_sub_le_prod fun g t => T (X' t, g)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:282:probabilities over `(·, ω)` (`uprob_prod`), and `StatClose.abs_uprob_sub_le_prod` applies with
+TCSlib/Cryptography/Asymptotic/Sampling.lean:296:  have hh := h.abs_uprob_sub_le_prod (fun c (ω : ∀ c', Aux c') => Q c (ω c))
+TCSlib/Cryptography/Asymptotic/Sampling.lean:831:along the bijection `{x : Fin (2^k) // x < m} ≃ Fin m` (`StatClose.comp_equiv_right`,
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:546:  have hbij : StatClose (Equiv.prodCongr (blocksE M k) (Equiv.refl (Fin c → Bool)))
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:892:on the sampled coins; `YaoMachine.statClose_sampleAll` and `StatClose.abs_uprob_sub_le_prod`
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:945:  have key := hS'.abs_uprob_sub_le_prod fun cs (x : Fin (inLen.eval n) → Bool) =>
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1696:gap of the averages by the pointwise gap (`abs_uexp_sub_le`, `dlc_hyb3_point`). -/
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1721:  refine abs_uexp_sub_le (by positivity) fun ρ => ?_
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:406:`hT.sampleClose = ⟨δ, hδ, hS'⟩` and `StatClose.abs_uprob_sub_le_prod` averaged over `r`
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:453:    refine abs_uexp_sub_le (hδS n (fun _ => false)).nonneg fun r => ?_
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:454:    have hs := (hδS n r).abs_uprob_sub_le_prod
+TCSlib/Cryptography/Candidates/Concrete.lean:877:`⟨d, hdk⟩`, `hd`) by `StatClose.comp_pushesUniform` and `StatClose.map Fin.val`. -/
+TCSlib/Cryptography/Candidates/DDH.lean:303:(`StatClose.comp_equiv_right`, `natCast_val_finEquiv_symm`). -/
+TCSlib/Cryptography/Candidates/RSA.lean:494:`ZMod.val_lt`, `ZMod.val_coe_unit_coprime`, and `N < 2^k`; `StatClose.comp_equiv_right`).
+TCSlib/Cryptography/Candidates/RSA.lean:1333:`StatClose.comp_equiv_right`). -/
+TCSlib/Cryptography/Candidates/RSA.lean:1554:(`NUPPT.coinsEquivPoly`, `StatClose.comp_equiv_left`) and the domain
+TCSlib/Cryptography/Candidates/RSA.lean:1555:(`rsaCollection_domEquiv`, `rsaCollection_decD`, `StatClose.comp_equiv_right`). -/
+TCSlib/Cryptography/Candidates/RSA.lean:1899:`StatClose.abs_uprob_sub_le_prod` with the challenge and coins as auxiliary coins; both sides
+TCSlib/Cryptography/Candidates/RSA.lean:1907:  have h := (statClose_sampleUnitL n (Nat.totient (z.p * z.q)) hk).abs_uprob_sub_le_prod
+TCSlib/Cryptography/Candidates/RSA.lean:1975:(`StatClose.abs_uprob_sub_le_prod`, with `(y, r)` as the auxiliary coins). (ii) The law of `z`
+TCSlib/Cryptography/Candidates/RSA.lean:1980:most that distance (`StatClose.abs_uprob_sub_le_prod` again, with `g(z)` read as a probability
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:607:(`StatClose.comp_equiv_right`) and weaken the bound (`StatClose.mono`). -/
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:800:`StatClose.comp_equiv_right`). -/
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:903:`statClose_sampleBelowL`, moved along the coin identification (`StatClose.comp_equiv_left`),
+TCSlib/Cryptography/Candidates/DiscreteLog.lean:905:(`StatClose.comp_equiv_right`), is the claim: its left side is the decoded sampler output
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2513:exponents, `StatClose.abs_uprob_sub_le_prod`).
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2522:uniform domain elements (`StatClose.prod`, `OneWay.statClose_pi` twice,
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2523:`StatClose.abs_uprob_sub_le_prod`), and on uniform coordinates `P` is `D`'s inversion event,
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2632:  have hclose := hXn.abs_uprob_sub_le_prod P
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:2987:(`OneWay.statClose_pi`, `StatClose.prod`, `StatClose.abs_uprob_sub_le_prod`), and the guess and
+TCSlib/Cryptography/Candidates/Rabin.lean:1181:`StatClose.comp_equiv_right`). -/
+TCSlib/Cryptography/Candidates/Rabin.lean:1327:(`StatClose.comp_equiv_left`/`_right`). -/
+TCSlib/Cryptography/Candidates/Rabin.lean:1684:(`statClose_sampleUnitL` at `N`, `StatClose.abs_uprob_sub_le_prod`) replaces the ideal `x` by the
+TCSlib/Cryptography/Candidates/Rabin.lean:1733:  have hS3 := (statClose_sampleUnitL n (z.p * z.q) hk).abs_uprob_sub_le_prod Succ
+TCSlib/Cryptography/Candidates/Rabin.lean:1898:/-- **The pair law of the Rabin generators** (the private helper generic in `P` of brief step 8): two restricted prime samplers on independent coins, selected by `rabin_zOf`, are within `2e^{-n} + 4n/2^n` of the uniform distinct class pair, given the density `2^n ≤ 4n|C|` (`StatClose.prod`, `StatClose.map`, `rabin_statClose_diag`, `StatClose.trans`). -/
+TCSlib/Cryptography/Candidates/Rabin.lean:2174:trials (`one_sub_one_div_pow_le_exp_neg`), then `StatClose.prod`, `StatClose.map` through the
+TCSlib/Cryptography/Candidates/Rabin.lean:2185:`unitSampleStr` within `e^{-n}` of uniform (S3, `StatClose.abs_uprob_sub_le_prod`), paid twice
+TCSlib/Cryptography/Candidates/Rabin.lean:2861:(`uprob_comp_equiv`, `StatClose.comp_equiv_right`). -/
+TCSlib/Cryptography/Candidates/Factoring.lean:463:`StatClose.abs_uprob_sub_le_prod`). -/
+TCSlib/Cryptography/Candidates/Factoring.lean:469:  have h := (fac_statClose_diag n hn).abs_uprob_sub_le_prod fun v r => G v.1 v.2 r
+TCSlib/Cryptography/Candidates/Factoring.lean:749:`OneWay.lt_two_pow_kkOf`, `two_pow_kkOf_le`), and `StatClose.abs_uprob_sub_le_prod` (auxiliary
+TCSlib/Cryptography/Candidates/Factoring.lean:828:  have habs := hsc.abs_uprob_sub_le_prod P
+TCSlib/Cryptography/Candidates/Factoring.lean:1183:`StatClose.map bitsToNat`; `chunk` is the block bijection (`fac_chunk_eq_blocks`, `comp_equiv_left`),
+TCSlib/Cryptography/Candidates/Factoring.lean:1231:uniform prime block is the uniform element of `Primes n`). (4) `StatClose.prod` puts the two
+TCSlib/Cryptography/Candidates/Factoring.lean:1506:(`uprob_comp_equiv`, `StatClose.comp_equiv_right`). -/
+TCSlib/Cryptography/Candidates/Factoring.lean:1627:(`uprob_samplePrime_none_le_two_pow`'s bound) — and `StatClose.prod` gives the pair within
+exit=0
+
+$ rg -n theorem uprob_prod|theorem uexp|theorem abs.*sum|sum.*abs|sum_le_sum|uexp_mono|uexp_const TCSlib/Cryptography/Foundations/Probability.lean TCSlib/Cryptography/Asymptotic/Sampling.lean TCSlib/Cryptography/HardcoreBit/Basic.lean
+TCSlib/Cryptography/Foundations/Probability.lean:72:theorem uexp_def (f : α → ℝ) : uexp f = (∑ a, f a) / Fintype.card α := rfl
+TCSlib/Cryptography/Foundations/Probability.lean:153:theorem uprob_prod (p : α × β → Prop) :
+TCSlib/Cryptography/Foundations/Probability.lean:208:  have hsum := sum_le_sum (fun a (_ : a ∈ univ) => hpt a)
+TCSlib/Cryptography/Foundations/Probability.lean:218:theorem abs_sub_le_sum_hybrids (P : ℕ → ℝ) (t : ℕ) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:218:    calc |∑ a, (f a - g a)| ≤ ∑ a, |f a - g a| := Finset.abs_sum_le_sum_abs _ _
+TCSlib/Cryptography/Asymptotic/Sampling.lean:219:      _ ≤ ∑ _a : α, c := Finset.sum_le_sum fun a _ => h a
+TCSlib/Cryptography/Asymptotic/Sampling.lean:284:theorem uexp_le_of_statClose {σ τ γ : Type*}
+TCSlib/Cryptography/HardcoreBit/Basic.lean:31:* `uexp_add`, `uexp_const_mul`, `uexp_sum`, `uexp_mono`, `uexp_prod`: linearity,
+TCSlib/Cryptography/HardcoreBit/Basic.lean:59:theorem uexp_add (f g : Ω → ℝ) : uexp (fun ω => f ω + g ω) = uexp f + uexp g := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:63:theorem uexp_sub (f g : Ω → ℝ) : uexp (fun ω => f ω - g ω) = uexp f - uexp g := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:67:theorem uexp_const_mul (c : ℝ) (f : Ω → ℝ) : uexp (fun ω => c * f ω) = c * uexp f := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:71:theorem uexp_const [Nonempty Ω] (c : ℝ) : uexp (fun _ : Ω => c) = c := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:77:theorem uexp_sum {ι : Type*} (s : Finset ι) (f : ι → Ω → ℝ) :
+TCSlib/Cryptography/HardcoreBit/Basic.lean:83:theorem uexp_mono {f g : Ω → ℝ} (h : ∀ ω, f ω ≤ g ω) : uexp f ≤ uexp g := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:85:  exact div_le_div_of_nonneg_right (sum_le_sum fun ω _ => h ω) (Nat.cast_nonneg _)
+TCSlib/Cryptography/HardcoreBit/Basic.lean:88:theorem uexp_comp_equiv (e : Ω ≃ α) (F : α → ℝ) : uexp (fun ω => F (e ω)) = uexp F := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:94:theorem uexp_prod (F : α × β → ℝ) : uexp F = uexp (fun a => uexp (fun b => F (a, b))) := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:99:theorem uexp_fst [Nonempty β] (F : α → ℝ) : uexp (fun z : α × β => F z.1) = uexp F := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:101:  simp only [uexp_const]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:129:theorem uprob_prod_and (p : α → Prop) (q : β → Prop) :
+TCSlib/Cryptography/HardcoreBit/Basic.lean:132:  rw [uprob_prod, uprob_eq_uexp_ite p, mul_comm, ← uexp_const_mul]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:145:  rw [uprob_eq_uexp_ite G, mul_comm, ← uexp_const_mul]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:146:  refine uexp_mono fun ω => ?_
+TCSlib/Cryptography/HardcoreBit/Basic.lean:167:  have h1 := uexp_mono hpt
+TCSlib/Cryptography/HardcoreBit/Basic.lean:168:  rw [uexp_add, uexp_const, ← uprob_eq_uexp_ite] at h1
+exit=0
+

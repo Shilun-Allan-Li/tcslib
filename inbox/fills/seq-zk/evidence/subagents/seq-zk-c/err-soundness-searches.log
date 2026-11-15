@@ -1,0 +1,15 @@
+$ rg -n InteractiveProofErr.*(accept|nonneg)|uprob_accept_le|sound_nonneg|prefixProver.*accept|theorem uprob_congr|theorem.*uprob_snd TCSlib/Cryptography
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:60:theorem uprob_congr {p p' : α → Prop} (h : ∀ a, p a ↔ p' a) : uprob p = uprob p' :=
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:70:theorem uprob_snd [Nonempty α] (p : β → Prop) :
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:50:theorem uprob_congr {p q : α → Prop} (h : ∀ a, p a ↔ q a) : uprob p = uprob q := by
+TCSlib/Cryptography/Candidates/Rabin.lean:177:private theorem rabin_uprob_snd_val_eq_le {n : ℕ} (c : ℕ) :
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:219:theorem InteractiveProofErr.exists_accept {π : Protocol} {L : Language Bool} {s : ℕ → ℝ}
+exit=0
+
+$ rg -n prefixProver|accept.*sound|sound.*accept /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability
+exit=1
+
+$ rg -n sub_le_self_iff /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Algebra/Order/Group/Unbundled/Basic.lean
+220:alias ⟨_, sub_le_self⟩ := sub_le_self_iff
+exit=0
+

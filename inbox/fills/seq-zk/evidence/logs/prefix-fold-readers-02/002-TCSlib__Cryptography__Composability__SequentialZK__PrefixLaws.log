@@ -1,0 +1,44 @@
+START 2026-11-15T10:18:02.253124+00:00
+MODULE TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:50:82: error: unsolved goals
+π : Protocol
+V : Strategy
+x y z rV : List Bool
+p q : ℕ
+r : Fin (q + 1) → π.P.Coins x.length
+⊢ realStep π V x y z rV p (↑(Fin.last q))
+      (Fin.foldl q (fun x1 x2 => realStep π V x y z rV p (↑x2.castSucc) x1 (r x2.castSucc)) []) (r (Fin.last q)) =
+    realStep π V x y z rV p q (Fin.foldl q (fun pre i => realStep π V x y z rV p (↑i) pre (r i.castSucc)) [])
+      (r (Fin.last q))
+TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws.lean:73:81: error: unsolved goals
+S : NUPPT
+x z rV : List Bool
+k B p q : ℕ
+r : Fin (q + 1) → S.Coins x.length
+⊢ simStep S x z rV k B p (↑(Fin.last q))
+      (Fin.foldl q (fun x1 x2 => simStep S x z rV k B p (↑x2.castSucc) x1 (r x2.castSucc)) []) (r (Fin.last q)) =
+    simStep S x z rV k B p q (Fin.foldl q (fun pre i => simStep S x z rV k B p (↑i) pre (r i.castSucc)) [])
+      (r (Fin.last q))
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/PrefixLaws): no fresh .olean produced
+        2.29 real         1.39 user         0.99 sys
+          2210414592  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175440  page reclaims
+                  65  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  20  voluntary context switches
+                4894  involuntary context switches
+            31731624  instructions retired
+            17544562  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T10:18:04.587795+00:00
+EXIT 1

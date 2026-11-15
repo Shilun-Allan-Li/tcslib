@@ -1,0 +1,1 @@
+Checkpoint2Axioms attempt01 was inadvertently launched after PrefixLaws endpoint attempt04 failed and removed its prior olean. Any import failure from that attempt is an invalid dependent check, not a mathematical finding. Raw attempt is retained. PrefixLaws is repaired and checked before rerunning the axiom probe. No bootstrap failure or E-RES is claimed.

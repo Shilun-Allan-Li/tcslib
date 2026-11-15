@@ -1,0 +1,35 @@
+START 2026-11-15T09:19:34Z
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:76:80: error: unsolved goals
+x z : List Bool
+h : List (List Bool)
+⊢ (if True then BinArith.encWords h else []) = BinArith.encWords h
+TCSlib/Cryptography/Composability/SequentialZK/PhaseView.lean:149:34: warning: This simp argument is unused:
+  Function.comp_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [phaseViewPayload_eq, F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵,̵ ̵BinArith.eqW_pairEncode, decide_eq_true_eq, View.encode_mk,
+  ̲  ̲ ̲ ̲encodeMsgs_eq_encWords]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/PhaseView): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/PhaseView): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/PhaseView): no fresh .olean produced
+        2.52 real         1.36 user         1.11 sys
+          2215968768  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171777  page reclaims
+                4079  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 277  voluntary context switches
+                8772  involuntary context switches
+            32796688  instructions retired
+            15244963  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T09:20:42Z

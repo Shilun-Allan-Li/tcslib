@@ -1,7 +1,7 @@
 From a758032d636fd410b0c4b8a1530a96d000cc467a Mon Sep 17 00:00:00 2001
 From: Seyoon Ragavan <complexzetaprime@gmail.com>
 Date: Sun, 15 Nov 2026 01:30:30 -0800
-Subject: [PATCH] Prove sequential repetition preserves interactive proofs
+Subject: [PATCH 1/2] Prove sequential repetition preserves interactive proofs
 
 ---
  .../Composability/SequentialZK.lean           | 300 ++++++++++++++++-
@@ -17,7 +17,7 @@ Subject: [PATCH] Prove sequential repetition preserves interactive proofs
  create mode 100644 TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean
 
 diff --git a/TCSlib/Cryptography/Composability/SequentialZK.lean b/TCSlib/Cryptography/Composability/SequentialZK.lean
-index d966b6f11569f923f70606b3d92d46468b01b671..fb0d67a1a404cb2d7c9e919f5da1c62df1709fdc 100644
+index d966b6f11..fb0d67a1a 100644
 --- a/TCSlib/Cryptography/Composability/SequentialZK.lean
 +++ b/TCSlib/Cryptography/Composability/SequentialZK.lean
 @@ -5,13 +5,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
@@ -370,7 +370,7 @@ index d966b6f11569f923f70606b3d92d46468b01b671..fb0d67a1a404cb2d7c9e919f5da1c62d
  repeated many times … to drive the probability of error as low as desired"; and p. 127, the
 diff --git a/TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean b/TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean
 new file mode 100644
-index 0000000000000000000000000000000000000000..6eb088485763b9898682a52e784b764c71566a61
+index 000000000..6eb088485
 --- /dev/null
 +++ b/TCSlib/Cryptography/Composability/SequentialZK/Efficiency.lean
 @@ -0,0 +1,306 @@
@@ -682,7 +682,7 @@ index 0000000000000000000000000000000000000000..6eb088485763b9898682a52e784b764c
 +end TCSlib.Cryptography.Composability.SeqEfficiency
 diff --git a/TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean b/TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean
 new file mode 100644
-index 0000000000000000000000000000000000000000..33e53a847853dba26401bdd05fab867691fb06f6
+index 000000000..33e53a847
 --- /dev/null
 +++ b/TCSlib/Cryptography/Composability/SequentialZK/Normalization.lean
 @@ -0,0 +1,98 @@
@@ -786,7 +786,7 @@ index 0000000000000000000000000000000000000000..33e53a847853dba26401bdd05fab8676
 +end TCSlib.Cryptography.SequentialZK
 diff --git a/TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean b/TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean
 new file mode 100644
-index 0000000000000000000000000000000000000000..b624ca6110aa65e2fb7f34557b6a14315a208cd3
+index 000000000..b624ca611
 --- /dev/null
 +++ b/TCSlib/Cryptography/Composability/SequentialZK/NormalizationMachine.lean
 @@ -0,0 +1,97 @@
@@ -889,7 +889,7 @@ index 0000000000000000000000000000000000000000..b624ca6110aa65e2fb7f34557b6a1431
 +end TCSlib.Cryptography.SequentialZK
 diff --git a/TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean b/TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean
 new file mode 100644
-index 0000000000000000000000000000000000000000..2ee7c58944b9b76ce797b8825d8ad98e3b13dfd7
+index 000000000..2ee7c5894
 --- /dev/null
 +++ b/TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean
 @@ -0,0 +1,163 @@
@@ -1057,7 +1057,7 @@ index 0000000000000000000000000000000000000000..2ee7c58944b9b76ce797b8825d8ad98e
 +
 +end TCSlib.Cryptography.Composability
 diff --git a/TCSlib/Cryptography/ZeroKnowledge/Defs.lean b/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
-index cb6a212b6c7107b1c9959673d14895daba16e09e..c0dc077b4a84345301c137349e5507e07458759a 100644
+index cb6a212b6..c0dc077b4 100644
 --- a/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
 +++ b/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
 @@ -183,6 +183,15 @@ def StatZK (π : Protocol) (R : List Bool → List Bool → Prop) (δ : ℕ →

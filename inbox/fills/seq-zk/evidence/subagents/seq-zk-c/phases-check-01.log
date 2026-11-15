@@ -1,0 +1,83 @@
+START 2026-11-15T09:20:04Z
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:94:6: error: unsolved goals
+case neg.right
+P V W : Strategy
+vFirst : Bool
+x y z rP rV rW : List Bool
+g k : ℕ
+hturn : ∀ t < k, moverIsV vFirst (g + t) = moverIsV vFirst t
+hV :
+  ∀ t < k,
+    moverIsV vFirst t = true →
+      V.next x z rV (exec P V vFirst x y z rP rV (g + t)).2 =
+        W.next x z rW (List.drop (exec P V vFirst x y z rP rV g).2.length (exec P V vFirst x y z rP rV (g + t)).2)
+t : ℕ
+ih :
+  t ≤ k →
+    (exec P V vFirst x y z rP rV (g + t)).1 =
+        (exec P V vFirst x y z rP rV g).1 ++
+          (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).1 ∧
+      (exec P V vFirst x y z rP rV (g + t)).2 =
+        (exec P V vFirst x y z rP rV g).2 ++
+          (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).2
+ht : t + 1 ≤ k
+htk : t < k
+ihP :
+  (exec P V vFirst x y z rP rV (g + t)).1 =
+    (exec P V vFirst x y z rP rV g).1 ++
+      (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).1
+ihV :
+  (exec P V vFirst x y z rP rV (g + t)).2 =
+    (exec P V vFirst x y z rP rV g).2 ++
+      (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).2
+hm : ¬moverIsV vFirst t = true
+⊢ (if false = true then
+        ((exec P V vFirst x y z rP rV g).1 ++
+            ((exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).1 ++
+              [V.next x z rV
+                  ((exec P V vFirst x y z rP rV g).2 ++
+                    (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).2)]),
+          (exec P V vFirst x y z rP rV g).2 ++
+            (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).2)
+      else
+        ((exec P V vFirst x y z rP rV g).1 ++
+            (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).1,
+          (exec P V vFirst x y z rP rV g).2 ++
+              (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).2 ++
+            [P.next x y rP
+                ((exec P V vFirst x y z rP rV g).1 ++
+                  (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).1)])).2 =
+    (exec P V vFirst x y z rP rV g).2 ++
+      (if false = true then
+          ((exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).1 ++
+              [W.next x z rW (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).2],
+            (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).2)
+        else
+          ((exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).1,
+            (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).2 ++
+              [P.next x y rP
+                  ((exec P V vFirst x y z rP rV g).1 ++
+                    (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1) W vFirst x [] z [] rW t).1)])).2
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Phases): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Phases): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/Phases): no fresh .olean produced
+        2.42 real         1.33 user         1.04 sys
+          2147205120  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              169944  page reclaims
+                1512  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  71  voluntary context switches
+                5318  involuntary context switches
+            32635449  instructions retired
+            15963272  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T09:20:47Z
+EXIT 1

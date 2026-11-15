@@ -1,0 +1,29 @@
+Snapshot 2026-11-15T09:41:37.663344+00:00
+
+$ ps -p 96700 -o pid,ppid,etime,%cpu,rss,state,command
+  PID  PPID ELAPSED  %CPU    RSS STAT COMMAND
+96700 96697   04:34   0.0   2192 S    bash /private/tmp/seq-zk-lean-slot.sh /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness
+
+$ ps -p 96798 -o pid,ppid,etime,%cpu,rss,state,command
+  PID  PPID ELAPSED  %CPU    RSS STAT COMMAND
+96798 96700   04:29   0.0   1184 S    /usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness
+
+$ ps -p 96799 -o pid,ppid,etime,%cpu,rss,state,command
+  PID  PPID ELAPSED  %CPU    RSS STAT COMMAND
+96799 96798   04:29   0.0   2352 S    bash scripts/lean_check_tree.sh TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness
+
+$ ps -p 96807 -o pid,ppid,etime,%cpu,rss,state,command
+  PID  PPID ELAPSED  %CPU    RSS STAT COMMAND
+96807 96799   04:29 100.0 3020592 R    /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/bin/lean TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness.lean -o /Users/seyoonr/.codex/worktrees/seq-zk-c/tcslib-exchange/.lake/seq-zk-c-oleans/TCSlib/Cryptography/Composability/SequentialZK/ErrSoundness.olean
+
+Running check log:
+START 2026-11-15T09:37:03Z
+
+
+Read-only stdout lookup: lsof -a -p 96807 -d 1 -Fn
+p96807
+f1
+n/private/var/folders/gc/93nsn68n4g9fgyjj6sjjmy180000gn/T/tmp.fILg8otOg8
+The existing Lean stdout file was read in place and was empty. No file or process was changed.
+One-second sample command: sample 96807 1 1 -file evidence/subagents/seq-zk-c/err-soundness-sample.log
+Sample completed successfully; active calc elaboration and deep definitional-equality recursion observed.

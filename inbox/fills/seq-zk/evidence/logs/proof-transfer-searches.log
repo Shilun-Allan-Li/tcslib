@@ -1,0 +1,6 @@
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:77:  `TCSlib.Cryptography.Protocol.ProverBounded.exists_complete` — completeness without the
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:231:theorem Protocol.ProverBounded.exists_complete {π : Protocol} {L : Language Bool}
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean:492:`hR.mem_iff` (`Protocol.ProverBounded.exists_complete`). Soundness with `ε n := 2⁻¹ ^ n`
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:388:and the verifier accepts with probability one (`Protocol.ProverBounded.exists_complete`).
+
+Nearest: ZeroKnowledge/InteractiveProofs.lean:249 Protocol.ProverBounded.exists_complete. New complete transfer directly reuses it via the local relation comprising the original bound and acceptance; no witness-packaging proof is copied. next_length_le specializes the padded-next contract, nearest owned Protocol.ProverBounded.seqRep, which is unavailable to helpers through imports. No private host/lemma copied.

@@ -1,0 +1,79 @@
+TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine.lean:216:32: error: unsolved goals
+S : NUPPT
+hS : S.Uniform
+k B Q : PolyExpr
+verifierFirst : Bool
+X Z RV RS : List Bool → List Bool
+hX : PolyTimeComputable X
+hZ : PolyTimeComputable Z
+hRV : PolyTimeComputable RV
+hRS : PolyTimeComputable RS
+upd : List Bool → List Bool :=
+  fun w =>
+    let t := pairFstD w;
+    let i := (pairFstD (pairSndD w)).length;
+    let pre := BinArith.decWords (pairSndD (pairSndD w));
+    let aux := phaseAux (Z t) (RV t) i pre;
+    let p := if verifierFirst = true then k.eval (X t).length / 2 else (k.eval (X t).length + 1) / 2;
+    pairSndD (pairSndD w) ++
+      (Strategy.encodeMsgs
+          (normalizePhaseMsgs (X t) aux p (B.eval (X t).length)
+            (S.runAtL (X t).length (pairEncode (X t) aux) (coinBlock (S.coinLen (X t).length) i (RS t)))) ++
+        Strategy.encodeMsgs (List.replicate (k.eval (X t).length - p) []))
+hXt : PolyTimeComputable fun w => X (pairFstD w)
+hZt : PolyTimeComputable fun w => Z (pairFstD w)
+hRVt : PolyTimeComputable fun w => RV (pairFstD w)
+hRSt : PolyTimeComputable fun w => RS (pairFstD w)
+hIword : PolyTimeComputable (pairFstD ∘ pairSndD)
+hI : PolyTimeComputable fun x => List.replicate ((pairFstD ∘ pairSndD) x).length true
+hstate : PolyTimeComputable (pairSndD ∘ pairSndD)
+hcanonical : PolyTimeComputable fun w => BinArith.encWords (BinArith.decWords ((pairSndD ∘ pairSndD) w))
+hpre : PolyTimeComputable fun w => Strategy.encodeMsgs (BinArith.decWords (pairSndD (pairSndD w)))
+haux :
+  PolyTimeComputable fun w =>
+    phaseAux (Z (pairFstD w)) (RV (pairFstD w)) ((pairFstD ∘ pairSndD) w).length
+      (BinArith.decWords (pairSndD (pairSndD w)))
+hcoins :
+  PolyTimeComputable fun w =>
+    coinBlock (S.coinLen (X (pairFstD w)).length) (pairFstD (pairSndD w)).length (RS (pairFstD w))
+hlay :
+  PolyTimeComputable fun z =>
+    NUPPT.layout (List.replicate (X (pairFstD z)).length true)
+      (pairEncode (X (pairFstD z))
+        (phaseAux (Z (pairFstD z)) (RV (pairFstD z)) ((pairFstD ∘ pairSndD) z).length
+          (BinArith.decWords (pairSndD (pairSndD z)))))
+      [] (coinBlock (S.coinLen (X (pairFstD z)).length) (pairFstD (pairSndD z)).length (RS (pairFstD z)))
+w : List Bool
+⊢ S.output
+      (NUPPT.layout (List.replicate (X (pairFstD w)).length true)
+        (pairEncode (X (pairFstD w))
+          (phaseAux (Z (pairFstD w)) (RV (pairFstD w)) ((pairFstD ∘ pairSndD) w).length
+            (BinArith.decWords (pairSndD (pairSndD w)))))
+        [] (coinBlock (S.coinLen (X (pairFstD w)).length) (pairFstD (pairSndD w)).length (RS (pairFstD w)))) =
+    S.output
+      (NUPPT.layout (List.replicate (X (pairFstD w)).length true)
+        (pairEncode (X (pairFstD w))
+          (phaseAux (Z (pairFstD w)) (RV (pairFstD w)) (pairFstD (pairSndD w)).length
+            (BinArith.decWords (pairSndD (pairSndD w)))))
+        [] (coinBlock (S.coinLen (X (pairFstD w)).length) (pairFstD (pairSndD w)).length (RS (pairFstD w))))
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/SimulatorMachine): no fresh .olean produced
+        2.70 real         1.59 user         1.09 sys
+          2240757760  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173257  page reclaims
+                4255  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 304  voluntary context switches
+                7859  involuntary context switches
+            32564925  instructions retired
+            16873334  cycles elapsed
+             1638736  peak memory footprint

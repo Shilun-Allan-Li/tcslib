@@ -1,0 +1,18 @@
+$ rg -n exec_congr|exec_eq_of|next_eq_on|reachable.*exec|exec.*reachable TCSlib
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:24:* **Executions.** `exec_congr`: two executions whose next-message functions agree on every
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:59:* `TCSlib.Cryptography.LevinTransfer.exec_congr` — executions with pointwise equal
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:88:theorem exec_congr {P₁ V₁ P₂ V₂ : Strategy} {x₁ zP₁ zV₁ rP₁ rV₁ x₂ zP₂ zV₂ rP₂ rV₂ : List Bool}
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:45:congruence `exec_congr`, the uniform coin projections `coinTrunc`/`UnifProj` with
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:287:(`LevinTransfer.exec_congr`; the pulled-back next-message functions are those of the
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:294:  refine exec_congr ?_ ?_ vFirst k <;> intro _ <;> rfl
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:299:(`LevinTransfer.exec_congr`). -/
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:306:  refine exec_congr ?_ ?_ vFirst k <;> intro _ <;> rfl
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:341:coins cast along `Strategy.coinLen_pullback` (`exec_congr`). -/
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:381:`Protocol.pullback_outV` and `LevinTransfer.exec_congr` — the pulled-back next-message
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:475:(`LevinTransfer.exec_congr`, `liftVerifier_next`, `postView_encode`), and `D'`'s verdict is
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:537:          refine congrArg Prod.snd (exec_congr ?_ ?_ _ _)
+exit=0
+
+$ rg -n exec.*(congr|reachable)|reachable.*exec /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability
+exit=1
+

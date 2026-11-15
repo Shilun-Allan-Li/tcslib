@@ -1,0 +1,46 @@
+START 2026-11-15T10:31:15.481051+00:00
+MODULE TCSlib/Cryptography/Composability/SequentialZK
+TCSlib/Cryptography/Composability/SequentialZK.lean:701:74: error: unexpected identifier; expected '}'
+TCSlib/Cryptography/Composability/SequentialZK.lean:701:9: error: Fields missing: `first_eq`, `next_eq`, `terminal_eq`, `index_eq`, `boundary_lengths`, `local_length`, `period`
+TCSlib/Cryptography/Composability/SequentialZK.lean:700:69: error: unsolved goals
+π : Protocol
+Q : PolyExpr
+x : List Bool
+⊢ (π.seqRep Q).V.coinLen x.length = Q.eval x.length * π.V.coinLen x.length
+TCSlib/Cryptography/Composability/SequentialZK.lean:735:80: error: unexpected identifier; expected '}'
+TCSlib/Cryptography/Composability/SequentialZK.lean:735:9: error: Fields missing: `first`, `next`, `prover_index`, `boundary`, `original_count`, `real_le`, `period`
+TCSlib/Cryptography/Composability/SequentialZK.lean:734:50: error: unsolved goals
+π : Protocol
+Q : PolyExpr
+x : List Bool
+⊢ (π.seqRep Q).P.coinLen x.length = Q.eval x.length * π.P.coinLen x.length
+TCSlib/Cryptography/Composability/SequentialZK.lean:799:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Composability/SequentialZK.lean:816:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Composability/SequentialZK.lean:891:20: warning: unused variable `hQ`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Cryptography/Composability/SequentialZK.lean:911:72: error: unexpected identifier; expected '}'
+TCSlib/Cryptography/Composability/SequentialZK.lean:911:9: error: Fields missing: `efficientP`, `boundedP`, `completeWitness`
+FAIL(TCSlib/Cryptography/Composability/SequentialZK): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK): no fresh .olean produced
+       69.96 real        71.33 user         1.57 sys
+          3238969344  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              239545  page reclaims
+                 185  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  70  voluntary context switches
+               22356  involuntary context switches
+            31961201  instructions retired
+            16618831  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T10:32:25.481049+00:00
+EXIT 1

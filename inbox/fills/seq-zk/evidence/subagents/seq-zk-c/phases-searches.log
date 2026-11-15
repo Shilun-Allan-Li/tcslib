@@ -1,0 +1,174 @@
+$ rg -n prefixProver|exec_phase|exec.*append|hardwire.*prover|prover.*hardwire TCSlib/Cryptography
+TCSlib/Cryptography/Composability/SequentialZK.lean:76:* `Protocol.seqRep_exec_phase`: phase `j` of an honest execution of `π.seqRep Q` is an execution
+TCSlib/Cryptography/Composability/SequentialZK.lean:159:    rw [exec_succ, List.range_succ, List.countP_append]
+TCSlib/Cryptography/Composability/SequentialZK.lean:169:    rw [exec_succ, List.range_succ, List.countP_append]
+TCSlib/Cryptography/Composability/SequentialZK.lean:280:theorem seqRep_exec_phase (π : Protocol) (Q : PolyExpr) (x y z rP rV : List Bool) {j : ℕ}
+TCSlib/Cryptography/Composability/SequentialZK.lean:464:   independent uniform coin slices (`seqRep_exec_phase`), accepted with probability one, so
+TCSlib/Cryptography/Composability/SequentialZK.lean:468:   `seqRep_exec_phase`'s argument applies with `P'` in place of `π.P`. Phase `0`'s verdict is
+TCSlib/Cryptography/Composability/SequentialZK.lean:484:   (`seqRep_exec_phase`), accepted with probability one.
+TCSlib/Cryptography/SecureComputation/Compose.lean:119:    rw [exec_succ, List.range_succ, List.filter_append, List.filter_append, List.map_append,
+TCSlib/Cryptography/Games/Bridges/Strategies.lean:186:Induct on `k`; the parity of `j` decides who moves, and `exec_succ` (D8's) appends the message
+exit=0
+
+$ rg -n theorem drop_left|theorem append_assoc /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/TakeDrop.lean:214:theorem drop_left : ∀ {l₁ l₂ : List α}, drop (length l₁) (l₁ ++ l₂) = l₂
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/TakeDrop.lean:219:theorem drop_left' {l₁ l₂ : List α} {i} (h : length l₁ = i) : drop i (l₁ ++ l₂) = l₂ := by
+/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Basic.lean:625:@[simp, grind _=_] theorem append_assoc (as bs cs : List α) : (as ++ bs) ++ cs = as ++ (bs ++ cs) := by
+exit=0
+
+$ rg -n exec.*(prefix|append)|prefix.*exec /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability
+exit=1
+
+$ rg -n coins := \.const 0|P.*next.*\+\+|prefixProver TCSlib/Cryptography
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:16:* `Composability.prefixProver`: a prover with its original auxiliary input, tape, and
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:34:`prior`, `prefixProver P y rP prior` has zero coins and sends
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:35:`P.next x y rP (prior ++ hist)` on `x`, any auxiliary input, any tape, and history `hist`.
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:38:def prefixProver (P : Strategy) (y rP : List Bool)
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:40:  next x _ _ hist := P.next x y rP (prior ++ hist)
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:41:  coins := .const 0
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:48:`prefixProver P y rP (exec P V vFirst x y z rP rV g).1` against `W` for `t` moves.
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:66:          (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1)
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:70:          (exec (prefixProver P y rP (exec P V vFirst x y z rP rV g).1)
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:94:      · rw [ihV, ihP, prefixProver_next, List.append_assoc]
+TCSlib/Cryptography/SecureComputation/Yao.lean:523:  coins := .const 0
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:65:    let γ := P'.next x y rP (v.1 ++ [b])
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:256:        (fun j => P'.next x y rP ((repViews P' giVerifierRep x y z rP rV j).1 ++ [[rV.getD j false]])) i ∧
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:263:          (fun j => P'.next x y rP ((repViews P' giVerifierRep x y z rP rV j).1 ++ [[rV.getD j false]])) i ++
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:287:          (fun j => P'.next x y rP ((repViews P' giVerifierRep x y z rP rV j).1 ++ [[rV.getD j false]])) i ++
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:293:          (fun j => P'.next x y rP ((repViews P' giVerifierRep x y z rP rV j).1 ++ [[rV.getD j false]])) i ++
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:295:            P'.next x y rP ((repViews P' giVerifierRep x y z rP rV i).1 ++ [[rV.getD i false]])]) = [] := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:389:  decPerm n (P'.next x y (List.ofFn r₁) (PsOfFin (Fin.init bs) ++ [[bs (Fin.last i)]]))
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:208:  coins := .const 0
+TCSlib/Cryptography/Games/Bridges/Strategies.lean:75:        | k' + 1 => turnParty next k' (M ++ [y])
+TCSlib/Cryptography/Games/Bridges/Strategies.lean:90:    | k' + 1 => turnParty next k' (M ++ [y])
+TCSlib/Cryptography/Games/Bridges/Strategies.lean:103:`k` moves left: `waitParty next (k + 1) M (some y) = turnParty next k (M ++ [y])`. -/
+TCSlib/Cryptography/Games/Bridges/Strategies.lean:105:    waitParty next (k + 1) M (some y) = turnParty next k (M ++ [y]) :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:438:  coins := .const 0
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:110:          P'.next x y rP (chView ch j ++ [ch j])) ∧
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:134:              P'.next x y rP (E.1 ++ [V.next x z rV (E.2 ++ [P'.next x y rP E.1])])])],
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean:136:            P'.next x y rP (E.1 ++ [V.next x z rV (E.2 ++ [P'.next x y rP E.1])])]) := by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:1066:            (2 * j + 1) [] = P'.next x y rP (ColRep.chView (colRep_challenge x n (edgeCount G) rV) j ++
+exit=0
+
+$ rg -n hardwir|fixed.*tape|prefix.*strateg|strateg.*prefix TCSlib/Complexity /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability/PostTuringMachine.lean:828:fixed constant. Each tape element is represented as a block of `n` `Bool`s. Whenever the machine
+TCSlib/Complexity/CookLevin/Hardness.lean:692:/-- Replace each native input bit by a fixed bit, with no work tapes.
+TCSlib/Complexity/CookLevin/Hardness.lean:1595:/-- Two disjoint fixed tape slots, with no run-time indexing assumption. -/
+TCSlib/Complexity/CookLevin/Hardness.lean:2051:/-- Native row controller: copy every counter in fixed tape order, then
+TCSlib/Complexity/CookLevin/Hardness.lean:2139:**Proof sketch.** Induct over the fixed number of tapes. Each field uses
+TCSlib/Complexity/CookLevin/Hardness.lean:5572:input. Each fixed tape's actual recorded search is a native computation;
+TCSlib/Complexity/CookLevin/Hardness.lean:5665:including an append of this time's codes in fixed work-tape order. -/
+TCSlib/Complexity/CookLevin/Hardness.lean:7887:fixed time-then-tape ordering. -/
+TCSlib/Complexity/CookLevin/Hardness.lean:8021:/-- The fixed tape choice at the current work-family ordinal. -/
+TCSlib/Complexity/CookLevin/Hardness.lean:8742:after completion. The constant per-family clause tables are hardwired
+TCSlib/Complexity/TuringMachine/Codes2Tape.lean:29:format** that `Turing.CodeNDTM` fixed for the nondeterministic two-tape
+TCSlib/Complexity/TuringMachine/Codes2Tape.lean:166:The fixed silent fallback and the two-work-tape instance of `CodeFormat` supply
+TCSlib/Complexity/ClassNP/Reductions.lean:291:/-- Emit the fixed prefix, then copy the input verbatim. No work tape is needed;
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:31:binary machines in the fixed `k`-record serialization. The one-work-tape codes
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1207:    · have fixed := (embedEmitTM_frame ι M tapes heads [] c 0).1 j located
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:3153:/-- The fixed fields of one record: the input move, the `k` work-tape writes and moves, and
+TCSlib/Complexity/Diagonalization/Relativization.lean:506:**Proof sketch.** For fixed tape count `k` and state count `m + 1`, the oracle
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:58:(each record must follow from its predecessor by `N`'s table, hardwired in
+TCSlib/Complexity/TuringMachine/CodeParser.lean:55:This module retains the shared field readers, erasure laws and fixed one-tape skipper.
+TCSlib/Complexity/TuringMachine/CodeParser.lean:94:/-- Decode the fixed dictionary for an optional work-tape write. -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:182:/-- Evaluation of a one- or two-tape block action at a fixed tape (`one_0_0`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:184:/-- Evaluation of a one- or two-tape block action at a fixed tape (`one_0_1`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:186:/-- Evaluation of a one- or two-tape block action at a fixed tape (`one_0_2`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:188:/-- Evaluation of a one- or two-tape block action at a fixed tape (`one_1_0`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:190:/-- Evaluation of a one- or two-tape block action at a fixed tape (`one_1_1`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:192:/-- Evaluation of a one- or two-tape block action at a fixed tape (`one_1_2`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:194:/-- Evaluation of a one- or two-tape block action at a fixed tape (`one_2_0`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:196:/-- Evaluation of a one- or two-tape block action at a fixed tape (`one_2_1`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:198:/-- Evaluation of a one- or two-tape block action at a fixed tape (`one_2_2`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:200:/-- Evaluation of a one- or two-tape block action at a fixed tape (`two_01_0`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:202:/-- Evaluation of a one- or two-tape block action at a fixed tape (`two_01_1`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:204:/-- Evaluation of a one- or two-tape block action at a fixed tape (`two_01_2`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:206:/-- Evaluation of a one- or two-tape block action at a fixed tape (`two_12_0`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:208:/-- Evaluation of a one- or two-tape block action at a fixed tape (`two_12_1`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:210:/-- Evaluation of a one- or two-tape block action at a fixed tape (`two_12_2`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:212:/-- Evaluation of a one- or two-tape block action at a fixed tape (`two_02_0`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:214:/-- Evaluation of a one- or two-tape block action at a fixed tape (`two_02_1`). -/
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:216:/-- Evaluation of a one- or two-tape block action at a fixed tape (`two_02_2`). -/
+TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly.lean:21:`|x| = n`, `|y| = a(n)`, then hard-wire `y := αₙ` (`Language.InPPoly.of_hardwire`,
+TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly.lean:214:  refine Language.InPPoly.of_hardwire D αf (fun n => cfgCircuit_isFaninTwo _) (c := C + 3 +
+TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly.lean:235:(`Language.InPPoly.of_hardwire`) gives the family.  This is the instance
+TCSlib/Complexity/ClassNP/EXP.lean:1201:`|x|+|s|+2` steps. The fixed candidate tape is retained. -/
+TCSlib/Complexity/ClassNP/EXP.lean:2529:The scanner and fixed emission chain use no work tapes. -/
+TCSlib/Complexity/ClassPSPACE/TQBF.lean:40:  are *not* injectively codable at fixed length, the output tape being
+TCSlib/Complexity/ClassPSPACE/TQBF.lean:1642:/-- A joint position/table guard. All quantification is over the machine's fixed tapes. -/
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:998:(iii) a clocked product simulation of the **fixed** machine `N`: `N`'s work tapes as
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:2436:The scanner and fixed emission chain use no work tapes. -/
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:27:* `BoolCircuit.DAGCircuit.hardwire` — fix the *last* `m` inputs (the book's "second
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:29:* `BoolCircuit.DAGCircuit.hardwireLeft` — fix the *first* `m` inputs:
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:31:* `BoolCircuit.DAGCircuitFamily.hardwire` — hard-wire one advice string per input length.
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:35:* `hardwire_eval`, `hardwire_size`, `hardwire_isWellFormed`, `hardwire_isFaninTwo`,
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:36:  `hardwire_depth_le`, and the same five for `hardwireLeft`.
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:37:* `Language.InSIZE.of_hardwire`, `Language.InPPoly.of_hardwire` — the family-level step of
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:44:* **Size is preserved exactly** (`hardwire_size`), which is stronger than the book's
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:51:* **Depth may grow by one** (`hardwire_depth_le`).  The book says nothing about depth.  In
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:121:def hardwire (C : DAGCircuit (n + m)) (y : Fin m → Bool) : DAGCircuit n where
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:141:theorem hardwire_values (x : Fin n → Bool) :
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:142:    (C.hardwire y).values x = C.values (Fin.append x y) := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:143:  simp only [values, hardwire, runWith_append, runWith_eval_constGates, List.ofFn_fin_append]
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:147:theorem hardwire_eval (x : Fin n → Bool) :
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:148:    (C.hardwire y).eval x = C.eval (Fin.append x y) := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:149:  simp only [eval, hardwire_values]; rfl
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:153:theorem hardwire_size : (C.hardwire y).size = C.size := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:154:  simp [size, hardwire]; omega
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:157:theorem hardwire_size_le : (C.hardwire y).size ≤ C.size :=
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:158:  (hardwire_size C y).le
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:161:theorem hardwire_isWellFormed (hC : C.IsWellFormed) : (C.hardwire y).IsWellFormed := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:169:theorem hardwire_isFaninTwo (hC : C.IsFaninTwo) : (C.hardwire y).IsFaninTwo := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:170:  refine ⟨hardwire_isWellFormed C y hC.1, fun g hg => ?_⟩
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:178:theorem hardwire_depth_le : (C.hardwire y).depth ≤ C.depth + 1 := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:191:  unfold depth depthAt depths hardwire
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:219:mirror image of `hardwire`.  The fixed input vertices become constant gates placed right
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:222:def hardwireLeft (C : DAGCircuit (m + n)) (y : Fin m → Bool) : DAGCircuit n where
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:253:theorem hardwireLeft_eval (x : Fin n → Bool) :
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:254:    (C.hardwireLeft y).eval x = C.eval (Fin.append y x) := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:271:  unfold eval values hardwireLeft
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:277:theorem hardwireLeft_size : (C.hardwireLeft y).size = C.size := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:278:  simp [size, hardwireLeft]; omega
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:281:theorem hardwireLeft_size_le : (C.hardwireLeft y).size ≤ C.size :=
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:282:  (hardwireLeft_size C y).le
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:286:theorem hardwireLeft_isWellFormed (hC : C.IsWellFormed) : (C.hardwireLeft y).IsWellFormed := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:296:theorem hardwireLeft_isFaninTwo (hC : C.IsFaninTwo) : (C.hardwireLeft y).IsFaninTwo := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:297:  refine ⟨hardwireLeft_isWellFormed C y hC.1, fun g hg => ?_⟩
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:305:theorem hardwireLeft_depth_le : (C.hardwireLeft y).depth ≤ C.depth + 1 := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:315:  unfold depth depthAt depths hardwireLeft
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:330:def hardwire {a : ℕ → ℕ} (D : (n : ℕ) → DAGCircuit (n + a n))
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:332:  ⟨fun n => (D n).hardwire (α n)⟩
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:337:theorem hardwire_language :
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:338:    (hardwire D α).language = {w | (D w.length).eval (Fin.append w.get (α w.length)) = true} := by
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:340:  simp only [mem_language_iff, hardwire, DAGCircuit.hardwire_eval]
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:354:theorem Language.InSIZE.of_hardwire {a : ℕ → ℕ} (D : (n : ℕ) → DAGCircuit (n + a n))
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:358:  ⟨DAGCircuitFamily.hardwire D α, fun n => (D n).hardwire_isFaninTwo (α n) (hD n),
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:359:    fun n => ((D n).hardwire_size_le (α n)).trans (hp n),
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:360:    DAGCircuitFamily.hardwire_language D α⟩
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:367:theorem Language.InPPoly.of_hardwire {a : ℕ → ℕ} (D : (n : ℕ) → DAGCircuit (n + a n))
+TCSlib/Complexity/CircuitComplexity/HardWire.lean:371:  ⟨c, k, Language.InSIZE.of_hardwire D α hD hp⟩
+TCSlib/Complexity/Randomized/UnaryPolynomial.lean:17:For each fixed syntactic polynomial, a multitape machine emits its value at one plus the input length. Its time is proportional to the input and output lengths. Expanding into nonzero monomials allows the sharp monomial machines to be combined without an extra power of the input length.
+TCSlib/Complexity/TuringMachine/CodeFormat.lean:208:/-- The fixed one-work-tape serialization agrees with the generic record serialization. [AB09, §1.4] -/
+TCSlib/Complexity/TuringMachine/CodeFormat.lean:213:/-- The fixed two-work-tape serialization agrees with the generic record serialization. [AB09, §1.4] -/
+TCSlib/Complexity/TuringMachine/CodeFormat.lean:218:/-- The fixed one-work-tape skipper agrees with the generic skipper at `k = 1`. [AB09, §1.4] -/
+TCSlib/Complexity/Randomized/BPPHard.lean:43:  `Turing.EffectiveNDMachineCode` in `TuringMachine/NDCodes.lean`) are fixed at two work tapes,
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:32:* `Turing.universalInterpreter` — the fixed four-tape table interpreter.
+TCSlib/Complexity/Randomized/Adleman.lean:20:and hardwiring `r₀` turns the verifier into a circuit.
+TCSlib/Complexity/Randomized/Adleman.lean:34:In [AB09] the verifier is a polynomial-time TM, and the hardwiring step
+TCSlib/Complexity/TuringMachine/UniversalK.lean:40:  a fixed code; H2-F forwards the emissions. Nothing here is specific to one or two work tapes.
+TCSlib/Complexity/ClassP/ModelInvariance.lean:24:fixed class `DTIME T` under tape reduction is claimed, and [AB09, §1.6.1] likewise
+TCSlib/Complexity/TuringMachine/Composition.lean:225:/-- **The fixed-word comparator**. A machine with no work tapes that compares its input with the
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:352:fixed-width binary increment on tape `i`: the carry pass flips `true`
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2217:/-- Emit the fixed prefix, then copy the input verbatim. No work tape is needed;
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4819:Pairing with a fixed first component runs in constant work-tape space: it
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:420:a finite binary machine computing, from a code `α`, the fixed three-work-tape serialization
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:96:/-- The fixed enumeration of the work reads of `k` work tapes: tape `0`
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:103:/-- The fixed serialization of a `k`-work-tape transition table: states in `Fin`
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:203:/-- The number of fixed bits of a `k`-tape transition record before its variable-length
+TCSlib/Complexity/TuringMachine/Build/Convention.lean:246:`none` — the generalization of `Turing.solveSplit` from the hardwired
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2178:fixed list `suf` of suffix fields, there is a two-tape module with an entry and
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2989:/-- Repeat a fixed digit pattern using a preserved radius word on tape zero.
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:477:/-- **The fixed-width incrementer**. A machine with no work tapes that first scans its input for a
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6779:`Turing.FinTM.computesFunInTime_splitSolve` from the hardwired polynomial
+exit=0
+

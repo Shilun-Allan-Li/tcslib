@@ -1,0 +1,55 @@
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:97:2: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  i ≥ 0
+  h ≥ 0
+  g ≥ 0
+  f ≥ 0
+  f - h - i ≤ -1
+  e ≥ 0
+  d ≥ 0
+  d + e ≥ 0
+  c ≥ 0
+  b ≥ 0
+  b - c ≥ 0
+  b - f ≤ 0
+  a ≥ 0
+  a + b - f ≤ 0
+where
+ a := ↑(Strategy.encodeMsgs (normalizePhaseMsgs x aux p (B.eval x.length) raw)).length
+ b := ↑(k.eval x.length - p) * ↑(2 * B.eval x.length + 2)
+ c := ↑(Strategy.encodeMsgs (List.replicate (k.eval x.length - p) [])).length
+ d := ↑(if verifierFirst = true then k.eval x.length / 2 else (k.eval x.length + 1) / 2)
+ e := ↑(k.eval x.length - p)
+ f := ↑(k.eval x.length) * ↑(2 * B.eval x.length + 2)
+ g := ↑(Strategy.encodeMsgs pre).length
+ h := ↑(Strategy.encodeMsgs
+      (normalizePhaseMsgs x (phaseAux z rV j pre)
+        (if verifierFirst = true then k.eval x.length / 2 else (k.eval x.length + 1) / 2) (B.eval x.length)
+        (S.runAtL x.length (pairEncode x (phaseAux z rV j pre)) (coinBlock (S.coinLen x.length) j rS)))).length
+ i := ↑(Strategy.encodeMsgs
+      (List.replicate
+        (k.eval x.length - if verifierFirst = true then k.eval x.length / 2 else (k.eval x.length + 1) / 2) [])).length
+TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine.lean:293:11: warning: unused variable `w`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/SuffixMachine): no fresh .olean produced
+        2.67 real         1.61 user         1.09 sys
+          2244722688  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173427  page reclaims
+                4273  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 385  voluntary context switches
+                7246  involuntary context switches
+            33721116  instructions retired
+            16111646  cycles elapsed
+             1638736  peak memory footprint

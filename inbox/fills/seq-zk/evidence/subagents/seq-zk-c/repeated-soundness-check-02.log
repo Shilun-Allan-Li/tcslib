@@ -1,0 +1,39 @@
+START 2026-11-15T10:18:10Z
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:115:2: error: Type mismatch
+  htest
+has type
+  π.V.next x z (List.ofFn (F i))
+      (exec
+          (prefixProver P [] rP
+            (exec P ρ.V π.verifierFirst x [] z rP (phaseTape q c F) (2 * π.rounds.eval x.length * ↑i)).1)
+          π.V π.verifierFirst x [] z [] (coinBlock (π.V.coinLen x.length) (↑i) (phaseTape q c F))
+          (π.rounds.eval x.length)).2 =
+    [true]
+but is expected to have type
+  π.V.next x z (List.ofFn (F i))
+      (exec (prefixProver P [] rP (exec P ρ.V π.verifierFirst x [] z rP (phaseTape q c F) (2 * k * ↑i)).1) π.V
+          π.verifierFirst x [] z [] (List.ofFn (F i)) k).2 =
+    [true]
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness): no fresh .olean produced
+        2.46 real         1.56 user         1.08 sys
+          2163163136  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172311  page reclaims
+                  12  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  18  voluntary context switches
+                4301  involuntary context switches
+            32111029  instructions retired
+            17414906  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T10:18:13Z
+EXIT 1

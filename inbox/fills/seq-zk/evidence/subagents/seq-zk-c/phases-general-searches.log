@@ -1,0 +1,9 @@
+$ rg -n exec_phase_of_moves|exec.*drop|drop.*exec TCSlib/Cryptography/ZeroKnowledge TCSlib/Cryptography/Composability
+TCSlib/Cryptography/Composability/SequentialZK.lean:300:      (exec (π.seqRep Q).P (π.seqRep Q).V vF x y z rP rV (2 * k * j + t)).1.drop (j * k) =
+TCSlib/Cryptography/Composability/SequentialZK.lean:302:      (exec (π.seqRep Q).P (π.seqRep Q).V vF x y z rP rV (2 * k * j + t)).2.drop (j * k) =
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:61:          ((exec P V vFirst x y z rP rV (g + t)).2.drop
+exit=0
+
+$ rg -n exec.*(prefix|append|drop) /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Computability
+exit=1
+

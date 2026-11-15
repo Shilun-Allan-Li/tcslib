@@ -1,0 +1,67 @@
+$ rg -n zeroTail|zero.*prefix|prefix.*zero|extend.*Fin|Fin.*extend|def extend TCSlib/Cryptography /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fin /Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Function
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Function/Basic.lean:686:def extend (f : α → β) (g : α → γ) (j : β → γ) : β → γ := fun b ↦
+TCSlib/Cryptography/Pseudorandom/NextBit.lean:21:its advice and reads the position from the prefix length. Where the output length is zero,
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:132:      acceptProb (fun W : Fin q → (Fin (ℓ₂.eval n) → Bool) => extendStream W) (lazyDist A) := by
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:32:* `extendStream W`: a finite list of values `W : Fin q → O` as an answer stream.
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:196:noncomputable def extendStream {O : Type*} [Nonempty O] {q : ℕ} (W : Fin q → O) : ℕ → O :=
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:201:theorem extendStream_def {O : Type*} [Nonempty O] {q : ℕ} (W : Fin q → O) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:235:theorem extendStream_update_of_ne (W : Fin q → O) (j : Fin q) (v : O) {k : ℕ}
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:243:theorem extendStream_update_self (W : Fin q → O) (j : Fin q) (v : O) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:247:private theorem extendStream_combine_of_lt (W₀ W : Fin q → O) {ℓ k : ℕ} (hk : k < ℓ) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:252:private theorem extendStream_combine_self (W₀ W : Fin q → O) {ℓ : ℕ} (hℓ : ℓ < q) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:326:    uprob (fun W : Fin q → O => φ (evalLazy (extendStream (combine L.length W₀ W)) t L)) =
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:395:    uprob (fun W : Fin q → O => φ (evalLazy (extendStream W) t [])) =
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:400:  have h2 : ∀ R : I → O, mergeTable [] (extendStream fun _ : Fin q => Classical.arbitrary O)
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:263:    (fun r (W : (Fin q → S) × (Fin q → V)) => (A r).evalLazy (extendStream W.2) [] = true)
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:265:  exact (uprob_snd (fun W : Fin q → V => (A r).evalLazy (extendStream W) [] = true)).trans
+TCSlib/Cryptography/Candidates/RSA.lean:2163:(`H.xgcd`), `y^d mod N` (`H.modExp`, with the zero prefix `H.sub ⟨1y, 1y⟩`), and the `2n`-bit
+TCSlib/Cryptography/Candidates/RSA.lean:2325:`N` (the zeros are `H.sub ⟨1y, 1y⟩`). The two zero prefixes make every word read exactly, also on
+TCSlib/Cryptography/Candidates/Rabin.lean:1391:/-- An all-`true` word longer than `2|z| + 2|x|`, the length of the zero prefix of the modulus word. -/
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean:112:`C(q(n)+1, 2) · 2^{-n}`. The zero prefix `0^n` is masked like the message. -/
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:44:/-- `zeroTail q c i pre` has block `pre j` below `i` and the all-false block afterwards. -/
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:45:private def zeroTail (q c i : ℕ) (pre : Fin i → Fin c → Bool) : Fin q → Fin c → Bool :=
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:56:        (phaseTape q (π.V.coinLen x.length) (zeroTail q (π.V.coinLen x.length) i pre))
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:67:      (phaseTape q (π.V.coinLen x.length) (zeroTail q (π.V.coinLen x.length) i pre))
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:72:**Proof sketch.** Replace every block at and after the phase by zeros. The verifier-prefix
+TCSlib/Cryptography/Composability/SequentialZK/RepeatedSoundness.lean:89:  let F0 : Fin q → π.V.Coins x.length := zeroTail q c i pre
+TCSlib/Cryptography/Composability/SequentialZK/Phases.lean:36:`prior`, `prefixProver P y rP prior` has zero coins and sends
+TCSlib/Cryptography/Composability/SequentialZK/Soundness.lean:52:  | zero => simp only [Nat.add_zero, List.prefix_rfl, and_self]
+exit=0
+
+$ rg -n LazySampling evidence/../inputs/order.txt
+rg: evidence/../inputs/order.txt: IO error for operation on evidence/../inputs/order.txt: No such file or directory (os error 2)
+exit=2
+
+$ rg -n LazySampling /private/tmp/seq-zk-issued/outbox/fills/seq-zk/order.txt
+126:TCSlib/Cryptography/Pseudorandom/Functions/LazySampling
+exit=0
+Corrected earlier relative search path; LazySampling is in the supplied closure.
+
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean
+194:/-- A finite list `W : Fin q → O` of values as an answer stream; entries beyond `q` are
+195:an arbitrary fixed value and are never read by trees making at most `q` queries. -/
+196:noncomputable def extendStream {O : Type*} [Nonempty O] {q : ℕ} (W : Fin q → O) : ℕ → O :=
+197:  fun k => if h : k < q then W ⟨k, h⟩ else Classical.arbitrary O
+198:
+199:/-- The defining equation of `extendStream`: `extendStream W = fun k => if h : k < q then W ⟨k, h⟩
+200:else Classical.arbitrary O`. -/
+201:theorem extendStream_def {O : Type*} [Nonempty O] {q : ℕ} (W : Fin q → O) :
+202:    (extendStream W : ℕ → O) =
+203:      (fun k => if h : k < q then W ⟨k, h⟩ else Classical.arbitrary O :
+204:        ℕ → O) := rfl
+
+/Users/seyoonr/.codex/worktrees/seq-zk-proof/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Function/Basic.lean
+682:`g.FactorsThrough f`). In particular this holds if `f` is injective.
+683:
+684:A typical use case is extending a function from a subtype to the entire type. If you wish to extend
+685:`g : {b : β // p b} → γ` to a function `β → γ`, you should use `Function.extend Subtype.val g j`. -/
+686:def extend (f : α → β) (g : α → γ) (j : β → γ) : β → γ := fun b ↦
+687:  open scoped Classical in
+688:  if h : ∃ a, f a = b then g (Classical.choose h) else j b
+689:
+690:/-- g factors through f : `f a = f b → g a = g b` -/
+691:def FactorsThrough (g : α → γ) (f : α → β) : Prop :=
+692:  ∀ ⦃a b⦄, f a = f b → g a = g b
+693:
+694:theorem extend_def (f : α → β) (g : α → γ) (e' : β → γ) (b : β) [Decidable (∃ a, f a = b)] :
+695:    extend f g e' b = if h : ∃ a, f a = b then g (Classical.choose h) else e' b := by

@@ -1,0 +1,3 @@
+
+Core reader reuse: Init/Data/Fin/Fold.lean:247 foldl_zero and :254 foldl_succ_last already provide the semantic recursion. PrefixLaws specializes them; no new fold/host is implemented. Fin.snoc_castSucc/last are reused directly.
+simPrefix_eq_phasePrefix: new typed-table endpoint bridge; nearest SimulatorMachine.phasePrefix_succ_simulate is directly reused, along with PrefixLaws.simPrefix_succ. Reuses Core Fin.coe_castSucc/val_last. No random-tape reader or recursion host copied.

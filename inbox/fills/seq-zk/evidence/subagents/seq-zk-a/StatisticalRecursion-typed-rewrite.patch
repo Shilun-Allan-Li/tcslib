@@ -1,0 +1,95 @@
+--- attempt01/StatisticalRecursion.lean
++++ checked/StatisticalRecursion.lean
+@@ -66,27 +66,40 @@
+     intro _
+     letI : Nonempty (Fin 0 → α) := ⟨Fin.elim0⟩
+     letI : Nonempty (Fin 0 → β) := ⟨Fin.elim0⟩
+-    refine (statClose_iff _ _ _).2 ?_
++    simp only [Nat.cast_zero, zero_mul]
++    refine (statClose_iff (realFamily 0) (simFamily 0) (0 : ℝ)).2 ?_
+     intro T
+     by_cases hT : T initial
+-    · simp only [real_zero, sim_zero, hT, uprob_true, Nat.cast_zero, zero_mul,
+-        sub_self, abs_zero, le_refl]
+-    · simp only [real_zero, sim_zero, hT, uprob_false, Nat.cast_zero, zero_mul,
+-        sub_self, abs_zero, le_refl]
++    · simp only [real_zero, sim_zero, hT, uprob_true, sub_self, abs_zero, le_refl]
++    · simp only [real_zero, sim_zero, hT, uprob_false, sub_self, abs_zero, le_refl]
+   | succ q ih =>
+     intro hstep
+-    have hprev := ih fun i hi state => hstep i (Nat.lt_succ_of_lt hi) state
++    have hprev : StatClose (realFamily q) (simFamily q) ((q : ℝ) * δ) :=
++      ih fun i hi state => hstep i (Nat.lt_succ_of_lt hi) state
+     -- Replace only the last update while preserving the common real prefix.
++    have hcurrent (r : Fin q → α) :
++        StatClose (realStep q (realFamily q r)) (simStep q (realFamily q r)) δ :=
++      hstep q (Nat.lt_succ_self q) (realFamily q r)
+     have hfirst :
+         StatClose (fun r : (Fin q → α) × α => realStep q (realFamily q r.1) r.2)
+           (fun r : (Fin q → α) × β => simStep q (realFamily q r.1) r.2) δ :=
+-      statClose_average hδ fun r => hstep q (Nat.lt_succ_self q) (realFamily q r)
++      statClose_average (α := Fin q → α) (β := α) (γ := β) (O := State)
++        (F := fun r a => realStep q (realFamily q r) a)
++        (G := fun r b => simStep q (realFamily q r) b) (δ := δ) hδ hcurrent
+     -- Compare prefixes through the same randomized simulated last update.
+     have hsecond :
+         StatClose (fun r : (Fin q → α) × β => simStep q (realFamily q r.1) r.2)
+           (fun r : (Fin q → β) × β => simStep q (simFamily q r.1) r.2) ((q : ℝ) * δ) :=
+-      (statClose_iff _ _ _).2 fun T =>
+-        hprev.abs_uprob_sub_le_prod fun state coin => T (simStep q state coin)
++      (statClose_iff
++        (fun r : (Fin q → α) × β => simStep q (realFamily q r.1) r.2)
++        (fun r : (Fin q → β) × β => simStep q (simFamily q r.1) r.2)
++        ((q : ℝ) * δ)).2 fun T =>
++        hprev.abs_uprob_sub_le_prod (ρ := β) fun state coin => T (simStep q state coin)
++    have hjoined :
++        StatClose (fun r : (Fin q → α) × α => realStep q (realFamily q r.1) r.2)
++          (fun r : (Fin q → β) × β => simStep q (simFamily q r.1) r.2)
++          (δ + (q : ℝ) * δ) :=
++      hfirst.trans hsecond
+     -- Reindex full coin tables as their prefixes and last entries.
+     let eA : (Fin (q + 1) → α) ≃ (Fin q → α) × α :=
+       (Fin.snocEquiv (fun _ : Fin (q + 1) => α)).symm.trans
+@@ -94,19 +107,33 @@
+     let eB : (Fin (q + 1) → β) ≃ (Fin q → β) × β :=
+       (Fin.snocEquiv (fun _ : Fin (q + 1) => β)).symm.trans
+         (Equiv.prodComm β (Fin q → β))
+-    have hfull := ((hfirst.trans hsecond).comp_equiv_left eA).comp_equiv_right eB
+-    have hleft : ∀ r, realStep q (realFamily q (eA r).1) (eA r).2 = realFamily (q + 1) r := by
+-      intro r
+-      change realStep q (realFamily q (Fin.init r)) (r (Fin.last q)) = realFamily (q + 1) r
++    have heA (r : Fin (q + 1) → α) : eA r = (Fin.init r, r (Fin.last q)) := rfl
++    have heB (r : Fin (q + 1) → β) : eB r = (Fin.init r, r (Fin.last q)) := rfl
++    have hleftIndex :
++        StatClose
++          (fun r : Fin (q + 1) → α => realStep q (realFamily q (eA r).1) (eA r).2)
++          (fun r : (Fin q → β) × β => simStep q (simFamily q r.1) r.2)
++          (δ + (q : ℝ) * δ) :=
++      hjoined.comp_equiv_left eA
++    have hfull :
++        StatClose
++          (fun r : Fin (q + 1) → α => realStep q (realFamily q (eA r).1) (eA r).2)
++          (fun r : Fin (q + 1) → β => simStep q (simFamily q (eB r).1) (eB r).2)
++          (δ + (q : ℝ) * δ) :=
++      hleftIndex.comp_equiv_right eB
++    have hleft (r : Fin (q + 1) → α) :
++        realStep q (realFamily q (eA r).1) (eA r).2 = realFamily (q + 1) r := by
++      simp only [heA]
+       simpa only [Fin.snoc_init_self] using (real_snoc q (Fin.init r) (r (Fin.last q))).symm
+-    have hright : ∀ r, simStep q (simFamily q (eB r).1) (eB r).2 = simFamily (q + 1) r := by
+-      intro r
+-      change simStep q (simFamily q (Fin.init r)) (r (Fin.last q)) = simFamily (q + 1) r
++    have hright (r : Fin (q + 1) → β) :
++        simStep q (simFamily q (eB r).1) (eB r).2 = simFamily (q + 1) r := by
++      simp only [heB]
+       simpa only [Fin.snoc_init_self] using (sim_snoc q (Fin.init r) (r (Fin.last q))).symm
++    have hout : StatClose (realFamily (q + 1)) (simFamily (q + 1)) (δ + (q : ℝ) * δ) := by
++      simpa only [hleft, hright] using hfull
+     have herror : δ + (q : ℝ) * δ = ((q + 1 : ℕ) : ℝ) * δ := by
+       rw [Nat.cast_succ, add_mul, one_mul]
+       exact add_comm _ _
+-    rw [herror] at hfull
+-    simpa only [hleft, hright] using hfull
++    simpa only [herror] using hout
+ 
+ end TCSlib.Cryptography.SequentialZK
