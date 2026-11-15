@@ -1,0 +1,89 @@
+prf-mac review: independent overlap search at landing head bd45faecffa420497557dfeba9e2818d7d3cf4a3 (issue base 107f1e8c; worker searches: evidence/overlap/dupsearch-base.log, none for prfAdv/tblEnc/take_ofFn/ofFn_arrowCongr)
+
+=== U1 (undisclosed): Bound.lean hadv (exists_forgeGame_le, lines 159-173) vs public ETTGame.prfAdv_eq_expect (EncryptThenTag/Reduction.lean:347, #306, present at the issue base 107f1e8c)
+--- Bound.lean 159-173
+  have hadv : prfAdv (F n) (D.toOracleAdversary n n n ((macBudget q).eval n)) =
+      |(expect (sample (Fin n → Bool)) fun k => expect (sample (D.Coins n)) fun c =>
+          if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval (F n k) = true
+          then (1 : ℝ) else 0) -
+        expect (sample ((Fin n → Bool) → (Fin n → Bool))) (fun R =>
+          expect (sample (D.Coins n)) fun c =>
+            if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval R = true
+            then (1 : ℝ) else 0)| := by
+    rw [prfAdv_def, distAdv_def, Bridge.acceptProb_eq, Bridge.acceptProb_eq, accept_eq, accept_eq,
+      Bridge.acceptGame_eq, Bridge.acceptGame_eq, prob_bind, prob_bind]
+    congr 2
+    · refine congrArg _ (funext fun k => ?_)
+      simp only [prob_bind, prob_pure, oracleDist_apply]
+    · refine congrArg _ (funext fun R => ?_)
+      simp only [prob_bind, prob_pure, oracleDist_apply, randomFunction_apply]
+--- EncryptThenTag/Reduction.lean 341-360
+in general form from the published readers): for an oracle adversary `A'` on `m`-bit strings,
+`prfAdv F A' = |𝔼_k 𝔼_c [A'(c)^{F k} = 1] − 𝔼_R 𝔼_c [A'(c)^R = 1]|`.
+
+**Proof sketch.** `prfAdv_def`, `distAdv_def`; each acceptance probability is an average over the
+key (resp. the function table) and the coins (`Bridge.acceptProb_eq`, `accept_eq`,
+`Bridge.acceptGame_eq`, `prob_bind`, `oracleDist_apply`, `randomFunction_apply`). -/
+theorem prfAdv_eq_expect {m : ℕ} (Fm : (Fin m → Bool) → (Fin m → Bool) → (Fin m → Bool))
+    {ρ : Type} [Fintype ρ] [Nonempty ρ] (A' : OracleAdversary ρ (Fin m → Bool) (Fin m → Bool)) :
+    prfAdv Fm A' =
+      |expect (sample (Fin m → Bool))
+          (fun k => expect (sample ρ) fun c => if (A' c).eval (Fm k) = true then (1 : ℝ) else 0) -
+        expect (sample ((Fin m → Bool) → (Fin m → Bool)))
+          (fun R => expect (sample ρ) fun c => if (A' c).eval R = true then (1 : ℝ) else 0)| := by
+  rw [prfAdv_def, distAdv_def, Bridge.acceptProb_eq, Bridge.acceptProb_eq, accept_eq, accept_eq,
+    Bridge.acceptGame_eq, Bridge.acceptGame_eq, prob_bind, prob_bind]
+  congr 2
+  · refine congrArg _ (funext fun k => ?_)
+    simp only [prob_bind, prob_pure, oracleDist_apply]
+  · refine congrArg _ (funext fun R => ?_)
+    simp only [prob_bind, prob_pure, oracleDist_apply, randomFunction_apply]
+--- importability: EncryptThenTag/Reduction closure at 107f1e8c has 164 modules, 0 under Authentication (no cycle); adding it to Bound's closure adds 4 modules: EncryptThenTag/{Games,Handler,Machines,Reduction}
+
+=== U2 (undisclosed, landing-time + base): Reduction.lean decide_fnForge hw/htake/hdrop (lines 139-147)
+      decide (FnForge f w log) := by
+  have hw : List.ofFn w = List.ofFn (splitBits w).1 ++ List.ofFn (splitBits w).2 := by
+    rw [← List.ofFn_fin_append,
+      show (splitBits w).1 = fun i => w (Fin.castAdd b i) from funext (splitBits_fst w),
+      show (splitBits w).2 = fun j => w (Fin.natAdd a j) from funext (splitBits_snd w),
+      Fin.append_castAdd_natAdd]
+  have htake : (List.ofFn w).take a = List.ofFn (splitBits w).1 := by
+    rw [hw, List.take_left' List.length_ofFn]
+  have hdrop : (List.ofFn w).drop a = List.ofFn (splitBits w).2 := by
+--- merged #307 (after the issue base): Hashing/FromDiscreteLog/Encoding.lean:45,55
+/-- The word of the first component of `splitBits w` is the first `a` bits of `w`:
+`List.ofFn (splitBits w).1 = (List.ofFn w).take a`. -/
+theorem ofFn_splitBits_fst {a b : ℕ} (w : Fin (a + b) → Bool) :
+    List.ofFn (splitBits w).1 = (List.ofFn w).take a := by
+  have hfst : (splitBits w).1 = fun j : Fin a => w (Fin.castAdd b j) :=
+    funext fun j => splitBits_fst w j
+  rw [hfst]
+  have hwindow := ofFn_drop_take w 0 a (by omega)
+  simpa only [List.drop_zero, Nat.zero_add] using hwindow.symm
+
+/-- The word of the second component of `splitBits w` is the word of `w` after its first
+`a` bits: `List.ofFn (splitBits w).2 = (List.ofFn w).drop a`. -/
+theorem ofFn_splitBits_snd {a b : ℕ} (w : Fin (a + b) → Bool) :
+    List.ofFn (splitBits w).2 = (List.ofFn w).drop a := by
+--- at the issue base: Asymptotic/ReductionSupport.lean:288 take_ofFn_castLE (the G24-01 lemma), Asymptotic/CollectionsHelpers.lean:210 ofFn_drop_take
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:210:theorem ofFn_drop_take {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k ≤ L) :
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean-211-    ((List.ofFn b).drop a).take k = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
+--
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:288:theorem take_ofFn_castLE {ℓ m : ℕ} (h : m ≤ ℓ) (f : Fin ℓ → Bool) :
+107f1e8c218733eac12d6b9bee6fece441271317:TCSlib/Cryptography/Asymptotic/ReductionSupport.lean-289-    (List.ofFn f).take m = List.ofFn fun i : Fin m => f (Fin.castLE h i) := by
+
+=== U3 (undisclosed relative): blocks/macState/hitsOf/hits_nil_iff (Handler.lean) vs the published encoded table with poly-time lookup GGMRed.tblEnc / GGMRed.lookup / lookup_tblOf (Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean:180,349,472), reused by cca2-ett as tblW/lookup_tblW (EncryptThenTag/CPAHandler.lean:74,116) for a handler state of stored entries
+
+=== U4 (undisclosed relatives of disclosed rows)
+owned-file key/hkey: public NUPPT.coinsEquiv_ofPolyTimeUniform(_ofFn) (Complexity/Randomized/PPT.lean:417,422) and Asymptotic/Adversary.lean:232 ofFn_arrowCongr_finCongr (the disclosed relative was only the private prfKeyEq)
+accept_forgeGame_eq: Lamport's deterministic-signer game lemmas lamport_signImpl_expect / lamport_loggedSignImpl_expect / lamport_forgeGame_accept_eq_honestProbability (Signatures/Lamport.lean:808,823,849; #309, at the issue base)
+fnImpl: disclosed (tableSigner T = fnImpl-shape for Lamport)
+
+=== Checked, disclosed or no overlap
+finish_of_query_padFin: no finalization-with-query lemma elsewhere (all *_finish lemmas use finish_of_ret/buildComp_zero_of_ret; Decrypt.lean:218 simulate_decHandler_finish is decHandler-specific)
+allOutputs_simulate_withLog_length: no withLog log-length lemma in TCSlib (Simulate.lean has only withLog_apply, simulate_withLog)
+queried / FnForge: relatives in HashAndSign ForwardGame/CollisionHandler/FixedGame and Lamport Planted (disclosed rows)
+eval_toOracleAdversary_width2, macBudget, forgerCodec_eq_bitCodec, expect_forge_*: disclosed
+hash-sign CollisionHandler (one stored query, not a list) is not a restatement
+
+=== Name clashes: statements/nameclash.txt (0 exact; one same short name under Authentication: SignatureScheme.forgerCodec_eq_bitCodec, different namespace)

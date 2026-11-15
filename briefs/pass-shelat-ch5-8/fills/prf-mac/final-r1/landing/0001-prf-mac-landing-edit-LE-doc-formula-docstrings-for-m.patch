@@ -1,0 +1,49 @@
+From bd45faecffa420497557dfeba9e2818d7d3cf4a3 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 02:33:28 +0000
+Subject: [PATCH] prf-mac landing edit LE-doc: formula docstrings for
+ macHandler and the FnForge Decidable instance
+
+Docstring-only (code identical with doc comments removed; tools/doconly.py): the two new public
+declarations whose docstrings stated no formula now state it, macHandler's simps fields and the
+instance's Decidable (FnForge f w log).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Authentication/MAC/FromPRF/Handler.lean   | 4 +++-
+ TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean | 3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Handler.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Handler.lean
+index 8a9d0ec12..1ff897ea4 100644
+--- a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Handler.lean
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Handler.lean
+@@ -239,7 +239,9 @@ private theorem polyTimeComputable_macFin (ℓ : PolyExpr) : PolyTimeComputable
+ `q` and `ℓ(n)`-bit messages with `t(n)`-bit tags: one inner and one outer oracle, both with these
+ lengths; the state keeps the queried messages in `q(n) · (ℓ(n) + 1)` bits; no seed; one outer
+ query per call, which forwards the inner query; the adversary gets the empty input; the
+-finalization makes one outer query and returns one bit. -/
++finalization makes one outer query and returns one bit:
++`(macHandler q ℓ t).stateLen = macStLen q ℓ`, `seedLen = .const 0`,
++`perCall = finCall = outLen = .const 1` and `advIn _ = []` (the `simps` fields). -/
+ def macHandler (q ℓ t : PolyExpr) :
+     InteractiveHandler 1 (fun _ => ℓ) (fun _ => t) 1 (fun _ => ℓ) (fun _ => t) where
+   stateLen := macStLen q ℓ
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean
+index efd4cd7a9..fea7c8943 100644
+--- a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean
+@@ -88,7 +88,8 @@ theorem fnForge_iff (f : (Fin a → Bool) → (Fin b → Bool)) (w : Fin (a + b)
+     FnForge f w log ↔ f (splitBits w).1 = (splitBits w).2 ∧ ∀ e ∈ log, e.2.1 ≠ (splitBits w).1 :=
+   Iff.rfl
+ 
+-/-- Forgeries are decidable. -/
++/-- Forgeries are decidable, as the conjunction they unfold to (`fnForge_iff`):
++`Decidable (FnForge f w log)` from `f (splitBits w).1 = (splitBits w).2 ∧ ∀ e ∈ log, …`. -/
+ instance (f : (Fin a → Bool) → (Fin b → Bool)) (w : Fin (a + b) → Bool)
+     (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b))) : Decidable (FnForge f w log) :=
+   inferInstanceAs (Decidable (_ ∧ _))
+-- 
+2.43.0
+
