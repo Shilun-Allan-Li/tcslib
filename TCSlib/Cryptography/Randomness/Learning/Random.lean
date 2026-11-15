@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Randomness.Learning.Law
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -120,13 +121,15 @@ theorem uprob_flip_half {m : ℕ} {ρ : Type*}
   linarith
 
 /-- **A uniform point hits a given point with probability `2^{-n}`:**
-`uprob (fun x : {0,1}^n => y = x) = 1 / 2^n`. -/
+`uprob (fun x : {0,1}^n => y = x) = 1 / 2^n`.
+
+**Proof sketch.** This is `OneWay.uprob_eq_one_div_card` with the equation reversed and
+`|{0,1}^n| = 2^n`. -/
 theorem uprob_eq_point (y : Fin n → Bool) :
     uprob (fun x : Fin n → Bool => y = x) = 1 / 2 ^ n := by
-  classical
-  rw [uprob_eq_card_filter, Finset.filter_eq, if_pos (Finset.mem_univ y), Finset.card_singleton,
-    Fintype.card_fun, Fintype.card_bool, Fintype.card_fin, Nat.cast_one, Nat.cast_pow,
-    Nat.cast_two]
+  rw [show (fun x : Fin n → Bool => y = x) = (fun x => x = y) from
+      funext fun _ => propext eq_comm, OneWay.uprob_eq_one_div_card, Fintype.card_fun,
+    Fintype.card_bool, Fintype.card_fin, Nat.cast_pow, Nat.cast_two]
 
 include hn in
 /-- **With a random function the prediction is within `m/2^n` of `½`** [PS10, Theorem 179.1,
@@ -135,7 +138,8 @@ proof, step 2]: for `n ≥ 1`, every learner `ℓ` and `m` examples,
 
 **Proof sketch.** Put the function last (`uprob_comp_equiv`) and average over it first
 (`uprob_prod`): for fixed `((s, r), x)` the probability `p` is `½` when `x` is fresh
-(`uprob_flip_half`) and in `[0, 1]` otherwise, so `|p − ½| ≤ [x ∈ s]`. Averaging,
+(`uprob_flip_half`) and in `[0, 1]` otherwise, so `|p − ½| ≤ [x ∈ s]`. Averaging (the
+coupling bound `MultiMsg.abs_uexp_sub_le_uprob` against the constant `½`),
 `|gameProb − ½| ≤ Pr[∃ j, s_j = x]`, which the union bound (`uprob_exists_le`) bounds by
 `Σ_j Pr[s_j = x] = m · 2^{-n}` (`uprob_prod`, `uprob_eq_point`). -/
 theorem abs_gameProb_random_sub_half_le {ρ : Type*} [Fintype ρ] [Nonempty ρ] (m : ℕ)
@@ -158,30 +162,12 @@ theorem abs_gameProb_random_sub_half_le {ρ : Type*} [Fintype ρ] [Nonempty ρ] 
   -- the bad event: the fresh point is an example
   set bad : ((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool) → Prop :=
     fun t => ∃ j ∈ (Finset.univ : Finset (Fin m)), t.1.1 j = t.2 with hbad
-  have hpt : ∀ t, |p t - 1 / 2| ≤ if bad t then 1 else 0 := by
-    intro t
-    by_cases hb : bad t
-    · rw [if_pos hb, abs_le]
-      have h0 := uprob_nonneg (fun R : (Fin n → Bool) → (Fin n → Bool) =>
-        (ℓ (label (fun z => firstBit (R z)) t.1.1) t.1.2 t.2 == firstBit (R t.2)) = true)
-      have h1 := uprob_le_one (fun R : (Fin n → Bool) → (Fin n → Bool) =>
-        (ℓ (label (fun z => firstBit (R z)) t.1.1) t.1.2 t.2 == firstBit (R t.2)) = true)
-      constructor <;> linarith
-    · rw [if_neg hb, hp]
-      beta_reduce
-      have hx : ∀ j, t.1.1 j ≠ t.2 := fun j hj => hb ⟨j, Finset.mem_univ j, hj⟩
-      rw [uprob_flip_half hn ℓ t.1.1 t.1.2 t.2 hx, sub_self, abs_zero]
-  have hcard : (0 : ℝ) < Fintype.card (((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool)) := by
-    exact_mod_cast Fintype.card_pos
+  -- the coupling bound against the constant `½`: off the bad event, `p = ½`
   have hdev : |uexp p - 1 / 2| ≤ uprob bad := by
-    rw [uprob_eq_uexp, uexp_def, uexp_def]
-    have hhalf : (1 : ℝ) / 2 = (∑ _t : ((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool),
-        (1 : ℝ) / 2) / Fintype.card (((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool)) := by
-      rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-      field_simp
-    rw [hhalf, ← sub_div, ← Finset.sum_sub_distrib, abs_div, abs_of_pos hcard]
-    gcongr
-    exact (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun t _ => hpt t)
+    have h := MultiMsg.abs_uexp_sub_le_uprob p (fun _ => 1 / 2) bad
+      (fun _ => ⟨uprob_nonneg _, uprob_le_one _⟩) (fun _ => ⟨by norm_num, by norm_num⟩)
+      (fun t hb => uprob_flip_half hn ℓ t.1.1 t.1.2 t.2 fun j hj => hb ⟨j, Finset.mem_univ j, hj⟩)
+    rwa [OneWay.uexp_const] at h
   -- the union bound
   have hj : ∀ j : Fin m, uprob (fun t : ((Fin m → Fin n → Bool) × ρ) × (Fin n → Bool) =>
       t.1.1 j = t.2) = 1 / 2 ^ n := by
