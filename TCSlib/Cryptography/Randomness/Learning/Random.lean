@@ -62,11 +62,11 @@ theorem flip0_flip0 (y : Fin n → Bool) : flip0 hn (flip0 hn y) = y := by
     Function.update_eq_self]
 
 /-- The first bit of an `n`-bit string with `n ≥ 1` is its bit `0`:
-`firstBit y = y ⟨0, hn⟩`. -/
+`firstBit y = y ⟨0, hn⟩`.
+This is the published `TCSlib.Cryptography.headD_drop_ofFn` at index `0`. -/
 theorem firstBit_of_pos (y : Fin n → Bool) : firstBit y = y ⟨0, hn⟩ := by
-  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by omega⟩
-  rw [firstBit_eq, List.ofFn_succ, List.headD_cons]
-  rfl
+  rw [firstBit_eq]
+  simpa only [List.drop_zero] using TCSlib.Cryptography.headD_drop_ofFn y ⟨0, hn⟩ false
 
 /-- Flipping the first bit negates it: `firstBit (flip0 hn y) = !firstBit y`. -/
 theorem firstBit_flip0 (y : Fin n → Bool) : firstBit (flip0 hn y) = !firstBit y := by
