@@ -88,7 +88,8 @@ theorem fnForge_iff (f : (Fin a → Bool) → (Fin b → Bool)) (w : Fin (a + b)
     FnForge f w log ↔ f (splitBits w).1 = (splitBits w).2 ∧ ∀ e ∈ log, e.2.1 ≠ (splitBits w).1 :=
   Iff.rfl
 
-/-- Forgeries are decidable. -/
+/-- Forgeries are decidable, as the conjunction they unfold to (`fnForge_iff`):
+`Decidable (FnForge f w log)` from `f (splitBits w).1 = (splitBits w).2 ∧ ∀ e ∈ log, …`. -/
 instance (f : (Fin a → Bool) → (Fin b → Bool)) (w : Fin (a + b) → Bool)
     (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b))) : Decidable (FnForge f w log) :=
   inferInstanceAs (Decidable (_ ∧ _))

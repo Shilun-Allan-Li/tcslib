@@ -239,7 +239,9 @@ private theorem polyTimeComputable_macFin (ℓ : PolyExpr) : PolyTimeComputable 
 `q` and `ℓ(n)`-bit messages with `t(n)`-bit tags: one inner and one outer oracle, both with these
 lengths; the state keeps the queried messages in `q(n) · (ℓ(n) + 1)` bits; no seed; one outer
 query per call, which forwards the inner query; the adversary gets the empty input; the
-finalization makes one outer query and returns one bit. -/
+finalization makes one outer query and returns one bit:
+`(macHandler q ℓ t).stateLen = macStLen q ℓ`, `seedLen = .const 0`,
+`perCall = finCall = outLen = .const 1` and `advIn _ = []` (the `simps` fields). -/
 def macHandler (q ℓ t : PolyExpr) :
     InteractiveHandler 1 (fun _ => ℓ) (fun _ => t) 1 (fun _ => ℓ) (fun _ => t) where
   stateLen := macStLen q ℓ
