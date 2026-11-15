@@ -4,8 +4,10 @@
 
 - Repository: `https://github.com/Shilun-Allan-Li/tcslib` (the same repository as your exchange
   checkout).
-- **Base commit:** given in the dispatch prompt: the campaign `complexity/arora-barak-ch3-4` after
-  Ladner fill 2 (the saturated power `BinArith.powCap` and the private padding parser) has landed.
+- **Base commit:** `fe8a8520f65a9feaa4c960c11874b68ebf8798db`, the campaign
+  `complexity/arora-barak-ch3-4` after Ladner fill 2 (#310: the saturated power `BinArith.powCap`,
+  the private padding parser, the shared round `BinArith.sqStep`, and the readers `BinArith.mod_eq`
+  and `BoolCircuit.encodeNat_eq`).
   Work on a local branch off it (suggested `fill/ladner-poly-candidate`). Record the base in
   `REPORT.md`. Never rebase.
 - **Delivery** is by zip pushed to the exchange and attached in chat; see "Delivery".
@@ -74,7 +76,13 @@ approved imports `ClassP.BinaryArith.Loops` and `ClassP.ModelInvariance` if not 
    state reached, not only the final one; malformed states must not cause long loops or huge
    allocations; never assume `ladnerH` is monotone; a classical equation is not an FP
    implementation.
-6. **Escalate** anything unprovable as stated (E-STATEMENT) or a missing host (E-HOST). A clean
+6. **Cite, do not re-prove.** Before proving a helper fact, search the import closure for a
+   public lemma that already states it, possibly in another presentation (for example
+   `BinArith.uRest_encodeNat` read through `BoolCircuit.encodeNat_eq`), and fill 2's private leaves
+   in `Ladner.lean`. A re-derivation of an existing fact is a duplication finding even when the copy
+   screens miss it. If the fact exists but cannot be reached by published equations, escalate
+   (E-READER).
+7. **Escalate** anything unprovable as stated (E-STATEMENT) or a missing host (E-HOST). A clean
    frontier with the leaves it completed is a valid delivery; prefer finishing the arithmetic,
    preparation and simulator leaves before the scan.
 
