@@ -15,10 +15,12 @@ Campaign Lean is `d811bdaaf5e923b2a57f0453135af5c7ee37713a`. Its replay output i
 (876 objects); use it whole. See campaign/status/2026-11-15-merge-322/. Ladner has one admitted
 target left: target 6, `SAT_H_intermediate`. Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
 (`ladnerH_polyTime`; #321). Fills 5 and 6 proved targets 2 and 5
-(#322). Fill 7 (target 6, the last admission) is dispatched (2026-11-15; campaign/fills/ladner-final/). Earlier merges are in the table.
+(#322). Fill 7 proves target 6, completing Ladner
+(`Complexity.ladner`, standard axioms only); it is in gate 141 (draft PR #325, staged). Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
+| #325 / 141 | **Draft, staged** at `b2d562d926a822cc59545fbc89513ca573effbd2`. Ladner fill 7: target 6 `SAT_H_intermediate`, completing `ladner`. Replay 2/2 with 0 admissions; seals 8/8. campaign/gates/141-ladner-final/. |
 | #322 / 140 | **Merged** at `d811bdaaf5e923b2a57f0453135af5c7ee37713a` (2026-11-15). Gate closed (CLEAR). Ladner fills 5 and 6: targets 2 `SAT_H_mem_NP` and 5 `SAT_mem_P_of_padSAT_NPHard`. Its replay output is the campaign snapshot `oleans-cd811` (876 objects; campaign/status/2026-11-15-merge-322/). |
 | #321 / 139 | **Merged** at `34643146ee1fe6bf6d7ffdf2e543e8342a3e16a0` (2026-11-15). Gate closed (CLEAR). Ladner fill 4: the approved reorder and target 1 `ladnerH_polyTime`. Its replay output is the campaign snapshot `oleans-c3464` (876 objects; campaign/status/2026-11-15-merge-321/). |
 | #320 / 138 | **Merged** at `1320a5c8ce93f4644c2c92ed32e2768ed07ea9bb` (2026-11-15). Gate closed (CLEAR). Ladner fill 3: target 1 part A through `ladner_candidate_FP`, with private dedup helpers. Its replay output is the campaign snapshot `oleans-c1320` (876 objects; campaign/status/2026-11-15-merge-320/). |
@@ -55,7 +57,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
 with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132), merged 2026-11-14.** The archived `CfgFacts` draft is superseded. The approved
-Hardness CfgFacts import stays separate. Next free gate 141. Use complete
+Hardness CfgFacts import stays separate. Next free gate 142. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.
 
