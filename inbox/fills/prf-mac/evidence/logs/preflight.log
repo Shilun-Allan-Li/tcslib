@@ -1,0 +1,54 @@
+# preflight 2026-11-14T23:38:21Z
+nproc: 4
+## cgroup
+9:name=systemd:/
+8:pids:/process_api
+7:blkio:/
+6:freezer:/
+5:devices:/
+4:memory:/process_api/b91a095c68a8aa13e288e2de5be0cf9e
+3:cpuset:/
+2:cpuacct:/
+1:cpu:/
+0::/
+### /sys/fs/cgroup/memory/memory.limit_in_bytes
+9223372036854771712
+### /sys/fs/cgroup/memory/memory.usage_in_bytes
+4615127040
+## /proc/meminfo
+MemTotal:       16473776 kB
+MemFree:        11707336 kB
+MemAvailable:   16050996 kB
+Buffers:           42820 kB
+Cached:          4449016 kB
+## df
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 33470001152 10402267136  77% /
+/dev/vda       270553174016 33470001152 10402267136  77% /
+/dev/vda       270553174016 33470001152 10402267136  77% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 32685548  10158464  77% /
+/dev/vda       ext4 264212084 32685548  10158464  77% /
+/dev/vda       ext4 264212084 32685548  10158464  77% /
+
+## Initial reading: / has 10402267136 B (9.69 GiB) free, below the 12 GiB floor.
+## Freed this session's own finished scratch (no dependency tree touched):
+##  - git worktree remove /workspace/sim (fill/nm-sim, clean, delivered and landed in #297; branch kept)
+##  - git worktree remove /workspace/basewt (detached base checkout at b96ab3ccc, clean)
+##  - rm -rf /workspace/folds/.lake/tcslib-check-oleans (dl-folds olean tree; rebuildable)
+# re-check after freeing 2026-11-14T23:39:52Z
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 29990973440 13881294848  69% /
+/dev/vda       270553174016 29990973440 13881294848  69% /
+/dev/vda       270553174016 29990973440 13881294848  69% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 29288060  13555952  69% /
+## memory: cgroup v1, no limit (limit_in_bytes = 9223372036854771712), so headroom = MemAvailable
+MemTotal:       16473776 kB
+MemAvailable:   16025892 kB
+cache 45404160
+rss 8851456
+shmem 17035264
+total_cache 4696391680
+total_rss 15560704
+total_shmem 17035264
