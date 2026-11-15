@@ -221,9 +221,15 @@ theorem exists_viewP_le {G : Functionality} {ρ : Protocol} (hρ : G.PolyTime ρ
   rw [Protocol.transcript_eq_transcriptWith] at hb
   have h₂ := (length_encodeMsgs_le _ (B.eval n) fun w hw =>
     hb w (List.mem_append_left _ hw)).trans (Nat.mul_le_mul_right _ h₁)
-  rw [Protocol.viewP_eq, View.encode_mk]
-  simp only [length_pairEncode, List.length_ofFn, Strategy.coinLen_eq, List.length_replicate]
-    at h₂ ⊢
+  have hR : ρ.rounds.eval (List.replicate n true).length = ρ.rounds.eval n := by
+    rw [List.length_replicate]
+  rw [hR] at h₂
+  have hu : (List.replicate n true).length = n := List.length_replicate
+  have hz : (List.ofFn x).length = G.inA.eval n := List.length_ofFn
+  have ht : (List.ofFn t.1).length = ρ.P.coins.eval n := by
+    rw [List.length_ofFn, Strategy.coinLen_eq, List.length_replicate]
+  rw [Protocol.viewP_eq, View.encode_mk, length_pairEncode, length_pairEncode, length_pairEncode,
+    ht]
   simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   omega
 
@@ -244,9 +250,15 @@ theorem exists_viewV_le {G : Functionality} {ρ : Protocol} (hρ : G.PolyTime ρ
   rw [Protocol.transcript_eq_transcriptWith] at hb
   have h₂ := (length_encodeMsgs_le _ (B.eval n) fun w hw =>
     hb w (List.mem_append_right _ hw)).trans (Nat.mul_le_mul_right _ h₁)
-  rw [Protocol.viewV_eq, View.encode_mk]
-  simp only [length_pairEncode, List.length_ofFn, Strategy.coinLen_eq, List.length_replicate]
-    at h₂ ⊢
+  have hR : ρ.rounds.eval (List.replicate n true).length = ρ.rounds.eval n := by
+    rw [List.length_replicate]
+  rw [hR] at h₂
+  have hu : (List.replicate n true).length = n := List.length_replicate
+  have hz : (List.ofFn y).length = G.inB.eval n := List.length_ofFn
+  have ht : (List.ofFn t.2).length = ρ.V.coins.eval n := by
+    rw [List.length_ofFn, Strategy.coinLen_eq, List.length_replicate]
+  rw [Protocol.viewV_eq, View.encode_mk, length_pairEncode, length_pairEncode, length_pairEncode,
+    ht]
   simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   omega
 
