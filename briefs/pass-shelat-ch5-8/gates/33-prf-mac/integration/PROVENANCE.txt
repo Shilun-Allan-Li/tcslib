@@ -1,0 +1,131 @@
+#317 (Pass-shelat prf-mac, draft) integration build on the records tip + #315 (prf-long) + #317, maintainer, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0, PATH=$HOME/.elan/bin:$PATH; one Lean process at a time (ours), only
+  scripts/lean_check_tree.sh (worktree copy byte-equal to /home/user/tcslib/scripts/lean_check_tree.sh, checks/runner-equal.txt)
+  through tools-used/review/runner.py (the G26-N1-fixed runner: errors counted as ^\S+\.lean:\d+:\d+: error[:(], both forms)
+  with TCSLIB_OLEANS=$SP/dl-oleans-2 (dl-oleans, in use by another review, not touched); no lake command; nothing pushed; no
+  commit or branch in /home/user/tcslib (only `git fetch`, `git worktree`, and unreferenced `git commit-tree` objects; two
+  remote-tracking refs created by a first `git fetch ... pull/31x/head:refs/remotes/origin/pr31x` were deleted at once with
+  `git update-ref -d`; FETCH_HEAD/ls-remote used after that); /home/user/tcslib working tree not edited (status clean).
+Method and tools: the #315 integration evidence (records briefs/pass-shelat-ch5-8/gates/31-prf-long/integration/
+  int-315-evidence.zip, SHA-256 162c3f1cfd7a1785a533b842c477dae3e8955e1d9c3fb3ffed66c5cca0ff7759), extracted into a fresh
+  directory and checked against its evidence-SHA256SUMS: 219/219 OK, path set exact (220 files incl. SHA256SUMS, which equals
+  evidence-SHA256SUMS). tools-used/ here: unmodified copies of its tools-used/ (review/runner.py, downorder.py, snapshot.py,
+  buildsum.py, sorrycensus.py, treecheck.py; buildset.py, bothdown.py, refunion.py, refcmp.py, restoreplan.py; each
+  hash-checked against that SHA256SUMS). runner.py there is byte-equal to the prf-mac LE-reuse zip's. New here:
+  bothdown317.py (bothdown.py with the #315/#317 seed sets) and permod.py (per-module table, error count split by form).
+  PROVENANCE layout as in that evidence. The prf-mac LE-reuse evidence (records briefs/pass-shelat-ch5-8/fills/prf-mac/final-r1/
+  landing-reuse/prf-mac-reuse-evidence.zip, SHA-256 203f1b031ebd6ea25b333069f51290a678531223b1855f1fb5c8d0e7d99d7541) was
+  extracted the same way: 330/330 OK, path set exact, SHA256SUMS = evidence-SHA256SUMS.
+
+trial merge (landing/):
+  records tip 8722064f808605aec8e2f43d08f4731a0d17ec80 (= origin/cryptography/pass-shelat-ch2-4 after `git fetch`; tree
+    4414a0f896240afe18140c6e1ba4c2de57264b19).
+  #315 head fbd37f447596d4207c8d08b7ef7602f57fe95198 (= refs/pull/315/head). NOTE: #315 is already merged into the tip
+    (10b9be17b70715441c14e55b7c31436ac0f7c965 "Merge pull request #315", first parent of the tip's parent chain; merge-base
+    tip x #315 = fbd37f44 itself). So the first merge is a no-op: its tree is the tip's tree.
+  #317 head 590d1a56a350d9e8e75ee33d31e0501182169f67 (= refs/pull/317/head), merge-base with the tip e99987221593020b9f7dbb87fe577bd6aac5ecbb
+  `git merge-tree --write-tree 8722064f fbd37f44` (landing/merge-tree-1.txt): clean, tree 4414a0f896240afe18140c6e1ba4c2de57264b19
+    (= tip tree). scratch S1 5d73f1986ab3f0161ecf11326fefdd8539c270a2 = `git commit-tree --no-gpg-sign 4414a0f8 -p 8722064f -p fbd37f44`.
+  `git merge-tree --write-tree S1 590d1a56` (landing/merge-tree-2.txt): clean, tree ca865aa809e864e47302484daaba8d78d6b3777f
+    (the expected value). scratch S2 37e3974337bd47eca11c7ff433a567d2a0db4789 = `git commit-tree --no-gpg-sign ca865aa8 -p S1 -p 590d1a56`.
+  other order (landing/merge-tree-alt-*.txt): tip x 590d1a56 = ca865aa8 (scratch S3 5941b356ee3a8fd996b245a2da282f4b0fbeff57),
+    S3 x fbd37f44 = ca865aa8. Both merge orders give the same tree, so this one build covers both.
+  S1, S2, S3: author = committer = Claude <noreply@anthropic.com>, date fixed 2026-11-15T00:00:00Z, unsigned, no ref, never
+    pushed (landing/scratch-commits.txt).
+  checks/tip-vs-merge-name-status.txt: exactly #317's 6 Lean files (M Authentication/MAC/FromPRF.lean; A FromPRF/Bound, Game,
+    Handler, Random, Reduction), = checks/pr317-name-status.txt (e9998722..590d1a56), +1289/-19 (pr317-numstat.txt).
+    #315's 6 files do not appear because the tip already holds them. Against the records commit just before the #315 merge
+    (885b594e, checks/pre315-records-885b594e-vs-merge-name-status.txt) the merge differs in exactly #315's 6 Lean files +
+    #317's 6 (plus PassShelatChapter5-8Plan.md and two briefs/ files, records). checks/pr315-name-status.txt (dd98360d..fbd37f44):
+    6 files, +908/-279. Shared paths between #315 and #317: 0. checks/merge-315paths-vs-315head.txt and
+    merge-317paths-vs-317head.txt: each of the 12 files at the merge = its blob at the PR head.
+  checks/int315-merge-8207f47f-vs-merge-code.txt: the int-315 scratch merge 8207f47f vs S2 over TCSlib, TCSlib.lean, audits,
+    scripts, lake files, toolchain: exactly #317's 6 files (the tip's code = 8207f47f's code).
+  checks/317base-e9998722-vs-tip-code.txt: the code delta from #317's base to the tip is #315's 6 files only.
+  origin moved during the job (landing/origin-moved.txt): 8722064f -> a334ec2e1d87dbde7eac40812286ba60e85c9078 (2 records commits
+    "Gate 32 closed by disposition", "#315 merged", not made here); code diff 0 files; outside briefs/ only
+    PassShelatChapter5-8Plan.md; merge-tree a334ec2e x 590d1a56 = 94ce3dba, which differs from ca865aa8 only in *.md under
+    briefs/ and the plan. The build applies unchanged to the new tip.
+worktree: $SP/wt-int-317, detached at S2, sparse (non-cone: /* !/briefs/), .lake/packages -> /home/user/tcslib/.lake/packages.
+  Clean at the end before removal (checks/worktree-status.txt: only ignored .lake/); removed with `git worktree remove`, pruned.
+
+build set (order/):
+  tools-used/review/downorder.py /home/user/tcslib S2 eff2dcd0 (olean base snapshot; order/base-rev.txt): changed.txt 68 modules
+    (the 56 base delta since eff2dcd0 of int-315: #303, #306-#309, #311, #312, #314; + #315's 6 + #317's 6), down.txt 137,
+    order.txt 1249 (imports-first), roots.txt 375. down.txt = int-315's 132 + #317's 5 new modules.
+  tools-used/buildset.py (seeds = #315's 6 + #317's 6, order/seed.txt; order/buildset.out): down-seed.txt 91 = the downstream
+    closure of the 12 (incl. root TCSlib, audits/garg-ch1-3/Checks, audits/pass-shelat/Checks); build-set.txt = (upstream closure
+    of down-seed) intersected with down.txt = 137 = down-seed + 46 base-delta-affected modules they need (Randomized{,/SeedMajority},
+    HashAndSign/*, Lamport/*, Candidates/*, Hashing/FromDiscreteLog/*, Functions/Defs, GGM/*, Extraction/*, ETT/Tools ...);
+    excluded.txt empty. build-queue.txt = order.txt restricted to the set, imports-first (asserted per import edge). 137 modules.
+  downstream counts (tools-used/bothdown317.py, order/bothdown.out, order/<tag>-down315/-down317/-union/-both.txt):
+    at the merge S2: downstream of #315 91, of #317 8, union 91 (= down-seed), downstream of BOTH a #315 and a #317 module: 8
+      (merge-both.txt: the 6 #317 modules, TCSlib/Cryptography/Authentication, root TCSlib; neither audits Checks imports
+      MAC/FromPRF). Every #317 module is downstream of #315 (via Pseudorandom/Functions/Asymptotic/Defs).
+    at the tip (only MAC/FromPRF of #317 present): both 3; at the #317 head (MultiMsgOut absent): both 8.
+
+olean tree $SP/dl-oleans-2:
+  pre: tree/snapshot-pre.txt (snapshot.py): 1230 files, 0 empty dirs, SHA-256
+    457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the required base value.
+  Before the build the 87 base oleans it overwrites were copied aside (tree/backed-up.txt, with hashes; copies verified) and the
+    50 new ones listed (tree/new-oleans.txt).
+
+build (build/; runner.py $SP/wt-int-317 order/build-queue.txt $SP/dl-oleans-2 build; runner rc 0):
+  build/summary.txt (buildsum.py): 137/137 rc 0; errors 0 in the G26-N1 form; substring "error" 0 times; 11 sorry warnings,
+    37 warnings; 794 s (08:54:53-09:08:07 UTC), max RSS 4.5 GB. build/per-module.tsv (permod.py): per module rc, err_colon
+    (`error:`), err_paren (`error(`), combined, error_substr, sorry, warnings; totals error: 0, error( 0; every log hash = its record.
+  Sorry warnings only in admitted base/base-delta modules: SeedMajority 2, SpecialEncryptionSecurity 3, SpecialEncryptionMulti 1,
+    GarblingSecurity 1, Yao 3, Randomness/Learning 1 (int-315 had 12: MAC/FromPRF's prfMAC_secure is now proved). Other warnings
+    inherited from unchanged sources: SubHybrids 1, GGM 1, Encryption FromPRF 1 (unused simp argument, line 132:8), DDH 3,
+    MAC/FromPRF 1 (unused simp argument, line 129:32, as in the prf-mac reuse build), Lamport 7, Rejection 10, Extraction 2.
+  build/seed-modules.txt: the 12 #315/#317 modules each rc 0, 0 errors (both forms), 0 sorry; warnings 0 except Encryption
+    FromPRF 1 and MAC/FromPRF 1 (the two simp lines above). TCSlib/Cryptography/Authentication, TCSlib, audits/garg-ch1-3/Checks,
+    audits/pass-shelat/Checks: rc 0, 0 errors, 0 warnings.
+  refcmp (tools-used/refcmp.py; references copied to build/refs/, each hash-checked against its records evidence-SHA256SUMS):
+    build/vs-int-315.txt (int-315 build, 132 modules at 8207f47f): 131 identical source and olean SHA-256 (all 6 #315 modules,
+      TCSlib, Authentication, both audits Checks among them); 1 differs: MAC/FromPRF (#317 changes it); 5 no record (#317's new
+      Bound, Game, Handler, Random, Reduction).
+    build/vs-prf-mac-reuse.txt (prf-mac LE-reuse build, 136 modules at 9a415163 = #317's sources): 131 identical (all 6 #317
+      modules, TCSlib, Authentication, both audits Checks among them); 5 differ: #315's 5 changed existing modules; 1 no record
+      (MultiMsgOut, new in #315).
+    build/refunion.txt (refunion.py over both): all 137 modules byte-identical in source and olean to at least one reference;
+      no module has the same source with a different olean anywhere.
+  tree/tree-check-merge.txt (treecheck.py, order.txt 1249 modules, records admissions/records-merge.jsonl, rev S2), run after the
+    probe olean was deleted: every module rc 0 at the merge source, every olean = its record, no stray olean, no empty dir:
+    RESULT OK (1280 files, tree/snapshot-merge.txt).
+
+admissions (admissions/): records-merge.jsonl = int-315's admissions/base-records-from-prf-long-r1.jsonl (base records of the
+  457ba704 tree, copied as base-records-from-int-315.jsonl) + build/results.jsonl.
+  sorry-census.txt (sorrycensus.py, issued base-sorries.txt of fills/prf-long/issued-r1/ (issue SHA256SUMS OK; copy
+  base-sorries-prf-long-issued.txt, = int-315's), issue base 7b307d62, head S2): TOTAL issued-base 40 in 19 modules; merge 39 in
+  the issued modules; modules differing ['TCSlib/Cryptography/Authentication/MAC/FromPRF'] (1 -> 0: prfMAC_secure, the
+  admission #317 discharges). 216 sorry warnings over the whole tree (177 outside the issued order, as at int-315).
+  census-int315-vs-merge.diff: the only changes vs int-315's census are that module line and the TOTAL line (40 -> 39).
+  sorry-census-prf-mac-issued.txt (same tool, fills/prf-mac/issued-r1/base-sorries.txt (SHA256SUMS OK), issue base 107f1e8c):
+    issued 20 in 10 modules, merge 18; differing MAC/FromPRF (this PR) and Hashing/FromDiscreteLog (dlHash_crh, filled by #307
+    dl-crh, merged after that issue base and already 0 in the int-315 build; prf-mac-census-note.txt).
+  unit-modules-sorry.txt: the 12 #315/#317 modules have 0 sorry at the merge (MAC/FromPRF 1 at int-315, 0 in the prf-mac reuse
+    build); no `sorry`/`admit` token in their sources. No new admission in any #315 or #317 module.
+
+axioms (axioms/): AxiomsMerge.lean.txt run as IntProbe/AxiomsMerge in the worktree (runner, axioms/probe-runs/, rc 0, 0 errors,
+  0 warnings); AxiomsMerge.log:
+    TCSlib.Cryptography.Authentication.prfMAC_secure, TCSlib.Cryptography.MultiMsg.exists_negligible_distAdv_prfEncRealOut,
+    TCSlib.Cryptography.prfScheme_multiMessageSecure, TCSlib.Cryptography.prfAdv_eq_expect: each
+    [propext, Classical.choice, Quot.sound].
+  The probe olean (axioms/probe-oleans.txt) and IntProbe/ (worktree and tree) were deleted before the tree check.
+
+lint (lint/): python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography --check8b in the worktree at S2
+  (lint-merge-37e39743.txt): 92 FAIL, 101 WARN over 350 files (rc 1, as always with FAILs).
+  linediff-int315-merge-vs-merge.txt (FAIL/WARN lines, whitespace-normalised, vs int-315's lint at 8207f47f, whose code = the
+    tip's; copied as lint-int315-merge-8207f47f-from-int-315.txt): empty.
+  linediff-prfmac-reuse-vs-merge.txt (same, vs the prf-mac LE-reuse lint at 9a415163, copied): only the two check-8 WARN lines
+    #315 shortens (Hybrid: chainTree, otpEnc -> chainTree; ReductionMachine: 16 -> 10 defs). No #317 file has a FAIL or WARN.
+
+restore (restore/): the 87 backups copied back, each hash checked (restore-log.txt: 87 restored, 0 failed); restoreplan.py
+  --delete against tree/snapshot-pre.txt: 50 extra files (= tree/new-oleans.txt, restore/extra-vs-new-oleans.txt empty) deleted
+  with 6 emptied directories (deleted-dirs.txt); 0 changed, 0 missing. Backups removed afterwards.
+  post: tree/snapshot-post.txt: 1230 files, 0 empty dirs, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f,
+  byte-identical to tree/snapshot-pre.txt.
+cleanup: the zip extracts (int-315, prf-mac reuse) removed after use; the worktree removed.
+SHA256SUMS: every file here except itself (paths without "./"); ../int-317-evidence.zip holds exactly these paths plus SHA256SUMS.

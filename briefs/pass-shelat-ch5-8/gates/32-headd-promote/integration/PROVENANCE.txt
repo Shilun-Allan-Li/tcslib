@@ -1,0 +1,90 @@
+#316 (headD_drop_ofFn promotion) integration build on the records tip + #315 + #317 + #316, maintainer, 2026-11-15 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: as ../int-317 (python3 -I; Lean 4.25.0, PATH=$HOME/.elan/bin:$PATH; one Lean process at a time (ours), only
+  scripts/lean_check_tree.sh (worktree copy byte-equal to /home/user/tcslib/scripts/lean_check_tree.sh, checks/runner-equal.txt)
+  through tools-used/review/runner.py (the G26-N1-fixed runner) with TCSLIB_OLEANS=$SP/dl-oleans-2 (dl-oleans not touched); no
+  lake command; nothing pushed; no commit or branch in /home/user/tcslib (only `git fetch`, `git worktree`, and unreferenced
+  `git commit-tree` objects); /home/user/tcslib working tree not edited (status clean)). Run after the #317 build had been
+  restored (dl-review/int-317/, tree back at 457ba704).
+Method and tools: tools-used/ = int-317's tools-used/ (the int-315 copies, hash-checked against ../int-317/SHA256SUMS), less
+  bothdown317.py (not used here), with permod.py. PROVENANCE layout as in int-317. The promote-headd evidence (records
+  briefs/pass-shelat-ch5-8/maintainer/promote-headd-2026-11-15/promote-headd-evidence.zip, SHA-256
+  5efc53e2637910fb4fe22d8184023ad7fcde0f235ae1d5f69531221321870e3c) was extracted into a fresh directory and checked against its
+  evidence-SHA256SUMS: 476/476 OK, path set exact, SHA256SUMS = evidence-SHA256SUMS.
+
+trial merge (landing/):
+  base: the int-317 scratch merge S2 37e3974337bd47eca11c7ff433a567d2a0db4789 (tree ca865aa809e864e47302484daaba8d78d6b3777f
+    = (records tip 8722064f808605aec8e2f43d08f4731a0d17ec80 + #315 fbd37f447596d4207c8d08b7ef7602f57fe95198) + #317
+    590d1a56a350d9e8e75ee33d31e0501182169f67).
+  #316 head c18afbe66101381eed1617801d942dcf691506ea (= refs/pull/316/head), parent and merge-base with the tip
+    dd98360d4886ac68fab34899b8bd0d12ae9a0aef.
+  `git merge-tree --write-tree 37e39743 c18afbe6` (landing/merge-tree.txt): clean, tree 5487bb05270db5a118ba9c224b5bf77b6380f276.
+  scratch S4 7f31ff9b768b49d0af3daabbd01ccad84c9a0ded = `git commit-tree --no-gpg-sign 5487bb05 -p 37e39743 -p c18afbe6`
+    (author = committer = Claude <noreply@anthropic.com>, date fixed 2026-11-15T00:00:00Z; unsigned, no ref, never pushed;
+    landing/scratch-commit.txt).
+  checks/merge317-vs-merge-name-status.txt: exactly #316's 2 files (M Foundations/BitLists.lean, M Authentication/Signatures/
+    Lamport/MachineSpec.lean), = checks/pr316-name-status.txt (dd98360d..c18afbe6); merge-316paths-vs-316head.txt: both = their
+    blobs at c18afbe6; 316paths-touched-since-base.txt: neither file changed on the records line since dd98360d (empty).
+  checks/tip-vs-merge-name-status.txt: #317's 6 files + #316's 2 (no shared path; #315 is already in the tip).
+  origin (landing/origin-moved.txt): a334ec2e1d87dbde7eac40812286ba60e85c9078 throughout this job (records only vs 8722064f, code
+    diff 0 files); the same merges on a334ec2e give tree 4b5b9f52, which differs from 5487bb05 only in *.md (briefs/, the plan).
+worktree: $SP/wt-int-316, detached at S4, sparse (non-cone: /* !/briefs/), .lake/packages -> /home/user/tcslib/.lake/packages.
+  Clean at the end before removal (checks/worktree-status.txt: only ignored .lake/); removed with `git worktree remove`, pruned.
+
+build set (order/):
+  tools-used/review/downorder.py /home/user/tcslib S4 eff2dcd0 (olean base snapshot): changed.txt 69 modules (int-317's 68 +
+    BitLists; MachineSpec is already in the base delta via #309 lamport), down.txt 264, order.txt 1249, roots.txt 375.
+  order/unit-vs-merge317/ (downorder.py S4 vs S2): changed 2, down 251 = the downstream closure of BitLists and MachineSpec in
+    this tree (promote-headd counted 245 at dd98360d; + #315's MultiMsgOut + #317's 5 new modules).
+  tools-used/buildset.py (seeds BitLists, MachineSpec; order/buildset.out): down-seed.txt 251 (incl. root TCSlib,
+    audits/garg-ch1-3/Checks, audits/pass-shelat/Checks); build-set.txt = up-closure of down-seed intersected with down.txt = 264
+    = down-seed + 13 base-delta-affected modules they need (Randomized{,/SeedMajority}, HashAndSign/OneQuery{,Sampling},
+    Lamport/Averaging{,Extra}, Lamport/Blocks, FromPRF/Hybrid{,Lemmas}, Functions/Defs, GGM, SubHybrids, Extraction/Rejection);
+    excluded.txt empty (the set is all of down.txt). build-queue.txt imports-first (asserted per import edge). 264 modules.
+
+olean tree $SP/dl-oleans-2:
+  pre: tree/snapshot-pre.txt: 1230 files, 0 empty dirs, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f
+    (byte-equal to ../int-317/tree/snapshot-post.txt). 214 base oleans backed up (tree/backed-up.txt, verified), 50 new
+    (tree/new-oleans.txt).
+
+build (build/; runner rc 0): build/summary.txt: 264/264 rc 0; errors 0 (G26-N1 form); substring "error" 0 times; 23 sorry
+  warnings, 92 warnings; 1443 s (09:12:23-09:36:26 UTC), max RSS 4.5 GB. build/per-module.tsv (permod.py): error: 0, error( 0,
+  every log hash = its record.
+  build/seed-modules.txt: BitLists rc 0, 0 errors, 0 sorry, 0 warnings; MachineSpec rc 0, 0 errors, 0 sorry, 2 warnings (inherited:
+    unused variable `hg` 54:55, unused simp argument 255:13; as in the int-317 and promote-headd builds). Lamport facade, TCSlib,
+    both audits Checks: rc 0, 0 errors, 0 warnings. Sorry warnings only in admitted base modules (SeedMajority 2, Universal 1,
+    ObliviousTransfer 2, SpecialEncryptionSecurity 3, SpecialEncryptionMulti 1, GarblingSecurity 1, ComposeSecurity 3, Yao 3,
+    SequentialZK 5, Learning 1, Derandomization 1); promote-headd's 24 less MAC/FromPRF's prfMAC_secure.
+  refcmp (references in build/refs/, each hash-checked against its SHA256SUMS):
+    build/vs-int-317.txt (int-317 build, 137 modules at S2): 136 identical source and olean (all 6 #317 and 6 #315 modules, TCSlib,
+      both audits Checks among them); 1 differs: MachineSpec (#316); 127 no record (downstream of BitLists only).
+    build/vs-promote-headd.txt (promote-headd build, 253 modules at c18afbe6 on dd98360d): 247 identical (BitLists, MachineSpec,
+      TCSlib, both audits Checks among them); 6 differ: #315's Encryption/PrivateKey, FromPRF, ReductionMachine, Asymptotic/Defs; MAC/FromPRF (#317); EncryptThenTag/Reduction (#314,
+      landed after dd98360d); 11 no record (#317's 5 new, MultiMsgOut, Functions/Defs, SubHybrids, GGM,
+      Hybrid, HybridLemmas: not in that build's queue).
+    build/refunion.txt: all 264 modules byte-identical in source and olean to at least one reference; no module has the same
+      source with a different olean anywhere.
+  tree/tree-check-merge.txt (treecheck.py, order.txt 1249, records admissions/records-merge.jsonl = int-315's base records +
+    build/results.jsonl, rev S4), after the probe olean was deleted: RESULT OK (1280 files, no stray olean, no empty dir).
+
+admissions (admissions/): sorry-census.txt (prf-long issued base-sorries, issue base 7b307d62, head S4): TOTAL issued-base 40
+  in 19 modules; merge 39 in the issued modules; differing only MAC/FromPRF (prfMAC_secure, #317). census-int317-vs-merge.diff:
+  empty (identical to the int-317 census). unit-modules-sorry.txt: BitLists and MachineSpec 0 sorry (as at int-317 and
+  promote-headd), no sorry/admit token. No new admission.
+
+axioms (axioms/): AxiomsMerge.lean.txt run as IntProbe/AxiomsMerge316 (rc 0, 0 errors, 0 warnings); AxiomsMerge.log:
+    TCSlib.Cryptography.headD_drop_ofFn: [propext]; TCSlib.Cryptography.Authentication.LamportFill.headD_drop_ofFn: [propext];
+    TCSlib.Cryptography.Authentication.lamport_oneTimeSecure: [propext, Classical.choice, Quot.sound]. #check forms as in
+    promote-headd's AxiomsHead.log. Probe olean (probe-oleans.txt) and IntProbe/ deleted before the tree check.
+
+lint (lint/): campaign_style_lint.py TCSlib/Cryptography --check8b at S4 (lint-merge-7f31ff9b.txt): 92 FAIL, 101 WARN over 350
+  files. linediff-int317-merge-vs-merge.txt (FAIL/WARN lines): empty; fulldiff-int317-merge-vs-merge.txt: the two INFO lines
+  (MachineSpec 268 -> 269 lines; BitLists 179 -> 192 lines, 14 -> 15 public). linediff-promote-headd-vs-merge.txt (vs
+  promote-headd's head lint, copied): only #315's two shortened check-8 WARN lines (Hybrid, ReductionMachine).
+
+restore (restore/): 214 backups copied back, each hash checked (restore-log.txt: 214 restored, 0 failed); restoreplan.py --delete
+  vs tree/snapshot-pre.txt: 50 extra files (= tree/new-oleans.txt) deleted with 6 emptied directories; 0 changed, 0 missing.
+  Backups removed. post: tree/snapshot-post.txt: 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, byte-identical to tree/snapshot-pre.txt.
+cleanup: the promote-headd extract removed; the worktree removed.
+SHA256SUMS: every file here except itself (paths without "./"); ../int-316-evidence.zip holds exactly these paths plus SHA256SUMS.
