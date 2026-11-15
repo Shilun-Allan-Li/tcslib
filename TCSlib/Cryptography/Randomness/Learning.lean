@@ -9,6 +9,7 @@ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
 import TCSlib.Cryptography.Randomness.Learning.Sample
 import TCSlib.Cryptography.Randomness.Learning.Distinguisher
 import TCSlib.Cryptography.Randomness.Learning.Law
+import TCSlib.Cryptography.Randomness.Learning.Random
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
