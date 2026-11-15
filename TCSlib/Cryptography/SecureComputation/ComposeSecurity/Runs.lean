@@ -54,6 +54,12 @@ def splitCoins {m a q b : ℕ} (h : m = a + q * b) :
   ((Equiv.refl (Fin a → Bool)).prodCongr (FunFamily.blocks q b).symm).trans
     ((Fin.appendEquiv a (q * b)).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool)))
 
+/-- The defining equation of `splitCoins` (see `splitCoins`). -/
+theorem splitCoins_eq {m a q b : ℕ} (h : m = a + q * b) :
+    splitCoins h = ((Equiv.refl (Fin a → Bool)).prodCongr (FunFamily.blocks q b).symm).trans
+      ((Fin.appendEquiv a (q * b)).trans
+        (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool))) := rfl
+
 /-- The blocks as one string: `⟦(blocks q b).symm t⟧ = ⟦t 0⟧ ++ ⋯ ++ ⟦t (q − 1)⟧`.
 
 **Proof sketch.** `List.ofFn_mul` writes `⟦v⟧` for `v : Fin (q·b) → Bool` as the concatenation
@@ -83,7 +89,7 @@ theorem ofFn_splitCoins {m a q b : ℕ} (h : m = a + q * b) (u : Fin a → Bool)
     (t : Fin q → Fin b → Bool) :
     List.ofFn (splitCoins h (u, t)) =
       List.ofFn u ++ (List.ofFn fun j => List.ofFn (t j)).flatten := by
-  rw [splitCoins, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr]
+  rw [splitCoins_eq, Equiv.trans_apply, Equiv.trans_apply, ofFn_arrowCongr_finCongr]
   show List.ofFn (Fin.append u ((FunFamily.blocks q b).symm t)) = _
   rw [List.ofFn_fin_append, ofFn_blocks_symm]
 

@@ -52,10 +52,15 @@ followed by the second (`Fin.appendEquiv`). -/
 def appendCoins {a b c : ℕ} (h : c = a + b) : (Fin a → Bool) × (Fin b → Bool) ≃ (Fin c → Bool) :=
   (Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool))
 
+/-- The defining equation of `appendCoins` (see `appendCoins`). -/
+theorem appendCoins_eq {a b c : ℕ} (h : c = a + b) :
+    appendCoins h =
+      (Fin.appendEquiv a b).trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool)) := rfl
+
 /-- `⟦appendCoins h (u, v)⟧ = ⟦u⟧ ++ ⟦v⟧`. -/
 theorem ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool) (v : Fin b → Bool) :
     List.ofFn (appendCoins h (u, v)) = List.ofFn u ++ List.ofFn v := by
-  rw [appendCoins, Equiv.trans_apply, ofFn_arrowCongr_finCongr]
+  rw [appendCoins_eq, Equiv.trans_apply, ofFn_arrowCongr_finCongr]
   exact List.ofFn_fin_append u v
 
 /-- The first `a` bits of `appendCoins h (u, v)` are `u`. -/
@@ -73,10 +78,16 @@ theorem drop_ofFn_appendCoins {a b c : ℕ} (h : c = a + b) (u : Fin a → Bool)
 def blocksCoins {m q b : ℕ} (h : m = q * b) : (Fin q → Fin b → Bool) ≃ (Fin m → Bool) :=
   (FunFamily.blocks q b).symm.trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool))
 
+/-- The defining equation of `blocksCoins` (see `blocksCoins`). -/
+theorem blocksCoins_eq {m q b : ℕ} (h : m = q * b) :
+    blocksCoins h =
+      (FunFamily.blocks q b).symm.trans (Equiv.arrowCongr (finCongr h.symm) (Equiv.refl Bool)) :=
+  rfl
+
 /-- `⟦blocksCoins h t⟧ = ⟦t 0⟧ ++ ⋯ ++ ⟦t (q − 1)⟧` (`ComposeSim.ofFn_blocks_symm`). -/
 theorem ofFn_blocksCoins {m q b : ℕ} (h : m = q * b) (t : Fin q → Fin b → Bool) :
     List.ofFn (blocksCoins h t) = (List.ofFn fun j => List.ofFn (t j)).flatten := by
-  rw [blocksCoins, Equiv.trans_apply, ofFn_arrowCongr_finCongr, ComposeSim.ofFn_blocks_symm]
+  rw [blocksCoins_eq, Equiv.trans_apply, ofFn_arrowCongr_finCongr, ComposeSim.ofFn_blocks_symm]
 
 /-- Block `j` of `blocksCoins h t` is `t j`: `coinBlock b j ⟦blocksCoins h t⟧ = ⟦t j⟧`
 (`coinBlock_flatten`). -/
