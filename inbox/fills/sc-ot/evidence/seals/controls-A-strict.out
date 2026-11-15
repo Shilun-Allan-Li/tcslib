@@ -1,0 +1,42 @@
+===== lean_proof/scot/ctl/CtlUnfold.lean [A-strict]
+DLC-SEAL lean_proof_scot_ctl_CtlUnfold: sealed=1185 (already irreducible 19) abbrev-excluded=1211 excluded=1 coe-excluded=0 []
+lean_proof/dlc/seal/cAstrict/lean_proof_scot_ctl_CtlUnfold.lean:72:2: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  Complexity.NUPPT.layout u y α r = Turing.pairEncode (Turing.pairEncode (Turing.pairEncode u y) α) r
+FAIL(lean_proof/dlc/seal/cAstrict/lean_proof_scot_ctl_CtlUnfold): lean exited with status 1
+FAIL(lean_proof/dlc/seal/cAstrict/lean_proof_scot_ctl_CtlUnfold): error diagnostics reported
+FAIL(lean_proof/dlc/seal/cAstrict/lean_proof_scot_ctl_CtlUnfold): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=22.34 s, maxrss=2616216 KiB, exit=1
+
+===== lean_proof/scot/ctl/CtlUnfoldHelper.lean [A-strict]
+DLC-SEAL lean_proof_scot_ctl_CtlUnfoldHelper: sealed=1185 (already irreducible 19) abbrev-excluded=1211 excluded=1 coe-excluded=0 []
+lean_proof/dlc/seal/cAstrict/lean_proof_scot_ctl_CtlUnfoldHelper.lean:77:2: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  OT.mask T H n i t yj a =
+    List.zipWith xor
+      (H (Turing.pairEncode i (T.inv.runAtL n (Turing.pairEncode t yj) (List.replicate (T.inv.coins.eval n) true)))) [a]
+FAIL(lean_proof/dlc/seal/cAstrict/lean_proof_scot_ctl_CtlUnfoldHelper): lean exited with status 1
+FAIL(lean_proof/dlc/seal/cAstrict/lean_proof_scot_ctl_CtlUnfoldHelper): error diagnostics reported
+FAIL(lean_proof/dlc/seal/cAstrict/lean_proof_scot_ctl_CtlUnfoldHelper): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=23.80 s, maxrss=2619520 KiB, exit=1
+
+===== lean_proof/scot/ctl/CtlEval.lean [A-strict]
+DLC-SEAL lean_proof_scot_ctl_CtlEval: sealed=1185 (already irreducible 19) abbrev-excluded=1211 excluded=1 coe-excluded=0 []
+time: elapsed=25.12 s, maxrss=2626968 KiB, exit=0
+
+===== lean_proof/scot/ctl/CtlCoe.lean [A-strict]
+DLC-SEAL lean_proof_scot_ctl_CtlCoe: sealed=1185 (already irreducible 19) abbrev-excluded=1211 excluded=1 coe-excluded=0 []
+time: elapsed=23.13 s, maxrss=2626908 KiB, exit=0
+
+===== lean_proof/scot/ctl/CtlReader.lean [A-strict]
+DLC-SEAL lean_proof_scot_ctl_CtlReader: sealed=1185 (already irreducible 19) abbrev-excluded=1211 excluded=1 coe-excluded=0 []
+time: elapsed=22.29 s, maxrss=2624992 KiB, exit=0
+

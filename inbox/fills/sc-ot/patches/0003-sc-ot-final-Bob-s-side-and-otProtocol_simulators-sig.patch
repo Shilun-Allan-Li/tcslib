@@ -1,0 +1,1093 @@
+From e2c6f1a8f9e16d830e07f9cd3b1158553edb5500 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 05:28:22 +0000
+Subject: [PATCH 3/3] =?UTF-8?q?sc-ot:=20final=20=E2=80=94=20Bob's=20side?=
+ =?UTF-8?q?=20and=20otProtocol=5Fsimulators=20(signed=20predictor,=20view-?=
+ =?UTF-8?q?building=20distinguisher)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .../SecureComputation/ObliviousTransfer.lean  |  71 ++-
+ .../ObliviousTransfer/Efficiency.lean         |  21 +-
+ .../ObliviousTransfer/Predictor.lean          | 206 +++++++
+ .../ObliviousTransfer/Shape.lean              |   2 +-
+ .../ObliviousTransfer/Simulators.lean         |  33 +-
+ .../ObliviousTransfer/ViewB.lean              | 534 ++++++++++++++++++
+ 6 files changed, 822 insertions(+), 45 deletions(-)
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Predictor.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean
+
+diff --git a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
+index a720e7949..e9507b4b9 100644
+--- a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
+@@ -8,13 +8,15 @@ import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Shape
+ import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Efficiency
+ import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Simulators
+ import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.ViewA
++import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Predictor
++import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.ViewB
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Oblivious transfer from trapdoor permutations (statement phase)
++# Oblivious transfer from trapdoor permutations
+ 
+ [PS10, Protocol 160.4]: for a collection of trapdoor permutations `{f_i}` with a hard-core
+ predicate `h`,
+@@ -80,8 +82,8 @@ cost are passed explicitly, so this module needs only `Asymptotic/Collections`.
+   `OT.polyTime_of_isOT`).
+ * `SecureComputation.otSimA_isSimA`, `otSimB_isSimB`: the simulators have the shapes
+   `OT.IsSimA`, `OT.IsSimB` of the helper modules.
+-* `SecureComputation.otProtocol_simulators` (Prop 161.5 with the explicit simulators, stated; a
+-  `sorry` under its sketch), and `otProtocol_hbcSecure` (Prop 161.5, proved from the two).
++* `SecureComputation.otProtocol_simulators`: Prop 161.5 with the explicit simulators (proved,
++  `OT.simulators_of_isOT`), and `otProtocol_hbcSecure` (Prop 161.5, proved from the two).
+ 
+ ## Contents
+ 
+@@ -95,6 +97,10 @@ them for every protocol of the shape of Protocol 160.4:
+   functions restated), the coin spaces, and the simulated views on assembled tapes.
+ * `ObliviousTransfer/ViewA.lean`: Alice's side, the bound `2δ(n)`
+   (`OT.distAdv_realA_idealA_le`).
++* `ObliviousTransfer/Predictor.lean`: the view-building distinguisher `OT.viewDist` behind Bob's
++  side.
++* `ObliviousTransfer/ViewB.lean`: Bob's side through the signed predictor
++  (`OT.exists_negligible_bob`) and the two sides together (`OT.simulators_of_isOT`).
+ 
+ ## References
+ 
+@@ -652,35 +658,44 @@ include henc in
+ `S_A = otSimA` and `S_B = otSimB` simulate the two sides of Protocol 160.4 within a negligible
+ advantage, uniformly over the inputs.
+ 
+-**Proof sketch.**
++**Proof sketch.** The protocol and the simulators have the shapes `OT.IsOT`, `OT.IsSimA`,
++`OT.IsSimB` (`otProtocol_isOT`, `otSimA_isSimA`, `otSimB_isSimB`), and `OT.simulators_of_isOT`
++proves the statement for every protocol and simulators of these shapes.
+ 1. *Correctness* (`otProtocol_outV`, `otProtocol_outP`): the real outputs are `a_b` for Bob and
+    `[]` for Alice on every coin string, which are the ideal outputs. So each side reduces to its
+    view.
+-2. *Alice's side* (`S_A`). Alice's real view differs from `S_A`'s only in Bob's message.
+-   - Real: `y_b = encD(perm x)` for a sampled `x`, and `y_{1−b}` a sampled element.
+-   - Simulated: two sampled elements, canonical by `SamplerCanonical`.
++2. *Alice's side* (`OT.distAdv_realA_idealA_le`). On the coins `(r, s₁, s₂)` (`OT.realCoins`,
++   `OT.simACoins`) Alice's real and simulated views differ only in Bob's message.
++   - Real: `⟨f_i(w₁), w₂⟩` (or `⟨w₂, f_i(w₁)⟩` when `b`), with `w_j = Sample(i; s_j)`.
++   - Simulated: `⟨w₁, w₂⟩`, two sampled elements, canonical by `SamplerCanonical`.
+ 
+    The sampler is within `δ(n)` of uniform on `D_i` (`T.OneWay.sampleClose`), and `perm` is a
+-   bijection, so each coordinate is within `δ(n)` of `encD` of a uniform element, independently
+-   of `b`. The views are `2δ(n)`-close statistically, so any distinguisher's advantage is at most
+-   `2δ(n)` (`distAdv_le_of_statClose`).
+-3. *Bob's side* (`S_B`).
++   bijection, so at every generated index `f_i(w) = eval ⟨i, w⟩` is `2δ(n)`-close to a sampled
++   element (`OT.statClose_eval_sample`). The views are `2δ(n)`-close statistically, so any
++   distinguisher's advantage is at most `2δ(n)` (`distAdv_le_of_statClose`).
++3. *Bob's side* (`OT.exists_negligible_bob`).
+    - Bob's real view is his tape, `i`, and `(z₁, z₂)` with `z_b = h(x) ⊕ a_b` and
+-     `z_{1−b} = h(u) ⊕ a_{1−b}`, where `u = perm⁻¹(x')` for Bob's raw element `x'`.
+-   - `S_B` produces the same, but with `z_{1−b}` a fresh coin.
++     `z_{1−b} = h(u) ⊕ a_{1−b}`, where `u = perm⁻¹(x')` for Bob's raw element `x'`
++     (`OT.mask_eval`, `OT.mask_raw`).
++   - `S_B` produces the same, but with `z_{1−b}` a fresh coin. Writing `P(β)` for `D`'s
++     acceptance with `z_{1−b} = β ⊕ a_{1−b}`, the advantage is `|E_r P(B) − E_r P(¬B)| / 2`
++     for `B = h(u)` (`OT.acceptProb_realB`, `OT.acceptProb_idealB`).
+    - A distinguisher of the two gives a predictor of `h(u)` from `⟨i, s'⟩`, where `s'` are the
+-     sampler coins of `x'`: build the view around the challenge (Bob's tape contains `s'`), run
+-     the distinguisher, and flip according to `a_{1−b}` (the signed-predictor identity
+-     `exists_pkPredictor` of Algorithm 104.3).
+-   - Its advantage is at most `2 ε_EHC(n)` by `hEHC` (enhanced hard-core: the predictor sees the
+-     sampler's coins, which the plain hard-core property would not allow).
+-   - Building the selected mask also uses `a_b`, so take all eight triples `(b,a₀,a₁)`.
+-     The maximum of their eight negligible bounds is negligible and uniform over the inputs;
+-     fixing only the choice and unselected sender bit would not specify the complete view.
+-4. *Efficiency.* The predictor runs Bob's sampler, the distinguisher, and one XOR: a machine by
+-   composition (`NUPPT.exists_comp`).
+-
+-The source writes out `S_A` only and leaves `S_B` "as an exercise"; step 3 is that exercise. -/
++     sampler coins of `x'`: the machine `OT.viewDist` builds the view around the challenge (Bob's
++     tape contains `s'`) and runs the distinguisher, inside `tdpPredictor` of Algorithm 104.3. It
++     predicts with probability `1/2 ± (P(B) − P(¬B))/2` (the signed-predictor identity
++     `OT.uprob_signedPredictor_false`/`_true`, for uniform coin challenges).
++   - Its advantage is at most `|ε_false(n)| + |ε_true(n)|` by `hEHC` (enhanced hard-core: the
++     predictor sees the sampler's coins, which the plain hard-core property would not allow).
++   - Building the selected mask also uses `a_b`, so the bits `(b, a₀, a₁)` are fixed in the
++     machine: eight triples and two signs. The sum of the sixteen negligible bounds is negligible
++     and uniform over the inputs; fixing only the choice and unselected sender bit would not
++     specify the complete view.
++4. *Efficiency.* The predictor runs Bob's sampler, `H`, one XOR and the distinguisher (with its
++   advice): `NUPPT.ofPolyTime` of a polynomial-time raw function (`OT.viewDist`).
++
++The bound is `ε(n) = 2|δ(n)| + ε_B(n)`. The source writes out `S_A` only and leaves `S_B` "as an
++exercise"; step 3 is that exercise. -/
+ theorem otProtocol_simulators (hT : T.OneWay) (hEHC : EnhancedHardCore T h) :
+     ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+       ∀ n (x : Fin (otFunctionality.inA.eval n) → Bool)
+@@ -688,8 +703,10 @@ theorem otProtocol_simulators (hT : T.OneWay) (hEHC : EnhancedHardCore T h) :
+         distAdv (otFunctionality.realA (otProtocol T H) n x y)
+             (otFunctionality.idealA (otSimA T) n x y) (D.distinguisherL n) ≤ ε n ∧
+           distAdv (otFunctionality.realB (otProtocol T H) n x y)
+-            (otFunctionality.idealB (otSimB T hH) n x y) (D.distinguisherL n) ≤ ε n := by
+-  sorry
++            (otFunctionality.idealB (otSimB T hH) n x y) (D.distinguisherL n) ≤ ε n :=
++  OT.simulators_of_isOT T H hH henc (otProtocol_isOT T H) (otProtocol_outV T H henc)
++    (otProtocol_outP T H) (otSimA_isSimA T) (otSimB_isSimB T hH) hT
++    ((enhancedHardCore_iff T h).1 hEHC)
+ 
+ include hH in
+ /-- **Protocol 160.4 runs in polynomial time** (Definition 155.1's efficiency requirement,
+diff --git a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Efficiency.lean b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Efficiency.lean
+index 02a8d46bd..6f4d53292 100644
+--- a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Efficiency.lean
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Efficiency.lean
+@@ -107,7 +107,8 @@ def maskRaw (z yj bt : List Bool) : List Bool :=
+     (T.inv.output (NUPPT.layout (NUPPT.inParam z) (pairEncode (pairSndD (genRaw T z)) yj) []
+       (List.replicate (T.inv.coins.eval (NUPPT.inParam z).length) true))))) bt
+ 
+-/-- The defining equation of `maskRaw`. -/
++/-- The defining equation of `maskRaw`: `maskRaw T H z yj bt =
++zipWith xor (H ⟨i, Inv(inParam z, ⟨t, yj⟩; 1^{inv})⟩) bt` with `⟨i, t⟩ = genRaw T z`. -/
+ theorem maskRaw_eq (z yj bt : List Bool) :
+     maskRaw T H z yj bt =
+       List.zipWith xor (H (pairEncode (pairFstD (genRaw T z))
+@@ -144,7 +145,8 @@ def senderRaw (z : List Bool) : List Bool :=
+         [((pairSndD (pairFstD (NUPPT.inArg z))).drop 1).headD false])
+   else []
+ 
+-/-- The defining equation of `senderRaw`. -/
++/-- The defining equation of `senderRaw`: with `w = snd (inArg z)`, `fst (genRaw T z)` if
++`w = []`, the two raw masks if `snd w = []`, else `[]`. -/
+ theorem senderRaw_eq (z : List Bool) :
+     senderRaw T H z =
+       if decide (pairSndD (NUPPT.inArg z) = []) then pairFstD (genRaw T z)
+@@ -226,7 +228,8 @@ def knownRaw (z : List Bool) : List Bool :=
+   T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (pairSndD (NUPPT.inArg z))) []
+     ((NUPPT.inCoins z).take (T.sample.coins.eval (NUPPT.inParam z).length)))
+ 
+-/-- The defining equation of `knownRaw`. -/
++/-- The defining equation of `knownRaw`: `knownRaw T z = Sample(inParam z, fst w;
++(inCoins z).take coins_Sample(n))` with `w = snd (inArg z)`. -/
+ theorem knownRaw_eq (z : List Bool) :
+     knownRaw T z =
+       T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (pairSndD (NUPPT.inArg z))) []
+@@ -237,7 +240,8 @@ def rawRaw (z : List Bool) : List Bool :=
+   T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (pairSndD (NUPPT.inArg z))) []
+     ((NUPPT.inCoins z).drop (T.sample.coins.eval (NUPPT.inParam z).length)))
+ 
+-/-- The defining equation of `rawRaw`. -/
++/-- The defining equation of `rawRaw`: `rawRaw T z = Sample(inParam z, fst w;
++(inCoins z).drop coins_Sample(n))` with `w = snd (inArg z)`. -/
+ theorem rawRaw_eq (z : List Bool) :
+     rawRaw T z =
+       T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (pairSndD (NUPPT.inArg z))) []
+@@ -251,7 +255,8 @@ def outRaw (z : List Bool) : List Bool :=
+       pairSndD (pairFstD (pairSndD (pairSndD (NUPPT.inArg z))))
+     else pairFstD (pairFstD (pairSndD (pairSndD (NUPPT.inArg z)))))
+ 
+-/-- The defining equation of `outRaw`. -/
++/-- The defining equation of `outRaw`: `outRaw T H z = zipWith xor (H ⟨fst w, knownRaw T z⟩) z_b`
++with `z_b` the second or first projection of `fst (snd w)` by the choice bit. -/
+ theorem outRaw_eq (z : List Bool) :
+     outRaw T H z =
+       List.zipWith xor (H (pairEncode (pairFstD (pairSndD (NUPPT.inArg z))) (knownRaw T z)))
+@@ -269,7 +274,8 @@ def pairRaw (z : List Bool) : List Bool :=
+     pairEncode (T.eval (pairEncode (pairFstD (pairSndD (NUPPT.inArg z))) (knownRaw T z)))
+       (rawRaw T z)
+ 
+-/-- The defining equation of `pairRaw`. -/
++/-- The defining equation of `pairRaw`: `⟨rawRaw, eval ⟨fst w, knownRaw⟩⟩` if `b`, else
++`⟨eval ⟨fst w, knownRaw⟩, rawRaw⟩`. -/
+ theorem pairRaw_eq (z : List Bool) :
+     pairRaw T z =
+       if (pairSndD (pairFstD (NUPPT.inArg z))).headD false then
+@@ -287,7 +293,8 @@ def receiverRaw (z : List Bool) : List Bool :=
+   else if decide (pairSndD (pairSndD (pairSndD (NUPPT.inArg z))) = []) then []
+   else outRaw T H z
+ 
+-/-- The defining equation of `receiverRaw`. -/
++/-- The defining equation of `receiverRaw`: with `w = snd (inArg z)`, `outRaw` if `w = []`,
++`pairRaw` if `snd w = []`, `[]` if `snd (snd w) = []`, else `outRaw`. -/
+ theorem receiverRaw_eq (z : List Bool) :
+     receiverRaw T H z =
+       if decide (pairSndD (NUPPT.inArg z) = []) then outRaw T H z
+diff --git a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Predictor.lean b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Predictor.lean
+new file mode 100644
+index 000000000..1576d70da
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Predictor.lean
+@@ -0,0 +1,206 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Simulators
++import TCSlib.Cryptography.Encryption.PublicKey.Trapdoor
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Oblivious transfer: the view-building distinguisher behind Bob's side
++
++On Bob's side of [PS10, Proposition 161.5] a distinguisher `D` of Bob's real and simulated views
++becomes a predictor of the enhanced hard-core bit `h(f_i⁻¹(y_{1−b}))` from `⟨i, s'⟩`, `s'` the
++sampler coins of `y_{1−b}`. The predictor is the machine `tdpPredictor D' flip` of Algorithm
++104.3's proof, run on the distinguisher `D'` built here: on `⟨i, ⟨s', [β]⟩⟩` with its own coins
++`s₁ ++ ρ`, `D'` assembles Bob's view with tape `s₁ ++ s'`, index `i`, the selected mask
++`z_b = H ⟨i, Sample(i; s₁)⟩ ⊕ a_b` and the unselected mask `z_{1−b} = β ⊕ a_{1−b}` (`OT.bobView`),
++and runs `D` on it with the coins `ρ`. The choice and sender bits `(b, a₀, a₁)` are fixed in the
++machine.
++
++## Main definitions
++
++* `OT.bobView`: Bob's view (paired with Alice's empty output) with a given unselected mask bit.
++* `OT.viewRaw`, `OT.viewDistRaw`: the raw functions of the view and of `D'`.
++* `OT.viewDist`: the machine `D'`; `OT.viewDistCoins`: its coins as `Coins_Sample × Coins_D`.
++
++## Main results
++
++* `OT.polyTimeComputable_bobView`, `OT.polyTimeComputable_viewDistRaw`: they are
++  polynomial-time.
++* `OT.distinguisherL_viewDist`: `D'` accepts `⟨i, ⟨s', [β]⟩⟩` on `(s₁, ρ)` iff `D` accepts the
++  view `bobView … β` on `ρ`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.2.4, Proposition 161.5, and Theorem 104.4 (the predictor), book pp. 104, 161–162.
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.OT
++
++open Complexity Turing TCSlib.Cryptography
++
++variable (T : TrapdoorCollection) (H : List Bool → List Bool)
++
++/-- **Bob's view with the unselected mask bit `β`** [PS10, Proposition 161.5], paired with
++Alice's empty output: `⟨⟨⟨u, [b]⟩, ⟨s, [i, Z, []]⟩⟩, []⟩` with
++`Z = ⟨[β ⊕ a₀], H ⟨i, w⟩ ⊕ [a₁]⟩` if `b`, else `⟨H ⟨i, w⟩ ⊕ [a₀], [β ⊕ a₁]⟩`. -/
++def bobView (u : List Bool) (b a₀ a₁ : Bool) (i s w : List Bool) (β : Bool) : List Bool :=
++  pairEncode (pairEncode (pairEncode u [b]) (pairEncode s (pairEncode i (pairEncode
++    (if b then pairEncode [xor β a₀] (List.zipWith xor (H (pairEncode i w)) [a₁])
++      else pairEncode (List.zipWith xor (H (pairEncode i w)) [a₀]) [xor β a₁])
++    (pairEncode [] []))))) []
++
++/-- The defining equation of `bobView`: `bobView H u b a₀ a₁ i s w β =
++⟨⟨⟨u, [b]⟩, ⟨s, [i, Z, []]⟩⟩, []⟩` with `Z` ordered by `b`. -/
++theorem bobView_eq (u : List Bool) (b a₀ a₁ : Bool) (i s w : List Bool) (β : Bool) :
++    bobView H u b a₀ a₁ i s w β =
++      pairEncode (pairEncode (pairEncode u [b]) (pairEncode s (pairEncode i (pairEncode
++        (if b then pairEncode [xor β a₀] (List.zipWith xor (H (pairEncode i w)) [a₁])
++          else pairEncode (List.zipWith xor (H (pairEncode i w)) [a₀]) [xor β a₁])
++        (pairEncode [] []))))) [] := rfl
++
++/-- **Bob's view is polynomial-time** in its string arguments, for polynomial-time `H`
++(pairing, one XOR of bits `BinArith.polyTimeComputable_xor`, `polyTimeComputable_pairXor`, a
++branch on the fixed bit `b`). -/
++theorem polyTimeComputable_bobView {H : List Bool → List Bool} (hH : PolyTimeComputable H)
++    (b a₀ a₁ : Bool) {U I S W B : List Bool → List Bool} (hU : PolyTimeComputable U)
++    (hI : PolyTimeComputable I) (hS : PolyTimeComputable S) (hW : PolyTimeComputable W)
++    (hB : PolyTimeComputable B) :
++    PolyTimeComputable fun z => bobView H (U z) b a₀ a₁ (I z) (S z) (W z) ((B z).headD false) := by
++  have hβ := polyTimeComputable_headD.comp' hB
++  have hx : ∀ a : Bool, PolyTimeComputable fun z => [xor ((B z).headD false) a] := fun a =>
++    BinArith.polyTimeComputable_xor hβ (polyTimeComputable_const [a])
++  have hm : ∀ a : Bool, PolyTimeComputable fun z =>
++      List.zipWith xor (H (pairEncode (I z) (W z))) [a] := fun a =>
++    (polyTimeComputable_pairXor.comp' ((hH.comp' (hI.pairEncode hW)).pairEncode
++      (polyTimeComputable_const [a]))).congr fun z => by
++        rw [pairFstD_pairEncode, pairSndD_pairEncode]
++  have hZ := polyTimeComputable_ite (p := fun _ => b) (polyTimeComputable_const [b])
++    ((hx a₀).pairEncode (hm a₁)) ((hm a₀).pairEncode (hx a₁))
++  have h := ((hU.pairEncode (polyTimeComputable_const [b])).pairEncode (hS.pairEncode
++    (hI.pairEncode (hZ.pairEncode (polyTimeComputable_const (pairEncode [] [])))))).pairEncode
++    (polyTimeComputable_const [])
++  exact h.congr fun z => (bobView_eq H _ _ _ _ _ _ _ _).symm
++
++/-- The view built by `D'` on the raw layout `z = layout u ⟨i, ⟨s', [β]⟩⟩ α (s₁ ++ ρ)`:
++`bobView u b a₀ a₁ i (s₁ ++ s') (Sample(u, i; s₁)) β`, with `s₁` the first `coins_Sample(|u|)`
++coins. -/
++def viewRaw (b a₀ a₁ : Bool) (z : List Bool) : List Bool :=
++  bobView H (NUPPT.inParam z) b a₀ a₁ (pairFstD (NUPPT.inArg z))
++    ((NUPPT.inCoins z).take (T.sample.coins.eval (NUPPT.inParam z).length) ++
++      pairFstD (pairSndD (NUPPT.inArg z)))
++    (T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)) []
++      ((NUPPT.inCoins z).take (T.sample.coins.eval (NUPPT.inParam z).length))))
++    ((pairSndD (pairSndD (NUPPT.inArg z))).headD false)
++
++/-- The defining equation of `viewRaw`: `viewRaw T H b a₀ a₁ z = bobView H u b a₀ a₁ i
++(s₁ ++ s') (Sample(u, i; s₁)) β` read off the layout `z`. -/
++theorem viewRaw_eq (b a₀ a₁ : Bool) (z : List Bool) :
++    viewRaw T H b a₀ a₁ z =
++      bobView H (NUPPT.inParam z) b a₀ a₁ (pairFstD (NUPPT.inArg z))
++        ((NUPPT.inCoins z).take (T.sample.coins.eval (NUPPT.inParam z).length) ++
++          pairFstD (pairSndD (NUPPT.inArg z)))
++        (T.sample.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)) []
++          ((NUPPT.inCoins z).take (T.sample.coins.eval (NUPPT.inParam z).length))))
++        ((pairSndD (pairSndD (NUPPT.inArg z))).headD false) := rfl
++
++/-- The raw function of `D'`: `D` on the layout of `1^n`, the built view, the advice and the
++coins after the first `coins_Sample(n)`. -/
++def viewDistRaw (D : NUPPT) (b a₀ a₁ : Bool) (z : List Bool) : List Bool :=
++  D.output (NUPPT.layout (NUPPT.inParam z) (viewRaw T H b a₀ a₁ z) (NUPPT.inAdvice z)
++    ((NUPPT.inCoins z).drop (T.sample.coins.eval (NUPPT.inParam z).length)))
++
++/-- The defining equation of `viewDistRaw`: `viewDistRaw T H D b a₀ a₁ z = D.output (layout
++(inParam z) (viewRaw T H b a₀ a₁ z) (inAdvice z) ((inCoins z).drop coins_Sample(n)))`. -/
++theorem viewDistRaw_eq (D : NUPPT) (b a₀ a₁ : Bool) (z : List Bool) :
++    viewDistRaw T H D b a₀ a₁ z =
++      D.output (NUPPT.layout (NUPPT.inParam z) (viewRaw T H b a₀ a₁ z) (NUPPT.inAdvice z)
++        ((NUPPT.inCoins z).drop (T.sample.coins.eval (NUPPT.inParam z).length))) := rfl
++
++/-- **The raw function of `D'` is polynomial-time** (`polyTimeComputable_bobView`, the sampler's
++and `D`'s output functions, `polyTimeComputable_pairTakePoly`, `polyTimeComputable_pairDropPoly`,
++`PolyTimeComputable.append`).
++
++**Proof sketch.** Build the projections, the first coin block and the remaining coins, the sampled
++element on the first block, the tape `s₁ ++ s'` and the built view (`polyTimeComputable_bobView`),
++then `D`'s output on the layout; match the definition by the pairing readers. -/
++theorem polyTimeComputable_viewDistRaw {H : List Bool → List Bool} (hH : PolyTimeComputable H)
++    (D : NUPPT) (b a₀ a₁ : Bool) : PolyTimeComputable (viewDistRaw T H D b a₀ a₁) := by
++  have hU := NUPPT.polyTimeComputable_inParam
++  have hi := polyTimeComputable_pairFstD.comp' NUPPT.polyTimeComputable_inArg
++  have htake := (polyTimeComputable_pairTakePoly T.sample.coins).comp'
++    (hU.pairEncode NUPPT.polyTimeComputable_inCoins)
++  have hdrop := (polyTimeComputable_pairDropPoly T.sample.coins).comp'
++    (hU.pairEncode NUPPT.polyTimeComputable_inCoins)
++  have hs := htake.append (polyTimeComputable_pairFstD.comp'
++    (polyTimeComputable_pairSndD.comp' NUPPT.polyTimeComputable_inArg))
++  have hw := T.sample.polyTimeComputable_output.comp' (NUPPT.polyTimeComputable_layout hU hi
++    (polyTimeComputable_const []) htake)
++  have hβ := polyTimeComputable_pairSndD.comp'
++    (polyTimeComputable_pairSndD.comp' NUPPT.polyTimeComputable_inArg)
++  have hv := polyTimeComputable_bobView hH b a₀ a₁ hU hi hs hw hβ
++  have h := D.polyTimeComputable_output.comp' (NUPPT.polyTimeComputable_layout hU hv
++    NUPPT.polyTimeComputable_inAdvice hdrop)
++  refine h.congr fun z => ?_
++  simp only [viewDistRaw_eq, viewRaw_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- **The view-building distinguisher `D'`** for the fixed bits `(b, a₀, a₁)`: `D`'s advice and
++coins `coins_Sample + coins_D`. -/
++noncomputable def viewDist {H : List Bool → List Bool} (hH : PolyTimeComputable H) (D : NUPPT)
++    (b a₀ a₁ : Bool) : NUPPT :=
++  NUPPT.ofPolyTime (polyTimeComputable_viewDistRaw T hH D b a₀ a₁) (.add T.sample.coins D.coins)
++    D.adv D.advice D.advice_length
++
++/-- The coin polynomial of `D'` is `coins_Sample + coins_D`. -/
++theorem viewDist_coins {H : List Bool → List Bool} (hH : PolyTimeComputable H) (D : NUPPT)
++    (b a₀ a₁ : Bool) : (viewDist T hH D b a₀ a₁).coins = .add T.sample.coins D.coins :=
++  NUPPT.coins_ofPolyTime _ _ _ _ _
++
++/-- **`D'`'s coins** as a sampler block and `D`'s coins. -/
++noncomputable def viewDistCoins {H : List Bool → List Bool} (hH : PolyTimeComputable H) (D : NUPPT)
++    (b a₀ a₁ : Bool) (n : ℕ) : (viewDist T hH D b a₀ a₁).Coins n ≃ T.sample.Coins n × D.Coins n :=
++  splitLen (by rw [NUPPT.coinLen_eq, viewDist_coins, PolyExpr.eval_add, NUPPT.coinLen_eq,
++    NUPPT.coinLen_eq])
++
++/-- The tape of `D'` from blocks: `ofFn ((viewDistCoins …).symm (s₁, ρ)) = ofFn s₁ ++ ofFn ρ`. -/
++theorem viewDistCoins_symm_ofFn {H : List Bool → List Bool} (hH : PolyTimeComputable H)
++    (D : NUPPT) (b a₀ a₁ : Bool) (n : ℕ) (p : T.sample.Coins n × D.Coins n) :
++    List.ofFn ((viewDistCoins T hH D b a₀ a₁ n).symm p) = List.ofFn p.1 ++ List.ofFn p.2 :=
++  splitLen_symm_ofFn _ p
++
++/-- **`D'` runs `D` on the built view**: on `⟨i, ⟨s', [β]⟩⟩` with coins `s₁ ++ ρ`,
++`D'(1^n, ⟨i, ⟨s', [β]⟩⟩; s₁ ++ ρ) = D(1^n, bobView (1^n) b a₀ a₁ i (s₁ ++ s') w β; ρ)` with
++`w = Sample(1^n, i; s₁)`. -/
++theorem runAtL_viewDist {H : List Bool → List Bool} (hH : PolyTimeComputable H) (D : NUPPT)
++    (b a₀ a₁ : Bool) (n : ℕ) (i s' : List Bool) (β : Bool) (s₁ : T.sample.Coins n)
++    (ρ : List Bool) :
++    (viewDist T hH D b a₀ a₁).runAtL n (pairEncode i (pairEncode s' [β])) (List.ofFn s₁ ++ ρ) =
++      D.runAtL n (bobView H (List.replicate n true) b a₀ a₁ i (List.ofFn s₁ ++ s')
++        (T.sample.runAt n i s₁) β) ρ := by
++  have hl : (List.ofFn s₁).length = T.sample.coins.eval (List.replicate n true).length := by
++    rw [length_ofFn_coins, List.length_replicate]
++  unfold viewDist
++  rw [NUPPT.runAtL_ofPolyTime, NUPPT.advInput_eq, ← NUPPT.layout_eq, viewDistRaw_eq, viewRaw_eq,
++    NUPPT.inParam_layout, NUPPT.inArg_layout, NUPPT.inAdvice_layout, NUPPT.inCoins_layout,
++    List.take_left' hl, List.drop_left' hl, pairFstD_pairEncode, pairSndD_pairEncode,
++    pairFstD_pairEncode, pairSndD_pairEncode, List.headD_cons, NUPPT.runAtL_eq_output_layout,
++    NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, NUPPT.Uniform.advice_eq T.sample_uniform]
++
++/-- **`D'` accepts iff `D` accepts the built view**: `D'.distinguisherL n ⟨i, ⟨s', [β]⟩⟩ (s₁, ρ) =
++D.distinguisherL n (bobView (1^n) b a₀ a₁ i (s₁ ++ s') (Sample(1^n, i; s₁)) β) ρ`. -/
++theorem distinguisherL_viewDist {H : List Bool → List Bool} (hH : PolyTimeComputable H)
++    (D : NUPPT) (b a₀ a₁ : Bool) (n : ℕ) (i s' : List Bool) (β : Bool)
++    (p : T.sample.Coins n × D.Coins n) :
++    (viewDist T hH D b a₀ a₁).distinguisherL n (pairEncode i (pairEncode s' [β]))
++        ((viewDistCoins T hH D b a₀ a₁ n).symm p) =
++      D.distinguisherL n (bobView H (List.replicate n true) b a₀ a₁ i (List.ofFn p.1 ++ s')
++        (T.sample.runAt n i p.1) β) p.2 := by
++  rw [NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.runAt_eq,
++    viewDistCoins_symm_ofFn, runAtL_viewDist]
++
++end TCSlib.Cryptography.SecureComputation.OT
+diff --git a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Shape.lean b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Shape.lean
+index 0db003388..8b19fc16b 100644
+--- a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Shape.lean
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Shape.lean
+@@ -127,7 +127,7 @@ def IsOT (π : Protocol) : Prop :=
+     π.V.coins = .add T.sample.coins T.sample.coins ∧ π.rounds = .const 5 ∧
+       π.verifierFirst = false
+ 
+-/-- The defining property of `IsOT`: the six field equations. -/
++/-- The defining property of `IsOT`: `IsOT T H π` iff the six field equations hold. -/
+ theorem isOT_iff (π : Protocol) :
+     IsOT T H π ↔
+       π.P.next = senderNext T H ∧ π.V.next = receiverNext T H ∧ π.P.coins = T.gen.coins ∧
+diff --git a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean
+index df8c27450..a0a0b9353 100644
+--- a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean
+@@ -66,7 +66,8 @@ of `coinSeg`): `(inCoins z).drop p(|inParam z|) |>.take q(|inParam z|)`. -/
+ def simSeg (p q : PolyExpr) (z : List Bool) : List Bool :=
+   ((NUPPT.inCoins z).drop (p.eval (NUPPT.inParam z).length)).take (q.eval (NUPPT.inParam z).length)
+ 
+-/-- The defining equation of `simSeg`. -/
++/-- The defining equation of `simSeg`: `simSeg p q z =
++((inCoins z).drop p(|inParam z|)).take q(|inParam z|)`. -/
+ theorem simSeg_eq (p q : PolyExpr) (z : List Bool) :
+     simSeg p q z =
+       ((NUPPT.inCoins z).drop (p.eval (NUPPT.inParam z).length)).take
+@@ -77,7 +78,8 @@ def simIndex (z : List Bool) : List Bool :=
+   pairFstD (T.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
+     (simSeg (.const 0) T.gen.coins z)))
+ 
+-/-- The defining equation of `simIndex`. -/
++/-- The defining equation of `simIndex`: `simIndex T z =
++fst Gen.output (layout (inParam z) [] [] (simSeg 0 coins_Gen z))`. -/
+ theorem simIndex_eq (z : List Bool) :
+     simIndex T z = pairFstD (T.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
+       (simSeg (.const 0) T.gen.coins z))) := rfl
+@@ -87,7 +89,8 @@ theorem simIndex_eq (z : List Bool) :
+ def simSampled (p : PolyExpr) (z : List Bool) : List Bool :=
+   T.sample.output (NUPPT.layout (NUPPT.inParam z) (simIndex T z) [] (simSeg p T.sample.coins z))
+ 
+-/-- The defining equation of `simSampled`. -/
++/-- The defining equation of `simSampled`: `simSampled T p z =
++Sample.output (layout (inParam z) (simIndex T z) [] (simSeg p coins_Sample z))`. -/
+ theorem simSampled_eq (p : PolyExpr) (z : List Bool) :
+     simSampled T p z =
+       T.sample.output (NUPPT.layout (NUPPT.inParam z) (simIndex T z) []
+@@ -102,7 +105,8 @@ def simAView (z : List Bool) : List Bool :=
+           (simSampled T (.add T.gen.coins T.sample.coins) z))
+         (pairEncode [] [])))
+ 
+-/-- The defining equation of `simAView`. -/
++/-- The defining equation of `simAView`: `simAView T z = ⟨⟨inParam z, fst (inArg z)⟩,
++⟨simSeg 0 coins_Gen z, [⟨y₁, y₂⟩, []]⟩⟩` with the two simulated samples `y₁, y₂`. -/
+ theorem simAView_eq (z : List Bool) :
+     simAView T z =
+       pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
+@@ -116,7 +120,8 @@ def simZbit (z : List Bool) : List Bool :=
+   List.zipWith xor (H (pairEncode (simIndex T z) (simSampled T T.gen.coins z)))
+     (pairSndD (NUPPT.inArg z))
+ 
+-/-- The defining equation of `simZbit`. -/
++/-- The defining equation of `simZbit`: `simZbit T H z =
++zipWith xor (H ⟨simIndex T z, simSampled T coins_Gen z⟩) (snd (inArg z))`. -/
+ theorem simZbit_eq (z : List Bool) :
+     simZbit T H z =
+       List.zipWith xor (H (pairEncode (simIndex T z) (simSampled T T.gen.coins z)))
+@@ -131,7 +136,8 @@ def simZpair (z : List Bool) : List Bool :=
+     pairEncode (simZbit T H z)
+       (simSeg (.add T.gen.coins (.add T.sample.coins T.sample.coins)) (.const 1) z)
+ 
+-/-- The defining equation of `simZpair`. -/
++/-- The defining equation of `simZpair`: `⟨c, z_b⟩` if the choice bit is set, else `⟨z_b, c⟩`,
++with `c` the last coin segment and `z_b = simZbit T H z`. -/
+ theorem simZpair_eq (z : List Bool) :
+     simZpair T H z =
+       if (pairFstD (NUPPT.inArg z)).headD false then
+@@ -148,7 +154,8 @@ def simBView (z : List Bool) : List Bool :=
+     (pairEncode (simSeg T.gen.coins (.add T.sample.coins T.sample.coins) z)
+       (pairEncode (simIndex T z) (pairEncode (simZpair T H z) (pairEncode [] []))))
+ 
+-/-- The defining equation of `simBView`. -/
++/-- The defining equation of `simBView`: `simBView T H z = ⟨⟨inParam z, fst (inArg z)⟩,
++⟨simSeg coins_Gen (2 coins_Sample) z, [simIndex T z, simZpair T H z, []]⟩⟩`. -/
+ theorem simBView_eq (z : List Bool) :
+     simBView T H z =
+       pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
+@@ -162,7 +169,8 @@ def IsSimA (S : NUPPT) : Prop :=
+     ∀ n y (r : S.Coins n),
+       S.runAt n y r = simAView T (NUPPT.layout (List.replicate n true) y [] (List.ofFn r))
+ 
+-/-- The defining property of `IsSimA`. -/
++/-- The defining property of `IsSimA`: `IsSimA T S` iff `S.coins = coins_Gen + (coins_Sample +
++coins_Sample)` and `S(1^n, y; r) = simAView T (layout 1^n y [] r)`. -/
+ theorem isSimA_iff (S : NUPPT) :
+     IsSimA T S ↔
+       S.coins = .add T.gen.coins (.add T.sample.coins T.sample.coins) ∧
+@@ -177,7 +185,8 @@ def IsSimB (S : NUPPT) : Prop :=
+     ∀ n y (r : S.Coins n),
+       S.runAt n y r = simBView T H (NUPPT.layout (List.replicate n true) y [] (List.ofFn r))
+ 
+-/-- The defining property of `IsSimB`. -/
++/-- The defining property of `IsSimB`: `IsSimB T H S` iff its coins are `coins_Gen +
++(coins_Sample + (coins_Sample + 1))` and `S(1^n, y; r) = simBView T H (layout 1^n y [] r)`. -/
+ theorem isSimB_iff (S : NUPPT) :
+     IsSimB T H S ↔
+       S.coins = .add T.gen.coins (.add T.sample.coins (.add T.sample.coins (.const 1))) ∧
+@@ -251,7 +260,11 @@ theorem simAView_layout (n : ℕ) (y : List Bool) (r : T.gen.Coins n)
+ 
+ /-- **`S_B`'s view on the tape `r ++ (s₁ ++ (s₂ ++ c))`**:
+ `⟨⟨1^n, fst y⟩, ⟨s₁ ++ s₂, [i, Z, []]⟩⟩` with `i = index n r`, `z_b = H ⟨i, Sample(i; s₁)⟩ ⊕ snd y`
+-and `Z = ⟨c, z_b⟩` if `(fst y).headD false`, else `⟨z_b, c⟩`. -/
++and `Z = ⟨c, z_b⟩` if `(fst y).headD false`, else `⟨z_b, c⟩`.
++
++**Proof sketch.** The coin segments of the tape are `s₁ ++ s₂` and `c` (`simSeg_layout`), the
++simulated index is `index n r` (`simIndex_layout`) and the first simulated sample is
++`Sample(i; s₁)` (`simSampled_layout`); rewrite `simBView`, `simZpair` and `simZbit` with them. -/
+ theorem simBView_layout (n : ℕ) (y : List Bool) (r : T.gen.Coins n)
+     (s₁ s₂ : T.sample.Coins n) (c : Fin 1 → Bool) :
+     simBView T H (NUPPT.layout (List.replicate n true) y []
+diff --git a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean
+new file mode 100644
+index 000000000..0b3608a64
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewB.lean
+@@ -0,0 +1,534 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.ViewA
++import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Predictor
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Oblivious transfer: Bob's side of Proposition 161.5
++
++Bob's real view of Protocol 160.4 differs from `S_B`'s only in the unselected mask:
++`z_{1−b} = h(f_i⁻¹(y_{1−b})) ⊕ a_{1−b}` in the real view, a fresh coin in the simulated one
++[PS10, Proposition 161.5, the proof left as an exercise]. Both are `OT.bobView` with the
++unselected mask `β ⊕ a_{1−b}`, where `β = h(f_i⁻¹(y_{1−b}))` (real) or `β` is uniform
++(simulated). Writing `P(β)` for `D`'s acceptance probability, the real one is `E_r P(B)`, the
++simulated one `E_r (P(B) + P(¬B))/2`, so the advantage is `|E_r P(B) − E_r P(¬B)| / 2`. The
++signed predictor (`uprob_signedPredictor_false`, `_true`) run on the view-building distinguisher
++`D'` (`OT.viewDist`) predicts `B` from `⟨i, s'⟩` with probability `1/2 ± (P(B) − P(¬B))/2`, so the
++enhanced hard-core hypothesis bounds the advantage by `|ε_false(n)| + |ε_true(n)|` for the fixed
++bits `(b, a₀, a₁)`. The eight choices of these bits give sixteen machines; the sum of their
++bounds is negligible and uniform over the inputs.
++
++## Main definitions
++
++* `OT.hcBit`: the enhanced hard-core bit `h_i(f_i⁻¹(Sample(i; s)))` of a sampled element.
++* `OT.accB`: `D`'s acceptance probability of Bob's view with a given unselected bit.
++
++## Main results
++
++* `OT.uprob_signedPredictor_false`, `OT.uprob_signedPredictor_true`: the signed-predictor
++  identity of Algorithm 104.3's proof for a uniform challenge `x` and a bit `B x`.
++* `OT.uprob_xor_shear`, `OT.negligible_finset_sum`: a uniform bit masked by a fixed bit, and
++  finite sums of negligible functions.
++* `OT.mask_eval`, `OT.mask_raw`: Alice's two masks on Bob's real pair.
++* `OT.realB_realCoins`, `OT.idealB_simBCoins`: Bob's real and ideal samplers on typed coins;
++  `OT.acceptProb_realB`, `OT.acceptProb_idealB`: their acceptance probabilities through `accB`.
++* `OT.acceptProb_viewDist`, `OT.uprob_predictor_false`, `OT.uprob_predictor_true`: the
++  prediction experiments of the two predictors.
++* `OT.distAdv_realB_idealB_le`, `OT.exists_negligible_bob`: the bound on Bob's side.
++* `OT.simulators_of_isOT`: Proposition 161.5 with its simulators, for every protocol and pair of
++  machines of the shapes of Protocol 160.4 and of `S_A`, `S_B`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.2.4, Proposition 161.5, and Theorem 104.4 (the predictor), book pp. 104, 161–162.
++* [Gol04] O. Goldreich, *Foundations of Cryptography, Volume 2*, Cambridge University Press,
++  2004, §7.3.2 (the enhanced predicate in the OT argument).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.OT
++
++open Complexity Turing TCSlib.Cryptography
++
++variable (T : TrapdoorCollection) (H : List Bool → List Bool)
++
++/-! ### The signed predictor -/
++
++/-- **The signed predictor, unflipped** (the identity behind [PS10, Theorem 104.4, proof], for a
++uniform challenge `x` and a bit `B x`): drawing `c` and coins `ρ`, outputting `c` if `D(x, c; ρ)`
++accepts and `¬c` otherwise, predicts `B x` with probability
++`1/2 + (Pr[D(x, B x) = 1] − Pr[D(x, ¬B x) = 1]) / 2`.
++
++**Proof sketch.** Substitute `c = d ⊕ B x` (a bijection of `Bool × (α × ρ)`) and split on `d`
++(`uprob_bool_prod`): for `d = 0` the prediction is right iff `D(x, B x)` accepts, for `d = 1` iff
++`D(x, ¬B x)` rejects (`uprob_not`). -/
++theorem uprob_signedPredictor_false {α ρ : Type*} [Fintype α] [Fintype ρ] [Nonempty α]
++    [Nonempty ρ] (B : α → Bool) (D : α × Bool → ρ → Bool) :
++    uprob (fun z : α × (Bool × ρ) =>
++        xor (if D (z.1, z.2.1) z.2.2 then z.2.1 else !z.2.1) false = B z.1) =
++      1 / 2 + (acceptProb (fun x => (x, B x)) D - acceptProb (fun x => (x, !B x)) D) / 2 := by
++  let e : Bool × (α × ρ) ≃ α × (Bool × ρ) :=
++    { toFun := fun v => (v.2.1, (xor v.1 (B v.2.1), v.2.2))
++      invFun := fun z => (xor z.2.1 (B z.1), (z.1, z.2.2))
++      left_inv := fun v => by simp
++      right_inv := fun z => by simp }
++  rw [← uprob_comp_equiv e, uprob_bool_prod, acceptProb_def, acceptProb_def,
++    show ∀ a b : ℝ, 1 / 2 + (a - b) / 2 = (a + (1 - b)) / 2 by intro a b; ring, ← uprob_not]
++  congr 2
++  · congr 1
++    funext w
++    apply propext
++    simp only [e, Equiv.coe_fn_mk, Bool.false_xor, Bool.xor_false]
++    cases D (w.1, B w.1) w.2 <;> cases B w.1 <;> simp
++  · congr 1
++    funext w
++    apply propext
++    simp only [e, Equiv.coe_fn_mk, Bool.true_xor, Bool.xor_false]
++    cases D (w.1, !B w.1) w.2 <;> cases B w.1 <;> simp
++
++/-- **The signed predictor, flipped**: the same predictor negated predicts `B x` with probability
++`1/2 − (Pr[D(x, B x) = 1] − Pr[D(x, ¬B x) = 1]) / 2`.
++
++**Proof sketch.** As `uprob_signedPredictor_false`: substitute `c = d ⊕ B x` and split on `d`.
++With the output negated, for `d = 0` the prediction is right iff `D(x, B x)` rejects
++(`uprob_not`), and for `d = 1` iff `D(x, ¬B x)` accepts. -/
++theorem uprob_signedPredictor_true {α ρ : Type*} [Fintype α] [Fintype ρ] [Nonempty α]
++    [Nonempty ρ] (B : α → Bool) (D : α × Bool → ρ → Bool) :
++    uprob (fun z : α × (Bool × ρ) =>
++        xor (if D (z.1, z.2.1) z.2.2 then z.2.1 else !z.2.1) true = B z.1) =
++      1 / 2 - (acceptProb (fun x => (x, B x)) D - acceptProb (fun x => (x, !B x)) D) / 2 := by
++  let e : Bool × (α × ρ) ≃ α × (Bool × ρ) :=
++    { toFun := fun v => (v.2.1, (xor v.1 (B v.2.1), v.2.2))
++      invFun := fun z => (xor z.2.1 (B z.1), (z.1, z.2.2))
++      left_inv := fun v => by simp
++      right_inv := fun z => by simp }
++  rw [← uprob_comp_equiv e, uprob_bool_prod, acceptProb_def, acceptProb_def,
++    show ∀ a b : ℝ, 1 / 2 - (a - b) / 2 = ((1 - a) + b) / 2 by intro a b; ring, ← uprob_not]
++  congr 2
++  · congr 1
++    funext w
++    apply propext
++    simp only [e, Equiv.coe_fn_mk, Bool.false_xor, Bool.xor_true]
++    cases D (w.1, B w.1) w.2 <;> cases B w.1 <;> simp
++  · congr 1
++    funext w
++    apply propext
++    simp only [e, Equiv.coe_fn_mk, Bool.true_xor, Bool.xor_true]
++    cases D (w.1, !B w.1) w.2 <;> cases B w.1 <;> simp
++
++/-- **A uniform bit masked by a fixed bit, re-centred on `g x`**: over uniform `(β, x)`,
++`Pr[Q (β ⊕ a) x] = (Pr[Q (g x) x] + Pr[Q (¬g x) x]) / 2` (the bijection `β ↦ β ⊕ a ⊕ g x`, then
++`uprob_bool_prod`). -/
++theorem uprob_xor_shear {X : Type*} [Fintype X] (g : X → Bool) (a : Bool) (Q : Bool → X → Prop) :
++    uprob (fun w : Bool × X => Q (xor w.1 a) w.2) =
++      (uprob (fun x => Q (g x) x) + uprob (fun x => Q (!g x) x)) / 2 := by
++  let e : Bool × X ≃ Bool × X :=
++    { toFun := fun w => (xor (xor w.1 (g w.2)) a, w.2)
++      invFun := fun w => (xor (xor w.1 a) (g w.2), w.2)
++      left_inv := fun w => by simp
++      right_inv := fun w => by simp }
++  rw [← uprob_comp_equiv e, uprob_bool_prod]
++  congr 2 <;> congr 1 <;> funext x <;> simp only [e, Equiv.coe_fn_mk] <;> cases g x <;>
++    cases a <;> rfl
++
++/-- **A finite sum of negligible functions is negligible** (`Negligible.add` by induction on the
++finite set). -/
++theorem negligible_finset_sum {ι : Type*} (s : Finset ι) {f : ι → ℕ → ℝ}
++    (h : ∀ i ∈ s, Negligible (f i)) : Negligible fun n => ∑ i ∈ s, f i n := by
++  classical
++  induction s using Finset.induction_on with
++  | empty => simpa using negligible_zero
++  | insert i s hi ih =>
++    simp_rw [Finset.sum_insert hi]
++    exact (h i (Finset.mem_insert_self i s)).add
++      (ih fun j hj => h j (Finset.mem_insert_of_mem hj))
++
++/-! ### The enhanced bit and the two masks -/
++
++/-- **The enhanced hard-core bit of a sampled element** [Gol04, §7.3.2]: at the index
++`i = index n r`, `hcBit T h n r s = h_i(perm_i⁻¹(dec_i(Sample(i; s))))`. -/
++def hcBit (h : ∀ i, T.D i → Bool) (n : ℕ) (r : T.gen.Coins n) (s : T.sample.Coins n) : Bool :=
++  h (T.index n r) ((T.perm (T.index n r)).symm
++    ((T.decD (T.index n r) (T.sample.runAt n (T.index n r) s)).getD default))
++
++/-- The defining equation of `hcBit`: `hcBit T h n r s =
++h_i (perm_i⁻¹ ((dec_i (Sample(i; s))).getD default))` with `i = index n r`. -/
++theorem hcBit_eq (h : ∀ i, T.D i → Bool) (n : ℕ) (r : T.gen.Coins n) (s : T.sample.Coins n) :
++    hcBit T h n r s = h (T.index n r) ((T.perm (T.index n r)).symm
++      ((T.decD (T.index n r) (T.sample.runAt n (T.index n r) s)).getD default)) := rfl
++
++/-- **The inverter on the all-`true` tape** [PS10, Definition 56.1 (6)]:
++`Inv(1^n, ⟨t, encD y⟩; 1^{inv(n)}) = encD (perm⁻¹ y)` (`TrapdoorCollection.inv_eq_encD`). -/
++theorem inv_runAtL_ones (n : ℕ) (r : T.gen.Coins n) (y : T.D (T.index n r)) :
++    T.inv.runAtL n (pairEncode (T.trap n r) (T.encD _ y))
++        (List.replicate (T.inv.coins.eval n) true) =
++      T.encD _ ((T.perm _).symm y) := by
++  rw [← NUPPT.coinLen_eq, ← List.ofFn_const, ← NUPPT.runAt_eq]
++  exact T.inv_eq_encD n r y fun _ => true
++
++/-- **The selected mask** [PS10, Protocol 160.4]: on `y_b = eval ⟨i, w⟩` with `w = Sample(i; s)`,
++Alice's mask is `H ⟨i, w⟩ ⊕ [c]` (the inverter returns `w`'s element, `H` is correct on it). -/
++theorem mask_eval {h : ∀ i, T.D i → Bool}
++    (henc : ∀ i (x : T.D i), H (pairEncode i (T.encD i x)) = [h i x]) (n : ℕ)
++    (r : T.gen.Coins n) (s : T.sample.Coins n) (c : Bool) :
++    mask T H n (T.index n r) (T.trap n r)
++        (T.eval (pairEncode (T.index n r) (T.sample.runAt n (T.index n r) s))) c =
++      List.zipWith xor (H (pairEncode (T.index n r) (T.sample.runAt n (T.index n r) s))) [c] := by
++  obtain ⟨x, hx, hev⟩ := (Collection.evalSampled_iff _).1 T.toCollection.evalSampled n r s
++  have hw : H (pairEncode (T.index n r) (T.sample.runAt n (T.index n r) s)) = [h _ x] :=
++    T.toCollection.apply_of_decD (v := fun i x => [h i x]) henc hx
++  rw [mask_eq, hev, T.f_perm, inv_runAtL_ones, Equiv.symm_apply_apply, henc, hw]
++
++/-- **The unselected mask** [PS10, Protocol 160.4]: on the raw sample `w' = Sample(i; s)`,
++Alice's mask is `[hcBit T h n r s ⊕ c]` (the inverter returns the encoding of
++`perm⁻¹(dec w')`). -/
++theorem mask_raw {h : ∀ i, T.D i → Bool}
++    (henc : ∀ i (x : T.D i), H (pairEncode i (T.encD i x)) = [h i x]) (n : ℕ)
++    (r : T.gen.Coins n) (s : T.sample.Coins n) (c : Bool) :
++    mask T H n (T.index n r) (T.trap n r) (T.sample.runAt n (T.index n r) s) c =
++      [xor (hcBit T h n r s) c] := by
++  obtain ⟨x, hx, -⟩ := (Collection.evalSampled_iff _).1 T.toCollection.evalSampled n r s
++  have hw : T.sample.runAt n (T.index n r) s = T.encD _ x :=
++    (Collection.decD_eq_some_iff _).1 hx
++  rw [mask_eq, hcBit_eq, hx, Option.getD_some, hw, inv_runAtL_ones, henc]
++  rfl
++
++/-! ### Bob's real and ideal samplers -/
++
++/-- Alice's input string is the two-bit list `[a₀, a₁]`. -/
++theorem ofFn_inA2_eq {n : ℕ} (a : Fin (otFunctionality.inA.eval n) → Bool) :
++    List.ofFn (inA2 a) = [inA2 a 0, inA2 a 1] := by
++  rw [List.ofFn_succ, List.ofFn_succ, List.ofFn_zero]
++  rfl
++
++/-- **Bob's real sampler on typed coins**: on `(r, s₁, s₂)` (`realCoins`) it is
++`bobView (1^n) b a₀ a₁ i (s₁ ++ s₂) (Sample(i; s₁)) (hcBit T h n r s₂)` with `i = index n r`.
++
++**Proof sketch.** Unfold the real sampler to the transcript (`transcriptWith_isOT`) on the
++assembled tapes (`realCoins_symm_fst_ofFn`, `realCoins_symm_snd_ofFn`), with Alice's output `[]`
++(`houtP`). Then cases on `b`: the selected mask is `mask_eval`, the unselected one `mask_raw`. -/
++theorem realB_realCoins {h : ∀ i, T.D i → Bool}
++    (henc : ∀ i (x : T.D i), H (pairEncode i (T.encD i x)) = [h i x]) {π : Protocol}
++    (hπ : IsOT T H π)
++    (houtP : ∀ x (a : Fin 2 → Bool) (b : Fin 1 → Bool) (r : π.ExecCoins π.P x),
++      π.outP x (List.ofFn a) (List.ofFn b) r = [])
++    (n : ℕ) (a : Fin (otFunctionality.inA.eval n) → Bool)
++    (b : Fin (otFunctionality.inB.eval n) → Bool)
++    (p : T.gen.Coins n × (T.sample.Coins n × T.sample.Coins n)) :
++    otFunctionality.realB π n a b ((realCoins T H hπ n).symm p) =
++      bobView H (List.replicate n true) (inB1 b 0) (inA2 a 0) (inA2 a 1) (T.index n p.1)
++        (List.ofFn p.2.1 ++ List.ofFn p.2.2) (T.sample.runAt n (T.index n p.1) p.2.1)
++        (hcBit T h n p.1 p.2.2) := by
++  have hlen : (List.ofFn p.2.1).length = T.sample.coins.eval n := length_ofFn_coins _ n _
++  rw [Functionality.realB_eq, Protocol.viewV_eq, View.encode_mk, transcriptWith_isOT T H hπ,
++    ← ofFn_inA2 a, ← ofFn_inB1 b, houtP, ofFn_inB1, ofFn_eq_inB1, ofFn_inA2_eq,
++    realCoins_symm_fst_ofFn, realCoins_symm_snd_ofFn, senderNext_single, receiverNext_single,
++    List.length_replicate, List.take_left' hlen, List.drop_left' hlen, List.headD_cons,
++    ← NUPPT.runAt_eq, ← NUPPT.runAt_eq, ← NUPPT.runAt_eq, ← Collection.index_eq,
++    ← Collection.trap_eq, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_cons,
++    Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil, bobView_eq]
++  cases inB1 b 0
++  · simp only [Bool.false_eq_true, if_false, pairFstD_pairEncode, pairSndD_pairEncode,
++      mask_eval T H henc, mask_raw T H henc, List.getD_cons_zero, List.getD_cons_succ]
++  · simp only [if_true, pairFstD_pairEncode, pairSndD_pairEncode,
++      mask_eval T H henc, mask_raw T H henc, List.getD_cons_zero, List.getD_cons_succ]
++
++/-- **Bob's ideal sampler on typed coins**: on `(r, s₁, s₂, c)` (`simBCoins`) it is
++`bobView (1^n) b a₀ a₁ i (s₁ ++ s₂) (Sample(i; s₁)) (c ⊕ a_{1−b})` with `i = index n r`. -/
++theorem idealB_simBCoins {S : NUPPT} (hS : IsSimB T H S) (n : ℕ)
++    (a : Fin (otFunctionality.inA.eval n) → Bool) (b : Fin (otFunctionality.inB.eval n) → Bool)
++    (p : T.gen.Coins n × (T.sample.Coins n × (T.sample.Coins n × (Fin 1 → Bool)))) :
++    otFunctionality.idealB S n a b ((simBCoins T H hS n).symm p) =
++      bobView H (List.replicate n true) (inB1 b 0) (inA2 a 0) (inA2 a 1) (T.index n p.1)
++        (List.ofFn p.2.1 ++ List.ofFn p.2.2.1) (T.sample.runAt n (T.index n p.1) p.2.1)
++        (xor (p.2.2.2 0) (if inB1 b 0 then inA2 a 0 else inA2 a 1)) := by
++  have hc : List.ofFn p.2.2.2 = [p.2.2.2 0] := by rw [List.ofFn_succ, List.ofFn_zero]
++  rw [Functionality.idealB_eq, ((isSimB_iff T H S).1 hS).2, simBCoins_symm_ofFn, simBView_layout,
++    pairFstD_pairEncode, pairSndD_pairEncode, ofFn_f_snd, ofFn_f_fst, ofFn_eq_inB1,
++    List.headD_cons, hc, bobView_eq]
++  cases inB1 b 0 <;> simp
++
++/-! ### Acceptance probabilities -/
++
++/-- `D`'s acceptance probability of Bob's view at the index of `r` with the unselected bit
++`g(s₂)`: `accB T H D n b a₀ a₁ r g = Pr_{s₁, s₂, ρ}[D(bobView … (s₁ ++ s₂) (Sample(i; s₁))
++(g s₂); ρ) = 1]`. -/
++noncomputable def accB (D : NUPPT) (n : ℕ) (b a₀ a₁ : Bool) (r : T.gen.Coins n)
++    (g : T.sample.Coins n → Bool) : ℝ :=
++  uprob fun q : (T.sample.Coins n × T.sample.Coins n) × D.Coins n =>
++    D.distinguisherL n (bobView H (List.replicate n true) b a₀ a₁ (T.index n r)
++      (List.ofFn q.1.1 ++ List.ofFn q.1.2) (T.sample.runAt n (T.index n r) q.1.1) (g q.1.2))
++      q.2 = true
++
++/-- The defining equation of `accB`: `accB T H D n b a₀ a₁ r g =
++Pr_{((s₁, s₂), ρ)}[D(bobView … (s₁ ++ s₂) (Sample(i; s₁)) (g s₂); ρ) = 1]`. -/
++theorem accB_eq (D : NUPPT) (n : ℕ) (b a₀ a₁ : Bool) (r : T.gen.Coins n)
++    (g : T.sample.Coins n → Bool) :
++    accB T H D n b a₀ a₁ r g =
++      uprob fun q : (T.sample.Coins n × T.sample.Coins n) × D.Coins n =>
++        D.distinguisherL n (bobView H (List.replicate n true) b a₀ a₁ (T.index n r)
++          (List.ofFn q.1.1 ++ List.ofFn q.1.2) (T.sample.runAt n (T.index n r) q.1.1) (g q.1.2))
++          q.2 = true := rfl
++
++/-- **Bob's real acceptance** is the average over `Gen`'s coins of `accB` with the enhanced bit:
++`acceptProb realB D = E_r accB … r (hcBit T h n r)`. -/
++theorem acceptProb_realB {h : ∀ i, T.D i → Bool}
++    (henc : ∀ i (x : T.D i), H (pairEncode i (T.encD i x)) = [h i x]) {π : Protocol}
++    (hπ : IsOT T H π)
++    (houtP : ∀ x (a : Fin 2 → Bool) (b : Fin 1 → Bool) (r : π.ExecCoins π.P x),
++      π.outP x (List.ofFn a) (List.ofFn b) r = [])
++    (D : NUPPT) (n : ℕ) (a : Fin (otFunctionality.inA.eval n) → Bool)
++    (b : Fin (otFunctionality.inB.eval n) → Bool) :
++    acceptProb (otFunctionality.realB π n a b) (D.distinguisherL n) =
++      uexp fun r => accB T H D n (inB1 b 0) (inA2 a 0) (inA2 a 1) r (hcBit T h n r) := by
++  rw [← acceptProb_comp_equiv (realCoins T H hπ n).symm, acceptProb_def]
++  simp only [realB_realCoins T H henc hπ houtP]
++  rw [← uprob_comp_equiv (Equiv.prodAssoc _ _ _).symm, uprob_prod]
++  congr 1
++
++/-- **Bob's ideal acceptance** is the average of the two `accB` with the enhanced bit and its
++negation: `acceptProb idealB D = E_r (accB … r B + accB … r ¬B) / 2`.
++
++**Proof sketch.** Relabel the coins as `(r, s₁, s₂, c)` (`simBCoins`, `idealB_simBCoins`), reorder
++them as `(r, (c₀, ((s₁, s₂), ρ)))` by an explicit bijection `E` (`c` read as its bit `c₀`), average
++over `r` (`uprob_prod`), and apply `uprob_xor_shear` to the unselected bit `c₀ ⊕ a_{1−b}`,
++re-centred on `B(s₂)`. -/
++theorem acceptProb_idealB {h : ∀ i, T.D i → Bool} {S : NUPPT} (hS : IsSimB T H S) (D : NUPPT)
++    (n : ℕ) (a : Fin (otFunctionality.inA.eval n) → Bool)
++    (b : Fin (otFunctionality.inB.eval n) → Bool) :
++    acceptProb (otFunctionality.idealB S n a b) (D.distinguisherL n) =
++      uexp fun r => (accB T H D n (inB1 b 0) (inA2 a 0) (inA2 a 1) r (hcBit T h n r) +
++        accB T H D n (inB1 b 0) (inA2 a 0) (inA2 a 1) r (fun s => !hcBit T h n r s)) / 2 := by
++  let E : T.gen.Coins n × (Bool × ((T.sample.Coins n × T.sample.Coins n) × D.Coins n)) ≃
++      (T.gen.Coins n × (T.sample.Coins n × (T.sample.Coins n × (Fin 1 → Bool)))) × D.Coins n :=
++    { toFun := fun w => ((w.1, (w.2.2.1.1, (w.2.2.1.2, fun _ => w.2.1))), w.2.2.2)
++      invFun := fun z => (z.1.1, (z.1.2.2.2 0, ((z.1.2.1, z.1.2.2.1), z.2)))
++      left_inv := fun w => rfl
++      right_inv := fun z => by
++        obtain ⟨⟨r, s₁, s₂, c⟩, ρ⟩ := z
++        refine Prod.ext (Prod.ext rfl (Prod.ext rfl (Prod.ext rfl (funext fun j => ?_)))) rfl
++        rw [Subsingleton.elim j 0] }
++  rw [← acceptProb_comp_equiv (simBCoins T H hS n).symm, acceptProb_def]
++  simp only [idealB_simBCoins T H hS]
++  rw [← uprob_comp_equiv E, uprob_prod]
++  congr 1
++  funext r
++  simp only [E, Equiv.coe_fn_mk]
++  rw [accB_eq, accB_eq]
++  have key := uprob_xor_shear
++    (fun q : (T.sample.Coins n × T.sample.Coins n) × D.Coins n => hcBit T h n r q.1.2)
++    (if inB1 b 0 then inA2 a 0 else inA2 a 1) fun β q =>
++      D.distinguisherL n (bobView H (List.replicate n true) (inB1 b 0) (inA2 a 0) (inA2 a 1)
++        (T.index n r) (List.ofFn q.1.1 ++ List.ofFn q.1.2)
++        (T.sample.runAt n (T.index n r) q.1.1) β) q.2 = true
++  exact key
++
++/-! ### The predictor machines -/
++
++/-- **`D'`'s acceptance on `⟨i, ⟨s', [g s']⟩⟩` is `accB`**: over uniform `s'` and `D'`'s coins,
++`D'` accepts `⟨i, ⟨s', [g s']⟩⟩` with probability `accB T H D n b a₀ a₁ r g` (`viewDistCoins`,
++`distinguisherL_viewDist`, and the reordering `(s₂, (s₁, ρ)) ↦ ((s₁, s₂), ρ)`). -/
++theorem acceptProb_viewDist (hH : PolyTimeComputable H) (D : NUPPT) (n : ℕ) (b a₀ a₁ : Bool)
++    (r : T.gen.Coins n) (g : T.sample.Coins n → Bool) :
++    acceptProb (fun x : T.sample.Coins n => (x, g x))
++        (fun (yc : T.sample.Coins n × Bool) (ρ : (viewDist T hH D b a₀ a₁).Coins n) =>
++          (viewDist T hH D b a₀ a₁).distinguisherL n
++            (pairEncode (T.index n r) (pairEncode (List.ofFn yc.1) [yc.2])) ρ) =
++      accB T H D n b a₀ a₁ r g := by
++  let e : (T.sample.Coins n × T.sample.Coins n) × D.Coins n ≃
++      T.sample.Coins n × (viewDist T hH D b a₀ a₁).Coins n :=
++    { toFun := fun q => (q.1.2, (viewDistCoins T hH D b a₀ a₁ n).symm (q.1.1, q.2))
++      invFun := fun z => ((((viewDistCoins T hH D b a₀ a₁ n) z.2).1, z.1),
++        ((viewDistCoins T hH D b a₀ a₁ n) z.2).2)
++      left_inv := fun q => by simp
++      right_inv := fun z => by simp }
++  rw [acceptProb_def, accB_eq, ← uprob_comp_equiv e]
++  congr 1
++  funext q
++  simp only [e, Equiv.coe_fn_mk]
++  rw [distinguisherL_viewDist]
++
++/-- **The unflipped predictor's prediction experiment** at the index of `r`: the machine
++`tdpPredictor D' false` predicts `hcBit T h n r s'` from `⟨i, s'⟩` with probability
++`1/2 + (accB … r B − accB … r ¬B) / 2` (`uprob_tdpPredictor`, `uprob_signedPredictor_false`,
++`acceptProb_viewDist`). -/
++theorem uprob_predictor_false (h : ∀ i, T.D i → Bool) (hH : PolyTimeComputable H) (D : NUPPT)
++    (n : ℕ) (b a₀ a₁ : Bool) (r : T.gen.Coins n) :
++    uprob (fun z : T.sample.Coins n × (tdpPredictor (viewDist T hH D b a₀ a₁) false).Coins n =>
++        (tdpPredictor (viewDist T hH D b a₀ a₁) false).distinguisherL n
++          (pairEncode (T.index n r) (List.ofFn z.1)) z.2 = hcBit T h n r z.1) =
++      1 / 2 + (accB T H D n b a₀ a₁ r (hcBit T h n r) -
++        accB T H D n b a₀ a₁ r (fun s => !hcBit T h n r s)) / 2 := by
++  have h₁ := uprob_tdpPredictor (viewDist T hH D b a₀ a₁) false n (T.index n r)
++    (id : T.sample.Coins n → T.sample.Coins n) (hcBit T h n r) List.ofFn
++  have h₂ := uprob_signedPredictor_false (hcBit T h n r)
++    (fun (yc : T.sample.Coins n × Bool) (ρ : (viewDist T hH D b a₀ a₁).Coins n) =>
++      (viewDist T hH D b a₀ a₁).distinguisherL n
++        (pairEncode (T.index n r) (pairEncode (List.ofFn yc.1) [yc.2])) ρ)
++  rw [acceptProb_viewDist T H hH D n b a₀ a₁ r (hcBit T h n r),
++    acceptProb_viewDist T H hH D n b a₀ a₁ r (fun s => !hcBit T h n r s)] at h₂
++  exact h₁.trans h₂
++
++/-- **The flipped predictor's prediction experiment**: `tdpPredictor D' true` predicts
++`hcBit T h n r s'` with probability `1/2 − (accB … r B − accB … r ¬B) / 2`. -/
++theorem uprob_predictor_true (h : ∀ i, T.D i → Bool) (hH : PolyTimeComputable H) (D : NUPPT)
++    (n : ℕ) (b a₀ a₁ : Bool) (r : T.gen.Coins n) :
++    uprob (fun z : T.sample.Coins n × (tdpPredictor (viewDist T hH D b a₀ a₁) true).Coins n =>
++        (tdpPredictor (viewDist T hH D b a₀ a₁) true).distinguisherL n
++          (pairEncode (T.index n r) (List.ofFn z.1)) z.2 = hcBit T h n r z.1) =
++      1 / 2 - (accB T H D n b a₀ a₁ r (hcBit T h n r) -
++        accB T H D n b a₀ a₁ r (fun s => !hcBit T h n r s)) / 2 := by
++  have h₁ := uprob_tdpPredictor (viewDist T hH D b a₀ a₁) true n (T.index n r)
++    (id : T.sample.Coins n → T.sample.Coins n) (hcBit T h n r) List.ofFn
++  have h₂ := uprob_signedPredictor_true (hcBit T h n r)
++    (fun (yc : T.sample.Coins n × Bool) (ρ : (viewDist T hH D b a₀ a₁).Coins n) =>
++      (viewDist T hH D b a₀ a₁).distinguisherL n
++        (pairEncode (T.index n r) (pairEncode (List.ofFn yc.1) [yc.2])) ρ)
++  rw [acceptProb_viewDist T H hH D n b a₀ a₁ r (hcBit T h n r),
++    acceptProb_viewDist T H hH D n b a₀ a₁ r (fun s => !hcBit T h n r s)] at h₂
++  exact h₁.trans h₂
++
++/-! ### Bob's side -/
++
++/-- **Bob's side for fixed inputs**: if the two predictors `tdpPredictor D' false/true` for the
++bits `(b, a₀, a₁)` of the inputs predict the enhanced bit with probability at most `1/2 + ε_false`
++and `1/2 + ε_true` at `n`, then `D`'s advantage between Bob's real and ideal samplers is at most
++`|ε_false| + |ε_true|`.
++
++**Proof sketch.** With `U± = E_r accB … r (±B)`, the real acceptance is `U+`
++(`acceptProb_realB`) and the ideal one `(U+ + U−)/2` (`acceptProb_idealB`), so the advantage is
++`|U+ − U−| / 2`. The predictors give `U+ − U− ≤ 2ε_false` and `U− − U+ ≤ 2ε_true`
++(`uprob_predictor_false/true`, `uexp_half_add/sub`). -/
++theorem distAdv_realB_idealB_le {h : ∀ i, T.D i → Bool} (hH : PolyTimeComputable H)
++    (henc : ∀ i (x : T.D i), H (pairEncode i (T.encD i x)) = [h i x]) {π : Protocol}
++    (hπ : IsOT T H π)
++    (houtP : ∀ x (a : Fin 2 → Bool) (b : Fin 1 → Bool) (r : π.ExecCoins π.P x),
++      π.outP x (List.ofFn a) (List.ofFn b) r = [])
++    {S : NUPPT} (hS : IsSimB T H S) (D : NUPPT) (n : ℕ)
++    (a : Fin (otFunctionality.inA.eval n) → Bool) (b : Fin (otFunctionality.inB.eval n) → Bool)
++    {εf εt : ℝ}
++    (hf : uexp (fun r : T.gen.Coins n => uprob fun z : T.sample.Coins n ×
++        (tdpPredictor (viewDist T hH D (inB1 b 0) (inA2 a 0) (inA2 a 1)) false).Coins n =>
++      (tdpPredictor (viewDist T hH D (inB1 b 0) (inA2 a 0) (inA2 a 1)) false).distinguisherL n
++        (pairEncode (T.index n r) (List.ofFn z.1)) z.2 = hcBit T h n r z.1) ≤ 1 / 2 + εf)
++    (ht : uexp (fun r : T.gen.Coins n => uprob fun z : T.sample.Coins n ×
++        (tdpPredictor (viewDist T hH D (inB1 b 0) (inA2 a 0) (inA2 a 1)) true).Coins n =>
++      (tdpPredictor (viewDist T hH D (inB1 b 0) (inA2 a 0) (inA2 a 1)) true).distinguisherL n
++        (pairEncode (T.index n r) (List.ofFn z.1)) z.2 = hcBit T h n r z.1) ≤ 1 / 2 + εt) :
++    distAdv (otFunctionality.realB π n a b) (otFunctionality.idealB S n a b)
++      (D.distinguisherL n) ≤ |εf| + |εt| := by
++  simp only [uprob_predictor_false T H h hH D n, uprob_predictor_true T H h hH D n] at hf ht
++  rw [uexp_half_add] at hf
++  rw [uexp_half_sub] at ht
++  rw [distAdv_def, acceptProb_realB T H henc hπ houtP, acceptProb_idealB T H (h := h) hS,
++    show (fun r => (accB T H D n (inB1 b 0) (inA2 a 0) (inA2 a 1) r (hcBit T h n r) +
++        accB T H D n (inB1 b 0) (inA2 a 0) (inA2 a 1) r (fun s => !hcBit T h n r s)) / 2) =
++      fun r => (1 / 2 : ℝ) * (accB T H D n (inB1 b 0) (inA2 a 0) (inA2 a 1) r (hcBit T h n r) +
++        accB T H D n (inB1 b 0) (inA2 a 0) (inA2 a 1) r (fun s => !hcBit T h n r s)) from
++      funext fun r => by ring,
++    HardcoreBit.uexp_const_mul, HardcoreBit.uexp_add]
++  generalize uexp (fun r => accB T H D n (inB1 b 0) (inA2 a 0) (inA2 a 1) r (hcBit T h n r)) = U₁
++    at hf ht ⊢
++  generalize uexp (fun r => accB T H D n (inB1 b 0) (inA2 a 0) (inA2 a 1) r
++    (fun s => !hcBit T h n r s)) = U₂ at hf ht ⊢
++  have h₁ := le_abs_self εf
++  have h₂ := le_abs_self εt
++  have h₃ := abs_nonneg εf
++  have h₄ := abs_nonneg εt
++  rw [abs_le]
++  constructor <;> linarith
++
++/-- **Bob's side of Proposition 161.5** [PS10]: under the enhanced hard-core hypothesis (stated
++explicitly, `hEHC`), for every distinguisher `D` there is a negligible `ε ≥ 0` bounding `D`'s
++advantage between Bob's real and ideal samplers for all `n` and all inputs.
++
++**Proof sketch.** `hEHC` gives a negligible `ε_{t, fl}` for each of the sixteen predictors
++`tdpPredictor (viewDist D t) fl`, `t = (b, a₀, a₁)`, `fl ∈ {0, 1}`. Take
++`ε(n) = Σ_t Σ_fl |ε_{t, fl}(n)|` (negligible by `negligible_finset_sum`): for the inputs' bits
++`t`, `distAdv_realB_idealB_le` bounds the advantage by `|ε_{t, 0}(n)| + |ε_{t, 1}(n)| ≤ ε(n)`. -/
++theorem exists_negligible_bob {h : ∀ i, T.D i → Bool} (hH : PolyTimeComputable H)
++    (henc : ∀ i (x : T.D i), H (pairEncode i (T.encD i x)) = [h i x]) {π : Protocol}
++    (hπ : IsOT T H π)
++    (houtP : ∀ x (a : Fin 2 → Bool) (b : Fin 1 → Bool) (r : π.ExecCoins π.P x),
++      π.outP x (List.ofFn a) (List.ofFn b) r = [])
++    {S : NUPPT} (hS : IsSimB T H S)
++    (hEHC : ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
++      uexp (fun r : T.gen.Coins n =>
++        uprob fun z : T.sample.Coins n × A.Coins n =>
++          A.distinguisherL n (pairEncode (T.index n r) (List.ofFn z.1)) z.2 =
++            h (T.index n r) ((T.perm (T.index n r)).symm
++              ((T.decD (T.index n r) (T.sample.runAt n (T.index n r) z.1)).getD default)))
++        ≤ 1 / 2 + ε n)
++    (D : NUPPT) :
++    ∃ ε : ℕ → ℝ, Negligible ε ∧ (∀ n, 0 ≤ ε n) ∧
++      ∀ n (a : Fin (otFunctionality.inA.eval n) → Bool)
++        (b : Fin (otFunctionality.inB.eval n) → Bool),
++        distAdv (otFunctionality.realB π n a b) (otFunctionality.idealB S n a b)
++          (D.distinguisherL n) ≤ ε n := by
++  choose ε hε hb using fun (t : Bool × Bool × Bool) (fl : Bool) =>
++    hEHC (tdpPredictor (viewDist T hH D t.1 t.2.1 t.2.2) fl)
++  refine ⟨fun n => ∑ t : Bool × Bool × Bool, ∑ fl : Bool, |ε t fl n|,
++    negligible_finset_sum _ fun t _ => negligible_finset_sum _ fun fl _ =>
++      (hε t fl).mono ⟨0, fun n _ => (abs_abs _).le⟩,
++    fun n => Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => abs_nonneg _,
++    fun n a b => ?_⟩
++  refine (distAdv_realB_idealB_le T H hH henc hπ houtP hS D n a b
++    (hb (inB1 b 0, inA2 a 0, inA2 a 1) false n) (hb (inB1 b 0, inA2 a 0, inA2 a 1) true n)).trans ?_
++  have hsum : ∑ fl : Bool, |ε (inB1 b 0, inA2 a 0, inA2 a 1) fl n| =
++      |ε (inB1 b 0, inA2 a 0, inA2 a 1) false n| + |ε (inB1 b 0, inA2 a 0, inA2 a 1) true n| := by
++    rw [Fintype.sum_bool, add_comm]
++  rw [← hsum]
++  exact Finset.single_le_sum (f := fun t => ∑ fl : Bool, |ε t fl n|)
++    (fun t _ => Finset.sum_nonneg fun _ _ => abs_nonneg _) (Finset.mem_univ _)
++
++/-- **Proposition 161.5 with its simulators** [PS10], for every protocol of the shape of
++Protocol 160.4 (with Bob's output `[a_b]` and Alice's `[]`) and every pair of machines of the
++shapes of `S_A` and `S_B`: for a collection of one-way trapdoor permutations with an enhanced
++hard-core predicate (`hEHC`, explicit) evaluated on encodings by `H`, each distinguisher has
++a negligible `ε` bounding both advantages for all `n` and all inputs.
++
++**Proof sketch.** `T.OneWay` gives a negligible `δ` with `SampleClose δ`. Alice's side is at
++most `2δ(n)` (`distAdv_realA_idealA_le`), Bob's at most a negligible `ε_B(n) ≥ 0`
++(`exists_negligible_bob`). Take `ε(n) = 2|δ(n)| + ε_B(n)`. -/
++theorem simulators_of_isOT {h : ∀ i, T.D i → Bool} (hH : PolyTimeComputable H)
++    (henc : ∀ i (x : T.D i), H (pairEncode i (T.encD i x)) = [h i x]) {π : Protocol}
++    (hπ : IsOT T H π)
++    (houtV : ∀ x (a : Fin 2 → Bool) (b : Fin 1 → Bool) (r : π.ExecCoins π.P x),
++      π.outV π.P x (List.ofFn a) (List.ofFn b) r = [a (if b 0 then 1 else 0)])
++    (houtP : ∀ x (a : Fin 2 → Bool) (b : Fin 1 → Bool) (r : π.ExecCoins π.P x),
++      π.outP x (List.ofFn a) (List.ofFn b) r = [])
++    {SA SB : NUPPT} (hSA : IsSimA T SA) (hSB : IsSimB T H SB) (hT : T.OneWay)
++    (hEHC : ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
++      uexp (fun r : T.gen.Coins n =>
++        uprob fun z : T.sample.Coins n × A.Coins n =>
++          A.distinguisherL n (pairEncode (T.index n r) (List.ofFn z.1)) z.2 =
++            h (T.index n r) ((T.perm (T.index n r)).symm
++              ((T.decD (T.index n r) (T.sample.runAt n (T.index n r) z.1)).getD default)))
++        ≤ 1 / 2 + ε n) :
++    ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
++      ∀ n (x : Fin (otFunctionality.inA.eval n) → Bool)
++        (y : Fin (otFunctionality.inB.eval n) → Bool),
++        distAdv (otFunctionality.realA π n x y) (otFunctionality.idealA SA n x y)
++            (D.distinguisherL n) ≤ ε n ∧
++          distAdv (otFunctionality.realB π n x y) (otFunctionality.idealB SB n x y)
++            (D.distinguisherL n) ≤ ε n := by
++  obtain ⟨δ, hδ, hδS⟩ := ((TrapdoorCollection.oneWay_iff T).1 hT).sampleClose
++  intro D
++  obtain ⟨εB, hεB, h0, hB⟩ := exists_negligible_bob T H hH henc hπ houtP hSB hEHC D
++  refine ⟨fun n => 2 * |δ n| + εB n,
++    ((hδ.mono ⟨0, fun n _ => (abs_abs _).le⟩).const_mul 2).add hεB, fun n x y => ⟨?_, ?_⟩⟩
++  · have hA := distAdv_realA_idealA_le T H hπ houtV hSA hδS D n x y
++    have := le_abs_self (δ n)
++    have := h0 n
++    linarith
++  · have := hB n x y
++    have := abs_nonneg (δ n)
++    linarith
++
++end TCSlib.Cryptography.SecureComputation.OT
+-- 
+2.43.0
+
