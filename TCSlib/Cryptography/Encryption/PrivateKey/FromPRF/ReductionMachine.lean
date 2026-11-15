@@ -112,6 +112,11 @@ theorem eval_histBlockLen (n : ℕ) : histBlockLen.eval n = 6 * n + 6 := by
 def histBlockLenOut (ℓ : PolyExpr) : PolyExpr :=
   .add (.add (.mul (.const 4) .var) (.mul (.const 2) ℓ)) (.const 6)
 
+/-- `histBlockLenOut ℓ = 4 · var + 2 · ℓ + 6` (the defining equation). -/
+theorem histBlockLenOut_eq (ℓ : PolyExpr) :
+    histBlockLenOut ℓ = .add (.add (.mul (.const 4) .var) (.mul (.const 2) ℓ)) (.const 6) :=
+  rfl
+
 /-- `(histBlockLenOut ℓ).eval n = 4n + 2ℓ(n) + 6`. -/
 theorem eval_histBlockLenOut (ℓ : PolyExpr) (n : ℕ) :
     (histBlockLenOut ℓ).eval n = 4 * n + 2 * ℓ.eval n + 6 := by
@@ -560,6 +565,14 @@ def adviceBound (q : PolyExpr) : PolyExpr :=
 def adviceBoundOut (q ℓ : PolyExpr) : PolyExpr :=
   .add (.add (.mul (.const 2) (.mul (.add q (.const 1)) (histBlockLenOut ℓ))) (.const 2))
     (.add q (.const 1))
+
+/-- `adviceBoundOut q ℓ = 2 · ((q + 1) · histBlockLenOut ℓ) + 2 + (q + 1)` (the defining
+equation). -/
+theorem adviceBoundOut_eq (q ℓ : PolyExpr) :
+    adviceBoundOut q ℓ =
+      .add (.add (.mul (.const 2) (.mul (.add q (.const 1)) (histBlockLenOut ℓ))) (.const 2))
+        (.add q (.const 1)) :=
+  rfl
 
 /-- `(adviceBoundOut q ℓ).eval n = 2 ((q(n) + 1)(4n + 2ℓ(n) + 6)) + 2 + (q(n) + 1)`. -/
 theorem eval_adviceBoundOut (q ℓ : PolyExpr) (n : ℕ) :
