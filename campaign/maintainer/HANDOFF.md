@@ -15,7 +15,7 @@ Campaign Lean is `d811bdaaf5e923b2a57f0453135af5c7ee37713a`. Its replay output i
 (876 objects); use it whole. See campaign/status/2026-11-15-merge-322/. Ladner has one admitted
 target left: target 6, `SAT_H_intermediate`. Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
 (`ladnerH_polyTime`; #321). Fills 5 and 6 proved targets 2 and 5
-(#322). Fill 7 (target 6, the last admission) is staged, not dispatched (campaign/fills/ladner-final/). Earlier merges are in the table.
+(#322). Fill 7 (target 6, the last admission) is dispatched (2026-11-15; campaign/fills/ladner-final/). Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
