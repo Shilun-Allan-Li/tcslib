@@ -1,0 +1,65 @@
+Seed-majority enumeration host: maintainer statement PR (derand prerequisite), evidence.
+Prepared 2026-11-14/15 UTC by Claude (session_01PqpVTiuDcjSqhyfbqnsVxA). Nothing pushed.
+
+repo: Shilun-Allan-Li/tcslib. base = origin/cryptography/pass-shelat-ch2-4 after `git fetch origin`:
+  013119f006af40d03b88b0fc2d9b453cf0a9b348 ("prf-mac and learning dispatched").
+branch: stmt/pass-shelat-derand-host (local), worktree $SP/wt-stmt-derand (.lake/packages symlinked to
+  /home/user/tcslib/.lake/packages, as for the earlier scratch worktrees).
+head: 8972fb4ef15fa3d4e3df37d6aa8674408835593d, tree ba544f9ca0d80ff12644128a2cc32a94d6b5f709;
+  author = committer = Claude <noreply@anthropic.com>, 2026-11-15T00:02:27Z; SSH-signed by the environment
+  (commit.gpgsign=true). patches/: git format-patch base..head (1 patch) and COMMITS.tsv;
+  patches/am-check.txt: tree and unsigned commit reproduced from the patch (signature explains the hash).
+changed files (src/): TCSlib/Complexity/Randomized/SeedMajority.lean (new, 163 lines),
+  TCSlib/Complexity/Randomized.lean (facade: import + Contents entry, +4 lines).
+Lean 4.25.0 (leanprover/lean4:v4.25.0), PATH=$HOME/.elan/bin:$PATH. Python always `python3 -I`.
+No `lake build`, no `lake exe cache get`.
+
+olean tree: ONLY $SP/dl-oleans-2.
+  tree/snapshot-pre.txt (taken first, before any build): 1230 files, 0 empty dirs, SHA-256
+    457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, byte-identical to the gate-23
+    reference $SP/legate23/snapshot-pre.txt (the documented base snapshot; its oleans are the 1199-module
+    base at source eff2dcd0, whose 51 later-changed modules are all under TCSlib/Cryptography).
+  tree/snapshot-prebuild.txt: re-taken just before the build, same SHA-256.
+  backup: the 20 base oleans the build would overwrite were copied aside (tools/backed-up.txt); the 43
+    oleans the build would create were listed (tools/new-oleans.txt: 42 tip-new modules + SeedMajority).
+
+build/ (tools/runner.py, one Lean process at a time, via the worktree's scripts/lean_check_tree.sh, byte-
+  identical to /home/user/tcslib/scripts/lean_check_tree.sh; TCSLIB_OLEANS=$SP/dl-oleans-2):
+  order.txt = tools/downorder.py: downstream closure over TCSlib/**, audits/** and TCSlib.lean of
+    {51 modules changed eff2dcd0..base (tools/tip-vs-base.txt)} + {SeedMajority, Randomized facade}, imports
+    first: 63 modules (the 53, 8 unchanged Cryptography downstream modules, root TCSlib,
+    audits/pass-shelat/Checks). The tip-vs-base modules are built so that root TCSlib is checked at the tip.
+  results.jsonl: 63/63 rc 0; errors 0 counted as ^\S+\.lean:\d+:\d+: error[:(] (both forms, G26-N1); the
+    substring "error" occurs 0 times in all logs; the only sorry warning is
+    TCSlib/Complexity/Randomized/SeedMajority.lean:154:8 (seedMajority_mem_DTIME, intended). Source SHA-256
+    of the two changed files = the committed blobs (3f6758b1..., bfefe641...). mods/: every raw log.
+probes/ (tools/probe.sh: lean without -o, nothing written to the tree; cwd = worktree):
+  RouteAxioms.lean/.log: 26 route lemmas of the feasibility note, all [propext, Classical.choice,
+    Quot.sound] or fewer; no sorryAx (exists_loopFindTM, exists_loopCfgTM, ModuleHost, IterateFind host,
+    polyTimeComputable_find, exists_proj_decider, incFixed, lengthBits, BinArith add/lt/beq, ...).
+  SealSeedMajority.lean/.log: whole-file seal of the new module (randProb, DTIME, P, PolyTimeComputable,
+    pairEncode local irreducible): rc 0, only the intended sorry warning.
+  SealSeedMajorityControl / UnsealedSeedMajorityControl: control reading randProb through its body fails
+    sealed exactly once (line 172), passes unsealed.
+  ConsumerProbe.lean/.log, ConsumerProbeUnsealed: derand's last step (majority set in DTIME T from the
+    contract, half_lt_randProb_iff, DTIME.mono, Randomized.DTIME_const_mul_subset) elaborates with the five
+    definitions sealed; its control (DTIME membership through the body) fails exactly once sealed; all
+    pass unsealed. Also prints axioms: seedMajority_mem_DTIME [propext, sorryAx, Classical.choice,
+    Quot.sound] (intended); half_lt_randProb_iff [propext, Classical.choice, Quot.sound].
+  (probes ran while the build's oleans were in the tree, before the restore.)
+lint/: campaign_style_lint.py --check8b, base run in /home/user/tcslib (clean TCSlib/ and scripts/ at the
+  base commit), head run in the worktree. Cryptography: 92 FAIL / 101 WARN both; Complexity: 25 FAIL /
+  391 WARN both; linediff.txt: FAIL and WARN line sets identical (0 new, 0 gone). widths.txt
+  (tools/widths.py over git diff base..head): max widths 97 and 100, 163 and 210 lines, RESULT OK.
+restore/: backups copied back (20), new oleans removed (43), the 5 directories left empty by the check
+  script's mkdir -p removed with rmdir (restore-log.txt). snapshot-post.txt: 1230 files, 0 empty dirs,
+  SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f, byte-identical to
+  tree/snapshot-pre.txt and to the gate-23 reference.
+pr-body.md: the draft PR description (statement, design, feasibility, paper proof of Thm 180.1 from the
+  contract, decisions, draft registry row H17).
+Concurrency note: during the work another session was running Lean into $SP/dl-oleans (a different tree);
+  no other process touched dl-oleans-2 (the pre/prebuild/post snapshots agree).
+Disk note: the volume reached 98% during packaging (other sessions); a scratch worktree for git am could not
+  be checked out, so the patch was replayed on a scratch index instead (patches/am-check.txt).
+SHA256SUMS: every file here except itself (paths without "./"); ../stmt-derand-evidence.zip holds exactly
+  the manifest paths plus SHA256SUMS.
