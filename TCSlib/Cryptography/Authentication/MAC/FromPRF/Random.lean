@@ -146,10 +146,10 @@ theorem expect_fnForge_random_le
     expect (sample ((Fin a → Bool) → (Fin b → Bool))) (fun R =>
       expect (simulate (fnImpl R).withLog c ((), []))
         (fun res => if FnForge R res.1 res.2.2 then (1 : ℝ) else 0)) ≤ ((2 : ℝ) ^ b)⁻¹ := by
-  have h := expect_forge_ovr_le c [] [] fun p hp => by
-    rw [List.map_nil] at hp
-    exact absurd hp List.not_mem_nil
-  simp only [ovr_nil] at h
-  exact h
+  refine le_of_eq_of_le (congrArg _ (funext fun R => ?_))
+    (expect_forge_ovr_le c [] [] fun p hp => by
+      rw [List.map_nil] at hp
+      exact absurd hp List.not_mem_nil)
+  rw [ovr_nil]
 
 end TCSlib.Cryptography.Authentication.PRFMAC
