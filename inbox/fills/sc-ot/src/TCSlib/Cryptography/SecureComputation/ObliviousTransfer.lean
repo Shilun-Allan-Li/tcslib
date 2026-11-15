@@ -6,6 +6,8 @@ import TCSlib.Cryptography.SecureComputation.Defs
 import TCSlib.Cryptography.Asymptotic.Collections
 import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Shape
 import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Efficiency
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Simulators
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.ViewA
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -76,6 +78,8 @@ cost are passed explicitly, so this module needs only `Asymptotic/Collections`.
   modules.
 * `SecureComputation.otProtocol_polyTime`: the parties run in polynomial time (proved,
   `OT.polyTime_of_isOT`).
+* `SecureComputation.otSimA_isSimA`, `otSimB_isSimB`: the simulators have the shapes
+  `OT.IsSimA`, `OT.IsSimB` of the helper modules.
 * `SecureComputation.otProtocol_simulators` (Prop 161.5 with the explicit simulators, stated; a
   `sorry` under its sketch), and `otProtocol_hbcSecure` (Prop 161.5, proved from the two).
 
@@ -87,6 +91,10 @@ them for every protocol of the shape of Protocol 160.4:
   the five moves of its executions.
 * `ObliviousTransfer/Efficiency.lean`: the parties' machines and the message bound
   (`OT.polyTime_of_isOT`).
+* `ObliviousTransfer/Simulators.lean`: the simulators' shapes `OT.IsSimA`, `OT.IsSimB` (their raw
+  functions restated), the coin spaces, and the simulated views on assembled tapes.
+* `ObliviousTransfer/ViewA.lean`: Alice's side, the bound `2δ(n)`
+  (`OT.distAdv_realA_idealA_le`).
 
 ## References
 
@@ -610,6 +618,26 @@ theorem runAt_otSimB {H : List Bool → List Bool} (hH : PolyTimeComputable H)
   rw [NUPPT.runAt_eq]
   unfold otSimB
   rw [NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq, NUPPT.layout_eq]
+
+/-- **`S_A` has the shape `OT.IsSimA`**: its coins are `coins_Gen + (coins_Sample + coins_Sample)`
+and it computes `OT.simAView` (`otSimA_coins`, `runAt_otSimA`, and the readers of `otSimAFun`,
+`coinSeg`, `simIdx`, `simSample`). -/
+theorem otSimA_isSimA : OT.IsSimA T (otSimA T) := by
+  refine (OT.isSimA_iff T _).2 ⟨otSimA_coins T, fun n y r => ?_⟩
+  rw [runAt_otSimA]
+  simp only [otSimAFun_eq, simSample_eq, simIdx_eq, coinSeg_eq, OT.simAView_eq, OT.simSampled_eq,
+    OT.simIndex_eq, OT.simSeg_eq]
+
+/-- **`S_B` has the shape `OT.IsSimB`**: its coins are
+`coins_Gen + (coins_Sample + (coins_Sample + 1))` and it computes `OT.simBView` (`otSimB_coins`,
+`runAt_otSimB`, and the readers of `otSimBFun`, `otSimZ`, `otSimZb`, `coinSeg`, `simIdx`,
+`simSample`). -/
+theorem otSimB_isSimB {H : List Bool → List Bool} (hH : PolyTimeComputable H) :
+    OT.IsSimB T H (otSimB T hH) := by
+  refine (OT.isSimB_iff T H _).2 ⟨otSimB_coins T hH, fun n y r => ?_⟩
+  rw [runAt_otSimB]
+  simp only [otSimBFun_eq, otSimZ_eq, otSimZb_eq, simSample_eq, simIdx_eq, coinSeg_eq,
+    OT.simBView_eq, OT.simZpair_eq, OT.simZbit_eq, OT.simSampled_eq, OT.simIndex_eq, OT.simSeg_eq]
 
 /-! ### Proposition 161.5 -/
 

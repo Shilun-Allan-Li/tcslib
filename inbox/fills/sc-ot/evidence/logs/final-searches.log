@@ -1,0 +1,108 @@
+# Searches run for the checkpoint-2 and final helpers, over TCSlib at the issue base (an archive of 107f1e8c in /tmp/lintbase) and over Mathlib of the clone's .lake/packages
+## rg -n "theorem .*[sS]tatClose.*∀|StatClose \(fun z : . × .* z.1" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/Asymptotic/Sampling.lean:265:    StatClose (fun z : σ × σ' => (X z.1, Y z.2)) (fun z : τ × τ' => (X' z.1, Y' z.2)) (δ + δ') := by
+## rg -n "statClose_prod|StatClose.prod" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:277:and `m` copies (`StatClose.prod`), reassembled by `Fin.cons` (`StatClose.map`); the case `m = 0`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:809:`withV_vCoinsEquiv` (`StatClose.prod`, `StatClose.map`). The three moves unfold by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:886:uniform (`statClose_sampleEdgeIdx`, `statClose_sampleColorPair`, `StatClose.prod`), the blocks
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1595:uniform `π`: `statClose_samplePerm3`, `StatClose.prod`/`StatClose.refl` for the prover's
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:1604:`StatClose.prod` over the blocks).
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:557:(`statClose_samplePerm`, `StatClose.prod` with `StatClose.refl` for `r₂`, `StatClose.map`);
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:560:`n · permFailBound n` (`StatClose.prod` iterated over the `n` blocks, `StatClose.map`);
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:26:   with a uniform `π` (`statClose_samplePerm_long`, `StatClose.prod`, `StatClose.map`);
+## rg -n "theorem statClose_pi" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:279:theorem statClose_pi {σ γ : Type*} [Fintype σ] [Fintype γ] {X : σ → γ} {δ : ℝ}
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:165:theorem statClose_pi {σ τ γ : Type*} [Fintype σ] [Fintype τ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:276:theorem statClose_pi {σ τ γ : Type*} [Fintype σ] [Fintype τ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+## rg -n "splitCoins|Fin.appendEquiv" TCSlib --glob '*.lean' | head -8
+TCSlib/Complexity/Randomized/Classes.lean:202:`Fin.appendEquiv`, and surjectivity splits an arbitrary `r` by
+TCSlib/Complexity/Randomized/Classes.lean:222:    exact (Fin.appendEquiv m₁ m₂).injective (by exact h)
+TCSlib/Complexity/Randomized/RandomBits.lean:144:  rw [Finset.natCast_card_filter, ← (Fin.appendEquiv b m).sum_comp, Fintype.sum_prod_type,
+TCSlib/Complexity/Randomized/RandomBits.lean:347:    rw [← Finset.card_equiv (Fin.appendEquiv m₁ m₂)
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:198:split `Fin.appendEquiv` followed by the coin equivalence of `ofPolyTimeUniform`. -/
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:201:  (Fin.appendEquiv (S.gen.coinLen n) (S.enc.coinLen n)).trans
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:220:    ((Fin.appendEquiv (S.gen.coinLen n) (S.enc.coinLen n)) (r₁, r₂))).symm.trans ?_)
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:244:(the coin split `Fin.appendEquiv` is a bijection of the seed spaces, `acceptProb_comp_equiv`,
+## rg -n "ofFn_splitCoins_symm" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1074:(`ofFn_splitCoins_symm`). -/
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:1078:  exact ofFn_splitCoins_symm a b u v
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:189:private theorem ofFn_splitCoins_symm_cast {a b n : ℕ} (h : a + b = n)
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:196:  exact ofFn_splitCoins_symm a b q₁ q₂
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:306:    rw [ofFn_splitCoins_symm_cast]
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:308:    rw [ofFn_splitCoins_symm_cast, ofFn_splitCoins_symm_cast]
+TCSlib/Cryptography/Asymptotic/Collections.lean:824:    rw [← ofFn_splitCoins_symm, Prod.mk.eta, Equiv.symm_apply_apply, owfCoinsEquiv_ofFn]
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:38:* `TCSlib.Cryptography.ofFn_splitCoins_fst`, `ofFn_splitCoins_snd`, `ofFn_splitCoins_symm` —
+## rg -n "coinSeg|simIdx|simSample" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:357:def coinSeg (p q : PolyExpr) (z : List Bool) : List Bool :=
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:362:theorem coinSeg_eq (p q : PolyExpr) (z : List Bool) :
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:363:    coinSeg p q z =
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:369:theorem polyTimeComputable_coinSeg (p q : PolyExpr) : PolyTimeComputable (coinSeg p q) := by
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:374:  refine (congrArg PolyTimeComputable (?_ : coinSeg p q = _)).mpr h₂
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:376:  simp only [coinSeg, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:379:def simIdx (z : List Bool) : List Bool :=
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:381:    (coinSeg (.const 0) T.gen.coins z)))
+## rg -n "pkPredictor|owpPredictor" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:35:(`Pseudorandom/GeneratorFromPermutation.lean`), its predictor is `owpPredictorSnoc` of
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:37:`predProb_owpPredictor_false/true` **are** Claim-127.c; the
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:573:`Com(1, ·) = f(r) ‖ ¬h(r)` there is a sign `flip` such that `owpPredictorSnoc D flip` (one call
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:577:**Proof sketch.** This is `predProb_owpPredictor_false`/`_true` with `β := Unit`: under the
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:585:    ∃ flip : Bool, predProb f h (owpPredictorSnoc D flip) =
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:594:  have h1 : ∀ flip, predProb f h (owpPredictorSnoc D flip) =
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:596:        (owpPredictor (fun z r => D (e z) r) flip) := fun flip => by
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:616:    rw [h1, predProb_owpPredictor_false, h0, h0', distAdv_def, abs_of_nonneg hs]
+## rg -n "theorem predProb_pkPredictor|theorem predProb_owpPredictor" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:131:theorem predProb_owpPredictor_false [Nonempty ρ] [Nonempty α] [Nonempty β] (f : α ≃ α)
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:172:theorem predProb_owpPredictor_true [Nonempty ρ] [Nonempty α] [Nonempty β] (f : α ≃ α)
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:286:private theorem predProb_pkPredictor_eq {α ρ : Type*} [Fintype α] [Fintype ρ] (f : α ≃ α)
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:317:theorem predProb_pkPredictor_false {α ρ : Type*} [Fintype α] [Fintype ρ] [Nonempty α] [Nonempty ρ]
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:326:theorem predProb_pkPredictor_true {α ρ : Type*} [Fintype α] [Fintype ρ] [Nonempty α] [Nonempty ρ]
+## rg -n "pkPredictor_apply|owpPair_apply|owpGen_apply" TCSlib --glob '*.lean' | head -8
+## rg -n "uprob_tdpPredictor|tdpPredictor_runAtL" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:31:* `TCSlib.Cryptography.tdpPredictor_runAtL` gives the machine's run equation.
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:32:* `TCSlib.Cryptography.uprob_tdpPredictor` gives the probability identity used in
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:111:theorem tdpPredictor_runAtL (D : NUPPT) (flip : Bool) (n : ℕ) (i y : List Bool) (c : Bool)
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:150:(`uprob_comp_equiv` along `predCoins`, `tdpPredictor_runAtL`). -/
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:151:theorem uprob_tdpPredictor {α : Type*} [Fintype α] (D : NUPPT) (flip : Bool) (n : ℕ)
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:163:    NUPPT.runAt_eq, ofFn_predCoins, tdpPredictor_runAtL, decide_singleton_eq_true, ite_eq_xor_not]
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:410:`predCoins`, the per-index identity is `uprob_tdpPredictor`, the honest ciphertext is
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:470:    exact uprob_tdpPredictor D flip n (T.index n r) (T.perm _) (h _) (T.encD _)
+## rg -n "theorem uprob_bool_prod" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:59:theorem uprob_bool_prod {γ : Type*} [Fintype γ] (p : Bool × γ → Prop) :
+## rg -n "xor .* \(g |shear" TCSlib --glob '*.lean' | head -8
+TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:146:    decide_eq_true_iff, eq_iff_xor (f y) (g y)]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean:97:  fun i => xor (b i) (g i (prefixLT b i) w)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:623:  fun i => xor (b i) (g i (prefixLT b i) w)
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:165:    { toFun := fun w => (xor (w.2.1.2 i) (g w.2.1.1),
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:166:        ((w.2.1.1, Function.update w.2.1.2 i (xor w.1 (g w.2.1.1))), w.2.2))
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:167:      invFun := fun w => (xor (w.2.1.2 i) (g w.2.1.1),
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:168:        ((w.2.1.1, Function.update w.2.1.2 i (xor w.1 (g w.2.1.1))), w.2.2))
+## rg -n "Negligible.*∑|negligible_sum|Negligible.sum" TCSlib --glob '*.lean' | head -8
+## rg -n "theorem negligible_abs" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean:744:private theorem negligible_abs {μ : ℕ → ℝ} (hμ : Negligible μ) : Negligible fun n => |μ n| :=
+## rg -n "inv_eq_encD|inv_spec" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:266:   (`inv_spec`). Canonical decoding extends the supplied specification of `H` to all decodable
+TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean:319:  have hinv := T.inv_spec x.length rA (T.perm _ xx) (fun _ => true)
+TCSlib/Cryptography/Candidates/Rabin.lean:982:index `N` (`TrapdoorCollection.inv_spec`; the literal `Inv((i, t), y)` form of Definition
+TCSlib/Cryptography/Candidates/Rabin.lean:2706:`inv_spec` of `TrapdoorCollection`, [PS10, Theorem 63.10 (6)]).
+TCSlib/Cryptography/Candidates/Rabin.lean:2854:  inv_spec := blumInv_spec H
+TCSlib/Cryptography/Candidates/RSA.lean:1124:`TrapdoorCollection.inv_spec` hands the inverter `⟨t, y⟩` without the index (the literal
+TCSlib/Cryptography/Candidates/RSA.lean:1202:(the clause `inv_spec` of `TrapdoorCollection`, [PS10, Theorem 57.2, "`e·d = 1 mod Φ(N)`"]).
+TCSlib/Cryptography/Candidates/RSA.lean:1326:  inv_spec := rsaInv_spec H
+## rg -n "theorem uexp_half_add|theorem uexp_half_sub" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:169:theorem uexp_half_add {κ : Type*} [Fintype κ] [Nonempty κ] (a b : κ → ℝ) :
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:177:theorem uexp_half_sub {κ : Type*} [Fintype κ] [Nonempty κ] (a b : κ → ℝ) :
+## rg -n "realA_eq|realB_eq|idealA_eq|idealB_eq" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/SecureComputation/Hybrid.lean:53:* `HybridProtocol.realA_eq`, `realB_eq`, `polyTime_iff`, `hbcSecure_iff`: the sampler, time and
+TCSlib/Cryptography/SecureComputation/Hybrid.lean:166:theorem realA_eq (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+TCSlib/Cryptography/SecureComputation/Hybrid.lean:188:theorem realB_eq (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+TCSlib/Cryptography/SecureComputation/Defs.lean:55:* `Functionality.realA_eq`, `realB_eq`, `idealA_eq`, `idealB_eq`: the four sampler equations.
+TCSlib/Cryptography/SecureComputation/Defs.lean:99:theorem realA_eq (π : Protocol) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+TCSlib/Cryptography/SecureComputation/Defs.lean:112:theorem realB_eq (π : Protocol) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+TCSlib/Cryptography/SecureComputation/Defs.lean:125:theorem idealA_eq (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+TCSlib/Cryptography/SecureComputation/Defs.lean:138:theorem idealB_eq (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+## rg -n "otFunctionality_f_snd_apply" TCSlib --glob '*.lean' | head -8
+TCSlib/Cryptography/SecureComputation/Yao.lean:724:  rw [h, hj, getD_ofFn', otFunctionality_f_snd_apply,
+TCSlib/Cryptography/SecureComputation/Defs.lean:224:theorem otFunctionality_f_snd_apply (n : ℕ)
+## rg -n "theorem prodShear|def prodShear" Mathlib (clone .lake/packages) | head -4
+/workspace/scot/.lake/packages/mathlib/Mathlib/Logic/Equiv/Prod.lean:293:def prodShear (e₁ : α₁ ≃ α₂) (e₂ : α₁ → β₁ ≃ β₂) : α₁ × β₁ ≃ α₂ × β₂ where
+## rg -n "theorem Finset.single_le_sum|theorem single_le_sum" Mathlib (clone .lake/packages) | head -4

@@ -1,0 +1,697 @@
+From a643e566b57d450d4abdad7b8484215385179233 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 05:13:03 +0000
+Subject: [PATCH 2/2] =?UTF-8?q?sc-ot:=20checkpoint=202=20=E2=80=94=20Alice?=
+ =?UTF-8?q?'s=20side=20of=20otProtocol=5Fsimulators=20(simulator=20shapes,?=
+ =?UTF-8?q?=20the=202=CE=B4=20bound)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .../SecureComputation/ObliviousTransfer.lean  |  28 ++
+ .../ObliviousTransfer/Simulators.lean         | 418 ++++++++++++++++++
+ .../ObliviousTransfer/ViewA.lean              | 186 ++++++++
+ 3 files changed, 632 insertions(+)
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewA.lean
+
+diff --git a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
+index c5fbe2673..a720e7949 100644
+--- a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
+@@ -6,6 +6,8 @@ import TCSlib.Cryptography.SecureComputation.Defs
+ import TCSlib.Cryptography.Asymptotic.Collections
+ import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Shape
+ import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Efficiency
++import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Simulators
++import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.ViewA
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -76,6 +78,8 @@ cost are passed explicitly, so this module needs only `Asymptotic/Collections`.
+   modules.
+ * `SecureComputation.otProtocol_polyTime`: the parties run in polynomial time (proved,
+   `OT.polyTime_of_isOT`).
++* `SecureComputation.otSimA_isSimA`, `otSimB_isSimB`: the simulators have the shapes
++  `OT.IsSimA`, `OT.IsSimB` of the helper modules.
+ * `SecureComputation.otProtocol_simulators` (Prop 161.5 with the explicit simulators, stated; a
+   `sorry` under its sketch), and `otProtocol_hbcSecure` (Prop 161.5, proved from the two).
+ 
+@@ -87,6 +91,10 @@ them for every protocol of the shape of Protocol 160.4:
+   the five moves of its executions.
+ * `ObliviousTransfer/Efficiency.lean`: the parties' machines and the message bound
+   (`OT.polyTime_of_isOT`).
++* `ObliviousTransfer/Simulators.lean`: the simulators' shapes `OT.IsSimA`, `OT.IsSimB` (their raw
++  functions restated), the coin spaces, and the simulated views on assembled tapes.
++* `ObliviousTransfer/ViewA.lean`: Alice's side, the bound `2δ(n)`
++  (`OT.distAdv_realA_idealA_le`).
+ 
+ ## References
+ 
+@@ -611,6 +619,26 @@ theorem runAt_otSimB {H : List Bool → List Bool} (hH : PolyTimeComputable H)
+   unfold otSimB
+   rw [NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq, NUPPT.layout_eq]
+ 
++/-- **`S_A` has the shape `OT.IsSimA`**: its coins are `coins_Gen + (coins_Sample + coins_Sample)`
++and it computes `OT.simAView` (`otSimA_coins`, `runAt_otSimA`, and the readers of `otSimAFun`,
++`coinSeg`, `simIdx`, `simSample`). -/
++theorem otSimA_isSimA : OT.IsSimA T (otSimA T) := by
++  refine (OT.isSimA_iff T _).2 ⟨otSimA_coins T, fun n y r => ?_⟩
++  rw [runAt_otSimA]
++  simp only [otSimAFun_eq, simSample_eq, simIdx_eq, coinSeg_eq, OT.simAView_eq, OT.simSampled_eq,
++    OT.simIndex_eq, OT.simSeg_eq]
++
++/-- **`S_B` has the shape `OT.IsSimB`**: its coins are
++`coins_Gen + (coins_Sample + (coins_Sample + 1))` and it computes `OT.simBView` (`otSimB_coins`,
++`runAt_otSimB`, and the readers of `otSimBFun`, `otSimZ`, `otSimZb`, `coinSeg`, `simIdx`,
++`simSample`). -/
++theorem otSimB_isSimB {H : List Bool → List Bool} (hH : PolyTimeComputable H) :
++    OT.IsSimB T H (otSimB T hH) := by
++  refine (OT.isSimB_iff T H _).2 ⟨otSimB_coins T hH, fun n y r => ?_⟩
++  rw [runAt_otSimB]
++  simp only [otSimBFun_eq, otSimZ_eq, otSimZb_eq, simSample_eq, simIdx_eq, coinSeg_eq,
++    OT.simBView_eq, OT.simZpair_eq, OT.simZbit_eq, OT.simSampled_eq, OT.simIndex_eq, OT.simSeg_eq]
++
+ /-! ### Proposition 161.5 -/
+ 
+ section Security
+diff --git a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean
+new file mode 100644
+index 000000000..df8c27450
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean
+@@ -0,0 +1,418 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Shape
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Oblivious transfer: the shape of the simulators of Proposition 161.5
++
++The simulators `S_A` and `S_B` of [PS10, Proposition 161.5] restated for the helper modules
++(which cannot import `SecureComputation/ObliviousTransfer.lean`, the owned file that imports them):
++the coin segments, the simulated index and samples, and the two simulated views, with the
++predicates `OT.IsSimA` and `OT.IsSimB` that the owned file proves for `otSimA` and `otSimB`.
++On a tape assembled from typed coin blocks (`OT.splitLen`), the simulated views are computed
++explicitly (`OT.simAView_layout`, `OT.simBView_layout`).
++
++## Main definitions
++
++* `OT.splitLen`: a coin string of length `c = a + b` as an `a`-bit and a `b`-bit string.
++* `OT.simSeg`, `OT.simIndex`, `OT.simSampled`: a coin segment, the simulated index and a
++  simulated sample (the bodies of `coinSeg`, `simIdx`, `simSample`).
++* `OT.simAView`, `OT.simZbit`, `OT.simZpair`, `OT.simBView`: the simulators' raw functions (the
++  bodies of `otSimAFun`, `otSimZb`, `otSimZ`, `otSimBFun`).
++* `OT.IsSimA`, `OT.IsSimB`: machines of the simulators' shape.
++
++## Main results
++
++* `OT.splitLen_symm_ofFn`: the assembled tape is the concatenation of the blocks.
++* `OT.simSeg_layout`, `OT.simIndex_layout`, `OT.simSampled_layout`: the pieces on such a tape.
++* `OT.simAView_layout`, `OT.simBView_layout`: the simulated views on such a tape.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.2.4, Proposition 161.5 (book pp. 160–162).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.OT
++
++open Complexity Turing TCSlib.Cryptography
++
++variable (T : TrapdoorCollection) (H : List Bool → List Bool)
++
++/-! ### Splitting coin strings -/
++
++/-- **A coin string of length `c = a + b` split** into its first `a` and last `b` bits:
++`splitCoins a b` after the length cast `Fin c ≃ Fin (a + b)`. -/
++def splitLen {a b c : ℕ} (h : c = a + b) : (Fin c → Bool) ≃ (Fin a → Bool) × (Fin b → Bool) :=
++  (Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)).trans (splitCoins a b)
++
++/-- The tape assembled from two blocks is their concatenation:
++`ofFn ((splitLen h).symm (r₁, r₂)) = ofFn r₁ ++ ofFn r₂` (`ofFn_splitCoins_symm`). -/
++theorem splitLen_symm_ofFn {a b c : ℕ} (h : c = a + b) (p : (Fin a → Bool) × (Fin b → Bool)) :
++    List.ofFn ((splitLen h).symm p) = List.ofFn p.1 ++ List.ofFn p.2 := by
++  rw [← ofFn_splitCoins_symm]
++  exact (List.ofFn_congr h _).trans rfl
++
++/-! ### The simulators restated -/
++
++/-- The coin segment of length `q(n)` after the first `p(n)` coins of a raw layout `z` (the body
++of `coinSeg`): `(inCoins z).drop p(|inParam z|) |>.take q(|inParam z|)`. -/
++def simSeg (p q : PolyExpr) (z : List Bool) : List Bool :=
++  ((NUPPT.inCoins z).drop (p.eval (NUPPT.inParam z).length)).take (q.eval (NUPPT.inParam z).length)
++
++/-- The defining equation of `simSeg`. -/
++theorem simSeg_eq (p q : PolyExpr) (z : List Bool) :
++    simSeg p q z =
++      ((NUPPT.inCoins z).drop (p.eval (NUPPT.inParam z).length)).take
++        (q.eval (NUPPT.inParam z).length) := rfl
++
++/-- The simulated index (the body of `simIdx`): `fst Gen(inParam z; simSeg 0 coins_Gen z)`. -/
++def simIndex (z : List Bool) : List Bool :=
++  pairFstD (T.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
++    (simSeg (.const 0) T.gen.coins z)))
++
++/-- The defining equation of `simIndex`. -/
++theorem simIndex_eq (z : List Bool) :
++    simIndex T z = pairFstD (T.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
++      (simSeg (.const 0) T.gen.coins z))) := rfl
++
++/-- A simulated sample after `p(n)` coins (the body of `simSample`):
++`Sample(inParam z, simIndex z; simSeg p coins_Sample z)`. -/
++def simSampled (p : PolyExpr) (z : List Bool) : List Bool :=
++  T.sample.output (NUPPT.layout (NUPPT.inParam z) (simIndex T z) [] (simSeg p T.sample.coins z))
++
++/-- The defining equation of `simSampled`. -/
++theorem simSampled_eq (p : PolyExpr) (z : List Bool) :
++    simSampled T p z =
++      T.sample.output (NUPPT.layout (NUPPT.inParam z) (simIndex T z) []
++        (simSeg p T.sample.coins z)) := rfl
++
++/-- **`S_A`'s raw function** [PS10, Proposition 161.5] (the body of `otSimAFun`):
++`⟨⟨1^n, ⟨a₁, a₂⟩⟩, ⟨r_Gen, [⟨y₁, y₂⟩, []]⟩⟩` with two simulated samples `y₁, y₂`. -/
++def simAView (z : List Bool) : List Bool :=
++  pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
++    (pairEncode (simSeg (.const 0) T.gen.coins z)
++      (pairEncode (pairEncode (simSampled T T.gen.coins z)
++          (simSampled T (.add T.gen.coins T.sample.coins) z))
++        (pairEncode [] [])))
++
++/-- The defining equation of `simAView`. -/
++theorem simAView_eq (z : List Bool) :
++    simAView T z =
++      pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
++        (pairEncode (simSeg (.const 0) T.gen.coins z)
++          (pairEncode (pairEncode (simSampled T T.gen.coins z)
++              (simSampled T (.add T.gen.coins T.sample.coins) z))
++            (pairEncode [] []))) := rfl
++
++/-- `S_B`'s mask `z_b = h(x) ⊕ a_b` (the body of `otSimZb`). -/
++def simZbit (z : List Bool) : List Bool :=
++  List.zipWith xor (H (pairEncode (simIndex T z) (simSampled T T.gen.coins z)))
++    (pairSndD (NUPPT.inArg z))
++
++/-- The defining equation of `simZbit`. -/
++theorem simZbit_eq (z : List Bool) :
++    simZbit T H z =
++      List.zipWith xor (H (pairEncode (simIndex T z) (simSampled T T.gen.coins z)))
++        (pairSndD (NUPPT.inArg z)) := rfl
++
++/-- `S_B`'s pair `(z₁, z₂)` (the body of `otSimZ`): `z_b` from `simZbit`, `z_{1−b}` one coin. -/
++def simZpair (z : List Bool) : List Bool :=
++  if (pairFstD (NUPPT.inArg z)).headD false then
++    pairEncode (simSeg (.add T.gen.coins (.add T.sample.coins T.sample.coins)) (.const 1) z)
++      (simZbit T H z)
++  else
++    pairEncode (simZbit T H z)
++      (simSeg (.add T.gen.coins (.add T.sample.coins T.sample.coins)) (.const 1) z)
++
++/-- The defining equation of `simZpair`. -/
++theorem simZpair_eq (z : List Bool) :
++    simZpair T H z =
++      if (pairFstD (NUPPT.inArg z)).headD false then
++        pairEncode (simSeg (.add T.gen.coins (.add T.sample.coins T.sample.coins)) (.const 1) z)
++          (simZbit T H z)
++      else
++        pairEncode (simZbit T H z)
++          (simSeg (.add T.gen.coins (.add T.sample.coins T.sample.coins)) (.const 1) z) := rfl
++
++/-- **`S_B`'s raw function** [PS10, Proposition 161.5] (the body of `otSimBFun`):
++`⟨⟨1^n, [b]⟩, ⟨r_B, [i, ⟨z₁, z₂⟩, []]⟩⟩`. -/
++def simBView (z : List Bool) : List Bool :=
++  pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
++    (pairEncode (simSeg T.gen.coins (.add T.sample.coins T.sample.coins) z)
++      (pairEncode (simIndex T z) (pairEncode (simZpair T H z) (pairEncode [] []))))
++
++/-- The defining equation of `simBView`. -/
++theorem simBView_eq (z : List Bool) :
++    simBView T H z =
++      pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
++        (pairEncode (simSeg T.gen.coins (.add T.sample.coins T.sample.coins) z)
++          (pairEncode (simIndex T z) (pairEncode (simZpair T H z) (pairEncode [] [])))) := rfl
++
++/-- **A machine of `S_A`'s shape**: coins `coins_Gen + (coins_Sample + coins_Sample)`, and
++`S(1^n, y; r) = simAView T (layout 1^n y [] r)`. -/
++def IsSimA (S : NUPPT) : Prop :=
++  S.coins = .add T.gen.coins (.add T.sample.coins T.sample.coins) ∧
++    ∀ n y (r : S.Coins n),
++      S.runAt n y r = simAView T (NUPPT.layout (List.replicate n true) y [] (List.ofFn r))
++
++/-- The defining property of `IsSimA`. -/
++theorem isSimA_iff (S : NUPPT) :
++    IsSimA T S ↔
++      S.coins = .add T.gen.coins (.add T.sample.coins T.sample.coins) ∧
++        ∀ n y (r : S.Coins n),
++          S.runAt n y r = simAView T (NUPPT.layout (List.replicate n true) y [] (List.ofFn r)) :=
++  Iff.rfl
++
++/-- **A machine of `S_B`'s shape**: coins `coins_Gen + (coins_Sample + (coins_Sample + 1))`, and
++`S(1^n, y; r) = simBView T H (layout 1^n y [] r)`. -/
++def IsSimB (S : NUPPT) : Prop :=
++  S.coins = .add T.gen.coins (.add T.sample.coins (.add T.sample.coins (.const 1))) ∧
++    ∀ n y (r : S.Coins n),
++      S.runAt n y r = simBView T H (NUPPT.layout (List.replicate n true) y [] (List.ofFn r))
++
++/-- The defining property of `IsSimB`. -/
++theorem isSimB_iff (S : NUPPT) :
++    IsSimB T H S ↔
++      S.coins = .add T.gen.coins (.add T.sample.coins (.add T.sample.coins (.const 1))) ∧
++        ∀ n y (r : S.Coins n),
++          S.runAt n y r = simBView T H (NUPPT.layout (List.replicate n true) y [] (List.ofFn r)) :=
++  Iff.rfl
++
++/-! ### The simulators on assembled tapes -/
++
++/-- A coin segment of a tape `A ++ (B ++ C)` with `|A| = p(|u|)` and `|B| = q(|u|)` is `B`. -/
++theorem simSeg_layout {p q : PolyExpr} (u y α : List Bool) {A B : List Bool} (C : List Bool)
++    (hA : A.length = p.eval u.length) (hB : B.length = q.eval u.length) :
++    simSeg p q (NUPPT.layout u y α (A ++ (B ++ C))) = B := by
++  rw [simSeg_eq, NUPPT.inCoins_layout, NUPPT.inParam_layout, List.drop_left' hA,
++    List.take_left' hB]
++
++/-- The typed tape of a machine as a list has the coin length: `|ofFn r| = coins_A(n)`. -/
++theorem length_ofFn_coins (A : NUPPT) (n : ℕ) (r : A.Coins n) :
++    (List.ofFn r).length = A.coins.eval n := by
++  rw [List.length_ofFn, NUPPT.coinLen_eq]
++
++/-- On a tape starting with `Gen`'s coins `r`, the simulated index is `index n r`. -/
++theorem simIndex_layout (n : ℕ) (y : List Bool) (r : T.gen.Coins n) (B : List Bool) :
++    simIndex T (NUPPT.layout (List.replicate n true) y [] (List.ofFn r ++ B)) = T.index n r := by
++  have h := simSeg_layout (p := .const 0) (q := T.gen.coins) (List.replicate n true) y [] B
++    (A := []) (B := List.ofFn r) (by rw [PolyExpr.eval_const, List.length_nil])
++    (by rw [length_ofFn_coins, List.length_replicate])
++  rw [List.nil_append] at h
++  rw [simIndex_eq, h, NUPPT.inParam_layout, Collection.index_eq, NUPPT.runAt_eq,
++    NUPPT.runAtL_eq_output_layout, NUPPT.Uniform.advice_eq T.gen_uniform]
++
++/-- On a tape `r ++ (A ++ (s ++ C))` with `|A| = p(n) - coins_Gen(n)`, the simulated sample
++after `p(n)` coins is `Sample(1^n, index n r; s)`. -/
++theorem simSampled_layout {p : PolyExpr} (n : ℕ) (y : List Bool) (r : T.gen.Coins n)
++    (A : List Bool) (s : T.sample.Coins n) (C : List Bool)
++    (hA : (List.ofFn r ++ A).length = p.eval n) :
++    simSampled T p
++        (NUPPT.layout (List.replicate n true) y [] (List.ofFn r ++ (A ++ (List.ofFn s ++ C)))) =
++      T.sample.runAt n (T.index n r) s := by
++  have h := simSeg_layout (p := p) (q := T.sample.coins) (List.replicate n true) y []
++    (A := List.ofFn r ++ A) (B := List.ofFn s) C (by rw [hA, List.length_replicate])
++    (by rw [length_ofFn_coins, List.length_replicate])
++  rw [List.append_assoc] at h
++  rw [simSampled_eq, h, NUPPT.inParam_layout, simIndex_layout,
++    NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, NUPPT.Uniform.advice_eq T.sample_uniform]
++
++/-- **`S_A`'s view on the tape `r ++ (s₁ ++ s₂)`**:
++`⟨⟨1^n, fst y⟩, ⟨r, [⟨Sample(i; s₁), Sample(i; s₂)⟩, []]⟩⟩` with `i = index n r`. -/
++theorem simAView_layout (n : ℕ) (y : List Bool) (r : T.gen.Coins n)
++    (s₁ s₂ : T.sample.Coins n) :
++    simAView T (NUPPT.layout (List.replicate n true) y []
++        (List.ofFn r ++ (List.ofFn s₁ ++ List.ofFn s₂))) =
++      pairEncode (pairEncode (List.replicate n true) (pairFstD y))
++        (pairEncode (List.ofFn r)
++          (pairEncode (pairEncode (T.sample.runAt n (T.index n r) s₁)
++              (T.sample.runAt n (T.index n r) s₂))
++            (pairEncode [] []))) := by
++  have h₀ := simSeg_layout (p := .const 0) (q := T.gen.coins) (List.replicate n true) y []
++    (A := []) (B := List.ofFn r) (List.ofFn s₁ ++ List.ofFn s₂)
++    (by rw [PolyExpr.eval_const, List.length_nil])
++    (by rw [length_ofFn_coins, List.length_replicate])
++  rw [List.nil_append] at h₀
++  have h₁ := simSampled_layout T (p := T.gen.coins) n y r [] s₁ (List.ofFn s₂)
++    (by rw [List.append_nil, length_ofFn_coins])
++  have h₂ := simSampled_layout T (p := .add T.gen.coins T.sample.coins) n y r
++    (List.ofFn s₁) s₂ [] (by rw [List.length_append, length_ofFn_coins, length_ofFn_coins,
++      PolyExpr.eval_add])
++  rw [List.nil_append] at h₁
++  rw [List.append_nil] at h₂
++  rw [simAView_eq, NUPPT.inParam_layout, NUPPT.inArg_layout, h₀, h₁, h₂]
++
++/-- **`S_B`'s view on the tape `r ++ (s₁ ++ (s₂ ++ c))`**:
++`⟨⟨1^n, fst y⟩, ⟨s₁ ++ s₂, [i, Z, []]⟩⟩` with `i = index n r`, `z_b = H ⟨i, Sample(i; s₁)⟩ ⊕ snd y`
++and `Z = ⟨c, z_b⟩` if `(fst y).headD false`, else `⟨z_b, c⟩`. -/
++theorem simBView_layout (n : ℕ) (y : List Bool) (r : T.gen.Coins n)
++    (s₁ s₂ : T.sample.Coins n) (c : Fin 1 → Bool) :
++    simBView T H (NUPPT.layout (List.replicate n true) y []
++        (List.ofFn r ++ (List.ofFn s₁ ++ (List.ofFn s₂ ++ List.ofFn c)))) =
++      pairEncode (pairEncode (List.replicate n true) (pairFstD y))
++        (pairEncode (List.ofFn s₁ ++ List.ofFn s₂)
++          (pairEncode (T.index n r)
++            (pairEncode
++              (if (pairFstD y).headD false then
++                pairEncode (List.ofFn c)
++                  (List.zipWith xor (H (pairEncode (T.index n r)
++                    (T.sample.runAt n (T.index n r) s₁))) (pairSndD y))
++              else
++                pairEncode (List.zipWith xor (H (pairEncode (T.index n r)
++                    (T.sample.runAt n (T.index n r) s₁))) (pairSndD y))
++                  (List.ofFn c))
++              (pairEncode [] [])))) := by
++  have hs := simSeg_layout (p := T.gen.coins) (q := .add T.sample.coins T.sample.coins)
++    (List.replicate n true) y [] (A := List.ofFn r) (B := List.ofFn s₁ ++ List.ofFn s₂)
++    (List.ofFn c) (by rw [length_ofFn_coins, List.length_replicate])
++    (by rw [List.length_append, length_ofFn_coins, length_ofFn_coins, PolyExpr.eval_add,
++      List.length_replicate])
++  rw [List.append_assoc] at hs
++  have hc := simSeg_layout (p := .add T.gen.coins (.add T.sample.coins T.sample.coins))
++    (q := .const 1) (List.replicate n true) y []
++    (A := List.ofFn r ++ (List.ofFn s₁ ++ List.ofFn s₂)) (B := List.ofFn c) []
++    (by rw [List.length_append, List.length_append, length_ofFn_coins, length_ofFn_coins,
++      length_ofFn_coins, PolyExpr.eval_add, PolyExpr.eval_add, List.length_replicate])
++    (by rw [List.length_ofFn, PolyExpr.eval_const])
++  rw [List.append_nil, List.append_assoc, List.append_assoc] at hc
++  have hi := simIndex_layout T n y r (List.ofFn s₁ ++ (List.ofFn s₂ ++ List.ofFn c))
++  have h₁ := simSampled_layout T (p := T.gen.coins) n y r [] s₁ (List.ofFn s₂ ++ List.ofFn c)
++    (by rw [List.append_nil, length_ofFn_coins])
++  rw [List.nil_append] at h₁
++  rw [simBView_eq, simZpair_eq, simZbit_eq, NUPPT.inParam_layout, NUPPT.inArg_layout, hs, hc,
++    hi, h₁]
++
++/-! ### The coin spaces -/
++
++/-- **The real coins of a protocol of the shape of Protocol 160.4**: Alice's tape is `Gen`'s
++coins and Bob's two sampler blocks, `ExecCoins ≃ Coins_Gen × (Coins_Sample × Coins_Sample)`. -/
++def realCoins {π : Protocol} (hπ : IsOT T H π) (n : ℕ) :
++    π.ExecCoins π.P (List.replicate n true) ≃
++      T.gen.Coins n × (T.sample.Coins n × T.sample.Coins n) :=
++  Equiv.prodCongr
++    (Equiv.arrowCongr (finCongr (by
++      rw [Strategy.coinLen_eq, ((isOT_iff T H π).1 hπ).2.2.1, List.length_replicate,
++        NUPPT.coinLen_eq])) (Equiv.refl Bool))
++    (splitLen (by
++      rw [Strategy.coinLen_eq, ((isOT_iff T H π).1 hπ).2.2.2.1, List.length_replicate,
++        PolyExpr.eval_add, NUPPT.coinLen_eq]))
++
++/-- Alice's real tape is `Gen`'s coins: `ofFn ((realCoins hπ n).symm p).1 = ofFn p.1`. -/
++theorem realCoins_symm_fst_ofFn {π : Protocol} (hπ : IsOT T H π) (n : ℕ)
++    (p : T.gen.Coins n × (T.sample.Coins n × T.sample.Coins n)) :
++    List.ofFn ((realCoins T H hπ n).symm p).1 = List.ofFn p.1 :=
++  (List.ofFn_congr (by rw [Strategy.coinLen_eq, ((isOT_iff T H π).1 hπ).2.2.1,
++    List.length_replicate, NUPPT.coinLen_eq]) _).trans rfl
++
++/-- Bob's real tape is the two sampler blocks:
++`ofFn ((realCoins hπ n).symm p).2 = ofFn p.2.1 ++ ofFn p.2.2`. -/
++theorem realCoins_symm_snd_ofFn {π : Protocol} (hπ : IsOT T H π) (n : ℕ)
++    (p : T.gen.Coins n × (T.sample.Coins n × T.sample.Coins n)) :
++    List.ofFn ((realCoins T H hπ n).symm p).2 = List.ofFn p.2.1 ++ List.ofFn p.2.2 :=
++  splitLen_symm_ofFn _ p.2
++
++/-- **`S_A`'s coins**: `Coins_S ≃ Coins_Gen × (Coins_Sample × Coins_Sample)` for a machine of
++`S_A`'s shape. -/
++def simACoins {S : NUPPT} (hS : IsSimA T S) (n : ℕ) :
++    S.Coins n ≃ T.gen.Coins n × (T.sample.Coins n × T.sample.Coins n) :=
++  (splitLen (by rw [NUPPT.coinLen_eq, ((isSimA_iff T S).1 hS).1, PolyExpr.eval_add,
++    NUPPT.coinLen_eq])).trans
++    (Equiv.prodCongr (Equiv.refl _) (splitLen (by rw [PolyExpr.eval_add, NUPPT.coinLen_eq])))
++
++/-- `S_A`'s tape from blocks: `ofFn ((simACoins hS n).symm p) = ofFn p.1 ++ (ofFn p.2.1 ++
++ofFn p.2.2)`. -/
++theorem simACoins_symm_ofFn {S : NUPPT} (hS : IsSimA T S) (n : ℕ)
++    (p : T.gen.Coins n × (T.sample.Coins n × T.sample.Coins n)) :
++    List.ofFn ((simACoins T hS n).symm p) =
++      List.ofFn p.1 ++ (List.ofFn p.2.1 ++ List.ofFn p.2.2) := by
++  rw [simACoins, Equiv.symm_trans_apply, splitLen_symm_ofFn, Equiv.prodCongr_symm,
++    Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.refl_symm, Equiv.refl_apply,
++    splitLen_symm_ofFn]
++
++/-- **`S_B`'s coins**: `Coins_S ≃ Coins_Gen × (Coins_Sample × (Coins_Sample × {0,1}))` for a
++machine of `S_B`'s shape. -/
++def simBCoins {S : NUPPT} (hS : IsSimB T H S) (n : ℕ) :
++    S.Coins n ≃ T.gen.Coins n × (T.sample.Coins n × (T.sample.Coins n × (Fin 1 → Bool))) :=
++  (splitLen (by rw [NUPPT.coinLen_eq, ((isSimB_iff T H S).1 hS).1, PolyExpr.eval_add,
++    NUPPT.coinLen_eq])).trans
++    (Equiv.prodCongr (Equiv.refl _) ((splitLen (by rw [PolyExpr.eval_add, NUPPT.coinLen_eq])).trans
++      (Equiv.prodCongr (Equiv.refl _)
++        (splitLen (by rw [PolyExpr.eval_add, NUPPT.coinLen_eq, PolyExpr.eval_const])))))
++
++/-- `S_B`'s tape from blocks: `ofFn ((simBCoins hS n).symm p) =
++ofFn p.1 ++ (ofFn p.2.1 ++ (ofFn p.2.2.1 ++ ofFn p.2.2.2))`. -/
++theorem simBCoins_symm_ofFn {S : NUPPT} (hS : IsSimB T H S) (n : ℕ)
++    (p : T.gen.Coins n × (T.sample.Coins n × (T.sample.Coins n × (Fin 1 → Bool)))) :
++    List.ofFn ((simBCoins T H hS n).symm p) =
++      List.ofFn p.1 ++ (List.ofFn p.2.1 ++ (List.ofFn p.2.2.1 ++ List.ofFn p.2.2.2)) := by
++  rw [simBCoins, Equiv.symm_trans_apply, splitLen_symm_ofFn, Equiv.prodCongr_symm,
++    Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.refl_symm, Equiv.refl_apply,
++    Equiv.symm_trans_apply, splitLen_symm_ofFn, Equiv.prodCongr_symm, Equiv.prodCongr_apply,
++    Prod.map_fst, Prod.map_snd, Equiv.refl_symm, Equiv.refl_apply, splitLen_symm_ofFn]
++
++/-! ### The OT inputs and outputs -/
++
++/-- Alice's OT input length is `2` (`otFunctionality_inA`). -/
++theorem inA_eval (n : ℕ) : otFunctionality.inA.eval n = 2 := by
++  rw [otFunctionality_inA, PolyExpr.eval_const]
++
++/-- Bob's OT input length is `1` (`otFunctionality_inB`). -/
++theorem inB_eval (n : ℕ) : otFunctionality.inB.eval n = 1 := by
++  rw [otFunctionality_inB, PolyExpr.eval_const]
++
++/-- Alice's OT input read as two bits: `inA2 a j = a (cast j)`. -/
++def inA2 {n : ℕ} (a : Fin (otFunctionality.inA.eval n) → Bool) : Fin 2 → Bool :=
++  fun j => a (Fin.cast (inA_eval n).symm j)
++
++/-- The defining equation of `inA2`. -/
++theorem inA2_apply {n : ℕ} (a : Fin (otFunctionality.inA.eval n) → Bool) (j : Fin 2) :
++    inA2 a j = a (Fin.cast (inA_eval n).symm j) := rfl
++
++/-- Reading the input as two bits keeps its string: `ofFn (inA2 a) = ofFn a`. -/
++theorem ofFn_inA2 {n : ℕ} (a : Fin (otFunctionality.inA.eval n) → Bool) :
++    List.ofFn (inA2 a) = List.ofFn a :=
++  ((List.ofFn_congr (inA_eval n) a).trans rfl).symm
++
++/-- Bob's OT input read as one bit: `inB1 b j = b (cast j)`. -/
++def inB1 {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) : Fin 1 → Bool :=
++  fun j => b (Fin.cast (inB_eval n).symm j)
++
++/-- The defining equation of `inB1`. -/
++theorem inB1_apply {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) (j : Fin 1) :
++    inB1 b j = b (Fin.cast (inB_eval n).symm j) := rfl
++
++/-- Reading the input as one bit keeps its string: `ofFn (inB1 b) = ofFn b`. -/
++theorem ofFn_inB1 {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) :
++    List.ofFn (inB1 b) = List.ofFn b :=
++  ((List.ofFn_congr (inB_eval n) b).trans rfl).symm
++
++/-- Bob's choice string is the one-bit list `[inB1 b 0]`. -/
++theorem ofFn_eq_inB1 {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) :
++    List.ofFn b = [inB1 b 0] := by
++  rw [← ofFn_inB1, List.ofFn_succ, List.ofFn_zero]
++
++/-- Alice's OT output is empty: `ofFn (f n a b).1 = []`. -/
++theorem ofFn_f_fst (n : ℕ) (a : Fin (otFunctionality.inA.eval n) → Bool)
++    (b : Fin (otFunctionality.inB.eval n) → Bool) :
++    List.ofFn (otFunctionality.f n a b).1 = [] :=
++  List.eq_nil_of_length_eq_zero
++    (by rw [List.length_ofFn, otFunctionality_outA, PolyExpr.eval_const])
++
++/-- Bob's OT output is the chosen bit: `ofFn (f n a b).2 = [a_b]` with
++`a_b = inA2 a (if inB1 b 0 then 1 else 0)` (`otFunctionality_f_snd_apply`). -/
++theorem ofFn_f_snd (n : ℕ) (a : Fin (otFunctionality.inA.eval n) → Bool)
++    (b : Fin (otFunctionality.inB.eval n) → Bool) :
++    List.ofFn (otFunctionality.f n a b).2 = [inA2 a (if inB1 b 0 then 1 else 0)] := by
++  have h : otFunctionality.outB.eval n = 1 := by
++    rw [otFunctionality_outB, PolyExpr.eval_const]
++  rw [List.ofFn_congr h, List.ofFn_succ, List.ofFn_zero, otFunctionality_f_snd_apply]
++  rfl
++
++end TCSlib.Cryptography.SecureComputation.OT
+diff --git a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewA.lean b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewA.lean
+new file mode 100644
+index 000000000..64f46d691
+--- /dev/null
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewA.lean
+@@ -0,0 +1,186 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Simulators
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Oblivious transfer: Alice's side of Proposition 161.5
++
++Alice's real view of Protocol 160.4 differs from `S_A`'s only in Bob's message: the real pair holds
++`y_b = f_i(x) = eval ⟨i, w⟩` for a sampled `w` and a raw sample `y_{1−b}`, the simulated pair two
++raw samples. For every generated index `i`, `eval ⟨i, w⟩` is within `2δ(n)` of a raw sample when
++the sampler is within `δ(n)` of uniform (`perm_i` is a bijection), so any distinguisher's
++advantage is at most `2δ(n)` [PS10, Proposition 161.5, proof].
++
++## Main results
++
++* `OT.statClose_prod_of_forall`: closeness for every value of a shared first coordinate gives
++  closeness of the joint samplers.
++* `OT.statClose_eval_sample`: `eval ⟨i, Sample(i; s)⟩` is `2δ(n)`-close to `Sample(i; s)`.
++* `OT.realA_realCoins`, `OT.idealA_simACoins`: Alice's real and ideal samplers on typed coins.
++* `OT.distAdv_realA_idealA_le`: the bound `2δ(n)` on Alice's side.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.2.4, Proposition 161.5 (book pp. 161–162).
++-/
++
++namespace TCSlib.Cryptography.SecureComputation.OT
++
++open Complexity Turing TCSlib.Cryptography
++
++variable (T : TrapdoorCollection) (H : List Bool → List Bool)
++
++/-- **Closeness with a shared first coordinate**: if `X r` is `c`-close to `Y r` for every `r`
++(and `0 ≤ c`), then `(r, X r s)` is `c`-close to `(r, Y r t)` over uniform `(r, s)` and `(r, t)`
++(`uprob_prod`, `abs_uexp_sub_le`). -/
++theorem statClose_prod_of_forall {ρ σ τ γ : Type*} [Fintype ρ] [Fintype σ] [Fintype τ]
++    {X : ρ → σ → γ} {Y : ρ → τ → γ} {c : ℝ} (hc : 0 ≤ c) (h : ∀ r, StatClose (X r) (Y r) c) :
++    StatClose (fun z : ρ × σ => (z.1, X z.1 z.2)) (fun z : ρ × τ => (z.1, Y z.1 z.2)) c := by
++  refine (statClose_iff _ _ _).2 fun P => ?_
++  rw [uprob_prod, uprob_prod]
++  exact abs_uexp_sub_le hc fun r => (statClose_iff _ _ _).1 (h r) fun g => P (r, g)
++
++/-- **The evaluated sample is close to a raw sample** [PS10, Proposition 161.5, proof]: at every
++generated index `i = index n r`, `eval ⟨i, Sample(i; s)⟩` is `2δ(n)`-close to `Sample(i; s)` when
++the sampler is within `δ` of uniform.
++
++**Proof sketch.** Decoding the sample is `δ`-close to the uniform element (`SampleClose`). Mapping
++by `x ↦ encD (perm x)` gives `eval ⟨i, Sample⟩` (`evalSampled`, `f_perm`) against
++`encD (perm x)`, which is `0`-close to `encD x` (`perm` is a bijection, `comp_equiv_left`).
++Mapping by `encD` gives `Sample` (canonical decoding) against `encD x`. Chain the three. -/
++theorem statClose_eval_sample {δ : ℕ → ℝ} (hδ : T.SampleClose δ) (n : ℕ) (r : T.gen.Coins n) :
++    StatClose (fun s : T.sample.Coins n =>
++        T.eval (pairEncode (T.index n r) (T.sample.runAt n (T.index n r) s)))
++      (fun s => T.sample.runAt n (T.index n r) s) (2 * δ n) := by
++  have h₁ := (Collection.sampleClose_iff _ _).1 hδ n r
++  have hA : StatClose (fun s : T.sample.Coins n => T.encD (T.index n r) (T.perm (T.index n r)
++      ((T.decD (T.index n r) (T.sample.runAt n (T.index n r) s)).getD default)))
++      (fun x => T.encD (T.index n r) (T.perm (T.index n r) x)) (δ n) :=
++    h₁.map fun o => T.encD (T.index n r) (T.perm (T.index n r) (o.getD default))
++  have hC : StatClose (fun s : T.sample.Coins n => T.encD (T.index n r)
++      ((T.decD (T.index n r) (T.sample.runAt n (T.index n r) s)).getD default))
++      (fun x => T.encD (T.index n r) x) (δ n) :=
++    h₁.map fun o => T.encD (T.index n r) (o.getD default)
++  have eA : (fun s : T.sample.Coins n => T.encD (T.index n r) (T.perm (T.index n r)
++      ((T.decD (T.index n r) (T.sample.runAt n (T.index n r) s)).getD default))) =
++      fun s => T.eval (pairEncode (T.index n r) (T.sample.runAt n (T.index n r) s)) := by
++    funext s
++    obtain ⟨x, hx, hev⟩ := (Collection.evalSampled_iff _).1 T.toCollection.evalSampled n r s
++    rw [hx, Option.getD_some, hev, T.f_perm]
++  have eC : (fun s : T.sample.Coins n => T.encD (T.index n r)
++      ((T.decD (T.index n r) (T.sample.runAt n (T.index n r) s)).getD default)) =
++      fun s => T.sample.runAt n (T.index n r) s := by
++    funext s
++    obtain ⟨x, hx, -⟩ := (Collection.evalSampled_iff _).1 T.toCollection.evalSampled n r s
++    rw [hx, Option.getD_some, ((Collection.decD_eq_some_iff _).1 hx).symm]
++  rw [eA] at hA
++  rw [eC] at hC
++  have hB : StatClose (fun x => T.encD (T.index n r) (T.perm (T.index n r) x))
++      (fun x => T.encD (T.index n r) x) 0 :=
++    (StatClose.refl fun x => T.encD (T.index n r) x).comp_equiv_left (T.perm (T.index n r))
++  exact ((hA.trans hB).trans hC.symm).mono (by linarith)
++
++/-- **Alice's real sampler on typed coins**: on `(r, s₁, s₂)` (`realCoins`), it is
++`⟨⟨⟨1^n, a⟩, ⟨r, [y, []]⟩⟩, [a_b]⟩` with `y = ⟨eval ⟨i, w₁⟩, w₂⟩` (`⟨w₂, eval ⟨i, w₁⟩⟩` if `b`),
++`i = index n r` and `w_j = Sample(i; s_j)`. -/
++theorem realA_realCoins {π : Protocol} (hπ : IsOT T H π)
++    (hout : ∀ x (a : Fin 2 → Bool) (b : Fin 1 → Bool) (r : π.ExecCoins π.P x),
++      π.outV π.P x (List.ofFn a) (List.ofFn b) r = [a (if b 0 then 1 else 0)])
++    (n : ℕ) (a : Fin (otFunctionality.inA.eval n) → Bool)
++    (b : Fin (otFunctionality.inB.eval n) → Bool)
++    (p : T.gen.Coins n × (T.sample.Coins n × T.sample.Coins n)) :
++    otFunctionality.realA π n a b ((realCoins T H hπ n).symm p) =
++      pairEncode (pairEncode (pairEncode (List.replicate n true) (List.ofFn a))
++        (pairEncode (List.ofFn p.1)
++          (pairEncode
++            (if inB1 b 0 then
++              pairEncode (T.sample.runAt n (T.index n p.1) p.2.2)
++                (T.eval (pairEncode (T.index n p.1) (T.sample.runAt n (T.index n p.1) p.2.1)))
++            else
++              pairEncode
++                (T.eval (pairEncode (T.index n p.1) (T.sample.runAt n (T.index n p.1) p.2.1)))
++                (T.sample.runAt n (T.index n p.1) p.2.2))
++            (pairEncode [] []))))
++        [inA2 a (if inB1 b 0 then 1 else 0)] := by
++  have hlen : (List.ofFn p.2.1).length = T.sample.coins.eval n := length_ofFn_coins _ n _
++  rw [Functionality.realA_eq, Protocol.viewP_eq, View.encode_mk, transcriptWith_isOT T H hπ,
++    ← ofFn_inA2 a, ← ofFn_inB1 b, hout, ofFn_inA2, ofFn_inB1, realCoins_symm_fst_ofFn,
++    realCoins_symm_snd_ofFn, receiverNext_single, List.length_replicate, List.take_left' hlen,
++    List.drop_left' hlen, ofFn_eq_inB1, List.headD_cons, ← NUPPT.runAt_eq, ← NUPPT.runAt_eq,
++    ← NUPPT.runAt_eq, ← Collection.index_eq, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_cons,
++    Strategy.encodeMsgs_nil]
++
++/-- **Alice's ideal sampler on typed coins**: on `(r, s₁, s₂)` (`simACoins`), it is
++`⟨⟨⟨1^n, a⟩, ⟨r, [⟨w₁, w₂⟩, []]⟩⟩, [a_b]⟩` with `w_j = Sample(index n r; s_j)`. -/
++theorem idealA_simACoins {S : NUPPT} (hS : IsSimA T S) (n : ℕ)
++    (a : Fin (otFunctionality.inA.eval n) → Bool) (b : Fin (otFunctionality.inB.eval n) → Bool)
++    (p : T.gen.Coins n × (T.sample.Coins n × T.sample.Coins n)) :
++    otFunctionality.idealA S n a b ((simACoins T hS n).symm p) =
++      pairEncode (pairEncode (pairEncode (List.replicate n true) (List.ofFn a))
++        (pairEncode (List.ofFn p.1)
++          (pairEncode (pairEncode (T.sample.runAt n (T.index n p.1) p.2.1)
++              (T.sample.runAt n (T.index n p.1) p.2.2))
++            (pairEncode [] []))))
++        [inA2 a (if inB1 b 0 then 1 else 0)] := by
++  rw [Functionality.idealA_eq, ((isSimA_iff T S).1 hS).2, simACoins_symm_ofFn, simAView_layout,
++    pairFstD_pairEncode, ofFn_f_snd]
++
++/-- **Alice's side of Proposition 161.5** [PS10]: for a protocol of the shape of Protocol 160.4
++(with Bob's output `[a_b]`, `hout`), a machine of `S_A`'s shape and a sampler within `δ` of
++uniform, every distinguisher's advantage between Alice's real and ideal samplers is at most
++`2δ(n)`.
++
++**Proof sketch.** Relabel both coin spaces as `Coins_Gen × (Coins_Sample × Coins_Sample)`
++(`acceptProb_comp_equiv`). The samplers are then `W r (y_real)` and `W r (y_sim)` for one map
++`W` (`realA_realCoins`, `idealA_simACoins`). For each `r`, `y_real` is `2δ(n)`-close to `y_sim`:
++`StatClose.prod` of `statClose_eval_sample` with the identical raw sample (after swapping the two
++sample blocks when `b`). So the joint samplers are `2δ(n)`-close (`statClose_prod_of_forall`,
++`StatClose.map`), and `distAdv_le_of_statClose` concludes. -/
++theorem distAdv_realA_idealA_le {π : Protocol} (hπ : IsOT T H π)
++    (hout : ∀ x (a : Fin 2 → Bool) (b : Fin 1 → Bool) (r : π.ExecCoins π.P x),
++      π.outV π.P x (List.ofFn a) (List.ofFn b) r = [a (if b 0 then 1 else 0)])
++    {S : NUPPT} (hS : IsSimA T S) {δ : ℕ → ℝ} (hδ : T.SampleClose δ) (D : NUPPT) (n : ℕ)
++    (a : Fin (otFunctionality.inA.eval n) → Bool) (b : Fin (otFunctionality.inB.eval n) → Bool) :
++    distAdv (otFunctionality.realA π n a b) (otFunctionality.idealA S n a b)
++      (D.distinguisherL n) ≤ 2 * δ n := by
++  have h0 : 0 ≤ 2 * δ n := by
++    have := ((Collection.sampleClose_iff _ _).1 hδ n fun _ => false).nonneg
++    linarith
++  rw [distAdv_def, ← acceptProb_comp_equiv (realCoins T H hπ n).symm,
++    ← acceptProb_comp_equiv (simACoins T hS n).symm, ← distAdv_def]
++  simp only [realA_realCoins T H hπ hout, idealA_simACoins T hS]
++  refine distAdv_le_of_statClose _ _ ?_ _
++  -- the per-index closeness of Bob's message
++  have hY : ∀ r : T.gen.Coins n, StatClose
++      (fun s : T.sample.Coins n × T.sample.Coins n =>
++        if inB1 b 0 then
++          pairEncode (T.sample.runAt n (T.index n r) s.2)
++            (T.eval (pairEncode (T.index n r) (T.sample.runAt n (T.index n r) s.1)))
++        else
++          pairEncode (T.eval (pairEncode (T.index n r) (T.sample.runAt n (T.index n r) s.1)))
++            (T.sample.runAt n (T.index n r) s.2))
++      (fun s : T.sample.Coins n × T.sample.Coins n =>
++        pairEncode (T.sample.runAt n (T.index n r) s.1) (T.sample.runAt n (T.index n r) s.2))
++      (2 * δ n) := by
++    intro r
++    have he := statClose_eval_sample T hδ n r
++    have hs := StatClose.refl fun s : T.sample.Coins n => T.sample.runAt n (T.index n r) s
++    cases hb : inB1 b 0
++    · have h := (he.prod hs).map fun q : List Bool × List Bool => pairEncode q.1 q.2
++      simpa only [Bool.false_eq_true, if_false, add_zero] using h
++    · have h := ((hs.prod he).map fun q : List Bool × List Bool =>
++        pairEncode q.1 q.2).comp_equiv_left (Equiv.prodComm (T.sample.Coins n) (T.sample.Coins n))
++      simpa only [if_true, zero_add, Equiv.prodComm_apply, Prod.fst_swap, Prod.snd_swap] using h
++  exact (statClose_prod_of_forall h0 hY).map fun q : T.gen.Coins n × List Bool =>
++    pairEncode (pairEncode (pairEncode (List.replicate n true) (List.ofFn a))
++      (pairEncode (List.ofFn q.1) (pairEncode q.2 (pairEncode [] []))))
++      [inA2 a (if inB1 b 0 then 1 else 0)]
++
++end TCSlib.Cryptography.SecureComputation.OT
+-- 
+2.43.0
+
