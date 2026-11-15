@@ -13,13 +13,13 @@ simulators are proved modulo sc-garble, and `sc-yao` lands after it. `Yao.lean` 
 worker owns only the two bodies, their sketch paragraphs, the `## Main results` bullet and one hub import line
 (ruling SY-1), within a line budget (SY-2). Everything else goes into helpers under `SecureComputation/Yao/`.
 
-**Rulings SY-1 to SY-6 are open** (the brief's last section; recommended options first). The brief is written for
-the recommendations. The maintainer adds Seyoon's answers as `ruling-SY.md` and re-pins the dispatch prompts before
-dispatch.
+**Rulings SY-1 to SY-6 were made by Seyoon on 2026-11-15**: see [ruling-SY.md](ruling-SY.md), which overrides the brief
+where they differ. Two rulings differ from the brief's recommendations. SY-2 waives the `Yao.lean` cap up to 1,200 lines,
+and SY-6 makes the worker Codex with up to 3 sub-agents.
 
 Read [the brief](brief.md) and the [environment addendum](fill-environment-addendum.md). On Seyoon's Mac, the
-host addendum `outbox/fills/codex-host-2026-11-15/host-addendum.md` applies to this unit as it did to sc-garble
-(single agent). Verify the package with `shasum -a 256 -c SHA256SUMS` from this directory.
+host addendum `outbox/fills/codex-host-2026-11-15/host-addendum.md` applies to this unit in full,
+including §4 (sub-agents), as it did to seq-zk. Verify the package with `shasum -a 256 -c SHA256SUMS` from this directory.
 
 - [Build order](order.txt): 184 TCSlib modules, generated at the base. These are the upstream closure of the
   modules downstream of `Yao.lean`, and of the modules helpers may import (`Games/Efficiency`,
@@ -32,4 +32,4 @@ host addendum `outbox/fills/codex-host-2026-11-15/host-addendum.md` applies to t
 The worker returns checkpoints and the final payload only at `inbox/fills/sc-yao/` on the exchange. Seyoon
 dispatches.
 
-**Ready to dispatch after rulings SY-1–SY-6**
+**Ready to dispatch**
