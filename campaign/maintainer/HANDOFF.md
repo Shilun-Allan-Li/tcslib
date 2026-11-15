@@ -14,9 +14,8 @@ only go directly after fetch/rebase. The latest merge is #322 (Ladner fills 5 an
 Campaign Lean is `d811bdaaf5e923b2a57f0453135af5c7ee37713a`. Its replay output is the cloud snapshot `oleans-cd811`
 (876 objects); use it whole. See campaign/status/2026-11-15-merge-322/. Ladner has one admitted
 target left: target 6, `SAT_H_intermediate`. Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
-(`ladnerH_polyTime`; #321). Fills 5 (target 2, campaign/fills/ladner-np/) and 6
-(target 5, campaign/fills/ladner-shrink/) were dispatched in parallel and both delivered complete on 2026-11-15;
-one combined gate (Seyoon's ruling), gate 140, PR #322, clear to merge. Only target 6 then remains. Earlier merges are in the table.
+(`ladnerH_polyTime`; #321). Fills 5 and 6 proved targets 2 and 5
+(#322). Fill 7 (target 6, the last admission) is staged, not dispatched (campaign/fills/ladner-final/). Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
