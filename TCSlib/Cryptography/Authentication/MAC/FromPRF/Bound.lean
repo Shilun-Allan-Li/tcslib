@@ -89,7 +89,8 @@ messages read at `n` bits. Then for every forger `A` and budget `q` there is a n
    coins (`expect_sample_comm`) of the forgery probability against a random function, at most
    `2^{-n}` (`expect_fnForge_random_le`).
 3. *The PRF advantage* is the absolute gap between the two (`prfAdv_def`, `distAdv_def`,
-   `Bridge.acceptProb_eq`, `Bridge.acceptGame_eq`, `oracleDist_apply`). -/
+   `Bridge.acceptProb_eq`, `Bridge.acceptGame_eq`, `oracleDist_apply`); this is the published
+   `TCSlib.Cryptography.prfAdv_eq_expect`. -/
 theorem exists_forgeGame_le (M : MAC) (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
     (hℓ : ∀ n, M.msgLen.eval n = n) (ht : ∀ n, M.tagLen.eval n = n)
     (key : ∀ n, M.gen.Coins n ≃ (Fin n → Bool))
@@ -156,22 +157,7 @@ theorem exists_forgeGame_le (M : MAC) (F : ∀ n, (Fin n → Bool) → (Fin n �
     refine (expect_mono _ fun r => expect_fnForge_random_le _).trans (le_of_eq ?_)
     rw [expect_const, ht n, inv_pow]
   -- The PRF advantage is the gap.
-  have hadv : prfAdv (F n) (D.toOracleAdversary n n n ((macBudget q).eval n)) =
-      |(expect (sample (Fin n → Bool)) fun k => expect (sample (D.Coins n)) fun c =>
-          if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval (F n k) = true
-          then (1 : ℝ) else 0) -
-        expect (sample ((Fin n → Bool) → (Fin n → Bool))) (fun R =>
-          expect (sample (D.Coins n)) fun c =>
-            if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval R = true
-            then (1 : ℝ) else 0)| := by
-    rw [prfAdv_def, distAdv_def, Bridge.acceptProb_eq, Bridge.acceptProb_eq, accept_eq, accept_eq,
-      Bridge.acceptGame_eq, Bridge.acceptGame_eq, prob_bind, prob_bind]
-    congr 2
-    · refine congrArg _ (funext fun k => ?_)
-      simp only [prob_bind, prob_pure, oracleDist_apply]
-    · refine congrArg _ (funext fun R => ?_)
-      simp only [prob_bind, prob_pure, oracleDist_apply, randomFunction_apply]
-  rw [hreal, hadv]
+  rw [hreal, TCSlib.Cryptography.prfAdv_eq_expect (F n) (D.toOracleAdversary n n n _)]
   linarith [le_abs_self ((expect (sample (Fin n → Bool)) fun k => expect (sample (D.Coins n))
     fun c => if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval (F n k) = true
       then (1 : ℝ) else 0) -
