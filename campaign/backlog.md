@@ -3856,7 +3856,7 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `sqStep_of_stop`, `sqStep_cons` and `polyTimeComputable_sqStep` goes in ClassP/BinaryArith/Mul;
   `ModPow.powStep`'s body becomes `sqStep (mod ∘ mul) (p = 0)` (type and all statements unchanged,
   proofs re-pointed) and `powCap`'s private step becomes `sqStep powCapMul (fun _ => false)`; the
-  two invariants stay separate. Implemented by the maintainer on the fill 2 branch (`570cf193`); the fixed test is `decide (E = [])`, since `isNilB` has no published equation. **Ruling (Seyoon, 2026-11-14):** the reader `BinArith.mod_eq` (Div, not simp, `rfl`) is approved so the re-pointed ModPow proofs read `mod` by equation (`07272ed4`). In gate 137 (draft PR #310). the route's 5–12 agent-day
+  two invariants stay separate. Implemented by the maintainer on the fill 2 branch (`570cf193`); the fixed test is `decide (E = [])`, since `isNilB` has no published equation. **Ruling (Seyoon, 2026-11-14):** the reader `BinArith.mod_eq` (Div, not simp, `rfl`) is approved so the re-pointed ModPow proofs read `mod` by equation (`07272ed4`). In gate 137 (draft PR #310). **Ruling (Seyoon, 2026-11-14), gate 137 G137-01:** the reader `BoolCircuit.encodeNat_eq` (CircuitComplexity/UnaryCode, not simp, `rfl`) is approved, so `ladner_parse_prefix` cites `uRest_encodeNat` instead of re-proving it (`3b45471c`). the route's 5–12 agent-day
   estimate for it was Codex's, and fill 1 took one session against its 1.5–5-day estimate. See
   `campaign/items/ladner/LADNER-design.md`, roadmap3/PLAN§(f) and HANDOFF§0. *Origin:
   `AroraBarakChapters3-4Plan.md`§4(P3.4), CH34-Q6.*

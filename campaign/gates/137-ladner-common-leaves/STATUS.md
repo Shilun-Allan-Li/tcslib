@@ -1,3 +1,3 @@
-**Dispatched (2026-11-14) to Codex** · draft PR #310 at `07272ed4d91b22357b5a81a1f65d6787c6210e93` against campaign Lean `a052f889`. Round 1. Bundle `outbox/gates/137-ladner-common-leaves-gate/` (SHA-256 `e3c2d410`, exchange `f3766f8e`); prompt.md.
-Ladner fill 2 (Codex's delivery `5a080e56`), the `sqStep` dedup refactor (`570cf193`) and its rule-10 repair with the approved `BinArith.mod_eq` (`07272ed4`).
-Replay 24/24 on `oleans-ca052` (output `oleans-cl137-ca052`, 876 objects); seals 36/36 with 28 definitions sealed, 56 controls; QA clean. See pack.md.
+**Round 2 staged, not dispatched** · draft PR #310 at `3b45471ccefbc2605541b5d5075a04a44f341477` against campaign Lean `a052f889`.
+Round 1 (`07272ed4`): HOLD, 0/1/1 (G137-01 major: inline re-proof of `uRest_encodeNat`; G137-02 minor: wide-screen sources missing from the carrier). Both resolved (resolutions.md): approved `BoolCircuit.encodeNat_eq` (UnaryCode) and a fuller carrier.
+Round 2: replay 93/93 (output `oleans-cl137r2-ca052`, 876 objects); seals 36/36 with 29 definitions, 58 controls; QA clean. See pack-r2.md.
