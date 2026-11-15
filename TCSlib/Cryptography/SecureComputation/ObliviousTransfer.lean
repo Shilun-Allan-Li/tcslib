@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SecureComputation.Defs
 import TCSlib.Cryptography.Asymptotic.Collections
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Shape
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer.Efficiency
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -70,10 +72,21 @@ cost are passed explicitly, so this module needs only `Asymptotic/Collections`.
 * `SecureComputation.SamplerCanonical`: the sampler outputs canonical encodings.
 * `SecureComputation.otProtocol_outV`, `otProtocol_outP`: correctness: Bob outputs `a_b` and
   Alice outputs `⊥ = []`, on every coin string.
-* `SecureComputation.otProtocol_polyTime` (the parties run in polynomial time, stated; a `sorry`
-  under its sketch).
+* `SecureComputation.otProtocol_isOT`: the protocol has the shape `OT.IsOT` of the helper
+  modules.
+* `SecureComputation.otProtocol_polyTime`: the parties run in polynomial time (proved,
+  `OT.polyTime_of_isOT`).
 * `SecureComputation.otProtocol_simulators` (Prop 161.5 with the explicit simulators, stated; a
   `sorry` under its sketch), and `otProtocol_hbcSecure` (Prop 161.5, proved from the two).
+
+## Contents
+
+The proofs are in the helper modules under `SecureComputation/ObliviousTransfer/`, which state
+them for every protocol of the shape of Protocol 160.4:
+* `ObliviousTransfer/Shape.lean`: the shape `OT.IsOT` (the next-message functions restated) and
+  the five moves of its executions.
+* `ObliviousTransfer/Efficiency.lean`: the parties' machines and the message bound
+  (`OT.polyTime_of_isOT`).
 
 ## References
 
@@ -210,6 +223,18 @@ theorem otProtocol_rounds (H : List Bool → List Bool) : (otProtocol T H).round
 /-- The OT protocol starts with Alice, rather than the verifier-side party. -/
 theorem otProtocol_verifierFirst (H : List Bool → List Bool) :
     (otProtocol T H).verifierFirst = false := rfl
+
+/-- **Protocol 160.4 has the shape `OT.IsOT`**: its next-message functions are `OT.senderNext`
+and `OT.receiverNext` (the field equations, with `otMask_eq`, `otKnown_eq` and `otRaw_eq`), Alice
+uses `Gen`'s coins and Bob two sampler blocks, and it has five messages, Alice first. -/
+theorem otProtocol_isOT (H : List Bool → List Bool) : OT.IsOT T H (otProtocol T H) := by
+  refine (OT.isOT_iff T H _).2 ⟨?_, ?_, by rw [otProtocol_P, otSender_coins],
+    by rw [otProtocol_V, otReceiver_coins], otProtocol_rounds T H, otProtocol_verifierFirst T H⟩
+  · funext x y r hist
+    rw [otProtocol_P, otSender_next, OT.senderNext_eq, otMask_eq, otMask_eq, OT.mask_eq,
+      OT.mask_eq]
+  · funext x z r hist
+    rw [otProtocol_V, otReceiver_next, OT.receiverNext_eq, otKnown_eq, otRaw_eq]
 
 /-- **The sampler outputs canonical encodings** [PS10, Definition 41.1 (2)]: at every generated
 index, every output of the domain sampler is `encD i x` for some `x ∈ D_i`
@@ -642,18 +667,24 @@ include hH in
 /-- **Protocol 160.4 runs in polynomial time** (Definition 155.1's efficiency requirement,
 `Functionality.PolyTime`).
 
-**Proof sketch.**
+**Proof sketch.** The protocol has the shape `OT.IsOT` (`otProtocol_isOT`), and
+`OT.polyTime_of_isOT` proves the requirement for every protocol of that shape.
 1. *Alice.* On the empty history she outputs `Gen`'s index; on one message, the two masks (the
-   trapdoor inverter, `H` and one XOR each, paired); otherwise `[]`. `Gen` and the inverter are
-   uniform machines and `H` is polynomial-time, so a uniform machine computes her next-message
-   function by composition, as for Algorithm 104.3's machines.
-2. *Bob.* His sampler twice, `eval` and a pairing on one message; `[]` on two; `H` and one XOR on
-   his complete history. The same composition gives a uniform machine.
-3. *Messages.* The index has at most `Gen`'s output length (`NUPPT.runLenPoly`). Bob's pair is
-   two sampler outputs or evaluations, polynomial in `n` and the index. The masks have one bit
-   each, paired, and the fillers are empty. Their maximum is a polynomial `B`. -/
-theorem otProtocol_polyTime : otFunctionality.PolyTime (otProtocol T H) := by
-  sorry
+   trapdoor inverter, `H` and one XOR each, paired); otherwise `[]`. The raw machine
+   `OT.senderRaw` reads the case off the encoded history `w`: `w = []`, or `snd w = []`
+   (`polyTimeComputable_isNil`). `Gen` and the inverter are uniform machines and `H` is
+   polynomial-time, so `NUPPT.ofPolyTimeUniform` of it computes her next-message function
+   (`OT.senderRaw_advInput`), with `Gen`'s coins.
+2. *Bob.* His sampler on the two coin blocks, `eval` and a pairing on one message; `[]` on two;
+   `H` and one XOR otherwise (`OT.receiverRaw`, with a third emptiness test). The same
+   construction gives a uniform machine with two sampler blocks of coins.
+3. *Messages.* The transcript is `([y, []], [i, z, []])` (`OT.transcriptWith_isOT`). The index has
+   `|i| ≤ Q₁(n)`, `Gen`'s `NUPPT.runLenPoly`. Bob's pair `y` has two sampler outputs (`≤ Q₂(n)`,
+   the sampler's `runLenPoly` at `Q₁`) or evaluations (`≤ Q₃(n)`, `eval`'s polynomial bound), so
+   `|y| ≤ 3(Q₂ + Q₃) + 2`. The masks have one bit each, so `|z| ≤ 5`, and the fillers are empty.
+   So `B = Q₁ + (3(Q₂ + Q₃) + 2) + 5` (`OT.exists_messages_le`). -/
+theorem otProtocol_polyTime : otFunctionality.PolyTime (otProtocol T H) :=
+  OT.polyTime_of_isOT T hH (otProtocol_isOT T H)
 
 include henc hH in
 /-- **Proposition 161.5** [PS10]: Protocol 160.4 is an honest-but-curious one-out-of-two
