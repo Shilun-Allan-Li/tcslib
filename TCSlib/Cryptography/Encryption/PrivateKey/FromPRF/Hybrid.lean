@@ -23,6 +23,8 @@ of repeated points. The two independent-pad experiments agree by perfect secrecy
 * `chainTree` asks a fixed tuple of oracle queries.
 * `prfEncReal` and `otpEnc` sample the ciphertext tuples in the real and independent-pad experiments.
 * `multiMsgAdv` runs a tuple distinguisher after querying the oracle at the sampled points.
+* `prfEncRealOut`, `otpEncOut` and `multiMsgAdvOut` are the same at output width `l` (ruling B3);
+  the `n`-bit ones are their cases `l = n` (`prfEncReal_eq_prfEncRealOut`, …).
 
 ## Main results
 
@@ -30,6 +32,9 @@ of repeated points. The two independent-pad experiments agree by perfect secrecy
 * `distAdv_prfEncReal_random_otp_le` bounds the inner switch by the collision probability.
 * `acceptProb_otpEnc` equates the two independent-pad experiments.
 * `distAdv_prfEncReal_le` combines the switches [PS10, Theorem 99.2, proof].
+* `prfAdv_multiMsgAdvOut`, `distAdv_prfEncRealOut_random_otp_le`, `acceptProb_otpEncOut` and
+  `distAdv_prfEncRealOut_le` are the same at output width `l`; the four results above are their
+  cases `l = n`.
 
 **Deviation.** The vector has `q + 1` points, giving collision term `C(q + 1, 2) / 2^n`.
 
@@ -88,6 +93,96 @@ section Concrete
 
 variable {n q : ℕ} {K ρ : Type*} [Fintype K] [Fintype ρ]
 
+variable {l : ℕ}
+
+/-! #### The hybrids at output width `l`
+
+The concrete hybrids for a keyed family `F : K → {0,1}^n → {0,1}^l` with `l`-bit outputs (ruling
+B3): the points stay `n`-bit strings, only the answers, messages and pads have `l` bits. The
+`n`-bit hybrids below are their cases `l = n` (`prfEncReal_eq_prfEncRealOut`, …). -/
+
+/-- **The real hybrid at output width `l`** ([PS10, Theorem 99.2, proof, `H¹` and `H²`, with
+`ℓ`-bit outputs]): the ciphertext tuple `(r_j, m_j ⊕ F(r_j))_{j ≤ q}` for a key `z.1 : K` and the
+points `z.2 : Fin (q+1) → {0,1}^n`, with `F : K → {0,1}^n → {0,1}^l` and messages
+`m : Fin (q+1) → {0,1}^l`: `prfEncRealOut F m z j = (z.2 j, m j + F z.1 (z.2 j))`. -/
+def prfEncRealOut (F : K → (Fin n → Bool) → (Fin l → Bool)) (m : Fin (q + 1) → Fin l → Bool) :
+    K × (Fin (q + 1) → Fin n → Bool) → (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) :=
+  fun z j => (z.2 j, m j + F z.1 (z.2 j))
+
+omit [Fintype K] in
+/-- The real hybrid at width `l`, entrywise:
+`prfEncRealOut F m z j = (z.2 j, m j + F z.1 (z.2 j))`. -/
+theorem prfEncRealOut_apply (F : K → (Fin n → Bool) → (Fin l → Bool))
+    (m : Fin (q + 1) → Fin l → Bool) (z : K × (Fin (q + 1) → Fin n → Bool)) (j : Fin (q + 1)) :
+    prfEncRealOut F m z j = (z.2 j, m j + F z.1 (z.2 j)) := rfl
+
+/-- **The one-time-pad hybrid at output width `l`** ([PS10, Theorem 99.2, proof, `H³`, with
+`ℓ`-bit outputs]): the tuple `(r_j, m_j ⊕ p_j)_{j ≤ q}` with `n`-bit points `r_j` and independent
+uniform `l`-bit pads `p_j`, on the seeds `z = (r, p)`: `otpEncOut m z j = (z.1 j, m j + z.2 j)`. -/
+def otpEncOut (m : Fin (q + 1) → Fin l → Bool) :
+    (Fin (q + 1) → Fin n → Bool) × (Fin (q + 1) → Fin l → Bool) →
+      (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) :=
+  fun z j => (z.1 j, m j + z.2 j)
+
+/-- The one-time-pad hybrid at width `l`, entrywise: `otpEncOut m z j = (z.1 j, m j + z.2 j)`. -/
+theorem otpEncOut_apply (m : Fin (q + 1) → Fin l → Bool)
+    (z : (Fin (q + 1) → Fin n → Bool) × (Fin (q + 1) → Fin l → Bool)) (j : Fin (q + 1)) :
+    otpEncOut m z j = (z.1 j, m j + z.2 j) := rfl
+
+/-- **The oracle adversary of Thm-99.2.1 at output width `l`** ([PS10, Theorem 99.2, proof, with
+`ℓ`-bit outputs]): on coins `c = (r, c')` it queries its `l`-bit-output oracle at `r₀, …, r_q`
+(`chainTree`), forms `(r_j, m_j ⊕ ans_j)_j` and runs `D` on it with coins `c'`:
+`multiMsgAdvOut m D c = chainTree (q + 1) c.1 fun ans => D (fun j => (c.1 j, m j + ans j)) c.2`. -/
+def multiMsgAdvOut (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    OracleAdversary ((Fin (q + 1) → Fin n → Bool) × ρ) (Fin n → Bool) (Fin l → Bool) :=
+  fun c => chainTree (q + 1) c.1 fun ans => D (fun j => (c.1 j, m j + ans j)) c.2
+
+omit [Fintype ρ] in
+/-- Evaluating the hybrid adversary at width `l` against the oracle `g` runs `D` on the masked
+tuple: `(multiMsgAdvOut m D c).eval g = D (fun j => (c.1 j, m j + g (c.1 j))) c.2`
+[PS10, Theorem 99.2, proof]. -/
+theorem eval_multiMsgAdvOut (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool)
+    (g : (Fin n → Bool) → Fin l → Bool) (c : (Fin (q + 1) → Fin n → Bool) × ρ) :
+    (multiMsgAdvOut m D c).eval g = D (fun j => (c.1 j, m j + g (c.1 j))) c.2 := by
+  rw [multiMsgAdvOut, eval_chainTree]
+
+omit [Fintype ρ] in
+/-- `multiMsgAdvOut m D` makes at most `q + 1` queries: `(multiMsgAdvOut m D).BoundedBy (q + 1)`. -/
+theorem multiMsgAdvOut_boundedBy (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    (multiMsgAdvOut m D).BoundedBy (q + 1) :=
+  (OracleAdversary.boundedBy_iff _ _).2 fun c => boundedBy_chainTree (q + 1) c.1 _
+
+/-- Running `multiMsgAdvOut m D` with the oracle `F k` for a uniform key accepts with the
+probability that `D` accepts the hybrid at width `l`:
+`acceptProb F (oracleDist (multiMsgAdvOut m D)) = acceptProb (prfEncRealOut F m) D`
+(reassociation of the seed space `K × (points × coins)`). -/
+theorem acceptProb_oracleDist_multiMsgAdvOut (F : K → (Fin n → Bool) → (Fin l → Bool))
+    (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    acceptProb F (oracleDist (multiMsgAdvOut m D)) = acceptProb (prfEncRealOut F m) D := by
+  rw [acceptProb_def, acceptProb_def]
+  rw [← uprob_comp_equiv (Equiv.prodAssoc K (Fin (q + 1) → Fin n → Bool) ρ)]
+  congr 1
+  funext z
+  simp only [oracleDist_apply, multiMsgAdvOut, eval_chainTree, Equiv.prodAssoc_apply]
+  rfl
+
+/-- **Thm-99.2.1 at output width `l`: the gap `H¹ → H²` is a PRF advantage** ([PS10,
+Theorem 99.2, proof, with `ℓ`-bit outputs]):
+`prfAdv F (multiMsgAdvOut m D) = distAdv (prfEncRealOut F m) (prfEncRealOut R m) D` with
+`R = randomFunction {0,1}^n {0,1}^l` (unfolding of `prfAdv`, `oracleDist` and `acceptProb`). -/
+theorem prfAdv_multiMsgAdvOut (F : K → (Fin n → Bool) → (Fin l → Bool))
+    (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    prfAdv F (multiMsgAdvOut m D) =
+      distAdv (prfEncRealOut F m)
+        (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) D := by
+  rw [prfAdv_def, distAdv_def, distAdv_def, acceptProb_oracleDist_multiMsgAdvOut,
+    acceptProb_oracleDist_multiMsgAdvOut]
+
 /-- The ciphertext tuple `(r_j, m_j ⊕ F(r_j))_{j ≤ q}` for a key `z.1 : K` and the points
 `z.2 : Fin (q+1) → {0,1}^n`, with `F : K → {0,1}^n → {0,1}^n`. With `F` the PRF this is the
 hybrid `H¹` ("real encryptions"); with `F = randomFunction` (keys are function tables) it is
@@ -97,11 +192,19 @@ def prfEncReal (F : K → (Fin n → Bool) → (Fin n → Bool)) (m : Fin (q + 1
   fun z j => (z.2 j, m j + F z.1 (z.2 j))
 
 omit [Fintype K] in
+/-- The real hybrid is the case `l = n` of the hybrid at width `l`:
+`prfEncReal F m = prfEncRealOut F m` (`rfl`). -/
+theorem prfEncReal_eq_prfEncRealOut (F : K → (Fin n → Bool) → (Fin n → Bool))
+    (m : Fin (q + 1) → Fin n → Bool) : prfEncReal F m = prfEncRealOut F m := rfl
+
+omit [Fintype K] in
 /-- The hybrid ciphertext at position `j` contains the point `z.2 j` and the message
 masked with the oracle's value at that point [PS10, Theorem 99.2, proof]. -/
 theorem prfEncReal_apply (F : K → (Fin n → Bool) → (Fin n → Bool)) (m : Fin (q + 1) → Fin n → Bool)
     (z : K × (Fin (q + 1) → Fin n → Bool)) (j : Fin (q + 1)) :
-    prfEncReal F m z j = (z.2 j, m j + F z.1 (z.2 j)) := rfl
+    prfEncReal F m z j = (z.2 j, m j + F z.1 (z.2 j)) := by
+  rw [prfEncReal_eq_prfEncRealOut]
+  exact prfEncRealOut_apply F m z j
 
 /-- The ciphertext tuple `(r_j, m_j ⊕ p_j)_{j ≤ q}` with independent uniform pads `p_j`: the
 hybrid `H³` ("using OTP") of [PS10, Theorem 99.2, proof]; seeds `(r, p)`. -/
@@ -109,6 +212,11 @@ def otpEnc (m : Fin (q + 1) → Fin n → Bool) :
     (Fin (q + 1) → Fin n → Bool) × (Fin (q + 1) → Fin n → Bool) →
       (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) :=
   fun z j => (z.1 j, m j + z.2 j)
+
+/-- The one-time-pad hybrid is the case `l = n` of the hybrid at width `l`:
+`otpEnc m = otpEncOut m` (`rfl`). -/
+theorem otpEnc_eq_otpEncOut (m : Fin (q + 1) → Fin n → Bool) :
+    otpEnc (n := n) m = otpEncOut m := rfl
 
 /-- **The oracle adversary of Thm-99.2.1** ([PS10, Theorem 99.2, proof, "`H¹` and `H²` …
 otherwise (by closure under efficient operations) we contradict the pseudorandomness property"]):
@@ -121,20 +229,29 @@ def multiMsgAdv (m : Fin (q + 1) → Fin n → Bool)
   fun c => chainTree (q + 1) c.1 fun ans => D (fun j => (c.1 j, m j + ans j)) c.2
 
 omit [Fintype ρ] in
+/-- The hybrid adversary is the case `l = n` of the adversary at width `l`:
+`multiMsgAdv m D = multiMsgAdvOut m D` (`rfl`). -/
+theorem multiMsgAdv_eq_multiMsgAdvOut (m : Fin (q + 1) → Fin n → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
+    multiMsgAdv m D = multiMsgAdvOut m D := rfl
+
+omit [Fintype ρ] in
 /-- Evaluating the hybrid adversary on an oracle runs the tuple distinguisher on the sampled
 points and the messages masked by the oracle values [PS10, Theorem 99.2, proof]. -/
 theorem eval_multiMsgAdv (m : Fin (q + 1) → Fin n → Bool)
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool)
     (g : (Fin n → Bool) → Fin n → Bool) (c : (Fin (q + 1) → Fin n → Bool) × ρ) :
     (multiMsgAdv m D c).eval g = D (fun j => (c.1 j, m j + g (c.1 j))) c.2 := by
-  rw [multiMsgAdv, eval_chainTree]
+  rw [multiMsgAdv_eq_multiMsgAdvOut]
+  exact eval_multiMsgAdvOut m D g c
 
 omit [Fintype ρ] in
 /-- `multiMsgAdv m D` makes at most `q + 1` queries. -/
 theorem multiMsgAdv_boundedBy (m : Fin (q + 1) → Fin n → Bool)
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
-    (multiMsgAdv m D).BoundedBy (q + 1) :=
-  (OracleAdversary.boundedBy_iff _ _).2 fun c => boundedBy_chainTree (q + 1) c.1 _
+    (multiMsgAdv m D).BoundedBy (q + 1) := by
+  rw [multiMsgAdv_eq_multiMsgAdvOut]
+  exact multiMsgAdvOut_boundedBy m D
 
 /-- Running `multiMsgAdv m D` with the oracle `F k` (for a uniform key `k`) accepts with the
 probability that `D` accepts the hybrid sampler `prfEncReal F m` (reassociation of the seed
@@ -143,12 +260,8 @@ theorem acceptProb_oracleDist_multiMsgAdv (F : K → (Fin n → Bool) → (Fin n
     (m : Fin (q + 1) → Fin n → Bool)
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     acceptProb F (oracleDist (multiMsgAdv m D)) = acceptProb (prfEncReal F m) D := by
-  rw [acceptProb_def, acceptProb_def]
-  rw [← uprob_comp_equiv (Equiv.prodAssoc K (Fin (q + 1) → Fin n → Bool) ρ)]
-  congr 1
-  funext z
-  simp only [oracleDist_apply, multiMsgAdv, eval_chainTree, Equiv.prodAssoc_apply]
-  rfl
+  rw [multiMsgAdv_eq_multiMsgAdvOut, prfEncReal_eq_prfEncRealOut]
+  exact acceptProb_oracleDist_multiMsgAdvOut F m D
 
 /-- **Thm-99.2.1: the gap `H¹ → H²` is a PRF advantage.** The advantage of `D` between the real
 encryptions `(r_j, m_j ⊕ F_k(r_j))_j` and the random-function encryptions
@@ -159,8 +272,8 @@ theorem prfAdv_multiMsgAdv (F : K → (Fin n → Bool) → (Fin n → Bool))
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     prfAdv F (multiMsgAdv m D) =
       distAdv (prfEncReal F m) (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D := by
-  rw [prfAdv_def, distAdv_def, distAdv_def, acceptProb_oracleDist_multiMsgAdv,
-    acceptProb_oracleDist_multiMsgAdv]
+  simp only [multiMsgAdv_eq_multiMsgAdvOut, prfEncReal_eq_prfEncRealOut]
+  exact prfAdv_multiMsgAdvOut F m D
 
 /-- **The collision bound** ([PS10, Theorem 99.2, proof, "`∃ i, j` such that `r_i = r_j`, but this
 happens only with probability `C(q,2) · 2^{−n}`"]): `q + 1` uniform `n`-bit points fail to be
@@ -224,6 +337,125 @@ theorem pushesUniform_comp_injective {I O : Type*} [Fintype I] [DecidableEq I] [
     simp only [uexp_def, univ_eq_empty, sum_empty, zero_div]
   · exact HardcoreBit.pushesUniform_restrict hr
 
+/-- **Thm-99.2.2 at output width `l`: the gap `H² → H³` is at most the collision probability**
+([PS10, Theorem 99.2, proof, "`H²` and `H³` are 'almost' identical except for the case when
+`∃ i, j` such that `r_i = r_j`", with `ℓ`-bit outputs]): with `R = randomFunction {0,1}^n {0,1}^l`,
+`distAdv (prfEncRealOut R m) (otpEncOut m) D ≤ C(q+1, 2) / 2^n`. The bound concerns the `n`-bit
+points only; it does not depend on `l`.
+
+**Deviation:** the collision bound is `C(q(n)+1, 2) · 2^{−n}` for the `q(n) + 1` values
+`r₀, …, r_{q(n)}` (the text writes `C(q(n), 2) · 2^{−n}`; source error 35 of the plan).
+
+**Proof sketch.** Write both acceptance probabilities as averages over the points `r`
+(`uprob_prod` after reassociating the seeds): `a(r) := Pr_R[D((r_j, m_j ⊕ R(r_j))_j) = 1]` and
+`b(r) := Pr_p[D((r_j, m_j ⊕ p_j)_j) = 1]`. When `r` is injective, `(R(r_j))_j` is uniform on
+`({0,1}^l)^{q+1}` (`pushesUniform_comp_injective`, `PushesUniform.uprob_eq`), so `a(r) = b(r)`;
+otherwise `|a(r) − b(r)| ≤ 1`. Hence `|E_r a − E_r b| ≤ uprob (¬ Injective)`
+(`MultiMsg.abs_uexp_sub_le_uprob`), and `uprob_not_injective_le` bounds it. -/
+theorem distAdv_prfEncRealOut_random_otp_le (m : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    distAdv (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) (otpEncOut m) D ≤
+      (Nat.choose (q + 1) 2 : ℝ) / 2 ^ n := by
+  classical
+  -- the acceptance probabilities conditioned on the points `r`
+  let a : (Fin (q + 1) → Fin n → Bool) → ℝ := fun r =>
+    uprob fun w : ((Fin n → Bool) → (Fin l → Bool)) × ρ =>
+      D (fun j => (r j, m j + w.1 (r j))) w.2 = true
+  let b : (Fin (q + 1) → Fin n → Bool) → ℝ := fun r =>
+    uprob fun w : (Fin (q + 1) → Fin l → Bool) × ρ => D (fun j => (r j, m j + w.1 j)) w.2 = true
+  have ha : acceptProb (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) D =
+      uexp a := by
+    rw [acceptProb_def, show randomFunction (Fin n → Bool) (Fin l → Bool) = id from
+      funext fun f => randomFunction_apply _ _ f]
+    exact (uprob_comp_equiv ((Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+      ((Fin n → Bool) → (Fin l → Bool)) ρ).symm.trans
+        ((Equiv.prodComm _ _).prodCongr (Equiv.refl ρ))) _).symm.trans
+      (by rw [uprob_prod]; rfl)
+  have hb : acceptProb (otpEncOut m) D = uexp b := by
+    rw [acceptProb_def]
+    exact (uprob_comp_equiv (Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+      (Fin (q + 1) → Fin l → Bool) ρ).symm _).symm.trans (by rw [uprob_prod]; rfl)
+  -- at injective points the table values are fresh uniform pads
+  have hab : ∀ r : Fin (q + 1) → Fin n → Bool, Function.Injective r → a r = b r := by
+    intro r hr
+    exact ((pushesUniform_comp_injective (O := Fin l → Bool) hr).prodMap
+      (HardcoreBit.pushesUniform_id (Ω := ρ))).uprob_eq
+      (fun v : (Fin (q + 1) → Fin l → Bool) × ρ => D (fun j => (r j, m j + v.1 j)) v.2 = true)
+  rw [distAdv_def, ha, hb]
+  exact (MultiMsg.abs_uexp_sub_le_uprob a b (fun r => ¬ Function.Injective r)
+    (fun r => ⟨uprob_nonneg _, uprob_le_one _⟩) (fun r => ⟨uprob_nonneg _, uprob_le_one _⟩)
+    (fun r hr => hab r (not_not.mp hr))).trans uprob_not_injective_le
+
+/-- **Thm-99.2.3 at output width `l`: `H³ = H⁴` by the perfect secrecy of the one-time pad**
+([PS10, Theorem 99.2, proof, with `ℓ`-bit outputs]): for independent uniform `l`-bit pads,
+`acceptProb (otpEncOut m) D = acceptProb (otpEncOut m') D` for all messages `m`, `m'`.
+
+**Proof sketch.** The map `(r, p) ↦ (r, p ⊕ (m ⊕ m'))` is a bijection of the seed space
+(`Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))`) carrying the sampler for `m'` to the
+sampler for `m` (in the Boolean group `x + x = 0`); relabel by it (`acceptProb_comp_equiv`). -/
+theorem acceptProb_otpEncOut (m m' : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    acceptProb (otpEncOut (n := n) m) D = acceptProb (otpEncOut m') D := by
+  have key : ∀ z : (Fin (q + 1) → Fin n → Bool) × (Fin (q + 1) → Fin l → Bool),
+      otpEncOut m' ((Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))) z) =
+        otpEncOut m z := by
+    intro z
+    funext j
+    simp only [otpEncOut, Equiv.prodCongr_apply, Equiv.coe_refl, Equiv.coe_addRight,
+      Prod.map_fst, Prod.map_snd, id_eq, Pi.add_apply]
+    refine Prod.ext rfl ?_
+    funext i
+    simp only [Pi.add_apply]
+    cases m j i <;> cases m' j i <;> cases z.2 j i <;> rfl
+  calc acceptProb (otpEncOut m) D
+      = acceptProb (fun z => otpEncOut m'
+          ((Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))) z)) D := by
+        congr 1
+        funext z
+        exact (key z).symm
+    _ = acceptProb (otpEncOut m') D := acceptProb_comp_equiv _ (otpEncOut m') D
+
+/-- **[PS10, Theorem 99.2], concrete form, at output width `l`: the six-hybrid bound** (with
+`ℓ`-bit outputs). For a keyed family `F : K → {0,1}^n → {0,1}^l`, message vectors
+`m, m' ∈ ({0,1}^l)^{q+1}` and any distinguisher `D` of ciphertext tuples,
+`distAdv (prfEncRealOut F m) (prfEncRealOut F m') D ≤ prfAdv F (multiMsgAdvOut m D) +
+prfAdv F (multiMsgAdvOut m' D) + 2 · C(q+1, 2) / 2^n`.
+
+**Deviation:** the collision bound is `C(q(n)+1, 2) · 2^{−n}` for the `q(n) + 1` values
+`r₀, …, r_{q(n)}` (the text writes `C(q(n), 2) · 2^{−n}`; source error 35 of the plan).
+
+**Proof sketch.** Hybrids `H¹ = prfEncRealOut F m`, `H² = prfEncRealOut R m`, `H³ = otpEncOut m`,
+`H⁴ = otpEncOut m'`, `H⁵ = prfEncRealOut R m'`, `H⁶ = prfEncRealOut F m'`: `|H¹ − H²|` and
+`|H⁵ − H⁶|` are the two PRF advantages (`prfAdv_multiMsgAdvOut`), `|H² − H³|` and `|H⁴ − H⁵|`
+are at most the collision bound (`distAdv_prfEncRealOut_random_otp_le`), `H³ = H⁴`
+(`acceptProb_otpEncOut`); the triangle inequality (`abs_sub_le`, three times) finishes. -/
+theorem distAdv_prfEncRealOut_le (F : K → (Fin n → Bool) → (Fin l → Bool))
+    (m m' : Fin (q + 1) → Fin l → Bool)
+    (D : (Fin (q + 1) → (Fin n → Bool) × (Fin l → Bool)) → ρ → Bool) :
+    distAdv (prfEncRealOut F m) (prfEncRealOut F m') D ≤
+      prfAdv F (multiMsgAdvOut m D) + prfAdv F (multiMsgAdvOut m' D) +
+        2 * ((Nat.choose (q + 1) 2 : ℝ) / 2 ^ n) := by
+  have h12 := prfAdv_multiMsgAdvOut F m D
+  have h56 := prfAdv_multiMsgAdvOut F m' D
+  have h23 := distAdv_prfEncRealOut_random_otp_le m D
+  have h45 := distAdv_prfEncRealOut_random_otp_le m' D
+  have h34 := acceptProb_otpEncOut m m' D
+  simp only [distAdv_def] at h12 h56 h23 h45 ⊢
+  rw [h12, h56, abs_sub_comm (acceptProb (prfEncRealOut F m') D)]
+  rw [abs_sub_comm (acceptProb (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m')
+    D)] at h45
+  have t1 := abs_sub_le (acceptProb (prfEncRealOut F m) D)
+    (acceptProb (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) D)
+    (acceptProb (prfEncRealOut F m') D)
+  have t2 := abs_sub_le
+    (acceptProb (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m) D)
+    (acceptProb (otpEncOut m) D) (acceptProb (prfEncRealOut F m') D)
+  have t3 := abs_sub_le (acceptProb (otpEncOut m') D)
+    (acceptProb (prfEncRealOut (randomFunction (Fin n → Bool) (Fin l → Bool)) m') D)
+    (acceptProb (prfEncRealOut F m') D)
+  rw [← h34] at t3 h45
+  linarith
+
 /-- **Thm-99.2.2: the gap `H² → H³` is at most the collision probability**
 ([PS10, Theorem 99.2, proof, "`H²` and `H³` are 'almost' identical except for the case when
 `∃ i, j` such that `r_i = r_j`"]): the advantage of `D` between the random-function encryptions
@@ -233,46 +465,14 @@ theorem pushesUniform_comp_injective {I O : Type*} [Fintype I] [DecidableEq I] [
 **Deviation:** the collision bound is `C(q(n)+1, 2) · 2^{−n}` for the `q(n) + 1` values
 `r₀, …, r_{q(n)}` (the text writes `C(q(n), 2) · 2^{−n}`; source error 35 of the plan).
 
-**Proof sketch.** Write both acceptance probabilities as averages over the points `r`
-(`uprob_prod` after `uprob_prod_comm`): `a(r) := Pr_R[D((r_j, m_j ⊕ R(r_j))_j) = 1]` and
-`b(r) := Pr_p[D((r_j, m_j ⊕ p_j)_j) = 1]`. When `r` is injective, `(R(r_j))_j` is uniform
-(`pushesUniform_comp_injective`, `PushesUniform.uprob_eq`), so `a(r) = b(r)`; otherwise
-`|a(r) − b(r)| ≤ 1` (`uprob_nonneg`, `uprob_le_one`). Hence
-`|E_r a − E_r b| ≤ E_r |a − b| ≤ E_r [¬ Injective r] = uprob (¬ Injective)` (`uexp` is monotone
-and `|∑| ≤ ∑ |·|`, `uprob_eq_uexp_ite`), and `uprob_not_injective_le` bounds the last term. -/
+**Proof sketch.** The case `l = n` of `distAdv_prfEncRealOut_random_otp_le`
+(`prfEncReal_eq_prfEncRealOut`, `otpEnc_eq_otpEncOut`). -/
 theorem distAdv_prfEncReal_random_otp_le (m : Fin (q + 1) → Fin n → Bool)
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     distAdv (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) (otpEnc m) D ≤
       (Nat.choose (q + 1) 2 : ℝ) / 2 ^ n := by
-  classical
-  -- the acceptance probabilities conditioned on the points `r`
-  let a : (Fin (q + 1) → Fin n → Bool) → ℝ := fun r =>
-    uprob fun w : ((Fin n → Bool) → (Fin n → Bool)) × ρ =>
-      D (fun j => (r j, m j + w.1 (r j))) w.2 = true
-  let b : (Fin (q + 1) → Fin n → Bool) → ℝ := fun r =>
-    uprob fun w : (Fin (q + 1) → Fin n → Bool) × ρ => D (fun j => (r j, m j + w.1 j)) w.2 = true
-  have ha : acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D =
-      uexp a := by
-    rw [acceptProb_def, show randomFunction (Fin n → Bool) (Fin n → Bool) = id from
-      funext fun f => randomFunction_apply _ _ f]
-    exact (uprob_comp_equiv ((Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
-      ((Fin n → Bool) → (Fin n → Bool)) ρ).symm.trans
-        ((Equiv.prodComm _ _).prodCongr (Equiv.refl ρ))) _).symm.trans
-      (by rw [uprob_prod]; rfl)
-  have hb : acceptProb (otpEnc m) D = uexp b := by
-    rw [acceptProb_def]
-    exact (uprob_comp_equiv (Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
-      (Fin (q + 1) → Fin n → Bool) ρ).symm _).symm.trans (by rw [uprob_prod]; rfl)
-  -- at injective points the table values are fresh uniform pads
-  have hab : ∀ r : Fin (q + 1) → Fin n → Bool, Function.Injective r → a r = b r := by
-    intro r hr
-    exact ((pushesUniform_comp_injective (O := Fin n → Bool) hr).prodMap
-      (HardcoreBit.pushesUniform_id (Ω := ρ))).uprob_eq
-      (fun v : (Fin (q + 1) → Fin n → Bool) × ρ => D (fun j => (r j, m j + v.1 j)) v.2 = true)
-  rw [distAdv_def, ha, hb]
-  exact (MultiMsg.abs_uexp_sub_le_uprob a b (fun r => ¬ Function.Injective r)
-    (fun r => ⟨uprob_nonneg _, uprob_le_one _⟩) (fun r => ⟨uprob_nonneg _, uprob_le_one _⟩)
-    (fun r hr => hab r (not_not.mp hr))).trans uprob_not_injective_le
+  rw [prfEncReal_eq_prfEncRealOut, otpEnc_eq_otpEncOut]
+  exact distAdv_prfEncRealOut_random_otp_le m D
 
 /-- **Thm-99.2.3: `H³ = H⁴` by the perfect secrecy of the one-time pad** ([PS10, Theorem 99.2,
 proof, "`H³` and `H⁴` are identical by the perfect secrecy of the OTP"], the vector version of
@@ -280,29 +480,12 @@ Claim-92.a): for independent uniform pads `p_j`, the tuples `(r_j, m_j ⊕ p_j)_
 `(r_j, m'_j ⊕ p_j)_j` are identically distributed, so every distinguisher accepts them with the
 same probability.
 
-**Proof sketch.** The map `(r, p) ↦ (r, p ⊕ (m ⊕ m'))` is a bijection of the seed space
-(`Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))`) carrying the sampler for `m'` to the
-sampler for `m` (in the Boolean group `x + x = 0`); relabel by it (`acceptProb_comp_equiv`). -/
+**Proof sketch.** The case `l = n` of `acceptProb_otpEncOut` (`otpEnc_eq_otpEncOut`). -/
 theorem acceptProb_otpEnc (m m' : Fin (q + 1) → Fin n → Bool)
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     acceptProb (otpEnc m) D = acceptProb (otpEnc m') D := by
-  have key : ∀ z : (Fin (q + 1) → Fin n → Bool) × (Fin (q + 1) → Fin n → Bool),
-      otpEnc m' ((Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))) z) = otpEnc m z := by
-    intro z
-    funext j
-    simp only [otpEnc, Equiv.prodCongr_apply, Equiv.coe_refl, Equiv.coe_addRight, Prod.map_fst,
-      Prod.map_snd, id_eq, Pi.add_apply]
-    refine Prod.ext rfl ?_
-    funext i
-    simp only [Pi.add_apply]
-    cases m j i <;> cases m' j i <;> cases z.2 j i <;> rfl
-  calc acceptProb (otpEnc m) D
-      = acceptProb (fun z => otpEnc m'
-          ((Equiv.prodCongr (Equiv.refl _) (Equiv.addRight (m + m'))) z)) D := by
-        congr 1
-        funext z
-        exact (key z).symm
-    _ = acceptProb (otpEnc m') D := acceptProb_comp_equiv _ (otpEnc m') D
+  rw [otpEnc_eq_otpEncOut, otpEnc_eq_otpEncOut]
+  exact acceptProb_otpEncOut m m' D
 
 /-- **[PS10, Theorem 99.2], concrete form: the six-hybrid bound.** For a keyed family
 `F : K → {0,1}^n → {0,1}^n`, message vectors `m, m' ∈ ({0,1}^n)^{q+1}` and any distinguisher
@@ -313,36 +496,16 @@ is at most `prfAdv F (A_m D) + prfAdv F (A_{m'} D) + 2 · C(q+1, 2) / 2^n`, wher
 **Deviation:** the collision bound is `C(q(n)+1, 2) · 2^{−n}` for the `q(n) + 1` values
 `r₀, …, r_{q(n)}` (the text writes `C(q(n), 2) · 2^{−n}`; source error 35 of the plan).
 
-**Proof sketch.** Hybrids `H¹ = prfEncReal F m`, `H² = prfEncReal R m`, `H³ = otpEnc m`,
-`H⁴ = otpEnc m'`, `H⁵ = prfEncReal R m'`, `H⁶ = prfEncReal F m'`: `|H¹ − H²|` and `|H⁵ − H⁶|` are
-the two PRF advantages (`prfAdv_multiMsgAdv`), `|H² − H³|` and `|H⁴ − H⁵|` are at most the
-collision bound (`distAdv_prfEncReal_random_otp_le`), `H³ = H⁴` (`acceptProb_otpEnc`); the
-triangle inequality (`abs_sub_le`, five times) finishes. -/
+**Proof sketch.** The case `l = n` of `distAdv_prfEncRealOut_le` (`prfEncReal_eq_prfEncRealOut`,
+`multiMsgAdv_eq_multiMsgAdvOut`). -/
 theorem distAdv_prfEncReal_le (F : K → (Fin n → Bool) → (Fin n → Bool))
     (m m' : Fin (q + 1) → Fin n → Bool)
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     distAdv (prfEncReal F m) (prfEncReal F m') D ≤
       prfAdv F (multiMsgAdv m D) + prfAdv F (multiMsgAdv m' D) +
         2 * ((Nat.choose (q + 1) 2 : ℝ) / 2 ^ n) := by
-  have h12 := prfAdv_multiMsgAdv F m D
-  have h56 := prfAdv_multiMsgAdv F m' D
-  have h23 := distAdv_prfEncReal_random_otp_le m D
-  have h45 := distAdv_prfEncReal_random_otp_le m' D
-  have h34 := acceptProb_otpEnc m m' D
-  simp only [distAdv_def] at h12 h56 h23 h45 ⊢
-  rw [h12, h56, abs_sub_comm (acceptProb (prfEncReal F m') D)]
-  rw [abs_sub_comm (acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m') D)]
-    at h45
-  have t1 := abs_sub_le (acceptProb (prfEncReal F m) D)
-    (acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D)
-    (acceptProb (prfEncReal F m') D)
-  have t2 := abs_sub_le (acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D)
-    (acceptProb (otpEnc m) D) (acceptProb (prfEncReal F m') D)
-  have t3 := abs_sub_le (acceptProb (otpEnc m') D)
-    (acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m') D)
-    (acceptProb (prfEncReal F m') D)
-  rw [← h34] at t3 h45
-  linarith
+  simp only [prfEncReal_eq_prfEncRealOut, multiMsgAdv_eq_multiMsgAdvOut]
+  exact distAdv_prfEncRealOut_le F m m' D
 
 end Concrete
 
