@@ -37,7 +37,12 @@ open Complexity Turing
 /-- An efficient Boolean verifier remains efficient after an FP coin map:
 if `C` is FP on encoded pairs, then `(x,r) ↦ M x (C ⟨x,r⟩)` is efficient.
 This is `P`-preimage closure for the existing true and false languages.
-[PS10, §8.2, Theorem 180.1] -/
+[PS10, §8.2, Theorem 180.1]
+
+**Proof sketch.** Extract the verifier's two `P` languages with the published
+efficiency reader. Take their preimages under `z ↦ ⟨fst z,C z⟩`, which is FP
+by pairing. The Boolean-verifier and pair-projection readers identify the
+resulting true and false events on every encoded pair. -/
 theorem eff_mapCoins {M : List Bool → List Bool → Bool}
     (hM : Randomized.polyTimeModel.Eff (Randomized.boolVerifier M))
     {C : List Bool → List Bool} (hC : PolyTimeComputable C) :

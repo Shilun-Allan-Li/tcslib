@@ -55,8 +55,8 @@ constant `ε > 0`.
 ## Main results
 
 * `Randomness.subexpBound_pos`: the bound is positive.
-* `Randomness.bpp_subset_dtime_subexp` (Thm 180.1), proved modulo the shared
-  seed-majority machine contract through its DTIME corollary.
+* `Randomness.bpp_subset_dtime_subexp` (Thm 180.1), proved through the shared
+  seed-majority machine contract and its DTIME corollary.
 
 ## References
 
@@ -86,7 +86,7 @@ theorem subexpBound_pos (ε : ℝ) (n : ℕ) : 0 < subexpBound ε n :=
 [PS10, Theorem 180.1]: if a secure PRG exists, then every language of `main`'s `BPP` is in
 `DTIME(2^{n^ε})` for every `ε > 0`.
 
-**Status.** Proved modulo `Complexity.exists_seedMajorityTM`, through
+**Status.** Proved through `Complexity.exists_seedMajorityTM` and
 `Complexity.seedMajority_mem_DTIME`; the helpers introduce no admissions.
 
 **Proof sketch** ([PS10, Theorem 180.1], with an explicit piecewise test).

@@ -794,6 +794,8 @@ theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeCompu
     (fun _ w => acc (pairSndD w)) (fun _ w => out (pairSndD w)) (fun x => pairEncode x (init x))
     R T hFuel (fun x => ⟨init x, rfl, hbound x⟩)
     (fun x w h => inv_step g P x w h) hstart hround
-  exact ⟨L, c, A, D, by simpa only [T, pow] using hL⟩
+  refine ⟨L, c, A, D, (FinTM.computesFunInTime_iff _ _ _).mpr fun x => ?_⟩
+  have hx := (FinTM.computesFunInTime_iff _ _ _).mp hL x
+  simpa only [T, pow] using hx
 
 end Complexity.IterateFind

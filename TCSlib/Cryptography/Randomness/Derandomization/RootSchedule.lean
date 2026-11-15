@@ -24,6 +24,8 @@ searches through `0, …, n` with integer length comparisons and fixed powers.
 ## Main results
 
 * `TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_iff`: its least-root property.
+* `TCSlib.Cryptography.Randomness.Derand.ceilRoot_le_real`: the real-root upper bound.
+* `TCSlib.Cryptography.Randomness.Derand.polyTimeComputable_ceilRoot`: its FP unary word.
 
 ## References
 
@@ -88,7 +90,11 @@ theorem lt_ceilRoot_iff {d : ℕ} (hd : 0 < d) (n t : ℕ) :
 
 /-- The integer schedule is within one of the real root:
 `(ceilRoot d n : ℝ) ≤ (n : ℝ) ^ (1 / d) + 1` for `0 < d`.
-[PS10, §8.2, Theorem 180.1] -/
+[PS10, §8.2, Theorem 180.1]
+
+**Proof sketch.** Handle zero separately. At a positive input the floor root
+of `n-1` has `d`th power at most `n`. Cast this bound to the reals, apply
+the monotonic inverse-power comparison, and add one on both sides. -/
 theorem ceilRoot_le_real {d : ℕ} (hd : 0 < d) (n : ℕ) :
     (ceilRoot d n : ℝ) ≤ (n : ℝ) ^ (1 / (d : ℝ)) + 1 := by
   by_cases hn : n = 0
