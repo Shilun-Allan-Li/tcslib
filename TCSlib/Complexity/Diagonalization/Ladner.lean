@@ -215,6 +215,19 @@ private theorem ladner_pad_nil (h : ℕ → ℕ) : ([] : List Bool) ∉ padSAT h
     List.length_replicate] at hlen
   omega
 
+/-- Prepending a word to the binary word of a positive number gives the binary word of a
+number at least as large. [AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_bits_prepend (u : List Bool) (j : ℕ) (hj : 0 < j) :
+    ∃ i, j ≤ i ∧ i.bits = u ++ j.bits := by
+  induction u with
+  | nil => exact ⟨j, le_rfl, rfl⟩
+  | cons b u ih =>
+    obtain ⟨i, hi, hbits⟩ := ih
+    refine ⟨Nat.bit b i, ?_, ?_⟩
+    · rw [Nat.bit_val]
+      omega
+    · rw [Nat.bits_append_bit i b (fun hz => by omega), hbits, List.cons_append]
+
 /-- Every coded machine occurs at arbitrarily large canonical binary indices.
 [AB09, Theorem 3.3 and its proof]
 
@@ -235,18 +248,8 @@ private theorem ladner_padded_index (M : CodeTM) (B : ℕ) :
         omega
       · rw [Nat.bits_append_bit j true (fun _ => rfl), hbits,
           List.replicate_succ (n := b + 1)]
-  have prepend (u : List Bool) (j : ℕ) (hj : 0 < j) :
-      ∃ i, j ≤ i ∧ i.bits = u ++ j.bits := by
-    induction u with
-    | nil => exact ⟨j, le_rfl, rfl⟩
-    | cons b u ih =>
-      obtain ⟨i, hi, hbits⟩ := ih
-      refine ⟨Nat.bit b i, ?_, ?_⟩
-      · rw [Nat.bit_val]
-        omega
-      · rw [Nat.bits_append_bit i b (fun hz => by omega), hbits, List.cons_append]
   obtain ⟨j, hj, hbits⟩ := ones B
-  obtain ⟨i, hi, hi_bits⟩ := prepend (expCode.encode M) j (by omega)
+  obtain ⟨i, hi, hi_bits⟩ := ladner_bits_prepend (expCode.encode M) j (by omega)
   refine ⟨i, by omega, ?_⟩
   rw [ladnerMachine_eq, hi_bits, hbits, expCode.toMachineCode.decode_encode_pad]
 
@@ -660,6 +663,11 @@ private theorem ladner_parse_prefix {y p : List Bool} {t : ℕ}
   simp only [List.reverse_append, List.reverse_cons, List.reverse_replicate,
     List.append_assoc, List.singleton_append, hr, List.reverse_reverse]
 
+/-- The binary length of a word is polynomial-time (`FinTM.computesFunInTime_lengthBits`).
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_lengthBits_FP : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
+  polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+
 /-- The mathematical padding parser has a polynomial-time serialization.
 
 **Proof sketch.** Reverse the input, skip its true suffix and separator with the existing
@@ -667,8 +675,7 @@ unary-rest reader, and reverse the remainder. Subtract the prefix length and one
 the input length to get the suffix length. The public false-bit test distinguishes a
 missing separator from an empty prefix. [AB09, Theorem 3.3 and its proof] -/
 private theorem ladner_parse_FP : PolyTimeComputable ladner_parseWord := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hl := ladner_lengthBits_FP
   have hpre := BinArith.polyTimeComputable_reverse.comp
     (BinArith.polyTimeComputable_uRest.comp BinArith.polyTimeComputable_reverse)
   have ht := BinArith.polyTimeComputable_sub.comp
@@ -695,27 +702,31 @@ private theorem ladner_parse_FP : PolyTimeComputable ladner_parseWord := by
     simp only [ladner_parseWord, hp, Function.comp_apply, hf, if_true, hpre',
       BinArith.sub_pairEncode, ht']
 
-/-- The padding syntax test is polynomial-time when its exponent function is.
+/-- The padding syntax test, for an exponent function that may depend on the input word, is
+polynomial-time when the exponent at the parsed prefix length is.
 
 **Proof sketch.** Parse the word and compute the prefix length and exponent in binary.
 Use the saturated power with cap parameter equal to the suffix length. Its result equals
 the suffix length exactly when the full power does; this avoids allocating an enormous
 power. [AB09, Theorem 3.3 and its proof] -/
-private theorem ladner_syntax_FP {h : ℕ → ℕ}
-    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length))) :
-    PolyTimeComputable (fun y => [ladner_padSyntax h y]) := by
-  have hl : PolyTimeComputable (fun y : List Bool => Nat.bits y.length) :=
-    polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
-  have hpre := BinArith.polyTimeComputable_slot2.comp ladner_parse_FP
-  have ht := BinArith.polyTimeComputable_slot3.comp ladner_parse_FP
+private theorem ladner_padSyntax_FP {g : List Bool → List Bool} {h : List Bool → ℕ → ℕ}
+    (hg : PolyTimeComputable g)
+    (hh : PolyTimeComputable (fun z : List Bool =>
+      Nat.bits (h (pairSndD z) (pairFstD z).length))) :
+    PolyTimeComputable (fun S => [ladner_padSyntax (h S) (g S)]) := by
+  have hl := ladner_lengthBits_FP
+  have hp := ladner_parse_FP.comp hg
+  have hpre := BinArith.polyTimeComputable_slot2.comp hp
+  have ht := BinArith.polyTimeComputable_slot3.comp hp
+  have he := hh.comp (hpre.pairEncode polyTimeComputable_id)
   have hpow := BinArith.polyTimeComputable_powCap.comp
-    ((hl.comp hpre).pairEncode ((hp.comp hpre).pairEncode ht))
+    ((hl.comp hpre).pairEncode (he.pairEncode ht))
   have heq := BinArith.polyTimeComputable_beq.comp (ht.pairEncode hpow)
-  have hout := polyTimeComputable_ite (polyTimeComputable_isNil.comp ladner_parse_FP)
+  have hout := polyTimeComputable_ite (polyTimeComputable_isNil.comp hp)
     (polyTimeComputable_const [false]) heq
   convert hout using 1
-  funext y
-  cases hy : ladner_parse y with
+  funext S
+  cases hy : ladner_parse (g S) with
   | none => simp only [ladner_padSyntax, ladner_parseWord, hy, Function.comp_apply,
       decide_true, if_true]
   | some pt =>
@@ -726,12 +737,21 @@ private theorem ladner_syntax_FP {h : ℕ → ℕ}
       rw [length_pairEncode] at he'
       simp only [List.length_cons, List.length_nil] at he'
       omega
-    simp only [ladner_padSyntax, ladner_parseWord, hy, Function.comp_apply,
+    simp only [ladner_padSyntax, ladner_parseWord, hy, Function.comp_apply, id_eq,
       hne, decide_false, Bool.false_eq_true, if_false, pairFstD_pairEncode,
       pairSndD_pairEncode, BinArith.powCap_pairEncode, BinArith.beq_pairEncode]
-    have heq' : (t = min (p.length ^ h p.length) (t + 1)) ↔
-        t = p.length ^ h p.length := by omega
+    have heq' : (t = min (p.length ^ h S p.length) (t + 1)) ↔
+        t = p.length ^ h S p.length := by omega
     simp only [heq']
+
+/-- The padding syntax test is polynomial-time when its exponent function is: the
+instance of `ladner_padSyntax_FP` with a fixed exponent function.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_syntax_FP {h : ℕ → ℕ}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length))) :
+    PolyTimeComputable (fun y => [ladner_padSyntax h y]) :=
+  ladner_padSyntax_FP (h := fun _ => h) polyTimeComputable_id
+    (hp.comp polyTimeComputable_pairFstD)
 
 /-- Padding membership is successful parsing, the prescribed suffix length, and SAT
 membership of the prefix. [AB09, Theorem 3.3 and its proof] -/
@@ -779,5 +799,1023 @@ private theorem ladner_small_SAT_table (B : ℕ) :
       exact ⟨x.length, hx, x.get, List.ofFn_get x⟩
   exact ⟨U.filter (fun x => x ∈ SAT), fun x => by rw [Finset.mem_filter, hu]⟩
 
+
+/-! ### Polynomial-time preparation for the bounded candidate test -/
+
+/-- Read the numeric memo entries through `BinArith.decWords`.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_values (T : List Bool) : List ℕ :=
+  (BinArith.decWords T).map LogProg.bitsVal
+
+/-- Enumerate every short word by deleting the high sentinel bit of a positive rank.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_shortWords (a : ℕ) : List (List Bool) :=
+  (List.range (2 ^ (a + 1) - 1)).map (fun r => (Nat.bits (r + 1)).dropLast)
+
+/-- Select the least successful index against the supplied memo values, or the cap.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_stage (vs : List ℕ) : ℕ :=
+  let n := vs.length
+  if hex : ∃ i, i < Nat.log 2 (Nat.log 2 n) ∧
+      ∀ x : List Bool, x.length ≤ Nat.log 2 n →
+        ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+          x ∈ padSAT (fun m => vs.getD m 0)) then Nat.find hex
+  else Nat.log 2 (Nat.log 2 n)
+
+/-- The candidate predicate checks context consistency and every short input.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_candidate (S : List Bool) : Bool :=
+  let n := (pairFstD S).length
+  let i := LogProg.bitsVal (pairFstD (pairSndD S))
+  let vs := ladner_values (pairSndD (pairSndD S))
+  decide (n = vs.length ∧ i < Nat.log 2 (Nat.log 2 n) ∧
+    ∀ x : List Bool, x.length ≤ Nat.log 2 n →
+      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT (fun m => vs.getD m 0)))
+
+/-- A simulator query contains an index below the double logarithm and a short input.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_validQuery (S : List Bool) : Prop :=
+  LogProg.bitsVal (pairFstD (pairSndD S)) <
+      Nat.log 2 (Nat.log 2 (pairFstD S).length) ∧
+    (pairSndD (pairSndD S)).length ≤ Nat.log 2 (pairFstD S).length
+
+/-- Invalid queries use the empty code; valid ones use the canonical index bits.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_queryCode (S : List Bool) : List Bool :=
+  if ladner_validQuery S then Nat.bits (LogProg.bitsVal (pairFstD (pairSndD S))) else []
+
+/-- Invalid queries use the empty simulator input.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_queryInput (S : List Bool) : List Bool :=
+  if ladner_validQuery S then pairSndD (pairSndD S) else []
+
+/-- Invalid queries use deadline zero; valid ones use the indexed deadline.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_queryDeadline (S : List Bool) : ℕ :=
+  if ladner_validQuery S then
+    LogProg.bitsVal (pairFstD (pairSndD S)) *
+      (pairSndD (pairSndD S)).length ^ LogProg.bitsVal (pairFstD (pairSndD S))
+  else 0
+
+/-- Serialize the guarded query in the uniform simulator's input format.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_queryPrep (S : List Bool) : List Bool :=
+  pairEncode (pairEncode (Nat.bits (ladner_queryDeadline S)) (ladner_queryCode S))
+    (ladner_queryInput S)
+
+/-- Check the candidate context before using its numeric index.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_ctxGuard (C : List Bool) : Prop :=
+  (pairFstD C).length = (ladner_values (pairSndD (pairSndD C))).length ∧
+    LogProg.bitsVal (pairFstD (pairSndD C)) <
+      Nat.log 2 (Nat.log 2 (pairFstD C).length)
+
+/-- A single rank's verdict includes every guard and the acceptance equivalence.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_wordVerdict (C : List Bool) (r : ℕ) : Bool :=
+  let x := (Nat.bits (r + 1)).dropLast
+  let i := LogProg.bitsVal (pairFstD (pairSndD C))
+  decide (ladner_ctxGuard C ∧ x.length ≤ Nat.log 2 (pairFstD C).length ∧
+    ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+      x ∈ padSAT (fun m => (ladner_values (pairSndD (pairSndD C))).getD m 0)))
+
+/-- The number of words in the bounded short-input scan.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_queryCount (C : List Bool) : ℕ :=
+  2 ^ (Nat.log 2 (pairFstD C).length + 1) - 1
+
+/-- Initialize the remaining count, completed rank, and conjunction flag.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_testInit (C : List Bool) : List Bool :=
+  pairEncode C (pairEncode (List.replicate (ladner_queryCount C) true) (pairEncode [] [true]))
+
+/-- One transition of the candidate scan, intended for `BinArith.polyTimeComputable_iterate`.
+[AB09, Theorem 3.3 and its proof] -/
+private noncomputable def ladner_testStep (S : List Bool) : List Bool :=
+  let C := pairFstD S
+  let rem := pairFstD (pairSndD S)
+  let rank := pairFstD (pairSndD (pairSndD S))
+  let flag := pairSndD (pairSndD (pairSndD S))
+  if rem = [] then S else
+    pairEncode C (pairEncode (rem.drop 1)
+      (pairEncode (rank ++ [true]) [flag.headD false && ladner_wordVerdict C rank.length]))
+
+/-- Read the conjunction flag of the candidate scan.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_testOut (S : List Bool) : List Bool :=
+  pairSndD (pairSndD (pairSndD S))
+
+/-- The sentinel enumeration contains exactly the words of length at most its bound.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** The upper rank bound limits the binary word to `a + 1` bits.
+Conversely prepend the bits of any word to the positive sentinel `1`; the resulting
+canonical number has that word as its binary expansion with its last bit removed. -/
+private theorem ladner_shortWords_complete (a : ℕ) (x : List Bool) :
+    x ∈ ladner_shortWords a ↔ x.length ≤ a := by
+  constructor
+  · intro hx
+    obtain ⟨r, hr, rfl⟩ := List.mem_map.mp hx
+    have hr' := List.mem_range.mp hr
+    have hl := LogProg.length_bits_le (show r + 1 < 2 ^ (a + 1) by omega)
+    rw [List.length_dropLast]
+    omega
+  · intro hx
+    obtain ⟨n, hn, he⟩ := ladner_bits_prepend x 1 Nat.one_pos
+    rw [Nat.one_bits] at he
+    have hlt := LogProg.lt_two_pow_bits n
+    rw [he, List.length_append, List.length_cons, List.length_nil] at hlt
+    have hna : n < 2 ^ (a + 1) := hlt.trans_le
+      (Nat.pow_le_pow_right (by decide) (by omega))
+    apply List.mem_map.mpr
+    refine ⟨n - 1, List.mem_range.mpr (by omega), ?_⟩
+    rw [Nat.sub_add_cancel hn, he, List.dropLast_concat]
+
+/-- The short-input scan has at most twice the stage length plus two queries.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_shortWords_count (n : ℕ) :
+    (ladner_shortWords (Nat.log 2 n)).length ≤ 2 * (n + 1) := by
+  rw [ladner_shortWords, List.length_map, List.length_range, pow_succ']
+  have h := Nat.pow_log_le_add_one 2 n
+  omega
+
+/-- A uniform elementary bound used to charge the double logarithm.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_square_le_power (k : ℕ) : k ^ 2 ≤ 2 ^ (k + 1) := by
+  induction k with
+  | zero => decide
+  | succ k ih =>
+    by_cases hk : k < 3
+    · have hk0 : k = 0 ∨ k = 1 ∨ k = 2 := by omega
+      rcases hk0 with rfl | rfl | rfl <;> norm_num
+    · have hk' : 3 ≤ k := by omega
+      calc (k + 1) ^ 2 ≤ 2 * k ^ 2 := by nlinarith
+           _ ≤ 2 * 2 ^ (k + 1) := Nat.mul_le_mul_left _ ih
+           _ = 2 ^ (k + 1 + 1) := by simp only [pow_succ']
+
+/-- Short indexed simulations have a deadline bounded by the cube of the stage length.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Put `L = log₂ n` and `k = log₂ L`. The index is below `k`,
+so `(k + 1)i ≤ k² ≤ 2^(k+1) ≤ 2L`. Thus `m^i ≤ 2^(2L) ≤ n²`,
+while `i ≤ n`. No monotonicity of the delayed index is used. -/
+private theorem ladner_short_deadline (n i m : ℕ)
+    (hi : i < Nat.log 2 (Nat.log 2 n)) (hm : m ≤ Nat.log 2 n) :
+    i * m ^ i ≤ n ^ 3 := by
+  have hL : Nat.log 2 n ≠ 0 := by
+    intro h
+    rw [h, Nat.log_zero_right] at hi
+    omega
+  have hn : n ≠ 0 := by
+    intro h
+    subst n
+    rw [Nat.log_zero_right] at hL
+    exact hL rfl
+  have hi' : (Nat.log 2 (Nat.log 2 n) + 1) * i ≤
+      (Nat.log 2 (Nat.log 2 n)) ^ 2 := by
+    have h := Nat.mul_le_mul_left (Nat.log 2 (Nat.log 2 n) + 1)
+      (Nat.succ_le_of_lt hi)
+    nlinarith
+  have hexp : (Nat.log 2 (Nat.log 2 n) + 1) * i ≤ 2 * Nat.log 2 n := calc
+    _ ≤ (Nat.log 2 (Nat.log 2 n)) ^ 2 := hi'
+    _ ≤ 2 ^ (Nat.log 2 (Nat.log 2 n) + 1) := ladner_square_le_power _
+    _ = 2 * 2 ^ Nat.log 2 (Nat.log 2 n) := by rw [pow_succ']
+    _ ≤ 2 * Nat.log 2 n := Nat.mul_le_mul_left _ (Nat.pow_log_le_self 2 hL)
+  have hpow : m ^ i ≤ n ^ 2 := calc
+    _ ≤ (2 ^ (Nat.log 2 (Nat.log 2 n) + 1)) ^ i := Nat.pow_le_pow_left
+      (hm.trans (Nat.lt_pow_succ_log_self (by decide) (Nat.log 2 n)).le) _
+    _ = 2 ^ ((Nat.log 2 (Nat.log 2 n) + 1) * i) := (pow_mul _ _ _).symm
+    _ ≤ 2 ^ (2 * Nat.log 2 n) := Nat.pow_le_pow_right (by decide) hexp
+    _ = (2 ^ Nat.log 2 n) ^ 2 := by rw [Nat.mul_comm 2, pow_mul]
+    _ ≤ n ^ 2 := Nat.pow_le_pow_left (Nat.pow_log_le_self 2 hn) _
+  have hin : i ≤ n := hi.le.trans ((Nat.log_le_self 2 _).trans (Nat.log_le_self 2 n))
+  calc i * m ^ i ≤ n * n ^ 2 := Nat.mul_le_mul hin hpow
+       _ = n ^ 3 := by ring
+
+/-- The uniform simulator's numeric deadline cost has a polynomial stage envelope.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Bound each of the code length, short-input length, deadline, and
+constant by `(n + 1)^3`, then raise the sum bound to the simulator degree. -/
+private theorem ladner_numeric_envelope (D n i : ℕ) (x : List Bool)
+    (hi : i < Nat.log 2 (Nat.log 2 n)) (hx : x.length ≤ Nat.log 2 n) :
+    D * ((Nat.bits i).length + x.length + i * x.length ^ i + 1) ^ D ≤
+      (D * 4 ^ D) * (n + 1) ^ (3 * D) := by
+  have hin : i ≤ n := hi.le.trans ((Nat.log_le_self 2 _).trans (Nat.log_le_self 2 n))
+  have hb := (length_bits_le_self i).trans hin
+  have hx' := hx.trans (Nat.log_le_self 2 n)
+  have ht := ladner_short_deadline n i x.length hi hx
+  have hcube : n ^ 3 ≤ (n + 1) ^ 3 := Nat.pow_le_pow_left (Nat.le_succ _) _
+  have hlin : n + 1 ≤ (n + 1) ^ 3 := by
+    simpa only [pow_one] using Nat.pow_le_pow_right (by omega : 1 ≤ n + 1) (by decide : 1 ≤ 3)
+  calc _ ≤ D * (4 * (n + 1) ^ 3) ^ D :=
+         Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (by omega) _)
+       _ = (D * 4 ^ D) * (n + 1) ^ (3 * D) := by rw [mul_pow, ← pow_mul]; ring
+
+/-- Polynomial preparation and an image budget absorb the exact composition overhead.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_composition_clock (C q A e n : ℕ) :
+    2 * (C * (n + 1) ^ q) + A * (n + 1) ^ e + 2 ≤
+      (2 * C + A + 2) * (n + 1) ^ max q e := by
+  have hq := Nat.pow_le_pow_right (by omega : 1 ≤ n + 1) (le_max_left q e)
+  have he := Nat.pow_le_pow_right (by omega : 1 ≤ n + 1) (le_max_right q e)
+  have hp : 1 ≤ (n + 1) ^ max q e := Nat.one_le_pow _ _ (by omega)
+  nlinarith
+
+/-- The floor binary logarithm is the canonical binary length minus one.
+`Complexity.LogProg.length_bits_eq_log` supplies the nonzero case. -/
+private theorem ladner_log_eq_bits_length (n : ℕ) :
+    Nat.log 2 n = (Nat.bits n).length - 1 := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · rw [Nat.log_zero_right, Nat.zero_bits, List.length_nil, Nat.zero_sub]
+  · rw [LogProg.length_bits_eq_log (by omega)]
+    omega
+
+/-- The binary floor logarithm is polynomial-time, including noncanonical inputs.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_binary_log_FP : PolyTimeComputable
+    (fun w : List Bool => Nat.bits (Nat.log 2 (LogProg.bitsVal w))) := by
+  have hl := ladner_lengthBits_FP
+  have h := BinArith.polyTimeComputable_sub.comp
+    ((hl.comp BinArith.polyTimeComputable_normBits).pairEncode
+      (polyTimeComputable_const (Nat.bits 1)))
+  convert h using 1
+  funext w
+  simp only [Function.comp_apply, BinArith.sub_pairEncode, ladner_log_eq_bits_length]
+
+/-- A linear SAT verifier yields the exact exponential short-SAT search clock.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Apply `Complexity.exists_proj_decider` at certificate width `m + 1`.
+The verifier sees `2m + 1` symbols, and its clock therefore has base `2m + 2`.
+Identify the projected language using the supplied verifier equivalence. -/
+private theorem ladner_short_SAT_machine
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    ∃ (a d b : ℕ) (E : FinTM Bool), E.DecidesInTime SAT
+      (fun m => b * 2 ^ (m + 1) *
+        (a * (2 * m + 2) ^ d + (2 * m + 2) ^ 2)) := by
+  obtain ⟨V, hV, hv⟩ := linear
+  obtain ⟨a, d, M, hM⟩ := mem_P_iff.mp hV
+  obtain ⟨b, E, hE⟩ := exists_proj_decider 1 1 V (fun n => a * (n + 1) ^ d) M hM
+  have hlang : {x : List Bool | ∃ u, u.length = 1 * (x.length + 1) ^ 1 ∧ x ++ u ∈ V} =
+      SAT := by
+    ext x
+    simpa only [Set.mem_setOf_eq, one_mul, pow_one] using (hv x).symm
+  rw [hlang] at hE
+  refine ⟨a, d, b, E, ?_⟩
+  convert hE using 1
+  funext m
+  congr 2 <;> simp only [one_mul, pow_one] <;> ring
+
+/-- The short-SAT search clock is polynomial when the queried word is logarithmic.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** `2^m ≤ n + 1` and `2m + 2 ≤ 2(n + 1)`. Raise the latter
+bound to each degree, enlarge both degrees to `d + 2`, and charge the outer
+factor `2(n + 1)` to obtain degree `d + 3`. -/
+private theorem ladner_short_SAT_envelope (a b d n m : ℕ) (hm : m ≤ Nat.log 2 n) :
+    b * 2 ^ (m + 1) * (a * (2 * m + 2) ^ d + (2 * m + 2) ^ 2) ≤
+      (2 * b * (a * 2 ^ d + 4)) * (n + 1) ^ (d + 3) := by
+  have hm' := hm.trans (Nat.log_le_self 2 n)
+  have hexp : 2 ^ (m + 1) ≤ 2 * (n + 1) := by
+    rw [pow_succ']
+    exact Nat.mul_le_mul_left _ ((Nat.pow_le_pow_right (by decide) hm).trans
+      (Nat.pow_log_le_add_one 2 n))
+  have hd : (2 * m + 2) ^ d ≤ 2 ^ d * (n + 1) ^ (d + 2) := calc
+    _ ≤ (2 * (n + 1)) ^ d := Nat.pow_le_pow_left (by omega) _
+    _ = 2 ^ d * (n + 1) ^ d := mul_pow _ _ _
+    _ ≤ 2 ^ d * (n + 1) ^ (d + 2) := Nat.mul_le_mul_left _
+      (Nat.pow_le_pow_right (by omega) (by omega))
+  have htwo : (2 * m + 2) ^ 2 ≤ 4 * (n + 1) ^ (d + 2) := calc
+    _ ≤ (2 * (n + 1)) ^ 2 := Nat.pow_le_pow_left (by omega) _
+    _ = 4 * (n + 1) ^ 2 := by ring
+    _ ≤ 4 * (n + 1) ^ (d + 2) := Nat.mul_le_mul_left _
+      (Nat.pow_le_pow_right (by omega) (by omega))
+  calc _ ≤ b * (2 * (n + 1)) *
+          ((a * 2 ^ d + 4) * (n + 1) ^ (d + 2)) :=
+        Nat.mul_le_mul (Nat.mul_le_mul_left _ hexp) (by nlinarith)
+       _ = (2 * b * (a * 2 ^ d + 4)) * (n + 1) ^ (d + 3) := by
+        rw [show d + 3 = (d + 2) + 1 by omega, pow_succ]
+        ring
+
+/-- Polynomial query preparation and a polynomial numeric budget suffice for simulation.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Extract the preparation machine through `polyTimeComputable_iff`.
+The simulator's accepting and rejecting contracts compute the indicated bit on its image.
+Use `FinTM.exists_comp_on_image`, then absorb its exact setup overhead with
+`ladner_composition_clock`. The simulator clock is charged in the numeric deadline. -/
+private theorem ladner_simulation_on_image (code input : List Bool → List Bool)
+    (deadline : List Bool → ℕ)
+    (hprep : PolyTimeComputable (fun z =>
+      pairEncode (pairEncode (Nat.bits (deadline z)) (code z)) (input z)))
+    (hbudget : ∃ A e, ∀ z, expCode.simDegree *
+      ((code z).length + (input z).length + deadline z + 1) ^ expCode.simDegree ≤
+        A * (z.length + 1) ^ e) :
+    PolyTimeComputable (fun z => [decide
+      ((expCode.decode (code z)).toFinTM.ComputesInTime
+        (input z) [true] (deadline z))]) := by
+  obtain ⟨M, C, q, hM⟩ := (polyTimeComputable_iff _).mp hprep
+  obtain ⟨A, e, hA⟩ := hbudget
+  have hU (z : List Bool) : expCode.simulator.ComputesInTime
+      (pairEncode (pairEncode (Nat.bits (deadline z)) (code z)) (input z))
+      [decide ((expCode.decode (code z)).toFinTM.ComputesInTime
+        (input z) [true] (deadline z))] (A * (z.length + 1) ^ e) := by
+    by_cases h : (expCode.decode (code z)).toFinTM.ComputesInTime
+        (input z) [true] (deadline z)
+    · simpa only [h, decide_true] using
+        (expCode.simulator_accepts (code z) (input z) (deadline z) h).mono (hA z)
+    · simpa only [h, decide_false] using
+        (expCode.simulator_rejects (code z) (input z) (deadline z) h).mono (hA z)
+  obtain ⟨N, hN⟩ := FinTM.exists_comp_on_image M expCode.simulator _ _
+    (fun n => C * (n + 1) ^ q) (fun n => A * (n + 1) ^ e) hM hU
+  apply (polyTimeComputable_iff _).mpr
+  refine ⟨N, 2 * C + A + 2, max q e, ?_⟩
+  apply (FinTM.computesFunInTime_iff _ _ _).mpr
+  intro z
+  exact ((FinTM.computesFunInTime_iff _ _ _).mp hN z).mono
+    (ladner_composition_clock C q A e z.length)
+
+/-- Short SAT evaluation on an FP-prepared image has polynomial total cost.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Use the linear verifier's exponential projection decider only on the
+logarithmically short image. `ladner_short_SAT_envelope` bounds that phase in the
+original input length; image composition explicitly includes the FP preparation clock. -/
+private theorem ladner_short_SAT_on_image (f : List Bool → List Bool)
+    (hf : PolyTimeComputable f)
+    (hshort : ∀ z, (f z).length ≤ Nat.log 2 z.length)
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    PolyTimeComputable (fun z => [decide (f z ∈ SAT)]) := by
+  obtain ⟨M, C, q, hM⟩ := (polyTimeComputable_iff _).mp hf
+  obtain ⟨a, d, b, E, hE⟩ := ladner_short_SAT_machine linear
+  have he := (FinTM.computesFunInTime_iff _ _ _).mp
+    ((FinTM.decidesInTime_iff _ _ _).mp hE)
+  have hU (z : List Bool) : E.ComputesInTime (f z) [decide (f z ∈ SAT)]
+      ((2 * b * (a * 2 ^ d + 4)) * (z.length + 1) ^ (d + 3)) := by
+    have h := (he (f z)).mono (ladner_short_SAT_envelope a b d z.length (f z).length (hshort z))
+    by_cases hz : f z ∈ SAT
+    · simpa only [MultiTapeTM.indicator_of_mem hz, hz, decide_true] using h
+    · simpa only [MultiTapeTM.indicator_of_not_mem hz, hz, decide_false] using h
+  obtain ⟨N, hN⟩ := FinTM.exists_comp_on_image M E f _
+    (fun n => C * (n + 1) ^ q)
+    (fun n => (2 * b * (a * 2 ^ d + 4)) * (n + 1) ^ (d + 3)) hM hU
+  apply (polyTimeComputable_iff _).mpr
+  refine ⟨N, 2 * C + (2 * b * (a * 2 ^ d + 4)) + 2, max q (d + 3), ?_⟩
+  apply (FinTM.computesFunInTime_iff _ _ _).mpr
+  intro z
+  exact ((FinTM.computesFunInTime_iff _ _ _).mp hN z).mono
+    (ladner_composition_clock C q _ (d + 3) z.length)
+
+/-- A canonical index below the double logarithm of a word's length is an FP test.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_index_lt_loglog_FP {f g : List Bool → List Bool}
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun S => [decide
+      (LogProg.bitsVal (f S) < Nat.log 2 (Nat.log 2 (g S).length))]) := by
+  have hl := ladner_lengthBits_FP
+  have hi := BinArith.polyTimeComputable_normBits.comp hf
+  have hcap := ladner_binary_log_FP.comp (ladner_binary_log_FP.comp (hl.comp hg))
+  convert BinArith.polyTimeComputable_lt.comp (hi.pairEncode hcap) using 1
+  funext S
+  simp only [Function.comp_apply, LogProg.bitsVal_bits, BinArith.lt_pairEncode]
+
+/-- The query guard is an FP test of canonical binary lengths and indices.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_validQuery_FP :
+    PolyTimeComputable (fun S => [decide (ladner_validQuery S)]) := by
+  have hl := ladner_lengthBits_FP
+  have hx := hl.comp BinArith.polyTimeComputable_slot3
+  have hlog := ladner_binary_log_FP.comp (hl.comp polyTimeComputable_pairFstD)
+  convert polyTimeComputable_and
+    (ladner_index_lt_loglog_FP BinArith.polyTimeComputable_slot2 polyTimeComputable_pairFstD)
+    (BinArith.polyTimeComputable_le.comp (hx.pairEncode hlog)) using 1
+  funext S
+  simp only [Function.comp_apply, LogProg.bitsVal_bits, BinArith.le_pairEncode,
+    Bool.decide_and, ladner_validQuery]
+
+/-- The guarded simulator query has a polynomial preparation machine and clock.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Normalize the index, compute the input and context lengths, and test
+`ladner_validQuery` in binary. Compute the power with `BinArith.powCap` capped at
+`n³ + 1`; the short deadline bound makes saturation inert on valid queries. All
+operations remain FP on malformed inputs. Mask all three fields on invalid queries,
+then pair them and expose the preparation witness through `polyTimeComputable_iff`. -/
+private theorem ladner_query_preparation :
+    ∃ (M : FinTM Bool) (C q : ℕ),
+      M.ComputesFunInTime ladner_queryPrep (fun n => C * (n + 1) ^ q) := by
+  have hl := ladner_lengthBits_FP
+  have hn := hl.comp polyTimeComputable_pairFstD
+  have hi := BinArith.polyTimeComputable_normBits.comp BinArith.polyTimeComputable_slot2
+  have hx := hl.comp BinArith.polyTimeComputable_slot3
+  have hc : PolyTimeComputable (fun S : List Bool => Nat.bits ((pairFstD S).length ^ 3)) := by
+    convert BinArith.polyTimeComputable_mul.comp
+      ((BinArith.polyTimeComputable_mul.comp (hn.pairEncode hn)).pairEncode hn) using 1
+    funext S
+    simp only [Function.comp_apply, BinArith.mul_pairEncode]
+    congr 1
+    ring
+  have hpower := BinArith.polyTimeComputable_powCap.comp (hx.pairEncode (hi.pairEncode hc))
+  have hraw := BinArith.polyTimeComputable_mul.comp (hi.pairEncode hpower)
+  have hd : PolyTimeComputable (fun S => Nat.bits (ladner_queryDeadline S)) := by
+    convert polyTimeComputable_ite ladner_validQuery_FP hraw (polyTimeComputable_const []) using 1
+    funext S
+    by_cases hv : ladner_validQuery S
+    · have ht := ladner_short_deadline (pairFstD S).length
+        (LogProg.bitsVal (pairFstD (pairSndD S))) (pairSndD (pairSndD S)).length hv.1 hv.2
+      have hcap : (pairSndD (pairSndD S)).length ^
+          LogProg.bitsVal (pairFstD (pairSndD S)) ≤ (pairFstD S).length ^ 3 + 1 := by
+        by_cases hi0 : LogProg.bitsVal (pairFstD (pairSndD S)) = 0
+        · simp only [hi0, pow_zero]
+          omega
+        · have hi1 : 1 ≤ LogProg.bitsVal (pairFstD (pairSndD S)) := by omega
+          have hm := Nat.mul_le_mul_right
+            ((pairSndD (pairSndD S)).length ^ LogProg.bitsVal (pairFstD (pairSndD S))) hi1
+          rw [one_mul] at hm
+          omega
+      simp only [Function.comp_apply, ladner_queryDeadline, hv, decide_true, if_true,
+        BinArith.powCap_pairEncode, BinArith.mul_pairEncode, min_eq_left hcap]
+    · simp only [Function.comp_apply, ladner_queryDeadline, hv, decide_false, Bool.false_eq_true, if_false,
+        Nat.zero_bits]
+  have hcode : PolyTimeComputable ladner_queryCode := by
+    convert polyTimeComputable_ite ladner_validQuery_FP hi (polyTimeComputable_const []) using 1
+    funext S
+    simp only [Function.comp_apply, ladner_queryCode, decide_eq_true_eq]
+  have hin : PolyTimeComputable ladner_queryInput := by
+    convert polyTimeComputable_ite ladner_validQuery_FP BinArith.polyTimeComputable_slot3
+      (polyTimeComputable_const []) using 1
+    funext S
+    simp only [ladner_queryInput, decide_eq_true_eq]
+  exact (polyTimeComputable_iff _).mp ((hd.pairEncode hcode).pairEncode hin)
+
+/-- The simulator's guarded numeric clock is polynomial in the serialized query length.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** For valid queries use `ladner_numeric_envelope` and the public
+projection length bound. Invalid queries have empty code and input and deadline zero,
+so their simulator budget reduces to its degree. -/
+private theorem ladner_query_budget (S : List Bool) :
+    expCode.simDegree *
+      ((ladner_queryCode S).length + (ladner_queryInput S).length + ladner_queryDeadline S + 1) ^
+        expCode.simDegree ≤
+      (expCode.simDegree * 4 ^ expCode.simDegree) *
+        (S.length + 1) ^ (3 * expCode.simDegree) := by
+  by_cases hv : ladner_validQuery S
+  · simp only [ladner_queryCode, ladner_queryInput, ladner_queryDeadline, hv, if_true]
+    exact (ladner_numeric_envelope expCode.simDegree (pairFstD S).length
+      (LogProg.bitsVal (pairFstD (pairSndD S))) (pairSndD (pairSndD S)) hv.1 hv.2).trans
+      (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left
+        (Nat.add_le_add_right (length_pairFstD_le S) 1) _))
+  · simp only [ladner_queryCode, ladner_queryInput, ladner_queryDeadline, hv, if_false,
+      List.length_nil, Nat.zero_add, one_pow, mul_one]
+    calc expCode.simDegree ≤ expCode.simDegree * 4 ^ expCode.simDegree :=
+          Nat.le_mul_of_pos_right _ (Nat.pow_pos (by decide))
+         _ ≤ _ * (S.length + 1) ^ (3 * expCode.simDegree) :=
+          Nat.le_mul_of_pos_right _ (Nat.pow_pos (by omega))
+
+/-- Canonicalize all memo entries using the public encoded-list map.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_table_FP : PolyTimeComputable
+    (fun T => BinArith.encWords ((ladner_values T).map Nat.bits)) := by
+  have hg := BinArith.polyTimeComputable_normBits.comp polyTimeComputable_pairSndD
+  have h := (BinArith.polyTimeComputable_mapW hg).comp
+    ((polyTimeComputable_const []).pairEncode polyTimeComputable_id)
+  convert h using 1
+  funext T
+  simp only [Function.comp_apply, BinArith.mapW_pairEncode, pairSndD_pairEncode,
+    ladner_values, List.map_map, id_eq]
+  rfl
+
+/-- The number of numeric memo entries is available in binary in polynomial time.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_values_length_FP :
+    PolyTimeComputable (fun T => Nat.bits (ladner_values T).length) := by
+  have hl := ladner_lengthBits_FP
+  convert hl.comp BinArith.polyTimeComputable_countW using 1
+  funext T
+  simp only [Function.comp_apply, BinArith.countW_eq, List.length_replicate,
+    ladner_values, List.length_map]
+
+/-- Numeric memo entries are no more numerous than their serialized input bits.
+`Complexity.BinArith.length_decWords_le` supplies the bound. -/
+private theorem ladner_values_length_le (T : List Bool) : (ladner_values T).length ≤ T.length := by
+  simpa only [ladner_values, List.length_map] using BinArith.length_decWords_le T
+
+/-- Lookup of a memo exponent is FP after canonicalizing the table through `mapW`.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_get_value_FP : PolyTimeComputable (fun S : List Bool =>
+    Nat.bits ((ladner_values (pairSndD S)).getD (pairFstD S).length 0)) := by
+  have h := BinArith.polyTimeComputable_getW.comp (polyTimeComputable_pairFstD.pairEncode
+    (ladner_table_FP.comp polyTimeComputable_pairSndD))
+  convert h using 1
+  funext S
+  simp only [Function.comp_apply, BinArith.getW_pairEncode_bits]
+
+/-- Check the padding syntax against an exponent read from the supplied table.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_tableSyntax (S : List Bool) : Bool :=
+  match ladner_parse (pairFstD S) with
+  | none => false
+  | some (p, t) => decide (t = p.length ^ (ladner_values (pairSndD S)).getD p.length 0)
+
+/-- Table-dependent padding syntax is FP, even for enormous malformed exponents: the
+instance of `ladner_padSyntax_FP` whose exponent is read from the supplied table.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_tableSyntax_FP : PolyTimeComputable (fun S => [ladner_tableSyntax S]) := by
+  have hh : PolyTimeComputable (fun z : List Bool => Nat.bits
+      ((ladner_values (pairSndD (pairSndD z))).getD (pairFstD z).length 0)) := by
+    convert ladner_get_value_FP.comp
+      (polyTimeComputable_pairFstD.pairEncode BinArith.polyTimeComputable_slot3) using 1
+    funext z
+    simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+  exact ladner_padSyntax_FP (h := fun S m => (ladner_values (pairSndD S)).getD m 0)
+    polyTimeComputable_pairFstD hh
+
+/-- The short-word guard relative to the memo entry count is an FP predicate.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_pad_guard_FP : PolyTimeComputable (fun S : List Bool =>
+    [decide ((pairFstD S).length ≤ Nat.log 2 (ladner_values (pairSndD S)).length)]) := by
+  have hl := ladner_lengthBits_FP
+  have h := BinArith.polyTimeComputable_le.comp ((hl.comp polyTimeComputable_pairFstD).pairEncode
+    (ladner_binary_log_FP.comp (ladner_values_length_FP.comp polyTimeComputable_pairSndD)))
+  convert h using 1
+  funext S
+  simp only [Function.comp_apply, LogProg.bitsVal_bits, BinArith.le_pairEncode]
+
+/-- Table-dependent padding membership of short words is polynomial-time.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Test the short-word guard and table-dependent syntax with the public
+parser, list map, lookup, and saturated-power routines. Feed the parsed prefix to the
+short-SAT machine only on guarded inputs, using the empty word as a default. The final
+bit is masked by both syntax and guard, so no SAT fact about the default is assumed. -/
+private theorem ladner_short_pad_FP
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    PolyTimeComputable (fun S : List Bool => [decide
+      ((pairFstD S).length ≤ Nat.log 2 (ladner_values (pairSndD S)).length ∧
+        pairFstD S ∈ padSAT (fun m => (ladner_values (pairSndD S)).getD m 0))]) := by
+  let f : List Bool → List Bool := fun S =>
+    if (pairFstD S).length ≤ Nat.log 2 (ladner_values (pairSndD S)).length then
+      pairFstD (pairSndD (ladner_parseWord (pairFstD S))) else []
+  have hf : PolyTimeComputable f := by
+    convert polyTimeComputable_ite ladner_pad_guard_FP
+      (BinArith.polyTimeComputable_slot2.comp (ladner_parse_FP.comp polyTimeComputable_pairFstD))
+      (polyTimeComputable_const []) using 1
+    funext S
+    simp only [f, Function.comp_apply, decide_eq_true_eq]
+  have hfst0 : pairFstD [] = [] := pairFstD_nil
+  have hsnd0 : pairSndD [] = [] := by
+    simpa only [Function.iterate_one] using BinArith.iterate_pairSndD_nil 1
+  have hshort (S : List Bool) : (f S).length ≤ Nat.log 2 S.length := by
+    by_cases hg : (pairFstD S).length ≤ Nat.log 2 (ladner_values (pairSndD S)).length
+    · dsimp only [f]
+      rw [if_pos hg]
+      cases hp : ladner_parse (pairFstD S) with
+      | none => simp only [ladner_parseWord, hp, hsnd0, hfst0, List.length_nil, Nat.zero_le]
+      | some pt =>
+        obtain ⟨p, t⟩ := pt
+        simp only [ladner_parseWord, hp, pairFstD_pairEncode, pairSndD_pairEncode]
+        exact ((ladner_parsed_length hp).2.le.trans hg).trans
+          (Nat.log_mono_right ((ladner_values_length_le _).trans (length_pairSndD_le S)))
+    · simp only [f, hg, if_false, List.length_nil, Nat.zero_le]
+  have hsat := ladner_short_SAT_on_image f hf hshort linear
+  have hout := polyTimeComputable_and ladner_pad_guard_FP
+    (polyTimeComputable_and ladner_tableSyntax_FP hsat)
+  convert hout using 1
+  funext S
+  by_cases hg : (pairFstD S).length ≤ Nat.log 2 (ladner_values (pairSndD S)).length
+  · cases hp : ladner_parse (pairFstD S) with
+    | none =>
+      have hn : pairFstD S ∉ padSAT (fun m => (ladner_values (pairSndD S)).getD m 0) := by
+        rintro h
+        obtain ⟨p, t, ht, -, -⟩ := ladner_pad_membership.mp h
+        rw [hp] at ht
+        cases ht
+      simp only [hg, hn, and_false, decide_false, ladner_tableSyntax, hp, Bool.false_and,
+        Bool.true_and, decide_true]
+    | some pt =>
+      obtain ⟨p, t⟩ := pt
+      have hm : (pairFstD S ∈ padSAT (fun m => (ladner_values (pairSndD S)).getD m 0)) ↔
+          t = p.length ^ (ladner_values (pairSndD S)).getD p.length 0 ∧ p ∈ SAT := by
+        rw [ladner_pad_membership]
+        constructor
+        · rintro ⟨p', t', hp', ht, hsat⟩
+          rw [hp, Option.some.injEq, Prod.mk.injEq] at hp'
+          obtain ⟨rfl, rfl⟩ := hp'
+          exact ⟨ht, hsat⟩
+        · rintro ⟨ht, hsat⟩
+          exact ⟨p, t, hp, ht, hsat⟩
+      simp only [hg, true_and, decide_true, Bool.true_and, hm, Bool.decide_and,
+        ladner_tableSyntax, hp, f, if_true, ladner_parseWord, pairFstD_pairEncode,
+        pairSndD_pairEncode]
+  · simp only [hg, false_and, decide_false, Bool.false_and]
+
+/-- The candidate context guard is an FP test of lengths and canonical indices.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_ctxGuard_FP : PolyTimeComputable (fun C => [decide (ladner_ctxGuard C)]) := by
+  have hl := ladner_lengthBits_FP
+  have hcount := ladner_values_length_FP.comp BinArith.polyTimeComputable_slot3
+  convert polyTimeComputable_and
+    (BinArith.polyTimeComputable_beq.comp ((hl.comp polyTimeComputable_pairFstD).pairEncode hcount))
+    (ladner_index_lt_loglog_FP BinArith.polyTimeComputable_slot2 polyTimeComputable_pairFstD) using 1
+  funext C
+  simp only [Function.comp_apply, BinArith.beq_pairEncode, ladner_ctxGuard, Bool.decide_and]
+
+/-- Deleting the high sentinel bit is FP through reversal and the public tail routine.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_dropLast_FP : PolyTimeComputable (fun w : List Bool => w.dropLast) := by
+  convert BinArith.polyTimeComputable_reverse.comp
+    (polyTimeComputable_tail.comp BinArith.polyTimeComputable_reverse) using 1
+  funext w
+  simp only [Function.comp_apply, List.drop_one, List.tail_reverse, List.reverse_reverse]
+
+/-- The guarded single-word acceptance equivalence has a polynomial-time test.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Decode the unary rank with a high sentinel, test the context and
+short-input guards, and build a guarded uniform-simulator query. Compare its verdict
+with short padded-SAT membership. The outer guards mask every invalid state; the
+SAT and simulator implementations retain their explicit preparation clocks. -/
+private theorem ladner_wordVerdict_FP
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    PolyTimeComputable (fun S : List Bool =>
+      [ladner_wordVerdict (pairFstD S) (pairSndD S).length]) := by
+  have hl := ladner_lengthBits_FP
+  let x : List Bool → List Bool := fun S => (Nat.bits ((pairSndD S).length + 1)).dropLast
+  have hx : PolyTimeComputable x := by
+    convert ladner_dropLast_FP.comp (BinArith.polyTimeComputable_add.comp
+      ((hl.comp polyTimeComputable_pairSndD).pairEncode
+        (polyTimeComputable_const (Nat.bits 1)))) using 1
+    funext S
+    simp only [x, Function.comp_apply, BinArith.add_pairEncode]
+  let Q : List Bool → List Bool := fun S =>
+    pairEncode (pairFstD (pairFstD S)) (pairEncode (pairFstD (pairSndD (pairFstD S))) (x S))
+  have hQ : PolyTimeComputable Q :=
+    (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD).pairEncode
+      ((BinArith.polyTimeComputable_slot2.comp polyTimeComputable_pairFstD).pairEncode hx)
+  have hprep : PolyTimeComputable ladner_queryPrep :=
+    (polyTimeComputable_iff _).mpr ladner_query_preparation
+  have hsim := (ladner_simulation_on_image ladner_queryCode ladner_queryInput
+    ladner_queryDeadline hprep ⟨_, _, ladner_query_budget⟩).comp hQ
+  have hpad := (ladner_short_pad_FP linear).comp
+    (hx.pairEncode (BinArith.polyTimeComputable_slot3.comp polyTimeComputable_pairFstD))
+  have hshort := BinArith.polyTimeComputable_le.comp ((hl.comp hx).pairEncode
+    (ladner_binary_log_FP.comp (hl.comp (polyTimeComputable_pairFstD.comp
+      polyTimeComputable_pairFstD))))
+  have hout := polyTimeComputable_and (ladner_ctxGuard_FP.comp polyTimeComputable_pairFstD)
+    (polyTimeComputable_and hshort
+      (polyTimeComputable_not (BinArith.polyTimeComputable_xor hsim hpad)))
+  convert hout using 1
+  funext S
+  have hxS : (Nat.bits ((pairSndD S).length + 1)).dropLast = x S := rfl
+  by_cases hc : ladner_ctxGuard (pairFstD S)
+  · by_cases hs : (x S).length ≤ Nat.log 2 (pairFstD (pairFstD S)).length
+    · have hvalid : ladner_validQuery (Q S) := by
+        simp only [ladner_validQuery, Q, pairFstD_pairEncode, pairSndD_pairEncode]
+        exact ⟨hc.2, hs⟩
+      have htable : (x S).length ≤
+          Nat.log 2 (ladner_values (pairSndD (pairSndD (pairFstD S)))).length := by
+        rw [← hc.1]
+        exact hs
+      by_cases hrun : (ladnerMachine (LogProg.bitsVal (pairFstD (pairSndD (pairFstD S))))).ComputesInTime (x S) [true]
+          (LogProg.bitsVal (pairFstD (pairSndD (pairFstD S))) *
+            (x S).length ^ LogProg.bitsVal (pairFstD (pairSndD (pairFstD S)))) <;>
+        by_cases hsat : x S ∈ padSAT
+          (fun m => (ladner_values (pairSndD (pairSndD (pairFstD S)))).getD m 0) <;>
+        simp only [Function.comp_apply, ladner_wordVerdict, hxS, hc, hs, true_and,
+          decide_true, Bool.true_and, BinArith.le_pairEncode, LogProg.bitsVal_bits,
+          ladner_queryCode, ladner_queryInput, ladner_queryDeadline, hvalid, if_true,
+          Q, pairFstD_pairEncode, pairSndD_pairEncode, ← ladnerMachine_eq,
+          htable, hrun, hsat, iff_self, iff_true, iff_false, not_true_eq_false,
+          decide_false, Bool.false_xor, Bool.true_xor,
+          Bool.not_false, Bool.not_true]
+    · simp only [Function.comp_apply, ladner_wordVerdict, hxS, hc, hs, true_and,
+        false_and, decide_false, decide_true, BinArith.le_pairEncode, LogProg.bitsVal_bits,
+        Bool.false_and, Bool.and_false]
+  · simp only [Function.comp_apply, ladner_wordVerdict, hc, false_and, decide_false,
+      Bool.false_and]
+
+/-- A candidate-scan transition is FP once its single-word verdict is FP.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_testStep_FP
+    (hw : PolyTimeComputable (fun S : List Bool =>
+      [ladner_wordVerdict (pairFstD S) (pairSndD S).length])) :
+    PolyTimeComputable ladner_testStep := by
+  have hr := polyTimeComputable_pairFstD.comp BinArith.polyTimeComputable_slot3
+  have hf := polyTimeComputable_headD.comp BinArith.polyTimeComputable_slot4
+  have hword := hw.comp (polyTimeComputable_pairFstD.pairEncode hr)
+  have hstep := polyTimeComputable_pairFstD.pairEncode
+    ((polyTimeComputable_tail.comp BinArith.polyTimeComputable_slot2).pairEncode
+      ((hr.append (polyTimeComputable_const [true])).pairEncode
+        (polyTimeComputable_and hf hword)))
+  convert polyTimeComputable_ite
+    (polyTimeComputable_isNil.comp BinArith.polyTimeComputable_slot2)
+    polyTimeComputable_id hstep using 1
+  funext S
+  simp only [Function.comp_apply, ladner_testStep, decide_eq_true_eq,
+    pairFstD_pairEncode, pairSndD_pairEncode, id_eq]
+
+/-- The short-word count needs one doubling per bit of the positive stage length.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_queryFuel (C : List Bool) : List Bool :=
+  if pairFstD C = [] then [true] else Nat.bits (pairFstD C).length
+
+/-- The count-generation counter has exactly `log₂ n + 1` symbols, including at zero.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_queryFuel_length (C : List Bool) :
+    (ladner_queryFuel C).length = Nat.log 2 (pairFstD C).length + 1 := by
+  by_cases hn : pairFstD C = []
+  · simp only [ladner_queryFuel, hn, if_true, List.length_cons, List.length_nil,
+      Nat.log_zero_right]
+  · have hlen : (pairFstD C).length ≠ 0 := by
+      intro h
+      exact hn (List.eq_nil_of_length_eq_zero h)
+    simp only [ladner_queryFuel, hn, if_false, LogProg.length_bits_eq_log hlen]
+
+/-- The doubling loop's final unary count is linearly bounded by the context length.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_queryFuel_power_le (C : List Bool) :
+    2 ^ (ladner_queryFuel C).length ≤ 2 * (C.length + 1) := by
+  rw [ladner_queryFuel_length, pow_succ']
+  exact Nat.mul_le_mul_left _ ((Nat.pow_log_le_add_one 2 _).trans
+    (Nat.add_le_add_right (length_pairFstD_le C) 1))
+
+/-- Initialize the bounded query-count generation through the existing iterator.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_countInit (C : List Bool) : List Bool :=
+  pairEncode C (pairEncode (ladner_queryFuel C) [])
+
+/-- A bounded doubling transition for query-count initialization; malformed states
+cannot grow beyond the explicit guard. It is consumed by `BinArith.polyTimeComputable_iterate`.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_countStep (S : List Bool) : List Bool :=
+  let C := pairFstD S
+  let rem := pairFstD (pairSndD S)
+  let acc := pairSndD (pairSndD S)
+  let next := acc ++ acc ++ [true]
+  if rem = [] then S else pairEncode C (pairEncode (rem.drop 1)
+    (if next.length ≤ 2 * (C.length + 1) then next else acc))
+
+/-- Query-count initialization is an FP serialization.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_countInit_FP : PolyTimeComputable ladner_countInit := by
+  have hl := ladner_lengthBits_FP
+  have hf : PolyTimeComputable ladner_queryFuel := by
+    convert polyTimeComputable_ite (polyTimeComputable_isNil.comp polyTimeComputable_pairFstD)
+      (polyTimeComputable_const [true]) (hl.comp polyTimeComputable_pairFstD) using 1
+    funext C
+    simp only [Function.comp_apply, ladner_queryFuel, decide_eq_true_eq]
+  exact polyTimeComputable_id.pairEncode (hf.pairEncode (polyTimeComputable_const []))
+
+/-- One guarded query-count doubling transition is polynomial-time.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_countStep_FP : PolyTimeComputable ladner_countStep := by
+  have ha := BinArith.polyTimeComputable_slot3
+  have hn := (ha.append ha).append (polyTimeComputable_const [true])
+  have hb := (polyTimeComputable_polyUnary 2 1).comp polyTimeComputable_pairFstD
+  have hg : PolyTimeComputable (fun S : List Bool =>
+      [decide ((pairSndD (pairSndD S) ++ pairSndD (pairSndD S) ++ [true]).length ≤
+        2 * ((pairFstD S).length + 1))]) := by
+    convert polyTimeComputable_lenLe.comp (hb.pairEncode hn) using 1
+    funext S
+    simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
+      List.length_replicate, pow_one]
+  have hs := polyTimeComputable_pairFstD.pairEncode
+    ((polyTimeComputable_tail.comp BinArith.polyTimeComputable_slot2).pairEncode
+      (polyTimeComputable_ite hg hn ha))
+  convert polyTimeComputable_ite (polyTimeComputable_isNil.comp BinArith.polyTimeComputable_slot2)
+    polyTimeComputable_id hs using 1
+  funext S
+  simp only [Function.comp_apply, ladner_countStep, decide_eq_true_eq, id_eq]
+
+/-- Every round of bounded query-count generation has the exact doubling value.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Before fuel exhaustion, `2^j - 1` becomes `2^(j+1) - 1` by
+doubling and appending one. The full-fuel power bound makes the cap guard inert.
+After exhaustion the transition is fixed, and the `min` in the exponent records this. -/
+private theorem ladner_count_orbit (C : List Bool) (j : ℕ) :
+    ladner_countStep^[j] (ladner_countInit C) =
+      pairEncode C (pairEncode ((ladner_queryFuel C).drop j)
+        (List.replicate (2 ^ min j (ladner_queryFuel C).length - 1) true)) := by
+  induction j with
+  | zero => simp only [Function.iterate_zero_apply, ladner_countInit, List.drop_zero,
+      Nat.zero_min, pow_zero, Nat.sub_self, List.replicate_zero]
+  | succ j ih =>
+    rw [Function.iterate_succ_apply', ih]
+    by_cases hj : j < (ladner_queryFuel C).length
+    · have hm : min j (ladner_queryFuel C).length = j := min_eq_left hj.le
+      have hm' : min (j + 1) (ladner_queryFuel C).length = j + 1 := min_eq_left (by omega)
+      have hp : 0 < 2 ^ j := Nat.pow_pos (by decide)
+      have he : 2 * (2 ^ j - 1) + 1 = 2 ^ (j + 1) - 1 := by
+        rw [pow_succ']
+        omega
+      have hn : List.replicate (2 ^ j - 1) true ++ List.replicate (2 ^ j - 1) true ++ [true] =
+          List.replicate (2 ^ (j + 1) - 1) true := by
+        rw [← List.replicate_add, ← List.replicate_succ']
+        congr 1
+        omega
+      have hg : (List.replicate (2 ^ j - 1) true ++
+          List.replicate (2 ^ j - 1) true ++ [true]).length ≤ 2 * (C.length + 1) := by
+        rw [hn, List.length_replicate]
+        have hp' := (Nat.pow_le_pow_right (by decide : 1 ≤ 2)
+          (by omega : j + 1 ≤ (ladner_queryFuel C).length)).trans (ladner_queryFuel_power_le C)
+        omega
+      have hne : (ladner_queryFuel C).drop j ≠ [] := by
+        intro h
+        have hlen := congrArg List.length h
+        rw [List.length_drop, List.length_nil] at hlen
+        omega
+      have hg' : (List.replicate (2 ^ (j + 1) - 1) true).length ≤ 2 * (C.length + 1) := by
+        rw [← hn]
+        exact hg
+      simp only [ladner_countStep, pairFstD_pairEncode, pairSndD_pairEncode, hm,
+        hm', hne, if_false, hn, hg', if_true, List.drop_drop]
+    · have hm : min j (ladner_queryFuel C).length = (ladner_queryFuel C).length :=
+        min_eq_right (by omega)
+      have hm' : min (j + 1) (ladner_queryFuel C).length = (ladner_queryFuel C).length :=
+        min_eq_right (by omega)
+      simp only [ladner_countStep, pairFstD_pairEncode, pairSndD_pairEncode,
+        List.drop_eq_nil_of_le (by omega : (ladner_queryFuel C).length ≤ j),
+        List.drop_eq_nil_of_le (by omega : (ladner_queryFuel C).length ≤ j + 1),
+        hm, hm', if_true]
+
+/-- All initialized query-count generation states have a linear serialized envelope.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_count_size (C : List Bool) (j : ℕ) :
+    (ladner_countStep^[j] (ladner_countInit C)).length ≤ 8 * (C.length + 1) ^ 1 := by
+  rw [ladner_count_orbit]
+  simp only [length_pairEncode, List.length_drop, List.length_replicate, pow_one]
+  have hfuel : (ladner_queryFuel C).length ≤ C.length + 1 := by
+    rw [ladner_queryFuel_length]
+    exact Nat.add_le_add_right ((Nat.log_le_self 2 _).trans (length_pairFstD_le C)) 1
+  have hpow := (Nat.pow_le_pow_right (by decide : 1 ≤ 2)
+    (min_le_right j (ladner_queryFuel C).length)).trans (ladner_queryFuel_power_le C)
+  omega
+
+/-- The candidate scan's unary budget is constructed in polynomial time with a capped
+application of the public iterator.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Generate `2^(log₂ n+1)-1` true bits by bounded doubling for one
+round per binary length bit. Every intermediate state has the linear envelope
+`ladner_count_size`; the guard protects malformed states. Compose the resulting
+budget with the fixed initial rank and conjunction flag. -/
+private theorem ladner_testInit_FP : PolyTimeComputable ladner_testInit := by
+  have hloop := BinArith.polyTimeComputable_iterate ladner_countStep_FP ladner_countInit_FP
+    1 1 8 1 (fun C j _ => ladner_count_size C j)
+  have hu : PolyTimeComputable (fun C => List.replicate (ladner_queryCount C) true) := by
+    convert BinArith.polyTimeComputable_slot3.comp hloop using 1
+    funext C
+    have hfuel : (ladner_queryFuel C).length ≤ 1 * (C.length + 1) ^ 1 := by
+      rw [ladner_queryFuel_length, pow_one, one_mul]
+      exact Nat.add_le_add_right ((Nat.log_le_self 2 _).trans (length_pairFstD_le C)) 1
+    simp only [Function.comp_apply, ladner_count_orbit, pairSndD_pairEncode, min_eq_right hfuel]
+    rw [ladner_queryFuel_length]
+    rfl
+  exact polyTimeComputable_id.pairEncode
+    (hu.pairEncode ((polyTimeComputable_const []).pairEncode (polyTimeComputable_const [true])))
+
+/-- Every initialized scan state has the exact remaining count, completed rank, and flag.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Induct on the iteration count. Before exhaustion the unary counter
+loses one symbol and the conjunction gains exactly the next verdict. After exhaustion
+the transition fixes the state, so both counters and the flag remain constant. -/
+private theorem ladner_test_orbit (C : List Bool) (j : ℕ) :
+    ladner_testStep^[j] (ladner_testInit C) =
+      pairEncode C (pairEncode (List.replicate (ladner_queryCount C - j) true)
+        (pairEncode (List.replicate (min j (ladner_queryCount C)) true)
+          [decide (∀ r < min j (ladner_queryCount C), ladner_wordVerdict C r = true)])) := by
+  induction j with
+  | zero => simp only [Function.iterate_zero_apply, ladner_testInit, Nat.sub_zero,
+      Nat.zero_min, List.replicate_zero, Nat.not_lt_zero, false_implies, implies_true,
+      decide_true]
+  | succ j ih =>
+    rw [Function.iterate_succ_apply', ih]
+    by_cases hj : j < ladner_queryCount C
+    · have hmin : min j (ladner_queryCount C) = j := min_eq_left hj.le
+      have hmin' : min (j + 1) (ladner_queryCount C) = j + 1 := min_eq_left (by omega)
+      have hne : List.replicate (ladner_queryCount C - j) true ≠ [] := by
+        intro h
+        have hlen := congrArg List.length h
+        rw [List.length_replicate, List.length_nil] at hlen
+        omega
+      have hrem : ladner_queryCount C - j - 1 = ladner_queryCount C - (j + 1) := by omega
+      have hrank : List.replicate j true ++ [true] = List.replicate (j + 1) true :=
+        List.replicate_succ'.symm
+      have hflag : (decide (∀ r < j, ladner_wordVerdict C r = true) && ladner_wordVerdict C j) =
+          decide (∀ r < j + 1, ladner_wordVerdict C r = true) := by
+        cases hv : ladner_wordVerdict C j <;>
+          simp only [Nat.forall_lt_succ_right, Bool.decide_and, hv, Bool.false_eq_true,
+            decide_false, decide_true, Bool.and_false, Bool.and_true]
+      simp only [ladner_testStep, pairFstD_pairEncode, pairSndD_pairEncode, hne,
+        if_false, hmin, hmin', List.drop_replicate, List.length_replicate,
+        List.headD_cons, hrem, hrank, hflag]
+    · have hmin : min j (ladner_queryCount C) = ladner_queryCount C := min_eq_right (by omega)
+      have hmin' : min (j + 1) (ladner_queryCount C) = ladner_queryCount C :=
+        min_eq_right (by omega)
+      have hsub : ladner_queryCount C - j = 0 := by omega
+      have hsub' : ladner_queryCount C - (j + 1) = 0 := by omega
+      simp only [ladner_testStep, pairFstD_pairEncode, pairSndD_pairEncode, hmin,
+        hmin', hsub, hsub', List.replicate_zero, if_true]
+
+/-- The number of scan queries is bounded by twice the serialized context length plus two.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_queryCount_le (C : List Bool) :
+    ladner_queryCount C ≤ 2 * (C.length + 1) := by
+  have h := ladner_shortWords_count (pairFstD C).length
+  simp only [ladner_shortWords, List.length_map, List.length_range] at h
+  exact h.trans (Nat.mul_le_mul_left _ (Nat.add_le_add_right (length_pairFstD_le C) 1))
+
+/-- Every state reached by an initialized candidate scan has linear serialized length.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_test_size (C : List Bool) (j : ℕ) :
+    (ladner_testStep^[j] (ladner_testInit C)).length ≤ 12 * (C.length + 1) ^ 1 := by
+  rw [ladner_test_orbit]
+  simp only [length_pairEncode, List.length_replicate, List.length_cons, List.length_nil,
+    pow_one]
+  have h := ladner_queryCount_le C
+  have hsum : ladner_queryCount C - j + min j (ladner_queryCount C) = ladner_queryCount C :=
+    by omega
+  omega
+
+/-- After the bounded word scan, its masked flag is exactly the candidate predicate.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** The query-count bound ensures the scan is exhausted. Sentinel
+completeness changes the conjunction over ranks into the universal short-word test.
+The context guard supplies the table-length and index conditions, and masks all
+inconsistent inputs. -/
+private theorem ladner_candidate_readout (C : List Bool) :
+    [ladner_candidate C] = if ladner_ctxGuard C then
+      ladner_testOut (ladner_testStep^[2 * (C.length + 1) ^ 1] (ladner_testInit C))
+      else [false] := by
+  have hq : ladner_queryCount C ≤ 2 * (C.length + 1) ^ 1 := by
+    simpa only [pow_one] using ladner_queryCount_le C
+  by_cases hc : ladner_ctxGuard C
+  · rw [if_pos hc, ladner_test_orbit]
+    simp only [ladner_testOut, pairSndD_pairEncode, min_eq_right hq]
+    have hequiv :
+        (∀ x : List Bool, x.length ≤ Nat.log 2 (pairFstD C).length →
+          ((ladnerMachine (LogProg.bitsVal (pairFstD (pairSndD C)))).ComputesInTime x [true]
+            (LogProg.bitsVal (pairFstD (pairSndD C)) *
+              x.length ^ LogProg.bitsVal (pairFstD (pairSndD C))) ↔
+            x ∈ padSAT (fun m => (ladner_values (pairSndD (pairSndD C))).getD m 0))) ↔
+        ∀ r < ladner_queryCount C, ladner_wordVerdict C r = true := by
+      constructor
+      · intro h r hr
+        have hx : (Nat.bits (r + 1)).dropLast ∈
+            ladner_shortWords (Nat.log 2 (pairFstD C).length) :=
+          List.mem_map.mpr ⟨r, List.mem_range.mpr hr, rfl⟩
+        have hlen := (ladner_shortWords_complete _ _).mp hx
+        simp only [ladner_wordVerdict, hc, hlen, true_and, decide_eq_true_eq]
+        exact h _ hlen
+      · intro h x hx
+        obtain ⟨r, hr, he⟩ := List.mem_map.mp ((ladner_shortWords_complete _ _).mpr hx)
+        have htest := h r (List.mem_range.mp hr)
+        simp only [ladner_wordVerdict, decide_eq_true_eq] at htest
+        simpa only [he] using htest.2.2
+    have hlen : decide ((pairFstD C).length =
+        (ladner_values (pairSndD (pairSndD C))).length) = true := decide_eq_true hc.1
+    have hindex : decide (LogProg.bitsVal (pairFstD (pairSndD C)) <
+        Nat.log 2 (Nat.log 2 (pairFstD C).length)) = true := decide_eq_true hc.2
+    simp only [ladner_candidate, Bool.decide_and, hlen, hindex, Bool.true_and, hequiv]
+  · rw [if_neg hc]
+    have hn : ¬ ((pairFstD C).length = (ladner_values (pairSndD (pairSndD C))).length ∧
+        LogProg.bitsVal (pairFstD (pairSndD C)) < Nat.log 2 (Nat.log 2 (pairFstD C).length) ∧
+        ∀ x : List Bool, x.length ≤ Nat.log 2 (pairFstD C).length →
+          ((ladnerMachine (LogProg.bitsVal (pairFstD (pairSndD C)))).ComputesInTime x [true]
+            (LogProg.bitsVal (pairFstD (pairSndD C)) *
+              x.length ^ LogProg.bitsVal (pairFstD (pairSndD C))) ↔
+            x ∈ padSAT (fun m => (ladner_values (pairSndD (pairSndD C))).getD m 0))) := by
+      rintro ⟨hn, hi, -⟩
+      exact hc ⟨hn, hi⟩
+    simp only [ladner_candidate, hn, decide_false]
+
+/-- The polynomial-time candidate test is the guarded readout of the existing bounded
+iterator; no Ladner target is used or proved here.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Use the single-word FP verdict in the scan transition, the FP unary
+initialization, and the linear bound on every scan state. Run `2(|C|+1)` rounds through
+`BinArith.polyTimeComputable_iterate`, then read and mask its flag by the context guard. -/
+private theorem ladner_candidate_FP
+    (linear : ∃ V : Language Bool, V ∈ P ∧ ∀ x : List Bool, x ∈ SAT ↔
+      ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V) :
+    PolyTimeComputable (fun S => [ladner_candidate S]) := by
+  have hstep := ladner_testStep_FP (ladner_wordVerdict_FP linear)
+  have hloop := BinArith.polyTimeComputable_iterate hstep ladner_testInit_FP 2 1 12 1
+    (fun C j _ => ladner_test_size C j)
+  have hflag := BinArith.polyTimeComputable_slot4.comp hloop
+  convert polyTimeComputable_ite ladner_ctxGuard_FP hflag (polyTimeComputable_const [false]) using 1
+  funext C
+  simpa only [Function.comp_apply, ladner_testOut, decide_eq_true_eq] using ladner_candidate_readout C
 
 end Complexity
