@@ -204,9 +204,9 @@ over `k, r_0, …, r_{q(n)} ← U_n`.
   `ℓ(n) = 2n + (n + (4n + 2))`. The rows under the inactive key `ι_u` where `u` is a second or
   only argument are slices `(0, n)` (`sliceEnc_append_left`: the `G₁`-ciphertexts
   `spEncStr E₁`). Those where `u` is a first argument are slices `(2n, 4n + 2)`
-  (`sliceEnc_append_right`: the `G₂`-ciphertexts `spEncStr E₂`). Both fit exactly. The bound is
-  uniform in the slices, so the reduction's advice may fix which rows, of which layer, it
-  embeds.
+  (`sliceEnc_append_right`: the `G₂`-ciphertexts `spEncStr E₂`). Both shapes fit; the outer
+  slice fits exactly. The bound is uniform in the slices, so the reduction's advice may fix
+  which rows, of which layer, it embeds.
 
 **Deviations.** [PS10] states the claim for one scheme and `n`-bit messages. Here the claim is
 length-generic and joint: the pads of different ciphertexts may come from different slices
