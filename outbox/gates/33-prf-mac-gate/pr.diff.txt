@@ -1,0 +1,1377 @@
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF.lean
+index 842bf6c59..7aa48c8ef 100644
+--- a/TCSlib/Cryptography/Authentication/MAC/FromPRF.lean
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF.lean
+@@ -3,6 +3,11 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Authentication.MAC.Defs
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Handler
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Reduction
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Random
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Game
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Bound
+ import TCSlib.Cryptography.Authentication.Encoding
+ import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
+ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
+@@ -14,7 +19,7 @@ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# The PRF MAC (statement phase)
++# The PRF MAC
+ 
+ [PS10, Protocol 134.3]: for a family `{f_s : {0,1}^n → {0,1}^n}`, `Gen(1^n)` samples a uniform
+ `n`-bit key, `Tag_k(m) = f_k(m)`, and `Ver_k(m, σ)` accepts iff `f_k(m) = σ`. Theorem 135.4: when
+@@ -32,8 +37,18 @@ the ch. 2–4 layer's `PRF`). `Gen` is the ch. 2–4 layer's coin-key machine (i
+ 
+ ## Main results
+ 
+-* `Authentication.prfMAC_secure` (Thm 135.4, stated; a `sorry` under its sketch): a PRF gives a
+-  secure MAC.
++* `Authentication.prfMAC_secure` (Thm 135.4, proved): a PRF gives a secure MAC, with the forgery
++  probability at most `prfAdv(F_n, D) + 2^{-n}` at every `n` for a distinguisher `D`.
++
++## Contents
++
++* `MAC/FromPRF/Handler`: the reduction's handler (forwarded and stored queries, the final query).
++* `MAC/FromPRF/Reduction`: the distinguisher, accepting against `f` iff the forger forges against
++  the tagging oracle `f`.
++* `MAC/FromPRF/Random`: forging against a random function succeeds with probability `≤ 2^{-t}`.
++* `MAC/FromPRF/Game`: the forgery game of a MAC with a deterministic tag.
++* `MAC/FromPRF/Bound`: the bound `Pr[forge] ≤ prfAdv + 2^{-n}` for a MAC whose tag is a keyed
++  family.
+ 
+ ## References
+ 
+@@ -118,22 +133,25 @@ attribute [simps (config := { isSimp := false }) msgLen tagLen gen tag ver] prfM
+ /-- **Theorem 135.4: a PRF gives a secure MAC** [PS10, Theorem 135.4]: if `F` is a pseudorandom
+ function family, the PRF MAC is secure.
+ 
+-**Proof sketch** (the source's, with its bound).
+-1. Fix a forger `A` with budget `q`. Let `ε(n)` be its forgery probability against the PRF MAC.
+-2. The distinguisher `D` runs `A` against its own oracle, answering each tagging query `m` with
+-   the oracle's value. It then queries the oracle at `A`'s output message `m` and outputs `1`
+-   iff the answer is `σ` and `m` was not queried before.
+-3. With the oracle `f_k`, `D` outputs `1` exactly when `A` forges: probability `ε(n)`.
++**Proof sketch** (the source's, with its bound `ε(n) ≤ prfAdv(F_n, D) + 2^{-n}`).
++1. Fix a forger `A` with budget `q`; let `ε(n)` be its forgery probability. `Gen` returns its
++   coins, the key (`runAt_coinKey`, read at `n` bits by `NUPPT.coinsEquivPoly`); `Tag` returns
++   `E ⟨k, m⟩ = f_k(m)` whatever its (empty) coins (`prfTagFun_eq`, `hFE`); `Ver` accepts `(m, σ)`
++   iff `f_k(m) = σ` (`prfVerFun_eq`).
++2. The distinguisher `D` (`PRFMAC.exists_macReduction`) runs `A` against its own oracle, answering
++   each tagging query `m` with the oracle's value and storing `m` in its state. It then queries
++   the oracle at `A`'s output message `m` and outputs `1` iff the answer is `σ` and `m` was not
++   stored. It is T2 (`Games.exists_interactiveHandlerMachine`) for the handler
++   `PRFMAC.macHandler` (`finCall = 1`, `outLen = 1`, budget `q + 1`) on the input-free companion
++   of `A` (`Games.exists_toCompOn_of_toComp`), made an oracle adversary by T4
++   (`Games.exists_toOracleAdversary_of_bitCodec`).
++3. With the oracle `f_k`, `D` outputs `1` exactly when `A` forges (`PRFMAC.accept_forgeGame_eq`):
++   probability `ε(n)`.
+ 4. With a random function, a forgery is a guess of a fresh uniform value: probability at most
+-   `2^{-n}` (the collision bound `prob_mem_le`, or a direct count).
+-5. So `D`'s PRF advantage is at least `ε(n) − 2^{-n}`. Since `F` is a PRF it is negligible, so
+-   `ε` is negligible.
+-6. First use the input-free companion `Games.exists_toCompOn_of_toComp` for the forger.
+-   The forwarding reduction is a machine by T2 (`Games.exists_interactiveHandlerMachine`):
+-   its finalization makes one query at the output message, checks freshness from the state,
+-   and returns one bit (`finCall = 1`, `outLen = 1`), with budget `q + 1`. T4
+-   (`Games.exists_toOracleAdversary_of_bitCodec`) then supplies `OracleEnsemble.Indist`'s
+-   oracle adversary.
++   `2^{-n}` (`PRFMAC.expect_fnForge_random_le`, sampling the function lazily by table override).
++5. So `ε(n) ≤ prfAdv(F_n, D) + 2^{-n}` at every `n`, `n = 0` included
++   (`PRFMAC.exists_forgeGame_le`), which is negligible (`PRF.negligible_prfAdv`, `Negligible.add`,
++   `negligible_two_pow_neg`).
+ 
+ The PRF advantage is read through `OracleEnsemble.Indist`, in framework form after the F-1
+ restatement. -/
+@@ -142,6 +160,63 @@ theorem prfMAC_secure {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin
+     (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) =
+       List.ofFn (F n s x)) :
+     (prfMAC F E hE hFE).Secure := by
+-  sorry
++  -- `Gen` returns its coins, and `Tag` returns `E` of its argument.
++  have hgen : ∀ n (rg : (prfMAC F E hE hFE).gen.Coins n),
++      (prfMAC F E hE hFE).gen.runAt n [] rg = List.ofFn rg := by
++    intro n
++    have h : ∀ G : NUPPT, G = NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD .var →
++        ∀ rg : G.Coins n, G.runAt n [] rg = List.ofFn rg := by
++      rintro G rfl rg
++      exact runAt_coinKey .var n rg
++    exact h _ (prfMAC_gen F E hE hFE)
++  have htagE : ∀ n (w : List Bool) (rt : (prfMAC F E hE hFE).tag.Coins n),
++      (prfMAC F E hE hFE).tag.runAt n w rt = E w := by
++    intro n w
++    have h : ∀ T : NUPPT,
++        T = NUPPT.ofPolyTimeUniform (polyTimeComputable_prfTagFun hE) (.const 0) →
++        ∀ rt : T.Coins n, T.runAt n w rt = E w := by
++      rintro T rfl rt
++      rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, prfTagFun_eq, NUPPT.inArg_eq,
++        NUPPT.advInput_eq, pairFstD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode]
++    exact h _ (prfMAC_tag F E hE hFE)
++  -- The key is `Gen`'s coins, read at `n` bits.
++  have hcoins : (prfMAC F E hE hFE).gen.coins = .var := by
++    rw [prfMAC_gen, NUPPT.coins_ofPolyTimeUniform]
++  let key : ∀ n, (prfMAC F E hE hFE).gen.Coins n ≃ (Fin n → Bool) := fun n =>
++    (NUPPT.coinsEquivPoly hcoins n).trans
++      (Equiv.arrowCongr (finCongr (PolyExpr.eval_var n)) (Equiv.refl Bool))
++  have hkey : ∀ n rg, List.ofFn (key n rg) = List.ofFn rg := fun n rg => by
++    rw [← NUPPT.coinsEquivPoly_ofFn hcoins n rg]
++    exact (List.ofFn_congr (PolyExpr.eval_var n) _).symm
++  have hmsg : ∀ n, (prfMAC F E hE hFE).msgLen.eval n = n := fun n => by
++    rw [prfMAC_msgLen, PolyExpr.eval_var]
++  have htl : ∀ n, (prfMAC F E hE hFE).tagLen.eval n = n := fun n => by
++    rw [prfMAC_tagLen, PolyExpr.eval_var]
++  -- On the key of `rg`, `E` computes `F_{key rg}` (`hFE`).
++  have hEF : ∀ n rg (m : Fin ((prfMAC F E hE hFE).msgLen.eval n) → Bool),
++      E (pairEncode ((prfMAC F E hE hFE).gen.runAt n [] rg) (List.ofFn m)) =
++        List.ofFn (F n (key n rg) (padFin n (List.ofFn m))) := by
++    intro n rg m
++    rw [hgen, ← hFE]
++    rw [hkey, ofFn_padFin_of_length (by rw [List.length_ofFn, hmsg])]
++  have htag : ∀ n rg (m : Fin ((prfMAC F E hE hFE).msgLen.eval n) → Bool)
++      (rt : (prfMAC F E hE hFE).tag.Coins n),
++      (prfMAC F E hE hFE).tag.runAt n
++          (pairEncode ((prfMAC F E hE hFE).gen.runAt n [] rg) (List.ofFn m)) rt =
++        List.ofFn (F n (key n rg) (padFin n (List.ofFn m))) := fun n rg m rt => by
++    rw [htagE, hEF]
++  have hacc : ∀ n rg (m : Fin ((prfMAC F E hE hFE).msgLen.eval n) → Bool)
++      (σ : Fin ((prfMAC F E hE hFE).tagLen.eval n) → Bool),
++      (prfMAC F E hE hFE).Accepts n ((prfMAC F E hE hFE).gen.runAt n [] rg) m σ ↔
++        List.ofFn (F n (key n rg) (padFin n (List.ofFn m))) = List.ofFn σ := by
++    intro n rg m σ
++    rw [MAC.accepts_iff, prfMAC_ver, prfVerFun_eq, atParam_eq]
++    simp only [pairFstD_pairEncode, pairSndD_pairEncode]
++    rw [hEF, List.singleton_inj, decide_eq_true_iff]
++  -- The bound of the reduction, negligible.
++  rw [MAC.secure_iff]
++  intro A q
++  obtain ⟨D, hD⟩ := PRFMAC.exists_forgeGame_le (prfMAC F E hE hFE) F hmsg htl key htag hacc A q
++  exact ⟨_, (hF.negligible_prfAdv D (PRFMAC.macBudget q)).add negligible_two_pow_neg, hD⟩
+ 
+ end TCSlib.Cryptography.Authentication
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean
+new file mode 100644
+index 000000000..7e1c0a1b1
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Bound.lean
+@@ -0,0 +1,169 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Game
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Random
++import TCSlib.Cryptography.Games.Bridges.Experiments
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The bound of the PRF-MAC reduction
++
++Step 5 of the proof of [PS10, Theorem 135.4], for any MAC whose tag is a keyed function family
++`F` (`n`-bit messages and tags, the key read off the generator's coins, a deterministic tag
++`F_k(m)` and verification `F_k(m) = σ`): for every forger `A` and budget `q` there is a
++distinguisher `D` with, at every `n`,
++`Pr[forgeGame A q(n) n] ≤ prfAdv (F n) (D^{q(n) · 1 + 1}) + 2^{-n}` (`exists_forgeGame_le`).
++
++The forgery probability is the acceptance probability of `D` against `F_k` (`accept_forgeGame_eq`,
++`exists_macReduction`), and its acceptance probability against a uniform random function is at
++most `2^{-n}` (`exists_macReduction`, `expect_fnForge_random_le`). The functions of the scheme's
++widths are those of `n` bits read through `padFin` (`eval_toOracleAdversary_width₂`).
++
++## Main results
++
++* `PRFMAC.eval_toOracleAdversary_width₂`: an oracle adversary read at equal widths.
++* `PRFMAC.exists_forgeGame_le`: the bound.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 135.4 (book p. 135).
++-/
++
++namespace TCSlib.Cryptography.Authentication.PRFMAC
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp
++
++/-- **An oracle adversary read at equal widths:** for `m₁ = n` and `m₂ = n`, running
++`D.toOracleAdversary n n n q c` against `f` is running `D.toOracleAdversary n m₁ m₂ q c` against
++`f` with its inputs and outputs read at the widths `m₁`, `m₂`:
++`(D^{n,n} c).eval f = (D^{m₁,m₂} c).eval (fun x => padFin m₂ ⟦f (padFin n ⟦x⟧)⟧)`.
++
++**Proof sketch.** Substitute `m₁ = n` and `m₂ = n`; the readings are identities (`padFin_ofFn`). -/
++theorem eval_toOracleAdversary_width₂ (D : NUPPT) (n q : ℕ) (c : D.Coins n) {m₁ m₂ : ℕ}
++    (h₁ : m₁ = n) (h₂ : m₂ = n) (f : (Fin n → Bool) → (Fin n → Bool)) :
++    (D.toOracleAdversary n n n q c).eval f =
++      (D.toOracleAdversary n m₁ m₂ q c).eval
++        (fun x => padFin m₂ (List.ofFn (f (padFin n (List.ofFn x))))) := by
++  subst h₁ h₂
++  simp only [padFin_ofFn]
++
++/-- The functions `{0,1}^n → {0,1}^n` read at the widths `m₁ = n` and `m₂ = n`: `R` becomes
++`fun x => padFin m₂ ⟦R (padFin n ⟦x⟧)⟧`. -/
++private def padFunEquiv {n m₁ m₂ : ℕ} (h₁ : m₁ = n) (h₂ : m₂ = n) :
++    ((Fin n → Bool) → (Fin n → Bool)) ≃ ((Fin m₁ → Bool) → (Fin m₂ → Bool)) where
++  toFun R x := padFin m₂ (List.ofFn (R (padFin n (List.ofFn x))))
++  invFun R' y := padFin n (List.ofFn (R' (padFin m₁ (List.ofFn y))))
++  left_inv R := by
++    funext y
++    simp only
++    rw [ofFn_padFin_of_length (by rw [List.length_ofFn]; omega), padFin_ofFn,
++      ofFn_padFin_of_length (by rw [List.length_ofFn]; omega), padFin_ofFn]
++  right_inv R' := by
++    funext x
++    simp only
++    rw [ofFn_padFin_of_length (by rw [List.length_ofFn]; omega), padFin_ofFn,
++      ofFn_padFin_of_length (by rw [List.length_ofFn]; omega), padFin_ofFn]
++
++/-- **The bound of the PRF-MAC reduction** [PS10, Theorem 135.4, proof, step 5]: let `M` be a
++MAC with `n`-bit messages and tags (`hℓ`, `ht`) and `F` a keyed family, with a bijection `key n`
++from the generator's coins to `n`-bit keys, such that tagging `m` on the key of `rg` returns
++`F_{key rg}(m)` (`htag`) and verification accepts `(m, σ)` iff `F_{key rg}(m) = σ` (`hacc`), the
++messages read at `n` bits. Then for every forger `A` and budget `q` there is a next-query machine
++`D` with, at every `n`,
++`Pr[forgeGame A q(n) n] ≤ prfAdv (F n) (D.toOracleAdversary n n n (q(n) · 1 + 1)) + 2⁻ⁿ`.
++
++**Proof sketch.** `D` is `exists_macReduction` at the widths `msgLen`, `tagLen`.
++1. *With `F_k`.* The tag is deterministic, so the forgery probability is the average over `rg`
++   of the forgery probability against `fnImpl (g rg)`, `g rg` being `F_{key rg}` read at the
++   scheme's widths (`accept_forgeGame_eq`); by `exists_macReduction` it is `D`'s acceptance
++   probability against `g rg`, which is `D`'s against `F_{key rg}` at `n` bits
++   (`eval_toOracleAdversary_width₂`); `key` relabels the coins (`expect_sample_equiv`).
++2. *With a random function.* `D`'s acceptance probability against a uniform `R` is, through the
++   widths (`padFunEquiv`, `expect_sample_equiv`) and `exists_macReduction`, the average over `A`'s
++   coins (`expect_sample_comm`) of the forgery probability against a random function, at most
++   `2^{-n}` (`expect_fnForge_random_le`).
++3. *The PRF advantage* is the absolute gap between the two (`prfAdv_def`, `distAdv_def`,
++   `Bridge.acceptProb_eq`, `Bridge.acceptGame_eq`, `oracleDist_apply`); this is the published
++   `TCSlib.Cryptography.prfAdv_eq_expect`. -/
++theorem exists_forgeGame_le (M : MAC) (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
++    (hℓ : ∀ n, M.msgLen.eval n = n) (ht : ∀ n, M.tagLen.eval n = n)
++    (key : ∀ n, M.gen.Coins n ≃ (Fin n → Bool))
++    (htag : ∀ n rg (m : Fin (M.msgLen.eval n) → Bool) (rt : M.tag.Coins n),
++      M.tag.runAt n (pairEncode (M.gen.runAt n [] rg) (List.ofFn m)) rt =
++        List.ofFn (F n (key n rg) (padFin n (List.ofFn m))))
++    (hacc : ∀ n rg (m : Fin (M.msgLen.eval n) → Bool) (σ : Fin (M.tagLen.eval n) → Bool),
++      M.Accepts n (M.gen.runAt n [] rg) m σ ↔
++        List.ofFn (F n (key n rg) (padFin n (List.ofFn m))) = List.ofFn σ)
++    (A : NUPPT) (q : PolyExpr) :
++    ∃ D : NUPPT, ∀ n, accept (M.forgeGame A (q.eval n) n) ≤
++      prfAdv (F n) (D.toOracleAdversary n n n ((macBudget q).eval n)) + (2 : ℝ)⁻¹ ^ n := by
++  obtain ⟨D, hD⟩ := exists_macReduction M.msgLen M.tagLen q A
++  refine ⟨D, fun n => ?_⟩
++  -- The tag function at the scheme's widths.
++  let g : M.gen.Coins n → (Fin (M.msgLen.eval n) → Bool) → (Fin (M.tagLen.eval n) → Bool) :=
++    fun rg m => padFin _ (List.ofFn (F n (key n rg) (padFin n (List.ofFn m))))
++  have hg_tag : ∀ rg (m : Fin (M.msgLen.eval n) → Bool) (rt : M.tag.Coins n),
++      padFin (M.tagLen.eval n) (M.tag.runAt n (pairEncode (M.gen.runAt n [] rg) (List.ofFn m))
++        rt) = g rg m := fun rg m rt => by
++    rw [htag]
++  have hg_acc : ∀ rg (m : Fin (M.msgLen.eval n) → Bool) (σ : Fin (M.tagLen.eval n) → Bool),
++      M.Accepts n (M.gen.runAt n [] rg) m σ ↔ g rg m = σ := fun rg m σ => by
++    rw [hacc]
++    constructor
++    · intro h
++      show padFin _ (List.ofFn (F n (key n rg) (padFin n (List.ofFn m)))) = σ
++      rw [h, padFin_ofFn]
++    · intro h
++      rw [← h]
++      exact (ofFn_padFin_of_length (by rw [List.length_ofFn, ht])).symm
++  -- With `F_k`: the forgery probability.
++  have hreal : accept (M.forgeGame A (q.eval n) n) =
++      expect (sample (Fin n → Bool)) fun k => expect (sample (D.Coins n)) fun c =>
++        if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval (F n k) = true
++        then (1 : ℝ) else 0 := by
++    rw [accept_forgeGame_eq M A (q.eval n) n g hg_tag hg_acc, ← expect_sample_equiv (key n)]
++    refine congrArg _ (funext fun rg => ?_)
++    rw [← hD n (g rg)]
++    refine congrArg _ (funext fun c => ?_)
++    rw [eval_toOracleAdversary_width₂ D n _ c (hℓ n) (ht n) (F n (key n rg))]
++  -- With a random function: at most `2⁻ⁿ`.
++  have hrand : expect (sample ((Fin n → Bool) → (Fin n → Bool))) (fun R =>
++      expect (sample (D.Coins n)) fun c =>
++        if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval R = true
++        then (1 : ℝ) else 0) ≤ (2 : ℝ)⁻¹ ^ n := by
++    have he : ∀ R : (Fin n → Bool) → (Fin n → Bool),
++        (expect (sample (D.Coins n)) fun c =>
++          if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval R = true
++          then (1 : ℝ) else 0) =
++        expect (sample (D.Coins n)) fun c =>
++          if (D.toOracleAdversary n (M.msgLen.eval n) (M.tagLen.eval n) ((macBudget q).eval n)
++            c).eval (padFunEquiv (hℓ n) (ht n) R) = true then (1 : ℝ) else 0 := fun R => by
++      refine congrArg _ (funext fun c => ?_)
++      rw [eval_toOracleAdversary_width₂ D n _ c (hℓ n) (ht n) R]
++      rfl
++    simp only [he]
++    rw [expect_sample_equiv (padFunEquiv (hℓ n) (ht n)) (fun R' =>
++      expect (sample (D.Coins n)) fun c =>
++        if (D.toOracleAdversary n (M.msgLen.eval n) (M.tagLen.eval n) ((macBudget q).eval n)
++          c).eval R' = true then (1 : ℝ) else 0)]
++    simp only [hD n]
++    rw [expect_sample_comm]
++    refine (expect_mono _ fun r => expect_fnForge_random_le _).trans (le_of_eq ?_)
++    rw [expect_const, ht n, inv_pow]
++  -- The PRF advantage is the gap.
++  rw [hreal, TCSlib.Cryptography.prfAdv_eq_expect (F n) (D.toOracleAdversary n n n _)]
++  linarith [le_abs_self ((expect (sample (Fin n → Bool)) fun k => expect (sample (D.Coins n))
++    fun c => if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval (F n k) = true
++      then (1 : ℝ) else 0) -
++    expect (sample ((Fin n → Bool) → (Fin n → Bool))) (fun R =>
++      expect (sample (D.Coins n)) fun c =>
++        if (D.toOracleAdversary n n n ((macBudget q).eval n) c).eval R = true
++        then (1 : ℝ) else 0))]
++
++end TCSlib.Cryptography.Authentication.PRFMAC
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Game.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Game.lean
+new file mode 100644
+index 000000000..2281b4619
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Game.lean
+@@ -0,0 +1,99 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Reduction
++import TCSlib.Cryptography.Authentication.MAC.Defs
++import TCSlib.Cryptography.Authentication.Signatures.HashAndSign.CodecReaders
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The forgery game of a MAC with a deterministic tag
++
++Step 3 of the proof of [PS10, Theorem 135.4], on the game side: when a MAC's tagging algorithm
++returns, on the key of the generator coins `rg`, a tag `g rg m` that does not depend on its own
++coins, and verification accepts `(m, σ)` exactly when `g rg m = σ`, the forgery probability is the
++average over the coins `rg` of the probability that the forger forges against the tagging oracle of
++the function `g rg` (`accept_forgeGame_eq`). The forger's codec is the bit codec
++(`forgerCodec_eq_bitCodec`).
++
++## Main results
++
++* `PRFMAC.forgerCodec_eq_bitCodec`: the forger codec of a MAC is the bit codec.
++* `PRFMAC.accept_forgeGame_eq`: the forgery game with a deterministic tag.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Definition 134.2 and Theorem 135.4 (book pp. 134–135).
++-/
++
++namespace TCSlib.Cryptography.Authentication.PRFMAC
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp
++
++/-- **The MAC forger codec is the bit codec** with message-length queries, tag-length answers and
++a message-plus-tag-length output: `M.forgerCodec n = bitCodec (fun _ => msgLen(n))
++(fun _ => tagLen(n)) (msgLen(n) + tagLen(n))`.
++
++**Proof sketch.** Codec extensionality (`MachineCodec.ext_of_fields`) on the published decoding,
++entry-encoding and timeout equations (`forgerCodec_decodeMove`, `forgerCodec_encodeEntry`,
++`forgerCodec_timeout`) and those of the bit codec. -/
++theorem forgerCodec_eq_bitCodec (M : MAC) (n : ℕ) :
++    M.forgerCodec n =
++      bitCodec (fun _ : Fin 1 => M.msgLen.eval n) (fun _ : Fin 1 => M.tagLen.eval n)
++        (M.msgLen.eval n + M.tagLen.eval n) := by
++  apply MachineCodec.ext_of_fields
++  · funext w
++    exact (M.forgerCodec_decodeMove n w).trans
++      (bitCodec_decodeMove (fun _ : Fin 1 => M.msgLen.eval n)
++        (fun _ : Fin 1 => M.tagLen.eval n) (M.msgLen.eval n + M.tagLen.eval n) w).symm
++  · funext e
++    exact (M.forgerCodec_encodeEntry n e).trans
++      (bitCodec_encodeEntry (fun _ : Fin 1 => M.msgLen.eval n)
++        (fun _ : Fin 1 => M.tagLen.eval n) (M.msgLen.eval n + M.tagLen.eval n) e).symm
++  · exact (M.forgerCodec_timeout n).trans
++      (bitCodec_timeout (fun _ : Fin 1 => M.msgLen.eval n)
++        (fun _ : Fin 1 => M.tagLen.eval n) (M.msgLen.eval n + M.tagLen.eval n)).symm
++
++/-- **The forgery game with a deterministic tag** [PS10, Definition 134.2]: if, on the key of the
++generator coins `rg`, tagging `m` returns `g rg m` whatever its coins, and verification accepts
++`(m, σ)` exactly when `g rg m = σ`, then
++`Pr[forgeGame A b n] = 𝔼_rg 𝔼_r Pr[FnForge (g rg) | simulate (fnImpl (g rg)).withLog (A.toComp … r)
++((), [])]`.
++
++**Proof sketch.** Unfold the game (`forgeGame_eq`, `prob_bind`) and the codec
++(`forgerCodec_eq_bitCodec`). Each call of the logged tagging oracle draws tag coins and returns
++`g rg m` (`tagImpl_eq`, `htag`), so it has the law of the logged `fnImpl (g rg)`
++(`expect_const`), and so do whole runs (`expect_simulate_congr`). The winning test is `FnForge` by
++`hacc`. -/
++theorem accept_forgeGame_eq (M : MAC) (A : NUPPT) (b n : ℕ)
++    (g : M.gen.Coins n → (Fin (M.msgLen.eval n) → Bool) → (Fin (M.tagLen.eval n) → Bool))
++    (htag : ∀ rg (m : Fin (M.msgLen.eval n) → Bool) (rt : M.tag.Coins n),
++      padFin (M.tagLen.eval n) (M.tag.runAt n (pairEncode (M.gen.runAt n [] rg) (List.ofFn m))
++        rt) = g rg m)
++    (hacc : ∀ rg (m : Fin (M.msgLen.eval n) → Bool) (σ : Fin (M.tagLen.eval n) → Bool),
++      M.Accepts n (M.gen.runAt n [] rg) m σ ↔ g rg m = σ) :
++    accept (M.forgeGame A b n) =
++      expect (sample (M.gen.Coins n)) fun rg => expect (sample (A.Coins n)) fun r =>
++        expect (simulate (fnImpl (g rg)).withLog
++            (A.toComp (bitCodec (fun _ : Fin 1 => M.msgLen.eval n) (fun _ => M.tagLen.eval n)
++              (M.msgLen.eval n + M.tagLen.eval n)) n b r) ((), []))
++          (fun res => if FnForge (g rg) res.1 res.2.2 then (1 : ℝ) else 0) := by
++  rw [accept_eq, MAC.forgeGame_eq, prob_bind]
++  refine congrArg _ (funext fun rg => ?_)
++  rw [prob_bind]
++  refine congrArg _ (funext fun r => ?_)
++  rw [prob_bind, forgerCodec_eq_bitCodec,
++    expect_simulate_congr (M.tagImpl n (M.gen.runAt n [] rg)).withLog (fnImpl (g rg)).withLog
++      (fun i x s G => ?_)]
++  · refine congrArg _ (funext fun res => ?_)
++    rw [prob_pure]
++    exact if_congr (by rw [decide_eq_true_iff, fnForge_iff, hacc]) rfl rfl
++  · simp only [QueryImpl.withLog_apply, MAC.tagImpl_eq, QueryImpl.ofComp_apply, fnImpl_apply,
++      expect_bind, expect_pure, OracleComp.pure_bind, htag, expect_const]
++
++end TCSlib.Cryptography.Authentication.PRFMAC
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Handler.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Handler.lean
+new file mode 100644
+index 000000000..1ff897ea4
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Handler.lean
+@@ -0,0 +1,446 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Forwarding
++import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation.Generic
++import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The handler of the PRF-MAC reduction
++
++The distinguisher of [PS10, Theorem 135.4] runs a MAC forger against its own function oracle: it
++answers each tagging query `m` with the oracle's value at `m`, and at the end it asks the oracle at
++the forger's output message `m*` and accepts iff the answer is the output tag `σ*` and `m*` was
++never queried. This file builds it as a `Games.InteractiveHandler` (`macHandler q ℓ t`) with one
++inner and one outer oracle, both with `ℓ(n)`-bit queries and `t(n)`-bit answers.
++
++* **The state** keeps the queried messages, newest first, as blocks `1 ‖ m` of `ℓ(n) + 1` bits,
++  followed by zeros, in `q(n) · (ℓ(n) + 1)` bits (`macState`). A query shifts its block in and
++  drops the last `ℓ(n) + 1` bits, which are zeros while at most `q(n)` messages are stored.
++* **One call** forwards the query and stores it (`macHandler_impl`).
++* **The finalization** asks the outer oracle at the first `ℓ(n)` bits `m*` of the forger's output
++  and returns the bit `[y = σ*] ∧ [m* fresh]`, where `σ*` is the rest of the output and `y` the
++  answer; freshness is read from the state block by block with the chunk map `NMSim.chunkMap`
++  (`macHandler_finish`).
++
++## Main definitions
++
++* `PRFMAC.blockLen`, `PRFMAC.macStLen`: the block and state lengths.
++* `PRFMAC.blocks`, `PRFMAC.macState`: the encoded state of a list of queried messages.
++* `PRFMAC.macHandler q ℓ t`: the handler.
++
++## Main results
++
++* `PRFMAC.finish_of_query_padFin`: a finalization with one outer query (generic).
++* `PRFMAC.macHandler_impl`, `PRFMAC.macHandler_finish`: the handler's call and finalization on
++  encoded states; `PRFMAC.macHandler_init_eq`: the initial state.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 135.4 (book p. 135).
++-/
++
++namespace TCSlib.Cryptography.Authentication.PRFMAC
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++open TCSlib.Cryptography.Games.InteractiveHandler (rU rS rI rX rL rAns finA)
++open TCSlib.Cryptography.Composability.NMSim (chunkMap chunkMap_flatten polyTimeComputable_chunkMap)
++
++/-! ### A finalization with one outer query -/
++
++section FinishQuery
++
++variable {k k' : ℕ} {din dout : Fin k → PolyExpr} {din' dout' : Fin k' → PolyExpr}
++
++/-- **A finalization with one outer query, on lists:** if the finalization's first round asks
++the outer query `x'` to oracle `j`, and its second round, with the answer `y` in the outer log,
++returns `⟨[true], b y⟩` with `|b y| = outLen(n)`, then (with `finCall(n) ≥ 1`)
++`H.finish n z ω s a = query j x' (fun y => pure (padFin _ (b y)))`.
++
++**Proof sketch.** As `InteractiveHandler.impl_of_query`: unfold the finalization (`finish_eq`) at
++the budget `finCall = p + 1`; the first round decodes to the query (`decodeBitMove_query`), which
++`buildComp_succ_of_query` asks; after the answer `y` the log encodes as in `hrun₁`
++(`bitCodec_encodeEntry`), and the second round decodes to the output `padFin _ (b y)`
++(`ofFn_padFin_of_length`, `decodeBitMove_ret`, `buildComp_of_ret`). -/
++theorem finish_of_query_padFin (H : InteractiveHandler k din dout k' din' dout') (n : ℕ)
++    (z : List Bool) (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool)
++    {d : ℕ} (a : Fin d → Bool) (j : Fin k') (x' : Fin ((din' j).eval n) → Bool)
++    (b : (Fin ((dout' j).eval n) → Bool) → List Bool) (hb : ∀ y, (b y).length = H.outLen.eval n)
++    (hfc : 1 ≤ H.finCall.eval n)
++    (hrun₀ : H.finRun (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
++      []) = pairEncode [false] (pairEncode (List.replicate j true) (List.ofFn x')))
++    (hrun₁ : ∀ y, H.finRun (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s)
++      (List.ofFn a) (pairEncode (pairEncode (List.replicate j true)
++        (pairEncode (List.ofFn x') (List.ofFn y))) [])) = pairEncode [true] (b y)) :
++    H.finish n z ω s a = .query j x' fun y => .pure (padFin _ (b y)) := by
++  obtain ⟨p, hp⟩ : ∃ p, H.finCall.eval n = p + 1 := ⟨H.finCall.eval n - 1, by omega⟩
++  rw [InteractiveHandler.finish_eq, hp,
++    buildComp_succ_of_query (i := j) (x := x') (by
++      rw [MachineCodec.encodeLog_nil, hrun₀]
++      exact decodeBitMove_query (fun j => (din' j).eval n) (fun j => (dout' j).eval n) _ j x')]
++  congr 1
++  funext y
++  have hlog : (bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog
++      ([] ++ [⟨j, x', y⟩]) = pairEncode (pairEncode (List.replicate j true)
++        (pairEncode (List.ofFn x') (List.ofFn y))) [] := by
++    rw [List.nil_append, MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
++      bitCodec_encodeEntry]
++  refine buildComp_of_ret ?_
++  have h := decodeBitMove_ret (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++    (H.outLen.eval n) (padFin _ (b y))
++  rwa [ofFn_padFin_of_length (hb y), ← hrun₁, ← hlog] at h
++
++end FinishQuery
++
++/-! ### Lengths and the encoded state -/
++
++/-- The length of a state block, a marker bit and a message: `blockLen ℓ = ℓ + 1`. -/
++def blockLen (ℓ : PolyExpr) : PolyExpr := .add ℓ (.const 1)
++
++/-- `(blockLen ℓ).eval n = ℓ(n) + 1`. -/
++theorem blockLen_eval (ℓ : PolyExpr) (n : ℕ) : (blockLen ℓ).eval n = ℓ.eval n + 1 := by
++  rw [blockLen, PolyExpr.eval_add, PolyExpr.eval_const]
++
++/-- The state length, `q` blocks: `macStLen q ℓ = q · (ℓ + 1)`. -/
++def macStLen (q ℓ : PolyExpr) : PolyExpr := .mul q (blockLen ℓ)
++
++/-- `(macStLen q ℓ).eval n = q(n) · (ℓ(n) + 1)`. -/
++theorem macStLen_eval (q ℓ : PolyExpr) (n : ℕ) :
++    (macStLen q ℓ).eval n = q.eval n * (ℓ.eval n + 1) := by
++  rw [macStLen, PolyExpr.eval_mul, blockLen_eval]
++
++/-- The blocks of a list of messages, each message `m` as `1 ‖ m`:
++`blocks L = (L.map fun m => true :: ⟦m⟧).flatten`. -/
++def blocks {a : ℕ} (L : List (Fin a → Bool)) : List Bool :=
++  (L.map fun m => true :: List.ofFn m).flatten
++
++/-- `blocks L = (L.map fun m => true :: ⟦m⟧).flatten`. -/
++theorem blocks_eq {a : ℕ} (L : List (Fin a → Bool)) :
++    blocks L = (L.map fun m => true :: List.ofFn m).flatten :=
++  rfl
++
++/-- `blocks (m :: L) = true :: ⟦m⟧ ++ blocks L`. -/
++theorem blocks_cons {a : ℕ} (m : Fin a → Bool) (L : List (Fin a → Bool)) :
++    blocks (m :: L) = true :: List.ofFn m ++ blocks L := by
++  rw [blocks_eq, blocks_eq, List.map_cons, List.flatten_cons]
++
++/-- Each block has `a + 1` bits: `|blocks L| = |L| · (a + 1)`. -/
++theorem length_blocks {a : ℕ} (L : List (Fin a → Bool)) :
++    (blocks L).length = L.length * (a + 1) := by
++  induction L with
++  | nil => rw [blocks_eq, List.map_nil, List.flatten_nil, List.length_nil, List.length_nil,
++      Nat.zero_mul]
++  | cons m L ih =>
++    rw [blocks_cons, List.length_append, List.length_cons, List.length_ofFn, ih,
++      List.length_cons]
++    ring
++
++/-! ### The round and the finalization -/
++
++/-- One round of a call: with an empty outer log, ask the outer oracle the query; with the answer
++`y` in the log, return `y` and the state with the block `1 ‖ x` shifted in and cut to `q(n)` blocks.
++-/
++private def macRun (q ℓ : PolyExpr) (w : List Bool) : List Bool :=
++  if decide (rL w = []) then pairEncode [false] (pairEncode (rI w) (rX w))
++  else pairEncode [true]
++    (rAns w ++ ([true] ++ rX w ++ rS w).take ((macStLen q ℓ).eval (rU w).length))
++
++/-- The round is polynomial-time. -/
++private theorem polyTimeComputable_macRun (q ℓ : PolyExpr) : PolyTimeComputable (macRun q ℓ) := by
++  have hcut : PolyTimeComputable fun w : List Bool =>
++      ([true] ++ rX w ++ rS w).take ((macStLen q ℓ).eval (rU w).length) :=
++    ((polyTimeComputable_pairTakePoly (macStLen q ℓ)).comp
++      (InteractiveHandler.polyTimeComputable_rU.pairEncode
++        (((polyTimeComputable_const [true]).append InteractiveHandler.polyTimeComputable_rX).append
++          InteractiveHandler.polyTimeComputable_rS))).congr fun w => by
++      simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++  exact polyTimeComputable_ite
++    (polyTimeComputable_isNil.comp InteractiveHandler.polyTimeComputable_rL)
++    ((polyTimeComputable_const [false]).pairEncode
++      (InteractiveHandler.polyTimeComputable_rI.pairEncode
++        InteractiveHandler.polyTimeComputable_rX))
++    ((polyTimeComputable_const [true]).pairEncode
++      (InteractiveHandler.polyTimeComputable_rAns.append hcut))
++
++/-- The output message of a finalization input: the first `ℓ(n)` bits of the forger's output. -/
++private def msgOf (ℓ : PolyExpr) (w : List Bool) : List Bool :=
++  (finA w).take (ℓ.eval (rU w).length)
++
++/-- The output tag of a finalization input: the forger's output after its first `ℓ(n)` bits. -/
++private def sigOf (ℓ : PolyExpr) (w : List Bool) : List Bool :=
++  (finA w).drop (ℓ.eval (rU w).length)
++
++/-- The emission of the freshness test on a block: `[true]` iff the block is `1 ‖ m*`, where `m*`
++is the second component of the context. -/
++private def hitEmit (ctx ch : List Bool) : List Bool :=
++  if decide (ch = [true] ++ pairSndD ctx) then [true] else []
++
++/-- The blocks of the state equal to `1 ‖ m*`, one `true` each (a chunk map over the state). -/
++private def hitsOf (ℓ : PolyExpr) (w : List Bool) : List Bool :=
++  chunkMap (blockLen ℓ) hitEmit (pairEncode (pairEncode (rU w) (msgOf ℓ w)) (rS w))
++
++/-- One round of the finalization: with an empty outer log, ask the oracle at `m*`; with the
++answer `y` in the log, return the bit `[y = σ*] ∧ [no block is 1 ‖ m*]`. -/
++private def macFin (ℓ : PolyExpr) (w : List Bool) : List Bool :=
++  if decide (rL w = []) then pairEncode [false] (pairEncode [] (msgOf ℓ w))
++  else pairEncode [true]
++    (if decide (rAns w = sigOf ℓ w) then [decide (hitsOf ℓ w = [])] else [false])
++
++/-- The finalization round is polynomial-time.
++
++**Proof sketch.** Its pieces are built from the published readers (`rU`, `rL`, `rS`, `rAns`,
++`finA`) with the pair primitives: the message and tag by `polyTimeComputable_pairTakePoly` and
++`polyTimeComputable_pairDropPoly`, the block test by `polyTimeComputable_pairEq`, the freshness
++test by the chunk map (`NMSim.polyTimeComputable_chunkMap`) and `polyTimeComputable_isNil`, and
++the branches by `polyTimeComputable_ite`. -/
++private theorem polyTimeComputable_macFin (ℓ : PolyExpr) : PolyTimeComputable (macFin ℓ) := by
++  have hU := InteractiveHandler.polyTimeComputable_rU
++  have hA := InteractiveHandler.polyTimeComputable_finA
++  have hmsg : PolyTimeComputable (msgOf ℓ) :=
++    ((polyTimeComputable_pairTakePoly ℓ).comp (hU.pairEncode hA)).congr fun w => by
++      simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, msgOf]
++  have hsig : PolyTimeComputable (sigOf ℓ) :=
++    ((polyTimeComputable_pairDropPoly ℓ).comp (hU.pairEncode hA)).congr fun w => by
++      simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, sigOf]
++  have hemit : PolyTimeComputable fun z => hitEmit (pairFstD z) (pairSndD z) := by
++    have hc : PolyTimeComputable fun z : List Bool =>
++        [decide (pairSndD z = [true] ++ pairSndD (pairFstD z))] :=
++      (polyTimeComputable_pairEq.comp (polyTimeComputable_pairSndD.pairEncode
++        ((polyTimeComputable_const [true]).append
++          (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)))).congr fun z => by
++        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++    exact (polyTimeComputable_ite hc (polyTimeComputable_const [true])
++      (polyTimeComputable_const [])).congr fun z => by simp only [hitEmit]
++  have hhits : PolyTimeComputable (hitsOf ℓ) :=
++    ((polyTimeComputable_chunkMap (blockLen ℓ) hemit).comp
++      ((hU.pairEncode hmsg).pairEncode InteractiveHandler.polyTimeComputable_rS)).congr fun w => by
++      simp only [Function.comp_apply, hitsOf]
++  have hbit : PolyTimeComputable fun w : List Bool =>
++      if decide (rAns w = sigOf ℓ w) then [decide (hitsOf ℓ w = [])] else [false] :=
++    polyTimeComputable_ite
++      ((polyTimeComputable_pairEq.comp
++        (InteractiveHandler.polyTimeComputable_rAns.pairEncode hsig)).congr fun w => by
++        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode])
++      (polyTimeComputable_isNil.comp hhits) (polyTimeComputable_const [false])
++  exact polyTimeComputable_ite
++    (polyTimeComputable_isNil.comp InteractiveHandler.polyTimeComputable_rL)
++    ((polyTimeComputable_const [false]).pairEncode ((polyTimeComputable_const []).pairEncode hmsg))
++    ((polyTimeComputable_const [true]).pairEncode hbit)
++
++/-! ### The handler -/
++
++/-- **The handler of the PRF-MAC reduction** [PS10, Theorem 135.4, proof], for the query budget
++`q` and `ℓ(n)`-bit messages with `t(n)`-bit tags: one inner and one outer oracle, both with these
++lengths; the state keeps the queried messages in `q(n) · (ℓ(n) + 1)` bits; no seed; one outer
++query per call, which forwards the inner query; the adversary gets the empty input; the
++finalization makes one outer query and returns one bit:
++`(macHandler q ℓ t).stateLen = macStLen q ℓ`, `seedLen = .const 0`,
++`perCall = finCall = outLen = .const 1` and `advIn _ = []` (the `simps` fields). -/
++def macHandler (q ℓ t : PolyExpr) :
++    InteractiveHandler 1 (fun _ => ℓ) (fun _ => t) 1 (fun _ => ℓ) (fun _ => t) where
++  stateLen := macStLen q ℓ
++  seedLen := .const 0
++  perCall := .const 1
++  init _ := zeroBits _
++  run := macRun q ℓ
++  poly := polyTimeComputable_macRun q ℓ
++  advIn _ := []
++  advIn_poly := polyTimeComputable_const []
++  outLen := .const 1
++  finCall := .const 1
++  finRun := macFin ℓ
++  finRun_poly := polyTimeComputable_macFin ℓ
++
++attribute [simps (config := { isSimp := false }) stateLen seedLen perCall init advIn outLen finCall]
++  macHandler
++
++variable (q ℓ t : PolyExpr)
++
++/-- **The encoded state** of the queried messages `L` (newest first): their blocks `1 ‖ m`,
++followed by zeros, read at the state length: `macState q ℓ t n L = padFin _ (blocks L)`. -/
++def macState (n : ℕ) (L : List (Fin (ℓ.eval n) → Bool)) :
++    Fin ((macHandler q ℓ t).stateLen.eval n) → Bool :=
++  padFin _ (blocks L)
++
++/-- `macState q ℓ t n L = padFin _ (blocks L)`. -/
++theorem macState_eq (n : ℕ) (L : List (Fin (ℓ.eval n) → Bool)) :
++    macState q ℓ t n L = padFin _ (blocks L) :=
++  rfl
++
++/-- The state has `q(n) · (ℓ(n) + 1)` bits:
++`(macHandler q ℓ t).stateLen.eval n = q(n) · (ℓ(n) + 1)`. -/
++theorem macHandler_stateLen_eval (n : ℕ) :
++    (macHandler q ℓ t).stateLen.eval n = q.eval n * (ℓ.eval n + 1) := by
++  rw [macHandler_stateLen, macStLen_eval]
++
++/-- **The initial state stores no message:** `(macHandler q ℓ t).init n = macState q ℓ t n []`. -/
++theorem macHandler_init_eq (n : ℕ) : (macHandler q ℓ t).init n = macState q ℓ t n [] := by
++  funext j
++  rw [macHandler_init, macState_eq, zeroBits_apply, padFin_def, blocks_eq, List.map_nil,
++    List.flatten_nil]
++  rfl
++
++/-- The encoded state of at most `q(n)` messages is their blocks followed by zeros:
++`⟦macState q ℓ t n L⟧ = blocks L ++ 0^{q(n)(ℓ(n)+1) − |L|(ℓ(n)+1)}`. -/
++theorem ofFn_macState (n : ℕ) (L : List (Fin (ℓ.eval n) → Bool)) (hL : L.length ≤ q.eval n) :
++    List.ofFn (macState q ℓ t n L) = blocks L ++
++      List.replicate (q.eval n * (ℓ.eval n + 1) - L.length * (ℓ.eval n + 1)) false := by
++  rw [macState_eq, Collection.ofFn_padFin_of_le, length_blocks, macHandler_stateLen_eval]
++  rw [macHandler_stateLen_eval, length_blocks]
++  exact Nat.mul_le_mul_right _ hL
++
++/-! ### The call -/
++
++/-- **One call forwards the query and stores it:** from the encoded state of `L` with
++`|L| < q(n)`, the inner query `x` is the outer query `x`, answered with the outer answer `y` and
++the state of `x :: L`: `(macHandler q ℓ t).impl n z ω i x (macState q ℓ t n L) =
++query i x (fun y => pure (y, macState q ℓ t n (x :: L)))`.
++
++**Proof sketch.** `InteractiveHandler.impl_of_query_padFin` with one outer query: the first round
++has an empty outer log (`rL_input`) and asks `⟨1^i, x⟩` (`rI_input`, `rX_input`); the second reads
++the answer (`rAns_input`) and returns it with `(1 ‖ x ‖ ⟦s⟧)` cut to `q(n)(ℓ(n) + 1)` bits. With
++`⟦s⟧ = blocks L ‖ 0…0` (`ofFn_macState`) the cut drops `ℓ(n) + 1` zeros (`List.take_append`,
++`List.take_replicate`) and leaves the encoded state of `x :: L`. -/
++theorem macHandler_impl (n : ℕ) (z : List Bool) (ω : Fin ((macHandler q ℓ t).seedLen.eval n) → Bool)
++    (i : Fin 1) (x : Fin (ℓ.eval n) → Bool) (L : List (Fin (ℓ.eval n) → Bool))
++    (hL : L.length < q.eval n) :
++    (macHandler q ℓ t).impl n z ω i x (macState q ℓ t n L) =
++      .query i x fun y => .pure (y, macState q ℓ t n (x :: L)) := by
++  have hN := macHandler_stateLen_eval q ℓ t n
++  have hcut : ([true] ++ List.ofFn x ++ List.ofFn (macState q ℓ t n L)).take
++      ((macStLen q ℓ).eval (List.replicate n true).length) =
++      List.ofFn (macState q ℓ t n (x :: L)) := by
++    have hle : (L.length + 1) * (ℓ.eval n + 1) ≤ q.eval n * (ℓ.eval n + 1) :=
++      Nat.mul_le_mul_right _ hL
++    rw [List.length_replicate, macStLen_eval, ofFn_macState q ℓ t n L hL.le,
++      ofFn_macState q ℓ t n (x :: L) hL, blocks_cons, List.length_cons]
++    have hB : ([true] ++ List.ofFn x ++ blocks L).length = (L.length + 1) * (ℓ.eval n + 1) := by
++      rw [List.length_append, List.length_append, List.length_ofFn, length_blocks]
++      simp only [List.length_singleton]
++      ring
++    rw [← List.append_assoc, List.take_append, List.take_of_length_le (by rw [hB]; exact hle), hB,
++      List.take_replicate]
++    have hmin : min (q.eval n * (ℓ.eval n + 1) - (L.length + 1) * (ℓ.eval n + 1))
++        (q.eval n * (ℓ.eval n + 1) - L.length * (ℓ.eval n + 1)) =
++        q.eval n * (ℓ.eval n + 1) - (L.length + 1) * (ℓ.eval n + 1) :=
++      Nat.min_eq_left (Nat.sub_le_sub_left (Nat.mul_le_mul_right _ (Nat.le_succ _)) _)
++    rw [hmin]
++    simp only [List.cons_append, List.nil_append, List.append_assoc]
++  refine (InteractiveHandler.impl_of_query_padFin _ n z ω i x (macState q ℓ t n L) i x
++    (fun y => List.ofFn y) (fun _ => List.ofFn (macState q ℓ t n (x :: L)))
++    (fun y => List.length_ofFn) (fun _ => List.length_ofFn)
++    (by rw [macHandler_perCall, PolyExpr.eval_const]) ?_ fun y => ?_).trans ?_
++  · show macRun q ℓ _ = _
++    rw [macRun, InteractiveHandler.rL_input, InteractiveHandler.rI_input,
++      InteractiveHandler.rX_input, if_pos (decide_eq_true rfl)]
++  · show macRun q ℓ _ = _
++    rw [macRun, InteractiveHandler.rL_input, InteractiveHandler.rAns_input,
++      InteractiveHandler.rX_input, InteractiveHandler.rS_input, InteractiveHandler.rU_input,
++      if_neg (fun h => pairEncode_ne_nil _ _ (of_decide_eq_true h)), hcut]
++  · simp only [padFin_ofFn]
++
++/-! ### The finalization -/
++
++/-- The freshness test on the encoded state of at most `q(n)` messages: no block is `1 ‖ u` iff no
++stored message has the list `u`: `chunkMap … ⟨⟨1^n, u⟩, ⟦macState q ℓ t n L⟧⟩ = [] ↔
++∀ m ∈ L, ⟦m⟧ ≠ u`.
++
++**Proof sketch.** The state is the concatenation of the blocks `1 ‖ m` and of `q(n) − |L|` zero
++blocks, all of `ℓ(n) + 1 > 0` bits (`ofFn_macState`, `List.flatten_replicate_replicate`), so the
++chunk map emits `hitEmit` of each block (`NMSim.chunkMap_flatten`), and the result is empty iff
++every emission is (`List.flatten_eq_nil_iff`). A block `1 ‖ m` emits iff `⟦m⟧ = u`
++(`List.cons_injective`); a zero block starts with `0` and never emits. -/
++private theorem hits_nil_iff (n : ℕ) (L : List (Fin (ℓ.eval n) → Bool))
++    (hL : L.length ≤ q.eval n) (u : List Bool) :
++    chunkMap (blockLen ℓ) hitEmit (pairEncode (pairEncode (List.replicate n true) u)
++        (List.ofFn (macState q ℓ t n L))) = [] ↔ ∀ m ∈ L, List.ofFn m ≠ u := by
++  have hflat : List.ofFn (macState q ℓ t n L) =
++      (L.map (fun m => true :: List.ofFn m) ++
++        List.replicate (q.eval n - L.length) (List.replicate (ℓ.eval n + 1) false)).flatten := by
++    rw [ofFn_macState q ℓ t n L hL, List.flatten_append, List.flatten_replicate_replicate,
++      blocks_eq, Nat.sub_mul]
++  have hlen : ∀ ch ∈ L.map (fun m => true :: List.ofFn m) ++
++      List.replicate (q.eval n - L.length) (List.replicate (ℓ.eval n + 1) false),
++      ch.length = (blockLen ℓ).eval n := by
++    intro ch hch
++    rw [blockLen_eval]
++    rcases List.mem_append.1 hch with h | h
++    · obtain ⟨m, -, rfl⟩ := List.mem_map.1 h
++      rw [List.length_cons, List.length_ofFn]
++    · rw [List.eq_of_mem_replicate h, List.length_replicate]
++  rw [hflat, chunkMap_flatten (blockLen ℓ) hitEmit n u _ hlen
++    (by rw [blockLen_eval]; omega), List.flatten_eq_nil_iff]
++  constructor
++  · intro h m hm hmu
++    have := h _ (List.mem_map.2 ⟨_, List.mem_append_left _ (List.mem_map.2 ⟨m, hm, rfl⟩), rfl⟩)
++    rw [hitEmit, pairSndD_pairEncode, if_pos (decide_eq_true (by rw [hmu]; rfl))] at this
++    exact List.cons_ne_nil _ _ this
++  · intro h x hx
++    obtain ⟨ch, hch, rfl⟩ := List.mem_map.1 hx
++    rcases List.mem_append.1 hch with hc | hc
++    · obtain ⟨m, hm, rfl⟩ := List.mem_map.1 hc
++      rw [hitEmit, pairSndD_pairEncode, if_neg]
++      intro he
++      exact h m hm (List.cons_injective (of_decide_eq_true he))
++    · rw [List.eq_of_mem_replicate hc, hitEmit, pairSndD_pairEncode, if_neg]
++      intro he
++      have := of_decide_eq_true he
++      rw [List.replicate_succ] at this
++      exact Bool.false_ne_true (List.cons_eq_cons.1 this).1
++
++/-- **The finalization** from the encoded state of `L` with `|L| ≤ q(n)`, after the output `a`
++of at least `ℓ(n)` bits: ask the oracle at `m* = a[0, ℓ(n))` and output the bit
++`[⟦y⟧ = a[ℓ(n), …)] ∧ [∀ m ∈ L, ⟦m⟧ ≠ ⟦m*⟧]` for its answer `y`:
++`(macHandler q ℓ t).finish n z ω (macState q ℓ t n L) a = query 0 (padFin _ (⟦a⟧.take ℓ(n)))
++(fun y => pure (padFin _ [decide (⟦y⟧ = ⟦a⟧.drop ℓ(n)) && decide (∀ m ∈ L, ⟦m⟧ ≠ ⟦a⟧.take ℓ(n))]))`.
++
++**Proof sketch.** `finish_of_query_padFin`. The first round has an empty outer log
++(`rL_finInput`) and asks the first `ℓ(n)` bits of `a` (`finA_finInput`, `rU_finInput`). The second
++reads the answer `y` from the one-entry log (`rAns_eq`, `rL_finInput`) and compares it with the rest
++of `a`; the freshness test reads the state block by block (`NMSim.chunkMap_flatten` on the blocks
++and the zero blocks, `ofFn_macState`): a zero block never starts with the marker bit. -/
++theorem macHandler_finish (n : ℕ) (z : List Bool)
++    (ω : Fin ((macHandler q ℓ t).seedLen.eval n) → Bool) (L : List (Fin (ℓ.eval n) → Bool))
++    (hL : L.length ≤ q.eval n) {d : ℕ} (a : Fin d → Bool) (hd : ℓ.eval n ≤ d) :
++    (macHandler q ℓ t).finish n z ω (macState q ℓ t n L) a =
++      .query 0 (padFin _ ((List.ofFn a).take (ℓ.eval n))) fun y =>
++        .pure (padFin _ [decide (List.ofFn y = (List.ofFn a).drop (ℓ.eval n)) &&
++          decide (∀ m ∈ L, List.ofFn m ≠ (List.ofFn a).take (ℓ.eval n))]) := by
++  have htake : ((List.ofFn a).take (ℓ.eval n)).length = ℓ.eval n := by
++    rw [List.length_take, List.length_ofFn, Nat.min_eq_left hd]
++  have hx : List.ofFn (padFin (ℓ.eval n) ((List.ofFn a).take (ℓ.eval n))) =
++      (List.ofFn a).take (ℓ.eval n) := ofFn_padFin_of_length htake
++  refine finish_of_query_padFin _ n z ω (macState q ℓ t n L) a 0
++    (padFin _ ((List.ofFn a).take (ℓ.eval n))) _ (fun y => by
++      rw [List.length_singleton, macHandler_outLen, PolyExpr.eval_const])
++    (by rw [macHandler_finCall, PolyExpr.eval_const]) ?_ fun y => ?_
++  · show macFin ℓ _ = _
++    rw [macFin, InteractiveHandler.rL_finInput, if_pos (decide_eq_true rfl), msgOf,
++      InteractiveHandler.finA_finInput, InteractiveHandler.rU_finInput, List.length_replicate, hx]
++    rfl
++  · show macFin ℓ _ = _
++    have hans : rAns (InteractiveHandler.finInput n z (List.ofFn ω)
++        (List.ofFn (macState q ℓ t n L)) (List.ofFn a)
++        (pairEncode (pairEncode (List.replicate ((0 : Fin 1) : ℕ) true)
++          (pairEncode (List.ofFn (padFin (ℓ.eval n) ((List.ofFn a).take (ℓ.eval n))))
++            (List.ofFn y))) [])) = List.ofFn y := by
++      rw [InteractiveHandler.rAns_eq, InteractiveHandler.rL_finInput, pairFstD_pairEncode,
++        pairSndD_pairEncode, pairSndD_pairEncode]
++    rw [macFin, InteractiveHandler.rL_finInput,
++      if_neg (fun h => pairEncode_ne_nil _ _ (of_decide_eq_true h)), hans, sigOf, hitsOf, msgOf,
++      InteractiveHandler.finA_finInput, InteractiveHandler.rU_finInput,
++      InteractiveHandler.rS_finInput, List.length_replicate]
++    congr 1
++    by_cases hy : List.ofFn y = (List.ofFn a).drop (ℓ.eval n)
++    · rw [if_pos (decide_eq_true hy), decide_eq_true hy, Bool.true_and]
++      congr 1
++      exact decide_eq_decide.2 (hits_nil_iff q ℓ t n L hL _)
++    · rw [if_neg (fun h => hy (of_decide_eq_true h)), decide_eq_false hy, Bool.false_and]
++
++end TCSlib.Cryptography.Authentication.PRFMAC
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Random.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Random.lean
+new file mode 100644
+index 000000000..b524809cb
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Random.lean
+@@ -0,0 +1,155 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Reduction
++import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag.Tools
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Forging against a random function
++
++Step 4 of the proof of [PS10, Theorem 135.4]: against a uniform random function `R`, a forgery
++`(m, σ)` with `m` never queried is a guess of the value `R m`, which is uniform and independent of
++everything the forger saw, so every forger (whatever its number of queries) forges with probability
++at most `2^{-t}` for `t`-bit tags (`expect_fnForge_random_le`).
++
++The proof samples `R` lazily along the run, with the table override `ETTGame.ovr` of the
++encrypt-then-tag proof: a new query `x` reads `R x`, which `ETTGame.expect_sample_ovr` moves into
++the table; a repeated query reads the table. Every table key is a queried message, so at the end a
++fresh message is not a key, and its value is `R` there, uniform (`expect_sample_coord`,
++`expect_sample_mem_le`).
++
++## Main results
++
++* `PRFMAC.expect_fnForge_random_le`: the forgery probability against a random function is at most
++  `2^{-t}` (checkpoint 2).
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 135.4 (book p. 135).
++-/
++
++namespace TCSlib.Cryptography.Authentication.PRFMAC
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp
++open TCSlib.Cryptography.Composability.ETTGame (ovr ovr_nil ovr_of_mem ovr_of_not_mem
++  expect_sample_ovr)
++
++variable {a b : ℕ}
++
++/-- A fresh message's value under a random function is a guess: for an output `w` whose message is
++no key of the table `M` and was not queried, the forgery probability against `ovr M R`, averaged
++over a uniform `R`, is at most `2^{-b}`; a queried message is no forgery:
++`𝔼_R [FnForge (ovr M R) w log] ≤ 2^{-b}` when every key of `M` is queried.
++
++**Proof sketch.** If the message `m = (splitBits w).1` was queried, there is no forgery
++(`mem_queried`). Otherwise it is no key of `M`, so `ovr M R m = R m` (`ovr_of_not_mem`) and a
++forgery needs `R m = σ`; the coordinate `R m` of a uniform table is uniform
++(`expect_sample_coord`), and hits the one value `σ` with probability `1 / 2^b`
++(`expect_sample_mem_le`, `Fintype.card_fun`). This re-derives, from the published `ovr` readers,
++the fresh-point case of the private `ETTGame.expect_hitW_le` (disclosed). -/
++private theorem expect_forge_pure_le (w : Fin (a + b) → Bool)
++    (M : List ((Fin a → Bool) × (Fin b → Bool)))
++    (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b)))
++    (hM : ∀ p ∈ M.map Prod.fst, p ∈ queried log) :
++    expect (sample ((Fin a → Bool) → (Fin b → Bool)))
++        (fun R => if FnForge (ovr M R) w log then (1 : ℝ) else 0) ≤ ((2 : ℝ) ^ b)⁻¹ := by
++  have hδ : (0 : ℝ) ≤ ((2 : ℝ) ^ b)⁻¹ := by positivity
++  by_cases hq : (splitBits w).1 ∈ queried log
++  · have h0 : (fun R => if FnForge (ovr M R) w log then (1 : ℝ) else 0) = fun _ => 0 := by
++      funext R
++      refine if_neg fun h => ?_
++      obtain ⟨e, he, hem⟩ := (mem_queried log _).1 hq
++      exact ((fnForge_iff _ _ _).1 h).2 e he hem
++    rw [h0, expect_const]
++    exact hδ
++  · have hk : (splitBits w).1 ∉ M.map Prod.fst := fun h => hq (hM _ h)
++    have hle : ∀ R : (Fin a → Bool) → (Fin b → Bool),
++        (if FnForge (ovr M R) w log then (1 : ℝ) else 0) ≤
++          if R (splitBits w).1 ∈ [(splitBits w).2] then 1 else 0 := by
++      intro R
++      by_cases h : FnForge (ovr M R) w log
++      · rw [if_pos h, if_pos]
++        rw [List.mem_singleton, ← ovr_of_not_mem hk R]
++        exact ((fnForge_iff _ _ _).1 h).1
++      · rw [if_neg h]
++        split <;> norm_num
++    refine (expect_mono _ hle).trans ?_
++    rw [expect_sample_coord (splitBits w).1 (fun y (_ : (Fin a → Bool) → (Fin b → Bool)) =>
++      if y ∈ [(splitBits w).2] then (1 : ℝ) else 0) (fun _ _ _ => rfl)]
++    simp only [expect_const]
++    refine (expect_sample_mem_le _).trans (le_of_eq ?_)
++    rw [List.length_singleton, Fintype.card_fun, Fintype.card_fin, Fintype.card_bool]
++    push_cast
++    rw [one_div]
++
++/-- **Lazy forging against a random function:** from a log `log` and a table `M` whose keys are
++all queried, the forgery probability against `ovr M R`, averaged over a uniform `R`, is at most
++`2^{-b}`:
++`𝔼_R Pr[FnForge (ovr M R) | simulate (fnImpl (ovr M R)).withLog c ((), log)] ≤ 2^{-b}`.
++
++**Proof sketch.** Induction on `c`. A return is `expect_forge_pure_le`. A query `x` that is a key
++reads the table (`ovr_of_mem`); the continuation starts from the longer log with the same table. A
++new query reads `R x` (`ovr_of_not_mem`), which `expect_sample_ovr` moves into the table as a
++uniform `y`; the new key `x` is queried, and the continuation's bound holds for every `y`. -/
++private theorem expect_forge_ovr_le
++    (c : OracleComp (bitSpec (fun _ : Fin 1 => a) (fun _ => b)) (Fin (a + b) → Bool))
++    (M : List ((Fin a → Bool) × (Fin b → Bool)))
++    (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b)))
++    (hM : ∀ p ∈ M.map Prod.fst, p ∈ queried log) :
++    expect (sample ((Fin a → Bool) → (Fin b → Bool))) (fun R =>
++      expect (simulate (fnImpl (ovr M R)).withLog c ((), log))
++        (fun res => if FnForge (ovr M R) res.1 res.2.2 then (1 : ℝ) else 0)) ≤
++      ((2 : ℝ) ^ b)⁻¹ := by
++  induction c generalizing M log with
++  | pure w =>
++    simp only [simulate_pure, expect_pure]
++    exact expect_forge_pure_le w M log hM
++  | query i x k ih =>
++    simp only [simulate_query, QueryImpl.withLog_apply, fnImpl_apply, OracleComp.pure_bind]
++    by_cases hx : x ∈ M.map Prod.fst
++    · have e : ∀ R : (Fin a → Bool) → (Fin b → Bool),
++          ovr M R x = ovr M (fun _ _ => false) x := fun R => ovr_of_mem hx R _
++      simp only [e]
++      refine ih _ M _ fun p hp => ?_
++      rw [queried_append]
++      exact List.mem_cons_of_mem _ (hM p hp)
++    · have e : ∀ R : (Fin a → Bool) → (Fin b → Bool), ovr M R x = R x :=
++        fun R => ovr_of_not_mem hx R
++      simp only [e]
++      have hF := expect_sample_ovr M hx
++        (fun (y : Fin b → Bool) (g : (Fin a → Bool) → (Fin b → Bool)) =>
++          expect (simulate (fnImpl g).withLog (k y) ((), log ++ [⟨i, x, y⟩]))
++            (fun res => if FnForge g res.1 res.2.2 then (1 : ℝ) else 0))
++      rw [hF]
++      refine (expect_mono _ fun y => ih y ((x, y) :: M) _ fun p hp => ?_).trans
++        (le_of_eq (expect_const _ _))
++      rw [queried_append]
++      rw [List.map_cons, List.mem_cons] at hp
++      rcases hp with rfl | hp
++      · exact List.mem_cons_self
++      · exact List.mem_cons_of_mem _ (hM p hp)
++
++/-- **Forging against a random function** [PS10, Theorem 135.4, proof, step 4]: every forger
++computation `c` with `a`-bit messages and `b`-bit tags, run against the tagging oracle of a uniform
++random function `R`, forges with probability at most `2^{-b}`:
++`𝔼_R Pr[FnForge R | simulate (fnImpl R).withLog c ((), [])] ≤ 2^{-b}`.
++
++**Proof sketch.** `expect_forge_ovr_le` from the empty table and the empty log (`ovr_nil`). -/
++theorem expect_fnForge_random_le
++    (c : OracleComp (bitSpec (fun _ : Fin 1 => a) (fun _ => b)) (Fin (a + b) → Bool)) :
++    expect (sample ((Fin a → Bool) → (Fin b → Bool))) (fun R =>
++      expect (simulate (fnImpl R).withLog c ((), []))
++        (fun res => if FnForge R res.1 res.2.2 then (1 : ℝ) else 0)) ≤ ((2 : ℝ) ^ b)⁻¹ := by
++  refine le_of_eq_of_le (congrArg _ (funext fun R => ?_))
++    (expect_forge_ovr_le c [] [] fun p hp => by
++      rw [List.map_nil] at hp
++      exact absurd hp List.not_mem_nil)
++  rw [ovr_nil]
++
++end TCSlib.Cryptography.Authentication.PRFMAC
+diff --git a/TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean
+new file mode 100644
+index 000000000..fea7c8943
+--- /dev/null
++++ b/TCSlib/Cryptography/Authentication/MAC/FromPRF/Reduction.lean
+@@ -0,0 +1,326 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Authentication.MAC.FromPRF.Handler
++import TCSlib.Cryptography.Authentication.Encoding
++import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Reduction
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The distinguisher of the PRF-MAC reduction
++
++Steps 2, 3 and 6 of the proof of [PS10, Theorem 135.4], for a forger with `ℓ(n)`-bit messages and
++`t(n)`-bit tags: T2 (`Games.exists_interactiveHandlerMachine`) applied to the handler `macHandler`
++(through the input-free companion `Games.exists_toCompOn_of_toComp`), then T4
++(`Games.exists_toOracleAdversary_of_bitCodec`), give a next-query machine `D` whose acceptance
++probability against any function `f` is the probability that the forger forges against the
++tagging oracle `f`: its output `(m, σ)` has `f m = σ` and `m` was never queried
++(`exists_macReduction`).
++
++The proof answers the handler's outer queries by `f` (`fnImpl`, `simulate_ofComp_pure`) and composes
++the two implementations (`simulate_comp`). From the encoded state of the queried messages, newest
++first (`queried`), each composed call is the logged call of `fnImpl f` with the new state abstracted
++(`macHandler_impl`); the forger asks at most `q(n)` queries, so this holds along every run
++(`Games.simulate_eq_of_abs_bounded`), and the log of every run has at most `q(n)` entries
++(`allOutputs_simulate_withLog_length`). The finalization then tests exactly the forgery
++(`macHandler_finish`).
++
++## Main definitions
++
++* `PRFMAC.fnImpl f`: the tagging oracle of the function `f`.
++* `PRFMAC.FnForge f a log`: the output `a = (m, σ)` is a forgery against `f` given the log.
++* `PRFMAC.queried log`: the queried messages of a log, newest first.
++* `PRFMAC.macBudget q`: the distinguisher's query budget `q · 1 + 1`.
++
++## Main results
++
++* `PRFMAC.allOutputs_simulate_withLog_length`: the log of a run grows by at most its query count.
++* `PRFMAC.exists_macReduction`: the distinguisher (checkpoint 1).
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Theorem 135.4 (book p. 135).
++-/
++
++namespace TCSlib.Cryptography.Authentication.PRFMAC
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp
++open TCSlib.Cryptography.Composability.ChallengeSim (expect_sample_prod)
++
++/-! ### The tagging oracle of a function and forgeries against it -/
++
++section Fn
++
++variable {a b : ℕ}
++
++/-- **The tagging oracle of the function `f`**: each query `m` is answered `f m`, the state kept:
++`fnImpl f = QueryImpl.ofComp fun _ m => pure (f m)`. -/
++def fnImpl (f : (Fin a → Bool) → (Fin b → Bool)) :
++    QueryImpl (bitSpec (fun _ : Fin 1 => a) (fun _ => b)) Unit unifSpec :=
++  QueryImpl.ofComp fun _ m => .pure (f m)
++
++/-- `fnImpl f = QueryImpl.ofComp fun _ m => pure (f m)`. -/
++theorem fnImpl_eq (f : (Fin a → Bool) → (Fin b → Bool)) :
++    fnImpl f = QueryImpl.ofComp fun _ m => .pure (f m) :=
++  rfl
++
++/-- The tagging oracle of `f` answers `f x`: `fnImpl f i x s = pure (f x, s)`. -/
++theorem fnImpl_apply (f : (Fin a → Bool) → (Fin b → Bool)) (i : Fin 1) (x : Fin a → Bool)
++    (s : Unit) : fnImpl f i x s = .pure (f x, s) := by
++  rw [fnImpl_eq, QueryImpl.ofComp_apply, OracleComp.pure_bind]
++
++/-- **A forgery against `f`** [PS10, Definition 134.2]: the output `w = (m, σ)` (`splitBits`) has
++`f m = σ` and `m` is the message of no entry of the log:
++`FnForge f w log ↔ f (splitBits w).1 = (splitBits w).2 ∧ ∀ e ∈ log, e.2.1 ≠ (splitBits w).1`. -/
++def FnForge (f : (Fin a → Bool) → (Fin b → Bool)) (w : Fin (a + b) → Bool)
++    (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b))) : Prop :=
++  f (splitBits w).1 = (splitBits w).2 ∧ ∀ e ∈ log, e.2.1 ≠ (splitBits w).1
++
++/-- `FnForge f w log ↔ f (splitBits w).1 = (splitBits w).2 ∧ ∀ e ∈ log, e.2.1 ≠ (splitBits w).1`.
++-/
++theorem fnForge_iff (f : (Fin a → Bool) → (Fin b → Bool)) (w : Fin (a + b) → Bool)
++    (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b))) :
++    FnForge f w log ↔ f (splitBits w).1 = (splitBits w).2 ∧ ∀ e ∈ log, e.2.1 ≠ (splitBits w).1 :=
++  Iff.rfl
++
++/-- Forgeries are decidable, as the conjunction they unfold to (`fnForge_iff`):
++`Decidable (FnForge f w log)` from `f (splitBits w).1 = (splitBits w).2 ∧ ∀ e ∈ log, …`. -/
++instance (f : (Fin a → Bool) → (Fin b → Bool)) (w : Fin (a + b) → Bool)
++    (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b))) : Decidable (FnForge f w log) :=
++  inferInstanceAs (Decidable (_ ∧ _))
++
++/-- **The queried messages of a log**, newest first: `queried log = (log.map (·.2.1)).reverse`. -/
++def queried (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b))) : List (Fin a → Bool) :=
++  (log.map fun e => e.2.1).reverse
++
++/-- `queried log = (log.map (·.2.1)).reverse`. -/
++theorem queried_eq (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b))) :
++    queried log = (log.map fun e => e.2.1).reverse :=
++  rfl
++
++/-- `queried [] = []`. -/
++theorem queried_nil : queried ([] : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b))) = [] :=
++  rfl
++
++/-- A new entry is the newest message: `queried (log ++ [e]) = e.2.1 :: queried log`. -/
++theorem queried_append (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b)))
++    (e : Σ i, (bitSpec (fun _ : Fin 1 => a) (fun _ => b)).dom i ×
++      (bitSpec (fun _ : Fin 1 => a) (fun _ => b)).rng i) :
++    queried (log ++ [e]) = e.2.1 :: queried log := by
++  rw [queried_eq, queried_eq, List.map_append, List.reverse_append, List.map_singleton,
++    List.reverse_singleton, List.singleton_append]
++
++/-- `|queried log| = |log|`. -/
++theorem length_queried (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b))) :
++    (queried log).length = log.length := by
++  rw [queried_eq, List.length_reverse, List.length_map]
++
++/-- `m ∈ queried log ↔ ∃ e ∈ log, e.2.1 = m`. -/
++theorem mem_queried (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b)))
++    (m : Fin a → Bool) : m ∈ queried log ↔ ∃ e ∈ log, e.2.1 = m := by
++  rw [queried_eq, List.mem_reverse, List.mem_map]
++
++/-- **A forgery read on lists:** for an output `w` of `a + b` bits, the list test of the
++finalization is the forgery: `(decide (⟦f (padFin a (⟦w⟧.take a))⟧ = ⟦w⟧.drop a) &&
++decide (∀ m ∈ queried log, ⟦m⟧ ≠ ⟦w⟧.take a)) = decide (FnForge f w log)`.
++
++**Proof sketch.** `⟦w⟧ = ⟦m⟧ ++ ⟦σ⟧` for `(m, σ) = splitBits w` (`Fin.append_castAdd_natAdd`,
++`List.ofFn_fin_append`), so the first `a` bits are `⟦m⟧` and the rest `⟦σ⟧`; `List.ofFn` is
++injective, and `queried` lists the logged messages (`mem_queried`). -/
++theorem decide_fnForge (f : (Fin a → Bool) → (Fin b → Bool)) (w : Fin (a + b) → Bool)
++    (log : QueryLog (bitSpec (fun _ : Fin 1 => a) (fun _ => b))) :
++    (decide (List.ofFn (f (padFin a ((List.ofFn w).take a))) = (List.ofFn w).drop a) &&
++      decide (∀ m ∈ queried log, List.ofFn m ≠ (List.ofFn w).take a)) =
++      decide (FnForge f w log) := by
++  have hw : List.ofFn w = List.ofFn (splitBits w).1 ++ List.ofFn (splitBits w).2 := by
++    rw [← List.ofFn_fin_append,
++      show (splitBits w).1 = fun i => w (Fin.castAdd b i) from funext (splitBits_fst w),
++      show (splitBits w).2 = fun j => w (Fin.natAdd a j) from funext (splitBits_snd w),
++      Fin.append_castAdd_natAdd]
++  have htake : (List.ofFn w).take a = List.ofFn (splitBits w).1 := by
++    rw [hw, List.take_left' List.length_ofFn]
++  have hdrop : (List.ofFn w).drop a = List.ofFn (splitBits w).2 := by
++    rw [hw, List.drop_left' List.length_ofFn]
++  rw [htake, hdrop, padFin_ofFn, ← Bool.decide_and]
++  refine decide_eq_decide.2 ?_
++  rw [fnForge_iff]
++  refine and_congr List.ofFn_inj ⟨fun h e he hm => h e.2.1 ((mem_queried log _).2 ⟨e, he, rfl⟩)
++    (by rw [hm]), fun h m hm hl => ?_⟩
++  obtain ⟨e, he, rfl⟩ := (mem_queried log m).1 hm
++  exact h e he (List.ofFn_inj.1 hl)
++
++end Fn
++
++/-- **The log of a run grows by at most its query count:** for a computation making at most `m`
++queries, every output of the logged simulation from `(s, log)` has a log of at most `|log| + m`
++entries: `(simulate impl.withLog c (s, log)).AllOutputs fun p => |p.2.2| ≤ |log| + m`.
++
++**Proof sketch.** Induction on `c`: a return keeps the log; a query appends one entry
++(`QueryImpl.withLog_apply`) and leaves at most `m - 1` queries (`OracleComp.costBoundedBy_query`).
++-/
++theorem allOutputs_simulate_withLog_length {ι ι' : Type} {spec : OracleSpec ι}
++    {spec' : OracleSpec ι'} {σ α : Type} (impl : QueryImpl spec σ spec') (c : OracleComp spec α)
++    (m : ℕ) (hc : c.CostBoundedBy (fun _ => 1) m) (s : σ) (log : QueryLog spec) :
++    (simulate impl.withLog c (s, log)).AllOutputs fun p => p.2.2.length ≤ log.length + m := by
++  induction c generalizing m s log with
++  | pure a =>
++    rw [simulate_pure, OracleComp.allOutputs_pure]
++    exact Nat.le_add_right _ _
++  | query i x k ih =>
++    obtain ⟨hm, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
++    have hm1 : 1 ≤ m := hm
++    rw [simulate_query, QueryImpl.withLog_apply, OracleComp.bind_assoc]
++    refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun ys _ => ?_
++    rw [OracleComp.pure_bind]
++    refine OracleComp.AllOutputs.mono (fun p hp => ?_) (ih ys.1 (m - 1) (hk ys.1) ys.2 _)
++    dsimp only at hp
++    rw [List.length_append, List.length_singleton] at hp
++    omega
++
++/-- The distinguisher's query budget, `q` forwarded queries and one final query:
++`macBudget q = q · 1 + 1`. -/
++def macBudget (q : PolyExpr) : PolyExpr := .add (.mul q (.const 1)) (.const 1)
++
++/-- `(macBudget q).eval n = q(n) · 1 + 1`, with the constants read by `PolyExpr.eval`. -/
++theorem macBudget_eval (q : PolyExpr) (n : ℕ) :
++    (macBudget q).eval n = q.eval n * (PolyExpr.const 1).eval n + (PolyExpr.const 1).eval n := by
++  rw [macBudget, PolyExpr.eval_add, PolyExpr.eval_mul]
++
++/-! ### The reduction -/
++
++/-- **The PRF-MAC distinguisher** [PS10, Theorem 135.4, proof, steps 2–3]: for a forger `A` with
++budget `q`, `ℓ(n)`-bit messages and `t(n)`-bit tags, there is a next-query machine `D` such that
++at every `n` and for every function `f : {0,1}^ℓ(n) → {0,1}^t(n)`, `D` with budget `q · 1 + 1`
++accepts against `f` with the probability that `A` forges against the tagging oracle `f`:
++`𝔼_c [D^f(c) = 1] = 𝔼_r Pr[FnForge f | simulate (fnImpl f).withLog (A.toComp … r) ((), [])]`.
++
++**Proof sketch.** `D` is T4 applied to T2's machine `B` for `macHandler q ℓ t` and the input-free
++companion `A'` of `A`. Its coins are, through the bijections of T4, T2 and the companion, an empty
++seed `ω` and `A`'s coins `r` (`expect_sample_equiv`, `ChallengeSim.expect_sample_prod`,
++`expect_sample_comm`); the run does not read `ω` (`expect_const`). For fixed `ω` and `r`, T4 and
++T2 turn `D`'s run against `f` into the evaluation of the reduction with `f`
++(`PRFGame.ofFn_evalFn_toCompOn`), which is its simulation with `fnImpl f`
++(`simulate_ofComp_pure`), composed with the handler (`simulate_bind`, `simulate_comp`). Along
++`A`'s run (at most `q(n)` queries) the composite is the logged `fnImpl f` with the state
++abstracted to the encoded queried messages (`simulate_eq_of_abs_bounded`, `macHandler_impl`). Every
++final log has at most `q(n)` entries (`allOutputs_simulate_withLog_length`), so the finalization
++asks `f` at `m*` and tests `f m* = σ*` and freshness (`macHandler_finish`), which is `FnForge` on
++lists (`decide_fnForge`) after transporting the output width (`expect_toCompOn_outLen`). -/
++theorem exists_macReduction (ℓ t q : PolyExpr) (A : NUPPT) :
++    ∃ D : NUPPT, ∀ (n : ℕ) (f : (Fin (ℓ.eval n) → Bool) → (Fin (t.eval n) → Bool)),
++      expect (ProbComp.sample (D.Coins n))
++          (fun c => if (D.toOracleAdversary n (ℓ.eval n) (t.eval n) ((macBudget q).eval n) c).eval
++            f = true then (1 : ℝ) else 0) =
++        expect (ProbComp.sample (A.Coins n)) fun r =>
++          expect (simulate (fnImpl f).withLog
++              (A.toComp (bitCodec (fun _ : Fin 1 => ℓ.eval n) (fun _ => t.eval n)
++                (ℓ.eval n + t.eval n)) n (q.eval n) r) ((), []))
++            (fun res => if FnForge f res.1 res.2.2 then (1 : ℝ) else 0) := by
++  obtain ⟨A', -, hA'⟩ := exists_toCompOn_of_toComp A
++  obtain ⟨B, hB⟩ := exists_interactiveHandlerMachine A' q (fun _ => ℓ) (fun _ => t)
++    (fun _ => ℓ) (fun _ => t) (.add ℓ t) (macHandler q ℓ t)
++  obtain ⟨D, -, hD⟩ := exists_toOracleAdversary_of_bitCodec B ℓ t
++  refine ⟨D, fun n f => ?_⟩
++  obtain ⟨φ₀, hφ₀⟩ := hA' n
++  obtain ⟨φ₂, hφ₂⟩ := hB n
++  obtain ⟨φ₄, hφ₄⟩ := hD n
++  have hQ : q.eval n * (macHandler q ℓ t).perCall.eval n + (macHandler q ℓ t).finCall.eval n =
++      (macBudget q).eval n := by
++    rw [macHandler_perCall, macHandler_finCall, macBudget_eval]
++  have hout : (macHandler q ℓ t).outLen.eval n = 1 := by
++    rw [macHandler_outLen, PolyExpr.eval_const]
++  have hd : (PolyExpr.add ℓ t).eval n = ℓ.eval n + t.eval n := PolyExpr.eval_add ℓ t n
++  -- `D`'s coins are a seed and `A`'s coins.
++  rw [← expect_sample_equiv φ₄, ← expect_sample_equiv φ₂, expect_sample_prod,
++    expect_sample_comm, ← expect_sample_equiv φ₀]
++  refine congrArg _ (funext fun r => ?_)
++  have key : ∀ g : Fin 1 → Bool, (if g 0 = true then (1 : ℝ) else 0) =
++      if (List.ofFn g).headD false = true then 1 else 0 := fun g => by rw [headD_ofFn_one]
++  -- One run of `D` is the forgery test of `A`'s run against `fnImpl f`.
++  have hrun : ∀ ω : Fin ((macHandler q ℓ t).seedLen.eval n) → Bool,
++      (if (D.toOracleAdversary n (ℓ.eval n) (t.eval n) ((macBudget q).eval n)
++          (φ₄ (φ₂ (ω, φ₀ r)))).eval f = true then (1 : ℝ) else 0) =
++        expect (simulate (fnImpl f).withLog
++            (A.toComp (bitCodec (fun _ : Fin 1 => ℓ.eval n) (fun _ => t.eval n)
++              (ℓ.eval n + t.eval n)) n (q.eval n) r) ((), []))
++          (fun res => if FnForge f res.1 res.2.2 then (1 : ℝ) else 0) := by
++    intro ω
++    have h2 : _ = B.toCompOn (bitCodec (fun _ : Fin 1 => ℓ.eval n) (fun _ => t.eval n)
++        ((macHandler q ℓ t).outLen.eval n)) n
++        (q.eval n * (macHandler q ℓ t).perCall.eval n + (macHandler q ℓ t).finCall.eval n)
++        [] (φ₂ (ω, φ₀ r)) := hφ₂ [] ω (φ₀ r)
++    rw [hφ₄, ← hQ, key, Composability.PRFGame.ofFn_evalFn_toCompOn hout.symm B n _ []
++      (φ₂ (ω, φ₀ r)), ← h2]
++    set c' := A'.toCompOn (bitCodec (fun _ : Fin 1 => ℓ.eval n) (fun _ => t.eval n)
++      ((PolyExpr.add ℓ t).eval n)) n (q.eval n) ((macHandler q ℓ t).advInput n [] ω) (φ₀ r)
++      with hc'
++    -- The evaluation with `f` is the simulation with `fnImpl f`.
++    have hev := simulate_ofComp_pure (σ := Unit) (spec' := unifSpec)
++      (fun (_ : Fin 1) (x : Fin (ℓ.eval n) → Bool) => f x)
++      ((simulate ((macHandler q ℓ t).impl n [] ω) c' ((macHandler q ℓ t).init n)).bind
++        (fun res => (macHandler q ℓ t).finish n [] ω res.2 res.1)) ()
++    rw [← fnImpl_eq] at hev
++    have h1 := congrArg (fun c => expect c
++      (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0)) hev
++    simp only [expect_pure] at h1
++    refine h1.symm.trans ?_
++    rw [simulate_bind, simulate_comp, OracleComp.bind_assoc, expect_bind]
++    simp only [OracleComp.pure_bind]
++    -- The composed calls are the logged calls of `fnImpl f`, the state abstracted.
++    have hstep : ∀ (i : Fin 1) (x : Fin (ℓ.eval n) → Bool)
++        (s : Unit × QueryLog (bitSpec (fun _ : Fin 1 => ℓ.eval n) (fun _ => t.eval n))),
++        s.2.length < q.eval n →
++        ∃ (y : Fin (t.eval n) → Bool)
++          (s' : Unit × QueryLog (bitSpec (fun _ : Fin 1 => ℓ.eval n) (fun _ => t.eval n))),
++          (fnImpl f).withLog i x s = .pure (y, s') ∧ s'.2.length ≤ s.2.length + 1 ∧
++          (fnImpl f).comp ((macHandler q ℓ t).impl n [] ω) i x
++              (macState q ℓ t n (queried s.2), ()) =
++            .pure (y, (macState q ℓ t n (queried s'.2), ())) := by
++      intro i x s hs
++      refine ⟨f x, ((), s.2 ++ [⟨i, x, f x⟩]), ?_, by
++        rw [List.length_append, List.length_singleton], ?_⟩
++      · rw [QueryImpl.withLog_apply, fnImpl_apply, OracleComp.pure_bind]
++      · rw [QueryImpl.comp_apply]
++        dsimp only
++        rw [macHandler_impl q ℓ t n [] ω i x _ (by rwa [length_queried])]
++        simp only [simulate_query, fnImpl_apply, OracleComp.pure_bind, simulate_pure,
++          queried_append]
++    have hinit : (macHandler q ℓ t).init n = macState q ℓ t n
++        (queried ([] : QueryLog (bitSpec (fun _ : Fin 1 => ℓ.eval n) (fun _ => t.eval n)))) := by
++      rw [macHandler_init_eq, queried_nil]
++    have hcost := A'.toCompOn_costBoundedBy (bitCodec (fun _ : Fin 1 => ℓ.eval n)
++      (fun _ => t.eval n) ((PolyExpr.add ℓ t).eval n)) n (q.eval n)
++      ((macHandler q ℓ t).advInput n [] ω) (φ₀ r)
++    rw [hinit, simulate_eq_of_abs_bounded ((fnImpl f).comp ((macHandler q ℓ t).impl n [] ω))
++      (fnImpl f).withLog (fun s => (macState q ℓ t n (queried s.2), ())) (fun s => s.2.length)
++      (q.eval n) hstep c' (q.eval n) hcost ((), []) (Nat.zero_add _).le,
++      expect_bind]
++    simp only [expect_pure]
++    -- The finalization tests the forgery, on lists.
++    let G : List Bool × (Unit × QueryLog (bitSpec (fun _ : Fin 1 => ℓ.eval n)
++        (fun _ => t.eval n))) → ℝ := fun p =>
++      if (decide (List.ofFn (f (padFin (ℓ.eval n) (p.1.take (ℓ.eval n)))) =
++          p.1.drop (ℓ.eval n)) &&
++        decide (∀ m ∈ queried p.2.2, List.ofFn m ≠ p.1.take (ℓ.eval n))) = true
++      then (1 : ℝ) else 0
++    have hall := allOutputs_simulate_withLog_length (fnImpl f) c' (q.eval n) hcost () []
++    rw [expect_congr_of_allOutputs hall (g := fun p => G (List.ofFn p.1, p.2)) fun p hp => ?_]
++    · rw [expect_toCompOn_outLen (fnImpl f).withLog A' n (q.eval n) _ (φ₀ r) ((), []) hd G, hφ₀]
++      refine congrArg _ (funext fun p => ?_)
++      show (if _ = true then (1 : ℝ) else 0) = _
++      rw [decide_fnForge]
++      exact if_congr decide_eq_true_iff rfl rfl
++    · rw [List.length_nil, Nat.zero_add] at hp
++      rw [macHandler_finish q ℓ t n [] ω (queried p.2.2) (by rwa [length_queried]) p.1
++        (by rw [hd]; omega)]
++      simp only [simulate_query, fnImpl_apply, OracleComp.pure_bind, simulate_pure, expect_pure]
++      rw [ofFn_padFin_of_length (by rw [List.length_singleton, hout]), List.headD_cons]
++  simp only [hrun]
++  exact expect_const _ _
++
++end TCSlib.Cryptography.Authentication.PRFMAC
