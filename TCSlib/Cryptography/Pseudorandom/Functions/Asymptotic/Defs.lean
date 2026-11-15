@@ -45,6 +45,9 @@ also gives verdict `false` (foundation decision D7 of `PassShelatChapter2-4Plan.
   finite hybrid bound for oracle ensembles.
 * `TCSlib.Cryptography.prfAdv_toOracleAdversary` and `PRF.negligible_prfAdv`
   connect the PRF contract to the concrete advantage.
+* `TCSlib.Cryptography.prfAdv_toOracleAdversary_out` and
+  `OracleEnsemble.Indist.negligible_prfAdv` do so at `ℓ₂(n)`-bit outputs (ruling B3); the two
+  `n`-bit results are their cases `ℓ₂ = var`.
 
 ## References
 
@@ -424,6 +427,38 @@ structure PRF (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → B
   /-- Clause (2): `{s ← U_n : f_s} ≈ {F ← RF_n : F}` as oracle ensembles. -/
   pseudorandom : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := .var) F).Indist (OracleEnsemble.random .var .var)
 
+/-- **The PRF advantage at `ℓ₂(n)`-bit outputs** (the advantage of [PS10, Definition 96.2],
+clause (2), "with `ℓ`-bit outputs"): for a keyed family `F n : {0,1}^n → {0,1}^n → {0,1}^{ℓ₂(n)}`,
+the advantage of the next-query machine `D` with budget `q` between the keyed ensemble and the
+random functions with `ℓ₂(n)`-bit outputs is the concrete PRF advantage of [Gar26, Definition 3.9]:
+`distAdv ((keyed F).O n) ((random var ℓ₂).O n) (oracleDist D^{n,ℓ₂(n),q}) =
+prfAdv (F n) D^{n,ℓ₂(n),q}` (definitional: `prfAdv F A = distAdv F (randomFunction I O)
+(oracleDist A)`). -/
+theorem prfAdv_toOracleAdversary_out {ℓ₂ : PolyExpr}
+    (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (ℓ₂.eval n) → Bool)) (D : NUPPT) (n q : ℕ) :
+    distAdv ((OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := ℓ₂) F).O n)
+        ((OracleEnsemble.random .var ℓ₂).O n)
+        (oracleDist (D.toOracleAdversary n n (ℓ₂.eval n) q)) =
+      prfAdv (F n) (D.toOracleAdversary n n (ℓ₂.eval n) q) := by
+  rw [prfAdv_def]
+  rfl
+
+/-- **Pseudorandomness at `ℓ₂(n)`-bit outputs, unfolded** ([PS10, Definition 96.2], clause (2),
+"with `ℓ`-bit outputs"): if the keyed ensemble of `F n : {0,1}^n → {0,1}^n → {0,1}^{ℓ₂(n)}` is
+oracle-indistinguishable from the random functions with `ℓ₂(n)`-bit outputs, then every
+next-query machine `D` with every polynomial budget `q` has negligible concrete PRF advantage:
+`Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n ℓ₂(n) q(n))`. This is the form in
+which a consumer of an `ℓ`-output PRF (such as `SecureComputation.PRFOut`, whose clause (2) is
+the hypothesis) reads it. -/
+theorem OracleEnsemble.Indist.negligible_prfAdv {ℓ₂ : PolyExpr}
+    {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (ℓ₂.eval n) → Bool)}
+    (hF : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := ℓ₂) F).Indist
+      (OracleEnsemble.random .var ℓ₂))
+    (D : NUPPT) (q : PolyExpr) :
+    Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n (ℓ₂.eval n) (q.eval n)) :=
+  (congrArg Negligible (funext fun n => prfAdv_toOracleAdversary_out F D n (q.eval n))).mp
+    (hF D q)
+
 /-- The advantage of the next-query machine `D` with budget `q` between the keyed family `F`
 and the random functions is the concrete PRF advantage `prfAdv` of [Gar26, Definition 3.9]
 (definitional: `prfAdv F A = distAdv F (randomFunction I O) (oracleDist A)`). -/
@@ -431,17 +466,15 @@ theorem prfAdv_toOracleAdversary (F : ∀ n, (Fin n → Bool) → (Fin n → Boo
     (D : NUPPT) (n q : ℕ) :
     distAdv ((OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := .var) F).O n) ((OracleEnsemble.random .var .var).O n)
         (oracleDist (D.toOracleAdversary n n n q)) =
-      prfAdv (F n) (D.toOracleAdversary n n n q) := by
-  rw [prfAdv_def]
-  rfl
+      prfAdv (F n) (D.toOracleAdversary n n n q) :=
+  prfAdv_toOracleAdversary_out (ℓ₂ := .var) F D n q
 
 /-- **Pseudorandomness unfolded**: for a PRF `F`, every next-query machine `D` with every
 polynomial budget `q` has negligible concrete PRF advantage `prfAdv (F n) (D^{(q n)})` — the
 form in which the Garg-layer reductions consume [PS10, Definition 96.2]. -/
 theorem PRF.negligible_prfAdv {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool)}
     (hF : PRF F) (D : NUPPT) (q : PolyExpr) :
-    Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n n (q.eval n)) := by
-  exact (congrArg Negligible (funext fun n => prfAdv_toOracleAdversary F D n (q.eval n))).mp
-    (hF.pseudorandom D q)
+    Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n n (q.eval n)) :=
+  hF.pseudorandom.negligible_prfAdv D q
 
 end TCSlib.Cryptography
