@@ -23,8 +23,6 @@ the unary FP toolkit (`ZeroKnowledge/EncodingMachines.lean`) and the peeling loo
 
 ## Main definitions
 
-* `ComposeMachines.ilayout`: the machine layout `⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, msgs⟩⟩, []⟩, r⟩` of a
-  strategy activation.
 * `ComposeMachines.padTo`: zero padding, the string form of `padFin`.
 
 ## Main results
@@ -37,8 +35,9 @@ the unary FP toolkit (`ZeroKnowledge/EncodingMachines.lean`) and the peeling loo
 * `ComposeMachines.polyTimeComputable_slots`: **the interleaved-slot map**: the encoded messages
   `slotMsgs sel off p hist` are a polynomial-time function of the encoded history, for a
   polynomial-time selector and unary offset and count.
-* `ComposeMachines.efficient_of_polyTime`, `Efficient.exists_polyTime`: a strategy is efficient
-  iff its next-message function is a polynomial-time function of the layout.
+* `ComposeMachines.Efficient.exists_polyTime`: an efficient strategy's next-message function is
+  a polynomial-time function of the machine layout `GI.ilayout` (the converse of
+  `GI.efficient_of_polyTime`).
 * `ComposeMachines.ofFn_padFin`, `padTo_poly`: `padFin` as a polynomial-time string map.
 
 ## References
@@ -206,41 +205,17 @@ theorem polyTimeComputable_slots {sel : List Bool → ℕ → Bool}
 
 /-! ### Strategies as functions of the machine layout -/
 
-/-- **The machine layout of a strategy activation**, `⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, msgs⟩⟩, []⟩, r⟩`
-(`Strategy.ofNUPPT`, `NUPPT.runAtL`). -/
-def ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) : List Bool :=
-  NUPPT.layout (List.replicate x.length true)
-    (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r
-
-/-- The defining equation of `ilayout`: `ilayout x z hist r =
-NUPPT.layout 1^{|x|} ⟨⟨x, z⟩, encodeMsgs hist⟩ [] r`. -/
-theorem ilayout_eq (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
-    ilayout x z hist r =
-      NUPPT.layout (List.replicate x.length true)
-        (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r := rfl
-
-/-- **A polynomial-time next-message function gives an efficient strategy**: if
-`S.next x z r hist = F (ilayout x z hist r)` for a polynomial-time `F`, then `S.Efficient`
-(`NUPPT.ofPolyTimeUniform` of `F` with the coin polynomial `S.coins`). -/
-theorem efficient_of_polyTime (S : Strategy) {F : List Bool → List Bool}
-    (hF : PolyTimeComputable F)
-    (h : ∀ x z r hist, S.next x z r hist = F (ilayout x z hist r)) : S.Efficient :=
-  (Strategy.efficient_iff S).2 ⟨NUPPT.ofPolyTimeUniform hF S.coins,
-    NUPPT.ofPolyTimeUniform_uniform hF _, (NUPPT.coins_ofPolyTimeUniform hF S.coins).symm,
-    fun x z r hist => by
-      rw [h, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, ilayout_eq,
-        NUPPT.layout_eq, NUPPT.advInput_eq]⟩
-
-/-- **An efficient strategy is a polynomial-time function of the layout**: if `S.Efficient`,
-there is a polynomial-time `F` with `S.next x z r hist = F (ilayout x z hist r)` (the output
+/-- **An efficient strategy is a polynomial-time function of the layout** (the converse of
+`GI.efficient_of_polyTime`): if `S.Efficient`, there is a polynomial-time `F` with
+`S.next x z r hist = F (GI.ilayout x z hist r)` (the output
 function of the uniform machine, `NUPPT.polyTimeComputable_output`; its advice is empty). -/
 theorem Efficient.exists_polyTime {S : Strategy} (h : S.Efficient) :
     ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
-      ∀ x z r hist, S.next x z r hist = F (ilayout x z hist r) := by
+      ∀ x z r hist, S.next x z r hist = F (GI.ilayout x z hist r) := by
   obtain ⟨A, hA, -, hnext⟩ := (Strategy.efficient_iff S).1 h
   refine ⟨A.output, A.polyTimeComputable_output, fun x z r hist => ?_⟩
   rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, NUPPT.Uniform.advice_eq hA,
-    ilayout_eq]
+    GI.ilayout_def]
 
 /-! ### Zero padding -/
 

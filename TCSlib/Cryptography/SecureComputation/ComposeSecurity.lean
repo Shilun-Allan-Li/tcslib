@@ -305,14 +305,14 @@ call-input function from `H.PolyTime`. Alice's next message is `composePW` on th
    concatenated (`ComposeMachines.ansW`, `ComposeMachines.polyTimeComputable_flatMap_range`).
 So `composePW` is polynomial-time (`polyTimeComputable_composePW`), and its uniform machine with
 the coin polynomial `main.P.coins + calls · ρ.P.coins` computes `composeP`
-(`ComposeMachines.efficient_of_polyTime`). -/
+(`GI.efficient_of_polyTime`). -/
 theorem composeP_efficient {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyTime ρ) :
     (H.composeP ρ).Efficient := by
   obtain ⟨hmain, -, ⟨fA, hfA, hcallA⟩, -, -⟩ := (HybridProtocol.polyTime_iff H F).mp hH
   obtain ⟨hρP, -, -⟩ := (Functionality.polyTime_iff G ρ).mp hρ
   obtain ⟨Fρ, hFρ, hρeq⟩ := ComposeMachines.Efficient.exists_polyTime hρP
   obtain ⟨Fm, hFm, hmeq⟩ := ComposeMachines.Efficient.exists_polyTime hmain
-  exact ComposeMachines.efficient_of_polyTime _ (H.polyTimeComputable_composePW ρ hFρ hFm hfA)
+  exact GI.efficient_of_polyTime _ (H.polyTimeComputable_composePW ρ hFρ hFm hfA)
     (H.composeP_next_eq_composePW ρ hρeq hmeq hcallA)
 
 /-- **Bob's strategy in `H.compose ρ` is PPT** (`Strategy.Efficient`), when `main`'s and `ρ`'s
@@ -329,7 +329,7 @@ theorem composeV_efficient {F : Functionality} (hH : H.PolyTime F) (hρ : G.Poly
   obtain ⟨-, hρV, -⟩ := (Functionality.polyTime_iff G ρ).mp hρ
   obtain ⟨Fρ, hFρ, hρeq⟩ := ComposeMachines.Efficient.exists_polyTime hρV
   obtain ⟨Fm, hFm, hmeq⟩ := ComposeMachines.Efficient.exists_polyTime hmain
-  exact ComposeMachines.efficient_of_polyTime _ (H.polyTimeComputable_composeVW ρ hFρ hFm hfB)
+  exact GI.efficient_of_polyTime _ (H.polyTimeComputable_composeVW ρ hFρ hFm hfB)
     (H.composeV_next_eq_composeVW ρ hρeq hmeq hcallB)
 
 /-- **The composed parties run in polynomial time** [Gol04, §7.3.1, the efficiency of the

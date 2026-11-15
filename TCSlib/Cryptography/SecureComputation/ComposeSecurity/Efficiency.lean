@@ -14,7 +14,7 @@ set_option autoImplicit false
 The efficiency half of the composition theorem [Gol04, §7.3.1, the protocol of Theorem 7.3.3]:
 Alice's and Bob's next-message functions in `H.compose ρ` (`HybridProtocol.composeP`,
 `composeV`) are polynomial-time functions of the machine layout
-`ilayout x z hist r = ⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, encodeMsgs hist⟩⟩, []⟩, r⟩`, when `main`'s and `ρ`'s
+`GI.ilayout x z hist r = ⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, encodeMsgs hist⟩⟩, []⟩, r⟩`, when `main`'s and `ρ`'s
 strategies are efficient and the call inputs are polynomial-time (`HybridProtocol.PolyTime`,
 `Functionality.PolyTime`).
 
@@ -55,60 +55,6 @@ open Complexity Turing Complexity.StateLoop TCSlib.Cryptography.EncodingMachines
 
 namespace ComposeMachines
 
-/-! ### The slots of the layout -/
-
-/-- The common input of a layout word: `argX w = pairFstD (pairFstD (inArg w))`. -/
-def argX (w : List Bool) : List Bool := pairFstD (pairFstD (NUPPT.inArg w))
-
-/-- The defining equation of `argX`: `argX w = pairFstD (pairFstD (inArg w))`. -/
-theorem argX_eq (w : List Bool) : argX w = pairFstD (pairFstD (NUPPT.inArg w)) := rfl
-
-/-- The private input of a layout word: `argZ w = pairSndD (pairFstD (inArg w))`. -/
-def argZ (w : List Bool) : List Bool := pairSndD (pairFstD (NUPPT.inArg w))
-
-/-- The defining equation of `argZ`: `argZ w = pairSndD (pairFstD (inArg w))`. -/
-theorem argZ_eq (w : List Bool) : argZ w = pairSndD (pairFstD (NUPPT.inArg w)) := rfl
-
-/-- The encoded messages of a layout word: `argM w = pairSndD (inArg w)`. -/
-def argM (w : List Bool) : List Bool := pairSndD (NUPPT.inArg w)
-
-/-- The defining equation of `argM`: `argM w = pairSndD (inArg w)`. -/
-theorem argM_eq (w : List Bool) : argM w = pairSndD (NUPPT.inArg w) := rfl
-
-/-- The common input of `ilayout x z hist r` is `x`. -/
-theorem argX_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
-    argX (ilayout x z hist r) = x := by
-  rw [argX_eq, ilayout_eq, NUPPT.inArg_layout, pairFstD_pairEncode, pairFstD_pairEncode]
-
-/-- The private input of `ilayout x z hist r` is `z`. -/
-theorem argZ_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
-    argZ (ilayout x z hist r) = z := by
-  rw [argZ_eq, ilayout_eq, NUPPT.inArg_layout, pairFstD_pairEncode, pairSndD_pairEncode]
-
-/-- The encoded messages of `ilayout x z hist r` are `encodeMsgs hist`. -/
-theorem argM_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
-    argM (ilayout x z hist r) = Strategy.encodeMsgs hist := by
-  rw [argM_eq, ilayout_eq, NUPPT.inArg_layout, pairSndD_pairEncode]
-
-/-- The coins of `ilayout x z hist r` are `r`. -/
-theorem inCoins_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
-    NUPPT.inCoins (ilayout x z hist r) = r := by
-  rw [ilayout_eq, NUPPT.inCoins_layout]
-
-/-- The common-input slot is polynomial-time. -/
-theorem argX_poly : PolyTimeComputable argX :=
-  polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairFstD.comp
-    NUPPT.polyTimeComputable_inArg)
-
-/-- The private-input slot is polynomial-time. -/
-theorem argZ_poly : PolyTimeComputable argZ :=
-  polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairFstD.comp
-    NUPPT.polyTimeComputable_inArg)
-
-/-- The messages slot is polynomial-time. -/
-theorem argM_poly : PolyTimeComputable argM :=
-  polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg
-
 /-! ### The mover test -/
 
 /-- **The mover test in unary**: `moverW vF b w = [moverIsV vF |fst w| = b]` (whether the
@@ -145,61 +91,61 @@ of the run read at the pairs `R(n)·j + q`, `q < p`, selected by `moverIsV vF q 
 tape `r[c₀(n) + j·c(n), c₀(n) + (j + 1)·c(n))`. -/
 def runW (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr) (vF b : Bool)
     (u : List Bool) : List Bool :=
-  Fρ (NUPPT.layout (List.replicate (argX (pairSndD (pairSndD u))).length true)
-    (pairEncode (pairEncode (argX (pairSndD (pairSndD u)))
-        (fcall (pairEncode (List.replicate (argX (pairSndD (pairSndD u))).length true)
-          (pairEncode (argZ (pairSndD (pairSndD u)))
+  Fρ (NUPPT.layout (List.replicate (GI.argX (pairSndD (pairSndD u))).length true)
+    (pairEncode (pairEncode (GI.argX (pairSndD (pairSndD u)))
+        (fcall (pairEncode (List.replicate (GI.argX (pairSndD (pairSndD u))).length true)
+          (pairEncode (GI.argZ (pairSndD (pairSndD u)))
             (pairEncode ((NUPPT.inCoins (pairSndD (pairSndD u))).take
-                (c₀.eval (argX (pairSndD (pairSndD u))).length))
+                (c₀.eval (GI.argX (pairSndD (pairSndD u))).length))
               (List.replicate (pairFstD u).length true))))))
       ((List.range (pairFstD (pairSndD u)).length).flatMap fun q =>
         if moverIsV vF q == b then
-          pairEncode (pairFstD (pairSndD^[R.eval (argX (pairSndD (pairSndD u))).length *
-            (pairFstD u).length + q] (argM (pairSndD (pairSndD u))))) []
+          pairEncode (pairFstD (pairSndD^[R.eval (GI.argX (pairSndD (pairSndD u))).length *
+            (pairFstD u).length + q] (GI.argM (pairSndD (pairSndD u))))) []
         else []))
     []
     (((NUPPT.inCoins (pairSndD (pairSndD u))).drop
-        (c₀.eval (argX (pairSndD (pairSndD u))).length +
-          (pairFstD u).length * c.eval (argX (pairSndD (pairSndD u))).length)).take
-      (c.eval (argX (pairSndD (pairSndD u))).length)))
+        (c₀.eval (GI.argX (pairSndD (pairSndD u))).length +
+          (pairFstD u).length * c.eval (GI.argX (pairSndD (pairSndD u))).length)).take
+      (c.eval (GI.argX (pairSndD (pairSndD u))).length)))
 
 /-- The defining equation of `runW` (see `runW`). -/
 theorem runW_eq (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr) (vF b : Bool)
     (u : List Bool) :
     runW Fρ fcall c₀ c R vF b u =
-      Fρ (NUPPT.layout (List.replicate (argX (pairSndD (pairSndD u))).length true)
-        (pairEncode (pairEncode (argX (pairSndD (pairSndD u)))
-            (fcall (pairEncode (List.replicate (argX (pairSndD (pairSndD u))).length true)
-              (pairEncode (argZ (pairSndD (pairSndD u)))
+      Fρ (NUPPT.layout (List.replicate (GI.argX (pairSndD (pairSndD u))).length true)
+        (pairEncode (pairEncode (GI.argX (pairSndD (pairSndD u)))
+            (fcall (pairEncode (List.replicate (GI.argX (pairSndD (pairSndD u))).length true)
+              (pairEncode (GI.argZ (pairSndD (pairSndD u)))
                 (pairEncode ((NUPPT.inCoins (pairSndD (pairSndD u))).take
-                    (c₀.eval (argX (pairSndD (pairSndD u))).length))
+                    (c₀.eval (GI.argX (pairSndD (pairSndD u))).length))
                   (List.replicate (pairFstD u).length true))))))
           ((List.range (pairFstD (pairSndD u)).length).flatMap fun q =>
             if moverIsV vF q == b then
-              pairEncode (pairFstD (pairSndD^[R.eval (argX (pairSndD (pairSndD u))).length *
-                (pairFstD u).length + q] (argM (pairSndD (pairSndD u))))) []
+              pairEncode (pairFstD (pairSndD^[R.eval (GI.argX (pairSndD (pairSndD u))).length *
+                (pairFstD u).length + q] (GI.argM (pairSndD (pairSndD u))))) []
             else []))
         []
         (((NUPPT.inCoins (pairSndD (pairSndD u))).drop
-            (c₀.eval (argX (pairSndD (pairSndD u))).length +
-              (pairFstD u).length * c.eval (argX (pairSndD (pairSndD u))).length)).take
-          (c.eval (argX (pairSndD (pairSndD u))).length))) := rfl
+            (c₀.eval (GI.argX (pairSndD (pairSndD u))).length +
+              (pairFstD u).length * c.eval (GI.argX (pairSndD (pairSndD u))).length)).take
+          (c.eval (GI.argX (pairSndD (pairSndD u))).length))) := rfl
 
-/-- **`runW` on a layout**: on `⟨1^j, ⟨1^p, ilayout x z hist r⟩⟩` it is `Fρ` on the layout of
-the run activation: `runW … ⟨1^j, ⟨1^p, ilayout x z hist r⟩⟩ =
-Fρ (ilayout x (fcall ⟨1^{|x|}, ⟨z, ⟨r_{<c₀}, 1^j⟩⟩⟩) (slotMsgs sel (R·j) p hist)
+/-- **`runW` on a layout**: on `⟨1^j, ⟨1^p, GI.ilayout x z hist r⟩⟩` it is `Fρ` on the layout of
+the run activation: `runW … ⟨1^j, ⟨1^p, GI.ilayout x z hist r⟩⟩ =
+Fρ (GI.ilayout x (fcall ⟨1^{|x|}, ⟨z, ⟨r_{<c₀}, 1^j⟩⟩⟩) (slotMsgs sel (R·j) p hist)
 (runTape c₀ c j r))` with `sel q = (moverIsV vF q == b)` (`encodeMsgs_slotMsgs`). -/
 theorem runW_ilayout (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr) (vF b : Bool)
     (x z : List Bool) (hist : List (List Bool)) (r : List Bool) (j p : ℕ) :
     runW Fρ fcall c₀ c R vF b (pairEncode (List.replicate j true)
-        (pairEncode (List.replicate p true) (ilayout x z hist r))) =
-      Fρ (ilayout x (fcall (pairEncode (List.replicate x.length true)
+        (pairEncode (List.replicate p true) (GI.ilayout x z hist r))) =
+      Fρ (GI.ilayout x (fcall (pairEncode (List.replicate x.length true)
           (pairEncode z (pairEncode (r.take (c₀.eval x.length)) (List.replicate j true)))))
         (Compose.slotMsgs (fun q => moverIsV vF q == b) (R.eval x.length * j) p hist)
         (Compose.runTape (c₀.eval x.length) (c.eval x.length) j r)) := by
   rw [runW_eq, pairSndD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode,
-    pairFstD_pairEncode, List.length_replicate, List.length_replicate, argX_ilayout,
-    argZ_ilayout, argM_ilayout, inCoins_ilayout, ilayout_eq, encodeMsgs_slotMsgs,
+    pairFstD_pairEncode, List.length_replicate, List.length_replicate, GI.argX_ilayout,
+    GI.argZ_ilayout, GI.argM_ilayout, GI.inCoins_ilayout, GI.ilayout_def, encodeMsgs_slotMsgs,
     Compose.runTape_eq]
 
 /-- **`runW` is polynomial-time** when `Fρ` and `fcall` are.
@@ -214,9 +160,9 @@ theorem polyTimeComputable_runW {Fρ fcall : List Bool → List Bool} (hFρ : Po
     PolyTimeComputable (runW Fρ fcall c₀ c R vF b) := by
   have hw : PolyTimeComputable fun u => pairSndD (pairSndD u) :=
     polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD
-  have hx := argX_poly.comp' hw
+  have hx := GI.argX_poly.comp' hw
   have hn : PolyTimeComputable fun u =>
-      List.replicate (argX (pairSndD (pairSndD u))).length true := unaryLength_poly hx
+      List.replicate (GI.argX (pairSndD (pairSndD u))).length true := unaryLength_poly hx
   have hj : PolyTimeComputable fun u => List.replicate (pairFstD u).length true :=
     unaryLength_poly polyTimeComputable_pairFstD
   have hp : PolyTimeComputable fun u => List.replicate (pairFstD (pairSndD u)).length true :=
@@ -226,23 +172,23 @@ theorem polyTimeComputable_runW {Fρ fcall : List Bool → List Bool} (hFρ : Po
   have hc := unaryPoly_comp c hx
   have hR := unaryPoly_comp R hx
   have hinp : PolyTimeComputable fun u => fcall (pairEncode
-      (List.replicate (argX (pairSndD (pairSndD u))).length true)
-      (pairEncode (argZ (pairSndD (pairSndD u)))
+      (List.replicate (GI.argX (pairSndD (pairSndD u))).length true)
+      (pairEncode (GI.argZ (pairSndD (pairSndD u)))
         (pairEncode ((NUPPT.inCoins (pairSndD (pairSndD u))).take
-            (c₀.eval (argX (pairSndD (pairSndD u))).length))
+            (c₀.eval (GI.argX (pairSndD (pairSndD u))).length))
           (List.replicate (pairFstD u).length true)))) :=
-    hcall.comp' (hn.pairEncode ((argZ_poly.comp' hw).pairEncode
+    hcall.comp' (hn.pairEncode ((GI.argZ_poly.comp' hw).pairEncode
       ((truncate_poly hr hc₀).pairEncode hj)))
   have hsel : PolyTimeComputable fun w' => [moverIsV vF (pairFstD w').length == b] :=
     (polyTimeComputable_moverW vF b).congr fun w' => moverW_eq vF b w'
   have hslots := polyTimeComputable_slots (sel := fun _ q => moverIsV vF q == b)
-    (off := fun u => R.eval (argX (pairSndD (pairSndD u))).length * (pairFstD u).length)
+    (off := fun u => R.eval (GI.argX (pairSndD (pairSndD u))).length * (pairFstD u).length)
     (p := fun u => (pairFstD (pairSndD u)).length)
     hsel
-    (unaryMul_poly hR hj) hp (argM_poly.comp' hw)
+    (unaryMul_poly hR hj) hp (GI.argM_poly.comp' hw)
   have hdrop : PolyTimeComputable fun u => (NUPPT.inCoins (pairSndD (pairSndD u))).drop
-      (c₀.eval (argX (pairSndD (pairSndD u))).length +
-        (pairFstD u).length * c.eval (argX (pairSndD (pairSndD u))).length) :=
+      (c₀.eval (GI.argX (pairSndD (pairSndD u))).length +
+        (pairFstD u).length * c.eval (GI.argX (pairSndD (pairSndD u))).length) :=
     ((polyTimeComputable_pairDropPoly .var).comp'
       ((unaryAdd_poly hc₀ (unaryMul_poly hj hc)).pairEncode hr)).congr fun u => by
         rw [pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var,
@@ -258,19 +204,19 @@ theorem polyTimeComputable_runW {Fρ fcall : List Bool → List Bool} (hFρ : Po
 `ansW … w = (range L(n)).flatMap fun j => padTo out(n) (runW … ⟨1^j, ⟨1^{R(n)}, w⟩⟩)`. -/
 def ansW (Fρ fcall : List Bool → List Bool) (c₀ c R L out : PolyExpr) (vF b : Bool)
     (w : List Bool) : List Bool :=
-  (List.range (L.eval (argX w).length)).flatMap fun j =>
-    padTo (out.eval (argX w).length) (runW Fρ fcall c₀ c R vF b
+  (List.range (L.eval (GI.argX w).length)).flatMap fun j =>
+    padTo (out.eval (GI.argX w).length) (runW Fρ fcall c₀ c R vF b
       (pairEncode (List.replicate j true)
-        (pairEncode (List.replicate (R.eval (argX w).length) true) w)))
+        (pairEncode (List.replicate (R.eval (GI.argX w).length) true) w)))
 
 /-- The defining equation of `ansW` (see `ansW`). -/
 theorem ansW_eq (Fρ fcall : List Bool → List Bool) (c₀ c R L out : PolyExpr) (vF b : Bool)
     (w : List Bool) :
     ansW Fρ fcall c₀ c R L out vF b w =
-      (List.range (L.eval (argX w).length)).flatMap fun j =>
-        padTo (out.eval (argX w).length) (runW Fρ fcall c₀ c R vF b
+      (List.range (L.eval (GI.argX w).length)).flatMap fun j =>
+        padTo (out.eval (GI.argX w).length) (runW Fρ fcall c₀ c R vF b
           (pairEncode (List.replicate j true)
-            (pairEncode (List.replicate (R.eval (argX w).length) true) w))) := rfl
+            (pairEncode (List.replicate (R.eval (GI.argX w).length) true) w))) := rfl
 
 /-- **The answers are polynomial-time** (`polyTimeComputable_flatMap_range` over the unary count
 `L(n)`, with the chunk `padTo_poly` of `polyTimeComputable_runW`). -/
@@ -278,16 +224,16 @@ theorem polyTimeComputable_ansW {Fρ fcall : List Bool → List Bool} (hFρ : Po
     (hcall : PolyTimeComputable fcall) (c₀ c R L out : PolyExpr) (vF b : Bool) :
     PolyTimeComputable (ansW Fρ fcall c₀ c R L out vF b) := by
   have hw := polyTimeComputable_pairSndD
-  have hx := argX_poly.comp' hw
+  have hx := GI.argX_poly.comp' hw
   have hchunk : PolyTimeComputable fun v =>
-      padTo (out.eval (argX (pairSndD v)).length) (runW Fρ fcall c₀ c R vF b
+      padTo (out.eval (GI.argX (pairSndD v)).length) (runW Fρ fcall c₀ c R vF b
         (pairEncode (List.replicate (pairFstD v).length true)
-          (pairEncode (List.replicate (R.eval (argX (pairSndD v)).length) true)
+          (pairEncode (List.replicate (R.eval (GI.argX (pairSndD v)).length) true)
             (pairSndD v)))) :=
     padTo_poly ((polyTimeComputable_runW hFρ hcall c₀ c R vF b).comp
       ((unaryLength_poly polyTimeComputable_pairFstD).pairEncode
         ((unaryPoly_comp R hx).pairEncode hw))) (unaryPoly_comp out hx)
-  exact (polyTimeComputable_flatMap_range hchunk (unaryPoly_comp L argX_poly)).congr
+  exact (polyTimeComputable_flatMap_range hchunk (unaryPoly_comp L GI.argX_poly)).congr
     fun w => rfl
 
 /-! ### One activation of a `main`-party -/
@@ -297,29 +243,30 @@ common input `x`, input `⟨z, ans w⟩`, the messages after the first `d w` (`p
 and the `main`-tape `r_{<c₀(n)}`. -/
 def mainW (Fm ans : List Bool → List Bool) (d : List Bool → ℕ) (c₀ : PolyExpr) (w : List Bool) :
     List Bool :=
-  Fm (NUPPT.layout (List.replicate (argX w).length true)
-    (pairEncode (pairEncode (argX w) (pairEncode (argZ w) (ans w))) (pairSndD^[d w] (argM w)))
-    [] ((NUPPT.inCoins w).take (c₀.eval (argX w).length)))
+  Fm (NUPPT.layout (List.replicate (GI.argX w).length true)
+    (pairEncode (pairEncode (GI.argX w) (pairEncode (GI.argZ w) (ans w)))
+      (pairSndD^[d w] (GI.argM w)))
+    [] ((NUPPT.inCoins w).take (c₀.eval (GI.argX w).length)))
 
 /-- The defining equation of `mainW` (see `mainW`). -/
 theorem mainW_eq (Fm ans : List Bool → List Bool) (d : List Bool → ℕ) (c₀ : PolyExpr)
     (w : List Bool) :
     mainW Fm ans d c₀ w =
-      Fm (NUPPT.layout (List.replicate (argX w).length true)
-        (pairEncode (pairEncode (argX w) (pairEncode (argZ w) (ans w)))
-          (pairSndD^[d w] (argM w)))
-        [] ((NUPPT.inCoins w).take (c₀.eval (argX w).length))) := rfl
+      Fm (NUPPT.layout (List.replicate (GI.argX w).length true)
+        (pairEncode (pairEncode (GI.argX w) (pairEncode (GI.argZ w) (ans w)))
+          (pairSndD^[d w] (GI.argM w)))
+        [] ((NUPPT.inCoins w).take (c₀.eval (GI.argX w).length))) := rfl
 
-/-- **`mainW` on a layout**: `mainW Fm ans d c₀ (ilayout x z hist r) =
-Fm (ilayout x ⟨z, ans (ilayout x z hist r)⟩ (hist.drop (d …)) r_{<c₀})`
+/-- **`mainW` on a layout**: `mainW Fm ans d c₀ (GI.ilayout x z hist r) =
+Fm (GI.ilayout x ⟨z, ans (GI.ilayout x z hist r)⟩ (hist.drop (d …)) r_{<c₀})`
 (`GI.iterate_pairSndD_encodeMsgs`). -/
 theorem mainW_ilayout (Fm ans : List Bool → List Bool) (d : List Bool → ℕ) (c₀ : PolyExpr)
     (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
-    mainW Fm ans d c₀ (ilayout x z hist r) =
-      Fm (ilayout x (pairEncode z (ans (ilayout x z hist r)))
-        (hist.drop (d (ilayout x z hist r))) (r.take (c₀.eval x.length))) := by
-  rw [mainW_eq, argX_ilayout, argZ_ilayout, argM_ilayout, inCoins_ilayout,
-    GI.iterate_pairSndD_encodeMsgs, ilayout_eq, ilayout_eq]
+    mainW Fm ans d c₀ (GI.ilayout x z hist r) =
+      Fm (GI.ilayout x (pairEncode z (ans (GI.ilayout x z hist r)))
+        (hist.drop (d (GI.ilayout x z hist r))) (r.take (c₀.eval x.length))) := by
+  rw [mainW_eq, GI.argX_ilayout, GI.argZ_ilayout, GI.argM_ilayout, GI.inCoins_ilayout,
+    GI.iterate_pairSndD_encodeMsgs, GI.ilayout_def, GI.ilayout_def]
 
 /-- **`mainW` is polynomial-time** when `Fm`, the answers and the unary drop count are
 (`iterSnd_poly`, `EncodingMachines.truncate_poly`). -/
@@ -327,26 +274,28 @@ theorem polyTimeComputable_mainW {Fm ans : List Bool → List Bool} (hFm : PolyT
     (hans : PolyTimeComputable ans) {d : List Bool → ℕ}
     (hd : PolyTimeComputable fun w => List.replicate (d w) true) (c₀ : PolyExpr) :
     PolyTimeComputable (mainW Fm ans d c₀) :=
-  (hFm.comp' (NUPPT.polyTimeComputable_layout (unaryLength_poly argX_poly)
-    ((argX_poly.pairEncode (argZ_poly.pairEncode hans)).pairEncode (iterSnd_poly argM_poly hd))
+  (hFm.comp' (NUPPT.polyTimeComputable_layout (unaryLength_poly GI.argX_poly)
+    ((GI.argX_poly.pairEncode (GI.argZ_poly.pairEncode hans)).pairEncode
+      (iterSnd_poly GI.argM_poly hd))
     (polyTimeComputable_const [])
-    (truncate_poly NUPPT.polyTimeComputable_inCoins (unaryPoly_comp c₀ argX_poly)))).congr
+    (truncate_poly NUPPT.polyTimeComputable_inCoins (unaryPoly_comp c₀ GI.argX_poly)))).congr
     fun w => by rw [mainW_eq]
 
 
 /-- **`ansW` on a layout**: the concatenation over `j < L(|x|)` of the padded run outputs
-`padTo out(|x|) (Fρ (ilayout x (fcall ⟨1^{|x|}, ⟨z, ⟨r_{<c₀}, 1^j⟩⟩⟩)
+`padTo out(|x|) (Fρ (GI.ilayout x (fcall ⟨1^{|x|}, ⟨z, ⟨r_{<c₀}, 1^j⟩⟩⟩)
 (slotMsgs sel (R·j) R hist) (runTape c₀ c j r)))` (`runW_ilayout`). -/
 theorem ansW_ilayout (Fρ fcall : List Bool → List Bool) (c₀ c R L out : PolyExpr) (vF b : Bool)
     (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
-    ansW Fρ fcall c₀ c R L out vF b (ilayout x z hist r) =
+    ansW Fρ fcall c₀ c R L out vF b (GI.ilayout x z hist r) =
       (List.range (L.eval x.length)).flatMap fun j =>
-        padTo (out.eval x.length) (Fρ (ilayout x (fcall (pairEncode (List.replicate x.length true)
+        padTo (out.eval x.length) (Fρ (GI.ilayout x
+          (fcall (pairEncode (List.replicate x.length true)
             (pairEncode z (pairEncode (r.take (c₀.eval x.length)) (List.replicate j true)))))
           (Compose.slotMsgs (fun q => moverIsV vF q == b) (R.eval x.length * j)
             (R.eval x.length) hist)
           (Compose.runTape (c₀.eval x.length) (c.eval x.length) j r))) := by
-  rw [ansW_eq, argX_ilayout]
+  rw [ansW_eq, GI.argX_ilayout]
   refine List.flatMap_congr fun j _ => ?_
   rw [runW_ilayout]
 
@@ -377,37 +326,37 @@ variable {G : Functionality} (H : HybridProtocol G) (ρ : Protocol)
 - else her `main`-move on `⟨z, her answers⟩` (`ansW`) and the messages after the first `L·R`
   (`mainW`). -/
 def composePW (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) : List Bool :=
-  if decide (GI.msgCount (argM w) <
-      H.calls.eval (argX w).length * ρ.rounds.eval (argX w).length) then
-    if moverIsV ρ.verifierFirst (GI.msgCount (argM w) % ρ.rounds.eval (argX w).length) then []
+  if decide (GI.msgCount (GI.argM w) <
+      H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length) then
+    if moverIsV ρ.verifierFirst (GI.msgCount (GI.argM w) % ρ.rounds.eval (GI.argX w).length) then []
     else runW Fρ fcall H.main.P.coins ρ.P.coins ρ.rounds ρ.verifierFirst true
       (pairEncode
-        (List.replicate (GI.msgCount (argM w) / ρ.rounds.eval (argX w).length) true)
+        (List.replicate (GI.msgCount (GI.argM w) / ρ.rounds.eval (GI.argX w).length) true)
         (pairEncode
-          (List.replicate (GI.msgCount (argM w) % ρ.rounds.eval (argX w).length) true) w))
-  else if (H.main.verifierFirst && decide (GI.msgCount (argM w) =
-      H.calls.eval (argX w).length * ρ.rounds.eval (argX w).length)) then []
+          (List.replicate (GI.msgCount (GI.argM w) % ρ.rounds.eval (GI.argX w).length) true) w))
+  else if (H.main.verifierFirst && decide (GI.msgCount (GI.argM w) =
+      H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length)) then []
   else mainW Fm (ansW Fρ fcall H.main.P.coins ρ.P.coins ρ.rounds H.calls G.outA
       ρ.verifierFirst true)
-    (fun w => H.calls.eval (argX w).length * ρ.rounds.eval (argX w).length) H.main.P.coins w
+    (fun w => H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length) H.main.P.coins w
 
 /-- The defining equation of `composePW` (see `composePW`). -/
 theorem composePW_eq (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) :
     H.composePW ρ Fρ Fm fcall w =
-      if decide (GI.msgCount (argM w) <
-          H.calls.eval (argX w).length * ρ.rounds.eval (argX w).length) then
-        if moverIsV ρ.verifierFirst (GI.msgCount (argM w) % ρ.rounds.eval (argX w).length)
+      if decide (GI.msgCount (GI.argM w) <
+          H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length) then
+        if moverIsV ρ.verifierFirst (GI.msgCount (GI.argM w) % ρ.rounds.eval (GI.argX w).length)
         then []
         else runW Fρ fcall H.main.P.coins ρ.P.coins ρ.rounds ρ.verifierFirst true
           (pairEncode
-            (List.replicate (GI.msgCount (argM w) / ρ.rounds.eval (argX w).length) true)
+            (List.replicate (GI.msgCount (GI.argM w) / ρ.rounds.eval (GI.argX w).length) true)
             (pairEncode
-              (List.replicate (GI.msgCount (argM w) % ρ.rounds.eval (argX w).length) true) w))
-      else if (H.main.verifierFirst && decide (GI.msgCount (argM w) =
-          H.calls.eval (argX w).length * ρ.rounds.eval (argX w).length)) then []
+              (List.replicate (GI.msgCount (GI.argM w) % ρ.rounds.eval (GI.argX w).length) true) w))
+      else if (H.main.verifierFirst && decide (GI.msgCount (GI.argM w) =
+          H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length)) then []
       else mainW Fm (ansW Fρ fcall H.main.P.coins ρ.P.coins ρ.rounds H.calls G.outA
           ρ.verifierFirst true)
-        (fun w => H.calls.eval (argX w).length * ρ.rounds.eval (argX w).length)
+        (fun w => H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length)
         H.main.P.coins w := rfl
 
 /-- **Bob of `H.compose ρ` on the layout**, given machines `Fρ` for `ρ.V`, `Fm` for `main.V` and
@@ -416,41 +365,43 @@ theorem composePW_eq (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) :
   (`runW`, reading Alice's moves), else `[]`;
 - else his `main`-move on `⟨z, his answers⟩` and the messages after the first `L·R + lead`. -/
 def composeVW (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) : List Bool :=
-  if decide (GI.msgCount (argM w) - 1 <
-      H.calls.eval (argX w).length * ρ.rounds.eval (argX w).length) then
-    if moverIsV ρ.verifierFirst ((GI.msgCount (argM w) - 1) % ρ.rounds.eval (argX w).length)
+  if decide (GI.msgCount (GI.argM w) - 1 <
+      H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length) then
+    if moverIsV ρ.verifierFirst ((GI.msgCount (GI.argM w) - 1) % ρ.rounds.eval (GI.argX w).length)
     then runW Fρ fcall H.main.V.coins ρ.V.coins ρ.rounds ρ.verifierFirst false
       (pairEncode
-        (List.replicate ((GI.msgCount (argM w) - 1) / ρ.rounds.eval (argX w).length) true)
+        (List.replicate ((GI.msgCount (GI.argM w) - 1) / ρ.rounds.eval (GI.argX w).length) true)
         (pairEncode
-          (List.replicate ((GI.msgCount (argM w) - 1) % ρ.rounds.eval (argX w).length) true) w))
+          (List.replicate ((GI.msgCount (GI.argM w) - 1) % ρ.rounds.eval (GI.argX w).length)
+            true) w))
     else []
   else mainW Fm (ansW Fρ fcall H.main.V.coins ρ.V.coins ρ.rounds H.calls G.outB
       ρ.verifierFirst false)
-    (fun w => H.calls.eval (argX w).length * ρ.rounds.eval (argX w).length + H.lead)
+    (fun w => H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length + H.lead)
     H.main.V.coins w
 
 /-- The defining equation of `composeVW` (see `composeVW`). -/
 theorem composeVW_eq (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) :
     H.composeVW ρ Fρ Fm fcall w =
-      if decide (GI.msgCount (argM w) - 1 <
-          H.calls.eval (argX w).length * ρ.rounds.eval (argX w).length) then
-        if moverIsV ρ.verifierFirst ((GI.msgCount (argM w) - 1) % ρ.rounds.eval (argX w).length)
+      if decide (GI.msgCount (GI.argM w) - 1 <
+          H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length) then
+        if moverIsV ρ.verifierFirst
+          ((GI.msgCount (GI.argM w) - 1) % ρ.rounds.eval (GI.argX w).length)
         then runW Fρ fcall H.main.V.coins ρ.V.coins ρ.rounds ρ.verifierFirst false
           (pairEncode
-            (List.replicate ((GI.msgCount (argM w) - 1) / ρ.rounds.eval (argX w).length) true)
+            (List.replicate ((GI.msgCount (GI.argM w) - 1) / ρ.rounds.eval (GI.argX w).length) true)
             (pairEncode
-              (List.replicate ((GI.msgCount (argM w) - 1) % ρ.rounds.eval (argX w).length)
+              (List.replicate ((GI.msgCount (GI.argM w) - 1) % ρ.rounds.eval (GI.argX w).length)
                 true) w))
         else []
       else mainW Fm (ansW Fρ fcall H.main.V.coins ρ.V.coins ρ.rounds H.calls G.outB
           ρ.verifierFirst false)
-        (fun w => H.calls.eval (argX w).length * ρ.rounds.eval (argX w).length + H.lead)
+        (fun w => H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length + H.lead)
         H.main.V.coins w := rfl
 
 /-- **Alice of `H.compose ρ` is `composePW`**: if `Fρ`, `Fm` compute `ρ.P` and `main.P` on the
 layout and `fcall` computes Alice's call inputs (the `callA` clause of `HybridProtocol.PolyTime`),
-then `(H.composeP ρ).next x z r hist = H.composePW ρ Fρ Fm fcall (ilayout x z hist r)`.
+then `(H.composeP ρ).next x z r hist = H.composePW ρ Fρ Fm fcall (GI.ilayout x z hist r)`.
 
 **Proof sketch.** Unfold both sides (`composeP_next`, `composePW_eq`); the number of messages
 read from the layout is `|hist|` (`GI.msgCount_encodeMsgs`). In a run branch `j = k / R < L`, so
@@ -458,25 +409,25 @@ the call input is `runInputA` (`runInputA_of_lt`) and `runW` is `runNextA` (`run
 `runNextA_eq`). In the main branch `mainW` is `main.P.next` on the answers read by `ansW`, which
 are `answersFromA` (`ansW_ilayout`, `answersFromA_eq`, `ofFn_padFin`). -/
 theorem composeP_next_eq_composePW {Fρ Fm fcall : List Bool → List Bool}
-    (hFρ : ∀ x z r hist, ρ.P.next x z r hist = Fρ (ilayout x z hist r))
-    (hFm : ∀ x z r hist, H.main.P.next x z r hist = Fm (ilayout x z hist r))
+    (hFρ : ∀ x z r hist, ρ.P.next x z r hist = Fρ (GI.ilayout x z hist r))
+    (hFm : ∀ x z r hist, H.main.P.next x z r hist = Fm (GI.ilayout x z hist r))
     (hcall : ∀ n (x r : List Bool) (j : Fin (H.calls.eval n)),
       fcall (pairEncode (List.replicate n true) (pairEncode x (pairEncode r
         (List.replicate j true)))) = List.ofFn (H.callA n x r j))
     (x z r : List Bool) (hist : List (List Bool)) :
-    (H.composeP ρ).next x z r hist = H.composePW ρ Fρ Fm fcall (ilayout x z hist r) := by
+    (H.composeP ρ).next x z r hist = H.composePW ρ Fρ Fm fcall (GI.ilayout x z hist r) := by
   have hrun : ∀ j p, j < H.calls.eval x.length →
       H.runNextA ρ x z r hist j p =
         runW Fρ fcall H.main.P.coins ρ.P.coins ρ.rounds ρ.verifierFirst true
           (pairEncode (List.replicate j true)
-            (pairEncode (List.replicate p true) (ilayout x z hist r))) := by
+            (pairEncode (List.replicate p true) (GI.ilayout x z hist r))) := by
     intro j p hj
     rw [runW_ilayout, hcall x.length z _ ⟨j, hj⟩, ← H.runInputA_of_lt x z r hj, ← hFρ,
       runNextA_eq]
     congr 2
     funext q
     rw [beq_true]
-  rw [composeP_next, composePW_eq, argM_ilayout, argX_ilayout, GI.msgCount_encodeMsgs]
+  rw [composeP_next, composePW_eq, GI.argM_ilayout, GI.argX_ilayout, GI.msgCount_encodeMsgs]
   simp only [decide_eq_true_eq, Bool.and_eq_true]
   by_cases hk : hist.length < H.calls.eval x.length * ρ.rounds.eval x.length
   · have hR : 0 < ρ.rounds.eval x.length := Nat.pos_of_ne_zero fun h => by
@@ -492,7 +443,8 @@ theorem composeP_next_eq_composePW {Fρ Fm fcall : List Bool → List Bool}
     by_cases hl : H.main.verifierFirst = true ∧
         hist.length = H.calls.eval x.length * ρ.rounds.eval x.length
     · rw [if_pos hl, if_pos hl]
-    · rw [if_neg hl, if_neg hl, mainW_ilayout, argX_ilayout, ← hFm, answersFromA_eq, ansW_ilayout,
+    · rw [if_neg hl, if_neg hl, mainW_ilayout, GI.argX_ilayout, ← hFm, answersFromA_eq,
+        ansW_ilayout,
         flatten_ofFn_eq_flatMap_range
           (fun j => List.ofFn (padFin (G.outA.eval x.length)
             (H.runNextA ρ x z r hist j (ρ.rounds.eval x.length))))]
@@ -502,31 +454,31 @@ theorem composeP_next_eq_composePW {Fρ Fm fcall : List Bool → List Bool}
 
 /-- **Bob of `H.compose ρ` is `composeVW`**: if `Fρ`, `Fm` compute `ρ.V` and `main.V` on the
 layout and `fcall` computes Bob's call inputs, then
-`(H.composeV ρ).next x z r hist = H.composeVW ρ Fρ Fm fcall (ilayout x z hist r)`.
+`(H.composeV ρ).next x z r hist = H.composeVW ρ Fρ Fm fcall (GI.ilayout x z hist r)`.
 
 **Proof sketch.** As `composeP_next_eq_composePW`, with `k = |hist| − 1`, `runNextB`,
 `runInputB_of_lt`, the selector `!moverIsV` (`beq_false`), `answersFromB` and the drop count
 `L·R + lead`. -/
 theorem composeV_next_eq_composeVW {Fρ Fm fcall : List Bool → List Bool}
-    (hFρ : ∀ x z r hist, ρ.V.next x z r hist = Fρ (ilayout x z hist r))
-    (hFm : ∀ x z r hist, H.main.V.next x z r hist = Fm (ilayout x z hist r))
+    (hFρ : ∀ x z r hist, ρ.V.next x z r hist = Fρ (GI.ilayout x z hist r))
+    (hFm : ∀ x z r hist, H.main.V.next x z r hist = Fm (GI.ilayout x z hist r))
     (hcall : ∀ n (y r : List Bool) (j : Fin (H.calls.eval n)),
       fcall (pairEncode (List.replicate n true) (pairEncode y (pairEncode r
         (List.replicate j true)))) = List.ofFn (H.callB n y r j))
     (x z r : List Bool) (hist : List (List Bool)) :
-    (H.composeV ρ).next x z r hist = H.composeVW ρ Fρ Fm fcall (ilayout x z hist r) := by
+    (H.composeV ρ).next x z r hist = H.composeVW ρ Fρ Fm fcall (GI.ilayout x z hist r) := by
   have hrun : ∀ j p, j < H.calls.eval x.length →
       H.runNextB ρ x z r hist j p =
         runW Fρ fcall H.main.V.coins ρ.V.coins ρ.rounds ρ.verifierFirst false
           (pairEncode (List.replicate j true)
-            (pairEncode (List.replicate p true) (ilayout x z hist r))) := by
+            (pairEncode (List.replicate p true) (GI.ilayout x z hist r))) := by
     intro j p hj
     rw [runW_ilayout, hcall x.length z _ ⟨j, hj⟩, ← H.runInputB_of_lt x z r hj, ← hFρ,
       runNextB_eq]
     congr 2
     funext q
     rw [beq_false]
-  rw [composeV_next, composeVW_eq, argM_ilayout, argX_ilayout, GI.msgCount_encodeMsgs]
+  rw [composeV_next, composeVW_eq, GI.argM_ilayout, GI.argX_ilayout, GI.msgCount_encodeMsgs]
   simp only [decide_eq_true_eq]
   by_cases hk : hist.length - 1 < H.calls.eval x.length * ρ.rounds.eval x.length
   · have hR : 0 < ρ.rounds.eval x.length := Nat.pos_of_ne_zero fun h => by
@@ -538,7 +490,7 @@ theorem composeV_next_eq_composeVW {Fρ Fm fcall : List Bool → List Bool}
     by_cases hm : moverIsV ρ.verifierFirst ((hist.length - 1) % ρ.rounds.eval x.length) = true
     · rw [if_pos hm, if_pos hm, hrun _ _ hj]
     · rw [if_neg hm, if_neg hm]
-  · rw [if_neg hk, if_neg hk, mainW_ilayout, argX_ilayout, ← hFm, answersFromB_eq, ansW_ilayout,
+  · rw [if_neg hk, if_neg hk, mainW_ilayout, GI.argX_ilayout, ← hFm, answersFromB_eq, ansW_ilayout,
       flatten_ofFn_eq_flatMap_range
         (fun j => List.ofFn (padFin (G.outB.eval x.length)
           (H.runNextB ρ x z r hist j (ρ.rounds.eval x.length))))]
@@ -556,18 +508,18 @@ mover test at `k % R` (`polyTimeComputable_moverW`, `modNum_poly`), and the piec
 theorem polyTimeComputable_composePW {Fρ Fm fcall : List Bool → List Bool}
     (hFρ : PolyTimeComputable Fρ) (hFm : PolyTimeComputable Fm)
     (hcall : PolyTimeComputable fcall) : PolyTimeComputable (H.composePW ρ Fρ Fm fcall) := by
-  have hk : PolyTimeComputable fun w => List.replicate (GI.msgCount (argM w)) true :=
-    GI.msgCount_poly.comp' argM_poly
-  have hR := unaryPoly_comp ρ.rounds argX_poly
-  have hLR := unaryMul_poly (unaryPoly_comp H.calls argX_poly) hR
+  have hk : PolyTimeComputable fun w => List.replicate (GI.msgCount (GI.argM w)) true :=
+    GI.msgCount_poly.comp' GI.argM_poly
+  have hR := unaryPoly_comp ρ.rounds GI.argX_poly
+  have hLR := unaryMul_poly (unaryPoly_comp H.calls GI.argX_poly) hR
   have hdiv : PolyTimeComputable fun w =>
-      List.replicate (GI.msgCount (argM w) / ρ.rounds.eval (argX w).length) true :=
+      List.replicate (GI.msgCount (GI.argM w) / ρ.rounds.eval (GI.argX w).length) true :=
     (divNum_poly hk hR).congr fun w => by rw [divNum_eq]
   have hmod : PolyTimeComputable fun w =>
-      List.replicate (GI.msgCount (argM w) % ρ.rounds.eval (argX w).length) true :=
+      List.replicate (GI.msgCount (GI.argM w) % ρ.rounds.eval (GI.argX w).length) true :=
     (modNum_poly hk hR).congr fun w => by rw [modNum_eq]
   have hmv : PolyTimeComputable fun w =>
-      [moverIsV ρ.verifierFirst (GI.msgCount (argM w) % ρ.rounds.eval (argX w).length)] :=
+      [moverIsV ρ.verifierFirst (GI.msgCount (GI.argM w) % ρ.rounds.eval (GI.argX w).length)] :=
     ((polyTimeComputable_moverW ρ.verifierFirst true).comp'
       (hmod.pairEncode polyTimeComputable_id)).congr fun w => by
         rw [moverW_eq, pairFstD_pairEncode, List.length_replicate, beq_true]
@@ -575,8 +527,9 @@ theorem polyTimeComputable_composePW {Fρ Fm fcall : List Bool → List Bool}
     ρ.verifierFirst true).comp' (hdiv.pairEncode (hmod.pairEncode polyTimeComputable_id))
   have hmain := polyTimeComputable_mainW hFm (polyTimeComputable_ansW hFρ hcall H.main.P.coins
     ρ.P.coins ρ.rounds H.calls G.outA ρ.verifierFirst true) hLR H.main.P.coins
-  have hlead : PolyTimeComputable fun w => [H.main.verifierFirst && decide (GI.msgCount (argM w) =
-      H.calls.eval (argX w).length * ρ.rounds.eval (argX w).length)] :=
+  have hlead : PolyTimeComputable fun w =>
+      [H.main.verifierFirst && decide (GI.msgCount (GI.argM w) =
+      H.calls.eval (GI.argX w).length * ρ.rounds.eval (GI.argX w).length)] :=
     polyTimeComputable_and (polyTimeComputable_const [H.main.verifierFirst]) (eqTest_poly hk hLR)
   exact (polyTimeComputable_ite (ltTest_poly hk hLR)
     (polyTimeComputable_ite hmv (polyTimeComputable_const []) hrun)
@@ -590,18 +543,19 @@ two branches in the run phase and the drop count `L(n)·R(n) + lead` (`unaryAdd_
 theorem polyTimeComputable_composeVW {Fρ Fm fcall : List Bool → List Bool}
     (hFρ : PolyTimeComputable Fρ) (hFm : PolyTimeComputable Fm)
     (hcall : PolyTimeComputable fcall) : PolyTimeComputable (H.composeVW ρ Fρ Fm fcall) := by
-  have hk : PolyTimeComputable fun w => List.replicate (GI.msgCount (argM w) - 1) true :=
-    unarySub_poly (GI.msgCount_poly.comp' argM_poly) (unaryConst_poly 1)
-  have hR := unaryPoly_comp ρ.rounds argX_poly
-  have hLR := unaryMul_poly (unaryPoly_comp H.calls argX_poly) hR
+  have hk : PolyTimeComputable fun w => List.replicate (GI.msgCount (GI.argM w) - 1) true :=
+    unarySub_poly (GI.msgCount_poly.comp' GI.argM_poly) (unaryConst_poly 1)
+  have hR := unaryPoly_comp ρ.rounds GI.argX_poly
+  have hLR := unaryMul_poly (unaryPoly_comp H.calls GI.argX_poly) hR
   have hdiv : PolyTimeComputable fun w =>
-      List.replicate ((GI.msgCount (argM w) - 1) / ρ.rounds.eval (argX w).length) true :=
+      List.replicate ((GI.msgCount (GI.argM w) - 1) / ρ.rounds.eval (GI.argX w).length) true :=
     (divNum_poly hk hR).congr fun w => by rw [divNum_eq]
   have hmod : PolyTimeComputable fun w =>
-      List.replicate ((GI.msgCount (argM w) - 1) % ρ.rounds.eval (argX w).length) true :=
+      List.replicate ((GI.msgCount (GI.argM w) - 1) % ρ.rounds.eval (GI.argX w).length) true :=
     (modNum_poly hk hR).congr fun w => by rw [modNum_eq]
   have hmv : PolyTimeComputable fun w =>
-      [moverIsV ρ.verifierFirst ((GI.msgCount (argM w) - 1) % ρ.rounds.eval (argX w).length)] :=
+      [moverIsV ρ.verifierFirst
+        ((GI.msgCount (GI.argM w) - 1) % ρ.rounds.eval (GI.argX w).length)] :=
     ((polyTimeComputable_moverW ρ.verifierFirst true).comp'
       (hmod.pairEncode polyTimeComputable_id)).congr fun w => by
         rw [moverW_eq, pairFstD_pairEncode, List.length_replicate, beq_true]
