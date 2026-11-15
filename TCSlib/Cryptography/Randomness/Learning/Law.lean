@@ -124,7 +124,8 @@ theorem learnerFn_eq (A : NUPPT) (n m : ℕ) (S : Fin m → (Fin n → Bool) × 
       pairEncode (List.ofFn (S j).1) [(S j).2]).foldr pairEncode []) (List.ofFn x)) r = [true]) :=
   rfl
 
-/-- **Examples and a fresh point as one tuple:** `((k, (s, r)), x) ↦ (k, (snoc s x, r))`. -/
+/-- **Examples and a fresh point as one tuple:** `((k, (s, r)), x) ↦ (k, (snoc s x, r))`, an
+equivalence `(K × ((Fin m → X) × ρ)) × X ≃ K × ((Fin (m + 1) → X) × ρ)`. -/
 def snocEquiv (K X ρ : Type*) (m : ℕ) :
     (K × ((Fin m → X) × ρ)) × X ≃ K × ((Fin (m + 1) → X) × ρ) where
   toFun w := (w.1.1, (Fin.snoc w.1.2.1 w.2, w.1.2.2))

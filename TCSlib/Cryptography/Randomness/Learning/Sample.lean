@@ -72,7 +72,8 @@ def firstBit {n : ℕ} (y : Fin n → Bool) : Bool := (List.ofFn y).headD false
 theorem firstBit_eq {n : ℕ} (y : Fin n → Bool) : firstBit y = (List.ofFn y).headD false := rfl
 
 /-- **The encoded tuple** of the pairs `(ρ_j, g(ρ_j))`: the concatenation of the blocks
-`⟨⟨ρ_j, g(ρ_j)⟩, []⟩` (as in `MultiMsg.exists_queryChain_nuppt`). -/
+`⟨⟨ρ_j, g(ρ_j)⟩, []⟩` (as in `MultiMsg.exists_queryChain_nuppt`):
+`tupleWord ρ g = (List.ofFn fun j => ⟨⟨⟦ρ j⟧, ⟦g (ρ j)⟧⟩, []⟩).flatten`. -/
 def tupleWord {n k : ℕ} (ρ : Fin k → Fin n → Bool) (g : (Fin n → Bool) → (Fin n → Bool)) :
     List Bool :=
   (List.ofFn fun j => pairEncode (pairEncode (List.ofFn (ρ j)) (List.ofFn (g (ρ j)))) []).flatten
@@ -95,7 +96,8 @@ private theorem length_blk {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) 
   omega
 
 /-- **Relabelling a block:** `⟨⟨x, y⟩, []⟩ ↦ ⟨⟨x, [y.headD false]⟩, []⟩`, the encoded labelled
-example of the pair. -/
+example of the pair:
+`relabel w = ⟨⟨pairFstD (pairFstD w), [(pairSndD (pairFstD w)).headD false]⟩, []⟩`. -/
 def relabel (w : List Bool) : List Bool :=
   pairEncode (pairEncode (pairFstD (pairFstD w)) [(pairSndD (pairFstD w)).headD false]) []
 
@@ -105,7 +107,8 @@ theorem relabel_eq (w : List Bool) :
       pairEncode (pairEncode (pairFstD (pairFstD w)) [(pairSndD (pairFstD w)).headD false]) [] :=
   rfl
 
-/-- Relabelling is polynomial-time. -/
+/-- Relabelling is polynomial-time: `PolyTimeComputable relabel`, for
+`relabel : List Bool → List Bool`. -/
 theorem polyTimeComputable_relabel : PolyTimeComputable relabel := by
   have hF := polyTimeComputable_pairFstD
   have hD := polyTimeComputable_pairSndD
@@ -119,7 +122,8 @@ private theorem relabel_blk {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool))
 
 /-! ### The learner's input and the last label -/
 
-/-- The length `m(n) · (6n + 6)` of the first `m(n)` blocks. -/
+/-- The length `m(n) · (6n + 6)` of the first `m(n)` blocks:
+`sampleLen m = m · histBlockLen` as a `PolyExpr`. -/
 def sampleLen (m : PolyExpr) : PolyExpr := .mul m MultiMsg.histBlockLen
 
 /-- `(sampleLen m).eval n = m(n) · (6n + 6)`. -/
@@ -127,7 +131,9 @@ theorem sampleLen_eval (m : PolyExpr) (n : ℕ) : (sampleLen m).eval n = m.eval 
   rw [sampleLen, PolyExpr.eval_mul, MultiMsg.eval_histBlockLen]
 
 /-- The relabelled first `m(|u|)` blocks of `s`, on `⟨u, s⟩`: the block map of `relabel` over
-`s.take (sampleLen m (|u|))` (the function of `Complexity.polyTimeComputable_blockMap`). -/
+`s.take (sampleLen m (|u|))` (the function of `Complexity.polyTimeComputable_blockMap`):
+`sampleOf m ⟨u, s⟩ = (range (|s'| / b)).flatMap fun i => relabel ((s'.drop (i * b)).take b)`,
+with `s' = s.take ((sampleLen m).eval |u|)` and `b = histBlockLen.eval |u|`. -/
 def sampleOf (m : PolyExpr) (z : List Bool) : List Bool :=
   (List.range (((pairSndD z).take ((sampleLen m).eval (pairFstD z).length)).length /
       MultiMsg.histBlockLen.eval (pairFstD z).length)).flatMap fun i =>
@@ -135,7 +141,9 @@ def sampleOf (m : PolyExpr) (z : List Bool) : List Bool :=
       (i * MultiMsg.histBlockLen.eval (pairFstD z).length)).take
         (MultiMsg.histBlockLen.eval (pairFstD z).length))
 
-/-- `sampleOf m z` is the block map of `relabel` over the first `sampleLen m` bits. -/
+/-- `sampleOf m z` is the block map of `relabel` over the first `sampleLen m` bits:
+`sampleOf m ⟨u, s⟩ = (range (|s'| / b)).flatMap fun i => relabel ((s'.drop (i * b)).take b)`,
+with `s' = s.take ((sampleLen m).eval |u|)` and `b = histBlockLen.eval |u|`. -/
 theorem sampleOf_eq (m : PolyExpr) (z : List Bool) :
     sampleOf m z =
       (List.range (((pairSndD z).take ((sampleLen m).eval (pairFstD z).length)).length /
@@ -144,7 +152,8 @@ theorem sampleOf_eq (m : PolyExpr) (z : List Bool) :
           (i * MultiMsg.histBlockLen.eval (pairFstD z).length)).take
             (MultiMsg.histBlockLen.eval (pairFstD z).length)) := rfl
 
-/-- The last block's pair `⟨x, y⟩` on `⟨u, s⟩`: `pairFstD (s.drop (sampleLen m (|u|)))`. -/
+/-- The last block's pair `⟨x, y⟩` on `⟨u, s⟩`:
+`lastPair m ⟨u, s⟩ = pairFstD (s.drop ((sampleLen m).eval |u|))`. -/
 def lastPair (m : PolyExpr) (z : List Bool) : List Bool :=
   pairFstD ((pairSndD z).drop ((sampleLen m).eval (pairFstD z).length))
 
@@ -153,7 +162,8 @@ theorem lastPair_eq (m : PolyExpr) (z : List Bool) :
     lastPair m z = pairFstD ((pairSndD z).drop ((sampleLen m).eval (pairFstD z).length)) := rfl
 
 /-- **The learner's input** on `⟨1^n, s⟩`: `⟨sampleOf m z, x⟩`, the relabelled first `m(n)`
-blocks and the point `x` of the last block. -/
+blocks and the point `x` of the last block: `learnIn m z = ⟨sampleOf m z, pairFstD (lastPair m z)⟩`.
+-/
 def learnIn (m : PolyExpr) (z : List Bool) : List Bool :=
   pairEncode (sampleOf m z) (pairFstD (lastPair m z))
 
@@ -161,21 +171,24 @@ def learnIn (m : PolyExpr) (z : List Bool) : List Bool :=
 theorem learnIn_eq (m : PolyExpr) (z : List Bool) :
     learnIn m z = pairEncode (sampleOf m z) (pairFstD (lastPair m z)) := rfl
 
-/-- **The last label** on `⟨1^n, s⟩`: the first bit of the answer of the last block. -/
+/-- **The last label** on `⟨1^n, s⟩`: the first bit of the answer of the last block,
+`lastLabel m z = (pairSndD (lastPair m z)).headD false`. -/
 def lastLabel (m : PolyExpr) (z : List Bool) : Bool := (pairSndD (lastPair m z)).headD false
 
 /-- `lastLabel m z = (pairSndD (lastPair m z)).headD false`. -/
 theorem lastLabel_eq (m : PolyExpr) (z : List Bool) :
     lastLabel m z = (pairSndD (lastPair m z)).headD false := rfl
 
-/-- The last block's pair is polynomial-time (`polyTimeComputable_pairDropPoly`). -/
+/-- The last block's pair is polynomial-time (`polyTimeComputable_pairDropPoly`):
+`PolyTimeComputable (lastPair m)`, for `lastPair m : List Bool → List Bool`. -/
 theorem polyTimeComputable_lastPair (m : PolyExpr) : PolyTimeComputable (lastPair m) :=
   (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairDropPoly (sampleLen m))).congr
     fun _ => rfl
 
 /-- The learner's input is polynomial-time: the block map of `relabel`
 (`Complexity.polyTimeComputable_blockMap`) after the head cut
-(`polyTimeComputable_pairTakePoly`), paired with the last point. -/
+(`polyTimeComputable_pairTakePoly`), paired with the last point: `PolyTimeComputable (learnIn m)`,
+for `learnIn m : List Bool → List Bool`. -/
 theorem polyTimeComputable_learnIn (m : PolyExpr) : PolyTimeComputable (learnIn m) := by
   have hcut : PolyTimeComputable fun z => pairEncode (pairFstD z)
       ((pairSndD z).take ((sampleLen m).eval (pairFstD z).length)) :=
@@ -187,7 +200,8 @@ theorem polyTimeComputable_learnIn (m : PolyExpr) : PolyTimeComputable (learnIn 
   exact (hS.pairEncode (polyTimeComputable_pairFstD.comp (polyTimeComputable_lastPair m))).congr
     fun _ => rfl
 
-/-- The last label, as a one-bit output, is polynomial-time. -/
+/-- The last label, as a one-bit output, is polynomial-time:
+`PolyTimeComputable fun z => [lastLabel m z]`, for `z ↦ [lastLabel m z] : List Bool → List Bool`. -/
 theorem polyTimeComputable_lastLabel (m : PolyExpr) :
     PolyTimeComputable fun z => [lastLabel m z] :=
   (polyTimeComputable_headD.comp (polyTimeComputable_pairSndD.comp
@@ -218,7 +232,9 @@ private theorem tupleWord_split :
 
 /-- **The learner's input on an encoded tuple:** on `⟨1^n, tupleWord ρ g⟩`, `learnIn m` is the
 pair of the nested labelled examples `⟨⟦ρ_j⟧, [firstBit (g ρ_j)]⟩` of the first `m(n)` points and
-the last point `⟦ρ_m⟧`.
+the last point `⟦ρ_m⟧`:
+`learnIn m ⟨1^n, tupleWord ρ g⟩ =
+⟨(ofFn j ↦ ⟨⟦ρ_j⟧, [firstBit (g ρ_j)]⟩).foldr pairEncode [], ⟦ρ_m⟧⟩` (`j < m(n)`).
 
 **Proof sketch.** Split the tuple into its first `m(n)` blocks and the last
 (`tupleWord_split`); the head cut keeps the first part and the tail cut the last block
@@ -246,7 +262,7 @@ theorem learnIn_tupleWord :
   exact congrArg List.ofFn (funext fun j => relabel_blk _)
 
 /-- **The last label on an encoded tuple:** on `⟨1^n, tupleWord ρ g⟩`, `lastLabel m` is the first
-bit of the last answer, `firstBit (g ρ_m)`. -/
+bit of the last answer: `lastLabel m ⟨1^n, tupleWord ρ g⟩ = firstBit (g ρ_m)`. -/
 theorem lastLabel_tupleWord :
     lastLabel m (pairEncode (List.replicate n true) (tupleWord ρ g)) =
       firstBit (g (ρ (Fin.last _))) := by

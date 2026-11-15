@@ -56,7 +56,8 @@ theorem verdictFun_eq (m : PolyExpr) (z : List Bool) :
 
 /-- The verdict is polynomial-time: an equality test (`polyTimeComputable_pairEq`) selecting the
 last label or its negation (`polyTimeComputable_ite`, `polyTimeComputable_not`,
-`polyTimeComputable_lastLabel`). -/
+`polyTimeComputable_lastLabel`): `PolyTimeComputable (verdictFun m)`, for
+`verdictFun m : List Bool → List Bool`. -/
 theorem polyTimeComputable_verdictFun (m : PolyExpr) : PolyTimeComputable (verdictFun m) := by
   have hArg := NUPPT.polyTimeComputable_inArg
   have hEq : PolyTimeComputable fun z => [decide (pairSndD (NUPPT.inArg z) = [true])] :=

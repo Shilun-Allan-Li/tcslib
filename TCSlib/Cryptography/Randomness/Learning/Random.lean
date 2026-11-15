@@ -81,7 +81,7 @@ def flipAt (x : Fin n → Bool) (R : (Fin n → Bool) → (Fin n → Bool)) :
 theorem flipAt_eq (x : Fin n → Bool) (R : (Fin n → Bool) → (Fin n → Bool)) :
     flipAt hn x R = Function.update R x (flip0 hn (R x)) := rfl
 
-/-- `flipAt hn x` is an involution. -/
+/-- `flipAt hn x` is an involution: `flipAt hn x (flipAt hn x R) = R`. -/
 theorem flipAt_involutive (x : Fin n → Bool) : Function.Involutive (flipAt hn x) := by
   intro R
   rw [flipAt_eq, flipAt_eq, Function.update_self, flip0_flip0, Function.update_idem,
