@@ -55,3 +55,9 @@ The changed rulings enlarge the phase:
 
 Effect: 6a gains the layering conversion (P6-Q14). 6b's leveled scheme uses the consecutive chain over layered circuits and cites
 Gen09 once ingested. The plan section is updated to r3 accordingly.
+
+**P6-Q19, refinement (Seyoon, 2026-11-16, same day):** Gen09 must not be a bottleneck. Seyoon sends the PDF later today, and
+it affects only docstrings. Nothing waits for it.
+- The 6b leveled statements proceed now, citing only ingested sources ([BV11, Thm 3.1, Def 3.6]; [BV14, Thm 2.14 first
+  part, Thm 3.7]; [AP14, §5.3]) and disclosing that the key-chain construction and hybrid order are reconstructed.
+- After the ingest, a docstring-only follow-up adds the [Gen09] citation. No Lean docstring cites [Gen09] before then.
