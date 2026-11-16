@@ -15,7 +15,7 @@ of `land/pass-shelat-sc-yao` at `e9b03c437aca251846430ff23b40ee5ff3d3347a`. It i
   standard axioms once sc-yao lands. The integration build on the new tip checks this; it is a merge condition.
 
 ## Duplication (extends SY-F03 and SY-F05)
-- **SY-F03, extended:** `YaoHybridProof.encodeMsgs_eq_encWords` is now a verbatim copy, statement and proof, of the public
+- **SY-F03, extended:** `YaoHybridProof.encodeMsgs_eq_encWords` is now a copy, statement and proof identical up to bound-variable names (the docstrings differ), of the public
   `SequentialZK.encodeMsgs_eq_encWords` (`Composability/SequentialZK/Normalization.lean:40`, from #327). The #327 copy is
   itself in the DL-49 class (`ColMachines.encodeMsgs_eq_flatMap` with `BinArith.encWords_def`) and is not on the ledger.
   Re-pointing sc-yao's `Lengths` at it would import `SequentialZK/Normalization` into a Yao helper. The recommendation
@@ -27,3 +27,6 @@ of `land/pass-shelat-sc-yao` at `e9b03c437aca251846430ff23b40ee5ff3d3347a`. It i
   goes to the post-merge cleanup (re-point after sc-yao merges), and the ledger row stands until then.
 
 Neither item changes the landing branch.
+
+Wording correction (2026-11-16, flagged by the Gate 42 staging): the two `encodeMsgs_eq_encWords` copies were first
+called "verbatim"; they are identical up to bound-variable names, and their docstrings differ.
