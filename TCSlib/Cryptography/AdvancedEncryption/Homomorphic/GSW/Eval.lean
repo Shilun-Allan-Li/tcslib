@@ -55,8 +55,9 @@ open BoolCircuit
 open Encryption.PublicKey
 
 /-- Homomorphic conjunction of a list of ciphertexts: the gadget for the empty list, the
-ciphertext itself for a singleton, and a left-to-right product chain otherwise [Pei16,
-Section 6.1.3; AP14, Corollary 3.6]. The singleton case avoids a needless product. -/
+ciphertext itself for a singleton, and otherwise a right-associative product chain, each head
+multiplied on the left [Pei16, Section 6.1.3; AP14, Corollary 3.6]. The singleton case avoids a
+needless product. -/
 def homAnd (P : Parameters) : List (Ciphertext P) → Ciphertext P
   | [] => gadget P
   | [C] => C
@@ -162,10 +163,11 @@ theorem homGate_encrypts (g : DAGGate) (hfan : g.args.length ≤ 2) (vals : List
   sorry
 
 /-- **Depth-indexed noise growth.** For a circuit of fan-in at most two, if every input
-ciphertext encrypts its input bit with noise at most `β`, then every vertex `v` holds an
-encryption of its value with noise at most `(N+1)^{depthAt v}·β`; in particular the output
-ciphertext has noise at most `(N+1)^{depth}·β` [GSW13, Section 3.3, "the final ciphertext's
-error will be bounded by `(N + 1)^L · B`"].
+ciphertext encrypts its input bit with noise at most `β`, then the output ciphertext
+`eval P Cc cts` encrypts the circuit's output with noise at most `(N+1)^{depth}·β` [GSW13,
+Section 3.3, "the final ciphertext's error will be bounded by `(N + 1)^L · B`"]. The proof
+establishes the stronger invariant `(N+1)^{depthAt v}·β` at every vertex `v` as an intermediate
+step.
 
 **Proof sketch.** Apply the shared `runWith_rel` to `DAGGate.eval` from `List.ofFn x` and
 `homGate P` from `List.ofFn cts`, with
