@@ -187,6 +187,13 @@ def oneTapeMachineFormat : MachineFormat :=
     serialize_eq := oneTape_serialize_eq
     skipTable_eq := oneTape_skipTable_eq }
 
+/-- The machine format's canonical serialization is the one-tape format's:
+`oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α) =
+oneTapeFormat.serialize (oneTapeFormat.decode α)`. -/
+theorem oneTapeMachineFormat_serialize_decode (α : List Bool) :
+    oneTapeMachineFormat.serialize (oneTapeMachineFormat.decode α) =
+      oneTapeFormat.serialize (oneTapeFormat.decode α) := rfl
+
 namespace MachineFormat
 
 variable (F : MachineFormat)
