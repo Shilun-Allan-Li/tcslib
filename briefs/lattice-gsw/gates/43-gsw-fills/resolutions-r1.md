@@ -30,7 +30,7 @@ No Lean change is needed for either PR.
 | GC-04 | note | Editorial only. Nothing. |
 | GC-05 | note, Rule 10 passes | The matcher tooling note is filed in `briefs/pass-shelat-ch5-8/maintainer/tooling-followups.md` (records after the pin). |
 | GC-06 | note | The evidence nits are confirmed; the provenance is adequate. Nothing. |
-| GS-01 | note, **ruling pending** | Seyoon rules on the ledger debt and promotion P-1 (recommended: accept both). The ledger row is written after his ruling. |
+| GS-01 | note | **Ruled (Seyoon, 2026-11-16): ledger debt with payback P-1.** Ledger row DL-50 records it. |
 | GS-02 | minor | The recorded erratum and the corrected P-1 in the gsw-security review stand. The `distAdv_comp` item is **not** an undisclosed re-proof (Codex §GS-02(c)): those steps prove acceptance-probability equalities through seed bijections. |
 | GS-03 | minor, reconstructed | The missing one-line `CacheProbe.lean` reconstructs to the manifested SHA-256 `f8388ee6…`. The review already corrects the delivery-exactness claim. Nothing more. |
 | GS-04 | note | Future fill briefs will ask workers to leave generated `.pyc` files out of deliveries. |
@@ -40,7 +40,7 @@ No Lean change is needed for either PR.
 The pre-existing missing registry entry for `[Vad12]` is a source-registration note. It is added to the DW-7 follow-ups.
 
 **Gate 43 is closed.** The remaining merge conditions are maintainer items:
-- GS-01's ruling, for #338;
+- ~~GS-01's ruling, for #338~~: ruled 2026-11-16 (ledger debt + P-1, DL-50);
 - a combined build of #339 × #338 on the current tip (`201bf57a`, with #327 and #324). It is queued for the next free
   olean tree, together with #331's integration build, and expects admissions 229 → 194.
 
