@@ -45,3 +45,14 @@ clean-up issue base: `Randomized/Build/IterateFind.polyTimeComputable_find` and
 `NumberTheory/Primality.exists_samplePrime_nuppt`. See `conservative-failure-preservation.json`
 and `historical-cleanup-reconciliation.json` for exact module names, lines and hashes.
 This is a recorded inventory input, not a fill dispatch or a claim those proofs are repaired.
+
+## Seal tool: matcher reductions (gsw-core review GC-05, 2026-11-16)
+
+Sealing a definition's generated matcher does not block a reduction through a published reader whose
+statement shares Lean's deduplicated matcher (here `BoolCircuit.instReprGateKind.repr.match_1`, shared by
+`DAGGate.eval` and the statement of `eval_eq`): with the matcher sealed, `match` on constructors through the
+reader still reduces; with `DAGGate.eval` also sealed, a direct `rfl` read fails exactly once while the reader
+route passes. This is a limitation of the seal, not a Rule 10 breach in `homGate_encrypts` (which uses the
+published reader, the brief's route). Follow-up: when a seal's controls include a matcher shared with a
+reader's statement, add a control that reads the definition directly, so the seal's coverage is not
+overstated. Evidence: `briefs/lattice-gsw/fills/gsw-core/final-r1/gsw-core-r1-evidence.zip` (`p2/`).
