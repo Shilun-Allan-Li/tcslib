@@ -45,9 +45,28 @@ Total rule-10 exposure: 35 declarations.
 |---|---|
 | SG1 kind 4 + riders, PL-1 | #334 / gate 145 |
 | SG1-UH | #335 / gate 146: −297 lines instead of the study's +170 to +370 public host |
-| SG1 kinds 1, 2, 5 (R4-2) | Approved with the stop rule; **not started**. What-if exposure: K1 4/4, K2 4/6, K5 0/4, i.e. about 22 proofs to repair, including `clA5Startup` and `satReduction_poly`. That makes the +50 stop line a real risk; recommend it as the next maintainer item, run against the stop rule. |
+| SG1 kinds 1, 2, 5 (R4-2) | Approved with the stop rule; **not started overnight** (maintainer's judgment). What-if exposure: K1 4/4, K2 4/6, K5 0/4, i.e. about 22 proofs to repair, including `clA5Startup` and `satReduction_poly`. See the note after this table. Recommend it as the next maintainer item, run against the +50 stop rule, with the consumer restatement priced first. |
 | SG1 kind 3 | Ruled: cite `Build/EmitIterEmbed`. The private signatures differ (no `m ≤ k` argument, no state map), so it rides with R4-2's host edits. |
 | SG1 kind 6, item 13 | Carried (ruled). |
+
+**Why R4-2 needs care.** Hardness's copy module (`clA5Copy_clean`) and startup (`clA5Startup`) use
+the stop adapter's tape count `D.k` and start state `D.tm.q₀` inside *types*: the words
+`stateWord D.k _` and the configurations `Cfg D.k …`.
+
+- Today the adapter is a same-file definition, so `change` and `simp [clA5StopTM]` may unfold it.
+- Once the adapter is a public definition in another module, every such unfolding is a rule-10
+  read.
+- An equation `stopTM_k : (stopTM C e x).k = C.k` cannot be used by `rw` under the dependent
+  `Cfg`/`stateWord` types (the motive is not type-correct).
+- So the repair is not a substitution. The consumers have to be restated in the adapter's own
+  fields, or go through a `CleanModule`-shaped contract. That is a real rewrite of the 55-line
+  `clA5Startup` and its legacy reads (`initCfg`, `Cfg.init`, `Cfg.ofWords`, `stateWord`,
+  `bufferTape`).
+- Keeping a private alias `clA5StopTM := FinTM.stopTM` would hide new foreign reads in unchanged
+  proofs, so it is not an option.
+
+The study's estimate (−80 to +50 lines) remains plausible, but most of the effort is this
+restatement.
 
 ## R5
 
