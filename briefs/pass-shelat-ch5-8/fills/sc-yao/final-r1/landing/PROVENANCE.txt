@@ -1,0 +1,45 @@
+sc-yao (PS10 Protocol 162.6 / Theorem 163.7, OT-hybrid model) maintainer delivery review r1: landing preparation, 2026-11-16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Nothing pushed, no PR opened.
+
+delivery: exchange/pass-shelat-ch5-8 47c38c479e4be52654cd2c055141dfb64be975c4 ("fill sc-yao: final"); checkpoints
+  f0a9a6163c5c91599147eb550fd5bb929cc68aa0, 816971fc6922646f056a47efd41b1407f762320d, acc868271367d525350da2c1043e7f470f1c0a98,
+  171a341ab208261d7a29865a32260c1640617158. All five commits touch only inbox/fills/sc-yao/ (author/committer Seyoon Ragavan, unsigned).
+worker series: 8 unsigned commits on the issue base 6ce4658db08a1dc2a03a149987197660db078011, tip
+  6e7ef601ad9a05d5e26d09f32eadb9c17a4a6cbc, reproduced by git am with the COMMITS.tsv committer fields and commit.gpgsign=false
+  (local branch review/sc-yao-am, worktree $SP/wt-scyao-am; integrity/git-am-reproduction.txt).
+
+landing: branch land/pass-shelat-sc-yao (local, no upstream), worktree $SP/wt-land-sc-yao (sparse: /* and !/briefs/), created at
+  origin/cryptography/pass-shelat-ch2-4 = f9fda8fe8d11fc68c233df2979a86d356ddfe1ab (contains #313, #318, #319, #323, #326, #332, #333;
+  #324 sc-compose and #327 seq-zk not merged).
+  1. git cherry-pick 6ce4658d..6e7ef601 (environment default: committer Claude <noreply@anthropic.com>, SSH-signed; author Seyoon
+     Ragavan and author dates kept). The committer therefore changes from the delivered series (Seyoon, unsigned) to Claude (signed),
+     as in the sc-garble, sc-ot and seq-zk landings.
+     - commit 1: DAGCircuit.lean's isFaninTwo_iff hunk is byte-identical to the tip's (sc-garble #323) block, so the 3-way merge
+       absorbed it: the rebased commit touches 32 files instead of 33, and DAGCircuit.lean on the landing head equals the tip byte for
+       byte (resolution (i); no separate landing commit needed).
+     - commits 4 and 7: conflict in Yao.lean's `## Main results` bullet with sc-garble's lines; resolved by keeping both: sc-garble's
+       `yaoSeed_good_whp` (proved) bullet, then the worker's `yaoHybrid_polyTime` bullet and (commit 7) the worker's
+       `yaoHybrid_simulators` bullet; the worker's superseded "`yaoSeed_good_whp` (stated; `sorry` ...)" bullet is dropped
+       (resolution (ii); logs cherry-pick-*.log).
+     - range-diff vs the delivered series: 5/8 identical; 1, 4 and 7 differ only by the two items above (range-diff-rebase.txt).
+     - the 68 helpers and Uniform.lean equal the delivered src/ byte for byte; Yao.lean equals the delivered final from the
+       yaoHybrid_polyTime docstring to EOF; the frozen-scope check against the tip's Yao.lean reports 0 violations
+       (yao-scope-vs-tip-pre-le.txt).
+  2. Landing edits, one SSH-signed commit each, trailers Co-Authored-By/Claude-Session as instructed (commits-signing.txt):
+     - 13690d2e9191be063f298fd69fc9ea8ede358233 LE-bullet: "(proved modulo sc-garble)" -> "(proved)" (sc-garble landed).
+     - 81d526d8ff63e9ee5e9209bd5377a0b2b8688b4a LE-reuse: CoinSeedRelabel.assignmentFold_lt_four / assignmentFold_injective
+       re-pointed onto GarblingProbability.assignmentFold_small (.1 a / .2); headers byte-identical; no import change
+       (CoinSeedRelabel -> RelabelGarbling -> SecureComputation.Garbling -> Garbling.CoinBlocks).
+     - bd7832d7fbac20b04db75bc858086b143ba4735b LE-title: drop "(statement phase)" from the Yao.lean module title (the brief left
+       it for the maintainer's landing edit; Yao.lean has no admission after landing). Optional: drop this commit if not wanted.
+  3. Resolution (iii): no clash with #332's DAGCircuit readers (depth_eq, depths_eq, depthAt_eq, getD_lt_depth, runWith_rel) or any
+     other tip declaration: the namespace-resolved scan of all 764 new names against the tip finds exactly one full-name match,
+     DAGCircuit.isFaninTwo_iff, which is the absorbed identical copy (dup/nameclash-tip-new.txt). #332 adds no simp attribute.
+  FINAL landing head bd7832d7fbac20b04db75bc858086b143ba4735b, tree 327f4f643ca8031a34ee46cde396ffa4dfc2a65e, 11 commits
+  (commits.tsv, series/), 70 files changed vs the tip: 68 added, Yao.lean and Uniform.lean modified, +14571/-67.
+  Yao.lean 1179 lines (<= 1200, SY-2), max width 99.
+  4. (Phase 2, maintainer instruction) fast-forwarded to e9b03c437aca251846430ff23b40ee5ff3d3347a (`git merge --ff-only
+     land/pass-shelat-sc-yao-ledoc`; parent bd7832d7, SSH-signed, author/committer Claude): LE-doc by the separate LE-doc job, 64 helper
+     files, code-identical after stripping comments (phase2/ledoc/docstrip.txt; tools/docstrip.py), widths <= 100, largest helper 649
+     lines, Yao.lean untouched. origin/cryptography/pass-shelat-ch2-4 moved to 15d8f01a42f23aa17d8fd305c7e5edde9b602da4 (records only;
+     TCSlib, TCSlib.lean, audits, scripts and the lake files byte-identical to f9fda8fe).
