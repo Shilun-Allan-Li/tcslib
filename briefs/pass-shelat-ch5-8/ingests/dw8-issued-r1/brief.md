@@ -5,9 +5,9 @@ dispatches this job to an external Claude worker. The worker is documentation-on
 Markdown transcriptions and registry rows. It runs no Lean and changes no `.lean` file.
 
 ## Where the PDFs are
-The PDFs are on the **private** repository `sragavan99/tcslib`, branch `sources/pdfs`, folder `pdfs/`. Attach that
-repository to your session; Seyoon owns it. The PDFs must **never** be committed to `Shilun-Allan-Li/tcslib`, which
-is public (DW-7 rule).
+The PDFs are on the exchange branch `exchange/pass-shelat-ch5-8`, folder `inbox/sources/pdfs/`, in the public repository. Seyoon
+approved this on 2026-11-16. Do not copy them anywhere else, and never commit a PDF to the records branch
+`cryptography/pass-shelat-ch2-4`.
 
 | Tag | File | Source | SHA-256 (if known) |
 |---|---|---|---|
@@ -58,7 +58,7 @@ Ingest only what each citation needs:
   - `src/` (the written files);
   - a top-level `SHA256SUMS` listing every delivered file except itself.
 
-  Pull with rebase before pushing. Never force-push, never edit another path, never push a campaign branch, and never push a PDF.
+  Pull with rebase before pushing. Never force-push, never edit another path, never push a campaign branch, and never copy a PDF into the deliverable.
 
 ## REPORT.md must give
 - For each tag: the files and their SHA-256s, the PDF hash, the pages ingested, and the exact citation locations in the library's
