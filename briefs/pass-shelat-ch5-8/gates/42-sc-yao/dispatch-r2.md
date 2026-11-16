@@ -75,4 +75,4 @@ The user dispatches and merges.
 
 The exchange commit `0ddfda33` (on `309071c6`, after the T4 worker's checkpoint 1) and the records (pin `2da7e0f3`, then this staging commit) are pushed.
 
-**Ready to dispatch** once the records files are committed and both the records and the exchange commit are pushed.
+**Ready to dispatch**
