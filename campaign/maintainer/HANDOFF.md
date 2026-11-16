@@ -10,9 +10,9 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 ## 0. Current state (2026-11-16; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
-only go directly after fetch/rebase. The latest merges are #337 (MIG-3, gate 148), #334 (R4-1, gate 145) and #336 (R3a, gate 147), 2026-11-16; the adoption replay of their tip `56ab33df` (output `oleans-c56ab`, 328 modules) is running. #335 (gate 146, CLEAR) then gets its merged-tree replay on that snapshot.
-Campaign Lean is `68cba664c2fcb4e33b4845b385feea3f456d0105`. Its replay output is the cloud snapshot `oleans-c68cb`
-(873 objects; `oleans-c720e` is the fallback); use it whole. See campaign/status/2026-11-16-merge-330/. **Closeout**
+only go directly after fetch/rebase. The latest merges are #337 (MIG-3, gate 148), #334 (R4-1, gate 145) and #336 (R3a, gate 147), 2026-11-16; their tip's adoption replay passed 328/328 and its output is the adopted snapshot `oleans-c56ab` (873 objects; `oleans-c68cb` is the fallback; campaign/status/2026-11-16-merge-334-336-337/). #335 (gate 146, CLEAR) then gets its merged-tree replay on that snapshot.
+Campaign Lean is `56ab33df9e688f7ba9404a8d5d270e3423b293f3`. Its replay output is the cloud snapshot `oleans-c56ab`
+(873 objects; `oleans-c68cb` is the fallback); use it whole. See campaign/status/2026-11-16-merge-334-336-337/. **Closeout**
 (campaign/closeout/PLAN.md, REFACTOR-PLAN.md): the chapter scope has no admission; refactor waves R0, R1a and R2a done (R2c measured and carried). **Overnight 2026-11-16** (Seyoon's authorization: cleanup and dedup on the maintainer's own, audited by Codex in the morning): R3–R6 measured (campaign/closeout/R3-R6-MEASUREMENT.md); four draft PRs built and gated, independent unless noted — #334/gate 145 (R4-1, −161), #335/gate 146 (R4 UH, stacked on #334, −297), #336/gate 147 (R3a, −303), #337/gate 148 (MIG-3, −444). Gates 145–148 are dispatched (Seyoon, 2026-11-16). R4-2 (SG1-B) is not started (analysis in the measurement note). **Ladner's theorem is proved** (`Complexity.ladner`,
 standard axioms only; Ladner.lean has no admission). Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
 (`ladnerH_polyTime`; #321). Fills 5 and 6 proved targets 2 and 5
