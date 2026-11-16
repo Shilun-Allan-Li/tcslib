@@ -288,7 +288,7 @@ private theorem sc_dec_patch_width (w : List Bool) :
   | some v => simpa using sc_dec_success_width w v h
 
 /-- R1d. The decoded shadow of the debit's one-tape start meets both decrement contracts'
-preconditions (state and delimited word). -/
+preconditions: `Turing.decrementTM_shadow_pre`. -/
 private theorem sc_shadow_pre {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
     (ip : Fin (x.length + 2)) (out : List Γ) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
@@ -296,22 +296,16 @@ private theorem sc_shadow_pre {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x 
     (Cfg.decodeSymbols e D).state = some .run ∧
       ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
         (Cfg.decodeSymbols e D).workTapes 0 ((Cfg.decodeSymbols e D).workTapePos 0 + p) =
-          FinTM.bufferTape w p := by
-  intro D
-  refine ⟨Cfg.decodeSymbols_state e D, fun p lo hi => ?_⟩
-  rw [Cfg.decodeSymbols_workTapes, Cfg.decodeSymbols_workTapePos]
-  change (ct (cp + p)).bind (decodeBool e) = _
-  rw [hw p lo hi, FinTM.bufferTape_map_decode]
+          FinTM.bufferTape w p :=
+  decrementTM_shadow_pre e ip out w ct cp hw
 
-/-- R1e. The lifted decrement runs as the overlay of the decrement's run on the shadow, from the
-rich start itself (the side conditions are the promoted table lemmas). -/
+/-- R1e. The lifted decrement runs as the overlay of the decrement's run on the shadow:
+`Turing.decrementTM_liftSymbols_runFrom`. -/
 private theorem sc_lift_run {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
     (D : Cfg 1 Γ FlagPhase x) (t : ℕ) :
     ((decrementTM 1 0).liftSymbols e).runFrom D t =
-      Cfg.liftOver e (by simp) D ((decrementTM 1 0).runFrom (Cfg.decodeSymbols e D) t) := by
-  conv_lhs => rw [← Cfg.liftOver_decodeSymbols e D]
-  exact MultiTapeTM.liftSymbols_runFrom_over e (decrementTM 1 0) (decrementTM_tr_input 0)
-    (fun q inp work j => (decrementTM_tr_action 0 q inp work).2 j) _ D (Cfg.decodeSymbols e D) t
+      Cfg.liftOver e (by simp) D ((decrementTM 1 0).runFrom (Cfg.decodeSymbols e D) t) :=
+  decrementTM_liftSymbols_runFrom e D t
 
 /-- R1f. At every time up to the decrement's exit, the overlay keeps the start's input position
 and output (what `sc_lastLayout` and the frame clause need), and its head is the decrement's. -/
