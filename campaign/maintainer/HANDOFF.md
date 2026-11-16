@@ -23,7 +23,7 @@ fresh probes in campaign/status/2026-11-16-closeout-probes/. Earlier merges are 
 
 | PR / gate | Current state |
 |---|---|
-| #330 / 144 | **Round 1 HOLD (0/1/1); round 2 staged** at `a3c9c2102865e60c4eed295a4b613ef2b85a987c` at `ae4157ddf37ea3520e5d953faef808649b8688d3`. Closeout R2a: `wordPatch` to Catalog, IW-1 and WA-1 retired, eight proofs' legacy reads repaired. Replay 127/127. campaign/gates/144-r2a-wordpatch/. |
+| #330 / 144 | **CLEAR (round 2, 0/0/0), ready to merge** at `a3c9c2102865e60c4eed295a4b613ef2b85a987c` at `ae4157ddf37ea3520e5d953faef808649b8688d3`. Closeout R2a: `wordPatch` to Catalog, IW-1 and WA-1 retired, eight proofs' legacy reads repaired. Replay 127/127. campaign/gates/144-r2a-wordpatch/. |
 | #329 / 143 | **Merged** (`856306d8d`, 2026-11-16); round 1 CLEAR at `ba93b96c566bbb56ec8185cb1c09b708b0169285`. Closeout R1a: BW-1 and CH34-D4 retired by citations. Replay 41/41. campaign/gates/143-r1a-dedup/. |
 | #328 / 142 | **Merged** (`720e2a9c`, 2026-11-16); round 1 CLEAR. Snapshot after both: `oleans-c720e` (873 objects; status/2026-11-16-merge-328-329) at `dcbab37806581f2bd0fd24cb55fee75fcacd2dab`. Closeout W2: remove the RD-2/H6 route (41 admissions). Replay 3/3, 0 admissions. campaign/gates/142-remove-rd2/. |
 | #325 / 141 | **Merged** at `20394834d86a509ad5776c36dbbfccc33b023306` (2026-11-16). Gate closed (CLEAR). Ladner fill 7: target 6 `SAT_H_intermediate`; **Ladner's theorem complete**. Its replay output is the campaign snapshot `oleans-c2039` (876 objects; campaign/status/2026-11-16-merge-325/). |

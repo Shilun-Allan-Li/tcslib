@@ -22,3 +22,7 @@ Round 1 HOLD: 0 blockers, 1 major, 1 minor, 3 notes (`findings.md`, verbatim).
   `counter_debit`, `counter_rounds`, `iw_patch_append`, `iw_patch_true`, `iw_local`) and the
   definition header `iw_prefix`; each change is the patch substitution only. **Pack erratum:**
   round 1's brief item 3 ("five private lemmas") should read eight.
+
+## Round 2
+
+Round 2 CLEAR: 0 blockers, 0 majors, 0 minors, 9 notes (`findings-r2.md`, verbatim). G144-01 and G144-02 confirmed resolved; every residual sweep hit's disposition confirmed. Nothing to resolve.
