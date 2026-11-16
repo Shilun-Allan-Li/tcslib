@@ -1,0 +1,121 @@
+Rule 10 seal suite re-run for pairings PR #331 at its head on the merged tree (gate40-seals-merged)
+Maintainer job, 2026-11-16 UTC. Supplement to the staged Gate 40 round 2 pack.
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+
+Question: the LE-gate40 seals (gate40-le-evidence.zip) ran on the 70c1f444 closure (based on 523d80d2). The #331 head 9e7a9648 is a
+merge onto the tip, after which #326's DTIME/IterateFind changes entered five owners' closures. Do the seals hold on the merged tree?
+Answer: yes. 40/40 seals rc 0 with 0 errors in both forms and install + EOF records; paired controls ALL_OK in both harnesses; the
+explicit-unfold scan is item-for-item identical (164 items, 0 foreign). Request counts grow only where the closure grew (below).
+
+Rules: python3 -I throughout; PATH=$HOME/.elan/bin:$PATH; Lean 4.25.0 cdd38ac5 (checks/git-checks.txt). Lean ran only through
+  scripts/lean_check_tree.sh (build: tools-used/review/runner.py, TCSLIB_OLEANS=$SP/dl-oleans) and through LE-gate40's seal harness
+  tools-used/seal/runner_full.py (`lean -DmaxErrors=0 <probe>.lean`, LEAN_PATH = tree + lake packages, no -o: nothing written to the
+  tree). One Lean process of this job at a time (results.jsonl: 120 runs, each starting after the previous ended). No lake command,
+  no cache get, no commit, branch, checkout or push. /home/user/tcslib was only read (git rev-parse/show/diff/ls-tree/archive/
+  merge-base/cat-file, hash-object without -w). dl-oleans-2 (sc-yao review) was not touched; no process was killed. Nothing was
+  written outside $SP: TMPDIR=$SP/g40m-work/tmp for lean_check_tree.sh's mktemp (emptied, removed).
+
+Head: 9e7a96481785d6cac4dea3b2e990c49ac278b060 (tree 338335013c86f6014c7f617b5cfd3f30f2aabbee), parent 39d42e235a62b7085ffc19b01f371015c20d7795
+  = merge of #331 head 70c1f44432a41bcdb6f6d8602d957d2fc68ce0da and the tip 673a27158338437896c624df32bf5421c6ba45cf.
+  9e7a9648 vs 39d42e23: only Pairing/Assumptions.lean (+3/-3, LE-doc-abs docstrings). merge-base(head, tip) = 673a2715; the current
+  origin tip e8772f5e has no code change vs 673a2715. `git diff 673a2715 9e7a9648` (code paths) = the 13 #331 files, equal to
+  LE-gate40's statements/pr-files.txt. 70c1f444 -> 9e7a9648 changes 52 TCSlib files (closure-diff/head-vs-70c1f444-files.txt).
+
+Inputs (both extracted to fresh $SP/g40m-work/{le-zip,tip-zip}, removed at the end):
+  - briefs/pairings/gates/40-pairings-statements/landing-r1/gate40-le-evidence.zip, SHA-256
+    5be013be1aeb4dd8feb0f3f1f458b1fd0bbab882df80048e2bd043eadbb1d7d5 (= $SP/dl-review copy). SHA256SUMS byte-equal to evidence-SHA256SUMS;
+    448/448 present entries OK; the 5 listed current.pid files are not in the zip (as shipped). README read.
+  - briefs/pairings/gates/40-pairings-statements/integration-tip/int-331-tip-evidence.zip, SHA-256
+    3227f70b77ce455994efe86c90f2fb6b2e3bf8b16a2fffa7508f1a87a6662eb8. SHA256SUMS byte-equal to evidence-SHA256SUMS; 794/794 OK. PROVENANCE read.
+  tools-used/: unmodified copies of int-331-tip's fullorder.py, stateplan.py, restoreplan.py, permod.py, restore_derand.sh,
+  review/runner.py, review/snapshot.py (as snapshot.py); tools-used/seal/ = LE-gate40's tools/ verbatim (diff -r empty). New here:
+  backup_g40m.py (split queue into backup/new, hash-checked backup), closurediff.py, manifest_g40m.py, compare_g40m.py.
+
+Export: $SP/wt-g40m = `git archive 9e7a9648 -- TCSlib audits scripts lakefile.lean lake-manifest.json lean-toolchain` (32.8 MB tar),
+  plus .lake/packages -> /home/user/tcslib/.lake/packages. checks/export-vs-head.txt: all 1450 files' blob hashes equal the head tree.
+  scripts/lean_check_tree.sh byte-equal to the repo copy (366dab40...). Removed at the end (probe file list with hashes:
+  rule10/probe-files-in-worktree.txt, 79 files).
+
+Tree: $SP/dl-oleans, tree/snapshot-pre.txt: 1230 files, 0 empty dirs, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f
+  (the required value). state/state-init.json (stateplan init keyed at eff2dcd0) is byte-equal to int-331-tip's state-init.json.
+
+Build (int-331-tip method):
+  - order/order.txt (fullorder.py at 9e7a9648): closure of the 10 owners + TCSlib/Cryptography/Pairing + TCSlib/Cryptography/KeyExchange
+    (the axioms probe's imports) = 109 modules (order/order-owners.txt: the 10 owners alone, 107). Root TCSlib not built.
+  - plan/ (stateplan plan): build 41 (20 snapshot oleans overwritten + 21 new), reuse 68. tree/to-backup.txt, new-oleans.txt,
+    backed-up.txt: the 20 were copied to $SP/g40m-work/bk and hash-checked against snapshot-pre (backup_g40m.py; sha256sum -c OK).
+  - No Mathlib overlay: no closure module imports NthRootLemmas; all 75 external imports have oleans in the pinned package build.
+  - build/ (run-build.sh, detached): 41/41 rc 0; error: 0; error( 0; substring "error" 0; 39 sorry warnings, 58 warnings;
+    13:03:50-13:05:47 UTC, max RSS 2.7 GB (build/per-module.tsv). Sorry warnings: Pairing/Assumptions 1 (T1), BonehBoyenMachine 1 (T4),
+    BonehBoyenSecurity 2 (T2, T3), and 35 in the tip's GSW statement-phase modules (#333) and Hashing/SIS/Columns.
+  - state: update took 41; check over the 109-module order -> RESULT OK (state/statecheck.txt).
+  - checks/olean-vs-int331tip.txt: 40 of the 41 oleans are byte-equal to int-331-tip's build of 39d42e23. The only difference is
+    Pairing/Assumptions (its source differs by LE-doc-abs); its dependents' oleans are equal.
+  - closure-diff/owners-70c1f444-vs-9e7a9648.txt: DTIME and IterateFind changed in the closures of Operations, BonehBoyenMachine,
+    BonehBoyenSecurity, IdentityBased and AdvancedEncryption (the five owners). Assumptions (LE-doc-abs) is in the closures of Joux,
+    Machine, Security, IdentityBased and AdvancedEncryption. The AdvancedEncryption facade now also imports Homomorphic (GSW, #333),
+    so its closure grows 81 -> 105 modules (+24). The other owners' closures keep the same module sets.
+
+Seals (rule10_g40m.sh, detached; rule10-runner.out; 13:06:06-13:57:54 UTC). This is LE-gate40's rule10_g40.sh with these changes only:
+  (a) the worktree is the export, not a git worktree, so H is passed explicitly and mkseals' `git -C <wt> show <H>:<path>` reads the
+  repository's object store through GIT_DIR=/home/user/tcslib/.git (read-only); (b) the collector is regenerated with mkcollect.py
+  (owners, title "LE-gate40 collector") and is byte-equal to LE-gate40's (2cf19d58...); the axioms probe is LE-gate40's byte for byte
+  (315f2a25...); (c) mkctl_g40.py is used at its final (attempt-2) state, so the controls run in the same single runner pass as the
+  seals (LE-gate40 re-ran them as controls_r2); (d) touched-after.json and the scan file list use the PR's own diff on the merged tree,
+  673a2715..9e7a9648 (LE-gate40 used 523d80d2..70c1f444). Both give the same 13 files (12 scanned). The 144 touched declarations are
+  identical in name, span and status.
+  - Collector (rule10/probe-runs): rc 0. compare/collector-vs-le-gate40.txt: the ROOT rows (stored constants and their term references)
+    for all 10 owners are identical (384 lines). CAT has 1620 -> 1848 rows (+228, 0 removed, 0 changed). CLOSURE is unchanged except
+    AdvancedEncryption (81 -> 105).
+  - Axioms probe: rc 0; axioms/AxiomsHead.log is byte-equal to LE-gate40's (6ff0dcb1..., 384 constants, sorryAx only in T1-T4 and
+    bb1_sidSecure).
+  - 40 seal probes (rule10/seals{,-coe}/{A,B}, seals-*.tsv, seal-runs/): strict A, strict B, coe A, coe B are each 10/10 rc 0,
+    error: 0, error( 0 (also 0 log lines containing either substring), install + EOF records 10/10, failing declarations none.
+    16 sorry warnings (T1-T4 in each variant), the same per probe as LE-gate40. coe A is the canonical variant.
+  - Paired controls (rule10/controls-{strict,coe}, ctlcheck-*.{log,json}): 18 probes per harness, ALL_OK True in both. 9 sealed probes per
+    harness rc 1 with 43 errors = the 43 expected sealed negatives, each failing exactly once (all `error:` form, 0 `error(`). The readers
+    pass. 9 unsealed probes rc 0, 0 errors. No stray errors.
+  - Explicit-unfold scan (scan/): 164 items: THEOREM 116, LOCAL_OR_UNRESOLVED 40, OWNED_DEFINITION 8, 0 foreign. ScanKindsHead rc 0.
+  - Manifest (rule10/manifest.{json,tsv}, manifest-summary.txt; manifest_g40m.py): 79 probes (40 seals, 36 controls, collector, axioms,
+    scan) are bound to their bytes, with 0 binding failures. Each seal record's source SHA-256 = `git show 9e7a9648:<path>` = the export
+    file. Its probe SHA-256 = the stored <label>.lean.txt = the runner's recorded source hash, and the log SHA-256 = the runner's. Each
+    control and probe source is bound to its stored copy in the same way. The error forms are counted separately, and their sum equals
+    the runner's combined count.
+
+Comparison with LE-gate40 (compare/; compare_g40m.py):
+  - Request counts (old -> new; the same deltas in strict A/B and coe A/B):
+      Group 567/568/567/568 (A/B/coeA/coeB), Assumptions 644/645/643/644, Joux 651/652/650/651, Defs 805/806/804/805,
+        BonehBoyen 840/841/839/840: unchanged (0 rows added or removed).
+      Operations, BonehBoyenMachine, BonehBoyenSecurity, IdentityBased: +4 each (Operations 931 -> 935 strict A; the three AE owners
+        1100 -> 1104 strict A). The 4 rows are #326's IterateFind match auxiliaries: Complexity.IterateFind.computesFunInTime_find.match_1_1
+        and three private `.splitter` definitions (computesFunInTime_find.match_1_1, polyTimeComputable_find.match_1,
+        Turing.FinTM.loop_find_run.match_1). DTIME's #326 change adds only theorems, so it adds no rows.
+      AdvancedEncryption: +148 (1100 -> 1248 strict A; 1101 -> 1249 B; 1099 -> 1247 coe A; 1100 -> 1248 coe B). These are the 4
+        IterateFind rows plus 144 definitions of the 24 modules that the merged facade now imports (GSW 34, DAGCircuit 47,
+        Randomized.Classes 24, LWE 13, Regev 10, SIS 7, Lossy.Gadget 4, RandomBits 3, LeftoverHash/UniversalHashing 2;
+        compare/seal-rows-summary.txt). AdvancedEncryption stores no constants (facade), so these are closure rows only.
+    No seal has a row removed or changed. Term readers and term exclusions are identical for all 40. Stored constants are identical.
+    Source differs only for Assumptions (LE-doc-abs) and the AdvancedEncryption facade (merge resolution).
+  - Results: identical. 40/40 rc 0 with 0 errors before and after; failing declarations none before and after.
+  - Controls: same outcome, same 43 expected sealed failures, and the same per-control error vectors and rc for all 18 probes per harness.
+    The one difference is by design. The covering-subset chooser picks, per row target, the record with the fewest requests containing
+    it. In LE-gate40, AdvancedEncryption tied with IdentityBased at 1100 and won the label tie-break. It now has 1248 requests, so
+    ControlS/U_{A,B}_Cryptography_AdvancedEncryption are replaced by ControlS/U_{A,B}_Cryptography_AdvancedEncryption_IdentityBased
+    (the same rows, the same per-control results; compare/controls-scan-vs-le-gate40.txt pairs them).
+  - Scan: item-level identical (only-old 0, only-new 0). Axioms log byte-equal.
+
+Restore (finish-restore.sh = tools-used/restore_derand.sh with a temporary tools -> tools-used symlink, removed; then restoreplan):
+  - Before the restore (restore/pre-restore-delta*): extra 21 (= new-oleans.txt) and changed 5 (DAGCircuit, DTIME, IterateFind,
+    Randomized/Classes, BitLists; all in backed-up.txt). The other 15 rebuilt snapshot oleans were byte-equal to the snapshot.
+  - restore-log.txt: backup hash failures 0; 20 restored; 21 new oleans deleted; no Mathlib overlay and no probe oleans existed;
+    the emptied dirs were pruned (empty-dirs-before-prune.txt).
+  - tree/snapshot-post.txt: 1230 files, 0 empty dirs, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f.
+    It is byte-identical to snapshot-pre (SNAPSHOT EQUAL). restoreplan (no --delete): extra 0, changed 0, missing 0. A second
+    independent snapshot (restore/snapshot-verify.txt) matches too, and a third, taken just before the cleanup
+    (restore/snapshot-before-cleanup.txt), matches as well.
+  - The backup dir, the export, TMPDIR and the evidence extracts were removed afterwards.
+
+Not done (out of scope): root TCSlib build, lint, admissions census.
+results.jsonl: every Lean run of this job in time order: build (41), collector + axioms (2), seals + controls (76), scan kinds (1).
+SHA256SUMS: every file here except itself (paths without "./"). ../gate40-seals-merged-evidence.zip holds exactly these paths plus
+  SHA256SUMS, under gate40-seals-merged/.
