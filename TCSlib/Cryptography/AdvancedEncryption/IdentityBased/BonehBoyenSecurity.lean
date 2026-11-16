@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine
 import TCSlib.Cryptography.Pairing.Assumptions
-import TCSlib.Cryptography.Pairing.Operations
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -33,7 +33,9 @@ tuple drawn from `P_BDH` (`real`) or `R_BDH`. The security proof has three named
 2. `bb1_sim_random`: on `R_BDH`, the simulation does not depend on the challenge bit;
 3. `exists_bb1_distinguisher`: the simulation is, up to a negligible statistical term, the
    Decision BDH experiment of a non-uniform PPT distinguisher (the machine step: handler theorem
-   T1 with exponents drawn from coin blocks).
+   T1 with exponents drawn from coin blocks). It is stated in its own module,
+   `AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean`, so that it can be filled
+   independently of steps 1 and 2 (ruling Q11 of `PairingCryptographyPlan.md`).
 `bb1_sidSecure` assembles them by the triangle inequality.
 
 **Deviation:** the paper's `B` draws the challenge bit itself and outputs `[b = b']`; here there
@@ -47,7 +49,8 @@ None: the simulator (`bb1SimImpl`, `bb1SimGame`) is defined beside the scheme, i
 
 ## Main results
 
-* `bb1_sim_real`, `bb1_sim_random`, `exists_bb1_distinguisher` — the three steps.
+* `bb1_sim_real`, `bb1_sim_random` — steps 1 and 2 (step 3, `exists_bb1_distinguisher`, is in
+  `AdvancedEncryption.IdentityBased.BonehBoyenMachine`).
 * `bb1_sidSecure` — [BB04, Theorem 4.1] at depth 1.
 
 ## References
@@ -100,28 +103,6 @@ bijection of `G_T`, so exchanging the sample of `T` with the rest of the game
 outside the message space are refused in both games. -/
 theorem bb1_sim_random (A : NUPPT) (q : ℕ) (κ : ℕ) :
     advantage (bb1SimGame G ℓ A q false false κ) (bb1SimGame G ℓ A q true false κ) = 0 := by
-  sorry
-
-/-- **Step 3: the simulation is a Decision BDH distinguisher**: with efficient group operations
-`O` and the arithmetic bundle `H`, for every adversary `A` and polynomial budget `q` there are
-non-uniform PPT distinguishers `D_b` and a negligible `σ` with
-`|Pr[bb1SimGame … b real = 1] − Pr[dbdhGame (D_b) real = 1]| ≤ σ(κ)` for both tuple
-distributions.
-
-**Proof sketch.** `D_b` parses `⟨d, ⟨g, ⟨X, ⟨Y, ⟨Z, T⟩⟩⟩⟩⟩` and runs `A` with the handler of
-`bb1SimImpl`: group operations by `O.mulG`, `O.powG`, `O.mulT`, membership by `O.memT`, exponent
-arithmetic modulo `p = O.orderStr d` with `H` (negation, difference, inverse via `xgcd`,
-product), and `α_1` and every `r` read from its own coin blocks by the rejection sampler
-`Candidates.sampleBelowL` with `wG(κ)`-bit trials (`p ≤ 2^{wG}`, as `encG` is injective). The
-handler is polynomial-time with polynomial state, so the handler theorem
-`Games.exists_handlerMachine` (T1) makes the run a machine whose output is exactly `A`'s guess
-in a game equal to `bb1SimGame` with sampled instead of ideal exponents. The at most `q(κ) + 1`
-sampled exponents are each within `2^{−κ}` of uniform (`statClose_sampleBelowL`), so
-`σ(κ) = (q(κ) + 1) · 2^{−κ}` works (hybrid over the samples). -/
-theorem exists_bb1_distinguisher (H : Candidates.ArithmeticFP) (O : G.Ops) (A : NUPPT)
-    (q : PolyExpr) :
-    ∃ D : Bool → NUPPT, ∃ σ : ℕ → ℝ, Negligible σ ∧ ∀ (b real : Bool) (κ : ℕ),
-      advantage (bb1SimGame G ℓ A (q.eval κ) b real κ) (G.dbdhGame (D b) real κ) ≤ σ κ := by
   sorry
 
 /-- **BB1 is IND-sID-CPA secure under Decision BDH** [BB04, Theorem 4.1, at depth `ℓ = 1`]: if

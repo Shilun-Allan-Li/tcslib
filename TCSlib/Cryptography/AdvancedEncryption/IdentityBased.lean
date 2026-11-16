@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.Defs
 import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine
 import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity
 
 set_option maxHeartbeats 0
@@ -19,8 +20,10 @@ set_option autoImplicit false
   (IND-sID-CPA).
 * `BonehBoyen`: the Boneh–Boyen BDH-based system (BB1) over a bilinear group generator and its
   correctness.
-* `BonehBoyenSecurity`: the paper's simulator as a game, and IND-sID-CPA security of BB1 under
-  Decision BDH.
+* `BonehBoyenMachine`: the simulator as a non-uniform PPT Decision BDH distinguisher (step 3 of
+  the security proof).
+* `BonehBoyenSecurity`: the coupling steps of the security proof, and IND-sID-CPA security of
+  BB1 under Decision BDH.
 
 ## References
 
