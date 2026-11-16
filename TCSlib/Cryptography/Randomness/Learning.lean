@@ -6,13 +6,17 @@ import TCSlib.LearningTheory.PAC
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
+import TCSlib.Cryptography.Randomness.Learning.Sample
+import TCSlib.Cryptography.Randomness.Learning.Distinguisher
+import TCSlib.Cryptography.Randomness.Learning.Law
+import TCSlib.Cryptography.Randomness.Learning.Random
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Pseudorandom functions make an unlearnable concept class (statement phase)
+# Pseudorandom functions make an unlearnable concept class
 
 [PS10, §8.1, Theorem 179.1]: if pseudorandom functions exist, there is a p.p.t.-decidable
 concept class that no non-uniform p.p.t. learner can learn: given polynomially many labelled uniform
@@ -36,13 +40,25 @@ notions are those of the information-theoretic layer `TCSlib.LearningTheory.PAC`
 
 * `Randomness.prfConcept_decidable` (Thm 179.1, part (a), proved): membership is
   polynomial-time decidable given the key.
-* `Randomness.predictAdv_prfConcept_negligible` (Thm 179.1, part (b), stated; a `sorry` under the
-  source's sketch): every efficient learner's prediction advantage is negligible.
+* `Randomness.predictAdv_prfConcept_negligible` (Thm 179.1, part (b), proved): every efficient
+  learner's prediction advantage is negligible.
 * `Randomness.not_weakLearnsUnder_prfConcept` (Thm 179.1, part (c), proved from (b) and the PAC
   layer's bridge): no efficient learner weakly PAC-learns the class under the uniform distribution
   with a constant edge `γ` at fixed failure probability `δ < γ`. Amplifying a KV94-style
   weak learner changes the learner and its resources; that amplification and its resource
   bridge are additional results, not a construction already supplied by part (c).
+
+## Contents
+
+This file states the class, the learner and Theorem 179.1, and assembles the proof of part (b)
+from the helper modules under `Learning/` (namespace `Randomness.LearnPRF`):
+- `Sample`: the learner's input and the last label as polynomial-time functions of the encoded
+  tuple of query points and answers (`learnIn`, `lastLabel`);
+- `Distinguisher`: the PRF distinguisher built from a learner (`exists_learnDist`);
+- `Law`: the prediction game and the distinguisher's acceptance probability as one uniform
+  probability (`predictSuccess_eq_uprob`, `gameProb`, `exists_learnDist_acceptProb`);
+- `Random`: with a uniform random function the prediction is within `m/2^n` of `½`
+  (`abs_gameProb_random_sub_half_le`).
 
 ## References
 
@@ -103,18 +119,73 @@ a PRF, then for every non-uniform PPT learner `A` and polynomial number `m` of e
 prediction advantage `|Pr[A predicts C_k(x)] − ½|` at uniform `k`, uniform examples and a fresh
 uniform `x` is negligible.
 
-**Proof sketch** (the source's, made explicit).
-1. The distinguisher `D` against the PRF draws `m(n) + 1` uniform points, queries its oracle at
-   them, labels the first `m(n)` with the answers' first bits, runs `A` on the labelled sample and
-   the last point, and outputs whether `A`'s prediction equals the last answer's first bit. With
-   `f_k` this is the prediction game. `D` is a machine by T1 (non-adaptive queries).
-2. With a random function, the last point's label is a uniform bit independent of the sample,
-   unless the last point was sampled, with probability at most `m(n)/2^n`. So `D` accepts with
-   probability at most `½ + m(n)/2^n`, and at least `½ − m(n)/2^n`.
-3. Hence the advantage is at most the PRF advantage plus `m(n)/2^n`: negligible. -/
+**Proof sketch** (the source's, made explicit; the delivered proof).
+1. **The distinguisher and the real game.** The next-query machine `D` of
+   `LearnPRF.exists_learnDist_acceptProb` takes `m(n) + 1` uniform points from its coins, queries
+   its oracle at them (the non-adaptive query chain `MultiMsg.exists_queryChain_nuppt`), labels
+   the first `m(n)` with the answers' first bits, runs `A` (with its own coins) on the labelled
+   sample and the last point, and accepts when `A`'s prediction equals the last answer's first
+   bit. Against any keyed family its acceptance probability is a uniform probability over the
+   key, the examples, the coins and the fresh point (`LearnPRF.gameProb`); with `f_k` this is
+   the prediction game (`LearnPRF.predictSuccess_eq_uprob`), so
+   `predictSuccess = acceptProb (F n) D`. The fresh point may equal an example, in both.
+2. **The random function.** With a uniform random function `R`, for `n ≥ 1`: when the last point
+   is none of the examples, flipping the first bit of `R` there exchanges winning and losing
+   functions, so `D` wins with probability exactly `½`; the last point is an example with
+   probability at most `m(n)/2^n` (union bound). So `|acceptProb R D − ½| ≤ m(n)/2^n`
+   (`LearnPRF.abs_gameProb_random_sub_half_le`).
+3. **The bound.** For `n ≥ 1`, `predictAdv ≤ prfAdv (F n) (D^{m(n)+1}) + m(n)/2^n`, which is
+   negligible by `PRF.negligible_prfAdv` (budget `m + 1`), `EnsembleLemmas.negligible_polyExpr_mul`
+   with `negligible_two_pow_neg`, and `Negligible.add`; the eventual bound gives negligibility
+   (`Negligible.mono` from `n = 1`, so `n = 0` needs no case). -/
 theorem predictAdv_prfConcept_negligible (hF : PRF F) (A : NUPPT) (m : PolyExpr) :
     Negligible fun n => predictAdv (prfConcept F n) (m.eval n) (learnerOf A n (m.eval n)) := by
-  sorry
+  obtain ⟨B, hB⟩ := LearnPRF.exists_learnDist_acceptProb A m
+  -- The owned learner and concept are the helpers' `learnerFn` and `firstBit`.
+  have hL : ∀ n, learnerOf A n (m.eval n) = LearnPRF.learnerFn A n (m.eval n) := fun n => by
+    funext S r x
+    rw [learnerOf_eq, LearnPRF.learnerFn_eq, encodeSample_eq]
+  have hC : ∀ n (k : Fin n → Bool), prfConcept F n k = fun x => LearnPRF.firstBit (F n k x) :=
+    fun n k => funext fun x => by rw [prfConcept_eq, LearnPRF.firstBit_eq]
+  -- Step 1: the prediction game is the distinguisher's game with `f_k`.
+  have hreal : ∀ n, predictSuccess (prfConcept F n) (m.eval n) (learnerOf A n (m.eval n)) =
+      acceptProb (F n) (oracleDist (B.toOracleAdversary n n n (m.eval n + 1))) := by
+    intro n
+    rw [hB, LearnPRF.predictSuccess_eq_uprob, LearnPRF.gameProb_eq, hL]
+    simp only [hC]
+  -- Step 2: with a random function the acceptance probability is within `m(n)/2^n` of `½`.
+  have hrand : ∀ n, 0 < n →
+      |acceptProb (randomFunction (Fin n → Bool) (Fin n → Bool))
+          (oracleDist (B.toOracleAdversary n n n (m.eval n + 1))) - 1 / 2| ≤
+        (m.eval n : ℝ) / 2 ^ n := by
+    intro n hn
+    rw [hB]
+    have h := LearnPRF.abs_gameProb_random_sub_half_le hn (m.eval n)
+      (LearnPRF.learnerFn A n (m.eval n))
+    rwa [show (fun R : (Fin n → Bool) → (Fin n → Bool) => R) =
+      randomFunction (Fin n → Bool) (Fin n → Bool) from
+        funext fun R => (randomFunction_apply _ _ R).symm] at h
+  -- Step 3: the bound, negligible by PRF security and `m(n)/2^n → 0`.
+  have hQ : ∀ n, (PolyExpr.add m (.const 1)).eval n = m.eval n + 1 := fun n => by
+    rw [PolyExpr.eval_add, PolyExpr.eval_const]
+  have hprf := hF.negligible_prfAdv B (.add m (.const 1))
+  simp only [hQ] at hprf
+  have hpow : Negligible fun n => (m.eval n : ℝ) / 2 ^ n := by
+    refine (EnsembleLemmas.negligible_polyExpr_mul m negligible_two_pow_neg).mono
+      ⟨0, fun n _ => le_of_eq ?_⟩
+    rw [inv_pow, div_eq_mul_inv]
+  refine (hprf.add hpow).mono ⟨1, fun n hn => ?_⟩
+  have h₁ := hrand n (by omega)
+  have h₂ := prfAdv_nonneg (F n) (B.toOracleAdversary n n n (m.eval n + 1))
+  have h₃ : (0 : ℝ) ≤ (m.eval n : ℝ) / 2 ^ n := by positivity
+  rw [predictAdv_eq, hreal, abs_abs, abs_of_nonneg (add_nonneg h₂ h₃), prfAdv_def, distAdv_def]
+  calc _ ≤ |acceptProb (F n) (oracleDist (B.toOracleAdversary n n n (m.eval n + 1))) -
+          acceptProb (randomFunction (Fin n → Bool) (Fin n → Bool))
+            (oracleDist (B.toOracleAdversary n n n (m.eval n + 1)))| +
+        |acceptProb (randomFunction (Fin n → Bool) (Fin n → Bool))
+            (oracleDist (B.toOracleAdversary n n n (m.eval n + 1))) - 1 / 2| :=
+        abs_sub_le _ _ _
+    _ ≤ _ := by linarith
 
 /-- **Theorem 179.1 (c): no efficient weak PAC learner** under the uniform distribution: for edges
 `δ < γ ≤ ½`, every efficient learner fails to `(γ, δ)`-weakly learn the class from some
