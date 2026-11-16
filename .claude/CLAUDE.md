@@ -8,6 +8,8 @@ This directory contains a coordinated multi-agent system for writing Lean 4 proo
 > [`workflow.md`](../workflow.md) §6–6.1 (`scripts/lean_check_tree.sh`, merged-tree replays
 > against a snapshot kept at the branch tip). The editor-only guidance below is for
 > interactive proof work.
+> External jobs, the exchange branch and the worker routes (Codex in the cloud for audits; Codex
+> locally or Claude in the cloud for fills) are in `workflow.md` §4.1.
 
 ## Core Principle: The Sorry Ladder
 
