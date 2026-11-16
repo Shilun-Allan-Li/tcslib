@@ -1011,13 +1011,18 @@ private lemma counter_debit {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq
   refine ⟨?_, ?_, ?_, ?_⟩
   · rw [run cost le_rfl, spec.1, layout, counter_layout]
     apply Cfg.ext
-    · cases hd : decFixed w <;> simp [Cfg.mapState, Cfg.liftOver, Cfg.liftSymbols,
+    · cases hd : decFixed w <;> simp [Cfg.mapState_state, Cfg.mapState_inputPos,
+        Cfg.mapState_workTapes, Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.liftOver_state,
+        Cfg.liftOver_inputPos, Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos,
+        Cfg.liftOver_output, Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes,
+        Cfg.liftSymbols_output,
         emb, counterLoopDecExit]
     · apply Fin.ext
       simp only [Cfg.mapState_inputPos, Cfg.liftOver_inputPos, z, Cfg.decodeSymbols_inputPos, D]
     · funext j p
       refine Fin.lastCases ?_ (fun i => ?_) j
-      · simp only [Cfg.mapState, Fin.lastCases_last]
+      · simp only [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+          Cfg.mapState_workTapePos, Cfg.mapState_output, Fin.lastCases_last]
         rw [Cfg.liftOver_workTapes]
         simp only [z, Cfg.decodeSymbols_workTapes, Cfg.decodeSymbols_workTapePos]
         change (if (if True ∧ cp ≤ p ∧ p < cp + (w.length : ℤ)
@@ -1043,30 +1048,52 @@ private lemma counter_debit {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq
               simp only [hb, Option.map_some, decodeBool_eq_some e γ _ decoded]
           · rfl
         · simp only [if_neg hp, if_true]
-      · simp only [Cfg.mapState, Fin.lastCases_castSucc]
+      · simp only [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+          Cfg.mapState_workTapePos, Cfg.mapState_output, Fin.lastCases_castSucc]
     · funext i
       simp only [Cfg.mapState_workTapePos, Cfg.liftOver_workTapePos, z,
         Cfg.decodeSymbols_workTapePos]
       rfl
-    · simp [Cfg.mapState, Cfg.liftOver, Cfg.liftSymbols, z, Cfg.decodeSymbols, D]
+    · simp [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+        Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.liftOver_state, Cfg.liftOver_inputPos,
+        Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos, Cfg.liftOver_output,
+        Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes, Cfg.liftSymbols_output, z,
+        Cfg.decodeSymbols_state, Cfg.decodeSymbols_inputPos, Cfg.decodeSymbols_workTapes,
+        Cfg.decodeSymbols_workTapePos, Cfg.decodeSymbols_output, D]
   · intro t ht
     rw [run t (by omega), layout]
     have hc := spec.2.1 t ht
     cases hs : ((decrementTM 1 0).runFrom z t).state with
-    | none => simp [Cfg.mapState, Cfg.liftOver, Cfg.liftSymbols, hs]
+    | none => simp [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+        Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.liftOver_state, Cfg.liftOver_inputPos,
+        Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos, Cfg.liftOver_output,
+        Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes, Cfg.liftSymbols_output, hs]
     | some f =>
       cases f with
-      | run => simp [Cfg.mapState, Cfg.liftOver, Cfg.liftSymbols, hs, emb, counterLoopDecExit]
+      | run => simp [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+          Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.liftOver_state,
+          Cfg.liftOver_inputPos, Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos,
+          Cfg.liftOver_output, Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes,
+          Cfg.liftSymbols_output, hs, emb, counterLoopDecExit]
       | rewind b =>
-        simp [Cfg.mapState, Cfg.liftOver, Cfg.liftSymbols, hs, emb, counterLoopDecExit]
+        simp [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+            Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.liftOver_state,
+            Cfg.liftOver_inputPos, Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos,
+            Cfg.liftOver_output, Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes,
+            Cfg.liftSymbols_output, hs, emb, counterLoopDecExit]
       | done b => exact False.elim (hc b hs)
   · intro t ht
     rw [run t ht, layout]
-    simpa only [Cfg.mapState, Fin.lastCases_last, Cfg.liftOver, Cfg.liftSymbols] using
+    simpa only [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+        Cfg.mapState_workTapePos, Cfg.mapState_output, Fin.lastCases_last, Cfg.liftOver_state,
+        Cfg.liftOver_inputPos, Cfg.liftOver_workTapes, Cfg.liftOver_workTapePos,
+        Cfg.liftOver_output, Cfg.liftSymbols_inputPos, Cfg.liftSymbols_workTapes,
+        Cfg.liftSymbols_output] using
       spec.2.2 t ht
   · intro t ht j
     rw [run t ht, layout]
-    simp only [Cfg.mapState, Fin.lastCases_castSucc]
+    simp only [Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes,
+        Cfg.mapState_workTapePos, Cfg.mapState_output, Fin.lastCases_castSucc]
 
 /-- The body phase executes its entry action once, then uses guarded transport.
 **Proof sketch.** The entry action reads the forwarding embedding. After that
@@ -1401,15 +1428,8 @@ theorem counterLoopTMVia_run_done {k : ℕ} {Γ S : Type} [DecidableEq S] [Decid
     (by simp [width])] at debit
   have fill : wordPatch ct cp ((List.replicate w.length true).map e) =
       (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some (e true) else ct q) := by
-    funext q
-    simp only [wordPatch_apply, List.length_replicate, List.map_replicate]
-    split_ifs with h
-    · have hp : 0 ≤ q - cp := by omega
-      have hn : (q - cp).toNat < w.length := by omega
-      have h0 : ((q - cp).toNat : ℤ) = q - cp := Int.toNat_of_nonneg hp
-      nth_rw 1 [← h0]
-      rw [FinTM.bufferTape_nat, List.getElem?_replicate_of_lt hn]
-    · rfl
+    rw [List.map_replicate]
+    exact wordPatch_replicate ct cp w.length (e true)
   rw [fill] at debit
   have time : (∑ r ∈ Finset.range d, τ (counterLoopOrbit M τ c r)) +
       counterOverhead w (d + 1) =

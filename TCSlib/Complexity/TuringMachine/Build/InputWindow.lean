@@ -208,15 +208,12 @@ private theorem iw_join_step {z : List Bool} (c : Cfg 2 Bool (CounterLoopState B
   rw [iw_one iw_machine c .escape hc]
   simp only [iw_machine, FinTM.controlAction_apply, moveInputPos_zero]
 
-/-- The all-true underflow word has exactly the counter loop's reported tape contents. -/
+/-- The all-true underflow word has exactly the counter loop's reported tape contents:
+`Turing.wordPatch_replicate`. -/
 private theorem iw_patch_true (ct : ℤ → Option Bool) (cp : ℤ) (width : ℕ) :
     wordPatch ct cp (List.replicate width true) =
-      fun q => if cp ≤ q ∧ q < cp + (width : ℤ) then some true else ct q := by
-  funext q
-  simp only [wordPatch_apply, List.length_replicate]
-  split_ifs with h
-  · rw [FinTM.bufferTape_eq, if_pos (by omega), List.getElem?_replicate_of_lt (by omega)]
-  · rfl
+      fun q => if cp ≤ q ∧ q < cp + (width : ℤ) then some true else ct q :=
+  wordPatch_replicate ct cp width true
 
 /-- The two-tape copier stops after the available window, with its counter width preserved.
 

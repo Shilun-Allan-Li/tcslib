@@ -96,7 +96,8 @@ one framed contract and one trace serve them all.
 * `Turing.wordPatch` — a tape with a word written over an interval, with its equation
   `Turing.wordPatch_apply`, its cells `Turing.wordPatch_of_mem` and `Turing.wordPatch_of_not_mem`
   (the specification API, user 2026-10-16), `Turing.wordPatch_append` (adjacent patches join),
-  `Turing.wordPatch_self`, `Turing.wordPatch_twice` and `Turing.wordPatch_frame` (same-width patches).
+  `Turing.wordPatch_self`, `Turing.wordPatch_twice` and `Turing.wordPatch_frame` (same-width patches),
+  and `Turing.wordPatch_replicate` (a constant word).
 * `Turing.transferTM`, `Turing.copyTM`, `Turing.clearTM`,
   `Turing.compareTM`, `Turing.incrementTM`.
 * Part 3: `Turing.tapeAction`, `Turing.inputMoveAction` (one-tape
@@ -564,6 +565,20 @@ theorem wordPatch_frame {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u v : 
     · rw [hu (-1) le_rfl (by omega), FinTM.bufferTape_left, FinTM.bufferTape_left]
     · rw [hu _ (by omega) (by omega)]
       simp [huv]
+
+/-- **Patching a constant word**: patching `n` copies of `a` at `cp` writes `a` on
+`[cp, cp + n)` and keeps every other cell.
+
+**Proof sketch.** Inside the interval the constant word's buffer reads `a` at every offset;
+outside it the patch is the original tape. -/
+theorem wordPatch_replicate {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (n : ℕ) (a : Γ) :
+    wordPatch ct cp (List.replicate n a) =
+      fun q => if cp ≤ q ∧ q < cp + (n : ℤ) then some a else ct q := by
+  funext q
+  simp only [wordPatch_apply, List.length_replicate]
+  split_ifs with h
+  · rw [FinTM.bufferTape_eq, if_pos (by omega), List.getElem?_replicate_of_lt (by omega)]
+  · rfl
 
 /-- **Extending a written prefix writes exactly its next cell** (design §12.6; public
 since the §12.8 fill, so that every writing sweep cites it). Writing `w[r]` at `a + r` on
@@ -1196,7 +1211,7 @@ private lemma catalog_write_middle {Symbol : Type*} (f : ℤ → Option Symbol) 
     simp only [List.length_append, List.length_cons]
     split_ifs with h
     · have h0 : 0 ≤ q - z := by omega
-      simp only [FinTM.bufferTape, if_pos h0, List.getElem?_append]
+      simp only [FinTM.bufferTape_eq, if_pos h0, List.getElem?_append]
       by_cases hlt : (q - z).toNat < pre.length
       · simp [hlt]
       · have he : (q - z).toNat - pre.length = ((q - z).toNat - pre.length - 1) + 1 := by
@@ -3943,7 +3958,7 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
   have hF (r : ℕ) (hr : r < w.length) :
       (scanTM k i δf δb a₀).step (F r) = F (r + 1) := by
     have hs : (F r).workTapeSymbols i = some w[r] := by
-      simp only [F, Cfg.workTapeSymbols, ↓reduceIte, true_and]
+      simp only [F, Cfg.workTapeSymbols_eq, ↓reduceIte, true_and]
       rw [if_neg (by omega)]
       simpa only [FinTM.bufferTape_nat, List.getElem?_eq_getElem hr] using
         hw r (by omega) (by omega)
@@ -3971,7 +3986,7 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
     · rfl
   have hturn : (scanTM k i δf δb a₀).step (F w.length) = R w.length := by
     have hs : (F w.length).workTapeSymbols i = none := by
-      simp only [F, Cfg.workTapeSymbols, ↓reduceIte, true_and]
+      simp only [F, Cfg.workTapeSymbols_eq, ↓reduceIte, true_and]
       rw [if_neg (by omega)]
       simpa using hw w.length (by omega) (by omega)
     rw [step_of_tapeAction_move (scanTM k i δf δb a₀) (F w.length)
@@ -4012,7 +4027,7 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
       rfl
     have hl : (f.2.take r).length = r := by simp [fl, Nat.min_eq_left hr.le]
     have hs : (R (r + 1)).workTapeSymbols i = some f.2[r] := by
-      simp only [R, Cfg.workTapeSymbols, ↓reduceIte]
+      simp only [R, Cfg.workTapeSymbols_eq, ↓reduceIte]
       rw [show d.workTapePos i + (((r + 1 : ℕ) : ℤ) - 1) = d.workTapePos i + r by omega]
       unfold wordPatch
       rw [wl (r + 1) (by omega), if_pos (by omega)]
@@ -4052,7 +4067,7 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
       rw [hb0]
       rfl
     have hs : (R 0).workTapeSymbols i = none := by
-      simp only [R, Cfg.workTapeSymbols, ↓reduceIte, Nat.cast_zero, zero_sub, wordPatch]
+      simp only [R, Cfg.workTapeSymbols_eq, ↓reduceIte, Nat.cast_zero, zero_sub, wordPatch]
       rw [if_neg (by omega)]
       simpa only [sub_eq_add_neg, FinTM.bufferTape_left] using hw (-1) (by omega) (by omega)
     rw [step_of_tapeAction_move (scanTM k i δf δb a₀) (R 0)
