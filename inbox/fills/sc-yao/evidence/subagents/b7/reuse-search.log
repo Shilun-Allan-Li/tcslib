@@ -1,0 +1,22 @@
+Repeated source lookup preserved for audit UTC 2026-11-16T05:09:39.507055+00:00
+COMMAND ['rg', '-n', 'selected_wire_lt|decoding_label_ne|length_occurrences_le', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences.lean']
+265:theorem length_occurrences_le {m : ℕ} (C : DAGCircuit m)
+321:  padded_some_iff q _ ((length_occurrences_le C rows perm u hrows hfanin).trans hbudget) s
+325:theorem selected_wire_lt {m : ℕ} (C : DAGCircuit m) (i₀ : Fin C.gates.length)
+350:  hybrid_plaintext_ne m i₀.val u j (selected_wire_lt C i₀ u hu) b
+364:theorem decoding_label_ne {m k : ℕ} (C : DAGCircuit m) (i₀ : Fin C.gates.length)
+EXIT 0
+COMMAND ['rg', '-n', 'reconstruction_negligible|distAdv_fibers_le|rebuild_poly|sample_advice_budget|slots_fit', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean']
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean:304:theorem sample_advice_budget {m n : ℕ} (E₁ E₂ : List Bool → List Bool)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:27:* `reconstruction_negligible`: one negligible bound covers all bounded advice choices.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:28:* `distAdv_fibers_le`: a uniform bound survives averaging over auxiliary randomness.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:80:theorem reconstruction_negligible {L : PolyExpr}
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:139:theorem distAdv_fibers_le {α β γ ρ : Type*} [Fintype α] [Fintype β] [Fintype ρ]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:216:theorem rebuild_poly {E₂ : List Bool → List Bool} (hE₂ : PolyTimeComputable E₂) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean:186:theorem slots_fit (j : Fin (q + 1)) :
+EXIT 0
+COMMAND ['rg', '-n', 'acceptProb_fill|theorem reconstruct', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedLaw.lean', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStep.lean']
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStep.lean:145:theorem reconstruct {m n : ℕ} (C : DAGCircuit m)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedLaw.lean:22:* `acceptProb_fill`: filling the selected key and row nonces preserves the actual tape law.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedLaw.lean:66:theorem acceptProb_fill
+EXIT 0

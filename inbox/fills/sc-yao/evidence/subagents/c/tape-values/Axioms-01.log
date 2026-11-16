@@ -1,0 +1,447 @@
+START 2026-11-16T03:20:01.327911+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (hS : C.size ≤ S) : Fin C.size × Bool ↪ Bool × Fin S
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding_eq {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (hS : C.size ≤ S) (w : Fin C.size) (b : Bool) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding C S hS) (w, b) = (b, Fin.castLE hS w)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding_eq' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S) :
+  (i : Fin C.gates.length) × (Fin C.gates[↑i].args.length → Bool) ↪ Fin S × Fin 4
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding_eq {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S) (hG : C.gates.length ≤ S)
+  (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding C S hA hS) ⟨i, a⟩ =
+    (Fin.castLE hG i,
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding C.gates[↑i].args.length
+          ⋯)
+        a)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest {m : ℕ} (C : BoolCircuit.DAGCircuit m) (S n : ℕ)
+  (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S) : Type
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest_eq {m : ℕ} (C : BoolCircuit.DAGCircuit m) (S n : ℕ)
+  (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest C S n hA hS =
+    ((Fin S → Fin 2 → Bool) ×
+      ({ x // x ∉ Set.range ⇑(TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding C S hS) } →
+          Fin n → Bool) ×
+        ({ x //
+            x ∉ Set.range ⇑(TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding C S hA hS) } →
+          Fin (2 * n) → Bool))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv {m : ℕ} (C : BoolCircuit.DAGCircuit m) (S n : ℕ)
+  (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S) :
+  (Fin (10 * S * n + 2 * S) → Bool) ≃
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest C S n hA hS ×
+      (Fin C.size → Bool → Fin n → Bool) ×
+        ((i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → (Fin n → Bool) × (Fin n → Bool))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_eq {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S) (hG : C.gates.length ≤ S)
+  (r : Fin (10 * S * n + 2 * S) → Bool) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS) r =
+    have q := (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n) r;
+    ((q.2.2, fun x => q.1 (↑x).1 (↑x).2, fun x => q.2.1 (↑x).1 (↑x).2), fun w b => q.1 b (Fin.castLE hS w), fun i a =>
+      (fun t =>
+        q.2.1 (Fin.castLE hG i)
+          ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding
+              C.gates[↑i].args.length ⋯)
+            a)
+          ((finCongr ⋯).symm (Fin.castAdd n t)),
+        fun t =>
+        q.2.1 (Fin.castLE hG i)
+          ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding
+              C.gates[↑i].args.length ⋯)
+            a)
+          ((finCongr ⋯).symm (Fin.natAdd n t))))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_shift {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S)
+  (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S) (t : Fin 2) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS) r).1.1 i t =
+    (List.ofFn r).getD (10 * S * n + 2 * ↑i + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_shift' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_key {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S)
+  (r : Fin (10 * S * n + 2 * S) → Bool) (w : Fin C.size) (b : Bool) (t : Fin n) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS) r).2.1 w b t =
+    (List.ofFn r).getD ((b.toNat * S + ↑w) * n + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_key' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_nonce_first {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S)
+  (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) (t : Fin n) :
+  (((TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS) r).2.2 i a).1 t =
+    (List.ofFn r).getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t)
+      false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_nonce_first' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_nonce_second {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2)
+  (hS : C.size ≤ S) (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool) (t : Fin n) :
+  (((TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS) r).2.2 i a).2 t =
+    (List.ofFn r).getD
+      (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_nonce_second' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_unused_key {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S)
+  (r : Fin (10 * S * n + 2 * S) → Bool)
+  (x : { x // x ∉ Set.range ⇑(TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding C S hS) })
+  (t : Fin n) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS) r).1.2.1 x t =
+    (List.ofFn r).getD (((↑x).1.toNat * S + ↑(↑x).2) * n + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_unused_key' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_unused_row {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S)
+  (r : Fin (10 * S * n + 2 * S) → Bool)
+  (x : { x // x ∉ Set.range ⇑(TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding C S hA hS) })
+  (t : Fin (2 * n)) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS) r).1.2.2 x t =
+    (List.ofFn r).getD (2 * S * n + (4 * ↑(↑x).1 + ↑(↑x).2) * (2 * n) + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_unused_row' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S)
+  (p : TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest C S n hA hS) (i : Fin C.gates.length) :
+  Equiv.Perm (Fin C.gates[↑i].args.length → Bool)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation_eq {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S) (hG : C.gates.length ≤ S)
+  (p : TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest C S n hA hS) (i : Fin C.gates.length) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation C S n hA hS p i =
+    TCSlib.Cryptography.xorPerm fun t => p.1 (Fin.castLE hG i) (Fin.castLE ⋯ t)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation_apply {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S) (hG : C.gates.length ≤ S)
+  (p : TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest C S n hA hS) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool) (t : Fin C.gates[↑i].args.length) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation C S n hA hS p i) a t =
+    (a t ^^ p.1 (Fin.castLE hG i) (Fin.castLE ⋯ t))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation_apply' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_perm {m : ℕ} {ρ : Type}
+  (C : BoolCircuit.DAGCircuit m) (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2)
+  (hS : C.size ≤ S) (seed : List Bool → TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ρ)
+  (hP :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool)
+      (t : Fin C.gates[↑i].args.length), ((seed q).2.2 i) a t = (a t ^^ q.getD (10 * S * n + 2 * ↑i + ↑t) false))
+  (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) :
+  ((seed (List.ofFn r)).2.2 i) a =
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation C S n hA hS
+        ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS) r).1 i)
+      a
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_perm' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_eq {m : ℕ} (C : BoolCircuit.DAGCircuit m) (S n : ℕ)
+  (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S)
+  (seed :
+    List Bool → TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (hK :
+    ∀ (q : List Bool) (w : Fin C.size) (b : Bool) (t : Fin n),
+      (seed q).1 w b t = q.getD ((b.toNat * S + ↑w) * n + ↑t) false)
+  (hR₀ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).1 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t) false)
+  (hR₁ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).2 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n + ↑t)
+          false)
+  (hP :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool)
+      (t : Fin C.gates[↑i].args.length), ((seed q).2.2 i) a t = (a t ^^ q.getD (10 * S * n + 2 * ↑i + ↑t) false))
+  (r : Fin (10 * S * n + 2 * S) → Bool) :
+  seed (List.ofFn r) =
+    (((TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS) r).2.1,
+      ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS) r).2.2,
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation C S n hA hS
+        ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS) r).1)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_on_inverse {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S n : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) (hS : C.size ≤ S)
+  (seed :
+    List Bool → TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (hK :
+    ∀ (q : List Bool) (w : Fin C.size) (b : Bool) (t : Fin n),
+      (seed q).1 w b t = q.getD ((b.toNat * S + ↑w) * n + ↑t) false)
+  (hR₀ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).1 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t) false)
+  (hR₁ :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) (t : Fin n),
+      ((seed q).2.1 i a).2 t =
+        q.getD (2 * S * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n + ↑t)
+          false)
+  (hP :
+    ∀ (q : List Bool) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool)
+      (t : Fin C.gates[↑i].args.length), ((seed q).2.2 i) a t = (a t ^^ q.getD (10 * S * n + 2 * ↑i + ↑t) false))
+  (p : TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest C S n hA hS)
+  (d :
+    (Fin C.size → Bool → Fin n → Bool) ×
+      ((i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → (Fin n → Bool) × (Fin n → Bool))) :
+  seed (List.ofFn ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv C S n hA hS).symm (p, d))) =
+    (d.1, d.2, TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation C S n hA hS p)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_on_inverse' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.key_not_mem_range {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (S : ℕ) (hS : C.size ≤ S) (w : Fin S) (b : Bool) (hw : C.size ≤ ↑w) :
+  (b, w) ∉ Set.range ⇑(TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding C S hS)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.key_not_mem_range' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_gate {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2)
+  (hS : C.size ≤ S) (i : Fin S) (a : Fin 4) (hi : C.gates.length ≤ ↑i) :
+  (i, a) ∉ Set.range ⇑(TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding C S hA hS)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_gate' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_code {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (S : ℕ) (hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2)
+  (hS : C.size ≤ S) (hG : C.gates.length ≤ S) (i : Fin C.gates.length) (code : Fin 4)
+  (hc : 2 ^ C.gates[↑i].args.length ≤ ↑code) :
+  (Fin.castLE hG i, code) ∉
+    Set.range ⇑(TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding C S hA hS)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_code' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+STORED_CONSTANT_COUNT 57
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEquiv: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEquiv: closure=2365 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_10: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_10: closure=2168 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_code: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_code: closure=2346 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding.congr_simp: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinSeedRelabel.assignmentEmbedding.congr_simp: closure=2119 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_nonce_first: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_nonce_first: closure=3742 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_gate._proof_1_3: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_gate._proof_1_3: closure=1398 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.gateBound: [propext,
+ Quot.sound]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.gateBound: closure=1380 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_5: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_5: closure=1302 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_3: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_3: closure=1345 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding: closure=150 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_code._proof_1_5: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_code._proof_1_5: closure=2149 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding.congr_simp: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding.congr_simp: closure=151 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_2: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_2: closure=1298 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_code._proof_1_3: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_code._proof_1_3: closure=1304 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.halfEquiv: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.halfEquiv: closure=799 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.key_not_mem_range: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.key_not_mem_range: closure=1426 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_9: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_9: closure=1310 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.key_not_mem_range._proof_1_2: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.key_not_mem_range._proof_1_2: closure=1398 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest_eq: [propext, Quot.sound, Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest_eq: closure=2179 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.splitEmbedding_unused: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.splitEmbedding_unused: closure=578 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest: [propext, Quot.sound, Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.Rest: closure=2178 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.halfEquiv_second: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.halfEquiv_second: closure=800 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding.congr_simp: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding.congr_simp: closure=2172 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEquiv: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEquiv: closure=622 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.halfEquiv_first: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.halfEquiv_first: closure=800 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation_apply: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation_apply: closure=2226 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_6: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_6: closure=1306 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_8: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_8: closure=1306 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding_eq: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding_eq: closure=160 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_eq: [propext, Quot.sound, Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_eq: closure=3772 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_unused_row: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_unused_row: closure=3741 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_on_inverse: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_on_inverse: closure=3773 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.halfEquiv._proof_1: [Classical.choice,
+ propext,
+ Quot.sound]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.halfEquiv._proof_1: closure=304 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.gateBound._proof_1_1: [propext,
+ Quot.sound]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.gateBound._proof_1_1: closure=1377 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation: closure=2202 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEquiv_unused: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEquiv_unused: closure=2366 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_7: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_7: closure=1310 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_code._proof_1_4: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_code._proof_1_4: closure=2145 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.splitEmbedding_used: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.splitEmbedding_used: closure=578 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding_eq: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding_eq: closure=2172 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEquiv_used: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEquiv_used: closure=623 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_shift: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_shift: closure=3742 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_nonce_second: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_nonce_second: closure=3742 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_1: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_1: closure=1297 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEquiv_unused: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEquiv_unused: closure=623 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv: [propext, Quot.sound, Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv: closure=3733 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation_eq: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.permutation_eq: closure=2203 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_gate: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.row_not_mem_range_of_gate: closure=2174 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEquiv_used: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEquiv_used: closure=2366 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_4: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding._proof_4: closure=1301 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.splitEmbedding: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.TapeValues.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.splitEmbedding: closure=577 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.rowEmbedding: closure=2171 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_key: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_key: closure=3741 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_perm: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.seed_perm: closure=3758 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_eq: [propext, Quot.sound, Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_eq: closure=3734 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding._proof_1: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.keyEmbedding._proof_1: closure=146 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_unused_key: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.TapeValues.equiv_unused_key: closure=3741 sorried=[]
+       33.04 real        29.79 user         1.68 sys
+          2206498816  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              155899  page reclaims
+               19903  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                2709  voluntary context switches
+               29766  involuntary context switches
+            32788378  instructions retired
+            23938529  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-16T03:20:34.409636+00:00 exit=0

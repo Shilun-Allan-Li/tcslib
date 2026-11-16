@@ -616,6 +616,40 @@ theorem idealB_eq {fakeMessage activeAnswers : List Bool → List Bool}
       let w
 ```
 
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobStageZero.lean · acceptProb_eq_stage0
+
+```lean
+theorem acceptProb_eq_stage0 {κ : Type*} [Fintype κ]
+    (D : List Bool → κ → Bool) :
+    acceptProb (fun r : H.Coins n => pairEncode
+      (H.main.viewV (List.replicate n true)
+        (H.privA n xs ys (List.ofFn r.1) (List.ofFn r.2))
+        (H.privB n xs ys (List.ofFn r.1) (List.ofFn r.2)) r).encode aliceOutput) D =
+    acceptProb (fun r : Fin (10 * S * n + 2 * S) → Bool =>
+      GateHybridMessage.sample M C (seed (List.ofFn r)) inA inB outLen output v
+        (List.replicate n true) ys [] aliceOutput 0) D
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobStatistical.lean · statClose_real_output_switch
+
+```lean
+theorem statClose_real_output_switch {G : Functionality} (H : HybridProtocol G)
+    (F : Functionality) (p : PolyExpr) (hCoins : H.main.P.coins = p)
+    (BadWord : ℕ → List Bool → Prop) (δ : ℕ → ℝ)
+    (hBad : ∀ n, uprob (fun r : Fin (p.eval n) → Bool => BadWord n (List.ofFn r)) ≤ δ n)
+    (hCorrect : ∀ n x y (r : H.Coins n), ¬ BadWord n (List.ofFn r.1) →
+      H.main.outP (List.replicate n true)
+        (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+        (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r =
+          List.ofFn (F.f n x y).1) :
+    ∀ n x y, StatClose (H.realB F n x y)
+      (fun r => pairEncode
+        (H.main.viewV (List.replicate n true)
+          (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+        (List.ofFn (F.f n x y).1)) (δ n)
+```
+
 ## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobTables.lean · tableSelector
 
 ```lean
@@ -1569,8 +1603,7 @@ theorem equiv_symm_apply_eq (pick : P → I → Option J) (place : P → J → O
 ## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoordinateSwap.lean · acceptProb_swap
 
 ```lean
-theorem acceptProb_swap [Fintype P] [Fintype I] [Fintype J] [Fintype V]
-    [DecidableEq I] [DecidableEq J]
+theorem acceptProb_swap [Fintype (P × (I → V))] [Fintype (J → V)]
     [Nonempty (J → V)] {γ ρ : Type*} [Fintype ρ]
     (pick : P → I → Option J) (place : P → J → Option I)
     (hmatch : ∀ p i j, pick p i = some j ↔ place p j = some i)
@@ -2600,6 +2633,43 @@ theorem Data.make_answersAt (n : ℕ) (r : List Bool) :
         (inA.eval n) (inB.eval n))
 ```
 
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeSimulatorFactory.lean · exists_data
+
+```lean
+theorem exists_data :
+    ∃ d : FakeSimulator.Data,
+      (∀ n r, FakeSimulator.answersAt d n r =
+        List.ofFn (FakeObjects.activeAnswers (circuit n) (seed n r)
+          (inA.eval n) (inB.eval n))) ∧
+      ∀ n r f, FakeSimulator.messageAt d n r f =
+        FakeObjects.message (nestedSpecial E₁ E₂ n) (circuit n) (seed n r)
+          (inA.eval n) (outLen.eval n) (output n) (fun j => f.getD j false)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeSimulatorFactory.lean · exists_simulator
+
+```lean
+theorem exists_simulator (coins : PolyExpr) :
+    ∃ SB : NUPPT, SB.Uniform ∧ SB.coins = coins ∧
+      (∀ n y f r, SB.runAtL n (pairEncode y f) r =
+        (⟨List.replicate n true, pairEncode y
+          (List.ofFn (FakeObjects.activeAnswers (circuit n) (seed n r)
+            (inA.eval n) (inB.eval n))), [],
+          [FakeObjects.message (nestedSpecial E₁ E₂ n) (circuit n) (seed n r)
+            (inA.eval n) (outLen.eval n) (output n) (fun j => f.getD j false)]⟩ : View).encode) ∧
+      ∀ (F : Functionality) n (x : Fin (F.inA.eval n) → Bool)
+        (y : Fin (F.inB.eval n) → Bool) (r : SB.Coins n),
+        F.idealB SB n x y r =
+          pairEncode
+            (⟨List.replicate n true, pairEncode (List.ofFn y)
+              (List.ofFn (FakeObjects.activeAnswers (circuit n) (seed n (List.ofFn r))
+                (inA.eval n) (inB.eval n))), [],
+              [FakeObjects.message (nestedSpecial E₁ E₂ n) (circuit n) (seed n (List.ofFn r))
+                (inA.eval n) (outLen.eval n) (output n)
+                (fun j => (List.ofFn (F.f n x y).2).getD j false)]⟩ : View).encode
+            (List.ofFn (F.f n x y).1)
+```
+
 ## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean · polyTimeComputable_reencodeWords
 
 ```lean
@@ -2938,6 +3008,28 @@ theorem tables_poly {E₁ E₂ : List Bool → List Bool} (hE₁ : PolyTimeCompu
       BinArith.encWords (garbledTable (nestedSpecial E₁ E₂ (width z)) (C z) (s z) i))
 ```
 
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridChain.lean · endpoint_negligible
+
+```lean
+theorem endpoint_negligible {inputs : ℕ → ℕ} {Z σ : ℕ → Type*}
+    [∀ n, Fintype (σ n)] (C : ∀ n, DAGCircuit (inputs n)) (S : PolyExpr)
+    (hSize : ∀ n, (C n).size ≤ S.eval n) (v : ∀ n, Z n → ℕ → Bool)
+    (hA : ∀ n (i : Fin (C n).gates.length), ((C n).gates[i]).args.length ≤ 2)
+    (hConsistent : ∀ n z (i : Fin (C n).gates.length),
+      gateOut ((C n).gates[i]) (RelabelGarbling.argValues (C n) (v n z) i) =
+        v n z (inputs n + i))
+    (H : ∀ n, Z n → ℕ → σ n → List Bool)
+    (hSameStage : ∀ n z t t', GateHybrids.stageBit (C n) (v n z) t =
+      GateHybrids.stageBit (C n) (v n z) t' → H n z t = H n z t')
+    (D : NUPPT) {μ : ℕ → ℝ} (hμ : Negligible μ) (hNonneg : ∀ n, 0 ≤ μ n)
+    (hSelected : ∀ n z (i : Fin (C n).gates.length)
+      (p : Fin ((C n).gates[i]).args.length), p.val < 2 →
+      distAdv (H n z (2 * i.val + p.val)) (H n z (2 * i.val + p.val + 1))
+        (D.distinguisherL n) ≤ μ n) :
+    ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n z,
+      distAdv (H n z 0) (H n z (2 * (C n).gates.length)) (D.distinguisherL n) ≤ ε n
+```
+
 ## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridMessage.lean · message
 
 ```lean
@@ -3065,6 +3157,23 @@ theorem sample_end (M : MultiEnc (Fin width → Bool) (List Bool) ρ)
         pairEncode bobInput (List.ofFn (FakeObjects.activeAnswers C s inA inB)),
         bobCoins, [FakeObjects.message M C s inA outLen output
           (fun j => v (output j))]⟩ : View).encode aliceOutput
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybridSecurity.lean · endpoint_negligible
+
+```lean
+theorem endpoint_negligible (D : NUPPT) :
+    ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n (z : I n),
+      distAdv
+        (fun r : SelectedStepChoices.Tape S n =>
+          GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (C n) (seed n (List.ofFn r))
+            (A.eval n) (B.eval n) (O.eval n) (output n) (v n z) (List.replicate n true)
+            (bobWord n z) [] (aliceWord n z) 0)
+        (fun r : SelectedStepChoices.Tape S n =>
+          GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (C n) (seed n (List.ofFn r))
+            (A.eval n) (B.eval n) (O.eval n) (output n) (v n z) (List.replicate n true)
+            (bobWord n z) [] (aliceWord n z) (2 * (C n).gates.length))
+        (D.distinguisherL n) ≤ ε n
 ```
 
 ## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean · rowWith
@@ -3593,6 +3702,24 @@ theorem decoding_label_ne {m k : ℕ} (C : DAGCircuit m) (i₀ : Fin C.gates.len
     (outs j, b) ≠ (u, true)
 ```
 
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateStepCases.lean · step_cases_exact
+
+```lean
+theorem step_cases_exact (t : ℕ) (ht : t < 2 * C.gates.length) :
+    GateHybrids.stageBit C v t = GateHybrids.stageBit C v (t + 1) ∨
+      ∃ i : Fin C.gates.length, ∃ p : Fin (C.gates[i.val]).args.length,
+        i.val = t / 2 ∧ p.val = t % 2 ∧ t = 2 * i.val + p.val ∧ p.val < 2
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateStepCases.lean · step_cases
+
+```lean
+theorem step_cases (t : ℕ) (ht : t < 2 * C.gates.length) :
+    GateHybrids.stageBit C v t = GateHybrids.stageBit C v (t + 1) ∨
+      ∃ i : Fin C.gates.length, ∃ p : Fin (C.gates[i.val]).args.length,
+        t = 2 * i.val + p.val ∧ p.val < 2
+```
+
 ## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean · length_spEncStr_le
 
 ```lean
@@ -3684,6 +3811,124 @@ theorem length_message_of_parts_le (tables keys pairs : List Bool) (g a o n : �
     (hp : pairs.length ≤ o * (6 * n + 6)) :
     (pairEncode tables (pairEncode keys pairs)).length ≤
       2 * (g * (112 * n + 82)) + 2 * (a * (2 * n + 2)) + o * (6 * n + 6) + 4
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean · Index
+
+```lean
+abbrev Index {m : ℕ} (C : DAGCircuit m)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean · Index_eq
+
+```lean
+theorem Index_eq {m : ℕ} (C : DAGCircuit m) :
+    Index C = (Σ i : Fin C.gates.length, (Fin C.gates[i.val].args.length → Bool) × Bool)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean · pick
+
+```lean
+noncomputable def pick {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u q : ℕ) (x : Index C) : Option (Fin (q + 1))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean · pick_eq
+
+```lean
+theorem pick_eq {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u q : ℕ) (x : Index C) :
+    pick C rows perm u q x =
+      (GateOccurrences.selectedPosition C.gates[x.1.val] x.2.1 u).bind (fun p =>
+        if x.2.2 = decide (p.val ≠ 0) then
+          let j := SelectedSeed.slotIndex C rows perm u x.1 x.2.1 p
+          if h : j < q + 1 then some ⟨j, h⟩ else none
+        else none)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean · place
+
+```lean
+def place {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u q : ℕ) (j : Fin (q + 1)) : Option (Index C)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean · place_eq
+
+```lean
+theorem place_eq {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u q : ℕ) (j : Fin (q + 1)) :
+    place C rows perm u q j =
+      (GateOccurrences.padded q (GateOccurrences.occurrences C rows perm u) j).map (fun s =>
+        ⟨s.1, (perm s.1 ((rows s.1).getD s.2.1 (fun _ => false)), decide (s.2.2 ≠ 0))⟩)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean · place_of_padded
+
+```lean
+theorem place_of_padded {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u q : ℕ) (j : Fin (q + 1)) (i : Fin C.gates.length) (r p : ℕ)
+    (h : GateOccurrences.padded q (GateOccurrences.occurrences C rows perm u) j =
+      some (i, r, p)) :
+    place C rows perm u q j =
+      some ⟨i, (perm i ((rows i).getD r (fun _ => false)), decide (p ≠ 0))⟩
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean · place_of_pick
+
+```lean
+theorem place_of_pick {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u q : ℕ) (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hcomplete : ∀ i a, a ∈ rows i) (x : Index C) (j : Fin (q + 1))
+    (h : pick C rows perm u q x = some j) : place C rows perm u q j = some x
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean · pick_of_place
+
+```lean
+theorem pick_of_place {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u q : ℕ) (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hrows : ∀ i, (rows i).Nodup) (x : Index C) (j : Fin (q + 1))
+    (h : place C rows perm u q j = some x) : pick C rows perm u q x = some j
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean · pick_iff_place
+
+```lean
+theorem pick_iff_place {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u q : ℕ) (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hcomplete : ∀ i a, a ∈ rows i) (hrows : ∀ i, (rows i).Nodup)
+    (x : Index C) (j : Fin (q + 1)) :
+    pick C rows perm u q x = some j ↔ place C rows perm u q j = some x
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/NonceCoordinates.lean · nonce_read
+
+```lean
+theorem nonce_read {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u q : ℕ) (r : Fin (q + 1) → ρ)
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) (half : Bool) :
+    (if half then (SelectedSeed.nonce C rows s u q r i a).2
+      else (SelectedSeed.nonce C rows s u q r i a).1) =
+        (pick C rows s.2.2 u q ⟨i, (a, half)⟩).elim
+          (if half then (s.2.1 i a).2 else (s.2.1 i a).1) r
 ```
 
 ## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTAnswerWords.lean · length_answersB
@@ -4451,6 +4696,1922 @@ theorem distAdv_end_ideal_zero {κ : Type*} [Fintype κ] (D : List Bool → κ �
       commonInput bobInput bobCoins aliceOutput (2 * C.gates.length)) ideal D = 0
 ```
 
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · Permutations
+
+```lean
+abbrev Permutations {m : ℕ} (C : DAGCircuit m)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · Permutations_eq
+
+```lean
+theorem Permutations_eq {m : ℕ} (C : DAGCircuit m) :
+    Permutations C =
+      ((i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · Index
+
+```lean
+abbrev Index {m : ℕ} (C : DAGCircuit m)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · Index_eq
+
+```lean
+theorem Index_eq {m : ℕ} (C : DAGCircuit m) :
+    Index C = ((Fin C.size × Bool) ⊕ NonceCoordinates.Index C)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · ChallengeIndex
+
+```lean
+abbrev ChallengeIndex (q : ℕ)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · ChallengeIndex_eq
+
+```lean
+theorem ChallengeIndex_eq (q : ℕ) : ChallengeIndex q = (Unit ⊕ Fin (q + 1))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · Data
+
+```lean
+abbrev Data {m : ℕ} (C : DAGCircuit m) (V : Type)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · Data_eq
+
+```lean
+theorem Data_eq {m : ℕ} (C : DAGCircuit m) (V : Type) :
+    Data C V = ((Fin C.size → Bool → V) ×
+      ((i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → V × V))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · dataEquiv
+
+```lean
+def dataEquiv {m : ℕ} (C : DAGCircuit m) (V : Type) : Data C V ≃ (Index C → V)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · dataEquiv_eq
+
+```lean
+theorem dataEquiv_eq {m : ℕ} (C : DAGCircuit m) (V : Type) (d : Data C V) :
+    dataEquiv C V d = Sum.elim (fun label => d.1 label.1 label.2)
+      (fun x => if x.2.2 then (d.2 x.1 x.2.1).2 else (d.2 x.1 x.2.1).1)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · dataEquiv_symm
+
+```lean
+theorem dataEquiv_symm {m : ℕ} (C : DAGCircuit m) (V : Type) (f : Index C → V) :
+    (dataEquiv C V).symm f = ((fun v b => f (Sum.inl (v, b))),
+      fun i a => (f (Sum.inr ⟨i, (a, false)⟩), f (Sum.inr ⟨i, (a, true)⟩)))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · paramEquiv
+
+```lean
+def paramEquiv {m : ℕ} (C : DAGCircuit m) (V P : Type) :
+    P × Data C V ≃ P × (Index C → V)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · paramEquiv_eq
+
+```lean
+theorem paramEquiv_eq {m : ℕ} (C : DAGCircuit m) (V P : Type) (p : P) (d : Data C V) :
+    paramEquiv C V P (p, d) = (p, dataEquiv C V d)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · paramEquiv_symm
+
+```lean
+theorem paramEquiv_symm {m : ℕ} (C : DAGCircuit m) (V P : Type) (p : P) (f : Index C → V) :
+    (paramEquiv C V P).symm (p, f) = (p, (dataEquiv C V).symm f)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · seedEquiv
+
+```lean
+def seedEquiv {m : ℕ} (C : DAGCircuit m) (V : Type) :
+    GarbleSeed C V (V × V) ≃ Permutations C × (Index C → V)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · seedEquiv_eq
+
+```lean
+theorem seedEquiv_eq {m : ℕ} (C : DAGCircuit m) (V : Type) (s : GarbleSeed C V (V × V)) :
+    seedEquiv C V s = (s.2.2, Sum.elim (fun label => s.1 label.1 label.2)
+      (fun x => if x.2.2 then (s.2.1 x.1 x.2.1).2 else (s.2.1 x.1 x.2.1).1))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · seedEquiv_perm
+
+```lean
+theorem seedEquiv_perm {m : ℕ} (C : DAGCircuit m) (V : Type) (s : GarbleSeed C V (V × V)) :
+    (seedEquiv C V s).1 = s.2.2
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · seedEquiv_key
+
+```lean
+theorem seedEquiv_key {m : ℕ} (C : DAGCircuit m) (V : Type) (s : GarbleSeed C V (V × V))
+    (v : Fin C.size) (b : Bool) : (seedEquiv C V s).2 (Sum.inl (v, b)) = s.1 v b
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · seedEquiv_nonce
+
+```lean
+theorem seedEquiv_nonce {m : ℕ} (C : DAGCircuit m) (V : Type) (s : GarbleSeed C V (V × V))
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) (half : Bool) :
+    (seedEquiv C V s).2 (Sum.inr ⟨i, (a, half)⟩) =
+      if half then (s.2.1 i a).2 else (s.2.1 i a).1
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · seedEquiv_symm
+
+```lean
+theorem seedEquiv_symm {m : ℕ} (C : DAGCircuit m) (V : Type)
+    (p : Permutations C) (f : Index C → V) :
+    (seedEquiv C V).symm (p, f) =
+      ((fun v b => f (Sum.inl (v, b))),
+        ((fun i a => (f (Sum.inr ⟨i, (a, false)⟩), f (Sum.inr ⟨i, (a, true)⟩))), p))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · challengeEquiv
+
+```lean
+def challengeEquiv (q : ℕ) (V : Type) :
+    V × (Fin (q + 1) → V) ≃ (ChallengeIndex q → V)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · challengeEquiv_eq
+
+```lean
+theorem challengeEquiv_eq (q : ℕ) (V : Type) (k : V) (r : Fin (q + 1) → V) :
+    challengeEquiv q V (k, r) = Sum.elim (fun _ => k) r
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · challengeEquiv_symm
+
+```lean
+theorem challengeEquiv_symm (q : ℕ) (V : Type) (f : ChallengeIndex q → V) :
+    (challengeEquiv q V).symm f = (f (Sum.inl ()), fun j => f (Sum.inr j))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · pick
+
+```lean
+noncomputable def pick {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : Permutations C) (u : Fin C.size) (q : ℕ) (x : Index C) :
+    Option (ChallengeIndex q)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · pick_eq
+
+```lean
+theorem pick_eq {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : Permutations C) (u : Fin C.size) (q : ℕ) (x : Index C) :
+    pick C rows perm u q x =
+      Sum.elim
+        (fun label => if label = (u, true) then some (Sum.inl () : ChallengeIndex q) else none)
+        (fun nonce => (NonceCoordinates.pick C rows perm u.val q nonce).map Sum.inr) x
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · place
+
+```lean
+def place {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : Permutations C) (u : Fin C.size) (q : ℕ) (j : ChallengeIndex q) : Option (Index C)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · place_eq
+
+```lean
+theorem place_eq {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : Permutations C) (u : Fin C.size) (q : ℕ) (j : ChallengeIndex q) :
+    place C rows perm u q j =
+      Sum.elim (fun _ => some (Sum.inl (u, true) : Index C))
+        (fun nonce => (NonceCoordinates.place C rows perm u.val q nonce).map Sum.inr) j
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · pick_iff_place
+
+```lean
+theorem pick_iff_place {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : Permutations C) (u : Fin C.size) (q : ℕ)
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hcomplete : ∀ i a, a ∈ rows i) (hrows : ∀ i, (rows i).Nodup)
+    (x : Index C) (j : ChallengeIndex q) :
+    pick C rows perm u q x = some j ↔ place C rows perm u q j = some x
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · seedEquiv_eq_data
+
+```lean
+theorem seedEquiv_eq_data {m : ℕ} (C : DAGCircuit m) (V : Type)
+    (s : GarbleSeed C V (V × V)) :
+    seedEquiv C V s = (s.2.2, dataEquiv C V (s.1, s.2.1))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · dataEquiv_fill
+
+```lean
+theorem dataEquiv_fill {m : ℕ} (C : DAGCircuit m) (V : Type)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C V (V × V)) (u : Fin C.size) (q : ℕ) (k : V)
+    (r : Fin (q + 1) → V) :
+    dataEquiv C V ((SelectedSeed.fill C rows s u q k r).1,
+      (SelectedSeed.fill C rows s u q k r).2.1) =
+        fun x => (pick C rows s.2.2 u q x).elim (dataEquiv C V (s.1, s.2.1) x)
+          (challengeEquiv q V (k, r))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean · seedEquiv_fill
+
+```lean
+theorem seedEquiv_fill {m : ℕ} (C : DAGCircuit m) (V : Type)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C V (V × V)) (u : Fin C.size) (q : ℕ) (k : V)
+    (r : Fin (q + 1) → V) :
+    seedEquiv C V (SelectedSeed.fill C rows s u q k r) =
+      (s.2.2, fun x => (pick C rows s.2.2 u q x).elim (dataEquiv C V (s.1, s.2.1) x)
+        (challengeEquiv q V (k, r)))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · record_le
+
+```lean
+theorem record_le {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (q : ℕ)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hcomplete : ∀ i a, a ∈ rows i)
+    (hcap : (GateOccurrences.occurrences C rows s.2.2 u.val).length ≤ q + 1)
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) :
+    (SelectedPlan.record C rows s u E₁ E₂ o i a).length ≤ 2 * q + 7 * n + 8
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · table_le
+
+```lean
+theorem table_le {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (q : ℕ)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hcomplete : ∀ i a, a ∈ rows i)
+    (hcap : (GateOccurrences.occurrences C rows s.2.2 u.val).length ≤ q + 1)
+    (hrowlen : ∀ i, (rows i).length ≤ 4) (i : Fin C.gates.length) :
+    (BinArith.encWords ((rows i).map fun a =>
+      SelectedPlan.record C rows s u E₁ E₂ o i (s.2.2 i a))).length ≤
+        4 * (2 * (2 * q + 7 * n + 8) + 2)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · encodedTables_le
+
+```lean
+theorem encodedTables_le {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (q : ℕ)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hcomplete : ∀ i a, a ∈ rows i)
+    (hcap : (GateOccurrences.occurrences C rows s.2.2 u.val).length ≤ q + 1)
+    (hrowlen : ∀ i, (rows i).length ≤ 4) :
+    (BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂ o).map BinArith.encWords)).length ≤
+      C.gates.length * (16 * (2 * q + 7 * n + 8) + 18)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · advice_le
+
+```lean
+theorem advice_le {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (q : ℕ)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hcomplete : ∀ i a, a ∈ rows i)
+    (hcap : (GateOccurrences.occurrences C rows s.2.2 u.val).length ≤ q + 1)
+    (hrowlen : ∀ i, (rows i).length ≤ 4) (tail privateInput aliceOutput : List Bool) :
+    (SliceReconstruction.advice
+      (BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂ o).map BinArith.encWords))
+      tail privateInput aliceOutput).length ≤
+        2 * C.gates.length * (16 * (2 * q + 7 * n + 8) + 18) +
+          2 * tail.length + 2 * privateInput.length + aliceOutput.length + 6
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · budget
+
+```lean
+def budget (S Q T I A : PolyExpr) : PolyExpr
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · budget_eq
+
+```lean
+theorem budget_eq (S Q T I A : PolyExpr) :
+    budget S Q T I A =
+      let row : PolyExpr
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · budget_eval
+
+```lean
+theorem budget_eval (S Q T I A : PolyExpr) (n : ℕ) :
+    (budget S Q T I A).eval n =
+      2 * S.eval n * (16 * (2 * Q.eval n + 7 * n + 8) + 18) +
+        2 * T.eval n + 2 * I.eval n + A.eval n + 6
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · advice_budget
+
+```lean
+theorem advice_budget {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (q : ℕ)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hcomplete : ∀ i a, a ∈ rows i)
+    (hcap : (GateOccurrences.occurrences C rows s.2.2 u.val).length ≤ q + 1)
+    (hrowlen : ∀ i, (rows i).length ≤ 4) (tail privateInput aliceOutput : List Bool)
+    (S Q T I A : PolyExpr) (hS : C.gates.length ≤ S.eval n) (hQ : q ≤ Q.eval n)
+    (hT : tail.length ≤ T.eval n) (hI : privateInput.length ≤ I.eval n)
+    (hA : aliceOutput.length ≤ A.eval n) :
+    (SliceReconstruction.advice
+      (BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂ o).map BinArith.encWords))
+      tail privateInput aliceOutput).length ≤ (budget S Q T I A).eval n
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · messageTail_le
+
+```lean
+theorem messageTail_le {m n : ℕ} {ρ : Type}
+    (M : MultiEnc (Fin n → Bool) (List Bool) ρ) (C : DAGCircuit m)
+    (s : GarbleSeed C (Fin n → Bool) ρ) (inA outLen : ℕ) (output : Fin outLen → ℕ)
+    (v : ℕ → Bool) (stage : ℕ) :
+    (pairSndD (GateHybridMessage.message M C s inA outLen output v stage)).length ≤
+      2 * (inA * (2 * n + 2)) + 2 + outLen * (6 * n + 6)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · privateInput_length
+
+```lean
+theorem privateInput_length {m n : ℕ} {ρ : Type} (C : DAGCircuit m)
+    (s : GarbleSeed C (Fin n → Bool) ρ) (first count : ℕ) (bobInput : List Bool) :
+    (pairEncode bobInput (List.ofFn (FakeObjects.activeAnswers C s first count))).length =
+      2 * bobInput.length + 2 + count * n
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · slotBudget
+
+```lean
+def slotBudget (S : PolyExpr) : PolyExpr
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · slotBudget_eq
+
+```lean
+theorem slotBudget_eq (S : PolyExpr) : slotBudget S = .mul (.const 4) S
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · tailBudget
+
+```lean
+def tailBudget (A O : PolyExpr) : PolyExpr
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · tailBudget_eq
+
+```lean
+theorem tailBudget_eq (A O : PolyExpr) :
+    tailBudget A O =
+      .add (.add (.mul (.const 2) (.mul A (.add (.mul (.const 2) .var) (.const 2)))) (.const 2))
+        (.mul O (.add (.mul (.const 6) .var) (.const 6)))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · privateBudget
+
+```lean
+def privateBudget (B : PolyExpr) : PolyExpr
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · privateBudget_eq
+
+```lean
+theorem privateBudget_eq (B : PolyExpr) :
+    privateBudget B = .add (.add (.mul (.const 2) B) (.const 2)) (.mul B .var)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · sampleBudget
+
+```lean
+def sampleBudget (S A B O R : PolyExpr) : PolyExpr
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · sampleBudget_eq
+
+```lean
+theorem sampleBudget_eq (S A B O R : PolyExpr) :
+    sampleBudget S A B O R = budget S (slotBudget S) (tailBudget A O) (privateBudget B) R
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · slotBudget_eval
+
+```lean
+theorem slotBudget_eval (S : PolyExpr) (n : ℕ) :
+    (slotBudget S).eval n = 4 * S.eval n
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · tailBudget_eval
+
+```lean
+theorem tailBudget_eval (A O : PolyExpr) (n : ℕ) :
+    (tailBudget A O).eval n =
+      2 * (A.eval n * (2 * n + 2)) + 2 + O.eval n * (6 * n + 6)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · privateBudget_eval
+
+```lean
+theorem privateBudget_eval (B : PolyExpr) (n : ℕ) :
+    (privateBudget B).eval n = 2 * B.eval n + 2 + B.eval n * n
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean · sample_advice_budget
+
+```lean
+theorem sample_advice_budget {m n : ℕ} (E₁ E₂ : List Bool → List Bool)
+    (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (S A B O R : PolyExpr) (output : Fin (O.eval n) → ℕ) (v : ℕ → Bool) (stage : ℕ)
+    (bobInput aliceOutput : List Bool) (hfanin : C.IsFaninTwo)
+    (hS : C.size ≤ S.eval n)
+    (hrows : ∀ i, rows i = (Finset.univ : Finset (Fin C.gates[i.val].args.length → Bool)).toList)
+    (hBob : bobInput.length ≤ B.eval n) (hAlice : aliceOutput.length ≤ R.eval n) :
+    (SelectedPlan.advice C rows s u E₁ E₂ o
+      (pairSndD (GateHybridMessage.message (nestedSpecial E₁ E₂ n) C s
+        (A.eval n) (O.eval n) output v stage))
+      (pairEncode bobInput (List.ofFn (FakeObjects.activeAnswers C s (A.eval n) (B.eval n))))
+      aliceOutput).length ≤ (sampleBudget S A B O R).eval n
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · keyAt_of_label_ne
+
+```lean
+theorem keyAt_of_label_ne (w : ℕ) (b : Bool) (h : (w, b) ≠ (u.val, true)) :
+    keyAt C (SelectedSeed.fill C rows s u q k rs) w b = keyAt C s w b
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · keyAt_false
+
+```lean
+theorem keyAt_false (w : ℕ) :
+    keyAt C (SelectedSeed.fill C rows s u q k rs) w false = keyAt C s w false
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · keyAt_of_ne
+
+```lean
+theorem keyAt_of_ne (w : ℕ) (b : Bool) (hw : w ≠ u.val) :
+    keyAt C (SelectedSeed.fill C rows s u q k rs) w b = keyAt C s w b
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · decodePair_fill
+
+```lean
+theorem decodePair_fill (w : ℕ) (b : Bool) (hw : w ≠ u.val) :
+    FakeObjects.decodePair C (SelectedSeed.fill C rows s u q k rs) w b =
+      FakeObjects.decodePair C s w b
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · activeAnswers_fill
+
+```lean
+theorem activeAnswers_fill {inputs width : ℕ} {ρ : Type} (C : DAGCircuit inputs)
+    (rows : (i : Fin C.gates.length) → List (Fin (C.gates[i.val]).args.length → Bool))
+    (s : GarbleSeed C (Fin width → Bool) (ρ × ρ)) (u : Fin C.size) (q : ℕ)
+    (k : Fin width → Bool) (rs : Fin (q + 1) → ρ) (first count : ℕ) :
+    FakeObjects.activeAnswers C (SelectedSeed.fill C rows s u q k rs) first count =
+      FakeObjects.activeAnswers C s first count
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · message_tail_stage_eq
+
+```lean
+theorem message_tail_stage_eq {inputs width : ℕ} {ρ : Type}
+    (M : MultiEnc (Fin width → Bool) (List Bool) ρ) (C : DAGCircuit inputs)
+    (s : GarbleSeed C (Fin width → Bool) ρ) (inA outLen : ℕ)
+    (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage stage' : ℕ) :
+    pairSndD (GateHybridMessage.message M C s inA outLen output v stage) =
+      pairSndD (GateHybridMessage.message M C s inA outLen output v stage')
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · message_tail_fill
+
+```lean
+theorem message_tail_fill {inputs width : ℕ} {ρ : Type}
+    (M : MultiEnc (Fin width → Bool) (List Bool) (ρ × ρ)) (C : DAGCircuit inputs)
+    (rows : (i : Fin C.gates.length) → List (Fin (C.gates[i.val]).args.length → Bool))
+    (s : GarbleSeed C (Fin width → Bool) (ρ × ρ)) (u : Fin C.size) (q : ℕ)
+    (k : Fin width → Bool) (rs : Fin (q + 1) → ρ) (inA outLen : ℕ)
+    (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage : ℕ)
+    (hOut : ∀ j, output j ≠ u.val) :
+    pairSndD (GateHybridMessage.message M C (SelectedSeed.fill C rows s u q k rs)
+      inA outLen output v stage) =
+      pairSndD (GateHybridMessage.message M C s inA outLen output v stage)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · outputBit_plaintext_ne_of_lt
+
+```lean
+theorem outputBit_plaintext_ne_of_lt {inputs : ℕ} (C : DAGCircuit inputs)
+    (v : ℕ → Bool) (cutoff phase u : ℕ) (hu : u < inputs + cutoff)
+    (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool) :
+    (inputs + i.val, GateHybrids.outputBit C v cutoff phase i a) ≠ (u, true)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · outputBit_plaintext_ne
+
+```lean
+theorem outputBit_plaintext_ne {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+    (i₀ : Fin C.gates.length) (phase u : ℕ) (hu : u ∈ (C.gates[i₀.val]).args)
+    (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool) :
+    (inputs + i.val, GateHybrids.outputBit C v i₀.val phase i a) ≠ (u, true)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · stageBit_plaintext_ne_even
+
+```lean
+theorem stageBit_plaintext_ne_even {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+    (i₀ : Fin C.gates.length) (u : ℕ) (hu : u ∈ (C.gates[i₀.val]).args)
+    (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool) :
+    (inputs + i.val, GateHybrids.stageBit C v (2 * i₀.val) i a) ≠ (u, true)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · stageBit_plaintext_ne_odd
+
+```lean
+theorem stageBit_plaintext_ne_odd {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+    (i₀ : Fin C.gates.length) (u : ℕ) (hu : u ∈ (C.gates[i₀.val]).args)
+    (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool) :
+    (inputs + i.val, GateHybrids.stageBit C v (2 * i₀.val + 1) i a) ≠ (u, true)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · stageBit_plaintext_ne_next
+
+```lean
+theorem stageBit_plaintext_ne_next {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+    (i₀ : Fin C.gates.length) (u : ℕ) (hu : u ∈ (C.gates[i₀.val]).args)
+    (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool) :
+    (inputs + i.val, GateHybrids.stageBit C v (2 * i₀.val + 2) i a) ≠ (u, true)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · stage_first_of_arity_zero
+
+```lean
+theorem stage_first_of_arity_zero {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+    (i₀ : Fin C.gates.length) (hzero : (C.gates[i₀.val]).args.length = 0) :
+    GateHybrids.stageBit C v (2 * i₀.val) =
+      GateHybrids.stageBit C v (2 * i₀.val + 1)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · stage_second_of_arity_le_one
+
+```lean
+theorem stage_second_of_arity_le_one {inputs : ℕ} (C : DAGCircuit inputs)
+    (v : ℕ → Bool)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i]).args.length ≤ 2)
+    (hEval : ∀ i : Fin C.gates.length,
+      gateOut (C.gates[i]) (RelabelGarbling.argValues C v i) = v (inputs + i))
+    (i₀ : Fin C.gates.length) (hsmall : (C.gates[i₀.val]).args.length ≤ 1) :
+    GateHybrids.stageBit C v (2 * i₀.val + 1) =
+      GateHybrids.stageBit C v (2 * i₀.val + 2)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · message_eq_of_stageBit_eq
+
+```lean
+theorem message_eq_of_stageBit_eq {inputs width : ℕ} {ρ : Type}
+    (M : MultiEnc (Fin width → Bool) (List Bool) ρ) (C : DAGCircuit inputs)
+    (s : GarbleSeed C (Fin width → Bool) ρ) (inA outLen : ℕ)
+    (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage stage' : ℕ)
+    (h : GateHybrids.stageBit C v stage = GateHybrids.stageBit C v stage') :
+    GateHybridMessage.message M C s inA outLen output v stage =
+      GateHybridMessage.message M C s inA outLen output v stage'
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · sample_eq_of_stageBit_eq
+
+```lean
+theorem sample_eq_of_stageBit_eq {inputs width : ℕ} {ρ : Type}
+    (M : MultiEnc (Fin width → Bool) (List Bool) ρ) (C : DAGCircuit inputs)
+    (s : GarbleSeed C (Fin width → Bool) ρ) (inA inB outLen : ℕ)
+    (output : Fin outLen → ℕ) (v : ℕ → Bool)
+    (commonInput bobInput bobCoins aliceOutput : List Bool) (stage stage' : ℕ)
+    (h : GateHybrids.stageBit C v stage = GateHybrids.stageBit C v stage') :
+    GateHybridMessage.sample M C s inA inB outLen output v
+        commonInput bobInput bobCoins aliceOutput stage =
+      GateHybridMessage.sample M C s inA inB outLen output v
+        commonInput bobInput bobCoins aliceOutput stage'
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · selectedPosition_none_bit
+
+```lean
+theorem selectedPosition_none_bit (g : DAGGate) (a : Fin g.args.length → Bool)
+    (u : ℕ) (hargs : g.args.Nodup) (p : Fin g.args.length) (hp : g.args[p.val] = u)
+    (hNone : GateOccurrences.selectedPosition g a u = none) : a p = false
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · selectedPosition_none_getD
+
+```lean
+theorem selectedPosition_none_getD (g : DAGGate) (a : Fin g.args.length → Bool)
+    (u : ℕ) (hargs : g.args.Nodup) (p : Fin g.args.length) (hp : g.args[p.val] = u)
+    (hNone : GateOccurrences.selectedPosition g a u = none) :
+    (List.ofFn a).getD p.val false = false
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · stage_first_unselected
+
+```lean
+theorem stage_first_unselected {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+    (i₀ : Fin C.gates.length) (hargs : (C.gates[i₀.val]).args.Nodup)
+    (p : Fin (C.gates[i₀.val]).args.length) (hp : p.val = 0)
+    (u : ℕ) (hu : (C.gates[i₀.val]).args[p.val] = u)
+    (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool)
+    (hNone : GateOccurrences.selectedPosition (C.gates[i.val]) a u = none) :
+    GateHybrids.stageBit C v (2 * i₀.val) i a =
+      GateHybrids.stageBit C v (2 * i₀.val + 1) i a
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean · stage_second_unselected
+
+```lean
+theorem stage_second_unselected {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i]).args.length ≤ 2)
+    (hEval : ∀ i : Fin C.gates.length,
+      gateOut (C.gates[i]) (RelabelGarbling.argValues C v i) = v (inputs + i))
+    (i₀ : Fin C.gates.length) (hargs : (C.gates[i₀.val]).args.Nodup)
+    (p : Fin (C.gates[i₀.val]).args.length) (hp : p.val = 1)
+    (u : ℕ) (hu : (C.gates[i₀.val]).args[p.val] = u)
+    (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool)
+    (hNone : GateOccurrences.selectedPosition (C.gates[i.val]) a u = none) :
+    GateHybrids.stageBit C v (2 * i₀.val + 1) i a =
+      GateHybrids.stageBit C v (2 * i₀.val + 2) i a
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedLaw.lean · acceptProb_fill
+
+```lean
+theorem acceptProb_fill
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (u : Fin C.size) (q : ℕ)
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hcomplete : ∀ i a, a ∈ rows i) (hrows : ∀ i, (rows i).Nodup)
+    {γ κ : Type*} [Fintype κ]
+    (X : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)) → γ)
+    (D : γ → κ → Bool) :
+    acceptProb
+      (fun z : (Fin (10 * S * n + 2 * S) → Bool) ×
+          ((Fin n → Bool) × (Fin (q + 1) → Fin n → Bool)) =>
+        X (SelectedSeed.fill C rows (seed (List.ofFn z.1)) u q z.2.1 z.2.2)) D =
+      acceptProb (fun r : Fin (10 * S * n + 2 * S) → Bool => X (seed (List.ofFn r))) D
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · record
+
+```lean
+noncomputable def record (E₁ E₂ : List Bool → List Bool)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · record_eq
+
+```lean
+theorem record_eq (E₁ E₂ : List Bool → List Bool)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) :
+    record C rows s u E₁ E₂ o i a =
+      (GateOccurrences.selectedPosition C.gates[i.val] a u.val).elim
+        (SliceReconstruction.fixedRecord ((nestedSpecial E₁ E₂ n).enc
+          (argKeys C s i a) (o i a) (s.2.1 i a)))
+        (fun p => SelectedRows.descriptor n (argKeys C s i a) (s.2.1 i a) p.val
+          (SelectedSeed.slotIndex C rows s.2.2 u.val i a p))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slotOffset
+
+```lean
+noncomputable def slotOffset (j : Fin (q + 1)) : ℕ
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slotOffset_eq
+
+```lean
+theorem slotOffset_eq (j : Fin (q + 1)) :
+    slotOffset C rows s u q j =
+      (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 u.val) j).elim 0
+        (fun t => SelectedRows.offset n
+          (argKeys C s t.1 (s.2.2 t.1 ((rows t.1).getD t.2.1 (fun _ => false)))) t.2.2)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slotLength
+
+```lean
+noncomputable def slotLength (j : Fin (q + 1)) : ℕ
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slotLength_eq
+
+```lean
+theorem slotLength_eq (j : Fin (q + 1)) :
+    slotLength C rows s u q j =
+      (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 u.val) j).elim n
+        (fun t => SelectedRows.length n
+          (argKeys C s t.1 (s.2.2 t.1 ((rows t.1).getD t.2.1 (fun _ => false)))) t.2.2)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slotWord
+
+```lean
+noncomputable def slotWord (E₁ : List Bool → List Bool)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (j : Fin (q + 1)) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slotWord_eq
+
+```lean
+theorem slotWord_eq (E₁ : List Bool → List Bool)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (j : Fin (q + 1)) :
+    slotWord C rows s u q E₁ o j =
+      (GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 u.val) j).elim
+        (List.replicate n false) (fun t =>
+          let a := s.2.2 t.1 ((rows t.1).getD t.2.1 (fun _ => false))
+          SelectedRows.word E₁ n (argKeys C s t.1 a) (o t.1 a) (s.2.1 t.1 a) t.2.2)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slotMessage
+
+```lean
+noncomputable def slotMessage (E₁ : List Bool → List Bool)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (j : Fin (q + 1)) : Fin (slotLength C rows s u q j) → Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slotMessage_eq
+
+```lean
+theorem slotMessage_eq (E₁ : List Bool → List Bool)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (j : Fin (q + 1)) :
+    slotMessage C rows s u q E₁ o j =
+      padFin (slotLength C rows s u q j) (slotWord C rows s u q E₁ o j)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · tables
+
+```lean
+noncomputable def tables (E₁ E₂ : List Bool → List Bool)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool)) :
+    List (List (List Bool))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · tables_eq
+
+```lean
+theorem tables_eq (E₁ E₂ : List Bool → List Bool)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool)) :
+    tables C rows s u E₁ E₂ o =
+      List.ofFn (fun i => (rows i).map fun a => record C rows s u E₁ E₂ o i (s.2.2 i a))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slotWord_length
+
+```lean
+theorem slotWord_length
+    {G₁ : ∀ k, (Fin k → Bool) → (Fin k → Bool) → (Fin (k + k) → Bool)}
+    {E₁ : List Bool → List Bool}
+    (hGE₁ : ∀ k (key nonce : Fin k → Bool),
+      E₁ (pairEncode (List.ofFn key) (List.ofFn nonce)) = List.ofFn (G₁ k key nonce))
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (j : Fin (q + 1)) :
+    (slotWord C rows s u q E₁ o j).length = slotLength C rows s u q j
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slotMessage_ofFn
+
+```lean
+theorem slotMessage_ofFn
+    {G₁ : ∀ k, (Fin k → Bool) → (Fin k → Bool) → (Fin (k + k) → Bool)}
+    {E₁ : List Bool → List Bool}
+    (hGE₁ : ∀ k (key nonce : Fin k → Bool),
+      E₁ (pairEncode (List.ofFn key) (List.ofFn nonce)) = List.ofFn (G₁ k key nonce))
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (j : Fin (q + 1)) :
+    List.ofFn (slotMessage C rows s u q E₁ o j) = slotWord C rows s u q E₁ o j
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slotReaders_of_padded
+
+```lean
+theorem slotReaders_of_padded (E₁ : List Bool → List Bool)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (j : Fin (q + 1)) (i : Fin C.gates.length) (row p : ℕ)
+    (hpad : GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 u.val) j =
+      some (i, row, p)) :
+    let a
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · slots_fit
+
+```lean
+theorem slots_fit (j : Fin (q + 1)) :
+    slotOffset C rows s u q j + n + slotLength C rows s u q j ≤
+      (n + n) + (n + (4 * n + 2))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · record_congr
+
+```lean
+theorem record_congr (E₁ E₂ : List Bool → List Bool)
+    (o₀ o₁ : (i : Fin C.gates.length) →
+      (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
+    (ho : GateOccurrences.selectedPosition C.gates[i.val] a u.val = none → o₀ i a = o₁ i a) :
+    record C rows s u E₁ E₂ o₀ i a = record C rows s u E₁ E₂ o₁ i a
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · tables_congr
+
+```lean
+theorem tables_congr (E₁ E₂ : List Bool → List Bool)
+    (o₀ o₁ : (i : Fin C.gates.length) →
+      (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (ho : ∀ i a, GateOccurrences.selectedPosition C.gates[i.val] a u.val = none →
+      o₀ i a = o₁ i a) : tables C rows s u E₁ E₂ o₀ = tables C rows s u E₁ E₂ o₁
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · advice
+
+```lean
+noncomputable def advice (E₁ E₂ : List Bool → List Bool)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (tail privateInput aliceOutput : List Bool) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · advice_eq
+
+```lean
+theorem advice_eq (E₁ E₂ : List Bool → List Bool)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (tail privateInput aliceOutput : List Bool) :
+    advice C rows s u E₁ E₂ o tail privateInput aliceOutput =
+      SliceReconstruction.advice
+        (BinArith.encWords ((tables C rows s u E₁ E₂ o).map BinArith.encWords))
+        tail privateInput aliceOutput
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean · advice_congr
+
+```lean
+theorem advice_congr (E₁ E₂ : List Bool → List Bool)
+    (o₀ o₁ : (i : Fin C.gates.length) →
+      (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (ho : ∀ i a, GateOccurrences.selectedPosition C.gates[i.val] a u.val = none →
+      o₀ i a = o₁ i a) (tail privateInput aliceOutput : List Bool) :
+    advice C rows s u E₁ E₂ o₀ tail privateInput aliceOutput =
+      advice C rows s u E₁ E₂ o₁ tail privateInput aliceOutput
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · offset
+
+```lean
+def offset (n : ℕ) (ks : List (Fin n → Bool)) (p : ℕ) : ℕ
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · offset_eq
+
+```lean
+theorem offset_eq (n : ℕ) (ks : List (Fin n → Bool)) (p : ℕ) :
+    offset n ks p = if ks.length = 2 ∧ p = 0 then n + n else 0
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · length
+
+```lean
+def length (n : ℕ) (ks : List (Fin n → Bool)) (p : ℕ) : ℕ
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · length_eq
+
+```lean
+theorem length_eq (n : ℕ) (ks : List (Fin n → Bool)) (p : ℕ) :
+    length n ks p = if ks.length = 2 ∧ p = 0 then 4 * n + 2 else n
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · word
+
+```lean
+def word (E₁ : List Bool → List Bool) (n : ℕ) (ks : List (Fin n → Bool))
+    (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · word_eq
+
+```lean
+theorem word_eq (E₁ : List Bool → List Bool) (n : ℕ) (ks : List (Fin n → Bool))
+    (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ) :
+    word E₁ n ks o nonce p = if ks.length = 2 ∧ p = 0 then
+      spEncStr E₁ (List.ofFn (ks.getD 1 default)) (List.ofFn o) (List.ofFn nonce.2)
+    else List.ofFn o
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · message
+
+```lean
+def message (E₁ : List Bool → List Bool) (n : ℕ) (ks : List (Fin n → Bool))
+    (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ) :
+    Fin (length n ks p) → Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · message_eq
+
+```lean
+theorem message_eq (E₁ : List Bool → List Bool) (n : ℕ) (ks : List (Fin n → Bool))
+    (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ) :
+    message E₁ n ks o nonce p =
+      padFin (length n ks p) (word E₁ n ks o nonce p)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · descriptor
+
+```lean
+def descriptor (n : ℕ) (ks : List (Fin n → Bool))
+    (nonce : (Fin n → Bool) × (Fin n → Bool)) (p j : ℕ) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · descriptor_eq
+
+```lean
+theorem descriptor_eq (n : ℕ) (ks : List (Fin n → Bool))
+    (nonce : (Fin n → Bool) × (Fin n → Bool)) (p j : ℕ) :
+    descriptor n ks nonce p j = if ks.length = 2 ∧ p = 1 then
+      SliceReconstruction.wrappedRecord j (List.ofFn (ks.getD 0 default)) (List.ofFn nonce.1)
+    else SliceReconstruction.directRecord j
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · word_length
+
+```lean
+theorem word_length
+    {G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool)}
+    {E₁ : List Bool → List Bool}
+    (hGE₁ : ∀ n (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) =
+      List.ofFn (G₁ n s x)) (n : ℕ) (ks : List (Fin n → Bool)) (o : Fin n → Bool)
+    (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ) :
+    (word E₁ n ks o nonce p).length = length n ks p
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · message_ofFn
+
+```lean
+theorem message_ofFn
+    {G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool)}
+    {E₁ : List Bool → List Bool}
+    (hGE₁ : ∀ n (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) =
+      List.ofFn (G₁ n s x)) (n : ℕ) (ks : List (Fin n → Bool)) (o : Fin n → Bool)
+    (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ) :
+    List.ofFn (message E₁ n ks o nonce p) = word E₁ n ks o nonce p
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · reconstruct
+
+```lean
+include hG hGE₁ hGE₂ in
+theorem reconstruct (n q : ℕ) (ks : List (Fin n → Bool)) (o : Fin n → Bool)
+    (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ) (j : Fin (q + 1))
+    (hks : ks.length ≤ 2) (hp : p < ks.length)
+    (offsets lens : Fin (q + 1) → ℕ) (msgs : ∀ i, Fin (lens i) → Bool)
+    (hOff : offsets j = offset n ks p) (hMsg : List.ofFn (msgs j) = word E₁ n ks o nonce p)
+    (k : Fin n → Bool) (rs : Fin (q + 1) → Fin n → Bool) :
+    SliceReconstruction.row E₂ (pairEncode (sliceMultiEncDist G n q offsets lens msgs (k, rs))
+      (descriptor n ks nonce p j.val)) =
+        (nestedSpecial E₁ E₂ n).enc (ks.set p k) o
+          (if p = 0 then (rs j, nonce.2) else (nonce.1, rs j))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · descriptor_length_le
+
+```lean
+theorem descriptor_length_le (n q : ℕ) (ks : List (Fin n → Bool))
+    (nonce : (Fin n → Bool) × (Fin n → Bool)) (p j : ℕ) (hj : j ≤ q) :
+    (descriptor n ks nonce p j).length ≤ 2 * q + 3 * n + 8
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedRows.lean · fits
+
+```lean
+theorem fits (n : ℕ) (ks : List (Fin n → Bool)) (p : ℕ) :
+    offset n ks p + n + length n ks p ≤ (n + n) + (n + (4 * n + 2))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · rowIndex
+
+```lean
+noncomputable def rowIndex {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) : ℕ
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · rowIndex_eq
+
+```lean
+theorem rowIndex_eq {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) :
+    rowIndex C rows perm i a = (rows i).idxOf ((perm i).symm a)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · rowIndex_lt
+
+```lean
+theorem rowIndex_lt {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
+    (hcomplete : ∀ a, a ∈ rows i) : rowIndex C rows perm i a < (rows i).length
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · rowIndex_actual
+
+```lean
+theorem rowIndex_actual {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
+    (hcomplete : ∀ a, a ∈ rows i) :
+    perm i ((rows i).getD (rowIndex C rows perm i a) (fun _ => false)) = a
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · slotIndex
+
+```lean
+noncomputable def slotIndex {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u : ℕ) (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
+    (p : Fin C.gates[i.val].args.length) : ℕ
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · slotIndex_eq
+
+```lean
+theorem slotIndex_eq {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u : ℕ) (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
+    (p : Fin C.gates[i.val].args.length) :
+    slotIndex C rows perm u i a p =
+      @List.idxOf (Fin C.gates.length × ℕ × ℕ) instBEqOfDecidableEq
+    (i, rowIndex C rows perm i a, p.val) (GateOccurrences.occurrences C rows perm u)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · slotIndex_lt
+
+```lean
+theorem slotIndex_lt {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u : ℕ) (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
+    (p : Fin C.gates[i.val].args.length) (hargs : C.gates[i.val].args.Nodup)
+    (hcomplete : ∀ a, a ∈ rows i) (hvertex : C.gates[i.val].args[p.val] = u)
+    (hbit : a p = true) :
+    slotIndex C rows perm u i a p < (GateOccurrences.occurrences C rows perm u).length
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · nonce
+
+```lean
+noncomputable def nonce (i : Fin C.gates.length)
+    (a : Fin C.gates[i.val].args.length → Bool) : ρ × ρ
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · nonce_eq
+
+```lean
+theorem nonce_eq (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) :
+    nonce C rows s u q r i a =
+      (GateOccurrences.selectedPosition C.gates[i.val] a u).elim (s.2.1 i a) (fun p =>
+        let j := slotIndex C rows s.2.2 u i a p
+        if h : j < q + 1 then
+          if p.val = 0 then (r ⟨j, h⟩, (s.2.1 i a).2) else ((s.2.1 i a).1, r ⟨j, h⟩)
+        else s.2.1 i a)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · nonce_of_none
+
+```lean
+theorem nonce_of_none (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
+    (h : GateOccurrences.selectedPosition C.gates[i.val] a u = none) :
+    nonce C rows s u q r i a = s.2.1 i a
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · nonce_of_some
+
+```lean
+theorem nonce_of_some (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
+    (p : Fin C.gates[i.val].args.length)
+    (h : GateOccurrences.selectedPosition C.gates[i.val] a u = some p)
+    (hslot : slotIndex C rows s.2.2 u i a p < q + 1) :
+    nonce C rows s u q r i a =
+      if p.val = 0 then (r ⟨slotIndex C rows s.2.2 u i a p, hslot⟩, (s.2.1 i a).2)
+      else ((s.2.1 i a).1, r ⟨slotIndex C rows s.2.2 u i a p, hslot⟩)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · fill
+
+```lean
+noncomputable def fill {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+    (r : Fin (q + 1) → ρ) : GarbleSeed C K (ρ × ρ)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · fill_eq
+
+```lean
+theorem fill_eq {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+    (r : Fin (q + 1) → ρ) :
+    fill C rows s u q k r =
+      ((fun v b => if v = u ∧ b = true then k else s.1 v b),
+        (nonce C rows s u.val q r, s.2.2))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · fill_key
+
+```lean
+theorem fill_key {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+    (r : Fin (q + 1) → ρ) (v : Fin C.size) (b : Bool) :
+    (fill C rows s u q k r).1 v b = if v = u ∧ b = true then k else s.1 v b
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · fill_nonce
+
+```lean
+theorem fill_nonce {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+    (r : Fin (q + 1) → ρ) (i : Fin C.gates.length)
+    (a : Fin C.gates[i.val].args.length → Bool) :
+    (fill C rows s u q k r).2.1 i a = nonce C rows s u.val q r i a
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · fill_perm
+
+```lean
+theorem fill_perm {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+    (r : Fin (q + 1) → ρ) (i : Fin C.gates.length) :
+    (fill C rows s u q k r).2.2 i = s.2.2 i
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · fill_key_selected
+
+```lean
+theorem fill_key_selected {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+    (r : Fin (q + 1) → ρ) : (fill C rows s u q k r).1 u true = k
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · fill_key_other
+
+```lean
+theorem fill_key_other {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+    (r : Fin (q + 1) → ρ) (v : Fin C.size) (b : Bool) (h : (v, b) ≠ (u, true)) :
+    (fill C rows s u q k r).1 v b = s.1 v b
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · fill_keyAt
+
+```lean
+theorem fill_keyAt {m : ℕ} {K ρ : Type} [Inhabited K] (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+    (r : Fin (q + 1) → ρ) (v : ℕ) (b : Bool) :
+    keyAt C (fill C rows s u q k r) v b =
+      if (v, b) = (u.val, true) then k else keyAt C s v b
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · fill_argKeys
+
+```lean
+theorem fill_argKeys {m : ℕ} {K ρ : Type} [Inhabited K] (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+    (r : Fin (q + 1) → ρ) (i : Fin C.gates.length)
+    (a : Fin C.gates[i.val].args.length → Bool) :
+    argKeys C (fill C rows s u q k r) i a = List.ofFn (fun p =>
+      if (C.gates[i.val].args[p.val], a p) = (u.val, true) then k
+      else keyAt C s C.gates[i.val].args[p.val] (a p))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · argument_label_eq_iff
+
+```lean
+theorem argument_label_eq_iff (g : DAGGate) (a : Fin g.args.length → Bool) (u : ℕ)
+    (hargs : g.args.Nodup) (p : Fin g.args.length) (hvertex : g.args[p.val] = u)
+    (hbit : a p = true) (t : Fin g.args.length) :
+    (g.args[t.val], a t) = (u, true) ↔ t = p
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · fill_argKeys_some
+
+```lean
+theorem fill_argKeys_some {m : ℕ} {K ρ : Type} [Inhabited K] (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+    (r : Fin (q + 1) → ρ) (i : Fin C.gates.length)
+    (a : Fin C.gates[i.val].args.length → Bool) (p : Fin C.gates[i.val].args.length)
+    (hargs : C.gates[i.val].args.Nodup)
+    (h : GateOccurrences.selectedPosition C.gates[i.val] a u.val = some p) :
+    argKeys C (fill C rows s u q k r) i a = (argKeys C s i a).set p.val k
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · fill_argKeys_none
+
+```lean
+theorem fill_argKeys_none {m : ℕ} {K ρ : Type} [Inhabited K] (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+    (r : Fin (q + 1) → ρ) (i : Fin C.gates.length)
+    (a : Fin C.gates[i.val].args.length → Bool) (hargs : C.gates[i.val].args.Nodup)
+    (h : GateOccurrences.selectedPosition C.gates[i.val] a u.val = none) :
+    argKeys C (fill C rows s u q k r) i a = argKeys C s i a
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · rowIndex_of_row
+
+```lean
+theorem rowIndex_of_row {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (i : Fin C.gates.length) (r : ℕ) (hr : r < (rows i).length) (hrows : (rows i).Nodup) :
+    rowIndex C rows perm i (perm i ((rows i).getD r (fun _ => false))) = r
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · slotIndex_of_lookup
+
+```lean
+theorem slotIndex_of_lookup {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u : ℕ) (i : Fin C.gates.length) (r j : ℕ) (p : Fin C.gates[i.val].args.length)
+    (hr : r < (rows i).length) (hrows : (rows i).Nodup)
+    (hlookup : (GateOccurrences.occurrences C rows perm u)[j]? = some (i, r, p.val)) :
+    slotIndex C rows perm u i (perm i ((rows i).getD r (fun _ => false))) p = j
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean · slotIndex_padded
+
+```lean
+theorem slotIndex_padded {m : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u q : ℕ) (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
+    (p : Fin C.gates[i.val].args.length) (hargs : C.gates[i.val].args.Nodup)
+    (hcomplete : ∀ a, a ∈ rows i) (hvertex : C.gates[i.val].args[p.val] = u)
+    (hbit : a p = true) (hslot : slotIndex C rows perm u i a p < q + 1) :
+    GateOccurrences.padded q (GateOccurrences.occurrences C rows perm u)
+      ⟨slotIndex C rows perm u i a p, hslot⟩ =
+        some (i, rowIndex C rows perm i a, p.val)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean · zero_row
+
+```lean
+theorem zero_row (E₁ E₂ : List Bool → List Bool) (n : ℕ) (o r₁ r₂ : Fin n → Bool) :
+    (nestedSpecial E₁ E₂ n).enc [] o (r₁, r₂) = List.ofFn o
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean · only_row
+
+```lean
+include hG hGE₁ in
+theorem only_row (n : ℕ) (k o r r₂ : Fin n → Bool) :
+    sliceEnc G n 0 k r (List.ofFn o) = (nestedSpecial E₁ E₂ n).enc [k] o (r, r₂)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean · inner_row
+
+```lean
+include hG hGE₁ in
+theorem inner_row (n : ℕ) (k outer o r₁ r₂ : Fin n → Bool) :
+    spEncStr E₂ (List.ofFn outer) (sliceEnc G n 0 k r₂ (List.ofFn o)) (List.ofFn r₁) =
+      (nestedSpecial E₁ E₂ n).enc [outer, k] o (r₁, r₂)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean · outer_row
+
+```lean
+include hG hGE₂ in
+theorem outer_row (n : ℕ) (k inner o r₁ r₂ : Fin n → Bool) :
+    sliceEnc G n (n + n) k r₁
+      (spEncStr E₁ (List.ofFn inner) (List.ofFn o) (List.ofFn r₂)) =
+        (nestedSpecial E₁ E₂ n).enc [k, inner] o (r₁, r₂)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean · innerCipher_length
+
+```lean
+theorem innerCipher_length
+    {G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool)}
+    {E₁ : List Bool → List Bool}
+    (hGE₁ : ∀ n (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) =
+      List.ofFn (G₁ n s x)) (n : ℕ) (k o r : Fin n → Bool) :
+    (spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)).length = 4 * n + 2
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean · innerMessage
+
+```lean
+def innerMessage (E₁ : List Bool → List Bool) (n : ℕ) (k o r : Fin n → Bool) :
+    Fin (4 * n + 2) → Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean · innerMessage_eq
+
+```lean
+theorem innerMessage_eq (E₁ : List Bool → List Bool) (n : ℕ) (k o r : Fin n → Bool)
+    (t : Fin (4 * n + 2)) :
+    innerMessage E₁ n k o r t =
+      (spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)).getD t.val false
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean · innerMessage_ofFn
+
+```lean
+theorem innerMessage_ofFn
+    {G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool)}
+    {E₁ : List Bool → List Bool}
+    (hGE₁ : ∀ n (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) =
+      List.ofFn (G₁ n s x)) (n : ℕ) (k o r : Fin n → Bool) :
+    List.ofFn (innerMessage E₁ n k o r) =
+      spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean · direct_sampler
+
+```lean
+theorem direct_sampler {L : ℕ → ℕ}
+    (G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (L n) → Bool))
+    (E₂ : List Bool → List Bool) (n q : ℕ) (offset len : Fin (q + 1) → ℕ)
+    (m : ∀ i, Fin (len i) → Bool) (k : Fin n → Bool)
+    (r : Fin (q + 1) → Fin n → Bool) (j : Fin (q + 1)) :
+    SliceReconstruction.row E₂ (pairEncode (sliceMultiEncDist G n q offset len m (k, r))
+      (SliceReconstruction.directRecord j.val)) =
+        sliceEnc G n (offset j) k (r j) (List.ofFn (m j))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean · wrapped_sampler
+
+```lean
+theorem wrapped_sampler {L : ℕ → ℕ}
+    (G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (L n) → Bool))
+    (E₂ : List Bool → List Bool) (n q : ℕ) (offset len : Fin (q + 1) → ℕ)
+    (m : ∀ i, Fin (len i) → Bool) (k : Fin n → Bool)
+    (r : Fin (q + 1) → Fin n → Bool) (j : Fin (q + 1)) (outer nonce : List Bool) :
+    SliceReconstruction.row E₂ (pairEncode (sliceMultiEncDist G n q offset len m (k, r))
+      (SliceReconstruction.wrappedRecord j.val outer nonce)) =
+        spEncStr E₂ outer (sliceEnc G n (offset j) k (r j) (List.ofFn (m j))) nonce
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean · slice_shapes_fit
+
+```lean
+theorem slice_shapes_fit (n : ℕ) :
+    0 + n + n ≤ (n + n) + (n + (4 * n + 2)) ∧
+      (n + n) + n + (4 * n + 2) ≤ (n + n) + (n + (4 * n + 2))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStep.lean · plaintext_ne
+
+```lean
+theorem plaintext_ne {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
+    (i₀ : Fin C.gates.length) (u : ℕ) (hu : u ∈ C.gates[i₀.val].args)
+    (phase : ℕ) (hphase : phase ≤ 2)
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool) :
+    (m + i.val, GateHybrids.stageBit C v (2 * i₀.val + phase) i a) ≠ (u, true)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStep.lean · unselected_eq
+
+```lean
+theorem unselected_eq {m : ℕ} (C : DAGCircuit m) (v : ℕ → Bool)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i]).args.length ≤ 2)
+    (hEval : ∀ i : Fin C.gates.length,
+      gateOut (C.gates[i]) (RelabelGarbling.argValues C v i) = v (m + i))
+    (i₀ : Fin C.gates.length) (hargs : C.gates[i₀.val].args.Nodup)
+    (p : Fin C.gates[i₀.val].args.length) (u : ℕ) (hu : C.gates[i₀.val].args[p.val] = u)
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
+    (hNone : GateOccurrences.selectedPosition C.gates[i.val] a u = none) :
+    GateHybrids.stageBit C v (2 * i₀.val + p.val) i a =
+      GateHybrids.stageBit C v (2 * i₀.val + p.val + 1) i a
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStep.lean · advice_next
+
+```lean
+theorem advice_next {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (v : ℕ → Bool) (hfanin : C.IsFaninTwo)
+    (hEval : ∀ i : Fin C.gates.length,
+      gateOut (C.gates[i]) (RelabelGarbling.argValues C v i) = v (m + i))
+    (i₀ : Fin C.gates.length) (p : Fin C.gates[i₀.val].args.length)
+    (hu : C.gates[i₀.val].args[p.val] = u.val) (inA outLen : ℕ)
+    (output : Fin outLen → ℕ) (privateInput aliceOutput : List Bool) :
+    SelectedPlan.advice C rows s u E₁ E₂ (fun i a =>
+      keyAt C s (m + i.val) (GateHybrids.stageBit C v (2 * i₀.val + p.val) i a))
+      (pairSndD (GateHybridMessage.message (nestedSpecial E₁ E₂ n) C s inA outLen
+        output v (2 * i₀.val + p.val))) privateInput aliceOutput =
+    SelectedPlan.advice C rows s u E₁ E₂ (fun i a =>
+      keyAt C s (m + i.val) (GateHybrids.stageBit C v (2 * i₀.val + p.val + 1) i a))
+      (pairSndD (GateHybridMessage.message (nestedSpecial E₁ E₂ n) C s inA outLen
+        output v (2 * i₀.val + p.val + 1))) privateInput aliceOutput
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStep.lean · reconstruct
+
+```lean
+include hG hGE₁ hGE₂ in
+theorem reconstruct {m n : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (q : ℕ) (v : ℕ → Bool) (hfanin : C.IsFaninTwo)
+    (hEval : ∀ i : Fin C.gates.length,
+      gateOut (C.gates[i]) (RelabelGarbling.argValues C v i) = v (m + i))
+    (i₀ : Fin C.gates.length) (p : Fin C.gates[i₀.val].args.length)
+    (hu : C.gates[i₀.val].args[p.val] = u.val)
+    (hcap : (GateOccurrences.occurrences C rows s.2.2 u.val).length ≤ q + 1)
+    (hrows : ∀ i, rows i = (Finset.univ : Finset (Fin C.gates[i.val].args.length → Bool)).toList)
+    (inA inB outLen : ℕ) (output : Fin outLen → ℕ)
+    (hsink : ∀ j g, g ∈ C.gates → output j ∉ g.args)
+    (N bobInput aliceOutput : List Bool)
+    (k : Fin n → Bool) (rs : Fin (q + 1) → Fin n → Bool) (side : Bool) :
+    let before
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · Selection
+
+```lean
+abbrev Selection {m : ℕ} (C : DAGCircuit m)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · Selection_eq
+
+```lean
+theorem Selection_eq {m : ℕ} (C : DAGCircuit m) :
+    Selection C = (Σ i : Fin C.gates.length, Fin C.gates[i.val].args.length)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · wire
+
+```lean
+def wire {m : ℕ} (C : DAGCircuit m) (a : Selection C) : Fin C.size
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · wire_val
+
+```lean
+theorem wire_val {m : ℕ} (C : DAGCircuit m) (a : Selection C) :
+    (wire C a).val = C.gates[a.1.val].args[a.2.val]
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · Tape
+
+```lean
+abbrev Tape (S : PolyExpr) (n : ℕ)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · Tape_eq
+
+```lean
+theorem Tape_eq (S : PolyExpr) (n : ℕ) :
+    Tape S n = (Fin (10 * S.eval n * n + 2 * S.eval n) → Bool)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · Choice
+
+```lean
+abbrev Choice (I : ℕ → Type) {inputs : ℕ → ℕ} (C : ∀ n, DAGCircuit (inputs n))
+    (S : PolyExpr) (n : ℕ)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · Choice_eq
+
+```lean
+theorem Choice_eq (I : ℕ → Type) {inputs : ℕ → ℕ} (C : ∀ n, DAGCircuit (inputs n))
+    (S : PolyExpr) (n : ℕ) :
+    Choice I C S n = (Option (I n × Selection (C n)) × Tape S n)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · rows
+
+```lean
+noncomputable def rows {m : ℕ} (C : DAGCircuit m) (i : Fin C.gates.length) :
+    List (Fin C.gates[i.val].args.length → Bool)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · rows_eq
+
+```lean
+theorem rows_eq {m : ℕ} (C : DAGCircuit m) (i : Fin C.gates.length) :
+    rows C i = (Finset.univ : Finset (Fin C.gates[i.val].args.length → Bool)).toList
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · rows_complete
+
+```lean
+theorem rows_complete {m : ℕ} (C : DAGCircuit m) (i : Fin C.gates.length)
+    (a : Fin C.gates[i.val].args.length → Bool) : a ∈ rows C i
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · rows_nodup
+
+```lean
+theorem rows_nodup {m : ℕ} (C : DAGCircuit m) (i : Fin C.gates.length) : (rows C i).Nodup
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · capacity
+
+```lean
+theorem capacity {m : ℕ} (C : DAGCircuit m) (S : PolyExpr) (n : ℕ)
+    (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[i.val].args.length → Bool))
+    (u : ℕ) (hSize : C.size ≤ S.eval n) (hfanin : C.IsFaninTwo) :
+    (GateOccurrences.occurrences C (rows C) perm u).length ≤
+      (SelectedAdviceBounds.slotBudget S).eval n + 1
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · offset
+
+```lean
+noncomputable def offset (n : ℕ) (a : Choice I C S n) :
+    Fin ((SelectedAdviceBounds.slotBudget S).eval n + 1) → ℕ
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · offset_none
+
+```lean
+theorem offset_none (n : ℕ) (t : Tape S n) :
+    offset (I := I) C S seed n (none, t) = fun _ => 0
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · offset_some
+
+```lean
+theorem offset_some (n : ℕ) (z : I n) (b : Selection (C n)) (t : Tape S n) :
+    offset C S seed n (some (z, b), t) = SelectedPlan.slotOffset (C n) (rows (C n))
+      (seed n (List.ofFn t)) (wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · len
+
+```lean
+noncomputable def len (n : ℕ) (a : Choice I C S n) :
+    Fin ((SelectedAdviceBounds.slotBudget S).eval n + 1) → ℕ
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · len_none
+
+```lean
+theorem len_none (n : ℕ) (t : Tape S n) :
+    len (I := I) C S seed n (none, t) = fun _ => 0
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · len_some
+
+```lean
+theorem len_some (n : ℕ) (z : I n) (b : Selection (C n)) (t : Tape S n) :
+    len C S seed n (some (z, b), t) = SelectedPlan.slotLength (C n) (rows (C n))
+      (seed n (List.ofFn t)) (wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · message
+
+```lean
+noncomputable def message (side : Bool) (n : ℕ) (a : Choice I C S n) :
+    ∀ j, Fin (len C S seed n a j) → Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · message_none
+
+```lean
+theorem message_none (side : Bool) (n : ℕ) (t : Tape S n) :
+    message C S seed v E₁ side n (none, t) = fun _ _ => false
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · message_some
+
+```lean
+theorem message_some (side : Bool) (n : ℕ) (z : I n) (b : Selection (C n)) (t : Tape S n) :
+    message C S seed v E₁ side n (some (z, b), t) =
+      SelectedPlan.slotMessage (C n) (rows (C n)) (seed n (List.ofFn t)) (wire (C n) b)
+        ((SelectedAdviceBounds.slotBudget S).eval n) E₁
+        (fun i a => keyAt (C n) (seed n (List.ofFn t)) (inputs n + i.val)
+          (GateHybrids.stageBit (C n) (v n z) (2 * b.1.val + b.2.val + side.toNat) i a))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · advice
+
+```lean
+noncomputable def advice (n : ℕ) (a : Choice I C S n) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · advice_none
+
+```lean
+theorem advice_none (n : ℕ) (t : Tape S n) :
+    advice C S A B O seed v output bobWord aliceWord E₁ E₂ n (none, t) = []
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · advice_some
+
+```lean
+theorem advice_some (n : ℕ) (z : I n) (b : Selection (C n)) (t : Tape S n) :
+    advice C S A B O seed v output bobWord aliceWord E₁ E₂ n (some (z, b), t) =
+      SelectedPlan.advice (C n) (rows (C n)) (seed n (List.ofFn t)) (wire (C n) b) E₁ E₂
+        (fun i a => keyAt (C n) (seed n (List.ofFn t)) (inputs n + i.val)
+          (GateHybrids.stageBit (C n) (v n z) (2 * b.1.val + b.2.val) i a))
+        (pairSndD (GateHybridMessage.message (nestedSpecial E₁ E₂ n) (C n) (seed n (List.ofFn t))
+          (A.eval n) (O.eval n) (output n) (v n z) (2 * b.1.val + b.2.val)))
+        (pairEncode (bobWord n z)
+          (List.ofFn (FakeObjects.activeAnswers (C n) (seed n (List.ofFn t)) (A.eval n)
+            (B.eval n)))) (aliceWord n z)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · fits
+
+```lean
+theorem fits (L : PolyExpr) (hL : ∀ n, 7 * n + 2 ≤ L.eval n)
+    (n : ℕ) (a : Choice I C S n) (j : Fin ((SelectedAdviceBounds.slotBudget S).eval n + 1)) :
+    offset C S seed n a j + n + len C S seed n a j ≤ L.eval n
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · advice_budget
+
+```lean
+theorem advice_budget (R : PolyExpr) (hSize : ∀ n, (C n).size ≤ S.eval n)
+    (hfanin : ∀ n, (C n).IsFaninTwo)
+    (hBob : ∀ n z, (bobWord n z).length ≤ B.eval n)
+    (hAlice : ∀ n z, (aliceWord n z).length ≤ R.eval n)
+    (n : ℕ) (a : Choice I C S n) :
+    (advice C S A B O seed v output bobWord aliceWord E₁ E₂ n a).length ≤
+      (SelectedAdviceBounds.sampleBudget S A B O R).eval n
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepChoices.lean · rebuild_some
+
+```lean
+include hG hGE₁ hGE₂ in
+theorem rebuild_some (hSize : ∀ n, (C n).size ≤ S.eval n)
+    (hfanin : ∀ n, (C n).IsFaninTwo)
+    (hEval : ∀ n z (i : Fin (C n).gates.length),
+      gateOut ((C n).gates[i]) (RelabelGarbling.argValues (C n) (v n z) i) =
+        v n z (inputs n + i))
+    (hsink : ∀ n j g, g ∈ (C n).gates → output n j ∉ g.args)
+    (n : ℕ) (z : I n) (b : Selection (C n)) (t : Tape S n)
+    (k : Fin n → Bool)
+    (rs : Fin ((SelectedAdviceBounds.slotBudget S).eval n + 1) → Fin n → Bool)
+    (side : Bool) :
+    SliceReconstruction.rebuild E₂ (pairEncode (List.replicate n true) (pairEncode
+      (sliceMultiEncDist G n ((SelectedAdviceBounds.slotBudget S).eval n)
+        (offset C S seed n (some (z, b), t)) (len C S seed n (some (z, b), t))
+        (message C S seed v E₁ side n (some (z, b), t)) (k, rs))
+      (advice C S A B O seed v output bobWord aliceWord E₁ E₂ n (some (z, b), t)))) =
+      GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (C n)
+        (SelectedSeed.fill (C n) (rows (C n)) (seed n (List.ofFn t)) (wire (C n) b)
+          ((SelectedAdviceBounds.slotBudget S).eval n) k rs)
+        (A.eval n) (B.eval n) (O.eval n) (output n) (v n z) (List.replicate n true)
+        (bobWord n z) [] (aliceWord n z) (2 * b.1.val + b.2.val + side.toNat)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepSecurity.lean · filled_negligible
+
+```lean
+include hSize hfanin hEval hsink hBob hAlice hE₂ hG hGE₁ hGE₂ hL hSecure in
+theorem filled_negligible (D : NUPPT) :
+    ∃ μ : ℕ → ℝ, Negligible μ ∧ (∀ n, 0 ≤ μ n) ∧
+      ∀ n (z : I n) (b : SelectedStepChoices.Selection (C n))
+        (t : SelectedStepChoices.Tape S n),
+      distAdv
+        (fun r : (Fin n → Bool) ×
+            (Fin ((SelectedAdviceBounds.slotBudget S).eval n + 1) → Fin n → Bool) =>
+          GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (C n)
+            (SelectedSeed.fill (C n) (SelectedStepChoices.rows (C n)) (seed n (List.ofFn t))
+              (SelectedStepChoices.wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n)
+              r.1 r.2)
+            (A.eval n) (B.eval n) (O.eval n) (output n) (v n z) (List.replicate n true)
+            (bobWord n z) [] (aliceWord n z) (2 * b.1.val + b.2.val))
+        (fun r : (Fin n → Bool) ×
+            (Fin ((SelectedAdviceBounds.slotBudget S).eval n + 1) → Fin n → Bool) =>
+          GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (C n)
+            (SelectedSeed.fill (C n) (SelectedStepChoices.rows (C n)) (seed n (List.ofFn t))
+              (SelectedStepChoices.wire (C n) b) ((SelectedAdviceBounds.slotBudget S).eval n)
+              r.1 r.2)
+            (A.eval n) (B.eval n) (O.eval n) (output n) (v n z) (List.replicate n true)
+            (bobWord n z) [] (aliceWord n z) (2 * b.1.val + b.2.val + 1))
+        (D.distinguisherL n) ≤ μ n
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedStepSecurity.lean · selected_negligible
+
+```lean
+theorem selected_negligible (D : NUPPT) :
+    ∃ μ : ℕ → ℝ, Negligible μ ∧ (∀ n, 0 ≤ μ n) ∧
+      ∀ n (z : I n) (i : Fin (C n).gates.length) (p : Fin (C n).gates[i.val].args.length),
+      distAdv
+        (fun t : SelectedStepChoices.Tape S n =>
+          GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (C n) (seed n (List.ofFn t))
+            (A.eval n) (B.eval n) (O.eval n) (output n) (v n z) (List.replicate n true)
+            (bobWord n z) [] (aliceWord n z) (2 * i.val + p.val))
+        (fun t : SelectedStepChoices.Tape S n =>
+          GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (C n) (seed n (List.ofFn t))
+            (A.eval n) (B.eval n) (O.eval n) (output n) (v n z) (List.replicate n true)
+            (bobWord n z) [] (aliceWord n z) (2 * i.val + p.val + 1))
+        (D.distinguisherL n) ≤ μ n
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables.lean · record_reconstruct
+
+```lean
+include hG hGE₁ hGE₂ in
+theorem record_reconstruct {m n : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (q : ℕ)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hfan : ∀ i : Fin C.gates.length, C.gates[i.val].args.length ≤ 2)
+    (hcomplete : ∀ i a, a ∈ rows i)
+    (hcap : (GateOccurrences.occurrences C rows s.2.2 u.val).length ≤ q + 1)
+    (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool)
+    (k : Fin n → Bool) (rs : Fin (q + 1) → Fin n → Bool) :
+    SliceReconstruction.row E₂ (pairEncode
+      (sliceMultiEncDist G n q (SelectedPlan.slotOffset C rows s u q)
+        (SelectedPlan.slotLength C rows s u q) (SelectedPlan.slotMessage C rows s u q E₁ o)
+          (k, rs)) (SelectedPlan.record C rows s u E₁ E₂ o i a)) =
+      (nestedSpecial E₁ E₂ n).enc (argKeys C (SelectedSeed.fill C rows s u q k rs) i a)
+        (o i a) ((SelectedSeed.fill C rows s u q k rs).2.1 i a)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables.lean · tables_reconstruct
+
+```lean
+include hG hGE₁ hGE₂ in
+theorem tables_reconstruct {m n : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (q : ℕ)
+    (o : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → (Fin n → Bool))
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hfan : ∀ i : Fin C.gates.length, C.gates[i.val].args.length ≤ 2)
+    (hcomplete : ∀ i a, a ∈ rows i)
+    (hcap : (GateOccurrences.occurrences C rows s.2.2 u.val).length ≤ q + 1)
+    (k : Fin n → Bool) (rs : Fin (q + 1) → Fin n → Bool) :
+    SliceReconstruction.tables E₂ (pairEncode
+      (sliceMultiEncDist G n q (SelectedPlan.slotOffset C rows s u q)
+        (SelectedPlan.slotLength C rows s u q) (SelectedPlan.slotMessage C rows s u q E₁ o)
+          (k, rs))
+      (BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂ o).map BinArith.encWords))) =
+      BinArith.encWords (List.ofFn fun i => BinArith.encWords ((rows i).map fun a =>
+        (nestedSpecial E₁ E₂ n).enc
+          (argKeys C (SelectedSeed.fill C rows s u q k rs) i (s.2.2 i a))
+          (o i (s.2.2 i a)) ((SelectedSeed.fill C rows s u q k rs).2.1 i (s.2.2 i a))))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables.lean · tablesWith_reconstruct
+
+```lean
+include hG hGE₁ hGE₂ in
+theorem tablesWith_reconstruct {m n : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (q : ℕ)
+    (bit : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → Bool)
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hfan : ∀ i : Fin C.gates.length, C.gates[i.val].args.length ≤ 2)
+    (hcomplete : ∀ i a, a ∈ rows i)
+    (hcap : (GateOccurrences.occurrences C rows s.2.2 u.val).length ≤ q + 1)
+    (hrows : ∀ i, rows i = (Finset.univ : Finset (Fin C.gates[i.val].args.length → Bool)).toList)
+    (hlabel : ∀ i a, (m + i.val, bit i a) ≠ (u.val, true))
+    (k : Fin n → Bool) (rs : Fin (q + 1) → Fin n → Bool) :
+    SliceReconstruction.tables E₂ (pairEncode
+      (sliceMultiEncDist G n q (SelectedPlan.slotOffset C rows s u q)
+        (SelectedPlan.slotLength C rows s u q)
+        (SelectedPlan.slotMessage C rows s u q E₁
+          (fun i a => keyAt C s (m + i.val) (bit i a))) (k, rs))
+      (BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂
+        (fun i a => keyAt C s (m + i.val) (bit i a))).map BinArith.encWords))) =
+      BinArith.encWords (List.ofFn fun i => BinArith.encWords
+        (GateHybrids.tableWith (nestedSpecial E₁ E₂ n) C
+          (SelectedSeed.fill C rows s u q k rs) bit i))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables.lean · view_reconstruct
+
+```lean
+include hG hGE₁ hGE₂ in
+theorem view_reconstruct {m n : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (q : ℕ)
+    (bit : (i : Fin C.gates.length) → (Fin C.gates[i.val].args.length → Bool) → Bool)
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hfan : ∀ i : Fin C.gates.length, C.gates[i.val].args.length ≤ 2)
+    (hcomplete : ∀ i a, a ∈ rows i)
+    (hcap : (GateOccurrences.occurrences C rows s.2.2 u.val).length ≤ q + 1)
+    (hrows : ∀ i, rows i = (Finset.univ : Finset (Fin C.gates[i.val].args.length → Bool)).toList)
+    (hlabel : ∀ i a, (m + i.val, bit i a) ≠ (u.val, true))
+    (N tail privateInput aliceOutput : List Bool)
+    (k : Fin n → Bool) (rs : Fin (q + 1) → Fin n → Bool) :
+    SliceReconstruction.rebuild E₂ (pairEncode N (pairEncode
+      (sliceMultiEncDist G n q (SelectedPlan.slotOffset C rows s u q)
+        (SelectedPlan.slotLength C rows s u q)
+        (SelectedPlan.slotMessage C rows s u q E₁
+          (fun i a => keyAt C s (m + i.val) (bit i a))) (k, rs))
+      (SliceReconstruction.advice
+        (BinArith.encWords ((SelectedPlan.tables C rows s u E₁ E₂
+          (fun i a => keyAt C s (m + i.val) (bit i a))).map BinArith.encWords))
+        tail privateInput aliceOutput))) =
+      pairEncode (⟨N, privateInput, [], [pairEncode
+        (BinArith.encWords (List.ofFn fun i => BinArith.encWords
+          (GateHybrids.tableWith (nestedSpecial E₁ E₂ n) C
+            (SelectedSeed.fill C rows s u q k rs) bit i))) tail]⟩ : View).encode aliceOutput
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables.lean · sample_reconstruct
+
+```lean
+include hG hGE₁ hGE₂ in
+theorem sample_reconstruct {m n : ℕ} (C : DAGCircuit m)
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[i.val].args.length → Bool))
+    (s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+    (u : Fin C.size) (q : ℕ) (inA inB outLen : ℕ) (output : Fin outLen → ℕ)
+    (v : ℕ → Bool) (stage : ℕ) (N bobInput aliceOutput : List Bool)
+    (hargs : ∀ i : Fin C.gates.length, C.gates[i.val].args.Nodup)
+    (hfan : ∀ i : Fin C.gates.length, C.gates[i.val].args.length ≤ 2)
+    (hcomplete : ∀ i a, a ∈ rows i)
+    (hcap : (GateOccurrences.occurrences C rows s.2.2 u.val).length ≤ q + 1)
+    (hrows : ∀ i, rows i = (Finset.univ : Finset (Fin C.gates[i.val].args.length → Bool)).toList)
+    (hlabel : ∀ (i : Fin C.gates.length) (a : Fin C.gates[i.val].args.length → Bool),
+      (m + i.val, GateHybrids.stageBit C v stage i a) ≠ (u.val, true))
+    (hOut : ∀ j, output j ≠ u.val)
+    (k : Fin n → Bool) (rs : Fin (q + 1) → Fin n → Bool) :
+    SliceReconstruction.rebuild E₂ (pairEncode N (pairEncode
+      (sliceMultiEncDist G n q (SelectedPlan.slotOffset C rows s u q)
+        (SelectedPlan.slotLength C rows s u q)
+        (SelectedPlan.slotMessage C rows s u q E₁ (fun i a =>
+          keyAt C s (m + i.val) (GateHybrids.stageBit C v stage i a))) (k, rs))
+      (SelectedPlan.advice C rows s u E₁ E₂ (fun i a =>
+        keyAt C s (m + i.val) (GateHybrids.stageBit C v stage i a))
+        (pairSndD (GateHybridMessage.message (nestedSpecial E₁ E₂ n) C s
+          inA outLen output v stage))
+        (pairEncode bobInput (List.ofFn (FakeObjects.activeAnswers C s inA inB))) aliceOutput))) =
+      GateHybridMessage.sample (nestedSpecial E₁ E₂ n) C (SelectedSeed.fill C rows s u q k rs)
+        inA inB outLen output v N bobInput [] aliceOutput stage
+```
+
 ## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SimulationBound.lean · simulators_of_output_switch
 
 ```lean
@@ -4519,6 +6680,233 @@ theorem acceptProb_firstTape {G : Functionality} (H : HybridProtocol G) (n m : �
     (hX : ∀ r, X r = Y (strategyTapeEquiv H.main.P (List.replicate n true).length m hLen r.1))
     {ρ : Type*} [Fintype ρ] (D : List Bool → ρ → Bool) :
     acceptProb X D = acceptProb Y D
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · fixedRecord
+
+```lean
+def fixedRecord (c : List Bool) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · fixedRecord_eq
+
+```lean
+theorem fixedRecord_eq (c : List Bool) : fixedRecord c = pairEncode [] c
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · directRecord
+
+```lean
+def directRecord (j : ℕ) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · directRecord_eq
+
+```lean
+theorem directRecord_eq (j : ℕ) :
+    directRecord j = pairEncode [true] (pairEncode (List.replicate j true) [])
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · wrappedRecord
+
+```lean
+def wrappedRecord (j : ℕ) (k r : List Bool) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · wrappedRecord_eq
+
+```lean
+theorem wrappedRecord_eq (j : ℕ) (k r : List Bool) :
+    wrappedRecord j k r =
+      pairEncode [false] (pairEncode (List.replicate j true) (pairEncode k r))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · row
+
+```lean
+def row (E₂ : List Bool → List Bool) (z : List Bool) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · row_eq
+
+```lean
+theorem row_eq (E₂ : List Bool → List Bool) (z : List Bool) :
+    row E₂ z =
+      let descriptor
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · row_poly
+
+```lean
+theorem row_poly {E₂ : List Bool → List Bool} (hE₂ : PolyTimeComputable E₂) :
+    PolyTimeComputable (row E₂)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · row_fixedRecord
+
+```lean
+theorem row_fixedRecord (E₂ : List Bool → List Bool) (challenge c : List Bool) :
+    row E₂ (pairEncode challenge (fixedRecord c)) = c
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · table
+
+```lean
+def table (E₂ : List Bool → List Bool) (z : List Bool) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · table_eq
+
+```lean
+theorem table_eq (E₂ : List Bool → List Bool) (z : List Bool) :
+    table E₂ z = BinArith.mapW (row E₂) z
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · table_poly
+
+```lean
+theorem table_poly {E₂ : List Bool → List Bool} (hE₂ : PolyTimeComputable E₂) :
+    PolyTimeComputable (table E₂)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · table_pairEncode
+
+```lean
+theorem table_pairEncode (E₂ : List Bool → List Bool) (challenge descriptors : List Bool) :
+    table E₂ (pairEncode challenge descriptors) = BinArith.encWords
+      ((BinArith.decWords descriptors).map fun d => row E₂ (pairEncode challenge d))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · tables
+
+```lean
+def tables (E₂ : List Bool → List Bool) (z : List Bool) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · tables_eq
+
+```lean
+theorem tables_eq (E₂ : List Bool → List Bool) (z : List Bool) :
+    tables E₂ z = BinArith.mapW (table E₂) z
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · tables_poly
+
+```lean
+theorem tables_poly {E₂ : List Bool → List Bool} (hE₂ : PolyTimeComputable E₂) :
+    PolyTimeComputable (tables E₂)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · tables_pairEncode
+
+```lean
+theorem tables_pairEncode (E₂ : List Bool → List Bool) (challenge descriptors : List Bool) :
+    tables E₂ (pairEncode challenge descriptors) = BinArith.encWords
+      ((BinArith.decWords descriptors).map fun d => table E₂ (pairEncode challenge d))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · row_directRecord
+
+```lean
+theorem row_directRecord (E₂ : List Bool → List Bool) (challenge : List (List Bool)) (j : ℕ) :
+    row E₂ (pairEncode (BinArith.encWords challenge) (directRecord j)) =
+      challenge.getD j []
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · row_wrappedRecord
+
+```lean
+theorem row_wrappedRecord (E₂ : List Bool → List Bool) (challenge : List (List Bool))
+    (j : ℕ) (k r : List Bool) :
+    row E₂ (pairEncode (BinArith.encWords challenge) (wrappedRecord j k r)) =
+      spEncStr E₂ k (challenge.getD j []) r
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · advice
+
+```lean
+def advice (tableDescriptors messageTail privateInput aliceOut : List Bool) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · advice_eq
+
+```lean
+theorem advice_eq (d t x a : List Bool) :
+    advice d t x a = pairEncode d (pairEncode t (pairEncode x a))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · rebuild
+
+```lean
+def rebuild (E₂ : List Bool → List Bool) (z : List Bool) : List Bool
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · rebuild_eq
+
+```lean
+theorem rebuild_eq (E₂ : List Bool → List Bool) (z : List Bool) :
+    rebuild E₂ z =
+      let data
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · rebuild_poly
+
+```lean
+theorem rebuild_poly {E₂ : List Bool → List Bool} (hE₂ : PolyTimeComputable E₂) :
+    PolyTimeComputable (rebuild E₂)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · encodeList_eq_encWords
+
+```lean
+theorem encodeList_eq_encWords (cs : List (List Bool)) :
+    PrivateKeyScheme.encodeList cs = BinArith.encWords cs
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · tables_records
+
+```lean
+theorem tables_records (E₂ : List Bool → List Bool) (challenge : List Bool)
+    (descriptors : List (List (List Bool))) :
+    tables E₂ (pairEncode challenge (BinArith.encWords (descriptors.map BinArith.encWords))) =
+      BinArith.encWords (descriptors.map fun ds => BinArith.encWords
+        (ds.map fun d => row E₂ (pairEncode challenge d)))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · tables_encoded
+
+```lean
+theorem tables_encoded (E₂ : List Bool → List Bool) (challenge : List (List Bool))
+    (descriptors : List (List (List Bool))) :
+    tables E₂ (pairEncode (BinArith.encWords challenge)
+      (BinArith.encWords (descriptors.map BinArith.encWords))) =
+        BinArith.encWords (descriptors.map fun ds => BinArith.encWords
+          (ds.map fun d => row E₂ (pairEncode (BinArith.encWords challenge) d)))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · record_lengths
+
+```lean
+theorem record_lengths (c : List Bool) (j : ℕ) (k r : List Bool) :
+    (fixedRecord c).length = c.length + 2 ∧
+      (directRecord j).length = 2 * j + 6 ∧
+      (wrappedRecord j k r).length = 2 * j + 2 * k.length + r.length + 8
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · advice_length
+
+```lean
+theorem advice_length (d t x a : List Bool) :
+    (advice d t x a).length = 2 * d.length + 2 * t.length + 2 * x.length + a.length + 6
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean · rebuild_layout
+
+```lean
+theorem rebuild_layout (E₂ : List Bool → List Bool) (N challenge d t x a : List Bool) :
+    rebuild E₂ (pairEncode N (pairEncode challenge (advice d t x a))) =
+      pairEncode
+        (⟨N, x, [], [pairEncode (tables E₂ (pairEncode challenge d)) t]⟩ : View).encode a
 ```
 
 ## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean · exists_adviceReduction
@@ -4720,6 +7108,349 @@ theorem tableWordWith_congr_at (args args' : List Bool → List Bool)
     (row row' : ∀ l : ℕ, (Fin l → Bool) → List Bool → List Bool) (z z' : List Bool)
     (hargs : args z = args' z') (hrow : ∀ l a, row l a z = row' l a z') :
     tableWordWith args row z = tableWordWith args' row' z'
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · splitEmbedding
+
+```lean
+private noncomputable def splitEmbedding {ι κ : Type} (e : ι ↪ κ) (V : Type) :
+    (κ → V) ≃ (ι → V) × ({x : κ // x ∉ Set.range e} → V)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · splitEmbedding_used
+
+```lean
+private theorem splitEmbedding_used {ι κ : Type} (e : ι ↪ κ) (V : Type)
+    (f : κ → V) (i : ι) : (splitEmbedding e V f).1 i = f (e i)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · splitEmbedding_unused
+
+```lean
+private theorem splitEmbedding_unused {ι κ : Type} (e : ι ↪ κ) (V : Type)
+    (f : κ → V) (j : {x : κ // x ∉ Set.range e}) :
+    (splitEmbedding e V f).2 j = f j
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · keyEmbedding
+
+```lean
+def keyEmbedding {m : ℕ} (C : DAGCircuit m) (S : ℕ) (hS : C.size ≤ S) :
+    (Fin C.size × Bool) ↪ (Bool × Fin S)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · keyEmbedding_eq
+
+```lean
+theorem keyEmbedding_eq {m : ℕ} (C : DAGCircuit m) (S : ℕ) (hS : C.size ≤ S)
+    (w : Fin C.size) (b : Bool) :
+    keyEmbedding C S hS (w, b) = (b, Fin.castLE hS w)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · gateBound
+
+```lean
+private theorem gateBound {m : ℕ} (C : DAGCircuit m) (S : ℕ) (hS : C.size ≤ S) :
+    C.gates.length ≤ S
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · rowEmbedding
+
+```lean
+def rowEmbedding {m : ℕ} (C : DAGCircuit m) (S : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2)
+    (hS : C.size ≤ S) :
+    (Σ i : Fin C.gates.length, (Fin (C.gates[i.val]).args.length → Bool)) ↪ (Fin S × Fin 4)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · rowEmbedding_eq
+
+```lean
+theorem rowEmbedding_eq {m : ℕ} (C : DAGCircuit m) (S : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2)
+    (hS : C.size ≤ S) (hG : C.gates.length ≤ S) (i : Fin C.gates.length)
+    (a : Fin (C.gates[i.val]).args.length → Bool) :
+    rowEmbedding C S hA hS ⟨i, a⟩ = (Fin.castLE hG i,
+      CoinSeedRelabel.assignmentEmbedding (C.gates[i.val]).args.length (hA i) a)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · halfEquiv
+
+```lean
+private def halfEquiv (n : ℕ) :
+    (Fin (2 * n) → Bool) ≃ (Fin n → Bool) × (Fin n → Bool)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · halfEquiv_first
+
+```lean
+private theorem halfEquiv_first (n : ℕ) (q : Fin (2 * n) → Bool) (t : Fin n) :
+    (halfEquiv n q).1 t = q ((finCongr (two_mul n)).symm (Fin.castAdd n t))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · halfEquiv_second
+
+```lean
+private theorem halfEquiv_second (n : ℕ) (q : Fin (2 * n) → Bool) (t : Fin n) :
+    (halfEquiv n q).2 t = q ((finCongr (two_mul n)).symm (Fin.natAdd n t))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · keyEquiv
+
+```lean
+private noncomputable def keyEquiv {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hS : C.size ≤ S) :
+    (Bool → Fin S → Fin n → Bool) ≃
+      (Fin C.size → Bool → Fin n → Bool) ×
+        ({x : Bool × Fin S // x ∉ Set.range (keyEmbedding C S hS)} → Fin n → Bool)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · keyEquiv_used
+
+```lean
+private theorem keyEquiv_used {m : ℕ} (C : DAGCircuit m) (S n : ℕ) (hS : C.size ≤ S)
+    (q : Bool → Fin S → Fin n → Bool) (w : Fin C.size) (b : Bool) :
+    (keyEquiv C S n hS q).1 w b = q b (Fin.castLE hS w)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · keyEquiv_unused
+
+```lean
+private theorem keyEquiv_unused {m : ℕ} (C : DAGCircuit m) (S n : ℕ) (hS : C.size ≤ S)
+    (q : Bool → Fin S → Fin n → Bool)
+    (x : {x : Bool × Fin S // x ∉ Set.range (keyEmbedding C S hS)}) :
+    (keyEquiv C S n hS q).2 x = q x.1.1 x.1.2
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · rowEquiv
+
+```lean
+private noncomputable def rowEquiv {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S) :
+    (Fin S → Fin 4 → Fin (2 * n) → Bool) ≃
+      ((i : Fin C.gates.length) → (Fin (C.gates[i.val]).args.length → Bool) →
+        (Fin n → Bool) × (Fin n → Bool)) ×
+      ({x : Fin S × Fin 4 // x ∉ Set.range (rowEmbedding C S hA hS)} → Fin (2 * n) → Bool)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · rowEquiv_used
+
+```lean
+private theorem rowEquiv_used {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (q : Fin S → Fin 4 → Fin (2 * n) → Bool) (i : Fin C.gates.length)
+    (a : Fin (C.gates[i.val]).args.length → Bool) :
+    (rowEquiv C S n hA hS q).1 i a =
+      halfEquiv n (q (Fin.castLE (gateBound C S hS) i)
+        (CoinSeedRelabel.assignmentEmbedding (C.gates[i.val]).args.length (hA i) a))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · rowEquiv_unused
+
+```lean
+private theorem rowEquiv_unused {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (q : Fin S → Fin 4 → Fin (2 * n) → Bool)
+    (x : {x : Fin S × Fin 4 // x ∉ Set.range (rowEmbedding C S hA hS)}) :
+    (rowEquiv C S n hA hS q).2 x = q x.1.1 x.1.2
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · Rest
+
+```lean
+abbrev Rest {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · Rest_eq
+
+```lean
+theorem Rest_eq {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S) :
+    Rest C S n hA hS = ((Fin S → Fin 2 → Bool) ×
+      ({x : Bool × Fin S // x ∉ Set.range (keyEmbedding C S hS)} → Fin n → Bool) ×
+      ({x : Fin S × Fin 4 // x ∉ Set.range (rowEmbedding C S hA hS)} →
+        Fin (2 * n) → Bool))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · equiv
+
+```lean
+noncomputable def equiv {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S) :
+    (Fin (10 * S * n + 2 * S) → Bool) ≃ Rest C S n hA hS ×
+      ((Fin C.size → Bool → Fin n → Bool) ×
+        ((i : Fin C.gates.length) → (Fin (C.gates[i.val]).args.length → Bool) →
+          (Fin n → Bool) × (Fin n → Bool)))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · equiv_eq
+
+```lean
+theorem equiv_eq {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (hG : C.gates.length ≤ S) (r : Fin (10 * S * n + 2 * S) → Bool) :
+    equiv C S n hA hS r =
+      let q
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · equiv_shift
+
+```lean
+theorem equiv_shift {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S) (t : Fin 2) :
+    (equiv C S n hA hS r).1.1 i t =
+      (List.ofFn r).getD (10 * S * n + 2 * i + t) false
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · equiv_key
+
+```lean
+theorem equiv_key {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (r : Fin (10 * S * n + 2 * S) → Bool) (w : Fin C.size) (b : Bool) (t : Fin n) :
+    (equiv C S n hA hS r).2.1 w b t =
+      (List.ofFn r).getD ((b.toNat * S + w) * n + t) false
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · equiv_nonce_first
+
+```lean
+theorem equiv_nonce_first {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin C.gates.length)
+    (a : Fin (C.gates[i.val]).args.length → Bool) (t : Fin n) :
+    ((equiv C S n hA hS r).2.2 i a).1 t =
+      (List.ofFn r).getD (2 * S * n + (4 * i +
+        (List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0) * (2 * n) + t) false
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · equiv_nonce_second
+
+```lean
+theorem equiv_nonce_second {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin C.gates.length)
+    (a : Fin (C.gates[i.val]).args.length → Bool) (t : Fin n) :
+    ((equiv C S n hA hS r).2.2 i a).2 t =
+      (List.ofFn r).getD (2 * S * n + (4 * i +
+        (List.ofFn a).foldr (fun b k => b.toNat + 2 * k) 0) * (2 * n) + n + t) false
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · equiv_unused_key
+
+```lean
+theorem equiv_unused_key {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (r : Fin (10 * S * n + 2 * S) → Bool)
+    (x : {x : Bool × Fin S // x ∉ Set.range (keyEmbedding C S hS)}) (t : Fin n) :
+    (equiv C S n hA hS r).1.2.1 x t =
+      (List.ofFn r).getD ((x.1.1.toNat * S + x.1.2) * n + t) false
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · equiv_unused_row
+
+```lean
+theorem equiv_unused_row {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (r : Fin (10 * S * n + 2 * S) → Bool)
+    (x : {x : Fin S × Fin 4 // x ∉ Set.range (rowEmbedding C S hA hS)})
+    (t : Fin (2 * n)) :
+    (equiv C S n hA hS r).1.2.2 x t =
+      (List.ofFn r).getD (2 * S * n + (4 * x.1.1 + x.1.2) * (2 * n) + t) false
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · permutation
+
+```lean
+def permutation {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (p : Rest C S n hA hS) (i : Fin C.gates.length) :
+    Equiv.Perm (Fin (C.gates[i.val]).args.length → Bool)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · permutation_eq
+
+```lean
+theorem permutation_eq {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (hG : C.gates.length ≤ S) (p : Rest C S n hA hS) (i : Fin C.gates.length) :
+    permutation C S n hA hS p i =
+      xorPerm (fun t => p.1 (Fin.castLE hG i) (Fin.castLE (hA i) t))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · permutation_apply
+
+```lean
+theorem permutation_apply {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (hG : C.gates.length ≤ S) (p : Rest C S n hA hS) (i : Fin C.gates.length)
+    (a : Fin (C.gates[i.val]).args.length → Bool) (t : Fin (C.gates[i.val]).args.length) :
+    permutation C S n hA hS p i a t =
+      xor (a t) (p.1 (Fin.castLE hG i) (Fin.castLE (hA i) t))
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · seed_perm
+
+```lean
+theorem seed_perm {m : ℕ} {ρ : Type} (C : DAGCircuit m) (S n : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (seed : List Bool → GarbleSeed C (Fin n → Bool) ρ)
+    (hP : ∀ q (i : Fin C.gates.length) (a : Fin (C.gates[i.val]).args.length → Bool)
+        (t : Fin (C.gates[i.val]).args.length),
+      (seed q).2.2 i a t = xor (a t) (q.getD (10 * S * n + 2 * i + t) false))
+    (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin C.gates.length)
+    (a : Fin (C.gates[i.val]).args.length → Bool) :
+    (seed (List.ofFn r)).2.2 i a =
+      permutation C S n hA hS (equiv C S n hA hS r).1 i a
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · seed_eq
+
+```lean
+theorem seed_eq (r : Fin (10 * S * n + 2 * S) → Bool) :
+    seed (List.ofFn r) =
+      ((equiv C S n hA hS r).2.1, (equiv C S n hA hS r).2.2,
+        permutation C S n hA hS (equiv C S n hA hS r).1)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · seed_on_inverse
+
+```lean
+theorem seed_on_inverse (p : Rest C S n hA hS)
+    (d : (Fin C.size → Bool → Fin n → Bool) ×
+      ((i : Fin C.gates.length) → (Fin (C.gates[i.val]).args.length → Bool) →
+        (Fin n → Bool) × (Fin n → Bool))) :
+    seed (List.ofFn ((equiv C S n hA hS).symm (p, d))) =
+      (d.1, d.2, permutation C S n hA hS p)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · key_not_mem_range
+
+```lean
+theorem key_not_mem_range {m : ℕ} (C : DAGCircuit m) (S : ℕ) (hS : C.size ≤ S)
+    (w : Fin S) (b : Bool) (hw : C.size ≤ (w : ℕ)) :
+    (b, w) ∉ Set.range (keyEmbedding C S hS)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · row_not_mem_range_of_gate
+
+```lean
+theorem row_not_mem_range_of_gate {m : ℕ} (C : DAGCircuit m) (S : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (i : Fin S) (a : Fin 4) (hi : C.gates.length ≤ (i : ℕ)) :
+    (i, a) ∉ Set.range (rowEmbedding C S hA hS)
+```
+
+## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean · row_not_mem_range_of_code
+
+```lean
+theorem row_not_mem_range_of_code {m : ℕ} (C : DAGCircuit m) (S : ℕ)
+    (hA : ∀ i : Fin C.gates.length, (C.gates[i.val]).args.length ≤ 2) (hS : C.size ≤ S)
+    (hG : C.gates.length ≤ S) (i : Fin C.gates.length) (code : Fin 4)
+    (hc : 2 ^ (C.gates[i.val]).args.length ≤ (code : ℕ)) :
+    (Fin.castLE hG i, code) ∉ Set.range (rowEmbedding C S hA hS)
 ```
 
 ## TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean · transcriptWith_eq

@@ -1,0 +1,58 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean:290:14: error: unsolved goals
+case pos
+m : ℕ
+C : DAGCircuit m
+V : Type
+rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+s : GarbleSeed C V (V × V)
+u : Fin C.size
+q : ℕ
+k : V
+r : Fin (q + 1) → V
+v : Fin C.size
+b : Bool
+h : v = u ∧ b = true
+⊢ (if True ∧ True then k else s.1 u true) =
+    (if True ∧ True then some (Sum.inl ()) else none).elim (s.1 u true) (Sum.elim (fun x => k) r)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean:295:20: warning: This simp argument is unused:
+  ite_true
+
+Hint: Omit it from the simp argument list.
+  simp only [h, ite_t̵r̵u̵e̵,̵ ̵i̵t̵e̵_̵false, Option.elim_some, Option.elim_none, Sum.elim_inl]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean:295:41: warning: This simp argument is unused:
+  Option.elim_some
+
+Hint: Omit it from the simp argument list.
+  simp only [h, ite_true, ite_false, O̵p̵t̵i̵o̵n̵.̵e̵l̵i̵m̵_̵s̵o̵m̵e̵,̵ ̵Option.elim_none, Sum.elim_inl]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates.lean:295:77: warning: This simp argument is unused:
+  Sum.elim_inl
+
+Hint: Omit it from the simp argument list.
+  simp only [h, ite_true, ite_false, Option.elim_some, Option.elim_none,̵ ̵S̵u̵m̵.̵e̵l̵i̵m̵_̵i̵n̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SeedCoordinates): no fresh .olean produced
+        2.95 real         2.35 user         0.90 sys
+          1555300352  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              125197  page reclaims
+                2310  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  99  voluntary context switches
+                5235  involuntary context switches
+            32586615  instructions retired
+            14556543  cycles elapsed
+             1638736  peak memory footprint

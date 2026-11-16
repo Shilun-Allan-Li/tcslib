@@ -1,0 +1,146 @@
+[
+  {
+    "variant": "B",
+    "coercions": "strict",
+    "source_line": 28,
+    "sealed_line": 71,
+    "category": "frozen PRF signature ill-typed when exempt polynomial notation is sealed",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:71:35: error: Application type mismatch: The argument\n  G\u2081\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin (n + n) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin ((PolyExpr.var.add PolyExpr.var).eval n) \u2192 Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G\u2081"
+  },
+  {
+    "variant": "B",
+    "coercions": "strict",
+    "source_line": 30,
+    "sealed_line": 73,
+    "category": "frozen PRF signature ill-typed when exempt polynomial notation is sealed",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:73:20: error: Type mismatch\n  Fin.append (G\u2081 n s x) (G\u2082 n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) \u2192 Bool"
+  },
+  {
+    "variant": "B",
+    "coercions": "strict",
+    "source_line": 48,
+    "sealed_line": 91,
+    "category": "polynomial eval-add index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:91:69: error: Application type mismatch: The argument\n  Y.circ\nhas type\n  (n : \u2115) \u2192 DAGCircuit (Y.inA.eval n + Y.inB.eval n)\nbut is expected to have type\n  (n : \u2115) \u2192 DAGCircuit ((Y.inA.add Y.inB).eval n)\nin the application\n  FakeSimulatorFactory.exists_simulator E\u2081 E\u2082 hE\u2081 hE\u2082 Y.sizeBound (Y.inA.add Y.inB) Y.inA Y.inB Y.outLen gen hgen Y.circ"
+  },
+  {
+    "variant": "B",
+    "coercions": "strict",
+    "source_line": 52,
+    "sealed_line": 95,
+    "category": "polynomial eval-add index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:95:29: error: Type mismatch\n  Nat.le_refl (Y.inA.eval n + Y.inB.eval n)\nhas type\n  Y.inA.eval n + Y.inB.eval n \u2264 Y.inA.eval n + Y.inB.eval n\nbut is expected to have type\n  Y.inA.eval n + Y.inB.eval n \u2264 (Y.inA.add Y.inB).eval n"
+  },
+  {
+    "variant": "B",
+    "coercions": "strict",
+    "source_line": 53,
+    "sealed_line": 96,
+    "category": "dependent-constructor cascade after circuit input-index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:96:12: error: unsolved goals\ncase h\nY : YaoCircuit\nE\u2081 E\u2082 : List Bool \u2192 List Bool\nG\u2081 : (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin (n + n) \u2192 Bool\nG\u2082 : (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin ((PolyExpr.var.add innerLen).eval n) \u2192 Bool\nhGE\u2081 : \u2200 (n : \u2115) (s x : Fin n \u2192 Bool), E\u2081 (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G\u2081 n s x)\nhGE\u2082 : \u2200 (n : \u2115) (s x : Fin n \u2192 Bool), E\u2082 (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G\u2082 n s x)\nhE\u2081 : PolyTimeComputable E\u2081"
+  },
+  {
+    "variant": "B",
+    "coercions": "strict",
+    "source_line": 54,
+    "sealed_line": 97,
+    "category": "dependent-constructor cascade after circuit input-index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:97:35: error: `simp` made no progress"
+  },
+  {
+    "variant": "B",
+    "coercions": "strict",
+    "source_line": 55,
+    "sealed_line": 98,
+    "category": "dependent-constructor cascade after circuit input-index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:98:35: error: `simp` made no progress"
+  },
+  {
+    "variant": "B",
+    "coercions": "strict",
+    "source_line": 57,
+    "sealed_line": 100,
+    "category": "dependent-constructor cascade after circuit input-index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:100:23: error: `simp` made no progress"
+  },
+  {
+    "variant": "B",
+    "coercions": "strict",
+    "source_line": 100,
+    "sealed_line": 143,
+    "category": "polynomial eval-add index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_strict.lean:143:20: error: Type mismatch\n  Fin.append (G\u2081 n s x) (G\u2082 n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) \u2192 Bool\n       29.89 real        28.41 user         1.40 sys\n          2304573440  maximum resident set size\n                   0  average shared memory size"
+  },
+  {
+    "variant": "B",
+    "coercions": "coe",
+    "source_line": 28,
+    "sealed_line": 71,
+    "category": "frozen PRF signature ill-typed when exempt polynomial notation is sealed",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:71:35: error: Application type mismatch: The argument\n  G\u2081\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin (n + n) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin ((PolyExpr.var.add PolyExpr.var).eval n) \u2192 Bool\nin the application\n  PRFOut (PolyExpr.var.add PolyExpr.var) G\u2081"
+  },
+  {
+    "variant": "B",
+    "coercions": "coe",
+    "source_line": 30,
+    "sealed_line": 73,
+    "category": "frozen PRF signature ill-typed when exempt polynomial notation is sealed",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:73:20: error: Type mismatch\n  Fin.append (G\u2081 n s x) (G\u2082 n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) \u2192 Bool"
+  },
+  {
+    "variant": "B",
+    "coercions": "coe",
+    "source_line": 48,
+    "sealed_line": 91,
+    "category": "polynomial eval-add index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:91:69: error: Application type mismatch: The argument\n  Y.circ\nhas type\n  (n : \u2115) \u2192 DAGCircuit (Y.inA.eval n + Y.inB.eval n)\nbut is expected to have type\n  (n : \u2115) \u2192 DAGCircuit ((Y.inA.add Y.inB).eval n)\nin the application\n  FakeSimulatorFactory.exists_simulator E\u2081 E\u2082 hE\u2081 hE\u2082 Y.sizeBound (Y.inA.add Y.inB) Y.inA Y.inB Y.outLen gen hgen Y.circ"
+  },
+  {
+    "variant": "B",
+    "coercions": "coe",
+    "source_line": 52,
+    "sealed_line": 95,
+    "category": "polynomial eval-add index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:95:29: error: Type mismatch\n  Nat.le_refl (Y.inA.eval n + Y.inB.eval n)\nhas type\n  Y.inA.eval n + Y.inB.eval n \u2264 Y.inA.eval n + Y.inB.eval n\nbut is expected to have type\n  Y.inA.eval n + Y.inB.eval n \u2264 (Y.inA.add Y.inB).eval n"
+  },
+  {
+    "variant": "B",
+    "coercions": "coe",
+    "source_line": 53,
+    "sealed_line": 96,
+    "category": "dependent-constructor cascade after circuit input-index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:96:12: error: unsolved goals\ncase h\nY : YaoCircuit\nE\u2081 E\u2082 : List Bool \u2192 List Bool\nG\u2081 : (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin (n + n) \u2192 Bool\nG\u2082 : (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin ((PolyExpr.var.add innerLen).eval n) \u2192 Bool\nhGE\u2081 : \u2200 (n : \u2115) (s x : Fin n \u2192 Bool), E\u2081 (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G\u2081 n s x)\nhGE\u2082 : \u2200 (n : \u2115) (s x : Fin n \u2192 Bool), E\u2082 (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G\u2082 n s x)\nhE\u2081 : PolyTimeComputable E\u2081"
+  },
+  {
+    "variant": "B",
+    "coercions": "coe",
+    "source_line": 54,
+    "sealed_line": 97,
+    "category": "dependent-constructor cascade after circuit input-index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:97:35: error: `simp` made no progress"
+  },
+  {
+    "variant": "B",
+    "coercions": "coe",
+    "source_line": 55,
+    "sealed_line": 98,
+    "category": "dependent-constructor cascade after circuit input-index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:98:35: error: `simp` made no progress"
+  },
+  {
+    "variant": "B",
+    "coercions": "coe",
+    "source_line": 57,
+    "sealed_line": 100,
+    "category": "dependent-constructor cascade after circuit input-index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:100:23: error: `simp` made no progress"
+  },
+  {
+    "variant": "B",
+    "coercions": "coe",
+    "source_line": 100,
+    "sealed_line": 143,
+    "category": "polynomial eval-add index mismatch",
+    "message_excerpt": "evidence/subagents/a12/seals/final-owner-fixed/CompleteSimulators_B_coe.lean:143:20: error: Type mismatch\n  Fin.append (G\u2081 n s x) (G\u2082 n s x)\nhas type\n  Fin (n + n + (PolyExpr.var.add innerLen).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) \u2192 Bool\n       29.28 real        28.19 user         1.24 sys\n          2389114880  maximum resident set size\n                   0  average shared memory size"
+  }
+]

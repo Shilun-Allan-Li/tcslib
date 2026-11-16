@@ -1,0 +1,324 @@
+START 2026-11-16T03:59:45.009954+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_of_label_ne {inputs : ℕ} {K ρ : Type}
+  [Inhabited K] (C : BoolCircuit.DAGCircuit inputs)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (rs : Fin (q + 1) → ρ) (w : ℕ) (b : Bool) (h : (w, b) ≠ (↑u, true)) :
+  TCSlib.Cryptography.SecureComputation.keyAt C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k rs) w b =
+    TCSlib.Cryptography.SecureComputation.keyAt C s w b
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_of_label_ne' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_false {inputs : ℕ} {K ρ : Type} [Inhabited K]
+  (C : BoolCircuit.DAGCircuit inputs) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (rs : Fin (q + 1) → ρ) (w : ℕ) :
+  TCSlib.Cryptography.SecureComputation.keyAt C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k rs) w false =
+    TCSlib.Cryptography.SecureComputation.keyAt C s w false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_false' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_of_ne {inputs : ℕ} {K ρ : Type} [Inhabited K]
+  (C : BoolCircuit.DAGCircuit inputs) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (rs : Fin (q + 1) → ρ) (w : ℕ) (b : Bool) (hw : w ≠ ↑u) :
+  TCSlib.Cryptography.SecureComputation.keyAt C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k rs) w b =
+    TCSlib.Cryptography.SecureComputation.keyAt C s w b
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_of_ne' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.decodePair_fill {inputs : ℕ} {K ρ : Type}
+  [Inhabited K] (C : BoolCircuit.DAGCircuit inputs)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (rs : Fin (q + 1) → ρ) (w : ℕ) (b : Bool) (hw : w ≠ ↑u) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.decodePair C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k rs) w b =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.decodePair C s w b
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.decodePair_fill' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.activeAnswers_fill {inputs width : ℕ} {ρ : Type}
+  (C : BoolCircuit.DAGCircuit inputs) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) (ρ × ρ)) (u : Fin C.size) (q : ℕ)
+  (k : Fin width → Bool) (rs : Fin (q + 1) → ρ) (first count : ℕ) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k rs) first count =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers C s first count
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.activeAnswers_fill' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_tail_stage_eq {inputs width : ℕ} {ρ : Type}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage stage' : ℕ) :
+  Complexity.pairSndD
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message M C s inA outLen output v stage) =
+    Complexity.pairSndD
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message M C s inA outLen output v stage')
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_tail_stage_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_tail_fill {inputs width : ℕ} {ρ : Type}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) (ρ × ρ))
+  (C : BoolCircuit.DAGCircuit inputs) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) (ρ × ρ)) (u : Fin C.size) (q : ℕ)
+  (k : Fin width → Bool) (rs : Fin (q + 1) → ρ) (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage : ℕ)
+  (hOut : ∀ (j : Fin outLen), output j ≠ ↑u) :
+  Complexity.pairSndD
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message M C
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k rs) inA outLen output v
+        stage) =
+    Complexity.pairSndD
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message M C s inA outLen output v stage)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_tail_fill' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.outputBit_plaintext_ne_of_lt {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (v : ℕ → Bool) (cutoff phase u : ℕ) (hu : u < inputs + cutoff)
+  (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) :
+  (inputs + ↑i, TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.outputBit C v cutoff phase i a) ≠
+    (u, true)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.outputBit_plaintext_ne_of_lt' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.outputBit_plaintext_ne {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (v : ℕ → Bool) (i₀ : Fin C.gates.length) (phase u : ℕ)
+  (hu : u ∈ C.gates[↑i₀].args) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) :
+  (inputs + ↑i, TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.outputBit C v (↑i₀) phase i a) ≠
+    (u, true)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.outputBit_plaintext_ne' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_even {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (v : ℕ → Bool) (i₀ : Fin C.gates.length) (u : ℕ) (hu : u ∈ C.gates[↑i₀].args)
+  (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) :
+  (inputs + ↑i, TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (2 * ↑i₀) i a) ≠ (u, true)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_even' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_odd {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (v : ℕ → Bool) (i₀ : Fin C.gates.length) (u : ℕ) (hu : u ∈ C.gates[↑i₀].args)
+  (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) :
+  (inputs + ↑i, TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (2 * ↑i₀ + 1) i a) ≠
+    (u, true)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_odd' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_next {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (v : ℕ → Bool) (i₀ : Fin C.gates.length) (u : ℕ) (hu : u ∈ C.gates[↑i₀].args)
+  (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) :
+  (inputs + ↑i, TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (2 * ↑i₀ + 2) i a) ≠
+    (u, true)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_next' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_of_arity_zero {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (v : ℕ → Bool) (i₀ : Fin C.gates.length) (hzero : C.gates[↑i₀].args.length = 0) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (2 * ↑i₀) =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (2 * ↑i₀ + 1)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_of_arity_zero' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_of_arity_le_one {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (v : ℕ → Bool) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2)
+  (hEval :
+    ∀ (i : Fin C.gates.length),
+      TCSlib.Cryptography.SecureComputation.gateOut C.gates[i]
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i) =
+        v (inputs + ↑i))
+  (i₀ : Fin C.gates.length) (hsmall : C.gates[↑i₀].args.length ≤ 1) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (2 * ↑i₀ + 1) =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (2 * ↑i₀ + 2)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_of_arity_le_one' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_eq_of_stageBit_eq {inputs width : ℕ}
+  {ρ : Type} (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage stage' : ℕ)
+  (h :
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v stage =
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v stage') :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message M C s inA outLen output v stage =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message M C s inA outLen output v stage'
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_eq_of_stageBit_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.sample_eq_of_stageBit_eq {inputs width : ℕ}
+  {ρ : Type} (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin width → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit inputs) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin width → Bool) ρ)
+  (inA inB outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (commonInput bobInput bobCoins aliceOutput : List Bool)
+  (stage stage' : ℕ)
+  (h :
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v stage =
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v stage') :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C s inA inB outLen output v
+      commonInput bobInput bobCoins aliceOutput stage =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample M C s inA inB outLen output v
+      commonInput bobInput bobCoins aliceOutput stage'
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.sample_eq_of_stageBit_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.selectedPosition_none_bit (g : BoolCircuit.DAGGate)
+  (a : Fin g.args.length → Bool) (u : ℕ) (hargs : g.args.Nodup) (p : Fin g.args.length) (hp : g.args[↑p] = u)
+  (hNone : TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition g a u = none) :
+  a p = false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.selectedPosition_none_bit' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.selectedPosition_none_getD (g : BoolCircuit.DAGGate)
+  (a : Fin g.args.length → Bool) (u : ℕ) (hargs : g.args.Nodup) (p : Fin g.args.length) (hp : g.args[↑p] = u)
+  (hNone : TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition g a u = none) :
+  (List.ofFn a).getD (↑p) false = false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.selectedPosition_none_getD' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_unselected {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (v : ℕ → Bool) (i₀ : Fin C.gates.length) (hargs : C.gates[↑i₀].args.Nodup)
+  (p : Fin C.gates[↑i₀].args.length) (hp : ↑p = 0) (u : ℕ) (hu : C.gates[↑i₀].args[↑p] = u) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool)
+  (hNone :
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑i] a u = none) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (2 * ↑i₀) i a =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (2 * ↑i₀ + 1) i a
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_unselected' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_unselected {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (v : ℕ → Bool) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2)
+  (hEval :
+    ∀ (i : Fin C.gates.length),
+      TCSlib.Cryptography.SecureComputation.gateOut C.gates[i]
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i) =
+        v (inputs + ↑i))
+  (i₀ : Fin C.gates.length) (hargs : C.gates[↑i₀].args.Nodup) (p : Fin C.gates[↑i₀].args.length) (hp : ↑p = 1) (u : ℕ)
+  (hu : C.gates[↑i₀].args[↑p] = u) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool)
+  (hNone :
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑i] a u = none) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (2 * ↑i₀ + 1) i a =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (2 * ↑i₀ + 2) i a
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_unselected' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+STORED_CONSTANT_COUNT 30
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_unselected._proof_3: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_unselected._proof_3: closure=1306 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_next._proof_1_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_next._proof_1_1: closure=1344 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_odd: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_odd: closure=1545 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_unselected._proof_2: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_unselected._proof_2: closure=1304 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_tail_stage_eq: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_tail_stage_eq: closure=2617 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_even: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_even: closure=1545 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.selectedPosition_none_getD: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.selectedPosition_none_getD: closure=1889 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.selectedPosition_none_bit: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.selectedPosition_none_bit: closure=1877 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_of_arity_zero: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_of_arity_zero: closure=1771 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.outputBit_plaintext_ne: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.outputBit_plaintext_ne: closure=1497 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_false: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_false: closure=1891 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_unselected._proof_1_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_unselected._proof_1_1: closure=1333 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.sample_eq_of_stageBit_eq: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.sample_eq_of_stageBit_eq: closure=2631 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.outputBit_plaintext_ne_of_lt: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.outputBit_plaintext_ne_of_lt: closure=1492 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.selectedPosition_none_bit._proof_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.selectedPosition_none_bit._proof_1: closure=1294 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_of_label_ne: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_of_label_ne: closure=1888 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.outputBit_plaintext_ne_of_lt._proof_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.outputBit_plaintext_ne_of_lt._proof_1: closure=1297 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SelectedFields.0._proof_8: [propext, Quot.sound]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SelectedFields.0._proof_8: closure=1297 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_tail_fill: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_tail_fill: closure=2690 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_unselected._proof_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_unselected._proof_1: closure=1302 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_of_ne: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.keyAt_of_ne: closure=1889 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_of_arity_le_one: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_of_arity_le_one: closure=2446 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.decodePair_fill: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.decodePair_fill: closure=1892 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_unselected: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_unselected: closure=2594 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.activeAnswers_fill: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.activeAnswers_fill: closure=1960 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_eq_of_stageBit_eq: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.message_eq_of_stageBit_eq: closure=2598 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_unselected: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_first_unselected: closure=2023 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_of_arity_le_one._proof_1_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stage_second_of_arity_le_one._proof_1_1: closure=1329 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_next: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_next: closure=1546 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_next._proof_1_2: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedFields.stageBit_plaintext_ne_next._proof_1_2: closure=1324 sorried=[]
+       46.49 real        25.82 user         4.79 sys
+          2127085568  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              132324  page reclaims
+              106000  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+               12592  voluntary context switches
+              133812  involuntary context switches
+            36658714  instructions retired
+            34337956  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-16T04:00:31.592501+00:00 exit=0

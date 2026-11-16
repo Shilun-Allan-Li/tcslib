@@ -1,0 +1,88 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables.lean:105:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  argKeys C s i ((s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false))
+in the target expression
+  SelectedPlan.slotOffset C rows s u q j =
+    SelectedRows.offset n
+      (argKeys C s i ((s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false))) ↑p
+
+case some
+L L₂ : ℕ → ℕ
+G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool
+G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L₂ n) → Bool
+E₁ E₂ : List Bool → List Bool
+hG : ∀ (n : ℕ) (s x : Fin n → Bool), List.ofFn (G n s x) = List.ofFn (G₁ n s x) ++ List.ofFn (G₂ n s x)
+hGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)
+hGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)
+m n : ℕ
+C : DAGCircuit m
+rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool))
+u : Fin C.size
+q : ℕ
+o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool
+hargs : ∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup
+hfan : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2
+hcomplete : ∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i
+hcap : (GateOccurrences.occurrences C rows s.2.2 ↑u).length ≤ q + 1
+i : Fin C.gates.length
+a : Fin C.gates[↑i].args.length → Bool
+k : Fin n → Bool
+rs : Fin (q + 1) → Fin n → Bool
+p : Fin C.gates[↑i].args.length
+hsel : GateOccurrences.selectedPosition C.gates[↑i] a ↑u = some p
+hvertex : C.gates[↑i].args[↑p] = ↑u
+hbit : a p = true
+hslot : SelectedSeed.slotIndex C rows s.2.2 (↑u) i a p < q + 1
+j : Fin (q + 1) := ⟨SelectedSeed.slotIndex C rows s.2.2 (↑u) i a p, hslot⟩
+hpad :
+  GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 ↑u)
+      ⟨SelectedSeed.slotIndex C rows s.2.2 (↑u) i a p, hslot⟩ =
+    some (i, SelectedSeed.rowIndex C rows s.2.2 i a, ↑p)
+hactual : (s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false) = a
+hOff :
+  SelectedPlan.slotOffset C rows s u q j =
+    SelectedRows.offset n
+      (argKeys C s i ((s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false))) ↑p
+left✝ :
+  SelectedPlan.slotLength C rows s u q j =
+    SelectedRows.length n
+      (argKeys C s i ((s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false))) ↑p
+hWord :
+  SelectedPlan.slotWord C rows s u q E₁ o j =
+    SelectedRows.word E₁ n
+      (argKeys C s i ((s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false)))
+      (o i ((s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false)))
+      (s.2.1 i ((s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false))) ↑p
+hkeys :
+  argKeys C s i ((s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false)) = argKeys C s i a
+hplain : o i ((s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false)) = o i a
+hcoins : s.2.1 i ((s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false)) = s.2.1 i a
+⊢ SliceReconstruction.row E₂
+      (pairEncode
+        (sliceMultiEncDist G n q (SelectedPlan.slotOffset C rows s u q) (SelectedPlan.slotLength C rows s u q)
+          (SelectedPlan.slotMessage C rows s u q E₁ o) (k, rs))
+        (SelectedPlan.record C rows s u E₁ E₂ o i a)) =
+    (nestedSpecial E₁ E₂ n).enc (argKeys C (SelectedSeed.fill C rows s u q k rs) i a) (o i a)
+      ((SelectedSeed.fill C rows s u q k rs).2.1 i a)
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables): no fresh .olean produced
+        3.91 real         2.56 user         1.19 sys
+          2203172864  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170374  page reclaims
+                4385  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 319  voluntary context switches
+                6638  involuntary context switches
+            32452870  instructions retired
+            18852330  cycles elapsed
+             1638736  peak memory footprint

@@ -1,0 +1,84 @@
+{
+  "status": "evidence-only skeleton; NOT landable until unchanged hBob is proved",
+  "metrics": {
+    "original": {
+      "body_lines_including_theorem_by": 117,
+      "body_nonempty_tactic_lines": 116,
+      "total_lines": 153,
+      "max_width": 93,
+      "sorry_tokens": 1,
+      "source_sha256": "7a2c8fb6e09875ee9471b1b707ad11219b5ae4dc206f06540313a8b56883ed06"
+    },
+    "shortened": {
+      "body_lines_including_theorem_by": 100,
+      "body_nonempty_tactic_lines": 99,
+      "total_lines": 137,
+      "max_width": 100,
+      "sorry_tokens": 1,
+      "source_sha256": "5a361bb55a97fc8dc6ec96c617561d048f84e1f129cc5a39eceffd185c5263b8"
+    },
+    "signature_byte_identical": true,
+    "hBob_block_byte_identical": true,
+    "exists_SA_SB_before_forall_D": true
+  },
+  "normal_checks": [
+    {
+      "module": "evidence/subagents/c/simulator_assembly/probes/FullSimulators",
+      "log": "evidence/subagents/c/simulator_assembly/FullSimulators-01.log",
+      "exit": 0,
+      "errors": 0,
+      "start": "2026-11-16T05:02:05.046213+00:00",
+      "colon_errors": 0,
+      "parenthesized_errors": 0,
+      "sorry_warnings": 1
+    },
+    {
+      "module": "evidence/subagents/c/simulator_assembly/probes/FullSimulators",
+      "log": "evidence/subagents/c/simulator_assembly/FullSimulators-02.log",
+      "exit": 0,
+      "errors": 0,
+      "start": "2026-11-16T05:06:15.063837+00:00",
+      "colon_errors": 0,
+      "parenthesized_errors": 0,
+      "sorry_warnings": 1
+    },
+    {
+      "module": "evidence/subagents/c/simulator_assembly/probes/AssemblyTrace",
+      "log": "evidence/subagents/c/simulator_assembly/AssemblyTrace-01.log",
+      "exit": 1,
+      "errors": 2,
+      "start": "2026-11-16T05:06:59.641773+00:00",
+      "colon_errors": 2,
+      "parenthesized_errors": 0,
+      "sorry_warnings": 0
+    },
+    {
+      "module": "evidence/subagents/c/simulator_assembly/probes/FullSimulators",
+      "log": "evidence/subagents/c/simulator_assembly/FullSimulators-03.log",
+      "exit": 0,
+      "errors": 0,
+      "start": "2026-11-16T05:07:42.304359+00:00",
+      "colon_errors": 0,
+      "parenthesized_errors": 0,
+      "sorry_warnings": 1
+    },
+    {
+      "module": "evidence/subagents/c/simulator_assembly/probes/AssemblyTrace",
+      "log": "evidence/subagents/c/simulator_assembly/AssemblyTrace-02.log",
+      "exit": 0,
+      "errors": 0,
+      "start": "2026-11-16T05:08:08.290358+00:00",
+      "colon_errors": 0,
+      "parenthesized_errors": 0,
+      "sorry_warnings": 0
+    }
+  ],
+  "admission_closure": [
+    "TCSlib.Cryptography.SecureComputation.yaoSeed_good_whp",
+    "TCSlib.Cryptography.SecureComputation.YaoFullSimulatorProbe.simulators_skeleton"
+  ],
+  "dependency_count": 17662,
+  "old_simulator_dependency": false,
+  "new_library_files_changed": [],
+  "whole_file_seals": "Omitted for admitted scratch as explicitly directed; root will run final whole-Yao audits."
+}

@@ -1,0 +1,424 @@
+START 2026-11-16T04:29:39Z module=evidence/subagents/a10/probes/FullSimulators
+evidence/subagents/a10/probes/FullSimulators.lean:83:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uprob fun z => ?p z.1
+in the target expression
+  (uprob fun r => BadWord n (List.ofFn r.1)) ≤ δ n
+
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool
+hGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)
+hGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+hG₁ : PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+hG₂ : PRFOut (PolyExpr.var.add innerLen) G₂
+hG₁₂ :
+  PRFOut ((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)) fun n s x => Fin.append (G₁ n s x) (G₂ n s x)
+hFan : ∀ (n : ℕ) (i : Fin (Y.circ n).gates.length), (Y.circ n).gates[↑i].args.length ≤ 2
+hSize : ∀ (n : ℕ), (Y.circ n).size ≤ Y.sizeBound.eval n
+hSeedK :
+  ∀ (n : ℕ) (r : List Bool) (v : Fin (Y.circ n).size) (b : Bool),
+    (yaoSeed Y n r).1 v b = readBits r ((b.toNat * Y.sizeBound.eval n + ↑v) * n) n
+hSeedR₀ :
+  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),
+    ((yaoSeed Y n q).2.1 i a).1 =
+      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,
+          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).1
+hSeedR₁ :
+  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),
+    ((yaoSeed Y n q).2.1 i a).2 =
+      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,
+          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).2
+hSeedP :
+  ∀ (n : ℕ) (r : List Bool) (i : Fin (Y.circ n).gates.length),
+    (yaoSeed Y n r).2.2 i = xorShift (readBits r (10 * Y.sizeBound.eval n * n + 2 * ↑i) (Y.circ n).gates[i].args.length)
+gen : List Bool → List Bool
+hgen : PolyTimeComputable gen
+hgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)
+SB : NUPPT
+hSBuniform : SB.Uniform
+hSBcoins : SB.coins = yaoCoins Y
+left✝ :
+  ∀ (n : ℕ) (y f r : List Bool),
+    SB.runAtL n (pairEncode y f) r =
+      { x := List.replicate n true,
+          z :=
+            pairEncode y
+              (List.ofFn (FakeObjects.activeAnswers (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n) (Y.inB.eval n))),
+          r := [],
+          received :=
+            [FakeObjects.message (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n) (Y.outLen.eval n)
+                (Y.outs n) fun j => f.getD (↑j) false] }.encode
+hIdeal :
+  ∀ (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (r : SB.Coins n),
+    F.idealB SB n x y r =
+      pairEncode
+        { x := List.replicate n true,
+            z :=
+              pairEncode (List.ofFn y)
+                (List.ofFn
+                  (FakeObjects.activeAnswers (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n) (Y.inB.eval n))),
+            r := [],
+            received :=
+              [FakeObjects.message (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n)
+                  (Y.outLen.eval n) (Y.outs n) fun j => (List.ofFn (F.f n x y).2).getD (↑j) false] }.encode
+        (List.ofFn (F.f n x y).1)
+δ : ℕ → ℝ
+hδ : Negligible δ
+hWHP :
+  ∀ (n : ℕ),
+    (uprob fun r =>
+        ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) ∧
+            ∀ (j : Fin (Y.outLen.eval n)),
+              keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) false ≠
+                keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) true)) ≤
+      δ n
+BadWord : ℕ → List Bool → Prop :=
+  fun n q =>
+    ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n q) ∧
+        ∀ (j : Fin (Y.outLen.eval n)),
+          keyAt (Y.circ n) (yaoSeed Y n q) (Y.outs n j) false ≠ keyAt (Y.circ n) (yaoSeed Y n q) (Y.outs n j) true)
+switched : (n : ℕ) →
+  (Fin ((yaoFunctionality Y).inA.eval n) → Bool) →
+    (Fin ((yaoFunctionality Y).inB.eval n) → Bool) → (yaoHybrid Y E₁ E₂).Coins n → List Bool :=
+  fun n x y r =>
+    pairEncode
+      ((yaoHybrid Y E₁ E₂).main.viewV (List.replicate n true)
+          ((yaoHybrid Y E₁ E₂).privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+          ((yaoHybrid Y E₁ E₂).privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+      (List.ofFn ((yaoFunctionality Y).f n x y).1)
+v : (n : ℕ) → (Fin (Y.inA.eval n) → Bool) → (Fin (Y.inB.eval n) → Bool) → ℕ → Bool :=
+  fun n x y w => ((Y.circ n).values (Fin.append x y)).getD w false
+game : (n : ℕ) →
+  (Fin (Y.inA.eval n) → Bool) →
+    (Fin (Y.inB.eval n) → Bool) → ℕ → (Fin (10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n) → Bool) → List Bool :=
+  fun n x y stage r =>
+    GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n)
+      (Y.inB.eval n) (Y.outLen.eval n) (Y.outs n) (v n x y) (List.replicate n true) (List.ofFn y) []
+      (List.ofFn (Y.output n x y)) stage
+hAlice :
+  ∀ (D : NUPPT) (n : ℕ) (x : Fin ((yaoFunctionality Y).inA.eval n) → Bool)
+    (y : Fin ((yaoFunctionality Y).inB.eval n) → Bool),
+    distAdv ((yaoHybrid Y E₁ E₂).realA (yaoFunctionality Y) n x y)
+        ((yaoFunctionality Y).idealA (AliceSimulator.simulator (yaoCoins Y)) n x y) (D.distinguisherL n) ≤
+      δ n
+n : ℕ
+⊢ (uprob fun r => BadWord n (List.ofFn r.1)) ≤ δ n
+evidence/subagents/a10/probes/FullSimulators.lean:125:56: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (yaoAlice ?Y ?E₁ ?E₂).coins
+in the target expression
+  (yaoHybrid Y E₁ E₂).main.P.coins.eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n
+
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool
+hGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)
+hGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+hG₁ : PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+hG₂ : PRFOut (PolyExpr.var.add innerLen) G₂
+hG₁₂ :
+  PRFOut ((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)) fun n s x => Fin.append (G₁ n s x) (G₂ n s x)
+hFan : ∀ (n : ℕ) (i : Fin (Y.circ n).gates.length), (Y.circ n).gates[↑i].args.length ≤ 2
+hSize : ∀ (n : ℕ), (Y.circ n).size ≤ Y.sizeBound.eval n
+hSeedK :
+  ∀ (n : ℕ) (r : List Bool) (v : Fin (Y.circ n).size) (b : Bool),
+    (yaoSeed Y n r).1 v b = readBits r ((b.toNat * Y.sizeBound.eval n + ↑v) * n) n
+hSeedR₀ :
+  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),
+    ((yaoSeed Y n q).2.1 i a).1 =
+      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,
+          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).1
+hSeedR₁ :
+  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),
+    ((yaoSeed Y n q).2.1 i a).2 =
+      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,
+          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).2
+hSeedP :
+  ∀ (n : ℕ) (r : List Bool) (i : Fin (Y.circ n).gates.length),
+    (yaoSeed Y n r).2.2 i = xorShift (readBits r (10 * Y.sizeBound.eval n * n + 2 * ↑i) (Y.circ n).gates[i].args.length)
+gen : List Bool → List Bool
+hgen : PolyTimeComputable gen
+hgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)
+SB : NUPPT
+hSBuniform : SB.Uniform
+hSBcoins : SB.coins = yaoCoins Y
+left✝ :
+  ∀ (n : ℕ) (y f r : List Bool),
+    SB.runAtL n (pairEncode y f) r =
+      { x := List.replicate n true,
+          z :=
+            pairEncode y
+              (List.ofFn (FakeObjects.activeAnswers (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n) (Y.inB.eval n))),
+          r := [],
+          received :=
+            [FakeObjects.message (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n) (Y.outLen.eval n)
+                (Y.outs n) fun j => f.getD (↑j) false] }.encode
+hIdeal :
+  ∀ (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (r : SB.Coins n),
+    F.idealB SB n x y r =
+      pairEncode
+        { x := List.replicate n true,
+            z :=
+              pairEncode (List.ofFn y)
+                (List.ofFn
+                  (FakeObjects.activeAnswers (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n) (Y.inB.eval n))),
+            r := [],
+            received :=
+              [FakeObjects.message (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n)
+                  (Y.outLen.eval n) (Y.outs n) fun j => (List.ofFn (F.f n x y).2).getD (↑j) false] }.encode
+        (List.ofFn (F.f n x y).1)
+δ : ℕ → ℝ
+hδ : Negligible δ
+hWHP :
+  ∀ (n : ℕ),
+    (uprob fun r =>
+        ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) ∧
+            ∀ (j : Fin (Y.outLen.eval n)),
+              keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) false ≠
+                keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) true)) ≤
+      δ n
+BadWord : ℕ → List Bool → Prop :=
+  fun n q =>
+    ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n q) ∧
+        ∀ (j : Fin (Y.outLen.eval n)),
+          keyAt (Y.circ n) (yaoSeed Y n q) (Y.outs n j) false ≠ keyAt (Y.circ n) (yaoSeed Y n q) (Y.outs n j) true)
+switched : (n : ℕ) →
+  (Fin ((yaoFunctionality Y).inA.eval n) → Bool) →
+    (Fin ((yaoFunctionality Y).inB.eval n) → Bool) → (yaoHybrid Y E₁ E₂).Coins n → List Bool :=
+  fun n x y r =>
+    pairEncode
+      ((yaoHybrid Y E₁ E₂).main.viewV (List.replicate n true)
+          ((yaoHybrid Y E₁ E₂).privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+          ((yaoHybrid Y E₁ E₂).privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+      (List.ofFn ((yaoFunctionality Y).f n x y).1)
+v : (n : ℕ) → (Fin (Y.inA.eval n) → Bool) → (Fin (Y.inB.eval n) → Bool) → ℕ → Bool :=
+  fun n x y w => ((Y.circ n).values (Fin.append x y)).getD w false
+game : (n : ℕ) →
+  (Fin (Y.inA.eval n) → Bool) →
+    (Fin (Y.inB.eval n) → Bool) → ℕ → (Fin (10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n) → Bool) → List Bool :=
+  fun n x y stage r =>
+    GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n)
+      (Y.inB.eval n) (Y.outLen.eval n) (Y.outs n) (v n x y) (List.replicate n true) (List.ofFn y) []
+      (List.ofFn (Y.output n x y)) stage
+hAlice :
+  ∀ (D : NUPPT) (n : ℕ) (x : Fin ((yaoFunctionality Y).inA.eval n) → Bool)
+    (y : Fin ((yaoFunctionality Y).inB.eval n) → Bool),
+    distAdv ((yaoHybrid Y E₁ E₂).realA (yaoFunctionality Y) n x y)
+        ((yaoFunctionality Y).idealA (AliceSimulator.simulator (yaoCoins Y)) n x y) (D.distinguisherL n) ≤
+      δ n
+hActualBad : ∀ (n : ℕ), (uprob fun r => BadWord n (List.ofFn r.1)) ≤ δ n
+hSwitch :
+  ∀ (n : ℕ) (x : Fin ((yaoFunctionality Y).inA.eval n) → Bool) (y : Fin ((yaoFunctionality Y).inB.eval n) → Bool),
+    StatClose ((yaoHybrid Y E₁ E₂).realB (yaoFunctionality Y) n x y)
+      (fun r =>
+        pairEncode
+          ((yaoHybrid Y E₁ E₂).main.viewV (List.replicate n true)
+              ((yaoHybrid Y E₁ E₂).privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+              ((yaoHybrid Y E₁ E₂).privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+          (List.ofFn ((yaoFunctionality Y).f n x y).1))
+      (δ n)
+hBob :
+  ∀ (D : NUPPT),
+    ∃ μ,
+      Negligible μ ∧
+        ∀ (n : ℕ) (x : Fin (Y.inA.eval n) → Bool) (y : Fin (Y.inB.eval n) → Bool),
+          distAdv (game n x y 0) (game n x y (2 * (Y.circ n).gates.length)) (D.distinguisherL n) ≤ μ n
+D : NUPPT
+μ : ℕ → ℝ
+hμ : Negligible μ
+hBound :
+  ∀ (n : ℕ) (x : Fin (Y.inA.eval n) → Bool) (y : Fin (Y.inB.eval n) → Bool),
+    distAdv (game n x y 0) (game n x y (2 * (Y.circ n).gates.length)) (D.distinguisherL n) ≤ μ n
+n : ℕ
+x : Fin ((yaoFunctionality Y).inA.eval n) → Bool
+y : Fin ((yaoFunctionality Y).inB.eval n) → Bool
+hvA : ∀ (i : Fin (Y.inA.eval n)), v n x y ↑i = (List.ofFn x).getD (↑i) false
+hvB : ∀ (i : Fin (Y.inB.eval n)), v n x y (Y.inA.eval n + ↑i) = (List.ofFn y).getD (↑i) false
+⊢ (yaoHybrid Y E₁ E₂).main.P.coins.eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n
+evidence/subagents/a10/probes/FullSimulators.lean:141:5: error: Function expected at
+  (fun r => ?m.744) (yaoFunctionality Y)
+but this term has type
+  ?m.745 (yaoFunctionality Y)
+
+Note: Expected a function because this term is being applied to the argument
+  n
+evidence/subagents/a10/probes/FullSimulators.lean:138:21: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.getD ?m.754 ?m.756 ?m.755
+in the target expression
+  v n x y (Y.outs n j) = (fun j => (List.ofFn ((yaoFunctionality Y).f n x y).2).getD (↑j) false) j
+
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add innerLen).eval n) → Bool
+hGE₁ : ∀ (n : ℕ) (s x : Fin n → Bool), E₁ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)
+hGE₂ : ∀ (n : ℕ) (s x : Fin n → Bool), E₂ (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+hG₁ : PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+hG₂ : PRFOut (PolyExpr.var.add innerLen) G₂
+hG₁₂ :
+  PRFOut ((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)) fun n s x => Fin.append (G₁ n s x) (G₂ n s x)
+hFan : ∀ (n : ℕ) (i : Fin (Y.circ n).gates.length), (Y.circ n).gates[↑i].args.length ≤ 2
+hSize : ∀ (n : ℕ), (Y.circ n).size ≤ Y.sizeBound.eval n
+hSeedK :
+  ∀ (n : ℕ) (r : List Bool) (v : Fin (Y.circ n).size) (b : Bool),
+    (yaoSeed Y n r).1 v b = readBits r ((b.toNat * Y.sizeBound.eval n + ↑v) * n) n
+hSeedR₀ :
+  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),
+    ((yaoSeed Y n q).2.1 i a).1 =
+      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,
+          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).1
+hSeedR₁ :
+  ∀ (n : ℕ) (q : List Bool) (i : Fin (Y.circ n).gates.length) (a : Fin (Y.circ n).gates[i].args.length → Bool),
+    ((yaoSeed Y n q).2.1 i a).2 =
+      (readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,
+          readBits q (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).2
+hSeedP :
+  ∀ (n : ℕ) (r : List Bool) (i : Fin (Y.circ n).gates.length),
+    (yaoSeed Y n r).2.2 i = xorShift (readBits r (10 * Y.sizeBound.eval n * n + 2 * ↑i) (Y.circ n).gates[i].args.length)
+gen : List Bool → List Bool
+hgen : PolyTimeComputable gen
+hgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)
+SB : NUPPT
+hSBuniform : SB.Uniform
+hSBcoins : SB.coins = yaoCoins Y
+left✝ :
+  ∀ (n : ℕ) (y f r : List Bool),
+    SB.runAtL n (pairEncode y f) r =
+      { x := List.replicate n true,
+          z :=
+            pairEncode y
+              (List.ofFn (FakeObjects.activeAnswers (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n) (Y.inB.eval n))),
+          r := [],
+          received :=
+            [FakeObjects.message (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n) (Y.outLen.eval n)
+                (Y.outs n) fun j => f.getD (↑j) false] }.encode
+hIdeal :
+  ∀ (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (r : SB.Coins n),
+    F.idealB SB n x y r =
+      pairEncode
+        { x := List.replicate n true,
+            z :=
+              pairEncode (List.ofFn y)
+                (List.ofFn
+                  (FakeObjects.activeAnswers (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n) (Y.inB.eval n))),
+            r := [],
+            received :=
+              [FakeObjects.message (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n)
+                  (Y.outLen.eval n) (Y.outs n) fun j => (List.ofFn (F.f n x y).2).getD (↑j) false] }.encode
+        (List.ofFn (F.f n x y).1)
+δ : ℕ → ℝ
+hδ : Negligible δ
+hWHP :
+  ∀ (n : ℕ),
+    (uprob fun r =>
+        ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) ∧
+            ∀ (j : Fin (Y.outLen.eval n)),
+              keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) false ≠
+                keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.outs n j) true)) ≤
+      δ n
+BadWord : ℕ → List Bool → Prop :=
+  fun n q =>
+    ¬(Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n q) ∧
+        ∀ (j : Fin (Y.outLen.eval n)),
+          keyAt (Y.circ n) (yaoSeed Y n q) (Y.outs n j) false ≠ keyAt (Y.circ n) (yaoSeed Y n q) (Y.outs n j) true)
+switched : (n : ℕ) →
+  (Fin ((yaoFunctionality Y).inA.eval n) → Bool) →
+    (Fin ((yaoFunctionality Y).inB.eval n) → Bool) → (yaoHybrid Y E₁ E₂).Coins n → List Bool :=
+  fun n x y r =>
+    pairEncode
+      ((yaoHybrid Y E₁ E₂).main.viewV (List.replicate n true)
+          ((yaoHybrid Y E₁ E₂).privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+          ((yaoHybrid Y E₁ E₂).privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+      (List.ofFn ((yaoFunctionality Y).f n x y).1)
+v : (n : ℕ) → (Fin (Y.inA.eval n) → Bool) → (Fin (Y.inB.eval n) → Bool) → ℕ → Bool :=
+  fun n x y w => ((Y.circ n).values (Fin.append x y)).getD w false
+game : (n : ℕ) →
+  (Fin (Y.inA.eval n) → Bool) →
+    (Fin (Y.inB.eval n) → Bool) → ℕ → (Fin (10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n) → Bool) → List Bool :=
+  fun n x y stage r =>
+    GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n)
+      (Y.inB.eval n) (Y.outLen.eval n) (Y.outs n) (v n x y) (List.replicate n true) (List.ofFn y) []
+      (List.ofFn (Y.output n x y)) stage
+hAlice :
+  ∀ (D : NUPPT) (n : ℕ) (x : Fin ((yaoFunctionality Y).inA.eval n) → Bool)
+    (y : Fin ((yaoFunctionality Y).inB.eval n) → Bool),
+    distAdv ((yaoHybrid Y E₁ E₂).realA (yaoFunctionality Y) n x y)
+        ((yaoFunctionality Y).idealA (AliceSimulator.simulator (yaoCoins Y)) n x y) (D.distinguisherL n) ≤
+      δ n
+hActualBad : ∀ (n : ℕ), (uprob fun r => BadWord n (List.ofFn r.1)) ≤ δ n
+hSwitch :
+  ∀ (n : ℕ) (x : Fin ((yaoFunctionality Y).inA.eval n) → Bool) (y : Fin ((yaoFunctionality Y).inB.eval n) → Bool),
+    StatClose ((yaoHybrid Y E₁ E₂).realB (yaoFunctionality Y) n x y)
+      (fun r =>
+        pairEncode
+          ((yaoHybrid Y E₁ E₂).main.viewV (List.replicate n true)
+              ((yaoHybrid Y E₁ E₂).privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+              ((yaoHybrid Y E₁ E₂).privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+          (List.ofFn ((yaoFunctionality Y).f n x y).1))
+      (δ n)
+hBob :
+  ∀ (D : NUPPT),
+    ∃ μ,
+      Negligible μ ∧
+        ∀ (n : ℕ) (x : Fin (Y.inA.eval n) → Bool) (y : Fin (Y.inB.eval n) → Bool),
+          distAdv (game n x y 0) (game n x y (2 * (Y.circ n).gates.length)) (D.distinguisherL n) ≤ μ n
+D : NUPPT
+μ : ℕ → ℝ
+hμ : Negligible μ
+hBound :
+  ∀ (n : ℕ) (x : Fin (Y.inA.eval n) → Bool) (y : Fin (Y.inB.eval n) → Bool),
+    distAdv (game n x y 0) (game n x y (2 * (Y.circ n).gates.length)) (D.distinguisherL n) ≤ μ n
+n : ℕ
+x : Fin ((yaoFunctionality Y).inA.eval n) → Bool
+y : Fin ((yaoFunctionality Y).inB.eval n) → Bool
+hvA : ∀ (i : Fin (Y.inA.eval n)), v n x y ↑i = (List.ofFn x).getD (↑i) false
+hvB : ∀ (i : Fin (Y.inB.eval n)), v n x y (Y.inA.eval n + ↑i) = (List.ofFn y).getD (↑i) false
+hStart :
+  acceptProb
+      (fun r =>
+        pairEncode
+          ((yaoHybrid Y E₁ E₂).main.viewV (List.replicate n true)
+              ((yaoHybrid Y E₁ E₂).privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+              ((yaoHybrid Y E₁ E₂).privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+          (List.ofFn ((yaoFunctionality Y).f n x y).1))
+      (D.distinguisherL n) =
+    acceptProb
+      (fun r =>
+        GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n)
+          (Y.inB.eval n) (Y.outLen.eval n) (Y.outs n) (v n x y) (List.replicate n true) (List.ofFn y) []
+          (List.ofFn ((yaoFunctionality Y).f n x y).1) 0)
+      (D.distinguisherL n)
+he : ∀ (r : Fin ((yaoCoins Y).eval n) → Bool), List.ofFn ((NUPPT.coinsEquivPoly hSBcoins n).symm r) = List.ofFn r
+e : (Fin (10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n) → Bool) ≃ SB.Coins n :=
+  ((finCongr ⋯).arrowCongr (Equiv.refl Bool)).trans (NUPPT.coinsEquivPoly hSBcoins n).symm
+j : Fin (Y.outLen.eval n)
+⊢ v n x y (Y.outs n j) = (fun j => (List.ofFn ((yaoFunctionality Y).f n x y).2).getD (↑j) false) j
+FAIL(evidence/subagents/a10/probes/FullSimulators): lean exited with status 1
+FAIL(evidence/subagents/a10/probes/FullSimulators): error diagnostics reported
+FAIL(evidence/subagents/a10/probes/FullSimulators): no fresh .olean produced
+        7.56 real         2.49 user         2.01 sys
+          2255945728  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              145685  page reclaims
+               33328  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                1265  voluntary context switches
+               47445  involuntary context switches
+            33741343  instructions retired
+            27051014  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-16T04:29:46Z status=1

@@ -1,0 +1,72 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:235:8: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a => (if _a then k else s.1 ⟨v, hv⟩ b) = if (v, b) = (↑u, true) then k else s.1 ⟨v, hv⟩ b
+Error: Application type mismatch: The argument
+  instDecidableAnd
+has type
+  Decidable (⟨v, hv⟩ = u ∧ b = true)
+but is expected to have type
+  Decidable _a
+in the application
+  @ite K _a instDecidableAnd
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+case pos
+m : ℕ
+K ρ : Type
+inst✝ : Inhabited K
+C : DAGCircuit m
+rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+s : GarbleSeed C K (ρ × ρ)
+u : Fin C.size
+q : ℕ
+k : K
+r : Fin (q + 1) → ρ
+v : ℕ
+b : Bool
+hv : v < C.size
+hcond : ⟨v, hv⟩ = u ∧ b = true ↔ (v, b) = (↑u, true)
+⊢ (if ⟨v, hv⟩ = u ∧ b = true then k else s.1 ⟨v, hv⟩ b) = if (v, b) = (↑u, true) then k else s.1 ⟨v, hv⟩ b
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:239:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (v, b).1
+in the target expression
+  v < C.size
+
+m : ℕ
+K ρ : Type
+inst✝ : Inhabited K
+C : DAGCircuit m
+rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+s : GarbleSeed C K (ρ × ρ)
+u : Fin C.size
+q : ℕ
+k : K
+r : Fin (q + 1) → ρ
+v : ℕ
+b : Bool
+hv : ¬v < C.size
+h : (v, b) = (↑u, true)
+⊢ v < C.size
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): no fresh .olean produced
+        4.25 real         3.95 user         0.79 sys
+          1557381120  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              127669  page reclaims
+                 192  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  37  voluntary context switches
+                4191  involuntary context switches
+            32299638  instructions retired
+            14358131  cycles elapsed
+             1638736  peak memory footprint

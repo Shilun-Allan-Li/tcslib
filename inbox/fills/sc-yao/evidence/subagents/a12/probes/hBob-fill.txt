@@ -1,0 +1,25 @@
+  have hBob : ∀ D : NUPPT, ∃ μ : ℕ → ℝ, Negligible μ ∧ ∀ n x y,
+      distAdv (game n x y 0) (game n x y (2 * (Y.circ n).gates.length))
+        (D.distinguisherL n) ≤ μ n := by
+    intro D
+    obtain ⟨μ, hμ, hBound⟩ := GateHybridSecurity.endpoint_negligible
+      (L := .add (.add .var .var) (.add .var innerLen))
+      (I := fun n => (Fin (Y.inA.eval n) → Bool) × (Fin (Y.inB.eval n) → Bool))
+      Y.circ Y.sizeBound Y.inA Y.inB Y.outLen Y.outLen (yaoSeed Y)
+      (fun n z => v n z.1 z.2) Y.outs (fun _ z => List.ofFn z.2)
+      (fun n z => List.ofFn (Y.output n z.1 z.2)) Y.size_le Y.fanin
+      (fun n z => GateHybrids.values_consistent (Y.circ n) (Fin.append z.1 z.2)) Y.outs_sink
+      (fun n z => by simp only [List.length_ofFn, le_refl])
+      (fun n z => by simp only [List.length_ofFn, le_refl])
+      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x)) G₁ G₂ E₁ E₂ hE₂
+      (fun n s x => List.ofFn_fin_append (G₁ n s x) (G₂ n s x)) hGE₁ hGE₂
+      (fun n => by
+        simp only [PolyExpr.eval_add, innerLen_eq, PolyExpr.eval_mul,
+          PolyExpr.eval_const, PolyExpr.eval_var]
+        omega)
+      (sliceMultiMessageSecure_of_prfOut hG₁₂)
+      (fun n q w b t => by rw [hSeedK, readBits_apply])
+      (fun n q i a t => by simp only [hSeedR₀, readBits_apply, assignIdx_eq])
+      (fun n q i a t => by simp only [hSeedR₁, readBits_apply, assignIdx_eq])
+      (fun n q i a t => by simp only [hSeedP, xorShift_apply, readBits_apply]) D
+    exact ⟨μ, hμ, fun n x y => hBound n (x, y)⟩

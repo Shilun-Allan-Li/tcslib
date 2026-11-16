@@ -1,0 +1,36 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:248:84: error: unsolved goals
+E₂ : List Bool → List Bool
+challenge : List (List Bool)
+descriptors : List (List (List Bool))
+⊢ BinArith.encWords
+      (List.map
+        ((fun d =>
+            BinArith.encWords
+              (List.map (fun d => row E₂ (pairEncode (BinArith.encWords challenge) d)) (BinArith.decWords d))) ∘
+          BinArith.encWords)
+        descriptors) =
+    BinArith.encWords
+      (List.map
+        (fun ds => BinArith.encWords (List.map (fun d => row E₂ (pairEncode (BinArith.encWords challenge) d)) ds))
+        descriptors)
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction): no fresh .olean produced
+       24.66 real        23.41 user         1.49 sys
+          2185445376  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173830  page reclaims
+                 204  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  39  voluntary context switches
+               14839  involuntary context switches
+            32496358  instructions retired
+            19587550  cycles elapsed
+             1638736  peak memory footprint

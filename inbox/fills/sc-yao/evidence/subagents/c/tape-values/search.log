@@ -1,0 +1,58 @@
+COMMAND ['rg', '-n', '(piEquivPiSubtypeProd|prodProdProdComm|def curry)', '.lake/packages/mathlib/Mathlib/Logic/Equiv/Prod.lean']
+104:def prodProdProdComm (α β γ δ) : (α × β) × γ × δ ≃ (α × γ) × β × δ where
+109:theorem prodProdProdComm_symm (α β γ δ) :
+110:    (prodProdProdComm α β γ δ).symm = prodProdProdComm α γ β δ :=
+115:def curry (α β γ) : (α × β → γ) ≃ (α → β → γ) where
+463:def piEquivPiSubtypeProd {α : Type*} (p : α → Prop) (β : α → Type*) [DecidablePred p] :
+EXIT 0
+
+COMMAND ['rg', '-n', '(def ofInjective|ofInjective_apply)', '.lake/packages/mathlib/Mathlib/Logic/Equiv/Basic.lean']
+EXIT 1
+
+COMMAND ['rg', '-n', '(assignmentEmbedding|assignmentFold|seed_relabel)', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel.lean']
+24:* `assignmentEmbedding`, `assignmentPerm`: assignment folds and their extended XOR permutation.
+29:* `seed_relabel`: the seed of the relabeled tape is the relabeling of the original seed.
+43:theorem assignmentFold_lt_four {l : ℕ} (a : Fin l → Bool) (hl : l ≤ 2) :
+45:  rw [RowFromCoins.assignmentFold_eq_two a hl]
+52:theorem assignmentFold_lt_pow {l : ℕ} (a : Fin l → Bool) (hl : l ≤ 2) :
+56:  · rw [RowFromCoins.assignmentFold_eq_two a (by decide),
+60:  · rw [RowFromCoins.assignmentFold_eq_two a (by decide),
+64:  · exact assignmentFold_lt_four a (by decide)
+72:theorem assignmentFold_injective (l : ℕ) (hl : l ≤ 2) :
+78:  rw [RowFromCoins.assignmentFold_eq_two a hl, RowFromCoins.assignmentFold_eq_two b hl] at hab
+109:def assignmentEmbedding (l : ℕ) (hl : l ≤ 2) : (Fin l → Bool) ↪ Fin 4 where
+111:    assignmentFold_lt_four a hl⟩
+112:  inj' _ _ h := assignmentFold_injective l hl (congrArg Fin.val h)
+114:/-- The natural value of `assignmentEmbedding l hl a` is its assignment fold. -/
+115:theorem assignmentEmbedding_eq (l : ℕ) (hl : l ≤ 2) (a : Fin l → Bool) :
+116:    (assignmentEmbedding l hl a : ℕ) =
+119:/-- The embedded code is below `2^l`: `(assignmentEmbedding l hl a : ℕ) < 2^l`. -/
+120:theorem assignmentEmbedding_lt_pow (l : ℕ) (hl : l ≤ 2) (a : Fin l → Bool) :
+121:    (assignmentEmbedding l hl a : ℕ) < 2 ^ l := assignmentFold_lt_pow a hl
+126:  (xorPerm mask).viaFintypeEmbedding (assignmentEmbedding l hl)
+131:      (xorPerm mask).viaFintypeEmbedding (assignmentEmbedding l hl) := rfl
+135:    assignmentPerm l hl mask (assignmentEmbedding l hl a) =
+136:      assignmentEmbedding l hl (xorPerm mask a) := by
+147:  have hlt := assignmentEmbedding_lt_pow l hl b
+206:        (assignmentEmbedding (C.gates[i]).args.length (hA i) a) : ℕ) =
+209:  rw [rowPerm_gate, assignmentPerm_code, assignmentEmbedding_eq]
+320:      (assignmentEmbedding (C.gates[i]).args.length (hA i) a) t
+321:  rw [rowPerm_fold, assignmentEmbedding_eq] at h
+350:theorem seed_relabel {m : ℕ} (C : DAGCircuit m) (S n : ℕ)
+EXIT 0
+
+COMMAND ['rg', '-n', '(blocksEquiv_key|blocksEquiv_row|blocksEquiv_shift)', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean']
+31:* `blocksEquiv_key`, `blocksEquiv_row`, `blocksEquiv_shift`: exact offset equations.
+136:theorem blocksEquiv_key (S n : ℕ) (r : Fin (10 * S * n + 2 * S) → Bool)
+151:theorem blocksEquiv_row (S n : ℕ) (r : Fin (10 * S * n + 2 * S) → Bool)
+163:theorem blocksEquiv_shift (S n : ℕ) (r : Fin (10 * S * n + 2 * S) → Bool)
+185:    exact blocksEquiv_key S n r b v t
+188:      exact blocksEquiv_row S n r i a t
+190:      exact blocksEquiv_shift S n r i t
+303:  rw [← blocksEquiv_key S n (relabel S n values rows mask r) b v t,
+304:    relabel_key, blocksEquiv_key]
+314:  rw [← blocksEquiv_row S n (relabel S n values rows mask r) i a t,
+315:    relabel_row, blocksEquiv_row]
+324:  rw [← blocksEquiv_shift S n (relabel S n values rows mask r) i t,
+325:    relabel_shift, blocksEquiv_shift]
+EXIT 0

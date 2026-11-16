@@ -1,0 +1,78 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:231:18: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  { x := ?x, z := ?z, r := ?r, received := ?received }.encode
+in the target expression
+  pairEncode
+      (pairEncode (pairEncode (pairFstD z) ((pairFstD ∘ pairSndD ∘ pairSndD ∘ pairSndD ∘ pairSndD) z))
+        (pairEncode []
+          (pairEncode
+            (pairEncode
+              ((tables E₂ ∘ fun x => pairEncode ((pairFstD ∘ pairSndD) x) ((pairFstD ∘ pairSndD ∘ pairSndD) x)) z)
+              ((pairFstD ∘ pairSndD ∘ pairSndD ∘ pairSndD) z))
+            [])))
+      ((pairSndD ∘ pairSndD ∘ pairSndD ∘ pairSndD ∘ pairSndD) z) =
+    have data := pairSndD (pairSndD z);
+    have rest := pairSndD data;
+    have message := pairEncode (tables E₂ (pairEncode (pairFstD (pairSndD z)) (pairFstD data))) (pairFstD rest);
+    pairEncode { x := pairFstD z, z := pairFstD (pairSndD rest), r := [], received := [message] }.encode
+      (pairSndD (pairSndD rest))
+
+E₂ : List Bool → List Bool
+hE₂ : PolyTimeComputable E₂
+hdata : PolyTimeComputable (pairSndD ∘ pairSndD)
+hrest : PolyTimeComputable (pairSndD ∘ pairSndD ∘ pairSndD)
+hchallenge : PolyTimeComputable (pairFstD ∘ pairSndD)
+hdescriptors : PolyTimeComputable (pairFstD ∘ pairSndD ∘ pairSndD)
+ht : PolyTimeComputable (tables E₂ ∘ fun x => pairEncode ((pairFstD ∘ pairSndD) x) ((pairFstD ∘ pairSndD ∘ pairSndD) x))
+htail : PolyTimeComputable (pairFstD ∘ pairSndD ∘ pairSndD ∘ pairSndD)
+hprivate : PolyTimeComputable (pairFstD ∘ pairSndD ∘ pairSndD ∘ pairSndD ∘ pairSndD)
+halice : PolyTimeComputable (pairSndD ∘ pairSndD ∘ pairSndD ∘ pairSndD ∘ pairSndD)
+hmessage :
+  PolyTimeComputable fun x =>
+    pairEncode ((tables E₂ ∘ fun x => pairEncode ((pairFstD ∘ pairSndD) x) ((pairFstD ∘ pairSndD ∘ pairSndD) x)) x)
+      ((pairFstD ∘ pairSndD ∘ pairSndD ∘ pairSndD) x)
+hnil : PolyTimeComputable fun x => []
+hview :
+  PolyTimeComputable fun x =>
+    pairEncode (pairEncode (pairFstD x) ((pairFstD ∘ pairSndD ∘ pairSndD ∘ pairSndD ∘ pairSndD) x))
+      (pairEncode []
+        (pairEncode
+          (pairEncode
+            ((tables E₂ ∘ fun x => pairEncode ((pairFstD ∘ pairSndD) x) ((pairFstD ∘ pairSndD ∘ pairSndD) x)) x)
+            ((pairFstD ∘ pairSndD ∘ pairSndD ∘ pairSndD) x))
+          []))
+z : List Bool
+⊢ pairEncode
+      (pairEncode (pairEncode (pairFstD z) ((pairFstD ∘ pairSndD ∘ pairSndD ∘ pairSndD ∘ pairSndD) z))
+        (pairEncode []
+          (pairEncode
+            (pairEncode
+              ((tables E₂ ∘ fun x => pairEncode ((pairFstD ∘ pairSndD) x) ((pairFstD ∘ pairSndD ∘ pairSndD) x)) z)
+              ((pairFstD ∘ pairSndD ∘ pairSndD ∘ pairSndD) z))
+            [])))
+      ((pairSndD ∘ pairSndD ∘ pairSndD ∘ pairSndD ∘ pairSndD) z) =
+    have data := pairSndD (pairSndD z);
+    have rest := pairSndD data;
+    have message := pairEncode (tables E₂ (pairEncode (pairFstD (pairSndD z)) (pairFstD data))) (pairFstD rest);
+    pairEncode { x := pairFstD z, z := pairFstD (pairSndD rest), r := [], received := [message] }.encode
+      (pairSndD (pairSndD rest))
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction): no fresh .olean produced
+       24.65 real        23.45 user         1.31 sys
+          2165145600  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172023  page reclaims
+                2657  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 165  voluntary context switches
+               16818  involuntary context switches
+            32794030  instructions retired
+            19549657  cycles elapsed
+             1638736  peak memory footprint

@@ -1,0 +1,38 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:118:57: error: unsolved goals
+E₂ : List Bool → List Bool
+challenge c : List Bool
+⊢ (if True then c
+    else
+      if [] = [true] then (BinArith.decWords challenge).getD (pairFstD c).length []
+      else
+        spEncStr E₂ (pairFstD (pairSndD c)) ((BinArith.decWords challenge).getD (pairFstD c).length [])
+          (pairSndD (pairSndD c))) =
+    c
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:119:79: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [row_eq, fixedRecord_eq, pairFstD_pairEncode, pairSndD_pairEncode,̵ ̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction): no fresh .olean produced
+       23.92 real        22.91 user         1.16 sys
+          2161934336  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172931  page reclaims
+                 678  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  50  voluntary context switches
+               10379  involuntary context switches
+            32393774  instructions retired
+            17062810  cycles elapsed
+             1638736  peak memory footprint

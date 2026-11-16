@@ -1,0 +1,22 @@
+COMMAND ['rg', '-n', '(realB_output_switch|strategyTapeEquiv|acceptProb_firstTape)', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SimulationBound.lean']
+22:* `strategyTapeEquiv`: normalize a strategy tape through a known length equality.
+27:* `realB_output_switch`: replace Alice's real output outside a bounded bad event.
+28:* `strategyTapeEquiv`, `acceptProb_firstTape`: normalize the first strategy's tape.
+82:theorem realB_output_switch {G : Functionality} (H : HybridProtocol G)
+103:def strategyTapeEquiv (S : Strategy) (n m : ℕ) (h : S.coinLen n = m) :
+107:/-- `strategyTapeEquiv S n m h` is the function-space equivalence induced by `finCongr h`. -/
+108:theorem strategyTapeEquiv_eq (S : Strategy) (n m : ℕ) (h : S.coinLen n = m) :
+109:    strategyTapeEquiv S n m h = Equiv.arrowCongr (finCongr h) (Equiv.refl Bool) := rfl
+112:`ofFn (strategyTapeEquiv S n m h r) = ofFn r`. -/
+113:theorem strategyTapeEquiv_ofFn (S : Strategy) (n m : ℕ) (h : S.coinLen n = m)
+114:    (r : S.Coins n) : List.ofFn (strategyTapeEquiv S n m h r) = List.ofFn r :=
+120:theorem acceptProb_firstTape {G : Functionality} (H : HybridProtocol G) (n m : ℕ)
+123:    (hX : ∀ r, X r = Y (strategyTapeEquiv H.main.P (List.replicate n true).length m hLen r.1))
+126:  rw [show X = (fun r => Y (strategyTapeEquiv H.main.P
+129:    ((strategyTapeEquiv H.main.P (List.replicate n true).length m hLen).prodCongr
+EXIT 0
+
+COMMAND ['rg', '-n', '(theorem uprob_fst|theorem uprob_comp_equiv)', 'TCSlib', '--glob', '*.lean']
+TCSlib/Cryptography/Foundations/Probability.lean:165:theorem uprob_comp_equiv (e : α ≃ β) (p : β → Prop) : uprob (fun a => p (e a)) = uprob p := by
+TCSlib/Cryptography/Foundations/Probability.lean:175:theorem uprob_fst [Nonempty β] (p : α → Prop) : uprob (fun z : α × β => p z.1) = uprob p := by
+EXIT 0

@@ -1,0 +1,59 @@
+UTC 2026-11-16T04:21:22.732200+00:00
+COMMAND ['rg', '-n', 'length_garbledTable_le|length_encoded_keys_le|length_encoded_pairs_le|length_occurrences_le', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences.lean']
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences.lean:265:theorem length_occurrences_le {m : ℕ} (C : DAGCircuit m)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences.lean:321:  padded_some_iff q _ ((length_occurrences_le C rows perm u hrows hfanin).trans hbudget) s
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:103:theorem length_garbledTable_le {K W ρ : Type} [Inhabited K] {m : ℕ}
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:132:      Nat.mul_le_mul_right _ (length_garbledTable_le _ C s i hi)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:158:theorem length_encoded_keys_le {a n : ℕ} (keys : Fin a → Fin n → Bool) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:171:theorem length_encoded_pairs_le {o n : ℕ} (keys : Fin o → Bool → Fin n → Bool) :
+EXIT 0
+COMMAND ['rg', '-n', 'polyTimeComputable_mapW|length_encWords_le|polyTimeComputable_getW', 'TCSlib']
+TCSlib/Complexity/Randomized/ZeroPRun.lean:156:  polyTimeComputable_getW.comp (hf.pairEncode polyTimeComputable_sL)
+TCSlib/Complexity/Randomized/ZeroPRun.lean:166:    polyTimeComputable_getW.comp ((polyTimeComputable_arg1W.comp w).pairEncode
+TCSlib/Complexity/Randomized/ZeroPRun.lean:484:  exact polyTimeComputable_getW.comp hp
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean:303:    (unaryLength_poly (BinArith.polyTimeComputable_getW.comp
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean:306:    (unaryLength_poly (BinArith.polyTimeComputable_getW.comp
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobTables.lean:83:    (BinArith.polyTimeComputable_getW.comp (hindex.pairEncode htables))
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate.lean:60:  have hraw := BinArith.polyTimeComputable_getW.comp
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate.lean:103:  (BinArith.polyTimeComputable_mapW keyLookup_poly).comp
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit.lean:114:  have hr : PolyTimeComputable raw := BinArith.polyTimeComputable_getW.comp'
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:127:      BinArith.length_encWords_le _ _ fun w hw => by
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:146:  have h := BinArith.length_encWords_le
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:162:  have h := BinArith.length_encWords_le
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:176:  have h := BinArith.length_encWords_le
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobIO.lean:103:    (BinArith.polyTimeComputable_getW.comp (polyTimeComputable_pairSndD.pairEncode ho))
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobIO.lean:110:    (BinArith.polyTimeComputable_getW.comp' (hvertex.pairEncode hv))
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobIO.lean:115:    BinArith.polyTimeComputable_getW.comp (polyTimeComputable_pairSndD.pairEncode hp)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean:93:  have ht := BinArith.length_encWords_le ((rows i).map fun a =>
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedAdviceBounds.lean:119:  have ht := BinArith.length_encWords_le
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:104:  have hread := BinArith.polyTimeComputable_getW.comp (hindex.pairEncode hchallenge)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:132:    PolyTimeComputable (table E₂) := BinArith.polyTimeComputable_mapW (row_poly hE₂)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:150:    PolyTimeComputable (tables E₂) := BinArith.polyTimeComputable_mapW (table_poly hE₂)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:44:  have h := (BinArith.polyTimeComputable_mapW polyTimeComputable_pairSndD).comp
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:84:    have h := BinArith.polyTimeComputable_getW.comp
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:99:  have hchosen := BinArith.polyTimeComputable_getW.comp (hindex.pairEncode hcanon)
+TCSlib/Complexity/Randomized/BPLInP.lean:151:  exact h1.pairEncode (ptA (polyTimeComputable_mapW hrow)
+TCSlib/Complexity/Randomized/BPLInP.lean:168:  exact hctx.pairEncode (ptA (polyTimeComputable_mapW hi)
+TCSlib/Complexity/Randomized/BPLInP.lean:312:  have := length_encWords_le ((List.range V).map fun a => Nat.bits (dpVal N x s V t a))
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarbledRun.lean:137:    have hv := BinArith.length_encWords_le
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:44:* `Complexity.BinArith.getW_pairEncode`, `Complexity.BinArith.polyTimeComputable_getW`.
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:391:theorem polyTimeComputable_getW : PolyTimeComputable getW := by
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:30:* `Complexity.BinArith.polyTimeComputable_mapW`, `Complexity.BinArith.mapW_pairEncode`.
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:81:theorem length_encWords_le (L : List (List Bool)) (c : ℕ) (h : ∀ w ∈ L, w.length ≤ c) :
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:221:theorem polyTimeComputable_mapW {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:318:**Proof sketch.** As for `polyTimeComputable_mapW`: the round drops the head entries of both
+TCSlib/Complexity/Randomized/BPLInPWords.lean:169:  have := length_encWords_le ((List.range V).map Nat.bits) V (by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:314:  · exact hP.pairEncode (((polyTimeComputable_mapW polyTimeComputable_rowW).comp
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:443:`|z|` entries and matrices at most `|z|` rows, so `length_encWords_le` bounds a row by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:458:    have := length_encWords_le (r.map Nat.bits) (K + 2) (fun w hw => by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:466:    have := length_encWords_le (R.map encRow) (K * (2 * K + 6)) (fun w hw => by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:600:    hP.pairEncode (((polyTimeComputable_mapW (polyTimeComputable_mapW hentry)).comp
+EXIT 0
+COMMAND ['rg', '-n', 'stageBit_plaintext_ne|stage_first_unselected|stage_second_unselected|message_tail_fill', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedFields.lean']
+106:theorem message_tail_fill {inputs width : ℕ} {ρ : Type}
+153:theorem stageBit_plaintext_ne_even {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+162:theorem stageBit_plaintext_ne_odd {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+171:theorem stageBit_plaintext_ne_next {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+274:theorem stage_first_unselected {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+299:theorem stage_second_unselected {inputs : ℕ} (C : DAGCircuit inputs) (v : ℕ → Bool)
+EXIT 0

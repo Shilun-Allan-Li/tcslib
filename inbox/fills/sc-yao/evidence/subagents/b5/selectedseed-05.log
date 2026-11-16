@@ -1,0 +1,74 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:126:4: error: Invalid match expression: This pattern contains metavariables:
+  none
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:136:12: error: Application type mismatch: The argument
+  rows
+has type
+  (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+but is expected to have type
+  Fin C.gates.length
+in the application
+  nonce C rows
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:149:12: error: Application type mismatch: The argument
+  rows
+has type
+  (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+but is expected to have type
+  Fin C.gates.length
+in the application
+  nonce C rows
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:150:6: error(lean.unknownIdentifier): Unknown identifier `nonce_eq`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:149:44: error: unsolved goals
+m : ℕ
+K ρ : Type
+C : DAGCircuit m
+s : GarbleSeed C K (ρ × ρ)
+u : ℕ
+i : Fin C.gates.length
+a : Fin C.gates[↑i].args.length → Bool
+h : GateOccurrences.selectedPosition C.gates[↑i] a u = none
+⊢ sorry = s.2.1 i a
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:162:13: error: Application type mismatch: The argument
+  rows
+has type
+  (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+but is expected to have type
+  Fin C.gates.length
+in the application
+  nonce C rows
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:172:17: error: Application type mismatch: The argument
+  rows
+has type
+  (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+but is expected to have type
+  Fin C.gates.length
+in the application
+  nonce C rows
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:187:46: error: Application type mismatch: The argument
+  rows
+has type
+  (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+but is expected to have type
+  Fin C.gates.length
+in the application
+  nonce C rows
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): no fresh .olean produced
+        4.09 real         3.61 user         0.82 sys
+          1551843328  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              127384  page reclaims
+                  99  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  24  voluntary context switches
+                5041  involuntary context switches
+            34243987  instructions retired
+            15574006  cycles elapsed
+             1638736  peak memory footprint

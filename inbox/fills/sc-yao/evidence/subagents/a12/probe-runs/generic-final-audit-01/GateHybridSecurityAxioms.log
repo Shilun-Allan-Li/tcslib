@@ -1,0 +1,104 @@
+START 2026-11-16T05:07:31.739528+00:00
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridSecurity.endpoint_negligible	∀ {I : ℕ → Type}
+  [(n : ℕ) → Fintype (I n)] {inputs : ℕ → ℕ} (C : (n : ℕ) → BoolCircuit.DAGCircuit (inputs n))
+  (S A B O R : Complexity.PolyExpr)
+  (seed :
+    (n : ℕ) →
+      List Bool →
+        TCSlib.Cryptography.SecureComputation.GarbleSeed (C n) (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (v : (n : ℕ) → I n → ℕ → Bool) (output : (n : ℕ) → Fin (O.eval n) → ℕ)
+  (bobWord aliceWord : (n : ℕ) → I n → List Bool),
+  (∀ (n : ℕ), (C n).size ≤ S.eval n) →
+    (∀ (n : ℕ), (C n).IsFaninTwo) →
+      (∀ (n : ℕ) (z : I n) (i : Fin (C n).gates.length),
+          TCSlib.Cryptography.SecureComputation.gateOut (C n).gates[i]
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues (C n) (v n z) i) =
+            v n z (inputs n + ↑i)) →
+        (∀ (n : ℕ) (j : Fin (O.eval n)), ∀ g ∈ (C n).gates, output n j ∉ g.args) →
+          (∀ (n : ℕ) (z : I n), (bobWord n z).length ≤ B.eval n) →
+            (∀ (n : ℕ) (z : I n), (aliceWord n z).length ≤ R.eval n) →
+              ∀ {L : Complexity.PolyExpr} {L₂ : ℕ → ℕ}
+                (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L.eval n) → Bool)
+                (G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool)
+                (G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L₂ n) → Bool) (E₁ E₂ : List Bool → List Bool),
+                Complexity.PolyTimeComputable E₂ →
+                  (∀ (n : ℕ) (s x : Fin n → Bool), List.ofFn (G n s x) = List.ofFn (G₁ n s x) ++ List.ofFn (G₂ n s x)) →
+                    (∀ (n : ℕ) (s x : Fin n → Bool),
+                        E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+                      (∀ (n : ℕ) (s x : Fin n → Bool),
+                          E₂ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)) →
+                        (∀ (n : ℕ), 7 * n + 2 ≤ L.eval n) →
+                          TCSlib.Cryptography.SecureComputation.SliceMultiMessageSecure G →
+                            (∀ (n : ℕ) (q : List Bool) (w : Fin (C n).size) (b : Bool) (t : Fin n),
+                                (seed n q).1 w b t = q.getD ((b.toNat * S.eval n + ↑w) * n + ↑t) false) →
+                              (∀ (n : ℕ) (q : List Bool) (i : Fin (C n).gates.length)
+                                  (a : Fin (C n).gates[↑i].args.length → Bool) (t : Fin n),
+                                  ((seed n q).2.1 i a).1 t =
+                                    q.getD
+                                      (2 * S.eval n * n +
+                                          (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) +
+                                        ↑t)
+                                      false) →
+                                (∀ (n : ℕ) (q : List Bool) (i : Fin (C n).gates.length)
+                                    (a : Fin (C n).gates[↑i].args.length → Bool) (t : Fin n),
+                                    ((seed n q).2.1 i a).2 t =
+                                      q.getD
+                                        (2 * S.eval n * n +
+                                              (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) *
+                                                (2 * n) +
+                                            n +
+                                          ↑t)
+                                        false) →
+                                  (∀ (n : ℕ) (q : List Bool) (i : Fin (C n).gates.length)
+                                      (a : Fin (C n).gates[↑i].args.length → Bool)
+                                      (t : Fin (C n).gates[↑i].args.length),
+                                      ((seed n q).2.2 i) a t =
+                                        (a t ^^ q.getD (10 * S.eval n * n + 2 * ↑i + ↑t) false)) →
+                                    ∀ (D : Complexity.NUPPT),
+                                      ∃ ε,
+                                        TCSlib.Cryptography.Negligible ε ∧
+                                          ∀ (n : ℕ) (z : I n),
+                                            TCSlib.Cryptography.distAdv
+                                                (fun r =>
+                                                  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample
+                                                    (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) (C n)
+                                                    (seed n (List.ofFn r)) (A.eval n) (B.eval n) (O.eval n) (output n)
+                                                    (v n z) (List.replicate n true) (bobWord n z) [] (aliceWord n z) 0)
+                                                (fun r =>
+                                                  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample
+                                                    (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) (C n)
+                                                    (seed n (List.ofFn r)) (A.eval n) (B.eval n) (O.eval n) (output n)
+                                                    (v n z) (List.replicate n true) (bobWord n z) [] (aliceWord n z)
+                                                    (2 * (C n).gates.length))
+                                                (D.distinguisherL n) ≤
+                                              ε n
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridSecurity.endpoint_negligible	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridSecurity.endpoint_negligible	[]
+SIGNATURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.GateHybridSecurity.0._proof_7	∀
+  {inputs : ℕ → ℕ} (C : (n : ℕ) → BoolCircuit.DAGCircuit (inputs n)) (n : ℕ),
+  ¬(C n).gates.length ≤ (C n).gates.length → False
+AXIOMS	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.GateHybridSecurity.0._proof_7	[propext,
+ Quot.sound]
+SORRY_CLOSURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.GateHybridSecurity.0._proof_7	[]
+STORED_CONSTANTS 2
+       29.12 real        27.61 user         1.25 sys
+          2290499584  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174898  page reclaims
+                2341  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   2  voluntary context switches
+                8913  involuntary context switches
+        129541329076  instructions retired
+         80570968733  cycles elapsed
+           362393496  peak memory footprint
+END 2026-11-16T05:08:00.888891+00:00

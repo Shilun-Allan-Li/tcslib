@@ -1,0 +1,39 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean:152:9: error: unsolved goals
+case none
+m n : ℕ
+C : DAGCircuit m
+rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool))
+u : Fin C.size
+q : ℕ
+G₁ : (k : ℕ) → (Fin k → Bool) → (Fin k → Bool) → Fin (k + k) → Bool
+E₁ : List Bool → List Bool
+hGE₁ :
+  ∀ (k : ℕ) (key nonce : Fin k → Bool), E₁ (pairEncode (List.ofFn key) (List.ofFn nonce)) = List.ofFn (G₁ k key nonce)
+o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool
+j : Fin (q + 1)
+hpad : GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 ↑u) j = none
+⊢ n =
+    none.elim n fun t =>
+      SelectedRows.length n (argKeys C s t.1 ((s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false))) t.2.2
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan): no fresh .olean produced
+        4.49 real         3.33 user         1.08 sys
+          2207547392  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170784  page reclaims
+                4443  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 323  voluntary context switches
+                7084  involuntary context switches
+            32342088  instructions retired
+            15482684  cycles elapsed
+             1638736  peak memory footprint

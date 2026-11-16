@@ -1,0 +1,29 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean:256:2: error: Type mismatch
+  congrArg (fun ts => SliceReconstruction.advice (BinArith.encWords ?m.156) tail privateInput aliceOutput)
+    (tables_congr C rows s u E₁ E₂ o₀ o₁ ho)
+has type
+  SliceReconstruction.advice (BinArith.encWords (?m.157 (tables C rows s u E₁ E₂ o₀))) tail privateInput aliceOutput =
+    SliceReconstruction.advice (BinArith.encWords (?m.157 (tables C rows s u E₁ E₂ o₁))) tail privateInput aliceOutput
+but is expected to have type
+  advice C rows s u E₁ E₂ o₀ tail privateInput aliceOutput = advice C rows s u E₁ E₂ o₁ tail privateInput aliceOutput
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan): no fresh .olean produced
+        7.57 real         6.75 user         1.11 sys
+          2214658048  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172030  page reclaims
+                4662  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 338  voluntary context switches
+               10093  involuntary context switches
+            32606896  instructions retired
+            15330050  cycles elapsed
+             1638736  peak memory footprint

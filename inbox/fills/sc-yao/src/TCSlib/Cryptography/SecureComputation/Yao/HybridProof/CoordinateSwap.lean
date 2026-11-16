@@ -109,13 +109,14 @@ theorem equiv_symm_apply_eq (pick : P → I → Option J) (place : P → J → O
 
 /-- Replacing the matched coordinates of an independent uniform full seed by uniform
 challenge coordinates preserves every sampler acceptance probability. Unmatched challenge
-slots may be padded, and coordinate values may repeat. [PS10, Theorem 163.7]
+slots may be padded, and coordinate values may repeat. Only the full coordinate spaces need
+finite enumerations; the control and address types are not separately enumerated.
+[PS10, Theorem 163.7]
 
 **Proof sketch.** Relabel the joint uniform sample by the proved exchange bijection.
 The sampler then sees just the original full-seed component. Remove its independent unused
 challenge component with the existing ignored-coordinate probability contract. -/
-theorem acceptProb_swap [Fintype P] [Fintype I] [Fintype J] [Fintype V]
-    [DecidableEq I] [DecidableEq J]
+theorem acceptProb_swap [Fintype (P × (I → V))] [Fintype (J → V)]
     [Nonempty (J → V)] {γ ρ : Type*} [Fintype ρ]
     (pick : P → I → Option J) (place : P → J → Option I)
     (hmatch : ∀ p i j, pick p i = some j ↔ place p j = some i)

@@ -1,0 +1,31 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:348:2: error: Type mismatch
+  List.idxOf_getElem (GateOccurrences.occurrences_nodup C rows perm u) j hj
+has type
+  @List.idxOf (Fin C.gates.length × ℕ × ℕ) instBEqOfDecidableEq (GateOccurrences.occurrences C rows perm u)[j]
+      (GateOccurrences.occurrences C rows perm u) =
+    j
+but is expected to have type
+  @List.idxOf (Fin C.gates.length × ℕ × ℕ) instBEqProd (GateOccurrences.occurrences C rows perm u)[j]
+      (GateOccurrences.occurrences C rows perm u) =
+    j
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): no fresh .olean produced
+        6.19 real         7.20 user         0.87 sys
+          1587134464  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              129829  page reclaims
+                  28  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  23  voluntary context switches
+                4702  involuntary context switches
+            32165664  instructions retired
+            17324244  cycles elapsed
+             1638736  peak memory footprint

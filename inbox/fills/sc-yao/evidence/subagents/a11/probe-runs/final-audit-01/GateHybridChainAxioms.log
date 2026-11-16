@@ -1,0 +1,66 @@
+START 2026-11-16T04:45:28.170288+00:00
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridChain.endpoint_negligible._proof_1	∀
+  {inputs : ℕ → ℕ} (C : (n : ℕ) → BoolCircuit.DAGCircuit (inputs n)) (n : ℕ),
+  ¬(C n).gates.length ≤ (C n).gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridChain.endpoint_negligible._proof_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridChain.endpoint_negligible._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridChain.endpoint_negligible._proof_1_1	∀
+  {inputs : ℕ → ℕ} (C : (n : ℕ) → BoolCircuit.DAGCircuit (inputs n)) (S : Complexity.PolyExpr) (n : ℕ),
+  inputs n + (C n).gates.length ≤ S.eval n → ¬2 * (C n).gates.length ≤ 2 * S.eval n → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridChain.endpoint_negligible._proof_1_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridChain.endpoint_negligible._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridChain.endpoint_negligible	∀ {inputs : ℕ → ℕ}
+  {Z : ℕ → Type u_1} {σ : ℕ → Type u_2} [inst : (n : ℕ) → Fintype (σ n)]
+  (C : (n : ℕ) → BoolCircuit.DAGCircuit (inputs n)) (S : Complexity.PolyExpr),
+  (∀ (n : ℕ), (C n).size ≤ S.eval n) →
+    ∀ (v : (n : ℕ) → Z n → ℕ → Bool),
+      (∀ (n : ℕ) (i : Fin (C n).gates.length), (C n).gates[i].args.length ≤ 2) →
+        (∀ (n : ℕ) (z : Z n) (i : Fin (C n).gates.length),
+            TCSlib.Cryptography.SecureComputation.gateOut (C n).gates[i]
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues (C n) (v n z) i) =
+              v n z (inputs n + ↑i)) →
+          ∀ (H : (n : ℕ) → Z n → ℕ → σ n → List Bool),
+            (∀ (n : ℕ) (z : Z n) (t t' : ℕ),
+                TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit (C n) (v n z) t =
+                    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit (C n) (v n z) t' →
+                  H n z t = H n z t') →
+              ∀ (D : Complexity.NUPPT) {μ : ℕ → ℝ},
+                TCSlib.Cryptography.Negligible μ →
+                  (∀ (n : ℕ), 0 ≤ μ n) →
+                    (∀ (n : ℕ) (z : Z n) (i : Fin (C n).gates.length) (p : Fin (C n).gates[i].args.length),
+                        ↑p < 2 →
+                          TCSlib.Cryptography.distAdv (H n z (2 * ↑i + ↑p)) (H n z (2 * ↑i + ↑p + 1))
+                              (D.distinguisherL n) ≤
+                            μ n) →
+                      ∃ ε,
+                        TCSlib.Cryptography.Negligible ε ∧
+                          ∀ (n : ℕ) (z : Z n),
+                            TCSlib.Cryptography.distAdv (H n z 0) (H n z (2 * (C n).gates.length))
+                                (D.distinguisherL n) ≤
+                              ε n
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridChain.endpoint_negligible	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridChain.endpoint_negligible	[]
+STORED_CONSTANTS 3
+       26.76 real        25.36 user         1.19 sys
+          2256764928  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174256  page reclaims
+                 827  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   3  voluntary context switches
+               10982  involuntary context switches
+        121583508226  instructions retired
+         74006122077  cycles elapsed
+           360246736  peak memory footprint
+END 2026-11-16T04:45:54.967228+00:00

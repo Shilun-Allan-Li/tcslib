@@ -13,19 +13,23 @@ import time
 parser = argparse.ArgumentParser()
 parser.add_argument('manifest')
 parser.add_argument('run')
+parser.add_argument('--output-root', help='Independent output-only tree; imports stay in this checkout')
 args = parser.parse_args()
 root = Path.cwd()
 rows = json.loads(Path(args.manifest).read_text())
 outdir = root / 'evidence/probe-runs' / args.run
 outdir.mkdir(parents=True, exist_ok=False)
 olean = root / '.lake/sc-yao-oleans'
+output_root = (root / args.output_root).resolve() if args.output_root else olean
+assert output_root.is_relative_to(root / '.lake'), output_root
+output_root.mkdir(parents=True, exist_ok=True)
 paths = [str(olean)]
 if (root / '.lake/build/lib/lean').is_dir():
     paths.append(str(root / '.lake/build/lib/lean'))
 paths.extend(str(p) for p in sorted((root / '.lake/packages').glob('*/.lake/build/lib/lean'))
              if p.is_dir())
 env = dict(os.environ, LEAN_PATH=':'.join(paths), LEAN_SLOT_TAG='sc-yao',
-           TCSLIB_OLEANS=str(olean))
+           TCSLIB_OLEANS=str(output_root))
 error_re = re.compile(r'^\S+\.lean:\d+:\d+: error[:(]', re.M)
 with (outdir / 'results.jsonl').open('w') as results:
     for row in rows:
@@ -35,7 +39,7 @@ with (outdir / 'results.jsonl').open('w') as results:
         label = hashlib.sha256(str(probe).encode()).hexdigest()[:12] + '__' + probe.stem
         raw = probe.read_bytes()
         (outdir / (label + '.source.lean')).write_bytes(raw)
-        output = olean / probe.with_suffix('.olean')
+        output = output_root / probe.with_suffix('.olean')
         output.parent.mkdir(parents=True, exist_ok=True)
         output.unlink(missing_ok=True)
         cmd = ['/private/tmp/sc-yao-lean-slot.sh', '/usr/bin/time', '-l', 'lean',
@@ -54,6 +58,7 @@ with (outdir / 'results.jsonl').open('w') as results:
                       exit=done.returncode, errors=len(error_re.findall(text)),
                       generic_errors=len(re.findall(r'^error[:(]', text, re.M)),
                       fresh_olean=output.is_file() and output.stat().st_size > 0,
+                      import_tree=str(olean), output_tree=str(output_root),
                       source_sha256=hashlib.sha256(raw).hexdigest(), log=str(logpath.relative_to(root)))
         results.write(json.dumps(record) + '\n')
         results.flush()

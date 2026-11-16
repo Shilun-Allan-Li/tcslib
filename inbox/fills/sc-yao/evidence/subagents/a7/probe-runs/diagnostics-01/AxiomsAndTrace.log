@@ -1,0 +1,205 @@
+START 2026-11-16T03:23:47.809923+00:00
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.exists_fixedSB	∀
+  (Y : TCSlib.Cryptography.SecureComputation.YaoCircuit) (E₁ E₂ : List Bool → List Bool),
+  Complexity.PolyTimeComputable E₁ →
+    Complexity.PolyTimeComputable E₂ →
+      ∃ SB,
+        SB.Uniform ∧
+          SB.coins = TCSlib.Cryptography.SecureComputation.yaoCoins Y ∧
+            ∀ (n : ℕ),
+              ∃ e,
+                (∀ (r : Fin (10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n) → Bool),
+                    List.ofFn (e r) = List.ofFn r) ∧
+                  ∀ (x : Fin ((TCSlib.Cryptography.SecureComputation.yaoFunctionality Y).inA.eval n) → Bool)
+                    (y : Fin ((TCSlib.Cryptography.SecureComputation.yaoFunctionality Y).inB.eval n) → Bool)
+                    (r : Fin (10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n) → Bool),
+                    (TCSlib.Cryptography.SecureComputation.yaoFunctionality Y).idealB SB n x y (e r) =
+                      Turing.pairEncode
+                        { x := List.replicate n true,
+                            z :=
+                              Turing.pairEncode (List.ofFn y)
+                                (List.ofFn
+                                  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers
+                                    (Y.circ n) (TCSlib.Cryptography.SecureComputation.yaoSeed Y n (List.ofFn r))
+                                    (Y.inA.eval n) (Y.inB.eval n))),
+                            r := [],
+                            received :=
+                              [TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message
+                                  (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) (Y.circ n)
+                                  (TCSlib.Cryptography.SecureComputation.yaoSeed Y n (List.ofFn r)) (Y.inA.eval n)
+                                  (Y.outLen.eval n) (Y.outs n) fun j =>
+                                  (List.ofFn
+                                        ((TCSlib.Cryptography.SecureComputation.yaoFunctionality Y).f n x y).2).getD
+                                    (↑j) false] }.encode
+                        (List.ofFn ((TCSlib.Cryptography.SecureComputation.yaoFunctionality Y).f n x y).1)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.exists_fixedSB	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.exists_fixedSB	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_3	∀
+  (Y : TCSlib.Cryptography.SecureComputation.YaoCircuit) (n : ℕ) (i : Fin (Y.circ n).gates.length),
+  ↑i < (Y.circ n).gates.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_3	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_3	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_5	∀
+  (Y : TCSlib.Cryptography.SecureComputation.YaoCircuit) (n : ℕ) (r : List Bool),
+  ∀ v < (Y.circ n).size,
+    ∀ (b : Bool),
+      TCSlib.Cryptography.SecureComputation.keyAt (Y.circ n) (TCSlib.Cryptography.SecureComputation.yaoSeed Y n r) v b =
+        fun t => r.getD ((b.toNat * Y.sizeBound.eval n + v) * n + ↑t) false
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_5	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_5	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_2	∀
+  (Y : TCSlib.Cryptography.SecureComputation.YaoCircuit) (n : ℕ), Y.inA.eval n + Y.inB.eval n ≤ (Y.inA.add Y.inB).eval n
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_2	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data	(Y :
+    TCSlib.Cryptography.SecureComputation.YaoCircuit) →
+  (E₁ E₂ : List Bool → List Bool) →
+    Complexity.PolyTimeComputable E₁ →
+      Complexity.PolyTimeComputable E₂ →
+        (gen : List Bool → List Bool) →
+          Complexity.PolyTimeComputable gen →
+            (∀ (n : ℕ),
+                gen (List.replicate n true) =
+                  TCSlib.Cryptography.SecureComputation.encodeCircuit (Y.circ n) (Y.outs n)) →
+              TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeSimulator.Data
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_9	∀
+  (Y : TCSlib.Cryptography.SecureComputation.YaoCircuit) (n : ℕ) (r : List Bool) (i : Fin (Y.circ n).gates.length)
+  (a : Fin (Y.circ n).gates[i].args.length → Bool) (t : Fin (Y.circ n).gates[i].args.length),
+  (a t ^^ r.getD (10 * Y.sizeBound.eval n * n + 2 * ↑i + ↑t) false) =
+    (a t ^^ r.getD (10 * Y.sizeBound.eval n * n + 2 * ↑i + ↑t) false)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_9	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_9	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_4	∀
+  (Y : TCSlib.Cryptography.SecureComputation.YaoCircuit) (n : ℕ) (i : Fin (Y.circ n).gates.length),
+  (Y.circ n).gates[i].args.length ≤ 2
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_4	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_4	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.ideal_eq	∀
+  (Y : TCSlib.Cryptography.SecureComputation.YaoCircuit) (E₁ E₂ : List Bool → List Bool)
+  (hE₁ : Complexity.PolyTimeComputable E₁) (hE₂ : Complexity.PolyTimeComputable E₂) (gen : List Bool → List Bool)
+  (hgen : Complexity.PolyTimeComputable gen)
+  (hgenEq :
+    ∀ (n : ℕ), gen (List.replicate n true) = TCSlib.Cryptography.SecureComputation.encodeCircuit (Y.circ n) (Y.outs n))
+  (n : ℕ) (x : Fin ((TCSlib.Cryptography.SecureComputation.yaoFunctionality Y).inA.eval n) → Bool)
+  (y : Fin ((TCSlib.Cryptography.SecureComputation.yaoFunctionality Y).inB.eval n) → Bool)
+  (r :
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeSimulator.simulator
+          (TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data Y E₁ E₂ hE₁ hE₂ gen hgen hgenEq)
+          (TCSlib.Cryptography.SecureComputation.yaoCoins Y)).Coins
+      n),
+  (TCSlib.Cryptography.SecureComputation.yaoFunctionality Y).idealB
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeSimulator.simulator
+        (TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data Y E₁ E₂ hE₁ hE₂ gen hgen hgenEq)
+        (TCSlib.Cryptography.SecureComputation.yaoCoins Y))
+      n x y r =
+    Turing.pairEncode
+      { x := List.replicate n true,
+          z :=
+            Turing.pairEncode (List.ofFn y)
+              (List.ofFn
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers (Y.circ n)
+                  (TCSlib.Cryptography.SecureComputation.yaoSeed Y n (List.ofFn r)) (Y.inA.eval n) (Y.inB.eval n))),
+          r := [],
+          received :=
+            [TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.message
+                (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) (Y.circ n)
+                (TCSlib.Cryptography.SecureComputation.yaoSeed Y n (List.ofFn r)) (Y.inA.eval n) (Y.outLen.eval n)
+                (Y.outs n) fun j =>
+                (List.ofFn ((TCSlib.Cryptography.SecureComputation.yaoFunctionality Y).f n x y).2).getD (↑j)
+                  false] }.encode
+      (List.ofFn ((TCSlib.Cryptography.SecureComputation.yaoFunctionality Y).f n x y).1)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.ideal_eq	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.ideal_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_1	∀
+  (Y : TCSlib.Cryptography.SecureComputation.YaoCircuit) (gen : List Bool → List Bool),
+  (∀ (n : ℕ), gen (List.replicate n true) = TCSlib.Cryptography.SecureComputation.encodeCircuit (Y.circ n) (Y.outs n)) →
+    ∀ (n : ℕ),
+      gen (List.replicate n true) =
+        Turing.pairEncode (Y.circ n).encode
+          (Complexity.BinArith.encWords (List.ofFn fun j => BoolCircuit.encodeNat (Y.outs n j)))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_1	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data.congr_simp	∀
+  (Y Y_1 : TCSlib.Cryptography.SecureComputation.YaoCircuit) (e_Y : Y = Y_1) (E₁ E₁_1 : List Bool → List Bool)
+  (e_E₁ : E₁ = E₁_1) (E₂ E₂_1 : List Bool → List Bool) (e_E₂ : E₂ = E₂_1) (hE₁ : Complexity.PolyTimeComputable E₁)
+  (hE₂ : Complexity.PolyTimeComputable E₂) (gen gen_1 : List Bool → List Bool) (e_gen : gen = gen_1)
+  (hgen : Complexity.PolyTimeComputable gen)
+  (hgenEq :
+    ∀ (n : ℕ), gen (List.replicate n true) = TCSlib.Cryptography.SecureComputation.encodeCircuit (Y.circ n) (Y.outs n)),
+  TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data Y E₁ E₂ hE₁ hE₂ gen hgen hgenEq =
+    TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data Y_1 E₁_1 E₂_1 ⋯ ⋯ gen_1 ⋯ ⋯
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data.congr_simp	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data.congr_simp	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_8	∀
+  (Y : TCSlib.Cryptography.SecureComputation.YaoCircuit) (n : ℕ) (r : List Bool) (i : Fin (Y.circ n).gates.length)
+  (a : Fin (Y.circ n).gates[i].args.length → Bool) (t : Fin n),
+  r.getD
+      (2 * Y.sizeBound.eval n * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n +
+        ↑t)
+      false =
+    r.getD
+      (2 * Y.sizeBound.eval n * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n +
+        ↑t)
+      false
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_8	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_8	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_6	∀
+  (Y : TCSlib.Cryptography.SecureComputation.YaoCircuit) (n : ℕ) (i : Fin (Y.circ n).gates.length),
+  ↑i < (Y.circ n).gates.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_6	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_6	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_7	∀
+  (Y : TCSlib.Cryptography.SecureComputation.YaoCircuit) (n : ℕ) (r : List Bool) (i : Fin (Y.circ n).gates.length)
+  (a : Fin (Y.circ n).gates[i].args.length → Bool) (t : Fin n),
+  r.getD
+      (2 * Y.sizeBound.eval n * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t)
+      false =
+    r.getD
+      (2 * Y.sizeBound.eval n * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t)
+      false
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_7	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoSpecializationProbe.data._proof_7	[]
+STORED_CONSTANTS 13
+       28.95 real        27.65 user         1.15 sys
+          2326986752  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              178137  page reclaims
+                1763  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  35  voluntary context switches
+                4070  involuntary context switches
+        144821560138  instructions retired
+         80570829581  cycles elapsed
+           366621792  peak memory footprint
+END 2026-11-16T03:24:16.795357+00:00

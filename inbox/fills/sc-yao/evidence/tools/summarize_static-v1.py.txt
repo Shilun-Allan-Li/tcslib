@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+"""Record exact style-line differences and source layout/visibility invariants."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import runpy
+import subprocess
+
+p = argparse.ArgumentParser()
+p.add_argument('--phase', required=True)
+a = p.parse_args()
+phase = Path('evidence/logs') / (a.phase + '-static')
+for area in ['cryptography', 'circuits']:
+    def rows(path):
+        return {tuple(m.groups()) for m in re.finditer(
+            r'^(FAIL|WARN|INFO)\s+(\S+\.lean)\s+(.*)$', path.read_text(), re.M)}
+    before = rows(Path('evidence/lint') / ('base-' + area + '.log'))
+    after = rows(phase / (area + '.log'))
+    new, removed = after - before, before - after
+    unexpected = [r for r in new if r[0] in ['FAIL', 'WARN'] and not (
+        r[0] == 'WARN' and r[1] == 'TCSlib/Cryptography/SecureComputation/Yao.lean'
+        and 'lines > 1000' in r[2])]
+    # The SY-3 reader insertions improve the missing-reader warning text.
+    if area == 'circuits':
+        unexpected = [r for r in unexpected if not (
+            'Uniform.lean' in r[1] and 'missing reader' in r[2]) and not (
+            'DAGCircuit.lean' in r[1] and 'missing reader' in r[2])]
+    summary = dict(new=sorted(new), removed=sorted(removed),
+                   unexpected_fail_or_warn=unexpected,
+                   counts={k: sum(r[0] == k for r in after) for k in ['FAIL', 'WARN', 'INFO']})
+    (Path('evidence/lint') / (a.phase + '-' + area + '-diff.json')).write_text(
+        json.dumps(summary, indent=2) + '\n')
+    assert not unexpected, unexpected
+lex = runpy.run_path('evidence/tools/header_lexer.py')
+base = '6ce4658db08a1dc2a03a149987197660db078011'
+changed = subprocess.check_output(['git', 'diff', '--name-only', base, '--', 'TCSlib'],
+                                  text=True).splitlines()
+changed += subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard',
+                                   'TCSlib'], text=True).splitlines()
+paths = sorted({Path(s) for s in changed if s.endswith('.lean')})
+inventory = []
+for path in paths:
+    raw = path.read_bytes()
+    source = raw.decode()
+    code, _ = lex['lex'](source)
+    count = len(source.splitlines())
+    width = max(map(len, source.splitlines()), default=0)
+    is_yao = path.as_posix() == 'TCSlib/Cryptography/SecureComputation/Yao.lean'
+    assert count + (28 if is_yao else 0) <= (1200 if is_yao else 999), path
+    assert width <= 100, (path, width)
+    if '/Yao/' in str(path):
+        assert not re.search(r'\bsorry\b|\baxiom\b|@\[simp\]', code), path
+        assert not re.search(r'^import .*\.(Yao|YaoReal|ComposeSecurity|ObliviousTransfer)$',
+                             code, re.M), path
+        assert not re.search(r'\b(YaoCircuit|yaoSeed|yaoHybrid|yaoFunctionality)\b', code), path
+    inventory.append(dict(path=str(path), lines=count, width_max=width,
+                          sha256=hashlib.sha256(raw).hexdigest()))
+children = sorted(Path('TCSlib/Cryptography/SecureComputation/Yao/HybridProof').glob('*.lean'))
+hub = Path('TCSlib/Cryptography/SecureComputation/Yao/HybridProof.lean').read_text()
+imports = set(re.findall(r'^import (\S+)$', hub, re.M))
+expected = {str(p.with_suffix('')).replace('/', '.') for p in children}
+assert imports == expected
+out = phase / 'source-scope.json'
+out.write_text(json.dumps(dict(files=len(paths), helper_children=len(children),
+    hub_exact_imports=True, generic_visibility=True, no_helper_admissions=True,
+    inventory=inventory), indent=2) + '\n')
+print('STATIC PASS', len(paths), 'changed/new sources;', len(children), 'hub children')

@@ -1,0 +1,2299 @@
+START 2026-11-16T04:20:31.998520+00:00
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables	(List Bool → List Bool) →
+  List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sampleBudget	Complexity.PolyExpr →
+  Complexity.PolyExpr → Complexity.PolyExpr → Complexity.PolyExpr → Complexity.PolyExpr → Complexity.PolyExpr
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sampleBudget	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sampleBudget	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_eq	∀ {m : ℕ} {K ρ : Type}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (r : Fin (q + 1) → ρ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r =
+    (fun v b => if v = u ∧ b = true then k else s.1 v b,
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce C rows s (↑u) q r, s.2.2)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_eq	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerMessage	(List Bool → List Bool) →
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool) → Fin (4 * n + 2) → Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerMessage	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerMessage	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.zero_row	∀ (E₁ E₂ : List Bool → List Bool)
+  (n : ℕ) (o r₁ r₂ : Fin n → Bool),
+  (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).enc [] o (r₁, r₂) = List.ofFn o
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.zero_row	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.zero_row	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1	∀
+  {m : ℕ} {n : ℕ} (C : BoolCircuit.DAGCircuit m) (S : Complexity.PolyExpr), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor	(n : ℕ) →
+  List (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → ℕ → ℕ → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_actual	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool),
+  (∀ (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+    (perm i)
+        ((rows i).getD (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex C rows perm i a)
+          fun x => false) =
+      a
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_actual	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_actual	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild_poly	∀
+  {E₂ : List Bool → List Bool},
+  Complexity.PolyTimeComputable E₂ →
+    Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild E₂)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild_poly	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget_eval	∀
+  (S Q T I A : Complexity.PolyExpr) (n : ℕ),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget S Q T I A).eval n =
+    2 * S.eval n * (16 * (2 * Q.eval n + 7 * n + 8) + 18) + 2 * T.eval n + 2 * I.eval n + A.eval n + 6
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget_eval	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget_eval	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget	Complexity.PolyExpr →
+  Complexity.PolyExpr → Complexity.PolyExpr → Complexity.PolyExpr → Complexity.PolyExpr → Complexity.PolyExpr
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word	(List Bool → List Bool) →
+  (n : ℕ) → List (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → ℕ → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild_layout	∀
+  (E₂ : List Bool → List Bool) (N challenge d t x a : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild E₂
+      (Turing.pairEncode N
+        (Turing.pairEncode challenge
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice d t x a))) =
+    Turing.pairEncode
+      { x := N, z := x, r := [],
+          received :=
+            [Turing.pairEncode
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables E₂
+                  (Turing.pairEncode challenge d))
+                t] }.encode
+      a
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild_layout	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild_layout	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.view_reconstruct	∀ {L L₂ : ℕ → ℕ}
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool)
+  (G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool)
+  (G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L₂ n) → Bool) (E₁ E₂ : List Bool → List Bool),
+  (∀ (n : ℕ) (s x : Fin n → Bool), List.ofFn (G n s x) = List.ofFn (G₁ n s x) ++ List.ofFn (G₂ n s x)) →
+    (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+      (∀ (n : ℕ) (s x : Fin n → Bool), E₂ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)) →
+        ∀ {m n : ℕ} (C : BoolCircuit.DAGCircuit m)
+          (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+          (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+          (u : Fin C.size) (q : ℕ) (bit : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Bool),
+          (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+            (∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) →
+              (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2
+                        ↑u).length ≤
+                    q + 1 →
+                  (∀ (i : Fin C.gates.length), rows i = Finset.univ.toList) →
+                    (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+                        (m + ↑i, bit i a) ≠ (↑u, true)) →
+                      ∀ (N tail privateInput aliceOutput : List Bool) (k : Fin n → Bool)
+                        (rs : Fin (q + 1) → Fin n → Bool),
+                        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild E₂
+                            (Turing.pairEncode N
+                              (Turing.pairEncode
+                                (TCSlib.Cryptography.SecureComputation.sliceMultiEncDist G n q
+                                  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset C rows s
+                                    u q)
+                                  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength C rows s
+                                    u q)
+                                  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage C rows
+                                    s u q E₁ fun i a =>
+                                    TCSlib.Cryptography.SecureComputation.keyAt C s (m + ↑i) (bit i a))
+                                  (k, rs))
+                                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice
+                                  (Complexity.BinArith.encWords
+                                    (List.map Complexity.BinArith.encWords
+                                      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s
+                                        u E₁ E₂ fun i a =>
+                                        TCSlib.Cryptography.SecureComputation.keyAt C s (m + ↑i) (bit i a))))
+                                  tail privateInput aliceOutput))) =
+                          Turing.pairEncode
+                            { x := N, z := privateInput, r := [],
+                                received :=
+                                  [Turing.pairEncode
+                                      (Complexity.BinArith.encWords
+                                        (List.ofFn fun i =>
+                                          Complexity.BinArith.encWords
+                                            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.tableWith
+                                              (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) C
+                                              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C
+                                                rows s u q k rs)
+                                              bit i)))
+                                      tail] }.encode
+                            aliceOutput
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.view_reconstruct	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.view_reconstruct	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index	{m : ℕ} →
+  BoolCircuit.DAGCircuit m → Type
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.messageTail_le	∀ {m n : ℕ}
+  {ρ : Type} (M : TCSlib.Cryptography.SecureComputation.MultiEnc (Fin n → Bool) (List Bool) ρ)
+  (C : BoolCircuit.DAGCircuit m) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ρ)
+  (inA outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage : ℕ),
+  (Complexity.pairSndD
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message M C s inA outLen output v
+          stage)).length ≤
+    2 * (inA * (2 * n + 2)) + 2 + outLen * (6 * n + 6)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.messageTail_le	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.messageTail_le	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick	{m : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      ((i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) →
+        ℕ →
+          (q : ℕ) → TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index C → Option (Fin (q + 1))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_nonce	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V : Type) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C V (V × V))
+  (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) (half : Bool),
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv C V) s).2 (Sum.inr ⟨i, (a, half)⟩) =
+    if half = true then (s.2.1 i a).2 else (s.2.1 i a).1
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_nonce	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_nonce	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index C =
+    ((i : Fin C.gates.length) × (Fin C.gates[↑i].args.length → Bool) × Bool)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.tablesWith_reconstruct	∀ {L L₂ : ℕ → ℕ}
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool)
+  (G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool)
+  (G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L₂ n) → Bool) (E₁ E₂ : List Bool → List Bool),
+  (∀ (n : ℕ) (s x : Fin n → Bool), List.ofFn (G n s x) = List.ofFn (G₁ n s x) ++ List.ofFn (G₂ n s x)) →
+    (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+      (∀ (n : ℕ) (s x : Fin n → Bool), E₂ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)) →
+        ∀ {m n : ℕ} (C : BoolCircuit.DAGCircuit m)
+          (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+          (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+          (u : Fin C.size) (q : ℕ) (bit : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Bool),
+          (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+            (∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) →
+              (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2
+                        ↑u).length ≤
+                    q + 1 →
+                  (∀ (i : Fin C.gates.length), rows i = Finset.univ.toList) →
+                    (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+                        (m + ↑i, bit i a) ≠ (↑u, true)) →
+                      ∀ (k : Fin n → Bool) (rs : Fin (q + 1) → Fin n → Bool),
+                        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables E₂
+                            (Turing.pairEncode
+                              (TCSlib.Cryptography.SecureComputation.sliceMultiEncDist G n q
+                                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset C rows s u
+                                  q)
+                                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength C rows s u
+                                  q)
+                                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage C rows s
+                                  u q E₁ fun i a => TCSlib.Cryptography.SecureComputation.keyAt C s (m + ↑i) (bit i a))
+                                (k, rs))
+                              (Complexity.BinArith.encWords
+                                (List.map Complexity.BinArith.encWords
+                                  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u
+                                    E₁ E₂ fun i a =>
+                                    TCSlib.Cryptography.SecureComputation.keyAt C s (m + ↑i) (bit i a))))) =
+                          Complexity.BinArith.encWords
+                            (List.ofFn fun i =>
+                              Complexity.BinArith.encWords
+                                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.tableWith
+                                  (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) C
+                                  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k
+                                    rs)
+                                  bit i))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.tablesWith_reconstruct	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.tablesWith_reconstruct	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.wrappedRecord	ℕ →
+  List Bool → List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.wrappedRecord	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.wrappedRecord	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget_eval	∀
+  (B : Complexity.PolyExpr) (n : ℕ),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget B).eval n =
+    2 * B.eval n + 2 + B.eval n * n
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget_eval	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget_eval	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.record_lengths._proof_1_1	∀
+  (c : List Bool) (j : ℕ) (k r : List Bool),
+  ¬(2 * 0 + 2 + c.length = c.length + 2 ∧
+        2 * (0 + 1) + 2 + (2 * j + 2 + 0) = 2 * j + 6 ∧
+          2 * (0 + 1) + 2 + (2 * j + 2 + (2 * k.length + 2 + r.length)) = 2 * j + 2 * k.length + r.length + 8) →
+    False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.record_lengths._proof_1_1	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.record_lengths._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_directRecord	∀
+  (E₂ : List Bool → List Bool) (challenge : List (List Bool)) (j : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂
+      (Turing.pairEncode (Complexity.BinArith.encWords challenge)
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.directRecord j)) =
+    challenge.getD j []
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_directRecord	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_directRecord	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerCipher_length._proof_1_2	∀
+  {E₁ : List Bool → List Bool} (n : ℕ) (k o r : Fin n → Bool), ¬2 * n + 2 + (n + n) = 4 * n + 2 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerCipher_length._proof_1_2	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerCipher_length._proof_1_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.wrapped_sampler	∀ {L : ℕ → ℕ}
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool) (E₂ : List Bool → List Bool) (n q : ℕ)
+  (offset len : Fin (q + 1) → ℕ) (m : (i : Fin (q + 1)) → Fin (len i) → Bool) (k : Fin n → Bool)
+  (r : Fin (q + 1) → Fin n → Bool) (j : Fin (q + 1)) (outer nonce : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂
+      (Turing.pairEncode (TCSlib.Cryptography.SecureComputation.sliceMultiEncDist G n q offset len m (k, r))
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.wrappedRecord (↑j) outer nonce)) =
+    TCSlib.Cryptography.SecureComputation.spEncStr E₂ outer
+      (TCSlib.Cryptography.SecureComputation.sliceEnc G n (offset j) k (r j) (List.ofFn (m j))) nonce
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.wrapped_sampler	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.wrapped_sampler	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.encodedTables_le._proof_1_1	∀
+  {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+  ¬2 * (4 * (2 * (2 * q + 7 * n + 8) + 2)) + 2 = 16 * (2 * q + 7 * n + 8) + 18 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.encodedTables_le._proof_1_1	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.encodedTables_le._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerCipher_length	∀
+  {G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool} {E₁ : List Bool → List Bool},
+  (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+    ∀ (n : ℕ) (k o r : Fin n → Bool),
+      (TCSlib.Cryptography.SecureComputation.spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)).length = 4 * n + 2
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerCipher_length	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerCipher_length	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V : Type)
+  (d : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Data C V),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv C V) d =
+    Sum.elim (fun label => d.1 label.1 label.2) fun x =>
+      if x.snd.2 = true then (d.2 x.fst x.snd.1).2 else (d.2 x.fst x.snd.1).1
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv_eq	∀ (q : ℕ) (V : Type)
+  (k : V) (r : Fin (q + 1) → V),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv q V) (k, r) =
+    Sum.elim (fun x => k) r
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (x : TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index C),
+  ↑x.fst < C.gates.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick._proof_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_2	∀ (n q p : ℕ)
+  (j : Fin (q + 1)) (offsets : Fin (q + 1) → ℕ) (k₀ : Fin n → Bool), p < 0 + 1 → ¬p = 0 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_2	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild	(List Bool → List Bool) →
+  List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_eq_data	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V : Type) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C V (V × V)),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv C V) s =
+    (s.2.2, (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv C V) (s.1, s.2.1))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_eq_data	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_eq_data	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex	{m : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      ((i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) →
+        ℕ → (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin C.gates[↑i].args.length → ℕ
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_lt._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (i : Fin C.gates.length), ¬C.gates[↑i].args.length ≤ C.gates[↑i].args.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_lt._proof_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_lt._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild_eq	∀
+  (E₂ : List Bool → List Bool) (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild E₂ z =
+    have data := Complexity.pairSndD (Complexity.pairSndD z);
+    have rest := Complexity.pairSndD data;
+    have message :=
+      Turing.pairEncode
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables E₂
+          (Turing.pairEncode (Complexity.pairFstD (Complexity.pairSndD z)) (Complexity.pairFstD data)))
+        (Complexity.pairFstD rest);
+    Turing.pairEncode
+      { x := Complexity.pairFstD z, z := Complexity.pairFstD (Complexity.pairSndD rest), r := [],
+          received := [message] }.encode
+      (Complexity.pairSndD (Complexity.pairSndD rest))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_eq	∀ (n : ℕ)
+  (ks : List (Fin n → Bool)) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p j : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor n ks nonce p j =
+    if ks.length = 2 ∧ p = 1 then
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.wrappedRecord j
+        (List.ofFn (ks.getD 0 default)) (List.ofFn nonce.1)
+    else TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.directRecord j
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record_eq	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (E₁ E₂ : List Bool → List Bool)
+  (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record C rows s u E₁ E₂ o i a =
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑i] a ↑u).elim
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.fixedRecord
+        ((TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).enc
+          (TCSlib.Cryptography.SecureComputation.argKeys C s i a) (o i a) (s.2.1 i a)))
+      fun p =>
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor n
+        (TCSlib.Cryptography.SecureComputation.argKeys C s i a) (s.2.1 i a) (↑p)
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows s.2.2 (↑u) i a p)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.paramEquiv_symm	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V P : Type) (p : P)
+  (f : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index C → V),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.paramEquiv C V P).symm (p, f) =
+    (p, (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv C V).symm f)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.paramEquiv_symm	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.paramEquiv_symm	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.message_eq	∀ (E₁ : List Bool → List Bool)
+  (n : ℕ) (ks : List (Fin n → Bool)) (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.message E₁ n ks o nonce p =
+    TCSlib.Cryptography.padFin (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length n ks p)
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word E₁ n ks o nonce p)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.message_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.message_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (t : Fin C.gates.length × ℕ × ℕ), ↑t.1 < C.gates.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset._proof_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_nonce	∀ {m : ℕ} {K ρ : Type}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (r : Fin (q + 1) → ρ) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r).2.1 i a =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce C rows s (↑u) q r i a
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_nonce	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_nonce	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex_eq	∀ (q : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex q = (Unit ⊕ Fin (q + 1))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice_length	∀
+  (d t x a : List Bool),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice d t x a).length =
+    2 * d.length + 2 * t.length + 2 * x.length + a.length + 6
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice_length	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice_length	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sampleBudget_eq	∀
+  (S A B O R : Complexity.PolyExpr),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sampleBudget S A B O R =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget S
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget S)
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget A O)
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget B) R
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sampleBudget_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sampleBudget_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (i : Fin C.gates.length), ↑i < C.gates.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record._proof_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_poly	∀
+  {E₂ : List Bool → List Bool},
+  Complexity.PolyTimeComputable E₂ →
+    Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables E₂)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_poly	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage_eq	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (E₁ : List Bool → List Bool)
+  (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) (j : Fin (q + 1)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage C rows s u q E₁ o j =
+    TCSlib.Cryptography.padFin
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength C rows s u q j)
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord C rows s u q E₁ o j)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct._proof_1_1	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool)
+  (p : Fin C.gates[↑i].args.length),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows s.2.2 (↑u) i a p < q + 1 →
+    ¬↑i < C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct._proof_1_1	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord_length	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) {G₁ : (k : ℕ) → (Fin k → Bool) → (Fin k → Bool) → Fin (k + k) → Bool}
+  {E₁ : List Bool → List Bool},
+  (∀ (k : ℕ) (key nonce : Fin k → Bool),
+      E₁ (Turing.pairEncode (List.ofFn key) (List.ofFn nonce)) = List.ofFn (G₁ k key nonce)) →
+    ∀ (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) (j : Fin (q + 1)),
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord C rows s u q E₁ o j).length =
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength C rows s u q j
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord_length	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord_length	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Data	{m : ℕ} →
+  BoolCircuit.DAGCircuit m → Type → Type
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Data	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Data	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget_eq	∀
+  (B : Complexity.PolyExpr),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget B =
+    (((Complexity.PolyExpr.const 2).mul B).add (Complexity.PolyExpr.const 2)).add (B.mul Complexity.PolyExpr.var)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_perm	∀ {m : ℕ} {K ρ : Type}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (r : Fin (q + 1) → ρ) (i : Fin C.gates.length),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r).2.2 i = s.2.2 i
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_perm	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_perm	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_1	∀ (n p : ℕ),
+  p < 0 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget	Complexity.PolyExpr →
+  Complexity.PolyExpr → Complexity.PolyExpr
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget_eq	∀
+  (S Q T I A : Complexity.PolyExpr),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget S Q T I A =
+    have row :=
+      (((Complexity.PolyExpr.const 2).mul Q).add ((Complexity.PolyExpr.const 7).mul Complexity.PolyExpr.var)).add
+        (Complexity.PolyExpr.const 8);
+    have descriptors :=
+      ((Complexity.PolyExpr.const 2).mul S).mul
+        (((Complexity.PolyExpr.const 16).mul row).add (Complexity.PolyExpr.const 18));
+    (((descriptors.add ((Complexity.PolyExpr.const 2).mul T)).add ((Complexity.PolyExpr.const 2).mul I)).add A).add
+      (Complexity.PolyExpr.const 6)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_some._proof_1_2	∀ {m : ℕ}
+  {K ρ : Type} [Inhabited K] (C : BoolCircuit.DAGCircuit m)
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (k : K) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool) (p : Fin C.gates[↑i].args.length) (j : ℕ), ¬↑i < C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_some._proof_1_2	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_some._proof_1_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_some._proof_1_1	∀ {m : ℕ}
+  {K ρ : Type} [Inhabited K] (C : BoolCircuit.DAGCircuit m)
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (k : K) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool) (p : Fin C.gates[↑i].args.length) (j : ℕ),
+  ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_some._proof_1_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_some._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget._proof_1_2	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (tail privateInput aliceOutput : List Bool) (S Q T I A : Complexity.PolyExpr),
+  2 * q + 7 * n + 8 ≤ 2 * Q.eval n + 7 * n + 8 →
+    ¬16 * (2 * q + 7 * n + 8) + 18 ≤ 16 * (2 * Q.eval n + 7 * n + 8) + 18 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget._proof_1_2	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget._proof_1_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record	{m n : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)) →
+        Fin C.size →
+          (List Bool → List Bool) →
+            (List Bool → List Bool) →
+              ((i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) →
+                (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_symm	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V : Type)
+  (p : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations C)
+  (f : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index C → V),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv C V).symm (p, f) =
+    (fun v b => f (Sum.inl (v, b)), fun i a => (f (Sum.inr ⟨i, (a, false)⟩), f (Sum.inr ⟨i, (a, true)⟩)), p)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_symm	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_symm	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_keyAt	∀ {m : ℕ} {K ρ : Type}
+  [inst : Inhabited K] (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (r : Fin (q + 1) → ρ) (v : ℕ) (b : Bool),
+  TCSlib.Cryptography.SecureComputation.keyAt C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r) v b =
+    if (v, b) = (↑u, true) then k else TCSlib.Cryptography.SecureComputation.keyAt C s v b
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_keyAt	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_keyAt	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word_eq	∀ (E₁ : List Bool → List Bool)
+  (n : ℕ) (ks : List (Fin n → Bool)) (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word E₁ n ks o nonce p =
+    if ks.length = 2 ∧ p = 0 then
+      TCSlib.Cryptography.SecureComputation.spEncStr E₁ (List.ofFn (ks.getD 1 default)) (List.ofFn o)
+        (List.ofFn nonce.2)
+    else List.ofFn o
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations._proof_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.encodedTables_le	∀ {m n : ℕ}
+  (E₁ E₂ : List Bool → List Bool) (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+  (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+    (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u).length ≤
+          q + 1 →
+        (∀ (i : Fin C.gates.length), (rows i).length ≤ 4) →
+          (Complexity.BinArith.encWords
+                (List.map Complexity.BinArith.encWords
+                  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁ E₂
+                    o))).length ≤
+            C.gates.length * (16 * (2 * q + 7 * n + 8) + 18)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.encodedTables_le	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.encodedTables_le	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_of_lookup	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u : ℕ) (i : Fin C.gates.length)
+  (r j : ℕ) (p : Fin C.gates[↑i].args.length),
+  r < (rows i).length →
+    (rows i).Nodup →
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u)[j]? =
+          some (i, r, ↑p) →
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows perm u i
+            ((perm i) ((rows i).getD r fun x => false)) p =
+          j
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_of_lookup	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_of_lookup	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_4	∀ (n q : ℕ)
+  (j : Fin (q + 1)) (offsets : Fin (q + 1) → ℕ) (k₀ : Fin n → Bool), 0 + 1 = 2 ∧ True → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_4	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_4	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce_eq	∀ {m : ℕ} {K ρ : Type}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u q : ℕ) (r : Fin (q + 1) → ρ)
+  (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce C rows s u q r i a =
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑i] a u).elim
+      (s.2.1 i a) fun p =>
+      have j := TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows s.2.2 u i a p;
+      if h : j < q + 1 then if ↑p = 0 then (r ⟨j, h⟩, (s.2.1 i a).2) else ((s.2.1 i a).1, r ⟨j, h⟩) else s.2.1 i a
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u q : ℕ)
+  (x : TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index C),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick C rows perm u q x =
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑x.fst] x.snd.1
+          u).bind
+      fun p =>
+      if x.snd.2 = decide (↑p ≠ 0) then
+        have j :=
+          TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows perm u x.fst x.snd.1 p;
+        if h : j < q + 1 then some ⟨j, h⟩ else none
+      else none
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_3	∀ (n q : ℕ)
+  (j : Fin (q + 1)) (offsets : Fin (q + 1) → ℕ) (k₀ : Fin n → Bool), 0 + 1 = 2 ∧ 0 = 1 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_3	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_3	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateInput_length	∀ {m n : ℕ}
+  {ρ : Type} (C : BoolCircuit.DAGCircuit m) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ρ)
+  (first count : ℕ) (bobInput : List Bool),
+  (Turing.pairEncode bobInput
+        (List.ofFn
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers C s first count))).length =
+    2 * bobInput.length + 2 + count * n
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateInput_length	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateInput_length	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_2	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_2	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_poly	∀
+  {E₂ : List Bool → List Bool},
+  Complexity.PolyTimeComputable E₂ →
+    Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_poly	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct._proof_2	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct._proof_2	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct._proof_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V : Type) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C V (V × V)),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv C V) s =
+    (s.2.2,
+      Sum.elim (fun label => s.1 label.1 label.2) fun x =>
+        if x.snd.2 = true then (s.2.1 x.fst x.snd.1).2 else (s.2.1 x.fst x.snd.1).1)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget	Complexity.PolyExpr →
+  Complexity.PolyExpr
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_length_le._proof_1_2	∀
+  (n q j : ℕ), j ≤ q → ¬2 * j + 6 ≤ 2 * q + 3 * n + 8 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_length_le._proof_1_2	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_length_le._proof_1_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table_pairEncode	∀
+  (E₂ : List Bool → List Bool) (challenge descriptors : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table E₂
+      (Turing.pairEncode challenge descriptors) =
+    Complexity.BinArith.encWords
+      (List.map
+        (fun d =>
+          TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂
+            (Turing.pairEncode challenge d))
+        (Complexity.BinArith.decWords descriptors))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table_pairEncode	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table_pairEncode	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotReaders_of_padded	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (E₁ : List Bool → List Bool)
+  (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) (j : Fin (q + 1))
+  (i : Fin C.gates.length) (row p : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded q
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u) j =
+      some (i, row, p) →
+    have a := (s.2.2 i) ((rows i).getD row fun x => false);
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset C rows s u q j =
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.offset n
+          (TCSlib.Cryptography.SecureComputation.argKeys C s i a) p ∧
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength C rows s u q j =
+          TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length n
+            (TCSlib.Cryptography.SecureComputation.argKeys C s i a) p ∧
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord C rows s u q E₁ o j =
+          TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word E₁ n
+            (TCSlib.Cryptography.SecureComputation.argKeys C s i a) (o i a) (s.2.1 i a) p
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotReaders_of_padded	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotReaders_of_padded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct	∀ {L L₂ : ℕ → ℕ}
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool)
+  (G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool)
+  (G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L₂ n) → Bool) (E₁ E₂ : List Bool → List Bool),
+  (∀ (n : ℕ) (s x : Fin n → Bool), List.ofFn (G n s x) = List.ofFn (G₁ n s x) ++ List.ofFn (G₂ n s x)) →
+    (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+      (∀ (n : ℕ) (s x : Fin n → Bool), E₂ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)) →
+        ∀ (n q : ℕ) (ks : List (Fin n → Bool)) (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ)
+          (j : Fin (q + 1)),
+          ks.length ≤ 2 →
+            p < ks.length →
+              ∀ (offsets lens : Fin (q + 1) → ℕ) (msgs : (i : Fin (q + 1)) → Fin (lens i) → Bool),
+                offsets j = TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.offset n ks p →
+                  List.ofFn (msgs j) =
+                      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word E₁ n ks o nonce p →
+                    ∀ (k : Fin n → Bool) (rs : Fin (q + 1) → Fin n → Bool),
+                      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂
+                          (Turing.pairEncode
+                            (TCSlib.Cryptography.SecureComputation.sliceMultiEncDist G n q offsets lens msgs (k, rs))
+                            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor n ks nonce p
+                              ↑j)) =
+                        (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).enc (ks.set p k) o
+                          (if p = 0 then (rs j, nonce.2) else (nonce.1, rs j))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables_eq	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (E₁ E₂ : List Bool → List Bool)
+  (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁ E₂ o =
+    List.ofFn fun i =>
+      List.map
+        (fun a =>
+          TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record C rows s u E₁ E₂ o i ((s.2.2 i) a))
+        (rows i)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.table_le	∀ {m n : ℕ}
+  (E₁ E₂ : List Bool → List Bool) (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+  (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+    (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u).length ≤
+          q + 1 →
+        (∀ (i : Fin C.gates.length), (rows i).length ≤ 4) →
+          ∀ (i : Fin C.gates.length),
+            (Complexity.BinArith.encWords
+                  (List.map
+                    (fun a =>
+                      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record C rows s u E₁ E₂ o i
+                        ((s.2.2 i) a))
+                    (rows i))).length ≤
+              4 * (2 * (2 * q + 7 * n + 8) + 2)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.table_le	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.table_le	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.wrappedRecord_eq	∀ (j : ℕ)
+  (k r : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.wrappedRecord j k r =
+    Turing.pairEncode [false] (Turing.pairEncode (List.replicate j true) (Turing.pairEncode k r))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.wrappedRecord_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.wrappedRecord_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv	{m : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    (V : Type) →
+      TCSlib.Cryptography.SecureComputation.GarbleSeed C V (V × V) ≃
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations C ×
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index C → V)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys	∀ {m : ℕ} {K ρ : Type}
+  [inst : Inhabited K] (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (r : Fin (q + 1) → ρ) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+  TCSlib.Cryptography.SecureComputation.argKeys C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r) i a =
+    List.ofFn fun p =>
+      if (C.gates[↑i].args[↑p], a p) = (↑u, true) then k
+      else TCSlib.Cryptography.SecureComputation.keyAt C s C.gates[↑i].args[↑p] (a p)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.message_ofFn	∀
+  {G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool} {E₁ : List Bool → List Bool},
+  (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+    ∀ (n : ℕ) (ks : List (Fin n → Bool)) (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ),
+      List.ofFn (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.message E₁ n ks o nonce p) =
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word E₁ n ks o nonce p
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.message_ofFn	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.message_ofFn	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables_congr	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (E₁ E₂ : List Bool → List Bool)
+  (o₀ o₁ : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+  (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑i] a ↑u = none →
+        o₀ i a = o₁ i a) →
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁ E₂ o₀ =
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁ E₂ o₁
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables_congr	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables_congr	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_7	∀ (n q : ℕ)
+  (j : Fin (q + 1)) (offsets : Fin (q + 1) → ℕ) (k₀ k₁ : Fin n → Bool), True ∧ 0 = 1 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_7	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_7	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv_symm	∀ (q : ℕ) (V : Type)
+  (f : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex q → V),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv q V).symm f =
+    (f (Sum.inl ()), fun j => f (Sum.inr j))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv_symm	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv_symm	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables	{m n : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)) →
+        Fin C.size →
+          (List Bool → List Bool) →
+            (List Bool → List Bool) →
+              ((i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) → List (List (List Bool))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_padded	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u q : ℕ) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool) (p : Fin C.gates[↑i].args.length),
+  C.gates[↑i].args.Nodup →
+    (∀ (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+      C.gates[↑i].args[↑p] = u →
+        a p = true →
+          ∀
+            (hslot :
+              TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows perm u i a p < q + 1),
+            TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded q
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u)
+                ⟨TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows perm u i a p,
+                  hslot⟩ =
+              some (i, TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex C rows perm i a, ↑p)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_padded	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_padded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget	∀ {m n : ℕ}
+  (E₁ E₂ : List Bool → List Bool) (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+  (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+    (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u).length ≤
+          q + 1 →
+        (∀ (i : Fin C.gates.length), (rows i).length ≤ 4) →
+          ∀ (tail privateInput aliceOutput : List Bool) (S Q T I A : Complexity.PolyExpr),
+            C.gates.length ≤ S.eval n →
+              q ≤ Q.eval n →
+                tail.length ≤ T.eval n →
+                  privateInput.length ≤ I.eval n →
+                    aliceOutput.length ≤ A.eval n →
+                      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice
+                            (Complexity.BinArith.encWords
+                              (List.map Complexity.BinArith.encWords
+                                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁
+                                  E₂ o)))
+                            tail privateInput aliceOutput).length ≤
+                        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.budget S Q T I
+                              A).eval
+                          n
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.nonce_read	∀ {m : ℕ} {K ρ : Type}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u q : ℕ) (r : Fin (q + 1) → ρ)
+  (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) (half : Bool),
+  (if half = true then (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce C rows s u q r i a).2
+    else (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce C rows s u q r i a).1) =
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick C rows s.2.2 u q ⟨i, (a, half)⟩).elim
+      (if half = true then (s.2.1 i a).2 else (s.2.1 i a).1) r
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.nonce_read	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.nonce_read	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice	{m n : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)) →
+        Fin C.size →
+          (List Bool → List Bool) →
+            (List Bool → List Bool) →
+              ((i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) →
+                List Bool → List Bool → List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv_fill	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V : Type)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C V (V × V)) (u : Fin C.size) (q : ℕ) (k : V)
+  (r : Fin (q + 1) → V),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv C V)
+      ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r).1,
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r).2.1) =
+    fun x =>
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick C rows s.2.2 u q x).elim
+      ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv C V) (s.1, s.2.1) x)
+      ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv q V) (k, r))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv_fill	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv_fill	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_key	∀ {m : ℕ} {K ρ : Type}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (r : Fin (q + 1) → ρ) (v : Fin C.size) (b : Bool),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r).1 v b =
+    if v = u ∧ b = true then k else s.1 v b
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_key	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_key	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_none	∀ {m : ℕ} {K ρ : Type}
+  [inst : Inhabited K] (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (r : Fin (q + 1) → ρ) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+  C.gates[↑i].args.Nodup →
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑i] a ↑u = none →
+      TCSlib.Cryptography.SecureComputation.argKeys C
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r) i a =
+        TCSlib.Cryptography.SecureComputation.argKeys C s i a
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_none	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_none	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table	(List Bool → List Bool) →
+  List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.slice_shapes_fit._proof_1_1	∀ (n : ℕ),
+  ¬(0 + n + n ≤ n + n + (n + (4 * n + 2)) ∧ n + n + n + (4 * n + 2) ≤ n + n + (n + (4 * n + 2))) → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.slice_shapes_fit._proof_1_1	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.slice_shapes_fit._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_5	∀ (n q p : ℕ)
+  (j : Fin (q + 1)) (offsets : Fin (q + 1) → ℕ) (k₀ k₁ : Fin n → Bool) (tail : List (Fin n → Bool)),
+  tail.length + 1 + 1 ≤ 2 → ¬tail.length = 0 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_5	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_5	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.argument_label_eq_iff	∀
+  (g : BoolCircuit.DAGGate) (a : Fin g.args.length → Bool) (u : ℕ),
+  g.args.Nodup →
+    ∀ (p : Fin g.args.length),
+      g.args[↑p] = u → a p = true → ∀ (t : Fin g.args.length), (g.args[↑t], a t) = (u, true) ↔ t = p
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.argument_label_eq_iff	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.argument_label_eq_iff	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.sample_reconstruct	∀ {L L₂ : ℕ → ℕ}
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool)
+  (G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool)
+  (G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L₂ n) → Bool) (E₁ E₂ : List Bool → List Bool),
+  (∀ (n : ℕ) (s x : Fin n → Bool), List.ofFn (G n s x) = List.ofFn (G₁ n s x) ++ List.ofFn (G₂ n s x)) →
+    (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+      (∀ (n : ℕ) (s x : Fin n → Bool), E₂ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)) →
+        ∀ {m n : ℕ} (C : BoolCircuit.DAGCircuit m)
+          (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+          (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+          (u : Fin C.size) (q inA inB outLen : ℕ) (output : Fin outLen → ℕ) (v : ℕ → Bool) (stage : ℕ)
+          (N bobInput aliceOutput : List Bool),
+          (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+            (∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) →
+              (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2
+                        ↑u).length ≤
+                    q + 1 →
+                  (∀ (i : Fin C.gates.length), rows i = Finset.univ.toList) →
+                    (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+                        (m + ↑i,
+                            TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v stage i a) ≠
+                          (↑u, true)) →
+                      (∀ (j : Fin outLen), output j ≠ ↑u) →
+                        ∀ (k : Fin n → Bool) (rs : Fin (q + 1) → Fin n → Bool),
+                          TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.rebuild E₂
+                              (Turing.pairEncode N
+                                (Turing.pairEncode
+                                  (TCSlib.Cryptography.SecureComputation.sliceMultiEncDist G n q
+                                    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset C rows
+                                      s u q)
+                                    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength C rows
+                                      s u q)
+                                    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage C
+                                      rows s u q E₁ fun i a =>
+                                      TCSlib.Cryptography.SecureComputation.keyAt C s (m + ↑i)
+                                        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v
+                                          stage i a))
+                                    (k, rs))
+                                  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice C rows s u
+                                    E₁ E₂
+                                    (fun i a =>
+                                      TCSlib.Cryptography.SecureComputation.keyAt C s (m + ↑i)
+                                        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v
+                                          stage i a))
+                                    (Complexity.pairSndD
+                                      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message
+                                        (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) C s inA outLen
+                                        output v stage))
+                                    (Turing.pairEncode bobInput
+                                      (List.ofFn
+                                        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers
+                                          C s inA inB)))
+                                    aliceOutput))) =
+                            TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.sample
+                              (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) C
+                              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k rs)
+                              inA inB outLen output v N bobInput [] aliceOutput stage
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.sample_reconstruct	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.sample_reconstruct	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_directRecord._simp_1_1	∀
+  {α : Type u_1} (a : α) (l : List α), (a :: l = []) = False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_directRecord._simp_1_1	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_directRecord._simp_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.directRecord_eq	∀ (j : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.directRecord j =
+    Turing.pairEncode [true] (Turing.pairEncode (List.replicate j true) [])
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.directRecord_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.directRecord_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slots_fit	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (j : Fin (q + 1)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset C rows s u q j + n +
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength C rows s u q j ≤
+    n + n + (n + (4 * n + 2))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slots_fit	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slots_fit	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.offset_eq	∀ (n : ℕ)
+  (ks : List (Fin n → Bool)) (p : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.offset n ks p =
+    if ks.length = 2 ∧ p = 0 then n + n else 0
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.offset_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.offset_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_6	∀ (n q p : ℕ)
+  (j : Fin (q + 1)) (offsets : Fin (q + 1) → ℕ) (k₀ k₁ : Fin n → Bool), p < 0 + 1 + 1 → ¬(p = 0 ∨ p = 1) → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_6	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_6	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv_symm	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V : Type)
+  (f : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index C → V),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv C V).symm f =
+    (fun v b => f (Sum.inl (v, b)), fun i a => (f (Sum.inr ⟨i, (a, false)⟩), f (Sum.inr ⟨i, (a, true)⟩)))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv_symm	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv_symm	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick_iff_place	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations C) (u : Fin C.size) (q : ℕ),
+  (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+    (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+      (∀ (i : Fin C.gates.length), (rows i).Nodup) →
+        ∀ (x : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index C)
+          (j : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex q),
+          TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick C rows perm u q x = some j ↔
+            TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.place C rows perm u q j = some x
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick_iff_place	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick_iff_place	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_eq	∀ (E₂ : List Bool → List Bool)
+  (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂ z =
+    have descriptor := Complexity.pairSndD z;
+    have tag := Complexity.pairFstD descriptor;
+    have data := Complexity.pairSndD descriptor;
+    have c := (Complexity.BinArith.decWords (Complexity.pairFstD z)).getD (Complexity.pairFstD data).length [];
+    if tag = [] then data
+    else
+      if tag = [true] then c
+      else
+        TCSlib.Cryptography.SecureComputation.spEncStr E₂ (Complexity.pairFstD (Complexity.pairSndD data)) c
+          (Complexity.pairSndD (Complexity.pairSndD data))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u : ℕ) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool) (p : Fin C.gates[↑i].args.length),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows perm u i a p =
+    List.idxOf (i, TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex C rows perm i a, ↑p)
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place	{m : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      ((i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) →
+        ℕ →
+          (q : ℕ) → Fin (q + 1) → Option (TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index C)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerMessage_ofFn	∀
+  {G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool} {E₁ : List Bool → List Bool},
+  (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+    ∀ (n : ℕ) (k o r : Fin n → Bool),
+      List.ofFn (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerMessage E₁ n k o r) =
+        TCSlib.Cryptography.SecureComputation.spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerMessage_ofFn	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerMessage_ofFn	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex	ℕ → Type
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_length_le	∀ (n q : ℕ)
+  (ks : List (Fin n → Bool)) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p j : ℕ),
+  j ≤ q →
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor n ks nonce p j).length ≤
+      2 * q + 3 * n + 8
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_length_le	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_length_le	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex	{m : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      ((i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) →
+        (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → ℕ
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word_length	∀
+  {G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool} {E₁ : List Bool → List Bool},
+  (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+    ∀ (n : ℕ) (ks : List (Fin n → Bool)) (o : Fin n → Bool) (nonce : (Fin n → Bool) × (Fin n → Bool)) (p : ℕ),
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word E₁ n ks o nonce p).length =
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length n ks p
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word_length	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word_length	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerCipher_length._simp_1_1	∀ (n : ℕ),
+  (n ≤ n) = True
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerCipher_length._simp_1_1	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerCipher_length._simp_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct	∀ {L L₂ : ℕ → ℕ}
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool)
+  (G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool)
+  (G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L₂ n) → Bool) (E₁ E₂ : List Bool → List Bool),
+  (∀ (n : ℕ) (s x : Fin n → Bool), List.ofFn (G n s x) = List.ofFn (G₁ n s x) ++ List.ofFn (G₂ n s x)) →
+    (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+      (∀ (n : ℕ) (s x : Fin n → Bool), E₂ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)) →
+        ∀ {m n : ℕ} (C : BoolCircuit.DAGCircuit m)
+          (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+          (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+          (u : Fin C.size) (q : ℕ) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+          (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+            (∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) →
+              (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2
+                        ↑u).length ≤
+                    q + 1 →
+                  ∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) (k : Fin n → Bool)
+                    (rs : Fin (q + 1) → Fin n → Bool),
+                    TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂
+                        (Turing.pairEncode
+                          (TCSlib.Cryptography.SecureComputation.sliceMultiEncDist G n q
+                            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset C rows s u q)
+                            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength C rows s u q)
+                            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage C rows s u q
+                              E₁ o)
+                            (k, rs))
+                          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record C rows s u E₁ E₂ o i
+                            a)) =
+                      (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).enc
+                        (TCSlib.Cryptography.SecureComputation.argKeys C
+                          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k rs) i
+                          a)
+                        (o i a)
+                        ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k rs).2.1
+                          i a)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record_congr	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (E₁ E₂ : List Bool → List Bool)
+  (o₀ o₁ : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑i] a ↑u = none →
+      o₀ i a = o₁ i a) →
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record C rows s u E₁ E₂ o₀ i a =
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record C rows s u E₁ E₂ o₁ i a
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record_congr	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record_congr	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1_1	∀ {m n : ℕ}
+  (E₁ E₂ : List Bool → List Bool) (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u).length ≤ q + 1 →
+    ∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+      ((TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).enc
+              (TCSlib.Cryptography.SecureComputation.argKeys C s i a) (o i a) (s.2.1 i a)).length ≤
+          7 * n + 4 →
+        ¬((TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).enc
+                    (TCSlib.Cryptography.SecureComputation.argKeys C s i a) (o i a) (s.2.1 i a)).length +
+                2 ≤
+              2 * q + 7 * n + 8 →
+          False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1_1	[]
+SIGNATURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SelectedPlan.0._proof_7	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SelectedPlan.0._proof_7	[propext, Quot.sound]
+SORRY_CLOSURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.SelectedPlan.0._proof_7	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_2	∀
+  {m n : ℕ} (C : BoolCircuit.DAGCircuit m) (S B R : Complexity.PolyExpr) (bobInput aliceOutput : List Bool),
+  m + C.gates.length ≤ S.eval n → ¬C.gates.length ≤ S.eval n → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_2	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.fits	∀ (n : ℕ) (ks : List (Fin n → Bool))
+  (p : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.offset n ks p + n +
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length n ks p ≤
+    n + n + (n + (4 * n + 2))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.fits	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.fits	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset	{m n : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)) →
+        Fin C.size → (q : ℕ) → Fin (q + 1) → ℕ
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length_eq	∀ (n : ℕ)
+  (ks : List (Fin n → Bool)) (p : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length n ks p =
+    if ks.length = 2 ∧ p = 0 then 4 * n + 2 else n
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_eq	∀
+  (E₂ : List Bool → List Bool) (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables E₂ z =
+    Complexity.BinArith.mapW (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table E₂) z
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.fixedRecord_eq	∀ (c : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.fixedRecord c = Turing.pairEncode [] c
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.fixedRecord_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.fixedRecord_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.inner_row	∀ {L L₂ : ℕ → ℕ}
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool)
+  (G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool)
+  (G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L₂ n) → Bool) (E₁ E₂ : List Bool → List Bool),
+  (∀ (n : ℕ) (s x : Fin n → Bool), List.ofFn (G n s x) = List.ofFn (G₁ n s x) ++ List.ofFn (G₂ n s x)) →
+    (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+      ∀ (n : ℕ) (k outer o r₁ r₂ : Fin n → Bool),
+        TCSlib.Cryptography.SecureComputation.spEncStr E₂ (List.ofFn outer)
+            (TCSlib.Cryptography.SecureComputation.sliceEnc G n 0 k r₂ (List.ofFn o)) (List.ofFn r₁) =
+          (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).enc [outer, k] o (r₁, r₂)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.inner_row	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.inner_row	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.argument_label_eq_iff._proof_1	∀
+  (g : BoolCircuit.DAGGate), ¬g.args.length ≤ g.args.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.argument_label_eq_iff._proof_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.argument_label_eq_iff._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.place_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations C) (u : Fin C.size) (q : ℕ)
+  (j : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex q),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.place C rows perm u q j =
+    Sum.elim (fun x => some (Sum.inl (u, true)))
+      (fun nonce =>
+        Option.map Sum.inr
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place C rows perm (↑u) q nonce))
+      j
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.place_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.place_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct._proof_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.record_reconstruct._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_1	∀
+  {m : ℕ} {n : ℕ} (C : BoolCircuit.DAGCircuit m) (S B R : Complexity.PolyExpr) (bobInput aliceOutput : List Bool),
+  ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_pairEncode	∀
+  (E₂ : List Bool → List Bool) (challenge descriptors : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables E₂
+      (Turing.pairEncode challenge descriptors) =
+    Complexity.BinArith.encWords
+      (List.map
+        (fun d =>
+          TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table E₂
+            (Turing.pairEncode challenge d))
+        (Complexity.BinArith.decWords descriptors))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_pairEncode	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_pairEncode	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.direct_sampler	∀ {L : ℕ → ℕ}
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool) (E₂ : List Bool → List Bool) (n q : ℕ)
+  (offset len : Fin (q + 1) → ℕ) (m : (i : Fin (q + 1)) → Fin (len i) → Bool) (k : Fin n → Bool)
+  (r : Fin (q + 1) → Fin n → Bool) (j : Fin (q + 1)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂
+      (Turing.pairEncode (TCSlib.Cryptography.SecureComputation.sliceMultiEncDist G n q offset len m (k, r))
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.directRecord ↑j)) =
+    TCSlib.Cryptography.SecureComputation.sliceEnc G n (offset j) k (r j) (List.ofFn (m j))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.direct_sampler	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.direct_sampler	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_wrappedRecord	∀
+  (E₂ : List Bool → List Bool) (challenge : List (List Bool)) (j : ℕ) (k r : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂
+      (Turing.pairEncode (Complexity.BinArith.encWords challenge)
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.wrappedRecord j k r)) =
+    TCSlib.Cryptography.SecureComputation.spEncStr E₂ k (challenge.getD j []) r
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_wrappedRecord	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_wrappedRecord	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_3	∀
+  {m n : ℕ} (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (S B R : Complexity.PolyExpr) (bobInput aliceOutput : List Bool),
+  C.gates.length ≤ S.eval n →
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u).length ≤
+        4 * C.gates.length →
+      ¬(TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u).length ≤
+            4 * S.eval n + 1 →
+        False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_3	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_3	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex._proof_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length	(n : ℕ) → List (Fin n → Bool) → ℕ → ℕ
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.paramEquiv	{m : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    (V P : Type) →
+      P × TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Data C V ≃
+        P × (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index C → V)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.paramEquiv	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.paramEquiv	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget_eval	∀
+  (S : Complexity.PolyExpr) (n : ℕ),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget S).eval n = 4 * S.eval n
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget_eval	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget_eval	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1_2	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool)
+  (p : Fin C.gates[↑i].args.length),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows s.2.2 (↑u) i a p < q + 1 →
+    ¬TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows s.2.2 (↑u) i a p ≤ q → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1_2	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place_of_pick	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u q : ℕ),
+  (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+    (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+      ∀ (x : TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index C) (j : Fin (q + 1)),
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick C rows perm u q x = some j →
+          TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place C rows perm u q j = some x
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place_of_pick	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place_of_pick	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_perm	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V : Type) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C V (V × V)),
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv C V) s).1 = s.2.2
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_perm	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_perm	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget._proof_1_1	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (tail privateInput aliceOutput : List Bool) (S Q T I A : Complexity.PolyExpr),
+  q ≤ Q.eval n → ¬2 * q + 7 * n + 8 ≤ 2 * Q.eval n + 7 * n + 8 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget._proof_1_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget	∀ {m n : ℕ}
+  (E₁ E₂ : List Bool → List Bool) (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool)
+  (S A B O R : Complexity.PolyExpr) (output : Fin (O.eval n) → ℕ) (v : ℕ → Bool) (stage : ℕ)
+  (bobInput aliceOutput : List Bool),
+  C.IsFaninTwo →
+    C.size ≤ S.eval n →
+      (∀ (i : Fin C.gates.length), rows i = Finset.univ.toList) →
+        bobInput.length ≤ B.eval n →
+          aliceOutput.length ≤ R.eval n →
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice C rows s u E₁ E₂ o
+                  (Complexity.pairSndD
+                    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybridMessage.message
+                      (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) C s (A.eval n) (O.eval n) output v
+                      stage))
+                  (Turing.pairEncode bobInput
+                    (List.ofFn
+                      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeObjects.activeAnswers C s (A.eval n)
+                        (B.eval n))))
+                  aliceOutput).length ≤
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sampleBudget S A B O R).eval n
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength	{m n : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)) →
+        Fin C.size → (q : ℕ) → Fin (q + 1) → ℕ
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage_ofFn	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) {G₁ : (k : ℕ) → (Fin k → Bool) → (Fin k → Bool) → Fin (k + k) → Bool}
+  {E₁ : List Bool → List Bool},
+  (∀ (k : ℕ) (key nonce : Fin k → Bool),
+      E₁ (Turing.pairEncode (List.ofFn key) (List.ofFn nonce)) = List.ofFn (G₁ k key nonce)) →
+    ∀ (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) (j : Fin (q + 1)),
+      List.ofFn (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage C rows s u q E₁ o j) =
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord C rows s u q E₁ o j
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage_ofFn	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage_ofFn	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice_eq	∀ (d t x a : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice d t x a =
+    Turing.pairEncode d (Turing.pairEncode t (Turing.pairEncode x a))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce	{m : ℕ} →
+  {K ρ : Type} →
+    (C : BoolCircuit.DAGCircuit m) →
+      ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+        TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ) →
+          ℕ → (q : ℕ) → (Fin (q + 1) → ρ) → (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → ρ × ρ
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index._proof_2	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (i : Fin C.gates.length), ↑i < C.gates.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index._proof_2	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index._proof_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce_of_some	∀ {m : ℕ} {K ρ : Type}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u q : ℕ) (r : Fin (q + 1) → ρ)
+  (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool) (p : Fin C.gates[↑i].args.length),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑i] a u = some p →
+    ∀
+      (hslot :
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows s.2.2 u i a p < q + 1),
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce C rows s u q r i a =
+        if ↑p = 0 then
+          (r ⟨TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows s.2.2 u i a p, hslot⟩,
+            (s.2.1 i a).2)
+        else
+          ((s.2.1 i a).1,
+            r ⟨TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows s.2.2 u i a p, hslot⟩)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce_of_some	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce_of_some	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.message	(List Bool → List Bool) →
+  (n : ℕ) →
+    (ks : List (Fin n → Bool)) →
+      (Fin n → Bool) →
+        (Fin n → Bool) × (Fin n → Bool) →
+          (p : ℕ) → Fin (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length n ks p) → Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.message	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.message	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.record_lengths	∀ (c : List Bool)
+  (j : ℕ) (k r : List Bool),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.fixedRecord c).length = c.length + 2 ∧
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.directRecord j).length = 2 * j + 6 ∧
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.wrappedRecord j k r).length =
+        2 * j + 2 * k.length + r.length + 8
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.record_lengths	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.record_lengths	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_4	∀
+  {m n : ℕ} (E₁ E₂ : List Bool → List Bool) (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (S A B O R : Complexity.PolyExpr) (output : Fin (O.eval n) → ℕ) (v : ℕ → Bool) (stage : ℕ)
+  (bobInput aliceOutput : List Bool),
+  bobInput.length ≤ B.eval n → ¬2 * bobInput.length + 2 + B.eval n * n ≤ 2 * B.eval n + 2 + B.eval n * n → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_4	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.sample_advice_budget._proof_1_4	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.offset	(n : ℕ) → List (Fin n → Bool) → ℕ → ℕ
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.offset	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.offset	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (s : Fin C.gates.length × ℕ × ℕ), ↑s.1 < C.gates.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place._proof_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index C =
+    (Fin C.size × Bool ⊕ TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index C)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_key_selected	∀ {m : ℕ} {K ρ : Type}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (r : Fin (q + 1) → ρ),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r).1 u true = k
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_key_selected	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_key_selected	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.directRecord	ℕ → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.directRecord	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.directRecord	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations C =
+    ((i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.paramEquiv_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V P : Type) (p : P)
+  (d : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Data C V),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.paramEquiv C V P) (p, d) =
+    (p, (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv C V) d)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.paramEquiv_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.paramEquiv_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerMessage_eq	∀
+  (E₁ : List Bool → List Bool) (n : ℕ) (k o r : Fin n → Bool) (t : Fin (4 * n + 2)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerMessage E₁ n k o r t =
+    (TCSlib.Cryptography.SecureComputation.spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r)).getD (↑t) false
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerMessage_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.innerMessage_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick_iff_place	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u q : ℕ),
+  (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+    (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+      (∀ (i : Fin C.gates.length), (rows i).Nodup) →
+        ∀ (x : TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index C) (j : Fin (q + 1)),
+          TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick C rows perm u q x = some j ↔
+            TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place C rows perm u q j = some x
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick_iff_place	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick_iff_place	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.argument_label_eq_iff._proof_2	∀
+  (g : BoolCircuit.DAGGate) (u : ℕ) (p : Fin g.args.length), ¬g.args.length ≤ g.args.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.argument_label_eq_iff._proof_2	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.argument_label_eq_iff._proof_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage	{m n : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool))) →
+        (u : Fin C.size) →
+          (q : ℕ) →
+            (List Bool → List Bool) →
+              ((i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) →
+                (j : Fin (q + 1)) →
+                  Fin (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength C rows s u q j) →
+                    Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget_eval	∀
+  (A O : Complexity.PolyExpr) (n : ℕ),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget A O).eval n =
+    2 * (A.eval n * (2 * n + 2)) + 2 + O.eval n * (6 * n + 6)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget_eval	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget_eval	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex C rows perm i a =
+    List.idxOf ((Equiv.symm (perm i)) a) (rows i)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice_length._proof_1_1	∀
+  (d t x a : List Bool),
+  ¬2 * d.length + 2 + (2 * t.length + 2 + (2 * x.length + 2 + a.length)) =
+        2 * d.length + 2 * t.length + 2 * x.length + a.length + 6 →
+    False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice_length._proof_1_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice_length._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick_of_place	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u q : ℕ),
+  (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+    (∀ (i : Fin C.gates.length), (rows i).Nodup) →
+      ∀ (x : TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index C) (j : Fin (q + 1)),
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place C rows perm u q j = some x →
+          TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick C rows perm u q x = some j
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick_of_place	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick_of_place	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations._proof_2	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (i : Fin C.gates.length), ↑i < C.gates.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations._proof_2	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations._proof_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice_congr	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (E₁ E₂ : List Bool → List Bool)
+  (o₀ o₁ : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+  (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑i] a ↑u = none →
+        o₀ i a = o₁ i a) →
+    ∀ (tail privateInput aliceOutput : List Bool),
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice C rows s u E₁ E₂ o₀ tail privateInput
+          aliceOutput =
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice C rows s u E₁ E₂ o₁ tail privateInput
+          aliceOutput
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice_congr	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice_congr	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.outer_row	∀ {L L₂ : ℕ → ℕ}
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool)
+  (G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool)
+  (G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L₂ n) → Bool) (E₁ E₂ : List Bool → List Bool),
+  (∀ (n : ℕ) (s x : Fin n → Bool), List.ofFn (G n s x) = List.ofFn (G₁ n s x) ++ List.ofFn (G₂ n s x)) →
+    (∀ (n : ℕ) (s x : Fin n → Bool), E₂ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)) →
+      ∀ (n : ℕ) (k inner o r₁ r₂ : Fin n → Bool),
+        TCSlib.Cryptography.SecureComputation.sliceEnc G n (n + n) k r₁
+            (TCSlib.Cryptography.SecureComputation.spEncStr E₁ (List.ofFn inner) (List.ofFn o) (List.ofFn r₂)) =
+          (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).enc [k, inner] o (r₁, r₂)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.outer_row	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.outer_row	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget_eq	∀
+  (S : Complexity.PolyExpr),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget S =
+    (Complexity.PolyExpr.const 4).mul S
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.slotBudget_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.only_row	∀ {L L₂ : ℕ → ℕ}
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool)
+  (G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool)
+  (G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L₂ n) → Bool) (E₁ E₂ : List Bool → List Bool),
+  (∀ (n : ℕ) (s x : Fin n → Bool), List.ofFn (G n s x) = List.ofFn (G₁ n s x) ++ List.ofFn (G₂ n s x)) →
+    (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+      ∀ (n : ℕ) (k o r r₂ : Fin n → Bool),
+        TCSlib.Cryptography.SecureComputation.sliceEnc G n 0 k r (List.ofFn o) =
+          (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).enc [k] o (r, r₂)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.only_row	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.only_row	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick	{m : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations C →
+        Fin C.size →
+          (q : ℕ) →
+            TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index C →
+              Option (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex q)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice_eq	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (E₁ E₂ : List Bool → List Bool)
+  (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool)
+  (tail privateInput aliceOutput : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice C rows s u E₁ E₂ o tail privateInput
+      aliceOutput =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice
+      (Complexity.BinArith.encWords
+        (List.map Complexity.BinArith.encWords
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁ E₂ o)))
+      tail privateInput aliceOutput
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.advice_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill	{m : ℕ} →
+  {K ρ : Type} →
+    (C : BoolCircuit.DAGCircuit m) →
+      ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+        TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ) →
+          Fin C.size → (q : ℕ) → K → (Fin (q + 1) → ρ) → TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength_eq	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (j : Fin (q + 1)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength C rows s u q j =
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded q
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u) j).elim
+      n fun t =>
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.length n
+        (TCSlib.Cryptography.SecureComputation.argKeys C s t.1 ((s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false)))
+        t.2.2
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index._proof_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.Index._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.slice_shapes_fit	∀ (n : ℕ),
+  0 + n + n ≤ n + n + (n + (4 * n + 2)) ∧ n + n + n + (4 * n + 2) ≤ n + n + (n + (4 * n + 2))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.slice_shapes_fit	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSlices.slice_shapes_fit	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_lt	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u : ℕ) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool) (p : Fin C.gates[↑i].args.length),
+  C.gates[↑i].args.Nodup →
+    (∀ (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+      C.gates[↑i].args[↑p] = u →
+        a p = true →
+          TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex C rows perm u i a p <
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u).length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_lt	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.slotIndex_lt	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u q : ℕ) (j : Fin (q + 1)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place C rows perm u q j =
+    Option.map (fun s => ⟨s.1, ((perm s.1) ((rows s.1).getD s.2.1 fun x => false), decide (s.2.2 ≠ 0))⟩)
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded q
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u) j)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_key	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V : Type) (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C V (V × V))
+  (v : Fin C.size) (b : Bool),
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv C V) s).2 (Sum.inl (v, b)) = s.1 v b
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_key	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_key	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_key_other	∀ {m : ℕ} {K ρ : Type}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (r : Fin (q + 1) → ρ) (v : Fin C.size) (b : Bool),
+  (v, b) ≠ (u, true) →
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r).1 v b = s.1 v b
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_key_other	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_key_other	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row	(List Bool → List Bool) →
+  List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_of_row	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (i : Fin C.gates.length),
+  ∀ r < (rows i).length,
+    (rows i).Nodup →
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex C rows perm i
+          ((perm i) ((rows i).getD r fun x => false)) =
+        r
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_of_row	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_of_row	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.tables_reconstruct	∀ {L L₂ : ℕ → ℕ}
+  (G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool)
+  (G₁ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool)
+  (G₂ : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L₂ n) → Bool) (E₁ E₂ : List Bool → List Bool),
+  (∀ (n : ℕ) (s x : Fin n → Bool), List.ofFn (G n s x) = List.ofFn (G₁ n s x) ++ List.ofFn (G₂ n s x)) →
+    (∀ (n : ℕ) (s x : Fin n → Bool), E₁ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₁ n s x)) →
+      (∀ (n : ℕ) (s x : Fin n → Bool), E₂ (Turing.pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (G₂ n s x)) →
+        ∀ {m n : ℕ} (C : BoolCircuit.DAGCircuit m)
+          (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+          (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+          (u : Fin C.size) (q : ℕ) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+          (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+            (∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2) →
+              (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2
+                        ↑u).length ≤
+                    q + 1 →
+                  ∀ (k : Fin n → Bool) (rs : Fin (q + 1) → Fin n → Bool),
+                    TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables E₂
+                        (Turing.pairEncode
+                          (TCSlib.Cryptography.SecureComputation.sliceMultiEncDist G n q
+                            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset C rows s u q)
+                            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotLength C rows s u q)
+                            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotMessage C rows s u q
+                              E₁ o)
+                            (k, rs))
+                          (Complexity.BinArith.encWords
+                            (List.map Complexity.BinArith.encWords
+                              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁ E₂
+                                o)))) =
+                      Complexity.BinArith.encWords
+                        (List.ofFn fun i =>
+                          Complexity.BinArith.encWords
+                            (List.map
+                              (fun a =>
+                                (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).enc
+                                  (TCSlib.Cryptography.SecureComputation.argKeys C
+                                    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q
+                                      k rs)
+                                    i ((s.2.2 i) a))
+                                  (o i ((s.2.2 i) a))
+                                  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q
+                                          k rs).2.1
+                                    i ((s.2.2 i) a)))
+                              (rows i)))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.tables_reconstruct	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedTables.tables_reconstruct	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_length_le._proof_1_1	∀ (n q : ℕ)
+  (ks : List (Fin n → Bool)) (p j : ℕ), j ≤ q → ¬2 * j + 2 * n + n + 8 ≤ 2 * q + 3 * n + 8 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_length_le._proof_1_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.descriptor_length_le._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_wrappedRecord._simp_1_1	∀
+  {α : Type u_1} (a : α) (l : List α), (a :: l = []) = False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_wrappedRecord._simp_1_1	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_wrappedRecord._simp_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget	Complexity.PolyExpr →
+  Complexity.PolyExpr
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.privateBudget	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_le._proof_1_1	∀ {m n : ℕ}
+  (E₁ E₂ : List Bool → List Bool) (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool)
+  (tail privateInput aliceOutput : List Bool),
+  2 *
+        (Complexity.BinArith.encWords
+            (List.map Complexity.BinArith.encWords
+              (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁ E₂ o))).length ≤
+      2 * (C.gates.length * (16 * (2 * q + 7 * n + 8) + 18)) →
+    ¬2 *
+                    (Complexity.BinArith.encWords
+                        (List.map Complexity.BinArith.encWords
+                          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁ E₂
+                            o))).length +
+                  2 * tail.length +
+                2 * privateInput.length +
+              aliceOutput.length +
+            6 ≤
+          2 * (C.gates.length * (16 * (2 * q + 7 * n + 8) + 18)) + 2 * tail.length + 2 * privateInput.length +
+              aliceOutput.length +
+            6 →
+      False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_le._proof_1_1	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_le._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord	{m n : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)) →
+        Fin C.size →
+          (q : ℕ) →
+            (List Bool → List Bool) →
+              ((i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) → Fin (q + 1) → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_fixedRecord	∀
+  (E₂ : List Bool → List Bool) (challenge c : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂
+      (Turing.pairEncode challenge
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.fixedRecord c)) =
+    c
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_fixedRecord	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row_fixedRecord	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations	{m : ℕ} →
+  BoolCircuit.DAGCircuit m → Type
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget._proof_1_3	∀ {m n : ℕ}
+  (E₁ E₂ : List Bool → List Bool) (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool)
+  (tail privateInput aliceOutput : List Bool) (S Q T I A : Complexity.PolyExpr),
+  tail.length ≤ T.eval n →
+    privateInput.length ≤ I.eval n →
+      aliceOutput.length ≤ A.eval n →
+        C.gates.length * (16 * (2 * q + 7 * n + 8) + 18) ≤ S.eval n * (16 * (2 * Q.eval n + 7 * n + 8) + 18) →
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice
+                  (Complexity.BinArith.encWords
+                    (List.map Complexity.BinArith.encWords
+                      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁ E₂ o)))
+                  tail privateInput aliceOutput).length ≤
+              2 * (C.gates.length * (16 * (2 * q + 7 * n + 8) + 18)) + 2 * tail.length + 2 * privateInput.length +
+                  aliceOutput.length +
+                6 →
+            ¬(TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice
+                      (Complexity.BinArith.encWords
+                        (List.map Complexity.BinArith.encWords
+                          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁ E₂
+                            o)))
+                      tail privateInput aliceOutput).length ≤
+                  2 * (S.eval n * (16 * (2 * Q.eval n + 7 * n + 8) + 18)) + 2 * T.eval n + 2 * I.eval n + A.eval n + 6 →
+              False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget._proof_1_3	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_budget._proof_1_3	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place_of_padded	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u q : ℕ) (j : Fin (q + 1))
+  (i : Fin C.gates.length) (r p : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded q
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u) j =
+      some (i, r, p) →
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place C rows perm u q j =
+      some ⟨i, ((perm i) ((rows i).getD r fun x => false), decide (p ≠ 0))⟩
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place_of_padded	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.place_of_padded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1_3	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool)
+  (p : Fin C.gates[↑i].args.length), ¬2 * q + 3 * n + 8 ≤ 2 * q + 7 * n + 8 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1_3	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le._proof_1_3	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice	List Bool →
+  List Bool → List Bool → List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index	{m : ℕ} →
+  BoolCircuit.DAGCircuit m → Type
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations C) (u : Fin C.size) (q : ℕ)
+  (x : TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index C),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick C rows perm u q x =
+    Sum.elim (fun label => if label = (u, true) then some (Sum.inl ()) else none)
+      (fun nonce =>
+        Option.map Sum.inr
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.NonceCoordinates.pick C rows perm (↑u) q nonce))
+      x
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv	(q : ℕ) →
+  (V : Type) →
+    V × (Fin (q + 1) → V) ≃ (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex q → V)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_records	∀
+  (E₂ : List Bool → List Bool) (challenge : List Bool) (descriptors : List (List (List Bool))),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables E₂
+      (Turing.pairEncode challenge (Complexity.BinArith.encWords (List.map Complexity.BinArith.encWords descriptors))) =
+    Complexity.BinArith.encWords
+      (List.map
+        (fun ds =>
+          Complexity.BinArith.encWords
+            (List.map
+              (fun d =>
+                TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂
+                  (Turing.pairEncode challenge d))
+              ds))
+        descriptors)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_records	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_records	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord_eq	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (E₁ : List Bool → List Bool)
+  (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool) (j : Fin (q + 1)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord C rows s u q E₁ o j =
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded q
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u) j).elim
+      (List.replicate n false) fun t =>
+      have a := (s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false);
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.word E₁ n
+        (TCSlib.Cryptography.SecureComputation.argKeys C s t.1 a) (o t.1 a) (s.2.1 t.1 a) t.2.2
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotWord_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table_eq	∀
+  (E₂ : List Bool → List Bool) (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table E₂ z =
+    Complexity.BinArith.mapW (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂) z
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget_eq	∀
+  (A O : Complexity.PolyExpr),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget A O =
+    (((Complexity.PolyExpr.const 2).mul
+              (A.mul
+                (((Complexity.PolyExpr.const 2).mul Complexity.PolyExpr.var).add (Complexity.PolyExpr.const 2)))).add
+          (Complexity.PolyExpr.const 2)).add
+      (O.mul (((Complexity.PolyExpr.const 6).mul Complexity.PolyExpr.var).add (Complexity.PolyExpr.const 6)))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.tailBudget_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce_of_none	∀ {m : ℕ} {K ρ : Type}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u q : ℕ) (r : Fin (q + 1) → ρ)
+  (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑i] a u = none →
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce C rows s u q r i a = s.2.1 i a
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce_of_none	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.nonce_of_none	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_fill	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V : Type)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C V (V × V)) (u : Fin C.size) (q : ℕ) (k : V)
+  (r : Fin (q + 1) → V),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv C V)
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r) =
+    (s.2.2, fun x =>
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.pick C rows s.2.2 u q x).elim
+        ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv C V) (s.1, s.2.1) x)
+        ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.challengeEquiv q V) (k, r)))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_fill	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.seedEquiv_fill	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset_eq	∀ {m n : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (j : Fin (q + 1)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset C rows s u q j =
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded q
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u) j).elim
+      0 fun t =>
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.offset n
+        (TCSlib.Cryptography.SecureComputation.argKeys C s t.1 ((s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false)))
+        t.2.2
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.slotOffset_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table_poly	∀
+  {E₂ : List Bool → List Bool},
+  Complexity.PolyTimeComputable E₂ →
+    Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table E₂)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table_poly	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.table_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv	{m : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    (V : Type) →
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Data C V ≃
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index C → V)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.dataEquiv	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_lt	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (i : Fin C.gates.length)
+  (a : Fin C.gates[↑i].args.length → Bool),
+  (∀ (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex C rows perm i a < (rows i).length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_lt	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex_lt	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.place	{m : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Permutations C →
+        Fin C.size →
+          (q : ℕ) →
+            TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.ChallengeIndex q →
+              Option (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Index C)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.place	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.place	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.encodeList_eq_encWords	∀
+  (cs : List (List Bool)), TCSlib.Cryptography.PrivateKeyScheme.encodeList cs = Complexity.BinArith.encWords cs
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.encodeList_eq_encWords	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.encodeList_eq_encWords	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex._proof_2	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (i : Fin C.gates.length), ↑i < C.gates.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex._proof_2	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.rowIndex._proof_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_some	∀ {m : ℕ} {K ρ : Type}
+  [inst : Inhabited K] (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K (ρ × ρ)) (u : Fin C.size) (q : ℕ) (k : K)
+  (r : Fin (q + 1) → ρ) (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool)
+  (p : Fin C.gates[↑i].args.length),
+  C.gates[↑i].args.Nodup →
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition C.gates[↑i] a ↑u = some p →
+      TCSlib.Cryptography.SecureComputation.argKeys C
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill C rows s u q k r) i a =
+        (TCSlib.Cryptography.SecureComputation.argKeys C s i a).set (↑p) k
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_some	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedSeed.fill_argKeys_some	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_8	∀ (n q : ℕ)
+  (j : Fin (q + 1)) (offsets : Fin (q + 1) → ℕ) (k₀ k₁ : Fin n → Bool), True ∧ 1 = 0 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_8	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedRows.reconstruct._proof_1_8	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_le	∀ {m n : ℕ}
+  (E₁ E₂ : List Bool → List Bool) (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+  (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+    (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u).length ≤
+          q + 1 →
+        (∀ (i : Fin C.gates.length), (rows i).length ≤ 4) →
+          ∀ (tail privateInput aliceOutput : List Bool),
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.advice
+                  (Complexity.BinArith.encWords
+                    (List.map Complexity.BinArith.encWords
+                      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.tables C rows s u E₁ E₂ o)))
+                  tail privateInput aliceOutput).length ≤
+              2 * C.gates.length * (16 * (2 * q + 7 * n + 8) + 18) + 2 * tail.length + 2 * privateInput.length +
+                  aliceOutput.length +
+                6
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_le	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.advice_le	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_encoded	∀
+  (E₂ : List Bool → List Bool) (challenge : List (List Bool)) (descriptors : List (List (List Bool))),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables E₂
+      (Turing.pairEncode (Complexity.BinArith.encWords challenge)
+        (Complexity.BinArith.encWords (List.map Complexity.BinArith.encWords descriptors))) =
+    Complexity.BinArith.encWords
+      (List.map
+        (fun ds =>
+          Complexity.BinArith.encWords
+            (List.map
+              (fun d =>
+                TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.row E₂
+                  (Turing.pairEncode (Complexity.BinArith.encWords challenge) d))
+              ds))
+        descriptors)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_encoded	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.tables_encoded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Data_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (V : Type),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Data C V =
+    ((Fin C.size → Bool → V) × ((i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → V × V))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Data_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SeedCoordinates.Data_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le	∀ {m n : ℕ}
+  (E₁ E₂ : List Bool → List Bool) (C : BoolCircuit.DAGCircuit m)
+  (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (u : Fin C.size) (q : ℕ) (o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool),
+  (∀ (i : Fin C.gates.length), C.gates[↑i].args.Nodup) →
+    (∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows s.2.2 ↑u).length ≤
+          q + 1 →
+        ∀ (i : Fin C.gates.length) (a : Fin C.gates[↑i].args.length → Bool),
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedPlan.record C rows s u E₁ E₂ o i a).length ≤
+            2 * q + 7 * n + 8
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedAdviceBounds.record_le	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.fixedRecord	List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.fixedRecord	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.SliceReconstruction.fixedRecord	[]
+STORED_CONSTANTS 224
+       41.75 real        40.57 user         1.09 sys
+          2278391808  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175225  page reclaims
+                1273  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   2  voluntary context switches
+                4342  involuntary context switches
+        275883722968  instructions retired
+        116681091074  cycles elapsed
+           361819792  peak memory footprint
+END 2026-11-16T04:21:13.783150+00:00

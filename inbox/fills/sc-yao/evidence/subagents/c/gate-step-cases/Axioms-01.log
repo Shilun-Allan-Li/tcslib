@@ -1,0 +1,91 @@
+START 2026-11-16T04:16:48.280276+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (v : ℕ → Bool) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2)
+  (hconsistency :
+    ∀ (i : Fin C.gates.length),
+      TCSlib.Cryptography.SecureComputation.gateOut C.gates[i]
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i) =
+        v (inputs + ↑i))
+  (t : ℕ) (ht : t < 2 * C.gates.length) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v t =
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (t + 1) ∨
+    ∃ i p, ↑i = t / 2 ∧ ↑p = t % 2 ∧ t = 2 * ↑i + ↑p ∧ ↑p < 2
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases {inputs : ℕ}
+  (C : BoolCircuit.DAGCircuit inputs) (v : ℕ → Bool) (hA : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2)
+  (hconsistency :
+    ∀ (i : Fin C.gates.length),
+      TCSlib.Cryptography.SecureComputation.gateOut C.gates[i]
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i) =
+        v (inputs + ↑i))
+  (t : ℕ) (ht : t < 2 * C.gates.length) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v t =
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateHybrids.stageBit C v (t + 1) ∨
+    ∃ i p, t = 2 * ↑i + ↑p ∧ ↑p < 2
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+STORED_CONSTANT_COUNT 14
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_9: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_9: closure=1385 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_1: closure=1419 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_8: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_8: closure=1422 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases.match_1_1: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases.match_1_1: closure=1301 sorried=[]
+AXIOMS _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.GateStepCases.0._proof_7: [propext, Quot.sound]
+DEPENDENCY _private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.GateStepCases.0._proof_7: closure=1297 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_4: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_4: closure=1390 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1: closure=1297 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact: closure=2464 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases: closure=2466 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_3: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_3: closure=1385 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_5: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_5: closure=1428 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_7: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_7: closure=1385 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_2: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_2: closure=1297 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_6: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateStepCases.step_cases_exact._proof_1_6: closure=1427 sorried=[]
+       23.96 real        22.86 user         1.10 sys
+          2217197568  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175480  page reclaims
+                  49  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  21  voluntary context switches
+                3043  involuntary context switches
+            32052454  instructions retired
+            16686806  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-16T04:17:12.277951+00:00 exit=0

@@ -1,0 +1,20 @@
+Retrospective comparison only: read after b5/v6/v7 proofs and immutable handoffs.
+No proof code or design taken; exact nearest unmerged statement names for REPORT.
+
+SOURCE /private/tmp/sc-garble-runtime/final/sc-garble/src/TCSlib/Cryptography/SecureComputation/Garbling/CoinBlocks.lean
+SHA256 19f752d4e4197424c3eb08d8f27aa5abdac23935a4ebed403f58bb6c88570262
+
+31:namespace TCSlib.Cryptography.SecureComputation.GarblingProbability
+38:theorem assignmentFold_small (len : ℕ) (hlen : len ≤ 2) :
+51:theorem pushesUniform_bits_of_blocks {I : Type} [Fintype I] [DecidableEq I]
+83:theorem key_row_blocks_injective {S V G : ℕ} (hV : V ≤ S) (hG : G ≤ S)
+162:theorem pushesUniform_key_row_blocks {S V G n : ℕ} (hV : V ≤ S) (hG : G ≤ S)
+
+SOURCE /private/tmp/sc-garble-runtime/final/sc-garble/src/TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean
+SHA256 a6e89a60fee4af09f3b2cba73382c8917b01e8284dbd4122520fb9b063e36cce
+
+31:namespace TCSlib.Cryptography.SecureComputation.GarblingProbability
+39:theorem findSome_eq_some_of_dichotomy {α β : Type} (l : List α) (f : α → Option β) (b : β)
+62:theorem pushesUniform_output_argKeys {I J K : Type} [Fintype I] [DecidableEq I]
+92:theorem pushesUniform_rowCoin {I : Type} [Fintype I] [DecidableEq I] {A : I → Type}
+102:theorem pushesUniform_output_argKeys_row {I J K R ρ : Type}

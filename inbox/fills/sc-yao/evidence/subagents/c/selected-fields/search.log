@@ -1,0 +1,35 @@
+COMMAND ['rg', '-n', '(fill_keyAt|fill_key_other|fill_perm)', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean']
+199:theorem fill_perm {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
+214:theorem fill_key_other {m : ℕ} {K ρ : Type} (C : DAGCircuit m)
+227:theorem fill_keyAt {m : ℕ} {K ρ : Type} [Inhabited K] (C : DAGCircuit m)
+256:    fill_keyAt C rows s u q k r C.gates[i.val].args[p.val] (a p)))
+EXIT 0
+
+COMMAND ['rg', '-n', '(selectedPosition_eq_some_iff|hybrid_plaintext_ne|selected_wire_lt)', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences.lean']
+71:theorem selectedPosition_eq_some_iff (g : DAGGate) (a : Fin g.args.length → Bool) (u : ℕ)
+140:      (selectedPosition_eq_some_iff g _ u hargs p').mp hp'⟩
+143:    exact ⟨⟨p, hp⟩, (selectedPosition_eq_some_iff g _ u hargs ⟨p, hp⟩).mpr
+325:theorem selected_wire_lt {m : ℕ} (C : DAGCircuit m) (i₀ : Fin C.gates.length)
+336:theorem hybrid_plaintext_ne (m i₀ u j : ℕ) (hu : u < m + i₀) (b : Bool) :
+346:This is the circuit-indexed form of `hybrid_plaintext_ne`. [PS10, Theorem 163.7] -/
+347:theorem hybrid_plaintext_ne_of_used {m : ℕ} (C : DAGCircuit m)
+350:  hybrid_plaintext_ne m i₀.val u j (selected_wire_lt C i₀ u hu) b
+EXIT 0
+
+COMMAND ['rg', '-n', '(outputBit_first_unchanged|outputBit_second_unchanged|outputBit_completed|stageBit_even|stageBit_odd)', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateHybrids.lean']
+201:theorem stageBit_even (C : DAGCircuit inputs) (v : ℕ → Bool) (k : ℕ) :
+209:theorem stageBit_odd (C : DAGCircuit inputs) (v : ℕ → Bool) (k : ℕ) :
+222:  rw [stageBit_even, outputBit_end C v C.gates.length 0 (by rfl), tableWith_fake]
+225:theorem outputBit_completed (C : DAGCircuit inputs) (v : ℕ → Bool)
+280:theorem outputBit_first_unchanged (C : DAGCircuit inputs) (v : ℕ → Bool)
+294:  · rw [outputBit_completed C v cutoff 1 i a hlt,
+295:      outputBit_completed C v (cutoff + 1) 0 i a (by omega)]
+308:theorem outputBit_second_unchanged (C : DAGCircuit inputs) (v : ℕ → Bool)
+321:        outputBit_completed C v ((i : ℕ) + 1) 0 i a (by omega)]
+328:          outputBit_completed C v ((i : ℕ) + 1) 0 i a (by omega)]
+EXIT 0
+
+COMMAND ['rg', '-n', '(activeAnswers_eq|decodePair_eq)', 'TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeObjects.lean']
+71:theorem decodePair_eq (C : DAGCircuit inputs) (s : GarbleSeed C K ρ) (v : ℕ) (b : Bool) :
+83:theorem activeAnswers_eq {width : ℕ} (C : DAGCircuit inputs)
+EXIT 0

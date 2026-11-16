@@ -1,0 +1,51 @@
+START 2026-11-16T04:35:37.603537+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobStatistical.statClose_real_output_switch
+  {G : TCSlib.Cryptography.SecureComputation.Functionality} (H : TCSlib.Cryptography.SecureComputation.HybridProtocol G)
+  (F : TCSlib.Cryptography.SecureComputation.Functionality) (p : Complexity.PolyExpr) (hCoins : H.main.P.coins = p)
+  (BadWord : ℕ → List Bool → Prop) (δ : ℕ → ℝ)
+  (hBad : ∀ (n : ℕ), (TCSlib.Cryptography.uprob fun r => BadWord n (List.ofFn r)) ≤ δ n)
+  (hCorrect :
+    ∀ (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (r : H.Coins n),
+      ¬BadWord n (List.ofFn r.1) →
+        H.main.outP (List.replicate n true) (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+            (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r =
+          List.ofFn (F.f n x y).1)
+  (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) :
+  TCSlib.Cryptography.StatClose (H.realB F n x y)
+    (fun r =>
+      Turing.pairEncode
+        (H.main.viewV (List.replicate n true) (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+            (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+        (List.ofFn (F.f n x y).1))
+    (δ n)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobStatistical.statClose_real_output_switch' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+STORED_CONSTANT_COUNT 2
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv.congr_simp: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.strategyTapeEquiv.congr_simp: closure=541 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobStatistical.statClose_real_output_switch: [propext,
+ Classical.choice,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobStatistical.statClose_real_output_switch: closure=12565 sorried=[]
+       26.35 real        24.73 user         1.37 sys
+          2204352512  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174644  page reclaims
+                  71  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  23  voluntary context switches
+               24542  involuntary context switches
+            31887314  instructions retired
+            17021635  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-16T04:36:03.991662+00:00 exit=0

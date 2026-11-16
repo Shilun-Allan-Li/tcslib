@@ -1,0 +1,62 @@
+START 2026-11-16T04:08:35.520896+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateStepCases.lean:63:49: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  e ≥ 0
+  d ≥ 0
+  d - e ≥ 1
+  c ≥ 0
+  b ≥ 0
+  0 ≤ b - 2*c ≤ 1
+  b - 2*c - d ≤ -1
+  b - 2*c - e ≤ -1
+  a ≥ 0
+  a - c ≥ 1
+  2*a - b ≥ 1
+where
+ a := ↑C.gates.length
+ b := ↑t
+ c := ↑t / 2
+ d := ↑C.gates[↑i].args.length
+ e := ↑↑⟨t % 2, hp⟩
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateStepCases.lean:63:49: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  e ≥ 2
+  d ≥ 0
+  d - e ≥ 1
+  c ≥ 0
+  b ≥ 0
+  0 ≤ b - 2*c ≤ 1
+  b - 2*c - d ≤ -1
+  a ≥ 0
+  a - c ≥ 1
+  2*a - b ≥ 1
+where
+ a := ↑C.gates.length
+ b := ↑t
+ c := ↑t / 2
+ d := ↑C.gates[↑i].args.length
+ e := ↑↑⟨t % 2, hp⟩
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateStepCases.lean:73:56: error(lean.unknownIdentifier): Unknown identifier `hA`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateStepCases.lean:73:59: error(lean.unknownIdentifier): Unknown identifier `hconsistency`
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateStepCases): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateStepCases): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateStepCases): no fresh .olean produced
+        7.19 real         2.52 user         1.98 sys
+          2093711360  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              157469  page reclaims
+               21664  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                2354  voluntary context switches
+               49833  involuntary context switches
+            36152359  instructions retired
+            32095615  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-16T04:08:42.835295+00:00 exit=1

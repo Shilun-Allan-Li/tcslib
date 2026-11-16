@@ -1,0 +1,53 @@
+START 2026-11-16T04:30:52Z module=evidence/subagents/a10/probes/FullSimulators
+evidence/subagents/a10/probes/FullSimulators.lean:148:6: error: Type mismatch: After simplification, term
+  hIdeal (yaoFunctionality Y) n x y (e r)
+ has type
+  (yaoFunctionality Y).idealB SB n x y (e r) =
+    pairEncode
+      { x := List.replicate n true,
+          z :=
+            pairEncode (List.ofFn y)
+              (List.ofFn
+                (FakeObjects.activeAnswers (Y.circ n) (yaoSeed Y n (List.ofFn (e r))) (Y.inA.eval n) (Y.inB.eval n))),
+          r := [],
+          received :=
+            [FakeObjects.message (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn (e r))) (Y.inA.eval n)
+                (Y.outLen.eval n) (Y.outs n) fun j =>
+                (List.ofFn ((yaoFunctionality Y).f n x y).2).getD (↑j) false] }.encode
+      (List.ofFn ((yaoFunctionality Y).f n x y).1)
+but is expected to have type
+  (yaoFunctionality Y).idealB SB n x y (e r) =
+    pairEncode
+      { x := List.replicate n true,
+          z :=
+            pairEncode (List.ofFn y)
+              (List.ofFn
+                (FakeObjects.activeAnswers (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n) (Y.inB.eval n))),
+          r := [],
+          received :=
+            [FakeObjects.message (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n)
+                (Y.outLen.eval n) (Y.outs n) fun j =>
+                (List.ofFn ((yaoFunctionality Y).f n x y).2).getD (↑j) false] }.encode
+      (List.ofFn ((yaoFunctionality Y).f n x y).1)
+FAIL(evidence/subagents/a10/probes/FullSimulators): lean exited with status 1
+FAIL(evidence/subagents/a10/probes/FullSimulators): error diagnostics reported
+FAIL(evidence/subagents/a10/probes/FullSimulators): no fresh .olean produced
+        6.28 real         3.76 user         1.39 sys
+          2264481792  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              164103  page reclaims
+               14757  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 704  voluntary context switches
+               14452  involuntary context switches
+            32569747  instructions retired
+            20705970  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-16T04:30:58Z status=1

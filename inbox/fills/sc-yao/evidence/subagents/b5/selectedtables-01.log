@@ -1,0 +1,40 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables.lean:114:6: error: Application type mismatch: The argument
+  hOff
+has type
+  SelectedPlan.slotOffset C rows s u q j =
+    SelectedRows.offset n
+      (argKeys C s i ((s.2.2 i) ((rows i).getD (SelectedSeed.rowIndex C rows s.2.2 i a) fun x => false))) ↑p
+but is expected to have type
+  SelectedPlan.slotOffset C rows s u q j = SelectedRows.offset n (argKeys C s i a) ↑p
+in the application
+  SelectedRows.reconstruct G G₁ G₂ E₁ E₂ hG hGE₁ hGE₂ n q (argKeys C s i a) (o i a) (s.2.1 i a) (↑p) j hks hp
+    (SelectedPlan.slotOffset C rows s u q) (SelectedPlan.slotLength C rows s u q)
+    (SelectedPlan.slotMessage C rows s u q E₁ o) hOff
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables.lean:101:15: warning: This simp argument is unused:
+  hactual
+
+Hint: Omit it from the simp argument list.
+  simp only [̵h̵a̵c̵t̵u̵a̵l̵]̵ ̵at hread
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedTables): no fresh .olean produced
+        3.82 real         2.63 user         1.05 sys
+          2211004416  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170711  page reclaims
+                4486  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 328  voluntary context switches
+                6599  involuntary context switches
+            32406059  instructions retired
+            21682116  cycles elapsed
+             1638736  peak memory footprint

@@ -1,122 +1,196 @@
-# sc-yao · checkpoint 3
+# sc-yao · checkpoint 4
 
 Issue base: `6ce4658db08a1dc2a03a149987197660db078011`.
 Issued exchange pin: `f41e1b4ddaff2a140c893d510bdd8d227f83fed8`.
-Local proof tip: `303e62b64db871df1f070ed2d89e8650e1d1e111`.
-The proof branch `fill/sc-yao` remains local; only inbox/fills/sc-yao is delivered.
+Local proof tip: `f2ec52e69731a81808bfad1fff0f31889a724f42`. The branch `fill/sc-yao` remains local.
+Only `inbox/fills/sc-yao/` is delivered, from the dedicated delivery worktree.
 
 ## Status and scope
 
-`yaoHybrid_polyTime` is proved with its frozen signature, standard axioms only, and no
-transitive admitted dependency. `yaoHybrid_simulators` retains its base admission and sketch.
-The full simulator objective continues; this is a checkpoint, not a partial final.
+`yaoHybrid_polyTime` is proved with its frozen signature, standard axioms only and no
+admitted dependency. `yaoHybrid_simulators` still retains its base body and sketch in
+the exported Yao file. The full objective continues; this is checkpoint4, not a partial final.
 
-This checkpoint adds proved generic two-move view/statistical contracts, a fixed uniform
-Bob simulator with internally derived efficiency, all-occurrence/symbolic-label contracts,
-seed and complete-tape relabeling, and exact generic sampler endpoint identities. The
-completed endpoint contracts are included early as whole declarations. The selected-key B1
-reconstruction, its actual tape-law specialization, and the final concrete security assembly
-are not claimed complete. No unfinished source declaration is exported under src/.
+All generic security contracts are now complete, including both exact sampler endpoints,
+the full-tape selected-coordinate law, polynomial-time all-occurrence reconstruction,
+uniform B1 reduction and the polynomial gate chain. The separate complete concrete
+simulator prototype also passes normal and owner-context A seals. Its body has not yet
+been installed in the frozen target; that installation and the final full-source audits
+remain. Every exported helper is a whole declaration without an admission.
 
-The two sc-garble statements remain frozen admissions at the issue base. No unmerged
-sc-garble, #318 or sc-compose proof declaration is consumed. No new frozen-file region is
-changed in this checkpoint. Yao remains1062 lines,1090 after sc-garble's28-line addition,
-within the1,200-line SY-2 cap. Every other file is below1,000 lines; width is at most100.
-The hub imports all46 children; src/ has50 changed/new files including the three frozen
-files. Complete line inventories, source hashes and signatures are under evidence/interfaces/.
+This checkpoint has67 helper children, their single HybridProof facade and the three
+approved frozen files:71 changed/new source files. Yao has1062 lines,1090 after sc-garble's
+28-line growth, below the SY-2 cap1200. All other files have<1000 lines; width≤100.
+Only the two authorized bodies/sketches, main-results bullet and hub import may change
+in Yao. The source/header checker reports zero unexpected differences and both one-error
+controls pass; its Yao count is72 public plus4 private declarations.
 
-## Contributions and fixed simulators
+No unmerged proof declaration is consumed. One scope correction is included: CP3's
+BobViewShape unnecessarily imported in-flight ObliviousTransfer. This import is removed;
+all required functionality/readers already come from TwoMoveViews→Hybrid→Defs. Its proof
+and statement are unchanged. Four ordinary merged checks and all four exact-source
+BobViewShape seals pass after removal. The earlier source is retained and the correction
+is recorded in evidence/logs/checkpoint4-import-correction.json.
 
-| Agent | Contributions, cumulative through this checkpoint |
+## Contributions
+
+| Agent | Cumulative contributions |
 |---|---|
-| Lead /root | CoinRead, BobIO, BobInit, ProtocolEfficiency, CallEquations, Strategies, SliceReduction, SimulationBound, OTAnswerWords, AliceStatistical; frozen readers/efficiency body; facade and integration/audits/delivery |
-| /root/decoder, sc-yao-a | ChunkScanner, DescriptionDecoder, CoinGarbling, Garbling, WordLists, RowFromCoins, TablesFromCoins, AllTables, GarblingProgram, AliceProgram; FakeObjects, FakeProgram, FakeMessage, FakeSimulator; CoordinateSwap and BobViewShape (the latter generalized from the lead's checked view probe) |
-| /root/evaluation, sc-yao-b | RunWithHost, Decryption, FirstTagged, EvalGate, GarbledRun, BobTables, BobProgram, BobSimulator and GateOccurrences |
-| /root/lengths, sc-yao-c | Lengths, OTInputs, TwoMoveViews, StatisticalSwitch, AliceSimulator, CoinRelabel, RelabelGarbling, CoinSeedRelabel, GateHybrids, GateHybridMessage and SamplerEndpoints |
+| Lead /root | CoinRead, BobIO, BobInit, ProtocolEfficiency, CallEquations, Strategies, SliceReduction, SimulationBound, OTAnswerWords, AliceStatistical, SelectedLaw; generalized CoordinateSwap's finiteness interface; corrected BobViewShape's import; frozen readers and efficiency body; integration, checks, commits and delivery. |
+| /root/decoder, sc-yao-a | ChunkScanner, DescriptionDecoder, CoinGarbling, Garbling, WordLists, RowFromCoins, TablesFromCoins, AllTables, GarblingProgram, AliceProgram, FakeObjects, FakeProgram, FakeMessage, FakeSimulator, CoordinateSwap, BobViewShape, FakeSimulatorFactory, BobStageZero, GateHybridChain, GateHybridSecurity; complete concrete simulator prototype. |
+| /root/evaluation, sc-yao-b | RunWithHost, Decryption, FirstTagged, EvalGate, GarbledRun, BobTables, BobProgram, BobSimulator, GateOccurrences; NonceCoordinates, SeedCoordinates, SliceReconstruction, SelectedSlices, SelectedSeed, SelectedRows, SelectedPlan, SelectedTables, SelectedAdviceBounds, SelectedStep, SelectedStepChoices, SelectedStepSecurity. |
+| /root/lengths, sc-yao-c | Lengths, OTInputs, TwoMoveViews, StatisticalSwitch, AliceSimulator, CoinRelabel, RelabelGarbling, CoinSeedRelabel, GateHybrids, GateHybridMessage, SamplerEndpoints, TapeValues, SelectedFields, GateStepCases, BobStatistical; shorter concrete assembly skeleton. |
 
-Only the lead edits frozen files, commits the local proof branch, checks the merged source
-and delivers. Every child has a separate worktree/olean tree and read-only package symlink.
-No child commits or delivery pushes occurred.
+Only the lead edits frozen files, commits and delivers. Children have separate worktrees,
+separate TCSlib artifact trees and read-only package symlinks. All child evidence is under
+evidence/subagents/. Ownership transfers and immutable handoff hashes are retained.
 
-AliceSimulator.simulator p is a uniform copying machine, fixed before inputs or D. The new
-AliceStatistical.distAdv_real_ideal_le derives its statistical simulation bound from the
-shared output-word equation, rounds/move order, p, the canonical-tape bad-event bound and
-correctness off that event. It normalizes the actual tape and proves the view agreement;
-it assumes no real/ideal sampler identity. AliceGenericGlue is a passing concrete Yao-body
-application using yaoHybrid_correct and the supplied yaoSeed_good_whp bound.
+## Interface and concrete premise discharges (SY-1)
 
-FakeSimulator.Data is the input contract of the new simulator construction: algorithms,
-polynomial counts, unary generator and canonical shape, original circuit/output/seed family
-and its addressed readers. Its seed is a parameter depending only on n and the raw tape;
-no concrete Yao semantic definition is copied. The input-range condition permits a larger
-input count. message_poly/answers_poly derive actual fake-message and answer computation
-internally from FakeProgram, with no PTC fake-message or reconstruction hypothesis.
-simulator d coins then uses the existing BobSimulator. uniform/coins/runAtL/runAt/idealB
-readers expose the same fixed uniform machine before D, n or private inputs. The canonical
-parameter adapter normalizes the unary parameter even on malformed words.
+Helpers are generic in the actual circuit, seed, output selectors, strategy equations and
+functionality; they cannot see or name Yao's definitions. Hybrid semantics are defined once
+in GateHybrids/GateHybridMessage and consumed through readers. No seed/message/protocol
+semantic copy is introduced. Source headers and complete elaborated signatures (including
+implicit section parameters, private and generated constants) are exported in evidence.
 
-## Interface (SY-1)
+The efficiency body uses AliceProgram.message_poly, BobProgram.output_poly, CallEquations
+and the answer-independent message bound through ProtocolEfficiency. Uniformity supplies
+the actual circuit description; canonical seed readers supply all key/nonce/shift blocks.
+Strategies are efficient on arbitrary private words, tapes and malformed histories.
 
-The efficiency body and its interfaces remain as in checkpoint2. AliceProgram.message_poly
-uses the uniform description, public encoded-table/key/pair readers and exact seed blocks;
-BobProgram.output_poly uses the generic runWith/evalGate machine on arbitrary messages and
-answers. CallEquations and the answer-independent message bound finish polyTime_iff.
+The following describes the checked prototype, not an exported proof of the frozen target.
 
-The simulator-route hypotheses and intended concrete readers are explicit:
 
-| Generic contract / premise | Concrete owned-body discharge |
-|---|---|
-| AliceStatistical: p and Alice coin polynomial, rounds2/Alice-first | yaoCoins, yaoAlice_coins, yaoMain_rounds/verifierFirst, owned rfl |
-| AliceStatistical: equal functionality output words | yaoFunctionality_f / owned rfl |
-| AliceStatistical: bad-event bound, correctness off bad | frozen yaoSeed_good_whp, yaoHybrid_correct first conjunct; AliceGenericGlue PASS |
-| realB_output_switch: actual output equality off bad and bad probability | yaoHybrid_correct second conjunct; strategyTapeEquiv_ofFn, uprob_comp_equiv/uprob_fst; BobOutputSwitchGlue PASS |
-| BobViewShape: rounds/move order, Bob zero coins, Alice sender | yaoMain_rounds/verifierFirst, yaoBob_coins, yaoAlice_next_nil |
-| OTAnswerWords.answersB_eq_active: call count and point reader | yaoHybrid_calls, yaoHybrid_answersB_getD; wire values from values_getD_input |
-| FakeSimulator.Data.make: PT evaluators / normalized generator | hE1/hE2, Y.uniform, encodeCircuit_eq and encodeMsgs_eq_encWords |
-| Data.make: count/range/output/fan-in | Y.inA/inB/outLen/sizeBound, Y.outs_lt, isFaninTwo_iff; original Y.circ/outs supplied |
-| Data.make: seed key/nonce/XOR equations | keyAt_yaoSeed, yaoSeed_snd_fst/snd_snd, readBits_apply, assignIdx_eq, xorShift_apply; owned rfl |
-| SamplerEndpoints: full tape bound, fan-in and four seed readers | Y.size_le, isFaninTwo_iff and the same original seed readers |
-| SamplerEndpoints: real encoded-view equation | BobViewShape, OTAnswerWords, yaoMsg/tables/keys/pairs readers and actual input values |
-| SamplerEndpoints: final result and ideal coin/view reader | Y.output_apply, C.values readers; FakeSimulator.idealB_eq/make_messageAt/make_answersAt; existing NUPPT.coinsEquivPoly/ofFn |
+### Concrete simulator assembly and premise discharge (agent a)
 
-The probes are body-instantiation harnesses; reductions of Yao's own definitions are allowed
-in the future owned theorem body. No helper imports/names YaoCircuit, yaoSeed or yaoHybrid.
-Complete formal signatures and all implicit section parameters are printed in stored-constant
-logs, and source headers are exported under evidence/interfaces/.
+The complete a12 prototype preserves the full frozen target signature, including
+`G₁`, `G₂`, both evaluator equations, both efficiency hypotheses, and all three PRF
+hypotheses. Its checked body is124 lines (maximum width93); the computational `hBob`
+instantiation is25 lines. It introduces no new admission or global Yao semantic definition.
 
-SliceReduction.reconstruction_negligible takes a fixed total polynomial-time rebuild,
-finite nonempty advice choices with a polynomial word bound, fitting offsets/lengths and
-two deterministic message families. It chooses the maximizing advice at each n and builds
-one parameter-preserving NUPPT reduction with the original D coins before invoking B1's
-uniform bound. It does not assume an embedding exists. distAdv_fibers_le averages independent
-auxiliary randomness; distAdv_chain_le and chain_negligible use the published hybrid bound
-and polynomial-times-negligible closure. SimulationBound combines the common statistical
-switch and uniform Bob bound for fixed SA/SB. The remaining embedding must discharge these
-premises concretely; that work is not hidden as a PTC or sampler-identity hypothesis.
+`S_A = AliceSimulator.simulator (yaoCoins Y)`. `FakeSimulatorFactory.exists_simulator`
+constructs one uniform `S_B` with the same coin polynomial and the exact ideal-view word
+contract; both machines are chosen before the distinguisher and inputs. The factory uses
+`Y.uniform`, `Y.circ`, `Y.outs`, `Y.outs_lt`, both actual evaluator algorithms and their
+proved efficiency. Its description equation uses `encodeCircuit_eq` and
+`encodeMsgs_eq_encWords`; its input-range equation is reflexivity under polynomial notation.
+Arity follows from `DAGCircuit.isFaninTwo_iff` applied to `Y.fanin`.
 
-## Gate 27 hand-off
+| Premise | Actual instantiation/readers |
+| --- | --- |
+| Key blocks | `yaoSeed_fst`, `keyAt_eq`, `dif_pos`, `readBits_apply`. |
+| Both nonce halves | `congrArg Prod.fst/snd (yaoSeed_snd_fst ...)`, `readBits_apply`, `assignIdx_eq`. |
+| Row shifts | `yaoSeed_snd_snd`, `xorShift_apply`, `readBits_apply`. |
+| Input wire values | `values_getD_input`, `Fin.castAdd/natAdd`, `Fin.append_left/right`, and public `ofFn` list readers. |
+| Actual Bob view | `BobStageZero.acceptProb_eq_stage0`, with `yaoAlice_next_nil`, `yaoHybrid_answersB_getD`, main/coin/call readers, and `yaoMsg_eq`/`yaoTables_eq`/`yaoKeysA_eq`/`yaoPairs_eq`. |
+| Ideal endpoint | `SamplerEndpoints.acceptProb_end_eq_ideal` and the factory's exact ideal word contract. `yaoCoins_eval`, `NUPPT.coinsEquivPoly_symm_ofFn`, and `ofFn_arrowCongr_finCongr` preserve the tape word. |
 
-1. Gate/row sub-hybrids: GateHybrids.rowWith/tableWith, outputBit/stageBit and exact
-   even/odd/start/end readers. outputBit_first_unchanged and outputBit_second_unchanged
-   isolate the two selected inactive-argument substeps. Zero/one/two arguments are included.
-2. All occurrences/padding: GateOccurrences.mem_occurrences_iff, exhaustive,
-   per_row_unique, occurrences_nodup, length_occurrences_le (at most4*gates) and
-   padded_occurrences_some_iff include occurrences in every gate. No key-value distinction
-   is assumed; the address is a symbolic vertex/bit label.
-3. No-dependence: selected_wire_lt, hybrid_plaintext_ne_of_used, active_label_ne and
-   decoding_label_ne establish symbolic separation using acyclicity, prior fake gates,
-   active input/answer keys, outs_sink and args.Nodup. The final selected-fill specialization
-   to actual substeps and shared descriptor advice remains work in progress.
-4. Exact sampler endpoints: RelabelGarbling gives per-seed key/row/table/output-pair
-   identities; CoinSeedRelabel.seed_relabel identifies the full addressed tape action,
-   including unused assignment codes, shifts and n=0. SamplerEndpoints composes these with
-   the supplied real view equation and acceptProb_comp_equiv. The final stage is the
-   canonical FakeObjects.message and active answers, transported through any given ideal
-   coin/view reader. The actual selected-coordinate law is ongoing, not inferred from a
-   uniform distribution over all permutations.
-5. Polynomial-time reconstruction: real/fake garbling, generic decoder/evaluator and
-   simulator view machines are proved. B1 challenge row/table/view reconstruction and its
-   polynomial advice envelope are ongoing in b5 and not exported in this checkpoint.
+The negligible bad-event bound is the frozen `yaoSeed_good_whp` instantiated with the
+actual `hGE₁`, `hGE₂`, `hG₁`, `hG₂`. `yaoHybrid_correct` supplies both off-bad output
+equalities. `AliceStatistical.distAdv_real_ideal_le` and
+`BobStatistical.statClose_real_output_switch` discharge the two statistical steps.
+
+The computational call is `GateHybridSecurity.endpoint_negligible` with input family
+`(Fin (Y.inA.eval n) → Bool) × (Fin (Y.inB.eval n) → Bool)`, counts
+`S=Y.sizeBound`, `A=Y.inA`, `B=Y.inB`, `O=R=Y.outLen`, seed `yaoSeed Y`, output
+selector `Y.outs`, wire values `((Y.circ n).values (Fin.append x y)).getD · false`,
+Bob word `ofFn y`, and outer Alice word `ofFn (Y.output n x y)`. `Y.size_le`,
+`Y.fanin`, `GateHybrids.values_consistent`, `Y.outs_sink`, and `List.length_ofFn`
+discharge its structural/word bounds. The joint generator is exactly
+`Fin.append (G₁ n s x) (G₂ n s x)`, with
+`L = .add (.add .var .var) (.add .var innerLen)`. `List.ofFn_fin_append` proves its
+word equation; public `PolyExpr.eval_add/mul/const/var` and `innerLen_eq` establish
+`7*n+2 ≤ L.eval n`. B1 is exactly `sliceMultiMessageSecure_of_prfOut hG₁₂`.
+`simulators_of_output_switch` combines the resulting computational bound with the
+statistical bound. No assumed fake-message or active-answer efficiency remains.
+
+### Verification and ownership qualification
+
+The generic helper passes its normal check and all four full-file A/B × strict/coe seals.
+Both stored helper constants have empty sorry closures and only `propext`,
+`Classical.choice`, `Quot.sound`. The complete prototype's final normal check has zero
+errors/warnings, and both owner-context canonical A seals pass. A genuine initial A issue
+(implicit expansion of foreign `distAdv` at the final bound) was repaired with an explicit
+`distAdv_def` rewrite; all affected checks were rerun and both versions are retained.
+
+Each diagnostic B variant has9 errors:2 already in the unchanged PRF signature,
+3 further polynomial add-index mismatches, and4 dependent-constructor cascades.
+These arise when B deliberately seals the explicitly exempt `PolyExpr.eval` notation;
+they are individually attributed in `a12/B-ATTRIBUTION.json`, not reported as passes.
+Both error forms were counted with `-DmaxErrors=0`.
+
+The prototype seals exempt exactly `TCSlib.Cryptography.SecureComputation.Yao` to emulate
+its future owner-local theorem body; all other imported TCSlib definitions are sealed.
+This is an owner-context prototype audit, not a substitute for the lead's final full-source
+`Yao.lean` normal/seal checks after installing the body.
+
+The focused trace visits18544 dependencies, excludes the old `yaoHybrid_simulators`,
+and finds exactly these two authorized frozen admitted declarations:
+
+* `TCSlib.Cryptography.SecureComputation.yaoSeed_good_whp`;
+* `TCSlib.Cryptography.SecureComputation.sliceMultiMessageSecure_of_prfOut`.
+
+Thus the prototype is proved modulo sc-garble, with no new admission. Canonical source:
+`a12/probes/CompleteSimulators.lean`, SHA256
+`2438566d0ccd1ec9b4b40e1e12b4d4dc5fc4e98f1db5741e1603d4c079b7d300`.
+Generic helper SHA256:
+`197cdfbe60aa5ee5fffb13f45f62c4d3eacb51cbf9fa00f78a3220c337ca5170`.
+
+
+## Gate 27 hand-off — selected-key embedding
+
+In this fragment, `H/` abbreviates
+`TCSlib/Cryptography/SecureComputation/Yao/HybridProof/`; declaration names are relative to
+`TCSlib.Cryptography.SecureComputation.YaoHybridProof`. Agent b proved b5/v6/v7; supporting
+shared contracts below retain their respective lead/a/c authorship.
+
+| Gate 27 obligation | Declaration map and delivered contract |
+| --- | --- |
+| 1. Gate and row sub-hybrids | Shared `H/GateHybrids.lean` `outputBit`, `stageBit`, `outputBit_current_first/current_rest`, and `H/GateHybridMessage.lean` `sample_eq` specify the two substeps per gate. v6 `SelectedStep.unselected_eq`, `advice_next`, `reconstruct` (`H/SelectedStep.lean:60,91,145`) give both neighboring endpoints for each actual argument. v7 `SelectedStepSecurity.selected_negligible` (`H/SelectedStepSecurity.lean:176`) uniformly bounds them. Missing arguments use c's `SelectedFields.stage_first_of_arity_zero/stage_second_of_arity_le_one` and `GateStepCases`; no dummy selected vertex is required. |
+| 2. All occurrences, with padding | `GateOccurrences.mem_occurrences_iff`, `length_occurrences_le`, `padded_occurrences_some_iff` enumerate every gate/permuted-row/selected-position occurrence, not merely the current gate. b5 `SelectedSeed.slotIndex_padded` (`H/SelectedSeed.lean:355`) and `SelectedPlan.slotReaders_of_padded/slots_fit` identify every real slot exactly. v7 `SelectedStepChoices.capacity` (`H/SelectedStepChoices.lean:100`) closes capacity for `q=4S`; its `offset`, `len`, `message` cover real and unused slots. |
+| 3. No dependence on the selected inactive label | Acyclicity is `GateOccurrences.selected_wire_lt`; shared `SelectedFields.stageBit_plaintext_ne_even/odd/next`, consumed by v6 `SelectedStep.plaintext_ne`, exclude `(u,true)` from every plaintext label, including the already-fake producing gate. `GateOccurrences.decoding_label_ne` uses `outs_sink`; `SelectedFields.keyAt_false`, `activeAnswers_fill`, `decodePair_fill`, `message_tail_fill` keep Alice's active keys, Bob's OT answers and decoding tail fixed. b5 `SelectedSeed.argument_label_eq_iff` and `fill_argKeys_some/none` use argument Nodup to exclude double use within one row. v6 `reconstruct` discharges plaintext/output separation internally. These are inequalities of labels, never inequalities of actual key values. |
+| 4. Exact coin and view sampler identities | b5 `SelectedTables.record_reconstruct/tables_reconstruct/tablesWith_reconstruct/view_reconstruct/sample_reconstruct` (`H/SelectedTables.lean:69,130,169,215,256`) are pointwise in every challenge key and nonce vector. v6 `SelectedStep.reconstruct` and v7 `SelectedStepChoices.rebuild_some` use the **same before-stage advice** for both sides. b5 `NonceCoordinates.pick_iff_place/nonce_read` and `SeedCoordinates.dataEquiv_fill` identify coordinate replacement. Shared `TapeValues.seed_on_inverse`, `CoordinateSwap` and lead `SelectedLaw.acceptProb_fill` retain the actual shifts/unused coordinates and close the uniform-tape law. The separate endpoint coin identities are shared `GateHybridMessage.sample_relabel/sample_end`, not redefined here. |
+| 5. Polynomial-time reconstruction | b5 `SliceReconstruction.row_poly/tables_poly/rebuild_poly` (`H/SliceReconstruction.lean:98,149,216`) prove one total raw reconstruction on **every** input/advice string, requiring only the uniform `E₂` leaf's polynomial time. Advice construction and precomputed messages are offline, polynomial-length data. `SelectedAdviceBounds.sample_advice_budget` and v7 `SelectedStepChoices.advice_budget` close that length bound. Lead `SliceReduction.exists_adviceReduction` preserves `D.coins` and runs `D.distinguisherL n` at the same `1^n`. |
+
+For evaluated polynomial bounds `s=S(n), a=A(n), b=B(n), o=O(n), r=R(n)`, the actual choices are
+
+```
+q(n) = 4s,                       slots = q(n)+1,
+t(n) = 2a(2n+2)+2+o(6n+6),        i(n) = 2b+2+bn,
+sampleBudget(n) = 2s(16(2q(n)+7n+8)+18) + 2t(n) + 2i(n) + r + 6.
+```
+
+These are the published `SelectedAdviceBounds.slotBudget`, `tailBudget`, `privateBudget`,
+`sampleBudget` and evaluation readers; `sample_advice_budget` derives row count and capacity
+from fan-in two, canonical rows and `C.size≤S(n)`. A record costs at most `2q+7n+8` bits.
+
+The interface is nonadaptive: `SelectedRows.word/message/descriptor` precompute the inner
+ciphertext when the selected key is outer, or wrap the inner challenge afterwards using
+the known other key/nonce. `SelectedSlices.only_row/inner_row/outer_row` use precisely
+`(0,n)` and `(2n,4n+2)`. Every challenge message is fixed before any challenge ciphertext;
+unchanged/unused slots get equal messages. Repeated actual key values are allowed. The
+actual tape law includes two independent nonce halves and keeps shifts plus all unread
+padding; it never asserts uniformity over all derived permutations.
+
+Zero-width keys, zero input/output counts and zero gates are included. The v7 choice type
+is `Option (input × actual gate/argument) × fullTape`; `none` supplies empty advice and
+zero-length messages, so no Nonempty input/gate/vertex premise is introduced. Constant
+and one-argument missing substeps are equalities. Repeated or input output vertices need
+no extra restriction beyond the original sink hypothesis.
+
+The exact B1 route is v7 `filled_negligible` (`H/SelectedStepSecurity.lean:79`): apply lead
+`SliceReduction.reconstruction_negligible` to this finite choice family, maximizing over
+input, selected step **and the entire baseline tape**, with the explicit advice polynomial
+and the fixed raw reconstruction. The empty option also forces the resulting negligible
+bound nonnegative at every n. `selected_negligible` then uses
+`SliceReduction.distAdv_fibers_le` and `SelectedLaw.acceptProb_fill` on both endpoints.
+Thus one μ bounds all actual selected neighbors, with no assumed sampler identity or
+unproved reduction premise. The caller supplies actual frozen B1
+`sliceMultiMessageSecure_of_prfOut`, the concatenation/evaluation equations and joint pad
+length at least `7n+2`. No D1–D4, PRF hybrid, collision bound or chain argument is rebuilt;
+a's `GateHybridChain`/`GateHybridSecurity` perform the polynomial chain closure.
+
+
 
 ## Overlap and reuse
 
@@ -177,7 +251,7 @@ relatives are retained under each agent's evidence. These disclosures include in
   reuse. The source version and subsequent runner changes are retained.
 
 
-Additional checkpoint3 disclosures:
+Further disclosed general contracts:
 
 - CoinSeedRelabel.assignmentFold_injective/assignmentEmbedding re-derive the general
   arity<=2 assignment-code bound/injectivity of unmerged sc-garble
@@ -210,22 +284,62 @@ Additional checkpoint3 disclosures:
   the lead's checked concrete view proof; it consumes TwoMoveViews rather than re-proving
   transcript semantics. These provenance details and every development log are retained.
 
-## Scope requests and readers
+Additional completed-contract disclosures:
 
-SY-1–SY-6 apply. The only frozen circuit insertions are the exact SY-3 readers:
-isFaninTwo_iff (byte-identical to sc-garble), encodeList_nil/cons, GateKind.encode_and/or/not,
-DAGGate.encode_eq and DAGCircuit.encode_parts. Removing them restores the base bytes.
-The encode_parts name avoids an existing downstream encode_eq name. Their24 reader-necessity
-controls remain delivered:8 unsealed direct passes,8 sealed negatives each exactly1error,
-and8 sealed reader passes, counting both diagnostic forms.
+- The lead strengthened CoordinateSwap.acceptProb_swap to require finite whole coordinate
+  spaces rather than independently enumerated coordinate index types. It uses the same
+  matching/reseeding proof, with no new counting identity. This avoids costly typeclass
+  search and accommodates the retained actual tape directly.
+- SelectedLaw.acceptProb_fill composes public TapeValues/SeedCoordinates/CoordinateSwap
+  readers with acceptProb_comp_equiv. Its new content is the exact actual full-tape
+  specialization, retaining shifts and every unused block. It adds no probability inequality.
+- FakeSimulatorFactory packages the already proved uniform fake machine with a public
+  existential word contract. This avoids dependent matching against Data.make in the
+  concrete owner-context A seal; no simulator semantics or efficiency proof is copied.
+- BobStatistical is a direct specialization of the published generic output switch, with
+  explicit actual strategy-tape transport. GateStepCases/GateHybridChain/GateHybridSecurity
+  compose public stage readers, selected-neighbor security and the existing polynomial
+  hybrid-chain bound. No new PRF/collision/probability-chain proof is introduced.
 
-The four user-approved extra imports and verbatim answers are in evidence/scope-request/:
-ThreeColoring.Machines; FromPRF.ReductionMachine; FromPRF.HybridLemmas; and
-Asymptotic.BlockEncryptor. Their closure is193 original/approved modules; no extra Mathlib
-root was added for the fourth import. BlockEncryptor's consumer is ongoing b5, not this src/.
-The user also explicitly authorized the full objective, edits/commits/delivery and wrapper
-checks despite AGENTS: “Yes, follow the full objective and wrapper rules”. These approvals
-persist across all relocations. No further frozen scope was assumed.
+
+## Overlap and reuse — b5/v6/v7
+
+* Slice identities reuse `SecureComputation/SpecialEncryptionMulti.lean:107,125,152`
+  (`sliceEnc_append_left/right`, `sliceMultiEncDist_apply`). The new declarations assemble
+  selected-layer cases and exact full-view endpoints, not another encryption proof.
+* Encoding/traversal reuse `Asymptotic/BlockEncryptor.lean:60` (`encodeList_eq_flatMap`,
+  explicitly scope-approved), `Complexity/ClassP/BinaryArith/Words.lean:81,208,221`
+  (`length_encWords_le`, `mapW_pairEncode`, `polyTimeComputable_mapW`). No DL-46 copy was added.
+  Slot reads use `List.getD_eq_getElem`/`List.getElem_ofFn`; ranks use Mathlib
+  `Data/List/Basic.lean:566` and `Data/List/Nodup.lean:120`. Padding consumes
+  `Asymptotic/EnsemblesLemmas.lean:198,201`. No DL-47 roundtrip is re-proved.
+* Coordinates compose Mathlib's `Equiv.curry`, `piCurry`, `piCongrRight`,
+  `boolArrowEquivProd`, `sumArrowEquivProdArrow` and `funUnique`. New material is the
+  all-occurrence rank/partial-inverse/fill contract. Bounds consume shared `Lengths` and
+  `GateOccurrences`; v7 canonical-row and capacity facts publish reader compositions
+  previously inline in `sample_advice_budget`, whose conclusion cannot supply those facts.
+* Probability/maximizing/averaging are consumed from `H/SliceReduction.lean:52,80,139`
+  and `H/SelectedLaw.lean:66`; base probability transport is
+  `Cryptography/Foundations/Experiments.lean:107` (`acceptProb_comp_equiv`). b adds no
+  competing probability, reduction-machine or hybrid-sum proof.
+* Nearest **unmerged** relatives in sc-garble's delivered `Garbling/CoinBlocks.lean:162`
+  (`pushesUniform_key_row_blocks`) and `Garbling/Probability.lean:62,92,102`
+  (`pushesUniform_output_argKeys`, `pushesUniform_rowCoin`,
+  `pushesUniform_output_argKeys_row`) establish key/row marginals. They do not retain the
+  shifts/unused coordinates needed by permutation-dependent all-occurrence replacement.
+  These b5/v6/v7 modules neither copy nor re-prove those lemmas: they consume the separately
+  audited shared full-coordinate law. No #318 `ObliviousTransfer/*` or sc-compose
+  `ComposeSecurity/*` result is re-derived here. The unmerged sources were inspected for
+  this final comparison after the proofs were complete; no design/code was taken from them.
+
+Search and inline-shape disclosures are in `evidence/subagents/b5/{reuse-search.log,
+reuse-search-resume3.log,RECONSTRUCTION.md}`, `b6/REUSE.md`, and
+`b7/{reuse-search.log,REUSE.md}`. Immutable b5/v6/v7 evidence records 12 exact-source normal
+checks, 48 full-file A/B strict/coe seals and all 289 stored-constant closures: every sorry
+closure is empty, with only `Classical.choice`, `Quot.sound`, `propext`. Source widths are
+at most100, files below1000 lines, and scoped style lint is clean. No b source was changed
+for this report fragment.
+
 
 ## Hosts, promotion and reader requests (SY-4)
 
@@ -240,68 +354,141 @@ The supporting ChunkScanner is also public with a same-machine clean/time/head c
 No private host is introduced. The read-only source/signature inventory identifies every
 new public definition and its published reader.
 
+## Additional c overlap comparisons
+
+The following additional nearest relatives were compared:
+
+- sc-garble exchange a73072f1, GarblingSecurity/NestedBounds.lean,
+  GarblingCoins.length_nestedInner: exact canonical-pad inner length versus c's
+  arbitrary-evaluator bound; compared, not imported/copied.
+- sc-garble Garbling/CoinBlocks.lean, GarblingProbability.assignmentFold_small:
+  CoinSeedRelabel assignment-fold bound/injectivity is an explicit general re-derivation
+  via the new public two-bit equation/digit bounds; later proof-only consolidation needed.
+- Same CoinBlocks file: pushesUniform_bits_of_blocks, key_row_blocks_injective,
+  pushesUniform_key_row_blocks are nearest relatives to CoinRelabel/TapeValues. Those prove
+  restricted marginals; c proves a full invertible split retaining shifts/padding. No
+  unmerged probability proof/helper import is used.
+- sc-garble delivered Garbling.lean, inline hcardNat in uprob_not_good_le_of_perm:
+  related card(A)*(card(A)-1)≤12; Lengths proves card(A)≤4 via public finite-cardinality
+  and power-monotonicity APIs.
+- #318 exchange f62a25b3: ObliviousTransfer/Shape.lean exec_five/transcriptWith_isOT;
+  ViewA.lean realA_realCoins; Simulators.lean simAView/simAView_layout. Related five-message
+  OT/view/coin calculations; not the two-move/copying contracts. No code copied/imported.
+- sc-compose exchange bdfdcb76: ComposeSecurity/Runs.lean realA_compose_eq/realB_compose_eq;
+  ComposeSecurity/Sim.lean ComposeSim.simV and assemblers. Related composition identities,
+  not reusable two-move/copying contracts. No code copied/imported. Efficiency/Lengths
+  were compared for the OT adapters.
+
+Merged public lemmas are used directly: EncodingMachines.divNum/getBit,
+BinArith.length_encWords_le, NUPPT.ofPolyTimeUniform, acceptProb_comp_equiv/fst, distAdv_def.
+BobStatistical's within-team extraction from root BobOutputSwitchGlue and comparison with
+AliceStatistical are disclosed in its CONTRIBUTION.md. Seal/control tooling adapts
+sc-garble a73072f1 evidence/tools; reference copies/changes are in c/SEAL-PROVENANCE.md.
+The consulted unmerged Lean source is preserved as evidence, not vendored/imported.
+
+
+
+## Scope requests and readers
+
+SY-1–SY-6 govern. The only circuit insertions are isFaninTwo_iff, byte-identical to
+sc-garble, plus encodeList_nil/cons, GateKind.encode_and/or/not, DAGGate.encode_eq and
+DAGCircuit.encode_parts. Removing them restores base bytes. All24 reader controls are
+retained:8 unsealed passes,8 sealed negatives each exactly1 error,8 sealed reader passes.
+Both diagnostic forms are counted.
+
+Four extra imports were explicitly approved, with verbatim requests/answers under
+evidence/scope-request/: ThreeColoring.Machines, FromPRF.ReductionMachine,
+FromPRF.HybridLemmas, Asymptotic.BlockEncryptor. The last is now actually used by
+SelectedSlices via the public encodeList_eq_flatMap; no unapproved Mathlib root is introduced.
+The full issued-plus-approved upstream order has193 modules, extended by68 helpers/facade.
+The user authorized full edits, scoped commits/pushes and shared-wrapper checks despite
+the supplied AGENTS prohibition: “Yes, follow the full objective and wrapper rules”.
+Approvals persist across relocation. No other frozen-file change or scope is assumed.
 
 ## Validation and evidence
 
-All Lean/Lake/tree commands use /private/tmp/sc-yao-lean-slot.sh and tags sc-yao/a/b/c,
-with at most THREE Lean processes host-wide. Python is python3 -I; never lake build or
-unfiltered cache get. Pins/packs and packages were verified at bootstrap. Children use
-separate TCSlib artifact trees and read-only package symlinks. The latest resumed preflight
-has6.368GiB headroom against4GiB and no orphan proof process. Wrapper SHA256 is unchanged.
-The first resumed lead normal batch lacked access to shared slot files and never acquired
-one; its waiting process group was stopped, its log retained, then all6checks reran with
-required access and passed. No Lean run or resource failure occurred in that first attempt.
+Every Lean/Lake/tree check uses /private/tmp/sc-yao-lean-slot.sh, with at most THREE Lean
+processes host-wide, shared with all other jobs; tags sc-yao/a/b/c. Python is python3 -I.
+No lake build or unfiltered cache fetch was used. Wrapper SHA256:
+ff64d8d5b6baf4e7b1c15172a7faeb70246f22c6acf76134bbdb70c017f41f1a.
+Initial packs/pins/narrow cache and package checks remain delivered. Latest resumed
+preflight headroom6.368GiB, later6.180GiB, both above4GiB; disk free>130GiB.
+Shared-slot histories and all interrupted/failed development versions are retained.
 
-All integrated new helpers, hub, Yao and YaoReal pass ordinary checks. The complete audit
-prints1082 stored constants including704 helper constants, private/generated constants
-included. Every helper uses only propext/Classical.choice/Quot.sound, with empty transitive
-sorry closure. The efficiency target also has exactly those axioms and empty closure.
-yaoHybrid_hbcSecure still reaches the simulator admission only; yaoProtocol_hbcSecure
-additionally reaches the two frozen OT targets and hbcSecure_compose. Base and current
-consumer traces remain delivered.
+The full261-module checkpoint sweep passes with0 errors and fresh artifacts. Every raw
+source snapshot hash matches the committed source. Comparing declaration names with the
+32 base admissions yields31, exactly removal of yaoHybrid_polyTime and no addition.
+See checkpoint4-sweep-summary.json and logs/checkpoint4-sweep/results.jsonl.
 
-The lead's16 new full-file variants pass (SimulationBound, OTAnswerWords, AliceStatistical,
-hub); final-source SimulationBound also has4/4rerun after a module-inventory documentation
-correction. Its own stored-constant trace passes. All integrated agents' full-file seals
-and controls pass, with their exact source/version records. Definition seals cover every
-imported TCSlib definition and generated matcher, excluding only authorized notation.
-All commands use -DmaxErrors=0 and count both error: and error(...). Earlier failed sources,
-unused-tactic warnings, repairs and documentation-only comparisons are retained.
+The merged all-stored probe prints1488 constants including1110 helper constants. Every
+helper has empty transitive sorry closure and only propext/Classical.choice/Quot.sound.
+The efficiency target has those standard axioms and empty closure. The simulator target
+and yaoHybrid_hbcSecure still reach the target's base admission; yaoProtocol_hbcSecure
+additionally reaches the two OT target admissions and hbcSecure_compose. The probe used
+the pre-import-correction artifacts; no declaration body changed in that correction.
+The corrected source is independently rechecked/sealed and the final audit will be rerun.
+Earlier c probes covered40 explicit source roots; later c probes dynamically enumerate
+278 stored constants. The lead's complete1488-constant merged audit independently closes
+the earlier coverage gap; the early source-root probes are not described as exhaustive.
 
-Frozen-file diagnostics remain the previously audited baseline. DAGCircuit:0errors in all
-variants. Uniform:4inherited errors in two old declarations. Yao canonical A strict/coe
-passes; B strict/coe each17errors=15unchanged base diagnostics plus2efficiency call-input
-applications requiring the explicitly exempt PolyExpr.eval notation. These two are fully
-attributed in efficiency-seal-summary.json. No simulator body has changed at this checkpoint.
+Every new helper has exact-version A/B strict/coe evidence from its owner. The lead has
+additionally rechecked all helpers in the full sweep; its complete facade4/4, strengthened
+CoordinateSwap/SelectedLaw8/8 and corrected BobViewShape4/4 full-file variants pass.
+All seals cover full imported TCSlib definition/matcher closures, use -DmaxErrors=0 and
+count error: and error(...). Coercion notation variants are canonical. No failed check
+is hidden by a cutoff. The prepared complete-helper seal manifests are for the next final
+lead verification; their generated sources alone are not claimed to be executed runs.
 
-The source/header/order/scope checker passes with both one-error controls. The full four-tip
-namespace-resolved name scan reports492 new explicit names and0unexpected clashes; the
-approved byte-identical fan-in reader is the sole intentional overlap. Downstream checks
-also validate generated names. The explicit-definition scan reviews1399tactic references
-across8949files including core/Mathlib. Its9candidates are local h/hv/hi/heq/hNext binders,
-with exact context review and source hashes,0foreign-definition violations. Earlier scan
-versions are preserved.
+Frozen-file baseline diagnostics remain: DAGCircuit0 in all variants; Uniform4 inherited
+errors in two old declarations; Yao A strict/coe0, B strict/coe17=15 base plus2 efficiency
+call-input polynomial-evaluation mismatches. Each is attributed in the retained baseline
+and efficiency seal summaries. The a12 prototype has a separate individually attributed
+B9, not a four-seal pass; its owner-context exemption is documented above.
 
-Exact line-set lint: Cryptography92 FAIL/102 WARN, base92/101; the only new WARN is Yao's
-approved1062-line size. Circuits0 FAIL/79 WARN, unchanged counts, with missing-reader text
-improved11→10 and2→1 in the two SY-3files. No new FAIL or undisclosed WARN is introduced.
-Width, generic visibility, complete facade child imports and no-helper-admission scans pass.
+Name scan:764 new explicit namespace-resolved public/private names,0 unexpected clashes
+across issue base, sc-garble a73072f1, sc-ot f62a25b3 and sc-compose bdfdcb76. The sole
+intentional coincidence is the byte-identical SY-3 reader. Explicit definition review:
+8970 files,1909 tactic references,17 candidates:15 local binders and2 same-file published
+SelectedRows.length_eq theorem references,0 foreign-definition violations. Full source
+contexts/hashes are retained. Initial parser assertions and their fixes are preserved.
 
-All240 modules pass with0 errors and fresh artifacts. The source snapshots match the committed source, and the complete issued-plus-approved order is covered. Comparing declaration names against base-sorries.txt gives31remaining admissions, exactly the removal of yaoHybrid_polyTime; no admission was added. See evidence/checkpoint3-sweep-summary.json and the complete checkpoint3-sweep raw logs/results.
+Exact lint line-set comparison: Cryptography92 FAIL/102 WARN versus base92/101; the only
+new WARN is the approved Yao size. Circuits0 FAIL/79 WARN, with missing-reader warnings
+improved11→10 and2→1. No new FAIL or undisclosed WARN. The old Yao target-size INFO
+disappears when it becomes a facade. Source scope, width, line bounds, complete facade
+imports and no-helper-admission scans pass.
 
-The complete unsigned five-patch series and COMMITS.tsv include author/committer identities,
-dates and signing=none. All five commit hashes reproduced exactly from the issue base in a fresh shared scratch clone, using the recorded identities/dates. Top-level and evidence manifests are checked
-for exact file-set equality, no leading ./ and SHA256 byte equality before delivery.
+SelectedLaw development evidence is preserved: the320-second candidate reported five
+missing finite-instance diagnostics (4.7GB peak), with no resource shortage and no signal
+sent to that already-finished run. Later source-directed SIGINTs were diagnostic stops
+of owned groups, not resource failures. A tool approval timeout created no process; the
+single retry succeeded. The genuine prototype foreign-distAdv reduction issue was fixed
+through its published reader. No other job was killed and no137/139/low-headroom E-RES
+occurred. The c shortened skeleton's width is100 (earlier prose said93); the final a12
+complete prototype is124 body lines, width93. Exact metrics take precedence over old prose.
 
-Evidence completeness includes every retained raw source/log/results file, probes, tools,
-header/seal/control/search/clash records, sub-agent handoffs and relocation notes. Large
-raw stack samples remain losslessly in the two numbered ZIPs with entry hashes and verified
-decompression. The later relocation ZIP separately preserves all four source/evidence trees;
-its48MB archive is checksummed, and incomplete development material inside evidence is not
-part of the exported proof source. Current b5/TapeValues/SelectedLaw development is outside
-this source snapshot; nothing from it is claimed as a completed checkpoint theorem.
+## Delivery and remaining work
 
-Prior pushed deliveries remain in exchange history: checkpoint1 f0a9a6163c5c91599147eb550fd5bb929cc68aa0;
-checkpoint2 816971fc6922646f056a47efd41b1407f762320d. This checkpoint is delivered only under
-inbox/fills/sc-yao from the clean dedicated delivery worktree, after rebase and without a
-force push. No final-security completion or PR merge is claimed.
+The complete unsigned six-patch series from the issue base includes COMMITS.tsv with all
+author/committer identities/dates and signing=none. All six hashes are reproduced with
+git am in a fresh shared scratch clone before pushing. Top-level and evidence manifests
+are checked for exact path-set equality, no leading ./ and SHA256 byte equality.
+
+Every retained raw source/log/results file, probe, seal/control, request, tool and child
+handoff is delivered. Large raw samples are losslessly in numbered ZIPs with entry hashes;
+the relocation ZIP preserves all four trees. Evidence-only unfinished ladder versions
+are historical probes and are not exported library source.
+
+The157MB SelectedLaw diagnostic stack is losslessly retained in raw-samples-03.zip, with
+verified decompression hash and entry inventory. An initial unpublished local delivery
+commit included the raw file; its controller was stopped after pull/rebase and before
+any push. That commit is preserved on a local backup ref and replaced by the corrected
+package commit. No push was refused and no force-push occurred. The exporter and delivery
+tools now reject oversized individual files before submission.
+
+Prior pushed checkpoints: f0a9a6163c5c91599147eb550fd5bb929cc68aa0,
+816971fc6922646f056a47efd41b1407f762320d, acc868271367d525350da2c1043e7f470f1c0a98.
+This checkpoint is rebased and pushed only under inbox/fills/sc-yao, without force.
+Remaining: install the complete concrete simulator body/sketch/main-results bullet,
+run final exact-source normal/all-stored/seal/static/full-sweep audits, commit and deliver
+the final payload and sc-yao-rooted ZIP. No final completion or PR merge is claimed.

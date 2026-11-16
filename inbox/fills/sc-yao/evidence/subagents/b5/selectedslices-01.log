@@ -1,0 +1,36 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean:67:29: error(lean.unknownIdentifier): Unknown identifier `hG`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean:67:32: error(lean.unknownIdentifier): Unknown identifier `hGE₁`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean:65:84: error: unsolved goals
+L : ℕ → ℕ
+G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L n) → Bool
+E₁ E₂ : List Bool → List Bool
+n : ℕ
+k o r r₂ : Fin n → Bool
+⊢ sliceEnc G n 0 k r (List.ofFn o) =
+    match [k] with
+    | [] => List.ofFn o
+    | [k] => spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn (r, r₂).1)
+    | [k₁, k₂] =>
+      spEncStr E₂ (List.ofFn k₁) (spEncStr E₁ (List.ofFn k₂) (List.ofFn o) (List.ofFn (r, r₂).2)) (List.ofFn (r, r₂).1)
+    | x => []
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices): no fresh .olean produced
+        2.78 real         1.29 user         1.14 sys
+          2180743168  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              167236  page reclaims
+                6114  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 422  voluntary context switches
+                8689  involuntary context switches
+            32260599  instructions retired
+            16240700  cycles elapsed
+             1638736  peak memory footprint

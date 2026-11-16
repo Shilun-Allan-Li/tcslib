@@ -1,0 +1,64 @@
+["rg", "-n", "sliceEnc_append_left|sliceEnc_append_right|sliceMultiEncDist_apply", "TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean"]
+51:* `SecureComputation.sliceEnc_eq_spEncStr`, `sliceEnc_append_left`, `sliceEnc_append_right`
+107:theorem sliceEnc_append_left {L L₂ : ℕ → ℕ}
+125:theorem sliceEnc_append_right {L L₂ : ℕ → ℕ}
+152:theorem sliceMultiEncDist_apply {L : ℕ → ℕ}
+205:  only argument are slices `(0, n)` (`sliceEnc_append_left`: the `G₁`-ciphertexts
+207:  (`sliceEnc_append_right`: the `G₂`-ciphertexts `spEncStr E₂`). Both shapes fit; the outer
+315:    rw [PrivateKeyScheme.multiEncDist_apply, sliceMultiEncDist_apply]
+EXIT 0
+["rg", "-n", "encodeList_eq_flatMap", "TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean", "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean"]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:33:* `MultiMsg.encodeList_eq_flatMap`: `encodeList` as a concatenation of chunks (the general form of
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:65:theorem MultiMsg.encodeList_eq_flatMap : ∀ l : List (List Bool),
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:69:    rw [PrivateKeyScheme.encodeList_cons, List.flatMap_cons, MultiMsg.encodeList_eq_flatMap l]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/MultiMsgOut.lean:80:  rw [encodeTupleOut_eq, MultiMsg.encodeList_eq_flatMap, MultiMsg.flatMap_ofFn]
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:41:* `TCSlib.Cryptography.encodeList_eq_flatMap`, `pairEncode_nil_append`,
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:60:theorem encodeList_eq_flatMap (l : List (List Bool)) :
+EXIT 0
+["rg", "-n", "mapW_pairEncode|polyTimeComputable_mapW", "TCSlib/Complexity/ClassP/BinaryArith/Words.lean"]
+30:* `Complexity.BinArith.polyTimeComputable_mapW`, `Complexity.BinArith.mapW_pairEncode`.
+208:theorem mapW_pairEncode (g : List Bool → List Bool) (q w : List Bool) :
+221:theorem polyTimeComputable_mapW {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
+318:**Proof sketch.** As for `polyTimeComputable_mapW`: the round drops the head entries of both
+EXIT 0
+["rg", "-n", "length_spEncStr", "TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean"]
+49:* `SecureComputation.spDecStr_spEncStr`, `length_spEncStr`: decryption inverts encryption, and the
+258:theorem length_spEncStr (E : List Bool → List Bool) {k m r : List Bool}
+EXIT 0
+["rg", "-n", "idxOf_lt_length_iff|getElem_idxOf|idxOf_getElem", "TCSlib/Programs/Util/List.lean", ".lake/packages/mathlib/Mathlib/Data/List/Basic.lean", ".lake/packages/mathlib/Mathlib/Data/List/Nodup.lean"]
+.lake/packages/mathlib/Mathlib/Data/List/Nodup.lean:120:theorem idxOf_getElem [DecidableEq α] {l : List α} (H : Nodup l) (i : Nat) (h : i < l.length) :
+.lake/packages/mathlib/Mathlib/Data/List/Nodup.lean:122:  suffices (⟨idxOf l[i] l, idxOf_lt_length_iff.2 (getElem_mem _)⟩ : Fin l.length) = ⟨i, h⟩
+.lake/packages/mathlib/Mathlib/Data/List/Nodup.lean:130:  simp [idxOf_getElem, H]
+.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:566:theorem getElem_idxOf [DecidableEq α] {a : α} : ∀ {l : List α} (h : idxOf a l < l.length),
+.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:570:    simp [h', getElem_idxOf]
+.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:580:  rw [getElem?_eq_getElem (idxOf_lt_length_iff.2 h), getElem_idxOf]
+.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:586:        get l ⟨idxOf x l, idxOf_lt_length_iff.2 hx⟩ =
+.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:587:        get l ⟨idxOf y l, idxOf_lt_length_iff.2 hy⟩ := by
+EXIT 0
+["rg", "-n", "reconstruct|selected.*nonce|fill.*Seed", "TCSlib/Cryptography/SecureComputation/Garbling.lean", "TCSlib/Cryptography/SecureComputation/Yao/HybridProof"]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean:73:for every selected key and inner nonce. [PS10, Theorem 163.7] -/
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices.lean:82:is the complete two-key row, for every selected key and outer nonce. [PS10, Theorem 163.7] -/
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:26:* `SliceReconstruction.table`, `tables`: nested table reconstruction.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:117:/-- A fixed record reconstructs its retained ciphertext unchanged for every challenge word. -/
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:134:/-- On `⟨challenge, descriptors⟩`, reconstruct each decoded row descriptor in order. -/
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:152:/-- On `⟨challenge, descriptors⟩`, reconstruct each decoded table-descriptor list in order. -/
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:176:/-- Fixed reconstruction advice is `⟨tableDescriptors, ⟨messageTail, ⟨privateInput,aliceOut⟩⟩⟩`.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:177:Its fields contain no selected challenge key or challenge nonces. -/
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:185:/-- On `⟨N,⟨challenge,advice⟩⟩`, reconstruct the tables, append the fixed message tail,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:196:/-- `rebuild E₂ z` assembles the reconstructed table word and three fixed advice fields
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction.lean:241:/-- On canonical nested descriptor lists, reconstruct each row in its original table,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder.lean:21:`DAGCircuit.decode_encode` already validates and reconstructs canonical descriptions. This
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:12:# Filling one selected key and all its encryption nonces
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:16:of the selected inactive label. All other key and nonce coordinates stay fixed.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:16:A polynomial-time reconstruction can use polynomial-length advice without depending
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:26:* `exists_adviceReduction`: a reconstruction with fixed advice is a non-uniform PPT test.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:27:* `reconstruction_negligible`: one negligible bound covers all bounded advice choices.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:46:reconstruction before `D`, then the advice constructor to fix `β`. The published coin
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:65:/-- A polynomial-time reconstruction of two slice-encryption experiments has a negligible
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:67:Slices and deterministic messages may depend on the choice; the reconstruction is fixed.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:70:**Proof sketch.** At each parameter choose the advice option maximizing the reconstructed
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:73:its two acceptance probabilities with the reconstructed experiments. Slice multi-message
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:75:option. This does not assert that a reconstruction or a sampler identity exists. -/
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:76:theorem reconstruction_negligible {L : PolyExpr}
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobProgram.lean:109:  -- The current-table machine discharges the generic traversal's reconstruction premise.
+EXIT 0

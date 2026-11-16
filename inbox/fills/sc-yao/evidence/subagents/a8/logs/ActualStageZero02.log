@@ -1,0 +1,68 @@
+START 2026-11-16T04:09:21Z module=evidence/subagents/a8/probes/ActualStageZero
+evidence/subagents/a8/probes/ActualStageZero.lean:89:2: error: unsolved goals
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+n : ℕ
+x : Fin (Y.inA.eval n) → Bool
+y : Fin (Y.inB.eval n) → Bool
+α : List Bool
+κ : Type u_1
+inst✝ : Fintype κ
+D : List Bool → κ → Bool
+v : ℕ → Bool := fun w => ((Y.circ n).values (Fin.append x y)).getD w false
+hvA : ∀ (i : Fin (Y.inA.eval n)), v ↑i = (List.ofFn x).getD (↑i) false
+real : (Fin (10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n) → Bool) → List Bool :=
+  fun r =>
+    pairEncode
+      { x := List.replicate n true,
+          z :=
+            pairEncode (List.ofFn y)
+              (List.ofFn fun t =>
+                keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r)) (Y.inA.eval n + ↑t.divNat) (v (Y.inA.eval n + ↑t.divNat))
+                  t.modNat),
+          r := [], received := [yaoMsg Y E₁ E₂ n (List.ofFn x) (List.ofFn r)] }.encode
+      α
+hLen :
+  (yaoHybrid Y E₁ E₂).main.P.coinLen (List.replicate n true).length =
+    10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n
+r : (yaoHybrid Y E₁ E₂).Coins n
+⊢ pairEncode
+      { x := List.replicate n true,
+          z :=
+            pairEncode (List.ofFn y)
+              (List.ofFn fun t =>
+                keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.inA.eval n + ↑t.divNat)
+                  (((Y.circ n).values (Fin.append x y)).getD (Y.inA.eval n + ↑t.divNat) false) t.modNat),
+          r := [], received := [yaoMsg Y E₁ E₂ n (List.ofFn x) (List.ofFn r.1)] }.encode
+      α =
+    pairEncode
+      { x := List.replicate n true,
+          z :=
+            pairEncode (List.ofFn y)
+              (List.ofFn fun t =>
+                keyAt (Y.circ n) (yaoSeed Y n (List.ofFn r.1)) (Y.inA.eval n + ↑t.divNat) (v (Y.inA.eval n + ↑t.divNat))
+                  t.modNat),
+          r := [], received := [yaoMsg Y E₁ E₂ n (List.ofFn x) (List.ofFn r.1)] }.encode
+      α
+FAIL(evidence/subagents/a8/probes/ActualStageZero): lean exited with status 1
+FAIL(evidence/subagents/a8/probes/ActualStageZero): error diagnostics reported
+FAIL(evidence/subagents/a8/probes/ActualStageZero): no fresh .olean produced
+        7.18 real         2.09 user         2.03 sys
+          1913618432  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              162600  page reclaims
+               24827  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 488  voluntary context switches
+               49428  involuntary context switches
+            35501386  instructions retired
+            26253968  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-16T04:09:28Z status=1

@@ -1,0 +1,78 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean:152:16: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 ↑u) j
+in the target expression
+  (none.elim (List.replicate n false) fun t =>
+        have a := (s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false);
+        SelectedRows.word E₁ n (argKeys C s t.1 a) (o t.1 a) (s.2.1 t.1 a) t.2.2).length =
+    none.elim n fun t =>
+      SelectedRows.length n (argKeys C s t.1 ((s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false))) t.2.2
+
+case none
+m n : ℕ
+C : DAGCircuit m
+rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool))
+u : Fin C.size
+q : ℕ
+G₁ : (k : ℕ) → (Fin k → Bool) → (Fin k → Bool) → Fin (k + k) → Bool
+E₁ : List Bool → List Bool
+hGE₁ :
+  ∀ (k : ℕ) (key nonce : Fin k → Bool), E₁ (pairEncode (List.ofFn key) (List.ofFn nonce)) = List.ofFn (G₁ k key nonce)
+o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool
+j : Fin (q + 1)
+hpad : GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 ↑u) j = none
+⊢ (none.elim (List.replicate n false) fun t =>
+        have a := (s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false);
+        SelectedRows.word E₁ n (argKeys C s t.1 a) (o t.1 a) (s.2.1 t.1 a) t.2.2).length =
+    none.elim n fun t =>
+      SelectedRows.length n (argKeys C s t.1 ((s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false))) t.2.2
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan.lean:154:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 ↑u) j
+in the target expression
+  ((some t).elim (List.replicate n false) fun t =>
+        have a := (s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false);
+        SelectedRows.word E₁ n (argKeys C s t.1 a) (o t.1 a) (s.2.1 t.1 a) t.2.2).length =
+    (some t).elim n fun t =>
+      SelectedRows.length n (argKeys C s t.1 ((s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false))) t.2.2
+
+case some
+m n : ℕ
+C : DAGCircuit m
+rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool))
+u : Fin C.size
+q : ℕ
+G₁ : (k : ℕ) → (Fin k → Bool) → (Fin k → Bool) → Fin (k + k) → Bool
+E₁ : List Bool → List Bool
+hGE₁ :
+  ∀ (k : ℕ) (key nonce : Fin k → Bool), E₁ (pairEncode (List.ofFn key) (List.ofFn nonce)) = List.ofFn (G₁ k key nonce)
+o : (i : Fin C.gates.length) → (Fin C.gates[↑i].args.length → Bool) → Fin n → Bool
+j : Fin (q + 1)
+t : Fin C.gates.length × ℕ × ℕ
+hpad : GateOccurrences.padded q (GateOccurrences.occurrences C rows s.2.2 ↑u) j = some t
+⊢ ((some t).elim (List.replicate n false) fun t =>
+        have a := (s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false);
+        SelectedRows.word E₁ n (argKeys C s t.1 a) (o t.1 a) (s.2.1 t.1 a) t.2.2).length =
+    (some t).elim n fun t =>
+      SelectedRows.length n (argKeys C s t.1 ((s.2.2 t.1) ((rows t.1).getD t.2.1 fun x => false))) t.2.2
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedPlan): no fresh .olean produced
+        8.06 real         3.81 user         1.71 sys
+          2197028864  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              125732  page reclaims
+               50049  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                1878  voluntary context switches
+               36788  involuntary context switches
+            32790214  instructions retired
+            21339637  cycles elapsed
+             1638736  peak memory footprint

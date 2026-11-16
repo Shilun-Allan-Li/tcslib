@@ -1,0 +1,70 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:285:26: error: unsolved goals
+m : ℕ
+K ρ : Type
+inst✝ : Inhabited K
+C : DAGCircuit m
+rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+s : GarbleSeed C K (ρ × ρ)
+u : Fin C.size
+q : ℕ
+k : K
+r : Fin (q + 1) → ρ
+i : Fin C.gates.length
+a : Fin C.gates[↑i].args.length → Bool
+p : Fin C.gates[↑i].args.length
+hargs : C.gates[↑i].args.Nodup
+h : GateOccurrences.selectedPosition C.gates[↑i] a ↑u = some p
+hvertex : C.gates[↑i].args[↑p] = ↑u
+hbit : a p = true
+⊢ C.gates[↑i].args.length = C.gates[i].args.length
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed.lean:293:2: error: unsolved goals
+case neg
+m : ℕ
+K ρ : Type
+inst✝ : Inhabited K
+C : DAGCircuit m
+rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)
+s : GarbleSeed C K (ρ × ρ)
+u : Fin C.size
+q : ℕ
+k : K
+r : Fin (q + 1) → ρ
+i : Fin C.gates.length
+a : Fin C.gates[↑i].args.length → Bool
+p : Fin C.gates[↑i].args.length
+hargs : C.gates[↑i].args.Nodup
+h : GateOccurrences.selectedPosition C.gates[↑i] a ↑u = some p
+hvertex : C.gates[↑i].args[↑p] = ↑u
+hbit : a p = true
+j : ℕ
+hj :
+  j <
+    (List.ofFn fun p =>
+        if (C.gates[↑i].args[↑p], a p) = (↑u, true) then k else keyAt C s C.gates[↑i].args[↑p] (a p)).length
+hj' : j < ((List.ofFn fun t => keyAt C s C.gates[i].args[t] (a t)).set (↑p) k).length
+hjg : j < C.gates[↑i].args.length
+hc : (C.gates[↑i].args[↑⟨j, hjg⟩], a ⟨j, hjg⟩) = (↑u, true) ↔ ⟨j, hjg⟩ = p
+hjp : ¬j = ↑p
+hfin : ⟨j, hjg⟩ ≠ p
+⊢ keyAt C s C.gates[↑i].args[j] (a ⟨j, ⋯⟩) = keyAt C s C.gates[i].args[⟨j, ⋯⟩] (a ⟨j, ⋯⟩)
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed): no fresh .olean produced
+        6.00 real         6.04 user         0.79 sys
+          1579024384  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              129269  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  17  voluntary context switches
+                4722  involuntary context switches
+            32750775  instructions retired
+            14387280  cycles elapsed
+             1638736  peak memory footprint

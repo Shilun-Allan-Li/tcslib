@@ -1,0 +1,42 @@
+START 2026-11-16T03:08:21.301636+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean:456:76: error(lean.unknownIdentifier): Unknown identifier `j`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean:456:52: error(lean.unknownIdentifier): Unknown identifier `j.val`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues.lean:456:44: error: failed to prove index is valid, possible solutions:
+  - Use `have`-expressions to prove the index is valid
+  - Use `a[i]!` notation instead, runtime check is performed, and 'Panic' error message is produced if index is not valid
+  - Use `a[i]?` notation instead, result is an `Option` type
+  - Use `a[i]'h` notation instead, where `h` is a proof that index is valid
+m : ℕ
+C : DAGCircuit m
+S : ℕ
+hA : ∀ (i : Fin C.gates.length), C.gates[↑i].args.length ≤ 2
+hS : C.size ≤ S
+hG : C.gates.length ≤ S
+i : Fin C.gates.length
+code : Fin 4
+hc : 2 ^ C.gates[↑i].args.length ≤ ↑code
+a : Fin C.gates[↑i].args.length → Bool
+h : (rowEmbedding C S hA hS) ⟨i, a⟩ = (Fin.castLE hG i, code)
+⊢ ?m.168 C.gates sorry
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TapeValues): no fresh .olean produced
+        6.89 real         6.91 user         1.00 sys
+          2233597952  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              176921  page reclaims
+                  83  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  21  voluntary context switches
+                5647  involuntary context switches
+            32586548  instructions retired
+            15294188  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-16T03:08:28.227576+00:00 exit=1

@@ -1,0 +1,110 @@
+START 2026-11-16T03:08:45.348288+00:00
+evidence/subagents/a7/probes/ConcreteData.lean:25:34: error(lean.unknownIdentifier): Unknown identifier `encodeMsgs_eq_encWords`
+evidence/subagents/a7/probes/ConcreteData.lean:25:4: error: Type mismatch: After simplification, term
+  hgenEq n
+ has type
+  gen (List.replicate n true) =
+    pairEncode (Y.circ n).encode (Strategy.encodeMsgs (List.ofFn fun j => encodeNat (Y.outs n j)))
+but is expected to have type
+  gen (List.replicate n true) =
+    pairEncode (Y.circ n).encode (BinArith.encWords (List.ofFn fun j => encodeNat (Y.outs n j)))
+evidence/subagents/a7/probes/ConcreteData.lean:35:25: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  readBits ?w ?off ?len ?t
+in the target expression
+  (readBits r (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,
+          readBits r (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).1
+      t =
+    r.getD
+      (2 * Y.sizeBound.eval n * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t)
+      false
+
+case refine_5
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+gen : List Bool → List Bool
+hgen : PolyTimeComputable gen
+hgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)
+n : ℕ
+r : List Bool
+i : Fin (Y.circ n).gates.length
+a : Fin (Y.circ n).gates[i].args.length → Bool
+t : Fin n
+⊢ (readBits r (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,
+          readBits r (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).1
+      t =
+    r.getD
+      (2 * Y.sizeBound.eval n * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + ↑t)
+      false
+evidence/subagents/a7/probes/ConcreteData.lean:37:25: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  readBits ?w ?off ?len ?t
+in the target expression
+  (readBits r (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,
+          readBits r (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).2
+      t =
+    r.getD
+      (2 * Y.sizeBound.eval n * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n +
+        ↑t)
+      false
+
+case refine_6
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+gen : List Bool → List Bool
+hgen : PolyTimeComputable gen
+hgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)
+n : ℕ
+r : List Bool
+i : Fin (Y.circ n).gates.length
+a : Fin (Y.circ n).gates[i].args.length → Bool
+t : Fin n
+⊢ (readBits r (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n)) n,
+          readBits r (2 * Y.sizeBound.eval n * n + (4 * ↑i + assignIdx a) * (2 * n) + n) n).2
+      t =
+    r.getD
+      (2 * Y.sizeBound.eval n * n + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) + n +
+        ↑t)
+      false
+evidence/subagents/a7/probes/ConcreteData.lean:39:41: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  readBits ?w ?off ?len ?t
+in the target expression
+  (fun p => a p ^^ readBits r (10 * Y.sizeBound.eval n * n + 2 * ↑i) (Y.circ n).gates[i].args.length p) t =
+    (a t ^^ r.getD (10 * Y.sizeBound.eval n * n + 2 * ↑i + ↑t) false)
+
+case refine_7
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+gen : List Bool → List Bool
+hgen : PolyTimeComputable gen
+hgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)
+n : ℕ
+r : List Bool
+i : Fin (Y.circ n).gates.length
+a : Fin (Y.circ n).gates[i].args.length → Bool
+t : Fin (Y.circ n).gates[i].args.length
+⊢ (fun p => a p ^^ readBits r (10 * Y.sizeBound.eval n * n + 2 * ↑i) (Y.circ n).gates[i].args.length p) t =
+    (a t ^^ r.getD (10 * Y.sizeBound.eval n * n + 2 * ↑i + ↑t) false)
+        2.85 real         1.45 user         1.11 sys
+          2237923328  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              168443  page reclaims
+                5695  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 368  voluntary context switches
+                6336  involuntary context switches
+         20640480517  instructions retired
+          7068813452  cycles elapsed
+           333050856  peak memory footprint
+END 2026-11-16T03:08:48.236951+00:00

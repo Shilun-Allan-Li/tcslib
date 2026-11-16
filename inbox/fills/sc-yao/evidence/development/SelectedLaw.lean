@@ -75,12 +75,18 @@ theorem acceptProb_fill
       (fun z : (Fin (10 * S * n + 2 * S) → Bool) ×
           ((Fin n → Bool) × (Fin (q + 1) → Fin n → Bool)) =>
         X (SelectedSeed.fill C rows (seed (List.ofFn z.1)) u q z.2.1 z.2.2)) D =
-      acceptProb (fun r : Fin (10 * S * n + 2 * S) → Bool => seed (List.ofFn r) |> X) D := by
+      acceptProb (fun r : Fin (10 * S * n + 2 * S) → Bool => X (seed (List.ofFn r))) D := by
   classical
   let P := TapeValues.Rest C S n hA hS
   let V := Fin n → Bool
   let e := (TapeValues.equiv C S n hA hS).trans (SeedCoordinates.paramEquiv C V P)
   let c := SeedCoordinates.challengeEquiv q V
+  letI : Fintype (P × (SeedCoordinates.Index C → V)) :=
+    Fintype.ofEquiv (Fin (10 * S * n + 2 * S) → Bool) e
+  letI : Fintype (SeedCoordinates.ChallengeIndex q → V) :=
+    Fintype.ofEquiv (V × (Fin (q + 1) → V)) c
+  letI : Nonempty (SeedCoordinates.ChallengeIndex q → V) :=
+    ⟨c ((fun _ => false), fun _ _ => false)⟩
   let perm : P → SeedCoordinates.Permutations C := TapeValues.permutation C S n hA hS
   let pick := fun p : P => SeedCoordinates.pick C rows (perm p) u q
   let place := fun p : P => SeedCoordinates.place C rows (perm p) u q
@@ -115,7 +121,36 @@ theorem acceptProb_fill
       Equiv.apply_symm_apply c t
     rw [Equiv.apply_symm_apply, SeedCoordinates.seedEquiv_fill, hp, hd, hc,
       CoordinateSwap.swap_eq]
-    rfl
-  sorry
+  let Z := fun z : P × (SeedCoordinates.Index C → V) =>
+    X ((SeedCoordinates.seedEquiv C V).symm (perm z.1, z.2))
+  have hStart : acceptProb Z D =
+      acceptProb (fun r : Fin (10 * S * n + 2 * S) → Bool => X (seed (List.ofFn r))) D := by
+    have h := acceptProb_comp_equiv e.symm
+      (fun r : Fin (10 * S * n + 2 * S) → Bool => X (seed (List.ofFn r))) D
+    have hf : (fun z : P × (SeedCoordinates.Index C → V) =>
+        X (seed (List.ofFn (e.symm z)))) = Z :=
+      funext fun z => congrArg X (hSeed z)
+    rw [hf] at h
+    exact h
+  have hPoint (z : (Fin (10 * S * n + 2 * S) → Bool) ×
+      (V × (Fin (q + 1) → V))) :
+      X (SelectedSeed.fill C rows (seed (List.ofFn z.1)) u q z.2.1 z.2.2) =
+        Z (CoordinateSwap.swap pick place ((e.prodCongr c) z)).1 := by
+    have h := congrArg X (hFilled (e z.1) (c z.2))
+    rw [Equiv.symm_apply_apply e z.1, Equiv.symm_apply_apply c z.2] at h
+    change X (SelectedSeed.fill C rows (seed (List.ofFn z.1)) u q z.2.1 z.2.2) =
+      X ((SeedCoordinates.seedEquiv C V).symm
+        (perm (CoordinateSwap.swap pick place (e z.1, c z.2)).1.1,
+          (CoordinateSwap.swap pick place (e z.1, c z.2)).1.2))
+    exact h
+  have hTransport := acceptProb_comp_equiv (e.prodCongr c)
+    (fun z : (P × (SeedCoordinates.Index C → V)) ×
+        (SeedCoordinates.ChallengeIndex q → V) => Z (CoordinateSwap.swap pick place z).1) D
+  have hf : (fun z : (Fin (10 * S * n + 2 * S) → Bool) ×
+      (V × (Fin (q + 1) → V)) =>
+      X (SelectedSeed.fill C rows (seed (List.ofFn z.1)) u q z.2.1 z.2.2)) =
+    (fun z => Z (CoordinateSwap.swap pick place ((e.prodCongr c) z)).1) := funext hPoint
+  rw [hf]
+  exact hTransport.trans ((CoordinateSwap.acceptProb_swap pick place hmatch Z D).trans hStart)
 
 end TCSlib.Cryptography.SecureComputation.YaoHybridProof.SelectedLaw
