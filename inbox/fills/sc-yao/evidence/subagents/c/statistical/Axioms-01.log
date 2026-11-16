@@ -1,0 +1,35 @@
+START 2026-11-15T22:14:09.506668+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.StatisticalSwitch.statClose_of_eq_off.{u_1, u_2} {σ : Type u_1}
+  {γ : Type u_2} [Fintype σ] (X Y : σ → γ) (Bad : σ → Prop) (δ : ℝ) (hBad : TCSlib.Cryptography.uprob Bad ≤ δ)
+  (heq : ∀ (r : σ), ¬Bad r → X r = Y r) : TCSlib.Cryptography.StatClose X Y δ
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.StatisticalSwitch.statClose_of_eq_off' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.StatisticalSwitch.distAdv_le_of_eq_off.{u_1, u_2, u_3}
+  {σ : Type u_1} {γ : Type u_2} {ρ : Type u_3} [Fintype σ] [Fintype ρ] (X Y : σ → γ) (Bad : σ → Prop) (δ : ℝ)
+  (hBad : TCSlib.Cryptography.uprob Bad ≤ δ) (heq : ∀ (r : σ), ¬Bad r → X r = Y r) (D : γ → ρ → Bool) :
+  TCSlib.Cryptography.distAdv X Y D ≤ δ
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.StatisticalSwitch.distAdv_le_of_eq_off' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.StatisticalSwitch.statClose_of_eq_off: closure=12160 sorried=[]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.StatisticalSwitch.distAdv_le_of_eq_off: closure=13332 sorried=[]
+        4.46 real         3.14 user         1.18 sys
+          2178138112  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170880  page reclaims
+                2167  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 128  voluntary context switches
+                1811  involuntary context switches
+            31994565  instructions retired
+            18474271  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-15T22:14:14.000552+00:00 exit=0

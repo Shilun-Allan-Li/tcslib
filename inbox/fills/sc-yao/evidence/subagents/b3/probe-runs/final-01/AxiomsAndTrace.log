@@ -1,0 +1,119 @@
+START 2026-11-15T23:27:31.936803+00:00
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_runAt	∀
+  {fakeMessage activeAnswers : List Bool → List Bool} (hM : Complexity.PolyTimeComputable fakeMessage)
+  (hA : Complexity.PolyTimeComputable activeAnswers) (coins : Complexity.PolyExpr) (n : ℕ) (y f : List Bool)
+  (r : (TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator hM hA coins).Coins n),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator hM hA coins).runAt n
+      (Turing.pairEncode y f) r =
+    have w := Complexity.NUPPT.layout (List.replicate n true) (Turing.pairEncode y f) [] (List.ofFn r);
+    { x := List.replicate n true, z := Turing.pairEncode y (activeAnswers w), r := [],
+        received := [fakeMessage w] }.encode
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_runAt	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_runAt	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_eq	∀
+  {fakeMessage activeAnswers : List Bool → List Bool} (hM : Complexity.PolyTimeComputable fakeMessage)
+  (hA : Complexity.PolyTimeComputable activeAnswers) (coins : Complexity.PolyExpr),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator hM hA coins =
+    Complexity.NUPPT.ofPolyTimeUniform ⋯ coins
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.raw_poly	∀
+  {fakeMessage activeAnswers : List Bool → List Bool},
+  Complexity.PolyTimeComputable fakeMessage →
+    Complexity.PolyTimeComputable activeAnswers →
+      Complexity.PolyTimeComputable
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.raw fakeMessage activeAnswers)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.raw_poly	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.raw_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator	{fakeMessage activeAnswers :
+    List Bool → List Bool} →
+  Complexity.PolyTimeComputable fakeMessage →
+    Complexity.PolyTimeComputable activeAnswers → Complexity.PolyExpr → Complexity.NUPPT
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.raw	(List Bool → List Bool) →
+  (List Bool → List Bool) → List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.raw	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.raw	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_coins	∀
+  {fakeMessage activeAnswers : List Bool → List Bool} (hM : Complexity.PolyTimeComputable fakeMessage)
+  (hA : Complexity.PolyTimeComputable activeAnswers) (coins : Complexity.PolyExpr),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator hM hA coins).coins = coins
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_coins	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_coins	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.idealB_eq	∀
+  {fakeMessage activeAnswers : List Bool → List Bool} (hM : Complexity.PolyTimeComputable fakeMessage)
+  (hA : Complexity.PolyTimeComputable activeAnswers) (coins : Complexity.PolyExpr)
+  (F : TCSlib.Cryptography.SecureComputation.Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+  (y : Fin (F.inB.eval n) → Bool)
+  (r : (TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator hM hA coins).Coins n),
+  F.idealB (TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator hM hA coins) n x y r =
+    have w :=
+      Complexity.NUPPT.layout (List.replicate n true) (Turing.pairEncode (List.ofFn y) (List.ofFn (F.f n x y).2)) []
+        (List.ofFn r);
+    Turing.pairEncode
+      { x := List.replicate n true, z := Turing.pairEncode (List.ofFn y) (activeAnswers w), r := [],
+          received := [fakeMessage w] }.encode
+      (List.ofFn (F.f n x y).1)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.idealB_eq	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.idealB_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_runAtL	∀
+  {fakeMessage activeAnswers : List Bool → List Bool} (hM : Complexity.PolyTimeComputable fakeMessage)
+  (hA : Complexity.PolyTimeComputable activeAnswers) (coins : Complexity.PolyExpr) (n : ℕ) (y f r : List Bool),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator hM hA coins).runAtL n
+      (Turing.pairEncode y f) r =
+    have w := Complexity.NUPPT.layout (List.replicate n true) (Turing.pairEncode y f) [] r;
+    { x := List.replicate n true, z := Turing.pairEncode y (activeAnswers w), r := [],
+        received := [fakeMessage w] }.encode
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_runAtL	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_runAtL	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.raw_eq	∀
+  (fakeMessage activeAnswers : List Bool → List Bool) (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.raw fakeMessage activeAnswers z =
+    { x := Complexity.NUPPT.inParam z,
+        z := Turing.pairEncode (Complexity.pairFstD (Complexity.NUPPT.inArg z)) (activeAnswers z), r := [],
+        received := [fakeMessage z] }.encode
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.raw_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.raw_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_uniform	∀
+  {fakeMessage activeAnswers : List Bool → List Bool} (hM : Complexity.PolyTimeComputable fakeMessage)
+  (hA : Complexity.PolyTimeComputable activeAnswers) (coins : Complexity.PolyExpr),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator hM hA coins).Uniform
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_uniform	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobSimulator.simulator_uniform	[]
+STORED_CONSTANTS 10
+       25.79 real        24.12 user         1.23 sys
+          2189393920  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171541  page reclaims
+                3276  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  86  voluntary context switches
+               10624  involuntary context switches
+        127087090482  instructions retired
+         70917359854  cycles elapsed
+           356311288  peak memory footprint
+END 2026-11-15T23:27:57.764861+00:00

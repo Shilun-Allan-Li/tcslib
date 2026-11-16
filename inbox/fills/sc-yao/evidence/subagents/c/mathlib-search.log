@@ -1,0 +1,15 @@
+Mathlib checkout became available after drafts; this search precedes final checking.
+$ rg -n spEncStr|garbledTable|nestedSpecial|encodeMsgs|otInputA|otInputB /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib
+
+exit=1
+$ rg -n theorem (length_toList|card_fun)|length.*zipWith|length_ofFn /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Finset /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Fintype /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Rotate.lean:184:    take_zipWith, List.length_zipWith, h, min_self]
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:130:  simp only [pairwise_iff_getElem, length_ofFn, List.getElem_ofFn,
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:146:      ⟨hpb, ⟨⟨i, length_ofFn (f := f) ▸ hi⟩, by simpa using hfb, fun j hj ↦ by simpa using h j hj⟩⟩,
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:148:      ⟨hpb, ⟨i, (length_ofFn (f := f)).symm ▸ i.isLt, by simpa using hfb,
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean:163:    Fin.sigma_eq_of_eq_comp_cast length_ofFn <| funext fun i => get_ofFn f i
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/Map2.lean:166:    ∀ as bs, length as ≤ length bs → map₂Left f as bs = zipWith (fun a b => f a (some b)) as bs
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/List/ChainOfFn.lean:21:  simp_rw [isChain_iff_get, get_ofFn, length_ofFn]
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Data/Finset/Card.lean:211:theorem length_toList (s : Finset α) : s.toList.length = #s := by
+
+exit=0

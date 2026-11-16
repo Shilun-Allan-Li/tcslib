@@ -1,0 +1,73 @@
+$ rg -n xorPerm|blocksEquivX|FunFamily.blocks|coinsEquiv|coinsCongr TCSlib/Cryptography/Foundations/BitLists.lean TCSlib/Cryptography/Asymptotic/Adversary.lean TCSlib/Complexity/Randomized/PPT.lean
+TCSlib/Cryptography/Foundations/BitLists.lean:24:* `TCSlib.Cryptography.xorPerm v`: exclusive-or with the vector `v`, as a permutation.
+TCSlib/Cryptography/Foundations/BitLists.lean:34:* `TCSlib.Cryptography.xorPerm_apply`: `xorPerm v y = y ⊕ v`.
+TCSlib/Cryptography/Foundations/BitLists.lean:104:/-- Exclusive-or with a fixed vector `v`, as a permutation of `{0,1}ⁿ`: `xorPerm v y = y ⊕ v`. -/
+TCSlib/Cryptography/Foundations/BitLists.lean:105:def xorPerm (v : Fin n → Bool) : Equiv.Perm (Fin n → Bool) :=
+TCSlib/Cryptography/Foundations/BitLists.lean:109:/-- `xorPerm v y = y ⊕ v`. -/
+TCSlib/Cryptography/Foundations/BitLists.lean:110:theorem xorPerm_apply (v y : Fin n → Bool) : xorPerm v y = fun i => xor (y i) (v i) := rfl
+TCSlib/Complexity/Randomized/PPT.lean:248:def coinsCongr {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) : A.Coins n ≃ B.Coins n :=
+TCSlib/Complexity/Randomized/PPT.lean:251:/-- The coin equivalence keeps the coin string: `List.ofFn (coinsCongr h n r) = List.ofFn r`. -/
+TCSlib/Complexity/Randomized/PPT.lean:252:theorem coinsCongr_ofFn {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (r : A.Coins n) :
+TCSlib/Complexity/Randomized/PPT.lean:253:    List.ofFn (coinsCongr h n r) = List.ofFn r :=
+TCSlib/Complexity/Randomized/PPT.lean:256:/-- Running `B` on coins carried over from `A`: `B.runAt n y (coinsCongr h n r) =
+TCSlib/Complexity/Randomized/PPT.lean:258:theorem runAt_coinsCongr {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (y : List Bool)
+TCSlib/Complexity/Randomized/PPT.lean:259:    (r : A.Coins n) : B.runAt n y (coinsCongr h n r) = B.runAtL n y (List.ofFn r) := by
+TCSlib/Complexity/Randomized/PPT.lean:260:  rw [runAt_eq, coinsCongr_ofFn]
+TCSlib/Complexity/Randomized/PPT.lean:266:def coinsEquivPoly {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ) :
+TCSlib/Complexity/Randomized/PPT.lean:271:`List.ofFn (coinsEquivPoly h n r) = List.ofFn r`. -/
+TCSlib/Complexity/Randomized/PPT.lean:272:theorem coinsEquivPoly_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ) (r : A.Coins n) :
+TCSlib/Complexity/Randomized/PPT.lean:273:    List.ofFn (coinsEquivPoly h n r) = List.ofFn r :=
+TCSlib/Complexity/Randomized/PPT.lean:277:`List.ofFn ((coinsEquivPoly h n).symm w) = List.ofFn w`. -/
+TCSlib/Complexity/Randomized/PPT.lean:278:theorem coinsEquivPoly_symm_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ)
+TCSlib/Complexity/Randomized/PPT.lean:279:    (w : Fin (c.eval n) → Bool) : List.ofFn ((coinsEquivPoly h n).symm w) = List.ofFn w := by
+TCSlib/Complexity/Randomized/PPT.lean:280:  rw [← coinsEquivPoly_ofFn h n, Equiv.apply_symm_apply]
+TCSlib/Complexity/Randomized/PPT.lean:366:`(ofPolyTime hf coins adv advice hα).Coins n ≃ {0,1}^{coins(n)}` (`coinsEquivPoly`). -/
+TCSlib/Complexity/Randomized/PPT.lean:367:noncomputable def coinsEquiv_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+TCSlib/Complexity/Randomized/PPT.lean:370:  coinsEquivPoly (coins_ofPolyTime hf coins adv advice hα) n
+TCSlib/Complexity/Randomized/PPT.lean:373:theorem coinsEquiv_ofPolyTime_ofFn {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+TCSlib/Complexity/Randomized/PPT.lean:376:    List.ofFn (coinsEquiv_ofPolyTime hf coins adv advice hα n r) = List.ofFn r :=
+TCSlib/Complexity/Randomized/PPT.lean:377:  coinsEquivPoly_ofFn _ n r
+TCSlib/Complexity/Randomized/PPT.lean:416:`(ofPolyTimeUniform hf coins).Coins n ≃ {0,1}^{coins(n)}` (`coinsEquivPoly`). -/
+TCSlib/Complexity/Randomized/PPT.lean:417:noncomputable def coinsEquiv_ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+TCSlib/Complexity/Randomized/PPT.lean:419:  coinsEquivPoly (coins_ofPolyTimeUniform hf coins) n
+TCSlib/Complexity/Randomized/PPT.lean:422:theorem coinsEquiv_ofPolyTimeUniform_ofFn {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+TCSlib/Complexity/Randomized/PPT.lean:424:    List.ofFn (coinsEquiv_ofPolyTimeUniform hf coins n r) = List.ofFn r :=
+TCSlib/Complexity/Randomized/PPT.lean:425:  coinsEquivPoly_ofFn _ n r
+TCSlib/Cryptography/Asymptotic/Adversary.lean:50:* `TCSlib.Cryptography.blocksEquivX`, `TCSlib.Cryptography.FunFamily.blocks` — the canonical
+TCSlib/Cryptography/Asymptotic/Adversary.lean:52:  `blocksEquivX_apply`, `blocksEquivX_symm_apply`, `FunFamily.blocks_apply`,
+TCSlib/Cryptography/Asymptotic/Adversary.lean:53:  `FunFamily.blocks_symm_apply`.
+TCSlib/Cryptography/Asymptotic/Adversary.lean:242:def blocksEquivX (q ℓ : ℕ) (X : Type*) : (Fin (q * ℓ) → X) ≃ (Fin q → Fin ℓ → X) :=
+TCSlib/Cryptography/Asymptotic/Adversary.lean:245:/-- The forward reader of `blocksEquivX`: block `i`, position `j` of `x` is entry
+TCSlib/Cryptography/Asymptotic/Adversary.lean:247:theorem blocksEquivX_apply (q ℓ : ℕ) {X : Type*} (x : Fin (q * ℓ) → X) (i : Fin q) (j : Fin ℓ) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:248:    blocksEquivX q ℓ X x i j = x (finProdFinEquiv (i, j)) := rfl
+TCSlib/Cryptography/Asymptotic/Adversary.lean:250:/-- The inverse of `blocksEquivX` reads block `p.divNat`, position `p.modNat`. -/
+TCSlib/Cryptography/Asymptotic/Adversary.lean:251:theorem blocksEquivX_symm_apply (q ℓ : ℕ) {X : Type*} (t : Fin q → Fin ℓ → X) (p : Fin (q * ℓ)) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:252:    (blocksEquivX q ℓ X).symm t p = t p.divNat p.modNat := rfl
+TCSlib/Cryptography/Asymptotic/Adversary.lean:257:`blocksEquivX`. -/
+TCSlib/Cryptography/Asymptotic/Adversary.lean:258:def FunFamily.blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+TCSlib/Cryptography/Asymptotic/Adversary.lean:259:  blocksEquivX q ℓ Bool
+TCSlib/Cryptography/Asymptotic/Adversary.lean:262:theorem FunFamily.blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:263:    FunFamily.blocks q ℓ x i j = x (finProdFinEquiv (i, j)) :=
+TCSlib/Cryptography/Asymptotic/Adversary.lean:264:  blocksEquivX_apply q ℓ x i j
+TCSlib/Cryptography/Asymptotic/Adversary.lean:267:theorem FunFamily.blocks_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) (k : Fin (q * ℓ)) :
+TCSlib/Cryptography/Asymptotic/Adversary.lean:268:    (FunFamily.blocks q ℓ).symm t k = t k.divNat k.modNat :=
+TCSlib/Cryptography/Asymptotic/Adversary.lean:269:  blocksEquivX_symm_apply q ℓ t k
+TCSlib/Cryptography/Asymptotic/Adversary.lean:272:`⟦FunFamily.blocks q ℓ ω j⟧ = (⟦ω⟧.drop (j·ℓ)).take ℓ`.
+TCSlib/Cryptography/Asymptotic/Adversary.lean:276:(`FunFamily.blocks_apply`), which is position `k` of the window. -/
+TCSlib/Cryptography/Asymptotic/Adversary.lean:278:    List.ofFn (FunFamily.blocks q ℓ ω j) = ((List.ofFn ω).drop (j * ℓ)).take ℓ := by
+TCSlib/Cryptography/Asymptotic/Adversary.lean:287:    refine (FunFamily.blocks_apply q ℓ ω j ⟨k, _⟩).trans ?_
+TCSlib/Cryptography/Asymptotic/Adversary.lean:298:**Proof sketch.** The block is block `i` of the first `r·k` bits (`FunFamily.blocks_apply`),
+TCSlib/Cryptography/Asymptotic/Adversary.lean:309:      FunFamily.blocks r k (fun p => w (Fin.castAdd sl p)) i :=
+TCSlib/Cryptography/Asymptotic/Adversary.lean:310:    funext fun j => (FunFamily.blocks_apply r k (fun p => w (Fin.castAdd sl p)) i j).symm
+
+exit=0
+$ rg -n finTwoEquiv|def Fin.appendEquiv|def prodCongr|def arrowCongr /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Equiv/Defs.lean /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Equiv/Prod.lean
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean:406:def Fin.appendEquiv {α : Type*} (m n : ℕ) :
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Equiv/Prod.lean:70:def prodCongr {α₁ α₂ β₁ β₂} (e₁ : α₁ ≃ α₂) (e₂ : β₁ ≃ β₂) : α₁ × β₁ ≃ α₂ × β₂ :=
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Equiv/Prod.lean:232:def prodCongrLeft : β₁ × α₁ ≃ β₂ × α₁ where
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Equiv/Prod.lean:249:def prodCongrRight : α₁ × β₁ ≃ α₁ × β₂ where
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Equiv/Defs.lean:450:def arrowCongr {α₁ β₁ α₂ β₂ : Sort*} (e₁ : α₁ ≃ α₂) (e₂ : β₁ ≃ β₂) : (α₁ → β₁) ≃ (α₂ → β₂) where
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Equiv/Defs.lean:476:def arrowCongr' {α₁ β₁ α₂ β₂ : Type*} (hα : α₁ ≃ α₂) (hβ : β₁ ≃ β₂) : (α₁ → β₁) ≃ (α₂ → β₂) :=
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/packages/mathlib/Mathlib/Logic/Equiv/Defs.lean:893:def finTwoEquiv : Fin 2 ≃ Bool where
+
+exit=0

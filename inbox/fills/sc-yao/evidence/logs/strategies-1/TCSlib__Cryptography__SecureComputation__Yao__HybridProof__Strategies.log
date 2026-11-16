@@ -1,0 +1,43 @@
+START 2026-11-15T23:38:13.508735+00:00 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Strategies
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Strategies.lean:59:16: error: unsolved goals
+case cons
+S : Strategy
+first : List Bool → List Bool → List Bool → List Bool
+hNil : ∀ (x z r : List Bool), S.next x z r [] = first x z r
+hCons : ∀ (x z r a : List Bool) (hist : List (List Bool)), S.next x z r (a :: hist) = a
+hFirst : PolyTimeComputable fun w => first (GI.argX w) (GI.argZ w) (NUPPT.inCoins w)
+hnil : PolyTimeComputable fun w => [decide (GI.argM w = [])]
+hhead : PolyTimeComputable (pairFstD ∘ GI.argM)
+x z r a : List Bool
+hist : List (List Bool)
+⊢ a = (pairFstD ∘ GI.argM) (GI.ilayout x z (a :: hist) r)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Strategies.lean:62:50: warning: This simp argument is unused:
+  pairFstD_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [GI.argM_ilayout, Strategy.encodeMsgs_cons, pairEncode_ne_nil, decide_false,
+  ̲  ̲ ̲ ̲ ̲ ̲Bool.false_eq_true, i̵f̵_̵f̵a̵l̵s̵e̵,̵ ̵p̵a̵i̵r̵F̵s̵t̵D̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵]̵i̲f̲_̲f̲a̲l̲s̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Strategies): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Strategies): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Strategies): no fresh .olean produced
+        2.16 real         1.25 user         0.94 sys
+          2162196480  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172053  page reclaims
+                 100  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  21  voluntary context switches
+                4402  involuntary context switches
+            31940694  instructions retired
+            17543977  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T23:38:15.707369+00:00 EXIT 1

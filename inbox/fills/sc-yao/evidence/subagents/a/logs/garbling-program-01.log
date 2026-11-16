@@ -1,0 +1,68 @@
+START 2026-11-15T22:27:44Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram.lean:112:56: error: unsolved goals
+E₁ E₂ : List Bool → List Bool
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+width bound inputs : List Bool → ℕ
+description outs coins : List Bool → List Bool
+hwidth : PolyTimeComputable fun z => List.replicate (width z) true
+hbound : PolyTimeComputable fun z => List.replicate (bound z) true
+hinputs : PolyTimeComputable fun z => List.replicate (inputs z) true
+hdescription : PolyTimeComputable description
+hcoins : PolyTimeComputable coins
+C : (z : List Bool) → DAGCircuit (inputs z)
+s : (z : List Bool) → GarbleSeed (C z) (Fin (width z) → Bool) ((Fin (width z) → Bool) × (Fin (width z) → Bool))
+hshape : ∀ (z : List Bool), description z = pairEncode (C z).encode (outs z)
+hfan : ∀ (z : List Bool) (i : Fin (C z).gates.length), (C z).gates[i].args.length ≤ 2
+hkey :
+  ∀ (z : List Bool),
+    ∀ v < (C z).size,
+      ∀ (b : Bool), keyAt (C z) (s z) v b = fun t => (coins z).getD ((b.toNat * bound z + v) * width z + ↑t) false
+hr₀ :
+  ∀ (z : List Bool) (i : Fin (C z).gates.length) (a : Fin (C z).gates[i].args.length → Bool) (t : Fin (width z)),
+    ((s z).2.1 i a).1 t =
+      (coins z).getD
+        (2 * bound z * width z + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * width z) +
+          ↑t)
+        false
+hr₁ :
+  ∀ (z : List Bool) (i : Fin (C z).gates.length) (a : Fin (C z).gates[i].args.length → Bool) (t : Fin (width z)),
+    ((s z).2.1 i a).2 t =
+      (coins z).getD
+        (2 * bound z * width z + (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * width z) +
+            width z +
+          ↑t)
+        false
+hperm :
+  ∀ (z : List Bool) (i : Fin (C z).gates.length) (a : Fin (C z).gates[i].args.length → Bool)
+    (t : Fin (C z).gates[i].args.length),
+    ((s z).2.2 i) a t = (a t ^^ (coins z).getD (10 * bound z * width z + 2 * ↑i + ↑t) false)
+gates : List Bool → List Bool := gatesWord description
+hgates : PolyTimeComputable gates
+hgs : ∀ (z : List Bool), gates z = BinArith.encWords (List.map DescriptionDecoder.gateRecord (C z).gates)
+hraw : PolyTimeComputable (AllTables.allTablesWord E₁ E₂ width bound inputs gates coins)
+z : List Bool
+i : Fin (C z).gates.length
+⊢ DescriptionDecoder.gateRecord (C z).gates[↑i] = DescriptionDecoder.gateRecord (C z).gates[i]
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram): no fresh .olean produced
+        3.26 real         2.11 user         1.20 sys
+          2252062720  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              177099  page reclaims
+                1201  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  68  voluntary context switches
+                7259  involuntary context switches
+            32245259  instructions retired
+            20326419  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T22:27:47Z status=1

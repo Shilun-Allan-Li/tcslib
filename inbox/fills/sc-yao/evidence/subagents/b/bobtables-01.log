@@ -1,0 +1,29 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobTables.lean:76:26: error: unsolved goals
+m msg : List Bool → List Bool
+hm : PolyTimeComputable m
+hmsg : PolyTimeComputable msg
+hvraw : PolyTimeComputable (BinArith.countW ∘ pairSndD ∘ pairSndD)
+w : List Bool
+⊢ List.replicate (BinArith.decWords ((pairSndD ∘ pairSndD) w)).length true =
+    List.replicate (BinArith.decWords (pairSndD (pairSndD w))).length true
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobTables): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobTables): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobTables): no fresh .olean produced
+        5.11 real         2.13 user         1.15 sys
+          1527054336  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              101277  page reclaims
+               24400  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                4889  voluntary context switches
+               17030  involuntary context switches
+            32305218  instructions retired
+            18243218  cycles elapsed
+             1655120  peak memory footprint

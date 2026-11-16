@@ -1,0 +1,31 @@
+START 2026-11-15T21:49:00.440390+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:124:39: error: unsolved goals
+hn : PolyTimeComputable fun x => List.replicate (pairFstD x).length true
+htail : PolyTimeComputable (pairSndD ∘ pairSndD)
+hj : PolyTimeComputable fun x => List.replicate ((pairSndD ∘ pairSndD ∘ pairSndD) x).length true
+hy : PolyTimeComputable (pairFstD ∘ pairSndD)
+z : List Bool
+⊢ List.replicate (((pairSndD ∘ pairSndD ∘ pairSndD) z).length / (pairFstD z).length) true =
+    List.replicate ((pairSndD (pairSndD (pairSndD z))).length / (pairFstD z).length) true
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs): no fresh .olean produced
+        2.16 real         1.11 user         0.96 sys
+          1516863488  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              121948  page reclaims
+                2321  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 145  voluntary context switches
+                5360  involuntary context switches
+            32423792  instructions retired
+            18377000  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T21:49:02.645687+00:00 exit=1

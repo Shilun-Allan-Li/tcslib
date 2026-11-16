@@ -1,0 +1,72 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate.lean:249:6: error: Type mismatch
+  nestedDecTagged_encoded E₁ E₂ N (List.map (fun a => vs.getD a default) g.args) row
+has type
+  nestedDecTagged E₁ E₂
+      (pairEncode N
+        (pairEncode (BinArith.encWords (List.map List.ofFn (List.map (fun a => vs.getD a default) g.args))) row)) =
+    match (nestedSpecial E₁ E₂ N.length).dec (List.map (fun a => vs.getD a default) g.args) row with
+    | none => []
+    | some k => true :: List.ofFn k
+but is expected to have type
+  nestedDecTagged E₁ E₂
+      (pairEncode N
+        (pairEncode (BinArith.encWords (List.map List.ofFn (List.map (fun a => vs.getD a default) g.args))) row)) =
+    match (nestedSpecial E₁ E₂ N.length).dec (List.map (fun a => vs.getD a default) g.args) row with
+    | none => []
+    | some b => true :: List.ofFn b
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate.lean:251:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  untagDefault
+    (pairEncode N
+      (match ?o with
+      | none => []
+      | some k => true :: List.ofFn k))
+in the target expression
+  untagDefault
+      (pairEncode N
+        (match
+          List.findSome? ((nestedSpecial E₁ E₂ N.length).dec (List.map (fun a => vs.getD a default) g.args)) (T v) with
+        | none => []
+        | some b => true :: (fun k => List.ofFn k) b)) =
+    List.ofFn (evalGate (nestedSpecial E₁ E₂ N.length) T v g vs)
+
+E₁ E₂ : List Bool → List Bool
+N : List Bool
+T : ℕ → List (List Bool)
+v : ℕ
+g : DAGGate
+vs : List (Fin N.length → Bool)
+hsearch :
+  firstTagged (nestedRowTagged E₁ E₂)
+      (pairEncode (pairEncode N (BinArith.encWords (List.map List.ofFn (List.map (fun a => vs.getD a default) g.args))))
+        (BinArith.encWords (T v))) =
+    match List.findSome? ((nestedSpecial E₁ E₂ N.length).dec (List.map (fun a => vs.getD a default) g.args)) (T v) with
+    | none => []
+    | some b => true :: (fun k => List.ofFn k) b
+⊢ untagDefault
+      (pairEncode N
+        (match
+          List.findSome? ((nestedSpecial E₁ E₂ N.length).dec (List.map (fun a => vs.getD a default) g.args)) (T v) with
+        | none => []
+        | some b => true :: (fun k => List.ofFn k) b)) =
+    List.ofFn (evalGate (nestedSpecial E₁ E₂ N.length) T v g vs)
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate): no fresh .olean produced
+        6.44 real         6.11 user         1.32 sys
+          2174763008  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              169996  page reclaims
+                2826  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 185  voluntary context switches
+               10732  involuntary context switches
+            32338501  instructions retired
+            21011310  cycles elapsed
+             1655120  peak memory footprint

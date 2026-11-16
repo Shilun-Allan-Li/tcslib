@@ -1,0 +1,18 @@
+--- base/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
++++ current/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
+@@ -507,6 +507,15 @@
+ def IsFaninTwo : Prop :=
+   C.IsWellFormed ∧ ∀ g ∈ C.gates, g.args.length ≤ 2
+ 
++/-- A circuit is fan-in two exactly when each gate has distinct arguments, each negation
++gate has one argument, and every gate has at most two arguments:
++`C.IsFaninTwo ↔ (∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)) ∧
++  ∀ g ∈ C.gates, g.args.length ≤ 2`. [AB09, Definition 6.1] -/
++theorem isFaninTwo_iff :
++    C.IsFaninTwo ↔
++      (∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)) ∧
++        ∀ g ∈ C.gates, g.args.length ≤ 2 := Iff.rfl
++
+ /-- The vertex-value list of a circuit has one entry per vertex: `n` inputs plus one per
+ gate. -/
+ @[simp] theorem length_values (x : Fin n → Bool) :

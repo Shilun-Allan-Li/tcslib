@@ -1,0 +1,33 @@
+START 2026-11-15T21:59:37.185381+00:00 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit
+END TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit exit 1 errors 1
+START 2026-11-15T21:59:37.185381+00:00 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit.lean:159:58: error: unsolved goals
+N A B msg ans : List Bool
+v : ℕ
+⊢ (if v < A.length then List.ofFn (padFin N.length ((BinArith.decWords (pairFstD (pairSndD msg))).getD v []))
+    else List.ofFn fun i => ans.getD ((v - A.length) * N.length + ↑(Fin.cast ⋯ i)) false) =
+    if v < A.length then List.ofFn (padFin N.length ((BinArith.decWords (pairFstD (pairSndD msg))).getD v []))
+    else List.ofFn fun t => ans.getD ((v - A.length) * N.length + ↑t) false
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit): no fresh .olean produced
+        2.91 real         1.44 user         1.18 sys
+          2217148416  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170237  page reclaims
+                5690  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 691  voluntary context switches
+                6898  involuntary context switches
+            32160505  instructions retired
+            17697173  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T21:59:40.132112+00:00 EXIT 1
+

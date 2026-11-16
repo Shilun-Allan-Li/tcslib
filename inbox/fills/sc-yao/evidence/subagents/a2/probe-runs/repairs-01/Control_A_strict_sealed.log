@@ -1,0 +1,30 @@
+START 2026-11-15T23:54:48.089541+00:00
+SEALED	TCSlib.Cryptography.Foundations.Probability	TCSlib.Cryptography.uprob
+SEALED	TCSlib.Cryptography.Foundations.Probability	TCSlib.Cryptography.uexp
+SEAL_COUNTS requested=2 excluded=0
+evidence/subagents/a2/seals/controls/Control_A_strict_sealed.lean:48:2: error: Tactic `rfl` failed: The left-hand side
+  TCSlib.Cryptography.uprob p
+is not definitionally equal to the right-hand side
+  ↑(Nat.card { a // p a }) / ↑(Fintype.card (Fin 1))
+
+p : Fin 1 → Prop
+⊢ TCSlib.Cryptography.uprob p = ↑(Nat.card { a // p a }) / ↑(Fintype.card (Fin 1))
+       13.16 real        11.95 user         0.98 sys
+          1544568832  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              125501  page reclaims
+                  26  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   1  voluntary context switches
+               16231  involuntary context switches
+         60804478354  instructions retired
+         35971649257  cycles elapsed
+           271495432  peak memory footprint
+END 2026-11-15T23:55:01.285702+00:00

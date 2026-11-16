@@ -1,0 +1,184 @@
+START 2026-11-15T22:05:25Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean:347:22: error: Type mismatch
+  fun t => (coins z).getD ((b.toNat * bound z + v) * width z + t) false
+has type
+  ℕ → Bool
+but is expected to have type
+  Fin (width z) → Bool
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean:373:64: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (List.map ?f ?l).getD ?n (?f ?d)
+in the target expression
+  ((List.map (fun v => List.replicate v true) C.gates[i].args).getD j []).length = C.gates[i].args.getD j 0
+
+E₁ E₂ : List Bool → List Bool
+width bound inputs gate : List Bool → ℕ
+kind args coins : List Bool → List Bool
+z : List Bool
+C : DAGCircuit (inputs z)
+s : GarbleSeed C (Fin (width z) → Bool) ((Fin (width z) → Bool) × (Fin (width z) → Bool))
+i : Fin C.gates.length
+a : Fin C.gates[i].args.length → Bool
+hfan : C.gates[i].args.length ≤ 2
+hgate : gate z = ↑i
+hkind : kind z = C.gates[i].kind.encode
+hargs : args z = BinArith.encWords (List.map (fun v => List.replicate v true) C.gates[i].args)
+hkey : (v : ℕ) → v < C.size → Bool → sorry
+hr₀ :
+  ∀ (a : Fin C.gates[i].args.length → Bool) (t : Fin (width z)),
+    (s.2.1 i a).1 t =
+      (coins z).getD
+        (2 * bound z * width z +
+            (4 * gate z + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * width z) +
+          ↑t)
+        false
+hr₁ :
+  ∀ (a : Fin C.gates[i].args.length → Bool) (t : Fin (width z)),
+    (s.2.1 i a).2 t =
+      (coins z).getD
+        (2 * bound z * width z +
+              (4 * gate z + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * width z) +
+            width z +
+          ↑t)
+        false
+hperm :
+  ∀ (a : Fin C.gates[i].args.length → Bool) (t : Fin C.gates[i].args.length),
+    (s.2.2 i) a t = (a t ^^ (coins z).getD (10 * bound z * width z + 2 * gate z + ↑t) false)
+b₀ : List Bool → Bool := assignmentBit width bound gate coins C.gates[i].args.length a 0
+b₁ : List Bool → Bool := assignmentBit width bound gate coins C.gates[i].args.length a 1
+a' : Fin C.gates[i].args.length → Bool := (s.2.2 i) a
+hb₀ : b₀ z = (List.ofFn a').getD 0 false
+hb₁ : b₁ z = (List.ofFn a').getD 1 false
+houtput : gateBit kind C.gates[i].args.length b₀ b₁ z = gateOut C.gates[i] a'
+j : ℕ
+⊢ ((List.map (fun v => List.replicate v true) C.gates[i].args).getD j []).length = C.gates[i].args.getD j 0
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean:392:59: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (BinArith.getW (pairEncode (List.replicate 0 true) (args z))).length
+in the target expression
+  List.ofFn (keyAt C s (BinArith.getW (pairEncode [] (args z))).length (b₀ z)) =
+    List.ofFn (keyAt C s (C.gates[i].args.getD 0 0) ((List.ofFn a').getD 0 false))
+
+E₁ E₂ : List Bool → List Bool
+width bound inputs gate : List Bool → ℕ
+kind args coins : List Bool → List Bool
+z : List Bool
+C : DAGCircuit (inputs z)
+s : GarbleSeed C (Fin (width z) → Bool) ((Fin (width z) → Bool) × (Fin (width z) → Bool))
+i : Fin C.gates.length
+a : Fin C.gates[i].args.length → Bool
+hfan : C.gates[i].args.length ≤ 2
+hgate : gate z = ↑i
+hkind : kind z = C.gates[i].kind.encode
+hargs : args z = BinArith.encWords (List.map (fun v => List.replicate v true) C.gates[i].args)
+hkey : (v : ℕ) → v < C.size → Bool → sorry
+hr₀ :
+  ∀ (a : Fin C.gates[i].args.length → Bool) (t : Fin (width z)),
+    (s.2.1 i a).1 t =
+      (coins z).getD
+        (2 * bound z * width z +
+            (4 * gate z + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * width z) +
+          ↑t)
+        false
+hr₁ :
+  ∀ (a : Fin C.gates[i].args.length → Bool) (t : Fin (width z)),
+    (s.2.1 i a).2 t =
+      (coins z).getD
+        (2 * bound z * width z +
+              (4 * gate z + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * width z) +
+            width z +
+          ↑t)
+        false
+hperm :
+  ∀ (a : Fin C.gates[i].args.length → Bool) (t : Fin C.gates[i].args.length),
+    (s.2.2 i) a t = (a t ^^ (coins z).getD (10 * bound z * width z + 2 * gate z + ↑t) false)
+b₀ : List Bool → Bool := assignmentBit width bound gate coins C.gates[i].args.length a 0
+b₁ : List Bool → Bool := assignmentBit width bound gate coins C.gates[i].args.length a 1
+a' : Fin C.gates[i].args.length → Bool := (s.2.2 i) a
+hb₀ : b₀ z = (List.ofFn a').getD 0 false
+hb₁ : b₁ z = (List.ofFn a').getD 1 false
+houtput : gateBit kind C.gates[i].args.length b₀ b₁ z = gateOut C.gates[i] a'
+hlookup : ∀ (j : ℕ), (BinArith.getW (pairEncode (List.replicate j true) (args z))).length = C.gates[i].args.getD j 0
+houtlt : inputs z + ↑i < C.size
+hwire : ∀ (j : ℕ), C.gates[i].args.getD j 0 < C.size
+hkeyWord :
+  ∀ (vertex : List Bool → ℕ) (bit : List Bool → Bool),
+    vertex z < C.size → keyWord width bound vertex bit coins z = List.ofFn (keyAt C s (vertex z) (bit z))
+⊢ List.ofFn (keyAt C s (BinArith.getW (pairEncode [] (args z))).length (b₀ z)) =
+    List.ofFn (keyAt C s (C.gates[i].args.getD 0 0) ((List.ofFn a').getD 0 false))
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean:396:59: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (BinArith.getW (pairEncode (List.replicate 1 true) (args z))).length
+in the target expression
+  List.ofFn (keyAt C s (BinArith.getW (pairEncode [true] (args z))).length (b₁ z)) =
+    List.ofFn (keyAt C s (C.gates[i].args.getD 1 0) ((List.ofFn a').getD 1 false))
+
+E₁ E₂ : List Bool → List Bool
+width bound inputs gate : List Bool → ℕ
+kind args coins : List Bool → List Bool
+z : List Bool
+C : DAGCircuit (inputs z)
+s : GarbleSeed C (Fin (width z) → Bool) ((Fin (width z) → Bool) × (Fin (width z) → Bool))
+i : Fin C.gates.length
+a : Fin C.gates[i].args.length → Bool
+hfan : C.gates[i].args.length ≤ 2
+hgate : gate z = ↑i
+hkind : kind z = C.gates[i].kind.encode
+hargs : args z = BinArith.encWords (List.map (fun v => List.replicate v true) C.gates[i].args)
+hkey : (v : ℕ) → v < C.size → Bool → sorry
+hr₀ :
+  ∀ (a : Fin C.gates[i].args.length → Bool) (t : Fin (width z)),
+    (s.2.1 i a).1 t =
+      (coins z).getD
+        (2 * bound z * width z +
+            (4 * gate z + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * width z) +
+          ↑t)
+        false
+hr₁ :
+  ∀ (a : Fin C.gates[i].args.length → Bool) (t : Fin (width z)),
+    (s.2.1 i a).2 t =
+      (coins z).getD
+        (2 * bound z * width z +
+              (4 * gate z + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * width z) +
+            width z +
+          ↑t)
+        false
+hperm :
+  ∀ (a : Fin C.gates[i].args.length → Bool) (t : Fin C.gates[i].args.length),
+    (s.2.2 i) a t = (a t ^^ (coins z).getD (10 * bound z * width z + 2 * gate z + ↑t) false)
+b₀ : List Bool → Bool := assignmentBit width bound gate coins C.gates[i].args.length a 0
+b₁ : List Bool → Bool := assignmentBit width bound gate coins C.gates[i].args.length a 1
+a' : Fin C.gates[i].args.length → Bool := (s.2.2 i) a
+hb₀ : b₀ z = (List.ofFn a').getD 0 false
+hb₁ : b₁ z = (List.ofFn a').getD 1 false
+houtput : gateBit kind C.gates[i].args.length b₀ b₁ z = gateOut C.gates[i] a'
+hlookup : ∀ (j : ℕ), (BinArith.getW (pairEncode (List.replicate j true) (args z))).length = C.gates[i].args.getD j 0
+houtlt : inputs z + ↑i < C.size
+hwire : ∀ (j : ℕ), C.gates[i].args.getD j 0 < C.size
+hkeyWord :
+  ∀ (vertex : List Bool → ℕ) (bit : List Bool → Bool),
+    vertex z < C.size → keyWord width bound vertex bit coins z = List.ofFn (keyAt C s (vertex z) (bit z))
+hk₀ :
+  keyWord width bound (fun w => (BinArith.getW (pairEncode [] (args w))).length) b₀ coins z =
+    List.ofFn (keyAt C s (C.gates[i].args.getD 0 0) ((List.ofFn a').getD 0 false))
+⊢ List.ofFn (keyAt C s (BinArith.getW (pairEncode [true] (args z))).length (b₁ z)) =
+    List.ofFn (keyAt C s (C.gates[i].args.getD 1 0) ((List.ofFn a').getD 1 false))
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins): no fresh .olean produced
+        6.24 real         5.95 user         1.27 sys
+          2223063040  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              163105  page reclaims
+               13491  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 919  voluntary context switches
+               11278  involuntary context switches
+            32628748  instructions retired
+            18793250  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T22:05:31Z status=1

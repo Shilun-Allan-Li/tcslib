@@ -1,0 +1,1357 @@
+2026-11-15T21:08:36Z ACQUIRE pid=98915 tag=sc-yao k=1 cmd=lean --version
+2026-11-15T21:08:37Z RELEASE pid=98915 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:12:22Z RELEASE pid=819 tag=sc-yao slots=[slot2 slot3 ]
+2026-11-15T21:24:59Z ACQUIRE pid=3858 tag=sc-yao k=3 cmd=env TAR_OPTIONS=--no-same-owner lake exe cache get Mathlib.Algebra.BigOperators.Field Mathlib.Algebra.BigOperators.Fin Mathlib.Algebra.BigOperators.Ring.Finset Mathlib.Algebra.Group.End Mathlib.Algebra.Group.Pi.Lemmas Mathlib.Algebra.Order.BigOperators.Group.Finset Mathlib.Algebra.Order.BigOperators.Group.List Mathlib.Algebra.Order.BigOperators.Group.Multiset Mathlib.Algebra.Order.Chebyshev Mathlib.Algebra.Order.Group.Abs Mathlib.Algebra.Order.Group.Int Mathlib.Algebra.Order.Group.Nat Mathlib.Algebra.Ring.BooleanRing Mathlib.Analysis.SpecialFunctions.Exp Mathlib.Analysis.SpecialFunctions.Log.Base Mathlib.Analysis.SpecialFunctions.Pow.Real Mathlib.Analysis.SpecialFunctions.Sqrt Mathlib.Analysis.SpecificLimits.Normed Mathlib.Computability.Language Mathlib.Computability.MyhillNerode Mathlib.Data.Bool.Count Mathlib.Data.Fin.Tuple.Basic Mathlib.Data.Finite.Card Mathlib.Data.Finset.Dedup Mathlib.Data.Finset.Max Mathlib.Data.Fintype.Basic Mathlib.Data.Fintype.BigOperators Mathlib.Data.Fintype.EquivFin Mathlib.Data.Fintype.Option Mathlib.Data.Fintype.Perm Mathlib.Data.Fintype.Pi Mathlib.Data.Fintype.Powerset Mathlib.Data.Fintype.Prod Mathlib.Data.Fintype.Sigma Mathlib.Data.Fintype.Sum Mathlib.Data.Fintype.Vector Mathlib.Data.Int.Interval Mathlib.Data.List.Basic Mathlib.Data.List.Dedup Mathlib.Data.List.FinRange Mathlib.Data.List.GetD Mathlib.Data.List.Induction Mathlib.Data.List.MinMax Mathlib.Data.List.Nodup Mathlib.Data.List.OfFn Mathlib.Data.List.Pairwise Mathlib.Data.List.Sort Mathlib.Data.Nat.Bits Mathlib.Data.Nat.Count Mathlib.Data.Nat.Find Mathlib.Data.Nat.Log Mathlib.Data.Nat.Notation Mathlib.Data.Nat.Size Mathlib.Data.Nat.Sqrt Mathlib.Data.Real.Basic Mathlib.Data.Set.Card Mathlib.Data.Set.Operations Mathlib.Data.Sigma.Basic Mathlib.Data.Sign.Defs Mathlib.GroupTheory.Index Mathlib.GroupTheory.Perm.Fin Mathlib.Logic.Embedding.Basic Mathlib.Logic.Equiv.Fin.Basic Mathlib.Logic.Equiv.Prod Mathlib.Logic.Function.Basic Mathlib.Logic.Function.Iterate Mathlib.Order.Monotone.Defs Mathlib.SetTheory.Cardinal.Finite Mathlib.Tactic.Cases Mathlib.Tactic.DeriveFintype Mathlib.Tactic.FieldSimp Mathlib.Tactic.FinCases Mathlib.Tactic.Linarith Mathlib.Tactic.Positivity Mathlib.Tactic.Ring Mathlib.Tactic.SplitIfs
+2026-11-15T21:27:23Z RELEASE pid=3858 tag=sc-yao slots=[slot2 slot3 slot1 ]
+2026-11-15T21:27:42Z ACQUIRE pid=8610 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/CacheProbe
+2026-11-15T21:27:45Z RELEASE pid=8610 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:34Z ACQUIRE pid=8767 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/DAGCircuit
+2026-11-15T21:28:36Z RELEASE pid=8767 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:36Z ACQUIRE pid=8803 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Formulas/CNF
+2026-11-15T21:28:38Z RELEASE pid=8803 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:38Z ACQUIRE pid=8833 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/DAGCircuitSat
+2026-11-15T21:28:41Z RELEASE pid=8833 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:41Z ACQUIRE pid=8863 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Configuration
+2026-11-15T21:28:43Z RELEASE pid=8863 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:43Z ACQUIRE pid=8892 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Deterministic
+2026-11-15T21:28:44Z RELEASE pid=8892 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:44Z ACQUIRE pid=8921 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Finite
+2026-11-15T21:28:46Z RELEASE pid=8921 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:46Z ACQUIRE pid=8952 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Simulation
+2026-11-15T21:28:49Z RELEASE pid=8952 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:49Z ACQUIRE pid=8982 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Composition
+2026-11-15T21:28:51Z RELEASE pid=8982 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:51Z ACQUIRE pid=9011 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/PolyTime
+2026-11-15T21:28:52Z RELEASE pid=9011 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:52Z ACQUIRE pid=9044 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/UnaryCode
+2026-11-15T21:28:54Z RELEASE pid=9044 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:54Z ACQUIRE pid=9070 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/Uniform
+2026-11-15T21:28:56Z RELEASE pid=9070 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:56Z ACQUIRE pid=9102 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Formulas/CNFEncoding
+2026-11-15T21:28:58Z RELEASE pid=9102 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:58Z ACQUIRE pid=9134 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/StateRenaming
+2026-11-15T21:28:59Z RELEASE pid=9134 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:28:59Z ACQUIRE pid=9163 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction
+2026-11-15T21:29:02Z RELEASE pid=9163 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:02Z ACQUIRE pid=9211 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Sweep
+2026-11-15T21:29:04Z RELEASE pid=9211 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:04Z ACQUIRE pid=9240 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Robustness/SingleTape
+2026-11-15T21:29:09Z RELEASE pid=9240 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:09Z ACQUIRE pid=9312 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Encoding
+2026-11-15T21:29:11Z RELEASE pid=9312 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:11Z ACQUIRE pid=9340 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassP/TimeConstructible
+2026-11-15T21:29:13Z RELEASE pid=9340 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:13Z ACQUIRE pid=9377 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Build/Convention
+2026-11-15T21:29:14Z RELEASE pid=9377 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:14Z ACQUIRE pid=9408 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Build/Wrappers
+2026-11-15T21:29:17Z RELEASE pid=9408 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:17Z ACQUIRE pid=9444 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Build/Embed
+2026-11-15T21:29:19Z RELEASE pid=9444 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:19Z ACQUIRE pid=9473 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Build/Loop
+2026-11-15T21:29:34Z RELEASE pid=9473 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:34Z ACQUIRE pid=9537 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Build/Primitives
+2026-11-15T21:29:48Z RELEASE pid=9537 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:48Z ACQUIRE pid=9608 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/PolyTimePairing
+2026-11-15T21:29:50Z RELEASE pid=9608 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:50Z ACQUIRE pid=9646 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassP/DTIME
+2026-11-15T21:29:52Z RELEASE pid=9646 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:52Z ACQUIRE pid=9682 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassP/P
+2026-11-15T21:29:53Z RELEASE pid=9682 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:53Z ACQUIRE pid=9713 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/NP
+2026-11-15T21:29:55Z RELEASE pid=9713 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:29:55Z ACQUIRE pid=9743 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/EXP
+2026-11-15T21:30:05Z RELEASE pid=9743 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:05Z ACQUIRE pid=9816 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/UniversalStartup
+2026-11-15T21:30:07Z RELEASE pid=9816 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:07Z ACQUIRE pid=9850 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/UniversalInterpreter
+2026-11-15T21:30:11Z RELEASE pid=9850 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:11Z ACQUIRE pid=9887 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/UniversalBlock
+2026-11-15T21:30:14Z RELEASE pid=9887 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:14Z ACQUIRE pid=9968 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Universal
+2026-11-15T21:30:23Z RELEASE pid=9968 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:23Z ACQUIRE pid=10085 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Uncomputability/Computable
+2026-11-15T21:30:25Z RELEASE pid=10085 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:25Z ACQUIRE pid=10113 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Uncomputability/Diagonalization
+2026-11-15T21:30:27Z RELEASE pid=10113 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:27Z ACQUIRE pid=10139 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Uncomputability/Halting
+2026-11-15T21:30:28Z RELEASE pid=10139 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:28Z ACQUIRE pid=10173 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/Reductions
+2026-11-15T21:30:30Z RELEASE pid=10173 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:30Z ACQUIRE pid=10202 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Build/ModuleHost
+2026-11-15T21:30:32Z RELEASE pid=10202 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:32Z ACQUIRE pid=10231 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/SAT
+2026-11-15T21:30:50Z RELEASE pid=10231 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:50Z ACQUIRE pid=10309 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang
+2026-11-15T21:30:52Z RELEASE pid=10309 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:52Z ACQUIRE pid=10337 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/OracleComp
+2026-11-15T21:30:53Z RELEASE pid=10337 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:53Z ACQUIRE pid=10359 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Simulate
+2026-11-15T21:30:54Z RELEASE pid=10359 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:54Z ACQUIRE pid=10387 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/PolyExpr
+2026-11-15T21:30:55Z RELEASE pid=10387 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:55Z ACQUIRE pid=10423 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/PPT
+2026-11-15T21:30:57Z RELEASE pid=10423 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:57Z ACQUIRE pid=10452 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Machines
+2026-11-15T21:30:59Z RELEASE pid=10452 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:30:59Z ACQUIRE pid=10481 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Foundations/Probability
+2026-11-15T21:31:01Z RELEASE pid=10481 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:01Z ACQUIRE pid=10512 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/InformationTheory/FinDist
+2026-11-15T21:31:04Z RELEASE pid=10512 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:04Z ACQUIRE pid=10544 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/InformationTheory/StatisticalDistance
+2026-11-15T21:31:07Z RELEASE pid=10544 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:07Z ACQUIRE pid=10624 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Foundations/Experiments
+2026-11-15T21:31:09Z RELEASE pid=10624 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:09Z ACQUIRE pid=10653 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/HardcoreBit/Basic
+2026-11-15T21:31:11Z RELEASE pid=10653 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:11Z ACQUIRE pid=10683 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Foundations/BitLists
+2026-11-15T21:31:13Z RELEASE pid=10683 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:13Z ACQUIRE pid=10709 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/Adversary
+2026-11-15T21:31:15Z RELEASE pid=10709 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:15Z ACQUIRE pid=10741 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Probability
+2026-11-15T21:31:17Z RELEASE pid=10741 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:17Z ACQUIRE pid=10779 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/UnaryTape
+2026-11-15T21:31:18Z RELEASE pid=10779 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:18Z ACQUIRE pid=10805 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/CounterProg
+2026-11-15T21:31:22Z RELEASE pid=10805 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:22Z ACQUIRE pid=10845 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/CounterProgRun
+2026-11-15T21:31:24Z RELEASE pid=10845 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:24Z ACQUIRE pid=10930 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/CounterProgPolyTime
+2026-11-15T21:31:26Z RELEASE pid=10930 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:26Z ACQUIRE pid=10960 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/CounterProgInput
+2026-11-15T21:31:27Z RELEASE pid=10960 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:27Z ACQUIRE pid=10991 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/PolyTimePrefix
+2026-11-15T21:31:30Z RELEASE pid=10991 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:30Z ACQUIRE pid=11022 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed
+2026-11-15T21:31:31Z RELEASE pid=11022 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:31Z ACQUIRE pid=11052 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Build/EmitIterBody
+2026-11-15T21:31:35Z RELEASE pid=11052 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:35Z ACQUIRE pid=11101 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/PolyTimeBlockLoop
+2026-11-15T21:31:37Z RELEASE pid=11101 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:37Z ACQUIRE pid=11193 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/BitCodec
+2026-11-15T21:31:39Z RELEASE pid=11193 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:39Z ACQUIRE pid=11224 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary
+2026-11-15T21:31:42Z RELEASE pid=11224 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:42Z ACQUIRE pid=11254 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Bridges/QueryTree
+2026-11-15T21:31:44Z RELEASE pid=11254 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:44Z ACQUIRE pid=11286 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/Build/PairSplit
+2026-11-15T21:31:46Z RELEASE pid=11286 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:46Z ACQUIRE pid=11357 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/Build/UnaryMul
+2026-11-15T21:31:49Z RELEASE pid=11357 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:49Z ACQUIRE pid=11403 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/Primitives
+2026-11-15T21:31:50Z RELEASE pid=11403 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:50Z ACQUIRE pid=11437 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/Closure
+2026-11-15T21:31:52Z RELEASE pid=11437 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:52Z ACQUIRE pid=11466 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/Basic
+2026-11-15T21:31:56Z RELEASE pid=11466 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:56Z ACQUIRE pid=11608 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/TreeDAG
+2026-11-15T21:31:59Z RELEASE pid=11608 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:31:59Z ACQUIRE pid=11639 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/DAGTransform
+2026-11-15T21:32:01Z RELEASE pid=11639 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:01Z ACQUIRE pid=11668 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/DAGFanin
+2026-11-15T21:32:04Z RELEASE pid=11668 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:04Z ACQUIRE pid=11715 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/LayeredCircuit
+2026-11-15T21:32:07Z RELEASE pid=11715 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:07Z ACQUIRE pid=11794 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/LayeredPPoly
+2026-11-15T21:32:09Z RELEASE pid=11794 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:09Z ACQUIRE pid=11896 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/PPoly
+2026-11-15T21:32:11Z RELEASE pid=11896 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:11Z ACQUIRE pid=11926 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/LayeredDAG
+2026-11-15T21:32:13Z RELEASE pid=11926 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:13Z ACQUIRE pid=11959 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/SizeClasses
+2026-11-15T21:32:15Z RELEASE pid=11959 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:15Z ACQUIRE pid=12000 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/Advice
+2026-11-15T21:32:18Z RELEASE pid=12000 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:18Z ACQUIRE pid=12039 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/NonUniform
+2026-11-15T21:32:20Z RELEASE pid=12039 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:20Z ACQUIRE pid=12069 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/Build/IterateFindHost
+2026-11-15T21:32:22Z RELEASE pid=12069 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:22Z ACQUIRE pid=12098 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/Build/IterateFind
+2026-11-15T21:32:25Z RELEASE pid=12098 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:25Z ACQUIRE pid=12139 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/Build/StateLoop
+2026-11-15T21:32:26Z RELEASE pid=12139 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:26Z ACQUIRE pid=12209 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassP/BinaryArith/Iterate
+2026-11-15T21:32:28Z RELEASE pid=12209 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:28Z ACQUIRE pid=12240 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/Transducer
+2026-11-15T21:32:30Z RELEASE pid=12240 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:30Z ACQUIRE pid=12277 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/SpaceComplexity/Machines/Bin
+2026-11-15T21:32:32Z RELEASE pid=12277 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:32Z ACQUIRE pid=12316 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassP/BinaryArith/Basic
+2026-11-15T21:32:34Z RELEASE pid=12316 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:34Z ACQUIRE pid=12356 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/Build/StringLoops
+2026-11-15T21:32:36Z RELEASE pid=12356 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:36Z ACQUIRE pid=12386 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/Repetition
+2026-11-15T21:32:38Z RELEASE pid=12386 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:38Z ACQUIRE pid=12418 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/OneWayFunctions/Basic
+2026-11-15T21:32:40Z RELEASE pid=12418 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:40Z ACQUIRE pid=12449 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/Sampling
+2026-11-15T21:32:44Z RELEASE pid=12449 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:44Z ACQUIRE pid=12518 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Foundations/Negligible
+2026-11-15T21:32:47Z RELEASE pid=12518 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:47Z ACQUIRE pid=12623 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Indistinguishability
+2026-11-15T21:32:49Z RELEASE pid=12623 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:49Z ACQUIRE pid=12654 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/EnsemblesLemmas
+2026-11-15T21:32:53Z RELEASE pid=12654 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:53Z ACQUIRE pid=12704 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Generators
+2026-11-15T21:32:55Z RELEASE pid=12704 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:55Z ACQUIRE pid=12856 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation
+2026-11-15T21:32:58Z RELEASE pid=12856 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:32:58Z ACQUIRE pid=12907 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/HardcoreBit/PairwiseIndependence
+2026-11-15T21:33:00Z RELEASE pid=12907 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:00Z ACQUIRE pid=12962 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/Ensembles
+2026-11-15T21:33:03Z RELEASE pid=12962 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:03Z ACQUIRE pid=13016 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Defs
+2026-11-15T21:33:05Z RELEASE pid=13016 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:05Z ACQUIRE pid=13072 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/NextBit/Concrete
+2026-11-15T21:33:08Z RELEASE pid=13072 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:08Z ACQUIRE pid=13155 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/NextBit
+2026-11-15T21:33:11Z RELEASE pid=13155 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:11Z ACQUIRE pid=13185 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/CoNP
+2026-11-15T21:33:13Z RELEASE pid=13185 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:13Z ACQUIRE pid=13248 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/PolyTimeBlockTests
+2026-11-15T21:33:15Z RELEASE pid=13248 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:15Z ACQUIRE pid=13279 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/PolyTimeBlockMajority
+2026-11-15T21:33:17Z RELEASE pid=13279 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:17Z ACQUIRE pid=13315 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/PClosure
+2026-11-15T21:33:18Z RELEASE pid=13315 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:18Z ACQUIRE pid=13344 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassP/BinaryArith/AddSub
+2026-11-15T21:33:21Z RELEASE pid=13344 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:21Z ACQUIRE pid=13374 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassP/BinaryArith/Mul
+2026-11-15T21:33:22Z RELEASE pid=13374 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:22Z ACQUIRE pid=13429 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassP/BinaryArith/Div
+2026-11-15T21:33:25Z RELEASE pid=13429 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:25Z ACQUIRE pid=13482 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassP/BinaryArith/Words
+2026-11-15T21:33:27Z RELEASE pid=13482 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:27Z ACQUIRE pid=13513 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassP/BinaryArith/Loops
+2026-11-15T21:33:32Z RELEASE pid=13513 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:32Z ACQUIRE pid=13589 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/OneWayFunctions/Amplification
+2026-11-15T21:33:35Z RELEASE pid=13589 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:35Z ACQUIRE pid=13657 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/OneWayLemmas
+2026-11-15T21:33:38Z RELEASE pid=13657 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:33:38Z ACQUIRE pid=13742 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/OneWayYao
+2026-11-15T21:34:18Z RELEASE pid=13742 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:18Z ACQUIRE pid=14205 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/OneWay
+2026-11-15T21:34:24Z RELEASE pid=14205 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:24Z ACQUIRE pid=14380 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/PolyHierarchy/Padding
+2026-11-15T21:34:26Z RELEASE pid=14380 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:26Z ACQUIRE pid=14409 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/CollectionsHelpers
+2026-11-15T21:34:28Z RELEASE pid=14409 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:28Z ACQUIRE pid=14467 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/CollectionsLemmas
+2026-11-15T21:34:31Z RELEASE pid=14467 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:31Z ACQUIRE pid=14501 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/Collections
+2026-11-15T21:34:33Z RELEASE pid=14501 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:33Z ACQUIRE pid=14557 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/HardcoreBit/InnerProduct
+2026-11-15T21:34:35Z RELEASE pid=14557 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:35Z ACQUIRE pid=14614 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/HardcoreBit/GoldreichLevin
+2026-11-15T21:34:38Z RELEASE pid=14614 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:38Z ACQUIRE pid=14655 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain
+2026-11-15T21:34:42Z RELEASE pid=14655 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:42Z ACQUIRE pid=14780 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/HardcoreBit/ThreeQuarters
+2026-11-15T21:34:45Z RELEASE pid=14780 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:45Z ACQUIRE pid=15201 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/OneWayFunctions/OutputLength
+2026-11-15T21:34:47Z RELEASE pid=15201 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:47Z ACQUIRE pid=15339 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/ReductionSupport
+2026-11-15T21:34:49Z RELEASE pid=15339 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:50Z ACQUIRE pid=15450 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/StretchMachine
+2026-11-15T21:34:52Z RELEASE pid=15450 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:52Z ACQUIRE pid=15482 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCoreLemmas
+2026-11-15T21:34:54Z RELEASE pid=15482 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:54Z ACQUIRE pid=15514 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCoreLoops
+2026-11-15T21:34:57Z RELEASE pid=15514 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:57Z ACQUIRE pid=15568 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Programs/Compat
+2026-11-15T21:34:58Z RELEASE pid=15568 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:34:58Z ACQUIRE pid=15594 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Programs/Util/List
+2026-11-15T21:35:00Z RELEASE pid=15594 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:00Z ACQUIRE pid=15626 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCoreGL
+2026-11-15T21:35:06Z RELEASE pid=15626 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:06Z ACQUIRE pid=15807 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCoreGLColl
+2026-11-15T21:35:07Z ACQUIRE pid=15824 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner
+2026-11-15T21:35:09Z RELEASE pid=15824 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T21:35:10Z RELEASE pid=15807 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:10Z ACQUIRE pid=15892 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCoreCollection
+2026-11-15T21:35:13Z RELEASE pid=15892 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:13Z ACQUIRE pid=16047 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCoreGLFamily
+2026-11-15T21:35:15Z RELEASE pid=16047 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:15Z ACQUIRE pid=16077 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCore/Functions
+2026-11-15T21:35:19Z RELEASE pid=16077 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:19Z ACQUIRE pid=16110 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin
+2026-11-15T21:35:22Z RELEASE pid=16110 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:22Z ACQUIRE pid=16275 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch
+2026-11-15T21:35:25Z RELEASE pid=16275 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:25Z ACQUIRE pid=16316 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation
+2026-11-15T21:35:26Z ACQUIRE pid=16333 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner
+2026-11-15T21:35:27Z RELEASE pid=16333 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T21:35:27Z RELEASE pid=16316 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:27Z ACQUIRE pid=16433 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/LazySampling
+2026-11-15T21:35:30Z RELEASE pid=16433 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:30Z ACQUIRE pid=16469 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Advantage
+2026-11-15T21:35:32Z RELEASE pid=16469 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:32Z ACQUIRE pid=16499 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Bridges/Experiments
+2026-11-15T21:35:34Z RELEASE pid=16499 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:34Z ACQUIRE pid=16531 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/Defs
+2026-11-15T21:35:36Z RELEASE pid=16531 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:36Z ACQUIRE pid=16561 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids
+2026-11-15T21:35:39Z RELEASE pid=16561 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:39Z ACQUIRE pid=16591 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/GGM
+2026-11-15T21:35:39Z ACQUIRE pid=16608 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost
+2026-11-15T21:35:41Z RELEASE pid=16608 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:35:41Z RELEASE pid=16591 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:41Z ACQUIRE pid=16656 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Evaluator
+2026-11-15T21:35:44Z RELEASE pid=16656 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:35:44Z ACQUIRE pid=16689 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction
+2026-11-15T21:35:45Z ACQUIRE pid=16716 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRead
+2026-11-15T21:35:48Z RELEASE pid=16716 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T21:36:07Z RELEASE pid=16689 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:07Z ACQUIRE pid=16923 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run
+2026-11-15T21:36:10Z RELEASE pid=16923 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:10Z ACQUIRE pid=16952 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs
+2026-11-15T21:36:12Z RELEASE pid=16952 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:12Z ACQUIRE pid=16992 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM
+2026-11-15T21:36:15Z RELEASE pid=16992 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:15Z ACQUIRE pid=17025 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Bridges/Machines
+2026-11-15T21:36:17Z RELEASE pid=17025 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:17Z ACQUIRE pid=17213 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Efficiency/Strings
+2026-11-15T21:36:20Z RELEASE pid=17213 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:20Z ACQUIRE pid=17245 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Efficiency/Replay
+2026-11-15T21:36:21Z RELEASE pid=17245 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:21Z ACQUIRE pid=17284 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Efficiency/Handler
+2026-11-15T21:36:29Z RELEASE pid=17284 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:29Z ACQUIRE pid=17485 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Efficiency/OracleBridge
+2026-11-15T21:36:32Z RELEASE pid=17485 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:32Z ACQUIRE pid=17513 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Efficiency/Interactive
+2026-11-15T21:36:34Z RELEASE pid=17513 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:34Z ACQUIRE pid=17543 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Efficiency/InteractiveSpec
+2026-11-15T21:36:39Z RELEASE pid=17543 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:39Z ACQUIRE pid=17742 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Efficiency
+2026-11-15T21:36:41Z ACQUIRE pid=17762 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost
+2026-11-15T21:36:42Z RELEASE pid=17742 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:42Z ACQUIRE pid=17794 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Games/Hopping
+2026-11-15T21:36:43Z RELEASE pid=17762 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:36:45Z RELEASE pid=17794 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:45Z ACQUIRE pid=17835 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic
+2026-11-15T21:36:47Z RELEASE pid=17835 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:47Z ACQUIRE pid=17865 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/Interaction
+2026-11-15T21:36:49Z RELEASE pid=17865 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:49Z ACQUIRE pid=17895 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Defs
+2026-11-15T21:36:51Z RELEASE pid=17895 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:51Z ACQUIRE pid=17926 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/ObliviousTransfer
+2026-11-15T21:36:56Z RELEASE pid=17926 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:56Z ACQUIRE pid=18135 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/SpecialEncryption
+2026-11-15T21:36:58Z RELEASE pid=18135 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:36:58Z ACQUIRE pid=18174 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Encryption/PrivateKey/Scheme
+2026-11-15T21:37:00Z RELEASE pid=18174 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:00Z ACQUIRE pid=18210 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity
+2026-11-15T21:37:03Z RELEASE pid=18210 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:03Z ACQUIRE pid=18240 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Encryption/PrivateKey/FromPRG
+2026-11-15T21:37:05Z RELEASE pid=18240 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:05Z ACQUIRE pid=18274 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity
+2026-11-15T21:37:08Z RELEASE pid=18274 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:08Z ACQUIRE pid=18304 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti
+2026-11-15T21:37:10Z RELEASE pid=18304 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:10Z ACQUIRE pid=18383 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Garbling
+2026-11-15T21:37:13Z RELEASE pid=18383 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:13Z ACQUIRE pid=18414 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/GarblingSpecial
+2026-11-15T21:37:15Z RELEASE pid=18414 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:15Z ACQUIRE pid=18639 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/GarblingSecurity
+2026-11-15T21:37:18Z RELEASE pid=18639 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:18Z ACQUIRE pid=18675 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Hybrid
+2026-11-15T21:37:20Z RELEASE pid=18675 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:20Z ACQUIRE pid=18707 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Compose
+2026-11-15T21:37:22Z RELEASE pid=18707 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:22Z ACQUIRE pid=18737 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/ComposePhases
+2026-11-15T21:37:25Z RELEASE pid=18737 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:25Z ACQUIRE pid=18788 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/ComposeSecurity
+2026-11-15T21:37:27Z RELEASE pid=18788 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:27Z ACQUIRE pid=18818 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao
+2026-11-15T21:37:30Z RELEASE pid=18818 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:30Z ACQUIRE pid=18849 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/YaoReal
+2026-11-15T21:37:32Z RELEASE pid=18849 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:32Z ACQUIRE pid=18878 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation
+2026-11-15T21:37:34Z RELEASE pid=18878 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:34Z ACQUIRE pid=18910 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/Permutations
+2026-11-15T21:37:36Z RELEASE pid=18910 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:36Z ACQUIRE pid=18947 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/EncodingMachines
+2026-11-15T21:37:38Z RELEASE pid=18947 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:38Z ACQUIRE pid=18979 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations
+2026-11-15T21:37:41Z RELEASE pid=18979 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:41Z ACQUIRE pid=19013 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/Encoding
+2026-11-15T21:37:44Z RELEASE pid=19013 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:44Z ACQUIRE pid=19044 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs
+2026-11-15T21:37:47Z RELEASE pid=19044 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:47Z ACQUIRE pid=19314 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs
+2026-11-15T21:37:50Z RELEASE pid=19314 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:50Z ACQUIRE pid=19460 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency
+2026-11-15T21:37:52Z RELEASE pid=19460 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:37:52Z ACQUIRE pid=19497 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep
+2026-11-15T21:37:55Z RELEASE pid=19497 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:38:28Z ACQUIRE pid=20036 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/Uniform
+2026-11-15T21:38:30Z RELEASE pid=20036 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:38:30Z ACQUIRE pid=20068 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRead
+2026-11-15T21:38:33Z RELEASE pid=20068 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:38:33Z ACQUIRE pid=20098 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobIO
+2026-11-15T21:39:39Z ACQUIRE pid=21237 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost
+2026-11-15T21:39:41Z RELEASE pid=21237 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:40:03Z ACQUIRE pid=21358 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinGarbling
+2026-11-15T21:40:06Z RELEASE pid=21358 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T21:40:11Z ACQUIRE pid=21487 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Decryption
+2026-11-15T21:40:15Z RELEASE pid=21487 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:40:15Z ACQUIRE pid=21521 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling
+2026-11-15T21:40:15Z ACQUIRE pid=21540 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths
+2026-11-15T21:40:19Z RELEASE pid=21540 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T21:40:24Z RELEASE pid=21521 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T21:46:56Z RELEASE pid=20098 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:46:58Z ACQUIRE pid=21750 tag=sc-yao k=3 cmd=env TAR_OPTIONS=--no-same-owner lake exe cache get Mathlib.Combinatorics.SimpleGraph.Coloring
+2026-11-15T21:47:08Z RELEASE pid=21750 tag=sc-yao slots=[slot2 slot3 slot1 ]
+2026-11-15T21:48:26Z ACQUIRE pid=23244 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/GraphCacheProbe
+2026-11-15T21:48:37Z RELEASE pid=23244 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:48:37Z ACQUIRE pid=23348 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language
+2026-11-15T21:48:44Z ACQUIRE pid=23450 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged
+2026-11-15T21:48:44Z RELEASE pid=23348 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:48:44Z ACQUIRE pid=23476 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCore
+2026-11-15T21:48:47Z ACQUIRE pid=23497 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths
+2026-11-15T21:48:47Z RELEASE pid=23476 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:48:47Z ACQUIRE pid=23525 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas
+2026-11-15T21:48:49Z RELEASE pid=23450 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:48:50Z RELEASE pid=23497 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T21:48:50Z RELEASE pid=23525 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:48:50Z ACQUIRE pid=23567 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCoreClaims
+2026-11-15T21:48:53Z RELEASE pid=23567 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:48:53Z ACQUIRE pid=23591 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/Commitment
+2026-11-15T21:48:57Z RELEASE pid=23591 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:48:57Z ACQUIRE pid=23619 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines
+2026-11-15T21:49:00Z ACQUIRE pid=23639 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs
+2026-11-15T21:49:00Z RELEASE pid=23619 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:49:00Z ACQUIRE pid=23664 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/ReductionMachine
+2026-11-15T21:49:02Z RELEASE pid=23639 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T21:49:05Z RELEASE pid=23664 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:49:07Z ACQUIRE pid=23731 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling
+2026-11-15T21:49:16Z RELEASE pid=23731 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T21:49:21Z ACQUIRE pid=23777 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs
+2026-11-15T21:49:24Z RELEASE pid=23777 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:49:26Z ACQUIRE pid=23806 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/BobIOProfile
+2026-11-15T21:49:35Z ACQUIRE pid=24152 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews
+2026-11-15T21:49:37Z RELEASE pid=23806 tag=sc-yao slots=[slot1 ]
+2026-11-15T21:49:38Z RELEASE pid=24152 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T21:50:08Z ACQUIRE pid=24261 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged
+2026-11-15T21:50:17Z RELEASE pid=24261 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T21:50:36Z ACQUIRE pid=24338 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged
+2026-11-15T21:50:41Z RELEASE pid=24338 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T21:50:55Z ACQUIRE pid=24428 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/subagents/c/Axioms
+2026-11-15T21:51:01Z ACQUIRE pid=24450 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling
+2026-11-15T21:51:02Z RELEASE pid=24428 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:51:06Z ACQUIRE pid=24486 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate
+2026-11-15T21:51:10Z RELEASE pid=24450 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T21:51:12Z RELEASE pid=24486 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T21:51:18Z ACQUIRE pid=24547 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/WordLists
+2026-11-15T21:51:18Z ACQUIRE pid=24564 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobIO
+2026-11-15T21:51:21Z RELEASE pid=24547 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T21:51:22Z ACQUIRE pid=24610 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/subagents/c/Axioms
+2026-11-15T21:51:24Z RELEASE pid=24564 tag=sc-yao slots=[slot2 ]
+2026-11-15T21:51:28Z RELEASE pid=24610 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:51:34Z ACQUIRE pid=24666 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/WordLists
+2026-11-15T21:51:37Z RELEASE pid=24666 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T21:51:45Z ACQUIRE pid=24702 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder
+2026-11-15T21:51:49Z RELEASE pid=24702 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T21:51:50Z ACQUIRE pid=24734 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate
+2026-11-15T21:51:56Z RELEASE pid=24734 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T21:52:34Z ACQUIRE pid=24824 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder
+2026-11-15T21:52:37Z RELEASE pid=24824 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T21:53:11Z ACQUIRE pid=24869 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate
+2026-11-15T21:53:15Z ACQUIRE pid=24898 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder
+2026-11-15T21:53:17Z RELEASE pid=24898 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T21:53:18Z RELEASE pid=24869 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T21:53:31Z ACQUIRE pid=24953 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder
+2026-11-15T21:53:34Z RELEASE pid=24953 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T21:53:50Z ACQUIRE pid=25005 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Decryption
+2026-11-15T21:53:54Z RELEASE pid=25005 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T21:54:01Z ACQUIRE pid=25042 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/Lengths_A_strict
+2026-11-15T21:54:27Z ACQUIRE pid=25069 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner
+2026-11-15T21:54:29Z RELEASE pid=25042 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:54:29Z ACQUIRE pid=25105 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/Lengths_A_coe
+2026-11-15T21:54:29Z RELEASE pid=25069 tag=sc-yao slots=[slot2 ]
+2026-11-15T21:54:29Z ACQUIRE pid=25124 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinGarbling
+2026-11-15T21:54:32Z RELEASE pid=25124 tag=sc-yao slots=[slot2 ]
+2026-11-15T21:54:32Z ACQUIRE pid=25164 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling
+2026-11-15T21:54:34Z ACQUIRE pid=25195 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder
+2026-11-15T21:54:37Z RELEASE pid=25195 tag=sc-yao-a slots=[slot3 ]
+2026-11-15T21:54:40Z RELEASE pid=25164 tag=sc-yao slots=[slot2 ]
+2026-11-15T21:54:40Z ACQUIRE pid=25253 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/WordLists
+2026-11-15T21:54:43Z RELEASE pid=25253 tag=sc-yao slots=[slot2 ]
+2026-11-15T21:54:43Z ACQUIRE pid=25288 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths
+2026-11-15T21:54:45Z ACQUIRE pid=25315 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarbledRun
+2026-11-15T21:54:46Z RELEASE pid=25288 tag=sc-yao slots=[slot2 ]
+2026-11-15T21:54:46Z ACQUIRE pid=25345 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs
+2026-11-15T21:54:47Z RELEASE pid=25345 tag=sc-yao slots=[slot2 ]
+2026-11-15T21:54:47Z ACQUIRE pid=25383 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews
+2026-11-15T21:54:48Z RELEASE pid=25315 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T21:54:50Z RELEASE pid=25383 tag=sc-yao slots=[slot2 ]
+2026-11-15T21:54:55Z RELEASE pid=25105 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:54:55Z ACQUIRE pid=25445 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/Lengths_B_strict
+2026-11-15T21:55:23Z RELEASE pid=25445 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:55:23Z ACQUIRE pid=25475 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/Lengths_B_coe
+2026-11-15T21:55:23Z ACQUIRE pid=25491 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarbledRun
+2026-11-15T21:55:26Z RELEASE pid=25491 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:55:50Z RELEASE pid=25475 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:55:50Z ACQUIRE pid=25551 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/OTInputs_A_strict
+2026-11-15T21:56:01Z RELEASE pid=25551 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:56:01Z ACQUIRE pid=25578 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/OTInputs_A_coe
+2026-11-15T21:56:13Z RELEASE pid=25578 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:56:13Z ACQUIRE pid=25615 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/OTInputs_B_strict
+2026-11-15T21:56:25Z RELEASE pid=25615 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:56:25Z ACQUIRE pid=25647 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/OTInputs_B_coe
+2026-11-15T21:56:26Z ACQUIRE pid=25669 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/RunWithHost_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/RunWithHost_A_strict.olean
+2026-11-15T21:56:37Z RELEASE pid=25647 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:56:37Z ACQUIRE pid=25694 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/TwoMoveViews_A_strict
+2026-11-15T21:56:37Z RELEASE pid=25669 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:56:37Z ACQUIRE pid=25712 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/RunWithHost_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/RunWithHost_A_coe.olean
+2026-11-15T21:56:49Z RELEASE pid=25712 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:56:49Z ACQUIRE pid=25737 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/RunWithHost_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/RunWithHost_B_strict.olean
+2026-11-15T21:57:00Z RELEASE pid=25694 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:57:00Z ACQUIRE pid=25766 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/TwoMoveViews_A_coe
+2026-11-15T21:57:01Z RELEASE pid=25737 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:57:01Z ACQUIRE pid=25785 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/RunWithHost_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/RunWithHost_B_coe.olean
+2026-11-15T21:57:13Z RELEASE pid=25785 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:57:13Z ACQUIRE pid=25821 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/Decryption_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/Decryption_A_strict.olean
+2026-11-15T21:57:24Z RELEASE pid=25766 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:57:24Z ACQUIRE pid=25842 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/TwoMoveViews_B_strict
+2026-11-15T21:57:37Z RELEASE pid=25821 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:57:37Z ACQUIRE pid=25868 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/Decryption_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/Decryption_A_coe.olean
+2026-11-15T21:57:47Z RELEASE pid=25842 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:57:47Z ACQUIRE pid=25894 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/final/TwoMoveViews_B_coe
+2026-11-15T21:57:50Z ACQUIRE pid=25915 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder
+2026-11-15T21:57:52Z RELEASE pid=25915 tag=sc-yao slots=[slot3 ]
+2026-11-15T21:57:52Z ACQUIRE pid=25950 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost
+2026-11-15T21:57:54Z RELEASE pid=25950 tag=sc-yao slots=[slot3 ]
+2026-11-15T21:57:54Z ACQUIRE pid=25988 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Decryption
+2026-11-15T21:57:58Z RELEASE pid=25988 tag=sc-yao slots=[slot3 ]
+2026-11-15T21:57:58Z ACQUIRE pid=26027 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged
+2026-11-15T21:58:01Z RELEASE pid=25868 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:58:01Z ACQUIRE pid=26064 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/Decryption_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/Decryption_B_strict.olean
+2026-11-15T21:58:02Z RELEASE pid=26027 tag=sc-yao slots=[slot3 ]
+2026-11-15T21:58:02Z ACQUIRE pid=26082 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/EvalGate
+2026-11-15T21:58:08Z RELEASE pid=26082 tag=sc-yao slots=[slot3 ]
+2026-11-15T21:58:08Z ACQUIRE pid=26123 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarbledRun
+2026-11-15T21:58:10Z RELEASE pid=26123 tag=sc-yao slots=[slot3 ]
+2026-11-15T21:58:10Z ACQUIRE pid=26159 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit
+2026-11-15T21:58:11Z RELEASE pid=25894 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:58:11Z ACQUIRE pid=26188 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/controls/Control_A_strict_unsealed
+2026-11-15T21:58:13Z RELEASE pid=26159 tag=sc-yao slots=[slot3 ]
+2026-11-15T21:58:13Z RELEASE pid=26188 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:58:13Z ACQUIRE pid=26225 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/controls/Control_A_strict_sealed
+2026-11-15T21:58:25Z RELEASE pid=26225 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:58:25Z ACQUIRE pid=26260 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/controls/Control_A_coe_unsealed
+2026-11-15T21:58:25Z RELEASE pid=26064 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:58:25Z ACQUIRE pid=26278 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/Decryption_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/Decryption_B_coe.olean
+2026-11-15T21:58:27Z RELEASE pid=26260 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:58:27Z ACQUIRE pid=26299 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/controls/Control_A_coe_sealed
+2026-11-15T21:58:39Z RELEASE pid=26299 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:58:39Z ACQUIRE pid=26324 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/controls/Control_B_strict_unsealed
+2026-11-15T21:58:40Z RELEASE pid=26324 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:58:40Z ACQUIRE pid=26348 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/controls/Control_B_strict_sealed
+2026-11-15T21:58:49Z RELEASE pid=26278 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:58:49Z ACQUIRE pid=26373 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/FirstTagged_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/FirstTagged_A_strict.olean
+2026-11-15T21:58:52Z RELEASE pid=26348 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:58:52Z ACQUIRE pid=26397 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/controls/Control_B_coe_unsealed
+2026-11-15T21:58:54Z RELEASE pid=26397 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:58:54Z ACQUIRE pid=26420 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/seals/controls/Control_B_coe_sealed
+2026-11-15T21:59:00Z RELEASE pid=26373 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:59:01Z ACQUIRE pid=26438 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/FirstTagged_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/FirstTagged_A_coe.olean
+2026-11-15T21:59:01Z ACQUIRE pid=26453 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T21:59:04Z RELEASE pid=26453 tag=sc-yao-a slots=[slot3 ]
+2026-11-15T21:59:06Z RELEASE pid=26420 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T21:59:12Z RELEASE pid=26438 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T21:59:12Z ACQUIRE pid=26507 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/FirstTagged_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/FirstTagged_B_strict.olean
+2026-11-15T21:59:24Z RELEASE pid=26507 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T21:59:24Z ACQUIRE pid=26544 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/FirstTagged_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/FirstTagged_B_coe.olean
+2026-11-15T21:59:37Z RELEASE pid=26544 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T21:59:37Z ACQUIRE pid=26569 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/EvalGate_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/EvalGate_A_strict.olean
+2026-11-15T21:59:37Z ACQUIRE pid=26579 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit
+2026-11-15T21:59:40Z RELEASE pid=26579 tag=sc-yao slots=[slot2 ]
+2026-11-15T22:00:03Z RELEASE pid=26569 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:00:03Z ACQUIRE pid=26650 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/EvalGate_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/EvalGate_A_coe.olean
+2026-11-15T22:00:28Z ACQUIRE pid=26688 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobInit
+2026-11-15T22:00:29Z RELEASE pid=26650 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:00:29Z ACQUIRE pid=26722 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/EvalGate_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/EvalGate_B_strict.olean
+2026-11-15T22:00:30Z RELEASE pid=26688 tag=sc-yao slots=[slot2 ]
+2026-11-15T22:00:55Z RELEASE pid=26722 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:00:55Z ACQUIRE pid=26783 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/EvalGate_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/EvalGate_B_coe.olean
+2026-11-15T22:01:13Z ACQUIRE pid=26808 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T22:01:17Z RELEASE pid=26808 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T22:01:22Z RELEASE pid=26783 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:01:22Z ACQUIRE pid=26853 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/GarbledRun_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/GarbledRun_A_strict.olean
+2026-11-15T22:01:43Z ACQUIRE pid=26875 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T22:01:46Z RELEASE pid=26875 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T22:01:48Z RELEASE pid=26853 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:01:48Z ACQUIRE pid=26912 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/GarbledRun_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/GarbledRun_A_coe.olean
+2026-11-15T22:02:11Z ACQUIRE pid=26935 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T22:02:14Z RELEASE pid=26912 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:02:14Z ACQUIRE pid=26959 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/GarbledRun_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/GarbledRun_B_strict.olean
+2026-11-15T22:02:15Z RELEASE pid=26935 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T22:02:37Z ACQUIRE pid=26997 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T22:02:40Z RELEASE pid=26959 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:02:40Z ACQUIRE pid=27021 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/GarbledRun_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/GarbledRun_B_coe.olean
+2026-11-15T22:02:40Z RELEASE pid=26997 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T22:03:07Z RELEASE pid=27021 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:04:23Z ACQUIRE pid=27215 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobTables
+2026-11-15T22:04:28Z RELEASE pid=27215 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:05:25Z ACQUIRE pid=27354 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T22:05:31Z RELEASE pid=27354 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T22:05:32Z ACQUIRE pid=27467 tag=sc-yao k=3 cmd=env TAR_OPTIONS=--no-same-owner lake exe cache get Mathlib.Data.Nat.Choose.Bounds
+2026-11-15T22:05:39Z RELEASE pid=27467 tag=sc-yao slots=[slot1 slot2 slot3 ]
+2026-11-15T22:08:38Z ACQUIRE pid=27728 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobTables
+2026-11-15T22:08:41Z ACQUIRE pid=27751 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T22:08:42Z RELEASE pid=27728 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:08:43Z ACQUIRE pid=27807 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/ProbabilityCacheProbe
+2026-11-15T22:08:44Z RELEASE pid=27807 tag=sc-yao slots=[slot1 ]
+2026-11-15T22:08:44Z ACQUIRE pid=27837 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas
+2026-11-15T22:08:47Z RELEASE pid=27837 tag=sc-yao slots=[slot1 ]
+2026-11-15T22:08:48Z RELEASE pid=27751 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T22:09:01Z ACQUIRE pid=27900 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/RunWithHost_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/RunWithHost_A_strict.olean
+2026-11-15T22:09:13Z RELEASE pid=27900 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:09:13Z ACQUIRE pid=27915 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/RunWithHost_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/RunWithHost_A_coe.olean
+2026-11-15T22:09:25Z RELEASE pid=27915 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:09:25Z ACQUIRE pid=27965 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/RunWithHost_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/RunWithHost_B_strict.olean
+2026-11-15T22:09:37Z RELEASE pid=27965 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:09:37Z ACQUIRE pid=27985 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/RunWithHost_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/RunWithHost_B_coe.olean
+2026-11-15T22:09:48Z RELEASE pid=27985 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:09:48Z ACQUIRE pid=28006 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/BobTables_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/BobTables_A_strict.olean
+2026-11-15T22:10:00Z RELEASE pid=28006 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:10:00Z ACQUIRE pid=28026 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/BobTables_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/BobTables_A_coe.olean
+2026-11-15T22:10:12Z RELEASE pid=28026 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:10:12Z ACQUIRE pid=28041 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/BobTables_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/BobTables_B_strict.olean
+2026-11-15T22:10:20Z ACQUIRE pid=28270 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobIO
+2026-11-15T22:10:23Z RELEASE pid=28041 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:10:23Z ACQUIRE pid=28303 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/final/BobTables_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/final/BobTables_B_coe.olean
+2026-11-15T22:10:27Z RELEASE pid=28270 tag=sc-yao slots=[slot2 ]
+2026-11-15T22:10:32Z ACQUIRE pid=28336 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T22:10:35Z RELEASE pid=28303 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:10:35Z ACQUIRE pid=28361 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/controls/Control_A_strict_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/controls/Control_A_strict_unsealed.olean
+2026-11-15T22:10:37Z RELEASE pid=28361 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:10:37Z ACQUIRE pid=28376 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/controls/Control_A_strict_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/controls/Control_A_strict_sealed.olean
+2026-11-15T22:10:38Z RELEASE pid=28336 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T22:10:39Z ACQUIRE pid=28399 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch
+2026-11-15T22:10:42Z RELEASE pid=28399 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T22:10:48Z RELEASE pid=28376 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:10:48Z ACQUIRE pid=28437 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/controls/Control_A_coe_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/controls/Control_A_coe_unsealed.olean
+2026-11-15T22:10:50Z RELEASE pid=28437 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:10:50Z ACQUIRE pid=28450 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/controls/Control_A_coe_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/controls/Control_A_coe_sealed.olean
+2026-11-15T22:11:02Z RELEASE pid=28450 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:11:02Z ACQUIRE pid=28469 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/controls/Control_B_strict_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/controls/Control_B_strict_unsealed.olean
+2026-11-15T22:11:04Z RELEASE pid=28469 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:11:04Z ACQUIRE pid=28484 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/controls/Control_B_strict_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/controls/Control_B_strict_sealed.olean
+2026-11-15T22:11:10Z ACQUIRE pid=28501 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch
+2026-11-15T22:11:13Z RELEASE pid=28501 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T22:11:15Z RELEASE pid=28484 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:11:15Z ACQUIRE pid=28540 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/controls/Control_B_coe_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/controls/Control_B_coe_unsealed.olean
+2026-11-15T22:11:17Z RELEASE pid=28540 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:11:17Z ACQUIRE pid=28556 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/seals/controls/Control_B_coe_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/seals/controls/Control_B_coe_sealed.olean
+2026-11-15T22:11:29Z RELEASE pid=28556 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:11:29Z ACQUIRE pid=28586 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b/probes/AxiomsAndTrace.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b/probes/AxiomsAndTrace.olean
+2026-11-15T22:12:10Z RELEASE pid=28586 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:12:32Z ACQUIRE pid=28657 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins
+2026-11-15T22:12:36Z RELEASE pid=28657 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T22:13:26Z ACQUIRE pid=28741 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins
+2026-11-15T22:13:30Z RELEASE pid=28741 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T22:14:09Z ACQUIRE pid=28809 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/subagents/c/statistical/Axioms
+2026-11-15T22:14:13Z RELEASE pid=28809 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T22:14:26Z ACQUIRE pid=28860 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/statistical/seals/final/StatisticalSwitch_A_strict
+2026-11-15T22:14:50Z RELEASE pid=28860 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T22:14:50Z ACQUIRE pid=28917 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/statistical/seals/final/StatisticalSwitch_A_coe
+2026-11-15T22:15:05Z ACQUIRE pid=28963 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins
+2026-11-15T22:15:08Z RELEASE pid=28963 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T22:15:14Z RELEASE pid=28917 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T22:15:14Z ACQUIRE pid=29014 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/statistical/seals/final/StatisticalSwitch_B_strict
+2026-11-15T22:15:38Z RELEASE pid=29014 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T22:15:38Z ACQUIRE pid=29066 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/statistical/seals/final/StatisticalSwitch_B_coe
+2026-11-15T22:16:02Z RELEASE pid=29066 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T22:18:06Z ACQUIRE pid=29216 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ProtocolEfficiency
+2026-11-15T22:18:09Z RELEASE pid=29216 tag=sc-yao slots=[slot1 ]
+2026-11-15T22:18:39Z ACQUIRE pid=29290 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables
+2026-11-15T22:18:45Z RELEASE pid=29290 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T22:18:57Z ACQUIRE pid=29325 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceSimulator
+2026-11-15T22:18:59Z RELEASE pid=29325 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T22:19:38Z ACQUIRE pid=29397 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceSimulator
+2026-11-15T22:19:48Z RELEASE pid=29397 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T22:20:21Z ACQUIRE pid=29473 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables
+2026-11-15T22:21:19Z ACQUIRE pid=29528 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/subagents/c/alice/Axioms
+2026-11-15T22:21:26Z RELEASE pid=29528 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T22:21:34Z ACQUIRE pid=29576 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/alice/seals/final/AliceSimulator_A_strict
+2026-11-15T22:21:57Z RELEASE pid=29576 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T22:21:57Z ACQUIRE pid=29606 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/alice/seals/final/AliceSimulator_A_coe
+2026-11-15T22:22:20Z RELEASE pid=29606 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T22:22:20Z ACQUIRE pid=29646 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/alice/seals/final/AliceSimulator_B_strict
+2026-11-15T22:22:31Z ACQUIRE pid=29673 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobProgram
+2026-11-15T22:22:31Z RELEASE pid=29673 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T22:22:38Z RELEASE pid=29473 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T22:22:44Z RELEASE pid=29646 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T22:22:44Z ACQUIRE pid=29735 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/alice/seals/final/AliceSimulator_B_coe
+2026-11-15T22:23:10Z RELEASE pid=29735 tag=sc-yao-c slots=[slot1 ]
+2026-11-15T22:24:19Z ACQUIRE pid=30036 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobProgram
+2026-11-15T22:24:22Z RELEASE pid=30036 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:25:04Z ACQUIRE pid=30131 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T22:25:10Z RELEASE pid=30131 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T22:26:04Z ACQUIRE pid=30200 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables
+2026-11-15T22:26:10Z RELEASE pid=30200 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T22:26:13Z ACQUIRE pid=30246 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b2/seals/final/BobProgram_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b2/seals/final/BobProgram_A_strict.olean
+2026-11-15T22:26:28Z ACQUIRE pid=30272 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables
+2026-11-15T22:26:34Z RELEASE pid=30272 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T22:26:41Z RELEASE pid=30246 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:26:41Z ACQUIRE pid=30315 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b2/seals/final/BobProgram_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b2/seals/final/BobProgram_A_coe.olean
+2026-11-15T22:27:10Z RELEASE pid=30315 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:27:10Z ACQUIRE pid=30336 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b2/seals/final/BobProgram_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b2/seals/final/BobProgram_B_strict.olean
+2026-11-15T22:27:39Z RELEASE pid=30336 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:27:39Z ACQUIRE pid=30373 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b2/seals/final/BobProgram_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b2/seals/final/BobProgram_B_coe.olean
+2026-11-15T22:27:44Z ACQUIRE pid=30387 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram
+2026-11-15T22:27:47Z RELEASE pid=30387 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T22:28:02Z ACQUIRE pid=30439 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram
+2026-11-15T22:28:05Z RELEASE pid=30439 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T22:28:08Z RELEASE pid=30373 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T22:28:08Z ACQUIRE pid=30476 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b2/probes/AxiomsAndTrace.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b2/probes/AxiomsAndTrace.olean
+2026-11-15T23:11:12Z REAP pid=32196 tag=sc-yao slot1 dead=30476
+2026-11-15T23:11:12Z ACQUIRE pid=32196 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost
+2026-11-15T23:11:22Z RELEASE pid=32196 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:11:22Z ACQUIRE pid=32278 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobTables
+2026-11-15T23:11:25Z RELEASE pid=32278 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:11:25Z ACQUIRE pid=32308 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobProgram
+2026-11-15T23:11:30Z RELEASE pid=32308 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:11:30Z ACQUIRE pid=32341 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch
+2026-11-15T23:11:32Z RELEASE pid=32341 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:11:32Z ACQUIRE pid=32369 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceSimulator
+2026-11-15T23:11:35Z RELEASE pid=32369 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:11:35Z ACQUIRE pid=32398 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ProtocolEfficiency
+2026-11-15T23:11:37Z RELEASE pid=32398 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:16:50Z ACQUIRE pid=33682 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations
+2026-11-15T23:17:03Z RELEASE pid=33682 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:17:45Z ACQUIRE pid=34207 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b2/probes/AxiomsAndTrace.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b2/probes/AxiomsAndTrace.olean
+2026-11-15T23:17:47Z ACQUIRE pid=34246 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram
+2026-11-15T23:17:52Z RELEASE pid=34246 tag=sc-yao-a slots=[slot3 ]
+2026-11-15T23:17:53Z ACQUIRE pid=34269 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel
+2026-11-15T23:17:55Z RELEASE pid=34269 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T23:18:17Z ACQUIRE pid=34474 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations
+2026-11-15T23:18:18Z RELEASE pid=34207 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:18:20Z RELEASE pid=34474 tag=sc-yao slots=[slot3 ]
+2026-11-15T23:18:33Z ACQUIRE pid=34545 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel
+2026-11-15T23:18:37Z RELEASE pid=34545 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:19:06Z ACQUIRE pid=34742 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/BaseAxioms
+2026-11-15T23:19:14Z ACQUIRE pid=34785 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel
+2026-11-15T23:19:15Z RELEASE pid=34742 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:19:16Z RELEASE pid=34785 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T23:19:19Z ACQUIRE pid=34811 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram
+2026-11-15T23:19:28Z RELEASE pid=34811 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:20:12Z ACQUIRE pid=35303 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations
+2026-11-15T23:20:15Z ACQUIRE pid=35350 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram
+2026-11-15T23:20:15Z RELEASE pid=35303 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:20:24Z RELEASE pid=35350 tag=sc-yao-a slots=[slot3 ]
+2026-11-15T23:20:38Z ACQUIRE pid=35453 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel
+2026-11-15T23:20:41Z RELEASE pid=35453 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:21:23Z ACQUIRE pid=35694 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel
+2026-11-15T23:21:23Z ACQUIRE pid=35717 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram
+2026-11-15T23:21:29Z RELEASE pid=35694 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:21:34Z RELEASE pid=35717 tag=sc-yao-a slots=[slot3 ]
+2026-11-15T23:22:29Z ACQUIRE pid=35854 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner
+2026-11-15T23:22:33Z RELEASE pid=35854 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:22:53Z ACQUIRE pid=35903 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner
+2026-11-15T23:22:55Z RELEASE pid=35903 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:23:30Z ACQUIRE pid=35956 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel
+2026-11-15T23:23:34Z ACQUIRE pid=35984 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobSimulator
+2026-11-15T23:23:35Z RELEASE pid=35956 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:23:37Z RELEASE pid=35984 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:24:35Z ACQUIRE pid=36175 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel
+2026-11-15T23:24:38Z RELEASE pid=36175 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:25:46Z ACQUIRE pid=36809 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b3/seals/final/BobSimulator_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b3/seals/final/BobSimulator_A_strict.olean
+2026-11-15T23:26:17Z RELEASE pid=36809 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:26:17Z ACQUIRE pid=36967 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b3/seals/final/BobSimulator_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b3/seals/final/BobSimulator_A_coe.olean
+2026-11-15T23:26:23Z ACQUIRE pid=36994 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel
+2026-11-15T23:26:26Z RELEASE pid=36994 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T23:26:41Z RELEASE pid=36967 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:26:41Z ACQUIRE pid=37048 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b3/seals/final/BobSimulator_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b3/seals/final/BobSimulator_B_strict.olean
+2026-11-15T23:26:59Z ACQUIRE pid=37092 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel
+2026-11-15T23:27:04Z RELEASE pid=37092 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T23:27:06Z RELEASE pid=37048 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:27:07Z ACQUIRE pid=37135 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b3/seals/final/BobSimulator_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b3/seals/final/BobSimulator_B_coe.olean
+2026-11-15T23:27:31Z RELEASE pid=37135 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:27:31Z ACQUIRE pid=37162 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b3/probes/AxiomsAndTrace.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b3/probes/AxiomsAndTrace.olean
+2026-11-15T23:27:57Z RELEASE pid=37162 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:28:08Z ACQUIRE pid=37214 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel
+2026-11-15T23:28:11Z RELEASE pid=37214 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:30:29Z ACQUIRE pid=37429 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/subagents/c/relabel/Axioms
+2026-11-15T23:31:00Z RELEASE pid=37429 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:31:10Z ACQUIRE pid=37642 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/subagents/c/relabel/Edges
+2026-11-15T23:31:12Z RELEASE pid=37642 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:31:56Z ACQUIRE pid=37747 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/relabel/seals/final/CoinRelabel_A_strict
+2026-11-15T23:32:23Z RELEASE pid=37747 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:32:23Z ACQUIRE pid=37840 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/relabel/seals/final/CoinRelabel_A_coe
+2026-11-15T23:32:47Z RELEASE pid=37840 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:32:47Z ACQUIRE pid=37956 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/relabel/seals/final/CoinRelabel_B_strict
+2026-11-15T23:33:01Z ACQUIRE pid=38062 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/ChunkScanner_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/ChunkScanner_A_strict.olean
+2026-11-15T23:33:11Z RELEASE pid=37956 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:33:11Z ACQUIRE pid=38175 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/relabel/seals/final/CoinRelabel_B_coe
+2026-11-15T23:33:12Z RELEASE pid=38062 tag=sc-yao-a slots=[slot3 ]
+2026-11-15T23:33:13Z ACQUIRE pid=38218 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/ChunkScanner_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/ChunkScanner_A_coe.olean
+2026-11-15T23:33:24Z RELEASE pid=38218 tag=sc-yao-a slots=[slot3 ]
+2026-11-15T23:33:24Z ACQUIRE pid=38303 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/ChunkScanner_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/ChunkScanner_B_strict.olean
+2026-11-15T23:33:35Z RELEASE pid=38175 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:33:36Z RELEASE pid=38303 tag=sc-yao-a slots=[slot3 ]
+2026-11-15T23:33:36Z ACQUIRE pid=38387 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/ChunkScanner_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/ChunkScanner_B_coe.olean
+2026-11-15T23:33:48Z RELEASE pid=38387 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:33:48Z ACQUIRE pid=38527 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/DescriptionDecoder_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/DescriptionDecoder_A_strict.olean
+2026-11-15T23:34:16Z RELEASE pid=38527 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:34:16Z ACQUIRE pid=38725 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/DescriptionDecoder_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/DescriptionDecoder_A_coe.olean
+2026-11-15T23:34:42Z RELEASE pid=38725 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:34:42Z ACQUIRE pid=38779 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/DescriptionDecoder_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/DescriptionDecoder_B_strict.olean
+2026-11-15T23:35:06Z RELEASE pid=38779 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:35:07Z ACQUIRE pid=38805 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/DescriptionDecoder_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/DescriptionDecoder_B_coe.olean
+2026-11-15T23:35:33Z RELEASE pid=38805 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:35:33Z ACQUIRE pid=38844 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/CoinGarbling_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/CoinGarbling_A_strict.olean
+2026-11-15T23:35:59Z RELEASE pid=38844 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:35:59Z ACQUIRE pid=38912 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/CoinGarbling_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/CoinGarbling_A_coe.olean
+2026-11-15T23:36:23Z RELEASE pid=38912 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:36:23Z ACQUIRE pid=38959 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/CoinGarbling_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/CoinGarbling_B_strict.olean
+2026-11-15T23:36:47Z RELEASE pid=38959 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:36:47Z ACQUIRE pid=39035 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/CoinGarbling_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/CoinGarbling_B_coe.olean
+2026-11-15T23:37:04Z ACQUIRE pid=39144 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/BobSimulator
+2026-11-15T23:37:06Z RELEASE pid=39144 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:06Z ACQUIRE pid=39179 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel
+2026-11-15T23:37:09Z RELEASE pid=39179 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:09Z ACQUIRE pid=39225 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner
+2026-11-15T23:37:11Z RELEASE pid=39225 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:11Z ACQUIRE pid=39268 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder
+2026-11-15T23:37:11Z RELEASE pid=39035 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:37:11Z ACQUIRE pid=39291 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/Garbling_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/Garbling_A_strict.olean
+2026-11-15T23:37:13Z RELEASE pid=39268 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:13Z ACQUIRE pid=39316 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinGarbling
+2026-11-15T23:37:16Z RELEASE pid=39316 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:16Z ACQUIRE pid=39349 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling
+2026-11-15T23:37:19Z ACQUIRE pid=39381 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:37:21Z RELEASE pid=39381 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:37:24Z RELEASE pid=39349 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:24Z ACQUIRE pid=39451 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/WordLists
+2026-11-15T23:37:26Z RELEASE pid=39451 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:26Z ACQUIRE pid=39485 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T23:37:32Z RELEASE pid=39485 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:32Z ACQUIRE pid=39556 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins
+2026-11-15T23:37:37Z RELEASE pid=39556 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:37Z ACQUIRE pid=39590 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables
+2026-11-15T23:37:39Z RELEASE pid=39291 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:37:39Z ACQUIRE pid=39623 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/Garbling_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/Garbling_A_coe.olean
+2026-11-15T23:37:43Z RELEASE pid=39590 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:43Z ACQUIRE pid=39645 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram
+2026-11-15T23:37:46Z RELEASE pid=39645 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:46Z ACQUIRE pid=39682 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram
+2026-11-15T23:37:55Z RELEASE pid=39682 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:37:56Z ACQUIRE pid=39716 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:37:58Z RELEASE pid=39716 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:38:05Z RELEASE pid=39623 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:38:05Z ACQUIRE pid=39790 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/Garbling_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/Garbling_B_strict.olean
+2026-11-15T23:38:13Z ACQUIRE pid=39819 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Strategies
+2026-11-15T23:38:15Z RELEASE pid=39819 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:38:30Z RELEASE pid=39790 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:38:30Z ACQUIRE pid=39894 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/Garbling_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/Garbling_B_coe.olean
+2026-11-15T23:38:35Z ACQUIRE pid=39914 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Strategies
+2026-11-15T23:38:55Z RELEASE pid=39894 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:38:55Z ACQUIRE pid=40206 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/WordLists_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/WordLists_A_strict.olean
+2026-11-15T23:38:59Z RELEASE pid=39914 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:39:21Z RELEASE pid=40206 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:39:21Z ACQUIRE pid=40350 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/WordLists_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/WordLists_A_coe.olean
+2026-11-15T23:39:27Z ACQUIRE pid=40397 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof
+2026-11-15T23:39:32Z RELEASE pid=40397 tag=sc-yao slots=[slot3 ]
+2026-11-15T23:39:47Z RELEASE pid=40350 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:39:47Z ACQUIRE pid=40460 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/WordLists_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/WordLists_B_strict.olean
+2026-11-15T23:40:04Z ACQUIRE pid=40491 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/EfficiencyAlice
+2026-11-15T23:40:07Z RELEASE pid=40491 tag=sc-yao slots=[slot3 ]
+2026-11-15T23:40:14Z RELEASE pid=40460 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:40:14Z ACQUIRE pid=40614 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/WordLists_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/WordLists_B_coe.olean
+2026-11-15T23:40:23Z ACQUIRE pid=40730 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/EfficiencyAlice
+2026-11-15T23:40:26Z RELEASE pid=40730 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:40:43Z RELEASE pid=40614 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:40:43Z ACQUIRE pid=40804 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/RowFromCoins_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/RowFromCoins_A_strict.olean
+2026-11-15T23:40:58Z ACQUIRE pid=40841 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/EfficiencyBob
+2026-11-15T23:41:02Z RELEASE pid=40841 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:41:13Z RELEASE pid=40804 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:41:13Z ACQUIRE pid=40911 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/RowFromCoins_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/RowFromCoins_A_coe.olean
+2026-11-15T23:41:26Z ACQUIRE pid=40977 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/EfficiencyBob
+2026-11-15T23:41:29Z RELEASE pid=40977 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:41:41Z RELEASE pid=40911 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:41:41Z ACQUIRE pid=41041 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/RowFromCoins_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/RowFromCoins_B_strict.olean
+2026-11-15T23:41:46Z ACQUIRE pid=41086 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/EfficiencyCallsA
+2026-11-15T23:41:49Z RELEASE pid=41086 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:42:10Z RELEASE pid=41041 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:42:10Z ACQUIRE pid=41175 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/RowFromCoins_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/RowFromCoins_B_coe.olean
+2026-11-15T23:42:15Z ACQUIRE pid=41208 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/EfficiencyBob
+2026-11-15T23:42:20Z RELEASE pid=41208 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:42:33Z ACQUIRE pid=41363 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/EfficiencyCallsB
+2026-11-15T23:42:38Z ACQUIRE pid=41393 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:42:41Z RELEASE pid=41363 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:42:41Z RELEASE pid=41393 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:42:47Z RELEASE pid=41175 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:42:47Z ACQUIRE pid=41441 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/TablesFromCoins_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/TablesFromCoins_A_strict.olean
+2026-11-15T23:43:01Z ACQUIRE pid=41456 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling
+2026-11-15T23:43:03Z RELEASE pid=41456 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:43:10Z ACQUIRE pid=41483 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/EfficiencyBound
+2026-11-15T23:43:13Z RELEASE pid=41483 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:43:14Z RELEASE pid=41441 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:43:14Z ACQUIRE pid=41515 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/TablesFromCoins_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/TablesFromCoins_A_coe.olean
+2026-11-15T23:43:26Z ACQUIRE pid=41534 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:43:29Z RELEASE pid=41534 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:43:40Z RELEASE pid=41515 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:43:40Z ACQUIRE pid=41582 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/TablesFromCoins_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/TablesFromCoins_B_strict.olean
+2026-11-15T23:43:46Z ACQUIRE pid=41604 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling
+2026-11-15T23:43:55Z RELEASE pid=41604 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:44:03Z ACQUIRE pid=41741 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling
+2026-11-15T23:44:05Z RELEASE pid=41741 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:44:06Z ACQUIRE pid=41773 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:44:08Z RELEASE pid=41582 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:44:08Z ACQUIRE pid=41796 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/TablesFromCoins_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/TablesFromCoins_B_coe.olean
+2026-11-15T23:44:09Z RELEASE pid=41773 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:44:30Z ACQUIRE pid=41841 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling
+2026-11-15T23:44:34Z RELEASE pid=41841 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:44:35Z ACQUIRE pid=41872 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:44:36Z RELEASE pid=41796 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:44:36Z ACQUIRE pid=41895 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/AllTables_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/AllTables_A_strict.olean
+2026-11-15T23:44:38Z RELEASE pid=41872 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:45:03Z RELEASE pid=41895 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:45:03Z ACQUIRE pid=41941 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/AllTables_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/AllTables_A_coe.olean
+2026-11-15T23:45:20Z ACQUIRE pid=41964 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:45:23Z RELEASE pid=41964 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:45:30Z RELEASE pid=41941 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:45:30Z ACQUIRE pid=42008 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/AllTables_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/AllTables_B_strict.olean
+2026-11-15T23:45:42Z ACQUIRE pid=42026 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao
+2026-11-15T23:45:47Z RELEASE pid=42026 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:45:59Z ACQUIRE pid=42207 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:46:02Z RELEASE pid=42008 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:46:02Z ACQUIRE pid=42239 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/AllTables_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/AllTables_B_coe.olean
+2026-11-15T23:46:04Z RELEASE pid=42207 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:46:21Z ACQUIRE pid=42294 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T23:46:24Z ACQUIRE pid=42347 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling
+2026-11-15T23:46:27Z RELEASE pid=42347 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T23:46:28Z RELEASE pid=42294 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:46:31Z RELEASE pid=42239 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:46:31Z ACQUIRE pid=42448 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/GarblingProgram_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/GarblingProgram_A_strict.olean
+2026-11-15T23:46:56Z ACQUIRE pid=42688 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:47:01Z ACQUIRE pid=42736 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/CoinRead_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/CoinRead_A_strict.olean
+2026-11-15T23:47:01Z RELEASE pid=42688 tag=sc-yao-b slots=[slot2 ]
+2026-11-15T23:47:03Z RELEASE pid=42448 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:47:03Z ACQUIRE pid=42775 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/GarblingProgram_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/GarblingProgram_A_coe.olean
+2026-11-15T23:47:26Z RELEASE pid=42736 tag=sc-yao slots=[slot3 ]
+2026-11-15T23:47:26Z ACQUIRE pid=42832 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/CoinRead_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/CoinRead_A_coe.olean
+2026-11-15T23:47:31Z RELEASE pid=42775 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:47:31Z ACQUIRE pid=42867 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/GarblingProgram_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/GarblingProgram_B_strict.olean
+2026-11-15T23:47:50Z ACQUIRE pid=42981 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:47:54Z RELEASE pid=42981 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:47:54Z RELEASE pid=42832 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:47:54Z ACQUIRE pid=43030 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/CoinRead_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/CoinRead_B_strict.olean
+2026-11-15T23:48:02Z RELEASE pid=42867 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:48:02Z ACQUIRE pid=43097 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/GarblingProgram_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/GarblingProgram_B_coe.olean
+2026-11-15T23:48:22Z RELEASE pid=43030 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:48:22Z ACQUIRE pid=43188 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/CoinRead_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/CoinRead_B_coe.olean
+2026-11-15T23:48:29Z ACQUIRE pid=43207 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:48:33Z RELEASE pid=43097 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:48:33Z ACQUIRE pid=43241 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/AliceProgram_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/AliceProgram_A_strict.olean
+2026-11-15T23:48:33Z RELEASE pid=43207 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:48:48Z RELEASE pid=43188 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:48:48Z ACQUIRE pid=43279 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/BobIO_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/BobIO_A_strict.olean
+2026-11-15T23:49:00Z RELEASE pid=43241 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:49:00Z ACQUIRE pid=43302 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/AliceProgram_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/AliceProgram_A_coe.olean
+2026-11-15T23:49:02Z ACQUIRE pid=43313 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:49:06Z RELEASE pid=43313 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:49:13Z RELEASE pid=43279 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:49:13Z ACQUIRE pid=43357 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/BobIO_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/BobIO_A_coe.olean
+2026-11-15T23:49:14Z ACQUIRE pid=43371 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling
+2026-11-15T23:49:17Z RELEASE pid=43371 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T23:49:25Z RELEASE pid=43302 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:49:25Z ACQUIRE pid=43416 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/AliceProgram_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/AliceProgram_B_strict.olean
+2026-11-15T23:49:37Z RELEASE pid=43357 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:49:37Z ACQUIRE pid=43438 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/BobIO_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/BobIO_B_strict.olean
+2026-11-15T23:49:50Z ACQUIRE pid=43454 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:49:51Z RELEASE pid=43416 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:49:51Z ACQUIRE pid=43480 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final/AliceProgram_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final/AliceProgram_B_coe.olean
+2026-11-15T23:49:54Z RELEASE pid=43454 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:50:02Z RELEASE pid=43438 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:50:02Z ACQUIRE pid=43507 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/BobIO_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/BobIO_B_coe.olean
+2026-11-15T23:50:05Z ACQUIRE pid=43521 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/subagents/c/garbling-relabel/Axioms
+2026-11-15T23:50:19Z RELEASE pid=43480 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:50:19Z RELEASE pid=43521 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T23:50:24Z ACQUIRE pid=43568 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:50:28Z RELEASE pid=43568 tag=sc-yao-b slots=[slot1 ]
+2026-11-15T23:50:29Z RELEASE pid=43507 tag=sc-yao slots=[slot2 ]
+2026-11-15T23:50:29Z ACQUIRE pid=43600 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/BobInit_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/BobInit_A_strict.olean
+2026-11-15T23:50:33Z ACQUIRE pid=43612 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.olean
+2026-11-15T23:50:41Z RELEASE pid=43612 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:50:41Z ACQUIRE pid=43638 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.olean
+2026-11-15T23:50:47Z RELEASE pid=43638 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:50:47Z ACQUIRE pid=43652 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins.olean
+2026-11-15T23:50:51Z RELEASE pid=43652 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:50:51Z ACQUIRE pid=43673 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables.olean
+2026-11-15T23:50:55Z RELEASE pid=43600 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:50:55Z ACQUIRE pid=43693 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/BobInit_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/BobInit_A_coe.olean
+2026-11-15T23:50:57Z RELEASE pid=43673 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:50:57Z ACQUIRE pid=43713 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram.olean
+2026-11-15T23:51:01Z RELEASE pid=43713 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:51:01Z ACQUIRE pid=43733 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram.olean
+2026-11-15T23:51:03Z ACQUIRE pid=43751 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b4/seals/final/GateOccurrences_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b4/seals/final/GateOccurrences_A_strict.olean
+2026-11-15T23:51:10Z RELEASE pid=43733 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:51:10Z ACQUIRE pid=43784 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-repair01/Garbling_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-repair01/Garbling_A_strict.olean
+2026-11-15T23:51:19Z RELEASE pid=43751 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:51:19Z ACQUIRE pid=43815 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b4/seals/final/GateOccurrences_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b4/seals/final/GateOccurrences_A_coe.olean
+2026-11-15T23:51:22Z RELEASE pid=43693 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:51:22Z ACQUIRE pid=43843 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/BobInit_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/BobInit_B_strict.olean
+2026-11-15T23:51:33Z RELEASE pid=43815 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:51:34Z ACQUIRE pid=43874 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b4/seals/final/GateOccurrences_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b4/seals/final/GateOccurrences_B_strict.olean
+2026-11-15T23:51:37Z RELEASE pid=43784 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:51:38Z ACQUIRE pid=43893 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-repair01/Garbling_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-repair01/Garbling_A_coe.olean
+2026-11-15T23:51:47Z RELEASE pid=43843 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:51:48Z ACQUIRE pid=43911 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/BobInit_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/BobInit_B_coe.olean
+2026-11-15T23:51:48Z RELEASE pid=43874 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:51:48Z ACQUIRE pid=43924 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b4/seals/final/GateOccurrences_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b4/seals/final/GateOccurrences_B_coe.olean
+2026-11-15T23:52:02Z RELEASE pid=43924 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:52:02Z ACQUIRE pid=43948 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b4/probes/AxiomsAndTrace.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b4/probes/AxiomsAndTrace.olean
+2026-11-15T23:52:02Z RELEASE pid=43893 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:52:03Z ACQUIRE pid=43965 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-repair01/Garbling_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-repair01/Garbling_B_strict.olean
+2026-11-15T23:52:12Z RELEASE pid=43911 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:52:12Z ACQUIRE pid=43993 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/ProtocolEfficiency_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/ProtocolEfficiency_A_strict.olean
+2026-11-15T23:52:16Z RELEASE pid=43948 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:52:27Z RELEASE pid=43965 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:52:27Z ACQUIRE pid=44022 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-repair01/Garbling_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-repair01/Garbling_B_coe.olean
+2026-11-15T23:52:35Z RELEASE pid=43993 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:52:35Z ACQUIRE pid=44045 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/ProtocolEfficiency_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/ProtocolEfficiency_A_coe.olean
+2026-11-15T23:52:52Z RELEASE pid=44022 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:52:52Z ACQUIRE pid=44067 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-repair01/RowFromCoins_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-repair01/RowFromCoins_A_strict.olean
+2026-11-15T23:52:58Z RELEASE pid=44045 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:52:58Z ACQUIRE pid=44083 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/ProtocolEfficiency_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/ProtocolEfficiency_B_strict.olean
+2026-11-15T23:53:08Z ACQUIRE pid=44096 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/garbling-relabel/seals/final/RelabelGarbling_A_strict
+2026-11-15T23:53:20Z RELEASE pid=44067 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:53:20Z ACQUIRE pid=44142 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-repair01/RowFromCoins_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-repair01/RowFromCoins_A_coe.olean
+2026-11-15T23:53:22Z RELEASE pid=44096 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T23:53:22Z ACQUIRE pid=44160 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/garbling-relabel/seals/final/RelabelGarbling_A_coe
+2026-11-15T23:53:23Z RELEASE pid=44083 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:53:23Z ACQUIRE pid=44184 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/ProtocolEfficiency_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/ProtocolEfficiency_B_coe.olean
+2026-11-15T23:53:35Z RELEASE pid=44160 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T23:53:35Z ACQUIRE pid=44219 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/garbling-relabel/seals/final/RelabelGarbling_B_strict
+2026-11-15T23:53:46Z RELEASE pid=44184 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:53:46Z ACQUIRE pid=44243 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/CallEquations_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/CallEquations_A_strict.olean
+2026-11-15T23:53:49Z RELEASE pid=44219 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T23:53:49Z ACQUIRE pid=44262 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash evidence/subagents/c/check_seal.sh evidence/subagents/c/garbling-relabel/seals/final/RelabelGarbling_B_coe
+2026-11-15T23:53:49Z RELEASE pid=44142 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:53:49Z ACQUIRE pid=44284 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-repair01/RowFromCoins_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-repair01/RowFromCoins_B_strict.olean
+2026-11-15T23:54:03Z RELEASE pid=44262 tag=sc-yao-c slots=[slot3 ]
+2026-11-15T23:54:07Z ACQUIRE pid=44308 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-15T23:54:11Z RELEASE pid=44308 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:54:12Z RELEASE pid=44243 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:54:12Z ACQUIRE pid=44379 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/CallEquations_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/CallEquations_A_coe.olean
+2026-11-15T23:54:14Z ACQUIRE pid=44391 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b4/seals/final/GateOccurrences_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b4/seals/final/GateOccurrences_A_strict.olean
+2026-11-15T23:54:17Z RELEASE pid=44284 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:54:17Z ACQUIRE pid=44412 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-repair01/RowFromCoins_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-repair01/RowFromCoins_B_coe.olean
+2026-11-15T23:54:28Z RELEASE pid=44391 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:54:28Z ACQUIRE pid=44439 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b4/seals/final/GateOccurrences_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b4/seals/final/GateOccurrences_A_coe.olean
+2026-11-15T23:54:36Z RELEASE pid=44379 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:54:36Z ACQUIRE pid=44462 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/CallEquations_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/CallEquations_B_strict.olean
+2026-11-15T23:54:43Z RELEASE pid=44439 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:54:43Z ACQUIRE pid=44479 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b4/seals/final/GateOccurrences_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b4/seals/final/GateOccurrences_B_strict.olean
+2026-11-15T23:54:46Z RELEASE pid=44412 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:54:46Z ACQUIRE pid=44504 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls/Control_A_strict_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls/Control_A_strict_unsealed.olean
+2026-11-15T23:54:48Z RELEASE pid=44504 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:54:48Z ACQUIRE pid=44518 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls/Control_A_strict_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls/Control_A_strict_sealed.olean
+2026-11-15T23:54:59Z RELEASE pid=44479 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:54:59Z ACQUIRE pid=44670 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b4/seals/final/GateOccurrences_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b4/seals/final/GateOccurrences_B_coe.olean
+2026-11-15T23:55:01Z RELEASE pid=44518 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:55:01Z ACQUIRE pid=44711 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls/Control_A_coe_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls/Control_A_coe_unsealed.olean
+2026-11-15T23:55:02Z RELEASE pid=44462 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:55:02Z ACQUIRE pid=44729 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/CallEquations_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/CallEquations_B_coe.olean
+2026-11-15T23:55:03Z RELEASE pid=44711 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:55:03Z ACQUIRE pid=44740 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls/Control_A_coe_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls/Control_A_coe_sealed.olean
+2026-11-15T23:55:13Z RELEASE pid=44670 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:55:14Z ACQUIRE pid=44813 tag=sc-yao-b k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/b4/probes/AxiomsAndTrace.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-b/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/b4/probes/AxiomsAndTrace.olean
+2026-11-15T23:55:15Z RELEASE pid=44740 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:55:15Z ACQUIRE pid=44832 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls/Control_B_strict_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls/Control_B_strict_unsealed.olean
+2026-11-15T23:55:17Z RELEASE pid=44832 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:55:17Z ACQUIRE pid=44848 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls/Control_B_strict_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls/Control_B_strict_sealed.olean
+2026-11-15T23:55:26Z RELEASE pid=44729 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:55:26Z ACQUIRE pid=44880 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/Strategies_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/Strategies_A_strict.olean
+2026-11-15T23:55:28Z RELEASE pid=44813 tag=sc-yao-b slots=[slot3 ]
+2026-11-15T23:55:29Z RELEASE pid=44848 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:55:29Z ACQUIRE pid=44905 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls/Control_B_coe_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls/Control_B_coe_unsealed.olean
+2026-11-15T23:55:31Z RELEASE pid=44905 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:55:31Z ACQUIRE pid=44923 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls/Control_B_coe_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls/Control_B_coe_sealed.olean
+2026-11-15T23:55:43Z RELEASE pid=44923 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:55:43Z ACQUIRE pid=44950 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/probes/AxiomsAndTrace.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/probes/AxiomsAndTrace.olean
+2026-11-15T23:55:51Z RELEASE pid=44880 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:55:51Z ACQUIRE pid=44975 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/Strategies_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/Strategies_A_coe.olean
+2026-11-15T23:56:16Z RELEASE pid=44975 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:56:16Z ACQUIRE pid=45026 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/Strategies_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/Strategies_B_strict.olean
+2026-11-15T23:56:43Z RELEASE pid=45026 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:56:43Z ACQUIRE pid=45085 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/final/Strategies_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/final/Strategies_B_coe.olean
+2026-11-15T23:56:44Z RELEASE pid=44950 tag=sc-yao-a slots=[slot2 ]
+2026-11-15T23:57:10Z RELEASE pid=45085 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:58:22Z ACQUIRE pid=45224 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction
+2026-11-15T23:58:32Z RELEASE pid=45224 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:58:36Z ACQUIRE pid=45270 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeObjects.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeObjects.olean
+2026-11-15T23:58:37Z ACQUIRE pid=45282 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/subagents/c/coin-seed/APIs
+2026-11-15T23:58:38Z RELEASE pid=45270 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:58:38Z ACQUIRE pid=45305 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeProgram.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeProgram.olean
+2026-11-15T23:58:40Z RELEASE pid=45282 tag=sc-yao-c slots=[slot2 ]
+2026-11-15T23:59:04Z RELEASE pid=45305 tag=sc-yao-a slots=[slot1 ]
+2026-11-15T23:59:08Z ACQUIRE pid=45367 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/yao-efficiency/final/Yao_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/yao-efficiency/final/Yao_A_strict.olean
+2026-11-15T23:59:39Z RELEASE pid=45367 tag=sc-yao slots=[slot1 ]
+2026-11-15T23:59:39Z ACQUIRE pid=45406 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/yao-efficiency/final/Yao_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/yao-efficiency/final/Yao_A_coe.olean
+2026-11-15T23:59:48Z ACQUIRE pid=45426 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-15T23:59:55Z RELEASE pid=45426 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:00:08Z RELEASE pid=45406 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:00:08Z ACQUIRE pid=45484 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/yao-efficiency/final/Yao_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/yao-efficiency/final/Yao_B_strict.olean
+2026-11-16T00:00:36Z ACQUIRE pid=45710 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins
+2026-11-16T00:00:40Z RELEASE pid=45484 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:00:40Z ACQUIRE pid=45736 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/yao-efficiency/final/Yao_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/yao-efficiency/final/Yao_B_coe.olean
+2026-11-16T00:00:44Z RELEASE pid=45710 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:01:05Z ACQUIRE pid=45850 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/subagents/c/coin-seed/APIs
+2026-11-16T00:01:08Z RELEASE pid=45850 tag=sc-yao-c slots=[slot2 ]
+2026-11-16T00:01:11Z RELEASE pid=45736 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:01:19Z ACQUIRE pid=45973 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction
+2026-11-16T00:01:25Z ACQUIRE pid=45993 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.olean
+2026-11-16T00:01:30Z RELEASE pid=45993 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:01:30Z ACQUIRE pid=46007 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeProgram.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeProgram.olean
+2026-11-16T00:01:44Z RELEASE pid=45973 tag=sc-yao-b slots=[slot1 ]
+2026-11-16T00:01:45Z ACQUIRE pid=46043 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao
+2026-11-16T00:01:48Z RELEASE pid=46043 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:01:48Z ACQUIRE pid=46077 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/BlockEncryptor
+2026-11-16T00:01:51Z RELEASE pid=46077 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:01:51Z ACQUIRE pid=46099 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences
+2026-11-16T00:01:53Z RELEASE pid=46007 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:01:55Z RELEASE pid=46099 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:01:55Z ACQUIRE pid=46129 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling
+2026-11-16T00:01:58Z RELEASE pid=46129 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:01:58Z ACQUIRE pid=46151 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh evidence/probes/AllAxioms
+2026-11-16T00:02:38Z ACQUIRE pid=46195 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction
+2026-11-16T00:02:42Z ACQUIRE pid=46216 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel
+2026-11-16T00:02:45Z RELEASE pid=46216 tag=sc-yao-c slots=[slot3 ]
+2026-11-16T00:02:53Z ACQUIRE pid=46262 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins
+2026-11-16T00:02:56Z RELEASE pid=46262 tag=sc-yao-a slots=[slot3 ]
+2026-11-16T00:03:02Z RELEASE pid=46195 tag=sc-yao-b slots=[slot2 ]
+2026-11-16T00:03:18Z ACQUIRE pid=46323 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel
+2026-11-16T00:03:22Z RELEASE pid=46323 tag=sc-yao-c slots=[slot2 ]
+2026-11-16T00:03:30Z ACQUIRE pid=46365 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction
+2026-11-16T00:03:55Z RELEASE pid=46365 tag=sc-yao-b slots=[slot2 ]
+2026-11-16T00:04:17Z ACQUIRE pid=46419 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices
+2026-11-16T00:04:19Z RELEASE pid=46419 tag=sc-yao-b slots=[slot2 ]
+2026-11-16T00:04:23Z RELEASE pid=46151 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:04:28Z ACQUIRE pid=46465 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel
+2026-11-16T00:04:31Z RELEASE pid=46465 tag=sc-yao-c slots=[slot1 ]
+2026-11-16T00:04:46Z ACQUIRE pid=46579 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins
+2026-11-16T00:04:52Z RELEASE pid=46579 tag=sc-yao-a slots=[slot1 ]
+2026-11-16T00:04:57Z ACQUIRE pid=46625 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction
+2026-11-16T00:05:00Z RELEASE pid=46625 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:05:13Z ACQUIRE pid=46656 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction
+2026-11-16T00:05:33Z ACQUIRE pid=46695 tag=sc-yao-a k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeProgram
+2026-11-16T00:05:38Z RELEASE pid=46656 tag=sc-yao-b slots=[slot1 ]
+2026-11-16T00:05:41Z ACQUIRE pid=46729 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction
+2026-11-16T00:05:44Z RELEASE pid=46729 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:05:49Z ACQUIRE pid=46757 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices
+2026-11-16T00:05:51Z RELEASE pid=46757 tag=sc-yao-b slots=[slot1 ]
+2026-11-16T00:05:56Z RELEASE pid=46695 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:06:11Z ACQUIRE pid=46811 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction
+2026-11-16T00:06:14Z RELEASE pid=46811 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:06:23Z ACQUIRE pid=46851 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices
+2026-11-16T00:06:25Z RELEASE pid=46851 tag=sc-yao-b slots=[slot1 ]
+2026-11-16T00:06:39Z ACQUIRE pid=46884 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction
+2026-11-16T00:06:50Z ACQUIRE pid=46902 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel
+2026-11-16T00:06:54Z RELEASE pid=46902 tag=sc-yao-c slots=[slot2 ]
+2026-11-16T00:06:57Z ACQUIRE pid=46938 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins.olean
+2026-11-16T00:07:00Z RELEASE pid=46938 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:07:00Z ACQUIRE pid=46952 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables.olean
+2026-11-16T00:07:01Z ACQUIRE pid=46962 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/isFaninTwo_iff_rfl_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/isFaninTwo_iff_rfl_unsealed.olean
+2026-11-16T00:07:03Z RELEASE pid=46962 tag=sc-yao slots=[slot3 ]
+2026-11-16T00:07:03Z ACQUIRE pid=46979 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/isFaninTwo_iff_rfl_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/isFaninTwo_iff_rfl_sealed.olean
+2026-11-16T00:07:03Z RELEASE pid=46884 tag=sc-yao-b slots=[slot1 ]
+2026-11-16T00:07:04Z RELEASE pid=46979 tag=sc-yao slots=[slot3 ]
+2026-11-16T00:07:04Z ACQUIRE pid=47006 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/isFaninTwo_iff_reader_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/isFaninTwo_iff_reader_sealed.olean
+2026-11-16T00:07:06Z RELEASE pid=47006 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:06Z ACQUIRE pid=47017 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/encodeList_nil_rfl_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/encodeList_nil_rfl_unsealed.olean
+2026-11-16T00:07:06Z RELEASE pid=46952 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:07:06Z ACQUIRE pid=47028 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GarblingProgram.olean
+2026-11-16T00:07:07Z RELEASE pid=47017 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:07Z ACQUIRE pid=47042 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/encodeList_nil_rfl_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/encodeList_nil_rfl_sealed.olean
+2026-11-16T00:07:09Z RELEASE pid=47042 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:09Z ACQUIRE pid=47053 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/encodeList_nil_reader_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/encodeList_nil_reader_sealed.olean
+2026-11-16T00:07:10Z RELEASE pid=47028 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:07:10Z ACQUIRE pid=47068 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram.olean
+2026-11-16T00:07:10Z RELEASE pid=47053 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:10Z ACQUIRE pid=47082 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/encodeList_cons_rfl_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/encodeList_cons_rfl_unsealed.olean
+2026-11-16T00:07:12Z RELEASE pid=47082 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:12Z ACQUIRE pid=47093 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/encodeList_cons_rfl_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/encodeList_cons_rfl_sealed.olean
+2026-11-16T00:07:13Z RELEASE pid=47093 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:13Z ACQUIRE pid=47104 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/encodeList_cons_reader_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/encodeList_cons_reader_sealed.olean
+2026-11-16T00:07:15Z RELEASE pid=47104 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:15Z ACQUIRE pid=47117 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/GateKind_encode_and_rfl_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/GateKind_encode_and_rfl_unsealed.olean
+2026-11-16T00:07:16Z RELEASE pid=47117 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:16Z ACQUIRE pid=47128 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/GateKind_encode_and_rfl_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/GateKind_encode_and_rfl_sealed.olean
+2026-11-16T00:07:18Z RELEASE pid=47128 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:18Z RELEASE pid=47068 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:07:18Z ACQUIRE pid=47140 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/GateKind_encode_and_reader_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/GateKind_encode_and_reader_sealed.olean
+2026-11-16T00:07:18Z ACQUIRE pid=47147 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeProgram.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FakeProgram.olean
+2026-11-16T00:07:19Z ACQUIRE pid=47161 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices
+2026-11-16T00:07:20Z RELEASE pid=47140 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:20Z ACQUIRE pid=47187 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/GateKind_encode_or_rfl_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/GateKind_encode_or_rfl_unsealed.olean
+2026-11-16T00:07:21Z RELEASE pid=47187 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:21Z ACQUIRE pid=47199 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/GateKind_encode_or_rfl_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/GateKind_encode_or_rfl_sealed.olean
+2026-11-16T00:07:22Z RELEASE pid=47161 tag=sc-yao-b slots=[slot3 ]
+2026-11-16T00:07:23Z RELEASE pid=47199 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:23Z ACQUIRE pid=47221 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/GateKind_encode_or_reader_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/GateKind_encode_or_reader_sealed.olean
+2026-11-16T00:07:24Z RELEASE pid=47221 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:24Z ACQUIRE pid=47232 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/GateKind_encode_not_rfl_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/GateKind_encode_not_rfl_unsealed.olean
+2026-11-16T00:07:26Z RELEASE pid=47232 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:26Z ACQUIRE pid=47243 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/GateKind_encode_not_rfl_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/GateKind_encode_not_rfl_sealed.olean
+2026-11-16T00:07:27Z RELEASE pid=47243 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:27Z ACQUIRE pid=47256 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/GateKind_encode_not_reader_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/GateKind_encode_not_reader_sealed.olean
+2026-11-16T00:07:29Z RELEASE pid=47256 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:29Z ACQUIRE pid=47269 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/DAGGate_encode_eq_rfl_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/DAGGate_encode_eq_rfl_unsealed.olean
+2026-11-16T00:07:30Z RELEASE pid=47269 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:30Z ACQUIRE pid=47280 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/DAGGate_encode_eq_rfl_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/DAGGate_encode_eq_rfl_sealed.olean
+2026-11-16T00:07:31Z ACQUIRE pid=47289 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel
+2026-11-16T00:07:32Z RELEASE pid=47280 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:32Z ACQUIRE pid=47314 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/DAGGate_encode_eq_reader_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/DAGGate_encode_eq_reader_sealed.olean
+2026-11-16T00:07:33Z RELEASE pid=47314 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:33Z ACQUIRE pid=47327 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/DAGCircuit_encode_parts_rfl_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/DAGCircuit_encode_parts_rfl_unsealed.olean
+2026-11-16T00:07:34Z RELEASE pid=47289 tag=sc-yao-c slots=[slot3 ]
+2026-11-16T00:07:35Z RELEASE pid=47327 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:35Z ACQUIRE pid=47346 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/DAGCircuit_encode_parts_rfl_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/DAGCircuit_encode_parts_rfl_sealed.olean
+2026-11-16T00:07:36Z RELEASE pid=47346 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:36Z ACQUIRE pid=47357 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/readers/DAGCircuit_encode_parts_reader_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/readers/DAGCircuit_encode_parts_reader_sealed.olean
+2026-11-16T00:07:38Z RELEASE pid=47357 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:07:38Z ACQUIRE pid=47368 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/checkpoint1/final/Yao_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/checkpoint1/final/Yao_A_strict.olean
+2026-11-16T00:07:41Z RELEASE pid=47147 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:07:55Z ACQUIRE pid=47396 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction
+2026-11-16T00:08:05Z ACQUIRE pid=47418 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/RowFromCoins_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/RowFromCoins_A_strict.olean
+2026-11-16T00:08:06Z RELEASE pid=47368 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:08:06Z ACQUIRE pid=47435 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/checkpoint1/final/Yao_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/checkpoint1/final/Yao_A_coe.olean
+2026-11-16T00:08:20Z RELEASE pid=47396 tag=sc-yao-b slots=[slot2 ]
+2026-11-16T00:08:34Z RELEASE pid=47435 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:08:34Z ACQUIRE pid=47480 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/checkpoint1/final/Yao_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/checkpoint1/final/Yao_B_strict.olean
+2026-11-16T00:08:36Z RELEASE pid=47418 tag=sc-yao-a slots=[slot3 ]
+2026-11-16T00:08:36Z ACQUIRE pid=47497 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/RowFromCoins_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/RowFromCoins_A_coe.olean
+2026-11-16T00:09:02Z RELEASE pid=47480 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:09:02Z ACQUIRE pid=47537 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/checkpoint1/final/Yao_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/checkpoint1/final/Yao_B_coe.olean
+2026-11-16T00:09:04Z RELEASE pid=47497 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:09:04Z ACQUIRE pid=47550 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/RowFromCoins_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/RowFromCoins_B_strict.olean
+2026-11-16T00:09:07Z ACQUIRE pid=47561 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices
+2026-11-16T00:09:08Z RELEASE pid=47561 tag=sc-yao-b slots=[slot3 ]
+2026-11-16T00:09:28Z RELEASE pid=47537 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:09:28Z ACQUIRE pid=47605 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/DAGCircuit_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/DAGCircuit_A_strict.olean
+2026-11-16T00:09:32Z RELEASE pid=47550 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:09:32Z ACQUIRE pid=47616 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/RowFromCoins_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/RowFromCoins_B_coe.olean
+2026-11-16T00:09:39Z RELEASE pid=47605 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:09:39Z ACQUIRE pid=47637 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/DAGCircuit_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/DAGCircuit_A_coe.olean
+2026-11-16T00:09:49Z RELEASE pid=47637 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:09:49Z ACQUIRE pid=47655 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/DAGCircuit_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/DAGCircuit_B_strict.olean
+2026-11-16T00:09:59Z RELEASE pid=47655 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:09:59Z ACQUIRE pid=47667 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/DAGCircuit_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/DAGCircuit_B_coe.olean
+2026-11-16T00:09:59Z RELEASE pid=47616 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:09:59Z ACQUIRE pid=47680 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/TablesFromCoins_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/TablesFromCoins_A_strict.olean
+2026-11-16T00:09:59Z ACQUIRE pid=47691 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction
+2026-11-16T00:10:09Z RELEASE pid=47667 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:10:09Z ACQUIRE pid=47724 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/Uniform_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/Uniform_A_strict.olean
+2026-11-16T00:10:20Z RELEASE pid=47724 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:10:20Z ACQUIRE pid=47743 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/Uniform_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/Uniform_A_coe.olean
+2026-11-16T00:10:23Z RELEASE pid=47680 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:10:23Z ACQUIRE pid=47758 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/TablesFromCoins_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/TablesFromCoins_A_coe.olean
+2026-11-16T00:10:24Z RELEASE pid=47691 tag=sc-yao-b slots=[slot3 ]
+2026-11-16T00:10:31Z RELEASE pid=47743 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:10:31Z ACQUIRE pid=47784 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/Uniform_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/Uniform_B_strict.olean
+2026-11-16T00:10:44Z RELEASE pid=47784 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:10:44Z ACQUIRE pid=47800 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/Uniform_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/Uniform_B_coe.olean
+2026-11-16T00:10:46Z ACQUIRE pid=47810 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices
+2026-11-16T00:10:49Z RELEASE pid=47810 tag=sc-yao-b slots=[slot3 ]
+2026-11-16T00:10:49Z RELEASE pid=47758 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:10:49Z ACQUIRE pid=47844 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/TablesFromCoins_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/TablesFromCoins_B_strict.olean
+2026-11-16T00:10:56Z RELEASE pid=47800 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:10:56Z ACQUIRE pid=47860 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/Yao_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/Yao_A_strict.olean
+2026-11-16T00:11:04Z ACQUIRE pid=47873 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction
+2026-11-16T00:11:08Z RELEASE pid=47873 tag=sc-yao-b slots=[slot3 ]
+2026-11-16T00:11:14Z RELEASE pid=47844 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:11:15Z ACQUIRE pid=47914 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/TablesFromCoins_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/TablesFromCoins_B_coe.olean
+2026-11-16T00:11:22Z RELEASE pid=47860 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:11:22Z ACQUIRE pid=47936 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/Yao_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/Yao_A_coe.olean
+2026-11-16T00:11:39Z ACQUIRE pid=48032 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction
+2026-11-16T00:11:40Z RELEASE pid=47914 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:11:40Z ACQUIRE pid=48058 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/FakeObjects_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/FakeObjects_A_strict.olean
+2026-11-16T00:11:48Z RELEASE pid=47936 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:11:48Z ACQUIRE pid=48096 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/Yao_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/Yao_B_strict.olean
+2026-11-16T00:11:52Z RELEASE pid=48058 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:11:52Z ACQUIRE pid=48110 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/FakeObjects_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/FakeObjects_A_coe.olean
+2026-11-16T00:12:04Z RELEASE pid=48032 tag=sc-yao-b slots=[slot3 ]
+2026-11-16T00:12:04Z RELEASE pid=48110 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:12:05Z ACQUIRE pid=48170 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/FakeObjects_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/FakeObjects_B_strict.olean
+2026-11-16T00:12:08Z ACQUIRE pid=48080 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel
+2026-11-16T00:12:11Z RELEASE pid=48080 tag=sc-yao-c slots=[slot3 ]
+2026-11-16T00:12:12Z RELEASE pid=48096 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:12:12Z ACQUIRE pid=48221 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/base/Yao_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/base/Yao_B_coe.olean
+2026-11-16T00:12:17Z RELEASE pid=48170 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:12:17Z ACQUIRE pid=48236 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/FakeObjects_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/FakeObjects_B_coe.olean
+2026-11-16T00:12:29Z RELEASE pid=48236 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:12:29Z ACQUIRE pid=48259 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/FakeProgram_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/FakeProgram_A_strict.olean
+2026-11-16T00:12:37Z RELEASE pid=48221 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:12:37Z ACQUIRE pid=48277 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/final/DAGCircuit_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/final/DAGCircuit_A_strict.olean
+2026-11-16T00:12:49Z RELEASE pid=48277 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:12:49Z ACQUIRE pid=48293 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/final/DAGCircuit_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/final/DAGCircuit_A_coe.olean
+2026-11-16T00:12:57Z ACQUIRE pid=48305 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel
+2026-11-16T00:12:58Z RELEASE pid=48259 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:12:58Z ACQUIRE pid=48349 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/FakeProgram_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/FakeProgram_A_coe.olean
+2026-11-16T00:13:01Z RELEASE pid=48305 tag=sc-yao-c slots=[slot3 ]
+2026-11-16T00:13:02Z RELEASE pid=48293 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:13:02Z ACQUIRE pid=48379 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/final/DAGCircuit_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/final/DAGCircuit_B_strict.olean
+2026-11-16T00:13:03Z ACQUIRE pid=48331 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction
+2026-11-16T00:13:06Z RELEASE pid=48331 tag=sc-yao-b slots=[slot3 ]
+2026-11-16T00:13:12Z RELEASE pid=48379 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:13:12Z ACQUIRE pid=48432 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/final/DAGCircuit_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/final/DAGCircuit_B_coe.olean
+2026-11-16T00:13:22Z RELEASE pid=48432 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:13:22Z ACQUIRE pid=48452 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/final/Uniform_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/final/Uniform_A_strict.olean
+2026-11-16T00:13:27Z RELEASE pid=48349 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:13:27Z ACQUIRE pid=48469 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/FakeProgram_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/FakeProgram_B_strict.olean
+2026-11-16T00:13:35Z RELEASE pid=48452 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:13:35Z ACQUIRE pid=48485 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/final/Uniform_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/final/Uniform_A_coe.olean
+2026-11-16T00:13:42Z ACQUIRE pid=48495 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction
+2026-11-16T00:13:47Z RELEASE pid=48485 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:13:47Z ACQUIRE pid=48525 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/final/Uniform_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/final/Uniform_B_strict.olean
+2026-11-16T00:13:53Z RELEASE pid=48469 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:13:53Z ACQUIRE pid=48538 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/final-fake01/FakeProgram_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/final-fake01/FakeProgram_B_coe.olean
+2026-11-16T00:13:58Z RELEASE pid=48525 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:13:58Z ACQUIRE pid=48552 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/frozen/final/Uniform_B_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/frozen/final/Uniform_B_coe.olean
+2026-11-16T00:14:06Z RELEASE pid=48495 tag=sc-yao-b slots=[slot3 ]
+2026-11-16T00:14:09Z RELEASE pid=48552 tag=sc-yao slots=[slot1 ]
+2026-11-16T00:14:10Z ACQUIRE pid=48564 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel
+2026-11-16T00:14:14Z RELEASE pid=48564 tag=sc-yao-c slots=[slot1 ]
+2026-11-16T00:14:19Z RELEASE pid=48538 tag=sc-yao-a slots=[slot2 ]
+2026-11-16T00:14:19Z ACQUIRE pid=48638 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls-fake01/Control_A_coe_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls-fake01/Control_A_coe_sealed.olean
+2026-11-16T00:14:48Z RELEASE pid=48638 tag=sc-yao-a slots=[slot1 ]
+2026-11-16T00:14:48Z ACQUIRE pid=48658 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls-fake01/Control_A_coe_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls-fake01/Control_A_coe_unsealed.olean
+2026-11-16T00:14:50Z RELEASE pid=48658 tag=sc-yao-a slots=[slot1 ]
+2026-11-16T00:14:50Z ACQUIRE pid=48669 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls-fake01/Control_A_strict_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls-fake01/Control_A_strict_sealed.olean
+2026-11-16T00:15:06Z ACQUIRE pid=48678 tag=sc-yao k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction
+2026-11-16T00:15:10Z RELEASE pid=48678 tag=sc-yao slots=[slot2 ]
+2026-11-16T00:15:13Z ACQUIRE pid=48706 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSlices
+2026-11-16T00:15:17Z RELEASE pid=48706 tag=sc-yao-b slots=[slot2 ]
+2026-11-16T00:15:18Z ACQUIRE pid=48738 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel
+2026-11-16T00:15:19Z RELEASE pid=48669 tag=sc-yao-a slots=[slot1 ]
+2026-11-16T00:15:19Z ACQUIRE pid=48763 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls-fake01/Control_A_strict_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls-fake01/Control_A_strict_unsealed.olean
+2026-11-16T00:15:22Z RELEASE pid=48763 tag=sc-yao-a slots=[slot1 ]
+2026-11-16T00:15:22Z ACQUIRE pid=48774 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls-fake01/Control_B_coe_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls-fake01/Control_B_coe_sealed.olean
+2026-11-16T00:15:23Z RELEASE pid=48738 tag=sc-yao-c slots=[slot2 ]
+2026-11-16T00:15:46Z ACQUIRE pid=48807 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel
+2026-11-16T00:15:50Z RELEASE pid=48774 tag=sc-yao-a slots=[slot1 ]
+2026-11-16T00:15:50Z ACQUIRE pid=48829 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls-fake01/Control_B_coe_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls-fake01/Control_B_coe_unsealed.olean
+2026-11-16T00:15:51Z RELEASE pid=48807 tag=sc-yao-c slots=[slot2 ]
+2026-11-16T00:15:53Z RELEASE pid=48829 tag=sc-yao-a slots=[slot1 ]
+2026-11-16T00:15:53Z ACQUIRE pid=48852 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls-fake01/Control_B_strict_sealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls-fake01/Control_B_strict_sealed.olean
+2026-11-16T00:16:20Z RELEASE pid=48852 tag=sc-yao-a slots=[slot1 ]
+2026-11-16T00:16:20Z ACQUIRE pid=48951 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/seals/controls-fake01/Control_B_strict_unsealed.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/seals/controls-fake01/Control_B_strict_unsealed.olean
+2026-11-16T00:16:21Z ACQUIRE pid=48958 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/yao-efficiency-repair/final/Yao_A_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/yao-efficiency-repair/final/Yao_A_strict.olean
+2026-11-16T00:16:22Z RELEASE pid=48951 tag=sc-yao-a slots=[slot1 ]
+2026-11-16T00:16:22Z ACQUIRE pid=48974 tag=sc-yao-a k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/subagents/a2/probes/AxiomsAndTraceFake.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/evidence/subagents/a2/probes/AxiomsAndTraceFake.olean
+2026-11-16T00:16:32Z ACQUIRE pid=48992 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction
+2026-11-16T00:16:51Z RELEASE pid=48958 tag=sc-yao slots=[slot2 ]
+2026-11-16T00:16:51Z ACQUIRE pid=49027 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/yao-efficiency-repair/final/Yao_A_coe.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/yao-efficiency-repair/final/Yao_A_coe.olean
+2026-11-16T00:16:57Z RELEASE pid=48992 tag=sc-yao-b slots=[slot3 ]
+2026-11-16T00:17:13Z ACQUIRE pid=49065 tag=sc-yao-c k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinSeedRelabel
+2026-11-16T00:17:18Z RELEASE pid=49065 tag=sc-yao-c slots=[slot3 ]
+2026-11-16T00:17:20Z ACQUIRE pid=49087 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SelectedSeed
+2026-11-16T00:17:20Z RELEASE pid=49027 tag=sc-yao slots=[slot2 ]
+2026-11-16T00:17:20Z ACQUIRE pid=49137 tag=sc-yao k=1 cmd=/usr/bin/time -l lean -DmaxErrors=0 evidence/seals/yao-efficiency-repair/final/Yao_B_strict.lean -o /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/.lake/sc-yao-oleans/evidence/seals/yao-efficiency-repair/final/Yao_B_strict.olean
+2026-11-16T00:17:22Z RELEASE pid=49087 tag=sc-yao-b slots=[slot3 ]
+2026-11-16T00:17:27Z RELEASE pid=48974 tag=sc-yao-a slots=[slot1 ]
+2026-11-16T00:17:43Z ACQUIRE pid=49172 tag=sc-yao-b k=1 cmd=/usr/bin/time -l bash scripts/lean_check_tree.sh TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReconstruction

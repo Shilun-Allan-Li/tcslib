@@ -1,0 +1,95 @@
+START 2026-11-15T23:41:26.203888+00:00 evidence/probes/EfficiencyBob
+evidence/probes/EfficiencyBob.lean:34:20: error: Tactic `rfl` failed: The left-hand side
+  (List.ofFn ∘ fun v =>
+      if ↑v < Y.inA.eval (GI.argX w).length then
+        padFin (GI.argX w).length ((decodeMsgs (pairFstD (pairSndD (msg w)))).getD ↑v [])
+      else readBits (ans w) ((↑v - Y.inA.eval (GI.argX w).length) * (GI.argX w).length) (GI.argX w).length)
+    v
+is not definitionally equal to the right-hand side
+  List.ofFn fun i =>
+    padFin (List.replicate (GI.argX w).length true).length
+      ((BinArith.decWords (pairFstD (pairSndD (pairFstD (GI.argM w))))).getD ↑(Fin.cast ⋯ v) []) (Fin.cast ⋯ i)
+
+case pos
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+gen : List Bool → List Bool
+hgen : PolyTimeComputable gen
+hgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)
+hdesc :
+  ∀ (n : ℕ),
+    gen (List.replicate n true) =
+      pairEncode (Y.circ n).encode (BinArith.encWords (List.ofFn fun j => encodeNat (Y.outs n j)))
+msg : List Bool → List Bool := fun w => pairFstD (GI.argM w)
+ans : List Bool → List Bool := fun w => pairSndD (GI.argZ w)
+w : List Bool
+v : Fin (Y.inA.eval (GI.argX w).length + Y.inB.eval (GI.argX w).length)
+h✝ : ↑(Fin.cast ⋯ v) < Y.inA.eval (GI.argX w).length
+⊢ (List.ofFn ∘ fun v =>
+        if ↑v < Y.inA.eval (GI.argX w).length then
+          padFin (GI.argX w).length ((decodeMsgs (pairFstD (pairSndD (msg w)))).getD ↑v [])
+        else readBits (ans w) ((↑v - Y.inA.eval (GI.argX w).length) * (GI.argX w).length) (GI.argX w).length)
+      v =
+    List.ofFn fun i =>
+      padFin (List.replicate (GI.argX w).length true).length
+        ((BinArith.decWords (pairFstD (pairSndD (pairFstD (GI.argM w))))).getD ↑(Fin.cast ⋯ v) []) (Fin.cast ⋯ i)
+evidence/probes/EfficiencyBob.lean:34:20: error: Tactic `rfl` failed: The left-hand side
+  (List.ofFn ∘ fun v =>
+      if ↑v < Y.inA.eval (GI.argX w).length then
+        padFin (GI.argX w).length ((decodeMsgs (pairFstD (pairSndD (msg w)))).getD ↑v [])
+      else readBits (ans w) ((↑v - Y.inA.eval (GI.argX w).length) * (GI.argX w).length) (GI.argX w).length)
+    v
+is not definitionally equal to the right-hand side
+  List.ofFn fun i =>
+    (pairSndD (GI.argZ w)).getD
+      ((↑(Fin.cast ⋯ v) - Y.inA.eval (GI.argX w).length) * (GI.argX w).length + ↑(Fin.cast ⋯ i)) false
+
+case neg
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+gen : List Bool → List Bool
+hgen : PolyTimeComputable gen
+hgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)
+hdesc :
+  ∀ (n : ℕ),
+    gen (List.replicate n true) =
+      pairEncode (Y.circ n).encode (BinArith.encWords (List.ofFn fun j => encodeNat (Y.outs n j)))
+msg : List Bool → List Bool := fun w => pairFstD (GI.argM w)
+ans : List Bool → List Bool := fun w => pairSndD (GI.argZ w)
+w : List Bool
+v : Fin (Y.inA.eval (GI.argX w).length + Y.inB.eval (GI.argX w).length)
+h✝ : ¬↑(Fin.cast ⋯ v) < Y.inA.eval (GI.argX w).length
+⊢ (List.ofFn ∘ fun v =>
+        if ↑v < Y.inA.eval (GI.argX w).length then
+          padFin (GI.argX w).length ((decodeMsgs (pairFstD (pairSndD (msg w)))).getD ↑v [])
+        else readBits (ans w) ((↑v - Y.inA.eval (GI.argX w).length) * (GI.argX w).length) (GI.argX w).length)
+      v =
+    List.ofFn fun i =>
+      (pairSndD (GI.argZ w)).getD
+        ((↑(Fin.cast ⋯ v) - Y.inA.eval (GI.argX w).length) * (GI.argX w).length + ↑(Fin.cast ⋯ i)) false
+FAIL(evidence/probes/EfficiencyBob): lean exited with status 1
+FAIL(evidence/probes/EfficiencyBob): error diagnostics reported
+FAIL(evidence/probes/EfficiencyBob): no fresh .olean produced
+        3.12 real         1.49 user         1.12 sys
+          2245722112  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170183  page reclaims
+                7654  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 606  voluntary context switches
+                9311  involuntary context switches
+            32020412  instructions retired
+            19428271  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T23:41:29.363599+00:00 EXIT 1

@@ -1,0 +1,56 @@
+START 2026-11-15T21:40:15.871125+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:68:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  c ≥ 0
+  b ≥ 0
+  a ≥ 0
+  4*a - b ≥ -2
+  7*a - c ≤ -5
+where
+ a := ↑n
+ b := ↑(spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r.1)).length
+ c := ↑(match [k] with
+    | [] => List.ofFn o
+    | [k] => spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r.1)
+    | [k₁, k₂] => spEncStr E₂ (List.ofFn k₁) (spEncStr E₁ (List.ofFn k₂) (List.ofFn o) (List.ofFn r.2)) (List.ofFn r.1)
+    | x => []).length
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:74:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  d ≥ 0
+  c ≥ 0
+  b ≥ 0
+  a ≥ 0
+  3*a + b - c ≥ -2
+  4*a - b ≥ -2
+  7*a - d ≤ -5
+where
+ a := ↑n
+ b := ↑(spEncStr E₁ (List.ofFn k₂) (List.ofFn o) (List.ofFn r.2)).length
+ c := ↑(spEncStr E₂ (List.ofFn k₁) (spEncStr E₁ (List.ofFn k₂) (List.ofFn o) (List.ofFn r.2)) (List.ofFn r.1)).length
+ d := ↑(match [k₁, k₂] with
+    | [] => List.ofFn o
+    | [k] => spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r.1)
+    | [k₁, k₂] => spEncStr E₂ (List.ofFn k₁) (spEncStr E₁ (List.ofFn k₂) (List.ofFn o) (List.ofFn r.2)) (List.ofFn r.1)
+    | x => []).length
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths): no fresh .olean produced
+        3.10 real         2.19 user         1.32 sys
+          2175205376  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170670  page reclaims
+                2342  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 133  voluntary context switches
+                8656  involuntary context switches
+            33985935  instructions retired
+            17455675  cycles elapsed
+             1671504  peak memory footprint
+END 2026-11-15T21:40:19.016600+00:00 exit=1

@@ -1,0 +1,35 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:46:  rw [spEncStr_eq, length_pairEncode, List.length_append, List.length_take,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:62:  rw [nestedSpecial_enc]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:64:  | [] => simp only [List.length_ofFn]; omega
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:66:    change (spEncStr E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r.1)).length ≤ 7 * n + 4
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:68:    simp only [List.length_ofFn] at h
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:71:    change (spEncStr E₂ (List.ofFn k₁)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:77:    simp only [List.length_ofFn] at h₁ h₂
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:79:  | _ :: _ :: _ :: _ => simp only [List.length_nil]; omega
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:86:  | nil => rw [Strategy.encodeMsgs_nil, BinArith.encWords_nil]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:87:  | cons w L ih => rw [Strategy.encodeMsgs_cons, BinArith.encWords_cons, ih]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:97:  rw [garbledRow_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:107:  rw [garbledTable_eq, List.length_map, Finset.length_toList, Finset.card_univ]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:124:  rw [encodeMsgs_eq_encWords]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:128:        rw [garbledTable_eq] at hw
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:145:  rw [encodeMsgs_eq_encWords]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:161:  rw [encodeMsgs_eq_encWords]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:175:  rw [encodeMsgs_eq_encWords]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:180:      rw [length_pairEncode, List.length_ofFn, List.length_ofFn]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:194:  rw [length_pairEncode, length_pairEncode]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:69:  rw [otInputA_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:70:  simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:109:  rw [otInputB_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:110:  simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:125:      simp only [divNum_eq, Function.comp_apply]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:57:  simp [Protocol.transcriptWith_eq, hR, hF, PolyExpr.eval_const, exec_succ, exec_zero,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:66:  rw [Protocol.transcript_eq_transcriptWith,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:75:  rw [Protocol.viewP_eq, transcriptWith_eq π msgA msgB hR hF hA hB]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:81:  rw [Protocol.viewV_eq, transcriptWith_eq π msgA msgB hR hF hA hB]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:90:  rw [viewP_eq π msgA msgB hR hF hA hB, View.encode_mk]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:98:  rw [viewV_eq π msgA msgB hR hF hA hB, View.encode_mk]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:106:  rw [Protocol.outV_eq, transcriptWith_eq π msgA msgB hR hF hA hB]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:115:  rw [Protocol.outP_eq, transcriptWith_eq π msgA msgB hR hF hA hB]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:141:  rw [HybridProtocol.realA_eq,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:160:  rw [HybridProtocol.realB_eq,
+EXPLICIT_UNFOLD_DELTA_DSIMp=0

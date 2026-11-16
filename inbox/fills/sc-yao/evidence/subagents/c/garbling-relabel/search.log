@@ -1,0 +1,26 @@
+$ rg -n relabel|tableWith|rowWith|xorPerm|argKeys_eq|inputKeys_eq|garbledRow_eq|garbledTable_eq TCSlib/Cryptography/SecureComputation/Garbling.lean TCSlib/Cryptography/Foundations/BitLists.lean
+TCSlib/Cryptography/Foundations/BitLists.lean:24:* `TCSlib.Cryptography.xorPerm v`: exclusive-or with the vector `v`, as a permutation.
+TCSlib/Cryptography/Foundations/BitLists.lean:34:* `TCSlib.Cryptography.xorPerm_apply`: `xorPerm v y = y ⊕ v`.
+TCSlib/Cryptography/Foundations/BitLists.lean:104:/-- Exclusive-or with a fixed vector `v`, as a permutation of `{0,1}ⁿ`: `xorPerm v y = y ⊕ v`. -/
+TCSlib/Cryptography/Foundations/BitLists.lean:105:def xorPerm (v : Fin n → Bool) : Equiv.Perm (Fin n → Bool) :=
+TCSlib/Cryptography/Foundations/BitLists.lean:109:/-- `xorPerm v y = y ⊕ v`. -/
+TCSlib/Cryptography/Foundations/BitLists.lean:110:theorem xorPerm_apply (v y : Fin n → Bool) : xorPerm v y = fun i => xor (y i) (v i) := rfl
+TCSlib/Cryptography/SecureComputation/Garbling.lean:250:theorem argKeys_eq (s : GarbleSeed Cc K ρ) (i : Fin Cc.gates.length)
+TCSlib/Cryptography/SecureComputation/Garbling.lean:262:theorem garbledRow_eq (s : GarbleSeed Cc K ρ) (i : Fin Cc.gates.length)
+TCSlib/Cryptography/SecureComputation/Garbling.lean:275:theorem garbledTable_eq (s : GarbleSeed Cc K ρ) (i : Fin Cc.gates.length) :
+TCSlib/Cryptography/SecureComputation/Garbling.lean:315:theorem inputKeys_eq (s : GarbleSeed Cc K ρ) (x : Fin n → Bool) :
+
+exit=0
+$ rg -n def rowWordWith|theorem rowWordWith_eq|def tableWordWith|theorem tableWordWith_eq /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean /Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins.lean
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins.lean:39:noncomputable def tableWordWith (args : List Bool → List Bool)
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins.lean:49:theorem tableWordWith_eq (args : List Bool → List Bool)
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean:199:def rowWordWith (E₁ E₂ : List Bool → List Bool) (width bound inputs gate : List Bool → ℕ)
+/Users/seyoonr/.codex/worktrees/sc-yao/tcslib-exchange/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean:220:theorem rowWordWith_eq (E₁ E₂ : List Bool → List Bool) (width bound inputs gate : List Bool → ℕ)
+
+exit=0
+$ git show a73072f1:inbox/fills/sc-garble/src/TCSlib/Cryptography/SecureComputation/Garbling/Probability.lean
+39:theorem findSome_eq_some_of_dichotomy {α β : Type} (l : List α) (f : α → Option β) (b : β)
+62:theorem pushesUniform_output_argKeys {I J K : Type} [Fintype I] [DecidableEq I]
+92:theorem pushesUniform_rowCoin {I : Type} [Fintype I] [DecidableEq I] {A : I → Type}
+102:theorem pushesUniform_output_argKeys_row {I J K R ρ : Type}
+exit=0

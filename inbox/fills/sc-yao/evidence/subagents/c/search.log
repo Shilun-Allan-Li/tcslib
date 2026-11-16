@@ -1,0 +1,329 @@
+$ rg -n length_.*(spEnc|garbled|nested|encodeMsgs)|length_(encWords)|encodeMsgs.*encWords|encWords.*encodeMsgs TCSlib/Cryptography/SecureComputation TCSlib/Cryptography/ZeroKnowledge TCSlib/Complexity/ClassP/BinaryArith/Words.lean
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:74:theorem length_encWords (L : List (List Bool)) :
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:81:theorem length_encWords_le (L : List (List Bool)) (c : ℕ) (h : ∀ w ∈ L, w.length ≤ c) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:26:* `length_spEncStr_le`: special encryption has at most `3 |r| + |m| + 2` bits.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:27:* `length_nestedSpecial_enc_le`: a nested ciphertext has at most `7 n + 4` bits.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:28:* `length_encoded_garbledTables_le`: the encoded tables have at most
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:44:theorem length_spEncStr_le (E : List Bool → List Bool) (k m r : List Bool) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:58:theorem length_nestedSpecial_enc_le (E₁ E₂ : List Bool → List Bool) (n : ℕ)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:66:    have h := length_spEncStr_le E₁ (List.ofFn k) (List.ofFn o) (List.ofFn r.1)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:70:    have h₁ := length_spEncStr_le E₁ (List.ofFn k₂) (List.ofFn o) (List.ofFn r.2)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:71:    have h₂ := length_spEncStr_le E₂ (List.ofFn k₁)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:78:`Strategy.encodeMsgs L = BinArith.encWords L`. -/
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:79:theorem encodeMsgs_eq_encWords (L : List (List Bool)) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:80:    Strategy.encodeMsgs L = BinArith.encWords L := by
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:82:  | nil => rw [Strategy.encodeMsgs_nil, BinArith.encWords_nil]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:83:  | cons w L ih => rw [Strategy.encodeMsgs_cons, BinArith.encWords_cons, ih]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:88:theorem length_garbledRow_le (E₁ E₂ : List Bool → List Bool) (n : ℕ) {m : ℕ}
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:94:  exact length_nestedSpecial_enc_le E₁ E₂ n _ _ _
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:99:theorem length_garbledTable_le {K W ρ : Type} [Inhabited K] {m : ℕ}
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:114:theorem length_encoded_garbledTable_le (E₁ E₂ : List Bool → List Bool) (n : ℕ)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:120:  rw [encodeMsgs_eq_encWords]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:123:      BinArith.length_encWords_le _ _ fun w hw => by
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:126:        exact length_garbledRow_le E₁ E₂ n C s i _
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:128:      Nat.mul_le_mul_right _ (length_garbledTable_le _ C s i hi)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:134:theorem length_encoded_garbledTables_le (E₁ E₂ : List Bool → List Bool) (n : ℕ)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:141:  rw [encodeMsgs_eq_encWords]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:142:  have h := BinArith.length_encWords_le
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:147:      exact length_encoded_garbledTable_le E₁ E₂ n C s i (hC i)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:157:  rw [encodeMsgs_eq_encWords]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:158:  have h := BinArith.length_encWords_le
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:171:  rw [encodeMsgs_eq_encWords]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Lengths.lean:172:  have h := BinArith.length_encWords_le
+TCSlib/Cryptography/SecureComputation/GarblingSpecial.lean:23:ciphertext `⟨r, c⟩` has `2n + 2 + 2n = 4n + 2` bits (`length_spEncStr`), so the outer layer encrypts
+TCSlib/Cryptography/SecureComputation/GarblingSpecial.lean:116:      rw [length_spEncStr E₁ (by rw [hp₁, hlen, hlen]), hlen, hlen]
+TCSlib/Cryptography/SecureComputation/Yao.lean:352:  have henc : ∀ ms : List (List Bool), Strategy.encodeMsgs ms = BinArith.encWords ms :=
+TCSlib/Cryptography/SecureComputation/Yao.lean:354:      Strategy.encodeMsgs ms = BinArith.encWords ms)
+TCSlib/Cryptography/SecureComputation/Yao.lean:355:      (Strategy.encodeMsgs_nil.trans BinArith.encWords_nil.symm)
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:49:* `SecureComputation.spDecStr_spEncStr`, `length_spEncStr`: decryption inverts encryption, and the
+TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean:258:theorem length_spEncStr (E : List Bool → List Bool) {k m r : List Bool}
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:264:hard-wired strings of commitments (`CommitmentLemmas.length_encodeMsgs_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:288:`CommitmentLemmas.length_encodeMsgs_le` with `|W i| ≤ C (2n + 3 + ℓ(n))^c`. -/
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:355:  · have h1 := length_encodeMsgs_le (List.ofFn fun i : Fin k => W (Fin.castLE k.2.le i))
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:357:    have h2 := length_encodeMsgs_le (List.ofFn fun i : Fin (t - k - 1) => W ⟨k + 1 + i, by omega⟩)
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:395:`length_encodeMsgs_le`), and `ε_D(n) ≤ q(n) · distAdv (Com ⟨v_n k_n, ·⟩) (Com ⟨v'_n k_n, ·⟩) (that reduction)`.
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:941:theorem length_le_length_encodeMsgs (hist : List (List Bool)) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:970:  · exact Nat.lt_succ_of_le (length_le_length_encodeMsgs hist)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:359:(`CommitmentLemmas.length_encodeMsgs_le`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:363:  refine CommitmentLemmas.length_encodeMsgs_le _ M fun w hw => ?_
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:371:**Proof sketch.** `CommitmentLemmas.length_encodeMsgs_le` on the fifteen fields of
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean:381:  refine CommitmentLemmas.length_encodeMsgs_le _ M fun w hw => ?_
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:607:(`CommitmentLemmas.length_encodeMsgs_le`, `length_pairEncode`). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:613:  refine (CommitmentLemmas.length_encodeMsgs_le _ (C * (2 * n + 3 + m) ^ c)
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:241:theorem length_encodeMsgs_le (L : List (List Bool)) (M : ℕ) (hM : ∀ m ∈ L, m.length ≤ M) :
+
+exit=0
+$ git show a73072f1:inbox/fills/sc-garble/src/TCSlib/Cryptography/SecureComputation/GarblingSecurity/NestedBounds.lean
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.SecureComputation.GarblingSpecial
+import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity
+import TCSlib.Cryptography.SecureComputation.GarblingSecurity.CoinMarginals
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Concrete wrong-key bounds for nested special encryption
+
+## Main definitions
+
+This module adds no definitions.
+
+## Main results
+
+* `SecureComputation.GarblingCoins.length_nestedInner`: the inner ciphertext has `4n+2` bits.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+  §6.2.2, Claim 157.a (ii).
+-/
+
+namespace TCSlib.Cryptography.SecureComputation.GarblingCoins
+
+open Complexity Turing TCSlib.Cryptography
+
+/-- A special ciphertext with an `n`-bit nonce, an `n`-bit message, and a `2n`-bit pad has
+`innerLen(n) = 4n+2` bits:
+`|spEncStr E ⟦k⟧ ⟦m⟧ ⟦r⟧| = innerLen.eval n`. -/
+theorem length_nestedInner
+    {G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool)}
+    {E : List Bool → List Bool}
+    (hGE : ∀ n (k r : Fin n → Bool), E (pairEncode (List.ofFn k) (List.ofFn r)) =
+      List.ofFn (G n k r)) (n : ℕ) (k m r : Fin n → Bool) :
+    (spEncStr E (List.ofFn k) (List.ofFn m) (List.ofFn r)).length = innerLen.eval n := by
+  rw [length_spEncStr E (by rw [hGE]; simp), List.length_ofFn, List.length_ofFn,
+    innerLen_eq, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
+    PolyExpr.eval_var, PolyExpr.eval_const]
+  omega
+
+/-- Inner and outer string success bounds `ε₁, ε₂` give
+`(nestedSpecial E₁ E₂ n).WrongKeyBot (ε₁+ε₂)`, provided both errors are nonnegative and
+the evaluators have the specified `2n` and `n+innerLen(n)` output lengths.
+[PS10, §6.2.2, Claim 157.a (ii)]
+
+**Proof sketch.** There are at most two key positions. With one position use the inner
+string bound and its uniform key/nonce marginal. With two positions, if the first key
+differs, condition on the second position's keys and inner nonce, and apply the outer
+bound to the resulting fixed inner ciphertext. If the first key agrees, correctness
+opens the outer layer and the inner key/nonce marginal gives the inner bound. Add the
+nonnegative unused error in each case. The zero-position case has no distinct choices. -/
+theorem nestedSpecial_wrongKeyBot_of_string_bounds
+    (G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool))
+    (G₂ : ∀ n, (Fin n → Bool) → (Fin n → Bool) →
+      (Fin ((PolyExpr.add .var innerLen).eval n) → Bool))
+    (E₁ E₂ : List Bool → List Bool)
+    (hGE₁ : ∀ n (k r : Fin n → Bool), E₁ (pairEncode (List.ofFn k) (List.ofFn r)) =
+      List.ofFn (G₁ n k r))
+    (hGE₂ : ∀ n (k r : Fin n → Bool), E₂ (pairEncode (List.ofFn k) (List.ofFn r)) =
+      List.ofFn (G₂ n k r)) (n : ℕ) {ε₁ ε₂ : ℝ} (hε₁ : 0 ≤ ε₁) (hε₂ : 0 ≤ ε₂)
+    (h₁ : ∀ m : Fin n → Bool,
+      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+        (spDecStr E₁ n n (List.ofFn t.2.1)
+          (spEncStr E₁ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₁)
+    (h₂ : ∀ m : Fin (innerLen.eval n) → Bool,
+      uprob (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+        (spDecStr E₂ n (innerLen.eval n) (List.ofFn t.2.1)
+          (spEncStr E₂ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true) ≤ ε₂) :
+    (nestedSpecial E₁ E₂ n).WrongKeyBot (ε₁ + ε₂) := by
+  rw [MultiEnc.wrongKeyBot_iff]
+  intro len hlen a a' hne o
+  have hcases : len = 0 ∨ len = 1 ∨ len = 2 := by omega
+  rcases hcases with rfl | rfl | rfl
+  · exact (hne (Subsingleton.elim a a')).elim
+  · have hab : a 0 ≠ a' 0 := fun h => hne (funext (Fin.forall_fin_one.mpr h))
+    have hu := (pushesUniform_position_keys_coin (K := Fin n → Bool) (0 : Fin 1)
+      hab false).uprob_eq (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+        (spDecStr E₁ n n (List.ofFn t.2.1)
+          (spEncStr E₁ (List.ofFn t.1) (List.ofFn o) (List.ofFn t.2.2))).isSome = true)
+    refine (uprob_mono (fun t ht => ?_)).trans
+      ((hu.trans_le (h₁ o)).trans (le_add_of_nonneg_right hε₂))
+    simp only [List.ofFn_succ, List.ofFn_zero, Fin.succ_zero_eq_one,
+      nestedSpecial_enc, nestedSpecial_dec] at ht
+    exact Option.isSome_of_isSome_bind ht
+  · by_cases hfirst : a 0 = a' 0
+    · have hsecond : a 1 ≠ a' 1 := fun h =>
+        hne (funext (Fin.forall_fin_two.mpr ⟨hfirst, h⟩))
+      have hu := (pushesUniform_position_keys_coin (K := Fin n → Bool) (1 : Fin 2)
+        hsecond true).uprob_eq (fun t : (Fin n → Bool) × (Fin n → Bool) × (Fin n → Bool) =>
+          (spDecStr E₁ n n (List.ofFn t.2.1)
+            (spEncStr E₁ (List.ofFn t.1) (List.ofFn o) (List.ofFn t.2.2))).isSome = true)
+      refine (uprob_mono (fun t ht => ?_)).trans
+        ((hu.trans_le (h₁ o)).trans (le_add_of_nonneg_right hε₂))
+      simp only [List.ofFn_succ, List.ofFn_zero, Fin.succ_zero_eq_one,
+      nestedSpecial_enc, nestedSpecial_dec] at ht
+      have hc := length_nestedInner hGE₁ n (t.1 1 (a 1)) o t.2.2
+      have hp : (E₂ (pairEncode (List.ofFn (t.1 0 (a 0))) (List.ofFn t.2.1))).length =
+          n + innerLen.eval n := by
+        rw [hGE₂, List.length_ofFn]
+        rfl
+      rw [← hfirst, spDecStr_spEncStr E₂ List.length_ofFn hc List.length_ofFn hp,
+        Option.bind_some] at ht
+      exact Option.isSome_of_isSome_bind ht
+    · let K := Fin n → Bool
+      let e : ((Fin 2 → Bool → K) × (K × K)) ≃
+          ((Bool → K) × K) × ((Bool → K) × K) :=
+        ((piFinTwoEquiv fun _ : Fin 2 => Bool → K).prodCongr (Equiv.refl (K × K))).trans
+          ((Equiv.prodProdProdComm (Bool → K) (Bool → K) K K).trans
+            (Equiv.prodComm ((Bool → K) × K) ((Bool → K) × K)))
+      rw [← uprob_comp_equiv e.symm, uprob_prod]
+      refine (OneWay.uexp_mono (g := fun _ => ε₂) (fun s => ?_)).trans ?_
+      · let c := spEncStr E₁ (List.ofFn (s.1 (a 1))) (List.ofFn o) (List.ofFn s.2)
+        have hc : c.length = innerLen.eval n := length_nestedInner hGE₁ n _ o _
+        let m := padFin (innerLen.eval n) c
+        have hm : List.ofFn m = c := ofFn_padFin_of_length hc
+        have hlaw : HardcoreBit.PushesUniform
+            (fun t : (Bool → K) × K => (t.1 (a 0), t.1 (a' 0), t.2)) :=
+          ((HardcoreBit.pushesUniform_eval_pair (γ := K) hfirst).prodMap
+            HardcoreBit.pushesUniform_id).comp
+              (HardcoreBit.pushesUniform_equiv (Equiv.prodAssoc K K K))
+        have hu := hlaw.uprob_eq (fun t : K × K × K =>
+          (spDecStr E₂ n (innerLen.eval n) (List.ofFn t.2.1)
+            (spEncStr E₂ (List.ofFn t.1) (List.ofFn m) (List.ofFn t.2.2))).isSome = true)
+        have hb := hu.trans_le (h₂ m)
+        rw [hm] at hb
+        refine (uprob_mono (fun t ht => ?_)).trans hb
+        simp only [List.ofFn_succ, List.ofFn_zero, Fin.succ_zero_eq_one,
+      nestedSpecial_enc, nestedSpecial_dec] at ht
+        exact Option.isSome_of_isSome_bind ht
+      · simpa only [OneWay.uexp_const] using
+          (le_add_of_nonneg_left hε₁ : ε₂ ≤ ε₁ + ε₂)
+
+end TCSlib.Cryptography.SecureComputation.GarblingCoins
+
+namespace TCSlib.Cryptography.SecureComputation
+
+open BoolCircuit
+
+variable {K C ρ : Type} [Inhabited K] {n : ℕ} (M : MultiEnc K C ρ) (Cc : DAGCircuit n)
+
+/-- Uniform independent keys and row coins give goodness and distinct output keys:
+`Pr_w[¬ (Good M Cc (s w) ∧ ∀ j, keyAt Cc (s w) (out j) false ≠
+  keyAt Cc (s w) (out j) true)] ≤ 12*|Cc.gates|*δ + m/|K|`, if `out j < Cc.size`
+and `w ↦ ((s w).1,(s w).2.1)` pushes uniform to uniform.
+Outputs may coincide. [PS10, §6.2.3, Claim 159.a and Protocol 162.6]
+
+**Proof sketch.** Use the B2 uniform-data bound for goodness. At each output, the two
+keys are independent uniform elements of `K`, so their collision probability is `1/|K|`.
+The finite union bound over output positions does not require distinct output vertices.
+Add this collision bound to the goodness failure bound. -/
+theorem uprob_not_good_distinct_le_of_uniform_data [Fintype K] [Fintype ρ] [Nonempty ρ]
+    (hdec : M.DecCorrect) {δ : ℝ} (hδ : M.WrongKeyBot δ) (hC : Cc.IsFaninTwo)
+    {Ω : Type} [Fintype Ω] (s : Ω → GarbleSeed Cc K ρ)
+    (hs : HardcoreBit.PushesUniform (fun w => ((s w).1, (s w).2.1)))
+    {m : ℕ} (out : Fin m → ℕ) (hout : ∀ j, out j < Cc.size) :
+    uprob (fun w => ¬ (Good M Cc (s w) ∧ ∀ j,
+      keyAt Cc (s w) (out j) false ≠ keyAt Cc (s w) (out j) true)) ≤
+      12 * Cc.gates.length * δ + m * (1 / Fintype.card K) := by
+  classical
+  let collision : Fin m → Ω → Prop := fun j w =>
+    keyAt Cc (s w) (out j) false = keyAt Cc (s w) (out j) true
+  have hpoint (j : Fin m) : uprob (collision j) = 1 / Fintype.card K := by
+    let v : Fin Cc.size := ⟨out j, hout j⟩
+    have hkeys : HardcoreBit.PushesUniform (fun w => (s w).1) :=
+      hs.comp HardcoreBit.pushesUniform_fst
+    have hpair : HardcoreBit.PushesUniform (fun w => ((s w).1 v false, (s w).1 v true)) :=
+      (hkeys.comp (HardcoreBit.pushesUniform_eval (γ := Bool → K) v)).comp
+        (HardcoreBit.pushesUniform_eval_pair (γ := K) Bool.false_ne_true)
+    have hu := hpair.uprob_eq (fun z : K × K => z.1 = z.2)
+    calc
+      _ = uprob (fun w => (s w).1 v false = (s w).1 v true) := by
+        apply OneWay.uprob_congr
+        intro w
+        simp only [collision, keyAt_eq, dif_pos (hout j)]
+        rfl
+      _ = uprob (fun z : K × K => z.1 = z.2) := hu
+      _ = 1 / Fintype.card K := MultiMsg.uprob_eq_pair
+  have hcoll : uprob (fun w => ∃ j ∈ Finset.univ, collision j w) ≤
+      m * (1 / Fintype.card K) := by
+    refine (uprob_exists_le Finset.univ collision).trans ?_
+    simp only [hpoint, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+    exact le_rfl
+  have hbad : ∀ w, ¬ (Good M Cc (s w) ∧ ∀ j,
+      keyAt Cc (s w) (out j) false ≠ keyAt Cc (s w) (out j) true) →
+        ¬ Good M Cc (s w) ∨ ∃ j ∈ Finset.univ, collision j w := by
+    intro w hw
+    by_cases hg : Good M Cc (s w)
+    · right
+      have hj : ∃ j, collision j w := by simpa only [not_and, hg, true_implies,
+        not_forall, not_not, collision] using hw
+      obtain ⟨j, hj⟩ := hj
+      exact ⟨j, Finset.mem_univ _, hj⟩
+    · exact Or.inl hg
+  calc
+    _ ≤ uprob (fun w => ¬ Good M Cc (s w) ∨ ∃ j ∈ Finset.univ, collision j w) :=
+      uprob_mono hbad
+    _ ≤ uprob (fun w => ¬ Good M Cc (s w)) +
+        uprob (fun w => ∃ j ∈ Finset.univ, collision j w) := uprob_or_le _ _
+    _ ≤ 12 * Cc.gates.length * δ + m * (1 / Fintype.card K) :=
+      add_le_add (uprob_not_good_le_of_uniform_data M Cc hdec hδ hC
+        (fun w => ((s w).1, (s w).2.1)) hs (fun w => (s w).2.2)) hcoll
+
+end TCSlib.Cryptography.SecureComputation
+
+exit=0
+$ rg -n divNum_(eq|poly)|getBit_poly|unary(Add|Mul|PolyOf|Length)_poly|otInput|callInput TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean TCSlib/Cryptography/SecureComputation
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:53:* `TCSlib.Cryptography.EncodingMachines.unaryAdd_poly`, `unaryMul_poly`, `unarySub_poly`,
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:54:  `unaryPolyOf_poly`, `leTest_poly`, `ltTest_poly`, `eqTest_poly`, `unaryMin_poly`,
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:55:  `getBit_poly` — the unary toolkit.
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:62:* `TCSlib.Cryptography.EncodingMachines.unarySqrt_poly`, `divNum_poly`, `modNum_poly`,
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:81:theorem unaryAdd_poly {f g : List Bool → ℕ}
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:90:theorem unaryMul_poly {f g : List Bool → ℕ}
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:117:theorem unaryLength_poly {h : List Bool → List Bool} (hh : PolyTimeComputable h) :
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:123:theorem unaryPolyOf_poly (p : PolyExpr) {f : List Bool → ℕ}
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:146:  convert leTest_poly (unaryAdd_poly hf (unaryConst_poly 1)) hg using 1
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:174:theorem getBit_poly {h : List Bool → List Bool} (hh : PolyTimeComputable h) {f : List Bool → ℕ}
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:411:    ltTest_poly (unaryLength_poly polyTimeComputable_pairFstD) hg
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:438:    unaryAdd_poly (unaryLength_poly polyTimeComputable_pairFstD) (unaryConst_poly 1)
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:441:    ltTest_poly (hf.comp polyTimeComputable_pairSndD) (unaryMul_poly hi hi)
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:443:    unaryAdd_poly hf (unaryConst_poly 1)
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:546:    (unaryLength_poly (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD))
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:627:theorem divNum_eq (a m : ℕ) : divNum a m = a / m := by
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:648:  rw [divNum_eq]
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:653:theorem divNum_poly {f g : List Bool → ℕ}
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:664:      (ltTest_poly hf' (unaryMul_poly
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:665:        (unaryAdd_poly (unaryLength_poly polyTimeComputable_pairFstD) (unaryConst_poly 1)) hg'))
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:666:      (unaryAdd_poly hf (unaryConst_poly 1))
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:678:  unarySub_poly hf (unaryMul_poly (divNum_poly hf hg) hg)
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:690:  convert unaryLength_poly (hbits.comp hf) using 1
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:21:* `otInputA`: the two coin bits at offsets `inA(n) n + j` and `(S(n) + inA(n)) n + j`.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:22:* `otInputB`: the input bit at offset `j / n`, with the total division convention at zero.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:26:* `polyTimeComputable_otInputA`, `polyTimeComputable_otInputB`: both machines are polynomial-time.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:27:* `otInputA_layout`, `otInputB_layout`: their equations on canonical call-input layouts.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:43:def otInputA (inA sizeBound : PolyExpr) (z : List Bool) : List Bool :=
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:51:/-- `otInputA inA S z` is the two defaulted coin bits at offsets
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:53:theorem otInputA_eq (inA sizeBound : PolyExpr) (z : List Bool) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:54:    otInputA inA sizeBound z =
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:62:/-- `otInputA inA S ⟨1^n, ⟨x, ⟨r, 1^j⟩⟩⟩` returns the coin bits at offsets
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:64:theorem otInputA_layout (inA sizeBound : PolyExpr) (n j : ℕ) (x r : List Bool) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:65:    otInputA inA sizeBound (pairEncode (List.replicate n true)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:69:  rw [otInputA_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:73:`otInputA inA S` is polynomial-time on every string. [PS10, Protocol 162.6]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:78:theorem polyTimeComputable_otInputA (inA sizeBound : PolyExpr) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:79:    PolyTimeComputable (otInputA inA sizeBound) := by
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:80:  have hn := unaryLength_poly polyTimeComputable_pairFstD
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:82:  have hj := unaryLength_poly (polyTimeComputable_pairSndD.comp htail)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:84:  have hA := unaryPolyOf_poly inA hn
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:85:  have hS := unaryPolyOf_poly sizeBound hn
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:86:  have h₀ := getBit_poly hr (unaryAdd_poly (unaryMul_poly hA hn) hj)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:87:  have h₁ := getBit_poly hr (unaryAdd_poly (unaryMul_poly (unaryAdd_poly hS hA) hn) hj)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:94:def otInputB (z : List Bool) : List Bool :=
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:98:/-- `otInputB z = [fst(snd z).getD (|snd³ z| / |fst z|) false]`. -/
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:99:theorem otInputB_eq (z : List Bool) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:100:    otInputB z = [(pairFstD (pairSndD z)).getD
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:103:/-- `otInputB ⟨1^n, ⟨y, ⟨r, 1^j⟩⟩⟩ = [y.getD (j / n) false]`, including
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:105:theorem otInputB_layout (n j : ℕ) (y r : List Bool) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:106:    otInputB (pairEncode (List.replicate n true)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:109:  rw [otInputB_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:112:/-- The one-bit choice-input machine `otInputB` is polynomial-time on every string,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:117:theorem polyTimeComputable_otInputB : PolyTimeComputable otInputB := by
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:118:  have hn := unaryLength_poly polyTimeComputable_pairFstD
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:120:  have hj := unaryLength_poly (polyTimeComputable_pairSndD.comp htail)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:124:    (divNum_poly hj hn).congr fun z => by rw [divNum_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/OTInputs.lean:125:  exact (getBit_poly hy hquot).congr fun z => rfl
+
+exit=0

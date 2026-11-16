@@ -1,0 +1,115 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:42:75: error: unsolved goals
+case h.e'_1.h
+h : PolyTimeComputable (BinArith.mapW pairSndD ∘ fun x => pairEncode [] (id x))
+w : List Bool
+⊢ BinArith.encWords (BinArith.decWords w) = BinArith.encWords (List.map (fun x => x) (BinArith.decWords (id w)))
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:48:34: warning: This simp argument is unused:
+  List.map_id_fun
+
+Hint: Omit it from the simp argument list.
+  simp only [pairSndD_pairEncode,̵ ̵L̵i̵s̵t̵.̵m̵a̵p̵_̵i̵d̵_̵f̵u̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:93:4: error: Type mismatch: After simplification, term
+  PolyTimeComputable.comp BinArith.polyTimeComputable_countW polyTimeComputable_pairSndD
+ has type
+  PolyTimeComputable (BinArith.countW ∘ pairSndD)
+but is expected to have type
+  PolyTimeComputable fun z => List.replicate (BinArith.decWords (pairSndD z)).length true
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:130:10: error(lean.unknownIdentifier): Unknown constant `List.getD_eq_getElem`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:132:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  EncodingMachines.firstIdx (fun j => !decide (F (pairEncode q (rows.getD j [])) = [])) rows.length
+in the target expression
+  (have rows := rows;
+    have i := EncodingMachines.firstIdx (fun j => !decide (F (pairEncode q (rows.getD j [])) = [])) rows.length;
+    if rows.length ≤ i then [] else F (pairEncode q (rows.getD i []))) =
+    match none with
+    | none => []
+    | some b => true :: payload b
+
+case none
+β : Type
+F : List Bool → List Bool
+q : List Bool
+rows : List (List Bool)
+f : List Bool → Option β
+payload : β → List Bool
+hspec :
+  ∀ (row : List Bool),
+    F (pairEncode q row) =
+      match f row with
+      | none => []
+      | some b => true :: payload b
+hfind : List.findSome? f rows = none
+hnone : ∀ x ∈ rows, f x = none
+hidx : EncodingMachines.firstIdx (fun j => !decide (F (pairEncode q (rows.getD j [])) = [])) rows.length = rows.length
+⊢ (have rows := rows;
+    have i := EncodingMachines.firstIdx (fun j => !decide (F (pairEncode q (rows.getD j [])) = [])) rows.length;
+    if rows.length ≤ i then [] else F (pairEncode q (rows.getD i []))) =
+    match none with
+    | none => []
+    | some b => true :: payload b
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:136:10: error(lean.unknownIdentifier): Unknown constant `List.getD_append_right`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:146:12: error(lean.unknownIdentifier): Unknown constant `List.getD_append`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:149:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  EncodingMachines.firstIdx (fun j => !decide (F (pairEncode q ((pre ++ row :: post).getD j [])) = []))
+    (pre ++ row :: post).length
+in the target expression
+  (have rows := pre ++ row :: post;
+    have i := EncodingMachines.firstIdx (fun j => !decide (F (pairEncode q (rows.getD j [])) = [])) rows.length;
+    if rows.length ≤ i then [] else F (pairEncode q (rows.getD i []))) =
+    match some b with
+    | none => []
+    | some b => true :: payload b
+
+case some
+β : Type
+F : List Bool → List Bool
+q : List Bool
+f : List Bool → Option β
+payload : β → List Bool
+hspec :
+  ∀ (row : List Bool),
+    F (pairEncode q row) =
+      match f row with
+      | none => []
+      | some b => true :: payload b
+b : β
+pre : List (List Bool)
+row : List Bool
+post : List (List Bool)
+hfind : List.findSome? f (pre ++ row :: post) = some b
+hrow : f row = some b
+hpre : ∀ x ∈ pre, f x = none
+hAt : (pre ++ row :: post).getD pre.length [] = row
+hidx :
+  EncodingMachines.firstIdx (fun j => !decide (F (pairEncode q ((pre ++ row :: post).getD j [])) = []))
+      (pre ++ row :: post).length =
+    pre.length
+⊢ (have rows := pre ++ row :: post;
+    have i := EncodingMachines.firstIdx (fun j => !decide (F (pairEncode q (rows.getD j [])) = [])) rows.length;
+    if rows.length ≤ i then [] else F (pairEncode q (rows.getD i []))) =
+    match some b with
+    | none => []
+    | some b => true :: payload b
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged): no fresh .olean produced
+        4.66 real         3.34 user         1.15 sys
+          1525809152  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              123057  page reclaims
+                2513  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 160  voluntary context switches
+               13490  involuntary context switches
+            33404892  instructions retired
+            23893852  cycles elapsed
+             1638736  peak memory footprint

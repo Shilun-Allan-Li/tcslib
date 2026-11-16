@@ -1,0 +1,22 @@
+.lake/packages/mathlib/Mathlib/Algebra/Order/BigOperators/Group/List.lean:86:@[to_additive sum_le_card_nsmul]
+TCSlib/BooleanAnalysis/Switching.lean:1213:      exact absurd ((List.Nodup.getElem_inj_iff hnodup_t).mp this) (by omega)
+TCSlib/BooleanAnalysis/Switching.lean:1256:        exact absurd ((List.Nodup.getElem_inj_iff hnodup_t).mp heq) (by omega)
+.lake/packages/mathlib/Mathlib/Data/Fintype/Card.lean:220:theorem List.Nodup.length_le_card {α : Type*} [Fintype α] {l : List α} (h : l.Nodup) :
+.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:459:  refine ⟨fun h x ↦ mem_iff_getElem?.mpr <| h x, fun h x ↦ ?_⟩
+.lake/packages/mathlib/Mathlib/Data/List/Basic.lean:462:  | some x => exact mem_iff_getElem?.mp <| h x
+.lake/packages/mathlib/Mathlib/Data/List/ReduceOption.lean:140:  rw [← mem_iff_getElem?, ← mem_iff_getElem?, reduceOption_mem_iff]
+.lake/packages/mathlib/Mathlib/Data/List/Nodup.lean:91:theorem Nodup.getElem_inj_iff {l : List α} (h : Nodup l)
+.lake/packages/mathlib/Mathlib/Data/List/GetD.lean:79:    exists_and_right, this, mem_iff_getElem?, getElem?_eq_some_iff]
+TCSlib/BooleanAnalysis/LMN/GateSwitching.lean:154:      convert Finset.sum_le_card_nsmul _ _ _ _ <;> norm_num;
+TCSlib/Programs/Util/List.lean:201:  simpa using List.sum_le_card_nsmul (l.map fun a => (f a).length) c (by simpa using h)
+TCSlib/Programs/Util/List.lean:269:  simpa using List.sum_le_card_nsmul ((l.map f).map fun x => |x|) B (by simpa using h)
+TCSlib/Complexity/TuringMachine/Oracle.lean:405:  refine (List.length_filterMap_le _ _).trans ?_
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean:165:  have hlen : cs.args.length ≤ m := by simpa using hnd.length_le_card
+TCSlib/Complexity/TuringMachine/OracleAgreement.lean:270:`List.range t`: `List.length_filterMap_le` and `List.length_range`. -/
+TCSlib/Complexity/TuringMachine/OracleAgreement.lean:275:  exact (List.length_filterMap_le _ _).trans_eq List.length_range
+TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean:185:  have := List.sum_le_card_nsmul _ _ hle
+TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean:198:  have hlen : cs.args.length ≤ m := by simpa using hnd.length_le_card
+TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean:421:  have hlen : cs.args.length ≤ m := by simpa using hnd.length_le_card
+TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean:471:  have hlen : cs.args.length ≤ m := by simpa using hnd.length_le_card
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1605:(`Finset.sum_le_card_nsmul`) and the decrement share by
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1613:  have hsum := Finset.sum_le_card_nsmul (Finset.range d)

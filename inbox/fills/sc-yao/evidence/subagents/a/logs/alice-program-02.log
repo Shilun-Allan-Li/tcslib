@@ -1,0 +1,96 @@
+START 2026-11-15T23:19:14Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram.lean:135:82: error: unsolved goals
+width bound count inputs : List Bool → ℕ
+description coins : List Bool → List Bool
+hwidth : PolyTimeComputable fun z => List.replicate (width z) true
+hbound : PolyTimeComputable fun z => List.replicate (bound z) true
+hcount : PolyTimeComputable fun z => List.replicate (count z) true
+hdescription : PolyTimeComputable description
+hcoins : PolyTimeComputable coins
+C : (z : List Bool) → DAGCircuit (inputs z)
+s : (z : List Bool) → GarbleSeed (C z) (Fin (width z) → Bool) ((Fin (width z) → Bool) × (Fin (width z) → Bool))
+output : (z : List Bool) → Fin (count z) → ℕ
+houtsWord : ∀ (z : List Bool), pairSndD (description z) = BinArith.encWords (List.ofFn fun j => encodeNat (output z j))
+houtput_lt : ∀ (z : List Bool) (j : Fin (count z)), output z j < (C z).size
+hkey :
+  ∀ (z : List Bool),
+    ∀ v < (C z).size,
+      ∀ (b : Bool), keyAt (C z) (s z) v b = fun t => (coins z).getD ((b.toNat * bound z + v) * width z + ↑t) false
+select : List Bool → ℕ → ℕ :=
+  fun z j => (List.drop 1 (BinArith.getW (pairEncode (List.replicate j true) (pairSndD (description z))))).length
+entry : List Bool → ℕ → List Bool :=
+  fun z j =>
+    pairEncode (RowFromCoins.keyWord width bound (fun v => select v j) (fun x => false) coins z)
+      (RowFromCoins.keyWord width bound (fun v => select v j) (fun x => true) coins z)
+hw : PolyTimeComputable fun w => List.replicate (width (pairSndD w)) true
+hb : PolyTimeComputable fun w => List.replicate (bound (pairSndD w)) true
+hlookup :
+  PolyTimeComputable
+    (BinArith.getW ∘ fun x =>
+      pairEncode (((fun x => List.replicate x.length true) ∘ pairFstD) x) (((pairSndD ∘ description) ∘ pairSndD) x))
+hv : PolyTimeComputable fun w => List.replicate (select (pairSndD w) (pairFstD w).length) true
+h₀ :
+  PolyTimeComputable
+    (RowFromCoins.keyWord (fun z => width (pairSndD z)) (fun z => bound (pairSndD z))
+      (fun z => select (pairSndD z) (pairFstD z).length) (fun z => false) (coins ∘ pairSndD))
+h₁ :
+  PolyTimeComputable
+    (RowFromCoins.keyWord (fun z => width (pairSndD z)) (fun z => bound (pairSndD z))
+      (fun z => select (pairSndD z) (pairFstD z).length) (fun z => true) (coins ∘ pairSndD))
+w : List Bool
+⊢ pairEncode
+      (List.ofFn fun t =>
+        ((coins ∘ pairSndD) w).getD
+          ((false.toNat * bound (pairSndD w) + select (pairSndD w) (pairFstD w).length) * width (pairSndD w) + ↑t)
+          false)
+      (List.ofFn fun t =>
+        ((coins ∘ pairSndD) w).getD
+          ((true.toNat * bound (pairSndD w) + select (pairSndD w) (pairFstD w).length) * width (pairSndD w) + ↑t)
+          false) =
+    pairEncode
+      (List.ofFn fun t =>
+        (coins (pairSndD w)).getD
+          ((false.toNat * bound (pairSndD w) + select (pairSndD w) (pairFstD w).length) * width (pairSndD w) + ↑t)
+          false)
+      (List.ofFn fun t =>
+        (coins (pairSndD w)).getD
+          ((true.toNat * bound (pairSndD w) + select (pairSndD w) (pairFstD w).length) * width (pairSndD w) + ↑t) false)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram.lean:147:4: error: No goals to be solved
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram.lean:156:4: error: Type mismatch
+  Eq.symm (congrArg List.ofFn (hkey z (output z j) (houtput_lt z j) false))
+has type
+  (List.ofFn fun t => (coins z).getD ((false.toNat * bound z + output z j) * width z + ↑t) false) =
+    List.ofFn (keyAt (C z) (s z) (output z j) false)
+but is expected to have type
+  List.ofFn (keyAt (C z) (s z) (output z j) false) =
+    List.ofFn fun t => (coins z).getD ((false.toNat * bound z + output z j) * width z + ↑t) false
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram.lean:158:4: error: Type mismatch
+  Eq.symm (congrArg List.ofFn (hkey z (output z j) (houtput_lt z j) true))
+has type
+  (List.ofFn fun t => (coins z).getD ((true.toNat * bound z + output z j) * width z + ↑t) false) =
+    List.ofFn (keyAt (C z) (s z) (output z j) true)
+but is expected to have type
+  List.ofFn (keyAt (C z) (s z) (output z j) true) =
+    List.ofFn fun t => (coins z).getD ((true.toNat * bound z + output z j) * width z + ↑t) false
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceProgram): no fresh .olean produced
+        8.94 real         7.54 user         1.14 sys
+          2241363968  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170633  page reclaims
+                6889  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 426  voluntary context switches
+                9180  involuntary context switches
+            32731833  instructions retired
+            16055188  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T23:19:28Z status=1

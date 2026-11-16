@@ -1,0 +1,40 @@
+START 2026-11-15T21:53:15Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder.lean:157:19: error: unsolved goals
+case cons
+r : List Bool
+a : ℕ
+args : List ℕ
+ih :
+  scan next output (true, false, false) (encodeList encodeNat args ++ r) =
+    dbl (BinArith.encWords (List.map (fun a => List.replicate a true) args)) ++ [false, true] ++
+      scan next output (false, false, true) r
+⊢ dbl (dbl (List.replicate a true)) ++
+      ([false, false, true, true] ++
+        (dbl (BinArith.encWords (List.map (fun a => List.replicate a true) args)) ++
+          ([false, true] ++ scan next output (false, false, true) r))) =
+    dbl (dbl (List.replicate a true)) ++
+      ([false, false, true, true] ++
+        (dbl (BinArith.encWords (List.map (fun a => List.replicate a true) args)) ++
+          false :: true :: scan next output (false, false, true) r))
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder): no fresh .olean produced
+        2.48 real         1.75 user         1.07 sys
+          2214363136  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175429  page reclaims
+                  18  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  23  voluntary context switches
+                8792  involuntary context switches
+            32514827  instructions retired
+            16267680  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T21:53:17Z status=1

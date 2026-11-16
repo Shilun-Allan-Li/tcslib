@@ -1,0 +1,267 @@
+START 2026-11-15T23:55:14.051300+00:00
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.mem_occurrences_iff._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (i : Fin C.gates.length) (p : ℕ), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.mem_occurrences_iff._proof_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.mem_occurrences_iff._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences._proof_2	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (i : Fin C.gates.length), ↑i < C.gates.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences._proof_2	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences._proof_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.length_rowSlots_le_four	∀
+  (g : BoolCircuit.DAGGate) (rows : List (Fin g.args.length → Bool)) (perm : Equiv.Perm (Fin g.args.length → Bool))
+  (u : ℕ),
+  rows.Nodup →
+    g.args.length ≤ 2 →
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots g rows perm u).length ≤ 4
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.length_rowSlots_le_four	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.length_rowSlots_le_four	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition	(g :
+    BoolCircuit.DAGGate) →
+  (Fin g.args.length → Bool) → ℕ → Option (Fin g.args.length)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_some_iff	∀ {α : Type u_1} (q : ℕ)
+  (slots : List α),
+  slots.length ≤ q + 1 →
+    ∀ (a : α),
+      (∃ j, TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded q slots j = some a) ↔ a ∈ slots
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_some_iff	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_some_iff	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition_eq_some_iff._proof_1_1	∀
+  (g : BoolCircuit.DAGGate) (u : ℕ) (p : Fin g.args.length), ¬g.args.length ≤ g.args.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition_eq_some_iff._proof_1_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition_eq_some_iff._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition_eq_some_iff	∀
+  (g : BoolCircuit.DAGGate) (a : Fin g.args.length → Bool) (u : ℕ),
+  g.args.Nodup →
+    ∀ (p : Fin g.args.length),
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition g a u = some p ↔
+        g.args[↑p] = u ∧ a p = true
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition_eq_some_iff	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition_eq_some_iff	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_occurrences_some_iff	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u q : ℕ),
+  (∀ (i : Fin C.gates.length), (rows i).Nodup) →
+    C.IsFaninTwo →
+      4 * C.gates.length ≤ q + 1 →
+        ∀ (s : Fin C.gates.length × ℕ × ℕ),
+          (∃ j,
+              TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded q
+                  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u) j =
+                some s) ↔
+            s ∈ TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_occurrences_some_iff	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_occurrences_some_iff	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded	{α : Type u_1} →
+  (q : ℕ) → List α → Fin (q + 1) → Option α
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.hybrid_plaintext_ne	∀ (m i₀ u j : ℕ),
+  u < m + i₀ → ∀ (b : Bool), (m + j, if j < i₀ then false else b) ≠ (u, true)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.hybrid_plaintext_ne	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.hybrid_plaintext_ne	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.mem_occurrences_iff	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u : ℕ) (i : Fin C.gates.length)
+  (r p : ℕ),
+  C.gates[↑i].args.Nodup →
+    ((i, r, p) ∈ TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u ↔
+      r < (rows i).length ∧
+        ∃ (hp : p < C.gates[↑i].args.length),
+          C.gates[↑i].args[p] = u ∧ (perm i) ((rows i).getD r fun x => false) ⟨p, hp⟩ = true)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.mem_occurrences_iff	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.mem_occurrences_iff	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots_nodup	∀
+  (g : BoolCircuit.DAGGate) (rows : List (Fin g.args.length → Bool)) (perm : Equiv.Perm (Fin g.args.length → Bool))
+  (u : ℕ), (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots g rows perm u).Nodup
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots_nodup	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots_nodup	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences._proof_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.length_occurrences_le	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u : ℕ),
+  (∀ (i : Fin C.gates.length), (rows i).Nodup) →
+    C.IsFaninTwo →
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u).length ≤
+        4 * C.gates.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.length_occurrences_le	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.length_occurrences_le	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.exhaustive	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u : ℕ) (i : Fin C.gates.length),
+  C.gates[↑i].args.Nodup →
+    (∀ (a : Fin C.gates[↑i].args.length → Bool), a ∈ rows i) →
+      ∀ (a : Fin C.gates[↑i].args.length → Bool) (p : Fin C.gates[↑i].args.length),
+        C.gates[↑i].args[↑p] = u →
+          a p = true →
+            ∃ r,
+              (i, r, ↑p) ∈
+                  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u ∧
+                (perm i) ((rows i).getD r fun x => false) = a
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.exhaustive	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.exhaustive	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.active_label_ne	∀ (v u : ℕ),
+  (v, false) ≠ (u, true)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.active_label_ne	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.active_label_ne	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.decoding_label_ne._proof_1_1	∀ {m k : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (u : ℕ) (outs : Fin k → ℕ) (j : Fin k), ¬C.gates.length ≤ C.gates.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.decoding_label_ne._proof_1_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.decoding_label_ne._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences_eq	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u =
+    List.flatMap
+      (fun i =>
+        List.map (fun rp => (i, rp))
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots C.gates[↑i] (rows i) (perm i)
+            u))
+      (List.finRange C.gates.length)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.decoding_label_ne	∀ {m k : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (i₀ : Fin C.gates.length),
+  ∀ u ∈ C.gates[↑i₀].args,
+    ∀ (outs : Fin k → ℕ),
+      (∀ (j : Fin k), ∀ g ∈ C.gates, outs j ∉ g.args) → ∀ (j : Fin k) (b : Bool), (outs j, b) ≠ (u, true)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.decoding_label_ne	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.decoding_label_ne	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.exhaustive._proof_1	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (i : Fin C.gates.length), ¬C.gates[↑i].args.length ≤ C.gates[↑i].args.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.exhaustive._proof_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.exhaustive._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_eq	∀ {α : Type u_1} (q : ℕ)
+  (slots : List α) (j : Fin (q + 1)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded q slots j = slots[↑j]?
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition._proof_2	∀
+  (g : BoolCircuit.DAGGate) (p : Fin g.args.length), ↑p < g.args.length
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition._proof_2	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition._proof_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.hybrid_plaintext_ne._proof_1_1	∀
+  (m i₀ u j : ℕ), u < m + i₀ → ¬j < i₀ → m + j = u → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.hybrid_plaintext_ne._proof_1_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.hybrid_plaintext_ne._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences_nodup	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u : ℕ),
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u).Nodup
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences_nodup	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences_nodup	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition._proof_1	∀
+  (g : BoolCircuit.DAGGate), ¬g.args.length ≤ g.args.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition._proof_1	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition._proof_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selected_wire_lt	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (i₀ : Fin C.gates.length), ∀ u ∈ C.gates[↑i₀].args, u < m + ↑i₀
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selected_wire_lt	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selected_wire_lt	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_eq_none_iff	∀ {α : Type u_1}
+  (q : ℕ) (slots : List α) (j : Fin (q + 1)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded q slots j = none ↔ slots.length ≤ ↑j
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_eq_none_iff	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.padded_eq_none_iff	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.mem_rowSlots_iff	∀
+  (g : BoolCircuit.DAGGate) (rows : List (Fin g.args.length → Bool)) (perm : Equiv.Perm (Fin g.args.length → Bool))
+  (u r p : ℕ),
+  g.args.Nodup →
+    ((r, p) ∈ TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots g rows perm u ↔
+      r < rows.length ∧ ∃ (hp : p < g.args.length), g.args[p] = u ∧ perm (rows.getD r fun x => false) ⟨p, hp⟩ = true)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.mem_rowSlots_iff	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.mem_rowSlots_iff	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.hybrid_plaintext_ne_of_used	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (i₀ : Fin C.gates.length),
+  ∀ u ∈ C.gates[↑i₀].args, ∀ (j : ℕ) (b : Bool), (m + j, if j < ↑i₀ then false else b) ≠ (u, true)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.hybrid_plaintext_ne_of_used	[propext,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.hybrid_plaintext_ne_of_used	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences	{m : ℕ} →
+  (C : BoolCircuit.DAGCircuit m) →
+    ((i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool)) →
+      ((i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) →
+        ℕ → List (Fin C.gates.length × ℕ × ℕ)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots	(g : BoolCircuit.DAGGate) →
+  List (Fin g.args.length → Bool) → Equiv.Perm (Fin g.args.length → Bool) → ℕ → List (ℕ × ℕ)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.per_row_unique	∀ {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (rows : (i : Fin C.gates.length) → List (Fin C.gates[↑i].args.length → Bool))
+  (perm : (i : Fin C.gates.length) → Equiv.Perm (Fin C.gates[↑i].args.length → Bool)) (u : ℕ) (i : Fin C.gates.length)
+  (r p p' : ℕ),
+  C.gates[↑i].args.Nodup →
+    (i, r, p) ∈ TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u →
+      (i, r, p') ∈ TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.occurrences C rows perm u →
+        p = p'
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.per_row_unique	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.per_row_unique	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots_eq	∀ (g : BoolCircuit.DAGGate)
+  (rows : List (Fin g.args.length → Bool)) (perm : Equiv.Perm (Fin g.args.length → Bool)) (u : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots g rows perm u =
+    List.filterMap
+      (fun r =>
+        Option.map (fun p => (r, ↑p))
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition g
+            (perm (rows.getD r fun x => false)) u))
+      (List.range rows.length)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.rowSlots_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition_eq	∀
+  (g : BoolCircuit.DAGGate) (a : Fin g.args.length → Bool) (u : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition g a u =
+    List.find? (fun p => decide (g.args[↑p] = u ∧ a p = true)) (List.finRange g.args.length)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.GateOccurrences.selectedPosition_eq	[]
+STORED_CONSTANTS 34
+       14.38 real        13.30 user         0.92 sys
+          1578876928  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              124247  page reclaims
+                1571  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   4  voluntary context switches
+                4751  involuntary context switches
+         79735221433  instructions retired
+         39752729063  cycles elapsed
+           280556768  peak memory footprint
+END 2026-11-15T23:55:28.513079+00:00

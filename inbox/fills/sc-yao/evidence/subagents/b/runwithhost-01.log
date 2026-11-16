@@ -1,0 +1,64 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost.lean:144:77: error: unsolved goals
+case h.e'_1.h
+β : Type
+gateCode : DAGGate → List Bool
+valueCode : List β → List Bool
+gs : List Bool → List DAGGate
+init : List Bool → List β
+f : List Bool → DAGGate → List β → β
+F : List Bool → List Bool
+hgs : PolyTimeComputable fun x => BinArith.encWords (List.map gateCode (gs x))
+hinit : PolyTimeComputable fun x => valueCode (init x)
+hF : PolyTimeComputable F
+hnext :
+  ∀ (x : List Bool) (g : DAGGate) (vs : List β),
+    F (pairEncode x (pairEncode (gateCode g) (valueCode vs))) = valueCode (vs ++ [f x g vs])
+R B : PolyExpr
+hN : ∀ (x : List Bool), (gs x).length ≤ R.eval x.length
+hbound :
+  ∀ (x : List Bool),
+    ∀ i ≤ (gs x).length,
+      (pairEncode (BinArith.encWords (List.map gateCode (List.drop i (gs x))))
+            (valueCode (runWith (f x) (List.take i (gs x)) (init x)))).length ≤
+        B.eval x.length
+h :
+  PolyTimeComputable fun x =>
+    (pairSndD ∘ pairSndD)
+      (pairEncode x
+        (StateLoop.orbit (fun x => pairEncode (BinArith.encWords (List.map gateCode (gs x))) (valueCode (init x)))
+          (step F) x ((fun x => (gs x).length) x)))
+x : List Bool
+⊢ valueCode (runWith (f x) (gs x) (init x)) =
+    (pairSndD ∘ pairSndD)
+      (pairEncode x
+        (pairEncode (BinArith.encWords (List.map gateCode (List.drop (gs x).length (gs x))))
+          (valueCode (runWith (f x) (gs x) (init x)))))
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost.lean:164:13: warning: This simp argument is unused:
+  pairSndD_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [p̵a̵i̵r̵S̵n̵d̵D̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵,̵ ̵List.take_length]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost.lean:192:47: error(lean.unknownIdentifier): Unknown identifier `ModuleHost.stateWord`
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RunWithHost): no fresh .olean produced
+        1.81 real         1.07 user         0.87 sys
+          1530642432  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              125225  page reclaims
+                 450  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  74  voluntary context switches
+                5379  involuntary context switches
+            32902047  instructions retired
+            15897585  cycles elapsed
+             1638736  peak memory footprint

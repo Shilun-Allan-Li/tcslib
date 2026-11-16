@@ -1,0 +1,545 @@
+START 2026-11-15T21:40:15Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:50:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  spEncFun ?E ?z
+in the target expression
+  spEncStr E (k z) (m z) (r z) = (spEncFun E ∘ fun z => NUPPT.layout [] (pairEncode (k z) (m z)) [] (r z)) z
+
+case h.e'_1.h
+E k m r : List Bool → List Bool
+hE : PolyTimeComputable E
+hk : PolyTimeComputable k
+hm : PolyTimeComputable m
+hr : PolyTimeComputable r
+h : PolyTimeComputable (spEncFun E ∘ fun z => NUPPT.layout [] (pairEncode (k z) (m z)) [] (r z))
+z : List Bool
+⊢ spEncStr E (k z) (m z) (r z) = (spEncFun E ∘ fun z => NUPPT.layout [] (pairEncode (k z) (m z)) [] (r z)) z
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:90:48: error: unsolved goals
+case h.e'_1.h
+E₁ E₂ : List Bool → List Bool
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+hk₁ : PolyTimeComputable (pairFstD ∘ pairFstD)
+hk₂ : PolyTimeComputable (pairFstD ∘ pairSndD ∘ pairFstD)
+hm : PolyTimeComputable (pairFstD ∘ pairSndD)
+hr₁ : PolyTimeComputable (pairFstD ∘ pairSndD ∘ pairSndD)
+hr₂ : PolyTimeComputable (pairSndD ∘ pairSndD ∘ pairSndD)
+z : List Bool
+⊢ (if pairFstD z = [] then pairFstD (pairSndD z)
+    else
+      if pairSndD (pairFstD z) = [] then
+        spEncStr E₁ (pairFstD (pairFstD z)) (pairFstD (pairSndD z)) (pairFstD (pairSndD (pairSndD z)))
+      else
+        if pairSndD (pairSndD (pairFstD z)) = [] then
+          spEncStr E₂ (pairFstD (pairFstD z))
+            (spEncStr E₁ (pairFstD (pairSndD (pairFstD z))) (pairFstD (pairSndD z)) (pairSndD (pairSndD (pairSndD z))))
+            (pairFstD (pairSndD (pairSndD z)))
+        else []) =
+    if pairFstD z = [] then (pairFstD ∘ pairSndD) z
+    else
+      if (pairSndD ∘ pairFstD) z = [] then
+        spEncStr E₁ ((pairFstD ∘ pairFstD) z) ((pairFstD ∘ pairSndD) z) ((pairFstD ∘ pairSndD ∘ pairSndD) z)
+      else
+        if (pairSndD ∘ pairSndD ∘ pairFstD) z = [] then
+          spEncStr E₂ ((pairFstD ∘ pairFstD) z)
+            (spEncStr E₁ ((pairFstD ∘ pairSndD ∘ pairFstD) z) ((pairFstD ∘ pairSndD) z)
+              ((pairSndD ∘ pairSndD ∘ pairSndD) z))
+            ((pairFstD ∘ pairSndD ∘ pairSndD) z)
+        else []
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:215:69: error: Tactic `rfl` failed: The left-hand side
+  match
+    { kind := { kind := GateKind.and, args := [u] }.kind,
+        args := List.range { kind := GateKind.and, args := [u] }.args.length }.kind with
+  | GateKind.and =>
+    { kind := { kind := GateKind.and, args := [u] }.kind,
+            args := List.range { kind := GateKind.and, args := [u] }.args.length }.args.all
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.or =>
+    { kind := { kind := GateKind.and, args := [u] }.kind,
+            args := List.range { kind := GateKind.and, args := [u] }.args.length }.args.any
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.not =>
+    !{ kind := { kind := GateKind.and, args := [u] }.kind,
+              args := List.range { kind := GateKind.and, args := [u] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+is not definitionally equal to the right-hand side
+  if { kind := GateKind.and, args := [u] }.kind = GateKind.and then
+    if { kind := GateKind.and, args := [u] }.args.length = 0 then true
+    else
+      if { kind := GateKind.and, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+      else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+  else
+    if { kind := GateKind.and, args := [u] }.kind = GateKind.or then
+      if { kind := GateKind.and, args := [u] }.args.length = 0 then false
+      else
+        if { kind := GateKind.and, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+    else
+      !if { kind := GateKind.and, args := [u] }.args.length = 0 then true
+        else
+          if { kind := GateKind.and, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+
+case mk.cons.nil.and
+u : ℕ
+a : Fin { kind := GateKind.and, args := [u] }.args.length → Bool
+hfan : { kind := GateKind.and, args := [u] }.args.length ≤ 2
+⊢ (match
+      { kind := { kind := GateKind.and, args := [u] }.kind,
+          args := List.range { kind := GateKind.and, args := [u] }.args.length }.kind with
+    | GateKind.and =>
+      { kind := { kind := GateKind.and, args := [u] }.kind,
+              args := List.range { kind := GateKind.and, args := [u] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.or =>
+      { kind := { kind := GateKind.and, args := [u] }.kind,
+              args := List.range { kind := GateKind.and, args := [u] }.args.length }.args.any
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.not =>
+      !{ kind := { kind := GateKind.and, args := [u] }.kind,
+                args := List.range { kind := GateKind.and, args := [u] }.args.length }.args.all
+          fun a_1 => (List.ofFn a).getD a_1 false) =
+    if { kind := GateKind.and, args := [u] }.kind = GateKind.and then
+      if { kind := GateKind.and, args := [u] }.args.length = 0 then true
+      else
+        if { kind := GateKind.and, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+    else
+      if { kind := GateKind.and, args := [u] }.kind = GateKind.or then
+        if { kind := GateKind.and, args := [u] }.args.length = 0 then false
+        else
+          if { kind := GateKind.and, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+      else
+        !if { kind := GateKind.and, args := [u] }.args.length = 0 then true
+          else
+            if { kind := GateKind.and, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+            else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:215:69: error: Tactic `rfl` failed: The left-hand side
+  match
+    { kind := { kind := GateKind.or, args := [u] }.kind,
+        args := List.range { kind := GateKind.or, args := [u] }.args.length }.kind with
+  | GateKind.and =>
+    { kind := { kind := GateKind.or, args := [u] }.kind,
+            args := List.range { kind := GateKind.or, args := [u] }.args.length }.args.all
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.or =>
+    { kind := { kind := GateKind.or, args := [u] }.kind,
+            args := List.range { kind := GateKind.or, args := [u] }.args.length }.args.any
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.not =>
+    !{ kind := { kind := GateKind.or, args := [u] }.kind,
+              args := List.range { kind := GateKind.or, args := [u] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+is not definitionally equal to the right-hand side
+  if { kind := GateKind.or, args := [u] }.kind = GateKind.and then
+    if { kind := GateKind.or, args := [u] }.args.length = 0 then true
+    else
+      if { kind := GateKind.or, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+      else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+  else
+    if { kind := GateKind.or, args := [u] }.kind = GateKind.or then
+      if { kind := GateKind.or, args := [u] }.args.length = 0 then false
+      else
+        if { kind := GateKind.or, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+    else
+      !if { kind := GateKind.or, args := [u] }.args.length = 0 then true
+        else
+          if { kind := GateKind.or, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+
+case mk.cons.nil.or
+u : ℕ
+a : Fin { kind := GateKind.or, args := [u] }.args.length → Bool
+hfan : { kind := GateKind.or, args := [u] }.args.length ≤ 2
+⊢ (match
+      { kind := { kind := GateKind.or, args := [u] }.kind,
+          args := List.range { kind := GateKind.or, args := [u] }.args.length }.kind with
+    | GateKind.and =>
+      { kind := { kind := GateKind.or, args := [u] }.kind,
+              args := List.range { kind := GateKind.or, args := [u] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.or =>
+      { kind := { kind := GateKind.or, args := [u] }.kind,
+              args := List.range { kind := GateKind.or, args := [u] }.args.length }.args.any
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.not =>
+      !{ kind := { kind := GateKind.or, args := [u] }.kind,
+                args := List.range { kind := GateKind.or, args := [u] }.args.length }.args.all
+          fun a_1 => (List.ofFn a).getD a_1 false) =
+    if { kind := GateKind.or, args := [u] }.kind = GateKind.and then
+      if { kind := GateKind.or, args := [u] }.args.length = 0 then true
+      else
+        if { kind := GateKind.or, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+    else
+      if { kind := GateKind.or, args := [u] }.kind = GateKind.or then
+        if { kind := GateKind.or, args := [u] }.args.length = 0 then false
+        else
+          if { kind := GateKind.or, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+      else
+        !if { kind := GateKind.or, args := [u] }.args.length = 0 then true
+          else
+            if { kind := GateKind.or, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+            else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:215:69: error: Tactic `rfl` failed: The left-hand side
+  match
+    { kind := { kind := GateKind.not, args := [u] }.kind,
+        args := List.range { kind := GateKind.not, args := [u] }.args.length }.kind with
+  | GateKind.and =>
+    { kind := { kind := GateKind.not, args := [u] }.kind,
+            args := List.range { kind := GateKind.not, args := [u] }.args.length }.args.all
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.or =>
+    { kind := { kind := GateKind.not, args := [u] }.kind,
+            args := List.range { kind := GateKind.not, args := [u] }.args.length }.args.any
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.not =>
+    !{ kind := { kind := GateKind.not, args := [u] }.kind,
+              args := List.range { kind := GateKind.not, args := [u] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+is not definitionally equal to the right-hand side
+  if { kind := GateKind.not, args := [u] }.kind = GateKind.and then
+    if { kind := GateKind.not, args := [u] }.args.length = 0 then true
+    else
+      if { kind := GateKind.not, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+      else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+  else
+    if { kind := GateKind.not, args := [u] }.kind = GateKind.or then
+      if { kind := GateKind.not, args := [u] }.args.length = 0 then false
+      else
+        if { kind := GateKind.not, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+    else
+      !if { kind := GateKind.not, args := [u] }.args.length = 0 then true
+        else
+          if { kind := GateKind.not, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+
+case mk.cons.nil.not
+u : ℕ
+a : Fin { kind := GateKind.not, args := [u] }.args.length → Bool
+hfan : { kind := GateKind.not, args := [u] }.args.length ≤ 2
+⊢ (match
+      { kind := { kind := GateKind.not, args := [u] }.kind,
+          args := List.range { kind := GateKind.not, args := [u] }.args.length }.kind with
+    | GateKind.and =>
+      { kind := { kind := GateKind.not, args := [u] }.kind,
+              args := List.range { kind := GateKind.not, args := [u] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.or =>
+      { kind := { kind := GateKind.not, args := [u] }.kind,
+              args := List.range { kind := GateKind.not, args := [u] }.args.length }.args.any
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.not =>
+      !{ kind := { kind := GateKind.not, args := [u] }.kind,
+                args := List.range { kind := GateKind.not, args := [u] }.args.length }.args.all
+          fun a_1 => (List.ofFn a).getD a_1 false) =
+    if { kind := GateKind.not, args := [u] }.kind = GateKind.and then
+      if { kind := GateKind.not, args := [u] }.args.length = 0 then true
+      else
+        if { kind := GateKind.not, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+    else
+      if { kind := GateKind.not, args := [u] }.kind = GateKind.or then
+        if { kind := GateKind.not, args := [u] }.args.length = 0 then false
+        else
+          if { kind := GateKind.not, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+      else
+        !if { kind := GateKind.not, args := [u] }.args.length = 0 then true
+          else
+            if { kind := GateKind.not, args := [u] }.args.length = 1 then (List.ofFn a).getD 0 false
+            else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:218:71: error: Tactic `rfl` failed: The left-hand side
+  match
+    { kind := { kind := GateKind.and, args := [u, v] }.kind,
+        args := List.range { kind := GateKind.and, args := [u, v] }.args.length }.kind with
+  | GateKind.and =>
+    { kind := { kind := GateKind.and, args := [u, v] }.kind,
+            args := List.range { kind := GateKind.and, args := [u, v] }.args.length }.args.all
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.or =>
+    { kind := { kind := GateKind.and, args := [u, v] }.kind,
+            args := List.range { kind := GateKind.and, args := [u, v] }.args.length }.args.any
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.not =>
+    !{ kind := { kind := GateKind.and, args := [u, v] }.kind,
+              args := List.range { kind := GateKind.and, args := [u, v] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+is not definitionally equal to the right-hand side
+  if { kind := GateKind.and, args := [u, v] }.kind = GateKind.and then
+    if { kind := GateKind.and, args := [u, v] }.args.length = 0 then true
+    else
+      if { kind := GateKind.and, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+      else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+  else
+    if { kind := GateKind.and, args := [u, v] }.kind = GateKind.or then
+      if { kind := GateKind.and, args := [u, v] }.args.length = 0 then false
+      else
+        if { kind := GateKind.and, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+    else
+      !if { kind := GateKind.and, args := [u, v] }.args.length = 0 then true
+        else
+          if { kind := GateKind.and, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+
+case mk.cons.cons.nil.and
+u v : ℕ
+a : Fin { kind := GateKind.and, args := [u, v] }.args.length → Bool
+hfan : { kind := GateKind.and, args := [u, v] }.args.length ≤ 2
+⊢ (match
+      { kind := { kind := GateKind.and, args := [u, v] }.kind,
+          args := List.range { kind := GateKind.and, args := [u, v] }.args.length }.kind with
+    | GateKind.and =>
+      { kind := { kind := GateKind.and, args := [u, v] }.kind,
+              args := List.range { kind := GateKind.and, args := [u, v] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.or =>
+      { kind := { kind := GateKind.and, args := [u, v] }.kind,
+              args := List.range { kind := GateKind.and, args := [u, v] }.args.length }.args.any
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.not =>
+      !{ kind := { kind := GateKind.and, args := [u, v] }.kind,
+                args := List.range { kind := GateKind.and, args := [u, v] }.args.length }.args.all
+          fun a_1 => (List.ofFn a).getD a_1 false) =
+    if { kind := GateKind.and, args := [u, v] }.kind = GateKind.and then
+      if { kind := GateKind.and, args := [u, v] }.args.length = 0 then true
+      else
+        if { kind := GateKind.and, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+    else
+      if { kind := GateKind.and, args := [u, v] }.kind = GateKind.or then
+        if { kind := GateKind.and, args := [u, v] }.args.length = 0 then false
+        else
+          if { kind := GateKind.and, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+      else
+        !if { kind := GateKind.and, args := [u, v] }.args.length = 0 then true
+          else
+            if { kind := GateKind.and, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+            else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:218:71: error: Tactic `rfl` failed: The left-hand side
+  match
+    { kind := { kind := GateKind.or, args := [u, v] }.kind,
+        args := List.range { kind := GateKind.or, args := [u, v] }.args.length }.kind with
+  | GateKind.and =>
+    { kind := { kind := GateKind.or, args := [u, v] }.kind,
+            args := List.range { kind := GateKind.or, args := [u, v] }.args.length }.args.all
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.or =>
+    { kind := { kind := GateKind.or, args := [u, v] }.kind,
+            args := List.range { kind := GateKind.or, args := [u, v] }.args.length }.args.any
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.not =>
+    !{ kind := { kind := GateKind.or, args := [u, v] }.kind,
+              args := List.range { kind := GateKind.or, args := [u, v] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+is not definitionally equal to the right-hand side
+  if { kind := GateKind.or, args := [u, v] }.kind = GateKind.and then
+    if { kind := GateKind.or, args := [u, v] }.args.length = 0 then true
+    else
+      if { kind := GateKind.or, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+      else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+  else
+    if { kind := GateKind.or, args := [u, v] }.kind = GateKind.or then
+      if { kind := GateKind.or, args := [u, v] }.args.length = 0 then false
+      else
+        if { kind := GateKind.or, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+    else
+      !if { kind := GateKind.or, args := [u, v] }.args.length = 0 then true
+        else
+          if { kind := GateKind.or, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+
+case mk.cons.cons.nil.or
+u v : ℕ
+a : Fin { kind := GateKind.or, args := [u, v] }.args.length → Bool
+hfan : { kind := GateKind.or, args := [u, v] }.args.length ≤ 2
+⊢ (match
+      { kind := { kind := GateKind.or, args := [u, v] }.kind,
+          args := List.range { kind := GateKind.or, args := [u, v] }.args.length }.kind with
+    | GateKind.and =>
+      { kind := { kind := GateKind.or, args := [u, v] }.kind,
+              args := List.range { kind := GateKind.or, args := [u, v] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.or =>
+      { kind := { kind := GateKind.or, args := [u, v] }.kind,
+              args := List.range { kind := GateKind.or, args := [u, v] }.args.length }.args.any
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.not =>
+      !{ kind := { kind := GateKind.or, args := [u, v] }.kind,
+                args := List.range { kind := GateKind.or, args := [u, v] }.args.length }.args.all
+          fun a_1 => (List.ofFn a).getD a_1 false) =
+    if { kind := GateKind.or, args := [u, v] }.kind = GateKind.and then
+      if { kind := GateKind.or, args := [u, v] }.args.length = 0 then true
+      else
+        if { kind := GateKind.or, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+    else
+      if { kind := GateKind.or, args := [u, v] }.kind = GateKind.or then
+        if { kind := GateKind.or, args := [u, v] }.args.length = 0 then false
+        else
+          if { kind := GateKind.or, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+      else
+        !if { kind := GateKind.or, args := [u, v] }.args.length = 0 then true
+          else
+            if { kind := GateKind.or, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+            else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:218:71: error: Tactic `rfl` failed: The left-hand side
+  match
+    { kind := { kind := GateKind.not, args := [u, v] }.kind,
+        args := List.range { kind := GateKind.not, args := [u, v] }.args.length }.kind with
+  | GateKind.and =>
+    { kind := { kind := GateKind.not, args := [u, v] }.kind,
+            args := List.range { kind := GateKind.not, args := [u, v] }.args.length }.args.all
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.or =>
+    { kind := { kind := GateKind.not, args := [u, v] }.kind,
+            args := List.range { kind := GateKind.not, args := [u, v] }.args.length }.args.any
+      fun a_1 => (List.ofFn a).getD a_1 false
+  | GateKind.not =>
+    !{ kind := { kind := GateKind.not, args := [u, v] }.kind,
+              args := List.range { kind := GateKind.not, args := [u, v] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+is not definitionally equal to the right-hand side
+  if { kind := GateKind.not, args := [u, v] }.kind = GateKind.and then
+    if { kind := GateKind.not, args := [u, v] }.args.length = 0 then true
+    else
+      if { kind := GateKind.not, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+      else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+  else
+    if { kind := GateKind.not, args := [u, v] }.kind = GateKind.or then
+      if { kind := GateKind.not, args := [u, v] }.args.length = 0 then false
+      else
+        if { kind := GateKind.not, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+    else
+      !if { kind := GateKind.not, args := [u, v] }.args.length = 0 then true
+        else
+          if { kind := GateKind.not, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+
+case mk.cons.cons.nil.not
+u v : ℕ
+a : Fin { kind := GateKind.not, args := [u, v] }.args.length → Bool
+hfan : { kind := GateKind.not, args := [u, v] }.args.length ≤ 2
+⊢ (match
+      { kind := { kind := GateKind.not, args := [u, v] }.kind,
+          args := List.range { kind := GateKind.not, args := [u, v] }.args.length }.kind with
+    | GateKind.and =>
+      { kind := { kind := GateKind.not, args := [u, v] }.kind,
+              args := List.range { kind := GateKind.not, args := [u, v] }.args.length }.args.all
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.or =>
+      { kind := { kind := GateKind.not, args := [u, v] }.kind,
+              args := List.range { kind := GateKind.not, args := [u, v] }.args.length }.args.any
+        fun a_1 => (List.ofFn a).getD a_1 false
+    | GateKind.not =>
+      !{ kind := { kind := GateKind.not, args := [u, v] }.kind,
+                args := List.range { kind := GateKind.not, args := [u, v] }.args.length }.args.all
+          fun a_1 => (List.ofFn a).getD a_1 false) =
+    if { kind := GateKind.not, args := [u, v] }.kind = GateKind.and then
+      if { kind := GateKind.not, args := [u, v] }.args.length = 0 then true
+      else
+        if { kind := GateKind.not, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+        else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+    else
+      if { kind := GateKind.not, args := [u, v] }.kind = GateKind.or then
+        if { kind := GateKind.not, args := [u, v] }.args.length = 0 then false
+        else
+          if { kind := GateKind.not, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+          else (List.ofFn a).getD 0 false || (List.ofFn a).getD 1 false
+      else
+        !if { kind := GateKind.not, args := [u, v] }.args.length = 0 then true
+          else
+            if { kind := GateKind.not, args := [u, v] }.args.length = 1 then (List.ofFn a).getD 0 false
+            else (List.ofFn a).getD 0 false && (List.ofFn a).getD 1 false
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:223:6: error: unexpected identifier; expected 'lemma'
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:229:35: error: unexpected identifier; expected 'lemma'
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:246:61: error: Application type mismatch: The argument
+  hAnd
+has type
+  PolyTimeComputable fun x =>
+    if decide ((g x).args.length = 0) = true then [true]
+    else
+      if decide ((g x).args.length = 1) = true then [(List.ofFn (a x)).getD 0 false]
+      else [(List.ofFn (a x)).getD 0 false && (List.ofFn (a x)).getD 1 false]
+but is expected to have type
+  PolyTimeComputable fun x => [?m.92 x]
+in the application
+  polyTimeComputable_not hAnd
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:239:57: error: unsolved goals
+g : List Bool → DAGGate
+a : (z : List Bool) → Fin (g z).args.length → Bool
+hfan : ∀ (z : List Bool), (g z).args.length ≤ 2
+hkAnd : PolyTimeComputable fun z => [decide ((g z).kind = GateKind.and)]
+hkOr : PolyTimeComputable fun z => [decide ((g z).kind = GateKind.or)]
+hzero : PolyTimeComputable fun z => [decide ((g z).args.length = 0)]
+hone : PolyTimeComputable fun z => [decide ((g z).args.length = 1)]
+h₀ : PolyTimeComputable fun z => [(List.ofFn (a z)).getD 0 false]
+h₁ : PolyTimeComputable fun z => [(List.ofFn (a z)).getD 1 false]
+hAnd :
+  PolyTimeComputable fun x =>
+    if decide ((g x).args.length = 0) = true then [true]
+    else
+      if decide ((g x).args.length = 1) = true then [(List.ofFn (a x)).getD 0 false]
+      else [(List.ofFn (a x)).getD 0 false && (List.ofFn (a x)).getD 1 false]
+hOr :
+  PolyTimeComputable fun x =>
+    if decide ((g x).args.length = 0) = true then [false]
+    else
+      if decide ((g x).args.length = 1) = true then [(List.ofFn (a x)).getD 0 false]
+      else [(List.ofFn (a x)).getD 0 false || (List.ofFn (a x)).getD 1 false]
+⊢ PolyTimeComputable fun z => [gateOut (g z) (a z)]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:289:2: error: Tactic `generalize` failed: result is not type correct
+  ∀ (args : List ℕ) (a : Fin args.length → Bool),
+    args.length ≤ 2 →
+      BinArith.encWords (List.map List.ofFn (List.ofFn fun t => keyAt C s args[t] (a t))) =
+        if args.length = 0 then []
+        else
+          if args.length = 1 then pairEncode (List.ofFn (keyAt C s (args.getD 0 0) ((List.ofFn a).getD 0 false))) []
+          else
+            pairEncode (List.ofFn (keyAt C s (args.getD 0 0) ((List.ofFn a).getD 0 false)))
+              (pairEncode (List.ofFn (keyAt C s (args.getD 1 0) ((List.ofFn a).getD 1 false))) [])
+
+m n : ℕ
+C : DAGCircuit m
+s : GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool))
+i : Fin C.gates.length
+⊢ ∀ (a : Fin C.gates[i].args.length → Bool),
+    C.gates[i].args.length ≤ 2 →
+      BinArith.encWords (List.map List.ofFn (List.ofFn fun t => keyAt C s C.gates[i].args[t] (a t))) =
+        if C.gates[i].args.length = 0 then []
+        else
+          if C.gates[i].args.length = 1 then
+            pairEncode (List.ofFn (keyAt C s (C.gates[i].args.getD 0 0) ((List.ofFn a).getD 0 false))) []
+          else
+            pairEncode (List.ofFn (keyAt C s (C.gates[i].args.getD 0 0) ((List.ofFn a).getD 0 false)))
+              (pairEncode (List.ofFn (keyAt C s (C.gates[i].args.getD 1 0) ((List.ofFn a).getD 1 false))) [])
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling): no fresh .olean produced
+        8.62 real         9.83 user         1.44 sys
+          2188083200  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174137  page reclaims
+                 152  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  30  voluntary context switches
+               16288  involuntary context switches
+            32903711  instructions retired
+            15924214  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T21:40:24Z status=1

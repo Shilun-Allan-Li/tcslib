@@ -1,0 +1,30 @@
+START 2026-11-15T23:20:38.952634+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:109:6: error: Type mismatch
+  (fun i => (List.ofFn r).getD i false, fun i => (List.ofFn r).getD (2 * S * n + i) false, fun i =>
+    (List.ofFn r).getD (10 * S * n + i) false)
+has type
+  (ℕ → Bool) × (ℕ → Bool) × (ℕ → Bool)
+but is expected to have type
+  (Fin (2 * S * n) → Bool) × (Fin (S * 4 * (2 * n)) → Bool) × (Fin (S * 2) → Bool)
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel): no fresh .olean produced
+        2.53 real         1.72 user         1.03 sys
+          2162819072  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171082  page reclaims
+                1607  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  77  voluntary context switches
+                6929  involuntary context switches
+            32492423  instructions retired
+            15738342  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T23:20:41.525805+00:00 exit=1

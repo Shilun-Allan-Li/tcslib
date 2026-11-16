@@ -1,0 +1,140 @@
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:64:theorem polyTimeComputable_app {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:69:theorem polyTimeComputable_test_app {p : List Bool → Bool} {g : List Bool → List Bool}
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:126:theorem polyTimeComputable_forLoop {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:335:theorem polyTimeComputable_uHead : PolyTimeComputable uHead :=
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:339:theorem polyTimeComputable_uRest : PolyTimeComputable uRest :=
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:343:theorem polyTimeComputable_hasFalse : PolyTimeComputable (fun w => [hasFalse w]) := by
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:359:def getW (z : List Bool) : List Bool := pairFstD (pairSndD (forLoop pairSndD z))
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:375:theorem getW_pairEncode (J : List Bool) (L : List (List Bool)) :
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:384:theorem getW_pairEncode_bits (J : List Bool) (vs : List ℕ) :
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:391:theorem polyTimeComputable_getW : PolyTimeComputable getW := by
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:426:theorem polyTimeComputable_eqW : PolyTimeComputable (fun z => [eqW z]) :=
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:451:theorem polyTimeComputable_mulU : PolyTimeComputable mulU := by
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:528:theorem polyTimeComputable_chunkW : PolyTimeComputable chunkW := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:56:theorem halfCnt_poly : PolyTimeComputable fun w => List.replicate (halfCount (argM w)) true :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:61:theorem halfRem_poly : PolyTimeComputable fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:66:theorem even_poly : PolyTimeComputable fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:71:theorem odd_poly : PolyTimeComputable fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:92:theorem giSlice_poly : PolyTimeComputable fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:98:theorem lastBit_poly : PolyTimeComputable fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:133:theorem ltLen2_poly : PolyTimeComputable fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:141:theorem challenge_poly : PolyTimeComputable fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:166:theorem giStep_poly : PolyTimeComputable giStep := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:274:theorem giScan_poly : PolyTimeComputable fun w =>
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:162:theorem polyTimeComputable_add : PolyTimeComputable add := by
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:211:theorem polyTimeComputable_lt : PolyTimeComputable (fun z => [lt z]) := by
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:219:theorem polyTimeComputable_le : PolyTimeComputable (fun z => [le z]) := by
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:227:theorem polyTimeComputable_beq : PolyTimeComputable (fun z => [beq z]) := by
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:239:theorem polyTimeComputable_sub : PolyTimeComputable sub := by
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:251:theorem lt_mem_P : {z | lt z = true} ∈ P := mem_P_of_test polyTimeComputable_lt
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:255:theorem le_mem_P : {z | le z = true} ∈ P := mem_P_of_test polyTimeComputable_le
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:259:theorem beq_mem_P : {z | beq z = true} ∈ P := mem_P_of_test polyTimeComputable_beq
+TCSlib/Complexity/ClassP/BinaryArith/Unary.lean:43:theorem polyTimeComputable_powerOfTwo :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:184:theorem peelLoop_poly {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:247:theorem msgCount_poly : PolyTimeComputable fun w => List.replicate (msgCount w) true :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:304:theorem halfLoop_poly : PolyTimeComputable fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:341:theorem lastMsg_poly : PolyTimeComputable fun w => pairFstD (pairSndD^[lastSteps w] w) :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:352:theorem unaryMul_poly : PolyTimeComputable fun z => match pairDecode z with
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:369:theorem unaryMul_comp {f g : List Bool → ℕ} (hf : PolyTimeComputable fun w => List.replicate (f w) true)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:376:theorem coinSlice_poly (p : PolyExpr) {u i r : List Bool → List Bool} (hu : PolyTimeComputable u)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:393:theorem iterUnary_poly {step : List Bool → List Bool} (hstep : PolyTimeComputable step) (B : PolyExpr)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:447:theorem cnt_poly : PolyTimeComputable fun w => List.replicate (msgCount (argM w)) true :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:452:theorem ltLen_poly : PolyTimeComputable fun w => [decide (msgCount (argM w) < (NUPPT.inParam w).length)] := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:468:theorem gniSlice_poly : PolyTimeComputable fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:485:theorem gniStep_poly : PolyTimeComputable gniStep := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:567:theorem gniScan_poly : PolyTimeComputable fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:581:theorem headD_take {c : ℕ} (hc : 0 < c) (l : List Bool) : (l.take c).headD false = l.headD false := by
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:221:theorem polyTimeComputable_mapW {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:321:theorem polyTimeComputable_zipWithW {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:369:theorem polyTimeComputable_countW : PolyTimeComputable countW := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:72:theorem ptc_congr {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:78:theorem pairValid_poly : PolyTimeComputable fun x => [(pairDecode x).isSome] := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:120:theorem start_poly : PolyTimeComputable start := polyTimeComputable_const []
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:123:theorem step_poly : PolyTimeComputable step := (cons_poly true).comp polyTimeComputable_pairSndD
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:126:theorem acc_poly : PolyTimeComputable fun st => [acc st] := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:134:theorem out_poly : PolyTimeComputable out := polyTimeComputable_pairSndD
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:141:theorem unarySqrt_poly : PolyTimeComputable fun w => List.replicate (Nat.sqrt w.length) true := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:163:theorem wellFormed_poly : PolyTimeComputable fun x => [wellFormedInstance x] := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:181:def padSq (n : ℕ) (w : List Bool) : List Bool := (w ++ List.replicate (n * n) false).take (n * n)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:192:theorem getD_padSq (n : ℕ) (w : List Bool) {k : ℕ} (hk : k < n * n) :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:208:theorem zeros_poly : PolyTimeComputable fun w => List.replicate w.length false :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:214:theorem padSq_poly : PolyTimeComputable fun z => padSq (pairFstD z).length (pairSndD z) := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:264:theorem sampleStr_poly : PolyTimeComputable fun z => sampleStr (pairFstD z) (pairSndD z) :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:269:theorem mulInvStr_poly : PolyTimeComputable fun z => mulInvStr (pairFstD z) (pairSndD z) :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:275:theorem relabelAt_poly :
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:332:theorem argX_poly : PolyTimeComputable argX :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:336:theorem argZ_poly : PolyTimeComputable argZ :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:340:theorem argM_poly : PolyTimeComputable argM :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:344:theorem w₀_poly : PolyTimeComputable fun w => pairFstD (argX w) := polyTimeComputable_pairFstD.comp argX_poly
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:347:theorem w₁_poly : PolyTimeComputable fun w => pairSndD (argX w) := polyTimeComputable_pairSndD.comp argX_poly
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:350:theorem vcount_poly : PolyTimeComputable fun w => List.replicate (vcount w) true :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:354:theorem coinBit_poly : PolyTimeComputable fun w => [(NUPPT.inCoins w).headD false] :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:358:theorem selGraph_poly : PolyTimeComputable fun w =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:363:theorem relabel_poly {g p : List Bool → List Bool} (hg : PolyTimeComputable g)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:369:theorem piStr_poly : PolyTimeComputable fun w => sampleStr (pairFstD (argX w)) (NUPPT.inCoins w) :=
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:409:theorem risoTest_poly : PolyTimeComputable fun z => [risoTest z] := by
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:458:theorem Riso_decidable : ∃ T : List Bool → Bool, PolyTimeComputable (fun z => [T z]) ∧
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:64:theorem polyTimeComputable_of_linear {f : List Bool → List Bool}
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:71:theorem polyTimeComputable_const (w : List Bool) : PolyTimeComputable (fun _ => w) :=
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:94:theorem PolyTimeComputable.pairMapSnd {g : List Bool → List Bool}
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:129:theorem PolyTimeComputable.pairEncode {f g : List Bool → List Bool}
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:163:theorem polyTimeComputable_unary :
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:186:theorem PolyTimeComputable.append {f g : List Bool → List Bool}
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:195:theorem polyTimeComputable_polyUnary (C d : ℕ) :
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:201:theorem polyTimeComputable_prepend (w : List Bool) : PolyTimeComputable (fun x => w ++ x) :=
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:207:def pairFstD (z : List Bool) : List Bool := ((pairDecode z).map Prod.fst).getD []
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:210:def pairSndD (z : List Bool) : List Bool := ((pairDecode z).map Prod.snd).getD []
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:213:theorem pairFstD_eq (z : List Bool) : pairFstD z = ((pairDecode z).map Prod.fst).getD [] := rfl
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:216:theorem pairSndD_eq (z : List Bool) : pairSndD z = ((pairDecode z).map Prod.snd).getD [] := rfl
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:252:theorem polyTimeComputable_pairFstD : PolyTimeComputable pairFstD :=
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:256:theorem polyTimeComputable_pairSndD : PolyTimeComputable pairSndD :=
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:260:theorem polyTimeComputable_iterate_pairFstD (n : ℕ) : PolyTimeComputable (pairFstD^[n]) := by
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:268:theorem polyTimeComputable_pairConcat :
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:278:theorem polyTimeComputable_pairSwap :
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:290:theorem polyTimeComputable_ite {p : List Bool → Bool} {f g : List Bool → List Bool}
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:320:theorem polyTimeComputable_and {p q : List Bool → Bool}
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:331:theorem polyTimeComputable_lenLe :
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:346:theorem polyTimeComputable_lenEq :
+TCSlib/Complexity/ClassP/BinaryArith/Div.lean:45:theorem polyTimeComputable_isZero :
+TCSlib/Complexity/ClassP/BinaryArith/Div.lean:82:theorem polyTimeComputable_divStep : PolyTimeComputable divStep := by
+TCSlib/Complexity/ClassP/BinaryArith/Div.lean:189:theorem polyTimeComputable_divLoop : PolyTimeComputable divLoop := by
+TCSlib/Complexity/ClassP/BinaryArith/Div.lean:230:theorem polyTimeComputable_div : PolyTimeComputable div := by
+TCSlib/Complexity/ClassP/BinaryArith/Div.lean:245:theorem polyTimeComputable_mod : PolyTimeComputable mod := by
+TCSlib/Complexity/ClassP/BinaryArith/DetModMath.lean:57:theorem getD_tail (l : List ℕ) (j : ℕ) : l.tail.getD j 0 = l.getD (j + 1) 0 := by
+TCSlib/Complexity/ClassP/BinaryArith/DetModMath.lean:61:theorem getD_zero_eq_headD (l : List ℕ) : l.getD 0 0 = l.headD 0 := by
+TCSlib/Complexity/ClassP/BinaryArith/DetModMath.lean:65:theorem getD_zipWith (f : ℕ → ℕ → ℕ) (l₁ l₂ : List ℕ) (j : ℕ) (h₁ : j < l₁.length)
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:189:theorem polyTimeComputable_countLoop : PolyTimeComputable countLoop := by
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:299:theorem polyTimeComputable_dblLoop : PolyTimeComputable dblLoop := by
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:443:theorem polyTimeComputable_lovaszPrime :
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:140:theorem polyTimeComputable_evenLength :
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:247:theorem polyTimeComputable_entryW : PolyTimeComputable entryW := by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:258:theorem polyTimeComputable_rowW : PolyTimeComputable rowW := by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:278:theorem polyTimeComputable_detWStep : PolyTimeComputable detWStep := by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:594:theorem polyTimeComputable_detModAlg : PolyTimeComputable detModAlg := by
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:103:theorem polyTimeComputable_jacStep : PolyTimeComputable jacStep := by
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:295:theorem polyTimeComputable_jacobiAlg : PolyTimeComputable jacobiAlg := by
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:389:theorem polyTimeComputable_jacobiModAlg : PolyTimeComputable jacobiModAlg :=
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:80:theorem iterate_drop_one (w : List Bool) (i : ℕ) :
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:88:theorem polyTimeComputable_any : PolyTimeComputable (fun w : List Bool => [w.any id]) := by
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:137:theorem polyTimeComputable_normBits :
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:169:theorem polyTimeComputable_lastBit :
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:189:theorem polyTimeComputable_slot2 : PolyTimeComputable (fun S => pairFstD (pairSndD S)) :=
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:193:theorem polyTimeComputable_slot3 : PolyTimeComputable (fun S => pairSndD (pairSndD S)) :=
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:197:theorem polyTimeComputable_cons {p : List Bool → Bool} {f : List Bool → List Bool}
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:203:theorem polyTimeComputable_slot4 :
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:208:theorem polyTimeComputable_xor {p q : List Bool → Bool}
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:216:theorem polyTimeComputable_drop (i : ℕ) : PolyTimeComputable (fun w : List Bool => w.drop i) := by
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:225:theorem bitsVal_drop_one (w : List Bool) : bitsVal (w.drop 1) = bitsVal w / 2 := by
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:266:theorem getLastD_serialOut_self (δ : Bool → Bool → Bool → Bool) (s : Bool)
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:329:theorem polyTimeComputable_zipStream :
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:358:theorem polyTimeComputable_serial {σ : Type} [Fintype σ] [DecidableEq σ]
+TCSlib/Complexity/ClassP/BinaryArith/Mul.lean:50:theorem polyTimeComputable_revStep : PolyTimeComputable revStep := by
+TCSlib/Complexity/ClassP/BinaryArith/Mul.lean:73:theorem polyTimeComputable_reverse : PolyTimeComputable (fun w : List Bool => w.reverse) := by
+TCSlib/Complexity/ClassP/BinaryArith/Mul.lean:128:theorem polyTimeComputable_mulStep : PolyTimeComputable mulStep := by
+TCSlib/Complexity/ClassP/BinaryArith/Mul.lean:217:theorem polyTimeComputable_mul : PolyTimeComputable mul := by
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:76:theorem polyTimeComputable_powStep : PolyTimeComputable powStep := by
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:214:theorem polyTimeComputable_powMod : PolyTimeComputable powMod := by
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:271:theorem polyTimeComputable_gcdStep : PolyTimeComputable gcdStep := by
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:348:theorem polyTimeComputable_gcd : PolyTimeComputable gcd := by
+TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean:160:theorem polyTimeComputable_guardLoop {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
+TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean:190:theorem polyTimeComputable_iterate {g init : List Bool → List Bool}

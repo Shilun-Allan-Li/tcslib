@@ -1,0 +1,25 @@
+["rg", "-n", "length_flatMap_le|length_filterMap_le|Nodup.length_le_card|sum_le_card_nsmul", "TCSlib/Programs/Util/List.lean", "TCSlib/Complexity/Randomized/Build/StateLoop.lean", ".lake/packages/mathlib/Mathlib/Data/Fintype/Card.lean", ".lake/packages/mathlib/Mathlib/Algebra/Order/BigOperators/Group/List.lean"]
+.lake/packages/mathlib/Mathlib/Algebra/Order/BigOperators/Group/List.lean:86:@[to_additive sum_le_card_nsmul]
+.lake/packages/mathlib/Mathlib/Data/Fintype/Card.lean:220:theorem List.Nodup.length_le_card {α : Type*} [Fintype α] {l : List α} (h : l.Nodup) :
+TCSlib/Programs/Util/List.lean:198:theorem length_flatMap_le (l : List α) (f : α → List β) (c : ℕ)
+TCSlib/Programs/Util/List.lean:201:  simpa using List.sum_le_card_nsmul (l.map fun a => (f a).length) c (by simpa using h)
+TCSlib/Programs/Util/List.lean:269:  simpa using List.sum_le_card_nsmul ((l.map f).map fun x => |x|) B (by simpa using h)
+EXIT 0
+["rg", "-n", "getElem_inj_iff|Nodup.filterMap|nodup_flatMap", ".lake/packages/mathlib/Mathlib/Data/List/Nodup.lean"]
+91:theorem Nodup.getElem_inj_iff {l : List α} (h : Nodup l)
+276:theorem nodup_flatMap {l₁ : List α} {f : α → List β} :
+286:  nodup_flatMap.2
+295:  nodup_flatMap.2
+302:protected theorem Nodup.filterMap {f : α → Option β} (h : ∀ a a' b, b ∈ f a → b ∈ f a' → a = a') :
+EXIT 0
+["rg", "-n", "card_pi_const", ".lake/packages/mathlib/Mathlib/Data/Fintype/BigOperators.lean"]
+134:lemma card_pi_const (α : Type*) [Fintype α] (n : ℕ) : card (Fin n → α) = card α ^ n :=
+EXIT 0
+["rg", "-n", "find\\?_some|find\\?_isSome|mem_iff_getElem\\?|length_filterMap_le", "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Init/Data/List/Lemmas.lean"]
+468:theorem mem_iff_getElem? {a} {l : List α} : a ∈ l ↔ ∃ i : Nat, l[i]? = some a := by
+1409:theorem length_filterMap_le (f : α → Option β) (l : List α) :
+1414:grind_pattern List.length_filterMap_le => (List.filterMap f l).length
+1424:    · have := Nat.ne_of_lt (Nat.lt_succ.mpr (length_filterMap_le f l))
+EXIT 0
+["rg", "-n", "occurr|selected.*label|hybrid.*label", "TCSlib/Cryptography/SecureComputation/Garbling.lean"]
+EXIT 1

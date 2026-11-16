@@ -1,0 +1,711 @@
+START 2026-11-15T22:11:29.755374+00:00
+SIGNATURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.EvalGate.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1.splitter	{β :
+    Type} →
+  (motive : Option β → Sort u_1) → (x : Option β) → motive none → ((b : β) → motive (some b)) → motive x
+AXIOMS	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.EvalGate.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1.splitter	[]
+SORRY_CLOSURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.EvalGate.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1.splitter	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.acc_eq	∀ (w : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.acc w =
+    decide (Complexity.pairFstD (Complexity.pairSndD w) = [])
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.acc_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.acc_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.orbit_eq	∀ {β : List Bool → Type}
+  (gateCode : BoolCircuit.DAGGate → List Bool) (valueCode : (x : List Bool) → List (β x) → List Bool)
+  (gs : List Bool → List BoolCircuit.DAGGate) (init : (x : List Bool) → List (β x))
+  (f : (x : List Bool) → BoolCircuit.DAGGate → List (β x) → β x) (F : List Bool → List Bool),
+  (∀ (x : List Bool) (g : BoolCircuit.DAGGate) (vs : List (β x)),
+      F (Turing.pairEncode x (Turing.pairEncode (gateCode g) (valueCode x vs))) = valueCode x (vs ++ [f x g vs])) →
+    ∀ (x : List Bool),
+      ∀ i ≤ (gs x).length,
+        Complexity.StateLoop.orbit
+            (fun z =>
+              Turing.pairEncode (Complexity.BinArith.encWords (List.map gateCode (gs z))) (valueCode z (init z)))
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step F) x i =
+          Turing.pairEncode (Complexity.BinArith.encWords (List.map gateCode (List.drop i (gs x))))
+            (valueCode x (BoolCircuit.runWith (f x) (List.take i (gs x)) (init x)))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.orbit_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.orbit_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.acc_poly	Complexity.PolyTimeComputable
+  fun w => [TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.acc w]
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.acc_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.acc_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.orbit_eq._proof_1_1	∀
+  (gs : List Bool → List BoolCircuit.DAGGate) (x : List Bool) (i : ℕ),
+  i + 1 ≤ (gs x).length → ¬i < (gs x).length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.orbit_eq._proof_1_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.orbit_eq._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup_eq	∀ (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup z =
+    TCSlib.Cryptography.EnsembleLemmas.padL (Complexity.pairFstD (Complexity.pairFstD z)).length
+      (Complexity.BinArith.getW
+        (Turing.pairEncode (Complexity.pairSndD z) (Complexity.pairSndD (Complexity.pairFstD z))))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup_eq	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_poly	Complexity.PolyTimeComputable
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged_eq	∀ (E₁ E₂ : List Bool → List Bool)
+  (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged E₁ E₂ z =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged E₁ E₂
+      (Turing.pairEncode (Complexity.pairFstD (Complexity.pairFstD z))
+        (Turing.pairEncode (Complexity.pairSndD (Complexity.pairFstD z)) (Complexity.pairSndD z)))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged_eq	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup	List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_eq	∀ (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged z =
+    if Complexity.pairSndD z = [] then []
+    else
+      if (List.drop 1 (Complexity.pairSndD z)).length = (Complexity.pairFstD z).length then
+        true :: List.drop 1 (Complexity.pairSndD z)
+      else []
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledStep_poly	∀
+  {E₁ E₂ N tableWord : List Bool → List Bool},
+  Complexity.PolyTimeComputable E₁ →
+    Complexity.PolyTimeComputable E₂ →
+      Complexity.PolyTimeComputable N →
+        Complexity.PolyTimeComputable tableWord →
+          Complexity.PolyTimeComputable
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledStep E₁ E₂ N tableWord)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledStep_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledStep_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_poly._simp_1_1	∀ (p q : Prop)
+  [dpq : Decidable (p ∧ q)] [dp : Decidable p] [dq : Decidable q], (decide p && decide q) = decide (p ∧ q)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_poly._simp_1_1	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_poly._simp_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded._proof_1_2	∀
+  (F : List Bool → List Bool) (q : List Bool) (pre : List (List Bool)) (row : List Bool) (post : List (List Bool)),
+  pre.length + (post.length + 1) ≤ pre.length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded._proof_1_2	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded._proof_1_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup_encoded	∀ (N : List Bool)
+  (vs : List (Fin N.length → Bool)) (a : ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup
+      (Turing.pairEncode (Turing.pairEncode N (Complexity.BinArith.encWords (List.map List.ofFn vs)))
+        (List.replicate a true)) =
+    List.ofFn (vs.getD a default)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup_encoded	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup_encoded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_encoded._simp_1_4	∀ {α : Type u_1}
+  (a : α) (l : List α), (a :: l = []) = False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_encoded._simp_1_4	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_encoded._simp_1_4	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector_eq	∀
+  (m msg : List Bool → List Bool) (w : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector m msg w =
+    have x := Complexity.pairFstD w;
+    have v := (Complexity.BinArith.decWords (Complexity.pairSndD (Complexity.pairSndD w))).length;
+    if (m x).length ≤ v then
+      Complexity.BinArith.encWords
+        (Complexity.BinArith.decWords
+          (Complexity.BinArith.getW
+            (Turing.pairEncode (List.replicate (v - (m x).length) true)
+              (Complexity.BinArith.encWords (Complexity.BinArith.decWords (Complexity.pairFstD (msg x)))))))
+    else []
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord	(List Bool → List Bool) →
+  (List Bool → List Bool) → List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged	(List Bool → List Bool) →
+  List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step	(List Bool → List Bool) →
+  List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged	(List Bool → List Bool) →
+  (List Bool → List Bool) → List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged	(List Bool → List Bool) →
+  (List Bool → List Bool) → List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledStep	(List Bool → List Bool) →
+  (List Bool → List Bool) → (List Bool → List Bool) → (List Bool → List Bool) → List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledStep	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledStep	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.polyTimeComputable_runWith	∀
+  {β : List Bool → Type} (gateCode : BoolCircuit.DAGGate → List Bool)
+  (valueCode : (x : List Bool) → List (β x) → List Bool) (gs : List Bool → List BoolCircuit.DAGGate)
+  (init : (x : List Bool) → List (β x)) (f : (x : List Bool) → BoolCircuit.DAGGate → List (β x) → β x)
+  {F : List Bool → List Bool},
+  (Complexity.PolyTimeComputable fun x => Complexity.BinArith.encWords (List.map gateCode (gs x))) →
+    (Complexity.PolyTimeComputable fun x => valueCode x (init x)) →
+      Complexity.PolyTimeComputable F →
+        (∀ (x : List Bool) (g : BoolCircuit.DAGGate) (vs : List (β x)),
+            F (Turing.pairEncode x (Turing.pairEncode (gateCode g) (valueCode x vs))) =
+              valueCode x (vs ++ [f x g vs])) →
+          ∀ (R B : Complexity.PolyExpr),
+            (∀ (x : List Bool), (gs x).length ≤ R.eval x.length) →
+              (∀ (x : List Bool),
+                  ∀ i ≤ (gs x).length,
+                    (Turing.pairEncode (Complexity.BinArith.encWords (List.map gateCode (List.drop i (gs x))))
+                          (valueCode x (BoolCircuit.runWith (f x) (List.take i (gs x)) (init x)))).length ≤
+                      B.eval x.length) →
+                Complexity.PolyTimeComputable fun x => valueCode x (BoolCircuit.runWith (f x) (gs x) (init x))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.polyTimeComputable_runWith	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.polyTimeComputable_runWith	[]
+SIGNATURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.EvalGate.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1.eq_2	∀
+  {β : Type} (motive : Option β → Sort u_1) (b : β) (h_1 : Unit → motive none) (h_2 : (b : β) → motive (some b)),
+  (match some b with
+    | none => h_1 ()
+    | some b => h_2 b) =
+    h_2 b
+AXIOMS	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.EvalGate.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1.eq_2	[]
+SORRY_CLOSURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.EvalGate.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1.eq_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged_poly	∀ {E₁ E₂ : List Bool → List Bool},
+  Complexity.PolyTimeComputable E₁ →
+    Complexity.PolyTimeComputable E₂ →
+      Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged E₁ E₂)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode_eq	∀ (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode z =
+    Complexity.BinArith.mapW TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup
+      (Turing.pairEncode (Turing.pairEncode (Complexity.pairFstD z) (Complexity.pairFstD (Complexity.pairSndD z)))
+        (Complexity.pairSndD (Complexity.pairSndD z)))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode_eq	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_pairEncode	∀ (E : List Bool → List Bool)
+  (N L k c : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged E
+      (Turing.pairEncode N (Turing.pairEncode L (Turing.pairEncode k c))) =
+    match TCSlib.Cryptography.SecureComputation.spDecStr E N.length L.length k c with
+    | none => []
+    | some m => true :: m
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_pairEncode	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_pairEncode	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_poly	∀ {E₁ E₂ : List Bool → List Bool},
+  Complexity.PolyTimeComputable E₁ →
+    Complexity.PolyTimeComputable E₂ →
+      Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged E₁ E₂)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_poly	[]
+SIGNATURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1.splitter	(N :
+    List Bool) →
+  (motive : Option (Fin N.length → Bool) → Sort u_1) →
+    (x : Option (Fin N.length → Bool)) → motive none → ((k : Fin N.length → Bool) → motive (some k)) → motive x
+AXIOMS	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1.splitter	[]
+SORRY_CLOSURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1.splitter	[]
+SIGNATURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1.eq_1	∀
+  (motive : Option (List Bool) → Sort u_1) (h_1 : Unit → motive none) (h_2 : (m : List Bool) → motive (some m)),
+  (match none with
+    | none => h_1 ()
+    | some m => h_2 m) =
+    h_1 ()
+AXIOMS	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1.eq_1	[]
+SORRY_CLOSURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1.eq_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.polyTimeComputable_reencodeWords	Complexity.PolyTimeComputable
+  fun w => Complexity.BinArith.encWords (Complexity.BinArith.decWords w)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.polyTimeComputable_reencodeWords	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.polyTimeComputable_reencodeWords	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledStep_eq	∀
+  (E₁ E₂ N tableWord : List Bool → List Bool) (w : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledStep E₁ E₂ N tableWord w =
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord E₁ E₂
+      (Turing.pairEncode (N (Complexity.pairFstD w))
+        (Turing.pairEncode (Complexity.pairSndD (Complexity.pairFstD (Complexity.pairSndD w)))
+          (Turing.pairEncode (Complexity.pairSndD (Complexity.pairSndD w)) (tableWord w))))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledStep_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledStep_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_poly	∀ {E : List Bool → List Bool},
+  Complexity.PolyTimeComputable E →
+    Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged E)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_poly	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded	∀ {β : Type}
+  (F : List Bool → List Bool) (q : List Bool) (rows : List (List Bool)) (f : List Bool → Option β)
+  (payload : β → List Bool),
+  (∀ (row : List Bool),
+      F (Turing.pairEncode q row) =
+        match f row with
+        | none => []
+        | some b => true :: payload b) →
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged F
+        (Turing.pairEncode q (Complexity.BinArith.encWords rows)) =
+      match List.findSome? f rows with
+      | none => []
+      | some b => true :: payload b
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_eq	∀ (E : List Bool → List Bool)
+  (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged E z =
+    match
+      TCSlib.Cryptography.SecureComputation.spDecStr E (Complexity.pairFstD z).length
+        (Complexity.pairFstD (Complexity.pairSndD z)).length
+        (Complexity.pairFstD (Complexity.pairSndD (Complexity.pairSndD z)))
+        (Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD z))) with
+    | none => []
+    | some m => true :: m
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault	List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord_encoded	∀ (E₁ E₂ : List Bool → List Bool)
+  (N : List Bool) (T : ℕ → List (List Bool)) (v : ℕ) (g : BoolCircuit.DAGGate) (vs : List (Fin N.length → Bool)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord E₁ E₂
+      (Turing.pairEncode N
+        (Turing.pairEncode (Complexity.BinArith.encWords (List.map (fun a => List.replicate a true) g.args))
+          (Turing.pairEncode (Complexity.BinArith.encWords (List.map List.ofFn vs))
+            (Complexity.BinArith.encWords (T v))))) =
+    List.ofFn
+      (TCSlib.Cryptography.SecureComputation.evalGate
+        (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ N.length) T v g vs)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord_encoded	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord_encoded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged_option	∀ (F : List Bool → List Bool)
+  (o : Option (List Bool)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged F
+      (match o with
+      | none => []
+      | some m => true :: m) =
+    match o with
+    | none => []
+    | some m => F m
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged_option	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged_option	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step_poly	∀ {F : List Bool → List Bool},
+  Complexity.PolyTimeComputable F →
+    Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step F)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step_poly	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.exists_machine	∀ {β : List Bool → Type}
+  (gateCode : BoolCircuit.DAGGate → List Bool) (valueCode : (x : List Bool) → List (β x) → List Bool)
+  (gs : List Bool → List BoolCircuit.DAGGate) (init : (x : List Bool) → List (β x))
+  (f : (x : List Bool) → BoolCircuit.DAGGate → List (β x) → β x) {F : List Bool → List Bool},
+  (Complexity.PolyTimeComputable fun x => Complexity.BinArith.encWords (List.map gateCode (gs x))) →
+    (Complexity.PolyTimeComputable fun x => valueCode x (init x)) →
+      Complexity.PolyTimeComputable F →
+        (∀ (x : List Bool) (g : BoolCircuit.DAGGate) (vs : List (β x)),
+            F (Turing.pairEncode x (Turing.pairEncode (gateCode g) (valueCode x vs))) =
+              valueCode x (vs ++ [f x g vs])) →
+          ∀ (R B : Complexity.PolyExpr),
+            (∀ (x : List Bool), (gs x).length ≤ R.eval x.length) →
+              (∀ (x : List Bool),
+                  ∀ i ≤ (gs x).length,
+                    (Turing.pairEncode (Complexity.BinArith.encWords (List.map gateCode (List.drop i (gs x))))
+                          (valueCode x (BoolCircuit.runWith (f x) (List.take i (gs x)) (init x)))).length ≤
+                      B.eval x.length) →
+                ∃ M A d,
+                  (Turing.ModuleHost.Clean M (fun x => valueCode x (BoolCircuit.runWith (f x) (gs x) (init x)))
+                      (fun x => []) fun n => A * (n + 1) ^ d) ∧
+                    ∀ (x arg : List Bool) (v : ℕ) (j : Fin M.k),
+                      |(Turing.MultiTapeTM.runFrom (Turing.Cfg.ofWords M.tm.q₀ (Turing.stateWord M.k arg))
+                                v).workTapePos
+                            j| ≤
+                        ↑(A * (arg.length + 1) ^ d)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.exists_machine	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.exists_machine	[]
+SIGNATURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1.splitter	(motive :
+    Option (List Bool) → Sort u_1) →
+  (x : Option (List Bool)) → motive none → ((m : List Bool) → motive (some m)) → motive x
+AXIOMS	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1.splitter	[]
+SORRY_CLOSURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1.splitter	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_poly	Complexity.PolyTimeComputable
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.orbit_eq._proof_1_2	∀
+  (gs : List Bool → List BoolCircuit.DAGGate) (x : List Bool) (i : ℕ),
+  i + 1 ≤ (gs x).length → ¬i ≤ (gs x).length → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.orbit_eq._proof_1_2	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.orbit_eq._proof_1_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1	{β : Type} →
+  (motive : Option β → Sort u_1) → (x : Option β) → (Unit → motive none) → ((b : β) → motive (some b)) → motive x
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord_eq	∀ (E₁ E₂ : List Bool → List Bool)
+  (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord E₁ E₂ z =
+    Complexity.pairFstD (Complexity.pairSndD (Complexity.pairSndD z)) ++
+      Turing.pairEncode (TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord E₁ E₂ z) []
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_encoded	∀ (N : List Bool)
+  (o : Option (Fin N.length → Bool)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault
+      (Turing.pairEncode N
+        (match o with
+        | none => []
+        | some k => true :: List.ofFn k)) =
+    List.ofFn (o.getD default)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_encoded	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_encoded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode	List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged	List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_eq	∀ (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault z =
+    if Complexity.pairSndD z = [] then List.replicate (Complexity.pairFstD z).length false
+    else List.drop 1 (Complexity.pairSndD z)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode_poly	Complexity.PolyTimeComputable
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode_encoded	∀ (N : List Bool)
+  (vs : List (Fin N.length → Bool)) (args : List ℕ),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode
+      (Turing.pairEncode N
+        (Turing.pairEncode (Complexity.BinArith.encWords (List.map List.ofFn vs))
+          (Complexity.BinArith.encWords (List.map (fun a => List.replicate a true) args)))) =
+    Complexity.BinArith.encWords (List.map List.ofFn (List.map (fun a => vs.getD a default) args))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode_encoded	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode_encoded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector_poly	∀
+  {m msg : List Bool → List Bool},
+  Complexity.PolyTimeComputable m →
+    Complexity.PolyTimeComputable msg →
+      Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector m msg)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector_poly	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector_poly	[]
+SIGNATURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1.eq_1	∀
+  (N : List Bool) (motive : Option (Fin N.length → Bool) → Sort u_1) (h_1 : Unit → motive none)
+  (h_2 : (k : Fin N.length → Bool) → motive (some k)),
+  (match none with
+    | none => h_1 ()
+    | some k => h_2 k) =
+    h_1 ()
+AXIOMS	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1.eq_1	[]
+SORRY_CLOSURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1.eq_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged	(List Bool → List Bool) →
+  List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged	(List Bool → List Bool) →
+  List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged	[]
+SIGNATURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1.eq_2	∀
+  (N : List Bool) (motive : Option (Fin N.length → Bool) → Sort u_1) (k : Fin N.length → Bool)
+  (h_1 : Unit → motive none) (h_2 : (k : Fin N.length → Bool) → motive (some k)),
+  (match some k with
+    | none => h_1 ()
+    | some k => h_2 k) =
+    h_2 k
+AXIOMS	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1.eq_2	[]
+SORRY_CLOSURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1.eq_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledRunWith_poly._proof_1_2	∀
+  {E₁ E₂ N : List Bool → List Bool} (gateCode : BoolCircuit.DAGGate → List Bool)
+  (gs : List Bool → List BoolCircuit.DAGGate) (init : (x : List Bool) → List (Fin (N x).length → Bool))
+  (T : List Bool → ℕ → List (List Bool)) (Cg cg Ci ci Cn cn : ℕ) (x : List Bool) (i : ℕ),
+  (Complexity.BinArith.encWords (List.map gateCode (List.drop i (gs x)))).length ≤
+      (Complexity.PolyExpr.normal Cg cg).eval x.length →
+    (Complexity.BinArith.encWords
+            (List.map List.ofFn
+              (BoolCircuit.runWith
+                (fun g vs =>
+                  TCSlib.Cryptography.SecureComputation.evalGate
+                    (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ (N x).length) (T x) vs.length g vs)
+                (List.take i (gs x)) (init x)))).length ≤
+        ((Complexity.PolyExpr.normal Ci ci).eval x.length + (Complexity.PolyExpr.normal Cg cg).eval x.length) *
+          (2 * (Complexity.PolyExpr.normal Cn cn).eval x.length + 2) →
+      ¬2 * (Complexity.BinArith.encWords (List.map gateCode (List.drop i (gs x)))).length + 2 +
+              (Complexity.BinArith.encWords
+                  (List.map List.ofFn
+                    (BoolCircuit.runWith
+                      (fun g vs =>
+                        TCSlib.Cryptography.SecureComputation.evalGate
+                          (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ (N x).length) (T x) vs.length g vs)
+                      (List.take i (gs x)) (init x)))).length ≤
+            2 * (Complexity.PolyExpr.normal Cg cg).eval x.length +
+              (2 +
+                ((Complexity.PolyExpr.normal Ci ci).eval x.length + (Complexity.PolyExpr.normal Cg cg).eval x.length) *
+                  (2 * (Complexity.PolyExpr.normal Cn cn).eval x.length + 2)) →
+        False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledRunWith_poly._proof_1_2	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledRunWith_poly._proof_1_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_encoded._simp_1_2	∀ (x y : List Bool),
+  (Turing.pairEncode x y = []) = False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_encoded._simp_1_2	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_encoded._simp_1_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord	(List Bool → List Bool) →
+  (List Bool → List Bool) → List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledRunWith_poly._proof_1_1	∀
+  {E₁ E₂ : List Bool → List Bool} {N : List Bool → List Bool} (gateCode : BoolCircuit.DAGGate → List Bool)
+  (gs : List Bool → List BoolCircuit.DAGGate) (init : (x : List Bool) → List (Fin (N x).length → Bool))
+  (T : List Bool → ℕ → List (List Bool)) (Cg cg Ci ci Cn cn : ℕ) (x : List Bool) (i : ℕ),
+  (N x).length ≤ (Complexity.PolyExpr.normal Cn cn).eval x.length →
+    ¬2 * (N x).length + 2 ≤ 2 * (Complexity.PolyExpr.normal Cn cn).eval x.length + 2 → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledRunWith_poly._proof_1_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledRunWith_poly._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledRunWith_poly	∀
+  {E₁ E₂ N tableWord : List Bool → List Bool},
+  Complexity.PolyTimeComputable E₁ →
+    Complexity.PolyTimeComputable E₂ →
+      Complexity.PolyTimeComputable N →
+        ∀ (gateCode : BoolCircuit.DAGGate → List Bool) (gs : List Bool → List BoolCircuit.DAGGate)
+          (init : (x : List Bool) → List (Fin (N x).length → Bool)) (T : List Bool → ℕ → List (List Bool)),
+          (Complexity.PolyTimeComputable fun x => Complexity.BinArith.encWords (List.map gateCode (gs x))) →
+            (Complexity.PolyTimeComputable fun x => Complexity.BinArith.encWords (List.map List.ofFn (init x))) →
+              Complexity.PolyTimeComputable tableWord →
+                (∀ (g : BoolCircuit.DAGGate),
+                    Complexity.pairSndD (gateCode g) =
+                      Complexity.BinArith.encWords (List.map (fun a => List.replicate a true) g.args)) →
+                  (∀ (x : List Bool) (g : BoolCircuit.DAGGate) (vs : List (Fin (N x).length → Bool)),
+                      tableWord
+                          (Turing.pairEncode x
+                            (Turing.pairEncode (gateCode g) (Complexity.BinArith.encWords (List.map List.ofFn vs)))) =
+                        Complexity.BinArith.encWords (T x vs.length)) →
+                    Complexity.PolyTimeComputable fun x =>
+                      Complexity.BinArith.encWords
+                        (List.map List.ofFn
+                          (BoolCircuit.runWith
+                            (fun g vs =>
+                              TCSlib.Cryptography.SecureComputation.evalGate
+                                (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ (N x).length) (T x) vs.length
+                                g vs)
+                            (gs x) (init x)))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledRunWith_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.garbledRunWith_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_eq	∀ (E₁ E₂ : List Bool → List Bool)
+  (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged E₁ E₂ z =
+    have N := Complexity.pairFstD z;
+    have keys := Complexity.pairFstD (Complexity.pairSndD z);
+    have c := Complexity.pairSndD (Complexity.pairSndD z);
+    if keys = [] then
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged (Turing.pairEncode N (true :: c))
+    else
+      if Complexity.pairSndD keys = [] then
+        TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged
+          (Turing.pairEncode N
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged E₁
+              (Turing.pairEncode N (Turing.pairEncode N (Turing.pairEncode (Complexity.pairFstD keys) c)))))
+      else
+        if Complexity.pairSndD (Complexity.pairSndD keys) = [] then
+          have outer :=
+            TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged E₂
+              (Turing.pairEncode N
+                (Turing.pairEncode (List.replicate (TCSlib.Cryptography.SecureComputation.innerLen.eval N.length) true)
+                  (Turing.pairEncode (Complexity.pairFstD keys) c)));
+          if outer = [] then []
+          else
+            TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged
+              (Turing.pairEncode N
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged E₁
+                  (Turing.pairEncode N
+                    (Turing.pairEncode N
+                      (Turing.pairEncode (Complexity.pairFstD (Complexity.pairSndD keys)) (List.drop 1 outer))))))
+        else []
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_eq	[propext]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1	(motive :
+    Option (List Bool) → Sort u_1) →
+  (x : Option (List Bool)) → (Unit → motive none) → ((m : List Bool) → motive (some m)) → motive x
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord_eq	∀ (E₁ E₂ : List Bool → List Bool)
+  (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord E₁ E₂ z =
+    have N := Complexity.pairFstD z;
+    have args := Complexity.pairFstD (Complexity.pairSndD z);
+    have values := Complexity.pairFstD (Complexity.pairSndD (Complexity.pairSndD z));
+    have rows := Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD z));
+    have keys :=
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.argKeysCode
+        (Turing.pairEncode N (Turing.pairEncode values args));
+    TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault
+      (Turing.pairEncode N
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedRowTagged E₁ E₂)
+          (Turing.pairEncode (Turing.pairEncode N keys) rows)))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup_poly	Complexity.PolyTimeComputable
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.keyLookup_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord_poly	∀
+  {E₁ E₂ : List Bool → List Bool},
+  Complexity.PolyTimeComputable E₁ →
+    Complexity.PolyTimeComputable E₂ →
+      Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord E₁ E₂)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord_poly	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord_encoded	∀
+  (E₁ E₂ : List Bool → List Bool) (N : List Bool) (T : ℕ → List (List Bool)) (v : ℕ) (g : BoolCircuit.DAGGate)
+  (vs : List (Fin N.length → Bool)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord E₁ E₂
+      (Turing.pairEncode N
+        (Turing.pairEncode (Complexity.BinArith.encWords (List.map (fun a => List.replicate a true) g.args))
+          (Turing.pairEncode (Complexity.BinArith.encWords (List.map List.ofFn vs))
+            (Complexity.BinArith.encWords (T v))))) =
+    Complexity.BinArith.encWords
+      (List.map List.ofFn
+        (vs ++
+          [TCSlib.Cryptography.SecureComputation.evalGate
+              (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ N.length) T v g vs]))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord_encoded	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateAppendWord_encoded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord_poly	∀ {E₁ E₂ : List Bool → List Bool},
+  Complexity.PolyTimeComputable E₁ →
+    Complexity.PolyTimeComputable E₂ →
+      Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord E₁ E₂)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.evalGateWord_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_encoded.match_1	(N : List Bool) →
+  (motive : Option (Fin N.length → Bool) → Sort u_1) →
+    (o : Option (Fin N.length → Bool)) → (Unit → motive none) → ((k : Fin N.length → Bool) → motive (some k)) → motive o
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_encoded.match_1	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.untagDefault_encoded.match_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged_poly	∀ {F : List Bool → List Bool},
+  Complexity.PolyTimeComputable F →
+    Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged F)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step_eq	∀ (F : List Bool → List Bool)
+  (w : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step F w =
+    Turing.pairEncode (Complexity.pairSndD (Complexity.pairFstD (Complexity.pairSndD w)))
+      (F
+        (Turing.pairEncode (Complexity.pairFstD w)
+          (Turing.pairEncode (Complexity.pairFstD (Complexity.pairFstD (Complexity.pairSndD w)))
+            (Complexity.pairSndD (Complexity.pairSndD w)))))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.step_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged_eq	∀ (F : List Bool → List Bool)
+  (w : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged F w = if w = [] then [] else F (List.drop 1 w)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged_eq	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.bindTagged_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector_host	∀ {α : Type}
+  (m msg : List Bool → List Bool) (x gate : List Bool) (vs : List α) (code : α → List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector m msg
+      (Turing.pairEncode x (Turing.pairEncode gate (Complexity.BinArith.encWords (List.map code vs)))) =
+    Complexity.BinArith.encWords
+      (if (m x).length ≤ vs.length then
+        Complexity.BinArith.decWords
+          ((Complexity.BinArith.decWords (Complexity.pairFstD (msg x))).getD (vs.length - (m x).length) [])
+      else [])
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector_host	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector_host	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.acc	List Bool → Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.acc	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.RunWithHost.acc	[]
+SIGNATURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1.eq_2	∀
+  (motive : Option (List Bool) → Sort u_1) (m : List Bool) (h_1 : Unit → motive none)
+  (h_2 : (m : List Bool) → motive (some m)),
+  (match some m with
+    | none => h_1 ()
+    | some m => h_2 m) =
+    h_2 m
+AXIOMS	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1.eq_2	[]
+SORRY_CLOSURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.Decryption.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.specialDecTagged.match_1.eq_2	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_poly	∀ {F : List Bool → List Bool},
+  Complexity.PolyTimeComputable F →
+    Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged F)
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_poly	[propext, Classical.choice, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_poly	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_encoded	∀ (E₁ E₂ : List Bool → List Bool)
+  (N : List Bool) (ks : List (Fin N.length → Bool)) (c : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged E₁ E₂
+      (Turing.pairEncode N (Turing.pairEncode (Complexity.BinArith.encWords (List.map List.ofFn ks)) c)) =
+    match (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ N.length).dec ks c with
+    | none => []
+    | some k => true :: List.ofFn k
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_encoded	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.nestedDecTagged_encoded	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded._proof_1_1	∀
+  (pre post : List (List Bool)), ¬pre.length < pre.length + (post.length + 1) → False
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded._proof_1_1	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded._proof_1_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector	(List Bool → List Bool) →
+  (List Bool → List Bool) → List Bool → List Bool
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobTables.tableSelector	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option	∀ (N : List Bool)
+  (o : Option (List Bool)),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged
+      (Turing.pairEncode N
+        (match o with
+        | none => []
+        | some m => true :: m)) =
+    match o.bind (TCSlib.Cryptography.decodeFin N.length) with
+    | none => []
+    | some k => true :: List.ofFn k
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option	[]
+SIGNATURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.EvalGate.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1.eq_1	∀
+  {β : Type} (motive : Option β → Sort u_1) (h_1 : Unit → motive none) (h_2 : (b : β) → motive (some b)),
+  (match none with
+    | none => h_1 ()
+    | some b => h_2 b) =
+    h_1 ()
+AXIOMS	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.EvalGate.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1.eq_1	[]
+SORRY_CLOSURE	_private.TCSlib.Cryptography.SecureComputation.Yao.HybridProof.EvalGate.0.TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_encoded.match_1.eq_1	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_eq	∀ (F : List Bool → List Bool)
+  (z : List Bool),
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged F z =
+    have rows := Complexity.BinArith.decWords (Complexity.pairSndD z);
+    have i :=
+      TCSlib.Cryptography.EncodingMachines.firstIdx
+        (fun j => !decide (F (Turing.pairEncode (Complexity.pairFstD z) (rows.getD j [])) = [])) rows.length;
+    if rows.length ≤ i then [] else F (Turing.pairEncode (Complexity.pairFstD z) (rows.getD i []))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_eq	[propext, Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.firstTagged_eq	[]
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1	(N : List Bool) →
+  (motive : Option (Fin N.length → Bool) → Sort u_1) →
+    (x : Option (Fin N.length → Bool)) → (Unit → motive none) → ((k : Fin N.length → Bool) → motive (some k)) → motive x
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1	[]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.checkFinTagged_option.match_1	[]
+STORED_CONSTANTS 83
+       41.04 real        39.72 user         1.18 sys
+          2241576960  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172024  page reclaims
+                1995  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  90  voluntary context switches
+                3432  involuntary context switches
+        254821190195  instructions retired
+        113588469446  cycles elapsed
+           357066128  peak memory footprint
+END 2026-11-15T22:12:10.836548+00:00

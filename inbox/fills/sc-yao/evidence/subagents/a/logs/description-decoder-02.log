@@ -1,0 +1,50 @@
+START 2026-11-15T21:52:34Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder.lean:161:23: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  scan next output (true, false, false) (encodeList encodeNat args ++ r)
+in the target expression
+  dbl (dbl (List.replicate a true)) ++ [false, false, true, true] ++
+      scan next output (true, false, false) ([] ++ (encodeList encodeNat args ++ r)) =
+    dbl (BinArith.encWords (List.map (fun a => List.replicate a true) (a :: args))) ++
+      false :: true :: ([] ++ scan next output (false, false, true) r)
+
+case cons
+r : List Bool
+a : ℕ
+args : List ℕ
+ih :
+  scan next output (true, false, false) (encodeList encodeNat args ++ r) =
+    dbl (BinArith.encWords (List.map (fun a => List.replicate a true) args)) ++ [false, true] ++
+      scan next output (false, false, true) r
+⊢ dbl (dbl (List.replicate a true)) ++ [false, false, true, true] ++
+      scan next output (true, false, false) ([] ++ (encodeList encodeNat args ++ r)) =
+    dbl (BinArith.encWords (List.map (fun a => List.replicate a true) (a :: args))) ++
+      false :: true :: ([] ++ scan next output (false, false, true) r)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder.lean:160:49: warning: This simp argument is unused:
+  List.singleton_append
+
+Hint: Omit it from the simp argument list.
+  simp only [encodeNat_def, List.append_assoc, List.s̵i̵n̵g̵l̵e̵t̵o̵n̵_̵a̵p̵p̵e̵n̵d̵,̵ ̵L̵i̵s̵t̵.̵cons_append]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder): no fresh .olean produced
+        3.10 real         2.03 user         1.31 sys
+          2215264256  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172360  page reclaims
+                3141  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  24  voluntary context switches
+                8831  involuntary context switches
+            32515565  instructions retired
+            20384048  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T21:52:37Z status=1

@@ -1,0 +1,88 @@
+sc-ot-efficiency f62a25b3:TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Efficiency.lean
+52:theorem headD_eq_pairFstD (hist : List (List Bool)) :
+58:theorem pairSndD_nil' : pairSndD ([] : List Bool) = [] :=
+63:theorem getD_one_eq (hist : List (List Bool)) :
+76:theorem runAtL_eq_layout {A : NUPPT} (hA : A.Uniform) (n : ℕ) (y r : List Bool) :
+81:theorem advInput_layout (n : ℕ) (a r : List Bool) :
+90:def genRaw (z : List Bool) : List Bool :=
+95:theorem genRaw_eq (z : List Bool) :
+99:theorem polyTimeComputable_genRaw : PolyTimeComputable (genRaw T) :=
+107:def maskRaw (z yj bt : List Bool) : List Bool :=
+114:theorem maskRaw_eq (z yj bt : List Bool) :
+126:theorem polyTimeComputable_maskRaw {H : List Bool → List Bool} (hH : PolyTimeComputable H)
+141:def senderRaw (z : List Bool) : List Bool :=
+153:theorem senderRaw_eq (z : List Bool) :
+167:theorem polyTimeComputable_senderRaw {H : List Bool → List Bool} (hH : PolyTimeComputable H) :
+185:theorem genRaw_layout (n : ℕ) (a r : List Bool) :
+191:theorem maskRaw_layout (n : ℕ) (a r yj : List Bool) (c : Bool) :
+198:theorem getD_zero_eq (y : List Bool) : y.getD 0 false = y.headD false := by
+203:theorem getD_one_eq' (y : List Bool) : y.getD 1 false = (y.drop 1).headD false := by
+215:theorem senderRaw_advInput (x y r : List Bool) (hist : List (List Bool)) :
+234:def knownRaw (z : List Bool) : List Bool :=
+240:theorem knownRaw_eq (z : List Bool) :
+248:def rawRaw (z : List Bool) : List Bool :=
+254:theorem rawRaw_eq (z : List Bool) :
+262:def outRaw (z : List Bool) : List Bool :=
+270:theorem outRaw_eq (z : List Bool) :
+280:def pairRaw (z : List Bool) : List Bool :=
+291:theorem pairRaw_eq (z : List Bool) :
+302:def receiverRaw (z : List Bool) : List Bool :=
+310:theorem receiverRaw_eq (z : List Bool) :
+324:theorem polyTimeComputable_receiverRaw {H : List Bool → List Bool} (hH : PolyTimeComputable H) :
+363:theorem knownRaw_layout (n : ℕ) (u r : List Bool) (hist : List (List Bool)) :
+374:theorem rawRaw_layout (n : ℕ) (u r : List Bool) (hist : List (List Bool)) :
+391:theorem receiverRaw_advInput (x z r : List Bool) (hist : List (List Bool)) :
+431:theorem length_runAtL_le (A : NUPPT) {Y : PolyExpr} (n : ℕ) {y r : List Bool}
+439:theorem length_zipWith_singleton_le (w : List Bool) (a : Bool) :
+445:theorem length_mask_le (n : ℕ) (i t yj : List Bool) (a : Bool) :
+458:theorem exists_messages_le {π : Protocol} (hπ : IsOT T H π) :
+531:theorem polyTime_of_isOT {H : List Bool → List Bool} (hH : PolyTimeComputable H) {π : Protocol}
+exit=0
+sc-compose-efficiency bdfdcb76:inbox/fills/sc-compose/src/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Efficiency.lean
+14:The efficiency half of the composition theorem [Gol04, §7.3.1, the protocol of Theorem 7.3.3]:
+18:strategies are efficient and the call inputs are polynomial-time (`HybridProtocol.PolyTime`,
+23:  on the call input (recomputed from the `main`-tape), the run tape cut from the coins and the
+62:def moverW (vF b : Bool) (w : List Bool) : List Bool :=
+66:theorem moverW_eq (vF b : Bool) (w : List Bool) :
+72:theorem polyTimeComputable_moverW (vF b : Bool) : PolyTimeComputable (moverW vF b) := by
+89:`fcall ⟨1^n, ⟨z, ⟨r_{<c₀(n)}, 1^j⟩⟩⟩` (the call input from the `main`-tape), the messages
+92:def runW (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr) (vF b : Bool)
+113:theorem runW_eq (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr) (vF b : Bool)
+138:theorem runW_ilayout (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr) (vF b : Bool)
+154:projections, the unary polynomials `c₀(n)`, `c(n)`, `R(n)` (`unaryPoly_comp`), the call input
+158:theorem polyTimeComputable_runW {Fρ fcall : List Bool → List Bool} (hFρ : PolyTimeComputable Fρ)
+205:def ansW (Fρ fcall : List Bool → List Bool) (c₀ c R L out : PolyExpr) (vF b : Bool)
+213:theorem ansW_eq (Fρ fcall : List Bool → List Bool) (c₀ c R L out : PolyExpr) (vF b : Bool)
+223:theorem polyTimeComputable_ansW {Fρ fcall : List Bool → List Bool} (hFρ : PolyTimeComputable Fρ)
+244:def mainW (Fm ans : List Bool → List Bool) (d : List Bool → ℕ) (c₀ : PolyExpr) (w : List Bool) :
+252:theorem mainW_eq (Fm ans : List Bool → List Bool) (d : List Bool → ℕ) (c₀ : PolyExpr)
+263:theorem mainW_ilayout (Fm ans : List Bool → List Bool) (d : List Bool → ℕ) (c₀ : PolyExpr)
+273:theorem polyTimeComputable_mainW {Fm ans : List Bool → List Bool} (hFm : PolyTimeComputable Fm)
+288:theorem ansW_ilayout (Fρ fcall : List Bool → List Bool) (c₀ c R L out : PolyExpr) (vF b : Bool)
+304:theorem flatten_ofFn_eq_flatMap_range (E : ℕ → List Bool) (L : ℕ) :
+321:`Fm` for `main.P` and `fcall` for her call inputs: with `k` the number of messages received
+328:def composePW (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) : List Bool :=
+344:theorem composePW_eq (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) :
+363:`fcall` for his call inputs: with `c` the number of messages received and `k = c − 1`:
+367:def composeVW (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) : List Bool :=
+384:theorem composeVW_eq (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) :
+403:layout and `fcall` computes Alice's call inputs (the `callA` clause of `HybridProtocol.PolyTime`),
+408:the call input is `runInputA` (`runInputA_of_lt`) and `runW` is `runNextA` (`runW_ilayout`,
+411:theorem composeP_next_eq_composePW {Fρ Fm fcall : List Bool → List Bool}
+456:layout and `fcall` computes Bob's call inputs, then
+462:theorem composeV_next_eq_composeVW {Fρ Fm fcall : List Bool → List Bool}
+508:theorem polyTimeComputable_composePW {Fρ Fm fcall : List Bool → List Bool}
+543:theorem polyTimeComputable_composeVW {Fρ Fm fcall : List Bool → List Bool}
+exit=0
+sc-compose-lengths bdfdcb76:inbox/fills/sc-compose/src/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Lengths.lean
+15:The templates of the reductions of the composition theorem [Gol04, §7.3.1, proof of
+41:private theorem exists_ofFn_eq {c : ℕ} {l : List Bool} (h : l.length = c) :
+51:theorem length_answersA (n : ℕ) (x y rA rB : List Bool) :
+58:theorem length_answersB (n : ℕ) (x y rA rB : List Bool) :
+72:theorem exists_main_msgs_le {F : Functionality} (hH : H.PolyTime F) :
+118:theorem exists_main_outV_le {F : Functionality} (hH : H.PolyTime F) :
+163:theorem exists_main_outP_le {F : Functionality} (hH : H.PolyTime F) :
+212:theorem exists_viewP_le {G : Functionality} {ρ : Protocol} (hρ : G.PolyTime ρ) :
+244:theorem exists_viewV_le {G : Functionality} {ρ : Protocol} (hρ : G.PolyTime ρ) :
+274:theorem exists_runAt_le (S : NUPPT) (k : PolyExpr) :
+exit=0

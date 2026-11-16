@@ -1,0 +1,152 @@
+$ rg -n theorem (viewP_eq|viewV_eq|outV_eq|outP_eq|transcriptWith_eq|transcript_eq)|two.*move|rounds.*const 2 TCSlib/Cryptography/ZeroKnowledge TCSlib/Cryptography/SecureComputation
+TCSlib/Cryptography/SecureComputation/YaoReal.lean:27:  side condition holds because Yao's message phase has two moves.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:44:  (hR : π.rounds = .const 2) (hF : π.verifierFirst = false)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:53:theorem transcriptWith_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:62:theorem transcript_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:71:theorem viewP_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:79:theorem viewV_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:103:theorem outV_eq (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:112:theorem outP_eq (hEcho : ∀ w z r b, π.P.next w z r [b] = b)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TwoMoveViews.lean:121:  (hRounds : H.main.rounds = .const 2) (hFirst : H.main.verifierFirst = false)
+TCSlib/Cryptography/SecureComputation/Compose.lean:40:party two moves in a row (when `R` is odd), and so may the passage from the runs to `main`.
+TCSlib/Cryptography/SecureComputation/Compose.lean:198:theorem moverIsV_false_two_mul (q : ℕ) : moverIsV false (2 * q) = false := by
+TCSlib/Cryptography/SecureComputation/Compose.lean:203:theorem moverIsV_false_two_mul_add_one (q : ℕ) : moverIsV false (2 * q + 1) = true := by
+TCSlib/Cryptography/SecureComputation/Compose.lean:417:  rounds := .add (.add (.mul H.calls (.mul (.const 2) ρ.rounds)) (.const H.lead)) H.main.rounds
+TCSlib/Cryptography/SecureComputation/ComposePhases.lean:284:    simp only [compose_verifierFirst, moverIsV_false_two_mul, moverIsV_false_two_mul_add_one,
+TCSlib/Cryptography/SecureComputation/Yao.lean:539:  rounds := .const 2
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:69:* `TCSlib.Cryptography.Protocol` — two strategies, the number of messages and the first mover
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:421:theorem transcriptWith_eq (π : Protocol) (P' : Strategy) (x y z : List Bool)
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:433:theorem transcript_eq_transcriptWith (π : Protocol) (x y z : List Bool)
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:449:theorem outV_eq (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) :
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:458:theorem outP_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:470:theorem viewV_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:491:theorem viewP_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:501:theorem outV_eq_out (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:505:theorem outP_eq_out (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:509:theorem transcript_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:524:theorem outV_eq_getLast_of_moverIsV (π : Protocol) (P' : Strategy) (x y z : List Bool)
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:234:  rounds := .const 2
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:287:  rounds := .mul (.const 2) .var
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:463:  rounds := .const 2
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:490:  rounds := .mul (.const 2) .var
+
+exit=0
+
+$ git show bdfdcb76:inbox/fills/sc-compose/src/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Runs.lean
+15:Step 2 of the proof of the composition theorem [Gol04, §7.3.1, proof of Theorem 7.3.3]: the coins
+20:those of the hybrid execution on the `main`-tapes (`realA_compose_eq`, `realB_compose_eq`, using
+36:* `HybridProtocol.realA_compose_eq`, `realB_compose_eq`: the real samples under `GoodRuns`.
+52:def splitCoins {m a q b : ℕ} (h : m = a + q * b) :
+58:theorem splitCoins_eq {m a q b : ℕ} (h : m = a + q * b) :
+69:theorem ofFn_blocks_symm (q b : ℕ) (t : Fin q → Fin b → Bool) :
+88:theorem ofFn_splitCoins {m a q b : ℕ} (h : m = a + q * b) (u : Fin a → Bool)
+97:theorem take_ofFn_splitCoins {m a q b : ℕ} (h : m = a + q * b) (u : Fin a → Bool)
+103:theorem runTape_ofFn_splitCoins {m a q b : ℕ} (h : m = a + q * b) (u : Fin a → Bool)
+116:theorem flatMap_range_mul (f : ℕ → List Bool) (R : ℕ) : ∀ L,
+136:theorem composeP_coinLen_eq (n : ℕ) :
+143:theorem composeV_coinLen_eq (n : ℕ) :
+151:def composeCoins (n : ℕ) :
+160:theorem composeCoins_fst (n : ℕ) (m : H.Coins n)
+167:theorem composeCoins_snd (n : ℕ) (m : H.Coins n)
+174:theorem ofFn_composeCoins_fst (n : ℕ) (m : H.Coins n)
+181:theorem ofFn_composeCoins_snd (n : ℕ) (m : H.Coins n)
+197:def inA (n : ℕ) (zA rA : List Bool) (j : ℕ) : List Bool :=
+202:theorem inA_eq (n : ℕ) (zA rA : List Bool) (j : ℕ) :
+208:def inB (n : ℕ) (zB rB : List Bool) (j : ℕ) : List Bool :=
+213:theorem inB_eq (n : ℕ) (zB rB : List Bool) (j : ℕ) :
+219:theorem ofFn_callA_congr {N n : ℕ} (hN : N = n) (zA rA : List Bool) (j : ℕ)
+227:theorem ofFn_callB_congr {N n : ℕ} (hN : N = n) (zB rB : List Bool) (j : ℕ)
+236:theorem runInputA_composeCoins (n : ℕ) (zA : List Bool) (m : H.Coins n)
+250:theorem runInputB_composeCoins (n : ℕ) (zB : List Bool) (m : H.Coins n)
+266:theorem runExec_composeCoins (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
+281:theorem runMsg_composeCoins (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
+297:def GoodRuns (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
+308:theorem goodRuns_iff (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
+325:`ρ.outP` of that run (`Protocol.outP_eq`, `Protocol.transcriptWith_eq`), i.e. `⟦f_A(…)⟧` by
+328:theorem answersRealA_eq_answersA (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
+358:    ← Protocol.transcriptWith_eq, ← Protocol.outP_eq, (hg ⟨j, hjn⟩).1, ofFn_padFin,
+369:theorem answersRealB_eq_answersB (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
+399:    ← Protocol.transcriptWith_eq (π := ρ) (P' := ρ.P), ← Protocol.outV_eq, (hg ⟨j, hjn⟩).2,
+405:theorem mainExec_composeCoins (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
+421:def realViewA (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
+424:    (ρ.viewP (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
+429:theorem realViewA_eq (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
+433:        (ρ.viewP (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
+437:/-- **Bob's encoded views of the honest runs** (as `realViewA`, with `ρ.viewV`). -/
+438:def realViewB (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
+441:    (ρ.viewV (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
+446:theorem realViewB_eq (n : ℕ) (zA zB : List Bool) (m : H.Coins n)
+450:        (ρ.viewV (List.replicate n true) (H.inA n zA (List.ofFn m.1) j)
+459:**Proof sketch.** `compose_viewP` and `compose_outV` (with `hM`) give the view and Bob's output.
+466:theorem realA_compose_eq {F : Functionality} (hM : ∀ n, 0 < H.main.rounds.eval n) (n : ℕ)
+473:          (Strategy.encodeMsgs (H.main.transcript (List.replicate n true)
+496:    rw [dif_pos hjn, realViewA_eq, dif_pos hjn, Protocol.viewP_eq, View.encode_mk,
+510:    rw [realViewA_eq, dif_pos hjn, Protocol.viewP_eq, View.encode_mk, pairSndD_pairEncode,
+511:      pairSndD_pairEncode, Protocol.transcriptWith_eq, exec_eq_map,
+522:  rw [Functionality.realA_eq, compose_viewP, compose_outV H ρ _ _ _ _ (hM _), View.encode_mk,
+525:    Protocol.transcript_eq_transcriptWith, Protocol.transcriptWith_eq, Protocol.outV_eq,
+526:    Protocol.transcriptWith_eq, privB_eq, ← Strategy.coinLen_eq H.main.V, composeCoins_snd,
+534:**Proof sketch.** As `realA_compose_eq`, with `compose_viewV`, `compose_outP`, the second
+536:theorem realB_compose_eq {F : Functionality} (hM : ∀ n, 0 < H.main.rounds.eval n) (n : ℕ)
+543:          (Strategy.encodeMsgs (H.main.transcript (List.replicate n true)
+566:    rw [dif_pos hjn, realViewB_eq, dif_pos hjn, Protocol.viewV_eq, View.encode_mk,
+580:    rw [realViewB_eq, dif_pos hjn, Protocol.viewV_eq, View.encode_mk, pairSndD_pairEncode,
+581:      pairSndD_pairEncode, Protocol.transcriptWith_eq, exec_eq_map,
+593:  rw [Functionality.realB_eq, compose_viewV, compose_outP H ρ _ _ _ _ (hM _), View.encode_mk,
+595:    H.answersRealA_eq_answersA ρ n _ _ m t hg, htape, Protocol.transcript_eq_transcriptWith,
+596:    Protocol.transcriptWith_eq, Protocol.outP_eq, Protocol.transcriptWith_eq, privA_eq,
+exit=0
+
+$ git show bdfdcb76:inbox/fills/sc-compose/src/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean
+15:Steps 1 and 4 of the proof of the composition theorem [Gol04, §7.3.1, proof of Theorem 7.3.3]. A
+54:def simV (v : List Bool) : List Bool :=
+69:theorem simV_pairEncode (n j : ℕ) (α x₁ xin a mt me s : List Bool) :
+81:def vlW (w : List Bool) : List Bool :=
+86:theorem vlW_eq (w : List Bool) :
+94:def phiV (w : List Bool) : List Bool :=
+103:theorem phiV_eq (w : List Bool) :
+116:theorem phiV_view (n : ℕ) (α xin a mt me s : List Bool) :
+139:def phiD (w : List Bool) : List Bool :=
+146:theorem phiD_pairEncode (u α hv o s : List Bool) :
+161:theorem polyTimeComputable_simV (hcall : PolyTimeComputable fcall) :
+187:theorem polyTimeComputable_vlW (hcall : PolyTimeComputable fcall) :
+201:theorem polyTimeComputable_phiV (hcall : PolyTimeComputable fcall) :
+215:theorem polyTimeComputable_phiD (hcall : PolyTimeComputable fcall) :
+228:theorem exists_simulator (SH : NUPPT) (hcall : PolyTimeComputable fcall) :
+240:theorem exists_dPhi (D : NUPPT) (hcall : PolyTimeComputable fcall) :
+exit=0
+
+$ git show f62a25b3:TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Shape.lean
+32:* `OT.transcriptWith_isOT`: the transcript of a protocol of the shape of Protocol 160.4.
+48:def mask (n : ℕ) (i t yj : List Bool) (a : Bool) : List Bool :=
+54:theorem mask_eq (n : ℕ) (i t yj : List Bool) (a : Bool) :
+62:def senderNext (x y r : List Bool) (hist : List (List Bool)) : List Bool :=
+76:theorem senderNext_eq (x y r : List Bool) (hist : List (List Bool)) :
+91:def receiverNext (x z r : List Bool) (hist : List (List Bool)) : List Bool :=
+110:theorem receiverNext_eq (x z r : List Bool) (hist : List (List Bool)) :
+130:def IsOT (π : Protocol) : Prop :=
+138:theorem isOT_iff (π : Protocol) :
+147:theorem senderNext_nil (x y r : List Bool) :
+153:theorem senderNext_single (x y r m : List Bool) :
+163:theorem senderNext_pair (x y r m m' : List Bool) : senderNext T H x y r [m, m'] = [] := by
+170:theorem receiverNext_single (x z r i : List Bool) :
+184:theorem receiverNext_pair (x z r m m' : List Bool) : receiverNext T H x z r [m, m'] = [] := by
+192:theorem exec_five (P V : Strategy) (x zP zV rP rV : List Bool) {m₁ m₂ m₃ m₄ m₅ : List Bool}
+200:/-- **The transcript of a protocol of the shape of Protocol 160.4**: with
+203:theorem transcriptWith_isOT {π : Protocol} (hπ : IsOT T H π) (x y z : List Bool)
+205:    π.transcriptWith π.P x y z r =
+212:  rw [Protocol.transcriptWith_eq, hr, hf, PolyExpr.eval_const]
+exit=0
+
+$ git show f62a25b3:TCSlib/Cryptography/SecureComputation/ObliviousTransfer/ViewA.lean
+25:* `OT.realA_realCoins`, `OT.idealA_simACoins`: Alice's real and ideal samplers on typed coins.
+26:* `OT.distAdv_realA_idealA_le`: the bound `2δ(n)` on Alice's side.
+43:theorem statClose_prod_of_forall {ρ σ τ γ : Type*} [Fintype ρ] [Fintype σ] [Fintype τ]
+58:theorem statClose_eval_sample {δ : ℕ → ℝ} (hδ : T.SampleClose δ) (n : ℕ) (r : T.gen.Coins n) :
+93:theorem realA_realCoins {π : Protocol} (hπ : IsOT T H π)
+113:  rw [Functionality.realA_eq, Protocol.viewP_eq, View.encode_mk, transcriptWith_isOT T H hπ,
+122:theorem idealA_simACoins {S : NUPPT} (hS : IsSimA T S) (n : ℕ)
+142:`W` (`realA_realCoins`, `idealA_simACoins`). For each `r`, `y_real` is `2δ(n)`-close to `y_sim`:
+146:theorem distAdv_realA_idealA_le {π : Protocol} (hπ : IsOT T H π)
+158:  simp only [realA_realCoins T H hπ hout, idealA_simACoins T hS]
+exit=0

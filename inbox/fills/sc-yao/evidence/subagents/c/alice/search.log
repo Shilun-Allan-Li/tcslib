@@ -1,0 +1,101 @@
+$ rg -n simA|simulator|View.encode_mk TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism TCSlib/Cryptography/SecureComputation/Defs.lean TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
+TCSlib/Cryptography/SecureComputation/Defs.lean:18:`f(x, y)` in the honest-but-curious model if there are non-uniform PPT simulators `S_A`, `S_B`
+TCSlib/Cryptography/SecureComputation/Defs.lean:172:(`Functionality.PolyTime`; see the module docstring), and there are non-uniform PPT simulators
+TCSlib/Cryptography/SecureComputation/Defs.lean:182:/-- Honest-but-curious security consists of polynomial time and two simulators whose
+
+exit=0
+
+$ git show f62a25b3:TCSlib/Cryptography/SecureComputation/ObliviousTransfer/Simulators.lean
+16:the coin segments, the simulated index and samples, and the two simulated views, with the
+18:On a tape assembled from typed coin blocks (`OT.splitLen`), the simulated views are computed
+19:explicitly (`OT.simAView_layout`, `OT.simBView_layout`).
+26:* `OT.simAView`, `OT.simZbit`, `OT.simZpair`, `OT.simBView`: the simulators' raw functions (the
+34:* `OT.simAView_layout`, `OT.simBView_layout`: the simulated views on such a tape.
+52:def splitLen {a b c : ℕ} (h : c = a + b) : (Fin c → Bool) ≃ (Fin a → Bool) × (Fin b → Bool) :=
+57:theorem splitLen_symm_ofFn {a b c : ℕ} (h : c = a + b) (p : (Fin a → Bool) × (Fin b → Bool)) :
+66:def simSeg (p q : PolyExpr) (z : List Bool) : List Bool :=
+71:theorem simSeg_eq (p q : PolyExpr) (z : List Bool) :
+78:def simIndex (z : List Bool) : List Bool :=
+84:theorem simIndex_eq (z : List Bool) :
+90:def simSampled (p : PolyExpr) (z : List Bool) : List Bool :=
+95:theorem simSampled_eq (p : PolyExpr) (z : List Bool) :
+101:`simAView T z = ⟨⟨1^n, ⟨a₁, a₂⟩⟩, ⟨r_Gen, [⟨y₁, y₂⟩, []]⟩⟩` with two simulated samples
+103:def simAView (z : List Bool) : List Bool :=
+110:/-- The defining equation of `simAView`: `simAView T z = ⟨⟨inParam z, fst (inArg z)⟩,
+112:theorem simAView_eq (z : List Bool) :
+113:    simAView T z =
+121:def simZbit (z : List Bool) : List Bool :=
+127:theorem simZbit_eq (z : List Bool) :
+134:def simZpair (z : List Bool) : List Bool :=
+144:theorem simZpair_eq (z : List Bool) :
+155:def simBView (z : List Bool) : List Bool :=
+162:theorem simBView_eq (z : List Bool) :
+169:`S(1^n, y; r) = simAView T (layout 1^n y [] r)`. -/
+170:def IsSimA (S : NUPPT) : Prop :=
+173:      S.runAt n y r = simAView T (NUPPT.layout (List.replicate n true) y [] (List.ofFn r))
+176:coins_Sample)` and `S(1^n, y; r) = simAView T (layout 1^n y [] r)`. -/
+177:theorem isSimA_iff (S : NUPPT) :
+181:          S.runAt n y r = simAView T (NUPPT.layout (List.replicate n true) y [] (List.ofFn r)) :=
+186:def IsSimB (S : NUPPT) : Prop :=
+193:theorem isSimB_iff (S : NUPPT) :
+203:theorem simSeg_layout {p q : PolyExpr} (u y α : List Bool) {A B : List Bool} (C : List Bool)
+210:theorem length_ofFn_coins (A : NUPPT) (n : ℕ) (r : A.Coins n) :
+216:theorem simIndex_layout (n : ℕ) (y : List Bool) (r : T.gen.Coins n) (B : List Bool) :
+227:theorem simSampled_layout {p : PolyExpr} (n : ℕ) (y : List Bool) (r : T.gen.Coins n)
+240:/-- **`S_A`'s view on the tape `r ++ (s₁ ++ s₂)`**:
+242:theorem simAView_layout (n : ℕ) (y : List Bool) (r : T.gen.Coins n)
+244:    simAView T (NUPPT.layout (List.replicate n true) y []
+263:  rw [simAView_eq, NUPPT.inParam_layout, NUPPT.inArg_layout, h₀, h₁, h₂]
+265:/-- **`S_B`'s view on the tape `r ++ (s₁ ++ (s₂ ++ c))`**:
+272:theorem simBView_layout (n : ℕ) (y : List Bool) (r : T.gen.Coins n)
+313:def realCoins {π : Protocol} (hπ : IsOT T H π) (n : ℕ) :
+325:theorem realCoins_symm_fst_ofFn {π : Protocol} (hπ : IsOT T H π) (n : ℕ)
+333:theorem realCoins_symm_snd_ofFn {π : Protocol} (hπ : IsOT T H π) (n : ℕ)
+340:def simACoins {S : NUPPT} (hS : IsSimA T S) (n : ℕ) :
+346:/-- `S_A`'s tape from blocks: `ofFn ((simACoins hS n).symm p) = ofFn p.1 ++ (ofFn p.2.1 ++
+348:theorem simACoins_symm_ofFn {S : NUPPT} (hS : IsSimA T S) (n : ℕ)
+350:    List.ofFn ((simACoins T hS n).symm p) =
+352:  rw [simACoins, Equiv.symm_trans_apply, splitLen_symm_ofFn, Equiv.prodCongr_symm,
+358:def simBCoins {S : NUPPT} (hS : IsSimB T H S) (n : ℕ) :
+368:theorem simBCoins_symm_ofFn {S : NUPPT} (hS : IsSimB T H S) (n : ℕ)
+380:theorem inA_eval (n : ℕ) : otFunctionality.inA.eval n = 2 := by
+384:theorem inB_eval (n : ℕ) : otFunctionality.inB.eval n = 1 := by
+388:def inA2 {n : ℕ} (a : Fin (otFunctionality.inA.eval n) → Bool) : Fin 2 → Bool :=
+392:theorem inA2_apply {n : ℕ} (a : Fin (otFunctionality.inA.eval n) → Bool) (j : Fin 2) :
+396:theorem ofFn_inA2 {n : ℕ} (a : Fin (otFunctionality.inA.eval n) → Bool) :
+401:def inB1 {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) : Fin 1 → Bool :=
+405:theorem inB1_apply {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) (j : Fin 1) :
+409:theorem ofFn_inB1 {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) :
+414:theorem ofFn_eq_inB1 {n : ℕ} (b : Fin (otFunctionality.inB.eval n) → Bool) :
+419:theorem ofFn_f_fst (n : ℕ) (a : Fin (otFunctionality.inA.eval n) → Bool)
+427:theorem ofFn_f_snd (n : ℕ) (a : Fin (otFunctionality.inA.eval n) → Bool)
+exit=0
+
+$ git show bdfdcb76:inbox/fills/sc-compose/src/TCSlib/Cryptography/SecureComputation/ComposeSecurity/Sim.lean
+15:Steps 1 and 4 of the proof of the composition theorem [Gol04, §7.3.1, proof of Theorem 7.3.3]. A
+17:`hv`, read as a view of `main` with private input `⟨x, a⟩`, `main`-tape `mt` and messages `me`:
+20:assembles the view of `H.compose ρ` (`ComposeSim.asmView`). The same post-processing applied to
+27:* `ComposeSim.phiV`: the post-processing of a view; `ComposeSim.phiD`: of a sample `⟨view, out⟩`.
+31:* `ComposeSim.phiV_view`: `phiV` on an encoded view of `main` with input `1^n` is the assembled
+32:  view of the simulated runs.
+51:`S^ρ`, `hv = ⟨⟨x₁, ⟨xin, a⟩⟩, ⟨mt, me⟩⟩` a view, `s` the fresh coins), `S^ρ`'s output on the
+54:def simV (v : List Bool) : List Bool :=
+69:theorem simV_pairEncode (n j : ℕ) (α x₁ xin a mt me s : List Bool) :
+81:def vlW (w : List Bool) : List Bool :=
+86:theorem vlW_eq (w : List Bool) :
+91:/-- **The post-processing of a view** (`Φ` on views): on `w = ⟨⟨1^n, α⟩, ⟨hv, s⟩⟩` with
+92:`hv = ⟨⟨x₁, ⟨xin, a⟩⟩, ⟨mt, me⟩⟩`, the assembled view (`asmW`) of `x₁`, `xin`, `mt`, `me` and the
+94:def phiV (w : List Bool) : List Bool :=
+103:theorem phiV_eq (w : List Bool) :
+112:/-- **`phiV` on a view of `main` with common input `1^n`**: on
+116:theorem phiV_view (n : ℕ) (α xin a mt me s : List Bool) :
+137:/-- **The post-processing of a sample** (`Φ` on samples `⟨view, out⟩`): on
+139:def phiD (w : List Bool) : List Bool :=
+146:theorem phiD_pairEncode (u α hv o s : List Bool) :
+161:theorem polyTimeComputable_simV (hcall : PolyTimeComputable fcall) :
+187:theorem polyTimeComputable_vlW (hcall : PolyTimeComputable fcall) :
+201:theorem polyTimeComputable_phiV (hcall : PolyTimeComputable fcall) :
+215:theorem polyTimeComputable_phiD (hcall : PolyTimeComputable fcall) :
+228:theorem exists_simulator (SH : NUPPT) (hcall : PolyTimeComputable fcall) :
+240:theorem exists_dPhi (D : NUPPT) (hcall : PolyTimeComputable fcall) :
+exit=0

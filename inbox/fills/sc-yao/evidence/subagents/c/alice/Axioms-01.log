@@ -1,0 +1,114 @@
+START 2026-11-15T22:21:19.975663+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.raw (z : List Bool) : List Bool
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.raw' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.raw_eq (z : List Bool) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.raw z =
+    Turing.pairEncode
+      (Turing.pairEncode (Complexity.NUPPT.inParam z)
+        (Turing.pairEncode (Complexity.pairFstD (Complexity.NUPPT.inArg z)) []))
+      (Turing.pairEncode (Complexity.NUPPT.inCoins z)
+        (TCSlib.Cryptography.Strategy.encodeMsgs [Complexity.pairSndD (Complexity.NUPPT.inArg z)]))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.raw_eq' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.polyTimeComputable_raw :
+  Complexity.PolyTimeComputable TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.raw
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.polyTimeComputable_raw' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator (coins : Complexity.PolyExpr) :
+  Complexity.NUPPT
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_eq (coins : Complexity.PolyExpr) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator coins =
+    Complexity.NUPPT.ofPolyTimeUniform
+      TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.polyTimeComputable_raw coins
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_uniform (coins : Complexity.PolyExpr) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator coins).Uniform
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_uniform' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_coins (coins : Complexity.PolyExpr) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator coins).coins = coins
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_coins' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_runAtL (coins : Complexity.PolyExpr)
+  (n : ℕ) (x f r : List Bool) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator coins).runAtL n (Turing.pairEncode x f)
+      r =
+    { x := List.replicate n true, z := Turing.pairEncode x [], r := r, received := [f] }.encode
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_runAtL' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.statClose_real_ideal.{u_1, u_2}
+  (coins : Complexity.PolyExpr) (F : TCSlib.Cryptography.SecureComputation.Functionality) (n : ℕ)
+  (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) {σ : Type u_1} {τ : Type u_2} [Fintype σ] [Fintype τ]
+  [Nonempty τ] (e : σ ≃ (TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator coins).Coins n)
+  (real : σ × τ → List Bool) (Bad : σ → Prop) (δ : ℝ) (hBad : TCSlib.Cryptography.uprob Bad ≤ δ)
+  (hReal :
+    ∀ (r : σ × τ),
+      ¬Bad r.1 →
+        real r =
+          Turing.pairEncode
+            { x := List.replicate n true, z := Turing.pairEncode (List.ofFn x) [], r := List.ofFn (e r.1),
+                received := [List.ofFn (F.f n x y).1] }.encode
+            (List.ofFn (F.f n x y).2)) :
+  TCSlib.Cryptography.StatClose real
+    (F.idealA (TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator coins) n x y) δ
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.statClose_real_ideal' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.distAdv_real_ideal_le.{u_1, u_2, u_3}
+  (coins : Complexity.PolyExpr) (F : TCSlib.Cryptography.SecureComputation.Functionality) (n : ℕ)
+  (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) {σ : Type u_1} {τ : Type u_2} {ρ : Type u_3}
+  [Fintype σ] [Fintype τ] [Nonempty τ] [Fintype ρ]
+  (e : σ ≃ (TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator coins).Coins n)
+  (real : σ × τ → List Bool) (Bad : σ → Prop) (δ : ℝ) (hBad : TCSlib.Cryptography.uprob Bad ≤ δ)
+  (hReal :
+    ∀ (r : σ × τ),
+      ¬Bad r.1 →
+        real r =
+          Turing.pairEncode
+            { x := List.replicate n true, z := Turing.pairEncode (List.ofFn x) [], r := List.ofFn (e r.1),
+                received := [List.ofFn (F.f n x y).1] }.encode
+            (List.ofFn (F.f n x y).2))
+  (D : List Bool → ρ → Bool) :
+  TCSlib.Cryptography.distAdv real
+      (F.idealA (TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator coins) n x y) D ≤
+    δ
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.distAdv_real_ideal_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.raw: closure=59 sorried=[]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.raw_eq: closure=63 sorried=[]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.polyTimeComputable_raw: closure=4256 sorried=[]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator: closure=4279 sorried=[]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_eq: closure=4280 sorried=[]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_uniform: closure=4284 sorried=[]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_coins: closure=4283 sorried=[]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.simulator_runAtL: closure=4305 sorried=[]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.statClose_real_ideal: closure=13235 sorried=[]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.AliceSimulator.distAdv_real_ideal_le: closure=14174 sorried=[]
+        6.11 real         4.73 user         1.09 sys
+          2194259968  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              169867  page reclaims
+                4301  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 188  voluntary context switches
+                8074  involuntary context switches
+            31942075  instructions retired
+            15887010  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-15T22:21:26.120632+00:00 exit=0

@@ -1,0 +1,27 @@
+START 2026-11-16T00:07:03.293533+00:00
+evidence/readers/isFaninTwo_iff_rfl_sealed.lean:10:45: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.25 ↔ ?m.25
+but is expected to have type
+  C.IsFaninTwo ↔
+    (∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = GateKind.not → g.args.length = 1)) ∧ ∀ g ∈ C.gates, g.args.length ≤ 2
+        1.42 real         0.74 user         0.66 sys
+          1375600640  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              109959  page reclaims
+                   4  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                1287  involuntary context switches
+         11978773230  instructions retired
+          3849544661  cycles elapsed
+           230085192  peak memory footprint
+END 2026-11-16T00:07:04.784783+00:00

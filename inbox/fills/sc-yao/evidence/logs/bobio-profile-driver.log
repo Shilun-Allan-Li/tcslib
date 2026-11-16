@@ -1,0 +1,127 @@
+START 2026-11-15T21:49:26.687851+00:00 evidence/probes/BobIOProfile
+END evidence/probes/BobIOProfile exit 1 errors 5
+tWord p) ?_ ?_
+      · refine (polyTimeComputable_ite ht hb (polyTimeComputable_const [false])).congr ?_
+        intro w
+        by_cases h : (pairFstD w).length < p.eval (pairFstD (pairSndD w)).length <;>
+          simp only [outputWord_getD, h, decide_true, decide_false, Bool.true_eq_true, Bool.false_eq_true, if_true,
+            if_false]
+      ·
+        exact
+          ((polyTimeComputable_unaryPoly p).comp polyTimeComputable_pairFstD).congr fun z => by rw [length_outputWord]
+  [Elab.definition.value] [0.017425] TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobIO.outputWord_poly
+    [Elab.step] [0.017026] 
+          have hn : PolyTimeComputable fun w => List.replicate (p.eval (pairFstD (pairSndD w)).length) true :=
+            (polyTimeComputable_unaryPoly p).comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+          have ht := EncodingMachines.ltTest_poly (EncodingMachines.unaryLength_poly polyTimeComputable_pairFstD) hn
+          have hb :
+            PolyTimeComputable fun w =>
+              [outputBit (pairEncode (pairSndD w) (List.replicate (pairFstD w).length true))] :=
+            outputBit_poly.comp
+              (polyTimeComputable_pairSndD.pairEncode (polyTimeComputable_unary.comp polyTimeComputable_pairFstD))
+          refine EncodingMachines.polyTimeComputable_of_getD (F := outputWord p) ?_ ?_
+          · refine (polyTimeComputable_ite ht hb (polyTimeComputable_const [false])).congr ?_
+            intro w
+            by_cases h : (pairFstD w).length < p.eval (pairFstD (pairSndD w)).length <;>
+              simp only [outputWord_getD, h, decide_true, decide_false, Bool.true_eq_true, Bool.false_eq_true, if_true,
+                if_false]
+          ·
+            exact
+              ((polyTimeComputable_unaryPoly p).comp polyTimeComputable_pairFstD).congr fun z => by
+                rw [length_outputWord]
+      [Elab.step] [0.017012] 
+            have hn : PolyTimeComputable fun w => List.replicate (p.eval (pairFstD (pairSndD w)).length) true :=
+              (polyTimeComputable_unaryPoly p).comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+            have ht := EncodingMachines.ltTest_poly (EncodingMachines.unaryLength_poly polyTimeComputable_pairFstD) hn
+            have hb :
+              PolyTimeComputable fun w =>
+                [outputBit (pairEncode (pairSndD w) (List.replicate (pairFstD w).length true))] :=
+              outputBit_poly.comp
+                (polyTimeComputable_pairSndD.pairEncode (polyTimeComputable_unary.comp polyTimeComputable_pairFstD))
+            refine EncodingMachines.polyTimeComputable_of_getD (F := outputWord p) ?_ ?_
+            · refine (polyTimeComputable_ite ht hb (polyTimeComputable_const [false])).congr ?_
+              intro w
+              by_cases h : (pairFstD w).length < p.eval (pairFstD (pairSndD w)).length <;>
+                simp only [outputWord_getD, h, decide_true, decide_false, Bool.true_eq_true, Bool.false_eq_true,
+                  if_true, if_false]
+            ·
+              exact
+                ((polyTimeComputable_unaryPoly p).comp polyTimeComputable_pairFstD).congr fun z => by
+                  rw [length_outputWord]
+BEGIN outputBit_layout
+[Elab.command] [0.186415] #eval IO.eprintln "BEGIN outputBit_layout"
+evidence/probes/BobIOProfile.lean:201:37: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+[Elab.command] [0.039290] /-- On encoded `n`-bit values, decoding pairs and unary output vertices, the bit reader
+    compares the value at `outs j` with the `j`-th pair. The vertex must be in the value list.
+    
+    **Proof sketch.** The public word-list lookup equations read the output vertex and the
+    pair. The vertex is encoded in unary, so its leading ones give its value. In-range lookup
+    in the encoded value list returns the list of the selected bit vector, and padding this
+    list leaves it unchanged. -/
+    theorem outputBit_layout {n k : ℕ} (vs : List (Fin n → Bool)) (ps : List (List Bool)) (outs : Fin k → ℕ) (j : Fin k)
+        (hv : outs j < vs.length) :
+        outputBit
+            (pairEncode
+              (pairEncode (List.replicate n true)
+                (pairEncode (BinArith.encWords (vs.map List.ofFn))
+                  (pairEncode (BinArith.encWords ps)
+                    (BinArith.encWords (List.ofFn fun i => BoolCircuit.encodeNat (outs i))))))
+              (List.replicate j true)) =
+          if List.ofFn (vs.getD (outs j) default) = pairFstD (ps.getD j []) then false
+          else decide (List.ofFn (vs.getD (outs j) default) = pairSndD (ps.getD j [])) :=
+      by
+      have ho : (List.ofFn fun i => BoolCircuit.encodeNat (outs i)).getD j [] = BoolCircuit.encodeNat (outs j) := by
+        rw [List.getD_eq_getElem _ _ (by simpa using j.isLt), List.getElem_ofFn]
+      have hk : (vs.map List.ofFn).getD (outs j) [] = List.ofFn (vs.getD (outs j) default) := by
+        rw [List.getD_eq_getElem _ _ (by simpa using hv), List.getElem_map, List.getD_eq_getElem _ _ hv]
+      have hu := BinArith.uHead_encodeNat (outs j) []
+      rw [List.append_nil] at hu
+      simp only [outputBit_eq, pairFstD_pairEncode, pairSndD_pairEncode, BinArith.getW_pairEncode,
+        List.length_replicate, ho, hu]
+      rw [hk, ← EnsembleLemmas.ofFn_padFin_eq_padL, padFin_ofFn]
+  [Elab.definition.value] [0.025368] TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobIO.outputBit_layout
+    [Elab.step] [0.024495] 
+          have ho : (List.ofFn fun i => BoolCircuit.encodeNat (outs i)).getD j [] = BoolCircuit.encodeNat (outs j) := by
+            rw [List.getD_eq_getElem _ _ (by simpa using j.isLt), List.getElem_ofFn]
+          have hk : (vs.map List.ofFn).getD (outs j) [] = List.ofFn (vs.getD (outs j) default) := by
+            rw [List.getD_eq_getElem _ _ (by simpa using hv), List.getElem_map, List.getD_eq_getElem _ _ hv]
+          have hu := BinArith.uHead_encodeNat (outs j) []
+          rw [List.append_nil] at hu
+          simp only [outputBit_eq, pairFstD_pairEncode, pairSndD_pairEncode, BinArith.getW_pairEncode,
+            List.length_replicate, ho, hu]
+          rw [hk, ← EnsembleLemmas.ofFn_padFin_eq_padL, padFin_ofFn]
+      [Elab.step] [0.024481] 
+            have ho : (List.ofFn fun i => BoolCircuit.encodeNat (outs i)).getD j [] = BoolCircuit.encodeNat (outs j) :=
+              by rw [List.getD_eq_getElem _ _ (by simpa using j.isLt), List.getElem_ofFn]
+            have hk : (vs.map List.ofFn).getD (outs j) [] = List.ofFn (vs.getD (outs j) default) := by
+              rw [List.getD_eq_getElem _ _ (by simpa using hv), List.getElem_map, List.getD_eq_getElem _ _ hv]
+            have hu := BinArith.uHead_encodeNat (outs j) []
+            rw [List.append_nil] at hu
+            simp only [outputBit_eq, pairFstD_pairEncode, pairSndD_pairEncode, BinArith.getW_pairEncode,
+              List.length_replicate, ho, hu]
+            rw [hk, ← EnsembleLemmas.ofFn_padFin_eq_padL, padFin_ofFn]
+FAIL(evidence/probes/BobIOProfile): lean exited with status 1
+FAIL(evidence/probes/BobIOProfile): error diagnostics reported
+FAIL(evidence/probes/BobIOProfile): no fresh .olean produced
+       11.04 real         8.33 user         1.50 sys
+          2194522112  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              146127  page reclaims
+               28592  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1824  voluntary context switches
+               27048  involuntary context switches
+            31902185  instructions retired
+            25296216  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T21:49:37.772395+00:00 EXIT 1
+

@@ -1,0 +1,19 @@
+Transcription of the read-only exec tool observation while AllTables-02 was running.
+The original command returned these values to the tool transcript rather than a disk log.
+Command: ps -axo pid,ppid,rss,etime,command | rg 'lean .*AllTables|lean_check_tree.sh.*AllTables'; vm_stat
+
+Lean PID: 29486; parent: 29478; RSS KiB: 2170592; elapsed: 01:12.
+Command: /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/bin/lean TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables.lean -o /Users/seyoonr/.codex/worktrees/sc-yao-a/tcslib-exchange/.lake/sc-yao-oleans/TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables.olean
+
+Mach Virtual Memory Statistics: page size 16384 bytes
+Pages free: 31916
+Pages inactive: 322631
+Pages speculative: 9256
+Pages purgeable: 7522
+Headroom = (31916 + 322631 + 9256 + 7522) * 16384 = 6083788800 bytes.
+Headroom GiB = 5.6659698486328125; minimum 4 GiB: PASS.
+
+Later own-PID interrupt attempt, after source-directed debugging authorization:
+ps -p 29486 -o pid,ppid,command returned only its header.
+kill -INT 29486 failed: no such process.
+The check had already completed itself with status 1. No process was killed.

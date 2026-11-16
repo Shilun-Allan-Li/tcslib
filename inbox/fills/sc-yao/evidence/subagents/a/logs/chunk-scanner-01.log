@@ -1,0 +1,57 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner.lean:143:19: error: Application type mismatch: The argument
+  Phase = Bool
+has type
+  Prop
+of sort `Type` but is expected to have type
+  Type ?u.1157
+of sort `Type (?u.1157 + 1)` in the application
+  Prod (Phase = Bool)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner.lean:157:82: error: unsolved goals
+case h.e'_1.h
+o : Phase → Bool → List Bool
+w : List Bool
+⊢ (if pairSndD w = [] then []
+    else
+      o ((pairFstD w).headD false, (List.drop 1 (pairFstD w)).headD false, (List.drop 2 (pairFstD w)).headD false)
+        ((pairSndD w).headD false)) =
+    if pairSndD w = [] then []
+    else
+      o
+        ((pairFstD w).headD false, (((fun w => List.drop 1 w) ∘ pairFstD) w).headD false,
+          (((fun w => List.drop 2 w) ∘ pairFstD) w).headD false)
+        ((pairSndD w).headD false)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner.lean:234:48: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [List.headD_nil, List.drop_nil, i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵,̵ ̵List.nil_append, scan_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner.lean:234:60: warning: This simp argument is unused:
+  List.nil_append
+
+Hint: Omit it from the simp argument list.
+  simp only [List.headD_nil, List.drop_nil, if_pos rfl, L̵i̵s̵t̵.̵n̵i̵l̵_̵a̵p̵p̵e̵n̵d̵,̵ ̵scan_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/ChunkScanner): no fresh .olean produced
+        1.92 real         1.51 user         0.87 sys
+          1539342336  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              125904  page reclaims
+                 337  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  59  voluntary context switches
+                6586  involuntary context switches
+            33318605  instructions retired
+            17002978  cycles elapsed
+             1638736  peak memory footprint

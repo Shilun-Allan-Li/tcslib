@@ -1,0 +1,62 @@
+START 2026-11-15T22:26:04Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables.lean:195:2: error: unsolved goals
+case pos.h
+E₁ E₂ : List Bool → List Bool
+width bound inputs : List Bool → ℕ
+gates coins : List Bool → List Bool
+i : ℕ
+z : List Bool
+w : List Bool := pairEncode (List.replicate i true) z
+record : List Bool → List Bool := fun v => BinArith.getW (pairEncode (pairFstD v) (gates (pairSndD v)))
+record' : List Bool → List Bool := fun v => BinArith.getW (pairEncode (List.replicate i true) (gates v))
+count : ℕ := (BinArith.decWords (pairSndD (record' z))).length
+left : ℕ → List Bool :=
+  fun l =>
+    BinArith.encWords
+      (List.map
+        (fun a =>
+          RowFromCoins.rowWord E₁ E₂ (fun v => width (pairSndD v)) (fun v => bound (pairSndD v))
+            (fun v => inputs (pairSndD v)) (fun v => (pairFstD v).length) (fun v => pairFstD (record v))
+            (fun v => pairSndD (record v)) (fun v => coins (pairSndD v)) l a w)
+        Finset.univ.toList)
+right : ℕ → List Bool :=
+  fun l =>
+    BinArith.encWords
+      (List.map
+        (fun a =>
+          RowFromCoins.rowWord E₁ E₂ width bound inputs (fun x => i) (fun v => pairFstD (record' v))
+            (fun v => pairSndD (record' v)) coins l a z)
+        Finset.univ.toList)
+hrecord : record w = record' z
+h : count ≤ 2
+a : Fin (min count 2) → Bool
+a✝ : a ∈ Finset.univ.toList
+⊢ RowFromCoins.rowWord E₁ E₂ (fun x => width z) (fun x => bound z) (fun x => inputs z) (fun x => i)
+      (fun x => pairFstD (BinArith.getW (pairEncode (List.replicate i true) (gates z))))
+      (fun x => pairSndD (BinArith.getW (pairEncode (List.replicate i true) (gates z)))) (fun x => coins z)
+      (min count 2) a [] =
+    RowFromCoins.rowWord E₁ E₂ width bound inputs (fun x => i)
+      (fun v => pairFstD (BinArith.getW (pairEncode (List.replicate i true) (gates v))))
+      (fun v => pairSndD (BinArith.getW (pairEncode (List.replicate i true) (gates v)))) coins (min count 2) a z
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables): no fresh .olean produced
+        6.59 real         5.43 user         1.25 sys
+          2223882240  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              175359  page reclaims
+                1488  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 131  voluntary context switches
+                4776  involuntary context switches
+            32335510  instructions retired
+            19947000  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T22:26:10Z status=1

@@ -1,0 +1,37 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences.lean:77:45: error: Application type mismatch: The argument
+  h
+has type
+  List.find? (fun p => decide (g.args[↑p] = u ∧ a p = true)) (List.finRange g.args.length) = some p
+but is expected to have type
+  List.find? (@decide (g.args[↑p] = u ∧ a p = true)) ?m.43 = some ?m.39
+in the application
+  List.find?_some h
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences.lean:84:41: error: Application type mismatch: The argument
+  hq
+has type
+  List.find? (fun p_1 => decide (g.args[↑p_1] = u ∧ a p_1 = true)) (List.finRange g.args.length) = some q
+but is expected to have type
+  List.find? (@decide (g.args[↑q] = u ∧ a q = true)) ?m.132 = some ?m.128
+in the application
+  List.find?_some hq
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/GateOccurrences): no fresh .olean produced
+        1.94 real         1.15 user         0.81 sys
+          1522958336  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              125029  page reclaims
+                 100  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  31  voluntary context switches
+                4107  involuntary context switches
+            32645165  instructions retired
+            15501003  cycles elapsed
+             1638736  peak memory footprint

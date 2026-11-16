@@ -1,0 +1,122 @@
+START 2026-11-15T23:40:58.963292+00:00 evidence/probes/EfficiencyBob
+evidence/probes/EfficiencyBob.lean:28:36: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  yaoBobInit ?Y ?n ?msg ?ans
+in the target expression
+  BinArith.encWords (List.map List.ofFn ((fun w => yaoBobInit Y (GI.argX w).length (msg w) (ans w)) w)) =
+    BinArith.encWords
+      (List.ofFn fun v =>
+        if ↑v < (List.replicate (Y.inA.eval (GI.argX w).length) true).length then
+          List.ofFn
+            (padFin (List.replicate (GI.argX w).length true).length
+              ((BinArith.decWords (pairFstD (pairSndD (pairFstD (GI.argM w))))).getD ↑v []))
+        else
+          List.ofFn fun t =>
+            (pairSndD (GI.argZ w)).getD
+              ((↑v - (List.replicate (Y.inA.eval (GI.argX w).length) true).length) *
+                  (List.replicate (GI.argX w).length true).length +
+                ↑t)
+              false)
+
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+gen : List Bool → List Bool
+hgen : PolyTimeComputable gen
+hgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)
+hdesc :
+  ∀ (n : ℕ),
+    gen (List.replicate n true) =
+      pairEncode (Y.circ n).encode (BinArith.encWords (List.ofFn fun j => encodeNat (Y.outs n j)))
+msg : List Bool → List Bool := fun w => pairFstD (GI.argM w)
+ans : List Bool → List Bool := fun w => pairSndD (GI.argZ w)
+w : List Bool
+⊢ BinArith.encWords (List.map List.ofFn ((fun w => yaoBobInit Y (GI.argX w).length (msg w) (ans w)) w)) =
+    BinArith.encWords
+      (List.ofFn fun v =>
+        if ↑v < (List.replicate (Y.inA.eval (GI.argX w).length) true).length then
+          List.ofFn
+            (padFin (List.replicate (GI.argX w).length true).length
+              ((BinArith.decWords (pairFstD (pairSndD (pairFstD (GI.argM w))))).getD ↑v []))
+        else
+          List.ofFn fun t =>
+            (pairSndD (GI.argZ w)).getD
+              ((↑v - (List.replicate (Y.inA.eval (GI.argX w).length) true).length) *
+                  (List.replicate (GI.argX w).length true).length +
+                ↑t)
+              false)
+evidence/probes/EfficiencyBob.lean:34:21: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  yaoBobInit ?Y ?n ?msg ?ans
+in the target expression
+  ((fun w => yaoBobInit Y (GI.argX w).length (msg w) (ans w)) w).length =
+    Y.inA.eval (GI.argX w).length + Y.inB.eval (GI.argX w).length
+
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+gen : List Bool → List Bool
+hgen : PolyTimeComputable gen
+hgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)
+hdesc :
+  ∀ (n : ℕ),
+    gen (List.replicate n true) =
+      pairEncode (Y.circ n).encode (BinArith.encWords (List.ofFn fun j => encodeNat (Y.outs n j)))
+msg : List Bool → List Bool := fun w => pairFstD (GI.argM w)
+ans : List Bool → List Bool := fun w => pairSndD (GI.argZ w)
+w : List Bool
+⊢ ((fun w => yaoBobInit Y (GI.argX w).length (msg w) (ans w)) w).length =
+    Y.inA.eval (GI.argX w).length + Y.inB.eval (GI.argX w).length
+evidence/probes/EfficiencyBob.lean:35:23: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  yaoBobTables ?Y ?n ?msg ?v
+in the target expression
+  (fun w => yaoBobTables Y (GI.argX w).length (msg w)) w v =
+    if Y.inA.eval (GI.argX w).length + Y.inB.eval (GI.argX w).length ≤ v then
+      BinArith.decWords
+        ((BinArith.decWords (pairFstD (pairFstD (GI.argM w)))).getD
+          (v - (Y.inA.eval (GI.argX w).length + Y.inB.eval (GI.argX w).length)) [])
+    else []
+
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+hE₁ : PolyTimeComputable E₁
+hE₂ : PolyTimeComputable E₂
+gen : List Bool → List Bool
+hgen : PolyTimeComputable gen
+hgenEq : ∀ (n : ℕ), gen (List.replicate n true) = encodeCircuit (Y.circ n) (Y.outs n)
+hdesc :
+  ∀ (n : ℕ),
+    gen (List.replicate n true) =
+      pairEncode (Y.circ n).encode (BinArith.encWords (List.ofFn fun j => encodeNat (Y.outs n j)))
+msg : List Bool → List Bool := fun w => pairFstD (GI.argM w)
+ans : List Bool → List Bool := fun w => pairSndD (GI.argZ w)
+w : List Bool
+v : ℕ
+⊢ (fun w => yaoBobTables Y (GI.argX w).length (msg w)) w v =
+    if Y.inA.eval (GI.argX w).length + Y.inB.eval (GI.argX w).length ≤ v then
+      BinArith.decWords
+        ((BinArith.decWords (pairFstD (pairFstD (GI.argM w)))).getD
+          (v - (Y.inA.eval (GI.argX w).length + Y.inB.eval (GI.argX w).length)) [])
+    else []
+FAIL(evidence/probes/EfficiencyBob): lean exited with status 1
+FAIL(evidence/probes/EfficiencyBob): error diagnostics reported
+FAIL(evidence/probes/EfficiencyBob): no fresh .olean produced
+        3.84 real         1.58 user         1.21 sys
+          2233057280  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              168732  page reclaims
+                8846  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                2962  voluntary context switches
+               12748  involuntary context switches
+            32650678  instructions retired
+            18073712  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T23:41:02.847534+00:00 EXIT 1

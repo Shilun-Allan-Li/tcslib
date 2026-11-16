@@ -1,0 +1,32 @@
+START 2026-11-15T21:51:18Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/WordLists
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/WordLists.lean:48:4: error: Application type mismatch: The argument
+  PolyTimeComputable.pairEncode hentry (polyTimeComputable_const [])
+has type
+  PolyTimeComputable fun x => pairEncode (entry (pairSndD x) (pairFstD x).length) []
+but is expected to have type
+  PolyTimeComputable fun w => ?m.10 (pairSndD w) (pairFstD w).length
+in the application
+  @ColMachines.polyTimeComputable_flatMap_range ?m.10
+    (PolyTimeComputable.pairEncode hentry (polyTimeComputable_const []))
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/WordLists): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/WordLists): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/WordLists): no fresh .olean produced
+        3.20 real         1.40 user         1.46 sys
+          2204090368  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170897  page reclaims
+                4227  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                 301  voluntary context switches
+               15123  involuntary context switches
+            32861728  instructions retired
+            22573072  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T21:51:21Z status=1

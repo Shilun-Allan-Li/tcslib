@@ -1,0 +1,65 @@
+START 2026-11-15T23:18:17.640776+00:00 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations
+END TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations exit 1 errors 3
+START 2026-11-15T23:18:17.640776+00:00 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations.lean:54:32: error(lean.unknownIdentifier): Unknown constant `Bool.false_toNat`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations.lean:54:50: error(lean.unknownIdentifier): Unknown constant `Bool.true_toNat`
+Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations.lean:49:85: error: unsolved goals
+case e_head.e_i
+A S : PolyExpr
+n m : ℕ
+x r : List Bool
+call : Fin (m * n) → Fin 2 → Bool
+hcall :
+  ∀ (i : Fin m) (t : Fin n) (c : Fin 2),
+    call (finProdFinEquiv (i, t)) c = r.getD (((decide (↑c = 1)).toNat * S.eval n + A.eval n + ↑i) * n + ↑t) false
+i : Fin m
+t : Fin n
+⊢ A.eval n * n + n * ↑i + ↑t = A.eval n * n + n * ↑i + n * (decide False).toNat * S.eval n + ↑t
+
+case e_tail.e_head
+A S : PolyExpr
+n m : ℕ
+x r : List Bool
+call : Fin (m * n) → Fin 2 → Bool
+hcall :
+  ∀ (i : Fin m) (t : Fin n) (c : Fin 2),
+    call (finProdFinEquiv (i, t)) c = r.getD (((decide (↑c = 1)).toNat * S.eval n + A.eval n + ↑i) * n + ↑t) false
+i : Fin m
+t : Fin n
+⊢ r.getD (S.eval n * n + A.eval n * n + n * ↑i + ↑t) false =
+    r.getD (S.eval n * n * (decide True).toNat + A.eval n * n + n * ↑i + ↑t) false
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CallEquations): no fresh .olean produced
+        2.45 real         1.39 user         0.95 sys
+          2158346240  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170256  page reclaims
+                2533  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 200  voluntary context switches
+                4680  involuntary context switches
+            31947707  instructions retired
+            16962294  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T23:18:20.138459+00:00 EXIT 1
+

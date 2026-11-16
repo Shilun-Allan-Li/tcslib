@@ -1,0 +1,109 @@
+START 2026-11-16T00:04:57.170570+00:00 TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction.lean:119:19: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  acceptProb (fun t => rebuild (pairEncode (List.replicate n true) (pairEncode (?X t) (advice n (μ n)))))
+    (D.distinguisherL n)
+in the target expression
+  |acceptProb
+          (fun t =>
+            rebuild
+              (pairEncode (List.replicate n true)
+                (pairEncode (sliceMultiEncDist G n (q.eval n) (offset n (μ n)) (len n (μ n)) (m₀ n (μ n)) t)
+                  (advice n (μ n)))))
+          (D.distinguisherL n) -
+        acceptProb
+          (fun t =>
+            rebuild
+              (pairEncode (List.replicate n true)
+                (pairEncode (sliceMultiEncDist G n (q.eval n) (offset n (μ n)) (len n (μ n)) (m₁ n (μ n)) t)
+                  (advice n (μ n)))))
+          (D.distinguisherL n)| ≤
+    ε n
+
+L : PolyExpr
+G : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (L.eval n) → Bool
+hSecure : SliceMultiMessageSecure G
+D : NUPPT
+q b : PolyExpr
+A : ℕ → Type u_1
+inst✝¹ : (n : ℕ) → Fintype (A n)
+inst✝ : ∀ (n : ℕ), Nonempty (A n)
+advice : (n : ℕ) → A n → List Bool
+hAdvice : ∀ (n : ℕ) (a : A n), (advice n a).length ≤ b.eval n
+rebuild : List Bool → List Bool
+hRebuild : PolyTimeComputable rebuild
+offset len : (n : ℕ) → A n → Fin (q.eval n + 1) → ℕ
+hFit : ∀ (n : ℕ) (a : A n) (i : Fin (q.eval n + 1)), offset n a i + n + len n a i ≤ L.eval n
+m₀ m₁ : (n : ℕ) → (a : A n) → (i : Fin (q.eval n + 1)) → Fin (len n a i) → Bool
+gap : (n : ℕ) → A n → ℝ :=
+  fun n a =>
+    distAdv
+      (fun t =>
+        rebuild
+          (pairEncode (List.replicate n true)
+            (pairEncode (sliceMultiEncDist G n (q.eval n) (offset n a) (len n a) (m₀ n a) t) (advice n a))))
+      (fun t =>
+        rebuild
+          (pairEncode (List.replicate n true)
+            (pairEncode (sliceMultiEncDist G n (q.eval n) (offset n a) (len n a) (m₁ n a) t) (advice n a))))
+      (D.distinguisherL n)
+μ : (n : ℕ) → A n
+hμ : ∀ (n : ℕ) (a' : A n), gap n a' ≤ gap n (μ n)
+R : NUPPT
+hcoins : R.coins = D.coins
+hRun :
+  ∀ (n : ℕ) (challenge : List Bool) (r : D.Coins n),
+    R.distinguisherL n challenge ((NUPPT.coinsCongr ⋯ n) r) =
+      D.distinguisherL n (rebuild (pairEncode (List.replicate n true) (pairEncode challenge (advice n (μ n))))) r
+ε : ℕ → ℝ
+hε : Negligible ε
+hBound :
+  ∀ (n : ℕ) (o len : Fin (q.eval n + 1) → ℕ),
+    (∀ (i : Fin (q.eval n + 1)), o i + n + len i ≤ L.eval n) →
+      ∀ (m m' : (i : Fin (q.eval n + 1)) → Fin (len i) → Bool),
+        distAdv (sliceMultiEncDist G n (q.eval n) o len m) (sliceMultiEncDist G n (q.eval n) o len m')
+            (R.distinguisherL n) ≤
+          ε n
+n : ℕ
+a : A n
+hAccept :
+  ∀ {σ : Type u_2} [inst : Fintype σ] (X : σ → List Bool),
+    acceptProb (fun t => rebuild (pairEncode (List.replicate n true) (pairEncode (X t) (advice n (μ n)))))
+        (D.distinguisherL n) =
+      acceptProb X (R.distinguisherL n)
+⊢ |acceptProb
+          (fun t =>
+            rebuild
+              (pairEncode (List.replicate n true)
+                (pairEncode (sliceMultiEncDist G n (q.eval n) (offset n (μ n)) (len n (μ n)) (m₀ n (μ n)) t)
+                  (advice n (μ n)))))
+          (D.distinguisherL n) -
+        acceptProb
+          (fun t =>
+            rebuild
+              (pairEncode (List.replicate n true)
+                (pairEncode (sliceMultiEncDist G n (q.eval n) (offset n (μ n)) (len n (μ n)) (m₁ n (μ n)) t)
+                  (advice n (μ n)))))
+          (D.distinguisherL n)| ≤
+    ε n
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/SliceReduction): no fresh .olean produced
+        3.40 real         1.94 user         1.19 sys
+          2186199040  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              167678  page reclaims
+                6222  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 319  voluntary context switches
+                6372  involuntary context switches
+            32244654  instructions retired
+            21065582  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-16T00:05:00.607183+00:00 EXIT 1

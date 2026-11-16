@@ -1,0 +1,31 @@
+START 2026-11-15T23:40:03.998608+00:00 evidence/probes/EfficiencyAlice
+evidence/probes/EfficiencyAlice.lean:20:5: error: Function expected at
+  (DAGCircuit.isFaninTwo_iff (Y.circ n)).mp (Y.fanin n)
+but this term has type
+  (∀ g ∈ (Y.circ n).gates, g.args.Nodup ∧ (g.kind = GateKind.not → g.args.length = 1)) ∧
+    ∀ g ∈ (Y.circ n).gates, g.args.length ≤ 2
+
+Note: Expected a function because this term is being applied to the argument
+  _
+FAIL(evidence/probes/EfficiencyAlice): lean exited with status 1
+FAIL(evidence/probes/EfficiencyAlice): error diagnostics reported
+FAIL(evidence/probes/EfficiencyAlice): no fresh .olean produced
+        3.23 real         1.67 user         1.19 sys
+          2250964992  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              172114  page reclaims
+                5952  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 493  voluntary context switches
+                9308  involuntary context switches
+            32605763  instructions retired
+            24377926  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T23:40:07.284897+00:00 EXIT 1

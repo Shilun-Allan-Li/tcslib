@@ -1,0 +1,373 @@
+START 2026-11-15T23:30:29.573284+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks (S n : ℕ) : Type
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks_eq (S n : ℕ) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks S n =
+    ((Bool → Fin S → Fin n → Bool) × (Fin S → Fin 4 → Fin (2 * n) → Bool) × (Fin S → Fin 2 → Bool))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks_eq' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape (S n : ℕ) :
+  (Fin (10 * S * n + 2 * S) → Bool) ≃ (Fin (2 * S * n) → Bool) × (Fin (S * 4 * (2 * n)) → Bool) × (Fin (S * 2) → Bool)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_key (S n : ℕ)
+  (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin (2 * S * n)) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape S n) r).1 i =
+    (List.ofFn r).getD (↑i) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_key' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_row (S n : ℕ)
+  (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin (S * 4 * (2 * n))) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape S n) r).2.1 i =
+    (List.ofFn r).getD (2 * S * n + ↑i) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_row' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_shift (S n : ℕ)
+  (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin (S * 2)) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape S n) r).2.2 i =
+    (List.ofFn r).getD (10 * S * n + ↑i) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_shift' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_eq (S n : ℕ)
+  (r : Fin (10 * S * n + 2 * S) → Bool) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape S n) r =
+    (fun i => (List.ofFn r).getD (↑i) false, fun i => (List.ofFn r).getD (2 * S * n + ↑i) false, fun i =>
+      (List.ofFn r).getD (10 * S * n + ↑i) false)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv (S n : ℕ) :
+  (Fin (10 * S * n + 2 * S) → Bool) ≃ TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks S n
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_key (S n : ℕ)
+  (r : Fin (10 * S * n + 2 * S) → Bool) (b : Bool) (v : Fin S) (t : Fin n) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n) r).1 b v t =
+    (List.ofFn r).getD ((b.toNat * S + ↑v) * n + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_key' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_row (S n : ℕ)
+  (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S) (a : Fin 4) (t : Fin (2 * n)) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n) r).2.1 i a t =
+    (List.ofFn r).getD (2 * S * n + (4 * ↑i + ↑a) * (2 * n) + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_row' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_shift (S n : ℕ)
+  (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S) (t : Fin 2) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n) r).2.2 i t =
+    (List.ofFn r).getD (10 * S * n + 2 * ↑i + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_shift' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_eq (S n : ℕ)
+  (r : Fin (10 * S * n + 2 * S) → Bool) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n) r =
+    (fun b v t => (List.ofFn r).getD ((b.toNat * S + ↑v) * n + ↑t) false, fun i a t =>
+      (List.ofFn r).getD (2 * S * n + (4 * ↑i + ↑a) * (2 * n) + ↑t) false, fun i t =>
+      (List.ofFn r).getD (10 * S * n + 2 * ↑i + ↑t) false)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel (S n : ℕ) (values : Fin S → Bool) :
+  Equiv.Perm (Bool → Fin S → Fin n → Bool)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel_eq (S n : ℕ) (values : Fin S → Bool)
+  (k : Bool → Fin S → Fin n → Bool) (b : Bool) (v : Fin S) (t : Fin n) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel S n values) k b v t =
+    k (b ^^ values v) v t
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel_eq' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.rowRelabel (S n : ℕ)
+  (rows : Fin S → Equiv.Perm (Fin 4)) : Equiv.Perm (Fin S → Fin 4 → Fin (2 * n) → Bool)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.rowRelabel' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.rowRelabel_eq (S n : ℕ)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (k : Fin S → Fin 4 → Fin (2 * n) → Bool) (i : Fin S) (a : Fin 4)
+  (t : Fin (2 * n)) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.rowRelabel S n rows) k i a t = k i ((rows i) a) t
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.rowRelabel_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.shiftRelabel (S : ℕ) (mask : Fin S → Fin 2 → Bool) :
+  Equiv.Perm (Fin S → Fin 2 → Bool)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.shiftRelabel' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.shiftRelabel_eq (S : ℕ) (mask k : Fin S → Fin 2 → Bool)
+  (i : Fin S) (t : Fin 2) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.shiftRelabel S mask) k i t = (k i t ^^ mask i t)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.shiftRelabel_eq' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blockRelabel (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) :
+  Equiv.Perm (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks S n)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blockRelabel' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blockRelabel_eq (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool)
+  (q : TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks S n) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blockRelabel S n values rows mask) q =
+    ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel S n values) q.1,
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.rowRelabel S n rows) q.2.1,
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.shiftRelabel S mask) q.2.2)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blockRelabel_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) : Equiv.Perm (Fin (10 * S * n + 2 * S) → Bool)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_eq (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (r : Fin (10 * S * n + 2 * S) → Bool) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n values rows mask) r =
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n).symm
+      ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blockRelabel S n values rows mask)
+        ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n) r))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_eq' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_blocks (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (r : Fin (10 * S * n + 2 * S) → Bool) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n)
+      ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n values rows mask) r) =
+    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blockRelabel S n values rows mask)
+      ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n) r)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_blocks' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (r : Fin (10 * S * n + 2 * S) → Bool) (b : Bool)
+  (v : Fin S) (t : Fin n) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n)
+          ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n values rows mask) r)).1
+      b v t =
+    ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n) r).1 (b ^^ values v) v t
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S)
+  (a : Fin 4) (t : Fin (2 * n)) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n)
+            ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n values rows mask) r)).2.1
+      i a t =
+    ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n) r).2.1 i ((rows i) a) t
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S)
+  (t : Fin 2) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n)
+            ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n values rows mask) r)).2.2
+      i t =
+    (((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv S n) r).2.2 i t ^^ mask i t)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key_getD (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (r : Fin (10 * S * n + 2 * S) → Bool) (b : Bool)
+  (v : Fin S) (t : Fin n) :
+  (List.ofFn ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n values rows mask) r)).getD
+      ((b.toNat * S + ↑v) * n + ↑t) false =
+    (List.ofFn r).getD (((b ^^ values v).toNat * S + ↑v) * n + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key_getD' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row_getD (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S)
+  (a : Fin 4) (t : Fin (2 * n)) :
+  (List.ofFn ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n values rows mask) r)).getD
+      (2 * S * n + (4 * ↑i + ↑a) * (2 * n) + ↑t) false =
+    (List.ofFn r).getD (2 * S * n + (4 * ↑i + ↑((rows i) a)) * (2 * n) + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row_getD' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift_getD (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S)
+  (t : Fin 2) :
+  (List.ofFn ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n values rows mask) r)).getD
+      (10 * S * n + 2 * ↑i + ↑t) false =
+    ((List.ofFn r).getD (10 * S * n + 2 * ↑i + ↑t) false ^^ mask i t)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift_getD' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key_fixed (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (r : Fin (10 * S * n + 2 * S) → Bool) (b : Bool)
+  (v : Fin S) (t : Fin n) (hv : values v = false) :
+  (List.ofFn ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n values rows mask) r)).getD
+      ((b.toNat * S + ↑v) * n + ↑t) false =
+    (List.ofFn r).getD ((b.toNat * S + ↑v) * n + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key_fixed' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row_fixed (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S)
+  (a : Fin 4) (t : Fin (2 * n)) (ha : (rows i) a = a) :
+  (List.ofFn ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n values rows mask) r)).getD
+      (2 * S * n + (4 * ↑i + ↑a) * (2 * n) + ↑t) false =
+    (List.ofFn r).getD (2 * S * n + (4 * ↑i + ↑a) * (2 * n) + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row_fixed' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift_fixed (S n : ℕ) (values : Fin S → Bool)
+  (rows : Fin S → Equiv.Perm (Fin 4)) (mask : Fin S → Fin 2 → Bool) (r : Fin (10 * S * n + 2 * S) → Bool) (i : Fin S)
+  (t : Fin 2) (ht : mask i t = false) :
+  (List.ofFn ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel S n values rows mask) r)).getD
+      (10 * S * n + 2 * ↑i + ↑t) false =
+    (List.ofFn r).getD (10 * S * n + 2 * ↑i + ↑t) false
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift_fixed' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+STORED_CONSTANT_COUNT 37
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_key: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_key: closure=1902 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv: closure=3186 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel._proof_1: [Quot.sound, propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel._proof_1: closure=89 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape._proof_1: [propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape._proof_1: closure=646 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel: [Quot.sound, Classical.choice, propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel: closure=3210 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks: closure=45 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift_fixed: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift_fixed: closure=3261 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_eq: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_eq: closure=3211 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.shiftRelabel: [Quot.sound, propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.shiftRelabel: closure=414 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_eq: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_eq: closure=3238 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_shift: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_shift: closure=1843 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blockRelabel: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blockRelabel: closure=517 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_key._proof_1_1: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_key._proof_1_1: closure=1411 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel: [Quot.sound, propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel: closure=374 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_shift._proof_1_1: [propext,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_shift._proof_1_1: closure=1345 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_blocks: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_blocks: closure=3212 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.shiftRelabel_eq: [Quot.sound, propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.shiftRelabel_eq: closure=417 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel_eq: [Quot.sound, propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.keyRelabel_eq: closure=409 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.rowRelabel_eq: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.rowRelabel_eq: closure=476 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape: closure=917 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_key: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_key: closure=3230 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row_getD: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row_getD: closure=3257 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift_getD: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift_getD: closure=3260 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.rowRelabel: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.rowRelabel: closure=475 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_row._proof_1_1: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_row._proof_1_1: closure=1411 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key: closure=3213 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_row: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_row: closure=1902 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row: closure=3213 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key_getD: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key_getD: closure=3258 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks_eq: []
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.Blocks_eq: closure=49 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blockRelabel_eq: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blockRelabel_eq: closure=520 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_shift: closure=3215 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_row: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_row: closure=3229 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_eq: [Quot.sound,
+ propext,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.splitTape_eq: closure=1911 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key_fixed: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_key_fixed: closure=3259 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_shift: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.blocksEquiv_shift: closure=3230 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row_fixed: [Quot.sound,
+ Classical.choice,
+ propext]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.CoinRelabel.relabel_row_fixed: closure=3258 sorried=[]
+       30.42 real        26.20 user         1.51 sys
+          2193358848  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              118042  page reclaims
+               55985  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                6612  voluntary context switches
+               30804  involuntary context switches
+            32591682  instructions retired
+            22117465  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-15T23:31:00.036305+00:00 exit=0

@@ -1,0 +1,19 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:54:    argValues C v i = fun t => v ((C.gates[i]).args[t]) := rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:59:    argValues C v i t = v ((C.gates[i]).args[t]) := rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:77:        fun i => (s.2.2 i).trans (xorPerm (argValues C v i))) := rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:82:    (relabelSeed C v s).1 w b = s.1 w (xor b (v w)) := rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:88:    (relabelSeed C v s).2.1 i a = s.2.1 i (xorPerm (argValues C v i) a) := rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:94:    (relabelSeed C v s).2.2 i a = xorPerm (argValues C v i) (s.2.2 i a) := rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:102:  · simp only [keyAt_eq, dif_pos hw, relabelSeed_key]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:103:  · simp only [keyAt_eq, dif_neg hw]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:110:  rw [keyAt_relabel, Bool.xor_assoc, Bool.xor_self, Bool.xor_false]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:119:  rw [argKeys_eq, argKeys_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:122:  simp only [keyAt_relabel, xorPerm_apply, argValues_apply]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:136:  rw [argKeys_relabel, keyAt_relabel, relabelSeed_coin, garbledRow_eq,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:159:  rw [garbledTable_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:161:  dsimp only
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:162:  conv_rhs => rw [row_relabel]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:163:  rw [relabelSeed_perm]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:166:  simp only [xorPerm_apply, Bool.xor_assoc, Bool.xor_self, Bool.xor_false]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:173:  rw [inputKeys_eq, inputKeys_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RelabelGarbling.lean:200:  cases hv : v w <;> simp [hv, keyAt_relabel]

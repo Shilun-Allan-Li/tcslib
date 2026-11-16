@@ -1,0 +1,245 @@
+START 2026-11-15T21:50:55.227019+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_spEncStr_le (E : List Bool → List Bool)
+  (k m r : List Bool) : (TCSlib.Cryptography.SecureComputation.spEncStr E k m r).length ≤ 3 * r.length + m.length + 2
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_spEncStr_le' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_nestedSpecial_enc_le (E₁ E₂ : List Bool → List Bool) (n : ℕ)
+  (ks : List (Fin n → Bool)) (o : Fin n → Bool) (r : (Fin n → Bool) × (Fin n → Bool)) :
+  ((TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n).enc ks o r).length ≤ 7 * n + 4
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_nestedSpecial_enc_le' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.encodeMsgs_eq_encWords (L : List (List Bool)) :
+  TCSlib.Cryptography.Strategy.encodeMsgs L = Complexity.BinArith.encWords L
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.encodeMsgs_eq_encWords' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_garbledRow_le (E₁ E₂ : List Bool → List Bool) (n : ℕ)
+  {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (i : Fin C.gates.length) (a : Fin C.gates[i].args.length → Bool) :
+  (TCSlib.Cryptography.SecureComputation.garbledRow (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) C s i
+        a).length ≤
+    7 * n + 4
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_garbledRow_le' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_garbledTable_le {K W ρ : Type} [Inhabited K] {m : ℕ}
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc K W ρ) (C : BoolCircuit.DAGCircuit m)
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (i : Fin C.gates.length)
+  (hi : C.gates[i].args.length ≤ 2) : (TCSlib.Cryptography.SecureComputation.garbledTable M C s i).length ≤ 4
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_garbledTable_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_encoded_garbledTable_le (E₁ E₂ : List Bool → List Bool)
+  (n : ℕ) {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (i : Fin C.gates.length) (hi : C.gates[i].args.length ≤ 2) :
+  (TCSlib.Cryptography.Strategy.encodeMsgs
+        (TCSlib.Cryptography.SecureComputation.garbledTable
+          (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) C s i)).length ≤
+    56 * n + 40
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_encoded_garbledTable_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_encoded_garbledTables_le (E₁ E₂ : List Bool → List Bool)
+  (n : ℕ) {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C (Fin n → Bool) ((Fin n → Bool) × (Fin n → Bool)))
+  (hC : ∀ (i : Fin C.gates.length), C.gates[i].args.length ≤ 2) :
+  (TCSlib.Cryptography.Strategy.encodeMsgs
+        (List.ofFn fun i =>
+          TCSlib.Cryptography.Strategy.encodeMsgs
+            (TCSlib.Cryptography.SecureComputation.garbledTable
+              (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ n) C s i))).length ≤
+    C.gates.length * (112 * n + 82)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_encoded_garbledTables_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_encoded_keys_le {a n : ℕ} (keys : Fin a → Fin n → Bool) :
+  (TCSlib.Cryptography.Strategy.encodeMsgs (List.ofFn fun i => List.ofFn (keys i))).length ≤ a * (2 * n + 2)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_encoded_keys_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_encoded_pairs_le {o n : ℕ}
+  (keys : Fin o → Bool → Fin n → Bool) :
+  (TCSlib.Cryptography.Strategy.encodeMsgs
+        (List.ofFn fun j => Turing.pairEncode (List.ofFn (keys j false)) (List.ofFn (keys j true)))).length ≤
+    o * (6 * n + 6)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_encoded_pairs_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_message_of_parts_le (tables keys pairs : List Bool)
+  (g a o n : ℕ) (ht : tables.length ≤ g * (112 * n + 82)) (hk : keys.length ≤ a * (2 * n + 2))
+  (hp : pairs.length ≤ o * (6 * n + 6)) :
+  (Turing.pairEncode tables (Turing.pairEncode keys pairs)).length ≤
+    2 * (g * (112 * n + 82)) + 2 * (a * (2 * n + 2)) + o * (6 * n + 6) + 4
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.length_message_of_parts_le' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA (inA sizeBound : Complexity.PolyExpr)
+  (z : List Bool) : List Bool
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA_eq (inA sizeBound : Complexity.PolyExpr)
+  (z : List Bool) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA inA sizeBound z =
+    [(Complexity.pairFstD (Complexity.pairSndD (Complexity.pairSndD z))).getD
+        (inA.eval (Complexity.pairFstD z).length * (Complexity.pairFstD z).length +
+          (Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD z))).length)
+        false,
+      (Complexity.pairFstD (Complexity.pairSndD (Complexity.pairSndD z))).getD
+        ((sizeBound.eval (Complexity.pairFstD z).length + inA.eval (Complexity.pairFstD z).length) *
+            (Complexity.pairFstD z).length +
+          (Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD z))).length)
+        false]
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA_eq' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA_layout (inA sizeBound : Complexity.PolyExpr)
+  (n j : ℕ) (x r : List Bool) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA inA sizeBound
+      (Turing.pairEncode (List.replicate n true) (Turing.pairEncode x (Turing.pairEncode r (List.replicate j true)))) =
+    [r.getD (inA.eval n * n + j) false, r.getD ((sizeBound.eval n + inA.eval n) * n + j) false]
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA_layout' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.polyTimeComputable_otInputA
+  (inA sizeBound : Complexity.PolyExpr) :
+  Complexity.PolyTimeComputable (TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputA inA sizeBound)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.polyTimeComputable_otInputA' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB (z : List Bool) : List Bool
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB_eq (z : List Bool) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB z =
+    [(Complexity.pairFstD (Complexity.pairSndD z)).getD
+        ((Complexity.pairSndD (Complexity.pairSndD (Complexity.pairSndD z))).length / (Complexity.pairFstD z).length)
+        false]
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB_eq' does not depend on any axioms
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB_layout (n j : ℕ) (y r : List Bool) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB
+      (Turing.pairEncode (List.replicate n true) (Turing.pairEncode y (Turing.pairEncode r (List.replicate j true)))) =
+    [y.getD (j / n) false]
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB_layout' depends on axioms: [propext, Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.polyTimeComputable_otInputB :
+  Complexity.PolyTimeComputable TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.otInputB
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.OTInputs.polyTimeComputable_otInputB' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.transcriptWith_eq (π : TCSlib.Cryptography.Protocol)
+  (msgA : List Bool → List Bool → List Bool → List Bool)
+  (msgB : List Bool → List Bool → List Bool → List Bool → List Bool) (hR : π.rounds = Complexity.PolyExpr.const 2)
+  (hF : π.verifierFirst = false) (hA : ∀ (w z r : List Bool), π.P.next w z r [] = msgA w z r)
+  (hB : ∀ (w z r a : List Bool), π.V.next w z r [a] = msgB w z r a) (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+  π.transcriptWith π.P w zA zB r =
+    ([msgB w zB (List.ofFn r.2) (msgA w zA (List.ofFn r.1))], [msgA w zA (List.ofFn r.1)])
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.transcriptWith_eq' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.transcript_eq (π : TCSlib.Cryptography.Protocol)
+  (msgA : List Bool → List Bool → List Bool → List Bool)
+  (msgB : List Bool → List Bool → List Bool → List Bool → List Bool) (hR : π.rounds = Complexity.PolyExpr.const 2)
+  (hF : π.verifierFirst = false) (hA : ∀ (w z r : List Bool), π.P.next w z r [] = msgA w z r)
+  (hB : ∀ (w z r a : List Bool), π.V.next w z r [a] = msgB w z r a) (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+  π.transcript w zA zB r = ([msgB w zB (List.ofFn r.2) (msgA w zA (List.ofFn r.1))], [msgA w zA (List.ofFn r.1)])
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.transcript_eq' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.viewP_eq (π : TCSlib.Cryptography.Protocol)
+  (msgA : List Bool → List Bool → List Bool → List Bool)
+  (msgB : List Bool → List Bool → List Bool → List Bool → List Bool) (hR : π.rounds = Complexity.PolyExpr.const 2)
+  (hF : π.verifierFirst = false) (hA : ∀ (w z r : List Bool), π.P.next w z r [] = msgA w z r)
+  (hB : ∀ (w z r a : List Bool), π.V.next w z r [a] = msgB w z r a) (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+  π.viewP w zA zB r =
+    { x := w, z := zA, r := List.ofFn r.1, received := [msgB w zB (List.ofFn r.2) (msgA w zA (List.ofFn r.1))] }
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.viewP_eq' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.viewV_eq (π : TCSlib.Cryptography.Protocol)
+  (msgA : List Bool → List Bool → List Bool → List Bool)
+  (msgB : List Bool → List Bool → List Bool → List Bool → List Bool) (hR : π.rounds = Complexity.PolyExpr.const 2)
+  (hF : π.verifierFirst = false) (hA : ∀ (w z r : List Bool), π.P.next w z r [] = msgA w z r)
+  (hB : ∀ (w z r a : List Bool), π.V.next w z r [a] = msgB w z r a) (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+  π.viewV w zA zB r = { x := w, z := zB, r := List.ofFn r.2, received := [msgA w zA (List.ofFn r.1)] }
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.viewV_eq' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.encode_viewP_eq (π : TCSlib.Cryptography.Protocol)
+  (msgA : List Bool → List Bool → List Bool → List Bool)
+  (msgB : List Bool → List Bool → List Bool → List Bool → List Bool) (hR : π.rounds = Complexity.PolyExpr.const 2)
+  (hF : π.verifierFirst = false) (hA : ∀ (w z r : List Bool), π.P.next w z r [] = msgA w z r)
+  (hB : ∀ (w z r a : List Bool), π.V.next w z r [a] = msgB w z r a) (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+  (π.viewP w zA zB r).encode =
+    Turing.pairEncode (Turing.pairEncode w zA)
+      (Turing.pairEncode (List.ofFn r.1)
+        (TCSlib.Cryptography.Strategy.encodeMsgs [msgB w zB (List.ofFn r.2) (msgA w zA (List.ofFn r.1))]))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.encode_viewP_eq' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.encode_viewV_eq (π : TCSlib.Cryptography.Protocol)
+  (msgA : List Bool → List Bool → List Bool → List Bool)
+  (msgB : List Bool → List Bool → List Bool → List Bool → List Bool) (hR : π.rounds = Complexity.PolyExpr.const 2)
+  (hF : π.verifierFirst = false) (hA : ∀ (w z r : List Bool), π.P.next w z r [] = msgA w z r)
+  (hB : ∀ (w z r a : List Bool), π.V.next w z r [a] = msgB w z r a) (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+  (π.viewV w zA zB r).encode =
+    Turing.pairEncode (Turing.pairEncode w zB)
+      (Turing.pairEncode (List.ofFn r.2) (TCSlib.Cryptography.Strategy.encodeMsgs [msgA w zA (List.ofFn r.1)]))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.encode_viewV_eq' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.outV_eq (π : TCSlib.Cryptography.Protocol)
+  (msgA : List Bool → List Bool → List Bool → List Bool)
+  (msgB : List Bool → List Bool → List Bool → List Bool → List Bool) (hR : π.rounds = Complexity.PolyExpr.const 2)
+  (hF : π.verifierFirst = false) (hA : ∀ (w z r : List Bool), π.P.next w z r [] = msgA w z r)
+  (hB : ∀ (w z r a : List Bool), π.V.next w z r [a] = msgB w z r a) (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+  π.outV π.P w zA zB r = msgB w zB (List.ofFn r.2) (msgA w zA (List.ofFn r.1))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.outV_eq' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.outP_eq (π : TCSlib.Cryptography.Protocol)
+  (msgA : List Bool → List Bool → List Bool → List Bool)
+  (msgB : List Bool → List Bool → List Bool → List Bool → List Bool) (hR : π.rounds = Complexity.PolyExpr.const 2)
+  (hF : π.verifierFirst = false) (hA : ∀ (w z r : List Bool), π.P.next w z r [] = msgA w z r)
+  (hB : ∀ (w z r a : List Bool), π.V.next w z r [a] = msgB w z r a)
+  (hEcho : ∀ (w z r b : List Bool), π.P.next w z r [b] = b) (w zA zB : List Bool) (r : π.ExecCoins π.P w) :
+  π.outP w zA zB r = msgB w zB (List.ofFn r.2) (msgA w zA (List.ofFn r.1))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.outP_eq' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.realA_eq
+  (msgA : List Bool → List Bool → List Bool → List Bool)
+  (msgB : List Bool → List Bool → List Bool → List Bool → List Bool)
+  {G : TCSlib.Cryptography.SecureComputation.Functionality} (H : TCSlib.Cryptography.SecureComputation.HybridProtocol G)
+  (hRounds : H.main.rounds = Complexity.PolyExpr.const 2) (hFirst : H.main.verifierFirst = false)
+  (hSender : ∀ (w z r : List Bool), H.main.P.next w z r [] = msgA w z r)
+  (hReply : ∀ (w z r a : List Bool), H.main.V.next w z r [a] = msgB w z r a)
+  (F : TCSlib.Cryptography.SecureComputation.Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+  (y : Fin (F.inB.eval n) → Bool) (r : H.Coins n) :
+  H.realA F n x y r =
+    have w := List.replicate n true;
+    have zA := H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2);
+    have zB := H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2);
+    have a := msgA w zA (List.ofFn r.1);
+    have b := msgB w zB (List.ofFn r.2) a;
+    Turing.pairEncode
+      (Turing.pairEncode (Turing.pairEncode w zA)
+        (Turing.pairEncode (List.ofFn r.1) (TCSlib.Cryptography.Strategy.encodeMsgs [b])))
+      b
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.realA_eq' depends on axioms: [propext]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.realB_eq
+  (msgA : List Bool → List Bool → List Bool → List Bool)
+  (msgB : List Bool → List Bool → List Bool → List Bool → List Bool)
+  {G : TCSlib.Cryptography.SecureComputation.Functionality} (H : TCSlib.Cryptography.SecureComputation.HybridProtocol G)
+  (hRounds : H.main.rounds = Complexity.PolyExpr.const 2) (hFirst : H.main.verifierFirst = false)
+  (hSender : ∀ (w z r : List Bool), H.main.P.next w z r [] = msgA w z r)
+  (hReply : ∀ (w z r a : List Bool), H.main.V.next w z r [a] = msgB w z r a)
+  (hEcho : ∀ (w z r b : List Bool), H.main.P.next w z r [b] = b)
+  (F : TCSlib.Cryptography.SecureComputation.Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+  (y : Fin (F.inB.eval n) → Bool) (r : H.Coins n) :
+  H.realB F n x y r =
+    have w := List.replicate n true;
+    have zA := H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2);
+    have zB := H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2);
+    have a := msgA w zA (List.ofFn r.1);
+    have b := msgB w zB (List.ofFn r.2) a;
+    Turing.pairEncode
+      (Turing.pairEncode (Turing.pairEncode w zB)
+        (Turing.pairEncode (List.ofFn r.2) (TCSlib.Cryptography.Strategy.encodeMsgs [a])))
+      b
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.TwoMoveViews.realB_eq' depends on axioms: [propext]
+evidence/subagents/c/Axioms.lean:102:41: error: expected forbidden token or line break
+FAIL(evidence/subagents/c/Axioms): lean exited with status 1
+FAIL(evidence/subagents/c/Axioms): error diagnostics reported
+FAIL(evidence/subagents/c/Axioms): no fresh .olean produced
+        7.20 real         2.62 user         1.74 sys
+          2177318912  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              128558  page reclaims
+               44439  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                4588  voluntary context switches
+               33251  involuntary context switches
+            33249770  instructions retired
+            23584451  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T21:51:02.463932+00:00 exit=1

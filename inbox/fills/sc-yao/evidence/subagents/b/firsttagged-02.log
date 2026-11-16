@@ -1,0 +1,33 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:43:75: error: unsolved goals
+case h.e'_1.h
+h : PolyTimeComputable (BinArith.mapW pairSndD ∘ fun x => pairEncode [] (id x))
+w : List Bool
+⊢ BinArith.encWords (BinArith.decWords w) = BinArith.encWords (List.map (fun x => x) (BinArith.decWords w))
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged.lean:49:41: warning: This simp argument is unused:
+  List.map_id_fun
+
+Hint: Omit it from the simp argument list.
+  simp only [pairSndD_pairEncode, id_eq,̵ ̵L̵i̵s̵t̵.̵m̵a̵p̵_̵i̵d̵_̵f̵u̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/FirstTagged): no fresh .olean produced
+        8.88 real         3.32 user         1.54 sys
+          1531117568  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               82064  page reclaims
+               43809  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+               11409  voluntary context switches
+               38221  involuntary context switches
+            33356459  instructions retired
+            20808547  cycles elapsed
+             1638736  peak memory footprint

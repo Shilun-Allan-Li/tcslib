@@ -1,0 +1,34 @@
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:55:      (Fin S → Fin 4 → Fin (2 * n) → Bool) × (Fin S → Fin 2 → Bool)) := rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:77:  rw [List.getD_eq_getElem _ _ (by rw [List.length_ofFn]; exact hb), List.getElem_ofFn]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:78:  rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:89:  rw [List.getD_eq_getElem _ _ (by rw [List.length_ofFn]; exact hb), List.getElem_ofFn]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:90:  rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:99:  rw [List.getD_eq_getElem _ _ (by rw [List.length_ofFn]; exact hb), List.getElem_ofFn]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:102:  change (2 * S) * n + ((S * 4) * (2 * n) + (i : ℕ)) = 10 * S * n + i
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:140:  change blocksEquivX 2 S (Fin n → Bool)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:142:  rw [blocksEquivX_apply, FunFamily.blocks_apply, splitTape_key]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:144:  simp only [finProdFinEquiv_apply_val]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:145:  have hb : (finTwoEquiv.symm b : ℕ) = b.toNat := by cases b <;> rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:146:  rw [hb]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:155:  change blocksEquivX S 4 (Fin (2 * n) → Bool)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:157:  rw [blocksEquivX_apply, FunFamily.blocks_apply, splitTape_row]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:159:  simp only [finProdFinEquiv_apply_val]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:167:  change FunFamily.blocks S 2 ((splitTape S n r).2.2) i t = _
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:168:  rw [FunFamily.blocks_apply, splitTape_shift]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:170:  rw [finProdFinEquiv_apply_val]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:199:      simp only [Bool.xor_assoc, Bool.xor_self, Bool.xor_false]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:204:    keyRelabel S n values k b v t = k (xor b (values v)) v t := rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:215:    (t : Fin (2 * n)) : rowRelabel S n rows k i a t = k i (rows i a) t := rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:227:  change xorPerm (mask i) (k i) t = _
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:242:      (keyRelabel S n values q.1, rowRelabel S n rows q.2.1, shiftRelabel S mask q.2.2) := rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:257:      (blocksEquiv S n).symm (blockRelabel S n values rows mask (blocksEquiv S n r)) := rfl
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:267:  rw [relabel_eq, Equiv.apply_symm_apply]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:276:  simp only [relabel_blocks, blockRelabel_eq, keyRelabel_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:285:  simp only [relabel_blocks, blockRelabel_eq, rowRelabel_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:294:  simp only [relabel_blocks, blockRelabel_eq, shiftRelabel_eq]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:303:  rw [← blocksEquiv_key S n (relabel S n values rows mask r) b v t,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:314:  rw [← blocksEquiv_row S n (relabel S n values rows mask r) i a t,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:324:  rw [← blocksEquiv_shift S n (relabel S n values rows mask r) i t,
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:335:  rw [relabel_key_getD, hv, Bool.xor_false]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:346:  rw [relabel_row_getD, ha]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:356:  rw [relabel_shift_getD, ht, Bool.xor_false]

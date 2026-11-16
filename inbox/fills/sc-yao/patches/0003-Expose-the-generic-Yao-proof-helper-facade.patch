@@ -1,0 +1,21 @@
+From f5f6fae4b4b45cb20bd42e1c9d9119e232c59513 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 15 Nov 2026 15:53:25 -0800
+Subject: [PATCH 3/3] Expose the generic Yao proof helper facade
+
+---
+ TCSlib/Cryptography/SecureComputation/Yao.lean | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TCSlib/Cryptography/SecureComputation/Yao.lean b/TCSlib/Cryptography/SecureComputation/Yao.lean
+index e4a546c2d..de7564669 100644
+--- a/TCSlib/Cryptography/SecureComputation/Yao.lean
++++ b/TCSlib/Cryptography/SecureComputation/Yao.lean
+@@ -7,6 +7,7 @@ import TCSlib.Cryptography.SecureComputation.GarblingSecurity
+ import TCSlib.Complexity.CircuitComplexity.Uniform
+ import TCSlib.Complexity.ClassP.BinaryArith.Words
+ import TCSlib.Cryptography.Foundations.BitLists
++import TCSlib.Cryptography.SecureComputation.Yao.HybridProof
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false

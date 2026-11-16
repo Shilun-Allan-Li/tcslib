@@ -1,0 +1,45 @@
+START 2026-11-15T23:19:06.974203+00:00 evidence/probes/BaseAxioms
+'TCSlib.Cryptography.SecureComputation.yaoHybrid_polyTime' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.SecureComputation.yaoHybrid_simulators' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.SecureComputation.yaoHybrid_hbcSecure' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.SecureComputation.yaoProtocol_hbcSecure' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.yaoHybrid_polyTime: closure=3545 sorried=[TCSlib.Cryptography.SecureComputation.yaoHybrid_polyTime]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.yaoHybrid_simulators: closure=9494 sorried=[TCSlib.Cryptography.SecureComputation.yaoHybrid_simulators]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.yaoHybrid_hbcSecure: closure=9504 sorried=[TCSlib.Cryptography.SecureComputation.yaoHybrid_polyTime,
+ TCSlib.Cryptography.SecureComputation.yaoHybrid_simulators]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.yaoProtocol_hbcSecure: closure=12249 sorried=[TCSlib.Cryptography.SecureComputation.HybridProtocol.hbcSecure_compose,
+ TCSlib.Cryptography.SecureComputation.yaoHybrid_polyTime,
+ TCSlib.Cryptography.SecureComputation.yaoHybrid_simulators,
+ TCSlib.Cryptography.SecureComputation.otProtocol_polyTime,
+ TCSlib.Cryptography.SecureComputation.otProtocol_simulators]
+        8.86 real         3.93 user         1.47 sys
+          2248851456  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              117232  page reclaims
+               60304  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                5661  voluntary context switches
+               36622  involuntary context switches
+            32578719  instructions retired
+            16461232  cycles elapsed
+             1622352  peak memory footprint
+END 2026-11-15T23:19:15.871474+00:00 EXIT 0

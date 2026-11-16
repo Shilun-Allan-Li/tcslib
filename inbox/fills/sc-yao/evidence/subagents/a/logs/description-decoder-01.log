@@ -1,0 +1,70 @@
+START 2026-11-15T21:51:45Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder.lean:131:14: error: unsolved goals
+case succ
+r : List Bool
+n : ℕ
+ih :
+  scan next output (false, false, false) (List.replicate n true ++ false :: r) =
+    dbl (List.replicate n true) ++ [false, true] ++ scan next output (false, false, true) r
+⊢ true :: true :: ([] ++ (dbl (List.replicate n true) ++ [false, true] ++ scan next output (false, false, true) r)) =
+    true :: true :: (dbl (List.replicate n true) ++ [false, true] ++ scan next output (false, false, true) r)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder.lean:144:14: error: unsolved goals
+case succ
+r : List Bool
+n : ℕ
+ih :
+  scan next output (true, false, true) (List.replicate n true ++ false :: r) =
+    dbl (dbl (List.replicate n true)) ++ [false, false, true, true] ++ scan next output (true, false, false) r
+⊢ true ::
+      true ::
+        true ::
+          true ::
+            ([] ++
+              (dbl (dbl (List.replicate n true)) ++ [false, false, true, true] ++
+                scan next output (true, false, false) r)) =
+    true ::
+      true ::
+        true ::
+          true ::
+            (dbl (dbl (List.replicate n true)) ++ [false, false, true, true] ++ scan next output (true, false, false) r)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder.lean:161:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  scan next output (true, false, true) (List.replicate ?n true ++ false :: ?r)
+in the target expression
+  scan next output (true, false, true) (List.replicate a true ++ (false :: encodeList encodeNat args ++ r)) =
+    dbl (BinArith.encWords (List.map (fun a => List.replicate a true) (a :: args))) ++
+      ([false, true] ++ scan next output (false, false, true) r)
+
+case cons
+r : List Bool
+a : ℕ
+args : List ℕ
+ih :
+  scan next output (true, false, false) (encodeList encodeNat args ++ r) =
+    dbl (BinArith.encWords (List.map (fun a => List.replicate a true) args)) ++ [false, true] ++
+      scan next output (false, false, true) r
+⊢ scan next output (true, false, true) (List.replicate a true ++ (false :: encodeList encodeNat args ++ r)) =
+    dbl (BinArith.encWords (List.map (fun a => List.replicate a true) (a :: args))) ++
+      ([false, true] ++ scan next output (false, false, true) r)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder.lean:189:4: error: No goals to be solved
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/DescriptionDecoder): no fresh .olean produced
+        3.14 real         2.02 user         1.34 sys
+          2214035456  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174183  page reclaims
+                1268  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  78  voluntary context switches
+                7155  involuntary context switches
+            32577675  instructions retired
+            21207031  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T21:51:49Z status=1

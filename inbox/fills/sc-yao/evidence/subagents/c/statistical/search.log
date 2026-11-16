@@ -1,0 +1,27 @@
+$ rg -n StatClose.*(uprob|Bad|bad)|statClose_of.*eq|agree outside|outside.*event|coupling bound|off.*[bB]ad TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean TCSlib/Cryptography/Asymptotic/Sampling.lean
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:55:/-- **The coupling bound**: two `[0,1]`-valued functions on a finite sample space that agree
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:56:outside the event `E` have averages at most `Pr[E]` apart (the "two experiments that agree
+TCSlib/Cryptography/Asymptotic/Sampling.lean:33:  experiment with auxiliary coins (`StatClose.abs_uprob_sub_le_prod`) — the statistical-switch
+TCSlib/Cryptography/Asymptotic/Sampling.lean:73:* `TCSlib.Cryptography.StatClose.abs_uprob_sub_le_prod`,
+TCSlib/Cryptography/Asymptotic/Sampling.lean:134:    StatClose X Y δ ↔ ∀ T : γ → Prop, |uprob (fun s => T (X s)) - uprob (fun t => T (Y t))| ≤ δ :=
+TCSlib/Cryptography/Asymptotic/Sampling.lean:138:theorem StatClose.abs_uprob_sub_le {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:144:theorem StatClose.uprob_le_add {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:237:theorem StatClose.abs_uprob_sub_le_prod {ρ : Type*} [Fintype ρ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:259:`StatClose.abs_uprob_sub_le_prod` for `X, X'` with the second coordinate as auxiliary coins;
+TCSlib/Cryptography/Asymptotic/Sampling.lean:282:probabilities over `(·, ω)` (`uprob_prod`), and `StatClose.abs_uprob_sub_le_prod` applies with
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:512:auxiliary coins (`StatClose.abs_uprob_sub_le_prod` at `δ = 0` after `statClose_copies` and
+
+exit=0
+$ rg -n statClose_of_eq_off|distAdv_le_of_eq_off|abs_uexp_sub_le_uprob TCSlib/Cryptography
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:26:* `statClose_of_eq_off`: agreement outside `Bad` gives closeness at most `Pr[Bad]`.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:27:* `distAdv_le_of_eq_off`: every randomized distinguisher inherits the same bound.
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:46:theorem statClose_of_eq_off {σ γ : Type*} [Fintype σ] (X Y : σ → γ)
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:53:  refine (MultiMsg.abs_uexp_sub_le_uprob
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:66:theorem distAdv_le_of_eq_off {σ γ ρ : Type*} [Fintype σ] [Fintype ρ]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/StatisticalSwitch.lean:70:  distAdv_le_of_statClose X Y (statClose_of_eq_off X Y Bad δ hBad heq) D
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:27:* `MultiMsg.abs_uexp_sub_le_uprob` bounds the difference of two expectations by the
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:61:theorem abs_uexp_sub_le_uprob {Ω : Type*} [Fintype Ω] (a b : Ω → ℝ) (E : Ω → Prop)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:354:(`MultiMsg.abs_uexp_sub_le_uprob`), and `uprob_not_injective_le` bounds it. -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:385:  exact (MultiMsg.abs_uexp_sub_le_uprob a b (fun r => ¬ Function.Injective r)
+
+exit=0

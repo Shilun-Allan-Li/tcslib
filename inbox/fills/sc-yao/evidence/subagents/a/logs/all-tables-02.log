@@ -1,0 +1,93 @@
+START 2026-11-15T22:20:21Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables.lean:170:4: error: Tactic `apply` failed: could not unify the conclusion of `@List.map_congr_left`
+  List.map ?f ?l = List.map ?g ?l
+with the goal
+  List.map
+      (fun a =>
+        RowFromCoins.rowWord E₁ E₂ (fun v => width (pairSndD v)) (fun v => bound (pairSndD v))
+          (fun v => inputs (pairSndD v)) (fun v => (pairFstD v).length)
+          (fun v => pairFstD (BinArith.getW (pairEncode (pairFstD v) (gates (pairSndD v)))))
+          (fun v => pairSndD (BinArith.getW (pairEncode (pairFstD v) (gates (pairSndD v)))))
+          (fun v => coins (pairSndD v))
+          (min
+            (BinArith.decWords
+                (pairSndD
+                  (BinArith.getW
+                    (pairEncode (pairFstD (pairEncode (List.replicate i true) z))
+                      (gates (pairSndD (pairEncode (List.replicate i true) z))))))).length
+            2)
+          a (pairEncode (List.replicate i true) z))
+      Finset.univ.toList =
+    List.map
+      (fun a =>
+        RowFromCoins.rowWord E₁ E₂ width bound inputs (fun x => i)
+          (fun v => pairFstD (BinArith.getW (pairEncode (List.replicate i true) (gates v))))
+          (fun v => pairSndD (BinArith.getW (pairEncode (List.replicate i true) (gates v)))) coins
+          (min (BinArith.decWords (pairSndD (BinArith.getW (pairEncode (List.replicate i true) (gates z))))).length 2) a
+          z)
+      Finset.univ.toList
+
+Note: The full type of `@List.map_congr_left` is
+  ∀ {α : Type ?u.2766} {l : List α} {α_1 : Type ?u.2765} {f g : α → α_1},
+    (∀ a ∈ l, f a = g a) → List.map f l = List.map g l
+
+case pos
+E₁ E₂ : List Bool → List Bool
+width bound inputs : List Bool → ℕ
+gates coins : List Bool → List Bool
+i : ℕ
+z : List Bool
+h : (BinArith.decWords (pairSndD (BinArith.getW (pairEncode (List.replicate i true) (gates z))))).length ≤ 2
+⊢ List.map
+      (fun a =>
+        RowFromCoins.rowWord E₁ E₂ (fun v => width (pairSndD v)) (fun v => bound (pairSndD v))
+          (fun v => inputs (pairSndD v)) (fun v => (pairFstD v).length)
+          (fun v => pairFstD (BinArith.getW (pairEncode (pairFstD v) (gates (pairSndD v)))))
+          (fun v => pairSndD (BinArith.getW (pairEncode (pairFstD v) (gates (pairSndD v)))))
+          (fun v => coins (pairSndD v))
+          (min
+            (BinArith.decWords
+                (pairSndD
+                  (BinArith.getW
+                    (pairEncode (pairFstD (pairEncode (List.replicate i true) z))
+                      (gates (pairSndD (pairEncode (List.replicate i true) z))))))).length
+            2)
+          a (pairEncode (List.replicate i true) z))
+      Finset.univ.toList =
+    List.map
+      (fun a =>
+        RowFromCoins.rowWord E₁ E₂ width bound inputs (fun x => i)
+          (fun v => pairFstD (BinArith.getW (pairEncode (List.replicate i true) (gates v))))
+          (fun v => pairSndD (BinArith.getW (pairEncode (List.replicate i true) (gates v)))) coins
+          (min (BinArith.decWords (pairSndD (BinArith.getW (pairEncode (List.replicate i true) (gates z))))).length 2) a
+          z)
+      Finset.univ.toList
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables.lean:167:55: warning: This simp argument is unused:
+  List.length_replicate
+
+Hint: Omit it from the simp argument list.
+  simp only [pairFstD_pairEncode, pairSndD_pairEncode,̵ ̵L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AllTables): no fresh .olean produced
+      137.54 real       135.28 user         2.25 sys
+          2222931968  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              125854  page reclaims
+               52871  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                7160  voluntary context switches
+               92903  involuntary context switches
+            33071786  instructions retired
+            22163936  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T22:22:38Z status=1

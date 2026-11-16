@@ -1,0 +1,13 @@
+chunk-scanner-01.reconstructed.lean 269
+143: theorem phase_eq : Phase = Bool × Bool × Bool := rfl
+157: theorem emit_poly (o : Phase → Bool → List Bool) : PolyTimeComputable (emit o) := by
+234:       simp only [List.headD_nil, List.drop_nil, if_pos rfl, List.nil_append, scan_nil]
+garbling-01.reconstructed.lean 308
+50:   rw [spEncFun_eq, NUPPT.inArg_layout, NUPPT.inCoins_layout, pairFstD_pairEncode,
+90:     PolyTimeComputable (nestedWordEnc E₁ E₂) := by
+215:       | nil => cases k <;> rw [gateOut_eq_eval, DAGGate.eval_eq] <;> rfl
+218:         | nil => cases k <;> rw [gateOut_eq_eval, DAGGate.eval_eq] <;> rfl
+223: zero-/one-argument tests, and the first two assignment-bit maps are polynomial-time,
+229: Boolean calculation with the public gate-output interface. -/
+246:     (polyTimeComputable_ite hkOr hOr (polyTimeComputable_not hAnd))
+289:   generalize hargs : (C.gates[i]).args = args at a hfan ⊢

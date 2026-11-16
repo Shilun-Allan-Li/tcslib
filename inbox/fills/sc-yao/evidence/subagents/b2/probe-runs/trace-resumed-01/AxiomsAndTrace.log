@@ -1,0 +1,77 @@
+START 2026-11-15T23:17:45.006275+00:00
+SIGNATURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobProgram.output_poly	∀
+  (inA inB outLen : Complexity.PolyExpr) (circ : (n : ℕ) → BoolCircuit.DAGCircuit (inA.eval n + inB.eval n))
+  (outs : (n : ℕ) → Fin (outLen.eval n) → ℕ),
+  (∀ (n : ℕ) (j : Fin (outLen.eval n)), outs n j < (circ n).size) →
+    ∀ {gen E₁ E₂ N msg ans : List Bool → List Bool},
+      Complexity.PolyTimeComputable gen →
+        (∀ (n : ℕ),
+            gen (List.replicate n true) =
+              Turing.pairEncode (circ n).encode
+                (Complexity.BinArith.encWords (List.ofFn fun j => BoolCircuit.encodeNat (outs n j)))) →
+          Complexity.PolyTimeComputable E₁ →
+            Complexity.PolyTimeComputable E₂ →
+              Complexity.PolyTimeComputable N →
+                Complexity.PolyTimeComputable msg →
+                  Complexity.PolyTimeComputable ans →
+                    ∀ (init : (z : List Bool) → List (Fin (N z).length → Bool)) (T : List Bool → ℕ → List (List Bool))
+                      (pairs : List Bool → List (List Bool)),
+                      (∀ (z : List Bool),
+                          Complexity.BinArith.encWords (List.map List.ofFn (init z)) =
+                            TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobInit.initWords
+                              (Turing.pairEncode (List.replicate (N z).length true)
+                                (Turing.pairEncode (List.replicate (inA.eval (N z).length) true)
+                                  (Turing.pairEncode (List.replicate (inB.eval (N z).length) true)
+                                    (Turing.pairEncode (msg z) (ans z)))))) →
+                        (∀ (z : List Bool), (init z).length = inA.eval (N z).length + inB.eval (N z).length) →
+                          (∀ (z : List Bool) (v : ℕ),
+                              T z v =
+                                if inA.eval (N z).length + inB.eval (N z).length ≤ v then
+                                  Complexity.BinArith.decWords
+                                    ((Complexity.BinArith.decWords (Complexity.pairFstD (msg z))).getD
+                                      (v - (inA.eval (N z).length + inB.eval (N z).length)) [])
+                                else []) →
+                            (∀ (z : List Bool),
+                                pairs z =
+                                  Complexity.BinArith.decWords (Complexity.pairSndD (Complexity.pairSndD (msg z)))) →
+                              Complexity.PolyTimeComputable fun z =>
+                                have vals :=
+                                  BoolCircuit.runWith
+                                    (fun g vs =>
+                                      TCSlib.Cryptography.SecureComputation.evalGate
+                                        (TCSlib.Cryptography.SecureComputation.nestedSpecial E₁ E₂ (N z).length) (T z)
+                                        vs.length g vs)
+                                    (circ (N z).length).gates (init z);
+                                List.ofFn fun j =>
+                                  if
+                                      List.ofFn (vals.getD (outs (N z).length j) default) =
+                                        Complexity.pairFstD ((pairs z).getD ↑j []) then
+                                    false
+                                  else
+                                    decide
+                                      (List.ofFn (vals.getD (outs (N z).length j) default) =
+                                        Complexity.pairSndD ((pairs z).getD ↑j []))
+AXIOMS	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobProgram.output_poly	[propext,
+ Classical.choice,
+ Quot.sound]
+SORRY_CLOSURE	TCSlib.Cryptography.SecureComputation.YaoHybridProof.BobProgram.output_poly	[]
+STORED_CONSTANTS 1
+       33.09 real        26.45 user         2.12 sys
+          2281029632  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              135535  page reclaims
+               46445  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                5845  voluntary context switches
+               74495  involuntary context switches
+        129102766200  instructions retired
+         79699241494  cycles elapsed
+           369832936  peak memory footprint
+END 2026-11-15T23:18:18.144825+00:00

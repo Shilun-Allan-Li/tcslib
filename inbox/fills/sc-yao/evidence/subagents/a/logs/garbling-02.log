@@ -1,0 +1,126 @@
+START 2026-11-15T21:49:07Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:214:50: warning: This simp argument is unused:
+  List.range_succ
+
+Hint: Omit it from the simp argument list.
+  simp [gateOut_eq_eval, DAGGate.eval_eq,̵ ̵L̵i̵s̵t̵.̵r̵a̵n̵g̵e̵_̵s̵u̵c̵c̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:249:4: error: Type mismatch: After simplification, term
+  polyTimeComputable_ite hzero (polyTimeComputable_const [true])
+    (polyTimeComputable_ite hone h₀ (polyTimeComputable_and h₀ h₁))
+ has type
+  PolyTimeComputable fun x =>
+    if (g x).args.length = 0 then [true]
+    else
+      if (g x).args.length = 1 then [(List.ofFn (a x)).getD 0 false]
+      else [(List.ofFn (a x)).getD 0 false && (List.ofFn (a x)).getD 1 false]
+but is expected to have type
+  PolyTimeComputable fun z =>
+    [if (g z).args.length = 0 then true
+      else
+        if (g z).args.length = 1 then (List.ofFn (a z)).getD 0 false
+        else (List.ofFn (a z)).getD 0 false && (List.ofFn (a z)).getD 1 false]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:256:4: error: Type mismatch: After simplification, term
+  polyTimeComputable_ite hzero (polyTimeComputable_const [false])
+    (polyTimeComputable_ite hone h₀ (polyTimeComputable_or h₀ h₁))
+ has type
+  PolyTimeComputable fun x =>
+    if (g x).args.length = 0 then [false]
+    else
+      if (g x).args.length = 1 then [(List.ofFn (a x)).getD 0 false]
+      else [(List.ofFn (a x)).getD 0 false || (List.ofFn (a x)).getD 1 false]
+but is expected to have type
+  PolyTimeComputable fun z =>
+    [if (g z).args.length = 0 then false
+      else
+        if (g z).args.length = 1 then (List.ofFn (a z)).getD 0 false
+        else (List.ofFn (a z)).getD 0 false || (List.ofFn (a z)).getD 1 false]
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean:382:77: error: unsolved goals
+case inl
+arity : List Bool → ℕ
+enum : (l : ℕ) → List (Fin l → Bool)
+row : (l : ℕ) → (Fin l → Bool) → List Bool → List Bool
+hbound : ∀ (z : List Bool), arity z ≤ 2
+hzero : PolyTimeComputable fun z => [decide (arity z = 0)]
+hone : PolyTimeComputable fun z => [decide (arity z = 1)]
+hrow : ∀ l ≤ 2, ∀ (a : Fin l → Bool), PolyTimeComputable (row l a)
+h₀ : PolyTimeComputable fun z => BinArith.encWords (List.map (fun a => row 0 a z) (enum 0))
+h₁ : PolyTimeComputable fun z => BinArith.encWords (List.map (fun a => row 1 a z) (enum 1))
+h₂ : PolyTimeComputable fun z => BinArith.encWords (List.map (fun a => row 2 a z) (enum 2))
+h :
+  PolyTimeComputable fun x =>
+    if decide (arity x = 0) = true then BinArith.encWords (List.map (fun a => row 0 a x) (enum 0))
+    else
+      if decide (arity x = 1) = true then BinArith.encWords (List.map (fun a => row 1 a x) (enum 1))
+      else BinArith.encWords (List.map (fun a => row 2 a x) (enum 2))
+z : List Bool
+hz : arity z = 0
+⊢ BinArith.encWords (List.map (fun a => row 0 a z) (enum 0)) =
+    BinArith.encWords (List.map (fun a => row (arity z) a z) (enum (arity z)))
+
+case inr.inl
+arity : List Bool → ℕ
+enum : (l : ℕ) → List (Fin l → Bool)
+row : (l : ℕ) → (Fin l → Bool) → List Bool → List Bool
+hbound : ∀ (z : List Bool), arity z ≤ 2
+hzero : PolyTimeComputable fun z => [decide (arity z = 0)]
+hone : PolyTimeComputable fun z => [decide (arity z = 1)]
+hrow : ∀ l ≤ 2, ∀ (a : Fin l → Bool), PolyTimeComputable (row l a)
+h₀ : PolyTimeComputable fun z => BinArith.encWords (List.map (fun a => row 0 a z) (enum 0))
+h₁ : PolyTimeComputable fun z => BinArith.encWords (List.map (fun a => row 1 a z) (enum 1))
+h₂ : PolyTimeComputable fun z => BinArith.encWords (List.map (fun a => row 2 a z) (enum 2))
+h :
+  PolyTimeComputable fun x =>
+    if decide (arity x = 0) = true then BinArith.encWords (List.map (fun a => row 0 a x) (enum 0))
+    else
+      if decide (arity x = 1) = true then BinArith.encWords (List.map (fun a => row 1 a x) (enum 1))
+      else BinArith.encWords (List.map (fun a => row 2 a x) (enum 2))
+z : List Bool
+hz : arity z = 1
+⊢ BinArith.encWords (List.map (fun a => row 1 a z) (enum 1)) =
+    BinArith.encWords (List.map (fun a => row (arity z) a z) (enum (arity z)))
+
+case inr.inr
+arity : List Bool → ℕ
+enum : (l : ℕ) → List (Fin l → Bool)
+row : (l : ℕ) → (Fin l → Bool) → List Bool → List Bool
+hbound : ∀ (z : List Bool), arity z ≤ 2
+hzero : PolyTimeComputable fun z => [decide (arity z = 0)]
+hone : PolyTimeComputable fun z => [decide (arity z = 1)]
+hrow : ∀ l ≤ 2, ∀ (a : Fin l → Bool), PolyTimeComputable (row l a)
+h₀ : PolyTimeComputable fun z => BinArith.encWords (List.map (fun a => row 0 a z) (enum 0))
+h₁ : PolyTimeComputable fun z => BinArith.encWords (List.map (fun a => row 1 a z) (enum 1))
+h₂ : PolyTimeComputable fun z => BinArith.encWords (List.map (fun a => row 2 a z) (enum 2))
+h :
+  PolyTimeComputable fun x =>
+    if decide (arity x = 0) = true then BinArith.encWords (List.map (fun a => row 0 a x) (enum 0))
+    else
+      if decide (arity x = 1) = true then BinArith.encWords (List.map (fun a => row 1 a x) (enum 1))
+      else BinArith.encWords (List.map (fun a => row 2 a x) (enum 2))
+z : List Bool
+hz : arity z = 2
+⊢ BinArith.encWords (List.map (fun a => row 2 a z) (enum 2)) =
+    BinArith.encWords (List.map (fun a => row (arity z) a z) (enum (arity z)))
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling): no fresh .olean produced
+        8.92 real        11.22 user         1.38 sys
+          2204401664  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173152  page reclaims
+                2366  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 220  voluntary context switches
+               27023  involuntary context switches
+            32725029  instructions retired
+            22470548  cycles elapsed
+             1655120  peak memory footprint
+END 2026-11-15T21:49:16Z status=1

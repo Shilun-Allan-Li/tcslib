@@ -1,0 +1,282 @@
+[
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, false] = [false, true])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.and = GateKind.or)]\n\ncase and.or\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.or.encode)\n\u22a2 [decide ([false, false] = [false, true])] = [decide (GateKind.and = GateKind.or)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, false] = [true, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.and = GateKind.not)]\n\ncase and.not\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.not.encode)\n\u22a2 [decide ([false, false] = [true, false])] = [decide (GateKind.and = GateKind.not)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, true] = [false, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.or = GateKind.and)]\n\ncase or.and\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.and.encode)\n\u22a2 [decide ([false, true] = [false, false])] = [decide (GateKind.or = GateKind.and)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, true] = [true, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.or = GateKind.not)]\n\ncase or.not\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.not.encode)\n\u22a2 [decide ([false, true] = [true, false])] = [decide (GateKind.or = GateKind.not)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([true, false] = [false, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.not = GateKind.and)]\n\ncase not.and\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.and.encode)\n\u22a2 [decide ([true, false] = [false, false])] = [decide (GateKind.not = GateKind.and)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([true, false] = [false, true])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.not = GateKind.or)]\n\ncase not.or\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.or.encode)\n\u22a2 [decide ([true, false] = [false, true])] = [decide (GateKind.not = GateKind.or)]\n       27.36 real        26.93 user         1.47 sys\n          2189590528  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n              191554  page reclaims\n                1383  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                  12  voluntary context switches\n               35405  involuntary context switches\n        136232598716  instructions retired\n         79237905053  cycles elapsed\n           391439352  peak memory footprint\nEND 2026-11-15T23:37:39.103590+00:00"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, false] = [false, true])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.and = GateKind.or)]\n\ncase and.or\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.or.encode)\n\u22a2 [decide ([false, false] = [false, true])] = [decide (GateKind.and = GateKind.or)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, false] = [true, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.and = GateKind.not)]\n\ncase and.not\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.not.encode)\n\u22a2 [decide ([false, false] = [true, false])] = [decide (GateKind.and = GateKind.not)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, true] = [false, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.or = GateKind.and)]\n\ncase or.and\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.and.encode)\n\u22a2 [decide ([false, true] = [false, false])] = [decide (GateKind.or = GateKind.and)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, true] = [true, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.or = GateKind.not)]\n\ncase or.not\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.not.encode)\n\u22a2 [decide ([false, true] = [true, false])] = [decide (GateKind.or = GateKind.not)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([true, false] = [false, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.not = GateKind.and)]\n\ncase not.and\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.and.encode)\n\u22a2 [decide ([true, false] = [false, false])] = [decide (GateKind.not = GateKind.and)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "A",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_A_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_A_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([true, false] = [false, true])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.not = GateKind.or)]\n\ncase not.or\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.or.encode)\n\u22a2 [decide ([true, false] = [false, true])] = [decide (GateKind.not = GateKind.or)]\n       25.98 real        25.66 user         1.31 sys\n          2225782784  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n              174443  page reclaims\n                1210  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                  31  voluntary context switches\n               20034  involuntary context switches\n        135676625155  instructions retired\n         75385537096  cycles elapsed\n           390325168  peak memory footprint\nEND 2026-11-15T23:38:05.113633+00:00"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, false] = [false, true])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.and = GateKind.or)]\n\ncase and.or\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.or.encode)\n\u22a2 [decide ([false, false] = [false, true])] = [decide (GateKind.and = GateKind.or)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, false] = [true, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.and = GateKind.not)]\n\ncase and.not\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.not.encode)\n\u22a2 [decide ([false, false] = [true, false])] = [decide (GateKind.and = GateKind.not)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, true] = [false, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.or = GateKind.and)]\n\ncase or.and\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.and.encode)\n\u22a2 [decide ([false, true] = [false, false])] = [decide (GateKind.or = GateKind.and)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, true] = [true, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.or = GateKind.not)]\n\ncase or.not\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.not.encode)\n\u22a2 [decide ([false, true] = [true, false])] = [decide (GateKind.or = GateKind.not)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([true, false] = [false, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.not = GateKind.and)]\n\ncase not.and\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.and.encode)\n\u22a2 [decide ([true, false] = [false, false])] = [decide (GateKind.not = GateKind.and)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_strict.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_strict.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([true, false] = [false, true])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.not = GateKind.or)]\n\ncase not.or\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.or.encode)\n\u22a2 [decide ([true, false] = [false, true])] = [decide (GateKind.not = GateKind.or)]\n       25.02 real        25.36 user         1.10 sys\n          2254684160  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n              175562  page reclaims\n                   0  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                   1  voluntary context switches\n               12652  involuntary context switches\n        135397757189  instructions retired\n         73988847913  cycles elapsed\n           390013920  peak memory footprint\nEND 2026-11-15T23:38:30.168500+00:00"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, false] = [false, true])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.and = GateKind.or)]\n\ncase and.or\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.or.encode)\n\u22a2 [decide ([false, false] = [false, true])] = [decide (GateKind.and = GateKind.or)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, false] = [true, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.and = GateKind.not)]\n\ncase and.not\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.not.encode)\n\u22a2 [decide ([false, false] = [true, false])] = [decide (GateKind.and = GateKind.not)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, true] = [false, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.or = GateKind.and)]\n\ncase or.and\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.and.encode)\n\u22a2 [decide ([false, true] = [false, false])] = [decide (GateKind.or = GateKind.and)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([false, true] = [true, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.or = GateKind.not)]\n\ncase or.not\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.not.encode)\n\u22a2 [decide ([false, true] = [true, false])] = [decide (GateKind.or = GateKind.not)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([true, false] = [false, false])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.not = GateKind.and)]\n\ncase not.and\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.and.encode)\n\u22a2 [decide ([true, false] = [false, false])] = [decide (GateKind.not = GateKind.and)]"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/Garbling.lean",
+    "variant": "B",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/Garbling_B_coe.log",
+    "probe_line": 324,
+    "original_line": 282,
+    "declaration": "gateKind_test_poly",
+    "diagnostic": "evidence/subagents/a2/seals/final/Garbling_B_coe.lean:324:81: error: Tactic `rfl` failed: The left-hand side\n  [decide ([true, false] = [false, true])]\nis not definitionally equal to the right-hand side\n  [decide (GateKind.not = GateKind.or)]\n\ncase not.or\nk : List Bool \u2192 GateKind\nhcode : PolyTimeComputable fun z => (k z).encode\nz : List Bool\nh :\n  PolyTimeComputable\n    ((fun z => [decide (pairFstD z = pairSndD z)]) \u2218 fun x => pairEncode (k x).encode GateKind.or.encode)\n\u22a2 [decide ([true, false] = [false, true])] = [decide (GateKind.not = GateKind.or)]\n       25.05 real        25.25 user         1.12 sys\n          2221834240  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n              175807  page reclaims\n                 138  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                  81  voluntary context switches\n                9593  involuntary context switches\n        135531882154  instructions retired\n         73768400900  cycles elapsed\n           393847776  peak memory footprint\nEND 2026-11-15T23:38:55.252264+00:00"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean",
+    "variant": "A",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/RowFromCoins_A_strict.log",
+    "probe_line": 490,
+    "original_line": 448,
+    "declaration": "rowWord_garbledRow",
+    "diagnostic": "evidence/subagents/a2/seals/final/RowFromCoins_A_strict.lean:490:44: error: Application type mismatch: The argument\n  C.output_lt\nhas type\n  C.output < inputs z + C.gates.length\nbut is expected to have type\n  C.output < C.size\nin the application\n  LE.le.trans_lt (Nat.zero_le C.output) C.output_lt\n       30.04 real        28.64 user         1.55 sys\n          2199142400  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n              184762  page reclaims\n                2268  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                 352  voluntary context switches\n               23172  involuntary context switches\n        154080554278  instructions retired\n         84391153378  cycles elapsed\n           415393216  peak memory footprint\nEND 2026-11-15T23:41:13.450513+00:00"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean",
+    "variant": "A",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/RowFromCoins_A_coe.log",
+    "probe_line": 490,
+    "original_line": 448,
+    "declaration": "rowWord_garbledRow",
+    "diagnostic": "evidence/subagents/a2/seals/final/RowFromCoins_A_coe.lean:490:44: error: Application type mismatch: The argument\n  C.output_lt\nhas type\n  C.output < inputs z + C.gates.length\nbut is expected to have type\n  C.output < C.size\nin the application\n  LE.le.trans_lt (Nat.zero_le C.output) C.output_lt\n       28.07 real        27.65 user         1.21 sys\n          2257879040  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n              178187  page reclaims\n                1142  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                  30  voluntary context switches\n                9398  involuntary context switches\n        153688014700  instructions retired\n         80851078507  cycles elapsed\n           417654184  peak memory footprint\nEND 2026-11-15T23:41:41.558117+00:00"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean",
+    "variant": "B",
+    "coercions": "strict",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/RowFromCoins_B_strict.log",
+    "probe_line": 490,
+    "original_line": 448,
+    "declaration": "rowWord_garbledRow",
+    "diagnostic": "evidence/subagents/a2/seals/final/RowFromCoins_B_strict.lean:490:44: error: Application type mismatch: The argument\n  C.output_lt\nhas type\n  C.output < inputs z + C.gates.length\nbut is expected to have type\n  C.output < C.size\nin the application\n  LE.le.trans_lt (Nat.zero_le C.output) C.output_lt\n       28.87 real        28.40 user         1.27 sys\n          2289254400  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n              177512  page reclaims\n                 134  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                  89  voluntary context switches\n               12836  involuntary context switches\n        153610032274  instructions retired\n         82895660462  cycles elapsed\n           417179120  peak memory footprint\nEND 2026-11-15T23:42:10.459005+00:00"
+  },
+  {
+    "file": "TCSlib/Cryptography/SecureComputation/Yao/HybridProof/RowFromCoins.lean",
+    "variant": "B",
+    "coercions": "coe",
+    "log": "evidence/subagents/a2/probe-runs/seals-01/RowFromCoins_B_coe.log",
+    "probe_line": 490,
+    "original_line": 448,
+    "declaration": "rowWord_garbledRow",
+    "diagnostic": "evidence/subagents/a2/seals/final/RowFromCoins_B_coe.lean:490:44: error: Application type mismatch: The argument\n  C.output_lt\nhas type\n  C.output < inputs z + C.gates.length\nbut is expected to have type\n  C.output < C.size\nin the application\n  LE.le.trans_lt (Nat.zero_le C.output) C.output_lt\n       37.04 real        31.65 user         2.37 sys\n          2198339584  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n              201223  page reclaims\n                8380  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                  84  voluntary context switches\n              130009  involuntary context switches\n        155918144694  instructions retired\n         94424050428  cycles elapsed\n           418358816  peak memory footprint\nEND 2026-11-15T23:42:47.534371+00:00"
+  }
+]

@@ -1,0 +1,63 @@
+START 2026-11-15T22:12:32Z module=TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins.lean:123:2: error: Tactic `apply` failed: could not unify the conclusion of `@List.map_congr_left`
+  List.map ?f ?l = List.map ?g ?l
+with the goal
+  List.map
+      (fun a =>
+        RowFromCoins.rowWord E₁ E₂ width bound inputs gate kind args coins (min (BinArith.decWords (args z)).length 2) a
+          z)
+      Finset.univ.toList =
+    List.map (fun a => garbledRow (nestedSpecial E₁ E₂ (width z)) C s i ((s.2.2 i) a)) Finset.univ.toList
+
+Note: The full type of `@List.map_congr_left` is
+  ∀ {α : Type ?u.81739} {l : List α} {α_1 : Type ?u.81738} {f g : α → α_1},
+    (∀ a ∈ l, f a = g a) → List.map f l = List.map g l
+
+E₁ E₂ : List Bool → List Bool
+width bound inputs gate : List Bool → ℕ
+kind args coins : List Bool → List Bool
+z : List Bool
+C : DAGCircuit (inputs z)
+s : GarbleSeed C (Fin (width z) → Bool) ((Fin (width z) → Bool) × (Fin (width z) → Bool))
+i : Fin C.gates.length
+hfan : C.gates[i].args.length ≤ 2
+hargs : args z = BinArith.encWords (List.map (fun v => List.replicate v true) C.gates[i].args)
+hrow :
+  ∀ (a : Fin C.gates[i].args.length → Bool),
+    RowFromCoins.rowWord E₁ E₂ width bound inputs gate kind args coins C.gates[i].args.length a z =
+      garbledRow (nestedSpecial E₁ E₂ (width z)) C s i ((s.2.2 i) a)
+⊢ List.map
+      (fun a =>
+        RowFromCoins.rowWord E₁ E₂ width bound inputs gate kind args coins (min (BinArith.decWords (args z)).length 2) a
+          z)
+      Finset.univ.toList =
+    List.map (fun a => garbledRow (nestedSpecial E₁ E₂ (width z)) C s i ((s.2.2 i) a)) Finset.univ.toList
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins.lean:120:4: warning: This simp argument is unused:
+  min_eq_left hfan
+
+Hint: Omit it from the simp argument list.
+  simp only [hargs, BinArith.decWords_encWords, List.length_map, m̵i̵n̵_̵e̵q̵_̵l̵e̵f̵t̵ ̵h̵f̵a̵n̵,̵ ̵if_pos hfan]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/TablesFromCoins): no fresh .olean produced
+        3.58 real         1.90 user         1.36 sys
+          2174320640  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              170532  page reclaims
+                2870  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                2219  voluntary context switches
+                6114  involuntary context switches
+            33220689  instructions retired
+            19399012  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T22:12:36Z status=1

@@ -1,0 +1,82 @@
+START 2026-11-15T23:26:23.353767+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:276:39: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (keyRelabel ?S ?n ?values) ?k ?b ?v ?t
+in the target expression
+  ((keyRelabel S n values) ((blocksEquiv S n) r).1, (rowRelabel S n rows) ((blocksEquiv S n) r).2.1,
+          (shiftRelabel S mask) ((blocksEquiv S n) r).2.2).1
+      b v t =
+    ((blocksEquiv S n) r).1 (b ^^ values v) v t
+
+S n : ℕ
+values : Fin S → Bool
+rows : Fin S → Equiv.Perm (Fin 4)
+mask : Fin S → Fin 2 → Bool
+r : Fin (10 * S * n + 2 * S) → Bool
+b : Bool
+v : Fin S
+t : Fin n
+⊢ ((keyRelabel S n values) ((blocksEquiv S n) r).1, (rowRelabel S n rows) ((blocksEquiv S n) r).2.1,
+          (shiftRelabel S mask) ((blocksEquiv S n) r).2.2).1
+      b v t =
+    ((blocksEquiv S n) r).1 (b ^^ values v) v t
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:285:39: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (rowRelabel ?S ?n ?rows) ?k ?i ?a ?t
+in the target expression
+  ((keyRelabel S n values) ((blocksEquiv S n) r).1, (rowRelabel S n rows) ((blocksEquiv S n) r).2.1,
+            (shiftRelabel S mask) ((blocksEquiv S n) r).2.2).2.1
+      i a t =
+    ((blocksEquiv S n) r).2.1 i ((rows i) a) t
+
+S n : ℕ
+values : Fin S → Bool
+rows : Fin S → Equiv.Perm (Fin 4)
+mask : Fin S → Fin 2 → Bool
+r : Fin (10 * S * n + 2 * S) → Bool
+i : Fin S
+a : Fin 4
+t : Fin (2 * n)
+⊢ ((keyRelabel S n values) ((blocksEquiv S n) r).1, (rowRelabel S n rows) ((blocksEquiv S n) r).2.1,
+            (shiftRelabel S mask) ((blocksEquiv S n) r).2.2).2.1
+      i a t =
+    ((blocksEquiv S n) r).2.1 i ((rows i) a) t
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel.lean:294:39: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (shiftRelabel ?S ?mask) ?k ?i ?t
+in the target expression
+  ((keyRelabel S n values) ((blocksEquiv S n) r).1, (rowRelabel S n rows) ((blocksEquiv S n) r).2.1,
+            (shiftRelabel S mask) ((blocksEquiv S n) r).2.2).2.2
+      i t =
+    (((blocksEquiv S n) r).2.2 i t ^^ mask i t)
+
+S n : ℕ
+values : Fin S → Bool
+rows : Fin S → Equiv.Perm (Fin 4)
+mask : Fin S → Fin 2 → Bool
+r : Fin (10 * S * n + 2 * S) → Bool
+i : Fin S
+t : Fin 2
+⊢ ((keyRelabel S n values) ((blocksEquiv S n) r).1, (rowRelabel S n rows) ((blocksEquiv S n) r).2.1,
+            (shiftRelabel S mask) ((blocksEquiv S n) r).2.2).2.2
+      i t =
+    (((blocksEquiv S n) r).2.2 i t ^^ mask i t)
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/CoinRelabel): no fresh .olean produced
+        3.12 real         2.38 user         1.27 sys
+          2170159104  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              171361  page reclaims
+                1862  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 143  voluntary context switches
+               14514  involuntary context switches
+            32717229  instructions retired
+            18472226  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T23:26:26.525292+00:00 exit=1

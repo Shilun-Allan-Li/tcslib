@@ -1,0 +1,229 @@
+START 2026-11-15T23:50:05.585323+00:00
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (v : ℕ → Bool) (i : Fin C.gates.length) : Fin C.gates[i].args.length → Bool
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues_eq {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (v : ℕ → Bool) (i : Fin C.gates.length) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i = fun t => v C.gates[i].args[t]
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues_eq' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues_apply {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) (i : Fin C.gates.length) (t : Fin C.gates[i].args.length) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i t = v C.gates[i].args[t]
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues_apply' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (v : ℕ → Bool) {K ρ : Type} (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) :
+  TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_eq {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) {K ρ : Type}
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) :
+  TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s =
+    (fun w b => s.1 w (b ^^ v ↑w), fun i a =>
+      s.2.1 i
+        ((TCSlib.Cryptography.xorPerm
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i))
+          a),
+      fun i =>
+      Equiv.trans (s.2.2 i)
+        (TCSlib.Cryptography.xorPerm
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i)))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_eq' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_key {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) {K ρ : Type}
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (w : Fin C.size) (b : Bool) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s).1 w b = s.1 w (b ^^ v ↑w)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_key' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_coin {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) {K ρ : Type}
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (i : Fin C.gates.length)
+  (a : Fin C.gates[i].args.length → Bool) :
+  (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s).2.1 i a =
+    s.2.1 i
+      ((TCSlib.Cryptography.xorPerm
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i))
+        a)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_coin' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_perm {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) {K ρ : Type}
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (i : Fin C.gates.length)
+  (a : Fin C.gates[i].args.length → Bool) :
+  ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s).2.2 i) a =
+    (TCSlib.Cryptography.xorPerm (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i))
+      ((s.2.2 i) a)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_perm' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.keyAt_relabel {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) {K ρ : Type} [Inhabited K]
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (w : ℕ) (b : Bool) :
+  TCSlib.Cryptography.SecureComputation.keyAt C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) w b =
+    TCSlib.Cryptography.SecureComputation.keyAt C s w (b ^^ v w)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.keyAt_relabel' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.keyAt_original {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) {K ρ : Type} [Inhabited K]
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (w : ℕ) (b : Bool) :
+  TCSlib.Cryptography.SecureComputation.keyAt C s w b =
+    TCSlib.Cryptography.SecureComputation.keyAt C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) w (b ^^ v w)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.keyAt_original' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argKeys_relabel {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) {K ρ : Type} [Inhabited K]
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (i : Fin C.gates.length)
+  (a : Fin C.gates[i].args.length → Bool) :
+  TCSlib.Cryptography.SecureComputation.argKeys C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) i a =
+    TCSlib.Cryptography.SecureComputation.argKeys C s i
+      ((TCSlib.Cryptography.xorPerm
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i))
+        a)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argKeys_relabel' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.row_relabel {m : ℕ} (C : BoolCircuit.DAGCircuit m)
+  (v : ℕ → Bool) {K W ρ : Type} [Inhabited K] (M : TCSlib.Cryptography.SecureComputation.MultiEnc K W ρ)
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (i : Fin C.gates.length)
+  (a : Fin C.gates[i].args.length → Bool) :
+  M.enc
+      (TCSlib.Cryptography.SecureComputation.argKeys C
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) i a)
+      (TCSlib.Cryptography.SecureComputation.keyAt C
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) (m + ↑i)
+        (TCSlib.Cryptography.SecureComputation.gateOut C.gates[i]
+            ((TCSlib.Cryptography.xorPerm
+                (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i))
+              a) ^^
+          v (m + ↑i)))
+      ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s).2.1 i a) =
+    TCSlib.Cryptography.SecureComputation.garbledRow M C s i
+      ((TCSlib.Cryptography.xorPerm
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i))
+        a)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.row_relabel' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.garbledTable_relabel {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) {K W ρ : Type} [Inhabited K]
+  (M : TCSlib.Cryptography.SecureComputation.MultiEnc K W ρ)
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (i : Fin C.gates.length) :
+  TCSlib.Cryptography.SecureComputation.garbledTable M C s i =
+    List.map
+      (fun a =>
+        have b := ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s).2.2 i) a;
+        M.enc
+          (TCSlib.Cryptography.SecureComputation.argKeys C
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) i b)
+          (TCSlib.Cryptography.SecureComputation.keyAt C
+            (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) (m + ↑i)
+            (TCSlib.Cryptography.SecureComputation.gateOut C.gates[i]
+                ((TCSlib.Cryptography.xorPerm
+                    (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues C v i))
+                  b) ^^
+              v (m + ↑i)))
+          ((TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s).2.1 i b))
+      Finset.univ.toList
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.garbledTable_relabel' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.inputKeys_relabel {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) {K ρ : Type} [Inhabited K]
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (x : Fin m → Bool) :
+  TCSlib.Cryptography.SecureComputation.inputKeys C
+      (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) x =
+    TCSlib.Cryptography.SecureComputation.inputKeys C s fun i => x i ^^ v ↑i
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.inputKeys_relabel' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.selectedKeys_original {m k : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) {K ρ : Type} [Inhabited K]
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (wire : Fin k → ℕ) (bits : Fin k → Bool) :
+  (List.ofFn fun j => TCSlib.Cryptography.SecureComputation.keyAt C s (wire j) (bits j)) =
+    List.ofFn fun j =>
+      TCSlib.Cryptography.SecureComputation.keyAt C
+        (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) (wire j)
+        (bits j ^^ v (wire j))
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.selectedKeys_original' depends on axioms: [propext,
+ Quot.sound]
+TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.output_pair_relabel {m : ℕ}
+  (C : BoolCircuit.DAGCircuit m) (v : ℕ → Bool) {K ρ : Type} [Inhabited K]
+  (s : TCSlib.Cryptography.SecureComputation.GarbleSeed C K ρ) (w : ℕ) :
+  (TCSlib.Cryptography.SecureComputation.keyAt C s w false, TCSlib.Cryptography.SecureComputation.keyAt C s w true) =
+    if v w = true then
+      (TCSlib.Cryptography.SecureComputation.keyAt C
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) w true,
+        TCSlib.Cryptography.SecureComputation.keyAt C
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) w false)
+    else
+      (TCSlib.Cryptography.SecureComputation.keyAt C
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) w false,
+        TCSlib.Cryptography.SecureComputation.keyAt C
+          (TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed C v s) w true)
+'TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.output_pair_relabel' depends on axioms: [propext,
+ Quot.sound]
+STORED_CONSTANT_COUNT 20
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues._proof_2: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues._proof_2: closure=1302 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.selectedKeys_original: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.selectedKeys_original: closure=1388 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed: closure=1372 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.inputKeys_relabel: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.inputKeys_relabel: closure=1384 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues: closure=1305 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.garbledTable_relabel: [propext,
+ Quot.sound,
+ Classical.choice]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.garbledTable_relabel: closure=2609 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.keyAt_original: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.keyAt_original: closure=1383 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_coin: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_coin: closure=1373 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues._proof_1: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues._proof_1: closure=1297 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.output_pair_relabel: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.output_pair_relabel: closure=1392 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues_apply: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues_apply: closure=1306 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argKeys_relabel: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argKeys_relabel: closure=1386 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_key: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_key: closure=1373 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.keyAt_relabel: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.keyAt_relabel: closure=1377 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues._proof_4: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues._proof_4: closure=1304 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.row_relabel: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.row_relabel: closure=1414 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues._proof_3: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues._proof_3: closure=1301 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_perm: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_perm: closure=1373 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_eq: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.relabelSeed_eq: closure=1373 sorried=[]
+AXIOMS TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues_eq: [propext, Quot.sound]
+DEPENDENCY TCSlib.Cryptography.SecureComputation.YaoHybridProof.RelabelGarbling.argValues_eq: closure=1306 sorried=[]
+       14.12 real        12.71 user         1.05 sys
+          1555202048  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              129669  page reclaims
+                2479  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  36  voluntary context switches
+               14780  involuntary context switches
+            32674138  instructions retired
+            21130991  cycles elapsed
+             1605968  peak memory footprint
+END 2026-11-15T23:50:19.768620+00:00 exit=0

@@ -1,0 +1,58 @@
+START 2026-11-15T22:18:57.035928+00:00
+TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceSimulator.lean:130:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uprob fun z => ?p z.1
+in the target expression
+  |(uprob fun s => T (real s)) - uprob fun t => T (F.idealA (simulator coins) n x y (e t.1))| ≤ δ
+
+coins : PolyExpr
+F : Functionality
+n : ℕ
+x : Fin (F.inA.eval n) → Bool
+y : Fin (F.inB.eval n) → Bool
+σ : Type u_1
+τ : Type u_2
+inst✝² : Fintype σ
+inst✝¹ : Fintype τ
+inst✝ : Nonempty τ
+e : σ ≃ (simulator coins).Coins n
+real : σ × τ → List Bool
+Bad : σ → Prop
+δ : ℝ
+hBad : uprob Bad ≤ δ
+hReal :
+  ∀ (r : σ × τ),
+    ¬Bad r.1 →
+      real r =
+        pairEncode
+          { x := List.replicate n true, z := pairEncode (List.ofFn x) [], r := List.ofFn (e r.1),
+              received := [List.ofFn (F.f n x y).1] }.encode
+          (List.ofFn (F.f n x y).2)
+hBad' : (uprob fun r => Bad r.1) ≤ δ
+h :
+  ∀ (T : List Bool → Prop),
+    |(uprob fun s => T (real s)) - uprob fun t => T (F.idealA (simulator coins) n x y (e t.1))| ≤ δ
+T : List Bool → Prop
+hT : |(uprob fun s => T (real s)) - uprob fun t => T (F.idealA (simulator coins) n x y (e t.1))| ≤ δ
+⊢ |(uprob fun s => T (real s)) - uprob fun t => T (F.idealA (simulator coins) n x y t)| ≤ δ
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceSimulator): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceSimulator): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao/HybridProof/AliceSimulator): no fresh .olean produced
+        2.71 real         1.52 user         1.25 sys
+          2144616448  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              169186  page reclaims
+                1895  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 144  voluntary context switches
+                7790  involuntary context switches
+            32402356  instructions retired
+            18252415  cycles elapsed
+             1638736  peak memory footprint
+END 2026-11-15T22:18:59.780806+00:00 exit=1
