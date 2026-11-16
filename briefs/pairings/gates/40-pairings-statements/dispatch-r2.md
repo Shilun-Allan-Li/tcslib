@@ -44,6 +44,12 @@ round 2, in https://github.com/Shilun-Allan-Li/tcslib.
    relational simulation lemma, the T4 fill route) are not round-2 items. The
    merge interaction with #327 and #324 is a maintainer merge condition, not
    an audit item.
+   Supplement (after the pack): records commit
+   98a068069adf25d5cac64eb687e8a4163dbe8626 adds
+   briefs/pairings/gates/40-pairings-statements/seals-merged/, a re-run of the
+   canonical seal suite at the head 9e7a9648 on the merged tree (the pack's
+   seal evidence predates the merge). Verify it and say whether it answers
+   the pack's question about seals on the merged tree.
 3. Return gate40-pairings-statements-r2-findings.md as Markdown in this chat.
    If you need multiple evidence files, return a ZIP containing that Markdown
    and evidence.
