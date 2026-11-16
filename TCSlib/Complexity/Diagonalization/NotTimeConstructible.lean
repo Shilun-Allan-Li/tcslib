@@ -69,16 +69,12 @@ private noncomputable def ntcT (n : ℕ) : ℕ :=
 
 /-- `Turing.codeBitsNat` is Mathlib's base-2 `Nat.ofDigits`.
 
-**Proof sketch.** Induct on the word; each step is one `Nat.bit`. -/
+**Proof sketch.** Unfold through `Turing.codeBitsNat_eq` and cite
+`Turing.foldr_bit_eq_ofDigits`; the digit maps agree bit by bit. -/
 private theorem ntc_codeBitsNat_eq_ofDigits (w : List Bool) :
     codeBitsNat w = Nat.ofDigits 2 (w.map fun b => cond b 1 0) := by
-  induction w with
-  | nil => rfl
-  | cons b w ih =>
-    change Nat.bit b (codeBitsNat w) = _
-    cases b
-    · simp [Nat.bit, Nat.ofDigits_cons, ih]
-    · simp [Nat.bit, Nat.ofDigits_cons, ih]; omega
+  rw [codeBitsNat_eq, foldr_bit_eq_ofDigits]
+  congr 2
 
 /-- A word ending in `true` is the binary representation of its value.
 

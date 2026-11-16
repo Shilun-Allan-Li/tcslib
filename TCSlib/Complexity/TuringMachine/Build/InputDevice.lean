@@ -60,9 +60,10 @@ test `Turing.exists_rulerTestTM`, the call rows `Turing.exists_rulerDeviceTM` an
   `Turing.NativeAt.move`, `Turing.nativeAt_init` — the native device (proved).
 * `Turing.inputCell_sub_eq_none_iff`, `Turing.inputCell_of_drop` — the ruler device's
   correctness facts, the empty payload included (proved).
-* `Turing.pairEncode_drop`, `Turing.pairEncode_pairEncode_length`,
-  `Turing.pairEncode_pairEncode_drop` — the payload after one pairing's header, and the header of
-  `Complexity.space_universal`'s input (proved).
+* `Turing.pairEncode_pairEncode_length`,
+  `Turing.pairEncode_pairEncode_drop` — the header of `Complexity.space_universal`'s input and the
+  payload after it (proved); the payload after one pairing's header, `Turing.pairEncode_drop`, is in
+  `TuringMachine/Encoding`.
 * `Turing.exists_rulerTestTM` — the restoring boundary test (proved).
 * `Turing.exists_rulerDeviceTM`, `Turing.exists_rulerHostTM` — the call rows and the host
   (proved).
@@ -189,18 +190,6 @@ theorem pairEncode_pairEncode_length (u α x : List Bool) :
     (pairEncode u (pairEncode α x)).length = (2 * u.length + 2 * α.length + 4) + x.length := by
   rw [universal_pair_length, universal_pair_length]
   omega
-
-/-- **The payload after the header.** Dropping the header of length `2|u| + 2` from
-`pairEncode u x` leaves `x`: the ruler device's `z.drop ℓ = y` for the code-first input.
-
-**Proof sketch.** The pairing is the header `pairEncode u []` followed by `x`, and that header
-has length `2|u| + 2` (`Turing.length_pairEncode`). -/
-theorem pairEncode_drop (u x : List Bool) : (pairEncode u x).drop (2 * u.length + 2) = x := by
-  have split : pairEncode u x = pairEncode u [] ++ x := by
-    rw [pairEncode_eq, pairEncode_eq, List.append_nil]
-  have width : (pairEncode u []).length = 2 * u.length + 2 := by
-    rw [length_pairEncode, List.length_nil, Nat.add_zero]
-  rw [split, ← width, List.drop_left]
 
 /-- **The payload after the header.** Dropping the header of length `2|u| + 2|α| + 4` from
 `pairEncode u (pairEncode α x)` leaves `x`: the ruler device's `z.drop ℓ = y`.

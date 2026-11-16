@@ -333,78 +333,6 @@ theorem unaryWitnessLang_mem_NPOracle (B : Language Bool) :
         exact hall i hi
       · simp only [List.length_take]; simp only [pow_one] at hw; omega
 
-/-- R1: transport an oracle table along a state equivalence. The ordinary
-transition uses `Action.mapState`; all distinguished states are transported.
-The received relabelling API covers only plain machines, so this oracle
-version is requested for `TuringMachine/Oracle.lean` when a second consumer
-appears. -/
-private def oracleRelabel {k : ℕ} {Symbol S S' : Type*}
-    (tm : OracleTM k Symbol S) (e : S ≃ S') : OracleTM k Symbol S' where
-  q₀ := e tm.q₀
-  qQuery := e tm.qQuery
-  qYes := e tm.qYes
-  qNo := e tm.qNo
-  tr q inp work := (tm.tr (e.symm q) inp work).mapState e
-
-/-- R1: injectivity preserves the three required state inequalities. -/
-private theorem oracleRelabel_wellFormed {k : ℕ} {Symbol S S' : Type*}
-    (tm : OracleTM k Symbol S) (e : S ≃ S') (wf : tm.WellFormed) :
-    (oracleRelabel tm e).WellFormed := by
-  exact ⟨e.injective.ne wf.qQuery_ne_qYes,
-    e.injective.ne wf.qQuery_ne_qNo, e.injective.ne wf.qYes_ne_qNo⟩
-
-/-- R1: one oracle step commutes with state relabelling, including the
-query-answer branch and absorbing halted configurations.
-
-**Proof sketch.** Split the optional state. A halted configuration is fixed.
-At the query state, injectivity identifies the same query branch; the query
-string ignores the state, and mapping the answer commutes with its conditional.
-Elsewhere the inverse equivalence recovers the original table row, and
-`Cfg.mapState_apply` transports its action. This is the single step argument
-used by all later run and behavior transfers. -/
-private theorem oracleRelabel_step {k : ℕ} {Symbol S S' : Type*}
-    {x : List Symbol} (tm : OracleTM k Symbol S) (e : S ≃ S')
-    (O : Language Symbol) (cfg : Cfg (k + 1) Symbol S x) :
-    (oracleRelabel tm e).step O (cfg.mapState e) = (tm.step O cfg).mapState e := by
-  classical
-  unfold OracleTM.step
-  cases hs : cfg.state with
-  | none => simp only [Cfg.mapState, hs, Option.map_none]
-  | some q =>
-      simp only [Cfg.mapState, hs, Option.map_some, oracleRelabel, e.injective.eq_iff]
-      by_cases hq : q = tm.qQuery
-      · rw [if_pos hq, if_pos hq]
-        refine Cfg.ext ?_ rfl rfl rfl rfl
-        change some (if OracleTM.queryString cfg ∈ O then e tm.qYes else e tm.qNo) =
-          some (e (if OracleTM.queryString cfg ∈ O then tm.qYes else tm.qNo))
-        rw [apply_ite e]
-      · rw [if_neg hq, if_neg hq]
-        simpa only [Equiv.symm_apply_apply] using
-          Cfg.mapState_apply e (tm.tr q cfg.inputSymbol cfg.workTapeSymbols) cfg
-
-/-- R1: arbitrary-start oracle runs commute with state relabelling, by the
-standard iteration theorem applied to the single step commutation. -/
-private theorem oracleRelabel_runFrom {k : ℕ} {Symbol S S' : Type*}
-    {x : List Symbol} (tm : OracleTM k Symbol S) (e : S ≃ S')
-    (O : Language Symbol) (cfg : Cfg (k + 1) Symbol S x) (t : ℕ) :
-    (oracleRelabel tm e).runFrom O (cfg.mapState e) t =
-      (tm.runFrom O cfg t).mapState e := by
-  have h : Function.Semiconj (Cfg.mapState (input := x) e)
-      (tm.step O) ((oracleRelabel tm e).step O) :=
-    fun c => (oracleRelabel_step tm e O c).symm
-  exact (h.iterate_right t cfg).symm
-
-/-- R1: relabelling preserves every oracle-relative time-bounded output
-verdict. Initialization transports definitionally; run transport preserves
-output, and `Option.map_eq_none_iff` preserves haltedness. -/
-private theorem oracleRelabel_computesInTime {k : ℕ} {Symbol S S' : Type*}
-    (tm : OracleTM k Symbol S) (e : S ≃ S') (O : Language Symbol)
-    (x out : List Symbol) (t : ℕ) :
-    (oracleRelabel tm e).ComputesInTime O x out t ↔ tm.ComputesInTime O x out t := by
-  have hinit : (oracleRelabel tm e).initCfg x = (tm.initCfg x).mapState e := rfl
-  simp only [OracleTM.ComputesInTime, hinit, oracleRelabel_runFrom]
-  simp only [Cfg.mapState, Option.map_eq_none_iff]
-
 /-- R2: well-formed binary oracle tables over the canonical state type. -/
 private abbrev CanonTab (k n : ℕ) :=
   {tm : OracleTM k Bool (Fin n) // tm.WellFormed}
@@ -522,8 +450,8 @@ configuration-by-configuration under every oracle — the oracle transport of
 (`TCSlib.Complexity.TuringMachine.StateRenaming`), with the query step
 commuting with the renaming because `Turing.OracleTM.queryString` ignores the
 state. Fill obligations, named for the brief: the `OracleTM` relabelling lemma
-(its natural home is the frozen `StateRenaming`/`Oracle` pair, so it lands in
-this phase's files — flagged for promotion); transfer of `ComputesInTime`
+(now public as `Turing.OracleTM.relabel` and its `relabel_*` lemmas in
+`TuringMachine/Oracle`); transfer of `ComputesInTime`
 across the configuration bijection (`Turing.Cfg.mapState` preserves
 haltedness and output, as in `Turing.exists_codeTM`); the arithmetic of the
 four-coordinate pairing (round-2 finding 2).
@@ -548,7 +476,7 @@ theorem exists_finOracleTM_enumeration :
   letI : DecidableEq Q := dQ
   let e := Fintype.equivFin Q
   let table : CanonTab k (Fintype.card Q) :=
-    ⟨oracleRelabel tm e, oracleRelabel_wellFormed tm e wf⟩
+    ⟨tm.relabel e, OracleTM.relabel_wellFormed tm e wf⟩
   let j := Nat.pair k (Nat.pair (Fintype.card Q)
     ((@Fintype.equivFin (CanonTab k (Fintype.card Q))
       (canonTabFintype k (Fintype.card Q))) table).val)
@@ -558,7 +486,7 @@ theorem exists_finOracleTM_enumeration :
       (⟨k, Fin (Fintype.card Q), table.val, table.property⟩ : FinOracleTM Bool) :=
     decodeOracleTable_rank k (Fintype.card Q) table
   rw [oracleEnumeration_pair, htable]
-  exact oracleRelabel_computesInTime tm e O x output t
+  exact OracleTM.relabel_computesInTime tm e O x output t
 
 /-- **Counting**: a list of fewer than `2 ^ n` words misses some word of length `n`
 [AB09, proof of Theorem 3.7: polynomially many queries cannot cover all `2^n` strings].

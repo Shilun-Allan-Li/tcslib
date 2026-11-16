@@ -231,19 +231,21 @@ private lemma skipSymbols_consumes (r : List Bool → Option (List Bool)) (b : �
       3 xs ys h
     simpa only [Nat.pow_succ, Nat.mul_assoc] using hb
 
+/-- A successful record skip consumes at least its read action's `4k + 5` bits. -/
+private lemma skipAction_consumes (k n : ℕ) (u v : List Bool)
+    (hu : codeSkipActionK k n u = some v) : 4 * k + 5 + v.length ≤ u.length := by
+  rw [← codeEraseActionK] at hu
+  obtain ⟨⟨a, rest⟩, hread, rfl⟩ := Option.map_eq_some_iff.mp hu
+  rw [codeReadActionK_sound u a rest hread, List.length_append]
+  exact Nat.add_le_add_right (codeActionK_length a) _
+
 /-- A successful table skip consumes a positive number of bits per state,
 independently of the format's optional guard. -/
 private lemma skipTable_consumes (k n : ℕ) (xs ys : List Bool)
     (h : codeSkipTableK k n xs = some ys) :
     (4 * k + 5) * 3 ^ (k + 1) * (n + 1) + ys.length ≤ xs.length := by
-  have ha (u v : List Bool) (hu : codeSkipActionK k n u = some v) :
-      4 * k + 5 + v.length ≤ u.length := by
-    rw [← codeEraseActionK] at hu
-    obtain ⟨⟨a, rest⟩, hread, rfl⟩ := Option.map_eq_some_iff.mp hu
-    rw [codeReadActionK_sound u a rest hread, List.length_append]
-    exact Nat.add_le_add_right (codeActionK_length a) _
   exact skipRepeat_consumes _ _ (fun u v huv =>
-    skipSymbols_consumes _ _ ha (k + 1) u v huv) (n + 1) xs ys h
+    skipSymbols_consumes _ _ (skipAction_consumes k n) (k + 1) u v huv) (n + 1) xs ys h
 
 /-- A successful scanner satisfies the positive grammar guard already on the
 suffix following the binary header. This holds also for a zero format guard.
@@ -5573,19 +5575,13 @@ private lemma canonStageInnerSpec (k : ℕ) :
 /-- One successful inner block consumes at least one input cell: every record it skips has at
 least `4k + 5` bits (`codeActionK_length`) and the block skips `3^(k+1)` of them.
 
-**Proof sketch.** Every successful record skip consumes at least `4k + 5` cells (its read action's
-bits), so `skipRepeat_consumes` bounds the consumed length below by `(4k + 5) · 3 ^ (k + 1) ≥ 1`. -/
+**Proof sketch.** Every successful record skip consumes at least `4k + 5` cells
+(`skipAction_consumes`), so `skipRepeat_consumes` bounds the consumed length below by
+`(4k + 5) · 3 ^ (k + 1) ≥ 1`. -/
 private lemma canonStageBlock_consumes (k n : ℕ) (xs ys : List Bool)
     (h : codeSkipRepeat (codeSkipActionK k n) (3 ^ (k + 1)) xs = some ys) :
     1 + ys.length ≤ xs.length := by
-  have ha : ∀ u v : List Bool, codeSkipActionK k n u = some v →
-      4 * k + 5 + v.length ≤ u.length := by
-    intro u v hu
-    rw [← codeEraseActionK] at hu
-    obtain ⟨⟨a, rest⟩, hread, rfl⟩ := Option.map_eq_some_iff.mp hu
-    rw [codeReadActionK_sound u a rest hread, List.length_append]
-    exact Nat.add_le_add_right (codeActionK_length a) _
-  have hb := skipRepeat_consumes _ (4 * k + 5) ha (3 ^ (k + 1)) xs ys h
+  have hb := skipRepeat_consumes _ (4 * k + 5) (skipAction_consumes k n) (3 ^ (k + 1)) xs ys h
   have hp : 1 ≤ 3 ^ (k + 1) := Nat.one_le_pow _ _ (by omega)
   have h1 : 1 * 1 ≤ (4 * k + 5) * 3 ^ (k + 1) := Nat.mul_le_mul (by omega) hp
   omega

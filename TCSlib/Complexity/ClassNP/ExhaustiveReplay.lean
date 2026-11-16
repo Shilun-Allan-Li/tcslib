@@ -124,19 +124,12 @@ private theorem xr_window_runWith {k : ℕ} {S : Type} (tm : NDTM k Bool S) (z w
     simpa only [List.length_cons, Nat.add_assoc, Nat.add_comm 1] using this
 
 /-- At an all-halting depth `L ≤ T`, acceptance within `L` and within `T` agree: one direction
-is monotonicity, the other truncates an accepting word of length `T` at `L`. -/
+is monotonicity, the other truncates an accepting word of length `T` at `L`
+(`Turing.FinNDTM.AcceptsWithin.iff_of_haltsWithin`). -/
 private theorem xr_accepts_iff_of_halts (N : FinNDTM Bool) (z : List Bool) {L T : ℕ}
     (hL : N.tm.HaltsWithin z L) (hLT : L ≤ T) :
-    N.AcceptsWithin z L ↔ N.AcceptsWithin z T := by
-  refine ⟨fun h => h.mono hLT, fun h => ?_⟩
-  obtain ⟨w, hw, hhalt, hout⟩ := FinNDTM.acceptsWithin_iff.mp h
-  have htake : (w.take L).length = L := by rw [List.length_take, hw]; omega
-  have hstop := NDTM.haltsWithin_iff.mp hL (w.take L) htake
-  have hsplit : N.tm.runWith w (N.tm.initCfg z) = N.tm.runWith (w.take L) (N.tm.initCfg z) := by
-    conv_lhs => rw [← List.take_append_drop L w]
-    rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hstop]
-  rw [hsplit] at hout
-  exact FinNDTM.acceptsWithin_iff.mpr ⟨w.take L, htake, hstop, hout⟩
+    N.AcceptsWithin z L ↔ N.AcceptsWithin z T :=
+  (FinNDTM.AcceptsWithin.iff_of_haltsWithin hL hLT).symm
 
 /-- The first all-halting depth exists below any all-halting bound, is positive, and answers
 as the bound does: the deepening terminates by depth `T`, never at depth `0`. -/

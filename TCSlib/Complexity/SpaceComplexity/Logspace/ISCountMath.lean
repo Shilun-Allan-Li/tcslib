@@ -108,44 +108,6 @@ lemma ball_mono {L L' : ℕ} (h : L ≤ L') : ball K R Init L ⊆ ball K R Init 
   obtain ⟨u, hu, hi, hw⟩ := ht
   exact ⟨u, hu, hi, walkLe_mono h hw⟩
 
-/-- **Walks extend at the end**: a walk of at most `j + 1` steps is a walk of at most `j`
-steps, or one followed by a step into a vertex below `K`.
-
-**Proof sketch.** `WalkLe` unfolds at the front (a walk is empty or a first step followed by
-a shorter walk), so induct on `j` generalizing the start `c`. For `j = 0` both sides are the
-empty walk or a single step. For `j + 1`, a walk that begins with a step `c → v` has its tail
-split by the induction hypothesis at `v`; conversely, a last step appended to a walk is
-pushed into the tail of that walk by the induction hypothesis (or, when the walk is empty, is
-itself a one-step walk). -/
-lemma walkLe_succ_iff (j c t : ℕ) : WalkLe R K (j + 1) c t ↔
-    WalkLe R K j c t ∨ ∃ w, WalkLe R K j c w ∧ R w t ∧ t < K := by
-  induction j generalizing c with
-  | zero =>
-    simp only [walkLe_succ_iff_head, walkLe_zero_iff]
-    constructor
-    · rintro (h | ⟨v, hv, he, rfl⟩)
-      · exact Or.inl h
-      · exact Or.inr ⟨c, rfl, he, hv⟩
-    · rintro (h | ⟨w, rfl, he, ht⟩)
-      · exact Or.inl h
-      · exact Or.inr ⟨t, ht, he, rfl⟩
-  | succ j ih =>
-    rw [walkLe_succ_iff_head (j := j + 1)]
-    constructor
-    · rintro (h | ⟨v, hv, he, hw⟩)
-      · exact Or.inl (walkLe_succ_iff_head.mpr (Or.inl h))
-      · rcases (ih v).mp hw with h | ⟨w, hw', hwt, ht⟩
-        · exact Or.inl (walkLe_succ_iff_head.mpr (Or.inr ⟨v, hv, he, h⟩))
-        · exact Or.inr ⟨w, walkLe_succ_iff_head.mpr (Or.inr ⟨v, hv, he, hw'⟩), hwt, ht⟩
-    · rintro (h | ⟨w, hw, hwt, ht⟩)
-      · rcases walkLe_succ_iff_head.mp h with h | ⟨v, hv, he, hw⟩
-        · exact Or.inl h
-        · exact Or.inr ⟨v, hv, he, walkLe_succ hw⟩
-      · rcases walkLe_succ_iff_head.mp hw with hw | ⟨v, hv, he, hw⟩
-        · subst hw
-          exact Or.inr ⟨t, ht, hwt, walkLe_refl _ t⟩
-        · exact Or.inr ⟨v, hv, he, (ih v).mpr (Or.inr ⟨w, hw, hwt, ht⟩)⟩
-
 /-- **The balls grow by one step**: `C_{L+1}` is `C_L` together with the successors below `K`
 of its members. -/
 lemma mem_succ_iff (L t : ℕ) : Mem K R Init (L + 1) t ↔

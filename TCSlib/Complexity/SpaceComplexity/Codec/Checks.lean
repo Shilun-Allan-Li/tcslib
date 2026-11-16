@@ -40,6 +40,7 @@ Configuration-graph infrastructure; not a result of [AB09].
 ## Main results
 
 * `Complexity.Codec.initChk_iff`, `acceptChk_iff`, `stepChk_iff`, `edgeChk_iff`.
+* `Complexity.Codec.initChk_def`, `acceptChk_def`, `edgeChk_def` — the checks as equations.
 * `Complexity.Codec.validLang_iff`, `initLang_iff`, `acceptLang_iff`, `stepLang_iff`,
   `edgeLang_iff` —
   membership of well-shaped inputs in terms of the checks.
@@ -94,6 +95,16 @@ def InitChk (x : List Bool) (s : ℕ) (w : List Bool) : Prop :=
     (vScan N (w.take (W N * (2 * s + 1)))).2.2.2.2.2 = true ∧
     bitsVal ((w.drop (W N * (2 * s + 1))).take (wP x.length)) = 1 ∧
     (N.k = 0 ∨ w.getD (W N * s + (hH N + 2)) false = true)
+
+variable (N) in
+/-- The initial-code check as an equation: validity, the header `(q₀, empty)`, the initial
+shape, input position `1`, and (with work tapes) the head of tape `0` in the middle cell. -/
+lemma initChk_def (x : List Bool) (s : ℕ) (w : List Bool) :
+    InitChk N x s w ↔ ValidChk (N := N) x.length s w ∧
+      (vScan N (w.take (W N * (2 * s + 1)))).2.1 = some (some N.tm.q₀, 0) ∧
+      (vScan N (w.take (W N * (2 * s + 1)))).2.2.2.2.2 = true ∧
+      bitsVal ((w.drop (W N * (2 * s + 1))).take (wP x.length)) = 1 ∧
+      (N.k = 0 ∨ w.getD (W N * s + (hH N + 2)) false = true) := Iff.rfl
 
 /-- **The initial-code check recognizes the code of the initial configuration.**
 
@@ -174,6 +185,12 @@ variable (N) in
 def AcceptChk (x : List Bool) (s : ℕ) (w : List Bool) : Prop :=
   ValidChk (N := N) x.length s w ∧
     (vScan N (w.take (W N * (2 * s + 1)))).2.1 = some (none, 1)
+
+variable (N) in
+/-- The accepting-code check as an equation: validity and the header `(halted, accept)`. -/
+lemma acceptChk_def (x : List Bool) (s : ℕ) (w : List Bool) :
+    AcceptChk N x s w ↔ ValidChk (N := N) x.length s w ∧
+      (vScan N (w.take (W N * (2 * s + 1)))).2.1 = some (none, 1) := Iff.rfl
 
 /-- **The accepting-code check recognizes the codes of accepting configurations.**
 
