@@ -2555,6 +2555,126 @@ private theorem ladner_padded_NP {h : ℕ → ℕ}
   simpa only [one_mul, pow_one] using ladner_verifier_equiv (h := h) hcert y
 
 
+/-! ### Bounded padding and the intermediate language -/
+
+/-- The literal padded word keeps its input before a final false separator.
+[AB09, Theorem 3.3 and its proof] -/
+private def ladner_padWord (h : ℕ → ℕ) (x : List Bool) : List Bool :=
+  x ++ false :: List.replicate (x.length ^ h x.length) true
+
+/-- A value bound on the exponent gives a polynomial bound on the literal padded word.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_bounded_pad_length {h : ℕ → ℕ} {C : ℕ} (hb : ∀ n, h n ≤ C)
+    (x : List Bool) : (ladner_padWord h x).length ≤ 2 * (x.length + 1) ^ (C + 1) := by
+  have hpower : x.length ^ h x.length ≤ (x.length + 1) ^ C :=
+    (Nat.pow_le_pow_left (Nat.le_succ _) _).trans
+      (Nat.pow_le_pow_right (Nat.succ_pos _) (hb _))
+  have hprefix : x.length + 1 ≤ (x.length + 1) ^ (C + 1) := by
+    simpa only [pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)
+      (show 1 ≤ C + 1 by omega)
+  have hdegree : (x.length + 1) ^ C ≤ (x.length + 1) ^ (C + 1) :=
+    Nat.pow_le_pow_right (Nat.succ_pos _) (Nat.le_succ _)
+  simp only [ladner_padWord, List.length_append, List.length_cons, List.length_replicate]
+  omega
+
+/-- A fixed finite set of exponent values has an FP unary-power selector.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Each fixed power is a finite composition of the public unary
+multiplication row, followed by the unary length map. Starting with the constant
+zeroth power, add one canonical binary equality test and one fixed-power branch
+for each possible exponent. Induction constructs finite compositions of FP closures
+whose number of branches depends only on the fixed bound. -/
+private theorem ladner_power_cases_FP {h : ℕ → ℕ}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length))) (C : ℕ) :
+    ∃ f : List Bool → List Bool, PolyTimeComputable f ∧
+      ∀ x, h x.length ≤ C → f x = List.replicate (x.length ^ h x.length) true := by
+  have hpower (k : ℕ) :
+      PolyTimeComputable (fun x : List Bool => List.replicate (x.length ^ k) true) := by
+    induction k with
+    | zero =>
+      simpa only [pow_zero, List.replicate_one] using polyTimeComputable_const [true]
+    | succ k ih =>
+      have hmul := polyTimeComputable_unary.comp
+        (BinArith.polyTimeComputable_mulU.comp (ih.pairEncode polyTimeComputable_unary))
+      convert hmul using 1
+      funext x
+      simp only [Function.comp_apply, BinArith.length_mulU, List.length_replicate, pow_succ]
+  induction C with
+  | zero =>
+    refine ⟨fun _ => [true], polyTimeComputable_const [true], ?_⟩
+    intro x hx
+    have hz : h x.length = 0 := by omega
+    simp only [hz, pow_zero, List.replicate_one]
+  | succ C ih =>
+    obtain ⟨f, hf, hcorrect⟩ := ih
+    let test (x : List Bool) : Bool :=
+      BinArith.beq (pairEncode (Nat.bits (h x.length)) (Nat.bits (C + 1)))
+    have htest := BinArith.polyTimeComputable_beq.comp
+      (hp.pairEncode (polyTimeComputable_const (Nat.bits (C + 1))))
+    refine ⟨fun x => if test x then List.replicate (x.length ^ (C + 1)) true else f x,
+      polyTimeComputable_ite htest (hpower (C + 1)) hf, ?_⟩
+    intro x hx
+    by_cases he : h x.length = C + 1
+    · simp only [test, BinArith.beq_pairEncode, he, decide_true, if_true]
+    · have hsmall : h x.length ≤ C := by omega
+      simp only [test, BinArith.beq_pairEncode, he, decide_false, Bool.false_eq_true, if_false,
+        hcorrect x hsmall]
+
+/-- Polynomial-time exponents with bounded values give a polynomial-time literal
+padding map, through the finite unary-power selector.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_bounded_pad_FP {h : ℕ → ℕ} {C : ℕ}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)))
+    (hb : ∀ n, h n ≤ C) : PolyTimeComputable (ladner_padWord h) := by
+  obtain ⟨f, hf, hcorrect⟩ := ladner_power_cases_FP hp C
+  have hpad := polyTimeComputable_id.append ((polyTimeComputable_const [false]).append hf)
+  convert hpad using 1
+  funext x
+  simp only [ladner_padWord, id_eq, List.singleton_append, hcorrect x (hb _)]
+
+/-- The final-separator parser recovers the original prefix of its literal padded
+word, so padding preserves its SAT membership.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_padWord_membership (h : ℕ → ℕ) (x : List Bool) :
+    ladner_padWord h x ∈ padSAT h ↔ x ∈ SAT := by
+  simp only [ladner_pad_membership, ladner_padWord, ladner_parse_pad,
+    Option.some.injEq, Prod.mk.injEq, and_assoc, exists_and_left, exists_eq_left', true_and]
+
+/-- Bounded polynomial-time padding reduces SAT to its padded language.
+[AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_bounded_pad_reduction {h : ℕ → ℕ} {C : ℕ}
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)))
+    (hb : ∀ n, h n ≤ C) : PolyTimeReducible SAT (padSAT h) :=
+  (polyTimeReducible_iff _ _).mpr ⟨ladner_padWord h, ladner_bounded_pad_FP hp hb,
+    fun x => (ladner_padWord_membership h x).symm⟩
+
+/-- A P decider for the padded witness would bound its exponent and hence put SAT
+in P, contradicting P ≠ NP. [AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_outside_P (hne : P ≠ NP)
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (ladnerH x.length)))
+    (hbounded : SAT_H ∈ P → ∃ C, ∀ n, ladnerH n ≤ C) : SAT_H ∉ P := by
+  intro hP
+  obtain ⟨C, hC⟩ := hbounded hP
+  rw [SAT_H_eq] at hP
+  exact hne (P_eq_NP_of_NPHard_mem_P SAT_NPHard
+    (mem_P_of_polyTimeReducible (ladner_bounded_pad_reduction hp hC) hP))
+
+/-- NP-completeness of the padded witness would combine divergent padding with
+the shrinking argument to put SAT in P. [AB09, Theorem 3.3 and its proof] -/
+private theorem ladner_not_complete (hne : P ≠ NP)
+    (hp : PolyTimeComputable (fun x : List Bool => Nat.bits (ladnerH x.length)))
+    (hout : SAT_H ∉ P)
+    (hdiv : SAT_H ∉ P → ∀ C, ∃ N, ∀ n ≥ N, C ≤ ladnerH n)
+    (hpadding : ∀ h : ℕ → ℕ,
+      PolyTimeComputable (fun x : List Bool => Nat.bits (h x.length)) →
+      (∀ C, ∃ N, ∀ n ≥ N, C ≤ h n) → NPHard (padSAT h) → SAT ∈ P) :
+    ¬ NPComplete SAT_H := by
+  intro hc
+  obtain ⟨-, hH⟩ := (NPComplete_iff _).mp hc
+  rw [SAT_H_eq] at hH
+  exact hne (P_eq_NP_of_NPHard_mem_P SAT_NPHard (hpadding ladnerH hp (hdiv hout) hH))
+
 /-! ### The theorem and its remaining targets -/
 
 /-- The binary digits of the delayed index at an input's length are polynomial-time
@@ -2606,8 +2726,10 @@ not NP-complete. [AB09, Theorem 3.3]
 polynomial reduction from SAT. NP-hardness would instead combine divergence of the
 index with the shrinking reduction. Each case would put SAT in P and collapse P and NP. -/
 theorem SAT_H_intermediate (h : P ≠ NP) :
-    SAT_H ∈ NP ∧ SAT_H ∉ P ∧ ¬ NPComplete SAT_H :=
-  sorry
+    SAT_H ∈ NP ∧ SAT_H ∉ P ∧ ¬ NPComplete SAT_H := by
+  have hout := ladner_outside_P h ladnerH_polyTime ladnerH_bounded_of_mem_P
+  exact ⟨SAT_H_mem_NP, hout, ladner_not_complete h ladnerH_polyTime hout
+    ladnerH_unbounded_of_not_mem_P (fun _ hp hu hH => SAT_mem_P_of_padSAT_NPHard hp hu hH)⟩
 
 /-- If P differs from NP, an NP-intermediate language exists. [AB09, Theorem 3.3] -/
 theorem ladner (h : P ≠ NP) : ∃ L ∈ NP, L ∉ P ∧ ¬ NPComplete L :=
