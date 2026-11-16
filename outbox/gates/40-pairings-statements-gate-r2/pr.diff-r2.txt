@@ -1,0 +1,2391 @@
+diff --git a/TCSlib.lean b/TCSlib.lean
+index 5700f1878..124658fc8 100644
+--- a/TCSlib.lean
++++ b/TCSlib.lean
+@@ -72,6 +72,8 @@ import TCSlib.Cryptography.Encryption.PrivateKey
+ import TCSlib.Cryptography.Encryption.PublicKey
+ import TCSlib.Cryptography.Randomness
+ import TCSlib.Cryptography.Implications
++import TCSlib.Cryptography.Pairing
++import TCSlib.Cryptography.KeyExchange
+ import TCSlib.Cryptography.AdvancedEncryption
+ 
+ import TCSlib.InformationTheory
+diff --git a/TCSlib/Cryptography/AdvancedEncryption.lean b/TCSlib/Cryptography/AdvancedEncryption.lean
+index 8d9744fc0..c1bc37f9a 100644
+--- a/TCSlib/Cryptography/AdvancedEncryption.lean
++++ b/TCSlib/Cryptography/AdvancedEncryption.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.AdvancedEncryption.Homomorphic
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -16,9 +17,13 @@ Encryption primitives beyond private-key and public-key encryption.
+ ## Contents
+ 
+ * `Homomorphic`: homomorphic encryption; leveled Gentry–Sahai–Waters encryption from LWE.
++* `IdentityBased`: identity-based encryption, selective-identity security and the Boneh–Boyen
++  system (BB1).
+ 
+ ## References
+ 
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004.
+ * [GSW13] C. Gentry, A. Sahai, B. Waters, *Homomorphic Encryption from Learning with Errors:
+   Conceptually-Simpler, Asymptotically-Faster, Attribute-Based*, CRYPTO 2013; author version
+   dated 8 June 2013.
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased.lean
+new file mode 100644
+index 000000000..bb983dc51
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased.lean
+@@ -0,0 +1,32 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.Defs
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Identity-based encryption
++
++## Contents
++
++* `Defs`: IBE systems, perfect correctness and selective-identity chosen-plaintext security
++  (IND-sID-CPA).
++* `BonehBoyen`: the Boneh–Boyen BDH-based system (BB1) over a bilinear group generator and its
++  correctness.
++* `BonehBoyenMachine`: the simulator as a non-uniform PPT Decision BDH distinguisher (step 3 of
++  the security proof).
++* `BonehBoyenSecurity`: the coupling steps of the security proof, and IND-sID-CPA security of
++  BB1 under Decision BDH.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004.
++-/
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean
+new file mode 100644
+index 000000000..73e522be5
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyen.lean
+@@ -0,0 +1,677 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.Defs
++import TCSlib.Cryptography.Pairing.Group
++import TCSlib.Cryptography.Asymptotic.Sampling
++import Mathlib.Algebra.Field.ZMod
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The Boneh–Boyen selective-identity IBE (BB1)
++
++[BB04, §4.1] with depth `ℓ = 1` (an IBE system is an HIBE whose identities have depth 1,
++[BB04, §2.1]). In a bilinear group `G` of prime order `p` with pairing `e`:
++* **Setup**: a random generator `g ∈ G^*`, `α ∈ Z_p`, `g_1 = g^α`, random `h, g_2 ∈ G`;
++  `params = (g, g_1, g_2, h)`, `master-key = g_2^α`; `F(x) = g_1^x h`.
++* **KeyGen**(`ID ∈ Z_p`): a random `r ∈ Z_p`, `d_ID = (g_2^α · F(ID)^r, g^r)`.
++* **Encrypt**(`params`, `ID`, `M ∈ G_1`): a random `s ∈ Z_p`,
++  `C = (e(g_1, g_2)^s · M, g^s, F(ID)^s)`.
++* **Decrypt**(`d_ID = (d_0, d_1)`, `C = (A, B, C_1)`): `A · e(C_1, d_1) / e(B, d_0)`.
++
++It is IND-sID-CPA secure under Decision BDH [BB04, Theorem 4.1], without random oracles; the
++security statement and its simulation are in `AdvancedEncryption.IdentityBased.BonehBoyenSecurity`.
++
++**Identities and messages.** The generic interface (`IBEScheme`) has `ℓ(κ)`-bit identities.
++BB1 reads an identity as the residue of its binary value in `Z_p` (`idToZ`), the injective
++"hash" `{0,1}^ℓ → {0, …, 2^ℓ − 1}` of [BB04, §4.4] ("a collision resistant hash function
++`H : {0,1}^* → {1, …, 2^b}` where `2^b < p` is sufficient"); distinct identities stay distinct in
++`Z_p` when `2^ℓ ≤ p`, which the security theorem assumes except with negligible probability.
++Messages are elements of `G_T` (the paper's `G_1`), sent as their `wT(κ)`-bit encodings; the
++message space is the set of encodings, and `Encrypt` reads a string through `decodeT` (strings
++outside the message space read as `1`, a choice that is never exercised by the game, which
++refuses them).
++
++**Groups from the generator.** Parameters, keys and ciphertexts carry the description `d` of the
++group they live in (a dependent pair), since the group is drawn by `Setup` from the generator
++(`Pairing.BilinearGen`). Decryption of a ciphertext whose description differs from the key's is
++`⊥`.
++
++**Deviation:** abstract bilinear groups drawn by a generator; depth-1 identities given as
++`ℓ(κ)`-bit strings and embedded into `Z_p` by their binary value; messages as encodings of `G_T`;
++parameters, keys and ciphertexts tagged with the group's description.
++
++## Main definitions
++
++* `BB1.Params`, `BB1.Key`, `BB1.Ciphertext` — `params`, `d_ID` and `C`.
++* `BB1.F`, `BB1.setup`, `BB1.keyGen`, `BB1.encrypt`, `BB1.decrypt` — the
++  algorithms of [BB04, §4.1] over one bilinear group.
++* `BB1.idToZ`, `BB1.decodeT` — identities in `Z_p` and messages in `G_T`.
++* `bb1Scheme` — BB1 as an `IBEScheme` over a generator.
++* `BB1SimState`, `bb1SimParams`, `bb1SimKey`, `bb1SimInit`, `bb1SimKeyQ`,
++  `bb1SimCt`, `bb1SimChal`, `bb1SimImpl`, `bb1SimGame` — the simulator of
++  [BB04, proof of Theorem 4.1] and its game, with ideal exponents.
++
++## Main results
++
++* `BB1.decrypt_encrypt` — decryption inverts encryption [BB04, §4.1, "for a valid
++  ciphertext"].
++* `bb1_correct` — BB1 is perfectly correct.
++* `bb1_encPP_inj`, `bb1_encSK_inj`, `bb1_encCT_inj` — BB1's encodings are injective on
++  parameters of the advertised description length and on keys and ciphertexts in one group.
++* `bb1SimInit_none`, …, `bb1SimChal_invalid` — the simulator's handlers case by case.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §2.1 (pp. 2–4), §4.1 (pp. 5–6:
++  the construction), §4.2 (pp. 6–8: the simulator in the proof of Theorem 4.1), §4.4 (p. 8:
++  arbitrary identities).
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++  TCSlib.Cryptography.Composability
++
++namespace BB1
++
++variable {wG wT : ℕ} (B : BilinearGroup wG wT)
++
++/-- **System parameters** `params = (g, g_1, g_2, h)` of BB1 [BB04, §4.1, `Setup` at depth 1]. -/
++structure Params where
++  /-- The generator `g ∈ G^*`. -/
++  g : B.G
++  /-- `g_1 = g^α`. -/
++  g1 : B.G
++  /-- The random element `g_2`. -/
++  g2 : B.G
++  /-- The random element `h = h_1`. -/
++  h : B.G
++
++/-- **A private key** `d_ID = (d_0, d_1)` of BB1 [BB04, §4.1, `KeyGen` at depth 1]. -/
++structure Key where
++  /-- `d_0 = g_2^α · F(ID)^r`. -/
++  d0 : B.G
++  /-- `d_1 = g^r`. -/
++  d1 : B.G
++
++/-- **A ciphertext** `C = (A, B, C_1)` of BB1 [BB04, §4.1, `Encrypt` at depth 1]. -/
++structure Ciphertext where
++  /-- `A = e(g_1, g_2)^s · M`. -/
++  a : B.GT
++  /-- `B = g^s`. -/
++  b : B.G
++  /-- `C_1 = F(ID)^s`. -/
++  c : B.G
++
++variable {B}
++
++/-- **The function** `F(x) = g_1^x h` [BB04, §4.1, `F_1 : Z_p → G`]. -/
++def F (pp : Params B) (x : ZMod B.order) : B.G := pp.g1 ^ x.val * pp.h
++
++/-- `F pp x = pp.g1 ^ x.val * pp.h`. -/
++theorem F_eq (pp : Params B) (x : ZMod B.order) : F pp x = pp.g1 ^ x.val * pp.h := rfl
++
++variable (B)
++
++/-- **Setup** [BB04, §4.1, depth 1]: a uniform generator `g ∈ G^*`, a uniform `α ∈ Z_p`, uniform
++`h, g_2 ∈ G`; returns `params = (g, g^α, g_2, h)` and `master-key = g_2^α`. -/
++noncomputable def setup : ProbComp (Params B × B.G) :=
++  (ProbComp.sample {x : B.G // x ≠ 1}).bind fun g =>
++  (ProbComp.sample (ZMod B.order)).bind fun α =>
++  (ProbComp.sample B.G).bind fun h =>
++  (ProbComp.sample B.G).bind fun g2 =>
++    .pure (⟨g.1, g.1 ^ α.val, g2, h⟩, g2 ^ α.val)
++
++/-- `setup B` draws `g ∈ G^*`, `α ∈ Z_p`, `h, g_2 ∈ G` and returns
++`((g, g^α, g_2, h), g_2^α)`. -/
++theorem setup_eq :
++    setup B =
++      (ProbComp.sample {x : B.G // x ≠ 1}).bind fun g =>
++      (ProbComp.sample (ZMod B.order)).bind fun α =>
++      (ProbComp.sample B.G).bind fun h =>
++      (ProbComp.sample B.G).bind fun g2 =>
++        .pure (⟨g.1, g.1 ^ α.val, g2, h⟩, g2 ^ α.val) := rfl
++
++variable {B}
++
++/-- **KeyGen** [BB04, §4.1, depth 1]: from the parameters, the master key `mk = g_2^α` and an
++identity `ID ∈ Z_p`, a uniform `r ∈ Z_p` and `d_ID = (mk · F(ID)^r, g^r)`. -/
++noncomputable def keyGen (pp : Params B) (mk : B.G) (id : ZMod B.order) : ProbComp (Key B) :=
++  (ProbComp.sample (ZMod B.order)).bind fun r => .pure ⟨mk * F pp id ^ r.val, pp.g ^ r.val⟩
++
++/-- `keyGen pp mk id` draws `r ∈ Z_p` and returns `(mk · F(id)^r, g^r)`. -/
++theorem keyGen_eq (pp : Params B) (mk : B.G) (id : ZMod B.order) :
++    keyGen pp mk id =
++      (ProbComp.sample (ZMod B.order)).bind fun r => .pure ⟨mk * F pp id ^ r.val, pp.g ^ r.val⟩ :=
++  rfl
++
++/-- **Encrypt** [BB04, §4.1, depth 1]: for an identity `ID ∈ Z_p` and a message `M ∈ G_T`, a
++uniform `s ∈ Z_p` and `C = (e(g_1, g_2)^s · M, g^s, F(ID)^s)`. -/
++noncomputable def encrypt (pp : Params B) (id : ZMod B.order) (M : B.GT) :
++    ProbComp (Ciphertext B) :=
++  (ProbComp.sample (ZMod B.order)).bind fun s =>
++    .pure ⟨B.pair pp.g1 pp.g2 ^ s.val * M, pp.g ^ s.val, F pp id ^ s.val⟩
++
++/-- `encrypt pp id M` draws `s ∈ Z_p` and returns `(e(g_1, g_2)^s · M, g^s, F(id)^s)`. -/
++theorem encrypt_eq (pp : Params B) (id : ZMod B.order) (M : B.GT) :
++    encrypt pp id M =
++      (ProbComp.sample (ZMod B.order)).bind fun s =>
++        .pure ⟨B.pair pp.g1 pp.g2 ^ s.val * M, pp.g ^ s.val, F pp id ^ s.val⟩ := rfl
++
++/-- **Decrypt** [BB04, §4.1, depth 1]: `A · e(C_1, d_1) / e(B, d_0)` for `d_ID = (d_0, d_1)` and
++`C = (A, B, C_1)`. -/
++def decrypt (d : Key B) (C : Ciphertext B) : B.GT := C.a * B.pair C.c d.d1 / B.pair C.b d.d0
++
++/-- `decrypt d C = C.a * e(C.c, d.d1) / e(C.b, d.d0)`. -/
++theorem decrypt_eq (d : Key B) (C : Ciphertext B) :
++    decrypt d C = C.a * B.pair C.c d.d1 / B.pair C.b d.d0 := rfl
++
++/-- **Decryption inverts encryption** [BB04, §4.1, "for a valid ciphertext, we have
++`e(C_1, d_1) / e(B, d_0) = 1 / e(g_1, g_2)^s`"]: for the parameters `(g, g^α, g_2, h)`, the
++master key `g_2^α`, the private key with exponent `r` and the ciphertext with exponent `s` of
++`M` for the same identity, `Decrypt(d_ID, C) = M`.
++
++**Proof sketch.** The proof is the paper's computation:
++`e(F(ID)^s, g^r) = e(g, F(ID))^{sr}` (bilinearity and symmetry) and
++`e(g^s, g_2^α F(ID)^r) = e(g, g_2)^{αs} · e(g, F(ID))^{sr}`, while the mask of `A`
++is `e(g^α, g_2)^s = e(g, g_2)^{αs}`. -/
++theorem decrypt_encrypt (g g2 h : B.G) (α r s id : ZMod B.order) (M : B.GT) :
++    decrypt (⟨g2 ^ α.val * F ⟨g, g ^ α.val, g2, h⟩ id ^ r.val, g ^ r.val⟩ : Key B)
++      ⟨B.pair (g ^ α.val) g2 ^ s.val * M, g ^ s.val, F ⟨g, g ^ α.val, g2, h⟩ id ^ s.val⟩ = M := by
++  rw [decrypt_eq]
++  dsimp only
++  have h1 : B.pair (g ^ α.val) g2 ^ s.val = B.pair g g2 ^ (α.val * s.val) := by
++    rw [B.pair_pow_left, ← pow_mul]
++  have h2 : B.pair (F ⟨g, g ^ α.val, g2, h⟩ id ^ s.val) (g ^ r.val) =
++      B.pair g (F ⟨g, g ^ α.val, g2, h⟩ id) ^ (s.val * r.val) := by
++    rw [B.bilinear_pow, B.pair_comm (F ⟨g, g ^ α.val, g2, h⟩ id) g]
++  have h3 : B.pair (g ^ s.val) (g2 ^ α.val * F ⟨g, g ^ α.val, g2, h⟩ id ^ r.val) =
++      B.pair g g2 ^ (α.val * s.val) * B.pair g (F ⟨g, g ^ α.val, g2, h⟩ id) ^ (s.val * r.val) := by
++    rw [map_mul (B.pair (g ^ s.val)), B.bilinear_pow, B.bilinear_pow, mul_comm s.val α.val]
++  rw [h1, h2, h3, mul_right_comm]
++  exact mul_div_cancel_left _ _
++
++variable (B)
++
++/-- **An identity as an element of `Z_p`**: the residue of the binary value of an `ℓ`-bit string,
++the injective encoding `{0,1}^ℓ → {0, …, 2^ℓ − 1}` of [BB04, §4.4] read in `Z_p`. -/
++def idToZ {ℓ : ℕ} (id : Fin ℓ → Bool) : ZMod B.order := (bitsToNat id : ZMod B.order)
++
++/-- `idToZ id` is the cast of `bitsToNat id` into `Z_p`. -/
++theorem idToZ_eq {ℓ : ℕ} (id : Fin ℓ → Bool) :
++    idToZ B id = (bitsToNat id : ZMod B.order) := rfl
++
++/-- **A message from its encoding**: the element of `G_T` with encoding `w`, and `1` when `w`
++encodes none. -/
++noncomputable def decodeT (w : Fin wT → Bool) : B.GT := (Function.partialInv B.encT w).getD 1
++
++/-- `decodeT B w = (Function.partialInv B.encT w).getD 1`. -/
++theorem decodeT_eq (w : Fin wT → Bool) : decodeT B w = (Function.partialInv B.encT w).getD 1 :=
++  rfl
++
++/-- Decoding an encoding returns the element: `decodeT B (B.encT u) = u`. -/
++theorem decodeT_encT (u : B.GT) : decodeT B (B.encT u) = u := by
++  rw [decodeT_eq, Function.partialInv_left B.encT_injective, Option.getD_some]
++
++end BB1
++
++/-! ### The encodings of BB1 lose no information
++
++The wire formats of `bb1Scheme` below, before the scheme is assembled: each is injective on the
++objects it is used for, which gives the fields `encPP_inj`, `encSK_inj` and `encCT_inj`. -/
++
++section Encodings
++
++variable (G : BilinearGen)
++
++/-- **Parameters with a description of the advertised length are determined by their
++encoding** (the encoding of `bb1Scheme`'s parameters): for `pp, pp'` whose descriptions have
++`descLen(κ)` bits, equal padded words `d ‖ g ‖ g_1 ‖ g_2 ‖ h` give `pp = pp'`.
++
++**Proof sketch.** Both words have exactly `descLen(κ) + 4 · wG(κ)` bits, so they are equal before
++padding (`ofFn_padFin_of_length`). Splitting off the last four blocks of `wG(κ)` bits
++(`List.append_inj'`) leaves equal descriptions; in the one group they describe, the four element
++encodings are equal, so the elements are (`List.ofFn_inj`, `encG_injective`). -/
++theorem bb1_encPP_inj {κ : ℕ} {pp pp' : Σ d : List Bool, BB1.Params (G.group κ d)}
++    (h : padFin ((PolyExpr.add G.descLen (.mul (.const 4) G.wG)).eval κ)
++        (pp.1 ++ List.ofFn ((G.group κ pp.1).encG pp.2.g) ++
++          List.ofFn ((G.group κ pp.1).encG pp.2.g1) ++
++          List.ofFn ((G.group κ pp.1).encG pp.2.g2) ++
++          List.ofFn ((G.group κ pp.1).encG pp.2.h)) =
++      padFin ((PolyExpr.add G.descLen (.mul (.const 4) G.wG)).eval κ)
++        (pp'.1 ++ List.ofFn ((G.group κ pp'.1).encG pp'.2.g) ++
++          List.ofFn ((G.group κ pp'.1).encG pp'.2.g1) ++
++          List.ofFn ((G.group κ pp'.1).encG pp'.2.g2) ++
++          List.ofFn ((G.group κ pp'.1).encG pp'.2.h)))
++    (hl : pp.1.length = G.descLen.eval κ) (hl' : pp'.1.length = G.descLen.eval κ) :
++    pp = pp' := by
++  obtain ⟨d, ⟨g, g1, g2, x⟩⟩ := pp
++  obtain ⟨d', ⟨g', g1', g2', x'⟩⟩ := pp'
++  dsimp only at hl hl' h
++  have hw := congrArg List.ofFn h
++  rw [ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn, hl,
++      PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]; omega),
++    ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn, hl',
++      PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]; omega)] at hw
++  obtain ⟨hw, hx⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
++  obtain ⟨hw, hg2⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
++  obtain ⟨hw, hg1⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
++  obtain ⟨rfl, hg⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
++  rw [List.ofFn_inj, (BilinearGroup.encG_injective _).eq_iff] at hx hg2 hg1 hg
++  rw [hx, hg2, hg1, hg]
++
++/-- **Two keys in one group with equal encodings are equal** (the encoding of `bb1Scheme`'s
++private keys, which omits the description).
++
++**Proof sketch.** Both words `d_0 ‖ d_1` have exactly `2 · wG(κ)` bits, so they are equal
++before padding (`ofFn_padFin_of_length`); splitting at `wG(κ)` (`List.append_inj'`) gives equal
++encodings of `d_0` and of `d_1`, hence equal elements (`List.ofFn_inj`, `encG_injective`). -/
++theorem bb1_encSK_inj {κ : ℕ} {d : List Bool} {k k' : BB1.Key (G.group κ d)}
++    (h : padFin ((PolyExpr.mul (.const 2) G.wG).eval κ)
++        (List.ofFn ((G.group κ d).encG k.d0) ++ List.ofFn ((G.group κ d).encG k.d1)) =
++      padFin ((PolyExpr.mul (.const 2) G.wG).eval κ)
++        (List.ofFn ((G.group κ d).encG k'.d0) ++ List.ofFn ((G.group κ d).encG k'.d1))) :
++    k = k' := by
++  obtain ⟨a, b⟩ := k
++  obtain ⟨a', b'⟩ := k'
++  dsimp only at h
++  have hw := congrArg List.ofFn h
++  rw [ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn,
++      PolyExpr.eval_mul, PolyExpr.eval_const]; omega),
++    ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn,
++      PolyExpr.eval_mul, PolyExpr.eval_const]; omega)] at hw
++  obtain ⟨ha, hb⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
++  rw [List.ofFn_inj, (G.group κ d).encG_injective.eq_iff] at ha hb
++  rw [ha, hb]
++
++/-- **Two ciphertexts in one group with equal encodings are equal** (the encoding of
++`bb1Scheme`'s ciphertexts, which omits the description).
++
++**Proof sketch.** Both words `A ‖ B ‖ C_1` have exactly `wT(κ) + 2 · wG(κ)` bits, so they are
++equal before padding (`ofFn_padFin_of_length`); splitting off the last two blocks of `wG(κ)` bits
++(`List.append_inj'`) gives equal encodings of the three components, hence equal components
++(`List.ofFn_inj`, `encT_injective`, `encG_injective`). -/
++theorem bb1_encCT_inj {κ : ℕ} {d : List Bool} {c c' : BB1.Ciphertext (G.group κ d)}
++    (h : padFin ((PolyExpr.add G.wT (.mul (.const 2) G.wG)).eval κ)
++        (List.ofFn ((G.group κ d).encT c.a) ++ List.ofFn ((G.group κ d).encG c.b) ++
++          List.ofFn ((G.group κ d).encG c.c)) =
++      padFin ((PolyExpr.add G.wT (.mul (.const 2) G.wG)).eval κ)
++        (List.ofFn ((G.group κ d).encT c'.a) ++ List.ofFn ((G.group κ d).encG c'.b) ++
++          List.ofFn ((G.group κ d).encG c'.c))) :
++    c = c' := by
++  obtain ⟨a, b, x⟩ := c
++  obtain ⟨a', b', x'⟩ := c'
++  dsimp only at h
++  have hw := congrArg List.ofFn h
++  rw [ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn,
++      PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]; omega),
++    ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn,
++      PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]; omega)] at hw
++  obtain ⟨hw, hx⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
++  obtain ⟨ha, hb⟩ := List.append_inj' hw (by simp only [List.length_ofFn])
++  rw [List.ofFn_inj, (G.group κ d).encG_injective.eq_iff] at hx hb
++  rw [List.ofFn_inj, (G.group κ d).encT_injective.eq_iff] at ha
++  rw [ha, hb, hx]
++
++end Encodings
++
++/-- **The BB1 IBE system** over the bilinear group generator `G`, for `ℓ(κ)`-bit identities
++[BB04, §4.1 at depth 1, with the identity encoding of §4.4]: `Setup` runs the generator and BB1's
++`Setup` in the group it describes; the parameters are `⟨d, (g, g_1, g_2, h)⟩`, the master key
++also carries the parameters; `KeyGen` and `Encrypt` read the identity through `idToZ` and the
++message through `decodeT`; `Decrypt` returns the encoding of BB1's decryption, or `⊥` if the key
++and the ciphertext name different descriptions. The message space at `⟨d, params⟩` is the set
++of encodings of `G_T` of the group `d` describes. Parameters are encoded as `d` followed by the
++four elements, keys as two elements, ciphertexts as `A, B, C_1`.
++
++The encodings are injective where the interface asks: generated descriptions have `descLen(κ)`
++bits (`BilinearGen.length_desc`, `bb1_encPP_inj`), and the keys and ciphertexts of one possible
++output of `Setup` carry its description, in whose group the element encodings are injective
++(`bb1_encSK_inj`, `bb1_encCT_inj`). -/
++noncomputable def bb1Scheme (G : BilinearGen) (ℓ : PolyExpr) : IBEScheme where
++  idLen := ℓ
++  msgLen := G.wT
++  ppLen := .add G.descLen (.mul (.const 4) G.wG)
++  skLen := .mul (.const 2) G.wG
++  ctLen := .add G.wT (.mul (.const 2) G.wG)
++  PP κ := Σ d : List Bool, BB1.Params (G.group κ d)
++  MSK κ := Σ d : List Bool, BB1.Params (G.group κ d) × (G.group κ d).G
++  SK κ := Σ d : List Bool, BB1.Key (G.group κ d)
++  CT κ := Σ d : List Bool, BB1.Ciphertext (G.group κ d)
++  setup κ :=
++    (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
++    (BB1.setup (G.group κ (G.desc κ r))).bind fun k =>
++      .pure (⟨G.desc κ r, k.1⟩, ⟨G.desc κ r, k⟩)
++  keyGen _ msk id :=
++    (BB1.keyGen msk.2.1 msk.2.2 (BB1.idToZ _ id)).bind fun d => .pure ⟨msk.1, d⟩
++  enc _ pp id m :=
++    (BB1.encrypt pp.2 (BB1.idToZ _ id) (BB1.decodeT _ m)).bind fun c => .pure ⟨pp.1, c⟩
++  dec κ sk c :=
++    if h : c.1 = sk.1 then
++      some ((G.group κ sk.1).encT (BB1.decrypt sk.2 (h ▸ c.2)))
++    else none
++  MsgSpace κ pp m := ∃ u, (G.group κ pp.1).encT u = m
++  encPP κ pp := padFin _ (pp.1 ++ List.ofFn ((G.group κ pp.1).encG pp.2.g) ++
++    List.ofFn ((G.group κ pp.1).encG pp.2.g1) ++ List.ofFn ((G.group κ pp.1).encG pp.2.g2) ++
++    List.ofFn ((G.group κ pp.1).encG pp.2.h))
++  encSK κ sk := padFin _ (List.ofFn ((G.group κ sk.1).encG sk.2.d0) ++
++    List.ofFn ((G.group κ sk.1).encG sk.2.d1))
++  encCT κ c := padFin _ (List.ofFn ((G.group κ c.1).encT c.2.a) ++
++    List.ofFn ((G.group κ c.1).encG c.2.b) ++ List.ofFn ((G.group κ c.1).encG c.2.c))
++  encPP_inj κ := by
++    refine (OracleComp.allOutputs_true _).bind fun r _ =>
++      (OracleComp.allOutputs_true _).bind fun k _ => OracleComp.allOutputs_pure.2 ?_
++    refine (OracleComp.allOutputs_true _).bind fun r' _ =>
++      (OracleComp.allOutputs_true _).bind fun k' _ => OracleComp.allOutputs_pure.2 ?_
++    exact fun h => bb1_encPP_inj G h (G.length_desc κ r) (G.length_desc κ r')
++  encSK_inj κ := by
++    refine (OracleComp.allOutputs_true _).mono fun k _ id id' => ?_
++    refine (OracleComp.allOutputs_true _).bind fun a _ => OracleComp.allOutputs_pure.2 ?_
++    refine (OracleComp.allOutputs_true _).bind fun a' _ => OracleComp.allOutputs_pure.2 ?_
++    exact fun h => congrArg (Sigma.mk k.2.1) (bb1_encSK_inj G h)
++  encCT_inj κ := by
++    refine (OracleComp.allOutputs_true _).mono fun k _ id id' m m' => ?_
++    refine (OracleComp.allOutputs_true _).bind fun a _ => OracleComp.allOutputs_pure.2 ?_
++    refine (OracleComp.allOutputs_true _).bind fun a' _ => OracleComp.allOutputs_pure.2 ?_
++    exact fun h => congrArg (Sigma.mk k.1.1) (bb1_encCT_inj G h)
++
++attribute [simps (config := { isSimp := false }) idLen msgLen ppLen skLen ctLen PP MSK SK CT
++  setup keyGen enc dec MsgSpace encPP encSK encCT] bb1Scheme
++
++/-- **BB1 is perfectly correct** [BB04, §4.1, "Indeed, for a valid ciphertext …"]: every
++honest run with a message of the message space decrypts to that message.
++
++**Proof sketch.** Every possible outcome of an honest run has parameters
++`⟨d, (g, g^α, g_2, h)⟩`, key `⟨d, (g_2^α F(ID)^r, g^r)⟩` and ciphertext
++`⟨d, (e(g^α, g_2)^s · M', g^s, F(ID)^s)⟩` with the same description `d` and
++`M' = decodeT M`, so `Decrypt` takes its first branch and returns the encoding of `M'` by
++`BB1.decrypt_encrypt`. A message of the message space is an encoding `encT u`, so
++`M' = u` (`decodeT_encT`) and its encoding is `M`. -/
++theorem bb1_correct (G : BilinearGen) (ℓ : PolyExpr) : (bb1Scheme G ℓ).Correct := by
++  rw [IBEScheme.correct_iff]
++  intro κ id m
++  rw [IBEScheme.honestRun_eq, bb1Scheme_setup]
++  simp only [OracleComp.bind_assoc, OracleComp.pure_bind, BB1.setup_eq, bb1Scheme_keyGen,
++    bb1Scheme_enc, BB1.keyGen_eq, BB1.encrypt_eq]
++  refine (OracleComp.allOutputs_true _).bind fun r _ => ?_
++  refine (OracleComp.allOutputs_true _).bind fun g _ => ?_
++  refine (OracleComp.allOutputs_true _).bind fun α _ => ?_
++  refine (OracleComp.allOutputs_true _).bind fun h _ => ?_
++  refine (OracleComp.allOutputs_true _).bind fun g2 _ => ?_
++  refine (OracleComp.allOutputs_true _).bind fun ρ _ => ?_
++  refine (OracleComp.allOutputs_true _).bind fun σ _ => ?_
++  refine OracleComp.allOutputs_pure.2 fun hm => ?_
++  obtain ⟨u, hu⟩ := hm
++  rw [bb1Scheme_dec, dif_pos rfl]
++  dsimp only
++  rw [← hu, BB1.decodeT_encT, BB1.decrypt_encrypt]
++
++/-! ### The simulator of [BB04, proof of Theorem 4.1]
++
++The Decision BDH algorithm `B` of the proof, as typed oracle handlers over the parameters of
++`bb1Scheme`, with ideal uniform exponents; `bb1SimGame` runs the adversary against them. The
++security argument is in `AdvancedEncryption.IdentityBased.BonehBoyenSecurity`. -/
++
++section Simulator
++
++variable (G : BilinearGen) (ℓ : PolyExpr)
++
++/-- The simulator's state at parameter `κ` in the group described by `d`: the committed identity
++with the simulator's exponent `α_1` (once `Init` is asked), and the issued challenge. -/
++abbrev BB1SimState (κ : ℕ) (d : List Bool) : Type :=
++  Option ((Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) × ZMod (G.group κ d).order) ×
++    Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)
++
++/-- `BB1SimState G ℓ κ d` is the optional pair of the committed identity and `α_1`, with the
++optional encoded challenge. -/
++theorem bb1SimState_eq (κ : ℕ) (d : List Bool) :
++    BB1SimState G ℓ κ d =
++      (Option ((Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) × ZMod (G.group κ d).order) ×
++        Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) := rfl
++
++/-- The simulated parameters `(g, X, Y, X^{−ID*} g^{α_1})` for the committed identity `ID*` and
++the exponent `α_1` [BB04, proof of Theorem 4.1, *Setup*]. -/
++noncomputable def bb1SimParams {κ : ℕ} {d : List Bool} (g X Y : (G.group κ d).G)
++    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order) :
++    BB1.Params (G.group κ d) :=
++  ⟨g, X, Y, X ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val⟩
++
++/-- `bb1SimParams G ℓ g X Y t α₁ = (g, X, Y, X ^ (−idToZ t).val · g ^ α₁.val)`. -/
++theorem bb1SimParams_eq {κ : ℕ} {d : List Bool} (g X Y : (G.group κ d).G)
++    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order) :
++    bb1SimParams G ℓ g X Y t α₁ =
++      ⟨g, X, Y, X ^ (-BB1.idToZ (G.group κ d) t).val * g ^ α₁.val⟩ := rfl
++
++/-- The simulated private key of `ID ≠ ID*` with exponent `r` [BB04, proof of Theorem 4.1,
++*Phase 1*]: `(Y^{−α_1/(ID − ID*)} F(ID)^r, Y^{−1/(ID − ID*)} g^r)`, with `F` of the simulated
++parameters and the identities read in `Z_p`. -/
++noncomputable def bb1SimKey {κ : ℕ} {d : List Bool} (g X Y : (G.group κ d).G)
++    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
++    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (r : ZMod (G.group κ d).order) :
++    BB1.Key (G.group κ d) :=
++  ⟨Y ^ (-α₁ / (BB1.idToZ (G.group κ d) id - BB1.idToZ (G.group κ d) t)).val *
++      BB1.F (bb1SimParams G ℓ g X Y t α₁) (BB1.idToZ (G.group κ d) id) ^ r.val,
++    Y ^ (-1 / (BB1.idToZ (G.group κ d) id - BB1.idToZ (G.group κ d) t)).val * g ^ r.val⟩
++
++/-- `bb1SimKey G ℓ g X Y t α₁ id r` is
++`(Y^{(−α₁/(id − t)).val} · F(id)^{r.val}, Y^{(−1/(id − t)).val} · g^{r.val})`. -/
++theorem bb1SimKey_eq {κ : ℕ} {d : List Bool} (g X Y : (G.group κ d).G)
++    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
++    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (r : ZMod (G.group κ d).order) :
++    bb1SimKey G ℓ g X Y t α₁ id r =
++      ⟨Y ^ (-α₁ / (BB1.idToZ (G.group κ d) id - BB1.idToZ (G.group κ d) t)).val *
++          BB1.F (bb1SimParams G ℓ g X Y t α₁) (BB1.idToZ (G.group κ d) id) ^ r.val,
++        Y ^ (-1 / (BB1.idToZ (G.group κ d) id - BB1.idToZ (G.group κ d) t)).val * g ^ r.val⟩ :=
++  rfl
++
++/-- **The simulator's `Init`** [BB04, proof of Theorem 4.1, *Initialization* and *Setup*] on the
++description `d` and `g, X = g^a, Y = g^{b'}`: before any commitment, draw `α_1 ∈ Z_p`, record
++`(ID, α_1)` and answer the simulated parameters; afterwards answer the recorded identity's. -/
++noncomputable def bb1SimInit (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (s : BB1SimState G ℓ κ d) :
++    ProbComp ((Fin ((bb1Scheme G ℓ).ppLen.eval κ) → Bool) × BB1SimState G ℓ κ d) :=
++  match s.1 with
++  | none => (ProbComp.sample (ZMod (G.group κ d).order)).bind fun α₁ =>
++      .pure ((bb1Scheme G ℓ).encPP κ ⟨d, bb1SimParams G ℓ g X Y id α₁⟩, (some (id, α₁), s.2))
++  | some (t, α₁) => .pure ((bb1Scheme G ℓ).encPP κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩, s)
++
++/-- `Init` before any commitment draws `α_1` and answers the simulated parameters. -/
++theorem bb1SimInit_none (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool)
++    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
++    bb1SimInit G ℓ κ d g X Y id (none, c) =
++      (ProbComp.sample (ZMod (G.group κ d).order)).bind fun α₁ =>
++        .pure ((bb1Scheme G ℓ).encPP κ ⟨d, bb1SimParams G ℓ g X Y id α₁⟩, (some (id, α₁), c)) :=
++  rfl
++
++/-- `Init` after a commitment answers the recorded identity's simulated parameters. -/
++theorem bb1SimInit_some (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    (id t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
++    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
++    bb1SimInit G ℓ κ d g X Y id (some (t, α₁), c) =
++      .pure ((bb1Scheme G ℓ).encPP κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩, (some (t, α₁), c)) :=
++  rfl
++
++/-- **The simulator's `KeyGen`** [BB04, proof of Theorem 4.1, *Phase 1*]: when `ID*` is recorded
++and `ID ≠ ID*`, draw `r ∈ Z_p` and answer `⟨1, bb1SimKey … ID r⟩`; otherwise `⊥`. -/
++noncomputable def bb1SimKeyQ (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (s : BB1SimState G ℓ κ d) :
++    ProbComp ((Fin ((bb1Scheme G ℓ).skLen.eval κ + 1) → Bool) × BB1SimState G ℓ κ d) :=
++  match s.1 with
++  | some (t, α₁) =>
++    if id = t then .pure (zeroBits _, s)
++    else (ProbComp.sample (ZMod (G.group κ d).order)).bind fun r =>
++      .pure (FixedLengthScheme.decAnswer
++        (some ((bb1Scheme G ℓ).encSK κ ⟨d, bb1SimKey G ℓ g X Y t α₁ id r⟩)), s)
++  | none => .pure (zeroBits _, s)
++
++/-- `KeyGen` before `Init` answers `⊥`. -/
++theorem bb1SimKeyQ_none (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    (id : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool)
++    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
++    bb1SimKeyQ G ℓ κ d g X Y id (none, c) = .pure (zeroBits _, (none, c)) := rfl
++
++/-- `KeyGen` for the committed identity answers `⊥`. -/
++theorem bb1SimKeyQ_target (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
++    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
++    bb1SimKeyQ G ℓ κ d g X Y t (some (t, α₁), c) = .pure (zeroBits _, (some (t, α₁), c)) := by
++  simp [bb1SimKeyQ]
++
++/-- `KeyGen` for `ID ≠ ID*` draws `r` and answers the simulated key. -/
++theorem bb1SimKeyQ_ne (κ : ℕ) (d : List Bool) (g X Y : (G.group κ d).G)
++    (id t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
++    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) (h : id ≠ t) :
++    bb1SimKeyQ G ℓ κ d g X Y id (some (t, α₁), c) =
++      (ProbComp.sample (ZMod (G.group κ d).order)).bind fun r =>
++        .pure (FixedLengthScheme.decAnswer
++          (some ((bb1Scheme G ℓ).encSK κ ⟨d, bb1SimKey G ℓ g X Y t α₁ id r⟩)),
++          (some (t, α₁), c)) := by
++  simp [bb1SimKeyQ, h]
++
++/-- The simulated challenge `(M · T, Z, Z^{α_1})` [BB04, proof of Theorem 4.1, *Challenge*] of the
++message string `m`, encoded. -/
++noncomputable def bb1SimCt (κ : ℕ) (d : List Bool) (Z : (G.group κ d).G) (T : (G.group κ d).GT)
++    (α₁ : ZMod (G.group κ d).order) (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) :
++    Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool :=
++  (bb1Scheme G ℓ).encCT κ ⟨d, ⟨BB1.decodeT _ m * T, Z, Z ^ α₁.val⟩⟩
++
++/-- `bb1SimCt G ℓ κ d Z T α₁ m` is the encoding of `(decodeT m · T, Z, Z ^ α₁.val)`. -/
++theorem bb1SimCt_eq (κ : ℕ) (d : List Bool) (Z : (G.group κ d).G) (T : (G.group κ d).GT)
++    (α₁ : ZMod (G.group κ d).order) (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) :
++    bb1SimCt G ℓ κ d Z T α₁ m =
++      (bb1Scheme G ℓ).encCT κ ⟨d, ⟨BB1.decodeT _ m * T, Z, Z ^ α₁.val⟩⟩ := rfl
++
++open Classical in
++/-- **The simulator's `Challenge`** [BB04, proof of Theorem 4.1, *Challenge*] with challenge bit
++`b`, on `Z = g^c` and `T`: with `ID*` recorded and no challenge yet, if `M₀, M₁` are in the
++message space, answer and record `(M_b · T, Z, Z^{α_1})`, and otherwise `⊥`; once a challenge is
++recorded, repeat it; before `Init`, `⊥`. -/
++noncomputable def bb1SimChal (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
++    (T : (G.group κ d).GT)
++    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
++    (s : BB1SimState G ℓ κ d) :
++    ProbComp ((Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool) × BB1SimState G ℓ κ d) :=
++  match s.1, s.2 with
++  | some _, some c => .pure (c, s)
++  | some (t, α₁), none =>
++    if (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
++          (FixedLengthScheme.splitHalf mm).1 ∧
++        (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
++          (FixedLengthScheme.splitHalf mm).2 then
++      .pure (bb1SimCt G ℓ κ d Z T α₁ (if b then (FixedLengthScheme.splitHalf mm).2
++          else (FixedLengthScheme.splitHalf mm).1),
++        (s.1, some (bb1SimCt G ℓ κ d Z T α₁ (if b then (FixedLengthScheme.splitHalf mm).2
++          else (FixedLengthScheme.splitHalf mm).1))))
++    else .pure (zeroBits _, s)
++  | none, _ => .pure (zeroBits _, s)
++
++/-- `Challenge` before `Init` answers `⊥`. -/
++theorem bb1SimChal_none (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
++    (T : (G.group κ d).GT)
++    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
++    (c : Option (Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool)) :
++    bb1SimChal G ℓ b κ d g X Y Z T mm (none, c) = .pure (zeroBits _, (none, c)) := rfl
++
++/-- `Challenge` after a recorded challenge repeats it. -/
++theorem bb1SimChal_repeat (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
++    (T : (G.group κ d).GT)
++    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
++    (t : (Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) × ZMod (G.group κ d).order)
++    (w : Fin ((bb1Scheme G ℓ).ctLen.eval κ) → Bool) :
++    bb1SimChal G ℓ b κ d g X Y Z T mm (some t, some w) = .pure (w, (some t, some w)) := rfl
++
++/-- The first `Challenge` with both messages in the message space answers and records
++`(M_b · T, Z, Z^{α_1})`. -/
++theorem bb1SimChal_fresh (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
++    (T : (G.group κ d).GT)
++    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
++    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
++    (h : (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
++          (FixedLengthScheme.splitHalf mm).1 ∧
++        (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
++          (FixedLengthScheme.splitHalf mm).2) :
++    bb1SimChal G ℓ b κ d g X Y Z T mm (some (t, α₁), none) =
++      .pure (bb1SimCt G ℓ κ d Z T α₁ (if b then (FixedLengthScheme.splitHalf mm).2
++          else (FixedLengthScheme.splitHalf mm).1),
++        (some (t, α₁), some (bb1SimCt G ℓ κ d Z T α₁ (if b then (FixedLengthScheme.splitHalf mm).2
++          else (FixedLengthScheme.splitHalf mm).1)))) := by
++  simp only [bb1SimChal]
++  rw [if_pos h]
++
++/-- The first `Challenge` with a message outside the message space answers `⊥`. -/
++theorem bb1SimChal_invalid (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
++    (T : (G.group κ d).GT)
++    (mm : Fin ((bb1Scheme G ℓ).msgLen.eval κ + (bb1Scheme G ℓ).msgLen.eval κ) → Bool)
++    (t : Fin ((bb1Scheme G ℓ).idLen.eval κ) → Bool) (α₁ : ZMod (G.group κ d).order)
++    (h : ¬ ((bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
++          (FixedLengthScheme.splitHalf mm).1 ∧
++        (bb1Scheme G ℓ).MsgSpace κ ⟨d, bb1SimParams G ℓ g X Y t α₁⟩
++          (FixedLengthScheme.splitHalf mm).2)) :
++    bb1SimChal G ℓ b κ d g X Y Z T mm (some (t, α₁), none) =
++      .pure (zeroBits _, (some (t, α₁), none)) := by
++  simp only [bb1SimChal]
++  rw [if_neg h]
++
++/-- **The simulator's oracles** [BB04, proof of Theorem 4.1] with challenge bit `b`, at
++parameter `κ`, on the description `d` and the Decision BDH tuple `(g, X, Y, Z, T)`: the three
++handlers `bb1SimInit`, `bb1SimKeyQ`, `bb1SimChal` as an implementation of the game's oracles. -/
++noncomputable def bb1SimImpl (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
++    (T : (G.group κ d).GT) :
++    QueryImpl ((bb1Scheme G ℓ).sidSpec κ) (BB1SimState G ℓ κ d) unifSpec :=
++  (bb1Scheme G ℓ).oracleImpl κ (bb1SimInit G ℓ κ d g X Y) (bb1SimKeyQ G ℓ κ d g X Y)
++    (bb1SimChal G ℓ b κ d g X Y Z T)
++
++/-- `bb1SimImpl` is `oracleImpl` of the three simulator handlers. -/
++theorem bb1SimImpl_eq (b : Bool) (κ : ℕ) (d : List Bool) (g X Y Z : (G.group κ d).G)
++    (T : (G.group κ d).GT) :
++    bb1SimImpl G ℓ b κ d g X Y Z T =
++      (bb1Scheme G ℓ).oracleImpl κ (bb1SimInit G ℓ κ d g X Y) (bb1SimKeyQ G ℓ κ d g X Y)
++        (bb1SimChal G ℓ b κ d g X Y Z T) := rfl
++
++/-- **The simulation game** [BB04, proof of Theorem 4.1] for the adversary `A` with budget `q`,
++challenge bit `b`, on `P_BDH` (`real`) or `R_BDH`: draw the generator's coins `r`, `g ∈ G^*`,
++`a, b', c ∈ Z_p`, `T ∈ G_T` and `A`'s coins, run `A(1^κ)` against the simulator's oracles on
++`(g, g^a, g^{b'}, g^c, T')` with `T' = e(g, g)^{ab'c}` if `real` and `T` otherwise, and return
++`A`'s guess. -/
++noncomputable def bb1SimGame (A : NUPPT) (q : ℕ) (b real : Bool) (κ : ℕ) : ProbComp Bool :=
++  (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
++  (ProbComp.sample {x : (G.group κ (G.desc κ r)).G // x ≠ 1}).bind fun g =>
++  (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order × ZMod (G.group κ (G.desc κ r)).order ×
++    ZMod (G.group κ (G.desc κ r)).order)).bind fun abc =>
++  (ProbComp.sample (G.group κ (G.desc κ r)).GT).bind fun t =>
++  (ProbComp.sample (A.Coins κ)).bind fun ρ =>
++  (simulate (bb1SimImpl G ℓ b κ (G.desc κ r) g.1 (g.1 ^ abc.1.val) (g.1 ^ abc.2.1.val)
++      (g.1 ^ abc.2.2.val)
++      (if real then (G.group κ (G.desc κ r)).pair g.1 g.1 ^ (abc.1 * abc.2.1 * abc.2.2).val
++        else t))
++    (A.toComp ((bb1Scheme G ℓ).sidCodec κ) κ q ρ) (none, none)).bind fun res => .pure (res.1 0)
++
++/-- The simulation game draws the generator's coins, `g ∈ G^*`, `(a, b', c)`, `T` and `A`'s
++coins, and simulates `A` against `bb1SimImpl` on the Decision BDH tuple. -/
++theorem bb1SimGame_eq (A : NUPPT) (q : ℕ) (b real : Bool) (κ : ℕ) :
++    bb1SimGame G ℓ A q b real κ =
++      (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
++      (ProbComp.sample {x : (G.group κ (G.desc κ r)).G // x ≠ 1}).bind fun g =>
++      (ProbComp.sample (ZMod (G.group κ (G.desc κ r)).order × ZMod (G.group κ (G.desc κ r)).order ×
++        ZMod (G.group κ (G.desc κ r)).order)).bind fun abc =>
++      (ProbComp.sample (G.group κ (G.desc κ r)).GT).bind fun t =>
++      (ProbComp.sample (A.Coins κ)).bind fun ρ =>
++      (simulate (bb1SimImpl G ℓ b κ (G.desc κ r) g.1 (g.1 ^ abc.1.val) (g.1 ^ abc.2.1.val)
++          (g.1 ^ abc.2.2.val)
++          (if real then (G.group κ (G.desc κ r)).pair g.1 g.1 ^ (abc.1 * abc.2.1 * abc.2.2).val
++            else t))
++        (A.toComp ((bb1Scheme G ℓ).sidCodec κ) κ q ρ) (none, none)).bind
++        fun res => .pure (res.1 0) := rfl
++
++end Simulator
++
++end TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean
+new file mode 100644
+index 000000000..63f16c9d4
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean
+@@ -0,0 +1,85 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
++import TCSlib.Cryptography.Pairing.Assumptions
++import TCSlib.Cryptography.Pairing.Operations
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The BB1 simulator as a Decision BDH distinguisher
++
++Step 3 of the security proof of [BB04, Theorem 4.1] at depth `ℓ = 1`; the other steps and the
++assembled theorem `bb1_sidSecure` are in
++`AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean`. The paper's algorithm `B`
++[BB04, pp. 7–8] is efficient: given `(g, g^a, g^b, g^c, T)` it runs the adversary with the
++simulated `Setup`, private keys and challenge, using only group operations, exponent arithmetic
++modulo `p` and fresh random exponents. Here the simulation game
++`bb1SimGame` (defined beside the scheme in `AdvancedEncryption/IdentityBased/BonehBoyen.lean`)
++uses ideal uniform exponents, and the step shows that it is, up to a negligible statistical term,
++the Decision BDH experiment of a non-uniform PPT distinguisher (the machine step: handler theorem
++T1 with exponents drawn from coin blocks).
++
++This step is its own module so that it can be filled independently of the coupling steps
++`bb1_sim_real` and `bb1_sim_random` (ruling Q11 of `PairingCryptographyPlan.md`).
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `exists_bb1_distinguisher` — the simulation is a Decision BDH distinguisher (step 3).
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.2 (pp. 6–8): Theorem 4.1 and
++  its proof.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
++  (Definition 26.8, non-uniform PPT.)
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++  TCSlib.Cryptography.Composability
++
++variable (G : BilinearGen) (ℓ : PolyExpr)
++
++/-- **Step 3: the simulation is a Decision BDH distinguisher** [BB04, §4.2, the algorithm `B`
++in the proof of Theorem 4.1, whose cost is the theorem's `Θ(τ ℓ q_S)` with the paper's hierarchy
++depth `ℓ = 1`]: with efficient group operations `O` and the arithmetic bundle `H`, for every
++adversary `A` and polynomial budget `q` there are non-uniform PPT distinguishers `D_b` and a
++negligible `σ` with `|Pr[bb1SimGame … b real = 1] − Pr[dbdhGame (D_b) real = 1]| ≤ σ(κ)` for
++both tuple distributions.
++
++**Proof sketch.** `D_b` parses `⟨d, ⟨g, ⟨X, ⟨Y, ⟨Z, T⟩⟩⟩⟩⟩` and runs `A` with the handler of
++`bb1SimImpl`: group operations by `O.mulG`, `O.powG`, `O.mulT`, membership by `O.memT`, and
++exponent arithmetic modulo `p = O.orderStr d` with `H`: products by `mulStr` and `divModStr`;
++negation and differences of residues `x, y < p` as `(p − x) mod p` and `(x + (p − y)) mod p`
++with `H`'s natural-number functions `addStr`, `subStr`, `divModStr` (truncated subtraction
++alone is not modular subtraction); and the field inverse by `xgcdStr`, which returns the
++inverse of zero as zero, as `Z_p` does. Let `n = κ + wG(κ) + 1`. Each of `α_1` and the `r`s
++is drawn as `(Candidates.sampleBelowL p (Nat.size p) n n w).getD 0` on its own block `w` of
++`n²` fresh coin bits. Since `encG` is injective, `p ≤ 2^{wG(κ)} < 2^n`, and
++`0 < p`, so `statClose_sampleBelowL` puts each draw within `(1/2)^n ≤ 2^{−κ}` of uniform on
++`Z_p`. The handler is polynomial-time with polynomial state, so the handler theorem
++`Games.exists_handlerMachine` (T1), applied to the adversary obtained from `A` by
++`Games.exists_toCompOn_of_toComp` (its `toCompOn` interface), makes the run a machine whose
++output is exactly `A`'s guess in a game equal to `bb1SimGame` with sampled instead of ideal
++exponents. A run makes at most `q(κ) + 1` draws, from independent blocks, so the hybrid over the
++draws gives `σ(κ) = (q(κ) + 1) · 2^{−κ}`. -/
++theorem exists_bb1_distinguisher (H : Candidates.ArithmeticFP) (O : G.Ops) (A : NUPPT)
++    (q : PolyExpr) :
++    ∃ D : Bool → NUPPT, ∃ σ : ℕ → ℝ, Negligible σ ∧ ∀ (b real : Bool) (κ : ℕ),
++      advantage (bb1SimGame G ℓ A (q.eval κ) b real κ) (G.dbdhGame (D b) real κ) ≤ σ κ := by
++  sorry
++
++end TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean
+new file mode 100644
+index 000000000..08f5211fd
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/BonehBoyenSecurity.lean
+@@ -0,0 +1,170 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
++import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenMachine
++import TCSlib.Cryptography.Pairing.Assumptions
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Selective-identity security of BB1 under Decision BDH
++
++[BB04, Theorem 4.1] at depth `ℓ = 1`: if Decision BDH holds in `G`, the BB1 system is
++IND-sID-CPA secure. The proof [BB04, pp. 7–8] builds a Decision BDH algorithm `B` that, given
++`(g, g^a, g^b, g^c, T)`, plays the selective-identity game with the adversary without knowing the
++master key `g^{ab}`:
++* **Setup**, once `ID*` is committed: a random `α_1 ∈ Z_p`, `h = g_1^{−ID*} g^{α_1}`,
++  `params = (g, g_1 = g^a, g_2 = g^b, h)`, so that `F(x) = g_1^{x − ID*} g^{α_1}`;
++* **private keys** for `ID ≠ ID*`: a random `r ∈ Z_p`,
++  `(g_2^{−α_1/(ID − ID*)} F(ID)^r, g_2^{−1/(ID − ID*)} g^r)`;
++* **the challenge**: `(M_b · T, g^c, (g^c)^{α_1})`.
++
++**The simulation game.** `bb1SimGame` (defined beside the scheme in
++`AdvancedEncryption/IdentityBased/BonehBoyen.lean`) is that simulator as a game of the `Games`
++framework, with ideal uniform exponents, run against the adversary machine on a Decision BDH
++tuple drawn from `P_BDH` (`real`) or `R_BDH`. The security proof has three named steps:
++1. `bb1_sim_real`: on `P_BDH`, the simulation is the real game, except when distinct
++   identities collide in `Z_p` (the generator's coins with `p < 2^ℓ`);
++2. `bb1_sim_random`: on `R_BDH`, the simulation does not depend on the challenge bit;
++3. `exists_bb1_distinguisher`: the simulation is, up to a negligible statistical term, the
++   Decision BDH experiment of a non-uniform PPT distinguisher (the machine step: handler theorem
++   T1 with exponents drawn from coin blocks). It is stated in its own module,
++   `AdvancedEncryption/IdentityBased/BonehBoyenMachine.lean`, so that it can be filled
++   independently of steps 1 and 2 (ruling Q11 of `PairingCryptographyPlan.md`).
++`bb1_sidSecure` assembles them by the triangle inequality.
++
++**Deviation:** the paper's `B` draws the challenge bit itself and outputs `[b = b']`; here there
++is one simulation per value of `b`, and the advantage of the two-experiment form is bounded by
++the sum of two Decision BDH advantages; the paper's statement is concrete (`t' < t − Θ(τ ℓ q_S)`).
++
++## Main definitions
++
++None: the simulator (`bb1SimImpl`, `bb1SimGame`) is defined beside the scheme, in
++`AdvancedEncryption.IdentityBased.BonehBoyen`.
++
++## Main results
++
++* `bb1_sim_real`, `bb1_sim_random` — steps 1 and 2 (step 3, `exists_bb1_distinguisher`, is in
++  `AdvancedEncryption.IdentityBased.BonehBoyenMachine`).
++* `bb1_sidSecure` — [BB04, Theorem 4.1] at depth 1.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §4.2 (pp. 6–8): Theorem 4.1 and
++  its proof; §4.4 (p. 8).
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
++  (Definition 26.8, non-uniform PPT.)
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++  TCSlib.Cryptography.Composability
++
++variable (G : BilinearGen) (ℓ : PolyExpr)
++
++/-- **Step 1: on `P_BDH` the simulation is the real game** [BB04, proof of Theorem 4.1, "When
++the input 5-tuple is sampled from `P_BDH` … `A`'s view is identical to its view in a real attack
++game"], except on the generator's coins where `p < 2^ℓ`, where distinct identities may collide
++in `Z_p`.
++
++**Proof sketch.** Fix coins with `2^ℓ ≤ p`, so `idToZ` is injective on `ℓ`-bit strings
++(`bitsToNat_lt`, `bitsToNat_injective`). Couple the two games: the real `Setup` draws
++`(g, α, h, g_2)`, the simulation `(g, a, b', c)` and, at `Init`, `α_1`. Map `α ↦ a`,
++`g_2 ↦ g^{b'}` and `h ↦ g_1^{−ID*} g^{α_1}` (a bijection in `α_1` for each `ID*`, so `h` is uniform
++and independent; `expect_sample_equiv`). Answers to `Init` agree. For `ID ≠ ID*` the simulated
++key with exponent `r` is the real key with exponent `r̃ = r − b'/(ID − ID*)`, a bijection of
++`Z_p` (the paper's computation, `pow_val_mul`, `bilinear_pow`). The challenge is `Encrypt` with
++`s = c`, since `F(ID*) = g^{α_1}` and `e(g, g)^{ab'c} = e(g_1, g_2)^c`. The state machines agree
++step by step (`simulate` with matched implementations, `Games.expect_simulate_congr`), so the
++acceptance probabilities differ only on the excluded coins, of probability
++`Pr_r[p < 2^ℓ]`. -/
++theorem bb1_sim_real (A : NUPPT) (q : ℕ) (b : Bool) (κ : ℕ) :
++    advantage ((bb1Scheme G ℓ).sidGame A q b κ) (bb1SimGame G ℓ A q b true κ) ≤
++      uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < 2 ^ ℓ.eval κ) := by
++  sorry
++
++/-- **Step 2: on `R_BDH` the simulation does not depend on the challenge bit** [BB04, proof of
++Theorem 4.1, "when `T` is uniform and independent in `G_1` … `C` is independent of `b` in the
++adversary's view"].
++
++**Proof sketch.** In the `R_BDH` game, `T` is uniform in `G_T` and is used only in the first
++component `M_b · T` of the challenge. For each fixed run up to the challenge, `T ↦ M_b · T` is a
++bijection of `G_T`, so exchanging the sample of `T` with the rest of the game
++(`expect_expect_sample`) and reindexing it by `T ↦ M_b^{−1} M_{1−b} · T`
++(`expect_sample_equiv`) turns the game with `b = 0` into the game with `b = 1`. Challenges
++outside the message space are refused in both games. -/
++theorem bb1_sim_random (A : NUPPT) (q : ℕ) (κ : ℕ) :
++    advantage (bb1SimGame G ℓ A q false false κ) (bb1SimGame G ℓ A q true false κ) = 0 := by
++  sorry
++
++/-- **BB1 is IND-sID-CPA secure under Decision BDH** [BB04, Theorem 4.1, at depth `ℓ = 1`]: if
++the generator's groups have efficient operations, the arithmetic bundle holds, the order is at
++least `2^{ℓ(κ)}` except with negligible probability, and Decision BDH holds, then the BB1 system
++for `ℓ(κ)`-bit identities is IND-sID-CPA secure.
++
++**Deviation:** asymptotic form of the paper's concrete bound (`(t', q_S, ε)`-security from
++`(t, ε)`-Decision BDH); the efficiency hypotheses `O` and `H` make the paper's simulator a
++non-uniform PPT; `hN` makes distinct `ℓ`-bit identities distinct in `Z_p` (the condition
++`2^b < p` of [BB04, §4.4]); the advantage is bounded by two Decision BDH advantages, one per
++challenge bit, instead of one.
++
++**Proof sketch.** By the triangle inequality through the simulation games and the Decision BDH
++experiments of the two distinguishers `D_0`, `D_1` of step 3,
++`advantage (sidGame … false) (sidGame … true)` is at most
++`2 Pr_r[p < 2^ℓ] + 4σ(κ) + dbdhAdv D_0 κ + dbdhAdv D_1 κ` (steps 1 and 3 for each bit, step 2
++in the middle). Each term is negligible (`hN`, step 3, `h`). -/
++theorem bb1_sidSecure (H : Candidates.ArithmeticFP) (O : G.Ops)
++    (hN : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.OrderAtLeastExcept (fun κ => 2 ^ ℓ.eval κ) δ)
++    (h : G.DBDHAssumption) : (bb1Scheme G ℓ).SIDSecure := by
++  rw [IBEScheme.sidSecure_iff]
++  intro A q
++  obtain ⟨δ, hδ, hN⟩ := hN
++  obtain ⟨D, σ, hσ, hD⟩ := exists_bb1_distinguisher G ℓ H O A q
++  refine ⟨fun κ => 2 * δ κ + 4 * σ κ + (G.dbdhAdv (D false) κ + G.dbdhAdv (D true) κ),
++    ((hδ.const_mul 2).add (hσ.const_mul 4)).add
++      ((G.dbdhAssumption_iff.1 h (D false)).add (G.dbdhAssumption_iff.1 h (D true))), fun κ => ?_⟩
++  have hu := (G.orderAtLeastExcept_iff _ δ).1 hN κ
++  have t := fun G₀ G₁ G₂ : ProbComp Bool => advantage_triangle G₀ G₁ G₂
++  have hc := fun G₀ G₁ : ProbComp Bool => advantage_comm G₀ G₁
++  have s0 := bb1_sim_real G ℓ A (q.eval κ) false κ
++  have s1 := bb1_sim_real G ℓ A (q.eval κ) true κ
++  have s2 := bb1_sim_random G ℓ A (q.eval κ) κ
++  have d0T := hD false true κ
++  have d0F := hD false false κ
++  have d1T := hD true true κ
++  have d1F := hD true false κ
++  have a0 := G.dbdhAdv_eq (D false) κ
++  have a1 := G.dbdhAdv_eq (D true) κ
++  set S0 := (bb1Scheme G ℓ).sidGame A (q.eval κ) false κ
++  set S1 := (bb1Scheme G ℓ).sidGame A (q.eval κ) true κ
++  set M0T := bb1SimGame G ℓ A (q.eval κ) false true κ
++  set M0F := bb1SimGame G ℓ A (q.eval κ) false false κ
++  set M1T := bb1SimGame G ℓ A (q.eval κ) true true κ
++  set M1F := bb1SimGame G ℓ A (q.eval κ) true false κ
++  set E0T := G.dbdhGame (D false) true κ
++  set E0F := G.dbdhGame (D false) false κ
++  set E1T := G.dbdhGame (D true) true κ
++  set E1F := G.dbdhGame (D true) false κ
++  have := t S0 M0T S1
++  have := t M0T E0T S1
++  have := t E0T E0F S1
++  have := t E0F M0F S1
++  have := t M0F M1F S1
++  have := t M1F E1F S1
++  have := t E1F E1T S1
++  have := t E1T M1T S1
++  have := hc E0T E0F
++  have := hc E0F M0F
++  have := hc E1T M1T
++  have := hc M1T S1
++  linarith
++
++end TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+diff --git a/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean
+new file mode 100644
+index 000000000..6c9331020
+--- /dev/null
++++ b/TCSlib/Cryptography/AdvancedEncryption/IdentityBased/Defs.lean
+@@ -0,0 +1,433 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Encryption.PrivateKey.OracleSecurity
++import TCSlib.Cryptography.Games.Machines
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Identity-based encryption and selective-identity security
++
++An *identity-based encryption* (IBE) system [BB04, §2.1] consists of four algorithms: `Setup`
++generates the system parameters `params` and a master key; `KeyGen` uses the master key to
++generate the private key `d_ID` of an identity `ID`; `Encrypt` encrypts a message for an identity
++using the parameters; `Decrypt` decrypts with a private key.
++
++*Selective-identity chosen-plaintext security* (IND-sID-CPA, [BB04, §2.1, the game and
++Definition 2.2]): the adversary first commits to the identity `ID*` it will attack (**Init**);
++the challenger runs `Setup` and gives it `params` (**Setup**); the adversary adaptively asks for
++the private keys of identities `ID ≠ ID*` (**Phase 1**); it outputs two messages `M₀, M₁` of the
++message space and receives `Encrypt(params, ID*, M_b)` (**Challenge**); it asks more private-key
++queries (**Phase 2**) and outputs a guess `b'` (**Guess**). There are no decryption queries.
++
++**The scheme interface.** The algorithms are probabilistic computations of the `Games` framework
++over typed parameters, keys and ciphertexts (`IBEScheme`). Identities are `idLen(κ)`-bit strings
++and messages arrive as `msgLen(κ)`-bit strings; a scheme declares which strings are messages for
++given parameters (`MsgSpace`, the paper's message space `M`). For the adversary, parameters,
++private keys and ciphertexts are written as fixed-width strings (`encPP`, `encSK`, `encCT`),
++injective on the objects the algorithms can output (`encPP_inj`, `encSK_inj`, `encCT_inj`).
++
++**The game's encoding.** As in the public-key games (`Encryption.PublicKey.OracleSecurity`), one
++non-uniform PPT machine plays every phase against bit-string oracles (`Games.bitCodec`):
++* `Init` (oracle 0) takes `ID*` and answers `params`. The first query fixes `ID*`; later queries
++  repeat `params` and leave `ID*` unchanged.
++* `KeyGen` (oracle 1) takes `ID` and answers `⟨1, d_ID⟩` with fresh `KeyGen` coins when `ID*` is
++  fixed and `ID ≠ ID*`, and `⊥` (all `false`) otherwise.
++* `Challenge` (oracle 2) takes `⟨M₀, M₁⟩` and answers `Encrypt(params, ID*, M_b)` the first time
++  it is asked with `ID*` fixed and `M₀, M₁ ∈ M`, recording it; later it repeats the recorded
++  challenge; it answers `⊥` before `Init` and on messages outside `M`.
++The machine starts with input `1^κ` only, so the only information it has before committing is
++its coins. `Setup` is run before the machine starts; since nothing about `params` reaches the
++machine before its `Init` query, this is the order of [BB04, §2.1] in distribution.
++
++**Deviation:** [BB04, Definition 2.2] is concrete (`(t, q_ID, ε)`) and measures
++`|Pr[b = b'] − 1/2|`; here security is asymptotic, for every non-uniform PPT and every polynomial
++query budget, and the advantage is `|Pr[b' = 1 | b = 0] − Pr[b' = 1 | b = 1]|`, twice the
++paper's (`Games.guessAdv_eq_half_advantage`). Queries to `KeyGen` for `ID*` and challenges outside
++`M` are answered `⊥` instead of being forbidden. The algorithms are typed probabilistic
++computations; their efficiency is not part of the interface (per-scheme contracts).
++
++## Main definitions
++
++* `TCSlib.Cryptography.AdvancedEncryption.IdentityBased.IBEScheme` — an IBE system [BB04, §2.1].
++* `IBEScheme.Correct` — perfect correctness on the message space.
++* `IBEScheme.sidSpec`, `IBEScheme.sidImpl`, `IBEScheme.sidGame`, `IBEScheme.SIDSecure` — the
++  IND-sID-CPA game and security [BB04, §2.1 and Definition 2.2].
++* `IBEScheme.oracleImpl` — the three oracles from typed handlers (for simulators).
++
++## Main results
++
++* `IBEScheme.sidImpl_init_none`, `sidImpl_init_some`, `sidImpl_keyGen_none`,
++  `sidImpl_keyGen_target`, `sidImpl_keyGen_ne`, `sidImpl_challenge_none`,
++  `sidImpl_challenge_repeat`, `sidImpl_challenge_fresh`, `sidImpl_challenge_invalid` — the
++  oracles case by case; `oracleImpl_zero`, `oracleImpl_one`, `oracleImpl_two`.
++* `IBEScheme.honestRun_eq`, `correct_iff`, `sidGame_eq`, `sidSecure_iff` — the experiments and
++  predicates through their published equations.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §2.1 (pp. 2–4): IBE systems, the
++  selective identity game, Definitions 2.1 and 2.2.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
++  (Definition 26.8, non-uniform PPT; the one-machine encoding of the games of §7.1.4.)
++-/
++
++namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Composability
++
++/-- An **identity-based encryption system** [BB04, §2.1]: at each security parameter `κ`, types of
++system parameters `PP κ`, master keys `MSK κ`, private keys `SK κ` and ciphertexts `CT κ`, and
++* `setup κ`, a probabilistic computation of `(params, master-key)`;
++* `keyGen κ msk ID`, a probabilistic computation of the private key `d_ID` of the `idLen(κ)`-bit
++  identity `ID`;
++* `enc κ params ID M`, a probabilistic computation of a ciphertext of the `msgLen(κ)`-bit message
++  `M` for `ID`;
++* `dec κ d_ID C`, the deterministic decryption, `none` for `⊥`;
++* the message space `MsgSpace κ params` (the paper's `M`), and fixed-width encodings of
++  parameters, private keys and ciphertexts for the adversary, which lose no information on the
++  objects the algorithms can output (`encPP_inj`, `encSK_inj`, `encCT_inj`).
++
++**Deviation:** messages are strings with a parameter-dependent message space (as for El Gamal,
++`Candidates.GroupPKScheme`); the algorithms are typed probabilistic computations, without an
++efficiency requirement in the interface. The adversary sees parameters, private keys and
++ciphertexts only through their encodings; their fidelity is injectivity on reachable objects
++(possible outputs of `setup`, and keys and ciphertexts under one possible output of `setup`), not
++efficient decoding, and not injectivity on all of `PP κ`, `SK κ`, `CT κ` (an encoding may omit
++data that the parameters fix). The efficiency of the encodings is deferred with that of the
++algorithms (ruling Q5 of `PairingCryptographyPlan.md`). -/
++structure IBEScheme where
++  /-- The identity length. -/
++  idLen : PolyExpr
++  /-- The message length. -/
++  msgLen : PolyExpr
++  /-- The width of encoded parameters. -/
++  ppLen : PolyExpr
++  /-- The width of encoded private keys. -/
++  skLen : PolyExpr
++  /-- The width of encoded ciphertexts. -/
++  ctLen : PolyExpr
++  /-- System parameters. -/
++  PP : ℕ → Type
++  /-- Master keys. -/
++  MSK : ℕ → Type
++  /-- Private keys. -/
++  SK : ℕ → Type
++  /-- Ciphertexts. -/
++  CT : ℕ → Type
++  /-- `Setup`: system parameters and a master key. -/
++  setup : (κ : ℕ) → ProbComp (PP κ × MSK κ)
++  /-- `KeyGen`: the private key of an identity. -/
++  keyGen : (κ : ℕ) → MSK κ → (Fin (idLen.eval κ) → Bool) → ProbComp (SK κ)
++  /-- `Encrypt`: a ciphertext of a message for an identity. -/
++  enc : (κ : ℕ) → PP κ → (Fin (idLen.eval κ) → Bool) → (Fin (msgLen.eval κ) → Bool) →
++    ProbComp (CT κ)
++  /-- `Decrypt`: the message of a ciphertext under a private key, or `⊥`. -/
++  dec : (κ : ℕ) → SK κ → CT κ → Option (Fin (msgLen.eval κ) → Bool)
++  /-- The message space for given parameters. -/
++  MsgSpace : (κ : ℕ) → PP κ → (Fin (msgLen.eval κ) → Bool) → Prop
++  /-- The encoding of parameters. -/
++  encPP : (κ : ℕ) → PP κ → Fin (ppLen.eval κ) → Bool
++  /-- The encoding of private keys. -/
++  encSK : (κ : ℕ) → SK κ → Fin (skLen.eval κ) → Bool
++  /-- The encoding of ciphertexts. -/
++  encCT : (κ : ℕ) → CT κ → Fin (ctLen.eval κ) → Bool
++  /-- **The parameter encoding is injective on reachable parameters**: two parameters output by
++  `setup κ` with equal encodings are equal. With `encSK_inj` and `encCT_inj`, the adversary's
++  wire view loses no information about the objects it is given [BB04, §2.1: the adversary
++  receives `params`, the private keys `d_i` and the challenge ciphertext `C`]. -/
++  encPP_inj : ∀ κ, (setup κ).AllOutputs fun k => (setup κ).AllOutputs fun k' =>
++    encPP κ k.1 = encPP κ k'.1 → k.1 = k'.1
++  /-- **The private-key encoding is injective on reachable keys**: for every possible output
++  `(params, master-key)` of `setup κ`, two private keys output by `keyGen` with that master key,
++  for any identities, with equal encodings are equal [BB04, §2.1, the adversary's view]. -/
++  encSK_inj : ∀ κ, (setup κ).AllOutputs fun k => ∀ id id',
++    (keyGen κ k.2 id).AllOutputs fun d => (keyGen κ k.2 id').AllOutputs fun d' =>
++      encSK κ d = encSK κ d' → d = d'
++  /-- **The ciphertext encoding is injective on reachable ciphertexts**: for every possible output
++  of `setup κ`, two ciphertexts output by `enc` with its parameters, for any identities and
++  messages, with equal encodings are equal [BB04, §2.1, the adversary's view]. -/
++  encCT_inj : ∀ κ, (setup κ).AllOutputs fun k => ∀ id id' m m',
++    (enc κ k.1 id m).AllOutputs fun c => (enc κ k.1 id' m').AllOutputs fun c' =>
++      encCT κ c = encCT κ c' → c = c'
++
++namespace IBEScheme
++
++variable (S : IBEScheme)
++
++/-- One honest run for the identity `ID` and the message `M`: `Setup`, then `KeyGen` for `ID`
++and `Encrypt(params, ID, M)`, returning the parameters, the private key and the ciphertext. -/
++noncomputable def honestRun (κ : ℕ) (id : Fin (S.idLen.eval κ) → Bool)
++    (m : Fin (S.msgLen.eval κ) → Bool) : ProbComp (S.PP κ × S.SK κ × S.CT κ) :=
++  (S.setup κ).bind fun k =>
++  (S.keyGen κ k.2 id).bind fun sk =>
++  (S.enc κ k.1 id m).bind fun c => .pure (k.1, sk, c)
++
++/-- `S.honestRun κ id m` runs `Setup`, `KeyGen` for `id` and `Encrypt` of `m` for `id`, and
++returns `(params, d_id, C)`. -/
++theorem honestRun_eq (κ : ℕ) (id : Fin (S.idLen.eval κ) → Bool)
++    (m : Fin (S.msgLen.eval κ) → Bool) :
++    S.honestRun κ id m =
++      (S.setup κ).bind fun k =>
++      (S.keyGen κ k.2 id).bind fun sk =>
++      (S.enc κ k.1 id m).bind fun c => .pure (k.1, sk, c) := rfl
++
++/-- **Perfect correctness** [BB04, §2.1, "the decryption algorithm decrypts ciphertexts using the
++private key"; §4.1's verification for BB1]: for every identity `ID` and every message `M`, every
++possible outcome `(params, d_ID, C)` of an honest run with `M` in the message space of `params`
++has `Decrypt(d_ID, C) = M`. -/
++def Correct : Prop :=
++  ∀ κ (id : Fin (S.idLen.eval κ) → Bool) (m : Fin (S.msgLen.eval κ) → Bool),
++    (S.honestRun κ id m).AllOutputs fun x => S.MsgSpace κ x.1 m → S.dec κ x.2.1 x.2.2 = some m
++
++/-- `S.Correct` iff every possible outcome of every honest run with a message of the message
++space decrypts to that message. -/
++theorem correct_iff :
++    S.Correct ↔ ∀ κ (id : Fin (S.idLen.eval κ) → Bool) (m : Fin (S.msgLen.eval κ) → Bool),
++      (S.honestRun κ id m).AllOutputs fun x =>
++        S.MsgSpace κ x.1 m → S.dec κ x.2.1 x.2.2 = some m := Iff.rfl
++
++/-! ### The selective-identity game -/
++
++/-- The query lengths of the three oracles: `Init` and `KeyGen` take an identity, `Challenge`
++takes two messages. -/
++def inLens (κ : ℕ) : Fin 3 → ℕ
++  | 0 => S.idLen.eval κ
++  | 1 => S.idLen.eval κ
++  | 2 => S.msgLen.eval κ + S.msgLen.eval κ
++
++/-- `Init` queries are identities: `S.inLens κ 0 = S.idLen.eval κ`. -/
++theorem inLens_zero (κ : ℕ) : S.inLens κ 0 = S.idLen.eval κ := rfl
++
++/-- `KeyGen` queries are identities: `S.inLens κ 1 = S.idLen.eval κ`. -/
++theorem inLens_one (κ : ℕ) : S.inLens κ 1 = S.idLen.eval κ := rfl
++
++/-- `Challenge` queries are two messages: `S.inLens κ 2 = S.msgLen.eval κ + S.msgLen.eval κ`. -/
++theorem inLens_two (κ : ℕ) : S.inLens κ 2 = S.msgLen.eval κ + S.msgLen.eval κ := rfl
++
++/-- The answer lengths of the three oracles: `Init` answers the parameters, `KeyGen` a validity
++bit and a private key, `Challenge` a ciphertext. -/
++def outLens (κ : ℕ) : Fin 3 → ℕ
++  | 0 => S.ppLen.eval κ
++  | 1 => S.skLen.eval κ + 1
++  | 2 => S.ctLen.eval κ
++
++/-- `Init` answers parameters: `S.outLens κ 0 = S.ppLen.eval κ`. -/
++theorem outLens_zero (κ : ℕ) : S.outLens κ 0 = S.ppLen.eval κ := rfl
++
++/-- `KeyGen` answers a validity bit and a key: `S.outLens κ 1 = S.skLen.eval κ + 1`. -/
++theorem outLens_one (κ : ℕ) : S.outLens κ 1 = S.skLen.eval κ + 1 := rfl
++
++/-- `Challenge` answers a ciphertext: `S.outLens κ 2 = S.ctLen.eval κ`. -/
++theorem outLens_two (κ : ℕ) : S.outLens κ 2 = S.ctLen.eval κ := rfl
++
++/-- The three oracles of the IND-sID-CPA game at parameter `κ`. -/
++abbrev sidSpec (κ : ℕ) : OracleSpec (Fin 3) := bitSpec (S.inLens κ) (S.outLens κ)
++
++/-- The IND-sID-CPA oracle specification is the bit specification at the scheme's query and
++answer lengths: `S.sidSpec κ = bitSpec (S.inLens κ) (S.outLens κ)`. -/
++theorem sidSpec_eq (κ : ℕ) : S.sidSpec κ = bitSpec (S.inLens κ) (S.outLens κ) := rfl
++
++/-- The state of the IND-sID-CPA game: the committed identity `ID*` (once `Init` is asked) and
++the challenge ciphertext (once issued). -/
++abbrev SidState (κ : ℕ) : Type :=
++  Option (Fin (S.idLen.eval κ) → Bool) × Option (Fin (S.ctLen.eval κ) → Bool)
++
++/-- The game state is the optional committed identity and the optional encoded challenge:
++`S.SidState κ = Option (Fin (S.idLen.eval κ) → Bool) × Option (Fin (S.ctLen.eval κ) → Bool)`. -/
++theorem sidState_eq (κ : ℕ) :
++    S.SidState κ =
++      (Option (Fin (S.idLen.eval κ) → Bool) × Option (Fin (S.ctLen.eval κ) → Bool)) := rfl
++
++open Classical in
++/-- **The oracles of the IND-sID-CPA game** [BB04, §2.1] with hidden bit `b`, at parameter `κ`,
++for the parameters `pp` and the master key `msk`:
++- `Init` on `ID`: answers `params`; records `ID*` = `ID` if none is recorded yet.
++- `KeyGen` on `ID`: when `ID*` is recorded and `ID ≠ ID*`, answers `⟨1, d_ID⟩` with
++  `d_ID ← KeyGen(msk, ID)`; otherwise `⊥`.
++- `Challenge` on `⟨M₀, M₁⟩`: with `ID*` recorded and no challenge yet, if `M₀, M₁ ∈ M`, answers
++  and records `C ← Encrypt(params, ID*, M_b)`, and otherwise `⊥`; once a challenge is recorded,
++  repeats it; before `Init`, `⊥`. -/
++noncomputable def sidImpl (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ) :
++    QueryImpl (S.sidSpec κ) (S.SidState κ) unifSpec
++  | 0, id, s =>
++    match s.1 with
++    | none => .pure (S.encPP κ pp, (some id, s.2))
++    | some _ => .pure (S.encPP κ pp, s)
++  | 1, id, s =>
++    match s.1 with
++    | some t =>
++      if id = t then .pure (zeroBits _, s)
++      else (S.keyGen κ msk id).bind fun sk =>
++        .pure (FixedLengthScheme.decAnswer (some (S.encSK κ sk)), s)
++    | none => .pure (zeroBits _, s)
++  | 2, mm, s =>
++    match s.1, s.2 with
++    | some _, some c => .pure (c, s)
++    | some t, none =>
++      if S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).1 ∧
++          S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).2 then
++        (S.enc κ pp t (if b then (FixedLengthScheme.splitHalf mm).2
++          else (FixedLengthScheme.splitHalf mm).1)).bind fun c =>
++          .pure (S.encCT κ c, (some t, some (S.encCT κ c)))
++      else .pure (zeroBits _, s)
++    | none, _ => .pure (zeroBits _, s)
++
++/-- `Init` before any commitment answers the parameters and records the identity. -/
++theorem sidImpl_init_none (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
++    (id : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
++    S.sidImpl b κ pp msk 0 id (none, c) = .pure (S.encPP κ pp, (some id, c)) := rfl
++
++/-- `Init` after a commitment answers the parameters and keeps the state. -/
++theorem sidImpl_init_some (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
++    (id t : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
++    S.sidImpl b κ pp msk 0 id (some t, c) = .pure (S.encPP κ pp, (some t, c)) := rfl
++
++/-- `KeyGen` before `Init` answers `⊥`. -/
++theorem sidImpl_keyGen_none (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
++    (id : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
++    S.sidImpl b κ pp msk 1 id (none, c) = .pure (zeroBits _, (none, c)) := rfl
++
++/-- `KeyGen` for the committed identity answers `⊥`. -/
++theorem sidImpl_keyGen_target (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
++    (t : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
++    S.sidImpl b κ pp msk 1 t (some t, c) = .pure (zeroBits _, (some t, c)) := by
++  simp [sidImpl]
++
++/-- `KeyGen` for an identity other than the committed one answers `⟨1, d_ID⟩` with
++`d_ID ← KeyGen(msk, ID)` and keeps the state. -/
++theorem sidImpl_keyGen_ne (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
++    (id t : Fin (S.idLen.eval κ) → Bool) (c : Option (Fin (S.ctLen.eval κ) → Bool))
++    (h : id ≠ t) :
++    S.sidImpl b κ pp msk 1 id (some t, c) =
++      (S.keyGen κ msk id).bind fun sk =>
++        .pure (FixedLengthScheme.decAnswer (some (S.encSK κ sk)), (some t, c)) := by
++  simp [sidImpl, h]
++
++/-- `Challenge` before `Init` answers `⊥`. -/
++theorem sidImpl_challenge_none (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
++    (mm : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)
++    (c : Option (Fin (S.ctLen.eval κ) → Bool)) :
++    S.sidImpl b κ pp msk 2 mm (none, c) = .pure (zeroBits _, (none, c)) := rfl
++
++/-- `Challenge` after a recorded challenge repeats it. -/
++theorem sidImpl_challenge_repeat (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
++    (mm : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) (t : Fin (S.idLen.eval κ) → Bool)
++    (c : Fin (S.ctLen.eval κ) → Bool) :
++    S.sidImpl b κ pp msk 2 mm (some t, some c) = .pure (c, (some t, some c)) := rfl
++
++/-- The first `Challenge` with both messages in the message space answers and records
++`C ← Encrypt(params, ID*, M_b)`. -/
++theorem sidImpl_challenge_fresh (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
++    (mm : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) (t : Fin (S.idLen.eval κ) → Bool)
++    (h : S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).1 ∧
++      S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).2) :
++    S.sidImpl b κ pp msk 2 mm (some t, none) =
++      (S.enc κ pp t (if b then (FixedLengthScheme.splitHalf mm).2
++        else (FixedLengthScheme.splitHalf mm).1)).bind fun c =>
++        .pure (S.encCT κ c, (some t, some (S.encCT κ c))) := by
++  simp only [sidImpl]
++  rw [if_pos h]
++
++/-- The first `Challenge` with a message outside the message space answers `⊥`. -/
++theorem sidImpl_challenge_invalid (b : Bool) (κ : ℕ) (pp : S.PP κ) (msk : S.MSK κ)
++    (mm : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) (t : Fin (S.idLen.eval κ) → Bool)
++    (h : ¬ (S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).1 ∧
++      S.MsgSpace κ pp (FixedLengthScheme.splitHalf mm).2)) :
++    S.sidImpl b κ pp msk 2 mm (some t, none) = .pure (zeroBits _, (some t, none)) := by
++  simp only [sidImpl]
++  rw [if_neg h]
++
++/-- **The three oracles from typed handlers**: an implementation of `S.sidSpec κ` whose `Init`,
++`KeyGen` and `Challenge` oracles are the handlers `init`, `key` and `chal`, which take and return
++strings of the scheme's lengths. Simulators and reductions describe their oracles this way, so
++that they never read the oracle lengths `inLens`, `outLens` through their bodies. -/
++def oracleImpl {σ : Type} (κ : ℕ)
++    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
++    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
++    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
++      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ)) :
++    QueryImpl (S.sidSpec κ) σ unifSpec
++  | 0, x, s => init x s
++  | 1, x, s => key x s
++  | 2, x, s => chal x s
++
++/-- Oracle `0` of `S.oracleImpl κ init key chal` is the handler `init`. -/
++theorem oracleImpl_zero {σ : Type} (κ : ℕ)
++    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
++    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
++    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
++      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
++    (x : Fin (S.idLen.eval κ) → Bool) (s : σ) :
++    S.oracleImpl κ init key chal 0 x s = init x s := rfl
++
++/-- Oracle `1` of `S.oracleImpl κ init key chal` is the handler `key`. -/
++theorem oracleImpl_one {σ : Type} (κ : ℕ)
++    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
++    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
++    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
++      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
++    (x : Fin (S.idLen.eval κ) → Bool) (s : σ) :
++    S.oracleImpl κ init key chal 1 x s = key x s := rfl
++
++/-- Oracle `2` of `S.oracleImpl κ init key chal` is the handler `chal`. -/
++theorem oracleImpl_two {σ : Type} (κ : ℕ)
++    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
++    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
++    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
++      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
++    (x : Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) (s : σ) :
++    S.oracleImpl κ init key chal 2 x s = chal x s := rfl
++
++/-- The codec of the adversary: the three oracles and a one-bit guess. -/
++def sidCodec (κ : ℕ) : MachineCodec (S.sidSpec κ) (Fin 1 → Bool) :=
++  bitCodec (S.inLens κ) (S.outLens κ) 1
++
++/-- The adversary codec is a bit codec: `S.sidCodec κ = bitCodec (S.inLens κ) (S.outLens κ) 1`. -/
++theorem sidCodec_eq (κ : ℕ) : S.sidCodec κ = bitCodec (S.inLens κ) (S.outLens κ) 1 := rfl
++
++/-- **The experiment `IND-sID-CPA_b(A, κ)`** [BB04, §2.1] with query budget `q`: run `Setup`,
++draw `A`'s coins, run `A(1^κ)` against the three oracles from the empty state (no identity
++committed, no challenge), and return its one-bit guess. -/
++noncomputable def sidGame (A : NUPPT) (q : ℕ) (b : Bool) (κ : ℕ) : ProbComp Bool :=
++  (S.setup κ).bind fun k =>
++  (ProbComp.sample (A.Coins κ)).bind fun r =>
++  (simulate (S.sidImpl b κ k.1 k.2) (A.toComp (S.sidCodec κ) κ q r) (none, none)).bind
++    fun res => .pure (res.1 0)
++
++/-- The IND-sID-CPA experiment runs `Setup`, samples the adversary's coins, simulates the
++oracles from the empty state, and returns the guess bit. -/
++theorem sidGame_eq (A : NUPPT) (q : ℕ) (b : Bool) (κ : ℕ) :
++    S.sidGame A q b κ =
++      (S.setup κ).bind fun k =>
++      (ProbComp.sample (A.Coins κ)).bind fun r =>
++      (simulate (S.sidImpl b κ k.1 k.2) (A.toComp (S.sidCodec κ) κ q r) (none, none)).bind
++        fun res => .pure (res.1 0) := rfl
++
++/-- **IND-sID-CPA security** [BB04, §2.1 and Definition 2.2]: for every non-uniform PPT `A` and
++every polynomial query budget `q`, `A`'s advantage between the experiments with `b = 0` and
++`b = 1` is negligible.
++
++**Deviation:** asymptotic, with a polynomial budget `q(κ)` on all queries (the paper's `q_ID`
++bounds private-key queries); the advantage is twice the paper's (module docstring). -/
++def SIDSecure : Prop :=
++  ∀ (A : NUPPT) (q : PolyExpr), ∃ ε : ℕ → ℝ, Negligible ε ∧
++    ∀ κ, advantage (S.sidGame A (q.eval κ) false κ) (S.sidGame A (q.eval κ) true κ) ≤ ε κ
++
++/-- IND-sID-CPA security is negligible advantage, uniformly in `κ`, for every non-uniform PPT
++adversary and polynomial query budget. -/
++theorem sidSecure_iff :
++    S.SIDSecure ↔ ∀ (A : NUPPT) (q : PolyExpr), ∃ ε : ℕ → ℝ, Negligible ε ∧
++      ∀ κ, advantage (S.sidGame A (q.eval κ) false κ) (S.sidGame A (q.eval κ) true κ) ≤ ε κ :=
++  Iff.rfl
++
++end IBEScheme
++
++end TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+diff --git a/TCSlib/Cryptography/KeyExchange.lean b/TCSlib/Cryptography/KeyExchange.lean
+new file mode 100644
+index 000000000..2c2ba73c6
+--- /dev/null
++++ b/TCSlib/Cryptography/KeyExchange.lean
+@@ -0,0 +1,23 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.KeyExchange.Joux
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Key exchange
++
++## Contents
++
++* `Joux`: Joux's one-round tripartite Diffie–Hellman over a symmetric bilinear group, its
++  correctness and its key indistinguishability under Decision BDH.
++
++## References
++
++* [Jou00] A. Joux, *A One Round Protocol for Tripartite Diffie–Hellman*, ANTS-IV, LNCS 1838,
++  pp. 385–393, Springer, 2000.
++-/
+diff --git a/TCSlib/Cryptography/KeyExchange/Joux.lean b/TCSlib/Cryptography/KeyExchange/Joux.lean
+new file mode 100644
+index 000000000..46d343d26
+--- /dev/null
++++ b/TCSlib/Cryptography/KeyExchange/Joux.lean
+@@ -0,0 +1,193 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Pairing.Assumptions
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Joux's one-round tripartite Diffie–Hellman
++
++[Jou00, §3]: three participants `A`, `B`, `C` share a group with a pairing and a public point.
++Each picks a random exponent (`a`, `b`, `c`), broadcasts the multiple of the point once (one round,
++`P_A = aP`, `P_B = bP`, `P_C = cP`), and computes the common key with
++`F(x, P, Q) = e(P, Q)^x`: `K = F(a, P_B, P_C) = F(b, P_A, P_C) = F(c, P_A, P_B) = F(1, P, P)^{abc}`
++[Jou00, p. 388]. In multiplicative notation, with the generator `g`: the messages are `g^a`,
++`g^b`, `g^c`, and each key is `e(g^b, g^c)^a = e(g^a, g^c)^b = e(g^a, g^b)^c = e(g, g)^{abc}`.
++
++**The single-point form.** [Jou00, §3] notes that with the Weil pairing on one point
++`e_n(P, P) = 1`, so the key would be constant, and therefore uses two independent points `P`, `Q`
++and the Tate pairing. In a symmetric bilinear group as defined in [BB04, §2.2], non-degeneracy is
++`e(g, g) ≠ 1`, so the paper's first formula `F_W(x, P, Q) = e(P, Q)^x` already gives a
++non-constant key, and one point suffices. This file formalizes that single-point form over the
++abstract groups of `Pairing.BilinearGroup`.
++
++**Security.** [Jou00, §5] gives no theorem; it says that "some Diffie–Hellman like problem and
++Diffie–Hellman like decision problem should be hard in order to get security". The key
++indistinguishability theorem here takes that decision problem to be Decision BDH [BB04, §3.1]:
++an eavesdropper who sees the public point and the three broadcasts cannot tell the common key
++from a uniform element of `G_T`.
++
++**Deviation:** abstract symmetric bilinear groups (no curve, no Weil or Tate pairing); one public
++point instead of two; multiplicative notation; the public point `g` is uniform in `G^*` (the
++paper fixes "some point `P`"), the distribution under which [BB04, §3.1] states Decision BDH;
++exponents in `Z_p`; security is the maintainer's formalization of [Jou00, §5]'s remark.
++
++## Main definitions
++
++* `TCSlib.Cryptography.KeyExchange.jouxMsg` — a participant's broadcast `g^x`.
++* `TCSlib.Cryptography.KeyExchange.jouxKey` — the key `F(x, X, Y) = e(X, Y)^x`.
++* `jouxGame`, `jouxAdv`, `JouxKeyIndist` — key indistinguishability for an eavesdropper.
++
++## Main results
++
++* `TCSlib.Cryptography.KeyExchange.jouxKey_eq` — every participant's key is `e(g, g)^{abc}`.
++* `TCSlib.Cryptography.KeyExchange.joux_correct` — the three participants agree.
++* `TCSlib.Cryptography.KeyExchange.jouxGame_eq_dbdhGame` — the eavesdropper's experiments are
++  Decision BDH experiments.
++* `TCSlib.Cryptography.KeyExchange.jouxKeyIndist_of_dbdhAssumption` — key indistinguishability
++  under Decision BDH.
++
++## References
++
++* [Jou00] A. Joux, *A One Round Protocol for Tripartite Diffie–Hellman*, ANTS-IV, LNCS 1838,
++  pp. 385–393, Springer, 2000. §3 (pp. 387–388): the protocol and `F_W`; §5 (pp. 391–392):
++  security issues.
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §2.2 (bilinear groups), §3.1
++  (Decision BDH).
++-/
++
++namespace TCSlib.Cryptography.KeyExchange
++
++open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
++
++variable {wG wT : ℕ} (B : BilinearGroup wG wT)
++
++/-- **A participant's broadcast** [Jou00, §3, `P_A = aP`]: the power `g^x` of the public
++generator `g` by the participant's secret exponent `x ∈ Z_p`. -/
++def jouxMsg (g : B.G) (x : ZMod B.order) : B.G := g ^ x.val
++
++/-- `jouxMsg B g x = g ^ x.val`. -/
++theorem jouxMsg_eq (g : B.G) (x : ZMod B.order) : jouxMsg B g x = g ^ x.val := rfl
++
++/-- **A participant's key** [Jou00, §3, `F_W(x, P, Q) = e_n(P, Q)^x`]: from its secret exponent
++`x` and the two other broadcasts `X`, `Y`, the key `e(X, Y)^x`. Participant `A` computes
++`jouxKey B a P_B P_C`, `B` computes `jouxKey B b P_A P_C`, `C` computes `jouxKey B c P_A P_B`. -/
++def jouxKey (x : ZMod B.order) (X Y : B.G) : B.GT := B.pair X Y ^ x.val
++
++/-- `jouxKey B x X Y = e(X, Y) ^ x.val`. -/
++theorem jouxKey_eq_pow (x : ZMod B.order) (X Y : B.G) : jouxKey B x X Y = B.pair X Y ^ x.val :=
++  rfl
++
++/-- Exponents of `G_T` multiply through `Z_p`: `u^{(abc mod p)} = u^{a b c}` with the
++representatives `a.val, b.val, c.val`. -/
++theorem pow_val_mul_mul (u : B.GT) (a b c : ZMod B.order) :
++    u ^ (a * b * c).val = u ^ (a.val * b.val * c.val) := by
++  rw [B.pow_val_mul_GT, pow_mul, B.pow_val_mul_GT, ← pow_mul]
++
++/-- **The common key** [Jou00, p. 388, `F_W(a, P_B, P_C) = F_W(1, P, P)^{abc}`]: participant `A`'s
++key `e(g^b, g^c)^a` is `e(g, g)^{abc}`. -/
++theorem jouxKey_eq (g : B.G) (a b c : ZMod B.order) :
++    jouxKey B a (jouxMsg B g b) (jouxMsg B g c) = B.pair g g ^ (a * b * c).val := by
++  rw [jouxKey_eq_pow, jouxMsg_eq, jouxMsg_eq, B.bilinear_pow, pow_val_mul_mul, ← pow_mul]
++  congr 1
++  ring
++
++/-- **Correctness: the three participants agree** [Jou00, p. 388,
++`F_W(a, P_B, P_C) = F_W(b, P_A, P_C) = F_W(c, P_A, P_B)`]: `e(g^b, g^c)^a = e(g^a, g^c)^b` and
++`e(g^a, g^c)^b = e(g^a, g^b)^c`. -/
++theorem joux_correct (g : B.G) (a b c : ZMod B.order) :
++    jouxKey B a (jouxMsg B g b) (jouxMsg B g c) = jouxKey B b (jouxMsg B g a) (jouxMsg B g c) ∧
++      jouxKey B b (jouxMsg B g a) (jouxMsg B g c) =
++        jouxKey B c (jouxMsg B g a) (jouxMsg B g b) := by
++  refine ⟨?_, ?_⟩ <;> rw [jouxKey_eq, jouxKey_eq] <;> congr 2 <;> ring
++
++/-- **The key-indistinguishability experiment** for the eavesdropper `A` at parameter `κ`: draw
++the generator's coins `r` (group `B`, description `d`), the public generator `g ∈ G^*`, the
++secret exponents `a, b, c ∈ Z_p`, a uniform `K ∈ G_T` and `A`'s coins `ρ`; give `A` the
++description, the public generator, the three broadcasts and either the common key
++`e(g^b, g^c)^a` (`real`) or `K`, in the string format of Decision BDH (`tupleStr`). -/
++noncomputable def jouxGame (G : BilinearGen) (A : NUPPT) (real : Bool) (κ : ℕ) : ProbComp Bool :=
++  (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
++  (ProbComp.sample {x : (G.inst κ r).G // x ≠ 1}).bind fun g =>
++  (ProbComp.sample (ZMod (G.inst κ r).order × ZMod (G.inst κ r).order ×
++    ZMod (G.inst κ r).order)).bind fun abc =>
++  (ProbComp.sample (G.inst κ r).GT).bind fun K =>
++  (ProbComp.sample (A.Coins κ)).bind fun ρ =>
++    .pure (A.distinguisherL κ (tupleStr (G.inst κ r) (G.desc κ r) g.1
++      (jouxMsg (G.inst κ r) g.1 abc.1) (jouxMsg (G.inst κ r) g.1 abc.2.1)
++      (jouxMsg (G.inst κ r) g.1 abc.2.2)
++      (if real then jouxKey (G.inst κ r) abc.1 (jouxMsg (G.inst κ r) g.1 abc.2.1)
++        (jouxMsg (G.inst κ r) g.1 abc.2.2) else K)) ρ)
++
++/-- The key-indistinguishability experiment draws the generator's coins, `g ∈ G^*`,
++`(a, b, c) ∈ Z_p³`, `K ∈ G_T` and the eavesdropper's coins, and runs the eavesdropper on the
++transcript `g, g^a, g^b, g^c` with `A`'s key if `real` and `K` otherwise. -/
++theorem jouxGame_eq (G : BilinearGen) (A : NUPPT) (real : Bool) (κ : ℕ) :
++    jouxGame G A real κ =
++      (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
++      (ProbComp.sample {x : (G.inst κ r).G // x ≠ 1}).bind fun g =>
++      (ProbComp.sample (ZMod (G.inst κ r).order × ZMod (G.inst κ r).order ×
++        ZMod (G.inst κ r).order)).bind fun abc =>
++      (ProbComp.sample (G.inst κ r).GT).bind fun K =>
++      (ProbComp.sample (A.Coins κ)).bind fun ρ =>
++        .pure (A.distinguisherL κ (tupleStr (G.inst κ r) (G.desc κ r) g.1
++          (jouxMsg (G.inst κ r) g.1 abc.1) (jouxMsg (G.inst κ r) g.1 abc.2.1)
++          (jouxMsg (G.inst κ r) g.1 abc.2.2)
++          (if real then jouxKey (G.inst κ r) abc.1 (jouxMsg (G.inst κ r) g.1 abc.2.1)
++            (jouxMsg (G.inst κ r) g.1 abc.2.2) else K)) ρ) :=
++  rfl
++
++/-- **Each key-indistinguishability experiment is a Decision BDH experiment**: with the key
++`e(g^b, g^c)^a = e(g, g)^{abc}` (`jouxKey_eq`) the transcript and key are drawn from `P_BDH`, and
++with a uniform `K` from `R_BDH`, in the same string format, so
++`jouxGame G A real κ = G.dbdhGame A real κ`. -/
++theorem jouxGame_eq_dbdhGame (G : BilinearGen) (A : NUPPT) (real : Bool) (κ : ℕ) :
++    jouxGame G A real κ = G.dbdhGame A real κ := by
++  rw [jouxGame_eq, BilinearGen.dbdhGame_eq]
++  simp only [jouxKey_eq]
++  rfl
++
++/-- **The eavesdropper's advantage** at `κ`: `|Pr[A(transcript, K) = 1] − Pr[A(transcript,
++key) = 1]|`. -/
++noncomputable def jouxAdv (G : BilinearGen) (A : NUPPT) (κ : ℕ) : ℝ :=
++  advantage (jouxGame G A false κ) (jouxGame G A true κ)
++
++/-- `jouxAdv G A κ = advantage (jouxGame G A false κ) (jouxGame G A true κ)`. -/
++theorem jouxAdv_eq (G : BilinearGen) (A : NUPPT) (κ : ℕ) :
++    jouxAdv G A κ = advantage (jouxGame G A false κ) (jouxGame G A true κ) := rfl
++
++/-- **Key indistinguishability of Joux's protocol** relative to the generator `G`: every
++non-uniform PPT eavesdropper has negligible advantage in telling the common key from a uniform
++element of `G_T`, given the public generator and the three broadcasts. The security goal of
++[Jou00, §3] ("this common value `K_{A,B,C}` will be hard to compute given `P_A`, `P_B` and `P_C`"),
++in its decisional form [Jou00, §5]. -/
++def JouxKeyIndist (G : BilinearGen) : Prop := ∀ A : NUPPT, Negligible fun κ => jouxAdv G A κ
++
++/-- `JouxKeyIndist G` iff `κ ↦ jouxAdv G A κ` is negligible for every non-uniform PPT `A`. -/
++theorem jouxKeyIndist_iff (G : BilinearGen) :
++    JouxKeyIndist G ↔ ∀ A : NUPPT, Negligible fun κ => jouxAdv G A κ := Iff.rfl
++
++/-- **Joux's protocol has indistinguishable keys under Decision BDH** ([Jou00, §5] with the
++decision problem of [BB04, §3.1]).
++
++**Source:** [Jou00] states no theorem; this is the formal version of its §5 requirement
++(module docstring).
++
++The eavesdropper is itself the Decision BDH distinguisher: `jouxAdv G A κ = G.dbdhAdv A κ`
++(`jouxGame_eq_dbdhGame`). -/
++theorem jouxKeyIndist_of_dbdhAssumption (G : BilinearGen) (h : G.DBDHAssumption) :
++    JouxKeyIndist G := by
++  intro A
++  have hfun : (fun κ => jouxAdv G A κ) = fun κ => G.dbdhAdv A κ := funext fun κ => by
++    rw [jouxAdv_eq, BilinearGen.dbdhAdv_eq, jouxGame_eq_dbdhGame, jouxGame_eq_dbdhGame]
++  rw [hfun]
++  exact G.dbdhAssumption_iff.1 h A
++
++end TCSlib.Cryptography.KeyExchange
+diff --git a/TCSlib/Cryptography/Pairing.lean b/TCSlib/Cryptography/Pairing.lean
+new file mode 100644
+index 000000000..37c1e2699
+--- /dev/null
++++ b/TCSlib/Cryptography/Pairing.lean
+@@ -0,0 +1,31 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Pairing.Group
++import TCSlib.Cryptography.Pairing.Assumptions
++import TCSlib.Cryptography.Pairing.Operations
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Symmetric bilinear groups and the bilinear Diffie–Hellman assumptions
++
++## Contents
++
++* `Group`: abstract symmetric bilinear groups of prime order, their generators, bilinearity and
++  non-degeneracy facts.
++* `Assumptions`: the BDH and Decision BDH experiments and assumptions; Decision BDH implies BDH.
++* `Operations`: the efficiency contract of a generator (group operations and pairing as
++  polynomial-time string functions).
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004,
++  §2.2 and §3.1.
++* [Jou00] A. Joux, *A One Round Protocol for Tripartite Diffie–Hellman*, ANTS-IV, LNCS 1838,
++  pp. 385–393, Springer, 2000.
++-/
+diff --git a/TCSlib/Cryptography/Pairing/Assumptions.lean b/TCSlib/Cryptography/Pairing/Assumptions.lean
+new file mode 100644
+index 000000000..f1f8aaad9
+--- /dev/null
++++ b/TCSlib/Cryptography/Pairing/Assumptions.lean
+@@ -0,0 +1,221 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Pairing.Group
++import TCSlib.Cryptography.Asymptotic.Adversary
++import TCSlib.Cryptography.Games.Advantage
++import TCSlib.Cryptography.Foundations.Negligible
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The bilinear Diffie–Hellman assumptions
++
++The *bilinear Diffie–Hellman* (BDH) problem [BB04, §3.1]: given `g, g^a, g^b, g^c ∈ G`, output
++`e(g, g)^{abc} ∈ G_1`; and its decisional form (Decision BDH, DBDH): distinguish
++`(g, g^a, g^b, g^c, e(g, g)^{abc})` (the distribution `P_BDH`) from `(g, g^a, g^b, g^c, T)` with
++`T` uniform in `G_1` (the distribution `R_BDH`). In both, the generator `g` is uniform in
++`G^* = G ∖ {1}`, the exponents `a, b, c` are uniform in `Z_p`, and the probability is also over
++the adversary's coins. [BB04, §3.1] credits the BDH problem to [Jou00, SOK00, BF01].
++
++**The experiments.** The bilinear group is drawn by the generator (`Pairing.BilinearGen`), and
++the adversary is a non-uniform PPT machine (`Complexity.NUPPT`) that receives `1^κ` and the
++string `⟨d, ⟨g, ⟨g^a, ⟨g^b, ⟨g^c, T⟩⟩⟩⟩⟩` of the description `d` and the encoded elements
++(`tupleStr`; without `T` for BDH, `bdhStr`). The experiments are games of the `Games` framework
++(`Games.ProbComp`): the generator's coins are drawn first, then `g`, the exponents and `T` from
++the group they describe, then the adversary's coins. Sampling in sequence keeps the law of the
++group the generator's law (a uniform seed over a dependent sum would not; run-3 audit P8-1 of
++the DDH layer).
++
++**Deviation:** [BB04, Definition 3.1] is concrete ("no `t`-time algorithm has advantage at least
++`ε` in `G`"). Here the assumptions are asymptotic: every non-uniform PPT has negligible advantage
++(BDH: success probability), relative to the generator. The decision advantage is the absolute
++difference of acceptance probabilities; the paper writes the absolute difference of the
++probabilities of output `0` [BB04, §3.1], which is the same number, since outputs `0` and `1` are
++complementary. The adversary receives the group's description `d` and `1^κ`.
++
++## Main definitions
++
++* `TCSlib.Cryptography.Pairing.tupleStr`, `bdhStr` — the strings handed to the adversary.
++* `BilinearGen.dbdhGame`, `BilinearGen.dbdhAdv`, `BilinearGen.DBDHAssumption` — the Decision BDH
++  experiment, its advantage and the assumption [BB04, §3.1 and Definition 3.1].
++* `BilinearGen.bdhGame`, `BilinearGen.BDHAssumption` — the BDH experiment and the assumption
++  [BB04, §3.1 and Definition 3.1].
++
++## Main results
++
++* `BilinearGen.bdhAssumption_of_dbdhAssumption` — Decision BDH implies BDH when the order is
++  at least `2^κ` except with negligible probability.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §3.1 (pp. 4–5): the BDH and
++  Decision BDH problems, Definition 3.1.
++* [Jou00] A. Joux, *A One Round Protocol for Tripartite Diffie–Hellman*, ANTS-IV, LNCS 1838,
++  pp. 385–393, Springer, 2000. §5 (p. 392): "some Diffie–Hellman like problem and
++  Diffie–Hellman like decision problem should be hard in order to get security".
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
++  (Definition 26.8, non-uniform PPT; Definition 69.4's convention that `A` receives `1^n`.)
++-/
++
++namespace TCSlib.Cryptography.Pairing
++
++open Complexity Turing TCSlib.Cryptography.Games
++
++/-- The **Decision BDH string** `⟨d, ⟨g, ⟨X, ⟨Y, ⟨Z, T⟩⟩⟩⟩⟩` of a description `d`, four elements
++`g, X, Y, Z` of `G` and an element `T` of `G_T`, each written by its encoding. It is the input
++`(g, g^a, g^b, g^c, T)` of a Decision BDH algorithm [BB04, §3.1], with the group's description
++in front. -/
++def tupleStr {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool) (g x y z : B.G) (t : B.GT) :
++    List Bool :=
++  pairEncode d (pairEncode (List.ofFn (B.encG g)) (pairEncode (List.ofFn (B.encG x))
++    (pairEncode (List.ofFn (B.encG y)) (pairEncode (List.ofFn (B.encG z))
++      (List.ofFn (B.encT t))))))
++
++/-- `tupleStr B d g x y z t = ⟨d, ⟨g, ⟨x, ⟨y, ⟨z, t⟩⟩⟩⟩⟩` with the elements encoded. -/
++theorem tupleStr_eq {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool) (g x y z : B.G)
++    (t : B.GT) :
++    tupleStr B d g x y z t =
++      pairEncode d (pairEncode (List.ofFn (B.encG g)) (pairEncode (List.ofFn (B.encG x))
++        (pairEncode (List.ofFn (B.encG y)) (pairEncode (List.ofFn (B.encG z))
++          (List.ofFn (B.encT t)))))) := rfl
++
++/-- The **BDH string** `⟨d, ⟨g, ⟨X, ⟨Y, Z⟩⟩⟩⟩`: the input `(g, g^a, g^b, g^c)` of a BDH algorithm
++[BB04, §3.1], with the group's description in front. -/
++def bdhStr {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool) (g x y z : B.G) : List Bool :=
++  pairEncode d (pairEncode (List.ofFn (B.encG g)) (pairEncode (List.ofFn (B.encG x))
++    (pairEncode (List.ofFn (B.encG y)) (List.ofFn (B.encG z)))))
++
++/-- `bdhStr B d g x y z = ⟨d, ⟨g, ⟨x, ⟨y, z⟩⟩⟩⟩` with the elements encoded. -/
++theorem bdhStr_eq {wG wT : ℕ} (B : BilinearGroup wG wT) (d : List Bool) (g x y z : B.G) :
++    bdhStr B d g x y z =
++      pairEncode d (pairEncode (List.ofFn (B.encG g)) (pairEncode (List.ofFn (B.encG x))
++        (pairEncode (List.ofFn (B.encG y)) (List.ofFn (B.encG z))))) := rfl
++
++namespace BilinearGen
++
++variable (G : BilinearGen)
++
++/-- **The Decision BDH experiment** [BB04, §3.1] for the distinguisher `D` at parameter `κ`:
++draw the generator's coins `r` (group `B = G.inst κ r`, description `d`), a generator
++`g ∈ G^*`, exponents `a, b, c ∈ Z_p`, an element `T ∈ G_T` and `D`'s coins `ρ`, all uniform, and
++return `D(1^κ, ⟨d, ⟨g, g^a, g^b, g^c, T'⟩⟩; ρ)`, where `T' = e(g, g)^{abc}` when `real` (the
++distribution `P_BDH`) and `T' = T` otherwise (`R_BDH`). -/
++noncomputable def dbdhGame (D : NUPPT) (real : Bool) (κ : ℕ) : ProbComp Bool :=
++  (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
++  (ProbComp.sample {x : (G.inst κ r).G // x ≠ 1}).bind fun g =>
++  (ProbComp.sample (ZMod (G.inst κ r).order × ZMod (G.inst κ r).order ×
++    ZMod (G.inst κ r).order)).bind fun abc =>
++  (ProbComp.sample (G.inst κ r).GT).bind fun t =>
++  (ProbComp.sample (D.Coins κ)).bind fun ρ =>
++    .pure (D.distinguisherL κ (tupleStr (G.inst κ r) (G.desc κ r) g.1 (g.1 ^ abc.1.val)
++      (g.1 ^ abc.2.1.val) (g.1 ^ abc.2.2.val)
++      (if real then (G.inst κ r).pair g.1 g.1 ^ (abc.1 * abc.2.1 * abc.2.2).val else t)) ρ)
++
++/-- The Decision BDH experiment draws the generator's coins, `g ∈ G^*`, `(a, b, c) ∈ Z_p³`,
++`T ∈ G_T` and the distinguisher's coins, and runs the distinguisher on
++`tupleStr B d g g^a g^b g^c T'` with `T' = e(g, g)^{abc}` if `real` and `T' = T` otherwise. -/
++theorem dbdhGame_eq (D : NUPPT) (real : Bool) (κ : ℕ) :
++    G.dbdhGame D real κ =
++      (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
++      (ProbComp.sample {x : (G.inst κ r).G // x ≠ 1}).bind fun g =>
++      (ProbComp.sample (ZMod (G.inst κ r).order × ZMod (G.inst κ r).order ×
++        ZMod (G.inst κ r).order)).bind fun abc =>
++      (ProbComp.sample (G.inst κ r).GT).bind fun t =>
++      (ProbComp.sample (D.Coins κ)).bind fun ρ =>
++        .pure (D.distinguisherL κ (tupleStr (G.inst κ r) (G.desc κ r) g.1 (g.1 ^ abc.1.val)
++          (g.1 ^ abc.2.1.val) (g.1 ^ abc.2.2.val)
++          (if real then (G.inst κ r).pair g.1 g.1 ^ (abc.1 * abc.2.1 * abc.2.2).val else t)) ρ) :=
++  rfl
++
++/-- **The Decision BDH advantage** of `D` at `κ`:
++`|Pr[D(P_BDH) = 1] − Pr[D(R_BDH) = 1]|` [BB04, §3.1]. -/
++noncomputable def dbdhAdv (D : NUPPT) (κ : ℕ) : ℝ :=
++  advantage (G.dbdhGame D false κ) (G.dbdhGame D true κ)
++
++/-- `G.dbdhAdv D κ = advantage (G.dbdhGame D false κ) (G.dbdhGame D true κ)`. -/
++theorem dbdhAdv_eq (D : NUPPT) (κ : ℕ) :
++    G.dbdhAdv D κ = advantage (G.dbdhGame D false κ) (G.dbdhGame D true κ) := rfl
++
++/-- **The Decision BDH assumption** relative to the generator `G` [BB04, §3.1 and
++Definition 3.1]: every non-uniform PPT distinguisher has negligible Decision BDH advantage.
++
++**Deviation:** asymptotic, relative to a generator, against non-uniform PPT machines that
++receive `1^κ` and the description (module docstring). -/
++def DBDHAssumption : Prop := ∀ D : NUPPT, Negligible fun κ => G.dbdhAdv D κ
++
++/-- `G.DBDHAssumption` iff `κ ↦ G.dbdhAdv D κ` is negligible for every non-uniform PPT `D`. -/
++theorem dbdhAssumption_iff : G.DBDHAssumption ↔ ∀ D : NUPPT, Negligible fun κ => G.dbdhAdv D κ :=
++  Iff.rfl
++
++/-- **The BDH experiment** [BB04, §3.1] for the machine `A` at parameter `κ`: draw the
++generator's coins `r`, a generator `g ∈ G^*`, exponents `a, b, c ∈ Z_p` and `A`'s coins `ρ`, all
++uniform, and accept iff `A(1^κ, ⟨d, ⟨g, g^a, g^b, g^c⟩⟩; ρ)` is the encoding of `e(g, g)^{abc}`. -/
++noncomputable def bdhGame (A : NUPPT) (κ : ℕ) : ProbComp Bool :=
++  (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
++  (ProbComp.sample {x : (G.inst κ r).G // x ≠ 1}).bind fun g =>
++  (ProbComp.sample (ZMod (G.inst κ r).order × ZMod (G.inst κ r).order ×
++    ZMod (G.inst κ r).order)).bind fun abc =>
++  (ProbComp.sample (A.Coins κ)).bind fun ρ =>
++    .pure (decide (A.runAt κ (bdhStr (G.inst κ r) (G.desc κ r) g.1 (g.1 ^ abc.1.val)
++      (g.1 ^ abc.2.1.val) (g.1 ^ abc.2.2.val)) ρ =
++        List.ofFn ((G.inst κ r).encT
++          ((G.inst κ r).pair g.1 g.1 ^ (abc.1 * abc.2.1 * abc.2.2).val))))
++
++/-- The BDH experiment draws the generator's coins, `g ∈ G^*`, `(a, b, c) ∈ Z_p³` and the
++machine's coins, and accepts iff the machine's output on `bdhStr B d g g^a g^b g^c` is the
++encoding of `e(g, g)^{abc}`. -/
++theorem bdhGame_eq (A : NUPPT) (κ : ℕ) :
++    G.bdhGame A κ =
++      (ProbComp.sample (G.gen.Coins κ)).bind fun r =>
++      (ProbComp.sample {x : (G.inst κ r).G // x ≠ 1}).bind fun g =>
++      (ProbComp.sample (ZMod (G.inst κ r).order × ZMod (G.inst κ r).order ×
++        ZMod (G.inst κ r).order)).bind fun abc =>
++      (ProbComp.sample (A.Coins κ)).bind fun ρ =>
++        .pure (decide (A.runAt κ (bdhStr (G.inst κ r) (G.desc κ r) g.1 (g.1 ^ abc.1.val)
++          (g.1 ^ abc.2.1.val) (g.1 ^ abc.2.2.val)) ρ =
++            List.ofFn ((G.inst κ r).encT
++              ((G.inst κ r).pair g.1 g.1 ^ (abc.1 * abc.2.1 * abc.2.2).val)))) :=
++  rfl
++
++/-- **The BDH assumption** relative to the generator `G` [BB04, §3.1 and Definition 3.1]: every
++non-uniform PPT machine solves the BDH problem with negligible probability.
++
++**Deviation:** asymptotic, relative to a generator, against non-uniform PPT machines that
++receive `1^κ` and the description; the answer must be the encoding of `e(g, g)^{abc}` exactly. -/
++def BDHAssumption : Prop := ∀ A : NUPPT, Negligible fun κ => accept (G.bdhGame A κ)
++
++/-- `G.BDHAssumption` iff `κ ↦ Pr[G.bdhGame A κ = 1]` is negligible for every non-uniform
++PPT `A`. -/
++theorem bdhAssumption_iff :
++    G.BDHAssumption ↔ ∀ A : NUPPT, Negligible fun κ => accept (G.bdhGame A κ) := Iff.rfl
++
++/-- **Decision BDH implies BDH** when the group order is at least `2^κ` except with negligible
++probability: a BDH solver `A` gives the Decision BDH distinguisher "run `A` on `(g, g^a, g^b, g^c)`
++and accept iff its answer is `T`".
++
++**Source:** not stated in [BB04] or [Jou00], which define the two problems ([BB04, §3.1]). The
++implication is independently derived here: the folklore fact that deciding is no harder than
++computing.
++
++**Proof sketch.** Given `A`, let `D(1^κ, ⟨s, T⟩)` run `A(1^κ, s)` with its own coins and accept
++iff the answer equals the encoding of `T`, where `s` is re-paired from the first five components
++(a polynomial-time string map, so `D` is a non-uniform PPT). On `P_BDH`, `D` accepts exactly when
++`A` succeeds, so `Pr[D(P_BDH) = 1] = Pr[A wins]`. On `R_BDH`, `T` is uniform in `G_T` and
++independent of `A`'s view, so `Pr[D(R_BDH) = 1] ≤ 1/p` by injectivity of the encoding. Hence
++`Pr[A wins] ≤ dbdhAdv D κ + E_r[1/p] ≤ dbdhAdv D κ + 2^{-κ} + δ(κ)` (the coins where `p < 2^κ`
++cost at most `δ(κ)`), a sum of negligible functions. -/
++theorem bdhAssumption_of_dbdhAssumption
++    (hN : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.OrderAtLeastExcept (fun κ => 2 ^ κ) δ)
++    (h : G.DBDHAssumption) : G.BDHAssumption := by
++  sorry
++
++end BilinearGen
++
++end TCSlib.Cryptography.Pairing
+diff --git a/TCSlib/Cryptography/Pairing/Group.lean b/TCSlib/Cryptography/Pairing/Group.lean
+new file mode 100644
+index 000000000..b6464ece3
+--- /dev/null
++++ b/TCSlib/Cryptography/Pairing/Group.lean
+@@ -0,0 +1,304 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.Randomized.PPT
++import TCSlib.Cryptography.Foundations.Probability
++import Mathlib.Data.ZMod.Basic
++import Mathlib.GroupTheory.OrderOfElement
++import Mathlib.GroupTheory.SpecificGroups.Cyclic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Symmetric bilinear groups and their generators
++
++A *bilinear group* [BB04, §2.2] is a pair of cyclic groups `G`, `G_1` of prime order `p` with a
++map `e : G × G → G_1` that is bilinear (`e(u^a, v^b) = e(u, v)^{ab}`) and non-degenerate
++(`e(g, g) ≠ 1` for a generator `g`). The pairing is symmetric: `e(u, v) = e(v, u)`. Here the
++groups stay abstract. No elliptic curve or concrete pairing (Weil, Tate) is formalized.
++
++**Representation.** A bilinear group is a bundle `BilinearGroup wG wT`: two finite commutative
++groups `G` and `GT` (the paper's `G_1`) of the same prime order, a distinguished generator `gen`,
++the pairing as a bimultiplicative map `G →* G →* GT`, and injective fixed-width encodings of the
++elements of both groups as `wG`- and `wT`-bit strings. A bimultiplicative map is the
++multiplicative form of [BB04, §2.2, item 1]: `bilinear_pow` reads `e(u^a, v^b) = e(u, v)^{ab}`
++for natural exponents; for integer exponents the law follows from the homomorphism fields.
++
++**The generator.** The asymptotic layer quantifies over non-uniform PPT adversaries
++(`Complexity.NUPPT`) and draws the group from a *bilinear group generator*, as the
++discrete-logarithm and DDH layers draw theirs from an instance generator
++(`Candidates.ExpGroupGen`, `Candidates.SafePrimeGen`). A `BilinearGen` is a PPT `Gen(1^κ)`
++whose output string, the *description* `d`, has a fixed polynomial length. The group it describes
++is `group κ d`, a total function of the description. So every string describes some bilinear
++group, and no validity predicate is needed. Adversaries receive the description.
++
++**Deviation:** [BB04] is concrete (a fixed group `G`, `(t, ε)` bounds); here the group is drawn
++by a PPT generator at each security parameter, and security is asymptotic. The efficiency of the
++group operations and of the pairing ("efficiently computable", [BB04, §2.2]) is not a field of
++the bundle. It is the separate contract `BilinearGen.Ops` (`Pairing/Operations.lean`), assumed
++only by the results whose reductions compute in the group.
++
++## Main definitions
++
++* `TCSlib.Cryptography.Pairing.BilinearGroup` — a symmetric bilinear group of prime order with
++  fixed-width encodings [BB04, §2.2].
++* `TCSlib.Cryptography.Pairing.BilinearGen` — a bilinear group generator; `BilinearGen.desc`,
++  `BilinearGen.inst` — the description and the group at the generator's coins;
++  `BilinearGen.OrderAtLeastExcept` — the order is large except on a set of coins of small
++  probability.
++
++## Main results
++
++* `BilinearGroup.bilinear_pow`, `pair_pow_left`, `pair_pow_right` — bilinearity
++  [BB04, §2.2, item 1].
++* `BilinearGroup.pair_comm` — the pairing is symmetric [BB04, §2.2, the remark after item 2].
++* `BilinearGroup.pow_order`, `BilinearGroup.pow_val_mul` — exponents act through `Z_p`.
++* `BilinearGroup.exists_pow_eq` — every element of `G^*` generates `G`.
++* `BilinearGroup.pair_ne_one` — every element of `G^*` pairs non-trivially with itself.
++* `BilinearGroup.pow_val_bijective` — `a ↦ e(g, g)^a` is a bijection `Z_p → G_1` for `g ∈ G^*`.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §2.2 (bilinear groups).
++* [Jou00] A. Joux, *A One Round Protocol for Tripartite Diffie–Hellman*, ANTS-IV, LNCS 1838,
++  pp. 385–393, Springer, 2000. §2 (the Weil and Tate pairings are bilinear and non-degenerate).
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
++  (Definition 26.8, non-uniform PPT; the instance-generator convention of §2.8 and §3.11.)
++-/
++
++namespace TCSlib.Cryptography.Pairing
++
++open Complexity
++
++/-- A **symmetric bilinear group of prime order** with fixed-width encodings [BB04, §2.2]: finite
++commutative groups `G` and `G_T` (the paper's `G_1`) of the same prime order `p`, a generator `g`
++of `G` (`g ≠ 1`; `G` has prime order), a pairing `e : G × G → G_T` that is multiplicative in each
++argument, and non-degenerate, `e(g, g) ≠ 1` [BB04, §2.2, items 1–2]. Elements are written as
++`wG`-bit (resp. `wT`-bit) strings by injective encodings, the representation handed to machines.
++
++**Deviation:** bilinearity is stated as a bimultiplicative map `G →* G →* G_T`. The paper's
++`e(u^a, v^b) = e(u, v)^{ab}` for `a, b ∈ ℤ` follows from these homomorphism fields (`map_zpow` in
++each argument); the published reader `bilinear_pow` states it for natural exponents `a, b ∈ ℕ`,
++the form the schemes use (exponents `x.val` for `x ∈ Z_p`). The fixed generator `gen`
++witnesses that `G^* = G ∖ {1}` is not empty; the schemes and assumptions sample their generator
++uniformly from `G^*`, as [BB04, §3.1 and §4.1] do. -/
++structure BilinearGroup (wG wT : ℕ) where
++  /-- The source group `G`. -/
++  G : Type
++  /-- The target group `G_T` (the paper's `G_1`). -/
++  GT : Type
++  /-- `G` is a commutative group. -/
++  [commGroupG : CommGroup G]
++  /-- `G_T` is a commutative group. -/
++  [commGroupGT : CommGroup GT]
++  /-- `G` is finite. -/
++  [fintypeG : Fintype G]
++  /-- `G_T` is finite. -/
++  [fintypeGT : Fintype GT]
++  /-- Equality in `G` is decidable. -/
++  [decEqG : DecidableEq G]
++  /-- Equality in `G_T` is decidable. -/
++  [decEqGT : DecidableEq GT]
++  /-- The common prime order `p`. -/
++  order : ℕ
++  /-- `p` is prime. -/
++  order_prime : order.Prime
++  /-- `|G| = p`. -/
++  card_G : Fintype.card G = order
++  /-- `|G_T| = p`. -/
++  card_GT : Fintype.card GT = order
++  /-- A generator `g` of `G`. -/
++  gen : G
++  /-- `g ≠ 1`, so `g` generates the group `G` of prime order. -/
++  gen_ne_one : gen ≠ 1
++  /-- The pairing `e`, multiplicative in each argument. -/
++  pair : G →* G →* GT
++  /-- Non-degeneracy: `e(g, g) ≠ 1` [BB04, §2.2, item 2]. -/
++  pair_gen_ne_one : pair gen gen ≠ 1
++  /-- The encoding of `G` as `wG`-bit strings. -/
++  encG : G → Fin wG → Bool
++  /-- Distinct elements of `G` have distinct encodings. -/
++  encG_injective : Function.Injective encG
++  /-- The encoding of `G_T` as `wT`-bit strings. -/
++  encT : GT → Fin wT → Bool
++  /-- Distinct elements of `G_T` have distinct encodings. -/
++  encT_injective : Function.Injective encT
++
++attribute [instance] BilinearGroup.commGroupG BilinearGroup.commGroupGT BilinearGroup.fintypeG
++  BilinearGroup.fintypeGT BilinearGroup.decEqG BilinearGroup.decEqGT
++
++namespace BilinearGroup
++
++variable {wG wT : ℕ} (B : BilinearGroup wG wT)
++
++/-- The order of a bilinear group is prime, as a `Fact` (so `ZMod B.order` is a field). -/
++instance factPrime : Fact B.order.Prime := ⟨B.order_prime⟩
++
++/-- The order of a bilinear group is nonzero (so `ZMod B.order` is finite). -/
++instance neZeroOrder : NeZero B.order := ⟨B.order_prime.ne_zero⟩
++
++/-- `G^* = G ∖ {1}` is not empty: it contains the generator `gen`. -/
++instance nonempty_ne_one : Nonempty {x : B.G // x ≠ 1} := ⟨⟨B.gen, B.gen_ne_one⟩⟩
++
++/-- **Bilinearity** [BB04, §2.2, item 1]: `e(u^a, v^b) = e(u, v)^{ab}` for natural exponents
++`a, b ∈ ℕ`. The paper states the law for `a, b ∈ ℤ`; that signed-exponent form follows from the
++homomorphism fields of `pair` (`map_zpow`), and this reader is the natural-exponent case. -/
++theorem bilinear_pow (u v : B.G) (a b : ℕ) : B.pair (u ^ a) (v ^ b) = B.pair u v ^ (a * b) := by
++  rw [map_pow (B.pair (u ^ a)) v b, map_pow B.pair u a, MonoidHom.pow_apply, ← pow_mul,
++    mul_comm]
++
++/-- Bilinearity in the first argument: `e(u^a, v) = e(u, v)^a`. -/
++theorem pair_pow_left (u v : B.G) (a : ℕ) : B.pair (u ^ a) v = B.pair u v ^ a := by
++  rw [map_pow, MonoidHom.pow_apply]
++
++/-- Bilinearity in the second argument: `e(u, v^b) = e(u, v)^b`. -/
++theorem pair_pow_right (u v : B.G) (b : ℕ) : B.pair u (v ^ b) = B.pair u v ^ b :=
++  map_pow (B.pair u) v b
++
++/-- `|G| = p` as a `Nat.card`: `Nat.card B.G = B.order`. -/
++theorem natCard_G : Nat.card B.G = B.order := by
++  rw [Nat.card_eq_fintype_card, B.card_G]
++
++/-- **Every element of `G^*` generates `G`**: for `g ≠ 1` and any `x`, `x = g^n` for some `n`
++(`G` has prime order). -/
++theorem exists_pow_eq {g : B.G} (hg : g ≠ 1) (x : B.G) : ∃ n : ℕ, g ^ n = x :=
++  (Submonoid.mem_powers_iff _ _).1 (mem_powers_of_prime_card B.natCard_G hg)
++
++/-- **The pairing is symmetric** [BB04, §2.2, the remark after item 2]: `e(u, v) = e(v, u)`,
++since `e(g^a, g^b) = e(g, g)^{ab} = e(g^b, g^a)`. -/
++theorem pair_comm (u v : B.G) : B.pair u v = B.pair v u := by
++  obtain ⟨a, rfl⟩ := B.exists_pow_eq B.gen_ne_one u
++  obtain ⟨b, rfl⟩ := B.exists_pow_eq B.gen_ne_one v
++  rw [B.bilinear_pow, B.bilinear_pow, mul_comm]
++
++/-- `x^p = 1` in `G`: Lagrange's theorem with `|G| = p`. -/
++theorem pow_order (x : B.G) : x ^ B.order = 1 := by
++  rw [← B.card_G]
++  exact pow_card_eq_one
++
++/-- `y^p = 1` in `G_T`: Lagrange's theorem with `|G_T| = p`. -/
++theorem pow_order_GT (y : B.GT) : y ^ B.order = 1 := by
++  rw [← B.card_GT]
++  exact pow_card_eq_one
++
++/-- Exponents of `G` act through `Z_p`: `x^{(ab mod p)} = (x^a)^b` read in `Z_p`, i.e.
++`x ^ (a * b).val = x ^ (a.val * b.val)` for `a, b ∈ Z_p`. -/
++theorem pow_val_mul (x : B.G) (a b : ZMod B.order) : x ^ (a * b).val = x ^ (a.val * b.val) := by
++  rw [ZMod.val_mul, ← Nat.mod_add_div (a.val * b.val) B.order, pow_add, pow_mul, B.pow_order,
++    one_pow, mul_one, Nat.mod_add_div]
++
++/-- Exponents of `G_T` act through `Z_p`: `y ^ (a * b).val = y ^ (a.val * b.val)`. -/
++theorem pow_val_mul_GT (y : B.GT) (a b : ZMod B.order) :
++    y ^ (a * b).val = y ^ (a.val * b.val) := by
++  rw [ZMod.val_mul, ← Nat.mod_add_div (a.val * b.val) B.order, pow_add, pow_mul, B.pow_order_GT,
++    one_pow, mul_one, Nat.mod_add_div]
++
++/-- **Non-degeneracy at every generator**: `e(x, x) ≠ 1` for every `x ∈ G^*` (from
++`e(g, g) ≠ 1` [BB04, §2.2, item 2], since every `x ∈ G^*` generates `G`).
++
++**Proof sketch.** Write `x = g^k` with `k ≢ 0 (mod p)` (`x ≠ 1`). Then
++`e(x, x) = e(g, g)^{k²}` by bilinearity. The element `e(g, g) ≠ 1` of the group `G_T` of prime
++order `p` has order `p`, and `p ∤ k²` because `p` is prime and `p ∤ k`. -/
++theorem pair_ne_one {x : B.G} (hx : x ≠ 1) : B.pair x x ≠ 1 := by
++  obtain ⟨k, rfl⟩ := B.exists_pow_eq B.gen_ne_one x
++  rw [B.bilinear_pow]
++  intro h
++  have ho : orderOf (B.pair B.gen B.gen) = B.order :=
++    orderOf_eq_prime (B.pow_order_GT _) B.pair_gen_ne_one
++  have hd : B.order ∣ k * k := ho ▸ orderOf_dvd_of_pow_eq_one h
++  obtain ⟨j, rfl⟩ : B.order ∣ k := ((Nat.Prime.dvd_mul B.order_prime).1 hd).elim id id
++  exact hx (by rw [pow_mul, B.pow_order, one_pow])
++
++/-- **`a ↦ e(x, x)^a` is a bijection `Z_p → G_T`** for every `x ∈ G^*`: the law of `e(x, x)^z`
++for uniform `z ∈ Z_p` is uniform on `G_T` (the identification of [BB04, §3.1]'s "`T` uniform in
++`G_1`" with `e(g, g)^z`, `z` uniform, used by the proofs).
++
++**Proof sketch.** `e(x, x) ≠ 1` (`pair_ne_one`) has prime order `p` in `G_T`, so
++`a ↦ e(x, x)^{a.val}` is injective on `Z_p`; both sides have `p` elements (`card_GT`). -/
++theorem pow_val_bijective {x : B.G} (hx : x ≠ 1) :
++    Function.Bijective fun a : ZMod B.order => B.pair x x ^ a.val := by
++  have ho : orderOf (B.pair x x) = B.order :=
++    orderOf_eq_prime (B.pow_order_GT _) (B.pair_ne_one hx)
++  rw [Fintype.bijective_iff_injective_and_card]
++  refine ⟨fun a b hab => ZMod.val_injective _ ?_, by rw [ZMod.card, B.card_GT]⟩
++  have h := pow_eq_pow_iff_modEq.1 hab
++  rw [ho] at h
++  exact Nat.ModEq.eq_of_lt_of_lt h (ZMod.val_lt a) (ZMod.val_lt b)
++
++end BilinearGroup
++
++/-- A **bilinear group generator**: a PPT `Gen(1^κ)` whose output, the *description* `d` of the
++group, has `descLen(κ)` bits, and the bilinear group `group κ d` that `d` describes, with element
++widths `wG(κ)` and `wT(κ)`. The form of [BB04, §2.2] ("`G` is a bilinear group") and of
++[BB04, §4.1] ("the security parameter determines the size of `G`") in the asymptotic layer.
++
++**Deviation:** the group is a total function of the description (every string describes some
++bilinear group), so no validity predicate or threshold appears, unlike `Candidates.ExpGroupGen`;
++descriptions have an exact polynomial length (a PPT generator can always pad its output to its
++time bound). The order of the group is unconstrained here: results that need a large order
++assume `OrderAtLeastExcept`. Efficient group operations are the separate contract
++`BilinearGen.Ops`. -/
++structure BilinearGen where
++  /-- The generator `Gen(1^κ)`, run on the empty argument. -/
++  gen : NUPPT
++  /-- `Gen` is a PPT. -/
++  gen_uniform : gen.Uniform
++  /-- The length of a description. -/
++  descLen : PolyExpr
++  /-- Every description at parameter `κ` has `descLen(κ)` bits. -/
++  desc_length : ∀ κ (r : gen.Coins κ), (gen.runAt κ [] r).length = descLen.eval κ
++  /-- The width of the encoding of `G`. -/
++  wG : PolyExpr
++  /-- The width of the encoding of `G_T`. -/
++  wT : PolyExpr
++  /-- The bilinear group described by a string at parameter `κ`. -/
++  group : (κ : ℕ) → List Bool → BilinearGroup (wG.eval κ) (wT.eval κ)
++
++namespace BilinearGen
++
++variable (G : BilinearGen)
++
++/-- The description `d = Gen(1^κ; r)` output by the generator on the coins `r`. -/
++def desc (κ : ℕ) (r : G.gen.Coins κ) : List Bool := G.gen.runAt κ [] r
++
++/-- `G.desc κ r = G.gen.runAt κ [] r`. -/
++theorem desc_eq (κ : ℕ) (r : G.gen.Coins κ) : G.desc κ r = G.gen.runAt κ [] r := rfl
++
++/-- A description has `descLen(κ)` bits: `(G.desc κ r).length = G.descLen.eval κ`. -/
++theorem length_desc (κ : ℕ) (r : G.gen.Coins κ) : (G.desc κ r).length = G.descLen.eval κ :=
++  G.desc_length κ r
++
++/-- The bilinear group generated on the coins `r`: `G.inst κ r = G.group κ (G.desc κ r)`. -/
++def inst (κ : ℕ) (r : G.gen.Coins κ) : BilinearGroup (G.wG.eval κ) (G.wT.eval κ) :=
++  G.group κ (G.desc κ r)
++
++/-- `G.inst κ r = G.group κ (G.desc κ r)`. -/
++theorem inst_eq (κ : ℕ) (r : G.gen.Coins κ) : G.inst κ r = G.group κ (G.desc κ r) := rfl
++
++/-- **The order is at least `N(κ)` except with probability `δ(κ)`**: for every `κ`,
++`Pr_r[|G| < N(κ)] ≤ δ(κ)` over the generator's coins `r`. With `N(κ) = 2^κ` and a negligible
++`δ` this is "the security parameter determines the size of `G`" [BB04, §4.1]; with
++`N(κ) = 2^{ℓ(κ)}` it makes `ℓ(κ)`-bit identities distinct in `Z_p` [BB04, §4.4, "`2^b < p`"].
++
++**Deviation:** a strict PPT generator may fail with small probability, so a bound on every coin
++string is not demanded (the lesson of `Candidates.ExpGroupGen.FullLengthExcept`, run-3 audit
++P8-2). -/
++def OrderAtLeastExcept (N : ℕ → ℕ) (δ : ℕ → ℝ) : Prop :=
++  ∀ κ, uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < N κ) ≤ δ κ
++
++/-- `G.OrderAtLeastExcept N δ` iff for every `κ` the probability over the generator's coins that
++the order is below `N κ` is at most `δ κ`. -/
++theorem orderAtLeastExcept_iff (N : ℕ → ℕ) (δ : ℕ → ℝ) :
++    G.OrderAtLeastExcept N δ ↔
++      ∀ κ, uprob (fun r : G.gen.Coins κ => (G.inst κ r).order < N κ) ≤ δ κ :=
++  Iff.rfl
++
++end BilinearGen
++
++end TCSlib.Cryptography.Pairing
+diff --git a/TCSlib/Cryptography/Pairing/Operations.lean b/TCSlib/Cryptography/Pairing/Operations.lean
+new file mode 100644
+index 000000000..386225edb
+--- /dev/null
++++ b/TCSlib/Cryptography/Pairing/Operations.lean
+@@ -0,0 +1,117 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Pairing.Group
++import TCSlib.Cryptography.Candidates.Arithmetic
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Efficient group operations of a bilinear group generator
++
++[BB04, §2.2]: "`G` is a bilinear group if the group action in `G` can be computed efficiently and
++there exists a group `G_1` and an efficiently computable bilinear map `e`". A `BilinearGen` keeps
++its groups abstract (`Pairing/Group.lean`); this file states the efficiency half of the
++definition as a separate contract, `BilinearGen.Ops`: polynomial-time string functions that, on
++every generated description `d`, compute on the encodings of the elements of the group `d`
++describes.
++
++The contract is a hypothesis only of the results whose reductions compute in the group (the
++security of BB1, `AdvancedEncryption.IdentityBased.bb1_sidSecure`). It reads exponents and the
++order as binary numerals with `NumberTheory.listToNat`, the convention of the arithmetic bundle
++`Candidates.ArithmeticFP` (D11), so that a reduction can do its exponent arithmetic modulo `p`
++with that bundle.
++
++## Main definitions
++
++* `TCSlib.Cryptography.Pairing.BilinearGen.Ops` — the order, multiplication and exponentiation in
++  `G`, the pairing, multiplication in `G_T` and the membership test of `G_T`, as polynomial-time
++  string functions with their specifications at generated descriptions.
++
++## Main results
++
++None: the contract is a hypothesis, read through its fields.
++
++## References
++
++* [BB04] D. Boneh, X. Boyen, *Efficient Selective-ID Secure Identity Based Encryption Without
++  Random Oracles*, full version, Cryptology ePrint Archive, Report 2004/172, December 2004
++  (extended abstract: EUROCRYPT 2004, LNCS 3027, pp. 223–238). §2.2 (p. 4).
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
++  (Definition 23.5, polynomial-time computation.)
++-/
++
++namespace TCSlib.Cryptography.Pairing
++
++open Complexity Turing TCSlib.Cryptography.NumberTheory
++
++namespace BilinearGen
++
++/-- **Efficient operations of a bilinear group generator** [BB04, §2.2, "the group action in `G`
++can be computed efficiently … an efficiently computable bilinear map `e`"]: polynomial-time
++string functions that, on every generated description `d = G.desc κ r` and the encodings of
++elements `x, y ∈ G`, `u, v ∈ G_T`, compute
++* the order `p`, as a binary numeral (`orderStr d`);
++* `x · y` from `⟨d, ⟨x, y⟩⟩` (`mulG`) and `x^n` from `⟨d, ⟨x, n⟩⟩` for any numeral `n` (`powG`);
++* `e(x, y)` from `⟨d, ⟨x, y⟩⟩` (`pairStr`);
++* `u · v` from `⟨d, ⟨u, v⟩⟩` (`mulT`);
++* whether a `wT(κ)`-bit string `w` encodes an element of `G_T`, from `⟨d, w⟩` (`memT`).
++
++**Deviation:** the paper asks for efficient group operations and pairing; the order, the
++membership test of `G_T` and numeral exponents are the minimal extras a machine needs to sample
++exponents in `Z_p` and to read messages of `G_T` sent by an adversary. Inputs that are not of
++these forms are unconstrained. Inversion is `x^{p−1}`. -/
++structure Ops (G : BilinearGen) where
++  /-- The order `p` of the described group, as a binary numeral. -/
++  orderStr : List Bool → List Bool
++  /-- Multiplication in `G` on `⟨d, ⟨x, y⟩⟩`. -/
++  mulG : List Bool → List Bool
++  /-- Exponentiation in `G` on `⟨d, ⟨x, n⟩⟩`, `n` a binary numeral. -/
++  powG : List Bool → List Bool
++  /-- The pairing on `⟨d, ⟨x, y⟩⟩`. -/
++  pairStr : List Bool → List Bool
++  /-- Multiplication in `G_T` on `⟨d, ⟨u, v⟩⟩`. -/
++  mulT : List Bool → List Bool
++  /-- The membership test of `G_T` on `⟨d, w⟩`. -/
++  memT : List Bool → List Bool
++  /-- `orderStr` is polynomial-time. -/
++  orderStr_poly : PolyTimeComputable orderStr
++  /-- `mulG` is polynomial-time. -/
++  mulG_poly : PolyTimeComputable mulG
++  /-- `powG` is polynomial-time. -/
++  powG_poly : PolyTimeComputable powG
++  /-- `pairStr` is polynomial-time. -/
++  pairStr_poly : PolyTimeComputable pairStr
++  /-- `mulT` is polynomial-time. -/
++  mulT_poly : PolyTimeComputable mulT
++  /-- `memT` is polynomial-time. -/
++  memT_poly : PolyTimeComputable memT
++  /-- `orderStr d` reads as the order of the described group. -/
++  orderStr_spec : ∀ κ (r : G.gen.Coins κ), listToNat (orderStr (G.desc κ r)) = (G.inst κ r).order
++  /-- `mulG ⟨d, ⟨x, y⟩⟩` is the encoding of `x · y`. -/
++  mulG_spec : ∀ κ (r : G.gen.Coins κ) (x y : (G.inst κ r).G),
++    mulG (pairEncode (G.desc κ r) (pairEncode (List.ofFn ((G.inst κ r).encG x))
++      (List.ofFn ((G.inst κ r).encG y)))) = List.ofFn ((G.inst κ r).encG (x * y))
++  /-- `powG ⟨d, ⟨x, n⟩⟩` is the encoding of `x^n`, `n` read as a binary numeral. -/
++  powG_spec : ∀ κ (r : G.gen.Coins κ) (x : (G.inst κ r).G) (n : List Bool),
++    powG (pairEncode (G.desc κ r) (pairEncode (List.ofFn ((G.inst κ r).encG x)) n)) =
++      List.ofFn ((G.inst κ r).encG (x ^ listToNat n))
++  /-- `pairStr ⟨d, ⟨x, y⟩⟩` is the encoding of `e(x, y)`. -/
++  pairStr_spec : ∀ κ (r : G.gen.Coins κ) (x y : (G.inst κ r).G),
++    pairStr (pairEncode (G.desc κ r) (pairEncode (List.ofFn ((G.inst κ r).encG x))
++      (List.ofFn ((G.inst κ r).encG y)))) = List.ofFn ((G.inst κ r).encT ((G.inst κ r).pair x y))
++  /-- `mulT ⟨d, ⟨u, v⟩⟩` is the encoding of `u · v`. -/
++  mulT_spec : ∀ κ (r : G.gen.Coins κ) (u v : (G.inst κ r).GT),
++    mulT (pairEncode (G.desc κ r) (pairEncode (List.ofFn ((G.inst κ r).encT u))
++      (List.ofFn ((G.inst κ r).encT v)))) = List.ofFn ((G.inst κ r).encT (u * v))
++  /-- `memT ⟨d, w⟩` is `[true]` iff `w` encodes an element of `G_T`, and `[false]` otherwise. -/
++  memT_spec : ∀ κ (r : G.gen.Coins κ) (w : Fin (G.wT.eval κ) → Bool),
++    memT (pairEncode (G.desc κ r) (List.ofFn w)) = [decide (∃ u, (G.inst κ r).encT u = w)]
++
++end BilinearGen
++
++end TCSlib.Cryptography.Pairing

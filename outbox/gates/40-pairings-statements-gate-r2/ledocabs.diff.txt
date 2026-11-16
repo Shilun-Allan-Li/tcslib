@@ -1,0 +1,17 @@
+diff --git a/TCSlib/Cryptography/Pairing/Assumptions.lean b/TCSlib/Cryptography/Pairing/Assumptions.lean
+index d01d28067..f1f8aaad9 100644
+--- a/TCSlib/Cryptography/Pairing/Assumptions.lean
++++ b/TCSlib/Cryptography/Pairing/Assumptions.lean
+@@ -34,9 +34,9 @@ the DDH layer).
+ **Deviation:** [BB04, Definition 3.1] is concrete ("no `t`-time algorithm has advantage at least
+ `ε` in `G`"). Here the assumptions are asymptotic: every non-uniform PPT has negligible advantage
+ (BDH: success probability), relative to the generator. The decision advantage is the absolute
+-difference of acceptance probabilities (the paper writes the difference of the probabilities of
+-output `0`, without absolute value; the two are equivalent for the assumption since the negated
+-machine is a PPT). The adversary receives the group's description `d` and `1^κ`.
++difference of acceptance probabilities; the paper writes the absolute difference of the
++probabilities of output `0` [BB04, §3.1], which is the same number, since outputs `0` and `1` are
++complementary. The adversary receives the group's description `d` and `1^κ`.
+ 
+ ## Main definitions
+ 
