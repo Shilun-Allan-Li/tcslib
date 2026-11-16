@@ -92,15 +92,36 @@ def encodeList {α : Type} (f : α → List Bool) : List α → List Bool
   | [] => [false]
   | a :: as => true :: (f a ++ encodeList f as)
 
+/-- The empty list code is `encodeList f [] = [false]`. -/
+theorem encodeList_nil {α : Type} (f : α → List Bool) :
+    encodeList f [] = [false] := rfl
+
+/-- A nonempty list code is `encodeList f (a :: as) = true :: (f a ++ encodeList f as)`. -/
+theorem encodeList_cons {α : Type} (f : α → List Bool) (a : α) (as : List α) :
+    encodeList f (a :: as) = true :: (f a ++ encodeList f as) := rfl
+
 /-- The two-bit code of a gate label. -/
 def GateKind.encode : GateKind → List Bool
   | .and => [false, false]
   | .or => [false, true]
   | .not => [true, false]
 
+/-- The conjunction label code is `GateKind.encode .and = [false, false]`. -/
+theorem GateKind.encode_and : GateKind.encode .and = [false, false] := rfl
+
+/-- The disjunction label code is `GateKind.encode .or = [false, true]`. -/
+theorem GateKind.encode_or : GateKind.encode .or = [false, true] := rfl
+
+/-- The negation label code is `GateKind.encode .not = [true, false]`. -/
+theorem GateKind.encode_not : GateKind.encode .not = [true, false] := rfl
+
 /-- The code of a gate: its label, then the list of vertices it reads. -/
 def DAGGate.encode (g : DAGGate) : List Bool :=
   g.kind.encode ++ encodeList encodeNat g.args
+
+/-- The gate code is `g.encode = g.kind.encode ++ encodeList encodeNat g.args`. -/
+theorem DAGGate.encode_eq (g : DAGGate) :
+    g.encode = g.kind.encode ++ encodeList encodeNat g.args := rfl
 
 /-- **The description of a circuit**: the number of inputs, the gates in order, and the
 output vertex, numbers in unary (`BoolCircuit.encodeNat`). This is the string a
@@ -108,6 +129,11 @@ uniformity machine must output [AB09, Def 6.12]; see the module docstring for th
 choice of representation. -/
 def DAGCircuit.encode {n : ℕ} (C : DAGCircuit n) : List Bool :=
   encodeNat n ++ (encodeList DAGGate.encode C.gates ++ encodeNat C.output)
+
+/-- The circuit code is
+`C.encode = encodeNat n ++ (encodeList DAGGate.encode C.gates ++ encodeNat C.output)`. -/
+theorem DAGCircuit.encode_parts {n : ℕ} (C : DAGCircuit n) :
+    C.encode = encodeNat n ++ (encodeList DAGGate.encode C.gates ++ encodeNat C.output) := rfl
 
 /-- The unary code `1ᵏ0` is prefix-free. -/
 private lemma encodeNat_prefixFree : PrefixFree encodeNat := by

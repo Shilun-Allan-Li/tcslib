@@ -7,13 +7,14 @@ import TCSlib.Cryptography.SecureComputation.GarblingSecurity
 import TCSlib.Complexity.CircuitComplexity.Uniform
 import TCSlib.Complexity.ClassP.BinaryArith.Words
 import TCSlib.Cryptography.Foundations.BitLists
+import TCSlib.Cryptography.SecureComputation.Yao.HybridProof
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Yao's protocol in the OT-hybrid model (statement phase)
+# Yao's protocol in the OT-hybrid model
 
 [PS10, Protocol 162.6]: Alice garbles a circuit for `f` and sends it with the keys of her input
 bits; for each of Bob's input bits the parties run an oblivious transfer in which Bob obtains the
@@ -95,8 +96,9 @@ coins (`yaoSeed`): the keys, `2n` coins per row, and a shift `λ_i` per gate.
   execution when the garbling is good with distinct output keys.
 * `SecureComputation.yaoSeed_good_whp` (proved): the garbling is good with distinct output keys
   except with negligible probability.
-* `SecureComputation.yaoHybrid_polyTime`, `yaoHybrid_simulators` (stated; `sorry`s under sketches):
-  the protocol is efficient, and the simulators of Theorem 163.7.
+* `SecureComputation.yaoHybrid_polyTime` (proved): the protocol is efficient.
+* `SecureComputation.yaoHybrid_simulators` (proved): the simulators of Theorem 163.7 in the
+  OT-hybrid model.
 * `SecureComputation.yaoHybrid_hbcSecure` (Theorem 163.7 in the OT-hybrid model, proved from the
   two previous results).
 
@@ -851,24 +853,159 @@ theorem yaoSeed_good_whp (hG₁ : PRFOut (.add .var .var) G₁)
 [PS10, Definition 155.1], `HybridProtocol.PolyTime`, ruling of 2026-11-05) when `E₁` and `E₂`
 are polynomial-time.
 
-**Proof sketch.** Write `S = sizeBound(n)`.
-1. *Alice* (`Strategy.Efficient`). On the empty history: compute the description of `C_n` from
-   `1^n` by the uniformity map and decode it; read keys, row coins and shifts from her coins;
-   encrypt at most four rows per gate with `E₁` and `E₂`; pair the tables, her input keys and the
-   decoding pairs. The enumeration `Finset.univ.toList` of the assignments of at most two
-   positions is a constant table. On a nonempty history: copy the first message. A uniform
-   machine with coin polynomial `yaoCoins` computes this.
-2. *Bob.* Decode the three lists (`decodeMsgs`), recompute `C_n`, and run `runWith` with
-   `evalGate`: each decryption checks lengths before calling `E₁` or `E₂` (`spDecStr`), and each
-   output key is compared with its pair. This is polynomial in `n` and the message length.
-3. *The calls.* Alice's input to call `(i, t)` is two coins at positions computed from `n`,
-   `inA(n)` and `S` (`keyAt_yaoSeed`); Bob's is one bit of his input.
-4. *The messages.* Whatever `E₁`, `E₂` return, a row has at most `7n + 4` bits (`take` and
-   `zipWith` cap the pads), so Alice's message has `O((S + inA(n) + outLen(n)) · n)` bits after
-   the pairings; Bob's has `outLen(n)` bits. Neither depends on the answers. -/
+**Proof sketch.** The generic garbling program computes Alice's message from the uniform
+circuit description and the seed's key, nonce and shift readers. The generic evaluator
+computes Bob's reply from arbitrary messages and answers. The interactive-layout
+constructor handles every history: Alice sends the garbling or echoes the first message,
+and Bob evaluates the first message. The two OT input machines read the appropriate
+coin blocks and choice bits through the finite-product call index. The truncation bounds
+on ciphertexts give a message envelope independent of the supplied answers. -/
 theorem yaoHybrid_polyTime (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂) :
     (yaoHybrid Y E₁ E₂).PolyTime (yaoFunctionality Y) := by
-  sorry
+  -- Step 1: Alice is efficient. The generic garbling program computes her message from the
+  -- uniform circuit description and the seed's key, nonce and shift readers.
+  open YaoHybridProof in
+  have hAlice : (yaoAlice Y E₁ E₂).Efficient := by
+    obtain ⟨gen, hgen, hgenEq⟩ := Y.uniform
+    have hdesc n : gen (List.replicate n true) = pairEncode (Y.circ n).encode
+        (BinArith.encWords (List.ofFn fun j => encodeNat (Y.outs n j))) := by
+      simpa only [encodeCircuit_eq, encodeMsgs_eq_encWords] using hgenEq n
+    have hfan n (i : Fin (Y.circ n).gates.length) :
+        ((Y.circ n).gates[i]).args.length ≤ 2 :=
+      ((DAGCircuit.isFaninTwo_iff (Y.circ n)).mp (Y.fanin n)).2 _
+        (List.getElem_mem i.isLt)
+    have hN := EncodingMachines.unaryLength_poly GI.argX_poly
+    have hA := (polyTimeComputable_unaryPoly Y.inA).comp' GI.argX_poly
+    have hB := (polyTimeComputable_unaryPoly Y.inB).comp' GI.argX_poly
+    have hp := AliceProgram.message_poly hE₁ hE₂
+      (fun w => (GI.argX w).length) (fun w => Y.sizeBound.eval (GI.argX w).length)
+      (fun w => Y.inA.eval (GI.argX w).length + Y.inB.eval (GI.argX w).length)
+      (fun w => Y.inA.eval (GI.argX w).length) (fun w => Y.outLen.eval (GI.argX w).length)
+      (fun w => gen (List.replicate (GI.argX w).length true))
+      (fun w => pairFstD (GI.argZ w)) NUPPT.inCoins
+      hN ((polyTimeComputable_unaryPoly Y.sizeBound).comp' GI.argX_poly)
+      (EncodingMachines.unaryAdd_poly hA hB) hA
+      ((polyTimeComputable_unaryPoly Y.outLen).comp' GI.argX_poly)
+      (hgen.comp' hN) (polyTimeComputable_pairFstD.comp' GI.argZ_poly)
+      NUPPT.polyTimeComputable_inCoins
+      (fun w => Y.circ (GI.argX w).length)
+      (fun w => yaoSeed Y (GI.argX w).length (NUPPT.inCoins w))
+      (fun w => Y.outs (GI.argX w).length) (fun w => hdesc _)
+      (fun _ => Nat.le_add_right _ _) (fun w => Y.outs_lt _) (fun w => hfan _)
+      (fun w v hv b => by rw [keyAt_yaoSeed Y _ _ hv]; rfl)
+      (fun _ _ _ _ => rfl) (fun _ _ _ _ => rfl) (fun _ _ _ _ => rfl)
+    -- Step 2: the interactive-layout constructor covers every history: Alice sends this
+    -- garbling on the empty history and echoes the first received message otherwise.
+    apply firstThenEcho_efficient (yaoAlice Y E₁ E₂)
+      (fun x z r => yaoMsg Y E₁ E₂ x.length (pairFstD z) r)
+      (yaoAlice_next_nil Y E₁ E₂) (yaoAlice_next_cons Y E₁ E₂)
+    refine hp.congr fun w => ?_
+    simp only [yaoMsg_eq, yaoTables_eq, yaoKeysA_eq, yaoPairs_eq, encodeMsgs_eq_encWords]
+  -- Step 3: Bob is efficient. The generic evaluator computes his reply from arbitrary
+  -- messages and answers.
+  have hBob : (yaoBob Y E₁ E₂).Efficient := by
+    obtain ⟨gen, hgen, hgenEq⟩ := Y.uniform
+    have hdesc n : gen (List.replicate n true) = pairEncode (Y.circ n).encode
+        (BinArith.encWords (List.ofFn fun j => encodeNat (Y.outs n j))) := by
+      simpa only [encodeCircuit_eq, encodeMsgs_eq_encWords] using hgenEq n
+    let msg := fun w => pairFstD (GI.argM w)
+    let ans := fun w => pairSndD (GI.argZ w)
+    have hp := BobProgram.output_poly Y.inA Y.inB Y.outLen Y.circ Y.outs Y.outs_lt
+      hgen hdesc hE₁ hE₂ GI.argX_poly
+      (polyTimeComputable_pairFstD.comp' GI.argM_poly)
+      (polyTimeComputable_pairSndD.comp' GI.argZ_poly)
+      (fun w => yaoBobInit Y (GI.argX w).length (msg w) (ans w))
+      (fun w => yaoBobTables Y (GI.argX w).length (msg w))
+      (fun w => decodeMsgs (pairSndD (pairSndD (msg w))))
+      (fun w => by
+        dsimp only
+        rw [BobInit.initWords_layout, yaoBobInit_eq, List.map_ofFn]
+        simp only [List.length_replicate]
+        apply congrArg BinArith.encWords
+        apply congrArg List.ofFn
+        funext v
+        simp only [Function.comp_apply, Fin.coe_cast]
+        split_ifs
+        · apply congrArg List.ofFn
+          funext t
+          simp only [padFin_apply, Fin.coe_cast, msg]
+          rfl
+        · rfl)
+      (fun w => by simp only [yaoBobInit_eq, List.length_ofFn])
+      (fun w v => by simp only [yaoBobTables_eq]; rfl) (fun _ => rfl)
+    -- Step 4: the interactive-layout constructor covers every history: Bob evaluates its
+    -- first message.
+    apply reply_efficient (yaoBob Y E₁ E₂)
+      (fun x z a => yaoBobOut Y E₁ E₂ x.length a (pairSndD z))
+      (yaoBob_next Y E₁ E₂)
+    refine hp.congr fun w => ?_
+    simp only [yaoBobOut_eq, yaoBobValues_eq, decodeOut_eq, msg, ans]
+  -- Step 5: by `HybridProtocol.polyTime_iff`, it remains to give the two OT call-input
+  -- machines and the message envelope.
+  apply (HybridProtocol.polyTime_iff (yaoHybrid Y E₁ E₂) (yaoFunctionality Y)).mpr
+  refine ⟨hAlice, hBob,
+    ⟨OTInputs.otInputA Y.inA Y.sizeBound,
+      OTInputs.polyTimeComputable_otInputA Y.inA Y.sizeBound, ?_⟩,
+    ⟨OTInputs.otInputB, OTInputs.polyTimeComputable_otInputB, ?_⟩, ?_⟩
+  -- Step 6: for call `(i, t)`, Alice's OT input machine reads bit `t` of both keys of wire
+  -- `inA + i` from the seed's coin blocks, through the finite-product call index.
+  · intro n x r j
+    have hlen : otFunctionality.inA.eval n = 2 := by
+      rw [otFunctionality_inA, PolyExpr.eval_const]
+    rw [List.ofFn_congr hlen]
+    apply CallEquations.inputA_eq Y.inA Y.sizeBound n (Y.inB.eval n) x r
+    intro i t c
+    rw [yaoHybrid_callA, yaoCall_finProdFinEquiv]
+    rw [keyAt_yaoSeed Y n r (by
+      rw [DAGCircuit.size_eq]
+      have := i.isLt
+      omega), readBits_apply]
+    simp only [Nat.add_assoc]
+  -- Step 7: for call `(i, t)`, Bob's OT input machine reads his choice bit `y_i`, through the
+  -- finite-product call index.
+  · intro n x r j
+    have hlen : otFunctionality.inB.eval n = 1 := by
+      rw [otFunctionality_inB, PolyExpr.eval_const]
+    rw [List.ofFn_congr hlen]
+    apply CallEquations.inputB_eq n (Y.inB.eval n) x r
+    intro i t c
+    rw [yaoHybrid_callB, yaoCall_finProdFinEquiv]
+  -- Step 8: the truncation bounds on ciphertexts bound Alice's message, Bob's reply has
+  -- `outLen` bits, and the two-move bound gives an envelope independent of the answers.
+  · have hfan n (i : Fin (Y.circ n).gates.length) :
+        ((Y.circ n).gates[i]).args.length ≤ 2 :=
+      ((DAGCircuit.isFaninTwo_iff (Y.circ n)).mp (Y.fanin n)).2 _
+        (List.getElem_mem i.isLt)
+    have hLA (w z r : List Bool) :
+        (yaoMsg Y E₁ E₂ w.length (pairFstD z) r).length ≤
+          (aliceMessageBound Y.sizeBound Y.inA Y.outLen).eval w.length := by
+      rw [yaoMsg_eq, aliceMessageBound_eq]
+      apply length_message_of_parts_le
+      · rw [yaoTables_eq]
+        have ht := length_encoded_garbledTables_le E₁ E₂ w.length
+          (Y.circ w.length) (yaoSeed Y w.length r) (hfan w.length)
+        have hs := Y.size_le w.length
+        rw [DAGCircuit.size_eq] at hs
+        exact ht.trans (Nat.mul_le_mul_right _ (by omega))
+      · rw [yaoKeysA_eq]
+        exact length_encoded_keys_le _
+      · rw [yaoPairs_eq]
+        exact length_encoded_pairs_le _
+    have hLB (w z r a : List Bool) :
+        (yaoBobOut Y E₁ E₂ w.length a (pairSndD z)).length ≤ Y.outLen.eval w.length := by
+      rw [yaoBobOut_eq, List.length_ofFn]
+    refine ⟨.add (aliceMessageBound Y.sizeBound Y.inA Y.outLen) Y.outLen, ?_⟩
+    intro n x y aA aB r msg hm
+    have h := twoMove_message_length_le (yaoMain Y E₁ E₂)
+      (fun w z r => yaoMsg Y E₁ E₂ w.length (pairFstD z) r)
+      (fun w z _ a => yaoBobOut Y E₁ E₂ w.length a (pairSndD z))
+      (yaoMain_rounds Y E₁ E₂) (yaoMain_verifierFirst Y E₁ E₂)
+      (fun _ _ _ => yaoAlice_next_nil Y E₁ E₂ _ _ _)
+      (fun _ _ _ _ => yaoBob_next Y E₁ E₂ _ _ _ _)
+      (aliceMessageBound Y.sizeBound Y.inA Y.outLen) Y.outLen hLA hLB
+      (List.replicate n true) (pairEncode (List.ofFn x) (List.ofFn aA))
+      (pairEncode (List.ofFn y) (List.ofFn aB)) r msg hm
+    simpa only [List.length_replicate] using h
 
 include hGE₁ hGE₂ in
 /-- **The simulators of Theorem 163.7, in the OT-hybrid model** [PS10, Theorem 163.7]: with
@@ -885,53 +1022,18 @@ under one unknown key. A reduction to the security of `G₁` alone cannot produc
 under that key, nor conversely; the two separate PRF assumptions do not give their security
 under a shared key in general.
 
-**Proof sketch.** Write `f = f(x, y)`. Alice's view in the hybrid execution is
-`⟨1^n, ⟨x, []⟩, r_A, [m_B]⟩` (her OT answers are empty), Bob's is `⟨1^n, ⟨y, ans⟩, [], [m_A]⟩`
-with `ans` the bits of the keys `k_{inA + i}^{y_i}` (`yaoHybrid_answersB_getD`). Let `Bad` be the
-event that the garbling is not good or some output vertex has two equal keys; by
-`yaoSeed_good_whp` it has probability at most `δ(n)`, and off `Bad` both outputs are `f`
-(`yaoHybrid_correct`).
-1. *`S_A(1^n, ⟨x, f⟩)`*, with `yaoCoins(n)` coins `r`: the view `⟨1^n, ⟨x, []⟩, r, [f]⟩`. The
-   source's `S_A` also simulates the OT transcripts with Proposition 161.5's simulator; in the
-   hybrid model there are none. Off `Bad`, `m_B = f` and Bob outputs `f`, so the real and ideal
-   samplers agree outside an event of probability at most `δ(n)`; every distinguisher has
-   advantage at most `δ(n)`, for all inputs.
-2. *`S_B(1^n, ⟨y, f⟩)`*, with `yaoCoins(n)` coins: read a seed `s = yaoSeed` and let the active
-   key of every wire be `k_w = k_w^0`. The fake garbled circuit has the real enumeration and
-   shifts, but every row of gate `i` encrypts the active key `k_{inA + inB + i}` under that row's
-   argument keys. Alice's input keys are the active keys, and so are Bob's answers. The pair of
-   output `j` is `⟨k_o^0, k_o^1⟩` if `f_j = 0` and `⟨k_o^1, k_o^0⟩` otherwise, so the active key
-   decodes to `f_j`. This is the source's "garbled circuit that always outputs `f(x, y)`", in the
-   one-active-key form of [LP09]. `S_B` outputs `⟨1^n, ⟨y, ans'⟩, [], [m'_A]⟩`.
-3. *Bob's side, the hybrid over gates* [PS10, "using a hybrid argument …"].
-   - `H₀` is the real sampler.
-   - In `H₁`, wire `w` with value `v_w` on `(x, y)` has active key `a_w = k_w^{v_w}` and inactive
-     key `ι_w = k_w^{1−v_w}`, and gate `i` the shift `λ_i ⊕ v_{args}`. This is a bijection of
-     Alice's coins, so `H₁ = H₀`. In these terms the opened row of every gate is the row of the
-     all-active assignment; its position is uniform, given by the shift. Bob holds only active
-     keys, and the active key of output `j` decodes to `f_j`.
-   - `H₂,ᵢ` makes the rows of the gates below `i` encrypt the active output key. Then
-     `H₂,₀ = H₁`, and `H₂,|gates|` is `S_B`'s output up to renaming the keys.
-   - `H₂,ᵢ ≈ H₂,ᵢ₊₁`: the rows that change are encrypted under an inactive key `ι_u` of an
-     argument `u` of gate `i`: in the outer layer if `u` is the first argument, else in the inner
-     one. In `H₂,ᵢ`, `ι_u` is only an encryption key, of rows of the gates that read `u`:
-     - it is no plaintext: if `u` is a gate, it precedes gate `i` and its table is already fake;
-     - it is in no decoding pair: no gate reads an output vertex (`YaoCircuit.outs_sink`);
-     - it is not among Alice's keys or Bob's answers, which are active.
-
-     A distinguisher between the two gives one against the multi-message security of
-     Algorithm 157.2 under `ι_u`: the reduction samples everything else and obtains the rows
-     under `ι_u` from its challenge, with plaintexts `ι_{inA + inB + i}` versus
-     `a_{inA + inB + i}` for the changed rows. For the inner layer this is Claim 157.a (i)
-     (`specialScheme_multiMessageSecure`, `n`-bit messages with `G₁`). For the outer layer it is
-     the same claim for `(4n + 2)`-bit messages with `G₂`. Since `ι_u` may key both layers, the
-     reduction needs the two schemes' ciphertexts under one key: the same proof, with the
-     joint PRF `hG₁₂` replaced by a random function (not yet stated in the library).
-   - The reductions are non-uniform: their advice at `n` is the worst inputs `(x, y)` and the
-     hybrid index. This makes the bound `2 · S(n) · ε_MM(n)` uniform over the inputs.
-   - Bob's real output pair adds `Bad`: the total is `δ(n) + 2 · S(n) · ε_MM(n)`, negligible.
-4. *Efficiency of the simulators.* `S_A` copies its input and coins. `S_B` builds `C_n` with the
-   uniformity map and encrypts with `E₁` and `E₂`; both are uniform PPT machines. -/
+**Proof sketch.** Fix the uniform copying simulator for Alice and fake garbler for Bob.
+The frozen good-seed statement supplies one negligible bad-event bound before any inputs.
+Outside that event, correctness gives both prescribed functionality outputs.
+The copying-view coupling simulates Alice; the same event permits Bob's output switch.
+The actual two-message view and ideal OT answers identify Bob's selected-key real view.
+An exact permutation of the full coin tape identifies this view with stage zero.
+The gate hybrid has two substeps per gate, replacing rows under an inactive argument key.
+Each neighbor reduces to the frozen joint multi-message encryption statement.
+Coordinate swapping preserves the seed law, and reconstruction gives the exact challenge.
+Finite worst-input and stage advice yields a negligible bound uniform over both inputs.
+The last-stage payload is the fixed Bob simulator's canonical prescribed-output view.
+Exact endpoint transport and the statistical bound give their negligible sum for both sides. -/
 theorem yaoHybrid_simulators (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeComputable E₂)
     (hG₁ : PRFOut (.add .var .var) G₁) (hG₂ : PRFOut (.add .var innerLen) G₂)
     (hG₁₂ : PRFOut (.add (.add .var .var) (.add .var innerLen))
@@ -943,7 +1045,130 @@ theorem yaoHybrid_simulators (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTime
             ((yaoFunctionality Y).idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
           distAdv ((yaoHybrid Y E₁ E₂).realB (yaoFunctionality Y) n x y)
             ((yaoFunctionality Y).idealB SB n x y) (D.distinguisherL n) ≤ ε n := by
-  sorry
+  open YaoHybridProof in
+  classical
+  have hFan n (i : Fin (Y.circ n).gates.length) :=
+    ((DAGCircuit.isFaninTwo_iff (Y.circ n)).mp (Y.fanin n)).2 _ (List.getElem_mem i.isLt)
+  have hSeedK := yaoSeed_fst Y
+  have hSeedR₀ := fun n q i a => congrArg Prod.fst (yaoSeed_snd_fst Y n q i a)
+  have hSeedR₁ := fun n q i a => congrArg Prod.snd (yaoSeed_snd_fst Y n q i a)
+  obtain ⟨gen, hgen, hgenEq⟩ := Y.uniform
+  obtain ⟨SB, hSBuniform, hSBcoins, _, hIdeal⟩ := FakeSimulatorFactory.exists_simulator
+    (E₁ := E₁) (E₂ := E₂) (E₁_poly := hE₁) (E₂_poly := hE₂)
+    (bound := Y.sizeBound) (inputs := .add Y.inA Y.inB) (inA := Y.inA) (inB := Y.inB)
+    (outLen := Y.outLen) (gen := gen) (gen_poly := hgen) (circuit := Y.circ)
+    (output := Y.outs) (output_lt := Y.outs_lt) (seed := yaoSeed Y) (fanin := hFan)
+    (shape := fun n => by
+      simpa only [encodeCircuit_eq, encodeMsgs_eq_encWords] using hgenEq n)
+    (input_range := fun n => Nat.le_refl (Y.inA.eval n + Y.inB.eval n))
+    (key := by intro n q w hw b; funext t; rw [keyAt_eq, dif_pos hw, hSeedK, readBits_apply])
+    (nonce₀ := by intro n q i a t; simp only [hSeedR₀, readBits_apply, assignIdx_eq])
+    (nonce₁ := by intro n q i a t; simp only [hSeedR₁, readBits_apply, assignIdx_eq])
+    (permutation := by
+      intro n q i a t; simp only [yaoSeed_snd_snd, xorShift_apply, readBits_apply])
+    (coins := yaoCoins Y)
+  obtain ⟨δ, hδ, hWHP⟩ := yaoSeed_good_whp Y E₁ E₂ G₁ G₂ hGE₁ hGE₂ hG₁ hG₂
+  let BadWord n q := ¬ (Good (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n q) ∧
+    ∀ j, keyAt (Y.circ n) (yaoSeed Y n q) (Y.outs n j) false ≠
+      keyAt (Y.circ n) (yaoSeed Y n q) (Y.outs n j) true)
+  let switched n x y := fun r : (yaoHybrid Y E₁ E₂).Coins n => pairEncode
+    ((yaoHybrid Y E₁ E₂).main.viewV (List.replicate n true)
+      ((yaoHybrid Y E₁ E₂).privA n (List.ofFn x) (List.ofFn y)
+        (List.ofFn r.1) (List.ofFn r.2))
+      ((yaoHybrid Y E₁ E₂).privB n (List.ofFn x) (List.ofFn y)
+        (List.ofFn r.1) (List.ofFn r.2)) r).encode
+    (List.ofFn ((yaoFunctionality Y).f n x y).1)
+  let v n (x : Fin (Y.inA.eval n) → Bool) (y : Fin (Y.inB.eval n) → Bool) w :=
+    ((Y.circ n).values (Fin.append x y)).getD w false
+  let game n x y stage := fun r :
+      Fin (10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n) → Bool =>
+    GateHybridMessage.sample (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n (List.ofFn r))
+      (Y.inA.eval n) (Y.inB.eval n) (Y.outLen.eval n) (Y.outs n) (v n x y)
+      (List.replicate n true) (List.ofFn y) [] (List.ofFn (Y.output n x y)) stage
+  have hAlice := AliceStatistical.distAdv_real_ideal_le (yaoHybrid Y E₁ E₂)
+    (yaoFunctionality Y) (yaoCoins Y) rfl (yaoMain_rounds Y E₁ E₂)
+    (yaoMain_verifierFirst Y E₁ E₂) BadWord δ hWHP (fun _ _ _ => rfl)
+    (fun n x y r hr => (yaoHybrid_correct Y E₁ E₂ n x y r
+      (not_not.mp hr).1 (not_not.mp hr).2).1)
+  have hSwitch := BobStatistical.statClose_real_output_switch
+    (yaoHybrid Y E₁ E₂) (yaoFunctionality Y) (yaoCoins Y) rfl BadWord δ hWHP
+    (fun n x y r hr => (yaoHybrid_correct Y E₁ E₂ n x y r
+      (not_not.mp hr).1 (not_not.mp hr).2).2)
+  -- The joint slice-security consumer supplies the complete computational hybrid.
+  have hBob : ∀ D : NUPPT, ∃ μ : ℕ → ℝ, Negligible μ ∧ ∀ n x y,
+      distAdv (game n x y 0) (game n x y (2 * (Y.circ n).gates.length))
+        (D.distinguisherL n) ≤ μ n := by
+    intro D
+    obtain ⟨μ, hμ, hBound⟩ := GateHybridSecurity.endpoint_negligible
+      (L := .add (.add .var .var) (.add .var innerLen))
+      (I := fun n => (Fin (Y.inA.eval n) → Bool) × (Fin (Y.inB.eval n) → Bool))
+      Y.circ Y.sizeBound Y.inA Y.inB Y.outLen Y.outLen (yaoSeed Y)
+      (fun n z => v n z.1 z.2) Y.outs (fun _ z => List.ofFn z.2)
+      (fun n z => List.ofFn (Y.output n z.1 z.2)) Y.size_le Y.fanin
+      (fun n z => GateHybrids.values_consistent (Y.circ n) (Fin.append z.1 z.2)) Y.outs_sink
+      (fun n z => by simp only [List.length_ofFn, le_refl])
+      (fun n z => by simp only [List.length_ofFn, le_refl])
+      (fun n s x => Fin.append (G₁ n s x) (G₂ n s x)) G₁ G₂ E₁ E₂ hE₂
+      (fun n s x => List.ofFn_fin_append (G₁ n s x) (G₂ n s x)) hGE₁ hGE₂
+      (fun n => by
+        simp only [PolyExpr.eval_add, innerLen_eq, PolyExpr.eval_mul,
+          PolyExpr.eval_const, PolyExpr.eval_var]
+        omega)
+      (sliceMultiMessageSecure_of_prfOut hG₁₂)
+      (fun n q w b t => by rw [hSeedK, readBits_apply])
+      (fun n q i a t => by simp only [hSeedR₀, readBits_apply, assignIdx_eq])
+      (fun n q i a t => by simp only [hSeedR₁, readBits_apply, assignIdx_eq])
+      (fun n q i a t => by simp only [yaoSeed_snd_snd, xorShift_apply, readBits_apply]) D
+    exact ⟨μ, hμ, fun n x y => hBound n (x, y)⟩
+  refine ⟨AliceSimulator.simulator (yaoCoins Y), SB, simulators_of_output_switch
+    (yaoHybrid Y E₁ E₂) (yaoFunctionality Y) _ SB switched δ hδ hAlice hSwitch ?_⟩
+  intro D; obtain ⟨μ, hμ, hBound⟩ := hBob D
+  refine ⟨μ, hμ, ?_⟩; intro n x y
+  have hvA (i : Fin (Y.inA.eval n)) : v n x y i = (List.ofFn x).getD i false := by
+    rw [List.getD_eq_getElem _ _ (by simpa only [List.length_ofFn] using i.isLt),
+      List.getElem_ofFn]
+    simpa only [Fin.coe_castAdd, Fin.append_left] using
+      (Y.circ n).values_getD_input (Fin.append x y) (Fin.castAdd (Y.inB.eval n) i)
+  have hvB (i : Fin (Y.inB.eval n)) : v n x y (Y.inA.eval n + i) =
+      (List.ofFn y).getD i false := by
+    rw [List.getD_eq_getElem _ _ (by simpa only [List.length_ofFn] using i.isLt),
+      List.getElem_ofFn]
+    simpa only [Fin.coe_natAdd, Fin.append_right] using
+      (Y.circ n).values_getD_input (Fin.append x y) (Fin.natAdd (Y.inA.eval n) i)
+  have hStart := BobStageZero.acceptProb_eq_stage0 (Y.circ n) (Y.sizeBound.eval n) n
+    (hFan n) (v n x y) (Y.size_le n) (yaoSeed Y n)
+    (fun q w b t => by rw [hSeedK, readBits_apply])
+    (fun q i a t => by simp only [hSeedR₀, readBits_apply, assignIdx_eq])
+    (fun q i a t => by simp only [hSeedR₁, readBits_apply, assignIdx_eq])
+    (fun q i a t => by simp only [yaoSeed_snd_snd, xorShift_apply, readBits_apply])
+    (nestedSpecial E₁ E₂ n) (Y.inA.eval n) (Y.inB.eval n) (Y.outLen.eval n) (Y.outs n)
+    (yaoHybrid Y E₁ E₂) (yaoMsg Y E₁ E₂) rfl rfl rfl (yaoAlice_next_nil Y E₁ E₂)
+    (List.ofFn x) (List.ofFn y) (List.ofFn ((yaoFunctionality Y).f n x y).1)
+    (by rw [Strategy.coinLen_eq, List.length_replicate, yaoHybrid_main, yaoMain_P,
+      yaoAlice_coins, yaoCoins_eval])
+    (by rw [yaoHybrid_calls, PolyExpr.eval_mul, PolyExpr.eval_var]) hvB
+    (fun q r => yaoHybrid_answersB_getD Y E₁ E₂ n _ _ q r)
+    (fun r => by simp only [yaoMsg_eq, yaoTables_eq, yaoKeysA_eq, yaoPairs_eq,
+      encodeMsgs_eq_encWords, ← hvA]) (D.distinguisherL n)
+  let e := (Equiv.arrowCongr (finCongr (yaoCoins_eval Y n).symm) (Equiv.refl Bool)).trans
+    (NUPPT.coinsEquivPoly hSBcoins n).symm
+  have hEnd := SamplerEndpoints.acceptProb_end_eq_ideal (nestedSpecial E₁ E₂ n) (Y.circ n)
+    (fun r => yaoSeed Y n (List.ofFn r)) (Y.inA.eval n) (Y.inB.eval n) (Y.outLen.eval n)
+    (Y.outs n) (v n x y) (fun j => (List.ofFn ((yaoFunctionality Y).f n x y).2).getD j false)
+    (fun j => by
+      change v n x y (Y.outs n j) =
+        (List.ofFn ((yaoFunctionality Y).f n x y).2).getD j false
+      rw [List.getD_eq_getElem _ _ (by simpa only [List.length_ofFn] using j.isLt),
+        List.getElem_ofFn]; rfl) (List.replicate n true) (List.ofFn y) []
+    (List.ofFn ((yaoFunctionality Y).f n x y).1) e ((yaoFunctionality Y).idealB SB n x y)
+    (fun r => by
+      simpa only [e, Equiv.trans_apply, NUPPT.coinsEquivPoly_symm_ofFn,
+        ofFn_arrowCongr_finCongr] using
+        (hIdeal (yaoFunctionality Y) n x y (e r))) (D.distinguisherL n)
+  rw [distAdv_def, hStart, ← hEnd]
+  have hb := hBound n x y
+  rw [distAdv_def] at hb
+  exact hb
 
 include hGE₁ hGE₂ in
 /-- **Theorem 163.7 in the OT-hybrid model** [PS10, Theorem 163.7; Gol04, §7.3]: for a uniform
