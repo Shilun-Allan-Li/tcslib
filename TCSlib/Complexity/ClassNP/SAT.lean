@@ -9,6 +9,7 @@ import TCSlib.Complexity.ClassNP.Reductions
 import TCSlib.Complexity.ClassNP.Transducer
 import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
 import TCSlib.Complexity.TuringMachine.Build.WordTests
+import TCSlib.Complexity.ClassNP.CleanCall
 import Mathlib.Tactic.FinCases
 import Mathlib.Data.List.MinMax
 
@@ -3599,21 +3600,13 @@ private lemma satAppend_rewind (x w : List Bool) (i : Fin (x.length + 2)) :
     exact ih (by omega)
 
 /-- A padded halting run can be cut at its first positive halt without changing
-any endpoint field. Apply `Turing.MultiTapeTM.exists_first_halt`; the live
-initial state excludes time zero. -/
+any endpoint field (`Turing.MultiTapeTM.exists_first_halt_pos`). -/
 private lemma sat_call_first_halt {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
     (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :
     ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
-      tm.runFrom cfg u = tm.runFrom cfg t := by
-  obtain ⟨u, hu, hg, he⟩ := MultiTapeTM.exists_first_halt tm cfg hhalt
-  have hp : 0 < u := by
-    by_contra hn
-    have hz : u = 0 := by omega
-    have hs := congrArg Cfg.state he
-    rw [hz, MultiTapeTM.runFrom_zero, hhalt] at hs
-    exact hstart hs
-  exact ⟨u, hp, hu, hg, he⟩
+      tm.runFrom cfg u = tm.runFrom cfg t :=
+  MultiTapeTM.exists_first_halt_pos tm cfg t hstart hhalt
 
 /-- The appender has a full clean return, in linear time in the native input
 and existing word. Both input and work heads return to their canonical origins.
@@ -3719,78 +3712,6 @@ private lemma satPad_seam {k K : ℕ} {S : Type} {x : List Bool}
   · funext i
     by_cases hi : i.val < k <;> simp [satPadCfg, Cfg.ofWords, hi]
 
-/-- Convert a first-positive-exit module into a halting source for `emit_run`.
-The Boolean release flag ensures even an entry equal to exit executes once. -/
-private def satStopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool where
-  k := C.k
-  State := Bool × C.State
-  tm := { q₀ := (false, entry)
-          tr := fun q inp work =>
-            if q.1 = true ∧ q.2 = exit then FinTM.controlAction 0 none
-            else {C.tm.tr q.2 inp work with state := (C.tm.tr q.2 inp work).state.map (true, ·)} }
-
-/-- Release-flag embedding preserves all physical fields of a call. -/
-private def satStopCfg {k : ℕ} {S : Type} {x : List Bool}
-    (b : Bool) (c : Cfg k Bool S x) : Cfg k Bool (Bool × S) x :=
-  ⟨c.state.map (b, ·), c.inputPos, c.workTapes, c.workTapePos, c.output⟩
-
-/-- Before the designated positive exit, the stopped source takes the same
-physical step as the module and raises the release flag. -/
-private lemma satStop_step (C : FinTM Bool) (entry exit : C.State)
-    {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x)
-    (hlive : c.state ≠ none) (hg : b = true → c.state ≠ some exit) :
-    (satStopTM C entry exit).tm.step (satStopCfg b c) = satStopCfg true (C.tm.step c) := by
-  cases hs : c.state with
-  | none => exact False.elim (hlive hs)
-  | some q =>
-    have hq : ¬(b = true ∧ q = exit) := by
-      rintro ⟨hb, rfl⟩; exact hg hb hs
-    simp only [MultiTapeTM.step, satStopCfg, hs, Option.map_some]
-    simp only [satStopTM, hq, ↓reduceIte]
-    rfl
-
-/-- Live endpoints force earlier module states to be live by
-`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/
-private lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
-    (ht : (tm.runFrom c t).state ≠ none) :
-    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
-  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht
-
-/-- Stop a clean call one silent step after its certified first positive exit.
-**Proof sketch.** Induct on prefixes, keeping the release flag false only at
-time zero. The supplied guard prevents early stopping; a final silent halt
-retains every canonical seam field and every emitted bit. -/
-private lemma satStop_clean (C : FinTM Bool) (entry exit : C.State)
-    (x arg result out : List Bool) (t : ℕ) (ht : 0 < t)
-    (hg : ∀ v, 0 < v → v < t → (C.tm.runFrom
-      (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state ≠ some exit)
-    (he : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
-      {Cfg.ofWords exit (stateWord C.k result) with output := out}) :
-    (satStopTM C entry exit).tm.runFrom
-      (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1) =
-      {Cfg.ofWords (true, exit) (stateWord C.k result) with state := none, output := out} := by
-  let c := Cfg.ofWords (input := x) entry (stateWord C.k arg)
-  have hl := sat_live_prefix C.tm c t (by rw [show C.tm.runFrom c t = _ from he]; simp [Cfg.ofWords])
-  have hp : ∀ v, v ≤ t → (satStopTM C entry exit).tm.runFrom (satStopCfg false c) v =
-      satStopCfg (decide (v ≠ 0)) (C.tm.runFrom c v) := by
-    intro v
-    induction v with
-    | zero => intro _; rfl
-    | succ v ih =>
-      intro hv
-      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
-        satStop_step C entry exit _ _ (hl v (by omega)) (by
-          intro hn
-          exact hg v (Nat.pos_of_ne_zero (of_decide_eq_true hn)) (by omega)),
-        MultiTapeTM.runFrom_succ_eq_step']
-      rfl
-  have hi : Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg) = satStopCfg false c := rfl
-  rw [hi, MultiTapeTM.runFrom_succ_eq_step', hp t (Nat.le_refl _)]
-  have hflag : decide (t ≠ 0) = true := by simp [Nat.ne_of_gt ht]
-  rw [hflag, show C.tm.runFrom c t = _ from he]
-  simp [MultiTapeTM.step, satStopTM, satStopCfg, Cfg.ofWords, FinTM.controlAction, Action.apply]
-
 /-- Six finite modules form the streaming body: startup append and install,
 then the recurring pack, append, emit, and install calls. -/
 private abbrev SatHostState (M : Fin 6 → FinTM Bool) := Unit ⊕ (Σ i, (M i).State)
@@ -3886,111 +3807,32 @@ private lemma satHost_call (M : Fin 6 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M 
     exact satHost_seam M K i hp x result pre out q none
 
 /-- Joining two guarded segments preserves the first-return guard when the
-intermediate seam is also outside the anchor. -/
+intermediate seam is also outside the anchor (`Turing.MultiTapeTM.avoid_add`). -/
 private lemma sat_guard_add {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S x) (a b : ℕ)
     (ha : ∀ v < a, (tm.runFrom c v).state ≠ some anchor)
     (he : tm.runFrom c a = d)
     (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :
-    ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor := by
-  have h₁ : Turing.Segment tm {some anchor} (fun _ => True) c d a :=
-    (Turing.segment_iff tm {some anchor} (fun _ => True) c d a).mpr
-      ⟨he, fun v hv hm => ha v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
-  have h₂ : Turing.Segment tm {some anchor} (fun _ => True) d (tm.runFrom d b) b :=
-    (Turing.segment_iff tm {some anchor} (fun _ => True) d (tm.runFrom d b) b).mpr
-      ⟨rfl, fun v hv hm => hb v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
-  have h := (Turing.segment_iff tm {some anchor} (fun _ => True) c (tm.runFrom d b)
-    (a + b)).mp (Turing.Segment.trans h₁ h₂)
-  intro v hv hm
-  exact h.2.1 v hv (Set.mem_singleton_iff.mpr hm)
+    ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor :=
+  MultiTapeTM.avoid_add tm anchor c d a b ha he hb
 
 /-- Uniform clean-module contract: a first halt with a prescribed replacement
-word and emitted chunk, over every untouched native input. -/
-private def SatClean (M : FinTM Bool) (result emit : List Bool → List Bool) (B : ℕ → ℕ) : Prop :=
-  0 < M.k ∧ ∀ x arg : List Bool, ∃ t, 0 < t ∧ t ≤ B arg.length ∧
-    (∀ v < t, ¬(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) v).Halted) ∧
-    M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) t =
-      {Cfg.ofWords M.tm.q₀ (stateWord M.k (result arg)) with state := none, output := emit arg}
-
-/-- Turn a clean-call bridge contract into the uniform first-halting form.
-**Proof sketch.** The release wrapper stops one step after the positive exit;
-minimal-halt cutting retains its entire clean configuration. -/
-private lemma satClean_stop (C : FinTM Bool) (entry exit : C.State)
-    (result emit : List Bool → List Bool) (B : ℕ → ℕ) (hk : 0 < C.k)
-    (h : ∀ x arg : List Bool, ∃ t ≤ B arg.length, 0 < t ∧
-      (∀ v, 0 < v → v < t → (C.tm.runFrom
-        (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state ≠ some exit) ∧
-      C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
-        {Cfg.ofWords exit (stateWord C.k (result arg)) with output := emit arg}) :
-    SatClean (satStopTM C entry exit) result emit (fun n => B n + 1) := by
-  refine ⟨hk, fun x arg => ?_⟩
-  obtain ⟨t, hb, ht, hg, he⟩ := h x arg
-  have hs := satStop_clean C entry exit x arg (result arg) (emit arg) t ht hg he
-  obtain ⟨u, hu, hut, hguard, hend⟩ := sat_call_first_halt (satStopTM C entry exit).tm
-    (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1)
-    (by simp [Cfg.ofWords]) (by rw [hs])
-  refine ⟨u, hu, by dsimp only; omega, hguard, ?_⟩
-  simpa only [satStopTM, Cfg.ofWords] using hend.trans hs
-
-/-- The bridge overhead is bounded by one monomial of degree one higher.
-**Proof sketch.** Output length is bounded by source time; `n+1` and both
-source-time terms fit the larger power. The last unit pays for stopping. -/
-private lemma sat_bridge_bound (c A d n len : ℕ) (hlen : len ≤ A * (n + 1) ^ d) :
-    c * (A * (n + 1) ^ d + n + len + 1) + 1 ≤
-      (c * (2 * A + 1) + 1) * (n + 1) ^ (d + 1) := by
-  have hd := Nat.mul_le_mul_left A
-    (Nat.pow_le_pow_right (Nat.succ_pos n) (show d ≤ d + 1 by omega))
-  simp only [Nat.succ_eq_add_one] at hd
-  have hn : n + 1 ≤ (n + 1) ^ (d + 1) := by
-    simpa using Nat.pow_le_pow_right (Nat.succ_pos n) (show 1 ≤ d + 1 by omega)
-  have h1 : 1 ≤ (n + 1) ^ (d + 1) := by omega
-  calc
-    _ ≤ c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + 1 := by
-      apply Nat.add_le_add_right
-      apply Nat.mul_le_mul_left
-      simp only [Nat.add_mul, Nat.one_mul, Nat.mul_assoc, two_mul]
-      omega
-    _ ≤ c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + (n + 1) ^ (d + 1) := Nat.add_le_add_left h1 _
-    _ = _ := by ring
+word and emitted chunk, over every untouched native input (`Turing.FinTM.CleanModule`). -/
+private abbrev SatClean (M : FinTM Bool) (result emit : List Bool → List Bool) (B : ℕ → ℕ) :
+    Prop :=
+  FinTM.CleanModule M result emit B
 
 /-- Every polynomial word computation has a clean first-halting install
 module with a polynomial budget on the argument length. -/
 private lemma satClean_install {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
-    ∃ M A d, SatClean M f (fun _ => []) (fun n => A * (n + 1) ^ d) := by
-  obtain ⟨F, A, d, hF⟩ := hf
-  obtain ⟨C, entry, exit, c, hk, hc⟩ := FinTM.exists_installCallTM F f _ hF
-  -- The bridge's result length depends on the word, so enlarge it pointwise
-  -- to source time before putting it in the uniform argument-length budget.
-  have hlen (arg : List Bool) : (f arg).length ≤ A * (arg.length + 1) ^ d := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hF arg)).2
-    simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
-  have hstop := satClean_stop C entry exit f (fun _ => [])
-    (fun n => c * (A * (n + 1) ^ d + n + A * (n + 1) ^ d + 1)) hk (by
-      intro x arg
-      obtain ⟨t, ht, hp, hg, he⟩ := hc x arg
-      refine ⟨t, ht.trans (Nat.mul_le_mul_left c (by have := hlen arg; omega)), hp, hg, ?_⟩
-      exact he)
-  refine ⟨satStopTM C entry exit, c * (2 * A + 1) + 1, d + 1, hk, fun x arg => ?_⟩
-  obtain ⟨t, hp, ht, hg, he⟩ := hstop.2 x arg
-  exact ⟨t, hp, ht.trans (sat_bridge_bound c A d arg.length _ (Nat.le_refl _)), hg, he⟩
+    ∃ M A d, SatClean M f (fun _ => []) (fun n => A * (n + 1) ^ d) :=
+  exists_cleanInstall hf
 
 /-- The emit-mode counterpart preserves the argument and forwards the exact
 computed chunk. Its polynomial budget includes cleanup and the final halt. -/
 private lemma satClean_emit {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
-    ∃ M A d, SatClean M id f (fun n => A * (n + 1) ^ d) := by
-  obtain ⟨F, A, d, hF⟩ := hf
-  obtain ⟨C, entry, exit, c, hk, hc⟩ := FinTM.exists_emitCallTM F f _ hF
-  have hlen (arg : List Bool) : (f arg).length ≤ A * (arg.length + 1) ^ d := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hF arg)).2
-    simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
-  have hstop := satClean_stop C entry exit id f
-    (fun n => c * (A * (n + 1) ^ d + n + A * (n + 1) ^ d + 1)) hk (by
-      intro x arg
-      obtain ⟨t, ht, hp, hg, he⟩ := hc x arg
-      exact ⟨t, ht.trans (Nat.mul_le_mul_left c (by have := hlen arg; omega)), hp, hg, he⟩)
-  refine ⟨satStopTM C entry exit, c * (2 * A + 1) + 1, d + 1, hk, fun x arg => ?_⟩
-  obtain ⟨t, hp, ht, hg, he⟩ := hstop.2 x arg
-  exact ⟨t, hp, ht.trans (sat_bridge_bound c A d arg.length _ (Nat.le_refl _)), hg, he⟩
+    ∃ M A d, SatClean M id f (fun n => A * (n + 1) ^ d) :=
+  exists_cleanEmit hf
 
 /-- Pairing length, used to charge every request to the original input. -/
 private lemma satPair_length (u v : List Bool) :
