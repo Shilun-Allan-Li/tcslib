@@ -2064,3 +2064,11 @@ status columns.
 
 Everything else that is open, and its wave, is in `REFACTOR-PLAN.md` §2. CH34-D3 and the optional
 items are carried in the register (§4).
+
+**BW-1 and CH34-D4 (gate 143, 2026-11-16).** PR #329 retires the copied proofs: `Build/StepBlock`'s
+four private buffer-word lemmas are one-line citations of `TuringMachine/BufferWords`' public ones
+(the declarations are kept as aliases, so their use sites stay byte-identical: an accepted
+deviation from the 2026-10-18 deletion wording, gate 143 resolutions); `Separation`'s
+`bits_two_pow` and `MeyerTableau`'s `incFixed_eq_none_iff` cite the #70 lemmas. Status: **retired
+upon #329's merge**. Not covered: the pre-existing foreign-definition reads in the aliases' use
+sites (`StepBlock`'s round proofs; `timeConstructible_two_pow`), which are legacy rule-10 debt.
