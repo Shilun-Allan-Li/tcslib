@@ -21,7 +21,7 @@ fresh probes in campaign/status/2026-11-16-closeout-probes/. Earlier merges are 
 
 | PR / gate | Current state |
 |---|---|
-| #328 / 142 | **Draft, staged** at `dcbab37806581f2bd0fd24cb55fee75fcacd2dab`. Closeout W2: remove the RD-2/H6 route (41 admissions). Replay 3/3, 0 admissions. campaign/gates/142-remove-rd2/. |
+| #328 / 142 | **Draft, dispatched 2026-11-16** at `dcbab37806581f2bd0fd24cb55fee75fcacd2dab`. Closeout W2: remove the RD-2/H6 route (41 admissions). Replay 3/3, 0 admissions. campaign/gates/142-remove-rd2/. |
 | #325 / 141 | **Merged** at `20394834d86a509ad5776c36dbbfccc33b023306` (2026-11-16). Gate closed (CLEAR). Ladner fill 7: target 6 `SAT_H_intermediate`; **Ladner's theorem complete**. Its replay output is the campaign snapshot `oleans-c2039` (876 objects; campaign/status/2026-11-16-merge-325/). |
 | #322 / 140 | **Merged** at `d811bdaaf5e923b2a57f0453135af5c7ee37713a` (2026-11-15). Gate closed (CLEAR). Ladner fills 5 and 6: targets 2 `SAT_H_mem_NP` and 5 `SAT_mem_P_of_padSAT_NPHard`. Its replay output is the campaign snapshot `oleans-cd811` (876 objects; campaign/status/2026-11-15-merge-322/). |
 | #321 / 139 | **Merged** at `34643146ee1fe6bf6d7ffdf2e543e8342a3e16a0` (2026-11-15). Gate closed (CLEAR). Ladner fill 4: the approved reorder and target 1 `ladnerH_polyTime`. Its replay output is the campaign snapshot `oleans-c3464` (876 objects; campaign/status/2026-11-15-merge-321/). |

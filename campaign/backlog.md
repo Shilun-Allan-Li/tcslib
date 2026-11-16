@@ -4006,7 +4006,7 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   structure-level halves (see §5). *Origin: ch2 plan §1.*
 * **§2.5 decision-versus-search** (Theorem 2.18). *Origin: ch2 plan §1.*
 * **Parsimonious and Levin reductions** ([AB09] §2.3.6). *Origin: ch2 plan §1.*
-* **Ex 2.6, the universal NDTM** — Chapter 3's tool. *Origin: ch2 plan §1.*
+* ~~**Ex 2.6, the universal NDTM**~~ **Done** (the timed universal NDTM `exists_timed_universal_NDTM`, `Diagonalization/NTimeDiagonalizer.lean`, used by Theorem 3.2). *Origin: ch2 plan §1.*
 * **Ex 2.30, Berman's theorem.** *Origin: ch2 plan §1.*
 * **General Boolean formulas** — `TAUTOLOGY` is deliberately stated on the
   documented DNF fragment; a general-formula carrier (AST, evaluation,
@@ -4017,12 +4017,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   certificate would transfer. (The Chapter-6 bridges were built on native
   machines without it; see §3.)
   *Origin: ch2 plan decision log ("revisit at phase 3" — still open).*
-* **Oracle complexity classes** (Chapter 3): `Oracle.lean` has the raw model
+* ~~**Oracle complexity classes**~~ **Done** by the chapters 3–4 campaign (`ClassOracle/Classes.lean`; Baker–Gill–Solovay proved, `Diagonalization/Relativization.lean`). Original entry: (Chapter 3): `Oracle.lean` has the raw model
   and both lockstep embeddings, audited; the class layer, the
   persistent-vs-auto-erased query-tape statement (polynomial overhead only —
   constant overhead provably impossible), and relativization (Baker-Gill-
   Solovay) are future Chapter-3 work. *Origin: ch1 plan §5 phase-2 notes;
   session assessment 2026-09-18.*
+* **Relativized hierarchy theorems** ([AB09] §3.4, remark: the hierarchy proofs relativize). **Deferred (Seyoon, 2026-11-16)** until after the chapters 3–4 closeout, possibly after integration into `main`. Starting point: `campaign/closeout/W9-DESIGN.md` (one model-generic interface for the three hierarchy proofs; the oracle instances need a universal oracle machine, oracle codes, an oracle clocked runner and an oracle space class, 30–40k lines for all three; proposed oracle space convention: count the query tape). *Origin: closeout plan D3/W9.*
 * **B5a linear headline (formerly "B5a headline H2", renamed 2026-10-13 to avoid confusion with host H2): the per-code-linear timed simulator** (user, 2026-10-11:
   "H1 for now, but add H2 to backlog"). `CodeSimulator.lean`'s headline is
   H1, polynomial in `|α| + |x| + t` jointly, which is exactly what the two

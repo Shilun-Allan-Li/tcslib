@@ -1,4 +1,7 @@
-# Closeout refactor plan and debt register (D4, W3): draft for Seyoon, 2026-11-16
+# Closeout refactor plan and debt register (D4, W3), 2026-11-16
+
+**Agreed (Seyoon, 2026-11-16):** all proposals, including §3's three decisions. W9 is deferred,
+so §3.3's interleaving with W9 lapses: the order is R0–R6, then W4.
 
 D4 (Seyoon, 2026-11-16): refactor before integration, all three groups — the chapter 3–4
 families, the 12.2c infrastructure families and the ARM layer (no Hydroxyi coordination). This
@@ -58,12 +61,13 @@ maintainer work. R4 and R5 are the long items.
 
 1. **CH34-D3** (`exists_uniformMachineCode2` vs EXPCOM's structure; acknowledged as forced, B261):
    unifying it redefines two frozen, audited structures (a statement change and its own gate) to
-   save about 12 lines. Proposed: **carry it in the register.**
+   save about 12 lines. Proposed: **carry it in the register.** **Agreed.**
 2. **Optional scope, not counted debt:** the original Loop host's 110 pairs (P item 11), the ch7
    embedding-layer watch (MIG-5), BL-W, WC-1, QF-1, RC-1–3, P item 12's clocks, the SafeSegment
-   sibling. Proposed: **leave out of the closeout**, listed in the register as optional.
+   sibling. Proposed: **leave out of the closeout**, listed in the register as optional. **Agreed.**
 3. **Order against W9.** Proposed: R0 and R1 first (quick), then R2/R3 interleaved with W9's
-   interface refactor; R4 and R5 design notes in parallel; W4 (sync `main`) after R5.
+   interface refactor; R4 and R5 design notes in parallel; W4 (sync `main`) after R5. **Agreed**; with
+   W9 deferred, R2/R3 run on their own.
 
 ## 4. Register (W3): what is carried into `main`
 

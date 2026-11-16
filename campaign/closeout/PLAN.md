@@ -62,7 +62,7 @@ fallback citation as recorded.
 closing: **Exercise 3.3** (a language `B ∈ EXP` with `P^B ≠ NP^B`; the existing
 `exists_oracle_ne` gives `P^B ≠ NP^B` for a classically chosen `B` with no EXP bound), and the
 **relativized hierarchy theorems**, by generalizing the existing hierarchy proofs rather than
-duplicating them. Everything else listed below stays deferred. Confirm that closeout leaves these deferred (plan §1, backlog §3):
+duplicating them. Everything else listed below stays deferred. **Both later deferred again (Seyoon, 2026-11-16):** Exercise 3.3 (W8), and the relativized hierarchies (W9) until after the other closeout work, possibly after integration. Confirm that closeout leaves these deferred (plan §1, backlog §3):
 - Chapter 3: Ex 3.1, 3.3, 3.4, 3.7–3.9; the relativized hierarchy statements; Remark 3.8 and
   §3.4.1 (expository);
 - Chapter 4: Def 4.19 (read-once certificates; Thm 4.20 is proved directly on NDTMs); Example
@@ -98,16 +98,16 @@ audits (and for fills if D1 = (b)).
 |---|---|---|---|
 | W1 | **Done (2026-11-16, `census/`):** no campaign-introduced admission; 166 in the snapshot, 41 of them RD-2/H6; 26 public removals and 19 restatements, none used by `main`'s changed files. **Admission and statement census.** A whole-campaign inventory, maintainer-run: every direct admission in `TCSlib` at the campaign tip, classified (campaign-introduced, inherited from `main`, held); and a statement-drift check of every public chapter 3–4 declaration against its last gated version (the gates' `SOURCE.json` freezes). Records only. | — | none |
 | W2 | **In gate 142** (draft PR #328, `dcbab378`; replay 3/3 with no admissions). **RD-2/H6 per D1.** (a): one removal PR, full downstream replay, gate. (b): regenerate RD-2a/b briefs, two fills, gates. (c): nothing. | D1, W1 | (a) 1 audit; (b) 2 fills + 2 audits |
-| W3 | **Drafted with the refactor plan (`REFACTOR-PLAN.md` §4); waves R0–R6, decisions pending.** **Debt register** per D4: one record listing each acknowledged family, its file, size, owner and window, carried into `main`'s backlog. Records only. | D4 | none |
+| W3 | **Plan agreed (Seyoon, 2026-11-16; `REFACTOR-PLAN.md`): waves R0–R6, register §4.** **Debt register** per D4: one record listing each acknowledged family, its file, size, owner and window, carried into `main`'s backlog. Records only. | D4 | none |
 | W4 | **Sync `main` into the campaign** (25 commits, disjoint), full replay on the merged tree, new snapshot. | D5 | none (records-only gate if wanted) |
 | W5 | **Blueprint increment** for chapters 3–4, with the repository's `/blueprint-extract` on the synced tree (after W4, so it builds on `main`'s reorganized blueprint). One PR. | W4 | 1 audit (light) |
 | W6 | **Final audit**: one Codex gate over the chapter scope: the headline and admission probes, the statement-vs-book fidelity table (plan §1), standards lint, W1's census and W3's register. | W1–W5 | 1 audit |
 | W8 | ~~Exercise 3.3~~ **Deferred again (Seyoon, 2026-11-16):** the existence of `B` (`exists_oracle_ne`) matters more than `B ∈ EXP`. | — | none |
-| W9 | **Design note drafted (`W9-DESIGN.md`); scope decision pending: the oracle instances need 30–40k lines of new oracle constructions for all three.** **Relativized hierarchies** (D3): generalize rather than duplicate. Design note first, on one interface over machine models (plain and oracle) that the existing deterministic proof (`DiagSimulator`), the nondeterministic proof and the space proof are restated against, each instantiated twice. The oracle space hierarchy needs an oracle space class and its query-tape convention, which AB09 leaves open; the note proposes one for Seyoon. Then statement gates and fills, one hierarchy at a time. | D3 | design review, 3 fills, 3+ audits |
+| W9 | ~~Relativized hierarchies~~ **Deferred (Seyoon, 2026-11-16), until after the other closeout work and possibly after integration into `main`.** The design note (`W9-DESIGN.md`) sizes the oracle instances at 30–40k lines for all three. **Relativized hierarchies** (D3): generalize rather than duplicate. Design note first, on one interface over machine models (plain and oracle) that the existing deterministic proof (`DiagSimulator`), the nondeterministic proof and the space proof are restated against, each instantiated twice. The oracle space hierarchy needs an oracle space class and its query-tape convention, which AB09 leaves open; the note proposes one for Seyoon. Then statement gates and fills, one hierarchy at a time. | D3 | design review, 3 fills, 3+ audits |
 | W7 | **Integration PR** to `main` (shape per D5), with D6's normalization; replay on `main`'s tree. Seyoon merges. | W6 | none, or 1 audit if wanted |
 
 **Order:** W1 now; then W2, W3, the W9 design note and the refactor plan in parallel; the refactors and
-the W9 fills; W4; W5; W6; W7.
+the W9 fills; W4; W5; W6; W7. **Revised (2026-11-16):** W2; the refactor waves R0–R6; W4; W5; W6; W7. W9 deferred.
 
 **Cost, with D1 = (a):** four or five Codex audits (W2, W5, W6, optionally W7) and no fills.
 With D1 = (b), add two fills and two audits.

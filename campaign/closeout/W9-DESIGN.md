@@ -1,4 +1,7 @@
-# W9 · Relativized hierarchy theorems: design note (draft for Seyoon, 2026-11-16)
+# W9 · Relativized hierarchy theorems: design note (2026-11-16)
+
+**Ruled (Seyoon, 2026-11-16): deferred** until the other closeout work is done, possibly until
+after the campaign is merged into `main`. This note is kept as the starting point.
 
 D3 brought the relativized hierarchy theorems into scope, "ideally just by generalising the
 existing hierarchy proofs rather than duplicating them". This note maps what the three existing
