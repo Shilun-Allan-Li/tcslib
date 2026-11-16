@@ -1,0 +1,82 @@
+=== evidence/probes/P8_NANDGadget start 2026-11-16T19:37:10Z
+evidence/probes/P8_NANDGadget.lean:22:21: error: Function expected at
+  [a, b]
+but this term has type
+  List Bool
+
+Note: Expected a function because this term is being applied to the argument
+  r.2
+evidence/probes/P8_NANDGadget.lean:22:79: error: Application type mismatch: The argument
+  [a, b]
+has type
+  List Bool
+but is expected to have type
+  Bool
+in the application
+  ![a, b]
+evidence/probes/P8_NANDGadget.lean:37:72: error: Tactic `decide` failed for proposition
+  (rows.all fun g => rowOK g []) = true
+because its `Decidable` instance
+  instDecidableEqBool (rows.all fun g => rowOK g []) true
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqBool`, `Bool.decEq`, `Nat.decLe`, and `Nat.decLt`, reduction got stuck at the `Decidable` instance
+  match rows.all fun g => rowOK g [], true with
+  | false, false => isTrue ⋯
+  | false, true => isFalse ⋯
+  | true, false => isFalse ⋯
+  | true, true => isTrue ⋯
+evidence/probes/P8_NANDGadget.lean:40:69: error: Tactic `decide` failed for proposition
+  (rowsWithGate.all fun g => rowOK g [{ kind := GateKind.or, args := [0, 1] }]) = true
+because its `Decidable` instance
+  instDecidableEqBool (rowsWithGate.all fun g => rowOK g [{ kind := GateKind.or, args := [0, 1] }]) true
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `decEq`, `instDecidableEqBool`, `instDecidableEqList`, `instDecidableEqNat`, `Bool.decEq`, `instDecidableEqDAGGate`, `instDecidableEqGateKind`, `List.hasDecEq`, `Nat.decEq`, `Nat.decLe`, `Nat.decLt`, and `instDecidableEqDAGGate.decEq`, reduction got stuck at the `Decidable` instance
+  match rowsWithGate.all fun g => rowOK g [{ kind := GateKind.or, args := [0, 1] }], true with
+  | false, false => isTrue ⋯
+  | false, true => isFalse ⋯
+  | true, false => isFalse ⋯
+  | true, true => isTrue ⋯
+[([{ kind := BoolCircuit.GateKind.not, args := [] }, { kind := BoolCircuit.GateKind.not, args := [2] }], 3),
+ ([{ kind := BoolCircuit.GateKind.not, args := [] }], 2),
+ ([{ kind := BoolCircuit.GateKind.not, args := [] }], 2),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0] }, { kind := BoolCircuit.GateKind.not, args := [2] }], 3),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0] }, { kind := BoolCircuit.GateKind.not, args := [2] }], 3),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0] }], 2),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0, 1] }, { kind := BoolCircuit.GateKind.not, args := [2] }], 3),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0] },
+   { kind := BoolCircuit.GateKind.not, args := [1] },
+   { kind := BoolCircuit.GateKind.not, args := [2, 3] }],
+  4),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0, 1] }], 2),
+ ([{ kind := BoolCircuit.GateKind.not, args := [1, 1] }, { kind := BoolCircuit.GateKind.not, args := [2] }], 3),
+ ([{ kind := BoolCircuit.GateKind.not, args := [1] },
+   { kind := BoolCircuit.GateKind.not, args := [1] },
+   { kind := BoolCircuit.GateKind.not, args := [2, 3] }],
+  4),
+ ([{ kind := BoolCircuit.GateKind.not, args := [1, 1] }], 2)]
+FAIL(evidence/probes/P8_NANDGadget): lean exited with status 1
+FAIL(evidence/probes/P8_NANDGadget): error diagnostics reported
+FAIL(evidence/probes/P8_NANDGadget): no fresh .olean produced
+=== evidence/probes/P8_NANDGadget end 2026-11-16T19:37:12Z rc=1 errors=4 sorry=0 maxrss_kib=1729268
+=== evidence/probes/P8_NANDGadget start 2026-11-16T19:37:18Z
+[([{ kind := BoolCircuit.GateKind.not, args := [] }, { kind := BoolCircuit.GateKind.not, args := [2] }], 3),
+ ([{ kind := BoolCircuit.GateKind.not, args := [] }], 2),
+ ([{ kind := BoolCircuit.GateKind.not, args := [] }], 2),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0] }, { kind := BoolCircuit.GateKind.not, args := [2] }], 3),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0] }, { kind := BoolCircuit.GateKind.not, args := [2] }], 3),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0] }], 2),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0, 1] }, { kind := BoolCircuit.GateKind.not, args := [2] }], 3),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0] },
+   { kind := BoolCircuit.GateKind.not, args := [1] },
+   { kind := BoolCircuit.GateKind.not, args := [2, 3] }],
+  4),
+ ([{ kind := BoolCircuit.GateKind.not, args := [0, 1] }], 2),
+ ([{ kind := BoolCircuit.GateKind.not, args := [1, 1] }, { kind := BoolCircuit.GateKind.not, args := [2] }], 3),
+ ([{ kind := BoolCircuit.GateKind.not, args := [1] },
+   { kind := BoolCircuit.GateKind.not, args := [1] },
+   { kind := BoolCircuit.GateKind.not, args := [2, 3] }],
+  4),
+ ([{ kind := BoolCircuit.GateKind.not, args := [1, 1] }], 2)]
+=== evidence/probes/P8_NANDGadget end 2026-11-16T19:37:20Z rc=0 errors=0 sorry=0 maxrss_kib=1778580

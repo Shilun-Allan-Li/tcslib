@@ -1,0 +1,9 @@
+Preflight assessment (addendum v1, Part 1, item 1), 2026-11-16T19:21:58Z, before any cache or Lean work.
+- nproc: 4.
+- Memory: no cgroup v2 or v1 memory limit files under /sys/fs/cgroup (memory.max absent), so the
+  headroom is MemAvailable from /proc/meminfo: 15,366,324 kB = 14.65 GiB >= 4 GiB. PASS.
+- Disk: the clone /home/user/gsw6a and every scratch directory used (/home/user/work, the session
+  scratchpad under /tmp/claude-0) are on /dev/vda, ext4 (not tmpfs), 16,224,301,056 B = 15.11 GiB
+  free >= 12 GiB. PASS. (The toolchain was installed after the preflight; the narrowed cache fetch
+  followed; disk was not re-checked after the cache step, per item 1.)
+- No E-RES condition was met at any time: no oom/oom_kill event, no Lean exit 137/135/139.

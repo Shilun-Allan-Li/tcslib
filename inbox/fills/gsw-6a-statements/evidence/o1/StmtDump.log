@@ -1,0 +1,186 @@
+=== evidence/stmt-o1/StmtDump start 2026-11-16T21:38:12Z
+BoolCircuit.TreeAC	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : Set (Language Bool)
+  CONSTS [Language]
+BoolCircuit.TreeAC.eq_1	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeAC = ⋃ (i : ℕ), BoolCircuit.TreeACLevel i
+  CONSTS [Language, BoolCircuit.TreeAC, BoolCircuit.TreeACLevel]
+BoolCircuit.TreeACLevel	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ℕ → Set (Language Bool)
+  CONSTS [Language]
+BoolCircuit.TreeACLevel.eq_1	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (d : ℕ), BoolCircuit.TreeACLevel d = {L : Language Bool | Language.InTreeAC d L}
+  CONSTS [Language, BoolCircuit.TreeACLevel, Language.InTreeAC]
+BoolCircuit.TreeACLevel_subset_NCLevel_succ	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (i : ℕ), BoolCircuit.TreeACLevel i ⊆ BoolCircuit.TreeNCLevel (i + 1)
+  CONSTS [Language, BoolCircuit.TreeACLevel, BoolCircuit.TreeNCLevel]
+BoolCircuit.TreeCircuit.balanced	def	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : {n : ℕ} → Bool → List (BoolCircuit.TreeCircuit n) → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.balanced_eval	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)) (x : Fin n → Bool),
+  (BoolCircuit.TreeCircuit.balanced b cs).eval x = (BoolCircuit.TreeCircuit.node b cs).eval x
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.balanced_nil	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool), BoolCircuit.TreeCircuit.balanced b [] = BoolCircuit.TreeCircuit.node b []
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuit.balanced_singleton	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (c : BoolCircuit.TreeCircuit n), BoolCircuit.TreeCircuit.balanced b [c] = c
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.balanced]
+BoolCircuit.TreeCircuit.depth_balanced_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)),
+  (BoolCircuit.TreeCircuit.balanced b cs).depth ≤ BoolCircuit.TreeCircuit.maxDepth cs + Nat.clog 2 cs.length + 1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.maxDepth]
+BoolCircuit.TreeCircuit.maxFanin_balanced_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)),
+  (BoolCircuit.TreeCircuit.balanced b cs).maxFanin ≤ Max.max 2 (BoolCircuit.TreeCircuit.maxFaninL cs)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.maxFaninL]
+BoolCircuit.TreeCircuit.size_balanced_le	theorem	TCSlib.Complexity.CircuitComplexity.FormulaArith.Combinators
+  : ∀ {n : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)),
+  (BoolCircuit.TreeCircuit.balanced b cs).size ≤ BoolCircuit.TreeCircuit.sumSize cs + cs.length + 1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.size, BoolCircuit.TreeCircuit.balanced, BoolCircuit.TreeCircuit.sumSize]
+BoolCircuit.TreeCircuit.toBinary	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {n : ℕ} → BoolCircuit.TreeCircuit n → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuit.toBinary.eq_1	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (l : BoolCircuit.Lit n), (BoolCircuit.TreeCircuit.lit l).toBinary = BoolCircuit.TreeCircuit.lit l
+  CONSTS [BoolCircuit.Lit, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.toBinary, BoolCircuit.TreeCircuit.lit]
+BoolCircuit.TreeCircuit.toBinary.eq_2	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (b : Bool) (cs : List (BoolCircuit.TreeCircuit n)),
+  (BoolCircuit.TreeCircuit.node b cs).toBinary =
+    BoolCircuit.TreeCircuit.balanced b (List.map BoolCircuit.TreeCircuit.toBinary cs)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.toBinary, BoolCircuit.TreeCircuit.node, BoolCircuit.TreeCircuit.balanced]
+BoolCircuit.TreeCircuit.toBinary.eq_def	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (x : BoolCircuit.TreeCircuit n),
+  x.toBinary =
+    match x with
+    | BoolCircuit.TreeCircuit.lit l => BoolCircuit.TreeCircuit.lit l
+    | BoolCircuit.TreeCircuit.node b cs =>
+      BoolCircuit.TreeCircuit.balanced b (List.map BoolCircuit.TreeCircuit.toBinary cs)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.toBinary, BoolCircuit.TreeCircuit.toBinary.match_1, BoolCircuit.Lit, BoolCircuit.TreeCircuit.lit, BoolCircuit.TreeCircuit.balanced]
+BoolCircuit.TreeCircuit.toBinary.match_1	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {n : ℕ} →
+  (motive : BoolCircuit.TreeCircuit n → Sort u_1) →
+    (x : BoolCircuit.TreeCircuit n) →
+      ((l : BoolCircuit.Lit n) → motive (BoolCircuit.TreeCircuit.lit l)) →
+        ((b : Bool) → (cs : List (BoolCircuit.TreeCircuit n)) → motive (BoolCircuit.TreeCircuit.node b cs)) → motive x
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.Lit, BoolCircuit.TreeCircuit.lit, BoolCircuit.TreeCircuit.node]
+BoolCircuit.TreeCircuitFamily	inductive	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : Type
+  CONSTS []
+BoolCircuit.TreeCircuitFamily.Accepts	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → List Bool → Prop
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.HasFaninTwo	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → Prop
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.HasPolylogDepth	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → ℕ → Prop
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.IsPolySize	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → Prop
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.casesOn	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {motive : BoolCircuit.TreeCircuitFamily → Sort u} →
+  (t : BoolCircuit.TreeCircuitFamily) →
+    ((circuit : (n : ℕ) → BoolCircuit.TreeCircuit n) → motive { circuit := circuit }) → motive t
+  CONSTS [BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.circuit	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → (n : ℕ) → BoolCircuit.TreeCircuit n
+  CONSTS [BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuit]
+BoolCircuit.TreeCircuitFamily.ctorIdx	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → ℕ
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.language	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeCircuitFamily → Language Bool
+  CONSTS [BoolCircuit.TreeCircuitFamily, Language]
+BoolCircuit.TreeCircuitFamily.mem_language_iff	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (C : BoolCircuit.TreeCircuitFamily) (w : List Bool), w ∈ C.language ↔ (C.circuit w.length).eval w.get = Bool.true
+  CONSTS [BoolCircuit.TreeCircuitFamily, Language, Language.instMembershipList, BoolCircuit.TreeCircuitFamily.language, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuitFamily.circuit]
+BoolCircuit.TreeCircuitFamily.mk	constructor	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ((n : ℕ) → BoolCircuit.TreeCircuit n) → BoolCircuit.TreeCircuitFamily
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.mk.inj	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {circuit circuit_1 : (n : ℕ) → BoolCircuit.TreeCircuit n},
+  { circuit := circuit } = { circuit := circuit_1 } → circuit = circuit_1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.mk.injEq	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (circuit circuit_1 : (n : ℕ) → BoolCircuit.TreeCircuit n),
+  ({ circuit := circuit } = { circuit := circuit_1 }) = (circuit = circuit_1)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.mk.noConfusion	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : (P : Sort u) →
+  (circuit circuit' : (n : ℕ) → BoolCircuit.TreeCircuit n) →
+    { circuit := circuit } = { circuit := circuit' } → (circuit = circuit' → P) → P
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.mk.sizeOf_spec	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (circuit : (n : ℕ) → BoolCircuit.TreeCircuit n), SizeOf.sizeOf { circuit := circuit } = 1
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuitFamily._sizeOf_inst, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.noConfusion	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {P : Sort u} → {x1 x2 : BoolCircuit.TreeCircuitFamily} → x1 = x2 → BoolCircuit.TreeCircuitFamily.noConfusionType P x1 x2
+  CONSTS [BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuitFamily.noConfusionType]
+BoolCircuit.TreeCircuitFamily.noConfusionType	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : Sort u → BoolCircuit.TreeCircuitFamily → BoolCircuit.TreeCircuitFamily → Sort u
+  CONSTS [BoolCircuit.TreeCircuitFamily]
+BoolCircuit.TreeCircuitFamily.rec	recursor	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {motive : BoolCircuit.TreeCircuitFamily → Sort u} →
+  ((circuit : (n : ℕ) → BoolCircuit.TreeCircuit n) → motive { circuit := circuit }) →
+    (t : BoolCircuit.TreeCircuitFamily) → motive t
+  CONSTS [BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeCircuitFamily.recOn	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : {motive : BoolCircuit.TreeCircuitFamily → Sort u} →
+  (t : BoolCircuit.TreeCircuitFamily) →
+    ((circuit : (n : ℕ) → BoolCircuit.TreeCircuit n) → motive { circuit := circuit }) → motive t
+  CONSTS [BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuitFamily.mk]
+BoolCircuit.TreeNC	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : Set (Language Bool)
+  CONSTS [Language]
+BoolCircuit.TreeNC.eq_1	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeNC = ⋃ i ∈ Set.Ici 1, BoolCircuit.TreeNCLevel i
+  CONSTS [Language, BoolCircuit.TreeNC, BoolCircuit.TreeNCLevel]
+BoolCircuit.TreeNCLevel	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ℕ → Set (Language Bool)
+  CONSTS [Language]
+BoolCircuit.TreeNCLevel.eq_1	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (d : ℕ), BoolCircuit.TreeNCLevel d = {L : Language Bool | Language.InTreeNC d L}
+  CONSTS [Language, BoolCircuit.TreeNCLevel, Language.InTreeNC]
+BoolCircuit.TreeNCLevel_subset_ACLevel	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (i : ℕ), BoolCircuit.TreeNCLevel i ⊆ BoolCircuit.TreeACLevel i
+  CONSTS [Language, BoolCircuit.TreeNCLevel, BoolCircuit.TreeACLevel]
+BoolCircuit.TreeNC_eq_TreeAC	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : BoolCircuit.TreeNC = BoolCircuit.TreeAC
+  CONSTS [Language, BoolCircuit.TreeNC, BoolCircuit.TreeAC]
+BoolCircuit.clog_poly_le	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (a k m : ℕ), Nat.clog 2 (a * (m + 1) ^ k) ≤ a + k * (Nat.log 2 m + 1)
+  CONSTS []
+BoolCircuit.mem_TreeAC_iff	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (L : Language Bool), L ∈ BoolCircuit.TreeAC ↔ ∃ (i : ℕ), Language.InTreeAC i L
+  CONSTS [Language, BoolCircuit.TreeAC, Language.InTreeAC]
+BoolCircuit.mem_TreeNC_iff	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ (L : Language Bool), L ∈ BoolCircuit.TreeNC ↔ ∃ (i : ℕ), 1 ≤ i ∧ Language.InTreeNC i L
+  CONSTS [Language, BoolCircuit.TreeNC, Language.InTreeNC]
+BoolCircuit.toBinary_depth_le	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n w : ℕ} (c : BoolCircuit.TreeCircuit n), c.maxFanin ≤ w → c.toBinary.depth ≤ c.depth * (Nat.clog 2 w + 1)
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.toBinary]
+BoolCircuit.toBinary_eval	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (c : BoolCircuit.TreeCircuit n) (x : Fin n → Bool), c.toBinary.eval x = c.eval x
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.toBinary]
+BoolCircuit.toBinary_maxFanin_le	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (c : BoolCircuit.TreeCircuit n), c.toBinary.maxFanin ≤ 2
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.toBinary]
+BoolCircuit.toBinary_size_le	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {n : ℕ} (c : BoolCircuit.TreeCircuit n), c.toBinary.size ≤ 3 * c.size
+  CONSTS [BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.size, BoolCircuit.TreeCircuit.toBinary]
+Language.InTreeAC	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ℕ → Language Bool → Prop
+  CONSTS [Language]
+Language.InTreeAC.inTreeNC_succ	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {d : ℕ} {L : Language Bool}, Language.InTreeAC d L → Language.InTreeNC (d + 1) L
+  CONSTS [Language, Language.InTreeAC, Language.InTreeNC]
+Language.InTreeNC	def	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ℕ → Language Bool → Prop
+  CONSTS [Language]
+Language.InTreeNC.inTreeAC	theorem	TCSlib.Complexity.CircuitComplexity.TreeNCAC
+  : ∀ {d : ℕ} {L : Language Bool}, Language.InTreeNC d L → Language.InTreeAC d L
+  CONSTS [Language, Language.InTreeNC, Language.InTreeAC]
+=== evidence/stmt-o1/StmtDump end 2026-11-16T21:38:15Z rc=0 errors=0 sorry=0 maxrss_kib=1762676

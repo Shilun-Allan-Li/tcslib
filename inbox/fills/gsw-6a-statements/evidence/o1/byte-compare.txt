@@ -1,0 +1,93 @@
+== old block: base f6f295a6502b72bbf498bb8c64b63f847e910866 TreeNCAC.lean:172-350 (178 lines, renames applied)
+== new block: head 413e9aa42f6b96b4d65673c37c83819b2fb77579 Combinators.lean:44-236 (192 lines)
+== (1) raw unified diff
+--- old(renamed)
++++ new
+@@ -24 +24 @@
+-  | [_] => by cases b <;> simp [pairUp, TreeCircuit.eval]
++  | [_] => by cases b <;> simp [pairUp, TreeCircuit.eval_node_true, TreeCircuit.eval_node_false]
+@@ -28 +28,2 @@
+-        simp only [pairUp, TreeCircuit.eval, List.foldr_cons, List.foldr_nil] at * <;>
++        simp only [pairUp, TreeCircuit.eval_node_true, TreeCircuit.eval_node_false,
++          List.all_cons, List.all_nil, List.any_cons, List.any_nil] at * <;>
+@@ -40 +41,2 @@
+-        rw [TreeCircuit.depth_node, TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_nil]
++        rw [TreeCircuit.depth_node, TreeCircuit.maxDepth_cons, TreeCircuit.maxDepth_cons,
++          TreeCircuit.maxDepth_nil]
+@@ -49 +51 @@
+-  | [] => le_refl 0
++  | [] => by rw [pairUp, TreeCircuit.sumSize_nil, List.length_nil]
+@@ -54 +56,2 @@
+-        rw [TreeCircuit.size_node, TreeCircuit.sumSize_cons, TreeCircuit.sumSize_cons, TreeCircuit.sumSize_nil]
++        rw [TreeCircuit.size_node, TreeCircuit.sumSize_cons, TreeCircuit.sumSize_cons,
++          TreeCircuit.sumSize_nil]
+@@ -60,2 +63,3 @@
+-    ∀ cs : List (TreeCircuit n), TreeCircuit.maxFaninL (pairUp b cs) ≤ max 2 (TreeCircuit.maxFaninL cs)
+-  | [] => Nat.zero_le _
++    ∀ cs : List (TreeCircuit n),
++      TreeCircuit.maxFaninL (pairUp b cs) ≤ max 2 (TreeCircuit.maxFaninL cs)
++  | [] => by rw [pairUp, TreeCircuit.maxFaninL_nil]; exact Nat.zero_le _
+@@ -80 +84,6 @@
+-/-- Combine a child list into a balanced binary tree of gates of type `b`. -/
++/-- The balanced binary tree of `b`-gates over the child list `cs`: the children are paired
++under fan-in-2 `b`-gates round by round (at most `|cs|` rounds) until one circuit is left,
++`balanced b cs = combineFuel b |cs| cs`.  It computes the unbounded gate
++`TreeCircuit.node b cs` (`TreeCircuit.balanced_eval`); `balanced b [] = node b []` and
++`balanced b [c] = c`.  The former private `TreeNCAC.combine`, promoted for the formula
++arithmetic layer; glue behind [AB09, p. 118]'s fan-in reduction (`TreeCircuit.toBinary`). -/
+@@ -90 +99,2 @@
+-  | _ + 1, [c] => by cases b <;> simp [combineFuel, TreeCircuit.eval]
++  | _ + 1, [c] => by
++      cases b <;> simp [combineFuel, TreeCircuit.eval_node_true, TreeCircuit.eval_node_false]
+@@ -160 +170,2 @@
+-/-- `TreeCircuit.balanced` computes the unbounded gate. -/
++/-- The balanced tree computes the unbounded gate:
++`(TreeCircuit.balanced b cs).eval x = (TreeCircuit.node b cs).eval x`. -/
+@@ -165 +176,2 @@
+-/-- `TreeCircuit.balanced` has fan-in 2, unless a child already had more. -/
++/-- The balanced tree has fan-in 2, unless a child already had more:
++`(TreeCircuit.balanced b cs).maxFanin ≤ max 2 (TreeCircuit.maxFaninL cs)`. -/
+@@ -170 +182,2 @@
+-/-- `TreeCircuit.balanced` adds `⌈log₂ |cs|⌉ + 1` to the children's depth. -/
++/-- The balanced tree adds at most `⌈log₂ |cs|⌉ + 1` to the children's depth:
++`(TreeCircuit.balanced b cs).depth ≤ TreeCircuit.maxDepth cs + Nat.clog 2 cs.length + 1`. -/
+@@ -175 +188,2 @@
+-/-- `TreeCircuit.balanced` adds `|cs| + 1` to the children's total size. -/
++/-- The balanced tree adds at most `|cs| + 1` to the children's total size:
++`(TreeCircuit.balanced b cs).size ≤ TreeCircuit.sumSize cs + cs.length + 1`. -/
+== (2) whitespace-insensitive diff (token stream)
+-- replace: old 'TreeCircuit.eval]'
+   new 'TreeCircuit.eval_node_true, TreeCircuit.eval_node_false]'
+-- replace: old 'TreeCircuit.eval, List.foldr_cons, List.foldr_nil]'
+   new 'TreeCircuit.eval_node_true, TreeCircuit.eval_node_false, List.all_cons, List.all_nil, List.any_cons, List.any_nil]'
+-- replace: old 'le_refl 0'
+   new 'by rw [pairUp, TreeCircuit.sumSize_nil, List.length_nil]'
+-- insert: old ''
+   new 'by rw [pairUp, TreeCircuit.maxFaninL_nil]; exact'
+-- replace: old 'Combine a child list into a'
+   new 'The'
+-- replace: old 'gates of type `b`.'
+   new "`b`-gates over the child list `cs`: the children are paired under fan-in-2 `b`-gates round by round (at most `|cs|` rounds) until one circuit is left, `balanced b cs = combineFuel b |cs| cs`. It computes the unbounded gate `TreeCircuit.node b cs` (`TreeCircuit.balanced_eval`); `balanced b [] = node b []` and `balanced b [c] = c`. The former private `TreeNCAC.combine`, promoted for the formula arithmetic layer; glue behind [AB09, p. 118]'s fan-in reduction (`TreeCircuit.toBinary`)."
+-- replace: old 'TreeCircuit.eval]'
+   new 'TreeCircuit.eval_node_true, TreeCircuit.eval_node_false]'
+-- replace: old '`TreeCircuit.balanced`'
+   new 'The balanced tree'
+-- replace: old 'gate.'
+   new 'gate: `(TreeCircuit.balanced b cs).eval x = (TreeCircuit.node b cs).eval x`.'
+-- replace: old '`TreeCircuit.balanced`'
+   new 'The balanced tree'
+-- replace: old 'more.'
+   new 'more: `(TreeCircuit.balanced b cs).maxFanin ≤ max 2 (TreeCircuit.maxFaninL cs)`.'
+-- replace: old '`TreeCircuit.balanced`'
+   new 'The balanced tree'
+-- insert: old ''
+   new 'at most'
+-- replace: old 'depth.'
+   new 'depth: `(TreeCircuit.balanced b cs).depth ≤ TreeCircuit.maxDepth cs + Nat.clog 2 cs.length + 1`.'
+-- replace: old '`TreeCircuit.balanced`'
+   new 'The balanced tree'
+-- insert: old ''
+   new 'at most'
+-- replace: old 'size.'
+   new 'size: `(TreeCircuit.balanced b cs).size ≤ TreeCircuit.sumSize cs + cs.length + 1`.'
+== hunks: raw 12 whitespace-insensitive 17

@@ -1,0 +1,536 @@
+{
+ "base": "f6f295a6502b72bbf498bb8c64b63f847e910866",
+ "head": "413e9aa42f6b96b4d65673c37c83819b2fb77579",
+ "files": {
+  "TCSlib/Complexity/CircuitComplexity/FormulaArith/Combinators.lean": {
+   "new_file": true,
+   "declarations": [
+    {
+     "name": "BoolCircuit.pairUp",
+     "kind": "def",
+     "private": true,
+     "start": 46,
+     "decl_line": 47,
+     "end": 51,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.length_pairUp",
+     "kind": "theorem",
+     "private": true,
+     "start": 52,
+     "decl_line": 53,
+     "end": 61,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.eval_node_pairUp",
+     "kind": "theorem",
+     "private": true,
+     "start": 62,
+     "decl_line": 63,
+     "end": 74,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.maxDepth_pairUp",
+     "kind": "theorem",
+     "private": true,
+     "start": 75,
+     "decl_line": 76,
+     "end": 88,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.sumSize_pairUp",
+     "kind": "theorem",
+     "private": true,
+     "start": 89,
+     "decl_line": 90,
+     "end": 103,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.maxFaninL_pairUp",
+     "kind": "theorem",
+     "private": true,
+     "start": 104,
+     "decl_line": 105,
+     "end": 119,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.combineFuel",
+     "kind": "def",
+     "private": true,
+     "start": 120,
+     "decl_line": 121,
+     "end": 126,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.balanced",
+     "kind": "def",
+     "private": false,
+     "start": 127,
+     "decl_line": 133,
+     "end": 135,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.combineFuel_eval",
+     "kind": "theorem",
+     "private": true,
+     "start": 136,
+     "decl_line": 137,
+     "end": 147,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.combineFuel_maxFanin",
+     "kind": "theorem",
+     "private": true,
+     "start": 148,
+     "decl_line": 149,
+     "end": 167,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.combineFuel_depth",
+     "kind": "theorem",
+     "private": true,
+     "start": 168,
+     "decl_line": 175,
+     "end": 199,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.combineFuel_size",
+     "kind": "theorem",
+     "private": true,
+     "start": 200,
+     "decl_line": 201,
+     "end": 212,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.balanced_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 213,
+     "decl_line": 215,
+     "end": 218,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.maxFanin_balanced_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 219,
+     "decl_line": 221,
+     "end": 224,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.depth_balanced_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 225,
+     "decl_line": 227,
+     "end": 230,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.size_balanced_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 231,
+     "decl_line": 233,
+     "end": 236,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.balanced_nil",
+     "kind": "theorem",
+     "private": false,
+     "start": 237,
+     "decl_line": 239,
+     "end": 241,
+     "status": "NEW_FILE",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.balanced_singleton",
+     "kind": "theorem",
+     "private": false,
+     "start": 242,
+     "decl_line": 243,
+     "end": 245,
+     "status": "NEW_FILE",
+     "touched": true
+    }
+   ],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 18
+  },
+  "TCSlib/Complexity/CircuitComplexity/FormulaArith.lean": {
+   "new_file": true,
+   "declarations": [],
+   "removed": [],
+   "base_count": 0,
+   "head_count": 0
+  },
+  "TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean": {
+   "new_file": false,
+   "declarations": [
+    {
+     "name": "BoolCircuit.TreeCircuitFamily",
+     "kind": "structure",
+     "private": false,
+     "start": 90,
+     "decl_line": 91,
+     "end": 94,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.Accepts",
+     "kind": "def",
+     "private": false,
+     "start": 99,
+     "decl_line": 100,
+     "end": 102,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.language",
+     "kind": "def",
+     "private": false,
+     "start": 103,
+     "decl_line": 104,
+     "end": 106,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.mem_language_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 109,
+     "decl_line": 109,
+     "end": 112,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.IsPolySize",
+     "kind": "def",
+     "private": false,
+     "start": 113,
+     "decl_line": 114,
+     "end": 116,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.HasFaninTwo",
+     "kind": "def",
+     "private": false,
+     "start": 117,
+     "decl_line": 118,
+     "end": 120,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuitFamily.HasPolylogDepth",
+     "kind": "def",
+     "private": false,
+     "start": 121,
+     "decl_line": 122,
+     "end": 124,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Language.InTreeNC",
+     "kind": "def",
+     "private": false,
+     "start": 129,
+     "decl_line": 131,
+     "end": 134,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Language.InTreeAC",
+     "kind": "def",
+     "private": false,
+     "start": 135,
+     "decl_line": 136,
+     "end": 139,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeNCLevel",
+     "kind": "def",
+     "private": false,
+     "start": 142,
+     "decl_line": 143,
+     "end": 144,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeACLevel",
+     "kind": "def",
+     "private": false,
+     "start": 145,
+     "decl_line": 146,
+     "end": 147,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeNC",
+     "kind": "def",
+     "private": false,
+     "start": 148,
+     "decl_line": 149,
+     "end": 150,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeAC",
+     "kind": "def",
+     "private": false,
+     "start": 151,
+     "decl_line": 152,
+     "end": 153,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.mem_TreeNC_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 154,
+     "decl_line": 155,
+     "end": 157,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.mem_TreeAC_iff",
+     "kind": "theorem",
+     "private": false,
+     "start": 158,
+     "decl_line": 159,
+     "end": 161,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Language.InTreeNC.inTreeAC",
+     "kind": "theorem",
+     "private": false,
+     "start": 164,
+     "decl_line": 165,
+     "end": 168,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeCircuit.toBinary",
+     "kind": "def",
+     "private": false,
+     "start": 173,
+     "decl_line": 175,
+     "end": 178,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.eval_node_map",
+     "kind": "theorem",
+     "private": true,
+     "start": 179,
+     "decl_line": 180,
+     "end": 190,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.maxDepth_map_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 191,
+     "decl_line": 192,
+     "end": 201,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.maxFaninL_map_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 202,
+     "decl_line": 203,
+     "end": 212,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.toBinary_eval",
+     "kind": "theorem",
+     "private": false,
+     "start": 213,
+     "decl_line": 214,
+     "end": 223,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.toBinary_maxFanin_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 224,
+     "decl_line": 225,
+     "end": 234,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.sumSize_map_toBinary",
+     "kind": "theorem",
+     "private": true,
+     "start": 235,
+     "decl_line": 236,
+     "end": 245,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.toBinary_size_succ_le",
+     "kind": "theorem",
+     "private": true,
+     "start": 246,
+     "decl_line": 247,
+     "end": 258,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.toBinary_size_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 259,
+     "decl_line": 260,
+     "end": 262,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.toBinary_depth_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 263,
+     "decl_line": 264,
+     "end": 284,
+     "status": "CHANGED",
+     "touched": true
+    },
+    {
+     "name": "BoolCircuit.clog_poly_le",
+     "kind": "theorem",
+     "private": false,
+     "start": 285,
+     "decl_line": 286,
+     "end": 295,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "Language.InTreeAC.inTreeNC_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 298,
+     "decl_line": 309,
+     "end": 336,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeNCLevel_subset_ACLevel",
+     "kind": "theorem",
+     "private": false,
+     "start": 339,
+     "decl_line": 340,
+     "end": 342,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeACLevel_subset_NCLevel_succ",
+     "kind": "theorem",
+     "private": false,
+     "start": 343,
+     "decl_line": 344,
+     "end": 346,
+     "status": "UNCHANGED",
+     "touched": false
+    },
+    {
+     "name": "BoolCircuit.TreeNC_eq_TreeAC",
+     "kind": "theorem",
+     "private": false,
+     "start": 347,
+     "decl_line": 350,
+     "end": 358,
+     "status": "UNCHANGED",
+     "touched": false
+    }
+   ],
+   "removed": [
+    "BoolCircuit.combine",
+    "BoolCircuit.combineFuel",
+    "BoolCircuit.combineFuel_depth",
+    "BoolCircuit.combineFuel_eval",
+    "BoolCircuit.combineFuel_maxFanin",
+    "BoolCircuit.combineFuel_size",
+    "BoolCircuit.combine_depth",
+    "BoolCircuit.combine_eval",
+    "BoolCircuit.combine_maxFanin",
+    "BoolCircuit.combine_size",
+    "BoolCircuit.eval_node_pairUp",
+    "BoolCircuit.length_pairUp",
+    "BoolCircuit.maxDepth_pairUp",
+    "BoolCircuit.maxFaninL_pairUp",
+    "BoolCircuit.pairUp",
+    "BoolCircuit.sumSize_pairUp"
+   ],
+   "base_count": 47,
+   "head_count": 31
+  }
+ }
+}
