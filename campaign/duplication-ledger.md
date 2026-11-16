@@ -2093,3 +2093,10 @@ Transducer API, `sat_pt_tail/_head` cite `polyTimeComputable_tail/_take1`, and
 pair: the two sibling polynomial-time wrappers in Transducer (disclosed in the gate 145 pack).
 `Nondeterminism`'s `a3n_poly_linear` is not in this PR. Status: **retiring (gate 145 dispatched
 when Seyoon sends it; PR #334 draft)**.
+
+**SG1-UH (gate 146, 2026-11-16).** PR #335 (stacked on #334) deletes Hardness's private
+unary-clock repetition host (`clRepeat*`, 12 declarations) and the clean-call bridges that only it
+used: `clA5Iter_native` now cites the public `BinArith.polyTimeComputable_iterate` through a
+private counted round, so the family is retired without the public host contract (B1040) the
+design study priced at +170 to +370 lines. Net −297 Lean lines. Status: **retiring (gate 146;
+PR #335 draft)**.
