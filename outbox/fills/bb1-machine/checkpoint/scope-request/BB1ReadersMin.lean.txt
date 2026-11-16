@@ -1,0 +1,111 @@
+/-
+PROBE (scope request of fill bb1-machine, MINIMAL form; not part of the fill, not committed).
+Seven readers: the three `oracleImpl_*_onSpec` (their casts stated with inline `rfl` proofs of
+the type equations, which consumers can derive from the published `IBEScheme.sidSpec_eq`,
+`bitSpec_dom`, `bitSpec_rng`, `inLens_*`, `outLens_*`) and the four `BonehBoyen.lean` readers.
+The readers requested for `AdvancedEncryption/IdentityBased/Defs.lean` (first part) and
+`AdvancedEncryption/IdentityBased/BonehBoyen.lean` (second part), with the statements proposed for
+the owners. Here they are proved by definitional unfolding, as the owners would prove them; only the
+owners may unfold these definitions (Rule 10), which is why the fill cannot prove them.
+-/
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyen
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+
+open Complexity Turing TCSlib.Cryptography.Games TCSlib.Cryptography.Pairing
+
+/-! ### Requested in `Defs.lean` (namespace `IBEScheme`, after `oracleImpl_two`) -/
+
+namespace IBEScheme
+
+variable (S : IBEScheme)
+
+/-- **Oracle `0` of `oracleImpl` on the game's query type**: the handler `init` on the query read
+as an identity, its answer read back on the game's answer type. -/
+theorem oracleImpl_zero_onSpec {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 0) (s : σ) :
+    S.oracleImpl κ init key chal 0 x s =
+      (init (cast (show (S.sidSpec κ).dom 0 = (Fin (S.idLen.eval κ) → Bool) from rfl) x) s).bind
+        fun p => .pure (cast (show (S.sidSpec κ).rng 0 = (Fin (S.ppLen.eval κ) → Bool)
+          from rfl).symm p.1, p.2) :=
+  (OracleComp.bind_pure _).symm
+
+/-- **Oracle `1` of `oracleImpl` on the game's query type**: the handler `key` on the query read
+as an identity, its answer read back on the game's answer type. -/
+theorem oracleImpl_one_onSpec {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 1) (s : σ) :
+    S.oracleImpl κ init key chal 1 x s =
+      (key (cast (show (S.sidSpec κ).dom 1 = (Fin (S.idLen.eval κ) → Bool) from rfl) x) s).bind
+        fun p => .pure (cast (show (S.sidSpec κ).rng 1 = (Fin (S.skLen.eval κ + 1) → Bool)
+          from rfl).symm p.1, p.2) :=
+  (OracleComp.bind_pure _).symm
+
+/-- **Oracle `2` of `oracleImpl` on the game's query type**: the handler `chal` on the query read
+as two messages, its answer read back on the game's answer type. -/
+theorem oracleImpl_two_onSpec {σ : Type} (κ : ℕ)
+    (init : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.ppLen.eval κ) → Bool) × σ))
+    (key : (Fin (S.idLen.eval κ) → Bool) → σ → ProbComp ((Fin (S.skLen.eval κ + 1) → Bool) × σ))
+    (chal : (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool) → σ →
+      ProbComp ((Fin (S.ctLen.eval κ) → Bool) × σ))
+    (x : (S.sidSpec κ).dom 2) (s : σ) :
+    S.oracleImpl κ init key chal 2 x s =
+      (chal (cast (show (S.sidSpec κ).dom 2 = (Fin (S.msgLen.eval κ + S.msgLen.eval κ) → Bool)
+        from rfl) x) s).bind
+        fun p => .pure (cast (show (S.sidSpec κ).rng 2 = (Fin (S.ctLen.eval κ) → Bool)
+          from rfl).symm p.1, p.2) :=
+  (OracleComp.bind_pure _).symm
+
+end IBEScheme
+
+/-! ### Requested in `BonehBoyen.lean` -/
+
+/-- **The parameter encoding as a word**: `⟦encPP ⟨d, pp⟩⟧` is the padded word
+`d ‖ g ‖ g_1 ‖ g_2 ‖ h` (`ppLen(κ)` bits). -/
+theorem ofFn_bb1Scheme_encPP (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (pp : BB1.Params (G.group κ d)) :
+    List.ofFn ((bb1Scheme G ℓ).encPP κ ⟨d, pp⟩) =
+      List.ofFn (padFin ((bb1Scheme G ℓ).ppLen.eval κ) (d ++ List.ofFn ((G.group κ d).encG pp.g) ++
+        List.ofFn ((G.group κ d).encG pp.g1) ++ List.ofFn ((G.group κ d).encG pp.g2) ++
+        List.ofFn ((G.group κ d).encG pp.h))) := rfl
+
+/-- **The key encoding as a word**: `⟦encSK ⟨d, k⟩⟧` is the padded word `d_0 ‖ d_1`
+(`skLen(κ)` bits). -/
+theorem ofFn_bb1Scheme_encSK (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (k : BB1.Key (G.group κ d)) :
+    List.ofFn ((bb1Scheme G ℓ).encSK κ ⟨d, k⟩) =
+      List.ofFn (padFin ((bb1Scheme G ℓ).skLen.eval κ) (List.ofFn ((G.group κ d).encG k.d0) ++
+        List.ofFn ((G.group κ d).encG k.d1))) := rfl
+
+/-- **The message space as words**: a `msgLen(κ)`-bit message is in the message space of
+`⟨d, pp⟩` iff its word is the word of the encoding of an element of `G_T`. -/
+theorem bb1Scheme_msgSpace_iff (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (pp : BB1.Params (G.group κ d)) (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) :
+    (bb1Scheme G ℓ).MsgSpace κ ⟨d, pp⟩ m ↔
+      ∃ u, List.ofFn ((G.group κ d).encT u) = List.ofFn m :=
+  exists_congr fun _ => List.ofFn_inj.symm
+
+/-- **The simulated challenge as a word**: `⟦bb1SimCt … m⟧` is the padded word
+`decodeT(m) · T ‖ Z ‖ Z^{α_1.val}` (`ctLen(κ)` bits), the message read at the width of `G_T`. -/
+theorem ofFn_bb1SimCt (G : BilinearGen) (ℓ : PolyExpr) (κ : ℕ) (d : List Bool)
+    (Z : (G.group κ d).G) (T : (G.group κ d).GT) (α₁ : ZMod (G.group κ d).order)
+    (m : Fin ((bb1Scheme G ℓ).msgLen.eval κ) → Bool) :
+    List.ofFn (bb1SimCt G ℓ κ d Z T α₁ m) =
+      List.ofFn (padFin ((bb1Scheme G ℓ).ctLen.eval κ)
+        (List.ofFn ((G.group κ d).encT (BB1.decodeT (G.group κ d) (padFin _ (List.ofFn m)) * T)) ++
+          List.ofFn ((G.group κ d).encG Z) ++ List.ofFn ((G.group κ d).encG (Z ^ α₁.val)))) := by
+  rw [padFin_ofFn]
+  rfl
+
+end TCSlib.Cryptography.AdvancedEncryption.IdentityBased

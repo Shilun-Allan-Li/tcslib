@@ -1,0 +1,29 @@
+import Lean
+import TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BonehBoyenSecurity
+
+/-! fill-bb1-machine axioms probe: the census of every constant of the fill's five owners
+(axioms of each; any outside `propext`, `Classical.choice`, `Quot.sound` listed), then
+`#print axioms` of T4 and of the assembled theorem. -/
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let P := `TCSlib.Cryptography.AdvancedEncryption.IdentityBased
+  let mods : List Name := [P ++ `BonehBoyenMachine.Draws, P ++ `BonehBoyenMachine.Words,
+    P ++ `BonehBoyenMachine.Handler, P ++ `BonehBoyenMachine.Reduction, P ++ `BonehBoyenMachine]
+  let mut n : Nat := 0
+  let mut bad : Array (Name × Array Name) := #[]
+  for (c, _) in env.constants.toList do
+    let some mi := env.getModuleIdxFor? c | continue
+    unless mods.contains env.header.moduleNames[mi.toNat]! do continue
+    let axs ← Lean.collectAxioms c
+    n := n + 1
+    let ns := axs.filter fun a => !([``propext, ``Classical.choice, ``Quot.sound].contains a)
+    unless ns.isEmpty do bad := bad.push (c, ns)
+  logInfo m!"AXCENSUS owners {mods.length} constants {n} nonstandard {bad.size}: {bad.toList}"
+
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.exists_bb1_distinguisher
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.bb1_sidSecure
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.simulate_handler
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.expect_handlerMachine
+#print axioms TCSlib.Cryptography.AdvancedEncryption.IdentityBased.BB1Machine.abs_expect_runAccept_sub_le
