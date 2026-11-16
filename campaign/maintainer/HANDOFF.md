@@ -7,20 +7,20 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-15; authoritative)
+## 0. Current state (2026-11-16; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
-only go directly after fetch/rebase. The latest merge is #322 (Ladner fills 5 and 6, gate 140).
-Campaign Lean is `d811bdaaf5e923b2a57f0453135af5c7ee37713a`. Its replay output is the cloud snapshot `oleans-cd811`
-(876 objects); use it whole. See campaign/status/2026-11-15-merge-322/. Ladner has one admitted
-target left: target 6, `SAT_H_intermediate`. Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
+only go directly after fetch/rebase. The latest merge is #325 (Ladner fill 7, gate 141).
+Campaign Lean is `20394834d86a509ad5776c36dbbfccc33b023306`. Its replay output is the cloud snapshot `oleans-c2039`
+(876 objects); use it whole. See campaign/status/2026-11-16-merge-325/. **Ladner's theorem is proved** (`Complexity.ladner`,
+standard axioms only; Ladner.lean has no admission). Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
 (`ladnerH_polyTime`; #321). Fills 5 and 6 proved targets 2 and 5
-(#322). Fill 7 proves target 6, completing Ladner
-(`Complexity.ladner`, standard axioms only); it is in gate 141 (PR #325, clear to merge). Earlier merges are in the table.
+(#322). Fill 7 proved target 6 (#325). Next: the
+chapters 3–4 closeout (campaign/closeout/PLAN.md, draft for Seyoon's review). Earlier merges are in the table.
 
 | PR / gate | Current state |
 |---|---|
-| #325 / 141 | **Clear to merge** at `b2d562d926a822cc59545fbc89513ca573effbd2` (round 1 CLEAR, 2026-11-16; one records minor fixed). Ladner fill 7: target 6 `SAT_H_intermediate`, completing `ladner`. Replay 2/2 with 0 admissions (`oleans-cl141-cd811`, prospective tree `c0d07c95`); seals 8/8. campaign/gates/141-ladner-final/. |
+| #325 / 141 | **Merged** at `20394834d86a509ad5776c36dbbfccc33b023306` (2026-11-16). Gate closed (CLEAR). Ladner fill 7: target 6 `SAT_H_intermediate`; **Ladner's theorem complete**. Its replay output is the campaign snapshot `oleans-c2039` (876 objects; campaign/status/2026-11-16-merge-325/). |
 | #322 / 140 | **Merged** at `d811bdaaf5e923b2a57f0453135af5c7ee37713a` (2026-11-15). Gate closed (CLEAR). Ladner fills 5 and 6: targets 2 `SAT_H_mem_NP` and 5 `SAT_mem_P_of_padSAT_NPHard`. Its replay output is the campaign snapshot `oleans-cd811` (876 objects; campaign/status/2026-11-15-merge-322/). |
 | #321 / 139 | **Merged** at `34643146ee1fe6bf6d7ffdf2e543e8342a3e16a0` (2026-11-15). Gate closed (CLEAR). Ladner fill 4: the approved reorder and target 1 `ladnerH_polyTime`. Its replay output is the campaign snapshot `oleans-c3464` (876 objects; campaign/status/2026-11-15-merge-321/). |
 | #320 / 138 | **Merged** at `1320a5c8ce93f4644c2c92ed32e2768ed07ea9bb` (2026-11-15). Gate closed (CLEAR). Ladner fill 3: target 1 part A through `ladner_candidate_FP`, with private dedup helpers. Its replay output is the campaign snapshot `oleans-c1320` (876 objects; campaign/status/2026-11-15-merge-320/). |
