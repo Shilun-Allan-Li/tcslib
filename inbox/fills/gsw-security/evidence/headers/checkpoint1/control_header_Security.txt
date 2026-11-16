@@ -1,0 +1,39 @@
+# frozen-statement check: control 1 (uniformKey_uniform_advantage_le header, one character)
+# base=/home/user/exchange/inbox/fills/gsw-security/evidence/headers/checkpoint1/base_Security.lean
+# final=/home/user/exchange/inbox/fills/gsw-security/evidence/headers/checkpoint1/control_header_Security.lean
+SAME      command  /-
+SAME      command  import TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW.Scheme
+SAME      command  import TCSlib.Cryptography.Hashing.SIS.Columns
+SAME      command  import TCSlib.Cryptography.LWE.Experiments
+SAME      command  import Mathlib.Tactic.Simps.Basic
+SAME      command  set_option maxHeartbeats 0
+SAME      command  set_option relaxedAutoImplicit false
+SAME      command  set_option autoImplicit false
+SAME      command  /-!
+SAME      command  namespace TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+SAME      command  open Encryption.PublicKey
+SAME      whole    view
+SAME      whole    view_eq
+SAME      whole    realView
+SAME      whole    realView_eq
+SAME      whole    uniformKeyView
+SAME      whole    uniformKeyView_eq
+SAME      whole    reduction
+SAME      whole    reduction_eq
+SAME      whole    columnHashParameters
+SAME      command  attribute [simps (config := { isSimp := false }) dimension columns mod
+SAME      target   real_uniformKey_advantage (header and statement prose; body unchanged)
+CHANGED   target   uniformKey_uniform_advantage_le (header DIFFERS, prose ok)
+SAME      target   distAdv_encrypt_le (header and statement prose; body unchanged)
+SAME      target   distAdv_encrypt_le_of_width (header and statement prose; body unchanged)
+SAME      command  end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
+--- DIFF header uniformKey_uniform_advantage_le
+--- base
++++ final
+@@ -5,4 +5,4 @@
+     distAdv (uniformKeyView P μ)
+       (id : ((Matrix (Fin P.lwe.samples) (Fin P.lwe.dimension) (ZMod P.lwe.modulus) ×
+         (Fin P.lwe.samples → ZMod P.lwe.modulus)) × Ciphertext P) → _) D ≤
+-      P.columns * Regev.extractionError P.lwe 
++      P.columns * Regev.extractionError P.lwd 
+DIFFERENCES=1 CHANGED=1 REMOVED=0 ORDER=ok ADDED_DECLS=0 ADDED_COMMANDS=0

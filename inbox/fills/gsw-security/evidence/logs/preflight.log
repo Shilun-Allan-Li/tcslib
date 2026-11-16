@@ -1,0 +1,139 @@
+# preflight 2026-11-16T07:58:20Z
+## nproc
+4
+## cgroup (v1) of this shell: /sys/fs/cgroup/memory/process_api/01a1e359-75c8-70e9-855a-2e0ad096beda/claude-code-bash
+--- memory.limit_in_bytes
+14338772992
+--- memory.usage_in_bytes
+10121523200
+--- memory.max_usage_in_bytes
+10296037376
+--- memory.failcnt
+0
+--- memory.oom_control
+oom_kill_disable 0
+under_oom 0
+oom_kill 0
+--- memory.stat
+cache 9734631424
+rss 548864
+rss_huge 0
+shmem 0
+mapped_file 36864
+dirty 89886720
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 2561090
+pgpgout 1568111
+pgfault 1624760
+pgmajfault 178
+inactive_anon 360448
+active_anon 12288
+inactive_file 7844671488
+active_file 1889959936
+unevictable 0
+hierarchical_memory_limit 14338772992
+hierarchical_memsw_limit 9223372036854771712
+total_cache 9734631424
+total_rss 548864
+total_rss_huge 0
+total_shmem 0
+total_mapped_file 36864
+total_dirty 89886720
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 2561090
+total_pgpgout 1568111
+total_pgfault 1624760
+total_pgmajfault 178
+total_inactive_anon 360448
+total_active_anon 12288
+total_inactive_file 7844671488
+total_active_file 1889959936
+total_unevictable 0
+## parent cgroup limits
+/sys/fs/cgroup/memory/process_api/01a1e359-75c8-70e9-855a-2e0ad096beda limit=9223372036854771712 usage=10714497024
+/sys/fs/cgroup/memory/process_api limit=9223372036854771712 usage=10715029504
+/sys/fs/cgroup/memory limit=9223372036854771712 usage=10276151296
+## /proc/meminfo
+MemTotal:       16473776 kB
+MemFree:         5889052 kB
+MemAvailable:   15824068 kB
+Buffers:           69644 kB
+Cached:          9777644 kB
+SwapCached:            0 kB
+Active:          1977308 kB
+Inactive:        8043256 kB
+Active(anon):         68 kB
+Inactive(anon):   189848 kB
+Active(file):    1977240 kB
+Inactive(file):  7853408 kB
+Unevictable:       14692 kB
+Mlocked:           10492 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Zswap:                 0 kB
+Zswapped:              0 kB
+Dirty:             88008 kB
+Writeback:             0 kB
+AnonPages:        188212 kB
+Mapped:           146568 kB
+Shmem:             16632 kB
+KReclaimable:     432656 kB
+Slab:             491116 kB
+SReclaimable:     432656 kB
+SUnreclaim:        58460 kB
+KernelStack:        1944 kB
+PageTables:         2868 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     8236888 kB
+Committed_AS:     454896 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:        6736 kB
+VmallocChunk:          0 kB
+Percpu:              992 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Balloon:               0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:       20480 kB
+DirectMap2M:     2076672 kB
+DirectMap1G:    16777216 kB
+## df -B1 / df -T
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 21719666688 19563868160  53% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 21210612  19105340  53% /
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 21719666688 19563868160  53% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 21210612  19105340  53% /
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 21719666688 19563868160  53% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 21210612  19105340  53% /
+## computation (cgroup v1): in_use = usage_in_bytes - total_cache + total_shmem
+limit=14338772992 usage=10120941568 total_cache=9734631424 total_shmem=0 in_use=386310144
+headroom = limit - in_use = 13952462848 bytes = 12.99 GiB (floor 4 GiB): PASS
+disk avail on clone fs = 19563859968 bytes = 18.22 GiB (floor 12 GiB): PASS
+# disk re-check after toolchain 2026-11-16T07:59:28Z
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 24305295360 16978239488  59% /
+avail GiB: 15.81 (floor 8)

@@ -1,0 +1,19 @@
+# frozen-statement check: TCSlib/Cryptography/Hashing/SIS/Columns.lean
+# base=/home/user/exchange/inbox/fills/gsw-security/evidence/headers/checkpoint1/base_Columns.lean
+# final=TCSlib/Cryptography/Hashing/SIS/Columns.lean
+SAME      command  /-
+SAME      command  import TCSlib.Cryptography.Hashing.SIS.Universality
+SAME      command  import TCSlib.Cryptography.Foundations.Probability
+SAME      command  set_option maxHeartbeats 0
+SAME      command  set_option relaxedAutoImplicit false
+SAME      command  set_option autoImplicit false
+SAME      command  /-!
+SAME      command  namespace TCSlib.Cryptography.Hashing.SIS
+SAME      command  open TCSlib.Cryptography.SIS (Parameters)
+SAME      whole    hashColumns
+SAME      whole    hashColumns_apply
+SAME      target   hashColumns_eq_mul (header and statement prose; body replaced)
+SAME      target   distAdv_hashColumns_uniform_le (header and statement prose; body replaced)
+SAME      command  end TCSlib.Cryptography.Hashing.SIS
+ADDED     command  import TCSlib.Cryptography.Pseudorandom.Indistinguishability
+DIFFERENCES=0 CHANGED=0 REMOVED=0 ORDER=ok ADDED_DECLS=0 ADDED_COMMANDS=1

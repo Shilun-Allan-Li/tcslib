@@ -1,0 +1,34 @@
+### grep -rn "theorem mul_apply'" Mathlib (mathlib 029db123)
+Mathlib/Algebra/Algebra/Bilinear.lean:108:theorem mul_apply' (a b : A) : mul R A a b = a * b :=
+Mathlib/Analysis/Normed/Operator/Mul.lean:41:theorem mul_apply' (x y : R) : mul 𝕜 R x y = x * y :=
+Mathlib/Analysis/CStarAlgebra/CStarMatrix.lean:298:theorem mul_apply' {l : Type*} [Fintype m] [Mul A] [AddCommMonoid A] {M : CStarMatrix l m A}
+Mathlib/Data/Matrix/Mul.lean:299:theorem mul_apply' [Fintype m] [Mul α] [AddCommMonoid α] {M : Matrix l m α} {N : Matrix m n α}
+### grep -rn "theorem mulVec_eq_sum" Mathlib (mathlib 029db123)
+Mathlib/Data/Matrix/Mul.lean:697:theorem mulVec_eq_sum [Fintype n] (v : n → α) (M : Matrix m n α) :
+### grep -rn "theorem of_apply" Mathlib (mathlib 029db123)
+Mathlib/FieldTheory/PerfectClosure.lean:383:theorem of_apply (x : K) : of K p x = mk _ _ (0, x) :=
+Mathlib/Algebra/MonoidAlgebra/Defs.lean:629:theorem of_apply [AddZeroClass M] (a : Multiplicative M) : of R M a = single a.toAdd 1 :=
+Mathlib/ModelTheory/DirectLimit.lean:283:theorem of_apply {i : ι} {x : G i} : of L ι G f i x = ⟦.mk f i x⟧ :=
+Mathlib/GroupTheory/CoprodI.lean:119:theorem of_apply {i} (m : M i) : of m = Con.mk' _ (FreeMonoid.of <| Sigma.mk i m) :=
+Mathlib/GroupTheory/PushoutI.lean:95:theorem of_apply_eq_base (i : ι) (x : H) : of i (φ i x) = base φ x := by
+### grep -rn "def piComm" Mathlib (mathlib 029db123)
+Mathlib/Logic/Equiv/Basic.lean:158:def piComm (φ : α → β → Sort*) : (∀ a b, φ a b) ≃ ∀ b a, φ a b :=
+### grep -rn "theorem ofBijective_apply" Mathlib (mathlib 029db123)
+Mathlib/Algebra/Group/Equiv/Defs.lean:500:theorem ofBijective_apply_symm_apply {n : N} (f : M →* N) (hf : Bijective f) :
+Mathlib/Algebra/Star/StarRingHom.lean:451:theorem ofBijective_apply {f : F} (hf : Function.Bijective f) (a : A) :
+Mathlib/Algebra/Star/MonoidHom.lean:342:theorem ofBijective_apply {f : A →⋆* B} (hf : Function.Bijective f) (a : A) :
+Mathlib/Algebra/Star/StarAlgHom.lean:922:theorem ofBijective_apply {f : F} (hf : Function.Bijective f) (a : A) :
+Mathlib/Algebra/Module/Submodule/Equiv.lean:186:theorem ofBijective_apply [RingHomInvPair σ₁₂ σ₂₁] [RingHomInvPair σ₂₁ σ₁₂] {hf} (x : M) :
+### grep -rn "theorem symm_apply_apply" Mathlib (mathlib 029db123)
+Mathlib/Algebra/Algebra/Equiv.lean:313:theorem symm_apply_apply (e : A₁ ≃ₐ[R] A₂) : ∀ x, e.symm (e x) = x :=
+Mathlib/Algebra/Group/Equiv/Defs.lean:324:theorem symm_apply_apply (e : M ≃* N) (x : M) : e.symm (e x) = x :=
+Mathlib/Algebra/Lie/Basic.lean:616:theorem symm_apply_apply (e : L₁ ≃ₗ⁅R⁆ L₂) : ∀ x, e.symm (e x) = x :=
+Mathlib/Algebra/Lie/Basic.lean:992:theorem symm_apply_apply (e : M ≃ₗ⁅R,L⁆ N) : ∀ x, e.symm (e x) = x :=
+Mathlib/Algebra/Order/Hom/Monoid.lean:652:theorem symm_apply_apply (e : α ≃*o β) (x : α) : e.symm (e x) = x :=
+### grep -rn "def addRight" Mathlib (mathlib 029db123)
+### grep -rn "def prodCongr" Mathlib (mathlib 029db123)
+Mathlib/Algebra/Algebra/Prod.lean:123:def prodCongr (l : S ≃ₐ[R] A) (r : T ≃ₐ[R] B) : (S × T) ≃ₐ[R] A × B :=
+Mathlib/Algebra/Group/Prod.lean:554:def prodCongr (f : M ≃* M') (g : N ≃* N') : M × N ≃* M' × N' :=
+Mathlib/Algebra/Ring/Equiv.lean:568:def prodCongr {R R' S S' : Type*} [NonUnitalNonAssocSemiring R] [NonUnitalNonAssocSemiring R']
+Mathlib/Logic/Equiv/Prod.lean:70:def prodCongr {α₁ α₂ β₁ β₂} (e₁ : α₁ ≃ α₂) (e₂ : β₁ ≃ β₂) : α₁ × β₁ ≃ α₂ × β₂ :=
+Mathlib/Logic/Equiv/Prod.lean:232:def prodCongrLeft : β₁ × α₁ ≃ β₂ × α₁ where

@@ -1,0 +1,476 @@
+### git grep -nE 'hashColumns' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:167:is `hashColumns (columnHashParameters P) N Ā R + μG` (`encrypt_eq`, `hashColumns_eq_mul`);
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:170:`distAdv_hashColumns_uniform_le` and rewrite its bound with the `columnHashParameters` readers
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:18:* `hashColumns`: hash `N` independent binary columns with the same matrix, `A ↦ A R`.
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:22:* `distAdv_hashColumns_uniform_le`: `(A, A R)` is within `N` times the single-column
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:43:/-- Hash `N` binary columns with one matrix: column `j` of `hashColumns P N A R` is
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:44:`hash P A (R · j)`, so `hashColumns P N A R = A R` modulo `q` [Pei16, Section 6.1.3, `ĀR`]. -/
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:45:def hashColumns (P : Parameters) (N : ℕ)
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:51:/-- Entry `(i,j)` of `hashColumns P N A R` is coordinate `i` of the hash of column `j`. -/
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:52:theorem hashColumns_apply (P : Parameters) (N : ℕ)
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:55:    hashColumns P N A R i j = hash P A (fun c => R c j) i := rfl
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:57:/-- `hashColumns` is matrix multiplication by the `{0,1}` lift of `R`.
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:60:theorem hashColumns_eq_mul (P : Parameters) (N : ℕ)
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:63:    hashColumns P N A R = A * Matrix.of fun c j => ((R c j).toNat : ZMod P.modulus) := by
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:78:theorem distAdv_hashColumns_uniform_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:83:        Matrix (Fin P.columns) (Fin N) Bool => (r.1, hashColumns P N r.1 r.2))
+(total: 15 lines)
+### git grep -nE 'columnHybrid' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:21:* `columnHybrid`, `columnTest`: replace one column at a time using a standard DLWE challenge.
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:82:def columnHybrid (P : Parameters) (χ : Noise) (w k : ℕ)
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:94:theorem columnHybrid_eq (P : Parameters) (χ : Noise) (w k : ℕ)
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:99:    columnHybrid P χ w k r =
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:142:    distAdv (columnHybrid P χ w (k.val + 1)) (columnHybrid P χ w k.val) D =
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:156:    D (columnHybrid P χ w t
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:180:  have hhybrid (t : ℕ) : acceptProb (columnHybrid P χ w t) D =
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:191:    rw [columnTest_eq, LWE.sample_fst, LWE.sample_snd, columnHybrid_eq]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:209:    rw [columnTest_eq, columnHybrid_eq]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:248:  have hzero : acceptProb (columnHybrid P χ w 0) D = acceptProb (id : Public × Uniform → _) D := by
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:258:    simp only [columnHybrid_eq, Nat.not_lt_zero, if_false, group, Equiv.coe_fn_mk, test, id_eq]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:260:  have hfull : acceptProb (columnHybrid P χ w w) D = acceptProb (concealedSampler P χ w) D := by
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:271:    rw [columnHybrid_eq, concealedSampler_eq]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:276:  let score (t : ℕ) := acceptProb (columnHybrid P χ w t) D
+(total: 14 lines)
+### git grep -nE 'columnTest' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:21:* `columnHybrid`, `columnTest`: replace one column at a time using a standard DLWE challenge.
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:106:def columnTest {ρ : Type*} (P : Parameters) (χ : Noise) (w : ℕ) (k : Fin w)
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:119:theorem columnTest_eq {ρ : Type*} (P : Parameters) (χ : Noise) (w : ℕ) (k : Fin w)
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:127:    columnTest P χ w k D c r =
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:143:      LWE.decisionAdvantage P χ (columnTest P χ w k D) := by
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:184:  have hreal : acceptProb (LWE.sample P χ) (columnTest P χ w k D) =
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:191:    rw [columnTest_eq, LWE.sample_fst, LWE.sample_snd, columnHybrid_eq]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:202:  have hideal : acceptProb (id : Public × Values → _) (columnTest P χ w k D) =
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:209:    rw [columnTest_eq, columnHybrid_eq]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:241:      ∑ k : Fin w, LWE.decisionAdvantage P χ (columnTest P χ w k D) := by
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:322:        (columnTest P χ w k (fun c r => D (c.1, c.2 + M₀) r))) +
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:324:        (columnTest P χ w k (fun c r => D (c.1, c.2 + M₁) r)) := by
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:331:      ∑ k : Fin w, LWE.decisionAdvantage P χ (columnTest P χ w k (Dshift M)) := by
+(total: 13 lines)
+### git grep -nE 'column_gap' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:138:theorem column_gap {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:232:differences and apply the real triangle inequality and `column_gap`. At `w=0` the
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:285:      exact column_gap P χ w k D
+(total: 3 lines)
+### git grep -nE 'multicopy' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:57:padded-image and multicopy reductions as `NUPPT`s, coin-splitting bijections, the exactness
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:89:* `TCSlib.Cryptography.Ensemble.Indist.copies` — polynomially many copies (the multicopy
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:168:the multicopy lemma that assumes it is [Gar26, Lemma 3.3] (`Indist.copies`). -/
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:221:ensemble `{X_n^{(1)} ‖ ⋯ ‖ X_n^{(t(n))}}` of the multicopy corollary of the hybrid lemma
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:473:/-- **Polynomially many copies** (the multicopy corollary of the hybrid lemma,
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:485:`t(n) > 0`, `exists_multicopyRed_ge` (through the block bijection `blocks`) gives a hybrid
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:486:index `k_n < t(n)` such that the concrete reduction `multicopyRed (X.X n) (Y.X n) (t n) k_n D'`
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:498:coincide exactly (`EnsembleLemmas.acceptProb_multicopyRed_congr`). Hence
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:533:        distAdv (X.X n) (Y.X n) (multicopyRed (X.X n) (Y.X n) (t.eval n) k (D' n))) := by
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:536:    · obtain ⟨k, hk, hge⟩ := exists_multicopyRed_ge (X.X n) (Y.X n) ht (D' n)
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:543:      distAdv (X.X n) (Y.X n) (multicopyRed (X.X n) (Y.X n) (t.eval n) (k n) (D' n)) := by
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:556:        multicopyRed
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:564:        multicopyRed_def, hD']
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:566:        acceptProb (Z.X n) (multicopyRed (X.X n) (Y.X n) (t.eval n) (k n) (D' n)) := by
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:568:      rw [← EnsembleLemmas.acceptProb_coins_equiv e, ← EnsembleLemmas.acceptProb_multicopyRed_congr
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:23:bridges of Definition 69.4, the multicopy corollary of Lemma 71.6 and the prediction
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:43:  with the challenge planted at a hard-wired position (the multicopy reduction as an FP
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:53:  — the machines of Lemmas 73.8, 71.5 and the multicopy corollary.
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:58:  `acceptProb_multicopyRed_congr` — replacing the ideal samplers of the multicopy reduction
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:130:case `t(n) = 0` of the multicopy corollary). -/
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:509:/-- **Replacing the ideal samplers of the multicopy reduction by exactly distributed ones**
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:514:theorem acceptProb_multicopyRed_congr {κX κY σ τ ζ γ ρ : Type*} [Fintype κX] [Fintype κY]
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:518:    acceptProb Z (multicopyRed X' Y' t k D) = acceptProb Z (multicopyRed X Y t k D) := by
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:524:  calc acceptProb Z (multicopyRed X' Y' t k D)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:532:    _ = acceptProb Z (multicopyRed X Y t k D) :=
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:535:/-! ### The sampler loop of the multicopy reduction -/
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:800:/-- **The machine of the multicopy corollary** [PS10, Lemma 71.6; Gar26, Lemma 3.3]: for an
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:122:`m'_j`. (Unlike `exists_multicopyRed_ge` the copies share the parameter `pk` and the samplers
+TCSlib/Cryptography/Pseudorandom.lean:49:* `Indistinguishability` gives randomized post-processing and multicopy hybrids
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:13:# Computational indistinguishability: the sunglass and multicopy lemmas
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:35:* `multicopyHybrid X Y t k`: the hybrid `(Y, …, Y, X, …, X)` with `k` copies of `Y`.
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:36:* `multicopyRed X Y t k D`: the hybrid-`k` distinguisher for one copy.
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:37:* `multicopyAvgRed X Y t D`: the same with a uniformly random `k`.
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:45:* `exists_multicopyRed_ge`: [Gar26, Lemma 3.3], some `k` has advantage `≥ ε / t`.
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:46:* `distAdv_multicopyAvgRed`: the averaged reduction has advantage exactly `ε / t`.
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:182:/-! ### The multicopy lemma -/
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:195:/-- The `k`-th hybrid of the multicopy lemma: the first `k` coordinates are copies of `Y`,
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:198:def multicopyHybrid (X : σ → γ) (Y : τ → γ) (t k : ℕ) :
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:202:/-- The multicopy reduction at hybrid index `k` [Gar26, proof of Lemma 3.3]: on input `z`,
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:211:def multicopyRed (X : σ → γ) (Y : τ → γ) (t k : ℕ) (D : (Fin t → γ) → ρ → Bool) :
+(total: 87 lines)
+### git grep -nE 'abs_sub_le_sum_hybrids' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:126:`κ × (Fin (q+1) → ρ)`, `H_0` and `H_{q+1}` the two sides; `abs_sub_le_sum_hybrids` over
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:82:on the seeds `κ × (Fin (q+1) → ρ)`, `H_0` and `H_{q+1}` the two sides; `abs_sub_le_sum_hybrids`
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:153:      ≤ ∑ t ∈ Finset.range (q + 1), |Pr t - Pr (t + 1)| := abs_sub_le_sum_hybrids Pr (q + 1)
+TCSlib/Cryptography/Foundations/Probability.lean:42:* `abs_sub_le_sum_hybrids`, `exists_hybrid_gap`: the hybrid argument for a chain of
+TCSlib/Cryptography/Foundations/Probability.lean:218:theorem abs_sub_le_sum_hybrids (P : ℕ → ℝ) (t : ℕ) :
+TCSlib/Cryptography/Foundations/Probability.lean:238:  linarith [abs_sub_le_sum_hybrids P t]
+TCSlib/Cryptography/Games/Advantage.lean:109:[PS10, Lemma 71.6]. It is the concrete layer's `abs_sub_le_sum_hybrids` for the acceptance
+TCSlib/Cryptography/Games/Advantage.lean:113:  abs_sub_le_sum_hybrids (fun i => accept (G i)) n
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:73:ideal one (after relabelling seeds by `uprob_comp_equiv`). `abs_sub_le_sum_hybrids` bounds the
+TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean:255:  refine (abs_sub_le_sum_hybrids (fun i => hybridProb G A i) n).trans ?_
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:281:  have key := abs_sub_le_sum_hybrids (fun j => subHybridProb G A q j) q
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:280:    _ ≤ ∑ i ∈ Finset.range w, |score i - score (i + 1)| := abs_sub_le_sum_hybrids score w
+(total: 12 lines)
+### git grep -nE 'exists_hybrid_gap' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:447:`m` where `m − 1` steps would do; harmless.) This is the concrete `exists_hybrid_gap` applied to
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:454:  obtain ⟨i, hi, h⟩ := exists_hybrid_gap (fun i => acceptProb (X i) D) hm
+TCSlib/Cryptography/Foundations/Probability.lean:42:* `abs_sub_le_sum_hybrids`, `exists_hybrid_gap`: the hybrid argument for a chain of
+TCSlib/Cryptography/Foundations/Probability.lean:230:theorem exists_hybrid_gap (P : ℕ → ℝ) {t : ℕ} (ht : 0 < t) :
+TCSlib/Cryptography/Games/Advantage.lean:121:layer's `exists_hybrid_gap` for the acceptance probabilities. -/
+TCSlib/Cryptography/Games/Advantage.lean:124:  exists_hybrid_gap (fun i => accept (G i)) hn
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:405:finite hybrid bound `exists_hybrid_gap` to the acceptance probabilities for `oracleDist A`. -/
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:409:  simpa only [distAdv_def] using exists_hybrid_gap (fun i => acceptProb (H i) (oracleDist A)) hm
+TCSlib/Cryptography/Pseudorandom/Generators.lean:237:  obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun i => acceptProb (prgHybrid G l i) D) hl
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:299:    exists_hybrid_gap (fun i => acceptProb (multicopyHybrid X Y t i) D) ht
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:380:`hybrid_lemma` (`exists_hybrid_gap`) over `i ↦ acceptProb (nextBitHybrid X i) D` gives
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:393:  obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun j => acceptProb (nextBitHybrid X j) D) hℓ
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:230:**Proof sketch.** `exists_hybrid_gap` on `k ↦ Pr[D(H_k) = 1]`; the ends are the two
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:237:  obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun i => acceptProb (pairHybrid X Y i) D) ht
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:543:**Proof sketch.** `exists_hybrid_gap` on `k ↦ acceptProb (colSimHyb … N k) D`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:544:**Proof sketch.** `exists_hybrid_gap` on `k ↦ acceptProb (hybStd H Wa N k) D` gives `k` with
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:561:  obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun i => acceptProb (hybStd H Wa N i) D) hN
+(total: 17 lines)
+### git grep -nE 'acceptProb_update' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Pseudorandom/Generators.lean:207:    (acceptProb_update (ρ := ρ) (⟨k, hk⟩ : Fin l)
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:42:  `acceptProb_bind`, `acceptProb_update`: reseeding.
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:103:theorem acceptProb_update [DecidableEq ι] [Fintype ι] [Nonempty σ] (k : ι)
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:252:  refine Eq.trans ?_ (acceptProb_update (ρ := ρ) (⟨k, hk⟩ : Fin t)
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:274:    ((acceptProb_update (ρ := ρ) (⟨k, hk⟩ : Fin t)
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:180:(`acceptProb_update`), as in `acceptProb_multicopyRed_left`. -/
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:186:  refine Eq.trans ?_ (acceptProb_update (ρ := ρ) k
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:201:`(k + 1)`-th hybrid (`acceptProb_update` after swapping the two seed vectors). -/
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:210:    ((acceptProb_update (ρ := ρ) k
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:546:`acceptProb_update`) of the difference between the planted attempt fed the `S'` vector and
+(total: 10 lines)
+### git grep -nE 'uprob_update' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Asymptotic/OneWay.lean:500:(`OneWay.uprob_update`), so the planted experiment is the direct-product experiment with the
+TCSlib/Cryptography/Asymptotic/OneWay.lean:507:  have h := uprob_update (α := α) (ρ := ρ) i fun xs r => f (B (prodFun f q xs) r i) = f (xs i)
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:184:(`OneWay.uprob_update`, `prodFun_update`), and an inverse of the whole tuple inverts every
+TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean:192:  have h := uprob_update (α := α) (ρ := ρ) i fun xs r =>
+TCSlib/Cryptography/Candidates/Concrete.lean:216:a fresh uniform `x` at position `i` leaves the tuple uniform (`OneWay.uprob_update`,
+TCSlib/Cryptography/Candidates/Concrete.lean:254:            rw [← uprob_update i (fun xs r =>
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:131:`v` by `update v j r` (`OneWay.uprob_update`, `[Nonempty ρ]`) and regrouping the seeds
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:51:`D (pk, sel pk (update v j r))` and `OneWay.uprob_update` forgets the planted coordinate. -/
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:72:  exact OneWay.uprob_update (ρ := κ × ρ') (α := ρ) j
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:210:            rw [← uprob_update i (fun xs r =>
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:33:* `uprob_update`: planting a fresh uniform value into a uniform tuple leaves it uniform.
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:131:theorem uprob_update {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty α] (i : ι)
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:43:  `uprob_sections_congr`, `uprob_update_absorb`, `uprob_update_split`.
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:87:theorem uprob_update_absorb [Nonempty β] (i : α) (f : (α → β) → γ → Prop) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:100:theorem uprob_update_absorb' [Nonempty β] (i : α) (f : (α → β) → Prop) :
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:112:theorem uprob_update_split [Nonempty β] (i : α) (g : β → (α → β) → Prop)
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:116:    ← uprob_update_absorb' i (fun W => g (W i) W)]
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:322:continuation probabilities (`uprob_update_split`), which agree by induction. -/
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:373:        uprob_update_split j g (fun v W u => by simp only [g, hlen, j, combine_update]),
+TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean:374:        uprob_update_split x h (fun v R u => by
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:151:  exact uprob_update_absorb _ E
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:201:  exact uprob_update_absorb _ E
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:220:  rw [OneWay.uprob_update k (fun cols (z : Public × ((Fin w → Values) × ρ)) =>
+TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean:222:    OneWay.uprob_update k (fun cols (z : Public × ((Fin w → Real) × ρ)) =>
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:463:coins, so by `uprob_prod` / `OneWay.uprob_update` the `t`-th term is
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:342:`uprob_prod`/`OneWay.uprob_update` the `t`-th term is `(1 - 1/|E|)^t · Pr[∃ v, attempt = some v ∧
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:550:whose law is uniform (`OneWay.uprob_update` twice), so the acceptance probability is that of
+(total: 27 lines)
+### git grep -nE 'acceptProb_bind' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:429:`EnsembleLemmas.coinsEquiv` (`Fin.appendEquiv`), so by `acceptProb_bind`
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:353:(`acceptProb_bind` after the coin split `coinsEquiv`). -/
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:364:    ← acceptProb_bind X (fun t c => padFin (ℓ'.eval n) (M.runAt n (List.ofFn t) c))
+TCSlib/Cryptography/Pseudorandom/Generators.lean:170:  refine (acceptProb_bind G (fun (T : Bool × S) (u : Fin l → Bool) =>
+TCSlib/Cryptography/Pseudorandom/Generators.lean:203:  refine (acceptProb_bind (id : Bool × S → _) (fun (T : Bool × S) (u : Fin l → Bool) =>
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:42:  `acceptProb_bind`, `acceptProb_update`: reseeding.
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:91:theorem acceptProb_bind (X : σ → γ) (P : γ → κ → δ) (D : δ → ρ → Bool) :
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:136:  rw [acceptProb_bind, acceptProb_bind]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:250:  refine (acceptProb_bind X (fun z (s : (Fin t → σ) × (Fin t → τ)) (i : Fin t) =>
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:271:  refine (acceptProb_bind Y (fun z (s : (Fin t → σ) × (Fin t → τ)) (i : Fin t) =>
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:184:  refine (acceptProb_bind (X k) (fun z (s : (Fin t → σ) × (Fin t → τ)) (i : Fin t) =>
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:207:  refine (acceptProb_bind (Y k) (fun z (s : (Fin t → σ) × (Fin t → τ)) (i : Fin t) =>
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:173:`κ × ρ` (`acceptProb_bind` on both samplers). -/
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean:178:  rw [distAdv_def, distAdv_def, acceptProb_bind, acceptProb_bind]
+(total: 14 lines)
+### git grep -nE 'acceptProb_comp_equiv' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:169:(`acceptProb_comp_equiv`) the gap is that of `(Ā, ĀR)` versus `(Ā, U)`. Apply
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:84:acceptance probability (the coin analogue of `acceptProb_comp_equiv`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:176:(`Equiv.funUnique`, `acceptProb_comp_equiv`) and the coins by `B.coins = D.coins`
+TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:198:    exact acceptProb_comp_equiv
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:337:(`acceptProb_comp_equiv`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:352:    acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean:354:    acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:395:sampler for `m` (in the Boolean group `x + x = 0`); relabel by it (`acceptProb_comp_equiv`). -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:416:    _ = acceptProb (otpEncOut m') D := acceptProb_comp_equiv _ (otpEncOut m') D
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:67:pad by it (`acceptProb_comp_equiv`) proves the claim. -/
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:90:        acceptProb_comp_equiv (hinv.toPerm _) (fun p => padXor h m₁ p) D
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:178:forgets the selector's (unique) coin, so `acceptProb_comp_equiv` with
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:194:    ← acceptProb_comp_equiv e (S.challenge n (constSelector m₀ m₁ b hb) false),
+TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean:195:    ← acceptProb_comp_equiv e (S.challenge n (constSelector m₀ m₁ b hb) true)]
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:380:`List.ofFn`; `acceptProb_comp_equiv`), the two samples are the shared-key tuples of
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:284:      acceptProb_comp_equiv keySeeds (fun r => unpack (sampleHash r)) D
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:288:      (acceptProb_comp_equiv unpack (id : Key × Ciphertext → Key × Ciphertext) D).symm
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean:105:  exact acceptProb_comp_equiv e id D
+TCSlib/Cryptography/Foundations/Experiments.lean:38:* `acceptProb_comp_equiv`: relabelling the seeds by a bijection preserves acceptance.
+TCSlib/Cryptography/Foundations/Experiments.lean:107:theorem acceptProb_comp_equiv (e : σ ≃ τ) (X : τ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM.lean:241:(`FunFamily.blocks`, `Fin.appendEquiv`, `splitHalves`), so `acceptProb_comp_equiv` gives the
+TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean:140:  rw [hybridProb, ← h, acceptProb_comp_equiv]
+TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean:197:  rw [hybridProb, ← acceptProb_comp_equiv e, acceptProb_def, acceptProb_def]
+TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean:347:    refine Eq.trans ?_ (acceptProb_comp_equiv splitHalves id _)
+TCSlib/Cryptography/Pseudorandom/Generators.lean:87:  rw [← acceptProb_comp_equiv e (id : δ → δ) D]
+TCSlib/Cryptography/Pseudorandom/Generators.lean:173:  refine Eq.trans ?_ (acceptProb_comp_equiv (Equiv.prodComm _ _) (prgHybrid G l k) D)
+TCSlib/Cryptography/Pseudorandom/Generators.lean:206:  refine Eq.trans ?_ ((acceptProb_comp_equiv e _ D).trans
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:265:  rw [he, acceptProb_comp_equiv e (fun p => p.1) D]
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits.lean:138:    rw [← acceptProb_comp_equiv e (fun u : Fin L → Bool => List.ofFn u) D]
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Flat.lean:166:  rw [acceptProb_comp_equiv (flatSeedEquiv P width t hq)]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:85:  (acceptProb_comp_equiv (Equiv.prodComm τ σ) (fun z : σ × τ => X z.1) D).trans
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:113:  exact acceptProb_comp_equiv e (fun w : ((ι → σ) × τ) × σ => Z w.1.1 w.1.2) D
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:273:  refine Eq.trans ?_ ((acceptProb_comp_equiv e _ D).trans
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:276:    (acceptProb_comp_equiv (Equiv.prodComm _ _) (multicopyHybrid X Y t (k + 1)) D)))
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:298:the seed (`acceptProb_comp_equiv`), so the slice bound applies verbatim. -/
+TCSlib/Cryptography/SecureComputation/SpecialEncryptionMulti.lean:320:  rw [distAdv_def, hX m, hX m', acceptProb_comp_equiv, acceptProb_comp_equiv, ← distAdv_def]
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:209:  refine Eq.trans ?_ ((acceptProb_comp_equiv e _ D).trans
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:212:    (acceptProb_comp_equiv (Equiv.prodComm _ _) (pairHybrid X Y (k + 1)) D)))
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:680:reindexing `acceptProb_comp_equiv (blocks n n)` turn the advantage into
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:718:    rw [← acceptProb_comp_equiv (FunFamily.blocks n n) (pairTuple (bc v₀)) D',
+(total: 47 lines)
+### git grep -nE 'acceptProb_fst' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:622:(`acceptProb_fst`, `acceptProb_snd`). -/
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:632:    rw [← acceptProb_fst (τ := σ₁) X₀ D, acceptProb_def, ← uprob_not]
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean:125:under the bijections `(s, ()) ↦ s` (seeds, `acceptProb_fst`) and
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean:158:    rw [← acceptProb_fst (τ := Unit) (fun s => Fin.snoc (f s) (B s)) D]
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:151:  rw [← acceptProb_fst (τ := δ) (id : γ → γ) D]
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:252:`Fin ℓ ≃ Fin m ⊕ Fin (ℓ − m)` and forget the independent second half, `acceptProb_fst`.) -/
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:266:  exact acceptProb_fst (τ := Fin (ℓ - m) → Bool) (id : (Fin m → Bool) → Fin m → Bool) D
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:41:* `uprob_eq_of_equiv`, `acceptProb_fst`, `acceptProb_snd`,
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:73:theorem acceptProb_fst [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:82:/-- As `acceptProb_fst`, for an ignored first seed coordinate. -/
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:86:    (acceptProb_fst X D)
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:112:  rw [← acceptProb_fst (τ := σ) (fun v : (ι → σ) × τ => Z v.1 v.2) D]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:231:  rw [h, acceptProb_fst]
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:138:  exact acceptProb_fst X D
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:166:  rw [h, acceptProb_fst]
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:579:`Com(1, ·)` (`acceptProb_fst` removes the `Unit` seed coordinate), and the prediction
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:607:    rw [bitCom_false, ← acceptProb_fst (τ := Unit) (fun r => Fin.snoc (f r) (h r)) D]
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:611:    rw [bitCom_true, ← acceptProb_fst (τ := Unit) (fun r => Fin.snoc (f r) (!h r)) D]
+(total: 18 lines)
+### git grep -nE 'acceptProb_snd' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:622:(`acceptProb_fst`, `acceptProb_snd`). -/
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:637:    rw [← acceptProb_snd (τ := σ₀) X₁ D]
+TCSlib/Cryptography/Pseudorandom/Generators.lean:151:  rw [h, acceptProb_snd]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:41:* `uprob_eq_of_equiv`, `acceptProb_fst`, `acceptProb_snd`,
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:83:theorem acceptProb_snd [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:240:  rw [h, acceptProb_snd]
+TCSlib/Cryptography/Pseudorandom/NextBit/Concrete.lean:128:  exact acceptProb_snd (fun u : Fin ℓ → Bool => u) D
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:174:  rw [h, acceptProb_snd]
+(total: 8 lines)
+### git grep -nE 'distAdv_hash_uniform_le' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:289:  have hbound := Hashing.SIS.distAdv_hash_uniform_le (hashParameters P) test
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:35:`distAdv_hash_uniform_le`. It is not a matrix leftover-hash lemma: the family `R ↦ A R` is not
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:77:`distAdv_hash_uniform_le`. The reduction's coins are a product of finite nonempty types. -/
+TCSlib/Cryptography/Hashing/SIS/Universality.lean:166:theorem distAdv_hash_uniform_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+(total: 4 lines)
+### git grep -nE 'theorem distAdv_[a-zA-Z_]*_le' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:189:theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Security.lean:205:theorem distAdv_encrypt_le_of_width {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/AdvancedEncryption/Homomorphic/GSW/Symmetric.lean:102:theorem distAdv_symEncrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:355:theorem distAdv_prfEncRealOut_random_otp_le (m : Fin (q + 1) → Fin l → Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:432:theorem distAdv_prfEncRealOut_le (F : K → (Fin n → Bool) → (Fin l → Bool))
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:470:theorem distAdv_prfEncReal_random_otp_le (m : Fin (q + 1) → Fin n → Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:501:theorem distAdv_prfEncReal_le (F : K → (Fin n → Bool) → (Fin n → Bool))
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:102:theorem distAdv_padXor_le {σ ρ : Type*} [Fintype σ] [Fintype ρ] {n L : ℕ} (h : n ≤ L)
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:134:theorem distAdv_multi_le_sum {κ π μ γ ρ ρ' : Type*} [Fintype κ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:88:theorem distAdv_tuple_le_sum {κ π μ γ ρ ρ' : Type*} [Fintype κ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:202:theorem distAdv_tuple_le_mul {κ ρ ρ' : Type*} [Fintype κ] [Fintype ρ] [Fintype ρ'] [Nonempty ρ]
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:301:theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean:116:theorem distAdv_encrypt_le (P : Parameters) (χ : Noise)
+TCSlib/Cryptography/Hashing/SIS/Columns.lean:78:theorem distAdv_hashColumns_uniform_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/Hashing/SIS/Universality.lean:166:theorem distAdv_hash_uniform_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+(total: 15 lines)
+### git grep -nE 'theorem uprob_[a-zA-Z_]*' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:108:theorem uprob_const {α : Type*} [Fintype α] [Nonempty α] (p : Prop) [Decidable p] :
+TCSlib/Cryptography/Asymptotic/Permutations.lean:287:theorem uprob_pi_forall_dep {ι α : Type*} [Fintype ι] [DecidableEq ι] [Fintype α]
+TCSlib/Cryptography/Asymptotic/Permutations.lean:379:theorem uprob_permFromCoins_none_le (n k T : ℕ) (hk : n ≤ 2 ^ k) :
+TCSlib/Cryptography/Asymptotic/Permutations.lean:470:theorem uprob_permFromCoins_none_le_two_pow (n : ℕ) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:435:theorem uprob_bitsToNat_lt {m k : ℕ} (hk : m ≤ 2 ^ k) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:486:theorem uprob_uniformFromBits_eq_some {m k : ℕ} (hk : m ≤ 2 ^ k) (i : Fin m) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:500:theorem uprob_uniformFromBits_none {m k : ℕ} (hk : m ≤ 2 ^ k) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:507:theorem uprob_comp_eq_sum_fiber {Ω β : Type*} [Fintype Ω] [Fintype β] [DecidableEq β] (f : Ω → β)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:564:theorem uprob_firstHit_none [Nonempty α] (T : ℕ) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:768:theorem uprob_rejectionSample_none (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:779:theorem uprob_rejectionSample_none_le_half_pow (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k)
+TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean:50:theorem uprob_comp_eq_probTrue_map (X : σ → γ) (D : γ → Bool) :
+TCSlib/Cryptography/Asymptotic/Universal.lean:556:theorem uprob_fiber_le_card_mul {α β : Type*} [Fintype α] [Fintype β] (E : α × β → Prop)
+TCSlib/Cryptography/Candidates/Concrete.lean:112:theorem uprob_and_eq_mul_subtype (E S : α → Prop) [DecidablePred E] :
+TCSlib/Cryptography/Candidates/Concrete.lean:160:theorem uprob_le_uprob_subtype_add (E S : α → Prop) [DecidablePred E] :
+TCSlib/Cryptography/Candidates/Concrete.lean:177:theorem uprob_subtype_prod_eq (E : α → Prop) [DecidablePred E] (S : α × ρ → Prop) :
+TCSlib/Cryptography/Candidates/Concrete.lean:184:theorem uprob_diag {γ : Type*} [Fintype γ] [DecidableEq γ] [Nonempty γ] :
+TCSlib/Cryptography/Candidates/DDH.lean:131:theorem uprob_sq_eq_one (hpq : p = 2 * q + 1) :
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:469:theorem uprob_trial_ge {g : (ZMod p)ˣ} (hg : IsGenerator g) {ρ : Type*} [Fintype ρ]
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean:564:theorem uprob_majOracle_ne_le {g : (ZMod p)ˣ} (hg : IsGenerator g) {ρ : Type*} [Fintype ρ]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:291:theorem uprob_not_injective_le :
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:111:theorem uprob_eq_pair {α : Type*} [Fintype α] [Nonempty α] :
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:151:theorem uprob_tdpPredictor {α : Type*} [Fintype α] (D : NUPPT) (flip : Bool) (n : ℕ)
+TCSlib/Cryptography/Foundations/Experiments.lean:117:theorem uprob_comp_eq_sum_map [Nonempty σ] [Fintype γ] [DecidableEq γ] (X : σ → γ)
+TCSlib/Cryptography/Foundations/Probability.lean:64:theorem uprob_def (p : α → Prop) : uprob p = (Nat.card {a // p a} : ℝ) / Fintype.card α := rfl
+TCSlib/Cryptography/Foundations/Probability.lean:75:theorem uprob_eq_card_filter (p : α → Prop) [DecidablePred p] :
+TCSlib/Cryptography/Foundations/Probability.lean:80:theorem uprob_eq_uexp (p : α → Prop) [DecidablePred p] :
+TCSlib/Cryptography/Foundations/Probability.lean:85:theorem uprob_nonneg (p : α → Prop) : 0 ≤ uprob p := by
+TCSlib/Cryptography/Foundations/Probability.lean:89:theorem uprob_le_one (p : α → Prop) : uprob p ≤ 1 := by
+TCSlib/Cryptography/Foundations/Probability.lean:95:theorem uprob_true [Nonempty α] : uprob (fun _ : α => True) = 1 := by
+TCSlib/Cryptography/Foundations/Probability.lean:101:theorem uprob_false : uprob (fun _ : α => False) = 0 := by
+TCSlib/Cryptography/Foundations/Probability.lean:109:theorem uprob_not [Nonempty α] (p : α → Prop) : uprob (fun a => ¬ p a) = 1 - uprob p := by
+TCSlib/Cryptography/Foundations/Probability.lean:120:theorem uprob_mono {p q : α → Prop} (h : ∀ a, p a → q a) : uprob p ≤ uprob q := by
+TCSlib/Cryptography/Foundations/Probability.lean:127:theorem uprob_or_le (p q : α → Prop) : uprob (fun a => p a ∨ q a) ≤ uprob p + uprob q := by
+TCSlib/Cryptography/Foundations/Probability.lean:137:theorem uprob_exists_le {ι : Type*} (s : Finset ι) (p : ι → α → Prop) :
+TCSlib/Cryptography/Foundations/Probability.lean:153:theorem uprob_prod (p : α × β → Prop) :
+TCSlib/Cryptography/Foundations/Probability.lean:165:theorem uprob_comp_equiv (e : α ≃ β) (p : β → Prop) : uprob (fun a => p (e a)) = uprob p := by
+TCSlib/Cryptography/Foundations/Probability.lean:175:theorem uprob_fst [Nonempty β] (p : α → Prop) : uprob (fun z : α × β => p z.1) = uprob p := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:105:theorem uprob_eq_uexp_ite (p : Ω → Prop) [DecidablePred p] :
+TCSlib/Cryptography/HardcoreBit/Basic.lean:123:theorem uprob_eq_one_of_forall [Nonempty Ω] {p : Ω → Prop} (h : ∀ ω, p ω) : uprob p = 1 := by
+(total: 117 lines)
+### git grep -nE 'theorem acceptProb_[a-zA-Z_]*' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:85:theorem acceptProb_coins_equiv (e : κ ≃ ρ) (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:92:theorem acceptProb_coins_fst [Nonempty κ] (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:99:theorem acceptProb_not [Nonempty σ] [Nonempty ρ] (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:258:theorem acceptProb_negRed {σ : Type*} [Fintype σ] [Nonempty σ] {B D : NUPPT} (hBc : B.coins = D.coins)
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:275:theorem acceptProb_reparam {σ : Type*} [Fintype σ] {B D : NUPPT} {p : PolyExpr}
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:291:theorem acceptProb_reparam_advice {σ : Type*} [Fintype σ] {A D : NUPPT} {φ : ℕ → ℕ} {p : PolyExpr}
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:354:theorem acceptProb_pushRed {σ : Type*} [Fintype σ] {M D B : NUPPT} {ℓ' : PolyExpr}
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:514:theorem acceptProb_multicopyRed_congr {κX κY σ τ ζ γ ρ : Type*} [Fintype κX] [Fintype κY]
+TCSlib/Cryptography/Asymptotic/ReductionSupport.lean:221:theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/Encryption/PrivateKey/EnsembleSecurity.lean:58:theorem acceptProb_distinguisherL_congr {σ : Type*} [Fintype σ] {A B : NUPPT}
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:162:theorem acceptProb_oracleDist_multiMsgAdvOut (F : K → (Fin n → Bool) → (Fin l → Bool))
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:259:theorem acceptProb_oracleDist_multiMsgAdv (F : K → (Fin n → Bool) → (Fin n → Bool))
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:396:theorem acceptProb_otpEncOut (m m' : Fin (q + 1) → Fin l → Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/Hybrid.lean:484:theorem acceptProb_otpEnc (m m' : Fin (q + 1) → Fin n → Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRF/HybridLemmas.lean:160:theorem acceptProb_oracleDist_congr_equiv {σ : Type*} {I O : Type} {ρ ρ' : Type*} [Fintype σ] [Fintype ρ]
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:68:theorem acceptProb_padXor {ρ : Type*} [Fintype ρ] {n L : ℕ} (h : n ≤ L) (m₀ m₁ : Fin n → Bool)
+TCSlib/Cryptography/Encryption/PrivateKey/FromPRG.lean:228:private theorem acceptProb_prgScheme_encDist (P : PRG) (F : List Bool → List Bool)
+TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean:358:private theorem acceptProb_bitwise_pkEncDist (S : BitPublicKeyScheme) (n : ℕ) (m : Fin n → Bool)
+TCSlib/Cryptography/Encryption/PublicKey/Hybrid.lean:52:private theorem acceptProb_plant {κ π γ ρ ρ' : Type*} [Fintype κ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean:397:theorem acceptProb_distinguisherL_coins {σ τ : Type*} [Fintype σ] [Fintype τ] (B : NUPPT)
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:295:private theorem acceptProb_owpGen_unit {α ρ : Type*} [Fintype α] [Fintype ρ] (f : α ≃ α)
+TCSlib/Cryptography/Encryption/PublicKey/Trapdoor.lean:303:private theorem acceptProb_owpGenNot_unit {α ρ : Type*} [Fintype α] [Fintype ρ] (f : α ≃ α)
+TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean:77:theorem acceptProb_uniform_shift (P : Parameters) (μ : Fin P.samples → Bool)
+TCSlib/Cryptography/Foundations/Experiments.lean:98:theorem acceptProb_def (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Foundations/Experiments.lean:107:theorem acceptProb_comp_equiv (e : σ ≃ τ) (X : τ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Foundations/Experiments.lean:137:theorem acceptProb_eq_uexp_sum_map [Nonempty σ] [Fintype γ] [DecidableEq γ] (X : σ → γ)
+TCSlib/Cryptography/Games/Bridges/Experiments.lean:120:theorem acceptProb_eq [Fintype σ] [Nonempty σ] [Fintype ρ] [Nonempty ρ] (X : σ → γ)
+TCSlib/Cryptography/LWE/Sampling.lean:103:theorem acceptProb_sampleFromBits {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/Defs.lean:131:theorem acceptProb_random_eq_lazy {ρ : Type*} [Fintype ρ] (ℓ₁ ℓ₂ : PolyExpr) (n : ℕ)
+TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean:138:theorem acceptProb_congr [Fintype σ] [Fintype ρ] {X Y : σ → γ} (h : ∀ s, X s = Y s)
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:122:theorem acceptProb_tableDist_prg (G : S → V) (A : OracleAdversary ρ P V) {q j : ℕ}
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:160:theorem acceptProb_tableDist_uniform (G : S → V) (A : OracleAdversary ρ P V) {q j : ℕ}
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:106:theorem acceptProb_id_owp [Nonempty ρ] (f : α ≃ α) (B : α × β → Bool)
+TCSlib/Cryptography/Pseudorandom/Generators.lean:145:theorem acceptProb_prgHybrid_zero (G : S → Bool × S) (l : ℕ)
+TCSlib/Cryptography/Pseudorandom/Generators.lean:154:theorem acceptProb_prgHybrid_self (G : S → Bool × S) (l : ℕ)
+TCSlib/Cryptography/Pseudorandom/Generators.lean:167:theorem acceptProb_prgExtRed_left (G : S → Bool × S) {l k : ℕ} (hk : k < l)
+TCSlib/Cryptography/Pseudorandom/Generators.lean:196:theorem acceptProb_prgExtRed_right (G : S → Bool × S) {l k : ℕ} (hk : k < l)
+TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean:253:theorem acceptProb_castLE {ℓ m : ℕ} (h : m ≤ ℓ) {ρ : Type*} [Fintype ρ]
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:73:theorem acceptProb_fst [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:83:theorem acceptProb_snd [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
+(total: 64 lines)
+### git grep -nE 'theorem uexp_[a-zA-Z_]*' -- TCSlib  (base 486f44f8)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:284:theorem uexp_le_of_statClose {σ τ γ : Type*}
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:169:theorem uexp_half_add {κ : Type*} [Fintype κ] [Nonempty κ] (a b : κ → ℝ) :
+TCSlib/Cryptography/Encryption/PublicKey/TrapdoorPredictor.lean:177:theorem uexp_half_sub {κ : Type*} [Fintype κ] [Nonempty κ] (a b : κ → ℝ) :
+TCSlib/Cryptography/Foundations/Probability.lean:72:theorem uexp_def (f : α → ℝ) : uexp f = (∑ a, f a) / Fintype.card α := rfl
+TCSlib/Cryptography/HardcoreBit/Basic.lean:59:theorem uexp_add (f g : Ω → ℝ) : uexp (fun ω => f ω + g ω) = uexp f + uexp g := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:63:theorem uexp_sub (f g : Ω → ℝ) : uexp (fun ω => f ω - g ω) = uexp f - uexp g := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:67:theorem uexp_const_mul (c : ℝ) (f : Ω → ℝ) : uexp (fun ω => c * f ω) = c * uexp f := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:71:theorem uexp_const [Nonempty Ω] (c : ℝ) : uexp (fun _ : Ω => c) = c := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:77:theorem uexp_sum {ι : Type*} (s : Finset ι) (f : ι → Ω → ℝ) :
+TCSlib/Cryptography/HardcoreBit/Basic.lean:83:theorem uexp_mono {f g : Ω → ℝ} (h : ∀ ω, f ω ≤ g ω) : uexp f ≤ uexp g := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:88:theorem uexp_comp_equiv (e : Ω ≃ α) (F : α → ℝ) : uexp (fun ω => F (e ω)) = uexp F := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:94:theorem uexp_prod (F : α × β → ℝ) : uexp F = uexp (fun a => uexp (fun b => F (a, b))) := by
+TCSlib/Cryptography/HardcoreBit/Basic.lean:99:theorem uexp_fst [Nonempty β] (F : α → ℝ) : uexp (fun z : α × β => F z.1) = uexp F := by
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:122:theorem uexp_ind (X : Ω → Bool) : uexp (fun ω => ind (X ω)) = uprob (fun ω => X ω = true) := by
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:129:theorem uexp_ind_mul_ind (X Y : Ω → Bool) :
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:143:theorem uexp_cov [Nonempty Ω] (X Y : Ω → Bool) :
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:164:theorem uexp_sq_sum_sub_eq [Nonempty Ω] [Fintype ι] {X : ι → Ω → Bool}
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:54:theorem uexp_mono {f g : α → ℝ} (h : ∀ a, f a ≤ g a) : uexp f ≤ uexp g := by
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:59:theorem uexp_add (f g : α → ℝ) : uexp (fun a => f a + g a) = uexp f + uexp g := by
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:64:theorem uexp_const_mul (c : ℝ) (f : α → ℝ) : uexp (fun a => c * f a) = c * uexp f := by
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:69:theorem uexp_const [Nonempty α] (c : ℝ) : uexp (fun _ : α => c) = c := by
+TCSlib/Cryptography/OneWayFunctions/Basic.lean:76:theorem uexp_indicator (p : α → Prop) [DecidablePred p] (c : ℝ) :
+(total: 22 lines)
+### git grep -nE 'Function.update' -- TCSlib  (base 486f44f8)
+TCSlib/BooleanAnalysis/ArrowTheorem.lean:629:    have hval : f (Function.update (fun _ => false) i true) =
+TCSlib/BooleanAnalysis/ArrowTheorem.lean:633:          fourierCoeff f {j} * boolToSign ((Function.update (fun _ => false) i true) j) =
+TCSlib/BooleanAnalysis/ArrowTheorem.lean:636:            (fun j => fourierCoeff f {j} * boolToSign ((Function.update (fun _ => false) i true) j))
+TCSlib/BooleanAnalysis/ArrowTheorem.lean:638:        simp only [Function.update_apply, ↓reduceIte,
+TCSlib/BooleanAnalysis/ArrowTheorem.lean:649:    have hpm_val := hpm (Function.update (fun _ => false) i true)
+TCSlib/BooleanAnalysis/Basic.lean:499:  Function.update x i (!x i)
+TCSlib/BooleanAnalysis/Basic.lean:504:  simp [flipBit, Function.update]
+TCSlib/BooleanAnalysis/Basic.lean:511:  simp [flipBit, Function.update_of_ne (Ne.symm h)]
+TCSlib/BooleanAnalysis/Basic.lean:545:    have flipped_prod : ∏ j ∈ S, boolToSign (Function.update x i (!x i) j) =
+TCSlib/BooleanAnalysis/Basic.lean:547:      have : ∏ j ∈ S, boolToSign (Function.update x i (!x i) j) =
+TCSlib/BooleanAnalysis/Basic.lean:548:          ∏ j ∈ S, Function.update (fun j => boolToSign (x j)) i (boolToSign (!x i)) j := by
+TCSlib/BooleanAnalysis/Basic.lean:550:        simp only [Function.update_apply]
+TCSlib/BooleanAnalysis/Basic.lean:565:    simp [Function.update_of_ne hji]
+TCSlib/BooleanAnalysis/Basic.lean:700:  fun x => (f (Function.update x i false) - f (Function.update x i true)) / 2
+TCSlib/BooleanAnalysis/Basic.lean:731:  fun x => (f (Function.update x i false) + f (Function.update x i true)) / 2
+TCSlib/BooleanAnalysis/DecisionTree.lean:110:      (DecisionTree.buildFull f (k + 1) (Function.update acc ⟨k, h⟩ false))
+TCSlib/BooleanAnalysis/DecisionTree.lean:111:      (DecisionTree.buildFull f (k + 1) (Function.update acc ⟨k, h⟩ true))
+TCSlib/BooleanAnalysis/DecisionTree.lean:125:      (Function.update acc ⟨k, h⟩ false)
+TCSlib/BooleanAnalysis/DecisionTree.lean:127:      (Function.update acc ⟨k, h⟩ true)
+TCSlib/BooleanAnalysis/DecisionTree.lean:159:      · subst heq; simp [Function.update, hxv]
+TCSlib/BooleanAnalysis/DecisionTree.lean:160:      · simp only [Function.update, heq]
+TCSlib/BooleanAnalysis/DecisionTree.lean:167:      · subst heq; simp [Function.update, hxv]
+TCSlib/BooleanAnalysis/DecisionTree.lean:168:      · simp only [Function.update, heq]
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/DiscreteApproximation.lean:107:      boolToSign (Function.update x i (Function.update (x i) j b) k l)) / Real.sqrt m) =
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/DiscreteApproximation.lean:110:  have hs : (∑ l : Fin m, boolToSign (Function.update (x i) j b l)) =
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/DiscreteApproximation.lean:112:    change (∑ l : Fin m, (boolToSign ∘ Function.update (x i) j b) l) = _
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/DiscreteApproximation.lean:120:    simp only [Function.update_self, Pi.add_apply, Pi.smul_apply, Pi.single_eq_same,
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/DiscreteApproximation.lean:123:  · simp [Function.update_of_ne hk, Pi.single_eq_of_ne hk]
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/DiscreteApproximation.lean:140:        boolToSign (Function.update x i (Function.update (x i) j false) k l)) /
+TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/DiscreteApproximation.lean:143:        boolToSign (Function.update x i (Function.update (x i) j true) k l)) /
+TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.lean:85:        ∑ i : ι, ((f (Function.update x i false) - f (Function.update x i true)) / 2) ^ 2)
+TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.lean:96:      r (Function.update y j b) = Function.update (r y) (e j) b := by
+TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.lean:106:        ∑ i : ι, ((f (Function.update (r y) i false) -
+TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.lean:107:          f (Function.update (r y) i true)) / 2) ^ 2 := by
+TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.lean:115:        ∑ i : ι, ((f (Function.update x i false) - f (Function.update x i true)) / 2) ^ 2)
+TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.lean:121:        ∑ i : ι, ((f (Function.update x i false) - f (Function.update x i true)) / 2) ^ 2))
+TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.lean:140:          ((f (Function.update x i (Function.update (x i) j false)) -
+TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.lean:141:            f (Function.update x i (Function.update (x i) j true))) / 2) ^ 2)
+TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.lean:160:          ((f (r (Function.update y p false)) -
+TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.lean:161:            f (r (Function.update y p true))) / 2) ^ 2)
+(total: 3465 lines)
+### git grep -nE 'hybrid' -- TCSlib  (base 486f44f8)
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance.lean:39:* `ThirdOrder`: single-coordinate and hybrid third-order replacement estimates.
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:19:* `Invariance.hybridIndex`: choose between two copies of each input coordinate.
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:20:* `Invariance.hybridInput`: replace the first coordinates of the left input by the right input.
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:24:* `Invariance.hybridIndex_injective`: each hybrid selects distinct input coordinates.
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:25:* `Invariance.hybridInput_zero`: the initial hybrid is the left family.
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:26:* `Invariance.hybridInput_all`: the terminal hybrid is the right family.
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:27:* `Invariance.hybridInput_succ_off`: consecutive hybrids agree away from the replaced coordinate.
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:28:* `Invariance.hybrid_expectation_bound`: sum arbitrary coordinate replacement bounds.
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:50:def hybridIndex {n : ℕ} (r : ℕ) (i : Fin n) : Fin n ⊕ Fin n :=
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:55:def hybridInput {n : ℕ} {Ω : Type*}
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:57:  fun i => Z (hybridIndex r i)
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:59:/-- Every hybrid selects distinct coordinates from the two input copies. -/
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:60:lemma hybridIndex_injective {n : ℕ} (r : ℕ) :
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:61:    Function.Injective (@hybridIndex n r) := by
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:63:  unfold hybridIndex at h
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:66:/-- The initial hybrid is the left input family. -/
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:67:lemma hybridInput_zero {n : ℕ} {Ω : Type*}
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:69:    hybridInput Z 0 = fun i => Z (Sum.inl i) := by
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:71:  simp [hybridInput, hybridIndex]
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:73:/-- The terminal hybrid is the right input family, including in dimension zero. -/
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:74:lemma hybridInput_all {n : ℕ} {Ω : Type*}
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:76:    hybridInput Z n = fun i => Z (Sum.inr i) := by
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:78:  simp [hybridInput, hybridIndex, i.isLt]
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:80:/-- Consecutive hybrids agree on every coordinate other than the one being replaced. -/
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:81:lemma hybridInput_succ_off {n : ℕ} {Ω : Type*}
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:83:    hybridInput Z i.val j = hybridInput Z (i.val + 1) j := by
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:86:  simp only [hybridInput, hybridIndex, hlt]
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:91:**Proof sketch.** Apply the triangle inequality along the finite hybrid sequence. -/
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:92:theorem hybrid_expectation_bound
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:97:      |(∫ ω, ψ (evalMultilinearRV F (hybridInput Z i.val) ω) ∂μ) -
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:98:        ∫ ω, ψ (evalMultilinearRV F (hybridInput Z (i.val + 1)) ω) ∂μ| ≤ B i) :
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:101:  let P : ℕ → ℝ := fun r => ∫ ω, ψ (evalMultilinearRV F (hybridInput Z r) ω) ∂μ
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:104:      simp only [P, hybridInput_zero, hybridInput_all, Real.dist_eq]
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:117:coordinates in index order. Each hybrid is a selection of distinct independent
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:118:inputs, and consecutive hybrids differ at one coordinate. Apply the checked
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:142:      have hI (r : ℕ) : iIndepFun (hybridInput Z r) μ :=
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:143:        iIndepFun.precomp (f := Z) (g := hybridIndex r) (hybridIndex_injective r) hIZ
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:147:          apply hybrid_expectation_bound
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:150:            (hybridInput Z i.val) (hybridInput Z (i.val + 1))
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean:152:            (fun j => hZ (hybridIndex i.val j))
+(total: 729 lines)
+### git grep -nE 'transpose.*Equiv\|piComm' -- TCSlib  (base 486f44f8)
+(total: 0 lines)
+### git grep -nE 'mul_apply'' -- TCSlib  (base 486f44f8)
+(total: 0 lines)

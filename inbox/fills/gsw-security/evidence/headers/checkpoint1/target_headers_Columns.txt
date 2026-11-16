@@ -1,0 +1,15 @@
+=== hashColumns_eq_mul
+theorem hashColumns_eq_mul (P : Parameters) (N : ℕ)
+    (A : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus))
+    (R : Matrix (Fin P.columns) (Fin N) Bool) :
+    hashColumns P N A R = A * Matrix.of fun c j => ((R c j).toNat : ZMod P.modulus) 
+=== distAdv_hashColumns_uniform_le
+theorem distAdv_hashColumns_uniform_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+    (P : Parameters) (N : ℕ)
+    (D : (Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) ×
+      Matrix (Fin P.dimension) (Fin N) (ZMod P.modulus)) → ρ → Bool) :
+    distAdv (fun r : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) ×
+        Matrix (Fin P.columns) (Fin N) Bool => (r.1, hashColumns P N r.1 r.2))
+      (id : (Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) ×
+        Matrix (Fin P.dimension) (Fin N) (ZMod P.modulus)) → _) D ≤
+      N * ((1 / 2) * Real.sqrt ((P.modulus : ℝ) ^ P.dimension / (2 : ℝ) ^ P.columns)) 
