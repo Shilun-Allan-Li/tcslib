@@ -22,6 +22,7 @@ fresh probes in campaign/status/2026-11-16-closeout-probes/. Earlier merges are 
 
 | PR / gate | Current state |
 |---|---|
+| #334 / 145 | **Staged** (2026-11-16), draft at `7bb1f687d87c8faa25c8523fc4bb1e15a5d473c1`. Closeout R4-1: the SAT/Hardness one-way transducer copies retired onto an extended `ClassNP/Transducer`; net −161 lines. Replay 137/137, seals/controls/sweeps clean. campaign/gates/145-r4-1-transducer/. |
 | #330 / 144 | **Merged** (`68cba664`, 2026-11-16); round 2 CLEAR. Snapshot `oleans-c68cb` (status/2026-11-16-merge-330) at `a3c9c2102865e60c4eed295a4b613ef2b85a987c` at `ae4157ddf37ea3520e5d953faef808649b8688d3`. Closeout R2a: `wordPatch` to Catalog, IW-1 and WA-1 retired, eight proofs' legacy reads repaired. Replay 127/127. campaign/gates/144-r2a-wordpatch/. |
 | #329 / 143 | **Merged** (`856306d8d`, 2026-11-16); round 1 CLEAR at `ba93b96c566bbb56ec8185cb1c09b708b0169285`. Closeout R1a: BW-1 and CH34-D4 retired by citations. Replay 41/41. campaign/gates/143-r1a-dedup/. |
 | #328 / 142 | **Merged** (`720e2a9c`, 2026-11-16); round 1 CLEAR. Snapshot after both: `oleans-c720e` (873 objects; status/2026-11-16-merge-328-329) at `dcbab37806581f2bd0fd24cb55fee75fcacd2dab`. Closeout W2: remove the RD-2/H6 route (41 admissions). Replay 3/3, 0 admissions. campaign/gates/142-remove-rd2/. |
@@ -62,7 +63,7 @@ superseding the 2026-11-06 `CfgFacts` ruling. The generic
 list of local modifications. The re-point scope ruled on 2026-11-06 stands.
 It is rebuilt on the campaign after #251, #241 and #242 merge (it shares 13 files
 with them), then gets its own replay and gate. **Rebuilt as #296 (gate 132), merged 2026-11-14.** The archived `CfgFacts` draft is superseded. The approved
-Hardness CfgFacts import stays separate. Next free gate 145. Use complete
+Hardness CfgFacts import stays separate. Next free gate 146. Use complete
 snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
 the original campaign checkout's example and all shared inbox originals.
 

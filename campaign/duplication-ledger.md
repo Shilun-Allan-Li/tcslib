@@ -2081,3 +2081,15 @@ exposed restated lemmas, retired by new public lemmas (Seyoon, 2026-11-16): `wor
 `counter_debit`); the privates are kept as one-line citations or deleted. It also repaired the
 pre-existing foreign-definition reads in the eight proofs it touched (gate 144 pack). Status:
 **retired (#330 merged 2026-11-16)**.
+
+**SG1 kind 4 and PL-1's SAT/Hardness twins (gate 145, 2026-11-16).** PR #334 (closeout R4-1)
+retires the SAT/Hardness finite one-way mapper copies (`satMap*`/`clA5Map*`, 5 exact pairs), the
+one-sided kind-4 instances `satScanCfg/_step/_run` (SAT) and `clFillTM/clFill_run` (Hardness),
+and SAT's head/tail residues. `ClassNP/Transducer` (colleague-authored; Seyoon ruled to extend it,
+2026-11-16) gains `transducerFinalTM`, `transducerFinalTM_computes` and
+`polyTimeComputable_transduce_final`; `satScanTM`, `satScan_computes` and `clNative_fill` cite the
+Transducer API, `sat_pt_tail/_head` cite `polyTimeComputable_tail/_take1`, and
+`sat_pt_eq/clA5_pt_eq` cite `FinTM.computesFunInTime_decideEq`. Net −161 Lean lines. New screen
+pair: the two sibling polynomial-time wrappers in Transducer (disclosed in the gate 145 pack).
+`Nondeterminism`'s `a3n_poly_linear` is not in this PR. Status: **retiring (gate 145 dispatched
+when Seyoon sends it; PR #334 draft)**.
