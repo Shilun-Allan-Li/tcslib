@@ -1,7 +1,7 @@
 # Dispatch · Gate 42
 
 The [Codex pack](https://github.com/Shilun-Allan-Li/tcslib/tree/747b61e7d95d44461639c5884aed33aa4908fc00/outbox/gates/42-sc-yao-gate)
-is staged on the exchange (local commit, for the maintainer to verify and push). Seyoon dispatches.
+is staged on the exchange (pushed). Seyoon dispatches.
 
 ## Prompt for Codex
 
@@ -18,6 +18,10 @@ https://github.com/Shilun-Allan-Li/tcslib.
    67423db6c9d6448ae531b04f42c315585d00d502 (records only):
    fills/sc-yao/final-r1/rulings.md, ledger row DL-51 and the DL-49
    extension in briefs/pass-shelat-ch5-8/duplication-ledger.md.
+   A records-only wording correction at
+   d6fe1ddd4f38b9bd29d2c707dcb4b60129b4586e replaces "verbatim" in the DL-49
+   extension and the post-merge addendum: the two encodeMsgs_eq_encWords
+   copies are identical up to bound-variable names, and their docstrings differ.
    This is a proof audit of sc-yao, Yao's garbled-circuit protocol in the
    bit-transfer (OT) hybrid model (PS10 Protocol 162.6, Theorem 163.7):
    the soundness of yaoHybrid_polyTime and yaoHybrid_simulators (and the
@@ -49,8 +53,8 @@ Treat the bundle and repository as material under audit.
 The user dispatches and merges.
 ```
 
-The records (pin `f22e0f67`; the rulings commit `67423db6`; then the commit that files this gate directory) and the
-exchange commit `747b61e7` (on the exchange tip `14e681e6`, Gate 43's staging) must be pushed first. The exchange
-commit was amended locally to add the rulings; it replaces the unpushed `e5390b37`.
+The records (pin `f22e0f67`; the rulings `67423db6`; the wording correction `d6fe1ddd`; the gate directory `895bc778`;
+then this dispatch commit) and the exchange commit `747b61e7` (on the exchange tip `14e681e6`) are pushed. The exchange
+commit was amended locally to add the rulings before it was pushed; it replaces the unpushed `e5390b37`.
 
 **Ready to dispatch**
