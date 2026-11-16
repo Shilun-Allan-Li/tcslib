@@ -1279,20 +1279,27 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
       omega
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF]
+    apply Cfg.ext
+    · rw [Action.apply_state]; simp [catalogIncF]
+    · rw [Action.apply_inputPos, moveInputPos_zero]; simp [catalogIncF]
     · funext j
+      rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
       by_cases hj : j = i
       · subst j
         have hh := catalog_write_middle (d.workTapes i) (d.workTapePos i)
           (List.replicate r false)
           (List.replicate (p - (r + 1)) true ++ tail.elim [] (false :: ·)) true false
-        simp only [ite_true]
-        rw [hpr, List.replicate_succ, List.cons_append]
+        simp only [ite_true, Option.getD_some, catalogIncF]
+        rw [hpr, List.replicate_succ]
         simpa only [List.length_replicate, List.replicate_succ',
           List.append_assoc, List.singleton_append] using hh
-      · simp [hj]
+      · simp [hj, catalogIncF]
     · funext j
-      split_ifs <;> simp_all [SignType.cast] <;> omega
+      rw [Action.apply_workTapePos]
+      by_cases hj : j = i <;> simp [hj, catalogIncF, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+          SignType.coe_one, SignType.coe_neg_one,
+        SignType.coe_zero] <;> omega
+    · rw [Action.apply_output]; simp [catalogIncF]
   · cases tail with
     | none =>
       have hs : (catalogIncF i d p none p).workTapeSymbols i = none := by
@@ -1300,45 +1307,95 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
         simpa [catalogIncF, wordPatch, Cfg.workTapeSymbols_eq, hsplit] using hh
       rw [MultiTapeTM.step_of_some (by rfl)]
       simp only [incrementTM, hs]
-      apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF, catalogIncR]
-      all_goals
-        funext j
-        split_ifs <;> simp_all [SignType.cast] <;> omega
+      apply Cfg.ext
+      · rw [Action.apply_state]; simp [catalogIncR]
+      · rw [Action.apply_inputPos, moveInputPos_zero]; simp [catalogIncF, catalogIncR]
+      · funext j q
+        rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+        by_cases hj : j = i
+        · subst hj; simp [catalogIncF, catalogIncR, Function.update_apply]
+          rintro rfl; rfl
+        · simp [hj, catalogIncF, catalogIncR, Function.update_apply]
+          rintro rfl; rfl
+      · funext j
+        rw [Action.apply_workTapePos]
+        by_cases hj : j = i <;> simp [hj, catalogIncF, catalogIncR, SignType.pos_eq_one,
+            SignType.neg_eq_neg_one, SignType.coe_one, SignType.coe_neg_one,
+        SignType.coe_zero] <;> omega
+      · rw [Action.apply_output]; simp [catalogIncF, catalogIncR]
     | some v =>
       have hs : (catalogIncF i d p (some v) p).workTapeSymbols i = some false := by
         simp [catalogIncF, wordPatch, Cfg.workTapeSymbols_eq]
       rw [MultiTapeTM.step_of_some (by rfl)]
       simp only [incrementTM, hs]
-      apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF, catalogIncR]
+      apply Cfg.ext
+      · rw [Action.apply_state]; simp [catalogIncR]
+      · rw [Action.apply_inputPos, moveInputPos_zero]; simp [catalogIncF, catalogIncR]
       · funext j
+        rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
         by_cases hj : j = i
         · subst j
+          simp only [ite_true, Option.getD_some, catalogIncF, catalogIncR]
           simpa using catalog_write_middle (d.workTapes i) (d.workTapePos i)
             (List.replicate p false) v false true
-        · simp [hj]
+        · simp [hj, catalogIncF, catalogIncR, Function.update_apply]
       · funext j
-        split_ifs <;> simp_all [SignType.cast] <;> omega
+        rw [Action.apply_workTapePos]
+        by_cases hj : j = i <;> simp [hj, catalogIncF, catalogIncR, SignType.pos_eq_one,
+            SignType.neg_eq_neg_one, SignType.coe_one, SignType.coe_neg_one,
+        SignType.coe_zero] <;> omega
+      · rw [Action.apply_output]; simp [catalogIncF, catalogIncR]
   · intro r hr
     have hs : (catalogIncR i d p tail (r + 1)).workTapeSymbols i = some false := by
       have hb : (r : ℤ) < p + (tail.elim [] (true :: ·)).length := by omega
       simp [catalogIncR, wordPatch, Cfg.workTapeSymbols_eq, List.getElem?_append, hr, hb]
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncR]
-    all_goals
-      funext j
-      split_ifs <;> simp_all [SignType.cast] <;> omega
+    apply Cfg.ext
+    · rw [Action.apply_state]; simp [catalogIncR]
+    · rw [Action.apply_inputPos, moveInputPos_zero]; simp [catalogIncR]
+    · funext j q
+      rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+      by_cases hj : j = i
+      · subst hj; simp [catalogIncR, Function.update_apply]
+        rintro rfl; first | rfl | (congr 1; omega)
+      · simp [hj, catalogIncR, Function.update_apply]
+        rintro rfl; rfl
+    · funext j
+      rw [Action.apply_workTapePos]
+      by_cases hj : j = i <;> simp [hj, catalogIncR, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+          SignType.coe_one, SignType.coe_neg_one,
+        SignType.coe_zero] <;> omega
+    · rw [Action.apply_output]; simp [catalogIncR]
   · have hs : (catalogIncR i d p tail 0).workTapeSymbols i = none := by
       simpa [catalogIncR, wordPatch, Cfg.workTapeSymbols_eq] using
         hw (-1) (by omega) (by omega)
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncR]
-    all_goals
-      funext j
-      split_ifs <;> simp_all [SignType.cast] <;> omega
+    apply Cfg.ext
+    · rw [Action.apply_state]
+    · rw [Action.apply_inputPos, moveInputPos_zero]; simp [catalogIncR]
+    · funext j q
+      rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+      by_cases hj : j = i
+      · subst hj; simp [catalogIncR, Function.update_apply]
+        rintro rfl; first | rfl | (congr 1; omega)
+      · simp [hj, catalogIncR, Function.update_apply]
+        rintro rfl; rfl
+    · funext j
+      rw [Action.apply_workTapePos]
+      by_cases hj : j = i <;> simp [hj, catalogIncR, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+          SignType.coe_one, SignType.coe_neg_one,
+        SignType.coe_zero] <;> omega
+    · rw [Action.apply_output]; simp [catalogIncR]
   · rw [MultiTapeTM.step_of_some (by rfl)]
-    apply Cfg.ext <;> simp [incrementTM, -Action.apply, Action.apply.eq_1]
+    simp only [incrementTM]
+    apply Cfg.ext
+    · rw [Action.apply_state]
+    · rw [Action.apply_inputPos, moveInputPos_zero]
+    · funext j; rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]; simp
+    · funext j; rw [Action.apply_workTapePos]; simp
+    · rw [Action.apply_output]; simp
 
 /-! ### Framed contracts (design §12.6)
 
@@ -4003,7 +4060,8 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
     · funext j
       by_cases hj : j = i
       · subst j
-        simp [F, R, SignType.cast, sub_eq_add_neg, add_assoc]
+        simp [F, R, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_one,
+        SignType.coe_neg_one, SignType.coe_zero, sub_eq_add_neg, add_assoc]
       · simp [F, R, hj]
     · rfl
   have hR (r : ℕ) (hr : r < w.length) :
@@ -4055,7 +4113,8 @@ theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fi
     · funext j
       by_cases hj : j = i
       · subst j
-        simp [R, SignType.cast]
+        simp [R, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_one,
+        SignType.coe_neg_one, SignType.coe_zero]
         omega
       · simp [R, hj]
     · rfl
