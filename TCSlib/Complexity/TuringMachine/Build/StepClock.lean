@@ -287,18 +287,6 @@ private theorem sc_dec_patch_width (w : List Bool) :
   | none => simp
   | some v => simpa using sc_dec_success_width w v h
 
-/-- R1d. The decoded shadow of the debit's one-tape start meets both decrement contracts'
-preconditions: `Turing.decrementTM_shadow_pre`. -/
-private theorem sc_shadow_pre {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
-    (ip : Fin (x.length + 2)) (out : List Γ) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)
-    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
-    let D : Cfg 1 Γ FlagPhase x := ⟨some .run, ip, fun _ => ct, fun _ => cp, out⟩
-    (Cfg.decodeSymbols e D).state = some .run ∧
-      ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
-        (Cfg.decodeSymbols e D).workTapes 0 ((Cfg.decodeSymbols e D).workTapePos 0 + p) =
-          FinTM.bufferTape w p :=
-  decrementTM_shadow_pre e ip out w ct cp hw
-
 /-- R1e. The lifted decrement runs as the overlay of the decrement's run on the shadow:
 `Turing.decrementTM_liftSymbols_runFrom`. -/
 private theorem sc_lift_run {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
@@ -379,7 +367,7 @@ private theorem sc_debit {k : ℕ} {Γ S Q : Type} [DecidableEq Γ] {x : List Γ
       if j = 0 ∧ shadow.workTapePos j ≤ p ∧ p < shadow.workTapePos j + (w.length : ℤ)
       then FinTM.bufferTape word (p - shadow.workTapePos j) else shadow.workTapes j p }
   have pos : shadow.workTapePos = seed.workTapePos := Cfg.decodeSymbols_workTapePos e seed
-  obtain ⟨ready, digits⟩ := sc_shadow_pre e c.inputPos c.output w ct cp hw
+  obtain ⟨ready, digits⟩ := decrementTM_shadow_pre e c.inputPos c.output w ct cp hw
   -- Consume the two framed contracts on the same decoded start.
   have binary : (decrementTM 1 0).runFrom shadow ticks = result ∧
       (∀ u < ticks, ∀ b, ((decrementTM 1 0).runFrom shadow u).state ≠ some (.done b)) ∧

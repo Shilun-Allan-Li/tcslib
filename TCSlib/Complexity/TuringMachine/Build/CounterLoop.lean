@@ -1269,7 +1269,7 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
       subst u; simp [counter_layout, Finset.mem_Icc]
     · intro u hu; have hz : u = 0 := by omega
       subst u
-      exact ⟨0, 0, Or.inr ⟨rfl, rfl⟩, by simp [counter_layout, counterLoopOrbit, roundOrbit]⟩
+      exact ⟨0, 0, Or.inr ⟨rfl, rfl⟩, by simp [counter_layout, counterLoopOrbit, roundOrbit_zero]⟩
   | succ n ih =>
     obtain ⟨before, span⟩ := ih (by omega) (fun r hr => hround r (by omega))
     obtain ⟨ha, ht, hg⟩ := hround n (by omega)
@@ -1406,7 +1406,9 @@ theorem counterLoopTMVia_run_done {k : ℕ} {Γ S : Type} [DecidableEq S] [Decid
     split_ifs with h
     · have hp : 0 ≤ q - cp := by omega
       have hn : (q - cp).toNat < w.length := by omega
-      simp [FinTM.bufferTape, h.1, hn]
+      have h0 : ((q - cp).toNat : ℤ) = q - cp := Int.toNat_of_nonneg hp
+      nth_rw 1 [← h0]
+      rw [FinTM.bufferTape_nat, List.getElem?_replicate_of_lt hn]
     · rfl
   rw [fill] at debit
   have time : (∑ r ∈ Finset.range d, τ (counterLoopOrbit M τ c r)) +
