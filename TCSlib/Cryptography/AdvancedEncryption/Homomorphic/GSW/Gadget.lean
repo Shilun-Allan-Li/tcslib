@@ -151,54 +151,86 @@ theorem digits_decomposeVec (P : Parameters)
     (u : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus) :
     TrapdoorFunctions.Lossy.digits P.width (P.lwe.dimension + 1) (decomposeVec P u) =
       fun j => digit P (u j) := by
-  sorry
+  rw [TrapdoorFunctions.Lossy.digits_eq, decomposeVec_eq, Equiv.apply_symm_apply]
 
 /-- `G · G⁻¹(u) = u` [Pei16, Section 5.4.3, relation `G · G⁻¹(u) = u (mod q)`].
 
-**Proof sketch.** Coordinate `j` of the left side is the cast of the integer
-`(Lossy.gadget ℓ (n+1))ᵗ · x` at `j`, where `x` is the decomposition read as integers.
-`Lossy.gadget_mulVec` evaluates it to the digit value, `digits_decomposeVec` and
-`digit_val` identify that with `(u j).val`, and `ZMod.natCast_zmod_val` casts back to `u j`.
-The integer-to-residue cast commutes with the finite sum by `Int.cast_sum`/`Int.cast_mul`. -/
+**Proof sketch.** Fix a coordinate `j`. Over the integers, `Lossy.gadget_mulVec` evaluates
+`(Lossy.gadget ℓ (n+1))ᵗ · x` at `j`, where `x` is the decomposition read as integers, to the
+block-`j` digit, which `digits_decomposeVec` and `digit_val` identify with `(u j).val`. Write
+`u j` as the residue of `(u j).val` (`ZMod.natCast_zmod_val`), hence as the residue of that
+integer sum; the cast commutes with the finite sum (`Int.cast_sum`), and each term is the
+matching entry of `G` times the lifted bit by `gadget_apply` and `Int.cast_mul`. -/
 theorem gadget_mulVec_decomposeVec (P : Parameters)
     (u : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus) :
     (gadget P).mulVec (fun i => ((decomposeVec P u i).toNat : ZMod P.lwe.modulus)) = u := by
-  sorry
+  funext j
+  have h := TrapdoorFunctions.Lossy.gadget_mulVec P.width (P.lwe.dimension + 1)
+    (decomposeVec P u) j
+  simp only [digits_decomposeVec, digit_val] at h
+  change (∑ i, TrapdoorFunctions.Lossy.gadget P.width (P.lwe.dimension + 1) i j *
+    ((decomposeVec P u i).toNat : ℤ)) = ((u j).val : ℤ) at h
+  change ∑ i, gadget P j i * ((decomposeVec P u i).toNat : ZMod P.lwe.modulus) = u j
+  rw [← ZMod.natCast_zmod_val (u j), ← Int.cast_natCast (R := ZMod P.lwe.modulus) (u j).val,
+    ← h, Int.cast_sum]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [gadget_apply, Int.cast_mul, Int.cast_natCast]
 
 /-- `G · G⁻¹(M) = M` for every matrix with `n+1` rows [Pei16, Section 5.4.3; AP14,
 Equation (3.1)].
 
-**Proof sketch.** Compare column `c`: it is `G` times the lifted decomposition of column
-`c` of `M`, which is `gadget_mulVec_decomposeVec` read through `decompose_apply` and
-`lift_apply`. -/
+**Proof sketch.** Compare entry `(i, c)`: by `Matrix.mul_apply`, `decompose_apply` and
+`lift_apply` it is coordinate `i` of `G` times the lifted decomposition of column `c` of `M`,
+which is `M i c` by `gadget_mulVec_decomposeVec`. -/
 theorem gadget_mul_decompose (P : Parameters) {ι : Type*}
     (M : Matrix (Fin (P.lwe.dimension + 1)) ι (ZMod P.lwe.modulus)) :
     gadget P * lift P (decompose P M) = M := by
-  sorry
+  ext i c
+  have h := congrFun (gadget_mulVec_decomposeVec P (fun j => M j c)) i
+  rw [Matrix.mul_apply]
+  simp only [lift_apply, decompose_apply]
+  exact h
 
 /-- A coordinate equal to zero decomposes to an all-false block.
 
 **Proof sketch.** `Lossy.digits_val` writes the block-`j` digit of `decomposeVec P u` as
 `∑ₖ bitₖ · 2^k`; by `digits_decomposeVec` and `digit_val` it equals `(u j).val = 0`. A sum of
-nonnegative terms is zero only if every term is, and `2^k > 0`. -/
+natural numbers is zero only if every term is (`Finset.sum_eq_zero_iff`), so
+`bitₖ · 2^k = 0`; since `2^k ≠ 0`, the bit has value `0`, i.e. it is `false`. -/
 theorem decomposeVec_block_eq_false (P : Parameters)
     (u : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus) (j : Fin (P.lwe.dimension + 1))
     (hj : u j = 0) (k : Fin P.width) :
     decomposeVec P u (finProdFinEquiv (j, k)) = false := by
-  sorry
+  have h := TrapdoorFunctions.Lossy.digits_val P.width (P.lwe.dimension + 1) (decomposeVec P u) j
+  simp only [digits_decomposeVec, digit_val, hj, ZMod.val_zero] at h
+  have hk := (Finset.sum_eq_zero_iff.mp h.symm) k (Finset.mem_univ k)
+  rcases Nat.mul_eq_zero.mp hk with hb | hpow
+  · exact Bool.toNat_eq_zero.mp hb
+  · exact absurd hpow (pow_ne_zero _ two_ne_zero)
 
 /-- If `u` vanishes outside coordinate `j₀`, any error vector with entries bounded by `β`
 has inner product with the decomposition of `u` at most `ℓ·β` in absolute value. This is
 the decryption-noise bound used for the `G⁻¹`-column decryptor.
 
-**Proof sketch.** Split the sum over `Fin ((n+1)ℓ)` through `finProdFinEquiv` into blocks.
-Every block `j ≠ j₀` vanishes by `decomposeVec_block_eq_false`. The surviving block has `ℓ`
-terms, each of magnitude at most `β`; apply `LWE.binaryErrorSum_bound` with `m := ℓ`. -/
+**Proof sketch.** Split the sum over `Fin ((n+1)ℓ)` through `finProdFinEquiv` into blocks
+(`Equiv.sum_comp`, `Fintype.sum_prod_type`). Every block `j ≠ j₀` vanishes termwise by
+`decomposeVec_block_eq_false`, so `Finset.sum_eq_single` leaves block `j₀`. It is a binary
+subset sum of `ℓ` errors, each of magnitude at most `β`; apply `LWE.binaryErrorSum_bound`
+with `m := ℓ`. -/
 theorem errorSum_decomposeVec_le (P : Parameters)
     (u : Fin (P.lwe.dimension + 1) → ZMod P.lwe.modulus) (j₀ : Fin (P.lwe.dimension + 1))
     (hu : ∀ j, j ≠ j₀ → u j = 0) (e : Fin P.columns → ℤ) (β : ℕ)
     (he : ∀ i, (e i).natAbs ≤ β) :
     (∑ i, e i * ((decomposeVec P u i).toNat : ℤ)).natAbs ≤ P.width * β := by
-  sorry
+  -- Step 1: split the index `Fin ((n+1)ℓ)` into blocks `(j, k)`.
+  rw [← finProdFinEquiv.sum_comp, Fintype.sum_prod_type]
+  -- Step 2: every block other than `j₀` vanishes.
+  rw [Finset.sum_eq_single j₀ (fun j _ hj => Finset.sum_eq_zero fun k _ => by
+      rw [decomposeVec_block_eq_false P u j (hu j hj) k, Bool.toNat_false, Nat.cast_zero,
+        mul_zero])
+    (fun h => absurd (Finset.mem_univ j₀) h)]
+  -- Step 3: the surviving block is a binary subset sum of `ℓ` bounded errors.
+  exact LWE.binaryErrorSum_bound (fun k => e (finProdFinEquiv (j₀, k)))
+    (fun k => decomposeVec P u (finProdFinEquiv (j₀, k))) β fun k => he _
 
 end TCSlib.Cryptography.AdvancedEncryption.Homomorphic.GSW
