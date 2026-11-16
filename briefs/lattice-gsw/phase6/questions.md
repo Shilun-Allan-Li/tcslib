@@ -141,3 +141,64 @@ secret LWE assumed only where used; it is not used here).
 - **B** `noncomputable`, choosing `θ` from Mathlib's conjugacy of equal cycle types. Shorter; the
   FHE evaluator becomes noncomputable (harmless for correctness and security, which are the
   phase's claims).
+
+## Questions raised by plan revision r2 (P6-Q14 to P6-Q19)
+
+Multiple choice, recommended option first and marked **(rec.)**. These arise from the changed rulings. For Seyoon;
+the maintainer moves them into `questions.md`.
+
+**P6-Q14. Leveled scheme: wires of unequal depth** (§H3.11, §H5.13–H5.14)
+- **A (rec.)** Keys indexed by vertex depth. The level-`d` evaluation key encrypts under `pk_d` the key bits of
+  **every** lower key, and each gate is bootstrapped by the two-key `bootNAND` from its arguments' levels to its own
+  level.
+  - No layering conversion is needed, and the per-gate lemma is G9 itself.
+  - The evaluation key has `N·L(L+1)/2` ciphertexts; it still depends only on `L` [BV11, Thm 3.1].
+  - The hybrid replaces the evaluation keys from the top level down.
+- **B** Consecutive keys only (`evk_d` encrypts `s_{d−1}`'s bits; `N·L` ciphertexts), as in the textbook chain.
+  Circuits must be **layered**, so 6a gains a layering conversion that pads by double-NAND identity chains (about
+  +150–250 lines, with parity care for odd gaps).
+- **C** As B, but the leveled theorems take "layered" as a hypothesis and provide no conversion. Smallest, but
+  general circuits are not covered.
+
+**P6-Q15. The concrete `WeakCircularSecure`** (§H3.12, §H5.12)
+- **A (rec.)** Per-distinguisher: `WeakCircularSecure P χ D ε := distAdv (fheView … false) (fheView … true) D ≤ ε`.
+  The asymptotic `WeakCircularSecureFamily` (NUPPT, negligible) is the headline hypothesis, faithful to
+  [BV11, Def 3.8], which is asymptotic. The ruled form over all function-level distinguishers holds only for `ε`
+  near `1`, because an unbounded distinguisher recovers `s` from `pk` and decrypts.
+- **B** Keep it as ruled (every distinguisher), with a docstring stating that it is meaningful only for `ε` near
+  `1`, and rely on the asymptotic predicate for content.
+- **C** A `(t, ε)` form over machines [BV11, Def 3.2, p013-b003]: NUPPT distinguishers of running time `≤ t` at a
+  fixed `κ`. This needs a time measure at one security parameter, which the library does not expose yet; larger.
+
+**P6-Q16. Representation of NAND form** (§H3.9, §H5.6)
+- **A (rec.)** A predicate on `DAGCircuit`: every gate is a `¬` gate (negated conjunction) of fan-in `≤ 2`.
+  - The conversion is an instance of `DAGCircuit.rewrite` with costs within its `fan-in + 2` budget and depth
+    factor 2.
+  - Bootstrapping pads fan-in 1 to `(a, a)` and fan-in 0 to `(G, G)`.
+  - Disclosed: NAND-form circuits are not `IsWellFormed`.
+- **B** Binary NAND only (`args.length = 2`, negation as `NAND(a, a)`). The constant `false` then needs three gates
+  over an input vertex, above `GadgetCorrect`'s budget of 2 for fan-in 0. That requires an owner-side change to
+  `DAGTransform.lean` (a general cost) and `n ≥ 1`.
+- **C** A new NAND circuit model type, registered in `ComputationalModels.lean`. It is a second circuit model;
+  phase-5 §G5 and P6-Q2 C rejected the same pattern.
+
+**P6-Q17. Host registry rows** (§H2, §H4)
+- **A (rec.)** Register `BranchingProgram.evalWith` as **H18**. Also record the two public, unregistered hosts the
+  phase consumes: **H19** `runWith`/`runWith_rel` (`DAGCircuit.lean:149/625`) and **H20** `DAGCircuit.rewrite`
+  (`DAGTransform.lean:246`). Gate 45 audits their contracts as listed. Records only; no Lean change.
+- **B** Register only H18, and put `runWith` and `rewrite` on the registry backlog.
+
+**P6-Q18. Thm 2's circuit model** (§H3.10, §H5.4)
+- **A (rec.)** A `TreeCircuit` formula with fan-in 2 that mirrors Bar89's three sections. It reaches `DAGCircuit` and
+  `Language.InNC 1` through `Language.InTreeNC.inNC`. Its size `l^{O(log w)}` is polynomial for fixed `w`.
+- **B** A `DAGCircuit` built directly, sharing composition subcircuits (size `O(l·w³)`). That is closer to "a
+  circuit", but needs vertex relocation ledgers (as in `Adder.lean`), about +200 lines.
+
+**P6-Q19. Source for the leveled key chain** (§H1 gap 1)
+- **A (rec.)** No new ingest.
+  - Cite [BV11, Thm 3.1, Def 3.6] and [BV14, Thm 2.14 first part, Thm 3.7] for the statement, and [AP14, §5.3]
+    for the independent-keys argument.
+  - The docstrings disclose that the key-chain construction and its hybrid order are reconstructed: no ingested
+    passage gives them.
+- **B** Ingest the leveled-bootstrapping passage of Gentry's thesis or STOC 2009 paper ([Gen09], cited by BV11 and
+  BV14), and cite it. This needs the PDF.
