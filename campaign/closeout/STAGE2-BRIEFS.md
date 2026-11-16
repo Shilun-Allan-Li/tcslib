@@ -1,4 +1,4 @@
-# Stage 2 briefs: delegated fills (draft, 2026-11-16)
+# Stage 2 briefs: delegated fills (2026-11-16)
 
 Stage 2 of `STAGES.md` is medium structural work, delegated to outside workers as three fills.
 Each fill owns files disjoint from the other two, so they can run in parallel. The maintainer
@@ -8,8 +8,11 @@ integrates all three into one stage 2 PR and one gate.
 touches ExhaustiveReplay, CodeSimulator and Nondeterminism. The maintainer will pin the exact base
 commit and refresh line numbers when the fills are dispatched.
 
-**Approvals needed before dispatch.** These are new public lemmas, imports or moves, so Seyoon
-rules on them first, as one checklist:
+**Approvals: all four granted (Seyoon, 2026-11-16).** At Seyoon's request, the fills run in
+parallel with stage 1's gate, based on stage 1's head `ceece3a0`. B1's home is `TuringMachine/CfgFacts`
+(about 160 downstream modules; Configuration has about 400). ExhaustiveReplay's WS-1 member,
+`xr_window_stepWith`, moves to Fill A so that the file sets stay disjoint. The full briefs are in
+`stage2/` (`COMMON.md`, `FILL-A.md`, `FILL-B.md`, `FILL-C.md`). The approved items:
 
 - **A2:** a public `NDTM` first-halt row in `TuringMachine/Nondeterministic` (RC-4). Its
   rebuild covers about 160 modules.
