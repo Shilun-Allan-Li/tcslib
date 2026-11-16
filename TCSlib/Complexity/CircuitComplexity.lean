@@ -11,6 +11,8 @@ import TCSlib.Complexity.CircuitComplexity.NCAC
 import TCSlib.Complexity.CircuitComplexity.TreeDAG
 import TCSlib.Complexity.CircuitComplexity.DAGTransform
 import TCSlib.Complexity.CircuitComplexity.DAGFanin
+import TCSlib.Complexity.CircuitComplexity.NANDForm
+import TCSlib.Complexity.CircuitComplexity.NANDLayering
 import TCSlib.Complexity.CircuitComplexity.LayeredCircuit
 import TCSlib.Complexity.CircuitComplexity.LayeredPPoly
 import TCSlib.Complexity.CircuitComplexity.LayeredDAG
@@ -158,6 +160,12 @@ both ways, so the two `P/poly`s coincide).
 - `CircuitComplexity.TreeDAG`: tree ↔ DAG conversions.
 - `CircuitComplexity.DAGTransform` / `DAGFanin`: a generic gate-rewriting pass on DAGs, and
   its instances binarization (fan-in two, [AB09, p. 118]) and De Morgan normalization.
+- `CircuitComplexity.NANDForm`: NAND gates (`¬` gates of fan-in `≤ 2`, the model's negated
+  conjunction) and NAND form, with the conversion `DAGCircuit.toNANDForm`, a third instance of
+  the gate-rewriting pass (depth at most doubled).
+- `CircuitComplexity.NANDLayering`: layered circuits (`DAGCircuit.IsLayered`), the literal input
+  `litInput`, and the layering `DAGCircuit.layerNAND` of NAND-form circuits onto the `2n`
+  literals, depth preserved exactly (double-NAND chains and a parity twin for odd gaps).
 - `CircuitComplexity.LayeredCircuit`: the layered model and its gate set `stdGateOps`.
 - `CircuitComplexity.LayeredPPoly`: `SIZE` and `P/poly` over the layered model.
 - `CircuitComplexity.LayeredDAG`: layered ↔ DAG conversions, and

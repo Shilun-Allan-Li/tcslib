@@ -25,6 +25,7 @@ import TCSlib.CommunicationComplexity.NewmanTheorem
 import TCSlib.Programs
 
 import TCSlib.Complexity.CircuitComplexity
+import TCSlib.Complexity.BranchingPrograms
 import TCSlib.Complexity.Expanders
 import TCSlib.Complexity.NPReductions
 import TCSlib.Complexity.Randomized
