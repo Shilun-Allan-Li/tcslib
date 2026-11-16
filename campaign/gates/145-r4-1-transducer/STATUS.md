@@ -1,1 +1,1 @@
-**Gate 145 CLEAR** (round 1, 0/0/1; resolutions.md) at `7bb1f687d87c8faa25c8523fc4bb1e15a5d473c1`. G145-01 fixed in records. **#334 clear to merge.** Once it merges, #335 (gate 146, CLEAR) is retargeted and replayed.
+**Merged** · #334 merged at `f487051c39fa7185ecb8ddab8d45de3c3621ae44` (2026-11-16), head `7bb1f687`. Gate 145 closed: round 1 CLEAR (0/0/1; G145-01 records erratum).
