@@ -101,9 +101,12 @@ audits (and for fills if D1 = (b)).
 | W4 | **Sync `main` into the campaign** (25 commits, disjoint), full replay on the merged tree, new snapshot. | D5 | none (records-only gate if wanted) |
 | W5 | **Blueprint increment** for chapters 3–4, with the repository's `/blueprint-extract` on the synced tree (after W4, so it builds on `main`'s reorganized blueprint). One PR. | W4 | 1 audit (light) |
 | W6 | **Final audit**: one Codex gate over the chapter scope: the headline and admission probes, the statement-vs-book fidelity table (plan §1), standards lint, W1's census and W3's register. | W1–W5 | 1 audit |
+| W8 | **Exercise 3.3** (D3): an EXP oracle `B` with `P^B ≠ NP^B`. Design note first: replace the classical choices in `bgsOracle` (fresh lengths, unqueried witnesses) by canonical least choices computed stage by stage, and show the resulting oracle in EXP by simulating each stage's oracle machine against the oracle built so far. Then a statement gate and a fill. | D3 | 1 design review, 1 fill, 1–2 audits |
+| W9 | **Relativized hierarchies** (D3): generalize rather than duplicate. Design note first, on one interface over machine models (plain and oracle) that the existing deterministic proof (`DiagSimulator`), the nondeterministic proof and the space proof are restated against, each instantiated twice. The oracle space hierarchy needs an oracle space class and its query-tape convention, which AB09 leaves open; the note proposes one for Seyoon. Then statement gates and fills, one hierarchy at a time. | D3 | design review, 3 fills, 3+ audits |
 | W7 | **Integration PR** to `main` (shape per D5), with D6's normalization; replay on `main`'s tree. Seyoon merges. | W6 | none, or 1 audit if wanted |
 
-**Order:** W1 now; then D1–D6; then W2 and W3 in parallel; W4; W5; W6; W7.
+**Order:** W1 now; then W2, W3 and the design notes for W8 and W9 in parallel; the refactors and
+W8–W9 fills; W4; W5; W6; W7.
 
 **Cost, with D1 = (a):** four or five Codex audits (W2, W5, W6, optionally W7) and no fills.
 With D1 = (b), add two fills and two audits.
