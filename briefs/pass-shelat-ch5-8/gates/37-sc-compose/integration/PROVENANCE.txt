@@ -1,0 +1,144 @@
+#313 (learning) + #323 (sc-garble) + #324 (sc-compose) combined integration build on the records tip, maintainer job, 2026-11-15/16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I throughout; Lean 4.25.0 (PATH=$HOME/.elan/bin:$PATH; `lean --version` 4.25.0 cdd38ac5); one Lean process at a time
+  (ours), only scripts/lean_check_tree.sh (worktree copy byte-equal to /home/user/tcslib/scripts/lean_check_tree.sh,
+  checks/runner-equal.txt) through tools-used/review/runner.py (the G26-N1-fixed runner: errors counted as
+  ^\S+\.lean:\d+:\d+: error[:(], both forms) with TCSLIB_OLEANS=$SP/dl-oleans (dl-oleans-2, in use by another job, not touched);
+  no lake command; nothing pushed; no commit or branch in /home/user/tcslib (only `git fetch`, `git worktree`, and unreferenced
+  `git commit-tree --no-gpg-sign` objects). The records checkout's HEAD moved during the job (8607fc81 -> 654323f2, a fast-forward
+  pull and a records commit by the maintainer, reflog 00:01 UTC), not made here.
+Method and tools: the #317 integration evidence (records briefs/pass-shelat-ch5-8/gates/33-prf-mac/integration/int-317-evidence.zip,
+  SHA-256 f395ea6c53136a875e87970b4d4d227d53a3832ab61b557bf207543b330a97ca), extracted into a fresh directory and checked against its
+  evidence-SHA256SUMS: 245/245 OK, path set exact (246 files incl. SHA256SUMS, which equals evidence-SHA256SUMS). tools-used/ here:
+  unmodified copies of its tools-used/ (review/runner.py, downorder.py, snapshot.py, buildsum.py, sorrycensus.py, treecheck.py;
+  buildset.py, bothdown.py, bothdown317.py, refunion.py, refcmp.py, permod.py, restoreplan.py). New here: bothdown3.py (bothdown.py /
+  bothdown317.py with three seed sets read from files, pairwise both-counts) and tipcensus.py (per-module sorry counts at a revision
+  from any record with the same source SHA-256). PROVENANCE layout as in that evidence.
+
+trial merge (landing/):
+  records tip 8607fc81282de669771c03d67e5b241fca154b77 (= origin/cryptography/pass-shelat-ch2-4 after `git fetch`; tree
+    535aa8bf09adc1f357840531fe72ecf98aa38ab4).
+  #313 head 2b6c29816de4cb1cd0e6b74fa3ae848c9f0f1be9, #323 head cd9a48438c2a6548fe9e246ce569be57c9df96b3,
+  #324 head a6eaebd78c48e7fdfd06263edb84b70bc00ec593 (each = refs/pull/31x|32x/head by `git ls-remote`). Merge-bases with the tip
+    (checks/pr-bases.txt): #313 and #324 6ce4658d, #323 1321b9cb; the code (TCSlib, TCSlib.lean, audits, scripts, lake files,
+    toolchain) of both bases equals the tip's (0 files differ).
+  `git merge-tree --write-tree --messages` (landing/merge-tree-{1,2,3}.txt; each rc 0, no conflict message):
+    tip x #313 -> tree 796655a664c5a14fe843c042177eae69fdd3cc88, scratch S1 00616f3d155ac2b356eff2a72ac9d33e916f71de (-p tip -p #313);
+    S1 x #323  -> tree d150f6f7bbbc9edf2941eb2a3a8416edc86f2082, scratch S2 57daec341fbe5b03ac6cea323662714b4b8d197f (-p S1 -p #323);
+    S2 x #324  -> tree ca715cb6247c88cf52b391d11c8347f02117f282, scratch S3 70c9c475e3ba98552b116d13db6fc6ae21c83867 (-p S2 -p #324).
+    (landing/scratch-chain.txt.) Other orders (landing/merge-tree-alt.txt): #323,#324,#313 and #324,#313,#323 each give tree ca715cb6.
+  All scratch commits: `git commit-tree --no-gpg-sign`, author = committer = Claude <noreply@anthropic.com>, date fixed
+    2026-11-15T00:00:00Z, unsigned, no ref, never pushed (also the alt-order chains, tips c23a1efe / 7bebcc99, and one new-tip
+    check commit, below).
+  checks/tip-vs-merge-name-status.txt = the union of checks/pr313/323/324-name-status.txt (35 files, all .lean; +7337/-195):
+    #313 5 (M Randomness/Learning; A Learning/{Distinguisher,Law,Random,Sample}), #323 14 (M Complexity/CircuitComplexity/DAGCircuit,
+    Garbling, GarblingSecurity, SpecialEncryptionMulti, SpecialEncryptionSecurity, Yao; A Garbling/{CoinBlocks,Probability},
+    GarblingSecurity/{CoinMarginals,NestedBounds}, SpecialEncryptionMulti/{SliceParser,SliceReduction},
+    SpecialEncryptionSecurity/{Pad,WrongKey}), #324 16 (M ComposeSecurity; A 15 ComposeSecurity/*). Shared paths: 0
+    (checks/shared-paths.txt). checks/merge-pr31x/32xpaths-vs-head.txt: every one of the 35 blobs at S3 = its blob at the PR head.
+  origin moved during the job (landing/origin-moved.txt): 8607fc81 -> 654323f27fbbed3a1b3664908b6c14cf563e52a2 (#313 merged as
+    10cc8c977b6870b8ead4c07d49533de0ce3cc908, parents b6ca2bd5 + 2b6c2981, plus records commits). The new tip's code = S1's code;
+    merge-tree new tip x #323 (63ce05ff) then x #324 = beb29c9e, which differs from S3's tree only in PassShelatChapter5-8Plan.md and
+    briefs/. The build applies unchanged to the new tip (tip + #323 + #324).
+worktree: $SP/wt-int-313-323-324, detached at S3, sparse (non-cone: /* !/briefs/), .lake/packages -> /home/user/tcslib/.lake/packages.
+  Clean at the end (checks/worktree-status.txt: only ignored .lake/); removed with `git worktree remove --force` (the ignored .lake
+  link), pruned.
+
+build set (order/):
+  tools-used/review/downorder.py /home/user/tcslib S3 eff2dcd0a63f0c371118a17c67b9a5dfc046f4e9 (olean base snapshot; order/base-rev.txt):
+    changed.txt 103 modules (68 base delta since eff2dcd0 = int-317's 68 (#303, #306-#309, #311, #312, #314, #315, #317) with #316's
+    updated sources, + the 35 PR modules), down.txt 407, order.txt 1276 (imports-first), roots.txt 375 Mathlib roots.
+  tools-used/buildset.py (seeds = the 35 PR modules, order/seed.txt; order/buildset.out): down-seed.txt 293 = the downstream closure
+    of the 35 (incl. root TCSlib, audits/garg-ch1-3/Checks, audits/pass-shelat/Checks; DAGCircuit alone puts 277 downstream of #323);
+    build-set.txt = (upstream closure of down-seed) intersected with down.txt = 407 = down-seed + 114 base-delta-affected modules they
+    need; excluded.txt empty. build-queue.txt = order.txt restricted to the set, imports-first (asserted per import edge). 407 modules.
+  downstream counts (tools-used/bothdown3.py, order/bothdown.out, order/merge-*.txt), at S3:
+    downstream of #313 7, of #323 277, of #324 19; union 293 (= down-seed).
+    #313 & #323: 7 = the 5 Learning modules, TCSlib/Cryptography/Randomness, root TCSlib (Learning imports DAGCircuit's closure);
+    #313 & #324: 1 = root TCSlib;
+    #323 & #324: 3 = TCSlib/Cryptography/SecureComputation, SecureComputation/YaoReal, root TCSlib;
+    all three: 1 (root TCSlib). These equal the gate-staging figures (7 and 3). Neither audits Checks is downstream of two PRs.
+
+olean tree $SP/dl-oleans:
+  pre: tree/snapshot-pre.txt (snapshot.py): 1230 files, 0 empty dirs, SHA-256
+    457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the required base value.
+  Before the build the 330 base oleans it overwrites were copied aside ($SP/dl-int313-backup; tree/backed-up.txt with hashes;
+    copies verified 330/330) and the 77 new ones listed (tree/overwrite.txt, tree/new-oleans.txt).
+
+build (build/; runner.py $SP/wt-int-313-323-324 order/build-queue.txt $SP/dl-oleans build; runner rc 0, build/runner.out):
+  build/summary.txt (buildsum.py): 407/407 rc 0; errors 0 in the G26-N1 form; substring "error" 0 times; 35 sorry warnings,
+    112 warnings; 2136 s (2026-11-15T23:43:57 - 2026-11-16T00:19:33 UTC), max RSS 4.57 GB. build/per-module.tsv (permod.py): per
+    module rc, err_colon (`error:`), err_paren (`error(`), combined, error_substr, sorry, warnings; totals error: 0, error( 0;
+    every log hash = its record (log/record mismatches []).
+  build/seed-modules.txt: the 35 PR modules each rc 0, 0 errors (both forms). Sorry: 0 in all except Yao 2 (yaoHybrid_polyTime,
+    yaoHybrid_simulators: admitted at the tip, not #323 targets). Non-sorry warnings: SliceParser 1 and NestedBounds 1 (the
+    unused-simp-argument linter, SG-F06 of the sc-garble review); all 5 Learning and all 16 ComposeSecurity modules 0 warnings.
+    TCSlib, Randomness, SecureComputation, YaoReal, audits/garg-ch1-3/Checks, audits/pass-shelat/Checks: rc 0, 0 errors, 0 warnings.
+  Sorry warnings only in admitted modules (NonUniform 1, SeedMajority 2, TQBF 21, Universal 1, ObliviousTransfer 2, Yao 2,
+    SequentialZK 5, Derandomization 1); other warnings only in unchanged base/base-delta sources.
+  refcmp (tools-used/refcmp.py, refunion.py; references copied to build/refs/, each hash-checked against its records
+    evidence-SHA256SUMS, build/refs/refs-hash-check.txt 7/7 OK; the three zips extracted into fresh directories and checked:
+    sc-garble 1200/1200, sc-compose 850/850, gate29-le-b 461/461 OK, path sets exact, SHA256SUMS = evidence-SHA256SUMS):
+    references = sc-garble final-r1 review (fills/sc-garble/final-r1/review-evidence.zip, SHA-256 5a121c0290969e1f7725f997b8e5683169613a62ba4db203669a74590bd0e658;
+      build/ (pre-edit head e5cb6129, 388) + edit-build/ (LE-doc head cd9a4843 = #323, 9): ref-sc-garble-r1.jsonl),
+    sc-compose final-r1 review (fills/sc-compose/final-r1/review-evidence.zip, SHA-256 c11ce8bb81d2ab7bf19259740f78c1dd2006d08e14e6672f9b257a131445a24; build/ (pre-edit
+      f3036c69, 279) + edit-build/ (LE-doc f61ce08f, 18): ref-sc-compose-r1.jsonl),
+    gate29-le-b (gates/29-learning/landing-r2/gate29-le-b-evidence.zip, SHA-256 66898704b4fb1734ebc64df691fcdb3ae6623d440ddb88ac45c6fbfb19b5b43a; build/ at 2b6c2981 = #313, 268).
+    build/vs-sc-garble-r1.txt: 386 identical source and olean; 2 differ in source (ComposeSecurity: #324; Randomness/Learning: #313);
+      19 no record (the 15 new ComposeSecurity and 4 new Learning modules).
+    build/vs-sc-compose-r1.txt: 273 identical; 6 differ in source (#323's SpecialEncryptionSecurity, SpecialEncryptionMulti,
+      GarblingSecurity, Yao; ComposeSecurity (LE-prose); Randomness/Learning (#313)); 128 no record (DAGCircuit's downstream,
+      Garbling, the new #323 and #313 modules).
+    build/vs-gate29-le-b.txt: 263 identical; 5 differ in source (SpecialEncryptionSecurity, SpecialEncryptionMulti, GarblingSecurity,
+      Yao, ComposeSecurity); 139 no record.
+    build/refunion.txt: 406 of 407 modules byte-identical in source and olean to at least one reference; no module anywhere has the
+      same source with a different olean. The one exception: ComposeSecurity (NO-SAME-REF: src-diff in all three), as expected:
+      #324's head a6eaebd7 carries the LE-prose docstring edit (checks/composesecurity-LE-prose.diff: 2 docstring lines of
+      polyTime_compose, f61ce08f -> a6eaebd7), which no review built; its olean differs because docstrings are stored in it.
+      This build is its first build: rc 0, 0 errors, 0 warnings, 0 sorry.
+    build/both-modules-refmatch.txt: every module downstream of two PRs (and both audits Checks) is byte-identical to a reference:
+      the 5 Learning modules to gate29-le-b (built against the old DAGCircuit); Randomness, SecureComputation, YaoReal, TCSlib and both
+      audits Checks to all three.
+  tree/tree-check-merge.txt (treecheck.py, order.txt 1276 modules, records admissions/records-merge.jsonl, rev S3), run after the
+    probe olean was deleted: every module rc 0 at the merge source, every olean = its record, no stray olean, no empty dir:
+    RESULT OK (1307 files incl. 31 PFR, tree/snapshot-merge.txt).
+
+admissions (admissions/): records-merge.jsonl = int-317's admissions/base-records-from-int-315.jsonl (base records of the 457ba704
+  tree; copied as base-records-from-int-317.jsonl, hash-checked) + build/results.jsonl.
+  Tip count (admissions/tip-census-8607fc81.txt, tip-count.txt; tipcensus.py over the base records, the int-317 build and the three
+  reference builds, by source SHA-256 at 8607fc81; 1249 tip modules matched, 0 disagreeing): 216 sorry warnings tree-wide at the tip
+  (= int-317's 216; #316 adds none); 39 in the prf-long issued-r1 modules (the integration list, 40 in 19 modules, copied as
+  base-sorries-prf-long-issued.txt), plus SpecialEncryptionMulti 1 outside that list (sliceMultiMessageSecure_of_prfOut, #311).
+  Merge: admissions/sorry-census.txt (sorrycensus.py, issue base 7b307d6254f6ed0e98f44cd563f88f9c56b7b1ee, head S3): issued modules
+    39 -> 29; admissions/merge-census-70c9c475.txt: 205 tree-wide = 216 - 1 (predictAdv_prfConcept_negligible) - 7 (sc-garble) - 3
+    (sc-compose). admissions/tip-vs-merge-census.diff: the only count changes are Learning 1->0, ComposeSecurity 3->0, Garbling 1->0,
+    GarblingSecurity 1->0, SpecialEncryptionMulti 1->0, SpecialEncryptionSecurity 3->0, Yao 3->2, and the 35 new/changed PR modules
+    otherwise 0. admissions/pr-modules-sorry.txt: the 35 PR modules have 0 sorry warnings and 0 `sorry`/`admit` tokens except Yao
+    (2 warnings, 3 tokens: the two tip admissions and the module docstring's mention). No admission in any PR module it did not
+    already have.
+
+axioms (axioms/): AxiomsMerge.lean.txt run as IntProbe/AxiomsMerge in the worktree (runner, axioms/probe-runs/, rc 0, 0 errors,
+  0 warnings); AxiomsMerge.log:
+    [propext, Classical.choice, Quot.sound] for Randomness.predictAdv_prfConcept_negligible, Randomness.not_weakLearnsUnder_prfConcept;
+    sc-garble's 7 targets spDecStr_wrongKey, specialScheme_wrongKey, specialScheme_multiMessageSecure, nestedSpecial_wrongKeyBot,
+    uprob_not_good_le, yaoSeed_good_whp, sliceMultiMessageSecure_of_prfOut and uprob_not_good_le_of_perm (B2); sc-compose's
+    HybridProtocol.composeP_efficient, composeV_efficient, hbcSecure_compose and HybridProtocol.polyTime_compose.
+    yaoHybrid_hbcSecure and yaoProtocol_hbcSecure: [propext, sorryAx, Classical.choice, Quot.sound]. The dependency trace (the
+    sc-garble review's DepTrace logic, in the same probe): admitted declarations (direct sorryAx) in the closure of
+    yaoProtocol_hbcSecure (17866 constants): otProtocol_polyTime, otProtocol_simulators (sc-ot) and yaoHybrid_polyTime,
+    yaoHybrid_simulators (sc-yao); of yaoHybrid_hbcSecure (9418): yaoHybrid_polyTime, yaoHybrid_simulators. yaoSeed_good_whp and
+    hbcSecure_compose are no longer among them.
+  The probe olean (axioms/probe-oleans.txt) and IntProbe/ (worktree and tree) were deleted before the tree check.
+
+lint (lint/): python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography --check8b in the worktree at S3
+  (lint-merge-70c9c475.txt): 92 FAIL, 101 WARN over 377 files (rc 1, as always with FAILs). linediff-int317-merge-vs-merge.txt
+  (FAIL/WARN lines, whitespace-normalised, vs int-317's lint at 37e39743, copied as lint-int317-merge-37e39743-from-int-317.txt):
+  empty. No PR file in TCSlib/Cryptography has a FAIL or WARN line.
+
+restore (restore/): the 330 backups copied back, each hash checked (restore-log.txt: 330 restored, 0 failed); restoreplan.py
+  --delete against tree/snapshot-pre.txt: 77 extra files (= tree/new-oleans.txt, restore/extra-vs-new-oleans.txt empty) deleted
+  with 12 emptied directories (deleted-dirs.txt); 0 changed, 0 missing. Backups removed afterwards.
+  post: tree/snapshot-post.txt: 1230 files, 0 empty dirs, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f,
+  byte-identical to tree/snapshot-pre.txt.
+cleanup: the worktree removed; the reference extracts are kept until the follow-up LE-gate36 job is done (its tools come from them).
+SHA256SUMS: every file here except itself (paths without "./"); ../int-313-323-324-evidence.zip holds exactly these paths plus SHA256SUMS.

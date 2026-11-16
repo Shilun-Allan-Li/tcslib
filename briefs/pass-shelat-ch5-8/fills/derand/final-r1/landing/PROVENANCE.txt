@@ -1,0 +1,131 @@
+derand issued-r2 (H17 exists_seedMajorityTM, its DTIME corollary seedMajority_mem_DTIME, PS10 Theorem 180.1 bpp_subset_dtime_subexp)
+maintainer delivery review r1 (Codex delivery), 2026-11-15 UTC.
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: the common review brief $SP/review-brief-common.md with Updates 1-3; newest references the sc-ot review (records
+  fills/sc-ot/final-r1/, its tools = $SP/dl-review/sc-ot-r1/tools), the canonizer review (C-F02 chunk/EOF discipline,
+  probefull.sh), int-315 (buildset.py, bothdown.py, refunion.py). Nothing pushed, no PR, records checkout only read (git fetch,
+  git worktree only). No lake build, no cache get. python3 -I throughout. One Lean process at a time, only on $SP/dl-oleans-2
+  (dl-oleans, used by the parallel sc-garble review, never touched; confirmed by its runner's command line).
+
+brief: records briefs/pass-shelat-ch5-8/fills/derand/issued-r2/brief.md SHA-256 5375acb095037660b7ec54c6c51fd00ac569f7ea8d2cfff6f3935fe40cf21a13
+  (= dispatch.md). Package SHA256SUMS 7/7 OK (logs/issue-package-check.txt); SOURCE-SHA256SUMS 377/377 OK at the issue base
+  01de2d8baed9113e4a099e13c5d50c81e6dbc66f (logs/source-sums-check.txt). base-sorries.txt: 26 in 12 modules.
+  Dispatch: Codex on Seyoon's Mac (records fills/codex-host-2026-11-15/dispatch-codex.md, host-addendum.md).
+delivery: exchange/pass-shelat-ch5-8 186ffb99ae6e1034185ee2cdffc318db2c955a58 ("fill derand: final"); checkpoints
+  d90a03638e06f560f02ddce1f5aeba1bfba0e25c, aa23fc19cdba95238e822d963660f315030452aa. All three touch only inbox/fills/derand/;
+  no later exchange commit touches it (logs/exchange-commits.txt). Unsigned (sig N), Seyoon's identity.
+  Payload: git archive into a fresh directory (removed after use); worker REPORT logs/worker-REPORT.md; extracts
+  logs/delivery-extracts/ (patches + COMMITS.tsv, scope-request/, the worker's canonical seal summary, header-check outputs).
+integrity:
+  - logs/payload-check.txt (tools/mancheck.py, exact path sets, manifest excluded): top SHA256SUMS 3146/3146 OK, evidence/SHA256SUMS
+    3124/3124 OK, no missing, no extra. Cross-checked without extraction by tools/gitmancheck.py (new here; hashes git blobs).
+  - logs/git-am-integrity.log: git am of the 4 patches at 01de2d8b in a scratch base worktree, committer name/email/date from
+    COMMITS.tsv, commit.gpgsign=false: all four hashes reproduce (776dabda, 0c7862af, 904123d3,
+    5e12a169e671dc16b6766e21067b79c16835af67), tree 30ed42ca374ce72162c53c2f361da797ef0592bc. COMMITS.tsv signing column: none x4.
+  - logs/src-equality.txt: the 15 changed paths are byte-identical to src/, which holds exactly these 15 files.
+  - Codex host: logs/slots-check.txt (derand slots.log: 1533 acquire = 1533 release, derand never above 3 slots; the log is
+    tag-filtered, so the host-wide cap is not checkable from it); preflight headroom 4.86-7.39 GiB >= 4 GiB, disk >= 182 GiB.
+olean tree: $SP/dl-oleans-2. tree/snapshot-pre.txt (tools/snapshot.py): 1230 files, 0 empty dirs, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = the required value (byte-equal to sc-ot-r1 tree/snapshot-pre.txt).
+landing: land/pass-shelat-derand (local, no upstream), worktree $SP/wt-land-derand (sparse, briefs/ excluded; .lake/packages ->
+  /home/user/tcslib/.lake/packages).
+  - r1 (landing/landing.log): worker head 5e12a169 rebased onto origin 1321b9cb358867f5b51974b8c5d0781519a9cfdb (#316, #317 merged):
+    rc 0, the 15 paths equal the worker head; head d34fbf097067ea94086295ec8b8ee1f5fe7495b7.
+  - r2 (landing/rebase-r2.log): onto origin 6ce4658db08a1dc2a03a149987197660db078011 (records-only since 1321b9cb: empty Lean/build
+    diff); range-diff 4/4 '='; Lean tree identical to r1.
+  - FINAL head 941b5a1e5116b1ecf3afa56188abd88159389600, tree ee97571ac786e5ae874ab9ae6537c09cdb979923 (landing/commits.txt,
+    series landing/series/0001-0004): author Seyoon Ragavan (kept), committer Claude, SSH-signed by the environment default.
+      255f3e48 checkpoint 1   09f32f0b Theorem 180.1 from the contract   4afde165 checkpoint 2 (host)   941b5a1e final
+    15 files, +1741/-36 vs origin (landing/changed-paths-vs-origin.txt). No landing edit was made (see findings).
+  - Origin delta since the issue base: landing/origin-commits-since-issue-base.txt, origin-delta-since-issue-base.txt (#314-#317).
+environment (deviation, not a delivery finding): the shared pinned Mathlib build lacks
+  Mathlib/Analysis/SpecialFunctions/Pow/NthRootLemmas.olean, imported by Derandomization/RootSchedule (the worker fetched it as an
+  extra narrowed root). The first build failed there (build/mods/..._RootSchedule.log, "object file ... does not exist") with 7
+  cascades. No cache get was run and nothing was written under /home/user/tcslib: tools/mloverlay.sh put a symlink overlay of the
+  3346 pinned Mathlib oleans in dl-oleans-2/Mathlib (Lean resolves a package by the first search-path entry holding its root
+  directory), and tools/mathlibextra.sh compiled that one module from the pinned source (mathlib 029db123, source SHA-256 b371bf48...)
+  with plain `lean -o` into the overlay (build-mathlib-extra/NthRootLemmas.log, 4 s, olean c0a9cff0...). A first attempt without
+  the overlay shadowed all of Mathlib and was removed at once (no Lean ran against it). The 8 modules were rebuilt (build-retry/).
+  The overlay is deleted by tools/restore_derand.sh (restore/restore-log.txt: DELETED-MATHLIB-OVERLAY 3346 symlinks, 1 file).
+build:
+  - order/ (tools/downorder.py at d34fbf09 vs eff2dcd0): changed.txt 83 = 68 base-delta modules since eff2dcd0
+    (order/basedelta-modules.txt: #303, #306-#309, #311, #312, #314-#317) + the 15 unit modules; down.txt 565; build-queue.txt =
+    order.txt restricted to down.txt (565, imports-first, through root TCSlib, audits/pass-shelat/Checks, audits/garg-ch1-3/Checks).
+    order/unitdown/ (tools/buildset.py, seeds = the 15): the unit's own downstream is 531 modules (ClassP/DTIME is deep).
+  - Before the build the 505 base oleans it overwrites were copied aside (tree/backed-up.txt, hashes = snapshot-pre) and the 60 new
+    ones listed (tree/new-oleans.txt).
+  - build/ (runner.py, G26-N1 error regex) + build-retry/: latest records 565/565 rc 0, 0 errors (both forms), error substring 0
+    (logs/build-summary.txt). logs/warnings-vs-base.txt: unit helpers 0 warnings; IterateFind 6 -> 12 (E1's copy of the base proof's
+    unused-simp-argument linter lines 387-388 at 629-630); other changes are base-delta modules. logs/module-times.txt: unit modules
+    <= 10 s each except ClassP/DTIME 178 s (cold start); slowest DetMod 1510 s; 5534 s in all.
+  - tree/tree-check-head.txt (tools/treecheck.py, order/order.txt 1259 modules at 941b5a1e, logs/records-head.jsonl = base records
+    + build + build-retry): every module rc 0 at the head source, olean = record, none missing, no empty dir; the only strays are
+    the 3347 Mathlib overlay entries (attributed in the file). The 59 head-probe oleans were deleted first
+    (logs/probe-oleans-deleted-head.txt).
+statements (vs the issue base 01de2d8b):
+  - statements/frozen/frozen-check.txt (tools/frozencheck.py, the 5 pre-existing files): headers and every definition body identical,
+    order kept; 3 PROSE differences = the three targets' docstrings (Status/sketch, allowed by the brief).
+  - statements/touched.tsv: 3 CHANGED (the targets), 4 ADDED in existing files (E1 computesFunInTime_find, E2 mem_DTIME_iff,
+    E3 decidesInTime_iff, SR-01 inBPP_iff), 50 NEW_FILE, 90 UNCHANGED. decls2-vs-base.tsv: 53 ADDED (public), 0 CHANGED, 0 REMOVED.
+    E2 and E3 are byte-identical to the brief's draft signatures, Iff.rfl, formula docstrings, no attribute, placed beside DTIME /
+    inside namespace Turing.FinTM beside DecidesInTime. No @[simp] added.
+  - statements/sizes-widths.txt: max width 99, 0 lines > 100; all files <= 1000 lines except Classes.lean 1403 -> 1415 (SR-01).
+  - statements/docaudit.tsv: 48 OK, 8 NO-FORMULA: 7 state a Prop formula without a relation symbol (PolyTimeComputable ...; tool
+    limitation), 1 real: Randomized.inBPP_iff is prose only (F-04). sketchaudit: 12 proofs >= 15 lines, all with a sketch.
+  - logs/nameclash.txt: 0 exact full-name clashes at the landing head (short-name coincidences only, e.g. Lamport state/state_eq).
+axioms: probe-sources/head/CensusHead.lean (tools/mkcensus_derand.py, new) -> probe-runs/mods/PlProbe_CensusHead.log: the three
+  targets, E1-E3, inBPP_iff, polyTimeComputable_find, polyTimeComputable_iterateFind and the helper endpoints: [propext,
+  Classical.choice, Quot.sound]. logs/census-summary.txt: 320 stored constants, axiom union the standard three, no sorryAx.
+  Base (probe-sources/base/CensusBase.lean on the restored tree, base-probe-runs/): targets carry sorryAx at base;
+  polyTimeComputable_find and polyTimeComputable_iterateFind are identical at base and head. logs/census-base-vs-head.tsv
+  (tools/censuscmp.py): 202 -> 320, removed 0, type-changed 0, attr-changed 0, added 118 (54 named), axioms-changed 3 (the targets),
+  no added simp or instance (added abbrevs are generated match splitters).
+admissions: logs/sorry-census.txt (tools/sorrycensus.py): issued 26 in 12 modules -> 23 in 10; only SeedMajority (2 -> 0) and
+  Derandomization (1 -> 0) differ; every module outside the issued list is unchanged since the issue base.
+Rule 10 (seals generated at d34fbf09, Lean tree = 941b5a1e):
+  - Collector probe-sources/head/CollectHead.lean (tools/mkcollect.py) -> probe-runs/. Seals tools/mkseals_ab.py (strict) ->
+    seals/{A,B}, tools/mkseals_coe.py -> seals-coe/{A,B}, PlProbe/S and PlProbe/C, logs/mkseals-*.log. First run unchunked
+    (attempt1-unchunked/): the 20 Derandomization-family probes (2787-3928 requests) overflowed Lean's stack (exit 134). Regenerated
+    with SEAL_CHUNK=2200: the 20 passing probes are byte-identical, the 20 others split in 2 harness parts each, every part with
+    install and EOF records (logs/seal-chunk-records.txt). coe probes byte-identical to strict were not re-run
+    (logs/seal-coe-identical.txt). Combined runs seal-runs/ (= attempt1 records for unchanged probes + seal-runs-chunked/).
+  - logs/seal-head-*.tsv, logs/seal-table.txt: every head probe passes (0 errors, install+EOF) except IterateFind, 20 errors in A and
+    B, strict = coe: 11 in the unchanged polyTimeComputable_find + 9 in E1 computesFunInTime_find. Base (base-seals{,-coe}/, 12 probes
+    base-seal-runs/ from a base worktree at 01de2d8b on the restored tree; logs/base-closure-vs-eff2dcd0.txt and
+    logs/base-owner-sources.txt show the base sources and closures equal eff2dcd0 except SeedMajority, whose base olean was built
+    temporarily, base-build/, and deleted): IterateFind 11 errors in polyTimeComputable_find, all others 0. New failing declaration:
+    exactly E1 (F-01). logs/seal-iteratefind-lines.txt gives the lines and messages.
+  - Paired controls tools/mkctl_derand.py (new; rows PolyExpr.eval, FinDist CoeFun instance, DTIME/mem_DTIME_iff,
+    DecidesInTime/decidesInTime_iff, InBPP/inBPP_iff, ModuleHost.hostTM/hostTM_k, SeedMajority.word/word_eq,
+    Derand.ceilRoot/ceilRoot_eq) -> controls/ (coe, 16 probes, 22 sealed negatives), controls-strict/ (20, 33), runs control-runs/.
+    logs/ctlcheck.log ALL_OK True. logs/ctlcheck-strict.log: every negative fails exactly once, every unsealed probe passes;
+    ctlCoeReader fails in the 2 strict sealed AdviceGap probes (harness effect; logs/controls-strict-attribution.txt).
+  - Explicit-unfold scan (tools/scan1.py, scan2.py; probe-sources/head/ScanKindsHead.lean): scan/items-head.json,
+    scan/explicit-head.json, logs/scan2-head.log: 743 items; 1 "foreign" = Enumeration.lean:71 `simp only [P, ...]` where P is the
+    local `let P : PolyExpr` resolved by name to the class Complexity.P (false positive); owned-definition items only in untouched
+    pre-existing declarations (logs/scan-owned.txt).
+lint (scripts/campaign_style_lint.py --check8b, #305 version): lint/lint-*-landing-head.txt vs lint/lint-*-records-tip-1321b9cb.txt
+  (tip export removed after use; records-only change to 6ce4658d): Cryptography 92/101 both, line sets identical; Complexity 25/391 ->
+  25/390, lint/linediff-Complexity.txt: DTIME's DecidesInTime check-8 WARN removed (E3), Classes' size WARN 1403 -> 1415 and its
+  check-8 list loses InBPP (SR-01). No new FAIL. (Old-lint numbers: not re-run; the old script is superseded by #305.)
+content: logs/duplication-review.txt; the host proof takes ONE machine M from SeedMajority.exists_countingTM and derives the decision
+  clause through FinTM.decidesInTime_iff / computesFunInTime_iff / indicator_def and the envelope through
+  envelope_of_computesInTime of the same computation, both at B(n) = c*(2^w(n)*(n+1)^e), matching H17 (machine-library-design.md
+  §14). The corollary is `⟨e, mem_DTIME_iff.mpr ⟨c, M, hM⟩⟩`; no definitional read of DTIME/DecidesInTime/DecidesInTimeVia. Route
+  as Gate 28: binary fuel Nat.bits(2^w), terminal rank in range(2^w+1), direct bound 2^w+2 <= 3*2^w (no final_bound), no admitted
+  loop/timed-cond spec (axioms). Theorem 180.1: integer ceiling root, expanded PRG, non-uniform bad-input advice at 1/12, piecewise
+  width and test, margins 7/12 and 5/12, half_lt_randProb_iff, eventual time bound, DTIME.mono and DTIME_const_mul_subset.
+open PRs (logs/open-pr-overlap.txt): #313 94b31964, #318 f62a25b3, #319 6421ac16: merge-tree with the landing head clean, no shared
+  file; shared closure: Learning (#313), ObliviousTransfer (#318) and Asymptotic/Universal (#319) are downstream of the unit (via
+  ClassP/DTIME). #320 is Arora-Barak (not touched).
+restore (restore/restore-log.txt, tools/restore_derand.sh): 505 backups back (0 hash failures), 60 new oleans deleted, Mathlib overlay
+  and 59 probe oleans deleted, 8 emptied dirs pruned: SNAPSHOT EQUAL. Base probes then ran; their 12 probe oleans and the temporary
+  base SeedMajority olean were deleted (restore/base-probe-oleans-deleted.txt). tree/snapshot-post-final.txt: 1230 files, SHA-256
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = tree/snapshot-pre.txt; tree/tree-check-post.txt: 1199 base
+  modules at the eff2dcd0 source and record hashes, snapshot equal: RESULT OK.
+tools/: sc-ot-r1 tools + int-315 (buildset.py, bothdown.py, refunion.py, restoreplan.py, refcmp.py) + canonizer (probefull.sh,
+  fullsealmap.py, mkctl_canon.py, mkcensus_canon.py). New here: mkcensus_derand.py, mkctl_derand.py, mkqueue.py, closurecmp.py,
+  gitmancheck.py, mathlibextra.sh, mloverlay.sh, restore_derand.sh. runner.py unchanged (G26-N1 fix).
+cleanup: payload extraction, olean backups (bk-derand), the base worktree (git worktree remove --force) removed; PlProbe/ removed from
+  the landing worktree, which is clean at 941b5a1e.
+SHA256SUMS: every file here except itself. ../derand-r1-evidence.zip holds exactly the manifest's paths plus SHA256SUMS.

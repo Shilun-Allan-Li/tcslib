@@ -1,0 +1,111 @@
+#323 (sc-garble) LE-gate36 (Gate 36 G36-01) and #323's integration build against the merged #313, maintainer job, 2026-11-16 UTC
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I; Lean 4.25.0; one Lean process at a time, only on $SP/dl-oleans (dl-oleans-2 not touched); builds through
+  scripts/lean_check_tree.sh (worktree copy byte-equal, checks/runner-equal.txt) via tools-used/review/runner.py (G26-N1, both error
+  forms); probes through tools-used/runner_full.py (lean -DmaxErrors=0, no -o); no lake command; nothing pushed; no branch moved and
+  no signed commit made (see landing/). Run after the int-313-323-324 job, whose restore left the tree at the base snapshot.
+Method and tools: the int-313-323-324 tools (tools-used/, review/) plus, from the sc-garble final-r1 review evidence
+  (fills/sc-garble/final-r1/review-evidence.zip, SHA-256 5a121c0290969e1f7725f997b8e5683169613a62ba4db203669a74590bd0e658; extract
+  1200/1200 OK against evidence-SHA256SUMS, path set exact), unmodified: runner_full.py, decls2.py, frozencheck{,_sg,_lib}.py,
+  review/{mkcollect.py, NmCollect.template.lean, mkseals_ab.py, mkseals_coe.py, mkctl_sg.py, sealsum.py, sealtable.py, ctlcheck2.py,
+  touched.py, archived-gate10-tools/}; rule10_b.sh from gate29-le-b (gates/29-learning/landing-r2/gate29-le-b-evidence.zip, SHA-256
+  66898704b4fb1734ebc64df691fcdb3ae6623d440ddb88ac45c6fbfb19b5b43a, 461/461 OK). New: legate36_edit.py (the edit, 3 exact
+  replacements), review/mkctl_g36.py (mkctl_sg.py + one row, below), upclosure.py (import closure of one module).
+
+landing (landing/):
+  - REBASE NOT RUN (landing/rebase-refused.log): `git rebase 654323f2` on land/pass-shelat-sc-garble ($SP/wt-land-sc-garble) was
+    refused by the session's permission system before it ran; not retried, no workaround on the branch. The branch, its worktree
+    and origin/land/pass-shelat-sc-garble are unchanged at cd9a48438c2a6548fe9e246ce569be57c9df96b3. PUSH: NOT DONE (not asked).
+  - Scratch replica instead (landing/replica-chain.txt; unsigned `git commit-tree --no-gpg-sign` objects, no ref): the 8 commits of
+    1321b9cb..cd9a4843 replayed onto origin/cryptography/pass-shelat-ch2-4 654323f27fbbed3a1b3664908b6c14cf563e52a2 (#313 merged as
+    10cc8c977) with `git merge-tree --write-tree --merge-base=<c>^`: every step rc 0, no conflict; original authors and messages,
+    committer Claude, date fixed. Replica head 4366cd962ceab226b680760b14c48dc17e54a3b1, tree 63ce05ff49c0295a946d4e9fa4fcfc38bfab5bb4
+    (= `git merge-tree --write-tree 654323f2 cd9a4843`). landing/range-diff.txt: 8/8 `=` (identical patches). vs the tip: the same
+    14 paths, +1901/-122.
+  - Edit commit (scratch) d32328f79cdef7d7e9c2a628d9f22c105f768a1c, tree 5662520d23695e1451bb3aa849ace82f71685393, parent 4366cd96,
+    author = committer = Claude <noreply@anthropic.com>, subject "sc-garble landing edit LE-gate36: use the public
+    length_le_length_encodeList (G36-01)", message landing/commit-msg.txt with the two trailers; patch landing/0001-*.patch. The
+    maintainer's rebase + this patch (or legate36_edit.py) gives the same tree; hashes will differ (signing, dates).
+edit (checks/le-gate36.diff; tools-used/legate36_edit.py), SpecialEncryptionMulti/SliceParser.lean, 2 insertions / 11 deletions:
+  - `import TCSlib.Cryptography.Asymptotic.BlockEncryptor` added (first import line). Acyclic: SliceParser's local import closure
+    146 -> 148 modules, added exactly Asymptotic/BlockEncryptor and Encryption/PrivateKey/FromPRG (checks/sliceparser-closure-*.txt).
+  - `SliceReduction.length_le_encodeList` and its docstring deleted (lines 117-127 at the parent).
+  - its one use, `hfuel` in `slicePost_encode`: `have h := TCSlib.Cryptography.length_le_length_encodeList (l.map Prod.snd)`
+    (compiled first time; the rest of the proof unchanged).
+  - The module docstring's `## Main results` (polyTimeComputable_slicePost, slicePost_encode) never listed the deleted lemma: unchanged.
+  - The deleted name occurs nowhere else: `git grep length_le_encodeList cd9a4843` (all paths) = the declaration and the use only;
+    0 occurrences at the edit head in TCSlib/ and audits/.
+statements (statements/):
+  - decls2-vs-parent.tsv (decls2.py over the 14 unit files, parent 4366cd96 vs head): exactly 1 line, REMOVED
+    SliceReduction.length_le_encodeList; nothing ADDED or CHANGED; decls2.err empty.
+  - frozen-check.txt (frozencheck_sg.py, issue base fbd37f447596d4207c8d08b7ef7602f57fe95198 vs head d32328f7, the review's 6 files,
+    --expect-removed the six SG-1 helpers): RESULT differences 0; byte-identical, apart from the FILE header lines, to the review's
+    frozen-check-le.txt. frozen-check-vs-parent{,-all}.txt (parent vs head, SliceParser / all 14 files, expect-removed the duplicate):
+    differences 0, 1 of 1 expected removal.
+  - touched-parent-vs-head.tsv: 1 CHANGED (slicePost_encode, its proof), 1 REMOVED (the duplicate), 258 UNCHANGED.
+build (build/; order/ from downorder.py at d32328f7 against eff2dcd0: changed 87 = 68 base delta + #313's 5 + the 14 unit modules;
+  buildset.py seeds = the 14 (order/seed.txt): down-seed 277, build set 392 (+115 base-delta modules needed), excluded 0; root TCSlib,
+  audits/garg-ch1-3/Checks, audits/pass-shelat/Checks in it). This is #323's integration build against the merged #313.
+  - build/summary.txt: 392/392 rc 0, 0 errors (both forms; build/per-module.tsv, log/record mismatches []), substring "error" 0,
+    38 sorry warnings, 115 warnings, 2122 s (00:26:45-01:02:08 UTC), max RSS 4.56 GB. build/seed-modules.txt: the 14 unit modules
+    rc 0, 0 errors, 0 sorry except Yao 2 (yaoHybrid_polyTime, yaoHybrid_simulators); warnings only SliceParser 1 (unused simp argument
+    pairSndD_pairEncode, now line 159:36, was 168:36 in the int build: SG-F06, shifted by the 9 removed lines) and NestedBounds 1 (SG-F06).
+    BlockEncryptor and FromPRG: rc 0 (BlockEncryptor's 10 warnings inherited, unchanged source).
+  - refcmp (build/refunion.txt, vs-int-313-323-324.txt; references int-313-323-324 build (copied), sc-garble final-r1 build+edit-build,
+    gate29-le-b build): 390/392 byte-identical in source and olean to a reference. SliceParser: new source (the edit), no reference.
+    SliceReduction: same source as the int build and the sc-garble review, different olean; it is one of SliceParser's two direct
+    importers (the other, SpecialEncryptionMulti, is byte-identical) and its import closure changed (SliceParser edited,
+    +BlockEncryptor, +FromPRG).
+    A rerun (build-rerun/) gives the same olean SHA-256 (90e0bbf2...), so the difference is deterministic and comes from the changed
+    imports; its log is identical to the int build's up to line numbers. Every module further downstream (SpecialEncryptionMulti,
+    GarblingSecurity, Yao, YaoReal, TCSlib, both audits Checks, ...) is byte-identical to the int build. ComposeSecurity here is the
+    tip's (#324 not merged): src-DIFF vs the int build (which had #324), byte-identical to the sc-garble review and gate29-le-b.
+  - tree/tree-check-head.txt (treecheck.py; order/order.txt 1261; admissions/records-head.jsonl = base records + build + rerun):
+    RESULT OK (1292 files, no stray olean, no empty dir).
+trial merge with #324 (trial/): `git merge-tree --write-tree d32328f7 a6eaebd7` clean, tree a025d7ab7c4911b6e42ef18b0c05b1c2ac1d4251,
+  scratch 1f7bf42db6bbc7f210e5106a201ecf119f31112b (unsigned, -p head -p #324); other order (tip x #324 = e6dfe0b8, then x head) = the
+  same tree a025d7ab, so both orders are covered. Shared paths 0; vs the int-313-323-324 merge S3 the trial's code differs only in
+  SliceParser.lean (trial/int-merge-vs-trial-code.txt). Downstream (trial/order/bothdown.out, at 1f7bf42d): of #323's 14 277, of
+  #324's 16 19, both 3 (SecureComputation, YaoReal, root TCSlib). trial/build/ = down(#324) in imports-first order, 19 modules
+  (#324's 16 + those 3): 19/19 rc 0, 0 errors, 0 sorry, 0 warnings, 50 s; trial/vs-int-313-323-324.txt: all 19 byte-identical in
+  source and olean to the int build. tree/tree-check-trial.txt (order 1276, records-trial.jsonl): RESULT OK (1307 files).
+Rule 10 (rule10/; tools-used/rule10_b.sh with mkctl_g36.py), SliceParser.lean at d32328f7, probes under G36Probe/ in the worktree:
+  - Collector G36Probe/CollectHead (mkcollect.py, owners = SliceParser; rule10/probe-sources/CollectHead.lean.txt; probe-runs/ rc 0):
+    2817 CAT lines; stored constants 11 (the review: 13).
+  - Seals (mkseals_ab.py strict, mkseals_coe.py canonical; B with SEAL_EVAL=1): requests strict A 2102 / B 2103, coe A 2101 / B 2102
+    (the review's pre-edit SliceParser seals 2084/2085/2083/2084: +18 from the 2 added modules). seals-{A,B,coe-A,coe-B}.tsv: all 4
+    pass, rc 0, 0 errors, install and EOF records present; every probe run with -DmaxErrors=0 (seal-runs/).
+  - Paired controls (review/mkctl_g36.py = mkctl_sg.py + a row for PrivateKeyScheme.encodeList, the definition under
+    length_le_length_encodeList: negative its rfl unfolding on a cons, positive the published reader encodeList_cons; rows chosen by the
+    seal requests: PolyExpr.eval (B), the FinDist CoeFun instance (strict), DAGCircuit.IsFaninTwo, encodeList). controls-coe: 4 probes,
+    7 sealed negatives; ctlcheck-coe.log ALL_OK True. controls-strict: 4 probes, 9 sealed negatives, each failing exactly once; ALL_OK
+    False only because ctlCoeReader fails in the 2 sealed strict probes (it elaborates to the sealed CoeFun instance: harness effect,
+    as in the sc-garble review; rule10/controls-strict-attribution.txt). Unsealed controls all pass. The new encodeList row: negative
+    fails sealed (A and B, strict and coe), reader passes.
+  - The G36Probe sources (rule10/probe-files-in-worktree.txt, 14 files; copies in seals*/, controls*/, probe-sources/) were removed
+    from the worktree after use; runner_full writes no olean (0 G36Probe files in the tree).
+axioms (axioms/AxiomsHead.lean.txt -> AxiomsHead.log; G36Probe/AxiomsHead, runner_full, rc 0, 0 errors, 0 warnings):
+  [propext, Classical.choice, Quot.sound] for the 7 targets spDecStr_wrongKey, specialScheme_wrongKey, specialScheme_multiMessageSecure,
+  nestedSpecial_wrongKeyBot, uprob_not_good_le, yaoSeed_good_whp, sliceMultiMessageSecure_of_prfOut, for uprob_not_good_le_of_perm (B2)
+  and for SliceReduction.slicePost_encode (the edited proof); TCSlib.Cryptography.length_le_length_encodeList [propext, Quot.sound].
+  yaoHybrid_hbcSecure, yaoProtocol_hbcSecure keep sorryAx: trace (direct sorryAx) for yaoProtocol_hbcSecure: hbcSecure_compose
+  (sc-compose, #324 not merged here), otProtocol_polyTime, otProtocol_simulators, yaoHybrid_polyTime, yaoHybrid_simulators; for
+  yaoHybrid_hbcSecure: yaoHybrid_polyTime, yaoHybrid_simulators (as in the sc-garble review).
+admissions (admissions/): tip count (tip-census-654323f2.txt, tipcensus.py by source SHA-256 over the base records, int-317,
+  gate29-le-b, int-313-323-324, sc-garble and sc-compose records; 1253 modules matched, 0 disagreeing): 215 tree-wide at 654323f2
+  (= 216 - predictAdv_prfConcept_negligible, #313 merged); 38 in the prf-long issued-r1 modules, + SpecialEncryptionMulti 1 outside the
+  list (admissions/tip-count.txt). Head (head-census-d32328f7.txt, records base + build): 208 tree-wide = 215 - 7; sorry-census.txt
+  (sorrycensus.py, issue base 7b307d62): issued modules 38 -> 32 (SpecialEncryptionSecurity 3->0, Garbling 1->0, GarblingSecurity 1->0,
+  Yao 3->2) and SpecialEncryptionMulti 1->0; tip-vs-head-census.diff: no other count changes; the 9 new unit modules 0.
+  No admission in a unit module that it did not already have (Yao's 2 are tip admissions).
+lint (lint/): campaign_style_lint.py TCSlib/Cryptography --check8b at d32328f7: 92 FAIL / 101 WARN over 362 files (rc 1);
+  FAIL/WARN line set identical to the int-313-323-324 merge's (linediff-int-merge-vs-head.txt empty); SliceParser has no FAIL/WARN
+  (INFO: 180 -> 171 lines, 10 -> 9 public declarations).
+olean tree $SP/dl-oleans: pre tree/snapshot-pre.txt 1230 files SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f;
+  330 base oleans backed up before the build (tree/backed-up.txt, copies verified), 62 new listed (tree/new-oleans.txt); the trial
+  build's 4 overwritten oleans were head-build outputs, its 15 new ComposeSecurity modules new. restore/ (restore-log.txt): 330
+  restored, 0 hash failures; restoreplan.py --delete: 77 extra files (= 62 + 15, restore/extra-vs-expected.txt empty) deleted with
+  12 emptied dirs; 0 changed, 0 missing. tree/snapshot-post.txt byte-identical to snapshot-pre.txt (1230 files, 457ba704...).
+cleanup: worktree $SP/wt-gate36 (sparse, briefs/ excluded, .lake/packages link; clean, checks/worktree-status.txt only .lake/) removed
+  with `git worktree remove --force`, pruned; backups and the reference extracts removed.
+SHA256SUMS: every file here except itself (paths without "./"); ../gate36-le-evidence.zip holds exactly these paths plus SHA256SUMS.

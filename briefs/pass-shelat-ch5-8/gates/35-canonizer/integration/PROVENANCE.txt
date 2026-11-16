@@ -1,0 +1,44 @@
+#319 (canonizer) integration build, and the combined #318 + #319 trial build, maintainer job, 2026-11-15 UTC (coordinator's
+job B, after job A = gate34-le, on $SP/dl-oleans-2).
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I; one Lean process at a time, only on $SP/dl-oleans-2; no lake build, no cache get; records checkout only read
+  (git fetch, git worktree; the scratch merge commit below has no ref).
+
+rebase (landing/rebase.log): land/pass-shelat-canonizer 6421ac1631ef08feed297c810f0839b178d2a2bb (= origin, on a334ec2e) onto origin
+  05d26fe5b41fcb9426ec220d877d03264b9c8e8c: rc 0, range-diff 3/3 '=', the 4 unit files unchanged. Head
+  47daa90792e96b93510384adbab9f6e492ccef3a, tree ab4c6f976b02c94ad92c772f1994d5398acc2ef8; landing/commits.txt (3, all gpgsig),
+  series landing/series/, landing/changed-paths-vs-origin.txt.
+build order: tools/downorder.py at 47daa907 vs eff2dcd0 -> order/ (down 321). The tree already held job A's build (all 270 modules
+  changed since eff2dcd0 at the tip's sources, plus sc-ot). order/build-queue-B.txt = order/order.txt restricted to (the B-downstream
+  of the 4 canonizer modules and of ObliviousTransfer.lean, whose B source differs from A's; order/seedsAB/) union (B's base-delta
+  modules not built in A): 67 modules, through root TCSlib and audits/pass-shelat/Checks. audits/garg-ch1-3/Checks is downstream of
+  neither and was built at the tip sources in job A.
+build (build/): 67/67 rc 0, 0 errors in both forms, error substring 0, 635 s (logs/build-summary.txt). CodeSimulator 61 s,
+  Universal 1 warning 0 sorry, Canonizer 0 warnings.
+records: logs/records-B.jsonl = base records + job A build + build/.
+  - axioms (probe-sources/CensusHead.lean, tools/mkcensus_canon.py -> probe-runs/): exists_canonizerExp, exists_polyCanonizer,
+    computesFunInTime_appendBit, fUniversal_easy/hard/weakOneWay, theorem_63_1, exists_codeCanonizer,
+    exists_effectiveMachineCode_canonizerTime_le, oneTapeMachineFormat_serialize_decode: [propext, Classical.choice, Quot.sound];
+    oneTapeFormat_serialize_decode [propext, Quot.sound]. logs/census-summary.txt: 1077 stored constants (= the canonizer review),
+    axiom union standard, no sorryAx.
+  - admissions (logs/admissions-B.txt): full-order sorry warnings 215 = tip 216 - 1 (exists_canonizerExp; Universal 1 -> 0).
+  - whole-tree check (logs/tree-check-B.txt, order/order.txt 1250 modules at 47daa907): every module rc 0 at the head source, olean =
+    record; strays: 3 probe oleans and the 6 sc-ot helper oleans of job A (absent at B).
+  - lint (lint/): Cryptography 92/101 at head and tip, identical line sets; Complexity 25/391 at both, the 3 WARN-line changes the
+    canonizer review disclosed (two check-8 lists shortened by the readers, CodeSimulator size 9126 -> 9133) and nothing else.
+combined (landing/combined-merge-tree.txt): git merge-tree --write-tree of the #318 head b0bad23a (job A, LE-gate34) and the #319 head
+  47daa907 on 05d26fe5: clean, tree 705cab618579f0c388a4ac5a680b87c24ff4cda2, the same in both argument orders; scratch commit
+  6ab7dcf0c1d5f2603c62e1fcb39c71948773ac4e (git commit-tree --no-gpg-sign, fixed date, no ref, never pushed) in the temporary worktree
+  $SP/wt-int-combined (removed). order/combined/ (downorder at 6ab7dcf0), order/combined/seeds/ (buildset, seeds = the 11 changed
+  files): build-queue-combined.txt 73 modules = everything downstream of either PR, incl. root TCSlib and audits/pass-shelat/Checks.
+  build-combined/: 73/73 rc 0, 0 errors in both forms, 632 s. logs/tree-check-combined.txt (order/combined/order.txt 1256 modules,
+  logs/records-combined.jsonl): every module rc 0 at the merged source with olean = record; strays only the 3 probe oleans.
+  logs/admissions-combined.txt: 213 = 216 - 2 - 1. With job A (tip + #318) and the B build (tip + #319) every merge order is built.
+push: NOT attempted for land/pass-shelat-canonizer: the equivalent force-with-lease push of land/pass-shelat-sc-ot (job A) was denied
+  by the session's permission system (landing/push.log has the command). Local branch = 47daa907; origin still 6421ac16.
+restore (restore/restore-log.txt, tools/restore.sh): one backup set for jobs A, B and combined (tree/backed-up.txt 270 base oleans,
+  hashes = snapshot-pre; tree/new-oleans.txt 57): 270 restored (0 hash failures), 57 new oleans deleted, 3 probe oleans deleted:
+  SNAPSHOT EQUAL. tree/snapshot-post.txt: 1230 files, SHA-256 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f;
+  tree/tree-check-post.txt (order/base-order.txt, 1199 base modules at eff2dcd0): RESULT OK.
+tools/: the gate34-le tools (derand-r1 tools + legate34.py, runfull.py).
+SHA256SUMS: every file here except itself; ../int-319-evidence.zip holds exactly the manifest's paths plus SHA256SUMS.

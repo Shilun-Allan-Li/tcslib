@@ -1,0 +1,49 @@
+LE-gate34 and the #318 (sc-ot) integration build, maintainer job, 2026-11-15 UTC (coordinator's job A, run between the derand and
+seq-zk reviews on $SP/dl-oleans-2).
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Rules: python3 -I; one Lean process at a time, only on $SP/dl-oleans-2; no lake build, no cache get; records checkout only read.
+Ruling: Gate 34 HOLD on #318 (records briefs/pass-shelat-ch5-8/gates/34-sc-ot/, resolutions-r1.md; decision log 2026-11-15):
+  "fix 01, ledger 02". G34-01 fixed here; G34-02 -> DL-48 (landing-gate34/NOTE.txt).
+
+rebase (landing/rebase-r4.log): land/pass-shelat-sc-ot f62a25b3eda099c9cf9371900664752e7b89007d (= origin, on a334ec2e) onto origin
+  cryptography/pass-shelat-ch2-4 05d26fe5b41fcb9426ec220d877d03264b9c8e8c (#316 headD_drop_ofFn/BitLists and #317 merged since
+  a334ec2e; records only after them): rc 0, range-diff 5/5 '=', the 7 unit files unchanged; head e0ecdf223490ad9c99fc9151ca5bef5821e6cf29.
+LE-gate34 (tools/legate34.py; landing/le-gate34.diff, le-gate34-commit.txt, commit-msg-le-gate34.txt):
+  ObliviousTransfer/Efficiency.lean: OT.getD_zero_eq := by simpa only [List.drop_zero] using
+  (TCSlib.Cryptography.headD_drop y 0 false).symm; OT.getD_one_eq' := (TCSlib.Cryptography.headD_drop y 1 false).symm.
+  No import added (BitLists is in Efficiency's closure). Each docstring gains "It is the public `TCSlib.Cryptography.headD_drop`
+  at `i = k`, reversed." (statements/docstring-insertion-check.txt: pure insertions).
+  Commit b0bad23ae611983e3323460bb8c564da90ad6e8c (author = committer = Claude, SSH-signed by the environment default, the two
+  trailers), tree 3b4301cf650324a3b6d5a59f2c3b60fb6f963dfd. landing/commits.txt (6 commits, all gpgsig), series landing/series/,
+  landing/changed-paths-vs-origin.txt (7 files, +2259/-40).
+verify:
+  - statements/decls2-vs-parent.tsv (vs e0ecdf22): empty. statements/frozen-check.txt: 38 -> 38 declarations, 0 HEADER/BODY
+    differences, 2 PROSE (the two insertions); control statements/control-header-getD_one_eq.txt (one header character changed):
+    exactly one more difference (HEADER). touched.tsv: exactly the two lemmas CHANGED.
+  - build (build/, tools/runner.py, G26-N1): order/ = tools/downorder.py at b0bad23a vs eff2dcd0 (the olean snapshot's base):
+    76 changed since eff2dcd0 (69 base delta #303-#317 + the 7 unit modules), down.txt 270; order/A/ (tools/buildset.py; seeds the 7,
+    both audits/*/Checks, root TCSlib): build set 270 = down.txt; build-queue.txt imports-first. 270/270 rc 0, 0 errors in both forms,
+    error substring 0, 1513 s (logs/build-summary.txt). The 7 unit modules, YaoReal, SecureComputation, TCSlib: 0 warnings;
+    audits/pass-shelat/Checks and audits/garg-ch1-3/Checks rc 0. This is #318's integration build against #314-#317.
+  - logs/tree-check-head.txt (tools/treecheck.py, order/order.txt 1255 modules, logs/records-head.jsonl = base records + build):
+    every module rc 0 at the head source with olean = record; strays only the 2 probe oleans.
+  - axioms (probe-sources/CensusHead.lean, tools/mkcensus_scot.py; probe-runs/): otProtocol_polyTime, otProtocol_simulators,
+    otProtocol_hbcSecure: [propext, Classical.choice, Quot.sound]; yaoProtocol_hbcSecure keeps sorryAx (Yao, base). logs/census-
+    summary.txt: 234 stored constants (= sc-ot r1), axiom union standard, no sorryAx; getD_zero_eq / getD_one_eq': [propext].
+  - seals (probe-sources/CollectHead.lean -> probe-runs/; tools/mkseals_ab.py -> seals/{A,B}, tools/mkseals_coe.py -> seals-coe/{A,B};
+    1109-1111 requests): run with tools/runfull.py (new; tools/probefull.sh = lean -DmaxErrors=0, no -o) -> seal-runs/: all 4 rc 0,
+    0 errors, install and EOF records present.
+  - controls (tools/mkctl_scot.py on the Efficiency records; rows PolyExpr.eval, FinDist CoeFun, NUPPT.layout, Strategy.encodeMsgs,
+    otFunctionality, OT.mask) -> controls/ (4 probes, 9 sealed negatives), controls-strict/ (4, 11), runfull -> control-runs/:
+    logs/ctlcheck.log ALL_OK True; strict: every negative fails exactly once; ctlCoeReader fails in the 2 strict sealed probes
+    (the known harness effect, sc-ot r1 F-09).
+  - admissions (logs/admissions.txt): full-order sorry warnings at the head 214 = tip 216 - 2 (exactly the two targets;
+    ObliviousTransfer 2 -> 0).
+  - lint (lint/): Cryptography 92/101 and Complexity 25/391 at the head and at the tip 05d26fe5; line sets identical (linediff-*.txt empty).
+push: NOT performed. `git push --force-with-lease=land/pass-shelat-sc-ot:f62a25b3... origin land/pass-shelat-sc-ot` was denied by
+  the session's permission system (landing/push.log). Local branch land/pass-shelat-sc-ot = b0bad23a; origin still f62a25b3.
+tree: shared with int-319 (one backup set for A, B and the combined build): tree/backed-up.txt (270), tree/new-oleans.txt (57);
+  restore after int-319 (tree/restore-log-shared-with-int-319.txt: 270 restored, 0 hash failures, 57 deleted, 3 probe oleans
+  deleted, SNAPSHOT EQUAL 457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f; tree/tree-check-post.txt RESULT OK).
+tools/: the derand-r1 tools plus legate34.py and runfull.py (new).
+SHA256SUMS: every file here except itself; ../gate34-le-evidence.zip holds exactly the manifest's paths plus SHA256SUMS.

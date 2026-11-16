@@ -1,0 +1,83 @@
+seq-zk issued-r1 (PS10 Theorem 175.1: the five seqRep theorems) maintainer delivery review r1 (Codex lead + 3 sub-agents), 2026-11-16 UTC.
+$SP = /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad. Paths below are relative to this directory.
+Method: the common review brief (Updates 1-3) as in derand-r1 (same tools); run after the derand review and the coordinator's jobs
+  gate34-le / int-319, each of which restored dl-oleans-2 to 457ba704. Nothing pushed, no PR, records checkout only read.
+  No lake build, no cache get. python3 -I. One Lean process at a time, only on $SP/dl-oleans-2.
+
+brief: records fills/seq-zk/issued-r1/brief.md SHA-256 d8b9feeced5c7f2396705fee9439344c3d774e9641b19b358fa13f6f5b0046fc (= dispatch.md);
+  package SHA256SUMS 7/7 OK (logs/issue-package-check.txt); SOURCE-SHA256SUMS 237/237 OK at the issue base
+  107f1e8c218733eac12d6b9bee6fece441271317 (logs/source-sums-check.txt); base-sorries.txt 23 in 9 modules.
+delivery: exchange a6be22fa168fcd0a40971383d8ffb3f1adb9731d ("fill seq-zk: final"); checkpoints d316d29a, 36f1896d, 65bc1c08. All four touch
+  only inbox/fills/seq-zk/; nothing later touches it (logs/exchange-commits.txt). Unsigned, Seyoon's identity. Worker REPORT
+  logs/worker-REPORT.md. The payload is 1.12 GB (3074 files): verified WITHOUT extraction by tools/gitmancheck.py (new; streams git
+  blobs, exact path sets): logs/payload-check.txt top SHA256SUMS 3073/3073 OK, evidence/SHA256SUMS 3023/3023 OK, no missing/extra;
+  logs/payload-inventory.sha256 lists every delivered file. Only REPORT, patches, src, scope-request and four small evidence files were
+  extracted (fresh directory, removed after use); extracts in logs/delivery-extracts/.
+integrity: logs/git-am-integrity.log: git am of the 6 patches at 107f1e8c, committer metadata from COMMITS.tsv, gpgsign false: all six
+  hashes reproduce (a758032d, e978a282, 04c253e4, 5a80d36a, 7cecd426, d842dc8f681f6b89499129f5b64a50d0e4587935), tree
+  718703de4ccc88cdbcbc3a3302c8a03790671483. COMMITS.tsv signing column: "unsigned; commit.gpgsign=false" x6. logs/src-equality.txt: the 41
+  changed paths (SequentialZK.lean, 39 new SequentialZK/ helpers, M ZeroKnowledge/Defs.lean) equal src/, which holds exactly them.
+  logs/defs-diff.txt: the Defs change is the 9-line StatZK_iff reader; its added lines equal the scope-request patch
+  (logs/delivery-extracts/scope-request/StatZK-iff.patch) except the position of one blank line.
+Codex host / sub-agents: evidence/subagents/{seq-zk-a,seq-zk-b,seq-zk-c} exist (221, 173, 222 files). logs/ownership-check.txt: the
+  REPORT's ownership table assigns each of the 39 helpers to exactly one agent (lead 5, a 10, b 9, c 15); SequentialZK.lean and Defs
+  are the lead's; the table is consistent with the delivered file set (not independently verifiable beyond the records).
+  logs/final-sweep-attribution.txt: all 276 final-sweep checks (evidence/logs/sweep-final-01/results.jsonl, 12:49-13:20Z) match a
+  lean_check_tree slot acquisition of the same module with the lead's tag (seq-zk). logs/slots-check.txt: never above 3 slots across
+  the seq-zk tags. Preflight headroom 4.754 GiB >= 4.
+landing: land/pass-shelat-seq-zk (local), worktree $SP/wt-land-seq-zk (sparse, briefs/ excluded; .lake/packages linked). Worker head
+  d842dc8f rebased onto origin 05d26fe5b41fcb9426ec220d877d03264b9c8e8c (#314-#317 merged; records after): rc 0, the 41 files unchanged
+  (landing/landing.log). FINAL head e9b5ea47a1c3dcd664caf2dbf308f89c1beffbb8, tree a6acdfbf697f8eb20d72f2ff1c7ead7b1ce01817; commits
+  landing/commits.txt (6, author Seyoon kept, committer Claude, all SSH-signed), series landing/series/; 41 files +6491/-14
+  (landing/changed-paths-vs-origin.txt). No landing edit.
+build: order/ (downorder at e9b5ea47 vs eff2dcd0): changed 110 (69 base delta + 41 unit), down 303 = build-queue.txt (through root
+  TCSlib and both audits/*/Checks). Backups tree/backed-up.txt (214), new tree/new-oleans.txt (89). build/: 303/303 rc 0, 0 errors in
+  both forms, error substring 0, 1670 s (logs/build-summary.txt). Unit: SequentialZK 117.8 s, 1 warning (unused hQ, disclosed); the
+  41 unit modules 213.5 s in all (logs/module-times.txt). tree/tree-check-head.txt (1288 modules, logs/records-head.jsonl): RESULT OK
+  (after deleting the 165 probe oleans, logs/probe-oleans-deleted-head.txt).
+statements (vs 107f1e8c): statements/frozen-check.txt: SequentialZK 27 -> 39 and Defs 35 -> 36 declarations, 0 header/prose/body
+  differences; control (one header character of ZK.seqRep) exactly 1. decls2-vs-base.tsv: 196 ADDED, 0 CHANGED, 0 REMOVED.
+  touched.tsv: 5 CHANGED (the targets), 13 ADDED in existing files (12 owned + StatZK_iff), 190 in new files, 57 UNCHANGED.
+  sizes-widths.txt: 41 files, max 990 lines, max width 99, 0 over 100. No @[simp] (only @[simps (config := {isSimp := false})]).
+  docaudit.tsv: 113 OK, 88 NO-FORMULA (prose descriptions of equations, or Prop statements without a relation symbol), 1 NO-DOC =
+  prefixProver, whose docstring precedes its @[simps] attribute (tool artifact). sketchaudit: 48 proofs >= 15 lines, all sketched.
+  logs/nameclash.txt: 0 exact clashes.
+axioms: probe-sources/head/CensusHead.lean (tools/mkcensus_seqzk.py, new) -> probe-runs/: the five targets, PerfectZK.seqRep,
+  PerfectZKAbort.seqRep, Composability.colSeq_efficientProverProof_zk, negligible_colSeqSound, StatZK_iff, zk_of_padded_spec:
+  [propext, Classical.choice, Quot.sound]. logs/census-summary.txt: 414 stored constants (= the worker), axiom union standard, no
+  sorryAx, no simp; one instance (PhaseMetadata.instNonempty, a Nonempty instance). Base (CensusBase on the restored tree):
+  targets and the two consumers carry sorryAx. logs/census-base-vs-head.tsv: 107 -> 414, removed 0, type-changed 0, attr-changed 0,
+  added 307 (231 named), axioms-changed 7.
+admissions: logs/sorry-census.txt: issued 23 in 9 modules -> 18; only SequentialZK differs (5 -> 0); outside the order only
+  SeedMajority (#312) and SpecialEncryptionMulti (#311), base delta.
+Rule 10: collector -> probe-runs/; seals tools/mkseals_ab.py -> seals/{A,B}, tools/mkseals_coe.py -> seals-coe/{A,B} (SEAL_CHUNK=2200,
+  no probe needed it: max 2068 requests); 154 probes seal-runs/ (10 coe probes byte-identical to strict not re-run,
+  logs/seal-coe-identical.txt). logs/seal-head-*.tsv: every probe has install and EOF records; all pass except ZeroKnowledge/Defs:
+  10 errors in A and B, strict and coe. Base (base-seals{,-coe}/, 8 probes base-seal-runs/, base worktree at 107f1e8c on the restored
+  tree; logs/base-closure-vs-eff2dcd0.txt, base-owner-sources.txt: base sources and closures equal eff2dcd0): SequentialZK 0, Defs
+  10 errors. logs/seal-defs-base-vs-head.txt: the same 6 failing declarations base and head (perfectZK_zeroRounds,
+  AbortRetry.attempt_poly, exists_retrySimulator, statClose_retry, PerfectZKAbort.statZK, negligible_inv_pow_sqrt_div; base names
+  mapped with base spans, statements/touched-base.json). New failing declarations: 0. StatZK_iff passes.
+  Controls tools/mkctl_seqzk.py (new; rows PolyExpr.eval, FinDist CoeFun, ZK/ZK_iff, StatZK/StatZK_iff, Protocol.seqRep (not
+  selected: no helper imports the owned file), Composability.prefixProver/prefixProver_coins) -> controls/ (10 probes, 9 negatives),
+  controls-strict/ (14, 15), control-runs/: logs/ctlcheck.log ALL_OK True; strict: negatives each fail once, ctlCoeReader fails in the
+  6 strict sealed probes (logs/controls-strict-attribution.txt). The sealed `Iff.rfl` form of StatZK fails and StatZK_iff passes:
+  the approved reader is needed and sufficient.
+  Explicit-unfold scan: scan/, logs/scan2-head.log: 1245 items; 13 "foreign" = local `let F`/`let g` bindings resolved by name to
+  globals (logs/scan-foreign-attribution.txt): 0 real foreign definitions.
+lint: lint/: Cryptography 92/101 at head and tip 05d26fe5; the only changed line: Defs' check-8 list loses StatZK (StatZK_iff).
+  Complexity 25/391, identical.
+content: the five targets are short instantiations: ZK.seqRep = zk_of_padded_spec h hB Q seqRep_proverSpec; StatZK.seqRep =
+  statZK_of_padded_spec; InteractiveProof.seqRep from seqVerifier_efficient, PaddedProverSpec.complete and seqRep_sound_first (phase 0);
+  InteractiveProofErr.seqRep from (seqRep_verifierSpec Q x).sound (hQ unused, disclosed); EfficientProverProofErr.seqRep adds
+  seqProver_efficient, ProverBounded.seqRep and seqRep_complete. Statements frozen, kernel-checked, standard axioms: proved as stated.
+  Target sketches rewritten to the delivered route (normalized simulator, conditional hybrids, Q·δ and Q·ε sums).
+duplication: logs/duplication-review.txt (spot checks; nothing undisclosed found).
+open PRs (logs/open-pr-overlap.txt): merge-tree of e9b5ea47 with #313, #318 (origin f62a25b3 and local LE-gate34 b0bad23a), #319 (origin
+  and local 47daa907) and the derand landing 941b5a1e: all clean. None of their modules is downstream of the unit
+  (order/unitdown/, 65 modules); shared downstream only root TCSlib and facades.
+restore (restore/restore-log.txt, tools/restore.sh): 214 restored (0 hash failures), 89 new deleted: SNAPSHOT EQUAL; base probes then
+  ran and their 6 probe oleans were deleted (restore/base-probe-oleans-deleted.txt). tree/snapshot-post-final.txt: 1230 files,
+  457ba704d26757307f14131aa534929ffd70d30a732b0c744b104ca3fc96a15f = snapshot-pre; tree/tree-check-post.txt RESULT OK.
+cleanup: payload extract, backups (bk-seqzk), the base worktree removed; PlProbe/ removed from the landing worktree (clean at e9b5ea47).
+SHA256SUMS: every file here except itself; ../seq-zk-r1-evidence.zip holds exactly the manifest's paths plus SHA256SUMS.
