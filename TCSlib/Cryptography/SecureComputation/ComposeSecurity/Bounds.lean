@@ -49,11 +49,11 @@ theorem length_transcriptWith_snd_le (π : Protocol) (P' : Strategy) (x y z : Li
   exact (List.length_filter_le _ _).trans (List.length_range).le
 
 /-- **The length of an encoded history**: if every message has at most `c` bits,
-`|encodeMsgs l| ≤ |l| (2c + 2)` (`encodeMsgs_eq_flatMap`, `BinArith.length_encWords_le`). -/
+`|encodeMsgs l| ≤ |l| (2c + 2)` (`encodeMsgs_eq_flatMap`, `BinArith.length_encWords_le`).
+It is the public `CommitmentLemmas.length_encodeMsgs_le` (`ZeroKnowledge/CommitmentLemmas.lean`). -/
 theorem length_encodeMsgs_le (l : List (List Bool)) (c : ℕ) (h : ∀ w ∈ l, w.length ≤ c) :
-    (Strategy.encodeMsgs l).length ≤ l.length * (2 * c + 2) := by
-  rw [ComposeMachines.encodeMsgs_eq_flatMap, ← BinArith.encWords_def]
-  exact BinArith.length_encWords_le l c h
+    (Strategy.encodeMsgs l).length ≤ l.length * (2 * c + 2) :=
+  TCSlib.Cryptography.CommitmentLemmas.length_encodeMsgs_le l c h
 
 /-- **The length of a machine layout**:
 `|layout u y α r| = 2(2(2|u| + 2 + |y|) + 2 + |α|) + 2 + |r|`

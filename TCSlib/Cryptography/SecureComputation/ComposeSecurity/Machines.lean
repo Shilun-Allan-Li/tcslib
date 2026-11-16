@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRep
 import TCSlib.Cryptography.ZeroKnowledge.EncodingMachines
 import TCSlib.Cryptography.SecureComputation.Compose
+import TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -139,15 +140,11 @@ theorem msgAt_encodeMsgs (hist : List (List Bool)) (i : ℕ) :
     List.head?_drop, List.getD_eq_getElem?_getD]
 
 /-- **The history encoding is a concatenation**:
-`encodeMsgs (a ++ b) = encodeMsgs a ++ encodeMsgs b` (`pairEncode_nil_append`). -/
+`encodeMsgs (a ++ b) = encodeMsgs a ++ encodeMsgs b` (`pairEncode_nil_append`).
+It is the public `CommitmentLemmas.encodeMsgs_append` (`ZeroKnowledge/CommitmentLemmas.lean`). -/
 theorem encodeMsgs_append (a b : List (List Bool)) :
-    Strategy.encodeMsgs (a ++ b) = Strategy.encodeMsgs a ++ Strategy.encodeMsgs b := by
-  induction a with
-  | nil => rw [List.nil_append, Strategy.encodeMsgs_nil, List.nil_append]
-  | cons m a ih =>
-    rw [List.cons_append, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_cons, ih,
-      ← BinArith.pairEncode_nil_append,
-      ← BinArith.pairEncode_nil_append (b := Strategy.encodeMsgs a), List.append_assoc]
+    Strategy.encodeMsgs (a ++ b) = Strategy.encodeMsgs a ++ Strategy.encodeMsgs b :=
+  TCSlib.Cryptography.CommitmentLemmas.encodeMsgs_append a b
 
 /-- **The history encoding chunk by chunk**: `encodeMsgs l = l.flatMap fun m => ⟨m, []⟩`. -/
 theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :

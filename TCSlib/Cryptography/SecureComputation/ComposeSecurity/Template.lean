@@ -72,7 +72,8 @@ def hybW (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) (z : List Bool
 /-- The defining equation of `hybW` (see `hybW`).
 `hybW calls rounds cρ vF b lead z = pairEncode (asmW calls rounds cρ vF b lead (pairEncode (pairFstD
 (pairFstD (pairSndD (pairFstD z)))) (pairSndD (pairFstD (pairSndD (pairFstD z))) ++ pairEncode
-(pairFstD (pairFstD (pairSndD z))) (pairFstD …`. -/
+(pairFstD (pairFstD (pairSndD z))) (pairFstD (pairSndD (pairSndD (pairFstD z))))))) (pairSndD
+(pairSndD (pairSndD (pairFstD z))))`. -/
 theorem hybW_eq (calls rounds cρ : PolyExpr) (vF b : Bool) (lead : ℕ) (z : List Bool) :
     hybW calls rounds cρ vF b lead z =
       pairEncode (asmW calls rounds cρ vF b lead

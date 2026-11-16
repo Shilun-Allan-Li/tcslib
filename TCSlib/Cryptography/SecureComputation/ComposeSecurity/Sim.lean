@@ -104,7 +104,8 @@ def phiV (w : List Bool) : List Bool :=
 /-- The defining equation of `phiV` (see `phiV`).
 `phiV Sρ fcall calls rounds cρ out vF b lead w = asmW calls rounds cρ vF b lead (pairEncode
 (pairEncode (pairEncode (pairFstD (pairFstD (pairFstD (pairSndD w)))) (pairFstD (pairSndD (pairFstD
-(pairFstD (pairSndD w)))))) (pairEncode …`. -/
+(pairFstD (pairSndD w)))))) (pairEncode (pairFstD (pairSndD (pairFstD (pairSndD w)))) (pairSndD
+(pairSndD (pairFstD (pairSndD w)))))) (vlW Sρ fcall calls out w))`. -/
 theorem phiV_eq (w : List Bool) :
     phiV Sρ fcall calls rounds cρ out vF b lead w =
       asmW calls rounds cρ vF b lead

@@ -113,7 +113,14 @@ def runW (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr) (vF b : Boo
 /-- The defining equation of `runW` (see `runW`).
 `runW Fρ fcall c₀ c R vF b u = Fρ (NUPPT.layout (List.replicate (GI.argX (pairSndD (pairSndD
 u))).length true) (pairEncode (pairEncode (GI.argX (pairSndD (pairSndD u))) (fcall (pairEncode
-(List.replicate (GI.argX (pairSndD (pairSndD …`. -/
+(List.replicate (GI.argX (pairSndD (pairSndD u))).length true) (pairEncode (GI.argZ (pairSndD
+(pairSndD u))) (pairEncode ((NUPPT.inCoins (pairSndD (pairSndD u))).take (c₀.eval (GI.argX (pairSndD
+(pairSndD u))).length)) (List.replicate (pairFstD u).length true)))))) ((List.range (pairFstD
+(pairSndD u)).length).flatMap fun q => if moverIsV vF q == b then pairEncode (pairFstD
+(pairSndD^[R.eval (GI.argX (pairSndD (pairSndD u))).length * (pairFstD u).length + q] (GI.argM
+(pairSndD (pairSndD u))))) [] else [])) [] (((NUPPT.inCoins (pairSndD (pairSndD u))).drop (c₀.eval
+(GI.argX (pairSndD (pairSndD u))).length + (pairFstD u).length * c.eval (GI.argX (pairSndD (pairSndD
+u))).length)).take (c.eval (GI.argX (pairSndD (pairSndD u))).length)))`. -/
 theorem runW_eq (Fρ fcall : List Bool → List Bool) (c₀ c R : PolyExpr) (vF b : Bool)
     (u : List Bool) :
     runW Fρ fcall c₀ c R vF b u =
@@ -217,7 +224,7 @@ def ansW (Fρ fcall : List Bool → List Bool) (c₀ c R L out : PolyExpr) (vF b
 /-- The defining equation of `ansW` (see `ansW`).
 `ansW Fρ fcall c₀ c R L out vF b w = (List.range (L.eval (GI.argX w).length)).flatMap fun j => padTo
 (out.eval (GI.argX w).length) (runW Fρ fcall c₀ c R vF b (pairEncode (List.replicate j true)
-(pairEncode (List.replicate (R.eval (GI.argX …`. -/
+(pairEncode (List.replicate (R.eval (GI.argX w).length) true) w)))`. -/
 theorem ansW_eq (Fρ fcall : List Bool → List Bool) (c₀ c R L out : PolyExpr) (vF b : Bool)
     (w : List Bool) :
     ansW Fρ fcall c₀ c R L out vF b w =
@@ -356,7 +363,13 @@ def composePW (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) : List Bo
 /-- The defining equation of `composePW` (see `composePW`).
 `H.composePW ρ Fρ Fm fcall w = if decide (GI.msgCount (GI.argM w) < H.calls.eval (GI.argX w).length
 * ρ.rounds.eval (GI.argX w).length) then if moverIsV ρ.verifierFirst (GI.msgCount (GI.argM w) %
-ρ.rounds.eval (GI.argX w).length) then [] …`. -/
+ρ.rounds.eval (GI.argX w).length) then [] else runW Fρ fcall H.main.P.coins ρ.P.coins ρ.rounds
+ρ.verifierFirst true (pairEncode (List.replicate (GI.msgCount (GI.argM w) / ρ.rounds.eval (GI.argX
+w).length) true) (pairEncode (List.replicate (GI.msgCount (GI.argM w) % ρ.rounds.eval (GI.argX
+w).length) true) w)) else if (H.main.verifierFirst && decide (GI.msgCount (GI.argM w) = H.calls.eval
+(GI.argX w).length * ρ.rounds.eval (GI.argX w).length)) then [] else mainW Fm (ansW Fρ fcall
+H.main.P.coins ρ.P.coins ρ.rounds H.calls G.outA ρ.verifierFirst true) (fun w => H.calls.eval
+(GI.argX w).length * ρ.rounds.eval (GI.argX w).length) H.main.P.coins w`. -/
 theorem composePW_eq (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) :
     H.composePW ρ Fρ Fm fcall w =
       if decide (GI.msgCount (GI.argM w) <
@@ -399,7 +412,12 @@ def composeVW (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) : List Bo
 /-- The defining equation of `composeVW` (see `composeVW`).
 `H.composeVW ρ Fρ Fm fcall w = if decide (GI.msgCount (GI.argM w) - 1 < H.calls.eval (GI.argX
 w).length * ρ.rounds.eval (GI.argX w).length) then if moverIsV ρ.verifierFirst ((GI.msgCount
-(GI.argM w) - 1) % ρ.rounds.eval (GI.argX w).length) …`. -/
+(GI.argM w) - 1) % ρ.rounds.eval (GI.argX w).length) then runW Fρ fcall H.main.V.coins ρ.V.coins
+ρ.rounds ρ.verifierFirst false (pairEncode (List.replicate ((GI.msgCount (GI.argM w) - 1) /
+ρ.rounds.eval (GI.argX w).length) true) (pairEncode (List.replicate ((GI.msgCount (GI.argM w) - 1) %
+ρ.rounds.eval (GI.argX w).length) true) w)) else [] else mainW Fm (ansW Fρ fcall H.main.V.coins
+ρ.V.coins ρ.rounds H.calls G.outB ρ.verifierFirst false) (fun w => H.calls.eval (GI.argX w).length *
+ρ.rounds.eval (GI.argX w).length + H.lead) H.main.V.coins w`. -/
 theorem composeVW_eq (Fρ Fm fcall : List Bool → List Bool) (w : List Bool) :
     H.composeVW ρ Fρ Fm fcall w =
       if decide (GI.msgCount (GI.argM w) - 1 <

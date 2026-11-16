@@ -98,7 +98,9 @@ moves read, no leading filler) of the words `V`, her input `xs`, her `main`-tape
 main phase on the ideal answers, paired with Bob's output in that hybrid execution.
 `H.sampleA ρ n xs ys m V = pairEncode (asmView H.calls ρ.rounds ρ.P.coins ρ.verifierFirst true 0
 (List.replicate n true) xs (List.ofFn m.1) (Strategy.encodeMsgs (H.main.transcript (List.replicate n
-true) (H.privA n xs ys (List.ofFn m.1) …`. -/
+true) (H.privA n xs ys (List.ofFn m.1) (List.ofFn m.2)) (H.privB n xs ys (List.ofFn m.1) (List.ofFn
+m.2)) m).1) V) (H.main.outV H.main.P (List.replicate n true) (H.privA n xs ys (List.ofFn m.1)
+(List.ofFn m.2)) (H.privB n xs ys (List.ofFn m.1) (List.ofFn m.2)) m)`. -/
 def sampleA (n : ℕ) (xs ys : List Bool) (m : H.Coins n) (V : ℕ → List Bool) : List Bool :=
   pairEncode (asmView H.calls ρ.rounds ρ.P.coins ρ.verifierFirst true 0 (List.replicate n true)
       xs (List.ofFn m.1) (Strategy.encodeMsgs (H.main.transcript (List.replicate n true)
@@ -110,7 +112,9 @@ def sampleA (n : ℕ) (xs ys : List Bool) (m : H.Coins n) (V : ℕ → List Bool
 /-- The defining equation of `sampleA` (see `sampleA`).
 `H.sampleA ρ n xs ys m V = pairEncode (asmView H.calls ρ.rounds ρ.P.coins ρ.verifierFirst true 0
 (List.replicate n true) xs (List.ofFn m.1) (Strategy.encodeMsgs (H.main.transcript (List.replicate n
-true) (H.privA n xs ys (List.ofFn m.1) …`. -/
+true) (H.privA n xs ys (List.ofFn m.1) (List.ofFn m.2)) (H.privB n xs ys (List.ofFn m.1) (List.ofFn
+m.2)) m).1) V) (H.main.outV H.main.P (List.replicate n true) (H.privA n xs ys (List.ofFn m.1)
+(List.ofFn m.2)) (H.privB n xs ys (List.ofFn m.1) (List.ofFn m.2)) m)`. -/
 theorem sampleA_eq (n : ℕ) (xs ys : List Bool) (m : H.Coins n) (V : ℕ → List Bool) :
     H.sampleA ρ n xs ys m V =
       pairEncode (asmView H.calls ρ.rounds ρ.P.coins ρ.verifierFirst true 0
@@ -145,7 +149,15 @@ all inputs, run indices `i` and coordinates `a`, the template (`ComposeSim.tmplW
 Bob's output in `main` has at most `q(n)` bits.
 `∃ q : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (i : Fin
 (H.calls.eval n)) (a : H.Coins n × (Fin (H.calls.eval n) → ρ.ExecCoins ρ.P (List.replicate n true) ×
-S.Coins n)), (tmplW (pairEncode (pairEncode …`.
+S.Coins n)), (tmplW (pairEncode (pairEncode (List.replicate n true) (List.ofFn x)) (pairEncode
+(List.ofFn a.1.1) (Strategy.encodeMsgs (H.main.transcript (List.replicate n true) (H.privA n
+(List.ofFn x) (List.ofFn y) (List.ofFn a.1.1) (List.ofFn a.1.2)) (H.privB n (List.ofFn x) (List.ofFn
+y) (List.ofFn a.1.1) (List.ofFn a.1.2)) a.1).1))) ((List.range i).map (hybV (H.viewRunA ρ n
+(List.ofFn x) (List.ofFn y)) (H.simRunA S n (List.ofFn x) (List.ofFn y)) i a)) ((List.range
+(H.calls.eval n - (i + 1))).map fun k => hybV (H.viewRunA ρ n (List.ofFn x) (List.ofFn y))
+(H.simRunA S n (List.ofFn x) (List.ofFn y)) i a (i + 1 + k)) (H.main.outV H.main.P (List.replicate n
+true) (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn a.1.1) (List.ofFn a.1.2)) (H.privB n
+(List.ofFn x) (List.ofFn y) (List.ofFn a.1.1) (List.ofFn a.1.2)) a.1)).length ≤ q.eval n`.
 
 **Proof sketch.** The main phase and Bob's output are polynomially long (`exists_main_msgs_le`,
 `exists_main_outV_le`); every run word is a real view (`exists_viewP_le`), a simulator output on

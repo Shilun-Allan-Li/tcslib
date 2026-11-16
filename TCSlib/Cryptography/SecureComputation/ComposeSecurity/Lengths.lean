@@ -68,7 +68,10 @@ theorem length_answersB (n : ℕ) (x y rA rB : List Bool) :
 `main` on the ideal answers have at most `E(n)` bits.
 `∃ E : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (m : H.Coins
 n), (Strategy.encodeMsgs (H.main.transcript (List.replicate n true) (H.privA n (List.ofFn x)
-(List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) …`.
+(List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn
+m.1) (List.ofFn m.2)) m).1).length ≤ E.eval n ∧ (Strategy.encodeMsgs (H.main.transcript
+(List.replicate n true) (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
+(H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m).2).length ≤ E.eval n`.
 
 **Proof sketch.** The ideal answers are strings of the hybrid lengths (`length_answersA`,
 `length_answersB`), so `H.PolyTime` bounds every message by `B(n)`; each half of the transcript
@@ -115,7 +118,8 @@ theorem exists_main_msgs_le {F : Functionality} (hH : H.PolyTime F) :
 most `O(n)` bits.
 `∃ O : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (m : H.Coins
 n), (H.main.outV H.main.P (List.replicate n true) (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn
-m.1) (List.ofFn m.2)) (H.privB n …`.
+m.1) (List.ofFn m.2)) (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2))
+m).length ≤ O.eval n`.
 
 **Proof sketch.** The output is `main.V.next` on `1^n`, Bob's private input, the messages he
 received and his `main`-tape (`Protocol.outV_eq`), at most `C (|layout| + 1)^c` bits
@@ -167,7 +171,8 @@ theorem exists_main_outV_le {F : Functionality} (hH : H.PolyTime F) :
 at most `O(n)` bits.
 `∃ O : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) (m : H.Coins
 n), (H.main.outP (List.replicate n true) (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn m.1)
-(List.ofFn m.2)) (H.privB n (List.ofFn x) …`.
+(List.ofFn m.2)) (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn m.1) (List.ofFn m.2)) m).length ≤
+O.eval n`.
 
 **Proof sketch.** As `exists_main_outV_le`, with `main.P.next` on her private input
 (`length_answersA`), the messages she received and her `main`-tape (`Protocol.outP_eq`). -/
