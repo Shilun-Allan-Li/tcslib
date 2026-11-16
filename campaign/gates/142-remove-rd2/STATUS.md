@@ -1,2 +1,2 @@
-**CLEAR, awaiting merge** · draft PR #328 at `dcbab37806581f2bd0fd24cb55fee75fcacd2dab`, marked ready. Round 1 CLEAR (0/0/0, 7 notes).
-Closeout W2: removal of the RD-2/H6 route (ConfigCodec, FormulaKit; 41 admissions); the chapter scope is admission-free. Replay 3/3, 0 admissions, 873 objects (output `oleans-cl142-c2039`); seals 2/2, 48 controls; no new copy pair.
+**Merged** · #328 merged at `720e2a9cab2e80924d208f997e89045f573a69f0` (2026-11-16). Gate 142 closed: round 1 CLEAR (0/0/0, 7 notes).
+Closeout W2: the RD-2/H6 route removed (ConfigCodec, FormulaKit; 41 admissions); the chapter scope is admission-free. Snapshot adopted after both merges: `oleans-c720e` (campaign/status/2026-11-16-merge-328-329/).

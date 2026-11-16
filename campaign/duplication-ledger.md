@@ -2069,6 +2069,5 @@ items are carried in the register (§4).
 four private buffer-word lemmas are one-line citations of `TuringMachine/BufferWords`' public ones
 (the declarations are kept as aliases, so their use sites stay byte-identical: an accepted
 deviation from the 2026-10-18 deletion wording, gate 143 resolutions); `Separation`'s
-`bits_two_pow` and `MeyerTableau`'s `incFixed_eq_none_iff` cite the #70 lemmas. Status: **retired
-upon #329's merge**. Not covered: the pre-existing foreign-definition reads in the aliases' use
+`bits_two_pow` and `MeyerTableau`'s `incFixed_eq_none_iff` cite the #70 lemmas. Status: **retired (#329 merged 2026-11-16)**. Not covered: the pre-existing foreign-definition reads in the aliases' use
 sites (`StepBlock`'s round proofs; `timeConstructible_two_pow`), which are legacy rule-10 debt.
