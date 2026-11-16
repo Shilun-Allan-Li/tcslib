@@ -6,6 +6,9 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.Formulas.CNFEncoding
 import TCSlib.Complexity.ClassNP.NP
 import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.ClassNP.Transducer
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import TCSlib.Complexity.TuringMachine.Build.WordTests
 import Mathlib.Tactic.FinCases
 import Mathlib.Data.List.MinMax
 
@@ -226,79 +229,30 @@ private lemma sat3_verifier_equiv (x : List Bool) :
     exact ⟨(satWidth_spec _).mp hh.1, u, hu, hh.2⟩
 
 /-- One-way finite-state scanners use no work tapes and emit only the final
-verdict, after inspecting the right boundary. -/
+verdict, after inspecting the right boundary: the final-emission transducer
+that is silent on every bit and emits `accept q` at the end. -/
 private def satScanTM {S : Type} [Fintype S] [DecidableEq S]
-    (step : S → Bool → S) (start : S) (accept : S → Bool) : FinTM Bool where
-  k := 0
-  State := S
-  tm := {
-    q₀ := start
-    tr := fun q inp _ => match inp with
-      | some b => ⟨.pos, Fin.elim0, none, some (step q b)⟩
-      | none => ⟨0, Fin.elim0, some (accept q), none⟩ }
+    (step : S → Bool → S) (start : S) (accept : S → Bool) : FinTM Bool :=
+  transducerFinalTM step (fun _ _ => none) (fun q => some (accept q)) start
 
-/-- Scanner configuration just before input symbol `i`, with empty output. -/
-private def satScanCfg {S : Type} (x : List Bool) (q : S) (i : ℕ)
-    (hi : i ≤ x.length) : Cfg 0 Bool S x :=
-  ⟨some q, ⟨i + 1, by omega⟩, Fin.elim0, Fin.elim0, []⟩
+/-- A transducer that emits nothing on any bit outputs the empty word. -/
+private lemma satScan_silent {S : Type} (step : S → Bool → S) :
+    ∀ (x : List Bool) (q : S), transduce step (fun _ _ => none) q x = []
+  | [], q => transduce_nil _ _ q
+  | b :: r, q => by
+    rw [transduce_cons, satScan_silent step r (step q b), Option.toList_none, List.append_nil]
 
-/-- One real scanner step consumes one input symbol silently. -/
-private lemma satScan_step {S : Type} [Fintype S] [DecidableEq S]
-    (step : S → Bool → S) (start : S) (accept : S → Bool)
-    (x : List Bool) (q : S) (i : ℕ) (hi : i < x.length) :
-    (satScanTM step start accept).tm.step (satScanCfg x q i (by omega)) =
-      satScanCfg x (step q x[i]) (i + 1) (by omega) := by
-  have hin := inputSymbolInner (cfg := satScanCfg x q i (by omega)) i
-    (by simp [satScanCfg, Nat.add_comm]) hi
-  unfold MultiTapeTM.step
-  change (((satScanTM step start accept).tm.tr q _ _).apply _) = _
-  rw [hin]
-  apply Cfg.ext_zero_tapes
-  · rfl
-  · exact moveInputPos_pos_of_ne_right _ (by simp [satScanCfg] <;> omega)
-  · rfl
-
-/-- A suffix scan consumes every remaining bit and then emits one verdict.
-
-**Proof sketch.** Induct on the suffix. The empty case reads the right blank;
-the nonempty case is one silent step followed by the induction hypothesis.
-The initial output is empty and no earlier step emits. -/
-private lemma satScan_run {S : Type} [Fintype S] [DecidableEq S]
-    (step : S → Bool → S) (start : S) (accept : S → Bool)
-    (x rest : List Bool) : ∀ pre (hx : x = pre ++ rest) (q : S),
-      ((satScanTM step start accept).tm.runFrom
-        (satScanCfg x q pre.length (by simp [hx])) (rest.length + 1)).state = none ∧
-      ((satScanTM step start accept).tm.runFrom
-        (satScanCfg x q pre.length (by simp [hx])) (rest.length + 1)).output =
-          [accept (rest.foldl step q)] := by
-  induction rest with
-  | nil =>
-    intro pre hx q
-    subst x
-    simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, satScanTM,
-      satScanCfg, Cfg.inputSymbol, Action.apply]
-  | cons b rest ih =>
-    intro pre hx q
-    have hi : pre.length < x.length := by simp [hx]
-    have hget : x[pre.length] = b := by simp [hx]
-    have hs := satScan_step step start accept x q pre.length hi
-    rw [hget] at hs
-    simp only [List.length_cons, MultiTapeTM.runFrom_succ_eq_step]
-    rw [hs]
-    simpa only [List.length_append, List.length_singleton, List.foldl_cons] using
-      ih (pre ++ [b]) (by simpa [List.append_assoc] using hx) (step q b)
-
-/-- Every such scanner has the exact `n+1` bound. -/
+/-- Every such scanner has the exact `n+1` bound (`transducerFinalTM_computes`). -/
 private lemma satScan_computes {S : Type} [Fintype S] [DecidableEq S]
     (step : S → Bool → S) (start : S) (accept : S → Bool) :
     (satScanTM step start accept).ComputesFunInTime
       (fun x => [accept (x.foldl step start)]) (fun n => n + 1) := by
-  intro x
-  apply (FinTM.computesInTime_iff _ _ _ _).mpr
-  have hinit : (satScanTM step start accept).tm.initCfg x =
-      satScanCfg x start 0 (Nat.zero_le _) := Cfg.ext_zero_tapes rfl rfl rfl
-  rw [hinit]
-  exact satScan_run step start accept x x [] rfl start
+  have hw : (fun x => transduce step (fun _ _ => none) start x ++
+      (some (accept (x.foldl step start))).toList) = fun x => [accept (x.foldl step start)] := by
+    funext x
+    rw [satScan_silent, List.nil_append, Option.toList_some]
+  rw [satScanTM, ← hw]
+  exact transducerFinalTM_computes step (fun _ _ => none) (fun q => some (accept q)) start
 
 /-- The complete CNF syntax pass is realized by an actual finite machine.
 The result concerns every input, not merely serialized formulas. -/
@@ -2740,123 +2694,24 @@ private lemma sat_pt_append {f g : List Bool → List Bool}
     PolyTimeComputable (fun x => f x ++ g x) := by
   exact PolyTimeComputable.append hf hg
 
-/-- Pure semantics for a finite one-way word transducer with at most one
-emitted bit per input bit and one optional final bit. -/
-private def satMapWord {S : Type} (next : S → Bool → S)
-    (emit : S → Bool → Option Bool) (finish : S → Option Bool) : S → List Bool → List Bool
-  | q, [] => (finish q).toList
-  | q, b :: r => (emit q b).toList ++ satMapWord next emit finish (next q b) r
-
-/-- Finite one-way transducer for local word operations used by round-field
-assembly. It uses no work tapes and always halts at the right boundary. -/
-private def satMapTM {S : Type} [Fintype S] [DecidableEq S]
-    (next : S → Bool → S) (emit : S → Bool → Option Bool)
-    (finish : S → Option Bool) (start : S) : FinTM Bool where
-  k := 0
-  State := S
-  tm := {
-    q₀ := start
-    tr := fun q inp _ => match inp with
-      | some b => ⟨.pos, Fin.elim0, emit q b, some (next q b)⟩
-      | none => ⟨0, Fin.elim0, finish q, none⟩ }
-
-/-- Scanner frame with an explicit already-emitted prefix. -/
-private def satMapCfg {S : Type} (x : List Bool) (q : S) (i : ℕ)
-    (hi : i ≤ x.length) (out : List Bool) : Cfg 0 Bool S x :=
-  ⟨some q, ⟨i + 1, by omega⟩, Fin.elim0, Fin.elim0, out⟩
-
-/-- The finite transducer implements its recursive word semantics exactly.
-**Proof sketch.** Induct on the unread suffix. An input bit performs one
-transition and appends its optional emission; the right blank performs the
-final transition, including its optional last bit. -/
-private lemma satMap_run {S : Type} [Fintype S] [DecidableEq S]
-    (next : S → Bool → S) (emit : S → Bool → Option Bool)
-    (finish : S → Option Bool) (start : S) (x rest : List Bool) :
-    ∀ pre (hx : x = pre ++ rest) q out,
-      ((satMapTM next emit finish start).tm.runFrom
-        (satMapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).state = none ∧
-      ((satMapTM next emit finish start).tm.runFrom
-        (satMapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).output =
-          out ++ satMapWord next emit finish q rest := by
-  induction rest with
-  | nil =>
-    intro pre hx q out
-    simp only [List.append_nil] at hx
-    subst x
-    simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, satMapTM,
-      satMapCfg, Cfg.inputSymbol, Action.apply, satMapWord]
-  | cons b rest ih =>
-    intro pre hx q out
-    have hs : (satMapTM next emit finish start).tm.step
-        (satMapCfg x q pre.length (by simp [hx]) out) =
-        satMapCfg x (next q b) (pre ++ [b]).length (by simp [hx]) (out ++ (emit q b).toList) := by
-      have hin : (satMapCfg x q pre.length (by simp [hx]) out).inputSymbol = some b := by
-        rw [FinTM.inputSymbol_at _ pre.length (by simp [hx]) rfl]
-        simp [hx]
-      unfold MultiTapeTM.step
-      change (((satMapTM next emit finish start).tm.tr q _ _).apply _) = _
-      rw [hin]
-      refine Cfg.ext_zero_tapes rfl ?_ rfl
-      simpa using moveInputPos_pos_of_ne_right
-        (⟨pre.length + 1, by simp [hx] <;> omega⟩ : Fin (x.length + 2)) (by simp [hx] <;> omega)
-    simp only [List.length_cons]
-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
-    simpa only [satMapWord, List.append_assoc] using
-      ih (pre ++ [b]) (by simpa [List.append_assoc] using hx) (next q b) (out ++ (emit q b).toList)
-
-/-- Every finite mapper has the exact input-length-plus-one time bound. -/
-private lemma satMap_poly {S : Type} [Fintype S] [DecidableEq S]
-    (next : S → Bool → S) (emit : S → Bool → Option Bool)
-    (finish : S → Option Bool) (start : S) :
-    PolyTimeComputable (satMapWord next emit finish start) := by
-  refine ⟨satMapTM next emit finish start, 1, 1, fun x => ?_⟩
-  apply (FinTM.computesInTime_iff _ _ _ _).mpr
-  have hi : (satMapTM next emit finish start).tm.initCfg x =
-      satMapCfg x start 0 (Nat.zero_le _) [] := Cfg.ext_zero_tapes rfl rfl rfl
-  simpa only [Nat.pow_one, Nat.one_mul, hi, List.length_nil, List.nil_append] using
-    satMap_run next emit finish start x x [] (by simp) start []
-
 /-- Replacing every bit by `true` computes the exact unary input length. -/
 private lemma sat_pt_unaryLength : PolyTimeComputable (fun x => List.replicate x.length true) := by
   exact polyTimeComputable_unary
 
-/-- Removing the first bit is a two-state finite transduction. -/
+/-- Removing the first bit is polynomial-time by the public tail closure. -/
 private lemma sat_pt_tail : PolyTimeComputable List.tail := by
-  let emit (q b : Bool) : Option Bool := if q then some b else none
-  have h := satMap_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false
-  have hc (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = x := by
-    induction x with
-    | nil => rfl
-    | cons b r ih => simp [satMapWord, emit, ih]
-  have he (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.tail := by
-    cases x <;> simp [satMapWord, emit, hc]
-  convert h using 1
-  funext x
-  exact (he x).symm
+  simpa only [List.drop_one] using polyTimeComputable_tail
 
-/-- Extracting at most the first bit is also a two-state finite transduction. -/
+/-- Extracting at most the first bit is polynomial-time by the public prefix closure. -/
 private lemma sat_pt_head : PolyTimeComputable (fun x => x.take 1) := by
-  let emit (q b : Bool) : Option Bool := if q then none else some b
-  have h := satMap_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false
-  have hc (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = [] := by
-    induction x with
-    | nil => rfl
-    | cons b r ih => simp [satMapWord, emit, ih]
-  have he (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.take 1 := by
-    cases x <;> simp [satMapWord, emit, hc]
-  convert h using 1
-  funext x
-  exact (he x).symm
+  exact polyTimeComputable_take1
 
 /-- Equality to a fixed control word is decided by the public finite-word
 comparison constructor, after any polynomial field computation. -/
 private lemma sat_pt_eq {f : List Bool → List Bool} (hf : PolyTimeComputable f) (w : List Bool) :
     PolyTimeComputable (fun x => [decide (f x = w)]) := by
-  have he : PolyTimeComputable (fun x => if x = w then [true] else [false]) :=
-    sat_pt_linear _ (FinTM.computesFunInTime_ifEq w [true] [false])
-  convert he.comp hf using 1
-  funext x
-  by_cases h : f x = w <;> simp [Function.comp_def, h]
+  simpa only [Function.comp_def] using
+    (polyTimeComputable_of_linear (FinTM.computesFunInTime_decideEq w)).comp hf
 
 /-- Changing a machine only beyond a guarded stopping point preserves its
 entire prefix run. This helper does not assume an eventual halt. -/
