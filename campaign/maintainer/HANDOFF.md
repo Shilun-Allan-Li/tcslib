@@ -13,7 +13,7 @@ Seyoon alone merges source, dispatches and rules on design or debt. Records
 only go directly after fetch/rebase. The latest merge is #330 (closeout R2a, gate 144).
 Campaign Lean is `68cba664c2fcb4e33b4845b385feea3f456d0105`. Its replay output is the cloud snapshot `oleans-c68cb`
 (873 objects; `oleans-c720e` is the fallback); use it whole. See campaign/status/2026-11-16-merge-330/. **Closeout**
-(campaign/closeout/PLAN.md, REFACTOR-PLAN.md): the chapter scope has no admission; refactor waves R0, R1a and R2a done (R2c measured and carried); next, measuring R3–R6 for Seyoon's go/carry decisions. **Ladner's theorem is proved** (`Complexity.ladner`,
+(campaign/closeout/PLAN.md, REFACTOR-PLAN.md): the chapter scope has no admission; refactor waves R0, R1a and R2a done (R2c measured and carried). **Overnight 2026-11-16** (Seyoon's authorization: cleanup and dedup on the maintainer's own, audited by Codex in the morning): R3–R6 measured (campaign/closeout/R3-R6-MEASUREMENT.md); four draft PRs built and gated, independent unless noted — #334/gate 145 (R4-1, −161), #335/gate 146 (R4 UH, stacked on #334, −297), #336/gate 147 (R3a, −303), #337/gate 148 (MIG-3, −451). Gates 145–147 are staged; 148's replay (328 modules) was restarted after a disk-full failure. R4-2 (SG1-B) is not started (analysis in the measurement note). **Ladner's theorem is proved** (`Complexity.ladner`,
 standard axioms only; Ladner.lean has no admission). Fills 1–3 are merged (#304, #310, #320). Fill 4 proved target 1
 (`ladnerH_polyTime`; #321). Fills 5 and 6 proved targets 2 and 5
 (#322). Fill 7 proved target 6 (#325). Next: the
