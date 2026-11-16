@@ -282,6 +282,7 @@ theorem bb1_encSK_inj {κ : ℕ} {d : List Bool} {k k' : BB1.Key (G.group κ d)}
     k = k' := by
   obtain ⟨a, b⟩ := k
   obtain ⟨a', b'⟩ := k'
+  dsimp only at h
   have hw := congrArg List.ofFn h
   rw [ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn,
       PolyExpr.eval_mul, PolyExpr.eval_const]; omega),
@@ -308,6 +309,7 @@ theorem bb1_encCT_inj {κ : ℕ} {d : List Bool} {c c' : BB1.Ciphertext (G.group
     c = c' := by
   obtain ⟨a, b, x⟩ := c
   obtain ⟨a', b', x'⟩ := c'
+  dsimp only at h
   have hw := congrArg List.ofFn h
   rw [ofFn_padFin_of_length (by simp only [List.length_append, List.length_ofFn,
       PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]; omega),
