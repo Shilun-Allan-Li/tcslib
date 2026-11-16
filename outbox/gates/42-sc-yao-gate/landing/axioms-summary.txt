@@ -1,0 +1,81 @@
+yaoHybrid_polyTime :: propext, Classical.choice, Quot.sound
+yaoHybrid_simulators :: propext, Classical.choice, Quot.sound
+yaoHybrid_hbcSecure :: propext, Classical.choice, Quot.sound
+yaoProtocol_hbcSecure :: propext, sorryAx, Classical.choice, Quot.sound
+yaoSeed_good_whp :: propext, Classical.choice, Quot.sound
+sliceMultiMessageSecure_of_prfOut :: propext, Classical.choice, Quot.sound
+otProtocol_polyTime :: propext, Classical.choice, Quot.sound
+otProtocol_simulators :: propext, Classical.choice, Quot.sound
+HybridProtocol.hbcSecure_compose :: propext, sorryAx, Classical.choice, Quot.sound
+YaoHybridProof.CoinSeedRelabel.assignmentFold_lt_four :: propext, Classical.choice, Quot.sound
+YaoHybridProof.CoinSeedRelabel.assignmentFold_injective :: propext, Classical.choice, Quot.sound
+GarblingProbability.assignmentFold_small :: propext, Classical.choice, Quot.sound
+YaoHybridProof.DescriptionDecoder.decodeDescription_host :: propext, Classical.choice, Quot.sound
+YaoHybridProof.RunWithHost.exists_machine :: propext, Classical.choice, Quot.sound
+YaoHybridProof.garbledRunWith_poly :: propext, Classical.choice, Quot.sound
+YaoHybridProof.GateHybridSecurity.endpoint_negligible :: propext, Classical.choice, Quot.sound
+YaoHybridProof.FakeSimulatorFactory.exists_simulator :: propext, Classical.choice, Quot.sound
+BoolCircuit.DAGCircuit.isFaninTwo_iff :: none
+BoolCircuit.encodeList_nil :: none
+BoolCircuit.encodeList_cons :: none
+BoolCircuit.GateKind.encode_and :: none
+BoolCircuit.GateKind.encode_or :: none
+BoolCircuit.GateKind.encode_not :: none
+BoolCircuit.DAGGate.encode_eq :: none
+BoolCircuit.DAGCircuit.encode_parts :: none
+ADMITTED yaoHybrid_polyTime: closure 9168; direct sorryAx 0: []
+ADMITTED yaoHybrid_simulators: closure 20202; direct sorryAx 0: []
+ADMITTED yaoHybrid_hbcSecure: closure 20475; direct sorryAx 0: []
+ADMITTED yaoProtocol_hbcSecure: closure 20865; direct sorryAx 1: [HybridProtocol.hbcSecure_compose]
+ADMITTED yaoSeed_good_whp: closure 17757; direct sorryAx 0: []
+CENSUS stored 1492; nonstandard 0; simp-lemmas 27; instances 11
+CHECK Data.make:
+YaoHybridProof.FakeSimulator.Data.make : (E₁ E₂ : List Bool → List Bool) →
+  Complexity.PolyTimeComputable E₁ →
+    Complexity.PolyTimeComputable E₂ →
+      (bound inputs inA inB outLen : Complexity.PolyExpr) →
+        (gen : List Bool → List Bool) →
+          Complexity.PolyTimeComputable gen →
+            (circuit : (n : ℕ) → BoolCircuit.DAGCircuit (inputs.eval n)) →
+              (output : (n : ℕ) → Fin (outLen.eval n) → ℕ) →
+                (∀ (n : ℕ),
+                    gen (List.replicate n true) =
+                      Turing.pairEncode (circuit n).encode
+                        (Complexity.BinArith.encWords (List.ofFn fun j => BoolCircuit.encodeNat (output n j)))) →
+                  (∀ (n : ℕ), inA.eval n + inB.eval n ≤ inputs.eval n) →
+                    (∀ (n : ℕ) (j : Fin (outLen.eval n)), output n j < (circuit n).size) →
+                      (∀ (n : ℕ) (i : Fin (circuit n).gates.length), (circuit n).gates[i].args.length ≤ 2) →
+                        (seed :
+                            (n : ℕ) →
+                              List Bool →
+                                TCSlib.Cryptography.SecureComputation.GarbleSeed (circuit n) (Fin n → Bool)
+                                  ((Fin n → Bool) × (Fin n → Bool))) →
+                          (∀ (n : ℕ) (r : List Bool),
+                              ∀ v < (circuit n).size,
+                                ∀ (b : Bool),
+                                  TCSlib.Cryptography.SecureComputation.keyAt (circuit n) (seed n r) v b = fun t =>
+                                    r.getD ((b.toNat * bound.eval n + v) * n + ↑t) false) →
+                            (∀ (n : ℕ) (r : List Bool) (i : Fin (circuit n).gates.length)
+                                (a : Fin (circuit n).gates[i].args.length → Bool) (t : Fin n),
+                                ((seed n r).2.1 i a).1 t =
+                                  r.getD
+                                    (2 * bound.eval n * n +
+                                        (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) * (2 * n) +
+                                      ↑t)
+                                    false) →
+                              (∀ (n : ℕ) (r : List Bool) (i : Fin (circuit n).gates.length)
+                                  (a : Fin (circuit n).gates[i].args.length → Bool) (t : Fin n),
+                                  ((seed n r).2.1 i a).2 t =
+                                    r.getD
+                                      (2 * bound.eval n * n +
+                                            (4 * ↑i + List.foldr (fun b k => b.toNat + 2 * k) 0 (List.ofFn a)) *
+                                              (2 * n) +
+                                          n +
+                                        ↑t)
+                                      false) →
+                                (∀ (n : ℕ) (r : List Bool) (i : Fin (circuit n).gates.length)
+                                    (a : Fin (circuit n).gates[i].args.length → Bool)
+                                    (t : Fin (circuit n).gates[i].args.length),
+                                    ((seed n r).2.2 i) a t =
+                                      (a t ^^ r.getD (10 * bound.eval n * n + 2 * ↑i + ↑t) false)) →
+                                  TCSlib.Cryptography.SecureComputation.YaoHybridProof.FakeSimulator.Data

@@ -1,0 +1,30 @@
+base regions (1-based inclusive lines):
+  import: insertion after line 9
+  bullet: 96-99
+  sketch:yaoHybrid_polyTime: 854-868
+  body:yaoHybrid_polyTime: 871-871
+  sketch:yaoHybrid_simulators: 888-934
+  body:yaoHybrid_simulators: 946-946
+final regions:
+  import: 10-10 (1 lines)
+  bullet: 97-101 (5 lines)
+  sketch:yaoHybrid_polyTime: 856-862 (7 lines)
+  body:yaoHybrid_polyTime: 865-992 (128 lines)
+  sketch:yaoHybrid_simulators: 1009-1020 (12 lines)
+  body:yaoHybrid_simulators: 1032-1155 (124 lines)
+VIOLATION replace masked-base 17-17 masked-final 17-17
+   - # Yao's protocol in the OT-hybrid model (statement phase)
+   + # Yao's protocol in the OT-hybrid model
+import lines: base 5, final 6
+body:yaoHybrid_polyTime: 128 lines
+body:yaoHybrid_simulators: 124 lines
+sketch:yaoHybrid_polyTime: 7 lines; mentions "not yet stated": False
+sketch:yaoHybrid_simulators: 12 lines; mentions "not yet stated": False
+bullet final text:
+   | * `SecureComputation.yaoSeed_good_whp` (proved): the garbling is good with distinct output keys
+   |   except with negligible probability.
+   | * `SecureComputation.yaoHybrid_polyTime` (proved): the protocol is efficient.
+   | * `SecureComputation.yaoHybrid_simulators` (proved): the simulators of Theorem 163.7 in the
+   |   OT-hybrid model.
+lines: base 970, final 1179 (net +209); max width 99
+RESULT violations=1 rule_breaks=0
