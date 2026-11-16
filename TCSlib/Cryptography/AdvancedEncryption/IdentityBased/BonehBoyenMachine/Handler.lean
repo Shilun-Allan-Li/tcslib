@@ -902,7 +902,328 @@ private theorem runF_zero (hj : j < q.eval κ)
     · exact padL_newState G ℓ O b q H hU hJ _ rfl rfl
 
 
+/-- **The key of `KeyGen` on encodings, first component**: with the query `⟦x⟧`, the committed
+identity `⟦t⟧`, `α_1`'s numeral and the drawn `u`'s numeral, `d0S` is the encoding of
+`Y^{(−α_1/(x − t)).val} · (X^{x.val} · (X^{(−t).val} g^{α_1.val}))^{u.val}`, identities read as
+their numerals' residues. -/
+private theorem d0S_of (hZ : rZ w = tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+    (xw tw : List Bool) (α₁ u : ZMod (G.group κ (G.desc κ r)).order) (hX : rX w = xw)
+    (hT : kT w = tw) (hA : kA w = natToList ((aWidth G).eval κ) α₁.val)
+    (hu : uS G O w = natToList ((aWidth G).eval κ) u.val) :
+    d0S G O w = List.ofFn ((G.group κ (G.desc κ r)).encG
+      (Y ^ (-α₁ / ((listToNat xw : ℕ) - (listToNat tw : ℕ) :
+          ZMod (G.group κ (G.desc κ r)).order)).val *
+        (X ^ ((listToNat xw : ℕ) : ZMod (G.group κ (G.desc κ r)).order).val *
+          (X ^ (-((listToNat tw : ℕ) : ZMod (G.group κ (G.desc κ r)).order)).val * g ^ α₁.val)) ^
+          u.val)) := by
+  have hD := zD_of hZ
+  have hp := listToNat_pS G O hD
+  simp only [d0S, hT, hA, hu, hX, hS_ofFn G O hZ, zX_of hZ, zY_of hZ, powGS_ofFn G O hD,
+    mulGS_ofFn G O hD, listToNat_natToList_val, listToNat_modS G O hp, listToNat_mulS G O hp,
+    invD, listToNat_negS G O hp, listToNat_invS G O hp, diffS, listToNat_addS G O hp,
+    ZMod.natCast_zmod_val, div_eq_mul_inv, sub_eq_add_neg]
+
+/-- **The key of `KeyGen` on encodings, second component**: `d1S` is the encoding of
+`Y^{(−1/(x − t)).val} · g^{u.val}`. -/
+private theorem d1S_of (hZ : rZ w = tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+    (xw tw : List Bool) (u : ZMod (G.group κ (G.desc κ r)).order) (hX : rX w = xw)
+    (hT : kT w = tw) (hu : uS G O w = natToList ((aWidth G).eval κ) u.val) :
+    d1S G O w = List.ofFn ((G.group κ (G.desc κ r)).encG
+      (Y ^ (-1 / ((listToNat xw : ℕ) - (listToNat tw : ℕ) :
+          ZMod (G.group κ (G.desc κ r)).order)).val * g ^ u.val)) := by
+  have hD := zD_of hZ
+  have hp := listToNat_pS G O hD
+  simp only [d1S, hu, hX, hT, zY_of hZ, zG_of hZ, powGS_ofFn G O hD, mulGS_ofFn G O hD,
+    listToNat_natToList_val, listToNat_negS G O hp, invD, listToNat_invS G O hp, diffS,
+    listToNat_addS G O hp, listToNat_modS G O hp, ZMod.natCast_zmod_val, neg_div, one_div,
+    sub_eq_add_neg]
+
+/-- **The `KeyGen` round**: on the encoding of `s` after `j < q` queries, the handler answers and
+updates the state as `drawStep` does with the exponent `u` drawn from block `j`. -/
+private theorem runF_one (hj : j < q.eval κ)
+    (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool) (x : Fin ((qLen G ℓ 1).eval κ) → Bool)
+    (s : BB1SimState G ℓ κ (G.desc κ r)) (y : Fin ((aLen G ℓ 1).eval κ) → Bool)
+    (s' : BB1SimState G ℓ κ (G.desc κ r))
+    (h : drawStep G ℓ b κ (G.desc κ r) g X Y Z T 1 x s
+      (draw G κ (G.desc κ r) (seedBlocks G ℓ O b q H κ ω ⟨j, hj⟩)) = .pure (y, s')) :
+    runF G ℓ O b q (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+        (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ s j)) (1 : Fin 3) (List.ofFn x)) =
+      pairEncode (List.ofFn y) (List.ofFn (stEnc G ℓ O b q H κ s' (j + 1))) := by
+  have hU : (rU (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+      (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ s j)) (1 : Fin 3) (List.ofFn x))).length = κ := by
+    rw [rU_input, List.length_replicate]
+  have hZ := rZ_input (κ := κ) (z := tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+    (W := List.ofFn ω) (S := List.ofFn (stEnc G ℓ O b q H κ s j)) (i := 1) (X := List.ofFn x)
+  have hD := zD_of hZ
+  obtain ⟨k, hJ, hO1, hR⟩ := fields_rS G ℓ O b q H hj.le rS_input
+  have hlen : (qLen G ℓ 1).eval κ = (bb1Scheme G ℓ).idLen.eval κ := by rw [qLen_one]
+  have hlen1 : (aLen G ℓ 1).eval κ = 1 + 2 * G.wG.eval κ := by
+    rw [aLen_one, PolyExpr.eval_add, PolyExpr.eval_const, bb1Scheme_skLen, PolyExpr.eval_mul,
+      PolyExpr.eval_const]
+    omega
+  rw [runF, ansW, newO1, newO2, show isI _ = false by rw [isI, rI_input]; rfl,
+    show isK _ = true by rw [isK, rI_input]; rfl, if_neg Bool.false_ne_true, if_pos rfl,
+    if_neg Bool.false_ne_true, Bool.false_or, if_pos rfl, sO2_of G ℓ hU hR, ans1, keyOk]
+  rcases s with ⟨_ | ⟨t, α₁⟩, c⟩
+  · -- before `Init`: `⊥`
+    rw [drawStep_one_none] at h
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj (OracleComp.pure.inj h)
+    rw [sCom_of G ℓ hO1]
+    simp only [Option.isSome_none, Bool.false_and, Bool.false_eq_true, if_false]
+    congr 1
+    · rw [hU, ofFn_zeroBits]
+    · exact padL_newState G ℓ O b q H hU hJ _ hO1 rfl
+  · have hcom := sCom_of G ℓ (s := (some (t, α₁), c)) hO1
+    have hT : kT (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+        (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), c) j)) (1 : Fin 3)
+          (List.ofFn x)) = List.ofFn t := by
+      rw [kT, hO1]
+      simp only [o1Word, pairFstD_pairEncode]
+    have hA : kA (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+        (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), c) j)) (1 : Fin 3)
+          (List.ofFn x)) = natToList ((aWidth G).eval κ) α₁.val := by
+      rw [kA, hO1]
+      simp only [o1Word, pairSndD_pairEncode]
+    rw [hcom, rX_input, hT]
+    simp only [Option.isSome_some, Bool.true_and]
+    by_cases hx : List.ofFn x = List.ofFn t
+    · -- the committed identity: `⊥`
+      rw [drawStep_one_target G ℓ b κ _ g X Y Z T x t α₁ c _ hx] at h
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj (OracleComp.pure.inj h)
+      rw [decide_eq_true hx, Bool.not_true, if_neg Bool.false_ne_true]
+      congr 1
+      · rw [hU, ofFn_zeroBits]
+      · exact padL_newState G ℓ O b q H hU hJ _ hO1 rfl
+    · -- another identity: the simulated key with `r = u`
+      rw [drawStep_one_key G ℓ b κ _ g X Y Z T x t α₁ c _ hx] at h
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj (OracleComp.pure.inj h)
+      rw [decide_eq_false hx, Bool.not_false, if_pos rfl,
+        d0S_of G O hZ (List.ofFn x) (List.ofFn t) α₁ _ rX_input hT hA
+          (uS_of G ℓ O b q H hj ω hU hD rW_input hJ),
+        d1S_of G O hZ (List.ofFn x) (List.ofFn t) _ rX_input hT
+          (uS_of G ℓ O b q H hj ω hU hD rW_input hJ)]
+      congr 1
+      · rw [ofFn_padFin_of_length (by
+            simp only [List.length_cons, List.length_append, List.length_ofFn]
+            rw [hlen1]; omega),
+          idToZ_padFin G ℓ x hlen, BB1.idToZ_eq, NumberTheory.bitsToNat_eq_listToNat]
+      · exact padL_newState G ℓ O b q H hU hJ _ hO1 rfl
+
+
+/-- The membership test on a `wT`-bit word: `(memT ⟨d, l⟩).headD false = [l encodes some u]`. -/
+private theorem memT_headD (hD : zD w = G.desc κ r) (l : List Bool) (hl : l.length = G.wT.eval κ) :
+    (O.memT (pairEncode (zD w) l)).headD false =
+      decide (∃ u, List.ofFn ((G.group κ (G.desc κ r)).encT u) = l) := by
+  have h := memT_ofFn G O hD (padFin _ l)
+  rw [ofFn_padFin_of_length hl] at h
+  rw [h, List.headD_cons, decide_eq_decide]
+  constructor
+  · rintro ⟨u, hu⟩
+    exact ⟨u, by rw [hu, ofFn_padFin_of_length hl]⟩
+  · rintro ⟨u, hu⟩
+    exact ⟨u, by rw [← hu, padFin_ofFn]⟩
+
+/-- The ciphertext word `M · T ‖ Z ‖ Z^{α_1}` has `ctLen` bits. -/
+private theorem length_ctWord (m : (G.group κ (G.desc κ r)).GT)
+    (α₁ : ZMod (G.group κ (G.desc κ r)).order) :
+    (List.ofFn ((G.group κ (G.desc κ r)).encT m) ++ List.ofFn ((G.group κ (G.desc κ r)).encG Z) ++
+      List.ofFn ((G.group κ (G.desc κ r)).encG (Z ^ α₁.val))).length =
+      (bb1Scheme G ℓ).ctLen.eval κ := by
+  simp only [List.length_append, List.length_ofFn]
+  rw [bb1Scheme_ctLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+  ring
+
+/-- **The `Challenge` round**: on the encoding of `s` after `j < q` queries, the handler answers
+and updates the state as `drawStep` does. -/
+private theorem runF_two (hj : j < q.eval κ)
+    (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool) (x : Fin ((qLen G ℓ 2).eval κ) → Bool)
+    (s : BB1SimState G ℓ κ (G.desc κ r)) (y : Fin ((aLen G ℓ 2).eval κ) → Bool)
+    (s' : BB1SimState G ℓ κ (G.desc κ r)) (u : ZMod (G.group κ (G.desc κ r)).order)
+    (h : drawStep G ℓ b κ (G.desc κ r) g X Y Z T 2 x s u = .pure (y, s')) :
+    runF G ℓ O b q (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+        (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ s j)) (2 : Fin 3) (List.ofFn x)) =
+      pairEncode (List.ofFn y) (List.ofFn (stEnc G ℓ O b q H κ s' (j + 1))) := by
+  classical
+  have hU : (rU (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+      (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ s j)) (2 : Fin 3) (List.ofFn x))).length = κ := by
+    rw [rU_input, List.length_replicate]
+  have hZ := rZ_input (κ := κ) (z := tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+    (W := List.ofFn ω) (S := List.ofFn (stEnc G ℓ O b q H κ s j)) (i := 2) (X := List.ofFn x)
+  have hD := zD_of hZ
+  obtain ⟨k, hJ, hO1, hR⟩ := fields_rS G ℓ O b q H hj.le rS_input
+  have hmsg : (bb1Scheme G ℓ).msgLen.eval κ = G.wT.eval κ := by rw [bb1Scheme_msgLen]
+  have hx2 : (List.ofFn x).length = (bb1Scheme G ℓ).msgLen.eval κ +
+      (bb1Scheme G ℓ).msgLen.eval κ := by
+    rw [List.length_ofFn, qLen_two, PolyExpr.eval_add]
+  have hct : (aLen G ℓ 2).eval κ = (bb1Scheme G ℓ).ctLen.eval κ := by rw [aLen_two]
+  rw [runF, ansW, newO1, newO2, show isI _ = false by rw [isI, rI_input]; rfl,
+    show isK _ = false by rw [isK, rI_input]; rfl, if_neg Bool.false_ne_true,
+    if_neg Bool.false_ne_true, if_neg Bool.false_ne_true, Bool.false_or, if_neg Bool.false_ne_true,
+    sO2_of G ℓ hU hR, ans2, sCom_of G ℓ hO1]
+  rcases s with ⟨_ | ⟨t, α₁⟩, c⟩
+  · -- before `Init`: `⊥`
+    rw [drawStep_two_none] at h
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj (OracleComp.pure.inj h)
+    simp only [Option.isSome_none, Bool.not_false, Bool.false_and, Bool.false_eq_true, if_false,
+      if_true]
+    congr 1
+    · rw [hU, ofFn_zeroBits]
+    · exact padL_newState G ℓ O b q H hU hJ _ hO1 rfl
+  · have hchal : sChal (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+        (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), c) j)) (2 : Fin 3)
+          (List.ofFn x)) = c.isSome := by
+      rw [sChal, hR, headD_o2Word]
+    simp only [Option.isSome_some, Bool.not_true, Bool.false_eq_true, if_false, Bool.true_and, hchal]
+    rcases c with _ | c
+    · -- no challenge yet
+      have hA : kA (PolyHandler.input κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T)
+          (List.ofFn ω) (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), none) j)) (2 : Fin 3)
+            (List.ofFn x)) = natToList ((aWidth G).eval κ) α₁.val := by
+        rw [kA, hO1]
+        simp only [o1Word, pairSndD_pairEncode]
+      have hl0 : ((List.ofFn x).take ((bb1Scheme G ℓ).msgLen.eval κ)).length = G.wT.eval κ := by
+        rw [List.length_take, hx2, ← hmsg]
+        omega
+      have hl1 : ((List.ofFn x).drop ((bb1Scheme G ℓ).msgLen.eval κ)).length = G.wT.eval κ := by
+        rw [List.length_drop, hx2, ← hmsg]
+        omega
+      have hvalid : valid G ℓ O (PolyHandler.input κ
+          (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T) (List.ofFn ω)
+          (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), none) j)) (2 : Fin 3) (List.ofFn x)) =
+          decide ((∃ v, List.ofFn ((G.group κ (G.desc κ r)).encT v) =
+              (List.ofFn x).take ((bb1Scheme G ℓ).msgLen.eval κ)) ∧
+            (∃ v, List.ofFn ((G.group κ (G.desc κ r)).encT v) =
+              (List.ofFn x).drop ((bb1Scheme G ℓ).msgLen.eval κ))) := by
+        rw [valid, m0, m1, rX_input, hU, memT_headD G O hD _ hl0, memT_headD G O hD _ hl1,
+          Bool.decide_and]
+      simp only [Option.isSome_none, Bool.not_false, Bool.true_and, Bool.false_eq_true,
+        if_false]
+      rw [hvalid]
+      by_cases hc : (∃ v, List.ofFn ((G.group κ (G.desc κ r)).encT v) =
+            (List.ofFn x).take ((bb1Scheme G ℓ).msgLen.eval κ)) ∧
+          (∃ v, List.ofFn ((G.group κ (G.desc κ r)).encT v) =
+            (List.ofFn x).drop ((bb1Scheme G ℓ).msgLen.eval κ))
+      · -- a fresh valid challenge: `M_b · T ‖ Z ‖ Z^{α_1}`, recorded
+        rw [drawStep_two_fresh G ℓ b κ _ g X Y Z T x t α₁ u hc] at h
+        obtain ⟨rfl, rfl⟩ := Prod.mk.inj (OracleComp.pure.inj h)
+        rw [decide_eq_true hc, if_pos rfl, if_pos rfl]
+        -- the selected message is an encoding `encT v`
+        obtain ⟨v, hv⟩ : ∃ v, List.ofFn ((G.group κ (G.desc κ r)).encT v) =
+            (if b then (List.ofFn x).drop ((bb1Scheme G ℓ).msgLen.eval κ)
+              else (List.ofFn x).take ((bb1Scheme G ℓ).msgLen.eval κ)) := by
+          cases b
+          · exact hc.1
+          · exact hc.2
+        have hmB : mB G ℓ b (PolyHandler.input κ
+            (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T) (List.ofFn ω)
+            (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), none) j)) (2 : Fin 3) (List.ofFn x)) =
+            List.ofFn ((G.group κ (G.desc κ r)).encT v) := by
+          rw [hv, mB, m0, m1, rX_input, hU]
+        have hct' : ctS G ℓ O b (PolyHandler.input κ
+            (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T) (List.ofFn ω)
+            (List.ofFn (stEnc G ℓ O b q H κ (some (t, α₁), none) j)) (2 : Fin 3) (List.ofFn x)) =
+            List.ofFn ((G.group κ (G.desc κ r)).encT
+              (BB1.decodeT (G.group κ (G.desc κ r)) (padFin _
+                (if b then (List.ofFn x).drop ((bb1Scheme G ℓ).msgLen.eval κ)
+                  else (List.ofFn x).take ((bb1Scheme G ℓ).msgLen.eval κ))) * T)) ++
+              List.ofFn ((G.group κ (G.desc κ r)).encG Z) ++
+              List.ofFn ((G.group κ (G.desc κ r)).encG (Z ^ α₁.val)) := by
+          rw [ctS, hmB, zT_of hZ, mulT_ofFn G O hD, zZ_of hZ, hA, powGS_ofFn G O hD,
+            listToNat_natToList_val, ← hv, padFin_ofFn, BB1.decodeT_encT]
+        rw [hct']
+        congr 1
+        · rw [ofFn_padFin_of_length (by rw [length_ctWord G ℓ, hct])]
+        · refine padL_newState G ℓ O b q H hU hJ _ hO1 ?_
+          simp only [o2Word]
+          rw [ofFn_padFin_of_length (length_ctWord G ℓ _ _)]
+      · -- a message outside `G_T`: `⊥`
+        rw [drawStep_two_invalid G ℓ b κ _ g X Y Z T x t α₁ u hc] at h
+        obtain ⟨rfl, rfl⟩ := Prod.mk.inj (OracleComp.pure.inj h)
+        rw [decide_eq_false hc]
+        simp only [Bool.false_eq_true, if_false]
+        congr 1
+        · rw [hU, ofFn_zeroBits]
+        · exact padL_newState G ℓ O b q H hU hJ _ hO1 rfl
+    · -- a recorded challenge: repeated
+      rw [drawStep_two_repeat] at h
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj (OracleComp.pure.inj h)
+      simp only [Option.isSome_some, Bool.not_true, Bool.false_and, if_true, Bool.false_eq_true,
+        if_false]
+      congr 1
+      · rw [sC, hR, hU, take_o2Word,
+          ofFn_padFin_of_length (by rw [List.length_ofFn, hct])]
+      · exact padL_newState G ℓ O b q H hU hJ _ hO1 rfl
+
+
 end Round
+
+
+/-! ### The handler's run -/
+
+/-- **One query to the handler on an encoded state is one query to `drawStep`**: from the
+encoding of `s` after `j < q` queries, the handler answers like `drawStep` with the exponent of
+the tape `V j = draw (block j)`, and moves to the encoding of the new state after `j + 1`
+queries. -/
+private theorem handler_impl_stEnc (κ : ℕ) (r : G.gen.Coins κ) (g X Y Z : (G.group κ (G.desc κ r)).G)
+    (T : (G.group κ (G.desc κ r)).GT) (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool)
+    (i : Fin 3) (x : Fin ((qLen G ℓ i).eval κ) → Bool)
+    (st : BB1SimState G ℓ κ (G.desc κ r) × ℕ) (hj : st.2 < q.eval κ) :
+    ∃ (y : Fin ((aLen G ℓ i).eval κ) → Bool) (st' : BB1SimState G ℓ κ (G.desc κ r) × ℕ),
+      ETTGame.tapeImpl (spec := bitSpecAt (qLen G ℓ) (aLen G ℓ) κ)
+          (drawStep G ℓ b κ (G.desc κ r) g X Y Z T)
+          (AdaptiveCPA.extTape fun j => draw G κ (G.desc κ r) (seedBlocks G ℓ O b q H κ ω j))
+          i x st = .pure (y, st') ∧ st'.2 ≤ st.2 + 1 ∧
+        (handler G ℓ O b q H).impl κ (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T) ω i
+          x (stEnc G ℓ O b q H κ st.1 st.2) = .pure (y, stEnc G ℓ O b q H κ st'.1 st'.2) := by
+  obtain ⟨s, j⟩ := st
+  have hV : AdaptiveCPA.extTape (fun j => draw G κ (G.desc κ r) (seedBlocks G ℓ O b q H κ ω j)) j =
+      draw G κ (G.desc κ r) (seedBlocks G ℓ O b q H κ ω ⟨j, hj⟩) :=
+    AdaptiveCPA.extTape_of_lt _ hj
+  obtain ⟨y, s', hds⟩ := exists_drawStep_eq_pure G ℓ b κ (G.desc κ r) g X Y Z T i x s
+    (draw G κ (G.desc κ r) (seedBlocks G ℓ O b q H κ ω ⟨j, hj⟩))
+  refine ⟨y, (s', j + 1), ?_, le_rfl, ?_⟩
+  · rw [ETTGame.tapeImpl_apply, hV, hds, OracleComp.pure_bind]
+  · rw [PolyHandler.impl_apply]
+    refine congrArg OracleComp.pure (PolyHandler.answer_of_run_eq _ ?_)
+    show runF G ℓ O b q _ = _
+    match i, x, y, hds with
+    | 0, x, y, hds => exact runF_zero G ℓ O b q H hj ω x s y s' hds
+    | 1, x, y, hds => exact runF_one G ℓ O b q H hj ω x s y s' hds
+    | 2, x, y, hds => exact runF_two G ℓ O b q H hj ω x s y s' _ hds
+
+/-- **The handler's run is the run of `drawStep` with exponents from the seed** [BB04, proof of
+Theorem 4.1, the algorithm `B`]: for a computation `c` with at most `q(κ)` queries, simulating
+`c` against the handler on the Decision BDH string of `(g, X, Y, Z, T)` and the seed `ω`, from its
+initial state, is simulating `c` against `drawStep` with the exponent of the `j`-th query read
+from the tape `V j = draw (block j of ω)` (`ETTGame.tapeImpl`), from the empty state, with the
+final state read through an encoding `f`.
+
+**Proof sketch.** `Games.simulate_eq_of_abs_bounded` with the counter of queries and the encoding
+of the simulator's states: from the encoding of a state after `j < q(κ)` queries, the handler and
+`drawStep` give the same answer and corresponding states (`handler_impl_stEnc`: the round
+function `runF` reads the counter, the commitment and the challenge record from the padded state,
+draws the exponent from block `j` of the seed, and computes the answer of `Init`, `KeyGen` or
+`Challenge` with the operations of `O` and the arithmetic of `H`, `runF_zero`, `runF_one`,
+`runF_two`); the initial state is the encoding of the empty state. -/
+theorem simulate_handler (κ : ℕ) (r : G.gen.Coins κ) (g X Y Z : (G.group κ (G.desc κ r)).G)
+    (T : (G.group κ (G.desc κ r)).GT) (ω : Fin ((handler G ℓ O b q H).seedLen.eval κ) → Bool)
+    {α : Type} (c : OracleComp (bitSpecAt (qLen G ℓ) (aLen G ℓ) κ) α)
+    (hc : c.CostBoundedBy (fun _ => 1) (q.eval κ)) :
+    ∃ f : BB1SimState G ℓ κ (G.desc κ r) × ℕ → (Fin ((handler G ℓ O b q H).stateLen.eval κ) → Bool),
+      simulate ((handler G ℓ O b q H).impl κ
+          (tupleStr (G.group κ (G.desc κ r)) (G.desc κ r) g X Y Z T) ω) c
+          ((handler G ℓ O b q H).init κ) =
+        (simulate (ETTGame.tapeImpl (spec := bitSpecAt (qLen G ℓ) (aLen G ℓ) κ)
+          (drawStep G ℓ b κ (G.desc κ r) g X Y Z T)
+          (AdaptiveCPA.extTape fun j => draw G κ (G.desc κ r) (seedBlocks G ℓ O b q H κ ω j)))
+          c ((none, none), 0)).bind fun p => .pure (p.1, f p.2) := by
+  refine ⟨fun st => stEnc G ℓ O b q H κ st.1 st.2, ?_⟩
+  have hinit : (handler G ℓ O b q H).init κ =
+      stEnc G ℓ O b q H κ (d := G.desc κ r) (none, none) 0 := rfl
+  rw [hinit]
+  exact simulate_eq_of_abs_bounded _ _ (fun st => stEnc G ℓ O b q H κ st.1 st.2) Prod.snd
+    (q.eval κ) (fun i x st hst => handler_impl_stEnc G ℓ O b q H κ r g X Y Z T ω i x st hst) c
+    (q.eval κ) hc ((none, none), 0) (by omega)
 
 
 end
