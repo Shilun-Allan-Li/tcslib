@@ -14,7 +14,7 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Yao's protocol in the OT-hybrid model (statement phase)
+# Yao's protocol in the OT-hybrid model
 
 [PS10, Protocol 162.6]: Alice garbles a circuit for `f` and sends it with the keys of her input
 bits; for each of Bob's input bits the parties run an oblivious transfer in which Bob obtains the
