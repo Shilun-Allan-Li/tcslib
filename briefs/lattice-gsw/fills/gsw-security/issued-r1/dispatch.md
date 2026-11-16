@@ -1,7 +1,7 @@
 # Dispatch · gsw-security, issued-r1 (Claude, single agent)
 
-The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/665b89fdf162077076d3b9cde0ff6855e5c84ffa/outbox/fills/gsw-security) is staged
-on the exchange at `665b89fdf162077076d3b9cde0ff6855e5c84ffa` (local commit, for the maintainer to verify and push). Brief SHA-256
+The [Claude pack](https://github.com/Shilun-Allan-Li/tcslib/tree/523d4e97302606b0301ecbcff13882abb917ec1f/outbox/fills/gsw-security) is staged
+on the exchange at `523d4e97302606b0301ecbcff13882abb917ec1f` (pushed). Brief SHA-256
 `5ce6f12e18867fe3c5f15b8d5d52f99d64f5dce86a2066b9e1f49b544bfeecda`. The worker is Claude under Seyoon's ruling of 2026-11-16 (GSW fill wave: two Claude jobs; this one
 single-agent). The parallel job is `gsw-core`. Seyoon dispatches.
 
@@ -18,7 +18,7 @@ campaign phase 5) in https://github.com/Shilun-Allan-Li/tcslib (Lean 4.25.0
 and pinned Mathlib).
 
 1. Read exchange/pass-shelat-ch5-8 at
-   665b89fdf162077076d3b9cde0ff6855e5c84ffa. Read README.md and
+   523d4e97302606b0301ecbcff13882abb917ec1f. Read README.md and
    outbox/fills/gsw-security/README.md, brief.md and
    fill-environment-addendum.md. Verify the pack with SHA256SUMS
    (shasum -a 256 -c).
