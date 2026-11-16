@@ -73,6 +73,9 @@ assembly through `Turing.FinTM.exists_loopFindTM`.
 
 ## Main results
 
+* `Complexity.IterateFind.computesFunInTime_find` — the finite machine with arbitrary
+  numerical fuel supplied in binary, a chosen initial state, and an explicit polynomial
+  per-round budget.
 * `Complexity.IterateFind.polyTimeComputable_find` — the loop-level form of the repetition
   lemma: the first accepted orbit point's payload along the guarded orbit of `⟨x, x⟩` is
   polynomial-time computable.
@@ -552,5 +555,247 @@ theorem polyTimeComputable_find {g : List Bool → List Bool} (hg : PolyTimeComp
   refine ⟨L, c * (A * (CP + 7) ^ D + 1) * (CR + 2), (cP + 1) * D + cR, fun x => (hL x).mono ?_⟩
   exact final_bound c A D CP cP CR cR x.length (P.eval x.length) (R.eval x.length)
     (hCP _) (hCR _)
+
+/-- A guarded search with arbitrary numerical fuel `R` and initial state `init` has a
+finite machine computing the first accepted payload (or `[]` on exhaustion) within
+`c * (A * (2 * n + 2 + P.eval n + 5) ^ D + 1) * (R n + 2)` steps, for constants
+`c, A, D`. The step `g`, acceptance word `[acc s]`, payload `out s`, and initial state are
+polynomial-time computable; `|init x| ≤ P.eval |x|`. A fuel machine computes
+`Nat.bits (R |x|)` within `aF * (|x| + 1) ^ dF`. The displayed common per-round budget
+`T n = A * (2 * n + 2 + P.eval n + 5) ^ D` is polynomial; no polynomial bound on `R`
+is assumed. [AB09, §7.1, p. 126]; [PS10, §8.2, Theorem 180.1, step 4]
+
+**Proof sketch.** Reuse the invariant and guarded-step modules of
+`polyTimeComputable_find`, installing `⟨x, init x⟩` at startup. The size guard preserves
+the invariant under every step, including steps after the search terminates. Install the
+verdict and step modules, emit the payload, and compose their clean calls through the
+same five-module host. A common polynomial budget pays for startup, each round, and the
+given binary fuel machine. The result-bearing loop combinator then supplies the stated
+bound directly, without using the polynomial-fuel normal form `final_bound`. -/
+theorem computesFunInTime_find {g : List Bool → List Bool} (hg : PolyTimeComputable g)
+    {acc : List Bool → Bool} (hacc : PolyTimeComputable fun s => [acc s])
+    {out : List Bool → List Bool} (hout : PolyTimeComputable out)
+    {init : List Bool → List Bool} (hinit : PolyTimeComputable init)
+    (R : ℕ → ℕ) (P : PolyExpr)
+    (hbound : ∀ x : List Bool, (init x).length ≤ P.eval x.length)
+    (F : FinTM Bool) (aF dF : ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length))
+      (fun n => aF * (n + 1) ^ dF)) :
+    ∃ (M : FinTM Bool) (c A D : ℕ),
+      M.ComputesFunInTime
+        (fun x => match (List.range (R x.length + 1)).find?
+            (fun i => acc (pairSndD ((step g P x)^[i] (pairEncode x (init x))))) with
+          | some i => out (pairSndD ((step g P x)^[i] (pairEncode x (init x))))
+          | none => [])
+        (fun n => c * (A * (2 * n + 2 + P.eval n + 5) ^ D + 1) * (R n + 2)) := by
+  -- Build the four clean calls and their shared host.
+  obtain ⟨S, aS, dS, hS⟩ := ModuleHost.clean_install (polyTimeComputable_id.pairEncode hinit)
+  obtain ⟨V, aV, dV, hV⟩ := ModuleHost.clean_install (verdictWord_poly hacc)
+  obtain ⟨I, aI, dI, hI⟩ := ModuleHost.clean_install (stepWord_poly hg P)
+  obtain ⟨E, aE, dE, hE⟩ := ModuleHost.clean_emit (outWord_poly hout)
+  let M : Fin 5 → FinTM Bool := fun i => match i.val with
+    | 0 => copyTM | 1 => S | 2 => V | 3 => I | _ => E
+  let K := S.k + V.k + I.k + E.k
+  have hk : ∀ i, (M i).k ≤ K + 1 := by
+    intro i; fin_cases i <;> simp [M, K, copyTM_k] <;> omega
+  let H := hostTM M K hk
+  let anchor : H.State := .inl 0
+  have hclean := ModuleHost.host_clean M (K + 1) hk (hostCtrl M K) (hostRet M)
+    (ModuleHost.entry M 0)
+  let D := dS + dV + dI + dE + dF + 1
+  let A := aS + aV + aI + aE + aF + 5
+  let pow (n : ℕ) := (2 * n + 2 + P.eval n + 5) ^ D
+  let T (n : ℕ) := A * pow n
+  have hpow (n : ℕ) : n + 1 ≤ pow n := by
+    have h := Nat.pow_le_pow_right (show 0 < 2 * n + 2 + P.eval n + 5 by omega)
+      (show 1 ≤ D by dsimp [D]; omega)
+    simp only [Nat.pow_one] at h
+    exact (by omega : n + 1 ≤ 2 * n + 2 + P.eval n + 5).trans h
+  -- Startup copies the input and installs the chosen initial state.
+  have hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ v < t, (H.tm.runFrom (H.tm.initCfg x) v).state ≠ some anchor) ∧
+      H.tm.runFrom (H.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord H.k (pairEncode x (init x))) := by
+    intro x
+    obtain ⟨hcg, hce⟩ := copy_clean x
+    obtain ⟨hcGuard, hcEnd⟩ := ModuleHost.host_call M (K + 1) hk (hostCtrl M K) (hostRet M)
+      (ModuleHost.entry M 0) 0 (by simp [M, copyTM_k]) x [] x [] [] (0 : Fin 2)
+      (2 * x.length + 2) hcg (by simpa using hce)
+    have hi : H.tm.initCfg x = Cfg.ofWords (ModuleHost.entry M 0) (stateWord (K + 1) []) := by
+      refine Cfg.ext ?_ rfl ?_ rfl rfl
+      · exact congrArg some (ModuleHost.hostTM_tm_q₀ M (K + 1) hk (hostCtrl M K) (hostRet M)
+          (ModuleHost.entry M 0))
+      funext i z
+      simp [MultiTapeTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_workTapes,
+          Cfg.init_workTapePos, Cfg.init_output, Cfg.ofWords_def, stateWord_eq]
+    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 0) (stateWord (K + 1) []))
+      (2 * x.length + 2) = Cfg.ofWords (hostRet M 0) (stateWord (K + 1) x) at hcEnd
+    rw [hostRet_zero] at hcEnd
+    obtain ⟨ts, hspos, hst, hsGuard, hsEnd⟩ := hclean 1
+      (fun x => pairEncode x (init x)) (fun _ => []) (fun n => aS * (n + 1) ^ dS)
+      (by simpa [M] using hS) x x []
+    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 1) (stateWord (K + 1) x))
+      ts = Cfg.ofWords (hostRet M 1) (stateWord (K + 1) (pairEncode x (init x))) at hsEnd
+    rw [hostRet_one] at hsEnd
+    have hsB := ModuleHost.request_budget aS dS D (2 * x.length + 2 + P.eval x.length + 5) x.length
+      (by dsimp [D]; omega) (by omega)
+    have hp := hpow x.length
+    refine ⟨2 * x.length + 2 + ts, ?_, ?_, ?_⟩
+    · dsimp only [T, A, pow]
+      simp only [Nat.add_mul]
+      dsimp only [pow] at hp
+      omega
+    · rw [hi]
+      exact ModuleHost.guard_add H.tm anchor _ _ _ ts (fun v hv => hcGuard v hv 0) hcEnd
+        (fun v hv => hsGuard v hv 0)
+    · rw [hi, MultiTapeTM.runFrom_add, hcEnd, hsEnd]
+      rfl
+  -- A positive round either emits its payload or advances the guarded state.
+  have hround : ∀ x w : List Bool, Inv P x w → ∃ t, 0 < t ∧ t ≤ T x.length ∧
+      (∀ t', 0 < t' → t' < t →
+        (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t').state
+          ≠ some anchor) ∧
+      if acc (pairSndD w) then
+        (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t).state = none ∧
+        (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t).output =
+          out (pairSndD w)
+      else
+        H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t =
+          Cfg.ofWords anchor (stateWord H.k (step g P x w)) := by
+    intro x w hw
+    obtain ⟨s, rfl, hs⟩ := hw
+    have hwlen : (pairEncode x s).length ≤ 2 * x.length + 2 + P.eval x.length := by
+      rw [length_pairEncode]; omega
+    have hw'len : (verdictWord acc (pairEncode x s)).length =
+        (pairEncode x s).length + 4 := verdictWord_length acc _
+    have hpow' := hpow x.length
+    -- the dispatch, the verdict call, the branch
+    have hdisp := host_dispatch M K hk x (pairEncode x s)
+    obtain ⟨tv, hvpos, hvt, hvGuard, hvEnd⟩ := hclean 2 (verdictWord acc)
+      (fun _ => []) (fun n => aV * (n + 1) ^ dV) (by simpa [M] using hV) x (pairEncode x s) []
+    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2) (stateWord (K + 1)
+      (pairEncode x s))) tv = Cfg.ofWords (hostRet M 2) (stateWord (K + 1)
+        (verdictWord acc (pairEncode x s))) at hvEnd
+    rw [hostRet_two] at hvEnd
+    have hbr := host_branch M K hk x (acc s) (verdictWord acc (pairEncode x s))
+      (by rw [verdictWord_head, pairSndD_pairEncode])
+    have hvB := ModuleHost.request_budget aV dV D (2 * x.length + 2 + P.eval x.length + 5)
+      (pairEncode x s).length (by dsimp [D]; omega) (by omega)
+    have hseg : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+        (stateWord (K + 1) (pairEncode x s))) (tv + 1) =
+        Cfg.ofWords (ModuleHost.entry M (if acc s then 4 else 3))
+          (stateWord (K + 1) (verdictWord acc (pairEncode x s))) := by
+      rw [MultiTapeTM.runFrom_succ_eq_step', hvEnd, hbr]
+    have hsegGuard : ∀ v < tv + 1, (H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+        (stateWord (K + 1) (pairEncode x s))) v).state ≠ some anchor := by
+      refine ModuleHost.guard_add H.tm anchor _ _ tv 1 (fun v hv => hvGuard v hv 0) hvEnd ?_
+      intro v hv
+      have hv0 : v = 0 := by omega
+      subst hv0
+      simp [Cfg.ofWords_def, anchor]
+    by_cases hb : acc s = true
+    · -- accepting round: the payload call, then the halt
+      rw [if_pos hb] at hseg
+      obtain ⟨te, hepos, het, heGuard, heEnd⟩ := hclean 4 id (outWord out)
+        (fun n => aE * (n + 1) ^ dE) (by simpa [M] using hE) x
+        (verdictWord acc (pairEncode x s)) []
+      change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 4) (stateWord (K + 1)
+        (verdictWord acc (pairEncode x s)))) te = {Cfg.ofWords (hostRet M 4) (stateWord (K + 1)
+          (verdictWord acc (pairEncode x s))) with
+            output := [] ++ outWord out (verdictWord acc (pairEncode x s))} at heEnd
+      rw [hostRet_four, List.nil_append, outWord_verdictWord] at heEnd
+      have hhalt := host_halt M K hk x (verdictWord acc (pairEncode x s)) (out s)
+      have heB := ModuleHost.request_budget aE dE D (2 * x.length + 2 + P.eval x.length + 5)
+        (verdictWord acc (pairEncode x s)).length (by dsimp [D]; omega) (by omega)
+      have hall : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+          (stateWord (K + 1) (pairEncode x s))) (tv + 1 + te + 1) =
+          {Cfg.ofWords (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1)
+            (verdictWord acc (pairEncode x s))) with state := none, output := out s} := by
+        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, hseg, heEnd, hhalt]
+      have hallGuard : ∀ v < tv + 1 + te + 1, (H.tm.runFrom (Cfg.ofWords (input := x)
+          (ModuleHost.entry M 2) (stateWord (K + 1) (pairEncode x s))) v).state ≠ some anchor := by
+        refine ModuleHost.guard_add H.tm anchor _ {Cfg.ofWords (input := x)
+          (.inl 2 : ModuleHost.State (Fin 3) M)
+          (stateWord (K + 1) (verdictWord acc (pairEncode x s))) with output := out s}
+          (tv + 1 + te) 1 ?_ ?_ ?_
+        · exact ModuleHost.guard_add H.tm anchor _ _ (tv + 1) te hsegGuard hseg
+            (fun v hv => heGuard v hv 0)
+        · rw [MultiTapeTM.runFrom_add, hseg, heEnd]
+        · intro v hv
+          have hv0 : v = 0 := by omega
+          subst hv0
+          simp [Cfg.ofWords_def, anchor]
+      refine ⟨tv + 1 + te + 1 + 1, by omega, ?_, ?_, ?_⟩
+      · dsimp only [T, A, pow]
+        simp only [Nat.add_mul]
+        dsimp only [pow] at hpow'
+        omega
+      · intro v hv hvt
+        have hvform : v = (v - 1) + 1 := by omega
+        change (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+          (pairEncode x s))) v).state ≠ some anchor
+        rw [hvform, MultiTapeTM.runFrom_succ_eq_step, hdisp]
+        exact hallGuard (v - 1) (by omega)
+      · rw [pairSndD_pairEncode, if_pos hb]
+        change (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+            (pairEncode x s))) (tv + 1 + te + 1 + 1)).state = none ∧
+          (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+            (pairEncode x s))) (tv + 1 + te + 1 + 1)).output = out s
+        rw [MultiTapeTM.runFrom_succ_eq_step, hdisp, hall]
+        exact ⟨rfl, rfl⟩
+    · -- advancing round: the step call returns to the anchor
+      rw [if_neg hb] at hseg
+      obtain ⟨ti, hipos, hit, hiGuard, hiEnd⟩ := hclean 3 (stepWord g P)
+        (fun _ => []) (fun n => aI * (n + 1) ^ dI) (by simpa [M] using hI) x
+        (verdictWord acc (pairEncode x s)) []
+      change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 3) (stateWord (K + 1)
+        (verdictWord acc (pairEncode x s)))) ti = Cfg.ofWords (hostRet M 3) (stateWord (K + 1)
+          (stepWord g P (verdictWord acc (pairEncode x s)))) at hiEnd
+      rw [hostRet_three, stepWord_verdictWord] at hiEnd
+      have hiB := ModuleHost.request_budget aI dI D (2 * x.length + 2 + P.eval x.length + 5)
+        (verdictWord acc (pairEncode x s)).length (by dsimp [D]; omega) (by omega)
+      have hall : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+          (stateWord (K + 1) (pairEncode x s))) (tv + 1 + ti) =
+          Cfg.ofWords anchor (stateWord (K + 1) (step g P x (pairEncode x s))) := by
+        rw [MultiTapeTM.runFrom_add, hseg, hiEnd]
+      have hallGuard : ∀ v < tv + 1 + ti, (H.tm.runFrom (Cfg.ofWords (input := x)
+          (ModuleHost.entry M 2) (stateWord (K + 1) (pairEncode x s))) v).state ≠ some anchor :=
+        ModuleHost.guard_add H.tm anchor _ _ (tv + 1) ti hsegGuard hseg
+          (fun v hv => hiGuard v hv 0)
+      refine ⟨tv + 1 + ti + 1, by omega, ?_, ?_, ?_⟩
+      · dsimp only [T, A, pow]
+        simp only [Nat.add_mul]
+        dsimp only [pow] at hpow'
+        omega
+      · intro v hv hvt
+        have hvform : v = (v - 1) + 1 := by omega
+        change (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+          (pairEncode x s))) v).state ≠ some anchor
+        rw [hvform, MultiTapeTM.runFrom_succ_eq_step, hdisp]
+        exact hallGuard (v - 1) (by omega)
+      · rw [pairSndD_pairEncode, if_neg hb]
+        change H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+            (pairEncode x s))) (tv + 1 + ti + 1) =
+          Cfg.ofWords anchor (stateWord (K + 1) (step g P x (pairEncode x s)))
+        rw [MultiTapeTM.runFrom_succ_eq_step, hdisp, hall]
+  -- Pay for binary fuel in the same polynomial budget, then apply the host.
+  have hFuel : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T := by
+    apply (FinTM.computesFunInTime_iff _ _ _).2
+    intro x
+    apply ((FinTM.computesFunInTime_iff _ _ _).1 hF x).mono
+    have h := ModuleHost.request_budget aF dF D (2 * x.length + 2 + P.eval x.length + 5) x.length
+      (by dsimp [D]; omega) (by omega)
+    have hp := hpow x.length
+    dsimp only [T, A, pow]
+    simp only [Nat.add_mul]
+    dsimp only [pow] at hp
+    omega
+  obtain ⟨L, c, hL⟩ := FinTM.exists_loopFindTM H F anchor (Inv P) (step g P)
+    (fun _ w => acc (pairSndD w)) (fun _ w => out (pairSndD w)) (fun x => pairEncode x (init x))
+    R T hFuel (fun x => ⟨init x, rfl, hbound x⟩)
+    (fun x w h => inv_step g P x w h) hstart hround
+  refine ⟨L, c, A, D, (FinTM.computesFunInTime_iff _ _ _).mpr fun x => ?_⟩
+  have hx := (FinTM.computesFunInTime_iff _ _ _).mp hL x
+  simpa only [T, pow] using hx
 
 end Complexity.IterateFind

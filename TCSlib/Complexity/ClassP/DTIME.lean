@@ -76,6 +76,16 @@ def DecidesInTime (M : FinTM Bool) (L : Language Bool) (T : ℕ → ℕ) : Prop 
   ∀ x : List Bool,
     M.ComputesInTime x [MultiTapeTM.indicator (L : Set (List Bool)) x] (T x.length)
 
+/-- The decision contract `M.DecidesInTime L T` holds exactly when every input `x`
+is computed with output `[indicator L x]` within `T |x|` steps:
+`M.DecidesInTime L T ↔ ∀ x, M.ComputesInTime x [indicator L x] (T |x|)`.
+[AB09, §1.6, Definition 1.3] -/
+theorem decidesInTime_iff (M : FinTM Bool) (L : Language Bool) (T : ℕ → ℕ) :
+    M.DecidesInTime L T ↔
+      ∀ x : List Bool,
+        M.ComputesInTime x [MultiTapeTM.indicator (L : Set (List Bool)) x] (T x.length) :=
+  Iff.rfl
+
 end Turing.FinTM
 
 namespace Complexity
@@ -87,6 +97,14 @@ open Turing
 `c · T n` steps on inputs of length `n`. [AB09, Definition 1.12] -/
 def DTIME (T : ℕ → ℕ) : Set (Language Bool) :=
   {L | ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInTime L fun n => c * T n}
+
+/-- Membership `L ∈ DTIME T` is exactly a constant `c` and a finite machine `M`
+deciding `L` within `n ↦ c * T n`:
+`L ∈ DTIME T ↔ ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInTime L (fun n => c * T n)`.
+[AB09, Definition 1.12] -/
+theorem mem_DTIME_iff {T : ℕ → ℕ} {L : Language Bool} :
+    L ∈ DTIME T ↔ ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInTime L fun n => c * T n :=
+  Iff.rfl
 
 /-- `DTIME` is monotone in the time bound.
 
