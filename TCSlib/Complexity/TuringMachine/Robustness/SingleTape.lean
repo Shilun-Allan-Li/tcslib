@@ -1689,9 +1689,9 @@ private lemma one_work_tape_witness {Γ : Type} [Fintype Γ] [DecidableEq Γ]
   by_cases hk : M.k = 0
   · refine ⟨Γ, inferInstance, inferInstance, Function.Embedding.refl Γ,
       unusedTapeTM M hk, 1, rfl, ?_, ?_⟩
-    · intro x
+    · refine (computesFunInTimeVia_iff _ _ _ _).mpr fun x => ?_
       simpa only [Function.Embedding.coe_refl, List.map_id, one_mul] using
-        ((unusedTape_computes M hk f T hM) x).mono
+        (((computesFunInTime_iff _ _ _).mp (unusedTape_computes M hk f T hM)) x).mono
           (show T x.length ≤ (T x.length + 1) ^ 2 from
             (Nat.le_succ _).trans (by rw [pow_two]; exact Nat.le_mul_of_pos_right _ (Nat.succ_pos _)))
     · intro S _ x t
@@ -1702,7 +1702,7 @@ private lemma one_work_tape_witness {Γ : Type} [Fintype Γ] [DecidableEq Γ]
   · obtain ⟨a₀⟩ := hΓ
     refine ⟨SweepAlphabet Γ M.k, inferInstance, inferInstance, sweepEmbed Γ M.k,
       dgTM M a₀, 9 * M.k + 6, rfl, ?_, ?_⟩
-    · intro y
+    · refine (computesFunInTimeVia_iff _ _ _ _).mpr fun y => ?_
       have h := (dg_all_inputs M (Nat.pos_of_ne_zero hk) a₀ f T hM
         (y.map (sweepEmbed Γ M.k))).1
       simpa only [List.map_map, Function.comp_def, dgRetract_embed,
@@ -1714,19 +1714,26 @@ private lemma one_work_tape_witness {Γ : Type} [Fintype Γ] [DecidableEq Γ]
         State := Unit
         tm := { q₀ := (), tr := fun _ _ _ => ⟨0, fun i => i.elim0, none, none⟩ } }
     have hZ : Z.ComputesFunInTime f (fun _ => 1) := by
-      intro x
+      refine (computesFunInTime_iff _ _ _).mpr fun x => ?_
       have hx : f x = [] := by
         cases he : f x with
         | nil => rfl
         | cons a as => exact (hΓ ⟨a⟩).elim
       apply (computesInTime_iff _ _ _ _).mpr
-      rw [hx, MultiTapeTM.runFrom_one]
-      exact ⟨rfl, rfl⟩
+      have hs : Z.tm.step (Z.tm.initCfg x) = (Z.tm.tr () (Z.tm.initCfg x).inputSymbol
+          (Z.tm.initCfg x).workTapeSymbols).apply (Z.tm.initCfg x) :=
+        MultiTapeTM.step_of_some (by rw [MultiTapeTM.initCfg_eq, Cfg.init_state])
+      rw [hx, MultiTapeTM.runFrom_one, hs, Action.apply_state, Action.apply_output,
+        MultiTapeTM.initCfg_eq, Cfg.init_output]
+      refine ⟨rfl, ?_⟩
+      rw [List.nil_append]
+      show (none : Option Γ).toList = []
+      exact Option.toList_none Γ
     refine ⟨Γ, inferInstance, inferInstance, Function.Embedding.refl Γ,
       unusedTapeTM Z rfl, 1, rfl, ?_, ?_⟩
-    · intro x
+    · refine (computesFunInTimeVia_iff _ _ _ _).mpr fun x => ?_
       simpa only [Function.Embedding.coe_refl, List.map_id, one_mul] using
-        ((unusedTape_computes Z rfl f (fun _ => 1) hZ) x).mono
+        (((computesFunInTime_iff _ _ _).mp (unusedTape_computes Z rfl f (fun _ => 1) hZ)) x).mono
           (show 1 ≤ (T x.length + 1) ^ 2 from Nat.pow_pos (Nat.succ_pos _))
     · intro S _ x t
       rw [dg_unused_space]
