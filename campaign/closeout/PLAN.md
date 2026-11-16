@@ -1,7 +1,7 @@
 # Arora–Barak chapters 3–4: closeout plan (draft for Seyoon's review, 2026-11-16)
 
 Status: **rulings in progress (Seyoon, 2026-11-16).** Ruled: D1 = (a) remove; D4 = refactor
-before integration (scope to be chosen); D5 as proposed; D6 as proposed. Open: D2 (Seyoon checks
+before integration, all three debt groups; D5 as proposed; D6 as proposed. Open: D2 (Seyoon checks
 the book against the attribution below) and D3 (Seyoon decides from the full list). The work
 packages start once the decisions they depend on are ruled.
 
@@ -60,8 +60,11 @@ fallback citation as recorded.
   4.15; Ex 4.2, 4.4–4.6, 4.8, 4.9, 4.12;
 - the queued additive NL closure lemma (P4.4) and the B5a linear-headline H2.
 
-**D4 · Duplication debt at closeout.** **Ruled (Seyoon, 2026-11-16): refactor before integration;**
-the scope (which families) is the next question. Every chapter 3–4 family in the ledger is acknowledged
+**D4 · Duplication debt at closeout.** **Ruled (Seyoon, 2026-11-16): refactor before integration,
+all three groups**: the chapter 3–4 families (CH34-D2, D3, D4 leftovers, SG1-UH, FE-LIVE-1), the
+12.2c infrastructure families (Catalog D-R2, the §12 sibling rows, Loop/RB4, ch7), and the ARM
+layer (ARM-1/ARM-2, after the shared interfaces are designed with Hydroxyi). Sequencing and
+sizing: `campaign/closeout/REFACTOR-PLAN.md` (to be drafted). Every chapter 3–4 family in the ledger is acknowledged
 (CH34-D2, D3; D4's factorings landed in #70; ARM-1/ARM-2; SG1-UH; FE-LIVE-1), with cleanup
 scheduled to the 12.2c / MIG / dedup windows. Two small follow-ups remain open under CH34-D4 (two
 colleague-owned retirements, and the padding-parse uniqueness lemma). Options: carry all
